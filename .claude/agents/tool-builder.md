@@ -22,7 +22,9 @@ build step, no server.
 
 - **Design**: reuse the shared components and token layers (`dark.css`, `light.css`,
   `shared.css`, then your `style.css`). Match the theme toggle, fonts, and dark/light
-  behaviour of the other tools exactly. Include `shared.js` before `script.js`.
+  behaviour of the other tools exactly. Include `dropdown.js` then `shared.js` before `script.js`. Dropdowns take
+  their look from `dropdown.css`: style a select's size only, and use a searchable
+  `.combo-input` + `.combo-list` only for a database-sized list.
 - **SEO**: copy and adapt the standard `<head>` block (title, description, canonical, OG,
   Twitter, JSON-LD `WebApplication`, gtag). Add the tool to `sitemap.xml` and `llms.txt`.
 - **Language**: plain and tight, **no em-dashes** in user copy, no walls of text. Notes go in

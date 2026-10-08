@@ -73,21 +73,20 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .fx-shock.shocked .fx-shock-reset{visibility:visible;}
 .fx-shock-reset:hover{color:var(--accent-strong);}
 
-/* Custom city dropdown */
+/* City picker: a searchable combobox, since 547 cities are too many to
+   scroll. Its field and list are the site's .combo-input / .combo-list
+   (dropdown.css); only the picker's own states and size live here. */
 .city-picker{position:relative;}
-.city-search{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:0.9rem;font-family:inherit;color:var(--text);outline:none;transition:border-color 150ms;}
-.city-search:focus{border-color:var(--accent-strong);}
-.city-search.has-value{border-color:var(--accent-strong);background:var(--positive-bg);padding-right:28px;}
+.city-search{width:100%;}
+.city-search.has-value{border-color:var(--accent-strong);background-color:var(--positive-bg);padding-right:28px;}
 .city-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);line-height:0;padding:4px;display:none;z-index:1;}
 .city-clear .ico{width:16px;height:16px;}
 .city-clear:hover{color:var(--text);background:var(--input-bg);}
 .city-search.has-value~.city-clear{display:block;}
-.city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);max-height:220px;overflow-y:auto;z-index:200;display:none;}
+/* Placed by SharedDropdown.place() so it can outgrow a narrow column and is
+   not clipped by the detailed table's scroller. */
+.city-dropdown{display:none;}
 .city-dropdown.open{display:block;}
-.city-opt{padding:7px 12px;font-size:0.86rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background 100ms;}
-.city-opt:last-child{border-bottom:none;}
-.city-opt:hover,.city-opt.focused{background:var(--positive-bg);color:var(--positive-em);}
-.city-opt .opt-sub{font-size:0.75rem;color:var(--muted);}
 
 /* Inputs - number type (legacy, kept for selects) */
 input[type=number]{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:0.9rem;font-family:'DM Mono',monospace;color:var(--text);outline:none;transition:border-color 150ms;width:100%;}
@@ -103,7 +102,8 @@ input[type=number]:focus{border-color:var(--accent-strong);}
 }
 .num-input:focus { border-color: var(--accent-strong); }
 
-select{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:7px 10px;font-size:0.85rem;font-family:inherit;color:var(--text);outline:none;width:100%;cursor:pointer;}
+/* Selects take dropdown.css's look; sized here for this tool's table. */
+select{padding:7px 10px;font-size:0.85rem;width:100%;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 
 /* Main analysis card */
 .analysis-card{padding:22px 24px;margin-bottom:16px;}
@@ -160,17 +160,17 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .dt .num-input{min-width:90px;padding:5px 8px;font-size:0.82rem;}
 .dt .cat-td{min-width:160px;}
 .dt .num-td{font-family:'DM Mono',monospace;text-align:right;}
-.dt .city-th select{font-size:0.77rem;padding:4px 6px;max-width:160px;}
+.dt .city-th select{font-size:0.77rem;padding:4px 6px;max-width:160px;--sel-pad:22px;--sel-chev:6px;}
 .dt .city-th{min-width:180px;}
 .sub-num{font-size:0.73rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
 /* Custom frequency (detailed mode) */
 .check-opt{display:inline-flex;align-items:center;gap:7px;font-size:0.85rem;font-weight:600;color:var(--text);cursor:pointer;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:5px 12px;user-select:none;}
 .check-opt input{accent-color:var(--accent-strong);margin:0;width:15px;height:15px;cursor:pointer;}
-.dt select.freq-sel{font-size:0.77rem;padding:4px 6px;margin-top:5px;width:auto;max-width:100%;}
+.dt select.freq-sel{font-size:0.77rem;padding:4px 6px;margin-top:5px;width:auto;max-width:100%;--sel-pad:22px;--sel-chev:6px;}
 .qty-line{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:0.77rem;color:var(--muted);flex-wrap:wrap;}
 .dt .qty-line .num-input{width:72px;min-width:0;padding:4px 6px;font-size:0.78rem;}
-.dt .qty-line select{width:auto;font-size:0.77rem;padding:4px 6px;}
+.dt .qty-line select{width:auto;font-size:0.77rem;padding:4px 6px;--sel-pad:22px;--sel-chev:6px;}
 
 /* Buttons */
 .btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;}

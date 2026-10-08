@@ -76,6 +76,7 @@
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">
+<script src="../dropdown.js"></script>
 <script src="../shared.js"></script>
 </head>
 <body class="light">
@@ -132,9 +133,9 @@
     <div class="wc-field">
       <label class="field-label" for="placeSearch">In</label>
       <div class="city-picker" id="placePicker">
-        <input class="city-search" id="placeSearch" type="text" placeholder="Search a city or country…" autocomplete="off" spellcheck="false">
+        <input class="city-search combo-input" id="placeSearch" type="text" placeholder="Search a city or country…" autocomplete="off" spellcheck="false">
         <button class="city-clear" id="placeClear" data-icon="clear" title="Clear place" aria-label="Clear place" type="button"></button>
-        <div class="city-dropdown" id="placeList" role="listbox"></div>
+        <div class="city-dropdown combo-list" id="placeList" role="listbox"></div>
       </div>
       <div class="field-sub">Or tap a place on the map.</div>
     </div>

@@ -43,11 +43,8 @@ p,.muted{color:var(--muted);line-height:1.55;margin:0;}
    accent rather than the browser's default blue, like every other link here. */
 .field-sub a{color:var(--accent);font-weight:600;text-decoration:none;}
 .field-sub a:hover{text-decoration:underline;}
-.num-input,.sel-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.9rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color .15s;font-family:inherit;}
-.num-input:focus,.sel-input:focus{border-color:var(--accent);}
-.sel-input{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a8b4d4'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
-.sel-input option{background:#162033;color:#EAF1FF;}
-body.light .sel-input option{background:#FFFFFF;color:#2D3436;}
+.num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:.9rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color .15s;font-family:inherit;}
+.num-input:focus{border-color:var(--accent);}
 .slider-block{padding:12px 0 16px;border-top:1px solid var(--border);}
 .slider-block:first-of-type{border-top:none;padding-top:4px;}
 .slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:7px;}
@@ -160,7 +157,7 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .sp-range b{color:var(--text);font-family:'DM Mono',monospace;font-weight:600;}
 .sp-sep{color:var(--muted);}
 /* Shared design-system select, sized down for the compact schedule row. */
-.sp-head .sp-type{flex:1;min-width:0;width:auto;font-size:.8rem;font-weight:600;padding:6px 26px 6px 9px;background-position:right 8px center;}
+.sp-head .sp-type{flex:1;min-width:0;width:auto;font-size:.8rem;padding:6px 9px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .sched-row input[type=number],.sched-row input[type=text]{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
 .sched-row input:focus{border-color:var(--accent);}
 .sp-range .sp-to{width:4.4em;flex-shrink:0;}
@@ -208,7 +205,6 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 /* M6: the Optimization Target sits in the Best Strategy card it decides. */
 .kpi-opt{margin-top:10px;padding-top:8px;border-top:1px solid var(--border);}
 .kpi-opt-label{color:var(--muted);font-size:.74rem;font-weight:700;margin-bottom:4px;}
-.sel-input.sel-sm{padding:6px 28px 6px 10px;font-size:.8rem;background-position:right 9px center;}
 /* M6: the chart's metric is a switch on the chart itself. */
 .chart-switch-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 4px;}
 .chart-switch-label{color:var(--muted);font-size:.8rem;font-weight:700;}

@@ -504,16 +504,22 @@ function currOf(city){return city?city.currency:'';}
 // ═══════════════════════════════════════════════════════════
 // CITY PICKER WIDGET
 // ═══════════════════════════════════════════════════════════
+// Pickers are rebuilt on every render, so one listener keeps whichever list
+// is open pinned to its field.
+function placeOpenCityDrops(){document.querySelectorAll('.city-dropdown.open').forEach(d=>d._place&&d._place());}
+window.addEventListener('scroll',placeOpenCityDrops,{passive:true,capture:true});
+window.addEventListener('resize',placeOpenCityDrops,{passive:true});
 function buildCityPicker(containerId, currentKey, onSelect){
   const wrap = document.getElementById(containerId);
   if(!wrap) return;
   const current = getCity(currentKey);
   const input = document.createElement('input');
-  input.type='text'; input.className='city-search'; input.placeholder='Search city…';
+  input.type='text'; input.className='city-search combo-input'; input.placeholder='Search city…';
   input.autocomplete='off';
   if(current){input.value=cityDisplay(current);input.classList.add('has-value');}
   const drop = document.createElement('div');
-  drop.className='city-dropdown';
+  drop.className='city-dropdown combo-list';
+  drop.setAttribute('role','listbox');
   const btnClear=document.createElement('button');
   btnClear.type='button'; btnClear.className='city-clear'; btnClear.innerHTML=SharedIcon.svg('clear');
   btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear'); btnClear.title='Clear';
@@ -528,9 +534,19 @@ function buildCityPicker(containerId, currentKey, onSelect){
 
   let focusIdx=-1;
   function renderDrop(q){
-    const lq=q.toLowerCase();
-    const filtered=CITIES.filter(c=>c.city.toLowerCase().includes(lq)||c.country.toLowerCase().includes(lq)||c.currency.toLowerCase().includes(lq)).slice(0,60);
-    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><strong>${c.city}</strong>, ${c.country}</div>`).join('');
+    // Every word typed must appear somewhere in the city, state, country or
+    // currency, so "paris france" and the shown "Basel, Switzerland" both match.
+    const terms=q.toLowerCase().split(/[\s,]+/).filter(Boolean);
+    const filtered=CITIES.filter(c=>{
+      const hay=(c.city+' '+c.country+' '+c.currency).toLowerCase();
+      return terms.every(t=>hay.includes(t));
+    }).slice(0,60);
+    // City (and state, when the data has one) up front; the country rides in a
+    // chip on the right so the list scans by city.
+    const curKey=current?cityKey(current):'';
+    drop.innerHTML=filtered.length
+      ? filtered.map((c,i)=>{const k=cityKey(c);return `<div class="city-opt combo-opt${k===curKey?' selected':''}" role="option" data-key="${k}" data-idx="${i}"><span class="combo-main">${c.city}</span><span class="combo-chip" title="${c.country}">${c.country}</span></div>`;}).join('')
+      : '<div class="combo-empty">No city matches</div>';
     focusIdx=-1;
     drop.querySelectorAll('.city-opt').forEach(el=>{
       el.addEventListener('mousedown',e=>{
@@ -544,8 +560,16 @@ function buildCityPicker(containerId, currentKey, onSelect){
     });
   }
 
-  input.addEventListener('focus',()=>{renderDrop(input.value);drop.classList.add('open');});
-  input.addEventListener('input',()=>{renderDrop(input.value);drop.classList.add('open');input.classList.remove('has-value');});
+  // Placed by the site's shared helper (dropdown.js): fixed to the viewport so
+  // it can be wider than its field and is not clipped by the table scroller.
+  function placeDrop(){
+    if(drop.classList.contains('open'))SharedDropdown.place(input,drop,{minWidth:300,maxHeight:260});
+  }
+  drop._place=placeDrop;
+  function openDrop(){drop.classList.add('open');placeDrop();}
+
+  input.addEventListener('focus',()=>{renderDrop(input.value);openDrop();});
+  input.addEventListener('input',()=>{renderDrop(input.value);openDrop();input.classList.remove('has-value');});
   input.addEventListener('keydown',e=>{
     const opts=drop.querySelectorAll('.city-opt');
     if(e.key==='ArrowDown'){focusIdx=Math.min(focusIdx+1,opts.length-1);}

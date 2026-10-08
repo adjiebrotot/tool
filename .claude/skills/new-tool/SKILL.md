@@ -27,12 +27,20 @@ tables, tooltips, charts) rather than inventing new ones. Include the shared lay
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">   <!-- page-specific only -->
 ...
+<script src="../dropdown.js"></script>     <!-- every dropdown's open list (dropdown.css comes via shared.css) -->
 <script src="../shared.js"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
 <script src="script.js"></script>
 ```
 
 The fastest way to stay consistent is to open the closest existing tool and mirror its
 structure. Theme toggle, dark/light behaviour, and fonts should match the others exactly.
+
+**Dropdowns** come from `dropdown.css` / `dropdown.js` and need no styling of your own: a
+short list is a plain `<select>` (no search), and only a database-sized list a reader
+would scroll one by one (cities, time zones) is a searchable `.combo-input` + `.combo-list`.
+Size a select if you must (padding, font-size, width, `--radius-sm`), never re-colour,
+re-border or re-font it. See "Dropdowns: one look, two kinds" in the design reference and
+run `node _ref/dropdown-check.mjs`.
 
 ### A finance tool: the seven-rule checklist
 
@@ -160,7 +168,8 @@ Scale the rigor to the risk:
   axis units, no em-dash, no red option, answer and caveats) alongside `_ref/quickstart-check.mjs`,
   `_ref/scenario-check.mjs`, `_ref/chart-check.mjs`, `_ref/tip-check.mjs` and `_ref/abbr-check.mjs`.
 - **Every tool** passes `node _ref/button-check.mjs` (one picture per job, bare icon buttons,
-  reachable main action).
+  reachable main action) and `node _ref/dropdown-check.mjs` (every dropdown has the shared look
+  and opens the shared list).
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 

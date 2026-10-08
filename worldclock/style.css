@@ -118,22 +118,18 @@ body:not(.light) .wc-travel .txt-input{color-scheme:dark;}
 .wc-travel-foot{display:flex;justify-content:flex-end;}
 .wc-travel-foot .btn-secondary{padding:8px 16px;font-size:.86rem;}
 
-/* City picker (design reference: Searchable Combobox) */
+/* Place picker: a searchable combobox, as there are hundreds of places. The
+   field and list are the site's .combo-input / .combo-list (dropdown.css);
+   only the picker's states and placement (it opens upwards) live here. */
 .city-picker{position:relative;}
-.city-search{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;font-size:.9rem;font-family:inherit;color:var(--text);outline:none;transition:border-color 150ms;}
-.city-search:focus{border-color:var(--accent-strong);}
-.city-search.has-value{border-color:var(--accent-strong);background:var(--positive-bg);padding-right:28px;}
+.city-search{width:100%;}
+.city-search.has-value{border-color:var(--accent-strong);background-color:var(--positive-bg);padding-right:28px;}
 .city-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);line-height:0;padding:4px;display:none;z-index:1;}
 .city-clear .ico{width:16px;height:16px;}
 .city-clear:hover{color:var(--text);background:var(--input-bg);}
 .city-search.has-value~.city-clear{display:block;}
-.city-dropdown{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);max-height:240px;overflow-y:auto;z-index:200;display:none;}
+.city-dropdown{position:absolute;bottom:calc(100% + 4px);left:0;right:0;max-height:260px;display:none;}
 .city-dropdown.open{display:block;}
-.city-opt{padding:7px 12px;font-size:.86rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background 100ms;}
-.city-opt:last-child{border-bottom:none;}
-.city-opt:hover,.city-opt.focused{background:var(--positive-bg);color:var(--positive-em);}
-.city-opt .opt-sub{font-size:.75rem;color:var(--muted);}
-.city-empty{padding:9px 12px;font-size:.84rem;color:var(--muted);}
 
 /* ---------- place card (hover / tap) ---------- */
 .wc-card{position:absolute;left:0;top:0;z-index:4;width:max-content;min-width:190px;max-width:270px;padding:10px 13px 11px;background:var(--panel-raised);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);font-size:.8rem;line-height:1.45;color:var(--text);pointer-events:none;}

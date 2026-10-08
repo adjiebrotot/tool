@@ -72,12 +72,13 @@ body.is-stale #plotDiv,body.is-stale .info-row{opacity:.45}
 .btn-sample{width:100%;justify-content:center;padding:8px 14px}
 
 /* INPUTS */
-select,input[type=number],input[type=text]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:.88rem;outline:none;transition:border-color 150ms}
-select:focus,input:focus{border-color:var(--accent)}
-select option{background:var(--panel);color:var(--text)}
-/* The rule above paints over the browser's own highlight, so a multi-select
-   would hide which series are picked. */
-select[multiple] option{background:transparent;padding:2px 4px;border-radius:4px}
+input[type=number],input[type=text]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:.88rem;outline:none;transition:border-color 150ms}
+input:focus{border-color:var(--accent)}
+/* Selects take their look from dropdown.css; sized here to sit with the inputs. */
+select{width:100%;padding:8px 10px;font-size:.88rem;border-radius:var(--radius-sm)}
+/* The shared option colours paint over the browser's own highlight, so a
+   multi-select would hide which series are picked. */
+select[multiple] option{background:transparent;color:var(--text);padding:2px 4px;border-radius:4px}
 select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 
 /* DIMENSION BUTTONS */

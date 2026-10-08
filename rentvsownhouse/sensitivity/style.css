@@ -17,8 +17,8 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 .controls-bar{padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:50;}
 .ctrl-row{display:flex;align-items:center;gap:8px;}
 .controls-label{font-size:.8rem;font-weight:700;color:var(--muted);white-space:nowrap;}
-.ctrl-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:inherit;padding:6px 10px;outline:none;cursor:pointer;transition:border-color var(--motion-fast);}
-.ctrl-select:focus{border-color:var(--accent);}
+/* Selects here take dropdown.css's look; these rules only size them. */
+.ctrl-select{font-size:.82rem;padding:6px 10px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 
 /* Segmented controls */
 .seg-group{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
@@ -67,8 +67,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .scen-preset:focus-within{outline:2px solid var(--accent-strong);outline-offset:1px;}
 .scen-preset-ico{width:14px;height:14px;}
 .scen-preset-chev{width:11px;height:11px;}
-.scen-preset-select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-family:inherit;font-size:.82rem;border:none;appearance:none;-webkit-appearance:none;}
-.scen-preset-select option{color:var(--text);background:var(--card-bg);}
+.scen-preset-select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:.82rem;border:none;padding:0;}
 /* Header icon buttons (duplicate, delete): shared.css's .btn-bare, one size
    down so two of them and the grip fit a narrow column. */
 .scen-header-actions .btn-head-icon{min-width:26px;height:26px;}
@@ -129,8 +128,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .param-wrap .prefix+.param-input{padding-left:5px;}
 .param-input:focus{outline:none;}
 .param-input::placeholder{color:var(--muted);opacity:.8;}
-.param-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;font-family:inherit;padding:5px 8px;width:100%;cursor:pointer;outline:none;transition:border-color var(--motion-fast);}
-.param-select:focus{border-color:var(--accent);}
+.param-select{font-size:.82rem;padding:5px 8px;width:100%;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .param-bool-wrap{display:flex;align-items:center;gap:7px;padding:3px 0;}
 .param-bool{width:15px;height:15px;cursor:pointer;accent-color:var(--accent);flex-shrink:0;}
 .param-bool-label{font-size:.78rem;color:var(--muted);}
@@ -152,8 +150,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .mini-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.78rem;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;padding:4px 6px;width:4.2em;text-align:right;outline:none;transition:border-color var(--motion-fast);}
 .mini-input:focus{border-color:var(--accent);}
 .mini-input.mini-amt{flex:1;min-width:5.5em;width:auto;}
-.mini-select{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.74rem;font-family:inherit;padding:4px 5px;cursor:pointer;outline:none;max-width:11em;transition:border-color var(--motion-fast);}
-.mini-select:focus{border-color:var(--accent);}
+.mini-select{font-size:.74rem;padding:4px 5px;max-width:11em;border-radius:var(--radius-sm);--sel-pad:22px;--sel-chev:6px;}
 .mini-unit{font-size:.7rem;color:var(--muted);white-space:nowrap;}
 .rp-dash{color:var(--muted);font-size:.78rem;}
 

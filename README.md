@@ -43,6 +43,7 @@ Shared, cross-tool files live at the repo root:
 | File | What it is |
 | --- | --- |
 | `shared.css`, `light.css`, `dark.css` | The design system and the two colour themes. |
+| `dropdown.css`, `dropdown.js` | The one dropdown look. Every `<select>` takes it with no class, and `dropdown.js` draws a select's open list in the shared panel when it is clicked with a mouse. A database-sized list (cities, time zones) is a searchable `.combo-input` + `.combo-list` instead; a short one stays a plain select. `shared.css` imports the CSS; tools load the script just before `shared.js`; the home page links both. `_ref/dropdown-check.mjs` checks every page. |
 | `shared.js` | `SharedFmt` (number input formatting), `SharedCurrency` (the one currency-symbol list every display-only currency picker is filled from: a `<select data-currency-symbols>` gets $ € £ ¥ ₹ Rp RM … in the same order on every tool, with Indonesian names on `/id/` pages. Nothing converts, so these are symbols, never ISO codes; codes are kept for the Cost of Living Comparator, which applies real exchange rates. A plan saved with a code reopens on its symbol through `SharedCurrency.toSymbol`), `SharedFreq` (a per-period amount follows its frequency: change a field from Monthly to Yearly and the 500 beside it becomes 6,000, rounded back to the field's own precision), `SharedYF` (market data via the self-hosted Cloudflare Worker in `dcasimulator/yf-proxy-worker.js`), `SharedTA` (technical indicators), `SharedConfig` (config download/upload), `SharedScenario` (the floppy-disk and open-folder buttons every finance tool carries in its Quick Start row, or its header where it has none: they write every input to a JSON file and read one back, built on the `Persist` snapshot so JS-only state such as scenario lists and edited brackets rides along), `SharedLegend` (chart legend swatches: each entry is drawn with the mark its series is drawn with — solid, dashed, dotted, shaded band, marker — on the page and in the PNG/SVG exports alike), `SharedZoom` (the two promises every zoomable chart makes: a pan or a pinch can never leave the data, and the y axis is refitted to the x window on every gesture, so a zoomed-in slice is drawn at its own scale rather than smeared against a scale built for the whole series), `SharedPane` (axis text on a chart of stacked panes, such as a balance under its cash flows or oscillators under a price: each stacked axis gets the width its labels and title need, and a title too long for its pane breaks onto two lines or shortens rather than running into the next pane), `Persist` (mini cache), `SharedTooltip`, `SharedAbbr` (the abbreviation glossary: subject-matter jargon found in page text gets a dashed underline and a hover definition), `SharedColDrag` (a grip in a table's header cell lifts its whole column and drops it somewhere else, with mouse, touch or the arrow keys; the tool decides what a move means), `SharedIcon` (one drawing per button job, so ✕ only closes and the bin only deletes on every tool; `SharedIcon.button('trash', 'Remove this row')` builds a bare icon button, and static markup names its icon with `data-icon`), `SharedReach` (a sticky control card is sized to the room it really has, so its Simulate or Reset row is on screen at first load rather than under the fold). |
 | `manifest.webmanifest`, `sw.js`, `pwa.js` | The installable app (PWA). Every page links the manifest and loads `pwa.js`, which registers the service worker and shows the homepage's small install banner. `sw.js` serves from the network first, re-checking every file with the server on each load (not the 10-minute HTTP cache), and keeps a copy of whatever loads, so a deploy is live on the next open and a tool opened once still works offline. An app left open in the background compares its page's `Last-Modified` with the server's when it returns to the foreground and offers a reload after a deploy. New tools need nothing extra; bump `VERSION` in `sw.js` only to wipe every stored copy. Icons are in `logos/icon-*.png`. |
 | `tour-shared.js`, `tour-shared.css` | The guided-tour engine. A tool opts in with a `tour.js` that sets `window.__TOUR = { seenKey, launchLabel, steps }` and loads `tour-shared.js` after it. |
@@ -89,7 +90,7 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Nine cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Ten cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
@@ -163,6 +164,12 @@ icon, an icon-only button is bare and named, and a sticky control card ends on s
 first load so its Simulate or Reset row is visible before any scroll. It also drives Finance
 vs Cash's scenario editor on a desktop and a phone: Done has to be on screen halfway down the
 form, and closing by Done, ✕ or Esc has to keep the edit. `ONLY=<path>` runs one page.
+
+`node _ref/dropdown-check.mjs` loads every page, the home page included, in both themes and
+holds every dropdown to the one look in `dropdown.css`: each `<select>` (hidden tabs too) in
+DM Sans at weight 500 with a 1.5px `--border`, the field fill, the chevron and the shared option
+colours, every searchable list on the shared `.combo-list`, and on each page a mouse click
+opens the shared list and a pick fires exactly one `change`. `ONLY=<path>` runs one page.
 
 ## Multi-language pages
 
