@@ -674,7 +674,7 @@ console.log('\n════ G — degenerate input: the books refuse rather than
   const k=await kpis();
   const wiped=await page.evaluate(()=>!document.querySelector('#compTableWrap table'));
   check('G1 available cash below the purchase price is explained, not modelled on cash that does not exist',
-    k.warn==='block' && /less than the purchase cost/i.test(k.warnText) && wiped && k.net==='—',
+    k.warn==='block' && /less than the (cash )?purchase cost/i.test(k.warnText) && wiped && k.net==='—',
     `warn shown, KPIs blanked, comparison table withdrawn`);
 }
 {
@@ -826,6 +826,19 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
   const twelfth=a.rows[11].end;
   claims.push({ok: peak>6000 && near(twelfth, 6000*1.199, 1) && a.rows.slice(0,12).every(r=>r.payment===0),
     say:`nothing paid for 12 periods and the debt reaches $${twelfth.toFixed(2)} on a $6,000 purchase before the first instalment`});
+  /* ...and the day-one offer is 10% off, which "more than halves the loss
+     against cash": the same offer at the full ticket is the comparison. */
+  {
+    t=await compTable();
+    const dn='36 payments, 10% off';
+    const withOff=money(t['Net Benefit vs Cash'][colOf(t,dn)]), price=money(t['Purchase Price'][colOf(t,dn)]);
+    await page.evaluate(()=>{const el=document.getElementById('offerPricing');el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}));});
+    await page.waitForTimeout(300);
+    t=await compTable();
+    const full=money(t['Net Benefit vs Cash'][colOf(t,dn)]);
+    claims.push({ok: price===5400 && withOff<0 && full<0 && withOff>full/2,
+      say:`10% off prices the day-one offer at $${price.toFixed(2)} and cuts its loss against cash from ${full.toFixed(2)} to ${withOff.toFixed(2)}`});
+  }
 
   // house: the band is shut across the fixed years and opens after the revert.
   await load({}); await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="house"]').click());
@@ -838,8 +851,9 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
     const bands=ds.filter(d=>d.isBand===true);
     const at=(d,x)=>{const p=d.data.find(p=>Math.abs(p.x-x)<0.05); return p?p.y:null;};
     if(bands.length<2) return null;
-    return {y1:Math.abs(at(bands[0],1)-at(bands[1],1)), y2:Math.abs(at(bands[0],2)-at(bands[1],2)),
-            y5:Math.abs(at(bands[0],5)-at(bands[1],5))};
+    // The x axis counts the finest repayment period on show, months here.
+    return {y1:Math.abs(at(bands[0],12)-at(bands[1],12)), y2:Math.abs(at(bands[0],24)-at(bands[1],24)),
+            y5:Math.abs(at(bands[0],60)-at(bands[1],60))};
   });
   claims.push({ok: band && band.y1<0.01 && band.y2<0.01 && band.y5>1000,
     say: band? `band width $${band.y1.toFixed(2)} at year 1, $${band.y2.toFixed(2)} at year 2, $${band.y5.toFixed(0)} at year 5`
@@ -873,6 +887,288 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
      + 'discounted note. That is consistent and it is what makes a flat quote comparable with an annuity quote, but it '
      + 'means APR alone never prices a fee-bearing deal. Total Financing Cost and Net Benefit do, and they are what the '
      + 'verdict is drawn from.');
+}
+
+console.log('\n════ P — a price per loan offer: the cash side keeps its price ════');
+
+/* "Price Each Loan Offer Separately" gives each offer a price of its own,
+   typed as money, a % of the Cash Purchase Cost or a % off it. Paying cash is
+   still scored at the cash price. Two claims follow, and both can be held to
+   an answer that needs no replay of the loan at all:
+
+     P1  an offer priced at exactly the cash price, in any of the three bases,
+         changes NOTHING: every table, schedule, chart series and sweep point
+         reads the same with the switch on as with it off;
+     P2  an offer priced at P' against a cash price C is the same loan as the
+         page with the switch off and a cash price of P', plus (C − P') that the
+         cash buyer spent and the financing side kept, compounded at the
+         risk-free rate to the horizon: NB = NB' + (C − P')(1 + rf)^T.
+
+   The rest pin the plumbing: the down payment is a share of the offer's own
+   price, a basis switch restates the same price, a % basis follows the cash
+   price while an amount stays put, and an old plan with no price reopens on
+   the cash price. */
+
+/* Everything the page says about a plan, as text, with the switch's own row
+   taken out: the comparison table, the KPIs, the verdict, What this assumes,
+   every amortisation tab, all four chart metrics and the 2D sweep. */
+async function snapshot(){
+  return await page.evaluate(async ()=>{
+    const out={};
+    const rows=[...document.querySelectorAll('#compTableWrap table tr')]
+      .map(tr=>[...tr.children].map(td=>td.textContent.trim()).join(' | '))
+      .filter(r=>!/^Purchase Price \|/.test(r));
+    out.table=rows.join('\n');
+    out.kpi=['kpiBest','kpiBestSub','kpiNetBenefit','kpiNetSub','kpiInterest','kpiIntSub','kpiCashWealth','kpiCashSub']
+      .map(id=>document.getElementById(id).textContent.trim()).join(' / ');
+    out.banners=['warnBanner','negCarryBanner'].map(id=>{const e=document.getElementById(id);return e.style.display+':'+e.textContent.trim();}).join(' / ');
+    out.verdict=document.getElementById('verdict').innerText.trim();
+    out.assume=document.getElementById('assumptions').innerText.trim();
+    out.amort=[];
+    for(const b of [...document.querySelectorAll('#amortTabs .tab-btn')]){
+      b.click();
+      out.amort.push(b.textContent.trim()+'\n'+[...document.querySelectorAll('#amortTableWrap table tr')]
+        .map(tr=>[...tr.children].map(td=>td.textContent.trim()).join('|')).join('\n'));
+    }
+    out.charts={};
+    const el=document.getElementById('chartMetric'), was=el.value;
+    for(const m of ['wealth','netBenefit','investmentValue','loanBalance']){
+      el.value=m; el.dispatchEvent(new Event('change',{bubbles:true}));
+      const ch=window.__charts.filter(c=>c.canvasId==='chartCanvas').pop();
+      out.charts[m]=ch?JSON.stringify(ch.data.datasets.map(d=>[d.label,d.data.map(p=>p.y)])):'none';
+    }
+    el.value=was; el.dispatchEvent(new Event('change',{bubbles:true}));
+    const set=(id,v)=>{const e=document.getElementById(id);e.value=v;['input','change'].forEach(t=>e.dispatchEvent(new Event(t,{bubbles:true})));};
+    set('sensObjective','netBenefit'); set('sensVarX','financeRate'); set('sensXStart','1'); set('sensXEnd','13'); set('sensSteps','25');
+    await new Promise(r=>setTimeout(r,500));
+    const sc=window.__charts.filter(c=>c.canvasId==='sensCanvas').pop();
+    out.sweep=sc?JSON.stringify(sc.data.datasets[0].data):'none';
+    return out;
+  });
+}
+function diffSnap(a,b){
+  const bad=[];
+  for(const k of ['table','kpi','banners','verdict','assume','sweep']) if(a[k]!==b[k]) bad.push(k);
+  if(a.amort.join('\n#\n')!==b.amort.join('\n#\n')) bad.push('amortisation');
+  for(const m of Object.keys(a.charts)) if(a.charts[m]!==b.charts[m]) bad.push('chart '+m);
+  return bad;
+}
+
+/* P1 over every loan type, every fee treatment, three down payments, two
+   frequencies, inflation on, and a floating band. The plan is loaded twice from
+   the mini-cache, switch off and switch on, and each neutral basis is tried in
+   turn. Byte-identical text is the bar: a cent of drift anywhere fails. */
+{
+  const C=50000;
+  const base=[
+    sc({name:'annuity',  loanType:'annuity', financeRate:7, downPaymentPct:20, feeAmt:600, feeTreatment:'upfront', adminFee:12}),
+    sc({name:'flat',     loanType:'flat', financeRate:6, downPaymentPct:0, feeAmt:2, feeType:'pct', feeTreatment:'capitalise'}),
+    sc({name:'io',       loanType:'interestOnly', financeRate:5.5, downPaymentPct:35, ioPeriods:24, feeAmt:1.5, feeType:'pct', feeTreatment:'discount'}),
+    sc({name:'balloon',  loanType:'balloon', financeRate:8.4, downPaymentPct:10, residualPct:35, freq:'fortnightly', termPeriods:130}),
+    sc({name:'bullet',   loanType:'bullet', financeRate:4, downPaymentPct:50, termPeriods:36}),
+    sc({name:'deferred', loanType:'deferred', financeRate:19.9, termPeriods:36, ioPeriods:12}),
+    sc({name:'known',    loanType:'knownPayment', knownPayment:900, termPeriods:60, downPaymentPct:10}),
+    sc({name:'float',    loanType:'annuity', financeRate:5.8, downPaymentPct:20, termPeriods:120, rateMode:'schedule',
+      ratePeriods:[{toPeriod:24,type:'fixed',rate:5.8,rateMin:5.8,rateMax:5.8},{toPeriod:120,type:'floating',rate:6.75,rateMin:5,rateMax:8.5}]}),
+    sc({name:'outright', loanType:'annuity', financeRate:7, downPaymentPct:100})
+  ];
+  const fields={'v:availableCash':'90000','c:inflationToggle':true,'v:inflationRate':'2.5'};
+  await load({fields, scenarios:base});
+  const off=await snapshot();
+  const bad=[];
+  for(const [type,value] of [['amount',C],['pct',100],['discount',0]]){
+    await load({fields:Object.assign({'c:offerPricing':true},fields), scenarios:base.map(s=>Object.assign({},s,{priceType:type,priceValue:value}))});
+    const on=await snapshot();
+    const d=diffSnap(off,on);
+    const hasRow=await page.evaluate(()=>[...document.querySelectorAll('#compTableWrap tbody tr')].some(tr=>/^Purchase Price/.test(tr.textContent)));
+    if(d.length) bad.push(`${type} ${value}: ${d.join(', ')} differ`);
+    if(!hasRow) bad.push(`${type}: no Purchase Price row with the switch on`);
+  }
+  check('P1 an offer priced at exactly the cash price, in any basis, changes nothing on the page',
+    !bad.length, bad.join(' | ') || `${base.length} offers × 3 bases: table, KPIs, verdict, assumptions, ${off.amort.length} schedules, 4 chart metrics and the sweep all byte-identical`);
+}
+
+/* P1b. The same for every Quick Start preset: switch it on over the preset
+   (new offers price at 0% off) and nothing may move. Furniture opens with the
+   switch already on and a 10% discount, so there the discount is taken back
+   to 0% and the switch turned off instead. */
+{
+  const bad=[], seen=[];
+  for(const key of PRESETS){
+    await load({});
+    await page.evaluate(k=>document.querySelector(`.quick-start-btn[data-preset="${k}"]`).click(), key);
+    await page.waitForTimeout(400);
+    const flip=async on=>{ await page.evaluate(on=>{const el=document.getElementById('offerPricing');el.checked=on;el.dispatchEvent(new Event('change',{bubbles:true}));},on); await page.waitForTimeout(250); };
+    let a,b;
+    if(key==='deferred'){
+      // Take the discount back to 0% off through the page's own editor.
+      await page.evaluate(()=>document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()));
+      await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-btn[data-action="edit"][data-idx="1"]').click();});
+      await page.fill('#scPriceVal','0'); await page.press('#scPriceVal','Tab');
+      await page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+      await page.waitForTimeout(300);
+      a=await snapshot(); await flip(false); b=await snapshot();
+    } else { a=await snapshot(); await flip(true); b=await snapshot(); }
+    const d=diffSnap(a,b);
+    seen.push(key);
+    if(d.length) bad.push(`${key}: ${d.join(', ')} differ`);
+  }
+  check('P1b every Quick Start preset reads the same with the switch on and every offer at the cash price',
+    !bad.length, bad.join(' | ') || seen.join(', ')+' — byte-identical');
+}
+
+/* P2. A discount, and a markup, against an independent statement of what each
+   is worth. Each offer is loaded twice: priced at P' against a cash price C
+   with the switch on, and with the switch off and the cash price set to P'.
+   The loan is the same loan, so every loan figure must agree to the cent; the
+   cash baseline is not, and the gap in Net Benefit is exactly the price gap
+   compounded at the risk-free rate over the row's own horizon. */
+{
+  const C=40000, rf=4.5, bad=[], seen=[];
+  const offers=[
+    ['annuity monthly',  sc({loanType:'annuity', financeRate:7, downPaymentPct:20, feeAmt:600, adminFee:10})],
+    ['flat weekly',      sc({loanType:'flat', financeRate:6, freq:'weekly', termPeriods:156, feeAmt:2, feeType:'pct', feeTreatment:'capitalise'})],
+    ['deferred monthly', sc({loanType:'deferred', financeRate:19.9, termPeriods:36, ioPeriods:12})],
+    ['balloon yearly',   sc({loanType:'balloon', financeRate:8, freq:'yearly', termPeriods:5, residualPct:30, feeAmt:1, feeType:'pct', feeTreatment:'discount'})],
+    ['known monthly',    sc({loanType:'knownPayment', knownPayment:700, termPeriods:60, downPaymentPct:10})]
+  ];
+  const loanRows=['Down Payment Amount','Financed Amount','Periodic Payment','Total Interest Paid','Total Fees Paid','Total Financing Cost','Total Out-of-Pocket','Ending Wealth','Effective Rate (APR)'];
+  for(const [label,o] of offers){
+    for(const Pp of [34000, 44000.5]){                    // 15% off, and a markup
+      const s=Object.assign({},o,{name:'x',priceType:'amount',priceValue:Pp});
+      await load({fields:{'v:purchaseCost':String(C),'v:availableCash':'60000','c:offerPricing':true}, scenarios:[s]});
+      const on=await compTable();
+      await load({fields:{'v:purchaseCost':String(Pp),'v:availableCash':'60000'}, scenarios:[s]});
+      const off=await compTable();
+      const i=colOf(on,'x'), j=colOf(off,'x');
+      for(const r of loanRows) if(on[r][i]!==off[r][j]) bad.push(`${label} @${Pp}: ${r} ${on[r][i]} vs ${off[r][j]}`);
+      const n=Math.round(o.termPeriods), ppy=PPY[o.freq];
+      const want=(C-Pp)*Math.pow(1+rf/100, n/ppy);
+      const got=money(on['Net Benefit vs Cash'][i])-money(off['Net Benefit vs Cash'][j]);
+      if(!near(got,want,0.011)) bad.push(`${label} @${Pp}: NB gap ${got.toFixed(2)} vs (C−P')(1+rf)^T ${want.toFixed(2)}`);
+      if(money(on['Purchase Price'][i])!==Pp || money(on['Purchase Price'][0])!==C) bad.push(`${label}: Purchase Price row ${on['Purchase Price'].join(' / ')}`);
+      seen.push(`${label} ${Pp<C?'−':'+'}${Math.abs(C-Pp)}: ${got.toFixed(2)}`);
+    }
+  }
+  check('P2 an offer priced at P\' is the same loan as a cash price of P\', plus (C − P\') compounded to its horizon',
+    !bad.length, bad.slice(0,4).join(' | ') || seen.join('; '));
+}
+
+/* P3. The wash again, with a discount. Borrow at exactly the risk-free rate with
+   no fee and the loan is worth nothing either way, so Net Benefit is the
+   discount alone, compounded: for every loan type that can wash and at 0% and
+   60% down. And at 100% down the offer is simply bought outright at its own
+   price, which is the same number by a different road. */
+{
+  const R=6, C=50000, Pp=45000, bad=[];
+  const list=[];
+  for(const ty of ['annuity','interestOnly','balloon','bullet','deferred']) for(const down of [0,60,100])
+    list.push(sc({name:`${ty}-${down}`, loanType:ty, financeRate:R, downPaymentPct:down, ioPeriods:20, residualPct:30,
+      priceType:'discount', priceValue:10}));
+  await load({fields:{'v:baseRf':String(R),'v:availableCash':'80000','c:offerPricing':true}, scenarios:list});
+  const t=await compTable();
+  const want=(C-Pp)*Math.pow(1+R/100,5);
+  for(const s of list){
+    const nb=money(t['Net Benefit vs Cash'][colOf(t,s.name)]);
+    if(!near(nb,want,0.011)) bad.push(`${s.name}: ${nb.toFixed(2)} vs ${want.toFixed(2)}`);
+  }
+  check('P3 borrowing at the risk-free rate leaves exactly the discount, compounded, in every shape and down payment',
+    !bad.length, bad.slice(0,4).join(' | ') || `${list.length} columns, each ${want.toFixed(2)} = 5,000 × 1.06^5`);
+}
+
+/* P4/P5. The three bases are one price: $5,400, 90% of cash and 10% off on a
+   $6,000 cash price give identical columns. And the down payment is a share of
+   the offer's price, not the cash price. */
+{
+  const mk=(name,type,value)=>sc({name, loanType:'annuity', financeRate:19.9, termPeriods:36, downPaymentPct:20, priceType:type, priceValue:value});
+  await load({fields:{'v:purchaseCost':'6000','v:availableCash':'15000','c:offerPricing':true},
+    scenarios:[mk('amount','amount',5400),mk('pct','pct',90),mk('discount','discount',10)]});
+  const t=await compTable();
+  const col=n=>Object.keys(t).filter(k=>k!=='__cols').map(k=>t[k][colOf(t,n)]).join('|');
+  const same=col('amount')===col('pct') && col('pct')===col('discount');
+  const down=money(t['Down Payment Amount'][colOf(t,'amount')]), fin=money(t['Financed Amount'][colOf(t,'amount')]);
+  check('P4 $5,400, 90% of cash and 10% off are one price, column for column',
+    same, same?'identical':'amount '+col('amount')+' ≠ pct '+col('pct')+' ≠ discount '+col('discount'));
+  check('P5 the down payment is 20% of the offer\'s own price, not of the cash price',
+    down===1080 && fin===4320 && t['Down Payment (%)'][colOf(t,'amount')]==='20.00%',
+    `down ${down}, financed ${fin}, ${t['Down Payment (%)'][colOf(t,'amount')]}`);
+}
+
+/* P6. A basis switch in the editor restates the same price, so the answer does
+   not move, and switching back returns what was typed. */
+{
+  await load({fields:{'v:purchaseCost':'6000','v:availableCash':'15000','c:offerPricing':true},
+    scenarios:[sc({name:'x', loanType:'annuity', financeRate:19.9, termPeriods:36, priceType:'amount', priceValue:5400})]});
+  await page.evaluate(()=>document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()));
+  const before=(await snapshot()).table;
+  await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-btn[data-action="edit"][data-idx="0"]').click();});
+  await page.waitForTimeout(150);
+  const seq=[];
+  for(const to of ['pct','discount','amount']){
+    await page.selectOption('#scPriceType',to); await page.waitForTimeout(350);
+    seq.push(to+'='+(await page.inputValue('#scPriceVal')));
+    const now=(await snapshot()).table;
+    if(now!==before) seq.push('TABLE MOVED');
+  }
+  check('P6 switching $ → % of cash → % off → $ restates one price and leaves the answer where it was',
+    seq.join(' ')==='pct=90 discount=10 amount=5,400', seq.join(' '));
+  await page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+}
+
+/* P6b. A markup has no "% off" that says it. The switch is refused and the
+   price kept, rather than clamped to 0% off, which would quietly hand the
+   offer the cash price. */
+{
+  await load({fields:{'v:purchaseCost':'6000','v:availableCash':'15000','c:offerPricing':true},
+    scenarios:[sc({name:'x', loanType:'annuity', financeRate:19.9, termPeriods:36, priceType:'pct', priceValue:110})]});
+  await page.evaluate(()=>document.querySelectorAll('[class*="tour-"]').forEach(n=>n.remove()));
+  const before=(await snapshot()).table;
+  await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-btn[data-action="edit"][data-idx="0"]').click();});
+  await page.waitForTimeout(150);
+  await page.selectOption('#scPriceType','discount'); await page.waitForTimeout(350);
+  const got={type:await page.inputValue('#scPriceType'), v:await page.inputValue('#scPriceVal'), sub:await page.textContent('#scPriceSub')};
+  const after=(await snapshot()).table;
+  check('P6b a markup cannot be switched to % off: the basis and the price stay',
+    got.type==='pct' && got.v==='110' && after===before && /cannot be a % off/.test(got.sub), JSON.stringify(got));
+  await page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+}
+
+/* P7. A % basis follows the cash price; an amount stays where it was typed. */
+{
+  await load({fields:{'v:purchaseCost':'6000','v:availableCash':'15000','c:offerPricing':true},
+    scenarios:[sc({name:'amt', termPeriods:36, priceType:'amount', priceValue:5400}),
+               sc({name:'off', termPeriods:36, priceType:'discount', priceValue:10}),
+               sc({name:'pct', termPeriods:36, priceType:'pct', priceValue:110})]});
+  await page.evaluate(()=>{const el=document.getElementById('purchaseCost');el.value='8,000';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.dispatchEvent(new Event('blur'));});
+  await page.waitForTimeout(400);
+  const t=await compTable();
+  const p=n=>money(t['Purchase Price'][colOf(t,n)]);
+  check('P7 a new cash price moves the % offers with it and leaves the typed amount alone',
+    p('amt')===5400 && p('off')===7200 && p('pct')===8800 && money(t['Purchase Price'][0])===8000,
+    `cash ${t['Purchase Price'][0]}, amount ${p('amt')}, 10% off ${p('off')}, 110% ${p('pct')}`);
+}
+
+/* P8. A plan saved before offers had a price carries no price fields at all;
+   with the switch on it has to reopen on the cash price, not on $0. */
+{
+  const s=sc({name:'old', financeRate:7, downPaymentPct:20});
+  await load({scenarios:[s]});
+  const off=await snapshot();
+  await load({fields:{'c:offerPricing':true}, scenarios:[s]});
+  const on=await snapshot();
+  const d=diffSnap(off,on);
+  check('P8 an offer saved without a price reopens on the cash price', !d.length, d.length?d.join(', ')+' differ':'identical to the switch off');
+}
+
+/* P9. Paying cash is scored at the cash price, so a discounted offer that a
+   reader could afford does not lift the affordability guard: cash below the
+   cash price still explains itself rather than modelling. */
+{
+  await load({fields:{'v:purchaseCost':'6000','v:availableCash':'5800','c:offerPricing':true},
+    scenarios:[sc({name:'x', termPeriods:36, priceType:'discount', priceValue:10})]});
+  const k=await kpis();
+  check('P9 cash below the cash price is refused even when an offer is cheaper',
+    k.warn==='block' && /less than the cash purchase cost/i.test(k.warnText) && k.net==='—', k.warnText.slice(0,90));
 }
 
 check('no uncaught page errors across the whole run', pageErrors.length===0, pageErrors[0]||'none');

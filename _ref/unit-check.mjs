@@ -331,6 +331,31 @@ if(want('financingvscash')){
     eq('fvc F4 each scheduled repayment a month -> a year', amts1.map(n).join(','), amts0.map(v=>Math.round(n(v)*12*100)/100).join(','));
     await page.click('#closeScenarioBtn');
   }
+  // F5 An offer's own price as money, a % of the cash price or a % off it:
+  // $43,210.55 on a $50,000 cash price is 86.42% of cash, which is $43,210:
+  // two decimals of a % drop 55c of price, so the answer may move by that 55c
+  // carried through the loan and five years of compounding and no more, and a
+  // switch back returns the amount the % describes.
+  {
+    await load([sc({name:'Priced', priceType:'amount', priceValue:43210.55})], {'c:offerPricing':true});
+    const before = await table();
+    await edit(0);
+    await page.selectOption('#scPriceType','pct');
+    eq('fvc F5 price 43,210.55 -> 86.42% of the 50,000 cash price', await val(page,'scPriceVal'), '86.42');
+    await save();
+    const mid = await table();
+    check('fvc F5 the table moves by no more than the 55c of price the % drops, compounded', gap(before,mid)<=1, 'max gap '+gap(before,mid));
+    await edit(0);
+    await page.selectOption('#scPriceType','discount');
+    eq('fvc F5 86.42% of cash -> 13.58% off', await val(page,'scPriceVal'), '13.58');
+    await save();
+    check('fvc F5 and % off is the same price as % of cash, exactly', await table()===mid);
+    await edit(0);
+    await page.selectOption('#scPriceType','amount');
+    eq('fvc F5 13.58% off -> back to 43,210', await val(page,'scPriceVal'), '43,210');
+    await save();
+    check('fvc F5 and the amount reads the same table as the % it came from', await table()===mid);
+  }
   await page.close();
 }
 
