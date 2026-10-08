@@ -50,6 +50,33 @@ main{min-width:0;}
    never over a row, the same dashed add as "+ Add column". */
 .grid-wrap{overflow:auto;max-height:440px;border:1px solid var(--border);border-radius:10px;background:var(--panel);}
 .grid-shell .add-btn{margin-top:8px;}
+.grid-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px;}
+.grid-count{font-size:.76rem;font-weight:600;color:var(--muted);}
+.grid-expand{font-size:1.15rem;}
+
+/* ── The table, enlarged: full screen, columns spread to the width ── */
+.grid-modal-overlay{position:fixed;inset:0;z-index:1000;display:flex;padding:16px;background:rgba(7,12,24,.62);backdrop-filter:blur(2px);}
+.grid-modal-overlay[hidden]{display:none;}
+body.grid-modal-open{overflow:hidden;}
+.grid-modal{display:flex;flex-direction:column;width:100%;height:100%;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:0 18px 60px rgba(0,0,0,.45);overflow:hidden;}
+.grid-modal-head{display:flex;align-items:center;gap:12px;padding:14px 16px 12px 20px;border-bottom:1px solid var(--border);}
+.grid-modal-head h2{margin:0;font-size:1.05rem;min-width:0;overflow-wrap:anywhere;}
+.grid-modal-head .grid-count{margin-right:auto;white-space:nowrap;}
+.grid-modal-close{min-width:34px;height:34px;}
+.grid-modal-close .ico{width:18px;height:18px;}
+.grid-modal-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:14px 20px;}
+.grid-modal-body .grid-shell{display:flex;flex-direction:column;min-height:0;}
+.grid-modal-body .grid-wrap{flex:0 1 auto;min-height:0;max-height:none;}
+.grid-modal .grid{font-size:.86rem;}
+.grid-modal .grid th{max-width:none;font-size:.76rem;padding:10px 8px;}
+.grid-modal .grid td{padding:5px 6px;}
+.grid-modal .cell-wrap{min-width:96px;}
+.grid-modal .grid td.t-price .cell-wrap{min-width:130px;}
+.grid-modal .grid .cell,.grid-modal .grid .cell.cell-text{width:100%;font-size:.86rem;}
+.grid-modal .grid td.t-del{width:40px;}
+.grid-modal-foot{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:10px 20px;border-top:1px solid var(--border);}
+.grid-modal-note{margin-right:auto;font-size:.76rem;color:var(--muted);}
+.grid-modal-foot .btn-primary{padding:8px 20px;flex-shrink:0;white-space:nowrap;}
 .grid{width:100%;border-collapse:collapse;font-size:.8rem;}
 .grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:8px 6px;text-align:left;vertical-align:bottom;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted);white-space:normal;line-height:1.25;min-width:56px;max-width:120px;border-bottom:1px solid var(--border);}
 .grid td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;vertical-align:middle;}
@@ -161,6 +188,13 @@ body.is-stale main .card{opacity:.45;transition:opacity var(--motion-fast);}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
+  .grid-modal-overlay{padding:0;}
+  .grid-modal{border-radius:0;border:0;}
+  .grid-modal-head,.grid-modal-body,.grid-modal-foot{padding-left:12px;padding-right:12px;}
+  .grid-modal-head .grid-count{display:none;}
+  .grid-modal-head h2{margin-right:auto;}
+  .grid-modal .cell-wrap{min-width:72px;}
+  .grid-modal .grid td.t-price .cell-wrap{min-width:104px;}
   .container{padding:10px;}
   .page-footer{padding:0 10px 16px;}
   .metrics{grid-template-columns:1fr;}

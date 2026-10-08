@@ -52,6 +52,11 @@ Covered:
    table has no Note column, and the equation falls back to plain text when
    KaTeX is not there.
 
+9. **The table, enlarged.** + Add listing sits under the table, outside its
+   scroll box. ⤢ lifts the same table into a full-screen modal; an edit and
+   a new listing made there land in the data, and Esc or Done puts the table
+   back in the sidebar with the edits kept.
+
 Run:
 
 ```sh

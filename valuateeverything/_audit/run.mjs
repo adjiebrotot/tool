@@ -413,6 +413,33 @@ console.log('\n── 8. The form ──');
   check('f9 without KaTeX the equation falls back to plain text', /^P = [\d,.]+ [−+] /.test(eq), eq.slice(0, 60));
 }
 
+/* ── 9. The listings table, enlarged ── */
+console.log('\n── 9. The table, enlarged ──');
+{
+  await ve(() => window.__VE.applyQuickStart('house'));
+  await page.waitForTimeout(400);
+  const g1 = await ve(() => ({ inScroll: !!document.querySelector('#gridWrap #addRowBtn'), under: document.getElementById('gridWrap').nextElementSibling.id }));
+  check('g1 + Add listing sits under the table, outside its scroll box', !g1.inScroll && g1.under === 'addRowBtn', JSON.stringify(g1));
+  await page.click('#gridExpandBtn');
+  await page.waitForTimeout(150);
+  const g2 = await ve(() => ({ open: !document.getElementById('gridModal').hidden, inModal: !!document.querySelector('#gridModal #gridWrap table'),
+    rows: document.querySelectorAll('#gridModal #gridWrap tbody tr').length, title: document.getElementById('gridModalTitle').textContent }));
+  check('g2 ⤢ opens the same table full screen, every listing in it', g2.open && g2.inModal && g2.rows === 18 && /Perth suburb/.test(g2.title), JSON.stringify(g2));
+  await page.fill('#gridModal #gridWrap tbody tr:first-child td.t-price input', '600000');
+  await page.click('#gridModal #addRowBtn');
+  await page.waitForTimeout(150);
+  const g3 = await ve(() => ({ p: window.__VE.state.rows[0][0], n: window.__VE.state.rows.length, stale: document.body.classList.contains('is-stale') }));
+  check('g3 an edit and a new listing in the enlarged table land in the data', g3.p === '600000' && g3.n === 19 && g3.stale, JSON.stringify(g3));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(150);
+  const g4 = await ve(() => ({ closed: document.getElementById('gridModal').hidden, back: !!document.querySelector('#entry-table #gridWrap table'),
+    rows: document.querySelectorAll('#entry-table #gridWrap tbody tr').length, first: document.querySelector('#entry-table #gridWrap td.t-price input').value }));
+  check('g4 Esc closes it, the table is back in the sidebar with the edits kept', g4.closed && g4.back && g4.rows === 19 && g4.first === '600,000', JSON.stringify(g4));
+  await page.click('#gridExpandBtn');
+  await page.click('#gridDoneBtn');
+  check('g5 Done closes it too', await ve(() => document.getElementById('gridModal').hidden && !!document.querySelector('#entry-table #gridShell')));
+}
+
 check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
 await browser.close();
 console.log(`\nValuate Everything audit: ${pass} passed, ${fail} failed`);

@@ -618,6 +618,31 @@ function buildGrid(){
     S.columns.map((c, ci) => `<td data-c="${ci}" class="t-${c.type}">${cellControl(c, r[ci])}</td>`).join('') +
     `<td class="t-del">${SharedIcon.button('trash', 'Delete this listing', 'sm row-del')}</td></tr>`).join('');
   wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>`;
+  const n = S.rows.length;
+  $('gridCount').textContent = $('gridModalCount').textContent = `${n} listing${n === 1 ? '' : 's'}, ${S.columns.length} columns`;
+}
+
+/* ─── The table, enlarged ───
+   ⤢ lifts the table (with its + Add listing) into a full-screen modal and
+   puts it back on close. It is the same element, so edits made there are
+   the same edits; every way out (Done, ✕, Esc, the backdrop) keeps them. */
+let gridReturnFocus = null;
+function openGridModal(){
+  const what = ($('itemWhat').value || '').trim();
+  $('gridModalTitle').textContent = 'Listings' + (what ? ': ' + what : '');
+  $('gridModalBody').appendChild($('gridShell'));
+  $('gridModal').hidden = false;
+  document.body.classList.add('grid-modal-open');
+  gridReturnFocus = document.activeElement;
+  $('gridCloseBtn').focus();
+}
+function closeGridModal(){
+  if($('gridModal').hidden) return;
+  $('entry-table').appendChild($('gridShell'));
+  $('gridModal').hidden = true;
+  document.body.classList.remove('grid-modal-open');
+  if(gridReturnFocus && gridReturnFocus.focus) gridReturnFocus.focus();
+  gridReturnFocus = null;
 }
 
 function onGridEvent(e){
@@ -1518,6 +1543,11 @@ function init(){
   $('gridWrap').addEventListener('input', onGridEvent);
   $('gridWrap').addEventListener('change', e => { if(e.target.type === 'checkbox') onGridEvent(e); });
   $('addRowBtn').addEventListener('click', addListing);
+  $('gridExpandBtn').addEventListener('click', openGridModal);
+  $('gridCloseBtn').addEventListener('click', closeGridModal);
+  $('gridDoneBtn').addEventListener('click', closeGridModal);
+  $('gridModal').addEventListener('click', e => { if(e.target === $('gridModal')) closeGridModal(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !$('gridModal').hidden){ e.preventDefault(); closeGridModal(); } });
   $('gridWrap').addEventListener('click', e => {
     const del = e.target.closest('.row-del');
     if(!del) return;

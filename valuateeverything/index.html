@@ -151,6 +151,10 @@
       </div>
 
       <div class="entry-panel" id="entry-table" data-no-persist>
+        <div class="grid-head">
+          <span class="grid-count" id="gridCount"></span>
+          <button type="button" class="btn-bare grid-expand" id="gridExpandBtn" title="Enlarge the table" aria-label="Enlarge the listings table">⤢</button>
+        </div>
         <div class="grid-shell" id="gridShell">
           <div class="grid-wrap" id="gridWrap"></div>
           <button type="button" class="add-btn" id="addRowBtn">+ Add listing</button>
@@ -335,6 +339,23 @@
     </div>
   </section>
 </footer>
+
+<!-- The listings table, enlarged. The table itself moves in here while it
+     is open and back when it closes, so every edit is the same edit. -->
+<div class="grid-modal-overlay" id="gridModal" hidden data-no-persist>
+  <div class="grid-modal" role="dialog" aria-modal="true" aria-labelledby="gridModalTitle">
+    <div class="grid-modal-head">
+      <h2 id="gridModalTitle">Listings</h2>
+      <span class="grid-count" id="gridModalCount"></span>
+      <button type="button" class="btn-bare grid-modal-close" data-icon="close" id="gridCloseBtn" title="Close. Your changes are already kept" aria-label="Close the enlarged table. Your changes are already kept"></button>
+    </div>
+    <div class="grid-modal-body" id="gridModalBody"></div>
+    <div class="grid-modal-foot">
+      <span class="grid-modal-note">Changes are kept as you type. Valuate runs them.</span>
+      <button type="button" class="btn-primary" id="gridDoneBtn">✓ Done</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="../dropdown.js"></script>
