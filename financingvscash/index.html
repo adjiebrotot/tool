@@ -135,7 +135,7 @@
       <button class="quick-start-btn" data-preset="phone" data-tip="An $1,800 phone on three plans that quote no rate: 12 payments of $150, 24 of $82, or 36 of $57. Over different terms the biggest instalment is the only one that beats cash.">Phone on a plan</button>
       <button class="quick-start-btn" data-preset="card" data-tip="A $3,000 purchase converted at 0%: three months free, six months for 3%, or twelve for 3%. The flat fee is the whole cost, so the six-month plan finishes last.">Credit card 0%</button>
       <button class="quick-start-btn" data-preset="motorbike" data-tip="A Rp 35,000,000 bike, 20% down over 36 months at 0.9% a month flat, as Indonesian multifinance quotes it. Interest rides on the original amount, so the solved rate is about double.">Motorbike, flat rate</button>
-      <button class="quick-start-btn" data-preset="deferred" data-tip="A $6,000 fit-out on nothing to pay for 12 months at 19.90%, against paying from day one. Interest capitalises through the holiday, so the balance is bigger when the first bill lands.">Furniture, pay later</button>
+      <button class="quick-start-btn" data-preset="deferred" data-tip="A $6,000 fit-out: nothing to pay for 12 months at 19.90%, or 36 payments from day one at 10% off. The holiday grows the debt; the discount more than halves the loss against cash.">Furniture, pay later</button>
     </div>
   </div>
   <div class="ctrl-scroll">
@@ -154,14 +154,18 @@
     <div class="field-group">
       <div class="group-title">Purchase</div>
       <div class="field-row">
-        <div class="field-label">Purchase Cost</div>
+        <div class="field-label"><span class="tip-wrap">Cash Purchase Cost <i class="tip-icon" data-tip="The price if you pay in full today. Paying cash is scored at this price.">?</i></span></div>
         <div class="currency-wrap">
           <span class="prefix" id="purchaseCostPrefix">$</span>
           <input class="currency-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
         </div>
       </div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span class="tip-wrap">Price Each Loan Offer Separately <i class="tip-icon" data-tip="<ul><li><strong>On:</strong> each loan offer gets its own price, as an amount, a % of the cash price or a % off.</li><li><strong>Off:</strong> every offer pays the cash price.</li></ul>">?</i></span></div>
+        <label class="toggle"><input type="checkbox" id="offerPricing"/><span class="slider"></span></label>
+      </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="Cash on hand today. It must cover the purchase cost, since this compares financing against genuinely paying cash.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="Cash on hand today. It must cover the cash purchase cost, since this compares financing against genuinely paying cash.">?</i></span></div>
         <div class="currency-wrap">
           <span class="prefix" id="availableCashPrefix">$</span>
           <input class="currency-input fmt-num" id="availableCash" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
@@ -253,8 +257,12 @@
           <div class="field-label"><span class="tip-wrap">Residual <i class="tip-icon" data-tip="The share of the financed amount still owed at the end and settled in one lump. A bigger residual buys smaller instalments and costs more interest.">?</i></span></div>
           <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/><span class="suffix">% of loan</span></div>
         </div>
+        <div class="field-row" id="scPriceRow" style="display:none;"><div class="field-label"><span class="tip-wrap">Offer Price <i class="tip-icon" id="tipPriceType" data-tip="" data-tip-options>?</i></span></div>
+          <div class="inline-row"><input class="num-input fmt-num" id="scPriceVal" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/><select class="sel-input" id="scPriceType" style="min-width:70px;"><option value="amount">$</option><option value="pct">% of cash</option><option value="discount">% off</option></select></div>
+          <div class="field-sub" id="scPriceSub"></div>
+        </div>
         <div class="slider-block" id="scDownRow">
-          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The share of the purchase cost you pay up front. 0% borrows it all; 100% pays cash outright.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
+          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The share of the offer price you pay up front. 0% borrows it all; 100% pays it outright.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
           <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
         </div>
         <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee to set the loan up, as a fixed amount or a % of the amount financed.">?</i></span></div>

@@ -39,7 +39,7 @@ window.__TOUR = {
         if (tab) tab.click();
       },
       title: '② Enter the purchase',
-      body: 'On <strong>Purchase</strong>, enter the <strong>purchase cost</strong> and ' +
+      body: 'On <strong>Purchase</strong>, enter the <strong>cash purchase cost</strong> and ' +
             'the <strong>cash you have</strong>, in the currency you pick. The ' +
             '<strong>Assumptions</strong> tab holds the <strong>risk-free rate</strong> ' +
             'your cash earns while it stays invested, and the inflation adjustment.'

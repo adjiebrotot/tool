@@ -287,13 +287,18 @@ function normaliseScenario(sc){
     loanType,rateMode,ratePeriods,paymentMode,paymentPeriods,
     knownPayment:Math.max(0,num(sc.knownPayment,0)),
     ioPeriods:Math.max(0,Math.round(num(sc.ioPeriods,term))),
-    residualPct:Math.min(99,Math.max(0,num(sc.residualPct,0)))};
+    residualPct:Math.min(99,Math.max(0,num(sc.residualPct,0))),
+    // A plan saved before offers had their own price reads as 0% off, which is
+    // the cash price exactly, so it reopens on the answer it was saved with.
+    priceType:PRICE_TYPES.includes(sc.priceType)?sc.priceType:'discount',
+    priceValue:clampPriceValue(sc.priceType,num(sc.priceValue,0))};
 }
 
 function defaultScenario(name,rate){
   const freq='monthly';
   return{name:name||'Scenario '+(scenarios.length+1),color:null,financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',feeTreatment:'upfront',adminFee:0,
-    loanType:'annuity',rateMode:'simple',ratePeriods:null,paymentMode:'single',paymentPeriods:null,knownPayment:0,ioPeriods:defaultTerm(freq),residualPct:0};
+    loanType:'annuity',rateMode:'simple',ratePeriods:null,paymentMode:'single',paymentPeriods:null,knownPayment:0,ioPeriods:defaultTerm(freq),residualPct:0,
+    priceType:'discount',priceValue:0};
 }
 
 /*
@@ -540,6 +545,48 @@ function computeAmortization(principal, annualRate, termPeriods, freq){
   return buildSchedule({loanType:'annuity',rateMode:'simple',financeRate:annualRate,termPeriods},principal,freq,'mid');
 }
 
+/* What one loan offer charges for the item. Off, every offer pays the Cash
+   Purchase Cost, which is what this page did before offers had a price of
+   their own. On, each offer states its price one of three ways against that
+   cash price. Paying cash is always scored at the cash price, so an offer's
+   discount is money the financing path keeps and the cash path does not.
+
+   Every basis lands on the cash price EXACTLY at its neutral value (an amount
+   equal to it, 100% of it, 0% off), because each multiplies the cash price by
+   a factor that is exactly 1 there. That is what lets the switch be flipped on
+   a plan without moving a cent of its answer. */
+const PRICE_TYPES=['amount','pct','discount'];
+const PRICE_MAX={amount:1e12,pct:1000,discount:100};
+function clampPriceValue(type,v){
+  const t=PRICE_TYPES.includes(type)?type:'discount';
+  return Math.min(PRICE_MAX[t],Math.max(0,Number(v)||0));
+}
+function offerPricingOn(){const el=$('offerPricing');return!!(el&&el.checked);}
+function resolveOfferPrice(type,value,cashPrice){
+  const t=PRICE_TYPES.includes(type)?type:'discount';
+  const v=clampPriceValue(t,value);
+  if(t==='amount')return v;
+  if(t==='pct')return cashPrice*(v/100);
+  return cashPrice*(1-v/100);
+}
+function scenarioPrice(sc,cashPrice){
+  return offerPricingOn()?resolveOfferPrice(sc.priceType,sc.priceValue,cashPrice):cashPrice;
+}
+/* Restate a price in another basis so it still describes the same money:
+   $5,400 against a $6,000 cash price is 90% of cash and 10% off. Rounded to
+   two decimals, as a fee or a frequency switch is. A price above the cash
+   price has no "% off" that says it, so that switch is refused (null). */
+function convertPrice(value,from,to,cashPrice){
+  if(from===to)return value;
+  const price=resolveOfferPrice(from,value,cashPrice);
+  const r2=v=>Math.round(v*100)/100;
+  if(to==='amount')return r2(price);
+  if(!(cashPrice>0))return null;
+  if(to==='pct')return r2(price/cashPrice*100);
+  if(price>cashPrice)return null;
+  return r2((1-price/cashPrice)*100);
+}
+
 /* How the origination fee is settled. Only 'upfront' spends your own cash; the
    other two put the fee inside the loan, which means you also pay interest on
    it, and which is why the fee must not then be added to out-of-pocket twice. */
@@ -562,7 +609,8 @@ function resolveFinancing(sc,base){
   return{financed:base+fee,fee,cashFee:0};
 }
 
-function dropReason(sc,purchaseCost,availableCash){
+function dropReason(sc,cashPrice,availableCash){
+  const purchaseCost=scenarioPrice(sc,cashPrice);
   const downPct=Math.min(100,Math.max(0,sc.downPaymentPct||0));
   const down=Math.min(purchaseCost*(downPct/100),purchaseCost,availableCash);
   const fin=resolveFinancing(sc,purchaseCost-down);
@@ -571,7 +619,11 @@ function dropReason(sc,purchaseCost,availableCash){
   return'unsolvable';
 }
 
-function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflationRate, inflationEnabled, variant){
+/* cashPrice is the Cash Purchase Cost. The offer is bought at its own price
+   (scenarioPrice), and only the cash baseline, computed elsewhere, is held to
+   the cash price. */
+function computeScenario(sc, cashPrice, availableCash, riskFreeRate, inflationRate, inflationEnabled, variant){
+  const purchaseCost=scenarioPrice(sc,cashPrice);
   const downPct=Math.min(100,Math.max(0,sc.downPaymentPct||0));
   const requestedDown=purchaseCost*(downPct/100);
   const down=Math.min(requestedDown,purchaseCost,availableCash);
@@ -622,7 +674,7 @@ function computeScenario(sc, purchaseCost, availableCash, riskFreeRate, inflatio
   // Carry is judged on what the loan actually costs, not on the headline rate:
   // a 5% flat loan really costs about 9%, and the warning has to say so.
   const effRate=amort.effectiveRate;
-  return{down,financed,fee,cashFee:fin.cashFee,feeTreatment:sc.feeTreatment||'upfront',adminFee,totalAdminFee,amort,endWealth,
+  return{price:purchaseCost,down,financed,fee,cashFee:fin.cashFee,feeTreatment:sc.feeTreatment||'upfront',adminFee,totalAdminFee,amort,endWealth,
     totalInterest:amort.totalInterest,totalFee,totalFinanceCost,payment:amort.payment,finalPayment:amort.finalPayment,
     paymentVaries:amort.paymentVaries,negAm:amort.negAm,effectiveRate:effRate,impliedAnnualRate:amort.impliedAnnualRate,
     residualAmt:amort.residualAmt,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',
@@ -641,7 +693,7 @@ function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflat
   for(let i=0;i<n;i++){bal*=(1+rfP);timeline.push({period:i+1,investBal:bal,loanBal:0,wealth:bal,cumInterest:0,cumPaid:0});}
   let inflAdj=null;
   if(inflationEnabled&&inflationRate>0) inflAdj={endWealthReal:bal/Math.pow(1+inflationRate/100,termYears)};
-  return{down:purchaseCost,financed:0,fee:0,cashFee:0,feeTreatment:'upfront',adminFee:0,totalAdminFee:0,amort:{payment:0,finalPayment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,paymentVaries:false,negAm:false,solved:true},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,finalPayment:0,paymentVaries:false,negAm:false,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+  return{price:purchaseCost,down:purchaseCost,financed:0,fee:0,cashFee:0,feeTreatment:'upfront',adminFee:0,totalAdminFee:0,amort:{payment:0,finalPayment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,paymentVaries:false,negAm:false,solved:true},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,finalPayment:0,paymentVaries:false,negAm:false,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
 }
 
 function computeCashBaseline(purchaseCost,availableCash,termYears,riskFreeRate,inflationRate,inflationEnabled){
@@ -684,6 +736,10 @@ function rerender(){
   rateConvention=$('rateConvention').value==='nominal'?'nominal':'ear';
   updateCurrencyPrefixes();
   $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
+  // A % price follows the cash price, so the cards and the editor's read-out
+  // are restated whenever it moves.
+  document.querySelectorAll('#scenarioList .sc-price').forEach(el=>{const sc=scenarios[+el.dataset.idx];if(sc)el.textContent=scPriceTxt(sc);});
+  if(editorDraft)syncPriceField();
 
   let warn='';
   const cashMissing = !(availableCash>0);
@@ -691,7 +747,7 @@ function rerender(){
   if(cashMissing||cashShortfall){
     warn=cashMissing
       ? '⚠ Available cash reads '+fmt.currencyExact(0)+'. Enter the cash you could put toward this purchase today. Nothing is assumed on your behalf, so the results below stay blank until you do.'
-      : '⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the purchase cost.';
+      : '⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the cash purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the cash purchase cost.';
     $('warnBanner').style.display='block';$('warnBanner').textContent=warn;
     $('negCarryBanner').style.display='none';
     // Clear all outputs
@@ -798,14 +854,24 @@ function renderAssumptions(L){
   const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const pc=v=>(+(Number(v)||0).toFixed(3))+'%';
   const list=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
-  if(!L){el.innerHTML='<li><strong>Enter the purchase cost and your available cash</strong> to see what the comparison rests on.</li>';return;}
+  if(!L){el.innerHTML='<li><strong>Enter the cash purchase cost and your available cash</strong> to see what the comparison rests on.</li>';return;}
   const valid=L.results.map((r,i)=>r?{r,sc:scenarios[i]}:null).filter(Boolean);
   const nm=x=>'<span data-no-abbr>'+esc(x.sc.name)+'</span>';
   const items=[];
 
   items.push('<strong>Paying cash and every scenario start from your '+fmt.currency(L.availableCash)+'.</strong> Whatever is not spent up front earns '+
     pc(L.riskFreeRate)+' a year, untaxed and compounded once each repayment period, and each repayment comes out of it.');
-  items.push('<strong>The '+fmt.currency(L.purchaseCost)+' purchase costs the same either way,</strong> and what it is later worth is left out of both.');
+  const priced=offerPricingOn()?valid.filter(v=>Math.abs(v.r.price-L.purchaseCost)>=0.005):[];
+  if(!priced.length)
+    items.push('<strong>The '+fmt.currency(L.purchaseCost)+' purchase costs the same either way,</strong> and what it is later worth is left out of both.');
+  else{
+    const off=v=>{const d=L.purchaseCost-v.r.price;
+      return nm(v)+' charges '+fmt.currency(v.r.price)+(L.purchaseCost>0?' ('+pc(Math.abs(d)/L.purchaseCost*100)+(d>0?' off':' more')+')':'');};
+    const rest=valid.length-priced.length;
+    items.push('<strong>Paying cash costs '+fmt.currency(L.purchaseCost)+'; '+list(priced.map(off))+'.</strong> '+
+      (rest===0?'':rest===1?'The other offer pays the cash price. ':'The other offers pay the cash price. ')+
+      'A saving stays invested on the financing side. It is the same item either way, so what it is later worth is left out of both.');
+  }
 
   if(valid.length){
     const terms=[...new Set(valid.map(v=>v.r.termYears))];
@@ -1026,7 +1092,9 @@ function renderComparisonTable(results){
   const rows=[
     // What the product IS comes before what it costs.
     ['Loan Type','Pay in full',r=>(LOAN_TYPE_LABEL[r.loanType]||LOAN_TYPE_LABEL.annuity)+(r.rateMode==='schedule'?' · scheduled rate':'')],
-    ['Down Payment (%)','—',r=>fmt.pct((r.down/latestResults.purchaseCost)||0,2)],
+    // A share of the price this offer actually charges, which is the cash
+    // price unless offers are priced separately.
+    ['Down Payment (%)','—',r=>fmt.pct((r.down/r.price)||0,2)],
     ['Down Payment Amount','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
     ['Periodic Payment','—',r=>paymentTxt(r)],
     // What the loan really costs, so a flat 5% and an annuity 5% can be read
@@ -1050,6 +1118,8 @@ function renderComparisonTable(results){
   if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=snapNB(r.inflAdj.netBenefitReal);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
   // Rows that only earn their place when some scenario actually has the thing.
   const rowAt=lbl=>rows.findIndex(x=>x[0]===lbl);
+  if(offerPricingOn())
+    rows.splice(rowAt('Loan Type')+1,0,['Purchase Price',fmt.currencyExact(pc),r=>fmt.currencyExact(r.price)]);
   if(valid.some(r=>r.residualAmt>0))
     rows.splice(rowAt('Financed Amount')+1,0,['Residual / Balloon','—',r=>r.residualAmt>0?fmt.currencyExact(r.residualAmt):'—']);
   if(valid.some(r=>r.amort&&r.amort.schedule.length>1&&Math.abs(r.finalPayment-r.payment)>0.005))
@@ -1178,9 +1248,9 @@ function runSensitivity(){
   // Read the same inputs, the same way, as the main panel: never substitute a
   // price of our own, and honour the "must be affordable upfront" guard.
   const pc=Math.max(0,parseNumInput($('purchaseCost'))),ac=Math.max(0,parseNumInput($('availableCash')));
-  const blocked=pc<=0?'Enter a purchase cost to run a sweep.'
+  const blocked=pc<=0?'Enter a cash purchase cost to run a sweep.'
     :ac<=0?'Enter your available cash to run a sweep.'
-    :ac<pc?'Available cash is below the purchase cost, so there is nothing to sweep.':'';
+    :ac<pc?'Available cash is below the cash purchase cost, so there is nothing to sweep.':'';
   const inflOn=$('inflationToggle').checked,inflR=parseFloat($('inflationRate').value)||0;
   const rfRate=parseFloat($('baseRf').value)||0;
 
@@ -1333,11 +1403,15 @@ function applyScenarioColor(idx,hex,live){
 // Back to the palette slot for this position, which also restores the
 // theme-aware colour a literal hex would otherwise freeze.
 
+// The card names the offer's price only when offers carry one of their own.
+function scPriceTxt(sc){
+  return offerPricingOn()?' · '+fmt.currency(scenarioPrice(sc,Math.max(0,parseNumInput($('purchaseCost')))))+' price':'';
+}
 function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
   scenarios.forEach((sc,i)=>{
     const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=scenarioColor(sc,i);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions">${SharedIcon.button('edit','Edit','sc-btn',`data-action="edit" data-idx="${i}"`)}${SharedIcon.button('duplicate','Duplicate','sc-btn',`data-action="dup" data-idx="${i}"`)}${SharedIcon.button('trash','Delete','sc-btn',`data-action="del" data-idx="${i}"`)}</div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions">${SharedIcon.button('edit','Edit','sc-btn',`data-action="edit" data-idx="${i}"`)}${SharedIcon.button('duplicate','Duplicate','sc-btn',`data-action="dup" data-idx="${i}"`)}${SharedIcon.button('trash','Delete','sc-btn',`data-action="del" data-idx="${i}"`)}</div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down<span class="sc-price" data-idx="${i}">${scPriceTxt(sc)}</span>${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
     div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;showEditor(false);}else if(editingIdx>idx)editingIdx--;renderScenarioList();rerender();}});});
     const dot=div.querySelector('.sc-dot');
     // The dot sits inside the card, whose own click opens the editor; without
@@ -1376,6 +1450,10 @@ const DYNAMIC_TIPS=[
     upfront:'<strong>Paid upfront:</strong> out of your own cash, so it reduces what is left to invest.',
     capitalise:'<strong>Added to the loan:</strong> borrowed alongside the purchase, so you pay interest on the fee too.',
     discount:'<strong>Deducted from the advance:</strong> the lender pays out net of the fee, so the loan is grossed up to still cover the price.'}],
+  ['tipPriceType','scPriceType',{
+    amount:'<strong>$:</strong> the price this offer charges, as money. It stays put if the cash price changes.',
+    pct:'<strong>% of cash:</strong> the price as a share of the Cash Purchase Cost. 100% matches it, above 100% is a markup.',
+    discount:'<strong>% off:</strong> the discount this offer gives off the Cash Purchase Cost. 0% matches it.'}],
   ['tipRateConvention','rateConvention',{
     ear:'<strong>Effective (EAR):</strong> compound conversion to the repayment period. A 12% loan charges 0.949% a month. Loans only, never the cash rate.',
     nominal:'<strong>Nominal (APR):</strong> the rate divided by the periods, as US contracts quote it. A 12% loan charges exactly 1.000% a month.'}],
@@ -1460,7 +1538,7 @@ function defaultPaymentPeriods(term,amt){
 // What a plain amortizing loan would charge, so the repayment field never opens
 // on a zero that no rate can solve.
 function suggestedPayment(){
-  const pc=Math.max(0,parseNumInput($('purchaseCost')));
+  const pc=editorPrice();
   const downPct=Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0));
   const base=pc-pc*(downPct/100);
   const ppy=periodsPerYear(editorTermFreq);
@@ -1607,7 +1685,7 @@ const EDITOR_SECTIONS={
   term:['scFreqRow','scTermRow'],
   rate:['scRateModeRow','scRateBlock','scRateScheduleRow'],
   plan:['scPaymentModeRow','scKnownPaymentRow','scPaymentScheduleRow','scImpliedRateRow'],
-  cash:['scDownRow','scFeeRow','scFeeTreatmentRow','scAdminFeeRow'],
+  cash:['scPriceRow','scDownRow','scFeeRow','scFeeTreatmentRow','scAdminFeeRow'],
 };
 function editorSectionPlan(t){
   const title={
@@ -1617,7 +1695,9 @@ function editorSectionPlan(t){
     // so the section is not offering a rate that can move.
     rate:t==='flat'?'Flat Rate':'Interest Rate',
     plan:'Repayment Plan',
-    cash:'Upfront & Fees',
+    // The offer's own price heads the section when offers are priced
+    // separately, since the down payment and a % fee are counted from it.
+    cash:offerPricingOn()?'Price, Upfront & Fees':'Upfront & Fees',
   };
   const order=t==='knownPayment'
     ?['structure','term','cash','plan','rate']
@@ -1671,6 +1751,8 @@ function updateEditorVisibility(){
   show('scImpliedRateRow',known);
   show('scIoPeriodsRow',usesIoPeriods(t));
   show('scResidualRow',t==='balloon');
+  show('scPriceRow',offerPricingOn());
+  syncPriceField();
   const unit=termUnitLabel(editorTermFreq);
   const rl=$('scRateLabel');
   if(rl&&rl.firstChild)rl.firstChild.textContent=(t==='flat'?'Flat Rate ':t==='bullet'?'Interest Rate ':'Finance Rate ');
@@ -1694,7 +1776,7 @@ function updateImpliedRate(){
   const el=$('scImpliedRate');
   if(!el||!editorDraft||editorLoanType()!=='knownPayment')return;
   el.classList.remove('unsolved');
-  const pc=Math.max(0,parseNumInput($('purchaseCost')));
+  const pc=editorPrice();
   const downPct=Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0));
   const base=pc-pc*(downPct/100);
   const sc=editorScenarioDraft();
@@ -1735,7 +1817,34 @@ function editorScenarioDraft(){
     knownPayment:Math.max(0,parseNumInput($('scKnownPayment'))),
     ioPeriods:Math.max(0,Math.round(parseFloat($('scIoPeriods').value)||0)),
     residualPct:Math.min(99,Math.max(0,parseFloat($('scResidualPct').value)||0)),
+    priceType:editorPriceType(),
+    priceValue:clampPriceValue(editorPriceType(),parseNumInput($('scPriceVal'))),
   };
+}
+
+/* The price the offer in the editor charges, read off the form, so every
+   preview in the editor (the solved rate, a suggested repayment, a fee
+   restated as a %) is counted from the same money the comparison will use. */
+function editorPriceType(){const v=$('scPriceType').value;return PRICE_TYPES.includes(v)?v:'discount';}
+function editorPrice(){
+  const cash=Math.max(0,parseNumInput($('purchaseCost')));
+  return offerPricingOn()?resolveOfferPrice(editorPriceType(),parseNumInput($('scPriceVal')),cash):cash;
+}
+// The field's limit follows its basis, and the line under it says what the
+// offer comes to in money and against the cash price.
+// Why the last basis switch was refused, kept until the price is next edited
+// so a redraw does not wipe it before it is read.
+let priceNote='';
+function syncPriceField(){
+  const t=editorPriceType(),el=$('scPriceVal');
+  if(el)el.setAttribute('data-max',String(PRICE_MAX[t]));
+  const o=$('scPriceType')&&$('scPriceType').querySelector('option[value="amount"]');
+  if(o)o.textContent=moneySymbol();
+  const sub=$('scPriceSub');if(!sub)return;
+  const cash=Math.max(0,parseNumInput($('purchaseCost'))),price=editorPrice(),d=cash-price;
+  sub.textContent=fmt.currencyExact(price)+(cash>0&&Math.abs(d)>=0.005
+    ?', '+fmt.currencyExact(Math.abs(d))+(d>0?' below':' above')+' the '+fmt.currencyExact(cash)+' cash price.'
+    :', the same as the cash price.')+priceNote;
 }
 
 function openEditor(idx){
@@ -1763,6 +1872,10 @@ function openEditor(idx){
   $('scKnownPayment').value=fmt.fmtInput(sc.knownPayment||0);
   $('scIoPeriods').value=(sc.ioPeriods===undefined||sc.ioPeriods===null)?sc.termPeriods:sc.ioPeriods;
   $('scResidualPct').value=sc.residualPct||0;
+  $('scPriceType').value=PRICE_TYPES.includes(sc.priceType)?sc.priceType:'discount';
+  $('scPriceType').dataset.prev=$('scPriceType').value; // the basis a price switch converts from
+  priceNote='';
+  $('scPriceVal').value=fmt.fmtInput(clampPriceValue(sc.priceType,sc.priceValue));
   editorDraft={
     rateMode:sc.rateMode==='schedule'?'schedule':'simple',
     paymentMode:sc.paymentMode==='schedule'?'schedule':'single',
@@ -1871,7 +1984,7 @@ $('scFreq').addEventListener('change',()=>{
    600 / 30,600. Rounded to two decimals, as a change of frequency is. Wired
    before the implied-rate preview below so it reads the converted fee. */
 function editorFinanceBase(){
-  const pc=Math.max(0,parseNumInput($('purchaseCost')));
+  const pc=editorPrice();
   const downPct=Math.min(100,Math.max(0,parseFloat($('scDownPct').value)||0));
   return pc-Math.min(pc*(downPct/100),pc,parseNumInput($('availableCash')));
 }
@@ -1894,6 +2007,32 @@ function convertFee(amount,from,to,base,treatment){
     if(next!==null)amt.value=fmt.fmtInput(next);
   };
   sel.addEventListener('input',onType);sel.addEventListener('change',onType);
+})();
+
+/* The offer price as money, a % of the cash price or a % off: a switch
+   restates the field so the offer still charges the same, $5,400 on a $6,000
+   cash price becoming 90% of cash or 10% off rather than a $90 sofa. */
+(()=>{
+  const sel=$('scPriceType'),val=$('scPriceVal');
+  const sync=()=>{sel.dataset.prev=sel.value;};
+  sel.addEventListener('focus',sync);sel.addEventListener('mousedown',sync);
+  const onType=()=>{
+    const from=sel.dataset.prev||sel.value,to=sel.value;
+    sel.dataset.prev=to;
+    // input and change both fire on a pick; the second has nothing to do.
+    if(from===to)return;
+    priceNote='';
+    if(String(val.value).trim()!==''){
+      const next=convertPrice(parseNumInput(val),from,to,Math.max(0,parseNumInput($('purchaseCost'))));
+      if(next!==null)val.value=fmt.fmtInput(next);
+      // A markup cannot be a % off, so the basis stays where it was rather
+      // than quietly turning the price into the cash price.
+      else if(to==='discount'){sel.value=from;sel.dataset.prev=from;priceNote=' A price above the cash price cannot be a % off; use % of cash.';}
+    }
+    syncPriceField();
+  };
+  sel.addEventListener('input',onType);sel.addEventListener('change',onType);
+  ['input','change'].forEach(ev=>val.addEventListener(ev,()=>{priceNote='';syncPriceField();}));
 })();
 
 /* ─── Loan type, schedules, fee treatment, rate convention ─── */
@@ -1969,7 +2108,7 @@ $('addPaymentPeriodBtn').addEventListener('click',()=>addSchedPeriod('payment'))
   });
 });
 
-['scKnownPayment','scRate','scDownPct','scFeeAmt','scFeeType','scFeeTreatment'].forEach(id=>{
+['scKnownPayment','scRate','scDownPct','scFeeAmt','scFeeType','scFeeTreatment','scPriceVal','scPriceType'].forEach(id=>{
   ['input','change'].forEach(ev=>$(id).addEventListener(ev,updateImpliedRate));
 });
 ['input','change'].forEach(ev=>$('scTerm').addEventListener(ev,()=>{
@@ -1985,6 +2124,11 @@ $('rateConvention').addEventListener('change',()=>{rerender();updateImpliedRate(
 ['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',rerender);});
 $('currencySymbol').addEventListener('change',rerender);
 $('inflationToggle').addEventListener('change',rerender);
+// Pricing offers separately adds a row to the editor and a price to every card.
+$('offerPricing').addEventListener('change',()=>{
+  if(editorDraft){updateEditorVisibility();updateImpliedRate();}
+  renderScenarioList();rerender();
+});
 $('inflationRate').addEventListener('change',rerender);
 
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('tab-'+btn.dataset.tab).classList.add('active');});});
@@ -2069,7 +2213,7 @@ $('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent=HO
 
    Interest-only and bullet are the two loan types no preset opens on; neither
    is a mass-market retail comparison, and run.mjs F9 and F15 pin them. */
-var QS_DEFAULTS={currencySymbol:'$',purchaseCost:50000,availableCash:50000,riskFree:4.5,
+var QS_DEFAULTS={currencySymbol:'$',purchaseCost:50000,offerPricing:false,availableCash:50000,riskFree:4.5,
   rateConvention:'ear',inflationOn:false,inflationRate:2.5,chartMetric:'wealth',optTarget:'netBenefit'};
 
 /* Every preset holds MORE cash than the purchase price, and none of them holds
@@ -2182,14 +2326,21 @@ var QUICK_START_SCENARIOS={
 
   /* A $6,000 fit-out on a 12-month payment holiday at 19.90%, against the same
      rate and the same 36-month term paid from day one. Opens on the loan
-     balance, because the lesson is the shape of that line. */
+     balance, because the lesson is the shape of that line.
+
+     It is also the preset that prices its offers separately, because this is
+     where a store's deals really do differ on the price tag and not only on
+     the terms: the holiday is sold at the full $6,000 ticket, typed as an
+     amount, while paying from day one comes with 10% off, typed as a
+     discount. The discount is $600 the financing side never borrows and the
+     cash buyer, paying the full $6,000, never gets. */
   deferred:{
-    base:{purchaseCost:6000,availableCash:15000,riskFree:4.5,chartMetric:'loanBalance'},
+    base:{purchaseCost:6000,offerPricing:true,availableCash:15000,riskFree:4.5,chartMetric:'loanBalance'},
     scenarios:[
       {name:'12mo holiday, then 24 payments',loanType:'deferred',financeRate:19.9,
-       freq:'monthly',termPeriods:36,ioPeriods:12},
-      {name:'36 payments from day one',loanType:'annuity',financeRate:19.9,
-       freq:'monthly',termPeriods:36}
+       freq:'monthly',termPeriods:36,ioPeriods:12,priceType:'amount',priceValue:6000},
+      {name:'36 payments, 10% off',loanType:'annuity',financeRate:19.9,
+       freq:'monthly',termPeriods:36,priceType:'discount',priceValue:10}
     ]
   }
 };
@@ -2206,6 +2357,7 @@ function applyQuickStart(key){
   $('currencySymbol').value=b.currencySymbol;
   currentCurrencySymbol=b.currencySymbol;
   $('purchaseCost').value=fmt.fmtInput(b.purchaseCost);
+  $('offerPricing').checked=!!b.offerPricing;
   $('availableCash').value=fmt.fmtInput(b.availableCash);
   $('baseRf').value=b.riskFree;
   $('baseRfVal').textContent=fmt.pct(b.riskFree/100)+'/yr';
