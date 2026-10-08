@@ -365,7 +365,10 @@ function downloadText(name, text){
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
-/* ───────────────────────── Column types ───────────────────────── */
+/* ───────────────────────── Column types ─────────────────────────
+   Price and Data year are always there, exactly once each, Price first and
+   Data year last. They are not a type the reader picks: only the columns in
+   between are, from PICK_TYPES. */
 const TYPES = [
   { v: 'price',    label: 'Price' },
   { v: 'number',   label: 'Number' },
@@ -374,6 +377,30 @@ const TYPES = [
   { v: 'datayear', label: 'Data year' },
   { v: 'ignore',   label: 'Ignore' }
 ];
+const FIXED_TYPES = ['price', 'datayear'];
+const PICK_TYPES = TYPES.filter(t => !FIXED_TYPES.includes(t.v));
+
+/* Put a column set (and its rows) in the one shape the editors assume. A
+   second Price or Data year becomes a Number; a missing one is added blank
+   (a blank data year reads as the current year). */
+function ensureFixed(columns, rows){
+  const cols = columns.map(c => Object.assign({}, c));
+  FIXED_TYPES.forEach(t => {
+    let seen = false;
+    cols.forEach(c => { if(c.type === t){ if(seen) c.type = 'number'; seen = true; } });
+  });
+  let n = 0;
+  cols.forEach(c => { const m = /^c(\d+)$/.exec(c.id); if(m) n = Math.max(n, +m[1]); });
+  const src = cols.map((c, i) => i);
+  if(!cols.some(c => c.type === 'price')){ cols.push({ id: 'c' + (++n), name: 'Price', type: 'price', unit: '' }); src.push(-1); }
+  if(!cols.some(c => c.type === 'datayear')){ cols.push({ id: 'c' + (++n), name: 'Data year', type: 'datayear', unit: '' }); src.push(-1); }
+  const rank = c => c.type === 'price' ? 0 : c.type === 'datayear' ? 2 : 1;
+  const order = cols.map((c, i) => i).sort((a, b) => rank(cols[a]) - rank(cols[b]) || a - b);
+  return {
+    columns: order.map(i => cols[i]),
+    rows: rows.map(r => order.map(i => src[i] < 0 ? '' : String(r[src[i]] == null ? '' : r[src[i]])))
+  };
+}
 function guessType(name, values, taken){
   const n = String(name || '').toLowerCase();
   const vals = values.filter(v => String(v == null ? '' : v).trim() !== '');
@@ -405,8 +432,8 @@ const PRESETS = {
            [39400,2024,33000,'Yes',2026],[39000,2025,17000,'No',2026],[26700,2019,99000,'Yes',2026],[32000,2021,45000,'Yes',2024],
            [36300,2023,9000,'No',2024],[29700,2020,95000,'Yes',2026]],
     items: [
-      { name: '2021 Ascent, 68,000 km', asking: '29,990', vals: { c2: '2021', c3: '68000', c4: true } },
-      { name: '2023 SL, 41,000 km', asking: '39,500', vals: { c2: '2023', c3: '41000', c4: false } }
+      { name: '2021 Ascent, 68,000 km', asking: '29990', vals: { c2: '2021', c3: '68000', c4: true } },
+      { name: '2023 SL, 41,000 km', asking: '39500', vals: { c2: '2023', c3: '41000', c4: false } }
     ],
     chart: { x: 'c3', y: 'c2', hold: 'mean' }
   },
@@ -426,17 +453,18 @@ const PRESETS = {
            [669000,3,520,2.6,'No',2024],[1120000,5,930,0.4,'Yes',2025],[618000,4,420,2.9,'No',2026],[812000,3,810,0.7,'No',2022],
            [507000,4,330,3.3,'No',2023],[722000,2,710,1.1,'Yes',2024]],
     items: [
-      { name: '3x1 on 480 m², 1.2 km to the station', asking: '739,000', vals: { c2: '3', c3: '480', c4: '1.2', c5: false } },
-      { name: '4x2 on 700 m² with a pool', asking: '799,000', vals: { c2: '4', c3: '700', c4: '2.8', c5: true } }
+      { name: '3x1 on 480 m², 1.2 km to the station', asking: '739000', vals: { c2: '3', c3: '480', c4: '1.2', c5: false } },
+      { name: '4x2 on 700 m² with a pool', asking: '799000', vals: { c2: '4', c3: '700', c4: '2.8', c5: true } }
     ],
     chart: { x: 'c3', y: 'c4', hold: 'mean' }
   }
 };
 function presetState(key){
   const p = PRESETS[key];
+  const fixed = ensureFixed(p.columns, p.rows.map(r => r.map(v => String(v))));
   return {
-    columns: clone(p.columns),
-    rows: p.rows.map(r => r.map(v => String(v))),
+    columns: fixed.columns,
+    rows: fixed.rows,
     items: clone(p.items),
     chart: clone(p.chart)
   };
@@ -472,7 +500,8 @@ function normaliseState(s){
     vals: it.vals && typeof it.vals === 'object' ? it.vals : {}
   }));
   const chart = s.chart && typeof s.chart === 'object' ? { x: s.chart.x || '', y: s.chart.y || '', hold: s.chart.hold || 'mean' } : { x: '', y: '', hold: 'mean' };
-  return { columns, rows, items, chart };
+  const fixed = ensureFixed(columns, rows);
+  return { columns: fixed.columns, rows: fixed.rows, items, chart };
 }
 
 /* ───────────────────────── Inputs ───────────────────────── */
@@ -493,38 +522,63 @@ const MODEL_TIPS = {
   ridge: '<strong>Ridge regression:</strong> linear, with every effect pulled toward zero. Steadier with few listings or features that move together, like age and km.',
   quadratic: '<strong>Quadratic terms:</strong> adds a squared term for every number and year, so the line can bend. Needs more listings than linear.'
 };
+// Table entry explains itself, so only Text and CSV carry a tip.
 const ENTRY_TIPS = {
-  table: '<strong>Table:</strong> one listing per row, typed straight in. Tick a Yes/No box for yes.',
   text: '<strong>Text:</strong> the column names on the first line, then one listing per line, separated by commas or tabs. A unit goes in brackets: Odometer (km).',
   csv: '<strong>CSV:</strong> open a spreadsheet saved as CSV, with the column names in the first row. It replaces the listings here.'
 };
 
-/* ───────────────────────── Editors ───────────────────────── */
-let renderTimer = null;
-function scheduleRender(){
-  clearTimeout(renderTimer);
-  renderTimer = setTimeout(render, 60);
+/* ───────────────────────── Typed numbers ─────────────────────────
+   Every typed figure shows its thousands separators and its unit as a prefix
+   or suffix. The state keeps the plain number, so Text, CSV and a saved
+   scenario never carry a grouping comma. */
+const KIND_DP = { price: 2, number: 6 };
+function fieldKind(c){
+  if(c.type === 'price') return 'price';
+  if(c.type === 'year' || c.type === 'datayear') return 'year';
+  return c.type === 'number' ? 'number' : null;
 }
+function showNum(v, kind){
+  const s = String(v == null ? '' : v).trim();
+  if(s === '' || !KIND_DP[kind]) return s;
+  const n = parseNum(s);
+  if(n === null) return s;
+  return SharedFmt.formatThousands(fmt.plain(n), { maxDecimals: KIND_DP[kind], allowNegative: kind === 'number' });
+}
+// Group as the reader types, but leave a half-typed "-", "." or "-0." alone.
+function liveFmt(el, kind){
+  if(!KIND_DP[kind] || /^\s*-?0?\.?0*\s*$/.test(el.value)) return;
+  SharedFmt.liveFormat(el, { maxDecimals: KIND_DP[kind], allowNegative: kind === 'number' });
+}
+const rawNum = v => String(v == null ? '' : v).replace(/,/g, '').trim();
+
+/* ───────────────────────── Editors ───────────────────────── */
+// An edit only marks the answer out of date. Valuate is what runs it.
 function touched(){
   if(persist) persist.schedule();
-  scheduleRender();
+  markStale();
 }
 
 function buildColumns(){
   const list = $('colList');
   list.innerHTML = '';
   S.columns.forEach((c, i) => {
+    const fixed = FIXED_TYPES.includes(c.type);
     const row = document.createElement('div');
-    row.className = 'col-row';
+    row.className = 'col-row' + (fixed ? ' col-fixed' : '');
     row.innerHTML =
       `<input class="txt-input col-name" type="text" maxlength="80" aria-label="Column name" value="${esc(c.name)}">` +
-      `<select class="col-type" aria-label="Column type">${TYPES.map(t => `<option value="${t.v}"${t.v === c.type ? ' selected' : ''}>${t.label}</option>`).join('')}</select>` +
-      `<input class="txt-input col-unit" type="text" maxlength="20" aria-label="Unit" placeholder="unit" value="${esc(c.unit)}"${c.type === 'number' ? '' : ' disabled'}>` +
-      SharedIcon.button('trash', 'Delete this column', 'col-del');
+      (fixed
+        ? `<span class="col-type-fixed">${esc(TYPES.find(t => t.v === c.type).label)}</span>` +
+          `<span class="col-unit-fixed">${c.type === 'price' ? esc(sym()) : ''}</span><span aria-hidden="true"></span>`
+        : `<select class="col-type" aria-label="Column type">${PICK_TYPES.map(t => `<option value="${t.v}"${t.v === c.type ? ' selected' : ''}>${t.label}</option>`).join('')}</select>` +
+          `<input class="txt-input col-unit" type="text" maxlength="20" aria-label="Unit" placeholder="unit" value="${esc(c.unit)}"${c.type === 'number' ? '' : ' disabled'}>` +
+          SharedIcon.button('trash', 'Delete this column', 'col-del'));
     row.querySelector('.col-name').addEventListener('input', e => {
       c.name = e.target.value;
       buildGrid(); buildItems(); touched();
     });
+    if(fixed){ list.appendChild(row); return; }
     row.querySelector('.col-type').addEventListener('change', e => {
       c.type = e.target.value;
       if(c.type !== 'number') c.unit = '';
@@ -549,34 +603,49 @@ function cellControl(c, v){
     return `<input type="checkbox" class="cell-chk" aria-label="${esc(c.name)}"${parseBool(v) === 1 ? ' checked' : ''}>`;
   }
   if(c.type === 'ignore'){
-    return `<input type="text" class="cell" aria-label="${esc(c.name)}" value="${esc(v)}">`;
+    return `<input type="text" class="cell cell-text" aria-label="${esc(c.name)}" value="${esc(v)}">`;
   }
-  let bounds, unit;
-  if(c.type === 'price'){ bounds = 'data-min="0" data-max="' + BIG + '"'; unit = ` data-unit="${esc(sym() || 'price')}"`; }
-  else if(c.type === 'year' || c.type === 'datayear'){ bounds = 'data-min="1900" data-max="2100" data-step="1"'; unit = ' data-unit="year"'; }
-  else { bounds = `data-min="-${BIG}" data-max="${BIG}"`; unit = c.unit ? ` data-unit="${esc(c.unit)}"` : ' data-unitless'; }
+  const kind = fieldKind(c);
+  let bounds, pre = '', suf = '';
+  if(kind === 'price'){ bounds = `data-min="0" data-max="${BIG}"`; pre = sym(); }
+  else if(kind === 'year'){ bounds = 'data-min="1900" data-max="2100" data-step="1"'; }
+  else { bounds = `data-min="-${BIG}" data-max="${BIG}"`; suf = c.unit || ''; }
+  const unit = pre || suf ? '' : kind === 'price' ? ' data-unit="price"' : kind === 'year' ? ' data-unit="year"' : ' data-unitless';
   const ph = c.type === 'datayear' ? ` placeholder="${readOpts().year}"` : '';
-  return `<input type="text" inputmode="decimal" class="cell" aria-label="${esc(c.name)}" ${bounds}${unit}${ph} value="${esc(v)}">`;
+  return `<div class="input-wrap cell-wrap">${pre ? `<span class="prefix">${esc(pre)}</span>` : ''}` +
+    `<input type="text" inputmode="${kind === 'year' ? 'numeric' : 'decimal'}" class="cell" aria-label="${esc(c.name)}" data-kind="${kind}" ${bounds}${unit}${ph} value="${esc(showNum(v, kind))}">` +
+    `${suf ? `<span class="suffix">${esc(suf)}</span>` : ''}</div>`;
 }
 
 function buildGrid(){
   const wrap = $('gridWrap');
-  const head = S.columns.map(c => `<th title="${esc(TYPES.find(t => t.v === c.type).label)}">${esc(c.name || '(no name)')}` +
-    (c.unit ? ` <span class="th-unit">${esc(c.unit)}</span>` : c.type === 'price' && sym() ? ` <span class="th-unit">${esc(sym())}</span>` : '') + '</th>').join('');
+  const head = S.columns.map(c => `<th class="t-${c.type}">${esc(c.name || '(no name)')}</th>`).join('');
   const body = S.rows.map((r, ri) => '<tr data-r="' + ri + '">' +
     S.columns.map((c, ci) => `<td data-c="${ci}" class="t-${c.type}">${cellControl(c, r[ci])}</td>`).join('') +
     `<td class="t-del">${SharedIcon.button('trash', 'Delete this listing', 'sm row-del')}</td></tr>`).join('');
-  wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>`;
+  wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>` +
+    '<button type="button" class="grid-add">+ Add listing</button>';
 }
 
 function onGridEvent(e){
-  const td = e.target.closest('td[data-c]');
-  const tr = e.target.closest('tr[data-r]');
+  const el = e.target;
+  const td = el.closest('td[data-c]');
+  const tr = el.closest('tr[data-r]');
   if(!td || !tr) return;
   const r = +tr.dataset.r, c = +td.dataset.c;
   if(!S.rows[r]) return;
-  S.rows[r][c] = e.target.type === 'checkbox' ? (e.target.checked ? 'Yes' : 'No') : e.target.value;
+  if(el.type === 'checkbox') S.rows[r][c] = el.checked ? 'Yes' : 'No';
+  else if(KIND_DP[el.dataset.kind]){ liveFmt(el, el.dataset.kind); S.rows[r][c] = rawNum(el.value); }
+  else S.rows[r][c] = el.value;
   touched();
+}
+
+function addListing(){
+  S.rows.push(S.columns.map(c => c.type === 'bool' ? 'No' : ''));
+  buildGrid(); touched();
+  const rows = $('gridWrap').querySelectorAll('tbody tr');
+  const lastRow = rows[rows.length - 1];
+  if(lastRow){ lastRow.scrollIntoView({ block: 'nearest' }); const f = lastRow.querySelector('input:not([type=checkbox])'); if(f) f.focus(); }
 }
 
 function syncText(){
@@ -608,8 +677,9 @@ function applyParsed(parsed){
     const first = cols.find(c => c.type === 'number');
     if(first) first.type = 'price';
   }
-  S.columns = cols.map(c => ({ id: c.id, name: c.name, type: c.type, unit: c.unit }));
-  S.rows = parsed.rows.map(r => r.slice());
+  const fixed = ensureFixed(cols.map(c => ({ id: c.id, name: c.name, type: c.type, unit: c.unit })), parsed.rows.map(r => r.map(rawNum)));
+  S.columns = fixed.columns;
+  S.rows = fixed.rows;
   const live = new Set(S.columns.map(c => c.id));
   S.items.forEach(it => Object.keys(it.vals).forEach(id => { if(!live.has(id)) delete it.vals[id]; }));
 }
@@ -652,10 +722,14 @@ function loadCsvFile(file){
 function showEntry(){
   const mode = $('entryMode').value;
   ['table', 'text', 'csv'].forEach(m => { $('entry-' + m).hidden = m !== mode; });
-  $('entryTip').setAttribute('data-tip', ENTRY_TIPS[mode] || '');
+  const tip = $('entryTip');
+  if(ENTRY_TIPS[mode]) tip.setAttribute('data-tip', ENTRY_TIPS[mode]);
+  else tip.removeAttribute('data-tip');
+  tip.hidden = !ENTRY_TIPS[mode];
   if(mode === 'text') syncText();
 }
 
+const ageNote = (v, year) => { const n = parseNum(v); return n === null ? '' : 'Age <b>' + fmt.num(year - n, 0) + ' yrs</b> in ' + year; };
 function buildItems(){
   const list = $('itemList');
   const feats = featureColumns();
@@ -671,37 +745,37 @@ function buildItems(){
     card.style.setProperty('--item-colour', SharedPalette.at(k));
     const rows = feats.map(c => {
       const v = it.vals[c.id];
+      const label = `<div class="field-label">${esc(c.name || '(no name)')}</div>`;
       if(c.type === 'bool'){
         return `<label class="chk-row"><input type="checkbox" data-col="${c.id}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></label>`;
       }
       if(c.type === 'year'){
-        const age = parseNum(v);
-        return `<div class="field-row"><div class="field-label">${esc(c.name || '(no name)')}</div>` +
+        return `<div class="field-row">${label}` +
           `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="numeric" data-col="${c.id}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
-          `<div class="derived" data-age="${c.id}">${age === null ? '' : 'Age <b>' + fmt.num(year - age, 0) + ' yrs</b> in ' + year}</div></div>`;
+          `<div class="derived" data-age="${c.id}">${ageNote(v, year)}</div></div>`;
       }
-      const unit = c.unit
-        ? `<div class="currency-wrap"><input class="currency-input has-suffix${c.unit.length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${c.id}" data-min="-${BIG}" data-max="${BIG}" value="${esc(v == null ? '' : v)}"><span class="suffix">${esc(c.unit)}</span></div>`
-        : `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="decimal" data-col="${c.id}" data-min="-${BIG}" data-max="${BIG}" value="${esc(v == null ? '' : v)}"></div>`;
-      return `<div class="field-row"><div class="field-label">${esc(c.name || '(no name)')}</div>${unit}</div>`;
+      const input = `<input class="currency-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${c.id}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
+      return `<div class="field-row">${label}` + (c.unit
+        ? `<div class="currency-wrap">${input}<span class="suffix">${esc(c.unit)}</span></div>`
+        : `<div class="currency-wrap" data-unitless>${input}</div>`) + '</div>';
     }).join('');
     card.innerHTML =
       `<div class="item-head"><span class="item-dot" aria-hidden="true"></span>` +
       `<input class="txt-input item-name" type="text" maxlength="80" aria-label="Item name" value="${esc(it.name)}" placeholder="Item ${k + 1}">` +
       SharedIcon.button('duplicate', 'Duplicate this item', 'item-dup') + SharedIcon.button('trash', 'Delete this item', 'item-del') + '</div>' +
-      `<div class="field-row"><div class="field-label"><span class="tip-wrap">Asking price <i class="tip-icon" data-tip="Optional. Leave it blank to see the fair price only.">?</i></span></div>` +
-      `<div class="currency-wrap">${s ? `<span class="prefix">${esc(s)}</span>` : ''}<input class="currency-input item-ask" type="text" inputmode="decimal" data-min="0" data-max="${BIG}" value="${esc(it.asking)}" placeholder="optional"${s ? '' : ' data-unit="price"'}></div></div>` +
+      `<div class="field-row"><div class="field-label">Asking price</div>` +
+      `<div class="currency-wrap"><span class="prefix">${esc(s)}</span><input class="currency-input item-ask" type="text" inputmode="decimal" data-kind="price" data-min="0" data-max="${BIG}" value="${esc(showNum(it.asking, 'price'))}" placeholder="optional"></div></div>` +
       rows;
-    const ask = card.querySelector('.item-ask');
-    SharedFmt.attachCurrencyInput(ask, { maxDecimals: 2 });
-    card.querySelector('.item-name').addEventListener('input', e => { it.name = e.target.value; refreshHoldOptions(); touched(); });
-    ask.addEventListener('input', e => { it.asking = e.target.value; touched(); });
+    card.querySelector('.item-name').addEventListener('input', e => { it.name = e.target.value; touched(); });
+    card.querySelector('.item-ask').addEventListener('input', e => { liveFmt(e.target, 'price'); it.asking = rawNum(e.target.value); touched(); });
     card.querySelectorAll('[data-col]').forEach(el => {
       const ev = el.type === 'checkbox' ? 'change' : 'input';
       el.addEventListener(ev, () => {
-        it.vals[el.dataset.col] = el.type === 'checkbox' ? el.checked : el.value;
+        if(el.type === 'checkbox') it.vals[el.dataset.col] = el.checked;
+        else if(el.dataset.kind === 'number'){ liveFmt(el, 'number'); it.vals[el.dataset.col] = rawNum(el.value); }
+        else it.vals[el.dataset.col] = el.value;
         const ageEl = card.querySelector(`[data-age="${el.dataset.col}"]`);
-        if(ageEl){ const n = parseNum(el.value); ageEl.innerHTML = n === null ? '' : 'Age <b>' + fmt.num(year - n, 0) + ' yrs</b> in ' + year; }
+        if(ageEl) ageEl.innerHTML = ageNote(el.value, year);
         touched();
       });
     });
@@ -709,20 +783,25 @@ function buildItems(){
       const copy = clone(it);
       copy.name = (it.name || 'Item ' + (k + 1)) + ' (copy)';
       S.items.splice(k + 1, 0, copy);
-      buildItems(); refreshHoldOptions(); touched();
+      buildItems(); touched();
     });
     card.querySelector('.item-del').addEventListener('click', () => {
       S.items.splice(k, 1);
       if(S.chart.hold && S.chart.hold.indexOf('item:') === 0) S.chart.hold = 'mean';
-      buildItems(); refreshHoldOptions(); touched();
+      buildItems(); touched();
     });
     list.appendChild(card);
   });
 }
 
-/* ───────────────────────── Chart controls ───────────────────────── */
-function refreshAxisOptions(){
-  const feats = featureColumns();
+/* ───────────────────────── Chart controls ─────────────────────────
+   Built from the last valuation, not the form, so a column or an item added
+   since cannot be picked before the model knows about it. */
+function chartFeatures(r){
+  return r && r.prep && r.prep.features ? r.prep.features : featureColumns();
+}
+function refreshChartControls(r){
+  const feats = chartFeatures(r);
   const ids = feats.map(c => c.id);
   if(!ids.includes(S.chart.x)) S.chart.x = ids[0] || '';
   if(!ids.includes(S.chart.y) || S.chart.y === S.chart.x) S.chart.y = ids.find(id => id !== S.chart.x) || '';
@@ -731,13 +810,18 @@ function refreshAxisOptions(){
   $('axisX').value = S.chart.x;
   $('axisY').innerHTML = feats.filter(c => c.id !== S.chart.x).map(c => `<option value="${c.id}">${esc(label(c))}</option>`).join('');
   $('axisY').value = S.chart.y;
-  refreshHoldOptions();
+  refreshHoldOptions(r);
 }
-function refreshHoldOptions(){
-  const opts = ['<option value="mean">Data average</option>'].concat(S.items.map((it, k) =>
-    `<option value="item:${k}">${esc((it.name || '').trim() || 'Item ' + (k + 1))}</option>`));
+// With one item to buy or none there is nothing to choose: the chart holds
+// the other features at that item, or at the data average.
+function refreshHoldOptions(r){
+  const items = r && r.items ? r.items : [];
+  $('holdWrap').hidden = items.length < 2;
+  if(items.length < 2) return;
+  const opts = ['<option value="mean">Data average</option>'].concat(items.map((it, k) =>
+    `<option value="item:${k}">${esc(it.name)}</option>`));
   $('holdAt').innerHTML = opts.join('');
-  if(!/^mean$|^item:\d+$/.test(S.chart.hold) || (S.chart.hold.indexOf('item:') === 0 && !S.items[+S.chart.hold.slice(5)])) S.chart.hold = 'mean';
+  if(!/^mean$|^item:\d+$/.test(S.chart.hold) || (S.chart.hold.indexOf('item:') === 0 && !items[+S.chart.hold.slice(5)])) S.chart.hold = 'mean';
   $('holdAt').value = S.chart.hold;
 }
 
@@ -745,7 +829,7 @@ function buildAll(){
   buildColumns();
   buildGrid();
   buildItems();
-  refreshAxisOptions();
+  refreshChartControls(last);
   showEntry();
 }
 
@@ -769,14 +853,39 @@ function syncUI(){
   $('lambdaBlock').hidden = o.model !== 'ridge';
   $('modelTip').setAttribute('data-tip', MODEL_TIPS[o.model] || '');
   $('axisYWrap').hidden = $('viewDim').value !== '3d';
-  $('itemsNote').textContent = `Items you are thinking of buying, as of ${o.year}. They are checked against the model, never added to it.`;
+}
+
+/* ─── The Valuate gate ───
+   The form stays live (affixes, slider readouts, which fields show), but the
+   answer waits for Valuate, so a reader can enter every listing and item
+   before the model runs. Until then the results are dimmed and the button
+   is ringed. */
+let stale = false;
+function markStale(){
+  if(stale) return;
+  stale = true;
+  document.body.classList.add('is-stale');
+  $('valuateBtn').classList.add('needs-run');
+}
+function markFresh(){
+  stale = false;
+  document.body.classList.remove('is-stale');
+  $('valuateBtn').classList.remove('needs-run');
+}
+// Swap a button's label for a moment to confirm the press.
+function flashBtn(btn, label){
+  if(btn._flashTimer) clearTimeout(btn._flashTimer);
+  else btn._flashLabel = btn.textContent;
+  btn.textContent = label;
+  btn._flashTimer = setTimeout(() => { btn.textContent = btn._flashLabel; btn._flashTimer = null; }, 900);
 }
 
 function render(){
-  clearTimeout(renderTimer);
   syncUI();
+  markFresh();
   const r = compute();
   last = r;
+  refreshChartControls(r);
   renderStatus(r);
   renderVerdict(r);
   renderKpis(r);
@@ -802,7 +911,7 @@ function renderVerdict(r){
   const fitLine = `Fitted to ${m.n} listings${what ? ' of ' + esc(what) : ''}, the model explains ${Math.round(Math.max(0, m.r2 || 0) * 100)}% of their price differences, with a typical error of ${fmt.money(m.rmse, s)}. Prices are in ${r.o.year} money.`;
   const good = r.items.filter(it => !it.incomplete && !it.bad);
   if(!S.items.length){
-    SharedVerdict.set('verdict', { tone: '', title: 'Add the items you want to buy in step 2 to see their fair price.', body: fitLine });
+    SharedVerdict.set('verdict', { tone: '', title: 'Add the items you want to buy to see their fair price.', body: fitLine });
     return;
   }
   if(!good.length){
@@ -850,7 +959,7 @@ function renderKpis(r){
   const good = r.items.filter(it => !it.incomplete && !it.bad);
   const asked = good.filter(it => it.asking !== null).sort((a, b) => a.gapPct - b.gapPct);
   if(asked.length) setKpi('kpiBest', fmt.pct(asked[0].gapPct), `${esc(asked[0].name)}, ${fmt.signedMoney(asked[0].gap, s)} against fair`, 'small-ish');
-  else setKpi('kpiBest', '—', good.length ? 'Add an asking price to compare' : 'Add an item in step 2');
+  else setKpi('kpiBest', '—', good.length ? 'Add an asking price to compare' : 'Add an item to buy');
   const lead = asked[0] || good[0];
   if(lead) setKpi('kpiFair', fmt.money(lead.fair, s), `${esc(lead.name)}, range ${fmt.money(lead.range[0], s)} to ${fmt.money(lead.range[1], s)}`);
   else setKpi('kpiFair', '—', 'No complete item yet');
@@ -866,7 +975,7 @@ function renderTables(r){
   if(r.error){
     $('itemsTableWrap').innerHTML = blank(r.error);
     $('coefTableWrap').innerHTML = '';
-    $('equation').textContent = '';
+    $('equation').innerHTML = '';
     $('dataTableWrap').innerHTML = '';
     $('itemsUnit').textContent = $('coefUnit').textContent = $('dataUnit').textContent = '';
     return;
@@ -876,18 +985,14 @@ function renderTables(r){
   // Items to buy
   $('itemsUnit').textContent = `Prices in ${s || 'the price unit'}, ${r.o.year} money. The range is the fair price give or take one typical error.`;
   $('itemsTableWrap').innerHTML = !r.items.length ? blank('No items to buy yet.') :
-    `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap %</th><th>Note</th></tr></thead><tbody>` +
+    `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap %</th></tr></thead><tbody>` +
     r.items.map(it => {
-      if(it.incomplete) return `<tr><td>${esc(it.name)}</td><td colspan="5" class="note">—</td><td class="note">Missing ${esc(it.missing.join(', '))}</td></tr>`;
-      const notes = [];
-      if(it.outside.length) notes.push('Outside the listings on ' + it.outside.join(', '));
-      if(it.negAge) notes.push('Year after the current year');
-      if(it.bad) notes.push('The model gives no positive price here');
-      return `<tr><td><span class="row-dot" style="background:${SharedPalette.at(it.k)}"></span>${esc(it.name)}</td>` +
+      const name = `<td><span class="row-dot" style="background:${SharedPalette.at(it.k)}"></span>${esc(it.name)}</td>`;
+      if(it.incomplete) return `<tr>${name}<td colspan="5" class="note">Missing ${esc(it.missing.join(', '))}</td></tr>`;
+      return `<tr>${name}` +
         `<td>${it.asking === null ? '—' : fmt.money(it.asking, s)}</td><td>${fmt.money(it.fair, s)}</td>` +
         `<td>${fmt.money(it.range[0], s)} to ${fmt.money(it.range[1], s)}</td>` +
-        `<td>${it.gap === null ? '—' : fmt.signedMoney(it.gap, s)}</td><td>${it.gapPct === null ? '—' : fmt.pct(it.gapPct)}</td>` +
-        `<td class="note">${esc(notes.join('. '))}</td></tr>`;
+        `<td>${it.gap === null ? '—' : fmt.signedMoney(it.gap, s)}</td><td>${it.gapPct === null ? '—' : fmt.pct(it.gapPct)}</td></tr>`;
     }).join('') + '</tbody></table>';
 
   // Model terms
@@ -895,7 +1000,8 @@ function renderTables(r){
   $('coefUnit').textContent = isLog
     ? `The model is for ln P, the natural log of the price in ${r.o.year} money. % per unit is e^α − 1. The standardised weight is the effect of one typical spread of the feature.`
     : `Coefficients are in ${s || 'price'}, ${r.o.year} money, per unit of the feature. The standardised weight is the effect of one typical spread of the feature, so weights compare across units.`;
-  const termName = (f, pow) => (f.type === 'year' ? `Age from ${f.name}` : f.name) + (pow === 2 ? '²' : '') + (f.unit ? ` (${f.unit}${pow === 2 ? '²' : ''})` : f.type === 'year' ? ` (yrs${pow === 2 ? '²' : ''})` : '');
+  const termUnit = (u, pow) => pow === 2 ? (/[²³]$/.test(u) ? ` (${u})²` : ` (${u}²)`) : ` (${u})`;
+  const termName = (f, pow) => (f.type === 'year' ? `Age from ${f.name}` : f.name) + (pow === 2 ? '²' : '') + (f.unit ? termUnit(f.unit, pow) : f.type === 'year' ? termUnit('yrs', pow) : '');
   const rows = [];
   rows.push({ term: 'Intercept (α)', coef: m.coef.c0, w: null, pct: null });
   prep.features.forEach((f, j) => {
@@ -912,15 +1018,21 @@ function renderTables(r){
       ? `<tr><td>${esc(x.term)}</td><td colspan="${isLog ? 3 : 2}" class="note">Dropped: the same in every listing</td></tr>`
       : `<tr><td>${esc(x.term)}</td><td>${fmt.num(x.coef, 4)}</td>${isLog ? `<td>${x.pct === null ? '—' : fmt.pct(x.pct, 2)}</td>` : ''}<td>${x.w === null ? '—' : (isLog ? fmt.num(x.w, 4) : fmt.signedMoney(x.w, s))}</td></tr>`).join('') +
     '</tbody></table>';
-  const parts = [fmt.num(m.coef.c0, 4)];
+  const parts = [fmt.num(m.coef.c0, 4)], tex = [texNum(m.coef.c0)];
   prep.features.forEach((f, j) => {
     if(m.dropped.includes(f.name)) return;
     const nm = f.type === 'year' ? 'Age(' + f.name + ')' : f.name;
-    const add = (c, label) => { if(!c) return; parts.push((c < 0 ? ' − ' : ' + ') + fmt.num(Math.abs(c), 4) + ' × ' + label); };
-    add(m.coef.a[j], nm);
-    add(m.coef.q[j], nm + '²');
+    const tn = f.type === 'year' ? texText('Age') + '(' + texText(f.name) + ')' : texText(f.name);
+    const add = (c, label, tl) => {
+      if(!c) return;
+      parts.push((c < 0 ? ' − ' : ' + ') + fmt.num(Math.abs(c), 4) + ' × ' + label);
+      tex.push((c < 0 ? ' - ' : ' + ') + texNum(Math.abs(c)) + '\\,' + tl);
+    };
+    add(m.coef.a[j], nm, tn);
+    add(m.coef.q[j], nm + '²', tn + '^{2}');
   });
-  $('equation').textContent = (isLog ? 'ln P = ' : 'P = ') + parts.join('');
+  r.eqText = (isLog ? 'ln P = ' : 'P = ') + parts.join('');
+  renderTex($('equation'), (isLog ? '\\ln P = ' : 'P = ') + tex.join(''), r.eqText);
 
   // Listings against the model
   $('dataUnit').textContent = `Prices in ${s || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`;
@@ -929,6 +1041,21 @@ function renderTables(r){
     prep.row.map((row, i) => `<tr><td>${row}</td><td>${prep.dataYear[i]}</td><td>${fmt.money(prep.price[i], s)}</td><td>${fmt.money(prep.priceToday[i], s)}</td>` +
       `<td>${fmt.money(m.fitted[i], s)}</td><td>${fmt.signedMoney(m.resid[i], s)}</td><td>${fmt.pct(m.resid[i] / m.fitted[i])}</td></tr>`).join('') +
     '</tbody></table>';
+}
+
+/* ─── The model as an equation, typeset by KaTeX ───
+   Inline mode, so a long model wraps after a + or a − instead of running off
+   the card. Without KaTeX (offline) the plain-text equation stands in. */
+function texText(s){
+  const map = { '\\': '\\textbackslash{}', '{': '\\{', '}': '\\}', '$': '\\$', '&': '\\&', '#': '\\#', '^': '\\textasciicircum{}', '_': '\\_', '%': '\\%', '~': '\\textasciitilde{}' };
+  return '\\text{' + String(s).replace(/[\\{}$&#^_%~]/g, ch => map[ch]) + '}';
+}
+const texNum = v => fmt.num(v, 4).replace(/−/g, '-').replace(/,/g, '{,}');
+function renderTex(el, tex, plain){
+  if(window.katex){
+    try { katex.render(tex, el, { throwOnError: false, strict: 'ignore', displayMode: false }); return; } catch(e){ /* plain text below */ }
+  }
+  el.textContent = plain;
 }
 
 function renderWarnings(r){
@@ -944,6 +1071,10 @@ function renderWarnings(r){
   if(r.items){
     const out = r.items.filter(it => !it.incomplete && it.outside.length);
     if(out.length) notes.push(`${out.map(it => esc(it.name)).join(', ')} ${out.length === 1 ? 'sits' : 'sit'} outside the range of the listings, so ${out.length === 1 ? 'its' : 'their'} fair price is extrapolated.`);
+    const neg = r.items.filter(it => !it.incomplete && it.negAge);
+    if(neg.length) notes.push(`${neg.map(it => esc(it.name)).join(', ')} ${neg.length === 1 ? 'has' : 'have'} a year after ${r.o.year}, so a negative age.`);
+    const bad = r.items.filter(it => !it.incomplete && it.bad);
+    if(bad.length) notes.push(`The model gives no positive price for ${bad.map(it => esc(it.name)).join(', ')}.`);
     const inc = r.items.filter(it => it.incomplete);
     if(inc.length) notes.push(`${inc.map(it => esc(it.name)).join(', ')} ${inc.length === 1 ? 'is' : 'are'} missing a feature and ${inc.length === 1 ? 'is' : 'are'} not priced.`);
   }
@@ -999,7 +1130,8 @@ function renderChart(){
 }
 
 function holdVector(r){
-  const h = S.chart.hold;
+  // One item: hold at it. None: the data average. Two or more: the reader picks.
+  const h = r.items.length === 1 ? 'item:0' : r.items.length ? S.chart.hold : 'mean';
   if(h && h.indexOf('item:') === 0){
     const it = r.items[+h.slice(5)];
     if(it && !it.incomplete) return { vec: it.vec.slice(), label: it.name };
@@ -1276,11 +1408,11 @@ async function copyPng(){
 function itemsCsv(){
   const r = last; if(!r || r.error) return;
   const s = r.o.sym;
-  const lines = [['Item', `Asking (${s})`, `Fair price (${s})`, `Range low (${s})`, `Range high (${s})`, `Gap (${s})`, 'Gap %', 'Note']];
+  const lines = [['Item', `Asking (${s})`, `Fair price (${s})`, `Range low (${s})`, `Range high (${s})`, `Gap (${s})`, 'Gap %']];
   r.items.forEach(it => {
-    if(it.incomplete){ lines.push([it.name, '', '', '', '', '', '', 'Missing ' + it.missing.join(', ')]); return; }
+    if(it.incomplete){ lines.push([it.name, '', '', '', '', '', '']); return; }
     lines.push([it.name, it.asking === null ? '' : it.asking.toFixed(0), it.fair.toFixed(0), it.range[0].toFixed(0), it.range[1].toFixed(0),
-      it.gap === null ? '' : it.gap.toFixed(0), it.gapPct === null ? '' : (it.gapPct * 100).toFixed(2), it.outside.length ? 'Outside the listings on ' + it.outside.join(', ') : '']);
+      it.gap === null ? '' : it.gap.toFixed(0), it.gapPct === null ? '' : (it.gapPct * 100).toFixed(2)]);
   });
   downloadText('valuate-everything-items.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
 }
@@ -1289,7 +1421,7 @@ function coefCsv(){
   const lines = [['Term', 'Coefficient', 'Percent per unit', 'Standardised weight']];
   r.coefRows.forEach(x => lines.push(x.dropped ? [x.term, 'dropped', '', ''] : [x.term, fmt.plain(x.coef), x.pct === null ? '' : (x.pct * 100).toFixed(4), x.w === null ? '' : fmt.plain(x.w)]));
   lines.push([]);
-  lines.push([$('equation').textContent]);
+  lines.push([r.eqText || '']);
   downloadText('valuate-everything-model.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
 }
 function dataCsv(){
@@ -1344,8 +1476,9 @@ function init(){
   const onStatic = e => {
     if(e.target.closest('[data-no-persist]')) return;
     if(e.target.id === 'entryMode'){ showEntry(); return; }
-    if(e.target.id === 'currency' || e.target.id === 'curYear'){ buildGrid(); buildItems(); }
-    render();
+    if(e.target.id === 'currency' || e.target.id === 'curYear'){ buildColumns(); buildGrid(); buildItems(); }
+    syncUI();
+    markStale();
   };
   document.querySelector('.controls').addEventListener('input', onStatic);
   document.querySelector('.controls').addEventListener('change', onStatic);
@@ -1353,29 +1486,27 @@ function init(){
   $('gridWrap').addEventListener('input', onGridEvent);
   $('gridWrap').addEventListener('change', e => { if(e.target.type === 'checkbox') onGridEvent(e); });
   $('gridWrap').addEventListener('click', e => {
+    if(e.target.closest('.grid-add')){ addListing(); return; }
     const del = e.target.closest('.row-del');
     if(!del) return;
     const tr = del.closest('tr[data-r]');
     S.rows.splice(+tr.dataset.r, 1);
     buildGrid(); touched();
   });
-  $('addRowBtn').addEventListener('click', () => {
-    S.rows.push(S.columns.map(c => c.type === 'bool' ? 'No' : ''));
-    buildGrid(); touched();
-    const rows = $('gridWrap').querySelectorAll('tbody tr');
-    const lastRow = rows[rows.length - 1];
-    if(lastRow){ lastRow.scrollIntoView({ block: 'nearest' }); const f = lastRow.querySelector('input:not([type=checkbox])'); if(f) f.focus(); }
-  });
+  // A new column goes in before Data year, which always stays last.
   $('addColBtn').addEventListener('click', () => {
     const id = nextColId();
-    S.columns.push({ id, name: 'Feature ' + (featureColumns().length + 1), type: 'number', unit: '' });
-    S.rows.forEach(r => r.push(''));
+    let at = S.columns.findIndex(c => c.type === 'datayear');
+    if(at < 0) at = S.columns.length;
+    S.columns.splice(at, 0, { id, name: 'Feature ' + (featureColumns().length + 1), type: 'number', unit: '' });
+    S.rows.forEach(r => r.splice(at, 0, ''));
     buildAll(); touched();
   });
   $('addItemBtn').addEventListener('click', () => {
     S.items.push({ name: 'Item ' + (S.items.length + 1), asking: '', vals: {} });
-    buildItems(); refreshHoldOptions(); touched();
+    buildItems(); touched();
   });
+  $('valuateBtn').addEventListener('click', () => { render(); flashBtn($('valuateBtn'), '✓ Updated'); });
 
   $('dataText').addEventListener('input', onTextInput);
   $('csvFile').addEventListener('change', e => { loadCsvFile(e.target.files[0]); e.target.value = ''; });
@@ -1387,7 +1518,7 @@ function init(){
   $('csvDataBtn').addEventListener('click', () => downloadText('valuate-everything-listings-input.csv', toDelimited(S.columns, S.rows, ',', ',')));
 
   // Display options beside the chart change how it reads, never the answer.
-  $('axisX').addEventListener('change', () => { S.chart.x = $('axisX').value; refreshAxisOptions(); if(persist) persist.schedule(); scheduleChart(); });
+  $('axisX').addEventListener('change', () => { S.chart.x = $('axisX').value; refreshChartControls(last); if(persist) persist.schedule(); scheduleChart(); });
   $('axisY').addEventListener('change', () => { S.chart.y = $('axisY').value; if(persist) persist.schedule(); scheduleChart(); });
   $('holdAt').addEventListener('change', () => { S.chart.hold = $('holdAt').value; if(persist) persist.schedule(); scheduleChart(); });
   $('viewDim').addEventListener('change', () => { syncUI(); scheduleChart(); });
@@ -1430,7 +1561,7 @@ function init(){
   // Exposed so the audit harness can drive the engine directly as well as
   // through the page.
   window.__VE = { prepare, fit, solve, itemVector, evaluateItem, shiftPrice, parseDelimited, toDelimited, parseBool, parseNum,
-                  guessType, compute, readOpts, applyQuickStart, PRESETS, get state(){ return S; }, set state(v){ S = v; buildAll(); render(); },
+                  guessType, compute, readOpts, applyQuickStart, PRESETS, get state(){ return S; }, set state(v){ S = normaliseState(v) || v; buildAll(); render(); },
                   render, buildAll };
 }
 

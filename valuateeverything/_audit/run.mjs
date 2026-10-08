@@ -304,7 +304,7 @@ console.log('\n── 5. Table, Text and CSV ──');
   await page.waitForTimeout(600);
   const st = await ve(() => JSON.parse(JSON.stringify(window.__VE.state)));
   check('t4 typed text becomes columns with guessed types', st.columns.map(c => c.type).join(',') === 'price,year,number,bool,datayear', st.columns.map(c => c.name + ':' + c.type).join(', '));
-  check('t5 a quoted "31,000" stays one value', st.rows[2][0] === '31,000', st.rows[2][0]);
+  check('t5 a quoted "31,000" stays one value, kept as the plain number', st.rows[2][0] === '31000', st.rows[2][0]);
   await ve(() => { const s = document.getElementById('entryMode'); s.value = 'table'; s.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.waitForTimeout(200);
   const ticks = await ve(() => [...document.querySelectorAll('#gridWrap td.t-bool input')].map(i => i.checked));
@@ -356,6 +356,61 @@ console.log('\n── 7. Mini cache ──');
   await page.waitForTimeout(700);
   const blob = await ve(() => localStorage.getItem('abt:save:valuateeverything:v1'));
   check('m2 the saved snapshot carries the listings and items', !!blob && JSON.parse(blob).__extra.rows.length === 18 && JSON.parse(blob).__extra.items.length === 2);
+}
+
+/* ── 8. The form: fixed columns, grouped figures, the Valuate gate ── */
+console.log('\n── 8. The form ──');
+{
+  await ve(() => window.__VE.applyQuickStart('camry'));
+  await page.waitForTimeout(400);
+  const f1 = await ve(() => ({
+    offer: [...document.querySelectorAll('#colList .col-type')].some(s => [...s.options].some(o => o.value === 'price' || o.value === 'datayear')),
+    fixed: [...document.querySelectorAll('#colList .col-fixed')].map(r => r.querySelector('.col-type-fixed').textContent + (r.querySelector('.col-del, select') ? ' (editable)' : ''))
+  }));
+  check('f1 Price and Data year are fixed rows, never a type to pick', !f1.offer && f1.fixed.join() === 'Price,Data year', JSON.stringify(f1));
+  await setState({ columns: [{ id: 'c1', name: 'Km', type: 'number', unit: 'km' }, { id: 'c2', name: 'Price', type: 'price', unit: '' }, { id: 'c3', name: 'Cost', type: 'price', unit: '' }],
+                   rows: [['10', '100', '1'], ['20', '90', '2']], items: [], chart: {} });
+  const f2 = await ve(() => window.__VE.state.columns.map(c => c.name + ':' + c.type).join(', '));
+  check('f2 a column set is put in shape: one Price first, one Data year last', f2 === 'Price:price, Km:number, Cost:number, Data year:datayear', f2);
+  const f2r = await ve(() => window.__VE.state.rows[0].join('|'));
+  check('f2b the rows follow their columns', f2r === '100|10|1|', f2r);
+
+  await ve(() => window.__VE.applyQuickStart('camry'));
+  await page.waitForTimeout(400);
+  const f3 = await ve(() => {
+    const row = document.querySelector('#gridWrap tbody tr');
+    const price = row.querySelector('td.t-price'), odo = row.querySelectorAll('td.t-number')[0];
+    return { p: price.querySelector('.prefix').textContent + ' ' + price.querySelector('input').value,
+             o: odo.querySelector('input').value + ' ' + odo.querySelector('.suffix').textContent,
+             raw: window.__VE.state.rows[0][0] + '|' + window.__VE.state.rows[0][2],
+             ask: document.querySelector('#itemList .item-ask').value };
+  });
+  check('f3 table figures show a prefix, a suffix and thousands separators; the state keeps plain numbers',
+        f3.p === '$ 25,100' && f3.o === '91,500 km' && f3.raw === '25100|91500' && f3.ask === '29,990', JSON.stringify(f3));
+
+  const fitBefore = await page.textContent('#kpiFit');
+  await ve(() => { const el = document.querySelector('#gridWrap tbody tr td.t-price input'); el.value = '9999999'; el.dispatchEvent(new Event('input', { bubbles: true })); });
+  await page.waitForTimeout(200);
+  const f4 = await ve(() => ({ shown: document.querySelector('#gridWrap tbody tr td.t-price input').value, raw: window.__VE.state.rows[0][0] }));
+  check('f4 a typed price is grouped as it is typed and saved plain', f4.shown === '9,999,999' && f4.raw === '9999999', JSON.stringify(f4));
+  const gate = await ve(() => ({ stale: document.body.classList.contains('is-stale'), ring: document.getElementById('valuateBtn').classList.contains('needs-run'), fit: document.getElementById('kpiFit').textContent }));
+  check('f5 an edit marks the answer out of date and leaves it alone', gate.stale && gate.ring && gate.fit === fitBefore, JSON.stringify(gate));
+  await page.click('#valuateBtn');
+  await page.waitForTimeout(300);
+  const after = await ve(() => ({ stale: document.body.classList.contains('is-stale'), fit: document.getElementById('kpiFit').textContent }));
+  check('f6 Valuate runs the model on what was entered', !after.stale && after.fit !== fitBefore, `${fitBefore} -> ${after.fit}`);
+
+  await ve(() => { const st = window.__VE.state; st.items = st.items.slice(0, 1); window.__VE.state = st; });
+  await page.waitForTimeout(400);
+  const f7 = await ve(() => ({ hidden: document.getElementById('holdWrap').hidden, note: document.getElementById('chartNote').textContent }));
+  check('f7 with one item, Hold others at is hidden and the chart holds at that item', f7.hidden && /held at 2021 Ascent/.test(f7.note), JSON.stringify(f7));
+  await ve(() => window.__VE.applyQuickStart('camry'));
+  await page.waitForTimeout(400);
+  check('f7b with two items, Hold others at is offered', await ve(() => !document.getElementById('holdWrap').hidden));
+  const heads = await ve(() => [...document.querySelectorAll('#itemsTableWrap th')].map(t => t.textContent).join(','));
+  check('f8 the items table has no Note column', !/Note/.test(heads), heads);
+  const eq = await ve(() => window.__VE.compute() && document.getElementById('equation').textContent);
+  check('f9 without KaTeX the equation falls back to plain text', /^P = [\d,.]+ [−+] /.test(eq), eq.slice(0, 60));
 }
 
 check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
