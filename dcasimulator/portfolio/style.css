@@ -17,11 +17,10 @@
 .sec-card.drag-over{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
 
 /* Read-only asset row (Assets subtab): assets are defined in the Data tab, so a row
-   can only be dragged to reorder or removed via the ✕ button — no inline editing. */
+   can only be dragged to reorder or removed with the bin, with no inline editing. */
 .sec-row-item{display:flex;align-items:center;gap:8px;padding:9px 11px}
 .sec-row-item .sec-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sec-del-x{flex-shrink:0;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;padding:0;border:1px solid rgba(230,57,57,.25);background:rgba(230,57,57,.12);color:#FF8B8B;border-radius:7px;cursor:pointer;font-family:inherit;transition:background .15s,border-color .15s}
-.sec-del-x:hover{background:rgba(230,57,57,.28);border-color:rgba(230,57,57,.5)}
+
 
 /* Target-weight pie + editable table (Rebalancing subtab).
    Pie and table sit side by side; the pie is kept compact (a fixed 120px so its
@@ -81,9 +80,7 @@
 
 /* Copy & Delete grouped on the side, stacked vertically and divided from the tabs */
 .pf-bar-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding-left:9px;border-left:1px solid var(--border)}
-.pf-act-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer;font-family:inherit;padding:0;transition:all .15s}
-.pf-act-btn:hover{border-color:var(--accent2);color:var(--accent2)}
-.pf-act-btn.pf-act-del:hover{border-color:var(--negative-em);color:var(--negative-em)}
+.pf-act-btn{min-width:30px;height:30px}
 
 /* Portfolio chooser on the Detailed Breakdown header (drives every subsection) */
 /* Sized by its own content inside the export cluster (see the DCA simulator). */
@@ -130,8 +127,8 @@
 .method-collapsed{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--accent);background:rgba(141,187,255,.08);border-radius:9px;margin-top:6px}
 .method-collapsed-text{flex:1;min-width:0;font-size:.8rem;line-height:1.4;color:var(--muted)}
 .method-collapsed-text strong{display:block;color:var(--text);font-weight:700;font-size:.86rem;margin-bottom:1px}
-/* Pencil edit button to re-open the full method list; compact square icon. */
-.method-change-btn{flex-shrink:0;font-size:.95rem;line-height:1;padding:6px 9px;white-space:nowrap}
+/* Pencil (shared .btn-bare) re-opens the full method list. */
+.method-change-btn{margin:-4px -6px 0 0}
 
 /* Rule-Based deploy triggers: one compact card per asset (Rebalancing subtab) */
 #triggerTableWrap{display:flex;flex-direction:column;gap:8px;margin-top:4px}

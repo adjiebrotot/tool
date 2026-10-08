@@ -63,8 +63,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .stage-row .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
 .stage-head{display:flex;align-items:center;gap:7px;}
 .stage-head .stage-name{flex:1;min-width:0;}
-.stage-del{background:transparent;color:var(--negative-em);border:1px solid var(--data-neg-border);border-radius:var(--radius-sm);padding:5px 9px;font-size:.75rem;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit;}
-.stage-del:hover{background:var(--negative-bg);}
+
 .stage-ages{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .stage-lbl{font-size:.8rem;color:var(--muted);}
 .stage-ages .num-input{width:5.4em;flex:0 0 auto;}

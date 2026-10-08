@@ -133,7 +133,7 @@
     <div id="poolChipsWrap" style="display:none">
       <div class="pool-chips-head">
         <span class="section-label" style="margin-top:0">Loaded assets</span>
-        <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker and simulated asset">Clear all</button>
+        <button id="clearPoolBtn" class="pool-clear-btn" type="button" data-icon="trash" title="Remove every loaded ticker and simulated asset">Clear all</button>
       </div>
       <div id="poolChips" data-no-abbr style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 18px"></div>
     </div>
@@ -196,8 +196,8 @@
       <div id="scenarioTabs" class="sc-tabs"></div>
       <button class="sc-add-btn" id="addScenarioBtn" title="New scenario" aria-label="New scenario">+</button>
       <div class="sc-bar-actions">
-        <button class="sc-act-btn" id="dupScenarioBtn" title="Copy this scenario" aria-label="Copy this scenario">⧉</button>
-        <button class="sc-act-btn sc-act-del" id="delScenarioBtn" title="Remove this scenario" aria-label="Remove this scenario">✕</button>
+        <button type="button" class="btn-bare sc-act-btn" data-icon="duplicate" id="dupScenarioBtn" title="Duplicate this scenario" aria-label="Duplicate this scenario"></button>
+        <button type="button" class="btn-bare sc-act-btn" data-icon="trash" id="delScenarioBtn" title="Remove this scenario" aria-label="Remove this scenario"></button>
       </div>
     </div>
 
@@ -235,7 +235,7 @@
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-primary" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
     <button class="btn-primary" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>
-    <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
+    <button class="btn-secondary" id="editTickersBtn" data-icon="edit" style="flex:1;display:none">Edit list</button>
   </div>
 </aside>
 

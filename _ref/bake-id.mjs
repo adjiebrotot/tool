@@ -92,7 +92,7 @@ const TOOLS = [
     description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
-    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js'],
+    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'presets.js'],
     extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
     ldJson: [
       {
@@ -190,7 +190,7 @@ const TOOLS = [
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
       ['<a href="../../" class="btn-theme btn-back" data-i18n="btnBack">', '<a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">'],
-      ['title="Upload a sensitivity CSV to rebuild the scenarios"', 'title="Unggah CSV sensitivitas untuk membangun ulang skenario"'],
+      ['title="Open a sensitivity CSV to rebuild the scenarios"', 'title="Buka CSV sensitivitas untuk membangun ulang skenario"'],
       ['title="Compare all scenarios in one chart"', 'title="Bandingkan semua skenario dalam satu grafik"'],
       // The currency picker carries no i18n keys on this page; name the two
       // options whose words differ, as the main page's LANG.id does.

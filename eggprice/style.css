@@ -91,9 +91,7 @@ body.gl3d #eggCanvas{display:block;}
 .pack-table .currency-wrap.cell-eggs .currency-input{padding-left:13px;}
 .c-net.is-best{color:var(--positive-em);font-weight:700;}
 tr.bad .c-gross,tr.bad .c-net{color:var(--negative-em);}
-.row-del{background:none;border:1px solid transparent;color:var(--muted);border-radius:var(--radius-sm);width:30px;height:30px;cursor:pointer;font-size:.9rem;}
-.row-del:hover:not(:disabled){color:var(--negative-em);border-color:var(--negative-border);}
-.row-del:disabled{opacity:.3;cursor:default;}
+.row-del{min-width:30px;height:30px;}
 
 @media (max-width: 900px){
   .math-grid{grid-template-columns:1fr;}

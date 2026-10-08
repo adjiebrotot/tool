@@ -88,6 +88,7 @@ const NB_EPS=0.005, snapNB=v=>Math.abs(v)<=NB_EPS?0:v;
 const HOVER_IDLE='Hover over the chart to inspect a period.';
 
 let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
+let editorApplyTimer=null; // see applyEditorSoon()
 let persist=null; // mini cache handle (assigned at init)
 let editorTermFreq='monthly'; // the frequency the editor's Term field currently shows
 let baseRiskFreeRate=4.5; // global risk-free rate from Base tab
@@ -1279,8 +1280,8 @@ function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
   scenarios.forEach((sc,i)=>{
     const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=scenarioColor(sc,i);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions"><button class="sc-btn" data-action="edit" data-idx="${i}" title="Edit">✎</button><button class="sc-btn" data-action="dup" data-idx="${i}" title="Duplicate">⧉</button><button class="sc-btn del" data-action="del" data-idx="${i}" title="Delete">✕</button></div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
-    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;showEditor(false);}renderScenarioList();rerender();}});});
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions">${SharedIcon.button('edit','Edit','sc-btn',`data-action="edit" data-idx="${i}"`)}${SharedIcon.button('duplicate','Duplicate','sc-btn',`data-action="dup" data-idx="${i}"`)}${SharedIcon.button('trash','Delete','sc-btn',`data-action="del" data-idx="${i}"`)}</div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
+    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;showEditor(false);}else if(editingIdx>idx)editingIdx--;renderScenarioList();rerender();}});});
     const dot=div.querySelector('.sc-dot');
     // The dot sits inside the card, whose own click opens the editor; without
     // this the swatch would open the editor before the colour picker appeared.
@@ -1420,7 +1421,7 @@ function buildSchedRow(kind,p,idx,len){
   const end=isLast
     ?'<b class="sp-to-lbl">1</b>'
     :'<input type="number" class="sp-to" min="1" step="1" value="'+p.toPeriod+'" aria-label="Last '+freqLabel(editorTermFreq)+' of this period" title="Last '+freqLabel(editorTermFreq)+' of this period"/>';
-  const del='<button type="button" class="btn-secondary btn-sm btn-icon sp-delete"'+(len<=1?' disabled':'')+' aria-label="Delete period" title="Delete period">✕</button>';
+  const del=SharedIcon.button('trash','Delete period','sp-delete',len<=1?'disabled':'');
   const head='<div class="sp-head"><span class="sp-range">'+unitCap+' <b class="sp-from">1</b><span class="sp-sep">–</span>'+end+'</span>';
   if(kind==='rate'){
     const f=p.type==='floating';
@@ -1681,6 +1682,7 @@ function editorScenarioDraft(){
 }
 
 function openEditor(idx){
+  saveEditor(); // switching scenarios keeps what the last one was given
   editingIdx=idx;const sc=scenarios[idx];
   if(sc.downPaymentPct===undefined&&sc.downPayment!==undefined){
     sc.downPaymentPct=Math.min(100,Math.max(0,(sc.downPayment/(parseNumInput($('purchaseCost'))||1))*100));
@@ -1720,7 +1722,8 @@ function openEditor(idx){
 }
 
 function saveEditor(){
-  if(editingIdx<0||!editorDraft)return;
+  clearTimeout(editorApplyTimer);
+  if(editingIdx<0||!editorDraft||!scenarios[editingIdx])return;
   readSchedFromDOM('rate');readSchedFromDOM('payment');
   // The Term field is kept in the current frequency's units live (see the
   // scFreq change handler), so the draft already carries the right unit.
@@ -1728,8 +1731,14 @@ function saveEditor(){
   d.name=$('scName').value||'Scenario '+(editingIdx+1);
   if(d.freq!==scenarios[editingIdx].freq)updateTermLabel(d.freq);
   scenarios[editingIdx]=d;
+  $('editorTitle').textContent='Edit: '+d.name;
   renderScenarioList();rerender();
 }
+// Edits apply as they are made, a beat after the last keystroke, so the
+// charts follow the form and closing the editor can never lose work. A click
+// counts too: the rate and repayment switches and the period rows change the
+// draft without firing input or change.
+function applyEditorSoon(){clearTimeout(editorApplyTimer);editorApplyTimer=setTimeout(saveEditor,200);}
 
 // The list and the Add button hide while the editor is open, so it is plain
 // which scenario is being edited and there is nothing else to click into.
@@ -1737,15 +1746,20 @@ function showEditor(open){
   $('scenarioEditor').style.display=open?'block':'none';
   $('tab-scenarios').classList.toggle('editing',open);
 }
-function closeEditor(){editingIdx=-1;editorDraft=null;showEditor(false);renderScenarioList();}
+// Closing keeps what is on the form: anything typed in the last 200ms is
+// applied now rather than dropped.
+function closeEditor(){saveEditor();editingIdx=-1;editorDraft=null;showEditor(false);renderScenarioList();}
 
 /* ─── Events ─── */
 $('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
 $('scColor').addEventListener('input',e=>applyScenarioColor(editingIdx,e.target.value,true));
 $('scColor').addEventListener('change',e=>applyScenarioColor(editingIdx,e.target.value,false));
-$('saveScenarioBtn').addEventListener('click',()=>{saveEditor();closeEditor();});
-$('cancelScenarioBtn').addEventListener('click',closeEditor);
+$('saveScenarioBtn').addEventListener('click',closeEditor);
 $('closeScenarioBtn').addEventListener('click',closeEditor);
+// The colour swatch applies itself (applyScenarioColor), so it stays out.
+['input','change'].forEach(evt=>$('scenarioEditor').addEventListener(evt,e=>{if(e.target.id!=='scColor')applyEditorSoon();}));
+$('scenarioEditor').addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#saveScenarioBtn,#closeScenarioBtn'))applyEditorSoon();});
+$('scenarioEditor').addEventListener('keydown',e=>{if(e.key==='Escape'&&editingIdx>=0){e.preventDefault();closeEditor();}});
 
 // Base RF rate slider
 ['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';rerender();});});

@@ -329,7 +329,7 @@ if(want('financingvscash')){
     await page.selectOption('#scFreq','yearly');
     const amts1 = await page.$$eval('#scPaymentPeriodRows .sp-amt', els=>els.map(e=>e.value));
     eq('fvc F4 each scheduled repayment a month -> a year', amts1.map(n).join(','), amts0.map(v=>Math.round(n(v)*12*100)/100).join(','));
-    await page.click('#cancelScenarioBtn');
+    await page.click('#closeScenarioBtn');
   }
   await page.close();
 }

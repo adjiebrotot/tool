@@ -163,6 +163,8 @@ body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:no
 .winner-label{color:var(--muted);font-weight:700;font-size:.86rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
 .winner-name{font-size:2.05rem;font-weight:800;margin-bottom:22px;word-break:break-word;color:var(--accent-strong);}
 .winner-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.winner-actions .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:7px;}
+.winner-actions .ico{width:16px;height:16px;}
 .winner-hint{color:var(--muted);font-size:.78rem;margin-top:12px;line-height:1.45;}
 
 /* ---------- responsive ---------- */

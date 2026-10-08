@@ -491,20 +491,19 @@
   <div class="right-pane">
     <div class="right-toolbar">
       <span class="pane-title">▸ Generated Code Preview</span>
-      <button class="btn btn-primary" onclick="generateCode()">⚡ Generate Code</button>
-      <button class="btn btn-success" onclick="copyCode()" title="Copy to clipboard" aria-label="Copy">⧉</button>
-      <button class="btn btn-ghost" id="download-btn" onclick="downloadCode()" title="Download script">↓ .py</button>
-      <button class="btn btn-ghost" onclick="exportConfigJSON()" title="Export config JSON">↓ JSON</button>
-      <label class="btn btn-ghost" style="cursor:pointer; position:relative;" title="Import config JSON">
-        ↑ JSON
-        <input type="file" accept=".json" id="import-json-file" onchange="importConfigJSON(event)" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0;" />
+      <button class="btn btn-primary" onclick="generateCode()">▶ Generate Code</button>
+      <button class="btn btn-ghost" onclick="copyCode()" title="Copy to clipboard" aria-label="Copy to clipboard">⧉</button>
+      <button class="btn btn-ghost" id="download-btn" onclick="downloadCode()" title="Download script">⬇ .py</button>
+      <button class="btn btn-ghost btn-io" data-icon="save" onclick="exportConfigJSON()" title="Save this setup to a JSON file" aria-label="Save this setup to a JSON file"></button>
+      <label class="btn btn-ghost btn-io" data-icon="open" style="cursor:pointer; position:relative;" title="Open a saved setup JSON file">
+        <input type="file" accept=".json" id="import-json-file" onchange="importConfigJSON(event)" aria-label="Open a saved setup JSON file" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0;" />
       </label>
-      <button class="btn btn-danger btn-xs" onclick="resetForm()" title="Reset" aria-label="Reset">↺</button>
+      <button class="btn btn-ghost" onclick="resetForm()" title="Reset every field to its default" aria-label="Reset every field to its default">↺</button>
     </div>
     <div id="code-preview-wrapper">
       <pre id="code-preview"><code class="language-python">
 <div class="placeholder-msg">
-  <span class="big">⚡</span>
+  <span class="big">▶</span>
   <span>Configure inputs and click <strong>Generate Code</strong></span>
 </div>
       </code></pre>

@@ -1198,10 +1198,10 @@ function copyPng(){
     try {
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
       btn.textContent = '✓';
+      setTimeout(() => { btn.textContent = original; }, 1400);
     } catch(e){
-      btn.textContent = '✕';
+      alert('PNG copy failed: ' + (e && e.message ? e.message : e));
     }
-    setTimeout(() => { btn.textContent = original; }, 1400);
   });
 }
 

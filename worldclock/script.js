@@ -902,7 +902,7 @@ function zoneLongName(z) {
 }
 function renderCard() {
   const z = cardZone, card = $('placeCard');
-  const close = cardPinned ? '<button class="wc-x" data-close aria-label="Close">✕</button>' : '';
+  const close = cardPinned ? SharedIcon.button('close', 'Close', 'wc-x', 'data-close') : '';
   let html = '<div class="wc-card-head"><div><div class="wc-card-name">' + esc(z.name) + '</div>' +
     (z.name !== z.country ? '<div class="wc-card-country">' + esc(z.country) + '</div>' : '') + '</div>' + close + '</div>';
   if (!z.fmt) {

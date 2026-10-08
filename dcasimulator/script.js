@@ -994,11 +994,11 @@ function renderPoolChips(){
     const warn = (e && e.kind==='stock' && e.source==='stooq');
     const range = (e && e.dates && e.dates.length) ? e.dates[0]+' to '+e.dates[e.dates.length-1] : '';
     const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:'') : range;
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
   }).join('');
   html += simPool.map(s=>{
     const nm=escapeHtml(s.name);
-    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}<button class="pool-chip-del" type="button" data-sim="${nm}" title="Remove ${nm}" aria-label="Remove ${nm}">×</button></span>`;
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
   }).join('');
   box.innerHTML = html;
   box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -1039,7 +1039,7 @@ function refreshTickerSelect(){
   updateSimBtnState();
 }
 
-// Loading is additive and individual tickers are removed via the chip ✕, so the
+// Loading is additive and individual tickers are removed with the chip's bin, so the
 // input is never locked - it always stays open for adding the next batch.
 function setPoolLocked(_locked){
   const inp = $('tickerPoolInput'), editBtn = $('editTickersBtn');

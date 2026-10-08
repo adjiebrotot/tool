@@ -117,8 +117,8 @@
                 <span><span class="load-method-kicker">Method</span>Drop JSON file</span>
               </button>
               <div class="method-body">
-                <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload JSON file">
-                  <span class="drop-zone-icon">🗂️</span>
+                <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Open a JSON file">
+                  <span class="drop-zone-icon" data-icon="open"></span>
                   <div class="drop-zone-text">
                     Drop a JSON file here, or <strong id="browseBtn">click to browse</strong>
                   </div>
@@ -183,7 +183,7 @@
           <div class="controls-row">
             <button class="btn-secondary" id="expandAllBtn" style="flex:1">Expand All</button>
             <button class="btn-secondary" id="collapseAllBtn" style="flex:1">Collapse All</button>
-            <button class="btn-danger" id="clearBtn">✕</button>
+            <button class="btn-secondary btn-clear" id="clearBtn" data-icon="trash" title="Clear the loaded JSON" aria-label="Clear the loaded JSON"></button>
           </div>
           <div class="toggle-row" title="Show only one representative example per array to reveal the JSON structure without the repeated data.">
             <span class="toggle-label">Schema Mode</span>
@@ -233,7 +233,7 @@
             <button class="btn-zoom" id="zoomOutBtn" title="Zoom out (−)">−</button>
             <span class="zoom-level" id="zoomLevel" title="Click to reset zoom">100%</span>
             <button class="btn-zoom" id="zoomInBtn" title="Zoom in (+)">+</button>
-            <button class="btn-zoom-fit" id="zoomFitBtn" title="Reset view">⊡ Reset</button>
+            <button class="btn-zoom-fit" id="zoomFitBtn" title="Reset view">⟳ Reset</button>
           </div>
         </div>
       </div>

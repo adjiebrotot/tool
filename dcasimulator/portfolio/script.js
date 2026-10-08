@@ -540,11 +540,11 @@ function renderPoolChips(){
     const warn=(e && e.kind==='stock' && e.source==='stooq');
     const range=(e && e.dates && e.dates.length)?e.dates[0]+' to '+e.dates[e.dates.length-1]:'';
     const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:''):range;
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
   }).join('');
   html+=simPool.map(s=>{
     const nm=escapeHtml(s.name);
-    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}<button class="pool-chip-del" type="button" data-sim="${nm}" title="Remove ${nm}" aria-label="Remove ${nm}">×</button></span>`;
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
   }).join('');
   box.innerHTML=html;
   box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -620,7 +620,7 @@ function refreshRfTickerSelect(){
   sel.value=cur;
 }
 
-// Loading is additive and individual tickers are removed via the chip ✕, so the
+// Loading is additive and individual tickers are removed with the chip's bin, so the
 // input is never locked - it always stays open for adding the next batch.
 function setPoolLocked(_locked){
   const inp=$('tickerPoolInput'), editBtn=$('editTickersBtn');
@@ -926,7 +926,7 @@ function renderAssetList(){
   }
   // Assets are defined in the Data tab (real tickers or simulated assets); here they
   // are only referenced. Each row is therefore read-only and can only be dragged to
-  // reorder (which sets the Composition stacking order) or removed with the ✕ button.
+  // reorder (which sets the Composition stacking order) or removed with the bin.
   el.innerHTML='';
   p.assets.forEach(a=>{
     const card=document.createElement('div');
@@ -937,7 +937,7 @@ function renderAssetList(){
         <span class="color-dot" style="background:${assetColor(a)}"></span>
         <span class="sec-name">${escapeHtml(a.name)}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
-        <button class="sec-del-x" id="aDel${a.id}" title="Remove asset" aria-label="Remove asset">×</button>
+        ${SharedIcon.button('trash', 'Remove asset', 'sec-del-x', `id="aDel${a.id}"`)}
       </div>`;
     el.appendChild(card);
 

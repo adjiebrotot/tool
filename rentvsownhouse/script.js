@@ -1634,7 +1634,7 @@ function buildRatePeriodRow(p, idx){
         <option value="fixed"${!floating?' selected':''}>${T('optFixed')}</option>
         <option value="floating"${floating?' selected':''}>${T('optFloating')}</option>
       </select>
-      <button type="button" class="btn-secondary btn-sm btn-icon rp-delete" ${S.ratePeriods.length<=1?'disabled':''} aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
+      ${SharedIcon.button('trash', T('btnDelete'), 'rp-delete', S.ratePeriods.length<=1?'disabled':'')}
     </div>
     <div class="rp-rates">
       <span class="rp-fixed-wrap" style="${floating?'display:none':''}">
@@ -1775,7 +1775,7 @@ function buildCostItemRow(key, item, idx, count){
   row.innerHTML = `
     <div class="ci-head">
       <input type="text" class="ci-name" placeholder="${T('phCostName')}" value="${String(item.name||'').replace(/"/g,'&quot;')}"/>
-      <button type="button" class="cagr-btn delete ci-delete" ${count<=1?'disabled':''} aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
+      ${SharedIcon.button('trash', T('btnDelete'), 'ci-delete', count<=1?'disabled':'')}
     </div>
     <div class="ci-line">
       <div class="currency-wrap">
@@ -1896,7 +1896,7 @@ function buildCagrRow(year='', price=''){
   row.innerHTML = `
     <input type="number" placeholder="${T('phCagrYear')}" class="cagr-year" min="1800" max="2200" step="1" value="${year}"/>
     <input type="text" inputmode="numeric" placeholder="${T('phCagrPrice')}" class="cagr-price money-input" data-money="true" data-min="0" data-max="1000000000000" value="${price}"/>
-    <button class="cagr-btn delete cagr-delete" type="button" aria-label="${T('btnDelete')}" title="${T('btnDelete')}">✕</button>
+    ${SharedIcon.button('trash', T('btnDelete'), 'cagr-delete')}
   `;
   const priceEl = row.querySelector('.cagr-price');
   formatMoneyInput(priceEl);

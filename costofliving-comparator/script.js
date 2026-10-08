@@ -515,8 +515,8 @@ function buildCityPicker(containerId, currentKey, onSelect){
   const drop = document.createElement('div');
   drop.className='city-dropdown';
   const btnClear=document.createElement('button');
-  btnClear.type='button'; btnClear.className='city-clear'; btnClear.textContent='×';
-  btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear');
+  btnClear.type='button'; btnClear.className='city-clear'; btnClear.innerHTML=SharedIcon.svg('clear');
+  btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear'); btnClear.title='Clear';
   btnClear.addEventListener('mousedown',e=>{
     e.preventDefault();
     input.value=''; input.classList.remove('has-value');
@@ -1171,7 +1171,7 @@ function buildDetailHTML(fromCity,toCities){
     <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:4px;">
       ${gripHtml(i+1,'Drag to move this city. Drop it first to make it the From city, keeping its figures.')}
       <span>🏁 DESTINATION ${i+1}</span>
-      <button class="btn-remove rmv-city-btn" data-ci="${i}" title="Remove destination">✕</button>
+      ${SharedIcon.button('trash', 'Remove destination', 'sm rmv-city-btn', `data-ci="${i}"`)}
     </div>
     <div class="city-picker" id="dtToPicker${i}" style="min-width:140px;"></div>
     <div class="sub-num" style="margin-top:3px;">${destCurr}</div>
@@ -1280,7 +1280,7 @@ function buildDetailHTML(fromCity,toCities){
       </td>`;
     });
 
-    cols+=`<td><button class="btn-remove rmv-row-btn" data-ri="${ri}">${S.detailRows.length>1?'✕':''}</button></td>`;
+    cols+=`<td>${S.detailRows.length>1?SharedIcon.button('trash', 'Remove this row', 'rmv-row-btn', `data-ri="${ri}"`):''}</td>`;
     return`<tr data-ri="${ri}">${cols}</tr>`;
   }).join('');
 

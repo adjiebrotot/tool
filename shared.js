@@ -877,6 +877,72 @@
 
   global.SharedConfig = { download: downloadJson, upload: uploadJson };
 
+  /* ── SharedIcon: one picture per job, on every tool ──────────────────────
+     A reader who learns a button on one tool should read it on the next, so
+     the icons that carry a meaning are drawn once, here:
+
+       close      ✕   dismiss a panel, a modal or a card. Nothing is lost.
+       trash      bin delete a row, a scenario, a chip, a loaded file.
+       duplicate  two sheets and a plus: add a copy of this item beside it.
+       edit       pencil: open this item for editing.
+       clear      backspace key: empty the text field it sits in.
+       reset      anticlockwise arrow: put this value back to its default.
+       save       floppy disk: write the work to a file.
+       open       open folder: read a file from this device.
+       view       eye: show the rendered result instead of its source.
+
+     ✕ never deletes and the bin never closes; that is the whole point. Two
+     ways to use it:
+
+         SharedIcon.svg('trash')                       // markup for a template
+         SharedIcon.button('trash', 'Remove this row', 'row-del', 'data-i="3"')
+         <button class="btn-bare" data-icon="trash" …>  // static markup,
+                                                         // filled at load
+
+     button() builds a .btn-bare (no fill, no border, tinted on hover; the
+     bin's hover is red). A labelled button can carry data-icon too and the
+     icon is placed before its text. See "Buttons and icons" in
+     _ref/design-reference.md for the full vocabulary.                     */
+  function makeIcon(){
+    var PATHS = {
+      close: '<path d="M6 6l12 12M18 6 6 18" stroke-width="2"/>',
+      trash: '<path d="M4 6.5h16"/><path d="M9 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h3.4A1.3 1.3 0 0 1 15 4.8v1.7"/><path d="M6.2 6.5l.8 12.2a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8l.8-12.2"/><path d="M10 10.5v6M14 10.5v6"/>',
+      duplicate: '<rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 8.5V5.7a2.2 2.2 0 0 0-2.2-2.2H5.7a2.2 2.2 0 0 0-2.2 2.2v7.6a2.2 2.2 0 0 0 2.2 2.2h2.8"/><path d="M14.5 11.9v5.2M11.9 14.5h5.2"/>',
+      edit: '<path d="M16.4 4a2.1 2.1 0 0 1 3 3L8 18.4l-4.3 1.2L4.9 15.3z"/><path d="M14.4 6l3 3"/>',
+      clear: '<path d="M8.7 5h10.8A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5H8.7a1.5 1.5 0 0 1-1.15-.54L2.6 12l4.95-6.46A1.5 1.5 0 0 1 8.7 5z"/><path d="M11.6 9.6l4.8 4.8M16.4 9.6l-4.8 4.8"/>',
+      reset: '<path d="M4.2 12a7.8 7.8 0 1 0 2.3-5.5"/><path d="M4.2 3.8v4.6h4.6"/>',
+      save: '<path d="M5 3.5h11.2L20.5 7.8V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z"/><path d="M7.5 3.5v5h8v-5"/><rect x="7" y="13" width="10" height="7.5" rx=".6"/>',
+      open: '<path d="M3.5 19V6a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2.2H18a1.5 1.5 0 0 1 1.5 1.5V10"/><path d="M3.5 19l2.6-7.4A1.5 1.5 0 0 1 7.5 10.6h13.1a1 1 0 0 1 .95 1.3L19.3 18.5a1.5 1.5 0 0 1-1.4 1H3.5"/>',
+      view: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>'
+    };
+    function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+    function svg(name){
+      var p = PATHS[name];
+      if(!p) return '';
+      return '<svg class="ico ico-' + name + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + p + '</svg>';
+    }
+    // A bare icon button, as markup. label is its tooltip and accessible name.
+    function button(name, label, cls, attrs){
+      var c = 'btn-bare' + (name === 'trash' ? ' is-delete' : '') + (cls ? ' ' + cls : '');
+      return '<button type="button" class="' + c + '" title="' + esc(label) + '" aria-label="' + esc(label) + '"' +
+        (attrs ? ' ' + attrs : '') + '>' + svg(name) + '</button>';
+    }
+    // Static markup names its icon with data-icon; this puts the drawing in,
+    // before any text the button already carries. Safe to run twice.
+    function hydrate(root){
+      var els = (root || document).querySelectorAll('[data-icon]');
+      for(var i = 0; i < els.length; i++){
+        var el = els[i], name = el.getAttribute('data-icon');
+        if(!PATHS[name] || el.querySelector(':scope > .ico')) continue;
+        el.insertAdjacentHTML('afterbegin', svg(name));
+        if(name === 'trash' && el.classList.contains('btn-bare')) el.classList.add('is-delete');
+        if(/\S/.test(el.textContent)) el.classList.add('has-ico'); // icon and a word
+      }
+    }
+    return { svg: svg, button: button, hydrate: hydrate, names: Object.keys(PATHS) };
+  }
+  global.SharedIcon = makeIcon();
+
   /* ── SharedScenario — save the scenario to a file, open it again tomorrow ──
      Two small icon buttons (a floppy disk and an open folder) that write every
      input on the page to a JSON file and read one back. The mini cache already
@@ -896,8 +962,8 @@
      options — tool (file tag and default file name), persist | save+load,
                filename, onError(message), onLoaded().                        */
   function makeScenario(){
-    var ICON_SAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3.5h11.2L20.5 7.8V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z"/><path d="M7.5 3.5v5h8v-5"/><rect x="7" y="13" width="10" height="7.5" rx=".6"/></svg>';
-    var ICON_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 19V6a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2.2H18a1.5 1.5 0 0 1 1.5 1.5V10"/><path d="M3.5 19l2.6-7.4A1.5 1.5 0 0 1 7.5 10.6h13.1a1 1 0 0 1 .95 1.3L19.3 18.5a1.5 1.5 0 0 1-1.4 1H3.5"/></svg>';
+    var ICON_SAVE = global.SharedIcon.svg('save');
+    var ICON_OPEN = global.SharedIcon.svg('open');
     var TEXT = {
       en: { save: 'Save scenario to a file', load: 'Open a saved scenario file',
             wrong: 'That file is not a saved scenario for this tool.',
@@ -3353,7 +3419,57 @@
   }
   global.SharedColDrag = makeColDrag();
 
+  /* ── SharedReach: a sticky sidebar ends on screen ────────────────────────
+     A control card is sticky with max-height:calc(100vh - 32px), which is
+     right once it has stuck to the top of the window. Before that, at page
+     load, it starts below the header, so its last ~150px hang under the fold:
+     exactly where Simulate, Done and the Reset/Clear row live. A reader who
+     has not scrolled could not see the button the whole form leads to.
+
+     This sizes the card to the room it really has, from wherever its top is
+     now to 16px above the window's bottom, and re-sizes it as the page
+     scrolls until the card sticks and the CSS figure takes over. It touches
+     only what is already sticky and already capped, so a phone layout (static,
+     max-height:none) is left alone. */
+  function initReach(){
+    var SEL = '.controls, .sidebar';
+    var cards = [], queued = false, remeasure = true;
+    // On load and resize: learn each card's own CSS cap (it follows the
+    // viewport), with this module's figure taken off first.
+    function measure(){
+      cards = [];
+      var els = document.querySelectorAll(SEL);
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        el.style.maxHeight = '';
+        var cs = getComputedStyle(el);
+        if (cs.position !== 'sticky' || cs.maxHeight === 'none') continue;
+        cards.push({ el: el, gap: parseFloat(cs.top) || 16, cap: parseFloat(cs.maxHeight) });
+      }
+    }
+    // On scroll: one read and one write per card.
+    function fit(){
+      queued = false;
+      if (remeasure) { remeasure = false; measure(); }
+      for (var i = 0; i < cards.length; i++) {
+        var c = cards[i];
+        var room = global.innerHeight - Math.max(c.gap, c.el.getBoundingClientRect().top) - c.gap;
+        var want = room > 160 && room < c.cap ? Math.floor(room) + 'px' : '';
+        if (c.el.style.maxHeight !== want) c.el.style.maxHeight = want;
+      }
+    }
+    function queue(){ if (!queued) { queued = true; requestAnimationFrame(fit); } }
+    function requeue(){ remeasure = true; queue(); }
+    global.addEventListener('scroll', queue, { passive: true });
+    global.addEventListener('resize', requeue);
+    global.addEventListener('load', requeue);
+    queue();
+  }
+  global.SharedReach = { init: initReach };
+
   function initShared(){
+    global.SharedIcon.hydrate();
+    initReach();
     initTooltip();
     global.SharedAbbr.init();
     initFit();
