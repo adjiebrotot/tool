@@ -66,7 +66,7 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .rp-years b{color:var(--text);font-family:'DM Mono',monospace;font-weight:600;}
 .rp-sep{color:var(--muted);}
 /* Shared design-system select, sized down for the compact schedule row. */
-.rp-head .rp-type{flex:1;min-width:0;width:auto;font-size:.8rem;font-weight:600;padding:6px 26px 6px 9px;background-position:right 8px center;}
+.rp-head .rp-type{flex:1;min-width:0;width:auto;font-size:.8rem;padding:6px 9px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .rate-period-row input[type=number]{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
 .rate-period-row input[type=number]:focus{border-color:var(--accent);}
 .rp-years .rp-to{width:4.4em;flex-shrink:0;}
@@ -89,7 +89,7 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .ci-line .currency-wrap{flex:1;min-width:0;}
 .ci-line .currency-input{width:100%;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px 6px 32px;outline:none;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
 .ci-line .currency-input:focus{border-color:var(--accent);}
-.ci-line select{flex-shrink:0;max-width:55%;font-size:.8rem;padding:6px 8px;cursor:pointer;}
+.ci-line select{flex-shrink:0;max-width:55%;font-size:.8rem;padding:6px 8px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .ci-infl-wrap{justify-content:flex-start;}
 .ci-infl-label{font-size:.78rem;color:var(--muted);}
 .ci-infl{width:5.2em;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
@@ -205,7 +205,7 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 /* ── Redesign: shared skeleton fit ── */
 .field-row .slider-head{margin-bottom:6px;}
 .field-row .slider-head .field-label{flex:1 1 auto;}
-.input-row .sel-input{width:auto;flex:0 0 auto;padding:10px 30px 10px 12px;background-position:right 10px center;}
+.input-row .sel-input{width:auto;flex:0 0 auto;padding:10px 12px;}
 .input-row .sel-unit{min-width:4.2em;}
 .chart-card>.sub{color:var(--muted);font-size:.8rem;margin:-2px 0 0;line-height:1.4;}
 .detail-section .detail-head{margin-bottom:4px;}

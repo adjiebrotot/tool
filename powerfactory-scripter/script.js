@@ -424,7 +424,8 @@ class PFComboBox {
 
     // Portal: append to body so it's never clipped by any ancestor
     this.drop = document.createElement('div');
-    this.drop.className = 'pf-combo-drop';
+    this.drop.className = 'combo-list pf-combo-drop';
+    this.drop.setAttribute('role', 'listbox');
     document.body.appendChild(this.drop);
 
     this.input.addEventListener('input',   () => this._refresh());
@@ -436,20 +437,9 @@ class PFComboBox {
   }
 
   _position() {
-    const r = this.input.getBoundingClientRect();
-    const dropW = Math.max(r.width, 270);
-    const left  = Math.min(r.left, window.innerWidth - dropW - 8);
-    this.drop.style.left     = `${Math.max(4, left)}px`;
-    this.drop.style.minWidth = `${r.width}px`;
-    this.drop.style.width    = `${dropW}px`;
-    const below = window.innerHeight - r.bottom;
-    if (below >= 160 || below >= r.top) {
-      this.drop.style.top    = `${r.bottom + 3}px`;
-      this.drop.style.bottom = 'auto';
-    } else {
-      this.drop.style.top    = 'auto';
-      this.drop.style.bottom = `${window.innerHeight - r.top + 3}px`;
-    }
+    // The site's shared placement (dropdown.js): under the field, or over it
+    // when short of room, at least 270px wide and kept on screen.
+    SharedDropdown.place(this.input, this.drop, { minWidth: 270, maxHeight: 260 });
   }
 
   _refresh() {
@@ -461,15 +451,16 @@ class PFComboBox {
     this.drop.innerHTML = '';
     this.items.forEach((item, i) => {
       const el = document.createElement('div');
-      el.className = 'pf-combo-item';
-      const unit = item.unit ? `<span class="item-unit"> · ${item.unit}</span>` : '';
-      const desc = item.desc ? `<span class="item-meta">${escHtml(item.desc)}${unit}</span>` : '';
-      el.innerHTML = `<span class="item-var">${escHtml(item.var)}</span>${desc}`;
+      el.className = 'combo-opt';
+      el.setAttribute('role', 'option');
+      const desc = item.desc ? `<span class="combo-sub">${escHtml(item.desc)}</span>` : '';
+      const unit = item.unit ? `<span class="combo-chip">${escHtml(item.unit)}</span>` : '';
+      el.innerHTML = `<span class="combo-text"><span class="combo-main">${escHtml(item.var)}</span>${desc}</span>${unit}`;
       el.addEventListener('mousedown', e => { e.preventDefault(); this._pick(i); });
       this.drop.appendChild(el);
     });
-    this._position();
     this.drop.style.display = 'block';
+    this._position();
   }
 
   _close() {
@@ -495,7 +486,7 @@ class PFComboBox {
 
   _highlight() {
     Array.from(this.drop.children).forEach((el, i) =>
-      el.classList.toggle('active', i === this.active));
+      el.classList.toggle('focused', i === this.active));
     if (this.active >= 0)
       this.drop.children[this.active]?.scrollIntoView({ block: 'nearest' });
   }
@@ -1261,7 +1252,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
   return `
     <div class="output-var-header">
       <span class="ov-index">#?</span>
-      <select style="width:160px;font-size:12px;padding:3px 6px;" id="${id}-type" onchange="onOutputTypeChange('${id}')">
+      <select style="width:160px;font-size:12px;padding:3px 26px 3px 6px;" id="${id}-type" onchange="onOutputTypeChange('${id}')">
         <option value="attribute" ${type==='attribute'?'selected':''}>Scalar</option>
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>

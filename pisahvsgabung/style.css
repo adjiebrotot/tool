@@ -42,11 +42,6 @@
     .field-sub{color:var(--muted);font-size:12px;line-height:1.4;margin-top:2px}
     .num-input,.currency-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color 150ms}
     .num-input:focus,.currency-input:focus{border-color:var(--accent);background:var(--panel)}
-    select.num-input{appearance:auto;cursor:pointer}
-    .num-input option{background:#1a2340;color:#e8eefc}
-    body.light .num-input option{background:#ffffff;color:#1a2340}
-    .sel-input option{background:#1a2340;color:#e8eefc}
-    body.light .sel-input option{background:#ffffff;color:#1a2340}
     .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;transition:all 150ms;white-space:nowrap;}
     .btn-theme:hover{border-color:var(--accent);color:var(--text);}
     .btn-primary{background:var(--accent);color:var(--panel);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:600;cursor:pointer;font-size:14px;transition:background 150ms,transform 150ms}

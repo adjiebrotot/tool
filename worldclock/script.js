@@ -1100,9 +1100,9 @@ function renderPicker() {
   }
   pickFocus = -1;
   pickEls.list.innerHTML = pickItems.length
-    ? pickItems.map((e, i) => '<div class="city-opt" role="option" data-i="' + i + '"><div>' + esc(e.label) + '</div><div class="opt-sub">' +
-        esc([e.sub, gmt(e.z ? e.z.off : userOff)].filter(Boolean).join(' · ')) + '</div></div>').join('')
-    : '<div class="city-empty">No place found. Try a country name.</div>';
+    ? pickItems.map((e, i) => '<div class="city-opt combo-opt" role="option" data-i="' + i + '"><span class="combo-text"><span class="combo-main">' +
+        esc(e.label) + '</span><span class="combo-sub">' + esc([e.sub, gmt(e.z ? e.z.off : userOff)].filter(Boolean).join(' · ')) + '</span></span></div>').join('')
+    : '<div class="combo-empty">No place found. Try a country name.</div>';
   pickEls.list.classList.add('open');
 }
 function choosePick(i) {

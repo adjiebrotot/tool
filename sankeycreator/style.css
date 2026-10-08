@@ -104,9 +104,8 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0}
 .radio-opt{display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 10px;border-radius:999px;border:1px solid var(--border);font-size:.8rem;font-weight:600;color:var(--muted);transition:all 150ms;background:var(--input-bg);user-select:none}
 .radio-opt:has(input:checked){border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
 .radio-opt input{display:none}
-select.sel-in{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.86rem;padding:6px 10px;outline:none;cursor:pointer;transition:border-color 150ms;margin-top:4px}
-select.sel-in:focus{border-color:var(--accent)}
-option{background:var(--panel)}
+/* Look from dropdown.css; this only sizes it. */
+select.sel-in{width:100%;font-size:.86rem;padding:7px 10px;border-radius:var(--radius-sm);margin-top:4px}
 
 /* ─── BUTTONS ─── */
 .btn-row{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}

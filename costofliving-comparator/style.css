@@ -73,29 +73,20 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .fx-shock.shocked .fx-shock-reset{visibility:visible;}
 .fx-shock-reset:hover{color:var(--accent-strong);}
 
-/* Custom city dropdown. Field and list follow the design system's select
-   (.ctrl-select / .sel-input): DM Sans, 1.5px border, --radius-sm, accent
-   focus. The font is named, not inherited, since a picker in the detailed
-   table would otherwise pick up the header's DM Mono. */
+/* City picker: a searchable combobox, since 547 cities are too many to
+   scroll. Its field and list are the site's .combo-input / .combo-list
+   (dropdown.css); only the picker's own states and size live here. */
 .city-picker{position:relative;}
-.city-search{width:100%;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.9rem;font-family:'DM Sans',system-ui,sans-serif;font-weight:400;letter-spacing:normal;text-transform:none;color:var(--text);outline:none;transition:border-color var(--motion-fast);}
-.city-search:focus{border-color:var(--accent);}
-.city-search.has-value{border-color:var(--accent-strong);background:var(--positive-bg);padding-right:28px;}
+.city-search{width:100%;}
+.city-search.has-value{border-color:var(--accent-strong);background-color:var(--positive-bg);padding-right:28px;}
 .city-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);line-height:0;padding:4px;display:none;z-index:1;}
 .city-clear .ico{width:16px;height:16px;}
 .city-clear:hover{color:var(--text);background:var(--input-bg);}
 .city-search.has-value~.city-clear{display:block;}
-/* Fixed and sized by placeDrop(), so it can outgrow a narrow column. It sits
-   inside a table header, so undo the header's caps, tracking and no-wrap. */
-.city-dropdown{position:fixed;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:4px;max-height:260px;overflow-x:hidden;overflow-y:auto;z-index:200;display:none;font-family:'DM Sans',system-ui,sans-serif;font-size:0.82rem;font-weight:400;text-transform:none;letter-spacing:normal;color:var(--text);text-align:left;white-space:normal;}
+/* Placed by SharedDropdown.place() so it can outgrow a narrow column and is
+   not clipped by the detailed table's scroller. */
+.city-dropdown{display:none;}
 .city-dropdown.open{display:block;}
-/* Rows read like a select's options: no rules between them, the hovered or
-   arrowed-to row filled with the accent, as .seg-btn.active is. */
-.city-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;border-radius:calc(var(--radius-sm) - 3px);cursor:pointer;line-height:1.35;}
-.city-opt:hover,.city-opt.focused{background:var(--accent);color:var(--text-inv);}
-.city-opt .opt-city{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.city-opt .opt-country{flex-shrink:0;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 8px;border-radius:var(--radius-pill);background:var(--input-bg);border:1px solid var(--border);font-size:0.72rem;font-weight:500;color:var(--muted);}
-.city-opt:hover .opt-country,.city-opt.focused .opt-country{color:inherit;border-color:currentColor;background:transparent;}
 
 /* Inputs - number type (legacy, kept for selects) */
 input[type=number]{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font-size:0.9rem;font-family:'DM Mono',monospace;color:var(--text);outline:none;transition:border-color 150ms;width:100%;}
@@ -111,7 +102,8 @@ input[type=number]:focus{border-color:var(--accent-strong);}
 }
 .num-input:focus { border-color: var(--accent-strong); }
 
-select{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:7px 10px;font-size:0.85rem;font-family:inherit;color:var(--text);outline:none;width:100%;cursor:pointer;}
+/* Selects take dropdown.css's look; sized here for this tool's table. */
+select{padding:7px 10px;font-size:0.85rem;width:100%;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 
 /* Main analysis card */
 .analysis-card{padding:22px 24px;margin-bottom:16px;}
@@ -168,17 +160,17 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .dt .num-input{min-width:90px;padding:5px 8px;font-size:0.82rem;}
 .dt .cat-td{min-width:160px;}
 .dt .num-td{font-family:'DM Mono',monospace;text-align:right;}
-.dt .city-th select{font-size:0.77rem;padding:4px 6px;max-width:160px;}
+.dt .city-th select{font-size:0.77rem;padding:4px 6px;max-width:160px;--sel-pad:22px;--sel-chev:6px;}
 .dt .city-th{min-width:180px;}
 .sub-num{font-size:0.73rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
 /* Custom frequency (detailed mode) */
 .check-opt{display:inline-flex;align-items:center;gap:7px;font-size:0.85rem;font-weight:600;color:var(--text);cursor:pointer;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:5px 12px;user-select:none;}
 .check-opt input{accent-color:var(--accent-strong);margin:0;width:15px;height:15px;cursor:pointer;}
-.dt select.freq-sel{font-size:0.77rem;padding:4px 6px;margin-top:5px;width:auto;max-width:100%;}
+.dt select.freq-sel{font-size:0.77rem;padding:4px 6px;margin-top:5px;width:auto;max-width:100%;--sel-pad:22px;--sel-chev:6px;}
 .qty-line{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:0.77rem;color:var(--muted);flex-wrap:wrap;}
 .dt .qty-line .num-input{width:72px;min-width:0;padding:4px 6px;font-size:0.78rem;}
-.dt .qty-line select{width:auto;font-size:0.77rem;padding:4px 6px;}
+.dt .qty-line select{width:auto;font-size:0.77rem;padding:4px 6px;--sel-pad:22px;--sel-chev:6px;}
 
 /* Buttons */
 .btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;}

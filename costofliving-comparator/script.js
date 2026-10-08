@@ -514,11 +514,12 @@ function buildCityPicker(containerId, currentKey, onSelect){
   if(!wrap) return;
   const current = getCity(currentKey);
   const input = document.createElement('input');
-  input.type='text'; input.className='city-search'; input.placeholder='Search city…';
+  input.type='text'; input.className='city-search combo-input'; input.placeholder='Search city…';
   input.autocomplete='off';
   if(current){input.value=cityDisplay(current);input.classList.add('has-value');}
   const drop = document.createElement('div');
-  drop.className='city-dropdown';
+  drop.className='city-dropdown combo-list';
+  drop.setAttribute('role','listbox');
   const btnClear=document.createElement('button');
   btnClear.type='button'; btnClear.className='city-clear'; btnClear.innerHTML=SharedIcon.svg('clear');
   btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear'); btnClear.title='Clear';
@@ -542,7 +543,10 @@ function buildCityPicker(containerId, currentKey, onSelect){
     }).slice(0,60);
     // City (and state, when the data has one) up front; the country rides in a
     // chip on the right so the list scans by city.
-    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><span class="opt-city">${c.city}</span><span class="opt-country" title="${c.country}">${c.country}</span></div>`).join('');
+    const curKey=current?cityKey(current):'';
+    drop.innerHTML=filtered.length
+      ? filtered.map((c,i)=>{const k=cityKey(c);return `<div class="city-opt combo-opt${k===curKey?' selected':''}" role="option" data-key="${k}" data-idx="${i}"><span class="combo-main">${c.city}</span><span class="combo-chip" title="${c.country}">${c.country}</span></div>`;}).join('')
+      : '<div class="combo-empty">No city matches</div>';
     focusIdx=-1;
     drop.querySelectorAll('.city-opt').forEach(el=>{
       el.addEventListener('mousedown',e=>{
@@ -556,22 +560,10 @@ function buildCityPicker(containerId, currentKey, onSelect){
     });
   }
 
-  // The list is fixed to the viewport so it can be wider than its field and
-  // is not clipped by the detailed table's horizontal scroller.
+  // Placed by the site's shared helper (dropdown.js): fixed to the viewport so
+  // it can be wider than its field and is not clipped by the table scroller.
   function placeDrop(){
-    if(!drop.classList.contains('open'))return;
-    const r=input.getBoundingClientRect(), vw=document.documentElement.clientWidth, vh=window.innerHeight;
-    const w=Math.min(Math.max(r.width,300),vw-16);
-    const left=Math.max(8,Math.min(r.left,vw-w-8));
-    drop.style.width=w+'px'; drop.style.left=left+'px';
-    const below=vh-r.bottom-12, above=r.top-12;
-    if(below<160&&above>below){
-      drop.style.top=''; drop.style.bottom=(vh-r.top+4)+'px';
-      drop.style.maxHeight=Math.min(260,above)+'px';
-    }else{
-      drop.style.bottom=''; drop.style.top=(r.bottom+4)+'px';
-      drop.style.maxHeight=Math.min(260,Math.max(below,120))+'px';
-    }
+    if(drop.classList.contains('open'))SharedDropdown.place(input,drop,{minWidth:300,maxHeight:260});
   }
   drop._place=placeDrop;
   function openDrop(){drop.classList.add('open');placeDrop();}

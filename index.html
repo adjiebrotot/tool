@@ -25,6 +25,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="logos/apple-touch-icon.png">
   <script src="pwa.js" defer></script>
+  <script src="dropdown.js" defer></script>
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Adjie Brotot Tools">
@@ -40,6 +41,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dropdown.css">
 
   <style>
     :root {
@@ -53,6 +55,7 @@
       --border-strong: #C8D4E8;
       --accent: #5A91E8;
       --accent-strong: #3A71C8;
+      --text-inv: #FFFFFF;
       --accent2: #2E9E7A;
       --accent3: #E63939;
       --gold: #B45309;
@@ -354,7 +357,6 @@
       color: var(--text);
     }
 
-    .field select,
     .field input,
     .filter-reset {
       width: 100%;
@@ -378,7 +380,6 @@
 
     .filter-reset:hover,
     .filter-reset:focus-visible,
-    .field select:focus-visible,
     .field input:focus-visible,
     .tool-link:focus-visible,
     .skip-link:focus-visible {
@@ -389,6 +390,15 @@
 
     .filter-reset:hover {
       opacity: 0.85;
+    }
+
+    /* The filters' look is the site's dropdown (dropdown.css); this only
+       sizes them to the row of fields beside them. */
+    .field select {
+      width: 100%;
+      min-height: 44px;
+      font-size: 1rem;
+      padding: 0.7rem 0.95rem;
     }
 
     .results-summary {

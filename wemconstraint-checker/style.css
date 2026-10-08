@@ -56,12 +56,12 @@ body.light .card{background:rgba(255,255,255,.9)}
 .upload-btn:hover{border-color:var(--acc)}
 .upload-btn input[type=file]{display:none}
 .fname{font-size:.74rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
-input[type=number],input[type=text],select{
+input[type=number],input[type=text]{
   background:var(--inp);border:1px solid var(--bdr);border-radius:8px;
   padding:7px 10px;color:var(--txt);font-size:.83rem;font-family:inherit;
   transition:border-color .15s;outline:none}
-input:focus,select:focus{border-color:var(--acc)}
-select option{background:var(--panel);color:var(--txt)}
+input:focus{border-color:var(--acc)}
+/* No selects here today; one added later takes dropdown.css's look. */
 .hint{font-size:.72rem;color:var(--muted);line-height:1.3}
 /* Status bar */
 .tb-status{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px;

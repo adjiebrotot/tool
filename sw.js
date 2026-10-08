@@ -20,7 +20,7 @@ const CDN_MAX = 80;
 
 const PRECACHE = [
   './',
-  'shared.css', 'shared.js', 'light.css', 'dark.css',
+  'shared.css', 'shared.js', 'dropdown.css', 'dropdown.js', 'light.css', 'dark.css',
   'tour-shared.css', 'tour-shared.js', 'pwa.js',
   'manifest.webmanifest',
   'logos/logo.svg', 'logos/icon-192.png', 'logos/icon-512.png',

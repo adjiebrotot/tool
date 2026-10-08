@@ -9,7 +9,8 @@
      .field-group / .group-title  — tinted box that groups related rows
      .num-input      — numeric text input (DM Sans, tabular-nums)
      .txt-input      — free-text input (DM Sans)
-     .sel-input      — <select> dropdown (DM Sans, custom chevron)
+     .sel-input      — <select> dropdown: any select, see dropdown.css
+     .combo-input / .combo-list — a searchable list, see dropdown.css
      .currency-wrap  — wraps a .currency-input with .prefix/.suffix
                         unit labels. Currency symbols are a .prefix
                         (before the number: "Rp", "$"); percentages and
@@ -23,6 +24,8 @@
    use SharedFmt.attachCurrencyInput / SharedFmt.liveFormat from
    shared.js (see <script src="../shared.js"></script>).
    ────────────────────────────────────────────────────────────────────────── */
+@import url('dropdown.css');
+
 
 /* Spinner keyframes */
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -279,13 +282,8 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .currency-wrap .prefix[hidden],.currency-wrap .suffix[hidden]{display:none;}
 
 /* ============================================================
-   SELECT / DROPDOWN
+   SELECT / DROPDOWN: see dropdown.css (imported at the top)
    ============================================================ */
-.sel-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:inherit;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
-.sel-input:focus{border-color:var(--accent);}
-/* CRITICAL: hard-code option colours — browsers ignore CSS variables on <option> */
-.sel-input option{background:#162033;color:#EAF1FF;}
-body.light .sel-input option{background:#ffffff;color:#2D3436;}
 
 /* ============================================================
    RADIO GROUP

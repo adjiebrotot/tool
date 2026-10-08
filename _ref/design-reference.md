@@ -605,32 +605,41 @@ SharedFmt.attachCurrencyInput(document.getElementById('startingValue'), { maxDec
 const value = SharedFmt.parseFormatted(document.getElementById('startingValue').value);
 ```
 
-### Dropdown / Select (`.sel-input`)
+### Dropdowns: one look, two kinds (`dropdown.css`, `dropdown.js`)
+
+Every dropdown on the site, the home page included, comes from one pair of
+files at the root: `dropdown.css` (imported by `shared.css`; the home page links
+it) and `dropdown.js` (loaded just before `shared.js`). Which kind a list gets
+depends on the list, not on the tool:
+
+| The list | Use | Search |
+| --- | --- | --- |
+| Short and fixed: periods, currencies, a scenario, a font, a few loaded tickers | a plain `<select>` | no |
+| Database-sized, painful to scroll one by one: hundreds of cities, time zones, PowerFactory variables | a searchable combobox (`.combo-input` + `.combo-list`) | yes |
+
+If the whole list would fit on the page, it is a plain select. Search is only
+for the database-looking ones.
+
+**A plain select needs no class.** Every `<select>` gets the field look:
+DM Sans named outright (so a select in a mono table cell or an uppercase header
+still matches), weight 500, `--input-bg`, a 1.5px `--border`, `--radius-md`, the
+chevron, and `--accent` on focus. `.sel-input` is the full-width form field and
+`.sel-sm` the compact one. When a select is clicked with a mouse, `dropdown.js`
+opens its list in the shared `.combo-list` panel: no lines between rows, the row
+under the pointer or arrow keys filled with `--accent`, and the chosen row in
+bold. A pick sets the select and fires `input` then `change`, the same as the
+browser's own list, so nothing that reads, sets or saves the select changes.
+Keyboard and touch keep the browser's own picker (screen readers, the phone's
+sheet). Add `data-native` to a select to opt it out.
+
+A tool may **size** a dropdown (width, padding, font-size, `--radius-sm` on a
+compact one, and `--sel-pad` / `--sel-chev` to move the chevron in), but never
+re-colour, re-border or re-font it, and never writes its own `option` colours.
+`_ref/dropdown-check.mjs` holds every page to this.
 
 ```css
-.sel-input {
-  background: var(--input-bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 600;
-  padding: 10px 13px;
-  width: 100%;
-  outline: none;
-  transition: border-color var(--transition-fast);
-  cursor: pointer;
-  appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
-.sel-input:focus { border-color: var(--accent); }
-
-/* CRITICAL: hard-code option colours — browsers ignore CSS variables on <option> */
-.sel-input option            { background: #162033; color: #EAF1FF; }
-body.light .sel-input option { background: #ffffff;  color: #2D3436; }
+/* A compact select in a toolbar or table cell: size only. */
+.ctrl-select { font-size: .82rem; padding: 6px 10px; border-radius: var(--radius-sm); --sel-pad: 26px; --sel-chev: 8px; }
 ```
 
 ### Segmented Control Group (`.seg-group`)
@@ -687,167 +696,36 @@ document.querySelectorAll('[data-val]').forEach(btn => {
 });
 ```
 
-### Searchable Combobox / City Picker (`.city-picker`)
+### Searchable Combobox (`.combo-input` + `.combo-list`)
 
-A fully custom searchable dropdown for selecting from a long list (e.g. cities, accounts,
-symbols). Features live search, clear button, and keyboard support.
+For a database-sized list only (see the table above). The field is a text input
+with `.combo-input`, which looks exactly like a select without the chevron; the
+list is a `.combo-list` of `.combo-opt` rows, the same panel `dropdown.js` uses
+for a plain select. Search matches every typed word anywhere in the row's text
+(city, state, country, currency), so "paris france" works.
 
-#### HTML
+Each row puts its label in `.combo-main`. A short tag that helps scanning (a
+country, a unit) goes in a `.combo-chip` on the right; a second line (a
+description, a UTC offset) goes in a `.combo-sub`, with the two lines wrapped in
+`.combo-text`. Mark the row the arrow keys are on with `.focused`, the current
+value with `.selected`, and say "nothing found" with a `.combo-empty`.
 
 ```html
-<div class="city-block">
-  <label>📍 From city</label>
-  <div class="city-picker" id="fromPicker">
-    <input class="city-search" type="text" placeholder="Search cities…" autocomplete="off" />
-    <button class="city-clear" aria-label="Clear selection">✕</button>
-    <div class="city-dropdown">
-      <!-- Options populated by JS -->
-      <div class="city-opt">
-        <div>New York</div>
-        <div class="opt-sub">United States</div>
-      </div>
-      <div class="city-opt">
-        <div>Sydney</div>
-        <div class="opt-sub">Australia</div>
-      </div>
-    </div>
+<div class="city-picker">
+  <input class="city-search combo-input" type="text" placeholder="Search city…" autocomplete="off">
+  <div class="city-dropdown combo-list" role="listbox">
+    <div class="combo-opt selected" role="option"><span class="combo-main">Santa Barbara, CA</span><span class="combo-chip">United States</span></div>
+    <div class="combo-opt" role="option"><span class="combo-text"><span class="combo-main">Jakarta</span><span class="combo-sub">Indonesia · GMT+7</span></span></div>
   </div>
 </div>
 ```
 
-#### CSS
-
-```css
-/* Container & search input */
-.city-picker { position: relative; }
-.city-search {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: var(--text);
-  outline: none;
-  transition: border-color 150ms;
-}
-.city-search:focus { border-color: var(--accent-strong); }
-
-/* When a value is selected, highlight the input */
-.city-search.has-value { border-color: var(--accent-strong); background: var(--positive-bg); padding-right: 28px; }
-
-/* Clear button (✕) */
-.city-clear {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1;
-  padding: 2px 3px;
-  display: none;
-  z-index: 1;
-}
-.city-clear:hover { color: var(--text); }
-.city-search.has-value ~ .city-clear { display: block; }
-
-/* Dropdown menu */
-.city-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 200;
-  display: none;
-}
-.city-dropdown.open { display: block; }
-
-/* Individual option */
-.city-opt {
-  padding: 7px 12px;
-  font-size: 0.86rem;
-  cursor: pointer;
-  border-bottom: 1px solid var(--border);
-  transition: background 100ms;
-}
-.city-opt:last-child { border-bottom: none; }
-.city-opt:hover, .city-opt.focused { background: var(--positive-bg); color: var(--positive-em); }
-
-/* Subtitle (e.g. country) */
-.city-opt .opt-sub { font-size: 0.75rem; color: var(--muted); }
-```
-
-#### JavaScript (Pattern)
-
-```js
-const cities = [
-  { name: 'New York', sub: 'United States', value: 'nyc' },
-  { name: 'Sydney', sub: 'Australia', value: 'syd' },
-  { name: 'London', sub: 'United Kingdom', value: 'lon' },
-  // ...
-];
-
-const picker = document.getElementById('fromPicker');
-const search = picker.querySelector('.city-search');
-const dropdown = picker.querySelector('.city-dropdown');
-const clearBtn = picker.querySelector('.city-clear');
-let selectedValue = null;
-
-function renderOptions(filter = '') {
-  dropdown.innerHTML = cities
-    .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
-    .map(c => `
-      <div class="city-opt" data-value="${c.value}">
-        <div>${c.name}</div>
-        <div class="opt-sub">${c.sub}</div>
-      </div>
-    `).join('');
-
-  picker.querySelectorAll('.city-opt').forEach(opt => {
-    opt.addEventListener('click', () => {
-      selectedValue = opt.dataset.value;
-      search.value = cities.find(c => c.value === selectedValue).name;
-      search.classList.add('has-value');
-      dropdown.classList.remove('open');
-    });
-  });
-}
-
-search.addEventListener('input', (e) => {
-  renderOptions(e.target.value);
-  dropdown.classList.add('open');
-});
-
-search.addEventListener('focus', () => {
-  renderOptions(search.value);
-  dropdown.classList.add('open');
-});
-
-document.addEventListener('click', (e) => {
-  if (!picker.contains(e.target)) dropdown.classList.remove('open');
-});
-
-clearBtn.addEventListener('click', () => {
-  search.value = '';
-  selectedValue = null;
-  search.classList.remove('has-value');
-  dropdown.classList.remove('open');
-  renderOptions();
-});
-
-renderOptions();
-```
+The tool keeps only the picker's own states (`.has-value`, the clear button) and
+where the list sits. Put it under its field with
+`SharedDropdown.place(input, list, {minWidth: 300})` on open, scroll and resize:
+it is fixed to the viewport, so a narrow column or a scrolling table cannot clip
+it or squeeze it. Working examples: the Cost of Living Comparator's city picker,
+the World Clock's place picker, and PowerFactory's `PFComboBox`.
 
 ### Radio Group (mutually exclusive options)
 

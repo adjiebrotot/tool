@@ -368,8 +368,7 @@
     font-weight: 500;
   }
   input[type="text"],
-  input[type="number"],
-  select {
+  input[type="number"] {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -387,7 +386,17 @@
     height: 15px;
     accent-color: var(--accent);
   }
-  select option { background: var(--card); }
+  /* Selects take the site's dropdown look (dropdown.css), sized like the
+     main tool's. These are a static sample, so they stay disabled. */
+  select {
+    font-size: 13px;
+    padding: 6px 10px;
+    width: 100%;
+    border-radius: var(--radius-sm);
+    --sel-pad: 26px;
+    --sel-chev: 8px;
+  }
+  select:disabled { opacity: 0.85; }
 
   /* ── DYNAMIC TABLES ──────────────────────────────────────────────── */
   .dyn-table-wrapper { overflow-x: auto; }
