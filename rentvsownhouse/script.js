@@ -1700,6 +1700,17 @@ function qsClose(){
   qsInput.value = c ? qsCityText(c) : '';
   qsInput.classList.toggle('has-value', !!c);
 }
+// The places a home stands for, short enough for the line under the
+// pickers: the first sentence of its `where`, cut after its bracketed list
+// of areas if it runs long. The assumptions page shows the whole text, the
+// derivation included.
+function qsArea(where){
+  let s = String(where || '').split(/[.;]\s/)[0];
+  const close = s.indexOf(')');
+  if(s.length > 120 && close > 0 && close < 140) s = s.slice(0, close + 1);
+  if(s.length > 140) s = s.slice(0, s.lastIndexOf(' ', 137)) + '…';
+  return s;
+}
 // Show a scenario on the pickers without loading it (applyPreset loads it).
 function qsShow(cityKey, typeKey){
   const c = QS.city(cityKey);
@@ -1718,7 +1729,7 @@ function qsShow(cityKey, typeKey){
   qsTypeSel.value = typeKey;
   qsClose();
   const h = c.homes[typeKey];
-  $('qsWhere').textContent = h ? [h.where, h.sqm ? h.sqm + ' m²' : '', T('qsAsOf')(qsMonth(c.asOf))].filter(Boolean).join(' · ') : '';
+  $('qsWhere').textContent = h ? [qsArea(h.where), h.sqm ? h.sqm + ' m²' : '', T('qsAsOf')(qsMonth(c.asOf))].filter(Boolean).join(' · ') : '';
   $('qsAll').href = qsPage() + '#' + cityKey + '-' + typeKey;
 }
 // Back to "nothing picked": a plan opened from a file is the reader's own.
