@@ -26,6 +26,11 @@ the same, a field shown as unused really changes nothing, each deciding field
 sits above what it governs with no rule inside the group, and a blank field
 means Auto where the field allows it.
 
+`node presets.mjs` checks the Quick Start picker on the first column: each
+city gives Own and Rent cashflow exports byte-identical to the main page's
+Quick Start for it (both read `../../presets.js`), sets the page currency, and
+only the first column carries the picker, also after a column is dragged.
+
 `node drag.mjs` checks the draggable scenario columns: a move only reorders
 the scenarios, so each one must keep every input and result, by pointer and by
 the arrow keys, and the summary CSV follows the new order.

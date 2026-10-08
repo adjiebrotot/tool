@@ -23,7 +23,8 @@ window.__TOUR = {
       body: 'Tambahkan kolom untuk setiap kasus yang ingin diuji, misalnya uang muka, ' +
             'suku bunga KPR, atau kota yang berbeda. Ubah asumsi apa pun secara langsung ' +
             'dan seluruh tabel dihitung ulang seketika, sehingga Anda bisa melihat faktor ' +
-            'mana yang paling memengaruhi hasil.'
+            'mana yang paling memengaruhi hasil. Pilihan <strong>⚡</strong> di kolom pertama ' +
+            'mengisinya dengan kota Mulai Cepat; seret kolom ke kanan untuk memuat kota lain.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
