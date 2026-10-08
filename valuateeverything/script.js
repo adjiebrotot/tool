@@ -1076,11 +1076,13 @@ function renderTables(r){
       ? `<tr><td>${esc(x.term)}</td><td colspan="${isLog ? 3 : 2}" class="note">Dropped: the same in every listing</td></tr>`
       : `<tr><td>${esc(x.term)}</td><td>${fmt.num(x.coef, 4)}</td>${isLog ? `<td>${x.pct === null ? '—' : fmt.pct(x.pct, 2)}</td>` : ''}<td>${x.w === null ? '—' : (isLog ? fmt.num(x.w, 4) : fmt.signedMoney(x.w, s))}</td></tr>`).join('') +
     '</tbody></table>';
+  // Every variable is bold, in KaTeX and in the plain fallback alike, so the
+  // eye can find what each figure multiplies.
   const parts = [fmt.num(m.coef.c0, 4)], tex = [texNum(m.coef.c0)];
   prep.features.forEach((f, j) => {
     if(m.dropped.includes(f.name)) return;
-    const nm = f.type === 'year' ? 'Age(' + f.name + ')' : f.name;
-    const tn = f.type === 'year' ? texText('Age') + '(' + texText(f.name) + ')' : texText(f.name);
+    const nm = f.type === 'year' ? '<strong>Age</strong>(<strong>' + esc(f.name) + '</strong>)' : '<strong>' + esc(f.name) + '</strong>';
+    const tn = f.type === 'year' ? texBold('Age') + '(' + texBold(f.name) + ')' : texBold(f.name);
     const add = (c, label, tl) => {
       if(!c) return;
       parts.push((c < 0 ? ' − ' : ' + ') + fmt.num(Math.abs(c), 4) + ' × ' + label);
@@ -1089,8 +1091,8 @@ function renderTables(r){
     add(m.coef.a[j], nm, tn);
     add(m.coef.q[j], nm + '²', tn + '^{2}');
   });
-  r.eqText = (isLog ? 'ln P = ' : 'P = ') + parts.join('');
-  renderTex($('equation'), (isLog ? '\\ln P = ' : 'P = ') + tex.join(''), r.eqText);
+  renderTex($('equation'), (isLog ? '\\ln \\mathbf{P} = ' : '\\mathbf{P} = ') + tex.join(''),
+    (isLog ? 'ln <strong>P</strong> = ' : '<strong>P</strong> = ') + parts.join(''));
 
   // Listings against the model
   $('dataUnit').textContent = `Prices in ${s || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`;
@@ -1104,16 +1106,17 @@ function renderTables(r){
 /* ─── The model as an equation, typeset by KaTeX ───
    Inline mode, so a long model wraps after a + or a − instead of running off
    the card. Without KaTeX (offline) the plain-text equation stands in. */
-function texText(s){
+function texBold(s){
   const map = { '\\': '\\textbackslash{}', '{': '\\{', '}': '\\}', '$': '\\$', '&': '\\&', '#': '\\#', '^': '\\textasciicircum{}', '_': '\\_', '%': '\\%', '~': '\\textasciitilde{}' };
-  return '\\text{' + String(s).replace(/[\\{}$&#^_%~]/g, ch => map[ch]) + '}';
+  return '\\textbf{' + String(s).replace(/[\\{}$&#^_%~]/g, ch => map[ch]) + '}';
 }
 const texNum = v => fmt.num(v, 4).replace(/−/g, '-').replace(/,/g, '{,}');
-function renderTex(el, tex, plain){
+// plainHtml is built from escaped names, so it is safe as markup.
+function renderTex(el, tex, plainHtml){
   if(window.katex){
     try { katex.render(tex, el, { throwOnError: false, strict: 'ignore', displayMode: false }); return; } catch(e){ /* plain text below */ }
   }
-  el.textContent = plain;
+  el.innerHTML = plainHtml;
 }
 
 function renderWarnings(r){
