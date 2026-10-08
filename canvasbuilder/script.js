@@ -422,7 +422,7 @@ function makeItemEl(sectionId, item){
 
   const del=document.createElement('span');
   del.className='item-del';
-  del.innerHTML='&times;';
+  del.innerHTML=SharedIcon.svg('trash');
   del.title='Delete';
 
   el.appendChild(handle); el.appendChild(text); el.appendChild(del);

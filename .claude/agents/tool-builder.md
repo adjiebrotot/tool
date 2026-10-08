@@ -29,6 +29,10 @@ build step, no server.
   `data-tip` tooltips, and prefer dynamic/on-demand tooltips over long ones. A tip that
   explains options lists them (`<ul>`, `<strong>Name:</strong>`, three short ones at most) or
   explains only the selected one with `data-tip-options`.
+- **Buttons**: one picture per job from `SharedIcon` in `shared.js` (✕ closes, the bin
+  deletes, duplicate, edit, save, open, clear-field), icon-only buttons bare (`.btn-bare`),
+  editors that keep the work on close. Find each button in `_ref/button-map.md`, see
+  **Buttons and Icons** in the design reference, and run `node _ref/button-check.mjs`.
 - **Do not edit the root `index.html`** unless the user explicitly asks.
 - **Footer**: full disclaimer + licence + made-in for finance/tax/engineering tools; just
   licence + made-in for plain tools.

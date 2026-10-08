@@ -58,7 +58,7 @@ function renderTable() {
       <td><div class="currency-wrap"><span class="prefix">$</span><input class="currency-input" data-k="price" type="text" inputmode="decimal" value="${esc(r.price)}" aria-label="Pack price"></div></td>
       <td class="mono c-gross"></td>
       <td class="mono c-net"></td>
-      <td><button class="row-del" title="Remove this size" aria-label="Remove this size"${rows.length < 2 ? ' disabled' : ''}>✕</button></td>
+      <td>${SharedIcon.button('trash', 'Remove this size', 'row-del', rows.length < 2 ? 'disabled' : '')}</td>
     </tr>`).join('');
   fillTable();
 }

@@ -15,7 +15,7 @@ const LANG_SENS = {
     labelAtYear: 'At year:',
     yearHint: "(clamped to each scenario's horizon)",
     btnCSV: '⬇ CSV',
-    btnUploadCSV: '⬆ CSV',
+    btnUploadCSV: 'CSV',
     btnCompareAll: 'Compare',
     csvParseError: 'Could not read this CSV. Make sure it is a sensitivity CSV exported from this tool.',
     gcTitle: 'All scenarios',
@@ -145,7 +145,7 @@ const LANG_SENS = {
     labelAtYear: 'Di tahun:',
     yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
     btnCSV: '⬇ CSV',
-    btnUploadCSV: '⬆ CSV',
+    btnUploadCSV: 'CSV',
     btnCompareAll: 'Bandingkan',
     csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
     gcTitle: 'Semua skenario',
@@ -742,7 +742,7 @@ function periodCellHTML(sc, si, k){
           <option value="floating"${floating?' selected':''}>${T('optFloating')}</option>
         </select>
         ${isLast?'':`<span class="mini-unit">${T('uToYr')}</span><input class="mini-input rp-to" data-si="${si}" data-idx="${k}" type="text" inputmode="numeric" value="${Math.round(Number(p.toYear)||to)}"/>`}
-        ${list.length>1?`<button class="btn-remove rp-del" data-si="${si}" data-idx="${k}" title="${T('removeTitle')}">✕</button>`:''}
+        ${list.length>1?SharedIcon.button('trash', T('removeTitle'), 'sm rp-del', `data-si="${si}" data-idx="${k}"`):''}
       </div>
       <div class="dcell-line">${ratesHtml}</div>
     </div>
@@ -770,7 +770,7 @@ function costCellHTML(sc, si, listKey, kind, k){
       <div class="dcell-line">
         <input class="mini-input mini-amt ci-amt" data-si="${si}" data-list="${listKey}" data-idx="${k}" type="text" inputmode="numeric" value="${escAttr(amtVal)}"/>
         <select class="mini-select ci-basis" data-si="${si}" data-list="${listKey}" data-idx="${k}">${optsHtml}</select>
-        ${list.length>1?`<button class="btn-remove ci-del" data-si="${si}" data-list="${listKey}" data-idx="${k}" title="${T('removeTitle')}">✕</button>`:''}
+        ${list.length>1?SharedIcon.button('trash', T('removeTitle'), 'sm ci-del', `data-si="${si}" data-list="${listKey}" data-idx="${k}"`):''}
       </div>
       ${inflHtml}
     </div>
@@ -790,8 +790,8 @@ function buildTableHTML(){
           <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
           ${i===0?presetPickerHTML(i):''}
         </div>
-        <button type="button" class="btn-head-icon btn-dupe" data-si="${i}" title="${escAttr(T('dupTitle'))}" aria-label="${escAttr(T('dupTitle'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 8.5V5.7a2.2 2.2 0 0 0-2.2-2.2H5.7a2.2 2.2 0 0 0-2.2 2.2v7.6a2.2 2.2 0 0 0 2.2 2.2h2.8"/></svg></button>
-        ${n>1?`<button type="button" class="btn-head-icon btn-remove rmv-scen" data-si="${i}" title="${escAttr(T('removeTitle'))}" aria-label="${escAttr(T('removeTitle'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`:''}
+        ${SharedIcon.button('duplicate', T('dupTitle'), 'btn-head-icon btn-dupe', `data-si="${i}"`)}
+        ${n>1?SharedIcon.button('trash', T('removeTitle'), 'btn-head-icon rmv-scen', `data-si="${i}"`):''}
       </div>
       ${clamped<viewYear?`<span class="scen-header-sub">${T('cappedAt')(clamped)}</span>`:''}
     </div></th>`;
@@ -1274,7 +1274,7 @@ function buildChartModal(){
   overlay.className = 'chart-modal-overlay';
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
-      <button class="chart-modal-close cm-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
+      ${SharedIcon.button('close', T('closeTitle'), 'chart-modal-close cm-close', 'data-act="close"')}
       <div class="chart-head">
         <h2 class="chart-modal-title"></h2>
         <div class="chart-controls">
@@ -1419,7 +1419,7 @@ function buildGlobalChartModal(){
   overlay.className = 'chart-modal-overlay gc-overlay';
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
-      <button class="chart-modal-close gc-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
+      ${SharedIcon.button('close', T('closeTitle'), 'chart-modal-close gc-close', 'data-act="close"')}
       <div class="chart-head">
         <h2 class="chart-modal-title gc-title"></h2>
         <div class="chart-controls">

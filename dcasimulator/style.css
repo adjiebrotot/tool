@@ -61,12 +61,15 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px}
 .seg-toggle .seg-btn{border-radius:6px;border:none}
 .seg-toggle .seg-btn+.seg-btn{border-left:none}
-.pool-chip-del{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;border-radius:50%;background:transparent;color:var(--muted);font-size:.95rem;line-height:1;cursor:pointer;padding:0;font-family:inherit;transition:all .12s}
-.pool-chip-del:hover{background:var(--negative-em);color:var(--text-inv)}
+/* The chip's delete is shared.css's .btn-bare.sm, drawn a size smaller again
+   so the chip stays one line of text tall. */
+.pool-chip .pool-chip-del{min-width:18px;height:18px;margin-left:1px;border-radius:50%}
+.pool-chip .pool-chip-del .ico{width:12px;height:12px}
 .pool-chips-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);padding-bottom:5px;margin:14px 0 0}
 .pool-chips-head:first-child{margin-top:0}
 .pool-chips-head .section-label{margin:0;padding:0;border-bottom:none;flex:1}
-.pool-clear-btn{background:transparent;border:none;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;padding:0;font-family:inherit;transition:color .12s;white-space:nowrap}
+.pool-clear-btn{display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;padding:0;font-family:inherit;transition:color .12s;white-space:nowrap}
+.pool-clear-btn .ico{width:13px;height:13px}
 .pool-clear-btn:hover{color:var(--negative-em)}
 .rate-info{font-weight:600}
 .rate-info.rate-info-low{color:var(--gold)}
@@ -88,9 +91,7 @@ body.light .num-input option,body.light .txt-input option{background:#ffffff;col
 .sc-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:all .15s}
 .sc-add-btn:hover{background:var(--accent2);color:var(--text-inv);border-style:solid}
 .sc-bar-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding-left:9px;border-left:1px solid var(--border)}
-.sc-act-btn{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer;font-family:inherit;padding:0;transition:all .15s}
-.sc-act-btn:hover{border-color:var(--accent2);color:var(--accent2)}
-.sc-act-btn.sc-act-del:hover{border-color:var(--negative-em);color:var(--negative-em)}
+.sc-act-btn{min-width:30px;height:30px}
 .txt-input:disabled{opacity:.6;cursor:not-allowed}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
 .metric{padding:16px 18px}

@@ -24,6 +24,11 @@ Read `.claude/skills/new-tool/SKILL.md`, then verify:
    are a `<ul>` of at most three `<strong>Name:</strong>` items, or explain the selected
    option only and carry `data-tip-options`.
 4. **Root index.html** — not modified unless the user asked for it.
+4b. **Buttons** — run `node _ref/button-check.mjs` (ONLY=<path>): ✕ only closes, the bin
+   only deletes, each job has its one picture from `SharedIcon` (`_ref/button-map.md`), no
+   emoji stands in for an icon, icon-only buttons are bare and named, and the sidebar's main
+   action is on screen at first load. Then judge what a script cannot: does closing any
+   editor or panel keep the reader's work, and is the outcome they want the easiest to reach?
 5. **Footer** — full disclaimer for finance/tax/engineering tools; licence + made-in only for
    plain tools. Flag a missing disclaimer on a risky tool, and flag an unnecessary disclaimer
    on a plain one.

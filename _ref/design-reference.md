@@ -448,7 +448,8 @@ follows the button's colour in both themes and lights up with the active tab.
   something other than 1.35em.
 
 Emoji outside a tab bar are fine where they are decoration rather than an icon
-(the 🌙 / ☀️ theme toggle, the footer flags).
+(the 🌙 / ☀️ theme toggle, the footer flags). Buttons follow the same rule: see
+**Buttons and Icons** for the one picture each job gets.
 
 ### Field Group (grouping rows in a control panel)
 
@@ -1032,6 +1033,116 @@ back to the start*
 .btn-secondary:hover { border-color: var(--accent); }
 .btn-secondary:active { transform: scale(0.97); }
 ```
+
+---
+
+## Buttons and Icons
+
+A reader who learns a button on one tool should be able to read it on the
+next. Four rules make that true, and `node _ref/button-check.mjs` holds every
+page to them. `_ref/button-map.md` lists every button on every tool by the job
+it does, so a new tool can copy the row it needs instead of inventing one.
+
+### 1. One picture per job
+
+The pictures that carry a meaning are drawn once, in `shared.js`
+(`SharedIcon`), and nowhere else. A picture is never lent to another job,
+because that is how ✕ came to mean both "close" and "delete" on the same page.
+
+| Job | Picture | Build it with | Never |
+| --- | --- | --- | --- |
+| **Close** a panel, modal or card. Nothing is lost. | ✕ cross | `SharedIcon.button('close', 'Close')` | ✕ on a delete, a clear, a failed copy, a "don't" list |
+| **Delete** a row, scenario, stage, chip, asset | bin | `SharedIcon.button('trash', 'Remove this stage', 'stage-del')` | ✕, ×, ⊗, 🗑 |
+| **Clear everything** (empty a table, unload a file) | bin + word | `<button data-icon="trash">Clear</button>` | ✕ Clear |
+| **Clear a text field** | backspace key | `SharedIcon.svg('clear')` inside `.city-clear` | ×, ✕ |
+| **Duplicate** an item beside itself | two sheets and a plus | `SharedIcon.button('duplicate', 'Duplicate')` | ⧉ (that is copy to clipboard) |
+| **Edit** an item | pencil | `SharedIcon.button('edit', 'Edit')` | ✎, ✏️ |
+| **Save** the work to a file | floppy disk | `SharedScenario.mount(...)`, or `data-icon="save"` | 💾, ↓ JSON |
+| **Open** a file from this device | open folder | `SharedScenario.mount(...)`, or `data-icon="open"` | 📂, 📊, ⬆, ↑, "Upload" (nothing is uploaded) |
+| **Show the result** instead of its source | eye | `SharedIcon.svg('view')` | 👁 |
+| **Put a value back** to its default | anticlockwise arrow | `SharedIcon.svg('reset')`, or `↺` in a label | |
+| **Download** an export | ⬇ + format | `⬇ SVG`, `⬇ PNG`, `⬇ CSV`, `⬇ .py` | ↓, 📥, "Export" |
+| **Copy** to the clipboard | ⧉ | `⧉`, titled "Copy PNG to clipboard" | ⧉ on a duplicate |
+| **Reset the view** (zoom, pan). Your data is untouched. | ⟳ | `⟳` | ⊡ |
+| **Restore defaults**. Your inputs are replaced. | ↺ | `↺ Reset` | ⟳ (that only moves the view) |
+| **Run** the tool's computation | ▶ | `▶ Simulate`, `▶ Generate Code`, `▶ Check` | ⚡ (that is Quick Start), ⚙ (that is Settings) |
+| **Add** a new item | + | `+ Add stage` (ASCII plus) | ＋ (full-width) |
+| **Reorder** by dragging | ⠿ | `⠿` grip | |
+
+Emoji are decoration, never an icon: the 🌙 / ☀️ theme toggle, 🧭 tour, 🚀 Time
+Travel and the footer flags stay; an emoji standing in for one of the jobs above
+does not. A status is not a button: a copy that fails says so in words
+(`alert('PNG copy failed: …')`), not with a ✕.
+
+Static markup names its icon and `shared.js` draws it at load:
+
+```html
+<button type="button" class="btn-bare" data-icon="duplicate" title="Duplicate this portfolio" aria-label="Duplicate this portfolio"></button>
+<button class="btn-secondary" data-icon="trash">Remove from list</button>   <!-- icon before the word -->
+```
+
+Markup built in JavaScript asks for it directly:
+
+```js
+row.innerHTML = '…' + SharedIcon.button('trash', 'Remove this size', 'row-del', rows.length < 2 ? 'disabled' : '');
+```
+
+`button(name, label, cls, attrs)` returns a `.btn-bare` with the label as its
+tooltip and accessible name; the bin also gets `.is-delete`. A labelled button
+with `data-icon` gets `.has-ico`, which spaces the icon from its word. Icons
+ignore the pointer, so `e.target` is always the button.
+
+### 2. A button wears only as much as its job needs
+
+| Weight | Looks | Use for |
+| --- | --- | --- |
+| Primary (`.btn-primary`) | accent fill, `var(--text-inv)` text | the one thing the panel exists to do: Simulate, Done, Generate |
+| Secondary (`.btn-secondary`, `.btn-sm`) | soft fill, border | a labelled action: `+ Add Scenario`, `⬇ CSV`, `Show table` |
+| Bare (`.btn-bare`) | nothing until hovered | an icon-only button that acts on the thing it sits in: a row, a card, a chip, a column header, a panel's corner |
+
+Bare is the default for an icon-only button. The picture already says what it
+does, so a box around it is noise; it is muted at rest, tinted on hover, and
+only the bin turns red. `rentvsownhouse/sensitivity`'s duplicate and delete in
+each scenario header are the model.
+
+Two exceptions keep a box. An icon-only button in a **row of boxed buttons**
+(the chart export cluster `⬇ SVG ⬇ PNG ⧉ ⟳`, the header's save and open, the
+JSON Visualiser's Expand / Collapse / bin) stays boxed, so the row reads as one
+set. And a **labelled** button keeps its box, because a bare word reads as a
+label rather than something to press. Never hard-code `white` or `#fff` on an
+accent fill: the dark theme's accent is pale.
+
+### 3. The outcome the reader wants is the easiest one to reach
+
+- **Closing keeps the work.** An editor applies each edit as it is made (a
+  short debounce, then the same save the old button ran), so every way out
+  (Done, ✕, Esc) keeps what was typed. There is no "close without saving" to
+  hit by mistake: losing a form is far worse than keeping an edit you can
+  change back. `financingvscash`'s scenario editor is the model
+  (`applyEditorSoon()`, `closeEditor()`).
+- **The way out is always in view.** A form taller than its panel pins its
+  primary button to the bottom of whatever is scrolling (`position:sticky;
+  bottom:0`), and says in a few words that changes save as you go. On a phone
+  that is the bottom of the screen, under the thumb; a card that clips its
+  corners uses `overflow:clip`, not `hidden`, so the pin still works.
+- **A sidebar ends on screen.** A sticky control card is sized by
+  `SharedReach` (`shared.js`) to the room it has from where it starts, so its
+  bottom row (Simulate, Load tickers, Reset/Clear) is visible at first load,
+  not 150px under the fold until the reader happens to scroll.
+- **The main action sits where the eye ends.** A gate (Simulate) lives in the
+  sidebar's pinned bottom row; a tool whose output is a separate pane puts the
+  action at the top of that pane (PowerFactory's Generate Code).
+- **A destructive button is never the easy one.** Delete is a bare bin at the
+  end of its row, red only on hover; a reset of the whole form asks first.
+
+### 4. Check it
+
+`node _ref/button-check.mjs` (`ONLY=<path>` for one page) loads every page and
+fails on a ✕ drawn as text, a picture lent to another job, a remove without
+the bin, an emoji standing in for an icon, an unnamed icon-only button, a
+`.btn-bare` with a fill, or a sticky sidebar that hangs under the fold. It
+also drives Finance vs Cash's editor on a desktop and a phone and requires
+Done on screen halfway down the form and every way out to keep an edit.
 
 ---
 

@@ -109,7 +109,7 @@
     <div id="poolChipsWrap" style="display:none">
       <div class="pool-chips-head">
         <span class="section-label" style="margin-top:0">Loaded assets</span>
-        <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker and simulated asset">Clear all</button>
+        <button id="clearPoolBtn" class="pool-clear-btn" type="button" data-icon="trash" title="Remove every loaded ticker and simulated asset">Clear all</button>
       </div>
       <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 18px"></div>
     </div>
@@ -174,8 +174,8 @@
       <div id="portfolioTabs" class="pf-tabs"></div>
       <button class="pf-add-btn" id="addPortfolioBtn" title="New portfolio" aria-label="New portfolio">+</button>
       <div class="pf-bar-actions">
-        <button class="pf-act-btn" id="dupPortfolioBtn" title="Duplicate this portfolio" aria-label="Duplicate this portfolio">⧉</button>
-        <button class="pf-act-btn pf-act-del" id="delPortfolioBtn" title="Remove this portfolio" aria-label="Remove this portfolio">✕</button>
+        <button type="button" class="btn-bare pf-act-btn" data-icon="duplicate" id="dupPortfolioBtn" title="Duplicate this portfolio" aria-label="Duplicate this portfolio"></button>
+        <button type="button" class="btn-bare pf-act-btn" data-icon="trash" id="delPortfolioBtn" title="Remove this portfolio" aria-label="Remove this portfolio"></button>
       </div>
     </div>
 
@@ -273,7 +273,7 @@
         <strong id="methodCollapsedName"></strong>
         <span id="methodCollapsedDesc"></span>
       </div>
-      <button type="button" class="btn-secondary method-change-btn" id="changeMethodBtn" title="Change method" aria-label="Change method">✎</button>
+      <button type="button" class="btn-bare method-change-btn" data-icon="edit" id="changeMethodBtn" title="Change method" aria-label="Change method"></button>
     </div>
     <div class="radio-group" id="methodList" style="flex-direction:column">
       <label class="radio-opt selected" data-method="towards-weight">
@@ -410,7 +410,7 @@
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
     <button class="btn-primary" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
     <button class="btn-primary" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>
-    <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
+    <button class="btn-secondary" id="editTickersBtn" data-icon="edit" style="flex:1;display:none">Edit list</button>
   </div>
 </aside>
 

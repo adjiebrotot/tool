@@ -669,9 +669,11 @@ function makeTableRow(r, i){
   colorPick.value = hasC ? r.color : '#8DBBFF';
   if(!hasC){ colorPick.style.opacity='0.35'; colorPick.title='Click to set custom colour'; }
   const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
   clearBtn.className = 'color-clear';
-  clearBtn.title = 'Remove custom colour';
-  clearBtn.textContent = '×';
+  clearBtn.title = 'Back to the automatic colour';
+  clearBtn.setAttribute('aria-label', 'Back to the automatic colour');
+  clearBtn.innerHTML = SharedIcon.svg('reset');
   colorCell.appendChild(colorPick);
   colorCell.appendChild(clearBtn);
   tdColor.appendChild(colorCell);
@@ -681,9 +683,11 @@ function makeTableRow(r, i){
   const tdDel = document.createElement('td');
   tdDel.className = 'td-del';
   const delBtn = document.createElement('button');
-  delBtn.className = 'del-btn';
+  delBtn.type = 'button';
+  delBtn.className = 'btn-bare is-delete sm del-btn';
   delBtn.title = 'Remove row';
-  delBtn.innerHTML = '✕';
+  delBtn.setAttribute('aria-label', 'Remove row');
+  delBtn.innerHTML = SharedIcon.svg('trash');
   tdDel.appendChild(delBtn);
   tr.appendChild(tdDel);
 

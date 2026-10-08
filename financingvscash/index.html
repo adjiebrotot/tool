@@ -175,12 +175,14 @@
     <div class="scenario-list" id="scenarioList"></div>
     <button class="btn-primary btn-sm" id="addScenarioBtn" style="width:100%;margin-bottom:12px;">+ Add Scenario</button>
     <!-- While the editor is open the list and Add button above it are hidden
-         (#tab-scenarios.editing), so the box is the only thing on the tab. The
-         X discards edits, the same as Cancel at the bottom. -->
+         (#tab-scenarios.editing), so the box is the only thing on the tab.
+         Every edit applies as it is made, so there is no Save to forget and no
+         discard to hit by mistake: the ✕ at the top, Done pinned to the bottom
+         and Esc all just go back to the list. -->
     <div id="scenarioEditor" class="sc-editor" style="display:none;" data-no-persist>
       <div class="sc-editor-head">
         <h3 id="editorTitle">Edit Scenario</h3>
-        <button type="button" class="sc-editor-close" id="closeScenarioBtn" title="Close without saving" aria-label="Close the scenario editor without saving">✕</button>
+        <button type="button" class="btn-bare sc-editor-close" data-icon="close" id="closeScenarioBtn" title="Close. Your changes are already saved" aria-label="Close the scenario editor. Your changes are already saved"></button>
       </div>
       <div class="field-row" id="scNameRow"><div class="field-label">Scenario Name</div><div class="inline-row"><input class="num-input" id="scName" type="text" value=""/><input type="color" class="color-series-picker" id="scColor" title="Scenario colour" aria-label="Scenario colour"/></div></div>
       <div id="scFields">
@@ -265,9 +267,9 @@
           <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input has-suffix wide-suffix fmt-num" id="scAdminFee" type="text" inputmode="decimal" data-min="0" data-max="1000000000" value="0"/><span class="suffix">/payment</span></div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <button class="btn-primary btn-sm" id="saveScenarioBtn">Save</button>
-        <button class="btn-secondary btn-sm" id="cancelScenarioBtn">Cancel</button>
+      <div class="sc-editor-foot">
+        <span class="sc-editor-note">Changes save as you go.</span>
+        <button type="button" class="btn-primary btn-sm" id="saveScenarioBtn">✓ Done</button>
       </div>
     </div>
   </div>

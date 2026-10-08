@@ -69,20 +69,15 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .scen-preset-chev{width:11px;height:11px;}
 .scen-preset-select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-family:inherit;font-size:.82rem;border:none;appearance:none;-webkit-appearance:none;}
 .scen-preset-select option{color:var(--text);background:var(--card-bg);}
-/* Header icon buttons (duplicate, remove): one square size, glyphs drawn as
-   strokes so they sit on the same line whatever the font. */
-.scen-header-actions .btn-head-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:26px;height:26px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;transition:color 130ms,background 130ms;font-family:inherit;line-height:1;}
-.scen-header-actions .btn-head-icon svg{width:15px;height:15px;}
-.scen-header-actions .btn-head-icon:focus-visible{outline:2px solid var(--accent-strong);outline-offset:1px;}
-.scen-header-actions .btn-dupe:hover{color:var(--accent-strong);background:var(--input-bg);}
-.scen-header-actions .btn-remove:hover{color:var(--data-neg-em);background:var(--data-neg-bg);}
+/* Header icon buttons (duplicate, delete): shared.css's .btn-bare, one size
+   down so two of them and the grip fit a narrow column. */
+.scen-header-actions .btn-head-icon{min-width:26px;height:26px;}
+.scen-header-actions .btn-head-icon .ico{width:15px;height:15px;}
 .scen-header-sub{font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
 /* Buttons */
 .btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;}
 .btn-add:hover{border-color:var(--accent-strong);color:var(--accent-strong);}
-.btn-remove{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 5px;border-radius:5px;transition:all 130ms;font-family:inherit;line-height:1;}
-.btn-remove:hover{background:var(--data-neg-bg);color:var(--data-neg-em);}
 
 /* Group separator row */
 .dt tr.group-sep-tr td{background:var(--bg);color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 11px 5px;border-top:2px solid var(--border);border-bottom:none;}
@@ -180,13 +175,14 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 .action-td{text-align:center;}
 .scen-actions{display:flex;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;}
+/* Bare, like every icon-only button that acts on the row it sits in. */
 .btn-scen-action{
-  background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-size:.9rem;line-height:1;padding:5px 8px;cursor:pointer;
-  display:inline-flex;align-items:center;gap:1px;transition:border-color var(--motion-fast),background var(--motion-fast);
+  background:transparent;border:none;border-radius:var(--radius-sm);
+  color:var(--muted);font-size:.9rem;line-height:1;padding:5px 7px;cursor:pointer;font-family:inherit;
+  display:inline-flex;align-items:center;gap:1px;transition:color var(--motion-fast),background var(--motion-fast);
 }
-.btn-scen-action:hover{border-color:var(--accent);background:rgba(139,184,248,.12);}
-.btn-scen-action:active{transform:scale(.95);}
+.btn-scen-action:hover{color:var(--accent-strong);background:var(--input-bg);}
+.btn-scen-action:focus-visible{outline:2px solid var(--accent-strong);outline-offset:1px;}
 .btn-scen-action .ricon{margin-right:0;width:1.1em;height:1.1em;}
 
 /* ── Scenario comparison chart popup ── */
@@ -202,15 +198,8 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
   padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.45);
 }
 /* Close button pinned to the top-right corner of the popup */
-.chart-modal-close{
-  position:absolute;top:12px;right:12px;z-index:3;
-  width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;
-  background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);
-  color:var(--muted);font-size:.95rem;line-height:1;cursor:pointer;font-family:inherit;
-  transition:all var(--motion-fast);
-}
-.chart-modal-close:hover{border-color:var(--accent);color:var(--text);}
-.chart-modal-close:active{transform:scale(.95);}
+.chart-modal-close{position:absolute;top:12px;right:12px;z-index:3;min-width:34px;height:34px;}
+.chart-modal-close .ico{width:18px;height:18px;}
 /* The export row itself is shared.css's (.chart-head, .btn-cluster, .btn-sm),
    so a modal's cluster is the one every chart on the site carries; the padding
    keeps it clear of the close button in the modal's corner. */

@@ -69,6 +69,25 @@ Before calling it done, every line here must hold:
 Add the page to `FINANCE` in `shared.js` and to `PAGES` in `_ref/form-check.mjs`, and run
 `node _ref/form-check.mjs` (ONLY=<path> for one page). No em-dashes in page text.
 
+### Buttons: one picture per job, every tool
+
+Read **Buttons and Icons** in the design reference and find each button you need in
+`_ref/button-map.md`; copy that row rather than drawing a new one.
+
+- [ ] **✕ only closes, the bin only deletes.** Close is `SharedIcon.button('close', …)`;
+      delete is `SharedIcon.button('trash', …)`. Never ✕, ×, ⊗ or 🗑 as text.
+- [ ] **The same job gets the same picture**: duplicate (sheets and a plus), edit
+      (pencil), save to a file (floppy), open a file (folder), clear a field (backspace
+      key), `⬇` download, `⧉` copy, `⟳` reset the view, `↺` restore defaults, `▶` run,
+      ASCII `+` add. No emoji in their place.
+- [ ] **Icon-only buttons are bare** (`.btn-bare`: no fill, no border) unless they sit in
+      a row of boxed buttons; every one has a title and aria-label.
+- [ ] **The wanted outcome is the easy one.** An editor applies edits as they are made, so
+      closing it keeps the work and there is no "close without saving"; a long form pins its
+      Done to the bottom; the main action is on screen at first load.
+
+Run `node _ref/button-check.mjs` (ONLY=<path> for one page).
+
 ## 2. SEO — match the standard head + register the page
 
 Copy the SEO block from an existing tool's `<head>` and adapt it: `<title>`, `<meta
@@ -140,6 +159,8 @@ Scale the rigor to the risk:
 - **Every finance tool** also passes `node _ref/form-check.mjs` (units, bounds, slider ends,
   axis units, no em-dash, no red option, answer and caveats) alongside `_ref/quickstart-check.mjs`,
   `_ref/scenario-check.mjs`, `_ref/chart-check.mjs`, `_ref/tip-check.mjs` and `_ref/abbr-check.mjs`.
+- **Every tool** passes `node _ref/button-check.mjs` (one picture per job, bare icon buttons,
+  reachable main action).
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 

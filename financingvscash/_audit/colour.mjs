@@ -86,7 +86,7 @@ check('C9 a custom colour survives a reload', (await lineOf('Renamed'))==='#ffaa
 
 // C10 every palette slot resolves to a colour something can actually paint
 await page.evaluate(()=>{for(let i=0;i<4;i++)document.getElementById('addScenarioBtn').click();
-  document.getElementById('cancelScenarioBtn').click();});
+  document.getElementById('closeScenarioBtn').click();});
 await page.waitForTimeout(400);
 const sixth=await page.evaluate(()=>{const ch=window.__charts.filter(c=>c.canvasId==='chartCanvas').pop();
   return ch.data.datasets.map(d=>d.borderColor);});

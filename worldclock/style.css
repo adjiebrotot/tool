@@ -108,8 +108,7 @@ body:not(.light) .seg-btn.active{color:var(--text-inv);}
 .wc-travel{position:absolute;left:12px;bottom:var(--wc-panel-bottom,110px);width:min(360px,calc(100% - 24px));padding:14px 16px 16px;z-index:6;}
 .wc-travel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .wc-travel-title{font-weight:800;font-size:1rem;}
-.wc-x{background:none;border:none;color:var(--muted);font-size:1rem;line-height:1;padding:4px 6px;border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;}
-.wc-x:hover{color:var(--text);background:var(--input-bg);}
+.wc-x{margin:-2px -4px 0 0;}
 .wc-travel-sub{margin:2px 0 10px;font-size:.84rem;}
 .wc-travel-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:10px;}
 .wc-field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
@@ -124,8 +123,9 @@ body:not(.light) .wc-travel .txt-input{color-scheme:dark;}
 .city-search{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 12px;font-size:.9rem;font-family:inherit;color:var(--text);outline:none;transition:border-color 150ms;}
 .city-search:focus{border-color:var(--accent-strong);}
 .city-search.has-value{border-color:var(--accent-strong);background:var(--positive-bg);padding-right:28px;}
-.city-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;line-height:1;padding:2px 3px;display:none;z-index:1;}
-.city-clear:hover{color:var(--text);}
+.city-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);line-height:0;padding:4px;display:none;z-index:1;}
+.city-clear .ico{width:16px;height:16px;}
+.city-clear:hover{color:var(--text);background:var(--input-bg);}
 .city-search.has-value~.city-clear{display:block;}
 .city-dropdown{position:absolute;bottom:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);max-height:240px;overflow-y:auto;z-index:200;display:none;}
 .city-dropdown.open{display:block;}

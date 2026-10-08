@@ -120,7 +120,7 @@ function addContingencyRow(data) {
     <td><input type="text" id="cont-filter-attr-${idx}" value="${filterAttr.replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" oninput="onContingencyFilterAttrChange(${idx})" style="min-width:100px;" autocomplete="off" /></td>
     <td><select id="cont-filter-op-${idx}" style="width:56px;">${opOptions}</select></td>
     <td><input type="text" id="cont-filter-val-${idx}" value="${(data.filterVal||'').replace(/"/g,'&quot;')}" placeholder="e.g. 66 or North*" style="min-width:100px;" autocomplete="off" /></td>
-    <td><button class="btn btn-ghost btn-xs" id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})" style="padding:2px 6px;">✕</button></td>
+    <td>${SharedIcon.button('trash', 'Remove this element type', '', `id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})"`)}</td>
   `;
   tbody.appendChild(tr);
   // Attach comboboxes
@@ -965,7 +965,7 @@ function addInputRow(data = {}) {
       <button type="button" class="iv-form-toggle" id="iv-form-${idx}" onclick="toggleInputList(${idx})"
         title="Range: every integer from Lower to Upper. List: only the values you type, e.g. 0,1,5. Click to switch.">${data.list ? 'List' : 'Range'}</button></td>
     <td class="td-action">
-      <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
+      ${SharedIcon.button('trash', 'Remove this input variable', '', `onclick="removeRow('input-row-${idx}')"`)}
     </td>
   `;
   tbody.appendChild(tr);
@@ -1271,7 +1271,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" autocomplete="off" />
       ${tip('Python name for this output. It must be unique across every input and output.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
-      <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
+      ${SharedIcon.button('trash', 'Remove this output variable', '', `onclick="removeOutputVar('${id}')"`)}
     </div>
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
@@ -1571,7 +1571,7 @@ function addConstraint(data = {}) {
     </td>
     <td><input type="number" id="con-val-${idx}" value="${data.value||''}" step="any" placeholder="0.95" autocomplete="off" /></td>
     <td class="td-action">
-      <button class="btn btn-remove btn-icon" onclick="removeRow('con-row-${idx}')">✕</button>
+      ${SharedIcon.button('trash', 'Remove this constraint', '', `onclick="removeRow('con-row-${idx}')"`)}
     </td>
   `;
   tbody.appendChild(tr);
@@ -2037,7 +2037,7 @@ function updateDownloadButtonLabel() {
   const btn = document.getElementById('download-btn');
   if (!btn) return;
   const cs = document.getElementById('coding-style').value;
-  btn.textContent = cs === 'notebook' ? '↓ .ipynb' : '↓ .py';
+  btn.textContent = cs === 'notebook' ? '⬇ .ipynb' : '⬇ .py';
 }
 
 function escapeHtml(str) {
@@ -2207,7 +2207,7 @@ function resetForm() {
   const nbEl  = document.getElementById('nb-preview');
   preEl.innerHTML = `<code class="language-python">
 <div class="placeholder-msg">
-  <span class="big">⚡</span>
+  <span class="big">▶</span>
   <span>Configure inputs and click <strong>Generate Code</strong></span>
 </div>
   </code>`;

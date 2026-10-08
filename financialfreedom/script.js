@@ -1499,7 +1499,7 @@ function stageRowHtml(s, idx){
     '<div class="stage-head">' +
       '<input type="text" class="txt-input stage-name" maxlength="40" placeholder="Name it, e.g. 1st kid"' +
         ' aria-label="Stage name" value="' + escapeHtml(s.name || '') + '"/>' +
-      '<button type="button" class="stage-del" title="Remove this stage" aria-label="Remove this stage">✕</button>' +
+      SharedIcon.button('trash', 'Remove this stage', 'stage-del') +
     '</div>' +
     '<div class="stage-ages">' +
       '<span class="stage-lbl">From age</span>' +
@@ -1777,7 +1777,7 @@ function inStageRowHtml(s, idx){
     '<div class="stage-head">' +
       '<input type="text" class="txt-input stage-name in-name" maxlength="40" placeholder="Name it, e.g. Study"' +
         ' aria-label="Stage name" value="' + escapeHtml(s.name || '') + '"/>' +
-      '<button type="button" class="stage-del" title="Remove this stage" aria-label="Remove this stage">✕</button>' +
+      SharedIcon.button('trash', 'Remove this stage', 'stage-del') +
     '</div>' +
     '<div class="stage-ages">' +
       '<span class="stage-lbl">From age</span>' +
