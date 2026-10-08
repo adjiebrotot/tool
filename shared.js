@@ -2180,6 +2180,9 @@
     },
 
     /* ── DCA Scenario Explorer, Portfolio mode and the ticker reference ── */
+    valuateeverything: {
+      RMSE: ['Root Mean Square Error', 'how far a listing usually sits from the model, in price']
+    },
     dcasimulator: {
       ADX:   ['Average Directional Index', 'how strong a trend is, whichever way it points'],
       DCA:   ['Dollar-Cost Averaging', 'investing a set amount on a set schedule instead of all at once'],
@@ -2988,7 +2991,7 @@
      other page opts in by calling SharedSlider.scan() itself. A readout that
      already has a tool's own typing box beside it keeps that box. */
   var FINANCE = ['rentvsownhouse', 'pisahvsgabung', 'borrowingcapacity', 'financingvscash',
-                 'financialfreedom', 'dcasimulator', 'costofliving-comparator'];
+                 'financialfreedom', 'dcasimulator', 'costofliving-comparator', 'valuateeverything'];
   function inFinanceTool(){
     var path = String((global.location && global.location.pathname) || '');
     return path.split('/').some(function(seg){ return FINANCE.indexOf(seg) > -1; });
