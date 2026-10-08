@@ -45,10 +45,10 @@ main{min-width:0;}
 /* ── Listings: Table / Text / CSV ── */
 .entry-panel{padding:6px 0 4px;}
 .entry-panel[hidden]{display:none;}
-/* The table, its scroll and its "+ Add listing" row are one box. The add row
-   is pinned to the bottom (and left) edge, so it is in reach however long or
-   wide the table grows. */
-.grid-wrap{overflow:auto;max-height:440px;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);}
+/* The table scrolls inside its own box; "+ Add listing" sits under the box,
+   never over a row, the same dashed add as "+ Add column". */
+.grid-wrap{overflow:auto;max-height:440px;border:1px solid var(--border);border-radius:10px;background:var(--panel);}
+.grid-shell .add-btn{margin-top:8px;}
 .grid{width:100%;border-collapse:collapse;font-size:.8rem;}
 .grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:8px 6px;text-align:left;vertical-align:bottom;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted);white-space:normal;line-height:1.25;min-width:56px;max-width:120px;border-bottom:1px solid var(--border);}
 .grid td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;vertical-align:middle;}
@@ -66,8 +66,6 @@ main{min-width:0;}
 .grid .cell.cell-text:focus{border-color:var(--accent);background:var(--panel);}
 .grid .cell-chk{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;vertical-align:middle;margin:0;}
 .grid td.t-del{width:30px;padding:0 4px;text-align:center;}
-.grid-add{position:sticky;left:0;bottom:0;z-index:1;display:block;width:100%;padding:9px 10px;background:var(--panel);border:0;border-top:1.5px dashed var(--border);color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;text-align:center;cursor:pointer;transition:color var(--motion-fast),background var(--motion-fast);}
-.grid-add:hover{color:var(--text);background:var(--input-bg);}
 
 .data-text{min-height:240px;resize:vertical;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.55;white-space:pre;overflow:auto;}
 
@@ -84,11 +82,19 @@ main{min-width:0;}
 .item-head{display:flex;align-items:center;gap:6px;padding:4px 0 8px;}
 .item-dot{width:10px;height:10px;border-radius:50%;background:var(--item-colour,var(--accent));flex:0 0 auto;}
 .item-head .txt-input{flex:1;min-width:0;padding:7px 9px;font-weight:700;font-size:.88rem;}
-.item-card>.field-row,.item-card>.chk-row{border-top:1px solid var(--border);}
-.item-card .field-row{padding:8px 0 10px;}
-.item-card .field-label{font-size:.85rem;}
-.chk-row{display:flex;align-items:flex-start;gap:9px;padding:9px 0;cursor:pointer;font-size:.85rem;font-weight:700;line-height:1.35;color:var(--text);}
-.chk-row input{accent-color:var(--accent);width:16px;height:16px;margin:1px 0 0;flex-shrink:0;cursor:pointer;}
+/* Asking price, then the features two to a row. Each field spans three
+   shared rows (label, field, note), so a label that wraps never pushes its
+   field out of line with the one beside it. */
+.item-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;padding-top:10px;border-top:1px solid var(--border);}
+.item-field{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;min-width:0;padding-bottom:10px;}
+.item-field .field-label{align-self:end;padding-bottom:5px;font-size:.8rem;line-height:1.3;}
+.item-field .currency-input{padding-top:8px;padding-bottom:8px;font-size:.88rem;}
+.item-field .derived{margin-top:3px;font-size:.74rem;}
+.item-ask-field{grid-column:1 / -1;}
+/* A Yes/No is a tick in the field row, beside the fields it shares it with. */
+.item-chk{cursor:pointer;}
+.item-chk .chk-line{grid-row:2;display:flex;align-items:center;gap:9px;padding:0 2px;font-size:.85rem;font-weight:700;line-height:1.3;color:var(--text);}
+.item-chk input{accent-color:var(--accent);width:16px;height:16px;margin:0;flex-shrink:0;cursor:pointer;}
 .empty-note{color:var(--muted);font-size:.84rem;margin:4px 0;}
 
 /* ── KPI strip ── */

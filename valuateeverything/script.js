@@ -623,8 +623,7 @@ function buildGrid(){
   const body = S.rows.map((r, ri) => '<tr data-r="' + ri + '">' +
     S.columns.map((c, ci) => `<td data-c="${ci}" class="t-${c.type}">${cellControl(c, r[ci])}</td>`).join('') +
     `<td class="t-del">${SharedIcon.button('trash', 'Delete this listing', 'sm row-del')}</td></tr>`).join('');
-  wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>` +
-    '<button type="button" class="grid-add">+ Add listing</button>';
+  wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>`;
 }
 
 function onGridEvent(e){
@@ -743,19 +742,21 @@ function buildItems(){
     const card = document.createElement('div');
     card.className = 'item-card';
     card.style.setProperty('--item-colour', SharedPalette.at(k));
-    const rows = feats.map(c => {
+    // Features sit two to a row, each label over its own field, so a card is
+    // half as tall as a stack of full-width rows.
+    const fields = feats.map(c => {
       const v = it.vals[c.id];
       const label = `<div class="field-label">${esc(c.name || '(no name)')}</div>`;
       if(c.type === 'bool'){
-        return `<label class="chk-row"><input type="checkbox" data-col="${c.id}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></label>`;
+        return `<label class="item-field item-chk"><span class="chk-line"><input type="checkbox" data-col="${c.id}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></span></label>`;
       }
       if(c.type === 'year'){
-        return `<div class="field-row">${label}` +
+        return `<div class="item-field">${label}` +
           `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="numeric" data-col="${c.id}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
           `<div class="derived" data-age="${c.id}">${ageNote(v, year)}</div></div>`;
       }
       const input = `<input class="currency-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${c.id}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
-      return `<div class="field-row">${label}` + (c.unit
+      return `<div class="item-field">${label}` + (c.unit
         ? `<div class="currency-wrap">${input}<span class="suffix">${esc(c.unit)}</span></div>`
         : `<div class="currency-wrap" data-unitless>${input}</div>`) + '</div>';
     }).join('');
@@ -763,9 +764,10 @@ function buildItems(){
       `<div class="item-head"><span class="item-dot" aria-hidden="true"></span>` +
       `<input class="txt-input item-name" type="text" maxlength="80" aria-label="Item name" value="${esc(it.name)}" placeholder="Item ${k + 1}">` +
       SharedIcon.button('duplicate', 'Duplicate this item', 'item-dup') + SharedIcon.button('trash', 'Delete this item', 'item-del') + '</div>' +
-      `<div class="field-row"><div class="field-label">Asking price</div>` +
+      `<div class="item-fields">` +
+      `<div class="item-field item-ask-field"><div class="field-label">Asking price</div>` +
       `<div class="currency-wrap"><span class="prefix">${esc(s)}</span><input class="currency-input item-ask" type="text" inputmode="decimal" data-kind="price" data-min="0" data-max="${BIG}" value="${esc(showNum(it.asking, 'price'))}" placeholder="optional"></div></div>` +
-      rows;
+      fields + '</div>';
     card.querySelector('.item-name').addEventListener('input', e => { it.name = e.target.value; touched(); });
     card.querySelector('.item-ask').addEventListener('input', e => { liveFmt(e.target, 'price'); it.asking = rawNum(e.target.value); touched(); });
     card.querySelectorAll('[data-col]').forEach(el => {
@@ -1542,8 +1544,8 @@ function init(){
 
   $('gridWrap').addEventListener('input', onGridEvent);
   $('gridWrap').addEventListener('change', e => { if(e.target.type === 'checkbox') onGridEvent(e); });
+  $('addRowBtn').addEventListener('click', addListing);
   $('gridWrap').addEventListener('click', e => {
-    if(e.target.closest('.grid-add')){ addListing(); return; }
     const del = e.target.closest('.row-del');
     if(!del) return;
     const tr = del.closest('tr[data-r]');
