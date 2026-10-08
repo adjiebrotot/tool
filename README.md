@@ -31,6 +31,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
 | [World Clock](https://tool.adjiebrotots.com/worldclock/) | A live full-screen world map with the local time on every country, state and territory, opening on your own region. Time Travel to any date and time in any place to convert a meeting time, daylight saving included; zoom out for a classic time zone map. |
+| [Valuate Everything](https://tool.adjiebrotots.com/valuateeverything/) | Is that listing a fair price? Fit a price model to the secondhand listings you have seen (linear, log-linear, ridge or quadratic), with years turned into ages and older prices lifted to today's money, then check the items you want to buy against it on a 2D or 3D price chart. |
 | [Egg Price](https://tool.adjiebrotots.com/eggprice/) | See how much of each egg carton you pay for shell and how much for the egg, with the price per gram of egg only. 3D eggs to scale, cut open, with the shape maths behind the shell weight. |
 
 ## Repo layout
@@ -77,7 +78,7 @@ mini-cache files reopened, against a recorded baseline or, with
 
 Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
 `financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`,
-`rentvsownhouse/sensitivity/`, and `worldclock/`. The World Clock's harness checks every clock on
+`rentvsownhouse/sensitivity/`, `valuateeverything/`, and `worldclock/`. The World Clock's harness checks every clock on
 its map, for all 407 zones and across Time Travel jumps over daylight-saving changes,
 against Python's `zoneinfo`, which reads the system's tz database rather than Chromium's.
 Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from a

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Valuate Everything: Secondhand Price Checker | Adjie Brotools</title>
+<meta name="description" content="Is that listing a fair price? Enter the listings you have seen, fit a price model to features like age, kilometres or land size, and check the items you want to buy against it in 2D or 3D.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/valuateeverything/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Valuate Everything: Secondhand Price Checker">
+<meta property="og:description" content="Is that listing a fair price? Enter the listings you have seen, fit a price model to features like age, kilometres or land size, and check the items you want to buy against it in 2D or 3D.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/valuateeverything/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Valuate Everything: Secondhand Price Checker">
+<meta name="twitter:description" content="Is that listing a fair price? Enter the listings you have seen, fit a price model to features like age, kilometres or land size, and check the items you want to buy against it in 2D or 3D.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Valuate Everything",
+  "url": "https://tool.adjiebrotots.com/valuateeverything/",
+  "description": "Is that listing a fair price? Enter the listings you have seen, fit a price model to features like age, kilometres or land size, and check the items you want to buy against it in 2D or 3D.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "alternateName": [
+    "Secondhand Price Checker",
+    "Used Car Fair Price Calculator",
+    "House Price Comparison Regression",
+    "Is This Listing Overpriced"
+  ],
+  "keywords": "fair price calculator, used car price, secondhand price comparison, house price regression, hedonic pricing, linear regression price model, log-linear depreciation, ridge regression, inflation adjusted prices, is this listing overpriced"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I tell if a used car or a house is fairly priced?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Collect listings of similar items with their price and the features that drive it, such as age and kilometres for a car or bedrooms and land size for a house. A regression fitted to those listings gives the price an item with your features should fetch. The free Valuate Everything tool at https://tool.adjiebrotots.com/valuateeverything/ fits that model and shows how far each asking price sits above or below it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why convert a model year into age?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Buyers pay for how old an item is, not for the number on it. A 2020 car sold in 2022 was two years old, the same car sold in 2026 is six. Converting the year to age at the year the listing was seen lets listings from different years be compared fairly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I mix listings from different years?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Give each listing the year it was seen and the tool lifts older prices to today's money with the inflation rate you set, 3% a year by default, before fitting the model."
+      }
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="../shared.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<div class="container">
+<section class="header card">
+  <div>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3.5 12.5 11.5 4.5h8v8l-8 8z"/> <circle stroke="var(--accent)" cx="15.6" cy="8.4" r="1.4"/> <path stroke="var(--accent2)" d="M8.2 15.8l3-3M10.4 17.4l2.6-2.6"/> </svg>Valuate Everything</h1>
+    <p>What a secondhand item should cost, judged by the listings you have seen. Fit a price model to them, then check the items you want to buy against it.</p>
+  </div>
+  <div class="header-right">
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+    <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+  </div>
+</section>
+
+<section class="layout">
+<aside class="controls card">
+  <div class="quick-start-row">
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills both steps with a worked example. The listings are illustrative, not real market data.">?</span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" data-preset="camry" data-tip="18 Camry Hybrid listings seen from 2024 to 2026, priced on year, kilometres and service history. Two cars to check.">Camry Hybrid</button>
+      <button class="quick-start-btn" data-preset="house" data-tip="18 house sales in one Perth suburb from 2022 to 2026, priced on bedrooms, land, distance to a METRONET station and a pool.">Perth house</button>
+    </div>
+  </div>
+  <div class="ctrl-scroll">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" data-tab="data"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.2"/><path d="M3 9.4h18M3 14.7h18M9.4 9.4V20"/></svg><span>1. Market data</span></button>
+    <button class="ctrl-tab" data-tab="items"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.8 4h2.6l2.3 11.2h10.6l2.1-7.6H6.6"/><circle cx="9.4" cy="19.4" r="1.4"/><circle cx="17" cy="19.4" r="1.4"/></svg><span>2. Items to buy</span></button>
+    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10"/><circle cx="10" cy="6.5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="17.5" r="2"/></svg><span>Assumptions</span></button>
+  </div>
+
+  <!-- ══════════════ STEP 1: THE MARKET DATA THE MODEL LEARNS FROM ══════════════ -->
+  <div class="ctrl-panel active" id="tab-data">
+    <div class="stage-note"><span class="stage-badge">Step 1</span><span>Listings you have seen. The model is fitted to these only.</span></div>
+
+    <div class="field-group">
+      <div class="group-title">What you are valuing</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Currency Symbol <i class="tip-icon" data-tip="The symbol prices are shown in. Nothing is converted between currencies.">?</i></span></div>
+        <select class="sel-input" id="currency" data-currency-symbols></select>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Item</div>
+        <input class="txt-input" id="itemWhat" type="text" maxlength="60" value="Toyota Camry Hybrid" placeholder="e.g. Toyota Camry Hybrid">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Columns</div>
+      <div class="col-head" aria-hidden="true"><span>Name</span><span>Type <i class="tip-icon" data-tip="&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Year:&lt;/strong&gt; turned into an age.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Data year:&lt;/strong&gt; when the listing was seen, to adjust for inflation.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Yes/No:&lt;/strong&gt; counts as 1 or 0.&lt;/li&gt;&lt;/ul&gt;">?</i></span><span>Unit</span><span></span></div>
+      <div class="col-list" id="colList" data-no-persist></div>
+      <button type="button" class="add-btn" id="addColBtn">+ Add column</button>
+      <div class="status-line" id="colStatus" aria-live="polite"></div>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Listings</div>
+      <div class="field-row detail-row">
+        <div class="field-label"><span class="tip-wrap">Entry <i class="tip-icon" id="entryTip" data-tip="" data-tip-options>?</i></span></div>
+        <select id="entryMode">
+          <option value="table">Table</option>
+          <option value="text">Text</option>
+          <option value="csv">CSV</option>
+        </select>
+      </div>
+
+      <div class="entry-panel" id="entry-table" data-no-persist>
+        <div class="grid-wrap" id="gridWrap"></div>
+        <button type="button" class="add-btn" id="addRowBtn">+ Add listing</button>
+      </div>
+
+      <div class="entry-panel" id="entry-text" data-no-persist hidden>
+        <textarea class="txt-input data-text" id="dataText" rows="12" spellcheck="false" data-no-abbr></textarea>
+        <div class="status-line" id="textStatus" aria-live="polite"></div>
+      </div>
+
+      <div class="entry-panel" id="entry-csv" data-no-persist hidden>
+        <label class="csv-drop" id="csvDrop">
+          <input type="file" id="csvFile" accept=".csv,.tsv,.txt,text/csv" hidden>
+          <span class="csv-drop-icon" data-icon="open" aria-hidden="true"></span>
+          <span><strong>Open a CSV</strong> or drop one here</span>
+          <span class="csv-drop-sub">First row is the column names</span>
+        </label>
+        <div class="csv-actions">
+          <button type="button" class="btn-secondary btn-sm" id="csvTemplateBtn" title="Download an empty CSV with these columns">⬇ Template</button>
+          <button type="button" class="btn-secondary btn-sm" id="csvDataBtn" title="Download these listings as CSV">⬇ CSV</button>
+        </div>
+        <div class="status-line" id="csvStatus" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ STEP 2: THE ITEMS YOU WANT TO BUY (NEVER IN THE MODEL) ══════════════ -->
+  <div class="ctrl-panel" id="tab-items">
+    <div class="stage-note"><span class="stage-badge">Step 2</span><span id="itemsNote">Items you are thinking of buying, as of this year. They are checked against the model, never added to it.</span></div>
+    <div class="item-list" id="itemList" data-no-persist></div>
+    <button type="button" class="add-btn" id="addItemBtn">+ Add item</button>
+  </div>
+
+  <!-- ══════════════ ASSUMPTIONS ══════════════ -->
+  <div class="ctrl-panel" id="tab-settings">
+    <div class="field-group">
+      <div class="group-title">Prices</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Current year <i class="tip-icon" data-tip="Prices are restated in this year's money, and items to buy are aged from it.">?</i></span></div>
+        <div class="currency-wrap" data-unitless><input class="currency-input" id="curYear" type="number" inputmode="numeric" min="1950" max="2100" step="1" value="2026"></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Inflation <i class="tip-icon" data-tip="Lifts a price seen in an earlier data year to the current year: each year back adds this much.">?</i></span></div><div class="slider-value" id="inflationValue">3.0 %/yr</div></div>
+        <input id="inflation" type="range" min="0" max="10" step="0.1" value="3">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Model</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Modelling approach <i class="tip-icon" id="modelTip" data-tip="" data-tip-options>?</i></span></div>
+        <select class="sel-input" id="model">
+          <option value="linear">Linear regression</option>
+          <option value="log">Log-linear</option>
+          <option value="ridge">Ridge regression</option>
+          <option value="quadratic">Quadratic terms</option>
+        </select>
+      </div>
+      <div class="slider-block" id="lambdaBlock" hidden>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Ridge penalty (λ) <i class="tip-icon" data-tip="How hard each effect is pulled toward zero. On its own, a feature's effect shrinks to about 1 / (1 + λ) of its linear size.">?</i></span></div><div class="slider-value" id="lambdaValue">0.10 ×</div></div>
+        <input id="lambda" type="range" min="0" max="2" step="0.01" value="0.1">
+      </div>
+    </div>
+  </div>
+
+  <div class="warning" id="warnBanner"></div>
+  </div><!-- /ctrl-scroll -->
+</aside>
+
+<main>
+  <!-- THE ANSWER, IN ONE SENTENCE -->
+  <div class="verdict card" id="verdict"></div>
+
+  <section class="metrics">
+    <div class="metric card"><div class="label"><span class="tip-wrap">Best value <i class="tip-icon" data-tip="The item asking the least compared with its fair price. A minus means it is asking below the model.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Fair price <i class="tip-icon" data-tip="What the model says an item with these features fetches, in the current year's money.">?</i></span></div><div class="value" id="kpiFair">—</div><div class="sub" id="kpiFairSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Model fit (R²) <i class="tip-icon" data-tip="The share of the price differences between listings that the features explain. 1 is a perfect fit, 0 explains nothing.">?</i></span></div><div class="value" id="kpiFit">—</div><div class="sub" id="kpiFitSub"></div></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Typical error (RMSE) <i class="tip-icon" data-tip="How far a listing's price usually sits from the model, as a root mean square, corrected for the number of terms fitted.">?</i></span></div><div class="value" id="kpiErr">—</div><div class="sub" id="kpiErrSub"></div></div>
+  </section>
+
+  <section class="chart-card card">
+    <div class="chart-head">
+      <h2>Price model <i class="tip-icon" data-tip="Price is always the vertical axis. Features you do not plot are held at the value you pick under Hold others at.">?</i></h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="svgBtn" title="Download this chart as SVG">⬇ SVG</button>
+        <button class="btn-secondary btn-sm" id="pngBtn" title="Download this chart as PNG">⬇ PNG</button>
+        <button class="btn-secondary btn-sm btn-icon" id="copyBtn" title="Copy PNG to clipboard">⧉</button>
+        <button class="btn-secondary btn-sm btn-icon" id="resetViewBtn" title="Reset zoom">⟳</button>
+      </div>
+    </div>
+    <div class="chart-opts">
+      <div class="opt">
+        <span class="opt-label">View</span>
+        <select id="viewDim">
+          <option value="2d">2D</option>
+          <option value="3d">3D</option>
+        </select>
+      </div>
+      <div class="opt" data-no-persist>
+        <label class="opt-label" for="axisX">Across</label>
+        <select id="axisX"></select>
+      </div>
+      <div class="opt" id="axisYWrap" data-no-persist hidden>
+        <label class="opt-label" for="axisY">And</label>
+        <select id="axisY"></select>
+      </div>
+      <div class="opt" data-no-persist>
+        <label class="opt-label" for="holdAt"><span class="tip-wrap">Hold others at <i class="tip-icon" data-tip="The value given to every feature not on an axis. Listings are shifted to it too, so each dot compares like for like with the line.">?</i></span></label>
+        <select id="holdAt"></select>
+      </div>
+      <label class="opt chk-opt"><input type="checkbox" id="showData" checked><span>Show data points</span></label>
+    </div>
+    <div class="plot-wrap"><div id="plotDiv"></div><div class="plot-empty" id="plotEmpty" hidden></div></div>
+    <div class="hover-box" id="chartNote"></div>
+  </section>
+
+  <section class="detail-section card" id="itemsSection">
+    <div class="detail-head">
+      <h2>Items to buy</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="itemsCsvBtn" title="Download this table as CSV">⬇ CSV</button>
+      </div>
+    </div>
+    <p class="unit-note" id="itemsUnit"></p>
+    <div class="table-wrap" id="itemsTableWrap" data-no-abbr></div>
+  </section>
+
+  <section class="detail-section card" id="coefSection">
+    <div class="detail-head">
+      <h2>Price model terms</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="coefCsvBtn" title="Download this table as CSV">⬇ CSV</button>
+      </div>
+    </div>
+    <p class="unit-note" id="coefUnit"></p>
+    <div class="equation" id="equation" data-no-abbr></div>
+    <div class="table-wrap" id="coefTableWrap" data-no-abbr></div>
+  </section>
+
+  <section class="detail-section card" id="dataSection">
+    <div class="detail-head">
+      <h2>Listings against the model</h2>
+      <div class="btn-cluster">
+        <button class="btn-secondary btn-sm" id="dataCsvBtn" title="Download this table as CSV">⬇ CSV</button>
+      </div>
+    </div>
+    <p class="unit-note" id="dataUnit"></p>
+    <div class="table-wrap" id="dataTableWrap" data-no-abbr></div>
+  </section>
+
+  <!-- WHAT THIS ASSUMES -->
+  <section class="assumes-card card">
+    <h2>What this assumes</h2>
+    <ul class="assumptions">
+      <li><strong>The listings are a fair sample of the market.</strong> The model only knows the prices you give it, so a few odd sales or a thin sample move the answer.</li>
+      <li><strong>Each feature has a steady effect.</strong> Linear adds a fixed amount per unit, Log-linear a fixed percentage, Quadratic lets the effect bend, and Ridge pulls each effect slightly toward zero.</li>
+      <li><strong>Older prices are restated in today's money</strong> at one flat inflation rate, from the listing's data year to the current year. A blank data year counts as the current year.</li>
+      <li><strong>A year becomes an age,</strong> measured at the listing's data year for the market data and at the current year for the items to buy.</li>
+      <li><strong>Yes/No features count as 1 or 0,</strong> and every feature is standardised before fitting, so a large unit such as kilometres cannot swamp a small one. This changes how the terms are scaled, not what Linear predicts.</li>
+      <li><strong>The range is one typical error either side,</strong> a guide to how far real prices scatter, not a confidence interval. Features outside the range of the listings are extrapolated and flagged.</li>
+      <li><strong>Items to buy are never added to the model.</strong> Their asking prices are judged against it, nothing more.</li>
+    </ul>
+  </section>
+</main>
+</section>
+</div>
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+    </p>
+    <p>
+      A price model is only as good as the listings behind it. It cannot see condition, history, location quirks or anything else you did not enter, so treat the fair price as a starting point for negotiation, not a valuation.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you’re interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+    </p>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="../dropdown.js"></script>
+<script src="../shared.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

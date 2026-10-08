@@ -448,6 +448,29 @@ const PAGES = [
     },
   },
   {
+    // A Plotly plot like the Graph Visualiser's. The zoom promises are tested
+    // on a series that climbs steeply, so the left of it sits well under the
+    // whole run's top, which is what the y refit has to come down to.
+    name: 'valuateeverything',
+    url: '/valuateeverything/',
+    plotly: true,
+    charts: [],
+    async prep(page) {
+      await page.evaluate(() => {
+        const sel = document.getElementById('entryMode');
+        sel.value = 'text'; sel.dispatchEvent(new Event('change', { bubbles: true }));
+        const t = document.getElementById('dataText');
+        t.value = 'Price, Size\n' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (1000 + 1000 * n * n / 10) + ', ' + n).join('\n');
+        t.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      await page.waitForFunction(() => {
+        const d = document.getElementById('plotDiv');
+        return d && d.layout && d.layout.xaxis && d.layout.xaxis.range && d.data && d.data.length >= 2;
+      }, null, { timeout: 20000 });
+      await page.waitForTimeout(400);
+    },
+  },
+  {
     name: 'rentvsownhouse/sensitivity',
     url: '/rentvsownhouse/sensitivity/',
     charts: ['.cm-canvas'],

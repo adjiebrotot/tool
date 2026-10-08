@@ -67,6 +67,7 @@ const PAGES = [
   { path: 'financialfreedom' },
   { path: 'dcasimulator' },
   { path: 'dcasimulator/portfolio' },
+  { path: 'valuateeverything' },
   // No results until two cities are picked, so it picks two.
   { path: 'costofliving-comparator', answer: '#ss_summary', setup: async page => {
       await page.evaluate(() => {
