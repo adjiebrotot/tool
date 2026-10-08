@@ -504,6 +504,11 @@ function currOf(city){return city?city.currency:'';}
 // ═══════════════════════════════════════════════════════════
 // CITY PICKER WIDGET
 // ═══════════════════════════════════════════════════════════
+// Pickers are rebuilt on every render, so one listener keeps whichever list
+// is open pinned to its field.
+function placeOpenCityDrops(){document.querySelectorAll('.city-dropdown.open').forEach(d=>d._place&&d._place());}
+window.addEventListener('scroll',placeOpenCityDrops,{passive:true,capture:true});
+window.addEventListener('resize',placeOpenCityDrops,{passive:true});
 function buildCityPicker(containerId, currentKey, onSelect){
   const wrap = document.getElementById(containerId);
   if(!wrap) return;
@@ -528,9 +533,16 @@ function buildCityPicker(containerId, currentKey, onSelect){
 
   let focusIdx=-1;
   function renderDrop(q){
-    const lq=q.toLowerCase();
-    const filtered=CITIES.filter(c=>c.city.toLowerCase().includes(lq)||c.country.toLowerCase().includes(lq)||c.currency.toLowerCase().includes(lq)).slice(0,60);
-    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><strong>${c.city}</strong>, ${c.country}</div>`).join('');
+    // Every word typed must appear somewhere in the city, state, country or
+    // currency, so "paris france" and the shown "Basel, Switzerland" both match.
+    const terms=q.toLowerCase().split(/[\s,]+/).filter(Boolean);
+    const filtered=CITIES.filter(c=>{
+      const hay=(c.city+' '+c.country+' '+c.currency).toLowerCase();
+      return terms.every(t=>hay.includes(t));
+    }).slice(0,60);
+    // City (and state, when the data has one) up front; the country rides in a
+    // chip on the right so the list scans by city.
+    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><span class="opt-city">${c.city}</span><span class="opt-country" title="${c.country}">${c.country}</span></div>`).join('');
     focusIdx=-1;
     drop.querySelectorAll('.city-opt').forEach(el=>{
       el.addEventListener('mousedown',e=>{
@@ -544,8 +556,28 @@ function buildCityPicker(containerId, currentKey, onSelect){
     });
   }
 
-  input.addEventListener('focus',()=>{renderDrop(input.value);drop.classList.add('open');});
-  input.addEventListener('input',()=>{renderDrop(input.value);drop.classList.add('open');input.classList.remove('has-value');});
+  // The list is fixed to the viewport so it can be wider than its field and
+  // is not clipped by the detailed table's horizontal scroller.
+  function placeDrop(){
+    if(!drop.classList.contains('open'))return;
+    const r=input.getBoundingClientRect(), vw=document.documentElement.clientWidth, vh=window.innerHeight;
+    const w=Math.min(Math.max(r.width,300),vw-16);
+    const left=Math.max(8,Math.min(r.left,vw-w-8));
+    drop.style.width=w+'px'; drop.style.left=left+'px';
+    const below=vh-r.bottom-12, above=r.top-12;
+    if(below<160&&above>below){
+      drop.style.top=''; drop.style.bottom=(vh-r.top+4)+'px';
+      drop.style.maxHeight=Math.min(260,above)+'px';
+    }else{
+      drop.style.bottom=''; drop.style.top=(r.bottom+4)+'px';
+      drop.style.maxHeight=Math.min(260,Math.max(below,120))+'px';
+    }
+  }
+  drop._place=placeDrop;
+  function openDrop(){drop.classList.add('open');placeDrop();}
+
+  input.addEventListener('focus',()=>{renderDrop(input.value);openDrop();});
+  input.addEventListener('input',()=>{renderDrop(input.value);openDrop();input.classList.remove('has-value');});
   input.addEventListener('keydown',e=>{
     const opts=drop.querySelectorAll('.city-opt');
     if(e.key==='ArrowDown'){focusIdx=Math.min(focusIdx+1,opts.length-1);}

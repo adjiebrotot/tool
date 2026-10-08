@@ -82,11 +82,16 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .city-clear .ico{width:16px;height:16px;}
 .city-clear:hover{color:var(--text);background:var(--input-bg);}
 .city-search.has-value~.city-clear{display:block;}
-.city-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);max-height:220px;overflow-y:auto;z-index:200;display:none;}
+/* Fixed and sized by placeDrop(), so it can outgrow a narrow column. It sits
+   inside a table header, so undo the header's caps, tracking and no-wrap. */
+.city-dropdown{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);max-height:260px;overflow-x:hidden;overflow-y:auto;z-index:200;display:none;font-family:'DM Sans',system-ui,sans-serif;text-transform:none;letter-spacing:normal;font-weight:400;color:var(--text);text-align:left;white-space:normal;}
 .city-dropdown.open{display:block;}
-.city-opt{padding:7px 12px;font-size:0.86rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background 100ms;}
+.city-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 12px;font-size:0.86rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background 100ms;}
 .city-opt:last-child{border-bottom:none;}
 .city-opt:hover,.city-opt.focused{background:var(--positive-bg);color:var(--positive-em);}
+.city-opt .opt-city{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.city-opt .opt-country{flex-shrink:0;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 8px;border-radius:var(--radius-pill);background:var(--input-bg);border:1px solid var(--border);font-size:0.72rem;font-weight:500;color:var(--muted);}
+.city-opt:hover .opt-country,.city-opt.focused .opt-country{color:inherit;border-color:currentColor;background:transparent;}
 .city-opt .opt-sub{font-size:0.75rem;color:var(--muted);}
 
 /* Inputs - number type (legacy, kept for selects) */
