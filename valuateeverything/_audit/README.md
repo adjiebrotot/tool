@@ -36,13 +36,21 @@ Covered:
    listings and coloured items.
 5. **Table, Text and CSV are one dataset.** Units in brackets in the header,
    a text round trip, every Yes/No spelling, typed text becoming typed
-   columns, a quoted "31,000" kept whole, Yes/No cells as checkboxes, and a
+   columns, a quoted "31,000" kept whole (as the plain number), Yes/No cells as checkboxes, and a
    blank data year read as the current year.
 6. **Edge cases.** A feature that never changes is dropped; features that move
    together exactly are refused in words and Ridge fits them anyway; too few
    listings, no Price and two Price columns are said in words; unreadable rows
    are skipped and counted; a data year after the current year is not read.
 7. **Mini cache.** The saved snapshot carries the listings and the items.
+8. **The form.** Price and Data year are fixed rows that cannot be picked or
+   deleted, and any column set is put in shape (one Price first, one Data year
+   last, rows following). Table figures show their prefix, suffix and
+   thousands separators while the state keeps plain numbers. An edit marks
+   the answer out of date without changing it, and Valuate runs it. With one
+   item, Hold others at is hidden and the chart holds at that item. The items
+   table has no Note column, and the equation falls back to plain text when
+   KaTeX is not there.
 
 Run:
 

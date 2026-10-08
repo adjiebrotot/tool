@@ -17,15 +17,10 @@ main{min-width:0;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
 
-/* ── Tabs: two numbered steps, then the assumptions ── */
+/* ── Tabs ── */
 .ctrl-tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;font-size:.8rem;line-height:1.25;}
 .ctrl-tab .tico{width:1.25em;height:1.25em;}
 .ctrl-panel>:first-child{margin-top:0;}
-
-/* The step a tab belongs to, said once at its top, so the two inputs never
-   read as one form. */
-.stage-note{display:flex;align-items:center;gap:9px;padding:9px 12px;margin-bottom:14px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);font-size:.8rem;line-height:1.4;}
-.stage-badge{flex:0 0 auto;padding:2px 9px;border-radius:var(--radius-pill);background:var(--accent-strong);color:var(--text-inv);font-size:.7rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;}
 
 /* ── Columns editor ── */
 .col-head,.col-row{display:grid;grid-template-columns:minmax(0,1fr) 104px 64px 28px;gap:6px;align-items:center;}
@@ -35,6 +30,8 @@ main{min-width:0;}
 .col-row .txt-input{padding:7px 9px;font-size:.84rem;}
 .col-row select{width:100%;padding:7px 26px 7px 9px;font-size:.84rem;}
 .col-row .col-unit:disabled{opacity:.4;}
+/* Price and Data year are always there: their type is a fact, not a choice. */
+.col-type-fixed,.col-unit-fixed{display:flex;align-items:center;height:100%;padding:0 9px;font-size:.84rem;font-weight:600;color:var(--muted);}
 
 .add-btn{display:block;width:100%;margin:8px 0 6px;padding:7px 10px;background:transparent;border:1.5px dashed var(--border);border-radius:var(--radius-md);color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:border-color var(--motion-fast),color var(--motion-fast);}
 .add-btn:hover{border-color:var(--accent);color:var(--text);}
@@ -48,21 +45,29 @@ main{min-width:0;}
 /* ── Listings: Table / Text / CSV ── */
 .entry-panel{padding:6px 0 4px;}
 .entry-panel[hidden]{display:none;}
-.grid-wrap{overflow:auto;max-height:420px;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);}
+/* The table, its scroll and its "+ Add listing" row are one box. The add row
+   is pinned to the bottom (and left) edge, so it is in reach however long or
+   wide the table grows. */
+.grid-wrap{overflow:auto;max-height:440px;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);}
 .grid{width:100%;border-collapse:collapse;font-size:.8rem;}
-.grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:7px 6px;text-align:left;font-size:.66rem;white-space:nowrap;}
-.grid th .th-unit{text-transform:none;font-weight:600;color:var(--muted);opacity:.8;}
-.grid td{padding:3px 4px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
-.grid td:first-child{font-family:inherit;}
+.grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:8px 6px;text-align:left;vertical-align:bottom;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted);white-space:normal;line-height:1.25;min-width:56px;max-width:120px;border-bottom:1px solid var(--border);}
+.grid td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;vertical-align:middle;}
+.grid th:first-child,.grid td:first-child{padding-left:8px;}
 .grid tr:hover td{background:transparent;}
-.grid .cell{width:76px;min-width:60px;padding:5px 6px;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font:inherit;font-family:'DM Mono',monospace;font-size:.78rem;font-variant-numeric:tabular-nums;outline:none;}
-.grid .cell:focus{border-color:var(--accent);background:var(--panel);}
-.grid td.t-price .cell{width:84px;}
-.grid td.t-year .cell,.grid td.t-datayear .cell{width:58px;}
-.grid td.t-ignore .cell{font-family:inherit;width:92px;}
-.grid td.t-bool{text-align:center;}
-.grid .cell-chk{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
-.grid td.t-del{width:26px;padding:0 2px;}
+.grid th.t-bool,.grid td.t-bool{text-align:center;}
+.grid th.t-bool{min-width:84px;}
+.cell-wrap{display:flex;align-items:center;gap:4px;padding:0 7px;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;transition:border-color var(--motion-fast);}
+.cell-wrap:focus-within{border-color:var(--accent);background:var(--panel);}
+.cell-wrap .prefix,.cell-wrap .suffix{flex:0 0 auto;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:700;}
+.grid .cell{width:72px;min-width:0;padding:6px 0;background:transparent;border:0;color:var(--text);font:inherit;font-family:'DM Sans',sans-serif;font-size:.8rem;font-variant-numeric:tabular-nums;outline:none;}
+.grid td.t-price .cell{width:74px;}
+.grid td.t-year .cell,.grid td.t-datayear .cell{width:44px;}
+.grid .cell.cell-text{width:96px;padding:6px 7px;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;}
+.grid .cell.cell-text:focus{border-color:var(--accent);background:var(--panel);}
+.grid .cell-chk{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;vertical-align:middle;margin:0;}
+.grid td.t-del{width:30px;padding:0 4px;text-align:center;}
+.grid-add{position:sticky;left:0;bottom:0;z-index:1;display:block;width:100%;padding:9px 10px;background:var(--panel);border:0;border-top:1.5px dashed var(--border);color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;text-align:center;cursor:pointer;transition:color var(--motion-fast),background var(--motion-fast);}
+.grid-add:hover{color:var(--text);background:var(--input-bg);}
 
 .data-text{min-height:240px;resize:vertical;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.55;white-space:pre;overflow:auto;}
 
@@ -100,6 +105,9 @@ main{min-width:0;}
 .chart-opts .opt[hidden]{display:none;}
 .chart-opts .opt-label{font-size:.78rem;font-weight:700;color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
 .chart-opts select{max-width:220px;padding:6px 26px 6px 10px;font-size:.82rem;}
+/* A short 2D | 3D pick sits beside its label at its own width. */
+.chart-opts .seg-count{display:inline-flex;width:auto;flex:0 0 auto;}
+.chart-opts .seg-count .seg-btn{flex:0 0 auto;padding:5px 12px;font-family:'DM Sans',sans-serif;}
 .chk-opt{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text);}
 .chk-opt input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;margin:0;}
 .plot-wrap{position:relative;height:500px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
@@ -114,11 +122,19 @@ main{min-width:0;}
 table{font-size:.84rem;}
 th,td{padding:8px 8px;}
 .table-wrap{max-height:none;overflow-y:visible;overflow-x:auto;}
-td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;white-space:normal;text-align:left;min-width:140px;}
+td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;white-space:normal;text-align:left;}
 .row-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:.05em;}
-.equation{font-family:'DM Mono',monospace;font-size:.8rem;line-height:1.6;color:var(--text);background:var(--bg-subtle);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin:0 0 12px;overflow-wrap:anywhere;}
+.equation{font-size:1rem;line-height:2;color:var(--text);background:var(--bg-subtle);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 12px;overflow-x:auto;}
+.equation .katex{font-size:1.08em;}
 .equation:empty{display:none;}
 .detail-section .unit-note{margin:-2px 0 10px;}
+
+/* ── Valuate: the gate ── */
+.btn-row .btn-primary{padding:10px 16px;font-size:.86rem;}
+.stale-note{display:none;flex-basis:100%;margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--accent2);}
+body.is-stale .stale-note{display:block;}
+body.is-stale main .card{opacity:.45;transition:opacity var(--motion-fast);}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2);}
 
 /* ── Banners ── */
 .warning{margin:0 18px 14px;}
@@ -145,4 +161,13 @@ td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;whit
   .ctrl-tab{font-size:.72rem;flex-direction:column;gap:3px;}
   .chart-opts select{max-width:100%;}
   .col-head,.col-row{grid-template-columns:minmax(0,1fr) 92px 54px 28px;}
+  /* Chart options: one per row, labels in a column, controls to the edge. */
+  .chart-opts{flex-direction:column;align-items:stretch;gap:8px;}
+  .chart-opts .opt{display:flex;width:100%;}
+  .chart-opts .opt-label{flex:0 0 104px;}
+  .chart-opts select{flex:1 1 auto;min-width:0;max-width:none;}
+  /* Table cards: the title on its own row, Show table and CSV under it. */
+  .detail-head h2{flex:1 1 100%;}
+  .detail-head .btn-cluster{width:auto;margin-left:auto;}
+  .detail-head .btn-cluster .btn-sm{flex:0 0 auto;}
 }
