@@ -365,15 +365,19 @@ console.log('\n── 8. The form ──');
   await page.waitForTimeout(400);
   const f1 = await ve(() => ({
     offer: [...document.querySelectorAll('#colList .col-type')].some(s => [...s.options].some(o => o.value === 'price' || o.value === 'datayear')),
-    fixed: [...document.querySelectorAll('#colList .col-fixed')].map(r => r.querySelector('.col-type-fixed').textContent + (r.querySelector('.col-del, select') ? ' (editable)' : ''))
+    fixed: [...document.querySelectorAll('#colList .col-fixed')].map(r => r.querySelector('.col-type-fixed').textContent + (r.querySelector('select') ? ' (pickable)' : '') + (r.querySelector('.col-del') ? ' (deletable)' : ''))
   }));
-  check('f1 Price and Data year are fixed rows, never a type to pick', !f1.offer && f1.fixed.join() === 'Price,Data year', JSON.stringify(f1));
+  check('f1 Price and Data year are fixed rows, never a type to pick; only Data year can be deleted', !f1.offer && f1.fixed.join() === 'Price,Data year (deletable)', JSON.stringify(f1));
   await setState({ columns: [{ id: 'c1', name: 'Km', type: 'number', unit: 'km' }, { id: 'c2', name: 'Price', type: 'price', unit: '' }, { id: 'c3', name: 'Cost', type: 'price', unit: '' }],
                    rows: [['10', '100', '1'], ['20', '90', '2']], items: [], chart: {} });
   const f2 = await ve(() => window.__VE.state.columns.map(c => c.name + ':' + c.type).join(', '));
-  check('f2 a column set is put in shape: one Price first, one Data year last', f2 === 'Price:price, Km:number, Cost:number, Data year:datayear', f2);
+  check('f2 a column set is put in shape: one Price first, no Data year added', f2 === 'Price:price, Km:number, Cost:number', f2);
   const f2r = await ve(() => window.__VE.state.rows[0].join('|'));
-  check('f2b the rows follow their columns', f2r === '100|10|1|', f2r);
+  check('f2b the rows follow their columns', f2r === '100|10|1', f2r);
+  await setState({ columns: [{ id: 'c1', name: 'Seen', type: 'datayear', unit: '' }, { id: 'c2', name: 'Price', type: 'price', unit: '' }, { id: 'c3', name: 'Km', type: 'number', unit: 'km' }, { id: 'c4', name: 'Again', type: 'datayear', unit: '' }],
+                   rows: [['2024', '100', '10', '2023']], items: [], chart: {} });
+  const f2c = await ve(() => window.__VE.state.columns.map(c => c.name + ':' + c.type).join(', ') + ' / ' + window.__VE.state.rows[0].join('|'));
+  check('f2c one Data year, moved last; a second one becomes a Number', f2c === 'Price:price, Km:number, Again:number, Seen:datayear / 100|10|2023|2024', f2c);
 
   await ve(() => window.__VE.applyQuickStart('camry'));
   await page.waitForTimeout(400);
@@ -411,6 +415,45 @@ console.log('\n── 8. The form ──');
   check('f8 the items table has no Note column', !/Note/.test(heads), heads);
   const eq = await ve(() => window.__VE.compute() && document.getElementById('equation').textContent);
   check('f9 without KaTeX the equation falls back to plain text', /^P = [\d,.]+ [−+] /.test(eq), eq.slice(0, 60));
+}
+
+/* ── 10. No data year: every listing is seen this year ── */
+console.log('\n── 10. Without a data year ──');
+{
+  await ve(() => window.__VE.applyQuickStart('house'));
+  await page.waitForTimeout(400);
+  const vis = () => ve(() => ({ add: !document.getElementById('addDataYearBtn').hidden,
+    year: !document.getElementById('curYearRow').hidden, infl: !document.getElementById('inflationBlock').hidden }));
+  const d0 = await vis();
+  check('d1 with a data year: Current year and Inflation shown, no + Add data year', !d0.add && d0.year && d0.infl, JSON.stringify(d0));
+  await setField('curYear', YEAR - 3);
+  await page.click('#colList .col-fixed:last-child .col-del');
+  await page.waitForTimeout(150);
+  const d1 = await vis();
+  const cols = await ve(() => window.__VE.state.columns.map(c => c.type).join(','));
+  check('d2 the bin deletes Data year; Current year and Inflation step out, + Add data year steps in',
+        d1.add && !d1.year && !d1.infl && !/datayear/.test(cols), JSON.stringify(d1) + ' ' + cols);
+  await page.click('#valuateBtn');
+  await page.waitForTimeout(300);
+  const d3 = await ve(() => { const r = window.__VE.compute(); return { year: r.o.year, dy: [...new Set(r.prep.dataYear)], same: r.prep.price.every((p, i) => p === r.prep.priceToday[i]),
+    heads: [...document.querySelectorAll('#dataTableWrap th')].map(t => t.textContent).join(','), verdict: document.getElementById('verdict').textContent }; });
+  check('d3 every listing is seen this calendar year, whatever the hidden Current year says, at its listed price',
+        d3.year === new Date().getFullYear() && d3.dy.length === 1 && d3.dy[0] === d3.year && d3.same, JSON.stringify({ year: d3.year, dy: d3.dy, same: d3.same }));
+  check('d4 the listings table drops Data year and Today, the verdict drops "money"', d3.heads === 'Row,Listed,Model,Miss,Miss %' && !/money/.test(d3.verdict), d3.heads);
+  // The model on the same listings with every data year set to this year must agree.
+  const preset = await ve(() => JSON.parse(JSON.stringify(window.__VE.PRESETS.house)));
+  const rp = replayPrepare(preset.rows.map(r => r.map((v, i) => i === 5 ? String(new Date().getFullYear()) : String(v))), preset.columns, new Date().getFullYear(), 0.03);
+  const f = replayLinear(rp.X, rp.y);
+  const fits = await ve(() => window.__VE.compute().model.fitted);
+  const worst = Math.max(...fits.map((v, i) => rel(v, f(rp.X[i]))));
+  check('d5 the fit matches the replay with every listing in this year', worst < 1e-8, `worst ${worst.toExponential(2)}`);
+  await page.click('#addDataYearBtn');
+  await page.waitForTimeout(150);
+  const d6 = await vis();
+  const st = await ve(() => ({ last: window.__VE.state.columns[window.__VE.state.columns.length - 1], blank: window.__VE.state.rows.every(r => r[r.length - 1] === '') }));
+  check('d6 + Add data year puts a blank Data year back last, and its settings with it',
+        !d6.add && d6.year && d6.infl && st.last.type === 'datayear' && st.blank, JSON.stringify(d6) + ' ' + st.last.name);
+  await setField('curYear', YEAR);
 }
 
 /* ── 9. The listings table, enlarged ── */

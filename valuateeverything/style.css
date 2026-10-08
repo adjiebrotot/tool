@@ -35,6 +35,8 @@ main{min-width:0;}
 
 .add-btn{display:block;width:100%;margin:8px 0 6px;padding:7px 10px;background:transparent;border:1.5px dashed var(--border);border-radius:var(--radius-md);color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:border-color var(--motion-fast),color var(--motion-fast);}
 .add-btn:hover{border-color:var(--accent);color:var(--text);}
+.add-btn[hidden],#curYearRow[hidden],#inflationBlock[hidden]{display:none;}
+.add-btn+.add-btn{margin-top:0;}
 
 .status-line{font-size:.8rem;line-height:1.4;min-height:0;}
 .status-line:empty{display:none;}
