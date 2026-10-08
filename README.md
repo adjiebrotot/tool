@@ -14,7 +14,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 
 | Tool | What it does |
 | --- | --- |
-| [Rent vs Own Home](https://tool.adjiebrotots.com/rentvsownhouse/) ([ID](https://tool.adjiebrotots.com/rentvsownhouse/id/)) | Model renting vs buying property over time — fixed/floating rates, setup/ongoing costs, and [multi-scenario sensitivity analysis](https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/). Comparable commercial software costs tens of thousands of dollars. |
+| [Rent vs Own Home](https://tool.adjiebrotots.com/rentvsownhouse/) ([ID](https://tool.adjiebrotots.com/rentvsownhouse/id/)) | Model renting vs buying property over time — fixed/floating rates, setup/ongoing costs, and [multi-scenario sensitivity analysis](https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/). Quick Start loads a typical home in major cities worldwide, from a studio apartment to a four-bedroom house, offering only the home types each city's market really has; [every figure and its source](https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/) is on one page, drawn from the same data file the calculator reads (`rentvsownhouse/quickstart-data.js`). Comparable commercial software costs tens of thousands of dollars. |
 | [PPh 21 Pisah vs Gabung](https://tool.adjiebrotots.com/pisahvsgabung/) ([ID](https://tool.adjiebrotots.com/pisahvsgabung/id/)) | One-of-a-kind comparison of Indonesian PPh 21 under separate (pisah harta) vs joint (gabung harta) filing. |
 | [Borrowing Capacity (AU)](https://tool.adjiebrotots.com/borrowingcapacity/) | Work out how much an Australian bank would lend you, and which of the four caps (serviceability, DTI, LVR, deposit) is binding. Shows the full serviceability build-up line by line, which bank calculators never do. |
 | [Finance vs Cash](https://tool.adjiebrotots.com/financingvscash/) | Compare paying cash vs financing while investing unused cash, across the seven repayment structures lenders actually sell. Six worked comparisons — house, car, phone plan, credit-card 0%, flat-rate motorbike, payment holiday — load in one click, each over differing terms so none is decided by the price tag. [Loan Types Explained](https://tool.adjiebrotots.com/financingvscash/loan-types/) defines all seven structures, gives the formula behind each, names the markets it is sold in, and works one of the Quick Start presets through with charts. |
@@ -85,7 +85,14 @@ Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from
 timezone-boundary-builder release clipped to Natural Earth coastlines; re-run it when a
 new release is out. The Rent vs Own page and its Sensitivity page run one shared engine
 (`rentvsownhouse/engine.js`), and `rentvsownhouse/sensitivity/_audit/parity.mjs` types the same
-scenarios into both and requires byte-identical cashflow exports. `rentvsownhouse/audit/` is the earlier
+scenarios into both and requires byte-identical cashflow exports. Their Quick Start scenarios
+(a city and one of its homes) all live in `rentvsownhouse/quickstart-data.js`, which both pages
+and the [assumptions page](https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/)
+read; `rentvsownhouse/_audit/quickstart-data.mjs` holds every scenario to the calculator's own
+field bounds and the file's rules (every home type accounted for in every city, a plausible
+yield, prices and rents rising with bedrooms) and checks the assumptions page draws each one,
+and `rentvsownhouse/sensitivity/_audit/presets.mjs` loads every scenario on both pages and
+requires byte-identical exports. `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain

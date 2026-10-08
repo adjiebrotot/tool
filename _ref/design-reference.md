@@ -699,7 +699,9 @@ where the list sits. Put it under its field with
 `SharedDropdown.place(input, list, {minWidth: 300})` on open, scroll and resize:
 it is fixed to the viewport, so a narrow column or a scrolling table cannot clip
 it or squeeze it. Working examples: the Cost of Living Comparator's city picker,
-the World Clock's place picker, and PowerFactory's `PFComboBox`.
+the World Clock's place picker, PowerFactory's `PFComboBox`, and Rent vs Own's
+Quick Start city (its Sensitivity page puts the search field at the top of the
+list, under a bolt in the first column's header).
 
 ### Segmented Control Group (`.seg-group`)
 

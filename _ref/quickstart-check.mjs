@@ -18,7 +18,7 @@
    scenario claims, and the engine reads its own state object, not them. What
    the reader can see, and the verdict drawn from it, must match to the letter.
 
-   Run: node _ref/quickstart-check.mjs
+   Run: node _ref/quickstart-check.mjs   (QS_ALL=1: every Rent vs Own scenario)
 */
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -50,6 +50,54 @@ const MIRRORS = {
   ]
 };
 
+/* How a tool's scenarios are listed and picked, where they are not a row of
+   .quick-start-btn pills. Rent vs Own has too many for pills (a city, then one
+   of that city's homes), so it is driven through its own two controls the way
+   a reader would: type the city into the search, press its row, then choose
+   the home. Both functions run in the page. */
+const PICKERS = {
+  rentvsownhouse: {
+    // By default one scenario per city, chosen so every home type is also
+    // covered: the reset path is the same code for all of them, and what
+    // varies (a city's frequencies, currency, a home's figures) is all hit.
+    // QS_ALL=1 drives every one of them. rentvsownhouse/_audit/
+    // quickstart-data.mjs checks every scenario's figures against the form.
+    list: process.env.QS_ALL ? `function(){ return window.RVO_QS.all(); }` : `function(){
+      var Q = window.RVO_QS, seen = {}, out = [];
+      Q.data.cities.forEach(function(c){
+        var homes = Q.homes(c.key);
+        var t = homes.filter(function(k){ return !seen[k]; })[0] || Q.defaultType(c.key);
+        seen[t] = 1;
+        out.push(Q.id(c.key, t));
+      });
+      return out;
+    }`,
+    pick: `async function(sid){
+      var sleep = function(ms){ return new Promise(function(r){ setTimeout(r, ms); }); };
+      var parts = sid.split('/'), city = window.RVO_QS.city(parts[0]);
+      var input = document.getElementById('qsCity');
+      input.focus();
+      input.value = city.city;
+      input.dispatchEvent(new Event('input', {bubbles: true}));
+      await sleep(20);
+      var row = document.querySelector('#qsCityList .combo-opt[data-key="' + parts[0] + '"]');
+      if(!row) throw new Error('no city row for ' + sid);
+      row.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
+      await sleep(20);
+      var sel = document.getElementById('qsType');
+      if(sel.value !== parts[1]){ sel.value = parts[1]; sel.dispatchEvent(new Event('change', {bubbles: true})); }
+      if(sel.value !== parts[1]) throw new Error('no home ' + parts[1] + ' for ' + parts[0]);
+    }`,
+    // Hundreds of scenarios: one scribbled page serves them all, scribbled
+    // again before each, rather than a fresh page apiece.
+    reuseDirty: true
+  }
+};
+const PILLS = {
+  list: `function(){ return Array.prototype.map.call(document.querySelectorAll('.quick-start-btn'), function(b){ return b.dataset.preset || b.dataset.city; }); }`,
+  pick: `async function(key){ document.querySelector('.quick-start-btn[data-preset="' + key + '"], .quick-start-btn[data-city="' + key + '"]').click(); }`
+};
+
 /* CDN libraries are stubbed so this runs offline; the pages only need Chart to
    exist, not to draw. */
 const STUB = `
@@ -71,7 +119,10 @@ Chart.Interaction = {modes: {}};
 Chart.helpers = {getRelativePosition: function(e){ return e; }};
 window.Chart = Chart;
 window.Plotly = {newPlot: async function(){}, react: async function(){}, relayout: async function(){}};
-try { localStorage.clear(); } catch(e){}`;
+try { localStorage.clear(); } catch(e){}
+// Every tour reads "<tool>-tour-v<N>-seen"; a returning visitor has seen it.
+(function(){ var get = Storage.prototype.getItem;
+  Storage.prototype.getItem = function(k){ return /-tour-v\d+-seen$/.test(k) ? '1' : get.call(this, k); }; })();`;
 
 /* Everything the reader can reach, plus the verdict the page draws from it.
    Every control tab is opened in turn, because most of a tool's form is behind
@@ -128,6 +179,8 @@ const SNAPSHOT = `async function(){
   out['@highlighted'] = Array.prototype.map
     .call(document.querySelectorAll('.quick-start-btn.active'),
           function(b){ return b.dataset.preset || b.dataset.city; }).join(',');
+  var qsCity = document.getElementById('qsCity'), qsType = document.getElementById('qsType');
+  if(qsCity) out['@picked'] = qsCity.value + ' / ' + (qsType ? qsType.value : '');
   var v = document.getElementById('verdict');
   if(v) out['@verdict'] = v.textContent.replace(/\\s+/g, ' ').trim().slice(0, 300);
   return out;
@@ -186,30 +239,30 @@ async function open(tool){
 
 for(const tool of TOOLS){
   console.log('\n── ' + tool + ' ──');
+  const picker = PICKERS[tool] || PILLS;
   const clean = await open(tool);
-  const presets = await clean.evaluate(() => Array.prototype.map.call(
-    document.querySelectorAll('.quick-start-btn'), b => b.dataset.preset || b.dataset.city));
+  const presets = await clean.evaluate(list => eval('(' + list + ')')(), picker.list);
 
   check(tool + ' ships Quick Start scenarios and no Reset button',
     presets.length > 0 && await clean.evaluate(() => !document.getElementById('resetBtn')),
     presets.length + ' scenarios');
 
+  let shared = picker.reuseDirty ? await open(tool) : null;
   for(const key of presets){
-    const sel = `.quick-start-btn[data-preset="${key}"], .quick-start-btn[data-city="${key}"]`;
-    const ref = await clean.evaluate(async ([sel, snap]) => {
-      document.querySelector(sel).click();
+    const ref = await clean.evaluate(async ([key, pick, snap]) => {
+      await eval('(' + pick + ')')(key);
       await new Promise(r => setTimeout(r, 500));
       return await eval('(' + snap + ')')();
-    }, [sel, SNAPSHOT]);
+    }, [key, picker.pick, SNAPSHOT]);
 
-    const dirty = await open(tool);
-    const got = await dirty.evaluate(async ([sel, snap, mangle]) => {
+    const dirty = shared || await open(tool);
+    const got = await dirty.evaluate(async ([key, pick, snap, mangle]) => {
       await eval('(' + mangle + ')')();
-      document.querySelector(sel).click();
+      await eval('(' + pick + ')')(key);
       await new Promise(r => setTimeout(r, 500));
       return await eval('(' + snap + ')')();
-    }, [sel, SNAPSHOT, MANGLE]);
-    await dirty.close();
+    }, [key, picker.pick, SNAPSHOT, MANGLE]);
+    if(!shared) await dirty.close();
 
     const diffs = Object.keys(Object.assign({}, ref, got))
       .filter(k => String(ref[k]) !== String(got[k]));
@@ -221,9 +274,9 @@ for(const tool of TOOLS){
 
     const pairs = MIRRORS[tool];
     if(pairs){
-      const seeded = await clean.evaluate(async ([sel, pairs]) => {
+      const seeded = await clean.evaluate(async ([key, pick, pairs]) => {
         const sleep = ms => new Promise(r => setTimeout(r, ms));
-        document.querySelector(sel).click();
+        await eval('(' + pick + ')')(key);
         await sleep(500);
         const segs = Array.prototype.slice.call(document.querySelectorAll('.seg-btn,.mode-btn'));
         for(const b of segs){ if(!b.classList.contains('active')){ b.click(); await sleep(60); } }
@@ -234,7 +287,7 @@ for(const tool of TOOLS){
           const b = document.querySelector(advSel);
           return {simpleId, simple: a ? norm(a.value) : null, advanced: b ? norm(b.value) : null};
         });
-      }, [sel, pairs]);
+      }, [key, picker.pick, pairs]);
       const off = seeded.filter(m => m.simple !== m.advanced);
       check('"' + key + '" seeds its detailed views from its own figures',
         off.length === 0,
@@ -243,6 +296,7 @@ for(const tool of TOOLS){
           : seeded.map(m => m.simpleId + '=' + m.simple).join(', '));
     }
   }
+  if(shared) await shared.close();
   await clean.close();
 }
 

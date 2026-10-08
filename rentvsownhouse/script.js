@@ -11,7 +11,14 @@ const LANG = {
     sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
     quickStartLabel: 'Quick Start',
-    quickStartTip: 'Prefills with a median two-bedroom apartment in the city centre or inner suburbs.',
+    quickStartTip: 'Fills the form with a typical home of that type in that city: price, rent, running costs and local loan terms.',
+    qsCityPh: 'Search city…',
+    qsCityTitle: 'Quick Start city',
+    qsTypeTitle: 'Home type',
+    qsTypePh: 'Home type',
+    qsNoMatch: 'No city matches',
+    qsAllLink: 'All figures and sources',
+    qsAsOf: m => m ? `figures as of ${m}` : '',
     tabGeneral: 'General',
     tabOwn: 'Home',
     tabRent: 'Rent',
@@ -243,7 +250,14 @@ const LANG = {
     sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
     /* sidebar */
     quickStartLabel: 'Mulai Cepat',
-    quickStartTip: 'Isi otomatis dengan harga median apartemen 2 kamar di pusat kota atau pinggiran kota.',
+    quickStartTip: 'Mengisi formulir dengan hunian tipikal jenis itu di kota tersebut: harga, sewa, biaya rutin, dan syarat KPR setempat.',
+    qsCityPh: 'Cari kota…',
+    qsCityTitle: 'Kota Mulai Cepat',
+    qsTypeTitle: 'Jenis hunian',
+    qsTypePh: 'Jenis hunian',
+    qsNoMatch: 'Kota tidak ditemukan',
+    qsAllLink: 'Semua angka dan sumbernya',
+    qsAsOf: m => m ? `data per ${m}` : '',
     tabGeneral: 'Umum',
     tabOwn: 'Rumah',
     tabRent: 'Sewa',
@@ -585,8 +599,9 @@ const DEFAULTS = {
   rentOngoingCosts: null,
 };
 
-/* ── CITY PRESETS ── shared with the Sensitivity tool, see presets.js */
-const CITY_PRESETS = window.RVO_CITY_PRESETS || {};
+/* ── QUICK START ── every scenario lives in quickstart-data.js, which the
+   Sensitivity tool and the assumptions page read too. */
+const QS = window.RVO_QS;
 
 let S = JSON.parse(JSON.stringify(DEFAULTS));
 let persist = null; // mini cache handle (assigned at init)
@@ -1547,13 +1562,14 @@ function resetAll(){
   rerender();
 }
 
-/* ── APPLY CITY PRESET ──
-   resetAll() first, so a city never inherits a field the last one did not set.
-   It is also what lets the page do without a Reset button: every Quick Start is
-   a full reset with a scenario laid on top, so any one of them already returns
-   the form to a clean, known state. */
-function applyPreset(cityKey){
-  const p = CITY_PRESETS[cityKey];
+/* ── APPLY A QUICK START SCENARIO ──
+   resetAll() first, so a scenario never inherits a field the last one did not
+   set. It is also what lets the page do without a Reset button: every Quick
+   Start is a full reset with a scenario laid on top, so any one of them
+   already returns the form to a clean, known state. `sid` is "<city>/<home>"
+   (see quickstart-data.js); a bare city loads that city's default home. */
+function applyPreset(sid){
+  const p = QS && QS.preset(sid);
   if(!p) return;
 
   resetAll();
@@ -1609,9 +1625,167 @@ function applyPreset(cityKey){
   renderRatePeriodRows();
   updateCostsModeUI();
 
-  document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.city===cityKey));
+  qsShow(p.cityKey, p.typeKey);
   updateCagrToolVisibility(false);
   rerender();
+}
+
+/* ── QUICK START PICKERS ──
+   A city first, then one of the homes that city has. The city list is long,
+   so it is a searchable combobox that searches the way the Cost of Living
+   Comparator's city picker does: every word typed has to appear in the city,
+   its country, its currency or another name it goes by, so "zurich", "uae"
+   and "perth au" all land. The homes are a short list, so a plain select,
+   holding only the types that city's market really has. Picking either loads
+   the scenario. Neither control is part of the plan: a saved plan or the mini
+   cache restores the form, not which preset it started from. */
+const qsInput = $('qsCity'), qsList = $('qsCityList'), qsTypeSel = $('qsType');
+let qsCity = null;   // the city on show, null until one is picked
+let qsFocus = -1;    // the row the arrow keys are on
+
+const qsPage = () => (lang === 'id' ? '../' : '') + 'quickstart-assumptions/';
+// The field shows the city alone: the list's chip already named its country.
+function qsCityText(c){ return c.city; }
+const QS_MONTHS = {
+  en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  id: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']
+};
+function qsMonth(ym){
+  const m = /^(\d{4})-(\d{2})/.exec(ym || '');
+  return m ? QS_MONTHS[lang === 'id' ? 'id' : 'en'][+m[2] - 1] + ' ' + m[1] : '';
+}
+
+function qsRender(q){
+  const cities = QS.sortedCities(lang).filter(c => QS.cityMatches(c, q));
+  qsList.textContent = '';
+  if(!cities.length){
+    const e = document.createElement('div');
+    e.className = 'combo-empty';
+    e.textContent = T('qsNoMatch');
+    qsList.appendChild(e);
+  }
+  cities.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'combo-opt' + (c.key === qsCity ? ' selected' : '');
+    row.setAttribute('role', 'option');
+    row.setAttribute('aria-selected', c.key === qsCity ? 'true' : 'false');
+    row.dataset.key = c.key;
+    const main = document.createElement('span');
+    main.className = 'combo-main';
+    main.textContent = c.city;
+    const chip = document.createElement('span');
+    chip.className = 'combo-chip';
+    chip.textContent = chip.title = QS.countryText(c, lang);
+    row.append(main, chip);
+    qsList.appendChild(row);
+  });
+  qsFocus = -1;
+}
+function qsPlace(){
+  if(qsList.classList.contains('open')) SharedDropdown.place(qsInput, qsList, {minWidth:260, maxHeight:300});
+}
+function qsOpen(){
+  qsList.classList.add('open');
+  qsInput.setAttribute('aria-expanded', 'true');
+  qsPlace();
+  const sel = qsList.querySelector('.combo-opt.selected');
+  if(sel) sel.scrollIntoView({block:'nearest'});
+}
+// Closing puts the chosen city back, so a half-typed search never sits in
+// the field looking like the scenario on screen.
+function qsClose(){
+  qsList.classList.remove('open');
+  qsInput.setAttribute('aria-expanded', 'false');
+  const c = qsCity && QS.city(qsCity);
+  qsInput.value = c ? qsCityText(c) : '';
+  qsInput.classList.toggle('has-value', !!c);
+}
+// Show a scenario on the pickers without loading it (applyPreset loads it).
+function qsShow(cityKey, typeKey){
+  const c = QS.city(cityKey);
+  if(!c) return;
+  qsCity = cityKey;
+  qsTypeSel.textContent = '';
+  ['apartment', 'house'].forEach(form => {
+    const keys = QS.homes(cityKey).filter(k => QS.type(k).form === form);
+    if(!keys.length) return;
+    const g = document.createElement('optgroup');
+    g.label = QS.formText(form, lang);
+    keys.forEach(k => g.appendChild(new Option(QS.typeText(k, 'short', lang), k)));
+    qsTypeSel.appendChild(g);
+  });
+  qsTypeSel.disabled = false;
+  qsTypeSel.value = typeKey;
+  qsClose();
+  const h = c.homes[typeKey];
+  $('qsWhere').textContent = h ? [h.where, h.sqm ? h.sqm + ' m²' : '', T('qsAsOf')(qsMonth(c.asOf))].filter(Boolean).join(' · ') : '';
+  $('qsAll').href = qsPage() + '#' + cityKey + '-' + typeKey;
+}
+// Back to "nothing picked": a plan opened from a file is the reader's own.
+function qsReset(){
+  qsCity = null;
+  qsTypeSel.textContent = '';
+  qsTypeSel.appendChild(new Option(T('qsTypePh'), ''));
+  qsTypeSel.disabled = true;
+  qsClose();
+  $('qsWhere').textContent = '';
+  $('qsAll').href = qsPage();
+}
+function qsPickCity(key){
+  if(!QS.city(key)) return;
+  // Keep the home type across cities where the new one has it.
+  const keep = qsCity && qsTypeSel.value && QS.homes(key).indexOf(qsTypeSel.value) >= 0;
+  qsCity = key;
+  qsClose();
+  applyPreset(QS.id(key, keep ? qsTypeSel.value : QS.defaultType(key)));
+}
+function qsMove(i){
+  const rows = qsList.querySelectorAll('.combo-opt');
+  qsFocus = Math.max(-1, Math.min(i, rows.length - 1));
+  rows.forEach((r, k) => r.classList.toggle('focused', k === qsFocus));
+  if(qsFocus >= 0) rows[qsFocus].scrollIntoView({block:'nearest'});
+}
+
+if(qsInput && QS){
+  qsInput.addEventListener('focus', () => {
+    // The field shows the chosen city: open on the whole list, with the
+    // city's name selected so typing replaces it.
+    qsRender(qsInput.classList.contains('has-value') ? '' : qsInput.value);
+    qsOpen();
+    if(qsInput.classList.contains('has-value')) qsInput.select();
+  });
+  // A click on the field when it already has the focus (after Esc) reopens.
+  qsInput.addEventListener('mousedown', () => {
+    if(document.activeElement === qsInput && !qsList.classList.contains('open')){ qsRender(''); qsOpen(); }
+  });
+  qsInput.addEventListener('input', () => {
+    qsInput.classList.remove('has-value');
+    qsRender(qsInput.value);
+    qsOpen();
+  });
+  qsInput.addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown'){ e.preventDefault(); if(!qsList.classList.contains('open')){ qsRender(''); qsOpen(); } qsMove(qsFocus + 1); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); qsMove(qsFocus - 1); }
+    else if(e.key === 'Enter'){
+      // Enter takes the row the arrows are on, or the only match left.
+      const rows = qsList.querySelectorAll('.combo-opt');
+      const row = rows[qsFocus] || (rows.length === 1 ? rows[0] : null);
+      if(row){ e.preventDefault(); qsPickCity(row.dataset.key); qsInput.blur(); }
+    }
+    else if(e.key === 'Escape'){ qsClose(); qsInput.blur(); }
+  });
+  qsInput.addEventListener('blur', qsClose);
+  // A press anywhere in the list (a row, its scrollbar) keeps the focus.
+  qsList.addEventListener('mousedown', e => {
+    e.preventDefault();
+    const row = e.target.closest('.combo-opt');
+    if(row){ qsPickCity(row.dataset.key); qsInput.blur(); }
+  });
+  window.addEventListener('scroll', qsPlace, {passive:true, capture:true});
+  window.addEventListener('resize', qsPlace, {passive:true});
+  qsTypeSel.addEventListener('change', () => {
+    if(qsCity && qsTypeSel.value) applyPreset(QS.id(qsCity, qsTypeSel.value));
+  });
 }
 
 /* ── PNG ── */
@@ -2189,7 +2363,6 @@ document.querySelectorAll('.graph-btn').forEach(btn=>{
   });
 });
 
-document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click', ()=>applyPreset(btn.dataset.city)));
 $('downloadBtn').addEventListener('click', downloadCsv);
 $('chartResetZoom').addEventListener('click',()=>{ if(chartInstance) chartInstance.resetZoom(); });
 $('themeToggle').addEventListener('click',()=>{
@@ -2285,6 +2458,18 @@ persist = Persist.init('rentvsownhouse', {
 });
 // One namespace for the English and Indonesian pages, so a file saved on one
 // opens on the other.
-SharedScenario.mount('.quick-start-row', { tool: 'rentvsownhouse', persist: persist });
+SharedScenario.mount('.quick-start-row', { tool: 'rentvsownhouse', persist: persist, onLoaded: qsReset });
+
+/* A link from the assumptions page, ?qs=<city>/<home>, opens on that
+   scenario. It is taken off the address once loaded, so a reload restores
+   the reader's edits rather than the preset again. */
+qsReset();
+(function(){
+  let want = null;
+  try { want = new URLSearchParams(location.search).get('qs'); } catch(e){}
+  if(!want || !QS || !QS.preset(want)) return;
+  applyPreset(want);
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){}
+})();
 
 })();

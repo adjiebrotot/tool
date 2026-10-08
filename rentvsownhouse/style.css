@@ -197,10 +197,21 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 .quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .quick-start-label .tico{width:1.05em;height:1.05em;}
-.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
-.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
-.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
-.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
+/* Quick Start: a city (a searchable .combo-input, as the Cost of Living
+   Comparator's city picker), then a home (a plain select). Both take their
+   look from dropdown.css; only their size and the picked state live here.
+   They sit on their own line under the label and the save/open buttons. */
+.quick-start-row .qs-pickers{order:1;flex-basis:100%;display:flex;gap:8px;min-width:0;}
+.qs-city{position:relative;flex:1 1 0;min-width:0;}
+.qs-city-input{width:100%;padding:8px 10px;font-size:.84rem;}
+.qs-city-input.has-value{border-color:var(--accent-strong);background-color:var(--positive-bg);}
+.qs-city-list{display:none;}
+.qs-city-list.open{display:block;}
+.qs-pickers .qs-type{flex:1.15 1 0;min-width:0;width:auto;padding:8px 10px;font-size:.84rem;}
+.quick-start-row .qs-note{order:2;flex-basis:100%;display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:-3px;font-size:.74rem;line-height:1.4;color:var(--muted);}
+.qs-where:empty{display:none;}
+.qs-all{color:var(--accent);font-weight:600;text-decoration:none;white-space:nowrap;}
+.qs-all:hover{text-decoration:underline;}
 
 /* ── Redesign: shared skeleton fit ── */
 .field-row .slider-head{margin-bottom:6px;}

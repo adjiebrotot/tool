@@ -203,8 +203,11 @@ async function rvoChecks(rel, tag){
   // convert from the type it left, not the one before it.
   {
     // Sydney: its setup cost is a "%" of the price.
-    const qs = await page.evaluate(()=>{
-      const b=document.querySelector('.quick-start-btn[data-city="sydney"]'); b.click(); return b.dataset.city; });
+    const qs = 'sydney/apt-2br';
+    await page.click('#qsCity');
+    await page.fill('#qsCity', 'Sydney');
+    await page.click('#qsCityList .combo-opt[data-key="sydney"]');
+    await page.selectOption('#qsType', 'apt-2br');
     await page.waitForTimeout(200);
     const type = await val(page,'setupCostType'), fig = n(await val(page,'setupCost'));
     const price = n(await val(page,'propertyPrice'));

@@ -2,7 +2,7 @@
    Mesin bersama (../../tour-shared.js) membaca objek ini. Setiap langkah
    menjelaskan apa yang ada di layar, jadi langkah tentang tab membukanya dulu. */
 window.__TOUR = {
-  seenKey: 'rvo-id-tour-v2-seen',
+  seenKey: 'rvo-id-tour-v3-seen',
   launchLabel: '🧭 Ikuti tur',
   launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
@@ -18,11 +18,11 @@ window.__TOUR = {
     },
     {
       target: '.quick-start-row',
-      title: '① Mulai dari kota preset',
-      body: 'Satu klik memuat harga, sewa, dan suku bunga yang realistis untuk kota ' +
-            'seperti <strong>Perth</strong>, <strong>Sydney</strong>, ' +
-            '<strong>Singapura</strong>, atau <strong>Jakarta</strong>. Titik awal cepat ' +
-            'yang bisa Anda sesuaikan dengan angka Anda sendiri.'
+      title: '① Mulai dari kota dan jenis hunian',
+      body: 'Cari kota seperti <strong>Perth</strong>, <strong>Tokyo</strong>, atau ' +
+            '<strong>Jakarta</strong>, lalu pilih hunian yang memang ada di kota itu, dari ' +
+            'studio hingga rumah tapak empat kamar. Harga, sewa, dan syarat KPR setempat ' +
+            'langsung terisi dan bisa Anda ganti dengan angka Anda sendiri.'
     },
     {
       target: '.ctrl-tabs',
