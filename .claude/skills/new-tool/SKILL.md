@@ -168,7 +168,8 @@ Scale the rigor to the risk:
   axis units, no em-dash, no red option, answer and caveats) alongside `_ref/quickstart-check.mjs`,
   `_ref/scenario-check.mjs`, `_ref/chart-check.mjs`, `_ref/tip-check.mjs` and `_ref/abbr-check.mjs`.
 - **Every tool** passes `node _ref/button-check.mjs` (one picture per job, bare icon buttons,
-  reachable main action).
+  reachable main action) and `node _ref/dropdown-check.mjs` (every dropdown has the shared look
+  and opens the shared list).
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 

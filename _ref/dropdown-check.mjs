@@ -103,18 +103,30 @@ async function newContext(opts = {}) {
 const READ = () => {
   // Chromium floors a computed border width to whole pixels (1.5px reads as
   // 1px), so the width is read from the rules that match instead.
+  // A shorthand holding a var() (`border:1.5px solid var(--border)`) is not
+  // split into longhands, so the width is picked out of it.
+  const bw = st => {
+    for (const prop of ['border-top-width', 'border-width', 'border-top', 'border']) {
+      const v = st.getPropertyValue(prop);
+      if (!v) continue;
+      if (/^(none|0)\b/.test(v.trim())) return '0px';
+      const m = v.match(/(^|\s)(\d*\.?\d+px|thin|medium|thick)(\s|$)/);
+      if (m) return m[2];
+    }
+    return '';
+  };
   const rules = [];
   const walk = list => {
     for (const r of list) {
       if (r.styleSheet) { try { walk(r.styleSheet.cssRules); } catch (e) {} }
       else if (r.media && r.cssRules) { if (matchMedia(r.media.mediaText).matches) walk(r.cssRules); }
       else if (r.cssRules && !r.selectorText) walk(r.cssRules);
-      else if (r.selectorText && r.style.getPropertyValue('border-top-width')) rules.push(r);
+      else if (r.selectorText && bw(r.style)) rules.push(r);
     }
   };
   for (const sh of document.styleSheets) { try { walk(sh.cssRules); } catch (e) {} }
   const widths = el => rules.filter(r => { try { return el.matches(r.selectorText); } catch (e) { return false; } })
-    .map(r => r.style.getPropertyValue('border-top-width'));
+    .map(r => bw(r.style));
   const probe = document.createElement('div');
   probe.style.cssText = 'position:absolute;left:-9999px;border:1px solid var(--border);background:var(--input-bg);color:var(--panel)';
   document.body.appendChild(probe);

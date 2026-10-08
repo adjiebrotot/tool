@@ -90,7 +90,7 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Nine cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Ten cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
@@ -164,6 +164,12 @@ icon, an icon-only button is bare and named, and a sticky control card ends on s
 first load so its Simulate or Reset row is visible before any scroll. It also drives Finance
 vs Cash's scenario editor on a desktop and a phone: Done has to be on screen halfway down the
 form, and closing by Done, ✕ or Esc has to keep the edit. `ONLY=<path>` runs one page.
+
+`node _ref/dropdown-check.mjs` loads every page, the home page included, in both themes and
+holds every dropdown to the one look in `dropdown.css`: each `<select>` (hidden tabs too) in
+DM Sans at weight 500 with a 1.5px `--border`, the field fill, the chevron and the shared option
+colours, every searchable list on the shared `.combo-list`, and on each page a mouse click
+opens the shared list and a pick fires exactly one `change`. `ONLY=<path>` runs one page.
 
 ## Multi-language pages
 

@@ -6,7 +6,9 @@ visualisation tools. It is domain-agnostic and can be dropped into any web proje
 
 Fonts: **DM Sans** (sans-serif) + **DM Mono** (monospace).
 Tokens live in `dark.css` (default) and `light.css` (applied via `body.light`).
-Shared, theme-independent components live in `shared.css` / `shared.js`.
+Shared, theme-independent components live in `shared.css` / `shared.js`. Dropdowns live
+in their own pair, `dropdown.css` / `dropdown.js`, so the home page (which loads neither
+shared file) uses the very same ones.
 
 To use this system in a new page, include the shared stylesheets and scripts (in this
 order), then layer your own page-specific overrides on top:
@@ -14,9 +16,10 @@ order), then layer your own page-specific overrides on top:
 ```html
 <link rel="stylesheet" href="dark.css">
 <link rel="stylesheet" href="light.css">
-<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="shared.css">   <!-- imports dropdown.css -->
 <link rel="stylesheet" href="style.css">  <!-- your page-specific overrides -->
 ...
+<script src="dropdown.js"></script>         <!-- before shared.js -->
 <script src="shared.js"></script>
 <script src="script.js"></script>
 ```
@@ -637,10 +640,53 @@ compact one, and `--sel-pad` / `--sel-chev` to move the chevron in), but never
 re-colour, re-border or re-font it, and never writes its own `option` colours.
 `_ref/dropdown-check.mjs` holds every page to this.
 
+The spec, for reference (all of it is in `dropdown.css`; a tool writes none of it):
+
+| Part | Values |
+| --- | --- |
+| Field (`select`, `.combo-input`) | DM Sans, weight 500, `.92rem`, padding `10px 13px`, `--input-bg`, `1.5px solid var(--border)`, `--radius-md`, `--accent` border on focus, `--motion-fast` |
+| Chevron | 12px, `--muted` colour per theme (`--sel-chevron`), `right 10px` (`--sel-chev`), text kept clear by `padding-right: 30px` (`--sel-pad`) |
+| Compact field (`.sel-sm`, toolbars, table cells) | `.82rem`, padding `6px 10px`, `--radius-sm`, `--sel-pad: 26px`, `--sel-chev: 8px` |
+| Open list (`.combo-list`) | `--panel`, `1.5px solid var(--border)`, `--radius-sm`, `--shadow-lg`, padding `4px`, max height 280px, DM Sans weight 400, z-index 9500 |
+| Row (`.combo-opt`) | padding `6px 10px`, radius 5px, no dividers; hover / `.focused`: `--accent` fill with `--text-inv` text; `.selected`: weight 600 |
+| Chip (`.combo-chip`) | pill, `.72rem`, weight 500, `--input-bg` fill, 1px `--border`, `--muted` text; outlined in the row's colour when the row is lit |
+| Second line (`.combo-sub`) / group label (`.combo-group`) | `.76rem` `--muted` / `.7rem` uppercase `--muted`, weight 700 |
+
 ```css
 /* A compact select in a toolbar or table cell: size only. */
 .ctrl-select { font-size: .82rem; padding: 6px 10px; border-radius: var(--radius-sm); --sel-pad: 26px; --sel-chev: 8px; }
 ```
+
+### Searchable Combobox (`.combo-input` + `.combo-list`)
+
+For a database-sized list only (see the table above). The field is a text input
+with `.combo-input`, which looks exactly like a select without the chevron; the
+list is a `.combo-list` of `.combo-opt` rows, the same panel `dropdown.js` uses
+for a plain select. Search matches every typed word anywhere in the row's text
+(city, state, country, currency), so "paris france" works.
+
+Each row puts its label in `.combo-main`. A short tag that helps scanning (a
+country, a unit) goes in a `.combo-chip` on the right; a second line (a
+description, a UTC offset) goes in a `.combo-sub`, with the two lines wrapped in
+`.combo-text`. Mark the row the arrow keys are on with `.focused`, the current
+value with `.selected`, and say "nothing found" with a `.combo-empty`.
+
+```html
+<div class="city-picker">
+  <input class="city-search combo-input" type="text" placeholder="Search city…" autocomplete="off">
+  <div class="city-dropdown combo-list" role="listbox">
+    <div class="combo-opt selected" role="option"><span class="combo-main">Santa Barbara, CA</span><span class="combo-chip">United States</span></div>
+    <div class="combo-opt" role="option"><span class="combo-text"><span class="combo-main">Jakarta</span><span class="combo-sub">Indonesia · GMT+7</span></span></div>
+  </div>
+</div>
+```
+
+The tool keeps only the picker's own states (`.has-value`, the clear button) and
+where the list sits. Put it under its field with
+`SharedDropdown.place(input, list, {minWidth: 300})` on open, scroll and resize:
+it is fixed to the viewport, so a narrow column or a scrolling table cannot clip
+it or squeeze it. Working examples: the Cost of Living Comparator's city picker,
+the World Clock's place picker, and PowerFactory's `PFComboBox`.
 
 ### Segmented Control Group (`.seg-group`)
 
@@ -695,37 +741,6 @@ document.querySelectorAll('[data-val]').forEach(btn => {
   });
 });
 ```
-
-### Searchable Combobox (`.combo-input` + `.combo-list`)
-
-For a database-sized list only (see the table above). The field is a text input
-with `.combo-input`, which looks exactly like a select without the chevron; the
-list is a `.combo-list` of `.combo-opt` rows, the same panel `dropdown.js` uses
-for a plain select. Search matches every typed word anywhere in the row's text
-(city, state, country, currency), so "paris france" works.
-
-Each row puts its label in `.combo-main`. A short tag that helps scanning (a
-country, a unit) goes in a `.combo-chip` on the right; a second line (a
-description, a UTC offset) goes in a `.combo-sub`, with the two lines wrapped in
-`.combo-text`. Mark the row the arrow keys are on with `.focused`, the current
-value with `.selected`, and say "nothing found" with a `.combo-empty`.
-
-```html
-<div class="city-picker">
-  <input class="city-search combo-input" type="text" placeholder="Search city…" autocomplete="off">
-  <div class="city-dropdown combo-list" role="listbox">
-    <div class="combo-opt selected" role="option"><span class="combo-main">Santa Barbara, CA</span><span class="combo-chip">United States</span></div>
-    <div class="combo-opt" role="option"><span class="combo-text"><span class="combo-main">Jakarta</span><span class="combo-sub">Indonesia · GMT+7</span></span></div>
-  </div>
-</div>
-```
-
-The tool keeps only the picker's own states (`.has-value`, the clear button) and
-where the list sits. Put it under its field with
-`SharedDropdown.place(input, list, {minWidth: 300})` on open, scroll and resize:
-it is fixed to the viewport, so a narrow column or a scrolling table cannot clip
-it or squeeze it. Working examples: the Cost of Living Comparator's city picker,
-the World Clock's place picker, and PowerFactory's `PFComboBox`.
 
 ### Radio Group (mutually exclusive options)
 
