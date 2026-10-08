@@ -55,6 +55,8 @@ const LANG_SENS = {
     seriesRent: 'Rent',
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
+    presetTitle: 'Quick Start: fill this column with a city',
+    presetPick: 'Quick Start city…',
     dragTitle: 'Drag to reorder scenarios',
     removeTitle: 'Remove',
     sepGeneral: 'Assumptions',
@@ -179,6 +181,8 @@ const LANG_SENS = {
     seriesRent: 'Sewa',
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
+    presetTitle: 'Mulai Cepat: isi kolom ini dengan data kota',
+    presetPick: 'Kota Mulai Cepat…',
     dragTitle: 'Seret untuk mengurutkan skenario',
     removeTitle: 'Hapus',
     sepGeneral: 'Asumsi',
@@ -566,6 +570,41 @@ function addScenario(){
   scenarios.push(clone);
   rerender();
 }
+/* Quick Start: the first column takes a city from the main page's Quick Start
+   row (../presets.js), as a fresh scenario named after it. The page shows one
+   currency, so the city's symbol becomes the page's. Only the first column has
+   the picker: to compare two cities, load one, drag it right, load the next. */
+const CITY_PRESETS = window.RVO_CITY_PRESETS || {};
+function applyCityPreset(si, key){
+  const p = CITY_PRESETS[key];
+  if(!p || !scenarios[si]) return;
+  const sc = cloneScenario(DEFAULT_SCENARIO);
+  Object.keys(sc).forEach(k=>{ if(p[k]!==undefined) sc[k] = p[k]; });
+  sc.name = p.label || key;
+  if(modes.mortgageMode==='detailed')  seedRatePeriods(sc);
+  if(modes.ownCostsMode==='detailed')  seedOwnCostItems(sc);
+  if(modes.rentCostsMode==='detailed') seedRentCostItems(sc);
+  scenarios[si] = sc;
+  const sel = document.getElementById('currencySelect');
+  if(sel) sel.value = sc.currencySymbol;
+  scenarios.forEach(s=>{ s.currencySymbol = sc.currencySymbol; });
+  const yr = document.getElementById('yearInput');
+  if(yr) yr.max = Math.max(...scenarios.map(s=>s.horizon||1));
+  rerender();
+}
+function presetPickerHTML(si){
+  const keys = Object.keys(CITY_PRESETS);
+  if(!keys.length) return '';
+  const opts = keys.map(k=>`<option value="${escAttr(k)}">${escHtml(CITY_PRESETS[k].label || k)}</option>`).join('');
+  return `<span class="scen-preset" title="${escAttr(T('presetTitle'))}">
+    <svg class="scen-preset-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg>
+    <svg class="scen-preset-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    <select class="scen-preset-select" data-si="${si}" aria-label="${escAttr(T('presetTitle'))}">
+      <option value="" selected disabled>${escHtml(T('presetPick'))}</option>${opts}
+    </select>
+  </span>`;
+}
+
 function moveScenario(from, to){
   scenarios.splice(to, 0, scenarios.splice(from, 1)[0]);
   scenarioResults.splice(to, 0, scenarioResults.splice(from, 1)[0]);
@@ -744,12 +783,15 @@ function buildTableHTML(){
 
   const thScens = scenarios.map((sc,i)=>{
     const clamped = Math.min(viewYear, sc.horizon||30);
-    return `<th class="scen-th"><div class="scen-header-cell">
+    return `<th class="scen-th${i===0 && Object.keys(CITY_PRESETS).length ? ' has-preset' : ''}"><div class="scen-header-cell">
       <div class="scen-header-actions">
         ${n>1?`<button type="button" class="col-grip" data-col-grip="${i}" title="${escAttr(T('dragTitle'))}" aria-label="${escAttr(T('dragTitle'))}">⠿</button>`:''}
-        <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
-        <button class="btn-dupe" data-si="${i}" title="${T('dupTitle')}">⧉</button>
-        ${n>1?`<button class="btn-remove rmv-scen" data-si="${i}" title="${T('removeTitle')}">✕</button>`:''}
+        <div class="scen-name-field">
+          <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
+          ${i===0?presetPickerHTML(i):''}
+        </div>
+        <button type="button" class="btn-head-icon btn-dupe" data-si="${i}" title="${escAttr(T('dupTitle'))}" aria-label="${escAttr(T('dupTitle'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 8.5V5.7a2.2 2.2 0 0 0-2.2-2.2H5.7a2.2 2.2 0 0 0-2.2 2.2v7.6a2.2 2.2 0 0 0 2.2 2.2h2.8"/></svg></button>
+        ${n>1?`<button type="button" class="btn-head-icon btn-remove rmv-scen" data-si="${i}" title="${escAttr(T('removeTitle'))}" aria-label="${escAttr(T('removeTitle'))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`:''}
       </div>
       ${clamped<viewYear?`<span class="scen-header-sub">${T('cappedAt')(clamped)}</span>`:''}
     </div></th>`;
@@ -1736,6 +1778,14 @@ function wireEvents(){
 
   document.querySelectorAll('.rmv-scen').forEach(btn=>{
     btn.addEventListener('click', ()=> removeScenario(+btn.dataset.si));
+  });
+
+  document.querySelectorAll('.scen-preset-select').forEach(el=>{
+    el.addEventListener('change', e=>{
+      const key = e.target.value;
+      e.target.value = '';
+      applyCityPreset(+e.target.dataset.si, key);
+    });
   });
 
   document.querySelectorAll('.btn-dupe').forEach(btn=>{

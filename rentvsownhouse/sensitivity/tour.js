@@ -20,7 +20,8 @@ window.__TOUR = {
       body: 'Add a column for every case you want to test, for example different ' +
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
             'table recalculates instantly. Each field shows its unit, and a figure past a ' +
-            'row\'s limits is pulled back to it.'
+            'row\'s limits is pulled back to it. The <strong>⚡</strong> picker on the first ' +
+            'column fills it with a Quick Start city; drag a column right to load another.'
     },
     {
       // The step names both controls, so highlight both: the year box sits

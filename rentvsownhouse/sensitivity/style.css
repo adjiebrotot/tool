@@ -46,14 +46,36 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .dt .label-td{font-weight:600;min-width:200px;white-space:nowrap;color:var(--text);background:var(--input-bg);}
 .dt .scen-th{min-width:185px;text-align:center;}
 .dt .scen-td{min-width:185px;}
+/* The first column also carries the Quick Start picker, so its name keeps room. */
+.dt .scen-th.has-preset{min-width:225px;}
 /* The column under "+ Scenario": no inputs, just the table's edge. */
 .dt td.trail-td{background:var(--input-bg);}
 
 /* Scenario header */
 .scen-header-cell{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;}
-.scen-name-input{background:transparent;border:none;border-bottom:1.5px solid var(--border);color:var(--text);font-weight:700;font-size:.85rem;width:100%;outline:none;padding:2px 0;font-family:inherit;}
-.scen-name-input:focus{border-bottom-color:var(--accent);}
-.scen-header-actions{display:flex;align-items:center;gap:6px;width:100%;}
+/* The name and, on the first column, the Quick Start picker share one
+   underline, so the picker reads as part of the name field. */
+.scen-name-field{flex:1 1 auto;display:flex;align-items:center;gap:4px;border-bottom:1.5px solid var(--border);transition:border-color 130ms;}
+.scen-name-field:focus-within{border-bottom-color:var(--accent);}
+.scen-name-input{flex:1 1 auto;background:transparent;border:none;color:var(--text);font-weight:700;font-size:.85rem;width:100%;outline:none;padding:3px 0;font-family:inherit;}
+.scen-header-actions{display:flex;align-items:center;gap:2px;width:100%;}
+.scen-header-actions .scen-name-field{margin-right:4px;}
+/* Quick Start picker: a native select (keyboard, screen readers and the
+   phone's own list) laid invisibly over a bolt-and-chevron mark. */
+.scen-preset{position:relative;display:inline-flex;align-items:center;gap:1px;flex-shrink:0;height:24px;padding:0 4px;border-radius:6px;color:var(--muted);transition:color 130ms,background 130ms;}
+.scen-preset:hover,.scen-preset:focus-within{color:var(--accent-strong);background:var(--input-bg);}
+.scen-preset:focus-within{outline:2px solid var(--accent-strong);outline-offset:1px;}
+.scen-preset-ico{width:14px;height:14px;}
+.scen-preset-chev{width:11px;height:11px;}
+.scen-preset-select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-family:inherit;font-size:.82rem;border:none;appearance:none;-webkit-appearance:none;}
+.scen-preset-select option{color:var(--text);background:var(--card-bg);}
+/* Header icon buttons (duplicate, remove): one square size, glyphs drawn as
+   strokes so they sit on the same line whatever the font. */
+.scen-header-actions .btn-head-icon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:26px;height:26px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;transition:color 130ms,background 130ms;font-family:inherit;line-height:1;}
+.scen-header-actions .btn-head-icon svg{width:15px;height:15px;}
+.scen-header-actions .btn-head-icon:focus-visible{outline:2px solid var(--accent-strong);outline-offset:1px;}
+.scen-header-actions .btn-dupe:hover{color:var(--accent-strong);background:var(--input-bg);}
+.scen-header-actions .btn-remove:hover{color:var(--data-neg-em);background:var(--data-neg-bg);}
 .scen-header-sub{font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
 /* Buttons */
@@ -61,8 +83,6 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .btn-add:hover{border-color:var(--accent-strong);color:var(--accent-strong);}
 .btn-remove{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 5px;border-radius:5px;transition:all 130ms;font-family:inherit;line-height:1;}
 .btn-remove:hover{background:var(--data-neg-bg);color:var(--data-neg-em);}
-.btn-dupe{background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:.72rem;padding:2px 6px;border-radius:5px;transition:all 130ms;font-family:inherit;line-height:1.4;}
-.btn-dupe:hover{border-color:var(--accent);color:var(--accent);}
 
 /* Group separator row */
 .dt tr.group-sep-tr td{background:var(--bg);color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 11px 5px;border-top:2px solid var(--border);border-bottom:none;}
