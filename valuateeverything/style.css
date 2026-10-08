@@ -43,7 +43,8 @@ main{min-width:0;}
 .status-err{color:var(--error-text);}
 
 /* ── Listings: Table / Text / CSV ── */
-.entry-panel{padding:6px 0 4px;}
+.entry-switch{padding:10px 0 2px;border-top:1px solid var(--border);}
+.entry-panel{padding:8px 0 4px;}
 .entry-panel[hidden]{display:none;}
 /* The table scrolls inside its own box; "+ Add listing" sits under the box,
    never over a row, the same dashed add as "+ Add column". */

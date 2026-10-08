@@ -522,12 +522,6 @@ const MODEL_TIPS = {
   ridge: '<strong>Ridge regression:</strong> linear, with every effect pulled toward zero. Steadier with few listings or features that move together, like age and km.',
   quadratic: '<strong>Quadratic terms:</strong> adds a squared term for every number and year, so the line can bend. Needs more listings than linear.'
 };
-// Table entry explains itself, so only Text and CSV carry a tip.
-const ENTRY_TIPS = {
-  text: '<strong>Text:</strong> the column names on the first line, then one listing per line, separated by commas or tabs. A unit goes in brackets: Odometer (km).',
-  csv: '<strong>CSV:</strong> open a spreadsheet saved as CSV, with the column names in the first row. It replaces the listings here.'
-};
-
 /* ───────────────────────── Typed numbers ─────────────────────────
    Every typed figure shows its thousands separators and its unit as a prefix
    or suffix. The state keeps the plain number, so Text, CSV and a saved
@@ -721,10 +715,6 @@ function loadCsvFile(file){
 function showEntry(){
   const mode = $('entryMode').value;
   ['table', 'text', 'csv'].forEach(m => { $('entry-' + m).hidden = m !== mode; });
-  const tip = $('entryTip');
-  if(ENTRY_TIPS[mode]) tip.setAttribute('data-tip', ENTRY_TIPS[mode]);
-  else tip.removeAttribute('data-tip');
-  tip.hidden = !ENTRY_TIPS[mode];
   if(mode === 'text') syncText();
 }
 
