@@ -158,8 +158,21 @@ meaning of its own.
 
 A year-by-year table opens closed behind **Show table** (`SharedFold.attach(card,
 {key, bodies})`); its CSV button exports it either way. Every tool closes with
-a `.assumes-card` listing what the model includes and leaves out, with the
-figures that drive it.
+a `.assumes-card` listing what the answer rests on, built by a
+`renderAssumptions` call on every redraw from the reader's own plan rather than
+written into the HTML:
+
+- **Only what this plan uses.** A line belongs to a figure the reader entered,
+  a choice they made, or a rule that touched their numbers. A feature left off,
+  a cost left at nil or a field never shown says nothing (no Rent-Then-Buy line
+  unless it is on, no fee line for a loan with no fee).
+- **The figure, not the fact.** "Inflation is 2.5% a year", "the $640,000 loan
+  is at a fixed 6%", "Living costs are $3,575 a month, the HEM benchmark for a
+  couple in Perth", never "Inflation is modelled".
+- **Nothing obvious.** Drop a line the reader could not have doubted, or one
+  that only restates how the page is laid out.
+- **Short.** Bold lead, one sentence after it; a longer reason goes in an (i)
+  tip. Before there is anything to describe, one line says what to enter.
 
 ### Page text
 

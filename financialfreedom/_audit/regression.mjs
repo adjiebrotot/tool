@@ -305,8 +305,8 @@ const SNAP = async () => {
       inflationNote: txt('inflationNote'), pensionNote: txt('pensionNote'), savingsModeNote: txt('savingsModeNote'),
       slider: [txt('ageRetireVal'), txt('retireScaleMin'), txt('retireScaleMax')]
     },
-    // The assumptions list carries reworded copy now; its figures must not move.
-    assumptionFigures: (txt('assumptions') || '').match(/-?\$?[\d][\d,.]*%?/g) || []
+    // The assumptions list is no longer compared: it is built from the plan
+    // and names figures the old copy never carried, so it differs by design.
   };
 };
 
@@ -320,7 +320,7 @@ const exact = v => JSON.stringify(v, (k, x) => {
   }
   return x;
 });
-const GROUPS = ['P', 'diag', 'series', 'headline', 'mc', 'reqs', 'dd', 'table', 'tableText', 'csv', 'charts', 'text', 'assumptionFigures'];
+const GROUPS = ['P', 'diag', 'series', 'headline', 'mc', 'reqs', 'dd', 'table', 'tableText', 'csv', 'charts', 'text'];
 const digest = snap => {
   const out = {};
   GROUPS.forEach(g => { out[g] = createHash('sha256').update(exact(snap[g])).digest('hex').slice(0, 20); });

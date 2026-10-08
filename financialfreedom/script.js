@@ -3190,71 +3190,87 @@ function renderTable(res){
 /* ─── ASSUMPTIONS ─── */
 
 function renderAssumptions(res){
-  var swr = res.needAtRetire > 0 ? (retireSpendAt(res.P, res.P.ageRetire) * 12 / res.needAtRetire * 100) : null;
-  var items = [
-    '<strong>No tax.</strong> Enter everything net of it.' +
-      info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'),
+  /* Built from this plan, so every line carries a figure the reader set or
+     one the plan implies, and nothing is said about a field left unused. */
+  var P = res.P, ui = res.ui;
+  var pc = function(v){ return (+(Number(v) || 0).toFixed(2)) + '%'; };
+  var per = function(p){ return p === 'weekly' ? 'a week' : p === 'monthly' ? 'a month' : 'a year'; };
+  var items = [];
 
-    '<strong>Shown in ' + moneyMode(res) + '.</strong> Spending holds its value, so it rises with inflation.' +
-      info('Future\u2019s money is what the account will read: the plan times each year\'s inflation factor. Show in today\u2019s money strips it back out.'),
+  // The return: the figure every projection compounds.
+  var preset = ui.assetPreset && ui.assetPreset !== 'custom' && !tickerInfo && PRESET_ASSETS[ui.assetPreset];
+  items.push('<strong>Investments return ' + pc(ui.ret) + ' a year</strong>' +
+    (ui.std > 0 ? ', swinging ' + pc(ui.std) + ' either way' : ', the same every year') +
+    ', which is ' + pc(P.rr * 100) + ' after inflation' + (preset ? ' (the ' + escapeHtml(preset.label) + ' preset)' : '') + '.' +
+    (ui.std > 0
+      ? info('The ' + pc(ui.std) + ' is one standard deviation. The shaded band is the 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures, taken year by year, so it is an envelope rather than one path.')
+      : info('With no swing every simulated future is the same, so the band closes onto the line.')));
 
-    '<strong>Inflation is ' + fmt.pct(res.ui.inflation, 1) + ' a year</strong> and applies to every year, working or retired.' +
-      info('Living costs, the pot needed and the pension all rise with it, and the return is discounted by it (Fisher, not subtraction).'),
-
-    '<strong>The two sections are two different questions.</strong> Path to freedom never withdraws; Cashflows always does.' +
-      info('Path to freedom keeps paying in and compares the pot with what each age needs. Cashflows stops at the slider age and draws down.'),
-
-    '<strong>Your FIRE number</strong> implies a ' + (swr == null ? 'n/a' : fmt.pct(swr, 2)) + ' safe withdrawal rate (SWR).' +
-      info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return.'),
-
-    '<strong>The shaded band is not a path.</strong>' +
-      info('The 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures, taken year by year, so the edges are an envelope rather than one future you could live through.'),
-
-    '<strong>Money deposited is what you put in that is still there.</strong>' +
-      info('Nothing is withdrawn on that chart, so it is every cent you have paid in. The gap to the investment line is the growth.'),
-
-    '<strong>The year-by-year table reconciles.</strong> Balance plus Saved plus Growth is next year\u2019s Balance, to the cent.' +
-      info('Growth is whatever is left over once the flows are accounted for. In today\u2019s money that is the real return; in future\u2019s money, the nominal one.'),
-
-    (res.P.inDetailed && res.P.inStages.length
-      ? (res.ui.savingsMode === 'income'
-          ? '<strong>Income is what you entered, stage by stage</strong>, and what you save is whatever it leaves over.'
-          : '<strong>Savings are what you entered, stage by stage</strong>, and income is that plus your spending.') +
-        info('Each stage grows at its own rate from its own start. Once you stop work, only the stages still paid after it come in.')
-    : res.ui.savingsMode === 'income'
-      ? '<strong>Income is what you entered</strong>, and what you save is whatever it leaves over.' +
-        info('Income grows at the rate on the You tab, spending rises with inflation. Once you retire the only income is the pension, if you included one.')
-      : '<strong>Income is implied, not entered.</strong> It is what you save plus what you spend.' +
-        info('You entered savings, so the income shown is what saving and spending that much implies. Switch to Net income on the You tab to enter it directly.')),
-
-    (res.ui.expenseMode === 'detailed'
-      ? '<strong>Not modelled:</strong> one-off costs. A life stage changes spending for whole months, never for a single bill.'
-      : '<strong>Not modelled:</strong> one-off costs, or any change in spending beyond your retirement expenses.' +
-        info('Switch Money out to Detailed to add life stages: kids, a lean stretch, slower later years.'))
-  ];
-  if(res.ui.expenseMode === 'detailed' && res.P.stages.length){
-    items.splice(2, 0, '<strong>Life stages replace, they do not add.</strong> Between its two ages a stage is what you spend, working or retired.' +
-      info('Stages run in age order and never overlap. Outside them you spend living expenses until you stop work, then retirement expenses, once any stage running then has ended.'));
-  }
-  if(res.P.pensionOn){
-    items.splice(3, 0, (res.P.pensionIndexed
-      ? '<strong>The pension rises with inflation</strong>, so it keeps its value for ever.'
-      : '<strong>The pension never rises</strong>, so it buys less every year.') +
-      info(res.P.pensionIndexed
-        ? 'A flat line in today\u2019s money and a rising figure in the money of the day. It starts at age ' + fmt.age(res.P.pensionStartAge) + ' and counts as income from then on, which is why it lowers the pot you need.'
-        : 'A flat figure in the money of the day and a sinking one in today\u2019s money. The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now, so the years before you claim it wear it down too. Turn on "Rises with inflation" if your country indexes its pension.'));
-  }
-  if(res.ui.mode === 'rich'){
-    items.splice(3, 0, '<strong>Forever is tested to age ' + RICH_HORIZON_AGE + '.</strong>' +
-      info('At the required pot the balance holds its real value, so a longer horizon would not change the answer.'));
-  }
   if(tickerInfo){
-    items.push('<strong>' + escapeHtml(tickerInfo.ticker) + '</strong> measured ' +
+    items.push('<strong>That return is ' + escapeHtml(tickerInfo.ticker) + '</strong> measured ' +
       escapeHtml(tickerInfo.stats.from) + ' to ' + escapeHtml(tickerInfo.stats.to) + '.' +
       info(tickerInfo.source === 'stooq'
         ? 'That series is not adjusted for dividends, so the return is understated. A Yahoo series would include them.'
         : 'Adjusted close, so dividends are included in the return.'));
   }
+
+  var spendNowYr = P.X * 12, yearsToRetire = Math.max(0, P.ageRetire - P.ageNow);
+  items.push('<strong>Inflation is ' + pc(ui.inflation) + ' a year,</strong> working or retired, and figures are in ' + moneyMode(res) + '.' +
+    info('Spending holds its value, so ' + fmt.currency(spendNowYr) + ' a year today is ' +
+      fmt.currency(spendNowYr * Math.pow(1 + P.inflation, yearsToRetire)) + ' a year by age ' + fmt.age(P.ageRetire) +
+      ' in the money of the day. The return is discounted by it (Fisher, not subtraction).'));
+
+  // Money in.
+  if(P.inDetailed && P.inStages.length){
+    items.push((ui.savingsMode === 'income'
+        ? '<strong>Income is what you entered, stage by stage</strong>, and what you save is whatever it leaves over.'
+        : '<strong>Savings are what you entered, stage by stage</strong>, and income is that plus your spending.') +
+      info('Each stage grows at its own rate from its own start. Once you stop work, only the stages still paid after it come in.'));
+  } else if(ui.savingsMode === 'income'){
+    items.push('<strong>Your ' + fmt.currency(ui.savings) + ' ' + per(ui.savingsPeriod) + ' of income' +
+      (ui.growth ? ' rises ' + pc(ui.growth) + ' a year' : ' never rises') + ' until ' + fmt.age(P.ageRetire) +
+      ',</strong> and what you save is whatever spending leaves over.');
+  } else {
+    items.push('<strong>You save ' + fmt.currency(ui.savings) + ' ' + per(ui.savingsPeriod) +
+      (ui.growth ? ', rising ' + pc(ui.growth) + ' a year,' : '') + ' until ' + fmt.age(P.ageRetire) + '.</strong> ' +
+      'Income is implied: that plus what you spend.');
+  }
+
+  items.push('<strong>No tax:</strong> the ' + pc(ui.ret) + ' return and the ' +
+    (ui.savingsMode === 'income' ? 'income' : 'savings') + ' you entered are taken as after tax.' +
+    info('Tax differs too much between countries, and between an ordinary account and a pension wrapper, to model honestly in one tool.'));
+
+  // What retirement has to fund, and for how long.
+  var retireYr = retireSpendAt(P, P.ageRetire) * 12;
+  var share = ui.expenseMode !== 'detailed' && ui.retireExpensePeriod === 'pct' ? ' (' + pc(ui.retireExpense) + ' of living costs)' : '';
+  var horizon = ui.mode === 'rich'
+    ? ', for ever with the pot left whole'
+    : ui.mode === 'legacy'
+      ? ', leaving ' + fmt.currency(ui.legacy) + ' at ' + fmt.age(P.ageDie)
+      : ', drawn down to nothing by ' + fmt.age(P.ageDie);
+  items.push('<strong>From ' + fmt.age(P.ageRetire) + ' you spend ' + fmt.currency(retireYr) + ' a year' + share + '</strong>' + horizon + '.' +
+    (ui.mode === 'rich' ? info('Forever is tested to age ' + RICH_HORIZON_AGE + '. At the required pot the balance holds its real value, so a longer horizon would not change the answer.') : ''));
+
+  if(ui.expenseMode === 'detailed' && P.stages.length){
+    items.push('<strong>Your ' + P.stages.length + (P.stages.length === 1 ? ' life stage replaces' : ' life stages replace') +
+      ' your spending, not adds to it,</strong> between its two ages.' +
+      info('Stages run in age order and never overlap. Outside them you spend living expenses until you stop work, then retirement expenses, once any stage running then has ended.'));
+  }
+
+  if(P.pensionOn){
+    items.push('<strong>A ' + fmt.currency(ui.pensionAmount) + ' ' + per(ui.pensionPeriod) + ' pension from ' + fmt.age(P.pensionStartAge) +
+      (P.pensionIndexed ? ' rises with inflation</strong>, so it keeps its value.' : ' never rises</strong>, so it buys less every year.') +
+      info(P.pensionIndexed
+        ? 'It counts as income from then on, which is why it lowers the pot you need.'
+        : 'The erosion is measured from TODAY, not from the start age, because the amount you entered is what it pays now. Turn on "Rises with inflation" if your country indexes its pension.'));
+  }
+
+  var swr = res.needAtRetire > 0 ? (retireYr / res.needAtRetire * 100) : null;
+  if(swr != null && isFinite(swr)){
+    items.push('<strong>Your FIRE number</strong> of ' + fmt.currency(res.needAtRetire) + ' implies a ' + fmt.pct(swr, 2) + ' safe withdrawal rate (SWR).' +
+      info('The share of the pot you spend in the first year. The familiar 25 times rule is the same arithmetic at a 4% real return.'));
+  }
+
   $('assumptions').innerHTML = items.map(function(x){ return '<li>' + x + '</li>'; }).join('');
 }
 

@@ -42,7 +42,8 @@ build step, no server.
   their work; use `extra` for non-form state and `data-no-persist` for transient controls.
 - **Finance tools**: follow **Finance Tool Skeleton** in the design reference and the seven-rule
   checklist in `.claude/skills/new-tool/SKILL.md`: Currency first, an Assumptions tab last, the
-  answer sentence first in the results and a What this assumes card last, units inside every
+  answer sentence first in the results and a What this assumes card last (built from the
+  reader's input: only what their plan uses, each line naming its figure), units inside every
   field and on every axis, bounds the form enforces, jargon kept with a one-line tip (spell out
   abbreviations only), neutral options in `SharedPalette` colours and never red. Add the page to
   `FINANCE` in `shared.js` and `PAGES` in `_ref/form-check.mjs`.

@@ -1208,6 +1208,7 @@ $('riskFreeRate').addEventListener('input',e=>{
   currentRiskFreeRate = Number.isFinite(n) ? Math.max(0,n) : 0;
   // Only the advanced metrics depend on this - re-render the summary in place.
   if(simResults.length) renderSummary();
+  renderAssumptions();
 });
 
 /* ─── DEFAULT DATE RANGE ─── */
@@ -1991,6 +1992,7 @@ $('showCandleToggle').addEventListener('change',e=>{
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
+  renderAssumptions();
   // Toggle visibility in place - metrics are already rendered in each tile.
   document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
 });
@@ -2086,21 +2088,65 @@ function renderVerdict(){
           ', so this compares the return on the money each put in rather than the final value.' });
 }
 
-/* ─── WHAT THIS ASSUMES ─── */
+/* ─── WHAT THIS ASSUMES ───
+   Built from the run on screen: the assets, rules and figures the scenarios
+   actually used. A feature none of them touched (a simulated asset, a
+   hindsight rule, the advanced metrics) says nothing. */
 function renderAssumptions(){
   const el=$('assumptions'); if(!el) return;
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const list=a=>a.length<2 ? a.join('') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  const pc=v=>(+(Number(v)||0).toFixed(2))+'%';
+  const runs=simResults.length ? simResults.map(r=>r.sec) : securities;
+  const items=[];
+  if(!runs.length){ el.innerHTML='<li><strong>Add a scenario and simulate</strong> to see what the run rests on.</li>'; return; }
+
+  const tickers=[...new Set(runs.filter(s=>s.type==='ticker').map(s=>String(s.ticker||'').toUpperCase()).filter(Boolean))];
+  if(tickers.length){
+    const stooq=tickers.filter(t=>{ const e=priceCache[t]; return e && e.kind==='stock' && e.source==='stooq'; });
+    const adj=tickers.filter(t=>!stooq.includes(t));
+    if(adj.length) items.push('<strong>'+list(adj.map(nm))+(adj.length===1?' uses':' use')+' Yahoo Finance\'s adjusted close,</strong> so dividends and splits are folded into the price.');
+    if(stooq.length) items.push('<strong>'+list(stooq.map(nm))+(stooq.length===1?' is':' are')+' from Stooq and unadjusted,</strong> so dividends are left out of the return.');
+    if(currentCurrencySymbol!=='$' || tickers.some(t=>t.includes('.')))
+      items.push('<strong>'+escapeHtml(currentCurrencySymbol||'The currency')+' is a label.</strong> Nothing is converted, so each ticker is read in the currency it is quoted in.');
+  }
+  const sims=runs.filter(s=>s.type==='custom');
+  if(sims.length){
+    const seen=new Set();
+    const desc=sims.filter(s=>{ const k=s.name+'|'+s.returnPct+'|'+s.stdPct; if(seen.has(k)) return false; seen.add(k); return true; })
+      .map(s=>nm(s.name)+' at '+pc(s.returnPct)+' a year, '+pc(s.stdPct)+' standard deviation');
+    items.push('<strong>'+(desc.length===1?'The simulated asset is one random path:':'Each simulated asset is one random path:')+'</strong> '+desc.join('; ')+
+      '. Seed '+escapeHtml(String(currentRandomSeed))+' fixes it, so it is a what-if rather than a forecast.');
+  }
+
+  if(simResults.length){
+    const axis=simResults[0].dailyRows;
+    if(axis.length) items.push('<strong>Every scenario runs '+escapeHtml(axis[0].date)+' to '+escapeHtml(axis[axis.length-1].date)+'</strong>'+
+      (runs.length>1 ? ', the trading days all of their assets share.' : '.'));
+  }
+
   const FILL={ 'close':'that day\'s close', 'next-open':'the next day\'s open', 'next-close':'the next day\'s close' };
-  const mode=FILL[currentExecTiming]||FILL['next-open'];
-  const items=[
-    '<strong>Adjusted closing prices.</strong> Real tickers use Yahoo Finance\'s adjusted close, so dividends and splits are folded into the price. A ticker that falls back to Stooq is unadjusted, and its chip on the Data tab says so.',
-    '<strong>Every rule decides on a day\'s close and fills at '+escapeHtml(mode)+'.</strong> Change it under Trade at, on the Assumptions tab.',
-    '<strong>No fees and no tax.</strong> Each top-up buys its whole amount, in fractions of a unit where needed.',
-    '<strong>The currency is a label.</strong> Nothing is converted, so a ticker priced in another currency is read as if it were this one.',
-    '<strong>Every scenario runs over the same dates</strong>: the window all of their assets share, so a later listing trims it for all of them.',
-    '<strong>A simulated asset is one random path</strong> built from its return and standard deviation, and the seed fixes it, so it is a what-if rather than a forecast.',
-    '<strong>The risk-free rate only feeds Sharpe and Sortino.</strong> It changes no money anywhere on the page.',
-    '<strong>Top and bottom of the period use hindsight.</strong> They pick the buy day with prices from later in the period, so they are a benchmark, not a plan anyone could follow.'
-  ];
+  items.push('<strong>Every rule decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
+
+  const amounts=[...new Set(runs.map(s=>fmt.currency(s.amount)))];
+  const rises=[...new Set(runs.map(s=>Number(s.yearlyIncrease)||0).filter(v=>v))];
+  items.push('<strong>No fees and no tax:</strong> each '+list(amounts)+' top-up buys its whole amount, in fractions of a unit where needed'+
+    (rises.length ? ', rising '+list(rises.map(pc))+' a year' : '')+'.');
+
+  const signal=runs.filter(s=>MOMENTUM_STYLES.includes(s.style)||TECH_STYLES.includes(s.style));
+  if(signal.length){
+    const eom=s=>MOMENTUM_STYLES.includes(s.style)?s.momentumEOM:s.techEOM;
+    const on=signal.filter(eom), off=signal.filter(s=>!eom(s));
+    const word=s=>(s.period==='weekly'?'week':'month');
+    if(on.length) items.push('<strong>'+list(on.map(s=>nm(s.name)))+' still '+(on.length===1?'buys':'buy')+' at the end of a '+word(on[0])+' with no signal.</strong>');
+    if(off.length) items.push('<strong>'+list(off.map(s=>nm(s.name)))+' '+(off.length===1?'skips':'skip')+' a '+word(off[0])+' with no signal,</strong> so less money goes in.');
+  }
+  const fwd=runs.filter(s=>FORWARD_STYLES.includes(s.style));
+  if(fwd.length) items.push('<strong>'+list([...new Set(fwd.map(s=>styleLabel(s.style)))])+' '+(fwd.length===1?'uses':'use')+' hindsight.</strong> '+
+    'The buy day is picked with prices from later in the period, so it is a benchmark, not a plan anyone could follow.');
+
+  if(showAdvanced) items.push('<strong>The '+pc(currentRiskFreeRate)+' risk-free rate only feeds Sharpe and Sortino.</strong> It changes no money anywhere on the page.');
+
   el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
 }
 

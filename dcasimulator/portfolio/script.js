@@ -2531,21 +2531,77 @@ function renderVerdict(){
           ', so this compares the return on the money each put in rather than the final value.' });
 }
 
-/* ─── WHAT THIS ASSUMES ─── */
+/* ─── WHAT THIS ASSUMES ───
+   Built from the portfolios that ran: their assets, methods, fees and cash.
+   A feature none of them use (a simulated asset, a reserve, the advanced
+   metrics) says nothing. */
 function renderAssumptions(){
   const el=$('assumptions'); if(!el) return;
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const list=a=>a.length<2 ? a.join('') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  const pc=v=>(+(Number(v)||0).toFixed(2))+'%';
+  const ran=simResults.length ? portfolios.filter(p=>simResults.some(r=>r.id===p.id)) : portfolios;
+  if(!ran.length){ el.innerHTML='<li><strong>Add a portfolio and simulate</strong> to see what the run rests on.</li>'; return; }
+  const items=[];
+  // Group portfolios that share a figure, so the same fact is said once.
+  const byKey=(fn)=>{ const m=new Map(); ran.forEach(p=>{ const k=fn(p); if(!m.has(k)) m.set(k,[]); m.get(k).push(p); }); return m; };
+  const who=(ps)=>ran.length===1 ? '' : ' in '+list(ps.map(p=>nm(p.name)));
+
+  const assets=ran.flatMap(p=>p.assets);
+  const tickers=[...new Set(assets.filter(a=>a.type==='ticker').map(a=>String(a.ticker||'').toUpperCase()).filter(Boolean))];
+  const rfTickers=[...new Set(ran.filter(p=>p.rf.mode==='ticker'&&p.rf.ticker).map(p=>String(p.rf.ticker).toUpperCase()))];
+  const allTk=[...new Set(tickers.concat(rfTickers))];
+  if(allTk.length){
+    const stooq=allTk.filter(t=>{ const e=priceCache[t]; return e && e.kind==='stock' && e.source==='stooq'; });
+    const adj=allTk.filter(t=>!stooq.includes(t));
+    if(adj.length) items.push('<strong>'+list(adj.map(nm))+(adj.length===1?' uses':' use')+' Yahoo Finance\'s adjusted close,</strong> so dividends and splits are folded into the price.');
+    if(stooq.length) items.push('<strong>'+list(stooq.map(nm))+(stooq.length===1?' is':' are')+' from Stooq and unadjusted,</strong> so dividends are left out of the return.');
+    if(currentCurrencySymbol!=='$' || allTk.some(t=>t.includes('.')))
+      items.push('<strong>'+escapeHtml(currentCurrencySymbol||'The currency')+' is a label.</strong> Nothing is converted, so each ticker is read in the currency it is quoted in.');
+  }
+  const sims=assets.filter(a=>a.type==='custom');
+  if(sims.length){
+    const seen=new Set();
+    const desc=sims.filter(a=>{ const k=a.name+'|'+a.returnPct+'|'+a.stdPct; if(seen.has(k)) return false; seen.add(k); return true; })
+      .map(a=>nm(a.name)+' at '+pc(a.returnPct)+' a year, '+pc(a.stdPct)+' standard deviation');
+    items.push('<strong>'+(desc.length===1?'The simulated asset is one random path:':'Each simulated asset is one random path:')+'</strong> '+desc.join('; ')+
+      '. Seed '+escapeHtml(String(currentRandomSeed))+' fixes it, so it is a what-if rather than a forecast.');
+  }
+
+  if(simResults.length && commonDates.length)
+    items.push('<strong>Every portfolio runs '+escapeHtml(commonDates[0])+' to '+escapeHtml(commonDates[commonDates.length-1])+'</strong>'+
+      (allTk.length+sims.length>1 ? ', the trading days all of their assets share.' : '.'));
+
   const FILL={ 'close':'that day\'s close', 'next-open':'the next day\'s open', 'next-close':'the next day\'s close' };
-  const mode=FILL[currentExecTiming]||FILL['next-open'];
-  const items=[
-    '<strong>Adjusted closing prices.</strong> Real tickers use Yahoo Finance\'s adjusted close, so dividends and splits are folded into the price. A ticker that falls back to Stooq is unadjusted, and its chip on the Data tab says so.',
-    '<strong>Every top-up, trigger and rebalance decides on a day\'s close and fills at '+escapeHtml(mode)+'.</strong> Change it under Trade at, on the Assumptions tab.',
-    '<strong>Fees are a share of each trade</strong>, set per portfolio under Rebalancing. There is no tax.',
-    '<strong>Idle cash earns the Risk-Free Account</strong>: a fixed yearly rate or a ticker\'s price, set per portfolio under Top-Ups.',
-    '<strong>Sharpe and Sortino measure each portfolio against its own Risk-Free Account.</strong>',
-    '<strong>The currency is a label.</strong> Nothing is converted, so an asset priced in another currency is read as if it were this one.',
-    '<strong>Every portfolio runs over the same dates</strong>: the window all of their assets share, so a later listing trims it for all of them.',
-    '<strong>A simulated asset is one random path</strong> built from its return and standard deviation, and the seed fixes it, so it is a what-if rather than a forecast.'
-  ];
+  items.push('<strong>Every top-up, trigger and rebalance decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
+
+  byKey(p=>(p.rebal.buyFee||0)+'|'+(p.rebal.sellFee||0)).forEach((ps,k)=>{
+    const [b,sl]=k.split('|').map(Number);
+    items.push(b||sl
+      ? '<strong>Each trade'+who(ps)+' pays '+(b===sl ? pc(b)+' in fees' : pc(b)+' to buy and '+pc(sl)+' to sell')+'.</strong> There is no tax.'
+      : '<strong>No fees and no tax'+who(ps)+'.</strong>');
+  });
+
+  byKey(p=>p.rf.mode==='ticker' ? 't:'+String(p.rf.ticker||'').toUpperCase() : 'r:'+(p.rf.rate||0)).forEach((ps,k)=>{
+    const tk=k.startsWith('t:') ? k.slice(2) : '';
+    const rate=tk ? 0 : Number(k.slice(2));
+    items.push('<strong>Idle cash'+who(ps)+(tk ? ' tracks '+nm(tk) : rate ? ' earns '+pc(rate)+' a year' : ' earns nothing')+'.</strong>'+
+      (showAdvanced ? ' Sharpe and Sortino measure '+(ps.length===1&&ran.length===1?'the portfolio':'each')+' against it.' : ''));
+  });
+
+  ran.forEach(p=>{
+    const r=p.rebal, name=ran.length===1 ? 'The portfolio' : nm(p.name);
+    const per={weekly:'weekly',fortnightly:'fortnightly',monthly:'monthly',quarterly:'quarterly',yearly:'yearly'}[(p.rebalSched||{}).period]||'scheduled';
+    const line={
+      'towards-weight': name+' never sells.</strong> Top-ups buy only assets below target, so some cash can sit idle.',
+      'constant-weight': name+' sells overweight assets to rebalance</strong> '+(r.cwTiming==='schedule' ? 'on a '+per+' schedule.' : 'at every top-up.'),
+      'constant-allocation': name+' splits each top-up by its weights</strong> and never rebalances what it already holds.',
+      'dynamic-momentum': name+' ranks its assets by their trailing '+(r.lookbackMonths||6)+'-month return</strong> at each top-up, so the holding behind each rank changes.',
+      'rule-trigger': name+' parks top-ups in '+((r.reserveMode||'cash')==='asset' ? 'its reserve asset' : 'cash')+'</strong> until an asset\'s own trigger fires.'
+    }[r.method];
+    if(line) items.push('<strong>'+line);
+  });
+
   el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
 }
 
@@ -2587,6 +2643,7 @@ $('detailPfSelect').addEventListener('change',e=>{ activeDetailId=parseInt(e.tar
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
+  renderAssumptions();
   // Toggle visibility in place - metrics are already rendered in each tile.
   document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
 });
