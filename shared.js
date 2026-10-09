@@ -125,6 +125,7 @@
     {sym:'₫',   en:'Dong',                         id:'Dong'},
     {sym:'₩',   en:'Won',                          id:'Won'},
     {sym:'CHF', en:'Swiss Franc',                  id:'Franc Swiss'},
+    {sym:'Dh',  en:'Dirham (UAE)',                 id:'Dirham (UEA)'},
     {sym:'kr',  en:'Krona / Krone',                id:'Krona / Krone'},
     {sym:'zł',  en:'Złoty',                        id:'Zloty'},
     {sym:'₺',   en:'Lira',                         id:'Lira'},
@@ -144,7 +145,7 @@
     EUR:'€', GBP:'£', JPY:'¥', CNY:'¥', INR:'₹', PKR:'Rs', LKR:'Rs', NPR:'Rs',
     IDR:'Rp', MYR:'RM', PHP:'₱', THB:'฿', VND:'₫', KRW:'₩', CHF:'CHF',
     SEK:'kr', NOK:'kr', DKK:'kr', ISK:'kr', PLN:'zł', TRY:'₺', RUB:'₽',
-    ILS:'₪', ZAR:'R', BRL:'R$', NGN:'₦', BTC:'₿'
+    ILS:'₪', ZAR:'R', BRL:'R$', NGN:'₦', BTC:'₿', AED:'Dh'
   };
 
   function currencyLang(lang){

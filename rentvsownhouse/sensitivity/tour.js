@@ -21,7 +21,8 @@ window.__TOUR = {
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
             'table recalculates instantly. Each field shows its unit, and a figure past a ' +
             'row\'s limits is pulled back to it. The <strong>⚡</strong> picker on the first ' +
-            'column fills it with a Quick Start city; drag a column right to load another.'
+            'column searches every Quick Start city and home and fills the column with one; ' +
+            'drag a column right to load another.'
     },
     {
       // The step names both controls, so highlight both: the year box sits

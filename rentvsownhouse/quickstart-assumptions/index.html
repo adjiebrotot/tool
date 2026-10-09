@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rent vs Own Quick Start Assumptions | Adjie Brotools</title>
+<meta name="description" content="Every figure the Rent vs Own Quick Start loads, city by city and home by home: prices, rents, deposits, mortgage rates, stamp duty, running costs and growth, with the sources behind them.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rent vs Own Quick Start Assumptions: Home Prices, Rents and Loan Terms by City">
+<meta property="og:description" content="Every figure the Rent vs Own Quick Start loads, city by city and home by home, with the sources behind them.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rent vs Own Quick Start Assumptions">
+<meta name="twitter:description" content="Home prices, rents, deposits, mortgage rates, stamp duty and running costs by city and home type, with sources.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Rent vs Own Quick Start Assumptions",
+  "url": "https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/",
+  "description": "Every figure the Rent vs Own Quick Start loads, city by city and home by home: prices, rents, deposits, mortgage rates, stamp duty, running costs and growth, with the sources behind them.",
+  "inLanguage": "en",
+  "keywords": "rent vs buy assumptions, home prices by city, rent by city, mortgage rates by country, stamp duty by country, apartment vs house prices, rental yield by city",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Rent vs Own Property Scenario Explorer",
+    "url": "https://tool.adjiebrotots.com/rentvsownhouse/"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Rent vs Own",
+      "item": "https://tool.adjiebrotots.com/rentvsownhouse/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Quick Start Assumptions",
+      "item": "https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<script src="../footer.js"></script>
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<div class="container">
+
+<!-- HEADER -->
+<section class="header card">
+  <div class="header-left">
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="m3 11 9-8 9 8"/> <path stroke="var(--accent)" d="M5 9.5V21h14V9.5"/> <path stroke="var(--accent2)" d="M10 21v-6h4v6"/> </svg>Quick Start Assumptions</h1>
+    <p>Every figure the Rent vs Own Quick Start loads, city by city and home by home, with where it comes from.</p>
+  </div>
+  <div class="header-right">
+    <a href="../" class="btn-theme btn-back">← Rent vs Own</a>
+    <button class="btn-theme" id="themeToggle">🌙 Dark</button>
+  </div>
+</section>
+
+<!-- FILTER -->
+<section class="card qa-intro">
+  <p class="intro">Each Quick Start is a city and a home type. Its figures come in two layers: the city's loan, tax and market terms, then the price, rent and running costs of that home. Only homes with a real market in a city are offered, so the gaps below are deliberate: hover a dash for the reason.</p>
+  <div class="qa-toolbar">
+    <input class="txt-input qa-search" id="qaSearch" type="search" placeholder="Filter by city, country or currency (e.g. tokyo, uae, eur)" autocomplete="off" spellcheck="false" data-no-persist aria-label="Filter cities"/>
+    <div class="seg-group" id="qaForm" role="group" aria-label="Home type">
+      <button type="button" class="seg-btn active" data-form="">All homes</button>
+      <button type="button" class="seg-btn" data-form="apartment">Apartments</button>
+      <button type="button" class="seg-btn" data-form="house">Landed houses</button>
+    </div>
+    <span class="qa-count" id="qaCount"></span>
+  </div>
+</section>
+
+<!-- AT A GLANCE -->
+<section class="card qa-glance" id="glance">
+  <div class="qa-head">
+    <h2>At a glance</h2>
+    <button type="button" class="btn-theme btn-sm" id="qaCsv" title="Download every scenario's form values as CSV">⬇ CSV</button>
+  </div>
+  <p class="unit-note" id="glanceNote">Typical price in local currency, and gross rental yield (a year's rent over the price). Pick a figure to see its workings.</p>
+  <div class="qa-table-wrap">
+    <table class="qa-table qa-matrix" id="glanceTable"></table>
+  </div>
+  <div class="no-results" id="noResults">No city matches your filter.</div>
+</section>
+
+<!-- ONE SECTION PER CITY -->
+<div id="cities"></div>
+<noscript><section class="card qa-intro"><p class="intro">This page draws its tables from the calculator's own Quick Start data, so it needs JavaScript.</p></section></noscript>
+
+<footer class="page-footer">
+  <section class="page-footer-info" id="siteFooterContent"></section>
+</footer>
+</div><!-- /container -->
+<script>renderRVOFooter('../../logos/');</script>
+
+<script src="../../dropdown.js"></script>
+
+<script src="../../shared.js"></script>
+<script src="../quickstart-data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

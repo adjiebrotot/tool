@@ -42,8 +42,8 @@ const PAGES = [
   // Family legacy carries life stages, the list that lives in JS rather than in a form control.
   { path: 'financialfreedom/',         preset: 'legacy',       probe: '.metrics' },
   { path: 'financingvscash/',          preset: 'car',          probe: '#verdict' },
-  { path: 'rentvsownhouse/',           preset: 'singapore',    probe: '.metrics' },
-  { path: 'rentvsownhouse/id/',        preset: 'jakarta',      probe: '.metrics' },
+  { path: 'rentvsownhouse/',           preset: 'singapore/apt-2br', probe: '.metrics' },
+  { path: 'rentvsownhouse/id/',        preset: 'jakarta/apt-2br',   probe: '.metrics' },
   { path: 'pisahvsgabung/',            preset: 'double',       probe: '.metrics',
     also: `document.getElementById('ptkpDependent').value = '5,000,000';
            document.getElementById('ptkpDependent').dispatchEvent(new Event('input', {bubbles: true}));` },
@@ -152,6 +152,20 @@ async function loadFile(page, file){
   await page.waitForTimeout(900);
 }
 
+// A Quick Start is a pill on most tools; Rent vs Own's is a searchable city
+// then a home ("<city>/<home>"), picked the way a reader would.
+async function pickQuickStart(page, key){
+  if(await page.$('#qsCity')){
+    const [city, home] = key.split('/');
+    await page.click('#qsCity');
+    await page.fill('#qsCity', await page.evaluate(k => window.RVO_QS.city(k).city, city));
+    await page.click(`#qsCityList .combo-opt[data-key="${city}"]`);
+    if(home) await page.selectOption('#qsType', home);
+  } else {
+    await page.click(`.quick-start-btn[data-preset="${key}"],.quick-start-btn[data-city="${key}"]`);
+  }
+}
+
 const only = process.argv[2];
 let failed = 0;
 const files = {};
@@ -162,7 +176,7 @@ for(const t of PAGES.filter(t => !only || t.path.includes(only))){
     console.log(`✗ ${t.path}: no save/open buttons`); failed++; await A.ctx.close(); continue;
   }
   const clean = await snap(A.page, t.probe);
-  if(t.preset) await A.page.click(`.quick-start-btn[data-preset="${t.preset}"],.quick-start-btn[data-city="${t.preset}"]`);
+  if(t.preset) await pickQuickStart(A.page, t.preset);
   if(t.also) await A.page.evaluate(t.also);
   await A.page.waitForTimeout(900);
   const want = await snap(A.page, t.probe);

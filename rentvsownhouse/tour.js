@@ -2,7 +2,7 @@
    The shared engine (../tour-shared.js) reads this object. Every step has to
    describe what is actually on screen, so a step about a tab opens it first. */
 window.__TOUR = {
-  seenKey: 'rvo-tour-v2-seen',
+  seenKey: 'rvo-tour-v3-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -15,11 +15,11 @@ window.__TOUR = {
     },
     {
       target: '.quick-start-row',
-      title: '① Start from a city preset',
-      body: 'One click loads realistic prices, rents and rates for a city such as ' +
-            '<strong>Perth</strong>, <strong>Sydney</strong>, <strong>Singapore</strong> ' +
-            'or <strong>Jakarta</strong>. A quick starting point you can then change to ' +
-            'your own numbers.'
+      title: '① Start from a city and a home',
+      body: 'Search a city such as <strong>Perth</strong>, <strong>Tokyo</strong> or ' +
+            '<strong>Jakarta</strong>, then pick a home that city really has, from a ' +
+            'studio to a four-bedroom house. It loads local prices, rents and loan terms ' +
+            'you can then change to your own numbers.'
     },
     {
       target: '.ctrl-tabs',

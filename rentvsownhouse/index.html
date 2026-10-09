@@ -165,14 +165,19 @@
 <aside class="controls card">
   <div class="quick-start-row">
     <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip">?</span>
-    <div class="quick-start-btns">
-      <button class="quick-start-btn" data-city="perth">Perth, AU</button>
-      <button class="quick-start-btn" data-city="melbourne">Melbourne, AU</button>
-      <button class="quick-start-btn" data-city="sydney">Sydney, AU</button>
-      <button class="quick-start-btn" data-city="singapore">Singapore</button>
-      <button class="quick-start-btn" data-city="kualalumpur">Kuala Lumpur, MY</button>
-      <button class="quick-start-btn" data-city="jakarta">Jakarta, ID</button>
+    <!-- A city (searchable: the list is database-sized), then one of the
+         homes that city has (a short list: a plain select). Both are filled
+         from quickstart-data.js; neither is part of the saved plan. -->
+    <div class="qs-pickers" data-no-persist data-no-abbr>
+      <div class="qs-city city-picker" id="qsCityPicker">
+        <input type="text" class="qs-city-input combo-input" id="qsCity" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="qsCityList" data-i18n-ph="qsCityPh" placeholder="Search city…" data-i18n-title="qsCityTitle" title="Quick Start city" aria-label="Quick Start city"/>
+        <div class="combo-list qs-city-list" id="qsCityList" role="listbox"></div>
+      </div>
+      <select class="sel-input qs-type" id="qsType" data-i18n-title="qsTypeTitle" title="Home type" aria-label="Home type" disabled>
+        <option value="" data-i18n-opt="qsTypePh">Home type</option>
+      </select>
     </div>
+    <div class="qs-note" id="qsNote" data-no-abbr><span class="qs-where" id="qsWhere"></span><a class="qs-all" id="qsAll" href="/rentvsownhouse/quickstart-assumptions/" data-i18n="qsAllLink">All figures and sources</a></div>
   </div>
   <div class="ctrl-scroll">
   <!-- Everyday figures first (the home, the rent), the guesses about the
@@ -617,7 +622,7 @@
 <script src="../shared.js"></script>
 <script src="cashflow-export.js"></script>
 <script src="engine.js"></script>
-<script src="presets.js"></script>
+<script src="quickstart-data.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../tour-shared.js"></script>

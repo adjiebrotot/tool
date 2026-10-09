@@ -24,7 +24,8 @@ window.__TOUR = {
             'suku bunga KPR, atau kota yang berbeda. Ubah asumsi apa pun secara langsung ' +
             'dan seluruh tabel dihitung ulang seketika, sehingga Anda bisa melihat faktor ' +
             'mana yang paling memengaruhi hasil. Pilihan <strong>⚡</strong> di kolom pertama ' +
-            'mengisinya dengan kota Mulai Cepat; seret kolom ke kanan untuk memuat kota lain.'
+            'mencari semua kota dan hunian Mulai Cepat lalu mengisi kolom itu; seret kolom ke ' +
+            'kanan untuk memuat yang lain.'
     },
     {
       // The step names both controls, so highlight both: the year box sits

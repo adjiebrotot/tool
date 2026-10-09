@@ -55,8 +55,10 @@ const LANG_SENS = {
     seriesRent: 'Rent',
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
-    presetTitle: 'Quick Start: fill this column with a city',
-    presetPick: 'Quick Start city…',
+    presetTitle: 'Quick Start: fill this column with a city and home',
+    presetPick: 'Search city or home…',
+    presetNone: 'No city or home matches',
+    presetAll: 'All figures and sources',
     dragTitle: 'Drag to reorder scenarios',
     removeTitle: 'Remove',
     sepGeneral: 'Assumptions',
@@ -181,8 +183,10 @@ const LANG_SENS = {
     seriesRent: 'Sewa',
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
-    presetTitle: 'Mulai Cepat: isi kolom ini dengan data kota',
-    presetPick: 'Kota Mulai Cepat…',
+    presetTitle: 'Mulai Cepat: isi kolom ini dengan data kota dan hunian',
+    presetPick: 'Cari kota atau hunian…',
+    presetNone: 'Kota atau hunian tidak ditemukan',
+    presetAll: 'Semua angka dan sumbernya',
     dragTitle: 'Seret untuk mengurutkan skenario',
     removeTitle: 'Hapus',
     sepGeneral: 'Asumsi',
@@ -570,17 +574,18 @@ function addScenario(){
   scenarios.push(clone);
   rerender();
 }
-/* Quick Start: the first column takes a city from the main page's Quick Start
-   row (../presets.js), as a fresh scenario named after it. The page shows one
-   currency, so the city's symbol becomes the page's. Only the first column has
-   the picker: to compare two cities, load one, drag it right, load the next. */
-const CITY_PRESETS = window.RVO_CITY_PRESETS || {};
-function applyCityPreset(si, key){
-  const p = CITY_PRESETS[key];
+/* Quick Start: the first column takes a scenario from ../quickstart-data.js,
+   the one list the main page's Quick Start reads, as a fresh scenario named
+   after it. The page shows one currency, so the scenario's symbol becomes the
+   page's. Only the first column has the picker: to compare two cities, load
+   one, drag it right, load the next. */
+const QS = window.RVO_QS;
+function applyCityPreset(si, sid){
+  const p = QS && QS.preset(sid);
   if(!p || !scenarios[si]) return;
   const sc = cloneScenario(DEFAULT_SCENARIO);
   Object.keys(sc).forEach(k=>{ if(p[k]!==undefined) sc[k] = p[k]; });
-  sc.name = p.label || key;
+  sc.name = QS.label(sid, lang);
   if(modes.mortgageMode==='detailed')  seedRatePeriods(sc);
   if(modes.ownCostsMode==='detailed')  seedOwnCostItems(sc);
   if(modes.rentCostsMode==='detailed') seedRentCostItems(sc);
@@ -593,16 +598,112 @@ function applyCityPreset(si, key){
   rerender();
 }
 function presetPickerHTML(si){
-  const keys = Object.keys(CITY_PRESETS);
-  if(!keys.length) return '';
-  const opts = keys.map(k=>`<option value="${escAttr(k)}">${escHtml(CITY_PRESETS[k].label || k)}</option>`).join('');
-  return `<span class="scen-preset" title="${escAttr(T('presetTitle'))}">
+  if(!QS || !QS.all().length) return '';
+  return `<button type="button" class="scen-preset" data-si="${si}" title="${escAttr(T('presetTitle'))}" aria-label="${escAttr(T('presetTitle'))}" aria-haspopup="listbox" aria-expanded="false">
     <svg class="scen-preset-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg>
     <svg class="scen-preset-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-    <select class="scen-preset-select" data-si="${si}" aria-label="${escAttr(T('presetTitle'))}">
-      <option value="" selected disabled>${escHtml(T('presetPick'))}</option>${opts}
-    </select>
-  </span>`;
+  </button>`;
+}
+
+/* The picker opens a searchable list under the bolt: a search field on top
+   and every home of every city below it, grouped by city. It searches the way
+   the Cost of Living Comparator's city picker does: every word typed has to
+   appear in the city, its country, its currency or the home, so "tokyo",
+   "studio sg" and "dubai villa" each narrow it. The header is redrawn on
+   every change, so the list lives on <body>, once, and follows its button. */
+const presetPop = { el:null, input:null, opts:null, btn:null, si:0, focus:-1 };
+function presetChip(sid){
+  const p = QS.preset(sid), sym = p.currencySymbol || '';
+  return fmtCurrency(p.propertyPrice, /[A-Za-z]$/.test(sym) ? sym + ' ' : sym);
+}
+function presetRender(){
+  const q = presetPop.input.value;
+  let html = '';
+  QS.sortedCities(lang).forEach(c=>{
+    const rows = QS.homes(c.key).filter(t=>QS.homeMatches(c, t, q, lang));
+    if(!rows.length) return;
+    html += `<div class="combo-group">${escHtml(c.city)} · ${escHtml(QS.countryText(c, lang))}</div>`;
+    rows.forEach(t=>{
+      const sid = QS.id(c.key, t);
+      html += `<div class="combo-opt" role="option" aria-selected="false" data-sid="${escAttr(sid)}"><span class="combo-main">${escHtml(QS.typeText(t, 'name', lang))}</span><span class="combo-chip">${escHtml(presetChip(sid))}</span></div>`;
+    });
+  });
+  presetPop.opts.innerHTML = (html || `<div class="combo-empty">${escHtml(T('presetNone'))}</div>`)
+    + `<a class="scen-preset-all" href="${lang==='id' ? '../../' : '../'}quickstart-assumptions/">${escHtml(T('presetAll'))}</a>`;
+  presetPop.focus = -1;
+}
+function presetPlace(){
+  if(presetPop.el && presetPop.el.classList.contains('open') && presetPop.btn && presetPop.btn.isConnected)
+    SharedDropdown.place(presetPop.btn, presetPop.el, {minWidth:300, maxWidth:380, maxHeight:340});
+}
+function presetClose(refocus){
+  if(!presetPop.el || !presetPop.el.classList.contains('open')) return;
+  presetPop.el.classList.remove('open');
+  if(presetPop.btn){
+    presetPop.btn.setAttribute('aria-expanded', 'false');
+    if(refocus && presetPop.btn.isConnected) presetPop.btn.focus();
+  }
+}
+function presetMove(i){
+  const rows = presetPop.opts.querySelectorAll('.combo-opt');
+  presetPop.focus = Math.max(-1, Math.min(i, rows.length - 1));
+  rows.forEach((r,k)=>r.classList.toggle('focused', k===presetPop.focus));
+  if(presetPop.focus>=0) rows[presetPop.focus].scrollIntoView({block:'nearest'});
+}
+function presetPick(sid){
+  const si = presetPop.si;
+  presetClose(false);
+  applyCityPreset(si, sid);
+}
+function presetBuild(){
+  if(presetPop.el) return;
+  const el = document.createElement('div');
+  el.className = 'combo-list scen-preset-pop';
+  el.setAttribute('data-no-abbr', '');
+  el.innerHTML = `<input type="text" class="combo-input scen-preset-search" autocomplete="off" spellcheck="false" data-no-persist role="combobox" aria-autocomplete="list" aria-expanded="true"/><div class="scen-preset-opts" role="listbox"></div>`;
+  document.body.appendChild(el);
+  presetPop.el = el;
+  presetPop.input = el.querySelector('.scen-preset-search');
+  presetPop.opts = el.querySelector('.scen-preset-opts');
+  presetPop.input.addEventListener('input', presetRender);
+  presetPop.input.addEventListener('keydown', e=>{
+    if(e.key==='ArrowDown'){ e.preventDefault(); presetMove(presetPop.focus + 1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); presetMove(presetPop.focus - 1); }
+    else if(e.key==='Enter'){
+      // Enter takes the row the arrows are on, or the only match left.
+      const rows = presetPop.opts.querySelectorAll('.combo-opt');
+      const row = rows[presetPop.focus] || (rows.length===1 ? rows[0] : null);
+      if(row){ e.preventDefault(); presetPick(row.dataset.sid); }
+    }
+    else if(e.key==='Escape'){ e.preventDefault(); presetClose(true); }
+    else if(e.key==='Tab'){ presetClose(false); }
+  });
+  presetPop.opts.addEventListener('mousedown', e=>{
+    if(e.target.closest('.scen-preset-all')) return;
+    e.preventDefault();
+    const row = e.target.closest('.combo-opt');
+    if(row) presetPick(row.dataset.sid);
+  });
+  document.addEventListener('mousedown', e=>{
+    if(presetPop.el.classList.contains('open') && !presetPop.el.contains(e.target) && !(presetPop.btn && presetPop.btn.contains(e.target))) presetClose(false);
+  }, true);
+  window.addEventListener('scroll', e=>{ if(!presetPop.el.contains(e.target)) presetPlace(); }, {passive:true, capture:true});
+  window.addEventListener('resize', presetPlace, {passive:true});
+}
+function presetOpen(btn){
+  presetBuild();
+  if(presetPop.el.classList.contains('open') && presetPop.btn===btn){ presetClose(true); return; }
+  presetPop.btn = btn;
+  presetPop.si = +btn.dataset.si;
+  presetPop.input.value = '';
+  presetPop.input.placeholder = T('presetPick');
+  presetPop.input.setAttribute('aria-label', T('presetTitle'));
+  presetRender();
+  presetPop.el.classList.add('open');
+  btn.setAttribute('aria-expanded', 'true');
+  presetPlace();
+  presetPop.opts.scrollTop = 0;
+  presetPop.input.focus();
 }
 
 function moveScenario(from, to){
@@ -783,7 +884,7 @@ function buildTableHTML(){
 
   const thScens = scenarios.map((sc,i)=>{
     const clamped = Math.min(viewYear, sc.horizon||30);
-    return `<th class="scen-th${i===0 && Object.keys(CITY_PRESETS).length ? ' has-preset' : ''}"><div class="scen-header-cell">
+    return `<th class="scen-th${i===0 && QS && QS.all().length ? ' has-preset' : ''}"><div class="scen-header-cell">
       <div class="scen-header-actions">
         ${n>1?`<button type="button" class="col-grip" data-col-grip="${i}" title="${escAttr(T('dragTitle'))}" aria-label="${escAttr(T('dragTitle'))}">⠿</button>`:''}
         <div class="scen-name-field">
@@ -1780,12 +1881,8 @@ function wireEvents(){
     btn.addEventListener('click', ()=> removeScenario(+btn.dataset.si));
   });
 
-  document.querySelectorAll('.scen-preset-select').forEach(el=>{
-    el.addEventListener('change', e=>{
-      const key = e.target.value;
-      e.target.value = '';
-      applyCityPreset(+e.target.dataset.si, key);
-    });
+  document.querySelectorAll('.scen-preset').forEach(btn=>{
+    btn.addEventListener('click', ()=>presetOpen(btn));
   });
 
   document.querySelectorAll('.btn-dupe').forEach(btn=>{

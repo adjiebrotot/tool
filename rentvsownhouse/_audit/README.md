@@ -20,4 +20,13 @@ own year 1 for the full term, automatic budget and cash that leave
 Rent-Then-Buy never short, and Rent-Then-Buy leaving Own and Rent untouched
 when the budget and cash are set.
 
+`node quickstart-data.mjs` holds `../quickstart-data.js`, the one file every
+Quick Start scenario comes from, to its own rules and to the form it fills:
+every city's currency is one the shared picker offers, every home type is
+either a home or a reasoned gap in every city, every scenario resolves every
+form value inside the bound the calculator's field enforces (read from
+`../index.html`), yields and bedroom order are plausible, no em-dash reaches a
+reader, and the assumptions page draws every scenario at the price the
+calculator loads.
+
 (See also ../audit/ — the earlier JS↔Python cross-model audit.)

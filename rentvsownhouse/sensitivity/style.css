@@ -62,12 +62,18 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .scen-header-actions .scen-name-field{margin-right:4px;}
 /* Quick Start picker: a native select (keyboard, screen readers and the
    phone's own list) laid invisibly over a bolt-and-chevron mark. */
-.scen-preset{position:relative;display:inline-flex;align-items:center;gap:1px;flex-shrink:0;height:24px;padding:0 4px;border-radius:6px;color:var(--muted);transition:color 130ms,background 130ms;}
-.scen-preset:hover,.scen-preset:focus-within{color:var(--accent-strong);background:var(--input-bg);}
-.scen-preset:focus-within{outline:2px solid var(--accent-strong);outline-offset:1px;}
+.scen-preset{position:relative;display:inline-flex;align-items:center;gap:1px;flex-shrink:0;height:24px;padding:0 4px;border:none;border-radius:6px;background:transparent;color:var(--muted);font:inherit;cursor:pointer;transition:color 130ms,background 130ms;}
+.scen-preset:hover,.scen-preset[aria-expanded="true"]{color:var(--accent-strong);background:var(--input-bg);}
+.scen-preset:focus-visible{outline:2px solid var(--accent-strong);outline-offset:1px;}
 .scen-preset-ico{width:14px;height:14px;}
 .scen-preset-chev{width:11px;height:11px;}
-.scen-preset-select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:.82rem;border:none;padding:0;}
+/* Its list: the shared .combo-list (dropdown.css), a search field pinned on
+   top and the homes grouped by city under it. Placed by SharedDropdown. */
+.scen-preset-pop{display:none;padding-top:0;}
+.scen-preset-pop.open{display:block;}
+.scen-preset-all{display:block;margin-top:4px;padding:7px 10px 5px;border-top:1px solid var(--border);font-size:.78rem;font-weight:600;color:var(--accent);text-decoration:none;}
+.scen-preset-all:hover{text-decoration:underline;}
+.scen-preset-search{position:sticky;top:0;z-index:1;display:block;width:100%;margin:0 0 4px;padding:8px 10px;font-size:.84rem;box-shadow:0 4px 0 var(--panel);}
 /* Header icon buttons (duplicate, delete): shared.css's .btn-bare, one size
    down so two of them and the grip fit a narrow column. */
 .scen-header-actions .btn-head-icon{min-width:26px;height:26px;}
