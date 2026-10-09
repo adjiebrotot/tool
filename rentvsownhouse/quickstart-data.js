@@ -668,8 +668,8 @@ window.RVO_QUICKSTART = {
       aliases: ["DKI Jakarta","South Jakarta","Jakarta Selatan","Jabodetabek"],
       currencySymbol: "Rp", currencyCode: "IDR", asOf: "2026-10",
       buyer: "Indonesian citizen with a Jakarta KTP buying a first home to live in, with a KPR; first-acquisition BPHTB allowance, no subsidised (FLPP) loan",
-      downPaymentPct: 20, mortgageRate: 9.95, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 5.5,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 3.81 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
+      downPaymentPct: 20, mortgageRate: 11.13, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 5.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 8.5 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "yearly", rentInflation: 3, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "apt-studio": {
@@ -748,7 +748,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "About 232,000 strata apartments, many investor-owned, with about 29,000 new units unsold in Q1 2026. Most Jakartans live in landed houses (rumah tapak), mostly with 3 or more bedrooms.",
         downPaymentPct: "BI lets banks lend up to 100% of value until Dec 2026 (PADG 30/2025), but most KPR loans are 80 to 90% of value. 20% down is the standard assumption.",
-        mortgageRate: "BCA promo: fixed 3.81% for 5 years (12-year tenor or more, to Oct 2026), then floating. Big-bank floating KPR is 11% (BCA) to 13% (Mandiri); SBDK base rates are 7.95 to 11.75% (Aug 2026).",
+        mortgageRate: "BCA's regular 5-year fix is 8.5% (Oct 2026); its 3.81% promo is only for new homes from partner developers, not resale. Then floating: 11% (BCA) to 13% (Mandiri).",
         riskFreeRate: "BI Rate 5.75% (Sep 2026). Average 1 to 6 month rupiah deposits paid 5.1 to 5.8% in Aug 2026; big banks pay 2.5 to 3.5% and retail SBN about 6.75 to 7%.",
         sellingCostPct: "Seller pays final income tax (PPh) of 2.5% of the gross price (PP 34/2016) plus an agent commission of about 3%.",
         rentInflation: "Knight Frank saw condo rents fall about 1% and serviced rents rise 2% in H1 2026. With apartment oversupply, rents are assumed to track CPI at about 3%.",
@@ -756,10 +756,11 @@ window.RVO_QUICKSTART = {
         setupCost: "BPHTB 5% on the price above Rp 250M for a first acquisition (Perda DKI 1/2024), PPAT/notary about 1%, bank provision 1% of the loan and about Rp 4M of appraisal and deed fees.",
         ownOngoingCost: "Apartment owners pay IPL service charge and sinking fund. PBB is 0.5% of 40% of NJOP above Rp 60M, waived in 2026 up to Rp 2B NJOP for houses and Rp 650M for apartments.",
         rentOngoingCost: "Landlords normally pay the agent and the apartment service charge, so tenants mainly add contents insurance and lease admin (estimate, not sourced).",
-        caveat: "Rent is usually paid 6 to 12 months upfront plus a deposit. Promo-fixed KPR rates reset to floating, so payments can jump. A second home gets no BPHTB allowance."
+        caveat: "Rent is usually paid 6 to 12 months upfront plus a deposit. Fixed KPR rates reset to floating, so payments can jump; a developer promo fix is cheaper but only on new units. A second home gets no BPHTB allowance."
       },
       sources: [
-        { name: "BCA Rumahsaya, KPR rates: promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "BCA Rumahsaya, KPR rates: regular 8.5% 5-year fix, promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "Investortrust, BCA Expo 2026: 3.81% 5-year fix for new homes from partner developers", url: "https://investortrust.id/financial/116082/mau-punya-rumah-pertama-bca-ungkap-cara-atur-cicilan-kpr" },
         { name: "Bank Indonesia, Survei Harga Properti Residensial Q2 2026 (IHPR 2018=100)", url: "https://www.bi.go.id/id/publikasi/laporan/Documents/SHPR_Tw_II_2026.pdf" },
         { name: "Kontan, floating KPR rates and SBDK by bank, Aug 2026", url: "https://keuangan.kontan.co.id/news/likuiditas-bank-ketat-begini-bunga-floating-kpr" },
         { name: "Databoks, SBDK KPR of 5 banks, Apr-May 2026", url: "https://databoks.katadata.co.id/keuangan/statistik/6a1ff64d0c633/sbdk-kpr-5-bank-di-indonesia-per-april-mei-2026-mandiri-tertinggi" },
@@ -777,8 +778,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Denpasar","Badung","Canggu","Seminyak","Kerobokan","Sanur","Jimbaran"],
       currencySymbol: "Rp", currencyCode: "IDR", asOf: "2026-10",
       buyer: "Indonesian citizen buying a freehold (SHM) home to live in with a KPR; foreigners can only lease (hak sewa) or hold hak pakai",
-      downPaymentPct: 20, mortgageRate: 9.95, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 7.5,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 3.81 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
+      downPaymentPct: 20, mortgageRate: 11.13, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 7.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 8.5 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "yearly", rentInflation: 4, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "house-2br": {
@@ -822,7 +823,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "The Badung and Denpasar belt is villa-led and low-rise. The 1,163 condos listed are mostly leasehold resort units for foreigners, so local homes here are freehold houses and villas.",
         downPaymentPct: "Same national KPR rules as Jakarta, 20% down assumed. Banks lend only against SHM or HGB titles with a residential building permit, not leasehold (estimate, not sourced).",
-        mortgageRate: "Same national KPR market: BCA promo fix 3.81% for 5 years, then floating at 11% (BCA) to 13% (Mandiri). SBDK base rates are 7.95 to 11.75% (Aug 2026).",
+        mortgageRate: "Same national KPR market: BCA's regular 5-year fix 8.5% (its 3.81% promo is for partner developers' new homes only), then floating at 11% (BCA) to 13% (Mandiri).",
         riskFreeRate: "BI Rate 5.75% (Sep 2026). Average 1 to 6 month rupiah deposits paid 5.1 to 5.8% in Aug 2026; big banks pay 2.5 to 3.5% and retail SBN about 6.75 to 7%.",
         sellingCostPct: "Seller pays final income tax (PPh) of 2.5% of the price (PP 34/2016) plus an agent commission of about 5%, the usual rate for Bali villa sales (estimate, not sourced).",
         rentInflation: "Yearly villa rents rose with tourism and remote workers. A long-run 4% a year is assumed, slightly above CPI (estimate, not sourced).",
@@ -833,7 +834,8 @@ window.RVO_QUICKSTART = {
         caveat: "Foreigners cannot own SHM freehold; they lease (hak sewa) or hold hak pakai, which runs down to zero and cannot be modelled here. Leasehold villas and condotels cannot get a KPR."
       },
       sources: [
-        { name: "BCA Rumahsaya, KPR rates: promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "BCA Rumahsaya, KPR rates: regular 8.5% 5-year fix, promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "Investortrust, BCA Expo 2026: 3.81% 5-year fix for new homes from partner developers", url: "https://investortrust.id/financial/116082/mau-punya-rumah-pertama-bca-ungkap-cara-atur-cicilan-kpr" },
         { name: "FazWaz, Denpasar villas and houses for sale (2,068 listings)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/denpasar" },
         { name: "FazWaz, Kerobokan villas for sale (819 listings, Oct 2026)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/badung/kerobokan" },
         { name: "FazWaz, Jimbaran villas for sale (2,150 listings)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/badung/jimbaran" },
@@ -851,8 +853,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Krung Thep","Krung Thep Maha Nakhon","BKK","Greater Bangkok"],
       currencySymbol: "฿", currencyCode: "THB", asOf: "2026-09",
       buyer: "Thai citizen owner-occupier, first home, registered in the house book (tabien baan); qualifies for the 0.01% transfer and mortgage fees on homes up to 7 million baht",
-      downPaymentPct: 10, mortgageRate: 5.27, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
-      ratePeriods: [{ toYear: 3, type: "fixed", rate: 3 }, { toYear: 30, type: "floating", rateMin: 5.2, rateMax: 5.85 }],
+      downPaymentPct: 10, mortgageRate: 5.24, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
+      ratePeriods: [{ toYear: 3, type: "fixed", rate: 4.2 }, { toYear: 30, type: "floating", rateMin: 5.05, rateMax: 5.65 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -899,7 +901,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Central Bangkok is a condo market (studios to 2 bedrooms, luxury large units on Sukhumvit and Sathorn); townhouses and detached houses sit in suburban estates. Supply is ample in 2026.",
         downPaymentPct: "BoT rules allow up to 100% LTV on a first home under 10 million baht, and the 2025 to 2027 easing covers dearer homes, but banks often lend 90 to 95%, so 10% is assumed.",
-        mortgageRate: "Teasers run about 2.5 to 3.5% for 3 years (3% used), then bank MRR (about 6.7 to 6.85% after the March 2026 cuts) minus 1 to 1.5 points: 5.2 to 5.85%. Policy rate is 1.0%.",
+        mortgageRate: "Sub-3% teasers are for new projects; resale loans average about 4.2% for 3 years (GHB resale promo 4.22%, KBank 4-5%), then MRR (6.5 to 6.67%) less 1 to 1.5: 5.05 to 5.65%.",
         riskFreeRate: "Thai 12-month deposits and short government bills yield about 1 to 1.3% with the BoT policy rate held at 1.0% through 2026.",
         sellingCostPct: "Long-held home: agent 3%, half the 2% transfer fee, stamp duty 0.5% and income tax withheld on appraised value about 0.5 to 1%. Specific business tax 3.3% applies only if sold within 5 years.",
         rentInflation: "Central condo rents have risen slowly amid oversupply; 2.5% a year assumed, a little above Thai CPI (estimate, not sourced).",
@@ -914,6 +916,8 @@ window.RVO_QUICKSTART = {
         { name: "HLB Thailand, Reduced registration fees extended for another year", url: "https://www.hlbthai.com/reduced-registration-fees-for-property-transfers-and-mortgages-extended-for-another-year/" },
         { name: "Business Today, Bank of Thailand holds rates at 1%, June 2026", url: "https://www.businesstoday.com.my/2026/06/24/bank-of-thailand-holds-rates-at-1-as-policy-makers-stay-on-hold-amid-weak-demand/" },
         { name: "Thairath, bank MRR cuts after the February 2026 policy cut", url: "https://en.thairath.co.th/money/personal_finance/finance_banking/2916697" },
+        { name: "Kasikornbank, home loan rates and MRR 6.58% (2026)", url: "https://www.kasikornbank.com/th/personal/loan/homeloan/pages/home.aspx" },
+        { name: "Thansettakij, GHB resale-home loan: 3.90%, 4.20%, 4.55% in years 1 to 3, average 4.216%", url: "https://www.thansettakij.com/finance/financial-banking/621823" },
         { name: "Kasikorn Research, Mortgage loan outlook, May 2026", url: "https://www.kasikornresearch.com/en/analysis/k-econ/business/Pages/Mortgage-Loan-CIS3644-KR-2026-05-21.aspx" },
         { name: "Global Property Guide, Thailand price history (BoT index, Q1 2026)", url: "https://www.globalpropertyguide.com/asia/thailand/price-history" },
         { name: "Global Property Guide, Bangkok gross rental yields by district, Q1 2026", url: "https://www.globalpropertyguide.com/asia/thailand/rental-yields" },
@@ -1780,8 +1784,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UK","England"],
       currencySymbol: "£", currencyCode: "GBP", asOf: "2026-10",
       buyer: "UK resident owner-occupier buying a first home at standard SDLT rates (first-time buyer relief ignored): a long-leasehold flat or a freehold house",
-      downPaymentPct: 15, mortgageRate: 5.52, mortgageTerm: 35, riskFreeRate: 3.75, horizon: 30, sellingCostPct: 2,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.68 }, { toYear: 35, type: "floating", rateMin: 5.3, rateMax: 5.68 }],
+      downPaymentPct: 15, mortgageRate: 5.7, mortgageTerm: 35, riskFreeRate: 3.75, horizon: 30, sellingCostPct: 2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 6 }, { toYear: 35, type: "floating", rateMin: 5.3, rateMax: 6 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1838,7 +1842,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Inner London is mostly leasehold flats; outer zones are Victorian terraces and 1930s semis. About half of London homes are owner-occupied, per Census 2021 (estimate, not sourced).",
         downPaymentPct: "UK lenders price by loan-to-value band. Deposits of 10 to 15% are common for first buyers, so 15% (85% LTV) is used; bigger deposits get slightly lower rates (estimate, not sourced).",
-        mortgageRate: "Moneyfacts, Sep 2026: 5-year fix 5.68% (2-year 5.63%, SVR 7.13%). Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and today's 5.68%.",
+        mortgageRate: "Moneyfacts, 5 Oct 2026: average 5-year fix 6.00% (2-year 5.98%), up from 5.01% on 1 Sep. Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and 6%.",
         riskFreeRate: "Bank Rate is 3.75% (held 17 Sep 2026). Average easy-access savings pay 2.53% and 1-year fixed bonds 4.28% (Moneyfacts, Sep 2026), so 3.75% is used.",
         sellingCostPct: "Estate agent about 1.2% plus VAT, plus conveyancing, EPC and leasehold pack, about 2% in all. No capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "ONS private rents in London rose 3.4% a year from Jan 2015 to Aug 2026 (£1,580 to £2,332 a month, all tenancies), so 3% a year is used long-run.",
@@ -1849,6 +1853,7 @@ window.RVO_QUICKSTART = {
         caveat: "London prices fell 3.3% in the year to Jul 2026. Leasehold flats can bring service charge rises and major-works bills. Prices are asking less about 3% for negotiation (estimate, not sourced)."
       },
       sources: [
+        { name: "Moneyfactscompare, average 5-year fixed rate hits 6%, 5 Oct 2026", url: "https://moneyfactscompare.co.uk/news/mortgages/avg-5-year-fixed-rate-at-6pc/" },
         { name: "ONS, Private rent and house prices, UK: September 2026", url: "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/privaterentandhousepricesuk/september2026" },
         { name: "ONS, Price Index of Private Rents by local authority and bedrooms, Aug 2026", url: "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/priceindexofprivaterentsukmonthlypricestatistics" },
         { name: "HM Land Registry, UK HPI average prices by property type, Jul 2026", url: "https://publicdata.landregistry.gov.uk/market-trend-data/house-price-index-data/Average-prices-Property-Type-2026-07.csv" },
@@ -2103,7 +2108,7 @@ window.RVO_QUICKSTART = {
       aliases: ["Noord-Holland","North Holland","Randstad","Mokum"],
       currencySymbol: "€", currencyCode: "EUR", asOf: "2026-10",
       buyer: "Dutch resident owner-occupier, first home, aged 35 or over (no starter transfer-tax exemption), without NHG",
-      downPaymentPct: 10, mortgageRate: 3.9, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 1.6,
+      downPaymentPct: 10, mortgageRate: 4.4, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 1.6,
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -2148,7 +2153,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Amsterdam is mostly flats; roughly 3 in 10 homes are owner-occupied and about 4 in 10 are social rentals (estimate, not sourced). Houses sit outside the ring.",
         downPaymentPct: "10%: Dutch rules allow loans up to 100% of value, but buyers pay purchase costs from savings and about 10% down reaches the 90% LTV rate band (estimate, not sourced).",
-        mortgageRate: "3.9%: new Dutch house-purchase loans averaged 3.94% in Aug 2026, with 5-10 year fixes at 3.93% (ECB MIR). Most buyers fix 10 years on a 30-year annuity loan.",
+        mortgageRate: "4.4%: a 10-year fix at 90% LTV without NHG costs 4.3 to 4.5% (Sep 2026), above the 3.94% all-loan average (ECB MIR, Aug). Most buyers fix 10 years on a 30-year annuity.",
         riskFreeRate: "2.5%: new 1-year household term deposits paid 2.54% in Aug 2026 (ECB MIR); instant-access savings about 1.3%; ECB deposit rate 2.5%.",
         sellingCostPct: "1.6%: seller's agent commission of about 1-1.5% plus VAT, marketing and energy label; no capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "3%: CBS measured Amsterdam rent rises averaging about 3.4%/yr over 2015-2026 (4.3% in 2026); free-sector rises for sitting tenants are capped near CPI + 1%.",
@@ -2159,6 +2164,8 @@ window.RVO_QUICKSTART = {
         caveat: "Mortgage interest deductibility and erfpacht ground rent are not modelled. Homes under 187 WWS points (rent up to €1,228) are regulated; rents shown are free sector. Starter exemption ignored."
       },
       sources: [
+        { name: "Westland Utrecht Bank, rates from 1 Oct 2026: 10-year fix 4.50% up to 90% of value", url: "https://www.westlandutrechtbank.nl/documents/pdfs/Renteoverzicht/Herziening/20260618_Herzieningsrente_20261001.pdf" },
+        { name: "Homefinance, average 10-year fixed rate with NHG 4.10% at end Aug 2026", url: "https://www.homefinance.nl/nieuws-blog/2026/zoveel-hypotheekrente-betaalt-de-gemiddelde-nederlander-op-dit-moment-301972/" },
         { name: "NVM, Marktoverzicht Groot-Amsterdam Q3 2026", url: "https://www.nvm.nl/api/assets/media/0n0n1d0d/marktoverzicht-regio-groot-amsterdam-3e-kwartaal-2026.pdf" },
         { name: "NVM, Regionale analyse Groot-Amsterdam Q3 2026", url: "https://www.nvm.nl/api/assets/media/gtncrfbe/regionale-analyse-regio-groot-amsterdam-3e-kwartaal-2026.pdf" },
         { name: "NVM, Analyse woningmarkt Q3 2026", url: "https://www.nvm.nl/api/assets/media/2uwnzubw/bijlage-1-analyse-woningmarkt-3e-kwartaal-2026.pdf" },
