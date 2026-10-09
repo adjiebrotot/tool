@@ -26,6 +26,7 @@
   <link rel="apple-touch-icon" href="logos/apple-touch-icon.png">
   <script src="pwa.js" defer></script>
   <script src="dropdown.js" defer></script>
+  <script src="home-anim.js" defer></script>
 
   <meta property="og:type" content="website">
   <meta property="og:title" content="Adjie Brotot Tools">
@@ -252,27 +253,39 @@
       white-space: nowrap;
     }
 
+    /* The caret is a bar that blinks with opacity, which the compositor runs
+       on its own. A blinking border colour would keep the main thread
+       painting, and drag the tool cards' animations onto it too. */
     .type-text {
+      position: relative;
       font-weight: 600;
       color: var(--accent-strong);
-      border-right: 2px solid var(--accent-strong);
-      padding-right: 3px;
+      padding-right: 5px;
       transition: color var(--motion-fast);
+    }
+
+    .type-text::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 2px;
+      background: currentColor;
       animation: caret-blink 1s steps(1) infinite;
     }
 
     .type-text.is-highlight {
       color: var(--data-pos);
       font-weight: 800;
-      border-right-color: var(--data-pos);
     }
 
     @keyframes caret-blink {
-      50% { border-right-color: transparent; }
+      50% { opacity: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .type-text { animation: none; }
+      .type-text::after { animation: none; }
     }
 
     .visually-hidden {
@@ -427,110 +440,164 @@
       display: none;
     }
 
+    /* A tool card: its animation on the left, then the title, one line or
+       two on what it does, its categories in small print, and the button. */
     .tool-card {
+      display: grid;
+      grid-template-columns: 148px minmax(0, 1fr);
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
-      padding: 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      min-height: 100%;
+      overflow: hidden;
+      transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+    }
+
+    .tool-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-lg);
     }
 
     .tool-card.is-hidden {
       display: none;
     }
 
+    /* home-anim.js draws into this panel. It is decoration, so a click on it
+       opens the tool, as the title does. contain keeps each frame's repaint
+       inside the panel. */
+    .tool-anim {
+      min-height: 148px;
+      padding: 0.6rem;
+      background: var(--data-pos-bg);
+      border-right: 1px solid var(--border);
+      contain: layout paint style;
+    }
+
+    .tool-anim.is-link {
+      cursor: pointer;
+    }
+
+    .tool-card:not([data-status="Active"]) .tool-anim {
+      opacity: 0.7;
+    }
+
+    .tool-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 0;
+      padding: 1.05rem 1.2rem 1.15rem;
+    }
+
     .tool-top {
       display: flex;
       justify-content: space-between;
-      gap: 0.8rem;
       align-items: flex-start;
+      gap: 0.75rem;
     }
 
-    .tool-title-group h3 {
+    .tool-top h3 {
       margin: 0;
-      font-size: 1.28rem;
-      line-height: 1.2;
+      font-size: 1.2rem;
+      line-height: 1.25;
       letter-spacing: -0.02em;
     }
 
-    .tool-title-group p {
-      margin: 0.45rem 0 0;
-      color: var(--muted);
-      font-size: 0.98rem;
+    .tool-top h3 a {
+      transition: color var(--motion-fast);
     }
 
+    .tool-top h3 a:hover {
+      color: var(--accent-strong);
+    }
+
+    .tool-top h3 a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Status is an icon, named on hover and to screen readers. A tool that is
+       not out yet says so on its disabled button as well. */
     .status-badge {
       flex-shrink: 0;
-      border-radius: var(--radius-pill);
-      padding: 0.42rem 0.78rem;
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      border: 1px solid transparent;
-      white-space: nowrap;
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      margin-top: 0.15rem;
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      background: currentColor;
+      -webkit-mask: var(--status-icon) center / contain no-repeat;
+      mask: var(--status-icon) center / contain no-repeat;
     }
 
     .status-active {
-      background: var(--active-bg);
-      color: var(--active-text);
-      border-color: var(--data-pos-border);
+      color: var(--accent2);
+    }
+
+    .status-active::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      -webkit-mask: none;
+      mask: none;
+      box-shadow: 0 0 0 3.5px rgba(46, 158, 122, 0.18);
     }
 
     .status-coming-soon {
-      background: var(--soon-bg);
-      color: var(--soon-text);
-      border-color: #F5D08A;
+      color: var(--gold);
+      --status-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
     }
 
     .status-deprecated {
-      background: var(--deprecated-bg);
       color: var(--deprecated-text);
-      border-color: var(--data-neg-border);
+      --status-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M5.7 5.7l12.6 12.6'/%3E%3C/svg%3E");
     }
 
     .tool-description {
       margin: 0;
       color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
+    /* Categories are small print: they feed the filters and the search, and
+       sit at the foot of the card so they line up across a row. */
     .tool-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 0;
+      margin: auto 0 0;
       padding: 0;
       list-style: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      line-height: 1.5;
     }
 
+    /* Inline tags, each kept whole, with the dot trailing its tag so a wrap
+       breaks after the dot rather than starting a line with one. */
     .tool-tags li {
-      border-radius: var(--radius-pill);
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.35rem 0.72rem;
-      font-family: 'DM Mono', monospace;
+      display: inline;
+      white-space: nowrap;
+    }
+
+    .tool-tags li:not(:last-child)::after {
+      content: '\2022';
+      content: '\2022' / '';
+      margin: 0 0.1em 0 0.45em;
+      opacity: 0.7;
     }
 
     .tool-footer {
-      position: relative;
-      margin-top: auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
       gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .tool-meta {
-      font-size: 0.9rem;
-      color: var(--muted);
-      font-weight: 600;
+      margin-top: 0.3rem;
     }
 
     .tool-link,
@@ -538,8 +605,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
-      padding: 0.72rem 1.1rem;
+      min-height: 40px;
+      padding: 0.55rem 1.05rem;
       border-radius: var(--radius-md);
       font-weight: 700;
       font-size: 14px;
@@ -549,7 +616,7 @@
 
     .tool-link {
       background: var(--accent);
-      color: #fff;
+      color: var(--text-inv);
       border: none;
     }
 
@@ -580,13 +647,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
-      padding: 0 0.8rem;
+      min-height: 40px;
+      padding: 0 0.75rem;
       border: none;
       border-left: 1px solid rgba(255, 255, 255, 0.35);
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
       background: var(--accent);
-      color: #fff;
+      color: var(--text-inv);
       font: inherit;
       cursor: pointer;
       transition: opacity var(--motion-fast), box-shadow var(--motion-fast);
@@ -620,55 +687,29 @@
       transform: rotate(180deg);
     }
 
+    /* The sub-tool menu is the site's dropdown list: .combo-list rows of
+       .combo-opt from dropdown.css, placed under (or, short of room, over)
+       its button by SharedDropdown.place. Only showing it lives here, plus
+       the keyboard's lit row, which matches the mouse's. */
     .tool-options-menu {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: calc(100% + 0.5rem);
-      z-index: 20;
-      margin: 0;
-      padding: 0.35rem;
-      list-style: none;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
       display: none;
+      margin: 0;
+      list-style: none;
     }
 
     .tool-options-menu.is-open {
       display: block;
     }
 
-    .tool-options-menu a {
-      display: block;
-      padding: 0.6rem 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      transition: background var(--motion-fast), color var(--motion-fast);
-    }
-
-    .tool-options-menu a:hover,
-    .tool-options-menu a:focus-visible {
+    .tool-options-menu .combo-opt:focus-visible {
       outline: none;
-      background: var(--input-bg);
-      color: var(--accent-strong);
+      background: var(--accent);
+      color: var(--text-inv);
     }
 
-    .tool-options-menu .option-note {
-      display: block;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--muted);
-      margin-top: 0.1rem;
-    }
-
-    .tool-options-menu a:hover .option-note,
-    .tool-options-menu a:focus-visible .option-note {
-      color: var(--muted);
+    .tool-options-menu .combo-opt:focus-visible .combo-sub {
+      color: inherit;
+      opacity: 0.85;
     }
 
     .empty-state {
@@ -733,10 +774,6 @@
       .tool-grid {
         grid-template-columns: 1fr;
       }
-
-      .tool-top {
-        flex-direction: column;
-      }
     }
 
     @media (max-width: 640px) {
@@ -752,10 +789,32 @@
         margin-top: 1rem;
       }
 
-      .tool-card,
       .filter-panel,
       .footer-card {
         padding: 1rem;
+      }
+
+      /* A phone keeps the card's row: a smaller animation, tighter text. */
+      .tool-card {
+        grid-template-columns: 104px minmax(0, 1fr);
+      }
+
+      .tool-anim {
+        min-height: 104px;
+        padding: 0.4rem;
+      }
+
+      .tool-body {
+        gap: 0.45rem;
+        padding: 0.9rem 1rem 1rem;
+      }
+
+      .tool-top h3 {
+        font-size: 1.08rem;
+      }
+
+      .tool-description {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -1280,9 +1339,12 @@
         - data-domain
         - data-geography
         - data-tags (other tags only)
-        - h3 title
-        - subtitle paragraph
-        - description paragraph
+        - data-anim on .tool-anim: the tool's folder name; the tool-animator
+          agent (.claude/agents/tool-animator.md) draws it in home-anim.js
+        - h3 title and its link
+        - status-badge class and title (status-active, status-coming-soon, status-deprecated)
+        - description paragraph: one or two short sentences, what it does in the
+          words people search for, no em-dashes
         - visible tags list
         - link/button
       -->
@@ -1297,27 +1359,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/> <path stroke="var(--accent)" d="M14 2v6h6"/> <path stroke="var(--accent2)" d="M12 11v6M9 14.5l3 3 3-3"/> </svg>Markdown to PDF Converter</h3>
-              <p itemprop="abstract">Read Markdown &amp; export a print-ready PDF — all local.</p>
+          <div class="tool-anim" data-anim="mdtopdf" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/mdtopdf/" target="_blank" rel="noopener noreferrer">Markdown to PDF Converter</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Your AI prefers Markdown. Your boss prefers PDF. This settles it.
-          </p>
+            <p class="tool-description" itemprop="description">Your AI writes Markdown, your boss wants PDF. Turn it into a print-ready PDF, maths and diagrams included.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Others</li>
-            <li>Universal</li>
-            <li>Converter</li>
-            <li>Documents</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Others</li>
+              <li>Universal</li>
+              <li>Converter</li>
+              <li>Documents</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/mdtopdf/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/mdtopdf/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1330,26 +1390,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/> <path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/> <path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/> </svg>PowerFactory Scripter</h3>
-              <p itemprop="abstract">DIgSILENT PowerFactory automation script creator for multiple use cases.</p>
+          <div class="tool-anim" data-anim="powerfactory-scripter" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer">PowerFactory Scripter</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            DIgSILENT PowerFactory Python API has already made our work as power system engineers faster by automating repetitive tasks in a single run. However, writing the script itself can still be time-consuming. I’ve realised that most PowerFactory workflows are essentially just input–study–output. Let’s make that process faster as well!
-          </p>
+            <p class="tool-description" itemprop="description">Write DIgSILENT PowerFactory Python scripts in minutes, not days. Most studies are just input, study, output.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Engineering</li>
-            <li>Universal</li>
-            <li>Power Systems</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Engineering</li>
+              <li>Universal</li>
+              <li>Power Systems</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/powerfactory-scripter/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1362,26 +1420,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>Pisah vs Gabung</h3>
-              <p itemprop="abstract">Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).</p>
+          <div class="tool-anim" data-anim="pisahvsgabung" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer">Pisah vs Gabung</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Deciding whether to file personal income tax separately (Pisah Harta) or jointly (Gabung Harta) should not be based on love. It’s mathematical. You’re better off spending your money on another romantic dinner than on extra tax.
-          </p>
+            <p class="tool-description" itemprop="description">Pisah Harta or Gabung Harta? Compare your PPh 21 both ways and let the maths decide, not love.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Indonesia</li>
-            <li>Tax</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Indonesia</li>
+              <li>Tax</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/pisahvsgabung/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1394,27 +1450,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="2" y="6" width="20" height="12" rx="2"/> <circle stroke="var(--accent2)" cx="12" cy="12" r="2.5"/> <path stroke="var(--accent)" d="M6 12h.01M18 12h.01"/> </svg>Finance vs Cash</h3>
-              <p itemprop="abstract">Compare paying in full versus financing and investing unused cash at the risk-free rate.</p>
+          <div class="tool-anim" data-anim="financingvscash" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer">Finance vs Cash</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            I’m a believer in the saying: “The lower class uses debt, the middle class avoids debt, and the upper class uses debt.” However, there’s a big difference in how the lower and upper classes use debt. Use this tool to take on debt that actually benefits you. It won’t make you rich, but it might help ensure you don’t make banks even richer.
-          </p>
+            <p class="tool-description" itemprop="description">Pay cash, or finance it and invest what you kept? Take on debt that works for you, not for the bank.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Universal</li>
-            <li>Investment</li>
-            <li>Leveraging</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Investment</li>
+              <li>Leveraging</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/financingvscash/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1427,34 +1481,32 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="m3 11 9-8 9 8"/> <path stroke="var(--accent)" d="M5 9.5V21h14V9.5"/> <path stroke="var(--accent2)" d="M10 21v-6h4v6"/> </svg>Rent vs Own Home</h3>
-              <p itemprop="abstract">Model the long-term financial outcome of renting vs buying property, comparing cash, equity, and net wealth over time.</p>
+          <div class="tool-anim" data-anim="rentvsownhouse" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer">Rent vs Own Home</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Is buying property always beneficial? Well, no. It’s a long-term financial decision that requires proper analysis. Sometimes renting wins; sometimes buying does. How do you know which one works for you? Use this tool.
-          </p>
+            <p class="tool-description" itemprop="description">Is buying always better than renting? Model both over the years and see which leaves you wealthier.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Universal</li>
-            <li>Property</li>
-            <li>Leveraging</li>
-          </ul>
-
-          <div class="tool-footer">
-          <div class="tool-actions">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-rentvsownhouse" aria-label="Choose which Rent vs Own Home tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
-            <ul class="tool-options-menu" id="options-rentvsownhouse" role="menu">
-              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer">Rent vs Own Home<span class="option-note">One scenario, year by year</span></a></li>
-              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" target="_blank" rel="noopener noreferrer">Sensitivity Analysis<span class="option-note">Several scenarios side by side</span></a></li>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Property</li>
+              <li>Leveraging</li>
             </ul>
-          </div>
+
+            <div class="tool-footer">
+              <div class="tool-actions">
+                <a class="tool-link" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-rentvsownhouse" aria-label="Choose which Rent vs Own Home tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                <ul class="tool-options-menu combo-list" id="options-rentvsownhouse" role="menu">
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Rent vs Own Home</span><span class="combo-sub">One scenario, year by year</span></span></a></li>
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Sensitivity Analysis</span><span class="combo-sub">Several scenarios side by side</span></span></a></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </article>
 
@@ -1467,33 +1519,31 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="m7 15 4-4 3 3 6-7"/> <path stroke="var(--accent2)" d="M16 7h4v4"/> </svg>DCA Scenario Explorer</h3>
-              <p itemprop="abstract">Compare Dollar Cost Averaging strategies across multiple securities with real market data or custom models.</p>
+          <div class="tool-anim" data-anim="dcasimulator" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer">DCA Scenario Explorer</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Sometimes people are afraid of investing in equities due to their perceived “volatility”. With this tool, I aim to show that volatility under dollar-cost averaging means very little. Even over the medium term, you can still expect better outcomes compared with investing in risk-free assets. Live data fetched from Yahoo Finance can be used to improve accuracy.
-          </p>
+            <p class="tool-description" itemprop="description">Volatility is less scary when you buy every month. Test dollar-cost averaging strategies on real market data.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Universal</li>
-            <li>Investment</li>
-          </ul>
-
-          <div class="tool-footer">
-          <div class="tool-actions">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
-            <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-dcasimulator" aria-label="Choose which DCA Scenario Explorer tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
-            <ul class="tool-options-menu" id="options-dcasimulator" role="menu">
-              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer">DCA Scenario Explorer<span class="option-note">Compare single assets</span></a></li>
-              <li role="none"><a role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" target="_blank" rel="noopener noreferrer">Portfolio DCA Simulator<span class="option-note">Compare whole portfolios</span></a></li>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Investment</li>
             </ul>
-          </div>
+
+            <div class="tool-footer">
+              <div class="tool-actions">
+                <a class="tool-link" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-dcasimulator" aria-label="Choose which DCA Scenario Explorer tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                <ul class="tool-options-menu combo-list" id="options-dcasimulator" role="menu">
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">DCA Scenario Explorer</span><span class="combo-sub">Compare single assets</span></span></a></li>
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/dcasimulator/portfolio/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Portfolio DCA Simulator</span><span class="combo-sub">Compare whole portfolios</span></span></a></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </article>
         <article
@@ -1505,26 +1555,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 20h18"/> <path stroke="var(--accent)" d="M4 16.5l5-5 3.5 3.5L18 8"/> <path stroke="var(--accent2)" d="M18 5v9"/> <path stroke="var(--accent2)" d="M18 5.5l4 1.75-4 1.75z" fill="var(--accent2)"/> </svg>Financial Freedom Calculator</h3>
-              <p itemprop="abstract">Work out the pot you need before you can stop working, and the age you actually reach it.</p>
+          <div class="tool-anim" data-anim="financialfreedom" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer">Financial Freedom Calculator</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Everyone tells you to save more, nobody tells you how much is enough. This tool puts a number on it, and a date next to it. Instead of one tidy average return, it runs thousands of possible futures to show how likely your plan is to hold. And when the numbers say it won’t, it tells you plainly what each way out costs: save more, spend less, or work a little longer.
-          </p>
+            <p class="tool-description" itemprop="description">How much is enough, and when do you get there? Your freedom number and age, tested across thousands of futures.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Universal</li>
-            <li>Investment</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Investment</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/financialfreedom/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1537,26 +1585,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 3v18h18"/> <path stroke="var(--accent2)" d="M8 17v-5M13 17V7M18 17v-8"/> </svg>Graph Visualiser</h3>
-              <p itemprop="abstract">Upload your data and instantly create interactive charts and graphs.</p>
+          <div class="tool-anim" data-anim="graphvisualiser" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/graphvisualiser/" target="_blank" rel="noopener noreferrer">Graph Visualiser</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Built for the last minute meeting. Drop in a CSV or Excel file, let it do the magic, and look smart in front of your boss or client.
-          </p>
+            <p class="tool-description" itemprop="description">Drop in a CSV or Excel file, get interactive charts, and look smart in the last-minute meeting.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Visualisation</li>
-            <li>Universal</li>
-            <li>Graphing</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Visualisation</li>
+              <li>Universal</li>
+              <li>Graphing</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/graphvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/graphvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1569,26 +1615,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent2)" d="M3 10c8 0 9-5 18-5"/> <path stroke="var(--accent)" d="M3 12h18"/> <path stroke="var(--accent2)" d="M3 14c8 0 9 5 18 5"/> </svg>Sankey Diagram Creator</h3>
-              <p itemprop="abstract">Build polished Sankey flow diagrams quickly with live editing and export options.</p>
+          <div class="tool-anim" data-anim="sankeycreator" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/sankeycreator/" target="_blank" rel="noopener noreferrer">Sankey Diagram Creator</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            That cool flow diagram that shows where this goes to where.
-          </p>
+            <p class="tool-description" itemprop="description">That cool flow diagram showing what goes where. Build a Sankey diagram live and export it as SVG or PNG.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Visualisation</li>
-            <li>Universal</li>
-            <li>Graphing</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Visualisation</li>
+              <li>Universal</li>
+              <li>Graphing</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/sankeycreator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/sankeycreator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1601,26 +1645,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M9 4c-2 0-3 1-3 3v2c0 1.2-.8 2.4-2 3 1.2.6 2 1.8 2 3v2c0 2 1 3 3 3"/> <path stroke="var(--accent)" d="M15 4c2 0 3 1 3 3v2c0 1.2.8 2.4 2 3-1.2.6-2 1.8-2 3v2c0 2-1 3-3 3"/> <circle cx="12" cy="12" r="1.4" fill="var(--accent2)" stroke="none"/> </svg>JSON Visualiser</h3>
-              <p itemprop="abstract">Upload, paste, or fetch JSON to explore it as an interactive tree.</p>
+          <div class="tool-anim" data-anim="jsonvisualiser" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer">JSON Visualiser</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            See JSON in tree format. Designed for humans.
-          </p>
+            <p class="tool-description" itemprop="description">See JSON as a tree, designed for humans. Lazy loading copes with millions of keys.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Visualisation</li>
-            <li>Universal</li>
-            <li>Graphing</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Visualisation</li>
+              <li>Universal</li>
+              <li>Graphing</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/jsonvisualiser/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1633,26 +1675,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="3" width="18" height="18" rx="2"/> <path stroke="var(--accent2)" d="M9 3v12M15 3v12M3 15h18"/> </svg>Canvas Builder</h3>
-              <p itemprop="abstract">Build visual strategy frameworks: Business Model Canvas, Value Proposition Canvas, etc in your browser.</p>
+          <div class="tool-anim" data-anim="canvasbuilder" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/canvasbuilder/" target="_blank" rel="noopener noreferrer">Canvas Builder</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            CEO and founder tooling, on the web.
-          </p>
+            <p class="tool-description" itemprop="description">CEO and founder tooling on the web. Build a pitch-ready Business Model Canvas, one note at a time.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Visualisation</li>
-            <li>Universal</li>
-            <li>Brainstorming Tool</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Visualisation</li>
+              <li>Universal</li>
+              <li>Brainstorming Tool</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/canvasbuilder/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/canvasbuilder/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1665,26 +1705,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="12" cy="12" r="9"/> <path stroke="var(--accent2)" d="M3 12h18"/> <path stroke="var(--accent2)" d="M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/> </svg>Cost of Living Comparator</h3>
-              <p itemprop="abstract">Compare cost of living across cities to find out where your salary actually goes furthest.</p>
+          <div class="tool-anim" data-anim="costofliving-comparator" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer">Cost of Living Comparator</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            A higher salary in a new city doesn't always mean more money in your pocket. Before relocating, the real question is: how far does your income actually go there? This tool compares cost of living across cities so you can make a genuinely informed decision about where to live and work.
-          </p>
+            <p class="tool-description" itemprop="description">A higher salary in a new city is not always more money. See how far your income really goes there.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Universal</li>
-            <li>Geoarbitrage</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Geoarbitrage</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1697,26 +1735,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="5" width="18" height="14" rx="2"/> <path d="M10.5 9.5 15 12l-4.5 2.5z" fill="var(--accent2)" stroke="var(--accent2)"/> </svg>Video to GIF Converter</h3>
-              <p itemprop="abstract">Convert Video to GIF, as the name suggest.</p>
+          <div class="tool-anim" data-anim="videotogif" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/videotogif/" target="_blank" rel="noopener noreferrer">Video to GIF Converter</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            There was no free tool out there, so I made one myself. Too cheap to subscribe to things.
-          </p>
+            <p class="tool-description" itemprop="description">Too cheap to subscribe, so I made one. Convert video to GIF on your device, free and never uploaded.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Others</li>
-            <li>Universal</li>
-            <li>Converter</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Others</li>
+              <li>Universal</li>
+              <li>Converter</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/videotogif/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/videotogif/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1729,27 +1765,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="var(--accent)" x="3" y="3" width="18" height="18" rx="4"/> <circle fill="var(--accent2)" stroke="none" cx="8.6" cy="8.6" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="15.4" cy="8.6" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="8.6" cy="15.4" r="1.7"/> <circle fill="var(--accent2)" stroke="none" cx="15.4" cy="15.4" r="1.7"/> </svg>Random Picker</h3>
-              <p itemprop="abstract">Type your choices, then spin, roll, pull or drop to pick one at random.</p>
+          <div class="tool-anim" data-anim="randompicker" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer">Random Picker</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Your decision fatigue solution!
-          </p>
+            <p class="tool-description" itemprop="description">Your decision fatigue solution! Spin a wheel, roll a dice, pull a slot or drop a ball to pick one.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Others</li>
-            <li>Universal</li>
-            <li>Randomiser</li>
-            <li>Decision</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Others</li>
+              <li>Universal</li>
+              <li>Randomiser</li>
+              <li>Decision</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/randompicker/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1762,27 +1796,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="12" cy="12" r="9"/> <path stroke="var(--accent)" d="M3.8 8.5h16.4M3.8 15.5h16.4" opacity=".5"/> <path stroke="var(--accent2)" d="M12 6.8V12l3.4 2.3"/> </svg>World Clock</h3>
-              <p itemprop="abstract">A live world map with the local time everywhere, daylight saving included.</p>
+          <div class="tool-anim" data-anim="worldclock" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/worldclock/" target="_blank" rel="noopener noreferrer">World Clock</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            As a consultant working across timezones, I made this because I was tired of typing “3pm in Perth is what time in Melbourne” and I realised there is something called Daylight Saving Time!
-          </p>
+            <p class="tool-description" itemprop="description">3pm in Perth is what time in Melbourne? A live world map of local times, daylight saving included.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Others</li>
-            <li>Universal</li>
-            <li>Time Zones</li>
-            <li>Meetings</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Others</li>
+              <li>Universal</li>
+              <li>Time Zones</li>
+              <li>Meetings</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/worldclock/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/worldclock/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1795,27 +1827,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M12 2.5c-3.9 0-7 6.1-7 11 0 4.4 3.1 8 7 8s7-3.6 7-8c0-4.9-3.1-11-7-11z"/> <circle fill="var(--accent2)" stroke="none" cx="12" cy="14.2" r="3.2"/> </svg>Egg Price</h3>
-              <p itemprop="abstract">See how much of each egg carton you pay for shell, and how much for the egg.</p>
+          <div class="tool-anim" data-anim="eggprice" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/eggprice/" target="_blank" rel="noopener noreferrer">Egg Price</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Help me avoid decision fatigue when choosing which egg to buy at Woolies. Make sure I pay for the proteins, not the calcium (shells!)
-          </p>
+            <p class="tool-description" itemprop="description">Pay for the protein, not the calcium. See what each egg carton really costs per gram of egg, shell left out.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Others</li>
-            <li>Universal</li>
-            <li>Groceries</li>
-            <li>Decision</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Others</li>
+              <li>Universal</li>
+              <li>Groceries</li>
+              <li>Decision</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/eggprice/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/eggprice/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1828,27 +1858,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="m3 9.5 9-5.5 9 5.5"/> <path stroke="var(--accent)" d="M5 9.5V19M19 9.5V19M3.5 21h17"/> <path stroke="var(--accent2)" d="M9.5 12.5V19M14.5 12.5V19"/> </svg>Borrowing Capacity Calculator</h3>
-              <p itemprop="abstract">Work out how much an Australian bank would lend you, and which of the four lending caps is holding you back.</p>
+          <div class="tool-anim" data-anim="borrowingcapacity" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer">Borrowing Capacity Calculator</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            The bank gives you one number and no working, so you never find out what is actually holding you back. This runs the same eight steps a lender does, from income shading and tax to HEM living expenses, your existing commitments, and the APRA buffer, then tells you which cap is binding: serviceability, debt to income, loan to value, or simply not enough deposit. Now you can argue with the bank using the bank’s own maths.
-          </p>
+            <p class="tool-description" itemprop="description">How much will an Australian bank lend you, and which cap is holding you back? Argue with the bank’s own maths.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Australia</li>
-            <li>Property</li>
-            <li>Leveraging</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Australia</li>
+              <li>Property</li>
+              <li>Leveraging</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/borrowingcapacity/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1861,27 +1889,25 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3.5 12.5 11.5 4.5h8v8l-8 8z"/> <circle stroke="var(--accent)" cx="15.6" cy="8.4" r="1.4"/> <path stroke="var(--accent2)" d="M8.2 15.8l3-3M10.4 17.4l2.6-2.6"/> </svg>Valuate Everything</h3>
-              <p itemprop="abstract">Is that listing a fair price? Check it against every other listing you have seen.</p>
+          <div class="tool-anim" data-anim="valuateeverything" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name"><a href="https://tool.adjiebrotots.com/valuateeverything/" target="_blank" rel="noopener noreferrer">Valuate Everything</a></h3>
+              <span class="status-badge status-active" title="Active"><span class="visually-hidden">Active</span></span>
             </div>
-            <span class="status-badge status-active">Active</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            Every seller says theirs is priced to sell. Give it the listings you have seen, a used Camry with its year and kilometres or a Perth house with its land and distance to the station, and it fits a price model to them. Then put in the ones you actually want to buy and see what each should cost, and how far the asking price is from it, on a 2D or 3D chart.
-          </p>
+            <p class="tool-description" itemprop="description">Every seller says it is priced to sell. Fit a price model to the listings you have seen and find the fair price.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Universal</li>
-            <li>Pricing</li>
-            <li>Decision</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Universal</li>
+              <li>Pricing</li>
+              <li>Decision</li>
+            </ul>
 
-          <div class="tool-footer">
-            <a class="tool-link" href="https://tool.adjiebrotots.com/valuateeverything/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            <div class="tool-footer">
+              <a class="tool-link" href="https://tool.adjiebrotots.com/valuateeverything/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+            </div>
           </div>
         </article>
 
@@ -1894,26 +1920,24 @@
           itemscope
           itemtype="https://schema.org/WebApplication"
         >
-          <div class="tool-top">
-            <div class="tool-title-group">
-              <h3 itemprop="name"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M9.5 5h5l1.8 3.2C17.8 10.4 19 12.3 19 15c0 3.8-3 6-7 6s-7-2.2-7-6c0-2.7 1.2-4.6 2.7-6.8z"/> <path stroke="var(--accent)" d="M9.5 5 8 2.5h8L14.5 5"/> <path stroke="var(--accent2)" d="M12 9.5v8M14 11.2c-.4-.7-1.1-1.2-2-1.2-1.1 0-2 .7-2 1.6 0 2.3 4 1.1 4 3.4 0 .9-.9 1.6-2 1.6-.9 0-1.6-.5-2-1.2"/> </svg>Superannuation DASP Simulator</h3>
-              <p itemprop="abstract">Compare Australian superannuation salary sacrifice to assess whether it’s worthwhile when DASP applies.</p>
+          <div class="tool-anim" data-anim="superdasp" aria-hidden="true"></div>
+          <div class="tool-body">
+            <div class="tool-top">
+              <h3 itemprop="name">Superannuation DASP Simulator</h3>
+              <span class="status-badge status-coming-soon" title="Coming soon"><span class="visually-hidden">Coming soon</span></span>
             </div>
-            <span class="status-badge status-coming-soon">Coming soon</span>
-          </div>
 
-          <p class="tool-description" itemprop="description">
-            If you are a temporary resident of Australia (or intend to stay temporarily), your superannuation will be subject to the Departing Australia Superannuation Payment (DASP). While concessional contributions can reduce tax now, they may be taxed more heavily under DASP later. Does increasing your super balance still make sense? Use this tool.
-          </p>
+            <p class="tool-description" itemprop="description">Leaving Australia one day? See if salary sacrificing into super still pays once DASP tax applies.</p>
 
-          <ul class="tool-tags" aria-label="Categories">
-            <li>Finance</li>
-            <li>Australia</li>
-            <li>Tax</li>
-          </ul>
+            <ul class="tool-tags" aria-label="Categories">
+              <li>Finance</li>
+              <li>Australia</li>
+              <li>Tax</li>
+            </ul>
 
-          <div class="tool-footer">
-            <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
+            <div class="tool-footer">
+              <span class="tool-link-disabled" aria-disabled="true">Coming soon</span>
+            </div>
           </div>
         </article>
       </div>
@@ -2139,26 +2163,43 @@
       applyFilters();
     })();
 
-    // Sub-tool menus on the split "Open tool" buttons.
+    // Sub-tool menus on the split "Open tool" buttons. The menu is the site's
+    // dropdown list, so it opens where a select's list would: fixed under the
+    // button (or over it, short of room), and it closes on a scroll or resize.
     (function () {
       const toggles = Array.from(document.querySelectorAll('.tool-options-toggle'));
       if (!toggles.length) return;
 
       const menuOf = btn => document.getElementById(btn.getAttribute('aria-controls'));
+      let current = null;
 
       function close(btn) {
         btn.setAttribute('aria-expanded', 'false');
         menuOf(btn).classList.remove('is-open');
+        if (current === btn) current = null;
       }
 
       function closeAll(except) {
         toggles.forEach(btn => { if (btn !== except) close(btn); });
       }
 
+      function place(btn) {
+        const menu = menuOf(btn);
+        const anchor = btn.closest('.tool-actions') || btn;
+        if (window.SharedDropdown) {
+          window.SharedDropdown.place(anchor, menu, { minWidth: 248 });
+        } else {
+          const r = anchor.getBoundingClientRect();
+          Object.assign(menu.style, { position: 'fixed', left: r.left + 'px', top: (r.bottom + 4) + 'px', minWidth: '248px' });
+        }
+      }
+
       function open(btn) {
         closeAll(btn);
         btn.setAttribute('aria-expanded', 'true');
         menuOf(btn).classList.add('is-open');
+        place(btn);
+        current = btn;
       }
 
       toggles.forEach(btn => {
@@ -2172,11 +2213,20 @@
           } else {
             open(btn);
             const first = links()[0];
-            if (first) first.focus();
+            if (first) first.focus({ preventScroll: true });
           }
         });
 
         menu.addEventListener('click', event => event.stopPropagation());
+
+        // Once the keyboard is in the list, the mouse moves the lit row with
+        // it, so only one row is ever lit.
+        menu.addEventListener('mousemove', event => {
+          const row = event.target.closest('a');
+          if (row && row !== document.activeElement && menu.contains(document.activeElement)) {
+            row.focus({ preventScroll: true });
+          }
+        });
 
         menu.addEventListener('keydown', event => {
           const items = links();
@@ -2199,7 +2249,20 @@
       document.addEventListener('keydown', event => {
         if (event.key === 'Escape') closeAll(null);
       });
+      window.addEventListener('scroll', event => {
+        if (current && !menuOf(current).contains(event.target)) close(current);
+      }, true);
+      window.addEventListener('resize', () => closeAll(null));
     })();
+
+    // The animation panel is decoration; a click on it opens the tool, as the
+    // title does.
+    document.querySelectorAll('.tool-anim').forEach(panel => {
+      const link = panel.parentElement.querySelector('h3 a');
+      if (!link) return;
+      panel.classList.add('is-link');
+      panel.addEventListener('click', () => link.click());
+    });
   </script>
 </body>
 </html>

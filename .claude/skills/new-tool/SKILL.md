@@ -157,6 +157,11 @@ prints how often each term fires per page.
 The site's root `index.html` is the tool directory/landing page. **Do not add a new tool to it
 unless the user explicitly asks.** Build the tool in its own folder and stop there.
 
+When the user does ask, copy a card in `index.html` (the comment above the grid lists what
+to change). Its description is one or two short sentences in the words people search for,
+and its `data-anim` key needs a drawing in `home-anim.js`: hand that to the `tool-animator`
+agent (`.claude/agents/tool-animator.md`) rather than drawing it inline.
+
 ## 5. Testing
 
 Scale the rigor to the risk:
