@@ -35,6 +35,13 @@ Chromium's ICU, so the replay does not share the page's code or its data.
   in November, when NSW and South Australia have started daylight saving and
   Queensland and the Northern Territory have not.
 
+- **W10** The night shade follows the sun: the page's subsolar point agrees
+  with NOAA's solar calculator, and over a 4° grid of the world view every
+  place where NOAA puts the sun up is unshaded, every place with the sun more
+  than 12° below the horizon is fully shaded, and twilight sits in between.
+  Checked now and at the June solstice (midnight sun north of the Arctic
+  Circle, night at 58°S).
+
 Run: `node run.mjs`. The first run caches d3 in `_ref/.libcache/`; later runs
 are offline. Exits non-zero if any check fails.
 

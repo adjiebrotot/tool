@@ -7,17 +7,18 @@
 
    The map is zones.json: timezone-boundary-builder polygons, one
    per IANA zone, clipped to Natural Earth land (see _build/). It is
-   drawn on two canvases in a plain Mercator projection: the base
-   (sea, land, borders) redraws on pan and zoom, the label layer
-   (clocks, hover, the time zone strip) also redraws on every tick.
+   drawn on three canvases in a plain Mercator projection: the base
+   (sea, land, borders) redraws on pan and zoom, the night shade over
+   it also follows the sun minute by minute, and the label layer
+   (clocks, hover, the time zone strip) redraws on every tick.
    ============================================================ */
 (function () {
 'use strict';
 
 const $ = id => document.getElementById(id);
 const app = $('app');
-const baseCv = $('baseCanvas'), labelCv = $('labelCanvas');
-const bctx = baseCv.getContext('2d'), lctx = labelCv.getContext('2d');
+const baseCv = $('baseCanvas'), nightCv = $('nightCanvas'), labelCv = $('labelCanvas');
+const bctx = baseCv.getContext('2d'), nctx = nightCv.getContext('2d'), lctx = labelCv.getContext('2d');
 const hitCtx = document.createElement('canvas').getContext('2d');
 const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -187,6 +188,8 @@ function readColors() {
     hover: v('--wc-hover'), hoverLine: v('--wc-hover-line'),
     label: v('--wc-label'), muted: v('--wc-label-muted'), youText: v('--wc-you-text'),
     panel: v('--panel'), line: v('--border'),
+    night: (v('--wc-night').match(/[0-9a-f]{2}/gi) || ['00', '00', '00']).slice(0, 3).map(h => parseInt(h, 16)),
+    nightAlpha: parseFloat(v('--wc-night-alpha')) || 0,
     tz: [0, 1, 2, 3, 4, 5].map(i => v('--wc-tz-' + i)),
   };
   hatchCache.clear();
@@ -517,6 +520,7 @@ function refreshTime(force) {
     lastMinute = minute;
     offChanged = computeOffsets();
     if (offChanged) updateBorders();
+    needNight = true;
   }
   userOff = offsetAt(userFmt, displayMs);
   const uw = wall(displayMs, userOff), uKey = dayKey(uw);
@@ -528,7 +532,7 @@ function refreshTime(force) {
     if (t !== z.timeStr || d !== z.dateStr) { z.timeStr = t; z.dateStr = d; changed = true; }
   }
   renderNow(uw);
-  if (changed || offChanged) requestDraw(offChanged);
+  if (changed || offChanged || needNight) requestDraw(offChanged);
   if (cardZone && !$('placeCard').hidden) renderCard();
 }
 const nowEls = {};
@@ -553,7 +557,7 @@ function tick() {
 document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 
 // ── DRAWING ──────────────────────────────────────────────────────────────
-let needBase = false, rafId = 0;
+let needBase = false, needNight = false, rafId = 0;
 function requestDraw(base) {
   if (base !== false) needBase = true;
   if (!rafId) rafId = requestAnimationFrame(frame);
@@ -562,7 +566,8 @@ function frame() {
   rafId = 0;
   if (!ready) return;
   if (needBase) drawBase();
-  needBase = false;
+  if (needBase || needNight) drawNight();
+  needBase = needNight = false;
   drawLabels();
 }
 function lodFor(k) {
@@ -627,6 +632,59 @@ function drawBase() {
       }
     }
   }
+}
+
+// ── NIGHT ────────────────────────────────────────────────────────────────
+// Where the sun is overhead at an instant, from the low-precision solar
+// position in the Astronomical Almanac (good to about 0.01° until 2050,
+// far finer than the twilight fade).
+function subsolar(ms) {
+  const d = ms / 86400000 - 10957.5;                // days since J2000.0
+  const g = (357.529 + 0.98560028 * d) * RAD;       // mean anomaly
+  const q = 280.459 + 0.98564736 * d;               // mean longitude
+  const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * RAD;
+  const e = (23.439 - 0.00000036 * d) * RAD;        // obliquity of the ecliptic
+  const ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)) / RAD;
+  const gmst = 280.46061837 + 360.98564736629 * d;  // Greenwich sidereal time, degrees
+  return { lat: Math.asin(Math.sin(e) * Math.sin(L)) / RAD, lon: mod(ra - gmst + 180, 360) - 180 };
+}
+// How much of the night shade a place gets, from the sun's altitude there:
+// none while the sun is up (its upper edge clears the horizon at -0.833°),
+// fading in through civil and nautical twilight to the full shade at -12°.
+const SUN_UP = -0.833, SUN_DARK = -12;
+function nightShade(alt) {
+  const t = Math.max(0, Math.min(1, (SUN_UP - alt) / (SUN_UP - SUN_DARK)));
+  return t * t * (3 - 2 * t);
+}
+// The shade is worked out on a coarse grid, one sample every NIGHT_STEP
+// screen pixels, and stretched over the map: the terminator is a soft band
+// hundreds of kilometres wide, so nothing finer would show.
+const NIGHT_STEP = 4;
+const nightGrid = document.createElement('canvas'), ngctx = nightGrid.getContext('2d');
+let nightImg = null;
+function drawNight() {
+  const S = NIGHT_STEP, gw = Math.ceil(vw / S) + 1, gh = Math.ceil(vh / S) + 1, k = T.k;
+  if (!nightImg || nightImg.width !== gw || nightImg.height !== gh) {
+    nightGrid.width = gw; nightGrid.height = gh;
+    nightImg = ngctx.createImageData(gw, gh);
+  }
+  const sun = subsolar(displayMs), sd = Math.sin(sun.lat * RAD), cd = Math.cos(sun.lat * RAD);
+  const cosH = new Float32Array(gw);
+  for (let i = 0; i < gw; i++) cosH[i] = Math.cos((unprojX((i * S - T.x) / k) - sun.lon) * RAD);
+  const px = nightImg.data, [r, g, b] = C.night, a = C.nightAlpha * 255;
+  for (let j = 0, o = 0; j < gh; j++) {
+    const lat = unprojY((j * S - T.y) / k) * RAD, A = Math.sin(lat) * sd, B = Math.cos(lat) * cd;
+    for (let i = 0; i < gw; i++, o += 4) {
+      const alt = Math.asin(Math.max(-1, Math.min(1, A + B * cosH[i]))) / RAD;
+      px[o] = r; px[o + 1] = g; px[o + 2] = b; px[o + 3] = Math.round(a * nightShade(alt));
+    }
+  }
+  ngctx.putImageData(nightImg, 0, 0);
+  nctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  nctx.clearRect(0, 0, vw, vh);
+  nctx.imageSmoothingEnabled = true;
+  // Sample (i, j) was taken at screen (i·S, j·S): centre each grid cell on it.
+  nctx.drawImage(nightGrid, -S / 2, -S / 2, gw * S, gh * S);
 }
 
 const F_NAME = '600 10.5px "DM Sans", system-ui, sans-serif';
@@ -981,8 +1039,8 @@ $('placeCard').addEventListener('click', e => { if (e.target.closest('[data-clos
 
 // ── VIEW ─────────────────────────────────────────────────────────────────
 const TIP_VIEW = {
-  jur: '<strong>Jurisdictions:</strong> every place that sets its own clock. A bold line marks where the time changes. Hover or tap a place for details.',
-  tz: '<strong>Time zones:</strong> places coloured by their offset from GMT right now, so daylight saving moves a place into the next colour.',
+  jur: '<strong>Jurisdictions:</strong> every place that sets its own clock. A bold line marks where the time changes. The shaded side of the map is in night. Hover or tap a place for details.',
+  tz: '<strong>Time zones:</strong> places coloured by their offset from GMT right now, so daylight saving moves a place into the next colour. The shaded side of the map is in night.',
 };
 function setView(v) {
   view = v;
@@ -1205,7 +1263,7 @@ function resize() {
   const oldW = vw, oldH = vh;
   vw = app.clientWidth; vh = app.clientHeight;
   DPR = Math.min(window.devicePixelRatio || 1, 2);
-  for (const cv of [baseCv, labelCv]) { cv.width = Math.round(vw * DPR); cv.height = Math.round(vh * DPR); }
+  for (const cv of [baseCv, nightCv, labelCv]) { cv.width = Math.round(vw * DPR); cv.height = Math.round(vh * DPR); }
   hatchCache.clear();
   minK = Math.min(vw / W, vh / H);
   updateObstacles();
@@ -1257,6 +1315,15 @@ function start(topo) {
     view: () => view,
     card: () => (cardZone ? $('placeCard').innerText : null),
     labels: () => lastLabels.slice(),
+    // The night shade on screen at a place, 0 (day) to 1 (full night), read
+    // back from the canvas; null when the place is off screen.
+    night: ([lon, lat]) => {
+      const y = T.y + projY(lat) * T.k, wk = W * T.k, x = mod(T.x + projX(lon) * T.k, wk);
+      if (y < 0 || y >= vh || x >= vw || !C.nightAlpha) return null;
+      const p = nctx.getImageData(Math.floor(x * DPR), Math.floor(y * DPR), 1, 1).data;
+      return p[3] / 255 / C.nightAlpha;
+    },
+    subsolar: () => subsolar(displayMs),
     zoneAt: (lon, lat) => { const [x, y] = [T.x + projX(lon) * T.k, T.y + projY(lat) * T.k], z = zoneAt(x, y); return z && z.id; },
     // Kinds of the borders two zones share: 1 country, 2 state line, 3 time border.
     borderKinds: (a, b) => {

@@ -27,6 +27,10 @@
 //       clock (one label for Italy and the Vatican), and a border is drawn as
 //       a time border exactly when the clocks on its two sides differ, so it
 //       changes with daylight saving
+//   W10 the night shade: wherever NOAA's solar position puts the sun up the
+//       map is unshaded, wherever it is well below the horizon the shade is
+//       full, and the twilight between fades from one to the other; checked
+//       at the fixed "now" and again at the June solstice (polar day and night)
 //
 // Run: node run.mjs  (the first run fetches d3 into _ref/.libcache/; after that
 // it runs offline). Exits non-zero if any check fails.
@@ -306,6 +310,59 @@ console.log(`World Clock audit — zoneinfo tzdata ${tzdataVersion}, fixed now $
   await checkAllClocks(page, 'W4 with seconds', 'Australia/Perth');
 
   check('Perth run: no page errors', errors.length === 0, errors.join('; '));
+  await ctx.close();
+}
+
+// ── W10 the night shade ─────────────────────────────────────────────────────
+// NOAA's solar calculator (the spreadsheet's equations: apparent longitude,
+// corrected obliquity, equation of time), written out here rather than
+// borrowed from the page, which uses the Almanac's shorter series.
+function noaaSun(ms) {
+  const R = Math.PI / 180, T = (ms / 86400000 + 2440587.5 - 2451545) / 36525;
+  const L0 = (280.46646 + T * (36000.76983 + T * 0.0003032)) % 360;
+  const M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+  const e = 0.016708634 - T * (0.000042037 + 0.0000001267 * T);
+  const C = Math.sin(M * R) * (1.914602 - T * (0.004817 + 0.000014 * T)) + Math.sin(2 * M * R) * (0.019993 - 0.000101 * T) + Math.sin(3 * M * R) * 0.000289;
+  const om = 125.04 - 1934.136 * T, lam = L0 + C - 0.00569 - 0.00478 * Math.sin(om * R);
+  const eps = 23 + (26 + (21.448 - T * (46.815 + T * (0.00059 - T * 0.001813))) / 60) / 60 + 0.00256 * Math.cos(om * R);
+  const dec = Math.asin(Math.sin(eps * R) * Math.sin(lam * R)) / R;
+  const y = Math.tan(eps * R / 2) ** 2;
+  const eot = 4 / R * (y * Math.sin(2 * L0 * R) - 2 * e * Math.sin(M * R) + 4 * e * y * Math.sin(M * R) * Math.cos(2 * L0 * R) - 0.5 * y * y * Math.sin(4 * L0 * R) - 1.25 * e * e * Math.sin(2 * M * R));
+  const utcMin = ((ms % 86400000) + 86400000) % 86400000 / 60000;
+  const lon = (((720 - utcMin - eot) / 4 + 540) % 360) - 180;
+  return { dec, lon, alt: (la, lo) => Math.asin(Math.sin(la * R) * Math.sin(dec * R) + Math.cos(la * R) * Math.cos(dec * R) * Math.cos((lo - lon) * R)) / R };
+}
+{
+  const { ctx, page, errors } = await openAs('Europe/London');
+  await page.click('#viewGroup .seg-btn[data-val=tz]');
+  await page.waitForTimeout(300);
+  const shadeCheck = async label => {
+    const ms = await hook(page, 'displayMs'), sun = noaaSun(ms), pg = await hook(page, 'subsolar');
+    const dLon = Math.abs(((pg.lon - sun.lon + 540) % 360) - 180);
+    check(`W10 ${label}: the sun is overhead at ${sun.dec.toFixed(2)}°, ${sun.lon.toFixed(2)}°`, Math.abs(pg.lat - sun.dec) < 0.05 && dLon < 0.05, `page ${pg.lat.toFixed(3)}°, ${pg.lon.toFixed(3)}°`);
+    // Twilight samples are held a couple of degrees clear of the ends of the
+    // fade, which the coarse shade grid blurs by about a degree at this zoom.
+    const bad = [], seen = { day: 0, night: 0, dusk: 0 };
+    for (let lat = -58; lat <= 80; lat += 4) for (let lon = -178; lon <= 178; lon += 4) {
+      const v = await page.evaluate(p => window.__worldclock.night(p), [lon, lat]);
+      if (v == null) continue;
+      const alt = sun.alt(lat, lon);
+      if (alt > 1.5) { seen.day++; if (v > 0.02) bad.push(`${lat},${lon} sun at ${alt.toFixed(1)}° shaded ${v.toFixed(2)}`); }
+      else if (alt < -13.5) { seen.night++; if (v < 0.96) bad.push(`${lat},${lon} sun at ${alt.toFixed(1)}° shaded ${v.toFixed(2)}`); }
+      else if (alt < -2 && alt > -10) { seen.dusk++; if (v < 0.005 || v > 0.995) bad.push(`${lat},${lon} sun at ${alt.toFixed(1)}° (twilight) shaded ${v.toFixed(2)}`); }
+    }
+    check(`W10 ${label}: day unshaded, night fully shaded, twilight in between`, bad.length === 0 && seen.day > 200 && seen.night > 200 && seen.dusk > 20, `${seen.day} day, ${seen.night} night, ${seen.dusk} twilight samples` + (bad.length ? '; ' + bad.slice(0, 4).join('; ') + (bad.length > 4 ? ` … +${bad.length - 4}` : '') : ''));
+    return sun;
+  };
+  await shadeCheck('now');
+  await page.click('#travelBtn');
+  await page.fill('#travelDate', '2027-06-21');
+  await page.fill('#travelTime', '12:00');
+  await page.waitForTimeout(450);
+  const sun = await shadeCheck('June solstice');
+  const [arctic, antarctic] = await page.evaluate(() => [window.__worldclock.night([150, 75]), window.__worldclock.night([150, -58])]);
+  check('W10 June solstice: midnight sun in the Arctic, dark at 58°S', arctic === 0 && antarctic > 0.96 && sun.alt(75, 150) > 0, `75°N ${arctic}, 58°S ${antarctic && antarctic.toFixed(2)}`);
+  check('W10 run: no page errors', errors.length === 0, errors.join('; '));
   await ctx.close();
 }
 
