@@ -12,7 +12,8 @@
 //      <select> reads in DM Sans at weight 500, no caps, with a 1.5px border in
 //      the theme's --border and the theme's field fill (--input-bg, or --panel
 //      for a field sitting on a tinted group). A one-line select has the
-//      chevron and room for it. A tool may size a select, never re-style it.
+//      chevron and room for it, and padding that keeps its text off the
+//      border. A tool may size a select, never re-style it.
 //   3. NO TOOL PAINTS ITS OWN OPTIONS. The browser's own list (keyboard,
 //      touch) shows the shared option colours for the theme.
 //   4. EVERY SEARCHABLE LIST IS THE SHARED ONE. A .combo-input and a
@@ -143,13 +144,14 @@ const READ = () => {
       weight: c.fontWeight, transform: c.textTransform,
       bw: widths(s), bstyle: c.borderTopStyle, bcolor: c.borderTopColor,
       bg: c.backgroundColor, chevron: c.backgroundImage.startsWith('url('),
-      padR: parseFloat(c.paddingRight), list: s.multiple || s.size > 1,
+      padR: parseFloat(c.paddingRight), padL: parseFloat(c.paddingLeft), padT: parseFloat(c.paddingTop), list: s.multiple || s.size > 1,
       hidden: c.opacity === '0', error: s.classList.contains('error'),
       optBg: o ? o.backgroundColor : null
     };
   });
   const combos = [...document.querySelectorAll('.combo-input, .combo-list')].map(el => ({
-    name: el.id || el.className, font: getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '').trim()
+    name: el.id || el.className, font: getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '').trim(),
+    input: el.classList.contains('combo-input'), padL: parseFloat(getComputedStyle(el).paddingLeft)
   }));
   const legacy = [...document.querySelectorAll('.city-dropdown:not(.combo-list), .pf-combo-drop:not(.combo-list), .city-opt:not(.combo-opt)')].map(e => e.className);
   return { token, light, selects, combos, legacy, hasJs: !!window.SharedDropdown };
@@ -190,12 +192,15 @@ for (const theme of ['dark', 'light']) {
         if (s.bg !== r.token.inputBg && s.bg !== r.token.panel) why.push('fill ' + s.bg);
         if (!s.list && !s.chevron) why.push('no chevron');
         if (!s.list && s.padR < 18) why.push('no room for the chevron (' + s.padR + 'px)');
+        // A tool's own `*{padding:0}` reset outranks dropdown.css's
+        // zero-specificity field and leaves the text against the border.
+        if (!s.list && (s.padL < 6 || s.padT < 3)) why.push(`text against the border (padding ${s.padT}px/${s.padL}px)`);
       }
       if (why.length) bad.push(s.name + ': ' + why.join(', '));
     }
     if (r.selects.length) check(`${tag}: ${r.selects.length} selects share the field look`, !bad.length, bad.slice(0, 6).join(' | '));
-    const badCombo = r.combos.filter(c => c.font !== 'DM Sans');
-    if (r.combos.length) check(`${tag}: ${r.combos.length} combobox parts use the shared look`, !badCombo.length, badCombo.map(c => c.name + ' ' + c.font).join(' | '));
+    const badCombo = r.combos.filter(c => c.font !== 'DM Sans' || (c.input && c.padL < 6));
+    if (r.combos.length) check(`${tag}: ${r.combos.length} combobox parts use the shared look`, !badCombo.length, badCombo.map(c => c.name + ' ' + c.font + (c.input && c.padL < 6 ? ' padding ' + c.padL + 'px' : '')).join(' | '));
     check(`${tag}: no list left on the old per-tool classes`, !r.legacy.length, r.legacy.slice(0, 3).join(' | '));
 
     // One mouse open per page and theme.

@@ -9,7 +9,10 @@ th[rowspan]{vertical-align:middle;}
 .toggle-label{font-weight:700;font-size:.88rem;flex:1;}
 .toggle-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--motion-base);pointer-events:none;}
 .toggle-switch input:checked~.toggle-knob,.toggle-switch input:checked+.toggle-track+.toggle-knob{transform:translateX(18px);}
-*{box-sizing:border-box;min-width:0;margin:0;padding:0;}
+*{box-sizing:border-box;min-width:0;margin:0;}
+/* Zero padding everywhere but the shared dropdown fields, whose padding
+   dropdown.css sets at zero specificity: a plain * here would wipe it. */
+:where(:not(select):not(.combo-input)){padding:0;}
 body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);transition:background var(--motion-base),color var(--motion-base);min-height:100vh;overflow-x:hidden;}
 .container{max-width:1460px;margin:0 auto;padding:24px;}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow);}
