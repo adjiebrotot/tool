@@ -80,18 +80,17 @@
         '<circle class="sb" cx="60" cy="66" r="34" stroke-width="3.5"/></g>' +
       '<circle class="w" cx="60" cy="66" r="5.5"/><path class="pt ot fB sB" d="M52 20H68L60 35Z"/>',
 
-    // A house and an apartment block lean in; a gold bolt flashes over the VS.
+    // A seesaw with a house on one side and an apartment block on the other.
     rentvsownhouse:
-      '<path class="sq" d="M10 95H110"/>' +
-      '<g class="hs ob"><rect class="w" x="15" y="61" width="30" height="33" rx="2"/>' +
-        '<path class="fm sm" d="M11 62L30 43L49 62Z"/>' +
-        '<rect class="fb" x="20" y="79" width="8" height="15" rx="1.5"/>' +
-        '<rect class="sb t" x="33" y="68" width="7" height="7" rx="1"/></g>' +
-      '<g class="ap ob"><rect class="w" x="76" y="32" width="28" height="62" rx="2"/>' +
-        '<path class="sm" stroke-width="6" stroke-linecap="butt" d="M81 43h6m6 0h6M81 55h6m6 0h6M81 67h6m6 0h6"/>' +
-        '<rect class="fb" x="86" y="79" width="8" height="15" rx="1.5"/></g>' +
-      '<path class="bo oc fg sg" stroke-width="2" d="M64 38L53 57H60L56 72L68 52H61Z"/>' +
-      '<text class="fB" x="60" y="88" font-size="14">VS</text>',
+      '<path class="sq" d="M34 100H86"/><path class="w" d="M60 80L50 98H70Z"/><g class="bm">' +
+        '<rect class="w" x="19" y="56" width="28" height="20" rx="2"/>' +
+        '<path class="fm sm" d="M15 57L33 40L51 57Z"/>' +
+        '<rect class="fb" x="24" y="64" width="7" height="12" rx="1.5"/>' +
+        '<rect class="sb t" x="36" y="61" width="6" height="6" rx="1"/>' +
+        '<rect class="w" x="76" y="32" width="25" height="44" rx="2"/>' +
+        '<path class="sm" stroke-width="5" stroke-linecap="butt" d="M80 41h6m5 0h6M80 51h6m5 0h6M80 61h6"/>' +
+        '<rect class="fb" x="91" y="64" width="6" height="12" rx="1.5"/>' +
+        '<path class="sB" stroke-width="3.5" d="M14 78H106"/></g>',
 
     // A turning globe; $, $$ and $$$ tags pop up at different spots in turn.
     'costofliving-comparator':
@@ -268,10 +267,8 @@
       '@keyframes taRp1{0%{transform:none}8%{transform:rotate(-14deg);animation-timing-function:cubic-bezier(.25,.6,.15,1)}72%,100%{transform:rotate(540deg)}}' +
       '@keyframes taRp2{0%,8%,17%,27%,38%,52%,70%,100%{transform:none}12%,22%,32%,45%,61%{transform:rotate(-18deg)}}',
 
-    rentvsownhouse: '&{--d:5s}&.hs{animation-name:taRv1}&.ap{animation-name:taRv2}&.bo{animation-name:taRv3}' +
-      '@keyframes taRv1{0%,12%,70%,100%{transform:none}32%{transform:rotate(6deg) translateY(-2px)}44%{transform:rotate(-2deg)}56%{transform:rotate(1deg)}}' +
-      '@keyframes taRv2{0%,12%,70%,100%{transform:none}32%{transform:rotate(-4deg) translateY(-2px)}44%{transform:rotate(1.5deg)}56%{transform:rotate(-.5deg)}}' +
-      '@keyframes taRv3{0%,22%,64%,100%{transform:scale(.9);opacity:.45}32%{transform:scale(1.2);opacity:1}37%{opacity:.55}42%{transform:none;opacity:1}}',
+    rentvsownhouse: '&{--d:5s}&.bm{animation-name:taRv;transform-box:view-box;transform-origin:60px 78px}' +
+      '@keyframes taRv{0%,100%{transform:rotate(7deg)}50%{transform:rotate(-7deg)}}',
 
     'costofliving-comparator': '&{--d:6s}&.mr{animation-name:taCl1}&.m2{transform:scaleX(-1)}&.m3{opacity:0}&.tg{animation-name:taCl2}' +
       '@keyframes taCl1{0%{transform:scaleX(-2);opacity:0}25%,75%{opacity:1}100%{transform:scaleX(2);opacity:0}}' +
