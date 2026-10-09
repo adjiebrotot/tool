@@ -691,8 +691,12 @@
        .combo-opt from dropdown.css, placed under (or, short of room, over)
        its button by SharedDropdown.place. Only showing it lives here, plus
        the keyboard's lit row, which matches the mouse's. */
+    /* Fixed from the start: were it in the card's flow even for the moment
+       before place() runs, the card would grow and move the button that
+       place() measures, and the menu would open away from it. */
     .tool-options-menu {
       display: none;
+      position: fixed;
       margin: 0;
       list-style: none;
     }
