@@ -414,8 +414,12 @@ function guessType(name, values, taken){
 }
 
 /* ───────────────────────── Quick Start ─────────────────────────
-   Illustrative listings, not real market data: each was drawn from a simple
-   price rule plus noise, then deflated back to the year it was "seen". */
+   Real market data, gathered on 9 October 2026. Every row is one real listing
+   or sale; _audit/quickstart-sources.md links each one to its page.
+   Camry: Toyota dealer and Cars24 asking prices, excluding government charges.
+   House: REIWA sold prices for freehold houses in Morley, WA, 2023 to 2026.
+   Camera: MPB UK prices for used Sony A7 II, III and IV bodies, no lens.
+   Hotel: one night in Perth CBD, Wed 11 Nov 2026, two adults, incl. taxes. */
 const PRESETS = {
   camry: {
     fields: { currency: '$', itemWhat: 'Toyota Camry Hybrid' },
@@ -423,40 +427,87 @@ const PRESETS = {
       { id: 'c1', name: 'Price', type: 'price', unit: '' },
       { id: 'c2', name: 'Year', type: 'year', unit: '' },
       { id: 'c3', name: 'Odometer', type: 'number', unit: 'km' },
-      { id: 'c4', name: 'Full service history', type: 'bool', unit: '' },
+      { id: 'c4', name: 'Above Ascent grade', type: 'bool', unit: '' },
       { id: 'c5', name: 'Data year', type: 'datayear', unit: '' }
     ],
-    rows: [[25100,2018,91500,'Yes',2024],[25800,2019,80000,'No',2024],[28100,2019,87000,'Yes',2025],[32600,2020,65000,'Yes',2024],
-           [29200,2020,68000,'No',2025],[31100,2021,65000,'Yes',2025],[27400,2021,79500,'Yes',2026],[36100,2022,35000,'No',2024],
-           [37000,2022,52000,'Yes',2026],[40900,2023,30000,'Yes',2025],[35000,2023,50000,'No',2026],[41600,2024,13000,'Yes',2025],
-           [39400,2024,33000,'Yes',2026],[39000,2025,17000,'No',2026],[26700,2019,99000,'Yes',2026],[32000,2021,45000,'Yes',2024],
-           [36300,2023,9000,'No',2024],[29700,2020,95000,'Yes',2026]],
+    rows: [[35980,2021,82984,'Yes',2026],[31777,2020,57592,'Yes',2026],[34990,2024,40013,'No',2026],[34490,2024,44679,'No',2026],
+           [35890,2021,71063,'Yes',2026],[34255,2022,50419,'Yes',2026],[29990,2021,84890,'No',2026],[24990,2019,103293,'No',2026],
+           [35990,2022,16306,'No',2026],[28990,2019,85438,'No',2026],[31990,2020,57001,'No',2026],[30990,2019,81095,'Yes',2026],
+           [34490,2024,53711,'No',2026],[33990,2024,57791,'No',2026],[32990,2023,95985,'No',2026],[31490,2023,19931,'No',2026],
+           [28490,2022,83762,'No',2026],[33490,2023,34756,'No',2026]],
     items: [
-      { name: '2021 Ascent, 68,000 km', asking: '29990', vals: { c2: '2021', c3: '68000', c4: true } },
-      { name: '2023 SL, 41,000 km', asking: '39500', vals: { c2: '2023', c3: '41000', c4: false } }
+      { name: '2021 Ascent Sport, 52,771 km', asking: '32369', vals: { c2: '2021', c3: '52771', c4: true } },
+      { name: '2020 SL, 61,444 km', asking: '31490', vals: { c2: '2020', c3: '61444', c4: true } }
     ],
     chart: { x: 'c3', y: 'c2', hold: 'mean' }
   },
   house: {
-    fields: { currency: '$', itemWhat: 'House in one Perth suburb' },
+    fields: { currency: '$', itemWhat: 'House in Morley, Perth' },
     columns: [
       { id: 'c1', name: 'Price', type: 'price', unit: '' },
       { id: 'c2', name: 'Bedrooms', type: 'number', unit: '' },
-      { id: 'c3', name: 'Land', type: 'number', unit: 'm²' },
-      { id: 'c4', name: 'Distance to METRONET station', type: 'number', unit: 'km' },
-      { id: 'c5', name: 'Pool', type: 'bool', unit: '' },
+      { id: 'c3', name: 'Bathrooms', type: 'number', unit: '' },
+      { id: 'c4', name: 'Land', type: 'number', unit: 'm²' },
+      { id: 'c5', name: 'Floor area', type: 'number', unit: 'm²' },
       { id: 'c6', name: 'Data year', type: 'datayear', unit: '' }
     ],
-    rows: [[514000,2,270,0.5,'No',2022],[687000,3,660,2.7,'Yes',2023],[1036000,3,1020,0.9,'No',2024],[660000,4,540,3.3,'Yes',2025],
-           [975000,3,940,1.2,'No',2026],[617000,4,440,3.5,'Yes',2022],[900000,5,800,1.4,'No',2023],[518000,3,330,3.9,'No',2024],
-           [761000,2,740,1.8,'Yes',2025],[994000,4,1100,4.3,'Yes',2026],[662000,3,620,2.2,'No',2022],[941000,4,1040,4.5,'No',2023],
-           [669000,3,520,2.6,'No',2024],[1120000,5,930,0.4,'Yes',2025],[618000,4,420,2.9,'No',2026],[812000,3,810,0.7,'No',2022],
-           [507000,4,330,3.3,'No',2023],[722000,2,710,1.1,'Yes',2024]],
+    rows: [[515000,3,1,318,106,2023],[699000,3,1,743,123,2023],[755000,5,2,869,215,2023],[849888,4,2,403,213,2023],
+           [800000,4,3,564,289,2023],[540000,3,2,186,97,2023],[800000,3,1,860,100,2024],[840000,4,2,724,332,2025],
+           [790000,3,2,315,186,2024],[930000,4,2,395,235,2024],[713500,4,1,429,104,2024],[870000,4,2,1027,185,2024],
+           [637000,2,1,503,67,2025],[990000,4,2,336,195,2025],[975000,4,2,705,222,2025],[1070000,5,2,405,171,2025],
+           [818000,3,1,306,122,2025],[770000,2,1,491,66,2026],[1110000,4,1,735,148,2026],[1200000,4,2,520,248,2026],
+           [1020000,3,2,510,144,2026],[1270000,5,2,417,194,2026],[740000,3,1,324,133,2026]],
     items: [
-      { name: '3x1 on 480 m², 1.2 km to the station', asking: '739000', vals: { c2: '3', c3: '480', c4: '1.2', c5: false } },
-      { name: '4x2 on 700 m² with a pool', asking: '799000', vals: { c2: '4', c3: '700', c4: '2.8', c5: true } }
+      { name: '11 Pitt Court, 4x2 on 709 m²', asking: '990000', vals: { c2: '4', c3: '2', c4: '709', c5: '153' } },
+      { name: '14 Netley Street, 4x2 on 355 m²', asking: '890000', vals: { c2: '4', c3: '2', c4: '355', c5: '151' } }
     ],
-    chart: { x: 'c3', y: 'c4', hold: 'mean' }
+    chart: { x: 'c4', y: 'c5', hold: 'mean' }
+  },
+  camera: {
+    fields: { currency: '£', itemWhat: 'Sony A7 body, used' },
+    columns: [
+      { id: 'c1', name: 'Price', type: 'price', unit: '' },
+      { id: 'c2', name: 'Release year', type: 'year', unit: '' },
+      { id: 'c3', name: 'Shutter count', type: 'number', unit: 'shots' },
+      { id: 'c4', name: 'Like new or Excellent', type: 'bool', unit: '' },
+      { id: 'c5', name: 'Original box', type: 'bool', unit: '' },
+      { id: 'c6', name: 'Data year', type: 'datayear', unit: '' }
+    ],
+    rows: [[439,2014,10089,'Yes','Yes',2026],[439,2014,19875,'Yes','Yes',2026],[439,2014,2466,'Yes','Yes',2026],
+           [434,2014,8387,'No','Yes',2026],[424,2014,12433,'Yes','No',2026],[419,2014,8106,'Yes','Yes',2026],
+           [354,2014,11114,'No','No',2026],[934,2018,1889,'Yes','No',2026],[919,2018,22031,'Yes','Yes',2026],
+           [909,2018,8869,'Yes','No',2026],[894,2018,26625,'Yes','No',2026],[889,2018,10600,'Yes','Yes',2026],
+           [874,2018,39719,'Yes','Yes',2026],[744,2018,135838,'No','No',2026],[739,2018,25384,'No','Yes',2026],
+           [574,2018,138259,'No','Yes',2026],[1279,2021,30740,'Yes','Yes',2026],[1269,2021,48934,'Yes','Yes',2026],
+           [1269,2021,9684,'Yes','Yes',2026],[1249,2021,47270,'Yes','Yes',2026],[1189,2021,122246,'No','Yes',2026],
+           [1169,2021,80635,'No','Yes',2026],[1169,2021,99851,'No','Yes',2026],[1139,2021,94923,'Yes','No',2026]],
+    items: [
+      { name: 'A7 III, 4,354 shots, Like new', asking: '934', vals: { c2: '2018', c3: '4354', c4: true, c5: true } },
+      { name: 'A7 IV, 10,513 shots, Excellent', asking: '1269', vals: { c2: '2021', c3: '10513', c4: true, c5: true } }
+    ],
+    chart: { x: 'c3', y: 'c2', hold: 'mean' }
+  },
+  hotel: {
+    fields: { currency: '$', itemWhat: 'Hotel night in Perth CBD' },
+    columns: [
+      { id: 'c1', name: 'Price', type: 'price', unit: '' },
+      { id: 'c2', name: 'Room size', type: 'number', unit: 'm²' },
+      { id: 'c3', name: 'Star rating', type: 'number', unit: '' },
+      { id: 'c4', name: 'Breakfast included', type: 'bool', unit: '' },
+      { id: 'c5', name: 'Bathtub', type: 'bool', unit: '' },
+      { id: 'c6', name: 'Data year', type: 'datayear', unit: '' }
+    ],
+    rows: [[499,42,5,'No','No',2026],[539,45,5,'No','No',2026],[539,42,5,'No','No',2026],[619,42,5,'No','No',2026],
+           [899,105,5,'No','Yes',2026],[549,50,5,'No','Yes',2026],[649,50,5,'No','Yes',2026],[729,50,5,'No','Yes',2026],
+           [849,64,5,'No','Yes',2026],[1099,64,5,'No','Yes',2026],[450,27,5,'No','No',2026],[520,27,5,'Yes','No',2026],
+           [480,26,5,'No','No',2026],[510,33,5,'No','No',2026],[580,33,5,'Yes','No',2026],[875,55,5,'Yes','Yes',2026],
+           [1397,75,5,'Yes','Yes',2026],[422,28,5,'No','No',2026],[440,34,5,'No','No',2026],[159,12,3,'No','No',2026],
+           [189,18,3,'No','No',2026],[355,24,4,'No','No',2026]],
+    items: [
+      { name: 'InterContinental City View, with breakfast', asking: '550', vals: { c2: '26', c3: '5', c4: true, c5: false } },
+      { name: 'Ritz-Carlton River View, 2 Double', asking: '669', vals: { c2: '50', c3: '5', c4: false, c5: true } }
+    ],
+    chart: { x: 'c2', y: 'c3', hold: 'mean' }
   }
 };
 function presetState(key){

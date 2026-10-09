@@ -172,7 +172,7 @@ console.log('── 1. Exact recovery ──');
 
 /* ── 2. The shipped presets against the replay ── */
 console.log('\n── 2. Presets, every model, against the replay ──');
-for(const key of ['camry', 'house']){
+for(const key of ['camry', 'house', 'camera', 'hotel']){
   const preset = await ve(k => JSON.parse(JSON.stringify(window.__VE.PRESETS[k])), key);
   const state = { columns: preset.columns, rows: preset.rows.map(r => r.map(String)) };
   const rp = replayPrepare(state.rows, state.columns, YEAR, 0.03);
@@ -292,7 +292,7 @@ console.log('\n── 5. Table, Text and CSV ──');
     const back = V.parseDelimited(text);
     return { text, back };
   }, preset);
-  check('t1 the header carries each unit in brackets', /Land \(m²\)/.test(round.text) && /Distance to METRONET station \(km\)/.test(round.text));
+  check('t1 the header carries each unit in brackets', /Land \(m²\)/.test(round.text) && /Floor area \(m²\)/.test(round.text));
   check('t2 text back to rows gives the same listings', JSON.stringify(round.back.rows) === JSON.stringify(preset.rows.map(r => r.map(String))) && round.back.errors.length === 0);
   const bools = await ve(() => ['Yes', 'no', 'TRUE', 'false', '1', '0', 'on', 'OFF', 'exists', 'does not exist', '', 'maybe'].map(window.__VE.parseBool));
   check('t3 Yes/No reads yes/no, true/false, 1/0, on/off, exists, and a blank as No', JSON.stringify(bools) === JSON.stringify([1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, null]), JSON.stringify(bools));
@@ -355,7 +355,7 @@ console.log('\n── 7. Mini cache ──');
   await ve(() => window.__VE.applyQuickStart('house'));
   await page.waitForTimeout(700);
   const blob = await ve(() => localStorage.getItem('abt:save:valuateeverything:v1'));
-  check('m2 the saved snapshot carries the listings and items', !!blob && JSON.parse(blob).__extra.rows.length === 18 && JSON.parse(blob).__extra.items.length === 2);
+  check('m2 the saved snapshot carries the listings and items', !!blob && JSON.parse(blob).__extra.rows.length === 23 && JSON.parse(blob).__extra.items.length === 2);
 }
 
 /* ── 8. The form: fixed columns, grouped figures, the Valuate gate ── */
@@ -386,7 +386,7 @@ console.log('\n── 8. The form ──');
              ask: document.querySelector('#itemList .item-ask').value };
   });
   check('f3 table figures show a prefix, a suffix and thousands separators; the state keeps plain numbers',
-        f3.p === '$ 25,100' && f3.o === '91,500 km' && f3.raw === '25100|91500' && f3.ask === '29,990', JSON.stringify(f3));
+        f3.p === '$ 35,980' && f3.o === '82,984 km' && f3.raw === '35980|82984' && f3.ask === '32,369', JSON.stringify(f3));
 
   const fitBefore = await page.textContent('#kpiFit');
   await ve(() => { const el = document.querySelector('#gridWrap tbody tr td.t-price input'); el.value = '9999999'; el.dispatchEvent(new Event('input', { bubbles: true })); });
