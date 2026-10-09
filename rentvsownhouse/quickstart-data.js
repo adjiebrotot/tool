@@ -20,6 +20,16 @@
      downPaymentPct, mortgageRate, mortgageTerm, riskFreeRate, horizon,
      sellingCostPct, rentFreq, rentInflation, ownOngoingInflation,
      rentOngoingInflation                               (city-wide form values)
+     ratePeriods   optional: the loan's rate by mortgage year, as the
+                   calculator's Detailed mortgage mode takes it, for a market
+                   whose loans really are staged (a promo or fixed period, then
+                   a floating or refixed rate). [{toYear, type:"fixed", rate} or
+                   {toYear, type:"floating", rateMin, rateMax}], the last period
+                   ending at the term. A scenario with one opens in Detailed
+                   mode; mortgageRate is then the schedule's average over the
+                   term (floating periods at their middle), the rate Simple
+                   mode falls back to. Markets that fix for the whole term, or
+                   float with no sourced range, keep the one rate.
      homes:        { <type key>: home }    the types that exist in this market
      unavailable:  { <type key>: reason }  the types that do not, and why
      notes:        { <field or topic>: one sentence on where it comes from }
@@ -458,7 +468,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Tamaki Makaurau","Tāmaki Makaurau","AKL","Auckland City"],
       currencySymbol: "$", currencyCode: "NZD", asOf: "2026-09",
       buyer: "New Zealand citizen or resident owner-occupier buying a first home with a 20% deposit; no KiwiSaver withdrawal or first-home scheme modelled",
-      downPaymentPct: 20, mortgageRate: 5.5, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 3.7,
+      downPaymentPct: 20, mortgageRate: 5.35, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 3.7,
+      ratePeriods: [{ toYear: 2, type: "fixed", rate: 5.39 }, { toYear: 30, type: "floating", rateMin: 4.95, rateMax: 5.75 }],
       rentFreq: "weekly", rentInflation: 3, ownOngoingInflation: 3, rentOngoingInflation: 2.5,
       homes: {
         "apt-1br": {
@@ -495,7 +506,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Auckland is mostly standalone houses plus fast-growing townhouse stock; apartments are a small share. REINZ median about $950,000 in Aug 2026, flat on a year earlier.",
         downPaymentPct: "Banks keep their special rates for borrowers with at least 20% equity; smaller deposits fall under RBNZ high-LVR limits and attract low-equity margins or fees.",
-        mortgageRate: "Blended long-run rate. Sept 2026 specials: 1-yr 4.95-5.19%, 2-yr 5.29-5.49%, 5-yr 5.49-5.75%; OCR 2.75% and rising, RBNZ puts neutral at 3-3.5%.",
+        mortgageRate: "Fixed 5.39% for 2 years (Sept 2026 2-year specials 5.29-5.49%), then refixed within today's 1 to 5 year specials, 4.95 to 5.75%. OCR 2.75% and rising; RBNZ neutral 3-3.5%.",
         riskFreeRate: "One-year bank term deposits: RBNZ series 3.85% (June 2026); ANZ 18-month and 2-year 4.20-4.30% (Aug 2026), before the September OCR hike.",
         sellingCostPct: "Barfoot & Thompson scale: 3.95% of the first $400,000 plus 2% of the rest, plus 15% GST, plus about $3,000 marketing and $1,500 legal. About 3.7% at the median.",
         rentInflation: "Barfoot average rent rose 0.9% in the year to Aug 2026 ($699 a week); NZ rents grew about 4.2% a year over 20 years. Forward assumption 3%.",
@@ -523,7 +534,8 @@ window.RVO_QUICKSTART = {
       aliases: ["SG","SGP","Republic of Singapore"],
       currencySymbol: "$", currencyCode: "SGD", asOf: "2026-10",
       buyer: "Singapore citizen buying a first private (non-HDB) home to live in: 0% ABSD, 25% down under MAS LTV rules",
-      downPaymentPct: 25, mortgageRate: 2.5, mortgageTerm: 30, riskFreeRate: 2, horizon: 30, sellingCostPct: 2,
+      downPaymentPct: 25, mortgageRate: 2.21, mortgageTerm: 30, riskFreeRate: 2, horizon: 30, sellingCostPct: 2,
+      ratePeriods: [{ toYear: 2, type: "fixed", rate: 1.7 }, { toYear: 30, type: "floating", rateMin: 1.45, rateMax: 3.05 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 3, rentOngoingInflation: 2.5,
       homes: {
         "apt-1br": {
@@ -560,7 +572,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "77% of resident households live in HDB flats, 18% in condos and 5% in landed homes (2025). Presets use the private condo market; HDB resale flats are cheaper but have eligibility rules.",
         downPaymentPct: "MAS caps a first housing loan at 75% LTV for tenures up to 30 years, so 25% down with at least 5% in cash (estimate, not sourced).",
-        mortgageRate: "Blended long-run rate: packages are 2-3 year fixes that reset to SORA. 6-month T-bills yielded 1.4-1.9% in 2026 and 10-yr SGS 2.3%, so about 2.5% over 30 years.",
+        mortgageRate: "2-year fix 1.70% (lowest private package, Oct 2026), then SORA-floating from 1.45% (3M SORA 1.23% + 0.2%) to 3.05% (10-yr SGS 2.3% + the 0.75% top spread).",
         riskFreeRate: "6-month T-bill cut-off 1.90% (8 Oct 2026; 1.36-1.92% across 2026), 1-year bill 1.68% (Jul 2026), 2-year SGS 1.84%. Spare cash earns about 2%.",
         sellingCostPct: "Seller's agent commission is negotiable, typically 1-2% plus 9% GST, plus conveyancing of about S$2,500-3,000; no SSD once held 4 years (estimate, not sourced).",
         rentInflation: "URA private rental index: +1.8% in the year to Q2 2026, 2.5% a year over 15 years and 4.4% over 20 years. Forward assumption 3%.",
@@ -571,6 +583,7 @@ window.RVO_QUICKSTART = {
         caveat: "Seller's Stamp Duty hits sales within 4 years (16% in year one). A second home attracts 20% ABSD. Many condos are 99-year leasehold, whose value fades late in the lease."
       },
       sources: [
+        { name: "PropertyNet, Singapore bank mortgage rates and SORA, Oct 2026", url: "https://propertynet.sg/latest-bank-mortgage-loan-rates-across-singapore/" },
         { name: "SingStat / URA, Private residential price index by type (to Q2 2026)", url: "https://tablebuilder.singstat.gov.sg/api/table/tabledata/M212261" },
         { name: "SingStat / URA, Non-landed price index by region (to Q2 2026)", url: "https://tablebuilder.singstat.gov.sg/api/table/tabledata/M212271" },
         { name: "SingStat / URA, Private residential rental index (to Q2 2026)", url: "https://tablebuilder.singstat.gov.sg/api/table/tabledata/M212311" },
@@ -655,7 +668,8 @@ window.RVO_QUICKSTART = {
       aliases: ["DKI Jakarta","South Jakarta","Jakarta Selatan","Jabodetabek"],
       currencySymbol: "Rp", currencyCode: "IDR", asOf: "2026-10",
       buyer: "Indonesian citizen with a Jakarta KTP buying a first home to live in, with a KPR; first-acquisition BPHTB allowance, no subsidised (FLPP) loan",
-      downPaymentPct: 20, mortgageRate: 10, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 5.5,
+      downPaymentPct: 20, mortgageRate: 9.95, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 5.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 3.81 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "yearly", rentInflation: 3, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "apt-studio": {
@@ -734,7 +748,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "About 232,000 strata apartments, many investor-owned, with about 29,000 new units unsold in Q1 2026. Most Jakartans live in landed houses (rumah tapak), mostly with 3 or more bedrooms.",
         downPaymentPct: "BI lets banks lend up to 100% of value until Dec 2026 (PADG 30/2025), but most KPR loans are 80 to 90% of value. 20% down is the standard assumption.",
-        mortgageRate: "Blend of a 3 to 5 year promo fix and the floating rate after it. Big-bank floating KPR is 11% (BCA) to 13% (Mandiri); SBDK base rates are 7.95 to 11.75% (Aug 2026).",
+        mortgageRate: "BCA promo: fixed 3.81% for 5 years (12-year tenor or more, to Oct 2026), then floating. Big-bank floating KPR is 11% (BCA) to 13% (Mandiri); SBDK base rates are 7.95 to 11.75% (Aug 2026).",
         riskFreeRate: "BI Rate 5.75% (Sep 2026). Average 1 to 6 month rupiah deposits paid 5.1 to 5.8% in Aug 2026; big banks pay 2.5 to 3.5% and retail SBN about 6.75 to 7%.",
         sellingCostPct: "Seller pays final income tax (PPh) of 2.5% of the gross price (PP 34/2016) plus an agent commission of about 3%.",
         rentInflation: "Knight Frank saw condo rents fall about 1% and serviced rents rise 2% in H1 2026. With apartment oversupply, rents are assumed to track CPI at about 3%.",
@@ -745,6 +759,7 @@ window.RVO_QUICKSTART = {
         caveat: "Rent is usually paid 6 to 12 months upfront plus a deposit. Promo-fixed KPR rates reset to floating, so payments can jump. A second home gets no BPHTB allowance."
       },
       sources: [
+        { name: "BCA Rumahsaya, KPR rates: promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
         { name: "Bank Indonesia, Survei Harga Properti Residensial Q2 2026 (IHPR 2018=100)", url: "https://www.bi.go.id/id/publikasi/laporan/Documents/SHPR_Tw_II_2026.pdf" },
         { name: "Kontan, floating KPR rates and SBDK by bank, Aug 2026", url: "https://keuangan.kontan.co.id/news/likuiditas-bank-ketat-begini-bunga-floating-kpr" },
         { name: "Databoks, SBDK KPR of 5 banks, Apr-May 2026", url: "https://databoks.katadata.co.id/keuangan/statistik/6a1ff64d0c633/sbdk-kpr-5-bank-di-indonesia-per-april-mei-2026-mandiri-tertinggi" },
@@ -762,7 +777,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Denpasar","Badung","Canggu","Seminyak","Kerobokan","Sanur","Jimbaran"],
       currencySymbol: "Rp", currencyCode: "IDR", asOf: "2026-10",
       buyer: "Indonesian citizen buying a freehold (SHM) home to live in with a KPR; foreigners can only lease (hak sewa) or hold hak pakai",
-      downPaymentPct: 20, mortgageRate: 10, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 7.5,
+      downPaymentPct: 20, mortgageRate: 9.95, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 7.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 3.81 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "yearly", rentInflation: 4, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "house-2br": {
@@ -806,7 +822,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "The Badung and Denpasar belt is villa-led and low-rise. The 1,163 condos listed are mostly leasehold resort units for foreigners, so local homes here are freehold houses and villas.",
         downPaymentPct: "Same national KPR rules as Jakarta, 20% down assumed. Banks lend only against SHM or HGB titles with a residential building permit, not leasehold (estimate, not sourced).",
-        mortgageRate: "Same national KPR market: blend of a 3 to 5 year promo fix and floating at 11% (BCA) to 13% (Mandiri) after it. SBDK base rates are 7.95 to 11.75% (Aug 2026).",
+        mortgageRate: "Same national KPR market: BCA promo fix 3.81% for 5 years, then floating at 11% (BCA) to 13% (Mandiri). SBDK base rates are 7.95 to 11.75% (Aug 2026).",
         riskFreeRate: "BI Rate 5.75% (Sep 2026). Average 1 to 6 month rupiah deposits paid 5.1 to 5.8% in Aug 2026; big banks pay 2.5 to 3.5% and retail SBN about 6.75 to 7%.",
         sellingCostPct: "Seller pays final income tax (PPh) of 2.5% of the price (PP 34/2016) plus an agent commission of about 5%, the usual rate for Bali villa sales (estimate, not sourced).",
         rentInflation: "Yearly villa rents rose with tourism and remote workers. A long-run 4% a year is assumed, slightly above CPI (estimate, not sourced).",
@@ -817,6 +833,7 @@ window.RVO_QUICKSTART = {
         caveat: "Foreigners cannot own SHM freehold; they lease (hak sewa) or hold hak pakai, which runs down to zero and cannot be modelled here. Leasehold villas and condotels cannot get a KPR."
       },
       sources: [
+        { name: "BCA Rumahsaya, KPR rates: promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
         { name: "FazWaz, Denpasar villas and houses for sale (2,068 listings)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/denpasar" },
         { name: "FazWaz, Kerobokan villas for sale (819 listings, Oct 2026)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/badung/kerobokan" },
         { name: "FazWaz, Jimbaran villas for sale (2,150 listings)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/badung/jimbaran" },
@@ -834,7 +851,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Krung Thep","Krung Thep Maha Nakhon","BKK","Greater Bangkok"],
       currencySymbol: "฿", currencyCode: "THB", asOf: "2026-09",
       buyer: "Thai citizen owner-occupier, first home, registered in the house book (tabien baan); qualifies for the 0.01% transfer and mortgage fees on homes up to 7 million baht",
-      downPaymentPct: 10, mortgageRate: 5, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
+      downPaymentPct: 10, mortgageRate: 5.27, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
+      ratePeriods: [{ toYear: 3, type: "fixed", rate: 3 }, { toYear: 30, type: "floating", rateMin: 5.2, rateMax: 5.85 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -881,7 +899,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Central Bangkok is a condo market (studios to 2 bedrooms, luxury large units on Sukhumvit and Sathorn); townhouses and detached houses sit in suburban estates. Supply is ample in 2026.",
         downPaymentPct: "BoT rules allow up to 100% LTV on a first home under 10 million baht, and the 2025 to 2027 easing covers dearer homes, but banks often lend 90 to 95%, so 10% is assumed.",
-        mortgageRate: "Blended long-run rate. Teasers run about 2.5 to 3.5% for 3 years, then bank MRR (about 6.7 to 6.85% after the March 2026 cuts) minus 1 to 1.5 points. Policy rate is 1.0%.",
+        mortgageRate: "Teasers run about 2.5 to 3.5% for 3 years (3% used), then bank MRR (about 6.7 to 6.85% after the March 2026 cuts) minus 1 to 1.5 points: 5.2 to 5.85%. Policy rate is 1.0%.",
         riskFreeRate: "Thai 12-month deposits and short government bills yield about 1 to 1.3% with the BoT policy rate held at 1.0% through 2026.",
         sellingCostPct: "Long-held home: agent 3%, half the 2% transfer fee, stamp duty 0.5% and income tax withheld on appraised value about 0.5 to 1%. Specific business tax 3.3% applies only if sold within 5 years.",
         rentInflation: "Central condo rents have risen slowly amid oversupply; 2.5% a year assumed, a little above Thai CPI (estimate, not sourced).",
@@ -909,7 +927,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Metro Manila","Makati","BGC","Taguig","Quezon City"],
       currencySymbol: "₱", currencyCode: "PHP", asOf: "2026-09",
       buyer: "Filipino citizen owner-occupier, first home, bank loan at standard pricing (no Pag-IBIG socialized or promo rate)",
-      downPaymentPct: 20, mortgageRate: 7.5, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 10.5,
+      downPaymentPct: 20, mortgageRate: 8.58, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 10.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 8 }, { toYear: 20, type: "floating", rateMin: 8.55, rateMax: 9 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 4, rentOngoingInflation: 4,
       homes: {
         "apt-studio": {
@@ -956,7 +975,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Central Metro Manila is condo-led (Makati, BGC, Ortigas, QC), with a record unsold stock of about 82,900 units (LPC Q2 2026). Landed homes sit in gated villages and subdivisions further out.",
         downPaymentPct: "Banks lend up to about 80% of appraised value, so 20% down is the standard. Developers often spread the down payment over the pre-selling period (estimate, not sourced).",
-        mortgageRate: "Blended long-run rate. BDO's May 2026 sheet shows fixes of 1 to 5 years at roughly 6.25 to 8%, repricing at the higher of 364-day T-bill plus 4% or board rate, with BSP policy at 5% (Aug 2026).",
+        mortgageRate: "BDO's May 2026 sheet: 5-year fix 8% (1 to 5 year fixes run 6.25 to 8%), then repriced yearly at the higher of 364-day T-bill (4.55 to 5% in 2026) plus 4% or board rate: 8.55 to 9%.",
         riskFreeRate: "91-day T-bills averaged 4.68% in March 2026 with policy at 4.25%. After hikes to 5% in August 2026, short bills are assumed near 5% (estimate, not sourced).",
         sellingCostPct: "Seller pays 6% capital gains tax on the higher of price or zonal value by custom, plus broker 3 to 5% (4% used) and about 0.5% in documents and clearances.",
         rentInflation: "LPC Q2 2026 rents are below pre-pandemic in most districts (Makati -18%, BGC flat) and Colliers sees flat rents through the glut, so 3% long-run is a tempered assumption (estimate, not sourced).",
@@ -983,7 +1002,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Saigon","HCMC","HCM"],
       currencySymbol: "₫", currencyCode: "VND", asOf: "2026-09",
       buyer: "Vietnamese citizen owner-occupier buying a resale home with a pink book (long-term land-use right); foreigners may only hold a 50-year condo title and are not modelled",
-      downPaymentPct: 30, mortgageRate: 11, mortgageTerm: 30, riskFreeRate: 6.5, horizon: 30, sellingCostPct: 3.5,
+      downPaymentPct: 30, mortgageRate: 13.77, mortgageTerm: 30, riskFreeRate: 6.5, horizon: 30, sellingCostPct: 3.5,
+      ratePeriods: [{ toYear: 2, type: "fixed", rate: 10.6 }, { toYear: 30, type: "floating", rateMin: 13, rateMax: 15 }],
       rentFreq: "monthly", rentInflation: 5, ownOngoingInflation: 4, rentOngoingInflation: 4,
       homes: {
         "apt-studio": {
@@ -1030,7 +1050,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Inner districts mix high-rise condos (Thu Duc, Binh Thanh, District 7) with narrow tube townhouses (nha pho) in alleys, which are land-heavy and rent for low yields.",
         downPaymentPct: "Banks lend 70 to 85% of value. BIDV caps at 70% when the bought home is the collateral and VPBank at 75%, so 30% down is typical.",
-        mortgageRate: "Blended long-run rate. Sept 2026 teasers run 8.2 to 13% for 6 to 36 months, then float at base plus 3.3 to 3.5%, about 13 to 15% now, and SBV average lending is 8.4 to 10.7%.",
+        mortgageRate: "Sept 2026 teasers run 8.2 to 13% for 6 to 36 months (2 years at 10.6% used), then float at base plus 3.3 to 3.5%, about 13 to 15% now. SBV average lending is 8.4 to 10.7%.",
         riskFreeRate: "SBV average VND deposit rates for 12 to 24 months were 6.1 to 7.6% in August 2026. Big state banks pay about 6%, private banks up to 8.8%.",
         sellingCostPct: "Seller pays 2% personal income tax on the sale price by law, plus a broker commission of about 1 to 2% (commission range estimate, not sourced).",
         rentInflation: "Asking rents rose about 5% a year city-wide and 14.5% in Binh Thanh over the past year on Batdongsan; 5% is used as the long-run rate.",
@@ -1058,7 +1078,8 @@ window.RVO_QUICKSTART = {
       aliases: ["HK"],
       currencySymbol: "$", currencyCode: "HKD", asOf: "2026-09",
       buyer: "Hong Kong permanent resident buying a first home to live in (Scale 2 stamp duty), standard bank mortgage at the 70% LTV cap without mortgage insurance",
-      downPaymentPct: 30, mortgageRate: 3.5, mortgageTerm: 30, riskFreeRate: 2.8, horizon: 30, sellingCostPct: 1.2,
+      downPaymentPct: 30, mortgageRate: 3.42, mortgageTerm: 30, riskFreeRate: 2.8, horizon: 30, sellingCostPct: 1.2,
+      ratePeriods: [{ toYear: 3, type: "fixed", rate: 2.73 }, { toYear: 30, type: "floating", rateMin: 3.25, rateMax: 3.75 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -1107,7 +1128,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Private homes are high-rise flats priced by saleable area. RVD prices rose 11% in the year to August 2026 but remain about 19% below the 2021 peak, and rents are at a record.",
         downPaymentPct: "HKMA has capped loan-to-value at 70% for all residential property since October 2024. HKMC mortgage insurance can lift this to 80-90% on cheaper flats for a premium, not assumed here.",
-        mortgageRate: "New HIBOR loans (HIBOR + 1.3%) pay the 3.25% cap (Prime 5% minus 1.75%), and 3-year fixes were 2.73% in mid-2026. We use 3.5% as a long-run blend because the rate floats.",
+        mortgageRate: "3-year fix 2.73% (mid-2026), then a HIBOR loan (HIBOR + 1.3%) capped at Prime 5% minus 1.75% = 3.25% today, up to 3.75% if Prime rises half a point (estimate, not sourced).",
         riskFreeRate: "Exchange Fund Bills yielded 2.84% (91-day) and 2.98% (182-day) at the 8 September 2026 tender; bank time deposits pay somewhat less. We use 2.8%.",
         sellingCostPct: "Sellers usually pay about 1% agent commission on a resale plus legal fees. There is no capital gains tax, and special stamp duty on quick resales was abolished in 2024.",
         rentInflation: "RVD rental index rose 1.7% a year over 1996-2025, 4.2% over 2005-2025 and 1.3% over 2015-2025, and hit a record in August 2026. We assume 2.5%.",
@@ -1365,7 +1386,8 @@ window.RVO_QUICKSTART = {
       aliases: ["東京","Tokyo 23 wards","Tokyo-to"],
       currencySymbol: "¥", currencyCode: "JPY", asOf: "2026-09",
       buyer: "Japanese resident buying a first home to live in, second-hand (chuko) home, no subsidies; the housing-loan tax credit is not modelled",
-      downPaymentPct: 10, mortgageRate: 2.5, mortgageTerm: 35, riskFreeRate: 1, horizon: 30, sellingCostPct: 3.5,
+      downPaymentPct: 10, mortgageRate: 2.51, mortgageTerm: 35, riskFreeRate: 1, horizon: 30, sellingCostPct: 3.5,
+      ratePeriods: [{ toYear: 2, type: "floating", rateMin: 1.1, rateMax: 1.35 }, { toYear: 35, type: "floating", rateMin: 1.35, rateMax: 3.83 }],
       rentFreq: "monthly", rentInflation: 2, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -1411,7 +1433,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "The 23 wards are a condo (mansion) market with many renters; kodate detached houses cluster in outer wards such as Setagaya, Nerima, Adachi, Edogawa and Suginami.",
         downPaymentPct: "Japanese banks lend up to the full price, and Flat 35 gives its lowest rate at 90% loan-to-value or less, so 10% down is used.",
-        mortgageRate: "Blended 2.5%: most borrowers take variable loans, 1.1-1.35% at big banks in Oct 2026 after the BOJ hike to 1.25% and likely to rise; Flat 35 fixed is 3.83%.",
+        mortgageRate: "Variable loans: 1.1-1.35% at big banks in Oct 2026 after the BOJ hike to 1.25%; from year 3 anywhere up to the 3.83% Flat 35 fixed rate, as variable rates are likely to rise.",
         riskFreeRate: "Megabank 1-year time deposits pay 0.5% (Aug 2026); online banks and short JGBs pay more after the BOJ raised its rate to 1.25%, so 1.0% is used (estimate, not sourced).",
         sellingCostPct: "Seller's agent fee 3% + ¥60,000 + 10% tax (about 3.4%) plus stamp duty and mortgage discharge; the ¥30M home-sale deduction usually removes capital gains tax.",
         rentInflation: "at home 23-ward asking rents rose 5-10% in the year to Jul 2026 and about 3-4% a year since 2015 after flat decades; 2% is used for the long run.",
@@ -1419,7 +1441,7 @@ window.RVO_QUICKSTART = {
         setupCost: "Agent 3% + ¥60,000 + tax, bank fee 2.2% of loan, registration tax (1.5% land, 0.3% building, 0.1% mortgage; higher under 50 m2), stamp duty, scrivener. Acquisition tax only under 50 m2.",
         ownOngoingCost: "Fixed asset tax 1.4% and city planning tax 0.3% of assessed value (cut for small residential land), condo kanrihi and shuzen tsumitatekin, fire and quake insurance, repairs.",
         rentOngoingCost: "Key money 1 month and agent fee 1.1 months spread over a 4-year stay, renewal fee 1 month every 2 years, guarantor company fee and tenant fire insurance.",
-        caveat: "Not modelled: the mortgage tax credit (0.7% of the loan balance a year), rate rises on variable loans, and building depreciation, which makes older homes trade mostly on land value."
+        caveat: "Not modelled: the mortgage tax credit (0.7% of the loan balance a year) and building depreciation, which makes older homes trade mostly on land value."
       },
       sources: [
         { name: "Tokyo Kantei via nomu.com, used condo asking price per 70 m2, Aug 2026", url: "https://www.nomu.com/mansion/library/trend/report/70m2_20260924.html" },
@@ -1439,7 +1461,8 @@ window.RVO_QUICKSTART = {
       aliases: ["서울","Seoul Metropolitan City"],
       currencySymbol: "₩", currencyCode: "KRW", asOf: "2026-09",
       buyer: "Korean citizen buying a first home to live in, using the first-time buyer 70% LTV within the Seoul loan caps; no other subsidies or acquisition-tax relief",
-      downPaymentPct: 30, mortgageRate: 4.7, mortgageTerm: 30, riskFreeRate: 3.2, horizon: 30, sellingCostPct: 1,
+      downPaymentPct: 30, mortgageRate: 4.73, mortgageTerm: 30, riskFreeRate: 3.2, horizon: 30, sellingCostPct: 1,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.88 }, { toYear: 30, type: "floating", rateMin: 4.53, rateMax: 4.88 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -1484,7 +1507,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Seoul is an apartment city of large complexes; renters pay big deposits, either jeonse (deposit only) or wolse (deposit plus monthly rent). Officetels house many singles.",
         downPaymentPct: "First-time buyers in regulated Seoul may borrow 70%, capped at ₩600M (₩400M above ₩1.5bn), so the 2-bed, 4-bed and house need 44-81% down (estimate, not sourced).",
-        mortgageRate: "Bank of Korea: new bank mortgages averaged 4.66% in Aug 2026 (fixed-type 4.88%, variable 4.53%) after base-rate hikes to 3.00%; 4.7% is used.",
+        mortgageRate: "Bank of Korea, Aug 2026: new mortgages averaged 4.66%, fixed-type (5-year mixed) 4.88%, variable 4.53%. Fixed 4.88% for 5 years, then variable 4.53 to 4.88%. Base rate 3.00%.",
         riskFreeRate: "Bank of Korea: new 1-2 year bank time deposits paid 3.40% in Aug 2026 and all time deposits 3.14%; 3.2% is used.",
         sellingCostPct: "Seller's broker fee 0.5-0.7% plus VAT and stamp duty; one-home capital gains tax is exempt up to ₩1.2bn after 2 years' residence, so 1% is used (estimate, not sourced).",
         rentInflation: "KB apartment wolse index rose 4.5% a year from Dec 2015 to Sep 2026 and 7.5% a year over the last 5 years as jeonse shifted to wolse; 3% is used long run.",
@@ -1591,7 +1614,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UAE"],
       currencySymbol: "Dh", currencyCode: "AED", asOf: "2026-09",
       buyer: "UAE resident expat buying a first home to live in, at or under AED 5M with an 80% LTV mortgage",
-      downPaymentPct: 20, mortgageRate: 4.9, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
+      downPaymentPct: 20, mortgageRate: 5.29, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.15 }, { toYear: 25, type: "floating", rateMin: 5.4, rateMax: 5.75 }],
       rentFreq: "yearly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1649,7 +1673,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Expat-driven freehold market of tower apartments plus villas and townhouses in master communities. Values fell about 10% after February 2026 (ValuStrat) after a 2021 to 2025 boom.",
         downPaymentPct: "UAE Central Bank caps expat first-home loans at 80% LTV up to AED 5M (70% above), so 20% down. Every preset here is at or under AED 5M.",
-        mortgageRate: "Expat fixed rates were 3.75 to 4.15% for 1 to 5 years in mid-2026, then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%. Blended long-run rate 4.9%.",
+        mortgageRate: "Expat fixes were 3.75 to 4.15% for 1 to 5 years in mid-2026 (5-year 4.15% used), then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%: 5.4 to 5.75%.",
         riskFreeRate: "AED deposits track EIBOR, which was about 3.7 to 3.9% for 1 to 3 months in August 2026. 3.5% assumed for a typical saver.",
         sellingCostPct: "Seller pays the 2% agent commission plus 5% VAT and a developer NOC fee of AED 500 to 5,000. There is no capital gains tax.",
         rentInflation: "Dubai rents fell about a quarter from 2015 to 2020 and surged from 2021 to 2025, easing in 2026. 3% a year long run, with RERA caps on renewals.",
@@ -1676,7 +1700,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UAE"],
       currencySymbol: "Dh", currencyCode: "AED", asOf: "2026-09",
       buyer: "UAE resident expat buying a first home to live in within an investment (freehold) zone, under AED 5M with an 80% LTV mortgage",
-      downPaymentPct: 20, mortgageRate: 4.9, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
+      downPaymentPct: 20, mortgageRate: 5.29, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.15 }, { toYear: 25, type: "floating", rateMin: 5.4, rateMax: 5.75 }],
       rentFreq: "yearly", rentInflation: 2.5, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1728,7 +1753,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Expats may buy freehold only in investment zones (Reem, Yas, Saadiyat, Raha, Reef). Flats rose 16.4% and villas 10.1% in the year to H1 2026 (Cavendish Maxwell).",
         downPaymentPct: "UAE Central Bank caps expat first-home loans at 80% LTV up to AED 5M (70% above), so 20% down. Every preset here is under AED 5M.",
-        mortgageRate: "Same UAE bank products as Dubai: fixed 3.75 to 4.15% for 1 to 5 years, then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%. Blended long-run 4.9%.",
+        mortgageRate: "Same UAE bank products as Dubai: 5-year fix 4.15% (fixes 3.75 to 4.15% for 1 to 5 years), then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%: 5.4 to 5.75%.",
         riskFreeRate: "AED deposits track EIBOR, about 3.7 to 3.9% for 1 to 3 months in August 2026. 3.5% assumed for a typical saver.",
         sellingCostPct: "Seller pays the 2% agent commission plus 5% VAT and a developer NOC fee. The 2% DMT fee is assumed paid by the buyer, though it is negotiable.",
         rentInflation: "ADREC froze rent increases at 0% from June 2026 after strong 2023 to 2026 growth. 2.5% a year assumed long run (estimate, not sourced).",
@@ -1755,7 +1780,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UK","England"],
       currencySymbol: "£", currencyCode: "GBP", asOf: "2026-10",
       buyer: "UK resident owner-occupier buying a first home at standard SDLT rates (first-time buyer relief ignored): a long-leasehold flat or a freehold house",
-      downPaymentPct: 15, mortgageRate: 5.3, mortgageTerm: 35, riskFreeRate: 3.75, horizon: 30, sellingCostPct: 2,
+      downPaymentPct: 15, mortgageRate: 5.52, mortgageTerm: 35, riskFreeRate: 3.75, horizon: 30, sellingCostPct: 2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.68 }, { toYear: 35, type: "floating", rateMin: 5.3, rateMax: 5.68 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1812,7 +1838,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Inner London is mostly leasehold flats; outer zones are Victorian terraces and 1930s semis. About half of London homes are owner-occupied, per Census 2021 (estimate, not sourced).",
         downPaymentPct: "UK lenders price by loan-to-value band. Deposits of 10 to 15% are common for first buyers, so 15% (85% LTV) is used; bigger deposits get slightly lower rates (estimate, not sourced).",
-        mortgageRate: "Moneyfacts, Sep 2026: 2-year fix 5.63%, 5-year fix 5.68%, SVR 7.13%. Buyers refix every 2 to 5 years over a 25 to 35 year term, so a blended long-run 5.3% is used.",
+        mortgageRate: "Moneyfacts, Sep 2026: 5-year fix 5.68% (2-year 5.63%, SVR 7.13%). Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and today's 5.68%.",
         riskFreeRate: "Bank Rate is 3.75% (held 17 Sep 2026). Average easy-access savings pay 2.53% and 1-year fixed bonds 4.28% (Moneyfacts, Sep 2026), so 3.75% is used.",
         sellingCostPct: "Estate agent about 1.2% plus VAT, plus conveyancing, EPC and leasehold pack, about 2% in all. No capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "ONS private rents in London rose 3.4% a year from Jan 2015 to Aug 2026 (£1,580 to £2,332 a month, all tenancies), so 3% a year is used long-run.",
@@ -1839,7 +1865,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Zürich","Zuerich"],
       currencySymbol: "CHF", currencyCode: "CHF", asOf: "2026-08",
       buyer: "Swiss resident owner-occupier buying a first home to live in, with 20% equity (at most half of it from pension money) and a standard bank mortgage",
-      downPaymentPct: 20, mortgageRate: 1.9, mortgageTerm: 30, riskFreeRate: 0.5, horizon: 30, sellingCostPct: 2.6,
+      downPaymentPct: 20, mortgageRate: 1.71, mortgageTerm: 30, riskFreeRate: 0.5, horizon: 30, sellingCostPct: 2.6,
+      ratePeriods: [{ toYear: 10, type: "fixed", rate: 2.03 }, { toYear: 30, type: "floating", rateMin: 1.08, rateMax: 2.03 }],
       rentFreq: "monthly", rentInflation: 2, ownOngoingInflation: 1, rentOngoingInflation: 1,
       homes: {
         "apt-studio": {
@@ -1891,7 +1918,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Zurich is a renters' city: only 7.9% of the city's 238,000 homes were owner-occupied in 2025. About 700 condos and 100 houses sell a year in the city; most houses are in the suburbs.",
         downPaymentPct: "Swiss rules require at least 20% equity, at most 10% of the price from pension money. The first mortgage covers up to 66.7% and the rest must be repaid within 15 years (estimate, not sourced).",
-        mortgageRate: "SNB, Aug 2026 averages: SARON mortgages 1.08%, 5-year fixed 1.76%, 10-year fixed 2.03%, policy rate 0%. Buyers mix SARON and fixes and refix often, so a blended long-run 1.9% is used.",
+        mortgageRate: "SNB, Aug 2026: 10-year fixed 2.03% for 10 years, then between SARON mortgages (1.08%) and a new 10-year fix (2.03%) as buyers mix and refix. 5-year fixed 1.76%, policy rate 0%.",
         riskFreeRate: "SNB, Aug 2026: savings accounts 0.07%, 2-year term deposits 0.38%, 5-year 0.59%. 0.5% is used as a long-run return on spare cash.",
         sellingCostPct: "Agent about 2.5% (estimate) plus half the 0.2% notary fee. Zurich property gains tax is left out: about 11.6% of the price on a 30-year sale, and deferred if you buy again.",
         rentInflation: "New-tenancy rents in Zurich city rose about 3.3% a year 2022 to 2026 (city rent survey), but sitting tenants' rents follow the reference rate and CPI, so 2% is used long-run.",
@@ -2002,7 +2029,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Land Berlin","Berlin-Brandenburg","BER"],
       currencySymbol: "€", currencyCode: "EUR", asOf: "2026-10",
       buyer: "German resident owner-occupier, first home, resale (Bestand) property bought through a broker",
-      downPaymentPct: 20, mortgageRate: 4.2, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 3.6,
+      downPaymentPct: 20, mortgageRate: 4.3, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 3.6,
+      ratePeriods: [{ toYear: 10, type: "fixed", rate: 4.35 }, { toYear: 30, type: "floating", rateMin: 4.04, rateMax: 4.52 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -2047,7 +2075,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Berlin is a renters' city: well under a fifth of homes are owner-occupied (estimate, not sourced). Most stock is flats in Altbau and post-war blocks; houses are in the outer districts.",
         downPaymentPct: "20%: German banks price best at or below 80% loan-to-value and expect the 11-12% purchase costs to come from savings (estimate, not sourced).",
-        mortgageRate: "4.2%: Interhyp quoted 4.35% for a 10-year fix at 80% LTV and 4.52% for 15 years in early Oct 2026; ECB data show 4.04% for over-10-year fixes in Aug.",
+        mortgageRate: "Interhyp, early Oct 2026: 10-year fix at 80% LTV 4.35%, 15 years 4.52%; ECB: over-10-year fixes 4.04% (Aug). 10-year fix, then refinanced between 4.04 and 4.52%.",
         riskFreeRate: "2.5%: 12-month Bubills sold at 3.07% and 6-month at 2.77% on 14 Sep 2026; new 1-year household deposits averaged 2.28% in Aug (ECB MIR).",
         sellingCostPct: "3.6%: the seller's half of the usual 7.14% Berlin broker commission; no tax on gains from a home the owner lived in (estimate, not sourced).",
         rentInflation: "2.5%: ImmoScout24 asking rents for existing flats rose 1.7% in the year to Q3 2026; the Mietspiegel and a 15% three-year cap limit rises for sitting tenants.",
@@ -2055,7 +2083,7 @@ window.RVO_QUICKSTART = {
         setupCost: "Grunderwerbsteuer 6%, notary and land registry about 2%, and the buyer's half of the broker commission, 3.57%. A standard Annuitätendarlehen carries no bank fees.",
         ownOngoingCost: "Non-recoverable Hausgeld (manager, reserve fund, repairs), upkeep and contents insurance. Grundsteuer and building insurance are recharged to tenants, so left out (estimate).",
         rentOngoingCost: "Contents insurance only: since 2015 the landlord pays the letting agent (Bestellerprinzip) and the deposit is refundable (estimate, not sourced).",
-        caveat: "Rents are free-market asking rents. The Mietpreisbremse caps new lets of older flats at Mietspiegel +10%, and municipal landlords rent far cheaper. The 10-15 year fix reset is not modelled."
+        caveat: "Rents are free-market asking rents. The Mietpreisbremse caps new lets of older flats at Mietspiegel +10%, and municipal landlords rent far cheaper."
       },
       sources: [
         { name: "Gutachterausschuss Berlin, Immobilienmarktbericht 2025/2026", url: "https://www.berlin.de/gutachterausschuss/_assets/amarktinformationen/amarktanalyse/04-03-010-2500.pdf" },
@@ -2561,7 +2589,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Ontario","GTA"],
       currencySymbol: "$", currencyCode: "CAD", asOf: "2026-09",
       buyer: "Canadian resident owner-occupier, first home, 20% down so no CMHC insurance; Ontario and Toronto first-time buyer land transfer tax refunds ignored",
-      downPaymentPct: 20, mortgageRate: 4.75, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 5,
+      downPaymentPct: 20, mortgageRate: 4.95, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.1 }, { toYear: 30, type: "floating", rateMin: 4.75, rateMax: 5.1 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -2603,7 +2632,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Downtown condo towers plus older freehold semis and detached houses. Condo prices are down 6.4% in a year (TRREB HPI, Sept 2026) amid heavy supply; detached down 4.5%.",
         downPaymentPct: "20% is the minimum to avoid CMHC insurance premiums (minimum down is 5% on the first $500k and 10% above, up to $1.5M).",
-        mortgageRate: "5-year fixed, 20% down, 30-year amortisation: about 5.1% now (nesto uninsured 5.09%, big-6 average 5.12%, Oct 2026). It resets every 5 years, so a blended 4.75% is used.",
+        mortgageRate: "5-year fixed, 20% down, 30-year amortisation: about 5.1% (nesto 5.09%, big-6 5.12%, Oct 2026). It renews every 5 years, between the 4.75% long-run view and 5.1%.",
         riskFreeRate: "3-month T-bill 2.41% (7 Oct 2026), ongoing high-interest savings about 2.75%, 1-year GICs up to about 3.6%. Bank of Canada at 2.25%. 3.0% used.",
         sellingCostPct: "Commission about 4% to 4.5% plus 13% HST, plus legal and mortgage discharge fees: about 5% (estimate, not sourced).",
         rentInflation: "Condo rents fell about 2% in the year to Q2 2026 (TRREB) after a 2023 peak; 3% is a long-run assumption (estimate, not sourced).",
@@ -2611,7 +2640,7 @@ window.RVO_QUICKSTART = {
         setupCost: "Ontario land transfer tax plus Toronto's municipal LTT on the same schedule (0.5% to 2% up to $2M), so the tax is roughly doubled; first-time refunds ignored. Plus legal and title fees.",
         ownOngoingCost: "2026 residential tax rate 0.767% of MPAC value, which still reflects 2016 prices (taken as 75% of price (estimate, not sourced)). Condo fees about $0.90/sq ft/month (estimate, not sourced).",
         rentOngoingCost: "Tenant insurance only (estimate, not sourced); listing commissions are paid by landlords and there are no recurring tenant fees.",
-        caveat: "Rates reset every 5 years and the calculator uses one blended rate. Mortgage interest is not tax deductible; a principal-residence gain is tax free. Rent control covers pre-2018 units only."
+        caveat: "Renewal rates every 5 years are a range, not a forecast. Mortgage interest is not tax deductible; a principal-residence gain is tax free. Rent control covers pre-2018 units only."
       },
       sources: [
         { name: "TRREB Market Watch, September 2026", url: "https://trreb.ca/wp-content/files/market-stats/market-watch/mw2609.pdf" },
@@ -2630,7 +2659,8 @@ window.RVO_QUICKSTART = {
       aliases: ["BC","British Columbia"],
       currencySymbol: "$", currencyCode: "CAD", asOf: "2026-09",
       buyer: "Canadian resident owner-occupier, first home, 20% down so no CMHC insurance; BC first-time buyer property transfer tax exemption ignored; home owner grant claimed",
-      downPaymentPct: 20, mortgageRate: 4.75, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 3.5,
+      downPaymentPct: 20, mortgageRate: 4.95, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 3.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.1 }, { toYear: 30, type: "floating", rateMin: 4.75, rateMax: 5.1 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -2667,7 +2697,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Condo towers plus detached houses on very expensive land. GVR Sept 2026: apartment benchmark $682,500 (-6.2% in a year), detached $1.78M (-7.3%), across Metro Vancouver.",
         downPaymentPct: "20% is the minimum to avoid CMHC insurance premiums (minimum down is 5% on the first $500k and 10% above, up to $1.5M; 20% required above that).",
-        mortgageRate: "5-year fixed, 20% down, 30-year amortisation: about 5.1% now (nesto uninsured 5.09%, big-6 average 5.12%, Oct 2026). It resets every 5 years, so a blended 4.75% is used.",
+        mortgageRate: "5-year fixed, 20% down, 30-year amortisation: about 5.1% (nesto 5.09%, big-6 5.12%, Oct 2026). It renews every 5 years, between the 4.75% long-run view and 5.1%.",
         riskFreeRate: "3-month T-bill 2.41% (7 Oct 2026), ongoing high-interest savings about 2.75%, 1-year GICs up to about 3.6%. Bank of Canada at 2.25%. 3.0% used.",
         sellingCostPct: "Commission often 7% on the first $100k plus 2.5% to 3% on the rest, plus 5% GST and legal fees: about 3.5% (estimate, not sourced).",
         rentInflation: "Asking rents are down about 4% in a year (Zumper, Oct 2026) after the 2023 peak; 3% is a long-run assumption (estimate, not sourced).",
@@ -2675,7 +2705,7 @@ window.RVO_QUICKSTART = {
         setupCost: "BC Property Transfer Tax: 1% on the first $200k, 2% to $2M, 3% to $3M, plus 2% above $3M; first-time buyer exemption ignored. Plus legal or notary, title and strata document fees.",
         ownOngoingCost: "Property tax ~0.31% of assessed value less the $570 home owner grant (estimate, not sourced); strata ~$0.60/sq ft/month (estimate, not sourced). Empty homes tax does not apply to owners.",
         rentOngoingCost: "Tenant insurance only (estimate, not sourced); there are no tenant broker fees and BC caps yearly rent increases for sitting tenants.",
-        caveat: "Rates reset every 5 years (blended rate used). Many houses carry a rented basement suite, which the calculator does not model; strata special levies can be large."
+        caveat: "Renewal rates every 5 years are a range, not a forecast. Many houses carry a rented basement suite, which the calculator does not model; strata special levies can be large."
       },
       sources: [
         { name: "Greater Vancouver Realtors, stats package September 2026", url: "https://members.gvrealtors.ca/news/GVR-Stats-Package-September-2026.pdf" },
@@ -2740,6 +2770,18 @@ window.RVO_QS = (function(D){
     FIELDS.forEach(function(f){
       out[f] = h[f] !== undefined ? h[f] : (c[f] !== undefined ? c[f] : D.defaults[f]);
     });
+    // A staged loan opens in Detailed mode, on its own copy of the schedule
+    // (a page edits the periods in place), each period carrying every field
+    // the rate rows show: a fixed one its rate as its range, a floating one
+    // its middle as its rate.
+    var rp = h.ratePeriods || c.ratePeriods || null;
+    out.mortgageMode = rp ? 'detailed' : 'simple';
+    out.ratePeriods = rp ? rp.map(function(p){
+      var fixed = p.type !== 'floating';
+      return { toYear: p.toYear, type: fixed ? 'fixed' : 'floating',
+        rate: fixed ? p.rate : (p.rateMin + p.rateMax) / 2,
+        rateMin: fixed ? p.rate : p.rateMin, rateMax: fixed ? p.rate : p.rateMax };
+    }) : null;
     out.id = id(c.key, s.type);
     out.cityKey = c.key;
     out.typeKey = s.type;

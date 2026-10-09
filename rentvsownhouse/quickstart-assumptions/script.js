@@ -32,6 +32,18 @@ function month(ym){
   const m = /^(\d{4})-(\d{2})/.exec(ym || '');
   return m ? MONTHS[+m[2] - 1] + ' ' + m[1] : '';
 }
+// A staged loan, period by period: "years 1-5 fixed 3.81%; years 6-20
+// floating 11% to 13%". Floating periods run at their middle in the calculator.
+function schedule(periods, term){
+  let from = 1;
+  return periods.map((p, i) => {
+    const to = i === periods.length - 1 ? term : p.toYear;
+    const yrs = from === to ? 'year ' + from : 'years ' + from + '-' + to;
+    from = to + 1;
+    return (i ? yrs : yrs[0].toUpperCase() + yrs.slice(1)) + (p.type === 'floating' ? ' floating ' + pct(p.rateMin) + ' to ' + pct(p.rateMax) : ' fixed ' + pct(p.rate));
+  }).join('; ');
+}
+const scheduleText = p => p.ratePeriods ? schedule(p.ratePeriods, p.mortgageTerm) : '';
 const grossYield = p => p.rentAmount * PER_YEAR[p.rentFreq] / p.propertyPrice * 100;
 const rowId = sid => sid.replace('/', '-');
 
@@ -80,7 +92,16 @@ function drawGlance(){
 // The city-wide form values a home may override, and how to say each.
 const CITY_ROWS = [
   {f:'downPaymentPct', label:'Down payment', note:'downPaymentPct', show:(v) => pct(v) + ' of the price'},
-  {f:'mortgageRate', label:'Mortgage rate', note:'mortgageRate', show:(v, c) => pct(v) + ' a year'},
+  {f:'mortgageRate', label:'Mortgage rate', note:'mortgageRate', show:(v, c) => pct(v) + (c.ratePeriods ? ' a year on average over the term' : ' a year')},
+  {f:'ratePeriods', label:'Rate schedule', when: c => QS.homes(c.key).some(t => QS.preset(QS.id(c.key, t)).ratePeriods),
+    value: c => {
+      const ps = QS.homes(c.key).map(t => QS.preset(QS.id(c.key, t)));
+      const texts = [...new Set(ps.map(scheduleText))];
+      return texts.length === 1
+        ? esc(texts[0])
+        : ps.map(p => esc(QS.type(p.typeKey).short.en + ': ' + (scheduleText(p) || pct(p.mortgageRate) + ' for the term'))).join('<br>');
+    },
+    basis: 'Opens in Detailed mortgage mode: the loan is staged, so each period is entered as its own rate, and a floating one is drawn as a band and read at its middle. The rate above is its average over the term, which Simple mode uses.'},
   {f:'mortgageTerm', label:'Mortgage term', show:(v) => v + ' years, principal and interest'},
   {f:'riskFreeRate', label:'Risk-free rate', note:'riskFreeRate', show:(v) => pct(v) + ' a year on spare cash'},
   {f:'sellingCostPct', label:'Selling cost', note:'sellingCostPct', show:(v) => pct(v) + ' of the sale price'},
@@ -145,7 +166,10 @@ function drawCity(c){
   // The city's loan, tax and market terms, each with its basis.
   h += `<h3>City-wide figures</h3><div class="qa-table-wrap"><table class="qa-table qa-terms"><thead><tr><th>Figure</th><th>Value</th><th>Basis</th></tr></thead><tbody>`;
   CITY_ROWS.forEach(r => {
-    h += `<tr><td>${esc(r.label)}</td><td class="qa-val">${cityValue(c, r)}</td><td class="qa-basis">${r.note && notes[r.note] ? esc(notes[r.note]) : ''}</td></tr>`;
+    if(r.when && !r.when(c)) return;
+    const val = r.value ? r.value(c) : cityValue(c, r);
+    const basis = r.basis || (r.note && notes[r.note]) || '';
+    h += `<tr><td>${esc(r.label)}</td><td class="qa-val">${val}</td><td class="qa-basis">${esc(basis)}</td></tr>`;
   });
   HOME_NOTES.forEach(([k, label]) => {
     if(notes[k]) h += `<tr><td>${esc(label)}</td><td class="qa-val">Per home, above</td><td class="qa-basis">${esc(notes[k])}</td></tr>`;
@@ -201,7 +225,7 @@ function draw(){
 /* ── CSV: every scenario, every form value it sets ── */
 function csv(){
   const cols = ['id', 'city', 'country', 'region', 'home', 'form', 'bedrooms', 'sqm', 'landSqm', 'where', 'currencyCode', 'asOf']
-    .concat(QS.FIELDS).concat(['grossYieldPct']);
+    .concat(QS.FIELDS).concat(['mortgageMode', 'rateSchedule', 'grossYieldPct']);
   const cell = v => {
     const s = v == null ? '' : String(v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -211,7 +235,7 @@ function csv(){
     const p = QS.preset(sid), c = QS.city(p.cityKey), t = QS.type(p.typeKey), home = c.homes[p.typeKey];
     const row = {id: sid, city: c.city, country: c.country, region: c.region, home: t.name.en, form: t.form,
       bedrooms: t.beds, sqm: home.sqm, landSqm: home.landSqm, where: home.where, currencyCode: c.currencyCode,
-      asOf: c.asOf, grossYieldPct: grossYield(p).toFixed(2)};
+      asOf: c.asOf, mortgageMode: p.mortgageMode, rateSchedule: scheduleText(p), grossYieldPct: grossYield(p).toFixed(2)};
     QS.FIELDS.forEach(f => { row[f] = p[f]; });
     lines.push(cols.map(k => cell(row[k])).join(','));
   });

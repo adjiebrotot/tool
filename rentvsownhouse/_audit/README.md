@@ -27,6 +27,9 @@ either a home or a reasoned gap in every city, every scenario resolves every
 form value inside the bound the calculator's field enforces (read from
 `../index.html`), yields and bedroom order are plausible, no em-dash reaches a
 reader, and the assumptions page draws every scenario at the price the
-calculator loads.
+calculator loads. A staged loan's rate schedule (D7) has to be one the
+Detailed mortgage mode can hold, its single rate must be the schedule's
+average over the term, and the calculator must open it in Detailed mode on
+exactly those periods.
 
 (See also ../audit/ — the earlier JS↔Python cross-model audit.)

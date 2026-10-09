@@ -12,8 +12,10 @@
 //       picker and every column) follows the city's symbol
 //   Q3  only the first column has the picker; after a drag the column now
 //       first has it, and the scenario moved right keeps all its figures
-//   Q4  with the detailed modes on, a scenario still loads (its lists are
-//       seeded) and gives the same exports as in simple mode
+//   Q4  with the detailed modes on, a scenario still loads (a single-rate
+//       one seeds one rate period, a staged loan brings its own schedule,
+//       and the cost lists are seeded) and gives the main page's exports;
+//       with them off, a staged loan turns the shared mortgage mode on
 //   Q5  the Indonesian page has the picker and loads the same figures
 //   Q6  search: the list shows exactly the scenarios whose city, country,
 //       currency or home has every word typed, the way the Cost of Living
@@ -163,9 +165,21 @@ const ref = {};
   await sens.evaluate(()=>['mortgageMode','ownCostsMode','rentCostsMode'].forEach(k=>document.querySelector('.mode-seg[data-mode-key="'+k+'"] .seg-btn[data-val="detailed"]').click()));
   await pickCity(sens, 'jakarta/apt-2br');
   const rows = await sens.evaluate(()=>({rp:document.querySelectorAll('.rp-type[data-si="0"]').length, ci:document.querySelectorAll('.ci-basis[data-si="0"]').length}));
-  check('Q4 detailed modes: the city seeds one rate period and its cost rows', rows.rp===1 && rows.ci===3, JSON.stringify(rows));
+  check('Q4 detailed modes: Jakarta brings its two-period KPR schedule and seeds its cost rows', rows.rp===2 && rows.ci===3, JSON.stringify(rows));
   const d = diffAt(ref['jakarta/apt-2br'][0], await sensCsv(sens,'own')) || diffAt(ref['jakarta/apt-2br'][1], await sensCsv(sens,'rent'));
   check('Q4 detailed modes: Jakarta exports still match the main page', !d, d||'');
+  await pickCity(sens, 'paris/apt-2br');
+  const one = await sens.evaluate(()=>document.querySelectorAll('.rp-type[data-si="0"]').length);
+  check('Q4 detailed modes: a single-rate city seeds one rate period', one===1, String(one));
+  await sens.close();
+}
+// Q4: simple modes, then a staged loan.
+{
+  const sens = await open(SENS);
+  await pickCity(sens, 'bangkok/apt-1br');
+  const mode = await sens.evaluate(()=>document.querySelector('.mode-seg[data-mode-key="mortgageMode"] .seg-btn.active').dataset.val);
+  const d = diffAt(ref['bangkok/apt-1br'][0], await sensCsv(sens,'own'));
+  check('Q4 simple modes: a staged loan (Bangkok) turns the mortgage mode to detailed and matches the main page', mode==='detailed' && !d, mode + ' ' + (d||''));
   await sens.close();
 }
 
