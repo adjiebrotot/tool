@@ -668,8 +668,8 @@ window.RVO_QUICKSTART = {
       aliases: ["DKI Jakarta","South Jakarta","Jakarta Selatan","Jabodetabek"],
       currencySymbol: "Rp", currencyCode: "IDR", asOf: "2026-10",
       buyer: "Indonesian citizen with a Jakarta KTP buying a first home to live in, with a KPR; first-acquisition BPHTB allowance, no subsidised (FLPP) loan",
-      downPaymentPct: 20, mortgageRate: 9.95, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 5.5,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 3.81 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
+      downPaymentPct: 20, mortgageRate: 11.13, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 5.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 8.5 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "yearly", rentInflation: 3, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "apt-studio": {
@@ -748,7 +748,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "About 232,000 strata apartments, many investor-owned, with about 29,000 new units unsold in Q1 2026. Most Jakartans live in landed houses (rumah tapak), mostly with 3 or more bedrooms.",
         downPaymentPct: "BI lets banks lend up to 100% of value until Dec 2026 (PADG 30/2025), but most KPR loans are 80 to 90% of value. 20% down is the standard assumption.",
-        mortgageRate: "BCA promo: fixed 3.81% for 5 years (12-year tenor or more, to Oct 2026), then floating. Big-bank floating KPR is 11% (BCA) to 13% (Mandiri); SBDK base rates are 7.95 to 11.75% (Aug 2026).",
+        mortgageRate: "BCA's regular 5-year fix is 8.5% (Oct 2026); its 3.81% promo is only for new homes from partner developers, not resale. Then floating: 11% (BCA) to 13% (Mandiri).",
         riskFreeRate: "BI Rate 5.75% (Sep 2026). Average 1 to 6 month rupiah deposits paid 5.1 to 5.8% in Aug 2026; big banks pay 2.5 to 3.5% and retail SBN about 6.75 to 7%.",
         sellingCostPct: "Seller pays final income tax (PPh) of 2.5% of the gross price (PP 34/2016) plus an agent commission of about 3%.",
         rentInflation: "Knight Frank saw condo rents fall about 1% and serviced rents rise 2% in H1 2026. With apartment oversupply, rents are assumed to track CPI at about 3%.",
@@ -756,10 +756,11 @@ window.RVO_QUICKSTART = {
         setupCost: "BPHTB 5% on the price above Rp 250M for a first acquisition (Perda DKI 1/2024), PPAT/notary about 1%, bank provision 1% of the loan and about Rp 4M of appraisal and deed fees.",
         ownOngoingCost: "Apartment owners pay IPL service charge and sinking fund. PBB is 0.5% of 40% of NJOP above Rp 60M, waived in 2026 up to Rp 2B NJOP for houses and Rp 650M for apartments.",
         rentOngoingCost: "Landlords normally pay the agent and the apartment service charge, so tenants mainly add contents insurance and lease admin (estimate, not sourced).",
-        caveat: "Rent is usually paid 6 to 12 months upfront plus a deposit. Promo-fixed KPR rates reset to floating, so payments can jump. A second home gets no BPHTB allowance."
+        caveat: "Rent is usually paid 6 to 12 months upfront plus a deposit. Fixed KPR rates reset to floating, so payments can jump; a developer promo fix is cheaper but only on new units. A second home gets no BPHTB allowance."
       },
       sources: [
-        { name: "BCA Rumahsaya, KPR rates: promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "BCA Rumahsaya, KPR rates: regular 8.5% 5-year fix, promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "Investortrust, BCA Expo 2026: 3.81% 5-year fix for new homes from partner developers", url: "https://investortrust.id/financial/116082/mau-punya-rumah-pertama-bca-ungkap-cara-atur-cicilan-kpr" },
         { name: "Bank Indonesia, Survei Harga Properti Residensial Q2 2026 (IHPR 2018=100)", url: "https://www.bi.go.id/id/publikasi/laporan/Documents/SHPR_Tw_II_2026.pdf" },
         { name: "Kontan, floating KPR rates and SBDK by bank, Aug 2026", url: "https://keuangan.kontan.co.id/news/likuiditas-bank-ketat-begini-bunga-floating-kpr" },
         { name: "Databoks, SBDK KPR of 5 banks, Apr-May 2026", url: "https://databoks.katadata.co.id/keuangan/statistik/6a1ff64d0c633/sbdk-kpr-5-bank-di-indonesia-per-april-mei-2026-mandiri-tertinggi" },
@@ -777,8 +778,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Denpasar","Badung","Canggu","Seminyak","Kerobokan","Sanur","Jimbaran"],
       currencySymbol: "Rp", currencyCode: "IDR", asOf: "2026-10",
       buyer: "Indonesian citizen buying a freehold (SHM) home to live in with a KPR; foreigners can only lease (hak sewa) or hold hak pakai",
-      downPaymentPct: 20, mortgageRate: 9.95, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 7.5,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 3.81 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
+      downPaymentPct: 20, mortgageRate: 11.13, mortgageTerm: 20, riskFreeRate: 5, horizon: 20, sellingCostPct: 7.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 8.5 }, { toYear: 20, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "yearly", rentInflation: 4, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "house-2br": {
@@ -822,7 +823,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "The Badung and Denpasar belt is villa-led and low-rise. The 1,163 condos listed are mostly leasehold resort units for foreigners, so local homes here are freehold houses and villas.",
         downPaymentPct: "Same national KPR rules as Jakarta, 20% down assumed. Banks lend only against SHM or HGB titles with a residential building permit, not leasehold (estimate, not sourced).",
-        mortgageRate: "Same national KPR market: BCA promo fix 3.81% for 5 years, then floating at 11% (BCA) to 13% (Mandiri). SBDK base rates are 7.95 to 11.75% (Aug 2026).",
+        mortgageRate: "Same national KPR market: BCA's regular 5-year fix 8.5% (its 3.81% promo is for partner developers' new homes only), then floating at 11% (BCA) to 13% (Mandiri).",
         riskFreeRate: "BI Rate 5.75% (Sep 2026). Average 1 to 6 month rupiah deposits paid 5.1 to 5.8% in Aug 2026; big banks pay 2.5 to 3.5% and retail SBN about 6.75 to 7%.",
         sellingCostPct: "Seller pays final income tax (PPh) of 2.5% of the price (PP 34/2016) plus an agent commission of about 5%, the usual rate for Bali villa sales (estimate, not sourced).",
         rentInflation: "Yearly villa rents rose with tourism and remote workers. A long-run 4% a year is assumed, slightly above CPI (estimate, not sourced).",
@@ -833,7 +834,8 @@ window.RVO_QUICKSTART = {
         caveat: "Foreigners cannot own SHM freehold; they lease (hak sewa) or hold hak pakai, which runs down to zero and cannot be modelled here. Leasehold villas and condotels cannot get a KPR."
       },
       sources: [
-        { name: "BCA Rumahsaya, KPR rates: promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "BCA Rumahsaya, KPR rates: regular 8.5% 5-year fix, promo fixes and 11% floating, valid to 31 Oct 2026", url: "https://rumahsaya.bca.co.id/info-kpr/Sukubunga-kpr" },
+        { name: "Investortrust, BCA Expo 2026: 3.81% 5-year fix for new homes from partner developers", url: "https://investortrust.id/financial/116082/mau-punya-rumah-pertama-bca-ungkap-cara-atur-cicilan-kpr" },
         { name: "FazWaz, Denpasar villas and houses for sale (2,068 listings)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/denpasar" },
         { name: "FazWaz, Kerobokan villas for sale (819 listings, Oct 2026)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/badung/kerobokan" },
         { name: "FazWaz, Jimbaran villas for sale (2,150 listings)", url: "https://www.fazwaz.id/villa-for-sale/indonesia/bali/badung/jimbaran" },

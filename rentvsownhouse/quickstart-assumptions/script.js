@@ -32,7 +32,7 @@ function month(ym){
   const m = /^(\d{4})-(\d{2})/.exec(ym || '');
   return m ? MONTHS[+m[2] - 1] + ' ' + m[1] : '';
 }
-// A staged loan, period by period: "years 1-5 fixed 3.81%; years 6-20
+// A staged loan, period by period: "years 1-5 fixed 8.5%; years 6-20
 // floating 11% to 13%". Floating periods run at their middle in the calculator.
 function schedule(periods, term){
   let from = 1;
