@@ -807,8 +807,86 @@ function loadCsvFile(file){
 
 function showEntry(){
   const mode = $('entryMode').value;
-  ['table', 'text', 'csv'].forEach(m => { $('entry-' + m).hidden = m !== mode; });
+  ['table', 'text', 'csv', 'ai'].forEach(m => { $('entry-' + m).hidden = m !== mode; });
   if(mode === 'text') syncText();
+  if(mode === 'ai') buildAiPrompt();
+}
+
+/* ─── AI: a prompt to research the listings with ───
+   Built from the columns as they stand: the header the AI must write is the
+   Text header exactly (so pasting keeps every column's id and type), and each
+   column is described by its type and unit. Lines starting with # are
+   skipped by Text, so the sources ride along as comments. */
+const AI_SPARK = '<svg class="tico ai-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 2.5c.5 4.6 2.4 6.5 7 7-4.6.5-6.5 2.4-7 7-.5-4.6-2.4-6.5-7-7 4.6-.5 6.5-2.4 7-7z"/><path d="M18.5 13c.3 2.5 1.3 3.5 3.8 3.8-2.5.3-3.5 1.3-3.8 3.8-.3-2.5-1.3-3.5-3.8-3.8 2.5-.3 3.5-1.3 3.8-3.8z"/><path d="M18 2c.2 1.5.8 2.1 2.3 2.3-1.5.2-2.1.8-2.3 2.3-.2-1.5-.8-2.1-2.3-2.3C17.2 4.1 17.8 3.5 18 2z"/></svg>';
+function currencyName(){
+  const o = $('currency').selectedOptions[0];
+  const s = sym();
+  const label = o ? o.textContent.replace(s, '').replace(/[()–—-]/g, ' ').replace(/\s+/g, ' ').trim() : '';
+  return label ? `${label} (${s})` : s || 'the local currency';
+}
+function aiExample(c, i){
+  const year = readOpts().year;
+  if(c.type === 'price') return i ? '18900' : '24500';
+  if(c.type === 'datayear') return String(year - i);
+  if(c.type === 'year') return String(year - 4 - 2 * i);
+  if(c.type === 'bool') return i ? 'No' : 'Yes';
+  if(c.type === 'ignore') return i ? '"text, with a comma"' : 'text';
+  return i ? '135' : '120';
+}
+function aiPromptText(){
+  const what = ($('itemWhat').value || '').trim() || 'the item';
+  const market = ($('aiMarket').value || '').trim();
+  const n = Math.min(100, Math.max(5, parseInt($('aiCount').value, 10) || 20));
+  const year = readOpts().year;
+  const dated = hasDataYear();
+  const cur = currencyName();
+  const cols = S.columns;
+  const header = cols.map(headerOf).map(h => csvCell(h, ',')).join(', ');
+  const nameOf = c => `"${headerOf(c)}"`;
+  const desc = c => {
+    if(c.type === 'price') return `${nameOf(c)}: the price in ${cur}, as a plain number with no currency symbol and no thousands separators (24500, not ${sym()}24,500). Use the asking price for a listing, or the sold price for a completed sale. Every row must have a price; skip any listing without one.`;
+    if(c.type === 'datayear') return `${nameOf(c)}: the four-digit year the listing was posted or the sale was completed (e.g. ${year}).`;
+    if(c.type === 'year') return `${nameOf(c)}: a four-digit calendar year (e.g. ${year - 4}), as the listing states it.`;
+    if(c.type === 'bool') return `${nameOf(c)}: exactly Yes or No. Write No when the listing does not mention it.`;
+    if(c.type === 'ignore') return `${nameOf(c)}: free text as the listing states it, kept for reference only. Wrap it in double quotes if it contains a comma.`;
+    return c.unit
+      ? `${nameOf(c)}: a plain number in ${c.unit}, without the unit and with no thousands separators. Convert to ${c.unit} if the listing uses another unit.`
+      : `${nameOf(c)}: a plain number with no unit and no thousands separators. Use the same unit on every row.`;
+  };
+  const example = [header].concat([0, 1].map(k => cols.map(c => aiExample(c, k)).join(', '))).join('\n');
+  const L = [];
+  L.push(`I am fitting a price model to find what "${what}" should cost secondhand. Search the web now and gather ${n} genuine listings${dated ? ' or completed sales' : ''} of it${market ? ` in ${market}` : ''}.`);
+  if(!market) L.push('If it is unclear which country or city I mean, ask me before you search.');
+  L.push('');
+  L.push('Rules:');
+  L.push(`- Every row must be a real ${dated ? 'listing or sale' : 'listing'} you found on a web page. Never estimate, average or invent a row.`);
+  L.push(dated
+    ? `- Prefer recent data: listings seen in ${year} first, then sales from earlier years if needed.`
+    : `- Only listings current in ${year}, not past sales.`);
+  L.push(`- All prices in ${cur}. Skip listings priced in another currency.`);
+  L.push('- Each item once only: skip duplicates of the same item listed on several sites.');
+  L.push('- Spread the rows across the range of the market, not only the cheapest or the newest.');
+  L.push('- Leave a cell empty if the listing does not state that value (a Yes/No column takes No). Do not guess.');
+  L.push('');
+  L.push('Columns, in this order:');
+  cols.forEach((c, i) => L.push(`${i + 1}. ${desc(c)}`));
+  L.push('');
+  L.push('Output format (it is pasted straight into a tool, so follow it exactly):');
+  L.push('- Plain text in one code block, no table formatting, no commentary.');
+  L.push(`- First line is this header, copied exactly:\n  ${header}`);
+  L.push(`- Then one line per ${dated ? 'listing or sale' : 'listing'}, with the values in the same order, separated by a comma and a space.`);
+  L.push('- Numbers carry no currency symbols, units or thousands separators.');
+  L.push('- After the rows, list the sources, one line each, starting with "# " and the row number, e.g. "# 1 https://…". Lines starting with # are skipped by the tool.');
+  L.push('');
+  L.push('The shape to follow (made-up values, do not copy them):');
+  L.push(example);
+  L.push('# 1 https://example.com/listing-1');
+  L.push('# 2 https://example.com/listing-2');
+  return L.join('\n');
+}
+function buildAiPrompt(){
+  $('aiPrompt').value = aiPromptText();
+  $('aiStatus').innerHTML = '';
 }
 
 const ageNote = (v, year) => { const n = parseNum(v); return n === null ? '' : 'Age <b>' + fmt.num(year - n, 0) + ' yrs</b> in ' + year; };
@@ -1596,7 +1674,9 @@ function applyQuickStart(key){
 function init(){
   $('curYear').value = String(THIS_YEAR);
   captureDefaults();
-  SharedSeg.fromSelect($('entryMode'), { labelOf: o => o.textContent, ariaLabel: 'How to enter the listings' });
+  const entrySeg = SharedSeg.fromSelect($('entryMode'), { labelOf: o => o.textContent, ariaLabel: 'How to enter the listings' });
+  const aiBtn = entrySeg && entrySeg.group.querySelector('[data-val="ai"]');
+  if(aiBtn){ aiBtn.insertAdjacentHTML('beforeend', AI_SPARK); aiBtn.title = 'A prompt to research the listings with an AI'; }
   SharedSeg.fromSelect($('viewDim'), { labelOf: o => o.textContent, ariaLabel: 'Chart view' });
 
   document.querySelectorAll('.ctrl-tab').forEach(tab => {
@@ -1613,6 +1693,7 @@ function init(){
     if(e.target.closest('[data-no-persist]')) return;
     if(e.target.id === 'entryMode'){ showEntry(); return; }
     if(e.target.id === 'currency' || e.target.id === 'curYear'){ buildColumns(); buildGrid(); buildItems(); }
+    if($('entryMode').value === 'ai') buildAiPrompt();
     syncUI();
     markStale();
   };
@@ -1657,6 +1738,22 @@ function init(){
   $('valuateBtn').addEventListener('click', () => { render(); flashBtn($('valuateBtn'), '✓ Updated'); });
 
   $('dataText').addEventListener('input', onTextInput);
+  ['aiMarket', 'aiCount'].forEach(id => $(id).addEventListener('input', buildAiPrompt));
+  $('aiCopyBtn').addEventListener('click', async () => {
+    buildAiPrompt();
+    try {
+      await navigator.clipboard.writeText($('aiPrompt').value);
+      flashBtn($('aiCopyBtn'), '✓ Copied');
+    } catch(err){
+      $('aiPrompt').focus(); $('aiPrompt').select();
+      $('aiStatus').innerHTML = statusHtml(false, 'Copy was blocked. The prompt is selected: press Ctrl+C (⌘C).');
+    }
+  });
+  $('aiToTextBtn').addEventListener('click', () => {
+    $('entryMode').value = 'text';
+    showEntry();
+    $('dataText').focus(); $('dataText').select();
+  });
   $('csvFile').addEventListener('change', e => { loadCsvFile(e.target.files[0]); e.target.value = ''; });
   const drop = $('csvDrop');
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });

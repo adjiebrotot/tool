@@ -150,6 +150,7 @@
           <option value="table">Table</option>
           <option value="text">Text</option>
           <option value="csv">CSV</option>
+          <option value="ai">AI</option>
         </select>
       </div>
 
@@ -167,6 +168,20 @@
       <div class="entry-panel" id="entry-text" data-no-persist hidden>
         <textarea class="txt-input data-text" id="dataText" rows="12" spellcheck="false" data-no-abbr></textarea>
         <div class="status-line" id="textStatus" aria-live="polite"></div>
+      </div>
+
+      <div class="entry-panel" id="entry-ai" data-no-persist hidden>
+        <p class="ai-lead">A prompt for an AI that can search the web (ChatGPT, Claude, Gemini, Perplexity). It asks for real listings in your columns, in the exact format Text reads. Paste its answer into Text, where it replaces the listings.</p>
+        <div class="ai-opts">
+          <label class="ai-opt"><span class="field-label">Market</span><input class="txt-input" id="aiMarket" type="text" maxlength="80" placeholder="e.g. Perth, Australia"></label>
+          <label class="ai-opt ai-opt-n"><span class="field-label">Listings</span><input class="txt-input" id="aiCount" type="number" inputmode="numeric" min="5" max="100" step="1" value="20"></label>
+        </div>
+        <textarea class="txt-input data-text ai-prompt" id="aiPrompt" rows="14" readonly spellcheck="false" data-no-abbr aria-label="Prompt for the AI"></textarea>
+        <div class="csv-actions">
+          <button type="button" class="btn-secondary btn-sm" id="aiCopyBtn">⧉ Copy prompt</button>
+          <button type="button" class="btn-secondary btn-sm" id="aiToTextBtn" title="Open Text to paste the AI's answer">Paste into Text →</button>
+        </div>
+        <div class="status-line" id="aiStatus" aria-live="polite"></div>
       </div>
 
       <div class="entry-panel" id="entry-csv" data-no-persist hidden>
