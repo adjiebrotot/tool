@@ -105,6 +105,15 @@ body.grid-modal-open{overflow:hidden;}
 .csv-drop-icon .ico{width:26px;height:26px;color:var(--accent);}
 .csv-drop-sub{font-size:.74rem;}
 .csv-actions{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px;}
+/* ── Listings: AI, a prompt to research listings with ── */
+.seg-btn .ai-spark{width:1.05em;height:1.05em;vertical-align:-0.15em;margin-left:3px;}
+.ai-lead{margin:0 0 10px;font-size:.8rem;line-height:1.45;color:var(--muted);}
+.ai-opts{display:flex;gap:8px;margin:0 0 8px;}
+.ai-opt{display:flex;flex-direction:column;gap:3px;flex:1 1 auto;min-width:0;}
+.ai-opt-n{flex:0 0 88px;}
+.ai-opt .field-label{font-size:.78rem;color:var(--muted);}
+.ai-opt .txt-input{padding:7px 9px;font-size:.84rem;}
+.ai-prompt{white-space:pre-wrap;min-height:280px;}
 
 /* ── Items to buy ── */
 .item-list{display:flex;flex-direction:column;gap:12px;}
