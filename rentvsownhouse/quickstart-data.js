@@ -853,8 +853,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Krung Thep","Krung Thep Maha Nakhon","BKK","Greater Bangkok"],
       currencySymbol: "฿", currencyCode: "THB", asOf: "2026-09",
       buyer: "Thai citizen owner-occupier, first home, registered in the house book (tabien baan); qualifies for the 0.01% transfer and mortgage fees on homes up to 7 million baht",
-      downPaymentPct: 10, mortgageRate: 5.27, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
-      ratePeriods: [{ toYear: 3, type: "fixed", rate: 3 }, { toYear: 30, type: "floating", rateMin: 5.2, rateMax: 5.85 }],
+      downPaymentPct: 10, mortgageRate: 5.24, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
+      ratePeriods: [{ toYear: 3, type: "fixed", rate: 4.2 }, { toYear: 30, type: "floating", rateMin: 5.05, rateMax: 5.65 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -901,7 +901,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Central Bangkok is a condo market (studios to 2 bedrooms, luxury large units on Sukhumvit and Sathorn); townhouses and detached houses sit in suburban estates. Supply is ample in 2026.",
         downPaymentPct: "BoT rules allow up to 100% LTV on a first home under 10 million baht, and the 2025 to 2027 easing covers dearer homes, but banks often lend 90 to 95%, so 10% is assumed.",
-        mortgageRate: "Teasers run about 2.5 to 3.5% for 3 years (3% used), then bank MRR (about 6.7 to 6.85% after the March 2026 cuts) minus 1 to 1.5 points: 5.2 to 5.85%. Policy rate is 1.0%.",
+        mortgageRate: "Sub-3% teasers are for new projects; resale loans average about 4.2% for 3 years (GHB resale promo 4.22%, KBank 4-5%), then MRR (6.5 to 6.67%) less 1 to 1.5: 5.05 to 5.65%.",
         riskFreeRate: "Thai 12-month deposits and short government bills yield about 1 to 1.3% with the BoT policy rate held at 1.0% through 2026.",
         sellingCostPct: "Long-held home: agent 3%, half the 2% transfer fee, stamp duty 0.5% and income tax withheld on appraised value about 0.5 to 1%. Specific business tax 3.3% applies only if sold within 5 years.",
         rentInflation: "Central condo rents have risen slowly amid oversupply; 2.5% a year assumed, a little above Thai CPI (estimate, not sourced).",
@@ -916,6 +916,8 @@ window.RVO_QUICKSTART = {
         { name: "HLB Thailand, Reduced registration fees extended for another year", url: "https://www.hlbthai.com/reduced-registration-fees-for-property-transfers-and-mortgages-extended-for-another-year/" },
         { name: "Business Today, Bank of Thailand holds rates at 1%, June 2026", url: "https://www.businesstoday.com.my/2026/06/24/bank-of-thailand-holds-rates-at-1-as-policy-makers-stay-on-hold-amid-weak-demand/" },
         { name: "Thairath, bank MRR cuts after the February 2026 policy cut", url: "https://en.thairath.co.th/money/personal_finance/finance_banking/2916697" },
+        { name: "Kasikornbank, home loan rates and MRR 6.58% (2026)", url: "https://www.kasikornbank.com/th/personal/loan/homeloan/pages/home.aspx" },
+        { name: "Thansettakij, GHB resale-home loan: 3.90%, 4.20%, 4.55% in years 1 to 3, average 4.216%", url: "https://www.thansettakij.com/finance/financial-banking/621823" },
         { name: "Kasikorn Research, Mortgage loan outlook, May 2026", url: "https://www.kasikornresearch.com/en/analysis/k-econ/business/Pages/Mortgage-Loan-CIS3644-KR-2026-05-21.aspx" },
         { name: "Global Property Guide, Thailand price history (BoT index, Q1 2026)", url: "https://www.globalpropertyguide.com/asia/thailand/price-history" },
         { name: "Global Property Guide, Bangkok gross rental yields by district, Q1 2026", url: "https://www.globalpropertyguide.com/asia/thailand/rental-yields" },
@@ -1782,8 +1784,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UK","England"],
       currencySymbol: "£", currencyCode: "GBP", asOf: "2026-10",
       buyer: "UK resident owner-occupier buying a first home at standard SDLT rates (first-time buyer relief ignored): a long-leasehold flat or a freehold house",
-      downPaymentPct: 15, mortgageRate: 5.52, mortgageTerm: 35, riskFreeRate: 3.75, horizon: 30, sellingCostPct: 2,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.68 }, { toYear: 35, type: "floating", rateMin: 5.3, rateMax: 5.68 }],
+      downPaymentPct: 15, mortgageRate: 5.7, mortgageTerm: 35, riskFreeRate: 3.75, horizon: 30, sellingCostPct: 2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 6 }, { toYear: 35, type: "floating", rateMin: 5.3, rateMax: 6 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1840,7 +1842,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Inner London is mostly leasehold flats; outer zones are Victorian terraces and 1930s semis. About half of London homes are owner-occupied, per Census 2021 (estimate, not sourced).",
         downPaymentPct: "UK lenders price by loan-to-value band. Deposits of 10 to 15% are common for first buyers, so 15% (85% LTV) is used; bigger deposits get slightly lower rates (estimate, not sourced).",
-        mortgageRate: "Moneyfacts, Sep 2026: 5-year fix 5.68% (2-year 5.63%, SVR 7.13%). Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and today's 5.68%.",
+        mortgageRate: "Moneyfacts, 5 Oct 2026: average 5-year fix 6.00% (2-year 5.98%), up from 5.01% on 1 Sep. Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and 6%.",
         riskFreeRate: "Bank Rate is 3.75% (held 17 Sep 2026). Average easy-access savings pay 2.53% and 1-year fixed bonds 4.28% (Moneyfacts, Sep 2026), so 3.75% is used.",
         sellingCostPct: "Estate agent about 1.2% plus VAT, plus conveyancing, EPC and leasehold pack, about 2% in all. No capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "ONS private rents in London rose 3.4% a year from Jan 2015 to Aug 2026 (£1,580 to £2,332 a month, all tenancies), so 3% a year is used long-run.",
@@ -1851,6 +1853,7 @@ window.RVO_QUICKSTART = {
         caveat: "London prices fell 3.3% in the year to Jul 2026. Leasehold flats can bring service charge rises and major-works bills. Prices are asking less about 3% for negotiation (estimate, not sourced)."
       },
       sources: [
+        { name: "Moneyfactscompare, average 5-year fixed rate hits 6%, 5 Oct 2026", url: "https://moneyfactscompare.co.uk/news/mortgages/avg-5-year-fixed-rate-at-6pc/" },
         { name: "ONS, Private rent and house prices, UK: September 2026", url: "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/privaterentandhousepricesuk/september2026" },
         { name: "ONS, Price Index of Private Rents by local authority and bedrooms, Aug 2026", url: "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/priceindexofprivaterentsukmonthlypricestatistics" },
         { name: "HM Land Registry, UK HPI average prices by property type, Jul 2026", url: "https://publicdata.landregistry.gov.uk/market-trend-data/house-price-index-data/Average-prices-Property-Type-2026-07.csv" },
@@ -2105,7 +2108,7 @@ window.RVO_QUICKSTART = {
       aliases: ["Noord-Holland","North Holland","Randstad","Mokum"],
       currencySymbol: "€", currencyCode: "EUR", asOf: "2026-10",
       buyer: "Dutch resident owner-occupier, first home, aged 35 or over (no starter transfer-tax exemption), without NHG",
-      downPaymentPct: 10, mortgageRate: 3.9, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 1.6,
+      downPaymentPct: 10, mortgageRate: 4.4, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 1.6,
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -2150,7 +2153,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Amsterdam is mostly flats; roughly 3 in 10 homes are owner-occupied and about 4 in 10 are social rentals (estimate, not sourced). Houses sit outside the ring.",
         downPaymentPct: "10%: Dutch rules allow loans up to 100% of value, but buyers pay purchase costs from savings and about 10% down reaches the 90% LTV rate band (estimate, not sourced).",
-        mortgageRate: "3.9%: new Dutch house-purchase loans averaged 3.94% in Aug 2026, with 5-10 year fixes at 3.93% (ECB MIR). Most buyers fix 10 years on a 30-year annuity loan.",
+        mortgageRate: "4.4%: a 10-year fix at 90% LTV without NHG costs 4.3 to 4.5% (Sep 2026), above the 3.94% all-loan average (ECB MIR, Aug). Most buyers fix 10 years on a 30-year annuity.",
         riskFreeRate: "2.5%: new 1-year household term deposits paid 2.54% in Aug 2026 (ECB MIR); instant-access savings about 1.3%; ECB deposit rate 2.5%.",
         sellingCostPct: "1.6%: seller's agent commission of about 1-1.5% plus VAT, marketing and energy label; no capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "3%: CBS measured Amsterdam rent rises averaging about 3.4%/yr over 2015-2026 (4.3% in 2026); free-sector rises for sitting tenants are capped near CPI + 1%.",
@@ -2161,6 +2164,8 @@ window.RVO_QUICKSTART = {
         caveat: "Mortgage interest deductibility and erfpacht ground rent are not modelled. Homes under 187 WWS points (rent up to €1,228) are regulated; rents shown are free sector. Starter exemption ignored."
       },
       sources: [
+        { name: "Westland Utrecht Bank, rates from 1 Oct 2026: 10-year fix 4.50% up to 90% of value", url: "https://www.westlandutrechtbank.nl/documents/pdfs/Renteoverzicht/Herziening/20260618_Herzieningsrente_20261001.pdf" },
+        { name: "Homefinance, average 10-year fixed rate with NHG 4.10% at end Aug 2026", url: "https://www.homefinance.nl/nieuws-blog/2026/zoveel-hypotheekrente-betaalt-de-gemiddelde-nederlander-op-dit-moment-301972/" },
         { name: "NVM, Marktoverzicht Groot-Amsterdam Q3 2026", url: "https://www.nvm.nl/api/assets/media/0n0n1d0d/marktoverzicht-regio-groot-amsterdam-3e-kwartaal-2026.pdf" },
         { name: "NVM, Regionale analyse Groot-Amsterdam Q3 2026", url: "https://www.nvm.nl/api/assets/media/gtncrfbe/regionale-analyse-regio-groot-amsterdam-3e-kwartaal-2026.pdf" },
         { name: "NVM, Analyse woningmarkt Q3 2026", url: "https://www.nvm.nl/api/assets/media/2uwnzubw/bijlage-1-analyse-woningmarkt-3e-kwartaal-2026.pdf" },
