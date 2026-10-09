@@ -47,7 +47,7 @@ const STRIP_H = 40;
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const MON = MONTHS.map(m => m.slice(0, 3));
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const COUNTRY = { HK: 'Hong Kong', MO: 'Macau', MM: 'Myanmar', CD: 'DR Congo', CG: 'Congo', PS: 'Palestine', CI: 'Côte d’Ivoire', VA: 'Vatican City', FM: 'Micronesia', UM: 'US Outlying Islands' };
+const COUNTRY = { HK: 'Hong Kong (China)', MO: 'Macau (China)', TW: 'Taiwan (China)', MM: 'Myanmar', CD: 'DR Congo', CG: 'Congo', PS: 'Palestine', CI: 'Côte d’Ivoire', VA: 'Vatican City', FM: 'Micronesia', UM: 'US Outlying Islands' };
 const CITY = {
   'America/St_Johns': 'St John’s', 'Asia/Ho_Chi_Minh': 'Ho Chi Minh City', 'Atlantic/Canary': 'Canary Islands',
   'Atlantic/Azores': 'Azores', 'Atlantic/Madeira': 'Madeira', 'Pacific/Galapagos': 'Galápagos', 'Pacific/Easter': 'Easter Island',

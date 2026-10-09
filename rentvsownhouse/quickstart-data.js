@@ -1156,7 +1156,7 @@ window.RVO_QUICKSTART = {
       ]
     },
     {
-      key: "taipei", city: "Taipei", country: "Taiwan", countryId: "Taiwan", countryCode: "TW", region: "East Asia",
+      key: "taipei", city: "Taipei", country: "Taiwan (China)", countryId: "Taiwan", countryCode: "TW", region: "East Asia",
       aliases: ["Taipei City"],
       currencySymbol: "$", currencyCode: "TWD", asOf: "2026-09",
       buyer: "Taiwanese citizen owner-occupier buying a first home (self-use tax rates), standard floating-rate bank mortgage, no subsidised youth (新青安) loan",
