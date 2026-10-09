@@ -22,7 +22,7 @@ Covered:
    several data years give that rule back: the intercept, the effect per year
    of age, per km, and of a Yes/No, with R² = 1. Prices land in today's money
    and years become ages at the listing's data year.
-2. **Both Quick Start presets, all four models.** Predictions, R² and the
+2. **All four Quick Start presets (Camry, Perth house, camera, hotel), all four models.** Predictions, R² and the
    typical error match the replay. Rescaling a feature (km into metres)
    changes its coefficient and never a prediction.
 3. **Items never feed the model.** Six extreme items leave every coefficient
