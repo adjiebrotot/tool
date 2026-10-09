@@ -1706,9 +1706,11 @@ function qsClose(){
 // derivation included.
 function qsArea(where){
   let s = String(where || '').split(/[.;]\s/)[0];
-  const close = s.indexOf(')');
-  if(s.length > 120 && close > 0 && close < 140) s = s.slice(0, close + 1);
+  const close = s.lastIndexOf(')', 139);
+  if(s.length > 120 && close > 40) s = s.slice(0, close + 1);
   if(s.length > 140) s = s.slice(0, s.lastIndexOf(' ', 137)) + '…';
+  // A cut inside a bracketed list still closes it.
+  if((s.match(/\(/g) || []).length > (s.match(/\)/g) || []).length) s += ')';
   return s;
 }
 // Show a scenario on the pickers without loading it (applyPreset loads it).
