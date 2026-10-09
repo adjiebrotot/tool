@@ -602,24 +602,24 @@ const SIMPLE_INC = {
    ---------------------------------------------------------------------------
    A Simple/Detailed row used to carry both halves of the explanation at once,
    which is two paragraphs to read a switch you have already made. Each tip now
-   leads with the mode that is live and keeps one clause on what the other mode
-   would add, which is all the switch is asking. Keyed by UI key, then value. */
+   explains the mode that is live, and the shared tooltip adds the line saying
+   the other mode has its own (data-tip-options). Keyed by UI key, then value. */
 const MODE_TIPS = {
   incMode: {
-    simple:   '<strong>Simple</strong> counts one gross figure in full, as a lender treats base salary or business profit. Detailed splits it per stream.',
-    detailed: '<strong>Detailed</strong> takes each stream with its own shading, the share a lender counts. Simple takes one gross figure in full.'
+    simple:   '<strong>Simple:</strong> counts one gross figure in full, as a lender treats base salary or business profit.',
+    detailed: '<strong>Detailed:</strong> takes each stream with its own shading, the share a lender counts.'
   },
   debtsMode: {
-    simple:   '<strong>Simple</strong> takes the headline figure of each debt you tick, on the standard settings shown beneath it. Detailed opens those up.',
-    detailed: '<strong>Detailed</strong> sets each rate, term, repayment type and the rate charged on card limits. Simple assesses on the standards.'
+    simple:   '<strong>Simple:</strong> takes the headline figure of each debt you tick, on the standard settings shown beneath it.',
+    detailed: '<strong>Detailed:</strong> sets each rate, term, repayment type and the rate charged on card limits.'
   },
   loanMode: {
-    simple:   '<strong>Simple</strong> asks for the rate and term, then tests you on the standard APRA settings below. Detailed lets you move them.',
-    detailed: '<strong>Detailed</strong> moves the buffer, lender floor, minimum surplus and minimum NSR to one lender&rsquo;s policy. Simple uses APRA standards.'
+    simple:   '<strong>Simple:</strong> asks for the rate and term, then tests you on the standard APRA settings below.',
+    detailed: '<strong>Detailed:</strong> moves the buffer, lender floor, minimum surplus and minimum NSR to one lender&rsquo;s policy.'
   },
   capsMode: {
-    simple:   '<strong>Simple</strong> takes the price, deposit and purchase costs, and reads the LVR ceiling off the LMI switch. Detailed adds the rest.',
-    detailed: '<strong>Detailed</strong> adds the DTI cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.'
+    simple:   '<strong>Simple:</strong> takes the price, deposit and purchase costs, and reads the LVR ceiling off the LMI switch.',
+    detailed: '<strong>Detailed:</strong> adds the DTI cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.'
   }
 };
 
@@ -630,12 +630,11 @@ const DEPOSIT_TIPS = {
 };
 
 function syncUI(){
-  $('depsValue').textContent    = fmt.num(num('deps'));
   $('incSplitValue').textContent = fmt.pct(num('incSplit'), 0);
   $('cardPctValue').textContent = fmt.pct(num('cardPct'));
   $('bufferValue').textContent  = fmt.pct(num('buffer'));
   $('floorValue').textContent   = fmt.pct(num('floorRate'));
-  $('nsrValue').textContent     = num('nsrMin').toFixed(2);
+  $('nsrValue').textContent     = num('nsrMin').toFixed(2)+'×';
   $('dtiValue').textContent     = num('dtiCap').toFixed(2)+'×';
   $('lvrValue').textContent     = fmt.pct(num('lvrMax'),0);
 
@@ -664,7 +663,7 @@ function syncUI(){
     + `whatever the balance.`;
   $('loanSimpleNote').textContent = `Tested at the higher of ${fmt.pct(num('prodRate') + num('buffer'))} `
     + `(product rate plus the ${fmt.pct(num('buffer'))} APRA buffer) and the ${fmt.pct(num('floorRate'))} lender floor, `
-    + `keeping ${fmt.money0(num('umiReq'))}/mo spare and an NSR of at least ${num('nsrMin').toFixed(2)}.`;
+    + `keeping ${fmt.money0(num('umiReq'))}/mo left over (UMI) and income cover (NSR) of at least ${num('nsrMin').toFixed(2)}.`;
   $('lvrSimpleNote').textContent = bool('lmiCap')
     ? `Ceiling lifted to 95% LVR, with the ${fmt.pct(num('lmiRate'))} premium capitalised onto the loan.`
     : 'Ceiling held at 80% LVR, the level that avoids LMI.';
@@ -697,6 +696,40 @@ function renderKpis(r, p){
   $('kpiUmiSub').textContent = (r.umiPass ? 'passes' : 'fails') + ` the ${fmt.money0(p.umiReq)} minimum surplus`;
 }
 
+/* What each cap means, in the words the verdict uses. */
+const CAP_WHY = {
+  serv: 'serviceability: what your income can repay after tax, living costs and debts',
+  dti:  'debt to income: total debt as a multiple of income',
+  lvr:  'loan to value: the loan as a share of the property',
+  dep:  'your deposit: the loan it can support at the loan to value limit'
+};
+
+/* The answer in one sentence: what a lender would lend, and whether that buys
+   the home the reader priced. A pass or a miss against their own price, so
+   the tone says which; the figures underneath say why. */
+function renderVerdict(r, p){
+  const loan = fmt.money0(r.maxLoan), price = fmt.money0(p.price);
+  let tone, title;
+  if(r.maxLoan < 1){
+    tone = 'bad';
+    title = 'On these figures a lender would not lend anything.';
+  } else if(p.price > 0 && r.maxPrice + 0.5 >= p.price){
+    tone = 'good';
+    title = `A lender would likely lend you up to <span class="v-num">${loan}</span>, enough for the ${price} home you entered.`;
+  } else if(p.price > 0){
+    tone = 'warn';
+    title = `A lender would likely lend you up to <span class="v-num">${loan}</span>, <span class="v-num">${fmt.money0(p.price - r.maxPrice)}</span> short of the ${price} home you entered.`;
+  } else {
+    tone = '';
+    title = `A lender would likely lend you up to <span class="v-num">${loan}</span>.`;
+  }
+  const body = [];
+  if(r.maxLoan >= 1) body.push(`With your deposit that buys a home of up to ${fmt.money0(r.maxPrice)}.`);
+  body.push(`The limit is set by ${CAP_WHY[r.binding.key] || r.binding.label.toLowerCase()}.`);
+  if(r.maxRepay <= 0) body.push('Income left after tax, living costs and debts does not cover any repayment at the assessment rate.');
+  SharedVerdict.set('verdict', { tone, title, body: body.join(' ') });
+}
+
 function table(head, rows){
   return '<table><thead><tr>' + head.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>'
        + rows.map(r => `<tr class="${r.cls||''}">` + r.cells.map((c,idx) =>
@@ -712,8 +745,8 @@ function renderCaps(r){
       fmt.money0(c.value),
       c.key===r.binding.key ? '—' : '+'+fmt.money0(c.value - r.maxLoan),
       c.key===r.binding.key
-        ? '<span class="badge badge-warning">Binding</span>'
-        : '<span class="badge badge-info">Slack</span>'
+        ? '<span class="badge badge-info">Binding</span>'
+        : '<span class="badge badge-muted">Room left</span>'
     ],
     cellCls: ['','','','']
   }));
@@ -752,7 +785,7 @@ function renderBuild(r, p){
         'serviced on top of the base loan'], cellCls:['','','','note'] });
   rows.push({ cls:'total', cells:['Loan this supports', fmt.money0(r.Lserv), '',
         'maximum repayment inverted through the annuity formula'], cellCls:['','','','note'] });
-  $('buildTableWrap').innerHTML = table(['Item','Monthly','Annual','Note'], rows);
+  $('buildTableWrap').innerHTML = table(['Item','$ a month','$ a year','Note'], rows);
 }
 
 function renderIncome(r){
@@ -762,17 +795,17 @@ function renderIncome(r){
   if(!rows.length) rows.push({ cells:['No income entered','$0','—','$0'], cellCls:['','','',''] });
   rows.push({ cls:'total', cells:['Total', fmt.money0(r.grossUnshaded),
         fmt.pct(r.grossUnshaded ? r.grossAssessable/r.grossUnshaded*100 : 0, 1), fmt.money0(r.grossAssessable)], cellCls:['','','',''] });
-  $('incomeTableWrap').innerHTML = table(['Stream','Entered, annual','Shading','Assessable'], rows);
+  $('incomeTableWrap').innerHTML = table(['Stream','Entered, $ a year','Shading','Assessable, $ a year'], rows);
 }
 
 function renderCommitments(r){
   const rows = r.commitLines.filter(l => l.value !== 0).map(l => ({
-    cells:[l.label, fmt.money0(l.value), l.note], cellCls:['', l.value<0?'pos':'neg', 'note']
+    cells:[l.label, fmt.money0(l.value), l.note], cellCls:['', l.value<0?'pos':'', 'note']
   }));
   if(!rows.length) rows.push({ cells:['No commitments entered','$0',''], cellCls:['','','note'] });
   rows.push({ cls:'total', cells:['Total monthly commitments', fmt.money0(r.commitments),
-        r.commitRaw < 0 ? 'floored at zero, the closures exceed every other commitment' : ''], cellCls:['','neg','note'] });
-  $('commTableWrap').innerHTML = table(['Item','Monthly','Note'], rows);
+        r.commitRaw < 0 ? 'floored at zero, the closures exceed every other commitment' : ''], cellCls:['','','note'] });
+  $('commTableWrap').innerHTML = table(['Item','$ a month','Note'], rows);
 }
 
 // The HEM benchmark is not a warning, it is the number the assessment actually
@@ -822,10 +855,10 @@ function renderWarnings(r, p){
 // colour alone to tell the four constraints apart.
 const SERIES = [
   { key:'cap',  label:'Borrowing capacity', varName:'--accent-strong', width:3.4, dash:[]     },
-  { key:'serv', label:'Serviceability',     varName:'--accent2',       width:1.9, dash:[7,4]  },
-  { key:'dti',  label:'Debt to income',     varName:'--line-b',        width:1.9, dash:[2,3]  },
-  { key:'lvr',  label:'Loan to value',      varName:'--gold',          width:1.9, dash:[11,4] },
-  { key:'dep',  label:'Deposit',            varName:'--line-d',        width:1.9, dash:[1,4]  }
+  { key:'serv', label:'Serviceability',     varName:'--line-c',        width:1.9, dash:[7,4]  },
+  { key:'dti',  label:'Debt to income',     varName:'--gold',          width:1.9, dash:[2,3]  },
+  { key:'lvr',  label:'Loan to value',      varName:'--line-d',        width:1.9, dash:[11,4] },
+  { key:'dep',  label:'Deposit',            varName:'--muted',         width:1.9, dash:[1,4]  }
 ];
 
 function renderLegend(datasets){
@@ -926,7 +959,7 @@ function updateChart(sweep, userIdx){
       x: {
         type:'linear',
         ...(bounded ? { min:xMin, max:xMax } : {}),
-        title:{ display:true, text:'Gross income, pre-tax ($ per year)', color:muted, font:{size:11} },
+        title:{ display:true, text:'Gross income before tax ($ a year)', color:muted, font:{size:11} },
         ticks:{ color:muted, maxTicksLimit:9, font:{size:11}, callback:v => fmt.currency(v, true) },
         grid:{ color:grid }
       },
@@ -953,11 +986,13 @@ function updateChart(sweep, userIdx){
 
 function render(){
   syncUI();
+  syncUnitSwitches();
   const p = readInputs();
   const r = compute(p);
   const sweep = buildSweep(p);
   last = { p, r, sweep };
 
+  renderVerdict(r, p);
   renderKpis(r, p);
   renderCaps(r);
   renderBuild(r, p);
@@ -966,7 +1001,75 @@ function render(){
   renderHemNote(r, p);
   renderDepositNote(r, p);
   renderWarnings(r, p);
+  renderAssumptions(r, p);
   updateChart(sweep, sweep.tiny ? -1 : USER_INDEX);
+}
+
+/* ── What this assumes ──
+   Built from this application: every line names the figure it rests on, and
+   a debt, income stream or option left unused says nothing. */
+function renderAssumptions(r, p){
+  const el = $('assumptions'); if(!el) return;
+  const pc = v => (+(Number(v)||0).toFixed(2)) + '%';
+  const m = fmt.money0;
+  const items = [];
+
+  const ioYrs = p.newType === 'io' ? Math.min(p.newIo, p.termYears) : 0;
+  items.push(`<strong>The new loan is tested at ${pc(r.assessRate)},</strong> ` +
+    (p.prodRate + p.buffer >= p.floorRate
+      ? `your ${pc(p.prodRate)} rate plus the ${pc(p.buffer)} buffer`
+      : `the ${pc(p.floorRate)} lender floor, above your ${pc(p.prodRate)} rate plus the ${pc(p.buffer)} buffer`) +
+    `, as principal and interest over ${Math.round(r.nMonths/12)} years${ioYrs ? ' after ' + ioYrs + ' years interest only' : ''}` +
+    (p.umiReq > 0 ? `, with ${m(p.umiReq)} a month left over (UMI)` : '') +
+    '. Lenders set these differently, so treat the answer as a guide, not a pre-approval.');
+
+  const shaded = r.streams.filter(s => s.amount > 0 && s.shade < 100);
+  if(UI.incMode === 'simple' || !shaded.length){
+    items.push(`<strong>Your ${m(r.grossUnshaded)} a year of income counts in full.</strong>`);
+  } else {
+    items.push(`<strong>Income counts at the share you set:</strong> ` +
+      shaded.map(s => s.label.toLowerCase() + ' ' + pc(s.shade)).join(', ') + `, so ${m(r.grossAssessable)} of ${m(r.grossUnshaded)} is assessed.`);
+  }
+  if(r.rentalLoss > 0 && p.negGear)
+    items.push(`<strong>The ${m(r.rentalLoss)} rental loss is negatively geared</strong> at the higher earner's ${pc(r.mRate * 100)} marginal rate.`);
+
+  const extras = [];
+  if(r.surcharge > 0) extras.push(`the ${m(r.surcharge)} Medicare levy surcharge, without private hospital cover`);
+  if(r.helpAsTax > 0) extras.push(`${m(r.helpAsTax)} of study loan repayments`);
+  items.push(`<strong>Tax is the ${p.taxYear} resident scale</strong> with LITO and the Medicare levy` +
+    (extras.length ? ', plus ' + extras.join(' and ') : '') +
+    (p.adults >= 2
+      ? (p.incSplit > 0 ? `. Two applicants are taxed as two people on a ${pc(100 - clamp(p.incSplit, 0, 50))} / ${pc(clamp(p.incSplit, 0, 50))} split.` : '. All the income is taxed in applicant 1\'s name.')
+      : '.'));
+  if(r.helpAsCommitment > 0) items.push(`<strong>Study loan repayments of ${m(r.helpCommMonthly)} a month count as a commitment,</strong> not as tax.`);
+
+  const where = p.city === 'Regional' ? 'a regional area' : p.city;
+  const house = (p.adults >= 2 ? 'a couple' : 'a single') + (p.deps ? ' with ' + p.deps + (p.deps === 1 ? ' dependant' : ' dependants') : '');
+  items.push(r.hemBinds
+    ? `<strong>Living costs are ${m(r.living)} a month,</strong> the HEM benchmark for ${house} in ${where}` + (p.declaredExp > 0 ? `, above the ${m(p.declaredExp)} you declared.` : '.')
+    : `<strong>Living costs are the ${m(r.living)} a month you declared,</strong> above the ${m(r.hem)} HEM benchmark for ${house} in ${where}.`);
+
+  if(p.olBal > 0)
+    items.push(`<strong>Your ${m(p.olBal)} of other loans is reassessed at ${pc(r.otherAssessRate)}</strong> over the ${Math.round(r.otherMonths/12)} years left, ${m(r.otherRepay)} a month.`);
+  if(p.cardLimit > 0)
+    items.push(`<strong>Cards and lines of credit count at ${pc(p.cardPct)} of the ${m(p.cardLimit)} limit,</strong> not the balance.`);
+
+  const lvrBase = p.valuation < p.price ? 'the ' + m(p.valuation) + ' valuation' : 'the price';
+  items.push(`<strong>Capacity is the lowest of four caps, here ${r.binding.label.toLowerCase()}.</strong> ` +
+    `Debt is held to ${fmt.num(p.dtiCap, p.dtiCap % 1 ? 1 : 0)}× ${p.dtiBasis === 'assessable' ? 'assessable' : 'gross'} income and the loan to ${pc(p.lvrMax)} of ${lvrBase}` +
+    (p.lmiCap ? `, with LMI of ${pc(p.lmiRate)} added to the loan.` : '.'));
+
+  if(p.price > 0){
+    const duty = p.dutyMode === 'pct'
+      ? `<strong>Stamp duty is ${pc(p.dutyPct)} of the price, ${m(r.stampDuty)}.</strong>`
+      : `<strong>Stamp duty is the ${m(r.stampDuty)} you entered.</strong>`;
+    items.push(duty + ' State concessions and first home grants are not worked out for you.');
+    items.push(p.depositMode === 'pct'
+      ? `<strong>Your ${pc(p.depositPct)} deposit is paid on top of</strong> ${m(r.purchaseCosts)} of stamp duty and costs.`
+      : `<strong>Your ${m(p.savings)} of savings pays ${m(r.purchaseCosts)} of stamp duty and costs first,</strong> leaving ${m(Math.max(0, r.availFunds))} as the deposit.`);
+  }
+
+  el.innerHTML = items.map(t => '<li>' + t + '</li>').join('');
 }
 
 /* ───────────────────────── Exports ───────────────────────── */
@@ -1013,33 +1116,45 @@ function exportCsv(){
 // Composite the chart onto a titled canvas so the PNG stands alone. Five caps
 // told apart by their dash patterns are unreadable without a key, so the
 // export carries the page's own legend, drawn with the same marks.
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
 function chartPng(){
+  var args = arguments;
+  return SharedExport.atDesktopSize('chartCanvas', function(){ return chartPngAtSize.apply(null, args); });
+}
+function chartPngAtSize(){
   const src = $('chartCanvas');
   const pad = 28, headH = 74, footH = 34;
   const items = SharedLegend.itemsOf('chartLegend');
   const K = 1.4;                                   // 15px label ↔ a 15px-scale mark
   const markW = SharedLegend.W * K, gap = 10, itemGap = 26;
   const legendH = items.length ? 34 : 0;
+  // Laid out in CSS px and painted at a fixed 3x, so the picture is the same
+  // whatever the screen's pixel density.
+  const dpr = window.devicePixelRatio || 1, OUT = 3;
+  const plotW = Math.round(src.width / dpr), plotH = Math.round(src.height / dpr);
+  const outW = plotW + pad*2, outH = plotH + headH + legendH + footH + pad;
   const out = document.createElement('canvas');
-  out.width = src.width + pad*2;
-  out.height = src.height + headH + legendH + footH + pad;
+  out.width = outW * OUT;
+  out.height = outH * OUT;
   const ctx = out.getContext('2d');
+  ctx.scale(OUT, OUT);
   ctx.fillStyle = cssVar('--panel') || '#fff';
-  ctx.fillRect(0,0,out.width,out.height);
+  ctx.fillRect(0,0,outW,outH);
   ctx.fillStyle = cssVar('--text');
   ctx.font = '700 26px "DM Sans", sans-serif';
   ctx.fillText('Borrowing capacity across the income range', pad, pad+22);
   ctx.fillStyle = cssVar('--muted');
   ctx.font = '400 15px "DM Sans", sans-serif';
   if(last) ctx.fillText(`Capacity ${fmt.money0(last.r.maxLoan)} · binding constraint: ${last.r.binding.label} · assessed at ${fmt.pct(last.r.assessRate)}`, pad, pad+48);
-  ctx.drawImage(src, pad, headH);
+  ctx.drawImage(src, pad, headH, plotW, plotH);
   if(items.length){
     ctx.font = '500 15px "DM Sans", sans-serif';
     ctx.textBaseline = 'middle';
     const widths = items.map(it => markW + gap + ctx.measureText(it.label).width);
     const totalW = widths.reduce((a,b)=>a+b, 0) + itemGap * (items.length - 1);
-    let x = Math.max(pad, (out.width - totalW) / 2);
-    const cy = headH + src.height + legendH/2;
+    let x = Math.max(pad, (outW - totalW) / 2);
+    const cy = headH + plotH + legendH/2;
     items.forEach((it, i) => {
       SharedLegend.paint(ctx, it.swatch || {color:it.color}, x, cy, K);
       x += markW + gap;
@@ -1051,7 +1166,7 @@ function chartPng(){
     ctx.fillStyle = cssVar('--muted');
   }
   ctx.font = '400 13px "DM Sans", sans-serif';
-  ctx.fillText('Made using tool.adjiebrotots.com/borrowingcapacity', pad, out.height - 14);
+  ctx.fillText('Made using tool.adjiebrotots.com/borrowingcapacity', pad, outH - 14);
   return out;
 }
 
@@ -1060,7 +1175,13 @@ function chartPng(){
    formats. The plot itself is the canvas Chart.js drew, embedded as an image;
    everything around it is vector, which is what makes the text on an SVG stay
    crisp at any size. */
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
 function chartSvg(){
+  var args = arguments;
+  return SharedExport.atDesktopSize('chartCanvas', function(){ return chartSvgAtSize.apply(null, args); });
+}
+function chartSvgAtSize(){
   const src = $('chartCanvas');
   const NS = 'http://www.w3.org/2000/svg', XL = 'http://www.w3.org/1999/xlink';
   const dpr = window.devicePixelRatio || 1;
@@ -1145,10 +1266,10 @@ function copyPng(){
     try {
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
       btn.textContent = '✓';
+      setTimeout(() => { btn.textContent = original; }, 1400);
     } catch(e){
-      btn.textContent = '✕';
+      alert('PNG copy failed: ' + (e && e.message ? e.message : e));
     }
-    setTimeout(() => { btn.textContent = original; }, 1400);
   });
 }
 
@@ -1217,9 +1338,15 @@ function carryCaps(nextMode){
 
    Under the shipped APRA settings (5.90% product rate, 3.00% buffer, 5.50%
    floor) serviceability binds for almost every realistic borrower. That is the
-   lesson, not an accident of the numbers. The first home buyer is the one
-   deliberate contrast: a thin deposit binds instead, and capitalising LMI is
-   the lever that moves it.
+   lesson, not an accident of the numbers.
+
+   Every scenario is a buyer who can afford the home they priced, so the
+   verdict opens on "enough" and the reader sees what a workable purchase looks
+   like before they start pushing it. Each price is what that borrower would
+   realistically shop for, not what the city median says, and each clears its
+   price with a few percent to spare so the first slider nudge can tip it over.
+   The first home buyer is the one deliberate contrast: they only get there
+   because LMI is capitalised, and turning it off lets the thin deposit bind.
 
    The DTI cap is unreachable here and no scenario should chase it. Stripped to
    zero declared expenses, zero commitments and no minimum surplus, the
@@ -1235,7 +1362,9 @@ const QUICK_START_SCENARIOS = {
      detailed debts swap the flat note under the card for the rate itself, the
      one commitment here whose setting is worth arguing with a lender about.
      The car loan rows are the same in either mode.
-     NSW duty on $1.7M = $76,555, which is 4.50%. Strata, rates and insurance on
+     $1.35M buys a two-bedroom apartment in the inner east or lower north
+     shore, which is what $320k on paper actually services at the assessment
+     rate. NSW duty on $1.35M = $57,305, which is 4.24%. Strata, rates and insurance on
      an inner Sydney apartment run far above the $350/mo the page opens on. */
   'finance-bro': {
     label: 'Finance Bro, Sydney',
@@ -1248,14 +1377,16 @@ const QUICK_START_SCENARIOS = {
       hasCard:true, cardLimit:25000,
       hasPersonal:true, persRepay:950, persBal:42000,
       newPropCosts:900,
-      price:1700000, savings:550000, dutyMode:'pct', dutyPct:'4.50', otherCosts:4000
+      price:1350000, savings:550000, dutyMode:'pct', dutyPct:'4.24', otherCosts:4000
     }
   },
 
   /* Melbourne couple, two school-age children, one income each. $185k combined
      is roughly a teacher plus a mid-level public servant. Two applicants means
      two taxpayers, so the income split matters here more than anywhere else.
-     VIC duty on $950k = $52,070, which is 5.48%. */
+     $300k is savings plus the equity from selling a first apartment, buying a
+     family house in the middle-ring suburbs.
+     VIC duty on $920k = $50,270, which is 5.46%. */
   'couple': {
     label: 'Couple, Melbourne',
     modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
@@ -1265,13 +1396,14 @@ const QUICK_START_SCENARIOS = {
       privHealth:true, taxYear:'2026-27', helpMode:'none',
       incSimple:185000,
       hasCard:true, cardLimit:15000, newPropCosts:450,
-      price:950000, savings:250000, dutyMode:'pct', dutyPct:'5.48', otherCosts:4000
+      price:920000, savings:300000, dutyMode:'pct', dutyPct:'5.46', otherCosts:4000
     }
   },
 
-  /* The ordinary single Perth buyer. $105k is close to WA full-time average
-     ordinary earnings. No dependants, no car loan, one modest card.
-     WA duty on $650k = $24,890, which is 3.83%. */
+  /* The ordinary single Perth buyer. $110k is close to WA full-time average
+     ordinary earnings. No dependants, no car loan, one modest card. A $560k
+     townhouse or older house in the outer suburbs, after years of saving.
+     WA duty on $560k = $20,615, which is 3.68%. */
   'geoff': {
     label: 'Average Man, Perth',
     modes: { incWho:'employee', incMode:'simple', debtsMode:'simple',
@@ -1279,21 +1411,22 @@ const QUICK_START_SCENARIOS = {
     vals: {
       city:'Perth', adults:'1', deps:0, declaredExp:2800, privHealth:true,
       taxYear:'2026-27', helpMode:'none',
-      incSimple:105000,
+      incSimple:110000,
       hasCard:true, cardLimit:8000, newPropCosts:350,
-      price:650000, savings:150000, dutyMode:'pct', dutyPct:'3.83', otherCosts:4000
+      price:560000, savings:180000, dutyMode:'pct', dutyPct:'3.68', otherCosts:4000
     }
   },
 
-  /* Brisbane first home buyer with a study loan still running. The deposit is
-     the binding cap here, not income: $70k against a $650k price is under 11%,
-     and without LMI the lender stops at 80% of the price. Tick "LMI capitalised"
-     on the Caps tab and capacity lifts from $264k to $292k, because the ceiling
-     moves to 95% and serviceability takes over as the binding cap.
+  /* Brisbane first home buyer with a study loan still running, buying a $480k
+     unit on $120k. $70k saved is under 15% of the price, so this only works
+     because LMI is capitalised: the ceiling sits at 95% and serviceability is
+     the binding cap. Turn "LMI capitalised" off on the Purchase tab and the
+     lender stops at 80% of the price, the deposit binds instead, and capacity
+     falls from $427k to $264k, $150k short of the same unit.
 
-     The deposit has to be genuinely thin for that to be true. At $90k saved the
-     two caps sit 1.5% apart and capitalising the premium makes the borrower
-     WORSE off, which is the opposite of the lesson. B27d guards that margin.
+     The deposit has to be genuinely thin for that to be true, and the loan has
+     to sit clear of the 95% ceiling, or a small change flips which cap binds.
+     B27d and B27g guard both margins.
 
      QLD first home concession is a full exemption to $700,000, so duty is nil. */
   'first-home': {
@@ -1303,18 +1436,19 @@ const QUICK_START_SCENARIOS = {
     vals: {
       city:'Brisbane', adults:'1', deps:0, declaredExp:2600, privHealth:true,
       taxYear:'2026-27', helpMode:'tax', helpThreshold:67000,
-      incSimple:95000,
+      incSimple:120000,
       hasCard:true, cardLimit:5000, newPropCosts:400,
-      price:650000, savings:70000, dutyMode:'pct', dutyPct:'0.00', otherCosts:4000,
-      lmiCap:false
+      price:480000, savings:70000, dutyMode:'pct', dutyPct:'0.00', otherCosts:4000,
+      lmiCap:true
     }
   },
 
   /* Adelaide sole trader, one dependant. $165k is two-year average net profit
      after add-backs, which is what a lender assesses for the self-employed, and
      the Employee / Self-employed switch is what puts the form on that side.
-     A ute under finance is the commitment that bites.
-     SA duty on $850k = $40,580, which is 4.77%. */
+     A ute under finance is the commitment that bites. A family house in the
+     northern or southern suburbs.
+     SA duty on $780k = $36,730, which is 4.71%. */
   'tradie': {
     label: 'Self-employed tradie, Adelaide',
     modes: { incWho:'self', incMode:'simple', debtsMode:'simple',
@@ -1325,7 +1459,7 @@ const QUICK_START_SCENARIOS = {
       incSimple:165000,
       hasCard:true, cardLimit:20000, newPropCosts:380,
       hasPersonal:true, persRepay:950, persBal:48000,
-      price:850000, savings:300000, dutyMode:'pct', dutyPct:'4.77', otherCosts:4000
+      price:780000, savings:300000, dutyMode:'pct', dutyPct:'4.71', otherCosts:4000
     }
   }
 };
@@ -1365,6 +1499,53 @@ function applyQuickStart(key){
   render();
 }
 
+/* Deposit and stamp duty each take an amount or a percentage of the price.
+   Switching one restates its figure rather than keeping it, so the answer
+   stays where it was: 4% duty on a $900,000 price becomes $36,000, and back.
+   The two deposit questions differ (see compute, step 7): an amount is the
+   cash in the bank and the purchase costs come out of it first, a percentage
+   is the down payment itself with the costs paid on top. So $200,000 of
+   savings with $40,000 of costs is a 17.778% deposit, the same $160,000 down,
+   and the way back adds the costs again. A percentage is held to the field's
+   three decimals, an amount to the cent; a deposit is kept within 0 to 100%
+   of the price. The mode it converts FROM is kept on the select and re-read on
+   every render, since a Quick Start or the mini cache sets it silently. */
+const UNIT_SWITCHES = {
+  dutyMode(to){
+    const price = num('price');
+    if(to === 'amount') setAmount('dutyAmt', Math.round(price*num('dutyPct'))/100);
+    else if(price > 0) setPct('dutyPct', num('dutyAmt')/price*100);
+  },
+  depositMode(to){
+    const price = num('price');
+    const duty  = str('dutyMode') === 'pct' ? price*num('dutyPct')/100 : num('dutyAmt');
+    const costs = duty + num('otherCosts');
+    if(to === 'amount') setAmount('savings', Math.round((price*num('depositPct')/100 + costs)*100)/100);
+    else if(price > 0) setPct('depositPct', Math.min(100, Math.max(0, (num('savings') - costs)/price*100)));
+  }
+};
+const setPct = (id, v) => { $(id).value = SharedFmt.formatThousands(String(Math.round(v*1000)/1000), { maxDecimals:3 }); };
+function syncUnitSwitches(){
+  Object.keys(UNIT_SWITCHES).forEach(id => { $(id).dataset.prev = $(id).value; });
+}
+// Listens on the select itself, so it runs before the panel-wide render.
+function wireUnitSwitches(){
+  Object.keys(UNIT_SWITCHES).forEach(id => {
+    const sel = $(id);
+    const sync = () => { sel.dataset.prev = sel.value; };
+    sync();
+    sel.addEventListener('focus', sync);
+    sel.addEventListener('mousedown', sync);
+    const onSwitch = () => {
+      const from = sel.dataset.prev, to = sel.value;
+      sel.dataset.prev = to;
+      if(from && from !== to) UNIT_SWITCHES[id](to);
+    };
+    sel.addEventListener('input', onSwitch);
+    sel.addEventListener('change', onSwitch);
+  });
+}
+
 function wireQuickStart(){
   document.querySelectorAll('.quick-start-btn').forEach(btn =>
     btn.addEventListener('click', () => applyQuickStart(btn.dataset.preset)));
@@ -1390,6 +1571,8 @@ function wireSegments(){
 
 function init(){
   captureDefaults();
+  SharedSeg.fromSelect($('adults'), { labelOf: o => o.value, ariaLabel: 'Applicants' });
+  SharedSeg.fromSelect($('deps'), { labelOf: o => o.value, ariaLabel: 'Dependants' });
 
   document.querySelectorAll('.fmt-num').forEach(el =>
     SharedFmt.attachCurrencyInput(el, { maxDecimals:2 }));
@@ -1427,6 +1610,7 @@ function init(){
   });
 
   wireSegments();
+  wireUnitSwitches();
   wireQuickStart();
 
   // Persist stores form controls on its own. The segmented controls are

@@ -73,6 +73,9 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="stylesheet" href="../dark.css">
@@ -99,8 +102,9 @@
   <div class="divider"></div>
   <button class="btn btn-primary" id="savePngBtn">⬇ PNG</button>
   <button class="btn btn-primary" id="copyPngBtn" title="Copy PNG to clipboard">⧉</button>
-  <button class="btn btn-green"   id="saveJsonBtn">💾 Save</button>
-  <button class="btn"             id="loadJsonBtn">📂 Load</button>
+  <button class="btn"             id="saveJsonBtn" data-icon="save" title="Save this canvas to a JSON file">Save</button>
+  <button class="btn"             id="loadJsonBtn" data-icon="open" title="Open a saved canvas JSON file">Open</button>
+  <button class="btn"             id="sampleBtn" title="Fill the canvas with a worked example">Sample</button>
   <div class="divider"></div>
   <button class="btn" id="themeBtn">🌙 Dark</button>
   <a href="https://tool.adjiebrotots.com/" class="btn">← Other Tools</a>
@@ -136,7 +140,7 @@
     <option value="28">28</option>
   </select>
   <div class="fbar-sep"></div>
-  <span class="fbar-del-btn" id="floatDelBtn" title="Delete item">⊗</span>
+  <span class="fbar-del-btn" id="floatDelBtn" data-icon="trash" title="Delete item"></span>
 </div>
 
 <!-- CONFIRM MODAL -->
@@ -156,6 +160,8 @@
   <div class="export-spinner"><div class="spinner-ring"></div>Generating PNG…</div>
 </div>
 <div class="scroll-hint" id="scrollHint">← Swipe canvas to explore →</div>
+
+<script src="../dropdown.js"></script>
 
 <script src="../shared.js"></script>
 <script src="script.js"></script>

@@ -960,7 +960,7 @@ function zoneLongName(z) {
 }
 function renderCard() {
   const z = cardZone, card = $('placeCard');
-  const close = cardPinned ? '<button class="wc-x" data-close aria-label="Close">✕</button>' : '';
+  const close = cardPinned ? SharedIcon.button('close', 'Close', 'wc-x', 'data-close') : '';
   let html = '<div class="wc-card-head"><div><div class="wc-card-name">' + esc(z.name) + '</div>' +
     (z.name !== z.country ? '<div class="wc-card-country">' + esc(z.country) + '</div>' : '') + '</div>' + close + '</div>';
   if (!z.fmt) {
@@ -1158,9 +1158,9 @@ function renderPicker() {
   }
   pickFocus = -1;
   pickEls.list.innerHTML = pickItems.length
-    ? pickItems.map((e, i) => '<div class="city-opt" role="option" data-i="' + i + '"><div>' + esc(e.label) + '</div><div class="opt-sub">' +
-        esc([e.sub, gmt(e.z ? e.z.off : userOff)].filter(Boolean).join(' · ')) + '</div></div>').join('')
-    : '<div class="city-empty">No place found. Try a country name.</div>';
+    ? pickItems.map((e, i) => '<div class="city-opt combo-opt" role="option" data-i="' + i + '"><span class="combo-text"><span class="combo-main">' +
+        esc(e.label) + '</span><span class="combo-sub">' + esc([e.sub, gmt(e.z ? e.z.off : userOff)].filter(Boolean).join(' · ')) + '</span></span></div>').join('')
+    : '<div class="combo-empty">No place found. Try a country name.</div>';
   pickEls.list.classList.add('open');
 }
 function choosePick(i) {

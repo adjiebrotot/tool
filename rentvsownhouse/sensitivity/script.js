@@ -7,32 +7,36 @@ var Tips = window.RVO_TIPS || {};
 let lang = (window.DEFAULT_LANG === 'id') ? 'id' : 'en';
 const LANG_SENS = {
   en: {
-    sensTitle: 'Rent vs Own — Sensitivity Tool',
-    sensSubtitle: 'Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.',
+    sensTitle: 'Rent vs Own: Sensitivity Tool',
+    sensSubtitle: 'Model the long-term financial outcome of renting vs buying property, comparing cash, equity and net wealth over time.',
     btnBack: '← Back',
-    labelCurrency: 'Currency:',
+    labelCurrency: 'Currency Symbol:',
     labelMetric: 'Metric:',
-    labelAtYear: 'At Year:',
+    labelAtYear: 'At year:',
     yearHint: "(clamped to each scenario's horizon)",
     btnCSV: '⬇ CSV',
-    btnUploadCSV: '⬆ CSV',
+    btnUploadCSV: 'CSV',
     btnCompareAll: 'Compare',
     csvParseError: 'Could not read this CSV. Make sure it is a sensitivity CSV exported from this tool.',
-    gcTitle: 'All Scenarios',
+    gcTitle: 'All scenarios',
     gcScenariosLabel: 'Scenarios:',
     gcShowOwn: 'Own',
     gcShowRent: 'Rent',
-    metricNetEquity: 'Net Equity',
-    metricLiquidCash: 'Liquid Cash',
-    metricAccumCost: 'Accum. Cost',
+    metricNetEquity: 'Net equity',
+    metricLiquidCash: 'Liquid cash',
+    metricAccumCost: 'Accumulated cost',
+    // Phone-width forms of the metric switch, so its three options keep one row.
+    metricNetEquityShort: 'Net equity',
+    metricLiquidCashShort: 'Liq. cash',
+    metricAccumCostShort: 'Accum. cost',
     tableHeaderParam: 'Parameter',
     tableHeaderUnit: 'Unit',
     btnAddScenario: '+ Scenario',
     scenPlaceholder: 'Scenario',
-    cappedAt: (n) => `capped at yr ${n}`,
-    ownOutputLabel: (ml) => `Own — ${ml}`,
-    rentOutputLabel: (ml) => `Rent — ${ml}`,
-    deltaLabel: 'Δ Own − Rent',
+    cappedAt: (n) => `capped at year ${n}`,
+    ownOutputLabel: (ml) => `Own: ${ml}`,
+    rentOutputLabel: (ml) => `Rent: ${ml}`,
+    deltaLabel: 'Own minus rent',
     actionsLabel: 'Per-scenario',
     dlOwnTitle: 'Download Own cashflow (CSV)',
     dlRentTitle: 'Download Rent cashflow (CSV)',
@@ -51,104 +55,117 @@ const LANG_SENS = {
     seriesRent: 'Rent',
     boolEnabled: 'Enabled',
     dupTitle: 'Duplicate',
+    presetTitle: 'Quick Start: fill this column with a city',
+    presetPick: 'Quick Start city…',
+    dragTitle: 'Drag to reorder scenarios',
     removeTitle: 'Remove',
-    sepGeneral: 'General',
-    sepOwn: 'Own — Property & Mortgage',
-    sepRent: 'Rent — Rental Payments & Costs',
-    pHorizon: 'Horizon',
+    sepGeneral: 'Assumptions',
+    sepOwn: 'Home: property & mortgage',
+    sepRent: 'Rent: rental payments & costs',
+    pHorizon: 'Time horizon',
     pRiskFreeRate: 'Risk-Free Rate',
-    pInitialCash: 'Initial Cash',
-    pMonthlyBudget: 'Monthly Housing Budget',
-    pMonthlyBudgetIncrease: 'Budget Annual Increase',
-    pPropertyPrice: 'Property Price',
-    pDownPaymentPct: 'Down Payment',
-    pMortgageType: 'Mortgage Type',
-    pMortgageRate: 'Mortgage Rate',
-    pMortgageTerm: 'Mortgage Term',
-    pHouseGrowth: 'House Growth (RPPI)',
-    pSellingCost: 'Selling Cost',
-    pSetupCost: 'Setup Cost',
-    pSetupCostType: 'Setup Cost Type',
-    pOwnOngoingCost: 'Ongoing Cost (Own)',
-    pOwnOngoingCostFreq: 'Own Cost Frequency',
-    pOwnOngoingCostType: 'Own Cost Type',
-    pOwnOngoingInflation: 'Own Cost Inflation',
-    pCostInterestOnly: 'Cost = Interest Only',
-    pRentAmount: 'Rent Amount',
-    pRentFreq: 'Rent Frequency',
-    pRentInflation: 'Rent Inflation',
-    pRentOngoingCost: 'Ongoing Cost (Rent)',
-    pRentOngoingCostFreq: 'Rent Cost Frequency',
-    pRentOngoingCostType: 'Rent Cost Type',
-    pRentOngoingInflation: 'Rent Cost Inflation',
-    pMortgageMode: 'Mortgage Mode',
-    pOwnCostsMode: 'Own Costs Mode',
-    pRentCostsMode: 'Rent Costs Mode',
+    pInitialCash: 'Initial cash',
+    pMonthlyBudget: 'Monthly housing budget',
+    pMonthlyBudgetIncrease: 'Budget annual increase',
+    pPropertyPrice: 'Property price',
+    pDownPaymentPct: 'Down payment',
+    pMortgageType: 'Mortgage type',
+    pMortgageRate: 'Mortgage rate',
+    pMortgageTerm: 'Mortgage term',
+    pHouseGrowth: 'House price growth (RPPI)',
+    pSellingCost: 'Selling cost',
+    pSetupCost: 'Setup cost',
+    pSetupCostType: 'Setup cost type',
+    pOwnOngoingCost: 'Ongoing cost (own)',
+    pOwnOngoingCostFreq: 'Own cost frequency',
+    pOwnOngoingCostType: 'Own cost type',
+    pOwnOngoingInflation: 'Own cost inflation',
+    pCostInterestOnly: 'Cost = interest only',
+    pRentAmount: 'Rent amount',
+    pRentFreq: 'Rent frequency',
+    pRentInflation: 'Rent inflation',
+    pRentOngoingCost: 'Ongoing cost (rent)',
+    pRentOngoingCostFreq: 'Rent cost frequency',
+    pRentOngoingCostType: 'Rent cost type',
+    pRentOngoingInflation: 'Rent cost inflation',
+    pMortgageMode: 'Mortgage detail',
+    pOwnCostsMode: 'Own costs detail',
+    pRentCostsMode: 'Rent costs detail',
     segSimple: 'Simple',
     segDetailed: 'Detailed',
-    pRatePeriodN: (k) => `Rate Period ${k}`,
-    pSetupCostN: (k) => `Setup Cost ${k}`,
-    pOwnOngoingN: (k) => `Own Ongoing Cost ${k}`,
-    pRentOngoingN: (k) => `Rent Ongoing Cost ${k}`,
-    btnAddPeriod: '+ Rate Period',
-    btnAddSetupCost: '+ Setup Cost',
-    btnAddOngoingCost: '+ Ongoing Cost',
+    pRatePeriodN: (k) => `Rate, period ${k}`,
+    pSetupCostN: (k) => `Setup cost ${k}`,
+    pOwnOngoingN: (k) => `Own ongoing cost ${k}`,
+    pRentOngoingN: (k) => `Rent ongoing cost ${k}`,
+    btnAddPeriod: '+ Rate period',
+    btnAddSetupCost: '+ Setup cost',
+    btnAddOngoingCost: '+ Ongoing cost',
     optFixed: 'Fixed',
     optFloating: 'Floating',
-    uYr: 'Yr',
-    uToYr: 'to yr',
-    lblInfl: 'infl.',
+    uYr: 'Year',
+    uToYr: 'to year',
+    lblInfl: 'inflation',
     optPerYear: '/ yr',
     optPerMonth: '/ mo',
     optPerWeek: '/ wk',
     optPctBuyPrice: '% of buy price',
     notUsed: 'not used in this scenario',
+    offNoBudget: 'Only with a set budget',
+    offPctCost: 'Not used for a % cost',
     uYrs: 'yrs',
-    uPctPa: '% p.a.',
-    uAuto: '0 = auto',
+    uPctPa: '%/yr',
+    uPerYr: '/yr',
+    uPerMo: '/mo',
+    uPerWk: '/wk',
+    phAuto: 'Auto',
+    autoNote: '0 = auto',
+    unitOr: ' or ',
     uPctOfPrice: '% of price',
-    uPctPaCagr: '% p.a. CAGR',
-    uPctOfSale: '% of sale price',
-    optPI: 'P&I — Principal & Interest',
-    optIO: 'IO — Interest Only',
-    optFixedAmount: 'Fixed amount ($)',
+    uPctOfSale: '% of sale',
+    optPI: 'Principal and interest (P&I)',
+    optIO: 'Interest only (IO)',
+    optFixedAmount: (sym) => `Fixed amount (${sym})`,
     optPctPropertyPrice: '% of property price',
-    optYearly: 'Yearly',
-    optMonthly: 'Monthly',
-    optWeekly: 'Weekly',
-    optFixedDollar: 'Fixed $ amount',
+    optYearly: 'a year',
+    optMonthly: 'a month',
+    optWeekly: 'a week',
     optPctPropertyValue: '% of property value',
-    optPctAnnualRent: '% of annual rent',
+    optPctAnnualRent: '% of yearly rent',
     pctOfRent: '% of rent',
     pctOfValue: '% of value',
+    hintMax: 'Max',
+    hintMin: 'Min',
   },
   id: {
-    sensTitle: 'Rent vs Own — Sensitivity Tool',
-    sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti — membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
+    sensTitle: 'Sewa vs Beli: Alat Sensitivitas',
+    sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti, membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
     btnBack: '← Kembali',
-    labelCurrency: 'Mata Uang:',
+    labelCurrency: 'Simbol Mata Uang:',
     labelMetric: 'Metrik:',
-    labelAtYear: 'Pada Tahun:',
+    labelAtYear: 'Di tahun:',
     yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
     btnCSV: '⬇ CSV',
-    btnUploadCSV: '⬆ CSV',
+    btnUploadCSV: 'CSV',
     btnCompareAll: 'Bandingkan',
     csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
-    gcTitle: 'Semua Skenario',
+    gcTitle: 'Semua skenario',
     gcScenariosLabel: 'Skenario:',
     gcShowOwn: 'Beli',
     gcShowRent: 'Sewa',
-    metricNetEquity: 'Kekayaan Bersih',
-    metricLiquidCash: 'Uang Tunai',
-    metricAccumCost: 'Biaya Kumulatif',
+    metricNetEquity: 'Kekayaan bersih',
+    metricLiquidCash: 'Uang tunai',
+    metricAccumCost: 'Biaya kumulatif',
+    metricNetEquityShort: 'Kekayaan bersih',
+    metricLiquidCashShort: 'Tunai',
+    metricAccumCostShort: 'Total biaya',
     tableHeaderParam: 'Parameter',
     tableHeaderUnit: 'Unit',
     btnAddScenario: '+ Skenario',
     scenPlaceholder: 'Skenario',
-    cappedAt: (n) => `dipotong di thn ${n}`,
-    ownOutputLabel: (ml) => `Beli — ${ml}`,
-    rentOutputLabel: (ml) => `Sewa — ${ml}`,
-    deltaLabel: 'Δ Beli − Sewa',
+    cappedAt: (n) => `dibatasi di tahun ke-${n}`,
+    ownOutputLabel: (ml) => `Beli: ${ml}`,
+    rentOutputLabel: (ml) => `Sewa: ${ml}`,
+    deltaLabel: 'Beli dikurangi sewa',
     actionsLabel: 'Per-skenario',
     dlOwnTitle: 'Unduh arus kas Beli (CSV)',
     dlRentTitle: 'Unduh arus kas Sewa (CSV)',
@@ -164,76 +181,86 @@ const LANG_SENS = {
     seriesRent: 'Sewa',
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
+    presetTitle: 'Mulai Cepat: isi kolom ini dengan data kota',
+    presetPick: 'Kota Mulai Cepat…',
+    dragTitle: 'Seret untuk mengurutkan skenario',
     removeTitle: 'Hapus',
-    sepGeneral: 'Umum',
-    sepOwn: 'Beli — Properti & KPR',
-    sepRent: 'Sewa — Pembayaran & Biaya',
-    pHorizon: 'Jangka Waktu',
+    sepGeneral: 'Asumsi',
+    sepOwn: 'Rumah: properti & KPR',
+    sepRent: 'Sewa: pembayaran & biaya',
+    pHorizon: 'Jangka waktu',
     pRiskFreeRate: 'Suku Bunga Bebas Risiko',
-    pInitialCash: 'Modal Awal',
-    pMonthlyBudget: 'Anggaran Rumah Bulanan',
-    pMonthlyBudgetIncrease: 'Kenaikan Anggaran Tahunan',
-    pPropertyPrice: 'Harga Properti',
+    pInitialCash: 'Modal awal',
+    pMonthlyBudget: 'Anggaran perumahan bulanan',
+    pMonthlyBudgetIncrease: 'Kenaikan anggaran tahunan',
+    pPropertyPrice: 'Harga properti',
     pDownPaymentPct: 'Uang Muka (DP)',
-    pMortgageType: 'Tipe KPR',
+    pMortgageType: 'Jenis KPR',
     pMortgageRate: 'Bunga KPR',
-    pMortgageTerm: 'Jangka Waktu KPR',
-    pHouseGrowth: 'Kenaikan Harga Properti (RPPI)',
-    pSellingCost: 'Biaya Penjualan',
-    pSetupCost: 'Biaya Awal Pembelian',
-    pSetupCostType: 'Tipe Biaya Awal',
-    pOwnOngoingCost: 'Biaya Rutin (Beli)',
-    pOwnOngoingCostFreq: 'Frekuensi Biaya Rutin Beli',
-    pOwnOngoingCostType: 'Tipe Biaya Rutin Beli',
-    pOwnOngoingInflation: 'Inflasi Biaya Rutin Beli',
-    pCostInterestOnly: 'Biaya = Bunga Saja',
-    pRentAmount: 'Biaya Sewa',
-    pRentFreq: 'Frekuensi Sewa',
-    pRentInflation: 'Kenaikan Sewa Tahunan',
-    pRentOngoingCost: 'Biaya Rutin (Sewa)',
-    pRentOngoingCostFreq: 'Frekuensi Biaya Rutin Sewa',
-    pRentOngoingCostType: 'Tipe Biaya Rutin Sewa',
-    pRentOngoingInflation: 'Inflasi Biaya Rutin Sewa',
-    pMortgageMode: 'Mode KPR',
-    pOwnCostsMode: 'Mode Biaya Beli',
-    pRentCostsMode: 'Mode Biaya Sewa',
+    pMortgageTerm: 'Jangka waktu KPR',
+    pHouseGrowth: 'Kenaikan harga properti (RPPI)',
+    pSellingCost: 'Biaya penjualan',
+    pSetupCost: 'Biaya awal pembelian',
+    pSetupCostType: 'Tipe biaya awal',
+    pOwnOngoingCost: 'Biaya rutin (beli)',
+    pOwnOngoingCostFreq: 'Frekuensi biaya rutin beli',
+    pOwnOngoingCostType: 'Tipe biaya rutin beli',
+    pOwnOngoingInflation: 'Inflasi biaya rutin beli',
+    pCostInterestOnly: 'Biaya = bunga saja',
+    pRentAmount: 'Biaya sewa',
+    pRentFreq: 'Frekuensi sewa',
+    pRentInflation: 'Kenaikan sewa tahunan',
+    pRentOngoingCost: 'Biaya rutin (sewa)',
+    pRentOngoingCostFreq: 'Frekuensi biaya rutin sewa',
+    pRentOngoingCostType: 'Tipe biaya rutin sewa',
+    pRentOngoingInflation: 'Inflasi biaya rutin sewa',
+    pMortgageMode: 'Rincian KPR',
+    pOwnCostsMode: 'Rincian biaya beli',
+    pRentCostsMode: 'Rincian biaya sewa',
     segSimple: 'Sederhana',
     segDetailed: 'Rinci',
-    pRatePeriodN: (k) => `Periode Bunga ${k}`,
-    pSetupCostN: (k) => `Biaya Awal ${k}`,
-    pOwnOngoingN: (k) => `Biaya Rutin Beli ${k}`,
-    pRentOngoingN: (k) => `Biaya Rutin Sewa ${k}`,
-    btnAddPeriod: '+ Periode Bunga',
-    btnAddSetupCost: '+ Biaya Awal',
-    btnAddOngoingCost: '+ Biaya Rutin',
+    pRatePeriodN: (k) => `Bunga, periode ${k}`,
+    pSetupCostN: (k) => `Biaya awal ${k}`,
+    pOwnOngoingN: (k) => `Biaya rutin beli ${k}`,
+    pRentOngoingN: (k) => `Biaya rutin sewa ${k}`,
+    btnAddPeriod: '+ Periode bunga',
+    btnAddSetupCost: '+ Biaya awal',
+    btnAddOngoingCost: '+ Biaya rutin',
     optFixed: 'Tetap',
     optFloating: 'Mengambang',
-    uYr: 'Thn',
-    uToYr: 's.d. thn',
-    lblInfl: 'infl.',
+    uYr: 'Tahun',
+    uToYr: 'hingga tahun',
+    lblInfl: 'inflasi',
     optPerYear: '/ thn',
     optPerMonth: '/ bln',
     optPerWeek: '/ mgg',
     optPctBuyPrice: '% dari harga beli',
     notUsed: 'tidak dipakai di skenario ini',
+    offNoBudget: 'Hanya jika anggaran diisi',
+    offPctCost: 'Tidak dipakai untuk biaya %',
     uYrs: 'thn',
     uPctPa: '%/thn',
-    uAuto: '0 = otomatis',
+    uPerYr: '/thn',
+    uPerMo: '/bln',
+    uPerWk: '/mgg',
+    phAuto: 'Otomatis',
+    autoNote: '0 = otomatis',
+    unitOr: ' atau ',
     uPctOfPrice: '% dari harga',
-    uPctPaCagr: '%/thn CAGR',
-    uPctOfSale: '% dari harga jual',
-    optPI: 'P&I — Pokok & Bunga',
-    optIO: 'IO — Bunga Saja',
-    optFixedAmount: 'Jumlah Tetap ($)',
+    uPctOfSale: '% harga jual',
+    optPI: 'Pokok dan bunga (P&I)',
+    optIO: 'Bunga saja (IO)',
+    optFixedAmount: (sym) => `Jumlah tetap (${sym})`,
     optPctPropertyPrice: '% dari harga properti',
-    optYearly: 'Tahunan',
-    optMonthly: 'Bulanan',
-    optWeekly: 'Mingguan',
-    optFixedDollar: 'Jumlah Tetap',
+    optYearly: 'per tahun',
+    optMonthly: 'per bulan',
+    optWeekly: 'per minggu',
     optPctPropertyValue: '% dari nilai properti',
     optPctAnnualRent: '% dari sewa tahunan',
     pctOfRent: '% dari sewa',
     pctOfValue: '% dari nilai',
+    hintMax: 'Maks.',
+    hintMin: 'Min.',
   }
 };
 function T(key){ return LANG_SENS[lang][key] !== undefined ? LANG_SENS[lang][key] : (LANG_SENS.en[key] !== undefined ? LANG_SENS.en[key] : key); }
@@ -256,37 +283,65 @@ function tipTable(){
 /* ── PARAMS (metadata for simple-mode rows) ──
    min/max MUST match the matching control on the main calculator (index.html),
    otherwise the same typed value is silently clamped differently on the two
-   pages and the scenarios stop being reproducible there. */
+   pages and the scenarios stop being reproducible there.
+
+   A field's unit sits inside it, as on the main page (see paramAffix):
+     suf      a fixed suffix ("yrs", "%/yr")
+     per      money paid at a fixed period ("/mo")
+     freqKey  money paid at the period another field picks
+     basis    a cost that is money or a "%" of something, by its type field
+     auto     0 means automatic, shown as a blank field
+   activeIf(sc) is false where the engine does not read the field for that
+   scenario, so its cell is shown as unused (offKey says why) rather than as
+   a live input. */
+const notPct = typeKey => sc => sc[typeKey] !== 'pct';
 const PARAMS = [
-  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  unitKey:'uYrs',        min:5,   max:100, step:1,    tip:'horizon'},
-  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  unitKey:'uPctPa',      min:-10, max:25,  step:0.05, tip:'riskFreeRate'},
-  {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', unitKey:'uAuto',       min:0,            step:10000,tip:'initialCash'},
-  {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', unitKey:'uAuto',       min:0,            step:100,  tip:'monthlyBudget'},
-  {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease'},
-  {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                        min:50000,        step:10000,tip:'propertyPrice'},
-  {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  unitKey:'uPctOfPrice', min:0,   max:100, step:0.5,  tip:'downPaymentPct'},
+  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  suf:'uYrs',          min:5,   max:100, step:1,    tip:'horizon'},
+  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.05, tip:'riskFreeRate'},
+  {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', auto:true,           min:0,            step:10000,tip:'initialCash'},
+  {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', auto:true, per:'monthly', min:0,       step:100,  tip:'monthlyBudget'},
+  {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease',
+    activeIf: sc => (Number(sc.monthlyBudget)||0) > 0, offKey:'offNoBudget'},
+  {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                      min:50000,        step:10000,tip:'propertyPrice'},
+  {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  suf:'uPctOfPrice',   min:0,   max:100, step:0.5,  tip:'downPaymentPct'},
   {key:'mortgageType',         labelKey:'pMortgageType',         type:'select',   options:[{v:'pi',lk:'optPI'},{v:'io',lk:'optIO'}], tip:'mortgageType'},
-  {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  unitKey:'uPctPa',      min:0,   max:25,  step:0.05, tip:'mortgageRate'},
-  {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  unitKey:'uYrs',        min:5,   max:50,  step:1,    tip:'mortgageTerm'},
-  {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  unitKey:'uPctPaCagr',  min:-10, max:25,  step:0.1,  tip:'houseGrowth'},
-  {key:'sellingCostPct',       labelKey:'pSellingCost',          type:'percent',  unitKey:'uPctOfSale',  min:0,   max:15,  step:0.1,  tip:'sellingCost'},
-  {key:'setupCost',            labelKey:'pSetupCost',            type:'currency',                        min:0,            step:500,  tip:'setupCost'},
-  {key:'setupCostType',        labelKey:'pSetupCostType',        type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctPropertyPrice'}], tip:'setupCost'},
-  {key:'ownOngoingCost',       labelKey:'pOwnOngoingCost',       type:'currency',                        min:0,            step:100,  tip:'ownOngoingCost', subgroup:'own-cost'},
-  {key:'ownOngoingCostFreq',   labelKey:'pOwnOngoingCostFreq',   type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}], subgroup:'own-cost'},
-  {key:'ownOngoingCostType',   labelKey:'pOwnOngoingCostType',   type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctPropertyValue'}], subgroup:'own-cost'},
-  {key:'ownOngoingInflation',  labelKey:'pOwnOngoingInflation',  type:'percent',  unitKey:'uPctPa',      min:0,   max:15,  step:0.1,  tip:'ownOngoingInflation'},
-  {key:'costInterestOnly',     labelKey:'pCostInterestOnly',     type:'boolean',                                                      tip:'costInterestOnly'},
-  {key:'rentAmount',           labelKey:'pRentAmount',           type:'currency',                        min:0,            step:50,   tip:'rentAmount'},
+  {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.05, tip:'mortgageRate'},
+  {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  suf:'uYrs',          min:5,   max:50,  step:1,    tip:'mortgageTerm'},
+  {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.1,  tip:'houseGrowth'},
+  {key:'sellingCostPct',       labelKey:'pSellingCost',          type:'percent',  suf:'uPctOfSale',    min:0,   max:15,  step:0.1,  tip:'sellingCost'},
+  {key:'setupCost',            labelKey:'pSetupCost',            type:'currency', basis:'setup',       min:0,            step:500,  tip:'setupCost'},
+  {key:'setupCostType',        labelKey:'pSetupCostType',        type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctPropertyPrice'}]},
+  {key:'ownOngoingCost',       labelKey:'pOwnOngoingCost',       type:'currency', basis:'own',         min:0,            step:100,  tip:'ownOngoingCost'},
+  {key:'ownOngoingCostFreq',   labelKey:'pOwnOngoingCostFreq',   type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}],
+    activeIf: notPct('ownOngoingCostType'), offKey:'offPctCost'},
+  {key:'ownOngoingCostType',   labelKey:'pOwnOngoingCostType',   type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctPropertyValue'}]},
+  {key:'ownOngoingInflation',  labelKey:'pOwnOngoingInflation',  type:'percent',  suf:'uPctPa',        min:0,   max:15,  step:0.1,  tip:'ownOngoingInflation',
+    activeIf: notPct('ownOngoingCostType'), offKey:'offPctCost'},
+  {key:'costInterestOnly',     labelKey:'pCostInterestOnly',     type:'boolean',                                                    tip:'costInterestOnly'},
+  {key:'rentAmount',           labelKey:'pRentAmount',           type:'currency', freqKey:'rentFreq',  min:0,            step:50,   tip:'rentAmount'},
   {key:'rentFreq',             labelKey:'pRentFreq',             type:'select',   options:[{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'},{v:'yearly',lk:'optYearly'}]},
-  {key:'rentInflation',        labelKey:'pRentInflation',        type:'percent',  unitKey:'uPctPa',      min:-10, max:25,  step:0.1,  tip:'rentInflation'},
-  {key:'rentOngoingCost',      labelKey:'pRentOngoingCost',      type:'currency',                        min:0,            step:100,  tip:'rentOngoingCost', subgroup:'rent-cost'},
-  {key:'rentOngoingCostFreq',  labelKey:'pRentOngoingCostFreq',  type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}], subgroup:'rent-cost'},
-  {key:'rentOngoingCostType',  labelKey:'pRentOngoingCostType',  type:'select',   options:[{v:'dollar',lk:'optFixedDollar'},{v:'pct',lk:'optPctAnnualRent'}], subgroup:'rent-cost'},
-  {key:'rentOngoingInflation', labelKey:'pRentOngoingInflation', type:'percent',  unitKey:'uPctPa',      min:0,   max:15,  step:0.1,  tip:'rentOngoingInflation'},
+  {key:'rentInflation',        labelKey:'pRentInflation',        type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.1,  tip:'rentInflation'},
+  {key:'rentOngoingCost',      labelKey:'pRentOngoingCost',      type:'currency', basis:'rent',        min:0,            step:100,  tip:'rentOngoingCost'},
+  {key:'rentOngoingCostFreq',  labelKey:'pRentOngoingCostFreq',  type:'select',   options:[{v:'yearly',lk:'optYearly'},{v:'monthly',lk:'optMonthly'},{v:'weekly',lk:'optWeekly'}],
+    activeIf: notPct('rentOngoingCostType'), offKey:'offPctCost'},
+  {key:'rentOngoingCostType',  labelKey:'pRentOngoingCostType',  type:'select',   options:[{v:'dollar',lk:'optFixedAmount'},{v:'pct',lk:'optPctAnnualRent'}]},
+  {key:'rentOngoingInflation', labelKey:'pRentOngoingInflation', type:'percent',  suf:'uPctPa',        min:0,   max:15,  step:0.1,  tip:'rentOngoingInflation',
+    activeIf: notPct('rentOngoingCostType'), offKey:'offPctCost'},
 ];
 const PARAM_MAP = {};
 PARAMS.forEach(p=>{ PARAM_MAP[p.key] = p; });
+
+/* A cost entered as money or as a "%" of something: the field that picks
+   which, the frequency it is paid at as money, the suffix it wears as a "%",
+   and what that "%" is a share of (see pctBase). */
+const COST_BASIS = {
+  setup: {amount:'setupCost',       type:'setupCostType',       freq:null,                  pctKey:'uPctOfPrice', of:'price'},
+  own:   {amount:'ownOngoingCost',  type:'ownOngoingCostType',  freq:'ownOngoingCostFreq',  pctKey:'pctOfValue',  of:'price'},
+  rent:  {amount:'rentOngoingCost', type:'rentOngoingCostType', freq:'rentOngoingCostFreq', pctKey:'pctOfRent',   of:'rent'},
+};
+const BASIS_BY_TYPE = {};
+Object.keys(COST_BASIS).forEach(k=>{ BASIS_BY_TYPE[COST_BASIS[k].type] = COST_BASIS[k]; });
+const PER_SUFFIX = {yearly:'uPerYr', monthly:'uPerMo', weekly:'uPerWk'};
 
 const DEFAULT_SCENARIO = {
   name: 'Base Case',
@@ -360,6 +415,10 @@ function fmtInputVal(val, type){
   if(type==='integer')  return String(Math.round(n));
   return String(val ?? '');
 }
+// What a field shows: an automatic figure (0) is a blank field with "Auto" in
+// it, as the main page shows it and as the field's tip describes it.
+const isAutoZero = (p, val) => !!p.auto && !(parseNum(val) > 0);
+function inputText(p, val){ return isAutoZero(p, val) ? '' : fmtInputVal(val, p.type); }
 
 function fmtCurrency(v, sym){
   sym = sym || '$';
@@ -441,7 +500,14 @@ function getMetricValues(i){
   if(metric==='cash')      return {own:row.ownCash,      rent:row.rentCash};
   return                          {own:row.ownAccumCost, rent:row.rentAccumCost};
 }
-function deltaColor(d){ return metric==='cost' ? (d>0?'neg-val':'pos-val') : (d>=0?'pos-val':'neg-val'); }
+/* Own and rent are two fair options, so the difference wears the colour of
+   the one that comes out ahead (blue own, gold rent), as on the main page,
+   rather than gain-and-loss blue and red. For costs, ahead means cheaper. */
+function deltaColor(d){
+  if(Math.abs(d) < 0.5) return '';
+  const ownAhead = metric==='cost' ? d < 0 : d > 0;
+  return ownAhead ? 'own-val' : 'rent-val';
+}
 const symOf = sc => (sc && sc.currencySymbol) || '$';
 
 /* ── DETAILED MODE: per-scenario list seeding & helpers ── */
@@ -504,37 +570,105 @@ function addScenario(){
   scenarios.push(clone);
   rerender();
 }
+/* Quick Start: the first column takes a city from the main page's Quick Start
+   row (../presets.js), as a fresh scenario named after it. The page shows one
+   currency, so the city's symbol becomes the page's. Only the first column has
+   the picker: to compare two cities, load one, drag it right, load the next. */
+const CITY_PRESETS = window.RVO_CITY_PRESETS || {};
+function applyCityPreset(si, key){
+  const p = CITY_PRESETS[key];
+  if(!p || !scenarios[si]) return;
+  const sc = cloneScenario(DEFAULT_SCENARIO);
+  Object.keys(sc).forEach(k=>{ if(p[k]!==undefined) sc[k] = p[k]; });
+  sc.name = p.label || key;
+  if(modes.mortgageMode==='detailed')  seedRatePeriods(sc);
+  if(modes.ownCostsMode==='detailed')  seedOwnCostItems(sc);
+  if(modes.rentCostsMode==='detailed') seedRentCostItems(sc);
+  scenarios[si] = sc;
+  const sel = document.getElementById('currencySelect');
+  if(sel) sel.value = sc.currencySymbol;
+  scenarios.forEach(s=>{ s.currencySymbol = sc.currencySymbol; });
+  const yr = document.getElementById('yearInput');
+  if(yr) yr.max = Math.max(...scenarios.map(s=>s.horizon||1));
+  rerender();
+}
+function presetPickerHTML(si){
+  const keys = Object.keys(CITY_PRESETS);
+  if(!keys.length) return '';
+  const opts = keys.map(k=>`<option value="${escAttr(k)}">${escHtml(CITY_PRESETS[k].label || k)}</option>`).join('');
+  return `<span class="scen-preset" title="${escAttr(T('presetTitle'))}">
+    <svg class="scen-preset-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg>
+    <svg class="scen-preset-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    <select class="scen-preset-select" data-si="${si}" aria-label="${escAttr(T('presetTitle'))}">
+      <option value="" selected disabled>${escHtml(T('presetPick'))}</option>${opts}
+    </select>
+  </span>`;
+}
+
+function moveScenario(from, to){
+  scenarios.splice(to, 0, scenarios.splice(from, 1)[0]);
+  scenarioResults.splice(to, 0, scenarioResults.splice(from, 1)[0]);
+}
 function removeScenario(i){
   if(scenarios.length<=1) return;
   scenarios.splice(i,1); scenarioResults.splice(i,1); rerender();
 }
 
-/* ── BUILD TABLE ── */
-function unitForParam(p){
-  if(p.type==='currency') return symOf(scenarios[0]) || '$';
-  if(p.type==='percent') return p.unitKey ? T(p.unitKey) : (p.unit || '%');
-  return p.unitKey ? T(p.unitKey) : (p.unit || '');
+/* ── UNITS ──
+   The unit a scenario's field is in, as the field's prefix (a currency) and
+   suffix (anything else). It follows the scenario's own choices, so a setup
+   cost switched to "% of property price" reads "4 % of price", not "$ 4". */
+function paramAffix(p, sc){
+  const sym = symOf(sc);
+  if(p.basis){
+    const b = COST_BASIS[p.basis];
+    if(sc[b.type]==='pct') return {pre:'', suf:T(b.pctKey)};
+    return {pre:sym, suf: b.freq ? T(PER_SUFFIX[sc[b.freq]] || 'uPerYr') : ''};
+  }
+  if(p.type==='currency'){
+    const per = p.per || (p.freqKey ? sc[p.freqKey] : null);
+    return {pre:sym, suf: per ? T(PER_SUFFIX[per] || 'uPerMo') : ''};
+  }
+  return {pre:'', suf: p.suf ? T(p.suf) : ''};
+}
+const paramActive = (p, sc) => !p.activeIf || p.activeIf(sc);
+
+// The summary CSV keeps its Unit column: one unit per row, or each one the
+// scenarios use ("$ or % of price") when their type fields differ.
+function csvUnit(p){
+  if(p.type==='select' || p.type==='boolean') return '';
+  const units = [...new Set(scenarios.map(sc=>{ const a = paramAffix(p, sc); return a.pre + a.suf; }))];
+  return units.join(T('unitOr')) + (p.auto ? ` (${T('autoNote')})` : '');
 }
 
-function getOngoingCostUnit(sc, costKey){
-  if(costKey==='rentOngoingCost') return sc.rentOngoingCostType==='pct' ? T('pctOfRent') : symOf(sc);
-  if(costKey==='ownOngoingCost')  return sc.ownOngoingCostType==='pct'  ? T('pctOfValue') : symOf(sc);
-  return symOf(sc);
-}
+/* ── MONEY ⇄ "%" ──
+   A "%" cost is a share of something, so moving a cost between money and "%"
+   restates it against that rather than keeping the figure: $32,000 on an
+   $800,000 home is 4% of the price. The conversion lives in the engine, with
+   the main page's, so one switch gives one figure on both pages. */
+const pctBase = RVOEngine.pctBase, convertCostBasis = RVOEngine.convertCostBasis;
+
+/* ── BUILD TABLE ── */
 
 /* The render-row list: which table rows exist given the current modes and the
    max list lengths across scenarios. Scenarios with fewer periods/cost items
-   than the max get darkened inactive cells to preserve table integrity. */
+   than the max get darkened inactive cells to preserve table integrity.
+
+   Rows where one field decides what another means share a group (`grp`): the
+   deciding field first, the fields it governs after it as children, with no
+   rule between them. A type decides whether a cost is money or a "%", and a
+   frequency decides what period the money is per. */
 function buildRenderRows(){
   const rows = [];
-  const P = key => ({type:'param', p:PARAM_MAP[key]});
+  const P = (key, grp, child) => ({type:'param', p:PARAM_MAP[key], grp:grp||null, child:!!child});
   rows.push({type:'sep', sepKey:'sepGeneral'});
-  ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease'].forEach(k=>rows.push(P(k)));
+  rows.push(P('horizon'), P('riskFreeRate'), P('initialCash'));
+  rows.push(P('monthlyBudget','budget'), P('monthlyBudgetIncrease','budget',true));
 
   rows.push({type:'sep', sepKey:'sepOwn'});
-  ['propertyPrice','downPaymentPct'].forEach(k=>rows.push(P(k)));
+  rows.push(P('propertyPrice'), P('downPaymentPct'));
   rows.push({type:'mode', modeKey:'mortgageMode', labelKey:'pMortgageMode', tip:'mortgageMode'});
-  if(modes.mortgageMode==='detailed') rows.push(P('mortgageType'));
+  if(modes.mortgageMode==='detailed') rows.push(P('mortgageType','mtype'), P('costInterestOnly','mtype',true));
   rows.push(P('mortgageTerm'));
   if(modes.mortgageMode==='simple'){
     rows.push(P('mortgageRate'));
@@ -542,13 +676,13 @@ function buildRenderRows(){
     const maxP = Math.max(1, ...scenarios.map(sc=>(sc.ratePeriods||[]).length));
     for(let k=0;k<maxP;k++) rows.push({type:'period', idx:k, subgroup:'rate-periods', first:k===0});
     rows.push({type:'addPeriod', subgroup:'rate-periods', last:true});
-    rows.push(P('costInterestOnly'));
   }
   rows.push(P('houseGrowth'));
   rows.push(P('sellingCostPct'));
   rows.push({type:'mode', modeKey:'ownCostsMode', labelKey:'pOwnCostsMode', tip:'ownCostsMode'});
   if(modes.ownCostsMode==='simple'){
-    ['setupCost','setupCostType','ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation'].forEach(k=>rows.push(P(k)));
+    rows.push(P('setupCostType','setup'), P('setupCost','setup',true));
+    rows.push(P('ownOngoingCostType','own'), P('ownOngoingCostFreq','own',true), P('ownOngoingCost','own',true), P('ownOngoingInflation','own',true));
   } else {
     const maxS = Math.max(1, ...scenarios.map(sc=>(sc.ownSetupCosts||[]).length));
     for(let k=0;k<maxS;k++) rows.push({type:'cost', listKey:'ownSetupCosts', kind:'setup', idx:k, labelFn:'pSetupCostN', subgroup:'own-setup', first:k===0});
@@ -559,10 +693,10 @@ function buildRenderRows(){
   }
 
   rows.push({type:'sep', sepKey:'sepRent'});
-  ['rentAmount','rentFreq','rentInflation'].forEach(k=>rows.push(P(k)));
+  rows.push(P('rentFreq','rent'), P('rentAmount','rent',true), P('rentInflation'));
   rows.push({type:'mode', modeKey:'rentCostsMode', labelKey:'pRentCostsMode', tip:'rentCostsMode'});
   if(modes.rentCostsMode==='simple'){
-    ['rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType','rentOngoingInflation'].forEach(k=>rows.push(P(k)));
+    rows.push(P('rentOngoingCostType','rentcost'), P('rentOngoingCostFreq','rentcost',true), P('rentOngoingCost','rentcost',true), P('rentOngoingInflation','rentcost',true));
   } else {
     const maxR = Math.max(1, ...scenarios.map(sc=>(sc.rentOngoingCosts||[]).length));
     for(let k=0;k<maxR;k++) rows.push({type:'cost', listKey:'rentOngoingCosts', kind:'ongoing', idx:k, labelFn:'pRentOngoingN', subgroup:'rent-ongoing', first:k===0});
@@ -579,10 +713,12 @@ function tipHtmlFor(tipKey, variant){
   const tipText = window.RVO_TIP ? RVO_TIP(tipKey, variant, tipTable()) : '';
   return tipText ? `<span class="tip-icon" data-tip-key="${escAttr(tipKey)}"`
     + (variant ? ` data-tip-variant="${escAttr(variant)}"` : '')
+    + (variant && (window.RVO_OPTION_TIPS || []).includes(tipKey) ? ' data-tip-options' : '')
     + ` data-tip="${escAttr(tipText)}">?</span>` : '';
 }
 
-const INACTIVE_TD = () => `<td class="scen-td inactive-td" title="${escAttr(T('notUsed'))}"></td>`;
+const INACTIVE_TD = (offKey) => `<td class="scen-td inactive-td" title="${escAttr(T('notUsed'))}">`
+  + (offKey ? `<span class="inactive-note">${escHtml(T(offKey))}</span>` : '') + `</td>`;
 
 function periodCellHTML(sc, si, k){
   const list = sc.ratePeriods || [];
@@ -606,7 +742,7 @@ function periodCellHTML(sc, si, k){
           <option value="floating"${floating?' selected':''}>${T('optFloating')}</option>
         </select>
         ${isLast?'':`<span class="mini-unit">${T('uToYr')}</span><input class="mini-input rp-to" data-si="${si}" data-idx="${k}" type="text" inputmode="numeric" value="${Math.round(Number(p.toYear)||to)}"/>`}
-        ${list.length>1?`<button class="btn-remove rp-del" data-si="${si}" data-idx="${k}" title="${T('removeTitle')}">✕</button>`:''}
+        ${list.length>1?SharedIcon.button('trash', T('removeTitle'), 'sm rp-del', `data-si="${si}" data-idx="${k}"`):''}
       </div>
       <div class="dcell-line">${ratesHtml}</div>
     </div>
@@ -634,7 +770,7 @@ function costCellHTML(sc, si, listKey, kind, k){
       <div class="dcell-line">
         <input class="mini-input mini-amt ci-amt" data-si="${si}" data-list="${listKey}" data-idx="${k}" type="text" inputmode="numeric" value="${escAttr(amtVal)}"/>
         <select class="mini-select ci-basis" data-si="${si}" data-list="${listKey}" data-idx="${k}">${optsHtml}</select>
-        ${list.length>1?`<button class="btn-remove ci-del" data-si="${si}" data-list="${listKey}" data-idx="${k}" title="${T('removeTitle')}">✕</button>`:''}
+        ${list.length>1?SharedIcon.button('trash', T('removeTitle'), 'sm ci-del', `data-si="${si}" data-list="${listKey}" data-idx="${k}"`):''}
       </div>
       ${inflHtml}
     </div>
@@ -643,20 +779,25 @@ function costCellHTML(sc, si, listKey, kind, k){
 
 function buildTableHTML(){
   const n = scenarios.length;
-  const colCount = n + 3;
+  const colCount = n + 2;
 
   const thScens = scenarios.map((sc,i)=>{
     const clamped = Math.min(viewYear, sc.horizon||30);
-    return `<th class="scen-th"><div class="scen-header-cell">
+    return `<th class="scen-th${i===0 && Object.keys(CITY_PRESETS).length ? ' has-preset' : ''}"><div class="scen-header-cell">
       <div class="scen-header-actions">
-        <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
-        <button class="btn-dupe" data-si="${i}" title="${T('dupTitle')}">⧉</button>
-        ${n>1?`<button class="btn-remove rmv-scen" data-si="${i}" title="${T('removeTitle')}">✕</button>`:''}
+        ${n>1?`<button type="button" class="col-grip" data-col-grip="${i}" title="${escAttr(T('dragTitle'))}" aria-label="${escAttr(T('dragTitle'))}">⠿</button>`:''}
+        <div class="scen-name-field">
+          <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
+          ${i===0?presetPickerHTML(i):''}
+        </div>
+        ${SharedIcon.button('duplicate', T('dupTitle'), 'btn-head-icon btn-dupe', `data-si="${i}"`)}
+        ${n>1?SharedIcon.button('trash', T('removeTitle'), 'btn-head-icon rmv-scen', `data-si="${i}"`):''}
       </div>
       ${clamped<viewYear?`<span class="scen-header-sub">${T('cappedAt')(clamped)}</span>`:''}
     </div></th>`;
   }).join('');
 
+  const trailTd = `<td class="trail-td"></td>`;
   const renderRows = buildRenderRows();
   let bodyHtml = '';
   renderRows.forEach((r,ri)=>{
@@ -667,16 +808,22 @@ function buildTableHTML(){
       return;
     }
     const prevR = renderRows[ri-1], nextR = renderRows[ri+1];
-    const sub = r.subgroup || (r.type==='param' ? r.p.subgroup : null);
-    const isFirst = sub && (r.first || !prevR || (prevR.subgroup||((prevR.type==='param'&&prevR.p.subgroup)||null))!==sub);
-    const isLast  = sub && (r.last  || !nextR || (nextR.subgroup||((nextR.type==='param'&&nextR.p.subgroup)||null))!==sub);
+    // Detailed lists (rate periods, cost items) keep their framed subgroup.
+    const sub = r.subgroup || null;
+    const isFirst = sub && (r.first || !prevR || prevR.subgroup!==sub);
+    const isLast  = sub && (r.last  || !nextR || nextR.subgroup!==sub);
+    // A deciding field and the fields it governs: one group, no rule between.
+    const grp = r.grp || null;
     const rowClass = [
       sub ? 'subgroup-row' : '',
       isFirst ? 'subgroup-first' : '',
       isLast  ? 'subgroup-last'  : '',
+      grp ? 'grp' : '',
+      grp && (!prevR || prevR.grp!==grp) ? 'grp-first' : '',
+      grp && (!nextR || nextR.grp!==grp) ? 'grp-last'  : '',
+      r.child ? 'grp-child' : '',
     ].filter(Boolean).join(' ');
     const trOpen = `<tr${rowClass?' class="'+rowClass+'"':''}>`;
-    const trailTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
 
     if(r.type==='mode'){
       const cur = modes[r.modeKey];
@@ -684,58 +831,60 @@ function buildTableHTML(){
         <button class="seg-btn${cur==='simple'?' active':''}" data-val="simple">${T('segSimple')}</button>
         <button class="seg-btn${cur==='detailed'?' active':''}" data-val="detailed">${T('segDetailed')}</button>
       </div>`;
-      bodyHtml += `<tr class="mode-tr"><td class="label-td">${escHtml(T(r.labelKey))}${tipHtmlFor(r.tip, cur)}</td><td class="unit-td"></td><td class="scen-td mode-td" colspan="${n}">${seg}</td>${trailTd}</tr>`;
+      bodyHtml += `<tr class="mode-tr"><td class="label-td">${escHtml(T(r.labelKey))}${tipHtmlFor(r.tip, cur)}</td><td class="scen-td mode-td" colspan="${n}">${seg}</td>${trailTd}</tr>`;
       return;
     }
     if(r.type==='period'){
       const tds = scenarios.map((sc,i)=>periodCellHTML(sc,i,r.idx)).join('');
-      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pRatePeriodN')(r.idx+1))}${r.idx===0?tipHtmlFor('rateSchedule'):''}</td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pRatePeriodN')(r.idx+1))}${r.idx===0?tipHtmlFor('rateSchedule'):''}</td>${tds}${trailTd}</tr>`;
       return;
     }
     if(r.type==='addPeriod'){
       const tds = scenarios.map((sc,i)=>`<td class="scen-td add-td"><button class="btn-add add-period-btn" data-si="${i}">${T('btnAddPeriod')}</button></td>`).join('');
-      bodyHtml += `${trOpen}<td class="label-td"></td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      bodyHtml += `${trOpen}<td class="label-td"></td>${tds}${trailTd}</tr>`;
       return;
     }
     if(r.type==='cost'){
       const tds = scenarios.map((sc,i)=>costCellHTML(sc,i,r.listKey,r.kind,r.idx)).join('');
       const tip = r.idx===0 ? tipHtmlFor(r.listKey==='ownSetupCosts'?'setupCost':r.listKey==='ownOngoingCosts'?'ownOngoingCost':'rentOngoingCost') : '';
-      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(r.labelFn)(r.idx+1))}${tip}</td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(r.labelFn)(r.idx+1))}${tip}</td>${tds}${trailTd}</tr>`;
       return;
     }
     if(r.type==='addCost'){
       const tds = scenarios.map((sc,i)=>`<td class="scen-td add-td"><button class="btn-add add-cost-btn" data-si="${i}" data-list="${r.listKey}">${T(r.btnKey)}</button></td>`).join('');
-      bodyHtml += `${trOpen}<td class="label-td"></td><td class="unit-td"></td>${tds}${trailTd}</tr>`;
+      bodyHtml += `${trOpen}<td class="label-td"></td>${tds}${trailTd}</tr>`;
       return;
     }
 
     // r.type==='param'
     const p = r.p;
-    const isDynamicUnit = key => key==='rentOngoingCost' || key==='ownOngoingCost';
     const tds = scenarios.map((sc,i)=>{
+      // A field the engine does not read for this scenario (a frequency under
+      // a "%" type, say) is shown as unused, not as an input that does nothing.
+      if(!paramActive(p, sc)) return INACTIVE_TD(p.offKey);
       let inp = '';
       if(p.type==='select'){
-        const opts = (p.options||[]).map(o=>`<option value="${escAttr(o.v)}"${sc[p.key]===o.v?' selected':''}>${escHtml(o.lk ? T(o.lk) : o.l)}</option>`).join('');
+        const optLabel = o => { const l = o.lk ? T(o.lk) : o.l; return typeof l==='function' ? l(symOf(sc)) : l; };
+        const opts = (p.options||[]).map(o=>`<option value="${escAttr(o.v)}"${sc[p.key]===o.v?' selected':''}>${escHtml(optLabel(o))}</option>`).join('');
         inp = `<select class="param-select" data-si="${i}" data-key="${p.key}">${opts}</select>`;
       } else if(p.type==='boolean'){
         inp = `<div class="param-bool-wrap"><input type="checkbox" class="param-bool" data-si="${i}" data-key="${p.key}"${sc[p.key]!==false?' checked':''}/><span class="param-bool-label">${T('boolEnabled')}</span></div>`;
       } else {
-        inp = `<input class="param-input" type="text" inputmode="numeric" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" value="${escAttr(fmtInputVal(sc[p.key], p.type))}"/>`;
-      }
-      if(isDynamicUnit(p.key)){
-        inp += `<span class="ongoing-unit" data-si="${i}" data-cost-key="${p.key}">${escHtml(getOngoingCostUnit(sc, p.key))}</span>`;
+        const {pre, suf} = paramAffix(p, sc);
+        inp = `<div class="input-wrap param-wrap">`
+          + (pre ? `<span class="prefix">${escHtml(pre)}</span>` : '')
+          + `<input class="param-input" type="text" inputmode="${p.type==='integer'?'numeric':'decimal'}" data-si="${i}" data-key="${p.key}" data-ptype="${p.type}" data-min="${p.min!=null?p.min:0}" data-max="${p.max!=null?p.max:1000000000000}"`
+          + (p.auto ? ` placeholder="${escAttr(T('phAuto'))}"` : '')
+          + ` value="${escAttr(inputText(p, sc[p.key]))}"/>`
+          + (suf ? `<span class="suffix">${escHtml(suf)}</span>` : '')
+          + `</div>`;
       }
       return `<td class="scen-td">${inp}</td>`;
     }).join('');
 
-    const unitCell = isDynamicUnit(p.key)
-      ? `<td class="unit-td"></td>`
-      : `<td class="unit-td">${escHtml(unitForParam(p))}</td>`;
-
-    bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(p.labelKey))}${tipHtmlFor(p.tip)}</td>${unitCell}${tds}${trailTd}</tr>`;
+    bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(p.labelKey))}${tipHtmlFor(p.tip)}</td>${tds}${trailTd}</tr>`;
   });
 
-  const emptyTd = `<td style="border:1px solid var(--border);background:var(--input-bg);"></td>`;
   const ml = metricLabel();
   const ownTds  = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):'—'}</td>`; }).join('');
   const rentTds = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'}</td>`; }).join('');
@@ -750,15 +899,15 @@ function buildTableHTML(){
     </td>`).join('');
 
   return `<table class="dt"><thead><tr>
-    <th class="label-td">${T('tableHeaderParam')}</th><th class="unit-th">${T('tableHeaderUnit')}</th>${thScens}
+    <th class="label-td">${T('tableHeaderParam')}</th>${thScens}
     <th style="white-space:nowrap;vertical-align:middle;"><button class="btn-add" id="addScenBtn">${T('btnAddScenario')}</button></th>
   </tr></thead><tbody>
     ${bodyHtml}
     <tr class="sep-tr"><td colspan="${colCount}"></td></tr>
-    <tr class="out-own"><td class="label-td"><span class="ricon ricon-own" aria-hidden="true"></span><span class="out-lbl-text">${T('ownOutputLabel')(ml)}</span></td><td class="unit-td"></td>${ownTds}${emptyTd}</tr>
-    <tr class="out-rent"><td class="label-td"><span class="ricon ricon-rent" aria-hidden="true"></span><span class="out-lbl-text">${T('rentOutputLabel')(ml)}</span></td><td class="unit-td"></td>${rentTds}${emptyTd}</tr>
-    <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td><td class="unit-td"></td>${deltaTds}${emptyTd}</tr>
-    <tr class="out-actions"><td class="label-td">${T('actionsLabel')}</td><td class="unit-td"></td>${actionTds}${emptyTd}</tr>
+    <tr class="out-own"><td class="label-td"><span class="ricon ricon-own" aria-hidden="true"></span><span class="out-lbl-text">${T('ownOutputLabel')(ml)}</span></td>${ownTds}${trailTd}</tr>
+    <tr class="out-rent"><td class="label-td"><span class="ricon ricon-rent" aria-hidden="true"></span><span class="out-lbl-text">${T('rentOutputLabel')(ml)}</span></td>${rentTds}${trailTd}</tr>
+    <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td>${deltaTds}${trailTd}</tr>
+    <tr class="out-actions"><td class="label-td">${T('actionsLabel')}</td>${actionTds}${trailTd}</tr>
   </tbody></table>`;
 }
 
@@ -841,7 +990,7 @@ function downloadCSV(){
       return;
     }
     const p = r.p;
-    lines.push([esc(T(p.labelKey)), esc(unitForParam(p)), ...scenarios.map(sc=>{
+    lines.push([esc(T(p.labelKey)), esc(csvUnit(p)), ...scenarios.map(sc=>{
       if(p.type==='boolean') return esc(sc[p.key]!==false?'Yes':'No');
       if(p.type==='select')  return esc(sc[p.key]||'');
       return esc(sc[p.key]??0);
@@ -894,16 +1043,31 @@ function parseCSVText(text){
 }
 
 // Reverse maps: translated label → param key / mode key (both languages).
+/* Row labels a CSV saved before the October 2026 relabel carries. The importer
+   reads rows by label, so an old file must still find its rows under the
+   names it was written with, in either language. */
+const LEGACY_ROW_LABELS = {
+  pHorizon:       ['Horizon'],
+  pHouseGrowth:   ['House Growth (RPPI)'],
+  pMonthlyBudget: ['Anggaran Rumah Bulanan'],
+  pMortgageType:  ['Tipe KPR'],
+  pMortgageMode:  ['Mortgage Mode', 'Mode KPR'],
+  pOwnCostsMode:  ['Own Costs Mode', 'Mode Biaya Beli'],
+  pRentCostsMode: ['Rent Costs Mode', 'Mode Biaya Sewa'],
+};
 function buildReverseLabelMaps(){
   const norm = s => String(s||'').trim().toLowerCase();
   const paramByLabel = {}, modeByLabel = {};
+  const MODES = [['pMortgageMode','mortgageMode'],['pOwnCostsMode','ownCostsMode'],['pRentCostsMode','rentCostsMode']];
   ['en','id'].forEach(lg=>{
     const L = LANG_SENS[lg];
     PARAMS.forEach(p=>{ const lbl = L[p.labelKey]; if(typeof lbl==='string') paramByLabel[norm(lbl)] = p.key; });
-    [['pMortgageMode','mortgageMode'],['pOwnCostsMode','ownCostsMode'],['pRentCostsMode','rentCostsMode']].forEach(([lk,mk])=>{
+    MODES.forEach(([lk,mk])=>{
       const lbl = L[lk]; if(typeof lbl==='string') modeByLabel[norm(lbl)] = mk;
     });
   });
+  PARAMS.forEach(p=>{ (LEGACY_ROW_LABELS[p.labelKey]||[]).forEach(l=>{ if(!(norm(l) in paramByLabel)) paramByLabel[norm(l)] = p.key; }); });
+  MODES.forEach(([lk,mk])=>{ (LEGACY_ROW_LABELS[lk]||[]).forEach(l=>{ if(!(norm(l) in modeByLabel)) modeByLabel[norm(l)] = mk; }); });
   return {paramByLabel, modeByLabel};
 }
 
@@ -1084,12 +1248,12 @@ function scenarioChartData(si, met){
     labels: rows.map(r=>r.year),
     series: [
       {label:T('seriesOwn'),  data:rows.map(r=>r[ownKey]||0),  color:cssVar('--line-a')},
-      {label:T('seriesRent'), data:rows.map(r=>r[rentKey]||0), color:cssVar('--line-b')},
+      {label:T('seriesRent'), data:rows.map(r=>r[rentKey]||0), color:cssVar('--gold')},
     ],
   };
 }
 function chartModalTitle(){
-  return `${scenarios[chartModal.si].name||T('scenPlaceholder')} — ${metricLabelOf(chartModal.met)}`;
+  return `${scenarios[chartModal.si].name||T('scenPlaceholder')}: ${metricLabelOf(chartModal.met)}`;
 }
 function chartModalLegendItems(){
   // Built from the same series the chart is rendered from, so each entry
@@ -1100,19 +1264,23 @@ function chartModalLegendItems(){
     swatch: SharedLegend.spec({color:s.color, width:2.5, dash:s.dash}),
   }));
 }
+// A metric button's name, in full and in its phone-width form (see .lbl-short).
+function metricBtnLabel(key){
+  return `<span class="lbl-long">${escHtml(T(key))}</span><span class="lbl-short">${escHtml(T(key + 'Short'))}</span>`;
+}
 function buildChartModal(){
   if(chartModal.el) return chartModal.el;
   const overlay = document.createElement('div');
   overlay.className = 'chart-modal-overlay';
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
-      <button class="chart-modal-close cm-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
+      ${SharedIcon.button('close', T('closeTitle'), 'chart-modal-close cm-close', 'data-act="close"')}
       <div class="chart-head">
         <h2 class="chart-modal-title"></h2>
         <div class="chart-controls">
-          <button class="graph-btn cm-met" data-met="netEquity">${T('metricNetEquity')}</button>
-          <button class="graph-btn cm-met" data-met="cash">${T('metricLiquidCash')}</button>
-          <button class="graph-btn cm-met" data-met="cost">${T('metricAccumCost')}</button>
+          <button class="graph-btn cm-met" data-met="netEquity">${metricBtnLabel('metricNetEquity')}</button>
+          <button class="graph-btn cm-met" data-met="cash">${metricBtnLabel('metricLiquidCash')}</button>
+          <button class="graph-btn cm-met" data-met="cost">${metricBtnLabel('metricAccumCost')}</button>
         </div>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" data-act="svg" title="${escAttr(T('btnSvgTitle'))}">⬇ SVG</button>
@@ -1187,12 +1355,14 @@ function closeChartModal(){
    sharing the scenario's colour. Per-scenario include/colour pickers plus
    Own/Rent visibility toggles, all the standard graph exports (SVG/PNG/copy/
    reset) and metric switching. */
-const GC_PALETTE = ['#4F8DFD','#E8743B','#19A979','#945ECF','#E0529C','#13A4B4','#C9A227','#5B6470','#D1495B','#2E86AB'];
+/* Scenario lines take the design system's neutral sequence (blue, gold,
+   teal, rose, purple): a scenario is not good or bad, so none is red. */
+function gcColour(i){ return SharedPalette.at(i); }
 let globalChart = { el:null, chart:null, met:'netEquity', include:[], colors:[], showOwn:true, showRent:true };
 
 function gcInitState(){
   globalChart.include = scenarios.map(()=>true);
-  globalChart.colors  = scenarios.map((_,i)=> GC_PALETTE[i % GC_PALETTE.length]);
+  globalChart.colors  = scenarios.map((_,i)=> gcColour(i));
   globalChart.showOwn = true;
   globalChart.showRent = true;
   globalChart.met = metric;
@@ -1218,15 +1388,22 @@ function gcChartData(){
     const res = scenarioResults[i];
     const rows = (res && res.rows) ? res.rows : [];
     if(!rows.length) return;
-    const color = globalChart.colors[i] || GC_PALETTE[i % GC_PALETTE.length];
+    const color = globalChart.colors[i] || gcColour(i);
     if(globalChart.showOwn)
-      series.push({label:`${sc.name||T('scenPlaceholder')} — ${T('seriesOwn')}`,  data:rows.map(r=>r[ownKey]||0),  color, dash:null});
+      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesOwn')}`,  data:rows.map(r=>r[ownKey]||0),  color, dash:null});
     if(globalChart.showRent)
-      series.push({label:`${sc.name||T('scenPlaceholder')} — ${T('seriesRent')}`, data:rows.map(r=>r[rentKey]||0), color, dash:[5,4]});
+      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesRent')}`, data:rows.map(r=>r[rentKey]||0), color, dash:[5,4]});
   });
   return {labels, series};
 }
-function gcTitle(){ return `${T('gcTitle')} — ${metricLabelOf(globalChart.met)}`; }
+function gcTitle(){ return `${T('gcTitle')}: ${metricLabelOf(globalChart.met)}`; }
+// <input type=color> takes only #rrggbb; tokens resolve to hex already, but
+// keep the picker safe if one ever resolves to rgb().
+function toHexColour(c){
+  const m = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(String(c||''));
+  if(!m) return String(c||'#5A91E8').slice(0,7);
+  return '#'+[m[1],m[2],m[3]].map(n=>(+n).toString(16).padStart(2,'0')).join('');
+}
 function gcLegendItems(){
   // Own and rent share a scenario's colour and are told apart by the dash, so
   // the exported key has to carry the dash too.
@@ -1242,13 +1419,13 @@ function buildGlobalChartModal(){
   overlay.className = 'chart-modal-overlay gc-overlay';
   overlay.innerHTML = `
     <div class="chart-modal card" role="dialog" aria-modal="true">
-      <button class="chart-modal-close gc-close" data-act="close" title="${escAttr(T('closeTitle'))}" aria-label="${escAttr(T('closeTitle'))}">✕</button>
+      ${SharedIcon.button('close', T('closeTitle'), 'chart-modal-close gc-close', 'data-act="close"')}
       <div class="chart-head">
         <h2 class="chart-modal-title gc-title"></h2>
         <div class="chart-controls">
-          <button class="graph-btn gc-met" data-met="netEquity">${T('metricNetEquity')}</button>
-          <button class="graph-btn gc-met" data-met="cash">${T('metricLiquidCash')}</button>
-          <button class="graph-btn gc-met" data-met="cost">${T('metricAccumCost')}</button>
+          <button class="graph-btn gc-met" data-met="netEquity">${metricBtnLabel('metricNetEquity')}</button>
+          <button class="graph-btn gc-met" data-met="cash">${metricBtnLabel('metricLiquidCash')}</button>
+          <button class="graph-btn gc-met" data-met="cost">${metricBtnLabel('metricAccumCost')}</button>
           <button class="graph-btn gc-toggle gc-own" data-series="own"><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
           <button class="graph-btn gc-toggle gc-rent" data-series="rent"><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
         </div>
@@ -1301,7 +1478,7 @@ function gcRenderScenarioPickers(){
   wrap.innerHTML = scenarios.map((sc,i)=>`
     <label class="gc-scen-item">
       <input type="checkbox" class="gc-include" data-i="${i}"${globalChart.include[i]?' checked':''}/>
-      <input type="color" class="gc-color" data-i="${i}" value="${escAttr(globalChart.colors[i]||GC_PALETTE[i%GC_PALETTE.length])}"/>
+      <input type="color" class="gc-color" data-i="${i}" value="${escAttr(toHexColour(globalChart.colors[i]||gcColour(i)))}"/>
       <span class="gc-scen-name">${escHtml(sc.name||(T('scenPlaceholder')+' '+(i+1)))}</span>
     </label>`).join('');
   wrap.querySelectorAll('.gc-include').forEach(el=>{
@@ -1358,8 +1535,9 @@ function wireEvents(){
 
   document.querySelectorAll('.param-input').forEach(el=>{
     el.addEventListener('focus', e=>{
+      const p = PARAM_MAP[e.target.dataset.key];
       const val = scenarios[+e.target.dataset.si][e.target.dataset.key];
-      e.target.value = String(val ?? '').replace(/,/g,'');
+      e.target.value = p && isAutoZero(p, val) ? '' : String(val ?? '').replace(/,/g,'');
     });
     el.addEventListener('input', e=>{
       // maxDecimals:2 matches the main tool's money inputs — a currency row can
@@ -1371,22 +1549,38 @@ function wireEvents(){
       const si = +e.target.dataset.si, key = e.target.dataset.key, ptype = e.target.dataset.ptype;
       const p = PARAM_MAP[key];
       if(!p) return;
-      let val = ptype==='integer' ? parseIntSafe(e.target.value, scenarios[si][key]) : parseFloatSafe(e.target.value, scenarios[si][key]);
+      const sc = scenarios[si];
+      const before = activeSignature(sc);
+      const raw = String(e.target.value).trim();
+      // A cleared automatic field goes back to automatic; any other cleared
+      // field keeps what it held.
+      let val = (p.auto && raw==='') ? 0
+        : ptype==='integer' ? parseIntSafe(raw, sc[key]) : parseFloatSafe(raw, sc[key]);
+      const typed = val;
       if(p.min!=null) val = Math.max(p.min, val);
       if(p.max!=null) val = Math.min(p.max, val);
+      // A value past either end is pulled back to it, and says so (SharedBounds' note)
+      if(val !== typed && window.SharedBounds){
+        const {pre, suf} = paramAffix(p, sc);
+        SharedBounds.hint(e.target, T(typed > val ? 'hintMax' : 'hintMin')+' '
+          + (pre ? pre+(pre.length>1?' ':'') : '') + fmtInputVal(val, ptype) + (suf ? ' '+suf : ''));
+      }
       // Percentages hold two decimals, as the main page's sliders do, so any
       // scenario typed here can be set there exactly
       if(ptype==='percent') val = Math.round(val*100)/100;
-      scenarios[si][key] = val;
-      e.target.value = fmtInputVal(val, ptype);
+      sc[key] = val;
+      e.target.value = inputText(p, val);
       if(key==='horizon'){
         const maxH = Math.max(...scenarios.map(s=>s.horizon||1));
         document.getElementById('yearInput').max = maxH;
       }
       recomputeScenario(si);
-      if(key==='mortgageTerm' && modes.mortgageMode==='detailed'){
-        // Year ranges of the rate periods depend on the term — rebuild
+      // Rebuild when the rate periods' year ranges follow the term, or when
+      // this field switches another one on or off (a budget set or cleared
+      // brings its annual increase into use or out of it).
+      if((key==='mortgageTerm' && modes.mortgageMode==='detailed') || activeSignature(sc)!==before){
         rerender();
+        refocus(e.relatedTarget);
         return;
       }
       rerenderOutputOnly();
@@ -1395,12 +1589,14 @@ function wireEvents(){
     el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
   });
 
-  /* A frequency parameter carries a money amount a row above it, so moving one
+  /* A frequency carries the money amount in the row under it, so moving one
      rescales the other: a scenario that read 2,800 a month reads 646.15 a week,
      and stays the same scenario. The old period is still in the scenario when
      the handler runs, which is what the conversion measures from. A cost on a
      "% of value" basis is a percentage rather than money per period, so it is
-     left as typed. */
+     left as typed.
+     A cost type does the same between money and "%" (see convertCostBasis):
+     $32,000 of setup on an $800,000 home becomes 4% of the price. */
   const FREQ_AMOUNT = {
     rentFreq:            {amount: 'rentAmount'},
     ownOngoingCostFreq:  {amount: 'ownOngoingCost',  type: 'ownOngoingCostType'},
@@ -1408,23 +1604,24 @@ function wireEvents(){
   };
   document.querySelectorAll('.param-select').forEach(el=>{
     el.addEventListener('change', e=>{
-      const si = +e.target.dataset.si, key = e.target.dataset.key;
-      const pair = FREQ_AMOUNT[key];
-      let converted = false;
-      if(pair && !(pair.type && scenarios[si][pair.type] === 'pct')){
-        const conv = SharedFreq.convert(scenarios[si][pair.amount], scenarios[si][key], e.target.value, 2);
-        if(conv !== null){ scenarios[si][pair.amount] = conv; converted = true; }
+      const si = +e.target.dataset.si, key = e.target.dataset.key, to = e.target.value;
+      const sc = scenarios[si];
+      const pair = FREQ_AMOUNT[key], cost = BASIS_BY_TYPE[key];
+      if(pair && !(pair.type && sc[pair.type] === 'pct')){
+        const conv = SharedFreq.convert(sc[pair.amount], sc[key], to, 2);
+        if(conv !== null) sc[pair.amount] = conv;
       }
-      scenarios[si][key] = e.target.value;
-      if(key==='rentOngoingCostType' || key==='ownOngoingCostType'){
-        const costKey = key==='rentOngoingCostType' ? 'rentOngoingCost' : 'ownOngoingCost';
-        document.querySelectorAll(`.ongoing-unit[data-si="${si}"][data-cost-key="${costKey}"]`).forEach(span=>{
-          span.textContent = getOngoingCostUnit(scenarios[si], costKey);
-        });
+      if(cost){
+        const asBasis = t => t==='pct' ? 'pct' : (cost.freq ? (sc[cost.freq] || 'yearly') : 'fixed');
+        const conv = convertCostBasis(sc[cost.amount], asBasis(sc[key]), asBasis(to), pctBase(sc, cost.of));
+        if(conv !== null) sc[cost.amount] = conv;
       }
+      sc[key] = to;
       recomputeScenario(si);
-      // A converted amount is a cell of the table, so the table is rebuilt.
-      if(converted) rerender(); else rerenderOutputOnly();
+      // A select here moves another cell (the amount, its unit, or which
+      // fields are in use), so the table is rebuilt.
+      rerender();
+      refocus(e.target);
     });
   });
 
@@ -1526,9 +1723,10 @@ function wireEvents(){
     el.addEventListener('change', e=>{
       const si = +e.target.dataset.si;
       const it = costItemOf(e.target);
-      // Same rescaling, one cost row at a time. A move to or from the "%"
-      // basis is not a change of period, and convert returns null for it.
-      const conv = SharedFreq.convert(it.amount, it.basis, e.target.value, 2);
+      // Same rescaling, one cost row at a time: between periods, and between
+      // money and "%" of what that list's "%" is a share of.
+      const conv = convertCostBasis(it.amount, it.basis, e.target.value,
+        pctBase(scenarios[si], e.target.dataset.list==='rentOngoingCosts' ? 'rent' : 'price'));
       if(conv !== null) it.amount = conv;
       it.basis = e.target.value;
       recomputeScenario(si);
@@ -1571,8 +1769,23 @@ function wireEvents(){
   const addBtn = document.getElementById('addScenBtn');
   if(addBtn) addBtn.addEventListener('click', addScenario);
 
+  // Column drag: reorders the scenarios. Each one carries all its own inputs
+  // and results, so a move is visual only and changes no figure.
+  SharedColDrag.attach(document.querySelector('#tableWrap table.dt'), {
+    scope: document.getElementById('tableWrap'),
+    onMove: (from, to)=>{ moveScenario(from, to); rerender(); }
+  });
+
   document.querySelectorAll('.rmv-scen').forEach(btn=>{
     btn.addEventListener('click', ()=> removeScenario(+btn.dataset.si));
+  });
+
+  document.querySelectorAll('.scen-preset-select').forEach(el=>{
+    el.addEventListener('change', e=>{
+      const key = e.target.value;
+      e.target.value = '';
+      applyCityPreset(+e.target.dataset.si, key);
+    });
   });
 
   document.querySelectorAll('.btn-dupe').forEach(btn=>{
@@ -1595,6 +1808,18 @@ function wireEvents(){
   document.querySelectorAll('.btn-scen-action.show-chart').forEach(btn=>{
     btn.addEventListener('click', ()=> openChartModal(+btn.dataset.si));
   });
+}
+
+// Which fields a scenario uses, as a string, to tell when an edit changed it.
+const activeSignature = sc => PARAMS.map(p => paramActive(p, sc) ? 1 : 0).join('');
+
+/* A rebuild replaces every cell, so the control a reader was on, or moving
+   to with Tab, is found again by what it edits and given the focus back. */
+function refocus(el){
+  if(!el || !el.dataset || el.dataset.si===undefined || !el.classList.length) return;
+  const attrs = ['si','key','list','idx'].filter(k=>el.dataset[k]!==undefined).map(k=>`[data-${k}="${el.dataset[k]}"]`).join('');
+  const twin = document.querySelector('#tableWrap .'+[...el.classList].join('.')+attrs);
+  if(twin && twin!==document.activeElement) twin.focus();
 }
 
 function updateClampNote(si){

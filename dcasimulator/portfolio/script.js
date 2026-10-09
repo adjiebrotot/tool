@@ -11,9 +11,19 @@ wmLogoImg.src = WM_LOGO_SRC;
 // glyph for custom (manual return) assets. Inherit colour via currentColor.
 const SVG_TICKER='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2v17.6"/><path d="M16 7.4c0-2-1.8-3.2-4-3.2S8 5.4 8 7.5s1.8 3 4 3.4 4 1.4 4 3.5-1.8 3.4-4 3.4-4-1.2-4-3.2"/></svg>';
 const SVG_CUSTOM='<svg class="tico" viewBox="0 0 24 24" fill="none"><text x="12" y="17.6" font-size="15.5" font-style="italic" font-weight="700" stroke="none" fill="currentColor" text-anchor="middle" font-family="Georgia,Cambria,&quot;Times New Roman&quot;,serif">fx</text></svg>';
-const LINE_COLOR_HEX = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4','#ec4899','#14b8a6'];
-const PORTFOLIO_COLOR_HEX = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4','#ec4899','#14b8a6'];
-const CASH_COLOR = '#94a3b8';
+/* Colours. Portfolios are options a reader weighs, and assets are the parts of
+   one, so both take the neutral sequence (SharedPalette): blue, gold, teal,
+   rose, then purple and a light blue. Red stays for direction: a price
+   falling, a loss. Each keeps its slot, resolved in the current theme, until
+   the reader picks a colour; a picked colour is kept in both themes. A slot
+   that resolves to a colour an earlier slot already has is skipped. Cash is
+   the theme's muted grey. */
+const PALETTE_VARS = ['--line-a','--gold','--line-c','--line-d','--line-e','--line-f'];
+const PALETTE_FALLBACK = ['#5A91E8','#B45309','#2E8B57','#b45309','#7c3aed','#0891b2'];
+// The colours every portfolio and asset was given before the palette. A saved
+// file or a cached session that carries one of these never picked it, so it
+// opens on the palette instead of on red.
+const LEGACY_COLOR_HEX = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4','#ec4899','#14b8a6'];
 const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; // 1..7
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; // 1..12
 const DEFAULT_RANDOM_SEED = 25823952204;
@@ -52,12 +62,8 @@ const OSC_GROUPS = {
 };
 // MACD histogram bar colours: saturated while a bar grows away from zero, faded
 // while it shrinks back toward it (green above zero, red below).
-const MACD_HIST_COLORS = {
-  upStrong:'#26a69a', upFaint:'rgba(38,166,154,0.42)',
-  downStrong:'#ef5350', downFaint:'rgba(239,83,80,0.42)'
-};
+// (The up and down shades come from upDownColors(), so they follow the theme.)
 // Candlestick body/wick colours (up = close ≥ open, down = close < open).
-const CANDLE_UP = '#26a69a', CANDLE_DOWN = '#ef5350';
 // `ref` picks what a Price % move is measured against: the opening price of a calendar
 // bucket ('period'), or a rolling previous top or bottom.
 //
@@ -142,10 +148,28 @@ function withAlpha(c,a){
   if(c.indexOf('rgb')===0) return c.replace(/rgba?\(([^)]+)\)/,(_,inner)=>{ const p=inner.split(',').slice(0,3).map(s=>s.trim()); return `rgba(${p.join(',')},${a})`; });
   return c;
 }
+function isHexColor(v){ return typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v); }
+function paletteColors(){
+  const seen={}, out=[];
+  PALETTE_VARS.forEach((v,k)=>{ const c=cssVar(v)||PALETTE_FALLBACK[k]; const key=c.toLowerCase(); if(!seen[key]){ seen[key]=1; out.push(c); } });
+  return out;
+}
+function slotColor(slot){ const l=paletteColors(), n=l.length; return l[(((slot|0)%n)+n)%n]; }
+// A colour a reader actually picked, or null for "follow the palette".
+function pickedColor(hex){ return isHexColor(hex) && !LEGACY_COLOR_HEX.includes(hex.toLowerCase()) ? hex : null; }
+// Everything that draws or labels a portfolio or an asset asks here, so a tab,
+// a line, a band, a pie slice and a tile can never disagree.
+function pfColor(p){ return p && isHexColor(p.colorHex) ? p.colorHex : slotColor(p ? p.colorSlot : 0); }
+function assetColor(a){ return a && isHexColor(a.colorHex) ? a.colorHex : slotColor(a ? a.colorSlot : 0); }
+function cashColor(){ return cssVar('--muted')||'#94a3b8'; }
+// Up and down: the site's green and red, read from the theme, for candlesticks
+// and the MACD histogram alike.
+function upDownColors(){ return { up: cssVar('--line-c')||'#2E8B57', down: cssVar('--line-b')||'#E63939' }; }
 // MACD histogram bar colours, TradingView-style: saturated while the bar grows
 // away from zero, faded while it shrinks back toward it.
 function macdHistColors(values){
-  const C=MACD_HIST_COLORS;
+  const ud=upDownColors();
+  const C={ upStrong:ud.up, upFaint:withAlpha(ud.up,0.42), downStrong:ud.down, downFaint:withAlpha(ud.down,0.42) };
   return values.map((v,i)=>{
     if(v==null) return 'transparent';
     const prev=i>0?values[i-1]:null;
@@ -186,6 +210,8 @@ function refreshResultLabels(){
 }
 function showWarning(msg){ const w=$('mainWarning'); w.textContent=msg; w.style.display='block'; }
 function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
+// " ($)" after an axis or a note, or nothing when the currency is set to None.
+function symInBrackets(){ return currentCurrencySymbol ? ' ('+currentCurrencySymbol+')' : ''; }
 function sanitizeSeed(v){ const n=Number(v); return Number.isFinite(n)?Math.floor(Math.abs(n)):DEFAULT_RANDOM_SEED; }
 
 // Wire a standardised number/money input (the shared currency-input design):
@@ -514,11 +540,11 @@ function renderPoolChips(){
     const warn=(e && e.kind==='stock' && e.source==='stooq');
     const range=(e && e.dates && e.dates.length)?e.dates[0]+' to '+e.dates[e.dates.length-1]:'';
     const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:''):range;
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
   }).join('');
   html+=simPool.map(s=>{
     const nm=escapeHtml(s.name);
-    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}<button class="pool-chip-del" type="button" data-sim="${nm}" title="Remove ${nm}" aria-label="Remove ${nm}">×</button></span>`;
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
   }).join('');
   box.innerHTML=html;
   box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -594,7 +620,7 @@ function refreshRfTickerSelect(){
   sel.value=cur;
 }
 
-// Loading is additive and individual tickers are removed via the chip ✕, so the
+// Loading is additive and individual tickers are removed with the chip's bin, so the
 // input is never locked - it always stays open for adding the next batch.
 function setPoolLocked(_locked){
   const inp=$('tickerPoolInput'), editBtn=$('editTickersBtn');
@@ -694,7 +720,7 @@ function makePortfolio(name, colorHex){
   return {
     id:++portfolioIdCounter,
     name: name||('Portfolio '+(portfolios.length+1)),
-    colorHex: colorHex||PORTFOLIO_COLOR_HEX[portfolios.length % PORTFOLIO_COLOR_HEX.length],
+    colorSlot: portfolios.length, colorHex: pickedColor(colorHex),
     assets:[], assetIdCounter:0,
     topup:{ amount:5000, yearlyIncrease:0 },
     topupSched:{ period:'monthly', weekdays:[1], weekParity:0, daysOfMonth:[1], dayOfMonth:1, quarterStart:1, month:1 },
@@ -725,7 +751,7 @@ function duplicatePortfolio(id){
   const copy=JSON.parse(JSON.stringify(src));
   copy.id=++portfolioIdCounter;
   copy.name=src.name+' (copy)';
-  copy.colorHex=PORTFOLIO_COLOR_HEX[portfolios.length % PORTFOLIO_COLOR_HEX.length];
+  copy.colorSlot=portfolios.length; copy.colorHex=null;
   // clear any cached price arrays carried by the deep copy
   copy.assets.forEach(a=>{ a.priceData=null; a.px=null; a.loaded=false; a.open=false; });
   const idx=portfolios.findIndex(p=>p.id===id);
@@ -753,7 +779,7 @@ function renderPortfolioList(){
     tab.title=p.name;
 
     const dot=document.createElement('input');
-    dot.type='color'; dot.className='pf-tab-dot'; dot.value=p.colorHex; dot.title='Pick colour';
+    dot.type='color'; dot.className='pf-tab-dot'; dot.value=pfColor(p); dot.title='Pick colour';
     dot.setAttribute('data-no-stale',''); // a colour is a label, not an assumption
     dot.addEventListener('click',e=>e.stopPropagation());
     dot.addEventListener('input',e=>{ p.colorHex=e.target.value; renderViewSelectors(); refreshResultLabels(); });
@@ -844,11 +870,11 @@ function loadControlsFromActive(){
 function addAsset(cfg){
   const p=getActive(); if(!p) return null;
   const id=++p.assetIdCounter;
-  const colorIdx=p.assets.length % LINE_COLOR_HEX.length;
+  const slot=Number.isInteger(cfg.colorSlot) && cfg.colorSlot>=0 ? cfg.colorSlot : p.assets.length;
   p.assets.forEach(a=>a.open=false);
   const asset={
     id, type:cfg.type||'custom', ticker:cfg.ticker||'', name:cfg.name||cfg.ticker||'Asset',
-    colorHex:cfg.colorHex||LINE_COLOR_HEX[colorIdx],
+    colorSlot:slot, colorHex:pickedColor(cfg.colorHex),
     weight:cfg.weight!=null?cfg.weight:0,
     returnPct:cfg.returnPct!=null?cfg.returnPct:8, stdPct:cfg.stdPct!=null?cfg.stdPct:15,
     // Per-asset deploy trigger, used only by the Rule-Based method.
@@ -900,7 +926,7 @@ function renderAssetList(){
   }
   // Assets are defined in the Data tab (real tickers or simulated assets); here they
   // are only referenced. Each row is therefore read-only and can only be dragged to
-  // reorder (which sets the Composition stacking order) or removed with the ✕ button.
+  // reorder (which sets the Composition stacking order) or removed with the bin.
   el.innerHTML='';
   p.assets.forEach(a=>{
     const card=document.createElement('div');
@@ -908,10 +934,10 @@ function renderAssetList(){
     card.innerHTML=`
       <div class="sec-row-item" data-id="${a.id}">
         <span class="drag-handle" title="Drag to reorder. The top asset sits on top of the Composition Over Time chart" aria-label="Drag to reorder">⠿</span>
-        <span class="color-dot" style="background:${a.colorHex}"></span>
+        <span class="color-dot" style="background:${assetColor(a)}"></span>
         <span class="sec-name">${escapeHtml(a.name)}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
-        <button class="sec-del-x" id="aDel${a.id}" title="Remove asset" aria-label="Remove asset">×</button>
+        ${SharedIcon.button('trash', 'Remove asset', 'sec-del-x', `id="aDel${a.id}"`)}
       </div>`;
     el.appendChild(card);
 
@@ -960,8 +986,8 @@ function renderWeightTable(){
   tableWrap.innerHTML=`<div class="weight-table">${
     p.assets.map(a=>`
       <div class="weight-row">
-        <span class="wt-name"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span></span>
-        <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
+        <span class="wt-name"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span></span>
+        <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" data-unit="%" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="wtTotalCell"></span></div></div>`;
 
@@ -990,7 +1016,7 @@ function updateWeightPie(){
   const p=getActive(); if(!p) return;
   const labels=p.assets.map(a=>a.name);
   const data=p.assets.map(a=>a.weight||0);
-  const colors=p.assets.map(a=>a.colorHex);
+  const colors=p.assets.map(assetColor);
   const allZero=data.every(v=>v<=0);
   if(weightPieChart){
     weightPieChart.data.labels=labels;
@@ -1056,7 +1082,7 @@ function renderRankWeightTable(){
     rw.map((w,idx)=>`
       <div class="weight-row">
         <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span></span>
-        <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
+        <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" data-unit="%" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="rwTotalCell"></span></div></div>`;
   rw.forEach((w,idx)=>{
@@ -1232,13 +1258,13 @@ function renderTriggerTable(){
   const reserveId=(p.rebal.reserveMode==='asset')?p.rebal.reserveAssetId:null;
   wrap.innerHTML=p.assets.map(a=>{
     if(a.id===reserveId)
-      return `<div class="trigger-card"><div class="trigger-head"><span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
+      return `<div class="trigger-card"><div class="trigger-head"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
     const tr=a.trigger||makeDefaultTrigger();
     const collapsed=trigCollapsed.has(a.id);
     return `<div class="trigger-card${collapsed?' is-collapsed':''}">
       <div class="trigger-head trigger-toggle" data-aid="${a.id}" role="button" tabindex="0" title="Show or hide this trigger's settings">
         <span class="trig-chevron" aria-hidden="true">▾</span>
-        <span class="color-dot" style="background:${a.colorHex}"></span><span class="wt-label">${a.name}</span>
+        <span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span>
         <span class="tip-icon" data-tip="${triggerPlainDesc(a)}">i</span></div>
       <div class="trigger-summary">${triggerSummary(a)}</div>
       <div class="trigger-body">
@@ -2007,8 +2033,8 @@ async function runSimulation(){
       // and (for Rule-Based tech triggers) the underlying indicators on demand.
       if(rows.openProxied) fillNotes.push(`${p.name}: ${rows.openProxied} trade(s) at the previous close, no open price in the data`);
       if(rows.unfilled) fillNotes.push(`${p.name}: ${rows.unfilled} decision(s) on the last day not filled`);
-      results.push({ id:p.id, name:p.name, colorHex:p.colorHex, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), method:p.rebal.method,
-        assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,weight:a.weight,type:a.type,px:a.px.slice(),ohlc:a.ohlc,trigger:a.trigger})) });
+      results.push({ id:p.id, name:p.name, colorHex:p.colorHex, colorSlot:p.colorSlot, rows, rfPx, rfRate:(p.rf.mode==='ticker'?0:(p.rf.rate||0)), method:p.rebal.method,
+        assets:active.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,colorSlot:a.colorSlot,weight:a.weight,type:a.type,px:a.px.slice(),ohlc:a.ohlc,trigger:a.trigger})) });
       // reflect "loaded" badges for tickers in the active portfolio's asset list
       if(p.id===activePortfolioId){ active.forEach(a=>{ const el=$('aLoad'+a.id); if(el&&a.type==='ticker'){ el.className='status-bar status-ok'; el.textContent='✓ Loaded'; } }); }
     });
@@ -2047,7 +2073,7 @@ function updateValueChart(){
   valueDsPairs=[]; hiddenPf.clear();
 
   simResults.forEach((res,idx)=>{
-    const color=res.colorHex;
+    const color=pfColor(res);
     const valueIdx=datasets.length;
     datasets.push({label:res.name, data:res.rows.map(r=>r.total), borderColor:color, backgroundColor:color+'22', borderWidth:2.6, pointRadius:0, pointHoverRadius:5, tension:0.15, fill:false, _type:'value'});
     const topupIdx=datasets.length;
@@ -2097,7 +2123,7 @@ function updateValueChart(){
       sharedYFit:{auto:{axes:['y']}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
-      y:{title:{display:true,text:'Value ('+currentCurrencySymbol+')',color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
+      y:{title:{display:true,text:'Value'+symInBrackets(),color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
   };
   if(valueChart) valueChart.destroy();
   valueChart=new Chart($('valueCanvas'),{type:'line',data:{labels:dates,datasets},options:opts,plugins:[SharedZoom.plugin]});
@@ -2120,8 +2146,8 @@ function updateCompChart(){
 
   // Cash is the base of the stack; assets are pushed in reverse list order so the
   // first asset in the (drag-reorderable) asset list is drawn on top.
-  const series=[{label:'Cash', color:CASH_COLOR, assetId:null, data:res.rows.map(r=>asVal(r.cash,r.total))}];
-  res.assets.slice().reverse().forEach(a=>series.push({label:a.name, color:a.colorHex, assetId:a.id, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
+  const series=[{label:'Cash', color:cashColor(), assetId:null, data:res.rows.map(r=>asVal(r.cash,r.total))}];
+  res.assets.slice().reverse().forEach(a=>series.push({label:a.name, color:assetColor(a), assetId:a.id, data:res.rows.map(r=>asVal(r.assetVals[a.id]||0, r.total))}));
 
   const datasets=series.map(s=>({
     label:s.label, data:s.data, borderColor:s.color, backgroundColor:s.color+'66',
@@ -2157,7 +2183,7 @@ function updateCompChart(){
       sharedYFit:{auto:{axes:['y'],fixed:isPct?['y']:[]}}},
     scales:{
       x:{title:{display:true,text:'Date',color:muted,font:{size:11}},ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>dates[Number(v)]?.slice(0,7)||''},grid:{color:grid}},
-      y:{stacked:true,min:0,max:isPct?100:undefined,title:{display:true,text:isPct?'% of Portfolio':'Value ('+currentCurrencySymbol+')',color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
+      y:{stacked:true,min:0,max:isPct?100:undefined,title:{display:true,text:isPct?'% of Portfolio':'Value'+symInBrackets(),color:muted,font:{size:11}},ticks:{color:muted,font:{size:11},callback:yCb},grid:{color:grid}}}
   };
   if(compChart) compChart.destroy();
   compChart=new Chart($('compCanvas'),{type:'line',data:{labels:dates,datasets},options:opts,plugins:[SharedZoom.plugin]});
@@ -2223,6 +2249,7 @@ const pfCandlePlugin = {
     const w=Math.max(1, Math.min(step*0.7, 16));
     ctx.save();
     ctx.beginPath(); ctx.rect(area.left,area.top,area.right-area.left,area.bottom-area.top); ctx.clip();
+    const ud=upDownColors();
     chart.data.datasets.forEach((ds,di)=>{
       if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
       const {o,h,l,c}=ds._ohlc;
@@ -2230,7 +2257,7 @@ const pfCandlePlugin = {
         if(c[i]==null||o[i]==null) continue;
         const px=x.getPixelForValue(i);
         if(px<area.left-w||px>area.right+w) continue;
-        const up=c[i]>=o[i], col=up?CANDLE_UP:CANDLE_DOWN;
+        const up=c[i]>=o[i], col=up?ud.up:ud.down;
         ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1;
         ctx.beginPath(); ctx.moveTo(px,y.getPixelForValue(h[i])); ctx.lineTo(px,y.getPixelForValue(l[i])); ctx.stroke();
         const yO=y.getPixelForValue(o[i]), yC=y.getPixelForValue(c[i]);
@@ -2276,7 +2303,7 @@ function updatePriceChart(){
   const priceVal=(a,price)=> normalize ? price/(a.px[0]||1)*100 : price;
 
   const datasets=assets.map((a,idx)=>{
-    const color=a.colorHex;
+    const color=assetColor(a);
     const hidden=priceHidden.has(idx);
     const item=document.createElement('div');
     item.className='legend-item'+(hidden?' hidden':'');
@@ -2315,14 +2342,14 @@ function updatePriceChart(){
     if(!isFinite(gMin)){ gMin=0; gMax=1; }
     const markerOffset=((gMax-gMin)||1)*0.05;
     assets.forEach((a,idx)=>{
-      const color=a.colorHex;
+      const color=assetColor(a);
       const aid=a.id;
       datasets.push({
         label:`${a.name} ▲ Buy`, hidden:priceHidden.has(idx),
         data:res.rows.map((r,ri)=> (Array.isArray(r.bought)&&r.bought.indexOf(aid)>=0) ? priceVal(a,a.px[ri]) - markerOffset : null),
         borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
         pointStyle:'triangle', pointRadius:2.5, pointHoverRadius:4,
-        pointBorderColor:'#fff', pointBorderWidth:0.5, _marker:true
+        pointBorderColor:cssVar('--card-bg')||'#fff', pointBorderWidth:0.5, _marker:true
       });
     });
   }
@@ -2339,7 +2366,7 @@ function updatePriceChart(){
       const prices=a.px;
       const base100=prices[0]||1;
       const ts=SharedTA.buildTech(prices, tr.type, tr.tech||{});
-      const base=a.colorHex;
+      const base=assetColor(a);
       const oscInfo=OSC_GROUPS[tr.type];
       ts.lines.forEach(ln=>{
         const isOsc=ln.axis==='osc'&&oscInfo;
@@ -2388,7 +2415,7 @@ function updatePriceChart(){
   const fmtY=v=> normalize ? fmt.num(v,2)+'%' : fmt.currency(v);
   const yCallback= normalize ? (val=>fmt.num(val,1)+'%') : (val=>fmt.currency(val,true));
   const fmtPt=i=> `${i.dataset.label}: ${isOscDs(i.dataset)?fmt.num(i.parsed.y,2):fmtY(i.parsed.y)}`;
-  const yTitle= normalize ? 'Normalised Price (base 100)' : 'Price ('+currentCurrencySymbol+')';
+  const yTitle= normalize ? 'Normalised Price (base 100)' : 'Price'+symInBrackets();
   const sub=$('pricePfSubtitle'); if(sub) sub.textContent = showCandles ? '(OHLC candlesticks)' : (normalize ? '(normalised to 100)' : '(actual price)');
 
   function buildPriceOpts(){
@@ -2423,7 +2450,8 @@ function updatePriceChart(){
   }
 
   if(priceChart) priceChart.destroy();
-  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin]});
+  // SharedPane (shared.js) keeps each stacked pane's axis text inside its pane.
+  priceChart=new Chart($('priceCanvas'),{type:'line',data:{labels:dates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin,SharedPane.plugin]});
   priceChart.update();
 }
 
@@ -2449,8 +2477,8 @@ function updateSummary(){
     const cashPct=last.total>0?last.cash/last.total:0;
     const isBest=res.id===bestId && simResults.length>1;
     const m=computeMetrics(res);
-    sg.innerHTML+=`<div class="tile" style="border-left:3px solid ${res.colorHex}">
-      <div class="label">${res.name}${isBest?' <span style="color:#22c55e;font-weight:700">★</span>':''}</div>
+    sg.innerHTML+=`<div class="tile" style="border-left:3px solid ${pfColor(res)}">
+      <div class="label">${res.name}${isBest?' <span style="color:var(--accent);font-weight:700">★</span>':''}</div>
       <div class="value">${fmt.currency(last.total)}</div>
       <div style="font-size:.75rem;color:var(--muted);margin-top:3px">Net ${fmt.currency(gain)} · ROI ${fmt.pct(roi)}</div>
       <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Topped up ${fmt.currency(last.cumTopup)} · Cash ${fmt.pct(cashPct)}</div>
@@ -2462,6 +2490,119 @@ function updateSummary(){
       </div>
     </div>`;
   });
+  renderVerdict();
+  renderAssumptions();
+}
+
+/* ─── THE ANSWER, IN ONE SENTENCE ───
+   Portfolios are options a reader is weighing, so the verdict is neutral:
+   which ended highest, and by how much. When they topped up different
+   amounts, more money in is not a better portfolio, so it compares the return
+   on what went in instead. */
+function renderVerdict(){
+  const el=$('verdict'); if(!el || !window.SharedVerdict) return;
+  if(!simResults.length){ SharedVerdict.set(el, null); return; }
+  const num=t=>'<span class="v-num">'+escapeHtml(t)+'</span>';
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const rows=simResults.map(res=>{ const l=res.rows[res.rows.length-1]; const g=l.total-l.cumTopup;
+    return { name:res.name||'Portfolio', fin:l.total, dep:l.cumTopup, gain:g, roi:l.cumTopup>0?g/l.cumTopup:0 }; });
+  if(rows.length===1){
+    const r=rows[0];
+    SharedVerdict.set(el, { tone:'', title: nm(r.name)+' turned '+num(fmt.currency(r.dep))+' of top-ups into '+num(fmt.currency(r.fin))+'.',
+      body: 'A net gain of '+num(fmt.currency(r.gain))+', a return on investment (ROI) of '+num(fmt.pct(r.roi))+'. Add a portfolio to compare it against.' });
+    return;
+  }
+  const deps=rows.map(r=>r.dep), hi=Math.max(...deps), lo=Math.min(...deps);
+  if(hi-lo <= Math.max(1, hi*0.005)){
+    const sorted=rows.slice().sort((a,b)=>b.fin-a.fin), a=sorted[0], b=sorted[1], gap=a.fin-b.fin;
+    const others=rows.length>2 ? ' of the '+rows.length : '';
+    SharedVerdict.set(el, { tone:'',
+      title: gap<0.5
+        ? nm(a.name)+' and '+nm(b.name)+' ended level at '+num(fmt.currency(a.fin))+'.'
+        : nm(a.name)+' ended highest'+others+' at '+num(fmt.currency(a.fin))+', '+num(fmt.currency(gap))+' more than '+nm(b.name)+'.',
+      body: 'Every portfolio topped up about '+num(fmt.currency(hi))+', so their final values compare directly. '+
+            'Advanced metrics, under the summary, add the risk taken to get there.' });
+    return;
+  }
+  const sorted=rows.slice().sort((a,b)=>b.roi-a.roi), a=sorted[0], b=sorted[1];
+  SharedVerdict.set(el, { tone:'',
+    title: nm(a.name)+' earned the most on what went in: a return on investment (ROI) of '+num(fmt.pct(a.roi))+', against '+num(fmt.pct(b.roi))+' for '+nm(b.name)+'.',
+    body: 'The portfolios topped up different amounts, from '+num(fmt.currency(lo))+' to '+num(fmt.currency(hi))+
+          ', so this compares the return on the money each put in rather than the final value.' });
+}
+
+/* ─── WHAT THIS ASSUMES ───
+   Built from the portfolios that ran: their assets, methods, fees and cash.
+   A feature none of them use (a simulated asset, a reserve, the advanced
+   metrics) says nothing. */
+function renderAssumptions(){
+  const el=$('assumptions'); if(!el) return;
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const list=a=>a.length<2 ? a.join('') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  const pc=v=>(+(Number(v)||0).toFixed(2))+'%';
+  const ran=simResults.length ? portfolios.filter(p=>simResults.some(r=>r.id===p.id)) : portfolios;
+  if(!ran.length){ el.innerHTML='<li><strong>Add a portfolio and simulate</strong> to see what the run rests on.</li>'; return; }
+  const items=[];
+  // Group portfolios that share a figure, so the same fact is said once.
+  const byKey=(fn)=>{ const m=new Map(); ran.forEach(p=>{ const k=fn(p); if(!m.has(k)) m.set(k,[]); m.get(k).push(p); }); return m; };
+  const who=(ps)=>ran.length===1 ? '' : ' in '+list(ps.map(p=>nm(p.name)));
+
+  const assets=ran.flatMap(p=>p.assets);
+  const tickers=[...new Set(assets.filter(a=>a.type==='ticker').map(a=>String(a.ticker||'').toUpperCase()).filter(Boolean))];
+  const rfTickers=[...new Set(ran.filter(p=>p.rf.mode==='ticker'&&p.rf.ticker).map(p=>String(p.rf.ticker).toUpperCase()))];
+  const allTk=[...new Set(tickers.concat(rfTickers))];
+  if(allTk.length){
+    const stooq=allTk.filter(t=>{ const e=priceCache[t]; return e && e.kind==='stock' && e.source==='stooq'; });
+    const adj=allTk.filter(t=>!stooq.includes(t));
+    if(adj.length) items.push('<strong>'+list(adj.map(nm))+(adj.length===1?' uses':' use')+' Yahoo Finance\'s adjusted close,</strong> so dividends and splits are folded into the price.');
+    if(stooq.length) items.push('<strong>'+list(stooq.map(nm))+(stooq.length===1?' is':' are')+' from Stooq and unadjusted,</strong> so dividends are left out of the return.');
+    if(currentCurrencySymbol!=='$' || allTk.some(t=>t.includes('.')))
+      items.push('<strong>'+escapeHtml(currentCurrencySymbol||'The currency')+' is a label.</strong> Nothing is converted, so each ticker is read in the currency it is quoted in.');
+  }
+  const sims=assets.filter(a=>a.type==='custom');
+  if(sims.length){
+    const seen=new Set();
+    const desc=sims.filter(a=>{ const k=a.name+'|'+a.returnPct+'|'+a.stdPct; if(seen.has(k)) return false; seen.add(k); return true; })
+      .map(a=>nm(a.name)+' at '+pc(a.returnPct)+' a year, '+pc(a.stdPct)+' standard deviation');
+    items.push('<strong>'+(desc.length===1?'The simulated asset is one random path:':'Each simulated asset is one random path:')+'</strong> '+desc.join('; ')+
+      '. Seed '+escapeHtml(String(currentRandomSeed))+' fixes it, so it is a what-if rather than a forecast.');
+  }
+
+  if(simResults.length && commonDates.length)
+    items.push('<strong>Every portfolio runs '+escapeHtml(commonDates[0])+' to '+escapeHtml(commonDates[commonDates.length-1])+'</strong>'+
+      (allTk.length+sims.length>1 ? ', the trading days all of their assets share.' : '.'));
+
+  const FILL={ 'close':'that day\'s close', 'next-open':'the next day\'s open', 'next-close':'the next day\'s close' };
+  items.push('<strong>Every top-up, trigger and rebalance decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
+
+  byKey(p=>(p.rebal.buyFee||0)+'|'+(p.rebal.sellFee||0)).forEach((ps,k)=>{
+    const [b,sl]=k.split('|').map(Number);
+    items.push(b||sl
+      ? '<strong>Each trade'+who(ps)+' pays '+(b===sl ? pc(b)+' in fees' : pc(b)+' to buy and '+pc(sl)+' to sell')+'.</strong> There is no tax.'
+      : '<strong>No fees and no tax'+who(ps)+'.</strong>');
+  });
+
+  byKey(p=>p.rf.mode==='ticker' ? 't:'+String(p.rf.ticker||'').toUpperCase() : 'r:'+(p.rf.rate||0)).forEach((ps,k)=>{
+    const tk=k.startsWith('t:') ? k.slice(2) : '';
+    const rate=tk ? 0 : Number(k.slice(2));
+    items.push('<strong>Idle cash'+who(ps)+(tk ? ' tracks '+nm(tk) : rate ? ' earns '+pc(rate)+' a year' : ' earns nothing')+'.</strong>'+
+      (showAdvanced ? ' Sharpe and Sortino measure '+(ps.length===1&&ran.length===1?'the portfolio':'each')+' against it.' : ''));
+  });
+
+  ran.forEach(p=>{
+    const r=p.rebal, name=ran.length===1 ? 'The portfolio' : nm(p.name);
+    const per={weekly:'weekly',fortnightly:'fortnightly',monthly:'monthly',quarterly:'quarterly',yearly:'yearly'}[(p.rebalSched||{}).period]||'scheduled';
+    const line={
+      'towards-weight': name+' never sells.</strong> Top-ups buy only assets below target, so some cash can sit idle.',
+      'constant-weight': name+' sells overweight assets to rebalance</strong> '+(r.cwTiming==='schedule' ? 'on a '+per+' schedule.' : 'at every top-up.'),
+      'constant-allocation': name+' splits each top-up by its weights</strong> and never rebalances what it already holds.',
+      'dynamic-momentum': name+' ranks its assets by their trailing '+(r.lookbackMonths||6)+'-month return</strong> at each top-up, so the holding behind each rank changes.',
+      'rule-trigger': name+' parks top-ups in '+((r.reserveMode||'cash')==='asset' ? 'its reserve asset' : 'cash')+'</strong> until an asset\'s own trigger fires.'
+    }[r.method];
+    if(line) items.push('<strong>'+line);
+  });
+
+  el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
 }
 
 /* ─── DETAILED BREAKDOWN (start, events & end snapshots for the selected portfolio) ─── */
@@ -2482,6 +2623,9 @@ function breakdownRows(rows){
 function updateTable(){
   const head=$('compHead'), body=$('compBody');
   if(!simResults.length){ return; }
+  const note=$('compUnitNote');
+  if(note) note.textContent=(currentCurrencySymbol ? 'Amounts in '+currentCurrencySymbol+'.' : 'Amounts in the currency of the prices.')+
+    ' Interest and Fees are running totals; one row per event, between the first and the last trading day.';
   const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
   // Interest and Fees are running totals, so any row closes on its own:
   // Portfolio Value - Deposited - Interest + Fees is what the market added.
@@ -2499,6 +2643,7 @@ $('detailPfSelect').addEventListener('change',e=>{ activeDetailId=parseInt(e.tar
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
+  renderAssumptions();
   // Toggle visibility in place - metrics are already rendered in each tile.
   document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
 });
@@ -2584,10 +2729,11 @@ function buildSettingsObj(){
 function normalizeLoadedPortfolio(src, idx){
   // A file without colours would otherwise give every portfolio the first
   // palette colour, and two lines on one chart would be indistinguishable.
-  const base=makePortfolio(src.name, src.colorHex||PORTFOLIO_COLOR_HEX[(idx||0) % PORTFOLIO_COLOR_HEX.length]);
+  const base=makePortfolio(src.name, src.colorHex);
   base.id = src.id||base.id;
   base.name = src.name||base.name;
-  base.colorHex = src.colorHex||base.colorHex;
+  base.colorSlot = Number.isInteger(src.colorSlot) && src.colorSlot>=0 ? src.colorSlot : (idx||0);
+  base.colorHex = pickedColor(src.colorHex);
   base.assetIdCounter = src.assetIdCounter||0;
   base.topup = Object.assign({}, base.topup, src.topup);
   base.topupSched = Object.assign({}, base.topupSched, src.topupSched);
@@ -2596,7 +2742,7 @@ function normalizeLoadedPortfolio(src, idx){
   base.rebalSched = Object.assign({}, base.rebalSched, src.rebalSched);
   base.assets = (src.assets||[]).map((a,idx)=>({
     id: a.id!=null?a.id:(idx+1), type:a.type||'custom', ticker:a.ticker||'', name:a.name||a.ticker||'Asset',
-    colorHex:a.colorHex||LINE_COLOR_HEX[idx % LINE_COLOR_HEX.length],
+    colorSlot:Number.isInteger(a.colorSlot) && a.colorSlot>=0 ? a.colorSlot : idx, colorHex:pickedColor(a.colorHex),
     weight:a.weight!=null?a.weight:0,
     returnPct:a.returnPct!=null?a.returnPct:8, stdPct:a.stdPct!=null?a.stdPct:15,
     trigger: a.trigger ? Object.assign(makeDefaultTrigger(), a.trigger, {tech:Object.assign(Object.assign({},TRIGGER_TECH_DEFAULTS), a.trigger.tech||{})}) : makeDefaultTrigger(),
@@ -2634,7 +2780,13 @@ SharedScenario.mount('.quick-start-row', {
 });
 
 /* ─── CHART PNG EXPORT ─── */
-function exportChartPng(canvasId, filename, chartTitle, legendId, download=true){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function exportChartPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return exportChartPngAtSize.apply(null, args); });
+}
+function exportChartPngAtSize(canvasId, filename, chartTitle, legendId, download=true){
   const src=$(canvasId); if(!src) return null;
   const dpr=window.devicePixelRatio||1, OUT=3;
   const chartW=Math.round(src.width/dpr*OUT), chartH=Math.round(src.height/dpr*OUT);
@@ -2686,7 +2838,13 @@ async function copyCanvasPng(canvas){
    Wraps the Chart.js canvas as a raster <image> inside a vector SVG, then adds a
    real vector title, legend swatches/labels and the watermark around it, so the
    download stays crisp at the chart frame and is drop-in for slides/docs. */
-function downloadChartSvg(canvasId, filename, chartTitle, legendId){
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartSvgAtSize.apply(null, args); });
+}
+function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId){
   const srcC=$(canvasId); if(!srcC) return;
   const dpr=window.devicePixelRatio||1;
   const chartW=Math.round(srcC.width/dpr), chartH=Math.round(srcC.height/dpr);
@@ -2717,7 +2875,10 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId){
   }
   const img=document.createElementNS(NS,'image');
   img.setAttribute('x',0); img.setAttribute('y',titleH); img.setAttribute('width',chartW); img.setAttribute('height',chartH);
-  img.setAttributeNS(xl,'href',srcC.toDataURL('image/png')); svg.appendChild(img);
+  // Plain href first: SVG 2 viewers (and some converters) ignore xlink:href,
+  // which left the chart blank with only the title, legend and logo showing.
+  const chartHref=srcC.toDataURL('image/png');
+  img.setAttribute('href',chartHref); img.setAttributeNS(xl,'href',chartHref); svg.appendChild(img);
   const mc=document.createElement('canvas').getContext('2d'); mc.font='500 11px DM Sans, sans-serif';
   legendRows.forEach((row,ri)=>{
     let x=Math.max(legMargin,(svgW-row.width)/2);
@@ -2796,13 +2957,13 @@ $('currencySymbol').addEventListener('change',e=>{
   if(simResults.length){ updateValueChart(); updatePriceChart(); updateCompChart(); updateSummary(); updateTable(); }
 });
 $('randomSeed').addEventListener('input',e=>{ currentRandomSeed=sanitizeSeed(e.target.value); });
-$('execTiming').addEventListener('change',e=>{ currentExecTiming=SharedTA.EXEC_MODES.includes(e.target.value)?e.target.value:DEFAULT_EXEC_TIMING; });
+$('execTiming').addEventListener('change',e=>{ currentExecTiming=SharedTA.EXEC_MODES.includes(e.target.value)?e.target.value:DEFAULT_EXEC_TIMING; renderAssumptions(); });
 
 /* ─── THEME ─── */
 $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
-  if(simResults.length){ updateValueChart(); updatePriceChart(); updateCompChart(); }
+  if(simResults.length){ updateValueChart(); updatePriceChart(); updateCompChart(); updateSummary(); }
   renderAssetList(); renderPortfolioList();
 });
 
@@ -2872,6 +3033,7 @@ function resetWorkspace(){
   $('priceCandleToggle').checked=false; $('priceBuyDateToggle').checked=false; $('priceTechToggle').checked=false;
   $('priceTechToggleWrap').style.display='none';
   $('summaryGrid').innerHTML='';
+  renderVerdict(); renderAssumptions();
   $('compHead').innerHTML='<tr><th>Date</th><th>Decided</th><th>Event</th><th>Cash</th><th>Deposited</th><th>Interest</th><th>Fees</th><th>Portfolio Value</th></tr>';
   $('compBody').innerHTML='<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:20px">Add portfolios and run to see the breakdown.</td></tr>';
   $('valueLegend').innerHTML=''; $('compLegend').innerHTML=''; $('priceLegend').innerHTML='';
@@ -2889,7 +3051,8 @@ function resetWorkspace(){
 // portfolio list, then runs the simulation so real Yahoo Finance prices are
 // fetched (no simulated/custom data).
 function qsAddPortfolio(name, colorIdx, assets, opts){
-  const p = addPortfolio(name, PORTFOLIO_COLOR_HEX[colorIdx % PORTFOLIO_COLOR_HEX.length]);
+  const p = addPortfolio(name);
+  p.colorSlot = colorIdx;
   activePortfolioId = p.id;
   assets.forEach(a=> addAsset({type:'ticker', ticker:a.ticker, name:a.name||a.ticker, weight:a.weight}));
   opts = opts || {};
@@ -2968,12 +3131,12 @@ function initDefaults(){
   ensureSimEntry('Equities',10,18);
   ensureSimEntry('Bonds',4,6);
   // Two contrasting strategies to demonstrate the comparison.
-  const a=addPortfolio('60/40 Balanced', PORTFOLIO_COLOR_HEX[0]);
+  const a=addPortfolio('60/40 Balanced');
   activePortfolioId=a.id;
   addAsset({type:'custom', name:'Equities', returnPct:10, stdPct:18, weight:60});
   addAsset({type:'custom', name:'Bonds', returnPct:4, stdPct:6, weight:40});
 
-  const b=addPortfolio('80/20 Growth', PORTFOLIO_COLOR_HEX[1]);
+  const b=addPortfolio('80/20 Growth');
   activePortfolioId=b.id;
   addAsset({type:'custom', name:'Equities', returnPct:10, stdPct:18, weight:80});
   addAsset({type:'custom', name:'Bonds', returnPct:4, stdPct:6, weight:20});
@@ -2999,6 +3162,14 @@ updateBtnRow();
    export/import config) so a returning user resumes where they left off;
    otherwise fall through to the seeded defaults and run. */
 let restoredFromCache=false;
+/* The breakdown table is the most specific thing on the page, so it opens
+   closed behind Show table; the CSV button exports it either way. */
+if(window.SharedFold){
+  const tableSub=$('compTable') && $('compTable').closest('.detail-subsection');
+  if(tableSub) SharedFold.attach(tableSub, { key:'dcasimulator-portfolio', bodies:['#compUnitNote','.table-wrap'] });
+}
+renderAssumptions();
+
 persist = Persist.init('dcasimulator-portfolio', {
   onRestore: function(){ /* importSettings() already rebuilt + ran */ },
   extra: {

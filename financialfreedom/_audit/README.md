@@ -31,9 +31,87 @@ means the maths agrees rather than an implementation being compared to itself:
 - a pot the page solved backwards is walked **forwards** through the replay's
   own step-5 recurrence (`refForward`), so "the solved pot never dips below
   zero and lands on its terminal condition" is page against replay rather than
-  page against itself.
+  page against itself;
+- the life stages of step 3c are a **scan** in the page, which walks every
+  stage and keeps the best active one, and a **priority list** in the replay
+  (`refStages`, `refStageAt`), sorted once latest start first, ties to the
+  row further down, and read for the first stage whose span holds the age.
+  Every replay function that spends (`refSavings`, `refSpend`, `refRequired`,
+  `refForward`, `refFan`) goes through it, so a stage that disagrees shows up
+  everywhere at once. With stages the closed-form future value no longer
+  applies, so `refAccum` falls back to the discounted sum of every month's
+  saving rather than the page's recurrence.
+- the income stages of step 3d share that ordering fold, are found with
+  `find()` (a stage ending at 120 has no end), and grow by a **yearly real
+  factor** `((1 + g) / (1 + i))^years` from the later of their start and
+  today, where the page compounds a real monthly rate month by month. Once
+  retired, a stage still paid after you stop work stands in `refPension`,
+  where the pension stood, so `refRequired`, `refForward` and `refLifetime`
+  pick it up without a line of their own. F72 to F77 compare the two month by
+  month in both models, by hand at every awkward shape a list can take, and
+  for the pot, the accumulation, the balance and the freedom age. F73 pins
+  that Detailed with no stages of its own is Simple to the last digit, and
+  that a pension entered as a stage (indexed, from 67, to 120) needs the pot
+  the Simple pension needs. Simple Money in was checked against the page
+  before income stages with `regression.mjs --live` and is unchanged to the
+  last binary digit.
 
 Run: `node run.mjs`
+
+## Previous plans, to the last binary digit: `regression.mjs`
+
+`run.mjs` checks the maths against a replay. `regression.mjs` checks something
+narrower and stricter: that adding Money out and life stages moved NO plan that
+could be entered before them. Not to the cent, to the last binary digit,
+compared with `Object.is` on every value: every number the engine produces
+(parameters, the verdict and its remedies, every series, the Monte Carlo
+bands, every simulated future's required pot, the drawdown band), every row of
+the table, every byte of the CSV, every point on both charts, and the text of
+the verdicts, the cards and the notes. The assumptions list was reworded, so
+only its figures are compared.
+
+    node regression.mjs                  this page against baseline.json
+    node regression.mjs --live ca850bc   this page beside the old one, from git
+    node regression.mjs --record ca850bc rewrite baseline.json from the old page
+    node regression.mjs --live HEAD      this page beside the last commit: the
+                                         check for a change that must not move
+                                         a figure (a relabel, a layout change)
+
+`--live` feeds each side the plan in the form that side reads: `retireMultiplier`
+to a page from before life stages, Retirement expenses to any page since. A
+reworded sentence on the cards, the table note or the verdicts shows up as a
+text difference by design; every number still has to match to the last digit.
+
+The plans are 38 hand-picked ones aimed at each branch of the engine (all three
+goals, both savings models and moneys, every period, frozen and indexed
+pensions, both ends of the slider, a plan that runs out, one no pot funds with
+its remedies, one already free, the retirement share at 10%, 300% and in
+fractions, zero inflation, zero and negative real returns, a fractional age,
+the six Quick Start plans as they stood) and 200 random ones. A plan from before
+is written with `retireMultiplier`; on the new page it is Retirement expenses at
+that share of living, Simple, no stages. The four Quick Start buttons whose
+scenario did not change are clicked on both pages. Then the mini cache: the old
+page saves 58 of the plans the way a returning reader's browser holds them, and
+a fresh new page has to open each one, `retireMultiplier` and all, to the same
+figures. A scenario file is the same snapshot, so it rides the same path.
+
+`--live` is the strongest form and names the first value that differs.
+`baseline.json` holds a digest per group per plan, recorded from ca850bc (the
+commit before life stages), so the default mode needs no git history. Both
+pages run in the same Chromium in `--live`; if the baseline mode ever fails on
+a different Chromium while `--live` passes, the difference is the platform's
+own floating point, not the page.
+
+It was mutation-tested. Computing a share as `X * pct / 100` instead of the old
+`X * (pct / 100)` is the same on paper and fails R1 and R3 at the last digit
+(Moderate FIRE's retirement spending 5416.666666666667 against
+5416.666666666668), which is why the page keeps the old order. Rounding a
+migrated share to the new field's display precision fails R3 (37.25% is not
+37.3%). The "spend less" remedy applies its cut to the living figure itself
+whenever every other expense is a share of it, the old arithmetic exactly; the
+other order only differs where a bisection probe lands within about 1e-15 of
+the funding threshold, so no plan here tells the two apart, and the page does
+not rely on that.
 
 ## Covered
 
@@ -312,13 +390,13 @@ in the money of the day, freedom at a later age costs MORE, while in today's
 money it costs less because fewer years are left to fund. Both are true at once
 and the page has to say which one it is showing.
 
-**Which money the page opens in.** Future dollars are the default, because a
-balance in the money of its own year is the figure a statement will actually
-read; today's money is the opt-in, behind Show Present Value. F47 pins that from
-the page as it loads — the toggle's wording, its unchecked state, the defaults
-object, the axis title, and the plotted balance genuinely carrying the inflation
-factor without anyone asking for it. Everything after F47 flips the toggle on,
-because the replay is written in real terms.
+**Which money the page opens in.** Today's money is the default: the toggle
+reads Show in Present Value and is on as the page loads, so every figure is in
+present value; future's money (the money of each year) is the opt-out. F47 pins
+that from the page as it loads: the toggle's wording, its checked state, the
+defaults object, the axis title, and the plotted balance being the engine's
+real figure with no inflation factor applied. Everything after F47 keeps the
+toggle on, because the replay is written in real terms.
 
 **A point in time is a date, not a decimal.** The crossing falls between two
 yearly samples, so its x is 2039.1666…, and F49 pins every place that used to
@@ -374,6 +452,93 @@ Rich may need an infinite pot, and no NaN ever reaches a chart. It is the net
 under everything above: a combination no hand-written case thought of either
 satisfies every invariant or shows up here.
 
+**Money out, and the life stages (F67 to F71).** Money in and Money out are
+two groups on the You tab now. Money out has a Simple/Detailed switch: Simple
+is living expenses while you work and retirement expenses once you stop (the
+old "retirement spending, % of today" from the Goal tab, which can now also be
+an amount a week, month or year). Detailed shows those same two fields as the
+first and last stage of a list, named and locked, with the reader's own stages
+between them, each a span of ages with its own level, as a share of today's
+living expenses or an amount. The own stages run in LIST ORDER and never
+overlap: a start typed inside the stage above is pushed to its end, a blank
+start follows the stage above, an end at or before its start becomes a year
+after it, a blank end is the life expectancy, and nothing passes 120. Between
+its two ages a stage REPLACES living or retirement expenses, working or
+retired. A gap falls back to living expenses before the retirement age and to
+retirement expenses after it, so a stage still running when you stop work
+carries on, and retirement expenses wait for it to end.
+
+F67 compares the spending schedule month for month at six retirement ages on
+a list built to contain every shape a typed list can take at once (an amount
+on a monthly basis, a gap, a start typed inside the stage above, a blank
+start, an end before its start, a blank end, and a stage with no room left
+past 120), and F67b works eleven ages out by hand, so the ordering rule is
+pinned by a third formulation; the replay orders the list with its own fold.
+F67c holds the required pot to the backward replay for all three goals, with
+and without a pension, at seven retirement ages; F67d walks each pot forwards
+and requires it to be tight; F67e-f pin accumulation under net income (a
+costly stage saves less) and under Savings (a stage changes only the income it
+implies); F67g brute forces the freedom age, which with stages is no longer
+one crossing of two monotone curves but is still the first funded month;
+F67h-i reconcile the table, both moneys. F67j: Simple keeps a stage list but
+never runs it. F67k: an amount and a share that say the same thing are the
+same plan, and a week is 52/12 of a month. F67l: a share follows living
+expenses, an amount does not. F67m: no stage passes 120 and an end age is not
+part of its stage, so Die Rich pays a stage to the horizon and prices for
+ever on retirement expenses, against a closed form. F67n is the reason
+retirement expenses wait: kids at home when you stop work are still paid for
+until they leave, and only then do retirement expenses apply, wherever the
+slider sits. F67o collapses the Monte Carlo onto the staged plan at zero
+volatility, F67p-p2 pin the timeline the panel prints, and F67q-q2 pin that
+"spend less" cuts EVERY expense and quotes a share that funds the plan, which
+cutting living alone would not.
+
+F68 is the panel: the two groups in order, the old field gone from the Goal
+tab and everywhere else, living taking an amount only while retirement and
+the stages take a share too, the tips following each switch, a figure
+converting through today's living expenses when its basis moves to or from a
+share (100% of 60,000 a year is 60,000 a year, 45,000 a year is 75%, and with
+no living expenses nothing to convert through), the list's add, remove, cap
+and per-row conversion, the Simulate gate (a rename does not send the answer
+stale), and stage names kept as text: escaped, and never decorated as jargon.
+F68l-l4 are the ordering rule as the reader meets it: nothing is corrected
+mid-keystroke, or typing 56 would be stopped at 5, but once an age is finished
+the list is put in order and the fields show exactly what the engine runs,
+each carrying the bound the rule holds it to; a stage running past the
+retirement age says it carries on, and one that can never apply says why.
+
+F71 is the two locked stages: living expenses first and retirement expenses
+last with the reader's stages between, both names read-only with a lock where
+the remove button would be (and put back if a script writes to them), a tip
+each in one sentence (living is the baseline a gap before retirement comes
+back to; retirement takes over once any stage running then has finished), and
+a line each saying which ages it covers at the slider's age, the retirement
+line naming the stage it waits for ("From 56, once "1st kid leaves" ends. You
+stop work at 47."). Both lines follow the slider to either end of it. F71f:
+Simple shows the same two fields as plain rows. F71g: Detailed with no stages
+of its own gives the Simple plan to the last binary digit. F71h exists because
+the Quick Start check, scribbling over the form, found the retirement line
+throwing on a fractional age now: the retirement month then starts a part of
+a month after the slider's age, and the line went looking for a stage to name
+in that sliver.
+
+F69 reloads the page and opens a saved scenario file on a page holding another
+plan, and both bring back Detailed, every row and the same answer; F69d opens
+a cache written before Money out existed, whose `retireMultiplier` has to come
+back as Retirement expenses on the share-of-living basis it always was. F70
+is a second fuzz pass, 150 plans with up to five random stages each, typed in
+any order, asserting every invariant at once against the replay, the range of
+balances and the "Chance it works" card included.
+
+F70e is what found the one correction the replay needed. Its Die Rich
+shortcut takes the perpetuity on the horizon's net draw and walks back only
+over the bridge years to the pension start, which assumes the draw is steady
+from there. A frozen pension keeps eroding, and a stage can end after the
+pension starts, so in both cases the replay now walks back over every month
+from age 120, which at a steady draw is a fixed point and agrees with the
+shortcut wherever both apply. The page was right: its forward pass was always
+the full walk.
+
 **The Quick Start scenarios.** Six buttons, each claiming the whole form now
 describes a named saver, so F65 reads the CONTROLS back rather than
 `readInputs()`: a scenario writing to an id that no longer exists would
@@ -388,13 +553,24 @@ crossing is solved on the expected return alone, so every scenario has to land
 between a 60% and a 90% chance, where the confidence pot underneath still has
 something to say. Then the lesson each tooltip promises: Frugal Living freeing a
 saver in fewer YEARS OF WORK than the moderate plan, not merely at a younger age
-(F65h); the Bali scenario's 40% retirement multiplier being worth years against
-the same saver who stays home (F65i); and the late starter's age pension being
-worth years against the same plan with it switched off (F65j). F65k follows the
-late starter with a scenario that has no pension and checks nothing was
-inherited, because every scenario is built on the DEFAULTS rather than over
-whatever the last one left behind. F65l pins that Reset drops the highlight
-along with the figures, or the page claims a scenario it no longer shows.
+(F65h); the Bali scenario's retirement expenses at 40% of living being worth
+years against the same saver who stays home (F65i); and the late starter's age
+pension being worth years against the same plan with it switched off (F65j).
+F65k follows the late starter with a scenario that has no pension and checks
+nothing was inherited, because every scenario is built on the DEFAULTS rather
+than over whatever the last one left behind. F65l pins that Reset drops the
+highlight along with the figures, or the page claims a scenario it no longer
+shows.
+
+Two scenarios carry life stages, and F65b reads every stage back off its own
+row, field by field, with the row count. Each stage is then taken away in turn
+and its claim has to show up as a difference (F65m-n): Frugal Living's hustle
+age frees the saver sooner and its relax age, falling after the crossing, costs
+a bigger pot; Family legacy's kids cut the couple's saving by exactly what
+they cost (net income, so every dollar they cost is a dollar not saved), push
+freedom years later, and are still at home when the plan frees up, so the pot
+pays for them to 56. F65o follows a staged scenario with a simple one and
+checks no row is shown or run.
 
 **Coming back tomorrow.** F57 reloads the page and checks the mini cache brings
 the plan back. The slider is the awkward one: a range input clamps an assigned

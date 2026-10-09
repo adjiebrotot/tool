@@ -5,9 +5,11 @@
 // DATA (loaded async)
 // ═══════════════════════════════════════════════════════════
 let CITIES = [];
-let RATES = {};
+let RATES = {};      // bundled: units per USD the indices were priced at
+let LIVE = null;     // {rates, date, source, url}: market units per USD, or null
 let META_COL = '';
 let META_RATE = '';
+let RATE_DATE = '';  // bundled rates' YYYY-MM-DD, the floor for a live rate
 
 // Build lookup
 const CITY_MAP = {};
@@ -22,6 +24,7 @@ async function loadData() {
 
   META_COL = parseMonthYear(colJson.metadata.updated_on);
   META_RATE = parseMonthYear(rateJson.metadata.updated_on);
+  RATE_DATE = rateJson.metadata.updated_on || '';
 
   CITIES = colJson.data.map(c => ({
     city: c.city,
@@ -44,10 +47,241 @@ async function loadData() {
 
   rateJson.data.forEach(r => { RATES[r.currency] = r.usd_rate; });
 
-  const el = document.getElementById('dataUpdatedText');
-  if(el) el.textContent = `Cost of living data updated ${META_COL}, currency rates updated ${META_RATE}.`;
+  // A live rate saved on an earlier visit is used straight away, so the page
+  // never opens on the old bundled rate and then jumps.
+  const saved = readLiveCache();
+  if(saved) LIVE = saved.live;
+  updateDataText();
 
   init();
+
+  if(!saved || Date.now() - saved.savedAt > LIVE_TTL) refreshLiveRates();
+}
+
+// ═══════════════════════════════════════════════════════════
+// LIVE EXCHANGE RATES
+//
+// The bundled currency_rates.json is the rate the indices were priced at, so
+// it stays the one the index estimates use (see the FX SHOCK note below: local
+// prices are sticky, and a newer rate must not reprice a city in its own
+// currency). Money that crosses the border is a different matter. It moves at
+// today's market rate, so that one comes from a free, keyless, CORS-open daily
+// feed, straight from the browser. Any failure falls back to the next source,
+// then to the bundled file, so the tool always has a rate.
+//
+// Feeds publish once a day. The result is kept in localStorage and asked for
+// again after LIVE_TTL, which keeps us well inside the feeds' fair-use limits.
+// ═══════════════════════════════════════════════════════════
+const LIVE_KEY = 'costofliving-comparator:live-fx';
+const LIVE_TTL = 6 * 3600 * 1000;    // ask again after 6 hours
+const LIVE_TIMEOUT = 8000;           // per source, in ms
+// A live rate more than this many times off the bundled one is a feed error or
+// a redenomination the feed has not caught up with (the two feeds once disagreed
+// 100x on the Syrian pound), never a market move. That currency keeps the
+// bundled rate.
+const LIVE_SANITY = 5;
+
+// Each source returns {date, rates} with rates in units per USD, upper-case
+// codes, or throws.
+const LIVE_SOURCES = [
+  {
+    name: 'ExchangeRate-API',
+    home: 'https://www.exchangerate-api.com',
+    url: 'https://open.er-api.com/v6/latest/USD',
+    parse: j => {
+      if(!j || j.result !== 'success' || !j.rates) throw new Error('bad payload');
+      return { date: new Date(j.time_last_update_unix * 1000).toISOString().slice(0,10), rates: j.rates };
+    }
+  },
+  ...['https://latest.currency-api.pages.dev/v1/currencies/usd.min.json',
+      'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json'
+  ].map(url => ({
+    name: 'Fawaz Ahmed\'s Currency API',
+    home: 'https://github.com/fawazahmed0/exchange-api',
+    url,
+    parse: j => {
+      if(!j || !j.usd || !j.date) throw new Error('bad payload');
+      const rates = {};
+      Object.keys(j.usd).forEach(k => { rates[k.toUpperCase()] = j.usd[k]; });
+      return { date: j.date, rates };
+    }
+  })),
+];
+
+// Keeps only the currencies the dataset uses, and only rates that pass the
+// sanity bound against the bundled one. null when nothing usable is left, or
+// the feed is older than the bundled file.
+function cleanLive(raw, src){
+  if(!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw.date) || raw.date < RATE_DATE) return null;
+  const rates = {};
+  Object.keys(RATES).forEach(c => {
+    const v = Number(raw.rates[c]), b = RATES[c];
+    if(isFinite(v) && v > 0 && b > 0 && v/b < LIVE_SANITY && b/v < LIVE_SANITY) rates[c] = v;
+  });
+  if(!Object.keys(rates).length) return null;
+  return { rates, date: raw.date, source: src.name, url: src.home };
+}
+
+function readLiveCache(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null');
+    if(!raw || !raw.live || !raw.live.rates || !isFinite(raw.savedAt)) return null;
+    // Re-screen with the current bundled file, which may be newer than the cache.
+    const live = cleanLive(raw.live, { name: raw.live.source, home: raw.live.url });
+    return live ? { live, savedAt: raw.savedAt } : null;
+  } catch(e) { return null; }
+}
+
+async function fetchJson(url){
+  const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+  const t = ctl ? setTimeout(() => ctl.abort(), LIVE_TIMEOUT) : 0;
+  try {
+    const res = await fetch(url, { cache: 'no-cache', signal: ctl ? ctl.signal : undefined });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } finally { clearTimeout(t); }
+}
+
+async function refreshLiveRates(){
+  for(const src of LIVE_SOURCES){
+    try {
+      const live = cleanLive(src.parse(await fetchJson(src.url)), src);
+      if(!live) continue;
+      // Never trade a newer saved rate for an older one from a lagging mirror.
+      if(LIVE && LIVE.date > live.date) return;
+      LIVE = live;
+      try { localStorage.setItem(LIVE_KEY, JSON.stringify({ savedAt: Date.now(), live })); } catch(e) {}
+      updateDataText();
+      rerenderForRates();
+      return;
+    } catch(e) { /* next source */ }
+  }
+}
+
+// Redraw with the new rate, unless the user is typing in the results: a redraw
+// would drop their cursor, and every field already redraws on blur.
+function rerenderForRates(){
+  const a = document.activeElement;
+  if(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName) && a.closest('#analysisArea, #simpleFxCard')) return;
+  render();
+}
+
+function updateDataText(){
+  renderAssumptions();
+  const el = document.getElementById('dataUpdatedText');
+  if(!el) return;
+  el.textContent = `Cost of living data updated ${META_COL}. `;
+  if(LIVE){
+    el.append('Live exchange rates as of ' + fmtDay(LIVE.date) + ', from ');
+    const a = document.createElement('a');
+    a.href = LIVE.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = LIVE.source;
+    el.append(a, '.');
+  } else {
+    el.append(`Exchange rates updated ${META_RATE} (live rates unavailable).`);
+  }
+}
+
+function fmtDay(iso){
+  const p = String(iso).split('-');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return parseInt(p[2],10) + ' ' + (months[parseInt(p[1],10)-1] || p[1]) + ' ' + p[0];
+}
+
+// ═══════════════════════════════════════════════════════════
+// THEME, and what the page assumes
+// ═══════════════════════════════════════════════════════════
+{
+  const tt = document.getElementById('themeToggle');
+  if(tt) tt.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    tt.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
+  });
+}
+// Built from the cities, figures and rates on screen: every line names what it
+// rests on, and a feature left unused (a custom rate, the rate slider, a typed
+// override) says nothing.
+function renderAssumptions(){
+  const ul = document.getElementById('assumptions');
+  if(!ul) return;
+  const items = [];
+  const updated = META_COL ? ', updated '+META_COL : '';
+  // How money crosses between two currencies: the reader's rate, or the market's.
+  const fxItem = (from, tos, customOf, shock) => {
+    const crossing = tos.filter(t => t.city.currency !== from.currency);
+    if(!crossing.length) return;
+    const seen = new Set();
+    const quote = crossing.filter(t => { const k = t.city.currency+'|'+(customOf(t)||''); if(seen.has(k)) return false; seen.add(k); return true; }).map(t => {
+      const c = customOf(t);
+      const r = c || marketFx(from.currency, t.city.currency);
+      return '1 '+t.city.currency+' = '+fmtFx(r)+' '+from.currency+(c ? ' (your rate)' : '');
+    }).join(', ');
+    const anyCustom = crossing.some(t => customOf(t));
+    const src = crossing.every(t => customOf(t)) ? 'your rate'
+      : LIVE ? 'the live rate of '+fmtDay(LIVE.date) : 'the rate of '+(META_RATE || 'the dataset');
+    let txt = '<strong>Money crossing currencies converts at '+src+':</strong> '+quote+'.';
+    if(shock) txt += ' The rate slider moves '+crossing[0].city.currency+' '+(shock > 0 ? '+' : '')+shock+'% on top of that.';
+    if(anyCustom || shock) txt += ' City estimates keep the rate the index was priced at.';
+    items.push(txt);
+  };
+  const salaryItem = list => {
+    const on = list.filter(x => x.amount > 0);
+    if(!on.length) return;
+    items.push('<strong>Salaries are after tax, as you entered them:</strong> '+
+      on.map(x => fmtC(x.amount, x.curr)+' in '+x.city).join(', ')+'. Nothing here works out tax.');
+  };
+  const targetItem = () => {
+    if(S.goal !== 'earn') return;
+    items.push(S.savingsTarget === 'ratio'
+      ? '<strong>The salary you need keeps your savings ratio,</strong> the share of income you save now.'
+      : '<strong>The salary you need keeps the same amount of savings,</strong> converted at the market rate.');
+  };
+
+  if(S.mode === 'simple'){
+    const from = getCity(S.fromKey), to = getCity(S.toKey);
+    if(!from || !to){
+      items.push('<strong>Pick a From and a To city</strong> to see what the comparison rests on.');
+    } else {
+      const ck = coliKey(), fi = getIdx(from, ck), ti = getIdx(to, ck);
+      const housing = S.housing === 'include' ? 'with housing' : 'without housing, as when an employer pays for it';
+      if(fi && ti){
+        const fe = S.fromExpense || 0, te = estDestExpense(from, to, fe);
+        items.push('<strong>'+to.city+' costs '+fmtP(ti/fi*100, 0)+' of what '+from.city+' does</strong> on the cost-of-living index '+housing+updated+'.'+
+          (fe > 0 && isFinite(te) ? ' Your '+fmtC(fe, from.currency)+' a month of spending becomes '+fmtC(te, to.currency)+' there, for the same lifestyle.' : ''));
+      }
+      salaryItem([{amount: S.fromSalary||0, curr: from.currency, city: from.city}]
+        .concat(S.goal === 'save' ? [{amount: S.toSalary||0, curr: to.currency, city: to.city}] : []));
+      targetItem();
+      fxItem(from, [{city: to}], () => simpleFx(from, to), fxShockPct());
+    }
+  } else {
+    const from = getCity(S.detailFromKey);
+    const tos = (S.detailToCities||[]).map((k, i) => ({city: getCity(k), i})).filter(t => t.city);
+    if(!from || !tos.length){
+      items.push('<strong>Pick a From city and at least one destination</strong> to see what the comparison rests on.');
+    } else {
+      const rows = S.detailRows.filter(r => (r.fromAmount||0) > 0 || (r.overrides && Object.keys(r.overrides).length));
+      if(rows.length){
+        const cats = [...new Set(rows.map(r => r.catId))].map(id => CATS.find(c => c.id === id) || CATS[0]);
+        const scaled = cats.filter(c => c.index !== 'currency_only').map(c => c.label.replace(/^\S+\s/, '').toLowerCase());
+        const fxOnly = cats.filter(c => c.index === 'currency_only').map(c => c.label.replace(/^\S+\s/, '').toLowerCase());
+        let txt = '<strong>Each of your '+rows.length+' expense '+(rows.length === 1 ? 'row is' : 'rows is')+' scaled by its own category index</strong> from '+from.city+' to '+tos.map(t => t.city.city).join(', ')+updated+', for the same lifestyle';
+        if(scaled.length) txt += ': '+scaled.join(', ');
+        txt += '.';
+        if(fxOnly.length) txt += ' '+fxOnly.join(' and ').replace(/^./, c => c.toUpperCase())+' change only by the exchange rate.';
+        items.push(txt);
+        const overrides = rows.reduce((n, r) => n + (r.overrides ? Object.keys(r.overrides).filter(k => tos.some(t => String(t.i) === k)).length : 0), 0);
+        if(overrides) items.push('<strong>Your '+overrides+' typed '+(overrides === 1 ? 'figure replaces' : 'figures replace')+' the estimate</strong> in '+(overrides === 1 ? 'its cell' : 'those cells')+'.');
+        if(S.customFreq && (rows.some(r => rowUnit(r) !== 'monthly') || validPeriod(S.detailIncomeFreq) !== 'monthly')){
+          items.push('<strong>Every amount is turned into a month</strong> at its own period or unit price before it is compared.');
+        }
+      }
+      salaryItem([{amount: fromSalaryMonthly(), curr: from.currency, city: from.city}]
+        .concat(S.goal === 'save' ? tos.map(t => ({amount: (S.detailToSalaries[t.i]||0)*incomeMult(), curr: t.city.currency, city: t.city.city})) : []));
+      targetItem();
+      fxItem(from, tos, t => detailFx(t.i, from, t.city), 0);
+    }
+  }
+  ul.innerHTML = items.map(t => '<li>'+t+'</li>').join('');
 }
 
 function parseMonthYear(dateStr) {
@@ -77,6 +311,8 @@ const S = {
   detailSavingsFreq: 'monthly',  // the period Savings is shown in; display only
   detailPrevIncomeFreq: null,    // remembered while the feature is off
 };
+// A Quick Start scenario opens from these, never from whatever is on screen.
+const S_DEFAULTS = JSON.parse(JSON.stringify(S));
 let persist = null; // mini cache handle (assigned at init)
 
 // ═══════════════════════════════════════════════════════════
@@ -146,13 +382,22 @@ function cityDisplay(c){return c.city+', '+c.country;}
 
 // Returns 0 (falsy) for a currency with no known USD rate so the conversion
 // guards below fire and the UI shows "—" instead of silently converting 1:1.
+// This is the bundled rate the indices were priced at.
 function getRate(curr){return RATES[curr]||0;}
 
-// Returns number of fromCurr per 1 toCurr using DB rates (DST/SRC notation)
-function getDefaultFxRate(fromCurr, toCurr){
+// fromCurr per 1 toCurr at today's market rate: the live feed when it has
+// both currencies, else the bundled pair. Never one of each, which would
+// splice two different days into one rate. 0 when neither knows them.
+function marketFx(fromCurr,toCurr){
+  const lf=LIVE&&LIVE.rates[fromCurr], lt=LIVE&&LIVE.rates[toCurr];
+  if(lf&&lt)return lf/lt;
   const fr=getRate(fromCurr), tr=getRate(toCurr);
-  if(!tr)return 0;
-  return fr/tr;
+  return(fr&&tr)?fr/tr:0;
+}
+
+// Returns number of fromCurr per 1 toCurr at the market rate (DST/SRC notation)
+function getDefaultFxRate(fromCurr, toCurr){
+  return marketFx(fromCurr,toCurr);
 }
 
 // Convert expense from one city to another.
@@ -172,10 +417,11 @@ function convertExpense(amount, fromCity, toCity, indexKey, customRate){
   return amount/fr*(ti/fi)*tr;
 }
 
+// Money crossing the border, so it moves at the market rate.
 function convertCurr(amount,fromCurr,toCurr){
-  const fr=getRate(fromCurr), tr=getRate(toCurr);
-  if(!fr||!tr)return NaN; // unknown rate → let the display fall back to "—"
-  return amount/fr*tr;
+  const fx=marketFx(fromCurr,toCurr);
+  if(!fx)return NaN; // unknown rate → let the display fall back to "—"
+  return amount/fx;
 }
 
 // Composite "utilities" weights (they must sum to 1 for a complete city).
@@ -256,7 +502,7 @@ function pruneCustomFx(){
 //
 // S.fxShock is a percentage move in the DESTINATION currency's strength against
 // the source currency, applied on top of whatever base rate is in force (the
-// bundled one, or the user's custom rate).
+// live market rate, or the user's custom rate).
 //
 // Local prices are sticky and the exchange rate is not. A weaker Rupiah does
 // not reprice a Perth lunch in AUD, and it does not reprice a Jakarta lunch in
@@ -306,8 +552,10 @@ function simpleMults(fromCity,toCity){
   // The rate the indices were priced at. Falls back to the user's rate only
   // when the dataset has none at all, since some rate beats no estimate.
   const priced = (fr&&tr) ? fr/tr : (cfx || NaN);
-  // The rate money actually crosses at: the user's if given, then the scenario.
-  const market = (cfx || priced) * fxShockMult(fromCity,toCity);
+  // The rate money actually crosses at: the user's if given, else today's
+  // market rate, then the scenario on top.
+  const today = marketFx(fromCity?fromCity.currency:'', toCity?toCity.currency:'');
+  const market = (cfx || today || priced) * fxShockMult(fromCity,toCity);
   return {
     priced, market,
     idxMult:    1/priced,   // src->dst, index estimate only (local prices are sticky)
@@ -327,19 +575,25 @@ function currOf(city){return city?city.currency:'';}
 // ═══════════════════════════════════════════════════════════
 // CITY PICKER WIDGET
 // ═══════════════════════════════════════════════════════════
+// Pickers are rebuilt on every render, so one listener keeps whichever list
+// is open pinned to its field.
+function placeOpenCityDrops(){document.querySelectorAll('.city-dropdown.open').forEach(d=>d._place&&d._place());}
+window.addEventListener('scroll',placeOpenCityDrops,{passive:true,capture:true});
+window.addEventListener('resize',placeOpenCityDrops,{passive:true});
 function buildCityPicker(containerId, currentKey, onSelect){
   const wrap = document.getElementById(containerId);
   if(!wrap) return;
   const current = getCity(currentKey);
   const input = document.createElement('input');
-  input.type='text'; input.className='city-search'; input.placeholder='Search city…';
+  input.type='text'; input.className='city-search combo-input'; input.placeholder='Search city…';
   input.autocomplete='off';
   if(current){input.value=cityDisplay(current);input.classList.add('has-value');}
   const drop = document.createElement('div');
-  drop.className='city-dropdown';
+  drop.className='city-dropdown combo-list';
+  drop.setAttribute('role','listbox');
   const btnClear=document.createElement('button');
-  btnClear.type='button'; btnClear.className='city-clear'; btnClear.textContent='×';
-  btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear');
+  btnClear.type='button'; btnClear.className='city-clear'; btnClear.innerHTML=SharedIcon.svg('clear');
+  btnClear.setAttribute('tabindex','-1'); btnClear.setAttribute('aria-label','Clear'); btnClear.title='Clear';
   btnClear.addEventListener('mousedown',e=>{
     e.preventDefault();
     input.value=''; input.classList.remove('has-value');
@@ -351,9 +605,19 @@ function buildCityPicker(containerId, currentKey, onSelect){
 
   let focusIdx=-1;
   function renderDrop(q){
-    const lq=q.toLowerCase();
-    const filtered=CITIES.filter(c=>c.city.toLowerCase().includes(lq)||c.country.toLowerCase().includes(lq)||c.currency.toLowerCase().includes(lq)).slice(0,60);
-    drop.innerHTML=filtered.map((c,i)=>`<div class="city-opt" data-key="${cityKey(c)}" data-idx="${i}"><strong>${c.city}</strong>, ${c.country}</div>`).join('');
+    // Every word typed must appear somewhere in the city, state, country or
+    // currency, so "paris france" and the shown "Basel, Switzerland" both match.
+    const terms=q.toLowerCase().split(/[\s,]+/).filter(Boolean);
+    const filtered=CITIES.filter(c=>{
+      const hay=(c.city+' '+c.country+' '+c.currency).toLowerCase();
+      return terms.every(t=>hay.includes(t));
+    }).slice(0,60);
+    // City (and state, when the data has one) up front; the country rides in a
+    // chip on the right so the list scans by city.
+    const curKey=current?cityKey(current):'';
+    drop.innerHTML=filtered.length
+      ? filtered.map((c,i)=>{const k=cityKey(c);return `<div class="city-opt combo-opt${k===curKey?' selected':''}" role="option" data-key="${k}" data-idx="${i}"><span class="combo-main">${c.city}</span><span class="combo-chip" title="${c.country}">${c.country}</span></div>`;}).join('')
+      : '<div class="combo-empty">No city matches</div>';
     focusIdx=-1;
     drop.querySelectorAll('.city-opt').forEach(el=>{
       el.addEventListener('mousedown',e=>{
@@ -367,8 +631,16 @@ function buildCityPicker(containerId, currentKey, onSelect){
     });
   }
 
-  input.addEventListener('focus',()=>{renderDrop(input.value);drop.classList.add('open');});
-  input.addEventListener('input',()=>{renderDrop(input.value);drop.classList.add('open');input.classList.remove('has-value');});
+  // Placed by the site's shared helper (dropdown.js): fixed to the viewport so
+  // it can be wider than its field and is not clipped by the table scroller.
+  function placeDrop(){
+    if(drop.classList.contains('open'))SharedDropdown.place(input,drop,{minWidth:300,maxHeight:260});
+  }
+  drop._place=placeDrop;
+  function openDrop(){drop.classList.add('open');placeDrop();}
+
+  input.addEventListener('focus',()=>{renderDrop(input.value);openDrop();});
+  input.addEventListener('input',()=>{renderDrop(input.value);openDrop();input.classList.remove('has-value');});
   input.addEventListener('keydown',e=>{
     const opts=drop.querySelectorAll('.city-opt');
     if(e.key==='ArrowDown'){focusIdx=Math.min(focusIdx+1,opts.length-1);}
@@ -589,12 +861,14 @@ function renderAnalysisArea(){
     const from=getCity(S.fromKey), to=getCity(S.toKey);
     if(!from||!to){
       area.innerHTML=`<div class="card placeholder"><div class="icon">🗺️</div><div>Select a <strong>From</strong> and <strong>To</strong> city above to begin your analysis.</div></div>`;
+      renderAssumptions();
       return;
     }
     S.goal==='save'?renderSimpleSave(area,from,to):renderSimpleEarn(area,from,to);
   } else {
     renderDetailed(area);
   }
+  renderAssumptions();
 }
 
 function renderSimpleFxSection(from,to){
@@ -610,7 +884,7 @@ function renderSimpleFxSection(from,to){
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;">
       <span style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">Custom FX Rate</span>
       <span style="font-size:0.88rem;white-space:nowrap;">1&nbsp;<strong>${tc}</strong>&nbsp;=</span>
-      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput"
+      <input type="text" inputmode="decimal" class="num-input" id="simpleFxInput" data-unit="${fc}" data-min="0" data-max="1000000000"
         value="${S.customFxSimple!=null?S.customFxSimple:''}"
         placeholder="${defFmt}"
         style="width:130px;"/>
@@ -622,7 +896,7 @@ function renderSimpleFxSection(from,to){
         <span class="fx-shock-title">What if ${tc} moves?</span>
         <span class="fx-shock-val" id="fxShockVal">${fxShockReadout(from,to)}</span>
       </div>
-      <input type="range" id="fxShockSlider" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
+      <input type="range" id="fxShockSlider" data-unit="%" min="-${FX_SHOCK_LIMIT}" max="${FX_SHOCK_LIMIT}" step="1" value="${pct}"
         aria-label="Exchange rate scenario, percent change in ${tc} against ${fc}"/>
       <div class="fx-shock-note">
         <span>${to.city} costs stay the same in ${tc}. Only ${fc} conversions move.</span>
@@ -640,6 +914,9 @@ function renderSimpleFxSection(from,to){
     inp.addEventListener('blur',()=>{render();});
   }
   const sl=document.getElementById('fxShockSlider');
+  // Both ends named under it, like every finance slider (drawn here because
+  // this card is built after the page's first pass).
+  if(sl && window.SharedSlider) SharedSlider.enhance(sl);
   if(sl){
     // Refresh the readout and the results in place. A full render() here would
     // replace the range input mid-drag and the gesture would die.
@@ -697,22 +974,23 @@ function renderSimpleSave(area,from,to){
 
   area.innerHTML=`
 <section class="analysis-card card">
+  <div class="summary-box" id="ss_summary">${buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,tRatio)}</div>
   <div class="compare-cols">
     <div class="col-card">
       <div class="col-header">📍 ${from.city}, ${from.country}</div>
       <div class="col-sub">${fc}</div>
       <div class="field-row">
-        <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
+        <div class="field-label">Net salary</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(fs)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fs,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Expenses</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
+        <div class="field-label">Expenses</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_fe" data-min="0" data-max="100000000000" value="${formatMoneyValue(fe)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fe,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${fSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(fSav,fc)}</div>
           ${cc(fSav,fc,tc)}
@@ -724,13 +1002,13 @@ function renderSimpleSave(area,from,to){
       <div class="col-header">🏁 ${to.city}, ${to.country}</div>
       <div class="col-sub">${tc}</div>
       <div class="field-row">
-        <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="decimal" class="num-input" id="ss_ts" value="${formatMoneyValue(ts)||''}" placeholder="0"/></div>
+        <div class="field-label">Net salary</div>
+        <div class="input-wrap"><span class="curr-tag">${tc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="ss_ts" data-min="0" data-max="100000000000" value="${formatMoneyValue(ts)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(ts,tc,fc)}
       </div>
       <div class="field-row">
         <div class="field-label">
-          Est. Monthly Expenses
+          Estimated monthly expenses
           <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio between cities. Data updated ${META_COL}.${estTipFx(from,to)}">?</span>
         </div>
         <div class="sav-block neutral">
@@ -739,7 +1017,7 @@ function renderSimpleSave(area,from,to){
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${tSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(tSav,tc)}</div>
           ${cc(tSav,tc,fc)}
@@ -748,7 +1026,6 @@ function renderSimpleSave(area,from,to){
       </div>
     </div>
   </div>
-  <div class="summary-box" id="ss_summary">${buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,tRatio)}</div>
 </section>`;
 
   const fsEl = document.getElementById('ss_fs');
@@ -782,6 +1059,9 @@ function buildSaveSummary(from,to,fc,tc,fromToMult,toFromMult,fSav,tSav,fRatio,t
   if(Math.abs(nomDiffTC)<0.5){nomTxt=`Living in ${toName} gives roughly the <strong>same nominal savings</strong> as ${from.city}`;}
   else if(nomPos){nomTxt=`Living in ${toName} gives you <span style="color:var(--positive-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>more</strong> in monthly savings`;}
   else{nomTxt=`Living in ${toName} gives you <span style="color:var(--negative-em);font-weight:700;">${fmtC(Math.abs(nomDiffTC),tc)}${fc!==tc?' (≈ '+fmtC(Math.abs(nomDiffFC),fc)+')':''}</span> <strong>less</strong> in monthly savings`;}
+  // A ratio needs a salary on both sides; until then the sentence stops at the
+  // savings gap rather than printing a dash inside it.
+  if(tRatio==null||fRatio==null) return `${nomTxt}.`+fxShockLine(from,to,true);
   if(Math.abs(ratDiff)<0.5){ratTxt=`with a similar savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)})`;}
   else if(ratPos){ratTxt=`<strong>and</strong> a higher savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, +${fmtP(Math.abs(ratDiff))})`;}
   else{ratTxt=`${contradict?'<strong>but</strong>':'<strong>and</strong>'} a lower savings ratio (${fmtP(tRatio)} vs ${fmtP(fRatio)}, −${fmtP(Math.abs(ratDiff))})`;}
@@ -827,22 +1107,23 @@ function renderSimpleEarn(area,from,to){
       <button class="seg-btn ${S.savingsTarget==='nominal'?'active':''}" data-val="nominal">Nominal savings</button>
     </div>
   </div>
+  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
   <div class="compare-cols">
     <div class="col-card">
       <div class="col-header">📍 ${from.city}, ${from.country}</div>
       <div class="col-sub">${fc}</div>
       <div class="field-row">
-        <div class="field-label">Net Monthly Salary</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="se_fs" value="${formatMoneyValue(fs)||''}" placeholder="0"/></div>
+        <div class="field-label">Net salary</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="se_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(fs)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fs,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Expenses</div>
-        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="se_fe" value="${formatMoneyValue(fe)||''}" placeholder="0"/></div>
+        <div class="field-label">Expenses</div>
+        <div class="input-wrap"><span class="curr-tag">${fc}</span><input type="text" inputmode="decimal" class="num-input has-per" id="se_fe" data-min="0" data-max="100000000000" value="${formatMoneyValue(fe)||''}" placeholder="0"/><span class="per-tag">/mo</span></div>
         ${cc(fe,fc,tc)}
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${fSav>=0?'positive':'negative'}">
           <div class="sav-val">${fmtC(fSav,fc)}</div>
           ${cc(fSav,fc,tc)}
@@ -854,7 +1135,7 @@ function renderSimpleEarn(area,from,to){
       <div class="col-header">🏁 ${to.city}, ${to.country}</div>
       <div class="col-sub">${tc}</div>
       <div class="field-row">
-        <div class="field-label">Required Net Salary${reqTip?` <span class="tip-icon" data-tip="${reqTip}">?</span>`:''}</div>
+        <div class="field-label">Required net monthly salary${reqTip?` <span class="tip-icon" data-tip="${reqTip}">?</span>`:''}</div>
         <div class="sav-block positive">
           <div class="req-val">${fmtC(toReq,tc)}</div>
           ${cc(toReq,tc,fc)}
@@ -862,7 +1143,7 @@ function renderSimpleEarn(area,from,to){
       </div>
       <div class="field-row">
         <div class="field-label">
-          Est. Monthly Expenses
+          Estimated monthly expenses
           <span class="tip-icon" data-tip="Estimated using ${S.housing==='include'?'full cost-of-living':'non-housing cost-of-living'} index ratio. Data updated ${META_COL}.${estTipFx(from,to)}">?</span>
         </div>
         <div class="sav-block neutral">
@@ -871,7 +1152,7 @@ function renderSimpleEarn(area,from,to){
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label">Monthly Savings</div>
+        <div class="field-label">Monthly savings</div>
         <div class="sav-block ${toSav==null?'neutral':(toSav>=0?'positive':'negative')}">
           <div class="sav-val">${fmtC(toSav,tc)}</div>
           ${cc(toSav,tc,fc)}
@@ -880,7 +1161,6 @@ function renderSimpleEarn(area,from,to){
       </div>
     </div>
   </div>
-  <div class="summary-box">${buildEarnSummary(from,to,fc,tc,M,toReq,fSav,fRatPct,toRatio,te,fRatio)}</div>
 </section>`;
 
   const sefsEl = document.getElementById('se_fs');
@@ -963,13 +1243,21 @@ function renderDetailed(area){
   wireDetail(fromCity,toCities);
 }
 
+// A column's grip: n counts the city columns, From first.
+function gripHtml(n,tip){
+  return`<button type="button" class="col-grip" data-col-grip="${n}" title="${tip}" aria-label="${tip} Arrow keys move it one place.">⠿</button>`;
+}
+
 function buildDetailHTML(fromCity,toCities){
   const fc=fromCity?fromCity.currency:'—';
   const tcs=toCities.map(c=>c?c.currency:'—');
 
   // City search headers using inline selects for detail mode
   let thFrom=`<th class="city-th">
-    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;">📍 FROM CITY</div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:4px;">
+      ${gripHtml(0,'Drag to move the From city. The city that lands first becomes the From city.')}
+      <span>📍 FROM CITY</span>
+    </div>
     <div class="city-picker" id="dtFromPicker" style="min-width:160px;"></div>
     <div class="sub-num" style="margin-top:3px;">${fc}</div>
   </th>`;
@@ -977,9 +1265,10 @@ function buildDetailHTML(fromCity,toCities){
   let thTos=toCities.map((tc,i)=>{
     const destCurr=tcs[i];
     return`<th class="city-th">
-    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px;">
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:4px;">
+      ${gripHtml(i+1,'Drag to move this city. Drop it first to make it the From city, keeping its figures.')}
       <span>🏁 DESTINATION ${i+1}</span>
-      <button class="btn-remove rmv-city-btn" data-ci="${i}" title="Remove destination">✕</button>
+      ${SharedIcon.button('trash', 'Remove destination', 'sm rmv-city-btn', `data-ci="${i}"`)}
     </div>
     <div class="city-picker" id="dtToPicker${i}" style="min-width:140px;"></div>
     <div class="sub-num" style="margin-top:3px;">${destCurr}</div>
@@ -997,7 +1286,7 @@ function buildDetailHTML(fromCity,toCities){
     return`<td class="num-td">
       <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;flex-wrap:wrap;">
         <span style="font-size:0.75rem;white-space:nowrap;">1&nbsp;<strong>${destCurr}</strong>&nbsp;=</span>
-        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}"
+        <input type="text" inputmode="decimal" class="num-input dt-fx-inp" data-ci="${i}" data-unit="${fc}" data-min="0" data-max="1000000000"
           value="${curCustomFx!=null?curCustomFx:''}"
           placeholder="${defFx}"
           style="width:80px;padding:4px 6px;font-size:0.78rem;"/>
@@ -1028,7 +1317,7 @@ function buildDetailHTML(fromCity,toCities){
   const savLabel=cf?`<br><select class="freq-sel" id="dtSavingsFreq" aria-label="Savings frequency">${unitOptions('',savFreq)}</select>`:'';
 
   // Salary row
-  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
+  let salFrom=`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input" id="dt_fs" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailFromSalary)||''}" placeholder="0" style="width:110px;"/></div></td>`;
   let salTos=toCities.map((tc,i)=>{
     const curr=tc?tc.currency:'—';
     if(S.goal==='earn'){
@@ -1038,7 +1327,7 @@ function buildDetailHTML(fromCity,toCities){
       const why=(req==null&&fromCity&&tc)?` <span class="tip-icon" data-tip="${reqSalNoteDetail(i,fromCity,tc)}">?</span>`:'';
       return`<td class="num-td"><span style="color:var(--positive-em);font-weight:700;">${fmtC(req,curr)}</span><br><span class="sub-num">required${why}</span></td>`;
     }
-    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
+    return`<td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${curr}</span><input type="text" inputmode="decimal" class="num-input dt-to-sal" data-ci="${i}" data-min="0" data-max="100000000000" value="${formatMoneyValue(S.detailToSalaries[i])||''}" placeholder="0" style="width:100px;"/></div></td>`;
   }).join('');
 
   // Expense rows
@@ -1048,7 +1337,7 @@ function buildDetailHTML(fromCity,toCities){
     const unit=rowUnit(row), U=UNITS[unit];
     const unitHtml=cf?`<select class="freq-sel dt-unit" data-ri="${ri}" aria-label="${cat.label.replace(/^\S+\s/,'')} frequency">${unitOptions(row.catId,unit)}</select>
       ${U?`<div class="qty-line">
-        <input type="text" inputmode="decimal" class="num-input dt-qty" data-ri="${ri}" value="${fmtDec(rowQty(row),4)}" aria-label="${U.many} per period"/>
+        <input type="text" inputmode="decimal" class="num-input dt-qty" data-ri="${ri}" data-min="0" data-max="100000" value="${fmtDec(rowQty(row),4)}" aria-label="${U.many} per period"/>
         <span>${U.many} a</span>
         <select class="dt-qty-per" data-ri="${ri}" aria-label="Period for ${U.many}">${periodOptions(validPeriod(row.qtyPer))}</select>
       </div>`:''}`:'';
@@ -1059,7 +1348,7 @@ function buildDetailHTML(fromCity,toCities){
       </div>
       ${unitHtml}
     </td>
-    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" value="${rowFieldValue(fv,row)||''}" placeholder="0" style="width:110px;"/></div>${fromCity?unitTotalLine(fv,fc,row):''}</td>`;
+    <td><div class="input-wrap"><span class="curr-tag" style="font-size:0.78rem;">${fc}</span><input type="text" inputmode="decimal" class="num-input dt-from-exp" data-ri="${ri}" data-min="0" data-max="100000000000" value="${rowFieldValue(fv,row)||''}" placeholder="0" style="width:110px;"/></div>${fromCity?unitTotalLine(fv,fc,row):''}</td>`;
 
     toCities.forEach((tc,ci)=>{
       if(!tc||!fromCity){cols+=`<td class="num-td">—</td>`;return;}
@@ -1075,7 +1364,7 @@ function buildDetailHTML(fromCity,toCities){
       cols+=`<td class="num-td ${isOv?'overridden':''}">
         <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">
           <span class="curr-tag" style="font-size:0.73rem;">${tc.currency}</span>
-          <input type="text" inputmode="decimal" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}"
+          <input type="text" inputmode="decimal" class="num-input dt-to-exp" data-ri="${ri}" data-ci="${ci}" data-min="0" data-max="100000000000"
             value="${dispVal!=null&&dispVal>0?rowFieldValue(dispVal,row):''}"
             placeholder="${hasCalc?(calc>0?Math.round(calc):'0'):'—'}"
             title="Edit to override estimate"
@@ -1088,7 +1377,7 @@ function buildDetailHTML(fromCity,toCities){
       </td>`;
     });
 
-    cols+=`<td><button class="btn-remove rmv-row-btn" data-ri="${ri}">${S.detailRows.length>1?'✕':''}</button></td>`;
+    cols+=`<td>${S.detailRows.length>1?SharedIcon.button('trash', 'Remove this row', 'rmv-row-btn', `data-ri="${ri}"`):''}</td>`;
     return`<tr data-ri="${ri}">${cols}</tr>`;
   }).join('');
 
@@ -1152,7 +1441,7 @@ ${goalHtml}
     </tbody>
   </table>
 </div>
-<div class="util-note" style="margin-top:8px;">Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
+<div class="util-note" style="margin-top:8px;">Drag <span class="col-grip" style="cursor:default;display:inline;padding:0;" aria-hidden="true">⠿</span> to move a city column. The first city is the From city, and every figure keeps its value when a column moves. Data in cells with <span style="display:inline-block;padding:1px 6px;background:var(--override-bg);border:1px solid var(--override-border);border-radius:3px;font-size:0.75rem;font-family:'DM Mono',monospace;">yellow background</span> has been manually overridden. Clear the field to revert to the calculated estimate.</div>`;
 }
 
 // null = no honest estimate for this cell (missing index or missing FX rate).
@@ -1227,6 +1516,105 @@ function calcReqSal(ci,fromCity,toCity){
   const fSavInTo=customFx?fSav/customFx:convertCurr(fSav,fromCity.currency,toCity.currency);
   if(!isFinite(fSavInTo))return null;
   return totToExp+fSavInTo;
+}
+
+// ═══════════════════════════════════════════════════════════
+// COLUMN DRAG (Detailed mode)
+//
+// The table's city columns are one list, From first: column 0 is the From
+// city and column i+1 is destination i. Dragging a column reorders that list,
+// and whichever city lands first becomes the From city.
+//
+// A move rearranges the table and changes no figure. Every cell keeps the
+// value it showed, in its own city's currency:
+//
+//   Net Income  the new From city's income is the figure its column showed:
+//               the required salary under "I need to earn", or its typed
+//               income under "I can save". The old From city's income goes
+//               to its new column as that column's typed income.
+//   Expenses    the new From city's amounts are the figures its column
+//               showed, estimate or override. Every destination cell keeps
+//               its figure too: where the estimate from the new From city
+//               already gives it (the usual case, as the index ratio cancels
+//               through the middle city) the cell stays an estimate, and
+//               where it would not (a custom rate, or an override in the new
+//               From column) the figure is kept as an override.
+//   FX rate     a custom rate is quoted as From currency per 1 destination
+//               currency, so it is re-quoted against the new From city: the
+//               same crossing rates, seen from another side. The old From
+//               city's column takes the inverse of the rate that was on the
+//               new From city's column.
+// ═══════════════════════════════════════════════════════════
+function sameFig(a,b){return Math.abs(a-b)<=1e-9*Math.max(1,Math.abs(a),Math.abs(b));}
+function moveDetailColumn(from,to){
+  const n=S.detailToCities.length+1;
+  if(from===to||from<0||to<0||from>=n||to>=n)return;
+  // perm[new column] = old column
+  const perm=[...Array(n).keys()];
+  perm.splice(to,0,perm.splice(from,1)[0]);
+
+  // Everything each old column shows, read before anything changes.
+  const keys=[S.detailFromKey,...S.detailToCities];
+  const cities=keys.map(getCity);
+  const fromCity=cities[0], fc=currOf(fromCity);
+  const custom=[null,...S.detailToCities.map((_,i)=>detailFx(i,fromCity,cities[i+1]))];
+  // From currency per 1 unit of each column's currency, as the table uses it.
+  const rate=cities.map((c,j)=>j===0?1:(custom[j]||(c&&fromCity?getDefaultFxRate(fc,c.currency):0)));
+  const shown=S.detailRows.map(row=>{
+    const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
+    return keys.map((_,j)=>{
+      if(j===0)return{v:row.fromAmount||0,ov:false};
+      const k=String(j-1);
+      if(row.overrides&&(k in row.overrides))return{v:row.overrides[k]||0,ov:true};
+      const v=(fromCity&&cities[j])?calcExp(row.fromAmount||0,fromCity,cities[j],cat.index,custom[j]):null;
+      return{v:(v!=null&&isFinite(v))?v:null,ov:false};
+    });
+  });
+  const salary=keys.map((_,j)=>{
+    if(j===0)return S.detailFromSalary||0;
+    const typed=S.detailToSalaries[j-1]||0;
+    if(S.goal!=='earn')return typed;
+    const req=calcReqSal(j-1,fromCity,cities[j]);
+    return req==null?typed:req/incomeMult();
+  });
+
+  // The new layout.
+  const p=perm[0], rest=perm.slice(1);
+  S.detailFromKey=keys[p]||'';
+  S.detailToCities=rest.map(q=>keys[q]||'');
+  S.detailFromSalary=salary[p];
+  S.detailToSalaries=rest.map(q=>q===0?salary[0]:(S.detailToSalaries[q-1]||0));
+  const nf=currOf(cities[p]);
+  S.customFxDetailed=rest.map(q=>{
+    if(p===0)return custom[q];                   // same From city: rates stand
+    if(!custom[p]&&!custom[q])return null;       // both on the market rate already
+    const c=cities[q];
+    if(!c||!cities[p]||!rate[p]||!rate[q])return null;
+    const r=rate[q]/rate[p];
+    if(!isFinite(r)||r<=0)return null;
+    const def=getDefaultFxRate(nf,c.currency);
+    return(def&&sameFig(r,def))?null:r;
+  });
+  S.detailRows.forEach((row,ri)=>{
+    const sp=shown[ri][p];
+    row.fromAmount=sp.v==null?0:sp.v;
+    row.overrides={};
+  });
+  pruneCustomFx();
+
+  // Each destination cell keeps its figure: an override where the estimate
+  // from the new From city would not give it back.
+  const nFrom=getCity(S.detailFromKey);
+  S.detailRows.forEach((row,ri)=>{
+    const cat=CATS.find(c=>c.id===row.catId)||CATS[0];
+    rest.forEach((q,j)=>{
+      const old=shown[ri][q];
+      if(old.v==null&&!old.ov)return;
+      const c=getCity(S.detailToCities[j]);
+      const est=(nFrom&&c)?calcExp(row.fromAmount,nFrom,c,cat.index,detailFx(j,nFrom,c)):null;
+      if(old.ov||est==null||!isFinite(est)||!sameFig(est,old.v))row.overrides[String(j)]=old.v;
+    });
+  });
 }
 
 function wireDetail(fromCity,toCities){
@@ -1361,6 +1749,12 @@ function wireDetail(fromCity,toCities){
   document.querySelectorAll('.dt-to-sal').forEach(inp=>{
     inp.addEventListener('input', () => { liveMoney(inp); S.detailToSalaries[+inp.dataset.ci] = parseNum(inp.value); });
     inp.addEventListener('blur', e => { formatMoneyInput(e.target); renderDetailArea(); });
+  });
+
+  // Column drag: From is column 0, destination i is column i+1.
+  SharedColDrag.attach(document.querySelector('#detailSec table.dt'),{
+    scope:document.getElementById('analysisArea'),
+    onMove:(from,to)=>{moveDetailColumn(from,to);renderDetailArea();}
   });
 
   // Target toggle (earn mode)
@@ -1517,6 +1911,64 @@ function tourRestoreState(snap){
   syncSegButtons();
   render();
 }
+// ═══════════════════════════════════════════════════════════
+// QUICK START
+// Each scenario opens the Detailed table on one home city and its regional
+// peers, with the goal set to "I need to earn" and the target to the savings
+// ratio, so the Net Income row answers one question: what each destination
+// must pay to save the same share of pay as home does.
+//
+// Every figure is monthly, net of tax, in the home city's currency, and a
+// plausible single professional's budget there. Each budget leaves a round
+// savings ratio (20, 25, 30 or 40%) so the target reads at a glance. Rows the
+// home city's people rarely pay (fuel in Singapore, New York, London or Tokyo,
+// where most commute by train) are left out rather than set to zero.
+// ═══════════════════════════════════════════════════════════
+const QUICK_START={
+  'sg-au':{from:['Singapore','Singapore'],to:[['Sydney','Australia'],['Melbourne','Australia'],['Brisbane','Australia'],['Perth','Australia']],
+    salary:8000,       rows:[['rent',3500],['groceries',600],['eating_out',700],['utilities',200],['other',1000]]},
+  'sea':{from:['Jakarta','Indonesia'],to:[['Kuala Lumpur','Malaysia'],['Bangkok','Thailand'],['Ho Chi Minh City','Vietnam']],
+    salary:25000000,   rows:[['rent',7000000],['groceries',3000000],['eating_out',2500000],['utilities',1200000],['fuel',800000],['other',3000000]]},
+  'us':{from:['New York, NY','United States'],to:[['San Francisco, CA','United States'],['Seattle, WA','United States'],['Austin, TX','United States']],
+    salary:8500,       rows:[['rent',4000],['groceries',600],['eating_out',700],['utilities',200],['other',1300]]},
+  'eu':{from:['London','United Kingdom'],to:[['Paris','France'],['Amsterdam','Netherlands'],['Berlin','Germany']],
+    salary:4500,       rows:[['rent',2100],['groceries',350],['eating_out',400],['utilities',250],['other',500]]},
+  'me':{from:['Dubai','United Arab Emirates'],to:[['Abu Dhabi','United Arab Emirates'],['Doha','Qatar'],['Riyadh','Saudi Arabia']],
+    salary:30000,      rows:[['rent',9000],['groceries',2000],['eating_out',2000],['utilities',800],['fuel',400],['other',3800]]},
+  'ea':{from:['Tokyo','Japan'],to:[['Seoul','South Korea'],['Hong Kong','Hong Kong (China)'],['Shanghai','China']],
+    salary:450000,     rows:[['rent',140000],['groceries',50000],['eating_out',45000],['utilities',15000],['other',65000]]},
+};
+// Exact city and country only: London, Canada must never stand in for London.
+function exactCityKey(name,country){
+  const c=CITIES.find(x=>x.city===name&&x.country===country);
+  return c?cityKey(c):'';
+}
+function applyQuickStart(id){
+  const q=QUICK_START[id];
+  if(!q||!CITIES.length)return;
+  // From the defaults, so no mode, override, custom rate or simple-mode figure
+  // from the comparison before survives the switch.
+  Object.keys(S).forEach(k=>{delete S[k];});
+  Object.assign(S,JSON.parse(JSON.stringify(S_DEFAULTS)));
+  S.mode='detailed'; S.goal='earn'; S.savingsTarget='ratio';
+  S.detailFromKey=exactCityKey(q.from[0],q.from[1]);
+  S.detailToCities=q.to.map(t=>exactCityKey(t[0],t[1]));
+  S.detailToSalaries=q.to.map(()=>0);
+  S.customFxDetailed=q.to.map(()=>null);
+  S.detailFromSalary=q.salary;
+  S.detailRows=q.rows.map(([catId,amt])=>({catId,fromAmount:amt,overrides:{}}));
+  buildCityPicker('fromPicker',S.fromKey,key=>{S.fromKey=key;S.customFxSimple=null;render();});
+  buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
+  syncSegButtons();
+  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.toggle('active',b.dataset.preset===id));
+  render();
+  if(persist)persist.save();
+}
+function wireQuickStart(){
+  document.querySelectorAll('.quick-start-btn').forEach(btn=>
+    btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
+}
+
 window.__COL_TOUR = {
   seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo,
   saveState: tourSaveState, restoreState: tourRestoreState
@@ -1533,6 +1985,7 @@ function init(){
   buildCityPicker('toPicker',S.toKey,key=>{S.toKey=key;S.customFxSimple=null;render();});
 
   wireGlobalToggles();
+  wireQuickStart();
   render();
 
   /* ── Mini cache ──────────────────────────────────────────────────────────
@@ -1551,8 +2004,7 @@ function init(){
       restore: function(e){ if(e && typeof e==='object') Object.assign(S, e); }
     }
   });
-  // No Quick Start row here, so save/open sit in the header beside Other Tools.
-  SharedScenario.mount('.header-right', { tool: 'costofliving-comparator', persist: persist });
+  SharedScenario.mount('.quick-start-row', { tool: 'costofliving-comparator', persist: persist });
 }
 
 loadData();

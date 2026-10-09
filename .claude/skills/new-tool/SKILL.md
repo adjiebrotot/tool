@@ -18,17 +18,85 @@ it before writing markup, and reuse its components (control panel, tabs, sliders
 tables, tooltips, charts) rather than inventing new ones. Include the shared layers in order:
 
 ```html
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">       <!-- installable app (PWA) -->
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>                   <!-- registers the service worker -->
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">   <!-- page-specific only -->
 ...
+<script src="../dropdown.js"></script>     <!-- every dropdown's open list (dropdown.css comes via shared.css) -->
 <script src="../shared.js"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
 <script src="script.js"></script>
 ```
 
 The fastest way to stay consistent is to open the closest existing tool and mirror its
 structure. Theme toggle, dark/light behaviour, and fonts should match the others exactly.
+
+**Dropdowns** come from `dropdown.css` / `dropdown.js` and need no styling of your own: a
+short list is a plain `<select>` (no search), and only a database-sized list a reader
+would scroll one by one (cities, time zones) is a searchable `.combo-input` + `.combo-list`.
+Size a select if you must (padding, font-size, width, `--radius-sm`), never re-colour,
+re-border or re-font it. See "Dropdowns: one look, two kinds" in the design reference and
+run `node _ref/dropdown-check.mjs`.
+
+### A finance tool: the seven-rule checklist
+
+A calculator that handles money follows **Finance Tool Skeleton** in the design reference.
+Before calling it done, every line here must hold:
+
+- [ ] **Grouped**: inputs in `.field-group`s, generic before specific; first tab holds the
+      four to six figures anyone knows, Currency first; a last **Assumptions** tab holds the
+      guesses (inflation, growth, simulation, fill timing).
+- [ ] **Currency is a symbol unless it converts**: a display-only picker is an empty
+      `<select data-currency-symbols>` filled by `SharedCurrency` in `shared.js` (the one
+      symbol list, $ € £ ¥ Rp…; add `data-currency-none` for a "None" option), labelled
+      "Currency Symbol". ISO codes (AUD, USD, EUR) are only for a tool that really applies an
+      exchange rate, like the Cost of Living Comparator.
+- [ ] **Titles stay the real term, tooltips explain it**: keep jargon (Risk-Free Rate,
+      Binding constraint) with a one-line plain tip; spell out abbreviations with the term
+      in brackets ("safe withdrawal rate (SWR)").
+- [ ] **The control fits the value**: known figures typed, guesses on sliders, small counts
+      as segmented buttons (`SharedSeg.fromSelect`). One **Detail: Simple | Detailed** switch
+      per group, first in it.
+- [ ] **Same structure**: results open with a one-sentence answer (`SharedVerdict`, neutral
+      tone for a comparison of options), then KPI cards, charts, tables folded behind
+      **Show table** (`SharedFold`), and a closing **What this assumes** card, built from the
+      reader's own input on every redraw: only lines for what their plan uses, each naming
+      its figure ("Inflation is 2.5% a year", not "Inflation is modelled"). Display options
+      sit beside the results they change.
+- [ ] **Units everywhere**: the unit is the field's prefix or suffix, never the label;
+      `data-unit` when it lives in a column header, `data-unitless` for a seed. Every y axis
+      names its unit, every x axis is titled, every table says its unit once (`.unit-note`).
+- [ ] **Bounds enforced by the form**: min/max on every typed number (`data-min`/`data-max`
+      on money), SharedBounds pulls values back; sliders name both ends and take a typed value.
+- [ ] **Colour means one thing**: options take `SharedPalette`'s neutral sequence (blue,
+      gold, teal, rose…), never red; red is direction only; no hex typed into code, every
+      colour a token, in both themes.
+
+Add the page to `FINANCE` in `shared.js` and to `PAGES` in `_ref/form-check.mjs`, and run
+`node _ref/form-check.mjs` (ONLY=<path> for one page). No em-dashes in page text.
+
+### Buttons: one picture per job, every tool
+
+Read **Buttons and Icons** in the design reference and find each button you need in
+`_ref/button-map.md`; copy that row rather than drawing a new one.
+
+- [ ] **✕ only closes, the bin only deletes.** Close is `SharedIcon.button('close', …)`;
+      delete is `SharedIcon.button('trash', …)`. Never ✕, ×, ⊗ or 🗑 as text.
+- [ ] **The same job gets the same picture**: duplicate (sheets and a plus), edit
+      (pencil), save to a file (floppy), open a file (folder), clear a field (backspace
+      key), `⬇` download, `⧉` copy, `⟳` reset the view, `↺` restore defaults, `▶` run,
+      ASCII `+` add. No emoji in their place.
+- [ ] **Icon-only buttons are bare** (`.btn-bare`: no fill, no border) unless they sit in
+      a row of boxed buttons; every one has a title and aria-label.
+- [ ] **The wanted outcome is the easy one.** An editor applies edits as they are made, so
+      closing it keeps the work and there is no "close without saving"; a long form pins its
+      Done to the bottom; the main action is on screen at first load.
+
+Run `node _ref/button-check.mjs` (ONLY=<path> for one page).
 
 ## 2. SEO — match the standard head + register the page
 
@@ -53,6 +121,11 @@ block. Then register the tool site-wide:
   A tip has to carry a domain fact: a definition, a unit, a rule, a caveat, a behaviour
   nobody could guess. If the only missing word is something like "annual", put it in the
   label instead of hiding it in a hover.
+- A tooltip that **explains options** names each one in `<strong>Name:</strong>` and never
+  runs them together as a paragraph. Three or fewer short ones: a `<ul>` list. More than
+  three, or any needing a long sentence: explain only the **selected** option and add
+  `data-tip-options`, which makes the shared tooltip add a small "Change the option to see
+  the others explained." line. See "Tips that explain options" in `_ref/design-reference.md`.
 - A tooltip on a **dependent** field is written to follow that field: it carries the option
   that is selected, or the state the control is in, not a list of every option. Leave its
   markup `data-tip=""` and fill it from the handler that already runs on change.
@@ -84,6 +157,11 @@ prints how often each term fires per page.
 The site's root `index.html` is the tool directory/landing page. **Do not add a new tool to it
 unless the user explicitly asks.** Build the tool in its own folder and stop there.
 
+When the user does ask, copy a card in `index.html` (the comment above the grid lists what
+to change). Its description is one or two short sentences in the words people search for,
+and its `data-anim` key needs a drawing in `home-anim.js`: hand that to the `tool-animator`
+agent (`.claude/agents/tool-animator.md`) rather than drawing it inline.
+
 ## 5. Testing
 
 Scale the rigor to the risk:
@@ -93,6 +171,12 @@ Scale the rigor to the risk:
   page headless and checks the engine against an independent replay of the documented maths,
   plus edge cases). Follow the pattern in `financingvscash/_audit/`, `costofliving-comparator/_audit/`,
   etc. Verify calculation/formula/code integrity, not just that the page renders.
+- **Every finance tool** also passes `node _ref/form-check.mjs` (units, bounds, slider ends,
+  axis units, no em-dash, no red option, answer and caveats) alongside `_ref/quickstart-check.mjs`,
+  `_ref/scenario-check.mjs`, `_ref/chart-check.mjs`, `_ref/tip-check.mjs` and `_ref/abbr-check.mjs`.
+- **Every tool** passes `node _ref/button-check.mjs` (one picture per job, bare icon buttons,
+  reachable main action) and `node _ref/dropdown-check.mjs` (every dropdown has the shared look
+  and opens the shared list).
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 
@@ -112,6 +196,15 @@ under ~50ms the output just follows the inputs and there is no Simulate button,
 over ~150ms (or if it fetches anything) it needs a real gate that actually gates.
 A tool with Quick Start scenarios needs no Reset, provided each scenario opens
 from the defaults rather than from whatever is on screen.
+
+A gate is only honest if its states read at a glance (`financialfreedom` is the model):
+- **Ready / up to date**: solid accent fill, text in `var(--text-inv)`, never a hard-coded
+  `#fff` (the dark accent is pale, so white text on it reads as greyed out). The same goes for
+  every active tab, pill or segmented button filled with an accent.
+- **Out of date**: the moment an input changes, the button gets `.needs-run` (an `--accent2`
+  ring), a short note says to press it, and the results dim (`body.is-stale`) until it is run.
+- **Disabled**: `shared.css` dims any native `:disabled` button and stops its hover and press
+  effects. Never override `--accent` with a paler shade on a page that fills buttons with it.
 
 ## Mini cache (nice to have)
 

@@ -3,8 +3,11 @@
   --input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);
   --value-highlight:#8DBBFF;
 }
+/* Light mode takes light.css's accents: the pale #8BB8F8 this page used to
+   set put white text on a fill too light to read, so Visualise looked greyed
+   out even when it was ready. */
 body.light {
-  --accent:#8BB8F8;--accent-strong:#5A91E8;--accent2:#B8E0D2;--accent3:#FFD6E0;
+  --accent3:#FFD6E0;
   --input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);
   --shadow:0 2px 16px rgba(120,160,220,0.10);--shadow-lg:0 4px 32px rgba(120,160,220,0.14);
   --value-highlight:#5A91E8;
@@ -41,29 +44,50 @@ body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-hei
 .btn-visualise{width:100%;padding:13px 22px;background:var(--accent);color:var(--text-inv);border:none;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer;transition:opacity 150ms,transform 150ms;font-family:inherit;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(141,187,255,.2)}
 .btn-visualise:hover{opacity:.88}
 .btn-visualise:active{transform:scale(.97)}
-.btn-visualise:disabled{opacity:.38;cursor:not-allowed}
+/* No data yet: a flat grey slab, not a faded blue one, so it cannot be
+   mistaken for a button that is merely pale. */
+.btn-visualise:disabled,.btn-visualise:disabled:hover{background:var(--input-bg);color:var(--muted);border:1.5px dashed var(--border);box-shadow:none;opacity:1;cursor:not-allowed;transform:none}
 
-/* SECTION TITLE */
-.section-title{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin:0 0 10px}
+/* The Visualise gate (the same contract as financialfreedom's Simulate).
+   The chart is drawn on Visualise, not on every change, so the page has to say
+   when what is on screen no longer matches the settings: the button gains a
+   ring and a note, and a chart already drawn steps back until it is redrawn. */
+.vis-note{font-size:.78rem;font-weight:700;text-align:center;margin:-4px 0 0;color:var(--muted)}
+.vis-note.is-stale{color:var(--accent2)}
+.btn-visualise.needs-run{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent2)}
+#plotDiv,.info-row{transition:opacity 150ms}
+body.is-stale #plotDiv,body.is-stale .info-row{opacity:.45}
 
-/* FIELD GROUP */
-.field-group{margin-bottom:16px}
-.field-group:last-child{margin-bottom:0}
-.field-group label{display:block;font-weight:700;font-size:.88rem;margin-bottom:6px}
-.field-group .help{color:var(--muted);font-size:.79rem;margin-top:4px;line-height:1.4}
+/* FIELD GROUPS — the boxes, titles and rows are shared.css's
+   (.field-group / .group-title / .field-row / .fg-body); only what sits
+   inside them is here. */
+.field-group>:first-child{border-top:none}
+/* A free-form body is ruled off from the title like a row is. */
+.field-group>.fg-body{border-top:1px solid var(--border);padding:10px 0 8px}
+.field-group .help{font-size:.79rem;margin-top:6px}
+.label-note{color:var(--muted);font-weight:400;font-size:.78rem}
+.empty-note{color:var(--muted);font-size:.83rem;text-align:center}
+.marker-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.marker-grid .field-label{margin-bottom:5px}
+.btn-sample{width:100%;justify-content:center;padding:8px 14px}
 
 /* INPUTS */
-select,input[type=number],input[type=text]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:.88rem;outline:none;transition:border-color 150ms}
-select:focus,input:focus{border-color:var(--accent)}
-select option{background:var(--panel);color:var(--text)}
+input[type=number],input[type=text]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:.88rem;outline:none;transition:border-color 150ms}
+input:focus{border-color:var(--accent)}
+/* Selects take their look from dropdown.css; sized here to sit with the inputs. */
+select{width:100%;padding:8px 10px;font-size:.88rem;border-radius:var(--radius-sm)}
+/* The shared option colours paint over the browser's own highlight, so a
+   multi-select would hide which series are picked. */
+select[multiple] option{background:transparent;color:var(--text);padding:2px 4px;border-radius:4px}
+select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 
 /* DIMENSION BUTTONS */
-.dim-btns{display:flex;gap:7px;margin-bottom:6px}
+.dim-btns{display:flex;gap:7px}
 .dim-btn{flex:1;padding:9px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);font-weight:700;font-size:.88rem;cursor:pointer;transition:all 150ms;font-family:inherit;text-align:center}
-.dim-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
+.dim-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
 
 /* UPLOAD ZONE */
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 200ms;margin-bottom:14px;position:relative}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 200ms;margin-bottom:10px;position:relative}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(141,187,255,.04)}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .upload-icon{margin-bottom:6px;color:var(--muted);line-height:0}
@@ -114,11 +138,8 @@ select option{background:var(--panel);color:var(--text)}
 /* COLORMAP GRID */
 .colormap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
 .colormap-btn{padding:7px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:.76rem;font-weight:700;color:var(--muted);text-align:center;transition:all 150ms;font-family:inherit}
-.colormap-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
+.colormap-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
 .colormap-preview{height:7px;border-radius:4px;margin-bottom:4px}
-
-/* SEPARATOR */
-hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
 
 /* FOOTER */
 .page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px}

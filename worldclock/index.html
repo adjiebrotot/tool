@@ -68,11 +68,15 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">
+<script src="../dropdown.js"></script>
 <script src="../shared.js"></script>
 </head>
 <body class="light">
@@ -114,7 +118,7 @@
   <section class="wc-travel card" id="travelPanel" hidden data-no-persist aria-label="Time Travel">
     <div class="wc-travel-head">
       <div class="wc-travel-title">🚀 Time Travel</div>
-      <button class="wc-x" id="travelClose" aria-label="Close Time Travel">✕</button>
+      <button class="btn-bare wc-x" data-icon="close" id="travelClose" title="Close Time Travel" aria-label="Close Time Travel"></button>
     </div>
     <p class="wc-travel-sub">Pick a date and time. Every clock jumps to it.</p>
     <div class="wc-travel-grid">
@@ -130,9 +134,9 @@
     <div class="wc-field">
       <label class="field-label" for="placeSearch">In</label>
       <div class="city-picker" id="placePicker">
-        <input class="city-search" id="placeSearch" type="text" placeholder="Search a city or country…" autocomplete="off" spellcheck="false">
-        <button class="city-clear" id="placeClear" aria-label="Clear place" type="button">✕</button>
-        <div class="city-dropdown" id="placeList" role="listbox"></div>
+        <input class="city-search combo-input" id="placeSearch" type="text" placeholder="Search a city or country…" autocomplete="off" spellcheck="false">
+        <button class="city-clear" id="placeClear" data-icon="clear" title="Clear place" aria-label="Clear place" type="button"></button>
+        <div class="city-dropdown combo-list" id="placeList" role="listbox"></div>
       </div>
       <div class="field-sub">Or tap a place on the map.</div>
     </div>
@@ -151,7 +155,7 @@
           <button class="seg-btn active" data-val="jur">Jurisdictions</button>
           <button class="seg-btn" data-val="tz">Time zones</button>
         </div>
-        <span class="tip-wrap"><span class="tip-icon" id="viewTip" data-tip="">i</span></span>
+        <span class="tip-wrap"><span class="tip-icon" id="viewTip" data-tip="" data-tip-options>i</span></span>
       </div>
     </div>
 

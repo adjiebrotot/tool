@@ -91,6 +91,118 @@
     setAffix: setAffix
   };
 
+  /* ── Currency symbol picker ─────────────────────────────────────────────
+     Two kinds of currency choice live on this site, and they are kept apart:
+
+       - A SYMBOL is cosmetic. Nothing is converted; the figures mean whatever
+         money the reader typed them in, and the picker only decides what is
+         drawn in front of them. Every such picker is built from the one list
+         below, so the tools offer the same choices in the same order.
+       - An ISO CODE (AUD, USD, EUR…) is reserved for a tool that really
+         converts between currencies with an exchange rate (the Cost of Living
+         Comparator). A code on a display-only picker would promise a
+         conversion that never happens.
+
+     Mark the <select> with data-currency-symbols and leave it empty; it is
+     filled when this file loads (every tool loads shared.js at the end of
+     <body>, after its form, and before its own script reads or restores the
+     value). The labels follow <html lang>: "id" gets Indonesian names.
+       data-currency-none  adds a "None" option (value "") for tools that can
+                           draw money with no symbol at all.
+     A symbol may stand for several currencies ($ is the US, Australian,
+     Singapore… dollar), which is fine precisely because nothing converts. */
+  var CURRENCY_SYMBOLS = [
+    {sym:'$',   en:'Dollar',                       id:'Dolar'},
+    {sym:'€',   en:'Euro',                         id:'Euro'},
+    {sym:'£',   en:'Pound',                        id:'Pound'},
+    {sym:'¥',   en:'Yen / Yuan',                   id:'Yen / Yuan'},
+    {sym:'₹',   en:'Rupee (India)',                id:'Rupee (India)'},
+    {sym:'Rs',  en:'Rupee (Pakistan, Sri Lanka)',  id:'Rupee (Pakistan, Sri Lanka)'},
+    {sym:'Rp',  en:'Rupiah',                       id:'Rupiah'},
+    {sym:'RM',  en:'Ringgit',                      id:'Ringgit'},
+    {sym:'₱',   en:'Peso (Philippines)',           id:'Peso (Filipina)'},
+    {sym:'฿',   en:'Baht',                         id:'Baht'},
+    {sym:'₫',   en:'Dong',                         id:'Dong'},
+    {sym:'₩',   en:'Won',                          id:'Won'},
+    {sym:'CHF', en:'Swiss Franc',                  id:'Franc Swiss'},
+    {sym:'kr',  en:'Krona / Krone',                id:'Krona / Krone'},
+    {sym:'zł',  en:'Złoty',                        id:'Zloty'},
+    {sym:'₺',   en:'Lira',                         id:'Lira'},
+    {sym:'₽',   en:'Ruble',                        id:'Rubel'},
+    {sym:'₪',   en:'Shekel',                       id:'Shekel'},
+    {sym:'R',   en:'Rand',                         id:'Rand'},
+    {sym:'R$',  en:'Real',                         id:'Real'},
+    {sym:'₦',   en:'Naira',                        id:'Naira'},
+    {sym:'₿',   en:'Bitcoin',                      id:'Bitcoin'}
+  ];
+
+  /* Saved plans from before a tool moved from codes to symbols carry a code.
+     Read through this so an old file or mini cache still opens on the symbol
+     it used to show. */
+  var CODE_TO_SYMBOL = {
+    AUD:'$', USD:'$', SGD:'$', NZD:'$', CAD:'$', HKD:'$', TWD:'$', MXN:'$',
+    EUR:'€', GBP:'£', JPY:'¥', CNY:'¥', INR:'₹', PKR:'Rs', LKR:'Rs', NPR:'Rs',
+    IDR:'Rp', MYR:'RM', PHP:'₱', THB:'฿', VND:'₫', KRW:'₩', CHF:'CHF',
+    SEK:'kr', NOK:'kr', DKK:'kr', ISK:'kr', PLN:'zł', TRY:'₺', RUB:'₽',
+    ILS:'₪', ZAR:'R', BRL:'R$', NGN:'₦', BTC:'₿'
+  };
+
+  function currencyLang(lang){
+    lang = lang || (document.documentElement && document.documentElement.lang) || 'en';
+    return /^id/i.test(lang) ? 'id' : 'en';
+  }
+  function hasSymbol(sym){
+    for(var i = 0; i < CURRENCY_SYMBOLS.length; i++) if(CURRENCY_SYMBOLS[i].sym === sym) return true;
+    return false;
+  }
+  /* A value as a tool may find it saved: a listed symbol stays, a code from
+     before the move maps to its symbol, anything else falls back. */
+  function toSymbol(v, fallback){
+    if(fallback === undefined) fallback = '$';
+    if(typeof v !== 'string') return fallback;
+    if(hasSymbol(v)) return v;
+    var code = v.trim().toUpperCase();
+    return Object.prototype.hasOwnProperty.call(CODE_TO_SYMBOL, code) ? CODE_TO_SYMBOL[code] : fallback;
+  }
+  /* Fill (or refill, e.g. on a language change) a symbol <select>. The
+     current value is kept when it is still on the list. */
+  function fillCurrency(sel, opts){
+    if(!sel) return;
+    opts = opts || {};
+    var lang = currencyLang(opts.lang);
+    var none = opts.none != null ? !!opts.none : sel.hasAttribute('data-currency-none');
+    // An empty <select> reads '' — that is "nothing chosen yet", not "None".
+    var keep = opts.value != null ? opts.value
+      : (sel.options.length ? sel.value : (sel.getAttribute('data-currency-default') || '$'));
+    sel.innerHTML = '';
+    CURRENCY_SYMBOLS.forEach(function(c){
+      var o = document.createElement('option');
+      o.value = c.sym;
+      o.textContent = c.sym + ' ' + c[lang];
+      sel.appendChild(o);
+    });
+    if(none){
+      var o = document.createElement('option');
+      o.value = '';
+      o.textContent = lang === 'id' ? 'Tanpa simbol' : 'None (no symbol)';
+      sel.appendChild(o);
+    }
+    sel.value = (keep === '' && none) || hasSymbol(keep) ? keep : '$';
+  }
+  function fillAllCurrency(){
+    var els = document.querySelectorAll('select[data-currency-symbols]');
+    for(var i = 0; i < els.length; i++) if(!els[i].options.length) fillCurrency(els[i]);
+  }
+  fillAllCurrency();
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fillAllCurrency);
+
+  global.SharedCurrency = {
+    SYMBOLS: CURRENCY_SYMBOLS,
+    fill: fillCurrency,
+    has: hasSymbol,
+    toSymbol: toSymbol
+  };
+
   /* ── Frequency conversion ───────────────────────────────────────────────
      A per-period amount only means something next to its period: $500 a month
      is $6,000 a year, not $500 a year. So when a frequency control moves, the
@@ -765,6 +877,72 @@
 
   global.SharedConfig = { download: downloadJson, upload: uploadJson };
 
+  /* ── SharedIcon: one picture per job, on every tool ──────────────────────
+     A reader who learns a button on one tool should read it on the next, so
+     the icons that carry a meaning are drawn once, here:
+
+       close      ✕   dismiss a panel, a modal or a card. Nothing is lost.
+       trash      bin delete a row, a scenario, a chip, a loaded file.
+       duplicate  two sheets and a plus: add a copy of this item beside it.
+       edit       pencil: open this item for editing.
+       clear      backspace key: empty the text field it sits in.
+       reset      anticlockwise arrow: put this value back to its default.
+       save       floppy disk: write the work to a file.
+       open       open folder: read a file from this device.
+       view       eye: show the rendered result instead of its source.
+
+     ✕ never deletes and the bin never closes; that is the whole point. Two
+     ways to use it:
+
+         SharedIcon.svg('trash')                       // markup for a template
+         SharedIcon.button('trash', 'Remove this row', 'row-del', 'data-i="3"')
+         <button class="btn-bare" data-icon="trash" …>  // static markup,
+                                                         // filled at load
+
+     button() builds a .btn-bare (no fill, no border, tinted on hover; the
+     bin's hover is red). A labelled button can carry data-icon too and the
+     icon is placed before its text. See "Buttons and icons" in
+     _ref/design-reference.md for the full vocabulary.                     */
+  function makeIcon(){
+    var PATHS = {
+      close: '<path d="M6 6l12 12M18 6 6 18" stroke-width="2"/>',
+      trash: '<path d="M4 6.5h16"/><path d="M9 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h3.4A1.3 1.3 0 0 1 15 4.8v1.7"/><path d="M6.2 6.5l.8 12.2a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8l.8-12.2"/><path d="M10 10.5v6M14 10.5v6"/>',
+      duplicate: '<rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 8.5V5.7a2.2 2.2 0 0 0-2.2-2.2H5.7a2.2 2.2 0 0 0-2.2 2.2v7.6a2.2 2.2 0 0 0 2.2 2.2h2.8"/><path d="M14.5 11.9v5.2M11.9 14.5h5.2"/>',
+      edit: '<path d="M16.4 4a2.1 2.1 0 0 1 3 3L8 18.4l-4.3 1.2L4.9 15.3z"/><path d="M14.4 6l3 3"/>',
+      clear: '<path d="M8.7 5h10.8A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5H8.7a1.5 1.5 0 0 1-1.15-.54L2.6 12l4.95-6.46A1.5 1.5 0 0 1 8.7 5z"/><path d="M11.6 9.6l4.8 4.8M16.4 9.6l-4.8 4.8"/>',
+      reset: '<path d="M4.2 12a7.8 7.8 0 1 0 2.3-5.5"/><path d="M4.2 3.8v4.6h4.6"/>',
+      save: '<path d="M5 3.5h11.2L20.5 7.8V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z"/><path d="M7.5 3.5v5h8v-5"/><rect x="7" y="13" width="10" height="7.5" rx=".6"/>',
+      open: '<path d="M3.5 19V6a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2.2H18a1.5 1.5 0 0 1 1.5 1.5V10"/><path d="M3.5 19l2.6-7.4A1.5 1.5 0 0 1 7.5 10.6h13.1a1 1 0 0 1 .95 1.3L19.3 18.5a1.5 1.5 0 0 1-1.4 1H3.5"/>',
+      view: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>'
+    };
+    function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+    function svg(name){
+      var p = PATHS[name];
+      if(!p) return '';
+      return '<svg class="ico ico-' + name + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + p + '</svg>';
+    }
+    // A bare icon button, as markup. label is its tooltip and accessible name.
+    function button(name, label, cls, attrs){
+      var c = 'btn-bare' + (name === 'trash' ? ' is-delete' : '') + (cls ? ' ' + cls : '');
+      return '<button type="button" class="' + c + '" title="' + esc(label) + '" aria-label="' + esc(label) + '"' +
+        (attrs ? ' ' + attrs : '') + '>' + svg(name) + '</button>';
+    }
+    // Static markup names its icon with data-icon; this puts the drawing in,
+    // before any text the button already carries. Safe to run twice.
+    function hydrate(root){
+      var els = (root || document).querySelectorAll('[data-icon]');
+      for(var i = 0; i < els.length; i++){
+        var el = els[i], name = el.getAttribute('data-icon');
+        if(!PATHS[name] || el.querySelector(':scope > .ico')) continue;
+        el.insertAdjacentHTML('afterbegin', svg(name));
+        if(name === 'trash' && el.classList.contains('btn-bare')) el.classList.add('is-delete');
+        if(/\S/.test(el.textContent)) el.classList.add('has-ico'); // icon and a word
+      }
+    }
+    return { svg: svg, button: button, hydrate: hydrate, names: Object.keys(PATHS) };
+  }
+  global.SharedIcon = makeIcon();
+
   /* ── SharedScenario — save the scenario to a file, open it again tomorrow ──
      Two small icon buttons (a floppy disk and an open folder) that write every
      input on the page to a JSON file and read one back. The mini cache already
@@ -784,8 +962,8 @@
      options — tool (file tag and default file name), persist | save+load,
                filename, onError(message), onLoaded().                        */
   function makeScenario(){
-    var ICON_SAVE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3.5h11.2L20.5 7.8V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z"/><path d="M7.5 3.5v5h8v-5"/><rect x="7" y="13" width="10" height="7.5" rx=".6"/></svg>';
-    var ICON_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 19V6a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2.2H18a1.5 1.5 0 0 1 1.5 1.5V10"/><path d="M3.5 19l2.6-7.4A1.5 1.5 0 0 1 7.5 10.6h13.1a1 1 0 0 1 .95 1.3L19.3 18.5a1.5 1.5 0 0 1-1.4 1H3.5"/></svg>';
+    var ICON_SAVE = global.SharedIcon.svg('save');
+    var ICON_OPEN = global.SharedIcon.svg('open');
     var TEXT = {
       en: { save: 'Save scenario to a file', load: 'Open a saved scenario file',
             wrong: 'That file is not a saved scenario for this tool.',
@@ -1829,6 +2007,17 @@
     var PAD = 8;
     var activeIcon = null;
 
+    /* A tip on an options control explains only the option that is selected
+       (see "Tooltips" in _ref/design-reference.md). The element says so with
+       data-tip-options, and this small line under the tip tells the reader the
+       other options have their own explanation. */
+    function optionsHint(){
+      var id = /^id\b/i.test(document.documentElement.lang || '');
+      return '<span class="tip-hint">' +
+        (id ? 'Ganti pilihan untuk melihat penjelasan lainnya.'
+            : 'Change the option to see the others explained.') + '</span>';
+    }
+
     function hide(){
       activeIcon = null;
       tt.classList.remove('visible');
@@ -1881,7 +2070,7 @@
       if (!tip) { hide(); return; }
 
       activeIcon = icon;
-      ttText.innerHTML = tip;
+      ttText.innerHTML = tip + (icon.hasAttribute('data-tip-options') ? optionsHint() : '');
       tt.classList.add('visible');
       tt.style.display = 'block';
       tt.style.opacity = '0';
@@ -1991,6 +2180,9 @@
     },
 
     /* ── DCA Scenario Explorer, Portfolio mode and the ticker reference ── */
+    valuateeverything: {
+      RMSE: ['Root Mean Square Error', 'how far a listing usually sits from the model, in price']
+    },
     dcasimulator: {
       ADX:   ['Average Directional Index', 'how strong a trend is, whichever way it points'],
       DCA:   ['Dollar-Cost Averaging', 'investing a set amount on a set schedule instead of all at once'],
@@ -2439,10 +2631,852 @@
   }
   global.SharedFit = { fitAll: fitAll, compact: fitCompact };
 
+  /* ── SharedPane: axis text on a chart of stacked panes ───────────────────
+     A chart that stacks several y axes on one canvas (Financial Freedom's flows
+     over its balance, the DCA price chart over its oscillators) breaks two of
+     Chart.js's assumptions about axis text, and on a phone both showed:
+
+     1. Every left axis is capped at half the width over the number of left
+        axes. With a price pane and three oscillators that is an eighth of a
+        phone, narrower than a title plus "-$2.00m", so the labels were drawn
+        under the title and off the canvas. A stacked axis is given the width
+        its own text needs instead, up to two fifths of the canvas.
+     2. A title is centred on its own pane and never clipped to it, so a title
+        longer than its pane is tall ("Balance, future's money" on a pane 90px
+        high) runs across the pane beside it. Each title gives way in steps
+        once the panes are laid out: the whole title; the same words on two
+        lines, broken at ", " or " ("; then the words before the break alone.
+
+     Wiring is one plugin, `plugins: [SharedPane.plugin]`. It only acts on
+     scales that carry `stack`, so a chart without stacked axes never notices
+     it. The title steps down only within one pane height (a two-line title
+     makes the axis wider and the pane no taller, so it can never argue for the
+     longer one), which keeps it from flipping between two frames. */
+  function paneTitleSteps(full){
+    var at = full.indexOf(', '), keep = 1, skip = 2;
+    if(at < 0){ at = full.indexOf(' ('); keep = 0; skip = 1; }
+    if(at <= 0) return [full];
+    return [full, [full.slice(0, at + keep), full.slice(at + skip)], full.slice(0, at)];
+  }
+  function paneAxisFit(scale){
+    var H = global.Chart && global.Chart.helpers;
+    if(!H || !scale._getLabelSizes || !scale.ticks || !scale.ticks.length || scale.isHorizontal()) return;
+    var o = scale.options;
+    var lines = o.title && o.title.display ? (Array.isArray(o.title.text) ? o.title.text.length : 1) : 0;
+    var title = lines ? H.toFont(o.title.font).lineHeight * lines + H.toPadding(o.title.padding).height : 0;
+    var tick = o.grid && o.grid.display !== false && o.grid.drawTicks !== false ? (o.grid.tickLength || 0) : 0;
+    var labels = o.ticks.display === false ? 0 : scale._getLabelSizes().widest.width + (o.ticks.padding || 0) * 2;
+    var need = Math.ceil(title + tick + labels);
+    scale.width = Math.max(scale.width, Math.min(need, scale.chart.width * 0.4));
+  }
+  var PANE_PLUGIN = {
+    id: 'sharedPane',
+    beforeUpdate: function(chart){
+      var scales = chart.options && chart.options.scales;
+      if(!scales) return;
+      Object.keys(scales).forEach(function(id){
+        var cfg = scales[id];
+        if(!cfg || !cfg.stack || cfg.display === false || cfg.afterFit) return;
+        cfg.afterFit = paneAxisFit;
+      });
+    },
+    afterLayout: function(chart){
+      var H = global.Chart && global.Chart.helpers;
+      if(!H || !chart.ctx || !chart.scales || !chart.options.scales) return;
+      var memo = chart.$sharedPane || (chart.$sharedPane = {});
+      var relayout = false;
+      var lineCount = function(v){ return Array.isArray(v) ? v.length : 1; };
+      Object.keys(chart.scales).forEach(function(id){
+        var sc = chart.scales[id], cfg = chart.options.scales[id];
+        if(!sc.options || !sc.options.stack || sc.isHorizontal() || !cfg || !cfg.title || !cfg.title.display) return;
+        // The whole title is remembered on the options it came in on, so a
+        // chart given new options starts again from the whole of the new one.
+        if(cfg.title.$full == null || (cfg.title.$shown != null &&
+           JSON.stringify(cfg.title.$shown) !== JSON.stringify(cfg.title.text))){
+          cfg.title.$full = String(cfg.title.text);
+        }
+        var full = cfg.title.$full;
+        var steps = paneTitleSteps(full);
+        var room = Math.round(sc.bottom - sc.top - 4);
+        var ctx = chart.ctx;
+        ctx.save();
+        ctx.font = H.toFont(sc.options.title.font).string;
+        var pick = steps.length - 1;
+        for(var i = 0; i < steps.length; i++){
+          var lines = Array.isArray(steps[i]) ? steps[i] : [steps[i]];
+          var widest = Math.max.apply(null, lines.map(function(l){ return ctx.measureText(l).width; }));
+          if(widest <= room){ pick = i; break; }
+        }
+        ctx.restore();
+        var key = id + '|' + full, last = memo[key];
+        if(last && last.room === room) pick = Math.max(pick, last.pick);
+        memo[key] = {pick: pick, room: room};
+        var want = steps[pick], had = cfg.title.text;
+        cfg.title.$shown = want;
+        if(JSON.stringify(had) === JSON.stringify(want)) return;
+        cfg.title.text = want;
+        // Same line count: the axis keeps its width, so this frame can simply
+        // draw the new words. A different count needs the layout run again.
+        if(lineCount(had) !== lineCount(want)) relayout = true;
+        else sc.options.title.text = want;
+      });
+      if(relayout && !chart.$sharedPaneBusy){
+        chart.$sharedPaneBusy = true;
+        Promise.resolve().then(function(){
+          /* Stopped first: a still-running animation from the update before
+             would otherwise carry on to the positions of the OLD layout after
+             this one has placed every point, leaving the lines drawn off their
+             own x axis (three years early on a phone). */
+          try { if(chart.canvas){ chart.stop(); chart.update('none'); } } finally { chart.$sharedPaneBusy = false; }
+        });
+      }
+    }
+  };
+  global.SharedPane = { plugin: PANE_PLUGIN, axisFit: paneAxisFit, titleSteps: paneTitleSteps };
+
+  /* ── SharedExport — an exported chart is always the desktop chart ─────────
+     A PNG or SVG export copies the live canvas, so on a phone it used to copy
+     the phone's narrow, squat chart: squeezed axes, a legend packed into a
+     column. An exported image is read on its own, away from the device, so it
+     should have the one ideal proportion the chart was designed at.
+
+         SharedExport.atDesktopSize('chartCanvas', function(){ ...read it... });
+
+     For the duration of `fn` the chart's wrapper is laid out at the desktop
+     width and at the height the tool's stylesheet gives it OUTSIDE any media
+     query, and the Chart.js chart is redrawn at that size. Everything happens
+     in one synchronous task, so the page never paints the large chart; a
+     Promise returned by `fn` keeps the size until it settles. A chart already
+     at desktop size, or anything that is not a Chart.js canvas, is passed
+     straight through. */
+  var EXPORT_W = 940;
+
+  // The wrapper's height as the desktop stylesheet sets it: the last plain
+  // (non-media) rule that matches, or an inline height, in px.
+  function desktopHeight(el){
+    var h = 0;
+    function scan(rules){
+      Array.prototype.forEach.call(rules, function(rule){
+        if (rule.type !== 1) return;                     // CSSStyleRule only
+        var v = rule.style && rule.style.getPropertyValue('height');
+        var px = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(v || '');
+        if (!px) return;
+        try { if (el.matches(rule.selectorText)) h = parseFloat(px[1]); } catch (e) { /* bad selector */ }
+      });
+    }
+    Array.prototype.forEach.call(document.styleSheets, function(sheet){
+      var rules;
+      try { rules = sheet.cssRules; } catch (e) { return; }  // cross-origin sheet
+      if (rules) scan(rules);
+    });
+    var inline = /^\s*(\d+(?:\.\d+)?)px\s*$/.exec(el.style.height || '');
+    return inline ? parseFloat(inline[1]) : h;
+  }
+
+  var exportDepth = 0;
+  function atDesktopSize(canvas, fn){
+    if (typeof canvas === 'string') canvas = document.getElementById(canvas);
+    var Chart = global.Chart;
+    var chart = canvas && Chart && Chart.getChart ? Chart.getChart(canvas) : null;
+    var wrap = canvas && canvas.parentElement;
+    if (!chart || !wrap || exportDepth) return fn();
+    var H = desktopHeight(wrap) || wrap.clientHeight;
+    var W = Math.max(EXPORT_W, wrap.clientWidth);
+    if (wrap.clientWidth >= EXPORT_W * 0.9 && Math.abs(wrap.clientHeight - H) < 2) return fn();
+
+    var savedStyle = wrap.getAttribute('style');
+    function restore(){
+      exportDepth--;
+      if (savedStyle == null) wrap.removeAttribute('style');
+      else wrap.setAttribute('style', savedStyle);
+      chart.resize();
+      chart.update('none');
+    }
+    exportDepth++;
+    try {
+      // !important, because some tools pin a mobile height with !important.
+      wrap.style.setProperty('width', W + 'px', 'important');
+      wrap.style.setProperty('max-width', 'none', 'important');
+      wrap.style.setProperty('height', H + 'px', 'important');
+      chart.stop();
+      chart.resize();
+      chart.update('none');
+    } catch (e) { restore(); throw e; }
+
+    var out;
+    try { out = fn(); }
+    catch (e) { restore(); throw e; }
+    if (out && typeof out.then === 'function') {
+      return out.then(function(v){ restore(); return v; },
+                      function(err){ restore(); throw err; });
+    }
+    restore();
+    return out;
+  }
+
+  global.SharedExport = { atDesktopSize: atDesktopSize, desktopHeight: desktopHeight, WIDTH: EXPORT_W };
+
+  /* ══ Finance tool skeleton ═══════════════════════════════════════════════
+     The behaviours every finance tool shares, so the same field behaves the
+     same way on every page. See "Finance tool skeleton" in
+     _ref/design-reference.md. */
+  function pageLang(){
+    var l = (document.documentElement.getAttribute('lang') || 'en').toLowerCase();
+    return l.indexOf('id') === 0 ? 'id' : 'en';
+  }
+  function decimalsOf(step){
+    if(step == null || step === '' || step === 'any' || !isFinite(+step)) return null;
+    var s = String(+step), e = s.indexOf('e-');
+    if(e >= 0) return parseInt(s.slice(e + 2), 10);
+    var i = s.indexOf('.');
+    return i < 0 ? 0 : s.length - i - 1;
+  }
+  // A number as a reader writes it: no float dust, a real minus sign.
+  function plainNumber(v, maxDp){
+    var n = +(+v).toFixed(maxDp == null ? 10 : maxDp);
+    var s = String(Math.abs(n));
+    if(Math.abs(n) >= 10000) s = Math.abs(n).toLocaleString('en-US', {maximumFractionDigits: maxDp == null ? 10 : maxDp});
+    return (n < 0 ? '−' : '') + s;
+  }
+
+  /* ── SharedBounds — a field refuses a value outside its range ─────────────
+     Rule: the boundary and the step of a field are stated by the field itself,
+     not by a sentence. A typed field declares them the way a slider does:
+
+         <input type="number" min="0" max="30" step="0.1">             (native)
+         <input type="text" class="currency-input" data-min="0"
+                data-max="100000000000" data-step="1">                 (money)
+
+     When the reader leaves the field (its change event), a value past either
+     end is pulled back to that end and snapped to the step, and a small note
+     under the field says so for a moment ("Max 30 %/yr"), so the change is
+     never silent. Snapping alone, inside the range, is silent: that is what a
+     slider does too. Runs in the capture phase, so the tool's own change
+     handler already reads the corrected value; an input event is fired as
+     well, for tools that only listen to input. A blank field is left blank:
+     several tools read blank as "work it out for me". */
+  function makeBounds(){
+    var TEXT = { en: { max: 'Max', min: 'Min' }, id: { max: 'Maks.', min: 'Min.' } };
+    var hintEl = null, hintTimer = null, hintFor = null;
+    // data-min / data-max opt a field in anywhere. A native number field's own
+    // min / max count too, on the finance tools (where this was designed);
+    // other pages keep their number fields as they were.
+    function raw(el, name){
+      var v = el.getAttribute('data-' + name);
+      if(v == null && (el.type || '').toLowerCase() === 'number' && inFinanceTool()) v = el.getAttribute(name);
+      return v == null || v === '' ? null : v;
+    }
+    function limits(el){
+      if(!el || el.tagName !== 'INPUT') return null;
+      var t = (el.type || 'text').toLowerCase();
+      if(t !== 'text' && t !== 'number' && t !== 'tel') return null;
+      var mn = raw(el, 'min'), mx = raw(el, 'max'), st = raw(el, 'step');
+      if(mn == null && mx == null) return null;
+      return {
+        min: mn == null ? -Infinity : parseFloat(mn),
+        max: mx == null ? Infinity : parseFloat(mx),
+        step: st == null || st === 'any' ? null : parseFloat(st)
+      };
+    }
+    function parse(el){
+      var s = String(el.value == null ? '' : el.value).replace(/,/g, '').replace(/−/g, '-').trim();
+      if(s === '' || s === '-' || s === '.' || s === '-.') return NaN;
+      var n = parseFloat(s);
+      return isFinite(n) ? n : NaN;
+    }
+    function grouped(el){
+      return /,/.test(el.value || '') || el.getAttribute('data-money') === 'true' ||
+             el.classList.contains('money-input') || el.hasAttribute('data-grouped');
+    }
+    function format(el, v, lim){
+      var dp = decimalsOf(lim.step);
+      if(grouped(el)) return SharedFmtRef().formatThousands(String(v), {maxDecimals: dp == null ? 2 : dp, allowNegative: v < 0});
+      var n = dp == null ? +(+v).toPrecision(12) : +(+v).toFixed(dp);
+      return String(n);
+    }
+    function unitOf(el){
+      var pre = '', suf = el.getAttribute('data-unit') || '';
+      var wrap = el.closest('.currency-wrap');
+      if(wrap){
+        var p = wrap.querySelector('.prefix'), s = wrap.querySelector('.suffix');
+        if(p && !p.hidden) pre = (p.textContent || '').trim();
+        if(s && !s.hidden) suf = (s.textContent || '').trim();
+      }
+      return {pre: pre, suf: suf};
+    }
+    function boundText(el, v, lim){
+      var u = unitOf(el), dp = decimalsOf(lim.step);
+      var num = plainNumber(v, dp == null ? 2 : dp);
+      if(grouped(el)) num = (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('en-US', {maximumFractionDigits: dp == null ? 2 : dp});
+      return (u.pre ? u.pre + ' ' : '') + num + (u.suf ? ' ' + u.suf : '');
+    }
+    function showHint(el, text){
+      if(!hintEl){
+        hintEl = document.createElement('div');
+        hintEl.id = 'boundHint';
+        hintEl.setAttribute('role', 'status');
+        hintEl.setAttribute('aria-live', 'polite');
+        hintEl.setAttribute('data-no-abbr', '');
+        document.body.appendChild(hintEl);
+      }
+      var box = (el.closest('.currency-wrap') || el).getBoundingClientRect();
+      hintEl.textContent = text;
+      hintEl.style.left = Math.max(8, Math.min(box.left, window.innerWidth - 268)) + 'px';
+      hintEl.style.top = Math.min(window.innerHeight - 30, box.bottom + 4) + 'px';
+      hintEl.classList.add('visible');
+      if(hintFor && hintFor !== el) hintFor.classList.remove('bound-flash');
+      hintFor = el;
+      el.classList.add('bound-flash');
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(hideHint, 2600);
+    }
+    function hideHint(){
+      if(hintEl) hintEl.classList.remove('visible');
+      if(hintFor) hintFor.classList.remove('bound-flash');
+      hintFor = null;
+    }
+    // Pull one field back inside its range. Returns true when it changed.
+    function apply(el){
+      var lim = limits(el);
+      if(!lim) return false;
+      var v = parse(el);
+      if(!isFinite(v)) return false;
+      var out = v, hit = null;
+      if(out > lim.max){ out = lim.max; hit = 'max'; }
+      if(out < lim.min){ out = lim.min; hit = 'min'; }
+      if(lim.step && isFinite(lim.step) && lim.step > 0){
+        var base = isFinite(lim.min) ? lim.min : 0;
+        var dp = decimalsOf(lim.step);
+        out = +(Math.round((out - base) / lim.step) * lim.step + base).toFixed(dp == null ? 10 : dp);
+        if(out > lim.max) out = +(out - lim.step).toFixed(dp == null ? 10 : dp);
+        if(out < lim.min) out = +(out + lim.step).toFixed(dp == null ? 10 : dp);
+      }
+      if(Math.abs(out - v) < 1e-12) return false;
+      el.value = format(el, out, lim);
+      if(hit) showHint(el, TEXT[pageLang()][hit] + ' ' + boundText(el, out, lim));
+      return true;
+    }
+    function onChange(e){
+      var el = e.target;
+      if(!el || el.tagName !== 'INPUT' || el.__boundsBusy) return;
+      if(!limits(el)) return;
+      if(apply(el)){
+        el.__boundsBusy = true;
+        try { el.dispatchEvent(new Event('input', {bubbles: true})); }
+        finally { el.__boundsBusy = false; }
+      }
+    }
+    document.addEventListener('change', onChange, true);
+    global.addEventListener('scroll', function(){ if(hintFor) hideHint(); }, true);
+    return { apply: apply, limits: limits, hint: showHint };
+  }
+  // SharedFmt is defined above in this same file; read it lazily all the same.
+  function SharedFmtRef(){ return global.SharedFmt; }
+  global.SharedBounds = makeBounds();
+
+  /* ── SharedSlider — a slider names both ends and takes a typed value ──────
+     Every range input gets its min and max written under it (in the unit its
+     readout uses), and its readout (.slider-value) becomes a small box: click
+     or Enter, type a figure, and it lands on the slider clamped to the same
+     ends and snapped to the same step. The ends follow the slider when a tool
+     moves its min or max at run time.
+
+     Found automatically at start-up; a slider added later calls
+     SharedSlider.enhance(range). Opt-outs: data-no-ends (the tool draws its
+     own scale), data-no-edit on the readout. data-unit on the range overrides
+     the unit read off the readout; data-readout="<id>" names a readout that
+     does not sit in the slider's own row.
+
+     The automatic pass runs on the finance tools only (FINANCE below); any
+     other page opts in by calling SharedSlider.scan() itself. A readout that
+     already has a tool's own typing box beside it keeps that box. */
+  var FINANCE = ['rentvsownhouse', 'pisahvsgabung', 'borrowingcapacity', 'financingvscash',
+                 'financialfreedom', 'dcasimulator', 'costofliving-comparator', 'valuateeverything'];
+  function inFinanceTool(){
+    var path = String((global.location && global.location.pathname) || '');
+    return path.split('/').some(function(seg){ return FINANCE.indexOf(seg) > -1; });
+  }
+  function makeSlider(){
+    var TEXT = { en: 'Click to type a value', id: 'Klik untuk mengetik nilai' };
+    function readoutOf(range){
+      var id = range.getAttribute('data-readout');
+      if(id) return document.getElementById(id);
+      var box = range.closest('.slider-block, .field-row, .sc-field, .slider-wrap');
+      if(!box || box.querySelectorAll('input[type=range]').length !== 1) return null;
+      return box.querySelector('.slider-value');
+    }
+    function unitParts(range, ro){
+      if(range.hasAttribute('data-unit')) return {pre: range.getAttribute('data-prefix') || '', suf: range.getAttribute('data-unit')};
+      var text = ro ? (ro.textContent || '').trim() : '';
+      var m = /^([^\d−+\-]*)[−+\-]?[\d.,]+(.*)$/.exec(text);
+      if(!m) return {pre: '', suf: ''};
+      var pre = m[1].trim(), rest = m[2], suf = '';
+      var u = /^\s?(%|×|x\b)/.exec(rest);
+      if(u) suf = u[1];
+      else { var w = /^(\s?[A-Za-z]+)/.exec(rest); if(w) suf = w[1]; }
+      return {pre: pre, suf: suf};
+    }
+    function endText(v, step, p){
+      var dp = decimalsOf(step);
+      return p.pre + plainNumber(v, dp == null ? 2 : Math.min(dp, 2)) + p.suf;
+    }
+    function editable(ro, range){
+      if(ro.__shEdit) return;
+      ro.__shEdit = true;
+      // The tool already makes this readout typeable: one box, not two.
+      var sib = ro.nextElementSibling;
+      if(sib && sib.classList && sib.classList.contains('slider-val-edit')) return;
+      ro.classList.add('is-editable');
+      ro.setAttribute('tabindex', '0');
+      ro.setAttribute('role', 'button');
+      ro.setAttribute('title', TEXT[pageLang()]);
+      var inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.className = 'slider-val-edit';
+      inp.setAttribute('data-no-persist', '');
+      inp.setAttribute('aria-label', TEXT[pageLang()]);
+      ro.parentNode.insertBefore(inp, ro.nextSibling);
+      function open(){
+        inp.value = String(parseFloat(range.value));
+        ro.style.display = 'none';
+        inp.style.display = 'inline-block';
+        inp.focus();
+        inp.select();
+      }
+      var cancelled = false;
+      function commit(){
+        if(!cancelled){
+          var v = parseFloat(String(inp.value).replace(/,/g, '').replace(/−/g, '-'));
+          if(isFinite(v)){
+            var mn = parseFloat(range.min), mx = parseFloat(range.max), st = parseFloat(range.step) || 1;
+            if(!isFinite(mn)) mn = 0;
+            if(!isFinite(mx)) mx = 100;
+            var c = Math.min(mx, Math.max(mn, v));
+            var dp = decimalsOf(st);
+            var snapped = +(Math.round((c - mn) / st) * st + mn).toFixed(dp == null ? 10 : dp);
+            if(snapped > mx) snapped = mx;
+            range.value = String(snapped);
+            range.dispatchEvent(new Event('input', {bubbles: true}));
+            range.dispatchEvent(new Event('change', {bubbles: true}));
+            if(c !== v){
+              var id = pageLang() === 'id';
+              var word = v > mx ? (id ? 'Maks.' : 'Max') : (id ? 'Min.' : 'Min');
+              global.SharedBounds.hint(ro, word + ' ' + endText(c, st, unitParts(range, ro)));
+            }
+          }
+        }
+        cancelled = false;
+        inp.style.display = 'none';
+        ro.style.display = '';
+      }
+      ro.addEventListener('click', open);
+      ro.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+      });
+      inp.addEventListener('blur', commit);
+      inp.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ e.preventDefault(); inp.blur(); }
+        else if(e.key === 'Escape'){ cancelled = true; inp.blur(); }
+      });
+    }
+    function enhance(range){
+      if(!range || range.__shSlider || range.type !== 'range') return;
+      range.__shSlider = true;
+      var ro = readoutOf(range);
+      var next = range.nextElementSibling;
+      var ownScale = range.hasAttribute('data-no-ends') ||
+        (next && next.classList && (next.classList.contains('slider-scale') || next.classList.contains('range-ends')));
+      if(!ownScale){
+        var ends = document.createElement('div');
+        ends.className = 'range-ends';
+        ends.setAttribute('aria-hidden', 'true');
+        ends.setAttribute('data-no-abbr', '');
+        ends.innerHTML = '<span></span><span></span>';
+        range.insertAdjacentElement('afterend', ends);
+        var draw = function(){
+          var p = unitParts(range, ro);
+          ends.children[0].textContent = endText(range.min === '' ? 0 : range.min, range.step, p);
+          ends.children[1].textContent = endText(range.max === '' ? 100 : range.max, range.step, p);
+        };
+        draw();
+        if(global.MutationObserver){
+          new MutationObserver(draw).observe(range, {attributes: true, attributeFilter: ['min', 'max', 'step']});
+          if(ro) new MutationObserver(draw).observe(ro, {childList: true, characterData: true, subtree: true});
+        }
+      }
+      if(ro && !ro.hasAttribute('data-no-edit')) editable(ro, range);
+    }
+    function scan(root){
+      (root || document).querySelectorAll('input[type=range]').forEach(enhance);
+    }
+    return { enhance: enhance, scan: scan, auto: inFinanceTool };
+  }
+  global.SharedSlider = makeSlider();
+
+  /* ── SharedSeg — a small count picked with buttons, kept in a <select> ────
+     A choice among a handful of numbers (dependants 0 to 3, adults 1 or 2) is
+     one tap on a segmented control rather than a dropdown to open or a slider
+     to land. The <select> stays on the page as the field the tool reads, the
+     mini cache saves and a scenario file carries; it is only hidden, and the
+     buttons follow it however its value is set (a click, a preset, a restored
+     file). labelOf(option) shortens a button's text; the option's own text
+     stays as the button's title. */
+  function fromSelect(sel, opts){
+    opts = opts || {};
+    if(!sel || sel.__seg) return null;
+    sel.__seg = true;
+    var group = document.createElement('div');
+    group.className = 'seg-group seg-count' + (opts.className ? ' ' + opts.className : '');
+    group.setAttribute('role', 'radiogroup');
+    group.setAttribute('data-no-abbr', '');
+    if(opts.ariaLabel) group.setAttribute('aria-label', opts.ariaLabel);
+    function sync(){
+      var v = sel.value;
+      Array.prototype.forEach.call(group.children, function(b){
+        var on = b.getAttribute('data-val') === v;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    function build(){
+      group.innerHTML = '';
+      Array.prototype.forEach.call(sel.options, function(o){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'seg-btn';
+        b.setAttribute('role', 'radio');
+        b.setAttribute('data-val', o.value);
+        b.textContent = opts.labelOf ? opts.labelOf(o) : o.value;
+        b.title = (o.textContent || '').trim();
+        b.addEventListener('click', function(){
+          if(sel.value === o.value) return;
+          sel.value = o.value;
+          sel.dispatchEvent(new Event('input', {bubbles: true}));
+          sel.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+        group.appendChild(b);
+      });
+      sync();
+    }
+    sel.classList.add('seg-source');
+    sel.setAttribute('tabindex', '-1');
+    sel.setAttribute('aria-hidden', 'true');
+    if(sel.parentElement) sel.parentElement.classList.add('seg-host');
+    sel.insertAdjacentElement('afterend', group);
+    // Presets and restores set .value without an event; follow them anyway.
+    ['value', 'selectedIndex'].forEach(function(prop){
+      var d = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, prop);
+      if(!d || !d.set) return;
+      Object.defineProperty(sel, prop, {
+        configurable: true,
+        get: function(){ return d.get.call(this); },
+        set: function(v){ d.set.call(this, v); sync(); }
+      });
+    });
+    sel.addEventListener('change', sync);
+    sel.addEventListener('input', sync);
+    if(global.MutationObserver) new MutationObserver(build).observe(sel, {childList: true, subtree: true, characterData: true});
+    build();
+    return { sync: sync, group: group };
+  }
+  global.SharedSeg = { fromSelect: fromSelect };
+
+  /* ── SharedFold — the long table waits behind a button ───────────────────
+     A year-by-year table is the most specific thing a tool shows, so it opens
+     closed: its header row (title, CSV button) stays, and a "Show table"
+     button beside the title opens the rest. The reader's choice is kept on
+     this device. The CSV button exports the whole table either way.
+
+         SharedFold.attach(card, { key: 'rentvsownhouse', bodies: [tabs, wrap],
+                                   onOpen: resyncStickyHeader });            */
+  function makeFold(){
+    var TEXT = { en: {show: 'Show table', hide: 'Hide table'}, id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel'} };
+    function attach(card, opts){
+      opts = opts || {};
+      if(!card || card.__fold) return null;
+      card.__fold = true;
+      var t = TEXT[pageLang()];
+      var bodies = (opts.bodies || []).map(function(b){ return typeof b === 'string' ? card.querySelector(b) : b; }).filter(Boolean);
+      bodies.forEach(function(b){ b.classList.add('fold-body'); });
+      var host = opts.host ? (typeof opts.host === 'string' ? card.querySelector(opts.host) : opts.host)
+                           : card.querySelector('.detail-head, .chart-head');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-secondary btn-sm fold-btn';
+      btn.setAttribute('data-no-abbr', '');
+      var cluster = host ? host.querySelector('.btn-cluster') : null;
+      if(cluster && cluster.parentElement === host) host.insertBefore(btn, cluster);
+      else if(host) host.appendChild(btn);
+      else card.insertBefore(btn, card.firstChild);
+      var key = opts.key ? 'abt:fold:' + opts.key : null;
+      var open = false;
+      try { open = !!key && localStorage.getItem(key) === '1'; } catch(e){}
+      function set(o, byReader){
+        open = !!o;
+        card.classList.toggle('is-folded', !open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.innerHTML = '<span>' + (open ? t.hide : t.show) + '</span><span class="fold-chev" aria-hidden="true">▾</span>';
+        if(byReader && key){ try { localStorage.setItem(key, open ? '1' : '0'); } catch(e){} }
+        if(open && typeof opts.onOpen === 'function') opts.onOpen();
+      }
+      btn.addEventListener('click', function(){ set(!open, true); });
+      set(open, false);
+      return { open: function(){ set(true, true); }, close: function(){ set(false, true); }, isOpen: function(){ return open; }, button: btn };
+    }
+    return { attach: attach };
+  }
+  global.SharedFold = makeFold();
+
+  /* ── SharedVerdict — the answer as one sentence, above the cards ──────────
+     tone: '' (a fair comparison: rent or own, separate or joint), 'good',
+     'bad' or 'warn' (a pass or a miss against a goal the reader set).
+     title and body are HTML the tool builds from its own figures. */
+  function setVerdict(el, v){
+    if(typeof el === 'string') el = document.getElementById(el);
+    if(!el) return;
+    el.classList.remove('good', 'bad', 'warn');
+    if(!v){ el.classList.remove('visible'); el.innerHTML = ''; return; }
+    if(v.tone) el.classList.add(v.tone);
+    el.innerHTML = '<h2>' + v.title + '</h2>' + (v.body ? '<p>' + v.body + '</p>' : '');
+    el.classList.add('visible');
+  }
+  global.SharedVerdict = { set: setVerdict };
+
+  /* ── SharedPalette — neutral options never wear red ───────────────────────
+     Two options a reader is choosing between (own or rent, separate or joint,
+     loan A or loan B) are neither good nor bad, so they take the neutral
+     sequence: blue, then gold, then teal, rose, purple. Red and the positive
+     blue stay for direction (a gain, a loss, money in, money out). Duplicates
+     are dropped by their resolved colour, because in dark mode --line-e and
+     --gold are the same gold. Blue against gold stays distinct for all three
+     common kinds of colour blindness (see the design reference). */
+  var NEUTRAL_VARS = ['--line-a', '--gold', '--line-c', '--line-d', '--line-e'];
+  function neutralColours(el){
+    var cs = getComputedStyle(el || document.body), out = [], seen = {};
+    NEUTRAL_VARS.forEach(function(name){
+      var c = cs.getPropertyValue(name).trim();
+      var k = c.toLowerCase();
+      if(c && !seen[k]){ seen[k] = true; out.push(c); }
+    });
+    return out;
+  }
+  global.SharedPalette = {
+    NEUTRAL_VARS: NEUTRAL_VARS,
+    neutral: neutralColours,
+    at: function(i, el){ var l = neutralColours(el); return l.length ? l[((i % l.length) + l.length) % l.length] : ''; }
+  };
+
+  /* ── SharedColDrag — pick up a table column and drop it somewhere else ────
+     A grip in a header cell (any element carrying data-col-grip="<n>", where
+     n counts the draggable columns only, left to right) lifts its whole
+     column: the cells slide with the pointer, a line shows where they will
+     land (past a column's middle is past that column), and the tool is told the move as onMove(from, to), both in that
+     same count. What a move means is the tool's business; this only reports
+     it, and the tool redraws. Mouse, pen and touch alike, and the keyboard:
+     a focused grip moves its column one place on the left and right arrows.
+     Escape, or dropping it back where it was, cancels.
+
+         SharedColDrag.attach(table, { onMove: function(from, to){ ... } });  */
+  function makeColDrag(){
+    var THRESHOLD = 4;     // px of travel before a press becomes a drag
+    var EDGE = 48;         // px from a scroller's edge where it starts scrolling
+    // Grid column a cell starts at, counting the colspans before it.
+    function gridCol(cell){ var x = 0, c = cell; while((c = c.previousElementSibling)) x += c.colSpan || 1; return x; }
+    // Every one-column cell at grid column `col`. A cell spanning several
+    // (a section heading, a full-width add button) belongs to no one column,
+    // so it stays where it is.
+    function cellsAt(table, col){
+      var out = [];
+      Array.prototype.forEach.call(table.rows, function(tr){
+        var x = 0;
+        for(var i = 0; i < tr.cells.length; i++){
+          var c = tr.cells[i], span = c.colSpan || 1;
+          if(x === col){ if(span === 1) out.push(c); break; }
+          x += span;
+          if(x > col) break;
+        }
+      });
+      return out;
+    }
+    function scrollerOf(el){
+      for(var p = el.parentElement; p && p !== document.body; p = p.parentElement){
+        var ox = getComputedStyle(p).overflowX;
+        if((ox === 'auto' || ox === 'scroll') && p.scrollWidth > p.clientWidth) return p;
+      }
+      return null;
+    }
+    function attach(table, opts){
+      if(!table || !opts || typeof opts.onMove !== 'function') return;
+      var grips = Array.prototype.slice.call(table.querySelectorAll('[data-col-grip]'));
+      var heads = [];
+      grips.forEach(function(g){ heads[+g.getAttribute('data-col-grip')] = g.closest('th,td'); });
+      if(heads.length < 2 || heads.some(function(h){ return !h; })) return;
+      var scope = opts.scope || document;
+
+      function move(from, to, refocus){
+        if(to === from || to < 0 || to >= heads.length) return;
+        opts.onMove(from, to);
+        if(refocus){
+          // The tool has usually rebuilt the table: find the grip again.
+          var g = scope.querySelector('[data-col-grip="' + to + '"]');
+          if(g) g.focus();
+        }
+      }
+
+      grips.forEach(function(grip){
+        var from = +grip.getAttribute('data-col-grip');
+        grip.addEventListener('keydown', function(e){
+          var d = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
+          if(!d) return;
+          e.preventDefault();
+          move(from, from + d, true);
+        });
+        grip.addEventListener('click', function(e){ e.preventDefault(); });
+        grip.addEventListener('pointerdown', function(e){
+          if(e.button !== 0) return;
+          e.preventDefault();
+          drag(e, grip, from);
+        });
+      });
+
+      function drag(e, grip, from){
+        var startX = e.clientX, lastX = startX, dragging = false, to = from, raf = 0, done = false;
+        var cells = cellsAt(table, gridCol(heads[from]));
+        var sc = scrollerOf(table), scroll0 = sc ? sc.scrollLeft : 0;
+        // Layout rects taken once, before anything moves; later frames shift
+        // them by however far the scroller has travelled since.
+        var R = heads.map(function(h){ var r = h.getBoundingClientRect(); return { l: r.left, r: r.right, m: (r.left + r.right) / 2 }; });
+        var minDx = R[0].l - R[from].l, maxDx = R[R.length - 1].r - R[from].r;
+        var others = heads.map(function(_, i){ return i; }).filter(function(i){ return i !== from; });
+        var line = null;
+        try { grip.setPointerCapture(e.pointerId); } catch(_){}
+
+        function frame(){
+          raf = 0;
+          if(!dragging || done) return;
+          if(sc){
+            var b = sc.getBoundingClientRect(), v = 0;
+            if(lastX < b.left + EDGE) v = -Math.ceil((b.left + EDGE - lastX) / 4);
+            else if(lastX > b.right - EDGE) v = Math.ceil((lastX - b.right + EDGE) / 4);
+            if(v){ sc.scrollLeft += Math.max(-16, Math.min(16, v)); }
+          }
+          var s = sc ? sc.scrollLeft - scroll0 : 0;
+          // The cells stop at the table's draggable span. The landing place
+          // follows the pointer: past a column's middle is past that column.
+          var dx = Math.max(minDx, Math.min(maxDx, lastX - startX + s));
+          cells.forEach(function(c){ c.style.transform = 'translateX(' + dx + 'px)'; });
+          to = others.filter(function(i){ return R[i].m - s < lastX; }).length;
+          if(to === from){ line.style.display = 'none'; }
+          else {
+            var x = to > from ? R[others[to - 1]].r : R[others[to]].l;
+            var t = table.getBoundingClientRect();
+            line.style.display = '';
+            line.style.left = (x - s) + 'px';
+            line.style.top = t.top + 'px';
+            line.style.height = t.height + 'px';
+          }
+          if(sc) raf = requestAnimationFrame(frame);   // keep edge-scrolling while held still
+        }
+        function begin(){
+          dragging = true;
+          document.body.classList.add('col-dragging');
+          cells.forEach(function(c){ c.classList.add('col-drag-src'); });
+          line = document.createElement('div');
+          line.className = 'col-drop-line';
+          line.style.display = 'none';
+          document.body.appendChild(line);
+        }
+        function onMove(ev){
+          lastX = ev.clientX;
+          if(!dragging){
+            if(Math.abs(lastX - startX) < THRESHOLD) return;
+            begin();
+          }
+          if(!raf) raf = requestAnimationFrame(frame);
+        }
+        function end(commit){
+          if(done) return;
+          done = true;
+          if(raf) cancelAnimationFrame(raf);
+          grip.removeEventListener('pointermove', onMove);
+          grip.removeEventListener('pointerup', onUp);
+          grip.removeEventListener('pointercancel', onCancel);
+          document.removeEventListener('keydown', onKey, true);
+          try { grip.releasePointerCapture(e.pointerId); } catch(_){}
+          cells.forEach(function(c){ c.classList.remove('col-drag-src'); c.style.transform = ''; });
+          document.body.classList.remove('col-dragging');
+          if(line) line.remove();
+          if(commit && dragging) move(from, to, false);
+        }
+        function onUp(){ end(true); }
+        function onCancel(){ end(false); }
+        function onKey(ev){ if(ev.key === 'Escape'){ ev.preventDefault(); end(false); } }
+        grip.addEventListener('pointermove', onMove);
+        grip.addEventListener('pointerup', onUp);
+        grip.addEventListener('pointercancel', onCancel);
+        document.addEventListener('keydown', onKey, true);
+      }
+    }
+    return { attach: attach };
+  }
+  global.SharedColDrag = makeColDrag();
+
+  /* ── SharedReach: a sticky sidebar ends on screen ────────────────────────
+     A control card is sticky with max-height:calc(100vh - 32px), which is
+     right once it has stuck to the top of the window. Before that, at page
+     load, it starts below the header, so its last ~150px hang under the fold:
+     exactly where Simulate, Done and the Reset/Clear row live. A reader who
+     has not scrolled could not see the button the whole form leads to.
+
+     This sizes the card to the room it really has, from wherever its top is
+     now to 16px above the window's bottom, and re-sizes it as the page
+     scrolls until the card sticks and the CSS figure takes over. It touches
+     only what is already sticky and already capped, so a phone layout (static,
+     max-height:none) is left alone. */
+  function initReach(){
+    var SEL = '.controls, .sidebar';
+    var cards = [], queued = false, remeasure = true;
+    // On load and resize: learn each card's own CSS cap (it follows the
+    // viewport), with this module's figure taken off first.
+    function measure(){
+      cards = [];
+      var els = document.querySelectorAll(SEL);
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        el.style.maxHeight = '';
+        var cs = getComputedStyle(el);
+        if (cs.position !== 'sticky' || cs.maxHeight === 'none') continue;
+        cards.push({ el: el, gap: parseFloat(cs.top) || 16, cap: parseFloat(cs.maxHeight) });
+      }
+    }
+    // On scroll: one read and one write per card.
+    function fit(){
+      queued = false;
+      if (remeasure) { remeasure = false; measure(); }
+      for (var i = 0; i < cards.length; i++) {
+        var c = cards[i];
+        var room = global.innerHeight - Math.max(c.gap, c.el.getBoundingClientRect().top) - c.gap;
+        var want = room > 160 && room < c.cap ? Math.floor(room) + 'px' : '';
+        if (c.el.style.maxHeight !== want) c.el.style.maxHeight = want;
+      }
+    }
+    function queue(){ if (!queued) { queued = true; requestAnimationFrame(fit); } }
+    function requeue(){ remeasure = true; queue(); }
+    global.addEventListener('scroll', queue, { passive: true });
+    global.addEventListener('resize', requeue);
+    global.addEventListener('load', requeue);
+    queue();
+  }
+  global.SharedReach = { init: initReach };
+
   function initShared(){
+    global.SharedIcon.hydrate();
+    initReach();
     initTooltip();
     global.SharedAbbr.init();
     initFit();
+    if(global.SharedSlider.auto()) global.SharedSlider.scan();
   }
 
   if (document.readyState === 'loading') {

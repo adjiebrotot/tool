@@ -1,8 +1,9 @@
 /* Konfigurasi tur berpemandu untuk Alat Analisis Sensitivitas Sewa vs Beli
    (versi Indonesia). Mesin bersama (../../../tour-shared.js) membaca objek ini. */
 window.__TOUR = {
-  seenKey: 'rvos-id-tour-v1-seen',
+  seenKey: 'rvos-id-tour-v2-seen',
   launchLabel: '🧭 Ikuti tur',
+  launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [
@@ -22,17 +23,18 @@ window.__TOUR = {
       body: 'Tambahkan kolom untuk setiap kasus yang ingin diuji, misalnya uang muka, ' +
             'suku bunga KPR, atau kota yang berbeda. Ubah asumsi apa pun secara langsung ' +
             'dan seluruh tabel dihitung ulang seketika, sehingga Anda bisa melihat faktor ' +
-            'mana yang paling memengaruhi hasil.'
+            'mana yang paling memengaruhi hasil. Pilihan <strong>⚡</strong> di kolom pertama ' +
+            'mengisinya dengan kota Mulai Cepat; seret kolom ke kanan untuk memuat kota lain.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
       title: '② Pilih metrik dan tahun',
-      body: 'Bandingkan berdasarkan <strong>Ekuitas Bersih</strong>, <strong>Kas ' +
-            'Likuid</strong>, atau <strong>Biaya Kumulatif</strong>, lalu atur ' +
-            '<strong>tahun</strong> evaluasi. Begitulah cara menemukan titik breakeven ' +
-            'antar skenario.'
+      body: 'Bandingkan berdasarkan <strong>Kekayaan bersih</strong>, <strong>Uang ' +
+            'tunai</strong>, atau <strong>Biaya kumulatif</strong>, lalu atur ' +
+            '<strong>tahun</strong> evaluasinya. <strong>Beli dikurangi sewa</strong> di ' +
+            'bawah berwarna sesuai pilihan yang unggul: biru untuk membeli, emas untuk menyewa.'
     },
     {
       target: '.csv-actions',
@@ -46,7 +48,7 @@ window.__TOUR = {
       title: '✅ Selesai',
       body: 'Itu seluruh alurnya. Butuh tampilan detail untuk satu kasus? Gunakan alat ' +
             '<strong>Sewa vs Beli</strong> utama lewat tautan Kembali. Putar ulang tur ' +
-            'kapan saja lewat <strong>Ikuti tur</strong>.'
+            'kapan saja lewat tombol <strong>🧭</strong>.'
     }
   ]
 };

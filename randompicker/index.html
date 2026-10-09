@@ -68,11 +68,15 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">
+<script src="../dropdown.js"></script>
 <script src="../shared.js"></script>
 </head>
 <body class="light">
@@ -232,7 +236,7 @@ Salad</textarea>
     <div class="winner-label">🎉 The winner is</div>
     <div class="winner-name" id="winnerName" data-no-abbr>—</div>
     <div class="winner-actions">
-      <button class="btn-secondary" id="winnerRemoveBtn">🗑 Remove from list</button>
+      <button class="btn-secondary" id="winnerRemoveBtn" data-icon="trash">Remove from list</button>
       <button class="btn-primary" id="winnerCloseBtn">Keep it, close</button>
     </div>
     <div class="winner-hint">Remove takes this line out of your choices so it cannot win again.</div>

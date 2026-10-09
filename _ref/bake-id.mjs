@@ -92,7 +92,7 @@ const TOOLS = [
     description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
-    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js'],
+    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'presets.js'],
     extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
     ldJson: [
       {
@@ -190,8 +190,12 @@ const TOOLS = [
     extraReplacements: [
       ["renderRVOFooter('../../logos/')", "renderRVOFooter('../../../logos/')"],
       ['<a href="../../" class="btn-theme btn-back" data-i18n="btnBack">', '<a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">'],
-      ['title="Upload a sensitivity CSV to rebuild the scenarios"', 'title="Unggah CSV sensitivitas untuk membangun ulang skenario"'],
+      ['title="Open a sensitivity CSV to rebuild the scenarios"', 'title="Buka CSV sensitivitas untuk membangun ulang skenario"'],
       ['title="Compare all scenarios in one chart"', 'title="Bandingkan semua skenario dalam satu grafik"'],
+      // The currency picker carries no i18n keys on this page; name the two
+      // options whose words differ, as the main page's LANG.id does.
+      ['<option value="$">$ Dollar</option>', '<option value="$">$ Dolar</option>'],
+      ['<option value="¥">¥ Yen or Yuan</option>', '<option value="¥">¥ Yen atau Yuan</option>'],
     ],
     ldJson: [
       {
@@ -372,8 +376,11 @@ function bake(tool) {
      A tooltip's own copy may carry a <strong> or a <br>, so a tag is matched
      with its quoted attribute values rather than by scanning to the first '>'.
      The lookbehind keeps `title` from matching inside `data-i18n-title`. */
+  /* A control named by its title is named by its aria-label too (an icon-only
+     button), so the two are baked together: a screen reader on the Indonesian
+     page must not announce the English word the tooltip has replaced. */
   for (const [marker, attr] of [['data-i18n-tip', 'data-tip'], ['data-i18n-ph', 'placeholder'],
-                                ['data-i18n-title', 'title']]) {
+                                ['data-i18n-title', 'title'], ['data-i18n-title', 'aria-label']]) {
     html = html.replace(/<\w+\b(?:"[^"]*"|[^>"])*>/g, (tag) => {
       const m = tag.match(new RegExp(`\\b${marker}="([^"]+)"`));
       if (!m || typeof id[m[1]] !== 'string') return tag;

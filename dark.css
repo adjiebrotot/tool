@@ -27,7 +27,7 @@
   --chart-text:#A8B6CF;--chart-grid:#2C3A52;
   /* Chart line colours */
   --line-a:#8DBBFF;--line-b:#FF8B8B;--line-c:#8FCDBD;--line-d:#F1C0D0;--line-e:#FFD28C;
-  --line-rtb-rent:#FF8B8B;--line-rtb-own:#8DBBFF;
+  --line-rtb-rent:#FFD28C;--line-rtb-own:#8DBBFF;
   /* Abbreviations (dashed underline + hover definition, see shared.css/.abbr) */
   --abbr-line:rgba(168,182,207,.42);--abbr-line-hover:rgba(141,187,255,.85);--abbr-hover-bg:rgba(141,187,255,.10);
   /* Scrollbars (see shared.css): both bars wear these colours site-wide */

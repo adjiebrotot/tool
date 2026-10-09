@@ -1,7 +1,7 @@
 /* Guided-tour config for the Rent vs Own Sensitivity Analysis Tool.
    The shared engine (../../tour-shared.js) reads this object. */
 window.__TOUR = {
-  seenKey: 'rvos-tour-v1-seen',
+  seenKey: 'rvos-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -19,17 +19,19 @@ window.__TOUR = {
       title: '① Each column is a scenario',
       body: 'Add a column for every case you want to test, for example different ' +
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
-            'table recalculates instantly, so you can spot which factors move the result ' +
-            'most.'
+            'table recalculates instantly. Each field shows its unit, and a figure past a ' +
+            'row\'s limits is pulled back to it. The <strong>⚡</strong> picker on the first ' +
+            'column fills it with a Quick Start city; drag a column right to load another.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
       title: '② Choose the metric and year',
-      body: 'Compare on <strong>Net Equity</strong>, <strong>Liquid Cash</strong>, or ' +
-            '<strong>Accumulated Cost</strong>, and set the <strong>year</strong> to ' +
-            'evaluate at. This is how you find the breakeven point across scenarios.'
+      body: 'Compare on <strong>Net equity</strong>, <strong>Liquid cash</strong> or ' +
+            '<strong>Accumulated cost</strong>, and set the <strong>year</strong> to ' +
+            'evaluate at. <strong>Own minus rent</strong> at the bottom takes the colour of ' +
+            'whichever comes out ahead: blue for owning, gold for renting.'
     },
     {
       target: '.csv-actions',
@@ -43,7 +45,7 @@ window.__TOUR = {
       title: '✅ You are all set',
       body: 'That is the workflow. Need the detailed single-case view instead? Use the ' +
             'main <strong>Rent vs Own</strong> tool via the Back link. Replay this tour ' +
-            'any time via <strong>Take a tour</strong>.'
+            'any time via the <strong>🧭</strong> button.'
     }
   ]
 };

@@ -20,13 +20,34 @@ Read `.claude/skills/new-tool/SKILL.md`, then verify:
 2. **SEO** — full `<head>` (title, description, canonical, OG, Twitter, JSON-LD
    `WebApplication`, gtag); registered in `sitemap.xml` and `llms.txt`.
 3. **Language** — plain, correct, **no em-dashes** in user copy, no excessive prose; notes live
-   in tooltips, not inline.
+   in tooltips, not inline. Run `node _ref/tip-check.mjs <tool>`: tips that explain options
+   are a `<ul>` of at most three `<strong>Name:</strong>` items, or explain the selected
+   option only and carry `data-tip-options`.
 4. **Root index.html** — not modified unless the user asked for it.
+4b. **Buttons** — run `node _ref/button-check.mjs` (ONLY=<path>): ✕ only closes, the bin
+   only deletes, each job has its one picture from `SharedIcon` (`_ref/button-map.md`), no
+   emoji stands in for an icon, icon-only buttons are bare and named, and the sidebar's main
+   action is on screen at first load. Then judge what a script cannot: does closing any
+   editor or panel keep the reader's work, and is the outcome they want the easiest to reach?
+4c. **Dropdowns** — run `node _ref/dropdown-check.mjs` (ONLY=<path>): every select has the
+   shared look from `dropdown.css` (font, border, fill, chevron, option colours), a mouse
+   opens the shared list, and every searchable list is a `.combo-list`. Then judge what a
+   script cannot: is search used only where the list is database-sized, and is every
+   short list a plain select?
 5. **Footer** — full disclaimer for finance/tax/engineering tools; licence + made-in only for
    plain tools. Flag a missing disclaimer on a risky tool, and flag an unnecessary disclaimer
    on a plain one.
 6. **Mini cache** — persists the right state, restores cleanly, and excludes transient controls
    (`data-no-persist`).
+7. **Finance skeleton** (finance tools) — run `node _ref/form-check.mjs` (ONLY=<path>): every
+   number field states its unit and limits and the form enforces them, sliders name both ends,
+   axes name units, no em-dash, no option drawn red, the answer sentence and the What this
+   assumes card present. Then change the plan (switch a feature on and off, zero a cost)
+   and check the card follows: no line about a feature left unused, every line naming
+   its figure. Then read the page against the seven-rule checklist in
+   `.claude/skills/new-tool/SKILL.md`, including the parts a script cannot judge: grouping,
+   Currency first and Assumptions last, controls that fit the value, tooltips that explain the
+   jargon without renaming it, and an answer sentence that is true for ties and missing input.
 
 ## Verify the maths (the important part)
 

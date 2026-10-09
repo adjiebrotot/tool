@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "Adjie Brotools",
+  "short_name": "Brotools",
+  "description": "Free, private, browser-based calculators and visualisers for finance, tax, property, engineering and data. Everything runs on your device.",
+  "lang": "en",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F0F4FF",
+  "theme_color": "#0f172a",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    { "src": "/logos/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/logos/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/logos/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/logos/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/logos/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Rent vs Own Home", "url": "/rentvsownhouse/", "icons": [{ "src": "/logos/icon-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Finance vs Cash", "url": "/financingvscash/", "icons": [{ "src": "/logos/icon-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "Borrowing Capacity", "url": "/borrowingcapacity/", "icons": [{ "src": "/logos/icon-96.png", "sizes": "96x96", "type": "image/png" }] },
+    { "name": "World Clock", "url": "/worldclock/", "icons": [{ "src": "/logos/icon-96.png", "sizes": "96x96", "type": "image/png" }] }
+  ]
+}

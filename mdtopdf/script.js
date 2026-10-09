@@ -891,11 +891,11 @@
     if (on) {
       clearStickyHeader();
       mdEditor.value = state.text;
-      editToggle.textContent = '👁 Preview';
+      editToggle.innerHTML = SharedIcon.svg('view') + 'Preview';
       mdEditor.focus();
     } else {
       state.text = mdEditor.value;
-      editToggle.textContent = '✏️ Edit';
+      editToggle.innerHTML = SharedIcon.svg('edit') + 'Edit';
       render();
     }
   }
@@ -907,7 +907,7 @@
     state.text = text;
     state.editing = false;
     docScroll.classList.remove('editing');
-    editToggle.textContent = '✏️ Edit';
+    editToggle.innerHTML = SharedIcon.svg('edit') + 'Edit';
     workspace.classList.add('active');
     dropZone.style.display = 'none';
     render();
@@ -1076,7 +1076,7 @@
       state.filename = 'document.md';
       state.editing = false;
       docScroll.classList.remove('editing');
-      editToggle.textContent = '✏️ Edit';
+      editToggle.innerHTML = SharedIcon.svg('edit') + 'Edit';
       mdEditor.value = '';
       mdBody.innerHTML = '';
       clearStickyHeader();

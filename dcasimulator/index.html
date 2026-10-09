@@ -73,6 +73,9 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -118,15 +121,19 @@
   <div class="ctrl-tabs">
     <button class="ctrl-tab active" data-tab="data"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/><path d="M19 12c0 1.66-3.13 3-7 3s-7-1.34-7-3"/></svg> Data</button>
     <button class="ctrl-tab" data-tab="securities"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><polyline points="8 17 10.5 14 12.5 15.5 16 11.5"/></svg> Scenarios</button>
-    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</button>
+    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10"/><circle cx="10" cy="6.5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="17.5" r="2"/></svg> Assumptions</button>
   </div>
 
   <!-- DATA TAB -->
   <div class="ctrl-panel active" id="tab-data">
+    <div class="field-row currency-row">
+      <div class="field-label">Currency Symbol <span class="tip-icon" data-tip="The symbol money is shown in. Nothing is converted between currencies.">?</span></div>
+      <select class="sel-input" id="currencySymbol" data-no-stale data-currency-symbols data-currency-none></select>
+    </div>
     <div id="poolChipsWrap" style="display:none">
       <div class="pool-chips-head">
         <span class="section-label" style="margin-top:0">Loaded assets</span>
-        <button id="clearPoolBtn" class="pool-clear-btn" type="button" title="Remove every loaded ticker and simulated asset">Clear all</button>
+        <button id="clearPoolBtn" class="pool-clear-btn" type="button" data-icon="trash" title="Remove every loaded ticker and simulated asset">Clear all</button>
       </div>
       <div id="poolChips" data-no-abbr style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 18px"></div>
     </div>
@@ -155,12 +162,12 @@
           <input class="txt-input" id="simNameInput" data-no-stale placeholder="e.g. S&amp;P500" style="width:100%" />
           <div style="display:flex;gap:8px;margin-top:10px">
             <div style="flex:1">
-              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return (% p.a.) <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
-              <input class="num-input" id="simReturnInput" data-no-stale type="number" step="0.5" value="8" style="width:100%" />
+              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
+              <div class="currency-wrap"><input class="currency-input has-suffix" id="simReturnInput" data-no-stale type="number" inputmode="decimal" min="-50" max="100" step="0.5" value="8" /><span class="suffix">%/yr</span></div>
             </div>
             <div style="flex:1">
-              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Std dev (%) <span class="tip-icon" data-tip="Yearly volatility, the standard deviation of returns. Higher makes the simulated path swing harder.">?</span></div>
-              <input class="num-input" id="simStdInput" data-no-stale type="number" min="0" step="0.5" value="15" style="width:100%" />
+              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Standard deviation <span class="tip-icon" data-tip="Yearly volatility: how far returns swing around the average. Higher makes the simulated path swing harder.">?</span></div>
+              <div class="currency-wrap"><input class="currency-input has-suffix" id="simStdInput" data-no-stale type="number" inputmode="decimal" min="0" max="100" step="0.5" value="15" /><span class="suffix">%/yr</span></div>
             </div>
           </div>
           <div class="status-bar" id="simStatus"></div>
@@ -189,8 +196,8 @@
       <div id="scenarioTabs" class="sc-tabs"></div>
       <button class="sc-add-btn" id="addScenarioBtn" title="New scenario" aria-label="New scenario">+</button>
       <div class="sc-bar-actions">
-        <button class="sc-act-btn" id="dupScenarioBtn" title="Copy this scenario" aria-label="Copy this scenario">⧉</button>
-        <button class="sc-act-btn sc-act-del" id="delScenarioBtn" title="Remove this scenario" aria-label="Remove this scenario">✕</button>
+        <button type="button" class="btn-bare sc-act-btn" data-icon="duplicate" id="dupScenarioBtn" title="Duplicate this scenario" aria-label="Duplicate this scenario"></button>
+        <button type="button" class="btn-bare sc-act-btn" data-icon="trash" id="delScenarioBtn" title="Remove this scenario" aria-label="Remove this scenario"></button>
       </div>
     </div>
 
@@ -198,39 +205,25 @@
     <div class="status-bar" id="fetchStatus"></div>
   </div>
 
-  <!-- SETTINGS TAB -->
+  <!-- ASSUMPTIONS TAB (ids keep their old name, tab-settings, so saved state lands) -->
   <div class="ctrl-panel" id="tab-settings">
     <div class="field-group">
-    <div class="group-title">General</div>
-    <div class="field-row">
-      <div class="field-label">Currency Symbol</div>
-      <select class="num-input" id="currencySymbol" data-no-stale style="cursor:pointer">
-        <option value="$" selected>$ - Dollar</option>
-        <option value="€">€ - Euro</option>
-        <option value="£">£ - Pound</option>
-        <option value="¥">¥ - Yen / Yuan</option>
-        <option value="₩">₩ - Won</option>
-        <option value="Rp">Rp - Rupiah</option>
-        <option value="RM">RM - Ringgit</option>
-        <option value="฿">฿ - Baht</option>
-        <option value=""> - None (Agnostic)</option>
-      </select>
-    </div>
+    <div class="group-title">Simulation and metrics</div>
     <div class="field-row">
       <div class="field-label">Simulation Seed <span class="tip-icon" data-tip="Fixes the random numbers behind simulated assets, so one seed always reproduces the same price path.">?</span></div>
-      <input class="num-input" id="randomSeed" type="number" min="0" step="1" value="25823952204" />
+      <input class="num-input" id="randomSeed" type="number" inputmode="numeric" min="0" step="1" value="25823952204" data-unitless data-unbounded />
     </div>
     <div class="field-row">
       <div class="field-label">Trade at <span class="tip-icon" data-tip="Every rule decides on a day's close. This sets when the order fills: that close, or the next trading day's open or close.">?</span></div>
-      <select class="num-input" id="execTiming" style="cursor:pointer">
+      <select class="sel-input" id="execTiming">
         <option value="close">Same day's close</option>
         <option value="next-open" selected>Next day's open</option>
         <option value="next-close">Next day's close</option>
       </select>
     </div>
     <div class="field-row">
-      <div class="field-label">Risk-Free Rate (% p.a.) <span class="tip-icon" data-tip="The yearly return you could earn without risk. Sharpe and Sortino measure the return earned above it.">?</span></div>
-      <input class="num-input" id="riskFreeRate" data-no-stale type="number" min="0" step="0.1" value="4" />
+      <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The yearly return you could earn without risk. Sharpe and Sortino measure the return earned above it.">?</span></div>
+      <div class="currency-wrap"><input class="currency-input has-suffix" id="riskFreeRate" data-no-stale type="number" inputmode="decimal" min="0" max="30" step="0.1" value="4" /><span class="suffix">%/yr</span></div>
     </div>
     </div>
   </div>
@@ -240,14 +233,32 @@
   <div class="btn-row">
     <p class="stale-note" id="staleNote" role="status">Inputs changed. Press Simulate to run them.</p>
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
-    <button class="btn-accent2" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
-    <button class="btn-accent2" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>
-    <button class="btn-secondary" id="editTickersBtn" style="flex:1;display:none">✎ Edit list</button>
+    <button class="btn-primary" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
+    <button class="btn-primary" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>
+    <button class="btn-secondary" id="editTickersBtn" data-icon="edit" style="flex:1;display:none">Edit list</button>
   </div>
 </aside>
 
 <!-- MAIN CONTENT -->
 <main>
+
+  <!-- THE ANSWER, then the figures behind it, then the charts -->
+  <div class="verdict card" id="verdict"></div>
+
+  <!-- SUMMARY -->
+  <section class="card summary-row" style="padding:18px">
+    <div class="section-title" style="margin-bottom:0">
+      <h2>Final Summary</h2>
+      <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0" title="Show Sharpe, Sortino and CAGR (TWR / MWR) for each scenario">
+        <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Advanced metrics</span>
+        <div class="toggle-switch">
+          <input type="checkbox" id="showAdvancedToggle"/>
+          <div class="toggle-track"><div class="toggle-knob"></div></div>
+        </div>
+      </label>
+    </div>
+    <div id="summaryGrid" class="summary-grid"></div>
+  </section>
 
   <!-- PRICE CHART -->
   <section class="chart-card card">
@@ -319,19 +330,7 @@
     <div class="hover-box" id="equityHoverBox">Add securities and run to view equity data.</div>
   </section>
 
-  <section class="card summary-row" style="padding:18px">
-    <div class="section-title" style="margin-bottom:0">
-      <h2>Final Summary</h2>
-      <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0" title="Show Sharpe, Sortino and CAGR (TWR / MWR) for each scenario">
-        <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Advanced metrics</span>
-        <div class="toggle-switch">
-          <input type="checkbox" id="showAdvancedToggle"/>
-          <div class="toggle-track"><div class="toggle-knob"></div></div>
-        </div>
-      </label>
-    </div>
-    <div id="summaryGrid" class="summary-grid"></div>
-  </section>
+
 
   <!-- DETAILED BREAKDOWN -->
   <section class="detail-section card">
@@ -339,11 +338,12 @@
       <div class="detail-head">
         <h2>Detailed Breakdown</h2>
         <div class="btn-cluster">
-          <select class="num-input pf-view-select" id="detailSelect" style="cursor:pointer" title="Choose which scenario to view"></select>
+          <select class="sel-input pf-view-select" id="detailSelect" title="Choose which scenario to view"></select>
           <button class="btn-secondary btn-sm" id="downloadBtn" title="Download this table as CSV">⬇ CSV</button>
         </div>
       </div>
     </div>
+    <p class="unit-note" id="detailUnitNote"></p>
     <div class="table-wrap">
       <table id="detailTable">
         <thead id="detailHead"><tr><th>Date</th><th>Decided</th><th>Price</th><th>Invested</th><th>Units</th><th>Total Units</th><th>Total Deposited</th><th>Equity</th><th>Return</th></tr></thead>
@@ -352,7 +352,10 @@
     </div>
   </section>
 
-
+  <section class="assumes-card card">
+    <h2>What this assumes</h2>
+    <ul class="assumptions" id="assumptions"></ul>
+  </section>
 
 </main>
 </section><!-- /layout -->
@@ -379,6 +382,8 @@
     </div>
   </section>
 </footer>
+
+<script src="../dropdown.js"></script>
 
 <script src="../shared.js"></script>
 <script src="script.js"></script>

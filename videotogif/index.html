@@ -68,10 +68,14 @@
 }
 </script>
   <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+  <script src="../pwa.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../dark.css">
   <link rel="stylesheet" href="../light.css">
   <link rel="stylesheet" href="../shared.css">
+  <script src="../dropdown.js"></script>
   <script src="../shared.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -102,6 +106,7 @@
     <span class="fmt-badge">AVI</span>
     <span class="fmt-badge">MKV</span>
   </div>
+  <button class="btn-secondary" id="sampleBtn" type="button" style="margin-top:6px">Load a sample video</button>
 </div>
 
 <!-- ── WORKSPACE ── -->
@@ -185,7 +190,7 @@
     </div>
 
     <div class="sb-section last">
-      <button class="btn-convert" id="convertBtn">⚙ Convert to GIF</button>
+      <button class="btn-convert" id="convertBtn">▶ Convert to GIF</button>
       <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
       <div class="status-msg" id="statusMsg">Load a video to get started.</div>
     </div>
@@ -229,7 +234,7 @@
       <div class="ctrl-sep"></div>
       <span class="speed-badge" id="speedBadge">1×</span>
       <div class="ctrl-spacer"></div>
-      <button class="load-btn" id="loadBtn">📂 Load Video</button>
+      <button class="load-btn" id="loadBtn" data-icon="open">Open video</button>
     </div>
 
     <!-- GIF Output -->

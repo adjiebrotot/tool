@@ -288,10 +288,17 @@ function buildData(resolved){
 let renderTimer = null;
 let graph = null;
 let sankeyGen = null;
+// Set while an export lays the diagram out at desktop width; see exportCloneXml.
+let exportWidth = 0;
+// A hand-dragged layout only lives in the current render, so an export keeps it
+// as drawn rather than re-laying the diagram out at desktop width.
+let nodesDragged = false;
+let lastExportSize = { W: 800, H: 0 };
 function scheduleRender(){ clearTimeout(renderTimer); renderTimer=setTimeout(doRender,40); }
 
 function doRender(){
   graph = null;
+  nodesDragged = false;
   const resolved = resolveRows(rows);
   updateRemBadges(resolved);
 
@@ -321,7 +328,7 @@ function doRender(){
   }
 
   const wrap = $('svgWrap');
-  const W = Math.max(600, wrap.clientWidth||800);
+  const W = exportWidth || Math.max(600, wrap.clientWidth||800);
   const H = S.h;
   const mL=130, mR=140, mT=10, mB=16;
 
@@ -520,6 +527,7 @@ function doRender(){
       d3.select(this).raise().style('cursor', 'grabbing');
     })
     .on('drag', function(event, d) {
+      nodesDragged = true;
       const nodeH = d.y1 - d.y0;
       const nodeW = d.x1 - d.x0;
       d.y0 = Math.max(mT, Math.min(H - mB - nodeH, d.y0 + event.dy));
@@ -661,9 +669,11 @@ function makeTableRow(r, i){
   colorPick.value = hasC ? r.color : '#8DBBFF';
   if(!hasC){ colorPick.style.opacity='0.35'; colorPick.title='Click to set custom colour'; }
   const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
   clearBtn.className = 'color-clear';
-  clearBtn.title = 'Remove custom colour';
-  clearBtn.textContent = '×';
+  clearBtn.title = 'Back to the automatic colour';
+  clearBtn.setAttribute('aria-label', 'Back to the automatic colour');
+  clearBtn.innerHTML = SharedIcon.svg('reset');
   colorCell.appendChild(colorPick);
   colorCell.appendChild(clearBtn);
   tdColor.appendChild(colorCell);
@@ -673,9 +683,11 @@ function makeTableRow(r, i){
   const tdDel = document.createElement('td');
   tdDel.className = 'td-del';
   const delBtn = document.createElement('button');
-  delBtn.className = 'del-btn';
+  delBtn.type = 'button';
+  delBtn.className = 'btn-bare is-delete sm del-btn';
   delBtn.title = 'Remove row';
-  delBtn.innerHTML = '✕';
+  delBtn.setAttribute('aria-label', 'Remove row');
+  delBtn.innerHTML = SharedIcon.svg('trash');
   tdDel.appendChild(delBtn);
   tr.appendChild(tdDel);
 
@@ -1034,12 +1046,23 @@ $('themeToggle').addEventListener('click',()=>{
 // ═══════════════════════════════════════════════
 //  EXPORT
 // ═══════════════════════════════════════════════
+/* An export is the desktop diagram whatever the screen: on a narrow one the
+   Sankey is laid out again at SharedExport's desktop width for the export,
+   then put back. */
 function exportCloneXml(){
+  const narrow = !nodesDragged && ($('svgWrap').clientWidth || 800) < SharedExport.WIDTH;
+  if(!narrow) return exportCloneXmlAtSize();
+  exportWidth = SharedExport.WIDTH; doRender();
+  try { return exportCloneXmlAtSize(); }
+  finally { exportWidth = 0; doRender(); }
+}
+function exportCloneXmlAtSize(){
   const clone = svgEl.cloneNode(true);
   clone.querySelectorAll('text').forEach(t => t.setAttribute('fill','#1a1a1a'));
   clone.querySelectorAll('.label-bg').forEach(r => r.setAttribute('fill','rgba(255,255,255,0.88)'));
   const W = svgEl.viewBox.baseVal.width || 800;
   const H = svgEl.viewBox.baseVal.height || S.h;
+  lastExportSize = { W, H };
   const titleText = (document.getElementById('diagramTitle')?.value || '').trim();
   const TITLE_H = titleText ? 36 : 0;
 
@@ -1094,9 +1117,9 @@ $('exportSvgBtn').addEventListener('click',()=>{
 
 function renderSankeyPngCanvas() {
   if(!graph) return Promise.resolve(null);
-  const W  = svgEl.viewBox.baseVal.width  || 800;
-  const H  = svgEl.viewBox.baseVal.height || S.h;
   const xml    = exportCloneXml();
+  // Read the size the export was laid out at, not the on-screen one.
+  const { W, H } = lastExportSize;
   // exportCloneXml already includes title in viewBox expansion — render the full exported SVG
   const svgB64 = 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));
   const titleText = (document.getElementById('diagramTitle')?.value || '').trim();

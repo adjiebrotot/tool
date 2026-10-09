@@ -66,11 +66,8 @@ html,body { margin:0; padding:0; height:100vh; width:100%; overflow:hidden;
   transition:border-color 150ms; outline:none; appearance:none; -webkit-appearance:none;
 }
 .tb-control:hover,.tb-control:focus { border-color:var(--accent); }
-select.tb-control {
-  padding-right:28px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 8px center; cursor:pointer;
-}
+/* The select's look is dropdown.css; it only keeps the toolbar's size. */
+select.tb-control { font-weight:500; border-radius:var(--radius-sm); --sel-pad:28px; --sel-chev:8px; }
 #canvasTypeSelect { min-width:220px; }
 #canvasNameInput  { min-width:170px; cursor:text; }
 .btn {
@@ -82,10 +79,9 @@ select.tb-control {
 }
 .btn:hover { border-color:var(--accent); box-shadow:var(--shadow-sm); }
 .btn:active { transform:scale(.97); }
-.btn-primary { background:var(--accent-strong); border-color:var(--accent-strong); color:#fff; }
+.btn-primary { background:var(--accent-strong); border-color:var(--accent-strong); color:var(--text-inv); }
 .btn-primary:hover { opacity:.88; border-color:var(--accent-strong); }
-.btn-green { background:var(--accent2); border-color:var(--accent2); color:#fff; }
-.btn-green:hover { opacity:.88; }
+.btn .ico { width:15px; height:15px; }
 .dirty-dot { width:7px; height:7px; background:var(--negative-em); border-radius:50%;
   display:none; flex-shrink:0; }
 .dirty-dot.visible { display:block; }
@@ -301,9 +297,10 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 .item-text ul { margin:0; padding-left:1.4em; list-style:disc; }
 .item-text li { margin:.1em 0; }
 .item-del {
-  flex-shrink:0; color:var(--muted); cursor:pointer; font-size:13px;
-  opacity:0; transition:opacity .15s,color .15s; line-height:1; padding:1px 2px; border-radius:3px;
+  flex-shrink:0; color:var(--muted); cursor:pointer; display:inline-flex;
+  opacity:0; transition:opacity .15s,color .15s; line-height:1; padding:2px; border-radius:3px;
 }
+.item-del .ico { width:12px; height:12px; }
 .text-item:hover .item-del, .text-item.selected .item-del { opacity:.6; }
 .item-del:hover { opacity:1 !important; color:#E63939 !important; background:var(--error-bg); }
 
@@ -326,17 +323,13 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 .fbar-btn:active { transform:scale(.95); }
 .fbar-btn b { font-family:Georgia,serif; }
 .fbar-btn i { font-family:Georgia,serif; }
-.fbar-sel {
-  background:var(--input-bg); border:1px solid var(--border); color:var(--text);
-  border-radius:6px; padding:3px 4px; font-family:'DM Sans',sans-serif;
-  font-size:.78rem; font-weight:600; cursor:pointer; outline:none;
-  max-width:70px;
-}
-.fbar-sel:hover { border-color:var(--accent); }
+/* Look from dropdown.css, sized for the floating text bar. */
+.fbar-sel { padding:3px 6px; font-size:.78rem; border-radius:6px; max-width:76px; --sel-pad:20px; --sel-chev:5px; }
 .fbar-del-btn {
-  color:var(--muted); cursor:pointer; font-size:15px; opacity:.55;
-  padding:2px 4px; border-radius:5px; transition:all .15s; line-height:1; flex-shrink:0;
+  display:inline-flex; color:var(--muted); cursor:pointer; opacity:.7;
+  padding:4px; border-radius:5px; transition:all .15s; line-height:1; flex-shrink:0;
 }
+.fbar-del-btn .ico { width:15px; height:15px; }
 .fbar-del-btn:hover { opacity:1; color:#E63939; background:var(--error-bg); }
 
 /* ── MODAL ───────────────────────────────────── */
@@ -398,5 +391,20 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
   75%{opacity:1}100%{opacity:0}
 }
 @media(max-width:920px){ .scroll-hint{display:block} }
+/* On a phone the toolbar wraps into rows rather than scrolling sideways,
+   which hid Save, Load and the way back off the right edge:
+   name and theme/back on top, the canvas picker and title, then the actions. */
+@media(max-width:700px){
+  .toolbar { flex-wrap:wrap; overflow:visible; gap:6px; padding:8px 12px; }
+  .toolbar .divider { display:none; }
+  .brand { order:0; margin-right:auto; }
+  #themeBtn, .toolbar a.btn { order:1; padding:6px 10px; }
+  /* Bases that add up past one row keep the picker and title together on
+     the second and the five actions together on the third at every width. */
+  #canvasTypeSelect { order:2; flex:1 1 60%; min-width:0; font-size:.8rem; padding-right:24px; }
+  #canvasNameInput { order:2; flex:1 1 30%; min-width:0; }
+  .dirty-dot { order:2; }
+  #savePngBtn, #copyPngBtn, #saveJsonBtn, #loadJsonBtn, #sampleBtn { order:3; flex:1 1 15%; justify-content:center; }
+}
 /* Scrollbars come from shared.css: no vertical bar anywhere, a themed
    horizontal one where a surface scrolls sideways. */

@@ -12,9 +12,19 @@ const _wmMeasureCtx = document.createElement('canvas').getContext('2d');
 function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasureCtx.measureText(text).width; }
 
 /* ─── CONSTANTS ─── */
-const LINE_COLORS     = ['--line-a','--line-b','--line-c','--line-d','--line-e','--line-f'];
-const LINE_COLOR_HEX  = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4'];
-const COLOR_NAMES     = ['Blue','Red','Green','Gold','Purple','Cyan'];
+/* Scenario colours. Scenarios are options a reader is weighing, so they take
+   the neutral sequence (SharedPalette): blue, gold, teal, rose, then purple and
+   a light blue. Red stays for direction: a price falling, a loss. A scenario
+   keeps its slot, resolved in the current theme, until the reader picks a
+   colour on its tab; a picked colour is kept in both themes. A slot that
+   resolves to a colour an earlier slot already has is skipped. */
+const SCENARIO_COLORS = ['--line-a','--gold','--line-c','--line-d','--line-e','--line-f'];
+const SCENARIO_COLORS_FALLBACK = ['#5A91E8','#B45309','#2E8B57','#b45309','#7c3aed','#0891b2'];
+// The colours every scenario was given before the palette. A saved file or a
+// cached session that carries one of these never picked it, so it opens on
+// the palette instead of on red.
+const LEGACY_COLOR_HEX = ['#3b82f6','#ef4444','#22c55e','#f59e0b','#a855f7','#06b6d4'];
+const COLOR_NAMES     = ['Blue','Gold','Teal','Rose','Purple','Light blue'];
 const DATE_BASED_STYLES = ['monthly-date','weekly-day'];
 const FORWARD_STYLES    = ['monthly-top','monthly-bottom','weekly-top','weekly-bottom'];
 const MOMENTUM_STYLES   = ['momentum-peak','momentum-dip'];
@@ -33,12 +43,7 @@ const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Sat
 // MACD histogram bar colours - the TradingView-style 4-colour scheme: a
 // saturated shade while a bar grows away from the zero line and a faded shade
 // while it shrinks back toward it (green above zero, red below).
-const MACD_HIST_COLORS = {
-  upStrong:'#26a69a', upFaint:'rgba(38,166,154,0.42)',
-  downStrong:'#ef5350', downFaint:'rgba(239,83,80,0.42)'
-};
-// Candlestick body/wick colours (up = close ≥ open, down = close < open).
-const CANDLE_UP = '#26a69a', CANDLE_DOWN = '#ef5350';
+// (The up and down shades come from upDownColors(), so they follow the theme.)
 const DEFAULT_RANDOM_SEED = 25823952204;
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again. Yahoo/Stooq simply
@@ -88,7 +93,21 @@ let tickerFetchInFlight = {};
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
 function cssVar(n){ return getComputedStyle(document.body).getPropertyValue(n).trim(); }
-function getSecColor(sec){ return sec.colorHex || cssVar(sec.colorVar); }
+function isHexColor(v){ return typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v); }
+function scenarioPalette(){
+  const seen={}, out=[];
+  SCENARIO_COLORS.forEach((v,k)=>{ const c=cssVar(v)||SCENARIO_COLORS_FALLBACK[k]; const key=c.toLowerCase(); if(!seen[key]){ seen[key]=1; out.push(c); } });
+  return out;
+}
+function slotColor(slot){ const l=scenarioPalette(), n=l.length; return l[(((slot|0)%n)+n)%n]; }
+// Everything that draws or labels a scenario asks here, so its tab, its lines,
+// its markers and its summary tile can never disagree.
+function getSecColor(sec){ return isHexColor(sec.colorHex) ? sec.colorHex : slotColor(sec.colorSlot); }
+// A colour a reader actually picked, or null for "follow the palette".
+function pickedColor(hex){ return isHexColor(hex) && !LEGACY_COLOR_HEX.includes(hex.toLowerCase()) ? hex : null; }
+// Up and down: the site's green and red, read from the theme, for candlesticks
+// and the MACD histogram alike.
+function upDownColors(){ return { up: cssVar('--line-c')||'#2E8B57', down: cssVar('--line-b')||'#E63939' }; }
 // Returns a related, semi-transparent shade of a colour so an indicator line
 // reads as belonging to its security while staying distinct from the price line.
 function withAlpha(c,a){
@@ -102,7 +121,8 @@ function withAlpha(c,a){
 // the zero line, faded while it shrinks back toward it (green ≥0, red <0) - the
 // standard 4-colour MACD histogram scheme.
 function macdHistColors(values){
-  const c=MACD_HIST_COLORS;
+  const ud=upDownColors();
+  const c={ upStrong:ud.up, upFaint:withAlpha(ud.up,0.42), downStrong:ud.down, downFaint:withAlpha(ud.down,0.42) };
   let prev=null;
   return values.map(v=>{
     if(v==null) return 'transparent';
@@ -148,29 +168,6 @@ function refreshResultLabels(){
   updatePriceChart(); updateEquityChart(); updateTables();
 }
 
-function makeSliderEditable(valSpan,rangeEl){
-  if(!valSpan||!rangeEl)return;
-  const inp=document.createElement('input');
-  inp.type='text';inp.className='slider-val-edit';
-  valSpan.parentNode.insertBefore(inp,valSpan.nextSibling);
-  valSpan.addEventListener('click',()=>{
-    inp.value=parseFloat(rangeEl.value);
-    valSpan.style.display='none';inp.style.display='inline';
-    inp.focus();inp.select();
-  });
-  function commit(){
-    const raw=parseFloat(inp.value);
-    if(!isNaN(raw)){
-      const mn=parseFloat(rangeEl.min),mx=parseFloat(rangeEl.max),st=parseFloat(rangeEl.step)||1;
-      const v=+(Math.round(Math.min(mx,Math.max(mn,raw))/st)*st).toFixed(10);
-      rangeEl.value=v;
-      rangeEl.dispatchEvent(new Event('input',{bubbles:true}));
-    }
-    inp.style.display='none';valSpan.style.display='';
-  }
-  inp.addEventListener('blur',commit);
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}else if(e.key==='Escape'){inp.value='';commit();}});
-}
 function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
 function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ Simulate'; updateBtnRow(); }
 // On the Data tab the bottom action becomes "Load tickers" (it consumes the Date
@@ -360,9 +357,10 @@ async function fetchYahooFinance(ticker, startDate, endDate){
 }
 
 /* ─── SECURITY MANAGEMENT ─── */
-function getColor(idx){ return LINE_COLORS[idx % LINE_COLORS.length]; }
 function getActiveSec(){ return securities.find(s=>s.id===activeSecurityId) || null; }
 function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// " ($)" after an axis or a note, or nothing when the currency is set to None.
+function symInBrackets(){ return currentCurrencySymbol ? ' ('+currentCurrencySymbol+')' : ''; }
 
 // Wire a standardised number/money input (the shared currency-input design):
 // live thousands-grouping while typing, re-format on blur, and push the parsed
@@ -377,11 +375,13 @@ function wireMoneyField(el, opts, onVal){
 
 function addSecurity(cfg){
   const id = ++secIdCounter;
-  const colorIdx = securities.length % LINE_COLORS.length;
+  // Its palette slot: the one a saved file names, else its place in the list.
+  const slot = Number.isInteger(cfg.colorSlot) && cfg.colorSlot >= 0 ? cfg.colorSlot : securities.length;
+  const picked = pickedColor(cfg.colorHex);
   securities.forEach(s => { s.open = false; });
   const sec = {
-    id, colorVar: getColor(colorIdx), colorName: COLOR_NAMES[colorIdx],
-    colorHex: cfg.colorHex || LINE_COLOR_HEX[colorIdx],
+    id, colorSlot: slot, colorName: COLOR_NAMES[slot % COLOR_NAMES.length],
+    colorHex: picked,
     type: cfg.type, ticker: cfg.ticker||'', name: cfg.name||cfg.ticker||'Custom',
     amount: 500, yearlyIncrease: 0, style: 'monthly-date', dayOrDate: 1,
     returnPct: 8, stdPct: 15,
@@ -401,8 +401,9 @@ function addSecurity(cfg){
     macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0,
     adxPeriod:14, adxThreshold:25
   }, cfg.tech||{});
-  // Ensure colorHex from cfg overrides the default set above
-  if(cfg.colorHex) sec.colorHex = cfg.colorHex;
+  // The cfg spread above may carry an old default colour or a colour variable
+  // from an older file: what the scenario shows is its slot or a picked colour.
+  sec.colorHex = picked; sec.colorSlot = slot; delete sec.colorVar;
   securities.push(sec);
   activeSecurityId = sec.id;
   renderSecList();
@@ -419,13 +420,13 @@ function removeSecurity(id){
 // Copy the active scenario (deep clone of its settings), insert after it, and select it.
 function duplicateSecurity(id){
   const src = securities.find(s=>s.id===id); if(!src) return;
-  const colorIdx = securities.length % LINE_COLORS.length;
+  const slot = securities.length;
   const copy = JSON.parse(JSON.stringify(src));
   copy.id = ++secIdCounter;
   copy.name = src.name + ' (copy)';
-  copy.colorVar = getColor(colorIdx);
-  copy.colorName = COLOR_NAMES[colorIdx];
-  copy.colorHex = LINE_COLOR_HEX[colorIdx];
+  copy.colorSlot = slot;
+  copy.colorName = COLOR_NAMES[slot % COLOR_NAMES.length];
+  copy.colorHex = null;
   copy.priceData = null; copy.loaded = false; copy.open = true;
   const idx = securities.findIndex(s=>s.id===id);
   securities.splice(idx+1, 0, copy);
@@ -455,7 +456,7 @@ function renderScenarioBar(){
     tab.title=sec.name;
 
     const dot=document.createElement('input');
-    dot.type='color'; dot.className='sc-tab-dot'; dot.value=sec.colorHex||LINE_COLOR_HEX[0]; dot.title='Pick colour';
+    dot.type='color'; dot.className='sc-tab-dot'; dot.value=getSecColor(sec); dot.title='Pick colour';
     dot.addEventListener('click',e=>e.stopPropagation());
     dot.addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
     tab.appendChild(dot);
@@ -509,7 +510,7 @@ function renderScenarioConfig(){
   }
   const curVal = sec.type==='ticker' ? ('t:'+sec.ticker) : ('s:'+(sec.simName||sec.name));
   const assetSelectBody = (tks.length || simPool.length)
-    ? `<select class="txt-input" id="cfgAssetSelect" style="width:100%;cursor:pointer">${
+    ? `<select class="sel-input" id="cfgAssetSelect">${
         (tks.length?`<optgroup label="Tickers (real)">${tks.map(tk=>`<option value="t:${tk}" ${curVal==='t:'+tk?'selected':''}>${tk}</option>`).join('')}</optgroup>`:'')
       }${
         (simPool.length?`<optgroup label="Simulated">${simPool.map(s=>`<option value="s:${escapeHtml(s.name)}" ${curVal==='s:'+s.name?'selected':''}>ƒ ${escapeHtml(s.name)}</option>`).join('')}</optgroup>`:'')
@@ -519,7 +520,7 @@ function renderScenarioConfig(){
     <div class="add-sec-area" style="border-top:none;padding-top:0">
       <div class="add-sec-row" style="gap:6px;align-items:center">
         <input class="txt-input" id="cfgName" data-no-stale placeholder="Scenario name" value="${escapeHtml(sec.name)}" style="flex:1;min-width:0"/>
-        <input type="color" id="cfgColor" data-no-stale value="${sec.colorHex||LINE_COLOR_HEX[0]}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
+        <input type="color" id="cfgColor" data-no-stale value="${getSecColor(sec)}" title="Pick colour" style="width:34px;height:34px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--input-bg);padding:2px;flex-shrink:0"/>
       </div>
 
       <div class="field-group">
@@ -528,14 +529,14 @@ function renderScenarioConfig(){
           <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span></label>
           <div class="currency-wrap">
             <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
-            <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" value="${fmtN(sec.amount)}"/>
+            <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="${fmtN(sec.amount)}"/>
           </div>
         </div>
         <div class="sec-row">
           <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
           <div class="currency-wrap">
-            <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" value="${fmtN(sec.yearlyIncrease||0)}"/>
-            <span class="suffix">%</span>
+            <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="${fmtN(sec.yearlyIncrease||0)}"/>
+            <span class="suffix">%/yr</span>
           </div>
         </div>
       </div>
@@ -672,50 +673,69 @@ function styleParamsBody(sec){
   const periodWord = (sec.period==='weekly') ? 'Week' : 'Month';
   const eomChecked = MOMENTUM_STYLES.includes(s) ? sec.momentumEOM : sec.techEOM;
   const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
-  const maTypeSel=(elId,val)=>`<select class="num-input" id="${elId}" style="max-width:84px">
+  // A look-back length, in trading days, with its unit inside the field.
+  const days=(elId,min,max,val)=>`<div class="currency-wrap unit-days"><input class="currency-input has-suffix" id="${elId}" type="number" inputmode="numeric" min="${min}" max="${max}" step="1" value="${val}"/><span class="suffix">days</span></div>`;
+  const maTypeSel=(elId,val)=>`<select class="sel-input" id="${elId}">
       <option value="sma" ${val==='sma'?'selected':''}>SMA</option>
       <option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
   if(s==='monthly-date')
     return `<div class="param-row"><label>Day of month</label><input class="num-input" id="secDay${id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}"/></div>`;
   if(s==='weekly-day')
-    return `<div class="param-row"><label>Day of week</label><select class="txt-input" id="secDay${id}" style="max-width:160px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select></div>`;
+    return `<div class="param-row"><label>Day of week</label><select class="sel-input" id="secDay${id}" style="max-width:160px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select></div>`;
   if(MOMENTUM_STYLES.includes(s))
     return `<div style="padding:4px 0 2px">
         <div class="slider-head" style="margin-bottom:4px">
           <span style="font-size:.8rem;color:var(--muted);font-weight:700">Threshold</span>
           <span id="secMomPctVal${id}" class="slider-value">${(+sec.momentumPct).toFixed(1)}%</span>
         </div>
-        <input type="range" id="secMomPct${id}" min="0.1" max="50" step="0.1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
+        <input type="range" id="secMomPct${id}" data-readout="secMomPctVal${id}" min="0.1" max="50" step="0.1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
       </div>${eomRow}`;
   if(s==='tech-ma-cross')
-    return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}<input class="num-input" id="secMaFastLen${id}" type="number" min="1" max="400" step="1" value="${t.fastMaLen}"/></div></div>
-      <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}<input class="num-input" id="secMaSlowLen${id}" type="number" min="1" max="400" step="1" value="${t.slowMaLen}"/></div></div>
+    return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}${days(`secMaFastLen${id}`,1,400,t.fastMaLen)}</div></div>
+      <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}${days(`secMaSlowLen${id}`,1,400,t.slowMaLen)}</div></div>
       <div class="param-note">Buys on a golden cross, the Fast MA crossing above the Slow MA.</div>${eomRow}`;
   if(s==='tech-rsi')
-    return `<div class="param-row"><label>RSI period</label><input class="num-input" id="secRsiPeriod${id}" type="number" min="2" max="100" step="1" value="${t.rsiPeriod}"/></div>
+    return `<div class="param-row"><label>RSI period</label>${days(`secRsiPeriod${id}`,2,100,t.rsiPeriod)}</div>
       <div class="param-row"><label>Oversold &lt;</label><input class="num-input" id="secRsiOversold${id}" type="number" min="1" max="99" step="1" value="${t.rsiOversold}"/></div>
       <div class="param-note">Buys when RSI falls below the oversold threshold.</div>${eomRow}`;
   if(s==='tech-bollinger')
-    return `<div class="param-row"><label>MA period</label><input class="num-input" id="secBbPeriod${id}" type="number" min="2" max="200" step="1" value="${t.bbPeriod}"/></div>
-      <div class="param-row"><label>Std dev</label><input class="num-input" id="secBbStd${id}" type="number" min="0.5" max="5" step="0.1" value="${t.bbStd}"/></div>
-      <div class="param-row"><label>Trigger</label><select class="txt-input" id="secBbTrigger${id}" style="max-width:220px"><option value="below" ${t.bbTrigger==='below'?'selected':''}>Close below lower band</option><option value="reclaim" ${t.bbTrigger==='reclaim'?'selected':''}>Reclaim above lower band</option></select></div>
+    return `<div class="param-row"><label>MA period</label>${days(`secBbPeriod${id}`,2,200,t.bbPeriod)}</div>
+      <div class="param-row"><label>Deviations</label><div class="currency-wrap unit-x"><input class="currency-input has-suffix" id="secBbStd${id}" type="number" inputmode="decimal" min="0.5" max="5" step="0.1" value="${t.bbStd}"/><span class="suffix">×</span></div></div>
+      <div class="param-row"><label>Trigger</label><select class="sel-input" id="secBbTrigger${id}" style="max-width:220px"><option value="below" ${t.bbTrigger==='below'?'selected':''}>Close below lower band</option><option value="reclaim" ${t.bbTrigger==='reclaim'?'selected':''}>Reclaim above lower band</option></select></div>
       <div class="param-note">Bollinger Band = MA ± N standard deviations.</div>${eomRow}`;
   if(s==='tech-macd-cross')
-    return `<div class="param-row"><label>Fast EMA</label><input class="num-input" id="secMacdFast${id}" type="number" min="1" max="100" step="1" value="${t.macdFast}"/></div>
-      <div class="param-row"><label>Slow EMA</label><input class="num-input" id="secMacdSlow${id}" type="number" min="1" max="200" step="1" value="${t.macdSlow}"/></div>
-      <div class="param-row"><label>Signal EMA</label><input class="num-input" id="secMacdSignal${id}" type="number" min="1" max="100" step="1" value="${t.macdSignal}"/></div>
+    return `<div class="param-row"><label>Fast EMA</label>${days(`secMacdFast${id}`,1,100,t.macdFast)}</div>
+      <div class="param-row"><label>Slow EMA</label>${days(`secMacdSlow${id}`,1,200,t.macdSlow)}</div>
+      <div class="param-row"><label>Signal EMA</label>${days(`secMacdSignal${id}`,1,100,t.macdSignal)}</div>
       <div class="param-note">Buys when the MACD line crosses above the signal line.</div>${eomRow}`;
   if(s==='tech-macd-hist')
-    return `<div class="param-row"><label>Fast EMA</label><input class="num-input" id="secMacdFast${id}" type="number" min="1" max="100" step="1" value="${t.macdFast}"/></div>
-      <div class="param-row"><label>Slow EMA</label><input class="num-input" id="secMacdSlow${id}" type="number" min="1" max="200" step="1" value="${t.macdSlow}"/></div>
-      <div class="param-row"><label>Signal EMA</label><input class="num-input" id="secMacdSignal${id}" type="number" min="1" max="100" step="1" value="${t.macdSignal}"/></div>
+    return `<div class="param-row"><label>Fast EMA</label>${days(`secMacdFast${id}`,1,100,t.macdFast)}</div>
+      <div class="param-row"><label>Slow EMA</label>${days(`secMacdSlow${id}`,1,200,t.macdSlow)}</div>
+      <div class="param-row"><label>Signal EMA</label>${days(`secMacdSignal${id}`,1,100,t.macdSignal)}</div>
       <div class="param-row"><label>Hist &gt;</label><input class="num-input" id="secMacdHist${id}" type="number" step="0.1" value="${t.macdHistThreshold}"/></div>
       <div class="param-note">Buys when the histogram turns positive after being negative.</div>${eomRow}`;
   if(s==='tech-adx')
-    return `<div class="param-row"><label>ADX period</label><input class="num-input" id="secAdxPeriod${id}" type="number" min="2" max="100" step="1" value="${t.adxPeriod}"/></div>
+    return `<div class="param-row"><label>ADX period</label>${days(`secAdxPeriod${id}`,2,100,t.adxPeriod)}</div>
       <div class="param-row"><label>Trend &gt;</label><input class="num-input" id="secAdxThreshold${id}" type="number" min="1" max="100" step="1" value="${t.adxThreshold}"/></div>
       <div class="param-note">Buys only when ADX shows a strong trend (close-based ADX).</div>${eomRow}`;
   return ''; // forward-looking styles have no parameters
+}
+
+/* How often a scenario's style buys: the date and forward styles by their
+   name, momentum and technical ones at most once per their Frequency. The
+   amount is per purchase, so moving between the two cadences rescales it
+   (SharedFreq): 500 a month is 115.38 a week, the same money over a year. */
+function purchaseCadence(sec){
+  const s=sec.style||'';
+  if(MOMENTUM_STYLES.includes(s)||TECH_STYLES.includes(s)) return sec.period==='weekly'?'weekly':'monthly';
+  return s.startsWith('weekly')?'weekly':'monthly';
+}
+function rescaleAmount(sec, from, to){
+  const conv=(from===to)?null:SharedFreq.convert(sec.amount, from, to, 2);
+  if(conv===null) return;
+  sec.amount=conv;
+  const amtEl=$('cfgAmount');
+  if(amtEl) amtEl.value=SharedFmt.formatThousands(conv,{maxDecimals:2});
 }
 
 function refreshStyleBlock(sec){
@@ -733,7 +753,12 @@ function wireStyleBlock(sec){
   // Style radios
   c.querySelectorAll(`input[name="secStyle${sec.id}"]`).forEach(r=>{
     r.addEventListener('change',()=>{
+      // A style that buys weekly rather than monthly (or back) makes the amount
+      // per purchase a different amount a year, so it is rescaled as the
+      // Frequency toggle below rescales it.
+      const was=purchaseCadence(sec);
       sec.style=r.value;
+      rescaleAmount(sec, was, purchaseCadence(sec));
       sec.catOpen=styleCategory(sec.style);
       if(showDayRow(sec.style)) sec.dayOrDate=1;
       refreshStyleBlock(sec);
@@ -747,7 +772,8 @@ function wireStyleBlock(sec){
   const momPctEl=$(`secMomPct${sec.id}`), momPctValEl=$(`secMomPctVal${sec.id}`);
   if(momPctEl){
     momPctEl.addEventListener('input',e=>{ sec.momentumPct=parseFloat(e.target.value)||5; if(momPctValEl) momPctValEl.textContent=(+sec.momentumPct).toFixed(1)+'%'; scheduleRun(); });
-    makeSliderEditable(momPctValEl,momPctEl);
+    // Both ends named and the readout typeable, the way every finance slider is.
+    if(window.SharedSlider) SharedSlider.enhance(momPctEl);
   }
   // Monthly / Weekly frequency toggle (momentum + technical). Re-render the
   // block on change so the EOM label and helper note pick up the new window.
@@ -758,12 +784,7 @@ function wireStyleBlock(sec){
       const prev=sec.period==='weekly'?'weekly':'monthly';
       // The amount is per purchase, so a narrower window has to buy less for the
       // scenario to keep putting the same money in over a year.
-      const conv=(next===prev)?null:SharedFreq.convert(sec.amount, prev, next, 2);
-      if(conv!==null){
-        sec.amount=conv;
-        const amtEl=$('cfgAmount');
-        if(amtEl) amtEl.value=SharedFmt.formatThousands(conv,{maxDecimals:2});
-      }
+      rescaleAmount(sec, prev, next);
       sec.period=next;
       refreshStyleBlock(sec);
       scheduleRun();
@@ -973,11 +994,11 @@ function renderPoolChips(){
     const warn = (e && e.kind==='stock' && e.source==='stooq');
     const range = (e && e.dates && e.dates.length) ? e.dates[0]+' to '+e.dates[e.dates.length-1] : '';
     const title = warn ? 'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:'') : range;
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}<button class="pool-chip-del" type="button" data-tk="${tk}" title="Remove ${tk}" aria-label="Remove ${tk}">×</button></span>`;
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
   }).join('');
   html += simPool.map(s=>{
     const nm=escapeHtml(s.name);
-    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}<button class="pool-chip-del" type="button" data-sim="${nm}" title="Remove ${nm}" aria-label="Remove ${nm}">×</button></span>`;
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
   }).join('');
   box.innerHTML = html;
   box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -1018,7 +1039,7 @@ function refreshTickerSelect(){
   updateSimBtnState();
 }
 
-// Loading is additive and individual tickers are removed via the chip ✕, so the
+// Loading is additive and individual tickers are removed with the chip's bin, so the
 // input is never locked - it always stays open for adding the next batch.
 function setPoolLocked(_locked){
   const inp = $('tickerPoolInput'), editBtn = $('editTickersBtn');
@@ -1172,7 +1193,7 @@ document.querySelectorAll('#dataModeToggle .seg-btn').forEach(b=>{
 $('currencySymbol').addEventListener('change',e=>{
   currentCurrencySymbol=e.target.value;
   const pfx=$('cfgAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$';
-  if(simResults.length){ updateTables(); updateEquityChart(); }
+  if(simResults.length){ updateTables(); updateEquityChart(); updatePriceChart(); }
 });
 $('randomSeed').addEventListener('input',e=>{
   currentRandomSeed = sanitizeSeed(e.target.value);
@@ -1187,6 +1208,7 @@ $('riskFreeRate').addEventListener('input',e=>{
   currentRiskFreeRate = Number.isFinite(n) ? Math.max(0,n) : 0;
   // Only the advanced metrics depend on this - re-render the summary in place.
   if(simResults.length) renderSummary();
+  renderAssumptions();
 });
 
 /* ─── DEFAULT DATE RANGE ─── */
@@ -1610,11 +1632,12 @@ const dcaCandlePlugin = {
     chart.data.datasets.forEach((ds,di)=>{
       if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
       const {o,h,l,c}=ds._ohlc;
+      const ud=upDownColors();
       for(let i=0;i<c.length;i++){
         if(c[i]==null||o[i]==null) continue;
         const px=x.getPixelForValue(i);
         if(px<area.left-w||px>area.right+w) continue;
-        const up=c[i]>=o[i], col=up?CANDLE_UP:CANDLE_DOWN;
+        const up=c[i]>=o[i], col=up?ud.up:ud.down;
         ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1;
         ctx.beginPath(); ctx.moveTo(px,y.getPixelForValue(h[i])); ctx.lineTo(px,y.getPixelForValue(l[i])); ctx.stroke();
         const yO=y.getPixelForValue(o[i]), yC=y.getPixelForValue(c[i]);
@@ -1707,7 +1730,7 @@ function updatePriceChart(){
         data:res.dailyRows.map(r=> buyDates.has(r.date) ? priceVal(res,r.price) - markerOffset : null),
         borderColor:color, backgroundColor:color, showLine:false, spanGaps:false,
         pointStyle:'triangle', pointRadius:2.5, pointHoverRadius:4,
-        pointBorderColor:'#fff', pointBorderWidth:0.5, _marker:true
+        pointBorderColor:cssVar('--card-bg')||'#fff', pointBorderWidth:0.5, _marker:true
       });
     });
   }
@@ -1790,7 +1813,7 @@ function updatePriceChart(){
   const fmtY=v=> normalize ? fmt.num(v,2)+'%' : fmt.currency(v);
   const yCallback= normalize ? (val=>fmt.num(val,1)+'%') : (val=>fmt.currency(val,true));
   const fmtPt=i=> `${i.dataset.label}: ${isOscDs(i.dataset)?fmt.num(i.parsed.y,2):fmtY(i.parsed.y)}`;
-  const yTitle= normalize ? 'Normalised Price (base 100)' : 'Price';
+  const yTitle= normalize ? 'Normalised Price (base 100)' : 'Price'+symInBrackets();
   const sub=$('priceChartSubtitle'); if(sub) sub.textContent = showCandles ? '(OHLC candlesticks)' : (normalize ? '(normalised to 100)' : '(actual price)');
 
   function buildPriceOpts(){
@@ -1844,7 +1867,8 @@ function updatePriceChart(){
     priceChartInstance.options=buildPriceOpts();
     priceChartInstance.update('none');
   } else {
-    priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin]});
+    // SharedPane (shared.js) keeps each stacked pane's axis text inside its pane.
+    priceChartInstance=new Chart($('priceCanvas'),{type:'line',data:{labels:allDates,datasets},options:buildPriceOpts(),plugins:[SharedZoom.plugin,SharedPane.plugin]});
   }
 }
 
@@ -1905,7 +1929,7 @@ function updateEquityChart(){
       // the final balance (SharedZoom, shared.js).
       sharedYFit:{auto:{axes:['y']}}},
     scales:{ x:{title:{display:true,text:'Date',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,maxTicksLimit:12,font:{family:'inherit',size:11},callback:v=>allDates[Number(v)]?.slice(0,7)||''},grid:{color:gridColor}},
-              y:{title:{display:true,text:'Portfolio Value ('+currentCurrencySymbol+')',color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
+              y:{title:{display:true,text:'Portfolio Value'+symInBrackets(),color:mutedColor,font:{family:'inherit',size:11}},ticks:{color:mutedColor,font:{family:'inherit',size:11},callback:yCallback},grid:{color:gridColor}}}
   };}
 
   if(equityChartInstance){
@@ -1968,6 +1992,7 @@ $('showCandleToggle').addEventListener('change',e=>{
 
 $('showAdvancedToggle').addEventListener('change',e=>{
   showAdvanced=e.target.checked;
+  renderAssumptions();
   // Toggle visibility in place - metrics are already rendered in each tile.
   document.querySelectorAll('#summaryGrid .adv-metrics').forEach(el=>{ el.style.display=showAdvanced?'grid':'none'; });
 });
@@ -2020,6 +2045,109 @@ function updateTables(){
   renderDetailTable(activeDetailSec);
 
   latestRows=simResults[0].dailyRows;
+  renderVerdict();
+  renderAssumptions();
+}
+
+/* ─── THE ANSWER, IN ONE SENTENCE ───
+   The scenarios are options a reader is weighing, so the verdict is neutral:
+   which ended highest, and by how much. When they put different amounts in,
+   more money in is not a better strategy, so it compares the return on what
+   went in instead. */
+function renderVerdict(){
+  const el=$('verdict'); if(!el || !window.SharedVerdict) return;
+  if(!simResults.length){ SharedVerdict.set(el, null); return; }
+  const num=t=>'<span class="v-num">'+escapeHtml(t)+'</span>';
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const rows=simResults.map(res=>({ name:res.sec.name||'Scenario', fin:res.finalEquity, dep:res.totalDeposited,
+    roi: res.totalDeposited>0 ? (res.finalEquity-res.totalDeposited)/res.totalDeposited : 0 }));
+  if(rows.length===1){
+    const r=rows[0];
+    SharedVerdict.set(el, { tone:'', title: nm(r.name)+' turned '+num(fmt.currency(r.dep))+' of top-ups into '+num(fmt.currency(r.fin))+'.',
+      body: 'A return on investment (ROI) of '+num(fmt.pct(r.roi))+' over the run. Add a scenario to compare it against.' });
+    return;
+  }
+  const deps=rows.map(r=>r.dep), hi=Math.max(...deps), lo=Math.min(...deps);
+  const sameMoney = hi-lo <= Math.max(1, hi*0.005);
+  if(sameMoney){
+    const sorted=rows.slice().sort((a,b)=>b.fin-a.fin), a=sorted[0], b=sorted[1];
+    const gap=a.fin-b.fin;
+    const others=rows.length>2 ? ' of the '+rows.length : '';
+    SharedVerdict.set(el, { tone:'',
+      title: gap<0.5
+        ? nm(a.name)+' and '+nm(b.name)+' ended level at '+num(fmt.currency(a.fin))+'.'
+        : nm(a.name)+' ended highest'+others+' at '+num(fmt.currency(a.fin))+', '+num(fmt.currency(gap))+' more than '+nm(b.name)+'.',
+      body: 'Every scenario topped up about '+num(fmt.currency(hi))+', so their final values compare directly. '+
+            'Advanced metrics, under the summary, add the risk taken to get there.' });
+    return;
+  }
+  const sorted=rows.slice().sort((a,b)=>b.roi-a.roi), a=sorted[0], b=sorted[1];
+  SharedVerdict.set(el, { tone:'',
+    title: nm(a.name)+' earned the most on what went in: a return on investment (ROI) of '+num(fmt.pct(a.roi))+', against '+num(fmt.pct(b.roi))+' for '+nm(b.name)+'.',
+    body: 'The scenarios topped up different amounts, from '+num(fmt.currency(lo))+' to '+num(fmt.currency(hi))+
+          ', so this compares the return on the money each put in rather than the final value.' });
+}
+
+/* ─── WHAT THIS ASSUMES ───
+   Built from the run on screen: the assets, rules and figures the scenarios
+   actually used. A feature none of them touched (a simulated asset, a
+   hindsight rule, the advanced metrics) says nothing. */
+function renderAssumptions(){
+  const el=$('assumptions'); if(!el) return;
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const list=a=>a.length<2 ? a.join('') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  const pc=v=>(+(Number(v)||0).toFixed(2))+'%';
+  const runs=simResults.length ? simResults.map(r=>r.sec) : securities;
+  const items=[];
+  if(!runs.length){ el.innerHTML='<li><strong>Add a scenario and simulate</strong> to see what the run rests on.</li>'; return; }
+
+  const tickers=[...new Set(runs.filter(s=>s.type==='ticker').map(s=>String(s.ticker||'').toUpperCase()).filter(Boolean))];
+  if(tickers.length){
+    const stooq=tickers.filter(t=>{ const e=priceCache[t]; return e && e.kind==='stock' && e.source==='stooq'; });
+    const adj=tickers.filter(t=>!stooq.includes(t));
+    if(adj.length) items.push('<strong>'+list(adj.map(nm))+(adj.length===1?' uses':' use')+' Yahoo Finance\'s adjusted close,</strong> so dividends and splits are folded into the price.');
+    if(stooq.length) items.push('<strong>'+list(stooq.map(nm))+(stooq.length===1?' is':' are')+' from Stooq and unadjusted,</strong> so dividends are left out of the return.');
+    if(currentCurrencySymbol!=='$' || tickers.some(t=>t.includes('.')))
+      items.push('<strong>'+escapeHtml(currentCurrencySymbol||'The currency')+' is a label.</strong> Nothing is converted, so each ticker is read in the currency it is quoted in.');
+  }
+  const sims=runs.filter(s=>s.type==='custom');
+  if(sims.length){
+    const seen=new Set();
+    const desc=sims.filter(s=>{ const k=s.name+'|'+s.returnPct+'|'+s.stdPct; if(seen.has(k)) return false; seen.add(k); return true; })
+      .map(s=>nm(s.name)+' at '+pc(s.returnPct)+' a year, '+pc(s.stdPct)+' standard deviation');
+    items.push('<strong>'+(desc.length===1?'The simulated asset is one random path:':'Each simulated asset is one random path:')+'</strong> '+desc.join('; ')+
+      '. Seed '+escapeHtml(String(currentRandomSeed))+' fixes it, so it is a what-if rather than a forecast.');
+  }
+
+  if(simResults.length){
+    const axis=simResults[0].dailyRows;
+    if(axis.length) items.push('<strong>Every scenario runs '+escapeHtml(axis[0].date)+' to '+escapeHtml(axis[axis.length-1].date)+'</strong>'+
+      (runs.length>1 ? ', the trading days all of their assets share.' : '.'));
+  }
+
+  const FILL={ 'close':'that day\'s close', 'next-open':'the next day\'s open', 'next-close':'the next day\'s close' };
+  items.push('<strong>Every rule decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
+
+  const amounts=[...new Set(runs.map(s=>fmt.currency(s.amount)))];
+  const rises=[...new Set(runs.map(s=>Number(s.yearlyIncrease)||0).filter(v=>v))];
+  items.push('<strong>No fees and no tax:</strong> each '+list(amounts)+' top-up buys its whole amount, in fractions of a unit where needed'+
+    (rises.length ? ', rising '+list(rises.map(pc))+' a year' : '')+'.');
+
+  const signal=runs.filter(s=>MOMENTUM_STYLES.includes(s.style)||TECH_STYLES.includes(s.style));
+  if(signal.length){
+    const eom=s=>MOMENTUM_STYLES.includes(s.style)?s.momentumEOM:s.techEOM;
+    const on=signal.filter(eom), off=signal.filter(s=>!eom(s));
+    const word=s=>(s.period==='weekly'?'week':'month');
+    if(on.length) items.push('<strong>'+list(on.map(s=>nm(s.name)))+' still '+(on.length===1?'buys':'buy')+' at the end of a '+word(on[0])+' with no signal.</strong>');
+    if(off.length) items.push('<strong>'+list(off.map(s=>nm(s.name)))+' '+(off.length===1?'skips':'skip')+' a '+word(off[0])+' with no signal,</strong> so less money goes in.');
+  }
+  const fwd=runs.filter(s=>FORWARD_STYLES.includes(s.style));
+  if(fwd.length) items.push('<strong>'+list([...new Set(fwd.map(s=>styleLabel(s.style)))])+' '+(fwd.length===1?'uses':'use')+' hindsight.</strong> '+
+    'The buy day is picked with prices from later in the period, so it is a benchmark, not a plan anyone could follow.');
+
+  if(showAdvanced) items.push('<strong>The '+pc(currentRiskFreeRate)+' risk-free rate only feeds Sharpe and Sortino.</strong> It changes no money anywhere on the page.');
+
+  el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
 }
 
 // Render one labelled endpoint row (start-of-simulation / end-of-simulation) from
@@ -2044,6 +2172,9 @@ function endpointRowHtml(d, label){
 function renderDetailTable(idx){
   const res=simResults[idx];
   if(!res) return;
+  const note=$('detailUnitNote');
+  if(note) note.textContent=(currentCurrencySymbol ? 'Amounts in '+currentCurrencySymbol+'.' : 'Amounts in the currency of the prices.')+
+    ' One row per buy, between the first and the last trading day.';
   const tbody=$('detailBody');
   if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
   const daily=res.dailyRows;
@@ -2074,7 +2205,7 @@ function renderDetailTable(idx){
 $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
-  if(simResults.length){ updatePriceChart(); updateEquityChart(); }
+  if(simResults.length){ updatePriceChart(); updateEquityChart(); renderSummary(); }
   renderSecList();
 });
 
@@ -2118,6 +2249,7 @@ function resetWorkspace(){
   if(priceChartInstance){ priceChartInstance.destroy(); priceChartInstance=null; }
   if(equityChartInstance){ equityChartInstance.destroy(); equityChartInstance=null; }
   $('summaryGrid').innerHTML='';
+  renderVerdict();
   $('detailBody').innerHTML='<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">Add securities to see detailed data.</td></tr>';
   $('detailSelect').innerHTML='';
   activeDetailSec=0;
@@ -2176,7 +2308,13 @@ document.querySelectorAll('.quick-start-btn').forEach(btn=>{
 });
 
 /* ─── DOWNLOAD CHART PNG ─── */
-function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartPngAtSize.apply(null, args); });
+}
+function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -2279,7 +2417,13 @@ async function copyCanvasPngToClipboard(canvas) {
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
 
-function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsOverride) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartSvgAtSize.apply(null, args); });
+}
+function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId, legendItemsOverride) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -2320,7 +2464,10 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId, legendItemsO
   const img = document.createElementNS(NS,'image');
   img.setAttribute('x',0); img.setAttribute('y',titleH);
   img.setAttribute('width',chartW); img.setAttribute('height',chartH);
-  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
+  // Plain href first: SVG 2 viewers (and some converters) ignore xlink:href,
+  // which left the chart blank with only the title, legend and logo showing.
+  const chartHref = src.toDataURL('image/png');
+  img.setAttribute('href',chartHref); img.setAttributeNS(xl,'href',chartHref);
   svg.appendChild(img);
   legendRows.forEach((row, ri) => {
     let x = Math.max(legMargin, (svgW - row.width) / 2);
@@ -2488,6 +2635,12 @@ function initializeDefaultSecurities(){
   addSecurity({type:'custom',name:'Risk-Free 5%',simName:'Risk-Free 5%',returnPct:5,stdPct:0.5,amount:500,style:'monthly-date',dayOrDate:1});
   renderPoolChips();
 }
+
+/* The breakdown table is the most specific thing on the page, so it opens
+   closed behind Show table; the CSV button exports it either way. */
+if(window.SharedFold) SharedFold.attach(document.querySelector('main .detail-section'),
+  { key:'dcasimulator', bodies:['#detailUnitNote','.table-wrap'] });
+renderAssumptions();
 
 // Restore any previously cached price history so reloads/return visits cost
 // zero Worker requests, then reflect it in the pool UI.

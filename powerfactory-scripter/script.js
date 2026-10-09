@@ -1,9 +1,12 @@
 /* ================================================================
    TOOLTIP HELPER
 ================================================================ */
-function tip(text, id = '') {
+// `options` marks a tip that explains the selected option only, so the shared
+// tooltip adds the line saying the other options have their own.
+function tip(text, id = '', options = false) {
   const idAttr = id ? ` id="${id}"` : '';
-  return `<span class="tip-icon"${idAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
+  const optAttr = options ? ' data-tip-options' : '';
+  return `<span class="tip-icon"${idAttr}${optAttr} data-tip="${text.replace(/"/g, '&quot;')}">?</span>`;
 }
 
 /* ================================================================
@@ -17,7 +20,9 @@ function setTip(id, text) {
 /* Option-list tooltips: the (i) beside a dropdown carries the option that is
    SELECTED, not the whole list. The list itself is on screen in the dropdown,
    so repeating all of it is a paragraph explaining a choice already made.
-   Keyed by the control's value; setOptionTips() keeps them current. */
+   Keyed by the control's value; setOptionTips() keeps them current, and the
+   tip's data-tip-options adds the shared "change the option" line. Two short
+   options (Coding Style) are listed in the markup instead. */
 const TIP_PROBLEM_TYPE = {
   brute_force:  '<strong>Brute Force:</strong> runs every combination of the input values. Total runs = the product of the number of values per input.',
   optimisation: '<strong>Optimisation:</strong> a search algorithm hunts for the best input combination. Pick it in Optimisation Settings.',
@@ -30,18 +35,13 @@ const TIP_STUDY_TYPE = {
   dynamic_emt:  '<strong>Dynamic EMT:</strong> an EMT simulation (ComSim) on every iteration. Timeseries outputs are available.',
   harmonic:     '<strong>Harmonic:</strong> a harmonic frequency sweep (ComHlf) on every iteration.'
 };
-const TIP_CODING_STYLE = {
-  python_file: '<strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.',
-  notebook:    '<strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.'
-};
 
-// Point each option-list tip at the option on screen. Called from the three
-// change handlers and once at start-up.
+// Point each option-list tip at the option on screen. Called from the change
+// handlers and once at start-up.
 function setOptionTips() {
   const val = id => (document.getElementById(id) || {}).value;
   setTip('tt-problem-type', TIP_PROBLEM_TYPE[val('problem-type')] || '');
   setTip('tt-study-type',   TIP_STUDY_TYPE[val('study-type')] || '');
-  setTip('tt-coding-style', TIP_CODING_STYLE[val('coding-style')] || '');
 }
 const TIP_OUTPUT_TYPE = {
   attribute:          '<strong>Scalar:</strong> reads one value after the solve, through obj.GetAttribute().',
@@ -120,7 +120,7 @@ function addContingencyRow(data) {
     <td><input type="text" id="cont-filter-attr-${idx}" value="${filterAttr.replace(/"/g,'&quot;')}" placeholder="e.g. e:Unom" oninput="onContingencyFilterAttrChange(${idx})" style="min-width:100px;" autocomplete="off" /></td>
     <td><select id="cont-filter-op-${idx}" style="width:56px;">${opOptions}</select></td>
     <td><input type="text" id="cont-filter-val-${idx}" value="${(data.filterVal||'').replace(/"/g,'&quot;')}" placeholder="e.g. 66 or North*" style="min-width:100px;" autocomplete="off" /></td>
-    <td><button class="btn btn-ghost btn-xs" id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})" style="padding:2px 6px;">✕</button></td>
+    <td>${SharedIcon.button('trash', 'Remove this element type', '', `id="cont-remove-${idx}" onclick="removeContingencyRow(${idx})"`)}</td>
   `;
   tbody.appendChild(tr);
   // Attach comboboxes
@@ -424,7 +424,8 @@ class PFComboBox {
 
     // Portal: append to body so it's never clipped by any ancestor
     this.drop = document.createElement('div');
-    this.drop.className = 'pf-combo-drop';
+    this.drop.className = 'combo-list pf-combo-drop';
+    this.drop.setAttribute('role', 'listbox');
     document.body.appendChild(this.drop);
 
     this.input.addEventListener('input',   () => this._refresh());
@@ -436,20 +437,9 @@ class PFComboBox {
   }
 
   _position() {
-    const r = this.input.getBoundingClientRect();
-    const dropW = Math.max(r.width, 270);
-    const left  = Math.min(r.left, window.innerWidth - dropW - 8);
-    this.drop.style.left     = `${Math.max(4, left)}px`;
-    this.drop.style.minWidth = `${r.width}px`;
-    this.drop.style.width    = `${dropW}px`;
-    const below = window.innerHeight - r.bottom;
-    if (below >= 160 || below >= r.top) {
-      this.drop.style.top    = `${r.bottom + 3}px`;
-      this.drop.style.bottom = 'auto';
-    } else {
-      this.drop.style.top    = 'auto';
-      this.drop.style.bottom = `${window.innerHeight - r.top + 3}px`;
-    }
+    // The site's shared placement (dropdown.js): under the field, or over it
+    // when short of room, at least 270px wide and kept on screen.
+    SharedDropdown.place(this.input, this.drop, { minWidth: 270, maxHeight: 260 });
   }
 
   _refresh() {
@@ -461,15 +451,16 @@ class PFComboBox {
     this.drop.innerHTML = '';
     this.items.forEach((item, i) => {
       const el = document.createElement('div');
-      el.className = 'pf-combo-item';
-      const unit = item.unit ? `<span class="item-unit"> · ${item.unit}</span>` : '';
-      const desc = item.desc ? `<span class="item-meta">${escHtml(item.desc)}${unit}</span>` : '';
-      el.innerHTML = `<span class="item-var">${escHtml(item.var)}</span>${desc}`;
+      el.className = 'combo-opt';
+      el.setAttribute('role', 'option');
+      const desc = item.desc ? `<span class="combo-sub">${escHtml(item.desc)}</span>` : '';
+      const unit = item.unit ? `<span class="combo-chip">${escHtml(item.unit)}</span>` : '';
+      el.innerHTML = `<span class="combo-text"><span class="combo-main">${escHtml(item.var)}</span>${desc}</span>${unit}`;
       el.addEventListener('mousedown', e => { e.preventDefault(); this._pick(i); });
       this.drop.appendChild(el);
     });
-    this._position();
     this.drop.style.display = 'block';
+    this._position();
   }
 
   _close() {
@@ -495,7 +486,7 @@ class PFComboBox {
 
   _highlight() {
     Array.from(this.drop.children).forEach((el, i) =>
-      el.classList.toggle('active', i === this.active));
+      el.classList.toggle('focused', i === this.active));
     if (this.active >= 0)
       this.drop.children[this.active]?.scrollIntoView({ block: 'nearest' });
   }
@@ -965,7 +956,7 @@ function addInputRow(data = {}) {
       <button type="button" class="iv-form-toggle" id="iv-form-${idx}" onclick="toggleInputList(${idx})"
         title="Range: every integer from Lower to Upper. List: only the values you type, e.g. 0,1,5. Click to switch.">${data.list ? 'List' : 'Range'}</button></td>
     <td class="td-action">
-      <button class="btn btn-remove btn-icon" title="Remove" onclick="removeRow('input-row-${idx}')">✕</button>
+      ${SharedIcon.button('trash', 'Remove this input variable', '', `onclick="removeRow('input-row-${idx}')"`)}
     </td>
   `;
   tbody.appendChild(tr);
@@ -1261,17 +1252,17 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
   return `
     <div class="output-var-header">
       <span class="ov-index">#?</span>
-      <select style="width:160px;font-size:12px;padding:3px 6px;" id="${id}-type" onchange="onOutputTypeChange('${id}')">
+      <select style="width:160px;font-size:12px;padding:3px 26px 3px 6px;" id="${id}-type" onchange="onOutputTypeChange('${id}')">
         <option value="attribute" ${type==='attribute'?'selected':''}>Scalar</option>
         <option value="timeseries" ${type==='timeseries'?'selected':''}>Timeseries</option>
         <option value="custom_calculation" ${type==='custom_calculation'?'selected':''}>Custom Calculation</option>
       </select>
-      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`)}
+      ${tip(TIP_OUTPUT_TYPE[type] || TIP_OUTPUT_TYPE.attribute, `${id}-tt-type`, true)}
       <input type="text" id="${id}-name" value="${data.name||''}" placeholder="Output var name"
         style="flex:1;font-size:12px;padding:3px 8px;min-width:80px;" oninput="onOutputNameChange()" autocomplete="off" />
       ${tip('Python name for this output. It must be unique across every input and output.')}
       <button class="btn btn-ghost btn-icon btn-xs" title="Collapse" onclick="toggleOutputVar('${id}')" id="${id}-toggle" style="font-size:14px;flex-shrink:0;">▾</button>
-      <button class="btn btn-remove btn-xs" onclick="removeOutputVar('${id}')">✕</button>
+      ${SharedIcon.button('trash', 'Remove this output variable', '', `onclick="removeOutputVar('${id}')"`)}
     </div>
     <div class="output-var-body" id="${id}-body">
       <!-- OBJECT (hidden for custom_calculation) -->
@@ -1291,7 +1282,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       </div>
       <!-- METRIC (hidden for single_attribute and custom_calculation) -->
       <div class="form-row ${(isAttr||isCust)?'cond-hidden':''}" id="${id}-row-metric">
-        <label>Metric ${tip(TIP_METRIC[metric] || TIP_METRIC.maximum, `${id}-tt-metric`)}</label>
+        <label>Metric ${tip(TIP_METRIC[metric] || TIP_METRIC.maximum, `${id}-tt-metric`, true)}</label>
         <select id="${id}-metric" onchange="onMetricChange('${id}')">
           ${metricOptions}
         </select>
@@ -1571,7 +1562,7 @@ function addConstraint(data = {}) {
     </td>
     <td><input type="number" id="con-val-${idx}" value="${data.value||''}" step="any" placeholder="0.95" autocomplete="off" /></td>
     <td class="td-action">
-      <button class="btn btn-remove btn-icon" onclick="removeRow('con-row-${idx}')">✕</button>
+      ${SharedIcon.button('trash', 'Remove this constraint', '', `onclick="removeRow('con-row-${idx}')"`)}
     </td>
   `;
   tbody.appendChild(tr);
@@ -2037,7 +2028,7 @@ function updateDownloadButtonLabel() {
   const btn = document.getElementById('download-btn');
   if (!btn) return;
   const cs = document.getElementById('coding-style').value;
-  btn.textContent = cs === 'notebook' ? '↓ .ipynb' : '↓ .py';
+  btn.textContent = cs === 'notebook' ? '⬇ .ipynb' : '⬇ .py';
 }
 
 function escapeHtml(str) {
@@ -2207,7 +2198,7 @@ function resetForm() {
   const nbEl  = document.getElementById('nb-preview');
   preEl.innerHTML = `<code class="language-python">
 <div class="placeholder-msg">
-  <span class="big">⚡</span>
+  <span class="big">▶</span>
   <span>Configure inputs and click <strong>Generate Code</strong></span>
 </div>
   </code>`;

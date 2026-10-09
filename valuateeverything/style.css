@@ -1,0 +1,173 @@
+/* Valuate Everything: page-specific layer.
+   Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
+
+
+.container{max-width:1440px;}
+.layout{grid-template-columns:420px minmax(0,1fr);}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
+h1{font-size:1.85rem;margin:0 0 4px;}
+main{min-width:0;}
+
+/* ── Quick Start scenarios ── */
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label .tico{width:1.05em;height:1.05em;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;font-family:inherit;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
+
+/* ── Tabs ── */
+.ctrl-tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 6px;font-size:.8rem;line-height:1.25;}
+.ctrl-tab .tico{width:1.25em;height:1.25em;}
+.ctrl-panel>:first-child{margin-top:0;}
+
+/* ── Columns editor ── */
+.col-head,.col-row{display:grid;grid-template-columns:minmax(0,1fr) 104px 64px 28px;gap:6px;align-items:center;}
+.col-head{padding:10px 0 4px;color:var(--muted);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.col-head span{display:inline-flex;align-items:center;gap:4px;}
+.col-row{padding:4px 0;}
+.col-row .txt-input{padding:7px 9px;font-size:.84rem;}
+.col-row select{width:100%;padding:7px 26px 7px 9px;font-size:.84rem;}
+.col-row .col-unit:disabled{opacity:.4;}
+/* Price and Data year are always there: their type is a fact, not a choice. */
+.col-type-fixed,.col-unit-fixed{display:flex;align-items:center;height:100%;padding:0 9px;font-size:.84rem;font-weight:600;color:var(--muted);}
+
+.add-btn{display:block;width:100%;margin:8px 0 6px;padding:7px 10px;background:transparent;border:1.5px dashed var(--border);border-radius:var(--radius-md);color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:border-color var(--motion-fast),color var(--motion-fast);}
+.add-btn:hover{border-color:var(--accent);color:var(--text);}
+
+.status-line{font-size:.8rem;line-height:1.4;min-height:0;}
+.status-line:empty{display:none;}
+.status-line{padding:2px 0 8px;}
+.status-ok{color:var(--success-text);}
+.status-err{color:var(--error-text);}
+
+/* ── Listings: Table / Text / CSV ── */
+.entry-panel{padding:6px 0 4px;}
+.entry-panel[hidden]{display:none;}
+/* The table, its scroll and its "+ Add listing" row are one box. The add row
+   is pinned to the bottom (and left) edge, so it is in reach however long or
+   wide the table grows. */
+.grid-wrap{overflow:auto;max-height:440px;border:1px solid var(--border);border-radius:10px;background:var(--card-bg);}
+.grid{width:100%;border-collapse:collapse;font-size:.8rem;}
+.grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:8px 6px;text-align:left;vertical-align:bottom;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted);white-space:normal;line-height:1.25;min-width:56px;max-width:120px;border-bottom:1px solid var(--border);}
+.grid td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;vertical-align:middle;}
+.grid th:first-child,.grid td:first-child{padding-left:8px;}
+.grid tr:hover td{background:transparent;}
+.grid th.t-bool,.grid td.t-bool{text-align:center;}
+.grid th.t-bool{min-width:84px;}
+.cell-wrap{display:flex;align-items:center;gap:4px;padding:0 7px;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;transition:border-color var(--motion-fast);}
+.cell-wrap:focus-within{border-color:var(--accent);background:var(--panel);}
+.cell-wrap .prefix,.cell-wrap .suffix{flex:0 0 auto;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.74rem;font-weight:700;}
+.grid .cell{width:72px;min-width:0;padding:6px 0;background:transparent;border:0;color:var(--text);font:inherit;font-family:'DM Sans',sans-serif;font-size:.8rem;font-variant-numeric:tabular-nums;outline:none;}
+.grid td.t-price .cell{width:74px;}
+.grid td.t-year .cell,.grid td.t-datayear .cell{width:44px;}
+.grid .cell.cell-text{width:96px;padding:6px 7px;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;}
+.grid .cell.cell-text:focus{border-color:var(--accent);background:var(--panel);}
+.grid .cell-chk{accent-color:var(--accent);width:16px;height:16px;cursor:pointer;vertical-align:middle;margin:0;}
+.grid td.t-del{width:30px;padding:0 4px;text-align:center;}
+.grid-add{position:sticky;left:0;bottom:0;z-index:1;display:block;width:100%;padding:9px 10px;background:var(--panel);border:0;border-top:1.5px dashed var(--border);color:var(--muted);font:inherit;font-size:.82rem;font-weight:700;text-align:center;cursor:pointer;transition:color var(--motion-fast),background var(--motion-fast);}
+.grid-add:hover{color:var(--text);background:var(--input-bg);}
+
+.data-text{min-height:240px;resize:vertical;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.55;white-space:pre;overflow:auto;}
+
+.csv-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:20px 12px;border:1.5px dashed var(--border);border-radius:12px;background:var(--card-bg);color:var(--muted);font-size:.85rem;text-align:center;cursor:pointer;transition:border-color var(--motion-fast),background var(--motion-fast);}
+.csv-drop:hover,.csv-drop.drag{border-color:var(--accent);background:var(--input-bg);}
+.csv-drop strong{color:var(--text);}
+.csv-drop-icon .ico{width:26px;height:26px;color:var(--accent);}
+.csv-drop-sub{font-size:.74rem;}
+.csv-actions{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px;}
+
+/* ── Items to buy ── */
+.item-list{display:flex;flex-direction:column;gap:12px;}
+.item-card{border:1px solid var(--border);border-left:4px solid var(--item-colour,var(--accent));border-radius:12px;padding:6px 12px 6px;background:var(--bg-subtle);}
+.item-head{display:flex;align-items:center;gap:6px;padding:4px 0 8px;}
+.item-dot{width:10px;height:10px;border-radius:50%;background:var(--item-colour,var(--accent));flex:0 0 auto;}
+.item-head .txt-input{flex:1;min-width:0;padding:7px 9px;font-weight:700;font-size:.88rem;}
+.item-card>.field-row,.item-card>.chk-row{border-top:1px solid var(--border);}
+.item-card .field-row{padding:8px 0 10px;}
+.item-card .field-label{font-size:.85rem;}
+.chk-row{display:flex;align-items:flex-start;gap:9px;padding:9px 0;cursor:pointer;font-size:.85rem;font-weight:700;line-height:1.35;color:var(--text);}
+.chk-row input{accent-color:var(--accent);width:16px;height:16px;margin:1px 0 0;flex-shrink:0;cursor:pointer;}
+.empty-note{color:var(--muted);font-size:.84rem;margin:4px 0;}
+
+/* ── KPI strip ── */
+.metrics{grid-template-columns:repeat(4,minmax(0,1fr));}
+.metric{padding:14px 16px;min-height:96px;}
+.metric .label{display:flex;align-items:center;gap:5px;}
+.metric .value{font-size:1.35rem;}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.35;}
+
+/* ── Chart ── */
+.chart-card{padding:20px;margin-bottom:18px;}
+.chart-opts{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:14px 0 12px;}
+.chart-opts .opt{display:inline-flex;align-items:center;gap:7px;}
+.chart-opts .opt[hidden]{display:none;}
+.chart-opts .opt-label{font-size:.78rem;font-weight:700;color:var(--muted);white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+.chart-opts select{max-width:220px;padding:6px 26px 6px 10px;font-size:.82rem;}
+/* A short 2D | 3D pick sits beside its label at its own width. */
+.chart-opts .seg-count{display:inline-flex;width:auto;flex:0 0 auto;}
+.chart-opts .seg-count .seg-btn{flex:0 0 auto;padding:5px 12px;font-family:'DM Sans',sans-serif;}
+.chk-opt{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--text);}
+.chk-opt input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;margin:0;}
+.plot-wrap{position:relative;height:500px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+#plotDiv{width:100%;height:100%;}
+.plot-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font-size:.9rem;}
+.plot-empty[hidden]{display:none;}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.82rem;min-height:20px;line-height:1.5;}
+
+/* ── Detail tables ── */
+.detail-section{padding:20px;margin-bottom:18px;}
+.detail-head{margin-bottom:10px;}
+table{font-size:.84rem;}
+th,td{padding:8px 8px;}
+.table-wrap{max-height:none;overflow-y:visible;overflow-x:auto;}
+td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;white-space:normal;text-align:left;}
+.row-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:.05em;}
+.equation{font-size:1rem;line-height:2;color:var(--text);background:var(--bg-subtle);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 12px;overflow-x:auto;}
+.equation .katex{font-size:1.08em;}
+.equation:empty{display:none;}
+.detail-section .unit-note{margin:-2px 0 10px;}
+
+/* ── Valuate: the gate ── */
+.btn-row .btn-primary{padding:10px 16px;font-size:.86rem;}
+.stale-note{display:none;flex-basis:100%;margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--accent2);}
+body.is-stale .stale-note{display:block;}
+body.is-stale main .card{opacity:.45;transition:opacity var(--motion-fast);}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2);}
+
+/* ── Banners ── */
+.warning{margin:0 18px 14px;}
+.warning p{margin:0;color:inherit;line-height:inherit;}
+.warning ul{margin:0;padding-left:17px;}
+.warning li+li{margin-top:5px;}
+.verdict{margin-bottom:18px;}
+.page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px;}
+
+@media(max-width:1300px){
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .plot-wrap{height:440px;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .page-footer{padding:0 10px 16px;}
+  .metrics{grid-template-columns:1fr;}
+  .plot-wrap{height:380px;}
+  .ctrl-tab{font-size:.72rem;flex-direction:column;gap:3px;}
+  .chart-opts select{max-width:100%;}
+  .col-head,.col-row{grid-template-columns:minmax(0,1fr) 92px 54px 28px;}
+  /* Chart options: one per row, labels in a column, controls to the edge. */
+  .chart-opts{flex-direction:column;align-items:stretch;gap:8px;}
+  .chart-opts .opt{display:flex;width:100%;}
+  .chart-opts .opt-label{flex:0 0 104px;}
+  .chart-opts select{flex:1 1 auto;min-width:0;max-width:none;}
+  /* Table cards: the title on its own row, Show table and CSV under it. */
+  .detail-head h2{flex:1 1 100%;}
+  .detail-head .btn-cluster{width:auto;margin-left:auto;}
+  .detail-head .btn-cluster .btn-sm{flex:0 0 auto;}
+}

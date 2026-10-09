@@ -42,9 +42,11 @@ async function open(rel){
     return r.fulfill({contentType:'application/javascript', body:'/*stub*/'});
   });
   // The guided tour offers itself on a first visit and its backdrop eats clicks.
+  // Every tour reads "<tool>-tour-v<N>-seen", and N moves whenever a tour is
+  // rewritten, so any such key reads as seen rather than a list that goes stale.
   await page.addInitScript(()=>{
-    ['rvo-tour-v1-seen','rvo-id-tour-v1-seen','rvos-tour-v1-seen','ff-tour-v3-seen',
-     'dca-tour-v1-seen','dcapf-tour-v1-seen'].forEach(k=>{ try { localStorage.setItem(k,'1'); } catch(e){} });
+    const get = Storage.prototype.getItem;
+    Storage.prototype.getItem = function(k){ return /-tour-v\d+-seen$/.test(k) ? '1' : get.call(this, k); };
   });
   await page.goto(url(rel), {waitUntil:'load'});
   await page.evaluate(()=>{ document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()); });
@@ -87,7 +89,8 @@ const val=(page,id)=>page.inputValue('#'+id);
   check('ff 1,154 a week -> a year', await val(page,'expense'), '60,008');
   await setSel(page,'savingsPeriod','monthly');
   check('ff savings 30,000 a year -> a month', await val(page,'savings'), '2,500');
-  await page.click('.ctrl-tab[data-tab="goal"]');
+  // The pension rows sit under Money in, on the You tab.
+  await page.click('.ctrl-tab[data-tab="you"]');
   await page.evaluate(()=>{ const c=document.getElementById('pensionOn'); c.checked=true; c.dispatchEvent(new Event('change',{bubbles:true})); });
   await page.waitForTimeout(100);
   await setSel(page,'pensionPeriod','monthly');
@@ -104,6 +107,28 @@ const val=(page,id)=>page.inputValue('#'+id);
     ? String(Math.round(Number(qsExpense.replace(/,/g,''))/12).toLocaleString('en-US'))
     : String(Math.round(Number(qsExpense.replace(/,/g,''))*12).toLocaleString('en-US'));
   check('ff converts from the period a Quick Start left', after, want);
+
+  /* Retirement expenses and each life stage take a share of living as well as
+     a period. Between two periods the figure is rescaled; to or from a share
+     it is converted through today's living expenses, read off the form. */
+  await page.evaluate(()=>{ window.__FF.resetToDefaults(); });
+  check('ff retirement expenses start at 100% of living', await val(page,'retireExpense'), '100');
+  await setSel(page,'retireExpensePeriod','yearly');
+  check('ff 100% of 60,000 a year -> a year', await val(page,'retireExpense'), '60,000');
+  await setSel(page,'retireExpensePeriod','weekly');
+  check('ff 60,000 a year -> a week', await val(page,'retireExpense'), '1,154');
+  await setSel(page,'retireExpensePeriod','pct');
+  check('ff 1,154 a week -> % of living', await val(page,'retireExpense'), '100');
+  check('ff the engine reads the share it shows',
+    await page.evaluate(()=>window.__FF.UI.retireExpense+' '+window.__FF.UI.retireExpensePeriod), '100 pct');
+  await page.click('#expenseModeGroup .seg-btn[data-val="detailed"]');
+  await page.click('#addStage');
+  await page.selectOption('#stageRows .stage-basis', 'monthly');
+  check('ff a stage at 100% of living -> a month', await page.inputValue('#stageRows .stage-amount'), '5,000');
+  await page.selectOption('#stageRows .stage-basis', 'yearly');
+  check('ff a stage at 5,000 a month -> a year', await page.inputValue('#stageRows .stage-amount'), '60,000');
+  check('ff and the stage the engine runs moved with it',
+    await page.evaluate(()=>{ const s=window.__FF.UI.stages[0]; return s.amount+' '+s.period; }), '60000 yearly');
   await page.close();
 }
 
@@ -136,8 +161,9 @@ const val=(page,id)=>page.inputValue('#'+id);
   check('rvo detailed row 1,200 a year -> a month', await page.inputValue(row+' .ci-amount'), '100');
   await page.selectOption(row+' .ci-basis','weekly');
   check('rvo detailed row 100 a month -> a week', await page.inputValue(row+' .ci-amount'), '23.08');
+  // …and restates as a "%" of a year of rent: 23.08 a week of a 33,600 year.
   await page.selectOption(row+' .ci-basis','pct');
-  check('rvo detailed row -> % basis left alone', await page.inputValue(row+' .ci-amount'), '23.08');
+  check('rvo detailed row 23.08 a week -> % of yearly rent', await page.inputValue(row+' .ci-amount'), '3.57');
   await page.close();
 }
 
@@ -155,6 +181,7 @@ const val=(page,id)=>page.inputValue('#'+id);
 
 /* ── rentvsownhouse sensitivity ────────────────────────────────────── */
 {
+  const SharedFreqPerYear = {yearly:1, monthly:12, weekly:52};
   const page = await open('rentvsownhouse/sensitivity/index.html');
   const amt  = '.param-input[data-key="rentAmount"][data-si="0"]';
   const freq = '.param-select[data-key="rentFreq"][data-si="0"]';
@@ -176,12 +203,39 @@ const val=(page,id)=>page.inputValue('#'+id);
   await page.waitForTimeout(200);
   check('sens own cost a year -> a month',
     Number(String(await page.inputValue(cAmt)).replace(/,/g,'')), Math.round(c0/12*100)/100);
+  // Money and "%" convert too, against what the "%" is a share of: 500 a
+  // month of owning costs on the default 800,000 home is 0.75% of its value.
   await page.selectOption(cType,'pct');
   await page.waitForTimeout(200);
-  const pctVal = await page.inputValue(cAmt);
-  await page.selectOption(cFreq,'yearly');
+  check('sens own cost 500 a month -> % of property value', await page.inputValue(cAmt), '0.75');
+  // A "%" cost is not money per period, so it offers no frequency to move.
+  check('sens a % cost has no frequency to move', await page.locator(cFreq).count(), 0);
+  await page.selectOption(cType,'dollar');
   await page.waitForTimeout(200);
-  check('sens a % basis is left alone', await page.inputValue(cAmt), pctVal);
+  check('sens own cost % of property value -> 500 a month', await page.inputValue(cAmt), '500');
+  check('sens own cost keeps its frequency through a % round trip', await page.inputValue(cFreq), 'monthly');
+
+  const sAmt  = '.param-input[data-key="setupCost"][data-si="0"]';
+  const sType = '.param-select[data-key="setupCostType"][data-si="0"]';
+  await page.selectOption(sType,'pct');
+  await page.waitForTimeout(200);
+  check('sens setup cost 32,000 -> % of an 800,000 price', await page.inputValue(sAmt), '4');
+  await page.selectOption(sType,'dollar');
+  await page.waitForTimeout(200);
+  check('sens setup cost 4% of price -> 32,000', await page.inputValue(sAmt), '32,000');
+
+  // Renting costs are a share of a year of rent (2,800 a month here).
+  const rcAmt  = '.param-input[data-key="rentOngoingCost"][data-si="0"]';
+  const rcType = '.param-select[data-key="rentOngoingCostType"][data-si="0"]';
+  await page.selectOption(rcType,'pct');
+  await page.waitForTimeout(200);
+  check('sens rent cost 1,200 a year -> % of yearly rent', await page.inputValue(rcAmt), '3.57');
+  // The "%" holds two decimals (as the main page's field does), so the way
+  // back lands within 0.005% of a year of rent, not always on the cent.
+  await page.selectOption(rcType,'dollar');
+  await page.waitForTimeout(200);
+  check('sens rent cost % of yearly rent -> back to about 1,200 a year',
+    Math.abs(Number(String(await page.inputValue(rcAmt)).replace(/,/g,'')) - 1200) <= 33600*0.00005, true);
 
   // Detailed per-scenario cost rows.
   await page.evaluate(()=>document.querySelector('.mode-seg[data-mode-key="rentCostsMode"] .seg-btn[data-val="detailed"]').click());
@@ -195,6 +249,13 @@ const val=(page,id)=>page.inputValue('#'+id);
   const d1 = Number(String(await page.inputValue(rowAmt)).replace(/,/g,''));
   check('sens detailed cost row rescales with its basis',
     d1, b0==='yearly' ? Math.round(d0/12*100)/100 : Math.round(d0*12*100)/100);
+  // …and restates as a "%" of a year of rent.
+  const b1 = await page.inputValue(rowBasis);
+  const yearRent = Number(String(await page.inputValue(amt)).replace(/,/g,''))*12; // rent is back to a month
+  await page.selectOption(rowBasis, 'pct');
+  await page.waitForTimeout(200);
+  check('sens detailed cost row money -> % of yearly rent',
+    Number(await page.inputValue(rowAmt)), Math.round(d1*SharedFreqPerYear[b1]/yearRent*100*100)/100);
   await page.close();
 }
 

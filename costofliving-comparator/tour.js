@@ -15,7 +15,7 @@ function colSeedDetailed(){
   if (window.__COL_TOUR) window.__COL_TOUR.seedDetailed();
 }
 window.__TOUR = {
-  seenKey: 'col-tour-v1-seen',
+  seenKey: 'col-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   // The steps overwrite the comparison on screen, so hand back whatever the
   // user had when the tour ends, however it ends.
@@ -38,7 +38,7 @@ window.__TOUR = {
       target: '#modeCard',
       onEnter: colSeedSimple,
       title: '① Choose what you want to know',
-      body: 'Pick <strong>Simple</strong> or <strong>Detailed</strong>, then whether you ' +
+      body: 'Set <strong>Detail</strong> to <strong>Simple</strong> or <strong>Detailed</strong>, then whether you ' +
             'want to know how much you <strong>can save</strong> or how much you ' +
             '<strong>need to earn</strong> to keep the same lifestyle. You can also ' +
             'include or exclude housing, handy when rent is covered by an employer.'
@@ -56,10 +56,12 @@ window.__TOUR = {
       target: '#analysisArea',
       onEnter: colSeedSimple,
       title: '③ Read your results',
-      body: 'The comparison updates instantly: the equivalent salary that preserves your ' +
-            'standard of living, where your money stretches furthest, and how much of ' +
-            'your income is left over. Perfect for relocation planning, a pay ' +
-            'negotiation, or a geoarbitrage decision.'
+      body: 'The sentence at the top is the answer: how much more or less you would save ' +
+            'each month in the other city, or the salary you would need there. The two ' +
+            'cities follow side by side, every amount per month. Perfect for relocation ' +
+            'planning, a pay negotiation, or a geoarbitrage decision. ' +
+            '<strong>What this assumes</strong>, under the results, lists what the estimate ' +
+            'rests on.'
     },
     {
       target: '#analysisArea',
@@ -79,7 +81,7 @@ window.__TOUR = {
       body: 'That is the whole workflow. The <strong>Jakarta → Perth</strong> example ' +
             'stays loaded, so swap in your own cities and numbers straight over the top ' +
             'of it. Everything runs privately in your browser, free, with no account. ' +
-            'Replay this tour any time via <strong>Take a tour</strong> in the header.'
+            'Replay this tour any time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

@@ -6,7 +6,9 @@ visualisation tools. It is domain-agnostic and can be dropped into any web proje
 
 Fonts: **DM Sans** (sans-serif) + **DM Mono** (monospace).
 Tokens live in `dark.css` (default) and `light.css` (applied via `body.light`).
-Shared, theme-independent components live in `shared.css` / `shared.js`.
+Shared, theme-independent components live in `shared.css` / `shared.js`. Dropdowns live
+in their own pair, `dropdown.css` / `dropdown.js`, so the home page (which loads neither
+shared file) uses the very same ones.
 
 To use this system in a new page, include the shared stylesheets and scripts (in this
 order), then layer your own page-specific overrides on top:
@@ -14,9 +16,10 @@ order), then layer your own page-specific overrides on top:
 ```html
 <link rel="stylesheet" href="dark.css">
 <link rel="stylesheet" href="light.css">
-<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="shared.css">   <!-- imports dropdown.css -->
 <link rel="stylesheet" href="style.css">  <!-- your page-specific overrides -->
 ...
+<script src="dropdown.js"></script>         <!-- before shared.js -->
 <script src="shared.js"></script>
 <script src="script.js"></script>
 ```
@@ -26,6 +29,156 @@ And add the font import at the top of your page's `style.css`:
 ```css
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
 ```
+
+---
+
+## Finance Tool Skeleton (the rules every finance tool keeps)
+
+Every finance tool on the site (Rent vs Own and its Sensitivity page, Pisah vs
+Gabung, Borrowing Capacity, Finance vs Cash, Financial Freedom, the DCA Scenario
+Explorer and Portfolio, Cost of Living) is built on one skeleton, so what a
+reader learns on one page carries to the next. `_ref/form-check.mjs` holds the
+pages to it; a new finance tool joins its `PAGES` list and the `FINANCE` list in
+`shared.js` (which switches on SharedBounds' native limits and SharedSlider's
+automatic pass).
+
+### The seven rules
+
+1. **Group** related inputs in a `.field-group`, generic before specific.
+2. **Self-explanatory titles, tooltips for the explanation.** Keep the field's
+   own term, including the jargon the reader will meet elsewhere (Risk-Free
+   Rate, Binding constraint, Pisah Harta, Net equity), and give it a one-line
+   plain tooltip. Do not rename jargon into a sentence. Abbreviations are the
+   exception: spell them out with the term in brackets ("Income cover (NSR)",
+   "safe withdrawal rate (SWR)", "Estimated", not "Est.").
+3. **The control fits the value.** A figure the reader knows exactly is typed;
+   a guess (growth, inflation, a what-if) is a slider; a small count is a
+   segmented control (`SharedSeg.fromSelect`, the `<select>` stays the field the
+   tool reads and saves).
+4. **The same structure on every tool** (below).
+5. **Every input and output states its unit** (below).
+6. **The form enforces the bounds** (below).
+7. **Colour means the same thing everywhere** (below).
+
+### Layout
+
+Inputs, top to bottom: Quick Start and save/open, a first tab with the four to
+six figures anyone knows (**Currency first**), topic tabs, then a last tab
+called **Assumptions** (inflation, growth, simulation settings, fill timing).
+Keep old tab ids when a tab is renamed (`data-tab="settings"` / `#tab-settings`
+stay on Financial Freedom and DCA), so saved tabs and scenario files still land.
+
+Outputs, top to bottom: the one-sentence answer (`.verdict`), three or four KPI
+cards with the answer first, the main chart, other charts, per-option tiles,
+tables (folded), and last the **What this assumes** card.
+
+A display option that changes how results READ (today's money, chart metric,
+candlesticks) sits beside the results it changes, never in the input panel.
+
+### The answer: `.verdict` and `SharedVerdict`
+
+```js
+SharedVerdict.set('verdict', { tone: '', title: 'Owning ends <span class="v-num">$84,200</span> ahead after 30 years.', body: '…' });
+```
+
+`tone` is `''` for a fair comparison of options (rent or own, two loans, two
+portfolios), `good` / `bad` / `warn` only for a pass or miss against a goal the
+reader set. Handle ties and missing input in words ("ended level", "enter both
+salaries"), never with a dash inside the sentence. When the options put
+different money in, compare the return on it, not the final value (the DCA
+verdicts).
+
+### Units
+
+The unit is the field's affix, never the label: currency before the number
+(`.prefix`), everything else after it (`.suffix`). Vocabulary: `%`, `%/yr`,
+`yrs`, `/mo`, `/yr`, `days`, `×`, `months`, `paths`, `points`. A per-period
+amount pairs with a period select (`a week / a month / a year`), and the amount
+follows its period (`SharedFreq`). The same holds for any control that changes
+a field's unit when the two are comparable: money and a "%" of something, a
+monthly and a weekly cadence, a household total with a share and each person's
+own figure. The field is restated in the new unit so it describes the same
+money ($32,000 on an $800,000 price becomes 4%, not 32,000%), rounded to the
+field's own precision, and a switch back gives back what was typed. Only the
+reader's own switch converts; a Quick Start or an opened file sets its figures
+with its units. `_ref/unit-check.mjs` holds every such switch to the tool's
+answer, which must not move. A field whose unit sits in a table's column
+header declares it with `data-unit`; a field with no unit at all (a seed, a day
+of month) carries `data-unitless`. Sentence-style rows ("From age 28 to 33",
+"Grows 3 %/yr from today") keep the unit words in the sentence.
+
+Outputs: every y axis names its unit (`Price ($)`, `Total tax (Rp a year)`,
+`Balance, today's money`), every x axis is titled, and every table says its
+unit once over it (`.unit-note`).
+
+### Bounds
+
+A typed number declares its range: native `min` / `max` / `step` on a number
+field, `data-min` / `data-max` on a money text field. `SharedBounds` pulls a
+value past either end back on change and says so ("Max 30 %/yr"); a blank field
+stays blank. A field whose unit changes with a select (a share of living or an
+amount) moves its `data-max` with it. `data-unbounded` opts out a threshold in
+the price's own units. Sliders show both ends under them and take a typed value
+in their readout (`SharedSlider`; call `SharedSlider.enhance(range)` for a
+slider built after load, with `data-readout` naming its readout).
+
+### Detail
+
+One Simple/Detailed control per group it changes, labelled **Detail**, first in
+that group.
+
+### Colour
+
+Options a reader weighs (rent or own, separate or joint, loan offers,
+scenarios, portfolios, assets) take the neutral sequence from `SharedPalette`:
+blue, gold, teal, rose, purple, light blue, never red. Red and the positive blue
+stay for direction: money out, a loss, a bar to clear. A picked colour is stored;
+an unpicked one is a palette slot resolved in the current theme, so it follows
+dark and light. Nothing is typed in as a hex: candles and histograms read
+`--line-c` / `--line-b`, cash reads `--muted`, status boxes read the
+`--info-*` / `--error-*` / `--success-*` / `--warning-*` tokens.
+
+Why blue and gold first: CIEDE2000 distance under full-severity colour-vision
+deficiency (Machado 2009):
+
+| Pair | Theme | Normal | Protan | Deutan | Tritan |
+| --- | --- | --- | --- | --- | --- |
+| blue / gold | light | 49.2 | 55.9 | 55.9 | 69.5 |
+| blue / gold | dark | 44.2 | 45.2 | 48.8 | 40.9 |
+| blue / teal | light | 33.8 | 32.3 | 26.4 | **8.1** |
+| blue / teal | dark | 27.5 | 25.5 | 21.1 | **6.2** |
+| blue / purple | light | 27.8 | 14.8 | **9.4** | 51.8 |
+
+Blue and gold stay apart for every kind; teal fails tritanopia and the light
+purple fails deuteranopia, so they come later in the sequence. In dark mode
+gold is also the warning text colour, so a gold series never carries a warning
+meaning of its own.
+
+### Tables and caveats
+
+A year-by-year table opens closed behind **Show table** (`SharedFold.attach(card,
+{key, bodies})`); its CSV button exports it either way. Every tool closes with
+a `.assumes-card` listing what the answer rests on, built by a
+`renderAssumptions` call on every redraw from the reader's own plan rather than
+written into the HTML:
+
+- **Only what this plan uses.** A line belongs to a figure the reader entered,
+  a choice they made, or a rule that touched their numbers. A feature left off,
+  a cost left at nil or a field never shown says nothing (no Rent-Then-Buy line
+  unless it is on, no fee line for a loan with no fee).
+- **The figure, not the fact.** "Inflation is 2.5% a year", "the $640,000 loan
+  is at a fixed 6%", "Living costs are $3,575 a month, the HEM benchmark for a
+  couple in Perth", never "Inflation is modelled".
+- **Nothing obvious.** Drop a line the reader could not have doubted, or one
+  that only restates how the page is laid out.
+- **Short.** Bold lead, one sentence after it; a longer reason goes in an (i)
+  tip. Before there is anything to describe, one line says what to enter.
+
+### Page text
+
+No em-dashes in page text, tips or placeholders; a lone `—` marking an empty
+cell is fine. When a tour changes, bump its `seenKey` version so returning
+readers see it again (checks treat any `<tool>-tour-vN-seen` as seen).
 
 ---
 
@@ -311,7 +464,8 @@ follows the button's colour in both themes and lights up with the active tab.
   something other than 1.35em.
 
 Emoji outside a tab bar are fine where they are decoration rather than an icon
-(the 🌙 / ☀️ theme toggle, the footer flags).
+(the 🌙 / ☀️ theme toggle, the footer flags). Buttons follow the same rule: see
+**Buttons and Icons** for the one picture each job gets.
 
 ### Field Group (grouping rows in a control panel)
 
@@ -467,33 +621,85 @@ SharedFmt.attachCurrencyInput(document.getElementById('startingValue'), { maxDec
 const value = SharedFmt.parseFormatted(document.getElementById('startingValue').value);
 ```
 
-### Dropdown / Select (`.sel-input`)
+### Dropdowns: one look, two kinds (`dropdown.css`, `dropdown.js`)
+
+Every dropdown on the site, the home page included, comes from one pair of
+files at the root: `dropdown.css` (imported by `shared.css`; the home page links
+it) and `dropdown.js` (loaded just before `shared.js`). Which kind a list gets
+depends on the list, not on the tool:
+
+| The list | Use | Search |
+| --- | --- | --- |
+| Short and fixed: periods, currencies, a scenario, a font, a few loaded tickers | a plain `<select>` | no |
+| Database-sized, painful to scroll one by one: hundreds of cities, time zones, PowerFactory variables | a searchable combobox (`.combo-input` + `.combo-list`) | yes |
+
+If the whole list would fit on the page, it is a plain select. Search is only
+for the database-looking ones.
+
+**A plain select needs no class.** Every `<select>` gets the field look:
+DM Sans named outright (so a select in a mono table cell or an uppercase header
+still matches), weight 500, `--input-bg`, a 1.5px `--border`, `--radius-md`, the
+chevron, and `--accent` on focus. `.sel-input` is the full-width form field and
+`.sel-sm` the compact one. When a select is clicked with a mouse, `dropdown.js`
+opens its list in the shared `.combo-list` panel: no lines between rows, the row
+under the pointer or arrow keys filled with `--accent`, and the chosen row in
+bold. A pick sets the select and fires `input` then `change`, the same as the
+browser's own list, so nothing that reads, sets or saves the select changes.
+Keyboard and touch keep the browser's own picker (screen readers, the phone's
+sheet). Add `data-native` to a select to opt it out.
+
+A tool may **size** a dropdown (width, padding, font-size, `--radius-sm` on a
+compact one, and `--sel-pad` / `--sel-chev` to move the chevron in), but never
+re-colour, re-border or re-font it, and never writes its own `option` colours.
+`_ref/dropdown-check.mjs` holds every page to this.
+
+The spec, for reference (all of it is in `dropdown.css`; a tool writes none of it):
+
+| Part | Values |
+| --- | --- |
+| Field (`select`, `.combo-input`) | DM Sans, weight 500, `.92rem`, padding `10px 13px`, `--input-bg`, `1.5px solid var(--border)`, `--radius-md`, `--accent` border on focus, `--motion-fast` |
+| Chevron | 12px, `--muted` colour per theme (`--sel-chevron`), `right 10px` (`--sel-chev`), text kept clear by `padding-right: 30px` (`--sel-pad`) |
+| Compact field (`.sel-sm`, toolbars, table cells) | `.82rem`, padding `6px 10px`, `--radius-sm`, `--sel-pad: 26px`, `--sel-chev: 8px` |
+| Open list (`.combo-list`) | `--panel`, `1.5px solid var(--border)`, `--radius-sm`, `--shadow-lg`, padding `4px`, max height 280px, DM Sans weight 400, z-index 9500 |
+| Row (`.combo-opt`) | padding `6px 10px`, radius 5px, no dividers; hover / `.focused`: `--accent` fill with `--text-inv` text; `.selected`: weight 600 |
+| Chip (`.combo-chip`) | pill, `.72rem`, weight 500, `--input-bg` fill, 1px `--border`, `--muted` text; outlined in the row's colour when the row is lit |
+| Second line (`.combo-sub`) / group label (`.combo-group`) | `.76rem` `--muted` / `.7rem` uppercase `--muted`, weight 700 |
 
 ```css
-.sel-input {
-  background: var(--input-bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 600;
-  padding: 10px 13px;
-  width: 100%;
-  outline: none;
-  transition: border-color var(--transition-fast);
-  cursor: pointer;
-  appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
-.sel-input:focus { border-color: var(--accent); }
-
-/* CRITICAL: hard-code option colours — browsers ignore CSS variables on <option> */
-.sel-input option            { background: #162033; color: #EAF1FF; }
-body.light .sel-input option { background: #ffffff;  color: #2D3436; }
+/* A compact select in a toolbar or table cell: size only. */
+.ctrl-select { font-size: .82rem; padding: 6px 10px; border-radius: var(--radius-sm); --sel-pad: 26px; --sel-chev: 8px; }
 ```
+
+### Searchable Combobox (`.combo-input` + `.combo-list`)
+
+For a database-sized list only (see the table above). The field is a text input
+with `.combo-input`, which looks exactly like a select without the chevron; the
+list is a `.combo-list` of `.combo-opt` rows, the same panel `dropdown.js` uses
+for a plain select. Search matches every typed word anywhere in the row's text
+(city, state, country, currency), so "paris france" works.
+
+Each row puts its label in `.combo-main`. A short tag that helps scanning (a
+country, a unit) goes in a `.combo-chip` on the right; a second line (a
+description, a UTC offset) goes in a `.combo-sub`, with the two lines wrapped in
+`.combo-text`. Mark the row the arrow keys are on with `.focused`, the current
+value with `.selected`, and say "nothing found" with a `.combo-empty`.
+
+```html
+<div class="city-picker">
+  <input class="city-search combo-input" type="text" placeholder="Search city…" autocomplete="off">
+  <div class="city-dropdown combo-list" role="listbox">
+    <div class="combo-opt selected" role="option"><span class="combo-main">Santa Barbara, CA</span><span class="combo-chip">United States</span></div>
+    <div class="combo-opt" role="option"><span class="combo-text"><span class="combo-main">Jakarta</span><span class="combo-sub">Indonesia · GMT+7</span></span></div>
+  </div>
+</div>
+```
+
+The tool keeps only the picker's own states (`.has-value`, the clear button) and
+where the list sits. Put it under its field with
+`SharedDropdown.place(input, list, {minWidth: 300})` on open, scroll and resize:
+it is fixed to the viewport, so a narrow column or a scrolling table cannot clip
+it or squeeze it. Working examples: the Cost of Living Comparator's city picker,
+the World Clock's place picker, and PowerFactory's `PFComboBox`.
 
 ### Segmented Control Group (`.seg-group`)
 
@@ -547,168 +753,6 @@ document.querySelectorAll('[data-val]').forEach(btn => {
     group.dispatchEvent(new CustomEvent('change', { detail: { value: btn.dataset.val } }));
   });
 });
-```
-
-### Searchable Combobox / City Picker (`.city-picker`)
-
-A fully custom searchable dropdown for selecting from a long list (e.g. cities, accounts,
-symbols). Features live search, clear button, and keyboard support.
-
-#### HTML
-
-```html
-<div class="city-block">
-  <label>📍 From city</label>
-  <div class="city-picker" id="fromPicker">
-    <input class="city-search" type="text" placeholder="Search cities…" autocomplete="off" />
-    <button class="city-clear" aria-label="Clear selection">✕</button>
-    <div class="city-dropdown">
-      <!-- Options populated by JS -->
-      <div class="city-opt">
-        <div>New York</div>
-        <div class="opt-sub">United States</div>
-      </div>
-      <div class="city-opt">
-        <div>Sydney</div>
-        <div class="opt-sub">Australia</div>
-      </div>
-    </div>
-  </div>
-</div>
-```
-
-#### CSS
-
-```css
-/* Container & search input */
-.city-picker { position: relative; }
-.city-search {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: var(--text);
-  outline: none;
-  transition: border-color 150ms;
-}
-.city-search:focus { border-color: var(--accent-strong); }
-
-/* When a value is selected, highlight the input */
-.city-search.has-value { border-color: var(--accent-strong); background: var(--positive-bg); padding-right: 28px; }
-
-/* Clear button (✕) */
-.city-clear {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1;
-  padding: 2px 3px;
-  display: none;
-  z-index: 1;
-}
-.city-clear:hover { color: var(--text); }
-.city-search.has-value ~ .city-clear { display: block; }
-
-/* Dropdown menu */
-.city-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 200;
-  display: none;
-}
-.city-dropdown.open { display: block; }
-
-/* Individual option */
-.city-opt {
-  padding: 7px 12px;
-  font-size: 0.86rem;
-  cursor: pointer;
-  border-bottom: 1px solid var(--border);
-  transition: background 100ms;
-}
-.city-opt:last-child { border-bottom: none; }
-.city-opt:hover, .city-opt.focused { background: var(--positive-bg); color: var(--positive-em); }
-
-/* Subtitle (e.g. country) */
-.city-opt .opt-sub { font-size: 0.75rem; color: var(--muted); }
-```
-
-#### JavaScript (Pattern)
-
-```js
-const cities = [
-  { name: 'New York', sub: 'United States', value: 'nyc' },
-  { name: 'Sydney', sub: 'Australia', value: 'syd' },
-  { name: 'London', sub: 'United Kingdom', value: 'lon' },
-  // ...
-];
-
-const picker = document.getElementById('fromPicker');
-const search = picker.querySelector('.city-search');
-const dropdown = picker.querySelector('.city-dropdown');
-const clearBtn = picker.querySelector('.city-clear');
-let selectedValue = null;
-
-function renderOptions(filter = '') {
-  dropdown.innerHTML = cities
-    .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
-    .map(c => `
-      <div class="city-opt" data-value="${c.value}">
-        <div>${c.name}</div>
-        <div class="opt-sub">${c.sub}</div>
-      </div>
-    `).join('');
-
-  picker.querySelectorAll('.city-opt').forEach(opt => {
-    opt.addEventListener('click', () => {
-      selectedValue = opt.dataset.value;
-      search.value = cities.find(c => c.value === selectedValue).name;
-      search.classList.add('has-value');
-      dropdown.classList.remove('open');
-    });
-  });
-}
-
-search.addEventListener('input', (e) => {
-  renderOptions(e.target.value);
-  dropdown.classList.add('open');
-});
-
-search.addEventListener('focus', () => {
-  renderOptions(search.value);
-  dropdown.classList.add('open');
-});
-
-document.addEventListener('click', (e) => {
-  if (!picker.contains(e.target)) dropdown.classList.remove('open');
-});
-
-clearBtn.addEventListener('click', () => {
-  search.value = '';
-  selectedValue = null;
-  search.classList.remove('has-value');
-  dropdown.classList.remove('open');
-  renderOptions();
-});
-
-renderOptions();
 ```
 
 ### Radio Group (mutually exclusive options)
@@ -855,8 +899,10 @@ dropping the button:
    instance — must live on its own control. `dcasimulator` keeps that on
    **Clear all** in the Data tab.
 
-Keep Reset on a tool with no scenarios (`pisahvsgabung`, `financingvscash`), and
-keep it where it means *empty the canvas* rather than *go back to the start*
+Every finance tool now has Quick Start scenarios and no Reset: Pisah vs Gabung
+dropped its button once its "Equal incomes, no children" scenario covered it. Keep Reset on a tool
+with no scenarios, and keep it where it means *empty the canvas* rather than *go
+back to the start*
 (`sankeycreator`'s Reset restores the demo, Clear empties the table).
 
 ```css
@@ -896,6 +942,116 @@ keep it where it means *empty the canvas* rather than *go back to the start*
 
 ---
 
+## Buttons and Icons
+
+A reader who learns a button on one tool should be able to read it on the
+next. Four rules make that true, and `node _ref/button-check.mjs` holds every
+page to them. `_ref/button-map.md` lists every button on every tool by the job
+it does, so a new tool can copy the row it needs instead of inventing one.
+
+### 1. One picture per job
+
+The pictures that carry a meaning are drawn once, in `shared.js`
+(`SharedIcon`), and nowhere else. A picture is never lent to another job,
+because that is how ✕ came to mean both "close" and "delete" on the same page.
+
+| Job | Picture | Build it with | Never |
+| --- | --- | --- | --- |
+| **Close** a panel, modal or card. Nothing is lost. | ✕ cross | `SharedIcon.button('close', 'Close')` | ✕ on a delete, a clear, a failed copy, a "don't" list |
+| **Delete** a row, scenario, stage, chip, asset | bin | `SharedIcon.button('trash', 'Remove this stage', 'stage-del')` | ✕, ×, ⊗, 🗑 |
+| **Clear everything** (empty a table, unload a file) | bin + word | `<button data-icon="trash">Clear</button>` | ✕ Clear |
+| **Clear a text field** | backspace key | `SharedIcon.svg('clear')` inside `.city-clear` | ×, ✕ |
+| **Duplicate** an item beside itself | two sheets and a plus | `SharedIcon.button('duplicate', 'Duplicate')` | ⧉ (that is copy to clipboard) |
+| **Edit** an item | pencil | `SharedIcon.button('edit', 'Edit')` | ✎, ✏️ |
+| **Save** the work to a file | floppy disk | `SharedScenario.mount(...)`, or `data-icon="save"` | 💾, ↓ JSON |
+| **Open** a file from this device | open folder | `SharedScenario.mount(...)`, or `data-icon="open"` | 📂, 📊, ⬆, ↑, "Upload" (nothing is uploaded) |
+| **Show the result** instead of its source | eye | `SharedIcon.svg('view')` | 👁 |
+| **Put a value back** to its default | anticlockwise arrow | `SharedIcon.svg('reset')`, or `↺` in a label | |
+| **Download** an export | ⬇ + format | `⬇ SVG`, `⬇ PNG`, `⬇ CSV`, `⬇ .py` | ↓, 📥, "Export" |
+| **Copy** to the clipboard | ⧉ | `⧉`, titled "Copy PNG to clipboard" | ⧉ on a duplicate |
+| **Reset the view** (zoom, pan). Your data is untouched. | ⟳ | `⟳` | ⊡ |
+| **Restore defaults**. Your inputs are replaced. | ↺ | `↺ Reset` | ⟳ (that only moves the view) |
+| **Run** the tool's computation | ▶ | `▶ Simulate`, `▶ Generate Code`, `▶ Check` | ⚡ (that is Quick Start), ⚙ (that is Settings) |
+| **Add** a new item | + | `+ Add stage` (ASCII plus) | ＋ (full-width) |
+| **Reorder** by dragging | ⠿ | `⠿` grip | |
+
+Emoji are decoration, never an icon: the 🌙 / ☀️ theme toggle, 🧭 tour, 🚀 Time
+Travel and the footer flags stay; an emoji standing in for one of the jobs above
+does not. A status is not a button: a copy that fails says so in words
+(`alert('PNG copy failed: …')`), not with a ✕.
+
+Static markup names its icon and `shared.js` draws it at load:
+
+```html
+<button type="button" class="btn-bare" data-icon="duplicate" title="Duplicate this portfolio" aria-label="Duplicate this portfolio"></button>
+<button class="btn-secondary" data-icon="trash">Remove from list</button>   <!-- icon before the word -->
+```
+
+Markup built in JavaScript asks for it directly:
+
+```js
+row.innerHTML = '…' + SharedIcon.button('trash', 'Remove this size', 'row-del', rows.length < 2 ? 'disabled' : '');
+```
+
+`button(name, label, cls, attrs)` returns a `.btn-bare` with the label as its
+tooltip and accessible name; the bin also gets `.is-delete`. A labelled button
+with `data-icon` gets `.has-ico`, which spaces the icon from its word. Icons
+ignore the pointer, so `e.target` is always the button.
+
+### 2. A button wears only as much as its job needs
+
+| Weight | Looks | Use for |
+| --- | --- | --- |
+| Primary (`.btn-primary`) | accent fill, `var(--text-inv)` text | the one thing the panel exists to do: Simulate, Done, Generate |
+| Secondary (`.btn-secondary`, `.btn-sm`) | soft fill, border | a labelled action: `+ Add Scenario`, `⬇ CSV`, `Show table` |
+| Bare (`.btn-bare`) | nothing until hovered | an icon-only button that acts on the thing it sits in: a row, a card, a chip, a column header, a panel's corner |
+
+Bare is the default for an icon-only button. The picture already says what it
+does, so a box around it is noise; it is muted at rest, tinted on hover, and
+only the bin turns red. `rentvsownhouse/sensitivity`'s duplicate and delete in
+each scenario header are the model.
+
+Two exceptions keep a box. An icon-only button in a **row of boxed buttons**
+(the chart export cluster `⬇ SVG ⬇ PNG ⧉ ⟳`, the header's save and open, the
+JSON Visualiser's Expand / Collapse / bin) stays boxed, so the row reads as one
+set. And a **labelled** button keeps its box, because a bare word reads as a
+label rather than something to press. Never hard-code `white` or `#fff` on an
+accent fill: the dark theme's accent is pale.
+
+### 3. The outcome the reader wants is the easiest one to reach
+
+- **Closing keeps the work.** An editor applies each edit as it is made (a
+  short debounce, then the same save the old button ran), so every way out
+  (Done, ✕, Esc) keeps what was typed. There is no "close without saving" to
+  hit by mistake: losing a form is far worse than keeping an edit you can
+  change back. `financingvscash`'s scenario editor is the model
+  (`applyEditorSoon()`, `closeEditor()`).
+- **The way out is always in view.** A form taller than its panel pins its
+  primary button to the bottom of whatever is scrolling (`position:sticky;
+  bottom:0`), and says in a few words that changes save as you go. On a phone
+  that is the bottom of the screen, under the thumb; a card that clips its
+  corners uses `overflow:clip`, not `hidden`, so the pin still works.
+- **A sidebar ends on screen.** A sticky control card is sized by
+  `SharedReach` (`shared.js`) to the room it has from where it starts, so its
+  bottom row (Simulate, Load tickers, Reset/Clear) is visible at first load,
+  not 150px under the fold until the reader happens to scroll.
+- **The main action sits where the eye ends.** A gate (Simulate) lives in the
+  sidebar's pinned bottom row; a tool whose output is a separate pane puts the
+  action at the top of that pane (PowerFactory's Generate Code).
+- **A destructive button is never the easy one.** Delete is a bare bin at the
+  end of its row, red only on hover; a reset of the whole form asks first.
+
+### 4. Check it
+
+`node _ref/button-check.mjs` (`ONLY=<path>` for one page) loads every page and
+fails on a ✕ drawn as text, a picture lent to another job, a remove without
+the bin, an emoji standing in for an icon, an unnamed icon-only button, a
+`.btn-bare` with a fill, or a sticky sidebar that hangs under the fold. It
+also drives Finance vs Cash's editor on a desktop and a phone and requires
+Done on screen halfway down the form and every way out to keep an edit.
+
+---
+
 ## Tooltips
 
 ### What a tooltip is allowed to say
@@ -928,13 +1084,46 @@ Four rules follow from that:
   needs nothing said, it has no (i).
 - **A dependent field's tip follows the field.** See below.
 
+### Tips that explain options: a list, or the selected one
+
+When a tip explains the options of a control (or the series of a chart, or the
+sections of a table), it never runs them together as a paragraph. Two forms,
+and the choice is by size:
+
+- **Three options or fewer, each a short clause:** a real list, every item
+  opening with the option's name in `<strong>`, colon included. Anything that
+  holds for all of them goes before the list as one plain sentence.
+
+  ```html
+  <span class="tip-icon" data-tip="<ul><li><strong>Net equity:</strong> the home if sold, minus the loan, plus cash.</li><li><strong>Liquid cash:</strong> cash in the bank.</li><li><strong>Accumulated cost:</strong> what housing has cost so far.</li></ul>">?</span>
+  ```
+
+- **More than three, or any one of them needs a long sentence:** the tip
+  explains the **selected** option only, in the same `<strong>Name:</strong>`
+  form, and the element carries `data-tip-options`. The shared tooltip then adds
+  a small muted line under it, "Change the option to see the others explained."
+  (Indonesian on an `lang="id"` page), so the reader knows the other options have
+  their own. Do not add a clause on what the other option does; that line is the
+  pointer. Wiring is as in "Dependent tooltips" below.
+
+  ```html
+  <i class="tip-icon" id="tipLoanType" data-tip="" data-tip-options>?</i>
+  ```
+
+A list never carries `data-tip-options`, and a tip that follows a control
+without naming an option (a state, such as a slider that is inert until a
+budget is set) does not carry it either. `tip-check` enforces all of this: two
+or more "Name:" runs outside a list fail, a list of more than three items fails,
+and a tip that changes with its control and opens with `<strong>Name:</strong>`
+fails without `data-tip-options`.
+
 ### Dependent tooltips: say the state you are in
 
 A dropdown with seven options used to mean a tip listing all seven, which is the
 longest tip on any page and the least read: the options are already on screen in
 the dropdown, and six of the seven describe a choice the reader did not make. So
-a tip that hangs off a control carries the option that is **selected**, with at
-most one clause on what switching would do:
+a tip that hangs off a control carries the option that is **selected**, and
+`data-tip-options` adds the line saying the others have their own:
 
 ```js
 const TIP_STUDY_TYPE = {
@@ -945,18 +1134,18 @@ const TIP_STUDY_TYPE = {
 setTip('tt-study-type', TIP_STUDY_TYPE[$('study-type').value] || '');
 ```
 
-The same shape covers a Simple/Detailed switch (`<strong>Simple</strong> counts
-one gross figure in full. Detailed splits it per stream.`), a unit that changes
+The same shape covers a Simple/Detailed switch (`<strong>Simple:</strong> counts
+one gross figure in full.`), a unit that changes
 what a field is asking for (deposit as an amount versus a share of the price), and
 a field that is inert until another one is set (a budget-growth slider while the
 budget is automatic). Where a tool already keeps a table of tip text, give the
 entry variants keyed by state rather than a second element:
 `rentvsownhouse/tooltips.js` does this, and `RVO_APPLY_TIPS` reads each element's
-`data-tip-variant`.
+`data-tip-variant` (and sets `data-tip-options` for the keys in `RVO_OPTION_TIPS`).
 
 Wire it so the control keeps its own tip current, from the handler that already
-runs on change, and leave the markup's `data-tip` empty (`data-tip=""`) so an
-unwired tip shows up as a blank bubble rather than as stale text. `tip-check`
+runs on change, and leave the markup's `data-tip` empty (`data-tip=""`, plus
+`data-tip-options` when it names an option) so an unwired tip shows up as a blank bubble rather than as stale text. `tip-check`
 fails on an empty tip for exactly that reason.
 
 ### Global Tooltip (Dynamic, triggered by `data-tip`)
@@ -996,6 +1185,10 @@ Auto-created by `shared.js`. Appears on hover, positioned intelligently to avoid
 #globalTooltip strong { color: var(--accent-strong); font-weight: 700; }
 #globalTooltip br { display: block; margin-top: 5px; content: ''; }
 #globalTooltip.visible { display: block; opacity: 1; }
+/* Options listed in a tip, and the line under a selected-option tip */
+#globalTooltip ul { margin: 4px 0 0; padding-left: 16px; }
+#globalTooltip li { margin: 3px 0 0; }
+#globalTooltip .tip-hint { display: block; margin-top: 6px; font-size: .7rem; color: var(--muted); }
 
 /* Arrow pointer */
 #globalTooltip .tt-arrow {
@@ -1427,11 +1620,10 @@ const fmt = {
 
 | Purpose | CSS Variable |
 |---------|-------------|
-| Primary/default scenario line | `--line-a` / `--accent` |
-| Secondary scenario line | `--line-b` |
-| Third scenario line | `--line-c` / `--accent2` (mint) |
-| Fourth scenario line | `--line-d` / `--accent3` (rose) |
-| Fifth scenario line | `--line-e` (gold) |
+| First option line | `--line-a` (blue) |
+| Second option line | `--gold` |
+| Third, fourth, fifth option lines | `--line-c` (teal), `--line-d` (rose), `--line-e` (purple) |
+| Money out, a loss, a bar to clear | `--line-b` / `--negative` (red, never an option) |
 | Slider value labels | `--accent` |
 | Muted labels / help text | `--muted` |
 | Positive deltas (text/badge on dark) | `--positive-em` / `--data-pos-em` |
@@ -1444,7 +1636,7 @@ const fmt = {
 
 **Colour semantics**:
 - Blue family (`--accent`, `--positive`) → brand leadership + critical positive data
-- Red family (`--negative`, `--accent3` dark) → critical negative / destructive / error
+- Red family (`--negative`, `--line-b`) → direction only: money out, a loss, a bar to clear, an error; never an option a reader is choosing between (see Finance Tool Skeleton → Colour)
 - Mint (`--accent2`) → secondary supportive / calm / soft success
 - Rose / gold (`--accent3` light, `--gold`) → accent / warm emphasis / tertiary
 - Monospace (`DM Mono`) → all numeric values and data

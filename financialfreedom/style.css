@@ -10,8 +10,6 @@
 .ctrl-scroll{flex:1 1 auto;}
 .btn-row{flex-shrink:0;}
 .btn-row .btn-primary,.btn-row .btn-secondary{padding:10px 16px;font-size:.86rem;}
-.header{flex-wrap:wrap;gap:12px;}
-.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 h1{font-size:1.85rem;margin:0 0 4px;}
 
@@ -33,6 +31,8 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .inline-row{display:flex;gap:8px;align-items:center;}
 .inline-row .grow{flex:1;min-width:0;}
 .inline-row .period{flex:0 0 108px;width:108px;}
+/* A basis that can be "% of living" needs a little more room than a period. */
+.inline-row .period.basis{flex-basis:128px;width:128px;}
 .inline-row .age-in{flex:0 0 96px;width:96px;}
 /* shared.css ships .toggle-switch / .toggle-track / .toggle-knob but not the
    row that holds them, which the design reference documents. The switch is a
@@ -47,6 +47,86 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .seg-btn:hover:not(.active){color:var(--text);}
 .note{color:var(--muted);font-size:.79rem;line-height:1.45;margin:6px 0 0;}
 .note strong{color:var(--text);}
+/* ── Life stages (Money out, Detailed) ──
+   One card per stage, the shape of the cost lists on the Rent vs Own page:
+   a name and its remove button, the two ages, then the figure and its basis. */
+.stage-list{display:grid;gap:8px;margin-top:6px;}
+.stage-list:empty{display:none;}
+.stage-row{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;display:grid;gap:7px;}
+.stage-row.stage-off{border-style:dashed;}
+.stage-row.stage-off .stage-note{color:var(--negative-em);}
+.stage-row .note{margin:0;}
+/* The card is already the input colour, so its own fields sit on the panel
+   colour, a size down, the way the Rent vs Own cost cards do it. */
+.stage-row .txt-input,.stage-row .num-input,.stage-row .currency-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+.stage-row .txt-input,.stage-row .num-input{padding-left:9px;padding-right:9px;}
+.stage-row .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
+.stage-head{display:flex;align-items:center;gap:7px;}
+.stage-head .stage-name{flex:1;min-width:0;}
+
+.stage-ages{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.stage-lbl{font-size:.8rem;color:var(--muted);}
+.stage-ages .num-input{width:5.4em;flex:0 0 auto;}
+.stage-actions{display:flex;margin-top:8px;}
+.stage-actions .btn-sm{flex:1;}
+.stage-actions .btn-sm:disabled{opacity:.5;cursor:not-allowed;}
+/* ── Detailed Money out: living and retirement expenses as locked stages ──
+   The same two fields as in Simple, framed as the first and last card of the
+   list, each with its name locked and a line saying which ages it covers. */
+#moneyOut:not(.is-detailed) .detailed-only{display:none !important;}
+#moneyOut.is-detailed .simple-only{display:none;}
+#moneyOut.is-detailed>.money-stage{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;gap:7px;margin:10px 0 0;}
+#moneyOut.is-detailed>.money-stage .txt-input,#moneyOut.is-detailed>.money-stage .currency-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+#moneyOut.is-detailed>.money-stage .txt-input{padding-left:9px;padding-right:9px;}
+#moneyOut.is-detailed>.money-stage .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
+#moneyOut.is-detailed>.money-stage .note{margin:0;}
+#moneyOut.is-detailed>#stagesBlock{margin-top:8px;}
+#moneyOut.is-detailed>.stage-timeline{margin-bottom:12px;}
+#moneyOut.is-detailed>.stage-timeline+.field-row{border-top:1px solid var(--border);}
+.stage-head .tip-wrap{flex-shrink:0;}
+.money-stage .stage-name-locked{font-weight:700;color:var(--text);cursor:not-allowed;border-style:dashed;}
+#moneyOut.is-detailed>.money-stage .stage-name-locked{background:var(--bg-subtle);}
+.money-stage .stage-name-locked:focus{border-color:var(--border);}
+.stage-lock{display:inline-flex;align-items:center;justify-content:center;width:31px;height:28px;color:var(--muted);flex-shrink:0;}
+.stage-lock svg{width:15px;height:15px;}
+
+/* ── Detailed Money in: today's figure as the locked first stage ──
+   The same two fields as in Simple (the figure and its growth), framed as the
+   first card of the list. In Simple the model switch and the figure read as
+   one row, the way they always did. */
+#moneyIn:not(.is-detailed) .detailed-only{display:none !important;}
+#moneyIn.is-detailed .simple-only{display:none !important;}
+#moneyIn:not(.is-detailed) #savingsModeRow{padding-bottom:0;}
+#moneyIn:not(.is-detailed) #savingsRow{padding-top:5px;border-top:none;}
+#moneyIn.is-detailed>.money-stage{display:grid;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;gap:7px;margin:10px 0 0;}
+#moneyIn.is-detailed>.money-stage>.field-row{padding:0;border-top:none;gap:7px;}
+#moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .currency-input,#moneyIn.is-detailed>.money-stage .num-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+#moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .num-input{padding-left:9px;padding-right:9px;}
+#moneyIn.is-detailed>.money-stage .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
+#moneyIn.is-detailed>.money-stage .note{margin:0;}
+#moneyIn.is-detailed>.money-stage .stage-name-locked{background:var(--bg-subtle);}
+#moneyIn.is-detailed>#inStagesBlock{margin-top:8px;}
+#moneyIn.is-detailed>.stage-timeline{margin-bottom:12px;}
+/* Growth reads as a sentence on a card, "Grows 3 % a year, from today", the
+   way a stage's ages read "From age 28 to 33". */
+#moneyIn.is-detailed .growth-line,.stage-grow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+#moneyIn.is-detailed .grow-wrap,.stage-grow .grow-wrap{width:7.4em;flex:0 0 auto;}
+#moneyIn.is-detailed .growth-line,.stage-grow{flex-wrap:nowrap;}
+.grow-tail{flex:1 1 0;min-width:0;}
+/* Whether a stage is still paid once you stop work: a switch on the card. */
+.stage-keep{display:flex;align-items:center;gap:7px;}
+.stage-keep .stage-lbl{flex:1;color:var(--text);font-weight:600;}
+.stage-keep .tip-wrap{flex-shrink:0;}
+.stage-row .toggle-track{background:var(--panel);}
+
+/* What the list resolves to, at the slider's retirement age. */
+.stage-timeline{margin-top:10px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
+.tl-head{font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:5px;}
+.tl-list{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:.79rem;}
+.tl-list li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;}
+.tl-ages{font-family:'DM Mono',monospace;color:var(--muted);font-size:.75rem;white-space:nowrap;}
+.tl-name{color:var(--text);min-width:0;overflow-wrap:break-word;}
+.tl-amt{font-family:'DM Mono',monospace;color:var(--text);white-space:nowrap;}
 .ticker-row{display:flex;gap:8px;align-items:stretch;}
 .ticker-row .txt-input{flex:1;min-width:0;text-transform:uppercase;}
 .ticker-ref-link{display:inline-block;margin-top:7px;font-size:.78rem;color:var(--accent);text-decoration:none;}
@@ -63,7 +143,13 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 #boardCash{border-left-color:var(--accent2);}
 .board-head{margin:0 0 14px;}
 .board-head h2{margin:0 0 6px;font-size:1.3rem;}
-.chart-head h3,.detail-head h3{font-size:1.02rem;}
+/* Path to freedom carries the money switch on its heading row: it changes how
+   every figure on the page reads, so it sits with the results, not the inputs. */
+.board-head-split{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;}
+.board-head-split h2{margin:0;}
+.board-head .money-toggle{border-top:none;padding:6px 12px;gap:10px;flex:0 0 auto;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
+.board-head .money-toggle .toggle-label{font-size:.84rem;flex:0 1 auto;}
+.detail-head h3{font-size:1.02rem;}
 
 /* ── Retirement-age sensitivity slider ──
    It is a control, but it belongs to the section it moves rather than to the
@@ -88,19 +174,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .metric .value.pos{color:var(--data-pos-em);}
 .metric .value.neg{color:var(--data-neg-em);}
 
-/* ── Verdict banner: the one thing a first-time visitor reads ── */
-.verdict{padding:16px 18px;margin-bottom:18px;border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg-subtle);display:none;}
-.verdict.visible{display:block;}
-.verdict h2{margin:0 0 6px;font-size:1.05rem;}
-/* A verdict whose heading says the whole thing carries no body line under it. */
-.verdict h2:last-child{margin-bottom:0;}
-.verdict p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;}
-.verdict.good{border-color:var(--positive-border);background:var(--positive-bg);}
-.verdict.good h2{color:var(--positive-em);}
-.verdict.bad{border-color:var(--negative-border);background:var(--negative-bg);}
-.verdict.bad h2{color:var(--negative-em);}
-.verdict.warn{border-color:rgba(255,210,140,.35);background:var(--warning-bg);}
-.verdict.warn h2{color:var(--warning-text);}
+/* ── Verdict banner: styled by shared.css (.verdict); the remedy list is ours ── */
 .remedies{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;}
 .remedies li{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 12px;font-size:.85rem;line-height:1.45;color:var(--muted);}
 .remedies li strong{color:var(--text);display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
@@ -151,9 +225,6 @@ tr.free td{background:rgba(141,187,255,.12);font-weight:700;border-top:1.5px sol
 body.light tr.free td{background:rgba(90,145,232,.12);}
 td.neg{color:var(--data-neg-em);}
 td.pos{color:var(--data-pos-em);}
-.assumptions{margin:0;padding-left:18px;color:var(--muted);font-size:.85rem;line-height:1.65;}
-.assumptions li+li{margin-top:5px;}
-.assumptions strong{color:var(--text);}
 
 .page-footer{max-width:1440px;margin:0 auto;padding:0 24px 24px;}
 
@@ -175,7 +246,6 @@ main .card{transition:opacity var(--transition-fast);}
   .metrics,.metrics-3{grid-template-columns:repeat(2,1fr);}
   .canvas-wrap{height:360px;}
   .canvas-wrap-cash{height:500px;}
-  .header{flex-direction:column;}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
@@ -189,5 +259,5 @@ main .card{transition:opacity var(--transition-fast);}
   .btn-row .btn-primary,.btn-row .btn-secondary{flex:1 1 auto;}
   .ctrl-tab{font-size:.7rem;}
   .inline-row{flex-wrap:wrap;}
-  .inline-row .period{flex:1 1 100%;width:auto;}
+  .inline-row .period,.inline-row .period.basis{flex:1 1 100%;width:auto;}
 }

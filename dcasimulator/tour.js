@@ -1,7 +1,9 @@
 /* Guided-tour config for the DCA Scenario Explorer (single asset).
-   The shared engine (../tour-shared.js) reads this object. */
+   The shared engine (../tour-shared.js) reads this object. v2 follows the
+   redesign: Currency on the Data tab, Settings renamed Assumptions, and the
+   answer and summary above the charts, so readers who took v1 see it again. */
 window.__TOUR = {
-  seenKey: 'dca-tour-v1-seen',
+  seenKey: 'dca-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -22,10 +24,11 @@ window.__TOUR = {
     },
     {
       target: '.ctrl-tabs',
-      title: '② Data, Scenarios, Settings',
-      body: 'Everything is organised into three tabs. In <strong>Data</strong> you load ' +
-            'the market data, in <strong>Scenarios</strong> you define each DCA strategy, ' +
-            'and in <strong>Settings</strong> you set currency and the risk-free rate for ' +
+      title: '② Data, Scenarios, Assumptions',
+      body: 'Everything is organised into three tabs. In <strong>Data</strong> you pick ' +
+            'the currency and load the market data, in <strong>Scenarios</strong> you ' +
+            'define each DCA strategy, and in <strong>Assumptions</strong> you set when ' +
+            'orders fill, the seed behind simulated assets, and the risk-free rate for ' +
             'the advanced metrics.'
     },
     {
@@ -61,17 +64,21 @@ window.__TOUR = {
         // Describing a Final Summary means there has to be one on screen.
         if (window.__DCA_TOUR) window.__DCA_TOUR.ensureResults();
       },
-      title: '⑤ Compare the outcomes',
-      body: 'Charts and the <strong>Final Summary</strong> line up ending value, average ' +
-            'cost, and return side by side, plus Sharpe, Sortino, and CAGR when you enable ' +
-            'advanced metrics. Export any chart or download the full breakdown as CSV.'
+      title: '⑤ Read the answer, then compare',
+      body: 'The sentence above the summary says which scenario ended highest and by how ' +
+            'much, or, when they put different amounts in, which earned the most on what ' +
+            'went in. The <strong>Final Summary</strong> gives each one\u2019s final value, ' +
+            'return on investment (ROI), total topped up and trades, plus Sharpe, Sortino ' +
+            'and CAGR under <strong>Advanced metrics</strong>. The charts follow; export any ' +
+            'of them, and open the breakdown with <strong>Show table</strong> or download ' +
+            'it as CSV.'
     },
     {
       target: null,
       title: '✅ You are all set',
       body: 'That is the workflow. Power user comparing whole portfolios? Try the ' +
             '<strong>Portfolio DCA Simulator</strong> linked near the top. Replay this ' +
-            'tour any time via <strong>Take a tour</strong> in the header.'
+            'tour any time via the <strong>🧭</strong> button in the header.'
     }
   ]
 };

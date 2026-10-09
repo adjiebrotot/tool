@@ -13,6 +13,14 @@ no absolutely positioned element may escape to the page (the currency tags
 once did, stacking on one spot over the card), and every currency tag must
 sit inside its own cell.
 
+It also checks the six Quick Start scenarios. Each is the page's only reset,
+so applied over a messy page (custom frequency on, a nominal target, an
+override, simple-mode cities and a custom rate) it must open exactly as it does
+on a fresh page. Each one's Required salaries are then replayed from the raw
+JSON: the home budget index-scaled to each destination, divided by one minus
+the home savings ratio, and every destination's savings ratio must read the
+same as home's.
+
 `freq.mjs` is the accounting integrity audit for Detailed mode's custom
 frequency checkbox, a conversion add-on that changes the units amounts are
 typed in, never the money. Unticked, the table must match the pre-feature
@@ -24,4 +32,25 @@ column's money where it was, including through a sweep of 60 random switches,
 unticking and ticking again, and a reload. Every Savings and Required salary
 cell is replayed from the raw JSON and the page state, without the tool's code.
 
-Run: `node run.mjs` and `node freq.mjs`
+`live.mjs` audits the live exchange rates, with every feed mocked. Money that
+crosses the border must move at the live rate, while the index estimate stays
+on the bundled rate the indices were priced at. A failing feed falls through to
+the next, every feed failing leaves the bundled rate, a rate far off the bundled
+one (a redenomination the feed got wrong) or a feed older than the bundled file
+is not trusted, a late rate redraws the results, and a saved rate is reused
+until it is six hours old.
+
+Run: `node run.mjs`, `node freq.mjs` and `node live.mjs`
+
+`drag.mjs` checks the Detailed table's draggable city columns. Whichever city
+lands first becomes the From city, and the promise is that a move changes no
+figure: the table is read off the screen city by city before and after each
+move and every income, expense, savings and ratio must match. Under "I need
+to earn" the promoted city's required salary becomes its typed income (also
+replayed from the raw JSON) and the old From city's required salary comes out
+at the income it had, with no cell turned into an override; dragging back is
+an exact round trip. Under "I can save", with a custom rate and overrides, the
+rate is re-quoted against the new From city (the old From column takes its
+inverse) and only the figures an estimate cannot give back become overrides.
+It also covers nominal targets with custom frequency, keyboard moves, Escape
+and a drop back in place.

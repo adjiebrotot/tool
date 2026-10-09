@@ -487,6 +487,30 @@
     loadVideo(e.dataTransfer.files[0]);
   });
   fileInput.addEventListener('change', e => loadVideo(e.target.files[0]));
+  // A 6-second clip shipped with the page, fetched from this site and handed
+  // to loadVideo like a dropped file. H.264 MP4 where the browser plays it,
+  // else the same clip as VP9 WebM (builds without H.264, such as Chromium).
+  const sampleBtn = $('sampleBtn');
+  const SAMPLE = video.canPlayType('video/mp4; codecs="avc1.4d401e"')
+    ? { url: 'sample.mp4',  type: 'video/mp4' }
+    : { url: 'sample.webm', type: 'video/webm' };
+  sampleBtn.addEventListener('click', async e => {
+    e.stopPropagation();
+    const label = sampleBtn.textContent;
+    sampleBtn.disabled = true;
+    sampleBtn.textContent = 'Loading sample…';
+    try {
+      const res = await fetch(SAMPLE.url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const blob = await res.blob();
+      loadVideo(new File([blob], SAMPLE.url, { type: SAMPLE.type }));
+    } catch (err) {
+      alert('Could not load the sample video (' + err.message + ').');
+    } finally {
+      sampleBtn.disabled = false;
+      sampleBtn.textContent = label;
+    }
+  });
   loadBtn.addEventListener('click', () => {
     const fi = document.createElement('input');
     fi.type = 'file'; fi.accept = 'video/*';

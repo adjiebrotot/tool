@@ -17,70 +17,80 @@ const LANG = {
   en: {
     subtitle: 'Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).',
     btnBack: '← Other Tools',
-    tabInputs: 'Inputs',
+    tabInputs: 'Household',
     tabAdvanced: 'PTKP & Brackets',
-    dependentsLabel: 'Number of Dependents (Tanggungan)',
-    dep0: '0 — no dependents',
-    dep1: '1 — one child (anak)',
-    dep2: '2 — two children (anak)',
-    dep3: '3 — three children (anak)',
+    groupFamily: 'Family',
+    dependentsLabel: 'Dependants (tanggungan)',
+    dependentsTip: 'Family members you support, such as children. Each one adds to the tax-free allowance (PTKP), and at most three count.',
+    dep0: 'No dependants',
+    dep1: '1 dependant',
+    dep2: '2 dependants',
+    dep3: '3 dependants',
     groupIncome: 'Income',
-    inputMethodLabel: 'Income Input Method',
-    modeTotalBtn: 'Total + Split %',
-    modeSplitBtn: 'Husband + Wife',
-    totalSalaryLabel: 'Total Household Annual Gross Salary',
-    wifeShareLabel: "Wife's share of income",
-    deductionLabel: 'Combined Annual Deductions (Pengurang)',
+    inputMethodLabel: 'Enter income as',
+    modeTotalBtn: 'Total and split',
+    modeSplitBtn: 'Each spouse',
+    unitPerYr: '/yr',
+    totalSalaryLabel: 'Household gross salary (both spouses)',
+    wifeShareLabel: "Wife's share of that salary",
+    splitDerived: (h, w) => `Husband <b>${h}</b>, wife <b>${w}</b> a year.`,
+    deductionLabel: 'Deductions, both spouses (pengurang)',
     deductionTip: 'Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.',
-    husbandSalaryLabel: "Husband's Annual Gross Salary",
-    wifeSalaryLabel: "Wife's Annual Gross Salary",
-    combinedPrefix: 'Combined:',
-    wifeSharePrefix: 'Wife share:',
-    husbandDeductionLabel: "Husband's Annual Deductions (Pengurang)",
+    husbandSalaryLabel: "Husband's gross salary",
+    wifeSalaryLabel: "Wife's gross salary",
+    combinedPrefix: 'Together',
+    combinedSuffix: "a year, wife's share",
+    husbandDeductionLabel: "Husband's deductions (pengurang)",
     husbandDeductionTip: "Deductions that come off the husband's gross income only, applied before PTKP.",
-    wifeDeductionLabel: "Wife's Annual Deductions (Pengurang)",
+    wifeDeductionLabel: "Wife's deductions (pengurang)",
     wifeDeductionTip: "Deductions that come off the wife's gross income only, applied before PTKP.",
-    ptkpSectionLabel: 'PTKP Values (Rp)',
-    ptkpTK0: 'TK/0 — Single (base)',
-    ptkpK: 'K — Married addition',
-    ptkpI: 'I — Working spouse addition',
-    ptkpDep: 'Per dependent (tanggungan)',
-    ptkpComputedPrefix: 'Computed PTKP → Pisah:',
-    ptkpHLabel: '(H)',
-    ptkpWLabel: '(W)',
-    ptkpGLabel: 'Gabung:',
-    bracketSectionLabel: 'Tax Brackets (PPh 21)',
+    ptkpSectionLabel: 'Tax-free allowance a year (PTKP)',
+    ptkpTK0: 'Base, for each taxpayer (TK/0)',
+    ptkpK: 'Added if married (K)',
+    ptkpI: "Added when the wife's income is combined (I)",
+    ptkpDep: 'Added for each dependant',
+    ptkpComputedPrefix: "This household's PTKP under Pisah Harta:",
+    ptkpHLabel: 'husband',
+    ptkpWLabel: 'wife',
+    ptkpGLabel: 'Gabung Harta:',
+    bracketSectionLabel: 'Tax brackets (PPh 21)',
     bracketFrom: 'From (Rp)',
-    bracketToHtml: 'To (Rp) <span style="font-size:0.68rem">(last=∞)</span>',
+    bracketTo: 'Up to (Rp)',
     bracketRate: 'Rate (%)',
-    bracketTip: 'Edit each threshold and rate. The "From" column fills itself in, and only the last bracket is open-ended. Raising a bound past the ones beneath it deletes them.',
-    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Each spouse files their own SPT. Husband uses PTKP {K}, wife uses PTKP {TK}. Double bracket access.<br><br><strong>Gabung Harta ({KI}):</strong> Combined income, single SPT. Uses PTKP {KI}. One bracket ladder for all income.',
-    resetBtn: '↺ Reset',
+    bracketTip: 'Edit each threshold and rate. The "From" column fills itself in, and only the last bracket has no upper limit. Raising a limit past the ones beneath it deletes them.',
+    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Each spouse files their own SPT. Husband uses PTKP {K}, wife uses PTKP {TK}. Each has their own set of brackets.<br><br><strong>Gabung Harta ({KI}):</strong> Combined income, one SPT. Uses PTKP {KI}. One set of brackets for all the income.',
     quickStartLabel: 'Quick Start',
-    quickStartTip: 'Fills the Inputs tab with a worked household and resets PTKP and brackets to statute. Change any figure over the top of it.',
+    quickStartTip: 'Fills the Household tab with a worked example and puts PTKP and the brackets back to the statutory values. Equal incomes is the example the page opens with.',
+    qsEven: 'Equal incomes, no children',
+    qsEvenTip: 'Rp 500 million a year shared equally, no dependants: the figures the page opens with. Pisah Harta saves Rp 19.8 million.',
     qsSingle: 'Single income family',
-    qsSingleTip: 'Husband earns Rp 300 million, wife earns nothing, two children. Her own PTKP goes unused under Pisah, so Gabung saves Rp 8.1 million.',
+    qsSingleTip: 'Husband earns Rp 300 million a year, wife earns nothing, two children. Her own PTKP goes unused under Pisah, so Gabung saves Rp 8.1 million.',
     qsDouble: 'Double income family',
-    qsDoubleTip: 'Husband Rp 400 million, wife Rp 300 million, one child. Under Pisah each climbs their own bracket ladder, which saves Rp 34.8 million.',
-    kpiPisahLabel: 'Pisah Harta — Total Tax',
-    kpiGabungLabel: 'Gabung Harta — Total Tax',
-    kpiSavingLabel: 'Tax Savings (Cheaper Option)',
-    effectiveRate: 'Effective Rate:',
+    qsDoubleTip: 'Husband Rp 400 million a year, wife Rp 300 million, one child. Under Pisah each climbs their own bracket ladder, which saves Rp 34.8 million.',
+    kpiSavingLabel: 'Tax savings (cheaper option)',
+    kpiPisahLabel: 'Pisah Harta: total tax',
+    kpiPisahTip: 'Each spouse files their own tax return (SPT). The effective rate is the tax as a share of gross salary.',
+    kpiGabungLabel: 'Gabung Harta: total tax',
+    kpiGabungTip: 'Husband and wife file one tax return (SPT) on their combined income.',
+    kpiRateSub: (pct) => `A year, effective rate ${pct}`,
     noSignificantDiff: 'No significant difference',
-    pisahWins: '✅ Pisah Harta wins',
-    gabungWins: '✅ Gabung Harta wins',
-    posTitle: '📍 Your Current Tax Position',
-    posPtkpPisahH: 'PTKP (Pisah H)',
-    posPtkpPisahW: 'PTKP (Pisah W)',
-    posPtkpGabung: 'PTKP (Gabung)',
-    posMaxMarginal: 'Max Marginal Bracket',
-    posEffPisah: 'Effective Rate — Pisah',
-    posEffGabung: 'Effective Rate — Gabung',
+    pisahWins: 'A year, with Pisah Harta',
+    gabungWins: 'A year, with Gabung Harta',
     margFrom: 'from',
-    chart1Title: 'Total Tax by Household Salary',
-    chart1Sub: 'Shows total tax payable across salary range. The gap between lines = tax savings.',
-    chart1XTitle: 'Total Household Salary',
-    chart1YTitle: 'Total Tax Payable',
+    /* The answer in one sentence, then the two totals and where the cheaper
+       way switches. Neutral: neither scheme is the bad one. */
+    verdictPisah: (amt) => `Pisah Harta saves <span class="v-num">${amt}</span> a year in tax.`,
+    verdictGabung: (amt) => `Gabung Harta saves <span class="v-num">${amt}</span> a year in tax.`,
+    verdictSame: 'Pisah Harta and Gabung Harta cost the same tax at these incomes.',
+    verdictTotals: (p, pr, g, gr) => `Total tax a year: ${p} with Pisah Harta (effective rate ${pr}), ${g} with Gabung Harta (${gr}).`,
+    verdictSwitch: (sal, below, above) => `At this split, ${below} is cheaper below a household salary of about ${sal} a year, and ${above} above it.`,
+    verdictAlways: (who, lo, hi) => `At this split, ${who} costs the same or less at every household salary from ${lo} to ${hi} a year.`,
+    optPisah: 'Pisah Harta',
+    optGabung: 'Gabung Harta',
+    chart1Title: 'Total tax a year, by household salary',
+    chart1Sub: "Each line is the household's total tax for the year if it files that way, with the wife's share held where you set it. The gap between the lines is the saving.",
+    chart1XTitle: 'Household gross salary (Rp a year)',
+    chart1YTitle: 'Total tax (Rp a year)',
     /* The export cluster every chart and table on the site carries: the label
        is a glyph, so the title attribute is what says what it does. */
     btnSvgTitle: 'Download this chart as SVG',
@@ -89,59 +99,65 @@ const LANG = {
     btnResetZoomTitle: 'Reset zoom',
     btnCsvTitle: 'Download this table as CSV',
     hoverBox1: 'Hover over the chart to inspect a salary point.',
-    chart2Title: 'Tax Difference (Gabung − Pisah)',
-    chart2Sub: 'Positive = Gabung Harta pays more (Pisah Harta wins). Negative = Gabung Harta pays less (Gabung Harta wins).',
-    chart2YTitle: 'Tax Difference (positive = Pisah wins)',
+    chart2Title: 'Tax difference (Gabung − Pisah)',
+    chart2Sub: 'Above zero, Pisah Harta is cheaper by that much. Below zero, Gabung Harta is.',
+    chart2YTitle: 'Tax difference (Rp a year)',
     hoverBox2: 'Hover over the chart to inspect the difference.',
     legendPisah: 'Pisah Harta ({PISAH})',
     legendGabung: 'Gabung Harta ({KI})',
-    legendPisahWins: 'Pisah Harta wins (positive)',
-    legendGabungWins: 'Gabung Harta wins (negative)',
+    legendPisahWins: 'Pisah Harta cheaper (above zero)',
+    legendGabungWins: 'Gabung Harta cheaper (below zero)',
     legendDiffFull: 'Difference, unbroken',
-    salaryLabel: 'Salary',
-    pisahSavesPrefix: 'Pisah saves:',
-    gabungSavesPrefix: 'Gabung saves:',
-    summaryTitle: 'Summary at Current Salary',
-    crossoverTitle: 'Crossover Analysis',
-    tilePtkpHusband: 'PTKP Husband (Pisah)',
-    tilePtkpWife: 'PTKP Wife (Pisah)',
-    tileTotalPtkpPisah: 'Total PTKP Pisah',
+    salaryLabel: 'Household salary',
+    pisahSavesPrefix: 'Pisah Harta saves',
+    gabungSavesPrefix: 'Gabung Harta saves',
+    summaryTitle: 'Summary at current salary, a year',
+    crossoverTitle: 'Crossover analysis',
+    tileGrosssalary: 'Gross salary',
+    tileDeductions: 'Deductions (pengurang)',
+    tileNetIncome: 'Net income (after deductions)',
+    tileHusbandNet: "Husband's net income",
+    tileWifeNet: "Wife's net income",
+    tilePtkpHusband: 'PTKP husband (Pisah)',
+    tilePtkpWife: 'PTKP wife (Pisah)',
+    tileTotalPtkpPisah: 'Total PTKP (Pisah)',
     tilePtkpGabungCode: 'PTKP Gabung ({KI})',
-    tileGrosssalary: 'Gross Salary',
-    tileDeductions: 'Deductions (Pengurang)',
-    tileNetIncome: 'Net Income (after deductions)',
-    tileHusbandNet: 'Husband Net Income',
-    tileWifeNet: 'Wife Net Income',
-    crossoverWith: 'With',
-    crossoverWifePct: '% wife income:',
-    crossoverWastedHtml: 'The non-earning spouse\'s PTKP is entirely wasted under Pisah Harta. Gabung Harta consolidates all PTKP into one filing, making it <span class="negative">beneficial</span> at this split.',
-    crossoverAdjust: 'Adjust the income split to see where Pisah Harta becomes advantageous due to double bracket access.',
-    crossoverPoint: 'Crossover point:',
-    crossoverBelowHtml: 'Below this salary, <span class="negative">Gabung Harta ({KI})</span> may pay less because the higher combined PTKP is utilized more efficiently relative to income.',
-    crossoverAboveHtml: 'Above this salary, <span class="positive">Pisah Harta ({PISAH})</span> wins because each spouse accesses lower tax brackets independently.',
-    crossoverNoneFound: 'No crossover found in range.',
-    crossoverPisahBetterPre: 'At this income split (',
-    crossoverPisahBetterPost: '%), <span class="positive">Pisah Harta</span> is better (or equal) across the entire salary range. Both schemes have the same total PTKP at even splits, but Pisah Harta benefits from dual bracket access.',
-    crossoverGabungBetterHtml: 'At this income split, <span class="negative">Gabung Harta</span> appears advantageous across the range. This typically occurs when the income split is very uneven.',
-    detailTitle: 'Detailed Breakdown by Salary',
+    tileTopBracket: 'Max marginal bracket',
+    tileTopBracketTip: 'The highest tax rate any of the income reaches, under Pisah or Gabung.',
+    crossoverWith: "With the wife's share at",
+    crossoverWifePct: '%:',
+    crossoverWastedHtml: 'The non-earning spouse\'s PTKP goes unused under Pisah Harta. Gabung Harta puts every PTKP on one SPT, so <span class="gabung-val">Gabung Harta</span> is cheaper at this split.',
+    crossoverAdjust: "Move the wife's share to see where Pisah Harta becomes cheaper, thanks to each spouse having their own set of brackets.",
+    crossoverPoint: (sal) => `Crossover point: about ${sal} a year of household salary.`,
+    crossoverBelowHtml: 'Below it, <span class="gabung-val">Gabung Harta ({KI})</span> pays less, because its larger combined PTKP counts for more against a smaller income.',
+    crossoverAboveHtml: 'Above it, <span class="pisah-val">Pisah Harta ({PISAH})</span> pays less, because each spouse climbs their own set of brackets.',
+    crossoverBelowPisahHtml: 'Below it, <span class="pisah-val">Pisah Harta ({PISAH})</span> pays less.',
+    crossoverAboveGabungHtml: 'Above it, <span class="gabung-val">Gabung Harta ({KI})</span> pays less.',
+    crossoverNoneFound: (lo, hi) => `No crossover between ${lo} and ${hi} a year.`,
+    crossoverPisahBetterPre: 'At this split (',
+    crossoverPisahBetterPost: '%), <span class="pisah-val">Pisah Harta</span> costs the same or less at every salary. With the statutory PTKP both ways allow the same total, and Pisah Harta also gives each spouse their own set of brackets.',
+    crossoverGabungBetterHtml: 'At this split, <span class="gabung-val">Gabung Harta</span> costs the same or less across the whole range. This usually happens when one spouse earns far more than the other.',
+    crossoverSameHtml: 'At this split, both ways cost the same at every salary.',
+    detailTitle: 'Detailed breakdown by salary',
+    tableUnitNote: "Rupiah a year, with the wife's share held where you set it. Household salary is both spouses' gross salary together.",
     tabComparison: 'Comparison',
-    tabPisah: 'Pisah Harta Detail',
-    tabGabung: 'Gabung Harta Detail',
-    tblSalary: 'Salary',
-    tblTaxPayables: 'Tax Payables',
-    tblDifference: 'Difference',
+    tabPisah: 'Pisah Harta detail',
+    tabGabung: 'Gabung Harta detail',
+    tblSalary: 'Household salary',
+    tblTaxPayables: 'Tax payable',
+    tblDifference: 'Difference (Gabung − Pisah)',
     tblWinner: 'Winner',
-    tblEffRate: 'Effective Rate',
-    tblPtkpGabungCode: 'PTKP {KI}',
-    tblNetIncome: 'Net Income',
+    tblEffRate: 'Effective rate',
+    tblPtkpGabungCode: 'PTKP ({KI})',
+    tblNetIncome: 'Net income',
     tblPTKP: 'PTKP',
-    tblTaxableIncome: 'Taxable Income',
+    tblTaxableIncome: 'Taxable income (PKP)',
     tblHusband: 'Husband',
     tblWife: 'Wife',
-    tblTotalTax: 'Total Tax',
+    tblTotalTax: 'Total tax',
     tblPisah: 'Pisah',
     tblGabung: 'Gabung',
-    tblProportional: 'Tax Payables (Proportional)',
+    tblProportional: 'Tax payable (proportional)',
     tblSame: '—',
     tblPisahWin: 'Pisah',
     tblGabungWin: 'Gabung',
@@ -154,134 +170,148 @@ const LANG = {
     warnCapTail: '. The amount you entered is still applied in full.',
     warnCapH: 'Husband',
     warnCapW: 'Wife',
+    assumesTitle: 'What this assumes',
   },
   id: {
     subtitle: 'Bandingkan PPh orang pribadi di Indonesia antara skema Pisah Harta dan Gabung Harta.',
     btnBack: '← Alat Lainnya',
-    tabInputs: 'Masukan',
+    tabInputs: 'Rumah tangga',
     tabAdvanced: 'PTKP & Lapisan Pajak',
-    dependentsLabel: 'Jumlah Tanggungan',
-    dep0: '0 — tidak ada tanggungan',
-    dep1: '1 — satu anak',
-    dep2: '2 — dua anak',
-    dep3: '3 — tiga anak',
+    groupFamily: 'Keluarga',
+    dependentsLabel: 'Tanggungan',
+    dependentsTip: 'Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP, dan paling banyak tiga yang dihitung.',
+    dep0: 'Tanpa tanggungan',
+    dep1: '1 tanggungan',
+    dep2: '2 tanggungan',
+    dep3: '3 tanggungan',
     groupIncome: 'Penghasilan',
-    inputMethodLabel: 'Cara Input Penghasilan',
-    modeTotalBtn: 'Total + % Bagi',
-    modeSplitBtn: 'Suami + Istri',
-    totalSalaryLabel: 'Total Gaji Kotor Tahunan Rumah Tangga',
-    wifeShareLabel: 'Porsi penghasilan istri',
-    deductionLabel: 'Total Potongan Tahunan (Pengurang)',
+    inputMethodLabel: 'Isi penghasilan sebagai',
+    modeTotalBtn: 'Total dan porsi',
+    modeSplitBtn: 'Per pasangan',
+    unitPerYr: '/thn',
+    totalSalaryLabel: 'Gaji kotor rumah tangga (suami dan istri)',
+    wifeShareLabel: 'Porsi istri dari gaji tersebut',
+    splitDerived: (h, w) => `Suami <b>${h}</b>, istri <b>${w}</b> per tahun.`,
+    deductionLabel: 'Pengurang, suami dan istri',
     deductionTip: 'Pengurang seperti biaya jabatan atau iuran pensiun, dikurangkan dari penghasilan kotor sebelum PTKP lalu dibagi sesuai porsi penghasilan masing-masing.',
-    husbandSalaryLabel: 'Gaji Kotor Tahunan Suami',
-    wifeSalaryLabel: 'Gaji Kotor Tahunan Istri',
-    combinedPrefix: 'Total:',
-    wifeSharePrefix: 'Porsi istri:',
-    husbandDeductionLabel: 'Potongan Tahunan Suami (Pengurang)',
+    husbandSalaryLabel: 'Gaji kotor suami',
+    wifeSalaryLabel: 'Gaji kotor istri',
+    combinedPrefix: 'Total',
+    combinedSuffix: 'per tahun, porsi istri',
+    husbandDeductionLabel: 'Pengurang suami',
     husbandDeductionTip: 'Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.',
-    wifeDeductionLabel: 'Potongan Tahunan Istri (Pengurang)',
+    wifeDeductionLabel: 'Pengurang istri',
     wifeDeductionTip: 'Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.',
-    ptkpSectionLabel: 'Nilai PTKP (Rp)',
-    ptkpTK0: 'TK/0 — Tidak Kawin (dasar)',
-    ptkpK: 'K — Tambahan Kawin',
-    ptkpI: 'I — Tambahan Istri/Suami Bekerja',
-    ptkpDep: 'Per tanggungan',
-    ptkpComputedPrefix: 'PTKP dihitung → Pisah:',
-    ptkpHLabel: '(S)',
-    ptkpWLabel: '(I)',
-    ptkpGLabel: 'Gabung:',
-    bracketSectionLabel: 'Lapisan Tarif PPh 21',
+    ptkpSectionLabel: 'Penghasilan tidak kena pajak per tahun (PTKP)',
+    ptkpTK0: 'Dasar, untuk tiap wajib pajak (TK/0)',
+    ptkpK: 'Tambahan bila kawin (K)',
+    ptkpI: 'Tambahan bila penghasilan istri digabung (I)',
+    ptkpDep: 'Tambahan per tanggungan',
+    ptkpComputedPrefix: 'PTKP rumah tangga ini dengan Pisah Harta:',
+    ptkpHLabel: 'suami',
+    ptkpWLabel: 'istri',
+    ptkpGLabel: 'Gabung Harta:',
+    bracketSectionLabel: 'Lapisan tarif PPh 21',
     bracketFrom: 'Dari (Rp)',
-    bracketToHtml: 'Sampai (Rp) <span style="font-size:0.68rem">(terakhir=∞)</span>',
+    bracketTo: 'Sampai (Rp)',
     bracketRate: 'Tarif (%)',
     bracketTip: 'Ubah setiap ambang batas dan tarif. Kolom "Dari" terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.',
-    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP {K}, istri menggunakan PTKP {TK}. Keduanya mengakses lapisan tarif secara terpisah.<br><br><strong>Gabung Harta ({KI}):</strong> Penghasilan digabung dalam satu SPT bersama. Menggunakan PTKP {KI}. Satu tangga lapisan tarif untuk seluruh penghasilan.',
-    resetBtn: '↺ Atur Ulang',
+    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Masing-masing pasangan mengajukan SPT sendiri. Suami menggunakan PTKP {K}, istri menggunakan PTKP {TK}. Masing-masing punya lapisan tarif sendiri.<br><br><strong>Gabung Harta ({KI}):</strong> Penghasilan digabung dalam satu SPT. Menggunakan PTKP {KI}. Satu lapisan tarif untuk seluruh penghasilan.',
     quickStartLabel: 'Mulai Cepat',
-    quickStartTip: 'Mengisi tab Input dengan contoh rumah tangga dan mengembalikan PTKP serta tarif ke ketentuan. Ubah angka mana pun setelahnya.',
+    quickStartTip: 'Mengisi tab Rumah tangga dengan contoh dan mengembalikan PTKP serta lapisan tarif ke ketentuan. Penghasilan setara adalah contoh saat halaman dibuka.',
+    qsEven: 'Penghasilan setara, tanpa anak',
+    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: angka saat halaman dibuka. Pisah Harta hemat Rp 19,8 juta.',
     qsSingle: 'Keluarga satu penghasilan',
-    qsSingleTip: 'Suami berpenghasilan Rp 300 juta, istri tidak berpenghasilan, dua anak. PTKP istri terbuang saat Pisah, jadi Gabung hemat Rp 8,1 juta.',
+    qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. PTKP istri terbuang saat Pisah, jadi Gabung hemat Rp 8,1 juta.',
     qsDouble: 'Keluarga dua penghasilan',
-    qsDoubleTip: 'Suami Rp 400 juta, istri Rp 300 juta, satu anak. Saat Pisah masing-masing menapaki lapisan tarifnya sendiri, jadi Pisah hemat Rp 34,8 juta.',
-    kpiPisahLabel: 'Pisah Harta — Total Pajak',
-    kpiGabungLabel: 'Gabung Harta — Total Pajak',
-    kpiSavingLabel: 'Penghematan Pajak',
-    effectiveRate: 'Tarif Efektif:',
+    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Saat Pisah masing-masing menapaki lapisan tarifnya sendiri, jadi Pisah hemat Rp 34,8 juta.',
+    kpiSavingLabel: 'Penghematan pajak (opsi lebih murah)',
+    kpiPisahLabel: 'Pisah Harta: total pajak',
+    kpiPisahTip: 'Suami dan istri masing-masing melapor SPT sendiri. Tarif efektif adalah pajak sebagai porsi gaji kotor.',
+    kpiGabungLabel: 'Gabung Harta: total pajak',
+    kpiGabungTip: 'Suami dan istri melapor satu SPT atas penghasilan gabungan.',
+    kpiRateSub: (pct) => `Per tahun, tarif efektif ${pct}`,
     noSignificantDiff: 'Tidak ada perbedaan signifikan',
-    pisahWins: '✅ Pisah Harta lebih hemat',
-    gabungWins: '✅ Gabung Harta lebih hemat',
-    posTitle: '📍 Posisi Pajak Anda Saat Ini',
-    posPtkpPisahH: 'PTKP Pisah (Suami)',
-    posPtkpPisahW: 'PTKP Pisah (Istri)',
-    posPtkpGabung: 'PTKP Gabung',
-    posMaxMarginal: 'Tarif Marginal Tertinggi',
-    posEffPisah: 'Tarif Efektif — Pisah',
-    posEffGabung: 'Tarif Efektif — Gabung',
-    margFrom: 'dari',
-    chart1Title: 'Total Pajak berdasarkan Gaji Rumah Tangga',
-    chart1Sub: 'Menampilkan total pajak terutang di berbagai tingkat gaji. Selisih antar garis = penghematan pajak.',
-    chart1XTitle: 'Total Gaji Rumah Tangga',
-    chart1YTitle: 'Total Pajak Terutang',
+    pisahWins: 'Per tahun, dengan Pisah Harta',
+    gabungWins: 'Per tahun, dengan Gabung Harta',
+    margFrom: 'mulai',
+    verdictPisah: (amt) => `Pisah Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
+    verdictGabung: (amt) => `Gabung Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
+    verdictSame: 'Pisah Harta dan Gabung Harta menghasilkan pajak yang sama pada penghasilan ini.',
+    verdictTotals: (p, pr, g, gr) => `Total pajak per tahun: ${p} dengan Pisah Harta (tarif efektif ${pr}), ${g} dengan Gabung Harta (${gr}).`,
+    verdictSwitch: (sal, below, above) => `Pada porsi ini, ${below} lebih murah di bawah gaji rumah tangga sekitar ${sal} per tahun, dan ${above} di atasnya.`,
+    verdictAlways: (who, lo, hi) => `Pada porsi ini, ${who} sama atau lebih murah di setiap gaji rumah tangga dari ${lo} sampai ${hi} per tahun.`,
+    optPisah: 'Pisah Harta',
+    optGabung: 'Gabung Harta',
+    chart1Title: 'Total pajak per tahun, menurut gaji rumah tangga',
+    chart1Sub: 'Tiap garis adalah total pajak rumah tangga setahun bila lapor dengan cara itu, dengan porsi istri tetap seperti yang Anda atur. Jarak antar garis adalah penghematannya.',
+    chart1XTitle: 'Gaji kotor rumah tangga (Rp/thn)',
+    chart1YTitle: 'Total pajak (Rp per tahun)',
     btnSvgTitle: 'Unduh grafik ini sebagai SVG',
     btnPngTitle: 'Unduh grafik ini sebagai PNG',
     btnCopyTitle: 'Salin PNG ke papan klip',
     btnResetZoomTitle: 'Atur ulang zoom',
     btnCsvTitle: 'Unduh tabel ini sebagai CSV',
     hoverBox1: 'Arahkan kursor ke grafik untuk melihat detail gaji.',
-    chart2Title: 'Selisih Pajak (Gabung − Pisah)',
-    chart2Sub: 'Positif = Gabung Harta bayar lebih banyak (Pisah Harta menang). Negatif = Gabung Harta bayar lebih sedikit (Gabung Harta menang).',
-    chart2YTitle: 'Selisih Pajak (positif = Pisah menang)',
+    chart2Title: 'Selisih pajak (Gabung − Pisah)',
+    chart2Sub: 'Di atas nol, Pisah Harta lebih murah sebesar selisih itu. Di bawah nol, Gabung Harta yang lebih murah.',
+    chart2YTitle: 'Selisih pajak (Rp per tahun)',
     hoverBox2: 'Arahkan kursor ke grafik untuk melihat selisihnya.',
     legendPisah: 'Pisah Harta ({PISAH})',
     legendGabung: 'Gabung Harta ({KI})',
-    legendPisahWins: 'Pisah Harta menang (positif)',
-    legendGabungWins: 'Gabung Harta menang (negatif)',
+    legendPisahWins: 'Pisah Harta lebih murah (di atas nol)',
+    legendGabungWins: 'Gabung Harta lebih murah (di bawah nol)',
     legendDiffFull: 'Selisih, garis utuh',
-    salaryLabel: 'Gaji',
-    pisahSavesPrefix: 'Pisah hemat:',
-    gabungSavesPrefix: 'Gabung hemat:',
-    summaryTitle: 'Ringkasan pada Gaji Saat Ini',
-    crossoverTitle: 'Analisis Breakeven',
-    tilePtkpHusband: 'PTKP Suami (Pisah)',
-    tilePtkpWife: 'PTKP Istri (Pisah)',
-    tileTotalPtkpPisah: 'Jumlah PTKP Pisah',
+    salaryLabel: 'Gaji rumah tangga',
+    pisahSavesPrefix: 'Pisah Harta hemat',
+    gabungSavesPrefix: 'Gabung Harta hemat',
+    summaryTitle: 'Ringkasan pada gaji saat ini, per tahun',
+    crossoverTitle: 'Analisis breakeven',
+    tileGrosssalary: 'Gaji kotor',
+    tileDeductions: 'Pengurang',
+    tileNetIncome: 'Penghasilan neto (setelah pengurang)',
+    tileHusbandNet: 'Penghasilan neto suami',
+    tileWifeNet: 'Penghasilan neto istri',
+    tilePtkpHusband: 'PTKP suami (Pisah)',
+    tilePtkpWife: 'PTKP istri (Pisah)',
+    tileTotalPtkpPisah: 'Total PTKP (Pisah)',
     tilePtkpGabungCode: 'PTKP Gabung ({KI})',
-    tileGrossalary: 'Gaji Kotor',
-    tileGrosssalary: 'Gaji Kotor',
-    tileDeductions: 'Potongan (Pengurang)',
-    tileNetIncome: 'Penghasilan Bersih (setelah potongan)',
-    tileHusbandNet: 'Penghasilan Bersih Suami',
-    tileWifeNet: 'Penghasilan Bersih Istri',
-    crossoverWith: 'Dengan',
-    crossoverWifePct: '% penghasilan istri:',
-    crossoverWastedHtml: 'PTKP pasangan yang tidak berpenghasilan terbuang sia-sia dalam skema Pisah Harta. Gabung Harta menggabungkan semua PTKP dalam satu SPT, sehingga lebih <span class="negative">menguntungkan</span> pada pembagian ini.',
-    crossoverAdjust: 'Ubah pembagian penghasilan untuk melihat di mana Pisah Harta menjadi lebih menguntungkan berkat akses lapisan tarif ganda.',
-    crossoverPoint: 'Breakeven:',
-    crossoverBelowHtml: 'Di bawah gaji ini, <span class="negative">Gabung Harta ({KI})</span> bisa lebih hemat karena PTKP gabungan yang lebih besar dimanfaatkan lebih efisien relatif terhadap penghasilan.',
-    crossoverAboveHtml: 'Di atas gaji ini, <span class="positive">Pisah Harta ({PISAH})</span> lebih unggul karena masing-masing pasangan mengakses lapisan tarif yang lebih rendah secara terpisah.',
-    crossoverNoneFound: 'Tidak ditemukan breakeven dalam rentang ini.',
-    crossoverPisahBetterPre: 'Pada pembagian penghasilan ini (',
-    crossoverPisahBetterPost: '%), <span class="positive">Pisah Harta</span> lebih baik (atau sama) di seluruh rentang gaji. Kedua skema memiliki total PTKP yang sama pada pembagian merata, namun Pisah Harta diuntungkan oleh akses lapisan tarif ganda.',
-    crossoverGabungBetterHtml: 'Pada pembagian penghasilan ini, <span class="negative">Gabung Harta</span> tampak lebih menguntungkan di seluruh rentang. Hal ini umumnya terjadi ketika pembagian penghasilan sangat tidak merata.',
-    detailTitle: 'Rincian Detail per Gaji',
+    tileTopBracket: 'Tarif marginal tertinggi',
+    tileTopBracketTip: 'Tarif pajak tertinggi yang dicapai penghasilan, dengan Pisah maupun Gabung.',
+    crossoverWith: 'Dengan porsi istri',
+    crossoverWifePct: '%:',
+    crossoverWastedHtml: 'PTKP pasangan yang tidak berpenghasilan terbuang dalam Pisah Harta. Gabung Harta memasukkan semua PTKP ke satu SPT, jadi <span class="gabung-val">Gabung Harta</span> lebih murah pada porsi ini.',
+    crossoverAdjust: 'Geser porsi istri untuk melihat kapan Pisah Harta menjadi lebih murah, berkat lapisan tarif sendiri untuk tiap pasangan.',
+    crossoverPoint: (sal) => `Breakeven: sekitar ${sal} per tahun gaji rumah tangga.`,
+    crossoverBelowHtml: 'Di bawahnya, <span class="gabung-val">Gabung Harta ({KI})</span> membayar lebih sedikit, karena PTKP gabungan yang lebih besar lebih berarti bagi penghasilan yang lebih kecil.',
+    crossoverAboveHtml: 'Di atasnya, <span class="pisah-val">Pisah Harta ({PISAH})</span> membayar lebih sedikit, karena tiap pasangan menapaki lapisan tarifnya sendiri.',
+    crossoverBelowPisahHtml: 'Di bawahnya, <span class="pisah-val">Pisah Harta ({PISAH})</span> membayar lebih sedikit.',
+    crossoverAboveGabungHtml: 'Di atasnya, <span class="gabung-val">Gabung Harta ({KI})</span> membayar lebih sedikit.',
+    crossoverNoneFound: (lo, hi) => `Tidak ada breakeven antara ${lo} dan ${hi} per tahun.`,
+    crossoverPisahBetterPre: 'Pada porsi ini (',
+    crossoverPisahBetterPost: '%), <span class="pisah-val">Pisah Harta</span> sama atau lebih murah di setiap gaji. Dengan PTKP sesuai ketentuan, total PTKP kedua cara sama, dan Pisah Harta juga memberi tiap pasangan lapisan tarifnya sendiri.',
+    crossoverGabungBetterHtml: 'Pada porsi ini, <span class="gabung-val">Gabung Harta</span> sama atau lebih murah di seluruh rentang. Ini biasanya terjadi bila satu pasangan berpenghasilan jauh lebih besar dari yang lain.',
+    crossoverSameHtml: 'Pada porsi ini, kedua cara sama di setiap gaji.',
+    detailTitle: 'Rincian detail per gaji',
+    tableUnitNote: 'Rupiah per tahun, dengan porsi istri tetap seperti yang Anda atur. Gaji rumah tangga adalah gaji kotor suami dan istri bersama.',
     tabComparison: 'Perbandingan',
     tabPisah: 'Detail Pisah Harta',
     tabGabung: 'Detail Gabung Harta',
-    tblSalary: 'Gaji',
-    tblTaxPayables: 'Pajak Terutang',
-    tblDifference: 'Selisih',
-    tblWinner: 'Lebih Hemat',
-    tblEffRate: 'Tarif Efektif',
-    tblPtkpGabungCode: 'PTKP {KI}',
-    tblNetIncome: 'Penghasilan Bersih',
+    tblSalary: 'Gaji rumah tangga',
+    tblTaxPayables: 'Pajak terutang',
+    tblDifference: 'Selisih (Gabung − Pisah)',
+    tblWinner: 'Lebih hemat',
+    tblEffRate: 'Tarif efektif',
+    tblPtkpGabungCode: 'PTKP ({KI})',
+    tblNetIncome: 'Penghasilan neto',
     tblPTKP: 'PTKP',
-    tblTaxableIncome: 'Penghasilan Kena Pajak',
+    tblTaxableIncome: 'Penghasilan kena pajak (PKP)',
     tblHusband: 'Suami',
     tblWife: 'Istri',
-    tblTotalTax: 'Total Pajak',
+    tblTotalTax: 'Total pajak',
     tblPisah: 'Pisah',
     tblGabung: 'Gabung',
-    tblProportional: 'Pajak Terutang (Proporsional)',
+    tblProportional: 'Pajak terutang (proporsional)',
     tblSame: '—',
     tblPisahWin: 'Pisah',
     tblGabungWin: 'Gabung',
@@ -294,6 +324,7 @@ const LANG = {
     warnCapTail: '. Nilai yang Anda isi tetap dipakai sepenuhnya.',
     warnCapH: 'Suami',
     warnCapW: 'Istri',
+    assumesTitle: 'Asumsi yang dipakai',
   }
 };
 
@@ -352,25 +383,35 @@ function applyLang() {
   renderInfoBox();
   // Bracket column headers
   $('bracketColFrom').textContent = T('bracketFrom');
-  $('bracketColTo').innerHTML = T('bracketToHtml');
+  $('bracketColTo').textContent = T('bracketTo');
   $('bracketColRate').textContent = T('bracketRate');
 }
 
 /* ── Formatters ── */
+/* Short amounts use the magnitude words of the page's language. In
+   Indonesian "M" is miliar (a billion), so a million is "jt" (juta) there:
+   Rp 46.1M on the Indonesian page would read a thousand times too big. */
+const MAG = {
+  en: { T: 'T', B: 'B', M: 'M', K: 'K' },
+  id: { T: ' T', B: ' M', M: ' jt', K: ' rb' }
+};
 const fmt = {
   idr(v, compact=false){
     const n=Number(v||0);const abs=Math.abs(n);const sign=n<0?'−':'';
-    if(compact&&abs>=1e12) return sign+'Rp '+(abs/1e12).toFixed(2)+'T';
-    if(compact&&abs>=1e9) return sign+'Rp '+(abs/1e9).toFixed(2)+'B';
-    if(compact&&abs>=1e6) return sign+'Rp '+(abs/1e6).toFixed(1)+'M';
-    if(compact&&abs>=1e3) return sign+'Rp '+(abs/1e3).toFixed(0)+'K';
+    const m=MAG[lang]||MAG.en;
+    if(compact&&abs>=1e12) return sign+'Rp '+(abs/1e12).toFixed(2)+m.T;
+    if(compact&&abs>=1e9) return sign+'Rp '+(abs/1e9).toFixed(2)+m.B;
+    if(compact&&abs>=1e6) return sign+'Rp '+(abs/1e6).toFixed(1)+m.M;
+    if(compact&&abs>=1e3) return sign+'Rp '+(abs/1e3).toFixed(0)+m.K;
     return sign+'Rp '+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
   },
+  full(v){ return 'Rp '+Math.round(Math.max(0,Number(v)||0)).toLocaleString('en-US'); },
   pct(v,d=2){const n=Number(v||0);const p=Math.abs(n)<=1?n*100:n;return p.toFixed(d)+'%';},
   num(v,d=0){return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});},
   salaryLabel(mio){
-    if(mio>=1000) return 'Rp '+(mio/1000).toFixed(mio%1000===0?0:1)+'B';
-    return 'Rp '+fmt.num(mio)+'M';
+    const m=MAG[lang]||MAG.en;
+    if(mio>=1000) return 'Rp '+(mio/1000).toFixed(mio%1000===0?0:1)+m.B;
+    return 'Rp '+fmt.num(mio)+m.M;
   }
 };
 
@@ -479,7 +520,6 @@ const els = {
   deductionInput: $('deductionInput'),
   husbandDeductionInput: $('husbandDeductionInput'),
   wifeDeductionInput: $('wifeDeductionInput'),
-  resetBtn: $('resetBtn'),
   chart1PngBtn: $('chart1PngBtn'),
   chart1CopyPngBtn: $('chart1CopyPngBtn'),
   chart1SvgBtn: $('chart1SvgBtn'),
@@ -547,6 +587,12 @@ function splitPctLabel(){
 function refreshSliderLabels(){
   const sv=$('splitValue');
   if(sv) sv.textContent = splitPctLabel() + '%';
+  // What the share means in rupiah, so a reader never has to multiply.
+  const d=$('splitDerived');
+  if(d){
+    const w=S.totalSalary*S.splitPct/100;
+    d.innerHTML=T('splitDerived')(fmt.full(S.totalSalary-w), fmt.full(w));
+  }
 }
 
 function computeModel() {
@@ -618,13 +664,20 @@ function computeModel() {
     });
   }
 
+  // The first salary where the cheaper way changes. A difference under
+  // Rp 1,000 counts as "the same", as on the cards and in the table, so a run
+  // of equal rows between the two sides no longer hides the switch (at an
+  // uneven split Gabung can be cheaper, then equal while both spouses sit in
+  // the 5% bracket, then dearer: the old adjacent-sign test missed that).
   let crossover = null;
-  for (let i = 1; i < rows.length; i++) {
-    if (rows[i-1].diff * rows[i].diff < 0) {
-      const r0=rows[i-1], r1=rows[i];
-      crossover = r0.salary + (r1.salary - r0.salary) * Math.abs(r0.diff) / (Math.abs(r0.diff) + Math.abs(r1.diff));
+  let lastSide = null;
+  for (const r of rows) {
+    if (Math.abs(r.diff) < 1000) continue;
+    if (lastSide && (lastSide.diff < 0) !== (r.diff < 0)) {
+      crossover = lastSide.salary + (r.salary - lastSide.salary) * Math.abs(lastSide.diff) / (Math.abs(lastSide.diff) + Math.abs(r.diff));
       break;
     }
+    lastSide = r;
   }
 
   // In "Husband + Wife" mode tax the exact salaries the user typed.
@@ -684,7 +737,7 @@ function buildLegend(id, series){
 function renderMainChart(rows){
   const series=[
     {key:'pisahTax',colorVar:'--line-a',label:TF('legendPisah')},
-    {key:'gabungTax',colorVar:'--line-b',label:TF('legendGabung')},
+    {key:'gabungTax',colorVar:'--gold',label:TF('legendGabung')},
   ];
   buildLegend('chartLegend',series);
   const labels=rows.map(r=>r.salary);
@@ -710,7 +763,7 @@ function renderMainChart(rows){
           onAfterBody:(items)=>{
             if(!items.length)return;
             const parts=items.map(i=>i.dataset.label.split('(')[0].trim()+': '+fmt.idr(i.parsed.y,true)).join('  |  ');
-            $('hoverBox').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+'  —  '+parts;
+            $('hoverBox').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+' · '+parts;
           }
         }),
         /* The shared gesture block: a pan cannot leave the swept salary range,
@@ -748,7 +801,7 @@ function renderMainChart(rows){
 function renderDiffChart(rows){
   buildLegend('chartLegend2',[
     {colorVar:'--line-a',label:T('legendPisahWins')},
-    {colorVar:'--line-b',label:T('legendGabungWins')},
+    {colorVar:'--gold',label:T('legendGabungWins')},
     // The faint dashed line that runs through both halves was never in the key.
     {label:T('legendDiffFull'), spec:{color:cssVar('--muted')+'44', width:1, dash:[4,4]}},
   ]);
@@ -759,7 +812,7 @@ function renderDiffChart(rows){
     type:'line',
     data:{labels,datasets:[
       {label:T('legendPisahWins'),data:diffData.map(d=>d>=0?d:null),borderColor:cssVar('--line-a'),backgroundColor:cssVar('--line-a')+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false,spanGaps:false},
-      {label:T('legendGabungWins'),data:diffData.map(d=>d<0?d:null),borderColor:cssVar('--line-b'),backgroundColor:cssVar('--line-b')+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false,spanGaps:false},
+      {label:T('legendGabungWins'),data:diffData.map(d=>d<0?d:null),borderColor:cssVar('--gold'),backgroundColor:cssVar('--gold')+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false,spanGaps:false},
       {label:'Full line',data:diffData,borderColor:cssVar('--muted')+'44',borderWidth:1,pointRadius:0,tension:0.3,fill:false,borderDash:[4,4]},
     ]},
     options:{
@@ -781,7 +834,7 @@ function renderDiffChart(rows){
           onAfterBody:(items)=>{
             if(!items.length)return;
             const v=rows[items[0].dataIndex]?.diff||0;
-            $('hoverBox2').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+'  —  '+(v>=0?T('pisahSavesPrefix')+' '+fmt.idr(v,true):T('gabungSavesPrefix')+' '+fmt.idr(-v,true));
+            $('hoverBox2').textContent=T('salaryLabel')+' '+fmt.salaryLabel(items[0].label)+' · '+(v>=0?T('pisahSavesPrefix')+' '+fmt.idr(v,true):T('gabungSavesPrefix')+' '+fmt.idr(-v,true));
           }
         }),
         zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),
@@ -813,10 +866,12 @@ function renderDiffChart(rows){
 function updateKPIs(state){
   const c=state.summary.current;
   $('kpiPisah').textContent=fmt.idr(c.pisahTax,true);
-  $('kpiPisahRate').textContent=T('effectiveRate')+' '+fmt.pct(c.pisahRate);
+  $('kpiPisahRate').textContent=T('kpiRateSub')(fmt.pct(c.pisahRate));
   $('kpiGabung').textContent=fmt.idr(c.gabungTax,true);
-  $('kpiGabungRate').textContent=T('effectiveRate')+' '+fmt.pct(c.gabungRate);
+  $('kpiGabungRate').textContent=T('kpiRateSub')(fmt.pct(c.gabungRate));
 
+  // The saving wears the colour of the way that earns it, the same colour as
+  // that way's line on both charts. Neither way is the bad one, so no red.
   const diff=c.diff;
   const absDiff=Math.abs(diff);
   if(absDiff<1000){
@@ -825,53 +880,88 @@ function updateKPIs(state){
     $('kpiWinner').textContent=T('noSignificantDiff');
   } else if(diff>0){
     $('kpiSaving').textContent=fmt.idr(absDiff,true);
-    $('kpiSaving').className='value positive';
+    $('kpiSaving').className='value pisah-val';
     $('kpiWinner').textContent=T('pisahWins');
   } else {
     $('kpiSaving').textContent=fmt.idr(absDiff,true);
-    $('kpiSaving').className='value negative';
+    $('kpiSaving').className='value gabung-val';
     $('kpiWinner').textContent=T('gabungWins');
   }
+}
 
-  $('posP_ptkpH').textContent = fmt.idr(c.ptkpH, true);
-  $('posP_ptkpW').textContent = fmt.idr(c.ptkpW, true);
-  $('posG_ptkp').textContent  = fmt.idr(c.ptkpGabung, true);
-  const margRate = (c.marginalRate * 100).toFixed(0) + '%';
-  const margFrom = fmt.idr(c.marginalBracketFrom, true);
-  $('posMarginBracket').textContent = margRate + ' (' + T('margFrom') + ' ' + margFrom + ')';
-  $('posEffPisah').textContent  = fmt.pct(c.pisahRate);
-  $('posEffGabung').textContent = fmt.pct(c.gabungRate);
+/* Which way is cheaper on each side of the crossover, read off the sweep
+   itself rather than assumed: below it is the row just under the switch. */
+function crossoverSides(state){
+  const x=state.summary.crossover;
+  if(!x) return null;
+  const below=state.rows.filter(r=>r.salary<x && Math.abs(r.diff)>=1000).pop();
+  const gabungBelow=!below || below.diff<0;
+  return { gabungBelow };
+}
+
+/* The answer in one sentence: which way of filing is cheaper and by how
+   much, then the two totals and where the cheaper way switches. */
+function renderVerdict(state){
+  const c=state.summary.current;
+  const diff=c.diff;
+  let title;
+  if(Math.abs(diff)<1000) title=T('verdictSame');
+  else if(diff>0) title=T('verdictPisah')(fmt.idr(diff,true));
+  else title=T('verdictGabung')(fmt.idr(-diff,true));
+  const body=[T('verdictTotals')(fmt.idr(c.pisahTax,true), fmt.pct(c.pisahRate), fmt.idr(c.gabungTax,true), fmt.pct(c.gabungRate))];
+  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
+  const sides=crossoverSides(state);
+  if(sides){
+    const sal=fmt.salaryLabel(Math.round(state.summary.crossover));
+    body.push(sides.gabungBelow
+      ? T('verdictSwitch')(sal, T('optGabung'), T('optPisah'))
+      : T('verdictSwitch')(sal, T('optPisah'), T('optGabung')));
+  } else {
+    const anyGabung=rows.some(r=>r.diff<=-1000), anyPisah=rows.some(r=>r.diff>=1000);
+    if(anyPisah && !anyGabung) body.push(T('verdictAlways')(T('optPisah'), lo, hi));
+    else if(anyGabung && !anyPisah) body.push(T('verdictAlways')(T('optGabung'), lo, hi));
+  }
+  SharedVerdict.set('verdict', {tone:'', title, body: body.join(' ')});
 }
 
 function updateSummary(state){
   const c=state.summary.current;
   const s=state.summary;
   const grid=$('summaryGrid');
+  // Money in, then what PTKP takes off it, then how high the brackets reach.
+  // (The effective rates sit on the cards above.)
   const tiles=[
-    {label:T('tilePtkpHusband'),value:fmt.idr(s.ptkpH,true)},
-    {label:T('tilePtkpWife'),value:fmt.idr(s.ptkpW,true)},
-    {label:T('tileTotalPtkpPisah'),value:fmt.idr(s.ptkpH+s.ptkpW,true)},
-    {label:TF('tilePtkpGabungCode'),value:fmt.idr(s.ptkpGabung,true)},
     {label:T('tileGrosssalary'),value:fmt.idr(c.totalGross,true)},
     {label:T('tileDeductions'),value:fmt.idr(c.totalDeduction,true)},
     {label:T('tileNetIncome'),value:fmt.idr(c.netIncome,true)},
     {label:T('tileHusbandNet'),value:fmt.idr(c.husbandNet,true)},
     {label:T('tileWifeNet'),value:fmt.idr(c.wifeNet,true)},
+    {label:T('tilePtkpHusband'),value:fmt.idr(s.ptkpH,true)},
+    {label:T('tilePtkpWife'),value:fmt.idr(s.ptkpW,true)},
+    {label:T('tileTotalPtkpPisah'),value:fmt.idr(s.ptkpH+s.ptkpW,true)},
+    {label:TF('tilePtkpGabungCode'),value:fmt.idr(s.ptkpGabung,true)},
+    {label:T('tileTopBracket')+' <span class="tip-icon" data-tip="'+T('tileTopBracketTip')+'">?</span>',value:(c.marginalRate*100).toFixed(0)+'% ('+T('margFrom')+' '+fmt.idr(c.marginalBracketFrom,true)+')'},
   ];
   grid.innerHTML=tiles.map(t=>`<div class="tile"><div class="label">${t.label}</div><div class="value">${t.value}</div></div>`).join('');
 
   const info=$('crossoverInfo');
+  const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
   if(S.splitPct===0 || S.splitPct===100){
-    info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong><br>${T('crossoverWastedHtml')}<br><br>${T('crossoverAdjust')}`;
+    info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong> ${T('crossoverWastedHtml')}<br>${T('crossoverAdjust')}`;
   } else if(s.crossover){
-    info.innerHTML='<strong>'+T('crossoverPoint')+'</strong> ~'+fmt.salaryLabel(Math.round(s.crossover))+'<br><br>'+TF('crossoverBelowHtml')+'<br><br>'+TF('crossoverAboveHtml');
+    const sides=crossoverSides(state);
+    const sal=fmt.salaryLabel(Math.round(s.crossover));
+    info.innerHTML='<strong>'+T('crossoverPoint')(sal)+'</strong><br>'+
+      (sides.gabungBelow ? TF('crossoverBelowHtml')+' '+TF('crossoverAboveHtml')
+                         : TF('crossoverBelowPisahHtml')+' '+TF('crossoverAboveGabungHtml'));
   } else {
-    const last=state.rows[state.rows.length-1];
-    if(last.diff>=0){
-      info.innerHTML='<strong>'+T('crossoverNoneFound')+'</strong><br><br>'+T('crossoverPisahBetterPre')+splitPctLabel()+T('crossoverPisahBetterPost');
-    } else {
-      info.innerHTML='<strong>'+T('crossoverNoneFound')+'</strong><br><br>'+T('crossoverGabungBetterHtml');
-    }
+    // No switch, so one way is never dearer than the other: say which.
+    const anyGabung=rows.some(r=>r.diff<=-1000);
+    let note;
+    if(anyGabung) note=T('crossoverGabungBetterHtml');
+    else if(rows.some(r=>r.diff>=1000)) note=T('crossoverPisahBetterPre')+splitPctLabel()+T('crossoverPisahBetterPost');
+    else note=T('crossoverSameHtml');
+    info.innerHTML='<strong>'+T('crossoverNoneFound')(lo, hi)+'</strong><br>'+note;
   }
 }
 
@@ -900,9 +990,11 @@ function updateDetailTable(rows){
         </tr>
       </thead>
       <tbody>${unique.map(r=>{
-        const d=r.diff;const cls=d>1000?'positive':d<-1000?'negative':'';
-        const w=Math.abs(d)<1000?T('tblSame'):d>0?T('tblPisahWin'):T('tblGabungWin');
-        return `<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.pisahTax,true)}</td><td>${fmt.idr(r.gabungTax,true)}</td><td class="${cls}">${d>=0?'+':''}${fmt.idr(d,true)}</td><td>${w}</td><td>${fmt.pct(r.pisahRate)}</td><td>${fmt.pct(r.gabungRate)}</td></tr>`;
+        // A zero difference is shown as Rp 0, never as "+Rp 0" or "−Rp 0".
+        const d=Math.abs(r.diff)<0.5?0:r.diff;
+        const same=Math.abs(d)<1000, cls=same?'':d>0?'pisah-val':'gabung-val';
+        const w=same?T('tblSame'):d>0?T('tblPisahWin'):T('tblGabungWin');
+        return `<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.pisahTax,true)}</td><td>${fmt.idr(r.gabungTax,true)}</td><td class="${cls}">${d>0?'+':''}${fmt.idr(d,true)}</td><td class="${cls}">${w}</td><td>${fmt.pct(r.pisahRate)}</td><td>${fmt.pct(r.gabungRate)}</td></tr>`;
       }).join('')}</tbody></table>`;
   } else if(activeTab==='pisah'){
     wrap.innerHTML=`<table>
@@ -1004,9 +1096,64 @@ function rerender(){
 
   renderMainChart(state.rows);
   renderDiffChart(state.rows);
+  renderVerdict(state);
   updateKPIs(state);
   updateSummary(state);
   updateDetailTable(state.rows);
+  renderAssumptions(state);
+}
+
+/* ── What this assumes ──
+   Built from this household, so every line names a figure the reader entered
+   or one the rules derive from it, and a field left at nil says nothing. */
+function renderAssumptions(state){
+  const c = state.summary.current;
+  const id = lang === 'id';
+  const L = (en, idText) => id ? idText : en;
+  const rp = fmt.full;
+  const items = [];
+
+  items.push(L(
+    `<strong>Only salary is taxed (PPh 21):</strong> ${rp(c.totalGross)} a year for the household. Other income, income taxed at a final rate and tax already withheld are left out.`,
+    `<strong>Hanya gaji yang dihitung (PPh 21):</strong> ${rp(c.totalGross)} per tahun untuk rumah tangga. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung.`));
+
+  const hDed = c.husbandGross - c.husbandNet, wDed = c.wifeGross - c.wifeNet;
+  if (S.inputMode === 'total' && S.deduction > 0) {
+    items.push(L(
+      `<strong>Your ${rp(S.deduction)} of deductions is shared by salary:</strong> ${rp(hDed)} off the husband's and ${rp(wDed)} off the wife's, before PTKP.`,
+      `<strong>Pengurang ${rp(S.deduction)} dibagi menurut gaji:</strong> ${rp(hDed)} dari gaji suami dan ${rp(wDed)} dari gaji istri, sebelum PTKP.`));
+  } else if (S.inputMode === 'individual' && (S.husbandDeduction > 0 || S.wifeDeduction > 0)) {
+    const capped = S.husbandDeduction > S.husbandSalary || S.wifeDeduction > S.wifeSalary;
+    items.push(L(
+      `<strong>Deductions come off each salary before PTKP:</strong> ${rp(hDed)} for the husband, ${rp(wDed)} for the wife.` + (capped ? ' A deduction larger than that spouse\'s salary counts only up to the salary.' : ''),
+      `<strong>Pengurang dikurangkan dari gaji masing-masing sebelum PTKP:</strong> ${rp(hDed)} untuk suami, ${rp(wDed)} untuk istri.` + (capped ? ' Pengurang yang melebihi gaji pasangan itu hanya dihitung sebesar gajinya.' : '')));
+  }
+
+  const dep = S.dependents;
+  items.push(L(
+    `<strong>Pisah Harta:</strong> the husband's PTKP is ${rp(c.ptkpH)}, with the married amount${dep ? ' and your ' + dep + (dep === 1 ? ' dependant' : ' dependants') : ''}; the wife keeps her own ${rp(c.ptkpW)}.`,
+    `<strong>Pisah Harta:</strong> PTKP suami ${rp(c.ptkpH)}, dengan tambahan kawin${dep ? ' dan ' + dep + ' tanggungan Anda' : ''}; istri memakai PTKP sendiri ${rp(c.ptkpW)}.`));
+  items.push(L(
+    `<strong>Gabung Harta:</strong> one SPT on ${rp(c.netIncome)} of combined net income, with a PTKP of ${rp(c.ptkpGabung)}.`,
+    `<strong>Gabung Harta:</strong> satu SPT atas penghasilan neto gabungan ${rp(c.netIncome)}, dengan PTKP ${rp(c.ptkpGabung)}.`));
+
+  const ptkpEdited = S.ptkpBase !== PTKP_BASE_DEFAULT || S.ptkpMarried !== PTKP_MARRIED_DEFAULT ||
+    S.ptkpSpouse !== PTKP_SPOUSE_DEFAULT || S.ptkpDependent !== PTKP_DEPENDENT_DEFAULT;
+  const bracketsEdited = JSON.stringify(S.brackets.map(b => [b.to, b.rate])) !==
+    JSON.stringify(BRACKETS_DEFAULT.map(b => [b.to, b.rate]));
+  if (ptkpEdited || bracketsEdited) {
+    const what = ptkpEdited && bracketsEdited ? L('PTKP amounts and tax brackets', 'nilai PTKP dan lapisan tarif')
+      : ptkpEdited ? L('PTKP amounts', 'nilai PTKP') : L('tax brackets', 'lapisan tarif');
+    items.push(L(
+      `<strong>Your own ${what} apply,</strong> not the statutory ones.`,
+      `<strong>Memakai ${what} hasil ubahan Anda,</strong> bukan yang sesuai ketentuan.`));
+  }
+
+  items.push(L(
+    `<strong>The charts and table keep the wife's ${splitPctLabel()}% share fixed</strong>${S.deduction > 0 ? ' and the deductions at ' + rp(S.deduction) : ''}, moving the household salary from Rp 100 million to Rp 5 billion a year. Gabung Harta's tax is shared between you by net income.`,
+    `<strong>Grafik dan tabel menahan porsi istri tetap ${splitPctLabel()}%</strong>${S.deduction > 0 ? ' dan pengurang tetap ' + rp(S.deduction) : ''}, sambil menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun. Pajak Gabung Harta dibagi antara suami dan istri menurut penghasilan neto.`));
+
+  $('assumptions').innerHTML = items.map(x => '<li>' + x + '</li>').join('');
 }
 
 /* ── Reset ── */
@@ -1032,8 +1179,11 @@ function resetAll(){
 
 /* ── Quick Start ──
    Each scenario opens from the defaults (resetAll), so the PTKP values and
-   brackets go back to statute and nothing left on screen leaks into it. */
+   brackets go back to statute and nothing left on screen leaks into it. There
+   is no Reset button: "Equal incomes" is the page's starting point, so it is
+   the way back to it (checked by _ref/quickstart-check.mjs). */
 const QUICK_START = {
+  even:   { mode: 'total', dependents: 0, totalSalary: 500000000, splitPct: 50 },
   single: { mode: 'total', dependents: 2, totalSalary: 300000000, splitPct: 0 },
   double: { mode: 'individual', dependents: 1, husbandSalary: 400000000, wifeSalary: 300000000 }
 };
@@ -1092,6 +1242,8 @@ function buildBracketEditor(){
     toEl.type='text';
     toEl.inputMode='numeric';
     toEl.placeholder='∞';
+    toEl.setAttribute('data-unit','Rp');
+    toEl.setAttribute('data-min','0'); toEl.setAttribute('data-max','100000000000000'); toEl.setAttribute('data-grouped','');
     if(b.to!==null) toEl.value=formatBracketNum(b.to);
     toEl.disabled=(i===S.brackets.length-1);
     toEl.addEventListener('input',function(){
@@ -1115,6 +1267,7 @@ function buildBracketEditor(){
     rateEl.className='num-input-sm';
     rateEl.type='number';
     rateEl.min=0;rateEl.max=100;rateEl.step=0.01;
+    rateEl.setAttribute('data-unit','%');
     rateEl.value=(b.rate*100).toFixed(2);
     rateEl.addEventListener('change',()=>{
       // Clamp to 0-100 and quantise to the 0.01% the cell displays, so every row is
@@ -1133,7 +1286,13 @@ function buildBracketEditor(){
 }
 
 /* ── PNG ── */
-function downloadChartPng(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartPng(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartPngAtSize.apply(null, args); });
+}
+function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, shouldDownload = true) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -1236,7 +1395,13 @@ async function copyCanvasPngToClipboard(canvas) {
   await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
 }
 
-function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
+/* Exports are drawn from the chart at its desktop size, whatever the screen
+   (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
+function downloadChartSvg(canvasId){
+  var args = arguments;
+  return SharedExport.atDesktopSize(canvasId, function(){ return downloadChartSvgAtSize.apply(null, args); });
+}
+function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId) {
   const src = document.getElementById(canvasId);
   if(!src) return;
   const dpr = window.devicePixelRatio || 1;
@@ -1278,7 +1443,10 @@ function downloadChartSvg(canvasId, filename, chartTitle, legendId) {
   const img = document.createElementNS(NS,'image');
   img.setAttribute('x',0); img.setAttribute('y',titleH);
   img.setAttribute('width',chartW); img.setAttribute('height',chartH);
-  img.setAttributeNS(xl,'href',src.toDataURL('image/png'));
+  // Plain href first: SVG 2 viewers (and some converters) ignore xlink:href,
+  // which left the chart blank with only the title, legend and logo showing.
+  const chartHref = src.toDataURL('image/png');
+  img.setAttribute('href',chartHref); img.setAttributeNS(xl,'href',chartHref);
   svg.appendChild(img);
   legendRows.forEach((row, ri) => {
     let x = Math.max(legMargin, (svgW - row.width) / 2);
@@ -1366,14 +1534,35 @@ function downloadCsv(){
   el.addEventListener('blur',function(){ formatBracketInput(this); rerender(); });
 });
 
-$('modeBtnTotal').addEventListener('click',()=>setInputMode('total'));
-$('modeBtnSplit').addEventListener('click',()=>setInputMode('individual'));
+/* The two modes describe the same household, so a click carries the figures
+   across rather than showing the other mode's old ones: Rp 500,000,000 split
+   40% to the wife becomes Rp 300,000,000 and Rp 200,000,000, and the
+   deduction is split by the same share, as Total mode splits it. The way back
+   adds them up, but the share slider holds whole percents and Total mode
+   splits a deduction pro rata, so a split it cannot hold (400M and 300M is
+   42.857%) lands on the nearest one. Only a click converts; a Quick Start or
+   the mini cache picks a mode with its own figures. */
+function carryAcrossModes(to){
+  if(to === S.inputMode) return;
+  const rp = el => Math.max(0, SharedFmt.parseFormatted(el.value) || 0);
+  const put = (el, n) => { el.value = Math.round(n).toLocaleString('en-US'); };
+  if(to === 'individual'){
+    const total = rp(els.totalSalaryInput), ded = rp(els.deductionInput);
+    const share = Math.max(0, Math.min(100, parseFloat(els.splitPct.value) || 0)) / 100;
+    const wife = Math.round(total*share), wifeDed = Math.round(ded*share);
+    put(els.husbandSalaryInput, total - wife);       put(els.wifeSalaryInput, wife);
+    put(els.husbandDeductionInput, ded - wifeDed);   put(els.wifeDeductionInput, wifeDed);
+  } else {
+    const h = rp(els.husbandSalaryInput), w = rp(els.wifeSalaryInput);
+    put(els.totalSalaryInput, h + w);
+    put(els.deductionInput, rp(els.husbandDeductionInput) + rp(els.wifeDeductionInput));
+    if(h + w > 0) els.splitPct.value = Math.round(w/(h + w)*100);
+  }
+}
+$('modeBtnTotal').addEventListener('click',()=>{ carryAcrossModes('total'); setInputMode('total'); });
+$('modeBtnSplit').addEventListener('click',()=>{ carryAcrossModes('individual'); setInputMode('individual'); });
 
 els.dependents.addEventListener('change',rerender);
-els.resetBtn.addEventListener('click',()=>{
-  resetAll();
-  document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
-});
 document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
 els.downloadBtn.addEventListener('click',downloadCsv);
 
@@ -1412,6 +1601,11 @@ $('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent=T(
 $('chartCanvas2').addEventListener('mouseleave',()=>{$('hoverBox2').textContent=T('hoverBox2');});
 
 /* ── Init ── */
+// Dependants: a count of 0 to 3 is one tap. The <select> stays as the field
+// the tool reads and the mini cache saves; the buttons follow it.
+SharedSeg.fromSelect(els.dependents, { labelOf: o => o.value, ariaLabel: T('dependentsLabel') });
+// The table is the most specific thing on the page, so it opens closed.
+SharedFold.attach($('detailSection'), { key: 'pisahvsgabung', bodies: ['#tableUnitNote', '#tableTabs', '#detailTable'] });
 buildBracketEditor();
 rerender();
 

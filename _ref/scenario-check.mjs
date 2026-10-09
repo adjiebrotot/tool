@@ -39,7 +39,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
    answer still shows up. */
 const PAGES = [
   { path: 'borrowingcapacity/',        preset: 'couple',       probe: '.metrics' },
-  { path: 'financialfreedom/',         preset: 'geoarbitrage', probe: '.metrics' },
+  // Family legacy carries life stages, the list that lives in JS rather than in a form control.
+  { path: 'financialfreedom/',         preset: 'legacy',       probe: '.metrics' },
   { path: 'financingvscash/',          preset: 'car',          probe: '#verdict' },
   { path: 'rentvsownhouse/',           preset: 'singapore',    probe: '.metrics' },
   { path: 'rentvsownhouse/id/',        preset: 'jakarta',      probe: '.metrics' },
@@ -47,6 +48,8 @@ const PAGES = [
     also: `document.getElementById('ptkpDependent').value = '5,000,000';
            document.getElementById('ptkpDependent').dispatchEvent(new Event('input', {bubbles: true}));` },
   { path: 'pisahvsgabung/id/',         preset: 'single',       probe: '.metrics' },
+  // The listings, columns and items live in JS state, not in form controls.
+  { path: 'valuateeverything/',        preset: 'house',        probe: '.metrics' },
   // The breakdown picker lists the results of the last run, which fails here
   // for want of market data; it is a view of the output, not an input.
   { path: 'dcasimulator/',             preset: 'equity-mmf',   probe: '#secList',  ignore: ['detailSelect'] },

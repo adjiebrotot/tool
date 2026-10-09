@@ -91,6 +91,9 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -122,11 +125,11 @@
     <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills every tab with a worked plan and reads the answer straight away. Change any figure over the top of it.">?</span>
     <div class="quick-start-btns">
       <button class="quick-start-btn" data-preset="moderate" data-tip="A 32-year-old saving $45,000 of a $110,000 take-home, spending $65,000, with $120,000 already in global equity. The plain baseline for the others.">Moderate FIRE</button>
-      <button class="quick-start-btn" data-preset="frugal" data-tip="Lean FIRE at 28: $92,000 net against $30,000 of spending, two thirds saved. Spending less fills the pot faster and shrinks the pot you need.">Frugal Living</button>
-      <button class="quick-start-btn" data-preset="geoarbitrage" data-tip="Earn in Australia, retire in Bali: spending stays $70,000 today but retirement spending is 40% of it, and that multiplier on the Goal tab is the lever.">Geoarbitrage, Bali</button>
+      <button class="quick-start-btn" data-preset="frugal" data-tip="Lean FIRE at 28 on $92,000 net, $30,000 spent, staged both ways: a hustle age to 33 earning more on 80%, part-time work from 40 on 120%, the age pension at 67.">Frugal Living</button>
+      <button class="quick-start-btn" data-preset="geoarbitrage" data-tip="Earn in Australia, retire in Bali: living expenses stay $70,000, retirement expenses are 40% of them. That one figure under Money out is the lever.">Geoarbitrage, Bali</button>
       <button class="quick-start-btn" data-preset="fatfire" data-tip="High earner on $320,000 net, spending $120,000, under Die Rich: only real growth is ever spent, so the pot lasts forever. Forever costs the most.">Fat FIRE, forever</button>
-      <button class="quick-start-btn" data-preset="legacy" data-tip="A $750,000 legacy in today's money, still there at 90, on top of 95% of today's spending. It is discounted back to the day you stop, so it adds less than its face value.">Family legacy</button>
-      <button class="quick-start-btn" data-preset="latestart" data-tip="Starting at 52 on a balanced 6.5% return, pension on from 67, retirement spending 85%. Switch the pension off on the Goal tab and freedom moves years later.">Late start, on a pension</button>
+      <button class="quick-start-btn" data-preset="legacy" data-tip="A couple at 33 with two kids ahead, as life stages: 125% of today's $70,000 with one at home, 150% with two, until 56. And $750,000 left at 90.">Family legacy</button>
+      <button class="quick-start-btn" data-preset="latestart" data-tip="Starting at 52 on a balanced 6.5% return, pension on from 67, retirement expenses 85%. Switch the pension off under Money in and freedom moves years later.">Late start, on a pension</button>
     </div>
   </div>
   <div class="ctrl-scroll">
@@ -134,61 +137,149 @@
     <button class="ctrl-tab active" data-tab="you"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7.4" r="3.7"/><path d="M4.6 20.4c0-4 3.3-6.7 7.4-6.7s7.4 2.7 7.4 6.7"/></svg><span>You</span></button>
     <button class="ctrl-tab" data-tab="invest"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.4 20.4h17.2"/><path d="M5.6 16.6 10.2 10.6l3.3 2.9 5.4-7.1"/><path d="M15.2 6.4h3.7v3.7"/></svg><span>Investment</span></button>
     <button class="ctrl-tab" data-tab="goal"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 21.2V3.4"/><path d="M6 4.6h11.6l-2.5 3.7 2.5 3.7H6"/></svg><span>Goal</span></button>
-    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
+    <button class="ctrl-tab" data-tab="settings"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10"/><circle cx="10" cy="6.5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="17.5" r="2"/></svg><span>Assumptions</span></button>
   </div>
 
   <!-- ── You ── -->
   <div class="ctrl-panel active" id="tab-you">
     <div class="field-row">
-      <div class="field-label"><span class="tip-wrap">Currency <i class="tip-icon" data-tip="Display only. Nothing is converted.">?</i></span></div>
-      <select class="sel-input" id="currency"></select>
+      <div class="field-label"><span class="tip-wrap">Currency Symbol <i class="tip-icon" data-tip="The symbol money is shown in. Nothing is converted between currencies.">?</i></span></div>
+      <select class="sel-input" id="currency" data-currency-symbols></select>
     </div>
 
     <div class="field-group">
       <div class="group-title">Ages</div>
       <div class="field-row">
         <div class="field-label">Age now</div>
-        <input class="num-input" id="ageNow" type="number" min="0" max="100" step="1" value="30"/>
+        <div class="currency-wrap"><input class="currency-input has-suffix" id="ageNow" type="number" inputmode="numeric" min="0" max="100" step="1" value="30"/><span class="suffix">yrs</span></div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it.">?</i></span></div>
-        <input class="num-input" id="ageDie" type="number" min="2" max="120" step="1" value="90"/>
+        <div class="currency-wrap"><input class="currency-input has-suffix" id="ageDie" type="number" inputmode="numeric" min="2" max="120" step="1" value="90"/><span class="suffix">yrs</span></div>
       </div>
     </div>
 
-    <div class="field-group">
-      <div class="group-title">Money in and out</div>
+    <!-- Money in. Simple is one figure that grows from today, plus an optional
+         pension. Detailed frames that same figure as the first stage of a
+         list, named and locked, with the reader's own stages after it in age
+         order: each its own figure, growing from its own start, and paid after
+         you stop work or not. A pension is one of those stages, so the pension
+         rows are Simple only. Every figure is in today's money. -->
+    <div class="field-group" id="moneyIn">
+      <div class="group-title">Money in</div>
       <div class="field-row">
         <div class="field-head">
-          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" id="savingsTip" data-tip="">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Detail <i class="tip-icon" id="incomeModeTip" data-tip="" data-tip-options>?</i></span></div>
+          <div class="seg-toggle" id="incomeModeGroup">
+            <button class="seg-btn active" data-val="simple" type="button">Simple</button>
+            <button class="seg-btn" data-val="detailed" type="button">Detailed</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-row" id="savingsModeRow">
+        <div class="field-head">
+          <div class="field-label"><span class="tip-wrap"><span id="savingsLabel">Savings</span> <i class="tip-icon" id="savingsTip" data-tip="" data-tip-options>?</i></span></div>
           <div class="seg-toggle" id="savingsModeGroup">
             <button class="seg-btn active" data-val="savings" type="button">Savings</button>
             <button class="seg-btn" data-val="income" type="button">Net income</button>
           </div>
         </div>
-        <div class="inline-row">
-          <div class="currency-wrap grow">
-            <span class="prefix" id="savingsPrefix">$</span>
-            <input class="currency-input fmt-num" id="savings" type="text" inputmode="decimal" value="30,000"/>
+      </div>
+      <div class="money-stage" id="incomeNow">
+        <div class="field-row" id="savingsRow">
+          <div class="stage-head detailed-only">
+            <input type="text" class="txt-input stage-name stage-name-locked" id="incomeNowName" value="Savings today" readonly aria-readonly="true" aria-label="Stage name, fixed"/>
+            <span class="tip-wrap"><i class="tip-icon" data-tip="<strong>The baseline.</strong> Before you stop work, any age no stage covers comes back to this, grown at its rate from today.">?</i></span>
+            <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
           </div>
-          <select class="sel-input period" id="savingsPeriod">
-            <option value="weekly">a week</option>
-            <option value="monthly">a month</option>
-            <option value="yearly" selected>a year</option>
-          </select>
+          <div class="inline-row">
+            <div class="currency-wrap grow">
+              <span class="prefix" id="savingsPrefix">$</span>
+              <input class="currency-input fmt-num" id="savings" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="30,000"/>
+            </div>
+            <select class="sel-input period" id="savingsPeriod">
+              <option value="weekly">a week</option>
+              <option value="monthly">a month</option>
+              <option value="yearly" selected>a year</option>
+            </select>
+          </div>
+          <p class="note" id="savingsModeNote"></p>
         </div>
-        <p class="note" id="savingsModeNote"></p>
+        <div class="field-row" id="growthRow">
+          <div class="field-label simple-only"><span class="tip-wrap">Growth of that amount <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
+          <div class="growth-line">
+            <span class="stage-lbl detailed-only">Grows</span>
+            <div class="currency-wrap grow-wrap"><input class="currency-input has-suffix" id="growth" type="number" inputmode="decimal" min="-10" max="30" step="0.1" value="3"/><span class="suffix">%/yr</span></div>
+            <span class="stage-lbl grow-tail detailed-only">from today</span>
+            <span class="tip-wrap detailed-only"><i class="tip-icon" data-tip="Before inflation. At the inflation rate it holds its value in today’s money; below it, it shrinks.">?</i></span>
+          </div>
+        </div>
       </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Growth of that amount, % p.a. <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
-        <input class="num-input" id="growth" type="number" min="-10" max="30" step="0.1" value="3"/>
+      <div class="fg-sub detailed-only" id="inStagesBlock">
+        <div class="stage-list" id="inStageRows"></div>
+        <p class="note" id="inStagesEmpty">Add a stage for a stretch of life that pays differently, such as study, a hustle, part-time work or a pension.</p>
+        <div class="stage-actions"><button class="btn-secondary btn-sm" id="addInStage" type="button">+ Add stage</button></div>
       </div>
+      <div class="stage-timeline detailed-only" id="inTimeline"></div>
+      <div class="toggle-row simple-only">
+        <div class="toggle-label"><span class="tip-wrap">Government or age pension <i class="tip-icon" data-tip="Income from its start age, so it reduces the pot you need from then on.">?</i></span></div>
+        <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      </div>
+      <div class="fg-sub simple-only" id="pensionRows" style="display:none;">
+        <div class="field-row">
+          <div class="field-label">Pension starts at age</div>
+          <div class="currency-wrap"><input class="currency-input has-suffix" id="pensionStartAge" type="number" inputmode="numeric" min="40" max="90" step="1" value="67"/><span class="suffix">yrs</span></div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
+          <div class="inline-row">
+            <div class="currency-wrap grow">
+              <span class="prefix" id="pensionAmountPrefix">$</span>
+              <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="29,000"/>
+            </div>
+            <select class="sel-input period" id="pensionPeriod">
+              <option value="weekly">a week</option>
+              <option value="monthly">a month</option>
+              <option value="yearly" selected>a year</option>
+            </select>
+          </div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<ul><li><strong>On:</strong> indexed, so it keeps its value.</li><li><strong>Off:</strong> a flat figure that buys less every year.</li></ul>">?</i></span></div>
+          <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+        </div>
+        <p class="note" id="pensionNote"></p>
+      </div>
+    </div>
+
+    <!-- Money out. Simple is two figures, one while you work and one once you
+         stop. Detailed shows those same two as the first and last stage of a
+         list, named and locked, with the reader's own stages between them in
+         age order. The two locked rows are the SAME fields in both modes, so
+         nothing is copied between them; Detailed only changes their frame.
+         Every figure is in today's money. -->
+    <div class="field-group" id="moneyOut">
+      <div class="group-title">Money out</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now. It buys the same every year, at a figure that rises with inflation.">?</i></span></div>
+        <div class="field-head">
+          <div class="field-label"><span class="tip-wrap">Detail <i class="tip-icon" id="expenseModeTip" data-tip="" data-tip-options>?</i></span></div>
+          <div class="seg-toggle" id="expenseModeGroup">
+            <button class="seg-btn active" data-val="simple" type="button">Simple</button>
+            <button class="seg-btn" data-val="detailed" type="button">Detailed</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-row money-stage" id="livingRow">
+        <div class="field-label simple-only"><span class="tip-wrap">Living expenses <i class="tip-icon" data-tip="What you spend to live now, in today's money. Every % of living is a share of it.">?</i></span></div>
+        <div class="stage-head detailed-only">
+          <input type="text" class="txt-input stage-name stage-name-locked" value="Living expenses" readonly aria-readonly="true" aria-label="Stage name, fixed"/>
+          <span class="tip-wrap"><i class="tip-icon" data-tip="<strong>The baseline.</strong> Before you stop work, any age no stage covers comes back to this. Every % of living is a share of it.">?</i></span>
+          <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+        </div>
         <div class="inline-row">
           <div class="currency-wrap grow">
             <span class="prefix" id="expensePrefix">$</span>
-            <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" value="60,000"/>
+            <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="60,000"/>
           </div>
           <select class="sel-input period" id="expensePeriod">
             <option value="weekly">a week</option>
@@ -197,11 +288,34 @@
           </select>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Inflation, % p.a. <i class="tip-icon" data-tip="It lifts your expenses, and the pot you need with them.">?</i></span></div>
-        <input class="num-input" id="inflation" type="number" min="0" max="30" step="0.1" value="2.5"/>
-        <p class="note" id="inflationNote"></p>
+      <div class="fg-sub" id="stagesBlock" style="display:none;">
+        <div class="stage-list" id="stageRows"></div>
+        <p class="note" id="stagesEmpty">Add a stage between these two for a stretch of life that costs more or less, such as kids or a hustle.</p>
+        <div class="stage-actions"><button class="btn-secondary btn-sm" id="addStage" type="button">+ Add stage</button></div>
       </div>
+      <div class="field-row money-stage" id="retireRow">
+        <div class="field-label simple-only"><span class="tip-wrap">Retirement expenses <i class="tip-icon" id="retireExpenseTip" data-tip="" data-tip-options>?</i></span></div>
+        <div class="stage-head detailed-only">
+          <input type="text" class="txt-input stage-name stage-name-locked" value="Retirement expenses" readonly aria-readonly="true" aria-label="Stage name, fixed"/>
+          <span class="tip-wrap"><i class="tip-icon" data-tip="<strong>Takes over when you stop work</strong>, once any stage still running has finished. After that it fills any gap between stages.">?</i></span>
+          <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+        </div>
+        <div class="inline-row">
+          <div class="currency-wrap grow" id="retireExpenseWrap">
+            <span class="prefix" id="retireExpensePrefix" hidden>$</span>
+            <input class="currency-input fmt-num has-suffix" id="retireExpense" type="text" inputmode="decimal" data-min="0" data-max="1000" value="100"/>
+            <span class="suffix" id="retireExpenseSuffix">%</span>
+          </div>
+          <select class="sel-input period basis" id="retireExpensePeriod">
+            <option value="pct" selected>% of living</option>
+            <option value="weekly">a week</option>
+            <option value="monthly">a month</option>
+            <option value="yearly">a year</option>
+          </select>
+        </div>
+        <p class="note" id="retireExpenseNote"></p>
+      </div>
+      <div class="stage-timeline detailed-only" id="stageTimeline"></div>
     </div>
   </div>
 
@@ -213,7 +327,7 @@
         <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
         <div class="currency-wrap">
           <span class="prefix" id="assetsPrefix">$</span>
-          <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" value="100,000"/>
+          <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="100,000"/>
         </div>
       </div>
     </div>
@@ -226,12 +340,12 @@
         <p class="note" id="presetNote"></p>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Expected return (CAGR), % p.a. <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
-        <input class="num-input" id="ret" type="number" min="-5" max="40" step="0.1" value="8"/>
+        <div class="field-label"><span class="tip-wrap">Expected return (CAGR) <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
+        <div class="currency-wrap"><input class="currency-input has-suffix" id="ret" type="number" inputmode="decimal" min="-5" max="40" step="0.1" value="8"/><span class="suffix">%/yr</span></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Volatility, % p.a. <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
-        <input class="num-input" id="std" type="number" min="0" max="80" step="0.1" value="15"/>
+        <div class="field-label"><span class="tip-wrap">Volatility <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
+        <div class="currency-wrap"><input class="currency-input has-suffix" id="std" type="number" inputmode="decimal" min="0" max="80" step="0.1" value="15"/><span class="suffix">%/yr</span></div>
       </div>
     </div>
 
@@ -283,56 +397,23 @@
         <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money.">?</i></span></div>
         <div class="currency-wrap">
           <span class="prefix" id="legacyPrefix">$</span>
-          <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" value="500,000"/>
+          <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="500,000"/>
         </div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Retirement spending, % of today <i class="tip-icon" data-tip="100% spends the same as now. 80% if the mortgage is gone.">?</i></span></div>
-        <input class="num-input" id="retireMultiplier" type="number" min="10" max="300" step="1" value="100"/>
-      </div>
-    </div>
-
-    <div class="field-group">
-      <div class="group-title">Government or age pension</div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Include a pension <i class="tip-icon" data-tip="Reduces the pot you need, but only from its start age.">?</i></span></div>
-        <label class="toggle-switch"><input type="checkbox" id="pensionOn"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
-      </div>
-      <div class="fg-sub" id="pensionRows" style="display:none;">
-        <div class="field-row">
-          <div class="field-label">Pension starts at age</div>
-          <input class="num-input" id="pensionStartAge" type="number" min="40" max="90" step="1" value="67"/>
-        </div>
-        <div class="field-row">
-          <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
-          <div class="inline-row">
-            <div class="currency-wrap grow">
-              <span class="prefix" id="pensionAmountPrefix">$</span>
-              <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" value="29,000"/>
-            </div>
-            <select class="sel-input period" id="pensionPeriod">
-              <option value="weekly">a week</option>
-              <option value="monthly">a month</option>
-              <option value="yearly" selected>a year</option>
-            </select>
-          </div>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-label"><span class="tip-wrap">Rises with inflation <i class="tip-icon" data-tip="<strong>On:</strong> indexed, so it keeps its value.<br><strong>Off:</strong> a flat figure that buys less every year.">?</i></span></div>
-          <label class="toggle-switch"><input type="checkbox" id="pensionIndexed" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
-        </div>
-        <p class="note" id="pensionNote"></p>
       </div>
     </div>
   </div>
 
-  <!-- ── Settings ── -->
+  <!-- ── Assumptions ──
+       The guesses about the future, last: what prices do, and how the
+       simulated futures are drawn. Ids keep their old names (tab-settings),
+       so a saved tab and every saved field still land. -->
   <div class="ctrl-panel" id="tab-settings">
     <div class="field-group">
-      <div class="group-title">Display</div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Show Present Value <i class="tip-icon" data-tip="<strong>Off:</strong> future's money.<br><strong>On:</strong> today's money. The plan is the same either way.">?</i></span></div>
-        <label class="toggle-switch"><input type="checkbox" id="showReal"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      <div class="group-title">Prices</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Inflation <i class="tip-icon" data-tip="It lifts your expenses, and the pot you need with them.">?</i></span></div>
+        <div class="currency-wrap"><input class="currency-input has-suffix" id="inflation" type="number" inputmode="decimal" min="0" max="30" step="0.1" value="2.5"/><span class="suffix">%/yr</span></div>
+        <p class="note" id="inflationNote"></p>
       </div>
     </div>
 
@@ -340,15 +421,15 @@
       <div class="group-title">Simulation</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
-        <input class="num-input" id="paths" type="number" min="100" max="5000" step="100" value="1000"/>
+        <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="paths" type="number" inputmode="numeric" min="100" max="5000" step="100" value="1000"/><span class="suffix">paths</span></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Confidence level, % <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
-        <input class="num-input" id="confidence" type="number" min="50" max="99" step="1" value="90"/>
+        <div class="field-label"><span class="tip-wrap">Confidence level <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
+        <div class="currency-wrap"><input class="currency-input has-suffix" id="confidence" type="number" inputmode="numeric" min="50" max="99" step="1" value="90"/><span class="suffix">%</span></div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
-        <input class="num-input" id="seed" type="number" min="1" step="1" value="20260921"/>
+        <input class="num-input" id="seed" type="number" inputmode="numeric" min="1" step="1" value="20260921" data-unitless data-unbounded/>
       </div>
     </div>
   </div>
@@ -366,8 +447,14 @@
        One question only: how early can you stop? Required pot against what
        the investment grows to, with no withdrawal anywhere in it. -->
   <section class="board" id="boardPath">
-    <header class="board-head">
+    <header class="board-head board-head-split">
       <h2>Path to freedom</h2>
+      <!-- A way of READING every figure on the page, not an assumption, so it
+           sits with the results it changes rather than in the input panel. -->
+      <div class="toggle-row money-toggle">
+        <div class="toggle-label"><span class="tip-wrap">Show in today's money <i class="tip-icon" data-tip="The plan is the same either way.<ul><li><strong>On:</strong> every figure in today's money.</li><li><strong>Off:</strong> in the money of each year, as the account will read.</li></ul>">?</i></span></div>
+        <label class="toggle-switch"><input type="checkbox" id="showReal" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+      </div>
     </header>
 
     <section class="metrics metrics-3">
@@ -390,7 +477,7 @@
 
     <section class="chart-card card">
       <div class="chart-head">
-        <h3>Pot needed vs investment growth</h3>
+        <h2>Investment vs pot needed, by age</h2>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" id="ffSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
           <button class="btn-secondary btn-sm" id="ffPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -421,7 +508,7 @@
              every render. The static pair is the widest either age can be, so a
              value restored from the last visit is never clamped by a stale bound
              before the render that would have widened it. -->
-        <input type="range" id="ageRetire" min="0" max="120" step="1" value="60"/>
+        <input type="range" id="ageRetire" min="0" max="120" step="1" value="60" data-readout="ageRetireVal" data-unit="yrs"/>
         <div class="slider-scale"><span id="retireScaleMin">Age now</span><span id="retireScaleMax">Life expectancy</span></div>
       </div>
       <!-- The verdict ON THE SLIDER'S OWN AGE, directly under the handle that
@@ -462,7 +549,15 @@
          picture. -->
     <section class="chart-card card">
       <div class="chart-head">
-        <h3>Income, spending and the balance they leave</h3>
+        <h2>Cashflows and balance, by age</h2>
+        <!-- Which life stages run along the top of the chart. Shown only when
+             both Money in and Money out are Detailed with stages of their own;
+             with one side staged, that side is drawn and there is nothing to
+             choose. -->
+        <div class="seg-toggle" id="stageViewGroup" role="group" aria-label="Life stages shown on the chart" style="display:none;">
+          <button class="seg-btn" data-val="in" type="button" title="Show the Money in stages along the top of the chart">Income stages</button>
+          <button class="seg-btn active" data-val="out" type="button" title="Show the Money out stages along the top of the chart">Expense stages</button>
+        </div>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" id="ddSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
           <button class="btn-secondary btn-sm" id="ddPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -487,7 +582,7 @@
     </section>
   </section>
 
-  <section class="detail-section card">
+  <section class="assumes-card card">
     <h2>What this assumes</h2>
     <ul class="assumptions" id="assumptions"></ul>
   </section>
@@ -506,7 +601,7 @@
       <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
         <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
@@ -515,6 +610,8 @@
     </div>
   </section>
 </footer>
+
+<script src="../dropdown.js"></script>
 
 <script src="../shared.js"></script>
 <script src="script.js"></script>

@@ -33,9 +33,8 @@ body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var
 .slider-block:first-of-type{border-top:none;}
 .slider-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
 .slider-label{font-weight:700;font-size:.88rem;}
-.slider-value{color:var(--accent);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;cursor:text;}
+.slider-value{color:var(--accent);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;}
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
-.slider-val-edit{display:none;width:5em;background:transparent;border:none;border-bottom:1.5px solid var(--accent);color:var(--accent);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;text-align:right;outline:none;padding:0 1px;}
 .help{color:var(--muted);font-size:.8rem;margin-top:4px;line-height:1.4;}
 .field-row{display:flex;flex-direction:column;gap:4px;padding:10px 0 12px;border-top:1px solid var(--border);}
 .field-row:first-of-type{border-top:none;}
@@ -45,10 +44,6 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .num-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,184,248,.15);}
 .input-row{display:flex;gap:8px;align-items:center;}
 .input-row .num-input,.input-row .currency-wrap{flex:1;}
-.input-row select{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:.88rem;font-weight:500;padding:10px 13px;outline:none;cursor:pointer;transition:border-color var(--motion-fast);}
-select{background-color:var(--panel)!important;color:var(--text)!important;border:1.5px solid var(--border);border-radius:var(--radius-md);outline:none;}
-select:focus{border-color:var(--accent);}
-select option{background:var(--panel);color:var(--text);}
 .radio-group{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
 .radio-opt{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:border-color var(--motion-fast);}
 .radio-opt:hover{border-color:var(--accent);}
@@ -60,7 +55,7 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 /* Segmented control (Simple / Detailed mortgage mode) */
 .seg-group{display:flex;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;margin-top:4px;}
 .seg-btn{flex:1;background:transparent;border:none;border-radius:7px;padding:7px 14px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
-.seg-btn.active{background:var(--accent);color:#fff;}
+.seg-btn.active{background:var(--accent);color:var(--text-inv);}
 .seg-btn:hover:not(.active){color:var(--text);}
 /* Mortgage rate schedule (detailed mode) */
 .rate-periods{display:grid;gap:8px;margin-top:6px;}
@@ -71,11 +66,11 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .rp-years b{color:var(--text);font-family:'DM Mono',monospace;font-weight:600;}
 .rp-sep{color:var(--muted);}
 /* Shared design-system select, sized down for the compact schedule row. */
-.rp-head .rp-type{flex:1;min-width:0;width:auto;font-size:.8rem;font-weight:600;padding:6px 26px 6px 9px;background-position:right 8px center;}
+.rp-head .rp-type{flex:1;min-width:0;width:auto;font-size:.8rem;padding:6px 9px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .rate-period-row input[type=number]{background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
 .rate-period-row input[type=number]:focus{border-color:var(--accent);}
 .rp-years .rp-to{width:4.4em;flex-shrink:0;}
-.rp-head .rp-delete{margin-left:auto;flex:0 0 auto;padding:5px 9px;font-size:.8rem;line-height:1;}
+.rp-head .rp-delete{margin-left:auto;}
 .rp-rates{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .rp-fixed-wrap,.rp-float-wrap{display:inline-flex;align-items:center;gap:6px;}
 .rp-rates input{width:5.2em;}
@@ -89,12 +84,12 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .ci-head{display:flex;align-items:center;gap:7px;}
 .ci-name{flex:1;min-width:0;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;padding:6px 8px;outline:none;transition:border-color var(--motion-fast);}
 .ci-name:focus{border-color:var(--accent);}
-.ci-delete{padding:5px 9px;font-size:.75rem;flex-shrink:0;}
+.ci-delete{flex-shrink:0;}
 .ci-line{display:flex;align-items:center;gap:7px;}
 .ci-line .currency-wrap{flex:1;min-width:0;}
 .ci-line .currency-input{width:100%;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px 6px 32px;outline:none;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
 .ci-line .currency-input:focus{border-color:var(--accent);}
-.ci-line select{flex-shrink:0;max-width:55%;font-size:.8rem;padding:6px 8px;cursor:pointer;}
+.ci-line select{flex-shrink:0;max-width:55%;font-size:.8rem;padding:6px 8px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .ci-infl-wrap{justify-content:flex-start;}
 .ci-infl-label{font-size:.78rem;color:var(--muted);}
 .ci-infl{width:5.2em;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px;outline:none;text-align:right;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
@@ -105,14 +100,12 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .cagr-actions{display:flex;flex-wrap:wrap;gap:8px;}
 .cagr-row input{width:100%;min-width:0;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:8px 10px;outline:none;transition:border-color var(--motion-fast);}
 .cagr-row input:focus{border-color:var(--accent);}
-.cagr-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity var(--motion-fast);}
+.cagr-btn{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-sm);padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity var(--motion-fast);}
 .cagr-btn:hover{opacity:.85;}
-.cagr-btn.delete{background:transparent;color:var(--negative-em);border:1px solid var(--data-neg-border);padding-inline:10px;}
-.cagr-btn.delete:disabled{opacity:.45;cursor:not-allowed;}
 .cagr-result{color:var(--accent2);font-size:.82rem;font-weight:700;line-height:1.4;min-height:1.2em;font-family:'DM Mono',monospace;}
 @media(max-width:520px){
   .cagr-row{grid-template-columns:1fr;}
-  .cagr-row .cagr-btn.delete{justify-self:start;}
+  .cagr-row .cagr-delete{justify-self:start;}
 }
 .warning{margin:0 18px 18px;padding:10px 12px;border-radius:var(--radius-md);background:rgba(255,210,140,.12);border:1px solid rgba(255,210,140,.25);color:#FFD28C;display:none;font-size:.82rem;line-height:1.5;}
 body.light .warning{background:#FFF0D9;border-color:#F5D08A;color:#7A4A00;}
@@ -208,3 +201,13 @@ h3{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;
 .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
+
+/* ── Redesign: shared skeleton fit ── */
+.field-row .slider-head{margin-bottom:6px;}
+.field-row .slider-head .field-label{flex:1 1 auto;}
+.input-row .sel-input{width:auto;flex:0 0 auto;padding:10px 12px;}
+.input-row .sel-unit{min-width:4.2em;}
+.chart-card>.sub{color:var(--muted);font-size:.8rem;margin:-2px 0 0;line-height:1.4;}
+.detail-section .detail-head{margin-bottom:4px;}
+.detail-section .unit-note{margin:2px 0 12px;}
+.assumes-card{padding:20px;}

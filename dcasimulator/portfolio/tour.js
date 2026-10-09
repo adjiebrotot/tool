@@ -1,7 +1,9 @@
 /* Guided-tour config for the Portfolio DCA Simulator.
-   The shared engine (../../tour-shared.js) reads this object. */
+   The shared engine (../../tour-shared.js) reads this object. v2 follows the
+   redesign: Currency on the Data tab, Settings renamed Assumptions, and the
+   answer and summary above the charts, so readers who took v1 see it again. */
 window.__TOUR = {
-  seenKey: 'dcapf-tour-v1-seen',
+  seenKey: 'dcapf-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -23,10 +25,11 @@ window.__TOUR = {
     },
     {
       target: '.ctrl-tabs',
-      title: '② Data, Portfolios, Settings',
-      body: 'Load market data in <strong>Data</strong>, build each strategy in ' +
-            '<strong>Portfolios</strong>, and set currency and the risk-free rate in ' +
-            '<strong>Settings</strong>.'
+      title: '② Data, Portfolios, Assumptions',
+      body: 'Pick the currency and load market data in <strong>Data</strong>, build each ' +
+            'strategy in <strong>Portfolios</strong>, each with its own Risk-Free Account ' +
+            'and fees, and set when orders fill and the seed behind simulated assets in ' +
+            '<strong>Assumptions</strong>.'
     },
     {
       target: '#tab-data',
@@ -68,16 +71,18 @@ window.__TOUR = {
       },
       title: '⑤ Run the simulation',
       body: 'Click <strong>Simulate</strong> to backtest every portfolio on the same ' +
-            'overlapping dates. Charts and the <strong>Final Summary</strong> line up ' +
-            'value, return, and risk metrics per portfolio. Everything runs locally in ' +
-            'your browser.'
+            'overlapping dates. The sentence at the top of the results says which ended ' +
+            'highest, or which earned the most on what went in when the top-ups differ. ' +
+            'The <strong>Final Summary</strong> under it lines up value, return and risk ' +
+            'metrics, the charts follow, and the breakdown table opens from ' +
+            '<strong>Show table</strong>. Everything runs locally in your browser.'
     },
     {
       target: null,
       title: '✅ You are all set',
       body: 'That is the workflow. Prefer comparing single assets instead? Use the ' +
             '<strong>Single-Asset DCA</strong> tool linked in the header. Replay this tour ' +
-            'any time via <strong>Take a tour</strong>.'
+            'any time via the <strong>🧭</strong> button.'
     }
   ]
 };

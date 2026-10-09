@@ -9,7 +9,8 @@
      .field-group / .group-title  — tinted box that groups related rows
      .num-input      — numeric text input (DM Sans, tabular-nums)
      .txt-input      — free-text input (DM Sans)
-     .sel-input      — <select> dropdown (DM Sans, custom chevron)
+     .sel-input      — <select> dropdown: any select, see dropdown.css
+     .combo-input / .combo-list — a searchable list, see dropdown.css
      .currency-wrap  — wraps a .currency-input with .prefix/.suffix
                         unit labels. Currency symbols are a .prefix
                         (before the number: "Rp", "$"); percentages and
@@ -23,6 +24,8 @@
    use SharedFmt.attachCurrencyInput / SharedFmt.liveFormat from
    shared.js (see <script src="../shared.js"></script>).
    ────────────────────────────────────────────────────────────────────────── */
+@import url('dropdown.css');
+
 
 /* Spinner keyframes */
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -32,6 +35,15 @@
 #globalTooltip strong{color:var(--accent-strong);font-weight:700;}
 #globalTooltip br{display:block;margin-top:5px;content:'';}
 #globalTooltip.visible{display:block;opacity:1;}
+/* Options explained in a tip: a real list, at most three short items. More
+   than that, or long ones, and the tip explains the selected option only and
+   carries .tip-hint (added by shared.js for [data-tip-options]). */
+#globalTooltip ul{margin:4px 0 0;padding-left:16px;}
+#globalTooltip ul:first-child{margin-top:0;}
+#globalTooltip li{margin:3px 0 0;}
+#globalTooltip li:first-child{margin-top:0;}
+#globalTooltip li::marker{color:var(--muted);}
+#globalTooltip .tip-hint{display:block;margin-top:6px;font-size:.7rem;line-height:1.4;color:var(--muted);}
 #globalTooltip .tt-arrow{position:absolute;bottom:-7px;width:12px;height:7px;overflow:hidden;transform:translateX(-50%);}
 #globalTooltip .tt-arrow::before{content:'';display:block;width:10px;height:10px;background:var(--panel);border:1px solid var(--border);transform:rotate(45deg) translate(-3px,-3px);}
 #globalTooltip.flip-below .tt-arrow{bottom:auto;top:-7px;}
@@ -154,8 +166,16 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 
 /* ============================================================
    HEADER
+   ------------------------------------------------------------
+   Title and subtitle on the left, the button cluster hard right, on every
+   tool. The left block grows from a zero basis, so however long the subtitle
+   runs it wraps inside its own column instead of pushing the buttons onto a
+   line of their own under the title (which is what a tool's own
+   `flex-wrap:wrap` used to do on a long subtitle).
    ============================================================ */
-.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;}
+.header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.header>:first-child{flex:1 1 0%;min-width:0;}
+.header-right{display:flex;gap:8px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end;align-items:center;}
 
 /* ============================================================
    DARK / LIGHT TOGGLE BUTTON
@@ -168,17 +188,20 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
    SCENARIO SAVE / OPEN (SharedScenario in shared.js)
    ============================================================ */
 /* Two icon buttons, floppy disk and open folder. In a Quick Start row they sit
-   hard right, sized like the preset buttons; in a header they sit in the
-   button cluster, sized like the theme toggle. */
-.scenario-io{display:inline-flex;gap:6px;flex-shrink:0;}
+   hard right on the label's line, bare like every icon-only button that has
+   no boxed neighbours (see .btn-bare); in a header they sit in the button
+   cluster and wear the theme toggle's box, so the row reads as one set. */
+.scenario-io{display:inline-flex;gap:2px;flex-shrink:0;}
 /* They share the label's line; the presets drop to a full-width line below,
    so the buttons never strand a line of their own under the presets. */
 .quick-start-row .scenario-io{margin-left:auto;}
 .quick-start-row:has(.scenario-io) .quick-start-btns{order:1;flex-basis:100%;}
-.scenario-io-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);cursor:pointer;transition:all var(--transition-fast);font-family:inherit;}
+.scenario-io-btn{display:inline-flex;align-items:center;justify-content:center;padding:0;color:var(--muted);cursor:pointer;font-family:inherit;}
+.scenario-io-btn:not(.btn-theme){width:30px;height:28px;background:transparent;border:none;border-radius:var(--radius-sm);transition:color var(--transition-fast),background var(--transition-fast);}
 .scenario-io-btn svg{width:17px;height:17px;}
-.scenario-io-btn:hover{border-color:var(--accent);color:var(--text);}
+.scenario-io-btn:not(.btn-theme):hover{color:var(--accent-strong);background:var(--input-bg);}
 .scenario-io-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+@media (pointer:coarse){.scenario-io-btn:not(.btn-theme){width:34px;height:34px;}}
 /* In a header the buttons also carry .btn-theme, so they wear whatever the
    page's own header buttons wear; only the shape is set here. */
 .header-right .scenario-io{align-self:stretch;}
@@ -259,13 +282,8 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .currency-wrap .prefix[hidden],.currency-wrap .suffix[hidden]{display:none;}
 
 /* ============================================================
-   SELECT / DROPDOWN
+   SELECT / DROPDOWN: see dropdown.css (imported at the top)
    ============================================================ */
-.sel-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:inherit;font-size:.92rem;font-weight:600;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
-.sel-input:focus{border-color:var(--accent);}
-/* CRITICAL: hard-code option colours — browsers ignore CSS variables on <option> */
-.sel-input option{background:#162033;color:#EAF1FF;}
-body.light .sel-input option{background:#ffffff;color:#2D3436;}
 
 /* ============================================================
    RADIO GROUP
@@ -300,6 +318,45 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:border-color var(--transition-fast);font-family:inherit;}
 .btn-secondary:hover{border-color:var(--accent);}
 .btn-secondary:active{transform:scale(.97);}
+/* Native [disabled], site-wide. Without this a disabled .btn-primary or
+   .btn-secondary looked exactly like a live one, and its hover still faded and
+   its press still squashed it, so nothing told the reader it would do nothing.
+   :where() keeps it at the weight of one class, so a tool's own :disabled rule wins;
+   the :hover/:active lines only stop a tool's hover and press effects playing
+   on a button that cannot be pressed. */
+:where(button,input[type=button],input[type=submit]):disabled{opacity:.45;cursor:not-allowed;}
+:where(button,input[type=button],input[type=submit]):disabled:hover,
+:where(button,input[type=button],input[type=submit]):disabled:active{transform:none;}
+.btn-primary:disabled:hover,.btn-primary:disabled:active{opacity:.45;transform:none;}
+.btn-secondary:disabled:hover,.btn-secondary:disabled:active{border-color:var(--border);transform:none;}
+
+/* ── Bare icon button (.btn-bare) and the shared icons (SharedIcon) ──
+   An icon-only button that acts on the thing it sits in (a row, a card, a
+   chip, a column header, a panel) wears no fill and no border: muted at rest,
+   tinted on hover. The picture alone says what it does, so a box around it is
+   only noise. Only the bin turns red on hover, because only the bin destroys
+   something. Drawings live in shared.js (SharedIcon), so ✕ is the same close
+   and the bin the same delete on every tool. */
+/* pointer-events:none so a click on the drawing lands on its button, which is
+   what every handler checks (e.target.classList, dataset). */
+.ico{display:inline-block;width:1.1em;height:1.1em;flex:0 0 auto;vertical-align:-.17em;pointer-events:none;}
+.btn-bare{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-width:28px;height:28px;padding:0;margin:0;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--muted);cursor:pointer;line-height:1;font:inherit;font-weight:600;transition:color var(--motion-fast),background var(--motion-fast);}
+.btn-bare .ico{width:16px;height:16px;}
+.btn-bare:hover{color:var(--accent-strong);background:var(--input-bg);}
+.btn-bare:focus-visible{outline:2px solid var(--accent-strong);outline-offset:1px;}
+.btn-bare.is-delete:hover{color:var(--negative-em);background:var(--negative-bg);}
+.btn-bare:disabled,.btn-bare:disabled:hover{opacity:.35;cursor:not-allowed;background:transparent;color:var(--muted);}
+/* Any button whose icon sits before a word: one gap between them, whatever
+   the button's own display was. :where() so a tool's own layout still wins. */
+:where(.has-ico){display:inline-flex;align-items:center;justify-content:center;gap:.45em;}
+/* Inside a chip or a dense table cell. */
+.btn-bare.sm{min-width:20px;height:20px;border-radius:5px;}
+.btn-bare.sm .ico{width:13px;height:13px;}
+/* A finger needs more than a pointer does. */
+@media (pointer:coarse){
+  .btn-bare{min-width:34px;height:34px;}
+  .btn-bare.sm{min-width:26px;height:26px;}
+}
 
 /* ============================================================
    CHART CARD TOOLBAR
@@ -404,9 +461,13 @@ body.light tr:hover td{background:rgba(90,145,232,0.04);}
      and the page scroll carries the panel. */
   .controls:has(.ctrl-scroll){display:block;max-height:none;}
   .ctrl-scroll{flex:0 0 auto;overflow:visible;}
-  .canvas-wrap{height:380px!important;}
+  /* No !important: a tool that sizes its own chart for a phone (a stacked
+     chart needs more height than a single pane) has to be able to. */
+  .canvas-wrap{height:380px;}
   .summary-grid{grid-template-columns:repeat(2,1fr);}
   .header{flex-direction:column;gap:10px;padding:16px 18px;}
+  .header>:first-child{flex:0 0 auto;}
+  .header-right{justify-content:flex-start;}
   .container{padding:16px;}
 }
 @media(max-width:600px){
@@ -482,3 +543,133 @@ html{scrollbar-gutter:stable;}
    and wrapping is the last resort if even the short form is too wide. */
 .metric,.tile{min-width:0;}
 .metric .value,.metric .val,.tile .value{overflow-wrap:anywhere;}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FINANCE TOOL SKELETON
+   ──────────────────────────────────────────────────────────────────────────
+   The pieces every finance tool shares, so a reader who learns one tool can
+   read the next: a field states its unit and refuses a value outside its
+   range, a slider names both of its ends and takes a typed value, the answer
+   opens with one plain sentence, the year-by-year table waits behind a
+   button, and the page closes on what it assumes. See "Finance tool
+   skeleton" in _ref/design-reference.md for when each one is used.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Segmented control (Simple | Detailed, Employee | Self-employed …) ──
+   The design reference's canonical look. A tool may set its own layout (a
+   full-width group, a smaller pill), never its own colours. */
+/* Zero specificity (:where), so a tool that already draws its own group keeps
+   every property it sets and only picks up the ones it leaves open. */
+:where(.seg-group){display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
+:where(.seg-group)>:where(.seg-btn){background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
+:where(.seg-group)>:where(.seg-btn.active){background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
+:where(.seg-group)>:where(.seg-btn:hover:not(.active)){color:var(--text);}
+:where(.seg-group)>:where(.seg-btn:focus-visible){outline:2px solid var(--accent);outline-offset:1px;}
+
+/* ── Detail level: one control, one wording, one place ──
+   "Detail  [Simple | Detailed]" as the first row of the group (or tab) it
+   governs. Simple holds the figures anyone knows; Detailed adds rows, it
+   never changes what a Simple field means. */
+.field-row.detail-row,.detail-row{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.detail-row .field-label{display:inline-flex;align-items:center;gap:5px;}
+.detail-row .seg-group{margin-top:0;flex:0 0 auto;}
+.detail-row .seg-btn{flex:0 0 auto;}
+
+/* ── A count picked from a few values (dependants, adults, 0 to 6) ──
+   SharedSeg.fromSelect() draws it from a <select> that stays on the page as
+   the field the tool reads and the mini cache saves; the buttons are the
+   control a reader uses. */
+.seg-count{display:flex;width:100%;}
+.seg-count .seg-btn{flex:1 1 0;padding:6px 6px;min-width:2.2em;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
+.seg-source{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;overflow:hidden!important;}
+.seg-host{position:relative;}
+
+/* ── Units live inside the field ──
+   A field's unit is its affix (.currency-wrap .prefix / .suffix), so a label
+   never carries "(% p.a.)". The suffix can be a word or two ("%/yr",
+   "yrs", "/mo"); this keeps the number clear of it. */
+.currency-wrap .suffix{white-space:nowrap;}
+.currency-wrap .currency-input.has-suffix.wide-suffix{padding-right:64px;}
+
+/* ── A field that refused a value outside its range ──
+   SharedBounds pulls the value back to the nearest end and says so in a small
+   note pinned under the field for a moment, so the change is never silent.
+   The note floats (fixed, like the tooltip) so it never shifts the layout of
+   the row it sits under. */
+#boundHint{position:fixed;z-index:99990;left:0;top:0;pointer-events:none;max-width:260px;padding:4px 9px;border-radius:var(--radius-sm);background:var(--warning-bg);border:1px solid rgba(255,210,140,.45);color:var(--warning-text);font-size:.76rem;font-weight:700;line-height:1.35;box-shadow:var(--shadow-sm);opacity:0;transition:opacity var(--motion-fast);}
+#boundHint.visible{opacity:1;}
+.bound-flash{border-color:var(--gold)!important;}
+
+/* ── Sliders: both ends named, the readout takes a typed value ──
+   SharedSlider writes the ends under every slider in a control panel from
+   the slider's own min and max, and turns the readout into a box a reader
+   can click and type into, clamped to the same ends and steps. */
+.range-ends{display:flex;justify-content:space-between;gap:8px;margin-top:2px;color:var(--muted);font-size:.72rem;line-height:1.2;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;pointer-events:none;}
+.slider-head .slider-value{flex:0 0 auto;}
+.slider-value.is-editable{display:inline-block;cursor:text;padding:1px 8px;min-width:4.4em;text-align:right;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);white-space:nowrap;transition:border-color var(--motion-fast);}
+.slider-value.is-editable:hover{border-color:var(--accent);}
+.slider-val-edit{display:none;width:6em;padding:1px 8px;border:1.5px solid var(--accent);border-radius:var(--radius-sm);background:var(--panel);color:var(--accent);font-weight:700;font-size:.88rem;font-variant-numeric:tabular-nums;font-family:'DM Mono',monospace;text-align:right;outline:none;}
+
+/* ── A figure worked out from the fields above it ──
+   "Down payment = $160,000". Read, not entered, so it is quiet: muted text,
+   the figure in the text colour. Gold is the warning colour in dark mode and
+   is not used here. */
+.derived{color:var(--muted);font-size:.8rem;line-height:1.4;margin-top:4px;}
+.derived b,.derived strong,.derived .derived-val{color:var(--text);font-weight:700;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
+
+/* ── The verdict: the answer in one plain sentence, above everything ──
+   Neutral when the tool compares two fair options (rent or own, file
+   separately or jointly), good / bad / warn when the answer is a pass or a
+   miss against a goal the reader set. */
+.verdict{padding:16px 18px;margin-bottom:18px;border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg-subtle);display:none;}
+.verdict.visible{display:block;}
+.verdict h2{margin:0 0 6px;font-size:1.05rem;line-height:1.4;}
+/* A verdict whose heading says the whole thing carries no body line under it. */
+.verdict h2:last-child{margin-bottom:0;}
+.verdict p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.55;}
+.verdict.good{border-color:var(--positive-border);background:var(--positive-bg);}
+.verdict.good h2{color:var(--positive-em);}
+.verdict.bad{border-color:var(--negative-border);background:var(--negative-bg);}
+.verdict.bad h2{color:var(--negative-em);}
+.verdict.warn{border-color:rgba(255,210,140,.35);background:var(--warning-bg);}
+.verdict.warn h2{color:var(--warning-text);}
+.verdict .v-num{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+
+/* ── Units of a table, said once over it ── */
+.unit-note{color:var(--muted);font-size:.78rem;line-height:1.4;margin:4px 0 10px;}
+
+/* ── Year-by-year table, behind a button ──
+   SharedFold collapses the long table under its own header row; the CSV
+   button beside it still exports the whole thing while it is closed. */
+.fold-btn,.btn-secondary.fold-btn{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;}
+.fold-btn .fold-chev{display:inline-block;transition:transform var(--motion-fast);}
+.fold-btn[aria-expanded="true"] .fold-chev{transform:rotate(180deg);}
+.is-folded .fold-body{display:none!important;}
+
+/* ── What this assumes: the page closes on its own caveats ── */
+.assumes-card{padding:20px;margin-bottom:18px;}
+.assumes-card h2{margin:0 0 10px;font-size:1.1rem;}
+.assumptions{margin:0;padding-left:18px;color:var(--muted);font-size:.85rem;line-height:1.65;}
+.assumptions li+li{margin-top:5px;}
+.assumptions strong{color:var(--text);}
+
+/* ── Assumptions tab glyph (mask form, for the tools whose tab bars use
+   .ricon). The .tico form is the same drawing inline. ── */
+.ricon-assume{background-color:currentColor;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10'/%3E%3Ccircle cx='10' cy='6.5' r='2'/%3E%3Ccircle cx='16' cy='12' r='2'/%3E%3Ccircle cx='8' cy='17.5' r='2'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10'/%3E%3Ccircle cx='10' cy='6.5' r='2'/%3E%3Ccircle cx='16' cy='12' r='2'/%3E%3Ccircle cx='8' cy='17.5' r='2'/%3E%3C/svg%3E");}
+
+/* A typed number field draws no spinner arrows: the unit sits where they
+   would, and the field's own min, max and step already bound it. */
+.currency-input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+.currency-input[type=number]::-webkit-inner-spin-button,.currency-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.ctrl-tabs.stacked .ricon{margin-right:0;width:1.35em;height:1.35em;}
+
+/* ── Draggable table columns (SharedColDrag) ──
+   The grip lifts its column; the lifted cells take an opaque panel colour so
+   they read cleanly over the columns they slide across, and the line marks
+   where they will land. */
+.col-grip{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:none;border:none;border-radius:5px;padding:1px 3px;margin:0;font-family:inherit;font-size:1rem;line-height:1;letter-spacing:-1px;color:var(--muted);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;}
+.col-grip:hover{color:var(--accent-strong);}
+.col-grip:focus-visible{color:var(--accent-strong);outline:2px solid var(--accent-strong);outline-offset:1px;}
+body.col-dragging,body.col-dragging *{cursor:grabbing!important;user-select:none!important;-webkit-user-select:none!important;}
+.col-drag-src{position:relative;z-index:5;background-color:var(--panel)!important;box-shadow:inset 0 0 0 9999px color-mix(in srgb,var(--accent) 20%,transparent),inset 1px 0 0 var(--accent-strong),inset -1px 0 0 var(--accent-strong);pointer-events:none;}
+.col-drop-line{position:fixed;z-index:1000;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--accent-strong);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 22%,transparent);pointer-events:none;}

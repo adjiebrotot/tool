@@ -209,7 +209,7 @@ await page.goto(PAGE, { waitUntil:'load' });
 // page.evaluate(), which a backdrop cannot block, but a step that seeds a Quick
 // Start scenario would still land on top of a test's own inputs. Mark the tour
 // as already seen so the run is deterministic.
-await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v1-seen','1'); } catch(e){} });
+await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v2-seen','1'); } catch(e){} });
 await page.reload({ waitUntil:'load' });
 await page.waitForTimeout(250);
 
@@ -656,7 +656,7 @@ async function reset(){
       && restoredModes.capsMode === 'detailed'
       && await page.evaluate(() => document.querySelector('#incModeGroup .seg-btn[data-val="detailed"]').classList.contains('active')),
     `restored ${JSON.stringify(restoredModes)}`);
-  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v1-seen','1'); } catch(e){} });
+  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v2-seen','1'); } catch(e){} });
 }
 
 /* ══════════════ B17 — Simple and Detailed describe the same person ══════════════ */
@@ -1006,23 +1006,23 @@ async function reset(){
   const EXPECTED = {
     'finance-bro': { modes:{ incWho:'employee', incMode:'detailed', debtsMode:'detailed', loanMode:'simple', capsMode:'simple' },
                      vals:{ city:'Sydney', adults:'1', incPayg:230000, incBonus:90000, shdBonus:80,
-                            cardLimit:25000, persRepay:950, price:1700000, savings:550000 },
+                            cardLimit:25000, persRepay:950, price:1350000, savings:550000 },
                      binds:'serv' },
     'couple':      { modes:{ incWho:'employee', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
                      vals:{ city:'Melbourne', adults:'2', incSplit:50, deps:2, declaredExp:4800,
-                            cardLimit:15000, price:950000, savings:250000 },
+                            cardLimit:15000, price:920000, savings:300000 },
                      binds:'serv' },
     'geoff':       { modes:{ incWho:'employee', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
-                     vals:{ city:'Perth', adults:'1', declaredExp:2800, cardLimit:8000,
-                            price:650000, savings:150000 },
+                     vals:{ city:'Perth', adults:'1', declaredExp:2800, incSimple:110000, cardLimit:8000,
+                            price:560000, savings:180000 },
                      binds:'serv' },
     'first-home':  { modes:{ incWho:'employee', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
-                     vals:{ city:'Brisbane', adults:'1', declaredExp:2600, cardLimit:5000,
-                            price:650000, savings:70000, dutyPct:0 },
-                     binds:'dep' },
+                     vals:{ city:'Brisbane', adults:'1', declaredExp:2600, incSimple:120000, cardLimit:5000,
+                            price:480000, savings:70000, dutyPct:0, lmiCap:true },
+                     binds:'serv' },
     'tradie':      { modes:{ incWho:'self', incMode:'simple', debtsMode:'simple', loanMode:'simple', capsMode:'simple' },
                      vals:{ city:'Adelaide', adults:'1', deps:1, cardLimit:20000,
-                            persRepay:950, price:850000, savings:300000 },
+                            persRepay:950, price:780000, savings:300000 },
                      binds:'serv' }
   };
 
@@ -1048,7 +1048,8 @@ async function reset(){
     Object.entries(want.vals).forEach(([id, v]) => {
       const live = got[id];
       if(live === null){ mismatched.push(`${key}.${id}: no such control`); return; }
-      const ok = typeof v === 'number'
+      const ok = typeof v === 'boolean' ? live === v
+        : typeof v === 'number'
         ? near(parseFloat(String(live).replace(/,/g, '')), v, 0.01)
         : String(live) === v;
       if(!ok) mismatched.push(`${key}.${id}: ${live} want ${v}`);
@@ -1067,22 +1068,34 @@ async function reset(){
   check('B27c the chosen scenario is the only one highlighted',
     unmarked.length === 0, unmarked.length ? unmarked.join(' | ') : 'exactly one active button each time');
 
-  // The first home buyer is the one scenario that binds on the deposit, and
-  // capitalising LMI is the lever its tooltip points at. If a later tweak to
-  // duty or HEM quietly moves that, this is what says so.
+  // Every scenario is someone who can afford what they priced. A scenario that
+  // opens on "short" teaches the reader the tool says no to everyone.
+  const short = [];
+  for(const key of Object.keys(EXPECTED)){
+    await applyPreset(key);
+    const r = await engine(), p = await inputs();
+    const tone = await page.evaluate(() => document.getElementById('verdict').textContent);
+    if(!(r.maxPrice + 0.5 >= p.price) || !/enough for/.test(tone))
+      short.push(`${key}: buys $${r.maxPrice.toFixed(0)} against $${p.price.toFixed(0)}`);
+  }
+  check('B27h every Quick Start scenario can afford the home it prices',
+    short.length === 0, short.length ? short.join(' | ') : 'all five verdicts read "enough"');
+
+  // The first home buyer only gets there because LMI is capitalised, and
+  // turning it off is the lever its tooltip points at. If a later tweak to duty
+  // or HEM quietly moves that, this is what says so.
   await applyPreset('first-home');
-  const fhBefore = await engine();
-  await setInputs({ lmiCap:true });
-  const fhAfter = await engine();
+  const fhOn = await engine();
+  await setInputs({ lmiCap:false });
+  const fhOff = await engine();
   // Changing the binding cap is not enough. Capitalising the premium divides
   // serviceability by 1 + the rate, so on a deposit that is only just the
   // tightest cap, LMI makes the borrower WORSE off and the tooltip becomes a
-  // lie. Capacity has to go UP.
-  check('B27d the first home buyer binds on the deposit, and capitalising LMI lifts capacity',
-    fhBefore.binding === 'Deposit' && fhAfter.binding !== 'Deposit'
-      && fhAfter.maxLoan > fhBefore.maxLoan,
-    `${fhBefore.binding} $${fhBefore.maxLoan.toFixed(0)} → ${fhAfter.binding} $${fhAfter.maxLoan.toFixed(0)}, ` +
-    `${fhAfter.maxLoan > fhBefore.maxLoan ? '+' : ''}$${(fhAfter.maxLoan - fhBefore.maxLoan).toFixed(0)} with LMI capitalised`);
+  // lie. Capacity has to be higher WITH it.
+  check('B27d the first home buyer needs LMI: without it the deposit binds and capacity falls',
+    fhOn.binding !== 'Deposit' && fhOff.binding === 'Deposit'
+      && fhOn.maxLoan > fhOff.maxLoan,
+    `${fhOn.binding} $${fhOn.maxLoan.toFixed(0)} with LMI capitalised → ${fhOff.binding} $${fhOff.maxLoan.toFixed(0)} without`);
 
   // No scenario should ship on a knife edge. A binding cap sitting within a few
   // percent of the next one means a small change to duty, HEM or a tax scale
@@ -1175,7 +1188,7 @@ async function reset(){
     bnpl:document.getElementById('hasBnpl').checked, ui:{ ...window.__BC.UI }
   }));
   check('B28c the tour seeds a scenario and hands the user their own work back',
-    snap !== null && seeded === '105,000' && JSON.stringify(before) === JSON.stringify(after),
+    snap !== null && seeded === '110,000' && JSON.stringify(before) === JSON.stringify(after),
     `seeded ${seeded}, restored ${JSON.stringify(after.inc)} in ${after.city} with loan mode ${after.ui.loanMode}`);
   await reset();
 }

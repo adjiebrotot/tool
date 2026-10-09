@@ -125,6 +125,9 @@
 }
 </script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
+<script src="../pwa.js" defer></script>
 <script src="tooltips.js"></script>
 <script src="footer.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -143,7 +146,7 @@
 <section class="header card">
   <div class="header-left">
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="m3 11 9-8 9 8"/> <path stroke="var(--accent)" d="M5 9.5V21h14V9.5"/> <path stroke="var(--accent2)" d="M10 21v-6h4v6"/> </svg>Rent vs Own</h1>
-    <p data-i18n="subtitle">Model the long-term financial outcome of renting vs buying property — comparing cash, equity, and net wealth over time.</p>
+    <p data-i18n="subtitle">Model the long-term financial outcome of renting vs buying property, comparing cash, equity and net wealth over time.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" data-i18n="btnBack">← Other Tools</a>
@@ -172,126 +175,50 @@
     </div>
   </div>
   <div class="ctrl-scroll">
-  <div class="ctrl-tabs">
-    <button class="ctrl-tab active" data-tab="general"><span class="ricon ricon-general" aria-hidden="true"></span><span data-i18n="tabGeneral">General</span></button>
-    <button class="ctrl-tab" data-tab="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwn">Own</span></button>
+  <!-- Everyday figures first (the home, the rent), the guesses about the
+       future last. The panel ids are the old ones (own, rent, general), so
+       anything that opens a tab by id still lands on the same fields. -->
+  <div class="ctrl-tabs stacked">
+    <button class="ctrl-tab active" data-tab="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwn">Home</span></button>
     <button class="ctrl-tab" data-tab="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRent">Rent</span></button>
+    <button class="ctrl-tab" data-tab="general"><span class="ricon ricon-assume" aria-hidden="true"></span><span data-i18n="tabAssumptions">Assumptions</span></button>
   </div>
 
-  <!-- GENERAL TAB -->
-  <div class="ctrl-panel active" id="tab-general">
+  <!-- HOME TAB -->
+  <div class="ctrl-panel active" id="tab-own">
     <div class="field-row" style="border-top:none;padding-top:0;">
       <div class="field-label" data-i18n="labelCurrencySymbol">Currency Symbol</div>
-      <select class="num-input" id="currencySymbol" style="cursor:pointer;">
-        <option value="$" selected>$ — Dollar</option>
-        <option value="€">€ — Euro</option>
-        <option value="£">£ — Pound</option>
-        <option value="¥">¥ — Yen / Yuan</option>
-        <option value="₩">₩ — Won</option>
-        <option value="₱">₱ — Peso</option>
-        <option value="Rp">Rp — Rupiah</option>
-        <option value="RM">RM — Ringgit</option>
-        <option value="฿">฿ — Baht</option>
-      </select>
+      <select class="sel-input" id="currencySymbol" data-currency-symbols></select>
     </div>
-    <div class="field-group">
-      <div class="group-title" data-i18n="sectionCash">Cash</div>
-      <div class="field-row">
-        <div class="field-label" data-i18n="labelRiskFreeRate">Risk-Free Rate <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span id="unitPctPa1" style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
-          <span class="slider-value" id="riskFreeRateVal">4.50%</span>
-        </div>
-        <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelInitialCash">Initial Cash</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
-        <div class="currency-wrap">
-          <span class="prefix" id="initialCashPrefix">$</span>
-          <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" value=""/>
-        </div>
-        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to down payment + setup cost. Any excess is invested at the risk-free rate.</div>
-        <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelMonthlyBudget">Monthly Housing Budget</span> <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
-        <div class="currency-wrap">
-          <span class="prefix" id="monthlyBudgetPrefix">$</span>
-          <input class="currency-input money-input" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" value="0"/>
-        </div>
-      </div>
-      <div class="field-row" id="budgetIncreaseRow" style="display:none;">
-        <div class="field-label"><span data-i18n="labelBudgetIncrease">Budget Annual Increase</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
-          <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%</span>
-        </div>
-        <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
-        <div class="help" id="helpBudgetGrows">Budget grows from <span id="budgetIncreaseBase" style="color:var(--gold);font-weight:700;">—</span> at this rate each year.</div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelTimeHorizon">Time Horizon</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="labelYears">years</span>
-          <span class="slider-value" id="horizonVal">30 yrs</span>
-        </div>
-        <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
-      </div>
-    </div>
-    <div class="field-group">
-      <div class="group-title" data-i18n="sectionRTB">Rent-Then-Buy Scenario</div>
-      <div class="toggle-row">
-        <span class="toggle-label"><span data-i18n="labelEnableRTB">Enable Rent-Then-Buy</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
-        <label class="toggle-switch" id="rtbToggleWrap">
-          <input type="checkbox" id="rtbEnabled"/>
-          <div class="toggle-track"><div class="toggle-knob"></div></div>
-        </label>
-      </div>
-      <div class="fg-sub" id="rtbParams" style="display:none;">
-        <div class="field-row">
-          <div class="field-label"><span data-i18n="labelBuyAtYear">Buy at Year</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
-          <div class="slider-head" style="margin-bottom:4px;">
-            <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitYearsRentingFirst">years of renting first</span>
-            <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
-          </div>
-          <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- OWN TAB -->
-  <div class="ctrl-panel" id="tab-own">
     <div class="field-group">
       <div class="group-title" data-i18n="sectionProperty">Property</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelPropertyPrice">Property Price</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
+        <div class="field-label"><span data-i18n="labelPropertyPrice">Property price</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
         <div class="currency-wrap">
           <span class="prefix" id="propertyPricePrefix">$</span>
-          <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" value="800,000"/>
+          <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" data-min="50000" data-max="1000000000000" value="800,000"/>
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelDownPayment">Down Payment</span> <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfPrice">% of property price</span>
-          <span class="slider-value" id="downPaymentPctVal">20%</span>
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelDownPayment">Down payment</span> <span class="tip-icon" data-tip-key="downPaymentPct">?</span></div>
+          <span class="slider-value" id="downPaymentPctVal">20% of price</span>
         </div>
         <input type="range" id="downPaymentPct" min="0" max="100" step="0.01" value="20"/>
-        <div class="help" id="helpDownPayment">Down payment = <span id="downPaymentDollar" style="color:var(--gold);font-weight:700;">$160,000</span></div>
+        <div class="derived" id="helpDownPayment"><span data-i18n="helpDownPaymentPrefix">Down payment = </span> <b id="downPaymentDollar">$160,000</b></div>
       </div>
     </div>
     <div class="field-group">
       <div class="group-title" data-i18n="sectionMortgage">Mortgage</div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelMortgageMode">Mortgage Mode</span> <span class="tip-icon" data-tip-key="mortgageMode">?</span></div>
+      <div class="field-row detail-row">
+        <div class="field-label"><span data-i18n="labelDetail">Detail</span> <span class="tip-icon" data-tip-key="mortgageMode">?</span></div>
         <div class="seg-group" id="mortgageModeGroup">
           <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Detailed</button>
         </div>
       </div>
       <div class="field-row" id="mortgageTypeRow" style="display:none;">
-        <div class="field-label"><span data-i18n="labelMortgageType">Mortgage Type</span> <span class="tip-icon" data-tip-key="mortgageType">?</span></div>
+        <div class="field-label"><span data-i18n="labelMortgageType">Mortgage type</span> <span class="tip-icon" data-tip-key="mortgageType">?</span></div>
         <div class="radio-group">
           <label class="radio-opt selected" id="radioPI">
             <input type="radio" name="mortgageType" value="pi" checked/>
@@ -303,7 +230,7 @@
           </label>
         </div>
         <div class="toggle-row" style="margin-top:8px;padding-top:8px;padding-bottom:0;">
-          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Cost = Interest Only</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
+          <span class="toggle-label"><span data-i18n="labelCostInterestOnly">Cost = interest only</span> <span class="tip-icon" data-tip-key="costInterestOnly">?</span></span>
           <label class="toggle-switch">
             <input type="checkbox" id="costInterestOnly" checked/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -311,23 +238,21 @@
         </div>
       </div>
       <div class="field-row" id="mortgageRateRow">
-        <div class="field-label"><span data-i18n="labelMortgageRate">Mortgage Rate</span> <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
-          <span class="slider-value" id="mortgageRateVal">6.00%</span>
+        <div class="field-label"><span data-i18n="labelMortgageRate">Mortgage rate</span> <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
+        <div class="currency-wrap">
+          <input class="currency-input has-suffix" id="mortgageRate" type="number" inputmode="decimal" min="0" max="25" step="0.01" value="6"/>
+          <span class="suffix" data-i18n="unitPctYr">%/yr</span>
         </div>
-        <input type="range" id="mortgageRate" min="0" max="25" step="0.01" value="6"/>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelMortgageTerm">Mortgage Term</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="labelYears">years</span>
-          <span class="slider-value" id="mortgageTermVal">30 yrs</span>
+        <div class="field-label"><span data-i18n="labelMortgageTerm">Mortgage term</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
+        <div class="currency-wrap">
+          <input class="currency-input has-suffix" id="mortgageTerm" type="number" inputmode="numeric" min="5" max="50" step="1" value="30"/>
+          <span class="suffix" data-i18n="unitYrs">yrs</span>
         </div>
-        <input type="range" id="mortgageTerm" min="5" max="50" step="1" value="30"/>
       </div>
       <div class="field-row" id="rateScheduleRow" style="display:none;">
-        <div class="field-label"><span data-i18n="labelRateSchedule">Mortgage Rate Schedule</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
+        <div class="field-label"><span data-i18n="labelRateSchedule">Mortgage rate schedule</span> <span class="tip-icon" data-tip-key="rateSchedule">?</span></div>
         <div class="rate-periods" id="ratePeriodRows"></div>
         <div class="rate-schedule-actions">
           <button class="btn-primary btn-sm" id="addRatePeriod" type="button" data-i18n="btnAddPeriod">+ Add Period</button>
@@ -335,51 +260,9 @@
       </div>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionPropertyGrowth">Property Growth</div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelHouseGrowth">House Price Growth (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span id="unitPctCagr" style="font-size:.82rem;color:var(--muted)">% p.a. CAGR</span>
-          <span class="slider-value" id="houseGrowthVal">5.00%</span>
-        </div>
-        <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelSellingCost">Selling Cost</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctOfValue">% of sale price</span>
-          <span class="slider-value" id="sellingCostPctVal">2.50%</span>
-        </div>
-        <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelCalcCAGR">Calculate CAGR from Historical Prices</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
-        <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Show Tool</button>
-        <div class="cagr-box" id="cagrToolWrap" style="display:none;">
-          <div id="cagrRows">
-            <div class="cagr-row">
-              <input type="number" placeholder="Year e.g. 2002" class="cagr-year"/>
-              <input type="text" inputmode="numeric" placeholder="Price e.g. 175,000" class="cagr-price money-input" data-money="true"/>
-              <button class="cagr-btn delete cagr-delete" type="button" disabled data-i18n-title="btnDelete" title="Delete" aria-label="Delete">✕</button>
-            </div>
-            <div class="cagr-row">
-              <input type="number" placeholder="Year e.g. 2025" class="cagr-year"/>
-              <input type="text" inputmode="numeric" placeholder="Price e.g. 400,000" class="cagr-price money-input" data-money="true"/>
-              <button class="cagr-btn delete cagr-delete" type="button" disabled data-i18n-title="btnDelete" title="Delete" aria-label="Delete">✕</button>
-            </div>
-          </div>
-          <div class="cagr-actions">
-            <button class="cagr-btn" id="cagrAddRow" type="button" data-i18n="btnAddRow">+ Row</button>
-            <button class="cagr-btn" id="cagrCalc" type="button" style="background:var(--accent2);" data-i18n="btnCalcCAGR">Calc CAGR →</button>
-          </div>
-          <div class="cagr-result" id="cagrResult"></div>
-        </div>
-      </div>
-    </div>
-    <div class="field-group">
-      <div class="group-title" data-i18n="sectionCostsOwning">Costs of Owning</div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelCostsMode">Costs Mode</span> <span class="tip-icon" data-tip-key="ownCostsMode">?</span></div>
+      <div class="group-title" data-i18n="sectionCostsOwning">Costs of owning</div>
+      <div class="field-row detail-row">
+        <div class="field-label"><span data-i18n="labelDetail">Detail</span> <span class="tip-icon" data-tip-key="ownCostsMode">?</span></div>
         <div class="seg-group" id="ownCostsModeGroup">
           <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Detailed</button>
@@ -387,55 +270,54 @@
       </div>
       <div class="fg-sub" id="ownCostsSimple">
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelSetupCost">Setup Cost (Stamp Duty, Legal, etc.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelSetupCost">Setup cost (stamp duty, legal, etc.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="setupCostPrefix">$</span>
-            <input class="currency-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" value="32,000"/>
+            <input class="currency-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value="32,000"/>
           </div>
-          <select id="setupCostType">
+          <select class="sel-input sel-unit" id="setupCostType">
             <option value="dollar" data-i18n-opt="optDollar">$</option>
             <option value="pct">%</option>
           </select>
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelOwnOngoing">Ongoing Costs of Owning</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelOwnOngoing">Ongoing costs of owning</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="ownOngoingCostPrefix">$</span>
-            <input class="currency-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" value="6,000"/>
+            <input class="currency-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value="6,000"/>
           </div>
-          <select id="ownOngoingCostFreq">
-            <option value="yearly" data-i18n-opt="optYearly">Yearly</option>
-            <option value="monthly" data-i18n-opt="optMonthly">Monthly</option>
-            <option value="weekly" data-i18n-opt="optWeekly">Weekly</option>
+          <select class="sel-input sel-freq" id="ownOngoingCostFreq">
+            <option value="yearly" data-i18n-opt="optYearly">a year</option>
+            <option value="monthly" data-i18n-opt="optMonthly">a month</option>
+            <option value="weekly" data-i18n-opt="optWeekly">a week</option>
           </select>
         </div>
-        <select id="ownOngoingCostType" style="margin-top:6px;width:100%;">
-          <option value="dollar" data-i18n-opt="optFixedAmount">Fixed $ amount</option>
-          <option value="pct" data-i18n-opt="optPctPropertyValue">% of property value</option>
+        <select class="sel-input" id="ownOngoingCostType" style="margin-top:6px;">
+          <option value="dollar" data-i18n-opt="optFixedAmount">Fixed amount</option>
+          <option value="pct" data-i18n-opt="optPctPropertyValue">% of home value</option>
         </select>
       </div>
       <div class="field-row" id="ownOngoingInflationRow">
-        <div class="field-label"><span data-i18n="labelOwnInflation">Own Ongoing Cost Inflation</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
-          <span class="slider-value" id="ownOngoingInflationVal">0.00%</span>
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelOwnInflation">Own ongoing cost inflation</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
+          <span class="slider-value" id="ownOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
       </div>
       </div><!-- /ownCostsSimple -->
       <div class="fg-sub" id="ownCostsDetailed" style="display:none;">
         <div class="field-row">
-          <div class="field-label"><span data-i18n="labelSetupCosts">Setup Costs</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelSetupCosts">Setup costs</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
           <div class="cost-items" id="ownSetupCostRows"></div>
-          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Add Setup Cost</button></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnSetupCost" type="button" data-i18n="btnAddSetupCost">+ Add setup cost</button></div>
         </div>
         <div class="field-row">
-          <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing Costs</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing costs</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
           <div class="cost-items" id="ownOngoingCostRows"></div>
-          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add Ongoing Cost</button></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addOwnOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add ongoing cost</button></div>
         </div>
       </div><!-- /ownCostsDetailed -->
     </div>
@@ -444,35 +326,34 @@
   <!-- RENT TAB -->
   <div class="ctrl-panel" id="tab-rent">
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionRentalPayments">Rental Payments</div>
+      <div class="group-title" data-i18n="sectionRentalPayments">Rental payments</div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelRentAmount">Rent Amount</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
+        <div class="field-label"><span data-i18n="labelRentAmount">Rent amount</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="rentAmountPrefix">$</span>
-            <input class="currency-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" value="2,800"/>
+            <input class="currency-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="2,800"/>
           </div>
-          <select id="rentFreq">
-            <option value="monthly" data-i18n-opt="optMonthly">Monthly</option>
-            <option value="weekly" data-i18n-opt="optWeekly">Weekly</option>
-            <option value="yearly" data-i18n-opt="optYearly">Yearly</option>
+          <select class="sel-input sel-freq" id="rentFreq">
+            <option value="monthly" data-i18n-opt="optMonthly">a month</option>
+            <option value="weekly" data-i18n-opt="optWeekly">a week</option>
+            <option value="yearly" data-i18n-opt="optYearly">a year</option>
           </select>
         </div>
-        <div class="field-sub" id="rentMonthlyDisplaySub">Rent = <span id="rentMonthlyDisplay" style="color:var(--gold);font-weight:700;">$2,800/mo</span></div>
+        <div class="derived" id="rentMonthlyDisplaySub"><span data-i18n="rentPrefix">Rent = </span> <b id="rentMonthlyDisplay">$2,800/mo</b></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelRentInflation">Rent Inflation</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
-          <span class="slider-value" id="rentInflationVal">3.00%</span>
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelRentInflation">Rent inflation</span> <span class="tip-icon" data-tip-key="rentInflation">?</span></div>
+          <span class="slider-value" id="rentInflationVal">3.00%/yr</span>
         </div>
         <input type="range" id="rentInflation" min="-10" max="25" step="0.01" value="3"/>
       </div>
     </div>
     <div class="field-group">
-      <div class="group-title" data-i18n="sectionCostsRenting">Costs of Renting</div>
-      <div class="field-row">
-        <div class="field-label"><span data-i18n="labelCostsMode">Costs Mode</span> <span class="tip-icon" data-tip-key="rentCostsMode">?</span></div>
+      <div class="group-title" data-i18n="sectionCostsRenting">Costs of renting</div>
+      <div class="field-row detail-row">
+        <div class="field-label"><span data-i18n="labelDetail">Detail</span> <span class="tip-icon" data-tip-key="rentCostsMode">?</span></div>
         <div class="seg-group" id="rentCostsModeGroup">
           <button type="button" class="seg-btn active" data-val="simple" data-i18n="segSimple">Simple</button>
           <button type="button" class="seg-btn" data-val="detailed" data-i18n="segDetailed">Detailed</button>
@@ -480,39 +361,146 @@
       </div>
       <div class="fg-sub" id="rentCostsSimple">
       <div class="field-row">
-        <div class="field-label"><span data-i18n="labelRentOngoing">Ongoing Costs of Renting</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
+        <div class="field-label"><span data-i18n="labelRentOngoing">Ongoing costs of renting</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
         <div class="input-row">
           <div class="currency-wrap">
             <span class="prefix" id="rentOngoingCostPrefix">$</span>
-            <input class="currency-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" value="1,200"/>
+            <input class="currency-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="1,200"/>
           </div>
-          <select id="rentOngoingCostFreq">
-            <option value="yearly" data-i18n-opt="optYearly">Yearly</option>
-            <option value="monthly" data-i18n-opt="optMonthly">Monthly</option>
-            <option value="weekly" data-i18n-opt="optWeekly">Weekly</option>
+          <select class="sel-input sel-freq" id="rentOngoingCostFreq">
+            <option value="yearly" data-i18n-opt="optYearly">a year</option>
+            <option value="monthly" data-i18n-opt="optMonthly">a month</option>
+            <option value="weekly" data-i18n-opt="optWeekly">a week</option>
           </select>
         </div>
-        <select id="rentOngoingCostType" style="margin-top:6px;width:100%;">
-          <option value="dollar" data-i18n-opt="optFixedAmount">Fixed $ amount</option>
-          <option value="pct" data-i18n-opt="optPctAnnualRent">% of annual rent</option>
+        <select class="sel-input" id="rentOngoingCostType" style="margin-top:6px;">
+          <option value="dollar" data-i18n-opt="optFixedAmount">Fixed amount</option>
+          <option value="pct" data-i18n-opt="optPctAnnualRent">% of yearly rent</option>
         </select>
       </div>
       <div class="field-row" id="rentOngoingInflationRow">
-        <div class="field-label"><span data-i18n="labelRentOngoingInflation">Rent Ongoing Cost Inflation</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
-        <div class="slider-head" style="margin-bottom:4px;">
-          <span style="font-size:.82rem;color:var(--muted)" data-i18n="unitPctPa">% p.a.</span>
-          <span class="slider-value" id="rentOngoingInflationVal">0.00%</span>
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Rent ongoing cost inflation</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
+          <span class="slider-value" id="rentOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
       </div>
       </div><!-- /rentCostsSimple -->
       <div class="fg-sub" id="rentCostsDetailed" style="display:none;">
         <div class="field-row">
-          <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing Costs</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
+          <div class="field-label"><span data-i18n="labelOngoingCostsList">Ongoing costs</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
           <div class="cost-items" id="rentOngoingCostRows"></div>
-          <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add Ongoing Cost</button></div>
+          <div class="rate-schedule-actions"><button class="cagr-btn" id="addRentOngoingCost" type="button" data-i18n="btnAddOngoingCost">+ Add ongoing cost</button></div>
         </div>
       </div><!-- /rentCostsDetailed -->
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionRTB">Rent-Then-Buy scenario</div>
+      <div class="toggle-row">
+        <span class="toggle-label"><span data-i18n="labelEnableRTB">Enable Rent-Then-Buy</span> <span class="tip-icon" data-tip-key="rtbEnabled">?</span></span>
+        <label class="toggle-switch" id="rtbToggleWrap">
+          <input type="checkbox" id="rtbEnabled"/>
+          <div class="toggle-track"><div class="toggle-knob"></div></div>
+        </label>
+      </div>
+      <div class="fg-sub" id="rtbParams" style="display:none;">
+        <div class="field-row">
+          <div class="slider-head">
+            <div class="field-label"><span data-i18n="labelBuyAtYear">Buy at year</span> <span class="tip-icon" data-tip-key="rtbBuyAtYear">?</span></div>
+            <span class="slider-value" id="rtbBuyYearVal">5 yrs</span>
+          </div>
+          <input type="range" id="rtbBuyYear" min="1" max="50" step="1" value="5"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSUMPTIONS TAB -->
+  <div class="ctrl-panel" id="tab-general">
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionSavings">Savings and time horizon</div>
+      <div class="field-row">
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelRiskFreeRate">Risk-Free Rate</span> <span class="tip-icon" data-tip-key="riskFreeRate">?</span></div>
+          <span class="slider-value" id="riskFreeRateVal">4.50%/yr</span>
+        </div>
+        <input type="range" id="riskFreeRate" min="-10" max="25" step="0.01" value="4.5"/>
+      </div>
+      <div class="field-row">
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelTimeHorizon">Time horizon</span> <span class="tip-icon" data-tip-key="horizon">?</span></div>
+          <span class="slider-value" id="horizonVal">30 yrs</span>
+        </div>
+        <input type="range" id="horizon" min="5" max="100" step="1" value="30"/>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionPropertyGrowth">Property growth</div>
+      <div class="field-row">
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelHouseGrowth">House price growth (RPPI)</span> <span class="tip-icon" data-tip-key="houseGrowth">?</span></div>
+          <span class="slider-value" id="houseGrowthVal">5.00%/yr</span>
+        </div>
+        <input type="range" id="houseGrowth" min="-10" max="25" step="0.01" value="5"/>
+      </div>
+      <div class="field-row">
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelSellingCost">Selling cost</span> <span class="tip-icon" data-tip-key="sellingCost">?</span></div>
+          <span class="slider-value" id="sellingCostPctVal">2.50% of sale</span>
+        </div>
+        <input type="range" id="sellingCostPct" min="0" max="15" step="0.01" value="2.5"/>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelCalcCAGR">Calculate compound annual growth (CAGR) from historical prices</span> <span class="tip-icon" data-tip-key="calcCagr">?</span></div>
+        <button class="btn-secondary cagr-toggle-btn" id="cagrToolToggle" type="button" data-i18n="btnShowTool">Show Tool</button>
+        <div class="cagr-box" id="cagrToolWrap" style="display:none;">
+          <div id="cagrRows">
+            <div class="cagr-row">
+              <input type="number" placeholder="Year e.g. 2002" class="cagr-year" data-i18n-ph="phCagrYear1" min="1800" max="2200" step="1"/>
+              <input type="text" inputmode="numeric" placeholder="Price e.g. 175,000" class="cagr-price money-input" data-money="true" data-i18n-ph="phCagrPrice1" data-min="0" data-max="1000000000000"/>
+              <button class="btn-bare cagr-delete" type="button" disabled data-icon="trash" data-i18n-title="btnDelete" title="Delete" aria-label="Delete"></button>
+            </div>
+            <div class="cagr-row">
+              <input type="number" placeholder="Year e.g. 2025" class="cagr-year" data-i18n-ph="phCagrYear2" min="1800" max="2200" step="1"/>
+              <input type="text" inputmode="numeric" placeholder="Price e.g. 400,000" class="cagr-price money-input" data-money="true" data-i18n-ph="phCagrPrice2" data-min="0" data-max="1000000000000"/>
+              <button class="btn-bare cagr-delete" type="button" disabled data-icon="trash" data-i18n-title="btnDelete" title="Delete" aria-label="Delete"></button>
+            </div>
+          </div>
+          <div class="cagr-actions">
+            <button class="cagr-btn" id="cagrAddRow" type="button" data-i18n="btnAddRow">+ Row</button>
+            <button class="cagr-btn" id="cagrCalc" type="button" data-i18n="btnCalcCAGR">Calculate CAGR</button>
+          </div>
+          <div class="cagr-result" id="cagrResult"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionCash">Cash</div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelInitialCash">Initial cash</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="initialCashPrefix">$</span>
+          <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
+        </div>
+        <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Defaults to the down payment plus setup cost. Any excess is invested at the risk-free rate.</div>
+        <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span data-i18n="labelMonthlyBudget">Monthly housing budget</span> <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(optional)</span></div>
+        <div class="currency-wrap">
+          <span class="prefix" id="monthlyBudgetPrefix">$</span>
+          <input class="currency-input money-input has-suffix" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="0"/>
+          <span class="suffix" data-i18n="perMoUnit">/mo</span>
+        </div>
+      </div>
+      <div class="field-row" id="budgetIncreaseRow" style="display:none;">
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelBudgetIncrease">Budget annual increase</span> <span class="tip-icon" data-tip-key="monthlyBudgetIncrease">?</span></div>
+          <span class="slider-value" id="monthlyBudgetIncreaseVal">0.00%/yr</span>
+        </div>
+        <input type="range" id="monthlyBudgetIncrease" min="0" max="25" step="0.01" value="0"/>
+        <div class="derived" id="helpBudgetGrows"><span data-i18n="helpBudgetGrowsPrefix">Budget grows from</span> <b id="budgetIncreaseBase">—</b> <span data-i18n="helpBudgetGrowsSuffix">at this rate each year.</span></div>
+      </div>
     </div>
   </div>
 
@@ -521,27 +509,30 @@
 </aside>
 
 <main>
-  <!-- KPI CARDS -->
+  <!-- THE ANSWER, IN ONE SENTENCE -->
+  <div class="verdict card" id="verdict"></div>
+
+  <!-- KPI CARDS: the answer first, the two figures it starts from after -->
   <section class="metrics">
     <div class="metric card">
-      <div class="label" data-i18n="kpiInitialCashLabel">Initial Cash <span class="tip-icon" data-i18n-tip="kpiInitialCashTip">?</span></div>
-      <div class="value" id="kpiInitialCash">—</div>
-      <div class="sub" data-i18n="kpiInitialCashSub">Starting capital at Year 0</div>
+      <div class="label"><span data-i18n="kpiDiffLabel">Equity difference</span> <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
+      <div class="value" id="kpiDiff">—</div>
+      <div class="sub" id="kpiDiffSub" data-i18n="kpiDiffSub">Own minus rent at the final year</div>
     </div>
     <div class="metric card">
-      <div class="label" data-i18n="kpiBudgetLabel">Monthly Housing Budget</div>
-      <div class="value" id="kpiBudgetRange">—</div>
-      <div class="sub" data-i18n="kpiBudgetSub">Min–max monthly budget over horizon</div>
-    </div>
-    <div class="metric card">
-      <div class="label" data-i18n="kpiBreakevenLabel">Breakeven Year <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
+      <div class="label"><span data-i18n="kpiBreakevenLabel">Breakeven year</span> <span class="tip-icon" data-i18n-tip="kpiBreakevenTip">?</span></div>
       <div class="value" id="kpiBreakeven">—</div>
       <div class="sub" data-i18n="kpiBreakevenSub">When owning net equity overtakes renting for good</div>
     </div>
     <div class="metric card">
-      <div class="label" data-i18n="kpiDiffLabel">Equity Difference <span class="tip-icon" data-i18n-tip="kpiDiffTip">?</span></div>
-      <div class="value" id="kpiDiff">—</div>
-      <div class="sub" data-i18n="kpiDiffSub">Own minus Rent at final year</div>
+      <div class="label"><span data-i18n="kpiInitialCashLabel">Initial cash</span> <span class="tip-icon" data-i18n-tip="kpiInitialCashTip">?</span></div>
+      <div class="value" id="kpiInitialCash">—</div>
+      <div class="sub" data-i18n="kpiInitialCashSub">Starting capital at Year 0</div>
+    </div>
+    <div class="metric card">
+      <div class="label"><span data-i18n="kpiBudgetLabel">Monthly housing budget</span></div>
+      <div class="value" id="kpiBudgetRange">—</div>
+      <div class="sub" data-i18n="kpiBudgetSub">Min–max monthly budget over the horizon</div>
     </div>
   </section>
 
@@ -553,9 +544,10 @@
     <div class="chart-head">
       <h2 data-i18n="chartTitle">Comparison</h2>
       <div class="chart-controls">
-        <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Net Equity</button>
-        <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid Cash</button>
-        <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accum. Cost</button>
+        <button class="graph-btn active" data-graph="netEquity" id="graphNetEquity" data-i18n="btnNetEquity">Net equity</button>
+        <button class="graph-btn" data-graph="cash" id="graphCash" data-i18n="btnLiquidCash">Liquid cash</button>
+        <button class="graph-btn" data-graph="cost" id="graphCost" data-i18n="btnAccumCost">Accumulated cost</button>
+        <span class="tip-icon" data-tip-key="graphMetric">?</span>
       </div>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="svgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
@@ -564,42 +556,53 @@
         <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom" data-i18n="btnZoom" data-i18n-title="btnResetZoomTitle" title="Reset zoom">⟳</button>
       </div>
     </div>
+    <div class="sub chart-sub" id="chartSub" data-i18n="chartSub">In future dollars, not adjusted for inflation.</div>
     <div class="legend" id="chartLegend"></div>
     <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
     <div class="hover-box" id="hoverBox" data-i18n="chartHoverHint">Hover over the chart to inspect a year.</div>
   </section>
 
-  <!-- BOTTOM SUMMARY -->
+  <!-- PER-OPTION DETAIL -->
   <section class="bottom" id="summarySection">
     <div class="card">
-      <h3 id="ownSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="ownSnapshotTitle">Own — Snapshot</span></h3>
+      <h3 id="ownSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="ownSnapshotTitle">Own snapshot</span></h3>
       <div class="summary-grid" id="ownSummary"></div>
     </div>
     <div class="card">
-      <h3 id="rentSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="rentSnapshotTitle">Rent — Snapshot</span></h3>
+      <h3 id="rentSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="rentSnapshotTitle">Rent snapshot</span></h3>
       <div class="summary-grid" id="rentSummary"></div>
     </div>
   </section>
   <section id="rtbSummarySection" style="display:none;margin-bottom:18px;">
     <div class="card">
-      <h3 id="rtbSnapshotH3" style="padding:16px 18px 0;" data-i18n="rtbSnapshotTitle">🔄 Rent-Then-Buy — Snapshot <span class="tip-icon" data-i18n-tip="rtbSnapshotTip">?</span></h3>
+      <h3 id="rtbSnapshotH3" style="padding:16px 18px 0;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="rtbSnapshotTitle">Rent-Then-Buy snapshot</span> <span class="tip-icon" data-i18n-tip="rtbSnapshotTip">?</span></h3>
       <div class="summary-grid" id="rtbSummary"></div>
     </div>
   </section>
 
-  <!-- DETAIL TABLES -->
-  <section class="detail-section card">
-    <div class="tab-controls">
-      <div class="tab-row">
-        <button class="tab-btn active" data-table="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwnCashflow">Own Cashflow</span></button>
-        <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Rent Cashflow</span></button>
-        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Rent-Then-Buy Cashflow</span></button>
-      </div>
+  <!-- YEAR BY YEAR (opens from Show table) -->
+  <section class="detail-section card" id="detailSection">
+    <div class="detail-head">
+      <h3><span data-i18n="tableTitle">Cashflow by year</span> <span class="tip-icon" data-tip-key="cashflowTable">?</span></h3>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="downloadBtn" type="button" data-i18n="btnCSV" data-i18n-title="btnCsvTitle" title="Download this table as CSV">⬇ CSV</button>
       </div>
     </div>
+    <p class="unit-note" id="tableUnitNote" data-i18n="tableUnitNote">Every figure is for that year, in future dollars. Money out is shown with a minus sign.</p>
+    <div class="tab-controls" id="tableTabs">
+      <div class="tab-row">
+        <button class="tab-btn active" data-table="own"><span class="ricon ricon-own" aria-hidden="true"></span><span data-i18n="tabOwnCashflow">Own cashflow</span></button>
+        <button class="tab-btn" data-table="rent"><span class="ricon ricon-rent" aria-hidden="true"></span><span data-i18n="tabRentCashflow">Rent cashflow</span></button>
+        <button class="tab-btn" id="rtbTableTab" data-table="rtb" style="display:none;"><span class="ricon ricon-rtb" aria-hidden="true"></span><span data-i18n="tabRTBCashflow">Rent-Then-Buy cashflow</span></button>
+      </div>
+    </div>
     <div class="table-wrap" id="detailTableWrap"></div>
+  </section>
+
+  <!-- WHAT THIS ASSUMES -->
+  <section class="assumes-card card">
+    <h2 data-i18n="assumesTitle">What this assumes</h2>
+    <ul class="assumptions" id="assumptions"></ul>
   </section>
 </main>
 </section>
@@ -609,9 +612,12 @@
 </div>
 <script>renderRVOFooter('../logos/');</script>
 
+<script src="../dropdown.js"></script>
+
 <script src="../shared.js"></script>
 <script src="cashflow-export.js"></script>
 <script src="engine.js"></script>
+<script src="presets.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../tour-shared.js"></script>

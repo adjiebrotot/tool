@@ -18,6 +18,10 @@
 //       the monthly expense adopts the estimate shown for the destination
 //   C7  detailed mode layout: no absolutely positioned element may escape to
 //       the page, and every currency tag must sit inside its own cell
+//   C8  Quick Start: each of the six scenarios, applied over a messy page,
+//       opens exactly as on a fresh one (it is the page's reset), and every
+//       Required salary is replayed from the JSON: index-scaled destination
+//       costs divided by one minus the home city's savings ratio
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -376,6 +380,115 @@ function expected(fx){
   check('C7 no absolutely positioned element escapes its wrapper, currency tags sit in their cell',
     escaped.length===0 && tagsPlaced,
     escaped.length ? `escaped: ${escaped.join(', ')}` : `all currency tags inside their own cell (${tagsPlaced})`);
+}
+
+// ── C8: Quick Start — each scenario is a clean reset, and its answer is right ──
+// The scenarios are the page's only reset, so each must open from the defaults:
+// applied over a deliberately messy page (custom frequency on, a nominal target,
+// an override, simple-mode cities and a custom rate) it must look exactly as it
+// does on a fresh page. Then every Required salary is replayed from the raw
+// JSON: destination costs index-scaled at the bundled rate (live feeds are
+// stubbed out here), divided by one minus the home city's savings ratio.
+{
+  const QS = {
+    'sg-au': ['Singapore|Singapore', ['Sydney|Australia','Melbourne|Australia','Brisbane|Australia','Perth|Australia'], 8000,
+              {rent:3500, groceries:600, eating_out:700, utilities:200, other:1000}],
+    'sea':   ['Jakarta|Indonesia', ['Kuala Lumpur|Malaysia','Bangkok|Thailand','Ho Chi Minh City|Vietnam'], 25000000,
+              {rent:7000000, groceries:3000000, eating_out:2500000, utilities:1200000, fuel:800000, other:3000000}],
+    'us':    ['New York, NY|United States', ['San Francisco, CA|United States','Seattle, WA|United States','Austin, TX|United States'], 8500,
+              {rent:4000, groceries:600, eating_out:700, utilities:200, other:1300}],
+    'eu':    ['London|United Kingdom', ['Paris|France','Amsterdam|Netherlands','Berlin|Germany'], 4500,
+              {rent:2100, groceries:350, eating_out:400, utilities:250, other:500}],
+    'me':    ['Dubai|United Arab Emirates', ['Abu Dhabi|United Arab Emirates','Doha|Qatar','Riyadh|Saudi Arabia'], 30000,
+              {rent:9000, groceries:2000, eating_out:2000, utilities:800, fuel:400, other:3800}],
+    'ea':    ['Tokyo|Japan', ['Seoul|South Korea','Hong Kong|Hong Kong (China)','Shanghai|China'], 450000,
+              {rent:140000, groceries:50000, eating_out:45000, utilities:15000, other:65000}],
+  };
+  const med = (c,k) => { const v=c.utilities_index&&c.utilities_index[k]; return v&&v.Median>0 ? v.Median : null; };
+  const idx = (c,cat) => {
+    if(cat==='rent') return c.rent_index&&c.rent_index.med;
+    if(cat==='groceries') return c.groceries_index;
+    if(cat==='eating_out') return c.eating_out_index;
+    if(cat==='fuel') return med(c,'fuel');
+    if(cat==='other') return c.coli_no_housing;
+    if(cat==='utilities'){                    // 50/20/30, renormalised over what exists
+      let a=0, w=0;
+      [['electricity',.5],['water',.2],['gas',.3]].forEach(([k,wt])=>{ const v=med(c,k); if(v){ a+=v*wt; w+=wt; } });
+      return w ? a/w : null;
+    }
+  };
+  const snapPage = p => p.evaluate(()=>({
+    seg: [...document.querySelectorAll('.seg-btn.active')].map(b=>b.closest('[id]').id+'='+b.dataset.val).join(','),
+    freq: document.getElementById('customFreqChk').checked,
+    simple: [...document.querySelectorAll('#fromPicker input,#toPicker input')].map(i=>i.value).join('|'),
+    table: [...document.querySelectorAll('#detailSec input,#detailSec select')].map(e=>e.value).join('|'),
+    cells: [...document.querySelectorAll('#detailSec td')].map(td=>td.textContent.replace(/\s+/g,' ').trim()).join('|'),
+    active: [...document.querySelectorAll('.quick-start-btn.active')].map(b=>b.dataset.preset).join(','),
+  }));
+
+  // A fresh page per scenario gives the clean reference.
+  const fresh = await browser.newPage();
+  await fresh.route('**/*', route=>route.request().url().includes('127.0.0.1')
+    ? route.continue() : route.fulfill({contentType:'application/javascript', body:'/* stub */'}));
+  await fresh.goto(PAGE, {waitUntil:'load'});
+  await fresh.waitForFunction(()=>document.getElementById('dataUpdatedText')?.textContent.length>0);
+
+  for(const [id,[fromKey,toKeys,sal,rows]] of Object.entries(QS)){
+    await fresh.evaluate(()=>{ try{ localStorage.clear(); }catch(e){} });
+    await fresh.reload({waitUntil:'load'});
+    await fresh.waitForFunction(()=>document.getElementById('dataUpdatedText')?.textContent.length>0);
+    await fresh.evaluate(id=>document.querySelector(`.quick-start-btn[data-preset="${id}"]`).click(), id);
+    await fresh.waitForTimeout(150);
+    const ref = await snapPage(fresh);
+
+    // Mess up the shared page, then apply the same scenario over it.
+    await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="detailed"]').click(); });
+    await page.waitForTimeout(80);
+    await page.evaluate(()=>{
+      const c=document.getElementById('customFreqChk'); c.checked=true; c.dispatchEvent(new Event('change'));
+      document.querySelector('#goalGroup .seg-btn[data-val="earn"]').click();
+    });
+    await page.waitForTimeout(80);
+    await page.evaluate(()=>{ const n=document.querySelector('#dtTargetGroup .seg-btn[data-val="nominal"]'); if(n) n.click(); });
+    await page.waitForTimeout(80);
+    await page.evaluate(()=>{ const o=document.querySelector('.dt-to-exp'); if(o){ o.value='123'; o.dispatchEvent(new Event('input')); o.dispatchEvent(new Event('blur')); } });
+    await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="simple"]').click(); });
+    await page.waitForTimeout(80);
+    await pickCity('fromPicker','Jakarta|Indonesia');
+    await pickCity('toPicker','Perth|Australia');
+    await setVal('simpleFxInput','9999');
+    await page.evaluate(id=>document.querySelector(`.quick-start-btn[data-preset="${id}"]`).click(), id);
+    await page.waitForTimeout(150);
+    const got = await snapPage(page);
+    const diffs = Object.keys(ref).filter(k=>ref[k]!==got[k]);
+    check(`C8a "${id}" opens the same over a messy page as on a fresh one`, diffs.length===0,
+      diffs.length ? diffs.map(k=>`${k}: ${String(got[k]).slice(0,80)} ≠ ${String(ref[k]).slice(0,80)}`).join(' | ')
+                   : `detailed, earn, savings ratio, ${toKeys.length} destinations, no custom frequency`);
+
+    // Independent replay of the answer.
+    const F = cityIdx[fromKey];
+    const fe = Object.values(rows).reduce((a,b)=>a+b,0), ratio = (sal-fe)/sal;
+    const shown = await page.evaluate(()=>[...document.querySelectorAll('.salary-tr td.num-td')].map(td=>({
+      req: td.querySelector('span').textContent, ratio: null })));
+    const ratios = await page.evaluate(()=>[...document.querySelectorAll('.dt-sav .sub-num')].map(e=>e.textContent));
+    const fromRatio = await page.evaluate(()=>document.querySelector('.dt-sav-from .sub-num').textContent);
+    const bad = [], seen = [];
+    toKeys.forEach((k,i)=>{
+      const T = cityIdx[k];
+      let tot = 0;
+      for(const [cat,a] of Object.entries(rows)) tot += a/RATE[F.currency]*(idx(T,cat)/idx(F,cat))*RATE[T.currency];
+      const want = tot/(1-ratio);
+      const g = shown[i] ? num(shown[i].req) : NaN;
+      const cur = shown[i] && shown[i].req.split(' ')[0];
+      if(!(Math.abs(g-want) <= Math.max(1, want*1e-9)) || cur!==T.currency) bad.push(`${T.city} ${shown[i]&&shown[i].req} want ${T.currency} ${want.toFixed(0)}`);
+      if(ratios[i] !== (ratio*100).toFixed(1)+'% ratio') bad.push(`${T.city} ratio "${ratios[i]}"`);
+      seen.push(`${T.city} ${shown[i]&&shown[i].req}`);
+    });
+    if(fromRatio !== (ratio*100).toFixed(1)+'% ratio') bad.push(`home ratio "${fromRatio}"`);
+    check(`C8b "${id}" required salaries keep the home savings ratio (${(ratio*100).toFixed(0)}%), replayed from the JSON`,
+      bad.length===0 && shown.length===toKeys.length, bad.length ? bad.join(' | ') : seen.join(', '));
+  }
+  await fresh.close();
 }
 
 await browser.close();

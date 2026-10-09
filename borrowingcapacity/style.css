@@ -3,14 +3,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
 
 :root{ --input-bg:rgba(28,41,66,0.7); }
-body.light{ --accent2:#3aaa86; }
 
 .container{max-width:1440px;}
 .layout{grid-template-columns:380px 1fr;}
 /* Height and the inner scroller come from shared.css (.controls:has(.ctrl-scroll)),
    which keeps the quick-start row and the tab bar pinned to the top of the card. */
-.header{flex-wrap:wrap;gap:12px;}
-.header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 h1{font-size:1.85rem;margin:0 0 4px;}
 
@@ -52,7 +49,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .mode-block{border:1px solid var(--border);border-radius:12px;padding:2px 12px 6px;background:var(--bg-subtle);}
 .mode-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;}
 .mode-row+.mode-row{border-top:1px solid var(--border);}
-.mode-label{font-weight:700;font-size:.82rem;color:var(--muted);flex:1 0 auto;}
+.mode-label{font-weight:700;font-size:.88rem;color:var(--text);flex:1 0 auto;display:inline-flex;align-items:center;gap:5px;}
 .seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
 .seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;flex-shrink:0;}
 .seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
@@ -121,7 +118,6 @@ td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;whit
   .controls{position:static;max-height:none;}
   .metrics{grid-template-columns:repeat(2,1fr);}
   .canvas-wrap{height:360px;}
-  .header{flex-direction:column;}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
@@ -132,3 +128,16 @@ td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;whit
   .btn-row{flex-direction:column;}
   .ctrl-tab{font-size:.7rem;}
 }
+
+/* ── Redesign: shared skeleton fit ── */
+/* Column heads over the income streams: the amount a year, then the share a
+   lender counts. Same widths as .inline-row below them. */
+.stream-head{display:flex;gap:8px;padding:2px 0 4px;color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.stream-head span:first-child{flex:1;}
+.stream-head span:last-child{flex:0 0 92px;text-align:right;}
+/* A status that is neither good nor bad: there is room left under this cap. */
+.badge-muted{background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border);}
+.detail-section .unit-note{margin:-2px 0 10px;}
+.detail-section>h2+.unit-note{margin-top:-4px;}
+.verdict{margin-bottom:18px;}
+.assumes-card{margin-bottom:18px;}

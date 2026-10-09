@@ -31,8 +31,8 @@ const COLORMAPS = [
 ];
 
 const DIM_HELP = {
-  2:'Line graph — X axis + one or more Y series',
-  3:'3D scatter — X, Y, Z axes; Z depth colour-coded',
+  2:'Line graph: X axis + one or more Y series',
+  3:'3D scatter: X, Y, Z axes; Z depth colour-coded',
   4:'3D scatter + W column colour-coded as heat map',
 };
 
@@ -64,6 +64,7 @@ document.querySelectorAll('.dim-btn').forEach(btn => {
     document.getElementById('dimHelp').textContent = DIM_HELP[S.dim];
     if (S.headers.length) buildAxesUI();
     refreshStyleTab();
+    markStale();
   };
 });
 
@@ -93,6 +94,40 @@ function handleFile(file) {
     reader.readAsArrayBuffer(file);
   }
 }
+
+// ─── SAMPLE DATASET ───────────────────────────────────────────────────────────
+/* A damped spring (1 kg mass, released 1 m from rest), sampled every 0.1 s.
+   The columns are ordered so every dimension's default picks tell the story:
+   2D draws position and velocity against time, 3D turns the same three into a
+   spiral winding down the time axis, and 4D colours that spiral by the energy
+   it is losing. Built as CSV text so it goes through the same parser a file does. */
+function buildSampleCSV() {
+  const w0 = 1.5, g = 0.12, wd = Math.sqrt(w0*w0 - g*g);
+  const lines = ['Time (s),Position (m),Velocity (m/s),Energy (J)'];
+  for (let i = 0; i <= 200; i++) {
+    const t = i / 10, e = Math.exp(-g*t), c = Math.cos(wd*t), s = Math.sin(wd*t);
+    const x = e * c, v = e * (-g*c - wd*s);
+    const E = 0.5 * (v*v + w0*w0*x*x);
+    lines.push([t.toFixed(1), x.toFixed(4), v.toFixed(4), E.toFixed(4)].join(','));
+  }
+  return lines.join('\n');
+}
+
+document.getElementById('sampleBtn').onclick = () => {
+  document.getElementById('fileName').textContent = '📄 sample-damped-spring.csv';
+  document.getElementById('headerRow').value = 1;
+  S.headerRow = 1;
+  document.getElementById('chartTitle').value = 'Damped spring';
+  parseCSV(buildSampleCSV());
+  // buildAxesUI picks its defaults on the next tick; add Velocity to the 2D
+  // series after that, then draw.
+  setTimeout(() => {
+    const y = document.getElementById('axisY');
+    if (y && y.multiple && y.options[2]) y.options[2].selected = true;
+    buildSeriesColourPickers();
+    renderChart();
+  }, 0);
+};
 
 function detectDelimiter(text) {
   const first = text.split('\n')[0];
@@ -141,6 +176,7 @@ function onDataLoaded() {
   buildAxesUI();
   buildColormapGrid();
   document.getElementById('renderBtn').disabled = false;
+  markStale();
   // Auto-switch to Axes tab
   document.querySelectorAll('.ctrl-tab,.ctrl-panel').forEach(el => el.classList.remove('active'));
   document.querySelector('[data-tab="axes"]').classList.add('active');
@@ -157,16 +193,18 @@ function buildAxesUI() {
   const c    = document.getElementById('axesContent');
   const opts = S.headers.map((h,i) => `<option value="${i}">${h}</option>`).join('');
 
-  if (S.dim === 2) {
-    c.innerHTML = `
-      <div class="field-group">
-        <label>X Axis</label>
-        <select id="axisX">${opts}</select>
-      </div>
-      <div class="field-group">
-        <label>Y Axis <span style="color:var(--muted);font-weight:400;font-size:.78rem">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each column you select is drawn as its own line, all sharing the X axis above. Hold Ctrl or Cmd to select more than one.">?</span></label>
-        <select id="axisY" multiple size="7" style="height:auto;font-size:.83rem">${opts}</select>
+  // One shared.css .field-row per axis, inside the Axes .field-group.
+  const row = (label, id, extra = '') => `
+      <div class="field-row">
+        <div class="field-label">${label}</div>
+        <select id="${id}"${extra}>${opts}</select>
       </div>`;
+
+  if (S.dim === 2) {
+    c.innerHTML =
+      row('X axis', 'axisX') +
+      row('Y axis <span class="label-note">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each column you select is drawn as its own line, all sharing the X axis above. Hold Ctrl or Cmd to select more than one.">?</span>',
+          'axisY', ' multiple size="7" style="height:auto;font-size:.83rem"');
     setTimeout(() => {
       const sel = document.getElementById('axisY');
       if (sel && sel.options[1]) sel.options[1].selected = true;
@@ -174,10 +212,7 @@ function buildAxesUI() {
     }, 0);
 
   } else if (S.dim === 3) {
-    c.innerHTML = `
-      <div class="field-group"><label>X Axis</label><select id="axisX">${opts}</select></div>
-      <div class="field-group"><label>Y Axis</label><select id="axisY">${opts}</select></div>
-      <div class="field-group"><label>Z Axis</label><select id="axisZ">${opts}</select></div>`;
+    c.innerHTML = row('X axis', 'axisX') + row('Y axis', 'axisY') + row('Z axis', 'axisZ');
     setTimeout(() => {
       const y=document.getElementById('axisY'), z=document.getElementById('axisZ');
       if(y&&y.options[1]) y.options[1].selected=true;
@@ -185,17 +220,10 @@ function buildAxesUI() {
     }, 0);
 
   } else {
-    c.innerHTML = `
-      <div class="field-group"><label>X Axis</label><select id="axisX">${opts}</select></div>
-      <div class="field-group"><label>Y Axis</label><select id="axisY">${opts}</select></div>
-      <div class="field-group">
-        <label>Z Axis <span style="color:var(--muted);font-size:.78rem">(height)</span></label>
-        <select id="axisZ">${opts}</select>
-      </div>
-      <div class="field-group">
-        <label>W Axis <span style="color:var(--muted);font-size:.78rem">(colour map)</span></label>
-        <select id="axisW">${opts}</select>
-      </div>`;
+    c.innerHTML =
+      row('X axis', 'axisX') + row('Y axis', 'axisY') +
+      row('Z axis <span class="label-note">(height)</span>', 'axisZ') +
+      row('W axis <span class="label-note">(colour map)</span>', 'axisW');
     setTimeout(() => {
       const y=document.getElementById('axisY'), z=document.getElementById('axisZ'), w=document.getElementById('axisW');
       if(y&&y.options[1]) y.options[1].selected=true;
@@ -227,7 +255,7 @@ function buildSeriesColourPickers() {
   const yCols = getSelected2dYCols();
 
   if (!yCols.length) {
-    list.innerHTML = '<div style="color:var(--muted);font-size:.83rem">Select Y columns in Axes tab first.</div>';
+    list.innerHTML = '<div class="empty-note">Select Y columns in Axes tab first.</div>';
     return;
   }
 
@@ -258,6 +286,7 @@ function buildColormapGrid() {
 function selectColormap(name) {
   S.colormap = name;
   document.querySelectorAll('.colormap-btn').forEach(b => b.classList.toggle('active', b.dataset.cmap===name));
+  markStale();
 }
 
 // ─── AXIS SELECTIONS ──────────────────────────────────────────────────────────
@@ -281,6 +310,36 @@ function getColumnValues(col, rows, numeric=true) {
     return v;
   });
 }
+
+// ─── THE VISUALISE GATE ───────────────────────────────────────────────────────
+/* The chart is drawn on Visualise, so any change in the sidebar after a draw
+   leaves a chart that no longer matches the settings. Say so: the button gets
+   a ring and a note, and a chart already on screen steps back until redrawn. */
+let drawn = false;
+function setVisNote(text, stale) {
+  const n = document.getElementById('visNote');
+  n.textContent = text;
+  n.classList.toggle('is-stale', !!stale);
+}
+function markStale() {
+  if (!S.raw) return;
+  document.getElementById('renderBtn').classList.add('needs-run');
+  document.body.classList.toggle('is-stale', drawn);
+  if (drawn) setStatus('Out of date', 'warning');
+  setVisNote(drawn ? 'Settings changed. Press Visualise to redraw' : 'Data loaded. Press Visualise to draw it', true);
+}
+function clearStale() {
+  drawn = true;
+  document.getElementById('renderBtn').classList.remove('needs-run');
+  document.body.classList.remove('is-stale');
+  setVisNote('Chart is up to date', false);
+}
+// Every setting lives in the sidebar, so one listener covers them all. The
+// header row and file input re-parse, which marks stale through onDataLoaded.
+['input', 'change'].forEach(ev => document.querySelector('.sidebar').addEventListener(ev, e => {
+  if (e.target.closest('#renderBtn')) return;
+  markStale();
+}));
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 document.getElementById('renderBtn').onclick = renderChart;
@@ -404,6 +463,7 @@ function renderChart() {
 
   document.getElementById('chartPanelTitle').textContent = title;
   setStatus('Rendered', 'success');
+  clearStale();
 }
 
 /* ─── ZOOM: BOUNDED, AND A Y AXIS THAT FOLLOWS THE X WINDOW ───────────────────

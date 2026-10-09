@@ -1,6 +1,6 @@
 /* Quick Start has to be a clean reset.
    ---------------------------------------------------------------------------
-   Six tools ship Quick Start scenarios and no Reset button, on one claim: any
+   Seven tools ship Quick Start scenarios and no Reset button, on one claim: any
    scenario already returns the form to a clean, known state, so a separate
    Reset would only be a worse version of the same thing. That claim is only
    true while every scenario opens from the defaults rather than from whatever
@@ -28,11 +28,12 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Tools whose Reset button was dropped because Quick Start covers it. A tool
-// that keeps its Reset (pisahvsgabung, sankeycreator) has no claim to check.
+// that keeps its Reset (sankeycreator) has no claim to check. pisahvsgabung's
+// "Equal incomes" example is its starting point, so it is the way back there.
 // dcasimulator and its portfolio page are not here: their scenarios fetch live
 // market data, so a clean-room replay would be a network test rather than a
 // state test.
-const TOOLS = ['borrowingcapacity', 'rentvsownhouse', 'financialfreedom', 'financingvscash'];
+const TOOLS = (process.env.ONLY ? process.env.ONLY.split(',') : ['borrowingcapacity', 'rentvsownhouse', 'financialfreedom', 'financingvscash', 'pisahvsgabung', 'valuateeverything']);
 
 /* Where a tool seeds a detailed list from the simple field it replaces, the two
    have to agree at the moment of switching — that is the documented promise of
