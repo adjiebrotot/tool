@@ -139,13 +139,13 @@
       <div class="col-head" aria-hidden="true"><span>Name</span><span>Type <i class="tip-icon" data-tip="&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Year:&lt;/strong&gt; turned into an age.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Yes/No:&lt;/strong&gt; counts as 1 or 0.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Ignore:&lt;/strong&gt; kept in the listings, left out of the model.&lt;/li&gt;&lt;/ul&gt;">?</i></span><span>Unit</span><span></span></div>
       <div class="col-list" id="colList" data-no-persist></div>
       <button type="button" class="add-btn" id="addColBtn">+ Add column</button>
+      <button type="button" class="add-btn" id="addDataYearBtn" hidden>+ Add data year</button>
       <div class="status-line" id="colStatus" aria-live="polite"></div>
     </div>
 
     <div class="field-group">
       <div class="group-title">Listings</div>
-      <div class="field-row detail-row">
-        <div class="field-label"><span class="tip-wrap">Entry <i class="tip-icon" id="entryTip" data-tip="" data-tip-options hidden>?</i></span></div>
+      <div class="entry-switch">
         <select id="entryMode">
           <option value="table">Table</option>
           <option value="text">Text</option>
@@ -154,7 +154,14 @@
       </div>
 
       <div class="entry-panel" id="entry-table" data-no-persist>
-        <div class="grid-wrap" id="gridWrap"></div>
+        <div class="grid-head">
+          <span class="grid-count" id="gridCount"></span>
+          <button type="button" class="btn-bare grid-expand" id="gridExpandBtn" title="Enlarge the table" aria-label="Enlarge the listings table">⤢</button>
+        </div>
+        <div class="grid-shell" id="gridShell">
+          <div class="grid-wrap" id="gridWrap"></div>
+          <button type="button" class="add-btn" id="addRowBtn">+ Add listing</button>
+        </div>
       </div>
 
       <div class="entry-panel" id="entry-text" data-no-persist hidden>
@@ -192,11 +199,11 @@
         <div class="field-label">Currency Symbol</div>
         <select class="sel-input" id="currency" data-currency-symbols></select>
       </div>
-      <div class="field-row">
+      <div class="field-row" id="curYearRow">
         <div class="field-label"><span class="tip-wrap">Current year <i class="tip-icon" data-tip="Prices are restated in this year's money, and items to buy are aged from it.">?</i></span></div>
         <div class="currency-wrap" data-unitless><input class="currency-input" id="curYear" type="number" inputmode="numeric" min="1950" max="2100" step="1" value="2026"></div>
       </div>
-      <div class="slider-block">
+      <div class="slider-block" id="inflationBlock">
         <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Inflation <i class="tip-icon" data-tip="Lifts a price seen in an earlier data year to the current year: each year back adds this much.">?</i></span></div><div class="slider-value" id="inflationValue">3.0 %/yr</div></div>
         <input id="inflation" type="range" min="0" max="10" step="0.1" value="3">
       </div>
@@ -278,9 +285,6 @@
   <section class="detail-section card" id="itemsSection">
     <div class="detail-head">
       <h2>Items to buy</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="itemsCsvBtn" title="Download this table as CSV">⬇ CSV</button>
-      </div>
     </div>
     <p class="unit-note" id="itemsUnit"></p>
     <div class="table-wrap" id="itemsTableWrap" data-no-abbr></div>
@@ -289,9 +293,6 @@
   <section class="detail-section card" id="coefSection">
     <div class="detail-head">
       <h2>Price model terms</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="coefCsvBtn" title="Download this table as CSV">⬇ CSV</button>
-      </div>
     </div>
     <p class="unit-note" id="coefUnit"></p>
     <div class="equation" id="equation" data-no-abbr></div>
@@ -341,6 +342,23 @@
     </div>
   </section>
 </footer>
+
+<!-- The listings table, enlarged. The table itself moves in here while it
+     is open and back when it closes, so every edit is the same edit. -->
+<div class="grid-modal-overlay" id="gridModal" hidden data-no-persist>
+  <div class="grid-modal" role="dialog" aria-modal="true" aria-labelledby="gridModalTitle">
+    <div class="grid-modal-head">
+      <h2 id="gridModalTitle">Listings</h2>
+      <span class="grid-count" id="gridModalCount"></span>
+      <button type="button" class="btn-bare grid-modal-close" data-icon="close" id="gridCloseBtn" title="Close. Your changes are already kept" aria-label="Close the enlarged table. Your changes are already kept"></button>
+    </div>
+    <div class="grid-modal-body" id="gridModalBody"></div>
+    <div class="grid-modal-foot">
+      <span class="grid-modal-note">Changes are kept as you type. Valuate runs them.</span>
+      <button type="button" class="btn-primary" id="gridDoneBtn">✓ Done</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script src="../dropdown.js"></script>

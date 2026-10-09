@@ -11,7 +11,8 @@
 
    1. Today's money. A listing seen in data year Y at price P is restated in the
       current year C at the inflation rate i:   P* = P · (1 + i)^(C − Y).
-      A blank data year is the current year.
+      A blank data year is the current year. With no Data year column at all,
+      every listing is taken as seen this calendar year and C is that year.
    2. Features. A Number is used as it is. A Year becomes an age at the time
       the listing was seen (Y − year); for an item to buy, at the current year
       (C − year). A Yes/No is 1 or 0, a blank one is No.
@@ -366,9 +367,10 @@ function downloadText(name, text){
 }
 
 /* ───────────────────────── Column types ─────────────────────────
-   Price and Data year are always there, exactly once each, Price first and
-   Data year last. They are not a type the reader picks: only the columns in
-   between are, from PICK_TYPES. */
+   Price is always there, exactly once, first. Data year is there at most
+   once, last; the reader can delete it (every listing is then seen this
+   year) and add it back. Neither is a type the reader picks: only the
+   columns in between are, from PICK_TYPES. */
 const TYPES = [
   { v: 'price',    label: 'Price' },
   { v: 'number',   label: 'Number' },
@@ -381,8 +383,8 @@ const FIXED_TYPES = ['price', 'datayear'];
 const PICK_TYPES = TYPES.filter(t => !FIXED_TYPES.includes(t.v));
 
 /* Put a column set (and its rows) in the one shape the editors assume. A
-   second Price or Data year becomes a Number; a missing one is added blank
-   (a blank data year reads as the current year). */
+   second Price or Data year becomes a Number; a missing Price is added
+   blank. A missing Data year stays missing. */
 function ensureFixed(columns, rows){
   const cols = columns.map(c => Object.assign({}, c));
   FIXED_TYPES.forEach(t => {
@@ -393,7 +395,6 @@ function ensureFixed(columns, rows){
   cols.forEach(c => { const m = /^c(\d+)$/.exec(c.id); if(m) n = Math.max(n, +m[1]); });
   const src = cols.map((c, i) => i);
   if(!cols.some(c => c.type === 'price')){ cols.push({ id: 'c' + (++n), name: 'Price', type: 'price', unit: '' }); src.push(-1); }
-  if(!cols.some(c => c.type === 'datayear')){ cols.push({ id: 'c' + (++n), name: 'Data year', type: 'datayear', unit: '' }); src.push(-1); }
   const rank = c => c.type === 'price' ? 0 : c.type === 'datayear' ? 2 : 1;
   const order = cols.map((c, i) => i).sort((a, b) => rank(cols[a]) - rank(cols[b]) || a - b);
   return {
@@ -532,6 +533,7 @@ function nextColId(){
   return 'c' + (n + 1);
 }
 function featureColumns(){ return S.columns.filter(c => FEATURE_TYPES.includes(c.type)); }
+const hasDataYear = () => S.columns.some(c => c.type === 'datayear');
 function sym(){ return $('currency').value || ''; }
 
 // A restored or opened state is checked field by field rather than trusted.
@@ -556,10 +558,14 @@ function normaliseState(s){
 }
 
 /* ───────────────────────── Inputs ───────────────────────── */
+/* Without a Data year column every listing is seen this year, so the
+   current year is this calendar year whatever the hidden field holds. */
 function readOpts(){
   const y = parseInt($('curYear').value, 10);
+  const dated = hasDataYear();
   return {
-    year: isFinite(y) ? Math.min(2100, Math.max(1950, y)) : THIS_YEAR,
+    dated,
+    year: !dated ? THIS_YEAR : isFinite(y) ? Math.min(2100, Math.max(1950, y)) : THIS_YEAR,
     inflation: (parseFloat($('inflation').value) || 0) / 100,
     model: $('model').value,
     lambda: parseFloat($('lambda').value) || 0,
@@ -573,12 +579,6 @@ const MODEL_TIPS = {
   ridge: '<strong>Ridge regression:</strong> linear, with every effect pulled toward zero. Steadier with few listings or features that move together, like age and km.',
   quadratic: '<strong>Quadratic terms:</strong> adds a squared term for every number and year, so the line can bend. Needs more listings than linear.'
 };
-// Table entry explains itself, so only Text and CSV carry a tip.
-const ENTRY_TIPS = {
-  text: '<strong>Text:</strong> the column names on the first line, then one listing per line, separated by commas or tabs. A unit goes in brackets: Odometer (km).',
-  csv: '<strong>CSV:</strong> open a spreadsheet saved as CSV, with the column names in the first row. It replaces the listings here.'
-};
-
 /* ───────────────────────── Typed numbers ─────────────────────────
    Every typed figure shows its thousands separators and its unit as a prefix
    or suffix. The state keeps the plain number, so Text, CSV and a saved
@@ -617,17 +617,28 @@ function buildColumns(){
     const fixed = FIXED_TYPES.includes(c.type);
     const row = document.createElement('div');
     row.className = 'col-row' + (fixed ? ' col-fixed' : '');
+    const del = c.type === 'datayear'
+      ? SharedIcon.button('trash', 'Delete the data year: every listing is then taken as seen this year', 'col-del')
+      : SharedIcon.button('trash', 'Delete this column', 'col-del');
     row.innerHTML =
       `<input class="txt-input col-name" type="text" maxlength="80" aria-label="Column name" value="${esc(c.name)}">` +
       (fixed
         ? `<span class="col-type-fixed">${esc(TYPES.find(t => t.v === c.type).label)}</span>` +
-          `<span class="col-unit-fixed">${c.type === 'price' ? esc(sym()) : ''}</span><span aria-hidden="true"></span>`
+          `<span class="col-unit-fixed">${c.type === 'price' ? esc(sym()) : ''}</span>` +
+          (c.type === 'price' ? '<span aria-hidden="true"></span>' : del)
         : `<select class="col-type" aria-label="Column type">${PICK_TYPES.map(t => `<option value="${t.v}"${t.v === c.type ? ' selected' : ''}>${t.label}</option>`).join('')}</select>` +
           `<input class="txt-input col-unit" type="text" maxlength="20" aria-label="Unit" placeholder="unit" value="${esc(c.unit)}"${c.type === 'number' ? '' : ' disabled'}>` +
-          SharedIcon.button('trash', 'Delete this column', 'col-del'));
+          del);
     row.querySelector('.col-name').addEventListener('input', e => {
       c.name = e.target.value;
       buildGrid(); buildItems(); touched();
+    });
+    const delBtn = row.querySelector('.col-del');
+    if(delBtn) delBtn.addEventListener('click', () => {
+      S.columns.splice(i, 1);
+      S.rows.forEach(r => r.splice(i, 1));
+      S.items.forEach(it => { delete it.vals[c.id]; });
+      buildAll(); syncUI(); touched();
     });
     if(fixed){ list.appendChild(row); return; }
     row.querySelector('.col-type').addEventListener('change', e => {
@@ -639,14 +650,14 @@ function buildColumns(){
       c.unit = e.target.value;
       buildGrid(); buildItems(); touched();
     });
-    row.querySelector('.col-del').addEventListener('click', () => {
-      S.columns.splice(i, 1);
-      S.rows.forEach(r => r.splice(i, 1));
-      S.items.forEach(it => { delete it.vals[c.id]; });
-      buildAll(); touched();
-    });
     list.appendChild(row);
   });
+  // No data year: "+ Add data year" brings it back, and the current year
+  // and inflation have nothing to do, so they step out of Assumptions.
+  const dated = hasDataYear();
+  $('addDataYearBtn').hidden = dated;
+  $('curYearRow').hidden = !dated;
+  $('inflationBlock').hidden = !dated;
 }
 
 function cellControl(c, v){
@@ -674,8 +685,32 @@ function buildGrid(){
   const body = S.rows.map((r, ri) => '<tr data-r="' + ri + '">' +
     S.columns.map((c, ci) => `<td data-c="${ci}" class="t-${c.type}">${cellControl(c, r[ci])}</td>`).join('') +
     `<td class="t-del">${SharedIcon.button('trash', 'Delete this listing', 'sm row-del')}</td></tr>`).join('');
-  wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>` +
-    '<button type="button" class="grid-add">+ Add listing</button>';
+  wrap.innerHTML = `<table class="grid"><thead><tr>${head}<th aria-label="Delete"></th></tr></thead><tbody>${body}</tbody></table>`;
+  const n = S.rows.length;
+  $('gridCount').textContent = $('gridModalCount').textContent = `${n} listing${n === 1 ? '' : 's'}, ${S.columns.length} columns`;
+}
+
+/* ─── The table, enlarged ───
+   ⤢ lifts the table (with its + Add listing) into a full-screen modal and
+   puts it back on close. It is the same element, so edits made there are
+   the same edits; every way out (Done, ✕, Esc, the backdrop) keeps them. */
+let gridReturnFocus = null;
+function openGridModal(){
+  const what = ($('itemWhat').value || '').trim();
+  $('gridModalTitle').textContent = 'Listings' + (what ? ': ' + what : '');
+  $('gridModalBody').appendChild($('gridShell'));
+  $('gridModal').hidden = false;
+  document.body.classList.add('grid-modal-open');
+  gridReturnFocus = document.activeElement;
+  $('gridCloseBtn').focus();
+}
+function closeGridModal(){
+  if($('gridModal').hidden) return;
+  $('entry-table').appendChild($('gridShell'));
+  $('gridModal').hidden = true;
+  document.body.classList.remove('grid-modal-open');
+  if(gridReturnFocus && gridReturnFocus.focus) gridReturnFocus.focus();
+  gridReturnFocus = null;
 }
 
 function onGridEvent(e){
@@ -773,10 +808,6 @@ function loadCsvFile(file){
 function showEntry(){
   const mode = $('entryMode').value;
   ['table', 'text', 'csv'].forEach(m => { $('entry-' + m).hidden = m !== mode; });
-  const tip = $('entryTip');
-  if(ENTRY_TIPS[mode]) tip.setAttribute('data-tip', ENTRY_TIPS[mode]);
-  else tip.removeAttribute('data-tip');
-  tip.hidden = !ENTRY_TIPS[mode];
   if(mode === 'text') syncText();
 }
 
@@ -794,19 +825,21 @@ function buildItems(){
     const card = document.createElement('div');
     card.className = 'item-card';
     card.style.setProperty('--item-colour', SharedPalette.at(k));
-    const rows = feats.map(c => {
+    // Features sit two to a row, each label over its own field, so a card is
+    // half as tall as a stack of full-width rows.
+    const fields = feats.map(c => {
       const v = it.vals[c.id];
       const label = `<div class="field-label">${esc(c.name || '(no name)')}</div>`;
       if(c.type === 'bool'){
-        return `<label class="chk-row"><input type="checkbox" data-col="${c.id}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></label>`;
+        return `<label class="item-field item-chk"><span class="chk-line"><input type="checkbox" data-col="${c.id}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></span></label>`;
       }
       if(c.type === 'year'){
-        return `<div class="field-row">${label}` +
+        return `<div class="item-field">${label}` +
           `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="numeric" data-col="${c.id}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
           `<div class="derived" data-age="${c.id}">${ageNote(v, year)}</div></div>`;
       }
       const input = `<input class="currency-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${c.id}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
-      return `<div class="field-row">${label}` + (c.unit
+      return `<div class="item-field">${label}` + (c.unit
         ? `<div class="currency-wrap">${input}<span class="suffix">${esc(c.unit)}</span></div>`
         : `<div class="currency-wrap" data-unitless>${input}</div>`) + '</div>';
     }).join('');
@@ -814,9 +847,10 @@ function buildItems(){
       `<div class="item-head"><span class="item-dot" aria-hidden="true"></span>` +
       `<input class="txt-input item-name" type="text" maxlength="80" aria-label="Item name" value="${esc(it.name)}" placeholder="Item ${k + 1}">` +
       SharedIcon.button('duplicate', 'Duplicate this item', 'item-dup') + SharedIcon.button('trash', 'Delete this item', 'item-del') + '</div>' +
-      `<div class="field-row"><div class="field-label">Asking price</div>` +
+      `<div class="item-fields">` +
+      `<div class="item-field item-ask-field"><div class="field-label">Asking price</div>` +
       `<div class="currency-wrap"><span class="prefix">${esc(s)}</span><input class="currency-input item-ask" type="text" inputmode="decimal" data-kind="price" data-min="0" data-max="${BIG}" value="${esc(showNum(it.asking, 'price'))}" placeholder="optional"></div></div>` +
-      rows;
+      fields + '</div>';
     card.querySelector('.item-name').addEventListener('input', e => { it.name = e.target.value; touched(); });
     card.querySelector('.item-ask').addEventListener('input', e => { liveFmt(e.target, 'price'); it.asking = rawNum(e.target.value); touched(); });
     card.querySelectorAll('[data-col]').forEach(el => {
@@ -983,7 +1017,11 @@ function renderAssumptions(r){
   }
   const years = used.filter(f => f.type === 'year');
   if(years.length)
-    items.push(`<strong>${names(years)} ${years.length === 1 ? 'becomes an age,' : 'become ages,'}</strong> at each listing's data year for the market data and at ${r.o.year} for the items to buy.`);
+    items.push(`<strong>${names(years)} ${years.length === 1 ? 'becomes an age,' : 'become ages,'}</strong> ` + (r.o.dated
+      ? `at each listing's data year for the market data and at ${r.o.year} for the items to buy.`
+      : `at ${r.o.year} for the listings and the items to buy alike.`));
+  if(!r.o.dated)
+    items.push(`<strong>Every listing is taken as seen in ${r.o.year},</strong> so its price is used as it is. Add a data year to mix listings from different years.`);
   const bools = used.filter(f => f.type === 'bool');
   if(bools.length)
     items.push(`<strong>${names(bools)} ${bools.length === 1 ? 'counts' : 'count'} as 1 for yes and 0 for no.</strong>`);
@@ -1016,7 +1054,7 @@ function renderVerdict(r){
   }
   const s = r.o.sym, what = ($('itemWhat').value || '').trim();
   const m = r.model;
-  const fitLine = `Fitted to ${m.n} listings${what ? ' of ' + esc(what) : ''}, the model explains ${Math.round(Math.max(0, m.r2 || 0) * 100)}% of their price differences, with a typical error of ${fmt.money(m.rmse, s)}. Prices are in ${r.o.year} money.`;
+  const fitLine = `Fitted to ${m.n} listings${what ? ' of ' + esc(what) : ''}, the model explains ${Math.round(Math.max(0, m.r2 || 0) * 100)}% of their price differences, with a typical error of ${fmt.money(m.rmse, s)}.${r.o.dated ? ` Prices are in ${r.o.year} money.` : ''}`;
   const good = r.items.filter(it => !it.incomplete && !it.bad);
   if(!S.items.length){
     SharedVerdict.set('verdict', { tone: '', title: 'Add the items you want to buy to see their fair price.', body: fitLine });
@@ -1091,7 +1129,8 @@ function renderTables(r){
   const m = r.model, prep = r.prep;
 
   // Items to buy
-  $('itemsUnit').textContent = `Prices in ${s || 'the price unit'}, ${r.o.year} money. The range is the fair price give or take one typical error.`;
+  const inMoney = r.o.dated ? `, ${r.o.year} money` : '';
+  $('itemsUnit').textContent = `Prices in ${s || 'the price unit'}${inMoney}. The range is the fair price give or take one typical error.`;
   $('itemsTableWrap').innerHTML = !r.items.length ? blank('No items to buy yet.') :
     `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap %</th></tr></thead><tbody>` +
     r.items.map(it => {
@@ -1106,8 +1145,8 @@ function renderTables(r){
   // Model terms
   const isLog = m.model === 'log';
   $('coefUnit').textContent = isLog
-    ? `The model is for ln P, the natural log of the price in ${r.o.year} money. % per unit is e^α − 1. The standardised weight is the effect of one typical spread of the feature.`
-    : `Coefficients are in ${s || 'price'}, ${r.o.year} money, per unit of the feature. The standardised weight is the effect of one typical spread of the feature, so weights compare across units.`;
+    ? `The model is for ln P, the natural log of the price${r.o.dated ? ` in ${r.o.year} money` : ''}. % per unit is e^α − 1. The standardised weight is the effect of one typical spread of the feature.`
+    : `Coefficients are in ${s || 'price'}${inMoney}, per unit of the feature. The standardised weight is the effect of one typical spread of the feature, so weights compare across units.`;
   const termUnit = (u, pow) => pow === 2 ? (/[²³]$/.test(u) ? ` (${u})²` : ` (${u}²)`) : ` (${u})`;
   const termName = (f, pow) => (f.type === 'year' ? `Age from ${f.name}` : f.name) + (pow === 2 ? '²' : '') + (f.unit ? termUnit(f.unit, pow) : f.type === 'year' ? termUnit('yrs', pow) : '');
   const rows = [];
@@ -1119,18 +1158,19 @@ function renderTables(r){
     const t2 = m.terms.findIndex(t => t.j === j && t.pow === 2);
     if(t2 >= 0) rows.push({ term: termName(f, 2), coef: m.coef.q[j], w: m.beta[t2 + 1], pct: null });
   });
-  r.coefRows = rows;
   $('coefTableWrap').innerHTML =
     `<table><thead><tr><th>Term</th><th>Coefficient</th>${isLog ? '<th>% per unit</th>' : ''}<th>Standardised weight</th></tr></thead><tbody>` +
     rows.map(x => x.dropped
       ? `<tr><td>${esc(x.term)}</td><td colspan="${isLog ? 3 : 2}" class="note">Dropped: the same in every listing</td></tr>`
       : `<tr><td>${esc(x.term)}</td><td>${fmt.num(x.coef, 4)}</td>${isLog ? `<td>${x.pct === null ? '—' : fmt.pct(x.pct, 2)}</td>` : ''}<td>${x.w === null ? '—' : (isLog ? fmt.num(x.w, 4) : fmt.signedMoney(x.w, s))}</td></tr>`).join('') +
     '</tbody></table>';
+  // Every variable is bold, in KaTeX and in the plain fallback alike, so the
+  // eye can find what each figure multiplies.
   const parts = [fmt.num(m.coef.c0, 4)], tex = [texNum(m.coef.c0)];
   prep.features.forEach((f, j) => {
     if(m.dropped.includes(f.name)) return;
-    const nm = f.type === 'year' ? 'Age(' + f.name + ')' : f.name;
-    const tn = f.type === 'year' ? texText('Age') + '(' + texText(f.name) + ')' : texText(f.name);
+    const nm = f.type === 'year' ? '<strong>Age</strong>(<strong>' + esc(f.name) + '</strong>)' : '<strong>' + esc(f.name) + '</strong>';
+    const tn = f.type === 'year' ? texBold('Age') + '(' + texBold(f.name) + ')' : texBold(f.name);
     const add = (c, label, tl) => {
       if(!c) return;
       parts.push((c < 0 ? ' − ' : ' + ') + fmt.num(Math.abs(c), 4) + ' × ' + label);
@@ -1139,14 +1179,18 @@ function renderTables(r){
     add(m.coef.a[j], nm, tn);
     add(m.coef.q[j], nm + '²', tn + '^{2}');
   });
-  r.eqText = (isLog ? 'ln P = ' : 'P = ') + parts.join('');
-  renderTex($('equation'), (isLog ? '\\ln P = ' : 'P = ') + tex.join(''), r.eqText);
+  renderTex($('equation'), (isLog ? '\\ln \\mathbf{P} = ' : '\\mathbf{P} = ') + tex.join(''),
+    (isLog ? 'ln <strong>P</strong> = ' : '<strong>P</strong> = ') + parts.join(''));
 
   // Listings against the model
-  $('dataUnit').textContent = `Prices in ${s || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`;
+  // Without a data year, Listed and Today are the same figure, so only one is shown.
+  const dated = r.o.dated;
+  $('dataUnit').textContent = dated
+    ? `Prices in ${s || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`
+    : `Prices in ${s || 'the price unit'}. Miss is the listed price less the model.`;
   $('dataTableWrap').innerHTML =
-    `<table><thead><tr><th>Row</th><th>Data year</th><th>Listed</th><th>Today</th><th>Model</th><th>Miss</th><th>Miss %</th></tr></thead><tbody>` +
-    prep.row.map((row, i) => `<tr><td>${row}</td><td>${prep.dataYear[i]}</td><td>${fmt.money(prep.price[i], s)}</td><td>${fmt.money(prep.priceToday[i], s)}</td>` +
+    `<table><thead><tr><th>Row</th>${dated ? '<th>Data year</th>' : ''}<th>Listed</th>${dated ? '<th>Today</th>' : ''}<th>Model</th><th>Miss</th><th>Miss %</th></tr></thead><tbody>` +
+    prep.row.map((row, i) => `<tr><td>${row}</td>${dated ? `<td>${prep.dataYear[i]}</td>` : ''}<td>${fmt.money(prep.price[i], s)}</td>${dated ? `<td>${fmt.money(prep.priceToday[i], s)}</td>` : ''}` +
       `<td>${fmt.money(m.fitted[i], s)}</td><td>${fmt.signedMoney(m.resid[i], s)}</td><td>${fmt.pct(m.resid[i] / m.fitted[i])}</td></tr>`).join('') +
     '</tbody></table>';
 }
@@ -1154,16 +1198,17 @@ function renderTables(r){
 /* ─── The model as an equation, typeset by KaTeX ───
    Inline mode, so a long model wraps after a + or a − instead of running off
    the card. Without KaTeX (offline) the plain-text equation stands in. */
-function texText(s){
+function texBold(s){
   const map = { '\\': '\\textbackslash{}', '{': '\\{', '}': '\\}', '$': '\\$', '&': '\\&', '#': '\\#', '^': '\\textasciicircum{}', '_': '\\_', '%': '\\%', '~': '\\textasciitilde{}' };
-  return '\\text{' + String(s).replace(/[\\{}$&#^_%~]/g, ch => map[ch]) + '}';
+  return '\\textbf{' + String(s).replace(/[\\{}$&#^_%~]/g, ch => map[ch]) + '}';
 }
 const texNum = v => fmt.num(v, 4).replace(/−/g, '-').replace(/,/g, '{,}');
-function renderTex(el, tex, plain){
+// plainHtml is built from escaped names, so it is safe as markup.
+function renderTex(el, tex, plainHtml){
   if(window.katex){
     try { katex.render(tex, el, { throwOnError: false, strict: 'ignore', displayMode: false }); return; } catch(e){ /* plain text below */ }
   }
-  el.textContent = plain;
+  el.innerHTML = plainHtml;
 }
 
 function renderWarnings(r){
@@ -1288,7 +1333,7 @@ function drawChart(r){
   const s = r.o.sym;
   const showData = $('showData').checked;
   const items = r.items.filter(it => !it.incomplete && !it.bad);
-  const priceTitle = `Price (${s ? s + ', ' : ''}${r.o.year} money)`;
+  const priceTitle = r.o.dated ? `Price (${s ? s + ', ' : ''}${r.o.year} money)` : (s ? `Price (${s})` : 'Price');
   const moneyFmt = (s ? s : '') + '%{y:,.0f}';
   const mix = (base, pairs) => { const v = base.slice(); pairs.forEach(([j, val]) => { v[j] = val; }); return v; };
   const others = feats.map((f, j) => j).filter(j => j !== xj && (dim === '2d' || j !== yj));
@@ -1512,31 +1557,14 @@ async function copyPng(){
   setTimeout(() => { btn.textContent = '⧉'; }, 1400);
 }
 
-/* ─── Table CSVs ─── */
-function itemsCsv(){
-  const r = last; if(!r || r.error) return;
-  const s = r.o.sym;
-  const lines = [['Item', `Asking (${s})`, `Fair price (${s})`, `Range low (${s})`, `Range high (${s})`, `Gap (${s})`, 'Gap %']];
-  r.items.forEach(it => {
-    if(it.incomplete){ lines.push([it.name, '', '', '', '', '', '']); return; }
-    lines.push([it.name, it.asking === null ? '' : it.asking.toFixed(0), it.fair.toFixed(0), it.range[0].toFixed(0), it.range[1].toFixed(0),
-      it.gap === null ? '' : it.gap.toFixed(0), it.gapPct === null ? '' : (it.gapPct * 100).toFixed(2)]);
-  });
-  downloadText('valuate-everything-items.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
-}
-function coefCsv(){
-  const r = last; if(!r || r.error || !r.coefRows) return;
-  const lines = [['Term', 'Coefficient', 'Percent per unit', 'Standardised weight']];
-  r.coefRows.forEach(x => lines.push(x.dropped ? [x.term, 'dropped', '', ''] : [x.term, fmt.plain(x.coef), x.pct === null ? '' : (x.pct * 100).toFixed(4), x.w === null ? '' : fmt.plain(x.w)]));
-  lines.push([]);
-  lines.push([r.eqText || '']);
-  downloadText('valuate-everything-model.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
-}
+/* ─── Listings CSV ─── */
 function dataCsv(){
   const r = last; if(!r || r.error) return;
-  const s = r.o.sym, p = r.prep, m = r.model;
-  const lines = [['Row', 'Data year', `Listed (${s})`, `Today (${s})`, `Model (${s})`, `Miss (${s})`, 'Miss %']];
-  p.row.forEach((row, i) => lines.push([row, p.dataYear[i], p.price[i].toFixed(0), p.priceToday[i].toFixed(0), m.fitted[i].toFixed(0), m.resid[i].toFixed(0), (m.resid[i] / m.fitted[i] * 100).toFixed(2)]));
+  const s = r.o.sym, p = r.prep, m = r.model, dated = r.o.dated;
+  const head = ['Row'].concat(dated ? ['Data year'] : [], [`Listed (${s})`], dated ? [`Today (${s})`] : [], [`Model (${s})`, `Miss (${s})`, 'Miss %']);
+  const lines = [head];
+  p.row.forEach((row, i) => lines.push([row].concat(dated ? [p.dataYear[i]] : [], [p.price[i].toFixed(0)], dated ? [p.priceToday[i].toFixed(0)] : [],
+    [m.fitted[i].toFixed(0), m.resid[i].toFixed(0), (m.resid[i] / m.fitted[i] * 100).toFixed(2)])));
   downloadText('valuate-everything-listings.csv', lines.map(l => l.map(v => csvCell(v, ',')).join(',')).join('\n'));
 }
 
@@ -1593,8 +1621,13 @@ function init(){
 
   $('gridWrap').addEventListener('input', onGridEvent);
   $('gridWrap').addEventListener('change', e => { if(e.target.type === 'checkbox') onGridEvent(e); });
+  $('addRowBtn').addEventListener('click', addListing);
+  $('gridExpandBtn').addEventListener('click', openGridModal);
+  $('gridCloseBtn').addEventListener('click', closeGridModal);
+  $('gridDoneBtn').addEventListener('click', closeGridModal);
+  $('gridModal').addEventListener('click', e => { if(e.target === $('gridModal')) closeGridModal(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !$('gridModal').hidden){ e.preventDefault(); closeGridModal(); } });
   $('gridWrap').addEventListener('click', e => {
-    if(e.target.closest('.grid-add')){ addListing(); return; }
     const del = e.target.closest('.row-del');
     if(!del) return;
     const tr = del.closest('tr[data-r]');
@@ -1609,6 +1642,13 @@ function init(){
     S.columns.splice(at, 0, { id, name: 'Feature ' + (featureColumns().length + 1), type: 'number', unit: '' });
     S.rows.forEach(r => r.splice(at, 0, ''));
     buildAll(); touched();
+  });
+  // Data year always goes back in last, blank: a blank reads as this year.
+  $('addDataYearBtn').addEventListener('click', () => {
+    if(hasDataYear()) return;
+    S.columns.push({ id: nextColId(), name: 'Data year', type: 'datayear', unit: '' });
+    S.rows.forEach(r => r.push(''));
+    buildAll(); syncUI(); touched();
   });
   $('addItemBtn').addEventListener('click', () => {
     S.items.push({ name: 'Item ' + (S.items.length + 1), asking: '', vals: {} });
@@ -1641,8 +1681,6 @@ function init(){
   $('pngBtn').addEventListener('click', () => exportImage('png'));
   $('copyBtn').addEventListener('click', copyPng);
   $('resetViewBtn').addEventListener('click', resetView);
-  $('itemsCsvBtn').addEventListener('click', itemsCsv);
-  $('coefCsvBtn').addEventListener('click', coefCsv);
   $('dataCsvBtn').addEventListener('click', dataCsv);
 
   document.querySelectorAll('.quick-start-btn').forEach(btn =>

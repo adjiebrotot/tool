@@ -43,14 +43,25 @@ Covered:
    listings, no Price and two Price columns are said in words; unreadable rows
    are skipped and counted; a data year after the current year is not read.
 7. **Mini cache.** The saved snapshot carries the listings and the items.
-8. **The form.** Price and Data year are fixed rows that cannot be picked or
-   deleted, and any column set is put in shape (one Price first, one Data year
-   last, rows following). Table figures show their prefix, suffix and
+8. **The form.** Price and Data year are fixed rows that cannot be picked;
+   only Data year can be deleted. Any column set is put in shape (one Price
+   first, at most one Data year last, rows following, no Data year added). Table figures show their prefix, suffix and
    thousands separators while the state keeps plain numbers. An edit marks
    the answer out of date without changing it, and Valuate runs it. With one
    item, Hold others at is hidden and the chart holds at that item. The items
    table has no Note column, and the equation falls back to plain text when
    KaTeX is not there.
+
+9. **The table, enlarged.** + Add listing sits under the table, outside its
+   scroll box. ⤢ lifts the same table into a full-screen modal; an edit and
+   a new listing made there land in the data, and Esc or Done puts the table
+   back in the sidebar with the edits kept.
+
+10. **Without a data year.** Deleting Data year hides Current year and
+    Inflation and offers + Add data year. Every listing is then seen this
+    calendar year at its listed price, whatever the hidden Current year
+    holds, and the fit matches the replay on that basis. The listings table
+    drops Data year and Today. + Add data year puts a blank one back last.
 
 Run:
 
