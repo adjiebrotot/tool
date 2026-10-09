@@ -6,7 +6,10 @@ body.light {
   --line-a:#5A91E8; --line-b:#E63939; --line-c:#2E8B57; --line-d:#b45309;
   --line-e:#7c3aed; --line-f:#0891b2;
 }
-*{box-sizing:border-box;margin:0;padding:0;min-width:0}
+*{box-sizing:border-box;margin:0;min-width:0}
+/* Zero padding everywhere but the shared dropdown fields, whose padding
+   dropdown.css sets at zero specificity: a plain * here would wipe it. */
+:where(:not(select):not(.combo-input)){padding:0}
 body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);transition:background .25s,color .25s;min-height:100vh;overflow-x:hidden}
 .container{max-width:1500px;margin:0 auto;padding:24px}
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
