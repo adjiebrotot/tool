@@ -586,6 +586,14 @@ function applyCityPreset(si, sid){
   const sc = cloneScenario(DEFAULT_SCENARIO);
   Object.keys(sc).forEach(k=>{ if(p[k]!==undefined) sc[k] = p[k]; });
   sc.name = QS.label(sid, lang);
+  /* A staged loan (promo or fixed, then floating) is only said by the
+     Detailed rate schedule, so it switches the page's mortgage mode, which is
+     shared by every column: the others are seeded from their own single
+     rate, so their rate is the one they had. */
+  if(p.mortgageMode==='detailed' && modes.mortgageMode!=='detailed'){
+    modes.mortgageMode = 'detailed';
+    scenarios.forEach(seedRatePeriods);
+  }
   if(modes.mortgageMode==='detailed')  seedRatePeriods(sc);
   if(modes.ownCostsMode==='detailed')  seedOwnCostItems(sc);
   if(modes.rentCostsMode==='detailed') seedRentCostItems(sc);

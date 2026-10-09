@@ -288,7 +288,11 @@ for(const tool of TOOLS){
           return {simpleId, simple: a ? norm(a.value) : null, advanced: b ? norm(b.value) : null};
         });
       }, [key, picker.pick, pairs]);
-      const off = seeded.filter(m => m.simple !== m.advanced);
+      // A scenario that ships its own rate schedule (a staged loan) opens on
+      // it rather than seeding one from the single rate, so its first period
+      // is the promo or fixed rate, not the term average the simple field holds.
+      const staged = tool === 'rentvsownhouse' && await clean.evaluate(k => !!(window.RVO_QS.preset(k) || {}).ratePeriods, key);
+      const off = seeded.filter(m => m.simple !== m.advanced && !(staged && m.simpleId === 'mortgageRate'));
       check('"' + key + '" seeds its detailed views from its own figures',
         off.length === 0,
         off.length

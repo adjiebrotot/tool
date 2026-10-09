@@ -1606,7 +1606,9 @@ function applyPreset(sid){
   document.querySelectorAll('input[name="mortgageType"]').forEach(r=>{ r.checked = r.value===p.mortgageType; });
   $('radioPI').classList.toggle('selected', p.mortgageType==='pi');
   $('radioIO').classList.toggle('selected', p.mortgageType==='io');
-  // City presets use the simple single-rate mortgage and simple costs
+  // Costs load in simple mode; the mortgage too, unless the market's loans are
+  // staged (a promo or fixed period, then floating), which only the Detailed
+  // rate schedule can say. Its rows are drawn from S below, after readInputs().
   S.mortgageMode = 'simple';
   S.ratePeriods = null;
   S.ownCostsMode = 'simple';
@@ -1621,6 +1623,10 @@ function applyPreset(sid){
      city never had. rerender() below calls this again; it is idempotent, and
      the modes above are already 'simple', so it cannot read the stale rows. */
   readInputs();
+  if(p.mortgageMode === 'detailed'){
+    S.mortgageMode = 'detailed';
+    S.ratePeriods = p.ratePeriods;
+  }
   updateMortgageModeUI();
   renderRatePeriodRows();
   updateCostsModeUI();

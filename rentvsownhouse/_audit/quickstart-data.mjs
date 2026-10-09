@@ -19,6 +19,11 @@
 //       reasons under 220 characters, sources are https links, asOf is YYYY-MM
 //   D6  the assumptions page draws a row for every scenario, at the price
 //       the calculator loads, and a dash with its reason for every gap
+//   D7  a staged loan's rate schedule is one the Detailed mortgage mode can
+//       hold (consecutive periods, the last ending at the term, rates inside
+//       the rate rows' bounds, a floating range that is a range), its
+//       mortgageRate is the schedule's average, and the calculator opens it
+//       in Detailed mode on exactly those periods
 //
 // Run: node quickstart-data.mjs
 import { readFileSync } from 'node:fs';
@@ -194,6 +199,80 @@ const yieldOf = p => p.rentAmount * PER_YEAR[p.rentFreq] / p.propertyPrice * 100
   check(`D6 the assumptions page draws all ${got.n} scenarios, each at the price the calculator loads`,
     got.rows === got.n && got.cells === got.n && !got.bad.length && !errors.length, list(got.bad.concat(errors)) || `${got.rows} rows, ${got.cells} cells`);
   check('D6 every missing home shows a dash with its reason', got.dashes === got.gaps, `${got.dashes} dashes for ${got.gaps} gaps`);
+  await browser.close();
+}
+
+/* ── D7: rate schedules ── */
+{
+  const bad = [], avg = [];
+  const staged = all.filter(sid => Q.preset(sid).ratePeriods);
+  all.forEach(sid => {
+    const p = Q.preset(sid), ps = p.ratePeriods;
+    if(!ps){ if(p.mortgageMode !== 'simple') bad.push(sid + ': no schedule but ' + p.mortgageMode); return; }
+    if(p.mortgageMode !== 'detailed') bad.push(sid + ': schedule but ' + p.mortgageMode);
+    let prev = 0, sum = 0;
+    ps.forEach((r, i) => {
+      if(!(Number.isInteger(r.toYear) && r.toYear > prev)) bad.push(`${sid}: period ${i + 1} ends at ${r.toYear}`);
+      if(!['fixed', 'floating'].includes(r.type)) bad.push(`${sid}: period ${i + 1} type ${r.type}`);
+      [r.rate, r.rateMin, r.rateMax].forEach(v => { if(!(v >= 0 && v <= 40)) bad.push(`${sid}: period ${i + 1} rate ${v}`); });
+      if(r.type === 'floating' && !(r.rateMax > r.rateMin)) bad.push(`${sid}: period ${i + 1} floating ${r.rateMin}-${r.rateMax}`);
+      if(r.type === 'fixed' && !(r.rateMin === r.rate && r.rateMax === r.rate)) bad.push(`${sid}: period ${i + 1} fixed range`);
+      sum += (Math.min(r.toYear, p.mortgageTerm) - prev) * (r.rateMin + r.rateMax) / 2;
+      prev = r.toYear;
+    });
+    if(prev !== p.mortgageTerm) bad.push(`${sid}: schedule ends at ${prev}, term ${p.mortgageTerm}`);
+    if(Math.abs(sum / p.mortgageTerm - p.mortgageRate) > 0.006) avg.push(`${sid}: average ${(sum / p.mortgageTerm).toFixed(3)} vs ${p.mortgageRate}`);
+  });
+  // A page edits its periods in place, so each preset must hand out its own copy.
+  if(staged.length && Q.preset(staged[0]).ratePeriods === Q.preset(staged[0]).ratePeriods) bad.push('schedule is shared, not copied');
+  check(`D7 ${staged.length} scenarios carry a rate schedule the Detailed mode can hold`, staged.length > 0 && !bad.length, list(bad));
+  check('D7 a staged scenario\'s mortgageRate is its schedule\'s average over the term', !avg.length, list(avg));
+
+  const browser = await pw.chromium.launch();
+  const page = await browser.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(String(e)));
+  await page.route('**://*/**', r => r.request().url().startsWith('file:') ? r.continue() : r.fulfill({ status: 200, body: '' }));
+  // The page only needs Chart to exist, not to draw.
+  await page.addInitScript(() => {
+    class Chart {
+      constructor(ctx, cfg){ this.config = cfg; this.data = (cfg && cfg.data) || { datasets: [] }; this.options = (cfg && cfg.options) || {}; this.scales = this.options.scales || {}; }
+      update(){} destroy(){} resetZoom(){} isDatasetVisible(){ return true; } setDatasetVisibility(){}
+      getDatasetMeta(){ return { data: [], hidden: false }; }
+    }
+    Chart.register = () => {};
+    Chart.Interaction = { modes: {} };
+    Chart.helpers = { getRelativePosition: e => e };
+    window.Chart = Chart;
+    try { localStorage.clear(); } catch(e){}
+  });
+  // Each city's default home, opened the way the assumptions page links it.
+  const got = [];
+  for(const c of Q.data.cities){
+    const sid = Q.id(c.key, Q.defaultType(c.key));
+    await page.goto(pathToFileURL(join(RVO, 'index.html')).href + '?qs=' + encodeURIComponent(sid));
+    await page.waitForTimeout(300);
+    got.push(await page.evaluate(sid => ({
+      sid,
+      mode: document.querySelector('#mortgageModeGroup .seg-btn.active').dataset.val,
+      shown: document.getElementById('rateScheduleRow').style.display !== 'none',
+      rows: [...document.querySelectorAll('#ratePeriodRows .rate-period-row')].map(r => ({
+        type: r.querySelector('.rp-type').value, rate: +r.querySelector('.rp-rate').value,
+        rateMin: +r.querySelector('.rp-min').value, rateMax: +r.querySelector('.rp-max').value }))
+    }), sid));
+  }
+  const off = [];
+  got.forEach(g => {
+    const p = Q.preset(g.sid);
+    if(g.mode !== p.mortgageMode) off.push(`${g.sid}: opens ${g.mode}`);
+    if(g.shown !== (p.mortgageMode === 'detailed')) off.push(`${g.sid}: schedule row ${g.shown ? 'shown' : 'hidden'}`);
+    if(p.ratePeriods){
+      const want = p.ratePeriods.map(r => ({ type: r.type, rate: r.rate, rateMin: r.rateMin, rateMax: r.rateMax }));
+      if(JSON.stringify(want) !== JSON.stringify(g.rows)) off.push(`${g.sid}: rows ${JSON.stringify(g.rows)}`);
+    }
+  });
+  check('D7 the calculator opens each staged scenario in Detailed mode on its own periods, and the rest in Simple',
+    !off.length && !errors.length, list(off.concat(errors)) || `${got.filter(g => g.mode === 'detailed').length} of ${got.length} city defaults staged`);
   await browser.close();
 }
 
