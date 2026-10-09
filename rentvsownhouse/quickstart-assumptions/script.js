@@ -165,7 +165,7 @@ function drawCity(c){
   const work = homes.filter(t => c.homes[t].setupCalc || c.homes[t].costCalc);
   const srcs = (c.sources || []).concat(...homes.map(t => c.homes[t].sources || []));
   if(work.length || srcs.length){
-    h += `<details class="qa-more"><summary>Workings and sources</summary>`;
+    h += `<div class="qa-more"><button type="button" class="qa-more-btn" aria-expanded="false">Workings and sources ▾</button><div class="qa-more-body" hidden>`;
     if(work.length){
       h += '<ul class="qa-list">';
       work.forEach(t => {
@@ -184,7 +184,7 @@ function drawCity(c){
       });
       h += '</ul>';
     }
-    h += '</details>';
+    h += '</div></div>';
   }
   return h + '</section>';
 }
@@ -233,6 +233,16 @@ $('qaForm').addEventListener('click', e => {
   draw();
 });
 $('qaCsv').addEventListener('click', csv);
+// Each city's workings open on request; the cities are redrawn on every
+// filter, so one listener on their container serves them all.
+$('cities').addEventListener('click', e => {
+  const b = e.target.closest('.qa-more-btn');
+  if(!b) return;
+  const body = b.nextElementSibling, open = body.hidden;
+  body.hidden = !open;
+  b.setAttribute('aria-expanded', String(open));
+  b.textContent = 'Workings and sources ' + (open ? '▴' : '▾');
+});
 
 const themeBtn = $('themeToggle');
 themeBtn.addEventListener('click', () => {
