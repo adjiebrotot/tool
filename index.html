@@ -253,27 +253,39 @@
       white-space: nowrap;
     }
 
+    /* The caret is a bar that blinks with opacity, which the compositor runs
+       on its own. A blinking border colour would keep the main thread
+       painting, and drag the tool cards' animations onto it too. */
     .type-text {
+      position: relative;
       font-weight: 600;
       color: var(--accent-strong);
-      border-right: 2px solid var(--accent-strong);
-      padding-right: 3px;
+      padding-right: 5px;
       transition: color var(--motion-fast);
+    }
+
+    .type-text::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 2px;
+      background: currentColor;
       animation: caret-blink 1s steps(1) infinite;
     }
 
     .type-text.is-highlight {
       color: var(--data-pos);
       font-weight: 800;
-      border-right-color: var(--data-pos);
     }
 
     @keyframes caret-blink {
-      50% { border-right-color: transparent; }
+      50% { opacity: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .type-text { animation: none; }
+      .type-text::after { animation: none; }
     }
 
     .visually-hidden {
