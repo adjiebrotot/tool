@@ -39,6 +39,11 @@
 //   B8  a summary CSV saved in multi-currency mode reopens to the same state
 //       and the same cashflows; so does a reload (the mini cache)
 //   B9  columns in two currencies read as one (multi-currency off) are flagged
+//   B10 expected appreciation/depreciation: the rate moves by the change typed
+//       (-2 for IDR: 1 AUD buys 2% more IDR every year), replayed for the
+//       shared money and for accumulated cost; the note under the field says
+//       so in words, live as it is typed; a new base re-quotes the changes so
+//       no column's money moves; the CSV and a reload keep them
 // Run: node integrity.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 import http from 'node:http';
@@ -148,6 +153,7 @@ function tableCSV(cols, shared, fx){
     rows.push(['Base currency', ...cols.map(() => fx.base)]);
     rows.push(['Risk-Free Rate, base currency', ...cols.map(() => fx.baseRfr)]);
     rows.push(['Exchange rate path', ...cols.map(() => fx.path)]);
+    if(fx.trend) rows.push(['Expected change vs base currency', ...cols.map(c => fx.trend[c.cur] ?? 0)]);
     rows.push(['Scenario currency', ...cols.map(c => c.cur)]);
     rows.push(['Exchange rate', ...cols.map(c => c.s0 === undefined ? '' : c.s0)]);
   }
@@ -394,6 +400,85 @@ const MC = [
   await page3.click('#fxModeToggle'); await page3.waitForTimeout(200);
   const warn = await page3.evaluate(() => { const w = document.querySelector('#tableWrap #fxWarn'); return w ? w.textContent : ''; });
   check('B9 columns in two currencies read as one (multi-currency off) are flagged', /AUD/.test(warn) && /IDR/.test(warn), warn);
+  await page.close();
+}
+
+{
+  // B10: expected appreciation/depreciation, IDR -2% and SGD +1% against AUD.
+  const page = await open();
+  const trend = {AUD:0, SGD:1, IDR:-2};
+  const fx = {base:'AUD', baseRfr:4.6, path:'trend', trend};
+  await upload(page, tableCSV(MC, {horizon:H}, fx));
+  const s0 = MC.map(c => c.s0 || 1);
+  const paths = MC.map((c, i) => k => s0[i] * Math.pow(1 - trend[c.cur]/100, k/12));
+  const needs = MC.map(c => needsOf(c, H));
+  const icBase = Math.max(...needs.map((n, i) => n.upFront / s0[i]));
+  const B = []; for(let k=0; k<12*H; k++){ const yr = Math.floor(k/12) + 1; B.push(Math.max(...needs.map((n, i) => n.need[yr-1] / paths[i](k+1)))); }
+  let icGap = 0, bGap = 0, at = '';
+  for(let i=0; i<MC.length; i++){
+    const f = await flows(page, 'rent', i);
+    icGap = Math.max(icGap, Math.max(0, Math.abs(f.rows[0].End_Cash - icBase*s0[i]) - 0.5) / Math.max(1, icBase*s0[i]));
+    for(let yr=1; yr<=H; yr++){
+      let want = 0; for(let m=0; m<12; m++){ const k = (yr-1)*12 + m; want += B[k] * paths[i](k+1); }
+      const g = Math.max(0, Math.abs(f.rows[yr].Ann_Budget - want) - 0.5) / Math.max(1, want);
+      if(g > bGap){ bGap = g; at = `${MC[i].name} yr ${yr}: ${f.rows[yr].Ann_Budget} vs ${want.toFixed(0)}`; }
+    }
+  }
+  const pl = await planOf(page);
+  const idrYr1 = pl.items[2].path[12] / pl.items[2].path[0], sgdYr1 = pl.items[1].path[12] / pl.items[1].path[0];
+  check('B10 expected change: 1 AUD buys 2% more IDR and 1% less SGD every year, and the same money reaches every column along that path',
+    near(idrYr1, 1.02, 1e-12) && near(sgdYr1, 0.99, 1e-12) && icGap < 1e-9 && bGap < 1e-9,
+    `IDR x${idrYr1.toFixed(6)}, SGD x${sgdYr1.toFixed(6)} a year; gaps cash ${icGap.toExponential(1)}, budget ${bGap.toExponential(1)}${at ? ' (' + at + ')' : ''}`);
+
+  const C = 24000000;
+  const cols = [home({name:'AUD', cur:'AUD', rfr:4}), home({name:'IDR', cur:'IDR', rfr:8, s0:11000, dp:100, setup:0, ownCost:C, ownInfl:0, price:5000000000})];
+  await upload(page, tableCSV(cols, {horizon:H}, {base:'AUD', baseRfr:4, path:'trend', trend:{IDR:-2}}));
+  const got = await series(page, 1, 'ownAccumCost');
+  let want = 0, worst = 0;
+  for(let yr=1; yr<=H; yr++){ for(let m=1; m<=12; m++) want += (C/12) / (11000 * Math.pow(1.02, ((yr-1)*12 + m)/12)); worst = Math.max(worst, Math.abs(got[yr] - want) / want); }
+  check('B10 expected change: accumulated cost in AUD is each month\'s cost at that month\'s rate', worst < 1e-9, `year ${H}: ${got[H].toFixed(2)} vs replay ${want.toFixed(2)}`);
+
+  const note = () => page.evaluate(() => document.querySelector('[data-trend-note="IDR"]').textContent + '. ' + document.querySelector('[data-trend-path="IDR"]').textContent);
+  const n1 = await note();
+  const typed = await page.evaluate(() => { const el = document.querySelector('.fx-trend-input[data-cur="IDR"]'); el.focus(); el.value = '3.5'; el.dispatchEvent(new Event('input', {bubbles:true}));
+    return document.querySelector('[data-trend-note="IDR"]').textContent + '. ' + document.querySelector('[data-trend-path="IDR"]').textContent; });
+  await page.evaluate(() => { const el = document.querySelector('.fx-trend-input[data-cur="IDR"]'); el.blur(); });
+  await page.waitForTimeout(150);
+  const n2 = await note(), st = await state(page);
+  check('B10 the note says what the sign does, as it is typed: -2 raises AUD against IDR, +3.5 lowers it',
+    /^AUD value will increase against IDR by 2% every year\. 1 AUD = 11,000 IDR today, 19,924\.98 IDR in year 30$/.test(n1)
+      && /^AUD value will decrease against IDR by 3\.5% every year/.test(typed) && typed === n2 && st.fx.trend.IDR === 3.5,
+    JSON.stringify([n1, typed, n2, st.fx.trend]));
+
+  // A new base: IDR. The AUD column now moves by 1 - 1/(1 - 3.5%) against it.
+  await page.evaluate(() => { const el = document.querySelector('.fx-trend-input[data-cur="IDR"]'); el.focus(); el.value = '-2'; el.blur(); });
+  await page.waitForTimeout(150);
+  const before = [await flows(page, 'own', 0), await flows(page, 'own', 1)].map(f => f.rows.map(r => r.End_Cash));
+  await page.selectOption('#baseCurrencySelect', 'IDR'); await page.waitForTimeout(200);
+  const after = [await flows(page, 'own', 0), await flows(page, 'own', 1)].map(f => f.rows.map(r => r.End_Cash));
+  const st2 = await state(page);
+  const kept = before.every((col, i) => col.every((v, y) => Math.abs(v - after[i][y]) <= Math.max(2, Math.abs(v)*1e-8)));
+  check('B10 a new base re-quotes the expected changes (AUD +1.96% against IDR) and no column\'s money moves',
+    st2.fx.base === 'IDR' && near(st2.fx.trend.AUD, 100*(1 - 1/1.02), 1e-9) && kept, JSON.stringify(st2.fx.trend) + ' kept ' + kept);
+
+  const csv = await page.evaluate(() => { let t = null; const orig = RVOExport.cleanCSV; RVOExport.cleanCSV = s => { t = s; return orig(s); };
+    URL.createObjectURL = () => 'blob:stub'; HTMLAnchorElement.prototype.click = function(){}; document.getElementById('downloadCSVBtn').click(); RVOExport.cleanCSV = orig; return t; });
+  const flowsOf = async p => { const out = []; for(let i=0; i<2; i++) for(const w of ['own', 'rent']) out.push((await flows(p, w, i)).text); return out.join('\n'); };
+  const ref = await flowsOf(page);
+  const page2 = await open();
+  await upload(page2, csv);
+  const st3 = await state(page2);
+  check('B10 a summary CSV keeps the path and the expected changes', st3.fx.path === 'trend' && relNear(st3.fx.trend.AUD, st2.fx.trend.AUD, 1e-9) && (await flowsOf(page2)) === ref,
+    JSON.stringify(st3.fx));
+  await page2.close();
+  await page.waitForTimeout(600);
+  await page.reload();
+  await page.waitForFunction(() => window.RVOFX && window.RVOFX.source(), null, {timeout: 10000});
+  await page.waitForTimeout(300);
+  await page.evaluate(() => { RVOExport.downloadCSV = (fn, txt) => { window.__csv = txt; }; });
+  const st4 = await state(page);
+  check('B10 a reload keeps the path and the expected changes (mini cache)', st4.fx.path === 'trend' && st4.fx.trend.AUD === st2.fx.trend.AUD && (await flowsOf(page)) === ref,
+    JSON.stringify(st4.fx));
   await page.close();
 }
 

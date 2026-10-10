@@ -162,6 +162,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .rfr-list{display:flex;flex-wrap:wrap;gap:6px 16px;}
 .rfr-item{display:flex;align-items:center;gap:6px;}
 .rfr-item .param-wrap{width:130px;}
+.trend-item{display:flex;flex-direction:column;max-width:340px;}
+.trend-note{font-weight:600;}
 .rfr-cur{font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;color:var(--muted);min-width:2.6em;}
 /* Exchange rate cells: the rate, where it came from, and the shared money
    as this column receives it. */

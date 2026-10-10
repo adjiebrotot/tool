@@ -25,8 +25,12 @@ monthly budget in the base, at each column's rate on the day; a renter's
 wealth identical in any currency under interest parity (and carry winning when
 the rate is held); a home growing by its currency's extra interest worth the
 same in the base; accumulated cost translated at each month's rate; live,
-typed and cleared rates; a base change that moves no column's money; and the
-summary CSV and mini cache round trips.
+typed and cleared rates; a base change that moves no column's money; the
+summary CSV and mini cache round trips; and the expected
+appreciation/depreciation path (a rate moving by the yearly change typed per
+currency, replayed for the shared money and accumulated cost, the note under
+the field saying it in words as it is typed, re-quoted on a base change, kept
+by the CSV and the mini cache).
 
 `node run.mjs` checks the defaults match between the two pages, the table
 outputs against the CSVs, and the summary-CSV column layout. It also opens the

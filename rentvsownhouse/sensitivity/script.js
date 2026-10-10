@@ -76,6 +76,13 @@ const LANG_SENS = {
     pFxRate: 'Exchange rate',
     optParity: 'Moves with the rate gap',
     optHold: "Held at today's rate",
+    optTrend: 'Expected appreciation/depreciation',
+    pFxTrend: 'Expected change vs base currency',
+    trendUp: (base, cur, pct) => `${base} value will increase against ${cur} by ${pct}% every year`,
+    trendDown: (base, cur, pct) => `${base} value will decrease against ${cur} by ${pct}% every year`,
+    trendFlat: (base, cur) => `${base} and ${cur} stay at today's rate`,
+    trendPath: (base, now, later, cur, yr) => `1 ${base} = ${now} ${cur} today, ${later} ${cur} in year ${yr}`,
+    trendNone: 'Only the base currency is used: pick another currency for a column',
     autoBasedOn: (amt, name) => `Auto: ${amt} based on ${name}`,
     autoBudgetBasedOn: (amt, name) => `Auto: ${amt}/mo in year 1, based on ${name}`,
     fxIsBase: 'Base currency, no conversion',
@@ -227,6 +234,13 @@ const LANG_SENS = {
     pFxRate: 'Kurs',
     optParity: 'Mengikuti selisih bunga',
     optHold: 'Tetap di kurs hari ini',
+    optTrend: 'Perkiraan penguatan/pelemahan',
+    pFxTrend: 'Perkiraan perubahan terhadap mata uang dasar',
+    trendUp: (base, cur, pct) => `Nilai ${base} akan naik ${pct}% per tahun terhadap ${cur}`,
+    trendDown: (base, cur, pct) => `Nilai ${base} akan turun ${pct}% per tahun terhadap ${cur}`,
+    trendFlat: (base, cur) => `${base} dan ${cur} tetap di kurs hari ini`,
+    trendPath: (base, now, later, cur, yr) => `1 ${base} = ${now} ${cur} hari ini, ${later} ${cur} di tahun ${yr}`,
+    trendNone: 'Hanya mata uang dasar yang dipakai: pilih mata uang lain untuk sebuah kolom',
     autoBasedOn: (amt, name) => `Otomatis: ${amt} berdasarkan ${name}`,
     autoBudgetBasedOn: (amt, name) => `Otomatis: ${amt}/bln di tahun 1, berdasarkan ${name}`,
     fxIsBase: 'Mata uang dasar, tanpa konversi',
@@ -459,9 +473,32 @@ const sharedFrom = src => {
              the page's symbol stands for
      path    how the rate moves after today: 'parity' (by the gap between the
              two currencies' risk-free rates, so holding cash in either earns
-             the same) or 'hold' (today's rate for the whole run)
-     rfr     the risk-free rate of each currency, by code */
-const DEFAULT_FX = {on:false, base:'AUD', path:'parity', rfr:{}};
+             the same), 'hold' (today's rate for the whole run) or 'trend'
+             (by the change the reader expects, per currency)
+     rfr     the risk-free rate of each currency, by code
+     trend   the expected yearly change of each currency against the base, in
+             % by code: minus is depreciation, plus appreciation. -2 reads "the
+             base's value increases against it by 2% every year", and that is
+             exactly what the rate does: 1 base unit buys 2% more of it a year */
+const DEFAULT_FX = {on:false, base:'AUD', path:'parity', rfr:{}, trend:{}};
+const FX_PATHS = ['parity','hold','trend'];
+const fxPathOf = v => FX_PATHS.includes(v) ? v : 'parity';
+const TREND_MIN = -50, TREND_MAX = 50;
+// A currency's expected yearly change against the base (0 for the base, or unset).
+const trendOf = code => {
+  if(code === fxs.base) return 0;
+  const v = Number(fxs.trend && fxs.trend[code]);
+  return Number.isFinite(v) ? Math.min(TREND_MAX, Math.max(TREND_MIN, v)) : 0;
+};
+// Keep only finite, in-bound changes, by ISO code.
+function cleanTrend(t){
+  const out = {};
+  if(t && typeof t === 'object') Object.keys(t).forEach(c=>{
+    const v = Number(t[c]);
+    if(/^[A-Z]{3}$/.test(c) && Number.isFinite(v)) out[c] = Math.min(TREND_MAX, Math.max(TREND_MIN, v));
+  });
+  return out;
+}
 const FX = window.RVOFX || null;
 
 /* ── STATE ── */
@@ -628,7 +665,12 @@ function stateFor(sc, sh){
           path[k] = spot × ((1 + r_col) / (1 + r_base))^(k/12)
       (interest parity), so a unit of the base held as cash in either
       currency is worth the same unit-for-unit at every month end: no column
-      wins merely by keeping its cash in the higher-paying currency.
+      wins merely by keeping its cash in the higher-paying currency. Or by
+      the change the reader expects, a = the column currency's yearly change
+      against the base (-2 = depreciates 2%):
+          path[k] = spot × (1 - a)^(k/12)
+      so the base's value against it moves by -a every year, as the note
+      under the field says.
    2. Initial cash, in the base: the figure set, or the most any column needs
       up front (its deposit and setup, or its first year of rent), each need
       translated at today's rate. Every column then starts with exactly that,
@@ -644,6 +686,7 @@ function stateFor(sc, sh){
 function computePlan(){
   const H = Math.max(1, Math.round(Number(shared.horizon) || 30)), M = 12*H;
   const parity = multiOn() && fxs.path === 'parity';
+  const trend = multiOn() && fxs.path === 'trend';
   const rB = rfrOf(fxs.base);
   const items = scenarios.map((sc,i)=>{
     const cur = curOf(sc), s0 = spotOf(sc), rL = multiOn() ? rfrOf(cur) : shared.riskFreeRate;
@@ -652,6 +695,11 @@ function computePlan(){
     if(ok && parity && rL !== rB){
       const gL = 1 + rL/100, gB = 1 + rB/100;
       for(let k=1; k<=M; k++) path[k] = s0 * Math.pow(gL, k/12) / Math.pow(gB, k/12);
+    }
+    const a = trend ? trendOf(cur) : 0;
+    if(ok && a !== 0){
+      const g = 1 - a/100;
+      for(let k=1; k<=M; k++) path[k] = s0 * Math.pow(g, k/12);
     }
     // What this column needs on its own: the engine's automatic figures.
     const S = stateFor(sc, {horizon:H, riskFreeRate:rL, initialCash:0, monthlyBudget:0, monthlyBudgetIncrease:0});
@@ -679,7 +727,7 @@ function computePlan(){
     budget[k] = best;
     if(k === 0) bFrom = from;
   }
-  return {H, M, parity, rB, items, ic, icFrom, icManual, budget, bFrom, bManual};
+  return {H, M, parity, trend, rB, items, ic, icFrom, icManual, budget, bFrom, bManual};
 }
 
 // A column's engine state: its own figures plus its share of the plan, in
@@ -1041,8 +1089,11 @@ function setMulti(on){
   }
 }
 /* A new base: rates you typed keep what they said (re-quoted against the new
-   base through today's cross rate), and a cash or budget you set keeps its
-   value, converted at today's rate. */
+   base through today's cross rate), a cash or budget you set keeps its
+   value, converted at today's rate, and the expected changes are re-quoted
+   against the new base so every rate keeps its path: a currency X moving by
+   (1 - aX) a year against the old base moves by (1 - aX) / (1 - aNew)
+   against the new one, and the old base by 1 / (1 - aNew). */
 function setBase(code){
   const old = fxs.base;
   if(!code || code === old) return;
@@ -1055,6 +1106,18 @@ function setBase(code){
     const r2 = v => Math.round(v*100)/100;
     if(shared.initialCash > 0)   shared.initialCash   = r2(shared.initialCash / k);
     if(shared.monthlyBudget > 0) shared.monthlyBudget = r2(shared.monthlyBudget / k);
+  }
+  const gNew = 1 - trendOf(code)/100;
+  if(gNew !== 1 && gNew > 0){
+    const t = {};
+    usedCurrencies().concat(Object.keys(fxs.trend || {})).forEach(c=>{
+      if(c === code || c in t) return;
+      t[c] = Math.min(TREND_MAX, Math.max(TREND_MIN, 100 * (1 - (1 - trendOf(c)/100) / gNew)));
+    });
+    fxs.trend = t;
+  } else {
+    fxs.trend = Object.assign({}, fxs.trend);
+    delete fxs.trend[code];
   }
   fxs.base = code;
   ensureRfr();
@@ -1095,7 +1158,9 @@ function buildRenderRows(){
 
   if(multiOn()){
     rows.push({type:'sep', sepKey:'sepCurrency'});
-    rows.push({type:'fxPath'}, {type:'currency'}, {type:'fxRate'});
+    rows.push({type:'fxPath'});
+    if(fxs.path==='trend') rows.push({type:'fxTrend'});
+    rows.push({type:'currency'}, {type:'fxRate'});
   }
 
   rows.push({type:'sep', sepKey:'sepOwn'});
@@ -1286,6 +1351,31 @@ function fxCellHTML(sc, i){
     <div class="fx-note fx-capital" data-fx-cap="${i}">${escHtml(capitalNote(i))}</div>
   </td>`;
 }
+/* The expected change, one field per currency other than the base (every
+   column in a currency shares it), each with a note saying in words what the
+   figure does to the rate, and where the rate ends up. */
+const fmtTrendPct = v => String(Number(Math.abs(v).toFixed(2)));
+function trendNote(cur, a){
+  const base = fxs.base;
+  return a < 0 ? T('trendUp')(base, cur, fmtTrendPct(a))
+    : a > 0 ? T('trendDown')(base, cur, fmtTrendPct(a)) : T('trendFlat')(base, cur);
+}
+function trendPathNote(cur, a){
+  const it = plan && plan.items.find(x=>x.cur===cur && x.ok);
+  if(!it) return '';
+  return T('trendPath')(fxs.base, fmtRate(it.s0), fmtRate(it.s0 * Math.pow(1 - a/100, plan.H)), cur, plan.H);
+}
+function trendListHTML(){
+  const list = usedCurrencies().filter(c=>c!==fxs.base);
+  if(!list.length) return `<span class="fx-note">${escHtml(T('trendNone'))}</span>`;
+  return `<div class="rfr-list trend-list">` + list.map(c=>{
+    const a = trendOf(c);
+    return `<div class="trend-item"><div class="rfr-item"><span class="rfr-cur">${escHtml(c)}</span>`
+      + `<div class="input-wrap param-wrap"><input class="param-input fx-trend-input" type="text" inputmode="decimal" data-cur="${escAttr(c)}" data-min="${TREND_MIN}" data-max="${TREND_MAX}" value="${escAttr(a.toFixed(2))}"/><span class="suffix">${escHtml(T('uPctPa'))}</span></div></div>`
+      + `<div class="fx-note trend-note" data-trend-note="${escAttr(c)}">${escHtml(trendNote(c, a))}</div>`
+      + `<div class="fx-note" data-trend-path="${escAttr(c)}">${escHtml(trendPathNote(c, a))}</div></div>`;
+  }).join('') + `</div>`;
+}
 // A column's own warnings, under its name: a cash balance that goes below
 // zero is money the model borrows at the risk-free rate, which no lender
 // offers, so it is said rather than left to look like a cheap win.
@@ -1383,8 +1473,12 @@ function buildTableHTML(){
       return;
     }
     if(r.type==='fxPath'){
-      const opts = [['parity','optParity'],['hold','optHold']].map(([v,k])=>`<option value="${v}"${fxs.path===v?' selected':''}>${escHtml(T(k))}</option>`).join('');
+      const opts = [['parity','optParity'],['hold','optHold'],['trend','optTrend']].map(([v,k])=>`<option value="${v}"${fxs.path===v?' selected':''}>${escHtml(T(k))}</option>`).join('');
       bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pFxPath'))}${tipHtmlFor('fxPath')}</td><td class="scen-td shared-td" colspan="${n}"><select class="fxpath-select">${opts}</select></td>${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='fxTrend'){
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pFxTrend'))}${tipHtmlFor('fxTrend')}</td><td class="scen-td shared-td" colspan="${n}">${trendListHTML()}</td>${trailTd}</tr>`;
       return;
     }
     if(r.type==='currency'){
@@ -1577,6 +1671,10 @@ function downloadCSV(){
       lines.push([esc(T('pFxPath')), esc(''), ...each(()=>fxs.path)].join(','));
       return;
     }
+    if(r.type==='fxTrend'){
+      lines.push([esc(T('pFxTrend')), esc(T('uPctPa')), ...each(sc=>trendOf(curOf(sc)))].join(','));
+      return;
+    }
     if(r.type==='currency'){
       lines.push([esc(T('pScenCurrency')), esc(''), ...each(sc=>curOf(sc))].join(','));
       return;
@@ -1728,7 +1826,7 @@ function buildScenariosFromCSV(text){
   const {paramByLabel, modeByLabel} = buildReverseLabelMaps();
   // The multi-currency rows, by label in either language.
   const fxByLabel = {};
-  ['en','id'].forEach(lg=>{ [['pBaseCurrency','base'],['pBaseRiskFree','baseRfr'],['pFxPath','path'],['pScenCurrency','cur'],['pFxRate','rate']]
+  ['en','id'].forEach(lg=>{ [['pBaseCurrency','base'],['pBaseRiskFree','baseRfr'],['pFxPath','path'],['pFxTrend','trend'],['pScenCurrency','cur'],['pFxRate','rate']]
     .forEach(([lk,k])=>{ fxByLabel[String(LANG_SENS[lg][lk]).trim().toLowerCase()] = k; }); });
   const fxRows = {};
   const newModes = {mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple'};
@@ -1822,9 +1920,12 @@ function buildScenariosFromCSV(text){
   const code = s => /^[A-Za-z]{3}$/.test(String(s||'').trim()) ? String(s).trim().toUpperCase() : null;
   let newFx = null;
   if(fxRows.base && code(fxRows.base[0])){
-    newFx = {on:true, base:code(fxRows.base[0]), path: fxRows.path && fxRows.path[0]==='hold' ? 'hold' : 'parity', rfr:{}};
+    newFx = {on:true, base:code(fxRows.base[0]), path: fxPathOf(fxRows.path && fxRows.path[0]), rfr:{}, trend:{}};
     newScen.forEach((sc,j)=>{
       sc.currency = (fxRows.cur && code(fxRows.cur[j])) || newFx.base;
+      const tr = fxRows.trend ? parseFloat(String(fxRows.trend[j]).replace(/,/g,'')) : NaN;
+      if(sc.currency !== newFx.base && Number.isFinite(tr) && newFx.trend[sc.currency]===undefined)
+        newFx.trend[sc.currency] = Math.min(TREND_MAX, Math.max(TREND_MIN, tr));
       const r = fxRows.rate ? parseNum(fxRows.rate[j]) : 0;
       sc.fxRate = sc.currency !== newFx.base && r > 0 ? r : null;
       const rf = Number(sc.riskFreeRate);
@@ -2331,7 +2432,36 @@ function wireEvents(){
     el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
   });
   document.querySelectorAll('.fxpath-select').forEach(el=>{
-    el.addEventListener('change', e=>{ fxs.path = e.target.value==='hold' ? 'hold' : 'parity'; rerender(); refocus(e.target); });
+    el.addEventListener('change', e=>{ fxs.path = fxPathOf(e.target.value); rerender(); refocus(e.target); });
+  });
+  /* The expected change: the note under it follows each keystroke, so the
+     reader sees what the sign means before leaving the field. */
+  document.querySelectorAll('.fx-trend-input').forEach(el=>{
+    const cur = el.dataset.cur;
+    const box = () => el.closest('.trend-item');
+    const shown = () => Number(trendOf(cur).toFixed(2));
+    el.addEventListener('focus', e=>{ e.target.value = String(shown()); });
+    el.addEventListener('input', e=>{
+      const v = parseFloat(String(e.target.value).replace(/,/g,''));
+      const b = box();
+      if(!b || !Number.isFinite(v)) return;
+      const a = Math.min(TREND_MAX, Math.max(TREND_MIN, v));
+      b.querySelector('[data-trend-note]').textContent = trendNote(cur, a);
+      b.querySelector('[data-trend-path]').textContent = trendPathNote(cur, a);
+    });
+    el.addEventListener('blur', e=>{
+      const raw = String(e.target.value).trim();
+      let v = raw==='' ? 0 : parseFloatSafe(raw, trendOf(cur));
+      const typed = v;
+      v = Math.min(TREND_MAX, Math.max(TREND_MIN, v));
+      if(v !== typed && window.SharedBounds) SharedBounds.hint(e.target, T(typed > v ? 'hintMax' : 'hintMin')+' '+v+' '+T('uPctPa'));
+      v = Math.round(v*100)/100;
+      // Left as shown keeps a re-quoted figure's full precision.
+      if(v !== shown()) fxs.trend = Object.assign({}, fxs.trend, {[cur]: v});
+      rerender();
+      refocus(e.relatedTarget);
+    });
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
   });
 
   /* A frequency carries the money amount in the row under it, so moving one
@@ -2643,7 +2773,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
           scenarios.forEach(sc=>{ SHARED_KEYS.forEach(k=>{ delete sc[k]; }); });
           const f = e.fx && typeof e.fx === 'object' ? e.fx : {};
           fxs = {on: !!f.on, base: /^[A-Z]{3}$/.test(f.base) ? f.base : SharedCurrency.toCode(pageSym(), DEFAULT_FX.base),
-                 path: f.path==='hold' ? 'hold' : 'parity', rfr: (f.rfr && typeof f.rfr === 'object') ? Object.assign({}, f.rfr) : {}};
+                 path: fxPathOf(f.path), rfr: (f.rfr && typeof f.rfr === 'object') ? Object.assign({}, f.rfr) : {}, trend: cleanTrend(f.trend)};
           const v = e.view && typeof e.view === 'object' ? e.view : {};
           if(METRICS.some(([m])=>m===v.metric)) metric = v.metric;
           if(Number(v.year) >= 1) viewYear = Math.round(Number(v.year));
