@@ -16,7 +16,7 @@
   'use strict';
 
   // Shared look for the family. Paint: .w white outlined blue; .t the thin 2.5 stroke; s* stroke, f* fill:
-  // b accent, B accent-strong, m accent2 (mint), g gold, q border-strong, w panel.
+  // b accent, B accent-strong, m accent2 (mint), g gold, q border-strong, w panel, r accent3 (red: brand marks only).
   // Pivots (fill-box): .oc centre, .ob bottom centre, .ol left middle, .ot top centre.
   var BASE =
     '.tool-anim svg{display:block;width:100%;height:100%;overflow:visible}' +
@@ -25,7 +25,7 @@
     '.ta .sb{stroke:var(--accent)}.ta .sB{stroke:var(--accent-strong)}.ta .sm{stroke:var(--accent2)}' +
     '.ta .sg{stroke:var(--gold)}.ta .sq{stroke:var(--border-strong)}.ta .sw{stroke:var(--panel)}' +
     '.ta .fb{fill:var(--accent)}.ta .fB{fill:var(--accent-strong)}.ta .fm{fill:var(--accent2)}' +
-    '.ta .fg{fill:var(--gold)}.ta .fw{fill:var(--panel)}' +
+    '.ta .fg{fill:var(--gold)}.ta .fw{fill:var(--panel)}.ta .fr{fill:var(--accent3)}' +
     ".ta text{stroke:none;font-family:'DM Sans',system-ui,sans-serif;font-weight:800;text-anchor:middle}" +
     ".ta .mono{font-family:'DM Mono',ui-monospace,monospace;font-weight:500}" +
     '.ta .oc,.ta .ob,.ta .ol,.ta .ot{transform-box:fill-box;transform-origin:50% 50%}' +
@@ -142,16 +142,21 @@
         '<rect class="fg sw t" x="69" y="83" width="34" height="18" rx="4"/>' +
         '<text class="fw" x="86" y="96" font-size="11">PDF</text></g></g>',
 
-    // A code window: a prompt, script lines typing in, then a power bolt pulses.
+    // A code window: a prompt, script lines typing in, then the PowerFactory badge stamps on its corner
+    // and its red corner slides home.
     'powerfactory-scripter':
       '<rect class="w" x="14" y="20" width="92" height="80" rx="6"/><path class="sb t" d="M15 33H105"/>' +
       '<path class="sg" stroke-width="4.5" d="M22 26.5h0"/><path class="sm" stroke-width="4.5" d="M29 26.5h0"/><path class="sb" stroke-width="4.5" d="M36 26.5h0"/>' +
       '<path class="sm t" d="M23 44L28 47.5L23 51"/>' +
       '<rect class="cu fm" x="31" y="49" width="7" height="2.5" rx="1"/><path class="ln ol sb" d="M24 61H62"/>' +
-      '<path class="ln ol sm" d="M32 71H74" style="animation-delay:-4.55s"/>' +
+      '<path class="ln ol sm" d="M32 71H68" style="animation-delay:-4.55s"/>' +
       '<path class="ln ol sb" d="M32 81H56" style="animation-delay:-4.1s"/>' +
       '<path class="ln ol sq" d="M24 91H46" style="animation-delay:-3.65s"/>' +
-      '<path class="bt oc fg sg" stroke-width="2" d="M94 48L79 72H88L83 92L99 66H90Z"/>',
+      '<g transform="rotate(-8 92 86)"><g class="bt oc">' +
+        '<rect class="fB" x="76" y="70" width="32" height="32" rx="3"/>' +
+        '<text class="fw" x="91" y="91.5" font-size="19" letter-spacing="-.6">PF</text>' +
+        '<path class="fw" d="M108 82V99A3 3 0 0 1 105 102H88Z"/>' +
+        '<path class="rc fr" d="M108 87V99A3 3 0 0 1 105 102H93Z"/></g></g>',
 
     // Two circles drift apart (separate) and slide into overlap (joint); a heart when joined.
     pisahvsgabung:
@@ -289,10 +294,11 @@
       '@keyframes taMd1{0%{transform:scaleX(0)}9%,58%{transform:none;opacity:1}66%,100%{transform:none;opacity:0}}' +
       '@keyframes taMd2{0%,36%{transform:scale(1.8);opacity:0}44%{transform:scale(.92);opacity:1}50%,80%{transform:none;opacity:1}90%,100%{transform:none;opacity:0}}',
 
-    'powerfactory-scripter': '&{--d:5s}&.ln{animation-name:taPf1}&.cu{animation-name:taPf2}&.bt{animation-name:taPf3}' +
+    'powerfactory-scripter': '&{--d:5s}&.ln{animation-name:taPf1}&.cu{animation-name:taPf2}&.bt{animation-name:taPf3}&.rc{animation-name:taPf4}' +
       '@keyframes taPf1{0%{transform:scaleX(0)}10%,60%{transform:none;opacity:1}70%,100%{transform:none;opacity:0}}' +
       '@keyframes taPf2{0%,20%,40%,60%,80%,100%{opacity:1}10%,30%,50%,70%,90%{opacity:0}}' +
-      '@keyframes taPf3{0%,44%,100%{transform:scale(.9);opacity:.35}52%{transform:scale(1.22);opacity:1}58%{transform:none}64%{transform:scale(1.12)}70%,84%{transform:none;opacity:1}}',
+      '@keyframes taPf3{0%,40%{transform:scale(1.7);opacity:0}48%{transform:scale(.92);opacity:1}54%,82%{transform:none;opacity:1}92%,100%{transform:none;opacity:0}}' +
+      '@keyframes taPf4{0%,52%{transform:translate(6px,6px);opacity:0}60%{transform:translate(-1px,-1px);opacity:1}64%,100%{transform:none;opacity:1}}',
 
     pisahvsgabung: '&{--d:6s}&.cl{animation-name:taPg1}&.cr{animation-name:taPg2}&.ht{animation-name:taPg3}' +
       '@keyframes taPg1{0%,10%,90%,100%{transform:translateX(-11px)}40%{transform:translateX(1.5px)}48%,68%{transform:none}}' +
