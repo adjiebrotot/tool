@@ -98,7 +98,8 @@ Sensitivity page's comparison to accounting integrity: every column starts with 
 and gets the same budget each month (in one currency, or translated at each column's rate in
 several), against an independent replay of each column's needs, and to identities that fix the
 answer, such as a renter's wealth being identical in any currency when exchange rates follow
-interest parity. Its exchange rates are the Cost of Living Comparator's (`fx.js` reads that
+interest parity, and replays the path a reader sets by an expected yearly appreciation or
+depreciation per currency. Its exchange rates are the Cost of Living Comparator's (`fx.js` reads that
 tool's bundled file and the same live feeds, under the same cache key). `rentvsownhouse/audit/` is the earlier
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference

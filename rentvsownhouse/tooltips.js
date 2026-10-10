@@ -71,7 +71,8 @@ var RVO_TIPS_EN = {
   fxMode:       "Compare homes priced in different currencies. Results and charts are in the base currency, and every column gets the same cash and budget at its exchange rate.",
   scenCurrency: "The currency this column's prices, rents and costs are in. Changing it relabels the figures, it does not convert them.",
   fxRate:       "Units of this column's currency one unit of the base buys today, from ExchangeRate-API. Type your own, or clear it for the live rate.",
-  fxPath:       "<ul><li><strong>Moves with the rate gap:</strong> a currency paying more interest weakens by the gap, so interest alone wins nothing.</li><li><strong>Held at today's rate:</strong> it never moves.</li></ul>",
+  fxPath:       "<ul><li><strong>Moves with the rate gap:</strong> a currency paying more interest weakens by the gap, so interest alone wins nothing.</li><li><strong>Held at today's rate:</strong> it never moves.</li><li><strong>Expected appreciation/depreciation:</strong> it moves by the yearly change you expect for each currency.</li></ul>",
+  fxTrend:      "How much each currency is expected to gain or lose against the base every year. Minus is depreciation, plus is appreciation: -2% means 1 unit of the base buys 2% more of it each year.",
 };
 var RVO_TIPS_ID = {
   propertyPrice:        "Harga pasar properti saat ini. Menjadi nilai awal ekuitas rumah dan besaran KPR.",
@@ -130,7 +131,8 @@ var RVO_TIPS_ID = {
   fxMode:       "Bandingkan rumah dengan mata uang berbeda. Hasil dan grafik dalam mata uang dasar, dan tiap kolom mendapat kas dan anggaran yang sama sesuai kursnya.",
   scenCurrency: "Mata uang harga, sewa dan biaya kolom ini. Menggantinya hanya mengganti label angka, tidak mengonversinya.",
   fxRate:       "Jumlah mata uang kolom ini untuk satu unit mata uang dasar hari ini, dari ExchangeRate-API. Isi kurs sendiri, atau kosongkan untuk kurs terkini.",
-  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, jadi bunga saja tidak membuat menang.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li></ul>",
+  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, jadi bunga saja tidak membuat menang.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li><li><strong>Perkiraan penguatan/pelemahan:</strong> kurs bergerak sesuai perubahan tahunan yang Anda perkirakan untuk tiap mata uang.</li></ul>",
+  fxTrend:      "Seberapa besar tiap mata uang diperkirakan menguat atau melemah terhadap mata uang dasar setiap tahun. Minus berarti melemah, plus berarti menguat: -2% berarti 1 unit mata uang dasar mendapat 2% lebih banyak mata uang itu setiap tahun.",
 };
 // Variant tips keyed by the option selected: explained one option at a time,
 // with the shared "change the option" line under them (data-tip-options).
