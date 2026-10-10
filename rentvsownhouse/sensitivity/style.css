@@ -117,6 +117,14 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .dt tr.grp-child td.label-td::before{top:0;height:50%;width:9px;border-left-width:1.5px;border-bottom-width:1.5px;border-bottom-left-radius:5px;}
 .dt tr.grp-child:not(.grp-last) td.label-td::after{top:50%;bottom:0;border-left-width:1.5px;}
 
+/* What the results read: metric and year, one merged cell for all columns. */
+.dt tr.view-tr td{background:var(--input-bg);}
+.view-ctrls{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;font-family:'DM Sans',sans-serif;}
+.view-ctrls .year-wrap{cursor:default;}
+/* Columns in different currencies read as one, said above the results. */
+.dt tr.fx-warn-tr td{background:color-mix(in srgb,var(--data-neg-em) 8%,transparent);padding:7px 11px;}
+.fx-warn{font-size:.78rem;font-weight:700;color:var(--data-neg-em);white-space:normal;}
+
 /* Output rows */
 .dt tr.out-own td{background:var(--data-pos-bg);font-weight:700;}
 /* Rent's row wears a tint of rent's own line colour (gold), as Own's wears blue. */
@@ -159,16 +167,12 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
    as this column receives it. */
 .fx-note{display:block;font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.35;white-space:normal;}
 .fx-capital{color:var(--text);opacity:.8;}
-/* Controls bar: the tick box, the rates' source, and the warning when
-   columns in different currencies are being read as one. */
+/* Controls bar: the multi-currency tick box. */
 .fx-row{gap:6px;}
 .fx-toggle-wrap{display:inline-flex;align-items:center;gap:2px;}
 .fx-toggle{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;}
 .fx-toggle input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;}
-.fx-source{font-size:.74rem;color:var(--muted);}
-.fx-source a{color:var(--accent);}
-.fx-warn{font-size:.74rem;font-weight:700;color:var(--data-neg-em);}
-.ctrl-select[hidden],.fx-source[hidden],.fx-warn[hidden]{display:none;}
+.ctrl-select[hidden]{display:none;}
 /* Under a scenario's name: a capped year, or cash that runs out. */
 .scen-header-notes{display:flex;flex-direction:column;gap:2px;}
 .scen-header-notes:empty{display:none;}
@@ -296,9 +300,7 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
   .ctrl-row{justify-content:space-between;flex-wrap:wrap;}
   .controls-bar .csv-actions{margin-left:0!important;align-self:stretch;}
   .controls-bar .csv-actions .btn-theme{flex:1 1 auto;min-width:max-content;display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:8px 10px;}
-  /* The metric switch takes the full width under its label, options sharing it. */
-  .controls-bar .seg-group{flex:1 1 100%;}
-  .controls-bar .seg-btn{flex:1 1 auto;padding:7px 10px;}
+  .view-ctrls .seg-btn{padding:7px 10px;}
   /* Chart popups: the three metrics share one row, Own and Rent the next,
      rather than wrapping wherever each name happens to end. */
   .chart-modal-overlay{padding:10px;}

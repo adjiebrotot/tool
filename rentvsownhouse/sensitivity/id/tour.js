@@ -43,7 +43,7 @@ window.__TOUR = {
     },
     {
       // The step names both controls, so highlight both: the year box sits
-      // in its own row beside the metric buttons.
+      // beside the metric buttons, in the table row above the results.
       target: ['#metricGroup', '#yearInput'],
       title: '④ Pilih metrik dan tahun',
       body: 'Bandingkan berdasarkan <strong>Kekayaan bersih</strong>, <strong>Uang ' +
