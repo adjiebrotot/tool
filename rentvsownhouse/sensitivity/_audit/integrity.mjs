@@ -113,6 +113,14 @@ async function flows(page, which, si){
 }
 const series = (page, i, key) => page.evaluate(([i, key]) => window.__RVOS.series(i, key), [i, key]);
 const state = page => page.evaluate(() => window.__RVOS.state());
+// The base currency is a searchable field over a hidden select: pick as a
+// reader does, by typing the code and pressing Enter.
+async function pickBase(page, code){
+  await page.click('#baseCurrencySelect + .combo-input');
+  await page.keyboard.type(code);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(200);
+}
 const planOf = page => page.evaluate(() => window.__RVOS.plan());
 const near = (a, b, tol) => Math.abs(a - b) <= tol;
 const relNear = (a, b, rel) => Math.abs(a - b) <= rel * Math.max(1, Math.abs(a), Math.abs(b));
@@ -363,7 +371,10 @@ const MC = [
   await page.waitForTimeout(150);
   const localBefore = [await flows(page, 'rent', 0), await flows(page, 'rent', 1)].map(f => f.rows.map(r => r.End_Cash));
   const audNE = [await series(page, 0, 'ownNetEquity'), await series(page, 1, 'ownNetEquity')];
-  await page.selectOption('#baseCurrencySelect', 'USD'); await page.waitForTimeout(200);
+  await pickBase(page, 'USD');
+  const field = await page.evaluate(() => { const s = document.getElementById('baseCurrencySelect'), i = s.nextElementSibling;
+    return { text: i.value, shown: !i.hidden && getComputedStyle(i).display !== 'none', native: getComputedStyle(s).display, open: !!document.getElementById(i.getAttribute('aria-controls')) }; });
+  check('B7 the base currency is a searchable field showing the pick, its select hidden', /^USD /.test(field.text) && field.shown && field.native === 'none' && !field.open, JSON.stringify(field));
   const st = await state(page);
   const localAfter = [await flows(page, 'rent', 0), await flows(page, 'rent', 1)].map(f => f.rows.map(r => r.End_Cash));
   const usdNE = [await series(page, 0, 'ownNetEquity'), await series(page, 1, 'ownNetEquity')];
@@ -454,7 +465,7 @@ const MC = [
   await page.evaluate(() => { const el = document.querySelector('.fx-trend-input[data-cur="IDR"]'); el.focus(); el.value = '-2'; el.blur(); });
   await page.waitForTimeout(150);
   const before = [await flows(page, 'own', 0), await flows(page, 'own', 1)].map(f => f.rows.map(r => r.End_Cash));
-  await page.selectOption('#baseCurrencySelect', 'IDR'); await page.waitForTimeout(200);
+  await pickBase(page, 'IDR');
   const after = [await flows(page, 'own', 0), await flows(page, 'own', 1)].map(f => f.rows.map(r => r.End_Cash));
   const st2 = await state(page);
   const kept = before.every((col, i) => col.every((v, y) => Math.abs(v - after[i][y]) <= Math.max(2, Math.abs(v)*1e-8)));

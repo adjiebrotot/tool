@@ -2725,8 +2725,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Multi-currency: the tick box and the base currency.
   const fxToggle = document.getElementById('fxModeToggle');
   if(fxToggle) fxToggle.addEventListener('change', e=>{ setMulti(e.target.checked); rerender(); syncControls(); });
+  /* Every currency with a rate is too many to scroll through, so the base
+     is a searchable field (dropdown.js); the select under it stays the value. */
   const baseSel = document.getElementById('baseCurrencySelect');
-  if(baseSel) baseSel.addEventListener('change', e=>{ setBase(e.target.value); rerender(); syncControls(); });
+  if(baseSel){
+    if(window.SharedDropdown && SharedDropdown.searchable)
+      SharedDropdown.searchable(baseSel, {placeholder: lang==='id' ? 'Cari mata uang…' : 'Search currency…', minWidth: 260});
+    baseSel.addEventListener('change', e=>{ setBase(e.target.value); rerender(); syncControls(); });
+  }
 
   /* A live rate arriving (or refreshed) moves every column on a live rate,
      unless the reader is typing in the table: a redraw would drop their

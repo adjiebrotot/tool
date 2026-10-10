@@ -14,6 +14,9 @@
      • A database-sized list a reader would otherwise scroll through one by
        one (hundreds of cities, time zones, PowerFactory variables): a
        searchable combobox, a .combo-input with a .combo-list under it.
+       Every currency in the world counts: SharedDropdown.searchable
+       (dropdown.js) turns a select into one and keeps the select as the
+       field of record.
    A tool may size a dropdown (width, padding, font-size, and --radius-sm on
    a compact one) but never re-colour, re-border or re-font it.
    ────────────────────────────────────────────────────────────────────────── */

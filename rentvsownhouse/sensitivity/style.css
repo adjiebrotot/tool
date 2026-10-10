@@ -175,6 +175,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .fx-toggle{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;}
 .fx-toggle input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;}
 .ctrl-select[hidden]{display:none;}
+/* The base currency: a searchable field (dropdown.js), wide enough for a code and its name. */
+.ctrl-row .combo-input.ctrl-select{width:16em;}
 /* Under a scenario's name: a capped year, or cash that runs out. */
 .scen-header-notes{display:flex;flex-direction:column;gap:2px;}
 .scen-header-notes:empty{display:none;}

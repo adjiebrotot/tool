@@ -365,9 +365,30 @@ console.log('\n── 8. The form ──');
   await page.waitForTimeout(400);
   const f1 = await ve(() => ({
     offer: [...document.querySelectorAll('#colList .col-type')].some(s => [...s.options].some(o => o.value === 'price' || o.value === 'datayear')),
-    fixed: [...document.querySelectorAll('#colList .col-fixed')].map(r => r.querySelector('.col-type-fixed').textContent + (r.querySelector('select') ? ' (pickable)' : '') + (r.querySelector('.col-del') ? ' (deletable)' : ''))
+    fixed: [...document.querySelectorAll('#colList .col-fixed')].map(r => r.querySelector('.col-type-fixed').textContent + (r.querySelector('select.col-type') ? ' (pickable)' : '') + (r.querySelector('.col-del') ? ' (deletable)' : ''))
   }));
   check('f1 Price and Data year are fixed rows, never a type to pick; only Data year can be deleted', !f1.offer && f1.fixed.join() === 'Price,Data year (deletable)', JSON.stringify(f1));
+  // Price's unit is its currency: a searchable ISO code, not a bare symbol.
+  const f1c = await ve(() => { const r = document.querySelector('#colList .col-fixed'); const i = r.querySelector('.combo-input');
+    return { code: window.__VE.state.columns[0].unit, field: i && i.value, native: r.querySelector('select.col-currency').style.display }; });
+  check('f1c the Price row offers a currency code as its unit, Quick Start naming AUD', f1c.code === 'AUD' && f1c.field === 'AUD' && f1c.native === 'none', JSON.stringify(f1c));
+  await page.click('#colList .col-fixed .combo-input');
+  await page.keyboard.type('british po');
+  const f1d = await ve(() => [...document.querySelectorAll('body > .combo-list .combo-opt')].map(d => d.textContent));
+  check('f1d typing filters the currencies by name', f1d.length >= 1 && f1d.every(t => /^GBP British Pound/.test(t)), JSON.stringify(f1d));
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(200);
+  const f1e = await ve(() => ({ code: window.__VE.state.columns[0].unit, sym: document.getElementById('currency').value,
+    head: window.__VE.toDelimited(window.__VE.state.columns, [], ',', ', ').split('\n')[0], open: !!document.querySelector('body > .combo-list') }));
+  check('f1e a pick sets the code, its symbol, and the header "Price (GBP)"', f1e.code === 'GBP' && f1e.sym === '£' && /^Price \(GBP\)/.test(f1e.head) && !f1e.open, JSON.stringify(f1e));
+  await setField('currency', '$');
+  const f1f = await ve(() => window.__VE.state.columns[0].unit);
+  check('f1f a Currency Symbol that is not the code\'s own clears the code', f1f === '', f1f);
+  await ve(() => window.__VE.applyQuickStart('hotel'));
+  await setField('entryMode', 'ai');
+  const f1g = await ve(() => document.getElementById('aiPrompt').value);
+  check('f1g the AI prompt is neutral (no "secondhand", no "sale") and names the currency by code', !/second-?hand|\bsales?\b|\bsold\b/i.test(f1g) && /Australian Dollar \(AUD\)/.test(f1g) && /Hotel night in Perth CBD/.test(f1g), f1g.split('\n').slice(0, 3).join(' / '));
+  await setField('entryMode', 'table');
   await setState({ columns: [{ id: 'c1', name: 'Km', type: 'number', unit: 'km' }, { id: 'c2', name: 'Price', type: 'price', unit: '' }, { id: 'c3', name: 'Cost', type: 'price', unit: '' }],
                    rows: [['10', '100', '1'], ['20', '90', '2']], items: [], chart: {} });
   const f2 = await ve(() => window.__VE.state.columns.map(c => c.name + ':' + c.type).join(', '));
