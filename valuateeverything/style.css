@@ -30,6 +30,9 @@ main{min-width:0;}
 .col-row .txt-input{padding:7px 9px;font-size:.84rem;}
 .col-row select{width:100%;padding:7px 26px 7px 9px;font-size:.84rem;}
 .col-row .col-unit:disabled{opacity:.4;}
+/* Price's unit is its currency: a searchable field (dropdown.js) showing the code. */
+.col-row .combo-input{width:100%;min-width:0;padding:7px 9px;font-size:.84rem;}
+.col-row .combo-input.has-value{font-weight:600;}
 /* Price and Data year are always there: their type is a fact, not a choice. */
 .col-type-fixed,.col-unit-fixed{display:flex;align-items:center;height:100%;padding:0 9px;font-size:.84rem;font-weight:600;color:var(--muted);}
 

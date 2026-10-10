@@ -344,6 +344,9 @@ const csvCell = (v, delim) => {
   const s = String(v == null ? '' : v);
   return (s.includes(delim) || /["\n]/.test(s)) ? '"' + s.replace(/"/g, '""') + '"' : s;
 };
+/* The price's currency, as an ISO code (AUD, GBP) or nothing. It is the
+   Price column's unit, so it rides in the header as "Price (AUD)". */
+const priceCode = u => { const c = String(u == null ? '' : u).trim().toUpperCase(); return /^[A-Z]{3}$/.test(c) ? c : ''; };
 function headerOf(c){ return c.unit ? `${c.name} (${c.unit})` : c.name; }
 function cellOut(c, v){
   if(c.type === 'bool'){ const b = parseBool(v); return b === null ? String(v == null ? '' : v) : (b ? 'Yes' : 'No'); }
@@ -393,6 +396,7 @@ function ensureFixed(columns, rows){
   });
   let n = 0;
   cols.forEach(c => { const m = /^c(\d+)$/.exec(c.id); if(m) n = Math.max(n, +m[1]); });
+  cols.forEach(c => { if(c.type === 'price') c.unit = priceCode(c.unit); });
   const src = cols.map((c, i) => i);
   if(!cols.some(c => c.type === 'price')){ cols.push({ id: 'c' + (++n), name: 'Price', type: 'price', unit: '' }); src.push(-1); }
   const rank = c => c.type === 'price' ? 0 : c.type === 'datayear' ? 2 : 1;
@@ -425,7 +429,7 @@ const PRESETS = {
   camry: {
     fields: { currency: '$', itemWhat: 'Toyota Camry Hybrid' },
     columns: [
-      { id: 'c1', name: 'Price', type: 'price', unit: '' },
+      { id: 'c1', name: 'Price', type: 'price', unit: 'AUD' },
       { id: 'c2', name: 'Year', type: 'year', unit: '' },
       { id: 'c3', name: 'Odometer', type: 'number', unit: 'km' },
       { id: 'c4', name: 'Above Ascent grade', type: 'bool', unit: '' },
@@ -445,7 +449,7 @@ const PRESETS = {
   house: {
     fields: { currency: '$', itemWhat: 'House in Morley, Perth' },
     columns: [
-      { id: 'c1', name: 'Price', type: 'price', unit: '' },
+      { id: 'c1', name: 'Price', type: 'price', unit: 'AUD' },
       { id: 'c2', name: 'Bedrooms', type: 'number', unit: '' },
       { id: 'c3', name: 'Bathrooms', type: 'number', unit: '' },
       { id: 'c4', name: 'Land', type: 'number', unit: 'm²' },
@@ -467,7 +471,7 @@ const PRESETS = {
   camera: {
     fields: { currency: '£', itemWhat: 'Sony A7 body, used' },
     columns: [
-      { id: 'c1', name: 'Price', type: 'price', unit: '' },
+      { id: 'c1', name: 'Price', type: 'price', unit: 'GBP' },
       { id: 'c2', name: 'Release year', type: 'year', unit: '' },
       { id: 'c3', name: 'Shutter count', type: 'number', unit: 'shots' },
       { id: 'c4', name: 'Like new or Excellent', type: 'bool', unit: '' },
@@ -491,7 +495,7 @@ const PRESETS = {
   hotel: {
     fields: { currency: '$', itemWhat: 'Hotel night in Perth CBD' },
     columns: [
-      { id: 'c1', name: 'Price', type: 'price', unit: '' },
+      { id: 'c1', name: 'Price', type: 'price', unit: 'AUD' },
       { id: 'c2', name: 'Room size', type: 'number', unit: 'm²' },
       { id: 'c3', name: 'Star rating', type: 'number', unit: '' },
       { id: 'c4', name: 'Breakfast included', type: 'bool', unit: '' },
@@ -535,6 +539,42 @@ function nextColId(){
 function featureColumns(){ return S.columns.filter(c => FEATURE_TYPES.includes(c.type)); }
 const hasDataYear = () => S.columns.some(c => c.type === 'datayear');
 function sym(){ return $('currency').value || ''; }
+
+/* The codes the Price currency offers: the Cost of Living Comparator's rated
+   currencies, the Rent vs Own base-currency list, or every code the browser
+   knows if that file cannot load. Nothing converts: the code names the money
+   (for the header and the AI prompt, where a bare $ is not enough), and the
+   figures keep the Currency Symbol. */
+let CODES = [];
+const CODE_NAMES = {};
+function codeName(code){
+  if(!(code in CODE_NAMES)){
+    let n = '';
+    try { n = new Intl.DisplayNames(['en'], { type: 'currency' }).of(code); } catch(e) {}
+    CODE_NAMES[code] = n && n !== code ? n : '';
+  }
+  return CODE_NAMES[code];
+}
+function currencyOptions(selected){
+  const code = priceCode(selected);
+  const list = CODES.slice();
+  if(code && !list.includes(code)){ list.push(code); list.sort(); }
+  return '<option value="">No code</option>' +
+    list.map(c => `<option value="${c}"${c === code ? ' selected' : ''}>${esc((c + ' ' + codeName(c)).trim())}</option>`).join('');
+}
+function loadCodes(){
+  fetch('../costofliving-comparator/currency_rates.json')
+    .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
+    .then(j => (j.data || []).map(r => r && r.currency))
+    .catch(() => { try { return Intl.supportedValuesOf('currency'); } catch(e) { return []; } })
+    .then(list => {
+      CODES = [...new Set(list.map(priceCode).filter(Boolean))].sort();
+      // Refill the picker in place: a rebuilt row would drop a reader's focus.
+      const sel = document.querySelector('#colList .col-currency');
+      const c = S.columns.find(x => x.type === 'price');
+      if(sel && c) sel.innerHTML = currencyOptions(c.unit);
+    });
+}
 
 // A restored or opened state is checked field by field rather than trusted.
 function normaliseState(s){
@@ -624,7 +664,9 @@ function buildColumns(){
       `<input class="txt-input col-name" type="text" maxlength="80" aria-label="Column name" value="${esc(c.name)}">` +
       (fixed
         ? `<span class="col-type-fixed">${esc(TYPES.find(t => t.v === c.type).label)}</span>` +
-          `<span class="col-unit-fixed">${c.type === 'price' ? esc(sym()) : ''}</span>` +
+          (c.type === 'price'
+            ? `<select class="col-currency" aria-label="Price currency" title="The price's currency">${currencyOptions(c.unit)}</select>`
+            : '<span class="col-unit-fixed"></span>') +
           (c.type === 'price' ? '<span aria-hidden="true"></span>' : del)
         : `<select class="col-type" aria-label="Column type">${PICK_TYPES.map(t => `<option value="${t.v}"${t.v === c.type ? ' selected' : ''}>${t.label}</option>`).join('')}</select>` +
           `<input class="txt-input col-unit" type="text" maxlength="20" aria-label="Unit" placeholder="unit" value="${esc(c.unit)}"${c.type === 'number' ? '' : ' disabled'}>` +
@@ -640,6 +682,20 @@ function buildColumns(){
       S.items.forEach(it => { delete it.vals[c.id]; });
       buildAll(); syncUI(); touched();
     });
+    const cur = row.querySelector('.col-currency');
+    if(cur){
+      if(window.SharedDropdown && SharedDropdown.searchable)
+        SharedDropdown.searchable(cur, { placeholder: sym() || 'code', display: o => o.value, minWidth: 260 });
+      cur.addEventListener('change', () => {
+        c.unit = cur.value;
+        // A code with a symbol of its own puts it on the figures (GBP is £).
+        const s = c.unit && SharedCurrency.toSymbol(c.unit, null);
+        if(s && s !== sym()) $('currency').value = s;
+        buildColumns(); buildGrid(); buildItems();
+        if($('entryMode').value === 'ai') buildAiPrompt();
+        syncUI(); touched();
+      });
+    }
     if(fixed){ list.appendChild(row); return; }
     row.querySelector('.col-type').addEventListener('change', e => {
       c.type = e.target.value;
@@ -747,7 +803,7 @@ function applyParsed(parsed){
   const used = new Set();
   const cols = parsed.columns.map((h, i) => {
     const old = S.columns.find(c => !used.has(c.id) && c.name.trim().toLowerCase() === h.name.toLowerCase());
-    if(old){ used.add(old.id); if(old.type === 'price' || old.type === 'datayear') taken[old.type] = true; return { id: old.id, name: h.name, type: old.type, unit: old.type === 'number' ? h.unit : '', _i: i }; }
+    if(old){ used.add(old.id); if(old.type === 'price' || old.type === 'datayear') taken[old.type] = true; return { id: old.id, name: h.name, type: old.type, unit: old.type === 'number' || old.type === 'price' ? h.unit : '', _i: i }; }
     return { id: null, name: h.name, unit: h.unit, _i: i };
   });
   let idn = 0;
@@ -757,7 +813,7 @@ function applyParsed(parsed){
     c.id = 'c' + (++idn);
     c.type = guessType(c.name, parsed.rows.map(r => r[c._i]), taken);
     if(c.type === 'price' || c.type === 'datayear') taken[c.type] = true;
-    if(c.type !== 'number') c.unit = '';
+    if(c.type !== 'number' && c.type !== 'price') c.unit = '';
   });
   if(!cols.some(c => c.type === 'price')){
     const first = cols.find(c => c.type === 'number');
@@ -819,6 +875,8 @@ function showEntry(){
    skipped by Text, so the sources ride along as comments. */
 const AI_SPARK = '<svg class="tico ai-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 2.5c.5 4.6 2.4 6.5 7 7-4.6.5-6.5 2.4-7 7-.5-4.6-2.4-6.5-7-7 4.6-.5 6.5-2.4 7-7z"/><path d="M18.5 13c.3 2.5 1.3 3.5 3.8 3.8-2.5.3-3.5 1.3-3.8 3.8-.3-2.5-1.3-3.5-3.8-3.8 2.5-.3 3.5-1.3 3.8-3.8z"/><path d="M18 2c.2 1.5.8 2.1 2.3 2.3-1.5.2-2.1.8-2.3 2.3-.2-1.5-.8-2.1-2.3-2.3C17.2 4.1 17.8 3.5 18 2z"/></svg>';
 function currencyName(){
+  const code = priceCode((S.columns.find(c => c.type === 'price') || {}).unit);
+  if(code){ const n = codeName(code); return n ? `${n} (${code})` : code; }
   const o = $('currency').selectedOptions[0];
   const s = sym();
   const label = o ? o.textContent.replace(s, '').replace(/[()–—-]/g, ' ').replace(/\s+/g, ' ').trim() : '';
@@ -844,8 +902,8 @@ function aiPromptText(){
   const header = cols.map(headerOf).map(h => csvCell(h, ',')).join(', ');
   const nameOf = c => `"${headerOf(c)}"`;
   const desc = c => {
-    if(c.type === 'price') return `${nameOf(c)}: the price in ${cur}, as a plain number with no currency symbol and no thousands separators (24500, not ${sym()}24,500). Use the asking price for a listing, or the sold price for a completed sale. Every row must have a price; skip any listing without one.`;
-    if(c.type === 'datayear') return `${nameOf(c)}: the four-digit year the listing was posted or the sale was completed (e.g. ${year}).`;
+    if(c.type === 'price') return `${nameOf(c)}: the price in ${cur}, as a plain number with no currency symbol and no thousands separators (24500, not ${sym()}24,500). Use the advertised price${dated ? ', or the price actually paid for a past transaction' : ''}. Price every row on the same basis: the same quantity or period, and the same taxes, fees and extras included or left out. Every row must have a price; skip any listing without one.`;
+    if(c.type === 'datayear') return `${nameOf(c)}: the four-digit year the price was advertised or paid (e.g. ${year}).`;
     if(c.type === 'year') return `${nameOf(c)}: a four-digit calendar year (e.g. ${year - 4}), as the listing states it.`;
     if(c.type === 'bool') return `${nameOf(c)}: exactly Yes or No. Write No when the listing does not mention it.`;
     if(c.type === 'ignore') return `${nameOf(c)}: free text as the listing states it, kept for reference only. Wrap it in double quotes if it contains a comma.`;
@@ -855,17 +913,17 @@ function aiPromptText(){
   };
   const example = [header].concat([0, 1].map(k => cols.map(c => aiExample(c, k)).join(', '))).join('\n');
   const L = [];
-  L.push(`I am fitting a price model to find what "${what}" should cost secondhand. Search the web now and gather ${n} genuine listings${dated ? ' or completed sales' : ''} of it${market ? ` in ${market}` : ''}.`);
+  L.push(`I am fitting a price model to find what "${what}" should cost. Search the web now and gather ${n} genuine listings of it${market ? ` in ${market}` : ''}. A listing is one real price${dated ? ', advertised or paid,' : ' on offer'} for one "${what}", with the details stated alongside it.`);
   if(!market) L.push('If it is unclear which country or city I mean, ask me before you search.');
   L.push('');
   L.push('Rules:');
-  L.push(`- Every row must be a real ${dated ? 'listing or sale' : 'listing'} you found on a web page. Never estimate, average or invent a row.`);
+  L.push('- Every row must be a real listing you found on a web page. Never estimate, average or invent a row.');
   L.push(dated
-    ? `- Prefer recent data: listings seen in ${year} first, then sales from earlier years if needed.`
-    : `- Only listings current in ${year}, not past sales.`);
+    ? `- Prefer recent data: prices from ${year} first, then earlier years if needed.`
+    : `- Only prices current in ${year}, not past ones.`);
   L.push(`- All prices in ${cur}. Skip listings priced in another currency.`);
-  L.push('- Each item once only: skip duplicates of the same item listed on several sites.');
-  L.push('- Spread the rows across the range of the market, not only the cheapest or the newest.');
+  L.push('- Each listing once only: skip the same offer repeated on several sites.');
+  L.push('- Spread the rows across the range of the market, not only the cheapest or the most expensive.');
   L.push('- Leave a cell empty if the listing does not state that value (a Yes/No column takes No). Do not guess.');
   L.push('');
   L.push('Columns, in this order:');
@@ -874,7 +932,7 @@ function aiPromptText(){
   L.push('Output format (it is pasted straight into a tool, so follow it exactly):');
   L.push('- Plain text in one code block, no table formatting, no commentary.');
   L.push(`- First line is this header, copied exactly:\n  ${header}`);
-  L.push(`- Then one line per ${dated ? 'listing or sale' : 'listing'}, with the values in the same order, separated by a comma and a space.`);
+  L.push(`- Then one line per listing, with the values in the same order, separated by a comma and a space.`);
   L.push('- Numbers carry no currency symbols, units or thousands separators.');
   L.push('- After the rows, list the sources, one line each, starting with "# " and the row number, e.g. "# 1 https://…". Lines starting with # are skipped by the tool.');
   L.push('');
@@ -1673,6 +1731,7 @@ function applyQuickStart(key){
 /* ───────────────────────── Wiring ───────────────────────── */
 function init(){
   $('curYear').value = String(THIS_YEAR);
+  loadCodes();
   captureDefaults();
   const entrySeg = SharedSeg.fromSelect($('entryMode'), { labelOf: o => o.textContent, ariaLabel: 'How to enter the listings' });
   const aiBtn = entrySeg && entrySeg.group.querySelector('[data-val="ai"]');
@@ -1692,6 +1751,12 @@ function init(){
   const onStatic = e => {
     if(e.target.closest('[data-no-persist]')) return;
     if(e.target.id === 'entryMode'){ showEntry(); return; }
+    if(e.target.id === 'currency'){
+      // A code whose own symbol is not the one now picked no longer names this money.
+      const p = S.columns.find(c => c.type === 'price');
+      const s = p && p.unit && SharedCurrency.toSymbol(p.unit, null);
+      if(s && s !== sym()){ p.unit = ''; touched(); }
+    }
     if(e.target.id === 'currency' || e.target.id === 'curYear'){ buildColumns(); buildGrid(); buildItems(); }
     if($('entryMode').value === 'ai') buildAiPrompt();
     syncUI();

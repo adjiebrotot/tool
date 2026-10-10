@@ -6,8 +6,9 @@
    The browser draws a select's open list itself, in its own font and
    colours, which no stylesheet can reach. So a mouse press on a select opens
    a .combo-list instead (dropdown.css), the same panel a searchable combobox
-   uses, and a pick goes back into the select as the user's own would: the
-   value changes and `input` then `change` fire. The select stays the field
+   uses (SharedDropdown.searchable, below, makes one from a select), and a
+   pick goes back into the select as the user's own would: the value changes
+   and `input` then `change` fire. The select stays the field
    every tool reads, so nothing that reads, sets, saves or restores it
    changes, and its width is still the browser's (sized to its longest
    option, not jumping with the pick).
@@ -214,5 +215,169 @@
   global.addEventListener('resize', close);
   global.addEventListener('blur', close);
 
-  global.SharedDropdown = { place: place, open: function(s){ if (usable(s)) { s.focus({ preventScroll: true }); open(s); } }, close: close };
+  /* ── A searchable select ────────────────────────────────────────────────
+     SharedDropdown.searchable(select[, opts]) puts a .combo-input in place of
+     a <select> that has too many options to scroll through (every currency,
+     say): typing filters the list, and a pick goes back into the select as
+     the user's own would, firing `input` then `change`. As above, the select
+     stays the field every tool reads, sets, saves and restores; it is only
+     hidden. The field follows it: refilled options, a value set by code (call
+     .refresh() after one that does not touch the options), `hidden` and
+     `disabled`. Call it again on the same select to get the same handle.
+       opts.placeholder   the field's placeholder ("Search…")
+       opts.display(o)    the field's text for the chosen option (its label)
+       opts.minWidth      the list's least width, for a narrow field (240)
+     Every row matches on its value and its label, accents and case aside;
+     options whose value starts with the search come first. */
+  var fold = function(t){ return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
+  var comboN = 0;
+  function searchable(s, opts){
+    if (!s || s.tagName !== 'SELECT') return null;
+    if (s._combo) return s._combo;
+    opts = opts || {};
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = (s.className ? s.className + ' ' : '') + 'combo-input';
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('spellcheck', 'false');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('data-no-persist', '');
+    ['aria-label', 'aria-labelledby', 'title'].forEach(function(a){ if (s.hasAttribute(a)) input.setAttribute(a, s.getAttribute(a)); });
+    input.placeholder = opts.placeholder || s.getAttribute('data-placeholder') || 'Search…';
+    var box = document.createElement('div');
+    box.className = 'combo-list';
+    box.id = 'comboList' + (++comboN);
+    box.setAttribute('role', 'listbox');
+    box.hidden = true;
+    input.setAttribute('aria-controls', box.id);
+    s.style.display = 'none';
+    s.setAttribute('data-native', '');
+    s.insertAdjacentElement('afterend', input);
+    var focus = -1;
+
+    function chosen(){ return s.selectedIndex >= 0 ? s.options[s.selectedIndex] : null; }
+    function label(o){ return o ? (opts.display ? opts.display(o) : o.textContent) : ''; }
+    function sync(){
+      input.hidden = s.hidden;
+      input.disabled = s.disabled;
+      if (box.hidden) {
+        var o = chosen();
+        input.value = label(o);
+        input.classList.toggle('has-value', !!(o && o.value));
+      }
+    }
+    function render(q){
+      q = fold(q).trim();
+      var hits = [], lead = [];
+      for (var i = 0; i < s.options.length; i++) {
+        var o = s.options[i];
+        if (o.hidden || o.disabled) continue;
+        var v = fold(o.value);
+        if (!q) { hits.push(o); continue; }
+        if (v.indexOf(q) === 0) lead.push(o);
+        else if ((v + ' ' + fold(o.textContent)).indexOf(q) >= 0) hits.push(o);
+      }
+      hits = lead.concat(hits);
+      box.textContent = '';
+      var cur = chosen();
+      hits.forEach(function(o){
+        var d = document.createElement('div');
+        d.className = 'combo-opt' + (o === cur ? ' selected' : '');
+        d.setAttribute('role', 'option');
+        d.setAttribute('aria-selected', o === cur ? 'true' : 'false');
+        var m = document.createElement('span');
+        m.className = 'combo-main';
+        m.textContent = o.textContent;
+        d.appendChild(m);
+        d._opt = o;
+        box.appendChild(d);
+      });
+      if (!hits.length) {
+        var e = document.createElement('div');
+        e.className = 'combo-empty';
+        e.textContent = 'No match';
+        box.appendChild(e);
+      }
+      focus = -1;
+    }
+    function where(){ if (!box.hidden) place(input, box, { minWidth: opts.minWidth || 240, maxHeight: 300 }); }
+    function show(){
+      if (box.hidden) {
+        document.body.appendChild(box);
+        global.addEventListener('scroll', where, { passive: true, capture: true });
+        global.addEventListener('resize', where, { passive: true });
+      }
+      box.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      where();
+      var d = box.querySelector('.combo-opt.selected');
+      if (d) d.scrollIntoView({ block: 'nearest' });
+    }
+    // Closing puts the chosen option back, so a half-typed search never sits
+    // in the field looking like the value.
+    function hide(){
+      box.hidden = true;
+      box.remove();
+      global.removeEventListener('scroll', where, { capture: true });
+      global.removeEventListener('resize', where);
+      input.setAttribute('aria-expanded', 'false');
+      sync();
+    }
+    function move(i){
+      var r = box.querySelectorAll('.combo-opt');
+      focus = Math.max(-1, Math.min(i, r.length - 1));
+      for (var k = 0; k < r.length; k++) r[k].classList.toggle('focused', k === focus);
+      if (focus >= 0) r[focus].scrollIntoView({ block: 'nearest' });
+    }
+    function take(o){
+      hide();
+      if (!o || o.selected) return;
+      s.value = o.value;
+      sync();
+      s.dispatchEvent(new Event('input', { bubbles: true }));
+      s.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    // The field shows the chosen option: open on the whole list, its text
+    // selected so typing replaces it.
+    input.addEventListener('focus', function(){ render(''); show(); input.select(); });
+    // A click on the field when it already has the focus (after Esc) reopens.
+    input.addEventListener('mousedown', function(){
+      if (document.activeElement === input && box.hidden) { render(''); show(); }
+    });
+    input.addEventListener('input', function(){ input.classList.remove('has-value'); render(input.value); show(); });
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (box.hidden) { render(''); show(); } move(focus + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); move(focus - 1); }
+      else if (e.key === 'Enter') {
+        // Enter takes the row the arrows are on, or the only match left.
+        var r = box.querySelectorAll('.combo-opt');
+        var d = r[focus] || (r.length === 1 ? r[0] : null);
+        if (d) { e.preventDefault(); take(d._opt); }
+      }
+      else if (e.key === 'Escape') { if (!box.hidden) { e.preventDefault(); e.stopPropagation(); } hide(); }
+    });
+    input.addEventListener('blur', hide);
+    // A press anywhere in the list (a row, its scrollbar) keeps the focus.
+    box.addEventListener('mousedown', function(e){
+      e.preventDefault();
+      var d = e.target.closest('.combo-opt');
+      if (d) { take(d._opt); input.blur(); }
+    });
+    box.addEventListener('mousemove', function(e){
+      var d = e.target.closest('.combo-opt');
+      var r = box.querySelectorAll('.combo-opt');
+      var i = d ? Array.prototype.indexOf.call(r, d) : -1;
+      if (i >= 0 && i !== focus) move(i);
+    });
+    s.addEventListener('change', sync);
+    if (global.MutationObserver) new MutationObserver(sync).observe(s, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'disabled'] });
+    sync();
+    s._combo = { input: input, list: box, refresh: sync, close: hide };
+    return s._combo;
+  }
+
+  global.SharedDropdown = { place: place, open: function(s){ if (usable(s)) { s.focus({ preventScroll: true }); open(s); } }, close: close, searchable: searchable };
 })(window);
