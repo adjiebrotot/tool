@@ -11,9 +11,15 @@ const LANG_SENS = {
     sensSubtitle: 'Model the long-term financial outcome of renting vs buying property, comparing cash, equity and net wealth over time.',
     btnBack: '← Back',
     labelCurrency: 'Currency Symbol:',
+    labelBase: 'Base currency:',
+    fxModeLabel: 'Multi-currency',
+    fxWarn: (list) => `Columns in ${list} are not converted`,
+    fxSourceLive: (name, date) => `Live rates: ${name}, ${date}`,
+    fxSourceBundled: (date) => `Rates of ${date} (live rates unavailable)`,
+    fxSourceNone: 'No exchange rates yet: type each one',
     labelMetric: 'Metric:',
     labelAtYear: 'At year:',
-    yearHint: "(clamped to each scenario's horizon)",
+    yearHint: '(up to the time horizon)',
     btnCSV: '⬇ CSV',
     btnUploadCSV: 'CSV',
     btnCompareAll: 'Compare',
@@ -61,9 +67,28 @@ const LANG_SENS = {
     presetAll: 'All figures and sources',
     dragTitle: 'Drag to reorder scenarios',
     removeTitle: 'Remove',
-    sepGeneral: 'Assumptions',
+    sepGeneral: 'Shared by every scenario',
+    sepCurrency: 'Currency & exchange rate',
     sepOwn: 'Home: property & mortgage',
     sepRent: 'Rent: rental payments & costs',
+    pBaseCurrency: 'Base currency',
+    pBaseRiskFree: 'Risk-Free Rate, base currency',
+    pFxPath: 'Exchange rate path',
+    pScenCurrency: 'Scenario currency',
+    pFxRate: 'Exchange rate',
+    optParity: 'Moves with the rate gap',
+    optHold: "Held at today's rate",
+    autoBasedOn: (amt, name) => `Auto: ${amt} based on ${name}`,
+    autoBudgetBasedOn: (amt, name) => `Auto: ${amt}/mo in year 1, based on ${name}`,
+    fxIsBase: 'Base currency, no conversion',
+    fxLive: (date) => `Live rate, ${date}`,
+    fxBundled: (date) => `Rate of ${date}`,
+    fxCustom: 'Your rate, clear it for the live one',
+    fxNone: 'No rate yet: type one',
+    fxCapital: (cash, budget) => `Same money here: ${cash} cash, ${budget}/mo budget in year 1`,
+    shortOwn: (y) => `Own cash below zero from year ${y}`,
+    shortRent: (y) => `Rent cash below zero from year ${y}`,
+    cashflowCurrencyNote: (cur, base, rate) => `# Figures in ${cur}, this scenario's own currency (1 ${base} = ${rate} ${cur} today)`,
     pHorizon: 'Time horizon',
     pRiskFreeRate: 'Risk-Free Rate',
     pInitialCash: 'Initial cash',
@@ -143,9 +168,15 @@ const LANG_SENS = {
     sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti, membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
     btnBack: '← Kembali',
     labelCurrency: 'Simbol Mata Uang:',
+    labelBase: 'Mata uang dasar:',
+    fxModeLabel: 'Multi-mata uang',
+    fxWarn: (list) => `Kolom dalam ${list} tidak dikonversi`,
+    fxSourceLive: (name, date) => `Kurs terkini: ${name}, ${date}`,
+    fxSourceBundled: (date) => `Kurs per ${date} (kurs terkini tidak tersedia)`,
+    fxSourceNone: 'Belum ada kurs: isi masing-masing',
     labelMetric: 'Metrik:',
     labelAtYear: 'Di tahun:',
-    yearHint: '(dibatasi oleh jangka waktu masing-masing skenario)',
+    yearHint: '(hingga jangka waktu)',
     btnCSV: '⬇ CSV',
     btnUploadCSV: 'CSV',
     btnCompareAll: 'Bandingkan',
@@ -189,9 +220,28 @@ const LANG_SENS = {
     presetAll: 'Semua angka dan sumbernya',
     dragTitle: 'Seret untuk mengurutkan skenario',
     removeTitle: 'Hapus',
-    sepGeneral: 'Asumsi',
+    sepGeneral: 'Berlaku untuk semua skenario',
+    sepCurrency: 'Mata uang & kurs',
     sepOwn: 'Rumah: properti & KPR',
     sepRent: 'Sewa: pembayaran & biaya',
+    pBaseCurrency: 'Mata uang dasar',
+    pBaseRiskFree: 'Suku Bunga Bebas Risiko, mata uang dasar',
+    pFxPath: 'Arah kurs',
+    pScenCurrency: 'Mata uang skenario',
+    pFxRate: 'Kurs',
+    optParity: 'Mengikuti selisih bunga',
+    optHold: 'Tetap di kurs hari ini',
+    autoBasedOn: (amt, name) => `Otomatis: ${amt} berdasarkan ${name}`,
+    autoBudgetBasedOn: (amt, name) => `Otomatis: ${amt}/bln di tahun 1, berdasarkan ${name}`,
+    fxIsBase: 'Mata uang dasar, tanpa konversi',
+    fxLive: (date) => `Kurs terkini, ${date}`,
+    fxBundled: (date) => `Kurs per ${date}`,
+    fxCustom: 'Kurs Anda, kosongkan untuk kurs terkini',
+    fxNone: 'Belum ada kurs: isi sendiri',
+    fxCapital: (cash, budget) => `Uang yang sama di sini: kas ${cash}, anggaran ${budget}/bln di tahun 1`,
+    shortOwn: (y) => `Kas Beli di bawah nol sejak tahun ${y}`,
+    shortRent: (y) => `Kas Sewa di bawah nol sejak tahun ${y}`,
+    cashflowCurrencyNote: (cur, base, rate) => `# Angka dalam ${cur}, mata uang skenario ini (1 ${base} = ${rate} ${cur} hari ini)`,
     pHorizon: 'Jangka waktu',
     pRiskFreeRate: 'Suku Bunga Bebas Risiko',
     pInitialCash: 'Modal awal',
@@ -299,13 +349,15 @@ function tipTable(){
    scenario, so its cell is shown as unused (offKey says why) rather than as
    a live input. */
 const notPct = typeKey => sc => sc[typeKey] !== 'pct';
+/* `shared` rows are one figure for every column (SHARED_KEYS), drawn as one
+   cell across the table; their activeIf reads the shared figures. */
 const PARAMS = [
-  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  suf:'uYrs',          min:5,   max:100, step:1,    tip:'horizon'},
-  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.05, tip:'riskFreeRate'},
-  {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', auto:true,           min:0,            step:10000,tip:'initialCash'},
-  {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', auto:true, per:'monthly', min:0,       step:100,  tip:'monthlyBudget'},
-  {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease',
-    activeIf: sc => (Number(sc.monthlyBudget)||0) > 0, offKey:'offNoBudget'},
+  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  suf:'uYrs',          min:5,   max:100, step:1,    tip:'horizon', shared:true},
+  {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.05, tip:'sensRiskFree', shared:true},
+  {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', auto:true,           min:0,            step:10000,tip:'sensInitialCash', shared:true},
+  {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', auto:true, per:'monthly', min:0,       step:100,  tip:'sensMonthlyBudget', shared:true},
+  {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease', shared:true,
+    activeIf: sh => (Number(sh.monthlyBudget)||0) > 0, offKey:'offNoBudget'},
   {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                      min:50000,        step:10000,tip:'propertyPrice'},
   {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  suf:'uPctOfPrice',   min:0,   max:100, step:0.5,  tip:'downPaymentPct'},
   {key:'mortgageType',         labelKey:'pMortgageType',         type:'select',   options:[{v:'pi',lk:'optPI'},{v:'io',lk:'optIO'}], tip:'mortgageType'},
@@ -347,6 +399,8 @@ const BASIS_BY_TYPE = {};
 Object.keys(COST_BASIS).forEach(k=>{ BASIS_BY_TYPE[COST_BASIS[k].type] = COST_BASIS[k]; });
 const PER_SUFFIX = {yearly:'uPerYr', monthly:'uPerMo', weekly:'uPerWk'};
 
+/* A column's own figures: the home, its loan and its rent. What every column
+   shares (SHARED below) is not in here. */
 const DEFAULT_SCENARIO = {
   name: 'Base Case',
   propertyPrice: 800000,
@@ -354,10 +408,8 @@ const DEFAULT_SCENARIO = {
   mortgageType: 'pi',
   mortgageRate: 6.0,
   mortgageTerm: 30,
-  riskFreeRate: 4.5,
   houseGrowth: 5.0,
   sellingCostPct: 2.5,
-  horizon: 30,
   setupCost: 32000,
   setupCostType: 'dollar',
   ownOngoingCost: 6000,
@@ -372,23 +424,60 @@ const DEFAULT_SCENARIO = {
   rentOngoingCostFreq: 'yearly',
   rentOngoingCostType: 'dollar',
   rentOngoingInflation: 0,
-  initialCash: 0,
-  monthlyBudget: 0,
-  monthlyBudgetIncrease: 0,
   currencySymbol: '$',
+  currency: null,  // ISO code once known (a Quick Start city, or picked in multi-currency mode)
+  fxRate: null,    // units of this currency per unit of the base; null = the live rate
   ratePeriods: null,
   ownSetupCosts: null,
   ownOngoingCosts: null,
   rentOngoingCosts: null,
 };
 
+/* ── SHARED ASSUMPTIONS ──
+   Columns are only comparable when every one of them plays with the same
+   money for the same time, so these are one figure for the whole table:
+     horizon            the same run
+     riskFreeRate       the same return on spare cash (one rate per currency
+                        in multi-currency mode)
+     initialCash        the same cash today; blank takes the most any column
+                        needs up front
+     monthlyBudget      the same monthly cash; blank takes, month by month,
+     (+ its increase)   the most any column needs
+   A cheaper home then banks what it does not spend at the risk-free rate,
+   rather than starting with less: a column wins or loses on what its home
+   earns and costs, never on a bigger cheque. */
+const SHARED_KEYS = ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease'];
+const DEFAULT_SHARED = {horizon:30, riskFreeRate:4.5, initialCash:0, monthlyBudget:0, monthlyBudgetIncrease:0};
+const sharedFrom = src => {
+  const out = Object.assign({}, DEFAULT_SHARED);
+  SHARED_KEYS.forEach(k=>{ const v = src ? Number(src[k]) : NaN; if(Number.isFinite(v)) out[k] = v; });
+  return out;
+};
+
+/* ── MULTI-CURRENCY ──
+   Off, every column is in the page's currency and its symbol is only a label.
+   On, each column names its currency and its exchange rate to the base, and
+   every figure the table compares is in the base:
+     on      the tick box
+     base    the base currency (ISO code); in single-currency mode, the code
+             the page's symbol stands for
+     path    how the rate moves after today: 'parity' (by the gap between the
+             two currencies' risk-free rates, so holding cash in either earns
+             the same) or 'hold' (today's rate for the whole run)
+     rfr     the risk-free rate of each currency, by code */
+const DEFAULT_FX = {on:false, base:'AUD', path:'parity', rfr:{}};
+const FX = window.RVOFX || null;
+
 /* ── STATE ── */
 const cloneScenario = sc => JSON.parse(JSON.stringify(sc));
 let scenarios = [cloneScenario(DEFAULT_SCENARIO), Object.assign(cloneScenario(DEFAULT_SCENARIO), {name:'Scenario 1'})];
+let shared = sharedFrom(null);
+let fxs = JSON.parse(JSON.stringify(DEFAULT_FX));
 let persist = null; // mini cache handle (assigned at init)
 let metric = 'netEquity';
 let viewYear = 30;
 let scenarioResults = [];
+let plan = null; // the shared money and the exchange-rate paths (computePlan)
 // Section-level Simple/Detailed modes — apply to ALL scenarios
 let modes = { mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple' };
 
@@ -437,12 +526,60 @@ function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&l
 const cssVar = n => getComputedStyle(document.body).getPropertyValue(n).trim();
 function escAttr(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/* ── CURRENCIES ──
+   What a money field wears: the page's symbol in single-currency mode, the
+   column's ISO code in multi-currency mode ("SGD 850,000", never "$" that
+   could be any dollar). Results are always in the base. */
+const multiOn = () => !!fxs.on;
+function pageSym(){
+  const el = document.getElementById('currencySelect');
+  return (el && el.value) || (scenarios[0] && scenarios[0].currencySymbol) || '$';
+}
+const curOf = sc => multiOn() ? ((sc && sc.currency) || fxs.base) : fxs.base;
+const labelOf = sc => multiOn() ? curOf(sc) : pageSym();
+const baseLabel = () => multiOn() ? fxs.base : pageSym();
+const symOf = labelOf;
+// A code reads "AUD 1.2m"; a symbol keeps its old look ("$1.2m", "Rp800k").
+const pfx = l => (multiOn() && /^[A-Z]{3}$/.test(l)) ? l + ' ' : l;
+const money = (v, l) => fmtCurrency(v, pfx(l));
+const moneyFull = (v, l) => pfx(l) + addCommas(Math.round(Number(v) || 0));
+
+// Units of the column's currency one unit of the base buys today.
+function spotOf(sc){
+  if(!multiOn()) return 1;
+  const c = curOf(sc);
+  if(c === fxs.base) return 1;
+  if(Number(sc.fxRate) > 0) return Number(sc.fxRate);
+  return FX ? FX.cross(fxs.base, c) : 0;
+}
+// The base first, then every other currency a column is in, in column order.
+function usedCurrencies(){
+  const out = [fxs.base];
+  scenarios.forEach(sc=>{ const c = curOf(sc); if(!out.includes(c)) out.push(c); });
+  return out;
+}
+/* A currency new to the table takes its risk-free rate from a Quick Start
+   city that uses it (they are market rates, sourced per country), else the
+   base's. */
+function seedRfr(code){
+  const city = QS && QS.data && (QS.data.cities || []).find(c=>c.currencyCode===code);
+  if(city && Number.isFinite(Number(city.riskFreeRate))) return Number(city.riskFreeRate);
+  const b = Number(fxs.rfr[fxs.base]);
+  return Number.isFinite(b) ? b : shared.riskFreeRate;
+}
+function ensureRfr(){
+  if(!multiOn()) return;
+  usedCurrencies().forEach(c=>{ if(!Number.isFinite(Number(fxs.rfr[c]))) fxs.rfr[c] = seedRfr(c); });
+}
+const rfrOf = code => multiOn() ? Number(fxs.rfr[code]) : shared.riskFreeRate;
+
 /* ── COMPUTE ENGINE ──
    The model is ../engine.js, the very file the main page runs, so identical
-   inputs give identical results by construction. This page only maps a
-   scenario onto the engine's state object (buildStateObj). Floating rates are
-   read at the band midpoint, as the main page's tables and lines are. */
-function buildStateObj(sc){
+   inputs give identical results by construction. This page maps a column
+   onto the engine's state object (stateFor), then adds what every column
+   shares (buildStateObj). Floating rates are read at the band midpoint, as
+   the main page's tables and lines are. */
+function stateFor(sc, sh){
   const mortgageDetailed = modes.mortgageMode === 'detailed';
   return {
     propertyPrice:       Math.max(50000, sc.propertyPrice || 800000),
@@ -451,10 +588,10 @@ function buildStateObj(sc){
     mortgageType:        mortgageDetailed ? (sc.mortgageType || 'pi') : 'pi',
     mortgageRate:        sc.mortgageRate ?? 6.0,
     mortgageTerm:        sc.mortgageTerm ?? 30,
-    riskFreeRate:        sc.riskFreeRate ?? 4.5,
+    riskFreeRate:        sh.riskFreeRate ?? 4.5,
     houseGrowth:         sc.houseGrowth ?? 5.0,
     sellingCostPct:      sc.sellingCostPct ?? 2.5,
-    horizon:             Math.max(1, sc.horizon || 30),
+    horizon:             Math.max(1, sh.horizon || 30),
     setupCost:           Math.max(0, sc.setupCost || 0),
     setupCostType:       sc.setupCostType || 'dollar',
     ownOngoingCost:      Math.max(0, sc.ownOngoingCost || 0),
@@ -469,9 +606,9 @@ function buildStateObj(sc){
     rentOngoingCostFreq: sc.rentOngoingCostFreq || 'yearly',
     rentOngoingCostType: sc.rentOngoingCostType || 'dollar',
     rentOngoingInflation:sc.rentOngoingInflation ?? 0,
-    initialCash:         sc.initialCash || 0,
-    monthlyBudget:       sc.monthlyBudget || 0,
-    monthlyBudgetIncrease: sc.monthlyBudgetIncrease || 0,
+    initialCash:         sh.initialCash || 0,
+    monthlyBudget:       sh.monthlyBudget || 0,
+    monthlyBudgetIncrease: sh.monthlyBudgetIncrease || 0,
     currencySymbol:      sc.currencySymbol || '$',
     mortgageMode:        modes.mortgageMode,
     ratePeriods:         sc.ratePeriods || null,
@@ -485,8 +622,115 @@ function buildStateObj(sc){
   };
 }
 
+/* ── THE SHARED MONEY ──
+   One plan for the whole table, rebuilt on every edit, since a change to any
+   column can move what the others are given:
+
+   1. Each column's exchange-rate path, path[k] = units of its currency per
+      unit of the base at the end of month k (k = 0 today). Held at today's
+      rate, or moving with the gap between the two risk-free rates
+          path[k] = spot × ((1 + r_col) / (1 + r_base))^(k/12)
+      (interest parity), so a unit of the base held as cash in either
+      currency is worth the same unit-for-unit at every month end: no column
+      wins merely by keeping its cash in the higher-paying currency.
+   2. Initial cash, in the base: the figure set, or the most any column needs
+      up front (its deposit and setup, or its first year of rent), each need
+      translated at today's rate. Every column then starts with exactly that,
+      at its own rate.
+   3. The monthly budget, in the base, month by month: the figure set (grown
+      by its increase each year), or the most any column needs that month
+      (repayment at the top of any floating range plus owning costs, or rent
+      plus renting costs), each translated at that month's rate. Every column
+      gets exactly that, at that month's rate, so none ever runs short and
+      none gets a cent more than another.
+   With one currency every path is 1, and the plan is the plain largest need,
+   column against column. */
+function computePlan(){
+  const H = Math.max(1, Math.round(Number(shared.horizon) || 30)), M = 12*H;
+  const parity = multiOn() && fxs.path === 'parity';
+  const rB = rfrOf(fxs.base);
+  const items = scenarios.map((sc,i)=>{
+    const cur = curOf(sc), s0 = spotOf(sc), rL = multiOn() ? rfrOf(cur) : shared.riskFreeRate;
+    const ok = s0 > 0 && Number.isFinite(s0);
+    const path = new Array(M+1).fill(ok ? s0 : NaN);
+    if(ok && parity && rL !== rB){
+      const gL = 1 + rL/100, gB = 1 + rB/100;
+      for(let k=1; k<=M; k++) path[k] = s0 * Math.pow(gL, k/12) / Math.pow(gB, k/12);
+    }
+    // What this column needs on its own: the engine's automatic figures.
+    const S = stateFor(sc, {horizon:H, riskFreeRate:rL, initialCash:0, monthlyBudget:0, monthlyBudgetIncrease:0});
+    const icAuto = RVOEngine.initialCashPlan(S).autoInitialCash;
+    const bp = RVOEngine.budgetPlan(S);
+    return {i, cur, s0, ok, path, rL, icAuto, needAt: yr => bp.budgetAt(yr)};
+  });
+  const live = items.filter(it=>it.ok);
+
+  const icManual = Number(shared.initialCash) > 0;
+  let ic = icManual ? Number(shared.initialCash) : 0, icFrom = -1;
+  if(!icManual) live.forEach(it=>{ const b = it.icAuto / it.path[0]; if(icFrom < 0 || b > ic){ ic = b; icFrom = it.i; } });
+
+  const bManual = Number(shared.monthlyBudget) > 0;
+  const budget = new Array(M);
+  let bFrom = -1;
+  for(let k=0; k<M; k++){
+    const yr = Math.floor(k/12) + 1;
+    if(bManual){
+      budget[k] = shared.monthlyBudget * Math.pow(1 + (shared.monthlyBudgetIncrease||0)/100, yr-1);
+      continue;
+    }
+    let best = 0, from = -1;
+    live.forEach(it=>{ const b = it.needAt(yr) / it.path[k+1]; if(from < 0 || b > best){ best = b; from = it.i; } });
+    budget[k] = best;
+    if(k === 0) bFrom = from;
+  }
+  return {H, M, parity, rB, items, ic, icFrom, icManual, budget, bFrom, bManual};
+}
+
+// A column's engine state: its own figures plus its share of the plan, in
+// its own currency.
+function buildStateObj(sc, i){
+  const it = plan.items[i];
+  const S = stateFor(sc, {horizon:plan.H, riskFreeRate:it.rL, initialCash:plan.ic * it.path[0],
+    monthlyBudget:0, monthlyBudgetIncrease:0});
+  if(plan.bManual && !multiOn()){
+    // One currency and a set budget: the engine grows it exactly as the
+    // main page does.
+    S.monthlyBudget = shared.monthlyBudget;
+    S.monthlyBudgetIncrease = shared.monthlyBudgetIncrease || 0;
+  } else {
+    S.budgetSchedule = plan.budget.map((b,k)=> b * it.path[k+1]);
+  }
+  if(multiOn()) S.fxPath = it.path;
+  return S;
+}
+
 function computeModel(S){
   return RVOEngine.computeModel(S, 'mid');
+}
+
+// Every column, against one fresh plan.
+function recompute(){
+  ensureRfr();
+  plan = computePlan();
+  scenarioResults = scenarios.map((sc,i)=>{
+    if(!plan.items[i].ok) return null;
+    try{ return computeModel(buildStateObj(sc, i)); }catch(e){ console.error(e); return null; }
+  });
+}
+
+/* A column's results for one year in the base currency: balances at that
+   year's closing rate, accumulated cost translated cost by cost on the day
+   each was paid (the engine adds it up). In one currency, as computed. */
+function baseRowOf(i, yr){
+  const res = scenarioResults[i];
+  if(!res || !res.rows || !res.rows.length) return null;
+  const row = res.rows[Math.max(0, Math.min(yr, res.rows.length-1))];
+  if(!row) return null;
+  if(!multiOn()) return {ownNetEquity:row.ownNetEquity, rentNetEquity:row.rentNetEquity, ownCash:row.ownCash,
+    rentCash:row.rentCash, ownAccumCost:row.ownAccumCost, rentAccumCost:row.rentAccumCost};
+  const f = plan.items[i].path[12*row.year];
+  return {ownNetEquity:row.ownNetEquity/f, rentNetEquity:row.rentNetEquity/f, ownCash:row.ownCash/f,
+    rentCash:row.rentCash/f, ownAccumCost:row.ownAccumCostBase, rentAccumCost:row.rentAccumCostBase};
 }
 
 /* ── HELPERS ── */
@@ -494,11 +738,9 @@ function metricLabelOf(met){
   return met==='netEquity' ? T('metricNetEquity') : met==='cash' ? T('metricLiquidCash') : T('metricAccumCost');
 }
 function metricLabel(){ return metricLabelOf(metric); }
+const viewYr = () => Math.min(viewYear, plan ? plan.H : (shared.horizon || 30));
 function getMetricValues(i){
-  const res = scenarioResults[i];
-  if(!res || !res.rows) return {own:null,rent:null};
-  const yr = Math.min(viewYear, scenarios[i].horizon || 30);
-  const row = res.rows[yr];
+  const row = baseRowOf(i, viewYr());
   if(!row) return {own:null,rent:null};
   if(metric==='netEquity') return {own:row.ownNetEquity, rent:row.rentNetEquity};
   if(metric==='cash')      return {own:row.ownCash,      rent:row.rentCash};
@@ -512,7 +754,6 @@ function deltaColor(d){
   const ownAhead = metric==='cost' ? d < 0 : d > 0;
   return ownAhead ? 'own-val' : 'rent-val';
 }
-const symOf = sc => (sc && sc.currencySymbol) || '$';
 
 /* ── DETAILED MODE: per-scenario list seeding & helpers ── */
 function seedRatePeriods(sc){
@@ -574,18 +815,33 @@ function addScenario(){
   scenarios.push(clone);
   rerender();
 }
-/* Quick Start: the first column takes a scenario from ../quickstart-data.js,
-   the one list the main page's Quick Start reads, as a fresh scenario named
-   after it. The page shows one currency, so the scenario's symbol becomes the
-   page's. Only the first column has the picker: to compare two cities, load
-   one, drag it right, load the next. */
+/* Quick Start: any column takes a scenario from ../quickstart-data.js, the
+   one list the main page's Quick Start reads, as a fresh scenario named after
+   it. What it does to the figures every column shares:
+     - the only column: it sets them all (time horizon, risk-free rate, cash,
+       budget, currency), as the main page's Quick Start sets its whole form,
+       so the column gives the main page's very numbers;
+     - beside other columns: it fills its own column and sets its currency's
+       risk-free rate (a market rate), and leaves the time horizon, cash and
+       budget alone, since those are the comparison's, not one city's;
+     - a city in another currency than the columns already have turns
+       multi-currency on, so two currencies are never added up as one. */
 const QS = window.RVO_QS;
+function setPageSymbol(sym){
+  const sel = document.getElementById('currencySelect');
+  if(sel && sym && [...sel.options].some(o=>o.value===sym)) sel.value = sym;
+  scenarios.forEach(s=>{ s.currencySymbol = pageSym(); });
+}
 function applyCityPreset(si, sid){
   const p = QS && QS.preset(sid);
   if(!p || !scenarios[si]) return;
+  const city = QS.city(p.cityKey) || {};
+  const code = city.currencyCode || SharedCurrency.toCode(p.currencySymbol, fxs.base);
   const sc = cloneScenario(DEFAULT_SCENARIO);
   Object.keys(sc).forEach(k=>{ if(p[k]!==undefined) sc[k] = p[k]; });
   sc.name = QS.label(sid, lang);
+  sc.currency = code;
+  sc.fxRate = null;
   /* A staged loan (promo or fixed, then floating) is only said by the
      Detailed rate schedule, so it switches the page's mortgage mode, which is
      shared by every column: the others are seeded from their own single
@@ -597,13 +853,31 @@ function applyCityPreset(si, sid){
   if(modes.mortgageMode==='detailed')  seedRatePeriods(sc);
   if(modes.ownCostsMode==='detailed')  seedOwnCostItems(sc);
   if(modes.rentCostsMode==='detailed') seedRentCostItems(sc);
+  const others = scenarios.filter((_,j)=>j!==si);
   scenarios[si] = sc;
-  const sel = document.getElementById('currencySelect');
-  if(sel) sel.value = sc.currencySymbol;
-  scenarios.forEach(s=>{ s.currencySymbol = sc.currencySymbol; });
-  const yr = document.getElementById('yearInput');
-  if(yr) yr.max = Math.max(...scenarios.map(s=>s.horizon||1));
+  if(!others.length){
+    shared = sharedFrom(p);
+    fxs.base = code;
+    fxs.rfr[code] = Number(p.riskFreeRate);
+    if(!multiOn()) setPageSymbol(p.currencySymbol);
+  } else if(!multiOn()){
+    const known = [...new Set(others.map(s=>s.currency).filter(Boolean))];
+    if(!known.length || (known.length===1 && known[0]===code)){
+      // Every other column is in this currency (or never said): still one money.
+      fxs.base = code;
+      shared.riskFreeRate = Number(p.riskFreeRate);
+      setPageSymbol(p.currencySymbol);
+    } else {
+      fxs.base = known[0];
+      setMulti(true);
+      fxs.rfr[code] = Number(p.riskFreeRate);
+    }
+  } else {
+    fxs.rfr[code] = Number(p.riskFreeRate);
+  }
+  syncYearMax();
   rerender();
+  syncControls();
 }
 function presetPickerHTML(si){
   if(!QS || !QS.all().length) return '';
@@ -728,7 +1002,8 @@ function removeScenario(i){
    suffix (anything else). It follows the scenario's own choices, so a setup
    cost switched to "% of property price" reads "4 % of price", not "$ 4". */
 function paramAffix(p, sc){
-  const sym = symOf(sc);
+  // A shared figure is the comparison's, so it is in the base currency.
+  const sym = p.shared ? baseLabel() : symOf(sc);
   if(p.basis){
     const b = COST_BASIS[p.basis];
     if(sc[b.type]==='pct') return {pre:'', suf:T(b.pctKey)};
@@ -740,7 +1015,7 @@ function paramAffix(p, sc){
   }
   return {pre:'', suf: p.suf ? T(p.suf) : ''};
 }
-const paramActive = (p, sc) => !p.activeIf || p.activeIf(sc);
+const paramActive = (p, sc) => !p.activeIf || p.activeIf(p.shared ? shared : sc);
 
 // The summary CSV keeps its Unit column: one unit per row, or each one the
 // scenarios use ("$ or % of price") when their type fields differ.
@@ -748,6 +1023,52 @@ function csvUnit(p){
   if(p.type==='select' || p.type==='boolean') return '';
   const units = [...new Set(scenarios.map(sc=>{ const a = paramAffix(p, sc); return a.pre + a.suf; }))];
   return units.join(T('unitOr')) + (p.auto ? ` (${T('autoNote')})` : '');
+}
+
+/* ── SWITCHING CURRENCY MODE ──
+   On: the base is the page's own currency, every column that never named one
+   is fixed in it, and the base's risk-free rate is the one the page had, so
+   switching on changes no figure until a column moves to another currency.
+   Off: every column is read in the base again (its code is kept, for when
+   multi-currency comes back on), and the base's rate is the page's. */
+function setMulti(on){
+  if(!!on === multiOn()) return;
+  if(on){
+    fxs.rfr[fxs.base] = shared.riskFreeRate;
+    fxs.on = true;
+    scenarios.forEach(s=>{ if(!s.currency) s.currency = fxs.base; });
+    ensureRfr();
+  } else {
+    shared.riskFreeRate = rfrOf(fxs.base);
+    fxs.on = false;
+    setPageSymbol(SharedCurrency.toSymbol(fxs.base, pageSym()));
+  }
+}
+/* A new base: rates you typed keep what they said (re-quoted against the new
+   base through today's cross rate), and a cash or budget you set keeps its
+   value, converted at today's rate. */
+function setBase(code){
+  const old = fxs.base;
+  if(!code || code === old) return;
+  const k = FX ? FX.cross(code, old) : 0; // units of the old base per unit of the new
+  scenarios.forEach(s=>{
+    if(!(Number(s.fxRate) > 0)) return;
+    s.fxRate = (curOf(s) !== code && k > 0) ? Number(s.fxRate) * k : null;
+  });
+  if(k > 0){
+    const r2 = v => Math.round(v*100)/100;
+    if(shared.initialCash > 0)   shared.initialCash   = r2(shared.initialCash / k);
+    if(shared.monthlyBudget > 0) shared.monthlyBudget = r2(shared.monthlyBudget / k);
+  }
+  fxs.base = code;
+  ensureRfr();
+}
+// The years the "At year" box can reach: the shared horizon.
+function syncYearMax(){
+  const yi = document.getElementById('yearInput');
+  const H = Math.max(1, Math.round(Number(shared.horizon) || 30));
+  if(yi) yi.max = H;
+  if(viewYear > H){ viewYear = H; if(yi) yi.value = H; }
 }
 
 /* ── MONEY ⇄ "%" ──
@@ -770,9 +1091,16 @@ const pctBase = RVOEngine.pctBase, convertCostBasis = RVOEngine.convertCostBasis
 function buildRenderRows(){
   const rows = [];
   const P = (key, grp, child) => ({type:'param', p:PARAM_MAP[key], grp:grp||null, child:!!child});
+  // One cell across every column: the comparison's own figures.
+  const S = (key, grp, child) => ({type:'shared', p:PARAM_MAP[key], grp:grp||null, child:!!child});
   rows.push({type:'sep', sepKey:'sepGeneral'});
-  rows.push(P('horizon'), P('riskFreeRate'), P('initialCash'));
-  rows.push(P('monthlyBudget','budget'), P('monthlyBudgetIncrease','budget',true));
+  rows.push(S('horizon'), S('riskFreeRate'), S('initialCash'));
+  rows.push(S('monthlyBudget','budget'), S('monthlyBudgetIncrease','budget',true));
+
+  if(multiOn()){
+    rows.push({type:'sep', sepKey:'sepCurrency'});
+    rows.push({type:'fxPath'}, {type:'currency'}, {type:'fxRate'});
+  }
 
   rows.push({type:'sep', sepKey:'sepOwn'});
   rows.push(P('propertyPrice'), P('downPaymentPct'));
@@ -886,23 +1214,111 @@ function costCellHTML(sc, si, listKey, kind, k){
   </td>`;
 }
 
+/* ── SHARED AND CURRENCY CELLS ── */
+// A number field with its unit inside it, as every field on the page has.
+function numberBox(cls, p, val, pre, suf, extra){
+  return `<div class="input-wrap param-wrap">`
+    + (pre ? `<span class="prefix">${escHtml(pre)}</span>` : '')
+    + `<input class="param-input ${cls}" type="text" inputmode="${p.type==='integer'?'numeric':'decimal'}" data-key="${p.key}" data-ptype="${p.type}" data-min="${p.min!=null?p.min:0}" data-max="${p.max!=null?p.max:1000000000000}"`
+    + (extra || '')
+    + (p.auto ? ` placeholder="${escAttr(T('phAuto'))}"` : '')
+    + ` value="${escAttr(inputText(p, val))}"/>`
+    + (suf ? `<span class="suffix">${escHtml(suf)}</span>` : '')
+    + `</div>`;
+}
+const scenName = i => (scenarios[i] && scenarios[i].name) || (T('scenPlaceholder')+' '+(i+1));
+// "Auto: AUD 1,000,000 based on Melbourne · 1BR apartment", or nothing when set.
+function autoNote(key){
+  if(!plan) return '';
+  if(key==='initialCash' && !plan.icManual && plan.icFrom >= 0)
+    return T('autoBasedOn')(moneyFull(plan.ic, baseLabel()), scenName(plan.icFrom));
+  if(key==='monthlyBudget' && !plan.bManual && plan.bFrom >= 0)
+    return T('autoBudgetBasedOn')(moneyFull(plan.budget[0], baseLabel()), scenName(plan.bFrom));
+  return '';
+}
+function sharedCellHTML(p, n){
+  const td = inner => `<td class="scen-td shared-td" colspan="${n}">${inner}</td>`;
+  if(!paramActive(p, null))
+    return `<td class="scen-td inactive-td shared-td" colspan="${n}" title="${escAttr(T('notUsed'))}"><span class="inactive-note">${escHtml(T(p.offKey))}</span></td>`;
+  if(p.key==='riskFreeRate' && multiOn()){
+    // One rate per currency, the base first: every column in a currency shares it.
+    return td(`<div class="rfr-list">` + usedCurrencies().map(c=>
+      `<div class="rfr-item"><span class="rfr-cur">${escHtml(c)}</span>${numberBox('shared-input', p, rfrOf(c), '', T('uPctPa'), ` data-cur="${escAttr(c)}"`)}</div>`
+    ).join('') + `</div>`);
+  }
+  const {pre, suf} = paramAffix(p, null);
+  const note = p.auto ? `<span class="shared-note" data-note="${p.key}">${escHtml(autoNote(p.key))}</span>` : '';
+  return td(`<div class="shared-line">${numberBox('shared-input', p, shared[p.key], pre, suf)}${note}</div>`);
+}
+function currencyOptions(selected){
+  const list = FX ? FX.codes() : [];
+  if(selected && !list.includes(selected)) list.push(selected);
+  list.sort();
+  return list.map(c=>`<option value="${c}"${c===selected?' selected':''}>${escHtml(c+' '+(FX ? FX.name(c, lang) : ''))}</option>`).join('');
+}
+function fmtDay(iso){
+  const d = new Date(String(iso||'') + 'T00:00:00Z');
+  if(isNaN(d)) return String(iso||'');
+  return d.toLocaleDateString(lang==='id' ? 'id-ID' : 'en-GB', {day:'numeric', month:'short', year:'numeric', timeZone:'UTC'});
+}
+// A rate with the digits that matter: 10,833.45 · 1.0832 · 0.000061.
+function fmtRate(r){
+  if(!(r > 0)) return '';
+  if(r >= 1000) return r.toLocaleString('en-US', {maximumFractionDigits:2});
+  if(r >= 1) return String(Number(r.toFixed(4)));
+  return String(Number(r.toPrecision(4)));
+}
+function fxSourceNote(sc){
+  if(Number(sc.fxRate) > 0) return T('fxCustom');
+  const src = FX && FX.source();
+  if(!src || !(spotOf(sc) > 0)) return T('fxNone');
+  return src.kind==='live' ? T('fxLive')(fmtDay(src.date)) : T('fxBundled')(fmtDay(src.date));
+}
+// The shared cash and year-1 budget as this column receives them.
+function capitalNote(i){
+  if(!plan || !plan.items[i] || !plan.items[i].ok) return '';
+  const it = plan.items[i], l = it.cur;
+  return T('fxCapital')(moneyFull(plan.ic * it.path[0], l), moneyFull(plan.budget[0] * it.path[1], l));
+}
+function fxCellHTML(sc, i){
+  const c = curOf(sc);
+  if(c === fxs.base) return `<td class="scen-td fx-td"><span class="fx-note">${escHtml(T('fxIsBase'))}</span></td>`;
+  const r = spotOf(sc);
+  return `<td class="scen-td fx-td">
+    <div class="input-wrap param-wrap"><span class="prefix">1 ${escHtml(fxs.base)} =</span><input class="param-input fx-input" type="text" inputmode="decimal" data-si="${i}" data-min="0.000001" data-max="1000000000" value="${escAttr(fmtRate(r))}"/><span class="suffix">${escHtml(c)}</span></div>
+    <div class="fx-note" data-fx-note="${i}">${escHtml(fxSourceNote(sc))}</div>
+    <div class="fx-note fx-capital" data-fx-cap="${i}">${escHtml(capitalNote(i))}</div>
+  </td>`;
+}
+// A column's own warnings, under its name: a cash balance that goes below
+// zero is money the model borrows at the risk-free rate, which no lender
+// offers, so it is said rather than left to look like a cheap win.
+function headerNotes(i){
+  const out = [];
+  const clamped = viewYr();
+  if(clamped < viewYear) out.push(`<span class="scen-header-sub">${T('cappedAt')(clamped)}</span>`);
+  const sf = scenarioResults[i] && scenarioResults[i].shortfalls;
+  if(sf && sf.own)  out.push(`<span class="scen-header-sub scen-warn">${escHtml(T('shortOwn')(sf.own.year))}</span>`);
+  if(sf && sf.rent) out.push(`<span class="scen-header-sub scen-warn">${escHtml(T('shortRent')(sf.rent.year))}</span>`);
+  return out.join('');
+}
+
 function buildTableHTML(){
   const n = scenarios.length;
   const colCount = n + 2;
 
   const thScens = scenarios.map((sc,i)=>{
-    const clamped = Math.min(viewYear, sc.horizon||30);
-    return `<th class="scen-th${i===0 && QS && QS.all().length ? ' has-preset' : ''}"><div class="scen-header-cell">
+    return `<th class="scen-th${QS && QS.all().length ? ' has-preset' : ''}"><div class="scen-header-cell">
       <div class="scen-header-actions">
         ${n>1?`<button type="button" class="col-grip" data-col-grip="${i}" title="${escAttr(T('dragTitle'))}" aria-label="${escAttr(T('dragTitle'))}">⠿</button>`:''}
         <div class="scen-name-field">
           <input class="scen-name-input" data-si="${i}" value="${escHtml(sc.name)}" placeholder="${T('scenPlaceholder')} ${i+1}"/>
-          ${i===0?presetPickerHTML(i):''}
+          ${presetPickerHTML(i)}
         </div>
         ${SharedIcon.button('duplicate', T('dupTitle'), 'btn-head-icon btn-dupe', `data-si="${i}"`)}
         ${n>1?SharedIcon.button('trash', T('removeTitle'), 'btn-head-icon rmv-scen', `data-si="${i}"`):''}
       </div>
-      ${clamped<viewYear?`<span class="scen-header-sub">${T('cappedAt')(clamped)}</span>`:''}
+      <div class="scen-header-notes">${headerNotes(i)}</div>
     </div></th>`;
   }).join('');
 
@@ -911,7 +1327,7 @@ function buildTableHTML(){
   let bodyHtml = '';
   renderRows.forEach((r,ri)=>{
     if(r.type==='sep'){
-      const sepIcon = {sepGeneral:'general', sepOwn:'own', sepRent:'rent'}[r.sepKey];
+      const sepIcon = {sepGeneral:'general', sepCurrency:'general', sepOwn:'own', sepRent:'rent'}[r.sepKey];
       const icnHtml = sepIcon ? `<span class="ricon ricon-${sepIcon}" aria-hidden="true"></span>` : '';
       bodyHtml += `<tr class="group-sep-tr"><td colspan="${colCount}">${icnHtml}${T(r.sepKey)}</td></tr>`;
       return;
@@ -964,6 +1380,27 @@ function buildTableHTML(){
       bodyHtml += `${trOpen}<td class="label-td"></td>${tds}${trailTd}</tr>`;
       return;
     }
+    if(r.type==='shared'){
+      const variant = r.p.tip && r.p.tip.indexOf('sens')===0 ? (multiOn() ? 'multi' : 'single')
+        : r.p.key==='monthlyBudgetIncrease' ? (shared.monthlyBudget > 0 ? 'manual' : 'auto') : null;
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T(r.p.labelKey))}${tipHtmlFor(r.p.tip, variant)}</td>${sharedCellHTML(r.p, n)}${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='fxPath'){
+      const opts = [['parity','optParity'],['hold','optHold']].map(([v,k])=>`<option value="${v}"${fxs.path===v?' selected':''}>${escHtml(T(k))}</option>`).join('');
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pFxPath'))}${tipHtmlFor('fxPath')}</td><td class="scen-td shared-td" colspan="${n}"><select class="fxpath-select">${opts}</select></td>${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='currency'){
+      const tds = scenarios.map((sc,i)=>`<td class="scen-td"><select class="cur-select" data-si="${i}">${currencyOptions(curOf(sc))}</select></td>`).join('');
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pScenCurrency'))}${tipHtmlFor('scenCurrency')}</td>${tds}${trailTd}</tr>`;
+      return;
+    }
+    if(r.type==='fxRate'){
+      const tds = scenarios.map((sc,i)=>fxCellHTML(sc, i)).join('');
+      bodyHtml += `${trOpen}<td class="label-td">${escHtml(T('pFxRate'))}${tipHtmlFor('fxRate')}</td>${tds}${trailTd}</tr>`;
+      return;
+    }
 
     // r.type==='param'
     const p = r.p;
@@ -995,9 +1432,11 @@ function buildTableHTML(){
   });
 
   const ml = metricLabel();
-  const ownTds  = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):'—'}</td>`; }).join('');
-  const rentTds = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):'—'}</td>`; }).join('');
-  const deltaTds= scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return `<td class="scen-td num-td">—</td>`; const d=v.own-v.rent; return `<td class="scen-td num-td ${deltaColor(d)}">${d>=0?'+':''}${fmtCurrency(d,symOf(scenarios[i]))}</td>`; }).join('');
+  // Results are the comparison's, so every column reads in the base currency.
+  const bl = baseLabel();
+  const ownTds  = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.own!==null?money(v.own,bl):'—'}</td>`; }).join('');
+  const rentTds = scenarios.map((_,i)=>{ const v=getMetricValues(i); return `<td class="scen-td num-td">${v.rent!==null?money(v.rent,bl):'—'}</td>`; }).join('');
+  const deltaTds= scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return `<td class="scen-td num-td">—</td>`; const d=v.own-v.rent; return `<td class="scen-td num-td ${deltaColor(d)}">${d>=0?'+':''}${money(d,bl)}</td>`; }).join('');
 
   const actionTds = scenarios.map((_,i)=>`<td class="scen-td action-td">
       <div class="scen-actions">
@@ -1030,28 +1469,42 @@ function rerenderOutputOnly(){
   const oTds = wrap.querySelectorAll('tr.out-own td.scen-td');
   const rTds = wrap.querySelectorAll('tr.out-rent td.scen-td');
   const dTds = wrap.querySelectorAll('tr.out-delta td.scen-td');
+  const s = baseLabel();
   scenarios.forEach((sc,i)=>{
-    const v = getMetricValues(i), s = symOf(sc);
-    if(oTds[i]) oTds[i].textContent = v.own!==null  ? fmtCurrency(v.own, s)  : '—';
-    if(rTds[i]) rTds[i].textContent = v.rent!==null ? fmtCurrency(v.rent, s) : '—';
+    const v = getMetricValues(i);
+    if(oTds[i]) oTds[i].textContent = v.own!==null  ? money(v.own, s)  : '—';
+    if(rTds[i]) rTds[i].textContent = v.rent!==null ? money(v.rent, s) : '—';
     if(dTds[i]){
       if(v.own===null){ dTds[i].textContent='—'; dTds[i].className='scen-td num-td'; return; }
       const d = v.own-v.rent;
-      dTds[i].textContent = (d>=0?'+':'')+fmtCurrency(d,s);
+      dTds[i].textContent = (d>=0?'+':'')+money(d,s);
       dTds[i].className   = 'scen-td num-td '+deltaColor(d);
     }
   });
+  updateNotes();
+}
+/* Everything an edit to one column can move in the others without changing
+   the table's shape: the Auto notes, the money each column receives, and the
+   warnings under each name. */
+function updateNotes(){
+  const wrap = document.getElementById('tableWrap');
+  if(!wrap) return;
+  wrap.querySelectorAll('.shared-note[data-note]').forEach(el=>{ el.textContent = autoNote(el.dataset.note); });
+  wrap.querySelectorAll('[data-fx-cap]').forEach(el=>{ el.textContent = capitalNote(+el.dataset.fxCap); });
+  wrap.querySelectorAll('.scen-header-notes').forEach((el,i)=>{ el.innerHTML = headerNotes(i); });
 }
 
-function recomputeScenario(si){
-  try{ scenarioResults[si] = computeModel(buildStateObj(scenarios[si])); }catch(err){ console.error(err); }
+// An edit anywhere is an edit everywhere: the shared cash and budget follow
+// the largest need, so every column is computed again.
+function recomputeScenario(){
+  recompute();
   if(persist) persist.schedule(); // per-scenario edits — save them
 }
 
 /* ── RERENDER ── */
 function rerender(){
   if(persist) persist.schedule(); // scenario edits funnel through here — save them
-  scenarioResults = scenarios.map(sc=>{ try{ return computeModel(buildStateObj(sc)); }catch(e){ console.error(e); return null; } });
+  recompute();
   const wrap = document.getElementById('tableWrap');
   if(!wrap) return;
   wrap.innerHTML = buildTableHTML();
@@ -1084,8 +1537,36 @@ function downloadCSV(){
   const esc = v => '"'+String(v).replace(/"/g,'""')+'"';
   const lines = [];
   lines.push([esc(T('tableHeaderParam')), esc(T('tableHeaderUnit')), ...scenarios.map(sc=>esc(sc.name))].join(','));
+  const each = f => scenarios.map((sc,i)=>esc(f(sc,i)));
   buildRenderRows().forEach(r=>{
     if(r.type==='sep' || r.type==='addPeriod' || r.type==='addCost') return;
+    /* A shared figure is written under every column, as it always was, so a
+       file still reads one value per scenario; it is read back from the
+       first column. The risk-free rate in multi-currency mode is each
+       column's currency's, with the base's on a row of its own. */
+    if(r.type==='shared'){
+      const p = r.p;
+      if(p.key==='riskFreeRate' && multiOn()){
+        lines.push([esc(T(p.labelKey)), esc(T('uPctPa')), ...each(sc=>rfrOf(curOf(sc)))].join(','));
+        lines.push([esc(T('pBaseRiskFree')), esc(T('uPctPa')), ...each(()=>rfrOf(fxs.base))].join(','));
+        return;
+      }
+      lines.push([esc(T(p.labelKey)), esc(csvUnit(p)), ...each(()=>shared[p.key]??0)].join(','));
+      return;
+    }
+    if(r.type==='fxPath'){
+      lines.push([esc(T('pBaseCurrency')), esc(''), ...each(()=>fxs.base)].join(','));
+      lines.push([esc(T('pFxPath')), esc(''), ...each(()=>fxs.path)].join(','));
+      return;
+    }
+    if(r.type==='currency'){
+      lines.push([esc(T('pScenCurrency')), esc(''), ...each(sc=>curOf(sc))].join(','));
+      return;
+    }
+    if(r.type==='fxRate'){
+      lines.push([esc(T('pFxRate')), esc('per 1 '+fxs.base), ...each(sc=>{ const v = spotOf(sc); return v > 0 ? v : ''; })].join(','));
+      return;
+    }
     if(r.type==='mode'){
       lines.push([esc(T(r.labelKey)), esc(''), ...scenarios.map(()=>esc(modes[r.modeKey]))].join(','));
       return;
@@ -1113,9 +1594,10 @@ function downloadCSV(){
   // mark scenarios with no value.
   // The empty second cell keeps these result rows aligned with the parameter
   // rows above, which carry a "Unit" column between the label and the scenarios.
-  lines.push([esc(T('ownOutputLabel')(ml)),  esc(''), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?fmtCurrency(v.own,symOf(scenarios[i])):''); })].join(','));
-  lines.push([esc(T('rentOutputLabel')(ml)), esc(''), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?fmtCurrency(v.rent,symOf(scenarios[i])):''); })].join(','));
-  lines.push([esc(T('deltaLabel')),          esc(''), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc(''); const d=v.own-v.rent; return esc((d>=0?'+':'')+fmtCurrency(d,symOf(scenarios[i]))); })].join(','));
+  const bl = baseLabel();
+  lines.push([esc(T('ownOutputLabel')(ml)),  esc(''), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.own!==null?money(v.own,bl):''); })].join(','));
+  lines.push([esc(T('rentOutputLabel')(ml)), esc(''), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); return esc(v.rent!==null?money(v.rent,bl):''); })].join(','));
+  lines.push([esc(T('deltaLabel')),          esc(''), ...scenarios.map((_,i)=>{ const v=getMetricValues(i); if(v.own===null) return esc(''); const d=v.own-v.rent; return esc((d>=0?'+':'')+money(d,bl)); })].join(','));
 
   const blob = new Blob([RVOExport.cleanCSV(lines.join('\n'))], {type:'text/csv;charset=utf-8'});
   const a = document.createElement('a');
@@ -1180,7 +1662,9 @@ function buildReverseLabelMaps(){
   return {paramByLabel, modeByLabel};
 }
 
-const RE_PERIOD = /^(?:rate period|periode bunga)\s+(\d+)$/i;
+// "Rate, period 1" / "Bunga, periode 1" as written since the October 2026
+// relabel, and "Rate Period 1" / "Periode Bunga 1" as written before it.
+const RE_PERIOD = /^(?:rate,?\s*period|bunga,\s*periode|periode bunga)\s+(\d+)$/i;
 const RE_SETUP  = /^(?:setup cost|biaya awal)\s+(\d+)$/i;
 const RE_OWN_ON = /^(?:own ongoing cost|biaya rutin beli)\s+(\d+)$/i;
 const RE_RENT_ON= /^(?:rent ongoing cost|biaya rutin sewa)\s+(\d+)$/i;
@@ -1224,6 +1708,11 @@ function buildScenariosFromCSV(text){
   if(nScen < 1) throw new Error('no scenarios');
 
   const {paramByLabel, modeByLabel} = buildReverseLabelMaps();
+  // The multi-currency rows, by label in either language.
+  const fxByLabel = {};
+  ['en','id'].forEach(lg=>{ [['pBaseCurrency','base'],['pBaseRiskFree','baseRfr'],['pFxPath','path'],['pScenCurrency','cur'],['pFxRate','rate']]
+    .forEach(([lk,k])=>{ fxByLabel[String(LANG_SENS[lg][lk]).trim().toLowerCase()] = k; }); });
+  const fxRows = {};
   const newModes = {mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple'};
   const sym = (document.getElementById('currencySelect') || {}).value || '$';
   const newScen = [];
@@ -1248,6 +1737,10 @@ function buildScenariosFromCSV(text){
     const lc = label.toLowerCase();
     const valAt = j => (r[2+j] !== undefined ? String(r[2+j]) : '');
 
+    if(fxByLabel[lc]){
+      fxRows[fxByLabel[lc]] = Array.from({length:nScen}, (_,j)=>valAt(j).trim());
+      continue;
+    }
     // Section mode rows (value identical across columns → read first).
     if(modeByLabel[lc]){
       const v = String(valAt(0)).trim().toLowerCase();
@@ -1302,7 +1795,29 @@ function buildScenariosFromCSV(text){
       if(Array.isArray(sc[k])){ sc[k] = sc[k].filter(Boolean); if(!sc[k].length) sc[k]=null; }
     });
   });
-  return {scenarios:newScen, modes:newModes};
+
+  /* What every column shares comes from the first column. A file saved when
+     each column had its own time horizon, rate, cash and budget opens with
+     the first column's (the base case's) for all of them. */
+  const newShared = sharedFrom(Object.assign({}, DEFAULT_SHARED,
+    ...SHARED_KEYS.filter(k=>newScen[0][k]!==undefined).map(k=>({[k]:newScen[0][k]}))));
+  const code = s => /^[A-Za-z]{3}$/.test(String(s||'').trim()) ? String(s).trim().toUpperCase() : null;
+  let newFx = null;
+  if(fxRows.base && code(fxRows.base[0])){
+    newFx = {on:true, base:code(fxRows.base[0]), path: fxRows.path && fxRows.path[0]==='hold' ? 'hold' : 'parity', rfr:{}};
+    newScen.forEach((sc,j)=>{
+      sc.currency = (fxRows.cur && code(fxRows.cur[j])) || newFx.base;
+      const r = fxRows.rate ? parseNum(fxRows.rate[j]) : 0;
+      sc.fxRate = sc.currency !== newFx.base && r > 0 ? r : null;
+      const rf = Number(sc.riskFreeRate);
+      if(Number.isFinite(rf) && newFx.rfr[sc.currency]===undefined) newFx.rfr[sc.currency] = rf;
+    });
+    const b = fxRows.baseRfr ? parseFloat(String(fxRows.baseRfr[0]).replace(/,/g,'')) : NaN;
+    if(Number.isFinite(b)) newFx.rfr[newFx.base] = b;
+    else if(newFx.rfr[newFx.base]===undefined) newFx.rfr[newFx.base] = newShared.riskFreeRate;
+  }
+  newScen.forEach(sc=>{ SHARED_KEYS.forEach(k=>{ delete sc[k]; }); });
+  return {scenarios:newScen, modes:newModes, shared:newShared, fx:newFx};
 }
 
 function applyUploadedCSV(text){
@@ -1312,14 +1827,16 @@ function applyUploadedCSV(text){
   if(!parsed || !parsed.scenarios || !parsed.scenarios.length){ alert(T('csvParseError')); return; }
   scenarios = parsed.scenarios;
   modes = parsed.modes;
+  shared = parsed.shared;
+  if(parsed.fx) fxs = parsed.fx;
+  else if(multiOn()){ fxs.on = false; scenarios.forEach(s=>{ s.currency = null; s.fxRate = null; }); }
   // Seed any detailed lists that the CSV implied but did not fully populate.
   if(modes.mortgageMode==='detailed')  seedDetailedLists('mortgageMode');
   if(modes.ownCostsMode==='detailed')  seedDetailedLists('ownCostsMode');
   if(modes.rentCostsMode==='detailed') seedDetailedLists('rentCostsMode');
-  const maxH = Math.max(...scenarios.map(s=>s.horizon||1));
-  const yi = document.getElementById('yearInput');
-  if(yi) yi.max = maxH;
+  syncYearMax();
   rerender();
+  syncControls();
 }
 
 function handleCSVUpload(file){
@@ -1340,8 +1857,11 @@ function downloadScenarioCashflow(si, which){
   const res = scenarioResults[si];
   if(!res || !res.rows || !res.rows.length || !global_RVOExport()) return;
   const slug = scenarioSlug(si);
-  if(which==='own')  RVOExport.downloadCSV(`${slug}_own_cashflow.csv`,  RVOExport.ownCashflowCSV(res.rows));
-  else               RVOExport.downloadCSV(`${slug}_rent_cashflow.csv`, RVOExport.rentCashflowCSV(res.rows));
+  /* A cashflow is the column's own ledger, in the currency its money moves
+     in. In multi-currency mode the file says which, and at what rate. */
+  const note = multiOn() ? T('cashflowCurrencyNote')(curOf(scenarios[si]), fxs.base, fmtRate(spotOf(scenarios[si]))) + '\n' : '';
+  if(which==='own')  RVOExport.downloadCSV(`${slug}_own_cashflow.csv`,  note + RVOExport.ownCashflowCSV(res.rows));
+  else               RVOExport.downloadCSV(`${slug}_rent_cashflow.csv`, note + RVOExport.rentCashflowCSV(res.rows));
 }
 function global_RVOExport(){ return typeof RVOExport !== 'undefined' && RVOExport; }
 
@@ -1353,11 +1873,12 @@ function scenarioChartData(si, met){
   const rows = (res && res.rows) ? res.rows : [];
   const ownKey  = met==='netEquity' ? 'ownNetEquity'  : met==='cash' ? 'ownCash'  : 'ownAccumCost';
   const rentKey = met==='netEquity' ? 'rentNetEquity' : met==='cash' ? 'rentCash' : 'rentAccumCost';
+  const at = (r, key) => (baseRowOf(si, r.year) || {})[key] || 0;
   return {
     labels: rows.map(r=>r.year),
     series: [
-      {label:T('seriesOwn'),  data:rows.map(r=>r[ownKey]||0),  color:cssVar('--line-a')},
-      {label:T('seriesRent'), data:rows.map(r=>r[rentKey]||0), color:cssVar('--gold')},
+      {label:T('seriesOwn'),  data:rows.map(r=>at(r, ownKey)),  color:cssVar('--line-a')},
+      {label:T('seriesRent'), data:rows.map(r=>at(r, rentKey)), color:cssVar('--gold')},
     ],
   };
 }
@@ -1435,12 +1956,12 @@ function renderChartModal(){
   chartModalLegendItems().forEach(it=>{ legendEl.appendChild(SharedLegend.item(it.swatch, it.label)); });
   // (Re)build the chart
   const data = scenarioChartData(chartModal.si, chartModal.met);
-  const sym = symOf(scenarios[chartModal.si]);
+  const sym = pfx(baseLabel());
   const canvas = overlay.querySelector('.cm-canvas');
   if(chartModal.chart){ chartModal.chart.destroy(); chartModal.chart = null; }
   chartModal.chart = RVOExport.renderComparisonChart(canvas, {
     labels: data.labels, series: data.series, sym,
-    yAxisTitle: `${metricLabelOf(chartModal.met)} (${sym})`,
+    yAxisTitle: `${metricLabelOf(chartModal.met)} (${baseLabel()})`,
   });
 }
 function openChartModal(si){
@@ -1499,9 +2020,9 @@ function gcChartData(){
     if(!rows.length) return;
     const color = globalChart.colors[i] || gcColour(i);
     if(globalChart.showOwn)
-      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesOwn')}`,  data:rows.map(r=>r[ownKey]||0),  color, dash:null});
+      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesOwn')}`,  data:rows.map(r=>(baseRowOf(i, r.year)||{})[ownKey]||0),  color, dash:null});
     if(globalChart.showRent)
-      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesRent')}`, data:rows.map(r=>r[rentKey]||0), color, dash:[5,4]});
+      series.push({label:`${sc.name||T('scenPlaceholder')}: ${T('seriesRent')}`, data:rows.map(r=>(baseRowOf(i, r.year)||{})[rentKey]||0), color, dash:[5,4]});
   });
   return {labels, series};
 }
@@ -1612,12 +2133,13 @@ function renderGlobalChartModal(){
   if(globalChart.showOwn)  hint.appendChild(SharedLegend.item({color:ink, width:2.5}, T('seriesOwn'), 'legend-item gc-line-key'));
   if(globalChart.showRent) hint.appendChild(SharedLegend.item({color:ink, width:2.5, dash:[5,4]}, T('seriesRent'), 'legend-item gc-line-key'));
   const data = gcChartData();
-  const sym = symOf(scenarios[0]);
+  // Every scenario on one axis, in the base currency.
+  const sym = pfx(baseLabel());
   const canvas = overlay.querySelector('.gc-canvas');
   if(globalChart.chart){ globalChart.chart.destroy(); globalChart.chart = null; }
   globalChart.chart = RVOExport.renderComparisonChart(canvas, {
     labels: data.labels, series: data.series, sym,
-    yAxisTitle: `${metricLabelOf(globalChart.met)} (${sym})`,
+    yAxisTitle: `${metricLabelOf(globalChart.met)} (${baseLabel()})`,
   });
 }
 function openGlobalChartModal(){
@@ -1642,7 +2164,8 @@ function wireEvents(){
     el.addEventListener('input', e=>{ scenarios[+e.target.dataset.si].name = e.target.value; });
   });
 
-  document.querySelectorAll('.param-input').forEach(el=>{
+  // A column's own fields (shared and exchange-rate fields have their own below).
+  document.querySelectorAll('.param-input[data-si][data-key]').forEach(el=>{
     el.addEventListener('focus', e=>{
       const p = PARAM_MAP[e.target.dataset.key];
       const val = scenarios[+e.target.dataset.si][e.target.dataset.key];
@@ -1679,10 +2202,6 @@ function wireEvents(){
       if(ptype==='percent') val = Math.round(val*100)/100;
       sc[key] = val;
       e.target.value = inputText(p, val);
-      if(key==='horizon'){
-        const maxH = Math.max(...scenarios.map(s=>s.horizon||1));
-        document.getElementById('yearInput').max = maxH;
-      }
       recomputeScenario(si);
       // Rebuild when the rate periods' year ranges follow the term, or when
       // this field switches another one on or off (a budget set or cleared
@@ -1693,9 +2212,90 @@ function wireEvents(){
         return;
       }
       rerenderOutputOnly();
-      updateClampNote(si);
     });
     el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+  });
+
+  /* Shared fields: one figure for every column (a risk-free rate in
+     multi-currency mode is one per currency, data-cur), with the same rules
+     as a column's: limits pulled back and said, two decimals on a "%", a
+     cleared Auto field back to Auto. */
+  document.querySelectorAll('.shared-input').forEach(el=>{
+    el.addEventListener('focus', e=>{
+      const p = PARAM_MAP[e.target.dataset.key];
+      const cur = e.target.dataset.cur;
+      const val = cur ? fxs.rfr[cur] : shared[p.key];
+      e.target.value = isAutoZero(p, val) ? '' : String(val ?? '').replace(/,/g,'');
+    });
+    el.addEventListener('input', e=>{ if(e.target.dataset.ptype==='currency') SharedFmt.liveFormat(e.target,{maxDecimals:2}); });
+    el.addEventListener('blur', e=>{
+      const p = PARAM_MAP[e.target.dataset.key];
+      if(!p) return;
+      const cur = e.target.dataset.cur, ptype = p.type;
+      const before = activeSignature(null);
+      const old = cur ? fxs.rfr[cur] : shared[p.key];
+      const raw = String(e.target.value).trim();
+      let val = (p.auto && raw==='') ? 0 : ptype==='integer' ? parseIntSafe(raw, old) : parseFloatSafe(raw, old);
+      const typed = val;
+      if(p.min!=null) val = Math.max(p.min, val);
+      if(p.max!=null) val = Math.min(p.max, val);
+      if(val !== typed && window.SharedBounds){
+        const {pre, suf} = paramAffix(p, null);
+        SharedBounds.hint(e.target, T(typed > val ? 'hintMax' : 'hintMin')+' '
+          + (pre ? pre+(pre.length>1?' ':'') : '') + fmtInputVal(val, ptype) + (suf ? ' '+suf : ''));
+      }
+      if(ptype==='percent') val = Math.round(val*100)/100;
+      if(cur) fxs.rfr[cur] = val; else shared[p.key] = val;
+      e.target.value = inputText(p, val);
+      if(p.key==='horizon') syncYearMax();
+      recompute();
+      if(persist) persist.schedule();
+      // The budget set or cleared brings its increase into use or out of it,
+      // and a new horizon can cap the year shown: both redraw the table.
+      if(activeSignature(null)!==before || p.key==='horizon'){
+        rerender();
+        refocus(e.relatedTarget);
+        return;
+      }
+      rerenderOutputOnly();
+    });
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+  });
+
+  // Multi-currency: a column's currency, its rate to the base, and the path.
+  document.querySelectorAll('.cur-select').forEach(el=>{
+    el.addEventListener('change', e=>{
+      const sc = scenarios[+e.target.dataset.si];
+      // The figures are now read in this currency (relabelled, not converted),
+      // at the live rate until one is typed.
+      sc.currency = e.target.value;
+      sc.fxRate = null;
+      rerender();
+      refocus(e.target);
+    });
+  });
+  document.querySelectorAll('.fx-input').forEach(el=>{
+    el.addEventListener('focus', e=>{ e.target.value = String(e.target.value).replace(/,/g,''); });
+    el.addEventListener('blur', e=>{
+      const sc = scenarios[+e.target.dataset.si];
+      const raw = String(e.target.value).trim();
+      const live = FX ? FX.cross(fxs.base, curOf(sc)) : 0;
+      if(raw===''){ sc.fxRate = null; }
+      else {
+        let v = parseNum(raw);
+        const typed = v;
+        v = Math.min(1e9, Math.max(1e-6, v));
+        if(v !== typed && window.SharedBounds) SharedBounds.hint(e.target, T(typed > v ? 'hintMax' : 'hintMin')+' '+fmtRate(v));
+        // Typing the live rate back is the live rate, not a rate of your own.
+        sc.fxRate = (live > 0 && fmtRate(v) === fmtRate(live)) ? null : v;
+      }
+      rerender();
+      refocus(e.relatedTarget);
+    });
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter') e.target.blur(); });
+  });
+  document.querySelectorAll('.fxpath-select').forEach(el=>{
+    el.addEventListener('change', e=>{ fxs.path = e.target.value==='hold' ? 'hold' : 'parity'; rerender(); refocus(e.target); });
   });
 
   /* A frequency carries the money amount in the row under it, so moving one
@@ -1916,31 +2516,24 @@ function wireEvents(){
 }
 
 // Which fields a scenario uses, as a string, to tell when an edit changed it.
-const activeSignature = sc => PARAMS.map(p => paramActive(p, sc) ? 1 : 0).join('');
+// (null: the shared fields only.)
+const activeSignature = sc => PARAMS.filter(p => sc || p.shared).map(p => paramActive(p, sc) ? 1 : 0).join('');
 
 /* A rebuild replaces every cell, so the control a reader was on, or moving
    to with Tab, is found again by what it edits and given the focus back. */
 function refocus(el){
-  if(!el || !el.dataset || el.dataset.si===undefined || !el.classList.length) return;
-  const attrs = ['si','key','list','idx'].filter(k=>el.dataset[k]!==undefined).map(k=>`[data-${k}="${el.dataset[k]}"]`).join('');
+  // (The rebuild has already detached `el`, so it is matched by what it edits.)
+  if(!el || !el.dataset || !el.classList.length) return;
+  const attrs = ['si','key','list','idx','cur'].filter(k=>el.dataset[k]!==undefined).map(k=>`[data-${k}="${el.dataset[k]}"]`).join('');
+  if(!attrs) return;
   const twin = document.querySelector('#tableWrap .'+[...el.classList].join('.')+attrs);
   if(twin && twin!==document.activeElement) twin.focus();
-}
-
-function updateClampNote(si){
-  const cells = document.querySelectorAll('.scen-header-cell');
-  const cell = cells[si]; if(!cell) return;
-  const clamped = Math.min(viewYear, scenarios[si].horizon||30);
-  let sub = cell.querySelector('.scen-header-sub');
-  if(clamped < viewYear){
-    if(!sub){ sub=document.createElement('span'); sub.className='scen-header-sub'; cell.appendChild(sub); }
-    sub.textContent = T('cappedAt')(clamped);
-  } else if(sub) sub.remove();
 }
 
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', ()=>{
   applyLang();
+  syncYearMax();
   rerender();
 
   const themeBtn = document.getElementById('themeToggle');
@@ -1952,8 +2545,31 @@ document.addEventListener('DOMContentLoaded', ()=>{
     localStorage.setItem('pf-theme', document.body.classList.contains('light') ? 'light' : 'dark');
   });
 
+  /* Single-currency mode: the symbol labels every column, and stands for the
+     code multi-currency mode would start from ($ is AUD unless a Quick Start
+     city already said which dollar). Every column is now in it. */
   document.getElementById('currencySelect').addEventListener('change', e=>{
-    scenarios.forEach(sc=>{ sc.currencySymbol = e.target.value; });
+    const sym = e.target.value;
+    if(SharedCurrency.toSymbol(fxs.base, null) !== sym) fxs.base = SharedCurrency.toCode(sym, fxs.base);
+    scenarios.forEach(sc=>{ sc.currencySymbol = sym; sc.currency = null; sc.fxRate = null; });
+    rerender();
+    syncControls();
+  });
+
+  // Multi-currency: the tick box and the base currency.
+  const fxToggle = document.getElementById('fxModeToggle');
+  if(fxToggle) fxToggle.addEventListener('change', e=>{ setMulti(e.target.checked); rerender(); syncControls(); });
+  const baseSel = document.getElementById('baseCurrencySelect');
+  if(baseSel) baseSel.addEventListener('change', e=>{ setBase(e.target.value); rerender(); syncControls(); });
+
+  /* A live rate arriving (or refreshed) moves every column on a live rate,
+     unless the reader is typing in the table: a redraw would drop their
+     cursor, and the field redraws on blur anyway. */
+  if(FX) FX.onChange(()=>{
+    syncControls();
+    if(!multiOn()) return;
+    const a = document.activeElement;
+    if(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName) && a.closest('#tableWrap')) return;
     rerender();
   });
 
@@ -1966,7 +2582,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 
   document.getElementById('yearInput').addEventListener('input', e=>{
-    viewYear = Math.max(1, parseIntSafe(e.target.value, 30));
+    viewYear = Math.max(1, Math.min(plan ? plan.H : 100, parseIntSafe(e.target.value, 30)));
     const wrap = document.getElementById('tableWrap');
     if(wrap){ wrap.innerHTML = buildTableHTML(); wireEvents(); }
   });
@@ -1988,19 +2604,84 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if(compareBtn) compareBtn.addEventListener('click', openGlobalChartModal);
 
   /* ── Mini cache ──────────────────────────────────────────────────────────
-     The whole comparison is the scenarios array, so persist it and rebuild the
-     table on revisit — a returning user keeps every scenario they configured. */
+     The whole comparison is the scenarios, the figures they share, the
+     currency settings and the section modes, so persist them and rebuild the
+     table on revisit: a returning user keeps every scenario they configured.
+     A cache or file from before the shared figures takes them from its first
+     column, as an old CSV does. */
   if(window.Persist){
     persist = Persist.init('rentvsownhouse-sensitivity', {
-      onRestore: function(){ rerender(); },
+      onRestore: function(){ syncYearMax(); rerender(); syncControls(); },
       extra: {
-        save: function(){ return { scenarios: scenarios }; },
-        restore: function(e){ if(e && Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios; }
+        save: function(){ return { scenarios: scenarios, shared: shared, fx: fxs, modes: modes }; },
+        restore: function(e){
+          if(!e) return;
+          if(Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios;
+          shared = sharedFrom(e.shared || scenarios[0]);
+          scenarios.forEach(sc=>{ SHARED_KEYS.forEach(k=>{ delete sc[k]; }); });
+          const f = e.fx && typeof e.fx === 'object' ? e.fx : {};
+          fxs = {on: !!f.on, base: /^[A-Z]{3}$/.test(f.base) ? f.base : SharedCurrency.toCode(pageSym(), DEFAULT_FX.base),
+                 path: f.path==='hold' ? 'hold' : 'parity', rfr: (f.rfr && typeof f.rfr === 'object') ? Object.assign({}, f.rfr) : {}};
+          if(e.modes && typeof e.modes === 'object') ['mortgageMode','ownCostsMode','rentCostsMode'].forEach(k=>{
+            if(e.modes[k]==='simple' || e.modes[k]==='detailed') modes[k] = e.modes[k];
+          });
+        }
       }
     });
     // No Quick Start row on this page, so save/open sit in the header.
     SharedScenario.mount('.header-right', { tool: 'rentvsownhouse-sensitivity', persist: persist });
   }
+  syncControls();
 });
+
+/* The controls bar follows the state: the symbol picker in one currency,
+   the base-currency picker (ISO codes) in several, the rates' source, and a
+   warning when columns in different currencies are being read as one. */
+function syncControls(){
+  const on = multiOn();
+  const toggle = document.getElementById('fxModeToggle');
+  if(toggle) toggle.checked = on;
+  const lbl = document.getElementById('currencyLabel');
+  if(lbl) lbl.textContent = T(on ? 'labelBase' : 'labelCurrency');
+  const symSel = document.getElementById('currencySelect');
+  if(symSel) symSel.hidden = on;
+  const baseSel = document.getElementById('baseCurrencySelect');
+  if(baseSel){
+    baseSel.hidden = !on;
+    if(on){ baseSel.innerHTML = currencyOptions(fxs.base); baseSel.value = fxs.base; }
+  }
+  const src = document.getElementById('fxSource');
+  if(src){
+    src.hidden = !on;
+    if(on){
+      const s = FX && FX.source();
+      src.textContent = '';
+      if(!s) src.textContent = T('fxSourceNone');
+      else if(s.kind==='live'){
+        const [before, after] = T('fxSourceLive')('\u0000', fmtDay(s.date)).split('\u0000');
+        const a = document.createElement('a');
+        a.href = s.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = s.name;
+        src.append(before, a, after);
+      } else src.textContent = T('fxSourceBundled')(fmtDay(s.date));
+    }
+  }
+  const warn = document.getElementById('fxWarn');
+  if(warn){
+    const codes = [...new Set(scenarios.map(s=>s.currency).filter(Boolean))];
+    const mixed = !on && (codes.length > 1 || (codes.length === 1 && codes[0] !== fxs.base));
+    warn.hidden = !mixed;
+    if(mixed) warn.textContent = T('fxWarn')([...new Set([fxs.base, ...codes])].join(', '));
+  }
+}
+
+/* Read-only view for the audit harnesses (_audit/integrity.mjs): the plan
+   and each column's results in the base currency, never a way to set them. */
+window.__RVOS = {
+  plan: () => plan && JSON.parse(JSON.stringify({H:plan.H, parity:plan.parity, rB:plan.rB, ic:plan.ic, icFrom:plan.icFrom,
+    icManual:plan.icManual, budget:plan.budget, bFrom:plan.bFrom, bManual:plan.bManual,
+    items:plan.items.map(it=>({cur:it.cur, s0:it.s0, ok:it.ok, rL:it.rL, icAuto:it.icAuto, path:it.path}))})),
+  series: (i, key) => ((scenarioResults[i] && scenarioResults[i].rows) || []).map(r => (baseRowOf(i, r.year) || {})[key]),
+  state: () => JSON.parse(JSON.stringify({scenarios, shared, fx: fxs, modes})),
+};
 
 })();

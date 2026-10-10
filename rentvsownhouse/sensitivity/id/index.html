@@ -54,6 +54,7 @@
   "keywords": "analisis sensitivitas sewa vs beli, skenario sewa vs beli rumah, perbandingan asumsi properti, simulasi KPR vs sewa, analisis investasi properti, alternatif gratis software analis properti",
   "featureList": [
     "Bandingkan beberapa skenario sewa vs beli secara berdampingan dalam satu tabel",
+    "Bandingkan rumah di kota dan mata uang berbeda dengan modal awal dan anggaran bulanan yang sama, dikonversi ke satu mata uang dasar dengan kurs terkini",
     "Uji bagaimana setiap asumsi — kenaikan harga, bunga KPR, inflasi sewa, biaya — mengubah hasilnya",
     "Alternatif gratis untuk software analisis properti bespoke dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah",
     "Tersedia dalam bahasa Indonesia dan Inggris",
@@ -155,8 +156,14 @@
 <!-- CONTROLS BAR -->
 <div class="controls-bar card">
   <div class="ctrl-row">
-    <span class="controls-label" data-i18n="labelCurrency">Simbol Mata Uang:</span>
+    <span class="controls-label" id="currencyLabel" data-i18n="labelCurrency">Simbol Mata Uang:</span>
     <select class="ctrl-select" id="currencySelect" data-currency-symbols></select>
+    <select class="ctrl-select" id="baseCurrencySelect" data-no-persist hidden aria-labelledby="currencyLabel"></select>
+  </div>
+  <div class="ctrl-row fx-row">
+    <span class="fx-toggle-wrap"><label class="fx-toggle"><input type="checkbox" id="fxModeToggle" data-no-persist/><span data-i18n="fxModeLabel">Multi-mata uang</span></label><span class="tip-icon" data-tip-key="fxMode" data-tip="Compare homes priced in different currencies. Results and charts are in the base currency, and every column gets the same cash and budget at its exchange rate.">?</span></span>
+    <span class="fx-source" id="fxSource" hidden></span>
+    <span class="fx-warn" id="fxWarn" hidden></span>
   </div>
   <div class="ctrl-row">
     <span class="controls-label" data-i18n="labelMetric">Metrik:</span>
@@ -169,7 +176,7 @@
   <div class="ctrl-row year-wrap">
     <span class="controls-label" data-i18n="labelAtYear">Di tahun:</span>
     <input type="number" class="year-input" id="yearInput" data-unit="year" min="1" max="100" value="30"/>
-    <span class="year-hint" data-i18n="yearHint">(dibatasi oleh jangka waktu masing-masing skenario)</span>
+    <span class="year-hint" data-i18n="yearHint">(hingga jangka waktu)</span>
   </div>
   <div class="ctrl-row csv-actions">
     <input type="file" id="csvFileInput" accept=".csv,text/csv" hidden/>
@@ -198,6 +205,7 @@
 <script src="../../cashflow-export.js"></script>
 <script src="../../engine.js"></script>
 <script src="../../quickstart-data.js"></script>
+<script src="../fx.js"></script>
 <script>window.DEFAULT_LANG='id';</script>
 <script src="../script.js"></script>
 <script src="tour.js"></script>

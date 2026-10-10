@@ -20,15 +20,29 @@ window.__TOUR = {
       body: 'Add a column for every case you want to test, for example different ' +
             'deposits, mortgage rates, or cities. Edit any assumption inline and the whole ' +
             'table recalculates instantly. Each field shows its unit, and a figure past a ' +
-            'row\'s limits is pulled back to it. The <strong>⚡</strong> picker on the first ' +
-            'column searches every Quick Start city and home and fills the column with one; ' +
-            'drag a column right to load another.'
+            'row\'s limits is pulled back to it. The <strong>⚡</strong> picker on every ' +
+            'column searches every Quick Start city and home and fills that column with one.'
+    },
+    {
+      target: '#tableWrap tr.group-sep-tr',
+      title: '② The same money in every column',
+      body: 'The time horizon, risk-free rate, initial cash and budget are one row for the ' +
+            'whole table, so no scenario wins with a bigger cheque. Left on <strong>Auto</strong>, ' +
+            'cash and budget take the most any column needs and say which one; a cheaper home ' +
+            'banks the difference.'
+    },
+    {
+      target: '.fx-row',
+      title: '③ Homes in different currencies',
+      body: 'Tick <strong>Multi-currency</strong> to give each column its own currency and ' +
+            'exchange rate (live from ExchangeRate-API, or your own). Every result and chart is ' +
+            'then in the base currency, and each column gets the same cash and budget at its rate.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
-      title: '② Choose the metric and year',
+      title: '④ Choose the metric and year',
       body: 'Compare on <strong>Net equity</strong>, <strong>Liquid cash</strong> or ' +
             '<strong>Accumulated cost</strong>, and set the <strong>year</strong> to ' +
             'evaluate at. <strong>Own minus rent</strong> at the bottom takes the colour of ' +
@@ -36,7 +50,7 @@ window.__TOUR = {
     },
     {
       target: '.csv-actions',
-      title: '③ Compare, export, and reload',
+      title: '⑤ Compare, export, and reload',
       body: 'Use <strong>Compare</strong> to chart every scenario together, download the ' +
             'grid as CSV, or upload a saved CSV to rebuild your scenarios later. ' +
             'Everything runs privately in your browser.'

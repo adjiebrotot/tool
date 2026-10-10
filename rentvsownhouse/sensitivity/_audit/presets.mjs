@@ -10,8 +10,12 @@
 //       main page
 //   Q2  the column is named after the scenario, and the page currency (the
 //       picker and every column) follows the city's symbol
-//   Q3  only the first column has the picker; after a drag the column now
-//       first has it, and the scenario moved right keeps all its figures
+//       (Q1, Q2, Q4 and Q5 load into a table of one column: the Sensitivity
+//       page shares the time horizon, rate, cash and budget across its
+//       columns, so only a lone column is the main page's scenario exactly)
+//   Q3  every column has the picker, also after a drag; a scenario moved
+//       right keeps all its own figures; a second city in the same currency
+//       keeps one currency, and the shared cash is the larger of the two needs
 //   Q4  with the detailed modes on, a scenario still loads (a single-rate
 //       one seeds one rate period, a staged loan brings its own schedule,
 //       and the cost lists are seeded) and gives the main page's exports;
@@ -20,6 +24,9 @@
 //   Q6  search: the list shows exactly the scenarios whose city, country,
 //       currency or home has every word typed, the way the Cost of Living
 //       Comparator's city picker matches
+//   Q7  a city in another currency beside another column turns multi-currency
+//       on, with the base kept at the first city's currency, and its own
+//       currency and risk-free rate in its column
 //
 // Run: node presets.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
@@ -55,10 +62,12 @@ async function open(url){
   await page.evaluate(()=>{ window.__csv=null; RVOExport.downloadCSV=(fn,txt)=>{ window.__csv=txt; }; });
   return page;
 }
+// Down to one column, so what the columns share is this one's alone.
+const alone = page => page.evaluate(()=>{ while(document.querySelectorAll('.rmv-scen').length) document.querySelector('.rmv-scen[data-si="1"]').click(); });
 // Pick through the popover, as a reader would: open it, type, press the row.
-const pickCity = (page, sid) => page.evaluate(async (sid)=>{
+const pickCity = (page, sid, si=0) => page.evaluate(async ([sid, si])=>{
   const sleep = ms => new Promise(r=>setTimeout(r, ms));
-  document.querySelector('.scen-preset[data-si="0"]').click();
+  document.querySelector('.scen-preset[data-si="'+si+'"]').click();
   await sleep(10);
   const input = document.querySelector('.scen-preset-pop.open .scen-preset-search');
   const [c, t] = sid.split('/');
@@ -67,7 +76,7 @@ const pickCity = (page, sid) => page.evaluate(async (sid)=>{
   const row = document.querySelector('.scen-preset-pop .combo-opt[data-sid="'+sid+'"]');
   if(!row) throw new Error('no row for '+sid+' after typing "'+input.value+'"');
   row.dispatchEvent(new MouseEvent('mousedown', {bubbles:true, cancelable:true}));
-}, sid);
+}, [sid, si]);
 // The main page's own picker: the city's row, then the home.
 const pickMain = (page, sid) => page.evaluate((sid)=>{
   const [c, t] = sid.split('/');
@@ -121,6 +130,7 @@ const info = await main.evaluate(()=>{
 const ref = {};
 {
   const sens = await open(SENS);
+  await alone(sens);
   const bad1 = [], bad2 = [];
   for(const sid of all){
     if(!(await pickMain(main, sid))){ bad1.push(sid+' (main page has no such home)'); continue; }
@@ -144,24 +154,33 @@ const ref = {};
   const sens = await open(SENS);
   await pickCity(sens, 'perth/apt-2br');
   const before = await header(sens);
-  check('Q3 only the first column has the picker', JSON.stringify(before.pickers)==='["0"]', JSON.stringify(before.pickers));
-  const perthOwn = await sensCsv(sens,'own',0);
+  check('Q3 every column has the picker', JSON.stringify(before.pickers)==='["0","1"]', JSON.stringify(before.pickers));
+  // A column's own figures: every input that carries its index.
+  const own = si => sens.evaluate(si=>[...document.querySelectorAll('[data-si="'+si+'"]')].filter(e=>e.matches('input,select'))
+    .map(e=>(e.dataset.key||e.className)+'='+(e.type==='checkbox'?e.checked:e.value)).join(';'), si);
+  const perthInputs = await own(0);
   // Move column 0 one place right with the grip's arrow key (as drag.mjs does).
   await sens.focus('[data-col-grip="0"]');
   await sens.keyboard.press('ArrowRight');
   await sens.waitForTimeout(100);
   await pickCity(sens, 'melbourne/apt-2br');
   const after = await header(sens);
-  check('Q3 after a move the new first column has the picker', JSON.stringify(after.pickers)==='["0"]', JSON.stringify(after.pickers));
+  check('Q3 after a move every column still has the picker', JSON.stringify(after.pickers)==='["0","1"]', JSON.stringify(after.pickers));
   check('Q3 Melbourne first, Perth second', after.names[0]===info['melbourne/apt-2br'].label && after.names[1]===info['perth/apt-2br'].label, after.names.join(' | '));
-  check('Q3 Perth moved right keeps its figures', diffAt(perthOwn, await sensCsv(sens,'own',1))===null);
-  check('Q3 Melbourne matches the main page', diffAt(ref['melbourne/apt-2br'][0], await sensCsv(sens,'own',0))===null);
+  check('Q3 Perth moved right keeps its own figures', (await own(1))===perthInputs);
+  const st = await sens.evaluate(()=>({fx: window.__RVOS.state().fx.on, plan: window.__RVOS.plan(),
+    note: document.querySelector('.shared-note[data-note="initialCash"]').textContent}));
+  const need = st.plan.items.map(i=>i.icAuto);
+  check('Q3 two cities in one currency stay one currency, and the shared cash is the larger need',
+    !st.fx && st.plan.ic===Math.max(...need) && st.note.includes(after.names[need.indexOf(Math.max(...need))]),
+    `multi ${st.fx}, cash ${st.plan.ic} of needs ${need.join(' / ')}, "${st.note}"`);
   await sens.close();
 }
 
 // Q4: detailed modes on before a city is loaded.
 {
   const sens = await open(SENS);
+  await alone(sens);
   await sens.evaluate(()=>['mortgageMode','ownCostsMode','rentCostsMode'].forEach(k=>document.querySelector('.mode-seg[data-mode-key="'+k+'"] .seg-btn[data-val="detailed"]').click()));
   await pickCity(sens, 'jakarta/apt-2br');
   const rows = await sens.evaluate(()=>({rp:document.querySelectorAll('.rp-type[data-si="0"]').length, ci:document.querySelectorAll('.ci-basis[data-si="0"]').length}));
@@ -176,6 +195,7 @@ const ref = {};
 // Q4: simple modes, then a staged loan.
 {
   const sens = await open(SENS);
+  await alone(sens);
   await pickCity(sens, 'bangkok/apt-1br');
   const mode = await sens.evaluate(()=>document.querySelector('.mode-seg[data-mode-key="mortgageMode"] .seg-btn.active').dataset.val);
   const d = diffAt(ref['bangkok/apt-1br'][0], await sensCsv(sens,'own'));
@@ -186,6 +206,7 @@ const ref = {};
 // Q5: the Indonesian page.
 {
   const sens = await open(SENS_ID);
+  await alone(sens);
   const sid = 'kualalumpur/apt-2br';
   await sens.evaluate(()=>document.querySelector('.scen-preset[data-si="0"]').click());
   const ph = await sens.evaluate(()=>document.querySelector('.scen-preset-search').placeholder);
@@ -226,6 +247,20 @@ const ref = {};
     if(!r.same || !r.honest || (r.n===0) !== r.empty) bad.push(q+' '+JSON.stringify(r));
   }
   check('Q6 the search lists exactly the scenarios that carry every word typed', !bad.length, bad.join(' | '));
+  await sens.close();
+}
+
+// Q7: Melbourne, then Jakarta beside it.
+{
+  const sens = await open(SENS);
+  await pickCity(sens, 'melbourne/apt-1br', 0);
+  await pickCity(sens, 'jakarta/apt-2br', 1);
+  const st = await sens.evaluate(()=>{ const s = window.__RVOS.state(); return {on:s.fx.on, base:s.fx.base, cur:s.scenarios.map(c=>c.currency), rfr:s.fx.rfr,
+    box: document.getElementById('fxModeToggle').checked, pre: document.querySelector('.param-input[data-key="propertyPrice"][data-si="1"]').closest('.param-wrap').querySelector('.prefix').textContent}; });
+  const Q = await sens.evaluate(()=>({mel: window.RVO_QS.preset('melbourne/apt-1br').riskFreeRate, jkt: window.RVO_QS.preset('jakarta/apt-2br').riskFreeRate}));
+  check('Q7 a second currency turns multi-currency on, base the first city\'s, each column in its own code',
+    st.on && st.box && st.base==='AUD' && st.cur.join()==='AUD,IDR' && st.pre==='IDR' && st.rfr.IDR===Q.jkt,
+    JSON.stringify(st));
   await sens.close();
 }
 

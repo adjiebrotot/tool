@@ -14,6 +14,13 @@
 //
 // The edge cases are also run on the Indonesian pages, which must match too.
 //
+// The Sensitivity page shares the time horizon, risk-free rate, initial cash
+// and budget across its columns, and an automatic cash or budget there is the
+// most ANY column needs. So the parity is between the main page and a table
+// of one column, where "the most any column needs" is that column's own need:
+// the harness removes the second default column first, and types the shared
+// figures into the shared row.
+//
 // Run: node parity.mjs [count]   (default 40 random scenarios)
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -166,9 +173,13 @@ async function applySens(page, sc){
     const sel=(k,v)=>{ const el=q('.param-select[data-si="0"][data-key="'+k+'"]'); if(el){ el.value=v; fire(el,'change'); } };
     const inp=(k,v)=>{ const el=q('.param-input[data-si="0"][data-key="'+k+'"]'); if(el){ el.value=String(v); fire(el,'blur'); } };
     const bool=(k,v)=>{ const el=q('.param-bool[data-si="0"][data-key="'+k+'"]'); if(el){ el.checked=v; fire(el,'change'); } };
+    // One column: what every column shares is then this column's alone.
+    while(document.querySelectorAll('.rmv-scen').length) document.querySelector('.rmv-scen[data-si="1"]').click();
+    const sh=(k,v)=>{ const el=q('.shared-input[data-key="'+k+'"]'); if(el){ el.value=String(v); fire(el,'blur'); } };
     ['setupCostType','ownOngoingCostType','ownOngoingCostFreq','rentOngoingCostType','rentOngoingCostFreq','rentFreq','mortgageType'].forEach(k=>sel(k, sc[k]));
     bool('costInterestOnly', sc.costInterestOnly);
-    ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease','propertyPrice','downPaymentPct','mortgageRate',
+    ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease'].forEach(k=>sh(k, sc[k]));
+    ['propertyPrice','downPaymentPct','mortgageRate',
      'mortgageTerm','houseGrowth','sellingCostPct','setupCost','ownOngoingCost','ownOngoingInflation','rentAmount','rentInflation','rentOngoingCost','rentOngoingInflation']
       .forEach(k=>inp(k, sc[k]));
     const cell=(cls,idx,extra='')=>q('.'+cls+'[data-si="0"][data-idx="'+idx+'"]'+extra);
