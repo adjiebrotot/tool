@@ -108,7 +108,7 @@ window.RVO_QUICKSTART = {
       aliases: ["WA","Western Australia"],
       currencySymbol: "$", currencyCode: "AUD", asOf: "2026-09",
       buyer: "Australian resident owner-occupier buying a first home to live in, at standard WA general duty rates (no first home owner rate or grant)",
-      downPaymentPct: 20, mortgageRate: 6.4, mortgageTerm: 30, riskFreeRate: 4.6, horizon: 30, sellingCostPct: 2.5,
+      downPaymentPct: 20, mortgageRate: 6.4, mortgageTerm: 30, riskFreeRate: 4.6, horizon: 30, sellingCostPct: 2.8,
       rentFreq: "weekly", rentInflation: 3.5, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-1br": {
@@ -133,7 +133,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-2br": {
-          propertyPrice: 855000, rentAmount: 650, houseGrowth: 5, setupCost: 4.51, ownOngoingCost: 7900, rentOngoingCost: 1400, sqm: 100, landSqm: 400,
+          propertyPrice: 855000, rentAmount: 650, houseGrowth: 4.5, setupCost: 4.51, ownOngoingCost: 7900, rentOngoingCost: 1400, sqm: 100, landSqm: 400,
           where: "Middle-ring older cottages, duplex halves and villas: Morley, Dianella, Bentley, Rivervale, Innaloo, Bassendean, Kardinya. REIWA 2BR house medians $673k to $960k, rents $530 to $745/wk. Rent is below the inner-city 2BR unit because these are older homes further from the CBD",
           setupCalc: "WA duty on $855k: $28,453 + 5.15% x $130,000 = $35,148; Landgate transfer ~$402 + mortgage $225; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $38,575 = 4.51% (estimate, not sourced)",
           costCalc: "Council rates $2,000 + water/sewer service charges $1,500 + ESL $250 + building insurance $1,650 + maintenance $2,500 = $7,900/yr; renter: contents $500 + moving $900 = $1,400/yr (estimate, not sourced)",
@@ -144,7 +144,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-4br": {
-          propertyPrice: 1350000, rentAmount: 950, houseGrowth: 5, setupCost: 4.75, ownOngoingCost: 10600, rentOngoingCost: 1800, sqm: 200, landSqm: 650,
+          propertyPrice: 1350000, rentAmount: 950, houseGrowth: 4.5, setupCost: 4.75, ownOngoingCost: 10600, rentOngoingCost: 1800, sqm: 200, landSqm: 650,
           where: "Middle-ring family suburbs: Morley, Dianella, Balcatta, Kardinya, Kingsley, Bassendean, Bayswater, Duncraig, Willetton. REIWA 4BR house medians $1.10M to $1.66M, rents $830 to $1,025/wk",
           setupCalc: "WA duty on $1.35M: $28,453 + 5.15% x $625,000 = $60,641; Landgate transfer ~$506 + mortgage $225; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $64,172 = 4.75% (estimate, not sourced)",
           costCalc: "Council rates $2,400 + water/sewer service charges $1,800 + ESL $350 + building insurance $2,050 + maintenance $4,000 = $10,600/yr; renter: contents $600 + moving $1,200 = $1,800/yr (estimate, not sourced)",
@@ -166,9 +166,9 @@ window.RVO_QUICKSTART = {
         downPaymentPct: "A 20% deposit is the standard for an owner-occupier loan without lenders mortgage insurance (LMI).",
         mortgageRate: "RBA F6: new owner-occupier variable loans averaged about 6.2% in Aug 2026. The 30 Sep 2026 cash rate rise to 4.60% was passed on in full, so about 6.4%.",
         riskFreeRate: "RBA cash rate 4.60% from 30 Sep 2026. RBA F4 (Sep 2026): bonus savings accounts 4.80%, 3-year term deposits 4.20%, 3-month bank bills 4.67%.",
-        sellingCostPct: "Agent commission of about 2% plus GST, marketing and conveyancing. No capital gains tax on a main residence (estimate, not sourced).",
+        sellingCostPct: "Agent commission of about 2.0 to 2.3% plus GST, plus marketing and conveyancing, about 2.8% in all. No capital gains tax on a main residence (estimate, not sourced).",
         rentInflation: "SQM: Perth asking rents rose 6.8% (units) to 7.5% (houses) a year over 10 years after a vacancy squeeze. Tempered to 3.5% for the long run.",
-        houseGrowth: "ABS index 2005 to 2016 chained with REIWA medians 2016 to 2026: houses about 5.1%/yr, units 4.3 (REIWA) to 4.9%/yr (SQM). Forward: houses 5.0%, units 4.5%.",
+        houseGrowth: "ABS index 2005 to 2016 chained with REIWA medians 2016 to 2026: houses about 5.1%/yr, units 4.3 (REIWA) to 4.9%/yr (SQM). Forward: houses and units 4.5%, rent growth plus 1, as falling rates drove the past gap.",
         setupCost: "WA general transfer duty rates (no first home owner rate), Landgate 2026-27 transfer and mortgage fees, plus about $2,800 legal, inspection and bank costs (estimate, not sourced).",
         ownOngoingCost: "Strata levies, council rates, Water Corporation service charges, emergency services levy, building insurance and upkeep. No land tax on a home (estimate, not sourced).",
         rentOngoingCost: "Contents insurance plus removalist, cleaning and reconnection costs spread over a typical 3-year lease. Tenants pay no letting fee (estimate, not sourced).",
@@ -221,7 +221,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-2br": {
-          propertyPrice: 1080000, rentAmount: 650, houseGrowth: 4.5, setupCost: 6.02, ownOngoingCost: 7600, rentOngoingCost: 1400, sqm: 100, landSqm: 250,
+          propertyPrice: 1080000, rentAmount: 650, houseGrowth: 4, setupCost: 6.02, ownOngoingCost: 7600, rentOngoingCost: 1400, sqm: 100, landSqm: 250,
           where: "Victorian and Edwardian workers' cottages: Richmond, Brunswick, Collingwood, Coburg, Yarraville. Derived: Cotality house median ~$1.30M x 0.83 (REIWA 2BR ratio); rent: house rents $800 to $835 x 0.80. Rent is below the inner-city 2BR unit, which is newer and closer to the CBD",
           setupCalc: "VIC general duty on $1.08M: 5.5% x $1,080,000 = $59,400; LSV transfer $104.30 + $2.34 x 1,080 = $2,632; mortgage registration ~$135; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $64,967 = 6.02% (estimate, not sourced)",
           costCalc: "Council rates $2,200 + ESVF levy $250 + water/sewer service $1,000 + building insurance $1,650 + maintenance $2,500 = $7,600/yr; renter: contents $500 + moving $900 = $1,400/yr (estimate, not sourced)",
@@ -232,8 +232,8 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-4br": {
-          propertyPrice: 1400000, rentAmount: 770, houseGrowth: 4.5, setupCost: 5.95, ownOngoingCost: 9800, rentOngoingCost: 1800, sqm: 200, landSqm: 650,
-          where: "Middle-ring suburbs: Reservoir, Bundoora, Keilor East, Ringwood, Mitcham, Doncaster, Glen Waverley, Bentleigh East. Derived: Cotality house medians $905k to $1.74M (middle ~$1.21M) x 1.14 (REIWA 4BR ratio); rent: Cotality house rents ~$675 x 1.14",
+          propertyPrice: 1400000, rentAmount: 830, houseGrowth: 4, setupCost: 5.95, ownOngoingCost: 9800, rentOngoingCost: 1800, sqm: 200, landSqm: 650,
+          where: "Middle-ring suburbs: Reservoir, Bundoora, Keilor East, Ringwood, Mitcham, Doncaster, Glen Waverley, Bentleigh East. Derived: Cotality house medians $905k to $1.74M (middle ~$1.21M) x 1.14 (REIWA 4BR ratio); rent: Cotality house rents ~$675 x 1.23, as Doncaster and Glen Waverley 4BR houses rent $800 to $863 (estimate, not sourced)",
           setupCalc: "VIC general duty on $1.4M: 5.5% x $1,400,000 = $77,000; LSV transfer $104.30 + $2.34 x 1,400 = $3,381; mortgage registration ~$135; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $83,316 = 5.95% (estimate, not sourced)",
           costCalc: "Council rates $2,400 + ESVF levy $260 + water/sewer service $1,100 + building insurance $2,040 + maintenance $4,000 = $9,800/yr; renter: contents $600 + moving $1,200 = $1,800/yr (estimate, not sourced)",
           sources: [
@@ -257,7 +257,7 @@ window.RVO_QUICKSTART = {
         riskFreeRate: "RBA cash rate 4.60% from 30 Sep 2026. RBA F4 (Sep 2026): bonus savings accounts 4.80%, 3-year term deposits 4.20%, 3-month bank bills 4.67%.",
         sellingCostPct: "Agent commission of about 2% plus GST, marketing and conveyancing. No capital gains tax on a main residence (estimate, not sourced).",
         rentInflation: "SQM: Melbourne asking rents rose about 5.0% a year over 10 years (units 4.6%, houses 5.4%), mostly after 2021. Tempered to 3.5% for the long run.",
-        houseGrowth: "ABS index 2005 to 2016 chained with SQM 2016 to 2026: houses 6.0 to 6.7%/yr, units 4.2 to 4.8%/yr, but 2BR units only 2.8%/yr in the last decade. Forward: houses 4.5%, units 3.0%.",
+        houseGrowth: "ABS index 2005 to 2016 chained with SQM 2016 to 2026: houses 6.0 to 6.7%/yr, units 4.2 to 4.8%/yr, but 2BR units only 2.8%/yr in the last decade. Forward: houses 4.0%, units 3.0%, kept near rent growth.",
         setupCost: "VIC general land transfer duty (5.5% of the whole price from $960k), owner-occupier PPR rate up to $550k, LSV 2026-27 transfer fee, plus about $2,800 other costs (estimate, not sourced).",
         ownOngoingCost: "Owners corporation fees, council rates, Emergency Services and Volunteers Fund levy, water and sewerage service charges, building insurance and upkeep. No land tax on a home (estimate, not sourced).",
         rentOngoingCost: "Contents insurance plus removalist, cleaning and reconnection costs spread over a typical 3-year lease. Tenants pay no letting fee (estimate, not sourced).",
@@ -317,7 +317,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-2br": {
-          propertyPrice: 1700000, rentAmount: 900, houseGrowth: 5, setupCost: 4.59, ownOngoingCost: 8000, rentOngoingCost: 1400, sqm: 100, landSqm: 150,
+          propertyPrice: 1700000, rentAmount: 900, houseGrowth: 4.5, setupCost: 4.59, ownOngoingCost: 8000, rentOngoingCost: 1400, sqm: 100, landSqm: 150,
           where: "Inner-west terraces and semis: Newtown, Marrickville, Erskineville, Leichhardt. Domain 2BR house median in Newtown $1.68M; NSW bond medians for 2BR houses $888 to $935/wk, below inner-city 2BR units, which are newer and closer to the CBD",
           setupCalc: "NSW duty on $1.7M: $52,237 + 5.5% x $410,000 = $74,787; LRS transfer + mortgage $365; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $77,952 = 4.59% (estimate, not sourced)",
           costCalc: "Council rates $2,100 + Sydney Water service $1,100 + building insurance $1,800 + maintenance $3,000 = $8,000/yr; renter: contents $500 + moving $900 = $1,400/yr (estimate, not sourced)",
@@ -328,7 +328,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-4br": {
-          propertyPrice: 2300000, rentAmount: 1300, houseGrowth: 5, setupCost: 4.82, ownOngoingCost: 10800, rentOngoingCost: 1800, sqm: 200, landSqm: 600,
+          propertyPrice: 2300000, rentAmount: 1300, houseGrowth: 4.5, setupCost: 4.82, ownOngoingCost: 10800, rentOngoingCost: 1800, sqm: 200, landSqm: 600,
           where: "Middle-ring suburbs: Ryde, Epping, Carlingford, Baulkham Hills, Sutherland, Miranda, Revesby. Price derived: middle-ring non-strata median $2.04M (NSW Jan to Mar 2026) x 1.14 (REIWA 4BR ratio); rent from NSW bonds (4+ bedroom houses $1,020 to $1,425/wk)",
           setupCalc: "NSW duty on $2.3M: $52,237 + 5.5% x $1,010,000 = $107,787; LRS transfer + mortgage $365; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $110,952 = 4.82% (estimate, not sourced)",
           costCalc: "Council rates $2,300 + Sydney Water service $1,100 + building insurance $2,400 + maintenance $5,000 = $10,800/yr; renter: contents $600 + moving $1,200 = $1,800/yr (estimate, not sourced)",
@@ -353,7 +353,7 @@ window.RVO_QUICKSTART = {
         riskFreeRate: "RBA cash rate 4.60% from 30 Sep 2026. RBA F4 (Sep 2026): bonus savings accounts 4.80%, 3-year term deposits 4.20%, 3-month bank bills 4.67%.",
         sellingCostPct: "Agent commission of about 2% plus GST, marketing and conveyancing. No capital gains tax on a main residence (estimate, not sourced).",
         rentInflation: "SQM: Sydney asking rents rose 3.9% (units) to 4.8% (houses) a year over 10 years. Long-run assumption 3.5%.",
-        houseGrowth: "ABS index 2005 to 2016 chained with SQM 2016 to 2026: houses 6.0 to 6.4%/yr, units 4.3 to 4.6%/yr (only 2.5 to 3.0%/yr in the last decade). Forward: houses 5.0%, units 3.5%.",
+        houseGrowth: "ABS index 2005 to 2016 chained with SQM 2016 to 2026: houses 6.0 to 6.4%/yr, units 4.3 to 4.6%/yr (only 2.5 to 3.0%/yr in the last decade). Forward: houses 4.5%, units 3.5%, near rent growth plus 1.",
         setupCost: "NSW 2026-27 general transfer duty ($11,602 + 4.5% from $387k; $52,237 + 5.5% from $1.29M), NSW LRS transfer and mortgage fees $182.73 each, plus about $2,800 other costs (estimate, not sourced).",
         ownOngoingCost: "Strata levies, council rates and waste charge, Sydney Water service charges, building insurance and upkeep. No land tax on a home (estimate, not sourced).",
         rentOngoingCost: "Contents insurance plus removalist, cleaning and reconnection costs spread over a typical 3-year lease. Tenants pay no letting fee (estimate, not sourced).",
@@ -377,7 +377,7 @@ window.RVO_QUICKSTART = {
       aliases: ["QLD","Queensland"],
       currencySymbol: "$", currencyCode: "AUD", asOf: "2026-06",
       buyer: "Australian citizen owner-occupier buying a first home to live in, at the QLD home concession rate that any owner-occupier gets (no first home concession or grant)",
-      downPaymentPct: 20, mortgageRate: 6.4, mortgageTerm: 30, riskFreeRate: 4.6, horizon: 30, sellingCostPct: 2.5,
+      downPaymentPct: 20, mortgageRate: 6.4, mortgageTerm: 30, riskFreeRate: 4.6, horizon: 30, sellingCostPct: 3.2,
       rentFreq: "weekly", rentInflation: 3.5, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-1br": {
@@ -406,7 +406,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-2br": {
-          propertyPrice: 1300000, rentAmount: 670, houseGrowth: 5.5, setupCost: 4.35, ownOngoingCost: 8700, rentOngoingCost: 1400, sqm: 100, landSqm: 405,
+          propertyPrice: 1300000, rentAmount: 670, houseGrowth: 4.5, setupCost: 4.35, ownOngoingCost: 8700, rentOngoingCost: 1400, sqm: 100, landSqm: 405,
           where: "Inner-ring workers' cottages: Annerley, Wooloowin, Windsor, Kedron, Holland Park, Morningside, Nundah. Price derived: Cotality house median ~$1.56M x 0.83 (REIWA 2BR ratio); rent from RTA 2-bed houses $645 to $710/wk, below inner-city 2BR units, which are newer and closer to the CBD",
           setupCalc: "QLD home concession duty on $1.3M: $30,850 + 5.75% x $300,000 = $48,100 (general rate $55,275); Titles Qld transfer $5,463 + mortgage $248; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $56,611 = 4.35% (estimate, not sourced)",
           costCalc: "Council rates $3,000 + water/sewer fixed charges $1,200 + building insurance $2,000 + maintenance $2,500 = $8,700/yr; renter: contents $500 + moving $900 = $1,400/yr (estimate, not sourced)",
@@ -418,7 +418,7 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-4br": {
-          propertyPrice: 1600000, rentAmount: 820, houseGrowth: 5.5, setupCost: 4.7, ownOngoingCost: 11000, rentOngoingCost: 1800, sqm: 210, landSqm: 600,
+          propertyPrice: 1600000, rentAmount: 820, houseGrowth: 4.5, setupCost: 4.7, ownOngoingCost: 11000, rentOngoingCost: 1800, sqm: 210, landSqm: 600,
           where: "Middle-ring suburbs: Carina, Carindale, Stafford, Everton Park, Aspley, Mount Gravatt East, Sunnybank, Eight Mile Plains, Kenmore. Price derived: Cotality house median ~$1.42M x 1.14 (REIWA 4BR ratio); rent from RTA 4-bed houses $780 to $980/wk",
           setupCalc: "QLD home concession duty on $1.6M: $30,850 + 5.75% x $600,000 = $65,350 (general rate $72,525); Titles Qld transfer $6,860 + mortgage $248; other costs $2,800 (legal/conveyancing ~$2,000, building or strata report ~$500, bank and settlement fees ~$300); total $75,258 = 4.70% (estimate, not sourced)",
           costCalc: "Council rates $3,200 + water/sewer fixed charges $1,300 + building insurance $2,500 + maintenance $4,000 = $11,000/yr; renter: contents $600 + moving $1,200 = $1,800/yr (estimate, not sourced)",
@@ -442,9 +442,9 @@ window.RVO_QUICKSTART = {
         downPaymentPct: "A 20% deposit is the standard for an owner-occupier loan without lenders mortgage insurance (LMI).",
         mortgageRate: "RBA F6: new owner-occupier variable loans averaged about 6.2% in Aug 2026. The 30 Sep 2026 cash rate rise to 4.60% was passed on in full, so about 6.4%.",
         riskFreeRate: "RBA cash rate 4.60% from 30 Sep 2026. RBA F4 (Sep 2026): bonus savings accounts 4.80%, 3-year term deposits 4.20%, 3-month bank bills 4.67%.",
-        sellingCostPct: "Agent commission of about 2% plus GST, marketing and conveyancing. No capital gains tax on a main residence (estimate, not sourced).",
+        sellingCostPct: "Brisbane City commission averages about 2.6% plus GST, plus marketing and conveyancing, about 3.2% in all. No capital gains tax on a main residence (estimate, not sourced).",
         rentInflation: "SQM: Brisbane asking rents rose 5.8% (units) to 6.6% (houses) a year over 10 years, driven by migration after 2020. Tempered to 3.5% for the long run.",
-        houseGrowth: "ABS index 2005 to 2016 chained with SQM 2016 to 2026: houses 6.2 to 6.5%/yr, units 5.7%/yr, mostly from the post-2020 boom (units grew 3.6%/yr in 2005 to 2016). Forward: houses 5.5%, units 4.5%.",
+        houseGrowth: "ABS index 2005 to 2016 chained with SQM 2016 to 2026: houses 6.2 to 6.5%/yr, units 5.7%/yr, mostly from the post-2020 boom (units grew 3.6%/yr in 2005 to 2016). Forward: 4.5%, about rent growth plus 1.",
         setupCost: "QLD home concession duty rate for owner-occupiers (not a first home concession), Titles Qld 2026-27 fees ($248 + $46.56 per $10k over $180k), plus about $2,800 other costs (estimate, not sourced).",
         ownOngoingCost: "Body corporate levies, Brisbane City Council rates, Urban Utilities water and sewerage fixed charges, building insurance and upkeep. No land tax on a home (estimate, not sourced).",
         rentOngoingCost: "Contents insurance plus removalist, cleaning and reconnection costs spread over a typical 3-year lease. Tenants pay no letting fee (estimate, not sourced).",
@@ -534,15 +534,15 @@ window.RVO_QUICKSTART = {
       aliases: ["SG","SGP","Republic of Singapore"],
       currencySymbol: "$", currencyCode: "SGD", asOf: "2026-10",
       buyer: "Singapore citizen buying a first private (non-HDB) home to live in: 0% ABSD, 25% down under MAS LTV rules",
-      downPaymentPct: 25, mortgageRate: 2.21, mortgageTerm: 30, riskFreeRate: 2, horizon: 30, sellingCostPct: 2,
-      ratePeriods: [{ toYear: 2, type: "fixed", rate: 1.7 }, { toYear: 30, type: "floating", rateMin: 1.45, rateMax: 3.05 }],
+      downPaymentPct: 25, mortgageRate: 2.07, mortgageTerm: 30, riskFreeRate: 2, horizon: 30, sellingCostPct: 2,
+      ratePeriods: [{ toYear: 2, type: "fixed", rate: 1.7 }, { toYear: 30, type: "floating", rateMin: 1.45, rateMax: 2.75 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 3, rentOngoingInflation: 2.5,
       homes: {
         "apt-1br": {
-          propertyPrice: 1200000, rentAmount: 3600, houseGrowth: 4, setupCost: 3.09, ownOngoingCost: 5100, rentOngoingCost: 800, sqm: 50,
-          where: "1-bedroom private condo in the Rest of Central Region: Queenstown/Alexandra, Toa Payoh/Balestier, Kallang/Geylang, Tiong Bahru. About S$2,230 psf; rent about S$6.70 psf (URA Q2 2026 RCR district medians S$5.4-6.0 psf, small units higher)",
+          propertyPrice: 1200000, rentAmount: 3200, houseGrowth: 4, setupCost: 3.09, ownOngoingCost: 4950, rentOngoingCost: 750, sqm: 50,
+          where: "1-bedroom private condo in the Rest of Central Region: Queenstown/Alexandra, Toa Payoh/Balestier, Kallang/Geylang, Tiong Bahru. About S$2,230 psf; rent about S$5.95 psf, the top of URA Q2 2026 RCR district medians (S$5.4-6.0 psf), as small units rent higher",
           setupCalc: "BSD on S$1.2m: 1%x180k + 2%x180k + 3%x640k + 4%x200k = S$32,600; legal ~S$3,500 + valuation ~S$1,000 = S$37,100 = 3.09% (legal and valuation estimate, not sourced)",
-          costCalc: "MCST maintenance S$3,400 + owner-occupier property tax S$1,075 (AV ~S$38,900 = 90% of market rent) + home insurance S$150 + aircon/repairs S$500 = S$5,125 ~ S$5,100/yr; renter: lease duty 0.4% S$173 + aircon servicing S$250 + minor repairs S$200 + contents S$150 = ~S$800/yr (MCST, AV ratio and upkeep estimate, not sourced)"
+          costCalc: "MCST maintenance S$3,400 + owner-occupier property tax S$902 (AV ~S$34,560 = 90% of market rent) + home insurance S$150 + aircon/repairs S$500 = S$4,952 ~ S$4,950/yr; renter: lease duty 0.4% S$154 + aircon servicing S$250 + minor repairs S$200 + contents S$150 = ~S$750/yr (MCST, AV ratio and upkeep estimate, not sourced)"
         },
         "apt-2br": {
           propertyPrice: 1800000, rentAmount: 5000, houseGrowth: 4, setupCost: 3.61, ownOngoingCost: 7000, rentOngoingCost: 1000, sqm: 80,
@@ -572,7 +572,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "77% of resident households live in HDB flats, 18% in condos and 5% in landed homes (2025). Presets use the private condo market; HDB resale flats are cheaper but have eligibility rules.",
         downPaymentPct: "MAS caps a first housing loan at 75% LTV for tenures up to 30 years, so 25% down with at least 5% in cash (estimate, not sourced).",
-        mortgageRate: "2-year fix 1.70% (lowest private package, Oct 2026), then SORA-floating from 1.45% (3M SORA 1.23% + 0.2%) to 3.05% (10-yr SGS 2.3% + the 0.75% top spread).",
+        mortgageRate: "2-year fixes run 1.4 to 2.0% (Oct 2026), so 1.70%; then SORA plus a typical 0.25 to 0.8 spread, from 1.45% (3M SORA about 1.1%) to 2.75% if SORA returns to about 2% (estimate, not sourced).",
         riskFreeRate: "6-month T-bill cut-off 1.90% (8 Oct 2026; 1.36-1.92% across 2026), 1-year bill 1.68% (Jul 2026), 2-year SGS 1.84%. Spare cash earns about 2%.",
         sellingCostPct: "Seller's agent commission is negotiable, typically 1-2% plus 9% GST, plus conveyancing of about S$2,500-3,000; no SSD once held 4 years (estimate, not sourced).",
         rentInflation: "URA private rental index: +1.8% in the year to Q2 2026, 2.5% a year over 15 years and 4.4% over 20 years. Forward assumption 3%.",
@@ -673,10 +673,10 @@ window.RVO_QUICKSTART = {
       rentFreq: "yearly", rentInflation: 3, ownOngoingInflation: 3.5, rentOngoingInflation: 3.5,
       homes: {
         "apt-studio": {
-          propertyPrice: 750000000, rentAmount: 60000000, houseGrowth: 2.5, setupCost: 5.67, ownOngoingCost: 8500000, rentOngoingCost: 1000000, sqm: 30,
+          propertyPrice: 750000000, rentAmount: 36000000, houseGrowth: 2.5, setupCost: 5.67, ownOngoingCost: 9400000, rentOngoingCost: 1000000, sqm: 30,
           where: "Inner mid-market towers, resale: Kuningan and Setiabudi, Tebet, Menteng and Cikini, Tanah Abang. About Rp 25M/m2, below the Rp 36M/m2 new-launch average",
           setupCalc: "BPHTB 5% x (Rp 750M - Rp 250M first-home NPOPTKP) = Rp 25M; PPAT/notary deed, title transfer and BPN fee ~1% = Rp 7.5M; bank provision 1% of an 80% loan = Rp 6M; appraisal and admin Rp 1.5M + SKMHT/APHT mortgage deeds Rp 2.5M = Rp 4M; total Rp 42.5M = 5.67%",
-          costCalc: "IPL service charge + sinking fund Rp 20,000/m2/month x 30 m2 = Rp 7.2M; PBB Rp 0 (NJOP ~Rp 525M is under the Rp 650M apartment waiver); unit insurance Rp 0.3M; repairs Rp 1M; total ~Rp 8.5M/yr; renter: contents insurance ~Rp 0.5M + lease admin and stamp duty ~Rp 0.5M = Rp 1M/yr. IPL rate and NJOP at ~70% of price are assumptions (estimate, not sourced)",
+          costCalc: "IPL service charge + sinking fund Rp 20,000/m2/month x 30 m2 = Rp 7.2M; PBB 0.5% x 40% x (NJOP ~Rp 525M - Rp 60M) = Rp 0.9M (the 2026 waiver is for one year only); unit insurance Rp 0.3M; repairs Rp 1M; total ~Rp 9.4M/yr; renter: contents insurance ~Rp 0.5M + lease admin and stamp duty ~Rp 0.5M = Rp 1M/yr. IPL rate and NJOP at ~70% of price are assumptions (estimate, not sourced)",
           sources: [
             { name: "Kompas, Colliers: Jakarta apartment average Rp 36.2M/m2, Apr 2026", url: "https://www.kompas.com/properti/read/2026/04/13/210000021/kredit-apartemen-makin-diminati-konsumen-tinggalkan-tren-investasi" },
             { name: "Numbeo, Jakarta rents, Oct 2026", url: "https://www.numbeo.com/cost-of-living/in/Jakarta" },
@@ -684,8 +684,8 @@ window.RVO_QUICKSTART = {
           ]
         },
         "apt-1br": {
-          propertyPrice: 1200000000, rentAmount: 84000000, houseGrowth: 2.5, setupCost: 6.09, ownOngoingCost: 14000000, rentOngoingCost: 1000000, sqm: 45,
-          where: "Inner mid-market towers, resale: Kuningan and Setiabudi, Tebet, Menteng and Cikini, Tanah Abang (e.g. Menteng Park 1BR rents ~Rp 8M/month)",
+          propertyPrice: 1200000000, rentAmount: 54000000, houseGrowth: 2.5, setupCost: 6.09, ownOngoingCost: 14000000, rentOngoingCost: 1000000, sqm: 45,
+          where: "Inner mid-market towers, resale: Kuningan and Setiabudi, Tebet, Menteng and Cikini, Tanah Abang. Rent is an unfurnished long lease at a 4.5% gross yield; furnished and serviced listings ask more",
           setupCalc: "BPHTB 5% x (Rp 1.2B - Rp 250M first-home NPOPTKP) = Rp 47.5M; PPAT/notary deed, title transfer and BPN fee ~1% = Rp 12M; bank provision 1% of an 80% loan = Rp 9.6M; appraisal and admin Rp 1.5M + SKMHT/APHT mortgage deeds Rp 2.5M = Rp 4M; total Rp 73.1M = 6.09%",
           costCalc: "IPL service charge + sinking fund Rp 20,000/m2/month x 45 m2 = Rp 10.8M; PBB 0.5% x 40% x (NJOP ~Rp 840M - Rp 60M) = Rp 1.6M; unit insurance Rp 0.4M; repairs Rp 1.2M; total ~Rp 14M/yr; renter: contents insurance ~Rp 0.5M + lease admin ~Rp 0.5M = Rp 1M/yr. IPL rate and NJOP at ~70% of price are assumptions (estimate, not sourced)",
           sources: [
@@ -695,8 +695,8 @@ window.RVO_QUICKSTART = {
           ]
         },
         "apt-2br": {
-          propertyPrice: 2000000000, rentAmount: 120000000, houseGrowth: 2.5, setupCost: 6.38, ownOngoingCost: 22000000, rentOngoingCost: 1000000, sqm: 72,
-          where: "Inner South and Central Jakarta mid-market resale: Kuningan, Setiabudi, Tebet, Kebayoran Baru (e.g. Bellagio 2BR 84 m2 Rp 2.1B; Kuningan City 2BR 75 m2 rents Rp 120M/yr; Taman Rasuna 74 m2 Rp 1.1-1.6B)",
+          propertyPrice: 2000000000, rentAmount: 84000000, houseGrowth: 2.5, setupCost: 6.38, ownOngoingCost: 22000000, rentOngoingCost: 1000000, sqm: 72,
+          where: "Inner South and Central Jakarta mid-market resale: Kuningan, Setiabudi, Tebet, Kebayoran Baru (e.g. Bellagio 2BR 84 m2 Rp 2.1B; Taman Rasuna 74 m2 Rp 1.1-1.6B). Rent is an unfurnished long lease at a 4.2% gross yield",
           setupCalc: "BPHTB 5% x (Rp 2B - Rp 250M first-home NPOPTKP) = Rp 87.5M; PPAT/notary deed, title transfer and BPN fee ~1% = Rp 20M; bank provision 1% of an 80% loan = Rp 16M; appraisal and admin Rp 1.5M + SKMHT/APHT mortgage deeds Rp 2.5M = Rp 4M; total Rp 127.5M = 6.38%",
           costCalc: "IPL service charge + sinking fund Rp 20,000/m2/month x 72 m2 = Rp 17.3M; PBB 0.5% x 40% x (NJOP ~Rp 1.4B - Rp 60M) = Rp 2.7M; unit insurance Rp 0.5M; repairs Rp 1.5M; total ~Rp 22M/yr; renter: contents insurance ~Rp 0.5M + lease admin ~Rp 0.5M = Rp 1M/yr. IPL rate and NJOP at ~70% of price are assumptions (estimate, not sourced)",
           sources: [
@@ -707,8 +707,8 @@ window.RVO_QUICKSTART = {
           ]
         },
         "apt-4br": {
-          propertyPrice: 15000000000, rentAmount: 900000000, houseGrowth: 2.5, setupCost: 6.74, ownOngoingCost: 154000000, rentOngoingCost: 3000000, sqm: 300,
-          where: "Luxury segment only: Kuningan (The Imperium, Verde), Senayan, Kebayoran Baru (Pakubuwono), Pondok Indah. Dearer than a 4BR house because these are prime CBD towers",
+          propertyPrice: 15000000000, rentAmount: 600000000, houseGrowth: 2.5, setupCost: 6.74, ownOngoingCost: 154000000, rentOngoingCost: 3000000, sqm: 300,
+          where: "Luxury segment only: Kuningan (The Imperium, Verde), Senayan, Kebayoran Baru (Pakubuwono), Pondok Indah. Dearer than a 4BR house because these are prime CBD towers. Rent at a 4% gross yield, as luxury stock yields less",
           setupCalc: "BPHTB 5% x (Rp 15B - Rp 250M first-home NPOPTKP) = Rp 737.5M; PPAT/notary deed, title transfer and BPN fee ~1% = Rp 150M; bank provision 1% of an 80% loan = Rp 120M; appraisal and admin Rp 1.5M + SKMHT/APHT mortgage deeds Rp 2.5M = Rp 4M; total Rp 1,011.5M = 6.74%",
           costCalc: "IPL service charge + sinking fund Rp 35,000/m2/month x 300 m2 = Rp 126M; PBB 0.5% x 40% x (NJOP ~Rp 10.5B - Rp 60M) = Rp 20.9M; unit insurance Rp 2M; repairs Rp 5M; total ~Rp 154M/yr; renter: contents insurance on higher-value contents ~Rp 2M + lease admin ~Rp 1M = Rp 3M/yr. Luxury IPL rate and NJOP at ~70% of price are assumptions (estimate, not sourced)",
           sources: [
@@ -718,10 +718,10 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-2br": {
-          propertyPrice: 1200000000, rentAmount: 36000000, houseGrowth: 3.5, setupCost: 6.09, ownOngoingCost: 3200000, rentOngoingCost: 1000000, sqm: 60, landSqm: 72,
+          propertyPrice: 1200000000, rentAmount: 36000000, houseGrowth: 3.5, setupCost: 6.09, ownOngoingCost: 4800000, rentOngoingCost: 1000000, sqm: 60, landSqm: 72,
           where: "Older housing estates in East Jakarta: Duren Sawit, Cakung, Cipayung, Kramat Jati (3BR houses of ~100 m2 list at Rp 1.2-1.45B there). A minority of listings, as most Jakarta houses have 3+ bedrooms. Cheaper than the inner 2BR apartment because it is further out",
           setupCalc: "BPHTB 5% x (Rp 1.2B - Rp 250M first-home NPOPTKP) = Rp 47.5M; PPAT/notary deed, title transfer and BPN fee ~1% = Rp 12M; bank provision 1% of an 80% loan = Rp 9.6M; appraisal and admin Rp 1.5M + SKMHT/APHT mortgage deeds Rp 2.5M = Rp 4M; total Rp 73.1M = 6.09%",
-          costCalc: "PBB Rp 0 (NJOP ~Rp 840M is under the Rp 2B landed-house waiver, Kepgub 339/2026); upkeep 1% of building value (60 m2 x Rp 4.5M/m2 = Rp 270M) = Rp 2.7M; fire insurance ~0.2% of building = Rp 0.5M; total ~Rp 3.2M/yr (RT/RW security dues are paid by whoever lives there, so left out); renter: contents insurance ~Rp 0.5M + lease admin ~Rp 0.5M = Rp 1M/yr. NJOP at ~70% of price and rebuild cost are assumptions (estimate, not sourced)",
+          costCalc: "PBB 0.5% x 40% x (NJOP ~Rp 840M - Rp 60M) = Rp 1.6M (the 2026 waiver, Kepgub 339/2026, is for one year only); upkeep 1% of building value (60 m2 x Rp 4.5M/m2 = Rp 270M) = Rp 2.7M; fire insurance ~0.2% of building = Rp 0.5M; total ~Rp 4.8M/yr (RT/RW security dues are paid by whoever lives there, so left out); renter: contents insurance ~Rp 0.5M + lease admin ~Rp 0.5M = Rp 1M/yr. NJOP at ~70% of price and rebuild cost are assumptions (estimate, not sourced)",
           sources: [
             { name: "FazWaz, East Jakarta houses for sale (6,294 listings)", url: "https://www.fazwaz.id/house-for-sale/indonesia/jakarta/jakarta-timur" },
             { name: "FazWaz, East Jakarta houses for rent", url: "https://www.fazwaz.id/house-for-rent/indonesia/jakarta/jakarta-timur" },
@@ -731,7 +731,7 @@ window.RVO_QUICKSTART = {
         },
         "house-4br": {
           propertyPrice: 9000000000, rentAmount: 360000000, houseGrowth: 3.5, setupCost: 6.71, ownOngoingCost: 34100000, rentOngoingCost: 2500000, sqm: 300, landSqm: 300,
-          where: "South Jakarta: Cilandak, Pondok Labu, Lebak Bulus, Pondok Indah (Kebayoran Baru costs more). Cheaper than a luxury 4BR apartment, which is prime CBD stock. Expat-let houses here ask US$3,200-3,800/month",
+          where: "South Jakarta: Cilandak, Pondok Labu, Lebak Bulus, Pondok Indah (Kebayoran Baru costs more). Cheaper than a luxury 4BR apartment, which is prime CBD stock. Rent is a local family lease; expat lets with US$ rents ask far more",
           setupCalc: "BPHTB 5% x (Rp 9B - Rp 250M first-home NPOPTKP) = Rp 437.5M; PPAT/notary deed, title transfer and BPN fee ~1% = Rp 90M; bank provision 1% of an 80% loan = Rp 72M; appraisal and admin Rp 1.5M + SKMHT/APHT mortgage deeds Rp 2.5M = Rp 4M; total Rp 603.5M = 6.71%",
           costCalc: "PBB 0.5% x 40% x (NJOP ~Rp 6.3B - Rp 60M) = Rp 12.5M; upkeep 1% of building value (300 m2 x Rp 6M/m2 = Rp 1.8B) = Rp 18M; fire insurance ~0.2% of building = Rp 3.6M; total ~Rp 34.1M/yr (RT/RW security dues are paid by whoever lives there, so left out); renter: contents insurance ~Rp 2M + lease admin ~Rp 0.5M = Rp 2.5M/yr. NJOP at ~70% of price and rebuild cost are assumptions (estimate, not sourced)",
           sources: [
@@ -754,7 +754,7 @@ window.RVO_QUICKSTART = {
         rentInflation: "Knight Frank saw condo rents fall about 1% and serviced rents rise 2% in H1 2026. With apartment oversupply, rents are assumed to track CPI at about 3%.",
         houseGrowth: "Colliers average apartment asking price rose from Rp 27.7M/m2 (2014) to Rp 36.2M/m2 (2026), about 2.2% a year. BI's Jabodebek house index rose about 1.2% a year since 2018.",
         setupCost: "BPHTB 5% on the price above Rp 250M for a first acquisition (Perda DKI 1/2024), PPAT/notary about 1%, bank provision 1% of the loan and about Rp 4M of appraisal and deed fees.",
-        ownOngoingCost: "Apartment owners pay IPL service charge and sinking fund. PBB is 0.5% of 40% of NJOP above Rp 60M, waived in 2026 up to Rp 2B NJOP for houses and Rp 650M for apartments.",
+        ownOngoingCost: "Apartment owners pay IPL service charge and sinking fund. PBB is 0.5% of 40% of NJOP above Rp 60M. Its 2026 waiver (to Rp 2B NJOP for houses, Rp 650M for flats) lasts one year, so it is not used.",
         rentOngoingCost: "Landlords normally pay the agent and the apartment service charge, so tenants mainly add contents insurance and lease admin (estimate, not sourced).",
         caveat: "Rent is usually paid 6 to 12 months upfront plus a deposit. Fixed KPR rates reset to floating, so payments can jump; a developer promo fix is cheaper but only on new units. A second home gets no BPHTB allowance."
       },
@@ -770,7 +770,8 @@ window.RVO_QUICKSTART = {
         { name: "DDTCNews, BPHTB NPOPTKP in DKI Jakarta Rp 250 juta (Perda 1/2024)", url: "https://news.ddtc.co.id/berita/daerah/1801148/npoptkp-di-dki-jakarta-rp-250-juta-khusus-waris-jadi-rp1-miliar" },
         { name: "DDTCNews, Jakarta PBB waived for houses to Rp 2B and apartments to Rp 650M NJOP", url: "https://news.ddtc.co.id/berita/daerah/1809737/asyik-gubernur-jakarta-bebaskan-pbb-untuk-rumah-di-bawah-rp2-miliar" },
         { name: "FazWaz, Jakarta condos for sale (4,811 listings, Oct 2026)", url: "https://www.fazwaz.id/condo-for-sale/indonesia/jakarta" },
-        { name: "FazWaz, Jakarta condos for rent (11,845 listings, yearly rents)", url: "https://www.fazwaz.id/condo-for-rent/indonesia/jakarta" }
+        { name: "FazWaz, Jakarta condos for rent (11,845 listings, yearly rents)", url: "https://www.fazwaz.id/condo-for-rent/indonesia/jakarta" },
+        { name: "Industry.co.id, Colliers: Jakarta apartment rental yields about 4%, CBD 4.3%", url: "https://www.industry.co.id/read/142674/jaminan-unit-tersewa-dan-insentif-ppn-dukung-investasi-apartemen-di-tahun-2025" }
       ]
     },
     {
@@ -852,27 +853,27 @@ window.RVO_QUICKSTART = {
       key: "bangkok", city: "Bangkok", country: "Thailand", countryId: "Thailand", countryCode: "TH", region: "Southeast Asia",
       aliases: ["Krung Thep","Krung Thep Maha Nakhon","BKK","Greater Bangkok"],
       currencySymbol: "฿", currencyCode: "THB", asOf: "2026-09",
-      buyer: "Thai citizen owner-occupier, first home, registered in the house book (tabien baan); qualifies for the 0.01% transfer and mortgage fees on homes up to 7 million baht",
-      downPaymentPct: 10, mortgageRate: 5.24, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
-      ratePeriods: [{ toYear: 3, type: "fixed", rate: 4.2 }, { toYear: 30, type: "floating", rateMin: 5.05, rateMax: 5.65 }],
+      buyer: "Thai citizen owner-occupier, first home, registered in the house book (tabien baan); paying the standard transfer and mortgage fees (the temporary 0.01% rate to June 2027 is not used)",
+      downPaymentPct: 10, mortgageRate: 5.27, mortgageTerm: 30, riskFreeRate: 1.2, horizon: 30, sellingCostPct: 5,
+      ratePeriods: [{ toYear: 3, type: "fixed", rate: 4.5 }, { toYear: 30, type: "floating", rateMin: 5.05, rateMax: 5.65 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
-          propertyPrice: 3400000, rentAmount: 15000, houseGrowth: 2.5, setupCost: 0.15, ownOngoingCost: 21600, rentOngoingCost: 1000, sqm: 28,
+          propertyPrice: 3400000, rentAmount: 15000, houseGrowth: 2.5, setupCost: 2.03, ownOngoingCost: 21600, rentOngoingCost: 1000, sqm: 28,
           where: "Mid-city condos near BTS/MRT: Ari and Phaya Thai, Ratchada to Rama 9, On Nut. Resale about 120,000 baht/m2",
-          setupCalc: "Price 3.4M is under the 7M cap: buyer's half of 0.01% transfer fee 170; mortgage fee 0.01% x 3.06M loan 306; loan stamp duty 0.05% 1,530; bank appraisal 3,000; total 5,006 = 0.15%",
+          setupCalc: "Standard fees: buyer's half of 2% transfer fee 34,000; mortgage fee 1% x 3.06M loan 30,600; loan stamp duty 0.05% 1,530; bank appraisal 3,000; total 69,130 = 2.03% (the temporary 0.01% fees would make it about 0.15%)",
           costCalc: "Common fee 45 x 28 m2 x 12 = 15,120 + contents and fire insurance 1,500 + upkeep 5,000 = 21,620/yr; land and building tax nil (registered main home); renter: contents insurance 1,000/yr (estimate, not sourced)"
         },
         "apt-1br": {
-          propertyPrice: 5300000, rentAmount: 24000, houseGrowth: 2.5, setupCost: 0.12, ownOngoingCost: 31800, rentOngoingCost: 1200, sqm: 38,
+          propertyPrice: 5300000, rentAmount: 24000, houseGrowth: 2.5, setupCost: 2, ownOngoingCost: 31800, rentOngoingCost: 1200, sqm: 38,
           where: "Sukhumvit (Asok to Phra Khanong), Ratchada to Rama 9, Phaya Thai and Ari, Silom fringe. About 140,000 baht/m2, rent about 630 baht/m2 a month",
-          setupCalc: "Price 5.3M is under the 7M cap: half of 0.01% transfer fee 265; mortgage fee 0.01% x 4.77M loan 477; loan stamp duty 0.05% 2,385; appraisal 3,000; total 6,127 = 0.12%",
+          setupCalc: "Standard fees: half of 2% transfer fee 53,000; mortgage fee 1% x 4.77M loan 47,700; loan stamp duty 0.05% 2,385; appraisal 3,000; total 106,085 = 2.00%",
           costCalc: "Common fee 50 x 38 m2 x 12 = 22,800 + insurance 2,000 + upkeep 7,000 = 31,800/yr; land and building tax nil; renter: contents insurance 1,200/yr (estimate, not sourced)"
         },
         "apt-2br": {
           propertyPrice: 9800000, rentAmount: 42000, houseGrowth: 2.5, setupCost: 1.98, ownOngoingCost: 61300, rentOngoingCost: 1500, sqm: 65,
           where: "Sukhumvit (Asok, Phrom Phong, Thong Lo, Ekkamai), Silom and Sathorn, Phaya Thai. About 150,000 baht/m2 for 5 to 15 year old buildings; rents 40,000 to 60,000 a month",
-          setupCalc: "Price 9.8M is above the 7M cap, so full fees: buyer's half of 2% transfer fee 98,000; mortgage fee 1% x 8.82M loan 88,200; loan stamp duty 0.05% 4,410; appraisal 3,000; total 193,610 = 1.98% (fees use price; appraised value is often lower)",
+          setupCalc: "Standard fees: buyer's half of 2% transfer fee 98,000; mortgage fee 1% x 8.82M loan 88,200; loan stamp duty 0.05% 4,410; appraisal 3,000; total 193,610 = 1.98% (fees use price; appraised value is often lower)",
           costCalc: "Common fee 60 x 65 m2 x 12 = 46,800 + insurance 2,500 + upkeep 12,000 = 61,300/yr; land and building tax nil (under 50M exemption); renter: contents insurance 1,500/yr (estimate, not sourced)"
         },
         "apt-4br": {
@@ -882,15 +883,15 @@ window.RVO_QUICKSTART = {
           costCalc: "Common fee 90 x 220 m2 x 12 = 237,600 + insurance 8,000 + upkeep 40,000 = 285,600/yr; land and building tax nil if appraised under 50M (0.02% above); renter: contents insurance 5,000/yr (estimate, not sourced)"
         },
         "house-2br": {
-          propertyPrice: 3200000, rentAmount: 15000, houseGrowth: 2.5, setupCost: 0.15, ownOngoingCost: 22000, rentOngoingCost: 1500, sqm: 120, landSqm: 80,
+          propertyPrice: 3200000, rentAmount: 15000, houseGrowth: 2.5, setupCost: 2.04, ownOngoingCost: 22000, rentOngoingCost: 1500, sqm: 120, landSqm: 80,
           where: "Two-storey townhouses in suburban estates: Ramintra, Lat Phrao (Prasert Manukitch), Bang Na, Nawamin. Cheaper than a central 2-bed condo because it is 15 to 25 km out",
-          setupCalc: "Price 3.2M is under the 7M cap: half of 0.01% transfer fee 160; mortgage fee 0.01% x 2.88M loan 288; loan stamp duty 0.05% 1,440; appraisal 3,000; total 4,888 = 0.15%",
+          setupCalc: "Standard fees: half of 2% transfer fee 32,000; mortgage fee 1% x 2.88M loan 28,800; loan stamp duty 0.05% 1,440; appraisal 3,000; total 65,240 = 2.04%",
           costCalc: "Estate common fee about 500/month 6,000 + fire insurance 2,000 + upkeep 0.7% of 2M building 14,000 = 22,000/yr; land and building tax nil; renter: contents insurance 1,500/yr (estimate, not sourced)"
         },
         "house-4br": {
           propertyPrice: 10500000, rentAmount: 45000, houseGrowth: 2.5, setupCost: 1.97, ownOngoingCost: 79600, rentOngoingCost: 3000, sqm: 250, landSqm: 280,
           where: "Detached houses in gated estates: Bang Na, Ramintra to Kaset Nawamin, Ratchaphruek, Pattanakarn. Far cheaper than a central 4-bed luxury condo because it is suburban",
-          setupCalc: "Price 10.5M is above the 7M cap: half of 2% transfer fee 105,000; mortgage fee 1% x 9.45M loan 94,500; loan stamp duty 0.05% 4,725; appraisal 3,000; total 207,225 = 1.97%",
+          setupCalc: "Standard fees: half of 2% transfer fee 105,000; mortgage fee 1% x 9.45M loan 94,500; loan stamp duty 0.05% 4,725; appraisal 3,000; total 207,225 = 1.97%",
           costCalc: "Estate fee 40 baht x 70 sq wah x 12 = 33,600 + fire insurance 4,000 + upkeep 0.7% of 6M building 42,000 = 79,600/yr; land and building tax nil (registered main home under 50M); renter: contents insurance 3,000/yr (estimate, not sourced)"
         }
       },
@@ -901,15 +902,15 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Central Bangkok is a condo market (studios to 2 bedrooms, luxury large units on Sukhumvit and Sathorn); townhouses and detached houses sit in suburban estates. Supply is ample in 2026.",
         downPaymentPct: "BoT rules allow up to 100% LTV on a first home under 10 million baht, and the 2025 to 2027 easing covers dearer homes, but banks often lend 90 to 95%, so 10% is assumed.",
-        mortgageRate: "Sub-3% teasers are for new projects; resale loans average about 4.2% for 3 years (GHB resale promo 4.22%, KBank 4-5%), then MRR (6.5 to 6.67%) less 1 to 1.5: 5.05 to 5.65%.",
+        mortgageRate: "Resale loans at commercial banks run about 4.2 to 4.9% for 3 years (SCB, KBank); 4.5% is used, not the GHB promo or new-project teasers, then MRR (6.5 to 6.67%) less 1 to 1.5: 5.05 to 5.65%.",
         riskFreeRate: "Thai 12-month deposits and short government bills yield about 1 to 1.3% with the BoT policy rate held at 1.0% through 2026.",
         sellingCostPct: "Long-held home: agent 3%, half the 2% transfer fee, stamp duty 0.5% and income tax withheld on appraised value about 0.5 to 1%. Specific business tax 3.3% applies only if sold within 5 years.",
         rentInflation: "Central condo rents have risen slowly amid oversupply; 2.5% a year assumed, a little above Thai CPI (estimate, not sourced).",
         houseGrowth: "BoT Bangkok indices: condos +1.95% and townhouses flat, detached -1.6% year on year in Q1 2026. After a stronger 2010s, 2.5% a year is assumed for all types (estimate, not sourced).",
-        setupCost: "Transfer fee 2% and mortgage fee 1% (cap 200,000 baht) cut to 0.01% each to 30 June 2027 for Thai buyers when price, appraisal and loan are each up to 7 million baht. Transfer fee split 50/50 by custom.",
+        setupCost: "Standard transfer fee 2% (split 50/50 by custom) and mortgage fee 1% (cap 200,000 baht). A temporary 0.01% rate to 30 June 2027 for homes up to 7M baht is not used.",
         ownOngoingCost: "Condo common fees of 45 to 90 baht per m2 a month, estate fees on landed homes, insurance and upkeep. Land and building tax is nil on a registered main home appraised under 50 million baht.",
         rentOngoingCost: "In Bangkok the landlord pays the agent and the deposit (usually 2 months) is refundable, so the renter's extra cost is mainly optional contents insurance (estimate, not sourced).",
-        caveat: "Prices are asking prices; deals often close 6 to 10% lower. The 0.01% fee cut ends 30 June 2027 unless extended again. Foreigners can only own condo units within the 49% foreign quota."
+        caveat: "Prices are asking prices; deals often close 6 to 10% lower. Closing under the temporary 0.01% fee cut (to June 2027) saves about 2%. Foreigners can only own condo units within the 49% foreign quota."
       },
       sources: [
         { name: "Tilleke & Gibbins, Thailand extends reduced property transfer and mortgage registration fees (to 30 June 2027)", url: "https://www.tilleke.com/insights/thailand-extends-reduced-property-transfer-and-mortgage-registration-fees/21/" },
@@ -1006,43 +1007,43 @@ window.RVO_QUICKSTART = {
       aliases: ["Saigon","HCMC","HCM"],
       currencySymbol: "₫", currencyCode: "VND", asOf: "2026-09",
       buyer: "Vietnamese citizen owner-occupier buying a resale home with a pink book (long-term land-use right); foreigners may only hold a 50-year condo title and are not modelled",
-      downPaymentPct: 30, mortgageRate: 13.77, mortgageTerm: 30, riskFreeRate: 6.5, horizon: 30, sellingCostPct: 3.5,
-      ratePeriods: [{ toYear: 2, type: "fixed", rate: 10.6 }, { toYear: 30, type: "floating", rateMin: 13, rateMax: 15 }],
+      downPaymentPct: 30, mortgageRate: 11.91, mortgageTerm: 30, riskFreeRate: 6.5, horizon: 30, sellingCostPct: 3.5,
+      ratePeriods: [{ toYear: 2, type: "fixed", rate: 10.6 }, { toYear: 30, type: "floating", rateMin: 11, rateMax: 13 }],
       rentFreq: "monthly", rentInflation: 5, ownOngoingInflation: 4, rentOngoingInflation: 4,
       homes: {
         "apt-studio": {
-          propertyPrice: 2800000000, rentAmount: 11000000, houseGrowth: 6, setupCost: 0.74, ownOngoingCost: 9900000, rentOngoingCost: 500000, sqm: 35,
-          where: "Resale condos in Thu Duc City (Thao Dien, An Phu), Binh Thanh and District 7, about 80m VND per m2",
+          propertyPrice: 2800000000, rentAmount: 8500000, houseGrowth: 5, setupCost: 0.74, ownOngoingCost: 9900000, rentOngoingCost: 500000, sqm: 35,
+          where: "Mid-market resale condos in the former Binh Thanh District and District 7 (wards since the July 2025 merger), about 80m VND per m2; Thao Dien projects cost far more (estimate, not sourced)",
           setupCalc: "Registration 0.5% x 2.8bn = 14.0m; notary 1.0m + 0.06% x 1.8bn = 2.08m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 20.6m = 0.74%; extras and bank fees (estimate, not sourced)",
           costCalc: "Management 15,000/m2 x 35 m2 x 12 = 6.3m + fire insurance 0.5m + repairs 3.0m + land-use tax 0.1m = 9.9m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         },
         "apt-1br": {
-          propertyPrice: 3800000000, rentAmount: 15000000, houseGrowth: 6, setupCost: 0.69, ownOngoingCost: 13700000, rentOngoingCost: 500000, sqm: 50,
-          where: "Resale condos in Thao Dien and An Phu (Thu Duc City), Binh Thanh and District 7, about 75m VND per m2",
+          propertyPrice: 3800000000, rentAmount: 11500000, houseGrowth: 5, setupCost: 0.69, ownOngoingCost: 13700000, rentOngoingCost: 500000, sqm: 50,
+          where: "Mid-market resale condos in the former Binh Thanh District and District 7 (wards since the July 2025 merger), about 75m VND per m2; Thao Dien projects ask 100m to 133m (estimate, not sourced)",
           setupCalc: "Registration 0.5% x 3.8bn = 19.0m; notary 2.2m + 0.05% x 0.8bn = 2.6m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 26.1m = 0.69%; extras and bank fees (estimate, not sourced)",
           costCalc: "Management 15,000/m2 x 50 m2 x 12 = 9.0m + fire insurance 0.6m + repairs 4.0m + land-use tax 0.1m = 13.7m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         },
         "apt-2br": {
-          propertyPrice: 5500000000, rentAmount: 22000000, houseGrowth: 6, setupCost: 0.64, ownOngoingCost: 20000000, rentOngoingCost: 500000, sqm: 72,
-          where: "Resale condos in Thao Dien and An Phu (Thu Duc City), Binh Thanh and District 7, about 75m VND per m2; a 72 m2 Masteri Thao Dien 2BR lists at 25m a month",
+          propertyPrice: 5500000000, rentAmount: 16500000, houseGrowth: 5, setupCost: 0.64, ownOngoingCost: 20000000, rentOngoingCost: 500000, sqm: 72,
+          where: "Mid-market resale condos in the former Binh Thanh District and District 7 (wards since the July 2025 merger), about 75m VND per m2, renting near a 3.6% gross yield (estimate, not sourced)",
           setupCalc: "Registration 0.5% x 5.5bn = 27.5m; notary 3.2m + 0.04% x 0.5bn = 3.4m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 35.4m = 0.64%; extras and bank fees (estimate, not sourced)",
           costCalc: "Management 15,000/m2 x 72 m2 x 12 = 13.0m + fire insurance 0.8m + repairs 6.0m + land-use tax 0.2m = 20.0m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         },
         "house-1br": {
-          propertyPrice: 2900000000, rentAmount: 6500000, houseGrowth: 7, setupCost: 0.73, ownOngoingCost: 3400000, rentOngoingCost: 500000, sqm: 45, landSqm: 30,
-          where: "Small tube houses in motorbike alleys of Go Vap, Tan Binh and Binh Thanh, about 95m VND per m2 of land; cheaper than a 1BR condo because the plot is tiny and the alley narrow",
+          propertyPrice: 2900000000, rentAmount: 6500000, houseGrowth: 6, setupCost: 0.73, ownOngoingCost: 3400000, rentOngoingCost: 500000, sqm: 45, landSqm: 30,
+          where: "Small tube houses in motorbike alleys of the former Go Vap, Tan Binh and Binh Thanh districts, about 95m VND per m2 of land; cheaper than a 1BR condo because the plot is tiny and the alley narrow",
           setupCalc: "Registration 0.5% x 2.9bn = 14.5m; notary 1.0m + 0.06% x 1.9bn = 2.14m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 21.1m = 0.73%; extras and bank fees (estimate, not sourced)",
           costCalc: "Building upkeep 3.0m + optional fire insurance 0.3m + land-use tax 0.1m = 3.4m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         },
         "house-2br": {
-          propertyPrice: 5800000000, rentAmount: 11000000, houseGrowth: 7, setupCost: 0.64, ownOngoingCost: 5700000, rentOngoingCost: 500000, sqm: 90, landSqm: 48,
-          where: "Two-storey alley townhouses (nha pho hem) in Go Vap and Tan Binh, listed at 87m to 125m VND per m2 of land; yield is low because price is mostly land",
+          propertyPrice: 5800000000, rentAmount: 11000000, houseGrowth: 6, setupCost: 0.64, ownOngoingCost: 5700000, rentOngoingCost: 500000, sqm: 90, landSqm: 48,
+          where: "Two-storey alley townhouses (nha pho hem) in the former Go Vap and Tan Binh districts, listed at 87m to 125m VND per m2 of land; yield is low because price is mostly land",
           setupCalc: "Registration 0.5% x 5.8bn = 29.0m; notary 3.2m + 0.04% x 0.8bn = 3.52m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 37.0m = 0.64%; extras and bank fees (estimate, not sourced)",
           costCalc: "Building upkeep about 0.8% of a 0.6bn building = 5.0m + optional fire insurance 0.5m + land-use tax 0.2m = 5.7m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         },
         "house-4br": {
-          propertyPrice: 8500000000, rentAmount: 17000000, houseGrowth: 7, setupCost: 0.61, ownOngoingCost: 11400000, rentOngoingCost: 500000, sqm: 200, landSqm: 70,
-          where: "Three to four-storey townhouses in car alleys of Go Vap, Tan Binh and Binh Thanh; 4x17 m plots; 5BR car-alley houses list for 19m to 24m a month",
+          propertyPrice: 8500000000, rentAmount: 17000000, houseGrowth: 6, setupCost: 0.61, ownOngoingCost: 11400000, rentOngoingCost: 500000, sqm: 200, landSqm: 70,
+          where: "Three to four-storey townhouses in car alleys of the former Go Vap, Tan Binh and Binh Thanh districts; 4x17 m plots; 5BR car-alley houses list for 19m to 24m a month",
           setupCalc: "Registration 0.5% x 8.5bn = 42.5m; notary 3.2m + 0.04% x 3.5bn = 4.6m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 51.6m = 0.61%; extras and bank fees (estimate, not sourced)",
           costCalc: "Building upkeep about 0.7% of a 1.4bn building = 10.0m + optional fire insurance 1.0m + land-use tax 0.4m = 11.4m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         }
@@ -1052,13 +1053,13 @@ window.RVO_QUICKSTART = {
         "house-studio": "Even the smallest alley tube houses are built with a separate bedroom on an upper floor or mezzanine, so a studio landed house is not a market segment."
       },
       notes: {
-        market: "Inner districts mix high-rise condos (Thu Duc, Binh Thanh, District 7) with narrow tube townhouses (nha pho) in alleys, which are land-heavy and rent for low yields.",
+        market: "Inner areas mix high-rise condos (former Thu Duc, Binh Thanh, District 7) with narrow tube townhouses (nha pho) in alleys, which are land-heavy and rent for low yields.",
         downPaymentPct: "Banks lend 70 to 85% of value. BIDV caps at 70% when the bought home is the collateral and VPBank at 75%, so 30% down is typical.",
-        mortgageRate: "Sept 2026 teasers run 8.2 to 13% for 6 to 36 months (2 years at 10.6% used), then float at base plus 3.3 to 3.5%, about 13 to 15% now. SBV average lending is 8.4 to 10.7%.",
+        mortgageRate: "2-year fixes average 10.9% across 11 banks (Aug 2026); 10.6% used. Floating is 13 to 15% now, a cyclical high; 11 to 13% is used long run, with SBV average lending 8.4 to 10.7%.",
         riskFreeRate: "SBV average VND deposit rates for 12 to 24 months were 6.1 to 7.6% in August 2026. Big state banks pay about 6%, private banks up to 8.8%.",
         sellingCostPct: "Seller pays 2% personal income tax on the sale price by law, plus a broker commission of about 1 to 2% (commission range estimate, not sourced).",
         rentInflation: "Asking rents rose about 5% a year city-wide and 14.5% in Binh Thanh over the past year on Batdongsan; 5% is used as the long-run rate.",
-        houseGrowth: "Condo prices rose roughly 8 to 12% a year from 2015 to 2025 (Ministry of Construction, Batdongsan), land faster. Tempered to 6% for condos and 7% for townhouses.",
+        houseGrowth: "Condo prices rose roughly 8 to 12% a year from 2015 to 2025 (Ministry of Construction, Batdongsan), land faster. Tempered to 5% for condos and 6% for townhouses over 30 years.",
         setupCost: "Buyer pays 0.5% registration fee (Decree 10/2022), the state notary fee on the contract value (Circular 257/2016 bands) and small bank valuation and mortgage fees.",
         ownOngoingCost: "Condo owners pay a monthly management fee of roughly 15,000 VND per m2; townhouse owners mainly pay upkeep. Land-use tax is tiny for homes (rate estimate, not sourced).",
         rentOngoingCost: "Landlords usually pay the agent fee and deposits are refundable, so renters only carry optional contents insurance (estimate, not sourced).",
@@ -1082,8 +1083,8 @@ window.RVO_QUICKSTART = {
       aliases: ["HK"],
       currencySymbol: "$", currencyCode: "HKD", asOf: "2026-09",
       buyer: "Hong Kong permanent resident buying a first home to live in (Scale 2 stamp duty), standard bank mortgage at the 70% LTV cap without mortgage insurance",
-      downPaymentPct: 30, mortgageRate: 3.42, mortgageTerm: 30, riskFreeRate: 2.8, horizon: 30, sellingCostPct: 1.2,
-      ratePeriods: [{ toYear: 3, type: "fixed", rate: 2.73 }, { toYear: 30, type: "floating", rateMin: 3.25, rateMax: 3.75 }],
+      downPaymentPct: 30, mortgageRate: 3.5, mortgageTerm: 30, riskFreeRate: 2.8, horizon: 30, sellingCostPct: 1.2,
+      ratePeriods: [{ toYear: 30, type: "floating", rateMin: 3.25, rateMax: 3.75 }],
       rentFreq: "monthly", rentInflation: 2.5, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -1132,7 +1133,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Private homes are high-rise flats priced by saleable area. RVD prices rose 11% in the year to August 2026 but remain about 19% below the 2021 peak, and rents are at a record.",
         downPaymentPct: "HKMA has capped loan-to-value at 70% for all residential property since October 2024. HKMC mortgage insurance can lift this to 80-90% on cheaper flats for a premium, not assumed here.",
-        mortgageRate: "3-year fix 2.73% (mid-2026), then a HIBOR loan (HIBOR + 1.3%) capped at Prime 5% minus 1.75% = 3.25% today, up to 3.75% if Prime rises half a point (estimate, not sourced).",
+        mortgageRate: "The usual HIBOR loan (HIBOR + 1.3%), capped at Prime 5% minus 1.75% = 3.25% today, up to 3.75% if Prime rises half a point. Fixed-rate plans are short promos (estimate, not sourced).",
         riskFreeRate: "Exchange Fund Bills yielded 2.84% (91-day) and 2.98% (182-day) at the 8 September 2026 tender; bank time deposits pay somewhat less. We use 2.8%.",
         sellingCostPct: "Sellers usually pay about 1% agent commission on a resale plus legal fees. There is no capital gains tax, and special stamp duty on quick resales was abolished in 2024.",
         rentInflation: "RVD rental index rose 1.7% a year over 1996-2025, 4.2% over 2005-2025 and 1.3% over 2015-2025, and hit a record in August 2026. We assume 2.5%.",
@@ -1390,8 +1391,8 @@ window.RVO_QUICKSTART = {
       aliases: ["東京","Tokyo 23 wards","Tokyo-to"],
       currencySymbol: "¥", currencyCode: "JPY", asOf: "2026-09",
       buyer: "Japanese resident buying a first home to live in, second-hand (chuko) home, no subsidies; the housing-loan tax credit is not modelled",
-      downPaymentPct: 10, mortgageRate: 2.51, mortgageTerm: 35, riskFreeRate: 1, horizon: 30, sellingCostPct: 3.5,
-      ratePeriods: [{ toYear: 2, type: "floating", rateMin: 1.1, rateMax: 1.35 }, { toYear: 35, type: "floating", rateMin: 1.35, rateMax: 3.83 }],
+      downPaymentPct: 10, mortgageRate: 2.74, mortgageTerm: 35, riskFreeRate: 1, horizon: 30, sellingCostPct: 3.5,
+      ratePeriods: [{ toYear: 2, type: "floating", rateMin: 1.2, rateMax: 1.8 }, { toYear: 35, type: "floating", rateMin: 1.8, rateMax: 3.83 }],
       rentFreq: "monthly", rentInflation: 2, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -1413,16 +1414,16 @@ window.RVO_QUICKSTART = {
           costCalc: "Kanrihi + shuzen ¥33,000/month = ¥396,000 + fixed asset and city planning tax ¥255,000 + insurance ¥25,000 + repairs ¥80,000 = ¥756,000/yr (estimate, not sourced). Renter: rent ¥260,000 (at home 50-70 m2 ¥259,881, Jul 2026) x 1.15 months + ¥20,000 = ¥319,000/yr"
         },
         "apt-4br": {
-          propertyPrice: 105000000, rentAmount: 380000, houseGrowth: 2, setupCost: 5.8, ownOngoingCost: 968000, rentOngoingCost: 457000, sqm: 90,
+          propertyPrice: 105000000, rentAmount: 290000, houseGrowth: 2, setupCost: 5.8, ownOngoingCost: 968000, rentOngoingCost: 354000, sqm: 90,
           where: "Outer family wards: Setagaya, Nerima, Suginami, Edogawa. A 4LDK of about 90 m2; a thin segment, as most Tokyo family condos are 3LDK",
           setupCalc: "Price ¥105M from MLIT 4LDK average ¥103.9M (Q1 2026); REINS ¥1.31M/m2 x 90 m2 = ¥118M. Agent (3% + ¥60k) x 1.1 = ¥3,531,000; registration: land 1.5% x ¥10.5M + building 0.3% x ¥15.75M + mortgage 0.1% x ¥94.5M = ¥299,250; acquisition tax ¥0; stamp ¥60,000; scrivener ¥120,000; bank fee 2.2% x ¥94.5M = ¥2,079,000; total ¥6,089,250 = 5.80%. Assessed value taken as 25% of price (estimate, not sourced)",
-          costCalc: "Kanrihi + shuzen ¥45,000/month = ¥540,000 + property taxes ¥297,500 + insurance ¥30,000 + repairs ¥100,000 = ¥968,000/yr (estimate, not sourced). Renter: rent ¥380,000 (at home over 70 m2 averages ¥416,440 incl. central luxury; family-ward 4LDK set lower (estimate, not sourced)) x 1.15 months + ¥20,000 = ¥457,000/yr"
+          costCalc: "Kanrihi + shuzen ¥45,000/month = ¥540,000 + property taxes ¥297,500 + insurance ¥30,000 + repairs ¥100,000 = ¥968,000/yr (estimate, not sourced). Renter: rent ¥290,000 (at home over 70 m2 averages ¥416,440 but is pulled up by central luxury; outer-ward 90-100 m2 4LDKs list at ¥200,000-300,000 (estimate, not sourced)) x 1.15 months + ¥20,000 = ¥354,000/yr"
         },
         "house-4br": {
-          propertyPrice: 70000000, rentAmount: 270000, houseGrowth: 1.5, setupCost: 6.33, ownOngoingCost: 545000, rentOngoingCost: 331000, sqm: 92, landSqm: 88,
+          propertyPrice: 70000000, rentAmount: 230000, houseGrowth: 1.5, setupCost: 6.33, ownOngoingCost: 545000, rentOngoingCost: 285000, sqm: 92, landSqm: 88,
           where: "Outer wards where kodate are common: Setagaya, Nerima, Adachi, Edogawa, Suginami. A used 3-4LDK, about 25 years old. Cheaper than the 4LDK condo because the building is worth little and lots are small",
           setupCalc: "Price ¥70M = at home median asking price ¥69.8M (23 wards, H1 2026; building 91.9 m2, land 88.2 m2, age 24.7). Agent (3% + ¥60k) x 1.1 = ¥2,376,000; registration: land 1.5% x ¥29.4M + building 0.3% x ¥4.2M + mortgage 0.1% x ¥63M = ¥516,600; acquisition tax ¥0 after deductions; stamp ¥30,000; scrivener ¥120,000; bank fee 2.2% x ¥63M = ¥1,386,000; total ¥4,428,600 = 6.33%. Assessed land 42% and building 6% of price (estimate, not sourced)",
-          costCalc: "Fixed asset tax (land at 1/6) ¥68,600 + city planning tax ¥14,700 + building ¥71,400 = ¥154,700 + fire and quake insurance (wooden) ¥90,000 + upkeep about 1%/yr of a ¥25M rebuild cost plus repainting ¥300,000 = ¥545,000/yr (estimate, not sourced). Renter: rent ¥270,000 (SUUMO Nerima 4LDK ¥329,000 is for new units near stations; older house set lower (estimate, not sourced)) x 1.15 months + ¥20,000 = ¥331,000/yr",
+          costCalc: "Fixed asset tax (land at 1/6) ¥68,600 + city planning tax ¥14,700 + building ¥71,400 = ¥154,700 + fire and quake insurance (wooden) ¥90,000 + upkeep about 1%/yr of a ¥25M rebuild cost plus repainting ¥300,000 = ¥545,000/yr (estimate, not sourced). Renter: rent ¥230,000 (SUUMO Nerima 4LDK ¥329,000 is for new units near stations; a 25-year-old house in the outer wards rents for about ¥200,000-240,000 (estimate, not sourced)) x 1.15 months + ¥20,000 = ¥285,000/yr",
           sources: [
             { name: "at home, used detached house prices, H1 2026", url: "https://www.athome.co.jp/corporate/wp-content/themes/news/pdf/chuuko-kodate-kakaku-2026-firsthalf/chuuko-kodate-kakaku-2026-firsthalf.pdf" },
             { name: "SUUMO, Nerima rent by layout, Jul 2026", url: "https://suumo.jp/chintai/soba/tokyo/sc_nerima/" }
@@ -1437,7 +1438,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "The 23 wards are a condo (mansion) market with many renters; kodate detached houses cluster in outer wards such as Setagaya, Nerima, Adachi, Edogawa and Suginami.",
         downPaymentPct: "Japanese banks lend up to the full price, and Flat 35 gives its lowest rate at 90% loan-to-value or less, so 10% down is used.",
-        mortgageRate: "Variable loans: 1.1-1.35% at big banks in Oct 2026 after the BOJ hike to 1.25%; from year 3 anywhere up to the 3.83% Flat 35 fixed rate, as variable rates are likely to rise.",
+        mortgageRate: "Megabank variable 1.2-1.5% in Oct 2026, before banks pass on the Sep hike to 1.25%, so 1.2-1.8%; from year 3 between 1.8% and the 3.83% Flat 35 fixed rate.",
         riskFreeRate: "Megabank 1-year time deposits pay 0.5% (Aug 2026); online banks and short JGBs pay more after the BOJ raised its rate to 1.25%, so 1.0% is used (estimate, not sourced).",
         sellingCostPct: "Seller's agent fee 3% + ¥60,000 + 10% tax (about 3.4%) plus stamp duty and mortgage discharge; the ¥30M home-sale deduction usually removes capital gains tax.",
         rentInflation: "at home 23-ward asking rents rose 5-10% in the year to Jul 2026 and about 3-4% a year since 2015 after flat decades; 2% is used for the long run.",
@@ -1470,23 +1471,24 @@ window.RVO_QUICKSTART = {
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
-          propertyPrice: 311000000, rentAmount: 1250000, houseGrowth: 1, setupCost: 5.49, ownOngoingCost: 930000, rentOngoingCost: 350000, sqm: 30, downPaymentPct: 30,
+          propertyPrice: 311000000, rentAmount: 1000000, houseGrowth: 1, setupCost: 5.49, ownOngoingCost: 930000, rentOngoingCost: 290000, sqm: 30, downPaymentPct: 30,
           where: "One-room and 1.5-room officetels (commercial buildings) near job hubs: Gangnam, Yeouido-Yeongdeungpo, Mapo, Jongno-Jung. KB Seoul officetel average; size is an estimate",
           setupCalc: "Price = KB Seoul officetel average ₩311M (Sep 2026). Officetel acquisition tax 4% + education 0.4% + rural 0.2% = 4.6% = ₩14,306,000; broker 0.5% + 10% VAT = ₩1,710,500; stamp duty buyer half ₩75,000 + loan stamp half ₩75,000; housing bond discount about 0.1% = ₩311,000 and scrivener ₩600,000 (estimate, not sourced); total ₩17,077,500 = 5.49%",
-          costCalc: "Building and land property tax about ₩450,000 + sinking fund ₩150,000 + repairs ₩300,000 + insurance ₩30,000 = ₩930,000/yr (estimate, not sourced). Rent: KB yield 5.0% x (₩311M - ₩10M deposit) / 12 = ₩1,250,000/month (Numbeo central 1-bed range ₩1.0-1.5M). Renter: broker 0.4% x (₩10M + 100 x ₩1.25M) x 1.1 / 2 years = ₩297,000 + contents ₩50,000 = ₩350,000/yr",
+          costCalc: "Building and land property tax about ₩450,000 + sinking fund ₩150,000 + repairs ₩300,000 + insurance ₩30,000 = ₩930,000/yr (estimate, not sourced). Rent: ₩1,000,000/month on a ₩10M deposit, from observed Seoul officetel rents (KREB average ₩914,000 on deposits of about ₩10-18M); KB's 5.0% yield is on asking prices. Renter: broker 0.4% x (₩10M + 100 x ₩1.0M) x 1.1 / 2 years = ₩242,000 + contents ₩50,000 = ₩290,000/yr",
           sources: [
-            { name: "KB Real Estate, Seoul officetel price and yield, Sep 2026", url: "https://data-api.kbland.kr/bfmstat/statusBoard/mntlyOfficeRentReturn" }
+            { name: "KB Real Estate, Seoul officetel price and yield, Sep 2026", url: "https://data-api.kbland.kr/bfmstat/statusBoard/mntlyOfficeRentReturn" },
+            { name: "Kyunghyang, KREB: Seoul officetel monthly rent averages ₩914,000", url: "https://www.khan.co.kr/article/202507160600101" }
           ]
         },
         "apt-1br": {
-          propertyPrice: 420000000, rentAmount: 1540000, houseGrowth: 1, setupCost: 5.43, ownOngoingCost: 1230000, rentOngoingCost: 410000, sqm: 42, downPaymentPct: 30,
+          propertyPrice: 420000000, rentAmount: 1200000, houseGrowth: 1, setupCost: 5.43, ownOngoingCost: 1230000, rentOngoingCost: 340000, sqm: 42, downPaymentPct: 30,
           where: "Two-room officetels (1 bedroom + living room) of about 42 m2 in Mapo, Yeongdeungpo, Songpa, Gangseo. Korean apartments rarely have only one bedroom",
           setupCalc: "Price ₩420M = KB officetel average ₩311M scaled to 42 m2 at about ₩10M/m2 (estimate, not sourced). Officetel tax 4.6% = ₩19,320,000; broker 0.5% + VAT = ₩2,310,000; stamps ₩150,000; bond ₩420,000; scrivener ₩600,000; total ₩22,800,000 = 5.43%",
-          costCalc: "Property tax ₩600,000 + sinking fund ₩200,000 + repairs ₩400,000 + insurance ₩30,000 = ₩1,230,000/yr (estimate, not sourced). Rent: 4.5% yield (below KB's 5.0% average, as bigger units yield less) x (₩420M - ₩10M) / 12 = ₩1,540,000 (estimate, not sourced). Renter: broker 0.4% x (₩10M + 100 x ₩1.54M) x 1.1 / 2 = ₩361,000 + contents ₩50,000 = ₩410,000/yr"
+          costCalc: "Property tax ₩600,000 + sinking fund ₩200,000 + repairs ₩400,000 + insurance ₩30,000 = ₩1,230,000/yr (estimate, not sourced). Rent: ₩1,200,000/month on a ₩10M deposit, the KREB Seoul officetel average of ₩914,000 scaled up for a two-room unit (estimate, not sourced). Renter: broker 0.4% x (₩10M + 100 x ₩1.2M) x 1.1 / 2 = ₩286,000 + contents ₩50,000 = ₩340,000/yr"
         },
         "apt-2br": {
-          propertyPrice: 1080000000, rentAmount: 1760000, houseGrowth: 3.5, setupCost: 4.06, ownOngoingCost: 1900000, rentOngoingCost: 570000, sqm: 50, downPaymentPct: 44,
-          where: "Small apartments up to 60 m2 (KB size band; about 50 m2 assumed), usually 2 rooms, in Mapo, Seongdong, Dongjak, Nowon. Loan capped at ₩600M, so 44% down. Low yield is normal in Seoul",
+          propertyPrice: 1080000000, rentAmount: 1760000, houseGrowth: 3.5, setupCost: 4.06, ownOngoingCost: 1900000, rentOngoingCost: 570000, sqm: 59, downPaymentPct: 44,
+          where: "Small apartments up to 60 m2 (KB size band, mostly 59 m2 exclusive-area units), usually 2 rooms, in Mapo, Seongdong, Dongjak, Nowon. Loan capped at ₩600M, so 44% down. Low yield is normal in Seoul",
           setupCalc: "Price = KB Seoul apartment average up to 60 m2, ₩1.079bn (Sep 2026). Acquisition tax 3% + education 0.3% = ₩35,640,000; broker 0.5% + VAT = ₩5,940,000; stamp half of ₩350,000 + loan stamp half = ₩250,000; housing bond 3.1% of ₩702M assessed price at about 6% discount = ₩1,305,720 and scrivener ₩700,000 (estimate, not sourced); total ₩43,835,720 = 4.06%",
           costCalc: "Property tax on ₩702M assessed (65% of market): 45% base, one-home rate ₩460,650 + city levy ₩442,260 + education ₩92,130 = ₩995,040 + sinking fund ₩250,000 + insurance ₩50,000 + repairs ₩600,000 = ₩1,900,000/yr (estimate, not sourced). Rent: KB jeonse ₩487M; wolse ₩100M deposit + (₩487M - ₩100M) x 4.29% / 12 = ₩1,384,000, plus ₩90M of deposit at the 5.0% legal rate = ₩375,000, total ₩1,760,000. Renter: broker 0.3% x ₩238M x 1.1 / 2 = ₩393,000 + deposit guarantee ₩130,000 + contents ₩50,000 = ₩570,000/yr"
         },
@@ -1539,7 +1541,7 @@ window.RVO_QUICKSTART = {
       aliases: ["Bombay"],
       currencySymbol: "₹", currencyCode: "INR", asOf: "2026-10",
       buyer: "Indian resident citizen buying a first home to live in: a ready-to-move resale flat (no GST), no women's stamp duty concession",
-      downPaymentPct: 25, mortgageRate: 7.75, mortgageTerm: 30, riskFreeRate: 6.25, horizon: 30, sellingCostPct: 1.5,
+      downPaymentPct: 25, mortgageRate: 8.1, mortgageTerm: 30, riskFreeRate: 6.25, horizon: 30, sellingCostPct: 2.4,
       rentFreq: "monthly", rentInflation: 5, ownOngoingInflation: 5, rentOngoingInflation: 5,
       homes: {
         "apt-studio": {
@@ -1553,29 +1555,29 @@ window.RVO_QUICKSTART = {
           ]
         },
         "apt-1br": {
-          propertyPrice: 13000000, rentAmount: 52000, houseGrowth: 5, setupCost: 7.66, ownOngoingCost: 72000, rentOngoingCost: 34203, sqm: 40,
-          where: "1BHK in Andheri East and West, Powai, Chembur, Goregaon East. Magicbricks Oct 2026 listing medians ₹1.13 to 1.62 crore (mean ₹1.37 crore, less 5% for negotiation) and rents ₹45.5k to 63.5k. Carpet area about 425 sq ft",
+          propertyPrice: 13000000, rentAmount: 48000, houseGrowth: 5, setupCost: 7.66, ownOngoingCost: 72000, rentOngoingCost: 31897, sqm: 40,
+          where: "1BHK in Andheri East and West, Powai, Chembur, Goregaon East. Magicbricks Oct 2026 listing medians ₹1.13 to 1.62 crore (mean ₹1.37 crore, less 5% for negotiation) and asking rents ₹45.5k to 63.5k; rent set near the low end, as leases close below asking (estimate, not sourced). Carpet area about 425 sq ft",
           setupCalc: "Stamp duty 6% (5% + 1% metro cess) ₹7,80,000 + registration 1% capped at ₹30,000 + buyer brokerage 1% + 18% GST ₹1,53,400 + legal and title search ₹20,000 + loan processing ₹11,800 (fees estimate, not sourced) = ₹9,95,200 = 7.66%. Resale, so no GST",
-          costCalc: "society maintenance ₹5,000 x 12 (listing median) ₹60,000 + BMC property tax, mostly waived under 500 sq ft (estimate, not sourced) ₹1,500 + home insurance ₹2,500 + upkeep (estimate, not sourced) ₹8,000 = ₹72,000/yr; renter: brokerage 1 month (₹52,000) every 22 months ₹28,364 + 11-month leave and licence (stamp duty 0.25% ₹1,478 + registration ₹1,000 + filing ₹1,500, annualised) ₹4,339 + contents insurance ₹1,500 = ₹34,203/yr",
+          costCalc: "society maintenance ₹5,000 x 12 (listing median) ₹60,000 + BMC property tax, mostly waived under 500 sq ft (estimate, not sourced) ₹1,500 + home insurance ₹2,500 + upkeep (estimate, not sourced) ₹8,000 = ₹72,000/yr; renter: brokerage 1 month (₹48,000) every 22 months ₹26,182 + 11-month leave and licence (stamp duty 0.25% ₹1,364 + registration ₹1,000 + filing ₹1,500, annualised) ₹4,215 + contents insurance ₹1,500 = ₹31,897/yr",
           sources: [
             { name: "Magicbricks, 1 BHK flats for sale in Andheri East", url: "https://www.magicbricks.com/1-bhk-flats-in-andheri-east-mumbai-for-sale-pppfs" },
             { name: "Magicbricks, 1 BHK flats for rent in Andheri West", url: "https://www.magicbricks.com/1-bhk-flats-for-rent-in-andheri-west-mumbai-pppfr" }
           ]
         },
         "apt-2br": {
-          propertyPrice: 20500000, rentAmount: 80000, houseGrowth: 5, setupCost: 7.48, ownOngoingCost: 111500, rentOngoingCost: 50343, sqm: 65,
-          where: "2BHK in Andheri East and West, Powai, Chembur, Goregaon East. Magicbricks Oct 2026 listing medians ₹1.9 to 2.6 crore (mean ₹2.17 crore, less 5% for negotiation) and rents ₹75k to 90k. Carpet area about 700 sq ft",
+          propertyPrice: 20500000, rentAmount: 75000, houseGrowth: 5, setupCost: 7.48, ownOngoingCost: 111500, rentOngoingCost: 47461, sqm: 65,
+          where: "2BHK in Andheri East and West, Powai, Chembur, Goregaon East. Magicbricks Oct 2026 listing medians ₹1.9 to 2.6 crore (mean ₹2.17 crore, less 5% for negotiation) and asking rents ₹75k to 90k; rent set at the low end, as leases close below asking (estimate, not sourced). Carpet area about 700 sq ft",
           setupCalc: "Stamp duty 6% (5% + 1% metro cess) ₹12,30,000 + registration 1% capped at ₹30,000 + buyer brokerage 1% + 18% GST ₹2,41,900 + legal and title search ₹20,000 + loan processing ₹11,800 (fees estimate, not sourced) = ₹15,33,700 = 7.48%. Resale, so no GST",
-          costCalc: "society maintenance ₹7,000 x 12 (listing median) ₹84,000 + BMC property tax (estimate, not sourced) ₹12,000 + home insurance ₹3,500 + upkeep (estimate, not sourced) ₹12,000 = ₹1,11,500/yr; renter: brokerage 1 month (₹80,000) every 22 months ₹43,636 + 11-month leave and licence (stamp duty 0.25% ₹2,273 + registration ₹1,000 + filing ₹1,500, annualised) ₹5,207 + contents insurance ₹1,500 = ₹50,343/yr",
+          costCalc: "society maintenance ₹7,000 x 12 (listing median) ₹84,000 + BMC property tax (estimate, not sourced) ₹12,000 + home insurance ₹3,500 + upkeep (estimate, not sourced) ₹12,000 = ₹1,11,500/yr; renter: brokerage 1 month (₹75,000) every 22 months ₹40,909 + 11-month leave and licence (stamp duty 0.25% ₹2,131 + registration ₹1,000 + filing ₹1,500, annualised) ₹5,052 + contents insurance ₹1,500 = ₹47,461/yr",
           sources: [
             { name: "Magicbricks, 2 BHK flats for sale in Andheri East", url: "https://www.magicbricks.com/2-bhk-flats-in-andheri-east-mumbai-for-sale-pppfs" },
             { name: "Magicbricks, 2 BHK flats for rent in Powai", url: "https://www.magicbricks.com/2-bhk-flats-for-rent-in-powai-mumbai-pppfr" }
           ]
         },
         "apt-4br": {
-          propertyPrice: 145000000, rentAmount: 500000, houseGrowth: 5, setupCost: 7.22, ownOngoingCost: 705000, rentOngoingCost: 295954, sqm: 195,
-          where: "Luxury segment: 4BHK towers in Worli, Prabhadevi, Lower Parel, Bandra West. Magicbricks Oct 2026 listing medians ₹14.6 to 16.9 crore (less 5%) and rents ₹4.65 to 5.8 lakh a month. Carpet area about 2,100 sq ft",
-          setupCalc: "Stamp duty 6% (5% + 1% metro cess) ₹87,00,000 + registration 1% capped at ₹30,000 + buyer brokerage 1% + 18% GST ₹17,11,000 + legal and title search ₹20,000 + loan processing ₹11,800 (fees estimate, not sourced) = ₹1,04,72,800 = 7.22%. Resale, so no GST",
+          propertyPrice: 160000000, rentAmount: 500000, houseGrowth: 5, setupCost: 7.22, ownOngoingCost: 705000, rentOngoingCost: 295954, sqm: 195,
+          where: "Luxury segment: 4BHK towers in Worli, Prabhadevi, Lower Parel, Bandra West. Magicbricks Oct 2026 listing medians ₹14.6 to 16.9 crore; the upper one less 5% is used, as Worli trades at ₹70k to 1.1 lakh per sq ft. Rents ₹4.65 to 5.8 lakh a month. Carpet area about 2,100 sq ft",
+          setupCalc: "Stamp duty 6% (5% + 1% metro cess) ₹96,00,000 + registration 1% capped at ₹30,000 + buyer brokerage 1% + 18% GST ₹18,88,000 + legal and title search ₹20,000 + loan processing ₹11,800 (fees estimate, not sourced) = ₹1,15,49,800 = 7.22%. Resale, so no GST",
           costCalc: "society maintenance ₹40,000 x 12 (listing median) ₹4,80,000 + BMC property tax (estimate, not sourced) ₹1,50,000 + home insurance ₹15,000 + upkeep (estimate, not sourced) ₹60,000 = ₹7,05,000/yr; renter: brokerage 1 month (₹5,00,000) every 22 months ₹2,72,727 + 11-month leave and licence (stamp duty 0.25% ₹14,208 + registration ₹1,000 + filing ₹1,500, annualised) ₹18,227 + contents insurance ₹5,000 = ₹2,95,954/yr",
           sources: [
             { name: "Magicbricks, 4 BHK flats for sale in Worli (605 listings)", url: "https://www.magicbricks.com/4-bhk-flats-in-worli-mumbai-for-sale-pppfs" },
@@ -1592,9 +1594,9 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "A city of flats sold by carpet area (sizes here are carpet). Landed homes are a tiny niche. Prices are Magicbricks October 2026 resale listing medians, less 5%.",
         downPaymentPct: "RBI LTV caps: 75% for loans over ₹75 lakh, 80% for ₹30 to 75 lakh, so 25% down (20% for the 1RK). Stamp duty is not financed (estimate, not sourced).",
-        mortgageRate: "Floating loans linked to the RBI repo rate (5.25%, held in August 2026). SBI from 7.25% (April 2026), HDFC about 7.75 to 7.9%. 7.75% assumed.",
+        mortgageRate: "Repo-linked floating loans. RBI raised repo to 5.50% on 7 Oct 2026. SBI's 7.25% is a best-credit floor; typical borrowers pay about 8 to 8.25% after the hike, so 8.1% (estimate, not sourced).",
         riskFreeRate: "SBI fixed deposit rate for 1 to 2 years is 6.25% (effective December 2025, page updated June 2026). Interest is taxable.",
-        sellingCostPct: "Seller brokerage about 1% plus 18% GST and minor legal costs (estimate, not sourced). Capital gains tax of 12.5% is not included.",
+        sellingCostPct: "Resale sellers commonly pay 2% brokerage plus 18% GST = 2.36%, plus minor legal costs (estimate, not sourced). Capital gains tax of 12.5% is not included.",
         rentInflation: "Mumbai rents jumped in 2022 to 2025 and are now steadier. 5% a year long run, about CPI plus a little (estimate, not sourced).",
         houseGrowth: "Prices were roughly flat from 2014 to 2020 and rose strongly from 2021; Magicbricks shows mostly small 2025 to 2026 gains. 5% a year assumed (estimate, not sourced).",
         setupCost: "Stamp duty 6% in Mumbai (5% plus 1% metro cess), registration 1% capped at ₹30,000, buyer brokerage 1% plus GST, legal and loan fees. No GST on resale.",
@@ -1618,8 +1620,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UAE"],
       currencySymbol: "Dh", currencyCode: "AED", asOf: "2026-09",
       buyer: "UAE resident expat buying a first home to live in, at or under AED 5M with an 80% LTV mortgage",
-      downPaymentPct: 20, mortgageRate: 5.29, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.15 }, { toYear: 25, type: "floating", rateMin: 5.4, rateMax: 5.75 }],
+      downPaymentPct: 20, mortgageRate: 5.36, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.5 }, { toYear: 25, type: "floating", rateMin: 5.4, rateMax: 5.75 }],
       rentFreq: "yearly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1677,7 +1679,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Expat-driven freehold market of tower apartments plus villas and townhouses in master communities. Values fell about 10% after February 2026 (ValuStrat) after a 2021 to 2025 boom.",
         downPaymentPct: "UAE Central Bank caps expat first-home loans at 80% LTV up to AED 5M (70% above), so 20% down. Every preset here is at or under AED 5M.",
-        mortgageRate: "Expat fixes were 3.75 to 4.15% for 1 to 5 years in mid-2026 (5-year 4.15% used), then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%: 5.4 to 5.75%.",
+        mortgageRate: "5-year expat fixes start near 4.15% but most banks charge 4.25 to 4.85%, so 4.5% is used; then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%: 5.4 to 5.75%.",
         riskFreeRate: "AED deposits track EIBOR, which was about 3.7 to 3.9% for 1 to 3 months in August 2026. 3.5% assumed for a typical saver.",
         sellingCostPct: "Seller pays the 2% agent commission plus 5% VAT and a developer NOC fee of AED 500 to 5,000. There is no capital gains tax.",
         rentInflation: "Dubai rents fell about a quarter from 2015 to 2020 and surged from 2021 to 2025, easing in 2026. 3% a year long run, with RERA caps on renewals.",
@@ -1704,8 +1706,8 @@ window.RVO_QUICKSTART = {
       aliases: ["UAE"],
       currencySymbol: "Dh", currencyCode: "AED", asOf: "2026-09",
       buyer: "UAE resident expat buying a first home to live in within an investment (freehold) zone, under AED 5M with an 80% LTV mortgage",
-      downPaymentPct: 20, mortgageRate: 5.29, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.15 }, { toYear: 25, type: "floating", rateMin: 5.4, rateMax: 5.75 }],
+      downPaymentPct: 20, mortgageRate: 5.36, mortgageTerm: 25, riskFreeRate: 3.5, horizon: 25, sellingCostPct: 2.2,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 4.5 }, { toYear: 25, type: "floating", rateMin: 5.4, rateMax: 5.75 }],
       rentFreq: "yearly", rentInflation: 2.5, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -1757,15 +1759,15 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Expats may buy freehold only in investment zones (Reem, Yas, Saadiyat, Raha, Reef). Flats rose 16.4% and villas 10.1% in the year to H1 2026 (Cavendish Maxwell).",
         downPaymentPct: "UAE Central Bank caps expat first-home loans at 80% LTV up to AED 5M (70% above), so 20% down. Every preset here is under AED 5M.",
-        mortgageRate: "Same UAE bank products as Dubai: 5-year fix 4.15% (fixes 3.75 to 4.15% for 1 to 5 years), then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%: 5.4 to 5.75%.",
+        mortgageRate: "Same UAE bank products as Dubai: a typical 5-year fix of 4.5% (best advertised 4.15%, most banks 4.25 to 4.85%), then 3-month EIBOR (about 3.9%) plus 1.5 to 1.85%: 5.4 to 5.75%.",
         riskFreeRate: "AED deposits track EIBOR, about 3.7 to 3.9% for 1 to 3 months in August 2026. 3.5% assumed for a typical saver.",
         sellingCostPct: "Seller pays the 2% agent commission plus 5% VAT and a developer NOC fee. The 2% DMT fee is assumed paid by the buyer, though it is negotiable.",
-        rentInflation: "ADREC froze rent increases at 0% from June 2026 after strong 2023 to 2026 growth. 2.5% a year assumed long run (estimate, not sourced).",
+        rentInflation: "ADREC froze renewal increases at 0% from June 2026, a temporary step that excludes ADGM areas such as Reem Island. 2.5% a year assumed long run (estimate, not sourced).",
         houseGrowth: "Abu Dhabi fell about a quarter from 2014 to 2020, then rebounded hard (flats up 16.4% y/y in H1 2026). Tempered to 2.5% flats, 3% villas (estimate, not sourced).",
         setupCost: "DMT registration 2%, title deed and admin about AED 1,540, mortgage registration 0.1% of loan, buyer agent 2% plus VAT, bank fee 1% plus VAT, valuation.",
         ownOngoingCost: "No property tax, and owner-occupiers do not pay the tenant municipality fee. Service charges about AED 15 per sq ft for towers, 4 for villas (estimate, not sourced).",
         rentOngoingCost: "Expat tenants pay a 3% municipality fee on rent via the utility bill (some 2026 guides say 5%), a 5% agency fee per lease (spread over 3 years) and Tawtheeq.",
-        caveat: "Expats can only buy in investment zones. Rent is paid upfront in cheques and increases are frozen for now. 4-bed flats are too few to quote."
+        caveat: "Expats can only buy in investment zones. Rent is paid upfront in cheques and renewal increases are frozen for now outside ADGM (Reem, Al Maryah). 4-bed flats are too few to quote."
       },
       sources: [
         { name: "Bayut, Abu Dhabi sales market report H1 2026", url: "https://www.bayut.com/mybayut/abu-dhabi-sales-market-report-h1-2026/" },
@@ -1789,28 +1791,28 @@ window.RVO_QUICKSTART = {
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
-          propertyPrice: 290000, rentAmount: 1650, houseGrowth: 2.5, setupCost: 3.15, ownOngoingCost: 1850, rentOngoingCost: 150, sqm: 32,
-          where: "Zone 2 inner London: Islington, Hackney, Bow, Bermondsey, Brixton, Camberwell. Median of 12 district medians, Oct 2026: asking £301k (less 3%), asking rent £1,660 pcm",
+          propertyPrice: 290000, rentAmount: 1560, houseGrowth: 2.5, setupCost: 3.15, ownOngoingCost: 2500, rentOngoingCost: 150, sqm: 32,
+          where: "Zone 2 inner London: Islington, Hackney, Bow, Bermondsey, Brixton, Camberwell. Median of 12 district medians, Oct 2026: asking £301k (less 3%), asking rent £1,660 pcm, less 6% as lets agree below asking, in line with the 1-bed ONS ratio",
           setupCalc: "SDLT on £290k: 2% x £125k = £2,500 + 5% x £40k = £2,000 = £4,500 (first-time buyer relief would make it £0); legal £2,200 + searches £400 + Land Registry £150 + survey £700 + lender fee £999 + lease notice fees £200 = £4,649; total £9,149 = 3.15% (fees other than SDLT and Land Registry are estimates, not sourced)",
-          costCalc: "Service charge £1,350 (median of 30 zone 2 studio listings) + ground rent £100 + internal upkeep £400 = £1,850/yr; council tax excluded as tenants pay it too; renter: contents insurance £150/yr (upkeep and insurance are estimates, not sourced)",
+          costCalc: "Service charge £2,000 (zone 2 studio listings show a £1,350 median, but London flats average £2,801, Hamptons 2025) + ground rent £100 + internal upkeep £400 = £2,500/yr; council tax excluded as tenants pay it too; renter: contents insurance £150/yr (upkeep and insurance are estimates, not sourced)",
           sources: [
             { name: "OnTheMarket, London studio flats for sale", url: "https://www.onthemarket.com/for-sale/flats-apartments/london/?max-bedrooms=0" }
           ]
         },
         "apt-1br": {
-          propertyPrice: 390000, rentAmount: 2150, houseGrowth: 2.5, setupCost: 3.63, ownOngoingCost: 2825, rentOngoingCost: 170, sqm: 50,
-          where: "Zone 2 inner London: Islington, Hackney, Bow, Bermondsey, Brixton, Camberwell. Median of 12 district medians, Oct 2026: asking £406k (less 3%), asking rent £2,185 pcm; ONS all-tenancy 1-bed rents there £1,880 to £2,180",
+          propertyPrice: 390000, rentAmount: 2030, houseGrowth: 2.5, setupCost: 3.63, ownOngoingCost: 3425, rentOngoingCost: 170, sqm: 50,
+          where: "Zone 2 inner London: Islington, Hackney, Bow, Bermondsey, Brixton, Camberwell. Median of 12 district medians, Oct 2026: asking £406k (less 3%), asking rent £2,185 pcm; ONS all-tenancy 1-bed rents there £1,880 to £2,180, midpoint used",
           setupCalc: "SDLT on £390k: £2,500 + 5% x £140k = £7,000 = £9,500 (first-time buyer relief would make it £4,500); legal £2,200 + searches £400 + Land Registry £150 + survey £700 + lender fee £999 + lease notice fees £200 = £4,649; total £14,149 = 3.63% (fees other than SDLT and Land Registry are estimates, not sourced)",
-          costCalc: "Service charge £2,200 (median of 34 zone 2 one-bed listings) + ground rent £125 + internal upkeep £500 = £2,825/yr; council tax excluded as tenants pay it too; renter: contents insurance £170/yr (upkeep and insurance are estimates, not sourced)",
+          costCalc: "Service charge £2,800 (London flat average £2,801, Hamptons 2025; listing median £2,200) + ground rent £125 + internal upkeep £500 = £3,425/yr; council tax excluded as tenants pay it too; renter: contents insurance £170/yr (upkeep and insurance are estimates, not sourced)",
           sources: [
             { name: "OnTheMarket, London one-bed flats for sale", url: "https://www.onthemarket.com/for-sale/flats-apartments/london/?min-bedrooms=1&max-bedrooms=1" }
           ]
         },
         "apt-2br": {
-          propertyPrice: 580000, rentAmount: 2700, houseGrowth: 2.5, setupCost: 4.1, ownOngoingCost: 3900, rentOngoingCost: 200, sqm: 70,
-          where: "Zone 2 inner London: Islington, Hackney, Bow, Bermondsey, Brixton, Camberwell. Median of 12 district medians, Oct 2026: asking £599k (less 3%), asking rent £2,725 pcm; ONS all-tenancy 2-bed rents there £2,340 to £2,700",
+          propertyPrice: 580000, rentAmount: 2520, houseGrowth: 2.5, setupCost: 4.1, ownOngoingCost: 4300, rentOngoingCost: 200, sqm: 70,
+          where: "Zone 2 inner London: Islington, Hackney, Bow, Bermondsey, Brixton, Camberwell. Median of 12 district medians, Oct 2026: asking £599k (less 3%), asking rent £2,725 pcm; ONS all-tenancy 2-bed rents there £2,340 to £2,700, midpoint used",
           setupCalc: "SDLT on £580k: £2,500 + 5% x £330k = £16,500 = £19,000 (no first-time buyer relief above £500k); legal £2,200 + searches £400 + Land Registry £295 + survey £700 + lender fee £999 + lease notice fees £200 = £4,794; total £23,794 = 4.10% (fees other than SDLT and Land Registry are estimates, not sourced)",
-          costCalc: "Service charge £3,100 (median of 28 zone 2 two-bed listings) + ground rent £150 + internal upkeep £650 = £3,900/yr; council tax excluded as tenants pay it too; renter: contents insurance £200/yr (upkeep and insurance are estimates, not sourced)",
+          costCalc: "Service charge £3,500 (listing median £3,100, raised toward London averages, as listings omit major-works bills) + ground rent £150 + internal upkeep £650 = £4,300/yr; council tax excluded as tenants pay it too; renter: contents insurance £200/yr (upkeep and insurance are estimates, not sourced)",
           sources: [
             { name: "OnTheMarket, London two-bed flats for sale", url: "https://www.onthemarket.com/for-sale/flats-apartments/london/?min-bedrooms=2&max-bedrooms=2" }
           ]
@@ -1842,17 +1844,18 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Inner London is mostly leasehold flats; outer zones are Victorian terraces and 1930s semis. About half of London homes are owner-occupied, per Census 2021 (estimate, not sourced).",
         downPaymentPct: "UK lenders price by loan-to-value band. Deposits of 10 to 15% are common for first buyers, so 15% (85% LTV) is used; bigger deposits get slightly lower rates (estimate, not sourced).",
-        mortgageRate: "Moneyfacts, 5 Oct 2026: average 5-year fix 6.00% (2-year 5.98%), up from 5.01% on 1 Sep. Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and 6%.",
+        mortgageRate: "Moneyfacts, 5 Oct 2026: average 5-year fix 6.00% (2-year 5.98%), the highest since Sep 2023. Buyers refix every 2 to 5 years, so from year 6 between the 5.3% long-run view and 6%.",
         riskFreeRate: "Bank Rate is 3.75% (held 17 Sep 2026). Average easy-access savings pay 2.53% and 1-year fixed bonds 4.28% (Moneyfacts, Sep 2026), so 3.75% is used.",
         sellingCostPct: "Estate agent about 1.2% plus VAT, plus conveyancing, EPC and leasehold pack, about 2% in all. No capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "ONS private rents in London rose 3.4% a year from Jan 2015 to Aug 2026 (£1,580 to £2,332 a month, all tenancies), so 3% a year is used long-run.",
         houseGrowth: "Land Registry UK HPI to Jul 2026: inner London flats +3.2% a year since 2006 but -0.5% since 2016; outer London terraces and semis +4.2% and +2.1%. Used: flats 2.5%, houses 3.5%.",
         setupCost: "SDLT standard rates since April 2025: 0% to £125k, 2% to £250k, 5% to £925k, 10% to £1.5m, 12% above. Plus Land Registry fee, legal, searches, survey and lender fee.",
-        ownOngoingCost: "Flats: median service charge and ground rent from Oct 2026 listings, plus upkeep. Houses: buildings insurance and upkeep. Council tax is left out because tenants pay it too.",
+        ownOngoingCost: "Flats: service charge near the London average (Hamptons £2,801, 2025), above listing medians, plus ground rent and upkeep. Houses: buildings insurance and upkeep. Council tax is left out because tenants pay it too.",
         rentOngoingCost: "Tenants pay contents insurance. The Tenant Fees Act 2019 bans letting fees and caps deposits at 5 weeks of rent, refundable (insurance cost is an estimate, not sourced).",
         caveat: "London prices fell 3.3% in the year to Jul 2026. Leasehold flats can bring service charge rises and major-works bills. Prices are asking less about 3% for negotiation (estimate, not sourced)."
       },
       sources: [
+        { name: "Mortgage Solutions, Hamptons: London flat service charges average £2,801 (2025)", url: "https://www.mortgagesolutions.co.uk/news/2026/03/02/nearly-40-of-flats-face-lending-curbs-as-service-charges-rise-hamptons-finds/" },
         { name: "Moneyfactscompare, average 5-year fixed rate hits 6%, 5 Oct 2026", url: "https://moneyfactscompare.co.uk/news/mortgages/avg-5-year-fixed-rate-at-6pc/" },
         { name: "ONS, Private rent and house prices, UK: September 2026", url: "https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/privaterentandhousepricesuk/september2026" },
         { name: "ONS, Price Index of Private Rents by local authority and bedrooms, Aug 2026", url: "https://www.ons.gov.uk/economy/inflationandpriceindices/datasets/priceindexofprivaterentsukmonthlypricestatistics" },
@@ -1875,40 +1878,40 @@ window.RVO_QUICKSTART = {
       rentFreq: "monthly", rentInflation: 2, ownOngoingInflation: 1, rentOngoingInflation: 1,
       homes: {
         "apt-studio": {
-          propertyPrice: 690000, rentAmount: 1450, houseGrowth: 3, setupCost: 0.31, ownOngoingCost: 1665, rentOngoingCost: 200, sqm: 37,
+          propertyPrice: 690000, rentAmount: 1450, houseGrowth: 3, setupCost: 0.31, ownOngoingCost: 2160, rentOngoingCost: 200, sqm: 37,
           where: "City of Zurich, 1 to 1.5 rooms, citywide 2025 median of 53 condo sales (CHF 18,750/m2). A thin segment: only about 600 studios in the city are owner-occupied. Rent: CHF 33.20/m2 new-tenancy rate for 2 rooms x 1.18 studio premium (canton ratio) x 37 m2",
           setupCalc: "No transfer tax. Purchase: notary 0.1% + VAT + land registry 0.1% = CHF 1,436, buyer half CHF 718; mortgage note on CHF 552k loan 0.2081% = CHF 1,149; disbursements CHF 300; total CHF 2,167 = 0.31% (half-split custom and disbursements are estimates, not sourced)",
-          costCalc: "Renewal fund 0.3% of a CHF 166k insured value CHF 500 + interior upkeep 0.4% CHF 665 + administration CHF 400 + building insurance CHF 100 = CHF 1,665/yr; Nebenkosten left out as tenants pay them too; renter: contents insurance CHF 200/yr (rates are estimates, not sourced)",
+          costCalc: "Renewal fund 0.4% of a CHF 166k insured value CHF 664 + interior upkeep 0.6% CHF 996 + administration CHF 400 + building insurance CHF 100 = CHF 2,160/yr; Nebenkosten left out as tenants pay them too; renter: contents insurance CHF 200/yr (rates are estimates, not sourced)",
           sources: [
             { name: "BFS, rent per m2 by rooms, canton of Zurich 2024", url: "https://www.bfs.admin.ch/asset/de/je-d-09.03.03.05" }
           ]
         },
         "apt-1br": {
-          propertyPrice: 1200000, rentAmount: 2200, houseGrowth: 3, setupCost: 0.3, ownOngoingCost: 2680, rentOngoingCost: 250, sqm: 66,
+          propertyPrice: 1200000, rentAmount: 2200, houseGrowth: 3, setupCost: 0.3, ownOngoingCost: 3570, rentOngoingCost: 250, sqm: 66,
           where: "City of Zurich, 2 to 2.5 rooms, typical of Wiedikon, Wipkingen, Oerlikon and Wollishofen (Kreis 1, 7 and 8 cost more). Citywide 2025 median of 105 condo sales CHF 1.216m. Rent: new private tenancies, April 2026 median CHF 33.20/m2 net x 66 m2",
           setupCalc: "No transfer tax. Purchase: notary 0.1% + VAT + land registry 0.1% = CHF 2,497, buyer half CHF 1,249; mortgage note on CHF 960k loan 0.2081% = CHF 1,998; disbursements CHF 300; total CHF 3,547 = 0.30% (half-split custom and disbursements are estimates, not sourced)",
-          costCalc: "Renewal fund 0.3% of a CHF 297k insured value CHF 890 + interior upkeep 0.4% CHF 1,190 + administration CHF 450 + building insurance CHF 150 = CHF 2,680/yr; Nebenkosten (about CHF 170/month) left out as tenants pay them too; renter: contents insurance CHF 250/yr (rates are estimates, not sourced)"
+          costCalc: "Renewal fund 0.4% of a CHF 297k insured value CHF 1,188 + interior upkeep 0.6% CHF 1,782 + administration CHF 450 + building insurance CHF 150 = CHF 3,570/yr; Nebenkosten (about CHF 170/month) left out as tenants pay them too; renter: contents insurance CHF 250/yr (rates are estimates, not sourced)"
         },
         "apt-2br": {
-          propertyPrice: 1550000, rentAmount: 2530, houseGrowth: 3, setupCost: 0.29, ownOngoingCost: 3390, rentOngoingCost: 300, sqm: 86,
+          propertyPrice: 1550000, rentAmount: 2530, houseGrowth: 3, setupCost: 0.29, ownOngoingCost: 4550, rentOngoingCost: 300, sqm: 86,
           where: "City of Zurich, 3 to 3.5 rooms, typical of Wiedikon, Wipkingen, Oerlikon and Wollishofen (Kreis 1, 7 and 8 cost more). Citywide 2025 median of 236 condo sales CHF 1.5475m. Rent: new private tenancies, April 2026 median CHF 29.38/m2 net x 86 m2",
           setupCalc: "No transfer tax. Purchase: notary 0.1% + VAT + land registry 0.1% = CHF 3,226, buyer half CHF 1,613; mortgage note on CHF 1.24m loan 0.2081% = CHF 2,580; disbursements CHF 300; total CHF 4,493 = 0.29% (half-split custom and disbursements are estimates, not sourced)",
-          costCalc: "Renewal fund 0.3% of a CHF 387k insured value CHF 1,160 + interior upkeep 0.4% CHF 1,550 + administration CHF 500 + building insurance CHF 180 = CHF 3,390/yr; Nebenkosten (about CHF 200/month) left out as tenants pay them too; renter: contents insurance CHF 300/yr (rates are estimates, not sourced)"
+          costCalc: "Renewal fund 0.4% of a CHF 387k insured value CHF 1,548 + interior upkeep 0.6% CHF 2,322 + administration CHF 500 + building insurance CHF 180 = CHF 4,550/yr; Nebenkosten (about CHF 200/month) left out as tenants pay them too; renter: contents insurance CHF 300/yr (rates are estimates, not sourced)"
         },
         "apt-4br": {
-          propertyPrice: 2100000, rentAmount: 3450, houseGrowth: 3, setupCost: 0.28, ownOngoingCost: 4945, rentOngoingCost: 400, sqm: 130,
+          propertyPrice: 2100000, rentAmount: 3450, houseGrowth: 3, setupCost: 0.28, ownOngoingCost: 6700, rentOngoingCost: 400, sqm: 130,
           where: "City of Zurich, 5 to 5.5 rooms, residential districts: Kreis 7 (Witikon, Hottingen), Kreis 9 (Altstetten, Albisrieden), Kreis 2 (Wollishofen), Kreis 6. Citywide 2025 median of 84 condo sales CHF 2.09m. Rent: 4-room new-tenancy rate CHF 27.26/m2 x 0.97 (canton 5 vs 4 room ratio) x 130 m2",
           setupCalc: "No transfer tax. Purchase: notary 0.1% + VAT + land registry 0.1% = CHF 4,370, buyer half CHF 2,185; mortgage note on CHF 1.68m loan 0.2081% = CHF 3,496; disbursements CHF 300; total CHF 5,981 = 0.28% (half-split custom and disbursements are estimates, not sourced)",
-          costCalc: "Renewal fund 0.3% of a CHF 585k insured value CHF 1,755 + interior upkeep 0.4% CHF 2,340 + administration CHF 600 + building insurance CHF 250 = CHF 4,945/yr; Nebenkosten (about CHF 300/month) left out as tenants pay them too; renter: contents insurance CHF 400/yr (rates are estimates, not sourced)",
+          costCalc: "Renewal fund 0.4% of a CHF 585k insured value CHF 2,340 + interior upkeep 0.6% CHF 3,510 + administration CHF 600 + building insurance CHF 250 = CHF 6,700/yr; Nebenkosten (about CHF 300/month) left out as tenants pay them too; renter: contents insurance CHF 400/yr (rates are estimates, not sourced)",
           sources: [
             { name: "BFS, rent per m2 by rooms, canton of Zurich 2024", url: "https://www.bfs.admin.ch/asset/de/je-d-09.03.03.05" }
           ]
         },
         "house-4br": {
-          propertyPrice: 1750000, rentAmount: 3450, houseGrowth: 3, setupCost: 0.29, ownOngoingCost: 6400, rentOngoingCost: 450, sqm: 150, landSqm: 400,
-          where: "Close suburbs where houses are common: Dübendorf, Wallisellen, Opfikon, Schlieren (row and detached houses, 5.5 rooms). House medians 2023 to 2025: CHF 1.63m to 1.77m; city houses CHF 2.88m, so cheaper than a city 5.5-room flat. Rent derived from canton rents",
+          propertyPrice: 1750000, rentAmount: 3450, houseGrowth: 3, setupCost: 0.29, ownOngoingCost: 7900, rentOngoingCost: 450, sqm: 150, landSqm: 250,
+          where: "Close suburbs where houses are common: Dübendorf, Wallisellen, Opfikon, Schlieren (mostly row and semi-detached houses on about 250 m2 of land, 5.5 rooms). House medians 2023 to 2025: CHF 1.63m to 1.77m; city houses CHF 2.88m, so cheaper than a city 5.5-room flat. Rent derived from canton rents",
           setupCalc: "No transfer tax. Purchase: notary 0.1% + VAT + land registry 0.1% = CHF 3,642, buyer half CHF 1,821; mortgage note on CHF 1.4m loan 0.2081% = CHF 2,913; disbursements CHF 300; total CHF 5,034 = 0.29% (half-split custom and disbursements are estimates, not sourced)",
-          costCalc: "Maintenance 0.8% of a CHF 750k rebuild value CHF 6,000 + building and liability insurance CHF 400 = CHF 6,400/yr; utilities left out as tenants pay them too; rent CHF 18.90/m2 canton 5-room average x 1.13 new-tenancy uplift x 1.074 (2024 to 2026) x 150 m2; renter: contents insurance CHF 450/yr (estimate, not sourced)",
+          costCalc: "Maintenance 1% of a CHF 750k rebuild value CHF 7,500 + building and liability insurance CHF 400 = CHF 7,900/yr; utilities left out as tenants pay them too; rent CHF 18.90/m2 canton 5-room average x 1.13 new-tenancy uplift x 1.074 (2024 to 2026) x 150 m2; renter: contents insurance CHF 450/yr (estimate, not sourced)",
           sources: [
             { name: "Statistisches Amt Kanton Zurich, house prices by municipality", url: "https://daten.statistik.zh.ch/ogd/daten/ressourcen/KTZH_00003158_00006788.json" },
             { name: "BFS, rent per m2 by rooms, canton of Zurich 2024", url: "https://www.bfs.admin.ch/asset/de/je-d-09.03.03.05" }
@@ -1929,7 +1932,7 @@ window.RVO_QUICKSTART = {
         rentInflation: "New-tenancy rents in Zurich city rose about 3.3% a year 2022 to 2026 (city rent survey), but sitting tenants' rents follow the reference rate and CPI, so 2% is used long-run.",
         houseGrowth: "City condo prices per m2 rose 5.4% a year 2010 to 2025 (Statistik Stadt Zurich); suburban house medians 3.7% a year 2011 to 2025 (canton). Tempered to 3% for both.",
         setupCost: "No transfer tax in Zurich since 2005. Notary 0.1% plus land registry 0.1% of price, plus 0.2% to register a mortgage note on the loan; buyers pay half the purchase fee by custom (estimate, not sourced).",
-        ownOngoingCost: "Condo renewal fund, administration, building insurance and upkeep. Nebenkosten (heating, water) are paid by tenants too, so left out. No annual property tax in Zurich (estimate, not sourced).",
+        ownOngoingCost: "Upkeep and renewal at about 1% of building value a year, administration and insurance. Nebenkosten are paid by tenants too, so left out. No annual property tax (estimate, not sourced).",
         rentOngoingCost: "Tenants pay household contents insurance (estimate, not sourced). The deposit of up to 3 months of net rent sits in a blocked savings account and is returned.",
         caveat: "Swiss owners rarely repay the first mortgage, but the calculator assumes full repayment. Imputed rent tax and interest deductions both end on 1 Jan 2029. Gains tax is deferred if you buy again."
       },
@@ -1950,49 +1953,49 @@ window.RVO_QUICKSTART = {
       key: "paris", city: "Paris", country: "France", countryId: "Prancis", countryCode: "FR", region: "Europe",
       aliases: ["Île-de-France","Ile-de-France","IDF","Paris intra-muros"],
       currencySymbol: "€", currencyCode: "EUR", asOf: "2026-09",
-      buyer: "French resident owner-occupier, first home, existing (ancien) property, standard DMTO rate (the first-time-buyer exemption from the 2025 DMTO rise is ignored)",
+      buyer: "French resident owner-occupier, first home, existing (ancien) property, at the standing DMTO rate that first-time buyers pay (the temporary 2025 to 2028 rise does not apply to them)",
       downPaymentPct: 20, mortgageRate: 3.5, mortgageTerm: 25, riskFreeRate: 2.4, horizon: 25, sellingCostPct: 4,
       rentFreq: "monthly", rentInflation: 2, ownOngoingInflation: 2, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
-          propertyPrice: 240000, rentAmount: 850, houseGrowth: 2, setupCost: 8.89, ownOngoingCost: 1600, rentOngoingCost: 250, sqm: 25,
+          propertyPrice: 240000, rentAmount: 850, houseGrowth: 2, setupCost: 8.38, ownOngoingCost: 2080, rentOngoingCost: 250, sqm: 25,
           where: "Studio (T1) in mid-market arrondissements: 11e, 14e, 15e, 17e. Notaires Q2 2026 average for these about €9,200/m², studios about 4% above: €9,700 × 25 m²",
-          setupCalc: "DMTO 6.3185% of €240,000 = €15,164; notaire emoluments €2,315 + 20% VAT = €2,778; CSI 0.1% €240 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €192,000 loan = €1,960 (filing and bank costs are estimates, not sourced); total €21,342 = 8.89%",
-          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €450 + owner share of copro charges and works ~€30/m² = €750 + interior upkeep €10/m² = €250 + home insurance €150, about €1,600/yr; renter: insurance €120 + ALUR letting fee €15/m² = €375 over 3 yrs, about €250/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
+          setupCalc: "DMTO 5.8067% of €240,000 = €13,936; notaire emoluments €2,315 + 20% VAT = €2,778; CSI 0.1% €240 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €192,000 loan = €1,960 (filing and bank costs are estimates, not sourced); total €20,114 = 8.38%",
+          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €450 + owner share of copro charges and works ~€30/m² = €750 + interior upkeep €10/m² = €250 + home insurance €150, about €1,600 + borrower insurance 0.25% of the €192,000 loan €480 = €2,080/yr; renter: insurance €120 + ALUR letting fee €15/m² = €375 over 3 yrs, about €250/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
         },
         "apt-1br": {
-          propertyPrice: 390000, rentAmount: 1250, houseGrowth: 2, setupCost: 8.46, ownOngoingCost: 2600, rentOngoingCost: 300, sqm: 42,
+          propertyPrice: 390000, rentAmount: 1250, houseGrowth: 2, setupCost: 7.95, ownOngoingCost: 3380, rentOngoingCost: 300, sqm: 42,
           where: "T2 in 11e, 14e, 15e, 17e: about €9,300/m² × 42 m² (notaires Q2 2026); rent about €30/m² hors charges",
-          setupCalc: "DMTO 6.3185% of €390,000 = €24,642; notaire emoluments €3,513 + 20% VAT = €4,216; CSI 0.1% €390 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €312,000 loan = €2,560 (filing and bank costs are estimates, not sourced); total €33,008 = 8.46%",
-          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €750 + owner share of copro charges and works ~€30/m² = €1,260 + interior upkeep €10/m² = €420 + home insurance €180, about €2,600/yr; renter: insurance €150 + ALUR letting fee €15/m² = €630 over 4 yrs, about €300/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
+          setupCalc: "DMTO 5.8067% of €390,000 = €22,646; notaire emoluments €3,513 + 20% VAT = €4,216; CSI 0.1% €390 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €312,000 loan = €2,560 (filing and bank costs are estimates, not sourced); total €31,012 = 7.95%",
+          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €750 + owner share of copro charges and works ~€30/m² = €1,260 + interior upkeep €10/m² = €420 + home insurance €180, about €2,600 + borrower insurance 0.25% of the €312,000 loan €780 = €3,380/yr; renter: insurance €150 + ALUR letting fee €15/m² = €630 over 4 yrs, about €300/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
         },
         "apt-2br": {
-          propertyPrice: 585000, rentAmount: 1750, houseGrowth: 2, setupCost: 8.23, ownOngoingCost: 3900, rentOngoingCost: 400, sqm: 63,
+          propertyPrice: 585000, rentAmount: 1750, houseGrowth: 2, setupCost: 7.72, ownOngoingCost: 5070, rentOngoingCost: 400, sqm: 63,
           where: "T3 in 11e, 14e, 15e, 17e: about €9,300/m² × 63 m²; rent about €28/m² hors charges, near the OLL 3-room median plus a new-lease premium",
-          setupCalc: "DMTO 6.3185% of €585,000 = €36,963; notaire emoluments €5,071 + 20% VAT = €6,086; CSI 0.1% €585 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €468,000 loan = €3,340 (filing and bank costs are estimates, not sourced); total €48,174 = 8.23%",
-          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €1,150 + owner share of copro charges and works ~€30/m² = €1,890 + interior upkeep €10/m² = €630 + home insurance €220, about €3,900/yr; renter: insurance €180 + ALUR letting fee €15/m² = €945 over 4 yrs, about €400/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
+          setupCalc: "DMTO 5.8067% of €585,000 = €33,969; notaire emoluments €5,071 + 20% VAT = €6,086; CSI 0.1% €585 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €468,000 loan = €3,340 (filing and bank costs are estimates, not sourced); total €45,180 = 7.72%",
+          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €1,150 + owner share of copro charges and works ~€30/m² = €1,890 + interior upkeep €10/m² = €630 + home insurance €220, about €3,900 + borrower insurance 0.25% of the €468,000 loan €1,170 = €5,070/yr; renter: insurance €180 + ALUR letting fee €15/m² = €945 over 4 yrs, about €400/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
         },
         "apt-4br": {
-          propertyPrice: 1150000, rentAmount: 3100, houseGrowth: 2, setupCost: 8.01, ownOngoingCost: 7000, rentOngoingCost: 650, sqm: 115,
+          propertyPrice: 1150000, rentAmount: 3100, houseGrowth: 2, setupCost: 7.5, ownOngoingCost: 9300, rentOngoingCost: 650, sqm: 115,
           where: "T5 family flat, mostly Haussmannian, in 15e, 16e, 17e: about €10,000/m² × 115 m²; rent about €27/m² hors charges; upper segment",
-          setupCalc: "DMTO 6.3185% of €1,150,000 = €72,663; notaire emoluments €9,586 + 20% VAT = €11,503; CSI 0.1% €1,150 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €920,000 loan = €5,600 (filing and bank costs are estimates, not sourced); total €92,116 = 8.01%",
-          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €2,050 + owner share of copro charges and works ~€30/m² = €3,450 + interior upkeep €10/m² = €1,150 + home insurance €350, about €7,000/yr; renter: insurance €300 + ALUR letting fee €15/m² = €1,725 over 5 yrs, about €650/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
+          setupCalc: "DMTO 5.8067% of €1,150,000 = €66,776; notaire emoluments €9,586 + 20% VAT = €11,503; CSI 0.1% €1,150 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €920,000 loan = €5,600 (filing and bank costs are estimates, not sourced); total €86,229 = 7.50%",
+          costCalc: "Taxe foncière excl. TEOM ~€18/m² = €2,050 + owner share of copro charges and works ~€30/m² = €3,450 + interior upkeep €10/m² = €1,150 + home insurance €350, about €7,000 + borrower insurance 0.25% of the €920,000 loan €2,300 = €9,300/yr; renter: insurance €300 + ALUR letting fee €15/m² = €1,725 over 5 yrs, about €650/yr. Recoverable charges and TEOM are paid by both, so excluded (per-m² rates are estimates, not sourced)"
         },
         "house-2br": {
-          propertyPrice: 370000, rentAmount: 1450, houseGrowth: 1.5, setupCost: 8.5, ownOngoingCost: 2800, rentOngoingCost: 450, sqm: 70, landSqm: 200,
+          propertyPrice: 370000, rentAmount: 1450, houseGrowth: 1.5, setupCost: 7.99, ownOngoingCost: 3540, rentOngoingCost: 450, sqm: 70, landSqm: 200,
           where: "Small pavillon (3 pièces) in the petite couronne: Montreuil, Fontenay-sous-Bois, Champigny-sur-Marne, Vitry-sur-Seine; about €5,300/m² × 70 m², rent about €21/m². Cheaper than a Paris T3 because it is outside the city",
-          setupCalc: "DMTO 6.3185% of €370,000 = €23,378; notaire emoluments €3,354 + 20% VAT = €4,024; CSI 0.1% €370 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €296,000 loan = €2,480 (filing and bank costs are estimates, not sourced); total €31,453 = 8.50%",
-          costCalc: "Taxe foncière excl. TEOM ~€1,050 + house insurance €350 + maintenance 1% of rebuild value (~€2,000/m² × 70 m²) = €1,400, about €2,800/yr; renter: insurance €200 + ALUR letting fee ~€14/m² = €980 over 4 yrs, about €450/yr (tax, insurance and fee rates are estimates, not sourced)",
+          setupCalc: "DMTO 5.8067% of €370,000 = €21,485; notaire emoluments €3,354 + 20% VAT = €4,024; CSI 0.1% €370 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €296,000 loan = €2,480 (filing and bank costs are estimates, not sourced); total €29,560 = 7.99%",
+          costCalc: "Taxe foncière excl. TEOM ~€1,050 + house insurance €350 + maintenance 1% of rebuild value (~€2,000/m² × 70 m²) = €1,400, about €2,800 + borrower insurance 0.25% of the €296,000 loan €740 = €3,540/yr; renter: insurance €200 + ALUR letting fee ~€14/m² = €980 over 4 yrs, about €450/yr (tax, insurance and fee rates are estimates, not sourced)",
           sources: [
             { name: "Notaires du Grand Paris, house prices by département, Q2 2026", url: "https://paris.notaires.fr/sites/default/files/Historiquedesprixdesmaisonspardep_4.pdf" },
             { name: "SeLoger, Saint-Maur-des-Fossés prices and rents, May 2026", url: "https://edito.seloger.com/actualites/france/prix-immobilier-saint-maur-fosses-vaut-marche-article-22913.html" }
           ]
         },
         "house-4br": {
-          propertyPrice: 700000, rentAmount: 2600, houseGrowth: 1.5, setupCost: 8.16, ownOngoingCost: 4900, rentOngoingCost: 600, sqm: 120, landSqm: 350,
+          propertyPrice: 700000, rentAmount: 2600, houseGrowth: 1.5, setupCost: 7.65, ownOngoingCost: 6300, rentOngoingCost: 600, sqm: 120, landSqm: 350,
           where: "5-pièces house in the petite couronne: Saint-Maur-des-Fossés, Colombes, Antony, Le Perreux-sur-Marne; about €5,850/m² × 120 m² (houses €5,500-6,500/m² there), rent about €21.70/m². Cheaper than a Paris T5 because it is outside the city",
-          setupCalc: "DMTO 6.3185% of €700,000 = €44,230; notaire emoluments €5,990 + 20% VAT = €7,188; CSI 0.1% €700 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €560,000 loan = €3,800 (filing and bank costs are estimates, not sourced); total €57,118 = 8.16%",
-          costCalc: "Taxe foncière excl. TEOM ~€2,000 + house insurance €500 + maintenance 1% of rebuild value (~€2,000/m² × 120 m²) = €2,400, about €4,900/yr; renter: insurance €280 + ALUR letting fee ~€14/m² = €1,680 over 5 yrs, about €600/yr (tax, insurance and fee rates are estimates, not sourced)",
+          setupCalc: "DMTO 5.8067% of €700,000 = €40,647; notaire emoluments €5,990 + 20% VAT = €7,188; CSI 0.1% €700 + filing costs ~€1,200; bank fee €1,000 + guarantee 0.5% of €560,000 loan = €3,800 (filing and bank costs are estimates, not sourced); total €53,535 = 7.65%",
+          costCalc: "Taxe foncière excl. TEOM ~€2,000 + house insurance €500 + maintenance 1% of rebuild value (~€2,000/m² × 120 m²) = €2,400, about €4,900 + borrower insurance 0.25% of the €560,000 loan €1,400 = €6,300/yr; renter: insurance €280 + ALUR letting fee ~€14/m² = €1,680 over 5 yrs, about €600/yr (tax, insurance and fee rates are estimates, not sourced)",
           sources: [
             { name: "Notaires du Grand Paris, house prices by département, Q2 2026", url: "https://paris.notaires.fr/sites/default/files/Historiquedesprixdesmaisonspardep_4.pdf" },
             { name: "SeLoger, Saint-Maur-des-Fossés prices and rents, May 2026", url: "https://edito.seloger.com/actualites/france/prix-immobilier-saint-maur-fosses-vaut-marche-article-22913.html" }
@@ -2006,15 +2009,15 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Paris is mostly small pre-1940 flats in copropriété; about a third of households own and about a quarter of homes are social housing (estimate, not sourced). Houses sit in the petite couronne.",
         downPaymentPct: "20%: Crédit Logement/CSA data put the average apport near 20% for existing homes in 2026; banks expect at least the notaire fees to be paid in cash.",
-        mortgageRate: "3.5%: the 25-year fixed averaged 3.35% in Aug 2026 (Observatoire Crédit Logement/CSA) and broker quotes rose to 3.5-3.6% in Sept. Borrower insurance is extra.",
+        mortgageRate: "3.5%: the 25-year fixed averaged 3.35% in Aug 2026 (Observatoire Crédit Logement/CSA) and broker quotes rose to 3.5-3.6% in Sept. Borrower insurance is in owner costs.",
         riskFreeRate: "2.4%: new 1-year household term deposits paid 2.36% in Aug 2026 (ECB MIR); Livret A pays 1.7% tax-free from 1 Aug 2026; ECB deposit rate 2.5%.",
         sellingCostPct: "4%: Paris agency commission of roughly 3.5-5% incl. VAT plus diagnostics; no capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "2%: Paris rents are capped by rent control and indexed to the IRL; OLAP measured +0.8%, +2.4% and +2.9% a year for unfurnished private rents in 2021-2023.",
         houseGrowth: "Flats: notaires' arrondissement average rose 2.8%/yr 2006-2026 and 1.6%/yr 2016-2026, so 2%. Petite couronne houses rose about 1%/yr over 10 and 20 years, so 1.5%.",
-        setupCost: "DMTO 6.32% (département 5% since Apr 2025 + commune 1.2% + fee), regulated notaire emoluments plus VAT, CSI 0.1%, filing costs, bank fee and loan guarantee.",
-        ownOngoingCost: "Taxe foncière without the TEOM waste levy (recharged to tenants), the owner share of copropriété charges and works, upkeep and home insurance (per-m² rates are estimates).",
+        setupCost: "DMTO 5.81% (département 4.5% + commune 1.2% + fee; first-time buyers skip the temporary rise to 5% to 2028), regulated notaire emoluments plus VAT, CSI 0.1%, filing costs, bank fee and loan guarantee.",
+        ownOngoingCost: "Taxe foncière without the TEOM waste levy (recharged to tenants), the owner share of copro charges and works, upkeep, home and borrower insurance (rates are estimates).",
         rentOngoingCost: "Tenant home insurance plus the ALUR-capped letting fee (€12/m² + €3/m² in Paris) spread over a 3-5 year tenancy (estimate, not sourced).",
-        caveat: "Rents are free-sector, unfurnished and capped by Paris rent control; social housing (about a quarter of homes) rents far lower. First-time buyers skip the 0.5 pt DMTO rise."
+        caveat: "Rents are free-sector, unfurnished and capped by Paris rent control; social housing (about a quarter of homes) rents far lower. Borrower insurance, modelled at 0.25% of the loan, ends with the loan."
       },
       sources: [
         { name: "Notaires du Grand Paris, apartment prices by arrondissement, Q2 2026", url: "https://paris.notaires.fr/sites/default/files/HistoriquedesprixaumappartementsanciensParispararrdt_4.pdf" },
@@ -2108,12 +2111,12 @@ window.RVO_QUICKSTART = {
       aliases: ["Noord-Holland","North Holland","Randstad","Mokum"],
       currencySymbol: "€", currencyCode: "EUR", asOf: "2026-10",
       buyer: "Dutch resident owner-occupier, first home, aged 35 or over (no starter transfer-tax exemption), without NHG",
-      downPaymentPct: 10, mortgageRate: 4.4, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 1.6,
+      downPaymentPct: 10, mortgageRate: 4.7, mortgageTerm: 30, riskFreeRate: 2.5, horizon: 30, sellingCostPct: 1.6,
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
-          propertyPrice: 330000, rentAmount: 1100, houseGrowth: 3, setupCost: 3.73, ownOngoingCost: 2050, rentOngoingCost: 120, sqm: 35,
-          where: "1-kamer flat in Oud-West, De Pijp, Oost, Westerpark: about €9,400/m² × 35 m² (NVM regional flat median €8,221/m² plus an inner-ring premium); rent about €31/m², likely rent-regulated (see caveat)",
+          propertyPrice: 330000, rentAmount: 950, houseGrowth: 3, setupCost: 3.73, ownOngoingCost: 2050, rentOngoingCost: 120, sqm: 35,
+          where: "1-kamer flat in Oud-West, De Pijp, Oost, Westerpark: about €9,400/m² × 35 m² (NVM regional flat median €8,221/m² plus an inner-ring premium); rent about €27/m², near the legal maximum for a regulated 35 m² flat under the WWS points system (estimate, not sourced)",
           setupCalc: "Overdrachtsbelasting 2% of €330,000 = €6,600; notary deeds incl. Kadaster ~€1,600; valuation ~€850; mortgage advice ~€3,000; bank guarantee ~€250; total €12,300 = 3.73% (fees are estimates, not sourced; NHG fee and buyer's agent not included)",
           costCalc: "OZB ~0.044% of WOZ €297,000 = €131 + water board ~0.017% = €50 + sewer levy ~€200 + VvE €100/month = €1,200 + interior upkeep €10/m² = €350 + contents insurance €120, about €2,050/yr; renter: contents insurance €120/yr, no agency fee. Assumes ground rent bought off or freehold (estimate, not sourced)"
         },
@@ -2153,7 +2156,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Amsterdam is mostly flats; roughly 3 in 10 homes are owner-occupied and about 4 in 10 are social rentals (estimate, not sourced). Houses sit outside the ring.",
         downPaymentPct: "10%: Dutch rules allow loans up to 100% of value, but buyers pay purchase costs from savings and about 10% down reaches the 90% LTV rate band (estimate, not sourced).",
-        mortgageRate: "4.4%: a 10-year fix at 90% LTV without NHG costs 4.3 to 4.5% (Sep 2026), above the 3.94% all-loan average (ECB MIR, Aug). Most buyers fix 10 years on a 30-year annuity.",
+        mortgageRate: "4.7%: the 10-year average with NHG rose to about 4.3-4.4% by late Sep 2026; at 90% LTV without NHG banks add 0.3-0.5 pt (Westland Utrecht 4.85% in July). 10-year fix, 30-year annuity.",
         riskFreeRate: "2.5%: new 1-year household term deposits paid 2.54% in Aug 2026 (ECB MIR); instant-access savings about 1.3%; ECB deposit rate 2.5%.",
         sellingCostPct: "1.6%: seller's agent commission of about 1-1.5% plus VAT, marketing and energy label; no capital gains tax on a main home (estimate, not sourced).",
         rentInflation: "3%: CBS measured Amsterdam rent rises averaging about 3.4%/yr over 2015-2026 (4.3% in 2026); free-sector rises for sitting tenants are capped near CPI + 1%.",
@@ -2161,7 +2164,7 @@ window.RVO_QUICKSTART = {
         setupCost: "Transfer tax 2% for an owner-occupier, notary deeds, valuation, mortgage advice and bank guarantee; houses add a building survey (fees are estimates, not sourced).",
         ownOngoingCost: "OZB and water board tax on the WOZ value, sewer levy, VvE contribution for flats or insurance and upkeep for houses, plus contents insurance (estimate, not sourced).",
         rentOngoingCost: "Contents insurance only: Dutch law bars letting agents from charging tenants, and the deposit is refundable (estimate, not sourced).",
-        caveat: "Mortgage interest deductibility and erfpacht ground rent are not modelled. Homes under 187 WWS points (rent up to €1,228) are regulated; rents shown are free sector. Starter exemption ignored."
+        caveat: "Not modelled: mortgage interest relief (37.56%, about €7k a year on the 1BR early on), erfpacht ground rent and Box 3 tax on savings. The studio rent is WWS-regulated; larger flats are free sector."
       },
       sources: [
         { name: "Westland Utrecht Bank, rates from 1 Oct 2026: 10-year fix 4.50% up to 90% of value", url: "https://www.westlandutrechtbank.nl/documents/pdfs/Renteoverzicht/Herziening/20260618_Herzieningsrente_20261001.pdf" },
@@ -2182,7 +2185,7 @@ window.RVO_QUICKSTART = {
       aliases: ["LA","US","USA","California"],
       currencySymbol: "$", currencyCode: "USD", asOf: "2026-10",
       buyer: "US resident owner-occupier buying a first home with a conventional 30-year fixed loan and 20% down, no first-time buyer assistance",
-      downPaymentPct: 20, mortgageRate: 7.3, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6.3,
+      downPaymentPct: 20, mortgageRate: 7.4, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6.3,
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -2247,7 +2250,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "A renter-majority city. Condos cluster in central districts; houses are mostly 2 to 4 bed single-family homes in the Valley and Eastside. Zillow LA values were flat in the year to Aug 2026.",
         downPaymentPct: "20% down avoids private mortgage insurance on a conventional loan. LA's 2026 conforming limit is $1,249,125, so every home here takes a conforming loan.",
-        mortgageRate: "Freddie Mac PMMS 30-year fixed averaged 7.28% on 1 Oct 2026, up from 6.34% a year earlier after a Fed hike and a global bond selloff.",
+        mortgageRate: "Freddie Mac PMMS 30-year fixed averaged 7.40% on 8 Oct 2026 (7.28% a week earlier), up from 6.30% a year earlier after a Fed hike and a global bond selloff.",
         riskFreeRate: "3-month Treasury bills yielded about 4.0% in early Oct 2026 (FRED DTB3); top online savings accounts paid about 4.15 to 4.25%.",
         sellingCostPct: "About 5% total commission (negotiable since the 2024 NAR settlement), 0.56% county and city transfer tax, title and escrow about 0.7%. Measure ULA 4% starts only above $5.4M.",
         rentInflation: "Zillow rent index for LA city rose 3.4% a year over 10 years and 0.7% in the last year; LA-area rent CPI averaged about 4% a year in 1997 to 2017. 3% assumed.",
@@ -2258,7 +2261,7 @@ window.RVO_QUICKSTART = {
         caveat: "Prop 13 caps taxable value growth at 2% a year. Earthquake cover is extra. A 30-year fixed can be refinanced free if rates fall, which the calculator does not model."
       },
       sources: [
-        { name: "Freddie Mac PMMS, 30-year fixed 7.28% (1 Oct 2026)", url: "https://www.freddiemac.com/pmms" },
+        { name: "Freddie Mac PMMS, 30-year fixed 7.40% (8 Oct 2026)", url: "https://www.freddiemac.com/pmms" },
         { name: "FRED, 3-month Treasury bill rate (DTB3), Oct 2026", url: "https://fred.stlouisfed.org/series/DTB3" },
         { name: "Zillow ZHVI by city, condo/co-op, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_condo_tier_0.33_0.67_sm_sa_month.csv" },
         { name: "Zumper, Los Angeles rent by bedroom, Oct 2026", url: "https://www.zumper.com/rent-research/los-angeles-ca" },
@@ -2274,24 +2277,24 @@ window.RVO_QUICKSTART = {
       aliases: ["SF","Bay Area","US","USA","California"],
       currencySymbol: "$", currencyCode: "USD", asOf: "2026-10",
       buyer: "US resident owner-occupier buying a first home with a conventional 30-year fixed loan (jumbo above $1,249,125) and 20% down, no first-time buyer assistance",
-      downPaymentPct: 20, mortgageRate: 7.3, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6.1,
+      downPaymentPct: 20, mortgageRate: 7.4, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6.1,
       rentFreq: "monthly", rentInflation: 3.5, ownOngoingInflation: 2.5, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
-          propertyPrice: 520000, rentAmount: 2900, houseGrowth: 2.5, setupCost: 1.4, ownOngoingCost: 14667, rentOngoingCost: 250, sqm: 45,
-          where: "SoMa, South Beach/Mission Bay, Nob Hill/Russian Hill, Hayes Valley. Zillow has no studio series: derived from the 1BR value per sq ft (about $1,085) x 480 sq ft = about $520k. Rent: Zumper Oct 2026 studio average $2,700 citywide, $3,500 in SoMa. Yield is high because rents jumped about 25% in 2026 while condo prices barely moved for a decade.",
-          setupCalc: "Transfer tax paid by seller by SF custom; buyer pays owner title in Northern California. Approx.: lender fees $1,800, appraisal $900, owner title policy $1,840, lender title policy $733, half of escrow $720, recording and notary $300, inspection $500, HOA transfer and docs $500; total $7,293 = 1.40% of $520,000",
-          costCalc: "property tax 1.1827% of price less $7,000 exemption $6,067 + parcel taxes and assessments approx. $700 + HOA $550/mo $6,600 + HO-6 insurance $500 + upkeep $800 = $14,667/yr; renter: contents insurance $200 + application fees about $150 per move over a 3-year tenancy $50 = $250/yr",
+          propertyPrice: 570000, rentAmount: 2900, houseGrowth: 2.5, setupCost: 1.33, ownOngoingCost: 15259, rentOngoingCost: 250, sqm: 45,
+          where: "SoMa, South Beach/Mission Bay, Nob Hill/Russian Hill, Hayes Valley. Zillow has no studio series: derived from the 1BR value per sq ft (about $1,085) x 480 sq ft = about $520k, plus 9% as Zillow lags the 2026 rise in condo sales (Compass July median +8.9% a year). Rent: Zumper Oct 2026 studio average $2,700 citywide, $3,500 in SoMa, after a 25% jump in 2026.",
+          setupCalc: "Transfer tax paid by seller by SF custom; buyer pays owner title in Northern California. Approx.: lender fees $1,800, appraisal $900, owner title policy $2,000, lender title policy $800, half of escrow $780, recording and notary $300, inspection $500, HOA transfer and docs $500; total $7,580 = 1.33% of $570,000",
+          costCalc: "property tax 1.1827% of price less $7,000 exemption $6,659 + parcel taxes and assessments approx. $700 + HOA $550/mo $6,600 + HO-6 insurance $500 + upkeep $800 = $15,259/yr; renter: contents insurance $200 + application fees about $150 per move over a 3-year tenancy $50 = $250/yr",
           sources: [
             { name: "Zillow ZHVI by ZIP, 1-bedroom, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/Zip_zhvi_bdrmcnt_1_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" },
             { name: "Zumper, SoMa rent by bedroom, Oct 2026", url: "https://www.zumper.com/rent-research/san-francisco-ca/soma" }
           ]
         },
         "apt-1br": {
-          propertyPrice: 760000, rentAmount: 4300, houseGrowth: 2.5, setupCost: 1.07, ownOngoingCost: 19556, rentOngoingCost: 250, sqm: 65,
-          where: "SoMa, South Beach/Mission Bay, Nob Hill/Russian Hill, Hayes Valley. Zillow Aug 2026 1BR values in these ZIPs run $610k to $910k (median about $760k). Rent: Zumper Oct 2026 1BR average $4,295 citywide, $4,995 in SoMa. High yield reflects the 2026 rent spike on flat condo prices.",
-          setupCalc: "Transfer tax paid by seller by SF custom; buyer pays owner title in Northern California. Approx.: lender fees $1,800, appraisal $900, owner title policy $2,320, lender title policy $886, half of escrow $960, recording and notary $300, inspection $500, HOA transfer and docs $500; total $8,166 = 1.07% of $760,000",
-          costCalc: "property tax 1.1827% of price less $7,000 exemption $8,906 + parcel taxes and assessments approx. $700 + HOA $700/mo $8,400 + HO-6 insurance $550 + upkeep $1,000 = $19,556/yr; renter: contents insurance $200 + application fees about $150 per move over a 3-year tenancy $50 = $250/yr",
+          propertyPrice: 830000, rentAmount: 4300, houseGrowth: 2.5, setupCost: 1.02, ownOngoingCost: 20384, rentOngoingCost: 250, sqm: 65,
+          where: "SoMa, South Beach/Mission Bay, Nob Hill/Russian Hill, Hayes Valley. Zillow Aug 2026 1BR values in these ZIPs run $610k to $910k (median about $760k), plus 9% as Zillow lags 2026 condo sales (Compass July median +8.9%). Rent: Zumper Oct 2026 1BR average $4,295 citywide, $4,995 in SoMa.",
+          setupCalc: "Transfer tax paid by seller by SF custom; buyer pays owner title in Northern California. Approx.: lender fees $1,800, appraisal $900, owner title policy $2,480, lender title policy $950, half of escrow $1,040, recording and notary $300, inspection $500, HOA transfer and docs $500; total $8,470 = 1.02% of $830,000",
+          costCalc: "property tax 1.1827% of price less $7,000 exemption $9,734 + parcel taxes and assessments approx. $700 + HOA $700/mo $8,400 + HO-6 insurance $550 + upkeep $1,000 = $20,384/yr; renter: contents insurance $200 + application fees about $150 per move over a 3-year tenancy $50 = $250/yr",
           sources: [
             { name: "Zillow ZHVI by ZIP, 1-bedroom, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/Zip_zhvi_bdrmcnt_1_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" },
             { name: "Zumper, SoMa rent by bedroom, Oct 2026", url: "https://www.zumper.com/rent-research/san-francisco-ca/soma" }
@@ -2338,7 +2341,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "A renter-majority city. Condos cluster in SoMa, Mission Bay and Nob Hill; houses are 2 to 4 bed row houses on 25-ft lots. AI wealth lifted the July 2026 house median to $2.05M, up 25% on a year.",
         downPaymentPct: "20% down avoids private mortgage insurance. Loans above the $1,249,125 conforming limit are jumbo; MBA data showed jumbo rates within about 0.1 point of conforming in Sept 2026.",
-        mortgageRate: "Freddie Mac PMMS 30-year fixed averaged 7.28% on 1 Oct 2026, up from 6.34% a year earlier after a Fed hike and a global bond selloff.",
+        mortgageRate: "Freddie Mac PMMS 30-year fixed averaged 7.40% on 8 Oct 2026 (7.28% a week earlier), up from 6.30% a year earlier after a Fed hike and a global bond selloff.",
         riskFreeRate: "3-month Treasury bills yielded about 4.0% in early Oct 2026 (FRED DTB3); top online savings accounts paid about 4.15 to 4.25%.",
         sellingCostPct: "About 5% total commission, SF transfer tax on the whole price (0.68% under $1M, 0.75% from $1M to $5M) paid by the seller, escrow and fees about 0.35%.",
         rentInflation: "Zillow rent index for SF rose 3.5% a year over 10 years but 25% in the last year; SF-area rent CPI averaged 3.5% a year over 20 years. 3.5% assumed.",
@@ -2349,7 +2352,7 @@ window.RVO_QUICKSTART = {
         caveat: "Most pre-1979 rentals are rent controlled, so sitting tenants pay far less than these asking rents. The 2026 rent spike may fade. Prop 13 caps taxable value growth at 2% a year."
       },
       sources: [
-        { name: "Freddie Mac PMMS, 30-year fixed 7.28% (1 Oct 2026)", url: "https://www.freddiemac.com/pmms" },
+        { name: "Freddie Mac PMMS, 30-year fixed 7.40% (8 Oct 2026)", url: "https://www.freddiemac.com/pmms" },
         { name: "FRED, 3-month Treasury bill rate (DTB3), Oct 2026", url: "https://fred.stlouisfed.org/series/DTB3" },
         { name: "Zillow ZHVI by city, condo/co-op, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_condo_tier_0.33_0.67_sm_sa_month.csv" },
         { name: "Zumper, San Francisco rent by bedroom, Oct 2026", url: "https://www.zumper.com/rent-research/san-francisco-ca" },
@@ -2366,14 +2369,14 @@ window.RVO_QUICKSTART = {
       aliases: ["US","USA","Texas"],
       currencySymbol: "$", currencyCode: "USD", asOf: "2026-10",
       buyer: "US resident owner-occupier buying a first home with a conventional 30-year fixed loan and 20% down, homestead exemption claimed, no first-time buyer assistance",
-      downPaymentPct: 20, mortgageRate: 7.3, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6.4,
+      downPaymentPct: 20, mortgageRate: 7.4, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6.4,
       rentFreq: "monthly", rentInflation: 2.8, ownOngoingInflation: 3, rentOngoingInflation: 2.5,
       homes: {
         "apt-1br": {
-          propertyPrice: 195000, rentAmount: 1400, houseGrowth: 2, setupCost: 2.36, ownOngoingCost: 10554, rentOngoingCost: 340, sqm: 74,
-          where: "Uptown/Galleria, Montrose, Midtown, Medical Center (mid- and high-rise condos). Zillow Aug 2026 1BR values in these ZIPs run $110k to $265k (median about $200k). Rent: Zumper Oct 2026 1BR averages $1,307 to $1,495. Yield near 9% because high HOA dues, taxes and insurance hold condo prices down.",
+          propertyPrice: 195000, rentAmount: 1300, houseGrowth: 2, setupCost: 2.36, ownOngoingCost: 10534, rentOngoingCost: 340, sqm: 74,
+          where: "Uptown/Galleria, Montrose, Midtown, Medical Center (mid- and high-rise condos). Zillow Aug 2026 1BR values in these ZIPs run $110k to $265k (median about $200k). Rent: Zumper Oct 2026 1BR asking averages $1,307 to $1,495, set at $1,300 as towers give 4 to 8 weeks free and rents are falling (estimate, not sourced). Yield near 8% because high HOA dues, taxes and insurance hold condo prices down.",
           setupCalc: "Texas has no transfer tax. Approx.: lender fees $1,800, appraisal $600, simultaneous lender title policy and endorsements $450, half of escrow $550, recording and tax certificates $250, inspection $450, HOA transfer and resale certificate $500; total $4,600 = 2.36% of $195,000",
-          costCalc: "property tax (HISD 0.8783% on value less $140k $483, city 0.5191% and county 0.3809% on 80% $1,404, Harris Health, flood, port, HCC 0.342% $667) $2,554 + HOA $550/mo (often incl. water and building insurance) $6,600 + HO-6 insurance $600 + upkeep $800 = $10,554/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
+          costCalc: "property tax (HISD 0.8421% on value less $140k $463, city 0.5191% and county 0.3809% on 80% $1,404, Harris Health, flood, port, HCC 0.342% $667) $2,534 + HOA $550/mo (often incl. water and building insurance) $6,600 + HO-6 insurance $600 + upkeep $800 = $10,534/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
           sources: [
             { name: "Zillow ZHVI by ZIP, 1-bedroom, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/Zip_zhvi_bdrmcnt_1_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" },
             { name: "Zumper, Great Uptown rent by bedroom, Oct 2026", url: "https://www.zumper.com/rent-research/houston-tx/great-uptown" },
@@ -2382,10 +2385,10 @@ window.RVO_QUICKSTART = {
           ]
         },
         "apt-2br": {
-          propertyPrice: 300000, rentAmount: 2050, houseGrowth: 2, setupCost: 1.53, ownOngoingCost: 16591, rentOngoingCost: 340, sqm: 116,
-          where: "Uptown/Galleria, Montrose, Midtown, Medical Center. Zillow Aug 2026 2BR values in these ZIPs run $225k to $490k (median about $310k); Uptown-Galleria condo median about $300k. Rent: Zumper Oct 2026 2BR averages $1,896 to $2,199. High yield offset by HOA dues of $0.60 to $1 per sq ft a month.",
+          propertyPrice: 300000, rentAmount: 1900, houseGrowth: 2, setupCost: 1.53, ownOngoingCost: 16533, rentOngoingCost: 340, sqm: 116,
+          where: "Uptown/Galleria, Montrose, Midtown, Medical Center. Zillow Aug 2026 2BR values in these ZIPs run $225k to $490k (median about $310k); Uptown-Galleria condo median about $300k. Rent: Zumper Oct 2026 2BR asking averages $1,896 to $2,199, set at the low end net of move-in specials (estimate, not sourced). High yield offset by HOA dues of $0.60 to $1 per sq ft a month.",
           setupCalc: "Texas has no transfer tax. Approx.: lender fees $1,800, appraisal $600, simultaneous lender title policy and endorsements $450, half of escrow $550, recording and tax certificates $250, inspection $450, HOA transfer and resale certificate $500; total $4,600 = 1.53% of $300,000",
-          costCalc: "property tax (HISD 0.8783% on value less $140k $1,405, city 0.5191% and county 0.3809% on 80% $2,160, Harris Health, flood, port, HCC 0.342% $1,026) $4,591 + HOA $850/mo (often incl. water and building insurance) $10,200 + HO-6 insurance $700 + upkeep $1,100 = $16,591/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
+          costCalc: "property tax (HISD 0.8421% on value less $140k $1,347, city 0.5191% and county 0.3809% on 80% $2,160, Harris Health, flood, port, HCC 0.342% $1,026) $4,533 + HOA $850/mo (often incl. water and building insurance) $10,200 + HO-6 insurance $700 + upkeep $1,100 = $16,533/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
           sources: [
             { name: "Zillow ZHVI by ZIP, 2-bedroom, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/Zip_zhvi_bdrmcnt_2_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" },
             { name: "Prestige Realty, Galleria condo median and towers, 2026", url: "https://prestigerealtypro.com/blog/the-gallerias-condo-median-is-falling-the-new-towers-say-otherwise" },
@@ -2394,20 +2397,20 @@ window.RVO_QUICKSTART = {
           ]
         },
         "house-2br": {
-          propertyPrice: 230000, rentAmount: 1500, houseGrowth: 3.5, setupCost: 2.11, ownOngoingCost: 9233, rentOngoingCost: 340, sqm: 85, landSqm: 560,
-          where: "Older east and north side areas: East End (Eastwood, Magnolia Park), Northside (Lindale Park), Independence Heights. Zillow Aug 2026 2BR values there run $165k to $320k. Cheaper than the 2BR condo because these are modest post-war cottages in lower-priced areas, while 2BR condos sit in Uptown and Montrose towers. Rent: Zumper 2BR house listings $1,040 to $1,355 citywide, more near the centre.",
+          propertyPrice: 230000, rentAmount: 1350, houseGrowth: 3.5, setupCost: 2.11, ownOngoingCost: 9201, rentOngoingCost: 340, sqm: 85, landSqm: 560,
+          where: "Older east and north side areas: East End (Eastwood, Magnolia Park), Northside (Lindale Park), Independence Heights. Zillow Aug 2026 2BR values there run $165k to $320k. Cheaper than the 2BR condo because these are modest post-war cottages in lower-priced areas, while 2BR condos sit in Uptown and Montrose towers. Rent: Zumper 2BR house listings $1,040 to $1,355 citywide; the top of that range is used for these close-in areas.",
           setupCalc: "Texas has no transfer tax. Approx.: lender fees $1,800, appraisal $600, simultaneous lender title policy and endorsements $450, half of escrow $550, recording and tax certificates $250, survey $500, inspection and termite $700; total $4,850 = 2.11% of $230,000",
-          costCalc: "property tax (HISD 0.8783% on value less $140k $790, city 0.5191% and county 0.3809% on 80% $1,656, Harris Health, flood, port, HCC 0.342% $787) $3,233 + homeowners insurance $3,000 + flood insurance (NFIP, outside high-risk zone) $700 + upkeep on a post-war cottage $2,300 = $9,233/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
+          costCalc: "property tax (HISD 0.8421% on value less $140k $758, city 0.5191% and county 0.3809% on 80% $1,656, Harris Health, flood, port, HCC 0.342% $787) $3,201 + homeowners insurance $3,000 + flood insurance (NFIP, outside high-risk zone) $700 + upkeep on a post-war cottage $2,300 = $9,201/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
           sources: [
             { name: "Zillow ZHVI by ZIP, 2-bedroom, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/Zip_zhvi_bdrmcnt_2_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" },
             { name: "Zumper, Houston houses for rent, Oct 2026", url: "https://www.zumper.com/houses-for-rent/houston-tx" }
           ]
         },
         "house-4br": {
-          propertyPrice: 340000, rentAmount: 2400, houseGrowth: 3.5, setupCost: 1.51, ownOngoingCost: 14267, rentOngoingCost: 340, sqm: 220, landSqm: 700,
+          propertyPrice: 340000, rentAmount: 2400, houseGrowth: 3.5, setupCost: 1.51, ownOngoingCost: 14194, rentOngoingCost: 340, sqm: 220, landSqm: 700,
           where: "Southwest Houston in HISD: Westbury, Meyerland, Sharpstown, Brays Oaks. Zillow Aug 2026 4BR values there run $260k to $500k (average about $350k); city 4BR value $327k; HAR metro single-family median $330k. Rent: Zumper 4BR house listings median $2,185, Clear Lake 4BR $2,655.",
           setupCalc: "Texas has no transfer tax. Approx.: lender fees $1,800, appraisal $600, simultaneous lender title policy and endorsements $450, half of escrow $550, recording and tax certificates $250, survey $500, inspection and termite $700, HOA transfer $300; total $5,150 = 1.51% of $340,000",
-          costCalc: "property tax (HISD 0.8783% on value less $140k $1,757, city 0.5191% and county 0.3809% on 80% $2,448, Harris Health, flood, port, HCC 0.342% $1,163) $5,367 + homeowners insurance $4,200 + flood insurance (NFIP) $800 + civic association/HOA $500 + upkeep $3,400 = $14,267/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
+          costCalc: "property tax (HISD 0.8421% on value less $140k $1,684, city 0.5191% and county 0.3809% on 80% $2,448, Harris Health, flood, port, HCC 0.342% $1,163) $5,294 + homeowners insurance $4,200 + flood insurance (NFIP) $800 + civic association/HOA $500 + upkeep $3,400 = $14,194/yr; renter: contents insurance $280 + application and admin fees about $180 per move over a 3-year tenancy $60 = $340/yr",
           sources: [
             { name: "Zillow ZHVI by ZIP, 4-bedroom, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/Zip_zhvi_bdrmcnt_4_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv" },
             { name: "Zumper, Houston houses for rent, Oct 2026", url: "https://www.zumper.com/houses-for-rent/houston-tx" },
@@ -2424,18 +2427,18 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "No zoning and abundant land keep 3 to 4 bed houses cheap. Condos are a small market of Uptown and Montrose towers with high HOA dues and 8.8 months of supply (HAR, Aug 2026).",
         downPaymentPct: "20% down avoids private mortgage insurance on a conventional loan; every home here falls under the $832,750 conforming limit.",
-        mortgageRate: "Freddie Mac PMMS 30-year fixed averaged 7.28% on 1 Oct 2026, up from 6.34% a year earlier after a Fed hike and a global bond selloff.",
+        mortgageRate: "Freddie Mac PMMS 30-year fixed averaged 7.40% on 8 Oct 2026 (7.28% a week earlier), up from 6.30% a year earlier after a Fed hike and a global bond selloff.",
         riskFreeRate: "3-month Treasury bills yielded about 4.0% in early Oct 2026 (FRED DTB3); top online savings accounts paid about 4.15 to 4.25%.",
         sellingCostPct: "About 5.5% total commission (negotiable since the 2024 NAR settlement), seller-paid owner title policy about 0.6%, escrow and fees about 0.3%. Texas has no transfer tax.",
         rentInflation: "Zillow rent index for Houston rose 2.5% a year over 10 years and dipped in the last year on new supply; Houston rent CPI rose 3.2% a year over 20 years. 2.8% assumed.",
         houseGrowth: "FHFA Houston index rose 4.5% a year over 20 years and 5.4% over 10, but Zillow Houston condo values only 1.9% a year over 10. Assumed 3.5% for houses, 2% for condos.",
         setupCost: "No transfer tax. Buyer pays lender fees, appraisal, a simultaneous lender title policy with endorsements, half of escrow, a survey for houses, inspection, HOA transfer fees.",
-        ownOngoingCost: "2025 rates total 2.12% (HISD, city, county, HCC); homestead takes $140k off school value and 20% off city and county. Plus high insurance, flood cover and condo HOA dues.",
+        ownOngoingCost: "Rates total about 2.08% (HISD 0.8421% for 2026-27, city, county, HCC); homestead takes $140k off school value and 20% off city and county. Plus high insurance, flood cover and condo HOA dues.",
         rentOngoingCost: "Renters insurance of about $280 a year plus application and admin fees of about $180 per move, spread over a 3-year tenancy.",
         caveat: "Homes in suburbs outside the city often add MUD taxes, lifting totals to 2.5% or more. Homestead taxable value can rise at most 10% a year. Flood risk varies by street."
       },
       sources: [
-        { name: "Freddie Mac PMMS, 30-year fixed 7.28% (1 Oct 2026)", url: "https://www.freddiemac.com/pmms" },
+        { name: "Freddie Mac PMMS, 30-year fixed 7.40% (8 Oct 2026)", url: "https://www.freddiemac.com/pmms" },
         { name: "FRED, 3-month Treasury bill rate (DTB3), Oct 2026", url: "https://fred.stlouisfed.org/series/DTB3" },
         { name: "Zillow ZHVI by city, condo/co-op, Aug 2026 (CSV)", url: "https://files.zillowstatic.com/research/public_csvs/zhvi/City_zhvi_uc_condo_tier_0.33_0.67_sm_sa_month.csv" },
         { name: "Zumper, Houston rent by bedroom, Oct 2026", url: "https://www.zumper.com/rent-research/houston-tx" },
@@ -2452,7 +2455,7 @@ window.RVO_QUICKSTART = {
       aliases: ["NYC","New York City","Manhattan","US","USA"],
       currencySymbol: "$", currencyCode: "USD", asOf: "2026-09",
       buyer: "US resident owner-occupier buying a first home with a conventional 30-year fixed loan; apartments are Manhattan resale co-ops (the majority of resale deals), houses are fee simple; no first-time buyer programs",
-      downPaymentPct: 20, mortgageRate: 7.3, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 7.5,
+      downPaymentPct: 20, mortgageRate: 7.4, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 7.5,
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 3, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -2480,15 +2483,15 @@ window.RVO_QUICKSTART = {
           costCalc: "Owner: co-op maintenance 2,400 sq ft x $2.83/sq ft/mo (includes the building's property tax and underlying mortgage) $81,504 + contents and HO-6 insurance $1,500 + in-unit repairs $6,000 = $89,004/yr (used $89,000). Rate = Miller Samuel Q2 2026 average for closed co-op sales ($2.83/sq ft/mo), which skews to larger units. Boards at this price usually want 30%+ down (estimate, not sourced). Insurance and repairs (estimate, not sourced). Renter: renters insurance $500 = $500/yr. No broker fee: under the FARE Act landlords pay the broker they hire. Insurance (estimate, not sourced)"
         },
         "house-2br": {
-          propertyPrice: 570000, rentAmount: 2900, houseGrowth: 3.5, setupCost: 3.39, ownOngoingCost: 9900, rentOngoingCost: 250, sqm: 100, landSqm: 185, sellingCostPct: 7,
+          propertyPrice: 570000, rentAmount: 2900, houseGrowth: 3.5, setupCost: 3.19, ownOngoingCost: 9900, rentOngoingCost: 250, sqm: 100, landSqm: 185, sellingCostPct: 7,
           where: "Fee-simple 2-bedroom townhouses and small detached homes on Staten Island (Great Kills, Eltingville, Bulls Head, Travis), about 20 to 25 km from Midtown, hence cheaper than a Manhattan 2BR co-op. Price: Zillow Aug 2026 2-bedroom typical value for Staten Island $544K, which includes cheaper condos, so $570K for a house (estimate, not sourced); rent: Zumper Oct 2026 Staten Island 2BR average $2,720, houses rent higher",
-          setupCalc: "mortgage recording tax 1.8% of $456,000 loan $8,208 + owner's and lender's title insurance $3,300 + buyer attorney $3,000 + lender fees $2,500 + lender attorney $1,000 + recording, searches and survey $800 + inspection $500 = $19,308 = 3.39% of $570,000. NYC mortgage recording tax paid by the borrower: 1.8% on loans under $500k, 1.925% above (1-2 family). No mansion tax under $1M; transfer taxes are paid by the seller. Title and fee levels (estimate, not sourced)",
+          setupCalc: "mortgage recording tax 1.55% of $456,000 loan $7,068 + owner's and lender's title insurance $3,300 + buyer attorney $3,000 + lender fees $2,500 + lender attorney $1,000 + recording, searches and survey $800 + inspection $500 = $18,168 = 3.19% of $570,000. NYC mortgage recording tax is 1.8% under $500k and 1.925% above, but on 1-2 family homes the lender pays 0.25 of it. No mansion tax under $1M; transfer taxes are paid by the seller. Title and fee levels (estimate, not sourced)",
           costCalc: "Owner: property tax ~0.9% of value (Class 1 effective rate, estimate; FY2027 rate 20.909% on a capped 6% assessment) $5,130 + homeowners insurance $1,800 + maintenance ~1% of a $300,000 building value $3,000 = $9,930/yr (used $9,900). Water and sewer charges treated as a utility both pay. Insurance and upkeep (estimate, not sourced). Renter: renters insurance $250 = $250/yr. No tenant broker fee under the FARE Act. Insurance (estimate, not sourced)"
         },
         "house-4br": {
-          propertyPrice: 950000, rentAmount: 4000, houseGrowth: 3.5, setupCost: 3.05, ownOngoingCost: 15600, rentOngoingCost: 300, sqm: 185, landSqm: 370, sellingCostPct: 7,
+          propertyPrice: 950000, rentAmount: 4000, houseGrowth: 3.5, setupCost: 2.85, ownOngoingCost: 15600, rentOngoingCost: 300, sqm: 185, landSqm: 370, sellingCostPct: 7,
           where: "Detached and semi-detached 4-bedroom houses in eastern Queens (Bayside, Fresh Meadows, Middle Village) and Staten Island. Price: Zillow Aug 2026 4-bedroom typical value Queens $963K, Staten Island $919K; rent: Zumper Oct 2026 4BR average $3,950 in both boroughs",
-          setupCalc: "mortgage recording tax 1.925% of $760,000 loan $14,630 + owner's and lender's title insurance $5,000 + buyer attorney $3,500 + lender fees $3,000 + lender attorney $1,000 + recording, searches and survey $1,200 + inspection $600 = $28,930 = 3.05% of $950,000. NYC mortgage recording tax paid by the borrower: 1.8% on loans under $500k, 1.925% above (1-2 family). No mansion tax under $1M; transfer taxes are paid by the seller. Title and fee levels (estimate, not sourced)",
+          setupCalc: "mortgage recording tax 1.675% of $760,000 loan $12,730 + owner's and lender's title insurance $5,000 + buyer attorney $3,500 + lender fees $3,000 + lender attorney $1,000 + recording, searches and survey $1,200 + inspection $600 = $27,030 = 2.85% of $950,000. NYC mortgage recording tax is 1.8% under $500k and 1.925% above, but on 1-2 family homes the lender pays 0.25 of it. No mansion tax under $1M; transfer taxes are paid by the seller. Title and fee levels (estimate, not sourced)",
           costCalc: "Owner: property tax ~0.9% of value (Class 1 effective rate, estimate; FY2027 rate 20.909% on a capped 6% assessment) $8,550 + homeowners insurance $2,500 + maintenance ~1% of a $450,000 building value $4,500 = $15,550/yr (used $15,600). Water and sewer charges treated as a utility both pay. Insurance and upkeep (estimate, not sourced). Renter: renters insurance $300 = $300/yr. No tenant broker fee under the FARE Act. Insurance (estimate, not sourced)"
         }
       },
@@ -2499,12 +2502,12 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Most New Yorkers rent. Manhattan resale is mostly co-ops (about 1,900 co-op vs 1,266 condo resale closings in 3Q 2026, Corcoran), so apartments here are co-ops; houses are in the outer boroughs.",
         downPaymentPct: "20% avoids mortgage insurance on a conventional loan and is the usual co-op board minimum; luxury boards often want 30% or more (board norms (estimate, not sourced)).",
-        mortgageRate: "Freddie Mac 30-year fixed averaged 7.28% on 1 Oct 2026, up from 6.66% in mid-August after the September Fed hike. 7.3% used, fixed for the whole term.",
+        mortgageRate: "Freddie Mac 30-year fixed averaged 7.40% on 8 Oct 2026, up from 6.66% in mid-August after the September Fed hike. 7.4% used, fixed for the whole term.",
         riskFreeRate: "3-month T-bills about 3.9% (late August 2026), top high-yield savings 4.2% to 4.3% (October 2026); Fed funds 3.75% to 4.00% after the September hike. 4.0% used.",
         sellingCostPct: "Broker about 5% (estimate, not sourced) plus NYC transfer tax 1% to 1.425% and NYS 0.4% paid by the seller, attorney, and often a co-op flip tax. 7.5% for co-ops, 7% for houses.",
         rentInflation: "Manhattan rents rose 6% to 7% in the year to mid-2026 (StreetEasy, Miller Samuel); 3% is a long-run assumption (estimate, not sourced).",
         houseGrowth: "Zillow ZHVI to Aug 2026: Manhattan 1-2BR values flat over 10 years, about 1%/yr over 20; outer-borough houses 2.5% to 3.5%/yr over 20 years. 2% co-ops, 3.5% houses.",
-        setupCost: "Co-ops: no mortgage recording tax or title insurance; buyer pays mansion tax (1% from $1M, 1.5% from $3M) plus attorney, bank and board fees. Houses: recording tax 1.8% to 1.925% of loan.",
+        setupCost: "Co-ops: no mortgage recording tax or title insurance; buyer pays mansion tax (1% from $1M, 1.25% from $2M, 1.5% from $3M) plus attorney, bank and board fees. Houses: borrower recording tax 1.55% to 1.675% of loan.",
         ownOngoingCost: "Co-op maintenance covers the building's property tax and its underlying mortgage: $2.44 to $2.83/sq ft/month in Manhattan (AskDoss; Miller Samuel Q2 2026). Houses: tax ~0.9% of value.",
         rentOngoingCost: "Renters insurance only (estimate, not sourced). Since the FARE Act (June 2025, upheld on appeal July 2026) the landlord pays the broker it hires.",
         caveat: "Co-op boards can reject buyers, cap financing and bar subletting; part of maintenance is tax deductible. Rent-stabilised flats rent far below market and are not modelled."
@@ -2527,7 +2530,7 @@ window.RVO_QUICKSTART = {
       aliases: ["US","USA","Illinois"],
       currencySymbol: "$", currencyCode: "USD", asOf: "2026-09",
       buyer: "US resident owner-occupier, first home, conventional 30-year fixed loan with 20% down, homeowner exemption claimed; no first-time buyer grants",
-      downPaymentPct: 20, mortgageRate: 7.3, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6,
+      downPaymentPct: 20, mortgageRate: 7.4, mortgageTerm: 30, riskFreeRate: 4, horizon: 30, sellingCostPct: 6,
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 3, rentOngoingInflation: 2.5,
       homes: {
         "apt-studio": {
@@ -2569,7 +2572,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Downtown and lakefront condo towers plus bungalows, frame houses and two-flats in the neighbourhoods. Chicago condo values are about where they were 20 years ago (Zillow).",
         downPaymentPct: "20% avoids private mortgage insurance on a conventional loan; 3% to 5% down loans exist but add insurance.",
-        mortgageRate: "Freddie Mac 30-year fixed averaged 7.28% on 1 Oct 2026, up from 6.66% in mid-August after the September Fed hike. 7.3% used, fixed for the whole term.",
+        mortgageRate: "Freddie Mac 30-year fixed averaged 7.40% on 8 Oct 2026, up from 6.66% in mid-August after the September Fed hike. 7.4% used, fixed for the whole term.",
         riskFreeRate: "3-month T-bills about 3.9% (late August 2026), top high-yield savings 4.2% to 4.3% (October 2026). 4.0% used.",
         sellingCostPct: "Commission about 5% (estimate, not sourced) plus seller transfer taxes (state 0.1%, county 0.05%, CTA 0.3%), owner's title policy and attorney: about 6%.",
         rentInflation: "Zumper shows Chicago rents up 7% in the year to October 2026; 3% is a long-run assumption (estimate, not sourced).",
@@ -2596,8 +2599,8 @@ window.RVO_QUICKSTART = {
       aliases: ["Ontario","GTA"],
       currencySymbol: "$", currencyCode: "CAD", asOf: "2026-09",
       buyer: "Canadian resident owner-occupier, first home, 20% down so no CMHC insurance; Ontario and Toronto first-time buyer land transfer tax refunds ignored",
-      downPaymentPct: 20, mortgageRate: 4.95, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 5,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.1 }, { toYear: 30, type: "floating", rateMin: 4.75, rateMax: 5.1 }],
+      downPaymentPct: 20, mortgageRate: 5.13, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.25 }, { toYear: 30, type: "floating", rateMin: 4.9, rateMax: 5.3 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -2639,7 +2642,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Downtown condo towers plus older freehold semis and detached houses. Condo prices are down 6.4% in a year (TRREB HPI, Sept 2026) amid heavy supply; detached down 4.5%.",
         downPaymentPct: "20% is the minimum to avoid CMHC insurance premiums (minimum down is 5% on the first $500k and 10% above, up to $1.5M).",
-        mortgageRate: "5-year fixed, 20% down, 30-year amortisation: about 5.1% (nesto 5.09%, big-6 5.12%, Oct 2026). It renews every 5 years, between the 4.75% long-run view and 5.1%.",
+        mortgageRate: "5-year fixed, uninsured, 30-year amortisation: 5.25% (big-6 average 5.17%, national 5.28%; nesto's 5.09% is a broker low, Oct 2026). Renews every 5 years at 4.9 to 5.3%.",
         riskFreeRate: "3-month T-bill 2.41% (7 Oct 2026), ongoing high-interest savings about 2.75%, 1-year GICs up to about 3.6%. Bank of Canada at 2.25%. 3.0% used.",
         sellingCostPct: "Commission about 4% to 4.5% plus 13% HST, plus legal and mortgage discharge fees: about 5% (estimate, not sourced).",
         rentInflation: "Condo rents fell about 2% in the year to Q2 2026 (TRREB) after a 2023 peak; 3% is a long-run assumption (estimate, not sourced).",
@@ -2666,8 +2669,8 @@ window.RVO_QUICKSTART = {
       aliases: ["BC","British Columbia"],
       currencySymbol: "$", currencyCode: "CAD", asOf: "2026-09",
       buyer: "Canadian resident owner-occupier, first home, 20% down so no CMHC insurance; BC first-time buyer property transfer tax exemption ignored; home owner grant claimed",
-      downPaymentPct: 20, mortgageRate: 4.95, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 3.5,
-      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.1 }, { toYear: 30, type: "floating", rateMin: 4.75, rateMax: 5.1 }],
+      downPaymentPct: 20, mortgageRate: 5.13, mortgageTerm: 30, riskFreeRate: 3, horizon: 30, sellingCostPct: 3.5,
+      ratePeriods: [{ toYear: 5, type: "fixed", rate: 5.25 }, { toYear: 30, type: "floating", rateMin: 4.9, rateMax: 5.3 }],
       rentFreq: "monthly", rentInflation: 3, ownOngoingInflation: 2.5, rentOngoingInflation: 2,
       homes: {
         "apt-studio": {
@@ -2704,7 +2707,7 @@ window.RVO_QUICKSTART = {
       notes: {
         market: "Condo towers plus detached houses on very expensive land. GVR Sept 2026: apartment benchmark $682,500 (-6.2% in a year), detached $1.78M (-7.3%), across Metro Vancouver.",
         downPaymentPct: "20% is the minimum to avoid CMHC insurance premiums (minimum down is 5% on the first $500k and 10% above, up to $1.5M; 20% required above that).",
-        mortgageRate: "5-year fixed, 20% down, 30-year amortisation: about 5.1% (nesto 5.09%, big-6 5.12%, Oct 2026). It renews every 5 years, between the 4.75% long-run view and 5.1%.",
+        mortgageRate: "5-year fixed, uninsured, 30-year amortisation: 5.25% (big-6 average 5.17%, national 5.28%; nesto's 5.09% is a broker low, Oct 2026). Renews every 5 years at 4.9 to 5.3%.",
         riskFreeRate: "3-month T-bill 2.41% (7 Oct 2026), ongoing high-interest savings about 2.75%, 1-year GICs up to about 3.6%. Bank of Canada at 2.25%. 3.0% used.",
         sellingCostPct: "Commission often 7% on the first $100k plus 2.5% to 3% on the rest, plus 5% GST and legal fees: about 3.5% (estimate, not sourced).",
         rentInflation: "Asking rents are down about 4% in a year (Zumper, Oct 2026) after the 2023 peak; 3% is a long-run assumption (estimate, not sourced).",
