@@ -40,7 +40,7 @@ window.__TOUR = {
     },
     {
       // The step names both controls, so highlight both: the year box sits
-      // in its own row beside the metric buttons.
+      // beside the metric buttons, in the table row above the results.
       target: ['#metricGroup', '#yearInput'],
       title: '④ Choose the metric and year',
       body: 'Compare on <strong>Net equity</strong>, <strong>Liquid cash</strong> or ' +

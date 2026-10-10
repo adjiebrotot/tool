@@ -14,9 +14,7 @@ const LANG_SENS = {
     labelBase: 'Base currency:',
     fxModeLabel: 'Multi-currency',
     fxWarn: (list) => `Columns in ${list} are not converted`,
-    fxSourceLive: (name, date) => `Live rates: ${name}, ${date}`,
-    fxSourceBundled: (date) => `Rates of ${date} (live rates unavailable)`,
-    fxSourceNone: 'No exchange rates yet: type each one',
+    labelView: 'Compare on',
     labelMetric: 'Metric:',
     labelAtYear: 'At year:',
     yearHint: '(up to the time horizon)',
@@ -171,9 +169,7 @@ const LANG_SENS = {
     labelBase: 'Mata uang dasar:',
     fxModeLabel: 'Multi-mata uang',
     fxWarn: (list) => `Kolom dalam ${list} tidak dikonversi`,
-    fxSourceLive: (name, date) => `Kurs terkini: ${name}, ${date}`,
-    fxSourceBundled: (date) => `Kurs per ${date} (kurs terkini tidak tersedia)`,
-    fxSourceNone: 'Belum ada kurs: isi masing-masing',
+    labelView: 'Bandingkan',
     labelMetric: 'Metrik:',
     labelAtYear: 'Di tahun:',
     yearHint: '(hingga jangka waktu)',
@@ -1452,11 +1448,33 @@ function buildTableHTML(){
   </tr></thead><tbody>
     ${bodyHtml}
     <tr class="sep-tr"><td colspan="${colCount}"></td></tr>
+    ${viewRowHTML(n, trailTd)}
+    ${fxWarnRowHTML(colCount)}
     <tr class="out-own"><td class="label-td"><span class="ricon ricon-own" aria-hidden="true"></span><span class="out-lbl-text">${T('ownOutputLabel')(ml)}</span></td>${ownTds}${trailTd}</tr>
     <tr class="out-rent"><td class="label-td"><span class="ricon ricon-rent" aria-hidden="true"></span><span class="out-lbl-text">${T('rentOutputLabel')(ml)}</span></td>${rentTds}${trailTd}</tr>
     <tr class="out-delta"><td class="label-td">${T('deltaLabel')}</td>${deltaTds}${trailTd}</tr>
     <tr class="out-actions"><td class="label-td">${T('actionsLabel')}</td>${actionTds}${trailTd}</tr>
   </tbody></table>`;
+}
+
+/* What the results read: the metric and the year, one choice for every
+   column so the columns compare like with like. */
+const METRICS = [['netEquity','metricNetEquity'],['cash','metricLiquidCash'],['cost','metricAccumCost']];
+function viewRowHTML(n, trailTd){
+  const btns = METRICS.map(([m,k])=>`<button type="button" class="seg-btn${metric===m?' active':''}" data-metric="${m}"><span class="lbl-long">${escHtml(T(k))}</span><span class="lbl-short">${escHtml(T(k+'Short'))}</span></button>`).join('');
+  const H = Math.max(1, Math.round(Number(shared.horizon) || 30));
+  return `<tr class="view-tr"><td class="label-td">${escHtml(T('labelView'))}</td><td class="scen-td view-td" colspan="${n}"><div class="view-ctrls" data-no-persist>
+      <div class="seg-group" id="metricGroup" role="group" aria-label="${escAttr(T('labelMetric').replace(/:$/,''))}">${btns}</div>
+      <label class="year-wrap"><span class="controls-label">${escHtml(T('labelAtYear'))}</span><input type="number" class="year-input" id="yearInput" data-unit="year" min="1" max="${H}" value="${viewYear}"/><span class="year-hint">${escHtml(T('yearHint'))}</span></label>
+    </div></td>${trailTd}</tr>`;
+}
+/* Columns in different currencies read as one money (multi-currency off)
+   are flagged above the results they distort. */
+function fxWarnRowHTML(colCount){
+  if(multiOn()) return '';
+  const codes = [...new Set(scenarios.map(s=>s.currency).filter(Boolean))];
+  if(!(codes.length > 1 || (codes.length === 1 && codes[0] !== fxs.base))) return '';
+  return `<tr class="fx-warn-tr"><td colspan="${colCount}"><span class="fx-warn" id="fxWarn">${escHtml(T('fxWarn')([...new Set([fxs.base, ...codes])].join(', ')))}</span></td></tr>`;
 }
 
 /* ── RERENDER OUTPUT ONLY ── */
@@ -2160,6 +2178,24 @@ function closeGlobalChartModal(){
 
 /* ── WIRE EVENTS ── */
 function wireEvents(){
+  const mg = document.getElementById('metricGroup');
+  if(mg) mg.addEventListener('click', e=>{
+    const btn = e.target.closest('.seg-btn');
+    if(!btn || !btn.dataset.metric) return;
+    metric = btn.dataset.metric;
+    mg.querySelectorAll('.seg-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    rerenderOutputOnly();
+    if(persist) persist.schedule();
+  });
+  // The year moves only the results and the notes under each name, so the
+  // box keeps its focus while the reader types.
+  const yi = document.getElementById('yearInput');
+  if(yi) yi.addEventListener('input', e=>{
+    viewYear = Math.max(1, Math.min(plan ? plan.H : 100, parseIntSafe(e.target.value, 30)));
+    rerenderOutputOnly();
+    if(persist) persist.schedule();
+  });
+
   document.querySelectorAll('.scen-name-input').forEach(el=>{
     el.addEventListener('input', e=>{ scenarios[+e.target.dataset.si].name = e.target.value; });
   });
@@ -2573,20 +2609,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     rerender();
   });
 
-  document.getElementById('metricGroup').addEventListener('click', e=>{
-    const btn = e.target.closest('.seg-btn');
-    if(!btn || !btn.dataset.metric) return;
-    metric = btn.dataset.metric;
-    document.querySelectorAll('#metricGroup .seg-btn').forEach(b=>b.classList.toggle('active', b===btn));
-    rerenderOutputOnly();
-  });
-
-  document.getElementById('yearInput').addEventListener('input', e=>{
-    viewYear = Math.max(1, Math.min(plan ? plan.H : 100, parseIntSafe(e.target.value, 30)));
-    const wrap = document.getElementById('tableWrap');
-    if(wrap){ wrap.innerHTML = buildTableHTML(); wireEvents(); }
-  });
-
   document.getElementById('downloadCSVBtn').addEventListener('click', downloadCSV);
 
   const uploadBtn = document.getElementById('uploadCSVBtn');
@@ -2613,7 +2635,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     persist = Persist.init('rentvsownhouse-sensitivity', {
       onRestore: function(){ syncYearMax(); rerender(); syncControls(); },
       extra: {
-        save: function(){ return { scenarios: scenarios, shared: shared, fx: fxs, modes: modes }; },
+        save: function(){ return { scenarios: scenarios, shared: shared, fx: fxs, modes: modes, view: { metric: metric, year: viewYear } }; },
         restore: function(e){
           if(!e) return;
           if(Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios;
@@ -2622,6 +2644,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
           const f = e.fx && typeof e.fx === 'object' ? e.fx : {};
           fxs = {on: !!f.on, base: /^[A-Z]{3}$/.test(f.base) ? f.base : SharedCurrency.toCode(pageSym(), DEFAULT_FX.base),
                  path: f.path==='hold' ? 'hold' : 'parity', rfr: (f.rfr && typeof f.rfr === 'object') ? Object.assign({}, f.rfr) : {}};
+          const v = e.view && typeof e.view === 'object' ? e.view : {};
+          if(METRICS.some(([m])=>m===v.metric)) metric = v.metric;
+          if(Number(v.year) >= 1) viewYear = Math.round(Number(v.year));
           if(e.modes && typeof e.modes === 'object') ['mortgageMode','ownCostsMode','rentCostsMode'].forEach(k=>{
             if(e.modes[k]==='simple' || e.modes[k]==='detailed') modes[k] = e.modes[k];
           });
@@ -2635,8 +2660,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 /* The controls bar follows the state: the symbol picker in one currency,
-   the base-currency picker (ISO codes) in several, the rates' source, and a
-   warning when columns in different currencies are being read as one. */
+   the base-currency picker (ISO codes) in several. */
 function syncControls(){
   const on = multiOn();
   const toggle = document.getElementById('fxModeToggle');
@@ -2649,28 +2673,6 @@ function syncControls(){
   if(baseSel){
     baseSel.hidden = !on;
     if(on){ baseSel.innerHTML = currencyOptions(fxs.base); baseSel.value = fxs.base; }
-  }
-  const src = document.getElementById('fxSource');
-  if(src){
-    src.hidden = !on;
-    if(on){
-      const s = FX && FX.source();
-      src.textContent = '';
-      if(!s) src.textContent = T('fxSourceNone');
-      else if(s.kind==='live'){
-        const [before, after] = T('fxSourceLive')('\u0000', fmtDay(s.date)).split('\u0000');
-        const a = document.createElement('a');
-        a.href = s.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = s.name;
-        src.append(before, a, after);
-      } else src.textContent = T('fxSourceBundled')(fmtDay(s.date));
-    }
-  }
-  const warn = document.getElementById('fxWarn');
-  if(warn){
-    const codes = [...new Set(scenarios.map(s=>s.currency).filter(Boolean))];
-    const mixed = !on && (codes.length > 1 || (codes.length === 1 && codes[0] !== fxs.base));
-    warn.hidden = !mixed;
-    if(mixed) warn.textContent = T('fxWarn')([...new Set([fxs.base, ...codes])].join(', '));
   }
 }
 

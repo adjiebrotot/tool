@@ -392,7 +392,7 @@ const MC = [
 
   // B9: off again, the AUD and IDR columns are read as one money: flagged.
   await page3.click('#fxModeToggle'); await page3.waitForTimeout(200);
-  const warn = await page3.evaluate(() => { const w = document.getElementById('fxWarn'); return w.hidden ? '' : w.textContent; });
+  const warn = await page3.evaluate(() => { const w = document.querySelector('#tableWrap #fxWarn'); return w ? w.textContent : ''; });
   check('B9 columns in two currencies read as one (multi-currency off) are flagged', /AUD/.test(warn) && /IDR/.test(warn), warn);
   await page.close();
 }
