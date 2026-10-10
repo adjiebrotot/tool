@@ -23,15 +23,29 @@ window.__TOUR = {
       body: 'Tambahkan kolom untuk setiap kasus yang ingin diuji, misalnya uang muka, ' +
             'suku bunga KPR, atau kota yang berbeda. Ubah asumsi apa pun secara langsung ' +
             'dan seluruh tabel dihitung ulang seketika, sehingga Anda bisa melihat faktor ' +
-            'mana yang paling memengaruhi hasil. Pilihan <strong>⚡</strong> di kolom pertama ' +
-            'mencari semua kota dan hunian Mulai Cepat lalu mengisi kolom itu; seret kolom ke ' +
-            'kanan untuk memuat yang lain.'
+            'mana yang paling memengaruhi hasil. Pilihan <strong>⚡</strong> di tiap kolom ' +
+            'mencari semua kota dan hunian Mulai Cepat lalu mengisi kolom itu.'
+    },
+    {
+      target: '#tableWrap tr.group-sep-tr',
+      title: '② Uang yang sama di tiap kolom',
+      body: 'Jangka waktu, suku bunga bebas risiko, modal awal dan anggaran adalah satu baris ' +
+            'untuk seluruh tabel, jadi tak ada skenario yang menang karena modal lebih besar. ' +
+            'Jika <strong>Otomatis</strong>, modal dan anggaran mengikuti kebutuhan terbesar ' +
+            'semua kolom dan menyebut kolomnya; rumah yang lebih murah menabung selisihnya.'
+    },
+    {
+      target: '.fx-row',
+      title: '③ Rumah dengan mata uang berbeda',
+      body: 'Centang <strong>Multi-mata uang</strong> agar tiap kolom punya mata uang dan kurs ' +
+            'sendiri (terkini dari ExchangeRate-API, atau isi sendiri). Semua hasil dan grafik ' +
+            'lalu dalam mata uang dasar, dan tiap kolom mendapat modal dan anggaran yang sama sesuai kursnya.'
     },
     {
       // The step names both controls, so highlight both: the year box sits
       // in its own row beside the metric buttons.
       target: ['#metricGroup', '#yearInput'],
-      title: '② Pilih metrik dan tahun',
+      title: '④ Pilih metrik dan tahun',
       body: 'Bandingkan berdasarkan <strong>Kekayaan bersih</strong>, <strong>Uang ' +
             'tunai</strong>, atau <strong>Biaya kumulatif</strong>, lalu atur ' +
             '<strong>tahun</strong> evaluasinya. <strong>Beli dikurangi sewa</strong> di ' +
@@ -39,7 +53,7 @@ window.__TOUR = {
     },
     {
       target: '.csv-actions',
-      title: '③ Bandingkan, ekspor, dan muat ulang',
+      title: '⑤ Bandingkan, ekspor, dan muat ulang',
       body: 'Gunakan <strong>Bandingkan</strong> untuk menggambar semua skenario dalam ' +
             'satu grafik, unduh tabel sebagai CSV, atau unggah CSV tersimpan untuk ' +
             'membangun ulang skenario Anda nanti. Semuanya berjalan privat di browser Anda.'

@@ -165,6 +165,15 @@
     var code = v.trim().toUpperCase();
     return Object.prototype.hasOwnProperty.call(CODE_TO_SYMBOL, code) ? CODE_TO_SYMBOL[code] : fallback;
   }
+  /* The other way, for a tool that starts converting from a page that only
+     knew a symbol: the first code listed for it above ($ is AUD, ¥ is JPY),
+     or the fallback for a symbol no code is listed for. */
+  function toCode(sym, fallback){
+    for(var code in CODE_TO_SYMBOL){
+      if(Object.prototype.hasOwnProperty.call(CODE_TO_SYMBOL, code) && CODE_TO_SYMBOL[code] === sym) return code;
+    }
+    return fallback === undefined ? 'USD' : fallback;
+  }
   /* Fill (or refill, e.g. on a language change) a symbol <select>. The
      current value is kept when it is still on the list. */
   function fillCurrency(sel, opts){
@@ -201,7 +210,8 @@
     SYMBOLS: CURRENCY_SYMBOLS,
     fill: fillCurrency,
     has: hasSymbol,
-    toSymbol: toSymbol
+    toSymbol: toSymbol,
+    toCode: toCode
   };
 
   /* ── Frequency conversion ───────────────────────────────────────────────

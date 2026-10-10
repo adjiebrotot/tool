@@ -210,9 +210,16 @@ function convertCostBasis(amount, from, to, base){
      Rent-Then-Buy  rent until it buys, then its own repayment + ongoing costs,
    with repayments taken at the top of any floating range. So no scenario ever
    spends more than the budget, at any rate in the range, and the budget (and
-   with it Rent) is the same on every rate path. */
+   with it Rent) is the same on every rate path.
+
+   A page comparing several homes on one budget (the Sensitivity page) works
+   that budget out across all of them and hands it over month by month as
+   S.budgetSchedule: the budget for month m of year yr, in this home's own
+   currency, at index (yr-1)*12 + m. It then replaces both the set and the
+   automatic figure, so every home is held to the same money. */
 function budgetPlan(S){
   S = normalizeState(S);
+  const schedule = Array.isArray(S.budgetSchedule) && S.budgetSchedule.length ? S.budgetSchedule : null;
   const P = S.propertyPrice, h = S.houseGrowth/100, ri = S.rentInflation/100;
   const years = Math.max(S.horizon, 1), buyYear = S.rtbBuyYear;
   const norm = getRateNorm(S);
@@ -234,10 +241,15 @@ function budgetPlan(S){
   const rtbRequired  = yr => yr <= buyYear ? rentRequired(yr) : payAt(rtbHigh, yr-buyYear) + ownOngoingMonthly(yr);
   const isManual = S.monthlyBudget > 0;
   const growth   = isManual ? S.monthlyBudgetIncrease/100 : 0;
-  const budgetAt = yr => isManual
-    ? S.monthlyBudget*Math.pow(1+growth, yr-1)
-    : Math.max(ownRequired(yr), rentRequired(yr), S.rtbEnabled ? rtbRequired(yr) : 0);
-  return {isManual, growth, budgetAt, ownRequired, rentRequired, rtbRequired};
+  // budgetAt(yr, m): the monthly budget in month m (0-11) of year yr. Only a
+  // schedule can differ month to month; a page that asks by year alone gets
+  // the year's first month, which is the whole year's figure otherwise.
+  const budgetAt = schedule
+    ? (yr, m) => Number(schedule[Math.min(schedule.length-1, Math.max(0, (yr-1)*12 + (m||0)))]) || 0
+    : yr => isManual
+      ? S.monthlyBudget*Math.pow(1+growth, yr-1)
+      : Math.max(ownRequired(yr), rentRequired(yr), S.rtbEnabled ? rtbRequired(yr) : 0);
+  return {isManual, growth, budgetAt, ownRequired, rentRequired, rtbRequired, scheduled: !!schedule};
 }
 
 /* The cash the model starts with, the same in every scenario. A figure the
@@ -263,8 +275,7 @@ function initialCashPlan(S){
     const {budgetAt, rentRequired} = budgetPlan(S);
     const rfm = Math.pow(1+rfr, 1/12)-1;
     for(let yr=1; yr<=S.rtbBuyYear; yr++){
-      const surplus = budgetAt(yr) - rentRequired(yr);
-      for(let m=0; m<12; m++) rtbSavedByBuy = rtbSavedByBuy*(1+rfm) + surplus;
+      for(let m=0; m<12; m++) rtbSavedByBuy = rtbSavedByBuy*(1+rfm) + (budgetAt(yr, m) - rentRequired(yr));
     }
     const growth = Math.pow(1+rfm, 12*S.rtbBuyYear);
     rtbRequiredNow = growth > 0 ? Math.max(0, (rtbFutureCost - rtbSavedByBuy)/growth) : 0;
@@ -325,6 +336,18 @@ function computeModel(S, variant){
 
   const rows = [];
 
+  /* Accumulated cost in another currency (the Sensitivity page's base
+     currency), when the page hands over S.fxPath: the units of this home's
+     currency one unit of the base buys at the end of month k, k = 0 today.
+     Each cost is translated at the rate on the day it is paid (IAS 21.21),
+     since a sum of years of costs has no one rate it could be read at. The
+     model itself never reads this path; it only adds the translated total. */
+  const fxPath = Array.isArray(S.fxPath) && S.fxPath.length ? S.fxPath : null;
+  const fxAt = k => fxPath ? (Number(fxPath[Math.min(k, fxPath.length-1)]) || 1) : 1;
+  let ownAccumCostBase  = fxPath ? setupCostDollar / fxAt(0) : 0;
+  let rentAccumCostBase = 0;
+  const baseCost = () => fxPath ? {ownAccumCostBase, rentAccumCostBase} : null;
+
   // Year 0
   let ownPropValue    = P;
   let ownPrincipal    = loan;
@@ -352,6 +375,7 @@ function computeModel(S, variant){
     costRent: 0,
     initialCashUsed, ownCashStart, renterStartCapital,
   });
+  if(fxPath) Object.assign(rows[0], baseCost());
 
   const rfm = Math.pow(1+rfr, 1/12)-1; // monthly risk-free
   // Cash grows at the risk-free rate in every scenario. The mortgage is the
@@ -392,7 +416,7 @@ function computeModel(S, variant){
       const mRentCost     = currentRentMonthly + rentOngoingMonthly; // true monthly cost of renting
 
       // ── Budget for this month ──
-      const mBudget = budgetAt(yr);
+      const mBudget = budgetAt(yr, m);
       ownYearBudget += mBudget;
 
       // ── Own: amortise mortgage ──
@@ -431,6 +455,11 @@ function computeModel(S, variant){
       rentAccumCost += mRentCost;
       ownYearCost   += ownCostThisMonth;
       rentYearCost  += mRentCost;
+      if(fxPath){
+        const k = (yr-1)*12 + m + 1; // paid by the end of this month
+        ownAccumCostBase  += ownCostThisMonth / fxAt(k);
+        rentAccumCostBase += mRentCost / fxAt(k);
+      }
     }
     // Interest-only: the balance falls due with the term's last payment and is
     // repaid from cash (principal, not a cost, unless costs count the whole repayment)
@@ -439,7 +468,7 @@ function computeModel(S, variant){
       ownCash       -= due;
       ownYearMortPmt += due;
       ownPrincipal   = 0;
-      if(!S.costInterestOnly){ ownAccumCost += due; ownYearCost += due; }
+      if(!S.costInterestOnly){ ownAccumCost += due; ownYearCost += due; ownAccumCostBase += due / fxAt(yr*12); }
     }
     // Derived year values
     const ownYearSurplus  = ownYearBudget - ownYearMortPmt - ownYearOngoingPart;
@@ -475,6 +504,7 @@ function computeModel(S, variant){
       costRent: rentAccumCost,
       yearlyBudget: ownYearBudget / 12,
     });
+    if(fxPath) Object.assign(rows[rows.length-1], baseCost());
   }
 
   // Breakeven: the year owning moves ahead for good. Found from the horizon
@@ -593,7 +623,7 @@ function computeRTB(S, rentMonthly0, initialCashUsed, budgetAt, rtbSched, rfm){
       let rtbP1YearOngoing = 0; // rent + ongoing (all non-mortgage costs during renting)
       for(let m=0; m<12; m++){
         const mRentCost     = currentRentMonthly + rentOngoingMonthly;
-        const mBudget = budgetAt(yr);
+        const mBudget = budgetAt(yr, m);
         const rtbCashR = rfm;
         rtbP1YearInterestInc += rtbCash * rtbCashR;
         const surplus = mBudget - mRentCost;
@@ -708,7 +738,7 @@ function computeRTB(S, rentMonthly0, initialCashUsed, budgetAt, rtbSched, rfm){
         }
         rtbYearMortPmt2 += mMortgage;
 
-        const mBudget = budgetAt(yr);
+        const mBudget = budgetAt(yr, m);
         const rtbCashR = rfm;
         rtbYearInterestInc2 += rtbCash2 * rtbCashR;
         const surplus = mBudget - mOwnCost;

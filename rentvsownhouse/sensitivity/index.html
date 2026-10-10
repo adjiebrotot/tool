@@ -51,6 +51,7 @@
     "Compare multiple rent-vs-own scenarios side by side in one table",
     "Test how each assumption — price growth, mortgage rate, rent inflation, costs — changes the outcome",
     "A free alternative to bespoke property-analysis software and the paid scenario modelling property analysts, buyer's agents, and financial advisers typically charge thousands of dollars for",
+    "Compare homes in different cities and currencies on the same starting cash and monthly budget, converted to one base currency at live exchange rates",
     "Available in English and Indonesian (Bahasa Indonesia) at https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/",
     "All calculations run locally in the browser — your financial data never leaves your device",
     "Free CSV export with no paywall"
@@ -150,8 +151,14 @@
 <!-- CONTROLS BAR -->
 <div class="controls-bar card">
   <div class="ctrl-row">
-    <span class="controls-label" data-i18n="labelCurrency">Currency Symbol:</span>
+    <span class="controls-label" id="currencyLabel" data-i18n="labelCurrency">Currency Symbol:</span>
     <select class="ctrl-select" id="currencySelect" data-currency-symbols></select>
+    <select class="ctrl-select" id="baseCurrencySelect" data-no-persist hidden aria-labelledby="currencyLabel"></select>
+  </div>
+  <div class="ctrl-row fx-row">
+    <span class="fx-toggle-wrap"><label class="fx-toggle"><input type="checkbox" id="fxModeToggle" data-no-persist/><span data-i18n="fxModeLabel">Multi-currency</span></label><span class="tip-icon" data-tip-key="fxMode" data-tip="Compare homes priced in different currencies. Results and charts are in the base currency, and every column gets the same cash and budget at its exchange rate.">?</span></span>
+    <span class="fx-source" id="fxSource" hidden></span>
+    <span class="fx-warn" id="fxWarn" hidden></span>
   </div>
   <div class="ctrl-row">
     <span class="controls-label" data-i18n="labelMetric">Metric:</span>
@@ -193,6 +200,7 @@
 <script src="../cashflow-export.js"></script>
 <script src="../engine.js"></script>
 <script src="../quickstart-data.js"></script>
+<script src="fx.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../../tour-shared.js"></script>

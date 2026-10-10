@@ -55,6 +55,23 @@ var RVO_TIPS_EN = {
   calcCagr:             "Enter year and price pairs. The yearly growth they imply (CAGR) is applied to House price growth above.",
   graphMetric:          "<ul><li><strong>Net equity:</strong> the home if sold, minus the loan, plus cash.</li><li><strong>Liquid cash:</strong> cash in the bank.</li><li><strong>Accumulated cost:</strong> what housing has cost so far.</li></ul>",
   cashflowTable:        "<ul><li><strong>Cash position:</strong> cash in and out that year.</li><li><strong>Mortgage position:</strong> the home and the loan.</li><li><strong>Financial position:</strong> net equity and accumulated cost.</li></ul>",
+  // Sensitivity page: the figures every column shares, and multi-currency mode.
+  sensRiskFree: {
+    single: "What spare cash earns each year, like a savings account. One rate for every column, so no column wins on interest alone.",
+    multi:  "What spare cash earns each year, one rate per currency. Every column in a currency shares its rate."
+  },
+  sensInitialCash: {
+    single: "Cash you hold today, the same in every column. Owning spends it on the deposit and setup, renting invests it. Blank takes the most any column needs.",
+    multi:  "Cash you hold today in the base currency, the same in every column at its exchange rate. Blank takes the most any column needs up front."
+  },
+  sensMonthlyBudget: {
+    single: "Monthly cash for housing, the same in every column. Blank takes, each month, the most any column needs, so a cheaper home banks the difference.",
+    multi:  "Monthly cash for housing in the base currency, the same in every column at its exchange rate. Blank takes the most any column needs each month."
+  },
+  fxMode:       "Compare homes priced in different currencies. Results and charts are in the base currency, and every column gets the same cash and budget at its exchange rate.",
+  scenCurrency: "The currency this column's prices, rents and costs are in. Changing it relabels the figures, it does not convert them.",
+  fxRate:       "Units of this column's currency one unit of the base buys today, from ExchangeRate-API. Type your own, or clear it for the live rate.",
+  fxPath:       "<ul><li><strong>Moves with the rate gap:</strong> a currency paying more interest weakens by the gap, so interest alone wins nothing.</li><li><strong>Held at today's rate:</strong> it never moves.</li></ul>",
 };
 var RVO_TIPS_ID = {
   propertyPrice:        "Harga pasar properti saat ini. Menjadi nilai awal ekuitas rumah dan besaran KPR.",
@@ -98,6 +115,22 @@ var RVO_TIPS_ID = {
   calcCagr:             "Masukkan pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya diterapkan ke Kenaikan harga properti di atas.",
   graphMetric:          "<ul><li><strong>Kekayaan bersih:</strong> rumah jika dijual, dikurangi pinjaman, ditambah kas.</li><li><strong>Uang tunai:</strong> kas di bank.</li><li><strong>Biaya kumulatif:</strong> total biaya perumahan sejauh ini.</li></ul>",
   cashflowTable:        "<ul><li><strong>Posisi kas:</strong> kas masuk dan keluar tahun itu.</li><li><strong>Posisi KPR:</strong> rumah dan pinjaman.</li><li><strong>Posisi keuangan:</strong> kekayaan bersih dan biaya kumulatif.</li></ul>",
+  sensRiskFree: {
+    single: "Imbal hasil kas yang tidak terpakai per tahun, seperti deposito. Satu suku bunga untuk semua kolom, jadi tak ada kolom yang menang hanya karena bunga.",
+    multi:  "Imbal hasil kas yang tidak terpakai per tahun, satu suku bunga per mata uang. Semua kolom dalam mata uang yang sama memakai suku bunga yang sama."
+  },
+  sensInitialCash: {
+    single: "Kas yang Anda miliki sekarang, sama di semua kolom. Beli memakainya untuk DP dan biaya awal, Sewa menginvestasikannya. Kosong berarti kebutuhan terbesar semua kolom.",
+    multi:  "Kas yang Anda miliki sekarang dalam mata uang dasar, sama di semua kolom sesuai kursnya. Kosong berarti kebutuhan awal terbesar semua kolom."
+  },
+  sensMonthlyBudget: {
+    single: "Kas bulanan untuk perumahan, sama di semua kolom. Kosong berarti kebutuhan terbesar semua kolom tiap bulan, jadi rumah yang lebih murah menabung selisihnya.",
+    multi:  "Kas bulanan untuk perumahan dalam mata uang dasar, sama di semua kolom sesuai kursnya. Kosong berarti kebutuhan terbesar semua kolom tiap bulan."
+  },
+  fxMode:       "Bandingkan rumah dengan mata uang berbeda. Hasil dan grafik dalam mata uang dasar, dan tiap kolom mendapat kas dan anggaran yang sama sesuai kursnya.",
+  scenCurrency: "Mata uang harga, sewa dan biaya kolom ini. Menggantinya hanya mengganti label angka, tidak mengonversinya.",
+  fxRate:       "Jumlah mata uang kolom ini untuk satu unit mata uang dasar hari ini, dari ExchangeRate-API. Isi kurs sendiri, atau kosongkan untuk kurs terkini.",
+  fxPath:       "<ul><li><strong>Mengikuti selisih bunga:</strong> mata uang berbunga lebih tinggi melemah sebesar selisihnya, jadi bunga saja tidak membuat menang.</li><li><strong>Tetap di kurs hari ini:</strong> kurs tidak bergerak.</li></ul>",
 };
 // Variant tips keyed by the option selected: explained one option at a time,
 // with the shared "change the option" line under them (data-tip-options).

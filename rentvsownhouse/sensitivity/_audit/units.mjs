@@ -42,12 +42,15 @@ async function open(url){
   await page.evaluate(()=>{ window.__csv=null; RVOExport.downloadCSV=(fn,txt)=>{ window.__csv=txt; }; window.alert=m=>{ window.__alert=m; }; });
   return page;
 }
-const q = (key, si=0, cls='param-input') => `.${cls}[data-key="${key}"][data-si="${si}"]`;
-const affix = (page, key, si=0) => page.evaluate(([key,si])=>{
-  const el=document.querySelector(`.param-input[data-key="${key}"][data-si="${si}"]`); if(!el) return null;
+// The figures every column shares are one field across the table.
+const SHARED = ['horizon','riskFreeRate','initialCash','monthlyBudget','monthlyBudgetIncrease'];
+const q = (key, si=0, cls='param-input') => SHARED.includes(key) && cls==='param-input'
+  ? `.shared-input[data-key="${key}"]` : `.${cls}[data-key="${key}"][data-si="${si}"]`;
+const affix = (page, key, si=0) => page.evaluate(([sel])=>{
+  const el=document.querySelector(sel); if(!el) return null;
   const w=el.closest('.param-wrap'); const t=s=>{ const n=w.querySelector(s); return n ? n.textContent.trim() : ''; };
   return {pre:t('.prefix'), suf:t('.suffix'), value:el.value, placeholder:el.placeholder};
-}, [key,si]);
+}, [q(key,si)]);
 async function pick(page, key, v, si=0){ await page.selectOption(q(key,si,'param-select'), v); await page.waitForTimeout(120); }
 async function type(page, key, v, si=0){
   await page.evaluate(([s,v])=>{ const el=document.querySelector(s); el.focus(); el.value=v; el.dispatchEvent(new Event('input',{bubbles:true})); el.blur(); }, [q(key,si), v]);
@@ -165,14 +168,28 @@ async function upload(page, csv){
                                                    [['Rent cost type','','dollar','dollar'],['Rent cost inflation','','0','6']]],
     ['a renting cost\'s frequency under a % type', [['Rent cost type','','pct','pct'],['Ongoing cost (rent)','','4','4'],['Rent cost frequency','','yearly','monthly']],
                                                    [['Rent cost type','','dollar','dollar'],['Rent cost frequency','','yearly','monthly']]],
-    ['the budget increase with an automatic budget', [['Monthly housing budget','','0','0'],['Budget annual increase','','0','6']],
-                                                     [['Monthly housing budget','','9000','9000'],['Budget annual increase','','0','6']]],
   ];
   for(const [name, off, on] of cases){
     const ignored = await same(off), shown = await unused();
     const used = !(await same(on));
     check(`U4 ${name} is shown as unused and changes nothing`, ignored && shown >= 2 && used, `ignored ${ignored}, unused cells ${shown}, used when active ${used}`);
   }
+  await page.close();
+}
+// U4, shared: the budget increase is one field for every column, so the
+// control is the same table before and after it is typed.
+{
+  const page = await open(SENS);
+  const all = async () => [await flows(page,'own',0), await flows(page,'rent',0), await flows(page,'own',1), await flows(page,'rent',1)].map(f=>f.text).join('\n');
+  const off = await page.evaluate(()=>!!document.querySelector('td.inactive-td.shared-td') && !document.querySelector('.shared-input[data-key="monthlyBudgetIncrease"]'));
+  const base = await all();
+  await upload(page, '"Parameter","Unit","A","B"\n"Monthly housing budget","","0","0"\n"Budget annual increase","","6","6"\n');
+  const ignored = (await all()) === base;
+  await type(page, 'monthlyBudget', '9000');
+  const set0 = await all();
+  await type(page, 'monthlyBudgetIncrease', '0');
+  const used = (await all()) !== set0;
+  check('U4 the budget increase with an automatic budget is shown as unused and changes nothing', off && ignored && used, `shown unused ${off}, ignored ${ignored}, used when active ${used}`);
   await page.close();
 }
 
@@ -225,8 +242,11 @@ async function upload(page, csv){
   await page.keyboard.type('5000');
   await page.keyboard.press('Tab');
   await page.waitForTimeout(150);
+  // The budget is one field across the table now. Its annual increase only
+  // turns into a field once the budget is set, so Tab, pressed before that,
+  // was headed for the next field there was: the first column's price.
   const f = await page.evaluate(()=>{ const a=document.activeElement; return a && a.dataset ? `${a.className}|${a.dataset.key}|${a.dataset.si}` : String(a&&a.tagName); });
-  check('U7 Tab out of a field that rebuilds the table lands on the next field', f==='param-input|monthlyBudget|1', f);
+  check('U7 Tab out of a field that rebuilds the table lands on the next field', f==='param-input|propertyPrice|0', f);
   await page.close();
 }
 

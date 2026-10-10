@@ -12,7 +12,14 @@
 //       detailed, English and Indonesian (fixtures/ were exported from 5e63a62).
 //       Rows are matched by label, not position: the table (and the CSV with
 //       it) lists a deciding field before the fields it governs, so the order
-//       has moved since those files were saved.
+//       has moved since those files were saved. The time horizon, risk-free
+//       rate, initial cash, budget and its increase are now one figure for
+//       every column, so those rows come back as the first column's value
+//       under every column (the fixtures hold a different one per column).
+//       Every other row comes back exactly.
+//   S5  a summary CSV exported now, with a detailed rate schedule, reopens
+//       with that schedule on the page of either language (the importer
+//       once read only the pre-relabel "Rate Period 1" row names).
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -148,6 +155,10 @@ const sensRent = await sensCsv('rent');
     // On the page of the file's own language, row by row by label.
     const own = await reopen(isId ? SENS_ID : SENS, f, old);
     const a = values(old, true), b = values(own.csv, false);
+    // Shared rows: the first column's figure, under every column.
+    const SHARED = ['time horizon', 'risk-free rate', 'initial cash', 'monthly housing budget', 'budget annual increase',
+      'jangka waktu', 'suku bunga bebas risiko', 'modal awal', 'anggaran perumahan bulanan', 'kenaikan anggaran tahunan'];
+    for (const k of SHARED) if (a.has(k)) { const v = a.get(k).split('|'); a.set(k, v.map(x => x === '' ? '' : v[0]).join('|')); }
     const bad = [...a].map(([k, v]) => v === b.get(k) ? null : `${k}: ${v} -> ${b.has(k) ? b.get(k) : '(no such row)'}`).filter(Boolean);
     check(`S4 ${f} reopens with every value it carries`, bad.length === 0 && a.size === b.size && !own.alert,
       bad.slice(0, 3).join(' | ') || `${a.size} parameter rows` + (a.size === b.size ? '' : `, now ${b.size}`));
@@ -158,6 +169,36 @@ const sensRent = await sensCsv('rent');
     const off = B.map((v, i) => v === C[i] ? null : `row ${i + 1}: ${v} -> ${C[i]}`).filter(Boolean);
     check(`S4 ${f} also reopens on the ${isId ? 'English' : 'Indonesian'} page`, off.length === 0 && B.length === C.length && !other.alert,
       off.slice(0, 3).join(' | ') || `${C.length} parameter rows`);
+  }
+}
+
+// S5 — a detailed rate schedule survives today's export, in both languages
+{
+  const SENS_ID = pathToFileURL(join(HERE, '..', 'id', 'index.html')).href;
+  for (const [from, to] of [[SENS, SENS], [SENS_ID, SENS_ID], [SENS, SENS_ID]]) {
+    const a = await open(from);
+    const setup = await a.evaluate(() => {
+      document.querySelector('.mode-seg[data-mode-key="mortgageMode"] .seg-btn[data-val="detailed"]').click();
+      document.querySelector('.add-period-btn[data-si="0"]').click();
+      const set = (sel, v, ev) => { const el = document.querySelector(sel); el.value = v; el.dispatchEvent(new Event(ev, {bubbles:true})); };
+      set('.rp-rate[data-si="0"][data-idx="0"]', '3.9', 'blur');
+      set('.rp-type[data-si="0"][data-idx="1"]', 'floating', 'change');
+      set('.rp-min[data-si="0"][data-idx="1"]', '5.5', 'blur');
+      set('.rp-max[data-si="0"][data-idx="1"]', '8', 'blur');
+      window.__summary = null; const orig = RVOExport.cleanCSV; RVOExport.cleanCSV = t => { window.__summary = t; return orig(t); };
+      URL.createObjectURL = () => 'blob:stub'; HTMLAnchorElement.prototype.click = function(){};
+      document.getElementById('downloadCSVBtn').click();
+      return window.__summary;
+    });
+    const want = await a.evaluate(() => { window.__csv = null; document.querySelector('.btn-scen-action.dl-own[data-si="0"]').click(); return window.__csv; });
+    const b = await open(to);
+    await b.setInputFiles('#csvFileInput', { name: 's.csv', mimeType: 'text/csv', buffer: Buffer.from(setup) });
+    await b.waitForTimeout(500);
+    const got = await b.evaluate(() => { window.__csv = null; document.querySelector('.btn-scen-action.dl-own[data-si="0"]').click(); return window.__csv; });
+    const n = await b.evaluate(() => document.querySelectorAll('.rp-type[data-si="0"]').length);
+    check(`S5 a detailed rate schedule reopens from today's export (${from === SENS ? 'English' : 'Indonesian'} file, ${to === SENS ? 'English' : 'Indonesian'} page)`,
+      n === 2 && got === want, `${n} rate periods; cashflow ${got === want ? 'identical' : 'differs'}`);
+    await a.close(); await b.close();
   }
 }
 
