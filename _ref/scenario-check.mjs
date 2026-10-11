@@ -57,6 +57,10 @@ const PAGES = [
   { path: 'costofliving-comparator/',  probe: '#analysisArea',
     also: `document.querySelector('#modeGroup .seg-btn[data-val="detailed"]').click();
            document.getElementById('swapCities').click();` },
+  // Mode, target, views and expense rows all live in JS state.
+  { path: 'costofliving-comparator/map/', preset: 'jkt', probe: '.results',
+    also: `document.querySelector('#modeGroup .seg-btn[data-val="global"]').click();
+           document.querySelector('#viewGroup .seg-btn[data-val="ratio"]').click();` },
   { path: 'rentvsownhouse/sensitivity/', probe: 'main',
     also: `var y = document.getElementById('yearInput'); y.value = '17';
            y.dispatchEvent(new Event('input', {bubbles: true})); y.dispatchEvent(new Event('change', {bubbles: true}));
@@ -118,7 +122,9 @@ const TMP = await mkdtemp(join(tmpdir(), 'scenario-check-'));
 
 const browser = await chromium.launch();
 async function open(path){
-  const ctx = await browser.newContext({acceptDownloads: true});
+  // A service worker's own fetches bypass page.route, so with one in control
+  // (from the first reload on) a page could reach live feeds after all.
+  const ctx = await browser.newContext({acceptDownloads: true, serviceWorkers: 'block'});
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));

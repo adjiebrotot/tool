@@ -1,0 +1,47 @@
+# Salary Map — audit harness
+
+Serves the repo over localhost and drives the real map page headless, with
+service workers blocked and every outside request refused unless a test
+mocks it.
+
+`run.mjs` replays every city from the raw JSON files, without the page's
+code, and holds the page to the replay to a relative 1e-9: each city's living
+cost (your budget scaled by its index at the rate the index was priced at),
+the market rate, the required salary (the comparator's formulas: living cost
+over one minus your savings ratio, or living cost plus your savings at
+today's rate), Global salary mode's savings and ratio, and the living cost
+against yours that the colours are drawn on. It runs seven plans across
+Simple (housing in and out) and Detailed lifestyles, both targets and Global
+salary mode, one of them spending more than it earns, and adds a gas row so
+that 33 cities without a gas price have to say "no estimate" rather than
+guess.
+
+It then opens the comparator itself and drives it through its own controls.
+Its five Quick Start budgets have their twins on the map, and every required
+salary and savings ratio the comparator's table shows has to read the same
+on the map; four Simple-mode pairs (both targets, housing in and out, same
+and different currencies) have to agree on living cost and required salary.
+
+The colours: cheaper is blue, dearer amber, and red only in Global salary
+mode and only where savings go below zero; your city is the neutral middle;
+the cheapest and the dearest city wear the deepest shade of their arm; and
+changing the view never repaints a city, because every view's figure is
+ordered by the one number the colours use, which is also checked.
+
+It also checks that the card and the map label lead with your currency and
+put the city's own in brackets (none for a city in your currency), that no
+label overlaps another or leaves the map, the modes and views (Global salary
+has no salary view and opens on Nominal savings, each mode keeps the view it
+was left on), that each Quick Start opens the same over a messy page as on a
+fresh one, a mocked live rate (money crossing a border moves, local prices
+hold still), the gestures (a drag pans, Ctrl and the wheel zooms, a plain
+wheel scrolls the page, a click pins a card), a reload, and that a 390px
+phone gets no sideways scroll.
+
+Every city's location (`../city_coords.json`, built by
+`../_build/build-coords.mjs` from GeoNames) has to land inside its own
+country on the World Clock's map, or within 10 km of its coast. Northern
+Vietnam and Kosovo are filed under a neighbour's time zone polygon there, so
+cities in them are held to their own country's bounding box instead.
+
+Run: `node run.mjs`

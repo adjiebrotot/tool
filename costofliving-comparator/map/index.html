@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Salary Map: What You Need to Earn Around the World | Adjie Brotools</title>
+<meta name="description" content="A world map of the net salary you need in 500+ cities to keep your lifestyle and savings, or what your own salary would save in each one. Free, runs in your browser.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/costofliving-comparator/map/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Salary Map: What You Need to Earn Around the World">
+<meta property="og:description" content="A world map of the net salary you need in 500+ cities to keep your lifestyle and savings, or what your own salary would save in each one.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/costofliving-comparator/map/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Salary Map: What You Need to Earn Around the World">
+<meta name="twitter:description" content="A world map of the net salary you need in 500+ cities to keep your lifestyle and savings, or what your own salary would save in each one.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cost of Living Salary Map",
+  "url": "https://tool.adjiebrotots.com/costofliving-comparator/map/",
+  "description": "A world map of the net salary you need in 500+ cities to keep your lifestyle and savings, or what your own salary would save in each one.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "isPartOf": { "@type": "WebApplication", "name": "Cost of Living Comparator", "url": "https://tool.adjiebrotots.com/costofliving-comparator/" },
+  "keywords": "salary map, cost of living map, salary needed by city, geoarbitrage map, where can I save the most, same lifestyle salary, relocation salary world map"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much would I need to earn in other cities to keep my lifestyle?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Open the Salary Map at https://tool.adjiebrotots.com/costofliving-comparator/map/, pick your city and enter your net salary and living cost. Every city on the map shows the net salary it needs to keep the same lifestyle and the same savings, in your currency first and its own currency after."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where in the world would my salary save the most?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Switch the Salary Map to Global salary mode. Your own salary is kept in every city, converted at today's exchange rate, and each city shows what you would save there for the same lifestyle, with the cities where it would not cover your costs in red."
+      }
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<div class="container">
+
+<!-- HEADER -->
+<section class="header card">
+  <div>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M3 6.5l5.5-2.5 7 2.5L21 4v13.5l-5.5 2.5-7-2.5L3 20z"/> <path stroke="var(--accent)" d="M8.5 4v13.5M15.5 6.5V20"/> <circle stroke="var(--accent2)" cx="12" cy="11" r="2.2"/> </svg>Salary Map</h1>
+    <p class="muted">The net salary every city needs for your lifestyle, or what your own salary saves there.</p>
+  </div>
+  <div class="header-right">
+    <a href="../" class="btn-theme btn-back" title="Compare two cities in detail">← Comparator</a>
+    <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">Other Tools</a>
+    <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+  </div>
+</section>
+
+<section class="layout">
+<aside class="controls card">
+  <div class="quick-start-row">
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start</span><span class="tip-icon" data-tip="Fills the form with a single professional's monthly budget, net of tax, itemised by category, and maps it.">?</span>
+    <div class="quick-start-btns">
+      <button class="quick-start-btn" type="button" data-preset="sg" data-tip="Singapore on SGD 8,000 a month net, spending SGD 6,000 and saving 25%.">Singapore</button>
+      <button class="quick-start-btn" type="button" data-preset="jkt" data-tip="Jakarta on IDR 25 million a month net, spending IDR 17.5 million and saving 30%.">Jakarta</button>
+      <button class="quick-start-btn" type="button" data-preset="per" data-tip="Perth on AUD 6,500 a month net, spending AUD 4,550 and saving 30%.">Perth</button>
+      <button class="quick-start-btn" type="button" data-preset="nyc" data-tip="New York on USD 8,500 a month net, spending USD 6,800 and saving 20%.">New York</button>
+      <button class="quick-start-btn" type="button" data-preset="lon" data-tip="London on GBP 4,500 a month net, spending GBP 3,600 and saving 20%.">London</button>
+      <button class="quick-start-btn" type="button" data-preset="dxb" data-tip="Dubai on AED 30,000 a month net, spending AED 18,000 and saving 40%.">Dubai</button>
+    </div>
+  </div>
+  <div class="ctrl-scroll">
+  <div class="ctrl-panel active" id="tab-inputs">
+
+    <div class="field-group">
+      <div class="group-title">You</div>
+      <div class="field-row">
+        <div class="field-label">Your city <span class="tip-icon" data-tip="Every other city is compared with this one, and money is shown in its currency first.">?</span></div>
+        <div class="city-picker" id="fromPicker"></div>
+        <div class="field-sub" id="fromCurrNote">Its currency is the one every figure leads with.</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Net salary <span class="tip-icon" data-tip="Take-home pay after income tax, a month. Nothing here works out tax.">?</span></div>
+        <div class="currency-wrap"><span class="prefix cur-tag" id="salaryPrefix">AUD</span><input class="currency-input has-suffix" id="salary" type="text" inputmode="decimal" data-min="0" data-max="100000000000" placeholder="0" autocomplete="off"/><span class="suffix">/mo</span></div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Compare by</div>
+      <div class="toggle-row">
+        <span class="toggle-label">Mode <span class="tip-icon" id="modeTip" data-tip="" data-tip-options>?</span></span>
+        <div class="seg-group" id="modeGroup" role="group" aria-label="Map mode">
+          <button class="seg-btn active" type="button" data-val="required">Required salary</button>
+          <button class="seg-btn" type="button" data-val="global">Global salary</button>
+        </div>
+      </div>
+      <div class="toggle-row" id="targetRow">
+        <span class="toggle-label">Target <span class="tip-icon" id="targetTip" data-tip="" data-tip-options>?</span></span>
+        <div class="seg-group" id="targetGroup" role="group" aria-label="Savings target">
+          <button class="seg-btn active" type="button" data-val="ratio">Savings ratio</button>
+          <button class="seg-btn" type="button" data-val="nominal">Nominal savings</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="group-title">Lifestyle</div>
+      <div class="toggle-row">
+        <span class="toggle-label">Detail <span class="tip-icon" id="detailTip" data-tip="" data-tip-options>?</span></span>
+        <div class="seg-group" id="detailGroup" role="group" aria-label="Lifestyle detail">
+          <button class="seg-btn active" type="button" data-val="simple">Simple</button>
+          <button class="seg-btn" type="button" data-val="detailed">Detailed</button>
+        </div>
+      </div>
+      <div class="fg-sub" id="simpleBox">
+        <div class="field-row">
+          <div class="field-label">Living cost <span class="tip-icon" data-tip="Everything you spend in your city in a month. Each city's figure is this, scaled by its cost-of-living index.">?</span></div>
+          <div class="currency-wrap"><span class="prefix cur-tag">AUD</span><input class="currency-input has-suffix" id="expense" type="text" inputmode="decimal" data-min="0" data-max="100000000000" placeholder="0" autocomplete="off"/><span class="suffix">/mo</span></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Housing <span class="tip-icon" id="housingTip" data-tip="" data-tip-options>?</span></span>
+          <div class="seg-group" id="housingGroup" role="group" aria-label="Housing">
+            <button class="seg-btn active" type="button" data-val="include">Include</button>
+            <button class="seg-btn" type="button" data-val="exclude">Exclude</button>
+          </div>
+        </div>
+      </div>
+      <div class="fg-sub" id="detailBox" hidden>
+        <div class="fg-body">
+          <div class="unit-note">Monthly amounts in your city. Each row is scaled by its own index.</div>
+          <div id="rows"></div>
+          <button class="btn-add" type="button" id="addRow">+ Add expense row</button>
+          <div class="rows-total" id="rowsTotal"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</aside>
+
+<main class="results">
+  <div class="verdict" id="verdict" aria-live="polite"></div>
+
+  <section class="metrics" id="metrics">
+    <div class="metric card"><div class="label" id="mLabel0">Your city</div><div class="value" id="mVal0">—</div><div class="sub" id="mSub0"></div></div>
+    <div class="metric card"><div class="label" id="mLabel1">Cheapest</div><div class="value" id="mVal1">—</div><div class="sub" id="mSub1"></div></div>
+    <div class="metric card"><div class="label" id="mLabel2">Dearest</div><div class="value" id="mVal2">—</div><div class="sub" id="mSub2"></div></div>
+    <div class="metric card"><div class="label" id="mLabel3">Cheaper than you</div><div class="value" id="mVal3">—</div><div class="sub" id="mSub3"></div></div>
+  </section>
+
+  <section class="map-card card" id="mapCard">
+    <div class="chart-head">
+      <h2 id="mapTitle">Required net salary, a month</h2>
+      <div class="view-row">
+        <span class="toggle-label">View</span>
+        <div class="seg-group" id="viewGroup" role="group" aria-label="What the map shows"></div>
+      </div>
+    </div>
+    <div class="map-note" id="mapNote" hidden></div>
+    <div class="map-legend" id="legend" data-no-abbr></div>
+    <div class="map-wrap" id="mapWrap">
+      <canvas id="mapCanvas" role="img" aria-label="World map of cities coloured by living cost against yours, each labelled with the figure the view shows. Drag to move, hold Ctrl and scroll or pinch to zoom, hover or tap a city for its figures."></canvas>
+      <div class="map-loading" id="mapLoading">Loading the map…</div>
+      <div class="map-hint" id="mapHint" hidden></div>
+      <div class="map-zoom" role="group" aria-label="Map zoom">
+        <button class="map-zbtn" id="zoomIn" type="button" title="Zoom in" aria-label="Zoom in">+</button>
+        <button class="map-zbtn" id="zoomOut" type="button" title="Zoom out" aria-label="Zoom out">−</button>
+        <button class="map-zbtn" id="zoomHome" type="button" title="Back to your city" aria-label="Back to your city"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg></button>
+        <button class="map-zbtn" id="zoomWorld" type="button" title="Whole world" aria-label="Whole world"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5S9.7 5.9 12 3.5z"/></svg></button>
+      </div>
+      <div class="map-card-pop" id="placeCard" hidden data-no-abbr role="status" aria-live="polite"></div>
+    </div>
+    <div class="map-foot">Drag to move. Hold Ctrl (⌘ on a Mac) and scroll, or pinch, to zoom. Tap a city for its figures.</div>
+  </section>
+
+  <section class="table-card card" id="tableCard">
+    <div class="detail-head">
+      <h2>Every city</h2>
+      <div class="btn-cluster"><button class="btn-secondary btn-sm" type="button" id="csvBtn">⬇ CSV</button></div>
+    </div>
+    <div class="table-body" id="tableBody">
+      <div class="table-tools">
+        <input class="txt-input" id="tableFind" type="search" placeholder="Find a city or country" autocomplete="off" data-no-persist aria-label="Find a city or country"/>
+        <span class="unit-note" id="tableUnit">Monthly figures. Click a row to find the city on the map.</span>
+      </div>
+      <div class="table-wrap">
+        <table class="city-table" id="cityTable">
+          <thead><tr id="tableHead"></tr></thead>
+          <tbody id="tableRows" data-no-abbr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="assumes-card card">
+    <h2>What this assumes</h2>
+    <ul class="assumptions" id="assumptions"></ul>
+  </section>
+</main>
+</section>
+
+</div><!-- /container -->
+
+<footer class="page-footer">
+  <section class="page-footer-info">
+    <p>
+      <strong>Disclaimer:</strong> This tool is provided on an "as is" and "as available" basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
+    </p>
+    <p>
+      If you encounter any bugs or technical issues, please report them to <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>. If you're interested, confused, or would like help learning how to use the tool, feel free to email me as well 🙂
+    </p>
+    <p id="dataUpdatedText" style="font-style:italic;"></p>
+    <p style="font-size:.82rem;">City locations from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames</a> (CC BY 4.0). Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors via <a href="https://github.com/evansiroky/timezone-boundary-builder" target="_blank" rel="noopener">timezone-boundary-builder</a>, <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>.</p>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+      <img src="../../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="../../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <span style="color:var(--muted);font-size:0.85rem">Made in Australia by Indonesian engineer.</span>
+      </div>
+    </div>
+  </section>
+</footer>
+
+<script src="../../dropdown.js"></script>
+<script src="../../shared.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
