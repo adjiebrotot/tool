@@ -967,14 +967,14 @@ function buildItems(){
       const v = it.vals[c.id];
       const label = `<div class="field-label">${esc(c.name || '(no name)')}</div>`;
       if(c.type === 'bool'){
-        return `<label class="item-field item-chk"><span class="chk-line"><input type="checkbox" data-col="${c.id}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></span></label>`;
+        return `<label class="item-field item-chk"><span class="chk-line"><input type="checkbox" data-col="${esc(c.id)}"${v ? ' checked' : ''}><span>${esc(c.name || '(no name)')}</span></span></label>`;
       }
       if(c.type === 'year'){
         return `<div class="item-field">${label}` +
-          `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="numeric" data-col="${c.id}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
-          `<div class="derived" data-age="${c.id}">${ageNote(v, year)}</div></div>`;
+          `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="numeric" data-col="${esc(c.id)}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
+          `<div class="derived" data-age="${esc(c.id)}">${ageNote(v, year)}</div></div>`;
       }
-      const input = `<input class="currency-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${c.id}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
+      const input = `<input class="currency-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${esc(c.id)}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
       return `<div class="item-field">${label}` + (c.unit
         ? `<div class="currency-wrap">${input}<span class="suffix">${esc(c.unit)}</span></div>`
         : `<div class="currency-wrap" data-unitless>${input}</div>`) + '</div>';
@@ -1027,9 +1027,9 @@ function refreshChartControls(r){
   if(!ids.includes(S.chart.x)) S.chart.x = ids[0] || '';
   if(!ids.includes(S.chart.y) || S.chart.y === S.chart.x) S.chart.y = ids.find(id => id !== S.chart.x) || '';
   const label = c => c.name || '(no name)';
-  $('axisX').innerHTML = feats.map(c => `<option value="${c.id}">${esc(label(c))}</option>`).join('');
+  $('axisX').innerHTML = feats.map(c => `<option value="${esc(c.id)}">${esc(label(c))}</option>`).join('');
   $('axisX').value = S.chart.x;
-  $('axisY').innerHTML = feats.filter(c => c.id !== S.chart.x).map(c => `<option value="${c.id}">${esc(label(c))}</option>`).join('');
+  $('axisY').innerHTML = feats.filter(c => c.id !== S.chart.x).map(c => `<option value="${esc(c.id)}">${esc(label(c))}</option>`).join('');
   $('axisY').value = S.chart.y;
   refreshHoldOptions(r);
 }
@@ -1678,19 +1678,9 @@ function exportImage(format){
   if(!window.Plotly || !last || last.error) return;
   withWatermark(() => Plotly.downloadImage('plotDiv', { format, filename: exportName(), width: 1440, height: 760, scale: format === 'png' ? 2 : 1 })).catch(() => {});
 }
-async function copyPng(){
-  const btn = $('copyBtn');
+function copyPng(){
   if(!window.Plotly || !last || last.error) return;
-  try {
-    if(!navigator.clipboard || !window.ClipboardItem) throw new Error('This browser cannot copy images.');
-    const url = await withWatermark(() => Plotly.toImage('plotDiv', { format: 'png', width: 1440, height: 760, scale: 2 }));
-    const blob = await (await fetch(url)).blob();
-    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-    btn.textContent = '✓';
-  } catch(e){
-    btn.textContent = 'Copy failed';
-  }
-  setTimeout(() => { btn.textContent = '⧉'; }, 1400);
+  SharedShare.copyImage(() => withWatermark(() => Plotly.toImage('plotDiv', { format: 'png', width: 1440, height: 760, scale: 2 })), $('copyBtn'));
 }
 
 /* ─── Listings CSV ─── */

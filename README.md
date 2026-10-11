@@ -111,7 +111,7 @@ committed. `powerfactory-scripter/audit/` validates generated scripts against a 
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
 CPython, with no PowerFactory needed.
 
-Ten cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
+Eleven cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it
 applies each scenario to a freshly loaded page and to a page whose every control has been
 scribbled over, and the two have to land on identical form state across every tab — plus, where a
@@ -142,7 +142,7 @@ rounding allows and holds the drift inside it. `ONLY=<name>` runs one tool.
 
 `node _ref/chart-check.mjs` drives every page that draws an interactive chart and holds it to
 the four things a chart here promises: that the export cluster is the same row everywhere —
-⬇ SVG, ⬇ PNG, ⧉, ⟳ in that order, at one size, hard right of the title on a desktop and full
+Share ⌄ then ⟳, at one size, hard right of the title on a desktop and full
 width on a phone, with a table's ⬇ CSV beside the table it exports; that panning and pinching
 stay inside the data, floor included; that the y axis follows the x window; and that no axis
 title or tick label lands on another or spills out of its pane, on a desktop, a phone and a small
@@ -152,6 +152,21 @@ page. It uses the
 real Chart.js, chartjs-plugin-zoom and Plotly rather than stubs, since the promises are about
 what those libraries do: they are fetched once into `_ref/.libcache/` (gitignored) and served
 from there afterwards, so later runs need no network.
+
+`node _ref/share-check.mjs` holds every chart's Share menu (`SharedShare` in `shared.js`) to
+what it offers. The menu reads Download as SVG, Download as PNG, Copy to clipboard and Embed
+as HTML, opens flush under its button and answers the keyboard. A PNG, an SVG or a copied
+image taken on a phone or a wide monitor is the very size a desktop gives, so an exported
+chart always has the proportions it was designed at rather than the screen's. And every
+chart's embed code (an iframe of the tool, its scenario deflated into the link's `#hash`,
+plus one backlink line) is pasted into a page on another site and opened at a desktop and a
+phone width, where it has to show that one chart card alone, draw exactly the data the
+reader was looking at, in their theme, keep its zoom, and leave the viewer's own saved work
+untouched. Every page is moved off its defaults before it is shared, so an embed that lost
+the scenario fails. Because anyone can send a link, each page's link is also replayed with
+every string swapped for markup and script, which has to be drawn as text and run nothing,
+and the code must stay under 2,500 characters. It reuses chart-check's library cache;
+`SHOT=<dir>` saves each embed as it rendered, and `ONLY=<name>` runs one page.
 
 `node _ref/tip-check.mjs` loads every page and holds every tooltip to the budget that makes one
 readable where it pops up: one thought per tip, 200 characters of rendered text at the outside and

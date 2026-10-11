@@ -188,10 +188,15 @@ function getDataRows() {
   return S.raw.slice(S.headerRow).filter(r => r.some(c => c !== ''));
 }
 
+// A column's name is whatever the file says, so it is text, never markup.
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // ─── AXES UI ──────────────────────────────────────────────────────────────────
 function buildAxesUI() {
   const c    = document.getElementById('axesContent');
-  const opts = S.headers.map((h,i) => `<option value="${i}">${h}</option>`).join('');
+  const opts = S.headers.map((h,i) => `<option value="${i}">${escHtml(h)}</option>`).join('');
 
   // One shared.css .field-row per axis, inside the Axes .field-group.
   const row = (label, id, extra = '') => `
@@ -266,7 +271,7 @@ function buildSeriesColourPickers() {
 
   list.innerHTML = yCols.map(ci => `
     <div class="color-series-row">
-      <span class="color-series-name" title="${S.headers[ci]}">${S.headers[ci]}</span>
+      <span class="color-series-name" title="${escHtml(S.headers[ci])}">${escHtml(S.headers[ci])}</span>
       <input type="color" class="color-series-picker" data-col="${ci}" value="${S.seriesColors[ci]}"/>
     </div>`).join('');
 
@@ -575,12 +580,6 @@ async function withPngWatermark(callback) {
   try { return await callback(); }
   finally { await Plotly.relayout('plotDiv', { annotations:[], images:[] }); }
 }
-async function copyPlotlyPngToClipboard(plotId, options) {
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const dataUrl = await Plotly.toImage(plotId, options);
-  const blob = await (await fetch(dataUrl)).blob();
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-}
 document.getElementById('savePng').onclick = async () => {
   const title = document.getElementById('chartTitle').value || 'graph';
   await withPngWatermark(() => Plotly.downloadImage('plotDiv', {
@@ -593,13 +592,10 @@ document.getElementById('saveSvg').onclick = async () => {
     format:'svg', filename:title.replace(/\s+/g,'_'), width:1440, height:760
   }));
 };
-document.getElementById('copyPng').onclick = async () => {
-  try {
-    await withPngWatermark(() => copyPlotlyPngToClipboard('plotDiv', {
-      format:'png', scale:3, width:1440, height:760
-    }));
-    setStatus('PNG copied', 'success');
-  } catch(err) { setStatus('PNG copy failed: ' + err.message, 'error'); }
+document.getElementById('copyPng').onclick = () => {
+  SharedShare.copyImage(() => withPngWatermark(() => Plotly.toImage('plotDiv', {
+    format:'png', scale:3, width:1440, height:760
+  })), document.getElementById('copyPng'));
 };
 
 // ─── UI HELPERS ───────────────────────────────────────────────────────────────
@@ -612,7 +608,7 @@ function showError(msg) { setStatus(msg,'error'); }
 function setInfoRow(...chips) {
   const el = document.getElementById('infoRow');
   el.style.display = 'flex';
-  el.innerHTML = chips.map(c=>`<div class="info-chip"><strong>${c}</strong></div>`).join('');
+  el.innerHTML = chips.map(c=>`<div class="info-chip"><strong>${escHtml(c)}</strong></div>`).join('');
 }
 
 /* ── Mini cache ────────────────────────────────────────────────────────────
@@ -621,3 +617,43 @@ function setInfoRow(...chips) {
    restore is silent — the saved styling applies once the user loads data and a
    chart renders. The header-row field is file-specific (data-no-persist). */
 if (window.Persist) Persist.init('graphvisualiser', { onRestore: function(){} });
+
+/* ── Embed ─────────────────────────────────────────────────────────────────
+   An embedded chart (SharedShare in shared.js) has no file to read, so it
+   carries the data itself: the rows under the header, the axes picked and
+   the styling, and draws what Visualise drew here. */
+SharedShare.state({
+  save: () => ({
+    rows: S.raw ? S.raw.slice(S.headerRow - 1) : null, dim: S.dim,
+    colormap: S.colormap, colors: S.seriesColors, axes: getAxisSelections(),
+    title: document.getElementById('chartTitle').value,
+    size: document.getElementById('markerSize').value,
+    opacity: document.getElementById('markerOpacity').value,
+  }),
+  load: v => new Promise(resolve => {
+    if (!v || !Array.isArray(v.rows) || v.rows.length < 2) return resolve();
+    const dimBtn = document.querySelector(`.dim-btn[data-dim="${+v.dim}"]`);
+    if (dimBtn) dimBtn.click();
+    if (COLORMAPS.some(c => c.name === v.colormap)) S.colormap = v.colormap;
+    S.seriesColors = v.colors && typeof v.colors === 'object' ? v.colors : {};
+    document.getElementById('chartTitle').value = v.title || '';
+    if (v.size) document.getElementById('markerSize').value = v.size;
+    if (v.opacity) document.getElementById('markerOpacity').value = v.opacity;
+    document.getElementById('headerRow').value = 1;
+    S.headerRow = 1;
+    S.raw = v.rows;
+    parseWithHeader();
+    // buildAxesUI picks its defaults on the next tick; the shared axes go
+    // in after that, as the sample dataset's do.
+    setTimeout(() => {
+      const a = v.axes || {}, pickOne = (id, i) => { const el = document.getElementById(id); if (el && i != null && el.options[i]) el.value = String(i); };
+      pickOne('axisX', a.x); pickOne('axisZ', a.z); pickOne('axisW', a.w);
+      const y = document.getElementById('axisY'), ys = Array.isArray(a.y) ? a.y.map(String) : [];
+      if (y && ys.length) Array.from(y.options).forEach(o => { o.selected = y.multiple ? ys.includes(o.value) : o.value === ys[0]; });
+      buildSeriesColourPickers();
+      buildColormapGrid();
+      renderChart();
+      resolve();
+    }, 0);
+  })
+});

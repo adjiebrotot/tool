@@ -1261,16 +1261,7 @@ function exportPng(){
 }
 
 function copyPng(){
-  const btn = $('copyBtn'), original = btn.textContent;
-  chartPng().toBlob(async blob => {
-    try {
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-      btn.textContent = '✓';
-      setTimeout(() => { btn.textContent = original; }, 1400);
-    } catch(e){
-      alert('PNG copy failed: ' + (e && e.message ? e.message : e));
-    }
-  });
+  SharedShare.copyImage(() => chartPng(), $('copyBtn'));
 }
 
 /* ───────────────────────── Wiring ───────────────────────── */

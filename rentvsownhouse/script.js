@@ -1825,13 +1825,10 @@ function downloadChartPng() {
   const m = chartExportMeta();
   RVOExport.exportChartPNG(src, {title:m.title, legendItems:m.legendItems, filename:'rent_vs_own_chart.png', download:true});
 }
-async function copyChartPng() {
-  try {
-    const src = document.getElementById('chartCanvas');
-    const m = chartExportMeta();
-    await RVOExport.copyChartPNG(src, {title:m.title, legendItems:m.legendItems});
-    alert('PNG copied to clipboard.');
-  } catch(err){ alert('PNG copy failed: ' + err.message); }
+function copyChartPng() {
+  const src = document.getElementById('chartCanvas');
+  const m = chartExportMeta();
+  RVOExport.copyChartPNG(src, {title:m.title, legendItems:m.legendItems}, $('copyPngBtn'));
 }
 function downloadChartSvg() {
   const src = document.getElementById('chartCanvas');

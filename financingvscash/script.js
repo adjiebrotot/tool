@@ -294,6 +294,9 @@ function normaliseScenario(sc){
     priceValue:clampPriceValue(sc.priceType,num(sc.priceValue,0))};
 }
 
+// Text a reader typed or a file carried, written into markup as text.
+function escHtml(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
 function defaultScenario(name,rate){
   const freq='monthly';
   return{name:name||'Scenario '+(scenarios.length+1),color:null,financeRate:rate||5,downPaymentPct:0,termPeriods:defaultTerm(freq),freq,feeAmt:0,feeType:'fixed',feeTreatment:'upfront',adminFee:0,
@@ -915,20 +918,22 @@ function renderAssumptions(L){
    financing scenario are options, not good and bad, so the tone is neutral;
    the Net Benefit figure carries the sign. */
 function renderVerdict(valid,best,tie,allNeg,rf,maxTerm){
+  // A scenario's name is the reader's (or a file's) text, never markup.
+  const nm=r=>escHtml(r.name);
   if(!valid.length){SharedVerdict.set('verdict',{tone:'',title:'Add a financing scenario to compare it with paying cash.'});return;}
   const v=x=>'<span class="v-num">'+fmt.currency(snapNB(x),true)+'</span>';
   const closest=valid.reduce((a,r)=>r.netBenefit>a.netBenefit?r:a,valid[0]);
   let title,body=[];
   if(tie){
-    title=`${best.name} and a Cash Purchase end level after ${horizonTxt(best.termYears)}.`;
+    title=`${nm(best)} and a Cash Purchase end level after ${horizonTxt(best.termYears)}.`;
   } else if(allNeg||!best){
     title='Cash Purchase is the Best Strategy: no financing scenario beats paying cash.';
-    body.push(`The closest, ${closest.name}, has a Net Benefit vs Cash of ${v(closest.netBenefit)} after ${horizonTxt(closest.termYears)}.`);
+    body.push(`The closest, ${nm(closest)}, has a Net Benefit vs Cash of ${v(closest.netBenefit)} after ${horizonTxt(closest.termYears)}.`);
   } else if(best.netBenefit>NB_EPS){
-    title=`${best.name} beats a Cash Purchase by ${v(best.netBenefit)} after ${horizonTxt(best.termYears)}.`;
+    title=`${nm(best)} beats a Cash Purchase by ${v(best.netBenefit)} after ${horizonTxt(best.termYears)}.`;
   } else {
     const what=$('optTarget').selectedOptions[0].text;
-    title=`${best.name} has the ${what.replace(/^Lowest /,'lowest ')}, but a Cash Purchase still comes out ahead.`;
+    title=`${nm(best)} has the ${what.replace(/^Lowest /,'lowest ')}, but a Cash Purchase still comes out ahead.`;
     body.push(`Its Net Benefit vs Cash is ${v(best.netBenefit)} after ${horizonTxt(best.termYears)}.`);
   }
   const r=best&&!allNeg?best:closest;
@@ -1088,7 +1093,7 @@ function horizonTxt(y){const n=Number(y)||0;return n>0&&n<1?(n*12).toFixed(1)+' 
 function renderComparisonTable(results){
   const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">Add financing scenarios to compare.</p>';return;}
   const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
-  let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+r.name+'</th>';});h+='</tr></thead><tbody>';
+  let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+escHtml(r.name)+'</th>';});h+='</tr></thead><tbody>';
   const rows=[
     // What the product IS comes before what it costs.
     ['Loan Type','Pay in full',r=>(LOAN_TYPE_LABEL[r.loanType]||LOAN_TYPE_LABEL.annuity)+(r.rateMode==='schedule'?' · scheduled rate':'')],
@@ -1411,7 +1416,7 @@ function renderScenarioList(){
   const list=$('scenarioList');list.innerHTML='';
   scenarios.forEach((sc,i)=>{
     const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=scenarioColor(sc,i);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${sc.name}"/>${sc.name}</div><div class="sc-actions">${SharedIcon.button('edit','Edit','sc-btn',`data-action="edit" data-idx="${i}"`)}${SharedIcon.button('duplicate','Duplicate','sc-btn',`data-action="dup" data-idx="${i}"`)}${SharedIcon.button('trash','Delete','sc-btn',`data-action="del" data-idx="${i}"`)}</div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down<span class="sc-price" data-idx="${i}">${scPriceTxt(sc)}</span>${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
+    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${escHtml(sc.name)}"/>${escHtml(sc.name)}</div><div class="sc-actions">${SharedIcon.button('edit','Edit','sc-btn',`data-action="edit" data-idx="${i}"`)}${SharedIcon.button('duplicate','Duplicate','sc-btn',`data-action="dup" data-idx="${i}"`)}${SharedIcon.button('trash','Delete','sc-btn',`data-action="del" data-idx="${i}"`)}</div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down<span class="sc-price" data-idx="${i}">${scPriceTxt(sc)}</span>${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
     div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;showEditor(false);}else if(editingIdx>idx)editingIdx--;renderScenarioList();rerender();}});});
     const dot=div.querySelector('.sc-dot');
     // The dot sits inside the card, whose own click opens the editor; without
@@ -2555,12 +2560,6 @@ function downloadChartJsPngAtSize(canvasId, filename, chartTitle, legendId, shou
   }
   return tmp;
 }
-async function copyCanvasPngToClipboard(canvas) {
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  if(!blob) throw new Error('Could not create PNG blob.');
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-}
 
 /* Exports are drawn from the chart at its desktop size, whatever the screen
    (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
@@ -2684,25 +2683,16 @@ async function withSens3dPngAnnotations(callback) {
 $('sens3dPngBtn').addEventListener('click', async () => {
   await withSens3dPngAnnotations(() => Plotly.downloadImage('plotly3d', Object.assign({ format:'png', filename:'financing_sensitivity_3d', scale:3 }, SENS3D_EXPORT_SIZE)));
 });
-async function copyPlotlyPngToClipboard(plotId, options) {
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const dataUrl = await Plotly.toImage(plotId, options);
-  const blob = await (await fetch(dataUrl)).blob();
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-}
-$('chartCopyPngBtn').addEventListener('click', async () => {
+$('chartCopyPngBtn').addEventListener('click', () => {
   const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
-  try { await copyCanvasPngToClipboard(downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+  SharedShare.copyImage(() => downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend', false), $('chartCopyPngBtn'));
 });
-$('sens2dCopyPngBtn').addEventListener('click', async () => {
+$('sens2dCopyPngBtn').addEventListener('click', () => {
   const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
-  try { await copyCanvasPngToClipboard(downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+  SharedShare.copyImage(() => downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend', false), $('sens2dCopyPngBtn'));
 });
-$('sens3dCopyPngBtn').addEventListener('click', async () => {
-  try { await withSens3dPngAnnotations(() => copyPlotlyPngToClipboard('plotly3d', Object.assign({ format:'png', scale:3 }, SENS3D_EXPORT_SIZE))); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+$('sens3dCopyPngBtn').addEventListener('click', () => {
+  SharedShare.copyImage(() => withSens3dPngAnnotations(() => Plotly.toImage('plotly3d', Object.assign({ format:'png', scale:3 }, SENS3D_EXPORT_SIZE))), $('sens3dCopyPngBtn'));
 });
 $('chartSvgBtn').addEventListener('click', () => {
   const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';

@@ -19,6 +19,7 @@ Access: Free, browser-based, no account required for the listed tools.
 
 - 100% client-side: every tool is a static web page and all calculations and file processing run locally in the user's browser. Nothing is uploaded, no server sees the data, so there is no data-breach exposure — safe even for confidential or sensitive data.
 - Completely free: no paywall, no account, no watermark. This includes the high-quality, detailed PDF, CSV, PNG, and SVG export features that many competing tools lock behind payment.
+- Every chart can be shared from its Share menu: downloaded as SVG or PNG at desktop proportions (even from a phone), copied to the clipboard, or embedded on another website as a live, zoomable chart that opens on the user's own scenario. The scenario travels inside the embed link itself, so nothing is uploaded.
 - Open source under the GNU GPL.
 - Several tools (noted below) have no comparable free — or in some cases any — equivalent on the market.
 
