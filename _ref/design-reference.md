@@ -1816,8 +1816,17 @@ site's circled A and one line, "Try your own scenarios at tool.adjiebrotots.com/
 linking to the tool's canonical address (opened in a new tab). It is the PNG and SVG
 watermark's equivalent: small (0.66rem), muted, at 70% opacity until hovered. Being part
 of the framed page, which the other site cannot reach into, it cannot be edited out of the
-code without dropping the chart too. The cost: a link inside a frame is credited to the
-framed page, not to the site that embeds it, so an embed earns no backlink.
+code without dropping the chart too. But a link inside a frame is credited to the
+framed page, not to the site that embeds it, so the watermark earns no backlink.
+
+**The backlink lives under the frame.** The code is the iframe and, on the next line, one
+credit paragraph: "Interactive chart: <a>DCA Scenario Explorer</a> by Adjie Brotot Tools"
+(Indonesian: "Grafik interaktif: … oleh …"). It is a plain, visible, followed link to the
+tool's canonical address on the other site's own page, which is what search engines and AI
+crawlers credit. Its anchor is the tool's `og:title`, never keywords: search engines treat
+keyword-rich links spread through widgets as link spam. It sets only margin, size and
+alignment, so it takes the other site's font and link colour. The site can delete it; the
+watermark in the frame stays either way, and the dialog asks the reader to keep it.
 
 Only Embed as HTML carries a second line in the menu ("Interactive chart for your site");
 the other three rows say what they do in their label alone.

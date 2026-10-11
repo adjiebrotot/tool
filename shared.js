@@ -3037,7 +3037,8 @@
             copied: '✓ Copied', copyFail: 'PNG copy failed: ',
             noCopy: 'This browser cannot copy images.', noImage: 'the image could not be drawn',
             embedTitle: 'Embed this chart', close: 'Close', codeLabel: 'Embed code',
-            embedNote: 'Paste this into any web page. The chart stays interactive and opens on your scenario, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it.',
+            embedNote: 'Paste this into any web page. The chart stays interactive and opens on your scenario, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it. Please keep the credit line under the chart.',
+            credit: ['Interactive chart: ', ' by '],
             copyCode: 'Copy code', preview: 'Preview in a new tab', building: 'Building the code…',
             noEmbed: 'This chart could not be embedded: ', textFail: 'Copy failed. Select the code and copy it yourself.',
             backlink: 'Try your own scenarios at',
@@ -3050,7 +3051,8 @@
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
             embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan',
-            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka pada skenario Anda, yang ikut di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya.',
+            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka pada skenario Anda, yang ikut di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawah grafik.',
+            credit: ['Grafik interaktif: ', ' oleh '],
             copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
             noEmbed: 'Grafik ini tidak bisa disematkan: ', textFail: 'Gagal menyalin. Pilih kodenya dan salin sendiri.',
             backlink: 'Coba skenario Anda sendiri di',
@@ -3453,9 +3455,25 @@
         var home = pageUrl();
         var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + s;
         var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
-          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0" loading="lazy"></iframe>';
+          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0" loading="lazy"></iframe>\n' + credit(home);
         return { code: code, src: src, key: key };
       });
+    }
+
+    /* The credit line under the frame. The watermark inside the frame cannot
+       be edited out, but a link inside a frame counts for the framed page, so
+       it earns no backlink. This one is a plain link on the other site's own
+       page, which does. Its anchor is the tool's name, not keywords (links in
+       widgets with keyword anchors are what search engines treat as spam),
+       and it is visible and followed. It takes the other site's own font and
+       link colour. The site may delete it; the watermark stays either way. */
+    function siteName(){
+      var m = document.querySelector('meta[property="og:site_name"]');
+      return norm(m && m.content) || 'Adjie Brotot Tools';
+    }
+    function credit(home){
+      return '<p style="margin:6px 0 0;font-size:13px;text-align:right">' + html(T().credit[0]) +
+        '<a href="' + attr(home) + '">' + html(toolName()) + '</a>' + html(T().credit[1]) + html(siteName()) + '</p>';
     }
 
     /* ── The embed dialog ── */

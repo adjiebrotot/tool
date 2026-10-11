@@ -13,7 +13,9 @@
 //      a chart exported on a phone is not the phone's squat one, and a wide
 //      monitor exports that same picture too rather than a wider one.
 //   3. AN EMBED IS THE SAME CHART. The code is one iframe of the tool's own
-//      address, and nothing else: the line back to the tool is drawn inside
+//      address and one credit line under it, a plain followed link to the
+//      tool by its name, which is the backlink (E11). The line back to the
+//      tool is also drawn inside
 //      the frame, under the chart, with the site's logo, where the other site
 //      cannot edit it out. Opened as another site would open it,
 //      inside a page on another site, it shows that one chart card and
@@ -507,10 +509,21 @@ for (const spec of PAGES) {
     const canon = await page.$eval('link[rel="canonical"]', l => l.href);
     const src = (/src="([^"]+)"/.exec(code) || [])[1] || '';
     const height = +((/height="(\d+)"/.exec(code) || [])[1] || 0);
-    check(`${tag} E1 the code is one iframe of the tool and nothing else`,
-          /^<iframe [^\n]*><\/iframe>$/.test(code) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
-          height >= 380 && code.length <= (spec.prices ? PRICE_BUDGET : BUDGET),
-          `${code.length} characters (at most ${spec.prices ? PRICE_BUDGET : BUDGET}), frame ${height}px tall`);
+    const [frameCode, creditCode = ''] = code.split('\n');
+    check(`${tag} E1 the code is one iframe of the tool and its credit line`,
+          /^<iframe [^\n]*><\/iframe>$/.test(frameCode) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
+          height >= 380 && code.split('\n').length === 2 && code.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400,
+          `${code.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), frame ${height}px tall`);
+    // The backlink: a plain, visible, followed link on the other site's page,
+    // named for the tool rather than for keywords.
+    const name = await page.evaluate(() => document.querySelector('meta[property="og:title"]').content.trim());
+    const site = await page.evaluate(() => document.querySelector('meta[property="og:site_name"]').content.trim());
+    const links = [...creditCode.matchAll(/<a\b[^>]*>/g)].map(m => m[0]);
+    check(`${tag} E11 a credit line under the frame links back to the tool by its name, followed`,
+          /^<p style="[^"]*">[^<]*<a href="[^"]+">[^<]+<\/a>[^<]*<\/p>$/.test(creditCode) && links.length === 1 &&
+          links[0] === `<a href="${canon}">` && creditCode.includes(`>${name.replace(/&/g, '&amp;')}</a>`) && creditCode.includes(site) &&
+          !/rel=|display:\s*none|visibility|opacity/.test(creditCode),
+          creditCode.replace(/<[^>]+>/g, ''));
     await page.keyboard.press('Escape');
     const want = await page.evaluate(`(${DRAWN})(${JSON.stringify(key)})`);
     const T6 = await D.ctx.newPage();
