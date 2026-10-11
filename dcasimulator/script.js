@@ -2604,6 +2604,13 @@ SharedScenario.mount('.quick-start-row', {
   save: buildSettingsObj, load: importSettings,
   onError: msg=>showWarning(msg)
 });
+// An embedded chart never calls the Worker (shared.js), so the prices the
+// scenario draws ride in its link and go into the frame's cache first.
+SharedShare.data({
+  save: ()=>SharedYF.snapCache(priceCache,
+    securities.filter(s=>s.type==='ticker').map(s=>s.ticker), $('startDate').value, $('endDate').value),
+  load: d=>{ SharedYF.restoreCache(priceCache, d); }
+});
 
 /* ─── WARNINGS ─── */
 function showWarning(msg){ const w=$('mainWarning'); w.style.display='block'; w.textContent=msg; }

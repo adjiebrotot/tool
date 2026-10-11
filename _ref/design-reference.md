@@ -1830,10 +1830,19 @@ the other three rows say what they do in their label alone.
   Graph Visualiser's carries the rows of the uploaded file, since nothing else has them.
 - A tool that fetches before it draws returns a promise from its load (the DCA explorers
   return their simulation's), and the embed waits on it.
-- An embed carries the scenario and never what the tool can fetch or rebuild: prices and
-  their OHLC candles stay out of the saved file, which keeps the code near 1 KB. The Graph
-  Visualiser is the exception, since its data is the scenario, and the dialog says how many
+- An embed carries the scenario and never what the tool can rebuild: simulated paths stay
+  out of the saved file, which keeps the code near 1 KB. The Graph Visualiser is the
+  exception, since its data is the scenario, and the dialog says how many
   KB the code is when it passes 8 KB (and refuses past the ~2 MB a browser will follow).
+- **An embed never calls the market-data Worker.** The frame runs on this origin, so the
+  Worker's origin lock lets it through, and every viewer on the other site would be a paid
+  invocation. `yfFetchPricesBatch` refuses inside a frame, and a tool on market prices
+  registers `SharedShare.data({ save, load })`: `save` packs the scenario's window of each
+  ticker from its cache (`SharedYF.snapCache`, exact, about 4.7 KB per ticker-year of daily
+  OHLC once deflated) and refuses until the prices are loaded; `load` puts them in the
+  frame's cache (`SharedYF.restoreCache`) before the scenario runs. The embed draws the
+  prices of the day it was shared and never updates. A link from before prices rode in it
+  shows the fallback, not half a chart.
 
 **A link is not a file.** A reader opens a file they chose; a link can be sent by anyone.
 So embed mode only switches on inside a frame (opened as a page of its own, the link is just

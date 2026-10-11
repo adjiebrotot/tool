@@ -336,6 +336,8 @@
      daily allowance. */
   var DAILY_REQUEST_LIMIT = 5;
   var RATE_COOKIE = 'yf_req';
+  // Set when an embedded chart asked for prices its link did not carry.
+  var embedFetchRefused = false;
 
   function rlToday(){ return new Date().toISOString().slice(0,10); }
   function rlRead(){
@@ -434,6 +436,18 @@
   // { TICKER: {dates, prices, source, kind} | {error} }. Never throws for an
   // individual bad ticker — only for a total transport failure of a batch.
   async function yfFetchPricesBatch(tickers, startDate, endDate){
+    // An embedded chart is this page in another site's frame. Its requests
+    // carry this origin, so the Worker's origin lock lets them through and
+    // every viewer there would cost an invocation. It never calls the Worker:
+    // the prices it draws ride in its link (snapCache, below).
+    if (EMBED){
+      embedFetchRefused = true;
+      var refused = {};
+      (tickers || []).forEach(function(t){
+        refused[String(t||'').trim().toUpperCase()] = { error: 'market data is not fetched inside an embedded chart' };
+      });
+      return refused;
+    }
     if (!WORKER_ENDPOINT || /REPLACE-WITH-YOUR-WORKER/.test(WORKER_ENDPOINT)){
       throw new Error('Market-data Worker endpoint not configured (set WORKER_ENDPOINT / SharedYF.setEndpoint)');
     }
@@ -505,9 +519,124 @@
     return r;
   }
 
+  /* ── Prices for an embedded chart ──────────────────────────────────────────
+     An embed never calls the Worker (yfFetchPricesBatch), so the reader's
+     page packs the prices the scenario draws into the link, and the frame
+     puts them in its cache before the scenario runs. Only the scenario's own
+     window is sent, and every number comes back exactly as cached, so the
+     embed draws the same trades the reader saw, on the day they shared it.
+
+     A column is the smallest power of ten that holds every value exactly, as
+     delta-coded integers. Yahoo's closes are float32 values widened to
+     doubles, so where no decimal scale is exact one is tried that is exact
+     after Math.fround. Anything else travels as it is. The link then
+     deflates it (SharedShare.pack).
+
+         payload = SharedYF.snapCache(priceCache, ['SPY'], start, end)  // throws if not loaded
+         SharedYF.restoreCache(priceCache, payload)                     // in the frame
+     ──────────────────────────────────────────────────────────────────────── */
+  var SNAP_COLS = { p: 'prices', o: 'opens', h: 'highs', l: 'lows' };
+  var SNAP_MAX = 40000;
+  function snapNums(a){
+    var modes = [false, true], m, k, i, f, n, q, ok;
+    for(m = 0; m < 2; m++){
+      for(k = 0; k <= 12; k++){
+        f = Math.pow(10, k); q = new Array(a.length); ok = true;
+        for(i = 0; i < a.length && ok; i++){
+          n = typeof a[i] === 'number' ? Math.round(a[i] * f) : NaN;
+          ok = Number.isSafeInteger(n) && (modes[m] ? Math.fround(n / f) : n / f) === a[i];
+          q[i] = i ? n - Math.round(a[i - 1] * f) : n;
+        }
+        if(ok) return modes[m] ? { k: k, f: 1, d: q } : { k: k, d: q };
+      }
+    }
+    return { r: a.slice() };
+  }
+  function unsnapNums(c, len){
+    if(!c || typeof c !== 'object') return null;
+    var a = Array.isArray(c.r) ? c.r : Array.isArray(c.d) ? c.d : null;
+    if(!a || a.length !== len) return null;
+    if(c.r) return a.every(function(v){ return v === null || (typeof v === 'number' && isFinite(v)); }) ? a.slice() : null;
+    var k = c.k, f = Math.pow(10, k), out = new Array(len), n = 0;
+    if(!(Number.isInteger(k) && k >= 0 && k <= 12)) return null;
+    for(var i = 0; i < len; i++){
+      if(!Number.isSafeInteger(a[i])) return null;
+      n += a[i];
+      out[i] = c.f ? Math.fround(n / f) : n / f;
+    }
+    return out;
+  }
+  var ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+  function dayNum(iso){ var p = iso.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5; }
+  function dayIso(n){ return new Date(n * 864e5).toISOString().slice(0, 10); }
+  function snapLabel(v){ return typeof v === 'string' && /^[\w.-]{0,24}$/.test(v) ? v : ''; }
+
+  function snapCache(cache, tickers, start, end){
+    var out = { a: start, b: end, t: {} };
+    (tickers || []).forEach(function(raw){
+      var tk = String(raw || '').trim().toUpperCase(), e = cache && cache[tk];
+      if(!tk || out.t[tk]) return;
+      if(!(e && e.dates && e.coverageStart <= start && e.coverageEnd >= end))
+        throw new Error('the prices for ' + tk + ' over these dates are not loaded yet. Run the simulation, then embed again.');
+      var si = -1, ei = -1, i;
+      for(i = 0; i < e.dates.length; i++){ if(e.dates[i] >= start){ si = i; break; } }
+      for(i = e.dates.length - 1; i >= 0; i--){ if(e.dates[i] <= end){ ei = i; break; } }
+      var s = { s: e.source, k: e.kind, b: e.basis };
+      if(si >= 0 && ei >= si){
+        var dates = e.dates.slice(si, ei + 1), gaps = [];
+        for(i = 1; i < dates.length; i++) gaps.push(dayNum(dates[i]) - dayNum(dates[i - 1]));
+        s.t = dates[0]; s.g = gaps;
+        Object.keys(SNAP_COLS).forEach(function(c){
+          var col = e[SNAP_COLS[c]];
+          if(c === 'p' || (e.opens && e.highs && e.lows)) s[c] = snapNums(col.slice(si, ei + 1));
+        });
+      }
+      out.t[tk] = s;
+    });
+    return out;
+  }
+  // Writes each ticker in a link into `cache`, covering the link's window.
+  // A link is anyone's to write, so anything malformed is dropped whole.
+  function restoreCache(cache, d){
+    if(!d || typeof d !== 'object' || !d.t || typeof d.t !== 'object') return [];
+    var start = d.a, end = d.b, done = [];
+    if(!(typeof start === 'string' && ISO_DAY.test(start) && typeof end === 'string' && ISO_DAY.test(end))) return [];
+    Object.keys(d.t).forEach(function(tk){
+      var s = d.t[tk];
+      if(!/^[A-Z0-9.^=_-]{1,24}$/.test(tk) || !s || typeof s !== 'object') return;
+      var dates = [];
+      if(s.t !== undefined){
+        if(!(typeof s.t === 'string' && ISO_DAY.test(s.t) && Array.isArray(s.g) && s.g.length < SNAP_MAX)) return;
+        var n = dayNum(s.t);
+        dates.push(s.t);
+        for(var i = 0; i < s.g.length; i++){
+          if(!(Number.isInteger(s.g[i]) && s.g[i] > 0 && s.g[i] < 4000)) return;
+          dates.push(dayIso(n += s.g[i]));
+        }
+      }
+      var entry = { dates: dates, prices: dates.length ? unsnapNums(s.p, dates.length) : [] };
+      if(!entry.prices) return;
+      if(s.o || s.h || s.l){
+        entry.opens = unsnapNums(s.o, dates.length); entry.highs = unsnapNums(s.h, dates.length); entry.lows = unsnapNums(s.l, dates.length);
+        if(!(entry.opens && entry.highs && entry.lows)) return;
+      }
+      entry.cachedStart = dates[0]; entry.cachedEnd = dates[dates.length - 1];
+      entry.coverageStart = start; entry.coverageEnd = end;
+      entry.source = snapLabel(s.s); entry.kind = snapLabel(s.k); entry.basis = snapLabel(s.b);
+      cache[tk] = entry;
+      done.push(tk);
+    });
+    // Whatever runs from here on draws from these; an earlier refusal was the
+    // page's own defaults, before the link was read.
+    embedFetchRefused = false;
+    return done;
+  }
+
   global.SharedYF = {
     fetchPrices: yfFetchPrices,
     fetchPricesBatch: yfFetchPricesBatch,
+    snapCache: snapCache,
+    restoreCache: restoreCache,
     mergeSeries: mergeSeries,
     tailStart: tailStart,
     setEndpoint: function(url){ WORKER_ENDPOINT = url || ''; },
@@ -2895,6 +3024,7 @@
 
          SharedShare.state({ save, load })        // a tool outside SharedScenario
          SharedShare.view(key, { save, load })    // a popup that has to open first
+         SharedShare.data({ save, load })         // data the frame cannot fetch (prices)
 
      key is the chart's canvas or Plotly id ('.class' when it has none). A
      card whose view depends on fields outside it names them in
@@ -2933,7 +3063,7 @@
     var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     // The box a chart and its own controls live in, nearest first.
     var CARD = '.chart-modal, .detail-subsection, .chart-card, .chart-panel, .card';
-    var uid = 0, menus = [], current = null, provider = null, views = {}, dlg = null;
+    var uid = 0, menus = [], current = null, provider = null, dataHook = null, views = {}, dlg = null;
 
     function T(){ return TEXT[pageLang()]; }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
@@ -3311,6 +3441,9 @@
       var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
       if(!key) return Promise.reject(new Error('no chart'));
       var payload = {};
+      // A hook that cannot hand over its data (prices not loaded) says why.
+      try { if(dataHook) payload.d = dataHook.save(); }
+      catch(e){ return Promise.reject(e); }
       if(provider) payload.s = provider.save();
       if(views[key] && views[key].save) payload.v = views[key].save();
       var u = captureUi(card);
@@ -3514,6 +3647,9 @@
           payload.s = inert(payload.s);
           payload.v = inert(payload.v);
           if(payload.u && typeof payload.u === 'object') payload.u.f = inert(payload.u.f);
+          // The data goes in first, so the scenario runs on it. It is checked
+          // field by field by its own hook rather than made inert.
+          if(payload.d && dataHook) dataHook.load(payload.d);
           if(payload.s && provider) return provider.load(payload.s);
         })
         .then(function(){ return wait(250); })
@@ -3532,6 +3668,11 @@
           isolate(card, el);
           return settled(E.key);
         })
+        .then(function(){
+          // A link from before prices rode in it would need the Worker, which
+          // an embed never calls: say so rather than draw half the chart.
+          if(embedFetchRefused) throw new Error('this link carries no prices; copy the embed code again');
+        })
         .catch(function(err){ if(global.console) console.warn('Embed:', err); embedFailed(); })
         .then(function(){ document.documentElement.classList.remove('abt-embed-wait'); });
     }
@@ -3545,6 +3686,8 @@
       copyImage: copyImage,
       state: function(p){ provider = p && typeof p.save === 'function' && typeof p.load === 'function' ? p : null; },
       view: function(key, hook){ if(key) views[key] = hook; },
+      // Data the scenario draws but cannot rebuild in the frame (prices).
+      data: function(hook){ dataHook = hook && typeof hook.save === 'function' && typeof hook.load === 'function' ? hook : null; },
       embedded: EMBED ? { key: EMBED.key, theme: EMBED.theme } : null,
       // For the checks in _ref/: the code a cluster's Embed row would show.
       embedCode: function(cluster){ var m = cluster && cluster.__share; return m ? buildEmbed(m) : Promise.reject(new Error('no menu')); },
