@@ -12,8 +12,10 @@
 //      taken on a phone have the very size and proportion a desktop gives, so
 //      a chart exported on a phone is not the phone's squat one, and a wide
 //      monitor exports that same picture too rather than a wider one.
-//   3. AN EMBED IS THE SAME CHART. The code is an iframe of the tool's own
-//      address plus one backlink line. Opened as another site would open it,
+//   3. AN EMBED IS THE SAME CHART. The code is one iframe of the tool's own
+//      address, and nothing else: the line back to the tool is drawn inside
+//      the frame, under the chart, with the site's logo, where the other site
+//      cannot edit it out. Opened as another site would open it,
 //      inside a page on another site, it shows that one chart card and
 //      nothing else, draws exactly the
 //      data the reader was looking at (scenario, metric, toggles and legend),
@@ -466,13 +468,11 @@ for (const spec of PAGES) {
     }, null, { timeout: 10000 });
     const code = await page.$eval('.share-code', t => t.value);
     const canon = await page.$eval('link[rel="canonical"]', l => l.href);
-    const name = await page.$eval('meta[property="og:title"]', m => m.content);
     const src = (/src="([^"]+)"/.exec(code) || [])[1] || '';
     const height = +((/height="(\d+)"/.exec(code) || [])[1] || 0);
-    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    check(`${tag} E1 the code is an iframe of the tool plus one backlink line`,
-          code.split('\n').length === 2 && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
-          code.endsWith(`<p>${W.back} <a href="${canon}">${esc(name)}</a></p>`) && height >= 380 && code.length <= BUDGET,
+    check(`${tag} E1 the code is one iframe of the tool and nothing else`,
+          /^<iframe [^\n]*><\/iframe>$/.test(code) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
+          height >= 380 && code.length <= BUDGET,
           `${code.length} characters (at most ${BUDGET}), frame ${height}px tall`);
     await page.keyboard.press('Escape');
     const want = await page.evaluate(`(${DRAWN})(${JSON.stringify(key)})`);
@@ -509,6 +509,13 @@ for (const spec of PAGES) {
           stray, light: document.body.classList.contains('light'),
           zoom: ch ? !!(ch.options.plugins && ch.options.plugins.zoom && ch.options.plugins.zoom.zoom) : !!(f.el && f.el._fullLayout),
           saved: Object.keys(localStorage).filter(k => /^abt:save:/.test(k)),
+          mark: (() => {
+            const m = f.card && f.card.querySelector(':scope > .abt-embed-mark');
+            if (!m || m.offsetParent === null) return null;
+            const r = m.getBoundingClientRect();
+            return { href: m.href, text: m.textContent.replace(/\\s+/g, ' ').trim(), logo: !!m.querySelector('svg circle'),
+                     px: parseFloat(getComputedStyle(m).fontSize), inFrame: r.bottom <= innerHeight + 1 && r.right <= innerWidth + 1 };
+          })(),
           share: f.cluster ? f.cluster.querySelector('.share-menu').offsetParent !== null : false,
           wide: document.documentElement.scrollWidth > innerWidth + 1,
         };
@@ -524,6 +531,11 @@ for (const spec of PAGES) {
             got === want ? (light ? 'light' : 'dark') : `drawn ${got ? got.length : 0} chars vs ${want ? want.length : 0}, first difference at ${[...(got || '')].findIndex((c, i) => c !== want[i])}`);
       check(`${tag} E4 ${where}: zoom still works, and the viewer's saved work is left alone`,
             view.zoom && !view.saved.length, view.saved.length ? 'wrote ' + view.saved.join(', ') : '');
+      const host = canon.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      check(`${tag} E8 ${where}: the frame carries its own watermark, logo and "${W.back} ${host}", small and in view`,
+            !!view.mark && view.mark.href === canon && view.mark.text === `${W.back} ${host}` && view.mark.logo &&
+            view.mark.px <= 11 && view.mark.inFrame,
+            view.mark ? `${view.mark.px}px "${view.mark.text}" → ${view.mark.href}` : 'no watermark in the card');
       check(`${tag} E5 ${where}: no page errors`, E.errors.length === 0, E.errors.slice(0, 2).join(' | '));
       await E.ctx.close();
     }

@@ -2,10 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://tool.adjiebrotots.com/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/borrowingcapacity/</loc>
@@ -14,8 +14,14 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
+    <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
     <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
+    <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -44,6 +50,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/eggprice/</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financialfreedom/</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -62,14 +80,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/</loc>
-    <lastmod>2026-10-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/jsonvisualiser/</loc>
     <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/mdtopdf/</loc>
+    <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -158,6 +176,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/valuateeverything/</loc>
+    <lastmod>2026-10-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/videotogif/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -170,39 +194,15 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/worldclock/</loc>
-    <lastmod>2026-09-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/eggprice/</loc>
-    <lastmod>2026-09-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://tool.adjiebrotots.com/wemconstraint-checker/guide/</loc>
     <lastmod>2026-06-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/mdtopdf/</loc>
-    <lastmod>2026-06-10</lastmod>
+    <loc>https://tool.adjiebrotots.com/worldclock/</loc>
+    <lastmod>2026-09-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/financialfreedom/</loc>
-    <lastmod>2026-09-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://tool.adjiebrotots.com/valuateeverything/</loc>
-    <lastmod>2026-10-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 </urlset>

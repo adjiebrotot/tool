@@ -2880,8 +2880,10 @@
      click, which Safari requires, flashes "✓ Copied" on the Share button and
      says why in words when it fails.
 
-     EMBED AS HTML hands the reader two lines: an iframe of this very page, and
-     one line of text linking back to the tool. The iframe's link carries the
+     EMBED AS HTML hands the reader one line: an iframe of this very page. The
+     link back to the tool is drawn inside the frame, under the chart, as the
+     PNG and SVG exports carry theirs, so the other site cannot edit it out
+     without dropping the chart with it. The iframe's link carries the
      chart and the reader's scenario, which is the file the save button writes
      (SharedScenario registers it here through state()), deflated into the
      #hash, which never reaches a server. On the other site the page opens in
@@ -2900,9 +2902,7 @@
   function makeShare(){
     var TEXT = {
       en: { share: 'Share', shareTitle: 'Download, copy or embed this chart',
-            svg: ['Download as SVG', 'Vector file, sharp at any size'],
-            png: ['Download as PNG', 'Image at desktop size'],
-            copy: ['Copy to clipboard', 'The PNG, ready to paste'],
+            svg: ['Download as SVG'], png: ['Download as PNG'], copy: ['Copy to clipboard'],
             embed: ['Embed as HTML', 'Interactive chart for your site'],
             copied: '✓ Copied', copyFail: 'PNG copy failed: ',
             noCopy: 'This browser cannot copy images.', noImage: 'the image could not be drawn',
@@ -2915,9 +2915,7 @@
             tooBig: 'This chart carries too much data to fit in a link. Embed a smaller part of it.',
             failed: 'This chart could not be loaded here.', openTool: 'Open the tool' },
       id: { share: 'Bagikan', shareTitle: 'Unduh, salin, atau sematkan grafik ini',
-            svg: ['Unduh sebagai SVG', 'Berkas vektor, tajam di ukuran apa pun'],
-            png: ['Unduh sebagai PNG', 'Gambar seukuran desktop'],
-            copy: ['Salin ke papan klip', 'PNG-nya, siap ditempel'],
+            svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], copy: ['Salin ke papan klip'],
             embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
@@ -2988,7 +2986,8 @@
         li.innerHTML = '<button type="button" role="menuitem" class="combo-opt share-opt" data-kind="' + r[0] + '">' +
           '<span class="share-ico' + (r[0] === 'embed' ? ' share-ico-code' : '') + '" aria-hidden="true">' + r[1] + '</span>' +
           '<span class="combo-text"><span class="combo-main">' + words[0] + '</span>' +
-          '<span class="combo-sub">' + words[1] + '</span></span></button>';
+          // Only Embed needs a line under it; the other three say what they do.
+          (words[1] ? '<span class="combo-sub">' + words[1] + '</span>' : '') + '</span></button>';
         list.appendChild(li);
       });
       // The buttons the tool binds stay in the cluster, out of sight, so
@@ -3318,11 +3317,10 @@
       if(u) payload.u = u;
       var theme = document.body.classList.contains('light') ? 'light' : 'dark';
       return pack(payload).then(function(s){
-        var home = pageUrl(), t = T();
+        var home = pageUrl();
         var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + s;
         var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
-          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0" loading="lazy"></iframe>\n' +
-          '<p>' + t.backlink + ' <a href="' + attr(home) + '">' + html(toolName()) + '</a></p>';
+          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0" loading="lazy"></iframe>';
         return { code: code, src: src, key: key };
       });
     }
@@ -3432,9 +3430,28 @@
       // The tool's own toggle, so its charts re-read their colours.
       if(b) b.click(); else document.body.classList.toggle('light', want);
     }
+    /* The frame's watermark: the site's circled A and one quiet line back to
+       the tool, at the card's foot. It is part of the framed page, which the
+       other site cannot reach into, so it goes wherever the chart goes. */
+    var LOGO = '<svg class="abt-embed-mark-logo" viewBox="0 0 680 680" width="12" height="12" aria-hidden="true" focusable="false">' +
+      '<circle cx="340" cy="340" r="300" fill="#0052cc"/><g fill="none" stroke="#fff" stroke-width="46">' +
+      '<path d="M242 570A250 250 0 0 1 234 113"/><path d="M234 113A250 250 0 0 1 446 113"/><path d="M446 113A250 250 0 0 1 438 570"/></g>' +
+      '<line x1="113" y1="354" x2="567" y2="354" stroke="#fff" stroke-width="42" stroke-linecap="round"/></svg>';
+    function mark(card){
+      var home = pageUrl(), a = document.createElement('a');
+      a.className = 'abt-embed-mark';
+      a.href = home;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.title = toolName();
+      a.setAttribute('data-no-abbr', '');
+      a.innerHTML = LOGO + '<span>' + html(T().backlink) + ' ' + html(home.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</span>';
+      card.appendChild(a);
+    }
     // Only the card is left: every sibling on the way up to the body is
     // hidden, and every box on that way loses its own layout.
     function isolate(card, el){
+      mark(card);
       card.classList.add('abt-embed-card');
       var fill = fillOf(el);
       fill.classList.add('abt-embed-fill');

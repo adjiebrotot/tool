@@ -920,6 +920,9 @@
             "@type": "WebApplication",
             "name": "PowerFactory Scripter",
             "url": "https://tool.adjiebrotots.com/powerfactory-scripter/",
+            "hasPart": [
+              { "@type": "WebApplication", "name": "PowerFactory Scripter Samples and Guides", "url": "https://tool.adjiebrotots.com/powerfactory-scripter/samples/" }
+            ],
             "description": "Generate DIgSILENT PowerFactory Python automation scripts for common power-system study workflows. Cuts scripting work that usually takes power system engineers hours to days down to minutes.",
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Any",
@@ -959,6 +962,9 @@
             "@type": "WebApplication",
             "name": "Finance vs Cash",
             "url": "https://tool.adjiebrotots.com/financingvscash/",
+            "hasPart": [
+              { "@type": "WebApplication", "name": "Loan Types Explained", "url": "https://tool.adjiebrotots.com/financingvscash/loan-types/" }
+            ],
             "description": "Compare paying cash versus financing a purchase while investing unused cash to evaluate total financial outcomes.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Any",
@@ -976,6 +982,10 @@
             "@type": "WebApplication",
             "name": "Rent vs Own Home",
             "url": "https://tool.adjiebrotots.com/rentvsownhouse/",
+            "hasPart": [
+              { "@type": "WebApplication", "name": "Rent vs Own Sensitivity Analysis", "url": "https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/" },
+              { "@type": "WebPage", "name": "Rent vs Own Quick Start Assumptions", "url": "https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/" }
+            ],
             "description": "Model renting versus buying property over time by comparing cash, equity, and net wealth scenarios. Comparable commercial property-modelling software can cost tens of thousands of dollars; this is free with full control.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Any",
@@ -1017,6 +1027,10 @@
             "@type": "WebApplication",
             "name": "DCA Scenario Explorer",
             "url": "https://tool.adjiebrotots.com/dcasimulator/",
+            "hasPart": [
+              { "@type": "WebApplication", "name": "Portfolio DCA Simulator", "url": "https://tool.adjiebrotots.com/dcasimulator/portfolio/" },
+              { "@type": "WebPage", "name": "Common yfinance Ticker Codes", "url": "https://tool.adjiebrotots.com/dcasimulator/ticker/" }
+            ],
             "description": "Compare dollar-cost averaging strategies across securities using market data or custom assumptions.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Any",
@@ -1104,6 +1118,9 @@
             "@type": "WebApplication",
             "name": "Cost of Living Comparator",
             "url": "https://tool.adjiebrotots.com/costofliving-comparator/",
+            "hasPart": [
+              { "@type": "WebApplication", "name": "Cost of Living Comparator: Map View", "url": "https://tool.adjiebrotots.com/costofliving-comparator/map/" }
+            ],
             "description": "Compare living costs across cities to understand how far your salary goes before relocating or negotiating pay.",
             "applicationCategory": "FinanceApplication",
             "operatingSystem": "Any",
@@ -1138,6 +1155,9 @@
             "@type": "WebApplication",
             "name": "WEM Constraint Equation Checker",
             "url": "https://tool.adjiebrotots.com/wemconstraint-checker/",
+            "hasPart": [
+              { "@type": "WebPage", "name": "How to Invoke WEM Constraint Equations", "url": "https://tool.adjiebrotots.com/wemconstraint-checker/guide/" }
+            ],
             "description": "Check Western Australia WEM constraint equations against generator and constraint data in your browser.",
             "applicationCategory": "BusinessApplication",
             "operatingSystem": "Any",
@@ -1725,7 +1745,14 @@
             </ul>
 
             <div class="tool-footer">
-              <a class="tool-link" href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+              <div class="tool-actions">
+                <a class="tool-link" href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer" itemprop="url">Open tool</a>
+                <button type="button" class="tool-options-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="options-costofliving-comparator" aria-label="Choose which Cost of Living Comparator tool to open"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+                <ul class="tool-options-menu combo-list" id="options-costofliving-comparator" role="menu">
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/costofliving-comparator/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Cost of Living Comparator</span><span class="combo-sub">A few cities side by side</span></span></a></li>
+                  <li role="none"><a class="combo-opt" role="menuitem" href="https://tool.adjiebrotots.com/costofliving-comparator/map/" target="_blank" rel="noopener noreferrer"><span class="combo-text"><span class="combo-main">Map View</span><span class="combo-sub">Your city against all 500+ on a map</span></span></a></li>
+                </ul>
+              </div>
             </div>
           </div>
         </article>

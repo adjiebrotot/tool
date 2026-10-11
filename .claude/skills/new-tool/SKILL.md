@@ -104,9 +104,24 @@ Copy the SEO block from an existing tool's `<head>` and adapt it: `<title>`, `<m
 name="description">`, canonical link, Open Graph + Twitter tags, and a JSON-LD `WebApplication`
 block. Then register the tool site-wide:
 
-- Add a `<url>` entry to `sitemap.xml`.
+- Add a `<url>` entry to `sitemap.xml`, right after its parent's if it is a sub-page
+  (entries run home first, then by path).
 - Add the tool to `llms.txt` (and `README.md` if it's a headline tool).
 - Keep the Google `gtag` snippet like the other pages.
+
+**A sub-tool** (a page under another tool's folder, such as `dcasimulator/portfolio/` or
+`costofliving-comparator/map/`) belongs to its parent everywhere:
+
+- It keeps the parent's tool glyph, and its `<h1>` is `<Parent>: <Variant>` or the variant's
+  own name (Portfolio DCA Simulator); the header carries only ← Other Tools and the theme.
+- Each page links the other with a banner under the header, the `portfolioLinkDiv` pattern
+  in `dcasimulator/`, not a header button.
+- On the home page the parent's card turns its Open tool into the split button, with a
+  menu row for the parent and one for each sub-tool.
+- JSON-LD: the sub-page's block has `isPartOf` the parent, the parent's block has `hasPart`
+  listing it (so does the parent's entry in the home page's `ItemList`), and the sub-page
+  carries a `BreadcrumbList` of Adjie Brotools › parent › sub-page. An `/id/` page gets the
+  Indonesian versions through `_ref/bake-id.mjs`, never by hand.
 
 ## 3. Language & descriptions — plain and tight
 

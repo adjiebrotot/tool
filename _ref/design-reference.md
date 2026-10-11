@@ -1786,7 +1786,7 @@ and it is driven by the keyboard as a menu is (arrows, Home, End, Escape back to
 | ⬇ Download as SVG | clicks the chart's own `⬇ SVG` | drawn at the desktop size (`SharedExport.atDesktopSize`), so a phone exports the desktop picture |
 | ⬇ Download as PNG | clicks `⬇ PNG` | the same |
 | ⧉ Copy to clipboard | clicks `⧉`, whose handler copies through `SharedShare.copyImage` | the PNG above; "✓ Copied" flashes on Share, a failure says why in words |
-| </> Embed as HTML | opens the embed dialog | two lines: an iframe of the tool and one backlink line |
+| </> Embed as HTML | opens the embed dialog | one line: an iframe of the tool, its watermark drawn inside the frame |
 
 ```js
 // Every ⧉ handler: copyImage writes inside the click (Safari needs that).
@@ -1800,7 +1800,6 @@ SharedShare.upgrade(overlay);
 ```html
 <iframe src="https://tool.adjiebrotots.com/<tool>/#embed=<chart>&amp;theme=dark&amp;s=…" title="<chart title>"
         width="100%" height="<desktop height>" style="border:0" loading="lazy"></iframe>
-<p>Try your own scenarios at <a href="https://tool.adjiebrotots.com/<tool>/"><og:title></a></p>
 ```
 
 `s` is the scenario file the save button writes (`SharedScenario.mount` registers it with
@@ -1810,8 +1809,18 @@ finance tool. The page reads the hash before any tool script runs and opens in *
 mode**: the mini cache neither restores nor saves (the viewer's own work is left alone),
 the tour stays away, the scenario is opened the way a saved file is, the chart's view is
 put back (fields, pressed buttons and legend entries inside its card), and only that card
-is shown, filling the frame. Zoom, pan and hover all keep working, and the backlink is a
-plain link, so search engines credit it to the tool's canonical address.
+is shown, filling the frame. Zoom, pan and hover all keep working.
+
+**The watermark lives in the frame.** Under the chart, hard right, embed mode draws the
+site's circled A and one line, "Try your own scenarios at tool.adjiebrotots.com/<tool>",
+linking to the tool's canonical address (opened in a new tab). It is the PNG and SVG
+watermark's equivalent: small (0.66rem), muted, at 70% opacity until hovered. Being part
+of the framed page, which the other site cannot reach into, it cannot be edited out of the
+code without dropping the chart too. The cost: a link inside a frame is credited to the
+framed page, not to the site that embeds it, so an embed earns no backlink.
+
+Only Embed as HTML carries a second line in the menu ("Interactive chart for your site");
+the other three rows say what they do in their label alone.
 
 - A view that lives outside the card names it: `data-share-view="#tab-sens"` on the card
   (Finance vs Cash's sensitivity sweep), and its fields and toggles ride along.
