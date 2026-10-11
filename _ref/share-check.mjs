@@ -13,7 +13,9 @@
 //      a chart exported on a phone is not the phone's squat one, and a wide
 //      monitor exports that same picture too rather than a wider one.
 //   3. AN EMBED IS THE SAME CHART. The code is one iframe of the tool's own
-//      address, and nothing else: the line back to the tool is drawn inside
+//      address and one credit line under it, a plain followed link to the
+//      tool by its name, which is the backlink (E11). The line back to the
+//      tool is also drawn inside
 //      the frame, under the chart, with the site's logo, where the other site
 //      cannot edit it out. Opened as another site would open it,
 //      inside a page on another site, it shows that one chart card and
@@ -21,6 +23,11 @@
 //      data the reader was looking at (scenario, metric, toggles and legend),
 //      in their theme, with zoom still working, and never touches the
 //      viewer's own saved work. It is checked again at a phone's width.
+//   5. AN EMBED COSTS NOTHING. Its frame runs on the tool's own origin, so
+//      the market-data Worker's origin lock lets it through, and every viewer
+//      on another site would be a paid invocation. It never calls the Worker:
+//      the prices its scenario draws ride in the link (E9), and a link from
+//      before they did fails in plain view rather than fetching (E10).
 //   4. A LINK CAN ONLY CARRY TEXT. Anyone can send one, so every string in a
 //      real scenario is swapped for markup and a script that would close a
 //      quote in a template; the embed has to draw it as text and run nothing.
@@ -93,20 +100,24 @@ for (const url of CDN) {
 }
 const libBody = url => readFileSync(join(LIBS, basename(url)), 'utf8');
 
-function synthSeries(days = 900, seed = 7) {
-  const dates = [], prices = [];
-  let p = 100, s = seed, d = new Date(Date.UTC(2020, 0, 1));
-  for (let i = 0; i < days; i++) {
-    s = (s * 1103515245 + 12345) % 2147483648;
-    const r = s / 2147483648 - 0.5;
-    p = Math.max(1, p * (1 + 0.0006 + r * 0.02));
+// Daily bars from 2010 to today, as Yahoo sends them: float32 values widened
+// to doubles, with OHLC, so the prices an embed carries are full size.
+function synthSeries(seed = 7) {
+  const dates = [], prices = [], opens = [], highs = [], lows = [];
+  const today = new Date().toISOString().slice(0, 10), f = Math.fround;
+  let p = 100, s = seed, d = new Date(Date.UTC(2010, 0, 1));
+  const rnd = () => { s = (s * 1103515245 + 12345) % 2147483648; return s / 2147483648; };
+  while (true) {
     d.setUTCDate(d.getUTCDate() + 1);
-    const dow = d.getUTCDay();
-    if (dow === 0 || dow === 6) { i--; continue; }
-    dates.push(d.toISOString().slice(0, 10));
-    prices.push(+p.toFixed(4));
+    const iso = d.toISOString().slice(0, 10), dow = d.getUTCDay();
+    if (iso > today) break;
+    if (dow === 0 || dow === 6) continue;
+    const o = p * (1 + (rnd() - 0.5) * 0.01);
+    p = Math.max(1, p * (1 + 0.0004 + (rnd() - 0.5) * 0.02));
+    dates.push(iso); prices.push(f(p)); opens.push(f(o));
+    highs.push(f(Math.max(o, p) * (1 + rnd() * 0.008))); lows.push(f(Math.min(o, p) * (1 - rnd() * 0.008)));
   }
-  return { dates, prices };
+  return { dates, prices, opens, highs, lows };
 }
 const DEMO_CSV = join(LIBS, 'share-check-demo.csv');
 {
@@ -125,6 +136,7 @@ const browser = await chromium.launch();
 
 async function newPage(viewport, { returning = true } = {}) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, acceptDownloads: true });
+  let worker = 0;
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: ORIGIN });
   await ctx.route('**', async route => {
     const url = route.request().url();
@@ -136,9 +148,14 @@ async function newPage(viewport, { returning = true } = {}) {
     if (url.includes('yfinance') || url.includes('workers.dev')) {
       const tickers = (new URL(url).searchParams.get('tickers') || 'TEST').split(',');
       const results = {};
-      tickers.forEach((t, i) => {
-        const s = synthSeries(900, 7 + i * 13);
-        results[t] = { dates: s.dates, prices: s.prices, source: 'test', kind: 'adjusted' };
+      worker++;
+      const u = new URL(url), start = u.searchParams.get('start') || '', end = u.searchParams.get('end') || '9';
+      tickers.forEach(t => {
+        const s = synthSeries(7 + [...t].reduce((a, c) => a + c.charCodeAt(0), 0) * 13);
+        const keep = s.dates.map((d, i) => d >= start && d <= end ? i : -1).filter(i => i >= 0);
+        const pick = a => keep.map(i => a[i]);
+        results[t] = { dates: pick(s.dates), prices: pick(s.prices), opens: pick(s.opens), highs: pick(s.highs),
+                       lows: pick(s.lows), source: 'yahoo', kind: 'stock', basis: 'utc' };
       });
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results }) });
     }
@@ -157,7 +174,7 @@ async function newPage(viewport, { returning = true } = {}) {
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   page.on('dialog', d => { errors.push('dialog: ' + d.message()); d.dismiss(); });
-  return { ctx, page, errors };
+  return { ctx, page, errors, worker: () => worker };
 }
 
 /* ── In-page probes ── */
@@ -234,10 +251,10 @@ async function clipboardSize(page, key) {
 }
 
 /* ── The pages, each moved off its defaults before it is shared ── */
-const dcaPrep = tab => async page => {
-  await page.fill('#tickerPoolInput', 'TEST');
-  await page.click('#loadTickersBtn');
-  await page.waitForTimeout(1200);
+// A preset on real tickers, so the scenario draws prices from the Worker.
+const dcaPrep = (tab, preset) => async page => {
+  await page.click(`.quick-start-btn[data-preset="${preset}"]`);
+  await page.waitForTimeout(1500);
   await page.click(`.ctrl-tab[data-tab="${tab}"]`);
 };
 const PAGES = [
@@ -289,9 +306,9 @@ const PAGES = [
     },
   },
   {
-    name: 'dcasimulator', url: '/dcasimulator/', charts: ['priceCanvas', 'equityCanvas'],
+    name: 'dcasimulator', url: '/dcasimulator/', charts: ['priceCanvas', 'equityCanvas'], prices: true,
     async prep(page) {
-      await dcaPrep('securities')(page);
+      await dcaPrep('securities', 'stock-etf')(page);
       await page.click('#simBtn');
       await page.waitForFunction(() => !!window.Chart.getChart(document.getElementById('equityCanvas')), null, { timeout: 60000 });
       await page.click('#showDepositedToggle', { force: true }).catch(() => {});
@@ -299,9 +316,9 @@ const PAGES = [
     },
   },
   {
-    name: 'dcasimulator/portfolio', url: '/dcasimulator/portfolio/', charts: ['valueCanvas', 'compCanvas', 'priceCanvas'],
+    name: 'dcasimulator/portfolio', url: '/dcasimulator/portfolio/', charts: ['valueCanvas', 'compCanvas', 'priceCanvas'], prices: true,
     async prep(page) {
-      await dcaPrep('portfolios')(page);
+      await dcaPrep('portfolios', 'rebal-freq')(page);
       await page.click('#simBtn');
       await page.waitForFunction(() => !!window.Chart.getChart(document.getElementById('compCanvas')), null, { timeout: 60000 });
       await page.click('#compViewToggle .seg-btn[data-cv="percent"]');
@@ -361,6 +378,9 @@ const PAGES = [
    (prices, simulated paths). Past this, something heavy has leaked into the
    saved state and the code is no longer one a reader can paste. */
 const BUDGET = 2500;
+// A tool on market prices carries them too (rule 5): the scenario's window of
+// daily OHLC for each ticker, which is tens of KB a decade.
+const PRICE_BUDGET = 600 * 1024;
 
 const WORDS = {
   en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Embed as HTML'],
@@ -395,6 +415,25 @@ async function attack(page, tag, src) {
   const r = await frame.evaluate(() => ({ ran: !!window.__pwned, imgs: document.querySelectorAll('img[src="x"]').length }));
   check(`${tag} E7 a link whose every string is markup and script draws it as text and runs none of it`,
         !r.ran && !r.imgs, `ran: ${r.ran}, injected elements: ${r.imgs}`);
+  await E.ctx.close();
+}
+
+/* 5. A link from before the prices rode in it. It would need the Worker,
+   which an embed never calls, so it shows its fallback rather than half a
+   chart, and costs nothing. */
+async function priceless(page, tag, src) {
+  const s = decodeURIComponent(/&amp;s=([^&]+)$/.exec(src)[1]);
+  const old = await page.evaluate(s => SharedShare.unpack(s).then(p => { const had = !!p.d; delete p.d; return SharedShare.pack(p).then(x => [had, x]); }), s);
+  const E = await newPage({ width: 760, height: 560 }, { returning: false });
+  const id = 'old' + hosted.size;
+  const base = src.split('&amp;s=')[0].replace(/&amp;/g, '&').replace(SITE, ORIGIN);
+  hosted.set(id, `<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="${base}&s=${old[1]}" width="760" height="560"></iframe></body>`);
+  await E.page.goto(HOST + '/?id=' + id, { waitUntil: 'load' });
+  const frame = await (await E.page.waitForSelector('iframe')).contentFrame();
+  await frame.waitForFunction(() => !document.documentElement.classList.contains('abt-embed-wait'), null, { timeout: 45000 }).catch(() => {});
+  const failed = await frame.evaluate(() => document.documentElement.classList.contains('abt-embed-failed'));
+  check(`${tag} E10 a link without its prices shows its fallback and never calls the Worker`,
+        old[0] && failed && E.worker() === 0, `prices were in the link: ${old[0]}, fallback: ${failed}, ${E.worker()} Worker request(s)`);
   await E.ctx.close();
 }
 
@@ -470,10 +509,21 @@ for (const spec of PAGES) {
     const canon = await page.$eval('link[rel="canonical"]', l => l.href);
     const src = (/src="([^"]+)"/.exec(code) || [])[1] || '';
     const height = +((/height="(\d+)"/.exec(code) || [])[1] || 0);
-    check(`${tag} E1 the code is one iframe of the tool and nothing else`,
-          /^<iframe [^\n]*><\/iframe>$/.test(code) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
-          height >= 380 && code.length <= BUDGET,
-          `${code.length} characters (at most ${BUDGET}), frame ${height}px tall`);
+    const [frameCode, creditCode = ''] = code.split('\n');
+    check(`${tag} E1 the code is one iframe of the tool and its credit line`,
+          /^<iframe [^\n]*><\/iframe>$/.test(frameCode) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
+          height >= 380 && code.split('\n').length === 2 && code.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400,
+          `${code.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), frame ${height}px tall`);
+    // The backlink: a plain, visible, followed link on the other site's page,
+    // named for the tool rather than for keywords.
+    const name = await page.evaluate(() => document.querySelector('meta[property="og:title"]').content.trim());
+    const site = await page.evaluate(() => document.querySelector('meta[property="og:site_name"]').content.trim());
+    const links = [...creditCode.matchAll(/<a\b[^>]*>/g)].map(m => m[0]);
+    check(`${tag} E11 a credit line under the frame links back to the tool by its name, followed`,
+          /^<p style="[^"]*">[^<]*<a href="[^"]+">[^<]+<\/a>[^<]*<\/p>$/.test(creditCode) && links.length === 1 &&
+          links[0] === `<a href="${canon}">` && creditCode.includes(`>${name.replace(/&/g, '&amp;')}</a>`) && creditCode.includes(site) &&
+          !/rel=|display:\s*none|visibility|opacity/.test(creditCode),
+          creditCode.replace(/<[^>]+>/g, ''));
     await page.keyboard.press('Escape');
     const want = await page.evaluate(`(${DRAWN})(${JSON.stringify(key)})`);
     const T6 = await D.ctx.newPage();
@@ -482,6 +532,7 @@ for (const spec of PAGES) {
           !(await T6.evaluate(() => document.documentElement.classList.contains('abt-embed'))));
     await T6.close();
     if (key === spec.charts[0]) await attack(page, tag, src);
+    if (key === spec.charts[0] && spec.prices) await priceless(page, tag, src);
     const light = await page.evaluate(() => document.body.classList.contains('light'));
 
     for (const vp of [{ width: 760, height: Math.max(380, height) }, { width: 360, height: Math.max(380, height) }]) {
@@ -537,6 +588,8 @@ for (const spec of PAGES) {
             view.mark.px <= 11 && view.mark.inFrame,
             view.mark ? `${view.mark.px}px "${view.mark.text}" → ${view.mark.href}` : 'no watermark in the card');
       check(`${tag} E5 ${where}: no page errors`, E.errors.length === 0, E.errors.slice(0, 2).join(' | '));
+      if (spec.prices) check(`${tag} E9 ${where}: it draws from the prices in its link and never calls the Worker`,
+                             E.worker() === 0, `${E.worker()} Worker request(s)`);
       await E.ctx.close();
     }
   }

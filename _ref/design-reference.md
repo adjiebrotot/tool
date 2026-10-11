@@ -1816,8 +1816,17 @@ site's circled A and one line, "Try your own scenarios at tool.adjiebrotots.com/
 linking to the tool's canonical address (opened in a new tab). It is the PNG and SVG
 watermark's equivalent: small (0.66rem), muted, at 70% opacity until hovered. Being part
 of the framed page, which the other site cannot reach into, it cannot be edited out of the
-code without dropping the chart too. The cost: a link inside a frame is credited to the
-framed page, not to the site that embeds it, so an embed earns no backlink.
+code without dropping the chart too. But a link inside a frame is credited to the
+framed page, not to the site that embeds it, so the watermark earns no backlink.
+
+**The backlink lives under the frame.** The code is the iframe and, on the next line, one
+credit paragraph: "Interactive chart: <a>DCA Scenario Explorer</a> by Adjie Brotot Tools"
+(Indonesian: "Grafik interaktif: … oleh …"). It is a plain, visible, followed link to the
+tool's canonical address on the other site's own page, which is what search engines and AI
+crawlers credit. Its anchor is the tool's `og:title`, never keywords: search engines treat
+keyword-rich links spread through widgets as link spam. It sets only margin, size and
+alignment, so it takes the other site's font and link colour. The site can delete it; the
+watermark in the frame stays either way, and the dialog asks the reader to keep it.
 
 Only Embed as HTML carries a second line in the menu ("Interactive chart for your site");
 the other three rows say what they do in their label alone.
@@ -1830,10 +1839,19 @@ the other three rows say what they do in their label alone.
   Graph Visualiser's carries the rows of the uploaded file, since nothing else has them.
 - A tool that fetches before it draws returns a promise from its load (the DCA explorers
   return their simulation's), and the embed waits on it.
-- An embed carries the scenario and never what the tool can fetch or rebuild: prices and
-  their OHLC candles stay out of the saved file, which keeps the code near 1 KB. The Graph
-  Visualiser is the exception, since its data is the scenario, and the dialog says how many
+- An embed carries the scenario and never what the tool can rebuild: simulated paths stay
+  out of the saved file, which keeps the code near 1 KB. The Graph Visualiser is the
+  exception, since its data is the scenario, and the dialog says how many
   KB the code is when it passes 8 KB (and refuses past the ~2 MB a browser will follow).
+- **An embed never calls the market-data Worker.** The frame runs on this origin, so the
+  Worker's origin lock lets it through, and every viewer on the other site would be a paid
+  invocation. `yfFetchPricesBatch` refuses inside a frame, and a tool on market prices
+  registers `SharedShare.data({ save, load })`: `save` packs the scenario's window of each
+  ticker from its cache (`SharedYF.snapCache`, exact, about 4.7 KB per ticker-year of daily
+  OHLC once deflated) and refuses until the prices are loaded; `load` puts them in the
+  frame's cache (`SharedYF.restoreCache`) before the scenario runs. The embed draws the
+  prices of the day it was shared and never updates. A link from before prices rode in it
+  shows the fallback, not half a chart.
 
 **A link is not a file.** A reader opens a file they chose; a link can be sent by anyone.
 So embed mode only switches on inside a frame (opened as a page of its own, the link is just
