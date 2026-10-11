@@ -969,8 +969,10 @@ because that is how ✕ came to mean both "close" and "delete" on the same page.
 | **Open** a file from this device | open folder | `SharedScenario.mount(...)`, or `data-icon="open"` | 📂, 📊, ⬆, ↑, "Upload" (nothing is uploaded) |
 | **Show the result** instead of its source | eye | `SharedIcon.svg('view')` | 👁 |
 | **Put a value back** to its default | anticlockwise arrow | `SharedIcon.svg('reset')`, or `↺` in a label | |
+| **Share** a chart | Share ⌄ menu | `SharedShare` folds the chart's `⬇ SVG`, `⬇ PNG`, `⧉` into it | "Export", a row of four buttons |
 | **Download** an export | ⬇ + format | `⬇ SVG`, `⬇ PNG`, `⬇ CSV`, `⬇ .py` | ↓, 📥, "Export" |
 | **Copy** to the clipboard | ⧉ | `⧉`, titled "Copy PNG to clipboard" | ⧉ on a duplicate |
+| **Embed** a chart on another site | </> | the Share menu's last row | |
 | **Reset the view** (zoom, pan). Your data is untouched. | ⟳ | `⟳` | ⊡ |
 | **Restore defaults**. Your inputs are replaced. | ↺ | `↺ Reset` | ⟳ (that only moves the view) |
 | **Run** the tool's computation | ▶ | `▶ Simulate`, `▶ Generate Code`, `▶ Check` | ⚡ (that is Quick Start), ⚙ (that is Settings) |
@@ -1014,7 +1016,7 @@ only the bin turns red. `rentvsownhouse/sensitivity`'s duplicate and delete in
 each scenario header are the model.
 
 Two exceptions keep a box. An icon-only button in a **row of boxed buttons**
-(the chart export cluster `⬇ SVG ⬇ PNG ⧉ ⟳`, the header's save and open, the
+(the chart export cluster `Share ⌄ ⟳`, the header's save and open, the
 JSON Visualiser's Expand / Collapse / bin) stays boxed, so the row reads as one
 set. And a **labelled** button keeps its box, because a bare word reads as a
 label rather than something to press. Never hard-code `white` or `#fff` on an
@@ -1713,10 +1715,14 @@ and a hover read-out box. The title row is a `.chart-head`: the title on the lef
 `.btn-cluster` hard right, and nothing else on that row — the subtitle is a SIBLING below it,
 so however long it runs it can never push the buttons onto a line of their own.
 
-The cluster is the same on every chart on the site, in the same order — **⬇ SVG, ⬇ PNG,
-⧉ copy, ⟳ reset zoom** — and a table's **⬇ CSV** is the same cluster in a `.detail-head`
-beside the table it exports. The buttons are labelled by a glyph, so each one carries a
-`title` saying what it does (and `data-i18n-title` on a translated page).
+The cluster is the same on every chart on the site: **Share ⌄** and then **⟳ reset zoom**,
+and a table's **⬇ CSV** is the same cluster in a `.detail-head` beside the table it
+exports. Share opens the site's dropdown list with **Download as SVG, Download as PNG,
+Copy to clipboard, Embed as HTML**, in that order (see *Share Menu* below). The markup
+still lists the chart's `⬇ SVG`, `⬇ PNG` and `⧉` buttons, because their ids are what the
+tool's script binds; `SharedShare` folds them into the menu at load. The buttons are
+labelled by a glyph, so each one carries a `title` saying what it does (and
+`data-i18n-title` on a translated page).
 
 ```html
 <section class="chart-card card">
@@ -1738,7 +1744,7 @@ beside the table it exports. The buttons are labelled by a glyph, so each one ca
 
 `.chart-head`, `.detail-head`, `.btn-cluster`, `.btn-sm` and `.btn-icon` — including the
 phone layout, where the cluster takes the full width under the title and its buttons share
-it evenly — all live in **`shared.css`**. A tool sets only what is particular to its own
+it evenly — all live in **`shared.css`**, with the Share menu beside them. A tool sets only what is particular to its own
 page (heading size, card padding, the height of its canvas) and never restates that
 geometry, or the row drifts apart tool by tool. `node _ref/chart-check.mjs` checks that it
 has not.
@@ -1763,6 +1769,75 @@ has not.
 @media (max-width: 1100px) { .canvas-wrap { height: 360px; } }
 @media (max-width: 600px)  { .canvas-wrap { height: 300px; } }
 ```
+
+---
+
+### Share Menu (`SharedShare`, shared.js)
+
+One button, one word: **Share**. It covers every way a chart leaves the page (two
+downloads, the clipboard, an embed), where "Export" would only name the files, and the
+button map already keeps "Export" off download buttons. The chevron turns over while the
+list is open, as the home page's sub-tool menu does; the list is the site's `.combo-list`,
+placed by `SharedDropdown.place(…, {align: 'end'})` so it opens flush under the button,
+and it is driven by the keyboard as a menu is (arrows, Home, End, Escape back to Share).
+
+| Row | Does | Rule |
+| --- | --- | --- |
+| ⬇ Download as SVG | clicks the chart's own `⬇ SVG` | drawn at the desktop size (`SharedExport.atDesktopSize`), so a phone exports the desktop picture |
+| ⬇ Download as PNG | clicks `⬇ PNG` | the same |
+| ⧉ Copy to clipboard | clicks `⧉`, whose handler copies through `SharedShare.copyImage` | the PNG above; "✓ Copied" flashes on Share, a failure says why in words |
+| </> Embed as HTML | opens the embed dialog | two lines: an iframe of the tool and one backlink line |
+
+```js
+// Every ⧉ handler: copyImage writes inside the click (Safari needs that).
+$('copyBtn').addEventListener('click', () => SharedShare.copyImage(() => chartPng(), $('copyBtn')));
+// A cluster built after load (a popup) is folded when it is built.
+SharedShare.upgrade(overlay);
+```
+
+**The embed is the tool itself.** The code is
+
+```html
+<iframe src="https://tool.adjiebrotots.com/<tool>/#embed=<chart>&amp;theme=dark&amp;s=…" title="<chart title>"
+        width="100%" height="<desktop height>" style="border:0" loading="lazy"></iframe>
+<p>Try your own scenarios at <a href="https://tool.adjiebrotots.com/<tool>/"><og:title></a></p>
+```
+
+`s` is the scenario file the save button writes (`SharedScenario.mount` registers it with
+`SharedShare.state`), deflated and base64url-encoded into the `#hash`, which a browser
+never sends to a server, so nothing is uploaded; about 400 to 1,000 characters for a
+finance tool. The page reads the hash before any tool script runs and opens in **embed
+mode**: the mini cache neither restores nor saves (the viewer's own work is left alone),
+the tour stays away, the scenario is opened the way a saved file is, the chart's view is
+put back (fields, pressed buttons and legend entries inside its card), and only that card
+is shown, filling the frame. Zoom, pan and hover all keep working, and the backlink is a
+plain link, so search engines credit it to the tool's canonical address.
+
+- A view that lives outside the card names it: `data-share-view="#tab-sens"` on the card
+  (Finance vs Cash's sensitivity sweep), and its fields and toggles ride along.
+- A view that has to be opened first (a popup) registers a hook:
+  `SharedShare.view('.cm-canvas', { save: () => ({…}), load: v => openIt(v) })`.
+- A tool outside `SharedScenario` passes its own `SharedShare.state({ save, load })`; the
+  Graph Visualiser's carries the rows of the uploaded file, since nothing else has them.
+- A tool that fetches before it draws returns a promise from its load (the DCA explorers
+  return their simulation's), and the embed waits on it.
+- An embed carries the scenario and never what the tool can fetch or rebuild: prices and
+  their OHLC candles stay out of the saved file, which keeps the code near 1 KB. The Graph
+  Visualiser is the exception, since its data is the scenario, and the dialog says how many
+  KB the code is when it passes 8 KB (and refuses past the ~2 MB a browser will follow).
+
+**A link is not a file.** A reader opens a file they chose; a link can be sent by anyone.
+So embed mode only switches on inside a frame (opened as a page of its own, the link is just
+the tool), and every string that arrives through a link is made inert before the tool sees
+it: `<`, `>`, `"`, `'` and the backtick become look-alikes (‹ › ” ʼ) that can only be text, so no scenario
+name or column header can become markup or close a quote in a template. Tools still escape
+what they write into `innerHTML`; this is the second lock, not the first.
+
+`node _ref/share-check.mjs` drives every chart's menu on a desktop and a phone, holds a
+phone's and a wide monitor's PNG, SVG and copy to the desktop's size, opens every embed in
+a page on another site at two widths to prove it draws exactly the data the reader saw, and
+replays each page's link with every string swapped for markup and script, which has to be
+drawn as text and run nothing.
 
 ---
 

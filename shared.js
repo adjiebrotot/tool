@@ -4,6 +4,19 @@
    (load before the tool's own script.js)
    ────────────────────────────────────────────────────────────────────────── */
 (function(global){
+  /* A chart embedded on another site (SharedShare, below) is this page opened
+     in an iframe as #embed=<chart>&theme=<theme>&s=<scenario>. Read once, now,
+     because the mini cache has to know before any tool script calls it. */
+  var EMBED = readEmbedHash(global.location && global.location.hash);
+  function readEmbedHash(hash){
+    var m = /(?:^#|&)embed=([^&]+)/.exec(hash || '');
+    // Only inside a frame: opened as a page of its own, the link is just the tool.
+    if(!m || global.self === global.top) return null;
+    var get = function(k){ var r = new RegExp('(?:^#|&)' + k + '=([^&]*)').exec(hash); return r ? decodeURIComponent(r[1]) : ''; };
+    return { key: decodeURIComponent(m[1]), theme: get('theme'), s: get('s') };
+  }
+  if(EMBED) document.documentElement.classList.add('abt-embed', 'abt-embed-wait');
+
   function formatThousands(value, opts){
     opts = opts || {};
     var maxDecimals = opts.maxDecimals || 0;
@@ -1011,15 +1024,20 @@
       var custom = typeof opts.save === 'function' && typeof opts.load === 'function';
       if(!custom && !(opts.persist && typeof opts.persist.snapshot === 'function')) return null;
 
-      function doSave(){
-        var body = custom ? opts.save() : {
+      function body(){
+        return custom ? opts.save() : {
           tool: opts.tool, kind: 'scenario', version: 1,
           savedAt: new Date().toISOString(), state: opts.persist.snapshot()
         };
-        downloadJson(opts.filename || (opts.tool + '-scenario-' + stamp() + '.json'), body);
       }
+      function doSave(){
+        downloadJson(opts.filename || (opts.tool + '-scenario-' + stamp() + '.json'), body());
+      }
+      // Returns whatever a custom load returns, so a tool that fetches before
+      // it can draw (the DCA explorers) can say when it has finished.
       function doLoad(obj){
-        if(custom){ opts.load(obj); }
+        var out;
+        if(custom){ out = opts.load(obj); }
         else {
           if(!obj || obj.tool !== opts.tool || !obj.state || typeof obj.state !== 'object'){ fail(t.wrong); return; }
           opts.persist.load(obj.state);
@@ -1027,7 +1045,13 @@
         // A loaded file is the user's own scenario, not one of the presets.
         document.querySelectorAll('.quick-start-btn.active').forEach(function(b){ b.classList.remove('active'); });
         if(typeof opts.onLoaded === 'function') opts.onLoaded(obj);
+        return out;
       }
+      // An embedded chart carries the same file in its link (SharedShare).
+      if(global.SharedShare) global.SharedShare.state({
+        save: function(){ var b = body(); if(b && b.savedAt) delete b.savedAt; return b; },
+        load: doLoad
+      });
 
       var wrap = document.createElement('div');
       wrap.className = 'scenario-io';
@@ -1963,7 +1987,9 @@
         }
       }
       var saved = null;
-      try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){}
+      // An embedded chart opens on the scenario in its link, never on the
+      // viewer's own cache, and never writes over it.
+      if(!EMBED){ try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){} }
       if(saved && typeof saved === 'object') apply(saved);
       var timer = null;
       function snapshot(){
@@ -1972,6 +1998,7 @@
         return blob;
       }
       function save(){
+        if(EMBED) return;
         try { localStorage.setItem(KEY, JSON.stringify(snapshot())); } catch(e){}
         if(typeof opts.onSave === 'function'){ try { opts.onSave(); } catch(e){} }
       }
@@ -2757,9 +2784,11 @@
      width and at the height the tool's stylesheet gives it OUTSIDE any media
      query, and the Chart.js chart is redrawn at that size. Everything happens
      in one synchronous task, so the page never paints the large chart; a
-     Promise returned by `fn` keeps the size until it settles. A chart already
-     at desktop size, or anything that is not a Chart.js canvas, is passed
-     straight through. */
+     Promise returned by `fn` keeps the size until it settles. The width is
+     the same on every screen, a wide monitor included, so one chart exports
+     one picture whatever it was opened on. A chart already at exactly that
+     size, or anything that is not a Chart.js canvas, is passed straight
+     through. */
   var EXPORT_W = 940;
 
   // The wrapper's height as the desktop stylesheet sets it: the last plain
@@ -2791,9 +2820,9 @@
     var chart = canvas && Chart && Chart.getChart ? Chart.getChart(canvas) : null;
     var wrap = canvas && canvas.parentElement;
     if (!chart || !wrap || exportDepth) return fn();
-    var H = desktopHeight(wrap) || wrap.clientHeight;
-    var W = Math.max(EXPORT_W, wrap.clientWidth);
-    if (wrap.clientWidth >= EXPORT_W * 0.9 && Math.abs(wrap.clientHeight - H) < 2) return fn();
+    var H = desktopHeight(wrap) || wrap.offsetHeight;
+    var W = EXPORT_W;
+    if (wrap.clientWidth === W && Math.abs(wrap.offsetHeight - H) < 1) return fn();
 
     var savedStyle = wrap.getAttribute('style');
     function restore(){
@@ -2809,7 +2838,14 @@
       wrap.style.setProperty('width', W + 'px', 'important');
       wrap.style.setProperty('max-width', 'none', 'important');
       wrap.style.setProperty('height', H + 'px', 'important');
+      // The chart fills the box inside the border, which is what has to come
+      // out at W: a border-box wrapper's border would take two pixels off it.
+      var dw = W - wrap.clientWidth;
+      if (dw) wrap.style.setProperty('width', (W + dw) + 'px', 'important');
       chart.stop();
+      // A resize Chart.js deferred while an animation ran is replayed on the
+      // next draw, and would put back the size the page had before this one.
+      chart._resizeBeforeDraw = null;
       chart.resize();
       chart.update('none');
     } catch (e) { restore(); throw e; }
@@ -2826,6 +2862,679 @@
   }
 
   global.SharedExport = { atDesktopSize: atDesktopSize, desktopHeight: desktopHeight, WIDTH: EXPORT_W };
+
+  /* ── SharedShare — one Share menu on every chart ──────────────────────────
+     A chart's toolbar used to carry ⬇ SVG, ⬇ PNG and ⧉ side by side. They are
+     now one "Share ⌄" button whose menu holds those three and a fourth, Embed
+     as HTML. The ⟳ beside it moves the view rather than exporting anything,
+     so it stays on the row.
+
+     A tool keeps the three buttons it always had, since their ids are what
+     its script binds. At load every .btn-cluster's ⬇ SVG, ⬇ PNG and ⧉ are
+     folded into the menu, and a pick clicks the button it stands for. A
+     cluster built later (a popup) is folded by SharedShare.upgrade(root).
+
+         SharedShare.copyImage(function(){ return chartPng(...); }, this);
+
+     Every ⧉ handler copies through copyImage: it writes the PNG inside the
+     click, which Safari requires, flashes "✓ Copied" on the Share button and
+     says why in words when it fails.
+
+     EMBED AS HTML hands the reader two lines: an iframe of this very page, and
+     one line of text linking back to the tool. The iframe's link carries the
+     chart and the reader's scenario, which is the file the save button writes
+     (SharedScenario registers it here through state()), deflated into the
+     #hash, which never reaches a server. On the other site the page opens in
+     embed mode: it loads that scenario instead of the viewer's own cache and
+     saves nothing, puts back the chart's view (the metric buttons, toggles
+     and legend entries in its card, plus a view() hook where the view lives
+     elsewhere), and shows that one chart card filling the frame, with every
+     gesture still working.
+
+         SharedShare.state({ save, load })        // a tool outside SharedScenario
+         SharedShare.view(key, { save, load })    // a popup that has to open first
+
+     key is the chart's canvas or Plotly id ('.class' when it has none). A
+     card whose view depends on fields outside it names them in
+     data-share-view="<selector>", and their fields and toggles ride along. */
+  function makeShare(){
+    var TEXT = {
+      en: { share: 'Share', shareTitle: 'Download, copy or embed this chart',
+            svg: ['Download as SVG', 'Vector file, sharp at any size'],
+            png: ['Download as PNG', 'Image at desktop size'],
+            copy: ['Copy to clipboard', 'The PNG, ready to paste'],
+            embed: ['Embed as HTML', 'Interactive chart for your site'],
+            copied: '✓ Copied', copyFail: 'PNG copy failed: ',
+            noCopy: 'This browser cannot copy images.', noImage: 'the image could not be drawn',
+            embedTitle: 'Embed this chart', close: 'Close', codeLabel: 'Embed code',
+            embedNote: 'Paste this into any web page. The chart stays interactive and opens on your scenario, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it.',
+            copyCode: 'Copy code', preview: 'Preview in a new tab', building: 'Building the code…',
+            noEmbed: 'This chart could not be embedded: ', textFail: 'Copy failed. Select the code and copy it yourself.',
+            backlink: 'Try your own scenarios at',
+            long: 'This code is {kb} KB, because the data the chart draws travels inside it.',
+            tooBig: 'This chart carries too much data to fit in a link. Embed a smaller part of it.',
+            failed: 'This chart could not be loaded here.', openTool: 'Open the tool' },
+      id: { share: 'Bagikan', shareTitle: 'Unduh, salin, atau sematkan grafik ini',
+            svg: ['Unduh sebagai SVG', 'Berkas vektor, tajam di ukuran apa pun'],
+            png: ['Unduh sebagai PNG', 'Gambar seukuran desktop'],
+            copy: ['Salin ke papan klip', 'PNG-nya, siap ditempel'],
+            embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
+            copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
+            noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
+            embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan',
+            embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka pada skenario Anda, yang ikut di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya.',
+            copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
+            noEmbed: 'Grafik ini tidak bisa disematkan: ', textFail: 'Gagal menyalin. Pilih kodenya dan salin sendiri.',
+            backlink: 'Coba skenario Anda sendiri di',
+            long: 'Kode ini {kb} KB, karena data yang digambar grafik ikut di dalamnya.',
+            tooBig: 'Grafik ini membawa terlalu banyak data untuk muat di tautan. Sematkan bagian yang lebih kecil.',
+            failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka alatnya' }
+    };
+    var ROWS = [['svg', '⬇'], ['png', '⬇'], ['copy', '⧉'], ['embed', '&lt;/&gt;']];
+    var LABEL = { svg: /^⬇\s*SVG$/, png: /^⬇\s*PNG$/, copy: /^⧉$/ };
+    var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+    // The box a chart and its own controls live in, nearest first.
+    var CARD = '.chart-modal, .detail-subsection, .chart-card, .chart-panel, .card';
+    var uid = 0, menus = [], current = null, provider = null, views = {}, dlg = null;
+
+    function T(){ return TEXT[pageLang()]; }
+    function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+    function html(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function attr(s){ return html(s).replace(/"/g, '&quot;'); }
+    function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+    function each(list, fn){ Array.prototype.forEach.call(list || [], fn); }
+
+    /* ── The menu ── */
+    function kindOf(b){
+      var s = norm(b.textContent);
+      for(var k in LABEL) if(LABEL[k].test(s)) return k;
+      return null;
+    }
+    function upgrade(root){
+      root = root || document;
+      if(root.matches && root.matches('.btn-cluster')) fold(root);
+      each(root.querySelectorAll ? root.querySelectorAll('.btn-cluster') : [], fold);
+    }
+    function fold(cluster){
+      if(cluster.__share) return;
+      var src = {}, first = null;
+      each(cluster.children, function(b){
+        var k = b.tagName === 'BUTTON' ? kindOf(b) : null;
+        if(k && !src[k]){ src[k] = b; if(!first) first = b; }
+      });
+      if(!first) return;
+      var t = T();
+      var wrap = document.createElement('span');
+      wrap.className = 'share-menu';
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'btn-secondary btn-sm share-toggle';
+      toggle.title = t.shareTitle;
+      toggle.setAttribute('aria-haspopup', 'menu');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('data-no-abbr', '');
+      toggle.innerHTML = '<span class="share-label">' + t.share + '</span>' + CHEVRON;
+      wrap.appendChild(toggle);
+      var list = document.createElement('ul');
+      list.className = 'combo-list share-list';
+      list.id = 'share-list-' + (++uid);
+      list.setAttribute('role', 'menu');
+      list.setAttribute('data-no-abbr', '');
+      toggle.setAttribute('aria-controls', list.id);
+      ROWS.forEach(function(r){
+        if(r[0] !== 'embed' && !src[r[0]]) return;
+        var words = t[r[0]], li = document.createElement('li');
+        li.setAttribute('role', 'none');
+        li.innerHTML = '<button type="button" role="menuitem" class="combo-opt share-opt" data-kind="' + r[0] + '">' +
+          '<span class="share-ico' + (r[0] === 'embed' ? ' share-ico-code' : '') + '" aria-hidden="true">' + r[1] + '</span>' +
+          '<span class="combo-text"><span class="combo-main">' + words[0] + '</span>' +
+          '<span class="combo-sub">' + words[1] + '</span></span></button>';
+        list.appendChild(li);
+      });
+      // The buttons the tool binds stay in the cluster, out of sight, so
+      // closest('.btn-cluster') and every handler still find them.
+      var hold = document.createElement('span');
+      hold.className = 'share-src';
+      hold.hidden = true;
+      cluster.insertBefore(wrap, first);
+      cluster.insertBefore(hold, wrap.nextSibling);
+      ['svg', 'png', 'copy'].forEach(function(k){ if(src[k]) hold.appendChild(src[k]); });
+      var m = { cluster: cluster, wrap: wrap, toggle: toggle, list: list, src: src };
+      cluster.__share = m;
+      menus.push(m);
+      wire(m);
+      // A tool that shows its export buttons only once it has drawn a chart
+      // (the Graph Visualiser) now shows and hides the Share button with them.
+      sync(m);
+      if(global.MutationObserver) new MutationObserver(function(){ sync(m); })
+        .observe(hold, { attributes: true, subtree: true, attributeFilter: ['style', 'hidden', 'disabled'] });
+    }
+    function shown(b){ return !!b && !b.hidden && b.style.display !== 'none'; }
+    function sync(m){
+      var any = shown(m.src.svg) || shown(m.src.png) || shown(m.src.copy);
+      m.wrap.style.display = any ? '' : 'none';
+      if(!any && current === m) close(m);
+    }
+    function rows(m){
+      return Array.prototype.filter.call(m.list.querySelectorAll('.share-opt'), function(b){ return !b.disabled; });
+    }
+    function open(m){
+      if(current && current !== m) close(current);
+      each(m.list.querySelectorAll('.share-opt'), function(b){
+        var s = m.src[b.getAttribute('data-kind')];
+        b.disabled = !!(s && s.disabled);
+      });
+      // In the body, so no card's overflow or a popup's transform can clip it.
+      if(m.list.parentNode !== document.body) document.body.appendChild(m.list);
+      m.list.classList.add('is-open');
+      m.toggle.setAttribute('aria-expanded', 'true');
+      if(global.SharedDropdown) global.SharedDropdown.place(m.toggle, m.list, { minWidth: 292, align: 'end', maxHeight: 320 });
+      current = m;
+    }
+    function close(m, refocus){
+      m.list.classList.remove('is-open');
+      m.toggle.setAttribute('aria-expanded', 'false');
+      if(current === m) current = null;
+      if(refocus) m.toggle.focus({ preventScroll: true });
+    }
+    function wire(m){
+      m.toggle.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(current === m){ close(m); return; }
+        open(m);
+        var r = rows(m)[0];
+        if(r) r.focus({ preventScroll: true });
+      });
+      m.toggle.addEventListener('keydown', function(e){
+        if(e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        open(m);
+        var r = rows(m), to = e.key === 'ArrowDown' ? r[0] : r[r.length - 1];
+        if(to) to.focus({ preventScroll: true });
+      });
+      m.list.addEventListener('click', function(e){
+        e.stopPropagation();
+        var b = e.target.closest('.share-opt');
+        if(!b || b.disabled) return;
+        close(m, true);
+        pick(m, b.getAttribute('data-kind'));
+      });
+      // Once the keyboard is in the list, the mouse moves the lit row with it.
+      m.list.addEventListener('mousemove', function(e){
+        var b = e.target.closest('.share-opt');
+        if(b && b !== document.activeElement && m.list.contains(document.activeElement)) b.focus({ preventScroll: true });
+      });
+      m.list.addEventListener('keydown', function(e){
+        var r = rows(m), i = r.indexOf(document.activeElement), to = null;
+        if(e.key === 'ArrowDown') to = r[(i + 1) % r.length];
+        else if(e.key === 'ArrowUp') to = r[(i - 1 + r.length) % r.length];
+        else if(e.key === 'Home') to = r[0];
+        else if(e.key === 'End') to = r[r.length - 1];
+        // The list sits at the end of the body, so Tab out of it would land at
+        // the end of the page: both keys hand the focus back to Share instead.
+        else if(e.key === 'Escape' || e.key === 'Tab'){ e.preventDefault(); e.stopPropagation(); close(m, true); return; }
+        else return;
+        e.preventDefault();
+        if(to) to.focus();
+      });
+    }
+    // Synchronous, so a copy still runs inside the reader's click.
+    function pick(m, kind){
+      if(kind === 'embed'){ openEmbed(m); return; }
+      var b = m.src[kind];
+      if(b && !b.disabled) b.click();
+    }
+    document.addEventListener('click', function(){ if(current) close(current); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && current) close(current, true); });
+    global.addEventListener('scroll', function(e){ if(current && !current.list.contains(e.target)) close(current); }, true);
+    global.addEventListener('resize', function(){ if(current) close(current); });
+
+    /* ── Copy to clipboard ── */
+    function flash(from, text){
+      var c = from && from.closest ? from.closest('.btn-cluster') : null;
+      var m = c && c.__share;
+      var el = m ? m.toggle.querySelector('.share-label') : from;
+      if(!el) return;
+      if(el.__flashT) clearTimeout(el.__flashT); else el.__flashText = el.textContent;
+      el.textContent = m ? text : '✓';
+      el.__flashT = setTimeout(function(){ el.textContent = el.__flashText; el.__flashT = null; }, 1400);
+    }
+    function asBlob(v){
+      return Promise.resolve(v).then(function(x){
+        if(x instanceof Blob) return x;
+        if(typeof x === 'string') return fetch(x).then(function(r){ return r.blob(); });
+        if(x && typeof x.toBlob === 'function') return new Promise(function(res, rej){
+          x.toBlob(function(b){ if(b) res(b); else rej(new Error(T().noImage)); }, 'image/png');
+        });
+        throw new Error(T().noImage);
+      });
+    }
+    /* source: a canvas, a Blob, a data URL, or a function returning one of
+       them or a promise of one. Resolves true once copied, false if not. */
+    function copyImage(source, from){
+      var t = T(), done;
+      try {
+        if(!navigator.clipboard || !navigator.clipboard.write || !global.ClipboardItem) throw new Error(t.noCopy);
+        // The item is handed a promise and written straight away: Safari only
+        // allows a write that starts inside the click.
+        var blob = asBlob(typeof source === 'function' ? source() : source);
+        blob.catch(function(){});
+        done = navigator.clipboard.write([new global.ClipboardItem({ 'image/png': blob })]);
+      } catch(e){ done = Promise.reject(e); }
+      return done.then(function(){ flash(from, t.copied); return true; },
+                       function(e){ alert(t.copyFail + (e && e.message ? e.message : e)); return false; });
+    }
+
+    /* ── The embed link ── */
+    function b64(bytes){
+      var s = '';
+      for(var i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function unb64(str){
+      var s = atob(str.replace(/-/g, '+').replace(/_/g, '/')), out = new Uint8Array(s.length);
+      for(var i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+      return out;
+    }
+    function pipe(bytes, Stream){
+      return new Response(new Blob([bytes]).stream().pipeThrough(new Stream('deflate-raw')))
+        .arrayBuffer().then(function(b){ return new Uint8Array(b); });
+    }
+    // 'z' + deflated JSON, or 'j' + plain JSON where the browser cannot deflate.
+    function pack(obj){
+      var bytes = new TextEncoder().encode(JSON.stringify(obj));
+      if(!global.CompressionStream) return Promise.resolve('j' + b64(bytes));
+      return pipe(bytes, global.CompressionStream).then(function(z){ return 'z' + b64(z); });
+    }
+    function unpack(str){
+      var bytes = unb64(str.slice(1));
+      var p = str.charAt(0) === 'z' ? pipe(bytes, global.DecompressionStream) : Promise.resolve(bytes);
+      return p.then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
+    }
+    /* A file is opened by the reader who chose it; a link can be sent by
+       anyone. So no string from a link may carry markup or close a quote in a
+       tool's template: < > " ' ` become look-alikes that can only be text. */
+    var LOOKALIKE = { '<': '‹', '>': '›', '"': '”', "'": 'ʼ', '`': 'ʼ' };
+    function inert(v){
+      if(typeof v === 'string') return v.replace(/[<>"'`]/g, function(c){ return LOOKALIKE[c]; });
+      if(Array.isArray(v)) return v.map(inert);
+      if(v && typeof v === 'object'){
+        var o = {};
+        Object.keys(v).forEach(function(k){ if(!/^(__proto__|constructor|prototype)$/.test(k)) o[inert(k)] = inert(v[k]); });
+        return o;
+      }
+      return v;
+    }
+
+    function chartOf(card){
+      var cs = card ? card.querySelectorAll('canvas') : [];
+      for(var i = 0; i < cs.length; i++) if(global.Chart && global.Chart.getChart && global.Chart.getChart(cs[i])) return cs[i];
+      return (card && card.querySelector('.js-plotly-plot')) || cs[0] || null;
+    }
+    function keyOf(el){ return el ? (el.id || (el.classList[0] ? '.' + el.classList[0] : '')) : ''; }
+    function findChart(key){
+      try { return key.charAt(0) === '.' ? document.querySelector(key) : document.getElementById(key); }
+      catch(e){ return null; }
+    }
+    function cardOf(el){ return el ? (el.closest(CARD) || el.parentElement) : null; }
+    function fillOf(el){ return el.tagName === 'CANVAS' ? el.parentElement : el; }
+    function pageUrl(){
+      var c = document.querySelector('link[rel="canonical"]');
+      var u = c && c.href ? c.href : global.location.origin + global.location.pathname;
+      return u.split('#')[0].split('?')[0];
+    }
+    function toolName(){
+      var m = document.querySelector('meta[property="og:title"]');
+      return norm(m && m.content) || norm(document.title.split('|')[0]);
+    }
+    function chartTitle(card){
+      var h = card.querySelector('.chart-modal-title, h2, h3');
+      if(!h) return '';
+      var c = h.cloneNode(true);
+      each(c.querySelectorAll('.tip-icon, .muted-note, button'), function(x){ x.remove(); });
+      return norm(c.textContent);
+    }
+    // The frame is as tall as the card is on a desktop, so the chart opens
+    // at the height it was designed at.
+    function frameHeight(card, el){
+      var fill = fillOf(el);
+      var want = desktopHeight(fill) || fill.offsetHeight || 430;
+      var chrome = Math.max(0, card.offsetHeight - fill.offsetHeight);
+      return Math.round(Math.min(1000, Math.max(380, want + chrome)) / 10) * 10;
+    }
+
+    /* What the card shows beyond the scenario: its fields (a metric select, a
+       toggle switch), its pressed buttons, and which legend entries are off. */
+    function rootsOf(card){
+      var out = [card], extra = card.getAttribute('data-share-view');
+      if(extra) each(document.querySelectorAll(extra), function(r){ if(out.indexOf(r) < 0) out.unshift(r); });
+      return out;
+    }
+    function fieldsIn(root){
+      var els = root.matches('input, select, textarea') ? [root] : [];
+      each(root.querySelectorAll('input, select, textarea'), function(el){ els.push(el); });
+      return els.filter(function(el){
+        var ty = (el.type || '').toLowerCase();
+        return !!(el.id || el.name) && !el.closest('.share-menu, .share-src') &&
+          ['file', 'password', 'hidden', 'button', 'submit', 'reset', 'image'].indexOf(ty) < 0;
+      });
+    }
+    function fieldKey(el){ return el.id ? '#' + el.id : el.name + (el.type === 'radio' ? '=' + el.value : ''); }
+    function readField(el){
+      var ty = (el.type || '').toLowerCase();
+      if(ty === 'checkbox' || ty === 'radio') return el.checked;
+      if(el.tagName === 'SELECT' && el.multiple) return Array.prototype.filter.call(el.options, function(o){ return o.selected; }).map(function(o){ return o.value; });
+      return el.value;
+    }
+    function writeField(el, v){
+      var ty = (el.type || '').toLowerCase();
+      if(ty === 'checkbox' || ty === 'radio') el.checked = !!v;
+      else if(el.tagName === 'SELECT' && el.multiple) each(el.options, function(o){ o.selected = Array.isArray(v) && v.indexOf(o.value) >= 0; });
+      else el.value = v;
+    }
+    function isOn(b){ return b.classList.contains('active') || b.getAttribute('aria-pressed') === 'true'; }
+    function togglesIn(root){
+      return Array.prototype.filter.call(root.querySelectorAll('button'), function(b){
+        // A SharedSeg button mirrors a select, which is already a field.
+        if(b.closest('.btn-cluster, .legend, .share-list') || b.getAttribute('role') === 'radio') return false;
+        return isOn(b) || b.getAttribute('aria-pressed') === 'false';
+      });
+    }
+    var NOT_A_HANDLE = /^data-(tip|i18n|no-|icon|persist)/;
+    function locator(el){
+      if(el.id) return '#' + (global.CSS && CSS.escape ? CSS.escape(el.id) : el.id);
+      for(var i = 0; i < el.attributes.length; i++){
+        var a = el.attributes[i];
+        if(/^data-/.test(a.name) && !NOT_A_HANDLE.test(a.name))
+          return el.tagName.toLowerCase() + '[' + a.name + '="' + String(a.value).replace(/["\\]/g, '\\$&') + '"]';
+      }
+      return null;
+    }
+    function captureUi(card){
+      var u = { f: {}, on: [], off: [], legend: {} }, any = false;
+      rootsOf(card).forEach(function(root){
+        fieldsIn(root).forEach(function(el){ u.f[fieldKey(el)] = readField(el); any = true; });
+        togglesIn(root).forEach(function(b){
+          var l = locator(b);
+          if(l){ (isOn(b) ? u.on : u.off).push(l); any = true; }
+        });
+        each(root.querySelectorAll('.legend-item'), function(it){
+          var l = norm(it.textContent);
+          if(l){ u.legend[l] = it.classList.contains('hidden') ? 1 : 0; any = true; }
+        });
+      });
+      return any ? u : null;
+    }
+    function inRoots(roots, el){ return !!el && roots.some(function(r){ return r === el || r.contains(el); }); }
+    function findIn(roots, sel){
+      for(var i = 0; i < roots.length; i++){
+        var r = roots[i], el = null;
+        try { el = r.matches(sel) ? r : r.querySelector(sel); } catch(e){}
+        if(el) return el;
+      }
+      return null;
+    }
+    function applyUi(card, u){
+      var roots = rootsOf(card);
+      Object.keys(u.f || {}).forEach(function(k){
+        var el = k.charAt(0) === '#' ? document.getElementById(k.slice(1)) : null;
+        if(!el){
+          var name = k.split('=')[0];
+          each(document.getElementsByName(name), function(x){ if(!el && fieldKey(x) === k) el = x; });
+        }
+        if(!inRoots(roots, el)) return;
+        var want = u.f[k];
+        if(JSON.stringify(readField(el)) === JSON.stringify(want)) return;
+        writeField(el, want);
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      (u.on || []).forEach(function(l){ var b = findIn(roots, l); if(b && !isOn(b)) b.click(); });
+      (u.off || []).forEach(function(l){ var b = findIn(roots, l); if(b && isOn(b)) b.click(); });
+      // A legend is often rebuilt by the click on it, so one entry at a time.
+      var legend = u.legend || {}, n = 0;
+      function next(){
+        var hit = null;
+        rootsOf(card).forEach(function(root){
+          each(root.querySelectorAll('.legend-item'), function(it){
+            var l = norm(it.textContent);
+            if(!hit && legend.hasOwnProperty(l) && !!legend[l] !== it.classList.contains('hidden')) hit = it;
+          });
+        });
+        if(!hit || ++n > 40) return;
+        hit.click();
+        return wait(80).then(next);
+      }
+      return wait(300).then(next);
+    }
+
+    function buildEmbed(m){
+      var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
+      if(!key) return Promise.reject(new Error('no chart'));
+      var payload = {};
+      if(provider) payload.s = provider.save();
+      if(views[key] && views[key].save) payload.v = views[key].save();
+      var u = captureUi(card);
+      if(u) payload.u = u;
+      var theme = document.body.classList.contains('light') ? 'light' : 'dark';
+      return pack(payload).then(function(s){
+        var home = pageUrl(), t = T();
+        var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + s;
+        var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
+          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0" loading="lazy"></iframe>\n' +
+          '<p>' + t.backlink + ' <a href="' + attr(home) + '">' + html(toolName()) + '</a></p>';
+        return { code: code, src: src, key: key };
+      });
+    }
+
+    /* ── The embed dialog ── */
+    function copyText(text, area){
+      var fallback = function(){
+        area.focus(); area.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch(e){}
+        return ok;
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText)
+        return navigator.clipboard.writeText(text).then(function(){ return true; }, fallback);
+      return Promise.resolve(fallback());
+    }
+    function dialog(){
+      if(dlg) return dlg;
+      var t = T(), ov = document.createElement('div');
+      ov.className = 'share-embed-overlay';
+      ov.setAttribute('data-no-abbr', '');
+      ov.innerHTML =
+        '<div class="share-embed card" role="dialog" aria-modal="true" aria-labelledby="shareEmbedTitle">' +
+          '<div class="share-embed-head"><h2 id="shareEmbedTitle">' + t.embedTitle + '</h2>' +
+            global.SharedIcon.button('close', t.close, 'share-embed-close') + '</div>' +
+          '<p class="share-embed-note">' + t.embedNote + '</p>' +
+          '<textarea class="share-code" readonly spellcheck="false" rows="6" data-no-persist aria-label="' + attr(t.codeLabel) + '"></textarea>' +
+          '<p class="share-embed-size" hidden></p>' +
+          '<div class="share-embed-actions">' +
+            '<a class="share-preview" target="_blank" rel="noopener">' + t.preview + '</a>' +
+            '<button type="button" class="btn-primary share-copy-code">⧉ ' + t.copyCode + '</button>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(ov);
+      dlg = { el: ov, code: ov.querySelector('.share-code'), copy: ov.querySelector('.share-copy-code'),
+              preview: ov.querySelector('.share-preview'), size: ov.querySelector('.share-embed-size'), back: null };
+      var shut = function(){
+        ov.classList.remove('is-open');
+        if(dlg.back) dlg.back.focus({ preventScroll: true });
+      };
+      dlg.close = shut;
+      ov.addEventListener('click', function(e){ if(e.target === ov) shut(); });
+      ov.querySelector('.share-embed-close').addEventListener('click', shut);
+      ov.addEventListener('keydown', function(e){
+        if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); shut(); return; }
+        if(e.key !== 'Tab') return;
+        // Keep the keyboard inside the dialog while it is open.
+        var f = Array.prototype.filter.call(ov.querySelectorAll('button, a[href], textarea'), function(x){ return x.offsetParent !== null; });
+        var i = f.indexOf(document.activeElement);
+        if(e.shiftKey && i <= 0){ e.preventDefault(); f[f.length - 1].focus(); }
+        else if(!e.shiftKey && i === f.length - 1){ e.preventDefault(); f[0].focus(); }
+      });
+      dlg.code.addEventListener('focus', function(){ dlg.code.select(); });
+      dlg.copy.addEventListener('click', function(){
+        if(!dlg.ready) return;
+        copyText(dlg.code.value, dlg.code).then(function(ok){
+          if(!ok){ alert(t.textFail); return; }
+          var lbl = dlg.copy.textContent;
+          dlg.copy.textContent = t.copied;
+          setTimeout(function(){ dlg.copy.textContent = lbl; }, 1400);
+        });
+      });
+      return dlg;
+    }
+    function previewPage(code){
+      return '<!doctype html><html lang="' + pageLang() + '"><head><meta charset="utf-8">' +
+        '<meta name="viewport" content="width=device-width,initial-scale=1"><title>' + html(T().preview) + '</title></head>' +
+        '<body style="margin:0;padding:24px 16px;background:#f4f5f7;color:#222;font:16px/1.5 system-ui,sans-serif">' +
+        '<div style="max-width:960px;margin:0 auto">' + code + '</div></body></html>';
+    }
+    function openEmbed(m){
+      var d = dialog(), t = T();
+      d.back = m.toggle;
+      d.ready = false;
+      d.code.value = t.building;
+      d.preview.removeAttribute('href');
+      d.copy.disabled = true;
+      d.size.hidden = true;
+      d.el.classList.add('is-open');
+      d.code.focus({ preventScroll: true });
+      buildEmbed(m).then(function(r){
+        // Browsers stop following a link at about 2 MB; past a few KB the
+        // reader should know why the code is long (a dataset rides in it).
+        if(r.code.length > 8000){
+          d.size.textContent = r.code.length > 1.9e6 ? t.tooBig : t.long.replace('{kb}', Math.round(r.code.length / 1024));
+          d.size.hidden = false;
+          if(r.code.length > 1.9e6){ d.code.value = t.tooBig; return; }
+        }
+        d.code.value = r.code;
+        // The preview is the code on a page of its own, as another site shows it.
+        if(d.blob) URL.revokeObjectURL(d.blob);
+        d.blob = URL.createObjectURL(new Blob([previewPage(r.code)], { type: 'text/html' }));
+        d.preview.href = d.blob;
+        d.ready = true;
+        d.copy.disabled = false;
+        d.code.focus({ preventScroll: true });
+        d.code.select();
+      }, function(e){ d.code.value = t.noEmbed + (e && e.message ? e.message : e); });
+    }
+
+    /* ── Embed mode: this page, inside someone else's iframe ── */
+    function applyTheme(theme){
+      if(theme !== 'light' && theme !== 'dark') return;
+      var want = theme === 'light';
+      if(want === document.body.classList.contains('light')) return;
+      var b = document.getElementById('themeToggle');
+      // The tool's own toggle, so its charts re-read their colours.
+      if(b) b.click(); else document.body.classList.toggle('light', want);
+    }
+    // Only the card is left: every sibling on the way up to the body is
+    // hidden, and every box on that way loses its own layout.
+    function isolate(card, el){
+      card.classList.add('abt-embed-card');
+      var fill = fillOf(el);
+      fill.classList.add('abt-embed-fill');
+      for(var n = fill.parentElement; n && n !== card; n = n.parentElement) n.classList.add('abt-embed-col');
+      for(var node = card; node && node.parentElement && node !== document.body; node = node.parentElement){
+        var parent = node.parentElement, atBody = parent === document.body;
+        each(parent.children, function(sib){
+          if(sib === node || /^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(sib.tagName)) return;
+          // Tooltips and menus float over the body, and still have to.
+          if(atBody && /^(fixed|absolute)$/.test(getComputedStyle(sib).position)) return;
+          sib.setAttribute('data-abt-hide', '');
+        });
+        if(!atBody) parent.classList.add('abt-embed-path');
+      }
+      var ch = global.Chart && global.Chart.getChart ? global.Chart.getChart(el) : null;
+      if(ch) ch.resize();
+      if(global.Plotly && el.classList.contains('js-plotly-plot')) { try { global.Plotly.Plots.resize(el); } catch(e){} }
+    }
+    // A signature of what the chart is drawing, to tell when it has settled.
+    function sig(el){
+      if(!el) return '';
+      var ch = global.Chart && global.Chart.getChart ? global.Chart.getChart(el) : null;
+      if(ch) return ch.id + '|' + (ch.data.labels || []).length + '|' + ch.data.datasets.map(function(d){
+        var a = d.data || [], s = 0, step = Math.max(1, Math.ceil(a.length / 60));
+        for(var i = 0; i < a.length; i += step){ var v = a[i]; s += typeof v === 'number' ? v : (v && typeof v.y === 'number' ? v.y : 0); }
+        return (d.label || '') + ':' + a.length + ':' + s + ':' + !!d.hidden;
+      }).join(',');
+      if(el.data && el._fullLayout) return 'p|' + el.data.length + '|' + el.data.map(function(tr){ return (tr.x || tr.z || []).length + ':' + (tr.visible === false); }).join(',');
+      return '';
+    }
+    function settled(key){
+      return new Promise(function(resolve){
+        var last = null, same = 0, t0 = Date.now();
+        (function poll(){
+          var s = sig(findChart(key));
+          same = s && s === last ? same + 1 : 0;
+          last = s;
+          if((s && same >= 3) || Date.now() - t0 > 15000) return resolve();
+          setTimeout(poll, 120);
+        })();
+      });
+    }
+    function embedFailed(){
+      var t = T(), box = document.createElement('div');
+      box.className = 'share-embed-fail';
+      box.innerHTML = '<p>' + t.failed + '</p><p><a href="' + attr(pageUrl()) + '" target="_blank" rel="noopener">' +
+        t.openTool + ': ' + html(toolName()) + '</a></p>';
+      document.body.appendChild(box);
+      document.documentElement.classList.add('abt-embed-failed');
+    }
+    function startEmbed(){
+      var E = EMBED, payload = {};
+      Promise.resolve()
+        .then(function(){ applyTheme(E.theme); })
+        .then(function(){ return E.s ? unpack(E.s) : {}; })
+        .then(function(p){
+          payload = p && typeof p === 'object' ? p : {};
+          // The legend labels and toggles are only compared and matched as
+          // selectors, never written into the page; everything else is.
+          payload.s = inert(payload.s);
+          payload.v = inert(payload.v);
+          if(payload.u && typeof payload.u === 'object') payload.u.f = inert(payload.u.f);
+          if(payload.s && provider) return provider.load(payload.s);
+        })
+        .then(function(){ return wait(250); })
+        .then(function(){
+          // A tool behind a Simulate gate draws on its button, not on load.
+          var run = document.querySelector('.needs-run');
+          if(run && !run.disabled){ run.click(); return wait(250); }
+        })
+        .then(function(){ var h = views[E.key]; if(h && h.load) return h.load(payload.v || {}); })
+        .then(function(){ return wait(250); })
+        .then(function(){ var card = cardOf(findChart(E.key)); if(card && payload.u) return applyUi(card, payload.u); })
+        .then(function(){ return wait(200); })
+        .then(function(){
+          var el = findChart(E.key), card = cardOf(el);
+          if(!card) throw new Error('no chart ' + E.key + ' on this page');
+          isolate(card, el);
+          return settled(E.key);
+        })
+        .catch(function(err){ if(global.console) console.warn('Embed:', err); embedFailed(); })
+        .then(function(){ document.documentElement.classList.remove('abt-embed-wait'); });
+    }
+    if(EMBED){
+      if(document.readyState === 'complete') setTimeout(startEmbed, 0);
+      else global.addEventListener('load', function(){ setTimeout(startEmbed, 0); });
+    }
+
+    return {
+      upgrade: upgrade,
+      copyImage: copyImage,
+      state: function(p){ provider = p && typeof p.save === 'function' && typeof p.load === 'function' ? p : null; },
+      view: function(key, hook){ if(key) views[key] = hook; },
+      embedded: EMBED ? { key: EMBED.key, theme: EMBED.theme } : null,
+      // For the checks in _ref/: the code a cluster's Embed row would show.
+      embedCode: function(cluster){ var m = cluster && cluster.__share; return m ? buildEmbed(m) : Promise.reject(new Error('no menu')); },
+      pack: pack, unpack: unpack
+    };
+  }
+  global.SharedShare = makeShare();
 
   /* ══ Finance tool skeleton ═══════════════════════════════════════════════
      The behaviours every finance tool shares, so the same field behaves the
@@ -3483,6 +4192,7 @@
 
   function initShared(){
     global.SharedIcon.hydrate();
+    global.SharedShare.upgrade(document);
     initReach();
     initTooltip();
     global.SharedAbbr.init();

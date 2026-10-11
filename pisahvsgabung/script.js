@@ -1388,12 +1388,6 @@ function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, should
   }
   return tmp;
 }
-async function copyCanvasPngToClipboard(canvas) {
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  if(!blob) throw new Error('Could not create PNG blob.');
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-}
 
 /* Exports are drawn from the chart at its desktop size, whatever the screen
    (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
@@ -1487,14 +1481,12 @@ function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId) {
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 els.chart1PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png', T('chart1Title'), 'chartLegend'));
-els.chart1CopyPngBtn.addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png', T('chart1Title'), 'chartLegend', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+els.chart1CopyPngBtn.addEventListener('click', () => {
+  SharedShare.copyImage(() => downloadChartPng('chartCanvas', 'pisah_vs_gabung_chart1.png', T('chart1Title'), 'chartLegend', false), els.chart1CopyPngBtn);
 });
 els.chart2PngBtn.addEventListener('click', () => downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png', T('chart2Title'), 'chartLegend2'));
-els.chart2CopyPngBtn.addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png', T('chart2Title'), 'chartLegend2', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+els.chart2CopyPngBtn.addEventListener('click', () => {
+  SharedShare.copyImage(() => downloadChartPng('chartCanvas2', 'pisah_vs_gabung_chart2.png', T('chart2Title'), 'chartLegend2', false), els.chart2CopyPngBtn);
 });
 els.chart1SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas', 'pisah_vs_gabung_chart1.svg', T('chart1Title'), 'chartLegend'));
 els.chart2SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas2', 'pisah_vs_gabung_chart2.svg', T('chart2Title'), 'chartLegend2'));

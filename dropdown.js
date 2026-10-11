@@ -20,7 +20,9 @@
      SharedDropdown.place(anchor, list[, opts])
        Puts a fixed-position list under (or, short of room, over) an anchor,
        at least as wide as it, kept on screen. A combobox calls it on open,
-       scroll and resize. opts: {minWidth, maxWidth, maxHeight, gap}.
+       scroll and resize. opts: {minWidth, maxWidth, maxHeight, gap, align}.
+       align: 'end' lines the list's right edge up with the anchor's, for a
+       button that sits hard right (a chart's Share menu).
    ────────────────────────────────────────────────────────────────────────── */
 (function(global){
   'use strict';
@@ -38,7 +40,8 @@
     list.style.maxWidth = maxW + 'px';
     if (opts.minWidth) list.style.width = minW + 'px';
     var w = list.offsetWidth;
-    list.style.left = Math.max(8, Math.min(r.left, vw - w - 8)) + 'px';
+    var x = opts.align === 'end' ? r.right - w : r.left;
+    list.style.left = Math.max(8, Math.min(x, vw - w - 8)) + 'px';
     var cap = opts.maxHeight || 280;
     var below = vh - r.bottom - gap - 8, above = r.top - gap - 8;
     if (below < Math.min(cap, 160) && above > below) {

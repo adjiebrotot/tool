@@ -2410,12 +2410,6 @@ function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, should
   }
   return tmp;
 }
-async function copyCanvasPngToClipboard(canvas) {
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  if(!blob) throw new Error('Could not create PNG blob.');
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-}
 
 /* Exports are drawn from the chart at its desktop size, whatever the screen
    (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
@@ -2513,14 +2507,12 @@ function priceChartExportTitle(){
   return 'DCA Scenario Explorer: Security Prices'+note;
 }
 $('pricePngBtn').addEventListener('click', () => downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend'));
-$('priceCopyPngBtn').addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+$('priceCopyPngBtn').addEventListener('click', () => {
+  SharedShare.copyImage(() => downloadChartPng('priceCanvas', 'dca_price_chart.png', priceChartExportTitle(), 'priceLegend', false), $('priceCopyPngBtn'));
 });
 $('equityPngBtn').addEventListener('click', () => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend'));
-$('equityCopyPngBtn').addEventListener('click', async () => {
-  try { await copyCanvasPngToClipboard(downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend', false)); alert('PNG copied to clipboard.'); }
-  catch(err){ alert('PNG copy failed: ' + err.message); }
+$('equityCopyPngBtn').addEventListener('click', () => {
+  SharedShare.copyImage(() => downloadChartPng('equityCanvas', 'dca_portfolio_chart.png', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend', false), $('equityCopyPngBtn'));
 });
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', priceChartExportTitle(), 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend'));
@@ -2602,7 +2594,8 @@ function importSettings(obj){
   (obj.securities||[]).forEach(s=>addSecurity(s));
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   renderSecList();
-  runSimulation();
+  // Returned, so an embedded chart (SharedShare) waits for the prices.
+  return runSimulation();
 }
 // The file keeps its own 'dca-single' format, so files saved before the
 // buttons moved to the Quick Start row still open.

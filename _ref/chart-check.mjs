@@ -5,10 +5,11 @@
 // to all four:
 //
 //   1. THE EXPORT ROW IS ONE ROW. Every chart carries the same cluster, in the
-//      same order — ⬇ SVG, ⬇ PNG, ⧉ copy, ⟳ reset zoom — drawn at the same
-//      size, pinned to the right edge of its title row on a desktop and spread
-//      full width on a phone. A table's ⬇ CSV sits in the same cluster beside
-//      the table it exports.
+//      same order — Share ⌄ (whose menu holds SVG, PNG, copy and embed, held
+//      to its own promises by share-check.mjs), then ⟳ reset zoom — drawn at
+//      the same size, pinned to the right edge of its title row on a desktop
+//      and spread full width on a phone. A table's ⬇ CSV sits in the same
+//      cluster beside the table it exports.
 //   2. A GESTURE CANNOT LEAVE THE DATA. Panning and pinching stay inside what
 //      the tool actually plotted, and a pinch cannot shrink the window below a
 //      handful of points, where there is nothing left to read.
@@ -177,7 +178,9 @@ const CLUSTER_PROBE = () => {
       const kr = card.getBoundingClientRect();
       return {
         where: (head.className || '') + ' | ' + norm((head.querySelector('h2,h3') || {}).textContent).slice(0, 40),
-        buttons: [...cluster.querySelectorAll('button')].map(b => {
+        // Only what the reader sees: the ⬇ SVG, ⬇ PNG and ⧉ the markup still
+        // lists are folded out of sight into the Share menu.
+        buttons: [...cluster.querySelectorAll('button')].filter(b => b.offsetParent !== null).map(b => {
           const cs = getComputedStyle(b), r = b.getBoundingClientRect();
           return {
             id: b.id || b.dataset.act || '', label: norm(b.textContent), title: b.getAttribute('title') || '',
@@ -590,10 +593,11 @@ const PLOTLY_PROBE = async () => {
 };
 
 /* The order every export cluster reads in. A cluster may carry a subset (a
-   table has only CSV), but never a different order. */
-const ORDER = ['⬇ SVG', '⬇ PNG', '⧉', '⟳', '⬇ CSV'];
+   table has only CSV), but never a different order. Share is Bagikan on an
+   Indonesian page. */
+const ORDER = [['Share', 'Bagikan'], ['⟳'], ['⬇ CSV']];
 const rank = label => {
-  const i = ORDER.findIndex(o => label.startsWith(o));
+  const i = ORDER.findIndex(o => o.some(w => label.startsWith(w)));
   return i < 0 ? 99 : i;
 };
 
@@ -667,7 +671,7 @@ for (const spec of PAGES) {
     }
     if (c.clusterRight < c.headRight - 2) { rightOk = false; problems.push(c.where + ': cluster not at the right edge (' + c.clusterRight + ' vs ' + c.headRight + ')'); }
   }
-  check(spec.name + ' C2 the cluster reads SVG, PNG, copy, reset (CSV for a table)', orderOk, problems.filter(p => /order|unknown/.test(p)).join('; '));
+  check(spec.name + ' C2 the cluster reads Share, reset (CSV for a table)', orderOk, problems.filter(p => /order|unknown/.test(p)).join('; '));
   check(spec.name + ' C3 every button is drawn at the shared size', styleOk, problems.filter(p => /btn-/.test(p)).join('; '));
   check(spec.name + ' C4 and says what it does on hover', titleOk, problems.filter(p => /no title/.test(p)).join('; '));
   check(spec.name + ' C5 the cluster sits hard right of its title row', rightOk, problems.filter(p => /right edge/.test(p)).join('; '));

@@ -2708,7 +2708,8 @@ $('downloadBtn').addEventListener('click',()=>{
    saved — it lives in the shared cache and re-fetches on the next run. */
 function buildSettingsObj(){
   const clean=JSON.parse(JSON.stringify(portfolios));
-  clean.forEach(p=>{ (p.assets||[]).forEach(a=>{ delete a.priceData; delete a.px; delete a.loaded; delete a.open; }); delete p._rfData; });
+  // Prices (and their OHLC candles) re-fetch on run, so a file carries none.
+  clean.forEach(p=>{ (p.assets||[]).forEach(a=>{ delete a.priceData; delete a.px; delete a.ohlc; delete a.loaded; delete a.open; }); delete p._rfData; });
   return {
     app:'dca-portfolio', version:1, savedAt:new Date().toISOString(),
     global:{
@@ -2769,7 +2770,8 @@ function importSettings(obj){
   activePortfolioId = (obj.activePortfolioId!=null && portfolios.some(p=>p.id===obj.activePortfolioId)) ? obj.activePortfolioId : (portfolios[0]?portfolios[0].id:null);
   hideWarning();
   loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
-  runSimulation();
+  // Returned, so an embedded chart (SharedShare) waits for the prices.
+  return runSimulation();
 }
 // The file keeps its own 'dca-portfolio' format, so files saved before the
 // buttons moved to the Quick Start row still open.
@@ -2826,12 +2828,6 @@ function exportChartPngAtSize(canvasId, filename, chartTitle, legendId, download
   ctx.fillText(wmText,wmX,wmY); ctx.restore();
   if(download){ const a=document.createElement('a'); a.href=tmp.toDataURL('image/png'); a.download=filename; document.body.appendChild(a); a.click(); a.remove(); }
   return tmp;
-}
-async function copyCanvasPng(canvas){
-  if(!navigator.clipboard||!window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const blob=await new Promise(res=>canvas.toBlob(res,'image/png'));
-  if(!blob) throw new Error('Could not create PNG.');
-  await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
 }
 
 /* ─── CHART SVG EXPORT ───
@@ -2917,9 +2913,9 @@ function priceTitle(){ const res=detailRes(); const sub=$('pricePfSubtitle'); co
 $('valuePngBtn').addEventListener('click',()=>exportChartPng('valueCanvas','portfolio-value.png','Portfolio Value Over Time','valueLegend'));
 $('compPngBtn').addEventListener('click',()=>exportChartPng('compCanvas','portfolio-composition.png',compTitle(),'compLegend'));
 $('pricePngBtn').addEventListener('click',()=>exportChartPng('priceCanvas','portfolio-security-prices.png',priceTitle(),'priceLegend'));
-$('valueCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('valueCanvas','','Portfolio Value Over Time','valueLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied value chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
-$('compCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('compCanvas','',compTitle(),'compLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied composition chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
-$('priceCopyBtn').addEventListener('click',async()=>{ const c=exportChartPng('priceCanvas','',priceTitle(),'priceLegend',false); if(c){ try{ await copyCanvasPng(c); showStatus($('assetFetchStatus'),'Copied security prices chart to clipboard.','ok'); }catch(e){ showStatus($('assetFetchStatus'),e.message,'error'); } } });
+$('valueCopyBtn').addEventListener('click',()=>SharedShare.copyImage(()=>exportChartPng('valueCanvas','','Portfolio Value Over Time','valueLegend',false),$('valueCopyBtn')));
+$('compCopyBtn').addEventListener('click',()=>SharedShare.copyImage(()=>exportChartPng('compCanvas','',compTitle(),'compLegend',false),$('compCopyBtn')));
+$('priceCopyBtn').addEventListener('click',()=>SharedShare.copyImage(()=>exportChartPng('priceCanvas','',priceTitle(),'priceLegend',false),$('priceCopyBtn')));
 
 $('valueSvgBtn').addEventListener('click',()=>downloadChartSvg('valueCanvas','portfolio-value.svg','Portfolio Value Over Time','valueLegend'));
 $('compSvgBtn').addEventListener('click',()=>downloadChartSvg('compCanvas','portfolio-composition.svg',compTitle(),'compLegend'));

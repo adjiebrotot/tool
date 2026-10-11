@@ -2044,6 +2044,7 @@ function buildChartModal(){
     </div>`;
   document.body.appendChild(overlay);
   chartModal.el = overlay;
+  SharedShare.upgrade(overlay);  // ⬇ SVG, ⬇ PNG and ⧉ into the Share menu
 
   overlay.addEventListener('click', e=>{ if(e.target===overlay) closeChartModal(); });
   overlay.querySelectorAll('.cm-met').forEach(btn=>{
@@ -2058,7 +2059,7 @@ function buildChartModal(){
       else if(act==='reset'){ if(chartModal.chart && chartModal.chart.resetZoom) chartModal.chart.resetZoom(); }
       else if(act==='png')  RVOExport.exportChartPNG(canvas, Object.assign({}, meta, {filename:`${scenarioSlug(chartModal.si)}_${chartModal.met}_chart.png`, download:true}));
       else if(act==='svg')  RVOExport.exportChartSVG(canvas, Object.assign({}, meta, {filename:`${scenarioSlug(chartModal.si)}_${chartModal.met}_chart.svg`}));
-      else if(act==='copy') RVOExport.copyChartPNG(canvas, meta).then(()=>alert('PNG copied to clipboard.')).catch(err=>alert('PNG copy failed: '+err.message));
+      else if(act==='copy') RVOExport.copyChartPNG(canvas, meta, btn);
     });
   });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape' && chartModal.el && chartModal.el.classList.contains('open')) closeChartModal(); });
@@ -2195,6 +2196,7 @@ function buildGlobalChartModal(){
     </div>`;
   document.body.appendChild(overlay);
   globalChart.el = overlay;
+  SharedShare.upgrade(overlay);
 
   overlay.addEventListener('click', e=>{ if(e.target===overlay) closeGlobalChartModal(); });
   overlay.querySelectorAll('.gc-met').forEach(btn=>{
@@ -2216,7 +2218,7 @@ function buildGlobalChartModal(){
       else if(act==='reset'){ if(globalChart.chart && globalChart.chart.resetZoom) globalChart.chart.resetZoom(); }
       else if(act==='png')  RVOExport.exportChartPNG(canvas, Object.assign({}, meta, {filename:`all_scenarios_${globalChart.met}_chart.png`, download:true}));
       else if(act==='svg')  RVOExport.exportChartSVG(canvas, Object.assign({}, meta, {filename:`all_scenarios_${globalChart.met}_chart.svg`}));
-      else if(act==='copy') RVOExport.copyChartPNG(canvas, meta).then(()=>alert('PNG copied to clipboard.')).catch(err=>alert('PNG copy failed: '+err.message));
+      else if(act==='copy') RVOExport.copyChartPNG(canvas, meta, btn);
     });
   });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape' && globalChart.el && globalChart.el.classList.contains('open')) closeGlobalChartModal(); });
@@ -2276,6 +2278,33 @@ function closeGlobalChartModal(){
   document.body.style.overflow = '';
   if(globalChart.chart){ globalChart.chart.destroy(); globalChart.chart = null; }
 }
+
+/* An embedded chart (SharedShare in shared.js) is one of these popups, so the
+   embed reopens it on the scenario, metric and lines it was shared with. */
+const isMetric = m => METRICS.some(([k])=>k===m);
+SharedShare.view('.cm-canvas', {
+  save: ()=>({ si: chartModal.si, met: chartModal.met }),
+  load: v=>{
+    openChartModal(Math.min(Math.max(0, Math.round(+v.si) || 0), scenarios.length - 1));
+    if(isMetric(v.met)){ chartModal.met = v.met; renderChartModal(); }
+  }
+});
+SharedShare.view('.gc-canvas', {
+  save: ()=>({ met: globalChart.met, include: globalChart.include.slice(), colors: globalChart.colors.slice(),
+               own: globalChart.showOwn, rent: globalChart.showRent }),
+  load: v=>{
+    openGlobalChartModal();
+    if(isMetric(v.met)) globalChart.met = v.met;
+    scenarios.forEach((_, i)=>{
+      if(Array.isArray(v.include) && typeof v.include[i] === 'boolean') globalChart.include[i] = v.include[i];
+      if(Array.isArray(v.colors) && /^#[0-9a-f]{6}$/i.test(v.colors[i] || '')) globalChart.colors[i] = v.colors[i];
+    });
+    if(typeof v.own === 'boolean') globalChart.showOwn = v.own;
+    if(typeof v.rent === 'boolean') globalChart.showRent = v.rent;
+    gcRenderScenarioPickers();
+    renderGlobalChartModal();
+  }
+});
 
 /* ── WIRE EVENTS ── */
 function wireEvents(){
@@ -2775,6 +2804,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         restore: function(e){
           if(!e) return;
           if(Array.isArray(e.scenarios) && e.scenarios.length) scenarios = e.scenarios;
+          // A file or an embed link can say anything: the symbol is one the
+          // site lists and the code is three capitals, or they fall back.
+          scenarios.forEach(sc=>{
+            sc.currencySymbol = SharedCurrency.toSymbol(sc.currencySymbol);
+            if(sc.currency != null && !/^[A-Z]{3}$/.test(sc.currency)) sc.currency = null;
+          });
           shared = sharedFrom(e.shared || scenarios[0]);
           scenarios.forEach(sc=>{ SHARED_KEYS.forEach(k=>{ delete sc[k]; }); });
           const f = e.fx && typeof e.fx === 'object' ? e.fx : {};

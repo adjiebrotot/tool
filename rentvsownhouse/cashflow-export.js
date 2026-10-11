@@ -243,13 +243,9 @@ function exportChartPNGAtSize(src, opts){
   return tmp;
 }
 
-async function copyChartPNG(src, opts){
-  if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Clipboard image copy is not supported in this browser.');
-  const canvas = exportChartPNG(src, Object.assign({}, opts, {download:false}));
-  if(!canvas) throw new Error('Could not build chart image.');
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-  if(!blob) throw new Error('Could not create PNG blob.');
-  await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+// `from` is the ⧉ button pressed: SharedShare flashes its Share menu.
+function copyChartPNG(src, opts, from){
+  return SharedShare.copyImage(() => exportChartPNG(src, Object.assign({}, opts, {download:false})), from);
 }
 
 /* Exports are drawn from the chart at its desktop size, whatever the screen

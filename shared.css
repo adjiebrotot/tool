@@ -363,8 +363,10 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
    ------------------------------------------------------------
    One definition of the export cluster every chart carries, so a reader who
    learns the row on one tool reads it on all of them: the title on the left,
-   the buttons hard right in a fixed order — SVG, PNG, copy, reset zoom — and
-   the same order for a table's CSV. The subtitle is a SIBLING below this row,
+   the buttons hard right in a fixed order — Share ⌄, then reset zoom — and a
+   table's ⬇ CSV in the same place. (The markup still lists ⬇ SVG, ⬇ PNG
+   and ⧉; SharedShare folds them into the Share menu at load, see below.)
+   The subtitle is a SIBLING below this row,
    never inside it, so however long it runs it can never push the buttons onto
    a line of their own. `margin-left:auto` holds the right edge even when a
    long title wraps.
@@ -401,7 +403,71 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
   .btn-cluster{width:100%;}
   .chart-head .btn-cluster,.detail-head .btn-cluster{margin-left:0;}
   .btn-cluster .btn-secondary,.btn-cluster .btn-sm,.btn-cluster .btn-secondary.btn-sm{flex:1 1 auto;}
+  .btn-cluster .share-menu{flex:1 1 auto;}
+  /* Beside Share, ⟳ stays a square thumb target instead of half the row. */
+  .btn-cluster .share-menu~.btn-icon,.btn-cluster .share-menu~.btn-secondary.btn-icon{flex:0 0 auto;min-width:44px;}
 }
+
+/* ============================================================
+   SHARE MENU (SharedShare in shared.js)
+   ------------------------------------------------------------
+   One "Share ⌄" button in the chart's toolbar, drawn as the toolbar's other
+   buttons are, opening the site's dropdown list (.combo-list) with Download
+   as SVG, Download as PNG, Copy to clipboard and Embed as HTML. The chevron
+   turns over while the list is open, as the home page's sub-tool menu does.
+   ============================================================ */
+.share-menu{display:inline-flex;}
+.share-src{display:none !important;}
+.share-toggle{display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.share-toggle .share-chev{flex:none;transition:transform var(--motion-fast);}
+.share-toggle[aria-expanded="true"]{border-color:var(--accent);}
+.share-toggle[aria-expanded="true"] .share-chev{transform:rotate(180deg);}
+.share-list{display:none;position:fixed;margin:0;list-style:none;}
+.share-list.is-open{display:block;}
+.share-list li{margin:0;padding:0;}
+.share-list .share-opt{width:100%;justify-content:flex-start;gap:10px;padding:7px 10px;border:0;background:transparent;color:inherit;font:inherit;text-align:left;}
+/* The lit row is the dropdown's, under the mouse and under the arrow keys. */
+.share-list .share-opt:hover,.share-list .share-opt:focus-visible{outline:none;background:var(--accent);color:var(--text-inv);}
+.share-list .share-opt:hover .combo-sub,.share-list .share-opt:focus-visible .combo-sub{color:inherit;opacity:.85;}
+.share-list .share-opt:disabled{opacity:.45;cursor:not-allowed;}
+.share-list .share-opt:disabled:hover{background:none;color:inherit;}
+.share-ico{flex:none;width:1.6rem;text-align:center;font-size:1rem;font-weight:700;line-height:1;}
+.share-ico-code{font-family:'DM Mono',ui-monospace,monospace;font-size:.76rem;letter-spacing:-.04em;}
+
+/* The embed dialog: the code, a preview, and one button to copy it. */
+.share-embed-overlay{display:none;position:fixed;inset:0;z-index:9400;background:rgba(8,12,22,.55);align-items:center;justify-content:center;padding:16px;}
+.share-embed-overlay.is-open{display:flex;}
+.share-embed{width:100%;max-width:580px;max-height:calc(100vh - 32px);overflow:auto;padding:18px 20px;background:var(--panel);box-shadow:var(--shadow-lg);}
+.share-embed-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.share-embed-head h2{margin:0;font-size:1.05rem;}
+.share-embed-note{margin:8px 0 12px;color:var(--muted);font-size:.84rem;line-height:1.45;}
+.share-code{display:block;width:100%;box-sizing:border-box;min-height:128px;resize:vertical;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text);font-family:'DM Mono',ui-monospace,monospace;font-size:.76rem;line-height:1.5;word-break:break-all;}
+.share-code:focus{outline:none;border-color:var(--accent);}
+.share-embed-size{margin:8px 0 0;color:var(--muted);font-size:.8rem;}
+.share-embed-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:14px;margin-top:12px;}
+.share-preview{color:var(--accent);font-size:.84rem;font-weight:600;}
+.share-preview:not([href]){opacity:.45;pointer-events:none;}
+
+/* ── Embed mode: this page inside someone else's iframe ──
+   Only the chart's card is left, filling the frame; the boxes it sat in lose
+   their own layout so nothing (a sidebar column, a modal's backdrop) is left
+   holding room for what has been hidden. The page stays hidden until the
+   reader's scenario has been loaded and drawn. */
+html.abt-embed-wait body{visibility:hidden;}
+html.abt-embed,html.abt-embed body{height:100%;}
+/* Nothing scrolls, so no gutter is kept for a scrollbar. */
+html.abt-embed{scrollbar-gutter:auto;overflow:hidden;}
+html.abt-embed body{margin:0 !important;padding:0 !important;overflow:hidden !important;display:block !important;min-height:0 !important;background:var(--bg) !important;}
+html.abt-embed [data-abt-hide]{display:none !important;}
+html.abt-embed .abt-embed-path{display:block !important;position:static !important;inset:auto !important;margin:0 !important;padding:0 !important;width:auto !important;min-width:0 !important;max-width:none !important;height:auto !important;min-height:0 !important;max-height:none !important;overflow:visible !important;transform:none !important;border:0 !important;border-radius:0 !important;background:none !important;box-shadow:none !important;}
+html.abt-embed .abt-embed-card{display:flex !important;flex-direction:column !important;position:relative !important;box-sizing:border-box !important;width:auto !important;max-width:none !important;height:100vh !important;max-height:none !important;margin:0 !important;overflow:hidden !important;transform:none !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;background:transparent !important;}
+html.abt-embed .abt-embed-card>*{flex:0 0 auto;}
+html.abt-embed .abt-embed-card .abt-embed-col{display:flex !important;flex-direction:column !important;flex:1 1 auto !important;min-height:0 !important;}
+html.abt-embed .abt-embed-card .abt-embed-fill{flex:1 1 auto !important;height:auto !important;min-height:160px !important;max-height:none !important;}
+html.abt-embed .share-menu,html.abt-embed .chart-modal-close{display:none !important;}
+html.abt-embed-failed body>*:not(.share-embed-fail){display:none !important;}
+.share-embed-fail{padding:24px;color:var(--text);font-size:.92rem;}
+.share-embed-fail a{color:var(--accent);font-weight:600;}
 
 /* ============================================================
    KPI CARDS

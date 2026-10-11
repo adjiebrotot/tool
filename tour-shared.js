@@ -393,6 +393,8 @@
   }
 
   function init() {
+    // A chart embedded on another site (SharedShare) is no place for a tour.
+    if (document.documentElement.classList.contains('abt-embed')) return;
     addLaunchButton();
     // Offer the tour only on the first visit (after this tour shipped).
     if (!hasVisited()) {

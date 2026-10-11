@@ -3561,18 +3561,6 @@ function chartPngAtSize(canvasId, filename, chartTitle, legendId, shouldDownload
   return tmp;
 }
 
-function copyCanvasPng(canvas){
-  if(!canvas) return Promise.reject(new Error('Nothing to copy yet.'));
-  if(!navigator.clipboard || !window.ClipboardItem){
-    return Promise.reject(new Error('Clipboard image copy is not supported in this browser.'));
-  }
-  return new Promise(function(resolve, reject){
-    canvas.toBlob(function(blob){
-      if(!blob){ reject(new Error('Could not create PNG blob.')); return; }
-      navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).then(resolve, reject);
-    }, 'image/png');
-  });
-}
 
 /* Exports are drawn from the chart at its desktop size, whatever the screen
    (SharedExport in shared.js), so a phone exports the same picture a laptop does. */
@@ -4133,14 +4121,10 @@ function wire(){
     chartSvg('ddChart', 'financial_freedom_cashflows.svg', exportTitle('dd'), 'legend2');
   });
   $('ffCopyBtn').addEventListener('click', function(){
-    copyCanvasPng(chartPng('ffChart', '', exportTitle('ff'), 'legend1', false))
-      .then(function(){ flashBtn($('ffCopyBtn'), '✓'); },
-            function(err){ alert('PNG copy failed: ' + (err && err.message ? err.message : 'unknown error')); });
+    SharedShare.copyImage(function(){ return chartPng('ffChart', '', exportTitle('ff'), 'legend1', false); }, this);
   });
   $('ddCopyBtn').addEventListener('click', function(){
-    copyCanvasPng(chartPng('ddChart', '', exportTitle('dd'), 'legend2', false))
-      .then(function(){ flashBtn($('ddCopyBtn'), '✓'); },
-            function(err){ alert('PNG copy failed: ' + (err && err.message ? err.message : 'unknown error')); });
+    SharedShare.copyImage(function(){ return chartPng('ddChart', '', exportTitle('dd'), 'legend2', false); }, this);
   });
   $('csvBtn').addEventListener('click', downloadCsv);
 

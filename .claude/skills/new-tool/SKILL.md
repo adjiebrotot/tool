@@ -177,6 +177,12 @@ Scale the rigor to the risk:
 - **Every tool** passes `node _ref/button-check.mjs` (one picture per job, bare icon buttons,
   reachable main action) and `node _ref/dropdown-check.mjs` (every dropdown has the shared look
   and opens the shared list).
+- **Every chart** gets the Share menu for free: write the usual `⬇ SVG`, `⬇ PNG`, `⧉`, `⟳`
+  cluster (see Chart Card Scaffold and Share Menu in the design reference), export through
+  `SharedExport.atDesktopSize`, and copy through `SharedShare.copyImage`. Add the page to
+  `PAGES` in `_ref/share-check.mjs`, which proves a phone exports the desktop picture and the
+  chart's embed redraws the same data. A chart whose view needs more than its inputs (a popup,
+  a panel outside its card) registers `SharedShare.view` or names it in `data-share-view`.
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 
