@@ -27,7 +27,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [JSON Visualiser](https://tool.adjiebrotots.com/jsonvisualiser/) | Lazy-loaded tree that handles millions of JSON keys/values without error. |
 | [Strategy Canvas Builder](https://tool.adjiebrotots.com/canvasbuilder/) | Beautiful, interactive, pitch-ready strategy canvases (Business Model Canvas, etc.). |
 | [Markdown to PDF](https://tool.adjiebrotots.com/mdtopdf/) | Read Markdown and export print-ready PDF with LaTeX math, diagrams, and auto ToC. |
-| [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. |
+| [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. Its [Salary Map](https://tool.adjiebrotots.com/costofliving-comparator/map/) runs your city against all 500+ at once on a world map: the net salary each city needs for your lifestyle and savings, or, in Global salary mode, what your own salary would save there, in your currency first and the city's own after. |
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
 | [World Clock](https://tool.adjiebrotots.com/worldclock/) | A live full-screen world map with the local time on every country, state and territory, opening on your own region. Time Travel to any date and time in any place to convert a meeting time, daylight saving included; zoom out for a classic time zone map. |
@@ -77,14 +77,19 @@ the last binary digit: 238 plans, the unchanged Quick Start buttons, and old
 mini-cache files reopened, against a recorded baseline or, with
 `--live <rev>`, against the old page loaded from git beside the new one.
 
-Harnesses live in `costofliving-comparator/`, `dcasimulator/`, `financialfreedom/`,
+Harnesses live in `costofliving-comparator/`, `costofliving-comparator/map/`, `dcasimulator/`, `financialfreedom/`,
 `financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`,
 `rentvsownhouse/sensitivity/`, `valuateeverything/`, and `worldclock/`. The World Clock's harness checks every clock on
 its map, for all 407 zones and across Time Travel jumps over daylight-saving changes,
 against Python's `zoneinfo`, which reads the system's tz database rather than Chromium's.
 Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from a
 timezone-boundary-builder release clipped to Natural Earth coastlines; re-run it when a
-new release is out. The Rent vs Own page and its Sensitivity page run one shared engine
+new release is out. The Cost of Living Comparator's Salary Map draws on that same map, and its
+harness (`costofliving-comparator/map/_audit/run.mjs`) replays every city's living cost, salary and
+savings from the raw JSON, drives the comparator page itself to the same required salaries, and
+checks that each city's location lands in its own country. The locations,
+`costofliving-comparator/map/city_coords.json`, are built from GeoNames by
+`costofliving-comparator/map/_build/build-coords.mjs`; re-run it when a city joins the dataset. The Rent vs Own page and its Sensitivity page run one shared engine
 (`rentvsownhouse/engine.js`), and `rentvsownhouse/sensitivity/_audit/parity.mjs` types the same
 scenarios into both and requires byte-identical cashflow exports. Their Quick Start scenarios
 (a city and one of its homes) all live in `rentvsownhouse/quickstart-data.js`, which both pages

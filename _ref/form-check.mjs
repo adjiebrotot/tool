@@ -87,6 +87,11 @@ const PAGES = [
       });
       await page.waitForTimeout(300);
   } },
+  // Empty until a city and a budget are in, so it opens a Quick Start.
+  { path: 'costofliving-comparator/map', setup: async page => {
+      await page.evaluate(() => { const b = document.querySelector('.quick-start-btn[data-preset="per"]'); if (b) b.click(); });
+      await page.waitForTimeout(400);
+  } },
 ].filter(p => !process.env.ONLY || p.path === process.env.ONLY);
 
 /* ── The site, served as in production ───────────────────────────────────── */
