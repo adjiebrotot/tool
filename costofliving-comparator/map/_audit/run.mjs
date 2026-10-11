@@ -365,7 +365,7 @@ for(const plan of PLANS){
 {
   await page.click('.quick-start-btn[data-preset="per"]'); await settle(page);
   const viewsNow = () => page.evaluate(() => ({ views: [...document.querySelectorAll('#viewGroup .seg-btn')].map(b => b.dataset.val),
-    on: (document.querySelector('#viewGroup .seg-btn.active') || {}).dataset.val, target: !document.getElementById('targetRow').hidden,
+    on: (document.querySelector('#viewGroup .seg-btn.active') || {}).dataset.val, target: getComputedStyle(document.getElementById('targetRow')).display !== 'none',
     title: document.getElementById('mapTitle').textContent }));
   const a = await viewsNow();
   check('M6 Required salary opens on Required net salary, with four views and a Target', a.on === 'salary' && a.views.join() === 'salary,living,savings,ratio' && a.target, JSON.stringify(a));
