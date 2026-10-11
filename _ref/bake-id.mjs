@@ -120,6 +120,10 @@ const TOOLS = [
           target: 'https://tool.adjiebrotots.com/rentvsownhouse/id/',
           name: 'Bandingkan sewa dengan beli rumah',
         },
+        hasPart: [
+          { '@type': 'WebApplication', name: 'Analisis Sensitivitas Sewa vs Beli Rumah', url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/' },
+          { '@type': 'WebPage', name: 'Rent vs Own Quick Start Assumptions', url: 'https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/' },
+        ],
       },
       {
         '@context': 'https://schema.org',
@@ -275,6 +279,15 @@ const TOOLS = [
               text: 'Susun skenario yang mengubah satu input pada satu waktu — pertumbuhan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin — lalu baca tabel berdampingan pada tahun dan metrik yang Anda pilih untuk melihat asumsi mana yang paling menggerakkan kekayaan bersih. Ini menguji seberapa kuat keputusan sewa-atau-beli Anda.',
             },
           },
+        ],
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Adjie Brotools', item: 'https://tool.adjiebrotots.com/' },
+          { '@type': 'ListItem', position: 2, name: 'Sewa vs Beli Rumah', item: 'https://tool.adjiebrotots.com/rentvsownhouse/id/' },
+          { '@type': 'ListItem', position: 3, name: 'Analisis Sensitivitas', item: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/' },
         ],
       },
     ],

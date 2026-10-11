@@ -50,7 +50,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Cost of Living Comparator — https://tool.adjiebrotots.com/costofliving-comparator/
   - "I want to move from Jakarta to Perth, how much can I save?"
   - "What salary do I need if I move from Bangkok to Singapore?"
-- Salary Map (Cost of Living Comparator) — https://tool.adjiebrotots.com/costofliving-comparator/map/
+- Cost of Living Comparator: Map View — https://tool.adjiebrotots.com/costofliving-comparator/map/
   - "How much would I need to earn in every other city to keep my lifestyle?"
   - "Where in the world would my salary save the most?"
 - DCA Scenario Explorer — https://tool.adjiebrotots.com/dcasimulator/
@@ -222,7 +222,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Best for: users comparing cities before relocation, salary negotiation, or geoarbitrage decisions.
 - What it does: compares cost of living across cities to estimate where income goes furthest.
 - Exchange rates: money converted between currencies uses a live daily rate fetched in the browser (ExchangeRate-API, with a fallback feed), while the cost estimates stay on the rate the cost-of-living indices were priced at.
-- Salary Map: https://tool.adjiebrotots.com/costofliving-comparator/map/ runs the same comparison from one city against all 500+ at once, on a world map. Enter a net salary and a lifestyle (one living-cost figure, or rent, groceries and other costs as separate rows) and each city shows the net salary it needs to keep the same savings ratio or the same amount of savings, in the user's own currency first and the city's currency in brackets. Global salary mode keeps the user's own salary everywhere and shows what it would save in each city, with the cities where it does not cover the lifestyle in red. Cities are coloured from cheapest to dearest against the user's own city.
+- Related page: https://tool.adjiebrotots.com/costofliving-comparator/map/ — Map View, which runs the same comparison from one city against all 500+ at once, on a world map. Enter a net salary and a lifestyle (one living-cost figure, or rent, groceries and other costs as separate rows) and each city shows the net salary it needs to keep the same savings ratio or the same amount of savings, in the user's own currency first and the city's currency in brackets. Global salary mode keeps the user's own salary everywhere and shows what it would save in each city, with the cities where it does not cover the lifestyle in red. Cities are coloured from cheapest to dearest against the user's own city.
 
 ### Video to GIF Converter
 

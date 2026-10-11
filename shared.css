@@ -465,6 +465,12 @@ html.abt-embed .abt-embed-card>*{flex:0 0 auto;}
 html.abt-embed .abt-embed-card .abt-embed-col{display:flex !important;flex-direction:column !important;flex:1 1 auto !important;min-height:0 !important;}
 html.abt-embed .abt-embed-card .abt-embed-fill{flex:1 1 auto !important;height:auto !important;min-height:160px !important;max-height:none !important;}
 html.abt-embed .share-menu,html.abt-embed .chart-modal-close{display:none !important;}
+/* The watermark the frame carries under its chart, as small and quiet as the
+   one on a PNG: the circled A, then one line back to the tool. */
+.abt-embed-mark{display:none;}
+html.abt-embed .abt-embed-card>.abt-embed-mark{display:inline-flex !important;align-self:flex-end;align-items:center;gap:4px;margin:2px 10px 6px;color:var(--muted);font-size:.66rem;text-align:right;font-weight:500;line-height:1.2;text-decoration:none;opacity:.7;transition:opacity var(--motion-fast);}
+html.abt-embed .abt-embed-mark:hover,html.abt-embed .abt-embed-mark:focus-visible{opacity:1;}
+.abt-embed-mark-logo{flex:none;}
 html.abt-embed-failed body>*:not(.share-embed-fail){display:none !important;}
 .share-embed-fail{padding:24px;color:var(--text);font-size:.92rem;}
 .share-embed-fail a{color:var(--accent);font-weight:600;}

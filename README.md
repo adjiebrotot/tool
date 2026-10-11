@@ -27,7 +27,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [JSON Visualiser](https://tool.adjiebrotots.com/jsonvisualiser/) | Lazy-loaded tree that handles millions of JSON keys/values without error. |
 | [Strategy Canvas Builder](https://tool.adjiebrotots.com/canvasbuilder/) | Beautiful, interactive, pitch-ready strategy canvases (Business Model Canvas, etc.). |
 | [Markdown to PDF](https://tool.adjiebrotots.com/mdtopdf/) | Read Markdown and export print-ready PDF with LaTeX math, diagrams, and auto ToC. |
-| [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. Its [Salary Map](https://tool.adjiebrotots.com/costofliving-comparator/map/) runs your city against all 500+ at once on a world map: the net salary each city needs for your lifestyle and savings, or, in Global salary mode, what your own salary would save there, in your currency first and the city's own after. |
+| [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. Its [Map View](https://tool.adjiebrotots.com/costofliving-comparator/map/) runs your city against all 500+ at once on a world map: the net salary each city needs for your lifestyle and savings, or, in Global salary mode, what your own salary would save there, in your currency first and the city's own after. |
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
 | [World Clock](https://tool.adjiebrotots.com/worldclock/) | A live full-screen world map with the local time on every country, state and territory, opening on your own region. Time Travel to any date and time in any place to convert a meeting time, daylight saving included; zoom out for a classic time zone map. |
@@ -84,7 +84,7 @@ its map, for all 407 zones and across Time Travel jumps over daylight-saving cha
 against Python's `zoneinfo`, which reads the system's tz database rather than Chromium's.
 Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from a
 timezone-boundary-builder release clipped to Natural Earth coastlines; re-run it when a
-new release is out. The Cost of Living Comparator's Salary Map draws on that same map, and its
+new release is out. The Cost of Living Comparator's Map View draws on that same map, and its
 harness (`costofliving-comparator/map/_audit/run.mjs`) replays every city's living cost, salary and
 savings from the raw JSON, drives the comparator page itself to the same required salaries, and
 checks that each city's location lands in its own country. The locations,
@@ -158,9 +158,10 @@ what it offers. The menu reads Download as SVG, Download as PNG, Copy to clipboa
 as HTML, opens flush under its button and answers the keyboard. A PNG, an SVG or a copied
 image taken on a phone or a wide monitor is the very size a desktop gives, so an exported
 chart always has the proportions it was designed at rather than the screen's. And every
-chart's embed code (an iframe of the tool, its scenario deflated into the link's `#hash`,
-plus one backlink line) is pasted into a page on another site and opened at a desktop and a
-phone width, where it has to show that one chart card alone, draw exactly the data the
+chart's embed code (one iframe of the tool, its scenario deflated into the link's `#hash`)
+is pasted into a page on another site and opened at a desktop and a
+phone width, where it has to show that one chart card alone with its own small watermark
+(the circled A and a line back to the tool, drawn inside the frame), draw exactly the data the
 reader was looking at, in their theme, keep its zoom, and leave the viewer's own saved work
 untouched. Every page is moved off its defaults before it is shared, so an embed that lost
 the scenario fails. Because anyone can send a link, each page's link is also replayed with
