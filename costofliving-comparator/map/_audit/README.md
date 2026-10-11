@@ -44,4 +44,11 @@ country on the World Clock's map, or within 10 km of its coast. Northern
 Vietnam and Kosovo are filed under a neighbour's time zone polygon there, so
 cities in them are held to their own country's bounding box instead.
 
+The borders come from time zones, which are not countries, so they are held
+to the zone file too. Asia/Urumqi is laid over Asia/Shanghai and Asia/Hebron
+over Asia/Jerusalem, and tzdb files northern Vietnam under Asia/Bangkok: no
+line may cut Xinjiang off from China, ring settlement areas inside the West
+Bank, or run across Vietnam. Where two countries' zones overlap the border is
+disputed (Abyei and Kafia Kingi, Kalapani), and both claim lines must stay.
+
 Run: `node run.mjs`

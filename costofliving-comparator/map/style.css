@@ -42,6 +42,7 @@ body.light{
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:color-mix(in srgb,var(--accent2) 15%,transparent);}
 .controls .ctrl-panel{padding-top:4px;}
 .field-group .toggle-row{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:10px 0 12px;}
+.field-group .toggle-row[hidden]{display:none;}
 .field-group .toggle-row .seg-group{display:flex;}
 .field-group .toggle-row .seg-btn{flex:1 1 auto;}
 .toggle-label{display:inline-flex;align-items:center;gap:5px;font-size:.9rem;font-weight:700;color:var(--text);}

@@ -27,6 +27,10 @@
 //   M9  gestures: a drag pans, Ctrl+wheel zooms, a plain wheel leaves the map
 //       alone for the page to scroll, a click pins a city's card
 //   M10 the page reloads to the same plan (mini cache)
+//   M11 borders: no line inside one country where a time zone is laid over
+//       another (Xinjiang, the West Bank) or filed under a neighbour
+//       (northern Vietnam under Asia/Bangkok); a disputed overlap keeps both
+//       claim lines
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -365,7 +369,7 @@ for(const plan of PLANS){
 {
   await page.click('.quick-start-btn[data-preset="per"]'); await settle(page);
   const viewsNow = () => page.evaluate(() => ({ views: [...document.querySelectorAll('#viewGroup .seg-btn')].map(b => b.dataset.val),
-    on: (document.querySelector('#viewGroup .seg-btn.active') || {}).dataset.val, target: !document.getElementById('targetRow').hidden,
+    on: (document.querySelector('#viewGroup .seg-btn.active') || {}).dataset.val, target: getComputedStyle(document.getElementById('targetRow')).display !== 'none',
     title: document.getElementById('mapTitle').textContent }));
   const a = await viewsNow();
   check('M6 Required salary opens on Required net salary, with four views and a Target', a.on === 'salary' && a.views.join() === 'salary,living,savings,ratio' && a.target, JSON.stringify(a));
@@ -454,6 +458,37 @@ for(const plan of PLANS){
   await page.waitForTimeout(400);
   const after = await page.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('verdict').innerText }));
   check('M10 a reload comes back to the same plan and answer', JSON.stringify(before) === JSON.stringify(after), after.v.slice(0, 80));
+
+  // M11 borders, held to the zone file read here without the page's code.
+  {
+    const kinds = await page.evaluate(() => window.__colmap.arcKinds());
+    const topo = JSON.parse(readFileSync(join(ROOT, 'worldclock', 'zones.json'), 'utf8'));
+    const [sx, sy] = topo.transform.scale, [tx, ty] = topo.transform.translate;
+    const arcs = topo.arcs.map(a => { let x = 0, y = 0; return a.map(p => { x += p[0]; y += p[1]; return [x * sx + tx, y * sy + ty]; }); });
+    const polysOf = g => g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
+    const own = arcs.map(() => []);
+    topo.objects.zones.geometries.forEach(g => polysOf(g).forEach(p => p.forEach(r => r.forEach(a => own[a < 0 ? ~a : a].push(g.properties.id)))));
+    const only = (...ids) => own.map((o, i) => i).filter(i => own[i].length === ids.length && ids.every(id => own[i].includes(id)));
+    const within = (i, [w, s, e, n]) => arcs[i].every(([x, y]) => x >= w && x <= e && y >= s && y <= n);
+    const name = k => ({ '-1': 'hidden', '0': 'coast', '1': 'border' })[k];
+    const all = (ids, want) => ids.length > 0 && ids.every(i => kinds[i] === want);
+    const show = ids => ids.length + ' edges: ' + [...new Set(ids.map(i => name(kinds[i])))].join('/');
+    // Asia/Urumqi is laid over Asia/Shanghai; its own edge runs through China.
+    const xj = only('Asia/Urumqi');
+    check('M11 no line splits Xinjiang from the rest of China', all(xj, -1), show(xj));
+    // Asia/Hebron is laid over Asia/Jerusalem; Jerusalem's holes in it are
+    // settlement areas, not a border.
+    const wb = only('Asia/Jerusalem').filter(i => within(i, [34.88, 31.34, 35.57, 32.55]));
+    check('M11 the West Bank is drawn whole, with no rings inside it', all(wb, -1), show(wb));
+    // tzdb files northern Vietnam under Asia/Bangkok.
+    const vn = only('Asia/Bangkok', 'Asia/Ho_Chi_Minh');
+    check('M11 no border across Vietnam', all(vn, -1), show(vn));
+    // Where two countries' zones overlap the border is disputed; both lines stay.
+    const sd = [...only('Africa/Juba'), ...only('Africa/Khartoum')].filter(i => within(i, [22, 8, 30, 11]));
+    check('M11 a disputed area (Abyei, Kafia Kingi) keeps both claim lines', all(sd, 1), show(sd));
+    const np = [...only('Asia/Kathmandu'), ...only('Asia/Kolkata')].filter(i => within(i, [80, 29.5, 81.5, 31]));
+    check('M11 a disputed area (Kalapani) keeps both claim lines', all(np, 1), show(np));
+  }
   check('M  no page errors on the map', !page.__errors.length, page.__errors.slice(0, 3).join('; '));
 }
 await mctx.close();

@@ -1069,10 +1069,14 @@ function buildGeo(topo){
     return out;
   });
   const polysOf = g => g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
+  // Time zones are not countries: tzdb files northern Vietnam under
+  // Asia/Bangkok, so the parts of that zone east of Thailand's easternmost
+  // point (105.64°E) are Vietnam's, or the map would draw a border across it.
+  const ccOf = (g, p) => g.properties.id === 'Asia/Bangkok' && p[0].some(a => full[a < 0 ? ~a : a].some((v, q) => !(q & 1) && v > projX(105.7))) ? 'VN' : g.properties.cc;
   const owners = full.map(() => new Set());
   const zones = topo.objects.zones.geometries.map((g, i) => {
-    const polys = polysOf(g);
-    polys.forEach(p => p.forEach(r => r.forEach(a => owners[a < 0 ? ~a : a].add(g.properties.cc))));
+    const polys = polysOf(g), ccs = polys.map(p => ccOf(g, p));
+    polys.forEach((p, pi) => p.forEach(r => r.forEach(a => owners[a < 0 ? ~a : a].add(ccs[pi]))));
     const b = [Infinity, Infinity, -Infinity, -Infinity];
     polys.forEach(p => p[0].forEach(a => {
       const arr = full[a < 0 ? ~a : a];
@@ -1081,7 +1085,7 @@ function buildGeo(topo){
         if(arr[q + 1] < b[1]) b[1] = arr[q + 1]; if(arr[q + 1] > b[3]) b[3] = arr[q + 1];
       }
     }));
-    return { polys, bbox: b, paths: [] };
+    return { gi: i, polys, ccs, bbox: b, paths: [] };
   }).filter(z => z.polys.length);
   // An edge between two countries is a border; one owned by a single zone
   // is coast. Edges inside one country are not drawn.
@@ -1089,6 +1093,65 @@ function buildGeo(topo){
   const refs = full.map(() => 0);
   topo.objects.zones.geometries.forEach(g => polysOf(g).forEach(p => p.forEach(r => r.forEach(a => { refs[a < 0 ? ~a : a]++; }))));
   refs.forEach((n, i) => { if(n !== 1 && kind[i] === 0) kind[i] = -1; });
+  // An edge only one zone uses is not always coast. Two zones are laid on top
+  // of another rather than cut out of it (Asia/Urumqi over Asia/Shanghai
+  // across Xinjiang, Asia/Hebron over Asia/Jerusalem across the West Bank),
+  // and neighbours' edges do not always meet, often where a border is
+  // disputed. So look just off each side of it: sea on one side is coast, the
+  // same one country on both is nothing, anything else a border. Where an
+  // overlay lies, it alone decides the country; where two countries' zones
+  // overlap, both count, so a disputed area keeps both lines.
+  // An overlay is found as the World Clock finds it: every edge it shares
+  // with other zones runs the same way as one zone's, its base's.
+  const geoms = topo.objects.zones.geometries, tally = full.map(() => new Map()), baseOf = new Map();
+  geoms.forEach((g, i) => polysOf(g).forEach(p => p.forEach(r => r.forEach(a => {
+    const m = tally[a < 0 ? ~a : a]; m.set(i, (m.get(i) || 0) + (a < 0 ? -1 : 1));
+  }))));
+  geoms.forEach((g, i) => {
+    let base = -1, ok = true;
+    polysOf(g).forEach(p => p.forEach(r => r.forEach(a => {
+      const m = tally[a < 0 ? ~a : a];
+      if(m.size === 1) return;
+      const same = [...m].filter(([j, s]) => j !== i && Math.sign(s) === Math.sign(m.get(i))).map(([j]) => j);
+      if(base < 0 && same.length === 1) base = same[0];
+      if(!same.includes(base)) ok = false;
+    })));
+    if(ok && base >= 0) baseOf.set(i, base);
+  });
+  const ringsOf = zones.map(z => z.polys.map(p => p.map(r => ringPoints(r, full))));
+  const inRing = (x, y, r) => {
+    let c = false;
+    for(let i = 0, j = r.length - 2; i < r.length; j = i, i += 2){
+      const yi = r[i + 1], yj = r[j + 1];
+      if((yi > y) !== (yj > y) && x < (r[j] - r[i]) * (y - yi) / (yj - yi) + r[i]) c = !c;
+    }
+    return c;
+  };
+  const ccsAt = (x, y) => {
+    const hits = [];
+    zones.forEach((z, zi) => {
+      const b = z.bbox;
+      if(x < b[0] || x > b[2] || y < b[1] || y > b[3]) return;
+      ringsOf[zi].forEach((p, pi) => { if(p.reduce((c, r) => inRing(x, y, r) ? !c : c, false)) hits.push([z.gi, z.ccs[pi]]); });
+    });
+    const under = new Set(hits.map(([gi]) => baseOf.get(gi)));
+    return [...new Set(hits.filter(([gi]) => !under.has(gi)).map(([, cc]) => cc))].sort().join();
+  };
+  refs.forEach((n, i) => {
+    if(n !== 1) return;
+    const a = full[i];
+    if(a.length < 4) return;
+    let q = 0, len = -1;
+    for(let p = 0; p + 3 < a.length; p += 2){
+      const d = Math.hypot(a[p + 2] - a[p], a[p + 3] - a[p + 1]);
+      if(d > len){ len = d; q = p; }
+    }
+    if(!(len > 0)) return;
+    const mx = (a[q] + a[q + 2]) / 2, my = (a[q + 1] + a[q + 3]) / 2;
+    const e = Math.min(0.004, len / 4), nx = -(a[q + 3] - a[q + 1]) / len * e, ny = (a[q + 2] - a[q]) / len * e;
+    const c1 = ccsAt(mx + nx, my + ny), c2 = ccsAt(mx - nx, my - ny);
+    if(c1 && c2) kind[i] = c1 === c2 && !c1.includes(',') ? -1 : 1;
+  });
   geo = { full, arcsLod: [], zones, kind, lines: [] };
   geo.arcsLod[LOD_TOL.length - 1] = full;
 }
@@ -1599,6 +1662,7 @@ function init(){
     labels: () => clone(lastLabels),
     transform: () => ({ ...T, minK, vw, vh }),
     mapReady: () => mapReady,
+    arcKinds: () => (geo ? Array.from(geo.kind) : null),
     screenOf: key => { const c = getCity(key); return c && c.lat != null ? screenOf(c) : null; },
     flyTo: (key, dur) => { const c = getCity(key); return c ? flyTo(cityTransform(c), dur || 0) : Promise.resolve(); },
     card: () => (cardKey && !$('placeCard').hidden ? $('placeCard').innerText : null),
