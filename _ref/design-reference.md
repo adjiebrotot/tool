@@ -1787,7 +1787,7 @@ and it is driven by the keyboard as a menu is (arrows, Home, End, Escape back to
 | ⬇ Download as SVG | clicks the chart's own `⬇ SVG` | drawn at the desktop size (`SharedExport.atDesktopSize`), so a phone exports the desktop picture |
 | ⬇ Download as PNG | clicks `⬇ PNG` | the same |
 | ⧉ Copy to clipboard | clicks `⧉`, whose handler copies through `SharedShare.copyImage` | the PNG above; "✓ Copied" flashes on Share, a failure says why in words |
-| 🔗 Share as link | copies `<tool>/#open=<chart>&s=…` | the same address as the embed's *Links back* below: the tool on the reader's scenario and this chart's view; "✓ Link copied" flashes on Share |
+| Share as link (chain-link icon) | copies `<tool>/#open=<chart>&s=…` | the same address as the embed's *Links back* below: the tool on the reader's scenario and this chart's view; "✓ Link copied" flashes on Share |
 | </> Embed as HTML | opens the embed dialog | one line: an iframe of the tool, its watermark drawn inside the frame |
 
 ```js
