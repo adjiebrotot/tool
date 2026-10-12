@@ -5,9 +5,11 @@
 // headless Chromium to hold it to what it promises:
 //
 //   1. ONE MENU, THE SAME EVERYWHERE. The toolbar reads Share ⌄ then ⟳, and
-//      the menu lists Download as SVG, Download as PNG, Copy to clipboard and
-//      Embed as HTML in that order, opens under the button on a click or the
-//      arrow keys, and closes again on Escape with the focus back on Share.
+//      the menu lists Download as SVG, Download as PNG, Copy to clipboard,
+//      Share as link and Embed as HTML in that order, opens under the button
+//      on a click or the arrow keys, and closes again on Escape with the
+//      focus back on Share. Share as link copies the address the embed's
+//      links back point at (L1).
 //   2. AN EXPORT IS THE DESKTOP PICTURE. The PNG, the SVG and the copied image
 //      taken on a phone have the very size and proportion a desktop gives, so
 //      a chart exported on a phone is not the phone's squat one, and a wide
@@ -385,10 +387,10 @@ const BUDGET = 2500;
 const PRICE_BUDGET = 600 * 1024;
 
 const WORDS = {
-  en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Embed as HTML'],
-        back: 'Try your own scenarios at', copied: '✓ Copied' },
-  id: { share: 'Bagikan', rows: ['Unduh sebagai SVG', 'Unduh sebagai PNG', 'Salin ke papan klip', 'Sematkan sebagai HTML'],
-        back: 'Coba skenario Anda sendiri di', copied: '✓ Tersalin' },
+  en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Share as link', 'Embed as HTML'],
+        back: 'Try your own scenarios at', copied: '✓ Copied', linkCopied: '✓ Link copied' },
+  id: { share: 'Bagikan', rows: ['Unduh sebagai SVG', 'Unduh sebagai PNG', 'Salin ke papan klip', 'Bagikan sebagai tautan', 'Sematkan sebagai HTML'],
+        back: 'Coba skenario Anda sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
 };
 
 /* 4. Every string in the reader's real scenario becomes an attack: markup,
@@ -485,7 +487,7 @@ for (const spec of PAGES) {
                rightGap: Math.round(tr.right - lr.right), below: Math.round(lr.top - tr.bottom),
                inView: lr.left >= 0 && lr.right <= innerWidth };
     })()`);
-    check(`${tag} M2 the menu lists SVG, PNG, copy, embed, in that order`, JSON.stringify(menu.rows) === JSON.stringify(W.rows), menu.rows.join(' | '));
+    check(`${tag} M2 the menu lists SVG, PNG, copy, link, embed, in that order`, JSON.stringify(menu.rows) === JSON.stringify(W.rows), menu.rows.join(' | '));
     check(`${tag} M3 and opens under Share, flush with its right edge`,
           menu.expanded === 'true' && menu.focused === 'svg' && Math.abs(menu.rightGap) <= 2 && menu.below >= 0 && menu.below <= 8 && menu.inView,
           `gap ${menu.rightGap}px, ${menu.below}px below, first row focused: ${menu.focused}`);
@@ -548,6 +550,21 @@ for (const spec of PAGES) {
             drew && !st.embed && st.hash === '' && O.errors.length === 0,
             !drew ? 'drew something else' : st.embed ? 'opened in embed mode' : st.hash ? 'kept ' + st.hash.slice(0, 20) : O.errors.slice(0, 2).join(' | '));
       await O.ctx.close();
+    }
+    // L1: Share as link copies that same address, the tool on the reader's
+    // scenario, so E12 holds for it too.
+    {
+      await page.evaluate(() => navigator.clipboard.writeText('-'));
+      await pick(page, key, 'link');
+      let got = '-';
+      for (let i = 0; i < 50 && got === '-'; i++) {
+        await page.waitForTimeout(100);
+        got = await page.evaluate(() => navigator.clipboard.readText());
+      }
+      const label = await page.evaluate(`(${FIND})(${JSON.stringify(key)}).toggle.textContent.trim()`);
+      check(`${tag} L1 Share as link copies the link back to the tool on this scenario`,
+            got === openHref && /#open=/.test(got) && label === W.linkCopied,
+            got === openHref ? 'Share reads ' + label : got.slice(0, 80) + '…');
     }
     if (key === spec.charts[0]) await attack(page, tag, src);
     if (key === spec.charts[0] && spec.prices) await priceless(page, tag, src);

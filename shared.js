@@ -3002,8 +3002,8 @@
 
   /* ── SharedShare — one Share menu on every chart ──────────────────────────
      A chart's toolbar used to carry ⬇ SVG, ⬇ PNG and ⧉ side by side. They are
-     now one "Share ⌄" button whose menu holds those three and a fourth, Embed
-     as HTML. The ⟳ beside it moves the view rather than exporting anything,
+     now one "Share ⌄" button whose menu holds those three and two more, Share
+     as link and Embed as HTML. The ⟳ beside it moves the view rather than exporting anything,
      so it stays on the row.
 
      A tool keeps the three buttons it always had, since their ids are what
@@ -3041,8 +3041,10 @@
      data-share-view="<selector>", and their fields and toggles ride along. */
   function makeShare(){
     var TEXT = {
-      en: { share: 'Share', shareTitle: 'Download, copy or embed this chart',
+      en: { share: 'Share', shareTitle: 'Download, copy, link or embed this chart',
             svg: ['Download as SVG'], png: ['Download as PNG'], copy: ['Copy to clipboard'],
+            link: ['Share as link', 'Opens the tool on your scenario'],
+            linkCopied: '✓ Link copied', linkPrompt: 'Copy this link:', noLink: 'This link could not be made: ',
             embed: ['Embed as HTML', 'Interactive chart for your site'],
             copied: '✓ Copied', copyFail: 'PNG copy failed: ',
             noCopy: 'This browser cannot copy images.', noImage: 'the image could not be drawn',
@@ -3055,8 +3057,10 @@
             long: 'This code is {kb} KB, because the data the chart draws travels inside it.',
             tooBig: 'This chart carries too much data to fit in a link. Embed a smaller part of it.',
             failed: 'This chart could not be loaded here.', openTool: 'Open the tool' },
-      id: { share: 'Bagikan', shareTitle: 'Unduh, salin, atau sematkan grafik ini',
+      id: { share: 'Bagikan', shareTitle: 'Unduh, salin, tautkan, atau sematkan grafik ini',
             svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], copy: ['Salin ke papan klip'],
+            link: ['Bagikan sebagai tautan', 'Membuka alat ini pada skenario Anda'],
+            linkCopied: '✓ Tautan tersalin', linkPrompt: 'Salin tautan ini:', noLink: 'Tautan ini tidak bisa dibuat: ',
             embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
@@ -3070,7 +3074,10 @@
             tooBig: 'Grafik ini membawa terlalu banyak data untuk muat di tautan. Sematkan bagian yang lebih kecil.',
             failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka alatnya' }
     };
-    var ROWS = [['svg', '⬇'], ['png', '⬇'], ['copy', '⧉'], ['embed', '&lt;/&gt;']];
+    var LINK_ICO = '<svg viewBox="0 0 24 24" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/></svg>';
+    // Share as link and Embed are drawn by this menu, not by a button the tool binds.
+    var ROWS = [['svg', '⬇'], ['png', '⬇'], ['copy', '⧉'], ['link', LINK_ICO], ['embed', '&lt;/&gt;']];
+    var OWN = { link: 1, embed: 1 };
     var LABEL = { svg: /^⬇\s*SVG$/, png: /^⬇\s*PNG$/, copy: /^⧉$/ };
     var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     // The box a chart and its own controls live in, nearest first.
@@ -3122,13 +3129,13 @@
       list.setAttribute('data-no-abbr', '');
       toggle.setAttribute('aria-controls', list.id);
       ROWS.forEach(function(r){
-        if(r[0] !== 'embed' && !src[r[0]]) return;
+        if(!OWN[r[0]] && !src[r[0]]) return;
         var words = t[r[0]], li = document.createElement('li');
         li.setAttribute('role', 'none');
         li.innerHTML = '<button type="button" role="menuitem" class="combo-opt share-opt" data-kind="' + r[0] + '">' +
           '<span class="share-ico' + (r[0] === 'embed' ? ' share-ico-code' : '') + '" aria-hidden="true">' + r[1] + '</span>' +
           '<span class="combo-text"><span class="combo-main">' + words[0] + '</span>' +
-          // Only Embed needs a line under it; the other three say what they do.
+          // Only the two rows the tool has no button for need a line under it.
           (words[1] ? '<span class="combo-sub">' + words[1] + '</span>' : '') + '</span></button>';
         list.appendChild(li);
       });
@@ -3222,6 +3229,7 @@
     // Synchronous, so a copy still runs inside the reader's click.
     function pick(m, kind){
       if(kind === 'embed'){ openEmbed(m); return; }
+      if(kind === 'link'){ copyLink(m); return; }
       var b = m.src[kind];
       if(b && !b.disabled) b.click();
     }
@@ -3449,17 +3457,24 @@
       return wait(300).then(next);
     }
 
-    function buildEmbed(m){
-      var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
-      if(!key) return Promise.reject(new Error('no chart'));
+    // What the chart shows: the scenario (s), the popup's view (v) and the
+    // card's fields, toggles and legend (u). The prices (d) only on request.
+    function payloadOf(card, key, withData){
       var payload = {};
       // A hook that cannot hand over its data (prices not loaded) says why.
-      try { if(dataHook) payload.d = dataHook.save(); }
-      catch(e){ return Promise.reject(e); }
+      if(withData && dataHook) payload.d = dataHook.save();
       if(provider) payload.s = provider.save();
       if(views[key] && views[key].save) payload.v = views[key].save();
       var u = captureUi(card);
       if(u) payload.u = u;
+      return payload;
+    }
+    function buildEmbed(m){
+      var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
+      if(!key) return Promise.reject(new Error('no chart'));
+      var payload;
+      try { payload = payloadOf(card, key, true); }
+      catch(e){ return Promise.reject(e); }
       var theme = document.body.classList.contains('light') ? 'light' : 'dark', home = pageUrl();
       return Promise.all([pack(payload), openLink(home, key, payload)]).then(function(r){
         var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + r[0];
@@ -3478,6 +3493,39 @@
       if(!p.s && !p.v && !p.u) return Promise.resolve(home);
       return pack(p).then(function(s){ return home + '#open=' + encodeURIComponent(key) + '&s=' + s; },
                           function(){ return home; });
+    }
+
+    /* ── Share as link ──
+       The address the embed's links back point at, on its own: the tool set
+       up on the reader's scenario and this chart's view, copied to the
+       clipboard. Whoever opens it gets open mode below. */
+    function buildLink(m){
+      var card = cardOf(m.cluster), key = keyOf(chartOf(card)), home = pageUrl();
+      if(!key) return Promise.resolve(home);
+      var payload;
+      try { payload = payloadOf(card, key, false); }
+      catch(e){ return Promise.reject(e); }
+      return openLink(home, key, payload);
+    }
+    function copyLink(m){
+      var t = T(), url = buildLink(m), done;
+      url.catch(function(){});
+      try {
+        // Packing is async, so the item is handed a promise and written
+        // straight away, inside the click, as Safari requires.
+        if(!navigator.clipboard || !navigator.clipboard.write || !global.ClipboardItem) throw new Error(t.noCopy);
+        done = navigator.clipboard.write([new global.ClipboardItem({
+          'text/plain': url.then(function(u){ return new Blob([u], { type: 'text/plain' }); })
+        })]);
+      } catch(e){ done = Promise.reject(e); }
+      done.then(function(){ flash(m.toggle, t.linkCopied); }, function(){
+        return url.then(function(u){
+          var fallback = function(){ global.prompt(t.linkPrompt, u); };
+          if(navigator.clipboard && navigator.clipboard.writeText)
+            return navigator.clipboard.writeText(u).then(function(){ flash(m.toggle, t.linkCopied); }, fallback);
+          fallback();
+        });
+      }).catch(function(e){ alert(t.noLink + (e && e.message ? e.message : e)); });
     }
 
     /* The credit line under the frame. The watermark inside the frame cannot
@@ -3764,6 +3812,8 @@
       embedded: EMBED ? { key: EMBED.key, theme: EMBED.theme } : null,
       // For the checks in _ref/: the code a cluster's Embed row would show.
       embedCode: function(cluster){ var m = cluster && cluster.__share; return m ? buildEmbed(m) : Promise.reject(new Error('no menu')); },
+      // The address a cluster's Share as link row would copy.
+      shareLink: function(cluster){ var m = cluster && cluster.__share; return m ? buildLink(m) : Promise.reject(new Error('no menu')); },
       pack: pack, unpack: unpack
     };
   }
