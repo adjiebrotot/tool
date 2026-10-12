@@ -49,6 +49,13 @@ Read `.claude/skills/new-tool/SKILL.md`, then verify:
    Currency first and Assumptions last, controls that fit the value, tooltips that explain the
    jargon without renaming it, and an answer sentence that is true for ties and missing input.
 
+8. **Old state still opens** (a change to an existing tool) — against **Change an existing
+   tool with the least damage** in `CLAUDE.md`: diff the tool's ids, names, `data-persist`,
+   option values and saved keys against the last commit and flag any that changed without a
+   migration. Run `node _ref/share-check.mjs` (F1 and F2 hold old Share links) and
+   `node _ref/scenario-check.mjs`, then load state saved before the change and check that it
+   gives the result it gave before, unless the change was meant to alter that result.
+
 ## Verify the maths (the important part)
 
 For any tool with calculation, accounting, tax, or engineering formulas:

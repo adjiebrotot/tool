@@ -9,7 +9,9 @@
 //      Share as link and Embed as HTML in that order, opens under the button
 //      on a click or the arrow keys, and closes again on Escape with the
 //      focus back on Share. Share as link copies the address the embed's
-//      links back point at (L1).
+//      links back point at (L1), its scenario deflated against the frozen
+//      dictionary share-dict-a.txt so the link stays short, and a link
+//      written before that dictionary still opens (L2).
 //   2. AN EXPORT IS THE DESKTOP PICTURE. The PNG, the SVG and the copied image
 //      taken on a phone have the very size and proportion a desktop gives, so
 //      a chart exported on a phone is not the phone's squat one, and a wide
@@ -49,6 +51,7 @@ import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { dirname, join, extname, normalize, basename } from 'node:path';
 
 const { chromium } = pw;
@@ -565,6 +568,23 @@ for (const spec of PAGES) {
       check(`${tag} L1 Share as link copies the link back to the tool on this scenario`,
             got === openHref && /#open=/.test(got) && label === W.linkCopied,
             got === openHref ? 'Share reads ' + label : got.slice(0, 80) + '…');
+      // L2: it is deflated against the dictionary wherever that comes out
+      // shorter than deflating it alone, and a link written the old way,
+      // deflated alone, still opens on the same scenario.
+      const L2 = await page.evaluate(async u => {
+        const s = decodeURIComponent((/&s=([^&]+)$/.exec(u) || [])[1] || '');
+        const p = await SharedShare.unpack(s);
+        const bytes = new TextEncoder().encode(JSON.stringify(p));
+        const z = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
+        let bin = '';
+        z.forEach(b => { bin += String.fromCharCode(b); });
+        const old = 'z' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const back = await SharedShare.unpack(old);
+        return { how: s.charAt(0), len: s.length, old: old.length, same: JSON.stringify(back) === JSON.stringify(p) };
+      }, got).catch(e => ({ error: e.message }));
+      check(`${tag} L2 the link is deflated against the dictionary where that is shorter, and an old link still opens`,
+            (L2.how === 'a' ? L2.len < L2.old : L2.how === 'z' && L2.len === L2.old) && L2.same,
+            L2.error || `${L2.how}: ${L2.len} characters, ${L2.old} deflated alone, old link ${L2.same ? 'opens the same' : 'differs'}`);
     }
     if (key === spec.charts[0]) await attack(page, tag, src);
     if (key === spec.charts[0] && spec.prices) await priceless(page, tag, src);
@@ -663,6 +683,72 @@ for (const spec of PAGES) {
   }
   check(spec.name + ' E no page errors on a phone', P.errors.length === 0, P.errors.slice(0, 2).join(' | '));
   await P.ctx.close();
+}
+
+/* ── 6. A link once sent keeps opening ──
+   A link lives on in chats and on other sites long after the tool moves on,
+   so _ref/share-links.json keeps real links as they were copied, in every
+   format the site has written (z: deflated alone, a: against share-dict-a),
+   with a hash of what each held. Never edit or drop one; add new ones.
+   F1: the dictionary is byte for byte the file links were made with, and
+       every kept link still decodes to exactly what it held.
+   F2: what it holds still has somewhere to land: every saved field names an
+       input still on the page, a select's saved value is still one of its
+       options, and the chart and the view's fields and buttons are still
+       there. A field renamed or removed fails here, so the tool can keep
+       reading the old name (a migration in its load) before it ships. */
+const DICT_SHA256 = { a: '4d72827e85280530d51be554f9df8295152278423b8e8d1ab532252d58c61c03' };
+{
+  console.log('\n── kept links ──');
+  for (const [letter, want] of Object.entries(DICT_SHA256)) {
+    const file = join(ROOT, `share-dict-${letter}.txt`);
+    const got = existsSync(file) ? createHash('sha256').update(readFileSync(file)).digest('hex') : 'missing';
+    check(`F1 share-dict-${letter}.txt is the file links were made with`, got === want, got.slice(0, 16));
+  }
+  const kept = JSON.parse(readFileSync(join(HERE, 'share-links.json'), 'utf8'));
+  for (const k of kept) {
+    if (ONLY && !k.page.includes(ONLY) && ONLY !== "kept") continue;
+    const tag = `${k.page} [${k.chart}] ${k.s.charAt(0)}-link`;
+    const K = await newPage({ width: 1440, height: 1000 });
+    await K.page.goto(ORIGIN + k.page, { waitUntil: 'load' });
+    await K.page.waitForTimeout(500);
+    const r = await K.page.evaluate(async s => {
+      const p = await SharedShare.unpack(s);
+      const text = JSON.stringify(p);
+      const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))]
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+      const lost = [];
+      const byHandle = id => document.querySelector(`[data-persist="${CSS.escape(id)}"]`) || document.getElementById(id) || document.getElementsByName(id)[0];
+      const fields = (p.s && p.s.state && p.s.state.__fields) || {};
+      for (const [key, v] of Object.entries(fields)) {
+        const kind = key.charAt(0), id = key.slice(2);
+        if (kind === 'r') {
+          const group = [...document.getElementsByName(id)];
+          if (!group.some(e => e.value === v)) lost.push(group.length ? `${key}=${v}` : key);
+          continue;
+        }
+        const el = byHandle(id);
+        if (!el) lost.push(key);
+        else if (el.tagName === 'SELECT' && !el.multiple && ![...el.options].some(o => o.value === v)) lost.push(`${key}=${v}`);
+      }
+      for (const key of Object.keys((p.u && p.u.f) || {})) {
+        const el = key.charAt(0) === '#' ? document.getElementById(key.slice(1)) : document.getElementsByName(key.split('=')[0])[0];
+        if (!el) lost.push('view ' + key);
+      }
+      return { hash, lost, ids: [...((p.u && p.u.on) || []), ...((p.u && p.u.off) || [])] };
+    }, k.s).catch(e => ({ error: e.message }));
+    check(`${tag} F1 still decodes to what it held`, !r.error && r.hash === k.sha256, r.error || (r.hash === k.sha256 ? '' : 'decodes to something else'));
+    if (r.error) { await K.ctx.close(); continue; }
+    // The chart and the view's buttons may only be drawn later (a popup, a
+    // simulation), so they are looked for in the page's own files.
+    const dir = join(ROOT, k.page);
+    const own = [join(dir, 'index.html'), join(dir, 'script.js'), join(dir, '..', 'script.js')]
+      .filter(f => existsSync(f)).map(f => readFileSync(f, 'utf8')).join('\n');
+    const named = sel => own.includes(sel.replace(/^[#.]/, '').replace(/^\w+\[([\w-]+)="([^"]*)"\]$/, '$2'));
+    const lost = r.lost.concat(named(k.chart) ? [] : ['chart ' + k.chart], r.ids.filter(sel => !named(sel)).map(sel => 'button ' + sel));
+    check(`${tag} F2 every field, the chart and the view it carries are still on the page`, lost.length === 0, lost.slice(0, 6).join(', '));
+    await K.ctx.close();
+  }
 }
 
 await browser.close();

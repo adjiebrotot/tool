@@ -1806,8 +1806,22 @@ SharedShare.upgrade(overlay);
 
 `s` is the scenario file the save button writes (`SharedScenario.mount` registers it with
 `SharedShare.state`), deflated and base64url-encoded into the `#hash`, which a browser
-never sends to a server, so nothing is uploaded; about 400 to 1,000 characters for a
-finance tool. The page reads the hash before any tool script runs and opens in **embed
+never sends to a server, so nothing is uploaded. It is deflated against a **dictionary**,
+`share-dict-a.txt`: what the tools save on their defaults and Quick Start presets (built by
+`node _ref/share-dict.mjs`), so a field name, a default value or a whole preset the
+dictionary also holds costs one back-reference of 2 to 4 bytes. That brings a finance
+tool's scenario to about 60 to 200 characters, where deflate alone needed 450 to 1,100.
+The first letter of `s` says how it was written: `a` for that dictionary, `z` for deflate
+alone (the format links were first written in, and still chosen when it comes out shorter,
+as for a page of data no dictionary knows) or `j` for plain JSON. A dictionary is frozen
+once shipped, since every link made with it decodes only against those bytes: a better one
+is the next letter, added to `DICTS` in `shared.js` beside the old file, which stays.
+A sent link outlives the tool it was made on, so `_ref/share-links.json` keeps real links
+in every format the site has written, and `share-check.mjs` holds them (F1, F2): each still
+decodes to exactly what it held, the dictionary's hash is pinned, and every field, chart
+and view button a kept link names is still on the page. Renaming or removing a field
+therefore fails the check: keep reading the old name in the tool's load (a migration)
+before shipping, and add new links to the file rather than editing old ones. The page reads the hash before any tool script runs and opens in **embed
 mode**: the mini cache neither restores nor saves (the viewer's own work is left alone),
 the tour stays away, the scenario is opened the way a saved file is, the chart's view is
 put back (fields, pressed buttons and legend entries inside its card), and only that card
@@ -1835,8 +1849,8 @@ watermark in the frame stays either way, and the dialog asks the reader to keep 
 **Links back open the reader's scenario.** The watermark and the credit link both point at
 `<tool>/#open=<chart>&s=…`: the canonical address (the part a crawler credits, since it
 ignores the `#hash`) set up on the scenario and view the embed shows. `s` is the embed's
-payload without its prices (`d`), since the whole tool fetches its own, so it stays about
-as long as the iframe's for a finance tool. Opened as a page (open mode), the tool drops
+payload without its prices (`d`), since the whole tool fetches its own, so it is about as
+long as the iframe's for a finance tool: 100 to 230 characters in all. Opened as a page (open mode), the tool drops
 `#open` from the address, loads the scenario the way a saved file is loaded (it becomes the
 reader's own saved work, so a reload keeps what they change), puts the chart's view back
 and scrolls the chart into view. Its strings are made inert as an embed's are.

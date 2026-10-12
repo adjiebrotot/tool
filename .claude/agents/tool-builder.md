@@ -17,6 +17,10 @@ build step, no server.
 2. Read `_ref/design-reference.md` for the design system.
 3. Open the closest existing tool and mirror its structure. Consistency with the neighbours
    beats novelty.
+4. Changing an existing tool: follow **Change an existing tool with the least damage** in
+   `CLAUDE.md`. Relabel freely but keep every saved handle, give a new input a default that
+   reproduces the old result, and migrate merged or split inputs in the tool's load, so the
+   mini cache, saved files, Share links and embeds made before the change still open.
 
 ## What to get right
 

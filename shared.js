@@ -4,6 +4,8 @@
    (load before the tool's own script.js)
    ────────────────────────────────────────────────────────────────────────── */
 (function(global){
+  // Files beside this one (the Share links' dictionary) are found from here.
+  var SCRIPT_URL = (document.currentScript && document.currentScript.src) || global.location.href;
   /* A chart embedded on another site (SharedShare, below) is this page opened
      in an iframe as #embed=<chart>&theme=<theme>&s=<scenario>. Read once, now,
      because the mini cache has to know before any tool script calls it. */
@@ -3176,6 +3178,8 @@
       if(m.list.parentNode !== document.body) document.body.appendChild(m.list);
       m.list.classList.add('is-open');
       m.toggle.setAttribute('aria-expanded', 'true');
+      // Fetched now, so a link is ready the moment its row is picked.
+      dictionary(DICT).catch(function(){});
       if(global.SharedDropdown) global.SharedDropdown.place(m.toggle, m.list, { minWidth: 292, align: 'end', maxHeight: 320 });
       current = m;
     }
@@ -3289,15 +3293,125 @@
       return new Response(new Blob([bytes]).stream().pipeThrough(new Stream('deflate-raw')))
         .arrayBuffer().then(function(b){ return new Uint8Array(b); });
     }
-    // 'z' + deflated JSON, or 'j' + plain JSON where the browser cannot deflate.
+
+    /* A scenario of a few hundred bytes barely deflates on its own: deflate
+       has seen none of it before, so every field name and value is spelt out.
+       So a link is deflated against a dictionary, a frozen file of what the
+       tools save (their defaults and presets, built by _ref/share-dict.mjs):
+       a run of text the dictionary also holds, "v:mortgageRate":"6" or a
+       whole preset's scenario, is written as one back-reference of 2 to 4
+       bytes, however long. A link names its dictionary by its first letter,
+       and a dictionary never changes once shipped, so a better one is a new
+       letter here and a new file beside the old, which stays for the links
+       made with it. */
+    var DICTS = { a: { file: 'share-dict-a.txt', size: 24279 } }, DICT = 'a', dicts = {};
+    function dictionary(letter){
+      if(!dicts[letter]) dicts[letter] = fetch(new URL(DICTS[letter].file, SCRIPT_URL)).then(function(r){
+        if(!r.ok) throw new Error(DICTS[letter].file + ' ' + r.status);
+        return r.arrayBuffer();
+      }).then(function(b){
+        // One byte off and every link made with it decodes to nonsense.
+        if(b.byteLength !== DICTS[letter].size) throw new Error(DICTS[letter].file + ' is not the shipped file');
+        return new Uint8Array(b);
+      });
+      dicts[letter].catch(function(){ dicts[letter] = null; });
+      return dicts[letter];
+    }
+    /* The browser's CompressionStream cannot be primed, so links are written
+       here: one deflate block in its fixed codes, which spend nothing on a
+       code table (on a short scenario the table would cost more than it
+       saves) and make every symbol's cost known, so the cheapest parse into
+       literals and back-references is found exactly, by a shortest path. */
+    var LBASE = [3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+    var LEXT = [0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+    var DBASE = [1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+    var DEXT = [0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+    var LCODE = null, DCODE = null;
+    function deflateWith(dict, data){
+      if(!LCODE){
+        LCODE = new Uint8Array(259); DCODE = new Uint8Array(32769);
+        for(var c = 0; c < 29; c++) for(var l = LBASE[c]; l < (c < 28 ? LBASE[c + 1] : 259); l++) LCODE[l] = c;
+        for(c = 0; c < 30; c++) for(var d = DBASE[c]; d < (c < 29 ? DBASE[c + 1] : 32769); d++) DCODE[d] = c;
+      }
+      var n0 = dict.length, n = data.length, N = n0 + n, buf = new Uint8Array(N);
+      buf.set(dict); buf.set(data, n0);
+      // Where each 3-byte string last occurred, and before that, and so on.
+      var head = new Int32Array(1 << 15).fill(-1), prev = new Int32Array(N);
+      function hash(i){ return ((buf[i] << 10) ^ (buf[i + 1] << 5) ^ buf[i + 2]) & 0x7fff; }
+      for(var i = 0; i + 2 < n0; i++){ var h0 = hash(i); prev[i] = head[h0]; head[h0] = i; }
+      // bits[k]: the fewest bits that write data[0..k); len and dist: the last step there.
+      var bits = new Float64Array(n + 1).fill(Infinity), len = new Uint16Array(n + 1), dist = new Uint16Array(n + 1);
+      bits[0] = 0;
+      for(var k = 0; k < n; k++){
+        var p = n0 + k, here = bits[k], lit = here + (buf[p] < 144 ? 8 : 9);
+        if(lit < bits[k + 1]){ bits[k + 1] = lit; len[k + 1] = 0; }
+        if(p + 2 >= N) continue;
+        var h = hash(p), best = 2, max = Math.min(258, N - p), tries = 1024;
+        // Nearest first, so the first match to reach a length is its cheapest.
+        for(var q = head[h]; q >= 0 && p - q <= 32768 && tries-- > 0; q = prev[q]){
+          if(buf[q + best] !== buf[p + best]) continue;
+          var L = 0;
+          while(L < max && buf[q + L] === buf[p + L]) L++;
+          if(L <= best) continue;
+          var dc = DCODE[p - q], db = 5 + DEXT[dc];
+          for(var m = best + 1; m <= L; m++){
+            var lc = LCODE[m], cost = here + (lc < 23 ? 7 : 8) + LEXT[lc] + db;
+            if(cost < bits[k + m]){ bits[k + m] = cost; len[k + m] = m; dist[k + m] = p - q; }
+          }
+          best = L;
+          if(L === max) break;
+        }
+        prev[p] = head[h]; head[h] = p;
+      }
+      var steps = [];
+      for(k = n; k > 0; k -= len[k] || 1) steps.push(k);
+      var out = new Uint8Array((bits[n] >> 3) + 4), at = 0, acc = 0, used = 0;
+      function put(v, nb){ acc |= v << used; used += nb; while(used >= 8){ out[at++] = acc & 255; acc >>>= 8; used -= 8; } }
+      // Huffman codes are packed from their top bit, everything else from the bottom.
+      function code(v, nb){ for(var r = 0, j = 0; j < nb; j++){ r = (r << 1) | (v & 1); v >>= 1; } put(r, nb); }
+      function sym(s){
+        if(s < 144) code(0x30 + s, 8); else if(s < 256) code(0x190 + s - 144, 9);
+        else if(s < 280) code(s - 256, 7); else code(0xC0 + s - 280, 8);
+      }
+      put(1, 1); put(1, 2);   // the last block, in the fixed codes
+      for(var j = steps.length - 1; j >= 0; j--){
+        k = steps[j];
+        if(!len[k]){ sym(buf[n0 + k - 1]); continue; }
+        var lc2 = LCODE[len[k]], dc2 = DCODE[dist[k]];
+        sym(257 + lc2); if(LEXT[lc2]) put(len[k] - LBASE[lc2], LEXT[lc2]);
+        code(dc2, 5); if(DEXT[dc2]) put(dist[k] - DBASE[dc2], DEXT[dc2]);
+      }
+      sym(256);
+      if(used) out[at++] = acc & 255;
+      return out.subarray(0, at);
+    }
+    // The browser inflates it: the dictionary goes in first as a stored
+    // block, so the link's back-references reach into it, and comes off again.
+    function inflateWith(dict, bytes){
+      var n = dict.length, all = new Uint8Array(5 + n + bytes.length);
+      all.set([0, n & 255, n >> 8, ~n & 255, (~n >> 8) & 255]);
+      all.set(dict, 5); all.set(bytes, 5 + n);
+      return pipe(all, global.DecompressionStream).then(function(b){ return b.subarray(n); });
+    }
+
+    /* A link's first letter says how the rest is written: a dictionary's
+       letter, 'z' (deflated alone, as links were first written, and still
+       the choice where it comes out shorter, as for a page of data), or 'j'
+       (plain JSON, where the browser cannot deflate). */
     function pack(obj){
       var bytes = new TextEncoder().encode(JSON.stringify(obj));
-      if(!global.CompressionStream) return Promise.resolve('j' + b64(bytes));
-      return pipe(bytes, global.CompressionStream).then(function(z){ return 'z' + b64(z); });
+      var alone = global.CompressionStream ? pipe(bytes, global.CompressionStream).then(function(z){ return 'z' + b64(z); })
+                                           : Promise.resolve('j' + b64(bytes));
+      // Past this it is the data (an embed's prices), which no dictionary knows.
+      if(bytes.length > 0x10000) return alone;
+      var primed = dictionary(DICT).then(function(d){ return DICT + b64(deflateWith(d, bytes)); }, function(){ return null; });
+      return Promise.all([alone, primed]).then(function(r){ return r[1] && r[1].length < r[0].length ? r[1] : r[0]; });
     }
     function unpack(str){
-      var bytes = unb64(str.slice(1));
-      var p = str.charAt(0) === 'z' ? pipe(bytes, global.DecompressionStream) : Promise.resolve(bytes);
+      var c = str.charAt(0), bytes = unb64(str.slice(1));
+      var p = c === 'z' ? pipe(bytes, global.DecompressionStream)
+            : DICTS.hasOwnProperty(c) ? dictionary(c).then(function(d){ return inflateWith(d, bytes); })
+            : Promise.resolve(bytes);
       return p.then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
     }
     /* A file is opened by the reader who chose it; a link can be sent by
