@@ -123,6 +123,23 @@ body.light{
 .map-zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3;}
 .map-zbtn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:1.1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);font-family:inherit;line-height:1;padding:0;}
 .map-zbtn:hover{border-color:var(--accent);color:var(--accent-strong);}
+.map-zbtn .zf-open{font-size:1.2rem;}
+.map-zbtn .zf-close,.map-card.is-full .map-zbtn .zf-open{display:none;}
+.map-card.is-full .map-zbtn .zf-close{display:block;}
+.map-foot .foot-full,.map-card.is-full .map-foot .foot-page{display:none;}
+.map-card.is-full .map-foot .foot-full{display:inline;}
+
+/* ⤢ Full screen: the same card, lifted out of the page to fill the window,
+   as the World Clock's map does. The title, View selector and legend stay
+   on top; the map takes the rest. The page under it is locked, so a plain
+   wheel zooms and one finger pans either way. */
+/* The site keeps a scrollbar gutter on <html>; it goes while the map is full
+   so the card reaches the right edge of the window. */
+html.map-full-open{overflow:hidden;scrollbar-gutter:auto;}
+.map-card.is-full{position:fixed;inset:0;z-index:1000;margin:0;display:flex;flex-direction:column;border:0;border-radius:0;box-shadow:none;background:var(--panel);
+  padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));}
+.map-card.is-full .chart-head,.map-card.is-full .map-note,.map-card.is-full .map-legend,.map-card.is-full .map-foot{flex:0 0 auto;}
+.map-card.is-full .map-wrap{flex:1 1 auto;height:auto;min-height:0;touch-action:none;}
 
 /* Hover / tap card */
 .map-card-pop{position:absolute;left:0;top:0;z-index:5;min-width:220px;max-width:min(300px,calc(100% - 16px));background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:10px 12px 11px;font-size:.82rem;pointer-events:none;}
@@ -170,5 +187,8 @@ body.light{
   .map-wrap{height:62vh;min-height:380px;}
   .map-zoom{right:6px;top:6px;}
   .map-zbtn{width:32px;height:32px;}
+  .map-card.is-full{padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));}
+  .map-card.is-full .map-legend{margin:2px 0 6px;}
+  .map-card.is-full .map-foot{display:none;}
 }
 @media(max-width:400px){ .metrics{grid-template-columns:1fr;} }

@@ -38,6 +38,14 @@ hold still), the gestures (a drag pans, Ctrl and the wheel zooms, a plain
 wheel scrolls the page, a click pins a card), a reload, and that a 390px
 phone gets no sideways scroll.
 
+The ⤢ button is held to the full-screen view it promises, on a desktop and a
+390px phone: the map card fills the window edge to edge, the map takes most
+of it and the canvas is refitted to it, the legend ("Living cost against …,
+for the same lifestyle") and the View selector stay on screen above the map
+and still switch the view, a plain wheel zooms there (there is no page to
+scroll), Esc closes a pinned card first and then puts the map back at the
+height it had in the page.
+
 Every city's location (`../city_coords.json`, built by
 `../_build/build-coords.mjs` from GeoNames) has to land inside its own
 country on the World Clock's map, or within 10 km of its coast. Northern

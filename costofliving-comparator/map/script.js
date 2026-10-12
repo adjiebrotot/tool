@@ -1502,7 +1502,8 @@ function fmtFx(v){
 // Drag pans. Ctrl or ⌘ with the wheel zooms (a trackpad pinch arrives as
 // that too); a plain wheel scrolls the page, as a map inside a page should.
 // On a phone one finger scrolls the page up and down and pans sideways, and
-// two fingers pinch.
+// two fingers pinch. With the map filling the screen there is no page to
+// scroll, so a plain wheel zooms and one finger pans either way.
 const ptrs = new Map();
 let drag = null, pinch = null, hintTimer = 0, lastTap = 0;
 function localXY(e){ const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
@@ -1515,7 +1516,7 @@ function hint(text){
 const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
 cv.addEventListener('wheel', e => {
   if(!mapReady) return;
-  if(e.ctrlKey || e.metaKey){
+  if(e.ctrlKey || e.metaKey || mapFull){
     e.preventDefault();
     const [x, y] = localXY(e);
     zoomAt(x, y, Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0022)));
@@ -1596,6 +1597,29 @@ $('zoomOut').addEventListener('click', () => zoomBy(1 / 1.8));
 $('zoomHome').addEventListener('click', () => { if(mapReady) flyTo(homeTransform(), 900); });
 $('zoomWorld').addEventListener('click', () => { if(mapReady) flyTo(worldTransform(), 700); });
 
+// ⤢ lifts the map card (title, View, legend and map) out of the page to fill
+// the window and puts it back on a second press or Esc. It is the same card,
+// so the view, the pinned city and the position all carry over; the
+// ResizeObserver below refits the canvas and keeps the same spot centred.
+let mapFull = false;
+function setMapFull(on){
+  on = !!on;
+  if(on === mapFull) return;
+  mapFull = on;
+  $('mapCard').classList.toggle('is-full', on);
+  document.documentElement.classList.toggle('map-full-open', on);
+  const b = $('mapFull'), label = on ? 'Put the map back in the page' : 'Enlarge the map to fill the screen';
+  b.setAttribute('aria-pressed', String(on));
+  b.title = label; b.setAttribute('aria-label', label);
+  if(!on) $('mapCard').scrollIntoView({block: 'nearest'});
+}
+$('mapFull').addEventListener('click', () => setMapFull(!mapFull));
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || !mapFull || e.defaultPrevented) return;
+  if(cardPinned){ hoverKey = null; hideCard(); return; }
+  setMapFull(false);
+});
+
 function resize(){
   const oldW = vw, oldH = vh;
   vw = wrapEl.clientWidth; vh = wrapEl.clientHeight;
@@ -1666,6 +1690,7 @@ function init(){
     screenOf: key => { const c = getCity(key); return c && c.lat != null ? screenOf(c) : null; },
     flyTo: (key, dur) => { const c = getCity(key); return c ? flyTo(cityTransform(c), dur || 0) : Promise.resolve(); },
     card: () => (cardKey && !$('placeCard').hidden ? $('placeCard').innerText : null),
+    full: () => mapFull,
   };
 }
 
