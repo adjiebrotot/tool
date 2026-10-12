@@ -972,6 +972,7 @@ because that is how ✕ came to mean both "close" and "delete" on the same page.
 | **Share** a chart | Share ⌄ menu | `SharedShare` folds the chart's `⬇ SVG`, `⬇ PNG`, `⧉` into it | "Export", a row of four buttons |
 | **Download** an export | ⬇ + format | `⬇ SVG`, `⬇ PNG`, `⬇ CSV`, `⬇ .py` | ↓, 📥, "Export" |
 | **Copy** to the clipboard | ⧉ | `⧉`, titled "Copy PNG to clipboard" | ⧉ on a duplicate |
+| **Link** to a chart on its scenario | chain link (drawn in SVG) | the Share menu's Share as link row | 🔗 emoji |
 | **Embed** a chart on another site | </> | the Share menu's last row | |
 | **Reset the view** (zoom, pan). Your data is untouched. | ⟳ | `⟳` | ⊡ |
 | **Restore defaults**. Your inputs are replaced. | ↺ | `↺ Reset` | ⟳ (that only moves the view) |
@@ -1718,7 +1719,7 @@ so however long it runs it can never push the buttons onto a line of their own.
 The cluster is the same on every chart on the site: **Share ⌄** and then **⟳ reset zoom**,
 and a table's **⬇ CSV** is the same cluster in a `.detail-head` beside the table it
 exports. Share opens the site's dropdown list with **Download as SVG, Download as PNG,
-Copy to clipboard, Embed as HTML**, in that order (see *Share Menu* below). The markup
+Copy to clipboard, Share as link, Embed as HTML**, in that order (see *Share Menu* below). The markup
 still lists the chart's `⬇ SVG`, `⬇ PNG` and `⧉` buttons, because their ids are what the
 tool's script binds; `SharedShare` folds them into the menu at load. The buttons are
 labelled by a glyph, so each one carries a `title` saying what it does (and
@@ -1786,6 +1787,7 @@ and it is driven by the keyboard as a menu is (arrows, Home, End, Escape back to
 | ⬇ Download as SVG | clicks the chart's own `⬇ SVG` | drawn at the desktop size (`SharedExport.atDesktopSize`), so a phone exports the desktop picture |
 | ⬇ Download as PNG | clicks `⬇ PNG` | the same |
 | ⧉ Copy to clipboard | clicks `⧉`, whose handler copies through `SharedShare.copyImage` | the PNG above; "✓ Copied" flashes on Share, a failure says why in words |
+| 🔗 Share as link | copies `<tool>/#open=<chart>&s=…` | the same address as the embed's *Links back* below: the tool on the reader's scenario and this chart's view; "✓ Link copied" flashes on Share |
 | </> Embed as HTML | opens the embed dialog | one line: an iframe of the tool, its watermark drawn inside the frame |
 
 ```js
@@ -1839,8 +1841,9 @@ as long as the iframe's for a finance tool. Opened as a page (open mode), the to
 reader's own saved work, so a reload keeps what they change), puts the chart's view back
 and scrolls the chart into view. Its strings are made inert as an embed's are.
 
-Only Embed as HTML carries a second line in the menu ("Interactive chart for your site");
-the other three rows say what they do in their label alone.
+Only the two rows the menu draws itself carry a second line: Share as link ("Opens the
+tool on your scenario") and Embed as HTML ("Interactive chart for your site"); the other
+three rows say what they do in their label alone.
 
 - A view that lives outside the card names it: `data-share-view="#tab-sens"` on the card
   (Finance vs Cash's sensitivity sweep), and its fields and toggles ride along.
