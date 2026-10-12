@@ -162,11 +162,12 @@ chart's embed code (one iframe of the tool, its scenario deflated into the link'
 is pasted into a page on another site and opened at a desktop and a
 phone width, where it has to show that one chart card alone with its own small watermark
 (the circled A and a line back to the tool, drawn inside the frame), draw exactly the data the
-reader was looking at, in their theme, keep its zoom, and leave the viewer's own saved work
-untouched. Every page is moved off its defaults before it is shared, so an embed that lost
+reader was looking at, in their theme and on a transparent background, keep its zoom, and
+leave the viewer's own saved work untouched. Its links back (the watermark and the credit
+line) have to open the whole tool on that same scenario. Every page is moved off its defaults before it is shared, so an embed that lost
 the scenario fails. Because anyone can send a link, each page's link is also replayed with
 every string swapped for markup and script, which has to be drawn as text and run nothing,
-and the code must stay under 2,500 characters. It reuses chart-check's library cache;
+and the iframe and the credit line must each stay under 2,500 characters. It reuses chart-check's library cache;
 `SHOT=<dir>` saves each embed as it rendered, and `ONLY=<name>` runs one page.
 
 `node _ref/tip-check.mjs` loads every page and holds every tooltip to the budget that makes one

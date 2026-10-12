@@ -17,7 +17,9 @@
 //      tool by its name, which is the backlink (E11). The line back to the
 //      tool is also drawn inside
 //      the frame, under the chart, with the site's logo, where the other site
-//      cannot edit it out. Opened as another site would open it,
+//      cannot edit it out. Both links open the whole tool set up on the
+//      scenario the embed shows (E12), and the frame has no background of
+//      its own, so the other site's page shows through (E13). Opened as another site would open it,
 //      inside a page on another site, it shows that one chart card and
 //      nothing else, draws exactly the
 //      data the reader was looking at (scenario, metric, toggles and legend),
@@ -512,16 +514,19 @@ for (const spec of PAGES) {
     const [frameCode, creditCode = ''] = code.split('\n');
     check(`${tag} E1 the code is one iframe of the tool and its credit line`,
           /^<iframe [^\n]*><\/iframe>$/.test(frameCode) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
-          height >= 380 && code.split('\n').length === 2 && code.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400,
-          `${code.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), frame ${height}px tall`);
+          height >= 380 && code.split('\n').length === 2 && frameCode.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400 &&
+          creditCode.length <= BUDGET + 400,
+          `frame ${frameCode.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), credit ${creditCode.length} (at most ${BUDGET + 400}), frame ${height}px tall`);
     // The backlink: a plain, visible, followed link on the other site's page,
     // named for the tool rather than for keywords.
     const name = await page.evaluate(() => document.querySelector('meta[property="og:title"]').content.trim());
     const site = await page.evaluate(() => document.querySelector('meta[property="og:site_name"]').content.trim());
     const links = [...creditCode.matchAll(/<a\b[^>]*>/g)].map(m => m[0]);
+    const openHref = ((/^<a href="([^"]+)">$/.exec(links[0] || '') || [])[1] || '').replace(/&amp;/g, '&');
     check(`${tag} E11 a credit line under the frame links back to the tool by its name, followed`,
           /^<p style="[^"]*">[^<]*<a href="[^"]+">[^<]+<\/a>[^<]*<\/p>$/.test(creditCode) && links.length === 1 &&
-          links[0] === `<a href="${canon}">` && creditCode.includes(`>${name.replace(/&/g, '&amp;')}</a>`) && creditCode.includes(site) &&
+          openHref.startsWith(canon + '#open=' + encodeURIComponent(key) + '&s=') &&
+          creditCode.includes(`>${name.replace(/&/g, '&amp;')}</a>`) && creditCode.includes(site) &&
           !/rel=|display:\s*none|visibility|opacity/.test(creditCode),
           creditCode.replace(/<[^>]+>/g, ''));
     await page.keyboard.press('Escape');
@@ -531,6 +536,19 @@ for (const spec of PAGES) {
     check(`${tag} E6 opened as a page of its own, the link is the whole tool`,
           !(await T6.evaluate(() => document.documentElement.classList.contains('abt-embed'))));
     await T6.close();
+    // E12: the link back opens the whole tool on the reader's scenario, for a
+    // visitor who has none saved, fetching its own prices.
+    {
+      const O = await newPage({ width: 1440, height: 1000 });
+      await O.page.goto(openHref.replace(SITE, ORIGIN), { waitUntil: 'load' });
+      const drew = await O.page.waitForFunction(`(() => { const w = ${JSON.stringify(want)}; return (${DRAWN})(${JSON.stringify(key)}) === w; })()`,
+        null, { timeout: 20000 }).then(() => true, () => false);
+      const st = await O.page.evaluate(() => ({ embed: document.documentElement.classList.contains('abt-embed'), hash: location.hash }));
+      check(`${tag} E12 the link back opens the whole tool on the scenario the embed shows`,
+            drew && !st.embed && st.hash === '' && O.errors.length === 0,
+            !drew ? 'drew something else' : st.embed ? 'opened in embed mode' : st.hash ? 'kept ' + st.hash.slice(0, 20) : O.errors.slice(0, 2).join(' | '));
+      await O.ctx.close();
+    }
     if (key === spec.charts[0]) await attack(page, tag, src);
     if (key === spec.charts[0] && spec.prices) await priceless(page, tag, src);
     const light = await page.evaluate(() => document.body.classList.contains('light'));
@@ -569,6 +587,7 @@ for (const spec of PAGES) {
           })(),
           share: f.cluster ? f.cluster.querySelector('.share-menu').offsetParent !== null : false,
           wide: document.documentElement.scrollWidth > innerWidth + 1,
+          bg: [document.documentElement, document.body, f.card].filter(Boolean).map(e => getComputedStyle(e).backgroundColor),
         };
       })()`);
       const where = `at ${vp.width}px`;
@@ -584,9 +603,11 @@ for (const spec of PAGES) {
             view.zoom && !view.saved.length, view.saved.length ? 'wrote ' + view.saved.join(', ') : '');
       const host = canon.replace(/^https?:\/\//, '').replace(/\/$/, '');
       check(`${tag} E8 ${where}: the frame carries its own watermark, logo and "${W.back} ${host}", small and in view`,
-            !!view.mark && view.mark.href === canon && view.mark.text === `${W.back} ${host}` && view.mark.logo &&
+            !!view.mark && view.mark.href === openHref && view.mark.text === `${W.back} ${host}` && view.mark.logo &&
             view.mark.px <= 11 && view.mark.inFrame,
             view.mark ? `${view.mark.px}px "${view.mark.text}" → ${view.mark.href}` : 'no watermark in the card');
+      check(`${tag} E13 ${where}: the frame has no background of its own`,
+            view.bg.every(c => c === 'rgba(0, 0, 0, 0)' || c === 'transparent'), view.bg.join(', '));
       check(`${tag} E5 ${where}: no page errors`, E.errors.length === 0, E.errors.slice(0, 2).join(' | '));
       if (spec.prices) check(`${tag} E9 ${where}: it draws from the prices in its link and never calls the Worker`,
                              E.worker() === 0, `${E.worker()} Worker request(s)`);
