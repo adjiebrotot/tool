@@ -31,6 +31,10 @@
 //       another (Xinjiang, the West Bank) or filed under a neighbour
 //       (northern Vietnam under Asia/Bangkok); a disputed overlap keeps both
 //       claim lines
+//   M12 full screen: ⤢ fills the window with the map card, keeping its title,
+//       View selector and legend above the map; a plain wheel zooms there;
+//       Esc closes a pinned card first, then puts the map back in the page;
+//       a phone gets the same with nothing pushed off the side
 // Run: node run.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 const { chromium } = pw;
@@ -452,6 +456,8 @@ for(const plan of PLANS){
   check('M9 picking a city flies the map to it', tk.k > tk.minK * 1.5 && Math.abs(tk.p[0] - tk.vw / 2) < tk.vw * 0.2 && Math.abs(tk.p[1] - tk.vh / 2) < tk.vh * 0.2,
     `Tokyo at ${tk.p.map(v => v.toFixed(0)).join(',')} of ${tk.vw}x${tk.vh}`);
 
+  await fullScreenChecks(page, 'desktop');
+
   const before = await page.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('verdict').innerText }));
   await page.reload({ waitUntil: 'load' });
   await page.waitForFunction(() => window.__colmap && window.__colmap.mapReady());
@@ -582,12 +588,64 @@ await mctx.close();
   await ctx.close();
 }
 
+// ── M12 full screen ──────────────────────────────────────────────────────
+async function fullScreenChecks(page, tag){
+  const inPage = await page.$eval('#mapWrap', el => el.getBoundingClientRect().height);
+  await page.click('#mapFull'); await page.waitForTimeout(300);
+  const g = await page.evaluate(() => {
+    const r = s => { const el = document.querySelector(s); if(!el) return null; const b = el.getBoundingClientRect(); return { l: b.left, t: b.top, r: b.right, b: b.bottom, w: b.width, h: b.height }; };
+    return { full: window.__colmap.full(), W: innerWidth, H: innerHeight, card: r('#mapCard'), wrap: r('#mapWrap'),
+      title: r('#legend .lg-title'), bar: r('#legend .lg-bar'), view: r('#viewGroup'), zoom: r('.map-zoom'),
+      titleText: (document.querySelector('#legend .lg-title') || {}).textContent || '',
+      views: document.querySelectorAll('#viewGroup .seg-btn').length, t: window.__colmap.transform(),
+      sw: document.documentElement.scrollWidth, pressed: document.getElementById('mapFull').getAttribute('aria-pressed') };
+  });
+  const near = (a, b) => Math.abs(a - b) <= 1;
+  check(`M12 ${tag}: ⤢ fills the window with the map card`, g.full && g.pressed === 'true' && near(g.card.l, 0) && near(g.card.t, 0) && near(g.card.w, g.W) && near(g.card.h, g.H),
+    `card ${g.card.w.toFixed(0)}x${g.card.h.toFixed(0)} in ${g.W}x${g.H}`);
+  check(`M12 ${tag}: the map takes most of the screen and the canvas follows it`, g.wrap.h > g.H * 0.55 && g.wrap.h > inPage && near(g.t.vw, g.wrap.w - 2) && near(g.t.vh, g.wrap.h - 2) && g.wrap.b <= g.H + 1,
+    `map ${g.wrap.w.toFixed(0)}x${g.wrap.h.toFixed(0)} (was ${inPage.toFixed(0)} tall), canvas ${g.t.vw}x${g.t.vh}`);
+  const above = b => b && b.h > 0 && b.b <= g.wrap.t + 1 && b.l >= -1 && b.r <= g.W + 1;
+  check(`M12 ${tag}: the legend and View selector stay on screen above the map`, /^Living cost against .+, for the same lifestyle$/.test(g.titleText) && above(g.title) && above(g.bar) && above(g.view) && g.views >= 2,
+    `"${g.titleText}", ${g.views} views`);
+  check(`M12 ${tag}: the zoom buttons sit inside the map, nothing pushed sideways`, g.zoom.t >= g.wrap.t && g.zoom.b <= g.wrap.b && g.zoom.r <= g.wrap.r && g.sw <= g.W, `page ${g.sw}px wide`);
+  // Switching the view in full screen keeps it full and redraws the labels.
+  const v0 = await page.evaluate(() => window.__colmap.view());
+  const other = await page.$$eval('#viewGroup .seg-btn', bs => (bs.find(b => !b.classList.contains('active')) || {}).dataset.val);
+  await page.click(`#viewGroup .seg-btn[data-val="${other}"]`); await page.waitForTimeout(250);
+  const v1 = await page.evaluate(() => ({ v: window.__colmap.view(), full: window.__colmap.full() }));
+  check(`M12 ${tag}: the View selector works in full screen`, v1.full && v1.v === other && v1.v !== v0, `${v0} → ${v1.v}`);
+  await page.click(`#viewGroup .seg-btn[data-val="${v0}"]`); await page.waitForTimeout(150);
+  if(tag === 'desktop'){
+    const k0 = (await page.evaluate(() => window.__colmap.transform())).k, sy0 = await page.evaluate(() => scrollY);
+    await page.mouse.move(g.wrap.l + g.wrap.w / 2, g.wrap.t + g.wrap.h / 2); await page.mouse.wheel(0, -300); await page.waitForTimeout(250);
+    const k1 = (await page.evaluate(() => window.__colmap.transform())).k, sy1 = await page.evaluate(() => scrollY);
+    check('M12 desktop: a plain wheel zooms the full-screen map', k1 > k0 * 1.2 && sy1 === sy0, `k ${k0.toFixed(3)} → ${k1.toFixed(3)}`);
+    const key = 'Perth|Australia';
+    await page.evaluate(k => window.__colmap.flyTo(k, 0), key); await page.waitForTimeout(250);
+    const [px, py] = await page.evaluate(k => window.__colmap.screenOf(k), key);
+    await page.mouse.click(g.wrap.l + 1 + px, g.wrap.t + 1 + py); await page.waitForTimeout(200);
+    const pinned = await page.evaluate(() => !!window.__colmap.card());
+    await page.keyboard.press('Escape'); await page.waitForTimeout(150);
+    const e1 = await page.evaluate(() => ({ card: !!window.__colmap.card(), full: window.__colmap.full() }));
+    check('M12 desktop: Esc closes a pinned card first and keeps the map full', pinned && !e1.card && e1.full);
+    await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+  } else {
+    await page.click('#mapFull'); await page.waitForTimeout(300);
+  }
+  const back = await page.evaluate(() => ({ full: window.__colmap.full(), h: document.getElementById('mapWrap').getBoundingClientRect().height,
+    lock: document.documentElement.classList.contains('map-full-open'), pressed: document.getElementById('mapFull').getAttribute('aria-pressed') }));
+  check(`M12 ${tag}: ${tag === 'desktop' ? 'Esc' : 'the button'} puts the map back in the page`, !back.full && !back.lock && back.pressed === 'false' && Math.abs(back.h - inPage) <= 1,
+    `map ${back.h.toFixed(0)} tall again`);
+}
+
 // ── Phone ────────────────────────────────────────────────────────────────
 {
   const { ctx, page: pp } = await openMap({ viewport: { width: 390, height: 844 } });
   await pp.click('.quick-start-btn[data-preset="sg"]'); await pp.waitForTimeout(500);
   const w = await pp.evaluate(() => document.documentElement.scrollWidth);
   check('M  a phone (390px) gets no sideways scroll', w <= 390, 'page is ' + w + 'px wide');
+  await fullScreenChecks(pp, 'phone');
   await ctx.close();
 }
 
