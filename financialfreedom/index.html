@@ -14,20 +14,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Financial Freedom Calculator | Adjie Brotools</title>
-<meta name="description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
+<meta name="description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band for good and bad markets.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/financialfreedom/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Financial Freedom Calculator">
-<meta property="og:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
+<meta property="og:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band for good and bad markets.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/financialfreedom/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Financial Freedom Calculator">
-<meta name="twitter:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a Monte Carlo confidence band.">
+<meta name="twitter:description" content="Work out the pot you need before you can stop working, and the age you actually reach it. Inflation-adjusted, with a confidence band for good and bad markets.">
 
 <script type="application/ld+json">
 {
@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "Financial Freedom Calculator",
   "url": "https://tool.adjiebrotots.com/financialfreedom/",
-  "description": "Work out the pot you need before you can stop working, and the age you actually reach it. Three definitions of financial freedom, inflation-adjusted, with a Monte Carlo confidence band.",
+  "description": "Work out the pot you need before you can stop working, and the age you actually reach it. Three definitions of financial freedom, inflation-adjusted, with a confidence band for good and bad markets.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -84,7 +84,7 @@
       "name": "Will my money last if I retire early?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A single average return hides the risk that the bad years land just as you stop working. The Financial Freedom Calculator runs thousands of simulated futures from your return and your volatility to give a success probability, and shows the pot needed for 90 percent confidence. Free at https://tool.adjiebrotots.com/financialfreedom/."
+        "text": "A single average return hides the risk that the bad years land just as you stop working. The Financial Freedom Calculator works out the spread of futures from your return and your volatility, weighing a bad year by how much money it hits, to give a success probability, and shows the pot needed for 90 percent confidence. Free at https://tool.adjiebrotots.com/financialfreedom/."
       }
     }
   ]
@@ -404,8 +404,8 @@
   </div>
 
   <!-- ── Assumptions ──
-       The guesses about the future, last: what prices do, and how the
-       simulated futures are drawn. Ids keep their old names (tab-settings),
+       The guesses about the future, last: what prices do, and how sure
+       the answer has to be. Ids keep their old names (tab-settings),
        so a saved tab and every saved field still land. -->
   <div class="ctrl-panel" id="tab-settings">
     <div class="field-group">
@@ -418,22 +418,14 @@
     </div>
 
     <div class="field-group">
-      <div class="group-title">Simulation</div>
+      <div class="group-title">Risk</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Simulated futures <i class="tip-icon" data-tip="How many random paths the band and the probability are built from.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="paths" type="number" inputmode="numeric" min="100" max="5000" step="100" value="1000"/><span class="suffix">paths</span></div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Investment outcome chance <i class="tip-icon" data-tip="The Investment outcome line is reached or beaten in at least this share of simulated futures. 50% is the expected return; 90% is cautious.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Investment outcome chance <i class="tip-icon" data-tip="The Investment outcome line is reached or beaten in at least this share of futures. 50% is the expected return; 90% is cautious.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix" id="chance" type="number" inputmode="numeric" min="50" max="99" step="1" value="50"/><span class="suffix">%</span></div>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Confidence level <i class="tip-icon" data-tip="The share of simulated futures the confidence pot has to survive.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Confidence level <i class="tip-icon" data-tip="The share of futures the confidence pot has to survive.">?</i></span></div>
         <div class="currency-wrap"><input class="currency-input has-suffix" id="confidence" type="number" inputmode="numeric" min="50" max="99" step="1" value="90"/><span class="suffix">%</span></div>
-      </div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Random seed <i class="tip-icon" data-tip="The same seed gives the same simulated futures.">?</i></span></div>
-        <input class="num-input" id="seed" type="number" inputmode="numeric" min="1" step="1" value="20260921" data-unitless data-unbounded/>
       </div>
     </div>
   </div>
@@ -534,7 +526,7 @@
         <div class="sub" id="mHaveSub"></div>
       </div>
       <div class="metric card">
-        <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of simulated futures in which the money lasts. Plan around the confidence pot named underneath, not the expected-return figure.">?</i></span></div>
+        <div class="label"><span class="tip-wrap">Chance it works <i class="tip-icon" data-tip="The share of futures in which the money lasts. Plan around the confidence pot named underneath, not the expected-return figure.">?</i></span></div>
         <div class="value" id="mSuccess">—</div>
         <div class="sub" id="mSuccessSub"></div>
       </div>

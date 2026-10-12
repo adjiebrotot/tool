@@ -57,7 +57,7 @@ window.__TOUR = {
             'historical figures, or type a ticker and ' +
             'press <strong>Fetch</strong> to measure them from real prices. ' +
             '<strong>Volatility</strong> decides how wide the range of outcomes is, ' +
-            'and it is what puts a crash into some of the simulated futures.'
+            'and it is what puts a crash into some of the futures.'
     },
     {
       target: '#tab-goal',
@@ -80,14 +80,14 @@ window.__TOUR = {
       title: '⑤ The guesses about the future',
       body: '<strong>Assumptions</strong> comes last because nobody knows these for sure: ' +
             '<strong>inflation</strong>, which lifts your spending and the pot you need with ' +
-            'it, and how the <strong>simulated futures</strong> are drawn. The note under ' +
+            'it, and how sure the <strong>Investment outcome</strong> and the pot have to be. The note under ' +
             'inflation shows what it does to your own spending by the time you stop.'
     },
     {
       target: '#simBtn',
       title: '⑥ Then press Simulate',
-      body: 'A thousand simulated futures is real work, so the page does not redo it on ' +
-            'every keystroke. Set the whole plan first (the form keeps up as you type), ' +
+      body: 'The page does not redo the answer on every keystroke. ' +
+            'Set the whole plan first (the form keeps up as you type), ' +
             'then press <strong>Simulate</strong> to run it. While anything is unanswered ' +
             'the results below step back and this button lights up, so you never read a ' +
             'verdict that belongs to numbers you have already changed. ' +
@@ -105,7 +105,7 @@ window.__TOUR = {
             'as you get older because there are fewer years left to fund. The blue line is ' +
             'what your investment grows to, and <strong>nothing is ever withdrawn from it ' +
             'here</strong>. <strong>Where they cross is your answer.</strong> The band is the ' +
-            'range of simulated futures and the dotted line is what you have put in, so the ' +
+            'range of likely futures and the dotted line is what you have put in, so the ' +
             'gap between them is the growth doing the work. <strong>Show in today\u2019s ' +
             'money</strong>, beside the heading, reads every figure on the page in today\u2019s ' +
             'money or in the money of each year.'

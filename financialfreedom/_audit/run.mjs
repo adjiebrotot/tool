@@ -338,6 +338,200 @@ function refClosedForm(p){
   return p.mode === 'legacy' ? annuity + p.legacy / Math.pow(1 + rm, n) : annuity;
 }
 
+/* ── Steps 8, 9 and 12: the spread of outcomes ──────────────────────────────
+   The page reads every percentile off ONE standard normal factor per horizon
+   and writes each term's conditional mean in closed form from running sums.
+   The replay writes the same thing as textbook Gaussian conditioning: for each
+   term, the covariance of its log with the factor, over the factor's
+   variance, is the regression slope, and what that slope leaves unexplained is
+   the residual variance, half of which a lognormal's mean adds back:
+
+     E[e^X | L = l] = exp(E X + Cov(X, L) / Var L * l + (Var X - Cov(X, L)^2 / Var L) / 2)
+
+   The weights are written differently too. The page carries the expected
+   balance forward and discounts it month by month; the replay takes the money
+   at stake over month j, in today's value, as the present value of every
+   amount landed by then, u(j) = sum over k <= j of a(k) / (1 + rm)^k, which
+   is the same number only if both readings of step 8 are right. The normal
+   distribution is the replay's own: the density integrated by Simpson's rule
+   and inverted by bisection, where the page uses rational approximations. */
+function refPhi(x){
+  if(x < 0) return 1 - refPhi(-x);
+  if(x > 12) return 1;
+  const n = 2000, h = x / n, f = t => Math.exp(-t * t / 2);
+  let s = f(0) + f(x);
+  for(let k = 1; k < n; k++) s += (k % 2 ? 4 : 2) * f(k * h);
+  return 0.5 + s * h / 3 / Math.sqrt(2 * Math.PI);
+}
+function refPhiInv(q){
+  let lo = -12, hi = 12;
+  for(let k = 0; k < 80; k++){ const m = (lo + hi) / 2; if(refPhi(m) < q) lo = m; else hi = m; }
+  return (lo + hi) / 2;
+}
+const REF_BAND_Z = refPhiInv(0.9);
+
+// u(j) for j < n: the present value of every amount landed by month j.
+function refExposure(p, amounts, n){
+  const u = [];
+  let pv = 0;
+  for(let j = 0; j < n; j++){ pv += (amounts[j] || 0) / Math.pow(1 + p.rm, j); u.push(pv); }
+  return u;
+}
+
+/* The stream's value at month T when its own factor is at z standard
+   deviations: each amount a(k), grown over months k..T-1, conditioned on
+   L = sum over j < T of u(j) * eps(j), eps(j) the month's log return. */
+function refStream(p, amounts, T, z){
+  const mu = Math.log(1 + p.rr) / 12, v = p.sigma * p.sigma / 12;
+  if(v === 0){
+    let W = 0;
+    for(let k = 0; k <= T; k++) W += (amounts[k] || 0) * Math.pow(1 + p.rm, T - k);
+    return W;
+  }
+  const u = refExposure(p, amounts, T);
+  const varL = v * u.reduce((s, x) => s + x * x, 0), l = z * Math.sqrt(varL);
+  // cov(k) = v * (u(k) + ... + u(T-1)), built from the end backwards.
+  const covFrom = new Array(T + 1).fill(0);
+  for(let j = T - 1; j >= 0; j--) covFrom[j] = covFrom[j + 1] + v * u[j];
+  let W = 0;
+  for(let k = 0; k <= T; k++){
+    const a = amounts[k] || 0;
+    if(!a) continue;
+    const cov = covFrom[k], m = T - k, slope = varL > 0 ? cov / varL : 0;
+    W += a * Math.exp(mu * m + slope * l + (v * m - slope * cov) / 2);
+  }
+  return W;
+}
+
+// Section 1's stream, from the replay's own savings.
+function refAccAmounts(p, n){
+  const a = [p.A0];
+  for(let t = 0; t < n; t++) a.push(refSavings(p, t));
+  return a;
+}
+const refBandAt = (p, T, z) => refStream(p, refAccAmounts(p, T), T, z);
+
+/* Step 12: the chance line at month T, the expected balance capped. */
+function refChanceAt(p, T, chance){
+  const det = refAccum(p, T);
+  if(!(chance > 50 && p.sigma > 0) || T === 0) return det;
+  return Math.min(det, refBandAt(p, T, -refPhiInv(chance / 100)));
+}
+
+/* Step 9, the requirement at factor score z, by the replay's BACKWARD walk on
+   the conditional discount factors. The goal's terminal condition comes from
+   the goal itself, as in refFan; the walk floors at zero, as refRequired does. */
+function refRequiredAt(p, z){
+  const ra = p.ageRetire, n = Math.max(1, mo(ra, refHorizon(p)));
+  const draw = t => refRetired(p, ra + t / 12) - refPension(p, ra + t / 12);
+  let target = p.mode === 'legacy' ? Math.max(0, p.legacy) : 0;
+  if(p.mode === 'rich'){
+    const net = refRetired(p, refHorizon(p)) - refPension(p, refHorizon(p));
+    target = net <= 0 ? 0 : (p.rm > 0 ? net * (1 + p.rm) / p.rm : Infinity);
+  }
+  if(!isFinite(target)) return Infinity;
+  const expected = refRequired(p, ra);
+  const mu = Math.log(1 + p.rr) / 12, v = p.sigma * p.sigma / 12;
+  const amounts = [];
+  for(let t = 0; t < n; t++) amounts.push(-draw(t));
+  amounts[0] += expected;
+  const u = refExposure(p, amounts, n);
+  const varL = v * u.reduce((s, x) => s + x * x, 0), l = z * Math.sqrt(varL);
+  // D(t) = E[1 / G(0, t) | L = l], the log of 1 / G(0, t) being -sum eps(j).
+  const D = [1];
+  let cov = 0;
+  for(let t = 1; t <= n; t++){
+    cov += v * u[t - 1];
+    const slope = varL > 0 ? cov / varL : 0;
+    D.push(Math.exp(-mu * t - slope * l + (v * t - slope * cov) / 2));
+  }
+  let W = target * D[n];
+  for(let t = n - 1; t >= 0; t--){
+    W += draw(t) * D[t];
+    if(W < 0) W = 0;
+  }
+  return W;
+}
+
+/* The cashflow band: the pot the plan reaches by the slider age (the
+   expected line's, or the chance line's), then the replay's own flows. */
+function refFanEdges(p, chance){
+  const accM = refAccMonths(p), total = Math.max(1, mo(p.ageNow, p.ageDie));
+  if(accM >= total) return null;
+  const line = refLifetime(p);
+  const pot = refChanceAt(p, accM, chance);
+  const amounts = [];
+  for(let t = accM; t < total; t++) amounts.push(refIncome(p, t) - refSpend(p, t));
+  amounts[0] += pot;
+  const years = Math.max(1, Math.round(total / 12)), start = Math.floor(accM / 12);
+  const edges = {p10: [], p90: []};
+  for(let y = start; y <= years; y++){
+    const at = Math.min(y * 12, total);
+    if(at <= accM){ const v = refChanceAt(p, at, chance); edges.p10.push(v); edges.p90.push(v); continue; }
+    // The balance at T is read before that month's draw comes out.
+    const before = amounts.slice(0, at - accM);
+    edges.p10.push(refStream(p, before, at - accM, -REF_BAND_Z));
+    edges.p90.push(refStream(p, before, at - accM, REF_BAND_Z));
+  }
+  return {edges, start, years, line, pot};
+}
+
+/* The card, from the replay's requirement: the chance a pot W lasts is the
+   probability the factor lands where the requirement is at or below W. */
+function refSuccess(p, W){
+  if(p.sigma === 0) return W >= refRequired(p, p.ageRetire) - 1e-6 ? 1 : 0;
+  if(!(W >= refRequiredAt(p, 8))) return 0;
+  if(W >= refRequiredAt(p, -8)) return 1;
+  let lo = -8, hi = 8;
+  for(let k = 0; k < 70; k++){ const m = (lo + hi) / 2; if(refRequiredAt(p, m) <= W) hi = m; else lo = m; }
+  return 1 - refPhi(hi);
+}
+
+/* An honest Monte Carlo, the replay's own: a seeded LCG feeding Box-Muller,
+   nothing borrowed from the page. Step 8 is an approximation, and this is
+   what says how good: the percentiles it reads off one factor against the
+   ones thousands of real futures give. */
+function refSimulate(p, nPaths, seed){
+  let s = seed >>> 0;
+  const unif = () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return (s + 0.5) / 4294967296; };
+  const normal = () => Math.sqrt(-2 * Math.log(unif())) * Math.cos(2 * Math.PI * unif());
+  const mu = Math.log(1 + p.rr) / 12, sd = p.sigma * Math.sqrt(1 / 12);
+  const total = Math.max(1, mo(p.ageNow, p.ageDie)), years = Math.max(1, Math.round(total / 12));
+  const ra = p.ageRetire, n = Math.max(1, mo(ra, refHorizon(p)));
+  const draw = t => refRetired(p, ra + t / 12) - refPension(p, ra + t / 12);
+  let target = p.mode === 'legacy' ? Math.max(0, p.legacy) : 0;
+  if(p.mode === 'rich'){
+    const net = refRetired(p, refHorizon(p)) - refPension(p, refHorizon(p));
+    target = net <= 0 ? 0 : net * (1 + p.rm) / p.rm;
+  }
+  const sav = [];
+  for(let t = 0; t < years * 12; t++) sav.push(refSavings(p, t));
+  const acc = Array.from({length: years + 1}, () => []), pots = [];
+  for(let k = 0; k < nPaths; k++){
+    let W = p.A0;
+    acc[0].push(W);
+    for(let t = 0; t < years * 12; t++){
+      W = W * Math.exp(mu + sd * normal()) + sav[t];
+      if((t + 1) % 12 === 0) acc[(t + 1) / 12].push(W);
+    }
+    // The requirement on a fresh future, by the backward walk.
+    const g = [];
+    for(let t = 0; t < n; t++) g.push(Math.exp(mu + sd * normal()));
+    let R = target;
+    for(let t = n - 1; t >= 0; t--){ R = R / g[t] + draw(t); if(R < 0) R = 0; }
+    pots.push(R);
+  }
+  acc.forEach(c => c.sort((a, b) => a - b));
+  pots.sort((a, b) => a - b);
+  const at = (c, q) => c[Math.min(c.length - 1, Math.max(0, Math.ceil(q * c.length) - 1))];
+  return {
+    years,
+    band: q => acc.map(c => at(c, q)),
+    potAt: q => at(pots, q),
+    success: W => pots.filter(x => x <= W).length / pots.length
+  };
+}
+
 /* ── DRIVE THE PAGE ────────────────────────────────────────────────────── */
 
 const browser = await chromium.launch({args: ['--allow-file-access-from-files']});
@@ -546,55 +740,84 @@ for(const savingsMode of ['savings', 'income']){
     `accumulated rising: ${shape.accUp}, required falling: ${shape.needDown}`);
 }
 
-console.log('\n── Randomness ──');
+console.log('\n── The spread of outcomes ──');
 
-// F12: zero volatility has to collapse the whole stochastic layer exactly, and
-//      the band has to wrap the line it is drawn around: the ACCUMULATION, not
-//      the drawdown, because section 1 never withdraws.
+// F12: zero volatility has to collapse the whole spread exactly, and the band
+//      has to wrap the line it is drawn around: the ACCUMULATION, not the
+//      drawdown, because section 1 never withdraws.
 {
-  const ui = Object.assign({}, base, {std: 0, paths: 200});
+  const ui = Object.assign({}, base, {std: 0});
   const r = await engine(ui, `(function(){
-    var mc = F.accumBands(P, {paths: ui.paths, seed: ui.seed});
+    var mc = F.accumBands(P);
     var acc = F.accumulationSeries(P).balance;
     var years = mc.years, worst = 0, y;
     for(y = 0; y <= years; y++){
       worst = Math.max(worst,
-        Math.abs(mc.bands.p10[y] - mc.bands.p90[y]),
+        Math.abs(mc.bands.p10[y] - acc[y * 12]),
+        Math.abs(mc.bands.p90[y] - acc[y * 12]),
         Math.abs(mc.bands.p50[y] - acc[y * 12]));
     }
-    return {worst: worst};
+    var reqs = F.potRequirements(P), need = F.requiredPot(P, P.ageRetire);
+    return {worst: worst, conf: reqs.atConfidence(90) - need, conf55: reqs.atConfidence(55) - need,
+            above: reqs.successAt(need + 1), below: reqs.successAt(need - 1)};
   })()`);
   check('F12 at zero volatility every percentile equals the deterministic accumulation',
     r.worst < 1e-6, `largest gap ${r.worst.toExponential(2)}`);
-  const potGap = await engine(ui, `(function(){
-    var reqs = F.potRequirements(P, {paths: ui.paths, seed: ui.seed});
-    return Math.abs(reqs.sorted[0] - reqs.sorted[reqs.sorted.length - 1]);
-  })()`);
-  check('F12b and every simulated path needs the same pot', potGap < 1e-6,
-    `spread ${potGap.toExponential(2)}`);
+  check('F12b and every confidence level needs the expected pot, which either lasts or does not',
+    Math.abs(r.conf) < 1e-6 && Math.abs(r.conf55) < 1e-6 && r.above === 1 && r.below === 0,
+    `gaps ${r.conf.toExponential(1)} / ${r.conf55.toExponential(1)}, chance ${r.below} below and ${r.above} above`);
 }
 
-// F13: same seed, same answer. Different seed, a different one.
+// F13: the band against the replay's Gaussian conditioning, year by year, on
+//      plans that stress the weights: savings that grow, a net income that
+//      goes negative, a stage that stops the saving, no assets at all, and a
+//      lump sum with nothing added, where the one factor is the whole return
+//      and the band is the exact lognormal percentile.
 {
-  const ui = Object.assign({}, base, {paths: 300});
-  const band = n => `F.accumBands(P, {paths: 300, seed: ${n}}).bands.p10.join(',')`;
-  const a = await engine(ui, band(12345));
-  const b = await engine(ui, band(12345));
-  const c = await engine(ui, band(999));
-  check('F13 the same seed reproduces the same band exactly', a === b);
-  check('F13b a different seed moves it', a !== c);
-  const s1 = await engine(ui, 'F.potRequirements(P, {paths: 300, seed: 12345}).successAt(F.requiredPot(P, P.ageRetire))');
-  const s2 = await engine(ui, 'F.potRequirements(P, {paths: 300, seed: 12345}).successAt(F.requiredPot(P, P.ageRetire))');
-  const s3 = await engine(ui, 'F.potRequirements(P, {paths: 300, seed: 999}).successAt(F.requiredPot(P, P.ageRetire))');
-  check('F13c and the success rate with it', s1 === s2 && s1 !== s3, `${s1} / ${s3}`);
+  const plans = {
+    'defaults': {},
+    'net income, a costly stage': {savingsMode: 'income', savings: 70000, expenseMode: 'detailed',
+      stages: [{name: 'Kids', from: 35, to: 55, amount: 160, period: 'pct'}]},
+    'nothing invested yet': {assets: 0},
+    'a volatile portfolio': {std: 30, ret: 11},
+    'a lump sum, nothing added': {savings: 0, assets: 250000}
+  };
+  const bad = [];
+  for(const [name, over] of Object.entries(plans)){
+    const ui = Object.assign({}, base, over), p = refParams(ui);
+    const pg = await engine(ui, 'F.accumBands(P)');
+    for(let y = 0; y <= pg.years; y += 1){
+      const lo = refBandAt(p, y * 12, -REF_BAND_Z), hi = refBandAt(p, y * 12, REF_BAND_Z);
+      const w = Math.max(Math.abs(pg.bands.p10[y] - lo), Math.abs(pg.bands.p90[y] - hi)) / Math.max(1, Math.abs(hi));
+      if(!(w < 1e-9)){ bad.push(`${name}, year ${y} (${w.toExponential(1)})`); break; }
+    }
+  }
+  check(`F13 the section 1 band is the replay's, year by year, on ${Object.keys(plans).length} plans`,
+    bad.length === 0, bad.join(', ') || 'agrees to 1e-9 everywhere');
+  const ui = Object.assign({}, base, plans['a lump sum, nothing added']), p = refParams(ui);
+  const pg = await engine(ui, 'F.accumBands(P)');
+  const mu = Math.log(1 + p.rr) / 12, s = p.sigma * Math.sqrt(1 / 12);
+  let worst = 0;
+  for(let y = 1; y <= pg.years; y++){
+    const T = y * 12, z = REF_BAND_Z * s * Math.sqrt(T);
+    worst = Math.max(worst, Math.abs(pg.bands.p10[y] / (p.A0 * Math.exp(mu * T - z)) - 1),
+                            Math.abs(pg.bands.p90[y] / (p.A0 * Math.exp(mu * T + z)) - 1));
+  }
+  check('F13b a lump sum with nothing added gets the exact lognormal percentiles',
+    worst < 1e-9, `worst relative gap ${worst.toExponential(1)}`);
+  const again = await engine(Object.assign({}, base), 'JSON.stringify([F.accumBands(P), F.potRequirements(P).atConfidence(90)])');
+  const once = await engine(Object.assign({}, base), 'JSON.stringify([F.accumBands(P), F.potRequirements(P).atConfidence(90)])');
+  check('F13c nothing is random: every run gives the same band and the same pot', again === once);
 }
 
-// F14: success probability must never fall as the pot grows. This is what the
-//      common-random-numbers design buys, and the confidence pot relies on it.
+// F14: the card. Success must never fall as the pot grows, the confidence pot
+//      must be exactly the pot that succeeds that often, and both must be the
+//      replay's, which walks the requirement BACKWARDS on its own conditional
+//      discount factors and inverts its own normal distribution.
 {
-  const ui = Object.assign({}, base, {paths: 400});
+  const ui = Object.assign({}, base);
   const r = await engine(ui, `(function(){
-    var reqs = F.potRequirements(P, {paths: 400, seed: ui.seed});
+    var reqs = F.potRequirements(P);
     var need = F.requiredPot(P, P.ageRetire), k, prev = -1, ok = true, rates = [];
     for(k = 0; k <= 20; k++){
       var s = reqs.successAt(need * k / 10);
@@ -602,38 +825,89 @@ console.log('\n── Randomness ──');
       if(s < prev - 1e-12) ok = false;
       prev = s;
     }
-    return {ok: ok, first: rates[0], last: rates[rates.length - 1],
-            atNeed: reqs.successAt(need), conf: reqs.atConfidence(90),
-            confSuccess: reqs.successAt(reqs.atConfidence(90))};
+    var inv = 0;
+    [55, 75, 90, 95, 99].forEach(function(c){ inv = Math.max(inv, Math.abs(reqs.successAt(reqs.atConfidence(c)) - c / 100)); });
+    return {ok: ok, first: rates[0], last: rates[rates.length - 1], need: need,
+            atNeed: reqs.successAt(need), conf: reqs.atConfidence(90), inv: inv,
+            at15: reqs.successAt(need * 1.15)};
   })()`);
   check('F14 success probability is monotone in the pot', r.ok,
     `from ${(r.first * 100).toFixed(0)}% to ${(r.last * 100).toFixed(0)}%`);
-  check('F14b the 90% confidence pot really does survive at least 90% of paths',
-    r.confSuccess >= 0.9 - 1e-9, `${(r.confSuccess * 100).toFixed(1)}%`);
+  check('F14b the confidence pot succeeds exactly as often as asked, at every level',
+    r.inv < 1e-6, `worst gap ${r.inv.toExponential(1)}`);
   check('F14c and it is larger than the expected-return pot, which is near a coin flip',
-    r.conf > 0 && r.atNeed < 0.75,
-    `confidence pot ${r.conf.toFixed(0)}, success at the amount needed ${(r.atNeed * 100).toFixed(1)}%`);
+    r.conf > r.need && r.atNeed > 0.35 && r.atNeed < 0.75,
+    `confidence pot ${r.conf.toFixed(0)} over ${r.need.toFixed(0)}, success at the amount needed ${(r.atNeed * 100).toFixed(1)}%`);
+  const p = refParams(ui);
+  const want = refRequiredAt(p, -refPhiInv(0.9));
+  const sAt = refSuccess(p, r.need), s15 = refSuccess(p, r.need * 1.15);
+  check('F14d the confidence pot and the chance are the replay\'s',
+    Math.abs(r.conf / want - 1) < 1e-7 && Math.abs(r.atNeed - sAt) < 1e-6 && Math.abs(r.at15 - s15) < 1e-6,
+    `pot ${r.conf.toFixed(2)} vs ${want.toFixed(2)}, chance ${r.atNeed.toFixed(6)} vs ${sAt.toFixed(6)}, ${r.at15.toFixed(6)} vs ${s15.toFixed(6)}`);
 }
 
-// F15: the growth factors are the documented log-normal, with the CAGR as drift.
+// F14e: the requirement against the replay on goals and incomes that bend it:
+//       a bequest, Die Rich on a frozen pension that starts after you stop, a
+//       stage still running at the horizon, and Detailed Money in.
 {
-  const ui = Object.assign({}, base);
-  const r = await engine(ui, `(function(){
-    var rng = F.mulberry32(F.deriveSeed(7, 'x'));
-    var g = F.growthSeries(P, rng, 240000);
-    var s = 0, ss = 0, i;
-    for(i = 0; i < g.length; i++){ var l = Math.log(g[i]); s += l; ss += l * l; }
-    var mean = s / g.length;
-    var sd = Math.sqrt(ss / g.length - mean * mean);
-    return {mean: mean, sd: sd,
-            wantMean: Math.log(1 + P.rr) / 12, wantSd: P.sigma * Math.sqrt(1 / 12)};
-  })()`);
-  check('F15 log growth has the documented drift ln(1+rr)/12',
-    Math.abs(r.mean - r.wantMean) < r.wantSd * 0.02,
-    `got ${r.mean.toExponential(3)}, want ${r.wantMean.toExponential(3)}`);
-  check('F15b and the documented monthly standard deviation',
-    Math.abs(r.sd - r.wantSd) / r.wantSd < 0.02,
-    `got ${r.sd.toFixed(6)}, want ${r.wantSd.toFixed(6)}`);
+  const plans = {
+    'Leave a Legacy': {mode: 'legacy', legacy: 750000},
+    'Die Rich, frozen pension after the bridge': {mode: 'rich', pensionOn: true, pensionStartAge: 67,
+      pensionAmount: 20000, pensionIndexed: false, ret: 8},
+    'Just Die, an indexed pension': {pensionOn: true, pensionStartAge: 62, pensionAmount: 25000},
+    'a stage in retirement': {expenseMode: 'detailed', stages: [{name: 'Travel', from: 60, to: 70, amount: 140, period: 'pct'}]},
+    'Detailed Money in, a part-time stage kept': {incomeMode: 'detailed',
+      inStages: [{name: 'Part time', from: 55, to: 65, amount: 20000, period: 'yearly', growth: 2.5, keeps: true}]}
+  };
+  const bad = [];
+  for(const [name, over] of Object.entries(plans)){
+    const ui = Object.assign({}, base, {ageRetire: 55}, over), p = refParams(ui);
+    const r = await engine(ui, `(function(){
+      var q = F.potRequirements(P), need = F.requiredPot(P, P.ageRetire);
+      return {c90: q.atConfidence(90), c60: q.atConfidence(60), s: q.successAt(need * 1.1)};
+    })()`);
+    const c90 = refRequiredAt(p, -refPhiInv(0.9)), c60 = refRequiredAt(p, -refPhiInv(0.6));
+    const s = refSuccess(p, refRequired(p, p.ageRetire) * 1.1);
+    const w = Math.max(Math.abs(r.c90 / c90 - 1), Math.abs(r.c60 / c60 - 1));
+    if(!(w < 1e-7) || !(Math.abs(r.s - s) < 1e-6)) bad.push(`${name}: pot ${w.toExponential(1)}, chance ${r.s.toFixed(5)} vs ${s.toFixed(5)}`);
+  }
+  check(`F14e the requirement is the replay's on ${Object.keys(plans).length} goals and incomes`,
+    bad.length === 0, bad.join('; ') || 'agrees everywhere');
+}
+
+// F15: how good the approximation is. Step 8 claims a confidence pot within
+//      about 1% and a chance within about a point of what thousands of futures
+//      give. The replay simulates 4,000 of its own and holds the page to a
+//      little more than that, sampling noise included.
+{
+  const plans = {
+    'defaults at 47': {ageRetire: 47},
+    'Leave a Legacy at 50': {mode: 'legacy', legacy: 500000, ageRetire: 50},
+    'Die Rich at 55, a volatile portfolio': {mode: 'rich', std: 22, ret: 10, ageRetire: 55},
+    'net income with a pension at 60': {savingsMode: 'income', savings: 110000, ageRetire: 60,
+      pensionOn: true, pensionStartAge: 67, pensionAmount: 25000}
+  };
+  const bad = [], seen = [];
+  let k = 0;
+  for(const [name, over] of Object.entries(plans)){
+    const ui = Object.assign({}, base, over), p = refParams(ui);
+    const mc = refSimulate(p, 4000, 9001 + k++);
+    const r = await engine(ui, `(function(){
+      var q = F.potRequirements(P), b = F.accumBands(P), need = F.requiredPot(P, P.ageRetire);
+      return {c90: q.atConfidence(90), c75: q.atConfidence(75), s: q.successAt(need), s20: q.successAt(need * 1.2),
+              need: need, p10: b.bands.p10, p90: b.bands.p90};
+    })()`);
+    const potGap = Math.max(Math.abs(r.c90 / mc.potAt(0.9) - 1), Math.abs(r.c75 / mc.potAt(0.75) - 1));
+    const chanceGap = Math.max(Math.abs(r.s - mc.success(r.need)), Math.abs(r.s20 - mc.success(r.need * 1.2)));
+    let bandGap = 0;
+    const lo = mc.band(0.1), hi = mc.band(0.9);
+    for(const y of [5, 10, 20, 30]) if(y <= mc.years)
+      bandGap = Math.max(bandGap, Math.abs(r.p10[y] / lo[y] - 1), Math.abs(r.p90[y] / hi[y] - 1));
+    seen.push(`${name}: pot ${(potGap * 100).toFixed(1)}%, chance ${(chanceGap * 100).toFixed(1)} pts, band ${(bandGap * 100).toFixed(1)}%`);
+    if(!(potGap < 0.035 && chanceGap < 0.03 && bandGap < 0.05)) bad.push(seen[seen.length - 1]);
+  }
+  check('F15 against 4,000 simulated futures: pot within 3.5%, chance within 3 points, band within 5%',
+    bad.length === 0, (bad.length ? bad : seen).join('; '));
 }
 
 console.log('\n── Ticker statistics ──');
@@ -2132,106 +2406,28 @@ for(const [name, extra] of [
 
 console.log('\n── The range of balances ──');
 
-/* F66: the cashflow balance carries a shaded range now, from the worst tenth
-   of the simulated futures to the best. It is the "Chance it works" card drawn
-   out, so it is held to the card rather than to itself:
+/* F66: the cashflow balance carries a shaded range, from the worst tenth of
+   the futures to the best. It is the "Chance it works" card drawn out, so it
+   is held to the replay and to the card rather than to itself:
 
-   - the band is REPLAYED here from the replay's own flows and its own
-     recurrence (refLifetime for the pot, refIncome/refSpend for the draws),
-     taking nothing from the page but the random draws themselves, which are
-     the page's by definition;
-   - the paths the replay finds funded (never below zero after a draw, and
-     on the goal's terminal condition at the horizon) are counted, and that
-     count has to BE the card's figure, path for path. The card is scored by
-     the page's affine required-pot solve; the replay never solves a pot at
-     all, it only walks the money forward, so agreement is two formulations
-     agreeing on which futures work;
-   - and the shading has to say what the card says: on a plan whose failed
-     futures stay failed, the worst-tenth edge ends above zero (above the
-     bequest, for Leave a Legacy) exactly when more than nine futures in ten
-     work. */
+   - the band is REPLAYED here from the replay's own flows, its own pot at
+     retirement (refLifetime, or refChanceAt for a chance above 50%) and its
+     own Gaussian conditioning (refStream), taking nothing from the page;
+   - the card is replayed by walking the requirement backwards on the
+     replay's conditional discount factors and inverting its own normal
+     distribution (refSuccess);
+   - and the shading has to say what the card says: the worst-tenth edge ends
+     above zero (above the bequest, for Leave a Legacy) when more than nine
+     futures in ten work, and under it when fewer do. The band and the card
+     each read their own factor, so this holds away from the 90% line itself,
+     which is what F66e measures. */
 
-// Nearest rank, the k-th smallest with k = ceil(q N), written from the
-// definition rather than copied from the page.
-const refRank = (sorted, q) => sorted[Math.min(sorted.length, Math.max(1, Math.ceil(q * sorted.length))) - 1];
-
-/* Walk every simulated future through the replay's own arithmetic. `draws`
-   are the page's growth factors, one array per path, long enough for both the
-   chart (to the life expectancy) and the card (to the goal's horizon).
-   Returns the four band edges per plotted year and how many futures work. */
-function refFan(p, draws){
-  const accM = refAccMonths(p), total = Math.max(1, mo(p.ageNow, p.ageDie));
-  if(accM >= total) return null;
-  const line = refLifetime(p);
-  const years = Math.max(1, Math.round(total / 12)), start = Math.floor(accM / 12);
-  const at = [];
-  for(let y = start; y <= years; y++) at.push(Math.min(y * 12, total));
-  const cols = at.map(() => []);
-  const n = Math.max(0, mo(p.ageRetire, refHorizon(p)));
-  // The goal's terminal condition, from the goal itself: nothing for Just Die,
-  // the bequest for Leave a Legacy, and for Die Rich a perpetuity-due on
-  // whatever the net draw has settled to by the horizon.
-  let target = p.mode === 'legacy' ? Math.max(0, p.legacy) : 0;
-  if(p.mode === 'rich'){
-    const net = refRetired(p, refHorizon(p)) - refPension(p, refHorizon(p));
-    target = net <= 0 ? 0 : (p.rm > 0 ? net * (1 + p.rm) / p.rm : Infinity);
-  }
-  let funded = 0;
-  const finals = [];
-  draws.forEach(g => {
-    // The chart's path: the expected balance up to the retirement month, then
-    // this future's returns on what is left after each month's draw.
-    const path = line.slice(0, accM + 1);
-    let W = line[accM];
-    for(let t = accM; t < total; t++){
-      W += refIncome(p, t) - refSpend(p, t);
-      W *= g[t - accM];
-      path.push(W);
-    }
-    at.forEach((m, k) => cols[k].push(path[m]));
-    finals.push(path[total]);
-    // The card's question, asked forward: does the pot this plan reaches
-    // cover this future? A pot is a sum of money, so it has to start at zero
-    // or more, never dip under zero after a draw, and land on the target.
-    const tol = 1e-9 * Math.max(1, Math.abs(line[accM]));
-    let V = line[accM], ok = V >= -tol;
-    for(let t = 0; t < n && ok; t++){
-      V -= refRetired(p, p.ageRetire + t / 12) - refPension(p, p.ageRetire + t / 12);
-      if(V < -tol) ok = false;
-      V *= g[t];
-    }
-    if(ok && !(V >= target - 1e-9 * Math.max(1, Math.abs(line[accM]), Math.abs(target)))) ok = false;
-    if(ok) funded++;
-  });
-  const edges = {p10: [], p90: []};
-  cols.forEach(c => {
-    c.sort((a, b) => a - b);
-    edges.p10.push(refRank(c, 0.10)); edges.p90.push(refRank(c, 0.90));
-  });
-  return {edges, start, years, funded, finals, line};
-}
-
-// The page's own band, its card, and the draws it scored the card on.
+// The page's own band and card.
 const pageFan = ui => page.evaluate(u => {
   const F = window.__FF;
   const full = Object.assign({}, F.UI_DEFAULTS, u);
-  const res = F.compute(full), P = res.P;
-  const accM = F.accMonths(P), total = res.det.length - 1;
-  const h = P.mode === 'rich' ? Math.max(F.RICH_HORIZON_AGE, P.ageDie) : P.ageDie;
-  const len = Math.max(1, F.months(P.ageRetire, h), total - accM);
-  const draws = [];
-  for(let k = 0; k < full.paths; k++){
-    draws.push(Array.from(F.growthSeries(P, F.mulberry32(F.deriveSeed(full.seed, 'pot' + k)), len)));
-  }
-  const pot = res.potAtRetire, sorted = res.reqs.sorted;
-  // Futures whose own required pot sits within a hair of the plan's pot: the
-  // only ones on which two formulations may round to different answers.
-  const hair = 1e-7 * Math.max(1, Math.abs(pot));
-  return {
-    dd: res.dd, draws, paths: full.paths,
-    success: res.successAtPlan, borderline: sorted.filter(w => Math.abs(w - pot) <= hair).length,
-    mode: P.mode, pensionOn: P.pensionOn
-  };
+  const res = F.compute(full);
+  return {dd: res.dd, success: res.successAtPlan, pot: res.potAtRetire};
 }, ui);
 
 const worstRel = (a, b) => {
@@ -2254,33 +2450,34 @@ const worstRel = (a, b) => {
       pensionOn: true, pensionStartAge: 60, pensionAmount: 15000},
     'stopping today': {ageRetire: 30, assets: 2500000},
     'a volatile portfolio': {std: 30},
-    'a plan that runs out': {savings: 2000, assets: 0, ageRetire: 45}
+    'a plan that runs out': {savings: 2000, assets: 0, ageRetire: 45},
+    'at 90% chance, so the pot is the chance line’s': {chance: 90, ageRetire: 50}
   };
   const bandBad = [], cardBad = [], lineBad = [], orderBad = [];
   const cardDetail = [];
   for(const [name, over] of Object.entries(plans)){
-    const ui = Object.assign({}, base, {paths: 400}, over);
+    const ui = Object.assign({}, base, over), p = refParams(ui);
     const pg = await pageFan(ui);
-    const rf = refFan(refParams(ui), pg.draws);
+    const rf = refFanEdges(p, ui.chance);
     if(!pg.dd || !rf){ bandBad.push(`${name}: no band`); continue; }
     const w = Math.max(...['p10', 'p90'].map(q => worstRel(pg.dd.bands[q], rf.edges[q])));
     if(!(w < 1e-9) || pg.dd.startYear !== rf.start) bandBad.push(`${name} (${w.toExponential(1)})`);
-    const want = Math.round(pg.success * pg.paths);
-    if(Math.abs(rf.funded - want) > pg.borderline) cardBad.push(`${name}: replay ${rf.funded}, card ${want}`);
-    cardDetail.push(`${want}/${pg.paths}`);
+    const want = refSuccess(p, rf.pot);
+    if(!(Math.abs(pg.success - want) < 1e-6)) cardBad.push(`${name}: card ${pg.success.toFixed(6)}, replay ${want.toFixed(6)}`);
+    cardDetail.push(`${(pg.success * 100).toFixed(1)}%`);
     // The fan opens ON the expected line: every edge equals it at the first year.
-    const y0 = rf.start, onLine = rf.line[Math.min(y0 * 12, rf.line.length - 1)];
-    if(!['p10', 'p90'].every(q => Math.abs(pg.dd.bands[q][0] - onLine) <= 1e-6 * Math.max(1, Math.abs(onLine))))
+    const opens = refChanceAt(p, Math.min(rf.start * 12, rf.line.length - 1), ui.chance);
+    if(!['p10', 'p90'].every(q => Math.abs(pg.dd.bands[q][0] - opens) <= 1e-6 * Math.max(1, Math.abs(opens))))
       lineBad.push(name);
     for(let k = 0; k < pg.dd.bands.p10.length; k++){
       const b = pg.dd.bands;
-      if(!(b.p10[k] <= b.p90[k])){ orderBad.push(`${name} year ${k}`); break; }
+      if(!(b.p10[k] <= b.p90[k] + 1e-6 * Math.max(1, Math.abs(b.p90[k])))){ orderBad.push(`${name} year ${k}`); break; }
     }
   }
   const nPlans = Object.keys(plans).length;
   check(`F66 every edge of the band matches the replay, year by year, on ${nPlans} plans`,
     bandBad.length === 0, bandBad.join(', ') || 'agrees to 1e-9 everywhere');
-  check('F66b the futures the replay finds funded ARE the "Chance it works" figure, path for path',
+  check('F66b and the "Chance it works" figure is the replay\'s on every one of them',
     cardBad.length === 0, cardBad.join(', ') || `agrees on every plan: ${cardDetail.join(', ')}`);
   check('F66c the fan opens on the expected balance, the year the draws begin',
     lineBad.length === 0, lineBad.join(', ') || 'every edge starts on the line');
@@ -2289,31 +2486,32 @@ const worstRel = (a, b) => {
 }
 
 // F66e: the shading says what the card says. With no pension a future that
-// runs out stays out, so the share of futures under zero at the life
-// expectancy is exactly the share the card says fail, and the worst-tenth edge
-// ends above zero exactly when more than nine futures in ten work. Swept over
-// the whole slider, so the chance runs from nothing to everything. Leave a
-// Legacy is the same sweep against the bequest instead of zero: a future that
-// never goes under ends on or above the bequest exactly when it is funded.
+// runs out stays out, so the worst-tenth edge ends above zero when more than
+// nine futures in ten work, and under it when fewer do. The band and the card
+// read their own factor each, so the two may disagree only near 90% itself:
+// within 3 points of it, which the sweep also reports. Swept over the whole
+// slider, so the chance runs from nothing to everything. Leave a Legacy is
+// the same sweep against the bequest instead of zero.
 for(const [mode, over] of [['Just Die', {}], ['Leave a Legacy', {mode: 'legacy', legacy: 500000}]]){
-  const bad = [], seen = [];
+  const bad = [], seen = [], near = [];
   for(let ar = 35; ar <= 75; ar += 1){
-    const ui = Object.assign({}, base, {paths: 400, ageRetire: ar}, over);
+    const ui = Object.assign({}, base, {ageRetire: ar}, over);
     const pg = await pageFan(ui);
     if(!pg.dd) continue;
-    const p = refParams(ui), rf = refFan(p, pg.draws);
+    const p = refParams(ui);
     const floor = p.mode === 'legacy' ? p.legacy : 0;
-    const failShare = rf.finals.filter(v => v < floor - 1e-6).length / pg.paths;
     const last = pg.dd.bands.p10[pg.dd.bands.p10.length - 1];
     const s = pg.success;
     seen.push(Math.round(s * 100));
-    if(Math.abs(failShare - (1 - s)) > pg.borderline / pg.paths + 1e-12)
-      bad.push(`retire ${ar}: ${(failShare * 100).toFixed(1)}% short vs ${((1 - s) * 100).toFixed(1)}% failing`);
-    if((last >= floor - 1e-6) !== (s > 0.9)) bad.push(`retire ${ar}: worst 10% ends at ${last.toFixed(0)} on ${(s * 100).toFixed(1)}%`);
+    if((last >= floor - 1e-6) !== (s > 0.9)){
+      if(Math.abs(s - 0.9) < 0.03) near.push(`${ar} at ${(s * 100).toFixed(1)}%`);
+      else bad.push(`retire ${ar}: worst 10% ends at ${last.toFixed(0)} on ${(s * 100).toFixed(1)}%`);
+    }
   }
-  check(`F66e ${mode}: the band ends short in exactly the futures the card counts as failing`,
+  check(`F66e ${mode}: the band ends short exactly when the card says fewer than 90% work`,
     bad.length === 0 && Math.min(...seen) === 0 && Math.max(...seen) === 100,
-    bad.slice(0, 3).join(', ') || `swept ${seen.length} retirement ages, chance ${Math.min(...seen)}%..${Math.max(...seen)}%`);
+    bad.slice(0, 3).join(', ') || `swept ${seen.length} retirement ages, chance ${Math.min(...seen)}%..${Math.max(...seen)}%` +
+      (near.length ? `; differ only beside 90%: ${near.join(', ')}` : ', never differ'));
 }
 
 // F66f: at zero volatility there is one future, so every edge IS the expected
@@ -2344,8 +2542,7 @@ for(const [mode, over] of [['Just Die', {}], ['Leave a Legacy', {mode: 'legacy',
 for(const real of [false, true]){
   await page.evaluate(v => { document.getElementById('showReal').checked = v; window.__FF.render(); }, real);
   const ui = Object.assign({}, DEFAULTS, await page.evaluate(() => window.__FF.readInputs()));
-  const pg = await pageFan(ui);
-  const rf = refFan(refParams(ui), pg.draws);
+  const rf = refFanEdges(refParams(ui), ui.chance);
   const r = await page.evaluate(() => {
     const F = window.__FF, cash = F.charts.cashflows;
     const get = l => cash.data.datasets.find(d => d.label === l);
@@ -2480,24 +2677,12 @@ for(const real of [false, true]){
     `opens ${r.today.firstX} at ${r.today.firstYs.map(v => v.toFixed(0)).join(' / ')}, assets ${r.today.assets}`);
 }
 
-// F66o: the same seed draws the same band, a different one moves it, and the
-// draws the band is built on are a prefix of any longer run of them: the band
-// takes the card's full horizon so its paths are the card's, and that is only
-// true if asking for more months changes none of the ones before.
+// F66o: nothing is random, so the cashflow band is the same on every run.
 {
-  const ui = Object.assign({}, base, {paths: 200});
-  const band = s => `JSON.stringify(F.drawdownBands(P, F.lifetimeSeries(P).balance, {paths: 200, seed: ${s}}).bands)`;
-  const a = await engine(ui, band(4242)), b = await engine(ui, band(4242)), c = await engine(ui, band(77));
-  const prefix = await engine(ui, `(function(){
-    var s = F.growthSeries(P, F.mulberry32(F.deriveSeed(9, 'pot3')), 480);
-    var l = F.growthSeries(P, F.mulberry32(F.deriveSeed(9, 'pot3')), 1441);
-    for(var i = 0; i < s.length; i++) if(s[i] !== l[i]) return false;
-    return true;
-  })()`);
-  check('F66o the same seed reproduces the band, a different seed moves it, and longer draws share every earlier month',
-    a === b && a !== c && prefix === true, `reproducible ${a === b}, moves ${a !== c}, prefix ${prefix}`);
+  const band = 'JSON.stringify(F.drawdownBands(P, F.lifetimeSeries(P).balance).bands)';
+  const a = await engine(Object.assign({}, base), band), b = await engine(Object.assign({}, base), band);
+  check('F66o the cashflow band is the same on every run', a === b);
 }
-
 
 /* F66p: Leave a Legacy is funded only if the balance ends on the bequest, so
    the bequest is drawn across the balance pane as a dashed line: in today's
@@ -3372,7 +3557,9 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
       pensionPeriod: pick(['weekly', 'monthly', 'yearly']),
       pensionIndexed: rnd() < 0.5,
       showReal: rnd() < 0.5,
-      paths: 60, seed: 1 + Math.floor(rnd() * 1e6), confidence: Math.round(between(50, 99))
+      // `tag` names the plan in a failure; the draw is kept so every plan
+      // after it is the plan it always was.
+      tag: 1 + Math.floor(rnd() * 1e6), confidence: Math.round(between(50, 99))
     });
   }
 
@@ -3434,7 +3621,7 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     for(let y = 0; y < r.balances.length; y++){
       balErr = Math.max(balErr, Math.abs(r.balances[y] - ref[y * 12] * r.scale[y]));
     }
-    const tag = `#${k} seed ${plans[k].seed}`;
+    const tag = `#${k} plan ${plans[k].tag}`;
     if(!r.finite) bad.finite.push(tag);
     if(!(r.savedErr < 0.01)) bad.saved.push(`${tag} (${r.savedErr.toExponential(1)})`);
     if(!(r.closeErr < tol)) bad.closes.push(`${tag} (${r.closeErr.toExponential(1)})`);
@@ -3446,15 +3633,15 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     // The range of balances, replayed and held to the card on every plan
     // that retires before its life expectancy (F66 on plans nobody chose).
     const pg = await pageFan(ui);
-    const rf = refFan(p, pg.draws);
+    const rf = refFanEdges(p, ui.chance);
     if(!!pg.dd !== !!rf) bad.band.push(`${tag} (band ${!!pg.dd}, replay ${!!rf})`);
     else if(rf){
       banded++;
       const w = Math.max(...['p10', 'p90'].map(q => worstRel(pg.dd.bands[q], rf.edges[q])));
       const flat = ['p10', 'p90'].every(q => pg.dd.bands[q].every(v => typeof v === 'number' && isFinite(v)));
       if(!(w < 1e-8) || !flat || pg.dd.startYear !== rf.start) bad.band.push(`${tag} (${w.toExponential(1)})`);
-      const want = Math.round(pg.success * pg.paths);
-      if(Math.abs(rf.funded - want) > pg.borderline) bad.card.push(`${tag} (replay ${rf.funded}, card ${want})`);
+      const want = refSuccess(p, rf.pot);
+      if(!(Math.abs(pg.success - want) < 1e-6)) bad.card.push(`${tag} (replay ${want.toFixed(6)}, card ${pg.success.toFixed(6)})`);
     }
   }
   const n = plans.length;
@@ -3476,8 +3663,8 @@ console.log('\n── Fuzz: 200 random plans, every invariant at once ──');
     bad.chart.length === 0, bad.chart.slice(0, 3).join(', ') || 'clean');
   check('F56i the range of balances matches the replay on every plan that draws one',
     bad.band.length === 0 && banded > 100, bad.band.slice(0, 3).join(', ') || `agrees on all ${banded}`);
-  check('F56j and the futures it shades as funded are the "Chance it works" figure on every one',
-    bad.card.length === 0, bad.card.slice(0, 3).join(', ') || `path for path on all ${banded}`);
+  check('F56j and the "Chance it works" figure is the replay\'s on every one',
+    bad.card.length === 0, bad.card.slice(0, 3).join(', ') || `agrees on all ${banded}`);
 }
 
 console.log('\n── Life stages: Money out, Simple and Detailed ──');
@@ -3783,9 +3970,9 @@ const KIDS = [
     `one kid ${r.one.toFixed(0)}, at 50 ${r.late50.toFixed(0)}, at 57 ${r.late57.toFixed(0)}, at 61 ${r.late61.toFixed(0)}`);
 }
 
-// F67o: zero volatility collapses every simulated future onto the staged plan.
+// F67o: zero volatility collapses every future onto the staged plan.
 {
-  const ui = Object.assign({}, awkward, {std: 0, paths: 200});
+  const ui = Object.assign({}, awkward, {std: 0});
   const r = await page.evaluate(([u]) => {
     const F = window.__FF;
     const res = F.compute(Object.assign({}, F.UI_DEFAULTS, u));
@@ -4113,7 +4300,7 @@ const KIDS = [
       {savings: 6000, assets: 0}];
     const pick = x => JSON.stringify([Array.from(x.det), Array.from(x.acc), Array.from(x.deposited), x.needCurve,
       x.incomeCurve, x.expenseCurve, x.flowCurve, x.needAtRetire, x.potAtRetire, x.leftAtDeath, x.successAtPlan,
-      x.confPot, x.ffAge, Array.from(x.reqs.sorted), x.mc.bands, x.dd && x.dd.bands, x.diag.status,
+      x.confPot, x.ffAge, x.reqs.expected, x.mc.bands, x.dd && x.dd.bands, x.diag.status,
       (x.diag.remedies || []).map(m => m.text), F.tableRows(x)]);
     return plans.map((u, k) => {
       const a = F.compute(Object.assign({}, F.UI_DEFAULTS, u, {expenseMode: 'simple'}));
@@ -4318,11 +4505,11 @@ const KIDS = [
       expenseMode: 'detailed', stages,
       pensionOn: rnd() < 0.4, pensionStartAge: Math.round(between(55, 75)),
       pensionAmount: Math.round(between(0, 40000)), pensionPeriod: 'yearly', pensionIndexed: rnd() < 0.6,
-      showReal: rnd() < 0.5, paths: 60, seed: 1 + Math.floor(rnd() * 1e6), confidence: 90
+      showReal: rnd() < 0.5, tag: 1 + Math.floor(rnd() * 1e6), confidence: 90
     });
     const p = refParams(ui);
     if(p.stages.length) staged++;
-    const tag = `#${k} seed ${ui.seed}`;
+    const tag = `#${k} plan ${ui.tag}`;
     const r = await page.evaluate(u => {
       const F = window.__FF;
       const res = F.compute(u);
@@ -4369,14 +4556,14 @@ const KIDS = [
     if(!r.ffOk) bad.ff.push(tag);
     if(!r.ffTight) bad.ffTight.push(tag);
     const pg = await pageFan(ui);
-    const rf = refFan(p, pg.draws);
+    const rf = refFanEdges(p, ui.chance);
     if(!!pg.dd !== !!rf) bad.band.push(`${tag} (band ${!!pg.dd}, replay ${!!rf})`);
     else if(rf){
       banded++;
       const w = Math.max(...['p10', 'p90'].map(q => worstRel(pg.dd.bands[q], rf.edges[q])));
       if(!(w < 1e-8)) bad.band.push(`${tag} (${w.toExponential(1)})`);
-      const got = Math.round(pg.success * pg.paths);
-      if(Math.abs(rf.funded - got) > pg.borderline) bad.card.push(`${tag} (replay ${rf.funded}, card ${got})`);
+      const want = refSuccess(p, rf.pot);
+      if(!(Math.abs(pg.success - want) < 1e-6)) bad.card.push(`${tag} (replay ${want.toFixed(6)}, card ${pg.success.toFixed(6)})`);
     }
   }
   check(`F70 150 random plans with random stages: every figure a number`,
@@ -5051,29 +5238,27 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
 /* F70: Investment outcome chance (step 12). At 50% the line is the expected
    return line and nothing on the page moves. Above it, the line at each month
    is the lower of the expected balance and the balance that share of the
-   simulated futures reach or beat, and the freedom age is where THAT meets the
-   pot needed. Replayed here from the replay's own savings and recurrence,
-   taking nothing from the page but its random growth factors, which are the
-   page's by definition. */
+   futures reach or beat, and the freedom age is where THAT meets the pot
+   needed. Replayed here from the replay's own savings and its own Gaussian
+   conditioning (refChanceAt), and then held to what it promises by the
+   replay's own simulated futures. */
 {
-  // The futures, walked forward by the replay: one balance per path per month.
-  const pageDraws = (ui, n) => page.evaluate(({u, n}) => {
-    const F = window.__FF;
-    const full = Object.assign({}, F.UI_DEFAULTS, u), P = F.buildParams(full), out = [];
-    for(let k = 0; k < full.paths; k++){
-      out.push(Array.from(F.growthSeries(P, F.mulberry32(F.deriveSeed(full.seed, 'path' + k)), n)));
+  /* The share of `nPaths` simulated futures, the replay's own, that hold at
+     least `need` after month T: what the 90% line promises is at least 90%. */
+  const refShareHolding = (p, T, need, nPaths, seed) => {
+    let s = seed >>> 0;
+    const unif = () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return (s + 0.5) / 4294967296; };
+    const normal = () => Math.sqrt(-2 * Math.log(unif())) * Math.cos(2 * Math.PI * unif());
+    const mu = Math.log(1 + p.rr) / 12, sd = p.sigma * Math.sqrt(1 / 12);
+    const sav = [];
+    for(let t = 0; t < T; t++) sav.push(refSavings(p, t));
+    let hold = 0;
+    for(let k = 0; k < nPaths; k++){
+      let W = p.A0;
+      for(let t = 0; t < T; t++) W = W * Math.exp(mu + sd * normal()) + sav[t];
+      if(W >= need - 1e-6) hold++;
     }
-    return out;
-  }, {u: ui, n});
-  const refChance = (p, draws, n, chance) => {
-    const W = draws.map(() => p.A0), line = [p.A0];
-    for(let t = 0; t < n; t++){
-      const s = refSavings(p, t);
-      draws.forEach((g, k) => { W[k] = W[k] * g[t] + s; });
-      const col = W.slice().sort((a, b) => a - b);
-      line.push(Math.min(refAccum(p, t + 1), refRank(col, (100 - chance) / 100)));
-    }
-    return {line, W};
+    return hold / nPaths;
   };
   const pageRun = ui => page.evaluate(u => {
     const F = window.__FF;
@@ -5086,7 +5271,7 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
 
   // F70: at the default, the line is the expected return, month for month.
   {
-    const ui = Object.assign({}, base, {paths: 200});
+    const ui = Object.assign({}, base);
     const p = refParams(ui), r = await pageRun(ui);
     let worst = 0;
     r.acc.forEach((v, t) => { worst = Math.max(worst, Math.abs(v - refAccum(p, t)) / Math.max(1, Math.abs(v))); });
@@ -5097,10 +5282,11 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
   // F70b-d: at 90% the line, the crossing and the guarantee, replayed.
   for(const [name, extra] of [['savings', {}], ['income', {savingsMode: 'income', savings: 110000}],
                               ['a pension', {pensionOn: true, mode: 'legacy'}]]){
-    const ui = Object.assign({}, base, {paths: 300, chance: 90}, extra);
+    const ui = Object.assign({}, base, {chance: 90}, extra);
     const p = refParams(ui), n = mo(p.ageNow, p.ageDie);
-    const draws = await pageDraws(ui, n), r = await pageRun(ui);
-    const ref = refChance(p, draws, n, 90);
+    const r = await pageRun(ui);
+    const ref = {line: []};
+    for(let t = 0; t <= n; t++) ref.line.push(refChanceAt(p, t, 90));
     let worst = 0;
     ref.line.forEach((v, t) => { worst = Math.max(worst, Math.abs(v - r.acc[t]) / Math.max(1, Math.abs(v))); });
     check(`F70b ${name}: the 90% line matches the replay, month by month`, worst < 1e-9,
@@ -5114,12 +5300,12 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
       (refAge === null) === (r.ff === null) && (refAge === null || close(r.ff, refAge, 1 / 24)),
       `page ${r.ff === null ? 'never' : r.ff.toFixed(4)} vs replay ${refAge === null ? 'never' : refAge.toFixed(4)}`);
     if(tAt !== null){
-      // Walk the futures to that month and count the ones that have the pot.
-      const need = refRequired(p, refAge);
-      const at = draws.map(g => { let W = p.A0; for(let t = 0; t < tAt; t++) W = W * g[t] + refSavings(p, t); return W; });
-      const share = at.filter(W => W >= need - 1e-6).length / at.length;
-      check(`F70d ${name}: at that age at least 90% of the futures really do hold the pot needed`,
-        share >= 0.9, `${(share * 100).toFixed(1)}% of ${at.length}`);
+      // Simulate the futures to that month and count the ones that have the
+      // pot. Step 8 is an approximation, read against 4,000 futures, so the
+      // promise is held to within a point and a half of 90%.
+      const share = refShareHolding(p, tAt, refRequired(p, refAge), 4000, 777);
+      check(`F70d ${name}: at that age about 90% of 4,000 simulated futures really do hold the pot needed`,
+        share >= 0.885, `${(share * 100).toFixed(1)}%`);
     }
   }
 
@@ -5127,7 +5313,7 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
   //       the chance rises, and lands on the band's lower edge at 90%.
   {
     const runs = {};
-    for(const c of [50, 60, 75, 90, 99]) runs[c] = await pageRun(Object.assign({}, base, {paths: 300, chance: c}));
+    for(const c of [50, 60, 75, 90, 99]) runs[c] = await pageRun(Object.assign({}, base, {chance: c}));
     let below = true, mono = true, ages = [];
     const cs = [50, 60, 75, 90, 99];
     cs.forEach((c, k) => {
@@ -5151,7 +5337,7 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
 
   // F70g: section 2 starts where section 1's line is at the slider age.
   {
-    const r = await pageRun(Object.assign({}, base, {paths: 300, chance: 90, ageRetire: 50}));
+    const r = await pageRun(Object.assign({}, base, {chance: 90, ageRetire: 50}));
     check('F70g the balance at the slider age is the 90% line’s, and the drawdown starts from it',
       r.pot === r.acc[r.accM] && r.det[r.accM] === r.acc[r.accM] && r.det.slice(0, r.accM + 1).every((v, t) => v === r.acc[t]),
       `pot ${r.pot.toFixed(0)}`);
@@ -5167,7 +5353,7 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
 
   // F70i: every remedy quoted at 90% really funds the plan, and a little less does not.
   {
-    const ui = Object.assign({}, base, {paths: 300, chance: 90, ageRetire: 44});
+    const ui = Object.assign({}, base, {chance: 90, ageRetire: 44});
     const r = await pageRun(ui);
     const st = async u => (await pageRun(Object.assign({}, ui, u))).status;
     const money = text => Number(/\$([\d,]+)/.exec(text)[1].replace(/,/g, ''));
@@ -5202,8 +5388,8 @@ console.log('\n── The chance line: how sure the Investment outcome is ──
       return res;
     });
     check('F70j at 90% the verdict, the chart, its key and What this assumes all name the chance',
-      out.ui === 90 && /at least 90% of simulated futures/.test(out.verdict) &&
-      /90% chance/.test(out.label) && /at 90% chance/.test(out.legend) && /90% of simulated futures/.test(out.assumes),
+      out.ui === 90 && /at least 90% of futures/.test(out.verdict) &&
+      /90% chance/.test(out.label) && /at 90% chance/.test(out.legend) && /90% of futures/.test(out.assumes),
       out.verdict.slice(0, 80));
     check('F70k and back at 50% it reads as it always did', /On the expected return alone/.test(out.back), out.back.slice(0, 60));
   }

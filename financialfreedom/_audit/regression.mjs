@@ -290,7 +290,7 @@ const SNAP = async () => {
     headline: {needAtRetire: L.needAtRetire, potAtRetire: L.potAtRetire, leftAtDeath: L.leftAtDeath,
                successAtPlan: L.successAtPlan, confPot: L.confPot, ffAge: L.ffAge},
     mc: {bands: L.mc.bands, years: L.mc.years, paths: L.mc.paths},
-    reqs: {sorted: arr(L.reqs.sorted), infinite: L.reqs.infinite, paths: L.reqs.paths},
+    reqs: L.reqs.sorted ? {sorted: arr(L.reqs.sorted), infinite: L.reqs.infinite, paths: L.reqs.paths} : null,
     dd: L.dd ? {bands: L.dd.bands, startYear: L.dd.startYear, years: L.dd.years, paths: L.dd.paths} : null,
     table: F.tableRows(L),
     tableText: txt('tableWrap') + ' | ' + txt('tableSub'),
@@ -321,6 +321,15 @@ const exact = v => JSON.stringify(v, (k, x) => {
   return x;
 });
 const GROUPS = ['P', 'diag', 'series', 'headline', 'mc', 'reqs', 'dd', 'table', 'tableText', 'csv', 'charts', 'text'];
+/* Recorded, and no longer compared. The bands, the "Chance it works" card and
+   the confidence pot (with the chance and the pot in `headline`) moved from a
+   Monte Carlo to the closed form of step 8, so they differ from any baseline
+   by design. run.mjs holds them to the replay and to 4,000 simulated futures
+   instead. The figures in `headline` that never were random are in `series`
+   and `diag` too, so nothing deterministic goes unchecked. */
+const BY_DESIGN = ['headline', 'mc', 'reqs', 'dd'];
+const COMPARED = GROUPS.filter(g => BY_DESIGN.indexOf(g) < 0);
+const held = snap => { const o = Object.assign({}, snap); BY_DESIGN.forEach(g => { delete o[g]; }); return o; };
 const digest = snap => {
   const out = {};
   GROUPS.forEach(g => { out[g] = createHash('sha256').update(exact(snap[g])).digest('hex').slice(0, 20); });
@@ -400,11 +409,11 @@ for(const n of names){
   const got = await snapCase(newSide.page, toSymbols(toNew(ui)));
   compared++;
   if(MODE === 'live'){
-    const d = firstDiff(oldSnaps[n], got);
+    const d = firstDiff(held(oldSnaps[n]), held(got));
     if(d) bad.cases.push(`${n} → ${d}`);
   } else {
     const dg = digest(got);
-    const off = GROUPS.filter(g => dg[g] !== want.digest[g]);
+    const off = COMPARED.filter(g => dg[g] !== want.digest[g]);
     if(off.length) bad.cases.push(`${n}: ${off.join(', ')} differ (need ${got.headline.needAtRetire} vs ${want.needAtRetire})`);
   }
 }
@@ -413,13 +422,13 @@ for(const k of SAME_BUTTONS){
   if(MODE === 'baseline'){
     const want = base.buttons[k];
     const got = digest(await snapButton(newSide.page, k));
-    const off = GROUPS.filter(g => got[g] !== want[g]);
+    const off = COMPARED.filter(g => got[g] !== want[g]);
     if(off.length) bad.buttons.push(`${k}: ${off.join(', ')}`);
   } else {
     const s = await snapButton(oldSide.page, k);
     record.buttons[k] = digest(s);
     if(MODE === 'live'){
-      const d = firstDiff(s, await snapButton(newSide.page, k));
+      const d = firstDiff(held(s), held(await snapButton(newSide.page, k)));
       if(d) bad.buttons.push(`${k} → ${d}`);
     }
   }
@@ -435,11 +444,11 @@ if(MODE !== 'record'){
     await ctx.close();
     if(errs.length){ bad.caches.push(`${n}: page error ${errs[0]}`); continue; }
     if(MODE === 'live'){
-      const d = firstDiff(oldSnaps[n], got);
+      const d = firstDiff(held(oldSnaps[n]), held(got));
       if(d) bad.caches.push(`${n} → ${d}`);
     } else {
       const dg = digest(got), want = base.cases[n].digest;
-      const off = GROUPS.filter(g => dg[g] !== want[g]);
+      const off = COMPARED.filter(g => dg[g] !== want[g]);
       if(off.length) bad.caches.push(`${n}: ${off.join(', ')}`);
     }
   }
@@ -455,7 +464,7 @@ if(MODE === 'record'){
   const hand = Object.keys(HAND).length;
   check(`R1 ${hand} hand-picked plans and 200 fuzz plans give the same figures to the last binary digit`,
     bad.cases.length === 0 && compared === names.length,
-    bad.cases.slice(0, 4).join(' | ') || `${compared} plans × ${GROUPS.length} groups: engine, table, CSV, both charts, verdicts and cards identical`);
+    bad.cases.slice(0, 4).join(' | ') || `${compared} plans × ${COMPARED.length} groups: engine, table, CSV, both charts, verdicts and cards identical`);
   check('R2 the Quick Start buttons whose scenario did not change load the same plan and draw the same page',
     bad.buttons.length === 0, bad.buttons.join(' | ') || SAME_BUTTONS.join(', '));
   const nc = Object.keys(MODE === 'baseline' ? base.caches : record.caches).length;
