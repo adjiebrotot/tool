@@ -158,7 +158,8 @@ what it offers. The menu reads Download as SVG, Download as PNG, Copy to clipboa
 as HTML, opens flush under its button and answers the keyboard. A PNG, an SVG or a copied
 image taken on a phone or a wide monitor is the very size a desktop gives, so an exported
 chart always has the proportions it was designed at rather than the screen's. And every
-chart's embed code (one iframe of the tool, its scenario deflated into the link's `#hash`)
+chart's embed code (one iframe of the tool, its scenario deflated into the link's `#hash`
+against the frozen dictionary `share-dict-a.txt`, which `node _ref/share-dict.mjs` builds)
 is pasted into a page on another site and opened at a desktop and a
 phone width, where it has to show that one chart card alone with its own small watermark
 (the circled A and a line back to the tool, drawn inside the frame), draw exactly the data the
@@ -167,7 +168,9 @@ leave the viewer's own saved work untouched. Its links back (the watermark and t
 line) have to open the whole tool on that same scenario. Every page is moved off its defaults before it is shared, so an embed that lost
 the scenario fails. Because anyone can send a link, each page's link is also replayed with
 every string swapped for markup and script, which has to be drawn as text and run nothing,
-and the iframe and the credit line must each stay under 2,500 characters. It reuses chart-check's library cache;
+and the iframe and the credit line must each stay under 2,500 characters. Links kept in
+`_ref/share-links.json`, as real readers copied them, must keep decoding to what they held and
+find every field they name still on the page, so a renamed field is caught before it ships. It reuses chart-check's library cache;
 `SHOT=<dir>` saves each embed as it rendered, and `ONLY=<name>` runs one page.
 
 `node _ref/tip-check.mjs` loads every page and holds every tooltip to the budget that makes one

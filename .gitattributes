@@ -1,0 +1,2 @@
+# A Share link dictionary must stay byte for byte as shipped (see _ref/share-dict.mjs).
+share-dict-*.txt -text
