@@ -5046,6 +5046,169 @@ console.log('\n── Quick Start scenarios ──');
   await pickView('out');
 }
 
+console.log('\n── The chance line: how sure the Investment outcome is ──');
+
+/* F70: Investment outcome chance (step 12). At 50% the line is the expected
+   return line and nothing on the page moves. Above it, the line at each month
+   is the lower of the expected balance and the balance that share of the
+   simulated futures reach or beat, and the freedom age is where THAT meets the
+   pot needed. Replayed here from the replay's own savings and recurrence,
+   taking nothing from the page but its random growth factors, which are the
+   page's by definition. */
+{
+  // The futures, walked forward by the replay: one balance per path per month.
+  const pageDraws = (ui, n) => page.evaluate(({u, n}) => {
+    const F = window.__FF;
+    const full = Object.assign({}, F.UI_DEFAULTS, u), P = F.buildParams(full), out = [];
+    for(let k = 0; k < full.paths; k++){
+      out.push(Array.from(F.growthSeries(P, F.mulberry32(F.deriveSeed(full.seed, 'path' + k)), n)));
+    }
+    return out;
+  }, {u: ui, n});
+  const refChance = (p, draws, n, chance) => {
+    const W = draws.map(() => p.A0), line = [p.A0];
+    for(let t = 0; t < n; t++){
+      const s = refSavings(p, t);
+      draws.forEach((g, k) => { W[k] = W[k] * g[t] + s; });
+      const col = W.slice().sort((a, b) => a - b);
+      line.push(Math.min(refAccum(p, t + 1), refRank(col, (100 - chance) / 100)));
+    }
+    return {line, W};
+  };
+  const pageRun = ui => page.evaluate(u => {
+    const F = window.__FF;
+    const full = Object.assign({}, F.UI_DEFAULTS, u), res = F.compute(full);
+    const accM = F.accMonths(res.P);
+    return {acc: Array.from(res.acc), det: Array.from(res.det), ff: res.ffAge, status: res.diag.status,
+            pot: res.potAtRetire, accM, p10: res.mc.bands.p10,
+            remedies: (res.diag.remedies || []).map(r => ({key: r.key, text: r.text}))};
+  }, ui);
+
+  // F70: at the default, the line is the expected return, month for month.
+  {
+    const ui = Object.assign({}, base, {paths: 200});
+    const p = refParams(ui), r = await pageRun(ui);
+    let worst = 0;
+    r.acc.forEach((v, t) => { worst = Math.max(worst, Math.abs(v - refAccum(p, t)) / Math.max(1, Math.abs(v))); });
+    check('F70 at the default 50% the Investment outcome is the expected return line',
+      DEFAULTS.chance === 50 && worst < 1e-9, `default ${DEFAULTS.chance}%, worst relative gap ${worst.toExponential(1)}`);
+  }
+
+  // F70b-d: at 90% the line, the crossing and the guarantee, replayed.
+  for(const [name, extra] of [['savings', {}], ['income', {savingsMode: 'income', savings: 110000}],
+                              ['a pension', {pensionOn: true, mode: 'legacy'}]]){
+    const ui = Object.assign({}, base, {paths: 300, chance: 90}, extra);
+    const p = refParams(ui), n = mo(p.ageNow, p.ageDie);
+    const draws = await pageDraws(ui, n), r = await pageRun(ui);
+    const ref = refChance(p, draws, n, 90);
+    let worst = 0;
+    ref.line.forEach((v, t) => { worst = Math.max(worst, Math.abs(v - r.acc[t]) / Math.max(1, Math.abs(v))); });
+    check(`F70b ${name}: the 90% line matches the replay, month by month`, worst < 1e-9,
+      `worst relative gap ${worst.toExponential(1)} over ${n} months`);
+    let refAge = null, tAt = null;
+    for(let t = 0; t < n; t++){
+      const age = p.ageNow + t / 12;
+      if(ref.line[t] >= refRequired(p, age) - 1e-6){ refAge = age; tAt = t; break; }
+    }
+    check(`F70c ${name}: the freedom age is where the 90% line meets the pot needed`,
+      (refAge === null) === (r.ff === null) && (refAge === null || close(r.ff, refAge, 1 / 24)),
+      `page ${r.ff === null ? 'never' : r.ff.toFixed(4)} vs replay ${refAge === null ? 'never' : refAge.toFixed(4)}`);
+    if(tAt !== null){
+      // Walk the futures to that month and count the ones that have the pot.
+      const need = refRequired(p, refAge);
+      const at = draws.map(g => { let W = p.A0; for(let t = 0; t < tAt; t++) W = W * g[t] + refSavings(p, t); return W; });
+      const share = at.filter(W => W >= need - 1e-6).length / at.length;
+      check(`F70d ${name}: at that age at least 90% of the futures really do hold the pot needed`,
+        share >= 0.9, `${(share * 100).toFixed(1)}% of ${at.length}`);
+    }
+  }
+
+  // F70e: the line never promises more than the expected return, never more as
+  //       the chance rises, and lands on the band's lower edge at 90%.
+  {
+    const runs = {};
+    for(const c of [50, 60, 75, 90, 99]) runs[c] = await pageRun(Object.assign({}, base, {paths: 300, chance: c}));
+    let below = true, mono = true, ages = [];
+    const cs = [50, 60, 75, 90, 99];
+    cs.forEach((c, k) => {
+      ages.push(runs[c].ff);
+      runs[c].acc.forEach((v, t) => {
+        if(v > runs[50].acc[t] + 1e-9) below = false;
+        if(k && v > runs[cs[k - 1]].acc[t] + 1e-9) mono = false;
+      });
+    });
+    const later = ages.every((a, k) => !k || a === null || (ages[k - 1] !== null && a >= ages[k - 1] - 1e-9));
+    check('F70e a higher chance never draws the line higher, nor the freedom age earlier',
+      below && mono && later, `ages ${ages.map(a => a === null ? 'never' : a.toFixed(2)).join(', ')}`);
+    const r = runs[90];
+    let onEdge = true;
+    r.p10.forEach((v, y) => {
+      const t = y * 12;
+      if(t < r.acc.length && Math.abs(r.acc[t] - Math.min(runs[50].acc[t], v)) > 1e-6 * Math.max(1, v)) onEdge = false;
+    });
+    check('F70f at 90% the line is the band’s worst-10% edge wherever that is under the expected line', onEdge);
+  }
+
+  // F70g: section 2 starts where section 1's line is at the slider age.
+  {
+    const r = await pageRun(Object.assign({}, base, {paths: 300, chance: 90, ageRetire: 50}));
+    check('F70g the balance at the slider age is the 90% line’s, and the drawdown starts from it',
+      r.pot === r.acc[r.accM] && r.det[r.accM] === r.acc[r.accM] && r.det.slice(0, r.accM + 1).every((v, t) => v === r.acc[t]),
+      `pot ${r.pot.toFixed(0)}`);
+  }
+
+  // F70h: zero volatility has nothing to be unsure about.
+  {
+    const a = await pageRun(Object.assign({}, base, {std: 0, chance: 50}));
+    const b = await pageRun(Object.assign({}, base, {std: 0, chance: 95}));
+    check('F70h with no volatility the chance changes nothing',
+      a.ff === b.ff && a.acc.every((v, t) => v === b.acc[t]), `${a.ff} vs ${b.ff}`);
+  }
+
+  // F70i: every remedy quoted at 90% really funds the plan, and a little less does not.
+  {
+    const ui = Object.assign({}, base, {paths: 300, chance: 90, ageRetire: 44});
+    const r = await pageRun(ui);
+    const st = async u => (await pageRun(Object.assign({}, ui, u))).status;
+    const money = text => Number(/\$([\d,]+)/.exec(text)[1].replace(/,/g, ''));
+    const save = r.remedies.find(x => x.key === 'save');
+    const ret = r.remedies.find(x => x.key === 'return');
+    const later = r.remedies.find(x => x.key === 'later');
+    const m = save ? money(save.text) : 0, rr = ret ? Number(/([\d.]+)%/.exec(ret.text)[1]) : 0;
+    const ok = r.status === 'late' && !!save && !!ret && !!later &&
+      await st({savings: ui.savings + (m + 1) * 12}) === 'ok' &&
+      await st({savings: ui.savings + m * 0.97 * 12}) === 'late' &&
+      await st({ret: rr}) === 'ok' && await st({ret: rr - 0.2}) === 'late' &&
+      await st({ageRetire: Math.ceil(r.ff)}) === 'ok';
+    check('F70i the remedies at 90% close the gap they name, and no less does',
+      ok, r.remedies.map(x => x.key + ': ' + x.text).join(' | '));
+  }
+
+  // F70j: the field reaches the page, and the page says which line it drew.
+  {
+    const out = await page.evaluate(async () => {
+      const $ = id => document.getElementById(id);
+      $('chance').value = 90; $('chance').dispatchEvent(new Event('input'));
+      $('simBtn').click();
+      await new Promise(r => setTimeout(r, 50));
+      const c = window.__charts.find(ch => ch.data.datasets.some(d => /^Investment outcome/.test(d.label)));
+      const res = {ui: window.__FF.UI.chance, verdict: $('verdict').textContent,
+                   label: c && c.data.datasets.find(d => /^Investment outcome/.test(d.label)).label,
+                   legend: $('legend1').textContent, assumes: $('assumptions').textContent};
+      $('chance').value = 50; $('chance').dispatchEvent(new Event('input'));
+      $('simBtn').click();
+      await new Promise(r => setTimeout(r, 50));
+      res.back = $('verdict').textContent;
+      return res;
+    });
+    check('F70j at 90% the verdict, the chart, its key and What this assumes all name the chance',
+      out.ui === 90 && /at least 90% of simulated futures/.test(out.verdict) &&
+      /90% chance/.test(out.label) && /at 90% chance/.test(out.legend) && /90% of simulated futures/.test(out.assumes),
+      out.verdict.slice(0, 80));
+    check('F70k and back at 50% it reads as it always did', /On the expected return alone/.test(out.back), out.back.slice(0, 60));
+  }
+}
+
 console.log('\n── Coming back tomorrow ──');
 
 /* F57: the mini cache has to bring back what it saved, and the slider is the
