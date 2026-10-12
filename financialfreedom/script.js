@@ -181,22 +181,49 @@
      plan is not achievable. Neither curve depends on the retirement age,
      which is why section 1 does not move when the slider does.
 
-   Step 8  Monte Carlo. The same recurrences with a random monthly growth
-     factor instead of (1 + rm):
-       growth = exp(ln(1 + rr)/12 + sigma * sqrt(1/12) * z),   z ~ N(0,1)
-     The drift is ln(1 + rr) because the return input is a COMPOUND (CAGR)
-     figure, so with no cash flows the median path is the deterministic line
-     and sigma = 0 collapses to it exactly. Normals come from Box-Muller,
-     seeded per path, so a run is reproducible and every pot is scored against
-     the SAME set of paths. The band on the section 1 chart is the yearly
-     cross-section of the ACCUMULATION paths, matching the line it wraps.
+   Step 8  The spread of outcomes, worked out rather than simulated. The
+     return is random: each month's real growth factor is
+       growth = exp(mu + s * z(j)),   mu = ln(1 + rr) / 12,   s = sigma * sqrt(1/12)
+     with z(j) ~ N(0,1), independent month to month. The drift is ln(1 + rr)
+     because the return input is a COMPOUND (CAGR) figure, so with no cash
+     flows the median future is the deterministic line. Every balance on the
+     page is a stream of money invested at different times,
+       V(T) = sum over k of a(k) * G(k, T),   G(k, T) = growth over months k..T-1
+     a sum of correlated lognormals, which has no closed-form distribution.
+     The rent-or-buy tool draws its floating-rate band as the same plan run
+     at the low and the high rate. A return band cannot be one rate run for
+     every horizon, because the swing of an average return narrows as the
+     years add up, so instead each horizon T gets ONE standard normal factor,
+     the first-order change in V(T) itself (the comonotonic approximation of
+     Kaas, Dhaene and Goovaerts, 2000):
+       u(j)  the balance at stake over month j on the expected path, in
+             today's money: what is invested that month / (1 + rm)^j
+       Z_T = sum over j < T of u(j) * z(j) / sqrt(Q_T),   Q_T = sum of u(j)^2
+     A month weighs in proportion to the money exposed in it, so a crash late
+     in the working years, or early in retirement, moves the answer most: the
+     sequence risk a single average return hides. Given Z_T = z the log of each
+     term is normal with a known mean and variance, so its conditional mean is
+     exact:
+       E[G(k, T) | Z_T = z] = exp(mu m + s z dU / sqrt(Q_T) + s^2 (m - dU^2 / Q_T) / 2)
+       m = T - k,   dU = sum of u(j) over k <= j < T
+     V(T) at percentile q is that sum at z = Phi^-1(q). One pass per horizon,
+     no random numbers, exact for a single lump sum (its factor is the whole
+     return), and at zero volatility step 4 exactly. Checked against 5,000
+     simulated futures on every Quick Start plan, the 90% confidence pot
+     agrees to about 1% and the chance it works to about a percentage point.
+     The band on the section 1 chart is the 10th to 90th percentile of the
+     ACCUMULATION, year by year, matching the line it wraps.
 
-   Step 9  The confidence pot. Because step 5 is affine in W, each simulated
-     path has an exact minimum starting pot that survives it. Collect one per
-     path, sort, and read off the percentile. The 90% confidence pot is the
-     90th percentile. No search is needed, and success probability at any pot
-     is just the share of paths whose requirement is at or below it. This is
-     measured at the slider's retirement age, so it is a section 2 figure.
+   Step 9  The confidence pot. Step 6 reads a sequence of returns only through
+     its discount factors 1 / G(0, t), so the pot required at score z is
+     step 6 run on their conditional means, E[1 / G(0, t) | Z = z], taken the
+     same way. Its weights are the drawdown from the expected requirement,
+     the money still at stake once each draw is paid. The requirement falls as
+     z rises, so the 90% confidence pot is the requirement at
+     z = -Phi^-1(0.90), and the chance a pot W lasts is Phi(-z*), with z* the
+     score at which the requirement is exactly W (found by bisection). The two
+     are exact inverses. This is measured at the slider's retirement age, so
+     it is a section 2 figure.
 
    Step 10  Money deposited, the third line on the section 1 chart. It is what
      you have put in that is STILL in the pot, so it answers "am I living off
@@ -222,8 +249,8 @@
 
    Step 12  The chance line. Investment outcome chance c (50 to 99) redraws the
      section 1 investment line as one reached or beaten in at least c percent
-     of the futures: month by month, across the step 8 accumulation paths
-     (the band's own, draw for draw), the balance at rank ceil((1 - c) N),
+     of the futures: month by month, the step 8 accumulation at percentile
+     1 - c (read the way the band is, so at 90% it is the band's lower edge),
      capped at the expected line of step 4. The cap is needed because the
      median future ends ABOVE that line, so an uncapped 55% would promise more
      than 50% does; capped, the line still clears c percent of futures,
@@ -239,8 +266,8 @@
    already net of, and lumpy one-off spending: a stage changes spending for
    whole months at a time, never for a single bill. Nor a separate crash
    test: one hand-placed drawdown told the reader less than step 8 already
-   does, because the volatility puts a crash somewhere in thousands of
-   futures, including the ones that land it the month you retire.
+   does, because step 8 weighs a crash by the money it hits, which is most in
+   the years either side of the month you retire.
 */
 (function(){
 'use strict';
@@ -300,10 +327,10 @@ var UI_DEFAULTS = {
   mode: 'die', legacy: 500000,
   pensionOn: false, pensionStartAge: 67,
   pensionAmount: 29000, pensionPeriod: 'yearly', pensionIndexed: true,
-  showReal: true, paths: 1000, seed: 20260921,
+  showReal: true,
   confidence: 90,
   // How sure the Investment outcome line is (step 12): a balance reached or
-  // beaten in at least this share of simulated futures. 50 is the expected
+  // beaten in at least this share of futures. 50 is the expected
   // return line itself, exactly as it was before the field existed.
   chance: 50
 };
@@ -384,37 +411,47 @@ var fmt = {
   }
 };
 
-/* Seeded randomness, so a run is reproducible and every pot is scored against
-   the same set of paths. mulberry32 and an FNV-1a seed derivation, matching the
-   DCA simulator so the two tools behave the same way. */
-function mulberry32(seed){
-  var state = seed >>> 0;
-  if(state === 0) state = 0x6d2b79f5;
-  return function(){
-    state |= 0; state = (state + 0x6D2B79F5) | 0;
-    var t = Math.imul(state ^ state >>> 15, 1 | state);
-    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
+/* The standard normal, which step 8 reads every percentile off. The
+   distribution function is Marsaglia's series (2004), all positive terms so
+   nothing cancels, good to the last few digits of a double. The quantile is
+   Acklam's rational approximation, polished by one Halley step against that
+   distribution function, which takes it to the same precision. */
+function normInv(p){
+  var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+           1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+  var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+           6.680131188771972e+01, -1.328068155922803e+01];
+  var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+           -2.549671500556281e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+  var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
+           3.754408661907416e+00];
+  var q, r, x, e;
+  if(!(p > 0)) return -Infinity;
+  if(!(p < 1)) return Infinity;
+  if(p < 0.02425 || p > 0.97575){
+    q = Math.sqrt(-2 * Math.log(p < 0.5 ? p : 1 - p));
+    r = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+        ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+    x = p < 0.5 ? r : -r;
+  } else {
+    q = p - 0.5; r = q * q;
+    x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+        (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+  }
+  e = (normCdf(x) - p) * Math.sqrt(2 * Math.PI) * Math.exp(x * x / 2);
+  return x - e / (1 + x * e / 2);
 }
-function deriveSeed(base, key){
-  var h = (base >>> 0) || 0x811c9dc5;
-  for(var i = 0; i < key.length; i++){ h ^= key.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
-  return h >>> 0;
-}
-// Box-Muller. The DCA simulator sums three uniforms, which is bounded at three
-// standard deviations; retirement outcomes live in the tail, so this tool pays
-// for proper normals.
-function normalDraws(rng){
-  var spare = null;
-  return function(){
-    if(spare !== null){ var s = spare; spare = null; return s; }
-    var u, v, q;
-    do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while(q === 0 || q >= 1);
-    var f = Math.sqrt(-2 * Math.log(q) / q);
-    spare = v * f;
-    return u * f;
-  };
+function normCdf(x){
+  if(x < -9) return 0;
+  if(x > 9) return 1;
+  var sum = x, term = x, q = x * x, next;
+  for(var i = 3; ; i += 2){
+    term *= q / i;
+    next = sum + term;
+    if(next === sum) break;
+    sum = next;
+  }
+  return 0.5 + sum * Math.exp(-0.5 * q - 0.91893853320467274178);   // ln sqrt(2 pi)
 }
 
 /* ─── ENGINE ─── */
@@ -551,11 +588,9 @@ function buildParams(ui){
     pensionStartAge: ui.pensionStartAge,
     pensionIndexed: ui.pensionIndexed !== false,
     pensionMonthly: ui.pensionOn && !detailedIn ? perMonth(ui.pensionAmount, ui.pensionPeriod) : 0,
-    // Step 12. The simulated futures the chance line is read off, the same
-    // ones the band on the section 1 chart is drawn from.
-    chance: clamp(Number(ui.chance) || 50, 50, 99),
-    paths: Math.max(1, ui.paths | 0),
-    seed: ui.seed
+    // Step 12. The percentile the chance line is read at, the same way the
+    // band on the section 1 chart is.
+    chance: clamp(Number(ui.chance) || 50, 50, 99)
   };
 }
 
@@ -724,7 +759,7 @@ function horizonAge(P){ return P.mode === 'rich' ? Math.max(RICH_HORIZON_AGE, P.
 /* The pot required to stop work at `ra` (step 6). One affine pass: track the
    post-withdrawal balance as a*W + d, collect every "never below zero" bound,
    then apply the mode's terminal bound. `growth` may be an array of per-month
-   factors (a Monte Carlo path); leaving it out uses the expected return.
+   factors (step 9's conditional path); leaving it out uses the expected return.
    Returns Infinity when no finite pot satisfies the mode. */
 function requiredPot(P, ra, growth){
   var ha = horizonAge(P);
@@ -761,13 +796,13 @@ function requiredPot(P, ra, growth){
    because callers hand it a span that can be empty or inverted — retiring at
    your age now is a legitimate slider position, and a solver probing past an
    age bound is not. An empty span is a pot that has not grown, not a crash. */
-function accumulate(P, n, growth){
+function accumulate(P, n){
   n = Math.max(0, n | 0);
   var out = new Float64Array(n + 1);
   var W = P.A0, t;
   out[0] = W;
   for(t = 0; t < n; t++){
-    W = W * (growth ? growth[t] : (1 + P.rm)) + savingsAt(P, t);
+    W = W * (1 + P.rm) + savingsAt(P, t);
     out[t + 1] = W;
   }
   return out;
@@ -791,129 +826,107 @@ function solveFreedomAge(P, accumArr){
   return null;
 }
 
-/* Per-month real growth factors (step 8). With sigma = 0 this returns exactly
-   (1 + rm) every month, so every stochastic result collapses onto the
-   deterministic one. */
-function growthSeries(P, rng, n){
-  var out = new Float64Array(n);
-  var drift = Math.log(1 + P.rr) / 12;
-  var vol = P.sigma * Math.sqrt(1 / 12);
-  if(vol === 0){
-    var g = Math.exp(drift);
-    for(var k = 0; k < n; k++) out[k] = g;
-    return out;
+/* ─── THE SPREAD OF OUTCOMES (steps 8, 9 and 12) ─── */
+
+// The band's edges, the 10th and 90th percentiles, as standard normal scores.
+var BAND_Z = normInv(0.9);
+// Far enough into either tail that no percentile the page asks for lies past it.
+var Z_LIMIT = 8;
+
+/* Step 8's weights. `amounts[k]` is money that lands at the start of month k
+   and is invested from then on: the current assets and each month's savings
+   in section 1, the pot less each draw in section 2. u(j) is the balance at
+   stake over month j on the expected path, in today's value, and U and Q are
+   its running sum and running sum of squares, so any horizon T reads its own
+   factor off U[T] and Q[T] without another pass. */
+function riskWeights(P, amounts, n){
+  var g = 1 + P.rm, U = new Float64Array(n + 1), Q = new Float64Array(n + 1);
+  var W = 0, disc = 1, u, j;
+  for(j = 0; j < n; j++){
+    W += amounts[j] || 0;
+    u = W / disc;
+    U[j + 1] = U[j] + u;
+    Q[j + 1] = Q[j] + u * u;
+    W *= g; disc *= g;
   }
-  var z = normalDraws(rng);
-  for(var t = 0; t < n; t++) out[t] = Math.exp(drift + vol * z());
-  return out;
+  return {U: U, Q: Q};
+}
+
+/* What the stream is worth at month T when the horizon's factor sits at z
+   (step 8): the sum of each amount's conditional mean, every amount from month
+   0 to month T included, the one landing at T at face value. At zero
+   volatility there is no factor, and this is the step 4 recurrence itself. */
+function streamValue(P, amounts, w, T, z){
+  var i, a, m, du, total = 0;
+  if(!(P.sigma > 0)){
+    for(i = 0; i <= T; i++) total = (i ? total * (1 + P.rm) : 0) + (amounts[i] || 0);
+    return total;
+  }
+  var mu = Math.log(1 + P.rr) / 12, v2 = P.sigma * P.sigma / 12;
+  var Q = w.Q[T], UT = w.U[T], k = Q > 0 ? z * Math.sqrt(v2 / Q) : 0;
+  for(i = 0; i <= T; i++){
+    a = amounts[i];
+    if(!a) continue;
+    m = T - i; du = UT - w.U[i];
+    total += a * Math.exp(mu * m + k * du + 0.5 * v2 * (m - (Q > 0 ? du * du / Q : 0)));
+  }
+  return total;
+}
+
+// Section 1's stream: the current assets now, then each month's savings at its end.
+function accumAmounts(P, n){
+  var a = new Float64Array(n + 1);
+  a[0] = P.A0;
+  for(var t = 0; t < n; t++) a[t + 1] = savingsAt(P, t);
+  return a;
 }
 
 /* The band on the section 1 chart (step 8). Accumulation only, because that
-   is the line it wraps: the same recurrence as step 4 with a random monthly
-   growth factor, sampled yearly across paths. Bands are the cross-section at
-   each year, so the p10 line is an envelope of bad years rather than one bad
-   path, and at zero volatility every percentile collapses onto the
-   deterministic accumulation exactly. */
-function accumBands(P, opts){
-  var nPaths = Math.max(1, opts.paths | 0);
+   is the line it wraps: the 10th and 90th percentile of the balance at each
+   year, each read off that year's own factor. The middle is the expected line
+   of step 4, and at zero volatility the band closes onto it exactly. */
+function accumBands(P){
   var chartYears = Math.max(1, Math.round(months(P.ageNow, P.ageDie) / 12));
-  var total = Math.max(1, chartYears * 12);
-  var samples = [], y, p, t;
-  for(y = 0; y <= chartYears; y++) samples.push(new Float64Array(nPaths));
-  for(p = 0; p < nPaths; p++){
-    var rng = mulberry32(deriveSeed(opts.seed, 'path' + p));
-    var g = growthSeries(P, rng, total);
-    var W = P.A0;
-    samples[0][p] = W;
-    for(t = 0; t < total; t++){
-      W = W * g[t] + savingsAt(P, t);
-      if((t + 1) % 12 === 0){
-        var yi = (t + 1) / 12;
-        if(yi <= chartYears) samples[yi][p] = W;
-      }
-    }
-  }
-  var bands = {p10: [], p50: [], p90: []};
+  var total = chartYears * 12;
+  var a = accumAmounts(P, total), w = riskWeights(P, a, total), det = accumulate(P, total);
+  var bands = {p10: [], p50: [], p90: []}, y;
   for(y = 0; y <= chartYears; y++){
-    var col = Array.prototype.slice.call(samples[y]).sort(function(a, b){ return a - b; });
-    bands.p10.push(quantile(col, 0.10));
-    bands.p50.push(quantile(col, 0.50));
-    bands.p90.push(quantile(col, 0.90));
+    bands.p10.push(streamValue(P, a, w, y * 12, -BAND_Z));
+    bands.p50.push(det[y * 12]);
+    bands.p90.push(streamValue(P, a, w, y * 12, BAND_Z));
   }
-  return {bands: bands, years: chartYears, paths: nPaths};
-}
-
-function quantile(sorted, q){
-  if(!sorted.length) return 0;
-  var idx = clamp(Math.ceil(q * sorted.length) - 1, 0, sorted.length - 1);
-  return sorted[idx];
+  return {bands: bands, years: chartYears};
 }
 
 /* Step 12, the chance line. Is it anything but the expected return line? Not
    at 50%, and not at zero volatility, where every future is that line. */
 function chanceOn(P){ return P.chance > 50 && P.sigma > 0; }
 
-/* The normal draws behind accumBands' paths, path by path, kept between calls.
-   The remedies ask the same futures dozens of times with one figure moved, and
-   drawing them is most of the cost. The draws come out in order, so a longer
-   run only adds months at the end and a shorter one reads a prefix. */
-var drawCache = {key: null, n: 0, z: null};
-function pathDraws(P, n){
-  var key = P.seed + '|' + P.paths;
-  if(drawCache.key === key && drawCache.n >= n) return drawCache.z;
-  var z = [], p, t;
-  for(p = 0; p < P.paths; p++){
-    var next = normalDraws(mulberry32(deriveSeed(P.seed, 'path' + p)));
-    var row = new Float64Array(n);
-    for(t = 0; t < n; t++) row[t] = next();
-    z.push(row);
-  }
-  drawCache = {key: key, n: n, z: z};
-  return z;
-}
-
-/* Every simulated future's balance, month by month to month n, through the
-   same recurrence and the same growth factors accumBands uses, bit for bit, so
-   the line at 90% lands on the band's lower edge. `each(t, W)` sees the
-   balances after month t; the return is the balances at month n. */
-function simulateAccumulation(P, n, each){
-  var z = pathDraws(P, n), np = z.length, W = new Float64Array(np), p, t, s;
-  var drift = Math.log(1 + P.rr) / 12, vol = P.sigma * Math.sqrt(1 / 12);
-  W.fill(P.A0);
-  for(t = 0; t < n; t++){
-    s = savingsAt(P, t);
-    for(p = 0; p < np; p++) W[p] = W[p] * Math.exp(drift + vol * z[p][t]) + s;
-    if(each) each(t + 1, W);
-  }
-  return W;
-}
-
-// The balance at least `P.chance` percent of the futures reach or beat.
-function atChance(P, balances){
-  var col = Float64Array.from(balances).sort();
-  return quantile(col, (100 - P.chance) / 100);
-}
+// The factor score a balance at least `P.chance` percent of futures reach or beat.
+function chanceZ(P){ return -normInv(P.chance / 100); }
 
 /* Step 12. Accumulation (step 4) at the chance asked for: month by month, the
    lower of the expected line and the balance that share of the futures reach
    or beat. The lower of the two because the median future ends ABOVE the
    expected line (savings spread over many years average out some of the
-   swing), so a cross-section at 55% would otherwise promise more than 50%
-   does. Either way the line is reached or beaten in at least that share of
-   the futures, which is all it claims. At 50%, or with no volatility, it is
-   step 4 itself. */
+   swing), so a 55% line would otherwise promise more than 50% does. Either
+   way the line is reached or beaten in at least that share of the futures,
+   which is all it claims. At 50%, or with no volatility, it is step 4 itself.
+   At 90% it is the band's lower edge, month for month, wherever that edge is
+   under the expected line. */
 var chanceMemo = {key: null, out: null};
 function accumulateAtChance(P, n){
   var det = accumulate(P, n);
   if(!chanceOn(P)) return det;
   n = det.length - 1;
   // One render asks for the same line three times (the verdict, the slider's
-  // default, the chart), and it is the costly part of a run. Callers only read it.
+  // default, the chart). Callers only read it.
   var key = n + '|' + JSON.stringify(P);
   if(chanceMemo.key === key) return chanceMemo.out;
-  var out = new Float64Array(n + 1);
+  var a = accumAmounts(P, n), w = riskWeights(P, a, n), z = chanceZ(P);
+  var out = new Float64Array(n + 1), t;
   out[0] = det[0];
-  simulateAccumulation(P, n, function(t, W){ out[t] = Math.min(det[t], atChance(P, W)); });
+  for(t = 1; t <= n; t++) out[t] = Math.min(det[t], streamValue(P, a, w, t, z));
   chanceMemo = {key: key, out: out};
   return out;
 }
@@ -923,24 +936,25 @@ function potAtChance(P, n){
   n = Math.max(0, n | 0);
   var det = accumulate(P, n)[n];
   if(!chanceOn(P) || n === 0) return det;
-  return Math.min(det, atChance(P, simulateAccumulation(P, n)));
+  var a = accumAmounts(P, n);
+  return Math.min(det, streamValue(P, a, riskWeights(P, a, n), n, chanceZ(P)));
 }
 
 /* The smallest x that puts the chance line at month n on `need`, where x
-   scales a stream of savings: P0 is the plan at x = 0 and P1 at x = 1. Every
-   future's balance, and the expected one, is affine in x, so the expected
-   line is solved directly as before and the chance it carries is bisected on
-   top. Each future rises with x, so the share that clears `need` does too.
+   scales a stream of savings: P0 is the plan at x = 0 and P1 at x = 1. The
+   expected balance is affine in x, so it is solved directly as before. The
+   stream is affine in x too, but the weights move with it, so the chance it
+   carries is bisected on top: more savings lift the balance at every score.
    NaN when more savings cannot help. */
 function affineAtChance(P0, P1, n, need){
   var d0 = accumulate(P0, n)[n], d1 = accumulate(P1, n)[n];
   var x = d1 - d0 > 1e-9 ? (need - d0) / (d1 - d0) : NaN;
   if(!chanceOn(P0) || !isFinite(x)) return x;
-  var e0 = simulateAccumulation(P0, n), e1 = simulateAccumulation(P1, n);
-  var col = new Float64Array(e0.length), k;
+  var a0 = accumAmounts(P0, n), a1 = accumAmounts(P1, n);
+  var av = new Float64Array(n + 1), z = chanceZ(P0), k;
   var reaches = function(v){
-    for(var p = 0; p < col.length; p++) col[p] = e0[p] + v * (e1[p] - e0[p]);
-    return atChance(P0, col) >= need;
+    for(var t = 0; t <= n; t++) av[t] = a0[t] + v * (a1[t] - a0[t]);
+    return streamValue(P0, av, riskWeights(P0, av, n), n, z) >= need;
   };
   if(reaches(x)) return x;
   var lo = x, step = Math.max(1, Math.abs(x)), hi = x + step;
@@ -953,93 +967,96 @@ function affineAtChance(P0, P1, n, need){
   return hi;
 }
 
-/* Step 9. One exact minimum pot per simulated path, because the drawdown is
-   affine in the starting pot. Sort once and every confidence level and every
-   success probability is a lookup, with no search at all. */
-function potRequirements(P, opts){
-  var nPaths = Math.max(1, opts.paths | 0);
+/* Step 9. The pot required to retire at the slider age, as a distribution.
+   Step 6 reads a sequence of returns only through its discount factors, so the
+   requirement at factor score z is step 6 run on their conditional means. The
+   weights are the drawdown from the expected requirement: the money still at
+   stake once each draw is paid, which is never below zero there. The
+   requirement falls as z rises, so every confidence level is one pass and
+   every success probability one bisection, and the two are exact inverses. */
+function potRequirements(P){
   var ra = P.ageRetire, n = Math.max(1, months(ra, horizonAge(P)));
-  var finite = [], infinite = 0, p;
-  for(p = 0; p < nPaths; p++){
-    var rng = mulberry32(deriveSeed(opts.seed, 'pot' + p));
-    var w = requiredPot(P, ra, growthSeries(P, rng, n));
-    if(isFinite(w)) finite.push(w); else infinite++;
+  var expected = requiredPot(P, ra);
+  if(!isFinite(expected) || !(P.sigma > 0)){
+    return {
+      expected: expected,
+      successAt: function(W){ return isFinite(expected) && W >= expected - 1e-6 ? 1 : 0; },
+      atConfidence: function(){ return expected; }
+    };
   }
-  finite.sort(function(a, b){ return a - b; });
-  return {
-    sorted: finite,
-    infinite: infinite,
-    paths: nPaths,
-    // Share of paths a pot of `W` would have survived.
-    successAt: function(W){
-      if(!isFinite(W)) return infinite ? 0 : 1;
-      var lo = 0, hi = finite.length;
-      while(lo < hi){ var mid = (lo + hi) >> 1; if(finite[mid] <= W) lo = mid + 1; else hi = mid; }
-      return lo / nPaths;
-    },
-    // Smallest pot that survives `c` percent of paths.
-    atConfidence: function(c){
-      var wanted = Math.ceil(c / 100 * nPaths);
-      if(wanted > finite.length) return Infinity;
-      return finite[clamp(wanted - 1, 0, finite.length - 1)];
+  var a = new Float64Array(n + 1), t;
+  for(t = 0; t < n; t++) a[t] = -drawAt(P, ra + t / 12);
+  a[0] += expected;
+  var w = riskWeights(P, a, n), Q = w.Q[n];
+  var mu = Math.log(1 + P.rr) / 12, v2 = P.sigma * P.sigma / 12;
+  var growth = new Float64Array(n);
+  // log G(t) here is the log of 1 / E[1 / G(0, t) | Z = z].
+  var potAt = function(z){
+    var k = Q > 0 ? z * Math.sqrt(v2 / Q) : 0, prev = 0, lg, U;
+    for(t = 1; t <= n; t++){
+      U = w.U[t];
+      lg = mu * t + k * U - 0.5 * v2 * (t - (Q > 0 ? U * U / Q : 0));
+      growth[t - 1] = Math.exp(lg - prev);
+      prev = lg;
     }
+    return requiredPot(P, ra, growth);
+  };
+  return {
+    expected: expected,
+    // Share of futures a pot of `W` lasts through.
+    successAt: function(W){
+      if(!(W >= potAt(Z_LIMIT))) return 0;
+      if(W >= potAt(-Z_LIMIT)) return 1;
+      var lo = -Z_LIMIT, hi = Z_LIMIT, mid;
+      for(var k = 0; k < 60; k++){
+        mid = (lo + hi) / 2;
+        if(potAt(mid) <= W) hi = mid; else lo = mid;
+      }
+      return normCdf(-hi);
+    },
+    // Smallest pot that lasts through `c` percent of futures.
+    atConfidence: function(c){ return potAt(-normInv(c / 100)); }
   };
 }
 
 /* The band on the cashflow balance. It is the "Chance it works" card drawn
-   out: the SAME futures potRequirements scores, seed for seed, each one
-   drawing down the pot the plan reaches by the slider age (the expected
-   return's, or the chance line's of step 12), through
-   the recurrence lifetimeSeries uses. A pot survives a path exactly when it is
-   at least that path's required pot, so the paths that stay funded here are
-   the paths the card counts, and the band shows where the rest run out.
+   out: the balance the plan reaches by the slider age (the expected return's,
+   or the chance line's of step 12), drawn down through the recurrence
+   lifetimeSeries uses, read at the 10th and 90th percentile of each year.
+   The weights are this drawdown's own, the money at stake once each draw is
+   paid, so a balance that runs out and goes on owing weighs the other way:
+   the lower edge shows the size of the miss as well as when.
 
-   Before retirement every path is the expected balance: the card starts its
+   Before retirement every future is the expected balance: the card starts its
    futures at the pot the plan reaches, so the fan opens at the retirement
-   month and not before. A path that runs out keeps owing, as the expected
-   line does, so the lower edge shows the size of the miss as well as when.
-   With zero volatility every percentile is the expected balance exactly.
+   month and not before. With zero volatility both edges are the expected
+   balance exactly.
 
    Sampled at the same months yearly() samples the expected line, from the
    last whole year at or before retirement, so the fan opens from a point on
    the line. Returns null when the plan never retires. */
-function drawdownBands(P, det, opts){
-  var nPaths = Math.max(1, opts.paths | 0);
+function drawdownBands(P, det){
   var accM = accMonths(P);
   var total = det.length - 1;
   if(accM >= total) return null;                        // never retires, nothing drawn
   var chartYears = Math.max(1, Math.round(total / 12));
   var startYear = Math.floor(accM / 12);
-  /* The card's own path length, so each path is the card's path draw for
-     draw. It is never shorter than the chart: the draws come out in order, so
-     a longer series only adds months at the end and changes none before. */
-  var n = Math.max(1, months(P.ageRetire, horizonAge(P)), total - accM);
-  var flows = new Float64Array(total), W, y, p, t;
-  for(t = accM; t < total; t++) flows[t] = flowAt(P, t);
-  // The month each yearly sample reads, clamped the way yearly() clamps the
-  // expected line, so the band and the line are sampled at the same months.
-  var at = [];
-  for(y = startYear; y <= chartYears; y++) at.push(Math.min(y * 12, total));
-  var samples = at.map(function(){ return new Float64Array(nPaths); });
-  var path = new Float64Array(total + 1);
-  for(t = 0; t <= accM; t++) path[t] = det[t];         // the same for every path
-  for(p = 0; p < nPaths; p++){
-    var g = growthSeries(P, mulberry32(deriveSeed(opts.seed, 'pot' + p)), n);
-    W = det[accM];
-    for(t = accM; t < total; t++){
-      W += flows[t];                                    // the draw comes out before the return
-      W *= g[t - accM];
-      path[t + 1] = W;
-    }
-    for(y = 0; y < at.length; y++) samples[y][p] = path[at[y]];
-  }
+  var N = total - accM, a = new Float64Array(N + 1), t, y, at;
+  for(t = accM; t < total; t++) a[t - accM] = flowAt(P, t);   // the draw comes out before the return
+  a[0] += det[accM];
+  var w = riskWeights(P, a, N);
+  // The draw of month T comes out after the balance at T is read, so it is
+  // not in it. It is counted at face value, so taking it back off is exact.
+  var balanceAt = function(T, z){ return streamValue(P, a, w, T, z) - a[T]; };
   var bands = {p10: [], p90: []};
-  samples.forEach(function(col){
-    col = Array.prototype.slice.call(col).sort(function(a, b){ return a - b; });
-    bands.p10.push(quantile(col, 0.10));
-    bands.p90.push(quantile(col, 0.90));
-  });
-  return {bands: bands, startYear: startYear, years: chartYears, paths: nPaths};
+  for(y = startYear; y <= chartYears; y++){
+    // Clamped the way yearly() clamps the expected line.
+    at = Math.min(y * 12, total);
+    if(at <= accM){ bands.p10.push(det[at]); bands.p90.push(det[at]); continue; }
+    bands.p10.push(balanceAt(at - accM, -BAND_Z));
+    bands.p90.push(balanceAt(at - accM, BAND_Z));
+  }
+  return {bands: bands, startYear: startYear, years: chartYears};
 }
 
 /* Annualised return and volatility from a fetched price series, the two figures
@@ -1373,10 +1390,8 @@ function readInputs(){
   UI.pensionPeriod = $('pensionPeriod').value;
   UI.pensionIndexed = $('pensionIndexed').checked;
   UI.showReal = $('showReal').checked;
-  UI.paths = clamp(Math.round(num($('paths').value, 1000)), 100, 5000);
   UI.confidence = clamp(num($('confidence').value, 90), 50, 99);
   UI.chance = clamp(num($('chance').value, 50), 50, 99);
-  UI.seed = Math.max(1, Math.round(num($('seed').value, UI_DEFAULTS.seed)));
   return UI;
 }
 
@@ -1418,8 +1433,8 @@ function widenRetireSlider(){
    load, from a Quick Start, or back to the defaults) and from then on the
    handle is the reader's; nothing moves it until the next whole plan.
 
-   Cheap enough to run on the spot: the freedom solve is about half a
-   millisecond, against ~150ms for the Monte Carlo it runs before. */
+   Cheap enough to run on the spot: the freedom solve is a few milliseconds,
+   a small part of the render it runs before. */
 function seedRetireAge(){
   var ff = solveFreedomAge(buildParams(UI));
   var span = retireSpan();
@@ -2219,9 +2234,9 @@ function compute(ui){
     }
   }
 
-  var mc = accumBands(P, {paths: ui.paths, seed: ui.seed});
-  var reqs = potRequirements(P, {paths: ui.paths, seed: ui.seed});
-  var dd = drawdownBands(P, det, {paths: ui.paths, seed: ui.seed});
+  var mc = accumBands(P);
+  var reqs = potRequirements(P);
+  var dd = drawdownBands(P, det);
 
   return {
     P: P, ui: ui, diag: diag, years: years, thisYear: thisYear, thisMonth: thisMonth,
@@ -2346,7 +2361,7 @@ function renderVerdict(res){
     cls += 'good';
     html = '<h2>Financially free at ' + escapeHtml(fmt.age(d.ffAge)) + '.</h2>' +
       (chanceOn(res.P)
-        ? '<p>In at least ' + fmt.pct(res.P.chance, 0) + ' of simulated futures, and the retirement slider cannot move it. Read the chance below too.' +
+        ? '<p>In at least ' + fmt.pct(res.P.chance, 0) + ' of futures, and the retirement slider cannot move it. Read the chance below too.' +
           info('Your investment reaches the pot by then in that share of futures. Once you stop, the pot is drawn down at the expected return.')
         : '<p>On the expected return alone, and the retirement slider cannot move it. Read the chance below too.' +
           info('A single average return ignores the order the good and bad years arrive in. Land the bad ones early and the same average return runs out.')) + '</p>';
@@ -2457,7 +2472,7 @@ function renderMetrics(res){
   $('mSuccess').className = 'value ' + (sr >= 0.85 ? 'pos' : (sr < 0.6 ? 'neg' : ''));
   /* The confidence pot no longer has a card of its own, but it is still the
      figure to plan around, so it rides under the probability it belongs to. */
-  $('mSuccessSub').textContent = 'of ' + fmt.num(res.reqs.paths) + ' simulated futures. ' +
+  $('mSuccessSub').textContent = 'of possible futures. ' +
     (isFinite(res.confPot)
       ? fmt.pct(res.ui.confidence, 0) + ' confidence needs ' +
         fmt.currency(show(res, res.confPot, retireYearIdx), true) + '.'
@@ -2506,7 +2521,7 @@ function pts(values, firstYear){
    window, so the shape under the reader's nose is the shape they can read.
 
    `hiSeries` are the series the TOP of the axis is sized to, `loSeries` those
-   the bottom is. The simulated band's upper edge is deliberately in neither:
+   the bottom is. The band's upper edge is deliberately in neither:
    sixty years of compounding put its best decile so far above the lines that
    decide the answer that the answer becomes an unreadable sliver, so the band
    is allowed to run off the top instead and the subtitle says it does. Points
@@ -3002,7 +3017,7 @@ function renderCharts(res){
     view1 = clamp(Math.ceil(res.ffAge - res.P.ageNow) + 8, Math.min(12, years), years);
   }
 
-  /* Size the axis to the expected plan, not to the best of a thousand futures.
+  /* Size the axis to the expected plan, not to the best tenth of the futures.
      Sixty years of compounding put the 90th percentile an order of magnitude
      above the crossing, and the crossing is what this chart is for. The band is
      allowed to run off the top; the subtitle says so when it does. Measured
@@ -3075,7 +3090,7 @@ function renderCharts(res){
 
   $('chart1Sub').textContent = bandClipped
     ? 'The axis is sized to the ' + (chanceOn(res.P) ? 'investment outcome' : 'expected outcome') +
-      ', so the best of the simulated futures runs off the top.'
+      ', so the best futures run off the top.'
     : '';
 
   /* ── Cashflows ──────────────────────────────────────────────────────────
@@ -3102,7 +3117,7 @@ function renderCharts(res){
   var retLabel = 'Retire at ' + fmt.age(res.P.ageRetire);
 
   /* The range of balances, shaded round the expected line from the year the
-     draws begin, worst tenth of the simulated futures to the best. Held as
+     draws begin, worst tenth of the futures to the best. Held as
      whole-plan arrays, blank before the fan opens, so the fitter reads them by
      the same year index as every other series. */
   var fan = {p10: [], p90: []}, fanFrom = null;
@@ -3347,11 +3362,11 @@ function renderAssumptions(res){
     (ui.std > 0 ? ', swinging ' + pc(ui.std) + ' either way' : ', the same every year') +
     ', which is ' + pc(P.rr * 100) + ' after inflation' + (preset ? ' (the ' + escapeHtml(preset.label) + ' preset)' : '') + '.' +
     (ui.std > 0
-      ? info('The ' + pc(ui.std) + ' is one standard deviation. The shaded band is the 10th to 90th percentile across ' + fmt.num(res.mc.paths) + ' simulated futures, taken year by year, so it is an envelope rather than one path.')
-      : info('With no swing every simulated future is the same, so the band closes onto the line.')));
+      ? info('The ' + pc(ui.std) + ' is one standard deviation. The band is the 10th to 90th percentile each year, and a bad year counts more the more money it hits.')
+      : info('With no swing every future is the same, so the band closes onto the line.')));
 
   if(chanceOn(P)){
-    items.push('<strong>Your investment grows to a level ' + pc(P.chance) + ' of simulated futures reach or beat</strong>, ' +
+    items.push('<strong>Your investment grows to a level ' + pc(P.chance) + ' of futures reach or beat</strong>, ' +
       'never above the expected return, until you stop work.' +
       info('That is the Investment outcome line, so the freedom age and the balance at ' + fmt.age(P.ageRetire) +
         ' are the cautious ones. From there the pot is drawn down at the expected return.'));
@@ -3448,11 +3463,10 @@ function render(){
 }
 
 /* ── The Simulate gate ──────────────────────────────────────────────────────
-   A thousand simulated futures cost about 150ms, and the control goes to five
-   thousand, so a page that recomputed itself as you type would stutter for a
-   sixth of a second after every pause — longer on a phone — and would do it
-   while the plan on screen is still half-entered. So typing does not run the
-   engine. It keeps the FORM coherent, which is cheap and has to stay live:
+   The bands are worked out rather than simulated (step 8), so a run is quick,
+   but a page that recomputed itself as you type would still redraw both
+   charts after every pause, and would do it while the plan on screen is still
+   half-entered. So typing does not run the engine. It keeps the FORM coherent, which is cheap and has to stay live:
    currency prefixes follow the currency, the retirement slider's ends follow
    the two ages, and the goal you pick decides which fields are even shown.
    What it does not do is pretend the answer below has kept up. The results are
@@ -4107,10 +4121,8 @@ function applyUIToDom(ui){
   $('pensionPeriod').value = ui.pensionPeriod;
   $('pensionIndexed').checked = ui.pensionIndexed !== false;
   $('showReal').checked = !!ui.showReal;
-  $('paths').value = ui.paths;
   $('confidence').value = ui.confidence;
   $('chance').value = ui.chance;
-  $('seed').value = ui.seed;
   var radio = document.querySelector('input[name="ffmode"][value="' + ui.mode + '"]');
   if(radio) radio.checked = true;
   syncModeSelection();
@@ -4168,7 +4180,7 @@ function wire(){
   SharedFmt.attachCurrencyInput($('retireExpense'), retireFmt);
 
   ['ageNow','ageDie','growth','inflation','ret','std',
-   'pensionStartAge','paths','confidence','chance','seed'].forEach(function(id){
+   'pensionStartAge','confidence','chance'].forEach(function(id){
     $(id).addEventListener('input', markStale);
   });
   /* A figure typed against one period is rescaled when the period moves, so
@@ -4208,7 +4220,7 @@ function wire(){
      it IS the question this board asks: it is a sensitivity control, and one you
      have to press a button after is not one. The readout follows the handle on
      every pixel and the recompute sits behind a short debounce, so a drag stays
-     smooth instead of running a Monte Carlo per animation frame.
+     smooth instead of redrawing both charts per animation frame.
 
      That render reads the whole form, so any assumption typed but not yet
      simulated is run by it — which is exactly why it clears the stale mark
@@ -4246,8 +4258,8 @@ function wire(){
   });
 
   /* Today's money against the money of the day is a way of READING the answer,
-     not an assumption about it, so it redraws on the spot. The seed makes the
-     simulated futures reproducible, so re-running gives back the same ones. */
+     not an assumption about it, so it redraws on the spot. Nothing in the
+     engine is random, so re-running gives back the same answer. */
   $('showReal').addEventListener('change', render);
 
   $('fetchTickerBtn').addEventListener('click', fetchTicker);
@@ -4429,14 +4441,17 @@ window.__FF = {
   accumBands: accumBands,
   potRequirements: potRequirements,
   drawdownBands: drawdownBands,
-  growthSeries: growthSeries,
+  accumulateAtChance: accumulateAtChance,
+  potAtChance: potAtChance,
+  riskWeights: riskWeights,
+  streamValue: streamValue,
+  normInv: normInv,
+  normCdf: normCdf,
   tickerStats: tickerStats,
   diagnose: diagnose,
   solveRemedies: solveRemedies,
   months: months,
   perMonth: perMonth,
-  mulberry32: mulberry32,
-  deriveSeed: deriveSeed,
   fmt: fmt,
   readInputs: readInputs,
   compute: compute,

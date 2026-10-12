@@ -37,7 +37,7 @@ means the maths agrees rather than an implementation being compared to itself:
   (`refStages`, `refStageAt`), sorted once latest start first, ties to the
   row further down, and read for the first stage whose span holds the age.
   Every replay function that spends (`refSavings`, `refSpend`, `refRequired`,
-  `refForward`, `refFan`) goes through it, so a stage that disagrees shows up
+  `refForward`, `refFanEdges`) goes through it, so a stage that disagrees shows up
   everywhere at once. With stages the closed-form future value no longer
   applies, so `refAccum` falls back to the discounted sum of every month's
   saving rather than the page's recurrence.
@@ -55,6 +55,23 @@ means the maths agrees rather than an implementation being compared to itself:
   the Simple pension needs. Simple Money in was checked against the page
   before income stages with `regression.mjs --live` and is unchanged to the
   last binary digit.
+- the spread of outcomes (steps 8, 9 and 12) is closed form in the page,
+  conditional means written from running sums of the weights. The replay
+  writes it as **textbook Gaussian conditioning** (`refStream`): each term's
+  covariance with the factor over the factor's variance as a regression
+  slope, the unexplained variance added back by half. Its weights are the
+  **present value of every amount landed so far**, where the page carries
+  the expected balance forward and discounts it; its normal distribution is
+  the density **integrated by Simpson's rule and inverted by bisection**,
+  where the page uses Marsaglia's series and Acklam's quantile; and the
+  requirement at a given score (`refRequiredAt`) is the replay's own
+  **backward walk** on the conditional discount factors. Agreement is to
+  1e-9 on the bands and 1e-6 on the chance. Because step 8 is an
+  approximation, the replay also carries **its own Monte Carlo**
+  (`refSimulate`, a seeded LCG feeding Box-Muller, nothing from the page),
+  and F15 and F70d hold the page to 4,000 simulated futures: the confidence
+  pot within 3.5%, the chance within 3 points, the band within 5%, and the
+  90% line held by at least 88.5% of futures where it meets the pot.
 
 Run: `node run.mjs`
 
@@ -64,11 +81,16 @@ Run: `node run.mjs`
 narrower and stricter: that adding Money out and life stages moved NO plan that
 could be entered before them. Not to the cent, to the last binary digit,
 compared with `Object.is` on every value: every number the engine produces
-(parameters, the verdict and its remedies, every series, the Monte Carlo
-bands, every simulated future's required pot, the drawdown band), every row of
-the table, every byte of the CSV, every point on both charts, and the text of
-the verdicts, the cards and the notes. The assumptions list was reworded, so
-only its figures are compared.
+(parameters, the verdict and its remedies, every series), every row of the
+table, every byte of the CSV, every point on both charts, and the text of the
+verdicts, the cards and the notes. The assumptions list was reworded, so only
+its figures are compared. The bands, the "Chance it works" card and the
+confidence pot are recorded but no longer compared: they moved from a Monte
+Carlo to the closed form of step 8, so they differ from the baseline by
+design, and `run.mjs` holds them to the replay and to simulated futures
+instead. The table, CSV, chart and text groups already differed from
+`baseline.json` before that change, for the reworded copy and the later
+features; the move added no difference to them.
 
     node regression.mjs                  this page against baseline.json
     node regression.mjs --live ca850bc   this page beside the old one, from git
@@ -128,12 +150,15 @@ pot is *supposed* to fall through the bridge and then hold for ever, and an
 earlier version of this tool rejected exactly that by comparing the horizon
 balance against the starting pot. F8 exists because the page got it wrong first.
 
-Randomness: zero volatility collapsing every percentile onto the deterministic
-ACCUMULATION exactly — the band wraps the line it is drawn around, and that line
-never withdraws — seed reproducibility, success probability being monotone in the
-pot (which is what the common-random-numbers design buys and what the confidence
-pot depends on), and the log-growth drift and spread matching the documented
-log-normal over 240,000 draws.
+The spread of outcomes: zero volatility collapsing every percentile onto the
+deterministic ACCUMULATION exactly — the band wraps the line it is drawn
+around, and that line never withdraws — and every confidence level onto the
+expected pot (F12); the section 1 band against the replay on five plans, and a
+lump sum with nothing added getting the exact lognormal percentiles, since its
+one factor is the whole return (F13); success monotone in the pot, the
+confidence pot succeeding exactly as often as asked at every level, and both
+against the replay on five goals and incomes (F14); and the approximation
+itself against 4,000 of the replay's own simulated futures on four plans (F15).
 
 **The cash flows and the money you put in.** `Saved = Income - Expense` in every
 row of the table, under both savings models and across a pension start, and all
@@ -152,7 +177,7 @@ all, because the section it belongs to does not ask that question.
 F45 pins the deletion: no drawdown field, no stress toggle, no crash metric, no
 `stressRequiredPot`, no `mdd` on a preset or in the defaults, and no crash left
 in the assumptions copy. The volatility already carries the downside, and a
-single hand-placed drawdown said less than the Monte Carlo does.
+single hand-placed drawdown said less than step 8 does.
 
 Ticker statistics against a synthetic series with a known closed-form answer: a
 gap down lowers the measured compound return and raises the measured volatility,
@@ -260,22 +285,20 @@ same pass as the flows, or it would be left drawn against a window it is not
 in.
 
 **The range of balances is the "Chance it works" card, drawn out.** The
-cashflow balance carries a shaded band now, from the worst tenth of the
-simulated futures to the best, opening at the retirement year. It is built from
-the SAME futures the card is scored on, seed for seed, each drawing down the
-pot the expected return reaches by the slider age, so the harness holds it to
-the card rather than to itself. F66 replays both edges, year by year, from the
-replay's own flows and recurrence (`refFan`), taking nothing from the page but
-the random draws. F66b walks each of those futures forward and counts the ones
-that stay funded (never under zero after a draw, and on the goal's terminal
-condition at its horizon), and that count has to BE the card's figure, path
-for path: the card is scored by the page's affine required-pot solve, the
-replay never solves a pot at all, so agreement is two formulations agreeing on
-which futures work. F66e is what makes the shading say it: swept across the
-slider from a 0% chance to 100%, under Just Die and again under Leave a
-Legacy, the share of futures ending short (under zero, or under the bequest)
-is exactly the share the card says fail, and the worst-tenth edge ends clear
-exactly when more than nine futures in ten work. F66c-d pin that the band
+cashflow balance carries a shaded band, from the worst tenth of the futures to
+the best, opening at the retirement year, drawn down from the pot the plan
+reaches by the slider age. F66 replays both edges, year by year, on eight
+plans from the replay's own flows, pot and conditioning (`refFanEdges`),
+taking nothing from the page, and F66b replays the card on the same plans
+(`refSuccess`). F66e is what makes the shading say it: swept across the slider
+from a 0% chance to 100%, under Just Die and again under Leave a Legacy, the
+worst-tenth edge ends clear (of zero, or of the bequest) exactly when more
+than nine futures in ten work. The band and the card read a factor each, so
+the two may part only beside 90% itself; the sweep reports any such age, and
+finds none. F66f is what found the one mistake the move to step 8 made: the
+balance at a year was read after that year's draw had come out, which the
+replay shared, and only the zero-volatility collapse onto the line exposed.
+F66c-d pin that the band
 opens on the expected line and its edges never cross, F66f that zero
 volatility collapses both plotted edges onto the line to the cent, F66g the
 plotted edges in both moneys, and F66h-i where they sit and what they fill
@@ -291,13 +314,12 @@ past it. The margin is what shows a failing tail: a band that dips under zero
 has to open the axis under zero even when the line never goes there. F66s pins
 the zero line itself, drawn heavier than the other gridlines in the axis text
 colour. F66k-l pin the key, F66m-n the two ends of the slider (never stopping
-draws no band; stopping today opens it on today's assets), and F66o that the
-same seed reproduces it and that a longer run of draws shares every earlier
-month, which is what lets the band use the card's full horizon. F66p-r pin the
+draws no band; stopping today opens it on today's assets), and F66o that
+nothing about it is random. F66p-r pin the
 bequest line Leave a Legacy draws across the pane: dashed, keyed, on the axis,
 flat in today's money and the bequest in each year's money otherwise, and
-absent under the two goals that leave none. F56i-j run the replay and the
-path-for-path identity on the fuzz pass's 200 random plans too.
+absent under the two goals that leave none. F56i-j run the band and the card
+against the replay on the fuzz pass's 200 random plans too.
 
 A band allowed off its pane must not be painted over the pane above it, and
 Chart.js clips to the whole plot area, so the page clips a stacked axis's
@@ -488,7 +510,7 @@ part of its stage, so Die Rich pays a stage to the horizon and prices for
 ever on retirement expenses, against a closed form. F67n is the reason
 retirement expenses wait: kids at home when you stop work are still paid for
 until they leave, and only then do retirement expenses apply, wherever the
-slider sits. F67o collapses the Monte Carlo onto the staged plan at zero
+slider sits. F67o collapses the spread onto the staged plan at zero
 volatility, F67p-p2 pin the timeline the panel prints, and F67q-q2 pin that
 "spend less" cuts EVERY expense and quotes a share that funds the plan, which
 cutting living alone would not.
