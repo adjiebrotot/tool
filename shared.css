@@ -457,7 +457,7 @@ html.abt-embed-wait body{visibility:hidden;}
 html.abt-embed,html.abt-embed body{height:100%;}
 /* Nothing scrolls, so no gutter is kept for a scrollbar. */
 html.abt-embed{scrollbar-gutter:auto;overflow:hidden;}
-html.abt-embed body{margin:0 !important;padding:0 !important;overflow:hidden !important;display:block !important;min-height:0 !important;background:var(--bg) !important;}
+html.abt-embed body{margin:0 !important;padding:0 !important;overflow:hidden !important;display:block !important;min-height:0 !important;background:transparent !important;}
 html.abt-embed [data-abt-hide]{display:none !important;}
 html.abt-embed .abt-embed-path{display:block !important;position:static !important;inset:auto !important;margin:0 !important;padding:0 !important;width:auto !important;min-width:0 !important;max-width:none !important;height:auto !important;min-height:0 !important;max-height:none !important;overflow:visible !important;transform:none !important;border:0 !important;border-radius:0 !important;background:none !important;box-shadow:none !important;}
 html.abt-embed .abt-embed-card{display:flex !important;flex-direction:column !important;position:relative !important;box-sizing:border-box !important;width:auto !important;max-width:none !important;height:100vh !important;max-height:none !important;margin:0 !important;overflow:hidden !important;transform:none !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;background:transparent !important;}

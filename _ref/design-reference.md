@@ -1799,7 +1799,7 @@ SharedShare.upgrade(overlay);
 
 ```html
 <iframe src="https://tool.adjiebrotots.com/<tool>/#embed=<chart>&amp;theme=dark&amp;s=…" title="<chart title>"
-        width="100%" height="<desktop height>" style="border:0" loading="lazy"></iframe>
+        width="100%" height="<desktop height>" style="border:0;background:transparent" loading="lazy"></iframe>
 ```
 
 `s` is the scenario file the save button writes (`SharedScenario.mount` registers it with
@@ -1809,11 +1809,13 @@ finance tool. The page reads the hash before any tool script runs and opens in *
 mode**: the mini cache neither restores nor saves (the viewer's own work is left alone),
 the tour stays away, the scenario is opened the way a saved file is, the chart's view is
 put back (fields, pressed buttons and legend entries inside its card), and only that card
-is shown, filling the frame. Zoom, pan and hover all keep working.
+is shown, filling the frame, on no background of its own (the page, the body and the card
+are transparent), so the other site's page shows through. Zoom, pan and hover all keep
+working.
 
 **The watermark lives in the frame.** Under the chart, hard right, embed mode draws the
 site's circled A and one line, "Try your own scenarios at tool.adjiebrotots.com/<tool>",
-linking to the tool's canonical address (opened in a new tab). It is the PNG and SVG
+linking back to the tool (opened in a new tab, see *Links back* below). It is the PNG and SVG
 watermark's equivalent: small (0.66rem), muted, at 70% opacity until hovered. Being part
 of the framed page, which the other site cannot reach into, it cannot be edited out of the
 code without dropping the chart too. But a link inside a frame is credited to the
@@ -1827,6 +1829,15 @@ crawlers credit. Its anchor is the tool's `og:title`, never keywords: search eng
 keyword-rich links spread through widgets as link spam. It sets only margin, size and
 alignment, so it takes the other site's font and link colour. The site can delete it; the
 watermark in the frame stays either way, and the dialog asks the reader to keep it.
+
+**Links back open the reader's scenario.** The watermark and the credit link both point at
+`<tool>/#open=<chart>&s=…`: the canonical address (the part a crawler credits, since it
+ignores the `#hash`) set up on the scenario and view the embed shows. `s` is the embed's
+payload without its prices (`d`), since the whole tool fetches its own, so it stays about
+as long as the iframe's for a finance tool. Opened as a page (open mode), the tool drops
+`#open` from the address, loads the scenario the way a saved file is loaded (it becomes the
+reader's own saved work, so a reload keeps what they change), puts the chart's view back
+and scrolls the chart into view. Its strings are made inert as an embed's are.
 
 Only Embed as HTML carries a second line in the menu ("Interactive chart for your site");
 the other three rows say what they do in their label alone.
@@ -1862,7 +1873,9 @@ what they write into `innerHTML`; this is the second lock, not the first.
 
 `node _ref/share-check.mjs` drives every chart's menu on a desktop and a phone, holds a
 phone's and a wide monitor's PNG, SVG and copy to the desktop's size, opens every embed in
-a page on another site at two widths to prove it draws exactly the data the reader saw, and
+a page on another site at two widths to prove it draws exactly the data the reader saw on
+a transparent background, follows the link back to prove the whole tool opens on that same
+chart, and
 replays each page's link with every string swapped for markup and script, which has to be
 drawn as text and run nothing.
 

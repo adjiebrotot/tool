@@ -16,6 +16,14 @@
     return { key: decodeURIComponent(m[1]), theme: get('theme'), s: get('s') };
   }
   if(EMBED) document.documentElement.classList.add('abt-embed', 'abt-embed-wait');
+  /* The links back to the tool (the frame's watermark and the credit line
+     under it) open the whole tool as #open=<chart>&s=<scenario>, set up on
+     the scenario the embed shows, so a reader starts from what they saw. */
+  var OPEN = EMBED ? null : readOpenHash(global.location && global.location.hash);
+  function readOpenHash(hash){
+    var m = /(?:^#|&)open=([^&]+)/.exec(hash || ''), s = /(?:^#|&)s=([^&]*)/.exec(hash || '');
+    return m && s ? { key: decodeURIComponent(m[1]), s: decodeURIComponent(s[1]) } : null;
+  }
 
   function formatThousands(value, opts){
     opts = opts || {};
@@ -3015,7 +3023,9 @@
      without dropping the chart with it. The iframe's link carries the
      chart and the reader's scenario, which is the file the save button writes
      (SharedScenario registers it here through state()), deflated into the
-     #hash, which never reaches a server. On the other site the page opens in
+     #hash, which never reaches a server. Both links back to the tool (the
+     watermark and the credit line) open it as #open=<chart>&s=<scenario>,
+     set up on that same scenario and view. On the other site the page opens in
      embed mode: it loads that scenario instead of the viewer's own cache and
      saves nothing, puts back the chart's view (the metric buttons, toggles
      and legend entries in its card, plus a view() hook where the view lives
@@ -3450,14 +3460,24 @@
       if(views[key] && views[key].save) payload.v = views[key].save();
       var u = captureUi(card);
       if(u) payload.u = u;
-      var theme = document.body.classList.contains('light') ? 'light' : 'dark';
-      return pack(payload).then(function(s){
-        var home = pageUrl();
-        var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + s;
+      var theme = document.body.classList.contains('light') ? 'light' : 'dark', home = pageUrl();
+      return Promise.all([pack(payload), openLink(home, key, payload)]).then(function(r){
+        var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + r[0];
         var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
-          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0" loading="lazy"></iframe>\n' + credit(home);
-        return { code: code, src: src, key: key };
+          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1]);
+        return { code: code, src: src, key: key, open: r[1] };
       });
+    }
+
+    /* The address the links back to the tool point at: the tool itself, set
+       up on the scenario and the view the embed shows. The prices (d) stay
+       out: the tool fetches its own, so the link stays short. */
+    function openLink(home, key, payload){
+      var p = {};
+      ['s', 'v', 'u'].forEach(function(k){ if(payload[k] !== undefined) p[k] = payload[k]; });
+      if(!p.s && !p.v && !p.u) return Promise.resolve(home);
+      return pack(p).then(function(s){ return home + '#open=' + encodeURIComponent(key) + '&s=' + s; },
+                          function(){ return home; });
     }
 
     /* The credit line under the frame. The watermark inside the frame cannot
@@ -3588,10 +3608,10 @@
       '<circle cx="340" cy="340" r="300" fill="#0052cc"/><g fill="none" stroke="#fff" stroke-width="46">' +
       '<path d="M242 570A250 250 0 0 1 234 113"/><path d="M234 113A250 250 0 0 1 446 113"/><path d="M446 113A250 250 0 0 1 438 570"/></g>' +
       '<line x1="113" y1="354" x2="567" y2="354" stroke="#fff" stroke-width="42" stroke-linecap="round"/></svg>';
-    function mark(card){
+    function mark(card, href){
       var home = pageUrl(), a = document.createElement('a');
       a.className = 'abt-embed-mark';
-      a.href = home;
+      a.href = href || home;
       a.target = '_blank';
       a.rel = 'noopener';
       a.title = toolName();
@@ -3601,8 +3621,8 @@
     }
     // Only the card is left: every sibling on the way up to the body is
     // hidden, and every box on that way loses its own layout.
-    function isolate(card, el){
-      mark(card);
+    function isolate(card, el, href){
+      mark(card, href);
       card.classList.add('abt-embed-card');
       var fill = fillOf(el);
       fill.classList.add('abt-embed-fill');
@@ -3654,12 +3674,14 @@
       document.documentElement.classList.add('abt-embed-failed');
     }
     function startEmbed(){
-      var E = EMBED, payload = {};
+      var E = EMBED, payload = {}, back = null;
       Promise.resolve()
         .then(function(){ applyTheme(E.theme); })
         .then(function(){ return E.s ? unpack(E.s) : {}; })
         .then(function(p){
           payload = p && typeof p === 'object' ? p : {};
+          // Packed as it came, before any string is made inert below.
+          back = openLink(pageUrl(), E.key, payload);
           // The legend labels and toggles are only compared and matched as
           // selectors, never written into the page; everything else is.
           payload.s = inert(payload.s);
@@ -3683,8 +3705,7 @@
         .then(function(){
           var el = findChart(E.key), card = cardOf(el);
           if(!card) throw new Error('no chart ' + E.key + ' on this page');
-          isolate(card, el);
-          return settled(E.key);
+          return back.then(function(href){ isolate(card, el, href); return settled(E.key); });
         })
         .then(function(){
           // A link from before prices rode in it would need the Worker, which
@@ -3697,6 +3718,40 @@
     if(EMBED){
       if(document.readyState === 'complete') setTimeout(startEmbed, 0);
       else global.addEventListener('load', function(){ setTimeout(startEmbed, 0); });
+    }
+
+    /* ── Open mode: a link back from an embed ──
+       The whole tool, on the scenario and view the embed showed. It loads as
+       a scenario file would, so it becomes the reader's own saved work; the
+       address loses its #open first, so a reload keeps what they change. */
+    function startOpen(){
+      var O = OPEN, payload = {};
+      try { global.history.replaceState(null, '', global.location.pathname + global.location.search); } catch(e){}
+      unpack(O.s)
+        .then(function(p){
+          payload = p && typeof p === 'object' ? p : {};
+          payload.s = inert(payload.s);
+          payload.v = inert(payload.v);
+          if(payload.u && typeof payload.u === 'object') payload.u.f = inert(payload.u.f);
+          if(payload.s && provider) return provider.load(payload.s);
+        })
+        .then(function(){ return wait(250); })
+        .then(function(){
+          var run = document.querySelector('.needs-run');
+          if(run && !run.disabled){ run.click(); return wait(250); }
+        })
+        .then(function(){ var h = views[O.key]; if(h && h.load) return h.load(payload.v || {}); })
+        .then(function(){ return wait(250); })
+        .then(function(){ var card = cardOf(findChart(O.key)); if(card && payload.u) return applyUi(card, payload.u); })
+        .then(function(){
+          var card = cardOf(findChart(O.key));
+          if(card && card.scrollIntoView) card.scrollIntoView({ block: 'center' });
+        })
+        .catch(function(err){ if(global.console) console.warn('Open:', err); });
+    }
+    if(OPEN){
+      if(document.readyState === 'complete') setTimeout(startOpen, 0);
+      else global.addEventListener('load', function(){ setTimeout(startOpen, 0); });
     }
 
     return {
