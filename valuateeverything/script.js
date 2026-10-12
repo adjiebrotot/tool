@@ -539,6 +539,9 @@ function nextColId(){
 function featureColumns(){ return S.columns.filter(c => FEATURE_TYPES.includes(c.type)); }
 const hasDataYear = () => S.columns.some(c => c.type === 'datayear');
 function sym(){ return $('currency').value || ''; }
+/* What the price is called in titles and notes: its code when the Price
+   column has one (AUD), else the Currency Symbol. Figures keep the symbol. */
+function priceLabel(){ return priceCode((S.columns.find(c => c.type === 'price') || {}).unit) || sym(); }
 
 /* The codes the Price currency offers: the Cost of Living Comparator's rated
    currencies, the Rent vs Own base-currency list, or every code the browser
@@ -609,7 +612,8 @@ function readOpts(){
     inflation: (parseFloat($('inflation').value) || 0) / 100,
     model: $('model').value,
     lambda: parseFloat($('lambda').value) || 0,
-    sym: sym()
+    sym: sym(),
+    cur: priceLabel()
   };
 }
 
@@ -1252,7 +1256,7 @@ function renderKpis(r){
 function featLabel(f){ return f.unit ? `${f.name} (${f.unit})` : f.name; }
 
 function renderTables(r){
-  const s = r.o.sym;
+  const s = r.o.sym, cur = r.o.cur;
   const blank = msg => `<p class="empty-note">${esc(msg)}</p>`;
   if(r.error){
     $('itemsTableWrap').innerHTML = blank(r.error);
@@ -1266,7 +1270,7 @@ function renderTables(r){
 
   // Items to buy
   const inMoney = r.o.dated ? `, ${r.o.year} money` : '';
-  $('itemsUnit').textContent = `Prices in ${s || 'the price unit'}${inMoney}. The range is the fair price give or take one typical error.`;
+  $('itemsUnit').textContent = `Prices in ${cur || 'the price unit'}${inMoney}. The range is the fair price give or take one typical error.`;
   $('itemsTableWrap').innerHTML = !r.items.length ? blank('No items to buy yet.') :
     `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap %</th></tr></thead><tbody>` +
     r.items.map(it => {
@@ -1282,7 +1286,7 @@ function renderTables(r){
   const isLog = m.model === 'log';
   $('coefUnit').textContent = isLog
     ? `The model is for ln P, the natural log of the price${r.o.dated ? ` in ${r.o.year} money` : ''}. % per unit is e^α − 1. The standardised weight is the effect of one typical spread of the feature.`
-    : `Coefficients are in ${s || 'price'}${inMoney}, per unit of the feature. The standardised weight is the effect of one typical spread of the feature, so weights compare across units.`;
+    : `Coefficients are in ${cur || 'price'}${inMoney}, per unit of the feature. The standardised weight is the effect of one typical spread of the feature, so weights compare across units.`;
   const termUnit = (u, pow) => pow === 2 ? (/[²³]$/.test(u) ? ` (${u})²` : ` (${u}²)`) : ` (${u})`;
   const termName = (f, pow) => (f.type === 'year' ? `Age from ${f.name}` : f.name) + (pow === 2 ? '²' : '') + (f.unit ? termUnit(f.unit, pow) : f.type === 'year' ? termUnit('yrs', pow) : '');
   const rows = [];
@@ -1322,8 +1326,8 @@ function renderTables(r){
   // Without a data year, Listed and Today are the same figure, so only one is shown.
   const dated = r.o.dated;
   $('dataUnit').textContent = dated
-    ? `Prices in ${s || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`
-    : `Prices in ${s || 'the price unit'}. Miss is the listed price less the model.`;
+    ? `Prices in ${cur || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`
+    : `Prices in ${cur || 'the price unit'}. Miss is the listed price less the model.`;
   $('dataTableWrap').innerHTML =
     `<table><thead><tr><th>Row</th>${dated ? '<th>Data year</th>' : ''}<th>Listed</th>${dated ? '<th>Today</th>' : ''}<th>Model</th><th>Miss</th><th>Miss %</th></tr></thead><tbody>` +
     prep.row.map((row, i) => `<tr><td>${row}</td>${dated ? `<td>${prep.dataYear[i]}</td>` : ''}<td>${fmt.money(prep.price[i], s)}</td>${dated ? `<td>${fmt.money(prep.priceToday[i], s)}</td>` : ''}` +
@@ -1469,7 +1473,8 @@ function drawChart(r){
   const s = r.o.sym;
   const showData = $('showData').checked;
   const items = r.items.filter(it => !it.incomplete && !it.bad);
-  const priceTitle = r.o.dated ? `Price (${s ? s + ', ' : ''}${r.o.year} money)` : (s ? `Price (${s})` : 'Price');
+  const cur = r.o.cur;
+  const priceTitle = r.o.dated ? `Price (${cur ? cur + ', ' : ''}${r.o.year} money)` : (cur ? `Price (${cur})` : 'Price');
   const moneyFmt = (s ? s : '') + '%{y:,.0f}';
   const mix = (base, pairs) => { const v = base.slice(); pairs.forEach(([j, val]) => { v[j] = val; }); return v; };
   const others = feats.map((f, j) => j).filter(j => j !== xj && (dim === '2d' || j !== yj));
@@ -1686,8 +1691,8 @@ function copyPng(){
 /* ─── Listings CSV ─── */
 function dataCsv(){
   const r = last; if(!r || r.error) return;
-  const s = r.o.sym, p = r.prep, m = r.model, dated = r.o.dated;
-  const head = ['Row'].concat(dated ? ['Data year'] : [], [`Listed (${s})`], dated ? [`Today (${s})`] : [], [`Model (${s})`, `Miss (${s})`, 'Miss %']);
+  const u = r.o.cur, p = r.prep, m = r.model, dated = r.o.dated;
+  const head = ['Row'].concat(dated ? ['Data year'] : [], [`Listed (${u})`], dated ? [`Today (${u})`] : [], [`Model (${u})`, `Miss (${u})`, 'Miss %']);
   const lines = [head];
   p.row.forEach((row, i) => lines.push([row].concat(dated ? [p.dataYear[i]] : [], [p.price[i].toFixed(0)], dated ? [p.priceToday[i].toFixed(0)] : [],
     [m.fitted[i].toFixed(0), m.resid[i].toFixed(0), (m.resid[i] / m.fitted[i] * 100).toFixed(2)])));

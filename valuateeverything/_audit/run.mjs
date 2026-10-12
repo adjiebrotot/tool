@@ -257,7 +257,7 @@ console.log('\n── 4. The chart ──');
   await page.waitForTimeout(500);
   const plot = await ve(() => window.__plots[window.__plots.length - 1]);
   const r = await ve(() => { const r = window.__VE.compute(); return { resid: r.model.resid, n: r.model.n }; });
-  check('c1 the vertical axis is the price, in today\'s money', /^Price \(\$, \d{4} money\)$/.test(plot.layout.yaxis.title.text), plot.layout.yaxis.title.text);
+  check('c1 the vertical axis is the price, by its code, in today\'s money', /^Price \(AUD, \d{4} money\)$/.test(plot.layout.yaxis.title.text), plot.layout.yaxis.title.text);
   const dots = plot.data.find(t => /Listings/.test(t.name));
   const line = plot.data.find(t => t.name === 'Price model');
   // Each dot sits off the line by its own miss. The line is sampled, so read
@@ -381,6 +381,11 @@ console.log('\n── 8. The form ──');
   const f1e = await ve(() => ({ code: window.__VE.state.columns[0].unit, sym: document.getElementById('currency').value,
     head: window.__VE.toDelimited(window.__VE.state.columns, [], ',', ', ').split('\n')[0], open: !!document.querySelector('body > .combo-list') }));
   check('f1e a pick sets the code, its symbol, and the header "Price (GBP)"', f1e.code === 'GBP' && f1e.sym === '£' && /^Price \(GBP\)/.test(f1e.head) && !f1e.open, JSON.stringify(f1e));
+  await page.click('#valuateBtn').catch(() => {});
+  await page.waitForTimeout(400);
+  const f1h = await ve(() => { const p = window.__plots[window.__plots.length - 1];
+    return { y: p && p.layout.yaxis.title.text, items: document.getElementById('itemsUnit').textContent, data: document.getElementById('dataUnit').textContent }; });
+  check('f1h the picked code names the price on the chart and in the tables', /^Price \(GBP\b/.test(f1h.y) && /^Prices in GBP/.test(f1h.items) && /^Prices in GBP/.test(f1h.data), JSON.stringify(f1h));
   await setField('currency', '$');
   const f1f = await ve(() => window.__VE.state.columns[0].unit);
   check('f1f a Currency Symbol that is not the code\'s own clears the code', f1f === '', f1f);
