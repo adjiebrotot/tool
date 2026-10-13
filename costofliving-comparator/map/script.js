@@ -324,7 +324,12 @@ function normalise(){
     if(!VIEWS[m].some(v => v[0] === S.views[m])) S.views[m] = VIEW_DEFAULT[m];
   });
 }
-const view = () => S.views[S.mode];
+// The views a mode offers right now. In Required salary mode the target is
+// matched in every city, so its own view would read the same everywhere and
+// is left out. The view saved for a mode is kept, and shown again once it
+// tells cities apart.
+const viewsOf = mode => VIEWS[mode].filter(([k]) => !(mode === 'required' && k === (S.target === 'ratio' ? 'ratio' : 'savings')));
+const view = () => viewsOf(S.mode).some(v => v[0] === S.views[S.mode]) ? S.views[S.mode] : VIEW_DEFAULT[S.mode];
 const fromExpense = () => S.detail === 'detailed' ? S.rows.reduce((s, r) => s + (r.amount || 0), 0) : (S.expense || 0);
 const coliKey = () => S.housing === 'include' ? 'coli_with_housing' : 'coli_no_housing';
 
@@ -744,10 +749,10 @@ function updateRowsTotal(){
 function renderViewSeg(){
   const g = $('viewGroup');
   // Keyed on the labels too: two modes can share views under different names.
-  const want = VIEWS[S.mode].map(v => v.join(':')).join(',');
+  const want = viewsOf(S.mode).map(v => v.join(':')).join(',');
   if(g.dataset.views !== want){
     g.dataset.views = want;
-    g.innerHTML = VIEWS[S.mode].map(([k, l]) => `<button class="seg-btn" type="button" data-val="${k}">${l}</button>`).join('');
+    g.innerHTML = viewsOf(S.mode).map(([k, l]) => `<button class="seg-btn" type="button" data-val="${k}">${l}</button>`).join('');
   }
   setSeg('viewGroup', view());
 }
@@ -848,17 +853,19 @@ function render(){
 }
 
 const VIEW_WORD = { salary: 'net salary', living: 'living cost', savings: 'savings', ratio: 'savings ratio' };
+// The map's title names the figure; what qualifies it (a month, on which
+// salary, at which multiple) goes in its tip and in the city card.
 function mapTitle(){
   const R = RESULT, v = view();
-  if(S.mode === 'global'){
-    const on = R && R.sal > 0 ? ' on ' + fmtC(R.sal, R.fc) : '';
-    return { living: 'Living cost', savings: 'Nominal savings' + on, ratio: 'Savings ratio' + on }[v] + (v === 'ratio' ? '' : ', a month');
+  const name = { salary: S.mode === 'scaled' ? 'Scaled net salary' : 'Required net salary', living: 'Living cost', savings: 'Nominal savings', ratio: 'Savings ratio' }[v];
+  const bits = [];
+  if(v !== 'ratio') bits.push('a month');
+  if(R && R.ready && v !== 'living'){
+    if(S.mode === 'global') bits.push('on ' + fmtC(R.sal, R.fc));
+    else if(S.mode === 'scaled'){ if(R.mult != null) bits.push('at ' + fmtX(R.mult) + ' the local ' + SCALES[S.scale].word); }
+    else bits.push(S.target === 'ratio' ? 'keeping your ' + fmtP(R.r) + ' savings ratio' : 'keeping your ' + fmtC(R.fSav, R.fc) + ' a month of savings');
   }
-  if(S.mode === 'scaled'){
-    const at = R && R.mult != null ? ', at ' + fmtX(R.mult) + ' the local ' + SCALES[S.scale].word : '';
-    return { salary: 'Scaled net salary', living: 'Living cost', savings: 'Nominal savings', ratio: 'Savings ratio' }[v] + (v === 'ratio' ? '' : ', a month') + at;
-  }
-  return { salary: 'Required net salary', living: 'Living cost', savings: 'Nominal savings', ratio: 'Savings ratio' }[v] + (v === 'ratio' ? '' : ', a month');
+  return { name, bits, full: [name].concat(bits).join(', ') };
 }
 
 function renderVerdict(){
@@ -969,16 +976,10 @@ function renderMetrics(){
 }
 
 function renderMapHead(){
-  const R = RESULT, v = view();
-  $('mapTitle').textContent = mapTitle();
-  // A view that is the target itself reads the same in every city.
-  let note = '';
-  if(R && R.ready && S.mode === 'required' && S.target === 'ratio' && v === 'ratio')
-    note = 'Savings ratio is your target, so every city keeps your ' + fmtP(R.r) + '. The colours still show living cost against ' + R.from.city + '.';
-  if(R && R.ready && S.mode === 'required' && S.target === 'nominal' && v === 'savings')
-    note = 'Nominal savings is your target, so every city keeps your ' + fmtC(R.fSav, R.fc) + ' a month. The colours still show living cost against ' + R.from.city + '.';
-  $('mapNote').hidden = !note;
-  $('mapNote').textContent = note;
+  const t = mapTitle(), tip = t.bits.join(', ');
+  $('mapTitle').textContent = t.name;
+  $('mapTitleTip').hidden = !tip;
+  $('mapTitleTip').setAttribute('data-tip', tip ? esc(tip.charAt(0).toUpperCase() + tip.slice(1)) + '.' : '');
   renderLegend();
 }
 function renderLegend(){
@@ -1644,7 +1645,7 @@ function renderCard(){
     const both = (vl) => fmtC(vl * o.fx, fc) + (o.cur !== fc ? ' <span class="pop-local">(' + fmtC(vl, o.cur) + ')</span>' : '');
     if('ratio' in x) html += '<div class="pop-big"' + neg(x.ratio) + '>' + fmtP(x.ratio) + '</div>';
     else html += '<div class="pop-big"' + neg(x.from) + '>' + fmtC(x.from, fc) + '</div>' + (o.cur !== fc ? '<div class="pop-local">(' + fmtC(x.local, o.cur) + ')</div>' : '');
-    html += '<div class="pop-what">' + esc(mapTitle()) + '</div><div class="pop-rows">';
+    html += '<div class="pop-what">' + esc(mapTitle().full) + '</div><div class="pop-rows">';
     const rows = [];
     if(v !== 'salary') rows.push([S.mode === 'global' ? 'Your salary' : S.mode === 'scaled' ? 'Scaled salary' : 'Net salary needed', both(o.sal)]);
     if(S.mode === 'scaled' && o.W > 0) rows.push([SCALES[S.scale].label, both(o.W)]);
