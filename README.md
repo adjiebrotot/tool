@@ -27,7 +27,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [JSON Visualiser](https://tool.adjiebrotots.com/jsonvisualiser/) | Lazy-loaded tree that handles millions of JSON keys/values without error. |
 | [Strategy Canvas Builder](https://tool.adjiebrotots.com/canvasbuilder/) | Beautiful, interactive, pitch-ready strategy canvases (Business Model Canvas, etc.). |
 | [Markdown to PDF](https://tool.adjiebrotots.com/mdtopdf/) | Read Markdown and export print-ready PDF with LaTeX math, diagrams, and auto ToC. |
-| [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. Its [Map View](https://tool.adjiebrotots.com/costofliving-comparator/map/) runs your city against all 500+ at once on a world map: the net salary each city needs for your lifestyle and savings, or, in Global salary mode, what your own salary would save there, in your currency first and the city's own after. |
+| [Cost of Living Comparator](https://tool.adjiebrotots.com/costofliving-comparator/) | Compare living costs across cities. Its [Map View](https://tool.adjiebrotots.com/costofliving-comparator/map/) runs your city against all 500+ at once on a world map: the net salary each city needs for your lifestyle and savings, or, in Global salary mode, what your own salary would save there, or, in Scaled salary mode, what the same multiple of each city's minimum wage, average or median salary would save there, in your currency first and the city's own after. |
 | [Video to GIF](https://tool.adjiebrotots.com/videotogif/) | Convert video to GIF locally — videos never leave your device. |
 | [Random Picker](https://tool.adjiebrotots.com/randompicker/) | Pick one option at random with a spinning wheel, a 3D dice roll, a slot machine, or a Galton board. |
 | [World Clock](https://tool.adjiebrotots.com/worldclock/) | A live full-screen world map with the local time on every country, state and territory, opening on your own region. Time Travel to any date and time in any place to convert a meeting time, daylight saving included; zoom out for a classic time zone map. |
@@ -89,7 +89,10 @@ harness (`costofliving-comparator/map/_audit/run.mjs`) replays every city's livi
 savings from the raw JSON, drives the comparator page itself to the same required salaries, and
 checks that each city's location lands in its own country. The locations,
 `costofliving-comparator/map/city_coords.json`, are built from GeoNames by
-`costofliving-comparator/map/_build/build-coords.mjs`; re-run it when a city joins the dataset. The Rent vs Own page and its Sensitivity page run one shared engine
+`costofliving-comparator/map/_build/build-coords.mjs`; re-run it when a city joins the dataset. Scaled salary mode's
+pay figures, `costofliving-comparator/map/wages.json`, are built by `costofliving-comparator/map/_build/build-wages.mjs`
+from Numbeo's city indices, ILOSTAT and a hand-kept, sourced table of minimum wages; re-run it with fresh downloads,
+and update the minimum wage table when a country, state or city revises its rate. The Rent vs Own page and its Sensitivity page run one shared engine
 (`rentvsownhouse/engine.js`), and `rentvsownhouse/sensitivity/_audit/parity.mjs` types the same
 scenarios into both and requires byte-identical cashflow exports. Their Quick Start scenarios
 (a city and one of its homes) all live in `rentvsownhouse/quickstart-data.js`, which both pages

@@ -38,6 +38,17 @@ hold still), the gestures (a drag pans, Ctrl and the wheel zooms, a plain
 wheel scrolls the page, a click pins a card), a reload, and that a 390px
 phone gets no sideways scroll.
 
+Scaled salary mode is replayed the same way from `../wages.json` (built by
+`../_build/build-wages.mjs`): your salary over your city's yardstick, times
+each city's own, for the minimum wage, the average and the median, with the
+savings, ratio and colour that follow (the colour is the share of pay the
+lifestyle takes there over the share it takes at home). Average salaries have
+to be the city's own (New York above Houston). A canton without a minimum wage
+and a country with no published median have no estimate and say why; a home
+city with no minimum wage says so in the verdict. The mode keeps its
+yardstick on a reload, and a plan saved before the mode existed still opens
+as it was.
+
 The ⤢ button is held to the full-screen view it promises, on a desktop and a
 390px phone: the map card fills the window edge to edge, the map takes most
 of it and the canvas is refitted to it, the legend ("Living cost against …,

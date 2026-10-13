@@ -34,6 +34,7 @@ let LIVE = null;     // {rates, date, source, url}: market units per USD, or nul
 let META_COL = '', META_RATE = '', RATE_DATE = '';
 let HEALTH_META = null;  // health_price_index.json's source line, for the footer
 let COORDS = {};     // "city|country" -> [lat, lon, population]
+let WAGES = null;    // wages.json: each city's pay yardsticks, or null when it failed to load
 let dataReady = false;
 
 async function getJson(url){
@@ -43,14 +44,18 @@ async function getJson(url){
 }
 
 async function loadData(){
-  const [colJson, rateJson, coords, healthJson] = await Promise.all([
+  const [colJson, rateJson, coords, healthJson, wageJson] = await Promise.all([
     getJson('../cost_of_living_indices_aggregated.json'),
     getJson('../currency_rates.json'),
     getJson('city_coords.json'),
     // The comparator's health prices (see its HEALTH PRICES note). Optional: a
     // failed load leaves the medical rows without an estimate.
     getJson('../health_price_index.json').catch(() => null),
+    // Scaled salary mode's pay figures (see _build/build-wages.mjs). Optional:
+    // a failed load leaves that mode without an estimate and nothing else.
+    getJson('wages.json').catch(() => null),
   ]);
+  WAGES = wageJson && wageJson.cities ? wageJson : null;
   const health = {};
   ((healthJson && healthJson.data) || []).forEach(d => { health[d.country] = d.health_ratio; });
   HEALTH_META = healthJson && healthJson.metadata || null;
@@ -81,6 +86,7 @@ async function loadData(){
     CITY_MAP[c.city + '|' + c.country] = c;
     const co = COORDS[c.city + '|' + c.country];
     c.lat = co ? co[0] : null; c.lon = co ? co[1] : null; c.pop = co ? co[2] : 0;
+    c.wage = WAGES && WAGES.cities[c.city + '|' + c.country] || null;
   });
   rateJson.data.forEach(r => { RATES[r.currency] = r.usd_rate; });
 
@@ -196,6 +202,11 @@ function updateDataText(){
     a.href = HEALTH_META.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'World Bank ICP ' + HEALTH_META.year;
     el.append(' Health care prices from the ', a, '.');
   }
+  if(WAGES){
+    const link = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; return a; };
+    el.append(' Scaled salary: average net salaries from ', link(WAGES.metadata.avg.url, 'Numbeo'), ' (' + fmtDay(WAGES.metadata.avg.date) + '), median-to-average ratios from ',
+      link(WAGES.metadata.median.url, 'ILOSTAT'), ' and national statistics offices, minimum wages from each country\'s, state\'s or city\'s own order.');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -274,13 +285,22 @@ const catOf = id => CATS.find(c => c.id === id) || CATS[CATS.length - 1];
 const VIEWS = {
   required: [['salary', 'Required net salary'], ['living', 'Living cost'], ['savings', 'Nominal savings'], ['ratio', 'Savings ratio']],
   global:   [['living', 'Living cost'], ['savings', 'Nominal savings'], ['ratio', 'Savings ratio']],
+  scaled:   [['salary', 'Scaled salary'], ['living', 'Living cost'], ['savings', 'Nominal savings'], ['ratio', 'Savings ratio']],
 };
-const VIEW_DEFAULT = { required: 'salary', global: 'savings' };
+const MODES = Object.keys(VIEWS);
+const VIEW_DEFAULT = { required: 'salary', global: 'savings', scaled: 'salary' };
+// Scaled salary mode's yardsticks: what your salary is a multiple of.
+const SCALES = {
+  min:    { label: 'Minimum wage',   word: 'minimum wage' },
+  avg:    { label: 'Average salary', word: 'average net salary' },
+  median: { label: 'Median salary',  word: 'median net salary' },
+};
 const S = {
   fromKey: '', salary: 0,
   detail: 'simple', expense: 0, housing: 'include',
   rows: [{catId: 'rent', amount: 0}],
   mode: 'required', target: 'ratio',
+  scale: 'avg',                   // Scaled salary mode's yardstick
   views: clone(VIEW_DEFAULT),     // the view each mode was last left on
 };
 const S_DEFAULTS = clone(S);
@@ -294,12 +314,13 @@ function normalise(){
   S.salary = num(S.salary); S.expense = num(S.expense);
   if(S.detail !== 'detailed') S.detail = 'simple';
   if(S.housing !== 'exclude') S.housing = 'include';
-  if(S.mode !== 'global') S.mode = 'required';
+  if(!MODES.includes(S.mode)) S.mode = 'required';
   if(S.target !== 'nominal') S.target = 'ratio';
+  if(!SCALES[S.scale]) S.scale = 'avg';
   if(!Array.isArray(S.rows) || !S.rows.length) S.rows = clone(S_DEFAULTS.rows);
   S.rows = S.rows.map(r => ({catId: catOf(r && r.catId).id, amount: num(r && r.amount)}));
   if(!S.views || typeof S.views !== 'object') S.views = clone(VIEW_DEFAULT);
-  ['required', 'global'].forEach(m => {
+  MODES.forEach(m => {
     if(!VIEWS[m].some(v => v[0] === S.views[m])) S.views[m] = VIEW_DEFAULT[m];
   });
 }
@@ -317,13 +338,24 @@ const coliKey = () => S.housing === 'include' ? 'coli_with_housing' : 'coli_no_h
 //   Required salary mode, Savings ratio target:   salary = E / (1 - r)
 //   Required salary mode, Nominal savings target: salary = E + savings / fx
 //   Global salary mode:                           salary = your salary / fx
+//   Scaled salary mode:                           salary = your salary / W_home * W
 //
-// where r is the share of pay you save now. Savings are salary - E, the ratio
-// savings / salary. Every figure is shown in your currency (x fx) first.
+// where r is the share of pay you save now and W is a city's pay yardstick in
+// its own currency (its average or median net salary, or its minimum wage), so
+// a scaled salary keeps the same multiple of local pay and no exchange rate
+// enters it. Savings are salary - E, the ratio savings / salary. Every figure
+// is shown in your currency (x fx) first.
 //
 // One number orders every view: q, the city's living cost in your currency
 // over yours. Each view is a monotone function of it, so the dots are
 // coloured on q alone and keep their colour as the view changes.
+//
+// Scaled salary mode pays each city differently, so q no longer orders it.
+// Its colour is cq, the share of pay the lifestyle takes there over the share
+// it takes at home: (E / salary) / (your living cost / your salary). Below 1
+// your pay goes further. In Global salary mode cq is q exactly, and in every
+// mode a city falls short where cq passes your salary over your living cost.
+// Outside Scaled salary mode cq is set to q itself.
 // ═══════════════════════════════════════════════════════════
 function destExpense(from, to, fe){
   if(S.detail === 'detailed'){
@@ -344,6 +376,20 @@ function destExpense(from, to, fe){
   return fe * (1 / priced) * (ti / fi);
 }
 
+// A city's yardstick for Scaled salary mode, a month in its own currency:
+// {v} or {v: null, why}.
+function wageOf(c, scale){
+  scale = scale || S.scale;
+  const w = c && c.wage;
+  if(!WAGES) return { v: null, why: 'The pay data could not load.' };
+  if(!w) return { v: null, why: 'No pay data for ' + c.city + '.' };
+  if(scale === 'min') return w.min > 0 ? { v: w.min } : { v: null, why: 'No minimum wage: ' + w.min_why + '.' };
+  if(!(w.avg > 0)) return { v: null, why: 'No average salary: ' + (w.avg_why || 'Numbeo has no salary data for it') + '.' };
+  if(scale === 'avg') return { v: w.avg };
+  const k = WAGES.countries[c.country] || {};
+  return k.ratio > 0 ? { v: w.avg * k.ratio } : { v: null, why: 'No median for ' + c.country + ': ' + (k.ratio_why || 'no survey reports one') + '.' };
+}
+
 let RESULT = null;
 function compute(){
   const from = getCity(S.fromKey);
@@ -352,13 +398,20 @@ function compute(){
   const fe = fromExpense(), sal = S.salary || 0, fSav = sal - fe;
   const r = sal > 0 ? fSav / sal : 0;
   const ready = sal > 0 && fe > 0;
+  const scaled = S.mode === 'scaled';
+  const wh = scaled ? wageOf(from) : null;
+  const mult = wh && wh.v > 0 ? sal / wh.v : null;
   const rows = CITIES.map(c => {
-    const o = { key: cityKey(c), c, cur: c.currency, home: c === from, E: null, fx: 0, sal: null, sav: null, ratio: null, q: null, neg: false };
+    const o = { key: cityKey(c), c, cur: c.currency, home: c === from, E: null, fx: 0, sal: null, sav: null, ratio: null, q: null, cq: null, W: null, neg: false };
+    if(scaled) o.W = wageOf(c).v;
     o.E = destExpense(from, c, fe);
     o.fx = marketFx(fc, c.currency);
     if(o.E == null || !(o.fx > 0)) return o;
     if(S.mode === 'global'){
       o.sal = sal / o.fx;
+    } else if(scaled){
+      // The home city's own yardstick cancels, so it keeps your salary exactly.
+      o.sal = o.home ? sal : (mult != null && o.W > 0 ? mult * o.W : null);
     } else if(S.target === 'ratio'){
       // A 100% ratio, or a city with nothing to spend, is matched at any
       // salary, so there is no single figure.
@@ -373,19 +426,20 @@ function compute(){
       o.ratio = o.sal > 0 ? o.sav / o.sal : null;
     }
     if(fe > 0) o.q = o.E * o.fx / fe;
+    o.cq = !scaled ? o.q : (o.q != null && o.sal > 0 && sal > 0) ? (o.E / o.sal) / (fe / sal) : null;
     // Below zero by more than rounding noise: the city costs more than the
-    // salary that is kept in Global mode.
-    o.neg = S.mode === 'global' && o.sav != null && o.sav < -1e-9 * Math.max(1, Math.abs(o.sal));
+    // salary it is given, which only a salary fixed from outside can do.
+    o.neg = S.mode !== 'required' && o.sav != null && o.sav < -1e-9 * Math.max(1, Math.abs(o.sal));
     return o;
   });
   const home = rows.find(o => o.home);
-  const valid = rows.filter(o => o.q != null && isFinite(o.q) && o.sal != null);
-  const byQ = valid.slice().sort((a, b) => a.q - b.q || a.c.city.localeCompare(b.c.city));
-  const cheaper = valid.filter(o => !o.home && o.q < 1 - 5e-4).length;
-  const dearer = valid.filter(o => !o.home && o.q > 1 + 5e-4).length;
+  const valid = rows.filter(o => o.cq != null && isFinite(o.cq) && o.sal != null);
+  const byQ = valid.slice().sort((a, b) => a.cq - b.cq || a.c.city.localeCompare(b.c.city));
+  const cheaper = valid.filter(o => !o.home && o.cq < 1 - 5e-4).length;
+  const dearer = valid.filter(o => !o.home && o.cq > 1 + 5e-4).length;
   const short = valid.filter(o => o.neg).length;
-  RESULT = { from, fc, fe, sal, fSav, r, ready, rows, home, valid, byQ, cheaper, dearer, short,
-             nodata: rows.filter(o => o.q == null || o.sal == null).length };
+  RESULT = { from, fc, fe, sal, fSav, r, ready, rows, home, valid, byQ, cheaper, dearer, short, wh, mult,
+             nodata: rows.filter(o => o.cq == null || o.sal == null).length };
   RESULT.scale = buildScale(RESULT);
   return RESULT;
 }
@@ -406,7 +460,8 @@ function viewValue(o, v){
 // dearer, each arm stretched to its own most extreme city so the cheapest
 // and the dearest wear the deepest shade. In Global salary mode a city whose
 // costs outrun the salary takes the red arm instead, from break-even out to
-// the dearest city.
+// the dearest city. Scaled salary mode draws the same scale on cq, and its
+// red arm too.
 // ═══════════════════════════════════════════════════════════
 let C = {};
 function readColors(){
@@ -434,10 +489,10 @@ function ramp(stops, t){
   return 'rgb(' + a.map((x, j) => Math.round(x + (b[j] - x) * f)).join(',') + ')';
 }
 function buildScale(R){
-  const qs = R.valid.map(o => o.q).filter(q => q > 0);
+  const qs = R.valid.map(o => o.cq).filter(q => q > 0);
   const lo = Math.min(1, ...qs), hi = Math.max(1, ...qs);
-  // In Global mode the break-even q is salary over living cost.
-  const qb = S.mode === 'global' && R.fe > 0 ? R.sal / R.fe : Infinity;
+  // Where the salary is fixed from outside, the break-even is salary over living cost.
+  const qb = S.mode !== 'required' && R.fe > 0 ? R.sal / R.fe : Infinity;
   const dearTop = Math.max(1, Math.min(hi, qb));
   return { lo, hi, qb, dearTop };
 }
@@ -446,24 +501,25 @@ function buildScale(R){
 const lift = t => Math.pow(Math.max(0, Math.min(1, t)), 0.8);
 function colorOf(o){
   const R = RESULT, sc = R && R.scale;
-  if(!sc || o.q == null || o.sal == null || !(o.q > 0)) return null;
+  const q = o.cq;
+  if(!sc || q == null || o.sal == null || !(q > 0)) return null;
   if(o.neg){
     const span = Math.log(sc.hi / sc.qb);
-    return ramp(C.neg, span > 0 ? 0.25 + 0.75 * lift(Math.log(o.q / sc.qb) / span) : 1);
+    return ramp(C.neg, span > 0 ? 0.25 + 0.75 * lift(Math.log(q / sc.qb) / span) : 1);
   }
-  if(o.q < 1){
+  if(q < 1){
     const span = Math.log(sc.lo);
-    return span < 0 ? ramp(C.cheap, lift(Math.log(o.q) / span)) : C.mid;
+    return span < 0 ? ramp(C.cheap, lift(Math.log(q) / span)) : C.mid;
   }
   const span = Math.log(sc.dearTop);
-  return span > 0 ? ramp(C.dear, lift(Math.log(o.q) / span)) : C.mid;
+  return span > 0 ? ramp(C.dear, lift(Math.log(q) / span)) : C.mid;
 }
 // Which arm a city is on, for the audit and the legend: cheap, dear, neg, mid.
 function armOf(o){
-  if(o.q == null || o.sal == null) return 'nodata';
+  if(o.cq == null || o.sal == null) return 'nodata';
   if(o.neg) return 'neg';
-  if(o.q < 1 - 5e-4) return 'cheap';
-  if(o.q > 1 + 5e-4) return 'dear';
+  if(o.cq < 1 - 5e-4) return 'cheap';
+  if(o.cq > 1 + 5e-4) return 'dear';
   return 'mid';
 }
 
@@ -492,6 +548,16 @@ function relText(o, homeName){
   return Math.round(Math.abs(d) * 100) + '% ' + (d < 0 ? 'cheaper' : 'dearer') + ' than ' + homeName;
 }
 const pctRel = q => (q < 1 ? '-' : '+') + Math.round(Math.abs(q - 1) * 100) + '%';
+// "1.35×" for your salary as a multiple of a yardstick.
+const fmtX = m => (m != null && isFinite(m)) ? (m >= 10 ? m.toFixed(1) : m.toFixed(2)) + '×' : '—';
+// "Pay goes 23% further than in Perth" from cq, for Scaled salary mode.
+function reachText(o, homeName){
+  if(o.home) return 'Your city, the baseline';
+  if(o.cq == null) return '';
+  const d = 1 / o.cq - 1;
+  if(Math.abs(d) < 5e-4) return 'Pay goes as far as in ' + homeName;
+  return 'Pay goes ' + Math.round(Math.abs(d) * 100) + '% ' + (d > 0 ? 'further' : 'less far') + ' than in ' + homeName;
+}
 
 // ═══════════════════════════════════════════════════════════
 // MONEY FIELDS
@@ -612,6 +678,12 @@ const TIPS = {
   mode: {
     required: '<strong>Required salary:</strong> the net salary each city needs for your lifestyle and your savings target.',
     global: '<strong>Global salary:</strong> your own salary in every city, at today\'s exchange rate, and what it leaves you after the same lifestyle.',
+    scaled: '<strong>Scaled salary:</strong> your salary as a multiple of your city\'s pay, given the same multiple of each city\'s pay, and what it leaves you after the same lifestyle.',
+  },
+  scale: {
+    min: '<strong>Minimum wage:</strong> the statutory gross minimum for a full-time month, the city\'s, its state\'s or its country\'s. Some countries set none.',
+    avg: '<strong>Average salary:</strong> the average net salary in each city, from Numbeo\'s crowd-sourced figures, so New York and Houston differ.',
+    median: '<strong>Median salary:</strong> each city\'s average net salary times its country\'s median-to-average ratio of earnings, from ILOSTAT.',
   },
   target: {
     ratio: '<strong>Savings ratio:</strong> each city\'s salary saves the same share of pay as you save now.',
@@ -633,14 +705,16 @@ function syncInputs(){
   if(document.activeElement !== $('salary')) $('salary').value = moneyText(S.salary);
   if(document.activeElement !== $('expense')) $('expense').value = moneyText(S.expense);
   setSeg('detailGroup', S.detail); setSeg('housingGroup', S.housing);
-  setSeg('modeGroup', S.mode); setSeg('targetGroup', S.target);
+  setSeg('modeGroup', S.mode); setSeg('targetGroup', S.target); setSeg('scaleGroup', S.scale);
   $('detailTip').setAttribute('data-tip', TIPS.detail[S.detail]);
   $('housingTip').setAttribute('data-tip', TIPS.housing[S.housing]);
   $('modeTip').setAttribute('data-tip', TIPS.mode[S.mode]);
   $('targetTip').setAttribute('data-tip', TIPS.target[S.target]);
+  $('scaleTip').setAttribute('data-tip', TIPS.scale[S.scale]);
   $('simpleBox').hidden = S.detail !== 'simple';
   $('detailBox').hidden = S.detail !== 'detailed';
   $('targetRow').hidden = S.mode !== 'required';
+  $('scaleRow').hidden = S.mode !== 'scaled';
   renderRows();
   renderViewSeg();
 }
@@ -669,7 +743,8 @@ function updateRowsTotal(){
 }
 function renderViewSeg(){
   const g = $('viewGroup');
-  const want = VIEWS[S.mode].map(v => v[0]).join(',');
+  // Keyed on the labels too: two modes can share views under different names.
+  const want = VIEWS[S.mode].map(v => v.join(':')).join(',');
   if(g.dataset.views !== want){
     g.dataset.views = want;
     g.innerHTML = VIEWS[S.mode].map(([k, l]) => `<button class="seg-btn" type="button" data-val="${k}">${l}</button>`).join('');
@@ -690,6 +765,7 @@ function wireInputs(){
   seg('housingGroup', v => { S.housing = v; clearPresetMark(); });
   seg('modeGroup', v => { S.mode = v; clearPresetMark(); });
   seg('targetGroup', v => { S.target = v; clearPresetMark(); });
+  seg('scaleGroup', v => { S.scale = v; clearPresetMark(); });
   seg('viewGroup', v => { S.views[S.mode] = v; });
   $('addRow').addEventListener('click', () => {
     const used = new Set(S.rows.map(r => r.catId));
@@ -778,6 +854,10 @@ function mapTitle(){
     const on = R && R.sal > 0 ? ' on ' + fmtC(R.sal, R.fc) : '';
     return { living: 'Living cost', savings: 'Nominal savings' + on, ratio: 'Savings ratio' + on }[v] + (v === 'ratio' ? '' : ', a month');
   }
+  if(S.mode === 'scaled'){
+    const at = R && R.mult != null ? ', at ' + fmtX(R.mult) + ' the local ' + SCALES[S.scale].word : '';
+    return { salary: 'Scaled net salary', living: 'Living cost', savings: 'Nominal savings', ratio: 'Savings ratio' }[v] + (v === 'ratio' ? '' : ', a month') + at;
+  }
   return { salary: 'Required net salary', living: 'Living cost', savings: 'Nominal savings', ratio: 'Savings ratio' }[v] + (v === 'ratio' ? '' : ', a month');
 }
 
@@ -787,6 +867,10 @@ function renderVerdict(){
   const name = R.from.city, fc = R.fc;
   if(!(R.sal > 0) || !(R.fe > 0)){
     SharedVerdict.set('verdict', { tone: '', title: 'Enter your ' + (!(R.sal > 0) && !(R.fe > 0) ? 'net salary and living cost' : !(R.sal > 0) ? 'net salary' : 'living cost') + ' in ' + esc(name) + ' to fill the map.', body: 'Every city then shows what it takes to live as you do.' });
+    return;
+  }
+  if(S.mode === 'scaled' && R.mult == null){
+    SharedVerdict.set('verdict', { tone: '', title: 'There is no ' + SCALES[S.scale].word + ' for ' + esc(name) + ' to scale your salary by.', body: esc(R.wh.why) + ' Pick another yardstick under Scale by.' });
     return;
   }
   const lo = R.byQ[0], hi = R.byQ[R.byQ.length - 1];
@@ -803,6 +887,20 @@ function renderVerdict(){
     let body = 'In ' + esc(name) + ' you save ' + fmtC(R.fSav, fc) + ' (' + fmtP(R.r) + '). ' +
       R.cheaper + ' of ' + others + ' cities let you save more' +
       (R.short ? '; in ' + R.short + ' your salary does not cover the same lifestyle.' : ', and your salary covers the lifestyle in every one.');
+    SharedVerdict.set('verdict', { tone: '', title, body: body + short });
+    return;
+  }
+  if(S.mode === 'scaled'){
+    const fs = o => o.sav * o.fx, word = SCALES[S.scale].word;
+    const others = R.valid.filter(o => !o.home).length;
+    if(!others){ SharedVerdict.set('verdict', { tone: '', title: 'No other city has a ' + word + ' to scale by.', body: 'Pick another yardstick under Scale by.' }); return; }
+    const title = 'At ' + fmtX(R.mult) + ' the local ' + word + ', your pay would go furthest in ' + esc(lo.c.city) + ', saving ' + num(fs(lo), fc) +
+      (hi.neg ? ' a month, and fall furthest short in ' + esc(hi.c.city) + ', by ' + num(-fs(hi), fc) + ' a month.'
+              : ' a month, and least far in ' + esc(hi.c.city) + ', saving ' + num(fs(hi), fc) + '.');
+    const body = 'You earn ' + fmtC(R.sal, fc) + ', ' + fmtX(R.mult) + ' the ' + word + ' in ' + esc(name) + ' (' + fmtC(R.wh.v, fc) + '). ' +
+      R.cheaper + ' of ' + others + ' cities let the same lifestyle take a smaller share of pay' +
+      (R.short ? '; in ' + R.short + ' the scaled salary does not cover it.' : ', and the scaled salary covers it in every one.') +
+      (R.nodata ? ' ' + R.nodata + ' cities have no ' + word + ' to scale by.' : '');
     SharedVerdict.set('verdict', { tone: '', title, body: body + short });
     return;
   }
@@ -848,6 +946,22 @@ function renderMetrics(){
     setMetric(3, 'Falls short in', R.short + ' of ' + others, R.short ? 'cities where ' + fmtC(R.sal, R.fc) + ' does not cover the lifestyle' : 'Your salary covers it everywhere', R.short > 0);
     return;
   }
+  if(S.mode === 'scaled'){
+    const word = SCALES[S.scale].word;
+    if(R.mult == null || R.valid.length < 2){
+      setMetric(0, 'Your multiple', '—', R.mult == null ? 'No ' + word + ' for ' + esc(R.from.city) : 'No other city to scale to');
+      ['Goes furthest', 'Goes least far', 'Falls short in'].forEach((l, i) => setMetric(i + 1, l, '—', ''));
+      return;
+    }
+    setMetric(0, 'Your multiple', fmtX(R.mult), 'of the ' + word + ' in ' + esc(R.from.city) + ', ' + fmtC(R.wh.v, R.fc), false);
+    // Ordered by the share of pay the lifestyle takes, so each leads with the
+    // share it leaves: the savings ratio, whatever the view.
+    const saving = o => esc(o.c.city) + ', ' + esc(o.c.country) + ', ' + (o.sav < 0 ? 'short by ' + fmtC(-o.sav * o.fx, R.fc) : 'saving ' + fmtC(o.sav * o.fx, R.fc)) + ' a month';
+    setMetric(1, 'Goes furthest', fmtP(lo.ratio), saving(lo), lo.ratio < 0);
+    setMetric(2, hi.neg ? 'Falls furthest short' : 'Goes least far', fmtP(hi.ratio), saving(hi), hi.ratio < 0);
+    setMetric(3, 'Falls short in', R.short + ' of ' + others, R.short ? 'cities where the scaled salary does not cover the lifestyle' : 'The scaled salary covers it everywhere', R.short > 0);
+    return;
+  }
   setMetric(0, 'Your city', fmtView(R.home, v), esc(R.from.city) + ', the baseline', isNeg(R.home));
   setMetric(1, 'Cheapest', fmtView(lo, v), esc(lo.c.city) + ', ' + esc(lo.c.country) + ' ' + localOf(lo, v), isNeg(lo));
   setMetric(2, 'Dearest', fmtView(hi, v), esc(hi.c.city) + ', ' + esc(hi.c.country) + ' ' + localOf(hi, v), isNeg(hi));
@@ -876,7 +990,8 @@ function renderLegend(){
   const sc = R.scale, name = esc(R.from.city);
   const steps = (stops, n, from, to) => Array.from({length: n}, (_, i) => ramp(stops, from + (to - from) * (i + 0.5) / n));
   const cheapCols = steps(C.cheap, 6, 1, 0), dearCols = steps(C.dear, 6, 0, 1);
-  const negOn = S.mode === 'global' && R.short > 0;
+  const negOn = S.mode !== 'required' && R.short > 0;
+  const scaled = S.mode === 'scaled';
   // Each arm's width follows its share of the log range, so the bar reads
   // like the scale it stands for.
   const lc = Math.max(0, -Math.log(sc.lo)), ld = Math.max(0, Math.log(sc.dearTop)), ln = negOn ? Math.max(0, Math.log(sc.hi / sc.qb)) : 0;
@@ -887,14 +1002,14 @@ function renderLegend(){
   const at = lc / tot * 100, tickAt = Math.max(24, Math.min(76, at));
   el.innerHTML = `
     <div class="lg-scale">
-      <div class="lg-title">Living cost against ${name}, for the same lifestyle</div>
+      <div class="lg-title">${scaled ? 'Share of local pay the lifestyle takes, against ' + name : 'Living cost against ' + name + ', for the same lifestyle'}</div>
       <div class="lg-barwrap"><div class="lg-bar" aria-hidden="true">${bar}</div><span class="lg-mark" style="left:${at.toFixed(2)}%"></span></div>
       <div class="lg-ticks"><span class="t-lo">${pctRel(sc.lo)} cheapest</span><span class="t-mid" style="left:${tickAt.toFixed(2)}%">${name}</span><span class="t-hi">dearest ${pctRel(sc.hi)}</span></div>
     </div>
     <div class="lg-keys">
-      <span class="lg-key"><span class="lg-dot" style="background:${ramp(C.cheap, 1)}"></span>Cheaper</span>
-      <span class="lg-key"><span class="lg-dot" style="background:${ramp(C.dear, 1)}"></span>Dearer</span>
-      ${negOn ? `<span class="lg-key"><span class="lg-tri"></span>Salary does not cover it</span>` : ''}
+      <span class="lg-key"><span class="lg-dot" style="background:${ramp(C.cheap, 1)}"></span>${scaled ? 'Pay goes further' : 'Cheaper'}</span>
+      <span class="lg-key"><span class="lg-dot" style="background:${ramp(C.dear, 1)}"></span>${scaled ? 'Pay goes less far' : 'Dearer'}</span>
+      ${negOn ? `<span class="lg-key"><span class="lg-tri"></span>${scaled ? 'Scaled salary' : 'Salary'} does not cover it</span>` : ''}
       <span class="lg-key"><span class="lg-dot home"></span>${name}</span>
       ${R.nodata ? `<span class="lg-key"><span class="lg-dot nodata"></span>No estimate (${R.nodata})</span>` : ''}
     </div>`;
@@ -907,9 +1022,10 @@ function renderLegend(){
 // ── Table ────────────────────────────────────────────────────────────────
 const COLS = () => {
   const fc = RESULT ? RESULT.fc : '';
-  const salHead = S.mode === 'global' ? 'Your salary there' : 'Net salary needed';
+  const salHead = S.mode === 'global' ? 'Your salary there' : S.mode === 'scaled' ? 'Scaled salary' : 'Net salary needed';
   return [
     {k: 'city', h: 'City'}, {k: 'country', h: 'Country'},
+    ...(S.mode === 'scaled' ? [{k: 'wage', h: SCALES[S.scale].label + ' (local)', num: 1}] : []),
     {k: 'salF', h: salHead + ' (' + fc + ')', num: 1}, {k: 'salL', h: salHead + ' (local)', num: 1},
     {k: 'liveF', h: 'Living cost (' + fc + ')', num: 1}, {k: 'liveL', h: 'Living cost (local)', num: 1},
     {k: 'savF', h: 'Savings (' + fc + ')', num: 1}, {k: 'ratio', h: 'Savings ratio', num: 1},
@@ -943,6 +1059,7 @@ function renderTable(){
     const ok = o.sal != null && o.fx > 0;
     return `<tr data-key="${esc(o.key)}" class="${o.home ? 'home' : ''}">
       <td class="name">${sw}${esc(o.c.city)}</td><td class="ctry">${esc(o.c.country)}</td>
+      ${S.mode === 'scaled' ? `<td class="num">${o.W > 0 ? money(o.W, o.cur) : '—'}</td>` : ''}
       <td class="num">${ok ? money(o.sal * o.fx, fc) : '—'}</td><td class="num">${ok ? money(o.sal, o.cur) : '—'}</td>
       <td class="num">${o.E != null && o.fx > 0 ? money(o.E * o.fx, fc) : '—'}</td><td class="num">${o.E != null ? money(o.E, o.cur) : '—'}</td>
       <td class="num">${ok && o.sav != null ? money(o.sav * o.fx, fc) : '—'}</td>
@@ -972,13 +1089,15 @@ function downloadCsv(){
   const R = RESULT;
   if(!R || !R.ready) return;
   const fc = R.fc, n = v => v == null || !isFinite(v) ? '' : (Math.round(v * 100) / 100).toFixed(2);
-  const head = ['City', 'Country', 'Currency', (S.mode === 'global' ? 'Salary' : 'Net salary needed') + ' (' + fc + ')', 'Salary (local)',
+  const scaled = S.mode === 'scaled';
+  const head = ['City', 'Country', 'Currency', ...(scaled ? [SCALES[S.scale].label + ' (local)'] : []),
+    (S.mode === 'global' ? 'Salary' : scaled ? 'Scaled salary' : 'Net salary needed') + ' (' + fc + ')', 'Salary (local)',
     'Living cost (' + fc + ')', 'Living cost (local)', 'Savings (' + fc + ')', 'Savings (local)', 'Savings ratio (%)',
     'Living cost vs ' + R.from.city + ' (%)', fc + ' per 1 local'];
   const q = s => /[",\n]/.test(s) ? '"' + String(s).replace(/"/g, '""') + '"' : s;
   const lines = [head.map(q).join(',')].concat(tableRowsOrdered().map(o => {
     const ok = o.sal != null && o.fx > 0;
-    return [o.c.city, o.c.country, o.cur,
+    return [o.c.city, o.c.country, o.cur, ...(scaled ? [o.W > 0 ? n(o.W) : ''] : []),
       ok ? n(o.sal * o.fx) : '', ok ? n(o.sal) : '',
       o.E != null && o.fx > 0 ? n(o.E * o.fx) : '', o.E != null ? n(o.E) : '',
       ok && o.sav != null ? n(o.sav * o.fx) : '', ok && o.sav != null ? n(o.sav) : '',
@@ -1019,6 +1138,7 @@ function renderAssumptions(){
     if(R.sal > 0) items.push('<strong>Salaries are after tax, as you entered them:</strong> ' + fmtC(R.sal, fc) + ' a month in ' + name + '. Nothing here works out tax.');
     if(R.ready){
       if(S.mode === 'global') items.push('<strong>Your ' + fmtC(R.sal, fc) + ' is converted to each city\'s currency at today\'s rate</strong> and spends on the same lifestyle there.');
+      else if(S.mode === 'scaled') scaledAssumptions(R, items);
       else if(S.target === 'ratio') items.push('<strong>Each city\'s salary keeps your ' + fmtP(R.r) + ' savings ratio,</strong> the share of pay you save now.');
       else items.push('<strong>Each city\'s salary keeps your ' + fmtC(R.fSav, fc) + ' a month of savings,</strong> converted at today\'s rate.');
     }
@@ -1027,9 +1147,34 @@ function renderAssumptions(){
       items.push('<strong>Money crossing currencies converts at ' + (LIVE ? 'the live rate of ' + fmtDay(LIVE.date) : 'the rate of ' + (META_RATE || 'the dataset')) +
         '.</strong> City estimates keep the rate the index was priced at, since local prices do not move with the exchange rate.');
     }
-    if(R.ready && R.nodata) items.push('<strong>' + R.nodata + (R.nodata === 1 ? ' city has' : ' cities have') + ' no estimate</strong> for this lifestyle: the dataset lacks an index it needs, or an exchange rate.');
+    if(R.ready && R.nodata){
+      // In Scaled salary mode a city can also lack the yardstick itself.
+      const noE = R.rows.filter(o => o.E == null || !(o.fx > 0)).length, noW = R.nodata - noE;
+      if(noE) items.push('<strong>' + noE + (noE === 1 ? ' city has' : ' cities have') + ' no estimate</strong> for this lifestyle: the dataset lacks an index it needs, or an exchange rate.');
+      if(S.mode === 'scaled' && noW > 0 && R.mult != null) items.push('<strong>' + noW + (noW === 1 ? ' city has' : ' cities have') + ' no ' + SCALES[S.scale].word + ' to scale by,</strong> each named on its card: ' +
+        (S.scale === 'min' ? 'some countries set no minimum by law, and a few set only a symbolic one.' : S.scale === 'median' ? 'not every country publishes both a median and an average wage.' : 'Numbeo has no trustworthy salary figure for them.'));
+    }
   }
   ul.innerHTML = items.map(t => '<li>' + t + '</li>').join('');
+}
+
+// What Scaled salary mode rests on, line by line, for the yardstick in use.
+function scaledAssumptions(R, items){
+  const fc = R.fc, name = esc(R.from.city), word = SCALES[S.scale].word;
+  if(R.mult == null){ items.push('<strong>No ' + word + ' for ' + name + ',</strong> so nothing can be scaled. ' + esc(R.wh.why)); return; }
+  items.push('<strong>Your ' + fmtC(R.sal, fc) + ' is ' + fmtX(R.mult) + ' the ' + word + ' in ' + name + ' (' + fmtC(R.wh.v, fc) + '), and each city pays you ' + fmtX(R.mult) + ' its own.</strong> ' +
+    'It assumes you would hold the same place in the local pay scale; pay for one job can differ by far more than this between cities.');
+  const meta = WAGES.metadata;
+  if(S.scale === 'min'){
+    items.push('<strong>Minimum wages are gross, for a full-time month:</strong> hourly rates times 40 hours a week, daily rates times 26 days. ' +
+      'The city\'s own, its state\'s, province\'s or prefecture\'s where one is set, else the country\'s. Your salary is net, so a country that taxes low pay harder looks better paid than it is.');
+  } else {
+    const older = R.valid.filter(o => o.c.wage && o.c.wage.avg_from).length;
+    items.push('<strong>Average net salaries are Numbeo\'s, city by city,</strong> worked out from its purchasing power and cost of living indices of ' + fmtDay(meta.avg.date) + '. ' +
+      'They are crowd-sourced after-tax averages, rough where few people contributed' + (older ? '; ' + older + ' cities missing from the current table use an older one' : '') + '.');
+    if(S.scale === 'median') items.push('<strong>Each median is the city\'s average times its country\'s median-to-average ratio of earnings,</strong> from ILOSTAT\'s labour force surveys or the national statistics office. ' +
+      'One ratio for the whole country: a big city\'s pay is usually more spread out, so its median is likely lower than shown. The ratio is of gross pay; tax narrows the spread, so net medians sit a little higher.');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1354,7 +1499,7 @@ function drawCities(){
     }
   }
   // Dearest drawn last, then home on top of all.
-  shown.sort((a, b) => (a.o.home - b.o.home) || ((a.o.q || 0) - (b.o.q || 0)));
+  shown.sort((a, b) => (a.o.home - b.o.home) || ((a.o.cq || 0) - (b.o.cq || 0)));
   for(const d of shown){
     const {o, sx, sy, col} = d;
     const hov = o.key === hoverKey || o.key === cardKey;
@@ -1472,6 +1617,10 @@ function followCard(){
 function noEstimateWhy(o){
   const R = RESULT, from = R.from;
   if(!(o.fx > 0)) return 'No exchange rate for ' + o.cur + '.';
+  if(S.mode === 'scaled'){
+    if(R.mult == null) return 'No ' + SCALES[S.scale].word + ' for ' + from.city + ' to scale by.';
+    if(!(o.W > 0)) return wageOf(o.c).why;
+  }
   if(S.detail === 'detailed'){
     const miss = S.rows.filter(r => r.amount > 0).map(r => catOf(r.catId)).filter(c => getIdx(o.c, c.index) == null || getIdx(from, c.index) == null);
     if(miss.length) return 'No ' + miss[0].label.toLowerCase() + ' data for ' + (getIdx(o.c, miss[0].index) == null ? o.c.city : from.city) + ' in the dataset.';
@@ -1497,15 +1646,29 @@ function renderCard(){
     else html += '<div class="pop-big"' + neg(x.from) + '>' + fmtC(x.from, fc) + '</div>' + (o.cur !== fc ? '<div class="pop-local">(' + fmtC(x.local, o.cur) + ')</div>' : '');
     html += '<div class="pop-what">' + esc(mapTitle()) + '</div><div class="pop-rows">';
     const rows = [];
-    if(v !== 'salary') rows.push([S.mode === 'global' ? 'Your salary' : 'Net salary needed', both(o.sal)]);
+    if(v !== 'salary') rows.push([S.mode === 'global' ? 'Your salary' : S.mode === 'scaled' ? 'Scaled salary' : 'Net salary needed', both(o.sal)]);
+    if(S.mode === 'scaled' && o.W > 0) rows.push([SCALES[S.scale].label, both(o.W)]);
     if(v !== 'living') rows.push(['Living cost', both(o.E)]);
     if(v !== 'savings') rows.push(['Savings', '<span' + neg(o.sav) + '>' + both(o.sav) + '</span>']);
     if(v !== 'ratio') rows.push(['Savings ratio', '<span' + neg(o.ratio) + '>' + fmtP(o.ratio) + '</span>']);
     if(o.cur !== fc) rows.push(['Rate', '1 ' + esc(o.cur) + ' = ' + fmtFx(o.fx) + ' ' + esc(fc)]);
     html += rows.map(([a, b]) => '<span>' + a + '</span><span>' + b + '</span>').join('') + '</div>';
-    html += '<div class="pop-rel">' + esc(relText(o, R.from.city)) + (o.neg ? '. Your salary does not cover the lifestyle here.' : '') + '</div>';
+    if(S.mode === 'scaled'){
+      html += '<div class="pop-rel">' + esc(reachText(o, R.from.city)) + (o.neg ? '. The scaled salary does not cover the lifestyle here.' : '') + '</div>';
+      html += '<div class="pop-src">' + esc(wageSource(o.c)) + '</div>';
+    } else html += '<div class="pop-rel">' + esc(relText(o, R.from.city)) + (o.neg ? '. Your salary does not cover the lifestyle here.' : '') + '</div>';
   }
   card.innerHTML = html;
+}
+// Where a city's yardstick comes from, for its card.
+function wageSource(c){
+  const w = c.wage || {}, has = wageOf(c);
+  if(has.v == null) return has.why;
+  if(S.scale === 'min') return 'Minimum wage: ' + w.min_src + ', ' + w.min_year + '.';
+  const avg = 'Average from Numbeo' + (w.avg_from ? '\'s ' + w.avg_from + ' table' : '');
+  if(S.scale === 'avg') return avg + '.';
+  const k = WAGES.countries[c.country] || {};
+  return avg + ', times ' + c.country + '\'s median-to-average ratio of ' + (k.ratio * 100).toFixed(0) + '% (' + k.ratio_src + ', ' + k.ratio_year + ').';
 }
 function fmtFx(v){
   if(!isFinite(v) || v <= 0) return '—';
@@ -1693,12 +1856,14 @@ function init(){
   window.__colmap = {
     state: () => clone(S),
     rows: () => (RESULT ? RESULT.rows.map(o => ({ key: o.key, cur: o.cur, home: o.home, E: o.E, fx: o.fx, sal: o.sal, sav: o.sav,
-      ratio: o.ratio, q: o.q, neg: o.neg, arm: armOf(o), color: colorOf(o), lat: o.c.lat, lon: o.c.lon })) : []),
+      ratio: o.ratio, q: o.q, cq: o.cq, W: o.W, neg: o.neg, arm: armOf(o), color: colorOf(o), lat: o.c.lat, lon: o.c.lon })) : []),
     summary: () => (RESULT ? { from: RESULT.from && cityKey(RESULT.from), fc: RESULT.fc, fe: RESULT.fe, sal: RESULT.sal, r: RESULT.r,
       cheaper: RESULT.cheaper, dearer: RESULT.dearer, short: RESULT.short, nodata: RESULT.nodata, scale: RESULT.scale } : null),
     live: () => LIVE && { date: LIVE.date, source: LIVE.source },
     marketFx,
     view,
+    wage: (key, scale) => { const c = getCity(key); return c ? wageOf(c, scale) : null; },
+    scaled: () => (RESULT ? { mult: RESULT.mult, wh: RESULT.wh && RESULT.wh.v } : null),
     labels: () => clone(lastLabels),
     transform: () => ({ ...T, minK, vw, vh }),
     mapReady: () => mapReady,

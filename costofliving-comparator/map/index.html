@@ -65,6 +65,14 @@
         "@type": "Answer",
         "text": "Switch the Map View to Global salary mode. Your own salary is kept in every city, converted at today's exchange rate, and each city shows what you would save there for the same lifestyle, with the cities where it would not cover your costs in red."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "What would my salary be in another city if I earned the same relative to local pay?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Switch the Map View to Scaled salary mode and pick Minimum wage, Average salary or Median salary. Your salary is taken as a multiple of that figure in your city, and each city pays the same multiple of its own: its average net salary city by city, its median from its country's median-to-average ratio, or the minimum wage its city, state or country sets. Each city then shows what that salary would save for the same lifestyle."
+      }
     }
   ]
 }
@@ -113,7 +121,7 @@
 <section class="header card">
   <div>
     <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="12" cy="12" r="9"/> <path stroke="var(--accent2)" d="M3 12h18"/> <path stroke="var(--accent2)" d="M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/> </svg>Cost of Living Comparator: Map View</h1>
-    <p class="muted">The net salary every city needs for your lifestyle, or what your own salary saves there.</p>
+    <p class="muted">The net salary every city needs for your lifestyle, or what your own salary, or the same share of local pay, saves there.</p>
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
@@ -162,6 +170,15 @@
         <div class="seg-group" id="modeGroup" role="group" aria-label="Map mode">
           <button class="seg-btn active" type="button" data-val="required">Required salary</button>
           <button class="seg-btn" type="button" data-val="global">Global salary</button>
+          <button class="seg-btn" type="button" data-val="scaled">Scaled salary</button>
+        </div>
+      </div>
+      <div class="toggle-row" id="scaleRow" hidden>
+        <span class="toggle-label">Scale by <span class="tip-icon" id="scaleTip" data-tip="" data-tip-options>?</span></span>
+        <div class="seg-group" id="scaleGroup" role="group" aria-label="Pay to scale your salary by">
+          <button class="seg-btn" type="button" data-val="min">Minimum wage</button>
+          <button class="seg-btn active" type="button" data-val="avg">Average salary</button>
+          <button class="seg-btn" type="button" data-val="median">Median salary</button>
         </div>
       </div>
       <div class="toggle-row" id="targetRow">
