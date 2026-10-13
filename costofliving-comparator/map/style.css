@@ -45,6 +45,9 @@ body.light{
 .field-group .toggle-row[hidden]{display:none;}
 .field-group .toggle-row .seg-group{display:flex;}
 .field-group .toggle-row .seg-btn{flex:1 1 auto;}
+/* Mode and Scale by keep their three options on one line. */
+#modeGroup,#scaleGroup{flex-wrap:nowrap;}
+#modeGroup .seg-btn,#scaleGroup .seg-btn{flex:1 1 0;min-width:0;padding-left:6px;padding-right:6px;}
 .toggle-label{display:inline-flex;align-items:center;gap:5px;font-size:.9rem;font-weight:700;color:var(--text);}
 .seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
 .seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.84rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;}
@@ -90,7 +93,6 @@ body.light{
 .map-card .chart-head{margin-bottom:6px;}
 .view-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .view-row .toggle-label{min-width:0;color:var(--muted);font-weight:600;}
-.map-note{font-size:.82rem;color:var(--info-text);background:var(--info-bg);border:1px solid var(--info-border);border-radius:var(--radius-sm);padding:6px 10px;margin:4px 0 8px;}
 .map-foot{font-size:.76rem;color:var(--muted);margin-top:8px;}
 
 /* Legend: the scale the dots are coloured on, living cost against yours. */
@@ -143,7 +145,7 @@ body.light{
 html.map-full-open{overflow:hidden;scrollbar-gutter:auto;}
 .map-card.is-full{position:fixed;inset:0;z-index:1000;margin:0;display:flex;flex-direction:column;border:0;border-radius:0;box-shadow:none;background:var(--panel);
   padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));}
-.map-card.is-full .chart-head,.map-card.is-full .map-note,.map-card.is-full .map-legend,.map-card.is-full .map-foot{flex:0 0 auto;}
+.map-card.is-full .chart-head,.map-card.is-full .map-legend,.map-card.is-full .map-foot{flex:0 0 auto;}
 .map-card.is-full .map-wrap{flex:1 1 auto;height:auto;min-height:0;touch-action:none;}
 
 /* Hover / tap card */

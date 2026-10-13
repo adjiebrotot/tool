@@ -20,7 +20,9 @@
 //       its own currency in brackets, at the figures the engine holds
 //   M6  modes: Required salary opens on Required net salary; Global salary
 //       has no salary view and opens on Nominal savings; each mode keeps the
-//       view it was left on; Target only shows in Required salary mode
+//       view it was left on; Target only shows in Required salary mode, and
+//       the view its target fixes in every city is dropped; the title names
+//       the figure and its tip carries the rest
 //   M7  labels: no two labels overlap and none leaves the map
 //   M8  live rates: with a mocked feed, money crossing currencies moves to the
 //       live rate while every city's own-currency living cost holds still
@@ -379,7 +381,10 @@ for(const plan of PLANS){
     on: (document.querySelector('#viewGroup .seg-btn.active') || {}).dataset.val, target: getComputedStyle(document.getElementById('targetRow')).display !== 'none',
     title: document.getElementById('mapTitle').textContent }));
   const a = await viewsNow();
-  check('M6 Required salary opens on Required net salary, with four views and a Target', a.on === 'salary' && a.views.join() === 'salary,living,savings,ratio' && a.target, JSON.stringify(a));
+  check('M6 Required salary opens on Required net salary with a Target, and drops the Savings ratio view its ratio target fixes', a.on === 'salary' && a.views.join() === 'salary,living,savings' && a.target, JSON.stringify(a));
+  await seg(page, 'targetGroup', 'nominal');
+  const n = await viewsNow();
+  check('M6 a Nominal savings target drops the Nominal savings view instead', n.views.join() === 'salary,living,ratio', JSON.stringify(n));
   await seg(page, 'viewGroup', 'ratio');
   await seg(page, 'modeGroup', 'global');
   const b = await viewsNow();
@@ -390,9 +395,13 @@ for(const plan of PLANS){
   await seg(page, 'modeGroup', 'global');
   const d = await viewsNow();
   check('M6 each mode keeps the view it was left on', c.on === 'ratio' && d.on === 'living', c.on + ' / ' + d.on);
-  await seg(page, 'modeGroup', 'required'); await seg(page, 'viewGroup', 'ratio');
-  const note = await page.evaluate(() => !document.getElementById('mapNote').hidden && document.getElementById('mapNote').textContent);
-  check('M6 a view that is the target itself says so', !!note && /target/.test(note), note || 'no note');
+  await seg(page, 'modeGroup', 'required'); await seg(page, 'targetGroup', 'ratio');
+  const e = await viewsNow();
+  check('M6 a view hidden by the target falls back to the salary, and comes back with the other target', e.on === 'salary' && !e.views.includes('ratio') && e.title === 'Required net salary', JSON.stringify(e));
+  await seg(page, 'targetGroup', 'nominal');
+  const f = await viewsNow();
+  const tip = await page.evaluate(() => document.getElementById('mapTitleTip').getAttribute('data-tip'));
+  check('M6 the title stays short and its tip carries the rest', f.on === 'ratio' && f.title === 'Savings ratio' && /savings/.test(tip), f.title + ' / ' + tip);
 }
 
 // ── M13 Scaled salary mode ───────────────────────────────────────────────

@@ -166,19 +166,19 @@
     <div class="field-group">
       <div class="group-title">Compare by</div>
       <div class="toggle-row">
-        <span class="toggle-label">Mode <span class="tip-icon" id="modeTip" data-tip="" data-tip-options>?</span></span>
-        <div class="seg-group" id="modeGroup" role="group" aria-label="Map mode">
-          <button class="seg-btn active" type="button" data-val="required">Required salary</button>
-          <button class="seg-btn" type="button" data-val="global">Global salary</button>
-          <button class="seg-btn" type="button" data-val="scaled">Scaled salary</button>
+        <span class="toggle-label">Salary <span class="tip-icon" id="modeTip" data-tip="" data-tip-options>?</span></span>
+        <div class="seg-group" id="modeGroup" role="group" aria-label="Salary mode">
+          <button class="seg-btn active" type="button" data-val="required" title="Required salary: what each city needs">Required</button>
+          <button class="seg-btn" type="button" data-val="global" title="Global salary: your salary everywhere">Global</button>
+          <button class="seg-btn" type="button" data-val="scaled" title="Scaled salary: the same multiple of local pay">Scaled</button>
         </div>
       </div>
       <div class="toggle-row" id="scaleRow" hidden>
         <span class="toggle-label">Scale by <span class="tip-icon" id="scaleTip" data-tip="" data-tip-options>?</span></span>
         <div class="seg-group" id="scaleGroup" role="group" aria-label="Pay to scale your salary by">
-          <button class="seg-btn" type="button" data-val="min">Minimum wage</button>
-          <button class="seg-btn active" type="button" data-val="avg">Average salary</button>
-          <button class="seg-btn" type="button" data-val="median">Median salary</button>
+          <button class="seg-btn" type="button" data-val="min" title="Minimum wage">Min. wage</button>
+          <button class="seg-btn active" type="button" data-val="avg" title="Average net salary">Average</button>
+          <button class="seg-btn" type="button" data-val="median" title="Median net salary">Median</button>
         </div>
       </div>
       <div class="toggle-row" id="targetRow">
@@ -238,13 +238,12 @@
 
   <section class="map-card card" id="mapCard">
     <div class="chart-head">
-      <h2 id="mapTitle">Required net salary, a month</h2>
+      <h2><span id="mapTitle">Required net salary</span> <span class="tip-icon" id="mapTitleTip" data-tip="A month.">?</span></h2>
       <div class="view-row">
         <span class="toggle-label">View</span>
         <div class="seg-group" id="viewGroup" role="group" aria-label="What the map shows"></div>
       </div>
     </div>
-    <div class="map-note" id="mapNote" hidden></div>
     <div class="map-legend" id="legend" data-no-abbr></div>
     <div class="map-wrap" id="mapWrap">
       <canvas id="mapCanvas" role="img" aria-label="World map of cities coloured by living cost against yours, each labelled with the figure the view shows. Drag to move, hold Ctrl and scroll or pinch to zoom, hover or tap a city for its figures."></canvas>
