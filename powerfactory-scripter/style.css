@@ -494,11 +494,23 @@
     padding-top: 12px;
     user-select: none;
   }
-  .nb-source {
+  .nb-body {
     flex: 1;
     min-width: 0;
+    position: relative;
+  }
+  .nb-copy {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    padding: 3px 8px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+  .nb-copy:hover, .nb-copy:focus-visible { opacity: 1; }
+  .nb-source {
     margin: 0;
-    padding: 10px 14px;
+    padding: 10px 44px 10px 14px; /* right room for the cell's copy button */
     font-family: var(--mono);
     font-size: 12.5px;
     line-height: 1.6;
