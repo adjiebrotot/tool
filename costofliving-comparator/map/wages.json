@@ -1,0 +1,3916 @@
+{
+ "metadata": {
+  "updated_on": "2026-10-13",
+  "avg": {
+   "source": "Numbeo",
+   "url": "https://www.numbeo.com/cost-of-living/rankings_current.jsp",
+   "date": "2026-10-13",
+   "fx_date": "2026-10-12",
+   "note": "Average monthly net salary: Local Purchasing Power x Cost of Living Plus Rent, against New York at USD 5278.25"
+  },
+  "median": {
+   "source": "ILOSTAT",
+   "url": "https://ilostat.ilo.org/topics/wages/",
+   "note": "Median over mean monthly earnings of employees, by country"
+  },
+  "min": {
+   "note": "Statutory gross minimum wage a month: hourly x 40 x 52/12, daily x 26, weekly x 52/12"
+  }
+ },
+ "countries": {
+  "Bermuda": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Switzerland": {
+   "ratio": 0.926,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "United States": {
+   "ratio": 0.7143,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Cayman Islands": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Bahamas": {
+   "ratio": 0.5775,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Norway": {
+   "ratio": 0.9154,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Australia": {
+   "ratio": 0.8467,
+   "ratio_year": 2021,
+   "ratio_src": "ILOSTAT, \"HIES"
+  },
+  "Jersey": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Singapore": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Denmark": {
+   "ratio": 0.9266,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Iceland": {
+   "ratio": 0.8965,
+   "ratio_year": 2020,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Israel": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "South Korea": {
+   "ratio": 0.7658,
+   "ratio_year": 2023,
+   "ratio_src": "Statistics Korea, wage job income"
+  },
+  "Lebanon": {
+   "ratio": 0.8504,
+   "ratio_year": 2019,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Finland": {
+   "ratio": 0.8727,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "New Zealand": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Ireland": {
+   "ratio": 0.7932,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "France": {
+   "ratio": 0.8369,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Canada": {
+   "ratio": 0.8724,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Netherlands": {
+   "ratio": 0.8988,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "United Kingdom": {
+   "ratio": 0.8579,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Hong Kong (China)": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Luxembourg": {
+   "ratio": 0.8193,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Italy": {
+   "ratio": 0.8837,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Germany": {
+   "ratio": 0.8554,
+   "ratio_year": 2022,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Japan": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Puerto Rico": {
+   "ratio": 0.7054,
+   "ratio_year": 2020,
+   "ratio_src": "ILOSTAT, PC"
+  },
+  "Sweden": {
+   "ratio": 0.9182,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Malta": {
+   "ratio": 0.7149,
+   "ratio_year": 2021,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Austria": {
+   "ratio": 0.8877,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Macao (China)": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Belgium": {
+   "ratio": 0.9272,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "United Arab Emirates": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Cyprus": {
+   "ratio": 0.7842,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Saudi Arabia": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Greece": {
+   "ratio": 0.8995,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Estonia": {
+   "ratio": 0.8539,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "China": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Uruguay": {
+   "ratio": 0.8245,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Qatar": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Spain": {
+   "ratio": 0.8374,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Taiwan (China)": {
+   "ratio": 0.7459,
+   "ratio_year": 2024,
+   "ratio_src": "DGBAS, annual total earnings of employees"
+  },
+  "Palestine": {
+   "ratio": 0.7824,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Iran": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Jamaica": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Trinidad And Tobago": {
+   "ratio": 0.9117,
+   "ratio_year": 2016,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Maldives": {
+   "ratio": 0.8657,
+   "ratio_year": 2019,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Czech Republic": {
+   "ratio": 0.9047,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Latvia": {
+   "ratio": 0.8279,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Slovenia": {
+   "ratio": 0.8637,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Croatia": {
+   "ratio": 0.8322,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Portugal": {
+   "ratio": 0.8319,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Lithuania": {
+   "ratio": 0.8317,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Thailand": {
+   "ratio": 0.7785,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Bahrain": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Slovakia": {
+   "ratio": 0.9093,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Costa Rica": {
+   "ratio": 0.742,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Dominican Republic": {
+   "ratio": 0.7977,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Russia": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Oman": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Panama": {
+   "ratio": 0.7538,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Jordan": {
+   "ratio": 0.8539,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Chile": {
+   "ratio": 0.7244,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Cambodia": {
+   "ratio": 0.8961,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Senegal": {
+   "ratio": 0.5353,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Kuwait": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Hungary": {
+   "ratio": 0.8847,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Guyana": {
+   "ratio": 0.8787,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Bulgaria": {
+   "ratio": 0.7659,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Philippines": {
+   "ratio": 0.821,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "El Salvador": {
+   "ratio": 0.8546,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HS"
+  },
+  "Poland": {
+   "ratio": 0.8713,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Guatemala": {
+   "ratio": 0.8571,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Romania": {
+   "ratio": 0.9013,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Ivory Coast": {
+   "ratio": 0.6281,
+   "ratio_year": 2022,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Ethiopia": {
+   "ratio": 0.7626,
+   "ratio_year": 2021,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Mexico": {
+   "ratio": 0.8261,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Serbia": {
+   "ratio": 0.8636,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Montenegro": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Armenia": {
+   "ratio": 0.8801,
+   "ratio_year": 2023,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Georgia": {
+   "ratio": 0.9228,
+   "ratio_year": 2023,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Brazil": {
+   "ratio": 0.6484,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HS"
+  },
+  "Zimbabwe": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "South Africa": {
+   "ratio": 0.5263,
+   "ratio_year": 2020,
+   "ratio_src": "ILOSTAT, HIES"
+  },
+  "Albania": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Malaysia": {
+   "ratio": 0.7731,
+   "ratio_year": 2025,
+   "ratio_src": "DOSM, Salaries & Wages Survey"
+  },
+  "Bosnia And Herzegovina": {
+   "ratio": null,
+   "ratio_year": 2025,
+   "ratio_why": "its latest survey reports a median at 115% of the mean, too close to the mean to trust"
+  },
+  "Ecuador": {
+   "ratio": 0.8729,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, \"LFS"
+  },
+  "Nigeria": {
+   "ratio": 0.6537,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, HS"
+  },
+  "Botswana": {
+   "ratio": 0.3819,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, HS"
+  },
+  "Vietnam": {
+   "ratio": 0.9324,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "North Macedonia": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Belarus": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Myanmar": {
+   "ratio": null,
+   "ratio_year": 2020,
+   "ratio_why": "its latest survey reports a median at 96% of the mean, too close to the mean to trust"
+  },
+  "Peru": {
+   "ratio": 0.757,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, \"LFS"
+  },
+  "Fiji": {
+   "ratio": 0.7776,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, \"LFS"
+  },
+  "Turkey": {
+   "ratio": 0.7597,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Indonesia": {
+   "ratio": 0.8085,
+   "ratio_year": 2023,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Iraq": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Kenya": {
+   "ratio": 0.4306,
+   "ratio_year": 2019,
+   "ratio_src": "ILOSTAT, HS"
+  },
+  "Bolivia": {
+   "ratio": 0.8778,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Namibia": {
+   "ratio": 0.3871,
+   "ratio_year": 2018,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Morocco": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Moldova": {
+   "ratio": 0.8267,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Uganda": {
+   "ratio": 0.4155,
+   "ratio_year": 2021,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Mongolia": {
+   "ratio": 0.9056,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Argentina": {
+   "ratio": 0.7945,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, \"LFS"
+  },
+  "Algeria": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Kazakhstan": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Ukraine": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Azerbaijan": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Rwanda": {
+   "ratio": 0.5011,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Tanzania": {
+   "ratio": 0.5722,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Tunisia": {
+   "ratio": 0.8112,
+   "ratio_year": 2019,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Bangladesh": {
+   "ratio": 0.9023,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Kosovo (Disputed Territory)": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Paraguay": {
+   "ratio": 0.8653,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, HS"
+  },
+  "Syria": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Uzbekistan": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Ghana": {
+   "ratio": 0.6348,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Sri Lanka": {
+   "ratio": 0.8425,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "India": {
+   "ratio": 0.6751,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Nepal": {
+   "ratio": 0.8543,
+   "ratio_year": 2017,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Libya": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Kyrgyzstan": {
+   "ratio": null,
+   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+  },
+  "Colombia": {
+   "ratio": 0.7416,
+   "ratio_year": 2025,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Egypt": {
+   "ratio": 0.9211,
+   "ratio_year": 2024,
+   "ratio_src": "ILOSTAT, LFS"
+  },
+  "Pakistan": {
+   "ratio": null,
+   "ratio_year": 2025,
+   "ratio_why": "its latest survey reports a median at 98% of the mean, too close to the mean to trust"
+  }
+ },
+ "cities": {
+  "Hamilton|Bermuda": {
+   "avg": 5091.17,
+   "avg_from": "2024",
+   "min": 2842.67,
+   "min_year": 2023,
+   "min_src": "Employment (Minimum Hourly Wage) Order 2023"
+  },
+  "Basel|Switzerland": {
+   "avg": 5878.4,
+   "min": 3848,
+   "min_year": 2026,
+   "min_src": "Canton of Basel-Stadt"
+  },
+  "Zurich|Switzerland": {
+   "avg": 6818.09,
+   "min": null,
+   "min_why": "this canton has no statutory minimum wage"
+  },
+  "Lausanne|Switzerland": {
+   "avg": 5494.39,
+   "min": null,
+   "min_why": "this canton has no statutory minimum wage"
+  },
+  "Zug|Switzerland": {
+   "avg": 6124.93,
+   "min": null,
+   "min_why": "this canton has no statutory minimum wage"
+  },
+  "Bern|Switzerland": {
+   "avg": 5769.75,
+   "min": null,
+   "min_why": "this canton has no statutory minimum wage"
+  },
+  "Santa Barbara, CA|United States": {
+   "avg": 4439.54,
+   "avg_from": "2023",
+   "min": 2929.33,
+   "min_year": 2026,
+   "min_src": "California"
+  },
+  "Geneva|Switzerland": {
+   "avg": 6062.68,
+   "min": 4262.27,
+   "min_year": 2026,
+   "min_src": "Canton of Geneva"
+  },
+  "George Town|Cayman Islands": {
+   "avg": 6122.65,
+   "min": 1516.67,
+   "min_year": 2026,
+   "min_src": "Labour (Minimum Wage) Order 2025"
+  },
+  "Honolulu, HI|United States": {
+   "avg": 4187.18,
+   "min": 2773.33,
+   "min_year": 2026,
+   "min_src": "Hawaii"
+  },
+  "New York, NY|United States": {
+   "avg": 5278.25,
+   "min": 2946.67,
+   "min_year": 2026,
+   "min_src": "New York City"
+  },
+  "San Francisco, CA|United States": {
+   "avg": 6610.85,
+   "min": 3399.07,
+   "min_year": 2026,
+   "min_src": "San Francisco (from 1 July 2026)"
+  },
+  "Nassau|Bahamas": {
+   "avg": 1549.32,
+   "avg_from": "2023-mid",
+   "min": 1125.8,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Oslo|Norway": {
+   "avg": 44922.6,
+   "min": null,
+   "min_why": "Norway has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Seattle, WA|United States": {
+   "avg": 6250.34,
+   "min": 3692,
+   "min_year": 2026,
+   "min_src": "Seattle"
+  },
+  "Stavanger|Norway": {
+   "avg": 48255.5,
+   "min": null,
+   "min_why": "Norway has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Oakland, CA|United States": {
+   "avg": 5333.15,
+   "min": 3021.2,
+   "min_year": 2026,
+   "min_src": "Oakland"
+  },
+  "Adelaide|Australia": {
+   "avg": 5615.93,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Bergen|Norway": {
+   "avg": 45037.4,
+   "min": null,
+   "min_why": "Norway has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Anchorage, AK|United States": {
+   "avg": 4761.56,
+   "min": 2426.67,
+   "min_year": 2026,
+   "min_src": "Alaska (from 1 July 2026)"
+  },
+  "Canberra|Australia": {
+   "avg": 6282.03,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Saint Helier|Jersey": {
+   "avg": 3505.19,
+   "min": 2355.6,
+   "min_year": 2026,
+   "min_src": "Employment (Minimum Wage) Order (from 1 April 2026)"
+  },
+  "Singapore|Singapore": {
+   "avg": 5672.78,
+   "min": null,
+   "min_why": "Singapore has no general minimum wage, only floors for some jobs and for firms that hire foreign workers"
+  },
+  "Trondheim|Norway": {
+   "avg": 41273,
+   "min": null,
+   "min_why": "Norway has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Tromso|Norway": {
+   "avg": 38668.2,
+   "avg_from": "2023-mid",
+   "min": null,
+   "min_why": "Norway has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Boston, MA|United States": {
+   "avg": 5981.52,
+   "min": 2600,
+   "min_year": 2023,
+   "min_src": "Massachusetts"
+  },
+  "Odense|Denmark": {
+   "avg": 26442.5,
+   "min": null,
+   "min_why": "Denmark has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Reykjavik|Iceland": {
+   "avg": 575719,
+   "min": null,
+   "min_why": "Iceland has no statutory minimum wage; collective agreements set pay floors"
+  },
+  "Sacramento, CA|United States": {
+   "avg": 4763.3,
+   "min": 2929.33,
+   "min_year": 2026,
+   "min_src": "California"
+  },
+  "Brisbane|Australia": {
+   "avg": 5969.44,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Washington, DC|United States": {
+   "avg": 6338.43,
+   "min": 3189.33,
+   "min_year": 2026,
+   "min_src": "District of Columbia (from 1 July 2026)"
+  },
+  "Sydney|Australia": {
+   "avg": 5969.08,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Copenhagen|Denmark": {
+   "avg": 30479.8,
+   "min": null,
+   "min_why": "Denmark has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "San Jose, CA|United States": {
+   "avg": 6181.49,
+   "min": 3198,
+   "min_year": 2026,
+   "min_src": "San Jose"
+  },
+  "Irvine, CA|United States": {
+   "avg": 6565.18,
+   "avg_from": "2026-mid",
+   "min": 2929.33,
+   "min_year": 2026,
+   "min_src": "California"
+  },
+  "San Diego, CA|United States": {
+   "avg": 4958.35,
+   "min": 3076.67,
+   "min_year": 2026,
+   "min_src": "City of San Diego"
+  },
+  "Portland, OR|United States": {
+   "avg": 4657.48,
+   "min": 2912,
+   "min_year": 2026,
+   "min_src": "Portland metro (from 1 July 2026)"
+  },
+  "Perth|Australia": {
+   "avg": 6172.65,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Nashville, TN|United States": {
+   "avg": 4711.07,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Miami, FL|United States": {
+   "avg": 4162.8,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Florida (from 30 September 2026)"
+  },
+  "Denver, CO|United States": {
+   "avg": 4543.67,
+   "min": 3343.6,
+   "min_year": 2026,
+   "min_src": "Denver"
+  },
+  "Ramat Gan|Israel": {
+   "avg": 13512.1,
+   "avg_from": "2026",
+   "min": 6247.67,
+   "min_year": 2025,
+   "min_src": "Ministry of Economy (from 1 April 2025)"
+  },
+  "Arhus|Denmark": {
+   "avg": 31340.5,
+   "min": null,
+   "min_why": "Denmark has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Melbourne|Australia": {
+   "avg": 6307.45,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Tel Aviv-Yafo|Israel": {
+   "avg": 12961.9,
+   "min": 6247.67,
+   "min_year": 2025,
+   "min_src": "Ministry of Economy (from 1 April 2025)"
+  },
+  "Seoul|South Korea": {
+   "avg": 4995090,
+   "min": 2156880,
+   "min_year": 2026,
+   "min_src": "Minimum Wage Commission (KRW 10,320 an hour, 209 paid hours a month)"
+  },
+  "Netanya|Israel": {
+   "avg": 8705.13,
+   "avg_from": "2025-mid",
+   "min": 6247.67,
+   "min_year": 2025,
+   "min_src": "Ministry of Economy (from 1 April 2025)"
+  },
+  "Raleigh, NC|United States": {
+   "avg": 4454.95,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "New Orleans, LA|United States": {
+   "avg": 4103.65,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Beirut|Lebanon": {
+   "avg": 65123200,
+   "min": null,
+   "min_why": "Lebanon's minimum wage has been reset several times since the currency collapsed, and its current figure could not be confirmed"
+  },
+  "Philadelphia, PA|United States": {
+   "avg": 4494.79,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Espoo|Finland": {
+   "avg": 2973.88,
+   "min": null,
+   "min_why": "Finland has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Los Angeles, CA|United States": {
+   "avg": 4064.94,
+   "min": 3192.8,
+   "min_year": 2026,
+   "min_src": "City of Los Angeles (from 1 July 2026)"
+  },
+  "Chicago, IL|United States": {
+   "avg": 4936.48,
+   "min": 2955.33,
+   "min_year": 2026,
+   "min_src": "Chicago (from 1 July 2026)"
+  },
+  "Buffalo, NY|United States": {
+   "avg": 3702.97,
+   "min": 2773.33,
+   "min_year": 2026,
+   "min_src": "New York State, outside New York City"
+  },
+  "Auckland|New Zealand": {
+   "avg": 5338.73,
+   "min": 4151.33,
+   "min_year": 2026,
+   "min_src": "Minimum Wage Order 2026 (from 1 April 2026)"
+  },
+  "Charlotte, NC|United States": {
+   "avg": 4329.38,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Wellington|New Zealand": {
+   "avg": 5043.38,
+   "min": 4151.33,
+   "min_year": 2026,
+   "min_src": "Minimum Wage Order 2026 (from 1 April 2026)"
+  },
+  "Pittsburgh, PA|United States": {
+   "avg": 4423.38,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Dublin|Ireland": {
+   "avg": 3467.72,
+   "min": 2391,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Nice|France": {
+   "avg": 2336.08,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Aalborg|Denmark": {
+   "avg": 27650.1,
+   "min": null,
+   "min_why": "Denmark has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Cleveland, OH|United States": {
+   "avg": 3700.54,
+   "min": 1906.67,
+   "min_year": 2026,
+   "min_src": "Ohio"
+  },
+  "Dallas, TX|United States": {
+   "avg": 4492.74,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Paris|France": {
+   "avg": 3206.33,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Victoria|Canada": {
+   "avg": 4673.81,
+   "min": 3163.33,
+   "min_year": 2026,
+   "min_src": "British Columbia (from 1 June 2026)"
+  },
+  "Petah Tikva|Israel": {
+   "avg": 11703.8,
+   "avg_from": "2026",
+   "min": 6247.67,
+   "min_year": 2025,
+   "min_src": "Ministry of Economy (from 1 April 2025)"
+  },
+  "Haarlem|Netherlands": {
+   "avg": 3811.71,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Baltimore, MD|United States": {
+   "avg": 4561.44,
+   "min": 2600,
+   "min_year": 2024,
+   "min_src": "Maryland"
+  },
+  "Tampa, FL|United States": {
+   "avg": 4975.23,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Florida (from 30 September 2026)"
+  },
+  "Long Beach, CA|United States": {
+   "avg": 3854.58,
+   "avg_from": "2022",
+   "min": 2929.33,
+   "min_year": 2026,
+   "min_src": "California"
+  },
+  "London|United Kingdom": {
+   "avg": 3895.94,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Omaha, NE|United States": {
+   "avg": 3972.18,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Nebraska"
+  },
+  "Haifa|Israel": {
+   "avg": 13686.2,
+   "min": 6247.67,
+   "min_year": 2025,
+   "min_src": "Ministry of Economy (from 1 April 2025)"
+  },
+  "Hong Kong|Hong Kong (China)": {
+   "avg": 26000.1,
+   "min": 7470.67,
+   "min_year": 2026,
+   "min_src": "Minimum Wage Commission (from 1 May 2026)"
+  },
+  "Nanaimo, BC|Canada": {
+   "avg": 4488.5,
+   "min": 3163.33,
+   "min_year": 2026,
+   "min_src": "British Columbia (from 1 June 2026)"
+  },
+  "Indianapolis, IN|United States": {
+   "avg": 4591.32,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Utrecht|Netherlands": {
+   "avg": 3882.33,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Luxembourg|Luxembourg": {
+   "avg": 4667.67,
+   "min": 2771,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Birmingham, AL|United States": {
+   "avg": 3181.7,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Fort Worth, TX|United States": {
+   "avg": 4573.34,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Lyon|France": {
+   "avg": 2805.01,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Minneapolis, MN|United States": {
+   "avg": 4270.73,
+   "min": 2837.47,
+   "min_year": 2026,
+   "min_src": "Minneapolis"
+  },
+  "Jerusalem|Israel": {
+   "avg": 11712.2,
+   "min": 6247.67,
+   "min_year": 2025,
+   "min_src": "Ministry of Economy (from 1 April 2025)"
+  },
+  "Phoenix, AZ|United States": {
+   "avg": 4233.14,
+   "min": 2626,
+   "min_year": 2026,
+   "min_src": "Arizona"
+  },
+  "Austin, TX|United States": {
+   "avg": 5096.57,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Milan|Italy": {
+   "avg": 1946.1,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Chattanooga, TN|United States": {
+   "avg": 4295.06,
+   "avg_from": "2023",
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Toronto|Canada": {
+   "avg": 5329.63,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Munich|Germany": {
+   "avg": 3729.61,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Atlanta, GA|United States": {
+   "avg": 5272.21,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Nijmegen|Netherlands": {
+   "avg": 3522.55,
+   "avg_from": "2025-mid",
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Fort Lauderdale, FL|United States": {
+   "avg": 4736.4,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Florida (from 30 September 2026)"
+  },
+  "Columbus, OH|United States": {
+   "avg": 3826.09,
+   "min": 1906.67,
+   "min_year": 2026,
+   "min_src": "Ohio"
+  },
+  "Detroit, MI|United States": {
+   "avg": 3480.64,
+   "min": 2379.87,
+   "min_year": 2026,
+   "min_src": "Michigan"
+  },
+  "Vancouver|Canada": {
+   "avg": 5448.18,
+   "min": 3163.33,
+   "min_year": 2026,
+   "min_src": "British Columbia (from 1 June 2026)"
+  },
+  "Spokane, WA|United States": {
+   "avg": 4364.03,
+   "min": 2969.2,
+   "min_year": 2026,
+   "min_src": "Washington State"
+  },
+  "Las Vegas, NV|United States": {
+   "avg": 3780.81,
+   "min": 2080,
+   "min_year": 2024,
+   "min_src": "Nevada"
+  },
+  "Calgary|Canada": {
+   "avg": 4558.22,
+   "min": 2600,
+   "min_year": 2019,
+   "min_src": "Alberta"
+  },
+  "Tokyo|Japan": {
+   "avg": 475504,
+   "min": 221867,
+   "min_year": 2026,
+   "min_src": "Tokyo (from 1 October 2026)"
+  },
+  "Reno, NV|United States": {
+   "avg": 4366.12,
+   "min": 2080,
+   "min_year": 2024,
+   "min_src": "Nevada"
+  },
+  "Colorado Springs, CO|United States": {
+   "avg": 4318.56,
+   "min": 2627.73,
+   "min_year": 2026,
+   "min_src": "Colorado"
+  },
+  "San Juan|Puerto Rico": {
+   "avg": 2764.07,
+   "min": 1820,
+   "min_year": 2024,
+   "min_src": "Act 47-2021 (from 1 July 2024)"
+  },
+  "Boise, ID|United States": {
+   "avg": 4407.71,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Orlando, FL|United States": {
+   "avg": 4759.61,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Florida (from 30 September 2026)"
+  },
+  "Fresno, CA|United States": {
+   "avg": 4923.01,
+   "avg_from": "2023-mid",
+   "min": 2929.33,
+   "min_year": 2026,
+   "min_src": "California"
+  },
+  "Madison, WI|United States": {
+   "avg": 4394.51,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Breda|Netherlands": {
+   "avg": 4222.89,
+   "avg_from": "2023-mid",
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Stockholm|Sweden": {
+   "avg": 36393.6,
+   "min": null,
+   "min_why": "Sweden has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Hamburg|Germany": {
+   "avg": 3352.29,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Hobart|Australia": {
+   "avg": 6046.84,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Milwaukee, WI|United States": {
+   "avg": 3765.82,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Maastricht|Netherlands": {
+   "avg": 4077.17,
+   "avg_from": "2025-mid",
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Amsterdam|Netherlands": {
+   "avg": 4235.12,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Oulu|Finland": {
+   "avg": 2308.92,
+   "min": null,
+   "min_why": "Finland has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Albuquerque, NM|United States": {
+   "avg": 4066.63,
+   "min": 2080,
+   "min_year": 2023,
+   "min_src": "New Mexico"
+  },
+  "Oklahoma City, OK|United States": {
+   "avg": 3850.87,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Markham|Canada": {
+   "avg": 5134.73,
+   "avg_from": "2023-mid",
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Turku|Finland": {
+   "avg": 2460.02,
+   "min": null,
+   "min_why": "Finland has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Valletta|Malta": {
+   "avg": 1840.79,
+   "avg_from": "2026-mid",
+   "min": 994,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Groningen|Netherlands": {
+   "avg": 2781.25,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Frankfurt|Germany": {
+   "avg": 3709.71,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Edmonton|Canada": {
+   "avg": 5363.27,
+   "min": 2600,
+   "min_year": 2019,
+   "min_src": "Alberta"
+  },
+  "Cambridge|United Kingdom": {
+   "avg": 3377.06,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Kamloops|Canada": {
+   "avg": 4199.79,
+   "min": 3163.33,
+   "min_year": 2026,
+   "min_src": "British Columbia (from 1 June 2026)"
+  },
+  "Innsbruck|Austria": {
+   "avg": 2591.86,
+   "avg_from": "2026-mid",
+   "min": null,
+   "min_why": "Austria has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Berlin|Germany": {
+   "avg": 3182.25,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Fredericton|Canada": {
+   "avg": 5155.86,
+   "avg_from": "2023-mid",
+   "min": 2756,
+   "min_year": 2026,
+   "min_src": "New Brunswick (from 1 April 2026)"
+  },
+  "Houston, TX|United States": {
+   "avg": 4474.32,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Guildford|United Kingdom": {
+   "avg": 2789.65,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Macao|Macao (China)": {
+   "avg": 17548.6,
+   "avg_from": "2025-mid",
+   "min": 7072,
+   "min_year": 2024,
+   "min_src": "Minimum Wage for Employees Law"
+  },
+  "Jacksonville, FL|United States": {
+   "avg": 4044.16,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Florida (from 30 September 2026)"
+  },
+  "Galway|Ireland": {
+   "avg": 2602.68,
+   "min": 2391,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Antwerp|Belgium": {
+   "avg": 2832.94,
+   "min": 2234,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Brussels|Belgium": {
+   "avg": 3058.53,
+   "min": 2234,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Toulouse|France": {
+   "avg": 2727.21,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Helsinki|Finland": {
+   "avg": 2948.02,
+   "min": null,
+   "min_why": "Finland has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Gold Coast|Australia": {
+   "avg": 6076.85,
+   "min": 4354.57,
+   "min_year": 2026,
+   "min_src": "Fair Work Commission, Annual Wage Review 2025-26 (38-hour week)"
+  },
+  "Ottawa|Canada": {
+   "avg": 5297.16,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Cork|Ireland": {
+   "avg": 3463.73,
+   "min": 2391,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Quebec City|Canada": {
+   "avg": 4358.81,
+   "min": 2877.33,
+   "min_year": 2026,
+   "min_src": "Quebec (from 1 May 2026)"
+  },
+  "Eindhoven|Netherlands": {
+   "avg": 3563.44,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Hamilton|New Zealand": {
+   "avg": 4147.98,
+   "avg_from": "2023-mid",
+   "min": 4151.33,
+   "min_year": 2026,
+   "min_src": "Minimum Wage Order 2026 (from 1 April 2026)"
+  },
+  "Marseille|France": {
+   "avg": 2245.74,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Kansas City, MO|United States": {
+   "avg": 3990.36,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Missouri"
+  },
+  "Tucson, AZ|United States": {
+   "avg": 4282.65,
+   "min": 2626,
+   "min_year": 2026,
+   "min_src": "Arizona"
+  },
+  "Halifax|Canada": {
+   "avg": 4020.37,
+   "min": 2946.67,
+   "min_year": 2026,
+   "min_src": "Nova Scotia (from 1 October 2026)"
+  },
+  "Graz|Austria": {
+   "avg": 2880.45,
+   "min": null,
+   "min_why": "Austria has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Dusseldorf|Germany": {
+   "avg": 3456.75,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Hamilton|Canada": {
+   "avg": 4128.18,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Christchurch|New Zealand": {
+   "avg": 4799.91,
+   "min": 4151.33,
+   "min_year": 2026,
+   "min_src": "Minimum Wage Order 2026 (from 1 April 2026)"
+  },
+  "Grenoble|France": {
+   "avg": 2571.83,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Rotterdam|Netherlands": {
+   "avg": 3732.87,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Saint Louis, MO|United States": {
+   "avg": 4295.43,
+   "min": 2600,
+   "min_year": 2026,
+   "min_src": "Missouri"
+  },
+  "Brighton|United Kingdom": {
+   "avg": 2592.46,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "San Antonio, TX|United States": {
+   "avg": 4153.26,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Salzburg|Austria": {
+   "avg": 2961.35,
+   "avg_from": "2026-mid",
+   "min": null,
+   "min_why": "Austria has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Leuven|Belgium": {
+   "avg": 3376.16,
+   "min": 2234,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Florence|Italy": {
+   "avg": 1791.1,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Red Deer|Canada": {
+   "avg": 4893.41,
+   "avg_from": "2023-mid",
+   "min": 2600,
+   "min_year": 2019,
+   "min_src": "Alberta"
+  },
+  "Bonn|Germany": {
+   "avg": 3199.15,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Saskatoon|Canada": {
+   "avg": 3871.36,
+   "min": 2721.33,
+   "min_year": 2026,
+   "min_src": "Saskatchewan (from 1 October 2026)"
+  },
+  "Rome|Italy": {
+   "avg": 1765.64,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Linz|Austria": {
+   "avg": 2606.22,
+   "min": null,
+   "min_why": "Austria has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Surrey|Canada": {
+   "avg": 4556.99,
+   "min": 3163.33,
+   "min_year": 2026,
+   "min_src": "British Columbia (from 1 June 2026)"
+  },
+  "Nantes|France": {
+   "avg": 1846.21,
+   "avg_from": "2023-mid",
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Freiburg im Breisgau|Germany": {
+   "avg": 2918.83,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "London|Canada": {
+   "avg": 4185.21,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Heidelberg|Germany": {
+   "avg": 2789.1,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Gent|Belgium": {
+   "avg": 3331.91,
+   "min": 2234,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Reading|United Kingdom": {
+   "avg": 2651.98,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Richmond, VA|United States": {
+   "avg": 4533.46,
+   "min": 2213.47,
+   "min_year": 2026,
+   "min_src": "Virginia"
+  },
+  "Bologna|Italy": {
+   "avg": 1944.17,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Winnipeg|Canada": {
+   "avg": 3701.09,
+   "min": 2842.67,
+   "min_year": 2026,
+   "min_src": "Manitoba (from 1 October 2026)"
+  },
+  "Cologne|Germany": {
+   "avg": 3232.63,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Louisville, KY|United States": {
+   "avg": 4099.2,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Nagoya|Japan": {
+   "avg": 413049,
+   "avg_from": "2023",
+   "min": 207133,
+   "min_year": 2026,
+   "min_src": "Aichi (from 1 October 2026)"
+  },
+  "Kitchener|Canada": {
+   "avg": 4290.48,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Sliema|Malta": {
+   "avg": 1646.56,
+   "min": 994,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Parma|Italy": {
+   "avg": 1853.79,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Montreal|Canada": {
+   "avg": 4188.71,
+   "min": 2877.33,
+   "min_year": 2026,
+   "min_src": "Quebec (from 1 May 2026)"
+  },
+  "Bristol|United Kingdom": {
+   "avg": 2896.58,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Limerick|Ireland": {
+   "avg": 2913,
+   "avg_from": "2026",
+   "min": 2391,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Karlsruhe|Germany": {
+   "avg": 2934.28,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Oxford|United Kingdom": {
+   "avg": 3058.82,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Genoa|Italy": {
+   "avg": 1902.25,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Mannheim|Germany": {
+   "avg": 3395.64,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Delft|Netherlands": {
+   "avg": 3244.56,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Bergamo|Italy": {
+   "avg": 2216.9,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Mississauga|Canada": {
+   "avg": 4655.2,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Salt Lake City, UT|United States": {
+   "avg": 4303.53,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Trento|Italy": {
+   "avg": 1814.51,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Dortmund|Germany": {
+   "avg": 2971.19,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Dubai|United Arab Emirates": {
+   "avg": 12706.6,
+   "min": null,
+   "min_why": "the UAE has no general minimum wage"
+  },
+  "Trieste|Italy": {
+   "avg": 1752.33,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Lund|Sweden": {
+   "avg": 29830.2,
+   "min": null,
+   "min_why": "Sweden has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Memphis, TN|United States": {
+   "avg": 3668.95,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Stuttgart|Germany": {
+   "avg": 3728.9,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Kelowna|Canada": {
+   "avg": 4359.29,
+   "min": 3163.33,
+   "min_year": 2026,
+   "min_src": "British Columbia (from 1 June 2026)"
+  },
+  "Kingston|Canada": {
+   "avg": 4267.76,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Tulsa, OK|United States": {
+   "avg": 3526.95,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Osaka|Japan": {
+   "avg": 387317,
+   "min": 213373,
+   "min_year": 2026,
+   "min_src": "Osaka (FY2026 revision)"
+  },
+  "Brescia|Italy": {
+   "avg": 1789.48,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Uppsala|Sweden": {
+   "avg": 31640.3,
+   "min": null,
+   "min_why": "Sweden has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Enschede|Netherlands": {
+   "avg": 3498.78,
+   "avg_from": "2023-mid",
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Manchester|United Kingdom": {
+   "avg": 2600.37,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Cincinnati, OH|United States": {
+   "avg": 4183.85,
+   "min": 1906.67,
+   "min_year": 2026,
+   "min_src": "Ohio"
+  },
+  "Brampton|Canada": {
+   "avg": 4171.59,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "St.Catharines|Canada": {
+   "avg": 5910.16,
+   "avg_from": "2023-mid",
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Larnaca|Cyprus": {
+   "avg": 1743.54,
+   "min": 1088,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Liverpool|United Kingdom": {
+   "avg": 2516.44,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Treviso|Italy": {
+   "avg": 1716.6,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Tampere|Finland": {
+   "avg": 2550.51,
+   "min": null,
+   "min_why": "Finland has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Bremen|Germany": {
+   "avg": 3083.43,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Bournemouth|United Kingdom": {
+   "avg": 2581.05,
+   "avg_from": "2026",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Glasgow|United Kingdom": {
+   "avg": 2577.52,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Malmo|Sweden": {
+   "avg": 30938.6,
+   "min": null,
+   "min_why": "Sweden has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Padova|Italy": {
+   "avg": 1764.49,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "The Hague (Den Haag)|Netherlands": {
+   "avg": 3718.08,
+   "min": 2338,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Nottingham|United Kingdom": {
+   "avg": 2441.39,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Plymouth|United Kingdom": {
+   "avg": null,
+   "avg_why": "Numbeo's average for it falls below its own minimum wage, too few contributors to trust",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Lille|France": {
+   "avg": 2641.2,
+   "min": 1867,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (SMIC)"
+  },
+  "Regina|Canada": {
+   "avg": 3811.26,
+   "min": 2721.33,
+   "min_year": 2026,
+   "min_src": "Saskatchewan (from 1 October 2026)"
+  },
+  "Leeds|United Kingdom": {
+   "avg": 2544.2,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Gothenburg|Sweden": {
+   "avg": 35772.8,
+   "min": null,
+   "min_why": "Sweden has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Hanover|Germany": {
+   "avg": 2777.46,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Cagliari|Italy": {
+   "avg": 1639.93,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Vienna|Austria": {
+   "avg": 3197.64,
+   "min": null,
+   "min_why": "Austria has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Bari|Italy": {
+   "avg": 1732.61,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Belfast|United Kingdom": {
+   "avg": 2560.83,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Windsor|Canada": {
+   "avg": 4287.72,
+   "min": 3111.33,
+   "min_year": 2026,
+   "min_src": "Ontario (from 1 October 2026)"
+  },
+  "Derby|United Kingdom": {
+   "avg": 2898.55,
+   "avg_from": "2023-mid",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Turin|Italy": {
+   "avg": 1794.93,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Verona|Italy": {
+   "avg": 1666.53,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Edinburgh|United Kingdom": {
+   "avg": 2729.05,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Leipzig|Germany": {
+   "avg": 2938.54,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Newcastle upon Tyne|United Kingdom": {
+   "avg": 2640.57,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Norwich|United Kingdom": {
+   "avg": 2673.17,
+   "avg_from": "2023-mid",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Nuremberg|Germany": {
+   "avg": 3159.17,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Limassol|Cyprus": {
+   "avg": 2340.22,
+   "min": 1088,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Southampton|United Kingdom": {
+   "avg": 2548.71,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Essen|Germany": {
+   "avg": 2802.15,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Knoxville, TN|United States": {
+   "avg": 3616.21,
+   "min": 1256.67,
+   "min_year": 2009,
+   "min_src": "Federal minimum wage (the state sets none higher)"
+  },
+  "Al Khobar|Saudi Arabia": {
+   "avg": 7123.74,
+   "min": 4000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (Saudi nationals only)"
+  },
+  "Exeter|United Kingdom": {
+   "avg": 2463.31,
+   "avg_from": "2023-mid",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Sheffield|United Kingdom": {
+   "avg": 2418.55,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Athens|Greece": {
+   "avg": 1145.36,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Tallinn|Estonia": {
+   "avg": 2014.77,
+   "min": 946,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Suzhou|China": {
+   "avg": 9441.97,
+   "min": 2660,
+   "min_year": 2026,
+   "min_src": "Jiangsu, first tier"
+  },
+  "Aachen|Germany": {
+   "avg": 3313.52,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Montevideo|Uruguay": {
+   "avg": 51840,
+   "min": 23604,
+   "min_year": 2025,
+   "min_src": "Executive decree (from 1 January 2025)"
+  },
+  "Portsmouth|United Kingdom": {
+   "avg": 2937.48,
+   "avg_from": "2023-mid",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Cardiff|United Kingdom": {
+   "avg": 2502.96,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Doha|Qatar": {
+   "avg": 12124.4,
+   "min": 1800,
+   "min_year": 2021,
+   "min_src": "Law 17 of 2020 (QAR 1,000 basic plus 800 for food and housing when not provided)"
+  },
+  "Coventry|United Kingdom": {
+   "avg": 2569.01,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Barcelona|Spain": {
+   "avg": 2036.25,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Birmingham|United Kingdom": {
+   "avg": 3455.11,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Aberdeen|United Kingdom": {
+   "avg": 2773.36,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Dresden|Germany": {
+   "avg": 2780.33,
+   "min": 2343,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Dundee|United Kingdom": {
+   "avg": 2486.9,
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Taipei|Taiwan (China)": {
+   "avg": 57452.6,
+   "min": 29500,
+   "min_year": 2026,
+   "min_src": "Ministry of Labor (from 1 January 2026)"
+  },
+  "Naples|Italy": {
+   "avg": 1688.41,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Preston|United Kingdom": {
+   "avg": null,
+   "avg_why": "Numbeo has no salary data for it",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Ramallah|Palestine": {
+   "avg": 1972.26,
+   "avg_from": "2023-mid",
+   "min": 1880,
+   "min_year": 2021,
+   "min_src": "Council of Ministers decision"
+  },
+  "Bilbao|Spain": {
+   "avg": 2171.77,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Leicester|United Kingdom": {
+   "avg": 2549.26,
+   "avg_from": "2023-mid",
+   "min": 2203.07,
+   "min_year": 2026,
+   "min_src": "National Living Wage (from 1 April 2026)"
+  },
+  "Shiraz|Iran": {
+   "avg": 418797000,
+   "avg_from": "2023",
+   "min": null,
+   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+  },
+  "Kingston|Jamaica": {
+   "avg": 120034,
+   "min": 69333.3,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage Order (from 1 June 2025)"
+  },
+  "New Taipei City|Taiwan (China)": {
+   "avg": 46037.4,
+   "min": 29500,
+   "min_year": 2026,
+   "min_src": "Ministry of Labor (from 1 January 2026)"
+  },
+  "Port of Spain|Trinidad And Tobago": {
+   "avg": 5293.57,
+   "min": 3550,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Palermo|Italy": {
+   "avg": 1529.15,
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Thessaloniki|Greece": {
+   "avg": 1074.41,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Abu Dhabi|United Arab Emirates": {
+   "avg": 10559.6,
+   "min": null,
+   "min_why": "the UAE has no general minimum wage"
+  },
+  "Nicosia|Cyprus": {
+   "avg": 1712.67,
+   "min": 1088,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Male|Maldives": {
+   "avg": 10741.3,
+   "avg_from": "2023-mid",
+   "min": 5700,
+   "min_year": 2022,
+   "min_src": "ILOSTAT"
+  },
+  "Prague|Czech Republic": {
+   "avg": 52693.1,
+   "min": 22400,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Riga|Latvia": {
+   "avg": 1364.73,
+   "min": 780,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Madrid|Spain": {
+   "avg": 2223.42,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Ljubljana|Slovenia": {
+   "avg": 1791.32,
+   "min": 1482,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Palma de Mallorca|Spain": {
+   "avg": 1843.79,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Heraklion|Greece": {
+   "avg": 1024.91,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Riyadh|Saudi Arabia": {
+   "avg": 7874.3,
+   "min": 4000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (Saudi nationals only)"
+  },
+  "Catania|Italy": {
+   "avg": 1689.33,
+   "avg_from": "2026-mid",
+   "min": null,
+   "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
+  },
+  "Zadar|Croatia": {
+   "avg": 1169.13,
+   "avg_from": "2023-mid",
+   "min": 1050,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Larissa|Greece": {
+   "avg": 1015.94,
+   "avg_from": "2023-mid",
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Tartu|Estonia": {
+   "avg": 1775.61,
+   "min": 946,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Jeddah (Jiddah)|Saudi Arabia": {
+   "avg": 6413.07,
+   "min": 4000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (Saudi nationals only)"
+  },
+  "Lisbon|Portugal": {
+   "avg": 1434.11,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Vilnius|Lithuania": {
+   "avg": 1776.29,
+   "min": 1153,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Dubrovnik|Croatia": {
+   "avg": 1402.16,
+   "avg_from": "2023-mid",
+   "min": 1050,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Valencia|Spain": {
+   "avg": 1693.35,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Pamplona|Spain": {
+   "avg": 2803.17,
+   "avg_from": "2023-mid",
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Zagreb|Croatia": {
+   "avg": 1798.18,
+   "min": 1050,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Bangkok|Thailand": {
+   "avg": 21161.3,
+   "min": 10400,
+   "min_year": 2025,
+   "min_src": "Bangkok"
+  },
+  "Manama|Bahrain": {
+   "avg": 895.715,
+   "min": null,
+   "min_why": "Bahrain has no minimum wage for the private sector"
+  },
+  "Oviedo|Spain": {
+   "avg": 1719.16,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Bratislava|Slovakia": {
+   "avg": 1538.41,
+   "min": 915,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "San Jose|Costa Rica": {
+   "avg": 476873,
+   "min": 358609,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Alicante|Spain": {
+   "avg": 1731.76,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Seville (Sevilla)|Spain": {
+   "avg": 1595.06,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Granada|Spain": {
+   "avg": 1679.6,
+   "avg_from": "2026-mid",
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Santo Domingo|Dominican Republic": {
+   "avg": 36802.1,
+   "min": 19450,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (average of the rates by firm size)"
+  },
+  "Paphos|Cyprus": {
+   "avg": 1688.52,
+   "min": 1088,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Malaga|Spain": {
+   "avg": 1693.11,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Vladivostok|Russia": {
+   "avg": 74510.4,
+   "avg_from": "2026",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Muscat|Oman": {
+   "avg": 661.673,
+   "min": 325,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (Omani nationals only)"
+  },
+  "Kaohsiung|Taiwan (China)": {
+   "avg": 47744.9,
+   "min": 29500,
+   "min_year": 2026,
+   "min_src": "Ministry of Labor (from 1 January 2026)"
+  },
+  "Panama City|Panama": {
+   "avg": 936.963,
+   "min": 482.18,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Brno|Czech Republic": {
+   "avg": 42103.8,
+   "min": 22400,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Kaunas|Lithuania": {
+   "avg": 1567.05,
+   "min": 1153,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Ad Dammam|Saudi Arabia": {
+   "avg": 5813.77,
+   "min": 4000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (Saudi nationals only)"
+  },
+  "Amman|Jordan": {
+   "avg": 566.476,
+   "min": 290,
+   "min_year": 2025,
+   "min_src": "Tripartite Labour Committee"
+  },
+  "Porto|Portugal": {
+   "avg": 1438.83,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Ostrava|Czech Republic": {
+   "avg": 38580.9,
+   "min": 22400,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Shanghai|China": {
+   "avg": 11688.8,
+   "min": 2740,
+   "min_year": 2025,
+   "min_src": "Shanghai"
+  },
+  "Olomouc|Czech Republic": {
+   "avg": 34108.5,
+   "min": 22400,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Plzen|Czech Republic": {
+   "avg": 42168,
+   "min": 22400,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Maribor|Slovenia": {
+   "avg": 1728.26,
+   "min": 1482,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Beijing|China": {
+   "avg": 11586.9,
+   "min": 2540,
+   "min_year": 2025,
+   "min_src": "Beijing"
+  },
+  "Santiago|Chile": {
+   "avg": 796606,
+   "min": 529000,
+   "min_year": 2025,
+   "min_src": "Law 21.751"
+  },
+  "Phnom Penh|Cambodia": {
+   "avg": 1350140,
+   "min": 844200,
+   "min_year": 2026,
+   "min_src": "Ministry of Labour (garment and footwear sector, the only one set)"
+  },
+  "Cascais|Portugal": {
+   "avg": 1527.22,
+   "avg_from": "2023-mid",
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Las Palmas de Gran Canaria|Spain": {
+   "avg": 1547.05,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Dakar|Senegal": {
+   "avg": 219127,
+   "avg_from": "2023-mid",
+   "min": 64175,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG)"
+  },
+  "Kuwait City|Kuwait": {
+   "avg": 650.913,
+   "min": 75,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (private sector)"
+  },
+  "Budapest|Hungary": {
+   "avg": 558510,
+   "min": 322800,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Georgetown|Guyana": {
+   "avg": 109153,
+   "min": 60147,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Moscow|Russia": {
+   "avg": 147209,
+   "min": 39730,
+   "min_year": 2026,
+   "min_src": "Moscow regional agreement"
+  },
+  "Santa Cruz de Tenerife|Spain": {
+   "avg": 1628.18,
+   "avg_from": "2026",
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Murcia|Spain": {
+   "avg": 1375.98,
+   "avg_from": "2023-mid",
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Kosice|Slovakia": {
+   "avg": 1355.28,
+   "min": 915,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Sharjah|United Arab Emirates": {
+   "avg": 8252.16,
+   "min": null,
+   "min_why": "the UAE has no general minimum wage"
+  },
+  "Rijeka|Croatia": {
+   "avg": 1374.59,
+   "min": 1050,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Sofia|Bulgaria": {
+   "avg": 3096.65,
+   "min": 1201.3,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Funchal|Portugal": {
+   "avg": 1294.19,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Makati|Philippines": {
+   "avg": 38650.1,
+   "min": 19630,
+   "min_year": 2026,
+   "min_src": "Metro Manila, Wage Order NCR-27 (from 25 July 2026)"
+  },
+  "Zaragoza (Saragossa)|Spain": {
+   "avg": 1714.58,
+   "avg_from": "2023-mid",
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Split|Croatia": {
+   "avg": 1468.37,
+   "min": 1050,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Klaipeda|Lithuania": {
+   "avg": 1415.19,
+   "min": 1153,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Saint Petersburg|Russia": {
+   "avg": 100137,
+   "min": 31250,
+   "min_year": 2026,
+   "min_src": "Saint Petersburg regional agreement"
+  },
+  "San Salvador|El Salvador": {
+   "avg": 387.139,
+   "min": 408.8,
+   "min_year": 2025,
+   "min_src": "Executive decree (commerce, services and industry)"
+  },
+  "Shenzhen|China": {
+   "avg": 11789.6,
+   "min": 2700,
+   "min_year": 2026,
+   "min_src": "Shenzhen (from 1 September 2026)"
+  },
+  "Vigo|Spain": {
+   "avg": 1740.55,
+   "min": 1425,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Warsaw|Poland": {
+   "avg": 8250.47,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Coimbra|Portugal": {
+   "avg": 1195.77,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Guatemala City|Guatemala": {
+   "avg": 5048.35,
+   "avg_from": "2025-mid",
+   "min": 3343.01,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Bucharest|Romania": {
+   "avg": 6509.07,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Phuket|Thailand": {
+   "avg": 16939.8,
+   "min": 10400,
+   "min_year": 2025,
+   "min_src": "Phuket"
+  },
+  "Abidjan|Ivory Coast": {
+   "avg": 129332,
+   "min": 75000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Aveiro|Portugal": {
+   "avg": 1338.84,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Addis Ababa|Ethiopia": {
+   "avg": 33613.4,
+   "min": null,
+   "min_why": "Ethiopia has no minimum wage for the private sector"
+  },
+  "Leiria|Portugal": {
+   "avg": 1515.58,
+   "avg_from": "2023-mid",
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Monterrey|Mexico": {
+   "avg": 21363.1,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Braga|Portugal": {
+   "avg": 1149.67,
+   "min": 1073,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (14 payments a year, spread over 12)"
+  },
+  "Belgrade|Serbia": {
+   "avg": 131965,
+   "min": 87207,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Yekaterinburg|Russia": {
+   "avg": 83971.9,
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Budva|Montenegro": {
+   "avg": 936.722,
+   "min": 670,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Yerevan|Armenia": {
+   "avg": 250548,
+   "min": 85000,
+   "min_year": 2025,
+   "min_src": "Law on Minimum Monthly Wage"
+  },
+  "Tijuana|Mexico": {
+   "avg": 17454,
+   "min": 13402.4,
+   "min_year": 2026,
+   "min_src": "CONASAMI, northern border zone"
+  },
+  "Tbilisi|Georgia": {
+   "avg": 1842.95,
+   "min": null,
+   "min_why": "Georgia's legal minimum is GEL 20 a month, a 1999 figure that no employer pays"
+  },
+  "Sao Paulo|Brazil": {
+   "avg": 4564.8,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Hangzhou|China": {
+   "avg": 10777.8,
+   "min": 2660,
+   "min_year": 2025,
+   "min_src": "Zhejiang, first tier"
+  },
+  "Novosibirsk|Russia": {
+   "avg": 75419.7,
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Osijek|Croatia": {
+   "avg": 1306.83,
+   "avg_from": "2024",
+   "min": 1050,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Mexico City|Mexico": {
+   "avg": 18451.9,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Cluj-Napoca|Romania": {
+   "avg": 6042.18,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Harare|Zimbabwe": {
+   "avg": 431.972,
+   "min": null,
+   "min_why": "Zimbabwe sets minimum wages by industry, in a currency that has changed twice since 2019"
+  },
+  "Krakow (Cracow)|Poland": {
+   "avg": 7544.67,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Wroclaw|Poland": {
+   "avg": 6977.55,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Ajman|United Arab Emirates": {
+   "avg": 8260.96,
+   "min": null,
+   "min_why": "the UAE has no general minimum wage"
+  },
+  "Constanta|Romania": {
+   "avg": 4624.54,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Quezon City|Philippines": {
+   "avg": 28126.4,
+   "min": 19630,
+   "min_year": 2026,
+   "min_src": "Metro Manila, Wage Order NCR-27 (from 25 July 2026)"
+  },
+  "Kazan|Russia": {
+   "avg": 75140.5,
+   "avg_from": "2026-mid",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Gdynia|Poland": {
+   "avg": 7776.26,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Szeged|Hungary": {
+   "avg": 422574,
+   "min": 322800,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Pattaya|Thailand": {
+   "avg": 15859.4,
+   "min": 10400,
+   "min_year": 2025,
+   "min_src": "Chonburi"
+  },
+  "Johannesburg|South Africa": {
+   "avg": 29526.2,
+   "min": 4990.27,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage (from 1 March 2025)"
+  },
+  "Cancun|Mexico": {
+   "avg": 15218.3,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Tirana|Albania": {
+   "avg": 73212.3,
+   "min": 50000,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Varna|Bulgaria": {
+   "avg": 2284.68,
+   "min": 1201.3,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Puebla|Mexico": {
+   "avg": 12618,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Kuching|Malaysia": {
+   "avg": 2264.67,
+   "min": 1700,
+   "min_year": 2025,
+   "min_src": "Minimum Wages Order 2024 (from 1 February 2025)"
+  },
+  "Krasnodar|Russia": {
+   "avg": 68814.9,
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Gdansk|Poland": {
+   "avg": 7782.35,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Katowice|Poland": {
+   "avg": 6891.55,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Merida|Mexico": {
+   "avg": 11029.7,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Kaliningrad|Russia": {
+   "avg": 69847.1,
+   "avg_from": "2026-mid",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Voronezh|Russia": {
+   "avg": 67787.3,
+   "avg_from": "2023",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Brasov|Romania": {
+   "avg": 5314.87,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Podgorica|Montenegro": {
+   "avg": 1069.61,
+   "min": 670,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Guangzhou|China": {
+   "avg": 8680.62,
+   "min": 2680,
+   "min_year": 2026,
+   "min_src": "Guangzhou (from 1 September 2026)"
+  },
+  "Sarajevo|Bosnia And Herzegovina": {
+   "avg": 1863.88,
+   "min": 1000,
+   "min_year": 2025,
+   "min_src": "Federation of BiH government decision (net)"
+  },
+  "Rio de Janeiro|Brazil": {
+   "avg": 3249.79,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Guayaquil|Ecuador": {
+   "avg": 636.24,
+   "min": 482,
+   "min_year": 2026,
+   "min_src": "Ministry of Labour (salario básico unificado)"
+  },
+  "Samara|Russia": {
+   "avg": 58829.5,
+   "avg_from": "2026",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Chiang Mai|Thailand": {
+   "avg": 20331,
+   "min": 9880,
+   "min_year": 2025,
+   "min_src": "Mueang Chiang Mai"
+  },
+  "Brasilia|Brazil": {
+   "avg": 4373.9,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Chengdu|China": {
+   "avg": 8634.43,
+   "min": 2330,
+   "min_year": 2025,
+   "min_src": "Sichuan, first tier"
+  },
+  "Bialystok|Poland": {
+   "avg": 5523.77,
+   "avg_from": "2023",
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Kuala Lumpur|Malaysia": {
+   "avg": 6300.33,
+   "min": 1700,
+   "min_year": 2025,
+   "min_src": "Minimum Wages Order 2024 (from 1 February 2025)"
+  },
+  "Nizhny Novgorod|Russia": {
+   "avg": 87349.1,
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Lagos|Nigeria": {
+   "avg": 158966,
+   "min": 70000,
+   "min_year": 2024,
+   "min_src": "National Minimum Wage (Amendment) Act 2024"
+  },
+  "Manila|Philippines": {
+   "avg": 30519.8,
+   "min": 19630,
+   "min_year": 2026,
+   "min_src": "Metro Manila, Wage Order NCR-27 (from 25 July 2026)"
+  },
+  "Plovdiv|Bulgaria": {
+   "avg": 2066.23,
+   "min": 1201.3,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Szczecin|Poland": {
+   "avg": 6401.01,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Queretaro (Santiago de Querétaro)|Mexico": {
+   "avg": 17290.8,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Guadalajara|Mexico": {
+   "avg": 14185.7,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Cuenca|Ecuador": {
+   "avg": 567.755,
+   "min": 482,
+   "min_year": 2026,
+   "min_src": "Ministry of Labour (salario básico unificado)"
+  },
+  "Perm|Russia": {
+   "avg": 75543.3,
+   "avg_from": "2026-mid",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Poznan|Poland": {
+   "avg": 6856.15,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Gaborone|Botswana": {
+   "avg": 6463.9,
+   "min": 1883.03,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (sectoral)"
+  },
+  "Pretoria|South Africa": {
+   "avg": 23894.1,
+   "min": 4990.27,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage (from 1 March 2025)"
+  },
+  "Puerto Vallarta|Mexico": {
+   "avg": 17280.2,
+   "min": 9577.22,
+   "min_year": 2026,
+   "min_src": "CONASAMI, general zone"
+  },
+  "Novi Sad|Serbia": {
+   "avg": 134436,
+   "min": 87207,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Ufa|Russia": {
+   "avg": 65658.1,
+   "avg_from": "2026",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Burgas|Bulgaria": {
+   "avg": 1792.22,
+   "min": 1201.3,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Oradea|Romania": {
+   "avg": 4440.35,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Ho Chi Minh City|Vietnam": {
+   "avg": 13111400,
+   "min": 5310000,
+   "min_year": 2026,
+   "min_src": "Region I, Decree 293/2025"
+  },
+  "Skopje|North Macedonia": {
+   "avg": 49340.1,
+   "min": 38507,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Minsk|Belarus": {
+   "avg": 2926.36,
+   "min": 726,
+   "min_year": 2025,
+   "min_src": "Ministry of Labour"
+  },
+  "Rostov-na-donu|Russia": {
+   "avg": 72544.7,
+   "avg_from": "2026-mid",
+   "min": 27093,
+   "min_year": 2026,
+   "min_src": "Federal law 429-FZ (federal MROT)"
+  },
+  "Cape Town|South Africa": {
+   "avg": 27235.7,
+   "min": 4990.27,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage (from 1 March 2025)"
+  },
+  "Cebu|Philippines": {
+   "avg": 21991.1,
+   "min": 14040,
+   "min_year": 2025,
+   "min_src": "Central Visayas, Wage Order ROVII-26"
+  },
+  "Lodz|Poland": {
+   "avg": 6501.31,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Timisoara|Romania": {
+   "avg": 5677.75,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Campinas|Brazil": {
+   "avg": 2949.86,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Florianopolis|Brazil": {
+   "avg": 5177,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Durban|South Africa": {
+   "avg": 21526.4,
+   "min": 4990.27,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage (from 1 March 2025)"
+  },
+  "Iasi|Romania": {
+   "avg": 5507.36,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Penang|Malaysia": {
+   "avg": 3915.62,
+   "min": 1700,
+   "min_year": 2025,
+   "min_src": "Minimum Wages Order 2024 (from 1 February 2025)"
+  },
+  "Yangon|Myanmar": {
+   "avg": 972565,
+   "avg_from": "2023",
+   "min": 124800,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Debrecen|Hungary": {
+   "avg": 413532,
+   "min": 322800,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Banja Luka|Bosnia And Herzegovina": {
+   "avg": 1598.44,
+   "min": 900,
+   "min_year": 2025,
+   "min_src": "Republika Srpska (net)"
+  },
+  "Nanjing|China": {
+   "avg": 9867.66,
+   "min": 2660,
+   "min_year": 2026,
+   "min_src": "Jiangsu, first tier"
+  },
+  "Porto Alegre|Brazil": {
+   "avg": 2834.39,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Lima|Peru": {
+   "avg": 2293.22,
+   "min": 1130,
+   "min_year": 2025,
+   "min_src": "Supreme decree (remuneración mínima vital)"
+  },
+  "Hanoi|Vietnam": {
+   "avg": 13803100,
+   "min": 5310000,
+   "min_year": 2026,
+   "min_src": "Region I, Decree 293/2025"
+  },
+  "Suva|Fiji": {
+   "avg": 2443.9,
+   "avg_from": "2023-mid",
+   "min": 935.28,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Bursa|Turkey": {
+   "avg": 53044.3,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Quito|Ecuador": {
+   "avg": 622.833,
+   "min": 482,
+   "min_year": 2026,
+   "min_src": "Ministry of Labour (salario básico unificado)"
+  },
+  "Petaling Jaya|Malaysia": {
+   "avg": 5561.15,
+   "avg_from": "2023-mid",
+   "min": 1700,
+   "min_year": 2025,
+   "min_src": "Minimum Wages Order 2024 (from 1 February 2025)"
+  },
+  "Istanbul|Turkey": {
+   "avg": 60220.3,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Tuzla|Bosnia And Herzegovina": {
+   "avg": 1678.5,
+   "min": 1000,
+   "min_year": 2025,
+   "min_src": "Federation of BiH government decision (net)"
+  },
+  "Craiova|Romania": {
+   "avg": 4523.73,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Lublin|Poland": {
+   "avg": 5970.14,
+   "min": 4806,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Sao Jose dos Campos|Brazil": {
+   "avg": 4204.68,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Belo Horizonte|Brazil": {
+   "avg": 3223.77,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Jakarta|Indonesia": {
+   "avg": 8263540,
+   "min": 5729880,
+   "min_year": 2026,
+   "min_src": "DKI Jakarta UMP"
+  },
+  "Batumi|Georgia": {
+   "avg": 1554.17,
+   "min": null,
+   "min_why": "Georgia's legal minimum is GEL 20 a month, a 1999 figure that no employer pays"
+  },
+  "Erbil (Irbil)|Iraq": {
+   "avg": 805524,
+   "min": 350000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Curitiba|Brazil": {
+   "avg": 3594.21,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Sibiu|Romania": {
+   "avg": 5471.46,
+   "min": 4325,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Nairobi|Kenya": {
+   "avg": 63738.8,
+   "min": 16033.1,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (general labourer, cities)"
+  },
+  "Recife|Brazil": {
+   "avg": 2218.11,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "La Paz|Bolivia": {
+   "avg": 3071.16,
+   "min": 2500,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Windhoek|Namibia": {
+   "avg": 17035.5,
+   "min": 3120,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage Order (from 1 January 2025)"
+  },
+  "Marrakech|Morocco": {
+   "avg": 4981.46,
+   "min": 3120,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG)"
+  },
+  "Chisinau|Moldova": {
+   "avg": 15876.2,
+   "min": 6300,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Nis|Serbia": {
+   "avg": 97889.3,
+   "min": 87207,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Casablanca|Morocco": {
+   "avg": 6782.8,
+   "min": 3120,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG)"
+  },
+  "Santa Cruz|Bolivia": {
+   "avg": 3381.25,
+   "min": 2500,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Kampala|Uganda": {
+   "avg": 713116,
+   "min": null,
+   "min_why": "Uganda's legal minimum is a 1984 figure that no employer pays"
+  },
+  "Qingdao|China": {
+   "avg": 8441.18,
+   "min": 2400,
+   "min_year": 2026,
+   "min_src": "Shandong, first tier"
+  },
+  "Tehran|Iran": {
+   "avg": 369713000,
+   "min": null,
+   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+  },
+  "Rabat|Morocco": {
+   "avg": 7163.95,
+   "min": 3120,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG)"
+  },
+  "Fortaleza|Brazil": {
+   "avg": 2520.63,
+   "min": 1621,
+   "min_year": 2026,
+   "min_src": "Decree, national minimum wage (five states set higher floors for some trades)"
+  },
+  "Baghdad|Iraq": {
+   "avg": 784451,
+   "min": 350000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Ulaanbaatar|Mongolia": {
+   "avg": 2163630,
+   "min": 792000,
+   "min_year": 2025,
+   "min_src": "National Tripartite Committee"
+  },
+  "Isfahan (Esfahan)|Iran": {
+   "avg": 369468000,
+   "avg_from": "2024",
+   "min": null,
+   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+  },
+  "Buenos Aires|Argentina": {
+   "avg": 1458650,
+   "min": 391200,
+   "min_year": 2026,
+   "min_src": "Resolution 4/2026 (SMVM, October 2026)"
+  },
+  "Algiers|Algeria": {
+   "avg": 45843.3,
+   "min": 24000,
+   "min_year": 2025,
+   "min_src": "Presidential decree (SNMG)"
+  },
+  "Bandung|Indonesia": {
+   "avg": 5245130,
+   "min": 4737680,
+   "min_year": 2026,
+   "min_src": "Kota Bandung UMK"
+  },
+  "Almaty|Kazakhstan": {
+   "avg": 396318,
+   "min": 85000,
+   "min_year": 2025,
+   "min_src": "Republican budget law"
+  },
+  "Kiev (Kyiv)|Ukraine": {
+   "avg": 37922.9,
+   "min": 8647,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Baku|Azerbaijan": {
+   "avg": 959.482,
+   "min": 400,
+   "min_year": 2025,
+   "min_src": "Presidential decree"
+  },
+  "Kigali|Rwanda": {
+   "avg": 416376,
+   "min": null,
+   "min_why": "Rwanda's legal minimum is a 1974 figure of RWF 100 a day that no employer pays"
+  },
+  "Dar es Salaam|Tanzania": {
+   "avg": 755749,
+   "min": 150000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (manufacturing)"
+  },
+  "Kayseri|Turkey": {
+   "avg": 45179.9,
+   "avg_from": "2023-mid",
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Tunis|Tunisia": {
+   "avg": 1115.84,
+   "min": 491.504,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG, 48-hour week)"
+  },
+  "Dhaka|Bangladesh": {
+   "avg": 31663.2,
+   "min": null,
+   "min_why": "Bangladesh sets minimum wages only by industry, with no national figure"
+  },
+  "Surabaya|Indonesia": {
+   "avg": 5766040,
+   "avg_from": "2026",
+   "min": 5288800,
+   "min_year": 2026,
+   "min_src": "Kota Surabaya UMK"
+  },
+  "Pristina|Kosovo (Disputed Territory)": {
+   "avg": 635.914,
+   "min": 350,
+   "min_year": 2023,
+   "min_src": "Government decision"
+  },
+  "Asuncion|Paraguay": {
+   "avg": 4369030,
+   "min": 2899050,
+   "min_year": 2025,
+   "min_src": "Executive decree (from 1 July 2025)"
+  },
+  "Izmir|Turkey": {
+   "avg": 58724.5,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Damascus|Syria": {
+   "avg": 9353.95,
+   "min": null,
+   "min_why": "Syria's minimum wage has been reset several times since 2024 and its current figure could not be confirmed"
+  },
+  "Agadir|Morocco": {
+   "avg": 5320.14,
+   "avg_from": "2026-mid",
+   "min": 3120,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG)"
+  },
+  "Astana (Nur-Sultan)|Kazakhstan": {
+   "avg": 416360,
+   "min": 85000,
+   "min_year": 2025,
+   "min_src": "Republican budget law"
+  },
+  "Antalya|Turkey": {
+   "avg": 48677.1,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Tangier|Morocco": {
+   "avg": 4998.88,
+   "min": 3120,
+   "min_year": 2024,
+   "min_src": "ILOSTAT (SMIG)"
+  },
+  "Ankara|Turkey": {
+   "avg": 54968.2,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Tashkent|Uzbekistan": {
+   "avg": 8663980,
+   "min": 1271000,
+   "min_year": 2025,
+   "min_src": "Presidential decree (from 1 February 2025)"
+  },
+  "Accra|Ghana": {
+   "avg": 2109.52,
+   "min": 519.22,
+   "min_year": 2025,
+   "min_src": "National Tripartite Committee"
+  },
+  "Mersin|Turkey": {
+   "avg": 42064.5,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Colombo|Sri Lanka": {
+   "avg": 86479.5,
+   "min": 27000,
+   "min_year": 2025,
+   "min_src": "National Minimum Wage of Workers (Amendment) Act"
+  },
+  "Mashhad|Iran": {
+   "avg": 422984000,
+   "avg_from": "2023-mid",
+   "min": null,
+   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+  },
+  "Eskisehir|Turkey": {
+   "avg": 53930.8,
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Oran|Algeria": {
+   "avg": null,
+   "avg_why": "Numbeo has no salary data for it",
+   "min": 24000,
+   "min_year": 2025,
+   "min_src": "Presidential decree (SNMG)"
+  },
+  "Gurgaon|India": {
+   "avg": 78452.1,
+   "min": 15220,
+   "min_year": 2026,
+   "min_src": "Haryana, unskilled"
+  },
+  "Kathmandu|Nepal": {
+   "avg": 41958.4,
+   "min": 19550,
+   "min_year": 2025,
+   "min_src": "Minimum Wage Fixation Committee"
+  },
+  "Dnipro|Ukraine": {
+   "avg": 24239.1,
+   "min": 8647,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Kocaeli|Turkey": {
+   "avg": 52383,
+   "avg_from": "2023-mid",
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Tripoli|Libya": {
+   "avg": 2020.52,
+   "avg_from": "2025-mid",
+   "min": 1000,
+   "min_year": 2024,
+   "min_src": "ILOSTAT"
+  },
+  "Odessa (Odesa)|Ukraine": {
+   "avg": 22529,
+   "min": 8647,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Bishkek|Kyrgyzstan": {
+   "avg": 45484.1,
+   "min": null,
+   "min_why": "Kyrgyzstan's legal minimum, KGS 2,534 a month, is far below its subsistence minimum and is used to index benefits, not as a pay floor"
+  },
+  "Noida|India": {
+   "avg": 91236.2,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Chittagong|Bangladesh": {
+   "avg": 31395.9,
+   "avg_from": "2026-mid",
+   "min": null,
+   "min_why": "Bangladesh sets minimum wages only by industry, with no national figure"
+  },
+  "Lviv|Ukraine": {
+   "avg": 30401.8,
+   "min": 8647,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Mumbai|India": {
+   "avg": 73942.7,
+   "min": 14956,
+   "min_year": 2025,
+   "min_src": "Maharashtra zone I, unskilled"
+  },
+  "Bangalore|India": {
+   "avg": 89534.3,
+   "min": 15701,
+   "min_year": 2026,
+   "min_src": "Karnataka zone I, unskilled"
+  },
+  "Hyderabad|India": {
+   "avg": 120529,
+   "min": 15000,
+   "min_year": 2025,
+   "min_src": "Telangana zone I, unskilled"
+  },
+  "Delhi|India": {
+   "avg": 59126.6,
+   "min": 18456,
+   "min_year": 2025,
+   "min_src": "Delhi, unskilled"
+  },
+  "Navi Mumbai|India": {
+   "avg": 69323.9,
+   "min": 14956,
+   "min_year": 2025,
+   "min_src": "Maharashtra zone I, unskilled"
+  },
+  "Medellin|Colombia": {
+   "avg": 2138270,
+   "min": 1750910,
+   "min_year": 2026,
+   "min_src": "Decree, salario mínimo 2026"
+  },
+  "Kharkiv|Ukraine": {
+   "avg": 24854.3,
+   "min": 8647,
+   "min_year": 2026,
+   "min_src": "ILOSTAT"
+  },
+  "Adana|Turkey": {
+   "avg": 42082.9,
+   "avg_from": "2026-mid",
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Cartagena|Colombia": {
+   "avg": 2172540,
+   "avg_from": "2023-mid",
+   "min": 1750910,
+   "min_year": 2026,
+   "min_src": "Decree, salario mínimo 2026"
+  },
+  "Bogota|Colombia": {
+   "avg": 2643470,
+   "min": 1750910,
+   "min_year": 2026,
+   "min_src": "Decree, salario mínimo 2026"
+  },
+  "Konya|Turkey": {
+   "avg": 39875.4,
+   "avg_from": "2023-mid",
+   "min": 33030,
+   "min_year": 2026,
+   "min_src": "ILOSTAT (gross)"
+  },
+  "Pune|India": {
+   "avg": 116726,
+   "min": 14956,
+   "min_year": 2025,
+   "min_src": "Maharashtra zone I, unskilled"
+  },
+  "Ahmedabad|India": {
+   "avg": 52533.6,
+   "min": 13013,
+   "min_year": 2025,
+   "min_src": "Gujarat zone I, unskilled"
+  },
+  "Guwahati|India": {
+   "avg": 33167.6,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Chandigarh|India": {
+   "avg": 42891.1,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Cali|Colombia": {
+   "avg": 2056770,
+   "avg_from": "2026-mid",
+   "min": 1750910,
+   "min_year": 2026,
+   "min_src": "Decree, salario mínimo 2026"
+  },
+  "Patna|India": {
+   "avg": 34740.9,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Barranquilla|Colombia": {
+   "avg": 2032540,
+   "avg_from": "2026-mid",
+   "min": 1750910,
+   "min_year": 2026,
+   "min_src": "Decree, salario mínimo 2026"
+  },
+  "Chennai|India": {
+   "avg": 65545.5,
+   "min": 13823,
+   "min_year": 2026,
+   "min_src": "Tamil Nadu zone I, unskilled"
+  },
+  "Jaipur|India": {
+   "avg": 38290.5,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Lucknow (Lakhnau)|India": {
+   "avg": 33076.5,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Bhubaneswar|India": {
+   "avg": 35866.2,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Vadodara|India": {
+   "avg": 51072.6,
+   "min": 13013,
+   "min_year": 2025,
+   "min_src": "Gujarat zone I, unskilled"
+  },
+  "Kolkata|India": {
+   "avg": 38381.2,
+   "min": null,
+   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+  },
+  "Cairo|Egypt": {
+   "avg": 10730.9,
+   "min": 7000,
+   "min_year": 2025,
+   "min_src": "National Wages Council (private sector)"
+  },
+  "Indore|India": {
+   "avg": 34463.5,
+   "min": 12425,
+   "min_year": 2026,
+   "min_src": "Madhya Pradesh, unskilled"
+  },
+  "Kochi|India": {
+   "avg": 41398.7,
+   "min": 13500,
+   "min_year": 2026,
+   "min_src": "Kerala, unskilled"
+  },
+  "Coimbatore|India": {
+   "avg": 39647.2,
+   "min": 13823,
+   "min_year": 2026,
+   "min_src": "Tamil Nadu zone I, unskilled"
+  },
+  "Thiruvananthapuram|India": {
+   "avg": 23958.4,
+   "min": 13500,
+   "min_year": 2026,
+   "min_src": "Kerala, unskilled"
+  },
+  "Bhopal|India": {
+   "avg": 32147,
+   "min": 12425,
+   "min_year": 2026,
+   "min_src": "Madhya Pradesh, unskilled"
+  },
+  "Lahore|Pakistan": {
+   "avg": 56959,
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  },
+  "Karachi|Pakistan": {
+   "avg": 52490.7,
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  },
+  "Islamabad|Pakistan": {
+   "avg": 109010,
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  },
+  "Bucaramanga|Colombia": {
+   "avg": 1535810,
+   "avg_from": "2023-mid",
+   "min": 1750910,
+   "min_year": 2026,
+   "min_src": "Decree, salario mínimo 2026"
+  },
+  "Alexandria|Egypt": {
+   "avg": 7697.43,
+   "min": 7000,
+   "min_year": 2025,
+   "min_src": "National Wages Council (private sector)"
+  },
+  "Giza|Egypt": {
+   "avg": 7967.32,
+   "min": 7000,
+   "min_year": 2025,
+   "min_src": "National Wages Council (private sector)"
+  },
+  "Rawalpindi|Pakistan": {
+   "avg": 49894.8,
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  },
+  "Faisalabad|Pakistan": {
+   "avg": 65295.7,
+   "avg_from": "2023",
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  },
+  "Multan|Pakistan": {
+   "avg": 42184.8,
+   "avg_from": "2023",
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  },
+  "Peshawar|Pakistan": {
+   "avg": 49162.8,
+   "avg_from": "2023",
+   "min": 40000,
+   "min_year": 2025,
+   "min_src": "Provincial and federal budgets 2025-26 (the same in every province)"
+  }
+ }
+}

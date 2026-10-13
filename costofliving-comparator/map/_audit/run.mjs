@@ -31,6 +31,9 @@
 //       another (Xinjiang, the West Bank) or filed under a neighbour
 //       (northern Vietnam under Asia/Bangkok); a disputed overlap keeps both
 //       claim lines
+//   M13 Scaled salary: every city's salary, savings, ratio and colour is
+//       replayed from wages.json for each yardstick; a city or home city
+//       with no yardstick says why; the mode keeps its yardstick on a reload
 //   M12 full screen: ⤢ fills the window with the map card, keeping its title,
 //       View selector and legend above the map; a plain wheel zooms there;
 //       Esc closes a pinned card first, then puts the map back in the page;
@@ -390,6 +393,98 @@ for(const plan of PLANS){
   await seg(page, 'modeGroup', 'required'); await seg(page, 'viewGroup', 'ratio');
   const note = await page.evaluate(() => !document.getElementById('mapNote').hidden && document.getElementById('mapNote').textContent);
   check('M6 a view that is the target itself says so', !!note && /target/.test(note), note || 'no note');
+}
+
+// ── M13 Scaled salary mode ───────────────────────────────────────────────
+// Replayed from wages.json and the cost of living files alone: your salary is
+// a multiple of your city's yardstick, every city pays that multiple of its
+// own, and the colour is the share of pay the lifestyle takes there over the
+// share it takes at home.
+{
+  const WAGES = JSON.parse(readFileSync(join(HERE, '..', 'wages.json'), 'utf8'));
+  const yard = (key, scale) => {
+    const w = WAGES.cities[key], k = WAGES.countries[CITY[key].country];
+    if(!w) return null;
+    if(scale === 'min') return w.min > 0 ? w.min : null;
+    if(!(w.avg > 0)) return null;
+    return scale === 'avg' ? w.avg : k.ratio > 0 ? w.avg * k.ratio : null;
+  };
+  check('M13 every dataset city has a pay entry, and nothing else does', COL.every(c => WAGES.cities[c.city + '|' + c.country]) && Object.keys(WAGES.cities).length === COL.length,
+    Object.keys(WAGES.cities).length + ' entries');
+  const ny = yard('New York, NY|United States', 'avg'), hou = yard('Houston, TX|United States', 'avg');
+  check('M13 average salaries are the city\'s own, not its country\'s', ny / hou > 1.1, 'New York ' + Math.round(ny) + ', Houston ' + Math.round(hou) + ' USD');
+  const SPLANS = [
+    { name: 'Perth, Simple, average salary', from: 'Perth|Australia', detail: 'simple', expense: 4550, housing: 'include', salary: 6500, mode: 'scaled', scale: 'avg' },
+    { name: 'New York, Simple without housing, minimum wage', from: 'New York, NY|United States', detail: 'simple', expense: 5000, housing: 'exclude', salary: 7000, mode: 'scaled', scale: 'min' },
+    { name: 'Jakarta Quick Start, Detailed, median salary', preset: 'jkt', from: 'Jakarta|Indonesia', detail: 'detailed', salary: 25000000,
+      rows: [['rent', 7000000], ['groceries', 3000000], ['eating_out', 2500000], ['utilities', 1200000], ['fuel', 800000], ['other', 3000000]], mode: 'scaled', scale: 'median' },
+    { name: 'Spending more than earning, average salary', from: 'Houston, TX|United States', detail: 'simple', expense: 5200, housing: 'include', salary: 4500, mode: 'scaled', scale: 'avg' },
+  ];
+  for(const plan of SPLANS){
+    await applyPlan(page, plan);
+    await seg(page, 'scaleGroup', plan.scale);
+    const got = Object.fromEntries((await rowsOf(page)).map(r => [r.key, r]));
+    const base = replay({ ...plan, mode: 'global' });
+    const fe = plan.detail === 'detailed' ? plan.rows.reduce((s, r) => s + r[1], 0) : plan.expense;
+    const wh = yard(plan.from, plan.scale), mult = plan.salary / wh;
+    const bad = [];
+    let n = 0, neg = 0;
+    for(const [key, b] of Object.entries(base)){
+      const W = yard(key, plan.scale), home = key === plan.from;
+      const sal = b.E == null || !(b.fx > 0) ? null : home ? plan.salary : W > 0 ? mult * W : null;
+      const sav = sal == null ? null : sal - b.E;
+      const cq = sal > 0 && b.q != null ? (b.E / sal) / (fe / plan.salary) : null;
+      const g = got[key];
+      const ok = close(g.sal, sal) && close(g.sav, sav) && close(g.cq, cq, 1e-7) && close(g.W, W) &&
+        g.neg === (sav != null && sav < -1e-9 * Math.max(1, Math.abs(sal))) &&
+        (g.arm === 'neg') === g.neg && (g.neg || cq == null || (g.arm === 'cheap') === (cq < 1 - 5e-4));
+      if(!ok) bad.push(key + ' ' + JSON.stringify({ got: [g.sal, g.cq, g.W, g.arm], want: [sal, cq, W] }));
+      if(sal != null) n++;
+      if(g.neg) neg++;
+    }
+    check('M13 ' + plan.name + ': every city replays', !bad.length, bad.length ? bad.slice(0, 2).join('; ') : n + ' cities, ' + neg + ' short');
+  }
+  // A city with no yardstick says why, and so does a home city with none.
+  await applyPlan(page, { name: '', from: 'Perth|Australia', detail: 'simple', expense: 4550, housing: 'include', salary: 6500, mode: 'scaled' });
+  await seg(page, 'scaleGroup', 'min');
+  const zur = await page.evaluate(() => window.__colmap.wage('Zurich|Switzerland', 'min'));
+  check('M13 a canton without a minimum wage has no estimate, and says why', zur.v == null && /canton/.test(zur.why), zur.why);
+  await pickFrom(page, 'Copenhagen|Denmark');
+  const vt = await page.textContent('#verdict');
+  check('M13 a home city with no minimum wage says so instead of scaling', /no minimum wage for Copenhagen/i.test(vt), vt.slice(0, 90));
+  await seg(page, 'scaleGroup', 'median');
+  const tk = await page.evaluate(() => window.__colmap.wage('Tokyo|Japan', 'median'));
+  check('M13 a country with no published median has no median estimate', tk.v == null && /Japan/.test(tk.why), tk.why);
+  // Views, rows and the reload.
+  await seg(page, 'scaleGroup', 'avg');
+  const st = await page.evaluate(() => ({ views: [...document.querySelectorAll('#viewGroup .seg-btn')].map(b => b.dataset.val), on: window.__colmap.view(),
+    scale: !document.getElementById('scaleRow').hidden, target: !document.getElementById('targetRow').hidden, title: document.getElementById('mapTitle').textContent }));
+  check('M13 Scaled salary opens on the scaled salary, shows Scale by and hides Target', st.on === 'salary' && st.views.join() === 'salary,living,savings,ratio' && st.scale && !st.target, JSON.stringify(st));
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForFunction(() => window.__colmap && window.__colmap.mapReady(), null, { timeout: 15000 });
+  await settle(page);
+  const back = await page.evaluate(() => ({ s: window.__colmap.state(), x: window.__colmap.scaled() }));
+  check('M13 a reload comes back in Scaled salary mode on the same yardstick', back.s.mode === 'scaled' && back.s.scale === 'avg' && back.x.mult > 0, back.s.mode + ' / ' + back.s.scale + ' / ' + (back.x.mult || 0).toFixed(3) + '×');
+  // State saved before the mode existed has neither key and still opens.
+  // The mini cache is rewritten as an older page saved it, then reloaded.
+  await page.evaluate(() => {
+    for(let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i), v = JSON.parse(localStorage.getItem(k) || 'null');
+      if(!v || !v.__extra || !v.__extra.fromKey) continue;
+      delete v.__extra.scale; delete v.__extra.views.scaled; v.__extra.mode = 'global';
+      localStorage.setItem(k, JSON.stringify(v));
+    }
+  });
+  // A second tab reads it, since this one saves its own plan on unload.
+  const p2 = await mctx.newPage();
+  await p2.route('**/*', route => route.request().url().startsWith(BASE) ? route.continue() : route.abort());
+  await p2.goto(MAP, { waitUntil: 'load' });
+  await p2.waitForFunction(() => window.__colmap && window.__colmap.mapReady(), null, { timeout: 15000 });
+  const old = await p2.evaluate(() => window.__colmap.state());
+  await p2.close();
+  check('M13 a plan saved before Scaled salary existed opens as it was, with the new mode at its defaults',
+    old.mode === 'global' && old.scale === 'avg' && old.views.scaled === 'salary', old.mode + ' / ' + old.scale + ' / ' + old.views.scaled);
+  await applyPlan(page, { from: 'Perth|Australia', detail: 'simple', expense: 4550, housing: 'include', salary: 6500, mode: 'required', target: 'ratio' });
 }
 
 // ── Q  Quick Start is the page's reset ───────────────────────────────────
