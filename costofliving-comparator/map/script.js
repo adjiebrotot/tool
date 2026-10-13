@@ -86,8 +86,15 @@ async function loadData(){
     CITY_MAP[c.city + '|' + c.country] = c;
     const co = COORDS[c.city + '|' + c.country];
     c.lat = co ? co[0] : null; c.lon = co ? co[1] : null; c.pop = co ? co[2] : 0;
+    c.capital = !!(co && co[3]);
     c.wage = WAGES && WAGES.cities[c.city + '|' + c.country] || null;
   });
+  // Major cities, the ones the map keeps when Major cities only is on: every
+  // national capital, the largest city of each country in the dataset, and
+  // any city of a million people or more.
+  const largest = {};
+  CITIES.forEach(c => { if(c.lat != null && (!largest[c.country] || c.pop > largest[c.country].pop)) largest[c.country] = c; });
+  CITIES.forEach(c => { c.major = c.capital || largest[c.country] === c || c.pop >= MAJOR_POP; });
   rateJson.data.forEach(r => { RATES[r.currency] = r.usd_rate; });
 
   const saved = readLiveCache();
@@ -295,6 +302,8 @@ const SCALES = {
   avg:    { label: 'Average salary', word: 'average net salary' },
   median: { label: 'Median salary',  word: 'median net salary' },
 };
+// A city this populous counts as major whether or not it is a capital.
+const MAJOR_POP = 1e6;
 const S = {
   fromKey: '', salary: 0,
   detail: 'simple', expense: 0, housing: 'include',
@@ -302,6 +311,7 @@ const S = {
   mode: 'required', target: 'ratio',
   scale: 'avg',                   // Scaled salary mode's yardstick
   views: clone(VIEW_DEFAULT),     // the view each mode was last left on
+  majorOnly: false,               // the map shows major cities only (state saved before it existed shows all)
 };
 const S_DEFAULTS = clone(S);
 let persist = null;
@@ -323,6 +333,7 @@ function normalise(){
   MODES.forEach(m => {
     if(!VIEWS[m].some(v => v[0] === S.views[m])) S.views[m] = VIEW_DEFAULT[m];
   });
+  S.majorOnly = S.majorOnly === true;
 }
 // The views a mode offers right now. In Required salary mode the target is
 // matched in every city, so its own view would read the same everywhere and
@@ -722,6 +733,7 @@ function syncInputs(){
   $('scaleRow').hidden = S.mode !== 'scaled';
   renderRows();
   renderViewSeg();
+  syncMajorBtn();
 }
 function renderRows(){
   const box = $('rows'), cur = (getCity(S.fromKey) || {}).currency || '¤';
@@ -811,8 +823,10 @@ const QUICK_START = {
 function applyQuickStart(id){
   const q = QUICK_START[id];
   if(!q || !CITIES.length) return;
+  const majorOnly = S.majorOnly;   // how the map is filtered is the reader's, not the preset's
   Object.keys(S).forEach(k => { delete S[k]; });
   Object.assign(S, clone(S_DEFAULTS));
+  S.majorOnly = majorOnly;
   const c = CITIES.find(x => x.city === q.from[0] && x.country === q.from[1]);
   S.fromKey = c ? cityKey(c) : '';
   S.salary = q.salary;
@@ -1491,6 +1505,8 @@ function drawCities(){
   const shown = [];
   for(const o of R.rows){
     if(o.c.lat == null) continue;
+    // Major cities only keeps your city and the one whose card is open.
+    if(S.majorOnly && !o.c.major && !o.home && o.key !== cardKey) continue;
     const bx = projX(o.c.lon), sy = T.y + projY(o.c.lat) * T.k;
     if(sy < -20 || sy > vh + 20) continue;
     for(const c of cs){
@@ -1794,6 +1810,18 @@ function setMapFull(on){
   if(!on) $('mapCard').scrollIntoView({block: 'nearest'});
 }
 $('mapFull').addEventListener('click', () => setMapFull(!mapFull));
+function syncMajorBtn(){
+  const b = $('majorOnly'), label = S.majorOnly ? 'Show all cities' : 'Show major cities only';
+  b.setAttribute('aria-pressed', String(S.majorOnly));
+  b.title = label; b.setAttribute('aria-label', label);
+}
+$('majorOnly').addEventListener('click', () => {
+  S.majorOnly = !S.majorOnly;
+  syncMajorBtn();
+  if(mapReady) hint(S.majorOnly ? 'Major cities only' : 'All cities');
+  if(persist) persist.schedule();
+  draw();
+});
 document.addEventListener('keydown', e => {
   if(e.key !== 'Escape' || !mapFull || e.defaultPrevented) return;
   if(cardPinned){ hoverKey = null; hideCard(); return; }
@@ -1873,6 +1901,7 @@ function init(){
     flyTo: (key, dur) => { const c = getCity(key); return c ? flyTo(cityTransform(c), dur || 0) : Promise.resolve(); },
     card: () => (cardKey && !$('placeCard').hidden ? $('placeCard').innerText : null),
     full: () => mapFull,
+    shownKeys: () => [...new Set(dotsOnScreen.map(d => d.key))],
   };
 }
 

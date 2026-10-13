@@ -125,6 +125,8 @@ body.light{
 .map-zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3;}
 .map-zbtn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:1.1rem;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);font-family:inherit;line-height:1;padding:0;}
 .map-zbtn:hover{border-color:var(--accent);color:var(--accent-strong);}
+.map-zbtn-major[aria-pressed="true"]{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--text-inv);}
+.map-zbtn-major[aria-pressed="true"]:hover{background:var(--accent);border-color:var(--accent);color:var(--text-inv);}
 /* ⤢ leads the stack in the accent fill, set apart from the zoom buttons by
    a wider gap, so it is the first thing the eye finds on the map. */
 .map-zbtn-full{margin-bottom:6px;background:var(--accent-strong);border-color:var(--accent-strong);color:var(--text-inv);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 28%,transparent),var(--shadow-sm);}
