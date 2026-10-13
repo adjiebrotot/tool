@@ -2380,4 +2380,17 @@ document.querySelectorAll('.quick-start-btn').forEach(btn => {
       }
     });
   }
+
+  /* A link from the samples page, ?qs=<sample file name>, opens on that
+     worked example. It is taken off the address once loaded, so a reload
+     restores the reader's edits rather than the sample again. */
+  var want = null;
+  try { want = new URLSearchParams(location.search).get('qs'); } catch (e) {}
+  if (want && /^sample-\d{2}-[a-z0-9-]+$/.test(want)) {
+    applyQuickStart(want)
+      .then(function () {
+        try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+      })
+      .catch(function () { /* unknown sample: keep the form as it was */ });
+  }
 })();

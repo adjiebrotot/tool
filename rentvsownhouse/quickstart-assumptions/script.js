@@ -155,7 +155,7 @@ function drawCity(c){
         <td>${esc(pct(p.setupCost, 2))}<span class="qa-sub">${esc(money(p.setupCost / 100 * p.propertyPrice, sym))}</span></td>
         <td>${esc(money(p.ownOngoingCost, sym))}</td>
         <td>${esc(money(p.rentOngoingCost, sym))}</td>
-        <td><a class="qa-open" href="../?qs=${encodeURIComponent(sid)}" title="Open this scenario in the calculator">Open →</a></td>
+        <td><a class="qa-open" href="../?qs=${encodeURIComponent(sid)}" title="Open this scenario in the calculator">Try it</a></td>
       </tr>`;
     });
     h += '</tbody></table></div>';
