@@ -686,9 +686,9 @@ const TIPS = {
     scaled: '<strong>Scaled salary:</strong> your salary as a multiple of your city\'s pay, given the same multiple of each city\'s pay, and what it leaves you after the same lifestyle.',
   },
   scale: {
-    min: '<strong>Minimum wage:</strong> the statutory gross minimum for a full-time month, the city\'s, its state\'s or its country\'s. Some countries set none.',
-    avg: '<strong>Average salary:</strong> the average net salary in each city, from Numbeo\'s crowd-sourced figures, so New York and Houston differ.',
-    median: '<strong>Median salary:</strong> each city\'s average net salary times its country\'s median-to-average ratio of earnings, from ILOSTAT.',
+    min: '<strong>Minimum wage:</strong> the legal minimum pay for a full-time month in each city.',
+    avg: '<strong>Average salary:</strong> the average net salary in each city.',
+    median: '<strong>Median salary:</strong> the middle net salary in each city: half earn more, half less.',
   },
   target: {
     ratio: '<strong>Savings ratio:</strong> each city\'s salary saves the same share of pay as you save now.',
@@ -1173,7 +1173,7 @@ function scaledAssumptions(R, items){
     const older = R.valid.filter(o => o.c.wage && o.c.wage.avg_from).length;
     items.push('<strong>Average net salaries are Numbeo\'s, city by city,</strong> worked out from its purchasing power and cost of living indices of ' + fmtDay(meta.avg.date) + '. ' +
       'They are crowd-sourced after-tax averages, rough where few people contributed' + (older ? '; ' + older + ' cities missing from the current table use an older one' : '') + '.');
-    if(S.scale === 'median') items.push('<strong>Each median is the city\'s average times its country\'s median-to-average ratio of earnings,</strong> from ILOSTAT\'s labour force surveys or the national statistics office. ' +
+    if(S.scale === 'median') items.push('<strong>Each median is the city\'s average times its country\'s median-to-average ratio of earnings,</strong> from ILOSTAT, the OECD, Eurostat or the national statistics office. ' +
       'One ratio for the whole country: a big city\'s pay is usually more spread out, so its median is likely lower than shown. The ratio is of gross pay; tax narrows the spread, so net medians sit a little higher.');
   }
 }
