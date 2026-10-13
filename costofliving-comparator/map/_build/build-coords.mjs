@@ -1,5 +1,6 @@
 // Builds map/city_coords.json: a latitude, longitude and population for every
-// city in the Cost of Living dataset, so the salary map can place it.
+// city in the Cost of Living dataset, so the salary map can place it, and a
+// fourth entry, 1, on each national capital.
 //
 // Source: GeoNames (https://www.geonames.org, CC BY 4.0). Download three files
 // into one folder and pass that folder:
@@ -103,6 +104,9 @@ for (const c of DATA) {
   const rival = hits.find(h => h !== pick && h.pop > pick.pop / 3 && !PICK[key]);
   if (rival) console.warn('  check ' + key + ': took ' + pick.name + ' (' + pick.pop + ', ' + pick.lat + ',' + pick.lon + '), also ' + rival.name + ' (' + rival.pop + ', ' + rival.lat + ',' + rival.lon + ')');
   out[key] = [Math.round(pick.lat * 1e4) / 1e4, Math.round(pick.lon * 1e4) / 1e4, pick.pop];
+  // A fourth entry, 1, marks a national capital (GeoNames' PPLC), for the
+  // map's Major cities filter.
+  if (pick.fcode === 'PPLC') out[key].push(1);
   if (how === 'alternate') console.log('  ' + key + ' -> ' + pick.name + ' (alternate name)');
 }
 
