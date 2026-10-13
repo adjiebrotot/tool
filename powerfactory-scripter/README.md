@@ -410,7 +410,8 @@ function generateCode()
 
 | Function | Description |
 |---|---|
-| `copyCode()` | Copies `window._generatedCode` to clipboard via `navigator.clipboard.writeText()`. Shows `#copy-toast`. |
+| `copyCode()` | Copies `window._generatedCode` to clipboard via `navigator.clipboard.writeText()`. Shows `#copy-toast`. The toolbar button (`#copy-btn`) is hidden while Notebook-style cells are shown. |
+| `copyCell(i)` | Notebook style: copies one cell's source (`window._generatedCells[i].source`) from the ⧉ button on that cell. Shows `#copy-toast`. |
 | `downloadCode()` | Routes the toolbar download button: `.ipynb` when the code was generated in Notebook style (`window._generatedCells` present), otherwise `.py`. |
 | `downloadPy()` | Downloads `window._generatedCode` as `powerfactory_script.py`. |
 | `downloadIpynb()` | Builds a valid Jupyter notebook (nbformat v4) from `window._generatedCells` — one markdown heading + code cell per section — and downloads `powerfactory_script.ipynb`. |

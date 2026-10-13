@@ -1998,12 +1998,14 @@ function generateCode() {
     renderNotebookCells(cells, nbEl);
     preEl.style.display = 'none';
     nbEl.style.display = '';
+    setToolbarCopyVisible(false);
   } else {
     window._generatedCells = null;
     preEl.innerHTML = `<code class="language-python">${escapeHtml(finalCode)}</code>`;
     hljs.highlightElement(preEl.querySelector('code'));
     preEl.style.display = '';
     nbEl.style.display = 'none';
+    setToolbarCopyVisible(true);
   }
   updateDownloadButtonLabel();
   showToast('generate-toast');
@@ -2016,11 +2018,21 @@ function renderNotebookCells(cells, container) {
     html += `<div class="nb-md-heading">Cell ${i + 1} — ${escapeHtml(cell.name)}</div>`;
     html += `<div class="nb-cell">` +
               `<div class="nb-prompt">In [ ]:</div>` +
-              `<pre class="nb-source"><code class="language-python">${escapeHtml(cell.source)}</code></pre>` +
+              `<div class="nb-body">` +
+                `<pre class="nb-source"><code class="language-python">${escapeHtml(cell.source)}</code></pre>` +
+                `<button class="btn btn-ghost nb-copy" onclick="copyCell(${i})" title="Copy cell ${i + 1}" aria-label="Copy cell ${i + 1}">⧉</button>` +
+              `</div>` +
             `</div>`;
   });
   container.innerHTML = html;
   container.querySelectorAll('code').forEach(el => hljs.highlightElement(el));
+}
+
+/* In Notebook style each cell carries its own copy button, so the toolbar
+   one (which copies the whole script) is hidden while the cells are shown. */
+function setToolbarCopyVisible(visible) {
+  const btn = document.getElementById('copy-btn');
+  if (btn) btn.style.display = visible ? '' : 'none';
 }
 
 /* Toolbar download button reflects the selected coding style (.py vs .ipynb). */
@@ -2057,6 +2069,15 @@ function copyCode() {
   const code = window._generatedCode;
   if (!code) { alert('Generate code first.'); return; }
   navigator.clipboard.writeText(code).then(() => {
+    showToast('copy-toast');
+  });
+}
+
+/* Copy one notebook cell's source (Notebook style). */
+function copyCell(i) {
+  const cell = window._generatedCells && window._generatedCells[i];
+  if (!cell) return;
+  navigator.clipboard.writeText(cell.source).then(() => {
     showToast('copy-toast');
   });
 }
@@ -2204,6 +2225,7 @@ function resetForm() {
   </code>`;
   preEl.style.display = '';
   if (nbEl) { nbEl.style.display = 'none'; nbEl.innerHTML = ''; }
+  setToolbarCopyVisible(true);
   updateDownloadButtonLabel();
   document.getElementById('validation-errors').style.display = 'none';
   document.getElementById('validation-warnings').style.display = 'none';
