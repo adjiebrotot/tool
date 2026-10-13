@@ -21,6 +21,7 @@ async function loadData() {
   ]);
   const colJson = await colRes.json();
   const rateJson = await rateRes.json();
+  const health = await loadHealth();
 
   META_COL = parseMonthYear(colJson.metadata.updated_on);
   META_RATE = parseMonthYear(rateJson.metadata.updated_on);
@@ -41,6 +42,7 @@ async function loadData() {
     water: c.utilities_index && c.utilities_index.water ? c.utilities_index.water.Median || null : null,
     gas: c.utilities_index && c.utilities_index.gas ? c.utilities_index.gas.Median || null : null,
     fuel: c.utilities_index && c.utilities_index.fuel ? c.utilities_index.fuel.Median || null : null,
+    health: healthIdx(health, c),
   })).filter(c => c.city && c.country);
   CITIES.sort((a, b) => a.city.localeCompare(b.city));
   CITIES.forEach(c => { CITY_MAP[c.city+'|'+c.country] = c; });
@@ -56,6 +58,35 @@ async function loadData() {
   init();
 
   if(!saved || Date.now() - saved.savedAt > LIVE_TTL) refreshLiveRates();
+}
+
+// ═══════════════════════════════════════════════════════════
+// HEALTH PRICES
+//
+// health_price_index.json (built by _build/build-health.mjs from the World
+// Bank's ICP 2021) holds, per country, how dear health care is next to
+// everyday prices: GP and specialist visits, dental care, medicines and
+// hospital procedures, priced as one basket in every economy. The ratio has no
+// exchange rate in it, so it rides on the city's own cost-of-living index
+// excluding housing, which is current and priced at the bundled rate like
+// every other index. A country the ICP did not price, or a file that fails to
+// load, leaves the index null and the row says "no estimate".
+// ═══════════════════════════════════════════════════════════
+let HEALTH_META = null;
+async function loadHealth(){
+  try {
+    const r = await fetch('health_price_index.json');
+    if(!r.ok) return {};
+    const j = await r.json();
+    HEALTH_META = j.metadata || null;
+    const m = {};
+    (j.data || []).forEach(d => { m[d.country] = d.health_ratio; });
+    return m;
+  } catch(e) { return {}; }
+}
+function healthIdx(ratios, c){
+  const r = ratios[c.country];
+  return (r > 0 && c.coli_no_housing > 0) ? r * c.coli_no_housing : null;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -179,6 +210,11 @@ function updateDataText(){
   } else {
     el.append(`Exchange rates updated ${META_RATE} (live rates unavailable).`);
   }
+  if(HEALTH_META){
+    const a = document.createElement('a');
+    a.href = HEALTH_META.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'World Bank ICP ' + HEALTH_META.year;
+    el.append(' Health care prices from the ', a, '.');
+  }
 }
 
 function fmtDay(iso){
@@ -269,6 +305,7 @@ function renderAssumptions(){
         txt += '.';
         if(fxOnly.length) txt += ' '+fxOnly.join(' and ').replace(/^./, c => c.toUpperCase())+' change only by the exchange rate.';
         items.push(txt);
+        if(cats.some(c => c.index === 'health')) items.push('<strong>Medical care and health insurance follow the World Bank\'s ICP 2021 health prices,</strong> set against everyday prices in each country and applied to each city\'s cost-of-living index. They assume the same care and cover, and leave out public schemes paid through tax.');
         const overrides = rows.reduce((n, r) => n + (r.overrides ? Object.keys(r.overrides).filter(k => tos.some(t => String(t.i) === k)).length : 0), 0);
         if(overrides) items.push('<strong>Your '+overrides+' typed '+(overrides === 1 ? 'figure replaces' : 'figures replace')+' the estimate</strong> in '+(overrides === 1 ? 'its cell' : 'those cells')+'.');
         if(S.customFreq && (rows.some(r => rowUnit(r) !== 'monthly') || validPeriod(S.detailIncomeFreq) !== 'monthly')){
@@ -441,6 +478,7 @@ function idxInfo(city, key){
   if(key==='water')return val(city.water);
   if(key==='gas_util')return val(city.gas);
   if(key==='fuel')return val(city.fuel);
+  if(key==='health')return val(city.health);
   if(key==='coli_no_housing')return val(city.coli_no_housing);
   if(key==='coli_with_housing')return val(city.coli_with_housing);
   if(key==='currency_only')return{idx:100,missing:[]}; // no index applies, FX only
@@ -665,6 +703,8 @@ const CATS=[
   {id:'water',label:'💧 Water',index:'water',tip:'Water and sewage bills on their own.'},
   {id:'gas_util',label:'🔥 Gas',index:'gas_util',tip:'Gas utility bills on their own.'},
   {id:'fuel',label:'⛽ Fuel',index:'fuel',tip:'Vehicle fuel, whether petrol or diesel.'},
+  {id:'medical',label:'🩺 Medical Care',index:'health',tip:'GP and dentist visits, medicines and procedures you pay for. Scaled by World Bank ICP health prices; public cover is not modelled.'},
+  {id:'health_insurance',label:'🛡️ Health Insurance',index:'health',tip:'Your health insurance premium, for the same cover, scaled by the same ICP health prices. Schemes paid through tax are not modelled.'},
   {id:'remittance',label:'💸 Remittance',index:'currency_only',tip:'Money you send abroad. The amount is the same wherever you live, so only the exchange rate changes it between cities.'},
   {id:'intl_travel',label:'✈️ International Travel',index:'currency_only',tip:'International travel, such as flights booked abroad. The price is the same wherever you live, so only the exchange rate changes it between cities.'},
   {id:'other',label:'🌐 Other',index:'coli_no_housing',tip:'Everything else, scaled by the cost-of-living index excluding housing.'},

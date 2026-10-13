@@ -32,6 +32,7 @@ const CITY_MAP = {};
 let RATES = {};      // bundled: units per USD the indices were priced at
 let LIVE = null;     // {rates, date, source, url}: market units per USD, or null
 let META_COL = '', META_RATE = '', RATE_DATE = '';
+let HEALTH_META = null;  // health_price_index.json's source line, for the footer
 let COORDS = {};     // "city|country" -> [lat, lon, population]
 let dataReady = false;
 
@@ -42,11 +43,17 @@ async function getJson(url){
 }
 
 async function loadData(){
-  const [colJson, rateJson, coords] = await Promise.all([
+  const [colJson, rateJson, coords, healthJson] = await Promise.all([
     getJson('../cost_of_living_indices_aggregated.json'),
     getJson('../currency_rates.json'),
     getJson('city_coords.json'),
+    // The comparator's health prices (see its HEALTH PRICES note). Optional: a
+    // failed load leaves the medical rows without an estimate.
+    getJson('../health_price_index.json').catch(() => null),
   ]);
+  const health = {};
+  ((healthJson && healthJson.data) || []).forEach(d => { health[d.country] = d.health_ratio; });
+  HEALTH_META = healthJson && healthJson.metadata || null;
   META_COL = parseMonthYear(colJson.metadata.updated_on);
   META_RATE = parseMonthYear(rateJson.metadata.updated_on);
   RATE_DATE = rateJson.metadata.updated_on || '';
@@ -67,6 +74,7 @@ async function loadData(){
     water: c.utilities_index && c.utilities_index.water ? c.utilities_index.water.Median || null : null,
     gas: c.utilities_index && c.utilities_index.gas ? c.utilities_index.gas.Median || null : null,
     fuel: c.utilities_index && c.utilities_index.fuel ? c.utilities_index.fuel.Median || null : null,
+    health: health[c.country] > 0 && c.coli_no_housing > 0 ? health[c.country] * c.coli_no_housing : null,
   })).filter(c => c.city && c.country);
   CITIES.sort((a, b) => a.city.localeCompare(b.city));
   CITIES.forEach(c => {
@@ -183,6 +191,11 @@ function updateDataText(){
   } else {
     el.append('Exchange rates updated ' + META_RATE + ' (live rates unavailable).');
   }
+  if(HEALTH_META){
+    const a = document.createElement('a');
+    a.href = HEALTH_META.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'World Bank ICP ' + HEALTH_META.year;
+    el.append(' Health care prices from the ', a, '.');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -212,6 +225,7 @@ function idxInfo(city, key){
   if(key === 'water') return val(city.water);
   if(key === 'gas_util') return val(city.gas);
   if(key === 'fuel') return val(city.fuel);
+  if(key === 'health') return val(city.health);
   if(key === 'coli_no_housing') return val(city.coli_no_housing);
   if(key === 'coli_with_housing') return val(city.coli_with_housing);
   if(key === 'currency_only') return {idx: 100, missing: []};
@@ -246,6 +260,8 @@ const CATS = [
   {id:'water',       label:'Water',                index:'water'},
   {id:'gas_util',    label:'Gas',                  index:'gas_util'},
   {id:'fuel',        label:'Fuel',                 index:'fuel'},
+  {id:'medical',     label:'Medical care',         index:'health'},
+  {id:'health_insurance', label:'Health insurance', index:'health'},
   {id:'remittance',  label:'Remittance',           index:'currency_only'},
   {id:'intl_travel', label:'International travel', index:'currency_only'},
   {id:'other',       label:'Other',                index:'coli_no_housing'},
