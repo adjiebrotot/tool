@@ -204,7 +204,7 @@ function updateDataText(){
   }
   if(WAGES){
     const link = (href, text) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; return a; };
-    el.append(' Scaled salary: average net salaries from ', link(WAGES.metadata.avg.url, 'Numbeo'), ' (' + fmtDay(WAGES.metadata.avg.date) + '), median-to-average ratios from ',
+    el.append(' Scaled salary: average net salaries from ', 'a crowd-sourced survey', ' (' + fmtDay(WAGES.metadata.avg.date) + '), median-to-average ratios from ',
       link(WAGES.metadata.median.url, 'ILOSTAT'), ' and national statistics offices, minimum wages from each country\'s, state\'s or city\'s own order.');
   }
 }
@@ -389,7 +389,7 @@ function wageOf(c, scale){
   if(!WAGES) return { v: null, why: 'The pay data could not load.' };
   if(!w) return { v: null, why: 'No pay data for ' + c.city + '.' };
   if(scale === 'min') return w.min > 0 ? { v: w.min } : { v: null, why: 'No minimum wage: ' + w.min_why + '.' };
-  if(!(w.avg > 0)) return { v: null, why: 'No average salary: ' + (w.avg_why || 'Numbeo has no salary data for it') + '.' };
+  if(!(w.avg > 0)) return { v: null, why: 'No average salary: ' + (w.avg_why || 'the survey has no salary data for it') + '.' };
   if(scale === 'avg') return { v: w.avg };
   const k = WAGES.countries[c.country] || {};
   return k.ratio > 0 ? { v: w.avg * k.ratio } : { v: null, why: 'No median for ' + c.country + ': ' + (k.ratio_why || 'no survey reports one') + '.' };
@@ -1153,7 +1153,7 @@ function renderAssumptions(){
       const noE = R.rows.filter(o => o.E == null || !(o.fx > 0)).length, noW = R.nodata - noE;
       if(noE) items.push('<strong>' + noE + (noE === 1 ? ' city has' : ' cities have') + ' no estimate</strong> for this lifestyle: the dataset lacks an index it needs, or an exchange rate.');
       if(S.mode === 'scaled' && noW > 0 && R.mult != null) items.push('<strong>' + noW + (noW === 1 ? ' city has' : ' cities have') + ' no ' + SCALES[S.scale].word + ' to scale by,</strong> each named on its card: ' +
-        (S.scale === 'min' ? 'some countries set no minimum by law, and a few set only a symbolic one.' : S.scale === 'median' ? 'not every country publishes both a median and an average wage.' : 'Numbeo has no trustworthy salary figure for them.'));
+        (S.scale === 'min' ? 'some countries set no minimum by law, and a few set only a symbolic one.' : S.scale === 'median' ? 'not every country publishes both a median and an average wage.' : 'the survey has no trustworthy salary figure for them.'));
     }
   }
   ul.innerHTML = items.map(t => '<li>' + t + '</li>').join('');
@@ -1171,7 +1171,7 @@ function scaledAssumptions(R, items){
       'The city\'s own, its state\'s, province\'s or prefecture\'s where one is set, else the country\'s. Your salary is net, so a country that taxes low pay harder looks better paid than it is.');
   } else {
     const older = R.valid.filter(o => o.c.wage && o.c.wage.avg_from).length;
-    items.push('<strong>Average net salaries are Numbeo\'s, city by city,</strong> worked out from its purchasing power and cost of living indices of ' + fmtDay(meta.avg.date) + '. ' +
+    items.push('<strong>Average net salaries come from a crowd-sourced survey, city by city,</strong> worked out from its purchasing power and cost of living indices of ' + fmtDay(meta.avg.date) + '. ' +
       'They are crowd-sourced after-tax averages, rough where few people contributed' + (older ? '; ' + older + ' cities missing from the current table use an older one' : '') + '.');
     if(S.scale === 'median') items.push('<strong>Each median is the city\'s average times its country\'s median-to-average ratio of earnings,</strong> from ILOSTAT, the OECD, Eurostat or the national statistics office. ' +
       'One ratio for the whole country: a big city\'s pay is usually more spread out, so its median is likely lower than shown. The ratio is of gross pay; tax narrows the spread, so net medians sit a little higher.');
@@ -1666,7 +1666,7 @@ function wageSource(c){
   const w = c.wage || {}, has = wageOf(c);
   if(has.v == null) return has.why;
   if(S.scale === 'min') return 'Minimum wage: ' + w.min_src + ', ' + w.min_year + '.';
-  const avg = 'Average from Numbeo' + (w.avg_from ? '\'s ' + w.avg_from + ' table' : '');
+  const avg = 'Average from the survey' + (w.avg_from ? '\'s ' + w.avg_from + ' table' : '');
   if(S.scale === 'avg') return avg + '.';
   const k = WAGES.countries[c.country] || {};
   return avg + ', times ' + c.country + '\'s median-to-average ratio of ' + (k.ratio * 100).toFixed(0) + '% (' + k.ratio_src + ', ' + k.ratio_year + ').';
