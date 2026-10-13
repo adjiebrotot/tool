@@ -41,7 +41,8 @@
 //
 // Earnings are skewed right, so a median at or above 95% of the mean is a
 // survey artefact (Bosnia's 2025 median reads 115% of its mean) and is dropped.
-// Three economies ILO lacks come from their statistics offices (RATIO_NATIONAL).
+// Economies ILO lacks come from OECD, Eurostat's Structure of Earnings Survey
+// or their statistics offices (RATIO_NATIONAL).
 // A country with neither gets null, never a neighbour's ratio, and the page
 // says "no estimate".
 //
@@ -106,6 +107,14 @@ const NUMBEO_ALIAS = {
   'Batumi|Georgia': 'Batumi, Ajara, Georgia',
   'Qingdao|China': 'Qingdao, Shandong, China',
 };
+// Numbeo's own city page, where the rankings table lacks the city or reads it
+// far from its page (Plymouth's table figure is GBP 1,595 against its page's
+// 2,319). In the currency the page showed.
+const CITY_PAGE = {
+  'Preston|United Kingdom': { v: 2235.34, cur: 'GBP' },
+  'Plymouth|United Kingdom': { v: 2319.20, cur: 'GBP' },
+  'Oran|Algeria': { v: 263.26, cur: 'EUR' },
+};
 const numbeoName = c => NUMBEO_ALIAS[c.city + '|' + c.country] || c.city + ', ' + c.country;
 const byCountry = {};
 DATA.forEach(c => { (byCountry[c.country] = byCountry[c.country] || []).push(c); });
@@ -113,6 +122,8 @@ DATA.forEach(c => { (byCountry[c.country] = byCountry[c.country] || []).push(c);
 function averageOf(c){
   const k = numbeoName(c), rate = usdTo(c.currency);
   if(!rate) throw new Error('no exchange rate for ' + c.currency);
+  const page = CITY_PAGE[c.city + '|' + c.country];
+  if(page) return { avg: page.v / usdTo(page.cur) * rate, from: 'current' };
   if(CUR[k] != null) return { avg: CUR[k] * NYC_NET_USD * rate, from: 'current' };
   for(const t of SNAPS){
     const old = OLD[t][k];
@@ -155,6 +166,19 @@ const RATIO_NATIONAL = {
   'South Korea':    { ratio: 2.78 / 3.63, year: 2023, src: 'Statistics Korea, wage job income' },
   'Malaysia':       { ratio: 2940 / 3803, year: 2025, src: 'DOSM, Salaries & Wages Survey' },
   'Taiwan (China)': { ratio: 546 / 732,   year: 2024, src: 'DGBAS, annual total earnings of employees' },
+  'Russia':         { ratio: 73871 / 99400, year: 2025, src: 'Rosstat, April 2025 survey of organisations' },
+  'Kazakhstan':     { ratio: 317512 / 443315, year: 2025, src: 'Bureau of National Statistics' },
+  // Per capita disposable income: China publishes no median wage.
+  'China':          { ratio: 36231 / 43377, year: 2025, src: 'NBS, per capita disposable income' },
+  // OECD's minimum wage relative to mean and to median full-time earnings,
+  // whose quotient is median over mean.
+  'Japan':          { ratio: 40.3753 / 46.3648, year: 2025, src: 'OECD, full-time employees' },
+  'New Zealand':    { ratio: 54.5560 / 64.0492, year: 2025, src: 'OECD, full-time employees' },
+  'Israel':         { ratio: 39.6766 / 50.7465, year: 2025, src: 'OECD, full-time employees' },
+  // Eurostat Structure of Earnings Survey, monthly earnings.
+  'Albania':        { ratio: 440 / 595, year: 2022, src: 'Eurostat, Structure of Earnings Survey' },
+  'North Macedonia':{ ratio: 650 / 785, year: 2022, src: 'Eurostat, Structure of Earnings Survey' },
+  'Bosnia And Herzegovina': { ratio: 800 / 963, year: 2022, src: 'Eurostat, Structure of Earnings Survey' },
 };
 function readIlo(file){
   const text = readFileSync(join(SRC, file), 'utf8').split(/\r?\n/);
@@ -241,7 +265,7 @@ const MIN = {
   'Iceland': { none: 'Iceland has no statutory minimum wage; collective agreements set pay floors' },
   'India': { none: 'set by state' },
   'Indonesia': { none: 'set by city or regency' },
-  'Iran': { none: 'Iran\'s 2026 rate was raised 60% in March and its approved amount could not be confirmed' },
+  'Iran': { m: 166000000, year: 2026, src: 'Supreme Labour Council (from 20 March 2026)' },
   'Iraq': { m: 350000, year: 2024, src: ILO },
   'Ireland': { m: 2391, year: 2026, src: ILO },
   'Israel': { m: 6247.67, year: 2025, src: 'Ministry of Economy (from 1 April 2025)' },
@@ -257,7 +281,7 @@ const MIN = {
   'Kuwait': { m: 75, year: 2024, src: ILO + ' (private sector)' },
   'Kyrgyzstan': { none: 'Kyrgyzstan\'s legal minimum, KGS 2,534 a month, is far below its subsistence minimum and is used to index benefits, not as a pay floor' },
   'Latvia': { m: 780, year: 2026, src: ILO },
-  'Lebanon': { none: 'Lebanon\'s minimum wage has been reset several times since the currency collapsed, and its current figure could not be confirmed' },
+  'Lebanon': { m: 28000000, year: 2025, src: 'Council of Ministers decree (from July 2025)' },
   'Libya': { m: 1000, year: 2024, src: ILO },
   'Lithuania': { m: 1153, year: 2026, src: ILO },
   'Luxembourg': { m: 2771, year: 2026, src: ILO },
@@ -304,7 +328,9 @@ const MIN = {
   'Sri Lanka': { m: 27000, year: 2025, src: 'National Minimum Wage of Workers (Amendment) Act' },
   'Sweden': { none: 'Sweden has no statutory minimum wage; collective agreements set pay floors by industry' },
   'Switzerland': { none: 'set by canton' },
-  'Syria': { none: 'Syria\'s minimum wage has been reset several times since 2024 and its current figure could not be confirmed' },
+  // New pounds: the January 2026 redenomination took two zeros off. A 2026
+  // decree raised it again, but reports of its amount disagree.
+  'Syria': { m: 7500, year: 2025, src: 'Decree 102 of 2025 (SYP 750,000 before the redenomination)' },
   'Taiwan (China)': { m: 29500, year: 2026, src: 'Ministry of Labor (from 1 January 2026)' },
   'Tanzania': { m: 150000, year: 2024, src: ILO + ' (manufacturing)' },
   'Thailand': { none: 'set by province' },
@@ -428,6 +454,14 @@ const LOCAL = {
   'Thiruvananthapuram|India': cn(13500, 2026, 'Kerala, unskilled'),
   'Indore|India': cn(12425, 2026, 'Madhya Pradesh, unskilled'),
   'Bhopal|India': cn(12425, 2026, 'Madhya Pradesh, unskilled'),
+  'Kolkata|India': cn(10329, 2025, 'West Bengal zone A, unskilled'),
+  'Noida|India': cn(11021, 2025, 'Uttar Pradesh, unskilled'),
+  'Lucknow (Lakhnau)|India': cn(11021, 2025, 'Uttar Pradesh, unskilled'),
+  'Patna|India': cn(11128, 2025, 'Bihar, unskilled'),
+  'Jaipur|India': cn(7410, 2024, 'Rajasthan, unskilled'),
+  'Bhubaneswar|India': { d: 462, year: 2025, src: 'Odisha, unskilled' },
+  'Guwahati|India': cn(10343.95, 2025, 'Assam, unskilled'),
+  'Chandigarh|India': cn(14562, 2025, 'Chandigarh, unskilled'),
 };
 const NO_LOCAL = {
   'India': 'no reliable figure was found for this state; India sets minimum wages by state, trade and zone',
@@ -506,7 +540,7 @@ const out = {
     updated_on: NUMBEO_DATE,
     avg: { source: 'Numbeo', url: 'https://www.numbeo.com/cost-of-living/rankings_current.jsp', date: NUMBEO_DATE, fx_date: FX_DATE,
            note: 'Average monthly net salary: Local Purchasing Power x Cost of Living Plus Rent, against New York at USD ' + NYC_NET_USD },
-    median: { source: 'ILOSTAT', url: 'https://ilostat.ilo.org/topics/wages/', note: 'Median over mean monthly earnings of employees, by country' },
+    median: { source: 'ILOSTAT', url: 'https://ilostat.ilo.org/topics/wages/', note: 'Median over mean monthly earnings of employees, by country; where ILOSTAT has none, from OECD, Eurostat or the statistics office' },
     min: { note: 'Statutory gross minimum wage a month: hourly x 40 x 52/12, daily x 26, weekly x 52/12' },
   },
   countries,

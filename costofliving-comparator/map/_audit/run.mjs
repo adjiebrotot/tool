@@ -462,8 +462,10 @@ for(const plan of PLANS){
   const vt = await page.textContent('#verdict');
   check('M13 a home city with no minimum wage says so instead of scaling', /no minimum wage for Copenhagen/i.test(vt), vt.slice(0, 90));
   await seg(page, 'scaleGroup', 'median');
+  const du = await page.evaluate(() => window.__colmap.wage('Dubai|United Arab Emirates', 'median'));
+  check('M13 a country with no published median has no median estimate', du.v == null && /United Arab Emirates/.test(du.why), du.why);
   const tk = await page.evaluate(() => window.__colmap.wage('Tokyo|Japan', 'median'));
-  check('M13 a country with no published median has no median estimate', tk.v == null && /Japan/.test(tk.why), tk.why);
+  check('M13 a median from OECD where ILOSTAT has none (Tokyo)', tk.v > 0, String(tk.v));
   // Views, rows and the reload.
   await seg(page, 'scaleGroup', 'avg');
   const st = await page.evaluate(() => ({ views: [...document.querySelectorAll('#viewGroup .seg-btn')].map(b => b.dataset.val), on: window.__colmap.view(),

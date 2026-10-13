@@ -11,7 +11,7 @@
   "median": {
    "source": "ILOSTAT",
    "url": "https://ilostat.ilo.org/topics/wages/",
-   "note": "Median over mean monthly earnings of employees, by country"
+   "note": "Median over mean monthly earnings of employees, by country; where ILOSTAT has none, from OECD, Eurostat or the statistics office"
   },
   "min": {
    "note": "Statutory gross minimum wage a month: hourly x 40 x 52/12, daily x 26, weekly x 52/12"
@@ -70,8 +70,9 @@
    "ratio_src": "ILOSTAT, HIES"
   },
   "Israel": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.7819,
+   "ratio_year": 2025,
+   "ratio_src": "OECD, full-time employees"
   },
   "South Korea": {
    "ratio": 0.7658,
@@ -89,8 +90,9 @@
    "ratio_src": "ILOSTAT, HIES"
   },
   "New Zealand": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.8518,
+   "ratio_year": 2025,
+   "ratio_src": "OECD, full-time employees"
   },
   "Ireland": {
    "ratio": 0.7932,
@@ -137,8 +139,9 @@
    "ratio_src": "ILOSTAT, HIES"
   },
   "Japan": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.8708,
+   "ratio_year": 2025,
+   "ratio_src": "OECD, full-time employees"
   },
   "Puerto Rico": {
    "ratio": 0.7054,
@@ -193,8 +196,9 @@
    "ratio_src": "ILOSTAT, HIES"
   },
   "China": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.8353,
+   "ratio_year": 2025,
+   "ratio_src": "NBS, per capita disposable income"
   },
   "Uruguay": {
    "ratio": 0.8245,
@@ -293,8 +297,9 @@
    "ratio_src": "ILOSTAT, LFS"
   },
   "Russia": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.7432,
+   "ratio_year": 2025,
+   "ratio_src": "Rosstat, April 2025 survey of organisations"
   },
   "Oman": {
    "ratio": null,
@@ -418,8 +423,9 @@
    "ratio_src": "ILOSTAT, HIES"
   },
   "Albania": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.7395,
+   "ratio_year": 2022,
+   "ratio_src": "Eurostat, Structure of Earnings Survey"
   },
   "Malaysia": {
    "ratio": 0.7731,
@@ -427,9 +433,9 @@
    "ratio_src": "DOSM, Salaries & Wages Survey"
   },
   "Bosnia And Herzegovina": {
-   "ratio": null,
-   "ratio_year": 2025,
-   "ratio_why": "its latest survey reports a median at 115% of the mean, too close to the mean to trust"
+   "ratio": 0.8307,
+   "ratio_year": 2022,
+   "ratio_src": "Eurostat, Structure of Earnings Survey"
   },
   "Ecuador": {
    "ratio": 0.8729,
@@ -452,8 +458,9 @@
    "ratio_src": "ILOSTAT, LFS"
   },
   "North Macedonia": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.828,
+   "ratio_year": 2022,
+   "ratio_src": "Eurostat, Structure of Earnings Survey"
   },
   "Belarus": {
    "ratio": null,
@@ -532,8 +539,9 @@
    "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
   },
   "Kazakhstan": {
-   "ratio": null,
-   "ratio_why": "ILOSTAT has no survey of it that reports both a median and a mean"
+   "ratio": 0.7162,
+   "ratio_year": 2025,
+   "ratio_src": "Bureau of National Statistics"
   },
   "Ukraine": {
    "ratio": null,
@@ -914,8 +922,9 @@
   },
   "Beirut|Lebanon": {
    "avg": 65123200,
-   "min": null,
-   "min_why": "Lebanon's minimum wage has been reset several times since the currency collapsed, and its current figure could not be confirmed"
+   "min": 28000000,
+   "min_year": 2025,
+   "min_src": "Council of Ministers decree (from July 2025)"
   },
   "Philadelphia, PA|United States": {
    "avg": 4494.79,
@@ -1932,8 +1941,7 @@
    "min_src": "National Living Wage (from 1 April 2026)"
   },
   "Plymouth|United Kingdom": {
-   "avg": null,
-   "avg_why": "Numbeo's average for it falls below its own minimum wage, too few contributors to trust",
+   "avg": 2319.2,
    "min": 2203.07,
    "min_year": 2026,
    "min_src": "National Living Wage (from 1 April 2026)"
@@ -2182,8 +2190,7 @@
    "min_why": "Italy has no statutory minimum wage; collective agreements set pay floors by industry"
   },
   "Preston|United Kingdom": {
-   "avg": null,
-   "avg_why": "Numbeo has no salary data for it",
+   "avg": 2235.34,
    "min": 2203.07,
    "min_year": 2026,
    "min_src": "National Living Wage (from 1 April 2026)"
@@ -2211,8 +2218,9 @@
   "Shiraz|Iran": {
    "avg": 418797000,
    "avg_from": "2023",
-   "min": null,
-   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+   "min": 166000000,
+   "min_year": 2026,
+   "min_src": "Supreme Labour Council (from 20 March 2026)"
   },
   "Kingston|Jamaica": {
    "avg": 120034,
@@ -3408,8 +3416,9 @@
   },
   "Tehran|Iran": {
    "avg": 369713000,
-   "min": null,
-   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+   "min": 166000000,
+   "min_year": 2026,
+   "min_src": "Supreme Labour Council (from 20 March 2026)"
   },
   "Rabat|Morocco": {
    "avg": 7163.95,
@@ -3438,8 +3447,9 @@
   "Isfahan (Esfahan)|Iran": {
    "avg": 369468000,
    "avg_from": "2024",
-   "min": null,
-   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+   "min": 166000000,
+   "min_year": 2026,
+   "min_src": "Supreme Labour Council (from 20 March 2026)"
   },
   "Buenos Aires|Argentina": {
    "avg": 1458650,
@@ -3533,8 +3543,9 @@
   },
   "Damascus|Syria": {
    "avg": 9353.95,
-   "min": null,
-   "min_why": "Syria's minimum wage has been reset several times since 2024 and its current figure could not be confirmed"
+   "min": 7500,
+   "min_year": 2025,
+   "min_src": "Decree 102 of 2025 (SYP 750,000 before the redenomination)"
   },
   "Agadir|Morocco": {
    "avg": 5320.14,
@@ -3594,8 +3605,9 @@
   "Mashhad|Iran": {
    "avg": 422984000,
    "avg_from": "2023-mid",
-   "min": null,
-   "min_why": "Iran's 2026 rate was raised 60% in March and its approved amount could not be confirmed"
+   "min": 166000000,
+   "min_year": 2026,
+   "min_src": "Supreme Labour Council (from 20 March 2026)"
   },
   "Eskisehir|Turkey": {
    "avg": 53930.8,
@@ -3604,8 +3616,7 @@
    "min_src": "ILOSTAT (gross)"
   },
   "Oran|Algeria": {
-   "avg": null,
-   "avg_why": "Numbeo has no salary data for it",
+   "avg": 40577.9,
    "min": 24000,
    "min_year": 2025,
    "min_src": "Presidential decree (SNMG)"
@@ -3655,8 +3666,9 @@
   },
   "Noida|India": {
    "avg": 91236.2,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 11021,
+   "min_year": 2025,
+   "min_src": "Uttar Pradesh, unskilled"
   },
   "Chittagong|Bangladesh": {
    "avg": 31395.9,
@@ -3753,13 +3765,15 @@
   },
   "Guwahati|India": {
    "avg": 33167.6,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 10344,
+   "min_year": 2025,
+   "min_src": "Assam, unskilled"
   },
   "Chandigarh|India": {
    "avg": 42891.1,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 14562,
+   "min_year": 2025,
+   "min_src": "Chandigarh, unskilled"
   },
   "Cali|Colombia": {
    "avg": 2056770,
@@ -3770,8 +3784,9 @@
   },
   "Patna|India": {
    "avg": 34740.9,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 11128,
+   "min_year": 2025,
+   "min_src": "Bihar, unskilled"
   },
   "Barranquilla|Colombia": {
    "avg": 2032540,
@@ -3788,18 +3803,21 @@
   },
   "Jaipur|India": {
    "avg": 38290.5,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 7410,
+   "min_year": 2024,
+   "min_src": "Rajasthan, unskilled"
   },
   "Lucknow (Lakhnau)|India": {
    "avg": 33076.5,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 11021,
+   "min_year": 2025,
+   "min_src": "Uttar Pradesh, unskilled"
   },
   "Bhubaneswar|India": {
    "avg": 35866.2,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 12012,
+   "min_year": 2025,
+   "min_src": "Odisha, unskilled"
   },
   "Vadodara|India": {
    "avg": 51072.6,
@@ -3809,8 +3827,9 @@
   },
   "Kolkata|India": {
    "avg": 38381.2,
-   "min": null,
-   "min_why": "no reliable figure was found for this state; India sets minimum wages by state, trade and zone"
+   "min": 10329,
+   "min_year": 2025,
+   "min_src": "West Bengal zone A, unskilled"
   },
   "Cairo|Egypt": {
    "avg": 10730.9,
