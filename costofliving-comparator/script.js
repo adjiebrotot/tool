@@ -549,7 +549,7 @@ function pruneCustomFx(){
 //
 // The maths already works this way. The cost-of-living indices are USD-
 // normalised against a base city (this dataset is rebased to Perth = 100, not
-// Numbeo's New York; the choice does not matter because it cancels below), so
+// the source's New York; the choice does not matter because it cancels below), so
 // index_c = P_c / (e_c * P_base) * 100, where P is the local price of the
 // basket and e is units of local currency per USD. Substituting that into the
 // estimate makes both the base and the FX terms cancel outright:
@@ -564,7 +564,7 @@ function pruneCustomFx(){
 //   1. The shock slider never reaches the estimate.
 //   2. Neither does the custom FX rate. It is a market rate for converting
 //      money across the border, NOT a correction to the rate the indices were
-//      priced at (that one is Numbeo's, baked into the index, and unknowable
+//      priced at (that one is the source's, baked into the index, and unknowable
 //      from here). Letting it move the estimate would say a Perth lunch got
 //      dearer in AUD because the Rupiah slipped, which is exactly wrong.
 // ═══════════════════════════════════════════════════════════

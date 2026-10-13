@@ -6,21 +6,21 @@
 //   ratio   the country's median over mean earnings, so median = avg * ratio
 //   min     the statutory minimum wage that applies in the city, a month, gross
 //
-// ── Average net salary: per city, from Numbeo ────────────────────────────────
-// Numbeo's Local Purchasing Power Index is the city's average net salary over
+// ── Average net salary: per city, from a crowd-sourced survey ─────────────────────────────────────────────────────
+// The source's Local Purchasing Power Index is the city's average net salary over
 // the price of its Cost of Living Plus Rent basket, against New York's
-// (https://www.numbeo.com/common/motivation_and_methodology.jsp). So
+//. So
 //
 //   avg_city (USD) = LPP/100 * (CoL+Rent)/100 * New York's average net salary
 //
-// which reproduces the salaries on Numbeo's own city pages to within about 2%
+// which reproduces the salaries on the source's own city pages to within about 2%
 // (Houston, San Francisco, Salt Lake City, London, Zurich, Berlin and Perth
 // were checked). It is a city figure, not a country one: New York and Houston,
 // Sydney and Hobart, Mumbai and Patna each get their own. Save these pages into
 // one folder:
 //
-//   https://www.numbeo.com/cost-of-living/rankings_current.jsp      as rank.html
-//   https://www.numbeo.com/cost-of-living/rankings.jsp?title=<T>    as rank_<T>.html
+//   the source's current cost of living rankings page     as rank.html
+//   the source's rankings page for period <T> as rank_<T>.html
 //     for T in 2026-mid 2026 2025-mid 2025 2024-mid 2024 2023-mid 2023 2022
 //   https://open.er-api.com/v6/latest/USD                            as fx.json
 //
@@ -68,10 +68,10 @@ const DATA = JSON.parse(readFileSync(join(HERE, '..', '..', 'cost_of_living_indi
 const BUNDLED = Object.fromEntries(JSON.parse(readFileSync(join(HERE, '..', '..', 'currency_rates.json'), 'utf8')).data.map(r => [r.currency, r.usd_rate]));
 const OUT = join(HERE, '..', 'wages.json');
 
-// New York's average monthly net salary on its Numbeo page, the day the
+// New York's average monthly net salary on the source's city page, the day the
 // current table was saved.
 const NYC_NET_USD = 5278.25;
-const NUMBEO_DATE = '2026-10-13';
+const AVG_DATE = '2026-10-13';
 
 // ═══════════════════════════════════════════════════════════
 // AVERAGE NET SALARY
@@ -98,8 +98,8 @@ const FX = fxJson.rates;   // units per USD, the day the table was saved
 const FX_DATE = new Date(fxJson.time_last_update_unix * 1000).toISOString().slice(0, 10);
 const usdTo = cur => FX[cur] || BUNDLED[cur] || null;
 
-// Numbeo's name for a dataset city, where the two differ.
-const NUMBEO_ALIAS = {
+// The source's name for a dataset city, where the two differ.
+const SOURCE_ALIAS = {
   'Arhus|Denmark': 'Aarhus, Denmark',
   'Taipei|Taiwan (China)': 'Taipei, Taiwan', 'New Taipei City|Taiwan (China)': 'New Taipei City, Taiwan',
   'Kaohsiung|Taiwan (China)': 'Kaohsiung, Taiwan',
@@ -107,7 +107,7 @@ const NUMBEO_ALIAS = {
   'Batumi|Georgia': 'Batumi, Ajara, Georgia',
   'Qingdao|China': 'Qingdao, Shandong, China',
 };
-// Numbeo's own city page, where the rankings table lacks the city or reads it
+// The source's own city page, where the rankings table lacks the city or reads it
 // far from its page (Plymouth's table figure is GBP 1,595 against its page's
 // 2,319). In the currency the page showed.
 const CITY_PAGE = {
@@ -115,12 +115,12 @@ const CITY_PAGE = {
   'Plymouth|United Kingdom': { v: 2319.20, cur: 'GBP' },
   'Oran|Algeria': { v: 263.26, cur: 'EUR' },
 };
-const numbeoName = c => NUMBEO_ALIAS[c.city + '|' + c.country] || c.city + ', ' + c.country;
+const sourceName = c => SOURCE_ALIAS[c.city + '|' + c.country] || c.city + ', ' + c.country;
 const byCountry = {};
 DATA.forEach(c => { (byCountry[c.country] = byCountry[c.country] || []).push(c); });
 
 function averageOf(c){
-  const k = numbeoName(c), rate = usdTo(c.currency);
+  const k = sourceName(c), rate = usdTo(c.currency);
   if(!rate) throw new Error('no exchange rate for ' + c.currency);
   const page = CITY_PAGE[c.city + '|' + c.country];
   if(page) return { avg: page.v / usdTo(page.cur) * rate, from: 'current' };
@@ -129,7 +129,7 @@ function averageOf(c){
     const old = OLD[t][k];
     if(old == null) continue;
     // Another city of the same country in both tables carries it forward.
-    const anchor = byCountry[c.country].map(numbeoName).find(n => n !== k && CUR[n] != null && OLD[t][n] != null);
+    const anchor = byCountry[c.country].map(sourceName).find(n => n !== k && CUR[n] != null && OLD[t][n] != null);
     if(anchor) return { avg: CUR[anchor] * NYC_NET_USD * rate * old / OLD[t][anchor], from: t };
     return { avg: old * NYC_NET_USD * rate, from: t, vsNyc: true };
   }
@@ -530,15 +530,15 @@ for(const c of DATA){
   cities[c.city + '|' + c.country] = {
     avg: round(a.avg),
     ...(a.from && a.from !== 'current' ? { avg_from: a.from } : {}),
-    ...(a.avg == null ? { avg_why: a.low ? 'Numbeo\'s average for it falls below its own minimum wage, too few contributors to trust' : 'Numbeo has no salary data for it' } : {}),
+    ...(a.avg == null ? { avg_why: a.low ? 'The survey\'s average for it falls below its own minimum wage, too few contributors to trust' : 'The survey has no salary data for it' } : {}),
     min: round(m.min),
     ...(m.min != null ? { min_year: m.year, min_src: m.src } : { min_why: m.why }),
   };
 }
 const out = {
   metadata: {
-    updated_on: NUMBEO_DATE,
-    avg: { source: 'Numbeo', url: 'https://www.numbeo.com/cost-of-living/rankings_current.jsp', date: NUMBEO_DATE, fx_date: FX_DATE,
+    updated_on: AVG_DATE,
+    avg: { source: 'crowd-sourced survey', date: AVG_DATE, fx_date: FX_DATE,
            note: 'Average monthly net salary: Local Purchasing Power x Cost of Living Plus Rent, against New York at USD ' + NYC_NET_USD },
     median: { source: 'ILOSTAT', url: 'https://ilostat.ilo.org/topics/wages/', note: 'Median over mean monthly earnings of employees, by country; where ILOSTAT has none, from OECD, Eurostat or the statistics office' },
     min: { note: 'Statutory gross minimum wage a month: hourly x 40 x 52/12, daily x 26, weekly x 52/12' },
