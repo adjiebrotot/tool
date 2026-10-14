@@ -6,8 +6,6 @@
 
    A scene is
      base    SVG markup of the network (branches, devices, bus bars)
-     marks   SVG markup that belongs to the results (flow arrows, standing still)
-     arrows  the same arrows on the move: [{ kind:'p'|'q', color, id, parts }]
      lanes   the moving flow dashes: [{ d, kind:'p'|'q', n, rev, color }]
      labels  text: [{ x, y, t, anchor, mono, bold, size, fill, res }]
      bbox    the drawing's extent in diagram px                            */
@@ -306,7 +304,7 @@
     };
     var by = display.colourBy || 'none';
     var vmin = display.vmin || 0.95, vmax = display.vmax || 1.05, lmax = display.loadMax || 100;
-    var base = '', marks = '', lanes = [], arrows = [], labels = [];
+    var base = '', lanes = [], labels = [];
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     function grow(x, y){ if(x < minX) minX = x; if(x > maxX) maxX = x; if(y < minY) minY = y; if(y > maxY) maxY = y; }
     function label(x, y, t, o){
@@ -416,31 +414,6 @@
       if(!isFinite(a) || a < Math.max(1e-6, max * 0.005)) return 0;
       return clamp(Math.ceil(6 * a / max), 1, 6);
     }
-    /* A line's arrow on the move: it rides with the lane under it, at the speed of
-       that lane's dashes (12 px per FLOW_T / n seconds), from the end the power
-       leaves to the end it reaches. When the two ends disagree (a cable feeding
-       reactive power out of both ends, or drawing it in at both), each half has
-       its own arrow, going the way its own end goes. */
-    function addArrow(g, kind, f0, f1, max, id){
-      var n0 = speed(f0, max), n1 = speed(f1, max);
-      if(!n0 && !n1) return;
-      var fw0 = f0 > 0, fw1 = f1 < 0;
-      if(!n0){ n0 = n1; fw0 = fw1; }
-      if(!n1){ n1 = n0; fw1 = fw0; }
-      var v = function(n){ return 12 * n / LF.FLOW_T; };
-      var hv = halves(g.pts, g), half = g.len / 2, parts = [];
-      if(half < 1) return;
-      if(fw0 === fw1){
-        var tA = half / v(fw0 ? n0 : n1), tB = half / v(fw0 ? n1 : n0);
-        parts.push({ d: pathD(fw0 ? g.pts : g.pts.slice().reverse()), dur: tA + tB, split: tA / (tA + tB), len: 2 * half });
-      } else {
-        [0, 1].forEach(function(k){
-          var fw = k ? fw1 : fw0, pts = fw ? hv[k] : hv[k].slice().reverse();
-          parts.push({ d: pathD(pts), dur: half / v(k ? n1 : n0), split: null, len: half });
-        });
-      }
-      arrows.push({ kind: kind, color: kind === 'p' ? C.p : C.q, id: id, parts: parts });
-    }
     function addLane(pts, kind, f, forward, max, id){
       var n = speed(f, max);
       if(!n || pts.length < 2) return;
@@ -486,19 +459,6 @@
         if(ac && e.c !== 'Link'){
           addLane(hv[0], 'q', r.q0, r.q0 > 0, maxQ, e.id);
           addLane(hv[1], 'q', r.q1, r.q1 < 0, maxQ, e.id);
-        }
-        // An arrowhead on the line, pointing the way active power goes. It stands at
-        // the middle while nothing moves, and travels with the flow while it does.
-        if(e.c === 'Line'){
-          addArrow(g, 'p', r.p0, r.p1, maxP, e.id);
-          if(ac) addArrow(g, 'q', r.q0, r.q1, maxQ, e.id);
-        }
-        var fwd = r.p0 >= 0;
-        if(Math.abs(r.p0) > 1e-9 && e.c !== 'Transformer' && e.c !== 'Link'){
-          var ax = g.ux * (fwd ? 1 : -1), ay = g.uy * (fwd ? 1 : -1);
-          var tx = g.mx + ax * 5, ty = g.my + ay * 5;
-          marks += '<path d="M' + r1(tx) + ' ' + r1(ty) + 'L' + r1(tx - ax * 9 - ay * 5) + ' ' + r1(ty - ay * 9 + ax * 5) +
-                   'L' + r1(tx - ax * 9 + ay * 5) + ' ' + r1(ty - ay * 9 - ax * 5) + 'Z" fill="' + C.p + '"/>';
         }
       }
       // Labels beside the middle of the route.
@@ -628,7 +588,7 @@
 
     placeLabels();
     if(!isFinite(minX)){ minX = 0; minY = 0; maxX = 400; maxY = 200; }
-    return { base: base, marks: marks, arrows: arrows, lanes: lanes, labels: labels, bbox: { x: minX, y: minY, w: maxX - minX, h: maxY - minY }, colours: C };
+    return { base: base, lanes: lanes, labels: labels, bbox: { x: minX, y: minY, w: maxX - minX, h: maxY - minY }, colours: C };
   };
 
   /* ── SVG text for a list of labels ── */
@@ -644,24 +604,6 @@
     });
     return s;
   };
-  /* ── SVG for the moving arrows of one kind (or both) ──
-     SMIL, so it moves in an exported SVG file too. A path's arrowhead sits on the
-     route's own line, fades in as it leaves and out as it arrives. */
-  LF.arrowSvg = function(arrows, kind){
-    var s = '';
-    arrows.forEach(function(a){
-      if(kind && a.kind !== kind) return;
-      a.parts.forEach(function(pt){
-        var dur = r3(pt.dur) + 's', fade = Math.min(0.2, 8 / Math.max(pt.len, 1));
-        s += '<path class="fa fa-' + a.kind + '" d="M4.5 0L-4.5 -5L-4.5 5Z" fill="' + a.color + '" data-id="' + a.id + '">' +
-          '<animateMotion dur="' + dur + '" repeatCount="indefinite" rotate="auto" path="' + pt.d + '"' +
-          (pt.split !== null ? ' calcMode="linear" keyPoints="0;0.5;1" keyTimes="0;' + r3(pt.split) + ';1"' : '') + '/>' +
-          '<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;' + r3(fade) + ';' + r3(1 - fade) + ';1" dur="' + dur + '" repeatCount="indefinite"/></path>';
-      });
-    });
-    return s;
-  };
-  function r3(x){ return Math.round(x * 1000) / 1000; }
   // The dash each kind of lane is drawn with: P a dash, Q a dot. One period: 12 px.
   LF.LANE = { p: { dash: [6, 6], width: 2.6 }, q: { dash: [0.01, 11.99], width: 3.2 } };
   LF.FLOW_T = 1.6; // seconds for the slowest lane to move one period

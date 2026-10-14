@@ -2469,16 +2469,10 @@
     },
 
     /* ── Load Flow Simulator ──
-       MW, MVAr and kV are units next to numbers there, so they are left alone. */
+       Its readers work in power systems, so the field's own units and words
+       (p.u., MW, MVAr, kV, AC, DC, HV, HVDC, PV, PQ) are left alone. Only the
+       names a power engineer may not have met are explained. */
     'loadflow-simulator': {
-      AC:    ['Alternating Current', 'here, the full load flow, with voltage magnitudes, reactive power and losses'],
-      DC:    ['Direct Current', 'here, the linear load flow: active power only, every voltage at 1 p.u. and no losses'],
-      HV:    ['High Voltage'],
-      LV:    ['Low Voltage'],
-      HVDC:  ['High Voltage Direct Current', 'a converter link that sends a set amount of power from one AC network to another'],
-      PV:    ['P and V held', 'a generator or bus that holds its active power (P) and its voltage (V)'],
-      PQ:    ['P and Q held', 'a generator, load or bus with a fixed active power (P) and reactive power (Q)'],
-      'p.u.': ['per unit', 'a quantity divided by its base, so a bus at 1.0 p.u. sits at its nominal voltage'],
       PyPSA: ['Python for Power System Analysis', 'the open-source power system toolbox this engine is ported from'],
       WSCC:  ['Western Systems Coordinating Council', 'the US body whose 9-bus test system became a textbook standard']
     },

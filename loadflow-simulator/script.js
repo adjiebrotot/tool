@@ -62,14 +62,23 @@
   function buildLabelMatrix(){
     var html = '';
     LF.CLASSES.forEach(function(c){
-      html += '<div class="field-group lbl-group"><div class="group-title">' + CLASS_TITLE[c] + '</div><div class="lbl-chips">';
+      html += '<div class="field-group lbl-group" data-c="' + c + '"><div class="group-title">' + CLASS_TITLE[c] + '</div><div class="lbl-chips">';
       LF.LABELS[c].forEach(function(q){
         var on = LABEL_DEFAULTS[c].indexOf(q) >= 0;
         html += '<label class="lbl-chip"><input type="checkbox" id="' + lbId(c, q) + '"' + (on ? ' checked' : '') + '/>' + QTY[q] + '</label>';
       });
       html += '</div></div>';
     });
-    $('labelMatrix').innerHTML = html;
+    $('labelMatrix').innerHTML = html + '<p class="note" id="lblEmpty" hidden>Add elements to the diagram to choose their labels.</p>';
+  }
+  // Only the kinds on the diagram are listed. A hidden group keeps its boxes, so
+  // its choices still save and come back with the elements.
+  function syncLabelMatrix(){
+    var used = {};
+    app.model.el.forEach(function(e){ used[e.c] = 1; });
+    Array.prototype.forEach.call(document.querySelectorAll('#labelMatrix .lbl-group'), function(g){ g.hidden = !used[g.getAttribute('data-c')]; });
+    var empty = $('lblEmpty');
+    if(empty) empty.hidden = Object.keys(used).length > 0;
   }
   function num(id, d){ var v = parseFloat($(id).value); return isFinite(v) ? v : d; }
   function display(){
@@ -115,18 +124,15 @@
       '<defs><pattern id="lfDots" width="' + G + '" height="' + G + '" patternUnits="userSpaceOnUse"><circle cx="' + G / 2 + '" cy="' + G / 2 + '" r="0.8" fill="' + C.border + '"/></pattern></defs>' +
       (app.readOnly ? '' : '<rect class="lf-grid" x="-100000" y="-100000" width="200000" height="200000" fill="url(#lfDots)" pointer-events="none"/>') +
       '<g class="lyr-base">' + sc.base + '</g>' +
-      '<g class="lyr-res"><g class="lyr-mark"><g class="fa-still">' + sc.marks + '</g>' + LF.arrowSvg(sc.arrows) + '</g><g class="lyr-flow">' + LF.laneSvg(sc.lanes) + '</g></g>' +
+      '<g class="lyr-res"><g class="lyr-flow">' + LF.laneSvg(sc.lanes) + '</g></g>' +
       '<g class="lyr-hit">' + hitLayer() + '</g>' +
       '<g class="lyr-lbl">' + LF.labelSvg(sc.labels, C, function(l){ return !l.res; }) + '</g>' +
       '<g class="lyr-res">' + LF.labelSvg(sc.labels, C, function(l){ return l.res; }) + '</g>' +
       '<g class="lyr-ovl"></g><g class="lyr-tmp"></g>';
     svg.classList.toggle('no-p', !d.animP);
     svg.classList.toggle('no-q', !d.animQ);
-    // The arrow on a line follows active power while its dashes move; with only the
-    // reactive dots on, it follows reactive power; with nothing moving, it stands still.
-    var shown = shownResults();
-    svg.setAttribute('data-arrow', d.animP ? 'p' : d.animQ && shown && shown.report.method === 'ac' ? 'q' : 'still');
     $('gifBtn').hidden = !(shownResults() && (d.animP || d.animQ));
+    syncLabelMatrix();
     renderOverlay();
     applyView();
     setSig(d);
@@ -918,30 +924,36 @@
     var html = '<div class="field-row"><div class="field-label">Network name</div><input class="txt-input" type="text" id="netName" maxlength="60" value="' + esc(m.name) + '" placeholder="My network"/></div>' +
       '<p class="stat-line"><strong>' + (counts.Bus || 0) + '</strong> buses, <strong>' + ((counts.Line || 0) + (counts.Transformer || 0) + (counts.Link || 0)) + '</strong> branches, <strong>' +
       ((counts.Generator || 0) + (counts.Load || 0) + (counts.ShuntImpedance || 0) + (counts.StorageUnit || 0)) + '</strong> devices, <strong>' + isl + '</strong> island' + (isl === 1 ? '' : 's') + '.</p>';
-    html += '<div class="field-group"><div class="group-title">Checks</div><div class="fg-body"><ul class="issue-list" id="issueList">' + issuesHtml(v) + '</ul></div></div>';
+    // Checks show only when there is something to fix or to know.
+    html += '<div class="field-group" id="checksGroup"' + (v.errors.length || v.warnings.length ? '' : ' hidden') + '><div class="group-title">Checks</div><div class="fg-body"><ul class="issue-list" id="issueList">' + issuesHtml(v) + '</ul></div></div>';
     html += '<div class="field-group"><div class="group-title">Elements</div>';
-    LF.CLASSES.forEach(function(c){
-      var list = m.el.filter(function(x){ return x.c === c; });
+    EL_GROUPS.forEach(function(gr){
+      var list = m.el.filter(gr[1]);
       if(!list.length) return;
-      html += '<div class="el-list">' + list.map(function(x){
-        var free = LF.DEVICE[c] && !x.bus;
+      html += '<div class="el-group"><div class="el-group-title">' + gr[0] + '</div><div class="el-list">' + list.map(function(x){
+        var free = LF.DEVICE[x.c] && !x.bus;
         return '<button type="button" class="el-chip' + (free ? ' is-free' : '') + '" data-sel="' + x.id + '">' + esc(LF.nameOf(x)) + '</button>';
-      }).join('') + '</div>';
+      }).join('') + '</div></div>';
     });
-    html += '</div><div class="field-group"><div class="group-title">How to draw</div><ul class="how-to">' +
-      '<li>Drag a part from the toolbar onto the diagram. A generator, load, shunt or storage unit snaps to the nearest bus.</li>' +
-      '<li>To connect two buses, pick Line, Transformer or HVDC link, then drag from one bus to the other. Or select a bus and drag its <b>+</b> knob.</li>' +
-      '<li>Drag a bus, a device or a branch\'s middle to move it; drag a bus end to resize it. Drag empty space to pan, scroll to zoom.</li>' +
-      '<li><kbd>Del</kbd> deletes, <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes, <kbd>Ctrl</kbd>+<kbd>D</kbd> duplicates, <kbd>R</kbd> turns a bus upright, <kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs.</li></ul></div>';
+    html += '</div>';
     box.innerHTML = html;
   }
+  // The element list, one group per kind, in the palette's order.
+  var isC = function(c){ return function(x){ return x.c === c; }; };
+  var EL_GROUPS = [['Buses', isC('Bus')], ['Lines', isC('Line')], ['Transformers', isC('Transformer')],
+    ['Generators', function(x){ return x.c === 'Generator' && !x.grid; }], ['External grids', function(x){ return x.c === 'Generator' && !!x.grid; }],
+    ['Loads', isC('Load')], ['Shunts', isC('ShuntImpedance')], ['Storage', isC('StorageUnit')], ['HVDC links', isC('Link')]];
   function doneHtml(){ return '<div class="insp-done"><button type="button" class="btn-primary" id="inspDone" style="width:100%;margin-top:10px">✓ Done</button></div>'; }
   function issuesHtml(v){
     var items = v.errors.map(function(x){ return '<li class="err" data-sel="' + (x.id === null ? '' : x.id) + '">' + esc(x.msg) + '</li>'; })
       .concat(v.warnings.map(function(x){ return '<li data-sel="' + (x.id === null ? '' : x.id) + '">' + esc(x.msg) + '</li>'; }));
     return items.length ? items.join('') : '<li class="none">No problems found.</li>';
   }
-  function renderIssues(v){ var el = $('issueList'); if(el) el.innerHTML = issuesHtml(v); }
+  function renderIssues(v){
+    var el = $('issueList'), grp = $('checksGroup');
+    if(el) el.innerHTML = issuesHtml(v);
+    if(grp) grp.hidden = !(v.errors.length || v.warnings.length);
+  }
   function elementHtml(e){
     var byId = LF.byId(app.model);
     var kind = e.c === 'Generator' && e.grid ? 'External grid' : e.c === 'Generator' ? 'Generator' : e.c === 'ShuntImpedance' ? 'Shunt impedance' : e.c === 'StorageUnit' ? 'Storage unit' : e.c === 'Link' ? 'HVDC link' : e.c;
