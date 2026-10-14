@@ -204,7 +204,7 @@
   .qs-badge b { color: var(--accent); font-weight: 600; }
   .qs-badge .qs-icon { color: var(--accent); flex-shrink: 0; }
 
-  .try-link {
+  .dl-json-link {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -220,13 +220,13 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .try-link:hover { border-color: var(--accent2); background: rgba(143,205,189,0.16); }
-  body.light .try-link {
+  .dl-json-link:hover { border-color: var(--accent2); background: rgba(143,205,189,0.16); }
+  body.light .dl-json-link {
     background: rgba(46,158,122,0.08);
     border-color: rgba(46,158,122,0.35);
     color: var(--accent2);
   }
-  body.light .try-link:hover { background: rgba(46,158,122,0.16); border-color: var(--accent2); }
+  body.light .dl-json-link:hover { background: rgba(46,158,122,0.16); border-color: var(--accent2); }
 
   /* ── SUB-SECTIONS ────────────────────────────────────────────────── */
   .sub-section { margin-bottom: 24px; }

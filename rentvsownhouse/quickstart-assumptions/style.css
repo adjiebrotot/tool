@@ -55,8 +55,10 @@ body.light .qa-table tbody tr:hover td{background:rgba(90,145,232,.05)}
 
 /* A city's homes and terms. */
 .qa-homes td.qa-home{white-space:normal;min-width:190px;max-width:300px}
-.qa-open{font-family:'DM Sans',sans-serif;font-weight:600;font-size:.8rem;color:var(--accent);text-decoration:none;white-space:nowrap}
-.qa-open:hover{text-decoration:underline}
+.dl-json-link{display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(143,205,189,0.35);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--accent2);background:rgba(143,205,189,0.08);text-decoration:none;transition:border-color 0.15s,background 0.15s;white-space:nowrap;flex-shrink:0}
+.dl-json-link:hover{border-color:var(--accent2);background:rgba(143,205,189,0.16)}
+body.light .dl-json-link{background:rgba(46,158,122,0.08);border-color:rgba(46,158,122,0.35);color:var(--accent2)}
+body.light .dl-json-link:hover{background:rgba(46,158,122,0.16);border-color:var(--accent2)}
 .qa-terms td.qa-val{text-align:left;white-space:normal;min-width:150px;font-family:'DM Sans',sans-serif}
 .qa-terms td.qa-basis{text-align:left;white-space:normal;min-width:260px;font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;line-height:1.45}
 .qa-terms th:nth-child(2),.qa-terms th:nth-child(3){text-align:left}
