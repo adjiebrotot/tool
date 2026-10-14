@@ -137,7 +137,7 @@ let tickerFetchInFlight = {};
 
 // Optimise mode (see OPTIMISE below): the settings swept on the active portfolio,
 // and the sweep on the board (null while the board shows a comparison).
-let optVars = [];                // [{key, start, end, steps, slack}], at most two
+let optVars = [];                // [{key, start, end, steps, slack, pick}], at most two
 let optResult = null;
 let optPick = [0, 0];            // which tested values the Detailed Breakdown shows
 let optPickWanted = null;        // a saved file's pick, applied once its sweep has run
@@ -2071,7 +2071,7 @@ function optSchedOf(p, which){ return which==='rebalSched' ? p.rebalSched : p.to
 // The spec of one sweepable setting of portfolio `p`, or null when that setting
 // is not sweepable on `p` as it stands. A key names the setting:
 //   topup.amount, topup.yearlyIncrease, rf.rate, rebal.buyFee, rebal.sellFee,
-//   rebal.lookbackMonths, execTiming,
+//   rebal.lookbackMonths,
 //   topupSched.<f> and rebalSched.<f> for f in period, dom, weekday, parity,
 //     quarterStart, month,
 //   weight:<assetId>, rank:<index>,
@@ -2100,8 +2100,6 @@ function optSpec(key, p){
     case 'rebal.lookbackMonths': if(method!=='dynamic-momentum') return null;
       return list({label:'Momentum lookback', options:[{v:1,l:'1 month'},{v:3,l:'3 months'},{v:6,l:'6 months'},{v:12,l:'12 months'}],
         get:q=>q.rebal.lookbackMonths||6, apply:(x,v)=>{ x.p.rebal.lookbackMonths=v; }});
-    case 'execTiming': return list({label:'Trade at', options:OPT_EXEC,
-      get:()=>currentExecTiming, apply:(x,v)=>{ x.exec=v; }});
   }
   let m=/^(topupSched|rebalSched)\.(period|dom|weekday|parity|quarterStart|month)$/.exec(key);
   if(m){
@@ -2190,7 +2188,7 @@ function optSpec(key, p){
 }
 // The range a setting opens on the first time it is picked.
 function optDefaultRange(spec, p){
-  if(spec.kind==='list') return {start:spec.options[0].v, end:spec.options[spec.options.length-1].v, steps:spec.options.length};
+  if(spec.kind==='list') return {start:spec.options[0].v, end:spec.options[spec.options.length-1].v, steps:spec.options.length, pick:spec.options.map(o=>o.v)};
   const base=Number(spec.get(p))||0;
   const r=spec.def ? spec.def(base) : optAround(spec, base, spec.steps);
   return Object.assign({steps:11}, r);
@@ -2215,7 +2213,8 @@ function optClash(key, vars){
 }
 
 // The values a swept setting takes, in order, as they are run: a list setting
-// runs every option from Start to End, a number runs `steps` evenly spaced
+// runs the options picked, in the list's order (a range saved before picking
+// existed, with only Start and End, runs every option between them), a number runs `steps` evenly spaced
 // values, each rounded to the precision its field takes (whole percents for a
 // weight, tenths for a trigger's move), so every value that ran is one a reader
 // could type, and never twice.
@@ -2223,6 +2222,7 @@ function optValues(spec, vr){
   if(!spec || !vr) return [];
   if(spec.kind==='list'){
     const vals=spec.options.map(o=>o.v);
+    if(Array.isArray(vr.pick)){ const want=new Set(vr.pick.map(String)); return vals.filter(x=>want.has(String(x))); }
     let a=vals.findIndex(x=>String(x)===String(vr.start)), b=vals.findIndex(x=>String(x)===String(vr.end));
     if(a<0 || b<0) return [];
     if(a>b){ const t=a; a=b; b=t; }
@@ -2353,9 +2353,11 @@ function optPlan(p){
   const values=optVars.map((v,k)=>optValues(specs[k], v));
   return { specs, values, runs:values.reduce((n,a)=>n*a.length, 1) };
 }
-// "0 to 100%", "7 to 21 bars", "Monthly to Yearly": the unit said once, at the end.
+// "0 to 100%", "7 to 21 bars": the unit said once, at the end. A list names
+// the values it picked: "Monthly, Quarterly", "Mon, Wed, Fri".
 function optRangeText(spec, vals){
   if(!vals.length) return '';
+  if(spec.kind==='list') return vals.length<=4 ? vals.map(v=>spec.fmt(v)).join(', ') : spec.fmt(vals[0])+', '+spec.fmt(vals[1])+' … '+spec.fmt(vals[vals.length-1]);
   const first=(spec.kind==='num' && spec.unit!=='money') ? optFmtNum(Object.assign({}, spec, {unit:''}), vals[0]) : spec.fmt(vals[0]);
   return first+' to '+spec.fmt(vals[vals.length-1]);
 }
@@ -2367,7 +2369,7 @@ function pruneOptVars(){
   const keep=[];
   optVars.forEach(v=>{
     const s=optSpec(v.key, p);
-    if(keep.length>=OPT_MAX_VARS || !s || (s.kind==='list' && !optValues(s, v).length) || optClash(v.key, keep)) return;
+    if(keep.length>=OPT_MAX_VARS || !s || (s.kind==='list' && !Array.isArray(v.pick) && !optValues(s, v).length) || optClash(v.key, keep)) return;
     // A slack that is gone, or is itself being swept, falls back to sharing.
     if(s.group && v.slack!=='even'){
       const others=optVars.filter(o=>o!==v).map(o=>optSpec(o.key, p)).filter(o=>o && o.group===s.group).map(o=>o.member);
@@ -2464,11 +2466,11 @@ function openOptModal(key, from){
   $('optNumFields').hidden=listy;
   $('optListFields').hidden=!listy;
   if(listy){
-    ['optStartSel','optEndSel'].forEach(id=>{
-      $(id).innerHTML=spec.options.map((o,i)=>`<option value="${i}">${escapeHtml(o.l)}</option>`).join('');
-    });
-    $('optStartSel').value=String(Math.max(0, spec.options.findIndex(o=>String(o.v)===String(vr.start))));
-    $('optEndSel').value=String(Math.max(0, spec.options.findIndex(o=>String(o.v)===String(vr.end))));
+    // An old Start..End range opens as the options it ran, picked.
+    if(!Array.isArray(vr.pick)) vr.pick=optValues(spec, vr);
+    const on=new Set(vr.pick.map(String)), sel=$('optPickSel');
+    sel.innerHTML=spec.options.map((o,i)=>`<option value="${i}"${on.has(String(o.v))?' selected':''}>${escapeHtml(o.l)}</option>`).join('');
+    sel.size=Math.min(spec.options.length, 7);
   } else {
     const u=optUnitAffix(spec);
     [['optStart','optStartPre','optStartSuf',vr.start],['optEnd','optEndPre','optEndSuf',vr.end]].forEach(([id,pre,suf,val])=>{
@@ -2499,7 +2501,7 @@ function openOptModal(key, from){
   renderOptModalNote();
   const ov=$('optModal'); ov.hidden=false;
   document.body.classList.add('opt-modal-open');
-  const first=listy ? $('optStartSel') : $('optStart');
+  const first=listy ? $('optPickSel') : $('optStart');
   setTimeout(()=>{ try{ first.focus(); if(first.select) first.select(); }catch(_){} }, 0);
 }
 function closeOptModal(){
@@ -2521,7 +2523,7 @@ function renderOptModalNote(){
     (/Sched\.period$/.test(spec.key) ? ' Each period uses the days its schedule shows when you pick it.' : '');
   const vals=optValues(spec, vr);
   let html;
-  if(vals.length<2) html='<span class="bad">Start and End give one value. Widen the range.</span>';
+  if(vals.length<2) html='<span class="bad">'+(spec.kind==='list' ? 'Pick at least two values.' : 'Start and End give one value. Widen the range.')+'</span>';
   else {
     const shown=vals.length<=8 ? vals.map(v=>spec.fmt(v)).join(', ') : vals.slice(0,3).map(v=>spec.fmt(v)).join(', ')+' … '+vals.slice(-2).map(v=>spec.fmt(v)).join(', ');
     html=vals.length+' values: '+escapeHtml(shown)+'.';
@@ -2565,12 +2567,12 @@ $('optSteps').addEventListener('input',e=>{
   vr.steps=optClamp(n, 2, OPT_MAX_STEPS);
   optModalEdited();
 });
-['optStartSel','optEndSel'].forEach(id=>$(id).addEventListener('change',e=>{
+$('optPickSel').addEventListener('change',e=>{
   const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActive()); if(!spec || spec.kind!=='list') return;
-  const o=spec.options[+e.target.value]; if(!o) return;
-  vr[id==='optStartSel'?'start':'end']=o.v;
+  vr.pick=[...e.target.selectedOptions].map(o=>spec.options[+o.value]).filter(Boolean).map(o=>o.v);
+  if(vr.pick.length){ vr.start=vr.pick[0]; vr.end=vr.pick[vr.pick.length-1]; }
   optModalEdited();
-}));
+});
 $('optSlack').addEventListener('change',e=>{
   const vr=optEditVar(); if(!vr) return;
   vr.slack=e.target.value==='even' ? 'even' : +e.target.value;
@@ -3046,7 +3048,7 @@ function simBlockReason(){
     for(let k=0;k<optVars.length;k++){
       const sp=plan.specs[k];
       if(!sp) return 'A swept setting no longer applies. Pick it again.';
-      if(plan.values[k].length<2) return `${sp.label}: Start and End give one value. Widen the range.`;
+      if(plan.values[k].length<2) return sp.kind==='list' ? `${sp.label}: pick at least two values.` : `${sp.label}: Start and End give one value. Widen the range.`;
     }
     if(plan.runs>OPT_MAX_RUNS) return `${plan.runs} runs is more than the ${OPT_MAX_RUNS} an optimisation allows. Lower the steps.`;
     return '';
@@ -3885,6 +3887,7 @@ function readOptVars(o){
     if(!v || typeof v.key!=='string' || seen.has(v.key) || out.length>=8) return;
     seen.add(v.key);
     const r={ key:v.key, start:v.start, end:v.end, steps:optClamp(parseInt(v.steps,10)||11, 2, OPT_MAX_STEPS) };
+    if(Array.isArray(v.pick)) r.pick=v.pick.filter(x=>typeof x==='string' || typeof x==='number').slice(0, OPT_MAX_STEPS);
     if(v.slack!=null) r.slack=(v.slack==='even' || !isFinite(+v.slack)) ? 'even' : +v.slack;
     out.push(r);
   });

@@ -171,8 +171,8 @@ main .card{transition:opacity var(--transition-fast)}
    varies. The gauge is shaped like a tip icon (a small round badge beside the
    label), but it is a button: hollow while the field is only a candidate,
    filled once it is being swept. */
-.opt-btn{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;padding:0;margin-left:2px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;flex-shrink:0;vertical-align:middle;font:inherit;line-height:1;transition:background var(--transition-fast),color var(--transition-fast),opacity var(--transition-fast)}
-.opt-btn .tico{width:12px;height:12px;vertical-align:0}
+.opt-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;padding:0;margin-left:2px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;flex-shrink:0;vertical-align:middle;font:inherit;line-height:1;transition:background var(--transition-fast),color var(--transition-fast),opacity var(--transition-fast)}
+.opt-btn .tico{width:10px;height:10px;vertical-align:0}
 .opt-btn:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
 .opt-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .opt-btn.on{background:var(--gold);color:var(--text-inv)}
@@ -216,6 +216,9 @@ body.opt-modal-open{overflow:hidden}
 .opt-modal-sub{margin:0 0 4px;font-size:.8rem;color:var(--muted);line-height:1.45}
 .opt-range-row{display:flex;gap:12px}
 .opt-range-row[hidden]{display:none}
+.opt-modal .label-note{color:var(--muted);font-weight:400;font-size:.78rem}
+.opt-pick-list{height:auto;font-size:.83rem;padding:4px 6px}
+.opt-pick-list option{padding:3px 6px;border-radius:4px}
 .opt-range-row>.field-row{flex:1 1 0;min-width:0;border-top:none}
 .opt-modal .field-row[hidden]{display:none}
 .opt-preview{margin:6px 0 8px;font-size:.78rem;color:var(--muted);line-height:1.45}
