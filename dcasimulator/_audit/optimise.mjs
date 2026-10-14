@@ -256,7 +256,6 @@ async function setByForm(page, key, v, sc, ctx){
   if (key === 'rebal.buyFee'){ await sub(page, 'rebal'); return fill(page, '#buyFee', v); }
   if (key === 'rebal.sellFee'){ await sub(page, 'rebal'); return fill(page, '#sellFee', v); }
   if (key === 'rebal.lookbackMonths'){ await sub(page, 'rebal'); return page.selectOption('#lookbackMonths', { value: String(v) }); }
-  if (key === 'execTiming'){ await tab(page, 'settings'); return page.selectOption('#execTiming', { value: String(v) }); }
   if ((m = /^(topupSched|rebalSched)\.(\w+)$/.exec(key))) return schedSet(page, m[1], m[2], v, sc);
   if ((m = /^trig:(\d+):(\w+)$/.exec(key))){
     await sub(page, 'rebal');
@@ -304,11 +303,11 @@ function valuesOf(v){
   const k = v.key, f = k.split(/[.:]/).pop();
   let L = null;
   if (k === 'rebal.lookbackMonths') L = [1, 3, 6, 12];
-  else if (k === 'execTiming') L = ['close', 'next-open', 'next-close'];
   else if (/Sched\.(period|weekday|parity|quarterStart|month)$/.test(k))
     L = { period: ['weekly', 'fortnightly', 'monthly', 'quarterly', 'yearly'], weekday: [1, 2, 3, 4, 5], parity: [0, 1], quarterStart: [1, 2, 3], month: [1,2,3,4,5,6,7,8,9,10,11,12] }[f];
   else if (/:freq$/.test(k)) L = ['monthly', 'weekly'];
   else if (/:from$/.test(k)) L = ['monthly', 'weekly'].includes(v.start) ? ['monthly', 'weekly'] : ['top', 'bottom'];
+  if (L && Array.isArray(v.pick)) return L.filter(x => v.pick.map(String).includes(String(x)));
   if (L){ const a = L.indexOf(v.start), b = L.indexOf(v.end); return L.slice(Math.min(a, b), Math.max(a, b) + 1); }
   return rangeValues(v, /dom$|lookback$|Period$|Len$|macd(Fast|Slow|Signal)$|Oversold$|Threshold$|^weight:|^rank:/.test(k), /:pct$|:bbStd$/.test(k) ? 1 : 2);
 }
@@ -406,6 +405,8 @@ S.ruleAdx = ruleWith({ type: 'tech-adx', period: 'monthly', eom: true });
 S.ruleAsset = scenario({ rebal: Object.assign({}, RULE, { reserveMode: 'asset', reserveAssetId: 2 }), assets: [
   asset(1, 0, 50, { type: 'pct', direction: 'drop', pct: 6, ref: 'bottom', lookback: 30 }), asset(2, 1, 30), asset(3, 2, 20, { type: 'at-topup' })] });
 const V = (key, start, end, steps, slack) => Object.assign({ key, start, end, steps: steps || 2 }, slack != null ? { slack } : {});
+// A list setting swept over values picked one by one (Start and End ride along).
+const P = (key, pick) => ({ key, start: pick[0], end: pick[pick.length - 1], steps: pick.length, pick });
 
 const CASES = [
   // the top-up
@@ -424,7 +425,6 @@ const CASES = [
   { name: 'Risk-free rate',               scenario: S.cw, vars: [V('rf.rate', 0, 6, 4)] },
   { name: 'Buying fee',                   scenario: S.cw, vars: [V('rebal.buyFee', 0, 1, 3)] },
   { name: 'Selling fee',                  scenario: S.cw, vars: [V('rebal.sellFee', 0, 1.5, 4)] },
-  { name: 'Trade at',                     scenario: S.cw, vars: [V('execTiming', 'close', 'next-close')] },
   // the rebalance schedule
   { name: 'Rebalance period',             scenario: S.cw, vars: [V('rebalSched.period', 'weekly', 'yearly')] },
   { name: 'Rebalance months, quarterly',  scenario: S.cw, vars: [V('rebalSched.quarterStart', 1, 3)] },
@@ -464,6 +464,11 @@ const CASES = [
   { name: 'ADX threshold',                scenario: S.ruleAdx, vars: [V('trig:3:adxThreshold', 15, 40, 3)] },
   { name: 'Trigger falls by, asset reserve', scenario: S.ruleAsset, vars: [V('trig:1:pct', 3, 12, 3)] },
   { name: 'Trigger lookback, previous bottom', scenario: S.ruleAsset, vars: [V('trig:1:lookback', 10, 60, 3)] },
+  // list settings swept over picked values, gaps and all
+  { name: 'Picked: top-up weekdays Mon, Wed, Fri', scenario: S.topWeekly, vars: [P('topupSched.weekday', [1, 3, 5])] },
+  { name: 'Picked: top-up periods weekly and quarterly', scenario: S.cw, vars: [P('topupSched.period', ['weekly', 'quarterly'])] },
+  { name: 'Picked: rebalance months Jan and Sep', scenario: S.cwRebalYearly, vars: [P('rebalSched.month', [9, 1])] },
+  { name: 'Picked: lookback 1 and 12 months', scenario: S.mom, vars: [P('rebal.lookbackMonths', [12, 1])] },
   // two settings at once
   { name: 'Two: amount x top-up period',  scenario: S.cw, vars: [V('topup.amount', 500, 1500, 3), V('topupSched.period', 'monthly', 'quarterly')] },
   { name: 'Two: weight x RSI period',     scenario: S.rule, vars: [V('weight:1', 20, 80, 3, 'even'), V('trig:3:rsiPeriod', 7, 21, 3)] },
@@ -540,6 +545,8 @@ function units(){
   const list = { kind: 'list', options: [{ v: 1 }, { v: 3 }, { v: 6 }, { v: 12 }] };
   ok(U.optValues(list, { start: 12, end: 3, steps: 2 }).join() === '3,6,12', 'a list runs every option between its ends');
   ok(U.optValues(list, { start: 2, end: 6 }).length === 0, 'a list end that is not an option runs nothing');
+  ok(U.optValues(list, { start: 12, end: 1, pick: [12, 1, 6] }).join() === '1,6,12', 'picked list values run in the list\'s order');
+  ok(U.optValues(list, { start: 1, end: 12, pick: [3, 99, '12'] }).join() === '3,12', 'a picked value that is not an option is skipped');
 }
 units();
 
@@ -564,8 +571,10 @@ async function contracts(){
     return { all, errs };
   };
   let g = await gaugesOn(S.cw);
-  ok(['weight:1', 'weight:2', 'weight:3', 'rebalSched.period', 'rebalSched.quarterStart', 'rebalSched.dom', 'topup.amount', 'topupSched.period', 'topupSched.dom', 'rf.rate', 'execTiming', 'rebal.buyFee', 'rebal.sellFee', 'topup.yearlyIncrease'].every(k => g.all.includes(k)),
-    'constant weight on a schedule offers weights, fees, both schedules, cash rate and Trade at', g.all.join(' '));
+  ok(['weight:1', 'weight:2', 'weight:3', 'rebalSched.period', 'rebalSched.quarterStart', 'rebalSched.dom', 'topup.amount', 'topupSched.period', 'topupSched.dom', 'rf.rate', 'rebal.buyFee', 'rebal.sellFee', 'topup.yearlyIncrease'].every(k => g.all.includes(k)),
+    'constant weight on a schedule offers weights, fees, both schedules and the cash rate', g.all.join(' '));
+  ok(!g.all.includes('execTiming') && await (async () => { const o2 = await openOn(deep(S.cw)); const none = await o2.page.evaluate(() => !document.getElementById('execTiming').closest('.field-row').querySelector('.opt-btn')); await closeAll(o2); return none; })(),
+    'Trade at offers no gauge');
   ok(!g.all.some(k => /^rank:|lookbackMonths|^trig:/.test(k)), 'constant weight offers no rank, lookback or trigger gauge');
   g = await gaugesOn(S.cwTopup);
   ok(!g.all.some(k => k.startsWith('rebalSched.')), 'Rebalance Timing at top-up offers no rebalance-schedule gauge');
@@ -692,9 +701,9 @@ async function contracts(){
   o = await openOn(deep(S.cw));
   ok(await o.page.evaluate(() => document.getElementById('simBtn').textContent === '▶ Simulate' && document.getElementById('valueTitle').textContent === 'Portfolio Value Over Time'), 'a file from before the mode opens comparing, as it always did');
   await closeAll(o);
-  o = await openOn(Object.assign(deep(S.cw), { optimise: { vars: [V('weight:9', 0, 100, 3), { key: 'nonsense', start: 'x' }, V('topup.amount', 500, 1000, 2)], metric: 'bogus' } }));
+  o = await openOn(Object.assign(deep(S.cw), { optimise: { vars: [V('weight:9', 0, 100, 3), { key: 'nonsense', start: 'x' }, V('execTiming', 'close', 'next-close'), V('topup.amount', 500, 1000, 2)], metric: 'bogus' } }));
   const s3 = await o.page.evaluate(() => ({ btn: document.getElementById('simBtn').textContent, note: document.getElementById('staleNote').textContent, metric: document.getElementById('optMetric').value, title: document.getElementById('valueTitle').textContent }));
-  ok(s3.btn === '▶ Optimise' && /Amount per top-up/.test(s3.note) && !/weight/.test(s3.note) && s3.metric === 'roi' && s3.title.startsWith('Optimisation'), 'settings that no longer exist are dropped, the rest still runs', JSON.stringify(s3));
+  ok(s3.btn === '▶ Optimise' && /Amount per top-up/.test(s3.note) && !/Trade at/.test(s3.note) && !/weight/.test(s3.note) && s3.metric === 'roi' && s3.title.startsWith('Optimisation'), 'settings that no longer exist are dropped, the rest still runs', JSON.stringify(s3));
   ok(o.errors.length === 0, 'no page errors opening saved sweeps', o.errors.join(' | '));
   await closeAll(o);
 
@@ -716,10 +725,30 @@ async function contracts(){
   ok(surf.traces[0] === 'surface:' && surf.traces.includes('scatter3d:Best') && surf.traces.includes('scatter3d:Your current setting') && surf.z === '3x4' && !surf.chart,
     'two settings draw a surface (rows the second setting, columns the first) with the best and your setting marked', JSON.stringify(surf));
   await p.click('#valueResetZoom');
+  // The gate row (Simulate or Optimise, and Cancel) lives off the Data tab.
+  await tab(p, 'portfolios');
   await p.click('#optCancelBtn'); await p.click('#simBtn'); await waitIdle(p);
   const norm = await p.evaluate(() => ({ title: document.getElementById('valueTitle').textContent, surf: document.getElementById('optSurface').style.display, chart: !!window.Chart.getChart(document.getElementById('valueCanvas')), sel: getComputedStyle(document.getElementById('detailPfSelect')).display, picks: document.getElementById('optPickWrap').hidden }));
   ok(norm.title === 'Portfolio Value Over Time' && norm.surf === 'none' && norm.chart && norm.sel !== 'none' && norm.picks, 'Simulate after Cancel puts the comparison board back', JSON.stringify(norm));
   ok(o.errors.length === 0, 'no page errors on the board', o.errors.join(' | '));
+  await closeAll(o);
+  // A list setting is picked value by value in the editor's multi-select.
+  o = await openOn(deep(S.topWeekly));
+  p = o.page; await sub(p, 'topups');
+  await p.click('.opt-btn[data-opt="topupSched.weekday"]');
+  const all = await p.evaluate(() => ({ n: document.getElementById('optPickSel').options.length, on: [...document.getElementById('optPickSel').selectedOptions].length, multi: document.getElementById('optPickSel').multiple }));
+  ok(all.multi && all.n === 5 && all.on === 5, 'a list opens with every option picked', JSON.stringify(all));
+  await p.selectOption('#optPickSel', [{ index: 0 }, { index: 2 }, { index: 4 }]);
+  const picked = await p.evaluate(() => ({ prev: document.getElementById('optPreview').textContent, note: document.getElementById('staleNote').textContent }));
+  ok(/^3 values: Mon, Wed, Fri/.test(picked.prev) && /Top-up weekday Mon, Wed, Fri, 3 runs/.test(picked.note), 'picking Mon, Wed and Fri runs exactly those three', JSON.stringify(picked));
+  await p.selectOption('#optPickSel', [{ index: 1 }]);
+  const one = await p.evaluate(() => ({ prev: document.getElementById('optPreview').textContent, tip: document.getElementById('simBtn').getAttribute('data-tip') }));
+  ok(/at least two/.test(one.prev) && /at least two/.test(one.tip || ''), 'one picked value is not a sweep, and the gate says so', JSON.stringify(one));
+  await p.selectOption('#optPickSel', [{ index: 0 }, { index: 4 }]); await p.click('#optDoneBtn');
+  await p.click('#simBtn'); await waitIdle(p);
+  const ran = await p.evaluate(() => [...document.getElementById('optPick0').options].map(o => o.textContent).join(','));
+  ok(ran === 'Mon,Fri', 'the sweep runs the picked values only', ran);
+  ok(o.errors.length === 0, 'no page errors picking list values', o.errors.join(' | '));
   await closeAll(o);
   // Cancel while a sweep is running stops it and leaves the comparison board.
   o = await openOn(Object.assign(deep(S.rule), { optimise: undefined }));
@@ -744,7 +773,8 @@ async function contracts(){
   ok(ph.done && ph.fits, 'on a phone the range editor fits and Done is on screen', JSON.stringify(ph));
   await closeAll(o);
 }
-await contracts();
+try { await contracts(); }
+catch (e) { ok(false, 'contracts ran to the end', String(e && e.message || e).split('\n')[0]); }
 
 await browser.close(); server.close();
 console.log(`\noptimise audit: ${passed} passed, ${failed} failed`);
