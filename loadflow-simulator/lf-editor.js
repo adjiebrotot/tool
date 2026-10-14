@@ -101,27 +101,48 @@
     }
     function arm(tool){
       armed = tool;
+      ghostQ = null; tmp('');
       Array.prototype.forEach.call(pal.querySelectorAll('.pal-btn'), function(b){ b.classList.toggle('is-armed', b.getAttribute('data-tool') === tool); });
       if(!tool) hint('');
       else if(BRANCH_TOOL[tool]) hint(TIP[tool].replace(/^[^:]+: pick it, then d/, 'D') + '. Esc to stop.');
       else hint('Click the diagram to place it' + (tool === 'Bus' ? '' : ' on a bus') + '. Esc to stop.');
     }
+    /* The shadow of a part before it lands: the part itself, drawn by the same code
+       as the diagram, where it would go (on the bus it would snap to, in the slot it
+       would take), in the accent colour and softened. A branch shows its real route
+       once the pointer is on the bus it would end at. */
+    function ghostSvg(e){
+      var m = { el: app.model.el.concat([e]) };
+      var acc = col('--accent');
+      var sc = LF.draw({ el: [e] }, LF.layout(m), null, {}, function(t){ return t === '--text' ? acc : col(t); });
+      return '<g class="lf-ghost" pointer-events="none">' + sc.base.replace(/ data-id="[^"]*"/g, '') + '</g>';
+    }
+    function partFor(tool, p){
+      if(tool === 'Bus') return { c: 'Bus', id: -1, v_nom: 1, at: [Math.round(p.x / G), Math.round(p.y / G), 8, 0] };
+      var hit = nearestBus(p, 6 * G);
+      var nw = LF.NEW[tool] || {};
+      return { c: tool === 'Grid' ? 'Generator' : tool, id: -1, grid: nw.grid || 0, control: nw.control,
+               bus: hit ? hit.id : null, at: hit ? [hit.a, hit.side] : [Math.round(p.x / G), Math.round(p.y / G)] };
+    }
+    function busGlow(g){
+      return '<path d="M' + g.x1 + ' ' + g.y1 + 'L' + g.x2 + ' ' + g.y2 + '" stroke="' + col('--accent2') + '" stroke-width="11" stroke-opacity=".4" stroke-linecap="round" pointer-events="none"/>';
+    }
     function ghost(tool, p){
       if(!p){ tmp(''); return; }
-      var a = col('--accent'), s = '';
-      if(tool === 'Bus'){
-        var x = Math.round(p.x / G) * G, y = Math.round(p.y / G) * G;
-        s = '<path d="M' + (x - 4 * G) + ' ' + y + 'h' + 8 * G + '" stroke="' + a + '" stroke-width="5" stroke-linecap="round" opacity=".55"/>';
-      } else {
-        var hit = nearestBus(p, 6 * G);
-        if(hit){
-          var g = hit.g, px = g.v ? g.cx : g.cx + hit.a * G, py = g.v ? g.cy + hit.a * G : g.cy;
-          var d = g.v ? [hit.side ? -1 : 1, 0] : [0, hit.side ? -1 : 1];
-          s = '<path d="M' + px + ' ' + py + 'l' + d[0] * 22 + ' ' + d[1] * 22 + '" stroke="' + a + '" stroke-width="2" stroke-dasharray="3 3"/>' +
-              '<circle cx="' + (px + d[0] * 33) + '" cy="' + (py + d[1] * 33) + '" r="11" fill="none" stroke="' + a + '" stroke-width="2" stroke-dasharray="3 3"/>';
-        } else s = '<circle cx="' + p.x + '" cy="' + p.y + '" r="11" fill="none" stroke="' + col('--muted') + '" stroke-width="2" stroke-dasharray="3 3"/>';
+      if(BRANCH_TOOL[tool]){
+        // Armed but not yet dragging: light the bus a drag would start from.
+        var start = nearestBus(p, 3 * G);
+        tmp(start ? busGlow(start.g) : '');
+        return;
       }
-      tmp(s);
+      tmp(ghostSvg(partFor(tool, p)));
+    }
+    // Pointer moves arrive faster than frames: draw the shadow once per frame.
+    var ghostQ = null;
+    function ghostSoon(tool, p){
+      var first = !ghostQ;
+      ghostQ = { tool: tool, p: p };
+      if(first) requestAnimationFrame(function(){ var q = ghostQ; ghostQ = null; if(q && (armed === q.tool || (drag && drag.mode === 'palette'))) ghost(q.tool, q.p); });
     }
     function place(tool, p){
       var e;
@@ -162,12 +183,12 @@
       if(!drag.moved || BRANCH_TOOL[drag.tool]) return;
       var r = stage.getBoundingClientRect();
       var inside = ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
-      ghost(drag.tool, inside ? toDiagram(ev.clientX, ev.clientY) : null);
+      if(inside) ghostSoon(drag.tool, toDiagram(ev.clientX, ev.clientY)); else { ghostQ = null; tmp(''); }
     });
     if(!ro) pal.addEventListener('pointerup', function(ev){
       if(!drag || drag.mode !== 'palette' || ev.pointerId !== drag.id) return;
       var d = drag; drag = null;
-      tmp('');
+      ghostQ = null; tmp('');
       var r = stage.getBoundingClientRect();
       var inside = ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
       if(d.moved && inside && !BRANCH_TOOL[d.tool]){ arm(null); place(d.tool, toDiagram(ev.clientX, ev.clientY)); return; }
@@ -274,6 +295,7 @@
       if(pointers.has(ev.pointerId)) pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
       if(!drag){
         if(ev.pointerType === 'mouse') app.hover(hitId(ev.target));
+        if(armed && !ro) ghostSoon(armed, toDiagram(ev.clientX, ev.clientY));
         return;
       }
       var p = toDiagram(ev.clientX, ev.clientY);
@@ -363,8 +385,14 @@
         case 'connect': {
           var from = app.L.bus[drag.from];
           var hit3 = nearestBus(p, 3 * G, [drag.from]);
-          var s = '<path d="M' + from.cx + ' ' + from.cy + 'L' + p.x + ' ' + p.y + '" stroke="' + col('--accent') + '" stroke-width="2" stroke-dasharray="5 4" fill="none"/>';
-          if(hit3) s += '<path d="M' + hit3.g.x1 + ' ' + hit3.g.y1 + 'L' + hit3.g.x2 + ' ' + hit3.g.y2 + '" stroke="' + col('--accent2') + '" stroke-width="11" stroke-opacity=".4" stroke-linecap="round"/>';
+          var s;
+          if(hit3){
+            // On a bus: the branch as it would be drawn, routed and with its symbol.
+            var A = m[drag.from], B = m[hit3.id];
+            var c = drag.tool === 'auto' ? (A.v_nom === B.v_nom ? 'Line' : 'Transformer') : drag.tool;
+            var swap = c === 'Transformer' && B.v_nom > A.v_nom;
+            s = busGlow(hit3.g) + ghostSvg({ c: c, id: -1, bus0: swap ? B.id : A.id, bus1: swap ? A.id : B.id });
+          } else s = '<path d="M' + from.cx + ' ' + from.cy + 'L' + p.x + ' ' + p.y + '" stroke="' + col('--accent') + '" stroke-width="2" stroke-dasharray="5 4" fill="none"/>';
           tmp(s);
           break;
         }
@@ -430,7 +458,7 @@
     }, { passive: false });
     svg.addEventListener('pointerup', end);
     svg.addEventListener('pointercancel', end);
-    svg.addEventListener('pointerleave', function(ev){ if(ev.pointerType === 'mouse' && !drag) app.hover(null); });
+    svg.addEventListener('pointerleave', function(ev){ if(ev.pointerType === 'mouse' && !drag){ app.hover(null); if(armed){ ghostQ = null; tmp(''); } } });
 
     // The wheel zooms where the pointer is; a trackpad pinch arrives as a ctrl-wheel.
     // A plain wheel scrolls the page past the diagram until the diagram is clicked

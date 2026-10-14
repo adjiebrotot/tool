@@ -51,10 +51,15 @@
   /* ── SVG ── */
   function svgText(ctx){
     var P = layout(ctx), C = P.C, s = P.scene;
+    // The line arrows travel with the flow the file animates, as on screen.
+    var arrowKind = P.anim.p ? 'p' : P.anim.q ? 'q' : null;
+    var moving = !!(arrowKind && !ctx.stale && LF.arrowSvg(s.arrows || [], arrowKind));
+    var marks = moving ? '<g class="fa-still">' + s.marks + '</g>' + LF.arrowSvg(s.arrows, arrowKind) : s.marks;
     var inner = '<g transform="translate(' + r2(P.ox) + ' ' + r2(P.oy) + ') scale(' + r4(P.k) + ') translate(' + r2(-P.bb.x) + ' ' + r2(-P.bb.y) + ')">' +
-      s.base + s.marks + LF.laneSvg(P.lanes) + LF.labelSvg(s.labels, C) + '</g>';
+      s.base + marks + LF.laneSvg(P.lanes) + LF.labelSvg(s.labels, C) + '</g>';
     var css = P.lanes.length ? '<style>.fl{animation:lf-flow calc(' + LF.FLOW_T + 's / var(--n, 1)) linear infinite}.fl.rev{animation-direction:reverse}' +
-      '@keyframes lf-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-12}}@media (prefers-reduced-motion:reduce){.fl{animation:none}}</style>' : '';
+      '@keyframes lf-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-12}}' + (moving ? '.fa-still{display:none}' : '') +
+      '@media (prefers-reduced-motion:reduce){.fl{animation:none}' + (moving ? '.fa{display:none}.fa-still{display:inline}' : '') + '}</style>' : '';
     var key = '', items = keyItems(P);
     if(items.length){
       var kx = W / 2 - items.length * 80, ky = P.keyY + 13;
