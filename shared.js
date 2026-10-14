@@ -4640,10 +4640,10 @@
   /* ── SharedCtrl: the control card folds away ─────────────────────────────
      A tool's .controls card opens folded, so the first thing a reader sees
      is the answer, not forty fields. Beside the results it folds to a slim
-     rail; stacked above them (a phone) it folds to one bar. Either way the
-     button that opens it pulses on arrival, and until the reader has opened
-     it once a callout says what is inside. Their choice is kept per page on
-     this device.
+     "Inputs" rail; stacked above them (a phone) it folds to one "Inputs" bar.
+     Either way its open button pulses on arrival. Open, a small Hide button
+     sits at the end of the Quick Start row. The reader's choice is kept per
+     page on this device.
 
      Something that needs the card on screen holds it open for as long as it
      needs it, then lets go, and the card returns to the reader's choice:
@@ -4654,17 +4654,15 @@
      mini cache, a scenario file and a Share link never see the fold. */
   function makeCtrl(){
     var TEXT = {
-      en: { name: 'Controls', sub: 'Quick Start & inputs', show: 'Show', hide: 'Hide',
-            open: 'Show the controls', close: 'Hide the controls',
-            tip: '<b>Your controls are folded in here.</b> Open them for the Quick Start examples and every input.' },
-      id: { name: 'Kontrol', sub: 'Mulai Cepat & input', show: 'Buka', hide: 'Tutup',
-            open: 'Tampilkan kontrol', close: 'Sembunyikan kontrol',
-            tip: '<b>Kontrol dilipat di sini.</b> Buka untuk contoh Mulai Cepat dan semua input.' }
+      en: { name: 'Inputs', show: 'Show', open: 'Show the inputs', close: 'Hide the inputs' },
+      id: { name: 'Input', show: 'Buka', open: 'Tampilkan input', close: 'Sembunyikan input' }
     };
     var GLYPH = '<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></svg>';
-    var card = null, layout = null, rail = null, head = null, tip = null;
-    var userOpen = false, holds = {}, shown = null, key = '', SEEN = 'abt:ctrl:seen', tipTimer = 0;
+    // Two chevrons pointing the way the card folds (CSS turns them up on a phone).
+    var FOLD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5 6.5 12l5.5 5.5"/><path d="M18 6.5 12.5 12l5.5 5.5"/></svg>';
+    var card = null, layout = null, rail = null;
+    var userOpen = false, holds = {}, shown = null, key = '';
 
     function pathKey(){
       return 'abt:ctrl:' + global.location.pathname.replace(/index\.html?$/, '').replace(/\/+$/, '/');
@@ -4690,9 +4688,7 @@
       shown = open;
       card.classList.toggle('ctrl-folded', !open);
       layout.classList.toggle('ctrl-folded', !open);
-      rail.setAttribute('aria-expanded', 'false');
       if (!open) attention();
-      else dismissTip();
       // The results just gained or lost the card's width: let anything that
       // sizes itself on resize (a canvas, a sticky card's cap) measure again.
       if (!first) global.dispatchEvent(new Event('resize'));
@@ -4701,7 +4697,6 @@
       holds = {};
       userOpen = !!open;
       if (save) write(key, userOpen ? '1' : '0');
-      if (userOpen) write(SEEN, '1');
       render();
     }
 
@@ -4709,13 +4704,7 @@
       rail.classList.remove('ctrl-attn');
       void rail.offsetWidth;            // restart the pulse
       rail.classList.add('ctrl-attn');
-      if (read(SEEN) !== '1' && tip) {
-        tip.hidden = false;
-        clearTimeout(tipTimer);
-        tipTimer = setTimeout(dismissTip, 10000);
-      }
     }
-    function dismissTip(){ if (tip) tip.hidden = true; }
 
     function init(){
       if (card || EMBED) return;
@@ -4730,36 +4719,32 @@
       rail = document.createElement('button');
       rail.type = 'button';
       rail.className = 'ctrl-fold-rail';
+      rail.setAttribute('aria-expanded', 'false');
       rail.setAttribute('aria-controls', card.id);
       rail.setAttribute('aria-label', t.open);
       rail.setAttribute('data-no-abbr', '');
-      rail.innerHTML = GLYPH +
-        '<span class="ctrl-fold-text"><span class="ctrl-fold-name">' + t.name + '</span>' +
-        '<span class="ctrl-fold-sub">' + t.sub + '</span></span>' +
+      rail.innerHTML = GLYPH + '<span class="ctrl-fold-name">' + t.name + '</span>' +
         '<span class="ctrl-fold-go"><span class="ctrl-fold-word">' + t.show + '</span><span class="ctrl-fold-chev" aria-hidden="true"></span></span>';
       rail.addEventListener('click', function(){ set(true, true); });
       rail.addEventListener('animationend', function(){ rail.classList.remove('ctrl-attn'); });
 
-      head = document.createElement('div');
-      head.className = 'ctrl-fold-head';
-      head.setAttribute('data-no-abbr', '');
-      head.innerHTML = '<span class="ctrl-fold-label">' + GLYPH + '<span>' + t.name + '</span></span>' +
-        '<button type="button" class="ctrl-fold-hide" aria-expanded="true" aria-controls="' + card.id + '" aria-label="' + t.close + '">' +
-        '<span>' + t.hide + '</span><span class="ctrl-fold-chev" aria-hidden="true"></span></button>';
-      head.querySelector('button').addEventListener('click', function(){ set(false, true); });
+      // Hide rides at the end of the Quick Start row, beside save and open,
+      // so folding adds no row of its own. A card without that row gets a
+      // corner of its own instead.
+      var hide = document.createElement('button');
+      hide.type = 'button';
+      hide.className = 'ctrl-fold-hide';
+      hide.setAttribute('aria-expanded', 'true');
+      hide.setAttribute('aria-controls', card.id);
+      hide.setAttribute('aria-label', t.close);
+      hide.title = t.close;
+      hide.innerHTML = FOLD;
+      hide.addEventListener('click', function(){ set(false, true); });
+      var row = card.querySelector(':scope > .quick-start-row');
+      if (row) row.appendChild(hide);
+      else { hide.classList.add('ctrl-fold-corner'); card.appendChild(hide); }
 
-      if (read(SEEN) !== '1') {
-        tip = document.createElement('div');
-        tip.className = 'ctrl-fold-tip';
-        tip.setAttribute('role', 'status');
-        tip.hidden = true;
-        tip.innerHTML = t.tip;
-        tip.addEventListener('click', function(){ set(true, true); });
-      }
-
-      card.insertBefore(head, card.firstChild);
       card.insertBefore(rail, card.firstChild);
-      if (tip) card.appendChild(tip);
       card.classList.add('ctrl-foldable');
 
       // A field the browser flags as invalid is one the reader must see.

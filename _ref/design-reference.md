@@ -437,14 +437,15 @@ stay reachable however far down the panel you are. Anything placed *before*
 
 A `.controls` card that is a direct child of `.layout` opens **folded**, so a
 reader lands on the answer, not on forty fields. shared.js does it; a tool writes
-nothing. Beside the results the card folds to a 58px rail (icon, "Controls ·
-Quick Start & inputs" set vertically, a round open button) and the results take
-the width; stacked above them on a phone it folds to one bar with a **Show**
-button. The open button pulses three times on arrival, and a callout ("Your
-controls are folded in here…") points at it until the reader has opened a card
-once. Open, a slim head row carries **Hide**. The choice is kept per page on this
-device (`abt:ctrl:<path>`); nothing in the fold is a field, so the mini cache,
-scenario files and Share links never see it.
+nothing. Beside the results the card folds to a 56px "Inputs" rail (a round open
+button, the sliders glyph, the word set vertically) and the results take the
+width; stacked above them on a phone it folds to one "Inputs" bar with a **Show**
+button. The open button pulses three times on arrival; there is no callout. Open,
+Hide is one icon (two chevrons pointing the way the card folds) at the end of the
+Quick Start row, beside save and open, so the fold adds no row of its own; the
+scenario buttons drop to a line of their own under it. The choice is kept per page
+on this device (`abt:ctrl:<path>`); nothing in the fold is a field, so the mini
+cache, scenario files and Share links never see it.
 
 Anything that needs the card on screen holds it open, then lets go:
 `SharedCtrl.hold('tour', true)` … `SharedCtrl.hold('tour', false)`. The tour
