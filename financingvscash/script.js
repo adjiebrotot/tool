@@ -3350,7 +3350,9 @@ function drawOptSurface(){
   const at=(sp,vals,v)=>sp.kind==='num'?Number(v):vals.findIndex(x=>String(x)===String(v));
   // Blue is always the better end: a cost that is low reads blue, as a
   // net benefit that is high does.
-  const data=[{type:'surface',x:xs,y:ys,z,text:txt,hovertemplate:'%{text}<extra></extra>',
+  // hovertext, not hovertemplate '%{text}': Plotly looks %{text} up as text[x][y] on a
+  // surface (transposed), so it showed the wrong cell or a raw '%{text}' off a square grid.
+  const data=[{type:'surface',x:xs,y:ys,z,hovertext:txt,hoverinfo:'text',
     colorscale:[[0,cssVar('--gold')],[0.5,cssVar('--line-c')],[1,cssVar('--line-a')]],reversescale:!meta.hi,
     colorbar:{title:{text:optAxisTitle(mk),side:'right',font:{color:muted,size:11}},tickfont:{color:muted,size:10},thickness:12,len:0.75},
     contours:{z:{show:true,usecolormap:true,project:{z:false}}}}];

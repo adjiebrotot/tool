@@ -2896,7 +2896,9 @@ function drawOptSurface(){
   const text=cssVar('--text'), muted=cssVar('--chart-text'), grid=cssVar('--chart-grid'), mark=cssVar('--muted');
   const best=optBestIdx(R, mk);
   const at=(s,vals,v)=>s.kind==='num' ? Number(v) : vals.findIndex(x=>String(x)===String(v));
-  const data=[{type:'surface', x:xs, y:ys, z, text:txt, hovertemplate:'%{text}<extra></extra>',
+  // hovertext, not hovertemplate '%{text}': Plotly looks %{text} up as text[x][y] on a
+  // surface (transposed), so it showed the wrong cell or a raw '%{text}' off a square grid.
+  const data=[{type:'surface', x:xs, y:ys, z, hovertext:txt, hoverinfo:'text',
     colorscale:[[0, cssVar('--gold')], [0.5, cssVar('--line-c')], [1, cssVar('--line-a')]],
     colorbar:{title:{text:optAxisTitle(mk), side:'right', font:{color:muted, size:11}}, tickfont:{color:muted, size:10}, thickness:12, len:0.75},
     contours:{z:{show:true, usecolormap:true, project:{z:false}}}}];
