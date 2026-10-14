@@ -329,9 +329,39 @@
       var w = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), h = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
       return w > 0 && h > 0 ? w * h : 0;
     }
+    // A coarse grid finds the rectangles near a candidate, so a big network places its
+    // labels in near-linear time. Only rectangles that overlap add to a score, and the
+    // ones found are summed in their original order, so the result is the same as
+    // checking every rectangle.
+    function Bins(list){
+      var S = 96, cells = {}, big = [], stamp = 0, seen = [];
+      function each(r, f){
+        if(!isFinite(r.x + r.y + r.w + r.h)) return;
+        for(var i = Math.floor(r.x / S), i1 = Math.floor((r.x + r.w) / S); i <= i1; i++)
+          for(var j = Math.floor(r.y / S), j1 = Math.floor((r.y + r.h) / S); j <= j1; j++) f(i + ',' + j);
+      }
+      function add(n){
+        var r = list[n];
+        // A huge rectangle (a long line) goes in a list every query reads.
+        if(!(r.w * r.h <= 400 * S * S) || !isFinite(r.x + r.y)){ big.push(n); return; }
+        each(r, function(k){ (cells[k] || (cells[k] = [])).push(n); });
+      }
+      for(var n = 0; n < list.length; n++) add(n);
+      return {
+        push: function(r){ list.push(r); add(list.length - 1); },
+        near: function(r){
+          stamp++;
+          var out = [];
+          var take = function(m){ if(seen[m] !== stamp){ seen[m] = stamp; out.push(m); } };
+          big.forEach(take);
+          each(r, function(k){ var c = cells[k]; if(c) for(var t = 0; t < c.length; t++) take(c[t]); });
+          return out.sort(function(x, y){ return x - y; });
+        }
+      };
+    }
     function placeLabels(){
       queue.sort(function(a, b){ return a.pri - b.pri || a.n - b.n; });
-      var placed = [];
+      var placed = [], pBins = Bins(placed), oBins = Bins(obst);
       queue.forEach(function(q){
         var w = q.lines.reduce(function(m, ln){ return Math.max(m, textW(ln)); }, 0), h = q.lines.length * 13 - 2;
         var best = null;
@@ -340,11 +370,11 @@
           var y0 = c.ay === 'top' ? c.y : c.ay === 'middle' ? c.y - h / 2 : c.y - h;
           var r = { x: x0 - 2, y: y0 - 1, w: w + 4, h: h + 2 };
           var sc = i * 20;
-          placed.forEach(function(o){ sc += 12 * area(r, o); });
-          obst.forEach(function(o){ sc += o.k * area(r, o); });
+          pBins.near(r).forEach(function(n){ sc += 12 * area(r, placed[n]); });
+          oBins.near(r).forEach(function(n){ sc += obst[n].k * area(r, obst[n]); });
           if(!best || sc < best.s) best = { s: sc, r: r, x0: x0, y0: y0, c: c };
         });
-        placed.push(best.r);
+        pBins.push(best.r);
         var tx = best.c.ax === 'start' ? best.x0 : best.c.ax === 'middle' ? best.x0 + w / 2 : best.x0 + w;
         q.lines.forEach(function(ln, i){
           label(tx, best.y0 + 10 + i * 13, ln.t, { anchor: best.c.ax, mono: ln.mono, bold: ln.bold, fill: ln.fill, res: ln.res, id: q.id, size: ln.size });

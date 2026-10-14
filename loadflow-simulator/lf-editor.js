@@ -174,6 +174,24 @@
       if(!d.moved || BRANCH_TOOL[d.tool]) arm(armed === d.tool ? null : d.tool);
     });
     if(!ro) pal.addEventListener('pointercancel', function(){ drag = null; tmp(''); });
+    // Enter or Space on a palette button (a click with no pointer behind it): a part
+    // goes on the one selected bus or in the middle of the view, and a branch joins
+    // the two selected buses.
+    if(!ro) pal.addEventListener('click', function(ev){
+      var b = ev.target.closest('.pal-btn');
+      if(!b || ev.detail !== 0) return;
+      var tool = b.getAttribute('data-tool'), m = byId();
+      var buses = Array.from(app.sel).filter(function(id){ return m[id] && m[id].c === 'Bus'; });
+      arm(null);
+      if(BRANCH_TOOL[tool]){
+        if(buses.length === 2) connect(tool, buses[0], buses[1]);
+        else hint('Select two buses, then press ' + tool + ' again to join them.');
+        return;
+      }
+      var g = tool !== 'Bus' && buses.length === 1 ? app.L.bus[buses[0]] : null;
+      var r = stage.getBoundingClientRect();
+      place(tool, g ? { x: g.cx + (g.v ? G : 0), y: g.cy + (g.v ? 0 : G) } : toDiagram(r.left + r.width / 2, r.top + r.height / 2));
+    });
 
     /* ── The diagram ── */
     svg.addEventListener('pointerdown', function(ev){
@@ -182,7 +200,7 @@
       try { svg.setPointerCapture(ev.pointerId); } catch(e){}
       if(pointers.size === 2){
         // Two fingers: pinch to zoom and pan, whatever the first one started.
-        if(drag && drag.undo) restoreDrag();
+        restoreDrag();
         var pts = Array.from(pointers.values());
         drag = { mode: 'pinch', d0: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), mx: (pts[0].x + pts[1].x) / 2, my: (pts[0].y + pts[1].y) / 2 };
         return;
@@ -234,7 +252,23 @@
       var horiz = L.pts[1][1] === L.pts[2][1];
       return { mode: 'bend', e: e, horiz: horiz, orig: e.at ? e.at.slice() : null, moved: false };
     }
-    function restoreDrag(){ /* a pinch takes over from a move: the move stays where it got to */ }
+    // Esc or a second finger cancels a drag: put back whatever it changed, so the model,
+    // the results and the history still agree.
+    function restoreDrag(){
+      var d = drag;
+      if(!d || !d.moved) return;
+      var m = byId();
+      if(d.mode === 'move') Object.keys(d.origs).forEach(function(id){
+        var e = m[id], o = d.origs[id];
+        if(!e) return;
+        e.at = o.at ? o.at.slice() : o.at;
+        if(LF.DEVICE[e.c]) e.bus = o.bus;
+      });
+      else if(d.mode === 'resize' || d.mode === 'bend') d.e.at = d.orig ? d.orig.slice() : d.orig;
+      else if(d.mode === 'end'){ var o2 = JSON.parse(d.orig); d.e.bus0 = o2[0]; d.e.bus1 = o2[1]; d.e.at = o2[2]; }
+      else return;
+      app.renderSoon();
+    }
 
     svg.addEventListener('pointermove', function(ev){
       if(pointers.has(ev.pointerId)) pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
@@ -348,6 +382,8 @@
       svg.classList.remove('is-panning');
       if(!drag) return;
       if(drag.mode === 'pinch'){ if(pointers.size < 1) drag = null; return; }
+      // The page took the swipe over: nothing was dragged and nothing is deselected.
+      if(ev.type === 'pointercancel' && drag.mode === 'pan'){ drag = null; return; }
       var d = drag; drag = null;
       tmp('');
       if(ro){ if(!d.moved && d.id !== null) app.hover(d.id); return; }
@@ -386,12 +422,34 @@
       }
       void m;
     }
+    // On a touch screen a vertical swipe on empty diagram scrolls the page (the stage
+    // allows pan-y); a touch that starts on a part, with a tool armed or with two
+    // fingers stays with the diagram.
+    svg.addEventListener('touchstart', function(ev){
+      if(ev.touches.length > 1 || armed || hitId(ev.target) !== null || handleOf(ev.target)) ev.preventDefault();
+    }, { passive: false });
     svg.addEventListener('pointerup', end);
     svg.addEventListener('pointercancel', end);
     svg.addEventListener('pointerleave', function(ev){ if(ev.pointerType === 'mouse' && !drag) app.hover(null); });
 
     // The wheel zooms where the pointer is; a trackpad pinch arrives as a ctrl-wheel.
+    // A plain wheel scrolls the page past the diagram until the diagram is clicked
+    // (or focused), so reading down the page never gets caught in it. An embed is the
+    // diagram and nothing else, so there the wheel always zooms.
+    var wheelOn = ro, wheelHintT = 0;
+    stage.addEventListener('pointerdown', function(){ wheelOn = true; });
+    stage.addEventListener('pointerleave', function(ev){ if(ev.pointerType === 'mouse' && !ro) wheelOn = false; });
+    svg.addEventListener('focus', function(){ wheelOn = true; });
     svg.addEventListener('wheel', function(ev){
+      if(!wheelOn && !ev.ctrlKey && !ev.metaKey){
+        if(!armed){
+          var msg = 'Click the diagram, or hold Ctrl, to zoom with the wheel.';
+          hint(msg);
+          clearTimeout(wheelHintT);
+          wheelHintT = setTimeout(function(){ if(hintEl.textContent === msg) hint(''); }, 2000);
+        }
+        return;
+      }
       ev.preventDefault();
       var p = toDiagram(ev.clientX, ev.clientY);
       var dy = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
@@ -409,7 +467,7 @@
       var k = ev.key;
       if(k === 'Escape'){
         if(armed){ arm(null); return; }
-        if(drag){ drag = null; tmp(''); return; }
+        if(drag){ restoreDrag(); drag = null; tmp(''); return; }
         if(app.sel.size) app.select([]);
         return;
       }

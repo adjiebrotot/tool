@@ -103,7 +103,8 @@
     });
     return s;
   }
-  function shownResults(){ return app.res && app.res.report && app.res.report.ok ? app.res : null; }
+  // A run that did not converge stopped somewhere arbitrary, so none of it is drawn.
+  function shownResults(){ return app.res && app.res.report && app.res.report.ok && app.res.report.converged ? app.res : null; }
   function render(){
     var d = display();
     var p = paint();
@@ -366,20 +367,32 @@
     var over = brs.filter(function(e){ var l = res.br[e.id].load; return isFinite(l) && l > d.loadMax + 1e-9; });
     var bad = !r.converged;
     var ms = r.ms < 1 ? '<1 ms' : Math.round(r.ms) + ' ms';
+    // The checks' warnings are part of the answer: a load left out or a mismatched
+    // voltage changes what the numbers mean.
+    var warns = (res.validation && res.validation.warnings) || [];
+    var warnTxt = warns.length ? ' ' + (warns.length === 1 ? 'One warning' : warns.length + ' warnings') + ' in Checks: ' + esc(warns[0].msg) + (warns.length > 1 ? ' …' : '') : '';
+    var linkLoss = brs.reduce(function(a, e){ return e.c === 'Link' ? a + res.br[e.id].loss : a; }, 0);
     if(bad){
       SharedVerdict.set(vEl, { tone: 'bad', title: 'The load flow did not converge after ' + r.iters + ' iterations.',
-        body: 'The numbers shown are where Newton-Raphson stopped, not a solution. Try the DC load flow seed, check that every island can reach its slack, or lower the load.' });
+        body: 'Newton-Raphson stopped without a solution, so no results are shown. Try the DC load flow seed, check that every island can reach its slack, or lower the load.' + warnTxt });
+      setSub('AC load flow, Newton-Raphson, did not converge. Solved by PSA.js in ' + ms + '.');
+      clearKpis();
+      $('mConv').textContent = 'Not converged';
+      $('mConv').classList.add('neg');
+      $('mConvSub').textContent = 'Largest mismatch ' + (r.mismatch ? r.mismatch.toExponential(1) : '0') + ' MW';
+      renderTable(); renderAssumptions();
+      return;
     } else if(!ac){
-      SharedVerdict.set(vEl, { tone: over.length ? 'warn' : '',
-        title: 'DC load flow solved: <span class="v-num">' + F.p(t.gen) + ' MW</span> supplied and served.',
-        body: 'A DC load flow keeps every voltage at 1 p.u. and has no losses or reactive power.' + (over.length ? ' ' + over.length + ' branch' + (over.length > 1 ? 'es are' : ' is') + ' above ' + d.loadMax + '% of rating: ' + over.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + '.' : '') });
+      SharedVerdict.set(vEl, { tone: over.length || warns.length ? 'warn' : '',
+        title: 'DC load flow solved: <span class="v-num">' + F.p(t.gen) + ' MW</span> supplied' + (linkLoss > 1e-9 ? ', <span class="v-num">' + F.p(t.load) + ' MW</span> served, <span class="v-num">' + F.p(linkLoss) + ' MW</span> lost in links.' : ' and served.'),
+        body: 'A DC load flow keeps every voltage at 1 p.u. and has no reactive power' + (linkLoss > 1e-9 ? '; its lines and transformers are lossless, and only the links lose their efficiency.' : ' or losses.') + (over.length ? ' ' + over.length + ' branch' + (over.length > 1 ? 'es are' : ' is') + ' above ' + d.loadMax + '% of rating: ' + over.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + '.' : '') + warnTxt });
     } else {
       var issues = [];
       if(outV.length) issues.push(outV.length + ' bus' + (outV.length > 1 ? 'es' : '') + ' outside ' + d.vmin + ' to ' + d.vmax + ' p.u. (' + outV.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + ')');
       if(over.length) issues.push(over.length + ' branch' + (over.length > 1 ? 'es' : '') + ' above ' + d.loadMax + '% loading (' + over.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + ')');
-      SharedVerdict.set(vEl, { tone: issues.length ? 'warn' : '',
+      SharedVerdict.set(vEl, { tone: issues.length || warns.length ? 'warn' : '',
         title: 'Converged in ' + r.iters + ' iteration' + (r.iters === 1 ? '' : 's') + ': <span class="v-num">' + F.p(t.gen) + ' MW</span> supplied, <span class="v-num">' + F.p(t.load) + ' MW</span> served, <span class="v-num">' + F.p(t.loss) + ' MW</span> lost.',
-        body: issues.length ? 'Outside your limits: ' + issues.join('; ') + '.' : 'Every bus is within ' + d.vmin + ' to ' + d.vmax + ' p.u. and every rated branch within ' + d.loadMax + '% of its rating.' });
+        body: (issues.length ? 'Outside your limits: ' + issues.join('; ') + '.' : 'Every bus is within ' + d.vmin + ' to ' + d.vmax + ' p.u. and every rated branch within ' + d.loadMax + '% of its rating.') + warnTxt });
     }
     setSub((ac ? 'AC load flow, Newton-Raphson' : 'DC load flow') + (bad ? ', did not converge' : ac ? ', converged in ' + r.iters + ' iteration' + (r.iters === 1 ? '' : 's') : '') +
            (ac && !bad ? '. Losses ' + F.p(t.loss) + ' MW.' : '.') + ' Solved by PSA.js in ' + ms + '.');
@@ -387,8 +400,8 @@
     $('mConv').textContent = bad ? 'Not converged' : ac ? r.iters + ' iteration' + (r.iters === 1 ? '' : 's') : 'DC, linear';
     if(bad) $('mConv').classList.add('neg');
     $('mConvSub').textContent = ac ? 'Largest mismatch ' + (r.mismatch ? r.mismatch.toExponential(1) : '0') + ' MW' + (r.islands.length > 1 ? ', ' + r.islands.length + ' islands' : '') : 'No iterations needed';
-    $('mLoss').textContent = ac ? F.p(t.loss) + ' MW' : '0 MW';
-    $('mLossSub').textContent = ac ? (t.gen > 0 ? F.pct(100 * t.loss / t.gen) + '% of ' + F.p(t.gen) + ' MW supplied' : '') : 'A DC load flow is lossless';
+    $('mLoss').textContent = ac ? F.p(t.loss) + ' MW' : F.p(linkLoss) + ' MW';
+    $('mLossSub').textContent = ac || linkLoss > 1e-9 ? (t.gen > 0 ? F.pct(100 * (ac ? t.loss : linkLoss) / t.gen) + '% of ' + F.p(t.gen) + ' MW supplied' + (ac ? '' : ', in links only') : '') : 'A DC load flow is lossless';
     if(ac && lo){
       $('mVolt').textContent = F.vl(res.bus[lo.id].v, d.vmin, d.vmax) + ' to ' + F.vl(res.bus[hi.id].v, d.vmin, d.vmax);
       $('mVoltSub').textContent = 'p.u., lowest at ' + LF.nameOf(lo) + ', highest at ' + LF.nameOf(hi);
@@ -469,7 +482,12 @@
   });
   $('csvBtn').addEventListener('click', function(){
     var t = tableData();
-    var q = function(s){ s = String(s).replace(/−/g, '-'); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    // A name that a spreadsheet would read as a formula gets a leading ' (numbers are left alone).
+    var q = function(s){
+      s = String(s).replace(/−/g, '-');
+      if(/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d[\d,.]*(e[+-]?\d+)?$/i.test(s)) s = "'" + s;
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
     var csv = [t.head.map(q).join(',')].concat(t.rows.map(function(r){ return r.cells.map(q).join(','); })).join('\n');
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
@@ -665,7 +683,7 @@
     tap_ratio: 'Off-nominal turns ratio on the tap side: 1.05 lifts that side\'s winding by 5%.',
     phase_shift: 'Angle the transformer shifts the voltage by, such as 150° for a Dyn5 unit.',
     tap_position: 'Steps away from the neutral tap, within the type\'s range.',
-    p_set: 'Active power the unit is dispatched at.',
+    p_set: 'Active power the unit is dispatched at. A slack supplies whatever balances its island, so its figure counts only when the slack is distributed.',
     q_set: 'Reactive power, positive when supplying.',
     p_nom: 'Rated power. Weights a distributed slack and sets a link\'s loading.',
     load_p: 'Active power drawn.',
@@ -703,7 +721,9 @@
            F_('b', 'Magnetising susceptance', 'p.u.', { min: -1, max: 1, step: 0.0001, show: tcustom }),
            F_('model', 'Equivalent circuit', '', { kind: 'seg', opts: [['t', 'T'], ['pi', 'π']] })],
     Generator: [F_('control', 'Control', '', { kind: 'seg', opts: [['Slack', 'Slack'], ['PV', 'PV'], ['PQ', 'PQ']] }),
-           F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.p_set }),
+           // A slack's dispatch only counts when the slack is distributed: each unit then
+           // supplies its dispatch plus its share of what is left over.
+           F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.p_set, show: function(e){ return e.control !== 'Slack' || $('lfDistSlack').checked; } }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.q_set, show: function(e){ return e.control === 'PQ'; } }),
            F_('vset', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.v_mag_pu_set, show: function(e){ return e.control !== 'PQ' && e.bus; } }),
            F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom }),
@@ -747,12 +767,8 @@
     if(a !== 0 && (a < 1e-4 || a >= 1e7)) return String(+v.toPrecision(6));
     return String(+v.toPrecision(8));
   }
-  function typeKv(name){
-    var m = / (\d+(?:\.\d+)?)$/.exec(name) || /\/(\d+(?:\.\d+)?) kV$/.exec(name);
-    if(m) return +m[1];
-    return /^NAYY/.test(name) ? 0.4 : NaN;
-  }
-  function tipHtml(t){ return t ? ' <i class="tip-icon" data-tip="' + esc(t) + '">?</i>' : ''; }
+  var typeKv = LF.lineTypeKv;
+  function tipHtml(t, opts){ return t ? ' <i class="tip-icon"' + (opts ? ' data-tip-options' : '') + ' data-tip="' + esc(t) + '">?</i>' : ''; }
   var KIND_ICON = {
     Bus: '<path d="M3 12h18" stroke-width="3"/>',
     Line: '<path d="M3 7h5M16 17h5M8 7v10h8" />',
@@ -796,7 +812,7 @@
     }
     if(f.kind === 'seg'){
       var cur = e[f.k];
-      var extra = f.k === 'control' ? tipHtml(CONTROL_TIP[cur]) : '';
+      var extra = f.k === 'control' ? tipHtml(CONTROL_TIP[cur], true) : '';
       return '<div class="field-row inline"><div class="field-label"><span class="tip-wrap">' + f.label + extra + '</span></div><div class="seg-group" data-k="' + f.k + '" role="group" aria-label="' + f.label + '">' +
         f.opts.map(function(o){ return '<button type="button" class="seg-btn' + (o[0] === cur ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>';
     }
@@ -1011,9 +1027,29 @@
   /* ── Load flow tab and display options ── */
   var METHOD_TIP = {
     ac: '<strong>AC, Newton-Raphson:</strong> the full load flow, with voltage magnitudes, reactive power and losses.',
-    dc: '<strong>DC, linear:</strong> active power only, every voltage at 1 p.u. and no losses. Quick, and it always solves.'
+    dc: '<strong>DC, linear:</strong> active power only, every voltage at 1 p.u. and no losses except in links. Quick, and it needs no iterations, so it solves whenever every line and transformer has a reactance.'
   };
+  // A saved value outside a limit's range is shown as the value used, and a select
+  // whose saved option no longer exists falls back to its default, which is what
+  // solveOptions() and display() read for it anyway.
+  var RANGE = { lfVmin: [0.5, 1], lfVmax: [1, 1.5], lfLoadMax: [10, 200] };
+  function clampField(id){
+    var el = $(id), v = parseFloat(el.value);
+    if(!isFinite(v)) return;
+    var c = Math.min(Math.max(v, RANGE[id][0]), RANGE[id][1]);
+    if(c !== v) el.value = c;
+  }
+  function fixForm(){
+    Object.keys(RANGE).forEach(clampField);
+    ['lfMethod', 'lfTol', 'lfSeed', 'lfSlackW', 'colourBy'].forEach(function(id){
+      var el = $(id);
+      if(el.selectedIndex >= 0) return;
+      var d = Array.prototype.filter.call(el.options, function(o){ return o.defaultSelected; })[0] || el.options[0];
+      if(d) d.selected = true;
+    });
+  }
   function syncSolverForm(){
+    fixForm();
     var ac = $('lfMethod').value === 'ac';
     $('acGroup').style.display = ac ? '' : 'none';
     $('slackWRow').style.display = $('lfDistSlack').checked ? '' : 'none';
@@ -1024,7 +1060,7 @@
   });
   // Limits and display options read the result; they never send it back to be solved.
   ['lfVmin', 'lfVmax', 'lfLoadMax', 'colourBy', 'animP', 'animQ'].forEach(function(id){
-    $(id).addEventListener('change', function(){ render(); if(app.res) showResults(); });
+    $(id).addEventListener('change', function(){ if(RANGE[id]) clampField(id); render(); if(app.res) showResults(); });
   });
   $('labelMatrix').addEventListener('change', function(){ render(); });
 

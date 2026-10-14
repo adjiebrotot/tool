@@ -22,6 +22,17 @@ conventions miss them by 14 to 59 MW.
 **A1. The replay against PyPSA.** A tap of 1.02 with a 5° phase shift, a shunt and a PV bus,
 over two snapshots. Also two islands, each with its own slack. Agreement is to about 1e-13.
 
+What the replay does not cover:
+- It reads the standard line and transformer types from the engine's own tables.
+- It has no distributed slack.
+- An island with no generator (its slack bus held at 1 p.u. as an ideal source) is checked
+  only against itself: PyPSA 1.4 raises an error there, so there is nothing to compare.
+
+An independent audit compared the tool with real PyPSA 1.4.0 on every Quick Start (AC and DC)
+and on the cases the replay leaves out: the tap on the second side, T and π models with
+magnetising branches, typed transformers in parallel, two slacks in one island, and a
+distributed slack by dispatch and by rating, over two islands. It agreed to 3e-12.
+
 **A2. The tool against the replay.** Each case below must agree to V 1e-7 p.u., angle 1e-6°
 and P/Q 1e-6 MW or MVAr:
 - every Quick Start, solved three ways:
@@ -36,11 +47,16 @@ and P/Q 1e-6 MW or MVAr:
   - a second island behind an HVDC link.
 
 **A3. WSCC 9-bus against Anderson and Fouad.** The Quick Start's published prefault load flow,
-in `wscc9-published.json`, must match to the published digit: every bus voltage and angle,
-and every unit's P and Q.
+in `wscc9-published.json`, must match to the published third decimal (within 0.0005): every
+bus voltage and angle, and every unit's P and Q.
 
 **A4. Balance.** Every bus balances, and the sources supply what is served plus what the
 branches lose.
+
+**A4b. A link sent backwards.** A negative set point sends power from the second end to the
+first. PyPSA applies the efficiency the wrong way round there (the far end gets more than was
+sent, and the loss is negative), so the tool hands the link to the engine turned round and
+turns its results back. The check holds the far end at p × efficiency and the loss positive.
 
 **A5. The engine.** `engine/psa-pf.min.js` hashes to the sha256 in its own banner.
 

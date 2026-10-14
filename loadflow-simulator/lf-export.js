@@ -198,7 +198,10 @@
         if(e.data && e.data.bytes) resolve(e.data.bytes); else reject(new Error(e.data && e.data.error || 'The GIF could not be encoded.'));
       };
       wk.onerror = function(){ if(done) return; done = true; wk.terminate(); inline().then(resolve, reject); };
-      wk.postMessage({ w: w, h: h, frames: bufs, delay: DELAY }, bufs.slice());
+      // The worker gets copies, so the frames are still here if it fails and the
+      // page has to encode them itself.
+      var copies = bufs.map(function(b){ return b.slice(0); });
+      wk.postMessage({ w: w, h: h, frames: copies, delay: DELAY }, copies);
     });
   }
   function encodeWith(G, bufs, w, h, onProgress){

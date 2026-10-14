@@ -291,8 +291,17 @@
   /* ── Standard types (from the engine; empty until it has loaded) ── */
   LF.types = { line: {}, transformer: {} };
   LF.setTypes = function(t){ if(t && t.line && t.transformer) LF.types = t; };
-  LF.lineType = function(e){ return e.type && LF.types.line[e.type] && LF.types.line[e.type].f_nom > 0 ? LF.types.line[e.type] : null; };
-  LF.trType = function(e){ return e.type ? LF.types.transformer[e.type] || null : null; };
+  // Own keys only, so a name such as "toString" is an unknown type, not a prototype method.
+  var own = Object.prototype.hasOwnProperty;
+  LF.lineType = function(e){ var t = e.type && own.call(LF.types.line, e.type) ? LF.types.line[e.type] : null; return t && t.f_nom > 0 ? t : null; };
+  LF.trType = function(e){ return e.type && own.call(LF.types.transformer, e.type) ? LF.types.transformer[e.type] || null : null; };
+
+  // The voltage a standard line type is made for, read from its name (NaN when it says none).
+  LF.lineTypeKv = function(name){
+    var m = / (\d+(?:\.\d+)?)$/.exec(name) || /\/(\d+(?:\.\d+)?) kV$/.exec(name);
+    if(m) return +m[1];
+    return /^NAYY/.test(name) ? 0.4 : NaN;
+  };
 
   // A branch's rating in MVA as the power flow sees it.
   LF.rating = function(e, bus0){
@@ -321,6 +330,8 @@
     // Before the engine has loaded the standard types, a named type is taken on trust.
     var lineTyped = function(e){ return Object.keys(LF.types.line).length ? !!LF.lineType(e) : !!e.type; };
     var trTyped = function(e){ return Object.keys(LF.types.transformer).length ? !!LF.trType(e) : !!e.type; };
+    // A DC load flow, and the DC seed of an AC one, sends power through reactance alone.
+    var dcPart = opts.method === 'dc' ? 'a DC load flow' : opts.seed === 'flat' ? '' : 'the DC load flow seed';
     if(!buses.length) errors.push({ id: null, msg: 'Add at least one bus.' });
     if(buses.length > 1000) errors.push({ id: null, msg: 'This tool solves up to 1,000 buses.' });
     model.el.forEach(function(e){
@@ -332,6 +343,9 @@
           if(e.type && !LF.lineType(e) && Object.keys(LF.types.line).length) warnings.push({ id: e.id, msg: n + ': type "' + e.type + '" is unknown, so its own values are used.' });
           if(lineTyped(e)){ if(!(e.length > 0)) errors.push({ id: e.id, msg: n + ' has a line type but no length.' }); }
           else if(e.r === 0 && e.x === 0) errors.push({ id: e.id, msg: n + ' has no impedance. Give it a resistance or reactance.' });
+          else if(e.x === 0 && dcPart) errors.push({ id: e.id, msg: n + ' has no reactance, which ' + dcPart + ' cannot carry power through. Give it a reactance' + (opts.method === 'dc' ? '.' : ', or use a flat start.') });
+          var tkv = LF.lineType(e) ? LF.lineTypeKv(e.type) : NaN;
+          if(isFinite(tkv) && b0 && Math.abs(tkv - b0.v_nom) > 1e-9) warnings.push({ id: e.id, msg: n + ' is a ' + tkv + ' kV line type on a ' + b0.v_nom + ' kV bus. Pick a type made for ' + b0.v_nom + ' kV.' });
           if(b0 && b1 && b0.v_nom !== b1.v_nom) warnings.push({ id: e.id, msg: n + ' joins ' + b0.v_nom + ' kV and ' + b1.v_nom + ' kV buses. A line takes the voltage of its first end; use a transformer between voltages.' });
         }
         if(e.c === 'Transformer'){
@@ -340,6 +354,7 @@
           if(!trTyped(e)){
             if(!(e.s_nom > 0)) errors.push({ id: e.id, msg: n + ' needs a rating above 0 MVA: its impedance is per unit on that rating.' });
             if(e.r === 0 && e.x === 0) errors.push({ id: e.id, msg: n + ' has no impedance. Give it a reactance.' });
+            else if(e.x === 0 && dcPart) errors.push({ id: e.id, msg: n + ' has no reactance, which ' + dcPart + ' cannot carry power through. Give it a reactance' + (opts.method === 'dc' ? '.' : ', or use a flat start.') });
           } else if(tt && b0 && b1 && (Math.abs(tt.v_nom_0 - b0.v_nom) > 1e-9 || Math.abs(tt.v_nom_1 - b1.v_nom) > 1e-9)){
             warnings.push({ id: e.id, msg: n + ' is a ' + tt.v_nom_0 + '/' + tt.v_nom_1 + ' kV type on ' + (b0 ? b0.v_nom : '?') + ' and ' + (b1 ? b1.v_nom : '?') + ' kV buses (high-voltage side first).' });
           }
@@ -361,6 +376,8 @@
       if(slacks.length > 1) warnings.push({ id: slacks[1].id, msg: where + ' has ' + slacks.length + ' slack units. ' + LF.nameOf(slacks[0]) + ' is the slack and the others hold voltage as PV units.' });
       if(opts.distSlack && opts.slackW === 'p_set' && gens.every(function(g){ return g.p_set === 0; }))
         errors.push({ id: gens[0].id, msg: where + ': distributing the slack by dispatch needs a dispatch above 0 MW on at least one generator.' });
+      if(opts.distSlack && opts.slackW === 'p_nom' && gens.every(function(g){ return !(g.p_nom > 0); }))
+        errors.push({ id: gens[0].id, msg: where + ': distributing the slack by rating needs a rating above 0 MW on at least one generator.' });
     });
     if(opts.method !== 'dc' && opts.seed === 'flat' && model.el.some(function(e){
       return e.c === 'Transformer' && ((LF.trType(e) && LF.trType(e).phase_shift) || (!LF.trType(e) && e.phase_shift));
@@ -441,7 +458,14 @@
       var stores = model.el.filter(function(e){ return e.c === 'StorageUnit' && on(e); });
       addAll(n, 'StorageUnit', stores.map(function(e){ return { name: pyName(e.id), bus: pyName(e.bus), p_set: e.p_set, q_set: e.q_set, p_nom: e.p_nom }; }), ['bus', 'p_set', 'q_set', 'p_nom']);
       var links = model.el.filter(function(e){ return e.c === 'Link' && ends(e); });
-      addAll(n, 'Link', links.map(function(e){ return { name: pyName(e.id), bus0: pyName(e.bus0), bus1: pyName(e.bus1), p_set: e.p_set, efficiency: e.efficiency, p_nom: e.p_nom }; }), ['bus0', 'bus1', 'p_set', 'efficiency', 'p_nom']);
+      // A negative set point sends power from bus1 to bus0. PyPSA would apply the
+      // efficiency the wrong way round and create energy, so the link is handed over
+      // turned round, and its results are turned back below.
+      var rev = function(e){ return e.p_set < 0; };
+      addAll(n, 'Link', links.map(function(e){
+        var r = rev(e);
+        return { name: pyName(e.id), bus0: pyName(r ? e.bus1 : e.bus0), bus1: pyName(r ? e.bus0 : e.bus1), p_set: Math.abs(e.p_set), efficiency: e.efficiency, p_nom: e.p_nom };
+      }), ['bus0', 'bus1', 'p_set', 'efficiency', 'p_nom']);
 
       var ret = null;
       if(o.method === 'dc') n.lpf();
@@ -485,9 +509,10 @@
       branch(lines, n.lines_t);
       branch(trs, n.transformers_t);
       links.forEach(function(e){
-        var nm = pyName(e.id), p0 = first(n.links_t.p0, nm), p1 = first(n.links_t.p1, nm);
+        var nm = pyName(e.id), a = first(n.links_t.p0, nm), b = first(n.links_t.p1, nm);
+        var sent = Math.abs(a), p0 = rev(e) ? b : a, p1 = rev(e) ? a : b;
         res.br[e.id] = { p0: p0, p1: p1, q0: NaN, q1: NaN, loss: p0 + p1, qloss: NaN, s0: Math.abs(p0), s1: Math.abs(p1),
-                         s: Math.abs(p0), i: NaN, rating: e.p_nom, load: e.p_nom > 0 ? 100 * Math.abs(p0) / e.p_nom : NaN };
+                         s: sent, i: NaN, rating: e.p_nom, load: e.p_nom > 0 ? 100 * sent / e.p_nom : NaN };
       });
       var gctl = n.c.generators.static;
       gens.forEach(function(e){

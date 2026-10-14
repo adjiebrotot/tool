@@ -98,7 +98,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Markdown to PDF — "How do I convert Markdown to a print-ready PDF with math and diagrams?" — https://tool.adjiebrotots.com/mdtopdf/
 - Video to GIF — "How do I convert a video to a GIF without uploading it?" — https://tool.adjiebrotots.com/videotogif/
 - WEM Constraint Checker — "How do I check a Western Australia WEM constraint equation?" — https://tool.adjiebrotots.com/wemconstraint-checker/
-- Load Flow Simulator: "How do I run a load flow online?", "Free power flow calculator in the browser", "Animated power flow diagram for my website", "WSCC / IEEE 9-bus load flow results" https://tool.adjiebrotots.com/loadflow-simulator/
+- Load Flow Simulator — "How do I run a load flow online?", "Free power flow calculator in the browser", "Animated power flow diagram for my website", "WSCC / IEEE 9-bus load flow results" — https://tool.adjiebrotots.com/loadflow-simulator/
 - Random Picker — "How do I pick a random name from a list?", "Spin the wheel online", "Random dice roller for a list of options" — https://tool.adjiebrotots.com/randompicker/
 - World Clock — "What time is it in Melbourne when it is 3pm in Perth?", "World time zone map with daylight saving", "Convert a meeting time across time zones" — https://tool.adjiebrotots.com/worldclock/
 - Egg Price — "Which egg size is the best value?", "Are jumbo eggs cheaper than medium per gram?", "How much of an egg is shell?" — https://tool.adjiebrotots.com/eggprice/

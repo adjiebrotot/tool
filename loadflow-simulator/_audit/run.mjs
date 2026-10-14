@@ -14,6 +14,7 @@
 //   A3  WSCC 9-bus against the values Anderson and Fouad publish.
 //   A4  Every island balances: what the sources supply is what is served plus
 //       what the branches lose.
+//   A4b A link with a negative set point loses power, it never makes it.
 //   A5  The engine file is the one its banner names (sha256).
 //   B   The real page in headless Chromium: the KPIs, verdict and CSV say what
 //       the results say; the Run gate is honest; hostile saved state never
@@ -171,12 +172,12 @@ console.log('\n── A3 WSCC 9-bus against Anderson and Fouad ──');
   const r = LF.solve(psa, LF.load(LF.PRESETS.wscc9), {});
   const bad = [];
   for (const [id, [v, a]] of Object.entries(pub.buses)) {
-    if (Math.abs(r.bus[id].v - v) > pub.tol.v) bad.push(`bus ${id} V ${r.bus[id].v.toFixed(4)} vs ${v}`);
-    if (Math.abs(r.bus[id].ang - a) > pub.tol.ang) bad.push(`bus ${id} angle ${r.bus[id].ang.toFixed(2)} vs ${a}`);
+    if (Math.abs(r.bus[id].v - v) > pub.tol.v) bad.push(`bus ${id} V ${r.bus[id].v.toFixed(5)} vs ${v}`);
+    if (Math.abs(r.bus[id].ang - a) > pub.tol.ang) bad.push(`bus ${id} angle ${r.bus[id].ang.toFixed(4)} vs ${a}`);
   }
   for (const [id, [p, q]] of Object.entries(pub.generators)) {
-    if (Math.abs(r.dev[id].p - p) > pub.tol.pq) bad.push(`${id} P ${r.dev[id].p.toFixed(2)} vs ${p}`);
-    if (Math.abs(r.dev[id].q - q) > pub.tol.pq) bad.push(`${id} Q ${r.dev[id].q.toFixed(2)} vs ${q}`);
+    if (Math.abs(r.dev[id].p - p) > pub.tol.pq) bad.push(`${id} P ${r.dev[id].p.toFixed(4)} vs ${p}`);
+    if (Math.abs(r.dev[id].q - q) > pub.tol.pq) bad.push(`${id} Q ${r.dev[id].q.toFixed(4)} vs ${q}`);
   }
   check('every bus voltage and angle and every unit\'s P and Q, to the published digit', !bad.length, bad.join('; ') || `${Object.keys(pub.buses).length} buses, ${Object.keys(pub.generators).length} units`);
 }
@@ -201,6 +202,21 @@ for (const key of Object.keys(LF.PRESETS)) {
   const t = r.totals;
   const total = Math.abs(t.gen - t.load - t.loss);
   check(`${key}: every bus balances, and supplied = served + lost`, worst < 1e-6 && total < 1e-6, `largest bus gap ${fmt(worst)} MW, totals gap ${fmt(total)} MW`);
+}
+
+/* ── A4b: a link sent backwards loses power, it never makes it ── */
+{
+  const m = LF.load(LF.PRESETS.hvdc);
+  const link = m.el.find(e => e.c === 'Link');
+  const fwd = LF.solve(psa, m, {}).br[link.id];
+  link.p_set = -link.p_set;
+  const bwd = LF.solve(psa, m, {}), r = bwd.br[link.id];
+  const want = Math.abs(link.p_set) * (1 - link.efficiency);
+  // PyPSA would apply the efficiency the wrong way round here (p1 = -eff * p_set > 0
+  // with a negative loss); the tool turns the link round instead.
+  check('A4b hvdc sent backwards: the far end gets p x efficiency and the loss is positive',
+        bwd.report.converged && Math.abs(r.p1 + link.p_set) < 1e-9 && Math.abs(r.p0 - link.efficiency * link.p_set) < 1e-9 && Math.abs(r.loss - want) < 1e-9 && Math.abs(fwd.loss - want) < 1e-9,
+        `p0 ${fmt(r.p0)} p1 ${fmt(r.p1)} loss ${fmt(r.loss)} MW`);
 }
 
 /* ── A5: the engine is the file its banner names ── */
