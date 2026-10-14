@@ -33,7 +33,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 // dcasimulator and its portfolio page are not here: their scenarios fetch live
 // market data, so a clean-room replay would be a network test rather than a
 // state test.
-const TOOLS = (process.env.ONLY ? process.env.ONLY.split(',') : ['borrowingcapacity', 'rentvsownhouse', 'financialfreedom', 'financingvscash', 'pisahvsgabung', 'valuateeverything']);
+// loadflow-simulator's presets reset its load flow, label and view options; its
+// engine cannot load over file://, which leaves the forms under test untouched.
+const TOOLS = (process.env.ONLY ? process.env.ONLY.split(',') : ['borrowingcapacity', 'rentvsownhouse', 'financialfreedom', 'financingvscash', 'pisahvsgabung', 'valuateeverything', 'loadflow-simulator']);
 
 /* Where a tool seeds a detailed list from the simple field it replaces, the two
    have to agree at the moment of switching — that is the documented promise of

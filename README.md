@@ -22,6 +22,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [DCA Scenario Explorer](https://tool.adjiebrotots.com/dcasimulator/) | Compare dollar-cost averaging strategies. Includes a [common yfinance ticker reference](https://tool.adjiebrotots.com/dcasimulator/ticker/) for AU, ID, US, and SG, and a [Portfolio mode](https://tool.adjiebrotots.com/dcasimulator/portfolio/) for comparing multi-asset portfolio strategies side by side. |
 | [PowerFactory Scripter](https://tool.adjiebrotots.com/powerfactory-scripter/) | Generate DIgSILENT PowerFactory Python scripts in minutes instead of hours/days. The generated script is yours; generation runs locally, suiting security-restricted environments. |
 | [WEM Constraint Checker](https://tool.adjiebrotots.com/wemconstraint-checker/) | Check WA WEM constraint equations in the browser. |
+| [Load Flow Simulator](https://tool.adjiebrotots.com/loadflow-simulator/) | Draw a single-line diagram and run an AC Newton-Raphson or DC load flow in the browser, on PSA.js (a JavaScript port of PyPSA, checked against PyPSA). Animated P and Q flows, voltages, loading and losses on the diagram, exported as SVG, PNG or GIF, or embedded live on another site. |
 | [Graph Visualiser](https://tool.adjiebrotots.com/graphvisualiser/) | Turn CSV/spreadsheet data into interactive charts without coding. |
 | [Sankey Diagram Creator](https://tool.adjiebrotots.com/sankeycreator/) | Build Sankey diagrams and export SVG/PNG. |
 | [JSON Visualiser](https://tool.adjiebrotots.com/jsonvisualiser/) | Lazy-loaded tree that handles millions of JSON keys/values without error. |
@@ -79,7 +80,7 @@ mini-cache files reopened, against a recorded baseline or, with
 
 Harnesses live in `costofliving-comparator/`, `costofliving-comparator/map/`, `dcasimulator/`, `financialfreedom/`,
 `financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`,
-`rentvsownhouse/sensitivity/`, `valuateeverything/`, and `worldclock/`. The World Clock's harness checks every clock on
+`rentvsownhouse/sensitivity/`, `valuateeverything/`, `worldclock/`, and `loadflow-simulator/`. The World Clock's harness checks every clock on
 its map, for all 407 zones and across Time Travel jumps over daylight-saving changes,
 against Python's `zoneinfo`, which reads the system's tz database rather than Chromium's.
 Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from a
@@ -112,7 +113,14 @@ tool's bundled file and the same live feeds, under the same cache key). `rentvso
 JS-versus-Python cross-model audit that these superseded; its CSV outputs are generated, not
 committed. `powerfactory-scripter/audit/` validates generated scripts against a nine-bus reference
 case, and its `audit_custom_functions.py` checks the pre-made Custom Calculation library on plain
-CPython, with no PowerFactory needed.
+CPython, with no PowerFactory needed. The Load Flow Simulator's harness (`loadflow-simulator/_audit/run.mjs`)
+checks the tool's load flows against a second, independent Newton-Raphson written from PyPSA's
+documented model, whose conventions are pinned to PyPSA's own results, and checks WSCC 9-bus
+against Anderson and Fouad's published voltages. Its engine is PSA.js's power flow, bundled by
+`loadflow-simulator/_build/build-engine.mjs` from a read-only PSA.js checkout, which refuses to
+write a bundle that differs from the source on any number. The tool solves only when Run is
+pressed, although one solve takes milliseconds: drawing a network passes through states that
+cannot be solved, such as a half-connected line or an island with no source.
 
 Eleven cross-tool checks live in `_ref/`. `node _ref/quickstart-check.mjs` drives every tool that
 ships Quick Start scenarios instead of a Reset button and proves the claim that lets it: it

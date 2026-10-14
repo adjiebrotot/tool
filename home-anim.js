@@ -158,6 +158,20 @@
         '<path class="fw" d="M108 82V99A3 3 0 0 1 105 102H88Z"/>' +
         '<path class="rc fr" d="M108 87V99A3 3 0 0 1 105 102H93Z"/></g></g>',
 
+    // A 3-bus system: the grid and a generator feed the load bus, the busier line flowing faster;
+    // gold reactive dots run between the top buses and the load breathes as power arrives.
+    'loadflow-simulator':
+      '<circle class="gl oc fm" cx="60" cy="98" r="14" fill-opacity=".2"/>' +
+      '<path class="sb" stroke-opacity=".3" d="M18 42V48L50 80V88M102 42V48L70 80V88M82 42V56H38V42"/>' +
+      '<g class="sb" stroke-dasharray="4 8"><path class="pf" d="M18 42V48L50 80V88"/><path class="ps" d="M102 42V48L70 80V88"/></g>' +
+      '<path class="q sg" stroke-width="4" stroke-dasharray="0 10" d="M82 42V56H38V42"/>' +
+      '<path class="sb" d="M27 30V42M93 30V42M60 88V95"/>' +
+      '<path class="sB" stroke-width="6" d="M13 42H43M77 42H107M40 88H80"/>' +
+      '<rect class="w" x="17" y="10" width="20" height="20" rx="2"/>' +
+      '<path class="sb" stroke-width="2" d="M18.5 20L27 11.5M18.5 28.5L35.5 11.5M27 28.5L35.5 20"/>' +
+      '<circle class="w" cx="93" cy="20" r="10"/><path class="sB t" d="M86 20q3.5-6 7 0t7 0"/>' +
+      '<path class="ld ot fB sB t" d="M51 94H69L60 106Z"/>',
+
     // Two circles drift apart (separate) and slide into overlap (joint); a heart when joined.
     pisahvsgabung:
       '<g class="cl"><circle class="fb sb" cx="46" cy="58" r="24" fill-opacity=".14"/>' +
@@ -299,6 +313,13 @@
       '@keyframes taPf2{0%,20%,40%,60%,80%,100%{opacity:1}10%,30%,50%,70%,90%{opacity:0}}' +
       '@keyframes taPf3{0%,40%{transform:scale(1.7);opacity:0}48%{transform:scale(.92);opacity:1}54%,82%{transform:none;opacity:1}92%,100%{transform:none;opacity:0}}' +
       '@keyframes taPf4{0%,52%{transform:translate(6px,6px);opacity:0}60%{transform:translate(-1px,-1px);opacity:1}64%,100%{transform:none;opacity:1}}',
+
+    // Flows are linear and move whole dash periods per loop (12 for P, 10 for Q), so the loop is seamless.
+    'loadflow-simulator': '&{--d:4.8s}&.pf{animation-name:taLf1}&.ps{animation-name:taLf2}&.q{animation-name:taLf3}' +
+      '&.pf,&.ps,&.q{animation-timing-function:linear}&.ld{animation-name:taLf4}&.gl{animation-name:taLf5}' +
+      '@keyframes taLf1{to{stroke-dashoffset:-48}}@keyframes taLf2{to{stroke-dashoffset:-24}}@keyframes taLf3{to{stroke-dashoffset:-20}}' +
+      '@keyframes taLf4{0%,50%,100%{transform:none}25%,75%{transform:scale(1.1)}}' +
+      '@keyframes taLf5{0%,50%,100%{transform:scale(.7);opacity:0}25%,75%{transform:none;opacity:1}}',
 
     pisahvsgabung: '&{--d:6s}&.cl{animation-name:taPg1}&.cr{animation-name:taPg2}&.ht{animation-name:taPg3}' +
       '@keyframes taPg1{0%,10%,90%,100%{transform:translateX(-11px)}40%{transform:translateX(1.5px)}48%,68%{transform:none}}' +

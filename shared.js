@@ -2468,6 +2468,21 @@
       THD:  ['Total Harmonic Distortion', 'how much harmonic content distorts a waveform, as a share of the fundamental']
     },
 
+    /* ── Load Flow Simulator ──
+       MW, MVAr and kV are units next to numbers there, so they are left alone. */
+    'loadflow-simulator': {
+      AC:    ['Alternating Current', 'here, the full load flow, with voltage magnitudes, reactive power and losses'],
+      DC:    ['Direct Current', 'here, the linear load flow: active power only, every voltage at 1 p.u. and no losses'],
+      HV:    ['High Voltage'],
+      LV:    ['Low Voltage'],
+      HVDC:  ['High Voltage Direct Current', 'a converter link that sends a set amount of power from one AC network to another'],
+      PV:    ['P and V held', 'a generator or bus that holds its active power (P) and its voltage (V)'],
+      PQ:    ['P and Q held', 'a generator, load or bus with a fixed active power (P) and reactive power (Q)'],
+      'p.u.': ['per unit', 'a quantity divided by its base, so a bus at 1.0 p.u. sits at its nominal voltage'],
+      PyPSA: ['Python for Power System Analysis', 'the open-source power system toolbox this engine is ported from'],
+      WSCC:  ['Western Systems Coordinating Council', 'the US body whose 9-bus test system became a textbook standard']
+    },
+
     /* ── WEM Constraint Checker (Western Australian electricity market) ── */
     'wemconstraint-checker': {
       LHS: ['Left-Hand Side', 'the flow side of the constraint equation, what is actually flowing'],
@@ -3040,11 +3055,19 @@
 
      key is the chart's canvas or Plotly id ('.class' when it has none). A
      card whose view depends on fields outside it names them in
-     data-share-view="<selector>", and their fields and toggles ride along. */
+     data-share-view="<selector>", and their fields and toggles ride along.
+
+     A chart drawn by the tool itself (an SVG diagram, not Chart.js or Plotly)
+     marks its element data-share-chart and keeps data-share-sig set to a
+     signature of what it draws, which embeds wait on and the checks compare.
+     A cluster may also carry ⬇ GIF for an animated chart: its row sits after
+     PNG and shows only while that button does, and the tool's ⧉ handler can
+     pass copyImage a third argument, { gif: fn, onDone: fn }, to put the
+     animation on the clipboard where the browser allows it. */
   function makeShare(){
     var TEXT = {
       en: { share: 'Share', shareTitle: 'Download, copy, link or embed this chart',
-            svg: ['Download as SVG'], png: ['Download as PNG'], copy: ['Copy to clipboard'],
+            svg: ['Download as SVG'], png: ['Download as PNG'], gif: ['Download as GIF'], copy: ['Copy to clipboard'],
             link: ['Share as link', 'Opens the tool on your scenario'],
             linkCopied: '✓ Link copied', linkPrompt: 'Copy this link:', noLink: 'This link could not be made: ',
             embed: ['Embed as HTML', 'Interactive chart for your site'],
@@ -3060,7 +3083,7 @@
             tooBig: 'This chart carries too much data to fit in a link. Embed a smaller part of it.',
             failed: 'This chart could not be loaded here.', openTool: 'Open the tool' },
       id: { share: 'Bagikan', shareTitle: 'Unduh, salin, tautkan, atau sematkan grafik ini',
-            svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], copy: ['Salin ke papan klip'],
+            svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], gif: ['Unduh sebagai GIF'], copy: ['Salin ke papan klip'],
             link: ['Bagikan sebagai tautan', 'Membuka alat ini pada skenario Anda'],
             linkCopied: '✓ Tautan tersalin', linkPrompt: 'Salin tautan ini:', noLink: 'Tautan ini tidak bisa dibuat: ',
             embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
@@ -3078,9 +3101,9 @@
     };
     var LINK_ICO = '<svg viewBox="0 0 24 24" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/></svg>';
     // Share as link and Embed are drawn by this menu, not by a button the tool binds.
-    var ROWS = [['svg', '⬇'], ['png', '⬇'], ['copy', '⧉'], ['link', LINK_ICO], ['embed', '&lt;/&gt;']];
+    var ROWS = [['svg', '⬇'], ['png', '⬇'], ['gif', '⬇'], ['copy', '⧉'], ['link', LINK_ICO], ['embed', '&lt;/&gt;']];
     var OWN = { link: 1, embed: 1 };
-    var LABEL = { svg: /^⬇\s*SVG$/, png: /^⬇\s*PNG$/, copy: /^⧉$/ };
+    var LABEL = { svg: /^⬇\s*SVG$/, png: /^⬇\s*PNG$/, gif: /^⬇\s*GIF$/, copy: /^⧉$/ };
     var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     // The box a chart and its own controls live in, nearest first.
     var CARD = '.chart-modal, .detail-subsection, .chart-card, .chart-panel, .card';
@@ -3148,7 +3171,7 @@
       hold.hidden = true;
       cluster.insertBefore(wrap, first);
       cluster.insertBefore(hold, wrap.nextSibling);
-      ['svg', 'png', 'copy'].forEach(function(k){ if(src[k]) hold.appendChild(src[k]); });
+      ['svg', 'png', 'gif', 'copy'].forEach(function(k){ if(src[k]) hold.appendChild(src[k]); });
       var m = { cluster: cluster, wrap: wrap, toggle: toggle, list: list, src: src };
       cluster.__share = m;
       menus.push(m);
@@ -3166,13 +3189,15 @@
       if(!any && current === m) close(m);
     }
     function rows(m){
-      return Array.prototype.filter.call(m.list.querySelectorAll('.share-opt'), function(b){ return !b.disabled; });
+      return Array.prototype.filter.call(m.list.querySelectorAll('.share-opt'), function(b){ return !b.disabled && !b.parentNode.hidden; });
     }
     function open(m){
       if(current && current !== m) close(current);
       each(m.list.querySelectorAll('.share-opt'), function(b){
-        var s = m.src[b.getAttribute('data-kind')];
+        var k = b.getAttribute('data-kind'), s = m.src[k];
         b.disabled = !!(s && s.disabled);
+        // An animation's GIF row shows only while the tool shows its button.
+        if(k === 'gif') b.parentNode.hidden = !shown(s);
       });
       // In the body, so no card's overflow or a popup's transform can clip it.
       if(m.list.parentNode !== document.body) document.body.appendChild(m.list);
@@ -3263,18 +3288,39 @@
       });
     }
     /* source: a canvas, a Blob, a data URL, or a function returning one of
-       them or a promise of one. Resolves true once copied, false if not. */
-    function copyImage(source, from){
-      var t = T(), done;
+       them or a promise of one. Resolves true once copied, false if not.
+       opts.gif (optional): a function returning a GIF Blob or a promise of
+       one, for an animated chart. Where the browser takes image/gif on the
+       clipboard it goes as it is; elsewhere the still PNG goes with an HTML
+       copy carrying the GIF, which rich-text apps (mail, documents) paste
+       animated. opts.onDone(kind) is told 'gif', 'png+html' or 'png'. */
+    function copyImage(source, from, opts){
+      var t = T(), done, kind = 'png';
+      opts = opts || {};
+      function supports(type){ try { return !!(global.ClipboardItem && global.ClipboardItem.supports && global.ClipboardItem.supports(type)); } catch(e){ return false; } }
       try {
         if(!navigator.clipboard || !navigator.clipboard.write || !global.ClipboardItem) throw new Error(t.noCopy);
         // The item is handed a promise and written straight away: Safari only
         // allows a write that starts inside the click.
         var blob = asBlob(typeof source === 'function' ? source() : source);
         blob.catch(function(){});
-        done = navigator.clipboard.write([new global.ClipboardItem({ 'image/png': blob })]);
+        var item = { 'image/png': blob };
+        if(typeof opts.gif === 'function'){
+          var gif = Promise.resolve(opts.gif());
+          gif.catch(function(){});
+          if(supports('image/gif')){ item = { 'image/gif': gif }; kind = 'gif'; }
+          else if(supports('text/html') || !global.ClipboardItem.supports){
+            item['text/html'] = gif.then(function(g){
+              return new Promise(function(res){ var r = new FileReader(); r.onload = function(){ res(new Blob(['<img src="' + r.result + '" alt="">'], { type: 'text/html' })); }; r.readAsDataURL(g); });
+            });
+            kind = 'png+html';
+          }
+        }
+        done = navigator.clipboard.write([new global.ClipboardItem(item)]);
+        // A browser that refuses the pair still takes the PNG on its own.
+        if(kind !== 'png') done = done.catch(function(){ kind = 'png'; return navigator.clipboard.write([new global.ClipboardItem({ 'image/png': asBlob(typeof source === 'function' ? source() : source) })]); });
       } catch(e){ done = Promise.reject(e); }
-      return done.then(function(){ flash(from, t.copied); return true; },
+      return done.then(function(){ flash(from, t.copied); if(typeof opts.onDone === 'function') opts.onDone(kind); return true; },
                        function(e){ alert(t.copyFail + (e && e.message ? e.message : e)); return false; });
     }
 
@@ -3430,6 +3476,9 @@
     }
 
     function chartOf(card){
+      // A chart the tool draws itself (an SVG diagram) says so.
+      var own = card ? card.querySelector('[data-share-chart]') : null;
+      if(own) return own;
       var cs = card ? card.querySelectorAll('canvas') : [];
       for(var i = 0; i < cs.length; i++) if(global.Chart && global.Chart.getChart && global.Chart.getChart(cs[i])) return cs[i];
       return (card && card.querySelector('.js-plotly-plot')) || cs[0] || null;
@@ -3813,6 +3862,7 @@
         return (d.label || '') + ':' + a.length + ':' + s + ':' + !!d.hidden;
       }).join(',');
       if(el.data && el._fullLayout) return 'p|' + el.data.length + '|' + el.data.map(function(tr){ return (tr.x || tr.z || []).length + ':' + (tr.visible === false); }).join(',');
+      if(el.hasAttribute && el.hasAttribute('data-share-sig')) return el.getAttribute('data-share-sig');
       return '';
     }
     function settled(key){

@@ -27,7 +27,7 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | --- | --- | --- | --- |
 | Delete one item | bin | bare, red on hover | Finance vs Cash scenario card, rate and repayment periods · Rent vs Own rate periods, cost items, CAGR rows · Sensitivity scenario header, periods, cost items · Financial Freedom stages (both sides) · DCA scenario, ticker chips · Portfolio portfolio, assets, ticker chips · Egg Price sizes · Cost of Living destinations, expense rows · Sankey rows · PowerFactory input variables, element types, output variables, constraints · Canvas Builder item (hover) and format bar |
 | Delete with a word | bin + `Remove from list` | secondary | Random Picker winner banner |
-| Empty a whole list or document | bin + `Clear` / `Clear all` | secondary or bare-with-label | DCA and Portfolio `Clear all` (loaded assets) · Sankey `Clear` · JSON Visualiser bin (in a boxed row, so boxed) |
+| Empty a whole list or document | bin + `Clear` / `Clear all` | secondary or bare-with-label | DCA and Portfolio `Clear all` (loaded assets) · Sankey `Clear` · Load Flow Simulator `Clear` (the diagram, asks first, undoable) · JSON Visualiser bin (in a boxed row, so boxed) |
 | Empty a search field | backspace key, inside the field | bare | Cost of Living From / To / destination pickers · World Clock place search |
 | Put a value back to automatic | anticlockwise arrow, on the swatch | badge | Sankey row colour |
 | Restore the whole form to defaults | `↺ Reset` / `↺` | secondary | Egg Price · Sankey · PowerFactory (asks first) |
@@ -37,7 +37,9 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | Job | Picture | Weight | Where |
 | --- | --- | --- | --- |
 | Add an item | `+ Add …` / `+` | primary or secondary (dashed for an inline add) | `+ Add Scenario`, `+ Add Period` (Finance vs Cash) · `+ Add Period`, `+ Add setup cost`, `+ Add ongoing cost`, `+ Row` (Rent vs Own) · `+ Scenario` (Sensitivity) · `+ Add stage` (Financial Freedom) · `+` new scenario / portfolio, `+ Add`, `+ Add Simulated Asset` (DCA, Portfolio) · `+ Add size` (Egg Price) · `+ Add Flow` (Sankey) · `+ Add Input Variable`, `+ Add Element Type`, `+ Add Output Variable`, `+ Add Constraint` (PowerFactory) · `+ New file` (Markdown to PDF) |
-| Duplicate an item beside itself | two sheets and a plus | bare | Finance vs Cash scenario card · Sensitivity scenario header · DCA scenario · Portfolio portfolio |
+| Duplicate an item beside itself | two sheets and a plus | bare | Finance vs Cash scenario card · Sensitivity scenario header · DCA scenario · Portfolio portfolio · Load Flow Simulator element |
+| Undo / redo an edit | `↶` / `↷` | bare | Load Flow Simulator diagram toolbar (Ctrl+Z, Ctrl+Shift+Z) |
+| Add a part to a diagram | the part's own symbol and word, dragged out | secondary tile | Load Flow Simulator toolbar (Bus, Line, Transformer, Generator, Grid, Load, Shunt, Storage, HVDC link) |
 | Edit an item | pencil | bare (icon only) or secondary (worded) | Finance vs Cash scenario card · Portfolio `Change method` · Markdown to PDF `Edit` (toggles with eye `Preview`) · DCA and Portfolio `Edit list` |
 | Reorder by dragging | `⠿` | bare | Sensitivity scenario columns · Portfolio assets · Cost of Living destination columns |
 
@@ -47,7 +49,7 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | --- | --- | --- | --- |
 | Save the work to a file | floppy disk | bare in a Quick Start row, boxed in a header or toolbar | every finance tool (`SharedScenario`) · Canvas Builder `Save` · PowerFactory setup |
 | Open a file from this device | open folder | as above | every finance tool (`SharedScenario`) · Canvas Builder `Open` · PowerFactory setup · Sensitivity `CSV` · Video to GIF `Open video` · WEM Checker `Open XLSX` · JSON Visualiser drop zone |
-| Share a chart (download, copy, link, embed) | `Share ⌄`, opening the dropdown list: `⬇ Download as SVG`, `⬇ Download as PNG`, `⧉ Copy to clipboard`, `Share as link` (chain-link icon), `</> Embed as HTML` | secondary, its rows as a dropdown's | every chart's toolbar, beside its `⟳` (`SharedShare` folds the chart's `⬇ SVG` `⬇ PNG` `⧉` into it at load) |
+| Share a chart (download, copy, link, embed) | `Share ⌄`, opening the dropdown list: `⬇ Download as SVG`, `⬇ Download as PNG`, (`⬇ Download as GIF` on an animated chart), `⧉ Copy to clipboard`, `Share as link` (chain-link icon), `</> Embed as HTML` | secondary, its rows as a dropdown's | every chart's toolbar, beside its `⟳` (`SharedShare` folds the chart's `⬇ SVG` `⬇ PNG` `⬇ GIF` `⧉` into it at load) · Load Flow Simulator diagram (with GIF) |
 | Download an export | `⬇` + format | secondary | tables `⬇ CSV` on every chart tool, and inside a chart's Share menu · Sensitivity `⬇ CSV` and per-scenario `⬇` Own / Rent cashflow · Markdown to PDF `⬇ MD` `⬇ PDF` · Video to GIF `⬇ Download GIF` · PowerFactory `⬇ .py` / `⬇ .ipynb`, `⬇ Download Template (.xlsx)`, samples `⬇ JSON` · Sankey `⬇ CSV`, `⬇ Download CSV Template` · WEM Checker `⬇ CSV` · Canvas Builder `⬇ PNG` (primary: it is that tool's output) |
 | Copy to the clipboard | `⧉` | secondary, square | inside every chart's Share menu · `⧉ Copy code` in its embed dialog (primary) · Canvas Builder · PowerFactory code · JSON Visualiser · Sankey |
 | Fetch data from the web | `⤓ Load tickers`, `Fetch` | primary / secondary | DCA and Portfolio · Financial Freedom ticker · JSON Visualiser URL |
@@ -57,10 +59,10 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 
 | Job | Picture | Weight | Where |
 | --- | --- | --- | --- |
-| Run the tool's computation | `▶ …` | primary | `▶ Simulate` (DCA, Portfolio, Financial Freedom) · `▶ Generate Code` (PowerFactory) · `▶ Check` (WEM Checker) · `▶ Convert to GIF` (Video to GIF) · `▶ Visualise` (Graph Visualiser) |
+| Run the tool's computation | `▶ …` | primary | `▶ Run load flow` (Load Flow Simulator) · `▶ Simulate` (DCA, Portfolio, Financial Freedom) · `▶ Generate Code` (PowerFactory) · `▶ Check` (WEM Checker) · `▶ Convert to GIF` (Video to GIF) · `▶ Visualise` (Graph Visualiser) |
 | Compute a side answer | worded | primary, small | `Calculate CAGR` (Rent vs Own) |
 | Reset a chart's zoom or view | `⟳` | secondary, square | every chart cluster · Finance vs Cash 3D view · JSON Visualiser `⟳ Reset` |
-| Zoom | `+` / `−` | secondary, square | JSON Visualiser · World Clock |
+| Zoom | `+` / `−` | secondary, square | JSON Visualiser · World Clock · Load Flow Simulator diagram (inside the stage, never in a cluster) |
 | Back to my place / now | crosshair · `↩ Back to now` | secondary | World Clock |
 | Show a chart or table | `Show table ▾` · chart icon · `Compare` | secondary / bare | every finance tool's tables · Sensitivity per-scenario chart and `Compare` |
 | Play a video | `▶` `◀◀` `▶▶` | secondary, square | Video to GIF player |

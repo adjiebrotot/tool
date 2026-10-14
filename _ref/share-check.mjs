@@ -42,6 +42,13 @@
 // Every page is moved off its defaults before it is shared, so an embed that
 // dropped the scenario would draw the defaults and fail rule 3.
 //
+// A chart the tool draws itself (an SVG diagram) marks its element
+// data-share-chart and keeps data-share-sig set to a signature of what it
+// draws: E3 compares that, and E4 wheels the diagram and needs its viewBox to
+// move. A page whose cluster carries ⬇ GIF (spec.gif) also has the GIF row in
+// its menu (M2), and its GIF must loop and be the desktop PNG's size at 1x on
+// a desktop and on a phone alike (X6, X7).
+//
 // SHOT=<dir> saves every embed as it rendered; ONLY=<name> runs one page.
 // The libraries are the real ones, cached by chart-check.mjs in
 // _ref/.libcache/; run that once with network access first.
@@ -208,6 +215,7 @@ const DRAWN = `(key) => {
   if (el.data) return JSON.stringify(el.data.map(t => ({ type: t.type, name: t.name, visible: t.visible,
     x: t.x && Array.from(t.x).map(r), y: t.y && Array.from(t.y).map(r),
     z: t.z && Array.from(t.z).map(z => Array.isArray(z) ? z.map(r) : r(z)) })));
+  if (el.hasAttribute && el.hasAttribute('data-share-sig')) return el.getAttribute('data-share-sig');
   return null;
 }`;
 
@@ -220,6 +228,28 @@ function svgSize(text) {
   return vb ? [+vb[1], +vb[2]] : null;
 }
 const same = (a, b) => !!a && !!b && a[0] === b[0] && a[1] === b[1];
+// A GIF's screen size, its frames and whether it loops, read block by block.
+function gifInfo(buf) {
+  const out = { head: buf.slice(0, 6).toString('latin1'), w: buf.readUInt16LE(6), h: buf.readUInt16LE(8), frames: 0, loop: false };
+  let i = 13;
+  if (buf[10] & 0x80) i += 3 * (1 << ((buf[10] & 7) + 1));
+  const subs = () => { while (i < buf.length && buf[i] !== 0) i += buf[i] + 1; i++; };
+  while (i < buf.length) {
+    const b = buf[i];
+    if (b === 0x3B) break;
+    if (b === 0x21) {
+      if (buf[i + 1] === 0xFF && buf.slice(i + 3, i + 14).toString('latin1') === 'NETSCAPE2.0') out.loop = true;
+      i += 2; subs();
+    } else if (b === 0x2C) {
+      out.frames++;
+      const flags = buf[i + 9];
+      i += 10;
+      if (flags & 0x80) i += 3 * (1 << ((flags & 7) + 1));
+      i++; subs();
+    } else break;
+  }
+  return out;
+}
 
 async function openMenu(page, key) {
   const t = await toggleOf(page, key);
@@ -343,6 +373,23 @@ const PAGES = [
     },
   },
   {
+    // An SVG diagram with an animated GIF export. The HVDC preset (two islands
+    // and a link), its flows animated and the branch loading labelled.
+    name: 'loadflow-simulator', url: '/loadflow-simulator/', charts: ['sldStage'], gif: true,
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="hvdc"]');
+      await page.waitForFunction(() => /\S/.test(document.getElementById('sldStage').getAttribute('data-share-sig') || ''), null, { timeout: 20000 });
+      await page.evaluate(() => {
+        for (const [id, v] of [['animP', true], ['animQ', true], ['lb_Line_load', true], ['colourBy', 'loading']]) {
+          const el = document.getElementById(id);
+          if (el.type === 'checkbox') el.checked = v; else el.value = v;
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+      await page.waitForTimeout(300);
+    },
+  },
+  {
     name: 'valuateeverything', url: '/valuateeverything/', charts: ['plotDiv'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="house"]');
@@ -390,9 +437,9 @@ const BUDGET = 2500;
 const PRICE_BUDGET = 600 * 1024;
 
 const WORDS = {
-  en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Share as link', 'Embed as HTML'],
+  en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Share as link', 'Embed as HTML'], gif: 'Download as GIF',
         back: 'Try your own scenarios at', copied: '✓ Copied', linkCopied: '✓ Link copied' },
-  id: { share: 'Bagikan', rows: ['Unduh sebagai SVG', 'Unduh sebagai PNG', 'Salin ke papan klip', 'Bagikan sebagai tautan', 'Sematkan sebagai HTML'],
+  id: { share: 'Bagikan', rows: ['Unduh sebagai SVG', 'Unduh sebagai PNG', 'Salin ke papan klip', 'Bagikan sebagai tautan', 'Sematkan sebagai HTML'], gif: 'Unduh sebagai GIF',
         back: 'Coba skenario Anda sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
 };
 
@@ -490,7 +537,8 @@ for (const spec of PAGES) {
                rightGap: Math.round(tr.right - lr.right), below: Math.round(lr.top - tr.bottom),
                inView: lr.left >= 0 && lr.right <= innerWidth };
     })()`);
-    check(`${tag} M2 the menu lists SVG, PNG, copy, link, embed, in that order`, JSON.stringify(menu.rows) === JSON.stringify(W.rows), menu.rows.join(' | '));
+    const wantRows = spec.gif ? [...W.rows.slice(0, 2), W.gif, ...W.rows.slice(2)] : W.rows;
+    check(`${tag} M2 the menu lists SVG, PNG, ${spec.gif ? 'GIF, ' : ''}copy, link, embed, in that order`, JSON.stringify(menu.rows) === JSON.stringify(wantRows), menu.rows.join(' | '));
     check(`${tag} M3 and opens under Share, flush with its right edge`,
           menu.expanded === 'true' && menu.focused === 'svg' && Math.abs(menu.rightGap) <= 2 && menu.below >= 0 && menu.below <= 8 && menu.inView,
           `gap ${menu.rightGap}px, ${menu.below}px below, first row focused: ${menu.focused}`);
@@ -505,6 +553,14 @@ for (const spec of PAGES) {
     desk[key] = { png: png && pngSize(png), svg: svg && svgSize(svg.toString('utf8')) };
     check(`${tag} X1 a desktop downloads a PNG and an SVG`, !!desk[key].png && !!desk[key].svg,
           `PNG ${desk[key].png}, SVG ${desk[key].svg}`);
+    if (spec.gif) {
+      const gif = await download(page, key, 'gif').then(gifInfo, e => ({ err: e.message }));
+      desk[key].gif = gif.err ? null : [gif.w, gif.h];
+      check(`${tag} X6 the GIF loops, moves, and is the PNG's picture at 1x`,
+            !gif.err && gif.head === 'GIF89a' && gif.frames >= 2 && gif.loop && !!desk[key].png &&
+            gif.w * 2 === desk[key].png[0] && gif.h * 2 === desk[key].png[1],
+            gif.err || `${gif.head} ${gif.w}x${gif.h}, ${gif.frames} frames, loop ${gif.loop}`);
+    }
 
     /* ── 3. the embed ── */
     await pick(page, key, 'embed');
@@ -628,6 +684,18 @@ for (const spec of PAGES) {
         };
       })()`);
       const where = `at ${vp.width}px`;
+      // A diagram drawn by the tool zooms by the wheel: its viewBox has to move.
+      const svgZoom = await frame.evaluate(`(async () => {
+        const f = (${FIND})(${JSON.stringify(key)});
+        if (!f.el || !f.el.hasAttribute('data-share-chart')) return null;
+        const svg = f.el.querySelector('svg'), before = svg && svg.getAttribute('viewBox');
+        if (!svg) return false;
+        const r = svg.getBoundingClientRect();
+        svg.dispatchEvent(new WheelEvent('wheel', { deltaY: -240, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, cancelable: true }));
+        await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
+        return svg.getAttribute('viewBox') !== before;
+      })()`);
+      if (svgZoom !== null) view.zoom = svgZoom;
       if (SHOT) await E.page.screenshot({ path: join(SHOT, `${spec.name}-${key}-${vp.width}`.replace(/[^a-z0-9]+/gi, '_') + '.png') });
       check(`${tag} E2 ${where}: the embed opens on its own chart card alone, filling the frame`,
             ready && !view.failed && view.fills && !view.stray.length && !view.share && !view.wide && view.chartTall >= 160,
@@ -676,6 +744,10 @@ for (const spec of PAGES) {
     const svg = await download(P.page, key, 'svg').then(b => svgSize(b.toString('utf8')), e => e.message);
     check(`${tag} X2 a phone's PNG is the desktop's, ${desk[key].png}`, same(png, desk[key].png), String(png));
     check(`${tag} X3 a phone's SVG is the desktop's, ${desk[key].svg}`, same(svg, desk[key].svg), String(svg));
+    if (spec.gif) {
+      const gif = await download(P.page, key, 'gif').then(gifInfo, e => ({ err: e.message }));
+      check(`${tag} X7 a phone's GIF is the desktop's, ${desk[key].gif}`, !gif.err && same([gif.w, gif.h], desk[key].gif), gif.err || `${gif.w}x${gif.h}`);
+    }
     const copied = await clipboardSize(P.page, key).catch(e => e.message);
     const label = await P.page.evaluate(`(${FIND})(${JSON.stringify(key)}).toggle.textContent.trim()`);
     check(`${tag} X4 and what it copies is that same PNG, with ${W.copied} on Share`,

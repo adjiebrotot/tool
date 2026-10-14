@@ -451,6 +451,16 @@ const PAGES = [
     },
   },
   {
+    // An SVG single-line diagram, no Chart.js or Plotly: only its export rows
+    // are held here (the diagram's cluster and the results table's ⬇ CSV).
+    name: 'loadflow-simulator',
+    url: '/loadflow-simulator/',
+    charts: [],
+    async prep(page) {
+      await page.waitForFunction(() => /\S/.test(document.getElementById('sldStage').getAttribute('data-share-sig') || ''), null, { timeout: 20000 });
+    },
+  },
+  {
     // A Plotly plot like the Graph Visualiser's. The zoom promises are tested
     // on a series that climbs steeply, so the left of it sits well under the
     // whole run's top, which is what the y refit has to come down to.

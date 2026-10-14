@@ -61,6 +61,12 @@ const PAGES = [
   { path: 'costofliving-comparator/map/', preset: 'jkt', probe: '.results',
     also: `document.querySelector('#modeGroup .seg-btn[data-val="global"]').click();
            document.querySelector('#viewGroup .seg-btn[data-val="ratio"]').click();` },
+  // The diagram lives in JS state (Persist extra), not in form controls: a
+  // load edited in the model, a label shown, then solved again.
+  { path: 'loadflow-simulator/',       preset: 'hvdc',         probe: '.metrics',
+    also: `var e = window.__lf.app.model.el.filter(function(x){ return x.id === 11; })[0]; e.p_set = 300; window.__lf.app.change('elec');
+           var l = document.getElementById('lb_Bus_vkv'); l.checked = true; l.dispatchEvent(new Event('change', {bubbles: true}));
+           document.getElementById('runBtn').click();` },
   { path: 'rentvsownhouse/sensitivity/', probe: 'main',
     also: `var y = document.getElementById('yearInput'); y.value = '17';
            y.dispatchEvent(new Event('input', {bubbles: true})); y.dispatchEvent(new Event('change', {bubbles: true}));

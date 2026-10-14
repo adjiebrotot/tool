@@ -1786,6 +1786,7 @@ and it is driven by the keyboard as a menu is (arrows, Home, End, Escape back to
 | --- | --- | --- |
 | ⬇ Download as SVG | clicks the chart's own `⬇ SVG` | drawn at the desktop size (`SharedExport.atDesktopSize`), so a phone exports the desktop picture |
 | ⬇ Download as PNG | clicks `⬇ PNG` | the same |
+| ⬇ Download as GIF | clicks `⬇ GIF`, only on an animated chart | shown only while the tool shows its `⬇ GIF` (the Load Flow Simulator, while a flow animates); one loop, the PNG's picture at 1x |
 | ⧉ Copy to clipboard | clicks `⧉`, whose handler copies through `SharedShare.copyImage` | the PNG above; "✓ Copied" flashes on Share, a failure says why in words |
 | Share as link (chain-link icon) | copies `<tool>/#open=<chart>&s=…` | the same address as the embed's *Links back* below: the tool on the reader's scenario and this chart's view; "✓ Link copied" flashes on Share |
 | </> Embed as HTML | opens the embed dialog | one line: an iframe of the tool, its watermark drawn inside the frame |
@@ -1861,6 +1862,15 @@ three rows say what they do in their label alone.
 
 - A view that lives outside the card names it: `data-share-view="#tab-sens"` on the card
   (Finance vs Cash's sensitivity sweep), and its fields and toggles ride along.
+- A chart the tool draws itself, not Chart.js or Plotly (the Load Flow Simulator's SVG
+  diagram), marks its element `data-share-chart` and keeps `data-share-sig` set to a
+  signature of what it draws, set only once it has drawn (a failure too, so an embed
+  settles). The embed waits on it and `_ref/share-check.mjs` compares it; that check also
+  wheels the diagram and needs its `viewBox` to move.
+- An animated chart's `⧉` passes `copyImage` a third argument, `{ gif: () => gifBlob,
+  onDone: kind => … }`: the GIF goes on the clipboard where the browser takes `image/gif`,
+  and elsewhere the PNG goes with an HTML copy carrying the GIF, which mail and documents
+  paste animated. `onDone` hears which, so the tool can say so in words.
 - A view that has to be opened first (a popup) registers a hook:
   `SharedShare.view('.cm-canvas', { save: () => ({…}), load: v => openIt(v) })`.
 - A tool outside `SharedScenario` passes its own `SharedShare.state({ save, load })`; the
