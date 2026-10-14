@@ -115,13 +115,17 @@
       '<defs><pattern id="lfDots" width="' + G + '" height="' + G + '" patternUnits="userSpaceOnUse"><circle cx="' + G / 2 + '" cy="' + G / 2 + '" r="0.8" fill="' + C.border + '"/></pattern></defs>' +
       (app.readOnly ? '' : '<rect class="lf-grid" x="-100000" y="-100000" width="200000" height="200000" fill="url(#lfDots)" pointer-events="none"/>') +
       '<g class="lyr-base">' + sc.base + '</g>' +
-      '<g class="lyr-res"><g class="lyr-mark">' + sc.marks + '</g><g class="lyr-flow">' + LF.laneSvg(sc.lanes) + '</g></g>' +
+      '<g class="lyr-res"><g class="lyr-mark"><g class="fa-still">' + sc.marks + '</g>' + LF.arrowSvg(sc.arrows) + '</g><g class="lyr-flow">' + LF.laneSvg(sc.lanes) + '</g></g>' +
       '<g class="lyr-hit">' + hitLayer() + '</g>' +
       '<g class="lyr-lbl">' + LF.labelSvg(sc.labels, C, function(l){ return !l.res; }) + '</g>' +
       '<g class="lyr-res">' + LF.labelSvg(sc.labels, C, function(l){ return l.res; }) + '</g>' +
       '<g class="lyr-ovl"></g><g class="lyr-tmp"></g>';
     svg.classList.toggle('no-p', !d.animP);
     svg.classList.toggle('no-q', !d.animQ);
+    // The arrow on a line follows active power while its dashes move; with only the
+    // reactive dots on, it follows reactive power; with nothing moving, it stands still.
+    var shown = shownResults();
+    svg.setAttribute('data-arrow', d.animP ? 'p' : d.animQ && shown && shown.report.method === 'ac' ? 'q' : 'still');
     $('gifBtn').hidden = !(shownResults() && (d.animP || d.animQ));
     renderOverlay();
     applyView();
@@ -674,20 +678,29 @@
     v_mag_pu_set: 'The voltage a slack or PV unit on this bus holds.',
     length: 'Route length. A line type gives its impedance per kilometre.',
     num_parallel: 'Identical circuits side by side: impedance divides and rating multiplies.',
-    r: 'Series resistance of the whole line.',
-    x: 'Series reactance of the whole line.',
+    r: 'Series resistance of the whole line, not per kilometre.',
+    x: 'Series reactance of the whole line, not per kilometre. Negative for a series capacitor.',
     b: 'Shunt susceptance (charging) of the whole line, split half to each end.',
-    g: 'Shunt conductance of the whole line.',
+    g: 'Shunt conductance (leakage) of the whole line, usually 0.',
     s_nom: 'Rated apparent power, used only to work out loading.',
     tx_x: 'Series reactance, per unit on the transformer\'s own rating.',
     tx_r: 'Series resistance, per unit on the transformer\'s own rating.',
     tap_ratio: 'Off-nominal turns ratio on the tap side: 1.05 lifts that side\'s winding by 5%.',
     phase_shift: 'Angle the transformer shifts the voltage by, such as 150° for a Dyn5 unit.',
     tap_position: 'Steps away from the neutral tap, within the type\'s range.',
-    p_set: 'Active power the unit is dispatched at. A slack supplies whatever balances its island, so its figure counts only when the slack is distributed.',
+    tx_g: 'Core (iron) loss, per unit on the transformer\'s own rating.',
+    tx_b: 'Magnetising current, per unit on the transformer\'s own rating. Negative: the core draws reactive power.',
+    tx_model: 'Where the magnetising branch sits.<ul><li><strong>T model:</strong> between two halves of the series impedance, PyPSA\'s default.</li><li><strong>π model:</strong> half at each end.</li></ul>',
+    gen_p: 'A fixed output. The slack, not this unit, takes up any imbalance.',
+    slack_p: 'With the slack distributed, the unit supplies this plus its share of what is left over.',
+    gen_vset: 'The voltage this unit holds at its bus. Every unit on the bus holds the same one.',
     q_set: 'Reactive power, positive when supplying.',
-    p_nom: 'Rated power. Weights a distributed slack and sets a link\'s loading.',
-    load_p: 'Active power drawn.',
+    p_nom: 'Rated power. When the slack is shared by rating, it sets this unit\'s share.',
+    link_nom: 'Rated power, used only to work out loading.',
+    store_nom: 'Rated power, kept for reference. Storage is a fixed injection, so the load flow never reads it.',
+    grid: 'Draws the unit as a hatched square, the usual sign for a wider grid. The load flow is the same.',
+    upright: 'Stands the bar on end. R does the same to every selected bus.',
+    load_p: 'Active power drawn. A negative figure feeds power in, like rooftop solar.',
     load_q: 'Reactive power drawn, positive for an inductive load.',
     shunt_q: 'Reactive power at the bus\'s nominal voltage, positive for a capacitor. Stored as a susceptance, so it scales with V².',
     shunt_p: 'Active power drawn at nominal voltage, stored as a conductance.',
@@ -716,29 +729,34 @@
            F_('x', 'Reactance', 'p.u.', { min: -10, max: 10, step: 0.0001, tip: UNIT_TIP.tx_x, show: tcustom }),
            F_('r', 'Resistance', 'p.u.', { min: 0, max: 10, step: 0.0001, tip: UNIT_TIP.tx_r, show: tcustom }),
            F_('tap_ratio', 'Tap ratio', '', { min: 0.5, max: 1.5, step: 0.0001, tip: UNIT_TIP.tap_ratio, show: tcustom }),
-           F_('tap_side', 'Tap side', '', { kind: 'seg', opts: [[0, 'First end'], [1, 'Second end']], show: tcustom }),
+           // The values stay 0 and 1: saved diagrams carry them. The words match the
+           // panel's own "From <bus> to <bus>" line, and the tip names the buses.
+           F_('tap_side', 'Tap side', '', { kind: 'seg', opts: [[0, 'From'], [1, 'To']], show: tcustom, tip: function(e){
+             var m = LF.byId(app.model), n = function(id){ return m[id] ? LF.nameOf(m[id]) : 'its bus'; };
+             return 'The winding the tap ratio sits on.<ul><li><strong>From:</strong> ' + n(e.bus0) + '.</li><li><strong>To:</strong> ' + n(e.bus1) + '.</li></ul>';
+           } }),
            F_('phase_shift', 'Phase shift', '°', { min: -360, max: 360, tip: UNIT_TIP.phase_shift, show: tcustom }),
-           F_('g', 'Magnetising conductance', 'p.u.', { min: -1, max: 1, step: 0.0001, show: tcustom }),
-           F_('b', 'Magnetising susceptance', 'p.u.', { min: -1, max: 1, step: 0.0001, show: tcustom }),
-           F_('model', 'Equivalent circuit', '', { kind: 'seg', opts: [['t', 'T'], ['pi', 'π']] })],
+           F_('g', 'Magnetising conductance', 'p.u.', { min: -1, max: 1, step: 0.0001, tip: UNIT_TIP.tx_g, show: tcustom }),
+           F_('b', 'Magnetising susceptance', 'p.u.', { min: -1, max: 1, step: 0.0001, tip: UNIT_TIP.tx_b, show: tcustom }),
+           F_('model', 'Equivalent circuit', '', { kind: 'seg', opts: [['t', 'T model'], ['pi', 'π model']], tip: UNIT_TIP.tx_model })],
     Generator: [F_('control', 'Control', '', { kind: 'seg', opts: [['Slack', 'Slack'], ['PV', 'PV'], ['PQ', 'PQ']] }),
            // A slack's dispatch only counts when the slack is distributed: each unit then
            // supplies its dispatch plus its share of what is left over.
-           F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.p_set, show: function(e){ return e.control !== 'Slack' || $('lfDistSlack').checked; } }),
+           F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: function(e){ return e.control === 'Slack' ? UNIT_TIP.slack_p : UNIT_TIP.gen_p; }, show: function(e){ return e.control !== 'Slack' || $('lfDistSlack').checked; } }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.q_set, show: function(e){ return e.control === 'PQ'; } }),
-           F_('vset', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.v_mag_pu_set, show: function(e){ return e.control !== 'PQ' && e.bus; } }),
+           F_('vset', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.gen_vset, show: function(e){ return e.control !== 'PQ' && e.bus; } }),
            F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom }),
-           F_('grid', 'Draw as an external grid', '', { kind: 'toggle' })],
+           F_('grid', 'Draw as an external grid', '', { kind: 'toggle', tip: UNIT_TIP.grid })],
     Load: [F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.load_p }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.load_q })],
     ShuntImpedance: [F_('shq', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.shunt_q }),
            F_('shp', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.shunt_p })],
     StorageUnit: [F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.store_p }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.q_set }),
-           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom })],
+           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.store_nom })],
     Link: [F_('p_set', 'Power sent', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.link_p }),
            F_('eff', 'Efficiency', '%', { min: 1, max: 100, step: 0.1, tip: UNIT_TIP.eff }),
-           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom })]
+           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.link_nom })]
   };
   var CONTROL_TIP = {
     Slack: '<strong>Slack:</strong> holds its bus voltage and angle, and supplies whatever balances its island.',
@@ -788,7 +806,7 @@
   }
   function fieldHtml(e, f){
     var id = 'f_' + f.k;
-    var tip = f.tip;
+    var tip = typeof f.tip === 'function' ? f.tip(e) : f.tip;
     if(f.kind === 'linetype' || f.kind === 'trtype'){
       var types = f.kind === 'linetype' ? LF.types.line : LF.types.transformer;
       var names = Object.keys(types).filter(function(n){ return f.kind === 'trtype' || types[n].f_nom > 0; });
@@ -809,11 +827,11 @@
       return '<div class="field-row"><div class="field-label"><span class="tip-wrap">' + f.label + tipHtml(t) + '</span></div><select class="sel-input" id="' + id + '" data-k="' + f.k + '">' + html + '</select></div>';
     }
     if(f.kind === 'toggle'){
-      return '<div class="toggle-row"><div class="toggle-label">' + f.label + '</div><label class="toggle-switch"><input type="checkbox" data-k="' + f.k + '"' + (e[f.k] ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+      return '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div><label class="toggle-switch"><input type="checkbox" data-k="' + f.k + '"' + (e[f.k] ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     }
     if(f.kind === 'seg'){
       var cur = e[f.k];
-      var extra = f.k === 'control' ? tipHtml(CONTROL_TIP[cur], true) : '';
+      var extra = f.k === 'control' ? tipHtml(CONTROL_TIP[cur], true) : tipHtml(tip);
       return '<div class="field-row inline"><div class="field-label"><span class="tip-wrap">' + f.label + extra + '</span></div><div class="seg-group" data-k="' + f.k + '" role="group" aria-label="' + f.label + '">' +
         f.opts.map(function(o){ return '<button type="button" class="seg-btn' + (o[0] === cur ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>';
     }
@@ -928,7 +946,7 @@
     html += '<div class="field-group"><div class="group-title">' + (e.c === 'Bus' ? 'Bus' : 'Parameters') + '</div>';
     (FIELDS[e.c] || []).forEach(function(f){ if(!f.show || f.show(e)) html += fieldHtml(e, f); });
     if(e.c === 'ShuntImpedance' && !e.bus) html += '<p class="note">Put it on a bus to set its rating at that bus\'s voltage.</p>';
-    if(e.c === 'Bus') html += '<div class="toggle-row"><div class="toggle-label">Upright bar</div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+    if(e.c === 'Bus') html += '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Upright bar' + tipHtml(UNIT_TIP.upright) + '</span></div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     html += derivedHtml(e) + '</div>';
     html += labelOverrideHtml(e);
     return html + doneHtml();
@@ -1055,13 +1073,20 @@
     $('acGroup').style.display = ac ? '' : 'none';
     $('slackWRow').style.display = $('lfDistSlack').checked ? '' : 'none';
     $('lfMethodTip').setAttribute('data-tip', METHOD_TIP[$('lfMethod').value] || '');
+    $('colourByTip').setAttribute('data-tip', COLOUR_TIP[$('colourBy').value] || '');
   }
+  var COLOUR_TIP = {
+    none: '<strong>Nothing:</strong> the diagram stays in one colour, whatever the result.',
+    voltage: '<strong>Bus voltage:</strong> a bus turns amber as it nears a voltage limit and red past one.',
+    loading: '<strong>Branch loading:</strong> a branch thickens with its loading, turns amber near the limit and red past it.',
+    both: '<strong>Both:</strong> buses by voltage, branches by loading. Amber nears a limit, red is past it.'
+  };
   ['lfMethod', 'lfTol', 'lfSeed', 'lfDistSlack', 'lfSlackW'].forEach(function(id){
     $(id).addEventListener('change', function(){ syncSolverForm(); updateStale(); renderInspector(); });
   });
   // Limits and display options read the result; they never send it back to be solved.
   ['lfVmin', 'lfVmax', 'lfLoadMax', 'colourBy', 'animP', 'animQ'].forEach(function(id){
-    $(id).addEventListener('change', function(){ if(RANGE[id]) clampField(id); render(); if(app.res) showResults(); });
+    $(id).addEventListener('change', function(){ if(RANGE[id]) clampField(id); if(id === 'colourBy') syncSolverForm(); render(); if(app.res) showResults(); });
   });
   $('labelMatrix').addEventListener('change', function(){ render(); });
 
