@@ -70,16 +70,17 @@ body.is-stale #sldSvg .fl{animation-play-state:paused;}
 .el-chip.is-free{border-style:dashed;color:var(--muted);}
 .stat-line{font-size:.82rem;color:var(--muted);padding:8px 0 4px;line-height:1.5;}
 .stat-line strong{color:var(--text);font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
-.how-to{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.8rem;line-height:1.55;}
-.how-to li+li{margin-top:3px;}
-.how-to kbd{font-family:'DM Mono',monospace;font-size:.72rem;padding:0 4px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);}
+#globalTooltip kbd{font-family:'DM Mono',monospace;font-size:.72rem;padding:0 4px;border:1px solid currentColor;border-radius:4px;opacity:.9;}
+.field-group[hidden]{display:none;}
+.el-group+.el-group{margin-top:4px;}
+.el-group-title{font-size:.72rem;font-weight:700;color:var(--muted);padding-top:4px;}
 .insp-actions{display:flex;gap:2px;}
 .ends-line{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted);flex-wrap:wrap;}
 .ends-line strong{color:var(--text);}
 
 /* ── Label matrix ── */
-.lbl-group{margin-top:10px;}
-.lbl-group:first-of-type{margin-top:0;}
+#labelMatrix{display:flex;flex-direction:column;gap:10px;}
+#labelMatrix>*{margin-top:0;margin-bottom:0;}
 .lbl-chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px 0 8px;}
 .lbl-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 6px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--input-bg);font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer;user-select:none;}
 .lbl-chip input{accent-color:var(--accent);margin:0;width:13px;height:13px;}
@@ -91,9 +92,21 @@ body.is-stale #sldSvg .fl{animation-play-state:paused;}
 .sld-viewbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:12px 0 10px;font-size:.84rem;}
 .flow-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;color:var(--text);user-select:none;}
 .flow-toggle input{accent-color:var(--accent);margin:0;width:15px;height:15px;}
-.flow-key{display:inline-block;width:26px;height:8px;background-repeat:repeat-x;background-position:left center;}
-.flow-key-p{background-image:linear-gradient(90deg,var(--line-a) 0 50%,transparent 50% 100%);background-size:10px 3px;}
-.flow-key-q{background-image:radial-gradient(circle,var(--gold) 0 1.7px,transparent 2.1px);background-size:9px 8px;}
+/* The key is the flow drawn as an arrow: active power a dashed shaft and a solid
+   head, reactive power a dotted shaft and an open head. Its shaft moves while
+   that flow's animation is on. */
+.flow-key{display:inline-block;width:32px;height:10px;flex-shrink:0;overflow:visible;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.flow-key-p{stroke:var(--line-a);}
+.flow-key-p .fk-shaft{stroke-width:2.6;stroke-dasharray:4 3;}
+.flow-key-p .fk-head{fill:var(--line-a);stroke-width:1;}
+.flow-key-q{stroke:var(--gold);}
+.flow-key-q .fk-shaft{stroke-width:3;stroke-dasharray:0.01 7;}
+.flow-key-q .fk-head{stroke-width:2;}
+.flow-key .fk-shaft{animation:lfKey .9s linear infinite;}
+.flow-toggle input:not(:checked)+.flow-key{opacity:.45;}
+.flow-toggle input:not(:checked)+.flow-key .fk-shaft{animation:none;}
+@keyframes lfKey{from{stroke-dashoffset:0;}to{stroke-dashoffset:-7;}}
+@media(prefers-reduced-motion:reduce){.flow-key .fk-shaft{animation:none;}}
 .viewbar-field{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--muted);}
 .viewbar-field .sel-input{width:auto;padding-top:5px;padding-bottom:5px;font-size:.82rem;}
 .sld-body{display:flex;gap:10px;align-items:stretch;}
@@ -102,6 +115,7 @@ body.is-stale #sldSvg .fl{animation-play-state:paused;}
 .pal-btn svg{width:30px;height:24px;color:var(--text);}
 .pal-btn:hover{border-color:var(--accent);}
 .pal-btn.is-armed{border-color:var(--accent2);background:rgba(143,205,189,.16);}
+.pal-help{display:flex;justify-content:center;align-items:center;padding:2px 0 4px;font-size:.66rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.2;}
 .pal-sep{height:1px;background:var(--border);margin:4px 2px;}
 .pal-row{display:flex;justify-content:space-between;}
 .pal-row .btn-bare{min-width:34px;height:30px;font-size:1.05rem;}
@@ -160,12 +174,6 @@ html.sld-full-open{overflow:hidden;scrollbar-gutter:auto;}
 #sldSvg .fl.rev{animation-direction:reverse;}
 @keyframes lfFlow{from{stroke-dashoffset:0;}to{stroke-dashoffset:-12;}}
 #sldSvg.no-p .fl-p,#sldSvg.no-q .fl-q{display:none;}
-/* Line arrows: the moving pair for the chosen flow, or the still one. A stale
-   result keeps its arrows still, as it keeps its dashes. */
-#sldSvg .fa,#sldSvg .fa-still{display:none;}
-#sldSvg[data-arrow="p"] .fa-p,#sldSvg[data-arrow="q"] .fa-q,#sldSvg[data-arrow="still"] .fa-still{display:inline;}
-body.is-stale #sldSvg .fa{display:none;}
-body.is-stale #sldSvg .fa-still{display:inline;}
 
 /* ── Results ── */
 .metrics{grid-template-columns:repeat(4,1fr);}
@@ -212,6 +220,7 @@ html.abt-embed .chart-card>.sub{margin-top:0;}
   .sld-body{flex-direction:column;}
   .sld-palette{flex-direction:row;flex:0 0 auto;overflow-x:auto;padding-bottom:2px;}
   .pal-btn{flex:0 0 64px;}
+  .pal-help{flex:0 0 auto;padding:0 6px;}
   .pal-sep{width:1px;height:auto;margin:2px 4px;}
   .pal-row{flex-direction:column;justify-content:center;}
   .pal-clear{width:auto;}

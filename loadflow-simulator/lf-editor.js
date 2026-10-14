@@ -77,8 +77,12 @@
 
     /* ── The toolbar ── */
     var pal = document.getElementById('palette');
+    // How to draw: one tip at the head of the toolbar, read on hover.
+    var HOW = '<ul><li>Drag a part onto the diagram, a device onto a bus.</li>' +
+      '<li>Line, transformer, HVDC link: pick it, drag bus to bus.</li>' +
+      '<li><kbd>Del</kbd> deletes, <kbd>R</kbd> turns a bus, <kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes.</li></ul>';
     if(!ro){
-      var html = '';
+      var html = '<div class="pal-help"><i class="tip-icon" tabindex="0" role="img" aria-label="How to draw" data-tip="' + HOW.replace(/"/g, '&quot;') + '">?</i></div>';
       PALETTE.forEach(function(p){
         html += '<button type="button" class="pal-btn" data-tool="' + p[0] + '" title="' + TIP[p[0]] + '" aria-label="' + TIP[p[0]] + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + LF.KIND_ICON[p[0]] + '</svg><span>' + p[1] + '</span></button>';
@@ -111,11 +115,19 @@
        as the diagram, where it would go (on the bus it would snap to, in the slot it
        would take), in the accent colour and softened. A branch shows its real route
        once the pointer is on the bus it would end at. */
-    function ghostSvg(e){
-      var m = { el: app.model.el.concat([e]) };
+    function ghostSvg(e, L){
       var acc = col('--accent');
-      var sc = LF.draw({ el: [e] }, LF.layout(m), null, {}, function(t){ return t === '--text' ? acc : col(t); });
+      var sc = LF.draw({ el: [e] }, L || LF.layout({ el: app.model.el.concat([e]) }), null, {}, function(t){ return t === '--text' ? acc : col(t); });
       return '<g class="lf-ghost" pointer-events="none">' + sc.base.replace(/ data-id="[^"]*"/g, '') + '</g>';
+    }
+    // A branch before its first bus is picked: a short length of it, symbol and
+    // all, hanging from the pointer as if it left a bus there.
+    function branchGhost(tool, p){
+      var n = 56, pts = [[p.x, p.y], [p.x, p.y + n]], acc = col('--accent');
+      var L = { bus: {}, dev: {}, br: { '-1': { pts: pts, mx: p.x, my: p.y + n / 2, ux: 0, uy: 1, seg: 0, len: n } } };
+      // A dot at each end, so even a plain line reads as something to connect.
+      var ends = '<g class="lf-ghost" pointer-events="none"><circle cx="' + p.x + '" cy="' + p.y + '" r="3.5" fill="' + acc + '"/><circle cx="' + p.x + '" cy="' + (p.y + n) + '" r="3.5" fill="' + acc + '"/></g>';
+      return ghostSvg({ c: tool, id: -1, bus0: null, bus1: null }, L) + ends;
     }
     function partFor(tool, p){
       if(tool === 'Bus') return { c: 'Bus', id: -1, v_nom: 1, at: [Math.round(p.x / G), Math.round(p.y / G), 8, 0] };
@@ -130,9 +142,10 @@
     function ghost(tool, p){
       if(!p){ tmp(''); return; }
       if(BRANCH_TOOL[tool]){
-        // Armed but not yet dragging: light the bus a drag would start from.
+        // Armed but not yet dragging: light the bus a drag would start from, and
+        // carry the branch's shadow so it is plain which one is picked.
         var start = nearestBus(p, 3 * G);
-        tmp(start ? busGlow(start.g) : '');
+        tmp((start ? busGlow(start.g) : '') + branchGhost(tool, p));
         return;
       }
       tmp(ghostSvg(partFor(tool, p)));
@@ -180,7 +193,7 @@
     if(!ro) pal.addEventListener('pointermove', function(ev){
       if(!drag || drag.mode !== 'palette' || ev.pointerId !== drag.id) return;
       if(Math.hypot(ev.clientX - drag.sx, ev.clientY - drag.sy) > 5) drag.moved = true;
-      if(!drag.moved || BRANCH_TOOL[drag.tool]) return;
+      if(!drag.moved) return;
       var r = stage.getBoundingClientRect();
       var inside = ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
       if(inside) ghostSoon(drag.tool, toDiagram(ev.clientX, ev.clientY)); else { ghostQ = null; tmp(''); }

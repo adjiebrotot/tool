@@ -251,12 +251,15 @@ async function fresh(viewport = { width: 1440, height: 1000 }) {
   page.on('pageerror', e => errors.push(String(e.message)));
   return { c, page, errors };
 }
+// The control card starts folded on every sidebar tool: open it, as a reader would, before using it.
+const openCtrl = page => page.evaluate(() => { if (window.SharedCtrl && !SharedCtrl.isOpen()) SharedCtrl.open(); });
 const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app.res && !document.getElementById('runBtn').disabled, null, { timeout: 20000 });
 
 {
   const { c, page, errors } = await fresh();
   await page.goto(URL_);
   await solved(page);
+  await openCtrl(page);
   const marks = await page.evaluate(() => Object.fromEntries(performance.getEntriesByType('mark').map(m => [m.name, m.startTime])));
   check('B1 first paint and first solve are quick', marks['lf-first-render'] < 1500 && marks['lf-solved'] < 2500,
         `first render ${Math.round(marks['lf-first-render'])} ms, solved ${Math.round(marks['lf-solved'])} ms after navigation (local server)`);
@@ -389,6 +392,7 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
   const { c, page, errors } = await fresh();
   await page.goto(URL_);
   await solved(page);
+  await openCtrl(page);
   const dir = mkdtempSync(join(tmpdir(), 'lf-audit-'));
   for (const [name, blob] of Object.entries(blobs)) {
     if (typeof blob === 'string') continue;

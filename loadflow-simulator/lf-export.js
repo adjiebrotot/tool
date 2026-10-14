@@ -47,26 +47,28 @@
     return items;
   }
   function esc(s){ return LF.esc(s); }
+  // The key's arrowhead, as on the page: solid for active power, open for reactive.
+  function keyHeadPath(kind, x, ky){ return kind === 'p' ? 'M' + (x + 26) + ' ' + (ky - 4) + 'L' + (x + 34) + ' ' + ky + 'L' + (x + 26) + ' ' + (ky + 4) + 'Z' : 'M' + (x + 28) + ' ' + (ky - 3.5) + 'L' + (x + 33) + ' ' + ky + 'L' + (x + 28) + ' ' + (ky + 3.5); }
+  function keyHead(kind, x, ky, col){
+    return '<path d="' + keyHeadPath(kind, x, ky) + '" ' + (kind === 'p' ? 'fill="' + col + '"' : 'fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"') + '/>';
+  }
 
   /* ── SVG ── */
   function svgText(ctx){
     var P = layout(ctx), C = P.C, s = P.scene;
-    // The line arrows travel with the flow the file animates, as on screen.
-    var arrowKind = P.anim.p ? 'p' : P.anim.q ? 'q' : null;
-    var moving = !!(arrowKind && !ctx.stale && LF.arrowSvg(s.arrows || [], arrowKind));
-    var marks = moving ? '<g class="fa-still">' + s.marks + '</g>' + LF.arrowSvg(s.arrows, arrowKind) : s.marks;
     var inner = '<g transform="translate(' + r2(P.ox) + ' ' + r2(P.oy) + ') scale(' + r4(P.k) + ') translate(' + r2(-P.bb.x) + ' ' + r2(-P.bb.y) + ')">' +
-      s.base + marks + LF.laneSvg(P.lanes) + LF.labelSvg(s.labels, C) + '</g>';
+      s.base + LF.laneSvg(P.lanes) + LF.labelSvg(s.labels, C) + '</g>';
     var css = P.lanes.length ? '<style>.fl{animation:lf-flow calc(' + LF.FLOW_T + 's / var(--n, 1)) linear infinite}.fl.rev{animation-direction:reverse}' +
-      '@keyframes lf-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-12}}' + (moving ? '.fa-still{display:none}' : '') +
-      '@media (prefers-reduced-motion:reduce){.fl{animation:none}' + (moving ? '.fa{display:none}.fa-still{display:inline}' : '') + '}</style>' : '';
+      '@keyframes lf-flow{from{stroke-dashoffset:0}to{stroke-dashoffset:-12}}' +
+      '@media (prefers-reduced-motion:reduce){.fl{animation:none}}</style>' : '';
     var key = '', items = keyItems(P);
     if(items.length){
       var kx = W / 2 - items.length * 80, ky = P.keyY + 13;
       items.forEach(function(it, i){
         var x = kx + i * 160, st = LF.LANE[it.kind];
-        key += '<path class="fl fl-' + it.kind + '" style="--n:2" d="M' + x + ' ' + ky + 'h26" stroke="' + (it.kind === 'p' ? C.p : C.q) + '" stroke-width="' + st.width + '" stroke-linecap="round" stroke-dasharray="' + st.dash.join(' ') + '" fill="none"/>' +
-          '<text x="' + (x + 34) + '" y="' + (ky + 4) + '" font-family="\'DM Sans\',system-ui,sans-serif" font-size="11.5" font-weight="500" fill="' + C.text + '">' + it.label + '</text>';
+        key += '<path class="fl fl-' + it.kind + '" style="--n:2" d="M' + x + ' ' + ky + 'h24" stroke="' + (it.kind === 'p' ? C.p : C.q) + '" stroke-width="' + st.width + '" stroke-linecap="round" stroke-dasharray="' + st.dash.join(' ') + '" fill="none"/>' +
+          keyHead(it.kind, x, ky, it.kind === 'p' ? C.p : C.q) +
+          '<text x="' + (x + 40) + '" y="' + (ky + 4) + '" font-family="\'DM Sans\',system-ui,sans-serif" font-size="11.5" font-weight="500" fill="' + C.text + '">' + it.label + '</text>';
       });
     }
     var wmX = W - 12 - WM_PATH_W, wmY = P.H - 11;
@@ -101,7 +103,7 @@
   function underImage(P, S){
     var s = P.scene;
     var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.ceil(P.dw * S) + '" height="' + Math.ceil(P.dh * S) + '" viewBox="' +
-      P.bb.x + ' ' + P.bb.y + ' ' + P.bb.w + ' ' + P.bb.h + '">' + s.base + s.marks + '</svg>';
+      P.bb.x + ' ' + P.bb.y + ' ' + P.bb.w + ' ' + P.bb.h + '">' + s.base + '</svg>';
     return loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
   }
   function canvas(w, h){ var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
@@ -129,7 +131,7 @@
     if(items.length){
       var kx = W / 2 - items.length * 80, ky = P.keyY + 13;
       g.textAlign = 'left'; g.font = '500 11.5px "DM Sans", system-ui, sans-serif';
-      items.forEach(function(it, i){ g.fillStyle = C.text; g.fillText(it.label, kx + i * 160 + 34, ky + 4); });
+      items.forEach(function(it, i){ g.fillStyle = C.text; g.fillText(it.label, kx + i * 160 + 40, ky + 4); });
     }
     g.save();
     g.globalAlpha = 0.22;
@@ -162,7 +164,11 @@
         var st = LF.LANE[it.kind], x = kx + i * 160;
         g.strokeStyle = it.kind === 'p' ? P.C.p : P.C.q; g.lineWidth = st.width;
         g.setLineDash(st.dash); g.lineDashOffset = phase(2, false);
-        g.beginPath(); g.moveTo(x, ky); g.lineTo(x + 26, ky); g.stroke();
+        g.beginPath(); g.moveTo(x, ky); g.lineTo(x + 24, ky); g.stroke();
+        var col = it.kind === 'p' ? P.C.p : P.C.q, head = new Path2D(keyHeadPath(it.kind, x, ky));
+        g.setLineDash([]);
+        if(it.kind === 'p'){ g.fillStyle = col; g.fill(head); }
+        else { g.strokeStyle = col; g.lineWidth = 2; g.lineJoin = 'round'; g.stroke(head); }
       });
     }
     g.restore();
