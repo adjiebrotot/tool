@@ -2,9 +2,9 @@
    The shared engine (../tour-shared.js) reads this object. v5 follows the
    scenario bar with its offer's form under it, the ▶ Simulate gate, and
    Optimise in place of the Sensitivity tab, so readers who took v4 are
-   offered it again. */
+   offered it again. v6 gives the optimise gauge a step of its own. */
 window.__TOUR = {
-  seenKey: 'fvc-tour-v5-seen',
+  seenKey: 'fvc-tour-v6-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -63,15 +63,27 @@ window.__TOUR = {
             'the rate is fixed for a while and then floats. Edits save as you go.'
     },
     {
+      // The gauge lives beside the field it sweeps, so the step keeps Loan
+      // offers open, where Term (shown for every loan type) is on screen.
+      target: '.opt-btn[data-opt="term"]',
+      onEnter: function () {
+        var tab = document.querySelector('.ctrl-tab[data-tab="scenarios"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
+      title: '④ Optimise a setting',
+      body: 'The small gold <strong>gauge</strong> beside a field such as the term, the ' +
+            'finance rate or the down payment sweeps it over a range: pick a Start, an ' +
+            'End and how many steps, for up to two settings of the offer you are editing. ' +
+            'Simulate becomes <strong>▶ Optimise</strong>, and the chart shows which value ' +
+            'did best, as a line for one setting or a 3D surface for two. Cancel goes ' +
+            'back to comparing offers.'
+    },
+    {
       target: '.controls .btn-row',
-      title: '④ Simulate, or optimise one offer',
+      title: '⑤ Run the comparison',
       body: 'Typing does not rerun the comparison. The results fade and ' +
             '<strong>▶ Simulate</strong> lights up, so you never read an answer that no ' +
-            'longer matches the form. The small gold gauge beside a field such as the ' +
-            'finance rate, the term or the down payment sweeps it over a range instead: ' +
-            'the button becomes <strong>▶ Optimise</strong>, and the run tries every value ' +
-            'on the offer you are editing, with up to two settings at once drawn as a 3D ' +
-            'surface. Cancel goes back to comparing offers.'
+            'longer matches the form. Click it to compare every offer against paying cash.'
     },
     {
       target: '#verdict',
@@ -80,13 +92,13 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="base"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '⑤ Read the answer',
+      title: '⑥ Read the answer',
       body: 'The sentence at the top says whether paying cash or a loan comes out ahead, ' +
             'by how much, and at what effective rate against the risk-free rate.'
     },
     {
       target: '.metrics',
-      title: '⑥ The figures behind it',
+      title: '⑦ The figures behind it',
       body: 'Four KPI cards call it: the <strong>best strategy</strong>, the ' +
             '<strong>net benefit versus paying cash</strong>, the <strong>total ' +
             'interest</strong> that strategy pays, and the <strong>wealth a cash ' +
@@ -98,7 +110,7 @@ window.__TOUR = {
     },
     {
       target: '.chart-card',
-      title: '⑦ Explore over time',
+      title: '⑧ Explore over time',
       body: 'Switch the chart between <strong>Ending Wealth</strong>, <strong>Net ' +
             'Benefit</strong>, <strong>Investment Value</strong> and <strong>Loan ' +
             'Balance</strong> right above it. A floating rate is drawn as a shaded band, so ' +
