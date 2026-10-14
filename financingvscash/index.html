@@ -105,7 +105,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
-<!-- Plotly (~3.5 MB) powers only the optional 3D sensitivity surface; it is
+<!-- Plotly (~3.5 MB) powers only the two-setting optimisation surface; it is
      lazy-loaded on first use (see ensurePlotly() in script.js) rather than
      blocking every page load. -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -150,13 +150,12 @@
     <button class="ctrl-tab active" data-tab="base"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8 2.8 7.4 12 12l9.2-4.6z"/><path d="M2.8 12.4 12 17l9.2-4.6"/><path d="M2.8 16.9 12 21.5l9.2-4.6"/></svg><span>Purchase</span></button>
     <button class="ctrl-tab" data-tab="scenarios"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.8" cy="12" r="2.1"/><path d="M6.9 12h2.4"/><path d="M9.3 12c3.4 0 3.1-6 6.4-6M9.3 12c3.4 0 3.1 6 6.4 6"/><circle cx="18.2" cy="6" r="2.1"/><circle cx="18.2" cy="18" r="2.1"/></svg><span>Loan offers</span></button>
     <button class="ctrl-tab" data-tab="assume"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h4M12 6.5h8M4 12h10M18 12h2M4 17.5h2M10 17.5h10"/><circle cx="10" cy="6.5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="8" cy="17.5" r="2"/></svg><span>Assumptions</span></button>
-    <button class="ctrl-tab" data-tab="sens"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 18.4a8 8 0 1 1 11.4 0"/><path d="M12 13.4 8.6 9.3"/><circle cx="12" cy="13.6" r="1.35"/></svg><span>Sensitivity</span></button>
   </div>
 
   <div class="ctrl-panel active" id="tab-base">
     <div class="field-row">
       <div class="field-label">Currency Symbol</div>
-      <select class="sel-input" id="currencySymbol" data-currency-symbols></select>
+      <select class="sel-input" id="currencySymbol" data-currency-symbols data-no-stale></select>
     </div>
     <div class="field-group">
       <div class="group-title">Purchase</div>
@@ -182,20 +181,22 @@
   </div>
 
   <div class="ctrl-panel" id="tab-scenarios">
-    <h3>Financing Scenarios</h3>
-    <div class="scenario-list" id="scenarioList"></div>
-    <button class="btn-primary btn-sm" id="addScenarioBtn" style="width:100%;margin-bottom:12px;">+ Add Scenario</button>
-    <!-- While the editor is open the list and Add button above it are hidden
-         (#tab-scenarios.editing), so the box is the only thing on the tab.
-         Every edit applies as it is made, so there is no Save to forget and no
-         discard to hit by mistake: the ✕ at the top, Done pinned to the bottom
-         and Esc all just go back to the list. -->
-    <div id="scenarioEditor" class="sc-editor" style="display:none;" data-no-persist>
-      <div class="sc-editor-head">
-        <h3 id="editorTitle">Edit Scenario</h3>
-        <button type="button" class="btn-bare sc-editor-close" data-icon="close" id="closeScenarioBtn" title="Close. Your changes are already saved" aria-label="Close the scenario editor. Your changes are already saved"></button>
+    <!-- SCENARIO BAR: one tab per loan offer. Click to edit it, double-click to
+         rename, the dot recolours it. The offer picked is the one the editor
+         below shows, so there is no list to open it from and no Done to close
+         it: every edit applies as it is made. -->
+    <div class="sc-bar">
+      <div id="scenarioList" class="sc-tabs"></div>
+      <button type="button" class="sc-add-btn" id="addScenarioBtn" title="New loan offer" aria-label="New loan offer">+</button>
+      <div class="sc-bar-actions">
+        <button type="button" class="btn-bare sc-act-btn" data-icon="duplicate" id="dupScenarioBtn" title="Duplicate this loan offer" aria-label="Duplicate this loan offer"></button>
+        <button type="button" class="btn-bare sc-act-btn is-delete" data-icon="trash" id="delScenarioBtn" title="Remove this loan offer" aria-label="Remove this loan offer"></button>
       </div>
-      <div class="field-row" id="scNameRow"><div class="field-label">Scenario Name</div><div class="inline-row"><input class="num-input" id="scName" type="text" value=""/><input type="color" class="color-series-picker" id="scColor" title="Scenario colour" aria-label="Scenario colour"/></div></div>
+    </div>
+    <p class="sc-empty muted" id="scEmpty" hidden>No loan offers yet. Press + to add one.</p>
+    <!-- EDIT THE SELECTED OFFER -->
+    <div id="scenarioEditor" class="sc-editor" data-no-persist>
+      <div class="field-row" id="scNameRow"><div class="field-label">Scenario Name</div><div class="inline-row"><input class="num-input" id="scName" type="text" value="" data-no-stale/><input type="color" class="color-series-picker" id="scColor" data-no-stale title="Scenario colour" aria-label="Scenario colour"/></div></div>
       <div id="scFields">
         <div class="field-row" id="scLoanTypeRow">
           <div class="field-label"><span class="tip-wrap">Loan Type <i class="tip-icon" id="tipLoanType" data-tip="" data-tip-options>?</i></span></div>
@@ -211,7 +212,7 @@
           <div class="field-sub"><a href="loan-types/">Learn more ↗</a> about the different loan types</div>
         </div>
         <div class="field-row" id="scIoPeriodsRow" style="display:none;">
-          <div class="field-label"><span class="tip-wrap" id="scIoLabel">Interest-Only <i class="tip-icon" data-tip="How many repayments run before normal instalments begin. Set it to the full term to repay the principal in one lump at maturity.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap" id="scIoLabel">Interest-Only <i class="tip-icon" data-tip="How many repayments run before normal instalments begin. Set it to the full term to repay the principal in one lump at maturity.">?</i></span> <button type="button" class="opt-btn" data-opt="ioPeriods" title="Add this span to optimisation" aria-label="Add this span to optimisation"></button></div>
           <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="scIoPeriods" type="number" min="0" max="3000" step="1" value="60"/><span class="suffix" id="scIoUnit">months</span></div>
           <div class="field-sub" id="scIoSub"></div>
         </div>
@@ -220,7 +221,7 @@
           <select class="sel-input" id="scFreq"><option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly" selected>Monthly</option><option value="yearly">Yearly</option></select>
         </div>
         <div class="field-row" id="scTermRow">
-          <div class="field-label"><span id="termLabel">Term </span></div>
+          <div class="field-label"><span id="termLabel">Term </span> <button type="button" class="opt-btn" data-opt="term" title="Add Term to optimisation" aria-label="Add Term to optimisation"></button></div>
           <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/><span class="suffix" id="termUnit">months</span></div>
           <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
         </div>
@@ -232,11 +233,11 @@
           </div>
         </div>
         <div class="field-row" id="scRateBlock">
-          <div class="field-label"><span class="tip-wrap" id="scRateLabel">Finance Rate <i class="tip-icon" data-tip="The yearly interest rate on the loan, as the lender quotes it.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap" id="scRateLabel">Finance Rate <i class="tip-icon" data-tip="The yearly interest rate on the loan, as the lender quotes it.">?</i></span> <button type="button" class="opt-btn" data-opt="financeRate" title="Add Finance Rate to optimisation" aria-label="Add Finance Rate to optimisation"></button></div>
           <div class="affix-wrap"><input class="affix-input has-suffix" id="scRate" type="number" min="0" max="30" step="0.01" value="5"/><span class="suffix">%/yr</span></div>
         </div>
         <div class="field-row" id="scRateScheduleRow" style="display:none;">
-          <div class="field-label"><span class="tip-wrap">Rate Schedule <i class="tip-icon" data-tip="Consecutive periods from the first repayment to the end of the term. The last one stretches, and each rate change re-amortises the balance still owed.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Rate Schedule <i class="tip-icon" data-tip="Consecutive periods from the first repayment to the end of the term. The last one stretches, and each rate change re-amortises the balance still owed.">?</i></span> <button type="button" class="opt-btn" data-opt="rateShift" title="Add a rate shift to optimisation" aria-label="Add a rate shift to optimisation"></button></div>
           <div class="sched-rows" id="scRatePeriodRows"></div>
           <div class="sched-actions"><button class="btn-primary btn-sm" id="addRatePeriodBtn" type="button">+ Add Period</button></div>
         </div>
@@ -248,7 +249,7 @@
           </div>
         </div>
         <div class="field-row" id="scKnownPaymentRow" style="display:none;">
-          <div class="field-label"><span class="tip-wrap">Repayment Amount <i class="tip-icon" data-tip="What you hand over each period. The rate is solved from it, so you can price a deal that quotes an instalment and no rate.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Repayment Amount <i class="tip-icon" data-tip="What you hand over each period. The rate is solved from it, so you can price a deal that quotes an instalment and no rate.">?</i></span> <button type="button" class="opt-btn" data-opt="knownPayment" title="Add Repayment Amount to optimisation" aria-label="Add Repayment Amount to optimisation"></button></div>
           <div class="affix-wrap"><span class="prefix" id="scKnownPaymentPrefix">$</span><input class="affix-input fmt-num" id="scKnownPayment" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/></div>
         </div>
         <div class="field-row" id="scPaymentScheduleRow" style="display:none;">
@@ -261,30 +262,26 @@
           <div class="implied-rate" id="scImpliedRate">&mdash;</div>
         </div>
         <div class="field-row" id="scResidualRow" style="display:none;">
-          <div class="field-label"><span class="tip-wrap">Residual <i class="tip-icon" data-tip="The share of the financed amount still owed at the end and settled in one lump. A bigger residual buys smaller instalments and costs more interest.">?</i></span></div>
+          <div class="field-label"><span class="tip-wrap">Residual <i class="tip-icon" data-tip="The share of the financed amount still owed at the end and settled in one lump. A bigger residual buys smaller instalments and costs more interest.">?</i></span> <button type="button" class="opt-btn" data-opt="residualPct" title="Add Residual to optimisation" aria-label="Add Residual to optimisation"></button></div>
           <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/><span class="suffix">% of loan</span></div>
         </div>
-        <div class="field-row" id="scPriceRow" style="display:none;"><div class="field-label"><span class="tip-wrap">Offer Price <i class="tip-icon" id="tipPriceType" data-tip="" data-tip-options>?</i></span></div>
+        <div class="field-row" id="scPriceRow" style="display:none;"><div class="field-label"><span class="tip-wrap">Offer Price <i class="tip-icon" id="tipPriceType" data-tip="" data-tip-options>?</i></span> <button type="button" class="opt-btn" data-opt="priceValue" title="Add Offer Price to optimisation" aria-label="Add Offer Price to optimisation"></button></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scPriceVal" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/><select class="sel-input" id="scPriceType" style="min-width:70px;"><option value="amount">$</option><option value="pct">% of cash</option><option value="discount">% off</option></select></div>
           <div class="field-sub" id="scPriceSub"></div>
         </div>
         <div class="slider-block" id="scDownRow">
-          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The share of the offer price you pay up front. 0% borrows it all; 100% pays it outright.">?</i></span></div><div class="slider-value" id="scDownVal">0%</div></div>
+          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The share of the offer price you pay up front. 0% borrows it all; 100% pays it outright.">?</i></span> <button type="button" class="opt-btn" data-opt="downPaymentPct" title="Add Down Payment to optimisation" aria-label="Add Down Payment to optimisation"></button></div><div class="slider-value" id="scDownVal">0%</div></div>
           <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
         </div>
-        <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee to set the loan up, as a fixed amount or a % of the amount financed.">?</i></span></div>
+        <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee to set the loan up, as a fixed amount or a % of the amount financed.">?</i></span> <button type="button" class="opt-btn" data-opt="feeAmt" title="Add Origination Fee to optimisation" aria-label="Add Origination Fee to optimisation"></button></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
         </div>
-        <div class="field-row" id="scFeeTreatmentRow"><div class="field-label"><span class="tip-wrap">Fee Treatment <i class="tip-icon" id="tipFeeTreatment" data-tip="" data-tip-options>?</i></span></div>
+        <div class="field-row" id="scFeeTreatmentRow"><div class="field-label"><span class="tip-wrap">Fee Treatment <i class="tip-icon" id="tipFeeTreatment" data-tip="" data-tip-options>?</i></span> <button type="button" class="opt-btn" data-opt="feeTreatment" title="Add Fee Treatment to optimisation" aria-label="Add Fee Treatment to optimisation"></button></div>
           <select class="sel-input" id="scFeeTreatment"><option value="upfront" selected>Paid upfront from cash</option><option value="capitalise">Added to the loan</option><option value="discount">Deducted from the advance</option></select>
         </div>
-        <div class="field-row" id="scAdminFeeRow"><div class="field-label"><span class="tip-wrap">Admin Fee <i class="tip-icon" data-tip="A fixed fee on every repayment, such as account-keeping. It runs the full term, so the total is this times the number of payments.">?</i></span></div>
+        <div class="field-row" id="scAdminFeeRow"><div class="field-label"><span class="tip-wrap">Admin Fee <i class="tip-icon" data-tip="A fixed fee on every repayment, such as account-keeping. It runs the full term, so the total is this times the number of payments.">?</i></span> <button type="button" class="opt-btn" data-opt="adminFee" title="Add Admin Fee to optimisation" aria-label="Add Admin Fee to optimisation"></button></div>
           <div class="affix-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="affix-input has-suffix wide-suffix fmt-num" id="scAdminFee" type="text" inputmode="decimal" data-min="0" data-max="1000000000" value="0"/><span class="suffix">/payment</span></div>
         </div>
-      </div>
-      <div class="sc-editor-foot">
-        <span class="sc-editor-note">Changes save as you go.</span>
-        <button type="button" class="btn-primary btn-sm" id="saveScenarioBtn">✓ Done</button>
       </div>
     </div>
   </div>
@@ -293,7 +290,7 @@
     <div class="field-group">
       <div class="group-title">Cash and rates</div>
       <div class="slider-block">
-        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate <i class="tip-icon" data-tip="What your spare cash earns in a safe place, like a savings account. Every scenario and the cash purchase use it.">?</i></span></div><div class="slider-value" id="baseRfVal">4.50%/yr</div></div>
+        <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Risk-Free Rate <i class="tip-icon" data-tip="What your spare cash earns in a safe place, like a savings account. Every scenario and the cash purchase use it.">?</i></span> <button type="button" class="opt-btn" data-opt="riskFreeRate" title="Add Risk-Free Rate to optimisation" aria-label="Add Risk-Free Rate to optimisation"></button></div><div class="slider-value" id="baseRfVal">4.50%/yr</div></div>
         <input id="baseRf" type="range" min="0" max="20" step="0.1" value="4.5"/>
       </div>
       <div class="field-row">
@@ -314,43 +311,16 @@
     </div>
   </div>
 
-  <div class="ctrl-panel" id="tab-sens" data-no-persist>
-    <div class="field-group">
-      <div class="group-title">Sensitivity Analysis</div>
-      <div class="field-row"><div class="field-label">Apply to Scenario</div><select class="sel-input" id="sensScenario"></select></div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Objective (output metric) <i class="tip-icon" data-tip="The result the chart plots as the variable changes.">?</i></span></div>
-        <select class="sel-input" id="sensObjective"><option value="netBenefit">Net Benefit vs Cash</option><option value="totalInterest">Total Interest Paid</option><option value="totalFinanceCost">Total Financing Cost</option><option value="endWealth">Ending Wealth</option><option value="inflAdjNetBenefit">Inflation-Adj Net Benefit</option></select>
-      </div>
-      <div class="field-row"><div class="field-label">Chart Type</div>
-        <div class="mode-tabs"><button class="mode-tab active" id="mode2d">2D Sweep</button><button class="mode-tab" id="mode3d">3D Surface</button></div>
-      </div>
-    </div>
-    <div class="field-group">
-      <div class="group-title">X-Axis</div>
-      <div class="field-row"><div class="field-label">X-Axis Variable</div>
-        <select class="sel-input" id="sensVarX"><option value="financeRate" id="sensVarXRateOpt">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarXTermOpt">Term (months)</option><option value="payment" id="sensVarXPayOpt">Repayment Amount</option><option value="residual" id="sensVarXResOpt">Residual (%)</option></select>
-      </div>
-      <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensXStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensXEnd" type="number" step="0.5" min="0" max="100" value="10"/><span class="suffix sens-unit">%</span></div></div></div>
-    </div>
-    <div id="sensYBlock" style="display:none;">
-      <div class="field-group">
-        <div class="group-title">Y-Axis</div>
-        <div class="field-row"><div class="field-label">Y-Axis Variable</div>
-          <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate" id="sensVarYRateOpt">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarYTermOpt">Term (months)</option><option value="payment" id="sensVarYPayOpt">Repayment Amount</option><option value="residual" id="sensVarYResOpt">Residual (%)</option></select>
-        </div>
-        <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensYStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensYEnd" type="number" step="0.5" min="0" max="100" value="8"/><span class="suffix sens-unit">%</span></div></div></div>
-      </div>
-    </div>
-    <div class="field-group">
-      <div class="group-title">Resolution</div>
-      <div class="field-row"><div class="field-label"><span class="tip-wrap">Grid Resolution <i class="tip-icon" data-tip="How many values are tried along each axis. More points draw a smoother line.">?</i></span></div>
-        <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/><span class="suffix">points</span></div>
-      </div>
-    </div>
-  </div>
-
   <div class="warning" id="warnBanner"></div>
   <div class="neg-carry" id="negCarryBanner"></div>
+  </div><!-- /ctrl-scroll -->
+  <!-- THE SIMULATE GATE. Typing keeps the form coherent but does not run the
+       comparison; this does. A gauge beside a field turns it into ▶ Optimise,
+       which sweeps that setting on the offer being edited. -->
+  <div class="btn-row">
+    <p class="stale-note" id="staleNote" role="status">Inputs changed. Press Simulate to run them.</p>
+    <button class="btn-primary" id="simBtn" type="button" style="flex:2">▶ Simulate</button>
+    <button class="btn-secondary" id="optCancelBtn" type="button" style="flex:1;display:none" title="Stop optimising and go back to comparing loan offers">Cancel</button>
   </div>
 </aside>
 
@@ -358,7 +328,7 @@
   <!-- THE ANSWER, IN ONE SENTENCE -->
   <div class="verdict card" id="verdict"></div>
 
-  <section class="metrics">
+  <section class="metrics" id="simMetrics">
     <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy <i class="tip-icon" data-tip="The option that comes out ahead on the Optimization Target below.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div>
       <div class="kpi-opt">
         <div class="kpi-opt-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" id="tipOptTarget" data-tip="" data-tip-options>?</i></span></div>
@@ -369,9 +339,28 @@
     <div class="metric card"><div class="label"><span class="tip-wrap">Total Interest (Best) <i class="tip-icon" data-tip="All the interest paid on the best option's loan. Fees are not included.">?</i></span></div><div class="value" id="kpiInterest">—</div><div class="sub" id="kpiIntSub"></div></div>
     <div class="metric card"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="The cash you would have left after paying cash, grown at the risk-free rate.">?</i></span></div><div class="value" id="kpiCashWealth">—</div><div class="sub" id="kpiCashSub"></div></div>
   </section>
+  <!-- In Optimise the tiles are the sweep's: its best and worst tested setting
+       against the setting on the form, and the cash purchase they all face. -->
+  <section class="metrics" id="optMetrics" hidden>
+    <div class="metric card opt-tile" id="optTileBest"><div class="label"><span class="tip-wrap"><span id="optBestLabel">Best</span> <i class="tip-icon" data-tip="The tested setting that comes out ahead on the objective chosen on the chart.">?</i></span></div><div class="value" id="optBestVal">—</div><div class="sub" id="optBestSub"></div></div>
+    <div class="metric card opt-tile" id="optTileBase"><div class="label"><span class="tip-wrap">Your current setting <i class="tip-icon" data-tip="The loan offer exactly as the form has it, scored on the same objective.">?</i></span></div><div class="value" id="optBaseVal">—</div><div class="sub" id="optBaseSub"></div></div>
+    <div class="metric card opt-tile" id="optTileWorst"><div class="label"><span class="tip-wrap"><span id="optWorstLabel">Worst</span> <i class="tip-icon" data-tip="The tested setting that comes out furthest behind on the objective.">?</i></span></div><div class="value" id="optWorstVal">—</div><div class="sub" id="optWorstSub"></div></div>
+    <div class="metric card opt-tile" id="optTileCash"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="The cash you would have left after paying cash, grown at the risk-free rate over your current setting's term.">?</i></span></div><div class="value" id="optCashVal">—</div><div class="sub" id="optCashSub"></div></div>
+  </section>
   <section class="chart-card card">
     <div class="chart-head">
       <h2><span id="chartTitle">Ending Wealth Over Time</span> <i class="tip-icon" id="tipChartMetric" data-tip="" data-tip-options>?</i></h2>
+      <label class="opt-metric-wrap" id="optMetricWrap" style="display:none">
+        <span>Objective</span>
+        <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+          <option value="netBenefit" selected>Net Benefit vs Cash</option>
+          <option value="endWealth">Ending Wealth</option>
+          <option value="totalInterest">Total Interest Paid</option>
+          <option value="totalFinanceCost">Total Financing Cost</option>
+          <option value="effectiveRate">Effective Rate (APR)</option>
+          <option value="inflAdjNetBenefit">Inflation-Adj Net Benefit</option>
+        </select>
+      </label>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="chartSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="chartPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -379,41 +368,17 @@
         <button class="btn-secondary btn-sm btn-icon" id="chartResetZoom" title="Reset zoom">⟳</button>
       </div>
     </div>
-    <div class="chart-switch-row">
+    <div class="chart-switch-row" id="chartSwitchRow">
       <span class="chart-switch-label">Chart Metric</span>
       <select class="sel-input" id="chartMetric"><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
     </div>
     <div class="legend" id="chartLegend"></div>
-    <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
+    <div class="canvas-wrap" id="chartCanvasWrap"><canvas id="chartCanvas"></canvas></div>
+    <div class="surface-wrap" id="optSurface" style="display:none"></div>
     <div class="hover-box" id="hoverBox">Hover over the chart to inspect a period.</div>
   </section>
-  <section class="chart-card card" id="sens2dSection" data-share-view="#tab-sens" style="display:none;">
-    <div class="chart-head">
-      <h2 id="sens2dTitle">2D Sensitivity</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="sens2dSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="sens2dPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm btn-icon" id="sens2dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm btn-icon" id="sensResetZoom" title="Reset zoom">⟳</button>
-      </div>
-    </div>
-    <div class="legend" id="sensLegend"></div>
-    <div class="canvas-wrap"><canvas id="sensCanvas"></canvas></div>
-  </section>
-  <section class="chart-card card" id="sens3dSection" data-share-view="#tab-sens" style="display:none;">
-    <div class="chart-head" style="margin-bottom:12px;">
-      <h2 id="sens3dTitle">3D Sensitivity Surface</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="sens3dSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="sens3dPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm btn-icon" id="sens3dCopyPngBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm btn-icon" id="sens3dResetView" title="Reset view">⟳</button>
-      </div>
-    </div>
-    <div class="surface-wrap" id="plotly3d"></div>
-  </section>
   <section class="detail-section card">
-    <h2>Scenario Comparison</h2>
+    <h2>Scenario Comparison <span class="muted-note" id="compNote"></span></h2>
     <p class="unit-note" id="compUnitNote">Money in the currency on the Purchase tab, in future dollars. Each scenario is scored at the end of its own term.</p>
     <div class="table-wrap" id="compTableWrap"></div>
   </section>
@@ -436,6 +401,44 @@
   </section>
 </main>
 </section>
+</div>
+
+<!-- OPTIMISE RANGE EDITOR. Edits apply as they are made, so every way out keeps them. -->
+<div class="opt-modal-overlay" id="optModal" hidden data-no-persist>
+  <div class="opt-modal" role="dialog" aria-modal="true" aria-labelledby="optModalTitle">
+    <div class="opt-modal-head">
+      <h2 id="optModalTitle">Optimise</h2>
+      <button type="button" class="btn-bare opt-modal-close" data-icon="close" id="optCloseBtn" title="Close. The range is already kept" aria-label="Close. The range is already kept"></button>
+    </div>
+    <div class="opt-modal-body">
+      <div class="opt-modal-sub" id="optModalSub"></div>
+      <div id="optNumFields">
+        <div class="opt-range-row">
+          <div class="field-row">
+            <div class="field-label">Start value</div>
+            <div class="affix-wrap"><span class="prefix" id="optStartPre"></span><input class="affix-input" id="optStart" type="text" inputmode="decimal" /><span class="suffix" id="optStartSuf"></span></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">End value</div>
+            <div class="affix-wrap"><span class="prefix" id="optEndPre"></span><input class="affix-input" id="optEnd" type="text" inputmode="decimal" /><span class="suffix" id="optEndSuf"></span></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="tip-wrap">Steps <i class="tip-icon" data-tip="How many values to test, Start and End included, spaced evenly between them.">?</i></span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix" id="optSteps" type="number" inputmode="numeric" min="2" max="50" step="1" value="11" /><span class="suffix">values</span></div>
+        </div>
+      </div>
+      <div id="optListFields" class="field-row" hidden>
+        <div class="field-label"><span class="tip-wrap">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span> <i class="tip-icon" data-tip="Each value you select runs once, in the order the list shows. Hold Ctrl or Cmd to select more than one.">?</i></span></div>
+        <select class="sel-input opt-pick-list" id="optPickSel" multiple></select>
+      </div>
+      <p class="opt-preview" id="optPreview" role="status"></p>
+    </div>
+    <div class="opt-modal-foot">
+      <button type="button" class="btn-secondary" data-icon="trash" id="optRemoveBtn" title="Remove this from the optimisation" aria-label="Remove this from the optimisation"></button>
+      <button type="button" class="btn-primary" id="optDoneBtn">✓ Done</button>
+    </div>
+  </div>
 </div>
 <footer class="page-footer">
   <section class="page-footer-info">

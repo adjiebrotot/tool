@@ -311,23 +311,38 @@ const PAGES = [
     },
   },
   {
-    name: 'financingvscash', url: '/financingvscash/', charts: ['chartCanvas', 'sensCanvas'],
+    name: 'financingvscash', url: '/financingvscash/', charts: ['chartCanvas'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="car"]');
       await page.selectOption('#chartMetric', 'netBenefit');
-      await page.click('.ctrl-tab[data-tab="sens"]');
-      await page.selectOption('#sensObjective', 'totalInterest');
-      await page.click('#mode2d');
-      await page.waitForFunction(() => !!window.Chart.getChart(document.getElementById('sensCanvas')), null, { timeout: 20000 });
     },
   },
   {
-    name: 'financingvscash (3D)', url: '/financingvscash/', charts: ['plotly3d'],
+    // Optimise on one setting draws its line on the same card, and the swept
+    // range and the objective have to ride in the link.
+    name: 'financingvscash (optimise)', url: '/financingvscash/', charts: ['chartCanvas'],
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="car"]');
+      await page.click('.ctrl-tab[data-tab="scenarios"]');
+      await page.click('.opt-btn[data-opt="downPaymentPct"]');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.selectOption('#optMetric', 'totalInterest');
+      await page.waitForFunction(() => { const c = window.Chart.getChart(document.getElementById('chartCanvas')); return !!c && /Down Payment/.test(c.options.scales.x.title.text); }, null, { timeout: 20000 });
+    },
+  },
+  {
+    name: 'financingvscash (3D)', url: '/financingvscash/', charts: ['optSurface'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="house"]');
-      await page.click('.ctrl-tab[data-tab="sens"]');
-      await page.click('#mode3d');
-      await page.waitForFunction(() => { const d = document.getElementById('plotly3d'); return d && d.data && d.data.length; }, null, { timeout: 20000 });
+      await page.click('.ctrl-tab[data-tab="scenarios"]');
+      await page.click('.opt-btn[data-opt="term"]');
+      await page.click('#optDoneBtn');
+      await page.click('.ctrl-tab[data-tab="assume"]');
+      await page.click('.opt-btn[data-opt="riskFreeRate"]');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.waitForFunction(() => { const d = document.getElementById('optSurface'); return d && d.data && d.data.length; }, null, { timeout: 20000 });
     },
   },
   {

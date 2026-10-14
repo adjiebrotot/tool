@@ -249,8 +249,9 @@ if(want('financingvscash')){
     await page.evaluate(()=>{ document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()); });
   }
   const table=()=>page.evaluate(()=>[...document.querySelectorAll('#compTableWrap table tr')].map(tr=>[...tr.children].map(td=>td.textContent.trim()).join(' | ')).join('\n'));
-  const edit=async i=>{ await page.click('.ctrl-tab[data-tab="scenarios"]'); await page.evaluate(i=>document.querySelector('.sc-btn[data-action="edit"][data-idx="'+i+'"]').click(), i); await page.waitForTimeout(100); };
-  const save=async()=>{ await page.click('#saveScenarioBtn'); await page.waitForTimeout(200); };
+  const edit=async i=>{ await page.click('.ctrl-tab[data-tab="scenarios"]'); await page.evaluate(i=>document.querySelector('.sc-tab[data-idx="'+i+'"]').click(), i); await page.waitForTimeout(100); };
+  // Edits apply as they are made; Simulate is what puts them on the board.
+  const save=async()=>{ await page.evaluate(()=>document.getElementById('simBtn').click()); await page.waitForTimeout(250); };
   const nums=t=>t.split('\n').map(l=>l.split(' | ').map(c=>/\d/.test(c)?n(c):c));
   // Largest numeric gap between two tables of the same shape.
   const gap=(a,b)=>{ const A=nums(a), B=nums(b); let g=0; A.forEach((r,i)=>r.forEach((c,j)=>{ if(typeof c==='number'&&typeof B[i][j]==='number') g=Math.max(g,Math.abs(c-B[i][j])); })); return g; };
@@ -334,7 +335,7 @@ if(want('financingvscash')){
     await page.selectOption('#scFreq','yearly');
     const amts1 = await page.$$eval('#scPaymentPeriodRows .sp-amt', els=>els.map(e=>e.value));
     eq('fvc F4 each scheduled repayment a month -> a year', amts1.map(n).join(','), amts0.map(v=>Math.round(n(v)*12*100)/100).join(','));
-    await page.click('#closeScenarioBtn');
+    await save();
   }
   // F5 An offer's own price as money, a % of the cash price or a % off it:
   // $43,210.55 on a $50,000 cash price is 86.42% of cash, which is $43,210:

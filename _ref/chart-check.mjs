@@ -512,18 +512,20 @@ const PAGES = [
      same row and the same charts — and have to prove it. */
   { name: 'pisahvsgabung/id', url: '/pisahvsgabung/id/', charts: ['chartCanvas', 'chartCanvas2'] },
   /* The states the gesture checks above never reach but the axis-text check
-     has to: a sensitivity sweep, and the DCA price chart with its oscillator
+     has to: an optimisation sweep, and the DCA price chart with its oscillator
      panes stacked under the price, which is the tallest stack on the site. */
   {
-    name: 'financingvscash (sensitivity)',
+    name: 'financingvscash (optimise)',
     url: '/financingvscash/',
-    charts: ['sensCanvas'],
+    charts: ['chartCanvas'],
     textOnly: true,
     async prep(page) {
-      await page.click('.ctrl-tab[data-tab="sens"]');
-      await page.click('#mode2d');
+      await page.click('.ctrl-tab[data-tab="scenarios"]');
+      await page.click('.opt-btn[data-opt="financeRate"]');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
       await page.waitForFunction(
-        () => !!window.Chart.getChart(document.getElementById('sensCanvas')), null, { timeout: 20000 });
+        () => { const c = window.Chart.getChart(document.getElementById('chartCanvas')); return !!c && /Finance Rate/.test(c.options.scales.x.title.text); }, null, { timeout: 20000 });
     },
   },
   {

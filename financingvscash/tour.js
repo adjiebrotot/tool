@@ -1,10 +1,10 @@
 /* Guided-tour config for the Finance vs Cash Scenario Explorer.
-   The shared engine (../tour-shared.js) reads this object. v4 follows the
-   redesign: Purchase | Loan offers | Assumptions | Sensitivity tabs, the
-   answer sentence, and the chart's own metric switch, so readers who took v3
-   are offered it again. */
+   The shared engine (../tour-shared.js) reads this object. v5 follows the
+   scenario bar with its offer's form under it, the ▶ Simulate gate, and
+   Optimise in place of the Sensitivity tab, so readers who took v4 are
+   offered it again. */
 window.__TOUR = {
-  seenKey: 'fvc-tour-v4-seen',
+  seenKey: 'fvc-tour-v5-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -53,15 +53,25 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '③ Add financing scenarios',
-      body: 'This is <strong>Loan offers</strong>, now open for you. Add each installment ' +
-            'or loan option here: interest rate, down payment, term, and fees. ' +
-            '<strong>Loan Type</strong> covers the shapes lenders actually sell, from a ' +
-            'flat rate to interest-only, a balloon, or an instalment whose rate you do ' +
-            'not know. <strong>Rate Basis</strong> switches to a schedule when the rate ' +
-            'is fixed for a while and then floats. The coloured dot on each card is a ' +
-            'swatch: click it, or the one beside <strong>Scenario Name</strong>, to ' +
-            'recolour that scenario everywhere it is drawn. Compare several at once, then use the ' +
-            '<strong>Sensitivity</strong> tab to sweep a variable such as the finance rate.'
+      body: 'This is <strong>Loan offers</strong>, now open for you. Each offer is a tab ' +
+            'on the bar at the top: click one to edit it below, double-click to rename it, ' +
+            'and click its coloured dot to recolour it everywhere it is drawn. ' +
+            '<strong>+</strong> adds an offer; the buttons on the right copy or remove the ' +
+            'one you are on. <strong>Loan Type</strong> covers the shapes lenders actually ' +
+            'sell, from a flat rate to interest-only, a balloon, or an instalment whose rate ' +
+            'you do not know, and <strong>Rate Basis</strong> switches to a schedule when ' +
+            'the rate is fixed for a while and then floats. Edits save as you go.'
+    },
+    {
+      target: '.controls .btn-row',
+      title: '④ Simulate, or optimise one offer',
+      body: 'Typing does not rerun the comparison. The results fade and ' +
+            '<strong>▶ Simulate</strong> lights up, so you never read an answer that no ' +
+            'longer matches the form. The small gold gauge beside a field such as the ' +
+            'finance rate, the term or the down payment sweeps it over a range instead: ' +
+            'the button becomes <strong>▶ Optimise</strong>, and the run tries every value ' +
+            'on the offer you are editing, with up to two settings at once drawn as a 3D ' +
+            'surface. Cancel goes back to comparing offers.'
     },
     {
       target: '#verdict',
@@ -70,24 +80,25 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="base"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Read the answer',
+      title: '⑤ Read the answer',
       body: 'The sentence at the top says whether paying cash or a loan comes out ahead, ' +
             'by how much, and at what effective rate against the risk-free rate.'
     },
     {
       target: '.metrics',
-      title: '⑤ The figures behind it',
+      title: '⑥ The figures behind it',
       body: 'Four KPI cards call it: the <strong>best strategy</strong>, the ' +
             '<strong>net benefit versus paying cash</strong>, the <strong>total ' +
             'interest</strong> that strategy pays, and the <strong>wealth a cash ' +
             'purchase</strong> would leave you with. The <strong>Optimization ' +
             'Target</strong> in the first card decides what "best" means. A positive net ' +
             'benefit means financing and investing the difference left you wealthier; a ' +
-            'negative one, as in the default numbers here, means paying cash wins.'
+            'negative one, as in the default numbers here, means paying cash wins. In ' +
+            'Optimise they become the best and worst tested settings beside yours.'
     },
     {
       target: '.chart-card',
-      title: '⑥ Explore over time',
+      title: '⑦ Explore over time',
       body: 'Switch the chart between <strong>Ending Wealth</strong>, <strong>Net ' +
             'Benefit</strong>, <strong>Investment Value</strong> and <strong>Loan ' +
             'Balance</strong> right above it. A floating rate is drawn as a shaded band, so ' +
