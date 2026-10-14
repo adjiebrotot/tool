@@ -6,7 +6,7 @@
 
    A scene is
      base    SVG markup of the network (branches, devices, bus bars)
-     lanes   the moving flow dashes: [{ d, kind:'p'|'q', n, rev, color, head }]
+     lanes   the moving flow arrows: [{ pts, d, len, kind:'p'|'q', n, at, fadeIn, fadeOut, color, id }]
      labels  text: [{ x, y, t, anchor, mono, bold, size, fill, res }]
      bbox    the drawing's extent in diagram px                            */
 (function(root){
@@ -414,31 +414,23 @@
       if(!isFinite(a) || a < Math.max(1e-6, max * 0.005)) return 0;
       return clamp(Math.ceil(6 * a / max), 1, 6);
     }
+    // A lane runs the way its flow goes, P on one side of the route and Q on the other.
     function addLane(pts, kind, f, forward, max, id){
       var n = speed(f, max);
-      if(!n || pts.length < 2) return;
-      var ofs = offset(pts, kind === 'p' ? -3.2 : 3.2);
-      lanes.push({ d: pathD(ofs), kind: kind, n: n, rev: !forward, color: kind === 'p' ? C.p : C.q, id: id,
-                   head: laneHead(forward ? ofs : ofs.slice().reverse(), kind) });
+      if(!n || pts.length < 2) return null;
+      var ofs = offset(pts, kind === 'p' ? -LANE_OFS : LANE_OFS);
+      var lane = laneOf(forward ? ofs : ofs.slice().reverse(), kind, n, kind === 'p' ? C.p : C.q, id);
+      if(lane.len < 1) return null;
+      lanes.push(lane);
+      return lane;
     }
-    /* The arrowhead on a lane, pointing the way its flow goes, as in the key: a solid
-       head for active power, an open one for reactive. The two kinds sit a little
-       apart along the lane (P before Q) so their heads never overlap. */
-    function laneHead(pts, kind){
-      var segs = [], tot = 0;
-      for(var i = 1; i < pts.length; i++){
-        var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
-        segs.push(l); tot += l;
-      }
-      if(tot < 8) return '';
-      var at = tot * (kind === 'p' ? 0.42 : 0.58), k = 0;
-      while(k < segs.length - 1 && at > segs[k]){ at -= segs[k]; k++; }
-      var a = pts[k], b = pts[k + 1], sl = segs[k] || 1;
-      var ux = (b[0] - a[0]) / sl, uy = (b[1] - a[1]) / sl;
-      var px = a[0] + ux * at, py = a[1] + uy * at;
-      var pt = function(f, s){ return r1(px + ux * f - uy * s) + ' ' + r1(py + uy * f + ux * s); };
-      return kind === 'p' ? 'M' + pt(5.5, 0) + 'L' + pt(-5, -4.5) + 'L' + pt(-5, 4.5) + 'Z'
-                          : 'M' + pt(-3, -4.5) + 'L' + pt(3, 0) + 'L' + pt(-3, 4.5);
+    /* Where both halves of a branch carry a flow the same way at the same speed,
+       the arrows run on from one half into the other instead of fading out at
+       the middle and in again. */
+    function joinHalves(a, b, forward){
+      if(!a || !b || a.n !== b.n) return;
+      var up = forward ? a : b, down = forward ? b : a;
+      up.fadeOut = false; down.fadeIn = false; down.at = up.len;
     }
 
     /* Branches */
@@ -474,12 +466,12 @@
       // Results along it.
       if(r){
         var hv = halves(g.pts, g);
-        addLane(hv[0], 'p', r.p0, r.p0 > 0, maxP, e.id);
-        addLane(hv[1], 'p', r.p1, r.p1 < 0, maxP, e.id);
-        if(ac && e.c !== 'Link'){
-          addLane(hv[0], 'q', r.q0, r.q0 > 0, maxQ, e.id);
-          addLane(hv[1], 'q', r.q1, r.q1 < 0, maxQ, e.id);
-        }
+        var halfLanes = function(kind, f0, f1, max){
+          var a = addLane(hv[0], kind, f0, f0 > 0, max, e.id), b = addLane(hv[1], kind, f1, f1 < 0, max, e.id);
+          if((f0 > 0) === (f1 < 0)) joinHalves(a, b, f0 > 0);
+        };
+        halfLanes('p', r.p0, r.p1, maxP);
+        if(ac && e.c !== 'Link') halfLanes('q', r.q0, r.q1, maxQ);
       }
       // Labels beside the middle of the route.
       var lines = [];
@@ -624,20 +616,109 @@
     });
     return s;
   };
-  // The dash each kind of lane is drawn with: P a dash, Q a dot. One period: 12 px.
-  LF.LANE = { p: { dash: [6, 6], width: 2.6 }, q: { dash: [0.01, 11.99], width: 3.2 } };
+  /* ── Flow lanes: a stream of arrows ──
+     Every mark on a lane is an arrow pointing the way its power flows, so a
+     still picture reads as well as the moving one: a solid arrow for active
+     power, an open chevron for reactive. The arrows sit one period (12 px)
+     apart and move one period per FLOW_T / n seconds; each rides the lane with
+     SMIL, turning its corners, and fades in where the lane starts and out where
+     it ends (except where it runs on into the next half of its branch). The
+     PNG and GIF exports place them with laneGlyphs, from the same clock. */
+  var GAP = 12, FADE = 5, LANE_OFS = 4.2;
   LF.FLOW_T = 1.6; // seconds for the slowest lane to move one period
-  // How a lane's head is painted: solid for active power, open for reactive.
-  LF.headPaint = function(kind, col){
-    return kind === 'p' ? 'fill="' + col + '"' : 'fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+  // Each arrow points along +x around its own middle.
+  LF.GLYPH = {
+    p: { d: 'M3.9 0L-0.2 -3.1L-0.2 -1L-4 -1L-4 1L-0.2 1L-0.2 3.1Z', fill: true, width: 0.6 },
+    q: { d: 'M-1.6 -2.8L1.6 0L-1.6 2.8', fill: false, width: 1.8 }
   };
-  LF.laneSvg = function(lanes){
+  LF.glyphPaint = function(kind, col){
+    var gl = LF.GLYPH[kind];
+    return (gl.fill ? 'fill="' + col + '"' : 'fill="none"') + ' stroke="' + col + '" stroke-width="' + gl.width + '" stroke-linecap="round" stroke-linejoin="round"';
+  };
+  // A lane along pts (in the order the flow goes), moving at speed step n (1–6).
+  function laneOf(pts, kind, n, color, id){
+    pts = pts.map(function(p){ return [r1(p[0]), r1(p[1])]; });
+    var len = 0;
+    for(var i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    // at: how far the stream has come before this lane, so it runs on from the lane before.
+    return { pts: pts, d: pathD(pts), len: len, kind: kind, n: n, at: 0, fadeIn: true, fadeOut: true, color: color, id: id };
+  }
+  // The key's lane: a short run of arrows from x to x + w.
+  LF.keyLane = function(kind, x, y, w, color){ return laneOf([[x, y], [x + w, y]], kind, 2, color); };
+  function mod(a, b){ return ((a % b) + b) % b; }
+  function r6(x){ return Math.round(x * 1e6) / 1e6; }
+  function fadeOf(l, s){
+    var F = Math.min(FADE, l.len / 2), o = 1;
+    if(l.fadeIn) o = Math.min(o, s / F);
+    if(l.fadeOut) o = Math.min(o, (l.len - s) / F);
+    return Math.max(0, Math.min(1, o));
+  }
+  // Where an arrow s along a lane is, and which way it points (a, radians).
+  function laneAt(l, s){
+    var s0 = 0;
+    for(var k = 0; ; k++){
+      var a = l.pts[k], b = l.pts[k + 1], sl = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if(s <= s0 + sl || k >= l.pts.length - 2){
+        var f = sl ? (s - s0) / sl : 0;
+        return { x: a[0] + (b[0] - a[0]) * f, y: a[1] + (b[1] - a[1]) * f, a: Math.atan2(b[1] - a[1], b[0] - a[0]) };
+      }
+      s0 += sl;
+    }
+  }
+  // The arrows on a lane at a moment t (seconds): where each one is, which way it points and how faded.
+  LF.laneGlyphs = function(l, t){
+    var out = [], v = GAP * l.n / LF.FLOW_T;
+    for(var s = mod(v * t - l.at, GAP); s <= l.len; s += GAP){
+      var g = laneAt(l, s);
+      g.o = fadeOf(l, s);
+      out.push(g);
+    }
+    return out;
+  };
+  /* An arrow's opacity over its cycle, as keyTimes and values: it is visible
+     while it travels the lane (fading at the ends that fade) and hidden for the
+     rest of the cycle, while the arrows behind it close the gap. Null when it is
+     never hidden or faded. */
+  function fadeKeys(l, W){
+    var F = Math.min(FADE, l.len / 2), end = l.len / W, full = end > 0.9999, k = [];
+    if(full && !l.fadeIn && !l.fadeOut) return null;
+    var r5 = function(t){ return Math.min(1, Math.round(t * 1e5) / 1e5); };
+    var add = function(t, o){
+      var last = k[k.length - 1];
+      t = r5(t);
+      if(last && t <= last[0]){ if(o === last[1]) return; t = r5(last[0] + 1e-5); }
+      k.push([t, o]);
+    };
+    if(l.fadeIn){ add(0, 0); add(F / W, 1); } else add(0, 1);
+    if(l.fadeOut){ add((l.len - F) / W, 1); add(end, 0); }
+    else if(!full){ add(end, 1); add(end + 1e-4, 0); }
+    add(1, k[k.length - 1][1]);
+    return { times: k.map(function(p){ return p[0]; }).join(';'), values: k.map(function(p){ return p[1]; }).join(';') };
+  }
+  /* One group per lane, painted once; its arrows inside. With still, each arrow
+     also stands where it is at time 0, for an exported file opened somewhere
+     that does not play SMIL; where SMIL plays, the motion takes its place. */
+  LF.laneSvg = function(lanes, still){
     var s = '';
     lanes.forEach(function(l){
-      var st = LF.LANE[l.kind];
-      s += '<path class="fl fl-' + l.kind + (l.rev ? ' rev' : '') + '" d="' + l.d + '" fill="none" stroke="' + l.color + '" stroke-width="' + st.width +
-        '" stroke-linecap="round" stroke-dasharray="' + st.dash.join(' ') + '" style="--n:' + l.n + '" data-id="' + l.id + '"/>';
-      if(l.head) s += '<path class="fh fl-' + l.kind + '" d="' + l.head + '" ' + LF.headPaint(l.kind, l.color) + ' data-id="' + l.id + '"/>';
+      var N = Math.max(1, Math.ceil(l.len / GAP - 1e-6)), W = N * GAP;
+      var tp = LF.FLOW_T / l.n, D = N * tp, v = GAP / tp, end = l.len / W;
+      var motion = end < 0.9999 ? ' keyPoints="0;1;1" keyTimes="0;' + Math.round(end * 1e5) / 1e5 + ';1"' : ' keyPoints="0;1" keyTimes="0;1"';
+      var op = fadeKeys(l, W);
+      s += '<g class="fl fl-' + l.kind + '" ' + LF.glyphPaint(l.kind, l.color) + (l.id !== undefined ? ' data-id="' + l.id + '"' : '') + '>';
+      for(var j = 0; j < N; j++){
+        // Arrow j starts its cycle where the stream puts it at time 0.
+        var timing = ' dur="' + r6(D) + 's" begin="' + r6(mod((l.at - GAP * j) / v, D) - D) + 's" repeatCount="indefinite"';
+        var base = '', hold = '';
+        if(still){
+          var s0 = mod(GAP * j - l.at, W), g = laneAt(l, Math.min(s0, l.len)), o = s0 <= l.len ? fadeOf(l, s0) : 0;
+          base = ' transform="translate(' + r1(g.x) + ' ' + r1(g.y) + ') rotate(' + r1(g.a * 180 / Math.PI) + ')"' + (o < 1 ? ' opacity="' + Math.round(o * 100) / 100 + '"' : '');
+          hold = '<animateTransform attributeName="transform" type="translate" from="0 0" to="0 0" dur="1s" fill="freeze"/>';
+        }
+        s += '<path d="' + LF.GLYPH[l.kind].d + '"' + base + '>' + hold + '<animateMotion path="' + l.d + '" rotate="auto" calcMode="linear"' + motion + timing + '/>' +
+          (op ? '<animate attributeName="opacity" calcMode="linear" values="' + op.values + '" keyTimes="' + op.times + '"' + timing + '/>' : '') + '</path>';
+      }
+      s += '</g>';
     });
     return s;
   };

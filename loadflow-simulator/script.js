@@ -114,17 +114,42 @@
   }
   // A run that did not converge stopped somewhere arbitrary, so none of it is drawn.
   function shownResults(){ return app.res && app.res.report && app.res.report.ok && app.res.report.converged ? app.res : null; }
+  /* The flow arrows outlive a render: a lane keeps its elements, and so its
+     running arrows, while its markup is unchanged. Dragging a part rebuilds only
+     the lanes it moves, not the hundreds of animated arrows around it. */
+  var under = null, flow = null, over = null, laneEls = new Map();
+  function syncFlow(lanes){
+    var next = new Map(), add = [];
+    lanes.forEach(function(l){
+      var html = LF.laneSvg([l]), key = html;
+      while(next.has(key)) key += '+';
+      var g = laneEls.get(key);
+      if(g){ laneEls.delete(key); next.set(key, g); } else add.push([key, html]);
+    });
+    laneEls.forEach(function(g){ g.remove(); });
+    if(add.length){
+      var first = flow.children.length;
+      flow.insertAdjacentHTML('beforeend', add.map(function(a){ return a[1]; }).join(''));
+      add.forEach(function(a, i){ next.set(a[0], flow.children[first + i]); });
+    }
+    laneEls = next;
+  }
   function render(){
     var d = display();
     var p = paint();
     app.L = LF.layout(app.model);
     var sc = app.scene = LF.draw(app.model, app.L, shownResults(), d, p);
     var C = sc.colours;
-    svg.innerHTML =
+    if(!flow){
+      svg.innerHTML = '<g></g><g class="lyr-res"><g class="lyr-flow"></g></g><g></g>';
+      under = svg.firstChild; flow = svg.querySelector('.lyr-flow'); over = svg.lastChild;
+    }
+    under.innerHTML =
       '<defs><pattern id="lfDots" width="' + G + '" height="' + G + '" patternUnits="userSpaceOnUse"><circle cx="' + G / 2 + '" cy="' + G / 2 + '" r="0.8" fill="' + C.border + '"/></pattern></defs>' +
       (app.readOnly ? '' : '<rect class="lf-grid" x="-100000" y="-100000" width="200000" height="200000" fill="url(#lfDots)" pointer-events="none"/>') +
-      '<g class="lyr-base">' + sc.base + '</g>' +
-      '<g class="lyr-res"><g class="lyr-flow">' + LF.laneSvg(sc.lanes) + '</g></g>' +
+      '<g class="lyr-base">' + sc.base + '</g>';
+    syncFlow(sc.lanes);
+    over.innerHTML =
       '<g class="lyr-hit">' + hitLayer() + '</g>' +
       '<g class="lyr-lbl">' + LF.labelSvg(sc.labels, C, function(l){ return !l.res; }) + '</g>' +
       '<g class="lyr-res">' + LF.labelSvg(sc.labels, C, function(l){ return l.res; }) + '</g>' +
@@ -292,6 +317,8 @@
     $('runBtn').classList.toggle('needs-run', stale);
     $('staleNote').textContent = app.res ? 'The network changed. Press Run load flow to solve it.' : 'Press Run load flow to solve the network.';
     if(!app.res) document.body.classList.toggle('is-stale', false);
+    // A stale result keeps its arrows, faded and standing still.
+    if(svg.pauseAnimations){ if(stale && app.res) svg.pauseAnimations(); else svg.unpauseAnimations(); }
   }
   app.updateStale = updateStale;
   var running = false;
@@ -1151,6 +1178,12 @@
   });
 
   /* ── Motion: flows move unless the reader asked for less motion ── */
+  // Each key is a short run of the diagram's own arrows.
+  ['p', 'q'].forEach(function(k){
+    var run = '';
+    [-8, 4, 16, 28].forEach(function(x){ run += '<path d="' + LF.GLYPH[k].d + '" transform="translate(' + x + ' 5)"/>'; });
+    document.querySelector('.flow-key-' + k).innerHTML = '<g class="fk-run">' + run + '</g>';
+  });
   var motionChosen = false;
   function applyMotionDefault(force){
     if(motionChosen && !force) return;
