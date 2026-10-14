@@ -1,9 +1,10 @@
 /* Guided-tour config for the Portfolio DCA Simulator.
    The shared engine (../../tour-shared.js) reads this object. v2 follows the
    redesign: Currency on the Data tab, Settings renamed Assumptions, and the
-   answer and summary above the charts, so readers who took v1 see it again. */
+   answer and summary above the charts, so readers who took v1 see it again.
+   v3 adds Optimise mode (the gold gauge beside a field). */
 window.__TOUR = {
-  seenKey: 'dcapf-tour-v2-seen',
+  seenKey: 'dcapf-tour-v3-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -62,6 +63,22 @@ window.__TOUR = {
             'rebalancing choices fairly.'
     },
     {
+      // The gauge lives beside the field it sweeps, so the step opens the
+      // Top-Ups subtab where the first one (Amount per top-up) is on screen.
+      target: '.opt-btn[data-opt="topup.amount"]',
+      onEnter: function () {
+        var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+        var sub = document.querySelector('.sub-tab[data-sub="topups"]');
+        if (sub) sub.click();
+      },
+      title: '⑤ Optimise a setting',
+      body: 'The gold <strong>gauge</strong> beside a field sweeps it over a range: pick a ' +
+            'Start, an End and how many steps, for up to two settings of one portfolio. ' +
+            'Simulate becomes <strong>▶ Optimise</strong>, and the chart shows which value ' +
+            'did best, as a line for one setting or a 3D surface for two.'
+    },
+    {
       target: '#simBtn',
       onEnter: function () {
         // Simulate/Reset only exist outside the Data panel, so make sure a
@@ -69,7 +86,7 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '⑤ Run the simulation',
+      title: '⑥ Run the simulation',
       body: 'Click <strong>Simulate</strong> to backtest every portfolio on the same ' +
             'overlapping dates. The sentence at the top of the results says which ended ' +
             'highest, or which earned the most on what went in when the top-ups differ. ' +

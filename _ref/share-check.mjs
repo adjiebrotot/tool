@@ -364,6 +364,36 @@ const PAGES = [
     },
   },
   {
+    // Optimise mode: one swept setting draws the sweep as a line in the value
+    // card, read here by its Sharpe.
+    name: 'dcasimulator/portfolio (optimise)', url: '/dcasimulator/portfolio/', charts: ['valueCanvas'], prices: true,
+    async prep(page) {
+      await dcaPrep('portfolios', 'rebal-freq')(page);
+      await page.click('.sub-tab[data-sub="rebal"]');
+      await page.click('.opt-btn[data-opt="weight:1"]');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.waitForFunction(() => document.getElementById('valueTitle').textContent.startsWith('Optimisation') && !!window.Chart.getChart(document.getElementById('valueCanvas')), null, { timeout: 60000 });
+      await page.selectOption('#optMetric', 'sharpe');
+    },
+  },
+  {
+    // Two swept settings draw a Plotly surface in the same card.
+    name: 'dcasimulator/portfolio (optimise 3D)', url: '/dcasimulator/portfolio/', charts: ['optSurface'], prices: true,
+    async prep(page) {
+      await dcaPrep('portfolios', 'rebal-freq')(page);
+      await page.click('.sub-tab[data-sub="rebal"]');
+      await page.click('.opt-btn[data-opt="weight:1"]');
+      await page.fill('#optSteps', '5'); await page.dispatchEvent('#optSteps', 'input');
+      await page.click('#optDoneBtn');
+      await page.click('.opt-btn[data-opt="rebal.buyFee"]');
+      await page.fill('#optSteps', '4'); await page.dispatchEvent('#optSteps', 'input');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.waitForFunction(() => { const d = document.getElementById('optSurface'); return d && d.data && d.data.length; }, null, { timeout: 60000 });
+    },
+  },
+  {
     name: 'graphvisualiser', url: '/graphvisualiser/', charts: ['plotDiv'],
     async prep(page) {
       await page.setInputFiles('#fileInput', DEMO_CSV);

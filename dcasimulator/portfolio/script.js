@@ -135,6 +135,15 @@ let priceSeriesKey = '';         // last (portfolio + asset set) signature → r
 let priceCache = {};
 let tickerFetchInFlight = {};
 
+// Optimise mode (see OPTIMISE below): the settings swept on the active portfolio,
+// and the sweep on the board (null while the board shows a comparison).
+let optVars = [];                // [{key, start, end, steps, slack}], at most two
+let optResult = null;
+let optPick = [0, 0];            // which tested values the Detailed Breakdown shows
+let optPickWanted = null;        // a saved file's pick, applied once its sweep has run
+let optAbort = false;            // Cancel pressed while a sweep is running
+let runInFlight = false, editedInFlight = false;
+
 /* ─── HELPERS ─── */
 const $ = id => document.getElementById(id);
 function cssVar(n){ return getComputedStyle(document.body).getPropertyValue(n).trim(); }
@@ -190,16 +199,19 @@ function hideStatus(el){ if(!el) return; el.className='status-bar'; el.textConte
    is no answer to doubt yet. */
 let stale=false;
 function markStale(){
+  if(runInFlight) editedInFlight=true;   // a sweep reads its inputs once, at the start
   if(stale || !simResults.length) return;
   stale=true;
   document.body.classList.add('is-stale');
   const b=$('simBtn'); if(b) b.classList.add('needs-run');
+  renderStaleNote();
 }
 function markFresh(){
   if(!stale) return;
   stale=false;
   document.body.classList.remove('is-stale');
   const b=$('simBtn'); if(b) b.classList.remove('needs-run');
+  renderStaleNote();
 }
 
 // A portfolio's name and colour are labels, not assumptions, so editing one
@@ -664,6 +676,7 @@ function updateBtnRow(){
   const t=document.querySelector('.ctrl-tab.active');
   const dataTab=t?t.dataset.tab==='data':true;
   { const b=$('simBtn'); if(b) b.style.display=dataTab?'none':''; }
+  { const c=$('optCancelBtn'); if(c) c.style.display=(!dataTab && optVars.length)?'':'none'; }
   // On the Data tab the bottom action mirrors the chosen download mode: "Load
   // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate.
   const realMode=(typeof dataMode==='undefined' || dataMode==='real');
@@ -822,7 +835,7 @@ function renderPortfolioList(){
     name.className='pf-tab-name'; name.textContent=p.name;
     tab.appendChild(name);
 
-    tab.addEventListener('click',()=>{ if(p.id!==activePortfolioId){ setActive(p.id); switchSubTab('assets'); } });
+    tab.addEventListener('click',()=>{ if(optVars.length) return; if(p.id!==activePortfolioId){ setActive(p.id); switchSubTab('assets'); } });
     tab.addEventListener('dblclick',()=>startRenamePortfolio(tab, p));
     el.appendChild(tab);
   });
@@ -955,6 +968,7 @@ function renderAssetList(){
   if(!p || !p.assets.length){
     el.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">'+(p?'No assets added yet.':'Add a portfolio first.')+'</div>';
     renderWeightTable();
+    syncOptUi();
     return;
   }
   // Assets are defined in the Data tab (real tickers or simulated assets); here they
@@ -1019,7 +1033,7 @@ function renderWeightTable(){
   tableWrap.innerHTML=`<div class="weight-table">${
     p.assets.map(a=>`
       <div class="weight-row">
-        <span class="wt-name"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span></span>
+        <span class="wt-name"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span>${optBtnHtml('weight:'+a.id, a.name+' weight')}</span>
         <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" data-unit="%" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="wtTotalCell"></span></div></div>`;
@@ -1096,6 +1110,7 @@ function refreshRebalPanels(){
   renderWeightTable();
   renderRankWeightTable();
   if(methodNeedsTriggers(method)){ populateReserveSelect(); renderTriggerTable(); }
+  syncOptUi();
 }
 
 /* ── Dynamic weight: per-rank target weights + momentum lookback ── */
@@ -1114,7 +1129,7 @@ function renderRankWeightTable(){
   wrap.innerHTML=`<div class="weight-table">${
     rw.map((w,idx)=>`
       <div class="weight-row">
-        <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span></span>
+        <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span>${optBtnHtml('rank:'+idx, 'Rank '+(idx+1)+' weight')}</span>
         <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" data-unit="%" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="rwTotalCell"></span></div></div>`;
@@ -1310,6 +1325,8 @@ function renderTriggerTable(){
     </div>`;
   }).join('');
   wireTriggerTable();
+  addTriggerGauges(wrap, p);
+  syncOptUi();
 }
 function wireTriggerTable(){
   const p=getActive(); if(!p) return;
@@ -1440,14 +1457,17 @@ function renderScheduleBox(boxId, hintId, sched){
   const isRebal=/rebal/i.test(boxId);
   const verb=isRebal?'Rebalance':'Top-up';
   const onceLabel=isRebal?'One rebalance per year':'One top-up per year';
+  // Each day setting carries its own gauge (optimise mode); syncOptUi shows the
+  // ones that are one setting as they stand (a single weekday, a single day).
+  const gauge=(f,word)=>optBtnHtml((isRebal?'rebalSched.':'topupSched.')+f, verb+' '+word);
   if(p==='weekly'||p==='fortnightly'){
-    let html='<div class="weekday-grid">'+WEEKDAYS.map((w,i)=>{
+    let html='<div class="sched-wd-row"><div class="weekday-grid">'+WEEKDAYS.map((w,i)=>{
       const v=i+1, on=sched.weekdays.includes(v);
       return `<div class="weekday-chip${on?' active':''}" data-wd="${v}">${w}</div>`;
-    }).join('')+'</div>';
+    }).join('')+'</div>'+gauge('weekday','weekday')+'</div>';
     if(p==='fortnightly'){
       if(sched.weekParity!==0&&sched.weekParity!==1) sched.weekParity=0;
-      html+=`<div class="sched-inline" style="margin-top:8px"><label>Week</label>
+      html+=`<div class="sched-inline" style="margin-top:8px"><label>Week ${gauge('parity','week')}</label>
         <div class="weekday-grid" style="display:inline-flex">
           <div class="weekday-chip wp-chip${sched.weekParity===0?' active':''}" data-wp="0">First week</div>
           <div class="weekday-chip wp-chip${sched.weekParity===1?' active':''}" data-wp="1">Second week</div>
@@ -1461,6 +1481,7 @@ function renderScheduleBox(boxId, hintId, sched){
         if(idx>=0){ if(sched.weekdays.length>1) sched.weekdays.splice(idx,1); }
         else sched.weekdays.push(v);
         chip.classList.toggle('active', sched.weekdays.includes(v));
+        syncOptUi();
       });
     });
     const fortnightHint=()=>verb+' on each selected weekday of the '+(sched.weekParity===1?'second':'first')+' week, every fortnight.';
@@ -1473,10 +1494,11 @@ function renderScheduleBox(boxId, hintId, sched){
     });
     hint.textContent=p==='weekly'?verb+' on each selected weekday, every week.':fortnightHint();
   } else if(p==='monthly'){
-    box.innerHTML=`<div class="sched-inline"><label>Day(s) of month</label><input class="txt-input" id="${boxId}_dom" value="${sched.daysOfMonth.join(', ')}" placeholder="e.g. 1 or 1, 15"/></div>`;
+    box.innerHTML=`<div class="sched-inline"><label>Day(s) of month ${gauge('dom','day of month')}</label><input class="txt-input" id="${boxId}_dom" value="${sched.daysOfMonth.join(', ')}" placeholder="e.g. 1 or 1, 15"/></div>`;
     $(boxId+'_dom').addEventListener('input',e=>{
       const arr=e.target.value.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>n>=1&&n<=31);
       sched.daysOfMonth=arr.length?arr:[1];
+      syncOptUi();
     });
     hint.textContent=verb+' on the closest trading day to each listed day, every month.';
   } else if(p==='quarterly'){
@@ -1486,23 +1508,24 @@ function renderScheduleBox(boxId, hintId, sched){
       {v:2,label:'Feb, May, Aug, Nov'},
       {v:3,label:'Mar, Jun, Sep, Dec'}
     ];
-    box.innerHTML=`<div class="sched-inline"><label>Months</label>
+    box.innerHTML=`<div class="sched-inline"><label>Months ${gauge('quarterStart','months')}</label>
       <select class="num-input" id="${boxId}_qs" style="max-width:160px">${qOpts.map(o=>`<option value="${o.v}" ${sched.quarterStart===o.v?'selected':''}>${o.label}</option>`).join('')}</select></div>
-      <div class="sched-inline" style="margin-top:6px"><label>Day of month</label><input class="num-input" id="${boxId}_dom" type="number" min="1" max="31" value="${sched.dayOfMonth}"/></div>`;
+      <div class="sched-inline" style="margin-top:6px"><label>Day of month ${gauge('dom','day of month')}</label><input class="num-input" id="${boxId}_dom" type="number" min="1" max="31" value="${sched.dayOfMonth}"/></div>`;
     $(boxId+'_qs').addEventListener('change',e=>{ sched.quarterStart=parseInt(e.target.value,10)||1; renderScheduleBox(boxId,hintId,sched); });
     $(boxId+'_dom').addEventListener('input',e=>{ sched.dayOfMonth=Math.min(31,Math.max(1,parseInt(e.target.value,10)||1)); });
     hint.textContent=verb+' on that day in '+qOpts.find(o=>o.v===sched.quarterStart).label.replace(/,([^,]*)$/,' and$1')+'.';
   } else if(p==='yearly'){
     box.innerHTML=`<div class="sched-inline">
-      <label>Month</label>
+      <label>Month ${gauge('month','month')}</label>
       <select class="num-input" id="${boxId}_mon" style="max-width:90px">${MONTHS.map((m,i)=>`<option value="${i+1}" ${sched.month===i+1?'selected':''}>${m}</option>`).join('')}</select>
-      <label>Day</label>
+      <label>Day ${gauge('dom','day of month')}</label>
       <input class="num-input" id="${boxId}_dom" type="number" min="1" max="31" value="${sched.dayOfMonth}" style="max-width:70px"/>
     </div>`;
     $(boxId+'_mon').addEventListener('change',e=>{ sched.month=parseInt(e.target.value,10)||1; });
     $(boxId+'_dom').addEventListener('input',e=>{ sched.dayOfMonth=Math.min(31,Math.max(1,parseInt(e.target.value,10)||1)); });
     hint.textContent=onceLabel+' on the chosen month and day.';
   }
+  syncOptUi();
 }
 
 /* ─── CONFIG INPUT BINDINGS (write to the active portfolio) ─── */
@@ -1534,6 +1557,7 @@ document.querySelectorAll('input[name="rfMode"]').forEach(r=>{
     document.querySelectorAll('#rfOptRate,#rfOptTicker').forEach(o=>o.classList.remove('selected'));
     r.closest('.radio-opt').classList.add('selected');
     const p=getActive(); if(p) p.rf.mode=r.value;
+    syncOptUi();
   });
 });
 document.querySelectorAll('input[name="rebalMethod"]').forEach(r=>{
@@ -1566,6 +1590,7 @@ document.querySelectorAll('input[name="cwTiming"]').forEach(r=>{
     r.closest('[data-cwtiming]').classList.add('selected');
     $('rebalScheduleWrap').style.display=r.value==='schedule'?'':'none';
     const p=getActive(); if(p) p.rebal.cwTiming=r.value;
+    syncOptUi();
   });
 });
 // Reserve (rule-trigger): one dropdown for the Risk-Free Account (cash) or a
@@ -1963,22 +1988,1071 @@ function simulatePortfolio(p, assets, common, rfPx, exec){
   return rows;
 }
 
+/* ─── OPTIMISE: WHAT CAN BE SWEPT, AND HOW ─────────────────────────────────────
+   Optimise mode runs ONE portfolio many times, sweeping up to two of its settings
+   over a range, so a reader can see how the result moves with them and where it
+   peaks. A setting qualifies only when changing it changes nothing else on the
+   form, so every tested value is a plan the reader could have typed in, with no
+   field quietly appearing, vanishing or being filled with a guess:
+
+     - plain numbers: the top-up amount and its yearly increase, the risk-free
+       rate, both fees, and every number a deploy trigger reads;
+     - fixed lists: Trade at, the momentum lookback, a trigger's Frequency, its
+       From anchor within its own family (Month or Week open, or Previous top or
+       bottom, the two that share a lookback), and the top-up and rebalance
+       schedules (period, day of month, weekday, fortnight week, quarter months,
+       month);
+     - weights, whose knock-on is contained: they have to add up to 100%, so a
+       swept weight hands its change to a slack, one named member or all the
+       others in equal shares (see applyWeightGroup).
+
+   The top-up period carries one contained knock-on as well, the one the form
+   applies when the period is switched by hand: the amount per top-up follows it,
+   so each year's money stays the same. Each period then reads its own day
+   settings, as the schedule box shows them when that period is picked.
+
+   Left out on purpose: the method, Rebalance Timing, the reserve, the risk-free
+   mode and ticker, a trigger's type and direction (each swaps the fields around
+   it), the seed and the dates.
+
+   Every spec is built from the portfolio as it stands, so `optSpec` returning
+   null means "not sweepable here" (a weight under a weight-free method, a
+   trigger number under another trigger type), and a swept setting that stops
+   qualifying is dropped (pruneOptVars). */
+const OPT_MAX_VARS = 2;
+const OPT_MAX_STEPS = 50;      // values per swept setting
+const OPT_MAX_RUNS = 625;      // runs per optimisation, 25 x 25 at the most
+const OPT_ICON = '<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 18.4a8 8 0 1 1 11.4 0"/><path d="M12 13.4 8.6 9.3"/><circle cx="12" cy="13.6" r="1.35"/></svg>';
+const OPT_PERIODS = [
+  {v:'weekly', l:'Weekly'}, {v:'fortnightly', l:'Fortnightly'}, {v:'monthly', l:'Monthly'},
+  {v:'quarterly', l:'Quarterly'}, {v:'yearly', l:'Yearly'}
+];
+const OPT_QUARTERS = [{v:1, l:'Jan, Apr, Jul, Oct'}, {v:2, l:'Feb, May, Aug, Nov'}, {v:3, l:'Mar, Jun, Sep, Dec'}];
+const OPT_EXEC = [{v:'close', l:"Same day's close"}, {v:'next-open', l:"Next day's open"}, {v:'next-close', l:"Next day's close"}];
+// The trigger numbers a deploy trigger reads, keyed as in trigger.tech, with the
+// trigger types that show each one and the bounds its field carries.
+const OPT_TECH = {
+  rsiPeriod:    {label:'RSI period',        types:['tech-rsi'],                        min:2,   max:100, int:true, unit:'bars'},
+  rsiOversold:  {label:'oversold level',    types:['tech-rsi'],                        min:1,   max:99,  int:true, unit:'', spread:15},
+  fastMaLen:    {label:'fast MA length',    types:['tech-ma-cross'],                   min:1,   max:200, int:true, unit:'bars'},
+  slowMaLen:    {label:'slow MA length',    types:['tech-ma-cross'],                   min:1,   max:400, int:true, unit:'bars'},
+  bbPeriod:     {label:'Bollinger period',  types:['tech-bollinger'],                  min:2,   max:100, int:true, unit:'bars'},
+  bbStd:        {label:'Bollinger std dev', types:['tech-bollinger'],                  min:0.5, max:5,   dp:1,     unit:'', spread:1},
+  macdFast:     {label:'MACD fast EMA',     types:['tech-macd-cross','tech-macd-hist'], min:1,   max:100, int:true, unit:'bars'},
+  macdSlow:     {label:'MACD slow EMA',     types:['tech-macd-cross','tech-macd-hist'], min:1,   max:200, int:true, unit:'bars'},
+  macdSignal:   {label:'MACD signal',       types:['tech-macd-cross','tech-macd-hist'], min:1,   max:100, int:true, unit:'bars'},
+  adxPeriod:    {label:'ADX period',        types:['tech-adx'],                        min:2,   max:100, int:true, unit:'bars'},
+  adxThreshold: {label:'ADX threshold',     types:['tech-adx'],                        min:1,   max:100, int:true, unit:'', spread:15}
+};
+
+function optClamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+function optRound(v, spec){ return spec.int ? Math.round(v) : +(+v).toFixed(spec.dp==null ? 2 : spec.dp); }
+// A range around the value the field holds now: half to one and a half times it
+// for a size, a fixed spread for a level, the field's own bounds either way.
+function optAround(spec, base, steps){
+  let a, b;
+  if(spec.spread){ a=base-spec.spread; b=base+spec.spread; }
+  else if(base>0){ a=base/2; b=base*1.5; if(spec.int && b-a<4){ a=base-2; b=base+2; } }
+  else { a=spec.min; b=spec.min+10; }
+  a=optRound(optClamp(a, spec.min, spec.max), spec); b=optRound(optClamp(b, spec.min, spec.max), spec);
+  if(b<=a) b=optRound(optClamp(a+(spec.int?4:1), spec.min, spec.max), spec);
+  return {start:a, end:b, steps: spec.int ? Math.min(steps||11, b-a+1) : (steps||11)};
+}
+function optFmtNum(spec, v){
+  const n=Number(v);
+  if(spec.unit==='money') return fmt.currency(n);
+  const s=spec.int ? String(Math.round(n)) : String(+n.toFixed(spec.dp==null ? 2 : spec.dp));
+  if(spec.unit==='%' || spec.unit==='%/yr') return s+'%';
+  if(spec.unit==='bars') return s+(Math.round(n)===1?' bar':' bars');
+  return s;
+}
+function optSchedOf(p, which){ return which==='rebalSched' ? p.rebalSched : p.topupSched; }
+
+// The spec of one sweepable setting of portfolio `p`, or null when that setting
+// is not sweepable on `p` as it stands. A key names the setting:
+//   topup.amount, topup.yearlyIncrease, rf.rate, rebal.buyFee, rebal.sellFee,
+//   rebal.lookbackMonths, execTiming,
+//   topupSched.<f> and rebalSched.<f> for f in period, dom, weekday, parity,
+//     quarterStart, month,
+//   weight:<assetId>, rank:<index>,
+//   trig:<assetId>:<f> for f in pct, lookback, from, freq or an OPT_TECH key.
+function optSpec(key, p){
+  if(!p || typeof key!=='string') return null;
+  const method=p.rebal.method;
+  const num=o=>Object.assign({key, kind:'num', dp:2, steps:11, fmt(v){ return optFmtNum(this, v); }}, o);
+  const list=o=>Object.assign({key, kind:'list', fmt(v){ const x=this.options.find(q=>String(q.v)===String(v)); return x ? x.l : String(v); }}, o);
+  switch(key){
+    case 'topup.amount': return num({label:'Amount per top-up', unit:'money', min:1, max:1e11,
+      get:q=>q.topup.amount||0, apply:(x,v)=>{ x.p.topup.amount=v; }});
+    case 'topup.yearlyIncrease': return num({label:'Yearly increase', unit:'%/yr', min:0, max:100,
+      get:q=>q.topup.yearlyIncrease||0, apply:(x,v)=>{ x.p.topup.yearlyIncrease=v; },
+      def:b=>({start:0, end:Math.max(10, Math.ceil(b*2)), steps:11})});
+    case 'rf.rate': if(p.rf.mode==='ticker') return null;
+      return num({label:'Risk-free rate', unit:'%/yr', min:0, max:30,
+        get:q=>q.rf.rate||0, apply:(x,v)=>{ x.p.rf.rate=v; },
+        def:b=>({start:0, end:Math.max(6, Math.ceil(b*2)), steps:13})});
+    case 'rebal.buyFee': case 'rebal.sellFee': {
+      const f=key.slice(6);
+      return num({label:f==='buyFee'?'Buying fee':'Selling fee', unit:'%', min:0, max:10,
+        get:q=>q.rebal[f]||0, apply:(x,v)=>{ x.p.rebal[f]=v; },
+        def:b=>({start:0, end:Math.max(1, optRound(b*4, {dp:2})), steps:11})});
+    }
+    case 'rebal.lookbackMonths': if(method!=='dynamic-momentum') return null;
+      return list({label:'Momentum lookback', options:[{v:1,l:'1 month'},{v:3,l:'3 months'},{v:6,l:'6 months'},{v:12,l:'12 months'}],
+        get:q=>q.rebal.lookbackMonths||6, apply:(x,v)=>{ x.p.rebal.lookbackMonths=v; }});
+    case 'execTiming': return list({label:'Trade at', options:OPT_EXEC,
+      get:()=>currentExecTiming, apply:(x,v)=>{ x.exec=v; }});
+  }
+  let m=/^(topupSched|rebalSched)\.(period|dom|weekday|parity|quarterStart|month)$/.exec(key);
+  if(m){
+    const which=m[1], f=m[2], isRebal=which==='rebalSched';
+    if(isRebal && !(method==='constant-weight' && p.rebal.cwTiming==='schedule')) return null;
+    const s=optSchedOf(p, which), per=s.period, word=isRebal?'Rebalance':'Top-up';
+    const sch=x=>optSchedOf(x.p, which);
+    if(f==='period') return list({label:word+' period', options:OPT_PERIODS, late:true,
+      get:()=>per,
+      // The amount is per top-up, so it follows the period as it does when the
+      // period is switched by hand: each year's money stays the same.
+      apply:(x,v)=>{
+        const s2=sch(x);
+        if(!isRebal){ const c=SharedFreq.convert(x.p.topup.amount, s2.period, v, 2); if(c!==null) x.p.topup.amount=c; }
+        s2.period=v;
+      }});
+    if(f==='dom'){
+      // Monthly reads a list of days; only a single day is one setting to sweep.
+      if(per==='monthly' ? (s.daysOfMonth||[]).length!==1 : (per!=='quarterly' && per!=='yearly')) return null;
+      return num({label:word+' day of month', unit:'', min:1, max:31, int:true,
+        get:()=>per==='monthly' ? s.daysOfMonth[0] : (s.dayOfMonth||1),
+        apply:(x,v)=>{ const s2=sch(x); if(s2.period==='monthly') s2.daysOfMonth=[v]; else s2.dayOfMonth=v; },
+        def:()=>({start:1, end:28, steps:28})});
+    }
+    if(f==='weekday'){
+      if(!(per==='weekly'||per==='fortnightly') || (s.weekdays||[]).length!==1) return null;
+      return list({label:word+' weekday', options:WEEKDAYS.slice(0,5).map((l,i)=>({v:i+1, l})),
+        get:()=>s.weekdays[0], apply:(x,v)=>{ sch(x).weekdays=[v]; }});
+    }
+    if(f==='parity'){ if(per!=='fortnightly') return null;
+      return list({label:word+' week', options:[{v:0,l:'First week'},{v:1,l:'Second week'}],
+        get:()=>s.weekParity===1?1:0, apply:(x,v)=>{ sch(x).weekParity=v; }}); }
+    if(f==='quarterStart'){ if(per!=='quarterly') return null;
+      return list({label:word+' months', options:OPT_QUARTERS,
+        get:()=>[1,2,3].includes(s.quarterStart)?s.quarterStart:1, apply:(x,v)=>{ sch(x).quarterStart=v; }}); }
+    if(f==='month'){ if(per!=='yearly') return null;
+      return list({label:word+' month', options:MONTHS.map((l,i)=>({v:i+1, l})),
+        get:()=>s.month||1, apply:(x,v)=>{ sch(x).month=v; }}); }
+    return null;
+  }
+  m=/^(weight|rank):(\d+)$/.exec(key);
+  if(m){
+    const n=p.assets.length, id=+m[2];
+    if(n<2) return null;
+    if(m[1]==='weight'){
+      const a=p.assets.find(b=>b.id===id);
+      if(!a || !methodNeedsWeights(method)) return null;
+      return num({label:a.name+' weight', unit:'%', min:0, max:100, int:true, group:'weight', member:id,
+        get:()=>a.weight||0, def:()=>({start:0, end:100, steps:11, slack:'even'})});
+    }
+    if(method!=='dynamic-momentum' || id>=n) return null;
+    return num({label:'Rank '+(id+1)+' weight', unit:'%', min:0, max:100, int:true, group:'rank', member:id,
+      get:q=>optRankBase(q)[id], def:()=>({start:0, end:100, steps:11, slack:'even'})});
+  }
+  m=/^trig:(\d+):(\w+)$/.exec(key);
+  if(m){
+    if(method!=='rule-trigger') return null;
+    const id=+m[1], f=m[2], a=p.assets.find(b=>b.id===id);
+    if(!a || (p.rebal.reserveMode==='asset' && p.rebal.reserveAssetId===id)) return null;
+    const tr=a.trigger||makeDefaultTrigger(), type=tr.type||'pct', isPct=type==='pct', ref=trigRef(tr);
+    const trig=x=>{ const b=x.assets.find(q=>q.id===id); return b ? b.trigger : null; };
+    if(f==='pct'){ if(!isPct) return null;
+      return num({label:a.name+(tr.direction==='rise'?' rises by':' falls by'), unit:'%', min:0.1, max:100, dp:1,
+        get:()=>tr.pct!=null?tr.pct:10, apply:(x,v)=>{ const t=trig(x); if(t) t.pct=v; }}); }
+    if(f==='lookback'){ if(!isPct || ref==='period') return null;
+      return num({label:a.name+' lookback', unit:'bars', min:1, max:1000, int:true,
+        get:()=>trigLookback(tr), apply:(x,v)=>{ const t=trig(x); if(t) t.lookback=v; }}); }
+    if(f==='from'){ if(!isPct) return null;
+      // Only within its own family: the two calendar anchors share the End of
+      // period fallback, the two rolling ones share the lookback.
+      const cal=ref==='period';
+      return list({label:a.name+' from',
+        options: cal ? [{v:'monthly',l:'Month open'},{v:'weekly',l:'Week open'}] : [{v:'top',l:'Previous top'},{v:'bottom',l:'Previous bottom'}],
+        get:()=>cal ? (tr.period==='weekly'?'weekly':'monthly') : ref,
+        apply:(x,v)=>{ const t=trig(x); if(!t) return; if(cal){ t.ref='period'; t.period=v; } else t.ref=v; }}); }
+    if(f==='freq'){ if(type.indexOf('tech-')!==0) return null;
+      return list({label:a.name+' frequency', options:[{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'}],
+        get:()=>tr.period==='weekly'?'weekly':'monthly', apply:(x,v)=>{ const t=trig(x); if(t) t.period=v; }}); }
+    const meta=OPT_TECH[f];
+    if(!meta || !meta.types.includes(type)) return null;
+    return num({label:a.name+' '+meta.label, unit:meta.unit, min:meta.min, max:meta.max, int:!!meta.int, dp:meta.dp==null?2:meta.dp, spread:meta.spread,
+      get:()=>{ const t=tr.tech||{}; return t[f]!=null ? t[f] : TRIGGER_TECH_DEFAULTS[f]; },
+      apply:(x,v)=>{ const t=trig(x); if(t){ t.tech=t.tech||{}; t.tech[f]=v; } }});
+  }
+  return null;
+}
+// The range a setting opens on the first time it is picked.
+function optDefaultRange(spec, p){
+  if(spec.kind==='list') return {start:spec.options[0].v, end:spec.options[spec.options.length-1].v, steps:spec.options.length};
+  const base=Number(spec.get(p))||0;
+  const r=spec.def ? spec.def(base) : optAround(spec, base, spec.steps);
+  return Object.assign({steps:11}, r);
+}
+// Rank weights as the engine reads them: one per asset, an equal split when the
+// table has never been filled.
+function optRankBase(p){
+  const n=p.assets.length;
+  let rw=(p.rebal.rankWeights && p.rebal.rankWeights.length) ? p.rebal.rankWeights.slice() : p.assets.map(()=>100/n);
+  rw=rw.slice(0, n); while(rw.length<n) rw.push(0);
+  return rw;
+}
+// Two settings that cannot be swept together: a schedule's period and one of its
+// days, because each period reads different days. '' when there is no clash.
+function optClash(key, vars){
+  const g=k=>{ const m=/^(topupSched|rebalSched)\.(\w+)$/.exec(k); return m ? {s:m[1], period:m[2]==='period'} : null; };
+  const a=g(key); if(!a) return '';
+  const other=vars.find(v=>{ if(v.key===key) return false; const b=g(v.key); return b && b.s===a.s && (a.period || b.period); });
+  if(!other) return '';
+  return a.period ? 'The period decides which days apply, so it cannot be swept with a day setting. Remove that first.'
+                  : 'The period is already swept, and it decides which days apply. Remove it first.';
+}
+
+// The values a swept setting takes, in order, as they are run: a list setting
+// runs every option from Start to End, a number runs `steps` evenly spaced
+// values, each rounded to the precision its field takes (whole percents for a
+// weight, tenths for a trigger's move), so every value that ran is one a reader
+// could type, and never twice.
+function optValues(spec, vr){
+  if(!spec || !vr) return [];
+  if(spec.kind==='list'){
+    const vals=spec.options.map(o=>o.v);
+    let a=vals.findIndex(x=>String(x)===String(vr.start)), b=vals.findIndex(x=>String(x)===String(vr.end));
+    if(a<0 || b<0) return [];
+    if(a>b){ const t=a; a=b; b=t; }
+    return vals.slice(a, b+1);
+  }
+  let a=Number(vr.start), b=Number(vr.end);
+  if(!isFinite(a) || !isFinite(b)) return [];
+  a=optClamp(a, spec.min, spec.max); b=optClamp(b, spec.min, spec.max);
+  if(a>b){ const t=a; a=b; b=t; }
+  const n=Math.max(2, Math.min(OPT_MAX_STEPS, Math.round(Number(vr.steps))||2));
+  const out=[];
+  for(let i=0;i<n;i++){
+    const v=optRound(a+(b-a)*i/(n-1), spec);
+    if(!out.length || out[out.length-1]!==v) out.push(v);
+  }
+  return out;
+}
+
+// Weights have to add up to what they added up to before, so when a swept weight
+// moves, its slack moves the other way: one named member, or every member that
+// is not itself swept, in equal shares. A share that would take a member below
+// zero stops it at zero and the others carry the rest, so the split stays equal
+// wherever it can. With two swept members, every weight handed back is shared
+// out before any is taken, and a named slack takes before an equal one, so the
+// order the settings were picked in never decides whether a pair can run.
+// Returns the new weights, or null when the others cannot absorb the move (the
+// combination is then skipped, never forced).
+//   base   the group's weights now, in order
+//   moves  [{idx, val, slack}] where slack is 'even' or a member index
+function applyWeightGroup(base, moves){
+  const w=base.map(x=>Math.max(0, Number(x)||0));
+  if(moves.some(mv=>!(mv.idx>=0 && mv.idx<w.length))) return null;
+  const swept=new Set(moves.map(mv=>mv.idx));
+  const plan=moves.map(mv=>{
+    const named=typeof mv.slack==='number' && mv.slack>=0 && mv.slack<w.length && !swept.has(mv.slack);
+    return { d:mv.val-w[mv.idx], named, pool:named ? [mv.slack] : w.map((_,i)=>i).filter(i=>!swept.has(i)) };
+  });
+  moves.forEach(mv=>{ w[mv.idx]=mv.val; });
+  const take=(pool, d)=>{
+    let rem=d, live=pool.filter(i=>w[i]>1e-12);
+    while(rem>1e-9 && live.length){
+      const t=Math.min(rem/live.length, Math.min.apply(null, live.map(i=>w[i])));
+      live.forEach(i=>{ w[i]-=t; });
+      rem-=t*live.length;
+      live=live.filter(i=>w[i]>1e-12);
+    }
+    return rem<=1e-6;
+  };
+  for(const x of plan) if(x.d<0){ if(!x.pool.length) return null; const add=-x.d/x.pool.length; x.pool.forEach(i=>{ w[i]+=add; }); }
+  for(const named of [true, false])
+    for(const x of plan) if(x.d>1e-12 && x.named===named){ if(!x.pool.length || !take(x.pool, x.d)) return null; }
+  // A weight field takes whole percents, so weights that started whole end
+  // whole: each share is rounded down and the units left over go to the largest
+  // remainders, the earlier member first on a tie. The total is unchanged.
+  const whole=x=>Math.abs(x-Math.round(x))<1e-9;
+  if(base.every(x=>whole(Number(x)||0)) && moves.every(mv=>whole(mv.val))){
+    const free=w.map((_,i)=>i).filter(i=>!swept.has(i));
+    const exact=free.map(i=>Math.max(0, Math.round(w[i]*1e6)/1e6));
+    const fl=exact.map(Math.floor);
+    const units=Math.round(exact.reduce((a,b)=>a+b,0)-fl.reduce((a,b)=>a+b,0));
+    const order=free.map((_,k)=>k).sort((a,b)=>((exact[b]-fl[b])-(exact[a]-fl[a])) || a-b);
+    for(let u=0;u<units;u++) fl[order[u]]++;
+    free.forEach((i,k)=>{ w[i]=fl[k]; });
+  }
+  return w.map(x=>(x<1e-9 ? 0 : x));
+}
+
+// One tested plan: copies of the portfolio and its assets with the swept values
+// written in, exactly where the form would write them. Nothing live is touched.
+// Returns {p, assets, exec}, or null when a weight sweep cannot add up.
+function optVariant(p, assets, exec, vars, vals){
+  const v={
+    p:Object.assign({}, p, {
+      topup:Object.assign({}, p.topup), rf:Object.assign({}, p.rf),
+      topupSched:Object.assign({}, p.topupSched, {weekdays:(p.topupSched.weekdays||[]).slice(), daysOfMonth:(p.topupSched.daysOfMonth||[]).slice()}),
+      rebalSched:Object.assign({}, p.rebalSched, {weekdays:(p.rebalSched.weekdays||[]).slice(), daysOfMonth:(p.rebalSched.daysOfMonth||[]).slice()}),
+      rebal:Object.assign({}, p.rebal, {rankWeights:(p.rebal.rankWeights||[]).slice()})
+    }),
+    assets:assets.map(a=>Object.assign({}, a, {trigger:Object.assign({}, a.trigger||{}, {tech:Object.assign({}, (a.trigger&&a.trigger.tech)||{})})})),
+    exec
+  };
+  const groups={weight:[], rank:[]}, late=[];
+  for(let k=0;k<vars.length;k++){
+    const s=optSpec(vars[k].key, p);
+    if(!s) return null;
+    if(s.group) groups[s.group].push({member:s.member, val:vals[k], slack:vars[k].slack});
+    else if(s.late) late.push([s, vals[k]]);
+    else s.apply(v, vals[k]);
+  }
+  // A period goes last, so a swept amount is rescaled with it like a typed one.
+  late.forEach(([s, val])=>s.apply(v, val));
+  if(groups.weight.length){
+    const ids=p.assets.map(a=>a.id);
+    const w=applyWeightGroup(p.assets.map(a=>a.weight||0), groups.weight.map(g=>({idx:ids.indexOf(g.member), val:g.val,
+      slack:(g.slack==null || g.slack==='even') ? 'even' : ids.indexOf(+g.slack)})));
+    if(!w) return null;
+    v.assets.forEach(a=>{ const i=ids.indexOf(a.id); if(i>=0) a.weight=w[i]; });
+    v.weights=w;
+  }
+  if(groups.rank.length){
+    const w=applyWeightGroup(optRankBase(p), groups.rank.map(g=>({idx:g.member, val:g.val,
+      slack:(g.slack==null || g.slack==='even') ? 'even' : +g.slack})));
+    if(!w) return null;
+    v.p.rebal.rankWeights=w;
+  }
+  return v;
+}
+// The figures one run is read by: the summary tile's and the advanced metrics.
+function optMetricsOf(rows, rfPx, rfRate){
+  const last=rows[rows.length-1];
+  const net=last.total-last.cumTopup;
+  const m=computeMetrics({rows, rfPx, rfRate});
+  return { final:last.total, net, roi:last.cumTopup>0 ? net/last.cumTopup : 0, dep:last.cumTopup,
+           cash:last.total>0 ? last.cash/last.total : 0,
+           sharpe:m.sharpe, sortino:m.sortino, twr:m.cagrTwr, mwr:m.cagrMwr };
+}
+
+/* ─── OPTIMISE MODE: THE FORM ──────────────────────────────────────────────────
+   A gauge beside every sweepable field opens the range editor. Picking one puts
+   the page in optimise mode: only the portfolio on screen runs, so the bar that
+   switches portfolios stands down, ▶ Simulate becomes ▶ Optimise with Cancel
+   beside it, and the note above the gate says what the next run will sweep. */
+function optBtnHtml(key, label){
+  return `<button type="button" class="opt-btn" data-opt="${escapeHtml(key)}" title="Optimise ${escapeHtml(label)}: test it over a range" aria-label="Optimise ${escapeHtml(label)}">${OPT_ICON}</button>`;
+}
+function optPlan(p){
+  const specs=optVars.map(v=>optSpec(v.key, p));
+  const values=optVars.map((v,k)=>optValues(specs[k], v));
+  return { specs, values, runs:values.reduce((n,a)=>n*a.length, 1) };
+}
+// "0 to 100%", "7 to 21 bars", "Monthly to Yearly": the unit said once, at the end.
+function optRangeText(spec, vals){
+  if(!vals.length) return '';
+  const first=(spec.kind==='num' && spec.unit!=='money') ? optFmtNum(Object.assign({}, spec, {unit:''}), vals[0]) : spec.fmt(vals[0]);
+  return first+' to '+spec.fmt(vals[vals.length-1]);
+}
+// A swept setting that no longer qualifies (its field went away with a method,
+// an asset or a trigger type) is dropped, and so is the later of two that clash.
+function pruneOptVars(){
+  if(!optVars.length) return;
+  const p=getActive();
+  const keep=[];
+  optVars.forEach(v=>{
+    const s=optSpec(v.key, p);
+    if(keep.length>=OPT_MAX_VARS || !s || (s.kind==='list' && !optValues(s, v).length) || optClash(v.key, keep)) return;
+    // A slack that is gone, or is itself being swept, falls back to sharing.
+    if(s.group && v.slack!=='even'){
+      const others=optVars.filter(o=>o!==v).map(o=>optSpec(o.key, p)).filter(o=>o && o.group===s.group).map(o=>o.member);
+      const exists=s.group==='weight' ? p.assets.some(a=>a.id===+v.slack) : (+v.slack>=0 && +v.slack<p.assets.length);
+      if(!exists || +v.slack===s.member || others.includes(+v.slack)) v.slack='even';
+    }
+    keep.push(v);
+  });
+  if(keep.length!==optVars.length){ optVars=keep; optChanged(); }
+}
+function optRowOf(btn){ return btn.closest('.sched-inline, .sched-wd-row, .param-row, .weight-row, .field-row'); }
+// Everything the mode shows on the form, from optVars: the gauges, the swept
+// rows, the locked portfolio bar, the gate and its note.
+function syncOptUi(){
+  pruneOptVars();
+  const p=getActive(), on=optVars.length>0;
+  document.body.classList.toggle('is-optimise', on);
+  // A row can hold two gauges (a yearly schedule's month and day), so a row is
+  // lit when any gauge in it is swept, decided once for all of them.
+  const lit=new Set();
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    const key=b.dataset.opt, spec=optSpec(key, p);
+    const vr=optVars.find(v=>v.key===key);
+    b.hidden=!spec;
+    const clash=!vr && optClash(key, optVars);
+    const full=!vr && (optVars.length>=OPT_MAX_VARS || !!clash);
+    b.classList.toggle('on', !!vr);
+    b.classList.toggle('is-full', full);
+    const label=spec ? spec.label : '';
+    b.title = vr ? `Optimising ${label}: ${optRangeText(spec, optValues(spec, vr))}. Click to change.`
+            : clash ? clash
+            : full ? `Up to ${OPT_MAX_VARS} settings at once. Remove one to pick this.`
+            : `Optimise ${label}: test it over a range`;
+    const row=optRowOf(b);
+    if(row && vr && spec) lit.add(row);
+  });
+  document.querySelectorAll('.opt-on').forEach(r=>{ if(!lit.has(r)) r.classList.remove('opt-on'); });
+  lit.forEach(r=>r.classList.add('opt-on'));
+  const bar=document.querySelector('.pf-bar');
+  if(bar){ bar.classList.toggle('is-locked', on); if(on) bar.title='Optimise runs one portfolio. Cancel to switch, add or remove portfolios.'; else bar.removeAttribute('title'); }
+  ['addPortfolioBtn','dupPortfolioBtn','delPortfolioBtn'].forEach(id=>{ const e=$(id); if(e) e.disabled=on; });
+  const sb=$('simBtn');
+  if(sb){ sb.classList.toggle('is-opt', on); if(sb.dataset.running!=='1') sb.textContent=simBtnLabel(); }
+  updateBtnRow();
+  renderStaleNote();
+  updateSimBtnState();
+}
+function simBtnLabel(){ return optVars.length ? '▶ Optimise' : '▶ Simulate'; }
+const STALE_TEXT='Inputs changed. Press Simulate to run them.';
+function renderStaleNote(){
+  const el=$('staleNote'); if(!el) return;
+  if(!optVars.length){ el.textContent=STALE_TEXT; return; }
+  const p=getActive(); if(!p) return;
+  const plan=optPlan(p), two=optVars.length>1;
+  const parts=optVars.map((v,k)=>{
+    const s=plan.specs[k]; if(!s) return '';
+    const vals=plan.values[k];
+    return '<b>'+escapeHtml(s.label)+'</b> '+escapeHtml(optRangeText(s, vals))+(two?' ('+vals.length+')':'');
+  }).filter(Boolean);
+  el.innerHTML=(stale ? '<span class="sn-stale">Inputs changed.</span> ' : '')+
+    'Optimise <span data-no-abbr>'+escapeHtml(p.name)+'</span>: '+parts.join(' × ')+', '+plan.runs+(plan.runs===1?' run.':' runs.');
+}
+// After any change to what is swept: save, and send an optimisation on the board
+// (or one still running) out of date. A comparison on the board still answers
+// the form, so it is left alone. Callers redraw the form with syncOptUi.
+function optChanged(){
+  if(optResult || runInFlight) markStale();
+  if(persist) persist.schedule();
+}
+
+/* ── The range editor ── */
+let optEditKey=null, optEditReturn=null;
+function optUnitAffix(spec){
+  const pre=spec.unit==='money' ? (currentCurrencySymbol||'') : '';
+  const suf=spec.unit==='%' ? '%' : spec.unit==='%/yr' ? '%/yr' : spec.unit==='bars' ? 'bars' : '';
+  return {pre, suf};
+}
+function optFieldText(spec, v){
+  return SharedFmt.formatThousands(String(v), {maxDecimals:spec.int?0:(spec.dp==null?2:spec.dp)});
+}
+function openOptModal(key, from){
+  const p=getActive(), spec=optSpec(key, p);
+  if(!p || !spec) return;
+  let vr=optVars.find(v=>v.key===key);
+  if(!vr){
+    if(optVars.length>=OPT_MAX_VARS || optClash(key, optVars)) return;
+    vr=Object.assign({key}, optDefaultRange(spec, p));
+    optVars.push(vr);
+    syncOptUi(); optChanged();
+  }
+  optEditKey=key; optEditReturn=from||null;
+  $('optModalTitle').textContent='Optimise '+spec.label;
+  const listy=spec.kind==='list';
+  $('optNumFields').hidden=listy;
+  $('optListFields').hidden=!listy;
+  if(listy){
+    ['optStartSel','optEndSel'].forEach(id=>{
+      $(id).innerHTML=spec.options.map((o,i)=>`<option value="${i}">${escapeHtml(o.l)}</option>`).join('');
+    });
+    $('optStartSel').value=String(Math.max(0, spec.options.findIndex(o=>String(o.v)===String(vr.start))));
+    $('optEndSel').value=String(Math.max(0, spec.options.findIndex(o=>String(o.v)===String(vr.end))));
+  } else {
+    const u=optUnitAffix(spec);
+    [['optStart','optStartPre','optStartSuf',vr.start],['optEnd','optEndPre','optEndSuf',vr.end]].forEach(([id,pre,suf,val])=>{
+      const el=$(id);
+      el.setAttribute('data-min', String(spec.min)); el.setAttribute('data-max', String(spec.max));
+      if(spec.int) el.setAttribute('step','1'); else el.removeAttribute('step');
+      el.classList.toggle('money-input', spec.unit==='money');
+      el.classList.toggle('has-suffix', !!u.suf);
+      if(u.suf) el.removeAttribute('data-unitless'); else el.setAttribute('data-unitless','');
+      $(pre).textContent=u.pre; $(pre).hidden=!u.pre;
+      $(suf).textContent=u.suf; $(suf).hidden=!u.suf;
+      el.value=optFieldText(spec, val);
+    });
+    $('optSteps').value=String(vr.steps);
+  }
+  const slackRow=$('optSlackRow');
+  slackRow.hidden=!spec.group;
+  if(spec.group){
+    const swept=optVars.filter(v=>v!==vr).map(v=>optSpec(v.key, p)).filter(s=>s && s.group===spec.group).map(s=>s.member);
+    const members=spec.group==='weight'
+      ? p.assets.map(a=>({v:a.id, l:a.name}))
+      : p.assets.map((_,i)=>({v:i, l:'Rank '+(i+1)}));
+    const opts=[{v:'even', l:'All the others, in equal shares'}].concat(members.filter(m=>m.v!==spec.member && !swept.includes(m.v)));
+    $('optSlack').innerHTML=opts.map(o=>`<option value="${escapeHtml(String(o.v))}">${escapeHtml(o.l)}</option>`).join('');
+    $('optSlack').value=String(vr.slack==null ? 'even' : vr.slack);
+    if($('optSlack').value!==String(vr.slack)) { $('optSlack').value='even'; vr.slack='even'; }
+  }
+  renderOptModalNote();
+  const ov=$('optModal'); ov.hidden=false;
+  document.body.classList.add('opt-modal-open');
+  const first=listy ? $('optStartSel') : $('optStart');
+  setTimeout(()=>{ try{ first.focus(); if(first.select) first.select(); }catch(_){} }, 0);
+}
+function closeOptModal(){
+  const ov=$('optModal'); if(!ov || ov.hidden) return;
+  ov.hidden=true; document.body.classList.remove('opt-modal-open');
+  const back=optEditReturn; optEditKey=null; optEditReturn=null;
+  // The editor's own button may have been redrawn while it was open.
+  const again=back && document.contains(back) ? back : null;
+  if(again) try{ again.focus(); }catch(_){}
+}
+// What the range comes to, under the fields: how many values run and which, and
+// for a weight how many of them the slack cannot absorb.
+function renderOptModalNote(){
+  const el=$('optPreview'); if(!el || !optEditKey) return;
+  const p=getActive(), spec=optSpec(optEditKey, p), vr=optVars.find(v=>v.key===optEditKey);
+  if(!spec || !vr){ el.textContent=''; return; }
+  $('optModalSub').innerHTML='<span data-no-abbr>'+escapeHtml(p.name)+'</span>, now '+escapeHtml(spec.fmt(spec.get(p)))+'.'+
+    (spec.key==='topupSched.period' ? ' The amount per top-up follows the period, so each year\'s money stays the same.' : '')+
+    (/Sched\.period$/.test(spec.key) ? ' Each period uses the days its schedule shows when you pick it.' : '');
+  const vals=optValues(spec, vr);
+  let html;
+  if(vals.length<2) html='<span class="bad">Start and End give one value. Widen the range.</span>';
+  else {
+    const shown=vals.length<=8 ? vals.map(v=>spec.fmt(v)).join(', ') : vals.slice(0,3).map(v=>spec.fmt(v)).join(', ')+' … '+vals.slice(-2).map(v=>spec.fmt(v)).join(', ');
+    html=vals.length+' values: '+escapeHtml(shown)+'.';
+    if(spec.group){
+      const others=optVars.filter(v=>v!==vr);
+      let bad=0;
+      vals.forEach(val=>{
+        const v=optVariant(p, p.assets, currentExecTiming, others.concat([vr]),
+          others.map(o=>{ const s=optSpec(o.key,p); return s ? s.get(p) : 0; }).concat([val]));
+        if(!v) bad++;
+      });
+      if(bad) html+=' <span class="bad">'+bad+' of them cannot add up to 100% and will be skipped.</span>';
+    }
+  }
+  const plan=optPlan(p);
+  if(plan.runs>OPT_MAX_RUNS) html+=' <span class="bad">'+plan.runs+' runs in all, over the '+OPT_MAX_RUNS+' a run allows: lower the steps.</span>';
+  el.innerHTML=html;
+}
+function optModalEdited(){
+  syncOptUi(); optChanged(); renderOptModalNote();
+}
+function optEditVar(){ return optVars.find(v=>v.key===optEditKey)||null; }
+['optStart','optEnd'].forEach(id=>{
+  const el=$(id); if(!el) return;
+  el.addEventListener('input',()=>{
+    const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActive()); if(!spec) return;
+    if(spec.unit==='money') SharedFmt.liveFormat(el, {maxDecimals:2});
+    const n=SharedFmt.parseFormatted(el.value);
+    if(!isFinite(n) || el.value.trim()==='') return;
+    vr[id==='optStart'?'start':'end']=optClamp(n, spec.min, spec.max);
+    optModalEdited();
+  });
+  el.addEventListener('blur',()=>{
+    const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActive()); if(!spec) return;
+    el.value=optFieldText(spec, vr[id==='optStart'?'start':'end']);
+  });
+});
+$('optSteps').addEventListener('input',e=>{
+  const vr=optEditVar(); if(!vr) return;
+  const n=parseInt(e.target.value,10); if(!isFinite(n)) return;
+  vr.steps=optClamp(n, 2, OPT_MAX_STEPS);
+  optModalEdited();
+});
+['optStartSel','optEndSel'].forEach(id=>$(id).addEventListener('change',e=>{
+  const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActive()); if(!spec || spec.kind!=='list') return;
+  const o=spec.options[+e.target.value]; if(!o) return;
+  vr[id==='optStartSel'?'start':'end']=o.v;
+  optModalEdited();
+}));
+$('optSlack').addEventListener('change',e=>{
+  const vr=optEditVar(); if(!vr) return;
+  vr.slack=e.target.value==='even' ? 'even' : +e.target.value;
+  optModalEdited();
+});
+$('optRemoveBtn').addEventListener('click',()=>{
+  const key=optEditKey;
+  optVars=optVars.filter(v=>v.key!==key);
+  closeOptModal();
+  syncOptUi(); optChanged();
+});
+$('optDoneBtn').addEventListener('click', closeOptModal);
+$('optCloseBtn').addEventListener('click', closeOptModal);
+$('optModal').addEventListener('mousedown',e=>{ if(e.target===$('optModal')) closeOptModal(); });
+document.addEventListener('keydown',e=>{
+  if($('optModal').hidden) return;
+  if(e.key==='Escape'){ e.preventDefault(); closeOptModal(); }
+  else if(e.key==='Enter' && e.target && e.target.tagName==='INPUT'){ e.preventDefault(); e.target.blur(); closeOptModal(); }
+});
+// One listener for every gauge, the ones drawn later with their tables included.
+document.addEventListener('click',e=>{
+  if(!e.target || !e.target.closest) return;
+  const b=e.target.closest('.opt-btn');
+  // A gauge inside a <label> is that label's first control, so a click on the
+  // label's words would press it. Those labels hold no field of their own.
+  if(!b){ const lab=e.target.closest('label'); if(lab && lab.querySelector('.opt-btn')) e.preventDefault(); return; }
+  e.preventDefault(); e.stopPropagation();
+  if(b.classList.contains('is-full') && !optVars.some(v=>v.key===b.dataset.opt)) return;
+  openOptModal(b.dataset.opt, b);
+}, true);
+$('optCancelBtn').addEventListener('click',()=>{
+  if($('simBtn').dataset.running==='1') optAbort=true;
+  optVars=[];
+  closeOptModal();
+  syncOptUi(); optChanged();
+});
+// The gauges written into the page's markup get their picture here, once.
+document.querySelectorAll('.opt-btn').forEach(b=>{ if(!b.querySelector('svg')) b.innerHTML=OPT_ICON; });
+// The trigger cards are drawn by triggerParamsHtml, which the audit lifts off the
+// page as it is, so their gauges are added to the drawn cards here instead.
+function addTriggerGauges(wrap, p){
+  if(!wrap || !p) return;
+  wrap.querySelectorAll('.trigger-card [data-aid]').forEach(el=>{
+    if(el.classList.contains('trigger-toggle')) return;
+    const aid=el.dataset.aid, a=p.assets.find(x=>x.id===+aid); if(!a) return;
+    let f=null;
+    if(el.classList.contains('trig-pct')) f='pct';
+    else if(el.classList.contains('trig-lookback')) f='lookback';
+    else if(el.classList.contains('trig-period')) f=el.dataset.role==='ref' ? 'from' : 'freq';
+    else if(el.classList.contains('ttk') && el.tagName==='INPUT') f=el.dataset.k;
+    if(!f) return;
+    const key=`trig:${aid}:${f}`, spec=optSpec(key, p);
+    const lab=el.closest('.param-row') && el.closest('.param-row').querySelector(':scope > label');
+    if(!spec || !lab || lab.querySelector('.opt-btn')) return;
+    lab.insertAdjacentHTML('beforeend', ' '+optBtnHtml(key, spec.label));
+  });
+}
+
+/* ─── OPTIMISE MODE: THE RUN ───────────────────────────────────────────────────
+   The portfolio is copied once at the start, so an edit made while the runs are
+   going cannot leak into the later ones, then every combination of the swept
+   values runs on the copy through the very engine Simulate uses. Only the
+   figures of each run are kept; the one the Detailed Breakdown shows is run
+   again on demand, which keeps a 625-run sweep light. */
+function optSnapshot(p){
+  const q=Object.assign({}, p, {
+    topup:Object.assign({}, p.topup), rf:Object.assign({}, p.rf),
+    topupSched:JSON.parse(JSON.stringify(p.topupSched)), rebalSched:JSON.parse(JSON.stringify(p.rebalSched)),
+    rebal:Object.assign({}, p.rebal, {rankWeights:(p.rebal.rankWeights||[]).slice()})
+  });
+  q.assets=p.assets.map(a=>Object.assign({}, a, {trigger:JSON.parse(JSON.stringify(a.trigger||makeDefaultTrigger()))}));
+  return q;
+}
+async function runOptimisation(){
+  if(persist) persist.schedule();
+  hideWarning();
+  const blocked=simBlockReason();
+  if(blocked){ showWarning(blocked); return; }
+  const startDate=$('startDate').value, endDate=$('endDate').value;
+  if(!startDate||!endDate){ showWarning('Please set start and end dates.'); return; }
+  if(startDate>=endDate){ showWarning('Start date must be before end date.'); return; }
+  const live=getActive();
+  const simBtn=$('simBtn'); simBtn.dataset.running='1'; simBtn.disabled=true; simBtn.classList.remove('is-disabled'); simBtn.removeAttribute('data-tip'); simBtn.innerHTML='<span class="spinner"></span>Optimising…';
+  optAbort=false; editedInFlight=false; runInFlight=true;
+  try{
+    const common=await prepareRun([live], startDate, endDate);
+    if(!common || optAbort) return;
+    const al=alignPortfolio(live, common);
+    if(!al){ showWarning('No assets with data loaded.'); return; }
+    const P0=optSnapshot(live), vars=optVars.map(v=>Object.assign({}, v));
+    const A0=P0.assets.filter(a=>al.active.some(b=>b.id===a.id));
+    const exec=currentExecTiming;
+    const rfRateOf=q=>q.rf.mode==='ticker' ? 0 : (q.rf.rate||0);
+    const plan=(()=>{ const specs=vars.map(v=>optSpec(v.key, P0)); return {specs, values:vars.map((v,k)=>optValues(specs[k], v))}; })();
+    // The reader's own settings, to measure every tested value against.
+    const baseRows=simulatePortfolio(P0, A0, common, al.rfPx, exec);
+    const base=optMetricsOf(baseRows, al.rfPx, rfRateOf(P0));
+    const n0=plan.values[0].length, n1=plan.values[1] ? plan.values[1].length : 1, total=n0*n1;
+    const grid=new Array(total);
+    let done=0, lastPaint=performance.now();
+    for(let j=0;j<n1;j++) for(let i=0;i<n0;i++){
+      if(optAbort) return;
+      const vals=[plan.values[0][i]].concat(plan.values[1] ? [plan.values[1][j]] : []);
+      const v=optVariant(P0, A0, exec, vars, vals);
+      grid[i+j*n0]={i, j, m:v ? optMetricsOf(simulatePortfolio(v.p, v.assets, common, al.rfPx, v.exec), al.rfPx, rfRateOf(v.p)) : null};
+      done++;
+      if(performance.now()-lastPaint>45){
+        simBtn.innerHTML=`<span class="spinner"></span>Optimising ${done} of ${total}…`;
+        await new Promise(r=>setTimeout(r, 0));
+        lastPaint=performance.now();
+      }
+    }
+    commonDates=common;
+    optResult={ pid:P0.id, name:P0.name, colorHex:P0.colorHex, colorSlot:P0.colorSlot, P0, A0, vars, specs:plan.specs, values:plan.values,
+      grid, base, baseVals:plan.specs.map(s=>s.get(P0)), common, rfPx:al.rfPx, exec };
+    // The breakdown opens on the best run, or on the run a saved file pointed at.
+    const want=optPickWanted; optPickWanted=null;
+    const best=optBestIdx(optResult, optMetricKey());
+    const fits=want && want.length===vars.length && want.every((x,k)=>Number.isInteger(x) && x>=0 && x<plan.values[k].length) &&
+      grid[want[0]+(want[1]||0)*n0].m;
+    optPick = fits ? want.slice() : (best>=0 ? [best%n0, Math.floor(best/n0)].slice(0, vars.length) : vars.map(()=>0));
+    activeDetailId=P0.id;
+    showStatus($('dateRangeStatus'),`Date range: ${common[0]} → ${common[common.length-1]} (${common.length} days). ${total} runs.`, 'ok');
+    hideStatus($('assetFetchStatus'));
+    setBoardMode();
+    renderViewSelectors();
+    updateValueChart();
+    updateSummary();
+    showOptDetail();
+    markFresh();
+    if(editedInFlight) markStale();
+  } finally {
+    runInFlight=false;
+    if(optAbort) hideStatus($('assetFetchStatus'));   // Cancel stopped it part way
+    simBtn.disabled=false; simBtn.textContent=simBtnLabel(); delete simBtn.dataset.running; updateSimBtnState();
+  }
+}
+
+/* ── Reading the sweep ── */
+const OPT_METRICS = {
+  roi:    {label:'ROI',         axis:'ROI (%)',              kind:'pct'},
+  final:  {label:'Final value', axis:'Final value',          kind:'money'},
+  net:    {label:'Net',         axis:'Net',                  kind:'money'},
+  sharpe: {label:'Sharpe',      axis:'Sharpe (ratio)',       kind:'ratio'},
+  sortino:{label:'Sortino',     axis:'Sortino (ratio)',      kind:'ratio'},
+  twr:    {label:'CAGR (TWR)',  axis:'CAGR, TWR (%/yr)',     kind:'pct'},
+  mwr:    {label:'CAGR (MWR)',  axis:'CAGR, MWR (%/yr)',     kind:'pct'}
+};
+function optMetricKey(){ const s=$('optMetric'); return s && OPT_METRICS[s.value] ? s.value : 'roi'; }
+function optAxisTitle(k){ const m=OPT_METRICS[k]; return m.kind==='money' ? m.axis+symInBrackets() : m.axis; }
+function optMetricFmt(k, v){
+  if(v==null || !isFinite(v)) return ' - ';
+  const kind=OPT_METRICS[k].kind;
+  return kind==='pct' ? fmt.pct(v) : kind==='money' ? fmt.currency(v) : v.toFixed(2);
+}
+// What a chart plots for a figure: percentages as percent, the rest as they are.
+function optPlotVal(k, v){ if(v==null || !isFinite(v)) return null; return OPT_METRICS[k].kind==='pct' ? v*100 : v; }
+function optVal(R, idx, k){ const g=R.grid[idx]; return g && g.m && isFinite(g.m[k]) && g.m[k]!=null ? g.m[k] : null; }
+function optBestIdx(R, k){ let b=-1; R.grid.forEach((g,i)=>{ const v=optVal(R,i,k); if(v!=null && (b<0 || v>optVal(R,b,k))) b=i; }); return b; }
+function optWorstIdx(R, k){ let b=-1; R.grid.forEach((g,i)=>{ const v=optVal(R,i,k); if(v!=null && (b<0 || v<optVal(R,b,k))) b=i; }); return b; }
+function optValsAt(R, idx){ const n0=R.values[0].length; return [R.values[0][idx%n0]].concat(R.values[1] ? [R.values[1][Math.floor(idx/n0)]] : []); }
+function optSettingText(R, vals){ return R.specs.map((s,k)=>s.label+' '+s.fmt(vals[k])).join(', '); }
+function optIsBase(R, vals){ return R.specs.every((s,k)=>String(vals[k])===String(R.baseVals[k])); }
+
+// The board shows the last thing that ran: a comparison of portfolios, or a sweep.
+function setBoardMode(){
+  const on=!!optResult;
+  $('valueTitle').textContent = on ? 'Optimisation: '+OPT_METRICS[optMetricKey()].label : 'Portfolio Value Over Time';
+  $('optMetricWrap').style.display = on ? '' : 'none';
+  $('showTopupsWrap').style.display = on ? 'none' : '';
+  $('summaryNote').textContent = on ? '(best, your setting and worst)' : '(per portfolio)';
+  $('detailNote').textContent = on ? '(one tested setting: prices, composition & events)' : '(one portfolio: prices, composition & events)';
+  $('detailPfLabel').style.display = on ? 'none' : '';
+  $('detailPfSelect').style.display = on ? 'none' : '';
+  $('optPickWrap').hidden = !on;
+  if(!on){ hideStatus($('optPickStatus')); $('valueCanvasWrap').style.display=''; $('optSurface').style.display='none'; purgeSurface(); }
+}
+function renderOptPickers(){
+  const R=optResult, wrap=$('optPickWrap'); if(!R || !wrap) return;
+  wrap.innerHTML=R.specs.map((s,k)=>`<label><span data-no-abbr>${escapeHtml(s.label)}</span><select class="sel-input pf-view-select" id="optPick${k}" title="Which tested value the breakdown shows">${
+    R.values[k].map((v,i)=>`<option value="${i}">${escapeHtml(s.fmt(v))}</option>`).join('')}</select></label>`).join('');
+  R.specs.forEach((_,k)=>{
+    const sel=$('optPick'+k);
+    sel.value=String(optPick[k]||0);
+    sel.addEventListener('change',()=>{ optPick[k]=+sel.value||0; showOptDetail(); if(persist) persist.schedule(); });
+  });
+}
+// Run the picked combination again, in full, for the Detailed Breakdown.
+function showOptDetail(){
+  const R=optResult; if(!R) return;
+  const vals=R.specs.map((_,k)=>R.values[k][optPick[k]||0]);
+  let v=optVariant(R.P0, R.A0, R.exec, R.vars, vals), what=optSettingText(R, vals);
+  // A pick the weights cannot reach was never run, so the breakdown says so and
+  // shows the reader's own setting rather than whatever was there before.
+  if(!v){
+    v={p:R.P0, assets:R.A0, exec:R.exec}; what='your current setting';
+    showStatus($('optPickStatus'),'Those values cannot add up to 100%, so that run was skipped. The breakdown shows your current setting.','warn');
+  } else hideStatus($('optPickStatus'));
+  const rows=simulatePortfolio(v.p, v.assets, R.common, R.rfPx, v.exec);
+  simResults=[{ id:R.pid, name:R.name+' · '+what, colorHex:R.colorHex, colorSlot:R.colorSlot, rows, rfPx:R.rfPx,
+    rfRate:(v.p.rf.mode==='ticker'?0:(v.p.rf.rate||0)), method:v.p.rebal.method,
+    assets:v.assets.map(a=>({id:a.id,name:a.name,colorHex:a.colorHex,colorSlot:a.colorSlot,weight:a.weight,type:a.type,px:a.px.slice(),ohlc:a.ohlc,trigger:a.trigger})) }];
+  activeDetailId=R.pid;
+  updatePriceChart(); updateCompChart(); updateTable(); renderAssumptions();
+}
+
+/* ── The optimisation chart: a line for one swept setting, a surface for two ── */
+const OPT_SURFACE_EXPORT_SIZE = { width:940, height:520 };
+let surfaceDrawn=false;
+function purgeSurface(){ if(surfaceDrawn && window.Plotly){ try{ Plotly.purge('optSurface'); }catch(_){} } surfaceDrawn=false; }
+function updateOptChart(){
+  const R=optResult; if(!R) return;
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  $('valueTitle').textContent='Optimisation: '+meta.label;
+  const two=R.specs.length===2;
+  $('valueCanvasWrap').style.display=two ? 'none' : '';
+  $('optSurface').style.display=two ? '' : 'none';
+  if(two){ if(valueChart){ valueChart.destroy(); valueChart=null; } drawOptSurface(); return; }
+  purgeSurface();
+  const s=R.specs[0], vals=R.values[0], isNum=s.kind==='num';
+  const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
+  const color=pfColor(R), mark=cssVar('--muted')||'#94a3b8';
+  const yAt=i=>optPlotVal(mk, optVal(R, i, mk));
+  const best=optBestIdx(R, mk);
+  const baseIdx=vals.findIndex(v=>String(v)===String(R.baseVals[0]));
+  const pt=(i,y)=>isNum ? {x:vals[i], y} : y;
+  const only=(i,y)=>isNum ? (i<0?[]:[{x:vals[i], y}]) : vals.map((_,k)=>k===i?y:null);
+  const datasets=[
+    {label:meta.label, data:vals.map((_,i)=>pt(i, yAt(i))), borderColor:color, backgroundColor:color+'22', borderWidth:2.4,
+      pointRadius:vals.length>30?0:2.5, pointHoverRadius:5, tension:0, spanGaps:false, fill:false},
+    {label:'Best', data:best>=0 ? only(best, yAt(best)) : [], showLine:false, pointStyle:'circle', pointRadius:7, pointHoverRadius:7,
+      borderColor:text, backgroundColor:'transparent', borderWidth:2, _opt:'best', legendSpec:{type:'point', color:text, point:{shape:'ring', stroke:text, radius:4.5, width:2}}},
+  ];
+  // Your setting sits on the line when it is one of the tested values, and beside
+  // it on a number axis when it is not.
+  const baseY=optPlotVal(mk, R.base[mk]);
+  if(isNum || baseIdx>=0) datasets.push({label:'Your current setting', data:isNum ? [{x:Number(R.baseVals[0]), y:baseY}] : only(baseIdx, baseY),
+    showLine:false, pointStyle:'rect', pointRadius:5, pointHoverRadius:6, borderColor:mark, backgroundColor:mark, _opt:'base',
+    legendSpec:{type:'point', color:mark, point:{shape:'rect', fill:mark, radius:4}}});
+  const legendEl=$('valueLegend'); legendEl.innerHTML='';
+  datasets.forEach((ds,idx)=>{
+    const item=document.createElement('div'); item.className='legend-item';
+    SharedLegend.attach(item, SharedLegend.specOf(ds), ds.label);
+    item.addEventListener('click',()=>{ if(!valueChart) return; const vis=!valueChart.isDatasetVisible(idx); valueChart.setDatasetVisibility(idx, vis); item.classList.toggle('hidden', !vis); valueChart.update(); });
+    legendEl.appendChild(item);
+  });
+  const xs=isNum ? vals.concat([Number(R.baseVals[0])]).filter(isFinite) : null;
+  const xmin=isNum ? Math.min.apply(null, xs) : 0, xmax=isNum ? Math.max.apply(null, xs) : vals.length-1;
+  const yTick=v=>meta.kind==='pct' ? fmt.num(v, Math.abs(v)<10?1:0)+'%' : meta.kind==='money' ? fmt.currency(v,true) : fmt.num(v,2);
+  const xLabel=ctx=>isNum ? s.fmt(ctx.parsed.x) : (s.fmt(vals[ctx.dataIndex]));
+  const yText=ctx=>{ const raw=ctx.parsed.y; return raw==null ? 'not run' : optMetricFmt(mk, meta.kind==='pct' ? raw/100 : raw); };
+  const opts={
+    responsive:true, maintainAspectRatio:false, animation:{duration:300},
+    interaction:{mode:'nearest', axis:'x', intersect:false},
+    plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
+      filter:item=>item.dataset._opt!=='best',
+      callbacks:{ title:ctx=>ctx[0] ? s.label+': '+xLabel(ctx[0]) : '', label:ctx=>`  ${ctx.dataset.label}: ${yText(ctx)}`,
+        afterBody(items){ if(items.length) $('valueHoverBox').textContent=`${s.label} ${xLabel(items[0])}  -  `+items.map(i=>`${i.dataset.label}: ${yText(i)}`).join('  |  '); }},
+      backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
+      zoom:SharedZoom.options({min:xmin, max:xmax, points:vals.length}),
+      sharedYFit:{auto:{axes:['y']}}},
+    scales:{
+      x: isNum
+        ? {type:'linear', title:{display:true,text:s.label+optUnitBracket(s),color:muted,font:{size:11}}, ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>s.fmt(v)}, grid:{color:grid}}
+        : {type:'category', title:{display:true,text:s.label,color:muted,font:{size:11}}, ticks:{color:muted,font:{size:11}}, grid:{color:grid}},
+      y:{title:{display:true,text:optAxisTitle(mk),color:muted,font:{size:11}}, ticks:{color:muted,font:{size:11},callback:yTick}, grid:{color:grid}}}
+  };
+  if(valueChart) valueChart.destroy();
+  valueChart=new Chart($('valueCanvas'),{type:'line', data:isNum ? {datasets} : {labels:vals.map(v=>s.fmt(v)), datasets}, options:opts, plugins:[SharedZoom.plugin]});
+  valueChart.update();
+  $('valueHoverBox').textContent='Hover to read each tested value.';
+}
+function optUnitBracket(s){
+  if(s.unit==='money') return symInBrackets();
+  return s.unit ? ' ('+s.unit+')' : '';
+}
+let _plotlyPromise=null;
+// Plotly (~3.5 MB) draws only the two-setting surface, so it loads on first use.
+function ensurePlotly(){
+  if(window.Plotly) return Promise.resolve();
+  if(_plotlyPromise) return _plotlyPromise;
+  _plotlyPromise=new Promise((resolve,reject)=>{
+    const sc=document.createElement('script');
+    sc.src='https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly.min.js';
+    sc.onload=()=>resolve();
+    sc.onerror=()=>{ _plotlyPromise=null; reject(new Error('Failed to load Plotly')); };
+    document.head.appendChild(sc);
+  });
+  return _plotlyPromise;
+}
+const OPT_CAMERA={eye:{x:1.65, y:-1.65, z:1.05}};
+function drawOptSurface(){
+  const R=optResult; if(!R) return Promise.resolve();
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  const [s0,s1]=R.specs, [v0,v1]=R.values, n0=v0.length;
+  const axisVals=(s,vals)=>s.kind==='num' ? vals.slice() : vals.map((_,i)=>i);
+  const xs=axisVals(s0,v0), ys=axisVals(s1,v1);
+  const z=[], txt=[];
+  for(let j=0;j<v1.length;j++){
+    const row=[], trow=[];
+    for(let i=0;i<n0;i++){
+      const raw=optVal(R, i+j*n0, mk);
+      row.push(optPlotVal(mk, raw));
+      trow.push(escapeHtml(s0.label)+': '+escapeHtml(s0.fmt(v0[i]))+'<br>'+escapeHtml(s1.label)+': '+escapeHtml(s1.fmt(v1[j]))+'<br>'+
+        escapeHtml(meta.label)+': '+(raw==null ? 'not run, the weights cannot add up' : escapeHtml(optMetricFmt(mk, raw))));
+    }
+    z.push(row); txt.push(trow);
+  }
+  const text=cssVar('--text'), muted=cssVar('--chart-text'), grid=cssVar('--chart-grid'), mark=cssVar('--muted');
+  const best=optBestIdx(R, mk);
+  const at=(s,vals,v)=>s.kind==='num' ? Number(v) : vals.findIndex(x=>String(x)===String(v));
+  const data=[{type:'surface', x:xs, y:ys, z, text:txt, hovertemplate:'%{text}<extra></extra>',
+    colorscale:[[0, cssVar('--gold')], [0.5, cssVar('--line-c')], [1, cssVar('--line-a')]],
+    colorbar:{title:{text:optAxisTitle(mk), side:'right', font:{color:muted, size:11}}, tickfont:{color:muted, size:10}, thickness:12, len:0.75},
+    contours:{z:{show:true, usecolormap:true, project:{z:false}}}}];
+  if(best>=0){
+    const bv=optValsAt(R, best);
+    data.push({type:'scatter3d', mode:'markers', name:'Best', x:[at(s0,v0,bv[0])], y:[at(s1,v1,bv[1])], z:[optPlotVal(mk, optVal(R,best,mk))],
+      marker:{symbol:'circle-open', size:9, color:text, line:{width:3, color:text}}, hovertemplate:'Best<extra></extra>'});
+  }
+  const bx=at(s0,v0,R.baseVals[0]), by=at(s1,v1,R.baseVals[1]);
+  const hasBase=bx>=0 && by>=0 && isFinite(bx) && isFinite(by);
+  if(hasBase) data.push({type:'scatter3d', mode:'markers', name:'Your current setting', x:[bx], y:[by], z:[optPlotVal(mk, R.base[mk])],
+    marker:{symbol:'square', size:5, color:mark}, hovertemplate:'Your current setting<extra></extra>'});
+  const ax=(s,vals)=>Object.assign({title:{text:s.label+(s.kind==='num'?optUnitBracket(s):'')}, color:muted, gridcolor:grid, zerolinecolor:grid, showbackground:false},
+    s.kind==='list' ? {tickvals:vals.map((_,i)=>i), ticktext:vals.map(v=>s.fmt(v))} : {});
+  const zt=meta.kind==='pct' ? {ticksuffix:'%'} : meta.kind==='money' ? {tickprefix:currentCurrencySymbol||'', tickformat:',.0f'} : {tickformat:'.2f'};
+  const layout={autosize:true, margin:{l:0, r:0, t:0, b:0}, paper_bgcolor:'rgba(0,0,0,0)', showlegend:false,
+    font:{family:'DM Sans, sans-serif', color:text},
+    scene:{xaxis:ax(s0,v0), yaxis:ax(s1,v1), zaxis:Object.assign({title:{text:optAxisTitle(mk)}, color:muted, gridcolor:grid, zerolinecolor:grid, showbackground:false}, zt),
+      camera:OPT_CAMERA},
+    uirevision:'opt'};
+  // The key under the chart: the two marks (the colour bar names the surface).
+  const legendEl=$('valueLegend'); legendEl.innerHTML='';
+  const items=[[{type:'area', fill:cssVar('--line-a'), fill2:cssVar('--gold')}, meta.label+', blue high, gold low']];
+  if(best>=0) items.push([{type:'point', color:text, point:{shape:'ring', stroke:text, radius:4.5, width:2}}, 'Best']);
+  if(hasBase) items.push([{type:'point', color:mark, point:{shape:'rect', fill:mark, radius:4}}, 'Your current setting']);
+  items.forEach(([spec,label])=>{ const it=document.createElement('div'); it.className='legend-item'; it.style.cursor='default'; SharedLegend.attach(it, spec, label); legendEl.appendChild(it); });
+  $('valueHoverBox').textContent='Drag to turn the surface, scroll to zoom, hover to read a run.';
+  return ensurePlotly()
+    .then(()=>Plotly.react('optSurface', data, layout, {responsive:true, displayModeBar:false, displaylogo:false}))
+    .then(()=>{ surfaceDrawn=true; })
+    .catch(()=>{ $('optSurface').innerHTML='<p style="padding:20px;text-align:center;color:var(--muted)">Could not load the 3D plotting library (Plotly). Check your connection and try again.</p>'; });
+}
+function wmPlotlyImage(){
+  return { source:WM_LOGO_SRC, xref:'paper', yref:'paper', x:1, y:0.07, xanchor:'right', yanchor:'bottom',
+    sizex:0.035, sizey:0.05, sizing:'contain', opacity:0.22, layer:'above' };
+}
+// A surface export carries the title and the watermark the canvas exports do.
+async function withSurfaceMarks(fn){
+  await ensurePlotly();
+  const isLight=document.body.classList.contains('light');
+  const title={ xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom', showarrow:false,
+    text:'<b>'+escapeHtml(valueChartTitle())+'</b>', font:{ size:14, color:isLight?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' } };
+  const wm={ xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom', showarrow:false,
+    text:'Made using tool.adjiebrotots.com/dcasimulator/portfolio', font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' } };
+  const bg=isLight?'#ffffff':'#0F1728';
+  await Plotly.relayout('optSurface', { annotations:[title, wm], images:[wmPlotlyImage()], paper_bgcolor:bg, 'margin.t':40 });
+  try { return await fn(); }
+  finally { await Plotly.relayout('optSurface', { annotations:[], images:[], paper_bgcolor:'rgba(0,0,0,0)', 'margin.t':0 }); }
+}
+function surfaceOnBoard(){ return !!(optResult && optResult.specs.length===2 && surfaceDrawn); }
+function valueChartTitle(){
+  if(!optResult) return 'Portfolio Value Over Time';
+  return 'Optimisation: '+OPT_METRICS[optMetricKey()].label+' by '+optResult.specs.map(s=>s.label).join(' and ');
+}
+
+/* ── The answer, the tiles and the caveat for a sweep ── */
+function renderOptVerdict(){
+  const el=$('verdict'), R=optResult; if(!el || !R) return;
+  const num=t=>'<span class="v-num">'+escapeHtml(t)+'</span>';
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  const ran=R.grid.filter(g=>g.m).length, skipped=R.grid.length-ran;
+  const best=optBestIdx(R, mk), worst=optWorstIdx(R, mk);
+  const phrase=vals=>R.specs.map((s,k)=>nm(s.label)+' at '+num(s.fmt(vals[k]))).join(' and ');
+  const skipNote=skipped ? ' '+skipped+(skipped===1?' combination was':' combinations were')+' skipped because the weights could not add up to 100%.' : '';
+  if(best<0){
+    SharedVerdict.set(el, { tone:'', title:'None of the tested settings could run.',
+      body:'Every combination left the weights unable to add up to 100%. Widen the range or pick another slack.' });
+    return;
+  }
+  const bv=optVal(R,best,mk), wv=optVal(R,worst,mk), cur=R.base[mk];
+  const tol=x=>1e-9*Math.max(1, Math.abs(x));
+  const ties=R.grid.filter((g,i)=>{ const v=optVal(R,i,mk); return v!=null && Math.abs(v-bv)<=tol(bv); }).length;
+  const bestVals=optValsAt(R, best);
+  const what=R.specs.length===1 ? 'value' : 'combination';
+  let title;
+  if(Math.abs(bv-wv)<=tol(bv)) title=R.specs.map(s=>nm(s.label)).join(' and ')+' made no difference to '+meta.label+' here: every tested '+what+' gave '+num(optMetricFmt(mk,bv))+'.';
+  else if(ties>1) title=meta.label+' tops out at '+num(optMetricFmt(mk,bv))+', reached by '+ties+' of the '+ran+' tested, the first with '+phrase(bestVals)+'.';
+  else if(optIsBase(R, bestVals)) title='Your current setting is already the best '+meta.label+' of the '+ran+' tested: '+num(optMetricFmt(mk,bv))+'.';
+  else title=meta.label+' peaks at '+num(optMetricFmt(mk,bv))+' with '+phrase(bestVals)+', against '+num(optMetricFmt(mk,cur))+' as you have it set.';
+  const body=(Math.abs(bv-wv)<=tol(bv) ? '' : 'The lowest, '+num(optMetricFmt(mk,wv))+', came with '+phrase(optValsAt(R, worst))+'. ')+
+    'Tested '+ran+' '+(ran===1?what:what+'s')+' on '+nm(R.name)+'.'+skipNote;
+  SharedVerdict.set(el, { tone:'', title, body });
+}
+function updateOptSummary(){
+  const sg=$('summaryGrid'), R=optResult; if(!sg || !R) return;
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  const best=optBestIdx(R, mk), worst=optWorstIdx(R, mk);
+  const tiles=[];
+  if(best>=0) tiles.push({title:'Best '+meta.label, sub:optSettingText(R, optValsAt(R,best)), m:R.grid[best].m, color:cssVar('--gold')});
+  tiles.push({title:'Your current setting', sub:R.specs.map((s,k)=>s.label+' '+s.fmt(R.baseVals[k])).join(', '), m:R.base, color:pfColor(R)});
+  if(worst>=0 && worst!==best) tiles.push({title:'Worst '+meta.label, sub:optSettingText(R, optValsAt(R,worst)), m:R.grid[worst].m, color:cssVar('--muted')});
+  const advStyle=`display:${showAdvanced?'grid':'none'}`;
+  // The figure the sweep is ranked by leads each tile's figures, unless the tile
+  // already shows it (final value, net and ROI always do).
+  const shownAlready=mk==='final' || mk==='net' || mk==='roi';
+  sg.innerHTML=tiles.map(t=>`<div class="tile" style="border-left:3px solid ${t.color}">
+      <div class="label">${escapeHtml(t.title)}</div>
+      <div style="font-size:.74rem;color:var(--muted);margin:1px 0 4px" data-no-abbr>${escapeHtml(t.sub)}</div>
+      <div class="value">${fmt.currency(t.m.final)}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:3px">${shownAlready ? '' : escapeHtml(meta.label)+' <b>'+escapeHtml(optMetricFmt(mk, t.m[mk]))+'</b> · '}Net ${fmt.currency(t.m.net)} · ROI ${fmt.pct(t.m.roi)}</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Topped up ${fmt.currency(t.m.dep)} · Cash ${fmt.pct(t.m.cash)}</div>
+      <div class="adv-metrics" style="${advStyle}">
+        ${metricCell('Sharpe', fmtRatio(t.m.sharpe), METRIC_TIPS.sharpe)}
+        ${metricCell('Sortino', fmtRatio(t.m.sortino), METRIC_TIPS.sortino)}
+        ${metricCell('CAGR (TWR)', fmtMetPct(t.m.twr), METRIC_TIPS.twr)}
+        ${metricCell('CAGR (MWR)', fmtMetPct(t.m.mwr), METRIC_TIPS.mwr)}
+      </div>
+    </div>`).join('');
+  renderVerdict();
+  renderAssumptions();
+}
+// The lines a sweep adds to What this assumes.
+function optAssumptionLines(){
+  const R=optResult; if(!R) return [];
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const parts=R.specs.map((s,k)=>{
+    const vals=R.values[k], v=R.vars[k];
+    let t=nm(s.label)+' from '+escapeHtml(optRangeText(s, vals));
+    if(s.group){
+      // Who takes up the difference: the named slack, else every member of the
+      // group that is not swept (named too when that is just one).
+      const sl=v.slack, swept=R.specs.filter(o=>o.group===s.group).map(o=>o.member);
+      const all=s.group==='weight' ? R.P0.assets.map(a=>({m:a.id, n:a.name})) : R.P0.assets.map((_,i)=>({m:i, n:'Rank '+(i+1)}));
+      const named=(sl==null || sl==='even') ? null : all.find(x=>x.m===+sl);
+      const pool=named ? [named] : all.filter(x=>!swept.includes(x.m));
+      t+=pool.length===1 ? ', '+nm(pool[0].n)+' taking up the difference'
+        : ', the other '+pool.length+' '+(s.group==='weight'?'assets':'ranks')+' sharing the difference equally';
+    }
+    if(s.key==='topupSched.period') t+=', the amount per top-up following it so each year\'s money stays the same';
+    return t;
+  });
+  return [
+    '<strong>Only '+nm(R.name)+' runs, '+R.grid.length+' times,</strong> with '+parts.join(' and ')+'. Everything else stays as set.',
+    '<strong>The best setting is the best for these past prices,</strong> not a forecast: a sweep finds what suited this stretch, and the next one can differ.'
+  ];
+}
+
 /* ─── SIMULATE BUTTON GATING ──────────────────────────────────────────────────
    The Simulate button is greyed out (but still hoverable) whenever a required
    input is missing, with the reason surfaced as a tooltip on hover. The weight
    check only applies to weight-based methods so future weight-free methods are
    never blocked by it. ───────────────────────────────────────────────────────── */
+function pfBlockReason(p){
+  if(!p.assets.length) return `Portfolio "${p.name}" has no assets yet.`;
+  if(methodNeedsWeights(p.rebal.method) && Math.abs(totalWeight(p)-100)>0.5)
+    return `Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`;
+  if(methodNeedsRankWeights(p.rebal.method) && p.rebal.rankWeights && p.rebal.rankWeights.length && Math.abs(rankWeightTotal(p)-100)>0.5)
+    return `Rank weights in "${p.name}" must sum to 100% (currently ${fmt.num(rankWeightTotal(p),1)}%).`;
+  if((p.topup.amount||0)<=0) return `Top-up amount in "${p.name}" must be greater than zero.`;
+  if(p.rf.mode==='ticker' && !p.rf.ticker) return `Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`;
+  return '';
+}
 function simBlockReason(){
-  if(!portfolios.length) return 'Add at least one portfolio to simulate.';
-  for(const p of portfolios){
-    if(!p.assets.length) return `Portfolio "${p.name}" has no assets yet.`;
-    if(methodNeedsWeights(p.rebal.method) && Math.abs(totalWeight(p)-100)>0.5)
-      return `Asset weights in "${p.name}" must sum to 100% (currently ${fmt.num(totalWeight(p),1)}%).`;
-    if(methodNeedsRankWeights(p.rebal.method) && p.rebal.rankWeights && p.rebal.rankWeights.length && Math.abs(rankWeightTotal(p)-100)>0.5)
-      return `Rank weights in "${p.name}" must sum to 100% (currently ${fmt.num(rankWeightTotal(p),1)}%).`;
-    if((p.topup.amount||0)<=0) return `Top-up amount in "${p.name}" must be greater than zero.`;
-    if(p.rf.mode==='ticker' && !p.rf.ticker) return `Enter a risk-free ticker for "${p.name}" or switch it to a fixed rate.`;
+  // Optimise runs the active portfolio alone, so only it has to be ready.
+  if(optVars.length){
+    const p=getActive();
+    if(!p) return 'Add a portfolio to optimise.';
+    const r=pfBlockReason(p); if(r) return r;
+    const plan=optPlan(p);
+    for(let k=0;k<optVars.length;k++){
+      const sp=plan.specs[k];
+      if(!sp) return 'A swept setting no longer applies. Pick it again.';
+      if(plan.values[k].length<2) return `${sp.label}: Start and End give one value. Widen the range.`;
+    }
+    if(plan.runs>OPT_MAX_RUNS) return `${plan.runs} runs is more than the ${OPT_MAX_RUNS} an optimisation allows. Lower the steps.`;
+    return '';
   }
+  if(!portfolios.length) return 'Add at least one portfolio to simulate.';
+  for(const p of portfolios){ const r=pfBlockReason(p); if(r) return r; }
   return '';
 }
 function updateSimBtnState(){
@@ -1988,8 +3062,88 @@ function updateSimBtnState(){
   else { b.classList.remove('is-disabled'); b.removeAttribute('aria-disabled'); b.removeAttribute('data-tip'); }
 }
 
+/* ─── PREPARE A RUN ─── */
+// Fetch any uncovered ticker, build every asset's price series and return the
+// shared date axis: the trading days every asset of `pfs` (and each risk-free
+// ticker) has in common. null, after saying why, when there is none.
+async function prepareRun(pfs, startDate, endDate){
+  showStatus($('assetFetchStatus'),'Preparing simulation...','loading');
+
+  // Gather every ticker referenced across the portfolios (assets + risk-free).
+  const tickers=new Set();
+  pfs.forEach(p=>{
+    p.assets.forEach(a=>{ if(a.type==='ticker'&&a.ticker) tickers.add(a.ticker.toUpperCase()); });
+    if(p.rf.mode==='ticker'&&p.rf.ticker) tickers.add(p.rf.ticker.toUpperCase());
+  });
+  // Fetch every uncovered ticker in ONE batched request (not one-by-one) to
+  // keep Worker invocations to a minimum.
+  const missing=[...tickers].filter(tk=>!isTickerRangeCovered(tk,startDate,endDate));
+  if(missing.length){
+    showStatus($('assetFetchStatus'),'Fetching '+missing.length+' ticker(s) in one request…','loading');
+    try{
+      const map=await window.SharedYF.fetchPricesBatch(missing,startDate,endDate);
+      for(const tk of missing){
+        const r=map[tk];
+        // Merge (don't clobber) so any wider history already cached survives.
+        if(!storeBatchResult(tk, r, startDate, endDate)){
+          showWarning('Could not load data for '+tk+(r&&r.error?': '+r.error:'')+'.');
+        }
+      }
+      persistPriceCache(); renderPoolChips(); refreshAssetPoolSelect(); updateRateInfo();
+    }catch(err){ showWarning('Could not load ticker data: '+err.message); }
+  }
+
+  // Build raw price series for every asset; collect date series for intersection.
+  // Custom assets are seeded purely from their own characteristics so an identical
+  // asset follows the same price path in every portfolio - a fair comparison.
+  const seriesDates=[];
+  pfs.forEach(p=>{
+    p.assets.forEach(a=>{
+      if(a.type==='custom'){
+        const seed=deriveSeed(currentRandomSeed, `${a.name}|${a.returnPct}|${a.stdPct}`);
+        a.priceData=generateGBMPrices(startDate,endDate,a.returnPct,a.stdPct,100,createSeededRng(seed));
+        a.loaded=true;
+      } else {
+        const slice=getCachedPriceSlice(a.ticker,startDate,endDate);
+        a.priceData=slice||null; a.loaded=!!slice;
+        if(!slice) showWarning('No data in selected range for '+a.ticker+'.');
+      }
+      if(a.priceData&&a.priceData.dates.length) seriesDates.push(a.priceData.dates);
+    });
+    if(p.rf.mode==='ticker'){
+      const slice=getCachedPriceSlice(p.rf.ticker,startDate,endDate);
+      p._rfData=slice||null;
+      if(!slice){ showWarning('No data in selected range for risk-free ticker '+p.rf.ticker+'.'); }
+      else seriesDates.push(slice.dates);
+    } else p._rfData=null;
+  });
+  if(!seriesDates.length){ showWarning('No assets with data loaded.'); return null; }
+
+  // Intersection of trading days across every series in every portfolio.
+  let common=seriesDates[0].slice();
+  for(let k=1;k<seriesDates.length;k++){ const s=new Set(seriesDates[k]); common=common.filter(d=>s.has(d)); }
+  common.sort();
+  if(common.length<2){ showWarning('No overlapping trading days across all portfolios/assets.'); return null; }
+  return common;
+}
+// One portfolio's assets priced on the shared axis, and its risk-free series.
+function alignPortfolio(p, common){
+  const active=p.assets.filter(a=>a.priceData&&a.priceData.dates.length);
+  if(!active.length) return null;
+  active.forEach(a=>{
+    const pd=a.priceData, at=new Map(); pd.dates.forEach((d,i)=>at.set(d,i));
+    a.px=common.map(d=>pd.prices[at.get(d)]);
+    a.ohlc=(pd.opens && pd.highs && pd.lows) ? {o:common.map(d=>pd.opens[at.get(d)]), h:common.map(d=>pd.highs[at.get(d)]), l:common.map(d=>pd.lows[at.get(d)])} : null;
+  });
+  let rfPx=null;
+  if(p._rfData){ const m=new Map(); p._rfData.dates.forEach((d,i)=>m.set(d,p._rfData.prices[i])); rfPx=common.map(d=>m.get(d)); }
+  return {active, rfPx};
+}
+
 /* ─── RUN SIMULATION (all portfolios on a shared date axis) ─── */
 async function runSimulation(){
+  // With settings picked to sweep, the gate runs the sweep instead.
+  if(optVars.length) return runOptimisation();
   if(persist) persist.schedule(); // runSimulation follows every change — save it
   hideWarning();
   const blocked=simBlockReason();
@@ -2000,77 +3154,16 @@ async function runSimulation(){
 
   const simBtn=$('simBtn'); simBtn.dataset.running='1'; simBtn.disabled=true; simBtn.classList.remove('is-disabled'); simBtn.removeAttribute('data-tip'); simBtn.innerHTML='<span class="spinner"></span>Running…';
   try{
-    showStatus($('assetFetchStatus'),'Preparing simulation...','loading');
-
-    // Gather every ticker referenced across all portfolios (assets + risk-free).
-    const tickers=new Set();
-    portfolios.forEach(p=>{
-      p.assets.forEach(a=>{ if(a.type==='ticker'&&a.ticker) tickers.add(a.ticker.toUpperCase()); });
-      if(p.rf.mode==='ticker'&&p.rf.ticker) tickers.add(p.rf.ticker.toUpperCase());
-    });
-    // Fetch every uncovered ticker in ONE batched request (not one-by-one) to
-    // keep Worker invocations to a minimum.
-    const missing=[...tickers].filter(tk=>!isTickerRangeCovered(tk,startDate,endDate));
-    if(missing.length){
-      showStatus($('assetFetchStatus'),'Fetching '+missing.length+' ticker(s) in one request…','loading');
-      try{
-        const map=await window.SharedYF.fetchPricesBatch(missing,startDate,endDate);
-        for(const tk of missing){
-          const r=map[tk];
-          // Merge (don't clobber) so any wider history already cached survives.
-          if(!storeBatchResult(tk, r, startDate, endDate)){
-            showWarning('Could not load data for '+tk+(r&&r.error?': '+r.error:'')+'.');
-          }
-        }
-        persistPriceCache(); renderPoolChips(); refreshAssetPoolSelect(); updateRateInfo();
-      }catch(err){ showWarning('Could not load ticker data: '+err.message); }
-    }
-
-    // Build raw price series for every asset; collect date series for intersection.
-    // Custom assets are seeded purely from their own characteristics so an identical
-    // asset follows the same price path in every portfolio - a fair comparison.
-    const seriesDates=[];
-    portfolios.forEach(p=>{
-      p.assets.forEach(a=>{
-        if(a.type==='custom'){
-          const seed=deriveSeed(currentRandomSeed, `${a.name}|${a.returnPct}|${a.stdPct}`);
-          a.priceData=generateGBMPrices(startDate,endDate,a.returnPct,a.stdPct,100,createSeededRng(seed));
-          a.loaded=true;
-        } else {
-          const slice=getCachedPriceSlice(a.ticker,startDate,endDate);
-          a.priceData=slice||null; a.loaded=!!slice;
-          if(!slice) showWarning('No data in selected range for '+a.ticker+'.');
-        }
-        if(a.priceData&&a.priceData.dates.length) seriesDates.push(a.priceData.dates);
-      });
-      if(p.rf.mode==='ticker'){
-        const slice=getCachedPriceSlice(p.rf.ticker,startDate,endDate);
-        p._rfData=slice||null;
-        if(!slice){ showWarning('No data in selected range for risk-free ticker '+p.rf.ticker+'.'); }
-        else seriesDates.push(slice.dates);
-      } else p._rfData=null;
-    });
-    if(!seriesDates.length){ showWarning('No assets with data loaded.'); return; }
-
-    // Intersection of trading days across every series in every portfolio.
-    let common=seriesDates[0].slice();
-    for(let k=1;k<seriesDates.length;k++){ const s=new Set(seriesDates[k]); common=common.filter(d=>s.has(d)); }
-    common.sort();
-    if(common.length<2){ showWarning('No overlapping trading days across all portfolios/assets.'); return; }
+    const common=await prepareRun(portfolios, startDate, endDate);
+    if(!common) return;
     commonDates=common;
 
     // Run each portfolio independently on the shared axis.
     const results=[], fillNotes=[];
     portfolios.forEach(p=>{
-      const active=p.assets.filter(a=>a.priceData&&a.priceData.dates.length);
-      if(!active.length) return;
-      active.forEach(a=>{
-        const pd=a.priceData, at=new Map(); pd.dates.forEach((d,i)=>at.set(d,i));
-        a.px=common.map(d=>pd.prices[at.get(d)]);
-        a.ohlc=(pd.opens && pd.highs && pd.lows) ? {o:common.map(d=>pd.opens[at.get(d)]), h:common.map(d=>pd.highs[at.get(d)]), l:common.map(d=>pd.lows[at.get(d)])} : null;
-      });
-      let rfPx=null;
-      if(p._rfData){ const m=new Map(); p._rfData.dates.forEach((d,i)=>m.set(d,p._rfData.prices[i])); rfPx=common.map(d=>m.get(d)); }
+      const al=alignPortfolio(p, common);
+      if(!al) return;
+      const active=al.active, rfPx=al.rfPx;
       const rows=simulatePortfolio(p, active, common, rfPx, currentExecTiming);
       // Carry each asset's close-price series (aligned to the shared date axis) and
       // its trigger so the Security Prices subsection can chart prices, candlesticks
@@ -2085,6 +3178,7 @@ async function runSimulation(){
     if(!results.length){ showWarning('No portfolios produced results.'); return; }
 
     simResults=results;
+    optResult=null; setBoardMode();   // the board is a comparison again
     if(!simResults.some(r=>r.id===activeDetailId)) activeDetailId=simResults[0].id;
 
     showStatus($('dateRangeStatus'),`Date range: ${common[0]} → ${common[common.length-1]} (${common.length} days)`+(fillNotes.length?'. '+fillNotes.join('. ')+'.':''), fillNotes.length?'warn':'ok');
@@ -2097,18 +3191,20 @@ async function runSimulation(){
     updateTable();
     markFresh();   // the board is the comparison the form describes again
   } finally {
-    simBtn.disabled=false; simBtn.textContent='▶ Simulate'; delete simBtn.dataset.running; updateSimBtnState();
+    simBtn.disabled=false; simBtn.textContent=simBtnLabel(); delete simBtn.dataset.running; updateSimBtnState();
   }
 }
 
 /* ─── VIEW SELECTOR (one chooser drives every Detailed Breakdown subsection) ─── */
 function renderViewSelectors(){
+  if(optResult){ renderOptPickers(); return; }
   const sel=$('detailPfSelect');
   if(sel){ sel.innerHTML=simResults.map(r=>`<option value="${r.id}">${r.name}</option>`).join(''); sel.value=String(activeDetailId); }
 }
 
 /* ─── VALUE CHART (one line per portfolio + per-portfolio top-ups) ─── */
 function updateValueChart(){
+  if(optResult) return updateOptChart();
   if(!simResults.length) return;
   const dates=commonDates;
   const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
@@ -2504,6 +3600,7 @@ function updatePriceChart(){
    between portfolios stay visible. Advanced risk/return metrics are appended to
    each tile and revealed by the "Advanced metrics" toggle. */
 function updateSummary(){
+  if(optResult) return updateOptSummary();
   const sg=$('summaryGrid'); sg.innerHTML='';
   if(!simResults.length){ return; }
   // Star a winner only when it leads on all three figures its tile shows: final
@@ -2545,6 +3642,7 @@ function updateSummary(){
    on what went in instead. */
 function renderVerdict(){
   const el=$('verdict'); if(!el || !window.SharedVerdict) return;
+  if(optResult) return renderOptVerdict();
   if(!simResults.length){ SharedVerdict.set(el, null); return; }
   const num=t=>'<span class="v-num">'+escapeHtml(t)+'</span>';
   const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
@@ -2586,7 +3684,10 @@ function renderAssumptions(){
   const pc=v=>(+(Number(v)||0).toFixed(2))+'%';
   const ran=simResults.length ? portfolios.filter(p=>simResults.some(r=>r.id===p.id)) : portfolios;
   if(!ran.length){ el.innerHTML='<li><strong>Add a portfolio and simulate</strong> to see what the run rests on.</li>'; return; }
-  const items=[];
+  // A sweep says what it varied first; the lines below then describe what stayed
+  // fixed, so a line about a swept setting is left to it.
+  const items=optResult ? optAssumptionLines() : [];
+  const swept=new Set(optResult ? optResult.vars.map(v=>v.key) : []);
   // Group portfolios that share a figure, so the same fact is said once.
   const byKey=(fn)=>{ const m=new Map(); ran.forEach(p=>{ const k=fn(p); if(!m.has(k)) m.set(k,[]); m.get(k).push(p); }); return m; };
   const who=(ps)=>ran.length===1 ? '' : ' in '+list(ps.map(p=>nm(p.name)));
@@ -2613,20 +3714,21 @@ function renderAssumptions(){
   }
 
   if(simResults.length && commonDates.length)
-    items.push('<strong>Every portfolio runs '+escapeHtml(commonDates[0])+' to '+escapeHtml(commonDates[commonDates.length-1])+'</strong>'+
+    items.push('<strong>'+(optResult ? 'Every run covers ' : 'Every portfolio runs ')+escapeHtml(commonDates[0])+' to '+escapeHtml(commonDates[commonDates.length-1])+'</strong>'+
       (allTk.length+sims.length>1 ? ', the trading days all of their assets share.' : '.'));
 
   const FILL={ 'close':'that day\'s close', 'next-open':'the next day\'s open', 'next-close':'the next day\'s close' };
-  items.push('<strong>Every top-up, trigger and rebalance decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
+  if(!swept.has('execTiming'))
+    items.push('<strong>Every top-up, trigger and rebalance decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
 
-  byKey(p=>(p.rebal.buyFee||0)+'|'+(p.rebal.sellFee||0)).forEach((ps,k)=>{
+  if(!swept.has('rebal.buyFee') && !swept.has('rebal.sellFee')) byKey(p=>(p.rebal.buyFee||0)+'|'+(p.rebal.sellFee||0)).forEach((ps,k)=>{
     const [b,sl]=k.split('|').map(Number);
     items.push(b||sl
       ? '<strong>Each trade'+who(ps)+' pays '+(b===sl ? pc(b)+' in fees' : pc(b)+' to buy and '+pc(sl)+' to sell')+'.</strong> There is no tax.'
       : '<strong>No fees and no tax'+who(ps)+'.</strong>');
   });
 
-  byKey(p=>p.rf.mode==='ticker' ? 't:'+String(p.rf.ticker||'').toUpperCase() : 'r:'+(p.rf.rate||0)).forEach((ps,k)=>{
+  if(!swept.has('rf.rate')) byKey(p=>p.rf.mode==='ticker' ? 't:'+String(p.rf.ticker||'').toUpperCase() : 'r:'+(p.rf.rate||0)).forEach((ps,k)=>{
     const tk=k.startsWith('t:') ? k.slice(2) : '';
     const rate=tk ? 0 : Number(k.slice(2));
     items.push('<strong>Idle cash'+who(ps)+(tk ? ' tracks '+nm(tk) : rate ? ' earns '+pc(rate)+' a year' : ' earns nothing')+'.</strong>'+
@@ -2766,8 +3868,27 @@ function buildSettingsObj(){
       simPool: JSON.parse(JSON.stringify(simPool))
     },
     activePortfolioId,
-    portfolios: clean
+    portfolios: clean,
+    // Optimise mode rides along only while it is on, so a file without it (every
+    // file saved before it existed) opens comparing portfolios, as it always did.
+    ...(optVars.length ? { optimise:{ vars:optVars.map(v=>Object.assign({}, v)), metric:optMetricKey(), pick:optPick.slice(0, optVars.length) } } : {})
   };
+}
+// The swept settings a file or link carries. Anything unreadable is dropped
+// rather than guessed at; a setting the portfolio no longer offers is dropped
+// later, by pruneOptVars, once the portfolio is loaded, which also keeps the
+// first two that still apply.
+function readOptVars(o){
+  if(!o || !Array.isArray(o.vars)) return [];
+  const seen=new Set(), out=[];
+  o.vars.forEach(v=>{
+    if(!v || typeof v.key!=='string' || seen.has(v.key) || out.length>=8) return;
+    seen.add(v.key);
+    const r={ key:v.key, start:v.start, end:v.end, steps:optClamp(parseInt(v.steps,10)||11, 2, OPT_MAX_STEPS) };
+    if(v.slack!=null) r.slack=(v.slack==='even' || !isFinite(+v.slack)) ? 'even' : +v.slack;
+    out.push(r);
+  });
+  return out;
 }
 // Rebuild one portfolio from a saved snapshot, merging onto current defaults so
 // older files still get any newer fields, and clearing transient/cache fields.
@@ -2809,6 +3930,9 @@ function importSettings(obj){
   if(Array.isArray(g.simPool)){ simPool=g.simPool.filter(x=>x&&x.name).map(x=>({name:x.name, returnPct:Number(x.returnPct)||0, stdPct:Math.max(0,Number(x.stdPct)||0)})); persistSimPool(); renderPoolChips(); refreshAssetPoolSelect(); }
   portfolios=(obj.portfolios||[]).map((src,idx)=>normalizeLoadedPortfolio(src,idx));
   simResults=[]; commonDates=[];
+  optVars=readOptVars(obj.optimise); optResult=null; setBoardMode(); closeOptModal();
+  optPickWanted=(obj.optimise && Array.isArray(obj.optimise.pick)) ? obj.optimise.pick.map(n=>parseInt(n,10)) : null;
+  if(obj.optimise && OPT_METRICS[obj.optimise.metric]) $('optMetric').value=obj.optimise.metric;
   markFresh();
   portfolioIdCounter = portfolios.reduce((m,p)=>Math.max(m, p.id||0), 0);
   activePortfolioId = (obj.activePortfolioId!=null && portfolios.some(p=>p.id===obj.activePortfolioId)) ? obj.activePortfolioId : (portfolios[0]?portfolios[0].id:null);
@@ -2962,18 +4086,36 @@ function detailRes(){ return simResults.find(r=>r.id===activeDetailId)||simResul
 function compTitle(){ const res=detailRes(); return 'Composition Over Time'+(res?': '+res.name:''); }
 function priceTitle(){ const res=detailRes(); const sub=$('pricePfSubtitle'); const note=sub&&sub.textContent?' '+sub.textContent.trim():''; return 'Security Prices'+(res?': '+res.name:'')+note; }
 
-$('valuePngBtn').addEventListener('click',()=>exportChartPng('valueCanvas','portfolio-value.png','Portfolio Value Over Time','valueLegend'));
+/* The value card holds either chart: the comparison, a one-setting sweep (both
+   Chart.js) or a two-setting surface (Plotly), so its buttons ask which. */
+const valueFile=ext=>(optResult?'portfolio-optimisation':'portfolio-value')+'.'+ext;
+$('valuePngBtn').addEventListener('click',()=>{
+  if(surfaceOnBoard()) return withSurfaceMarks(()=>Plotly.downloadImage('optSurface', Object.assign({format:'png', filename:'portfolio-optimisation', scale:3}, OPT_SURFACE_EXPORT_SIZE)));
+  exportChartPng('valueCanvas',valueFile('png'),valueChartTitle(),'valueLegend');
+});
 $('compPngBtn').addEventListener('click',()=>exportChartPng('compCanvas','portfolio-composition.png',compTitle(),'compLegend'));
 $('pricePngBtn').addEventListener('click',()=>exportChartPng('priceCanvas','portfolio-security-prices.png',priceTitle(),'priceLegend'));
-$('valueCopyBtn').addEventListener('click',()=>SharedShare.copyImage(()=>exportChartPng('valueCanvas','','Portfolio Value Over Time','valueLegend',false),$('valueCopyBtn')));
+$('valueCopyBtn').addEventListener('click',()=>{
+  if(surfaceOnBoard()) return SharedShare.copyImage(()=>withSurfaceMarks(()=>Plotly.toImage('optSurface', Object.assign({format:'png', scale:3}, OPT_SURFACE_EXPORT_SIZE))), $('valueCopyBtn'));
+  SharedShare.copyImage(()=>exportChartPng('valueCanvas','',valueChartTitle(),'valueLegend',false),$('valueCopyBtn'));
+});
 $('compCopyBtn').addEventListener('click',()=>SharedShare.copyImage(()=>exportChartPng('compCanvas','',compTitle(),'compLegend',false),$('compCopyBtn')));
 $('priceCopyBtn').addEventListener('click',()=>SharedShare.copyImage(()=>exportChartPng('priceCanvas','',priceTitle(),'priceLegend',false),$('priceCopyBtn')));
 
-$('valueSvgBtn').addEventListener('click',()=>downloadChartSvg('valueCanvas','portfolio-value.svg','Portfolio Value Over Time','valueLegend'));
+$('valueSvgBtn').addEventListener('click',()=>{
+  if(surfaceOnBoard()) return withSurfaceMarks(()=>Plotly.downloadImage('optSurface', Object.assign({format:'svg', filename:'portfolio-optimisation'}, OPT_SURFACE_EXPORT_SIZE)));
+  downloadChartSvg('valueCanvas',valueFile('svg'),valueChartTitle(),'valueLegend');
+});
 $('compSvgBtn').addEventListener('click',()=>downloadChartSvg('compCanvas','portfolio-composition.svg',compTitle(),'compLegend'));
 $('priceSvgBtn').addEventListener('click',()=>downloadChartSvg('priceCanvas','portfolio-security-prices.svg',priceTitle(),'priceLegend'));
 
-$('valueResetZoom').addEventListener('click',()=>{ if(valueChart) valueChart.resetZoom(); });
+$('valueResetZoom').addEventListener('click',()=>{
+  // The surface has no zoom to undo, but it has a camera to put back.
+  if(surfaceOnBoard()){ Plotly.relayout('optSurface', {'scene.camera':OPT_CAMERA}); return; }
+  if(valueChart) valueChart.resetZoom();
+});
+// What the sweep is read by is a view of it, so it redraws without a run.
+$('optMetric').addEventListener('change',()=>{ if(!optResult) return; updateOptChart(); updateOptSummary(); if(persist) persist.schedule(); });
 $('compResetZoom').addEventListener('click',()=>{ if(compChart) compChart.resetZoom(); });
 $('valueCanvas').addEventListener('mouseleave',()=>{ $('valueHoverBox').textContent='Hover to inspect data points.'; });
 $('compCanvas').addEventListener('mouseleave',()=>{ $('compHoverBox').textContent='Hover to inspect data points.'; });
@@ -3067,6 +4209,8 @@ $('simBtn').addEventListener('click', runSimulation);
 function resetWorkspace(){
   portfolios=[]; portfolioIdCounter=0; activePortfolioId=null;
   simResults=[]; commonDates=[]; activeDetailId=null;
+  optAbort=true; optVars=[]; optResult=null; optPick=[0,0]; optPickWanted=null;
+  closeOptModal(); $('optMetric').value='roi'; setBoardMode(); syncOptUi();
   markFresh();   // nothing on the board to be out of date
   currentCurrencySymbol='$'; currentRandomSeed=DEFAULT_RANDOM_SEED; showTopups=true;
   compViewMode='dollar'; valueDsPairs=[]; hiddenPf.clear();
