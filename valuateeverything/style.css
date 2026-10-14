@@ -221,9 +221,4 @@ body.is-stale main .card{opacity:.45;transition:opacity var(--motion-fast);}
   .chart-opts .opt{display:flex;width:100%;}
   .chart-opts .opt-label{flex:0 0 104px;}
   .chart-opts select{flex:1 1 auto;min-width:0;max-width:none;}
-  /* Table cards: the title takes the row, with CSV and the fold chevron at its
-     right end (or under it when the title runs long). */
-  .detail-head h2{flex:1 1 0;min-width:0;}
-  .detail-head .btn-cluster{width:auto;margin-left:auto;}
-  .detail-head .btn-cluster .btn-sm{flex:0 0 auto;}
 }

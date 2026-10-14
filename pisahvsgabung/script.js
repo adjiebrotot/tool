@@ -89,7 +89,7 @@ const LANG = {
     optGabung: 'Gabung Harta',
     chart1Title: 'Total tax a year, by household salary',
     chart1Sub: "Each line is the household's total tax for the year if it files that way, with the wife's share held where you set it. The gap between the lines is the saving.",
-    chart1XTitle: 'Household gross salary (Rp a year)',
+    chart1XTitle: 'Household gross salary (Rp/yr)',
     chart1YTitle: 'Total tax (Rp a year)',
     /* The export cluster every chart and table on the site carries: the label
        is a glyph, so the title attribute is what says what it does. */

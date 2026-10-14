@@ -479,9 +479,15 @@ const PAGES = [
         t.value = 'Price, Size\n' + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (1000 + 1000 * n * n / 10) + ', ' + n).join('\n');
         t.dispatchEvent(new Event('input', { bubbles: true }));
       });
+      // The text box parses after a short pause and only marks the answer stale;
+      // the plot redraws on Valuate. Wait for the listings to land, then press it,
+      // or the probe measures the sample the page opened on.
+      await page.waitForFunction(() => /10 listings/.test(document.getElementById('textStatus').textContent), null, { timeout: 20000 });
+      await page.click('#valuateBtn');
       await page.waitForFunction(() => {
         const d = document.getElementById('plotDiv');
-        return d && d.layout && d.layout.xaxis && d.layout.xaxis.range && d.data && d.data.length >= 2;
+        return d && d.layout && d.layout.xaxis && d.layout.xaxis.range && d.data && d.data.length >= 2 &&
+          d.data.some(t => (t.y || []).some(y => Math.abs(y - 11000) < 1));
       }, null, { timeout: 20000 });
       await page.waitForTimeout(400);
     },

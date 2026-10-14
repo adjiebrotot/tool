@@ -244,3 +244,10 @@ body.opt-modal-open{overflow:hidden}
 .opt-pick[hidden]{display:none}
 .opt-pick label{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--muted)}
 .opt-pick .pf-view-select{min-width:90px}
+/* Asset colour dots are colour pickers: the native swatch drawn as the round dot. */
+input.color-dot{padding:0;background:none;cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;box-sizing:border-box}
+input.color-dot::-webkit-color-swatch-wrapper{padding:0}
+input.color-dot::-webkit-color-swatch{border:none;border-radius:50%}
+input.color-dot::-moz-color-swatch{border:none;border-radius:50%}
+input.color-dot:hover{transform:scale(1.2)}
+input.color-dot:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
