@@ -435,13 +435,17 @@
     // The wheel zooms where the pointer is; a trackpad pinch arrives as a ctrl-wheel.
     // A plain wheel scrolls the page past the diagram until the diagram is clicked
     // (or focused), so reading down the page never gets caught in it. An embed is the
-    // diagram and nothing else, so there the wheel always zooms.
+    // diagram and nothing else, so there the wheel always zooms, and so does a
+    // diagram filling the screen. While the wheel is the diagram's, a soft blue
+    // ring round the stage says so.
     var wheelOn = ro, wheelHintT = 0;
-    stage.addEventListener('pointerdown', function(){ wheelOn = true; });
-    stage.addEventListener('pointerleave', function(ev){ if(ev.pointerType === 'mouse' && !ro) wheelOn = false; });
-    svg.addEventListener('focus', function(){ wheelOn = true; });
+    function setWheel(on){ wheelOn = on; stage.classList.toggle('is-active', on && !ro); }
+    stage.addEventListener('pointerdown', function(){ setWheel(true); });
+    stage.addEventListener('pointerleave', function(ev){ if(ev.pointerType === 'mouse' && !ro) setWheel(false); });
+    svg.addEventListener('focus', function(){ setWheel(true); });
+    svg.addEventListener('blur', function(){ if(!ro && !stage.matches(':hover')) setWheel(false); });
     svg.addEventListener('wheel', function(ev){
-      if(!wheelOn && !ev.ctrlKey && !ev.metaKey){
+      if(!wheelOn && !ev.ctrlKey && !ev.metaKey && !stage.closest('.is-full')){
         if(!armed){
           var msg = 'Click the diagram, or hold Ctrl, to zoom with the wheel.';
           hint(msg);

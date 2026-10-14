@@ -595,6 +595,7 @@
     writeHover(app.sel.size === 1 ? app.sel.values().next().value : null);
     Array.prototype.forEach.call(document.querySelectorAll('#tableWrap tr[data-row]'), function(tr){ tr.classList.toggle('is-sel', app.sel.has(+tr.getAttribute('data-row'))); });
     document.body.classList.toggle('lf-sheet', app.sel.size > 0 && window.matchMedia('(max-width:1100px)').matches);
+    document.body.classList.toggle('lf-has-sel', app.sel.size > 0);
     if(app.sel.size) showTab('element');
   };
 
@@ -1161,6 +1162,33 @@
   $('fitBtn').addEventListener('click', function(){ app.fit(); });
   $('zoomIn').addEventListener('click', function(){ app.zoomAt(1.25); });
   $('zoomOut').addEventListener('click', function(){ app.zoomAt(0.8); });
+
+  // ⤢ lifts the diagram card out of the page to fill the window, keeping the
+  // view bar, the palette and the diagram; a second press or Esc puts it back.
+  // A selected element's panel opens as a sidebar beside it (a sheet on a
+  // phone). The ResizeObserver keeps the reader's scale and centre.
+  var sldFull = false;
+  function setSldFull(on){
+    on = !!on;
+    if(on === sldFull) return;
+    sldFull = on;
+    $('sldCard').classList.toggle('is-full', on);
+    document.documentElement.classList.toggle('sld-full-open', on);
+    var b = $('sldFull'), label = on ? 'Put the diagram back in the page' : 'Enlarge the diagram to fill the screen';
+    b.setAttribute('aria-pressed', String(on));
+    b.title = label; b.setAttribute('aria-label', label);
+    if(!on) $('sldCard').scrollIntoView({ block: 'nearest' });
+  }
+  $('sldFull').addEventListener('click', function(){ setSldFull(!sldFull); });
+  // Capture runs before the editor's own Esc, so Esc first drops a held tool or
+  // the selection there and only then leaves full screen.
+  document.addEventListener('keydown', function(ev){
+    if(ev.key !== 'Escape' || !sldFull || ev.defaultPrevented) return;
+    var t = ev.target, tag = t && t.tagName;
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+    if(app.sel.size || document.querySelector('.pal-btn.is-armed')) return;
+    setSldFull(false);
+  }, true);
 
   /* ── Mini cache, scenario files and Share links ── */
   var persist = null, restoredAtLoad = false;
