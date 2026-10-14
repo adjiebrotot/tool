@@ -58,7 +58,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .stage-row .note{margin:0;}
 /* The card is already the input colour, so its own fields sit on the panel
    colour, a size down, the way the Rent vs Own cost cards do it. */
-.stage-row .txt-input,.stage-row .num-input,.stage-row .currency-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+.stage-row .txt-input,.stage-row .num-input,.stage-row .affix-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
 .stage-row .txt-input,.stage-row .num-input{padding-left:9px;padding-right:9px;}
 .stage-row .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
 .stage-head{display:flex;align-items:center;gap:7px;}
@@ -76,7 +76,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 #moneyOut:not(.is-detailed) .detailed-only{display:none !important;}
 #moneyOut.is-detailed .simple-only{display:none;}
 #moneyOut.is-detailed>.money-stage{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;gap:7px;margin:10px 0 0;}
-#moneyOut.is-detailed>.money-stage .txt-input,#moneyOut.is-detailed>.money-stage .currency-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+#moneyOut.is-detailed>.money-stage .txt-input,#moneyOut.is-detailed>.money-stage .affix-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
 #moneyOut.is-detailed>.money-stage .txt-input{padding-left:9px;padding-right:9px;}
 #moneyOut.is-detailed>.money-stage .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
 #moneyOut.is-detailed>.money-stage .note{margin:0;}
@@ -100,7 +100,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 #moneyIn:not(.is-detailed) #savingsRow{padding-top:5px;border-top:none;}
 #moneyIn.is-detailed>.money-stage{display:grid;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 10px;gap:7px;margin:10px 0 0;}
 #moneyIn.is-detailed>.money-stage>.field-row{padding:0;border-top:none;gap:7px;}
-#moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .currency-input,#moneyIn.is-detailed>.money-stage .num-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
+#moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .affix-input,#moneyIn.is-detailed>.money-stage .num-input{background:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.86rem;}
 #moneyIn.is-detailed>.money-stage .txt-input,#moneyIn.is-detailed>.money-stage .num-input{padding-left:9px;padding-right:9px;}
 #moneyIn.is-detailed>.money-stage .sel-input{background-color:var(--panel);padding-top:7px;padding-bottom:7px;font-size:.84rem;}
 #moneyIn.is-detailed>.money-stage .note{margin:0;}

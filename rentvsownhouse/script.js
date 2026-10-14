@@ -760,12 +760,12 @@ function updateCurrencyPrefixes(){
   // the currency symbol leads the number, "%" trails it
   [['setupCostPrefix','setupCostType'],['ownOngoingCostPrefix','ownOngoingCostType'],['rentOngoingCostPrefix','rentOngoingCostType']].forEach(([pid,tid])=>{
     const el = $(pid), type = $(tid);
-    if(el && type) setCostUnit(el.closest('.currency-wrap'), type.value==='pct', sym);
+    if(el && type) setCostUnit(el.closest('.affix-wrap'), type.value==='pct', sym);
   });
   // Dynamic cost-item rows: same rule, keyed off each row's basis select
   document.querySelectorAll('.cost-item-row').forEach(row=>{
     const basis = row.querySelector('.ci-basis')?.value;
-    setCostUnit(row.querySelector('.currency-wrap'), basis==='pct', sym);
+    setCostUnit(row.querySelector('.affix-wrap'), basis==='pct', sym);
   });
 }
 
@@ -2058,9 +2058,9 @@ function buildCostItemRow(key, item, idx, count){
       ${SharedIcon.button('trash', T('btnDelete'), 'ci-delete', count<=1?'disabled':'')}
     </div>
     <div class="ci-line">
-      <div class="currency-wrap">
+      <div class="affix-wrap">
         <span class="prefix"${isPct?' hidden':''}>${sym}</span>
-        <input class="currency-input money-input ci-amount${isPct?' has-suffix':''}" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="${formatMoneyValue(item.amount||0)}"/>
+        <input class="affix-input money-input ci-amount${isPct?' has-suffix':''}" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="${formatMoneyValue(item.amount||0)}"/>
         <span class="suffix"${isPct?'':' hidden'}>%</span>
       </div>
       <select class="sel-input ci-basis">${optsHtml}</select>
@@ -2147,7 +2147,7 @@ function wireCostListEvents(key){
     if(e.target.classList.contains('ci-basis')){
       const row = e.target.closest('.cost-item-row');
       const pct = e.target.value === 'pct';
-      setCostUnit(row.querySelector('.currency-wrap'), pct, moneySymbol());
+      setCostUnit(row.querySelector('.affix-wrap'), pct, moneySymbol());
       const infl = row.querySelector('.ci-infl-wrap');
       if(infl) infl.style.display = pct ? 'none' : '';
     }

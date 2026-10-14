@@ -35,9 +35,9 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .inline-row{display:flex;gap:8px;align-items:center;}
 .inline-row .grow{flex:1;min-width:0;}
 .shade-wrap{flex:0 0 92px;width:92px;}
-.shade-wrap .currency-input{padding-left:8px;padding-right:28px;text-align:right;}
+.shade-wrap .affix-input{padding-left:8px;padding-right:28px;text-align:right;}
 .shade-wrap .suffix{right:8px;}
-.currency-wrap .suffix{font-size:.8rem;}
+.affix-wrap .suffix{font-size:.8rem;}
 /* shared.css ships .toggle-switch / .toggle-track / .toggle-knob but not the
    row that holds them, which the design reference documents. The switch is a
    <label>, so it only takes a width once this row makes it a flex item. */

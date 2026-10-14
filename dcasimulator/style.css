@@ -38,7 +38,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .field-row:first-of-type{border-top:none}
 .field-label{font-weight:700;font-size:.88rem}
 .field-sub{color:var(--muted);font-size:.78rem;line-height:1.35;margin-top:2px}
-/* Plain number/text inputs share the standardised currency-input look (shared.css)
+/* Plain number/text inputs share the standardised affix-input look (shared.css)
    so every control - money fields, selects and technical/count fields - matches. */
 .num-input,.txt-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums}
 .num-input:focus,.txt-input:focus{border-color:var(--accent);background:var(--panel)}
@@ -143,7 +143,7 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 .sec-row{display:flex;gap:8px;align-items:center;margin:0;padding:6px 0;flex-wrap:wrap}
 .sec-row label{font-size:.8rem;color:var(--muted);min-width:80px;flex-shrink:0}
 .sec-row .num-input,.sec-row .txt-input{flex:1;min-width:80px}
-.sec-row .currency-wrap{flex:1;min-width:80px}
+.sec-row .affix-wrap{flex:1;min-width:80px}
 .color-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid var(--border)}
 .add-sec-area{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .add-sec-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -251,7 +251,7 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 /* Look-back lengths carry their unit inside the field. */
 .param-row .unit-days{flex:0 0 112px;max-width:112px}
 .param-row .unit-x{flex:0 0 90px;max-width:90px}
-.param-row .currency-wrap .currency-input{padding-top:7px;padding-bottom:7px;font-size:.86rem}
+.param-row .affix-wrap .affix-input{padding-top:7px;padding-bottom:7px;font-size:.86rem}
 .param-note{font-size:.74rem;color:var(--muted);line-height:1.35;margin:4px 0 2px;font-style:italic}
 .param-note.warn-note{color:var(--gold);font-style:normal;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);border-radius:8px;padding:6px 9px;margin:8px 0}
 .tech-eom{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);cursor:pointer;padding:6px 0 2px;line-height:1.35}

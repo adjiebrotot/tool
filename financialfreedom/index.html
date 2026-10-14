@@ -151,11 +151,11 @@
       <div class="group-title">Ages</div>
       <div class="field-row">
         <div class="field-label">Age now</div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="ageNow" type="number" inputmode="numeric" min="0" max="100" step="1" value="30"/><span class="suffix">yrs</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="ageNow" type="number" inputmode="numeric" min="0" max="100" step="1" value="30"/><span class="suffix">yrs</span></div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Life expectancy <i class="tip-icon" data-tip="How long the money has to last. Die Rich ignores it.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="ageDie" type="number" inputmode="numeric" min="2" max="120" step="1" value="90"/><span class="suffix">yrs</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="ageDie" type="number" inputmode="numeric" min="2" max="120" step="1" value="90"/><span class="suffix">yrs</span></div>
       </div>
     </div>
 
@@ -193,9 +193,9 @@
             <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
           </div>
           <div class="inline-row">
-            <div class="currency-wrap grow">
+            <div class="affix-wrap grow">
               <span class="prefix" id="savingsPrefix">$</span>
-              <input class="currency-input fmt-num" id="savings" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="30,000"/>
+              <input class="affix-input fmt-num" id="savings" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="30,000"/>
             </div>
             <select class="sel-input period" id="savingsPeriod">
               <option value="weekly">a week</option>
@@ -209,7 +209,7 @@
           <div class="field-label simple-only"><span class="tip-wrap">Growth of that amount <i class="tip-icon" data-tip="How fast the amount above grows each year, before inflation. Pay rises live here.">?</i></span></div>
           <div class="growth-line">
             <span class="stage-lbl detailed-only">Grows</span>
-            <div class="currency-wrap grow-wrap"><input class="currency-input has-suffix" id="growth" type="number" inputmode="decimal" min="-10" max="30" step="0.1" value="3"/><span class="suffix">%/yr</span></div>
+            <div class="affix-wrap grow-wrap"><input class="affix-input has-suffix" id="growth" type="number" inputmode="decimal" min="-10" max="30" step="0.1" value="3"/><span class="suffix">%/yr</span></div>
             <span class="stage-lbl grow-tail detailed-only">from today</span>
             <span class="tip-wrap detailed-only"><i class="tip-icon" data-tip="Before inflation. At the inflation rate it holds its value in today’s money; below it, it shrinks.">?</i></span>
           </div>
@@ -228,14 +228,14 @@
       <div class="fg-sub simple-only" id="pensionRows" style="display:none;">
         <div class="field-row">
           <div class="field-label">Pension starts at age</div>
-          <div class="currency-wrap"><input class="currency-input has-suffix" id="pensionStartAge" type="number" inputmode="numeric" min="40" max="90" step="1" value="67"/><span class="suffix">yrs</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix" id="pensionStartAge" type="number" inputmode="numeric" min="40" max="90" step="1" value="67"/><span class="suffix">yrs</span></div>
         </div>
         <div class="field-row">
           <div class="field-label"><span class="tip-wrap">Pension amount <i class="tip-icon" data-tip="What it pays today. Counted as income from its start age.">?</i></span></div>
           <div class="inline-row">
-            <div class="currency-wrap grow">
+            <div class="affix-wrap grow">
               <span class="prefix" id="pensionAmountPrefix">$</span>
-              <input class="currency-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="29,000"/>
+              <input class="affix-input fmt-num" id="pensionAmount" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="29,000"/>
             </div>
             <select class="sel-input period" id="pensionPeriod">
               <option value="weekly">a week</option>
@@ -277,9 +277,9 @@
           <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
         </div>
         <div class="inline-row">
-          <div class="currency-wrap grow">
+          <div class="affix-wrap grow">
             <span class="prefix" id="expensePrefix">$</span>
-            <input class="currency-input fmt-num" id="expense" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="60,000"/>
+            <input class="affix-input fmt-num" id="expense" type="text" inputmode="decimal" data-min="0" data-max="100000000000" value="60,000"/>
           </div>
           <select class="sel-input period" id="expensePeriod">
             <option value="weekly">a week</option>
@@ -301,9 +301,9 @@
           <span class="stage-lock" title="Every plan has this stage, so it cannot be renamed or removed" aria-label="Fixed stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
         </div>
         <div class="inline-row">
-          <div class="currency-wrap grow" id="retireExpenseWrap">
+          <div class="affix-wrap grow" id="retireExpenseWrap">
             <span class="prefix" id="retireExpensePrefix" hidden>$</span>
-            <input class="currency-input fmt-num has-suffix" id="retireExpense" type="text" inputmode="decimal" data-min="0" data-max="1000" value="100"/>
+            <input class="affix-input fmt-num has-suffix" id="retireExpense" type="text" inputmode="decimal" data-min="0" data-max="1000" value="100"/>
             <span class="suffix" id="retireExpenseSuffix">%</span>
           </div>
           <select class="sel-input period basis" id="retireExpensePeriod">
@@ -325,9 +325,9 @@
       <div class="group-title">What you hold</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Invested assets today <i class="tip-icon" data-tip="What you already hold that earns the return below. Not the home you live in.">?</i></span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="assetsPrefix">$</span>
-          <input class="currency-input fmt-num" id="assets" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="100,000"/>
+          <input class="affix-input fmt-num" id="assets" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="100,000"/>
         </div>
       </div>
     </div>
@@ -341,11 +341,11 @@
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Expected return (CAGR) <i class="tip-icon" data-tip="The compound return you expect, before inflation and after fees.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="ret" type="number" inputmode="decimal" min="-5" max="40" step="0.1" value="8"/><span class="suffix">%/yr</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="ret" type="number" inputmode="decimal" min="-5" max="40" step="0.1" value="8"/><span class="suffix">%/yr</span></div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Volatility <i class="tip-icon" data-tip="How much the return bounces year to year. Use 0 for a single smooth projection.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="std" type="number" inputmode="decimal" min="0" max="80" step="0.1" value="15"/><span class="suffix">%/yr</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="std" type="number" inputmode="decimal" min="0" max="80" step="0.1" value="15"/><span class="suffix">%/yr</span></div>
       </div>
     </div>
 
@@ -395,9 +395,9 @@
       </div>
       <div class="field-row" id="legacyRow" style="display:none;">
         <div class="field-label"><span class="tip-wrap">Amount to leave behind <i class="tip-icon" data-tip="In today's money.">?</i></span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="legacyPrefix">$</span>
-          <input class="currency-input fmt-num" id="legacy" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="500,000"/>
+          <input class="affix-input fmt-num" id="legacy" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="500,000"/>
         </div>
       </div>
     </div>
@@ -412,7 +412,7 @@
       <div class="group-title">Prices</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Inflation <i class="tip-icon" data-tip="It lifts your expenses, and the pot you need with them.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="inflation" type="number" inputmode="decimal" min="0" max="30" step="0.1" value="2.5"/><span class="suffix">%/yr</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="inflation" type="number" inputmode="decimal" min="0" max="30" step="0.1" value="2.5"/><span class="suffix">%/yr</span></div>
         <p class="note" id="inflationNote"></p>
       </div>
     </div>
@@ -421,11 +421,11 @@
       <div class="group-title">Risk</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Investment outcome chance <i class="tip-icon" data-tip="The Investment outcome line is reached or beaten in at least this share of futures. 50% is the expected return; 90% is cautious.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="chance" type="number" inputmode="numeric" min="50" max="99" step="1" value="50"/><span class="suffix">%</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="chance" type="number" inputmode="numeric" min="50" max="99" step="1" value="50"/><span class="suffix">%</span></div>
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Confidence level <i class="tip-icon" data-tip="The share of futures the confidence pot has to survive.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="confidence" type="number" inputmode="numeric" min="50" max="99" step="1" value="90"/><span class="suffix">%</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="confidence" type="number" inputmode="numeric" min="50" max="99" step="1" value="90"/><span class="suffix">%</span></div>
       </div>
     </div>
   </div>

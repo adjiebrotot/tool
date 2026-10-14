@@ -81,14 +81,14 @@
     });
   }
 
-  /* Unit label beside a .currency-input. A currency symbol is a PREFIX
+  /* Unit label beside a .affix-input. A currency symbol is a PREFIX
      ("$ 1,000", "Rp 1,000"); a percentage or any other trailing unit is a
      SUFFIX ("4.5 %", "30 yrs", "/mo"). Fields whose unit switches between
      the two (a $/% selector) call this instead of rewriting the prefix's text,
      so "%" never ends up in front of the number. Pass '' to hide a side. */
   function setAffix(wrap, prefix, suffix){
     if (!wrap) return;
-    var input = wrap.querySelector('.currency-input');
+    var input = wrap.querySelector('.affix-input');
     var pre = wrap.querySelector('.prefix');
     var suf = wrap.querySelector('.suffix');
     if (prefix && !pre) {
@@ -4011,7 +4011,7 @@
      not by a sentence. A typed field declares them the way a slider does:
 
          <input type="number" min="0" max="30" step="0.1">             (native)
-         <input type="text" class="currency-input" data-min="0"
+         <input type="text" class="affix-input" data-min="0"
                 data-max="100000000000" data-step="1">                 (money)
 
      When the reader leaves the field (its change event), a value past either
@@ -4063,7 +4063,7 @@
     }
     function unitOf(el){
       var pre = '', suf = el.getAttribute('data-unit') || '';
-      var wrap = el.closest('.currency-wrap');
+      var wrap = el.closest('.affix-wrap');
       if(wrap){
         var p = wrap.querySelector('.prefix'), s = wrap.querySelector('.suffix');
         if(p && !p.hidden) pre = (p.textContent || '').trim();
@@ -4086,7 +4086,7 @@
         hintEl.setAttribute('data-no-abbr', '');
         document.body.appendChild(hintEl);
       }
-      var box = (el.closest('.currency-wrap') || el).getBoundingClientRect();
+      var box = (el.closest('.affix-wrap') || el).getBoundingClientRect();
       hintEl.textContent = text;
       hintEl.style.left = Math.max(8, Math.min(box.left, window.innerWidth - 268)) + 'px';
       hintEl.style.top = Math.min(window.innerHeight - 30, box.bottom + 4) + 'px';

@@ -208,9 +208,9 @@
       <div class="group-title" data-i18n="sectionProperty">Properti</div>
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelPropertyPrice">Harga properti</span> <span class="tip-icon" data-tip-key="propertyPrice">?</span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="propertyPricePrefix">$</span>
-          <input class="currency-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" data-min="50000" data-max="1000000000000" value="800,000"/>
+          <input class="affix-input money-input" id="propertyPrice" type="text" inputmode="numeric" data-money="true" data-min="50000" data-max="1000000000000" value="800,000"/>
         </div>
       </div>
       <div class="field-row">
@@ -253,15 +253,15 @@
       </div>
       <div class="field-row" id="mortgageRateRow">
         <div class="field-label"><span data-i18n="labelMortgageRate">Bunga KPR</span> <span class="tip-icon" data-tip-key="mortgageRate">?</span></div>
-        <div class="currency-wrap">
-          <input class="currency-input has-suffix" id="mortgageRate" type="number" inputmode="decimal" min="0" max="25" step="0.01" value="6"/>
+        <div class="affix-wrap">
+          <input class="affix-input has-suffix" id="mortgageRate" type="number" inputmode="decimal" min="0" max="25" step="0.01" value="6"/>
           <span class="suffix" data-i18n="unitPctYr">%/thn</span>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelMortgageTerm">Jangka waktu KPR</span> <span class="tip-icon" data-tip-key="mortgageTerm">?</span></div>
-        <div class="currency-wrap">
-          <input class="currency-input has-suffix" id="mortgageTerm" type="number" inputmode="numeric" min="5" max="50" step="1" value="30"/>
+        <div class="affix-wrap">
+          <input class="affix-input has-suffix" id="mortgageTerm" type="number" inputmode="numeric" min="5" max="50" step="1" value="30"/>
           <span class="suffix" data-i18n="unitYrs">thn</span>
         </div>
       </div>
@@ -286,9 +286,9 @@
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelSetupCost">Biaya awal pembelian (BPHTB, notaris, dll.)</span> <span class="tip-icon" data-tip-key="setupCost">?</span></div>
         <div class="input-row">
-          <div class="currency-wrap">
+          <div class="affix-wrap">
             <span class="prefix" id="setupCostPrefix">$</span>
-            <input class="currency-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value="32,000"/>
+            <input class="affix-input money-input" id="setupCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value="32,000"/>
           </div>
           <select class="sel-input sel-unit" id="setupCostType">
             <option value="dollar" data-i18n-opt="optDollar">$</option>
@@ -299,9 +299,9 @@
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelOwnOngoing">Biaya rutin kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingCost">?</span></div>
         <div class="input-row">
-          <div class="currency-wrap">
+          <div class="affix-wrap">
             <span class="prefix" id="ownOngoingCostPrefix">$</span>
-            <input class="currency-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value="6,000"/>
+            <input class="affix-input money-input" id="ownOngoingCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value="6,000"/>
           </div>
           <select class="sel-input sel-freq" id="ownOngoingCostFreq">
             <option value="yearly" data-i18n-opt="optYearly">per tahun</option>
@@ -344,9 +344,9 @@
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelRentAmount">Biaya sewa</span> <span class="tip-icon" data-tip-key="rentAmount">?</span></div>
         <div class="input-row">
-          <div class="currency-wrap">
+          <div class="affix-wrap">
             <span class="prefix" id="rentAmountPrefix">$</span>
-            <input class="currency-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="2,800"/>
+            <input class="affix-input money-input" id="rentAmount" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="2,800"/>
           </div>
           <select class="sel-input sel-freq" id="rentFreq">
             <option value="monthly" data-i18n-opt="optMonthly">per bulan</option>
@@ -377,9 +377,9 @@
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelRentOngoing">Biaya rutin menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingCost">?</span></div>
         <div class="input-row">
-          <div class="currency-wrap">
+          <div class="affix-wrap">
             <span class="prefix" id="rentOngoingCostPrefix">$</span>
-            <input class="currency-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="1,200"/>
+            <input class="affix-input money-input" id="rentOngoingCost" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="1,200"/>
           </div>
           <select class="sel-input sel-freq" id="rentOngoingCostFreq">
             <option value="yearly" data-i18n-opt="optYearly">per tahun</option>
@@ -492,18 +492,18 @@
       <div class="group-title" data-i18n="sectionCash">Kas</div>
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelInitialCash">Modal awal</span> <span class="tip-icon" data-tip-key="initialCash">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="initialCashPrefix">$</span>
-          <input class="currency-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
+          <input class="affix-input money-input" id="initialCash" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="1000000000000" value=""/>
         </div>
         <div class="field-sub" id="initialCashSub" data-i18n="subInitialCashDefault">Default ke Uang Muka (DP) + biaya awal pembelian. Kelebihan diinvestasikan pada suku bunga bebas risiko.</div>
         <div class="warning" id="initialCashWarn" style="display:none;margin:6px 0 0;"></div>
       </div>
       <div class="field-row">
         <div class="field-label"><span data-i18n="labelMonthlyBudget">Anggaran perumahan bulanan</span> <span class="tip-icon" data-tip-key="monthlyBudget">?</span> <span style="color:var(--muted);font-weight:400;font-size:.8rem;" data-i18n="labelOptional">(opsional)</span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="monthlyBudgetPrefix">$</span>
-          <input class="currency-input money-input has-suffix" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="0"/>
+          <input class="affix-input money-input has-suffix" id="monthlyBudget" type="text" inputmode="numeric" data-money="true" data-min="0" data-max="100000000000" value="0"/>
           <span class="suffix" data-i18n="perMoUnit">/bln</span>
         </div>
       </div>

@@ -214,7 +214,7 @@ function hideWarning(){ const w=$('mainWarning'); w.style.display='none'; }
 function symInBrackets(){ return currentCurrencySymbol ? ' ('+currentCurrencySymbol+')' : ''; }
 function sanitizeSeed(v){ const n=Number(v); return Number.isFinite(n)?Math.floor(Math.abs(n)):DEFAULT_RANDOM_SEED; }
 
-// Wire a standardised number/money input (the shared currency-input design):
+// Wire a standardised number/money input (the shared affix-input design):
 // live thousands-grouping while typing, re-format on blur, and push the parsed
 // numeric value to `onVal` on every change. `opts` mirrors SharedFmt options
 // ({maxDecimals, allowNegative}).

@@ -166,9 +166,9 @@
           <div class="fg-sub" id="modeTotal">
             <div class="field-row">
               <div class="field-label" data-i18n="totalSalaryLabel">Gaji kotor rumah tangga (suami dan istri)</div>
-              <div class="currency-wrap">
+              <div class="affix-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input has-suffix" id="totalSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="500,000,000" />
+                <input class="affix-input has-suffix" id="totalSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="500,000,000" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
             </div>
@@ -182,9 +182,9 @@
             </div>
             <div class="field-row">
               <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti biaya jabatan atau iuran pensiun, dikurangkan dari penghasilan kotor sebelum PTKP lalu dibagi sesuai porsi penghasilan masing-masing.">?</span></div>
-              <div class="currency-wrap">
+              <div class="affix-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
+                <input class="affix-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
             </div>
@@ -194,34 +194,34 @@
           <div class="fg-sub" id="modeIndividual" style="display:none;">
             <div class="field-row">
               <div class="field-label" data-i18n="husbandSalaryLabel">Gaji kotor suami</div>
-              <div class="currency-wrap">
+              <div class="affix-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input has-suffix" id="husbandSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="250,000,000" />
+                <input class="affix-input has-suffix" id="husbandSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="250,000,000" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
             </div>
             <div class="field-row">
               <div class="field-label" data-i18n="wifeSalaryLabel">Gaji kotor istri</div>
-              <div class="currency-wrap">
+              <div class="affix-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input has-suffix" id="wifeSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="250,000,000" />
+                <input class="affix-input has-suffix" id="wifeSalaryInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="250,000,000" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
               <div class="derived"><span data-i18n="combinedPrefix">Total</span> <b id="combinedLabel">Rp 500,000,000</b> <span data-i18n="combinedSuffix">per tahun, porsi istri</span> <b id="splitDerivedLabel">50.0%</b></div>
             </div>
             <div class="field-row">
               <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Pengurang suami</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.">?</span></div>
-              <div class="currency-wrap">
+              <div class="affix-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
+                <input class="affix-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
             </div>
             <div class="field-row">
               <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Pengurang istri</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.">?</span></div>
-              <div class="currency-wrap">
+              <div class="affix-wrap">
                 <span class="prefix">Rp</span>
-                <input class="currency-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
+                <input class="affix-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
             </div>
@@ -234,19 +234,19 @@
           <div class="group-title" data-i18n="ptkpSectionLabel">Penghasilan tidak kena pajak per tahun (PTKP)</div>
           <div class="ptkp-row">
             <div class="ptkp-label-sm" data-i18n="ptkpTK0">Dasar, untuk tiap wajib pajak (TK/0)</div>
-            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpBase" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="54,000,000" /></div>
+            <div class="affix-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpBase" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="54,000,000" /></div>
           </div>
           <div class="ptkp-row">
             <div class="ptkp-label-sm" data-i18n="ptkpK">Tambahan bila kawin (K)</div>
-            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpMarried" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
+            <div class="affix-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpMarried" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
           </div>
           <div class="ptkp-row">
             <div class="ptkp-label-sm" data-i18n="ptkpI">Tambahan bila penghasilan istri digabung (I)</div>
-            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpSpouse" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="54,000,000" /></div>
+            <div class="affix-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpSpouse" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="54,000,000" /></div>
           </div>
           <div class="ptkp-row">
             <div class="ptkp-label-sm" data-i18n="ptkpDep">Tambahan per tanggungan</div>
-            <div class="currency-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
+            <div class="affix-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
           </div>
           <div class="derived"><span data-i18n="ptkpComputedPrefix">PTKP rumah tangga ini dengan Pisah Harta:</span> <b id="ptkpHDisplay">—</b> <span data-i18n="ptkpHLabel">suami</span> + <b id="ptkpWDisplay">—</b> <span data-i18n="ptkpWLabel">istri</span>. <span data-i18n="ptkpGLabel">Gabung Harta:</span> <b id="ptkpGDisplay">—</b>.</div>
         </div>

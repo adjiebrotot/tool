@@ -975,13 +975,13 @@ function buildItems(){
       }
       if(c.type === 'year'){
         return `<div class="item-field">${label}` +
-          `<div class="currency-wrap" data-unitless><input class="currency-input has-suffix" type="text" inputmode="numeric" data-col="${esc(c.id)}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
+          `<div class="affix-wrap" data-unitless><input class="affix-input has-suffix" type="text" inputmode="numeric" data-col="${esc(c.id)}" data-min="1900" data-max="${year}" data-step="1" value="${esc(v == null ? '' : v)}" placeholder="e.g. ${year - 3}"></div>` +
           `<div class="derived" data-age="${esc(c.id)}">${ageNote(v, year)}</div></div>`;
       }
-      const input = `<input class="currency-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${esc(c.id)}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
+      const input = `<input class="affix-input has-suffix${(c.unit || '').length > 3 ? ' wide-suffix' : ''}" type="text" inputmode="decimal" data-col="${esc(c.id)}" data-kind="number" data-min="-${BIG}" data-max="${BIG}" value="${esc(showNum(v, 'number'))}">`;
       return `<div class="item-field">${label}` + (c.unit
-        ? `<div class="currency-wrap">${input}<span class="suffix">${esc(c.unit)}</span></div>`
-        : `<div class="currency-wrap" data-unitless>${input}</div>`) + '</div>';
+        ? `<div class="affix-wrap">${input}<span class="suffix">${esc(c.unit)}</span></div>`
+        : `<div class="affix-wrap" data-unitless>${input}</div>`) + '</div>';
     }).join('');
     card.innerHTML =
       `<div class="item-head"><span class="item-dot" aria-hidden="true"></span>` +
@@ -989,7 +989,7 @@ function buildItems(){
       SharedIcon.button('duplicate', 'Duplicate this item', 'item-dup') + SharedIcon.button('trash', 'Delete this item', 'item-del') + '</div>' +
       `<div class="item-fields">` +
       `<div class="item-field item-ask-field"><div class="field-label">Asking price</div>` +
-      `<div class="currency-wrap"><span class="prefix">${esc(s)}</span><input class="currency-input item-ask" type="text" inputmode="decimal" data-kind="price" data-min="0" data-max="${BIG}" value="${esc(showNum(it.asking, 'price'))}" placeholder="optional"></div></div>` +
+      `<div class="affix-wrap"><span class="prefix">${esc(s)}</span><input class="affix-input item-ask" type="text" inputmode="decimal" data-kind="price" data-min="0" data-max="${BIG}" value="${esc(showNum(it.asking, 'price'))}" placeholder="optional"></div></div>` +
       fields + '</div>';
     card.querySelector('.item-name').addEventListener('input', e => { it.name = e.target.value; touched(); });
     card.querySelector('.item-ask').addEventListener('input', e => { liveFmt(e.target, 'price'); it.asking = rawNum(e.target.value); touched(); });

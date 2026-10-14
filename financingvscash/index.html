@@ -162,9 +162,9 @@
       <div class="group-title">Purchase</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Cash Purchase Cost <i class="tip-icon" data-tip="The price if you pay in full today. Paying cash is scored at this price.">?</i></span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="purchaseCostPrefix">$</span>
-          <input class="currency-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
+          <input class="affix-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
         </div>
       </div>
       <div class="toggle-row">
@@ -173,9 +173,9 @@
       </div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Available Cash <i class="tip-icon" data-tip="Cash on hand today. It must cover the cash purchase cost, since this compares financing against genuinely paying cash.">?</i></span></div>
-        <div class="currency-wrap">
+        <div class="affix-wrap">
           <span class="prefix" id="availableCashPrefix">$</span>
-          <input class="currency-input fmt-num" id="availableCash" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
+          <input class="affix-input fmt-num" id="availableCash" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
         </div>
       </div>
     </div>
@@ -212,7 +212,7 @@
         </div>
         <div class="field-row" id="scIoPeriodsRow" style="display:none;">
           <div class="field-label"><span class="tip-wrap" id="scIoLabel">Interest-Only <i class="tip-icon" data-tip="How many repayments run before normal instalments begin. Set it to the full term to repay the principal in one lump at maturity.">?</i></span></div>
-          <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="scIoPeriods" type="number" min="0" max="3000" step="1" value="60"/><span class="suffix" id="scIoUnit">months</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="scIoPeriods" type="number" min="0" max="3000" step="1" value="60"/><span class="suffix" id="scIoUnit">months</span></div>
           <div class="field-sub" id="scIoSub"></div>
         </div>
         <div class="field-row" id="scFreqRow">
@@ -221,7 +221,7 @@
         </div>
         <div class="field-row" id="scTermRow">
           <div class="field-label"><span id="termLabel">Term </span></div>
-          <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/><span class="suffix" id="termUnit">months</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="scTerm" type="number" min="1" max="3000" step="1" value="60"/><span class="suffix" id="termUnit">months</span></div>
           <div class="field-sub" id="termSub">Number of monthly payments (e.g. 60 = 5 years).</div>
         </div>
         <div class="field-row" id="scRateModeRow">
@@ -233,7 +233,7 @@
         </div>
         <div class="field-row" id="scRateBlock">
           <div class="field-label"><span class="tip-wrap" id="scRateLabel">Finance Rate <i class="tip-icon" data-tip="The yearly interest rate on the loan, as the lender quotes it.">?</i></span></div>
-          <div class="currency-wrap"><input class="currency-input has-suffix" id="scRate" type="number" min="0" max="30" step="0.01" value="5"/><span class="suffix">%/yr</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix" id="scRate" type="number" min="0" max="30" step="0.01" value="5"/><span class="suffix">%/yr</span></div>
         </div>
         <div class="field-row" id="scRateScheduleRow" style="display:none;">
           <div class="field-label"><span class="tip-wrap">Rate Schedule <i class="tip-icon" data-tip="Consecutive periods from the first repayment to the end of the term. The last one stretches, and each rate change re-amortises the balance still owed.">?</i></span></div>
@@ -249,7 +249,7 @@
         </div>
         <div class="field-row" id="scKnownPaymentRow" style="display:none;">
           <div class="field-label"><span class="tip-wrap">Repayment Amount <i class="tip-icon" data-tip="What you hand over each period. The rate is solved from it, so you can price a deal that quotes an instalment and no rate.">?</i></span></div>
-          <div class="currency-wrap"><span class="prefix" id="scKnownPaymentPrefix">$</span><input class="currency-input fmt-num" id="scKnownPayment" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/></div>
+          <div class="affix-wrap"><span class="prefix" id="scKnownPaymentPrefix">$</span><input class="affix-input fmt-num" id="scKnownPayment" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/></div>
         </div>
         <div class="field-row" id="scPaymentScheduleRow" style="display:none;">
           <div class="field-label"><span class="tip-wrap">Repayment Schedule <i class="tip-icon" data-tip="Consecutive periods covering repayment 1 to the end of the term, each with its own amount. The last period stretches automatically.">?</i></span></div>
@@ -262,7 +262,7 @@
         </div>
         <div class="field-row" id="scResidualRow" style="display:none;">
           <div class="field-label"><span class="tip-wrap">Residual <i class="tip-icon" data-tip="The share of the financed amount still owed at the end and settled in one lump. A bigger residual buys smaller instalments and costs more interest.">?</i></span></div>
-          <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/><span class="suffix">% of loan</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="scResidualPct" type="number" min="0" max="99" step="1" value="0"/><span class="suffix">% of loan</span></div>
         </div>
         <div class="field-row" id="scPriceRow" style="display:none;"><div class="field-label"><span class="tip-wrap">Offer Price <i class="tip-icon" id="tipPriceType" data-tip="" data-tip-options>?</i></span></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scPriceVal" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/><select class="sel-input" id="scPriceType" style="min-width:70px;"><option value="amount">$</option><option value="pct">% of cash</option><option value="discount">% off</option></select></div>
@@ -279,7 +279,7 @@
           <select class="sel-input" id="scFeeTreatment"><option value="upfront" selected>Paid upfront from cash</option><option value="capitalise">Added to the loan</option><option value="discount">Deducted from the advance</option></select>
         </div>
         <div class="field-row" id="scAdminFeeRow"><div class="field-label"><span class="tip-wrap">Admin Fee <i class="tip-icon" data-tip="A fixed fee on every repayment, such as account-keeping. It runs the full term, so the total is this times the number of payments.">?</i></span></div>
-          <div class="currency-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="currency-input has-suffix wide-suffix fmt-num" id="scAdminFee" type="text" inputmode="decimal" data-min="0" data-max="1000000000" value="0"/><span class="suffix">/payment</span></div>
+          <div class="affix-wrap"><span class="prefix" id="scAdminFeePrefix">$</span><input class="affix-input has-suffix wide-suffix fmt-num" id="scAdminFee" type="text" inputmode="decimal" data-min="0" data-max="1000000000" value="0"/><span class="suffix">/payment</span></div>
         </div>
       </div>
       <div class="sc-editor-foot">
@@ -309,7 +309,7 @@
       </div>
       <div class="field-row" id="inflationRow" style="display:none;">
         <div class="field-label">Inflation Rate</div>
-        <div class="currency-wrap"><input class="currency-input has-suffix" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/><span class="suffix">%/yr</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/><span class="suffix">%/yr</span></div>
       </div>
     </div>
   </div>
@@ -330,7 +330,7 @@
       <div class="field-row"><div class="field-label">X-Axis Variable</div>
         <select class="sel-input" id="sensVarX"><option value="financeRate" id="sensVarXRateOpt">Finance Rate (%)</option><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarXTermOpt">Term (months)</option><option value="payment" id="sensVarXPayOpt">Repayment Amount</option><option value="residual" id="sensVarXResOpt">Residual (%)</option></select>
       </div>
-      <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensXStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensXEnd" type="number" step="0.5" min="0" max="100" value="10"/><span class="suffix sens-unit">%</span></div></div></div>
+      <div class="field-row"><div class="field-label">X Range</div><div class="inline-row"><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensXStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensXEnd" type="number" step="0.5" min="0" max="100" value="10"/><span class="suffix sens-unit">%</span></div></div></div>
     </div>
     <div id="sensYBlock" style="display:none;">
       <div class="field-group">
@@ -338,13 +338,13 @@
         <div class="field-row"><div class="field-label">Y-Axis Variable</div>
           <select class="sel-input" id="sensVarY"><option value="riskFreeRate">Risk-Free Rate (%)</option><option value="financeRate" id="sensVarYRateOpt">Finance Rate (%)</option><option value="downPayment">Down Payment (%)</option><option value="term" id="sensVarYTermOpt">Term (months)</option><option value="payment" id="sensVarYPayOpt">Repayment Amount</option><option value="residual" id="sensVarYResOpt">Residual (%)</option></select>
         </div>
-        <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensYStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="currency-wrap grow"><input class="currency-input has-suffix wide-suffix" id="sensYEnd" type="number" step="0.5" min="0" max="100" value="8"/><span class="suffix sens-unit">%</span></div></div></div>
+        <div class="field-row"><div class="field-label">Y Range</div><div class="inline-row"><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensYStart" type="number" step="0.5" min="0" max="100" value="1"/><span class="suffix sens-unit">%</span></div><span style="color:var(--muted);font-size:.85rem;">to</span><div class="affix-wrap grow"><input class="affix-input has-suffix wide-suffix" id="sensYEnd" type="number" step="0.5" min="0" max="100" value="8"/><span class="suffix sens-unit">%</span></div></div></div>
       </div>
     </div>
     <div class="field-group">
       <div class="group-title">Resolution</div>
       <div class="field-row"><div class="field-label"><span class="tip-wrap">Grid Resolution <i class="tip-icon" data-tip="How many values are tried along each axis. More points draw a smoother line.">?</i></span></div>
-        <div class="currency-wrap"><input class="currency-input has-suffix wide-suffix" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/><span class="suffix">points</span></div>
+        <div class="affix-wrap"><input class="affix-input has-suffix wide-suffix" id="sensSteps" type="number" min="5" max="50" step="1" value="20"/><span class="suffix">points</span></div>
       </div>
     </div>
   </div>
