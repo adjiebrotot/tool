@@ -600,6 +600,15 @@
     Array.prototype.forEach.call(document.querySelectorAll('#tableWrap tr[data-row]'), function(tr){ tr.classList.toggle('is-sel', app.sel.has(+tr.getAttribute('data-row'))); });
     document.body.classList.toggle('lf-sheet', app.sel.size > 0 && window.matchMedia('(max-width:1100px)').matches);
     document.body.classList.toggle('lf-has-sel', app.sel.size > 0);
+    // The inspector lives in the folded control card. As a sheet or over the
+    // full-screen diagram it is an overlay, held open only while something is
+    // selected; beside the diagram, opening it moves the diagram, so it opens
+    // once and stays open.
+    if(window.SharedCtrl){
+      var overlay = document.body.classList.contains('lf-sheet') || document.documentElement.classList.contains('sld-full-open');
+      if(app.sel.size && !overlay && !SharedCtrl.isOpen()) SharedCtrl.open();
+      SharedCtrl.hold('selection', app.sel.size > 0 && overlay);
+    }
     if(app.sel.size) showTab('element');
   };
 

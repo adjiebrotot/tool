@@ -125,6 +125,8 @@ function synthSeries(days = 900, seed = 7) {
 const browser = await chromium.launch();
 async function openPage(path) {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, serviceWorkers: 'block' });
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   await ctx.route('**', async route => {
     const url = route.request().url();
     if (url.startsWith(ORIGIN)) return route.continue();

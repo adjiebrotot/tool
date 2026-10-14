@@ -96,6 +96,8 @@ async function newContext(opts = {}) {
                         'THREE', 'ace', 'Hammer', 'ChartZoom', 'gtag'])
       if (!(name in window)) window[name] = stub(name);
     try { localStorage.clear(); } catch (e) {}
+    // The control card opens folded (SharedCtrl); these checks drive its fields.
+    try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {}
   });
   return ctx;
 }

@@ -70,6 +70,8 @@ const urlFor = file => ORIGIN + '/' + relative(ROOT, file).split('\\').join('/')
 
 const browser = await chromium.launch();
 const ctx = await browser.newContext();
+// The control card opens folded (SharedCtrl); these checks drive its fields.
+await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
 // No network here, so every CDN library is replaced by a self-returning stub:
 // the tools still run their render paths instead of dying on a missing global.
 await ctx.route('**', route => {

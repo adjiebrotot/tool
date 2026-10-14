@@ -433,6 +433,29 @@ stay reachable however far down the panel you are. Anything placed *before*
 .ctrl-panel.active { display: block; }
 ```
 
+### The card opens folded (SharedCtrl)
+
+A `.controls` card that is a direct child of `.layout` opens **folded**, so a
+reader lands on the answer, not on forty fields. shared.js does it; a tool writes
+nothing. Beside the results the card folds to a 56px "Inputs" rail (the open
+icon above the word, set vertically; no glyph, which would read as Settings) and the results take the width;
+stacked above them on a phone it folds to one "Inputs" bar. Open and Hide are one
+icon, two chevrons pointing the way the card moves: right or down to open, left or
+up to hide. The open icon lights up and pulses three times on arrival; there is no
+callout and no label on the button. Open, Hide sits at the end of the Quick Start
+row, beside save and open, so the fold adds no row of its own; the scenario
+buttons drop to a line of their own under it. The choice is kept per page
+on this device (`abt:ctrl:<path>`); nothing in the fold is a field, so the mini
+cache, scenario files and Share links never see it.
+
+Anything that needs the card on screen holds it open, then lets go:
+`SharedCtrl.hold('tour', true)` … `SharedCtrl.hold('tour', false)`. The tour
+does this for its whole run; the load flow inspector does it while something is
+selected in the sheet. `SharedCtrl.open()` opens it for good. A browser check that
+drives fields inside the card seeds the open state in its init script
+(`localStorage.setItem('abt:ctrl:' + location.pathname…, '1')`), as every check
+in `_ref/` does.
+
 A sidebar with four or more tabs stacks the icon above the label: add `stacked`
 to the tab bar (`<div class="ctrl-tabs stacked">`) and shared.css turns each
 button into a centred column. `borrowingcapacity/` and `financialfreedom/` do this.

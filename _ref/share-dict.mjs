@@ -94,6 +94,8 @@ const PAGES = [
 const browser = await chromium.launch();
 async function newPage() {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   await ctx.route('**', async route => {
     const url = route.request().url();
     if (url.startsWith(ORIGIN)) return route.continue();

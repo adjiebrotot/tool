@@ -150,6 +150,8 @@ const browser = await chromium.launch();
 
 async function newPage(viewport, { returning = true } = {}) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, acceptDownloads: true });
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   let worker = 0;
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: ORIGIN });
   await ctx.route('**', async route => {

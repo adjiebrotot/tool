@@ -33,6 +33,8 @@ const browser = await chromium.launch({args:['--allow-file-access-from-files']})
 
 async function open(rel){
   const page = await browser.newPage();
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await page.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   page.on('pageerror', e => { console.log('  ! pageerror on '+rel+': '+e.message); fail++; });
   await page.route('**/*', r=>{
     const u=r.request().url();
