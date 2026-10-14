@@ -127,6 +127,8 @@ const browser = await chromium.launch();
 
 async function newPage(viewport) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1 });
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   await ctx.route('**', async route => {
     const url = route.request().url();
     if (url.startsWith(ORIGIN)) return route.continue();

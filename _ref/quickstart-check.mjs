@@ -229,6 +229,8 @@ const browser = await chromium.launch();
 
 async function open(tool){
   const page = await browser.newPage();
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await page.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   page.on('pageerror', e => console.log('   PAGEERROR ' + tool + ': ' + String(e).split('\n')[0]));
   await page.route('**://*/**', r => r.request().url().startsWith('file:')
     ? r.continue()

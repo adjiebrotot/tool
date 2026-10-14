@@ -131,6 +131,8 @@ async function open(path){
   // A service worker's own fetches bypass page.route, so with one in control
   // (from the first reload on) a page could reach live feeds after all.
   const ctx = await browser.newContext({acceptDownloads: true, serviceWorkers: 'block'});
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));

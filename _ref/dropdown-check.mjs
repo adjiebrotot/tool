@@ -70,6 +70,8 @@ const urlFor = file => ORIGIN + '/' + relative(ROOT, file).split('\\').join('/')
 const browser = await chromium.launch();
 async function newContext(opts = {}) {
   const ctx = await browser.newContext(opts);
+  // The control card opens folded (SharedCtrl); these checks drive its fields.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
   await ctx.route('**', route => {
     const url = route.request().url();
     if (url.startsWith(ORIGIN)) return route.continue();

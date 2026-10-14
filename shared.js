@@ -4637,7 +4637,165 @@
   }
   global.SharedReach = { init: initReach };
 
+  /* ── SharedCtrl: the control card folds away ─────────────────────────────
+     A tool's .controls card opens folded, so the first thing a reader sees
+     is the answer, not forty fields. Beside the results it folds to a slim
+     rail; stacked above them (a phone) it folds to one bar. Either way the
+     button that opens it pulses on arrival, and until the reader has opened
+     it once a callout says what is inside. Their choice is kept per page on
+     this device.
+
+     Something that needs the card on screen holds it open for as long as it
+     needs it, then lets go, and the card returns to the reader's choice:
+
+         SharedCtrl.hold('tour', true);   …   SharedCtrl.hold('tour', false);
+
+     Nothing a tool saves lives in here: the buttons are not fields, so the
+     mini cache, a scenario file and a Share link never see the fold. */
+  function makeCtrl(){
+    var TEXT = {
+      en: { name: 'Controls', sub: 'Quick Start & inputs', show: 'Show', hide: 'Hide',
+            open: 'Show the controls', close: 'Hide the controls',
+            tip: '<b>Your controls are folded in here.</b> Open them for the Quick Start examples and every input.' },
+      id: { name: 'Kontrol', sub: 'Mulai Cepat & input', show: 'Buka', hide: 'Tutup',
+            open: 'Tampilkan kontrol', close: 'Sembunyikan kontrol',
+            tip: '<b>Kontrol dilipat di sini.</b> Buka untuk contoh Mulai Cepat dan semua input.' }
+    };
+    var GLYPH = '<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></svg>';
+    var card = null, layout = null, rail = null, head = null, tip = null;
+    var userOpen = false, holds = {}, shown = null, key = '', SEEN = 'abt:ctrl:seen', tipTimer = 0;
+
+    function pathKey(){
+      return 'abt:ctrl:' + global.location.pathname.replace(/index\.html?$/, '').replace(/\/+$/, '/');
+    }
+    function held(){ for (var k in holds) if (holds[k]) return true; return false; }
+    function read(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+    function write(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+
+    // Beside the results or stacked above them? Read the grid as the tool's
+    // own CSS lays it out, with the fold's narrow column taken off first.
+    function side(){
+      var had = layout.classList.contains('ctrl-folded');
+      if (had) layout.classList.remove('ctrl-folded');
+      var cols = getComputedStyle(layout).gridTemplateColumns.trim().split(/\s+/).length;
+      if (had) layout.classList.add('ctrl-folded');
+      layout.classList.toggle('ctrl-side', cols > 1);
+    }
+
+    function render(){
+      var open = userOpen || held();
+      if (open === shown) return;
+      var first = shown === null;
+      shown = open;
+      card.classList.toggle('ctrl-folded', !open);
+      layout.classList.toggle('ctrl-folded', !open);
+      rail.setAttribute('aria-expanded', 'false');
+      if (!open) attention();
+      else dismissTip();
+      // The results just gained or lost the card's width: let anything that
+      // sizes itself on resize (a canvas, a sticky card's cap) measure again.
+      if (!first) global.dispatchEvent(new Event('resize'));
+    }
+    function set(open, save){
+      holds = {};
+      userOpen = !!open;
+      if (save) write(key, userOpen ? '1' : '0');
+      if (userOpen) write(SEEN, '1');
+      render();
+    }
+
+    function attention(){
+      rail.classList.remove('ctrl-attn');
+      void rail.offsetWidth;            // restart the pulse
+      rail.classList.add('ctrl-attn');
+      if (read(SEEN) !== '1' && tip) {
+        tip.hidden = false;
+        clearTimeout(tipTimer);
+        tipTimer = setTimeout(dismissTip, 10000);
+      }
+    }
+    function dismissTip(){ if (tip) tip.hidden = true; }
+
+    function init(){
+      if (card || EMBED) return;
+      card = document.querySelector('.layout > .controls');
+      if (!card) return;
+      layout = card.parentElement;
+      var t = TEXT[pageLang()];
+      if (!card.id) card.id = 'ctrlCard';
+      key = pathKey();
+      userOpen = read(key) === '1';
+
+      rail = document.createElement('button');
+      rail.type = 'button';
+      rail.className = 'ctrl-fold-rail';
+      rail.setAttribute('aria-controls', card.id);
+      rail.setAttribute('aria-label', t.open);
+      rail.setAttribute('data-no-abbr', '');
+      rail.innerHTML = GLYPH +
+        '<span class="ctrl-fold-text"><span class="ctrl-fold-name">' + t.name + '</span>' +
+        '<span class="ctrl-fold-sub">' + t.sub + '</span></span>' +
+        '<span class="ctrl-fold-go"><span class="ctrl-fold-word">' + t.show + '</span><span class="ctrl-fold-chev" aria-hidden="true"></span></span>';
+      rail.addEventListener('click', function(){ set(true, true); });
+      rail.addEventListener('animationend', function(){ rail.classList.remove('ctrl-attn'); });
+
+      head = document.createElement('div');
+      head.className = 'ctrl-fold-head';
+      head.setAttribute('data-no-abbr', '');
+      head.innerHTML = '<span class="ctrl-fold-label">' + GLYPH + '<span>' + t.name + '</span></span>' +
+        '<button type="button" class="ctrl-fold-hide" aria-expanded="true" aria-controls="' + card.id + '" aria-label="' + t.close + '">' +
+        '<span>' + t.hide + '</span><span class="ctrl-fold-chev" aria-hidden="true"></span></button>';
+      head.querySelector('button').addEventListener('click', function(){ set(false, true); });
+
+      if (read(SEEN) !== '1') {
+        tip = document.createElement('div');
+        tip.className = 'ctrl-fold-tip';
+        tip.setAttribute('role', 'status');
+        tip.hidden = true;
+        tip.innerHTML = t.tip;
+        tip.addEventListener('click', function(){ set(true, true); });
+      }
+
+      card.insertBefore(head, card.firstChild);
+      card.insertBefore(rail, card.firstChild);
+      if (tip) card.appendChild(tip);
+      card.classList.add('ctrl-foldable');
+
+      // A field the browser flags as invalid is one the reader must see.
+      card.addEventListener('invalid', function(){ if (!(userOpen || held())) { userOpen = true; render(); } }, true);
+
+      var queued = false;
+      global.addEventListener('resize', function(){
+        if (queued) return;
+        queued = true;
+        requestAnimationFrame(function(){ queued = false; side(); });
+      });
+      side();
+      render();
+    }
+
+    function hold(reason, on){
+      if (!card) return;
+      if (!!holds[reason] === !!on) return;
+      holds[reason] = !!on;
+      render();
+    }
+
+    return {
+      init: init, hold: hold,
+      open: function(){ if (card) set(true, true); },
+      close: function(){ if (card) set(false, true); },
+      isOpen: function(){ return !!shown; }
+    };
+  }
+  global.SharedCtrl = makeCtrl();
+  // The card is already parsed (shared.js loads at the end of the body), so
+  // fold it now, before the tool's own script draws anything beside it.
+  global.SharedCtrl.init();
+
   function initShared(){
+    global.SharedCtrl.init();
     global.SharedIcon.hydrate();
     global.SharedShare.upgrade(document);
     initReach();

@@ -323,6 +323,8 @@
   function start() {
     if (els) return; // already running
     try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+    // Most steps point into the control card, so it stays open for the tour.
+    if (window.SharedCtrl) window.SharedCtrl.hold('tour', true);
     // Take the snapshot before the first step fills anything in.
     userTab = activeTabName();
     userState = null;
@@ -348,6 +350,7 @@
     userState = null;
     openTab(userTab);
     userTab = null;
+    if (window.SharedCtrl) window.SharedCtrl.hold('tour', false);
   }
 
   /* ---- First-visit detection & wiring ------------------------------- */
