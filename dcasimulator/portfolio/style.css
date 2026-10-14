@@ -215,6 +215,9 @@ body.opt-modal-open{overflow:hidden}
 .opt-modal-close .ico{width:18px;height:18px}
 .opt-modal-body{padding:12px 20px 4px}
 .opt-modal-sub{margin:0 0 4px;font-size:.8rem;color:var(--muted);line-height:1.45}
+.opt-freq-demo{margin:4px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-variant-numeric:tabular-nums}
+.opt-freq-demo li{display:contents}
+.opt-freq-demo .is-now{color:var(--text);font-weight:600}
 .opt-range-row{display:flex;gap:12px}
 .opt-range-row[hidden]{display:none}
 .opt-modal .label-note{color:var(--muted);font-weight:400;font-size:.78rem}
@@ -225,7 +228,7 @@ body.opt-modal-open{overflow:hidden}
 .opt-preview{margin:6px 0 8px;font-size:.78rem;color:var(--muted);line-height:1.45}
 .opt-preview .bad{color:var(--warning-text);font-weight:700}
 .opt-modal-foot{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--border);background:var(--panel)}
-.opt-modal-note{margin-right:auto;font-size:.74rem;color:var(--muted)}
+#optRemoveBtn{margin-right:auto}
 .opt-modal-foot .btn-primary,.opt-modal-foot .btn-secondary{padding:8px 16px;flex-shrink:0;white-space:nowrap}
 
 /* The optimisation chart: what it ranks by sits beside it, and two swept
