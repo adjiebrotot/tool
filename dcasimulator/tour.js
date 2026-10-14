@@ -1,35 +1,32 @@
 /* Guided-tour config for the DCA Scenario Explorer (single asset).
    The shared engine (../tour-shared.js) reads this object. v2 follows the
    redesign: Currency on the Data tab, Settings renamed Assumptions, and the
-   answer and summary above the charts, so readers who took v1 see it again. */
+   answer and summary above the charts, so readers who took v1 see it again.
+   v3 trims every step to a lead line and a short list. */
 window.__TOUR = {
-  seenKey: 'dca-tour-v2-seen',
+  seenKey: 'dca-tour-v3-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
       target: null,
       title: '👋 Welcome to the DCA Scenario Explorer',
-      body: 'This quick tour shows how to backtest and compare ' +
-            '<strong>dollar-cost averaging</strong> strategies across different ' +
-            'securities, for example an equity ETF versus a money market fund, so you ' +
-            'can see which asset would have been more worth it. It takes about a minute.'
+      body: 'Backtest <strong>dollar-cost averaging</strong> into different assets and ' +
+            'see which would have grown more. About a minute.'
     },
     {
       target: '.quick-start-row',
-      title: '① Start from a worked example',
-      body: 'One click loads a complete comparison and runs it for you: ' +
-            '<strong>Monthly vs Weekly</strong>, <strong>Equity vs Money Market</strong>, ' +
-            'or <strong>Stock vs ETF</strong>. The fastest way to see how the DCA ' +
-            'simulator works before building your own.'
+      title: '① Start from an example',
+      body: 'One click loads a full comparison and runs it:' +
+            '<ul><li>Monthly vs Weekly</li>' +
+            '<li>Equity vs Money Market</li>' +
+            '<li>Stock vs ETF</li></ul>'
     },
     {
       target: '.ctrl-tabs',
-      title: '② Data, Scenarios, Assumptions',
-      body: 'Everything is organised into three tabs. In <strong>Data</strong> you pick ' +
-            'the currency and load the market data, in <strong>Scenarios</strong> you ' +
-            'define each DCA strategy, and in <strong>Assumptions</strong> you set when ' +
-            'orders fill, the seed behind simulated assets, and the risk-free rate for ' +
-            'the advanced metrics.'
+      title: '② Three tabs',
+      body: '<ul><li><strong>Data</strong>: currency and prices</li>' +
+            '<li><strong>Scenarios</strong>: one DCA plan each</li>' +
+            '<li><strong>Assumptions</strong>: order fills, simulation seed, risk-free rate</li></ul>'
     },
     {
       target: '#tab-data',
@@ -38,11 +35,10 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="data"]');
         if (tab) tab.click();
       },
-      title: '③ Load real or simulated data',
-      body: 'Enter tickers such as <code>SPY</code>, <code>AAPL</code>, or ' +
-            '<code>AAA.AX</code> to pull real Yahoo Finance prices, or switch to ' +
-            '<strong>Simulated</strong> to model an asset by expected return and ' +
-            'volatility. List every ticker you want and load them in one go.'
+      title: '③ Load the data',
+      body: '<ul><li>Real prices: list tickers such as <code>SPY</code> or ' +
+            '<code>AAA.AX</code> and load them together</li>' +
+            '<li><strong>Simulated</strong>: model an asset from its return and volatility</li></ul>'
     },
     {
       target: '#simBtn',
@@ -53,10 +49,9 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="securities"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Run the simulation',
-      body: 'Set the same contribution and schedule for each scenario, then click ' +
-            '<strong>Simulate</strong>. Everything runs locally in your browser, no ' +
-            'account and no paid software needed.'
+      title: '④ Simulate',
+      body: 'Set each scenario’s contribution and schedule, then press ' +
+            '<strong>Simulate</strong>. It all runs in your browser.'
     },
     {
       target: '.summary-row',
@@ -64,21 +59,18 @@ window.__TOUR = {
         // Describing a Final Summary means there has to be one on screen.
         if (window.__DCA_TOUR) window.__DCA_TOUR.ensureResults();
       },
-      title: '⑤ Read the answer, then compare',
-      body: 'The sentence above the summary says which scenario ended highest and by how ' +
-            'much, or, when they put different amounts in, which earned the most on what ' +
-            'went in. The <strong>Final Summary</strong> gives each one\u2019s final value, ' +
-            'return on investment (ROI), total topped up and trades, plus Sharpe, Sortino ' +
-            'and CAGR under <strong>Advanced metrics</strong>. The charts follow; export any ' +
-            'of them, and open the breakdown with its <strong>chevron</strong> or download ' +
-            'it as CSV.'
+      title: '⑤ Read the result',
+      body: '<ul><li>The sentence on top names the winner and by how much</li>' +
+            '<li><strong>Final Summary</strong>: value, ROI and trades, with Sharpe and ' +
+            'CAGR under Advanced metrics</li>' +
+            '<li>Charts follow; the breakdown table opens from its chevron or downloads as CSV</li></ul>'
     },
     {
       target: null,
       title: '✅ You are all set',
-      body: 'That is the workflow. Power user comparing whole portfolios? Try the ' +
-            '<strong>Portfolio DCA Simulator</strong> linked near the top. Replay this ' +
-            'tour any time via the <strong>🧭</strong> button in the header.'
+      body: '<ul><li>Comparing whole portfolios? Try the <strong>Portfolio DCA ' +
+            'Simulator</strong> linked near the top</li>' +
+            '<li>Replay this tour with the 🧭 button</li></ul>'
     }
   ]
 };

@@ -50,7 +50,7 @@ const browser = await chromium.launch({args:['--allow-file-access-from-files']})
 async function open(url){
   const page = await (await browser.newContext({viewport:{width:1600,height:1000}})).newPage();
   page.on('pageerror', e=>{ console.log('PAGEERROR:', e.message); fail++; });
-  await page.addInitScript(()=>{ try{ localStorage.clear(); localStorage.setItem('rvos-tour-v2-seen','1'); localStorage.setItem('rvo-tour-v2-seen','1'); localStorage.setItem('rvo-tour-v3-seen','1'); localStorage.setItem('rvo-id-tour-v3-seen','1'); }catch(e){} });
+  await page.addInitScript(()=>{ try{ localStorage.clear(); localStorage.setItem('rvos-tour-v2-seen','1'); localStorage.setItem('rvo-tour-v2-seen','1'); localStorage.setItem('rvo-tour-v3-seen','1'); localStorage.setItem('rvo-id-tour-v3-seen','1'); localStorage.setItem('rvos-tour-v3-seen','1'); localStorage.setItem('rvo-tour-v4-seen','1'); localStorage.setItem('rvo-id-tour-v4-seen','1'); }catch(e){} });
   await page.route('**/*', route=>{
     const u=route.request().url();
     if(u.startsWith('file://')) return route.continue();

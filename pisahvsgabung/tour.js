@@ -2,24 +2,24 @@
    The shared engine (../tour-shared.js) reads this object. v2: the tour
    follows the redesigned page (Quick Start is the way back to the start,
    Household and PTKP & Brackets tabs, the answer sentence, the table behind
-   Show table), so readers who took v1 are offered it again. */
+   Show table), so readers who took v1 are offered it again. v3 trims every
+   step to a lead line and a short list. */
 window.__TOUR = {
-  seenKey: 'pvg-tour-v2-seen',
+  seenKey: 'pvg-tour-v3-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
       target: null,
       title: '👋 Welcome to Pisah vs Gabung Harta',
-      body: 'This quick tour shows how to compare <strong>Pisah Harta</strong> and ' +
-            '<strong>Gabung Harta</strong> PPh 21 for a married couple, so you can see which ' +
-            'filing scheme results in lower total tax. It takes about a minute.'
+      body: 'Find which way a married couple files PPh 21 for <strong>less tax</strong>: ' +
+            'Pisah Harta or Gabung Harta. About a minute.'
     },
     {
       target: '.quick-start-row',
       title: '① Start from an example',
-      body: 'Pick a worked household. <strong>Equal incomes, no children</strong> is the example ' +
-            'the page opens with, so it also takes you back to the start. Every example puts PTKP ' +
-            'and the brackets back to the statutory values.'
+      body: '<ul><li>Each loads a worked household</li>' +
+            '<li>Equal incomes, no children is the starting example</li>' +
+            '<li>Every example resets PTKP and brackets to the law</li></ul>'
     },
     {
       target: '#tab-inputs',
@@ -28,10 +28,10 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="inputs"]');
         if (tab) tab.click();
       },
-      title: '② Describe your household',
-      body: 'Tap the number of <strong>dependants</strong>, then enter income either as a ' +
-            '<strong>total and the wife\'s share</strong> or <strong>each spouse</strong> on their ' +
-            'own, with any deductions (pengurang). Every amount is rupiah a year.'
+      title: '② Your household',
+      body: '<ul><li>Number of <strong>dependants</strong></li>' +
+            '<li>Income as a total and the wife\'s share, or per spouse</li>' +
+            '<li>Any deductions (pengurang); all in rupiah a year</li></ul>'
     },
     {
       target: '#tab-advanced',
@@ -41,9 +41,8 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="advanced"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '③ Check PTKP and brackets',
-      body: 'This is <strong>PTKP &amp; Brackets</strong>, now open for you. The PTKP amounts and the PPh 21 ' +
-            'brackets start at the statutory values; change them only to model a different rule.'
+      title: '③ PTKP & Brackets',
+      body: 'Set to the statutory values. Change them only to model a different rule.'
     },
     {
       target: '#verdict',
@@ -52,36 +51,34 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="inputs"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Read the answer',
-      body: 'The sentence at the top says whether <strong>Pisah Harta</strong> or <strong>Gabung ' +
-            'Harta</strong> is cheaper for your household and by how much a year, then where the ' +
-            'crossover sits.'
+      title: '④ The answer',
+      body: '<ul><li>Which scheme is <strong>cheaper</strong>, and by how much a year</li>' +
+            '<li>Where the crossover sits</li></ul>'
     },
     {
       target: '.metrics',
-      title: '⑤ The figures behind it',
-      body: 'The first card is the tax saving, in the colour of the cheaper scheme. The other two are ' +
-            'each scheme\'s total tax a year and its effective rate.'
+      title: '⑤ The figures',
+      body: '<ul><li>Tax saving, in the cheaper scheme\'s colour</li>' +
+            '<li>Each scheme\'s total tax and effective rate</li></ul>'
     },
     {
       target: '.chart-card',
-      title: '⑥ Compare across salaries',
-      body: 'The charts run the household salary from Rp 100 million to Rp 5 billion a year at your ' +
-            'split. Blue is Pisah Harta and gold is Gabung Harta; the crossover analysis under the ' +
-            'second chart says where one becomes cheaper than the other.'
+      title: '⑥ Across salaries',
+      body: '<ul><li>Household salary from Rp 100 million to Rp 5 billion, at your split</li>' +
+            '<li>Blue is Pisah, gold is Gabung</li>' +
+            '<li>The crossover note under the second chart says where they swap</li></ul>'
     },
     {
       target: '#detailSection',
-      title: '⑦ Open the detail',
-      body: 'The <strong>chevron</strong> opens the tax at each salary, and <strong>CSV</strong> ' +
-            'downloads it whether the table is open or not. The page ends with what the calculation ' +
-            'assumes.'
+      title: '⑦ The detail',
+      body: '<ul><li>The chevron opens tax at each salary</li>' +
+            '<li><strong>CSV</strong> downloads it either way</li></ul>'
     },
     {
       target: null,
       title: '✅ You are all set',
-      body: 'That is the whole workflow, free, private and with no account. Replay this tour any ' +
-            'time via the <strong>🧭</strong> button in the header.'
+      body: '<ul><li>Free, private, no account</li>' +
+            '<li>Replay this tour with the 🧭 button</li></ul>'
     }
   ]
 };

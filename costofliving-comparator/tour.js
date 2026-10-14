@@ -7,7 +7,7 @@
    city" placeholder. The steps below name those two cities out loud, so
    the seed always applies: whatever was on screen before is replaced,
    and the tour never describes one pair of cities while showing
-   another. */
+   another. v3 trims every step to a lead line and a short list. */
 function colSeedSimple(){
   if (window.__COL_TOUR) window.__COL_TOUR.seedSimple();
 }
@@ -15,7 +15,7 @@ function colSeedDetailed(){
   if (window.__COL_TOUR) window.__COL_TOUR.seedDetailed();
 }
 window.__TOUR = {
-  seenKey: 'col-tour-v2-seen',
+  seenKey: 'col-tour-v3-seen',
   launchLabel: '🧭 Take a tour',
   // The steps overwrite the comparison on screen, so hand back whatever the
   // user had when the tour ends, however it ends.
@@ -29,59 +29,48 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Welcome to the Cost of Living Comparator',
-      body: 'This quick tour shows you how to compare the cost of living between two ' +
-            'cities and see how far your salary really goes before you relocate or ' +
-            'negotiate pay. We will use a <strong>Jakarta → Perth</strong> example as we ' +
-            'go. It takes about a minute, and you can skip it any time.'
+      body: 'See how far your salary goes in <strong>another city</strong>. We will use ' +
+            'Jakarta \u2192 Perth as the example. About a minute.'
     },
     {
       target: '#modeCard',
       onEnter: colSeedSimple,
-      title: '① Choose what you want to know',
-      body: 'Set <strong>Detail</strong> to <strong>Simple</strong> or <strong>Detailed</strong>, then whether you ' +
-            'want to know how much you <strong>can save</strong> or how much you ' +
-            '<strong>need to earn</strong> to keep the same lifestyle. You can also ' +
-            'include or exclude housing, handy when rent is covered by an employer.'
+      title: '① Choose the question',
+      body: '<ul><li><strong>Detail</strong>: Simple or Detailed</li>' +
+            '<li>How much you <strong>can save</strong>, or how much you ' +
+            '<strong>need to earn</strong></li>' +
+            '<li>Include housing or leave it out</li></ul>'
     },
     {
       target: '#simpleCityCard',
       onEnter: colSeedSimple,
-      title: '② Pick your two cities',
-      body: 'Choose a <strong>From</strong> city and a <strong>To</strong> city from ' +
-            '500+ locations. We have loaded <strong>Jakarta → Perth</strong> for you ' +
-            'here. Different currencies are converted automatically so the comparison ' +
-            'stays fair.'
+      title: '② Pick two cities',
+      body: '<ul><li>A <strong>From</strong> and a <strong>To</strong> city, from 500+</li>' +
+            '<li>Currencies convert automatically</li></ul>'
     },
     {
       target: '#analysisArea',
       onEnter: colSeedSimple,
-      title: '③ Read your results',
-      body: 'The sentence at the top is the answer: how much more or less you would save ' +
-            'each month in the other city, or the salary you would need there. The two ' +
-            'cities follow side by side, every amount per month. Perfect for relocation ' +
-            'planning, a pay negotiation, or a geoarbitrage decision. ' +
-            '<strong>What this assumes</strong>, under the results, opens from its chevron ' +
-            'to list what the estimate rests on.'
+      title: '③ Read the result',
+      body: '<ul><li>The sentence on top is the answer: the saving gap, or the salary needed</li>' +
+            '<li>Both cities follow side by side, per month</li>' +
+            '<li>What this assumes opens from its chevron</li></ul>'
     },
     {
       target: '#analysisArea',
       onEnter: colSeedDetailed,
-      title: '④ Go line-by-line with Detailed mode',
-      body: 'Switch to <strong>Detailed</strong> for a full breakdown: add as many ' +
-            'destination cities as you like and split spending into <strong>rent, ' +
-            'groceries, eating out, utilities</strong> and more. Every category is ' +
-            'estimated across cities from its own index, and you can override any figure. ' +
-            'Tick <strong>At a custom frequency</strong> to enter a row per week or year, ' +
-            'or as a price per meal, kWh, litre or trip. ' +
-            'The same Jakarta → Perth example is now shown category by category.'
+      title: '④ Detailed mode',
+      body: 'The same example, category by category:' +
+            '<ul><li>Add more destination cities</li>' +
+            '<li>Split spending into rent, groceries, utilities and more; override any figure</li>' +
+            '<li>At a custom frequency: enter a row per week, year, meal or trip</li></ul>'
     },
     {
       target: null,
       title: '✅ You are all set',
-      body: 'That is the whole workflow. The <strong>Jakarta → Perth</strong> example ' +
-            'stays loaded, so swap in your own cities and numbers straight over the top ' +
-            'of it. Everything runs privately in your browser, free, with no account. ' +
-            'Replay this tour any time via the <strong>🧭</strong> button in the header.'
+      body: '<ul><li>Swap in your own cities over the example</li>' +
+            '<li>Everything stays in your browser</li>' +
+            '<li>Replay this tour with the 🧭 button</li></ul>'
     }
   ]
 };

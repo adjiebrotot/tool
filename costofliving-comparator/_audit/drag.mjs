@@ -71,7 +71,7 @@ const estimate=(amt,from,to,cat)=>amt/RATE[from.currency]*(index(to,cat)/index(f
 const browser = await chromium.launch();
 const page = await (await browser.newContext({viewport:{width:1700,height:1000}})).newPage();
 page.on('pageerror', e=>{ console.log('PAGEERROR:', e.message); fail++; });
-await page.addInitScript(()=>{ try{ localStorage.setItem('col-tour-v1-seen','1'); localStorage.setItem('col-tour-v2-seen','1'); }catch(e){} });
+await page.addInitScript(()=>{ try{ localStorage.setItem('col-tour-v1-seen','1'); localStorage.setItem('col-tour-v2-seen','1'); localStorage.setItem('col-tour-v3-seen','1'); }catch(e){} });
 // No network: the live-rate feeds fail and the bundled rates are used.
 await page.route('**/*', route=>route.request().url().includes('127.0.0.1') ? route.continue() : route.fulfill({contentType:'application/javascript', body:'/* stub */'}));
 await page.goto(PAGE, {waitUntil:'load'});

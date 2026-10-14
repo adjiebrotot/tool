@@ -1,25 +1,23 @@
 /* Guided-tour config for the Rent vs Own tool.
    The shared engine (../tour-shared.js) reads this object. Every step has to
-   describe what is actually on screen, so a step about a tab opens it first. */
+   describe what is actually on screen, so a step about a tab opens it first.
+   v4 trims every step to a lead line and a short list. */
 window.__TOUR = {
-  seenKey: 'rvo-tour-v3-seen',
+  seenKey: 'rvo-tour-v4-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
       target: null,
       title: '👋 Welcome to Rent vs Own',
-      body: 'This quick tour shows how to model the long-term outcome of ' +
-            '<strong>renting versus buying a home</strong>, comparing cash, equity and ' +
-            'net wealth over time so you can see which leaves you better off. It takes ' +
-            'about a minute.'
+      body: 'See whether <strong>renting or buying</strong> a home leaves you better off ' +
+            'over time. About a minute.'
     },
     {
       target: '.quick-start-row',
-      title: '① Start from a city and a home',
-      body: 'Search a city such as <strong>Perth</strong>, <strong>Tokyo</strong> or ' +
-            '<strong>Jakarta</strong>, then pick a home that city really has, from a ' +
-            'studio to a four-bedroom house. It loads local prices, rents and loan terms ' +
-            'you can then change to your own numbers.'
+      title: '① Start from a city',
+      body: '<ul><li>Search a city such as Perth, Tokyo or Jakarta</li>' +
+            '<li>Pick a home it really has, studio to four-bedroom</li>' +
+            '<li>Local prices, rents and loan terms fill in; change any of them</li></ul>'
     },
     {
       target: '.ctrl-tabs',
@@ -27,51 +25,42 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="own"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '② The figures you know first',
-      body: '<strong>Home</strong> holds the price, the down payment, the mortgage and ' +
-            'the costs of owning. <strong>Rent</strong> holds the rent, its costs, and an ' +
-            'optional <strong>Rent-Then-Buy</strong> scenario. <strong>Assumptions</strong> holds ' +
-            'the guesses about the future: the risk-free rate your savings earn, house price ' +
-            'growth, and the time horizon. Every field shows its unit, and a ' +
-            'slider\'s figure can be clicked and typed.'
+      title: '② Three tabs',
+      body: '<ul><li><strong>Home</strong>: price, down payment, mortgage, owning costs</li>' +
+            '<li><strong>Rent</strong>: rent, its costs, optional Rent-Then-Buy</li>' +
+            '<li><strong>Assumptions</strong>: savings rate, price growth, time horizon</li></ul>'
     },
     {
       target: '#verdict',
-      title: '③ The answer in one sentence',
-      body: 'Which comes out ahead, by how much and after how long, and the breakeven year ' +
-            'when owning pulls ahead for good. Blue is owning and gold is renting, here and on ' +
-            'the chart.'
+      title: '③ The answer',
+      body: '<ul><li>Which comes out ahead, by how much, after how long</li>' +
+            '<li>Blue is owning, gold is renting</li></ul>'
     },
     {
       target: '.metrics',
-      title: '④ The key numbers',
-      body: 'The <strong>equity difference</strong> between owning and renting at the end, ' +
-            'the <strong>breakeven year</strong>, then the initial cash both start with and the ' +
-            'monthly housing budget both share.'
+      title: '④ Key numbers',
+      body: '<ul><li><strong>Equity difference</strong> at the end</li>' +
+            '<li><strong>Breakeven year</strong>, when owning pulls ahead for good</li>' +
+            '<li>The starting cash and monthly budget both paths share</li></ul>'
     },
     {
       target: '.chart-card',
-      title: '⑤ Compare over time',
-      body: 'Switch the chart between <strong>Net equity</strong>, <strong>Liquid ' +
-            'cash</strong> and <strong>Accumulated cost</strong> to see how each path ' +
-            'plays out year by year. The ? beside them says what each one means. Export any ' +
-            'view as SVG or PNG.'
+      title: '⑤ Over time',
+      body: '<ul><li>Switch between Net equity, Liquid cash and Accumulated cost</li>' +
+            '<li>The ? explains each; export as SVG or PNG</li></ul>'
     },
     {
       target: '#detailSection',
-      title: '⑥ The details, when you want them',
-      body: 'The year-by-year cashflow for owning, renting and renting first sits behind ' +
-            'its <strong>chevron</strong>, and the CSV button exports it either way. ' +
-            '<strong>What this assumes</strong>, below it, opens the same way to list what ' +
-            'the model does and does not count.'
+      title: '⑥ The details',
+      body: '<ul><li>Year-by-year cashflow opens from its chevron; CSV exports it</li>' +
+            '<li>What this assumes, below, lists what the model counts</li></ul>'
     },
     {
       target: null,
       title: '✅ You are all set',
-      body: 'That is the workflow, and it runs privately in your browser, free. Want to ' +
-            'compare many scenarios at once? Try the <strong>Sensitivity Analysis ' +
-            'Tool</strong> linked near the top. Replay this tour any time via ' +
-            'the <strong>🧭</strong> button.'
+      body: '<ul><li>Many scenarios at once? Try the <strong>Sensitivity Analysis ' +
+            'Tool</strong> linked near the top</li>' +
+            '<li>Replay this tour with the 🧭 button</li></ul>'
     }
   ]
 };

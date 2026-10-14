@@ -78,7 +78,7 @@ const browser = await pw.chromium.launch();
 async function open(keepStorage){
   const ctx = keepStorage || await browser.newContext({viewport:{width:1500, height:1000}});
   if(!keepStorage){
-    await ctx.addInitScript(() => { if(!sessionStorage.getItem('init')){ try{ localStorage.clear(); localStorage.setItem('rvos-tour-v2-seen','1'); sessionStorage.setItem('init','1'); }catch(e){} } });
+    await ctx.addInitScript(() => { if(!sessionStorage.getItem('init')){ try{ localStorage.clear(); localStorage.setItem('rvos-tour-v2-seen','1'); localStorage.setItem('rvos-tour-v3-seen','1'); sessionStorage.setItem('init','1'); }catch(e){} } });
     await ctx.route('**', route => {
       const u = route.request().url();
       if(u.startsWith(ORIGIN)) return route.continue();
