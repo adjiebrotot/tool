@@ -1997,7 +1997,7 @@ function simulatePortfolio(p, assets, common, rfPx, exec){
 
      - plain numbers: the top-up amount and its yearly increase, the risk-free
        rate, both fees, and every number a deploy trigger reads;
-     - fixed lists: Trade at, the momentum lookback, a trigger's Frequency, its
+     - fixed lists: the momentum lookback, a trigger's Frequency, its
        From anchor within its own family (Month or Week open, or Previous top or
        bottom, the two that share a lookback), and the top-up and rebalance
        schedules (period, day of month, weekday, fortnight week, quarter months,
@@ -2013,7 +2013,7 @@ function simulatePortfolio(p, assets, common, rfPx, exec){
 
    Left out on purpose: the method, Rebalance Timing, the reserve, the risk-free
    mode and ticker, a trigger's type and direction (each swaps the fields around
-   it), the seed and the dates.
+   it), Trade at, the seed and the dates.
 
    Every spec is built from the portfolio as it stands, so `optSpec` returning
    null means "not sweepable here" (a weight under a weight-free method, a

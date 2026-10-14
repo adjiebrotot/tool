@@ -68,7 +68,7 @@ same checks run either way — only the printed numbers differ.
   settings of one portfolio. Its promise is that a tested value means exactly what
   the same value typed into the form means, so for every setting the mode offers
   (top-up amount, yearly increase and the whole top-up schedule; the rebalance
-  schedule; risk-free rate, fees and Trade at; target and rank weights with their
+  schedule; risk-free rate and fees; target and rank weights with their
   slack; the momentum lookback; and every trigger setting) it opens a sweep, reads
   each sampled value's seven figures off the chart (the surface for two settings)
   and its daily breakdown CSV, then opens the same scenario in plain Simulate mode,
@@ -77,7 +77,8 @@ same checks run either way — only the printed numbers differ.
   same CSV cell for cell. The slack split is also lifted from the page and fuzzed
   against an independently written one. Then the contracts: which fields offer a
   gauge under each method (trigger type and direction, the method, the reserve and
-  Rebalance Timing never do), a swept setting dropped when its field goes away, a
+  Rebalance Timing never do, nor does Trade at), list values picked one by one in
+  the editor, a swept setting dropped when its field goes away, a
   period and its day never swept together, the two-setting limit, the 625-run cap,
   the locked portfolio bar, Cancel, saved state (reload, file, an old file, a file
   naming settings that no longer exist) and no page errors.
