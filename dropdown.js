@@ -230,8 +230,11 @@
        opts.placeholder   the field's placeholder ("Search…")
        opts.display(o)    the field's text for the chosen option (its label)
        opts.minWidth      the list's least width, for a narrow field (240)
-     Every row matches on its value and its label, accents and case aside;
-     options whose value starts with the search come first. */
+       opts.chip(o)       a short tag for the row's .combo-chip (a ticker's
+                          full name); the option's data-chip by default
+     Every row matches on its value, its label and its chip, accents and case
+     aside; options whose value starts with the search come first. With no
+     search typed, an <optgroup>'s label heads its rows. */
   var fold = function(t){ return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
   var comboN = 0;
   function searchable(s, opts){
@@ -262,6 +265,7 @@
 
     function chosen(){ return s.selectedIndex >= 0 ? s.options[s.selectedIndex] : null; }
     function label(o){ return o ? (opts.display ? opts.display(o) : o.textContent) : ''; }
+    function chipOf(o){ return String((opts.chip ? opts.chip(o) : o.getAttribute('data-chip')) || ''); }
     function sync(){
       input.hidden = s.hidden;
       input.disabled = s.disabled;
@@ -280,12 +284,21 @@
         var v = fold(o.value);
         if (!q) { hits.push(o); continue; }
         if (v.indexOf(q) === 0) lead.push(o);
-        else if ((v + ' ' + fold(o.textContent)).indexOf(q) >= 0) hits.push(o);
+        else if ((v + ' ' + fold(o.textContent) + ' ' + fold(chipOf(o))).indexOf(q) >= 0) hits.push(o);
       }
       hits = lead.concat(hits);
       box.textContent = '';
-      var cur = chosen();
+      var cur = chosen(), group = null;
       hits.forEach(function(o){
+        var g = !q && o.parentNode && o.parentNode.tagName === 'OPTGROUP' ? o.parentNode : null;
+        if (g && g !== group) {
+          var h = document.createElement('div');
+          h.className = 'combo-group';
+          h.setAttribute('role', 'presentation');
+          h.textContent = g.label;
+          box.appendChild(h);
+        }
+        group = g;
         var d = document.createElement('div');
         d.className = 'combo-opt' + (o === cur ? ' selected' : '');
         d.setAttribute('role', 'option');
@@ -294,6 +307,14 @@
         m.className = 'combo-main';
         m.textContent = o.textContent;
         d.appendChild(m);
+        var c = chipOf(o);
+        if (c) {
+          var t = document.createElement('span');
+          t.className = 'combo-chip';
+          t.textContent = c;
+          t.title = c;
+          d.appendChild(t);
+        }
         d._opt = o;
         box.appendChild(d);
       });

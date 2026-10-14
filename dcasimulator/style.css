@@ -71,6 +71,16 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .pool-clear-btn{display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;padding:0;font-family:inherit;transition:color .12s;white-space:nowrap}
 .pool-clear-btn .ico{width:13px;height:13px}
 .pool-clear-btn:hover{color:var(--negative-em)}
+.pool-refresh-btn:hover{color:var(--accent)}
+.pool-clear-btn:disabled{opacity:.5;cursor:default}
+.pool-clear-btn:disabled:hover{color:var(--muted)}
+.pool-count{font-weight:600;color:var(--muted)}
+/* Loaded assets: a long pool scrolls inside its own box (about four rows of
+   chips) instead of pushing the Data tab down, and past a handful of chips a
+   filter finds one by ticker or full name. */
+.pool-chips{display:flex;flex-wrap:wrap;align-content:flex-start;gap:5px;margin:6px 0 18px;max-height:122px;overflow-y:auto;overscroll-behavior:contain;padding:1px 2px 1px 0}
+.pool-filter{width:100%;margin-top:8px;padding:7px 11px;font-size:.84rem}
+.pool-filter-empty{margin:6px 0 18px;font-size:.8rem;color:var(--muted)}
 .rate-info{font-weight:600}
 .rate-info.rate-info-low{color:var(--gold)}
 .rate-info:empty{display:none}

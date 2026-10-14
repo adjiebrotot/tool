@@ -139,10 +139,13 @@
     </div>
     <div id="poolChipsWrap" style="display:none">
       <div class="pool-chips-head">
-        <span class="section-label" style="margin-top:0">Loaded assets</span>
+        <span class="section-label" style="margin-top:0">Loaded assets <span class="pool-count" id="poolCount"></span></span>
+        <button id="refreshPoolBtn" class="pool-clear-btn pool-refresh-btn" type="button" data-icon="refresh" title="Fetch the latest prices for every loaded ticker, up to today">Refresh</button>
         <button id="clearPoolBtn" class="pool-clear-btn" type="button" data-icon="trash" title="Remove every loaded ticker and simulated asset">Clear all</button>
       </div>
-      <div id="poolChips" style="display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 18px"></div>
+      <input class="txt-input pool-filter" id="poolFilter" type="search" data-no-stale data-no-persist autocomplete="off" spellcheck="false" placeholder="Find a loaded asset by ticker or name…" aria-label="Find a loaded asset" style="display:none" />
+      <div id="poolChips" class="pool-chips"></div>
+      <div class="pool-filter-empty" id="poolFilterEmpty" hidden>No loaded asset matches.</div>
     </div>
 
     <div class="field-group">
@@ -620,6 +623,7 @@
 <script src="../../dropdown.js"></script>
 
 <script src="../../shared.js"></script>
+<script src="../ticker/names.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../../tour-shared.js"></script>
