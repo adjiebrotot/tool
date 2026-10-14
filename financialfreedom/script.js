@@ -1547,7 +1547,7 @@ function syncCurrencyPrefixes(){
   syncBasisAffix($('retireExpenseWrap'), UI.retireExpensePeriod);
   retireFmt.maxDecimals = basisDecimals(UI.retireExpensePeriod);
   document.querySelectorAll('#stageRows .stage-row').forEach(function(row){
-    syncBasisAffix(row.querySelector('.currency-wrap'), row.querySelector('.stage-basis').value);
+    syncBasisAffix(row.querySelector('.affix-wrap'), row.querySelector('.stage-basis').value);
   });
   document.querySelectorAll('#inStageRows .prefix').forEach(function(el){ el.textContent = fmt.symbol; });
 }
@@ -1662,9 +1662,9 @@ function stageRowHtml(s, idx){
         ' aria-label="To age, blank for your life expectancy" value="' + ageVal(s.to) + '"/>' +
     '</div>' +
     '<div class="inline-row">' +
-      '<div class="currency-wrap grow">' +
+      '<div class="affix-wrap grow">' +
         '<span class="prefix"' + (pct ? ' hidden' : '') + '>' + escapeHtml(fmt.symbol) + '</span>' +
-        '<input class="currency-input stage-amount' + (pct ? ' has-suffix' : '') + '" type="text"' +
+        '<input class="affix-input stage-amount' + (pct ? ' has-suffix' : '') + '" type="text"' +
           ' inputmode="decimal" data-min="0" data-max="' + (pct ? SPEND_MAX_PCT : SPEND_MAX_MONEY) + '"' +
           ' aria-label="Spending in this stage" value="' + fmtAmount(s.amount, basis) + '"/>' +
         '<span class="suffix"' + (pct ? '' : ' hidden') + '>%</span>' +
@@ -1940,17 +1940,17 @@ function inStageRowHtml(s, idx){
         ' aria-label="To age, blank for your life expectancy, 120 for life" value="' + ageVal(s.to) + '"/>' +
     '</div>' +
     '<div class="inline-row">' +
-      '<div class="currency-wrap grow">' +
+      '<div class="affix-wrap grow">' +
         '<span class="prefix">' + escapeHtml(fmt.symbol) + '</span>' +
-        '<input class="currency-input in-amount" type="text" inputmode="decimal" data-min="0" data-max="' + SPEND_MAX_MONEY + '"' +
+        '<input class="affix-input in-amount" type="text" inputmode="decimal" data-min="0" data-max="' + SPEND_MAX_MONEY + '"' +
           ' aria-label="Money in during this stage" value="' + SharedFmt.formatThousands(String(Math.round(s.amount))) + '"/>' +
       '</div>' +
       '<select class="sel-input period in-period" aria-label="Per">' + opts + '</select>' +
     '</div>' +
     '<div class="stage-grow">' +
       '<span class="stage-lbl">Grows</span>' +
-      '<div class="currency-wrap grow-wrap">' +
-        '<input type="number" class="currency-input has-suffix in-growth" inputmode="decimal" min="-10" max="30" step="0.1"' +
+      '<div class="affix-wrap grow-wrap">' +
+        '<input type="number" class="affix-input has-suffix in-growth" inputmode="decimal" min="-10" max="30" step="0.1"' +
           ' aria-label="Growth, % a year" value="' + escapeHtml(String(s.growth)) + '"/>' +
         '<span class="suffix">%/yr</span>' +
       '</div>' +

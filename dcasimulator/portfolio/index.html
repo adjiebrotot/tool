@@ -170,11 +170,11 @@
           <div style="display:flex;gap:8px;margin-top:10px">
             <div style="flex:1">
               <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
-              <div class="currency-wrap"><input class="currency-input has-suffix" id="simReturnInput" data-no-stale type="number" inputmode="decimal" min="-50" max="100" step="0.5" value="8" /><span class="suffix">%/yr</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" id="simReturnInput" data-no-stale type="number" inputmode="decimal" min="-50" max="100" step="0.5" value="8" /><span class="suffix">%/yr</span></div>
             </div>
             <div style="flex:1">
               <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Standard deviation <span class="tip-icon" data-tip="Yearly volatility: how far returns swing around the average. Higher makes the simulated path swing harder.">?</span></div>
-              <div class="currency-wrap"><input class="currency-input has-suffix" id="simStdInput" data-no-stale type="number" inputmode="decimal" min="0" max="100" step="0.5" value="15" /><span class="suffix">%/yr</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" id="simStdInput" data-no-stale type="number" inputmode="decimal" min="0" max="100" step="0.5" value="15" /><span class="suffix">%/yr</span></div>
             </div>
           </div>
           <div class="status-bar" id="simStatus"></div>
@@ -239,15 +239,15 @@
     <div class="group-title">Contribution</div>
     <div class="field-row">
       <div class="field-label">Amount per top-up</div>
-      <div class="currency-wrap">
+      <div class="affix-wrap">
         <span class="prefix" id="topupAmountPrefix">$</span>
-        <input class="currency-input money-input" id="topupAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="5,000" />
+        <input class="affix-input money-input" id="topupAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="5,000" />
       </div>
     </div>
     <div class="field-row">
       <div class="field-label">Yearly increase <span class="tip-icon" data-tip="Grows the top-up once a year and compounds: 10 makes year 2 +10% and year 3 +21%. Only the amount changes, never the schedule.">?</span></div>
-      <div class="currency-wrap">
-        <input class="currency-input money-input has-suffix" id="topupYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="0" />
+      <div class="affix-wrap">
+        <input class="affix-input money-input has-suffix" id="topupYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="0" />
         <span class="suffix">%/yr</span>
       </div>
     </div>
@@ -282,8 +282,8 @@
     </div>
     <div class="field-row" id="rfRateRow">
       <div class="field-label">Risk-free rate <span class="tip-icon" data-tip="The annual yield idle cash earns: 0% for nothing, 1 to 3% for a savings account, more for a money market fund.">?</span></div>
-      <div class="currency-wrap">
-        <input class="currency-input money-input has-suffix" id="rfRate" type="text" inputmode="numeric" data-min="0" data-max="30" value="0" />
+      <div class="affix-wrap">
+        <input class="affix-input money-input has-suffix" id="rfRate" type="text" inputmode="numeric" data-min="0" data-max="30" value="0" />
         <span class="suffix">%/yr</span>
       </div>
     </div>
@@ -398,15 +398,15 @@
     <div class="group-title">Fees</div>
     <div class="field-row">
       <div class="field-label">Buying fee <span class="tip-icon" data-tip="Charged on every purchase, as a share of the amount bought.">?</span></div>
-      <div class="currency-wrap">
-        <input class="currency-input money-input has-suffix" id="buyFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
+      <div class="affix-wrap">
+        <input class="affix-input money-input has-suffix" id="buyFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
       </div>
     </div>
     <div class="field-row">
       <div class="field-label">Selling fee <span class="tip-icon" data-tip="Charged on every sale: rebalancing trims, and reserve-asset sales that fund a trigger. Purchases pay the buying fee above instead.">?</span></div>
-      <div class="currency-wrap">
-        <input class="currency-input money-input has-suffix" id="sellFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
+      <div class="affix-wrap">
+        <input class="affix-input money-input has-suffix" id="sellFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
       </div>
     </div>

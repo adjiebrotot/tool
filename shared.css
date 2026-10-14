@@ -11,8 +11,9 @@
      .txt-input      — free-text input (DM Sans)
      .sel-input      — <select> dropdown: any select, see dropdown.css
      .combo-input / .combo-list — a searchable list, see dropdown.css
-     .currency-wrap  — wraps a .currency-input with .prefix/.suffix
-                        unit labels. Currency symbols are a .prefix
+     .affix-wrap     — wraps an .affix-input (any number or text field)
+                        with optional .prefix/.suffix unit labels; with
+                        neither, the input keeps its plain inset. Currency symbols are a .prefix
                         (before the number: "Rp", "$"); percentages and
                         other units are a .suffix (after it: "%", "yrs",
                         "/mo") and the input gets .has-suffix. A field
@@ -271,15 +272,17 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 /* ============================================================
    CURRENCY INPUT (canonical number-input style — prefix/suffix wrap)
    ============================================================ */
-.currency-wrap{position:relative;}
-.currency-wrap .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
-.currency-wrap .suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
-.currency-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
-.currency-input:focus{border-color:var(--accent);background:var(--panel);}
-.currency-wrap .currency-input{padding-left:32px;}
-.currency-wrap .currency-input.has-suffix{padding-left:13px;padding-right:42px;}
-.currency-wrap .prefix:not([hidden])~.currency-input.has-suffix{padding-left:32px;}
-.currency-wrap .prefix[hidden],.currency-wrap .suffix[hidden]{display:none;}
+.affix-wrap{position:relative;}
+.affix-wrap .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
+.affix-wrap .suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;font-size:.88rem;pointer-events:none;}
+.affix-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--transition-fast);font-variant-numeric:tabular-nums;}
+.affix-input:focus{border-color:var(--accent);background:var(--panel);}
+/* Room for the prefix only when one is showing: a wrap with no prefix (a bare
+   count, a suffix-only field, a hidden currency) keeps the plain 13px inset. */
+.affix-wrap :where(.prefix:not([hidden]))~.affix-input{padding-left:32px;}
+.affix-wrap .affix-input.has-suffix{padding-left:13px;padding-right:42px;}
+.affix-wrap .prefix:not([hidden])~.affix-input.has-suffix{padding-left:32px;}
+.affix-wrap .prefix[hidden],.affix-wrap .suffix[hidden]{display:none;}
 
 /* ============================================================
    SELECT / DROPDOWN: see dropdown.css (imported at the top)
@@ -715,11 +718,11 @@ html{scrollbar-gutter:stable;}
 .seg-host{position:relative;}
 
 /* ── Units live inside the field ──
-   A field's unit is its affix (.currency-wrap .prefix / .suffix), so a label
+   A field's unit is its affix (.affix-wrap .prefix / .suffix), so a label
    never carries "(% p.a.)". The suffix can be a word or two ("%/yr",
    "yrs", "/mo"); this keeps the number clear of it. */
-.currency-wrap .suffix{white-space:nowrap;}
-.currency-wrap .currency-input.has-suffix.wide-suffix{padding-right:64px;}
+.affix-wrap .suffix{white-space:nowrap;}
+.affix-wrap .affix-input.has-suffix.wide-suffix{padding-right:64px;}
 
 /* ── A field that refused a value outside its range ──
    SharedBounds pulls the value back to the nearest end and says so in a small
@@ -796,8 +799,8 @@ html{scrollbar-gutter:stable;}
 
 /* A typed number field draws no spinner arrows: the unit sits where they
    would, and the field's own min, max and step already bound it. */
-.currency-input[type=number]{-moz-appearance:textfield;appearance:textfield;}
-.currency-input[type=number]::-webkit-inner-spin-button,.currency-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.affix-input[type=number]{-moz-appearance:textfield;appearance:textfield;}
+.affix-input[type=number]::-webkit-inner-spin-button,.affix-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 .ctrl-tabs.stacked .ricon{margin-right:0;width:1.35em;height:1.35em;}
 
 /* ── Draggable table columns (SharedColDrag) ──

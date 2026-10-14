@@ -362,7 +362,7 @@ function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':
 // " ($)" after an axis or a note, or nothing when the currency is set to None.
 function symInBrackets(){ return currentCurrencySymbol ? ' ('+currentCurrencySymbol+')' : ''; }
 
-// Wire a standardised number/money input (the shared currency-input design):
+// Wire a standardised number/money input (the shared affix-input design):
 // live thousands-grouping while typing, re-format on blur, and push the parsed
 // numeric value to `onVal` on every change. `opts` mirrors SharedFmt options
 // ({maxDecimals, allowNegative}).
@@ -527,15 +527,15 @@ function renderScenarioConfig(){
         <div class="group-title">Top-Ups</div>
         <div class="sec-row">
           <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span></label>
-          <div class="currency-wrap">
+          <div class="affix-wrap">
             <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
-            <input class="currency-input money-input" id="cfgAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="${fmtN(sec.amount)}"/>
+            <input class="affix-input money-input" id="cfgAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="${fmtN(sec.amount)}"/>
           </div>
         </div>
         <div class="sec-row">
           <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
-          <div class="currency-wrap">
-            <input class="currency-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="${fmtN(sec.yearlyIncrease||0)}"/>
+          <div class="affix-wrap">
+            <input class="affix-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="${fmtN(sec.yearlyIncrease||0)}"/>
             <span class="suffix">%/yr</span>
           </div>
         </div>
@@ -674,7 +674,7 @@ function styleParamsBody(sec){
   const eomChecked = MOMENTUM_STYLES.includes(s) ? sec.momentumEOM : sec.techEOM;
   const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
   // A look-back length, in trading days, with its unit inside the field.
-  const days=(elId,min,max,val)=>`<div class="currency-wrap unit-days"><input class="currency-input has-suffix" id="${elId}" type="number" inputmode="numeric" min="${min}" max="${max}" step="1" value="${val}"/><span class="suffix">days</span></div>`;
+  const days=(elId,min,max,val)=>`<div class="affix-wrap unit-days"><input class="affix-input has-suffix" id="${elId}" type="number" inputmode="numeric" min="${min}" max="${max}" step="1" value="${val}"/><span class="suffix">days</span></div>`;
   const maTypeSel=(elId,val)=>`<select class="sel-input" id="${elId}">
       <option value="sma" ${val==='sma'?'selected':''}>SMA</option>
       <option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
@@ -700,7 +700,7 @@ function styleParamsBody(sec){
       <div class="param-note">Buys when RSI falls below the oversold threshold.</div>${eomRow}`;
   if(s==='tech-bollinger')
     return `<div class="param-row"><label>MA period</label>${days(`secBbPeriod${id}`,2,200,t.bbPeriod)}</div>
-      <div class="param-row"><label>Deviations</label><div class="currency-wrap unit-x"><input class="currency-input has-suffix" id="secBbStd${id}" type="number" inputmode="decimal" min="0.5" max="5" step="0.1" value="${t.bbStd}"/><span class="suffix">×</span></div></div>
+      <div class="param-row"><label>Deviations</label><div class="affix-wrap unit-x"><input class="affix-input has-suffix" id="secBbStd${id}" type="number" inputmode="decimal" min="0.5" max="5" step="0.1" value="${t.bbStd}"/><span class="suffix">×</span></div></div>
       <div class="param-row"><label>Trigger</label><select class="sel-input" id="secBbTrigger${id}" style="max-width:220px"><option value="below" ${t.bbTrigger==='below'?'selected':''}>Close below lower band</option><option value="reclaim" ${t.bbTrigger==='reclaim'?'selected':''}>Reclaim above lower band</option></select></div>
       <div class="param-note">Bollinger Band = MA ± N standard deviations.</div>${eomRow}`;
   if(s==='tech-macd-cross')

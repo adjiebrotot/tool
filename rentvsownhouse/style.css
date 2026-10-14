@@ -46,7 +46,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .num-input{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:.9rem;font-weight:500;padding:10px 13px;width:100%;outline:none;transition:border-color var(--motion-fast);}
 .num-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,184,248,.15);}
 .input-row{display:flex;gap:8px;align-items:center;}
-.input-row .num-input,.input-row .currency-wrap{flex:1;}
+.input-row .num-input,.input-row .affix-wrap{flex:1;}
 .radio-group{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
 .radio-opt{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:border-color var(--motion-fast);}
 .radio-opt:hover{border-color:var(--accent);}
@@ -89,9 +89,9 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .ci-name:focus{border-color:var(--accent);}
 .ci-delete{flex-shrink:0;}
 .ci-line{display:flex;align-items:center;gap:7px;}
-.ci-line .currency-wrap{flex:1;min-width:0;}
-.ci-line .currency-input{width:100%;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px 6px 32px;outline:none;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
-.ci-line .currency-input:focus{border-color:var(--accent);}
+.ci-line .affix-wrap{flex:1;min-width:0;}
+.ci-line .affix-input{width:100%;background:var(--panel);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.84rem;padding:6px 8px 6px 32px;outline:none;font-family:'DM Mono',monospace;transition:border-color var(--motion-fast);}
+.ci-line .affix-input:focus{border-color:var(--accent);}
 .ci-line select{flex-shrink:0;max-width:55%;font-size:.8rem;padding:6px 8px;border-radius:var(--radius-sm);--sel-pad:26px;--sel-chev:8px;}
 .ci-infl-wrap{justify-content:flex-start;}
 .ci-infl-label{font-size:.78rem;color:var(--muted);}

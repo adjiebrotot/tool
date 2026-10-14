@@ -86,9 +86,8 @@ body.gl3d #eggCanvas{display:block;}
 .pack-table td{text-align:left;}
 .pack-table th:nth-child(5),.pack-table th:nth-child(6),.pack-table td:nth-child(5),.pack-table td:nth-child(6){text-align:right;}
 .cell-name{min-width:130px;font-weight:700;}
-.pack-table .currency-wrap{width:120px;}
-.pack-table .currency-wrap.cell-eggs{width:80px;}
-.pack-table .currency-wrap.cell-eggs .currency-input{padding-left:13px;}
+.pack-table .affix-wrap{width:120px;}
+.pack-table .affix-wrap.cell-eggs{width:80px;}
 .c-net.is-best{color:var(--positive-em);font-weight:700;}
 tr.bad .c-gross,tr.bad .c-net{color:var(--negative-em);}
 .row-del{min-width:30px;height:30px;}

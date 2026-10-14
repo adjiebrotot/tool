@@ -742,7 +742,7 @@ function renderRows(){
   box.innerHTML = S.rows.map((r, i) => `
     <div class="exp-row" data-i="${i}">
       <select class="row-cat" aria-label="Category of row ${i + 1}">${CATS.map(c => `<option value="${c.id}"${c.id === r.catId ? ' selected' : ''}>${c.label}</option>`).join('')}</select>
-      <div class="currency-wrap"><span class="prefix cur-tag">${esc(cur)}</span><input class="currency-input row-amt" type="text" inputmode="decimal" data-min="0" data-max="100000000000" placeholder="0" autocomplete="off" value="${moneyText(r.amount)}" aria-label="${esc(catOf(r.catId).label)} a month"/></div>
+      <div class="affix-wrap"><span class="prefix cur-tag">${esc(cur)}</span><input class="affix-input row-amt" type="text" inputmode="decimal" data-min="0" data-max="100000000000" placeholder="0" autocomplete="off" value="${moneyText(r.amount)}" aria-label="${esc(catOf(r.catId).label)} a month"/></div>
       ${S.rows.length > 1 ? SharedIcon.button('trash', 'Remove this row', 'row-del', `data-i="${i}"`) : '<span></span>'}
     </div>`).join('');
   box.querySelectorAll('.exp-row').forEach(el => {

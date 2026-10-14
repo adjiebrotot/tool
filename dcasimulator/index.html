@@ -175,11 +175,11 @@
           <div style="display:flex;gap:8px;margin-top:10px">
             <div style="flex:1">
               <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
-              <div class="currency-wrap"><input class="currency-input has-suffix" id="simReturnInput" data-no-stale type="number" inputmode="decimal" min="-50" max="100" step="0.5" value="8" /><span class="suffix">%/yr</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" id="simReturnInput" data-no-stale type="number" inputmode="decimal" min="-50" max="100" step="0.5" value="8" /><span class="suffix">%/yr</span></div>
             </div>
             <div style="flex:1">
               <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Standard deviation <span class="tip-icon" data-tip="Yearly volatility: how far returns swing around the average. Higher makes the simulated path swing harder.">?</span></div>
-              <div class="currency-wrap"><input class="currency-input has-suffix" id="simStdInput" data-no-stale type="number" inputmode="decimal" min="0" max="100" step="0.5" value="15" /><span class="suffix">%/yr</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" id="simStdInput" data-no-stale type="number" inputmode="decimal" min="0" max="100" step="0.5" value="15" /><span class="suffix">%/yr</span></div>
             </div>
           </div>
           <div class="status-bar" id="simStatus"></div>
@@ -235,7 +235,7 @@
     </div>
     <div class="field-row">
       <div class="field-label">Risk-Free Rate <span class="tip-icon" data-tip="The yearly return you could earn without risk. Sharpe and Sortino measure the return earned above it.">?</span></div>
-      <div class="currency-wrap"><input class="currency-input has-suffix" id="riskFreeRate" data-no-stale type="number" inputmode="decimal" min="0" max="30" step="0.1" value="4" /><span class="suffix">%/yr</span></div>
+      <div class="affix-wrap"><input class="affix-input has-suffix" id="riskFreeRate" data-no-stale type="number" inputmode="decimal" min="0" max="30" step="0.1" value="4" /><span class="suffix">%/yr</span></div>
     </div>
     </div>
   </div>

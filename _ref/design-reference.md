@@ -559,9 +559,9 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
 ```html
 <div class="field-row">
   <div class="field-label">Starting amount</div>
-  <div class="currency-wrap">
+  <div class="affix-wrap">
     <span class="prefix">$</span>
-    <input class="currency-input" id="startingValue" type="text" inputmode="decimal" value="500,000" />
+    <input class="affix-input" id="startingValue" type="text" inputmode="decimal" value="500,000" />
   </div>
   <div class="field-sub">Initial investment or purchase price in dollars.</div>
 </div>
@@ -605,21 +605,22 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
 .txt-input:focus { border-color: var(--accent); background: var(--panel); }
 .txt-input::placeholder { color: var(--muted); }
 
-/* Currency input: prefix/suffix unit labels.
+/* Affix input: any number or text field, with optional prefix/suffix unit
+   labels (none at all is fine: the input then keeps its plain inset).
    .prefix = currency symbol, before the number ("$", "Rp").
    .suffix = percentage or other unit, after the number ("%", "yrs", "/mo");
    the input also gets .has-suffix. A field with a $/% selector switches
    side with SharedFmt.setAffix(wrap, prefix, suffix) — never put "%" in a
    .prefix. */
-.currency-wrap { position: relative; }
-.currency-wrap .prefix,
-.currency-wrap .suffix {
+.affix-wrap { position: relative; }
+.affix-wrap .prefix,
+.affix-wrap .suffix {
   position: absolute; top: 50%; transform: translateY(-50%);
   color: var(--muted); font-weight: 700; font-size: 0.88rem; pointer-events: none;
 }
-.currency-wrap .prefix { left: 11px; }
-.currency-wrap .suffix { right: 11px; }
-.currency-input {
+.affix-wrap .prefix { left: 11px; }
+.affix-wrap .suffix { right: 11px; }
+.affix-input {
   background: var(--input-bg);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
@@ -633,11 +634,11 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
   transition: border-color var(--transition-fast);
   font-variant-numeric: tabular-nums;
 }
-.currency-input:focus { border-color: var(--accent); background: var(--panel); }
-.currency-wrap .currency-input { padding-left: 32px; }
-.currency-wrap .currency-input.has-suffix { padding-left: 13px; padding-right: 42px; }
-.currency-wrap .prefix:not([hidden]) ~ .currency-input.has-suffix { padding-left: 32px; }
-.currency-wrap .prefix[hidden], .currency-wrap .suffix[hidden] { display: none; }
+.affix-input:focus { border-color: var(--accent); background: var(--panel); }
+.affix-wrap :where(.prefix:not([hidden])) ~ .affix-input { padding-left: 32px; } /* only when a prefix shows */
+.affix-wrap .affix-input.has-suffix { padding-left: 13px; padding-right: 42px; }
+.affix-wrap .prefix:not([hidden]) ~ .affix-input.has-suffix { padding-left: 32px; }
+.affix-wrap .prefix[hidden], .affix-wrap .suffix[hidden] { display: none; }
 ```
 
 For live thousand-separator formatting, use `shared.js`:

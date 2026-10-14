@@ -853,7 +853,7 @@
     var range = f.range ? f.range(e) : [f.min, f.max];
     var v = getVal(e, f);
     return '<div class="field-row inline"><div class="field-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div>' +
-      '<div class="currency-wrap"><input class="currency-input' + (f.unit ? ' has-suffix' : '') + '" type="text" inputmode="decimal" id="' + id + '" data-k="' + f.k + '"' +
+      '<div class="affix-wrap"><input class="affix-input' + (f.unit ? ' has-suffix' : '') + '" type="text" inputmode="decimal" id="' + id + '" data-k="' + f.k + '"' +
       ' data-min="' + range[0] + '" data-max="' + range[1] + '"' + (f.step ? ' data-step="' + f.step + '"' : '') + ' value="' + fmtField(v) + '"/>' +
       (f.unit ? '<span class="suffix">' + f.unit + '</span>' : '') + '</div></div>';
   }

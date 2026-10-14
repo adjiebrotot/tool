@@ -164,7 +164,7 @@ const FIELD_PROBE = () => {
   const shown = el => !!el && el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden';
   const txt = el => (el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : '');
   const UNIT_WORD = /(%|×|\bx\b|\byrs?\b|\byears?\b|\bmonths?\b|\bweeks?\b|\bdays?\b|\bage\b|\/mo\b|\/yr\b|\/wk\b|[$€£¥₩฿]|\bRp\b|\bRM\b|\bpaths\b|\bpoints\b|\bpayments?\b|\bper\b|\ba (week|month|year)\b|[A-Z]{3}\b)/i;
-  const sel = 'input[type=number],input[type=range],input.currency-input,input.money-input,input.fmt-num,' +
+  const sel = 'input[type=number],input[type=range],input.affix-input,input.money-input,input.fmt-num,' +
               'input[inputmode=decimal],input[inputmode=numeric]';
   const out = [];
   document.querySelectorAll(sel).forEach(el => {
@@ -172,7 +172,7 @@ const FIELD_PROBE = () => {
     if (el.classList.contains('slider-val-edit') || el.type === 'date' || el.type === 'checkbox') return;
     if (el.closest('[class*="tour-"]')) return;
     el.__formSeen = true;
-    const wrap = el.closest('.currency-wrap, .input-wrap');
+    const wrap = el.closest('.affix-wrap, .input-wrap');
     const affix = wrap ? [...wrap.querySelectorAll('.prefix,.suffix,.curr-tag,.per-tag')]
       .filter(a => !a.hidden && getComputedStyle(a).display !== 'none' && txt(a)).map(txt).join(' ') : '';
     const row = el.closest('.inline-row, .stage-ages, .stage-grow, .param-row, .sec-row, .field-row, .slider-block, .slider-head, .sc-field, .retire-slider, td, .add-sec-row, .row');

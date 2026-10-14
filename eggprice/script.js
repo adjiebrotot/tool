@@ -53,9 +53,9 @@ function renderTable() {
   $('packBody').innerHTML = rows.map((r, i) => `
     <tr data-i="${i}">
       <td><input class="txt-input cell-name" data-k="name" value="${esc(r.name)}" aria-label="Size name"></td>
-      <td><div class="currency-wrap cell-eggs"><input class="currency-input" data-k="eggs" type="text" inputmode="numeric" value="${esc(r.eggs)}" aria-label="Eggs in the pack"></div></td>
-      <td><div class="currency-wrap"><input class="currency-input has-suffix" data-k="grams" type="text" inputmode="decimal" value="${esc(r.grams)}" aria-label="Pack weight in grams"><span class="suffix">g</span></div></td>
-      <td><div class="currency-wrap"><span class="prefix">$</span><input class="currency-input" data-k="price" type="text" inputmode="decimal" value="${esc(r.price)}" aria-label="Pack price"></div></td>
+      <td><div class="affix-wrap cell-eggs"><input class="affix-input" data-k="eggs" type="text" inputmode="numeric" value="${esc(r.eggs)}" aria-label="Eggs in the pack"></div></td>
+      <td><div class="affix-wrap"><input class="affix-input has-suffix" data-k="grams" type="text" inputmode="decimal" value="${esc(r.grams)}" aria-label="Pack weight in grams"><span class="suffix">g</span></div></td>
+      <td><div class="affix-wrap"><span class="prefix">$</span><input class="affix-input" data-k="price" type="text" inputmode="decimal" value="${esc(r.price)}" aria-label="Pack price"></div></td>
       <td class="mono c-gross"></td>
       <td class="mono c-net"></td>
       <td>${SharedIcon.button('trash', 'Remove this size', 'row-del', rows.length < 2 ? 'disabled' : '')}</td>
