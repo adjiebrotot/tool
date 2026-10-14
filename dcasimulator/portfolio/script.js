@@ -170,6 +170,9 @@ function pickedColor(hex){ return isHexColor(hex) && !LEGACY_COLOR_HEX.includes(
 // a line, a band, a pie slice and a tile can never disagree.
 function pfColor(p){ return p && isHexColor(p.colorHex) ? p.colorHex : slotColor(p ? p.colorSlot : 0); }
 function assetColor(a){ return a && isHexColor(a.colorHex) ? a.colorHex : slotColor(a ? a.colorSlot : 0); }
+// An asset's dot is its colour picker, wherever the asset is listed. One delegated
+// listener (wireAssetDots) handles every copy of it.
+function assetDotHtml(a){ return `<input type="color" class="color-dot" data-dot-aid="${a.id}" data-no-stale value="${assetColor(a)}" title="Pick colour" aria-label="Pick colour for ${escapeHtml(a.name)}"/>`; }
 function cashColor(){ return cssVar('--muted')||'#94a3b8'; }
 // Up and down: the site's green and red, read from the theme, for candlesticks
 // and the MACD histogram alike.
@@ -981,7 +984,7 @@ function renderAssetList(){
     card.innerHTML=`
       <div class="sec-row-item" data-id="${a.id}">
         <span class="drag-handle" title="Drag to reorder. The top asset sits on top of the Composition Over Time chart" aria-label="Drag to reorder">⠿</span>
-        <span class="color-dot" style="background:${assetColor(a)}"></span>
+        ${assetDotHtml(a)}
         <span class="sec-name">${escapeHtml(a.name)}</span>
         <span class="sec-badge ${a.type==='ticker'?'badge-ticker':'badge-custom'}">${a.type==='ticker'?SVG_TICKER+' Ticker':SVG_CUSTOM+' Custom'}</span>
         ${SharedIcon.button('trash', 'Remove asset', 'sec-del-x', `id="aDel${a.id}"`)}
@@ -1006,6 +1009,21 @@ function renderAssetList(){
   });
   refreshRebalPanels();
 }
+
+// Picking a colour on any asset dot recolours that asset everywhere: the other dots
+// showing it, the weight pie and, when a run is on screen, its charts. The dots are
+// updated in place rather than re-rendered so the open picker stays open.
+document.addEventListener('input',e=>{
+  const dot=e.target.closest && e.target.closest('input.color-dot[data-dot-aid]'); if(!dot) return;
+  const p=getActive(); if(!p) return;
+  const aid=+dot.dataset.dotAid, a=p.assets.find(x=>x.id===aid); if(!a) return;
+  a.colorHex=dot.value;
+  document.querySelectorAll(`input.color-dot[data-dot-aid="${aid}"]`).forEach(d=>{ if(d!==dot) d.value=dot.value; });
+  updateWeightPie();
+  const res=simResults.filter(r=>r.id===p.id);
+  res.forEach(r=>(r.assets||[]).forEach(x=>{ if(x.id===aid) x.colorHex=dot.value; }));
+  if(res.length) refreshResultLabels();
+});
 
 /* ─── TARGET WEIGHTS (Rebalancing subtab) ─────────────────────────────────────
    The weight pie + editable table only make sense for weight-based methods. New
@@ -1033,7 +1051,7 @@ function renderWeightTable(){
   tableWrap.innerHTML=`<div class="weight-table">${
     p.assets.map(a=>`
       <div class="weight-row">
-        <span class="wt-name"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span>${optBtnHtml('weight:'+a.id, a.name+' weight')}</span>
+        <span class="wt-name">${assetDotHtml(a)}<span class="wt-label">${a.name}</span>${optBtnHtml('weight:'+a.id, a.name+' weight')}</span>
         <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" data-unit="%" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="wtTotalCell"></span></div></div>`;
@@ -1306,13 +1324,13 @@ function renderTriggerTable(){
   const reserveId=(p.rebal.reserveMode==='asset')?p.rebal.reserveAssetId:null;
   wrap.innerHTML=p.assets.map(a=>{
     if(a.id===reserveId)
-      return `<div class="trigger-card"><div class="trigger-head"><span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
+      return `<div class="trigger-card"><div class="trigger-head">${assetDotHtml(a)}<span class="wt-label">${a.name}</span><span class="trigger-reserve-tag">Reserve</span></div></div>`;
     const tr=a.trigger||makeDefaultTrigger();
     const collapsed=trigCollapsed.has(a.id);
     return `<div class="trigger-card${collapsed?' is-collapsed':''}">
       <div class="trigger-head trigger-toggle" data-aid="${a.id}" role="button" tabindex="0" title="Show or hide this trigger's settings">
         <span class="trig-chevron" aria-hidden="true">▾</span>
-        <span class="color-dot" style="background:${assetColor(a)}"></span><span class="wt-label">${a.name}</span>
+        ${assetDotHtml(a)}<span class="wt-label">${a.name}</span>
         <span class="tip-icon" data-tip="${triggerPlainDesc(a)}">i</span></div>
       <div class="trigger-summary">${triggerSummary(a)}</div>
       <div class="trigger-body">
@@ -1335,8 +1353,8 @@ function wireTriggerTable(){
   // collapsed state is per asset id and survives re-renders.
   const toggle=el=>{ const id=+el.dataset.aid; if(trigCollapsed.has(id)) trigCollapsed.delete(id); else trigCollapsed.add(id); renderTriggerTable(); };
   document.querySelectorAll('#triggerTableWrap .trigger-toggle').forEach(h=>{
-    h.addEventListener('click',e=>{ if(e.target.closest('.tip-icon')) return; toggle(h); });
-    h.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(h); } });
+    h.addEventListener('click',e=>{ if(e.target.closest('.tip-icon, .color-dot')) return; toggle(h); });
+    h.addEventListener('keydown',e=>{ if(e.target.closest('.color-dot')) return; if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(h); } });
   });
   document.querySelectorAll('#triggerTableWrap .trig-type').forEach(sel=>sel.addEventListener('change',e=>{
     const a=getAsset(e.target); if(!a) return; a.trigger.type=e.target.value; renderTriggerTable();  // params depend on type
