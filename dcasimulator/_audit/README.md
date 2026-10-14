@@ -63,3 +63,22 @@ same checks run either way — only the printed numbers differ.
   the same price path across DCA styles/amounts and across the two tools, and
   the generated date axis must not depend on the user's timezone.
   Run: `node seed_tz_audit.mjs`.
+
+- `optimise.mjs` - the portfolio page's Optimise mode, which sweeps up to two
+  settings of one portfolio. Its promise is that a tested value means exactly what
+  the same value typed into the form means, so for every setting the mode offers
+  (top-up amount, yearly increase and the whole top-up schedule; the rebalance
+  schedule; risk-free rate, fees and Trade at; target and rank weights with their
+  slack; the momentum lookback; and every trigger setting) it opens a sweep, reads
+  each sampled value's seven figures off the chart (the surface for two settings)
+  and its daily breakdown CSV, then opens the same scenario in plain Simulate mode,
+  sets that value through the form, presses Simulate, and requires the same final
+  value, ROI and net (to 1e-9), the same printed Sharpe, Sortino and CAGRs, and the
+  same CSV cell for cell. The slack split is also lifted from the page and fuzzed
+  against an independently written one. Then the contracts: which fields offer a
+  gauge under each method (trigger type and direction, the method, the reserve and
+  Rebalance Timing never do), a swept setting dropped when its field goes away, a
+  period and its day never swept together, the two-setting limit, the 625-run cap,
+  the locked portfolio bar, Cancel, saved state (reload, file, an old file, a file
+  naming settings that no longer exist) and no page errors.
+  Run: `node optimise.mjs` (`ONLY=<case>`, `JOBS=<n>`, 4 at once by default).

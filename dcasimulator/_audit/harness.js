@@ -23,6 +23,8 @@ function loadShared(){
   window.document = document;
   window.addEventListener = noop;
   window.navigator = { clipboard:{} };
+  // shared.js finds its sibling files from the page address at load.
+  window.location = { href:'file:///shared.js', hash:'', search:'' };
   window.getComputedStyle = ()=>({ getPropertyValue:()=>'' });
   window.requestAnimationFrame = fn=>{ fn(); return 0; };
   window.cancelAnimationFrame = noop;

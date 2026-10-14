@@ -44,7 +44,7 @@
     "Portfolio Strategy Comparator",
     "Rebalancing Strategy Backtest"
   ],
-  "keywords": "portfolio dca simulator, compare portfolio strategies, rebalancing backtest, target weight rebalancing, constant weight portfolio, constant allocation, multi asset dollar cost averaging, portfolio composition over time",
+  "keywords": "portfolio dca simulator, compare portfolio strategies, rebalancing backtest, target weight rebalancing, constant weight portfolio, constant allocation, multi asset dollar cost averaging, portfolio composition over time, optimise portfolio weights, dca parameter sweep, best top-up day",
   "isPartOf": {
     "@type": "WebApplication",
     "name": "DCA Scenario Explorer",
@@ -238,21 +238,21 @@
     <div class="field-group">
     <div class="group-title">Contribution</div>
     <div class="field-row">
-      <div class="field-label">Amount per top-up</div>
+      <div class="field-label">Amount per top-up <button type="button" class="opt-btn" data-opt="topup.amount" title="Optimise Amount per top-up: test it over a range" aria-label="Optimise Amount per top-up"></button></div>
       <div class="affix-wrap">
         <span class="prefix" id="topupAmountPrefix">$</span>
         <input class="affix-input money-input" id="topupAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="5,000" />
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Yearly increase <span class="tip-icon" data-tip="Grows the top-up once a year and compounds: 10 makes year 2 +10% and year 3 +21%. Only the amount changes, never the schedule.">?</span></div>
+      <div class="field-label">Yearly increase <span class="tip-icon" data-tip="Grows the top-up once a year and compounds: 10 makes year 2 +10% and year 3 +21%. Only the amount changes, never the schedule.">?</span> <button type="button" class="opt-btn" data-opt="topup.yearlyIncrease" title="Optimise Yearly increase: test it over a range" aria-label="Optimise Yearly increase"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="topupYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="0" />
         <span class="suffix">%/yr</span>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Top-up period</div>
+      <div class="field-label">Top-up period <button type="button" class="opt-btn" data-opt="topupSched.period" title="Optimise Top-up period: test it over a range" aria-label="Optimise Top-up period"></button></div>
       <select class="sel-input" id="topupPeriod">
         <option value="weekly">Weekly</option>
         <option value="fortnightly">Fortnightly</option>
@@ -281,7 +281,7 @@
       </label>
     </div>
     <div class="field-row" id="rfRateRow">
-      <div class="field-label">Risk-free rate <span class="tip-icon" data-tip="The annual yield idle cash earns: 0% for nothing, 1 to 3% for a savings account, more for a money market fund.">?</span></div>
+      <div class="field-label">Risk-free rate <span class="tip-icon" data-tip="The annual yield idle cash earns: 0% for nothing, 1 to 3% for a savings account, more for a money market fund.">?</span> <button type="button" class="opt-btn" data-opt="rf.rate" title="Optimise Risk-free rate: test it over a range" aria-label="Optimise Risk-free rate"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="rfRate" type="text" inputmode="numeric" data-min="0" data-max="30" value="0" />
         <span class="suffix">%/yr</span>
@@ -343,7 +343,7 @@
     <!-- DYNAMIC WEIGHT (momentum rank) options - only shown for that method. -->
     <div id="dynamicOpts" style="display:none;margin-top:14px">
       <div class="field-row" style="border-top:none;padding-top:0">
-        <div class="field-label">Momentum lookback <span class="tip-icon" data-tip="How far back each asset's return is measured for ranking. At every top-up they are sorted by it, then the money is split by your rank weights.">?</span></div>
+        <div class="field-label">Momentum lookback <span class="tip-icon" data-tip="How far back each asset's return is measured for ranking. At every top-up they are sorted by it, then the money is split by your rank weights.">?</span> <button type="button" class="opt-btn" data-opt="rebal.lookbackMonths" title="Optimise Momentum lookback: test it over a range" aria-label="Optimise Momentum lookback"></button></div>
         <select class="sel-input" id="lookbackMonths">
           <option value="1">1 month</option>
           <option value="3">3 months</option>
@@ -377,7 +377,7 @@
       </div>
       <div id="rebalScheduleWrap" style="display:none">
         <div class="field-row">
-          <div class="field-label">Rebalance period</div>
+          <div class="field-label">Rebalance period <button type="button" class="opt-btn" data-opt="rebalSched.period" title="Optimise Rebalance period: test it over a range" aria-label="Optimise Rebalance period"></button></div>
           <select class="sel-input" id="rebalPeriod">
             <option value="weekly">Weekly</option>
             <option value="fortnightly">Fortnightly</option>
@@ -397,14 +397,14 @@
     <div class="field-group">
     <div class="group-title">Fees</div>
     <div class="field-row">
-      <div class="field-label">Buying fee <span class="tip-icon" data-tip="Charged on every purchase, as a share of the amount bought.">?</span></div>
+      <div class="field-label">Buying fee <span class="tip-icon" data-tip="Charged on every purchase, as a share of the amount bought.">?</span> <button type="button" class="opt-btn" data-opt="rebal.buyFee" title="Optimise Buying fee: test it over a range" aria-label="Optimise Buying fee"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="buyFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Selling fee <span class="tip-icon" data-tip="Charged on every sale: rebalancing trims, and reserve-asset sales that fund a trigger. Purchases pay the buying fee above instead.">?</span></div>
+      <div class="field-label">Selling fee <span class="tip-icon" data-tip="Charged on every sale: rebalancing trims, and reserve-asset sales that fund a trigger. Purchases pay the buying fee above instead.">?</span> <button type="button" class="opt-btn" data-opt="rebal.sellFee" title="Optimise Selling fee: test it over a range" aria-label="Optimise Selling fee"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="sellFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
@@ -424,7 +424,7 @@
       <input class="num-input" id="randomSeed" type="number" inputmode="numeric" min="0" step="1" value="25823952204" data-unitless data-unbounded />
     </div>
     <div class="field-row">
-      <div class="field-label">Trade at <span class="tip-icon" data-tip="Every top-up, trigger and rebalance decides on a day's close. This sets when its orders fill: that close, or the next trading day's open or close.">?</span></div>
+      <div class="field-label">Trade at <span class="tip-icon" data-tip="Every top-up, trigger and rebalance decides on a day's close. This sets when its orders fill: that close, or the next trading day's open or close.">?</span> <button type="button" class="opt-btn" data-opt="execTiming" title="Optimise Trade at: test it over a range" aria-label="Optimise Trade at"></button></div>
       <select class="sel-input" id="execTiming">
         <option value="close">Same day's close</option>
         <option value="next-open" selected>Next day's open</option>
@@ -439,6 +439,7 @@
   <div class="btn-row">
     <p class="stale-note" id="staleNote" role="status">Inputs changed. Press Simulate to run them.</p>
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
+    <button class="btn-secondary" id="optCancelBtn" type="button" style="flex:1;display:none" title="Stop optimising and go back to comparing portfolios">Cancel</button>
     <button class="btn-primary" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
     <button class="btn-primary" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>
     <button class="btn-secondary" id="editTickersBtn" data-icon="edit" style="flex:1;display:none">Edit list</button>
@@ -454,7 +455,7 @@
   <!-- SUMMARY -->
   <section class="card summary-row" style="padding:18px">
     <div class="section-title" style="margin-bottom:0">
-      <h2>Final Summary <span style="color:var(--muted);font-size:.85rem;font-weight:400">(per portfolio)</span></h2>
+      <h2>Final Summary <span id="summaryNote" style="color:var(--muted);font-size:.85rem;font-weight:400">(per portfolio)</span></h2>
       <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0" title="Show Sharpe, Sortino and CAGR (TWR / MWR) for each portfolio">
         <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Advanced metrics</span>
         <div class="toggle-switch">
@@ -467,11 +468,23 @@
   </section>
 
   <!-- VALUE CHART -->
-  <section class="chart-card card">
+  <section class="chart-card card" id="valueCard">
     <div class="section-title">
-      <div><h2>Portfolio Value Over Time</h2></div>
+      <div><h2 id="valueTitle">Portfolio Value Over Time</h2></div>
       <div class="chart-actions">
-        <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0">
+        <label class="opt-metric-wrap" id="optMetricWrap" style="display:none">
+          <span>Show</span>
+          <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+            <option value="roi" selected>ROI</option>
+            <option value="final">Final value</option>
+            <option value="net">Net</option>
+            <option value="sharpe">Sharpe</option>
+            <option value="sortino">Sortino</option>
+            <option value="twr">CAGR (TWR)</option>
+            <option value="mwr">CAGR (MWR)</option>
+          </select>
+        </label>
+        <label class="toggle-row" id="showTopupsWrap" style="gap:8px;cursor:pointer;padding:0">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Top-Ups</span>
           <div class="toggle-switch">
             <input type="checkbox" id="showTopupsToggle" checked/>
@@ -487,7 +500,8 @@
       </div>
     </div>
     <div class="legend" id="valueLegend"></div>
-    <div class="canvas-wrap"><canvas id="valueCanvas"></canvas></div>
+    <div class="canvas-wrap" id="valueCanvasWrap"><canvas id="valueCanvas"></canvas></div>
+    <div class="surface-wrap" id="optSurface" style="display:none"></div>
     <div class="hover-box" id="valueHoverBox">Configure portfolios and run to compare value over time.</div>
   </section>
 
@@ -497,12 +511,14 @@
   <section class="detail-section card">
     <div class="detail-header">
       <div class="detail-head">
-        <h2>Detailed Breakdown <span style="color:var(--muted);font-size:.85rem;font-weight:400">(one portfolio: prices, composition &amp; events)</span></h2>
+        <h2>Detailed Breakdown <span id="detailNote" style="color:var(--muted);font-size:.85rem;font-weight:400">(one portfolio: prices, composition &amp; events)</span></h2>
         <div class="btn-cluster">
-          <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Portfolio</span>
+          <span id="detailPfLabel" style="font-size:.82rem;font-weight:600;color:var(--muted)">Portfolio</span>
           <select class="sel-input pf-view-select" id="detailPfSelect" title="Choose which portfolio to view"></select>
+          <span class="opt-pick" id="optPickWrap" hidden data-no-persist></span>
         </div>
       </div>
+      <div class="status-bar" id="optPickStatus"></div>
     </div>
 
     <!-- SECURITY PRICES SUBSECTION -->
@@ -594,6 +610,55 @@
 </main>
 </section><!-- /layout -->
 </div><!-- /container -->
+
+<!-- OPTIMISE RANGE EDITOR. Edits apply as they are made, so every way out keeps them. -->
+<div class="opt-modal-overlay" id="optModal" hidden data-no-persist>
+  <div class="opt-modal" role="dialog" aria-modal="true" aria-labelledby="optModalTitle">
+    <div class="opt-modal-head">
+      <h2 id="optModalTitle">Optimise</h2>
+      <button type="button" class="btn-bare opt-modal-close" data-icon="close" id="optCloseBtn" title="Close. The range is already kept" aria-label="Close. The range is already kept"></button>
+    </div>
+    <div class="opt-modal-body">
+      <p class="opt-modal-sub" id="optModalSub"></p>
+      <div id="optNumFields">
+        <div class="opt-range-row">
+          <div class="field-row">
+            <div class="field-label">Start value</div>
+            <div class="affix-wrap"><span class="prefix" id="optStartPre"></span><input class="affix-input" id="optStart" type="text" inputmode="decimal" /><span class="suffix" id="optStartSuf"></span></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">End value</div>
+            <div class="affix-wrap"><span class="prefix" id="optEndPre"></span><input class="affix-input" id="optEnd" type="text" inputmode="decimal" /><span class="suffix" id="optEndSuf"></span></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Steps <span class="tip-icon" data-tip="How many values to test, Start and End included, spaced evenly between them.">?</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix" id="optSteps" type="number" inputmode="numeric" min="2" max="50" step="1" value="11" /><span class="suffix">values</span></div>
+        </div>
+      </div>
+      <div id="optListFields" class="opt-range-row" hidden>
+        <div class="field-row">
+          <div class="field-label">Start value</div>
+          <select class="sel-input" id="optStartSel"></select>
+        </div>
+        <div class="field-row">
+          <div class="field-label">End value</div>
+          <select class="sel-input" id="optEndSel"></select>
+        </div>
+      </div>
+      <div class="field-row" id="optSlackRow" hidden>
+        <div class="field-label">Slack <span class="tip-icon" data-tip="Weights have to add up to 100%, so another weight moves the other way: one you pick, or all the others in equal shares.">?</span></div>
+        <select class="sel-input" id="optSlack"></select>
+      </div>
+      <p class="opt-preview" id="optPreview" role="status"></p>
+    </div>
+    <div class="opt-modal-foot">
+      <button type="button" class="btn-secondary" data-icon="trash" id="optRemoveBtn" title="Remove this from the optimisation" aria-label="Remove this from the optimisation">Remove</button>
+      <span class="opt-modal-note">Changes are kept as you type.</span>
+      <button type="button" class="btn-primary" id="optDoneBtn">✓ Done</button>
+    </div>
+  </div>
+</div>
 
 <footer class="page-footer">
   <section class="page-footer-info">
