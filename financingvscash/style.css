@@ -109,6 +109,8 @@ body.light .warning{background:#FFF0D9;border-color:rgba(176,122,0,.2);color:#7A
 .neg-carry{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:var(--warning-bg);border:1px solid rgba(255,210,140,.35);color:var(--warning-text);display:none;font-size:.82rem;line-height:1.5;}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem;}
 th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
+/* A note row spanning the table wraps instead of setting its width. */
+td[colspan]{white-space:normal;}
 th:first-child,td:first-child{text-align:left;white-space:normal;}
 th{color:var(--muted);font-size:.78rem;font-weight:600;position:sticky;top:0;background:var(--bg);z-index:1;}
 .table-wrap{overflow:auto;max-height:450px;}

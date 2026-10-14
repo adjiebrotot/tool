@@ -1139,6 +1139,15 @@ function paymentTxt(r){
 // Horizons are compared in years, but a sub-year term reads better in months.
 function horizonTxt(y){const n=Number(y)||0;return n>0&&n<1?(n*12).toFixed(1)+' mo':n.toFixed(1)+' yr';}
 
+// The type's name on one line and its qualifiers under it, so the longest
+// label ("Amortizing (fixed payment) · scheduled rate") cannot widen the table.
+function loanTypeCell(r){
+  const full=LOAN_TYPE_LABEL[r.loanType]||LOAN_TYPE_LABEL.annuity;
+  const m=full.match(/^(.*?)\s*\((.*)\)$/);
+  const subs=[];if(m)subs.push(m[2]);if(r.rateMode==='schedule')subs.push('scheduled rate');
+  return escHtml(m?m[1]:full)+(subs.length?'<span class="comp-sub">'+escHtml(subs.join(' · '))+'</span>':'');
+}
+
 function renderComparisonTable(results,L){
   const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">'+(optResult?'None of the tested settings could be modelled.':'Add financing scenarios to compare.')+'</p>';return;}
   const inflOn=L.inflationEnabled,pc=L.purchaseCost;
@@ -1146,7 +1155,7 @@ function renderComparisonTable(results,L){
   let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+escHtml(r.name)+(r.sub?'<span class="comp-sub" data-no-abbr>'+escHtml(r.sub)+'</span>':'')+'</th>';});h+='</tr></thead><tbody>';
   const rows=[
     // What the product IS comes before what it costs.
-    ['Loan Type','Pay in full',r=>(LOAN_TYPE_LABEL[r.loanType]||LOAN_TYPE_LABEL.annuity)+(r.rateMode==='schedule'?' · scheduled rate':'')],
+    ['Loan Type','Pay in full',r=>loanTypeCell(r)],
     // A share of the price this offer actually charges, which is the cash
     // price unless offers are priced separately.
     ['Down Payment (%)','—',r=>fmt.pct((r.down/r.price)||0,2)],
@@ -1188,7 +1197,7 @@ function renderComparisonTable(results,L){
     rows.splice(rowAt('Ending Wealth')+1,0,['Ending Wealth Range (min–max)','—',r=>{
       if(!r.bandLo||!r.bandHi)return'—';
       const a=Math.min(r.bandLo.endWealth,r.bandHi.endWealth),b=Math.max(r.bandLo.endWealth,r.bandHi.endWealth);
-      return fmt.currencyExact(a)+' – '+fmt.currencyExact(b);
+      return fmt.currencyExact(a)+' –<br>'+fmt.currencyExact(b);
     }]);
   rows.forEach(([label,cashVal,fn])=>{
     h+=`<tr><td>${label}</td><td>${cashVal}</td>`;valid.forEach(r=>{h+='<td>'+fn(r)+'</td>';});h+='</tr>';

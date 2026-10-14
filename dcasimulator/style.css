@@ -140,7 +140,7 @@ body.light tr:hover td{background:rgba(90,145,232,.05)}
    which in a flex row would stretch the select and push the CSV button onto a
    line of its own. */
 .pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:220px;width:auto;flex:0 0 auto}
-.detail-row-tag{display:inline-block;margin-left:6px;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--accent);vertical-align:middle}
+.detail-row-tag{display:block;margin-left:0;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--accent);vertical-align:middle}
 tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 
 /* Securities Manager */
@@ -186,7 +186,9 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 /* Table frozen header */
 .table-wrap{overflow-x:auto;overflow-y:auto;max-height:420px;border:1px solid var(--border);border-radius:10px}
 .table-wrap thead th{position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:none;box-shadow:inset 0 -1px 0 var(--border)}
-.table-wrap table{min-width:max-content}
+/* Headers wrap onto two lines before the table scrolls sideways. */
+.table-wrap thead th{white-space:normal}
+.table-wrap td:first-child{white-space:nowrap}
 /* Page footer */
 .page-footer{max-width:1500px;margin:0 auto;padding:0 24px 24px}
 .page-footer-info p:last-child{margin-bottom:0}
