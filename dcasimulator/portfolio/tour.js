@@ -74,8 +74,8 @@ window.__TOUR = {
             'overlapping dates. The sentence at the top of the results says which ended ' +
             'highest, or which earned the most on what went in when the top-ups differ. ' +
             'The <strong>Final Summary</strong> under it lines up value, return and risk ' +
-            'metrics, the charts follow, and the breakdown table opens from ' +
-            '<strong>Show table</strong>. Everything runs locally in your browser.'
+            'metrics, the charts follow, and the breakdown table opens from the ' +
+            '<strong>chevron</strong> beside its title. Everything runs locally in your browser.'
     },
     {
       target: null,

@@ -76,7 +76,7 @@ window.__TOUR = {
     {
       target: '#detailSection',
       title: '⑦ Buka rinciannya',
-      body: '<strong>Tampilkan tabel</strong> membuka pajak pada tiap gaji, dan <strong>CSV</strong> ' +
+      body: 'Tombol <strong>panah</strong> membuka pajak pada tiap gaji, dan <strong>CSV</strong> ' +
             'mengunduhnya baik tabel terbuka maupun tidak. Halaman ditutup dengan asumsi yang dipakai.'
     },
     {

@@ -92,7 +92,7 @@ window.__TOUR = {
             'Benefit</strong>, <strong>Investment Value</strong> and <strong>Loan ' +
             'Balance</strong> right above it. A floating rate is drawn as a shaded band, so ' +
             'you see the range rather than one guess. Export any view as SVG or PNG; the ' +
-            'amortization schedule opens from <strong>Show table</strong> and downloads as ' +
+            'amortization schedule opens from its <strong>chevron</strong> and downloads as ' +
             'CSV. Everything runs privately in your browser.'
     },
     {

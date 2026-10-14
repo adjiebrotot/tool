@@ -63,7 +63,8 @@ Before calling it done, every line here must hold:
       per group, first in it.
 - [ ] **Same structure**: results open with a one-sentence answer (`SharedVerdict`, neutral
       tone for a comparison of options), then KPI cards, charts, tables folded behind
-      **Show table** (`SharedFold`), and a closing **What this assumes** card, built from the
+      a chevron (`SharedFold`), and a closing **What this assumes** card (folded closed
+      by `shared.js`), built from the
       reader's own input on every redraw: only lines for what their plan uses, each naming
       its figure ("Inflation is 2.5% a year", not "Inflation is modelled"). Display options
       sit beside the results they change.

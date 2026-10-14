@@ -4384,7 +4384,7 @@ function init(){
     SharedScenario.mount('.quick-start-row', { tool: 'financialfreedom', persist: persist });
   }
   /* The year-by-year table is the most specific thing on the page, so it opens
-     closed behind Show table; the CSV button exports it either way. */
+     closed behind its chevron; the CSV button exports it either way. */
   if(window.SharedFold){
     SharedFold.attach($('boardCash').querySelector('.detail-section'),
       {key: 'financialfreedom', bodies: ['#tableSub', '#tableWrap']});

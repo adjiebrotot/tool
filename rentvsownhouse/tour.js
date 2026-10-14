@@ -61,9 +61,9 @@ window.__TOUR = {
       target: '#detailSection',
       title: '⑥ The details, when you want them',
       body: 'The year-by-year cashflow for owning, renting and renting first sits behind ' +
-            '<strong>Show table</strong>, and the CSV button exports it either way. ' +
-            '<strong>What this assumes</strong>, below it, lists what the model does and ' +
-            'does not count.'
+            'its <strong>chevron</strong>, and the CSV button exports it either way. ' +
+            '<strong>What this assumes</strong>, below it, opens the same way to list what ' +
+            'the model does and does not count.'
     },
     {
       target: null,

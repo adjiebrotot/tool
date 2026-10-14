@@ -73,7 +73,7 @@ window.__TOUR = {
     {
       target: '#detailSection',
       title: '⑦ Open the detail',
-      body: '<strong>Show table</strong> opens the tax at each salary, and <strong>CSV</strong> ' +
+      body: 'The <strong>chevron</strong> opens the tax at each salary, and <strong>CSV</strong> ' +
             'downloads it whether the table is open or not. The page ends with what the calculation ' +
             'assumes.'
     },

@@ -2637,7 +2637,7 @@ function initializeDefaultSecurities(){
 }
 
 /* The breakdown table is the most specific thing on the page, so it opens
-   closed behind Show table; the CSV button exports it either way. */
+   closed behind its chevron; the CSV button exports it either way. */
 if(window.SharedFold) SharedFold.attach(document.querySelector('main .detail-section'),
   { key:'dcasimulator', bodies:['#detailUnitNote','.table-wrap'] });
 renderAssumptions();

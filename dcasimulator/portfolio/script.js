@@ -3167,7 +3167,7 @@ updateBtnRow();
    otherwise fall through to the seeded defaults and run. */
 let restoredFromCache=false;
 /* The breakdown table is the most specific thing on the page, so it opens
-   closed behind Show table; the CSV button exports it either way. */
+   closed behind its chevron; the CSV button exports it either way. */
 if(window.SharedFold){
   const tableSub=$('compTable') && $('compTable').closest('.detail-subsection');
   if(tableSub) SharedFold.attach(tableSub, { key:'dcasimulator-portfolio', bodies:['#compUnitNote','.table-wrap'] });
