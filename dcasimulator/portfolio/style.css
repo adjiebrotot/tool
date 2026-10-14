@@ -171,14 +171,17 @@ main .card{transition:opacity var(--transition-fast)}
    varies. The gauge is shaped like a tip icon (a small round badge beside the
    label), but it is a button: hollow while the field is only a candidate,
    filled once it is being swept. */
-.opt-btn{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;padding:0;margin-left:2px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;flex-shrink:0;vertical-align:middle;font:inherit;line-height:1;transition:background var(--transition-fast),color var(--transition-fast),opacity var(--transition-fast)}
-.opt-btn .tico{width:12px;height:12px;vertical-align:0}
-.opt-btn:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
-.opt-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.opt-btn.on{background:var(--gold);color:var(--text-inv)}
+.opt-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;padding:0;margin:0;border-radius:50%;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.18);color:var(--gold);cursor:pointer;flex-shrink:0;font:inherit;font-size:.7rem;font-weight:800;line-height:1;font-style:normal;transition:background var(--transition-fast),border-color var(--transition-fast),color var(--transition-fast),opacity var(--transition-fast)}
+/* An invisible character gives the gauge the text baseline the tip icon's "?"
+   has, so the two sit on one line exactly as two tip icons would. */
+.opt-btn::before{content:'\200b';width:0;overflow:hidden}
+.opt-btn .tico{width:9px;height:9px;vertical-align:0}
+.opt-btn:hover{border-color:var(--gold)}
+.opt-btn:focus-visible{outline:1.5px solid var(--gold);outline-offset:1px}
+.opt-btn.on{background:var(--gold);border-color:var(--gold);color:var(--text-inv)}
 .opt-btn[hidden]{display:none}
 .opt-btn.is-full{opacity:.32;cursor:not-allowed}
-.opt-btn.is-full:hover{background:transparent}
+.opt-btn.is-full:hover{border-color:rgba(245,158,11,.3)}
 /* A swept row: a gold bar down its left edge, a faint gold wash, and its
    label at full weight, so it stands out from the rows that stay fixed. */
 .opt-on{border-radius:8px;background:color-mix(in srgb,var(--gold) 10%,transparent);box-shadow:inset 3px 0 0 var(--gold)}
@@ -186,11 +189,9 @@ main .card{transition:opacity var(--transition-fast)}
 .weight-row.opt-on{padding-left:9px;padding-right:6px}
 .trigger-card .param-row.opt-on{padding-left:7px;padding-right:4px}
 .field-row.opt-on .field-label,.param-row.opt-on>label,.weight-row.opt-on .wt-label{font-weight:800;color:var(--text)}
-.field-label .opt-btn{margin-left:4px}
 .sched-wd-row{display:flex;align-items:center;gap:6px}
 .sched-wd-row>.weekday-grid{flex:1 1 auto;min-width:0}
 .sched-inline.opt-on,.sched-wd-row.opt-on{padding:4px 6px 4px 9px}
-.trigger-card .param-row>label .opt-btn{margin-left:0}
 
 /* Only the portfolio being optimised runs, so the bar that switches, adds,
    copies and removes portfolios stands down; its tab stays lit. */
@@ -216,6 +217,9 @@ body.opt-modal-open{overflow:hidden}
 .opt-modal-sub{margin:0 0 4px;font-size:.8rem;color:var(--muted);line-height:1.45}
 .opt-range-row{display:flex;gap:12px}
 .opt-range-row[hidden]{display:none}
+.opt-modal .label-note{color:var(--muted);font-weight:400;font-size:.78rem}
+.opt-pick-list{height:auto;font-size:.83rem;padding:4px 6px}
+.opt-pick-list option{padding:3px 6px;border-radius:4px}
 .opt-range-row>.field-row{flex:1 1 0;min-width:0;border-top:none}
 .opt-modal .field-row[hidden]{display:none}
 .opt-preview{margin:6px 0 8px;font-size:.78rem;color:var(--muted);line-height:1.45}

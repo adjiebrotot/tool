@@ -427,7 +427,7 @@
       <input class="num-input" id="randomSeed" type="number" inputmode="numeric" min="0" step="1" value="25823952204" data-unitless data-unbounded />
     </div>
     <div class="field-row">
-      <div class="field-label">Trade at <span class="tip-icon" data-tip="Every top-up, trigger and rebalance decides on a day's close. This sets when its orders fill: that close, or the next trading day's open or close.">?</span> <button type="button" class="opt-btn" data-opt="execTiming" title="Optimise Trade at: test it over a range" aria-label="Optimise Trade at"></button></div>
+      <div class="field-label">Trade at <span class="tip-icon" data-tip="Every top-up, trigger and rebalance decides on a day's close. This sets when its orders fill: that close, or the next trading day's open or close.">?</span></div>
       <select class="sel-input" id="execTiming">
         <option value="close">Same day's close</option>
         <option value="next-open" selected>Next day's open</option>
@@ -639,15 +639,9 @@
           <div class="affix-wrap"><input class="affix-input has-suffix" id="optSteps" type="number" inputmode="numeric" min="2" max="50" step="1" value="11" /><span class="suffix">values</span></div>
         </div>
       </div>
-      <div id="optListFields" class="opt-range-row" hidden>
-        <div class="field-row">
-          <div class="field-label">Start value</div>
-          <select class="sel-input" id="optStartSel"></select>
-        </div>
-        <div class="field-row">
-          <div class="field-label">End value</div>
-          <select class="sel-input" id="optEndSel"></select>
-        </div>
+      <div id="optListFields" class="field-row" hidden>
+        <div class="field-label">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each value you select runs once, in the order the list shows. Hold Ctrl or Cmd to select more than one.">?</span></div>
+        <select class="sel-input opt-pick-list" id="optPickSel" multiple></select>
       </div>
       <div class="field-row" id="optSlackRow" hidden>
         <div class="field-label">Slack <span class="tip-icon" data-tip="Weights have to add up to 100%, so another weight moves the other way: one you pick, or all the others in equal shares.">?</span></div>
