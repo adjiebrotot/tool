@@ -507,6 +507,7 @@ function storeBatchResult(tk, r, fetchStart, fetchEnd){
   // The cache is shared with the single-asset tool, which draws real candles from
   // these OHLC arrays, so they are carried through rather than dropped on write.
   let opens = r.opens, highs = r.highs, lows = r.lows;
+  const name = r.name || (priceCache[tk] && priceCache[tk].name) || '';
   if(prev && prev.dates && prev.dates.length && window.SharedYF && SharedYF.mergeSeries){
     const m = SharedYF.mergeSeries(
       {dates:prev.dates, prices:prev.prices, opens:prev.opens, highs:prev.highs, lows:prev.lows},
@@ -519,7 +520,9 @@ function storeBatchResult(tk, r, fetchStart, fetchEnd){
     cachedStart: dates[0], cachedEnd: dates[dates.length-1],
     coverageStart: prev ? minIso(prev.coverageStart, fetchStart) : fetchStart,
     coverageEnd: prev ? maxIso(prev.coverageEnd, fetchEnd) : fetchEnd,
-    source:r.source, kind:r.kind, basis:r.basis
+    source:r.source, kind:r.kind, basis:r.basis,
+    // The security's full name (newer Worker deployments), kept across refreshes.
+    ...(name ? {name} : {})
   };
   return true;
 }
@@ -529,27 +532,54 @@ function maxIso(a, b){ return (a && a > b) ? a : b; }
 function loadBtnLabel(){ return loadedTickers().length ? '⤓ Load additional tickers' : '⤓ Load tickers'; }
 function updateLoadBtnLabel(){ const b=$('loadTickersBtn'); if(b && !b.disabled) b.innerHTML=loadBtnLabel(); }
 
+// The filter shows once the pool holds more chips than this.
+const POOL_FILTER_AT=8;
 function renderPoolChips(){
   const box=$('poolChips'); if(!box) return;
   const tks=loadedTickers();
   const wrap=$('poolChipsWrap');
   if(!tks.length && !simPool.length){ box.innerHTML=''; if(wrap) wrap.style.display='none'; updateLoadBtnLabel(); return; }
   if(wrap) wrap.style.display='';
+  // data-q is what the filter matches: the ticker and its full name.
   let html=tks.map(tk=>{
     const e=priceCache[tk];
     const warn=(e && e.kind==='stock' && e.source==='stooq');
+    const nm=tickerName(tk);
     const range=(e && e.dates && e.dates.length)?e.dates[0]+' to '+e.dates[e.dates.length-1]:'';
-    const title=warn?'Loaded from Stooq (unadjusted for splits/dividends)'+(range?' · '+range:''):range;
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${title}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
+    const title=[nm, warn?'Loaded from Stooq (unadjusted for splits/dividends)':'', range].filter(Boolean).join(' · ');
+    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${escapeHtml(title)}" data-q="${escapeHtml((tk+' '+nm).toLowerCase())}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
   }).join('');
   html+=simPool.map(s=>{
     const nm=escapeHtml(s.name);
-    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
+    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%" data-q="${escapeHtml(('simulated '+s.name).toLowerCase())}">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
   }).join('');
   box.innerHTML=html;
   box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
   box.querySelectorAll('.pool-chip-del[data-sim]').forEach(b=>b.addEventListener('click', ()=>{ removeSimAsset(b.dataset.sim); renderPoolChips(); refreshAssetPoolSelect(); }));
+  const n=tks.length+simPool.length;
+  const cnt=$('poolCount'); if(cnt) cnt.textContent='('+n+')';
+  const rb=$('refreshPoolBtn'); if(rb) rb.style.display=tks.length?'':'none';
+  // Past a handful of chips the filter shows; the box itself scrolls (style.css).
+  const f=$('poolFilter');
+  if(f){ f.style.display=n>POOL_FILTER_AT?'':'none'; if(n<=POOL_FILTER_AT) f.value=''; }
+  filterPoolChips();
   updateLoadBtnLabel();
+}
+// Show only the chips whose ticker or full name holds the filter's text.
+function filterPoolChips(){
+  const box=$('poolChips'); if(!box) return;
+  const f=$('poolFilter');
+  const q=(f && f.style.display!=='none' ? f.value : '').trim().toLowerCase();
+  let shown=0;
+  box.querySelectorAll('.pool-chip').forEach(c=>{ const hit=!q || (c.dataset.q||'').includes(q); c.hidden=!hit; if(hit) shown++; });
+  const empty=$('poolFilterEmpty'); if(empty) empty.hidden=!(q && !shown);
+  box.style.display=(q && !shown)?'none':'';
+}
+// The full name a ticker goes by: the one Yahoo gave when it was loaded, else the
+// reference list's (ticker/names.js). '' when neither knows it.
+function tickerName(tk){
+  const e=priceCache[tk];
+  return (e && e.name) || (window.DCA_TICKER_NAMES && window.DCA_TICKER_NAMES[tk]) || '';
 }
 
 // Remove a single ticker from the cached pool and reflect it everywhere.
@@ -593,7 +623,7 @@ function refreshAssetPoolSelect(){
   }
   sel.disabled=false;
   let html='';
-  if(tks.length) html+='<optgroup label="Tickers (real)">'+tks.map(tk=>`<option value="t:${tk}">${tk}</option>`).join('')+'</optgroup>';
+  if(tks.length) html+='<optgroup label="Tickers (real)">'+tks.map(tk=>`<option value="t:${tk}" data-chip="${escapeHtml(tickerName(tk))}">${tk}</option>`).join('')+'</optgroup>';
   if(simPool.length) html+='<optgroup label="Simulated">'+simPool.map(s=>`<option value="s:${escapeHtml(s.name)}">ƒ ${escapeHtml(s.name)}</option>`).join('')+'</optgroup>';
   sel.innerHTML=html;
   if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
@@ -614,7 +644,7 @@ function refreshRfTickerSelect(){
     return;
   }
   let html='<option value=""> - select a ticker - </option>';
-  html+=tks.map(tk=>`<option value="${escapeHtml(tk)}">${escapeHtml(tk)}</option>`).join('');
+  html+=tks.map(tk=>`<option value="${escapeHtml(tk)}" data-chip="${escapeHtml(tickerName(tk))}">${escapeHtml(tk)}</option>`).join('');
   if(cur && !tks.includes(cur)) html+=`<option value="${escapeHtml(cur)}">${escapeHtml(cur)} (not loaded)</option>`;
   sel.innerHTML=html;
   sel.value=cur;
@@ -645,10 +675,11 @@ function updateBtnRow(){
 // data we don't already hold: brand-new (or front-gapped) tickers get the full
 // history, while cached tickers missing only recent days fetch just the tail.
 // Each group is one batched Worker request (one daily request each).
-async function loadTickerPool(){
+// `only` (Refresh) is a list of loaded tickers to bring up to today instead.
+async function loadTickerPool(only){
   const inp=$('tickerPoolInput');
-  const list=[...new Set((inp.value||'').split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
-  if(!list.length){ showStatus($('poolStatus'),'Enter at least one ticker.','error'); return; }
+  const list=only ? [...only] : [...new Set((inp.value||'').split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+  if(!list.length){ showStatus($('poolStatus'), only ? 'No tickers are loaded yet.' : 'Enter at least one ticker.','error'); return; }
   if(!window.SharedYF){ showStatus($('poolStatus'),'Market data engine not loaded (shared.js).','error'); return; }
 
   const fetchEnd=isoDate(new Date());
@@ -662,8 +693,8 @@ async function loadTickerPool(){
   }
   const need=fullNeed.length+tailNeed.length;
   if(!need){
-    showStatus($('poolStatus'),'All requested tickers are already cached.','ok');
-    if(inp) inp.value=''; renderPoolChips(); refreshAssetPoolSelect(); updateRateInfo();
+    showStatus($('poolStatus'), only ? 'Every loaded ticker is already up to date.' : 'All requested tickers are already cached.','ok');
+    if(inp && !only) inp.value=''; renderPoolChips(); refreshAssetPoolSelect(); updateRateInfo();
     return;
   }
   if(SharedYF.getDailyRemaining()<=0){
@@ -673,8 +704,9 @@ async function loadTickerPool(){
   }
 
   const reqsNeeded=(fullNeed.length?1:0)+(tailNeed.length?1:0);
-  const loadBtn=$('loadTickersBtn');
+  const loadBtn=$('loadTickersBtn'), refreshBtn=$('refreshPoolBtn');
   loadBtn.disabled=true; loadBtn.innerHTML='<span class="spinner"></span>Loading…';
+  if(refreshBtn) refreshBtn.disabled=true;
   try{
     showStatus($('poolStatus'),'Fetching '+need+' ticker(s)'+(reqsNeeded>1?' in '+reqsNeeded+' requests':' in one request')+'…','loading');
     const failed=[]; let ok=0;
@@ -694,8 +726,8 @@ async function loadTickerPool(){
     persistPriceCache();
     if(failed.length&&ok) showStatus($('poolStatus'),ok+' loaded · could not load: '+failed.join(', '),'warn');
     else if(failed.length) showStatus($('poolStatus'),'Could not load: '+failed.join(', '),'error');
-    else showStatus($('poolStatus'),ok+' ticker(s) loaded and cached.','ok');
-    if(ok && !failed.length && inp) inp.value='';
+    else showStatus($('poolStatus'),ok+(only?' ticker(s) refreshed to the latest close.':' ticker(s) loaded and cached.'),'ok');
+    if(ok && !failed.length && inp && !only) inp.value='';
     renderPoolChips();
     refreshAssetPoolSelect();
     if(ok) markStale();   // fresh history behind an asset is a different run
@@ -703,6 +735,7 @@ async function loadTickerPool(){
     showStatus($('poolStatus'),'Load failed: '+e.message,'error');
   } finally {
     loadBtn.disabled=false; loadBtn.innerHTML=loadBtnLabel();
+    if(refreshBtn) refreshBtn.disabled=false;
     updateRateInfo();
   }
 }
@@ -1332,8 +1365,19 @@ $('addPortfolioBtn').addEventListener('click',()=>{
 $('dupPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) duplicatePortfolio(activePortfolioId); });
 $('delPortfolioBtn').addEventListener('click',()=>{ if(activePortfolioId!=null) removePortfolio(activePortfolioId); });
 
+/* ─── SEARCHABLE ASSET PICKERS ─── */
+// Type a ticker or any part of its full name (shown as the row's chip). The select
+// stays the field of record; the combo follows its refills (dropdown.js).
+if(window.SharedDropdown){
+  const ap=SharedDropdown.searchable($('assetPoolSelect'),{placeholder:'Search ticker or name…', minWidth:380});
+  if(ap){ ap.input.style.flex='1'; ap.input.style.minWidth='0'; }
+  SharedDropdown.searchable($('rfTicker'),{placeholder:'Search ticker or name…', minWidth:380});
+}
+
 /* ─── TICKER POOL WIRING (Data tab) ─── */
-$('loadTickersBtn').addEventListener('click', loadTickerPool);
+$('loadTickersBtn').addEventListener('click', ()=>loadTickerPool());
+{ const rb=$('refreshPoolBtn'); if(rb) rb.addEventListener('click', ()=>loadTickerPool(loadedTickers())); }
+{ const pf=$('poolFilter'); if(pf) pf.addEventListener('input', filterPoolChips); }
 $('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const i=$('tickerPoolInput'); if(i) i.focus(); });
 { const cb=$('clearPoolBtn'); if(cb) cb.addEventListener('click', clearPool); }
 $('tickerPoolInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); } });

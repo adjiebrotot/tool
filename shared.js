@@ -1050,6 +1050,8 @@
        edit       pencil: open this item for editing.
        clear      backspace key: empty the text field it sits in.
        reset      anticlockwise arrow: put this value back to its default.
+       refresh    two arrows chasing round: fetch the latest data for what is
+                  already loaded.
        save       floppy disk: write the work to a file.
        open       open folder: read a file from this device.
        view       eye: show the rendered result instead of its source.
@@ -1074,6 +1076,7 @@
       edit: '<path d="M16.4 4a2.1 2.1 0 0 1 3 3L8 18.4l-4.3 1.2L4.9 15.3z"/><path d="M14.4 6l3 3"/>',
       clear: '<path d="M8.7 5h10.8A1.5 1.5 0 0 1 21 6.5v11a1.5 1.5 0 0 1-1.5 1.5H8.7a1.5 1.5 0 0 1-1.15-.54L2.6 12l4.95-6.46A1.5 1.5 0 0 1 8.7 5z"/><path d="M11.6 9.6l4.8 4.8M16.4 9.6l-4.8 4.8"/>',
       reset: '<path d="M4.2 12a7.8 7.8 0 1 0 2.3-5.5"/><path d="M4.2 3.8v4.6h4.6"/>',
+      refresh: '<path d="M19.6 10A7.8 7.8 0 0 0 5.5 7.3"/><path d="M5.2 3.6v4h4"/><path d="M4.4 14a7.8 7.8 0 0 0 14.1 2.7"/><path d="M18.8 20.4v-4h-4"/>',
       save: '<path d="M5 3.5h11.2L20.5 7.8V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V5A1.5 1.5 0 0 1 5 3.5z"/><path d="M7.5 3.5v5h8v-5"/><rect x="7" y="13" width="10" height="7.5" rx=".6"/>',
       open: '<path d="M3.5 19V6a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2.2H18a1.5 1.5 0 0 1 1.5 1.5V10"/><path d="M3.5 19l2.6-7.4A1.5 1.5 0 0 1 7.5 10.6h13.1a1 1 0 0 1 .95 1.3L19.3 18.5a1.5 1.5 0 0 1-1.4 1H3.5"/>',
       view: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>'

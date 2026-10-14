@@ -205,6 +205,7 @@ async function fetchOneTicker(ticker, start, end, ctx) {
         // OHLC for candlestick view (split/dividend-adjusted to match `prices`).
         ...(series.opens && series.highs && series.lows
           ? { opens: series.opens, highs: series.highs, lows: series.lows } : {}),
+        ...(series.name ? { name: series.name } : {}),
         source: p.source,
         kind: p.kind,
         // Every date is the exchange's own trading day (see parseYahoo). Clients
@@ -338,7 +339,9 @@ function parseYahoo(text) {
     opens.push(o); highs.push(Math.max(o, h, c)); lows.push(Math.min(o, l, c));
   }
   if (!dates.length) throw new Error('Empty price series');
-  return { dates, prices, opens, highs, lows };
+  // The security's full name, so the simulators can find a ticker by it.
+  const name = String(meta.longName || meta.shortName || '').trim();
+  return { dates, prices, opens, highs, lows, ...(name ? { name } : {}) };
 }
 
 function parseStooq(text) {

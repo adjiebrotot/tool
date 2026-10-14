@@ -997,6 +997,7 @@ because that is how ✕ came to mean both "close" and "delete" on the same page.
 | **Open** a file from this device | open folder | `SharedScenario.mount(...)`, or `data-icon="open"` | 📂, 📊, ⬆, ↑, "Upload" (nothing is uploaded) |
 | **Show the result** instead of its source | eye | `SharedIcon.svg('view')` | 👁 |
 | **Put a value back** to its default | anticlockwise arrow | `SharedIcon.svg('reset')`, or `↺` in a label | |
+| **Refresh** loaded data to the latest | two arrows chasing round | `<button data-icon="refresh">Refresh</button>` | ⟳ (that only moves the view), ↺ |
 | **Share** a chart | Share ⌄ menu | `SharedShare` folds the chart's `⬇ SVG`, `⬇ PNG`, `⧉` into it | "Export", a row of four buttons |
 | **Download** an export | ⬇ + format | `⬇ SVG`, `⬇ PNG`, `⬇ CSV`, `⬇ .py` | ↓, 📥, "Export" |
 | **Copy** to the clipboard | ⧉ | `⧉`, titled "Copy PNG to clipboard" | ⧉ on a duplicate |
