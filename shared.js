@@ -4657,8 +4657,6 @@
       en: { name: 'Inputs', open: 'Show the inputs', close: 'Hide the inputs' },
       id: { name: 'Input', open: 'Tampilkan input', close: 'Sembunyikan input' }
     };
-    var GLYPH = '<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></svg>';
     // Two chevrons pointing the way the card moves: left or up to hide it,
     // right or down to open it (CSS turns them).
     var FOLD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5 6.5 12l5.5 5.5"/><path d="M18 6.5 12.5 12l5.5 5.5"/></svg>';
@@ -4725,7 +4723,7 @@
       rail.setAttribute('aria-label', t.open);
       rail.setAttribute('data-no-abbr', '');
       // The open icon is Hide's own, turned the other way.
-      rail.innerHTML = GLYPH + '<span class="ctrl-fold-name">' + t.name + '</span>' +
+      rail.innerHTML = '<span class="ctrl-fold-name">' + t.name + '</span>' +
         '<span class="ctrl-fold-go">' + FOLD + '</span>';
       rail.addEventListener('click', function(){ set(true, true); });
       rail.addEventListener('animationend', function(){ rail.classList.remove('ctrl-attn'); });
