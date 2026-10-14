@@ -241,21 +241,21 @@
     <div class="field-group">
     <div class="group-title">Contribution</div>
     <div class="field-row">
-      <div class="field-label">Amount per top-up <button type="button" class="opt-btn" data-opt="topup.amount" title="Optimise Amount per top-up: test it over a range" aria-label="Optimise Amount per top-up"></button></div>
+      <div class="field-label">Amount per top-up <button type="button" class="opt-btn" data-opt="topup.amount" title="Add Amount per top-up to optimisation" aria-label="Add Amount per top-up to optimisation"></button></div>
       <div class="affix-wrap">
         <span class="prefix" id="topupAmountPrefix">$</span>
         <input class="affix-input money-input" id="topupAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="5,000" />
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Yearly increase <span class="tip-icon" data-tip="Grows the top-up once a year and compounds: 10 makes year 2 +10% and year 3 +21%. Only the amount changes, never the schedule.">?</span> <button type="button" class="opt-btn" data-opt="topup.yearlyIncrease" title="Optimise Yearly increase: test it over a range" aria-label="Optimise Yearly increase"></button></div>
+      <div class="field-label">Yearly increase <span class="tip-icon" data-tip="Grows the top-up once a year and compounds: 10 makes year 2 +10% and year 3 +21%. Only the amount changes, never the schedule.">?</span> <button type="button" class="opt-btn" data-opt="topup.yearlyIncrease" title="Add Yearly increase to optimisation" aria-label="Add Yearly increase to optimisation"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="topupYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="0" />
         <span class="suffix">%/yr</span>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Top-up period <button type="button" class="opt-btn" data-opt="topupSched.period" title="Optimise Top-up period: test it over a range" aria-label="Optimise Top-up period"></button></div>
+      <div class="field-label">Top-up period <button type="button" class="opt-btn" data-opt="topupSched.period" title="Add Top-up period to optimisation" aria-label="Add Top-up period to optimisation"></button></div>
       <select class="sel-input" id="topupPeriod">
         <option value="weekly">Weekly</option>
         <option value="fortnightly">Fortnightly</option>
@@ -284,7 +284,7 @@
       </label>
     </div>
     <div class="field-row" id="rfRateRow">
-      <div class="field-label">Risk-free rate <span class="tip-icon" data-tip="The annual yield idle cash earns: 0% for nothing, 1 to 3% for a savings account, more for a money market fund.">?</span> <button type="button" class="opt-btn" data-opt="rf.rate" title="Optimise Risk-free rate: test it over a range" aria-label="Optimise Risk-free rate"></button></div>
+      <div class="field-label">Risk-free rate <span class="tip-icon" data-tip="The annual yield idle cash earns: 0% for nothing, 1 to 3% for a savings account, more for a money market fund.">?</span> <button type="button" class="opt-btn" data-opt="rf.rate" title="Add Risk-free rate to optimisation" aria-label="Add Risk-free rate to optimisation"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="rfRate" type="text" inputmode="numeric" data-min="0" data-max="30" value="0" />
         <span class="suffix">%/yr</span>
@@ -346,7 +346,7 @@
     <!-- DYNAMIC WEIGHT (momentum rank) options - only shown for that method. -->
     <div id="dynamicOpts" style="display:none;margin-top:14px">
       <div class="field-row" style="border-top:none;padding-top:0">
-        <div class="field-label">Momentum lookback <span class="tip-icon" data-tip="How far back each asset's return is measured for ranking. At every top-up they are sorted by it, then the money is split by your rank weights.">?</span> <button type="button" class="opt-btn" data-opt="rebal.lookbackMonths" title="Optimise Momentum lookback: test it over a range" aria-label="Optimise Momentum lookback"></button></div>
+        <div class="field-label">Momentum lookback <span class="tip-icon" data-tip="How far back each asset's return is measured for ranking. At every top-up they are sorted by it, then the money is split by your rank weights.">?</span> <button type="button" class="opt-btn" data-opt="rebal.lookbackMonths" title="Add Momentum lookback to optimisation" aria-label="Add Momentum lookback to optimisation"></button></div>
         <select class="sel-input" id="lookbackMonths">
           <option value="1">1 month</option>
           <option value="3">3 months</option>
@@ -380,7 +380,7 @@
       </div>
       <div id="rebalScheduleWrap" style="display:none">
         <div class="field-row">
-          <div class="field-label">Rebalance period <button type="button" class="opt-btn" data-opt="rebalSched.period" title="Optimise Rebalance period: test it over a range" aria-label="Optimise Rebalance period"></button></div>
+          <div class="field-label">Rebalance period <button type="button" class="opt-btn" data-opt="rebalSched.period" title="Add Rebalance period to optimisation" aria-label="Add Rebalance period to optimisation"></button></div>
           <select class="sel-input" id="rebalPeriod">
             <option value="weekly">Weekly</option>
             <option value="fortnightly">Fortnightly</option>
@@ -400,14 +400,14 @@
     <div class="field-group">
     <div class="group-title">Fees</div>
     <div class="field-row">
-      <div class="field-label">Buying fee <span class="tip-icon" data-tip="Charged on every purchase, as a share of the amount bought.">?</span> <button type="button" class="opt-btn" data-opt="rebal.buyFee" title="Optimise Buying fee: test it over a range" aria-label="Optimise Buying fee"></button></div>
+      <div class="field-label">Buying fee <span class="tip-icon" data-tip="Charged on every purchase, as a share of the amount bought.">?</span> <button type="button" class="opt-btn" data-opt="rebal.buyFee" title="Add Buying fee to optimisation" aria-label="Add Buying fee to optimisation"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="buyFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
       </div>
     </div>
     <div class="field-row">
-      <div class="field-label">Selling fee <span class="tip-icon" data-tip="Charged on every sale: rebalancing trims, and reserve-asset sales that fund a trigger. Purchases pay the buying fee above instead.">?</span> <button type="button" class="opt-btn" data-opt="rebal.sellFee" title="Optimise Selling fee: test it over a range" aria-label="Optimise Selling fee"></button></div>
+      <div class="field-label">Selling fee <span class="tip-icon" data-tip="Charged on every sale: rebalancing trims, and reserve-asset sales that fund a trigger. Purchases pay the buying fee above instead.">?</span> <button type="button" class="opt-btn" data-opt="rebal.sellFee" title="Add Selling fee to optimisation" aria-label="Add Selling fee to optimisation"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="sellFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
@@ -622,7 +622,7 @@
       <button type="button" class="btn-bare opt-modal-close" data-icon="close" id="optCloseBtn" title="Close. The range is already kept" aria-label="Close. The range is already kept"></button>
     </div>
     <div class="opt-modal-body">
-      <p class="opt-modal-sub" id="optModalSub"></p>
+      <div class="opt-modal-sub" id="optModalSub"></div>
       <div id="optNumFields">
         <div class="opt-range-row">
           <div class="field-row">
@@ -650,8 +650,7 @@
       <p class="opt-preview" id="optPreview" role="status"></p>
     </div>
     <div class="opt-modal-foot">
-      <button type="button" class="btn-secondary" data-icon="trash" id="optRemoveBtn" title="Remove this from the optimisation" aria-label="Remove this from the optimisation">Remove</button>
-      <span class="opt-modal-note">Changes are kept as you type.</span>
+      <button type="button" class="btn-secondary" data-icon="trash" id="optRemoveBtn" title="Remove this from the optimisation" aria-label="Remove this from the optimisation"></button>
       <button type="button" class="btn-primary" id="optDoneBtn">✓ Done</button>
     </div>
   </div>

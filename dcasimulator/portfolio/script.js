@@ -2346,7 +2346,7 @@ function optMetricsOf(rows, rfPx, rfRate){
    switches portfolios stands down, ▶ Simulate becomes ▶ Optimise with Cancel
    beside it, and the note above the gate says what the next run will sweep. */
 function optBtnHtml(key, label){
-  return `<button type="button" class="opt-btn" data-opt="${escapeHtml(key)}" title="Optimise ${escapeHtml(label)}: test it over a range" aria-label="Optimise ${escapeHtml(label)}">${OPT_ICON}</button>`;
+  return `<button type="button" class="opt-btn" data-opt="${escapeHtml(key)}" title="Add ${escapeHtml(label)} to optimisation" aria-label="Add ${escapeHtml(label)} to optimisation">${OPT_ICON}</button>`;
 }
 function optPlan(p){
   const specs=optVars.map(v=>optSpec(v.key, p));
@@ -2402,7 +2402,7 @@ function syncOptUi(){
     b.title = vr ? `Optimising ${label}: ${optRangeText(spec, optValues(spec, vr))}. Click to change.`
             : clash ? clash
             : full ? `Up to ${OPT_MAX_VARS} settings at once. Remove one to pick this.`
-            : `Optimise ${label}: test it over a range`;
+            : `Add ${label} to optimisation`;
     const row=optRowOf(b);
     if(row && vr && spec) lit.add(row);
   });
@@ -2519,8 +2519,7 @@ function renderOptModalNote(){
   const p=getActive(), spec=optSpec(optEditKey, p), vr=optVars.find(v=>v.key===optEditKey);
   if(!spec || !vr){ el.textContent=''; return; }
   $('optModalSub').innerHTML='<span data-no-abbr>'+escapeHtml(p.name)+'</span>, now '+escapeHtml(spec.fmt(spec.get(p)))+'.'+
-    (spec.key==='topupSched.period' ? ' The amount per top-up follows the period, so each year\'s money stays the same.' : '')+
-    (/Sched\.period$/.test(spec.key) ? ' Each period uses the days its schedule shows when you pick it.' : '');
+    (spec.key==='topupSched.period' ? optTopupPeriodDemo(p) : '');
   const vals=optValues(spec, vr);
   let html;
   if(vals.length<2) html='<span class="bad">'+(spec.kind==='list' ? 'Pick at least two values.' : 'Start and End give one value. Widen the range.')+'</span>';
@@ -2541,6 +2540,19 @@ function renderOptModalNote(){
   const plan=optPlan(p);
   if(plan.runs>OPT_MAX_RUNS) html+=' <span class="bad">'+plan.runs+' runs in all, over the '+OPT_MAX_RUNS+' a run allows: lower the steps.</span>';
   el.innerHTML=html;
+}
+// The top-up period rescales the amount per top-up so each year's money stays
+// the same (see optSpec). Shown as the amounts themselves, from the current input.
+function optTopupPeriodDemo(p){
+  const from=p.topupSched.period, sym=currentCurrencySymbol||'';
+  const money=v=>sym+SharedFmt.formatThousands(String(v), {maxDecimals:2});
+  const year=SharedFreq.convert(p.topup.amount, from, 'yearly', 2);
+  if(year===null) return '';
+  const word={weekly:'week', fortnightly:'fortnight', monthly:'month', quarterly:'quarter', yearly:'year'};
+  return ' Each period keeps '+escapeHtml(money(year))+' a year:<ul class="opt-freq-demo">'+OPT_PERIODS.map(o=>{
+    const v=SharedFreq.convert(p.topup.amount, from, o.v, 2);
+    return '<li'+(o.v===from?' class="is-now"':'')+'><span>'+escapeHtml(o.l)+'</span><span>'+escapeHtml(money(v))+' per '+word[o.v]+'</span></li>';
+  }).join('')+'</ul>';
 }
 function optModalEdited(){
   syncOptUi(); optChanged(); renderOptModalNote();
