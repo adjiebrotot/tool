@@ -45,11 +45,16 @@
 
   /* ── Geometry ── */
   function clamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+  // A node bus is a bar of no length: everything meets at its centre. Its saved
+  // width stays, so turning it back into a bar restores the bar.
   LF.busGeom = function(b){
-    var at = b.at, cx = at[0] * G, cy = at[1] * G, hw = at[2] * G / 2, v = at[3] === 1;
-    return { cx: cx, cy: cy, hw: hw, units: at[2], v: v,
+    var node = b.style === 'node';
+    var at = b.at, cx = at[0] * G, cy = at[1] * G, hw = node ? 0 : at[2] * G / 2, v = at[3] === 1;
+    return { cx: cx, cy: cy, hw: hw, units: node ? 0 : at[2], v: v, node: node,
              x1: v ? cx : cx - hw, y1: v ? cy - hw : cy, x2: v ? cx : cx + hw, y2: v ? cy + hw : cy };
   };
+  var NODE_R = 5;
+  LF.NODE_R = NODE_R;
   function busCentre(b){ return [b.at[0], b.at[1]]; }
   var DEV_UP = { Generator: 1, StorageUnit: 1 };
 
@@ -123,15 +128,16 @@
     Object.keys(reqs).forEach(function(key){
       var busId = +key.split(':')[0];
       var b = byId[busId];
-      var half = Math.max(0, Math.floor(b.at[2] / 2));
+      var g = L.bus[busId];
+      var half = g.node ? 0 : Math.max(0, Math.floor(b.at[2] / 2));
       pack(reqs[key], half);
       reqs[key].forEach(function(r){
-        var g = L.bus[busId];
         var px = g.v ? g.cx : g.cx + r.a * G, py = g.v ? g.cy + r.a * G : g.cy;
         var d = g.v ? [r.side ? -1 : 1, 0] : [0, r.side ? -1 : 1];
         ports[r.kind + r.id + ':' + (r.end || 0)] = { x: px, y: py, d: d, a: r.a, side: r.side, bus: busId };
       });
     });
+    nodePorts(model, L, ports);
     L.ports = ports;
 
     // Branch routes, and parallel branches between the same pair spread apart.
@@ -169,6 +175,52 @@
     });
     return L;
   };
+
+  /* A node has four ways out instead of two sides. A branch leaves it toward its
+     other end, along whichever axis that end lies further along (or the other
+     axis, when that way is taken and the other leads there too). A device takes
+     the side it was put on, or the next free way round when another device or a
+     branch is already there, so devices on one node never sit on top of each other. */
+  function nodePorts(model, L, ports){
+    var used = {};
+    function key(busId, d){ return busId + ':' + d[0] + ',' + d[1]; }
+    model.el.forEach(function(e){
+      if(!LF.BRANCH[e.c]) return;
+      [0, 1].forEach(function(end){
+        var p = ports['br' + e.id + ':' + end];
+        if(!p || !L.bus[p.bus].node) return;
+        var me = L.bus[p.bus], other = L.bus[end ? e.bus0 : e.bus1];
+        if(!other || other === me) return;
+        var dx = other.cx - me.cx, dy = other.cy - me.cy;
+        // Toward the nearest point of the other bar, not its centre, so a node
+        // beside a long bar leaves straight for it.
+        if(!other.node){
+          if(other.v){ dy = clamp(me.cy, other.y1, other.y2) - me.cy; }
+          else { dx = clamp(me.cx, other.x1, other.x2) - me.cx; }
+        }
+        if(dx === 0 && dy === 0) return;
+        var hx = [dx > 0 ? 1 : -1, 0], vy = [0, dy > 0 ? 1 : -1];
+        var ways = Math.abs(dx) > Math.abs(dy) ? [hx, vy] : [vy, hx];
+        // A way another branch already takes, while the other axis also leads
+        // toward this end: take that, so the two do not run on top of each other.
+        if(used[key(p.bus, ways[0])] && (ways[1][0] ? dx : dy) && !used[key(p.bus, ways[1])]) ways.shift();
+        p.d = ways[0];
+        used[key(p.bus, p.d)] = 1;
+      });
+    });
+    var dev = {};
+    model.el.forEach(function(e){
+      var p = LF.DEVICE[e.c] ? ports['dev' + e.id + ':0'] : null;
+      if(!p || !L.bus[p.bus].node) return;
+      var pref = p.d, perp = [[pref[1], pref[0]], [-pref[1], -pref[0]]], opp = [-pref[0], -pref[1]];
+      var order = [pref, perp[0], perp[1], opp];
+      // First a way nothing uses, then one only branches use, then the preferred one.
+      var pick = order.filter(function(d){ return !dev[key(p.bus, d)] && !used[key(p.bus, d)]; })[0] ||
+                 order.filter(function(d){ return !dev[key(p.bus, d)]; })[0] || pref;
+      p.d = pick;
+      dev[key(p.bus, pick)] = 1;
+    });
+  }
 
   // An orthogonal route from port p0 to port p1 (each leaving its bar along d).
   function route(p0, p1, m, spread){
@@ -520,6 +572,23 @@
         // An external grid: a hatched square.
         s += '<rect x="' + r1(g.cx - 11) + '" y="' + r1(g.cy - 11) + '" width="22" height="22" rx="1.5" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8"' + dash + '/>' +
              '<path d="M' + r1(g.cx - 11) + ' ' + r1(g.cy + 3) + 'l8 -8M' + r1(g.cx - 11) + ' ' + r1(g.cy + 11) + 'l22 -22M' + r1(g.cx - 3) + ' ' + r1(g.cy + 11) + 'l14 -14M' + r1(g.cx + 5) + ' ' + r1(g.cy + 11) + 'l6 -6M' + r1(g.cx - 11) + ' ' + r1(g.cy - 5) + 'l6 -6"' + strokeW(1.1) + '/>';
+      } else if(e.c === 'Generator' && e.style === 'pv'){
+        // A solar panel: a square of cells.
+        s += '<rect x="' + r1(g.cx - 11) + '" y="' + r1(g.cy - 11) + '" width="22" height="22" rx="1.5" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8"' + dash + '/>' +
+             '<path d="M' + r1(g.cx - 11) + ' ' + r1(g.cy - 3.7) + 'h22M' + r1(g.cx - 11) + ' ' + r1(g.cy + 3.7) + 'h22M' + r1(g.cx) + ' ' + r1(g.cy - 11) + 'v22"' + strokeW(1.1) + '/>';
+      } else if(e.c === 'Generator' && e.style === 'wind'){
+        // A wind turbine: a three-bladed rotor in the generator's circle.
+        var blades = '';
+        [-90, 30, 150].forEach(function(deg){
+          var a = deg * Math.PI / 180, c = Math.cos(a), sn = Math.sin(a);
+          // Each blade a slim leaf from the hub, wider near its root.
+          var tip = [g.cx + 8.5 * c, g.cy + 8.5 * sn], root = [g.cx + 1.8 * c, g.cy + 1.8 * sn];
+          var w = [-sn * 1.9, c * 1.9], mid = [g.cx + 4 * c, g.cy + 4 * sn];
+          blades += 'M' + r1(root[0]) + ' ' + r1(root[1]) + 'L' + r1(mid[0] + w[0]) + ' ' + r1(mid[1] + w[1]) + 'L' + r1(tip[0]) + ' ' + r1(tip[1]) + 'L' + r1(mid[0] - w[0] * 0.4) + ' ' + r1(mid[1] - w[1] * 0.4) + 'Z';
+        });
+        s += '<circle cx="' + r1(g.cx) + '" cy="' + r1(g.cy) + '" r="11" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8"' + dash + '/>' +
+             '<path d="' + blades + '" fill="' + col + '" stroke="' + col + '" stroke-width="0.8" stroke-linejoin="round"/>' +
+             '<circle cx="' + r1(g.cx) + '" cy="' + r1(g.cy) + '" r="1.7" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.2"/>';
       } else if(e.c === 'Generator'){
         s += '<circle cx="' + r1(g.cx) + '" cy="' + r1(g.cy) + '" r="11" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8"' + dash + '/>' +
              '<path d="M' + r1(g.cx - 6.5) + ' ' + r1(g.cy) + 'q3.25 -6.5 6.5 0t6.5 0"' + strokeW(1.6) + '/>';
@@ -570,8 +639,10 @@
       var g = L.bus[e.id], r = ok ? res.bus[e.id] : null;
       var col = C.text;
       if(r && (by === 'voltage' || by === 'both')) col = vColour(r.v);
-      base += '<path d="M' + r1(g.x1) + ' ' + r1(g.y1) + 'L' + r1(g.x2) + ' ' + r1(g.y2) + '" stroke="' + col + '" stroke-width="5" stroke-linecap="round" data-id="' + e.id + '"/>';
-      grow(g.x1 - 3, g.y1 - 3); grow(g.x2 + 3, g.y2 + 3);
+      if(g.node) base += '<circle cx="' + r1(g.cx) + '" cy="' + r1(g.cy) + '" r="' + NODE_R + '" fill="' + col + '" data-id="' + e.id + '"/>';
+      else base += '<path d="M' + r1(g.x1) + ' ' + r1(g.y1) + 'L' + r1(g.x2) + ' ' + r1(g.y2) + '" stroke="' + col + '" stroke-width="5" stroke-linecap="round" data-id="' + e.id + '"/>';
+      var gr = g.node ? NODE_R : 3;
+      grow(g.x1 - gr, g.y1 - gr); grow(g.x2 + gr, g.y2 + gr);
       var lines = [];
       if(shows(e, display, 'name')) lines.push({ t: LF.nameOf(e), bold: true });
       if(r){

@@ -24,6 +24,9 @@
                       omitted parts are automatic
      lb     a per-element label override, a bitmask over LF.LABELS[c]
      grid   (Generator) 1 draws it as an external grid; the power flow ignores it
+     style  how it is drawn, never what it computes: (Bus) 'node' draws a dot
+            instead of a bar; (Generator) 'pv' a solar panel, 'wind' a wind
+            turbine. '' (the default) is the bar and the round generator
    Only values that differ from DEFAULTS are written. */
 (function(root){
   'use strict';
@@ -43,11 +46,11 @@
   // PyPSA's own defaults, except p_set: PyPSA leaves it NaN, and a power flow
   // then returns NaN for a slack or storage unit, so the tool always sends 0.
   var DEFAULTS = {
-    Bus:            { v_nom: 1, v_mag_pu_set: 1 },
+    Bus:            { v_nom: 1, v_mag_pu_set: 1, style: '' },
     Line:           { type: '', length: 0, num_parallel: 1, r: 0, x: 0, b: 0, g: 0, s_nom: 0 },
     Transformer:    { type: '', tap_position: 0, num_parallel: 1, s_nom: 0, x: 0, r: 0, g: 0, b: 0,
                       tap_ratio: 1, tap_side: 0, phase_shift: 0, model: 't' },
-    Generator:      { control: 'PQ', p_set: 0, q_set: 0, p_nom: 0, grid: 0 },
+    Generator:      { control: 'PQ', p_set: 0, q_set: 0, p_nom: 0, grid: 0, style: '' },
     Load:           { p_set: 0, q_set: 0 },
     ShuntImpedance: { g: 0, b: 0 },
     StorageUnit:    { p_set: 0, q_set: 0, p_nom: 0 },
@@ -58,13 +61,13 @@
   // How each saved value is read back: [kind, min, max] or ['e', options].
   var BIG = 1e5;
   var SPEC = {
-    Bus:            { v_nom: ['n', 0.1, 1500], v_mag_pu_set: ['n', 0.5, 1.5] },
+    Bus:            { v_nom: ['n', 0.1, 1500], v_mag_pu_set: ['n', 0.5, 1.5], style: ['e', ['', 'node']] },
     Line:           { type: ['s'], length: ['n', 0, 5000], num_parallel: ['i', 1, 20], r: ['n', 0, BIG], x: ['n', -BIG, BIG],
                       b: ['n', -1, 1], g: ['n', 0, 1], s_nom: ['n', 0, BIG] },
     Transformer:    { type: ['s'], tap_position: ['i', -50, 50], num_parallel: ['i', 1, 20], s_nom: ['n', 0, BIG],
                       x: ['n', -10, 10], r: ['n', 0, 10], g: ['n', -1, 1], b: ['n', -1, 1], tap_ratio: ['n', 0.5, 1.5],
                       tap_side: ['e', [0, 1]], phase_shift: ['n', -360, 360], model: ['e', ['t', 'pi']] },
-    Generator:      { control: ['e', ['PQ', 'PV', 'Slack']], p_set: ['n', -BIG, BIG], q_set: ['n', -BIG, BIG], p_nom: ['n', 0, BIG], grid: ['e', [0, 1]] },
+    Generator:      { control: ['e', ['PQ', 'PV', 'Slack']], p_set: ['n', -BIG, BIG], q_set: ['n', -BIG, BIG], p_nom: ['n', 0, BIG], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']] },
     Load:           { p_set: ['n', -BIG, BIG], q_set: ['n', -BIG, BIG] },
     ShuntImpedance: { g: ['n', -10, 10], b: ['n', -10, 10] },
     StorageUnit:    { p_set: ['n', -BIG, BIG], q_set: ['n', -BIG, BIG], p_nom: ['n', 0, BIG] },
@@ -76,15 +79,22 @@
   // this table may change without changing any saved diagram).
   LF.NEW = {
     Bus:            { v_nom: 110 },
+    Node:           { v_nom: 110, style: 'node' },
     Line:           { r: 2, x: 12, b: 3e-5, s_nom: 100 },
     Transformer:    { s_nom: 100, x: 0.1, r: 0.005 },
     Generator:      { control: 'PV', p_set: 50, p_nom: 100 },
+    PV:             { control: 'PV', p_set: 50, p_nom: 100, style: 'pv' },
+    Wind:           { control: 'PV', p_set: 50, p_nom: 100, style: 'wind' },
     Grid:           { control: 'Slack', p_nom: 0, grid: 1 },
     Load:           { p_set: 20, q_set: 5 },
     ShuntImpedance: { b: 0 },
     StorageUnit:    { p_set: 10, p_nom: 20 },
     Link:           { p_set: 50, efficiency: 0.97, p_nom: 100 }
   };
+
+  // Toolbar parts that are another class drawn another way: the class they make.
+  LF.TOOL_CLASS = { Node: 'Bus', Grid: 'Generator', PV: 'Generator', Wind: 'Generator' };
+  LF.toolClass = function(tool){ return LF.TOOL_CLASS[tool] || tool; };
 
   // The quantities a label can show, per class. Frozen order: lb is a bitmask over it.
   LF.LABELS = {
@@ -255,7 +265,7 @@
       return o;
     }));
   };
-  var DRAW_ONLY = { grid: 1 };
+  var DRAW_ONLY = { grid: 1, style: 1 };
 
   /* ── Model queries ── */
   LF.byId = function(model){
