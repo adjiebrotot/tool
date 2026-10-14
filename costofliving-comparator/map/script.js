@@ -1696,7 +1696,9 @@ function fmtFx(v){
 
 // ── Gestures ─────────────────────────────────────────────────────────────
 // Drag pans. Ctrl or ⌘ with the wheel zooms (a trackpad pinch arrives as
-// that too); a plain wheel scrolls the page, as a map inside a page should.
+// that too). A plain wheel scrolls the page past the map until the map is
+// clicked: from then until the pointer leaves it, the wheel is the map's and
+// zooms it, and a soft blue ring round the map says so.
 // On a phone one finger scrolls the page up and down and pans sideways, and
 // two fingers pinch. With the map filling the screen there is no page to
 // scroll, so a plain wheel zooms and one finger pans either way.
@@ -1710,14 +1712,18 @@ function hint(text){
   hintTimer = setTimeout(() => { h.hidden = true; }, 1300);
 }
 const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
+let wheelOn = false;
+function setWheel(on){ wheelOn = on; wrapEl.classList.toggle('is-active', on); }
+wrapEl.addEventListener('pointerdown', () => setWheel(true));
+wrapEl.addEventListener('pointerleave', e => { if(e.pointerType === 'mouse') setWheel(false); });
 cv.addEventListener('wheel', e => {
   if(!mapReady) return;
-  if(e.ctrlKey || e.metaKey || mapFull){
+  if(e.ctrlKey || e.metaKey || mapFull || wheelOn){
     e.preventDefault();
     const [x, y] = localXY(e);
     zoomAt(x, y, Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0022)));
   } else if(Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-    hint(isMac ? 'Hold ⌘ and scroll to zoom the map' : 'Hold Ctrl and scroll to zoom the map');
+    hint(isMac ? 'Click the map, or hold ⌘, to zoom with the wheel' : 'Click the map, or hold Ctrl, to zoom with the wheel');
   }
 }, {passive: false});
 cv.addEventListener('pointerdown', e => {
