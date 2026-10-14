@@ -50,7 +50,7 @@
   // The key's arrowhead, as on the page: solid for active power, open for reactive.
   function keyHeadPath(kind, x, ky){ return kind === 'p' ? 'M' + (x + 26) + ' ' + (ky - 4) + 'L' + (x + 34) + ' ' + ky + 'L' + (x + 26) + ' ' + (ky + 4) + 'Z' : 'M' + (x + 28) + ' ' + (ky - 3.5) + 'L' + (x + 33) + ' ' + ky + 'L' + (x + 28) + ' ' + (ky + 3.5); }
   function keyHead(kind, x, ky, col){
-    return '<path d="' + keyHeadPath(kind, x, ky) + '" ' + (kind === 'p' ? 'fill="' + col + '"' : 'fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"') + '/>';
+    return '<path d="' + keyHeadPath(kind, x, ky) + '" ' + LF.headPaint(kind, col) + '/>';
   }
 
   /* ── SVG ── */
@@ -155,6 +155,14 @@
       g.strokeStyle = l.color; g.lineWidth = st.width;
       g.setLineDash(st.dash); g.lineDashOffset = phase(l.n, l.rev);
       g.stroke(new Path2D(l.d));
+    });
+    // The heads stand still on their lanes, as on the page.
+    g.setLineDash([]);
+    P.lanes.forEach(function(l){
+      if(!l.head) return;
+      var hd = new Path2D(l.head);
+      if(l.kind === 'p'){ g.fillStyle = l.color; g.fill(hd); }
+      else { g.strokeStyle = l.color; g.lineWidth = 2; g.stroke(hd); }
     });
     g.restore();
     if(items.length){

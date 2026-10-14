@@ -6,7 +6,7 @@
 
    A scene is
      base    SVG markup of the network (branches, devices, bus bars)
-     lanes   the moving flow dashes: [{ d, kind:'p'|'q', n, rev, color }]
+     lanes   the moving flow dashes: [{ d, kind:'p'|'q', n, rev, color, head }]
      labels  text: [{ x, y, t, anchor, mono, bold, size, fill, res }]
      bbox    the drawing's extent in diagram px                            */
 (function(root){
@@ -418,7 +418,27 @@
       var n = speed(f, max);
       if(!n || pts.length < 2) return;
       var ofs = offset(pts, kind === 'p' ? -3.2 : 3.2);
-      lanes.push({ d: pathD(ofs), kind: kind, n: n, rev: !forward, color: kind === 'p' ? C.p : C.q, id: id });
+      lanes.push({ d: pathD(ofs), kind: kind, n: n, rev: !forward, color: kind === 'p' ? C.p : C.q, id: id,
+                   head: laneHead(forward ? ofs : ofs.slice().reverse(), kind) });
+    }
+    /* The arrowhead on a lane, pointing the way its flow goes, as in the key: a solid
+       head for active power, an open one for reactive. The two kinds sit a little
+       apart along the lane (P before Q) so their heads never overlap. */
+    function laneHead(pts, kind){
+      var segs = [], tot = 0;
+      for(var i = 1; i < pts.length; i++){
+        var l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+        segs.push(l); tot += l;
+      }
+      if(tot < 8) return '';
+      var at = tot * (kind === 'p' ? 0.42 : 0.58), k = 0;
+      while(k < segs.length - 1 && at > segs[k]){ at -= segs[k]; k++; }
+      var a = pts[k], b = pts[k + 1], sl = segs[k] || 1;
+      var ux = (b[0] - a[0]) / sl, uy = (b[1] - a[1]) / sl;
+      var px = a[0] + ux * at, py = a[1] + uy * at;
+      var pt = function(f, s){ return r1(px + ux * f - uy * s) + ' ' + r1(py + uy * f + ux * s); };
+      return kind === 'p' ? 'M' + pt(5.5, 0) + 'L' + pt(-5, -4.5) + 'L' + pt(-5, 4.5) + 'Z'
+                          : 'M' + pt(-3, -4.5) + 'L' + pt(3, 0) + 'L' + pt(-3, 4.5);
     }
 
     /* Branches */
@@ -607,12 +627,17 @@
   // The dash each kind of lane is drawn with: P a dash, Q a dot. One period: 12 px.
   LF.LANE = { p: { dash: [6, 6], width: 2.6 }, q: { dash: [0.01, 11.99], width: 3.2 } };
   LF.FLOW_T = 1.6; // seconds for the slowest lane to move one period
+  // How a lane's head is painted: solid for active power, open for reactive.
+  LF.headPaint = function(kind, col){
+    return kind === 'p' ? 'fill="' + col + '"' : 'fill="none" stroke="' + col + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+  };
   LF.laneSvg = function(lanes){
     var s = '';
     lanes.forEach(function(l){
       var st = LF.LANE[l.kind];
       s += '<path class="fl fl-' + l.kind + (l.rev ? ' rev' : '') + '" d="' + l.d + '" fill="none" stroke="' + l.color + '" stroke-width="' + st.width +
         '" stroke-linecap="round" stroke-dasharray="' + st.dash.join(' ') + '" style="--n:' + l.n + '" data-id="' + l.id + '"/>';
+      if(l.head) s += '<path class="fh fl-' + l.kind + '" d="' + l.head + '" ' + LF.headPaint(l.kind, l.color) + ' data-id="' + l.id + '"/>';
     });
     return s;
   };
