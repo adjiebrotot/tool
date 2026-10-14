@@ -14,9 +14,8 @@ const CHART_STUB = `
 window.__charts = [];
 class Chart {
   constructor(ctx, cfg){ this.config=cfg; this.data=(cfg&&cfg.data)||{datasets:[]}; this.options=(cfg&&cfg.options)||{};
-    // Which canvas a chart was built on, because the page now draws the
-    // sensitivity sweep alongside the main chart and "the last one made" no
-    // longer picks out the one a check means.
+    // Which canvas a chart was built on, so "the last one made" picks out
+    // the chart a check means.
     this.canvasId=(ctx&&ctx.id)||''; window.__charts.push(this); }
   update(){} destroy(){ const i=window.__charts.indexOf(this); if(i>=0) window.__charts.splice(i,1); } resetZoom(){}
 }
@@ -107,7 +106,7 @@ async function compTable(){
     const set=(id,v)=>{ const el=document.getElementById(id); el.value=v; ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true}))); };
     document.getElementById('scName').value='Yearly 5y @5%';
     set('scFreq','yearly'); set('scTerm','5'); set('scRate','5');
-    document.getElementById('saveScenarioBtn').click();
+    document.getElementById('simBtn').click();
   });
   await page.waitForTimeout(250);
   const t=await compTable();
@@ -135,14 +134,14 @@ async function compTable(){
 //        60 months (5 yr) should become 260 weeks, not silently 60 weeks (1.15 yr). ──
 {
   // open editor on scenario 0 (60mo Monthly @ 5%)
-  await page.evaluate(()=>{ document.querySelectorAll('.scenario-card .sc-btn[data-action="edit"]')[0].click(); });
+  await page.evaluate(()=>{ document.querySelectorAll('.sc-tab')[0].click(); });
   await page.evaluate(()=>{
     const set=(id,v)=>{ const el=document.getElementById(id); el.value=v; ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true}))); };
     set('scFreq','weekly');
-    document.getElementById('saveScenarioBtn').click();
+    document.getElementById('simBtn').click();
   });
   await page.waitForTimeout(200);
-  const card=await page.evaluate(()=>document.querySelectorAll('.scenario-card .sc-summary')[0].textContent.trim());
+  const card=await page.evaluate(()=>document.querySelectorAll('.sc-tab')[0].title.trim());
   check('F3 changing frequency converts the term (5 years stays 5 years)',
     /260\s*weeks/.test(card),
     `scenario now reads "${card}" — a 5-year monthly loan silently became a ~1.15-year weekly loan`);
@@ -153,12 +152,12 @@ async function compTable(){
 //        down (49,500) + 1,000 fee > 50,000 cash → cashAfterUpfront < 0. ──
 {
   await resetPage();
-  await page.evaluate(()=>{ document.querySelectorAll('.scenario-card .sc-btn[data-action="edit"]')[0].click(); });
+  await page.evaluate(()=>{ document.querySelectorAll('.sc-tab')[0].click(); });
   await page.evaluate(()=>{
     const set=(id,v)=>{ const el=document.getElementById(id); el.value=v; ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true}))); };
     set('scDownPct','99');
     set('scFeeAmt','1,000');
-    document.getElementById('saveScenarioBtn').click();
+    document.getElementById('simBtn').click();
   });
   await page.waitForTimeout(200);
   const st=await page.evaluate(()=>({
@@ -203,9 +202,9 @@ const setBase=o=>page.evaluate(o=>{
 const setOneScenario=o=>page.evaluate(o=>{
   const fire=(el,e)=>e.forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true})));
   let guard=0;
-  while(document.querySelectorAll('.scenario-card').length>1&&guard++<50)
-    document.querySelectorAll('.scenario-card .sc-btn[data-action="del"]')[1].click();
-  document.querySelectorAll('.scenario-card .sc-btn[data-action="edit"]')[0].click();
+  while(document.querySelectorAll('.sc-tab').length>1&&guard++<50){
+    document.querySelectorAll('.sc-tab')[1].click();document.getElementById('delScenarioBtn').click();}
+  document.querySelectorAll('.sc-tab')[0].click();
   document.querySelector('#scRateModeGroup .seg-btn[data-val="simple"]').click();
   document.querySelector('#scPaymentModeGroup .seg-btn[data-val="single"]').click();
   const set=(id,v,evts)=>{const el=document.getElementById(id);el.value=String(v);fire(el,evts||['input','change']);};
@@ -224,7 +223,7 @@ const setOneScenario=o=>page.evaluate(o=>{
   if(o.payment!==undefined)set('scKnownPayment',o.payment);
 },o);
 
-const saveScenario=()=>page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+const saveScenario=()=>page.evaluate(()=>document.getElementById('simBtn').click());
 
 // Drive the rate or repayment schedule rows the way a reader would.
 const setSchedule=(kind,rows)=>page.evaluate(([kind,rows])=>{
@@ -420,7 +419,8 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
   const a=await amortRows();
   const ii=a.head.indexOf('Interest');
   const gotFirst=money(a.rows[0][ii]);
-  await setBase({conv:'ear'});await page.waitForTimeout(200);
+  // The convention is an assumption: it reaches the board through Simulate.
+  await setBase({conv:'ear'});await saveScenario();await page.waitForTimeout(200);
   const a2=await amortRows();
   const gotEar=money(a2.rows[0][a2.head.indexOf('Interest')]);
   check('F14 rate convention: nominal 12% charges exactly 1.000% a period, effective charges 0.949%',

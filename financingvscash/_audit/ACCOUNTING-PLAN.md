@@ -148,11 +148,11 @@ subtrahend for a given row.
 The page computes the same quantity through at least four separate paths. They
 must agree, because a reader will read whichever one is nearest.
 
-- **E1 · The sensitivity sweep must pass through the live answer.** Sweep the
-  finance rate across a range containing the scenario's own rate with a grid
-  point landing on it; the objective plotted there must equal the KPI on screen.
-  Repeated for Net Benefit, Total Interest, Total Financing Cost, Ending Wealth
-  and Inflation-Adjusted Net Benefit, and for both 2D and 3D.
+- **E1 · The optimisation sweep must pass through the live answer.** Optimise
+  the finance rate across a range containing the scenario's own rate with a
+  tested value landing on it; the objective plotted there must equal the figure
+  the comparison prints. Repeated for Net Benefit, Total Interest, Total
+  Financing Cost, Ending Wealth and Inflation-Adjusted Net Benefit.
 - **E2 · The CSV is the table.** Every cell of the downloaded amortisation CSV
   equals the cell on screen.
 - **E3 · The chart's last point is the table's ending figure**, for each of the

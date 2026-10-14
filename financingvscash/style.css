@@ -68,44 +68,42 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .canvas-wrap{position:relative;width:100%;height:420px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0));}
 body.light .canvas-wrap{background:linear-gradient(180deg,rgba(0,0,0,.015),rgba(0,0,0,0));}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.86rem;min-height:22px;}
-.scenario-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
-/* Editing mode: the editor is a box of its own and the list steps aside. */
-#tab-scenarios.editing .scenario-list,#tab-scenarios.editing #addScenarioBtn{display:none;}
-.sc-editor{border:1px solid var(--border);border-radius:12px;padding:12px 14px 14px;background:var(--bg-subtle);}
-.sc-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
-.sc-editor-head h3{margin:0;min-width:0;overflow-wrap:anywhere;}
-.sc-editor-close{margin-right:-6px;}
-/* Done is pinned to the bottom of whatever is scrolling (the panel on a
-   desktop, the page on a phone), so the way out is always in view however
-   long the loan form runs. It keeps the work: edits are applied as they are
-   made, so there is nothing to lose by leaving. */
-.sc-editor-foot{position:sticky;bottom:0;z-index:2;display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:14px -14px -14px;padding:10px 14px;background:var(--bg-subtle);border-top:1px solid var(--border);border-radius:0 0 12px 12px;box-shadow:0 -6px 12px -10px rgba(0,0,0,.35);}
-.sc-editor-note{margin-right:auto;font-size:.76rem;color:var(--muted);}
-.sc-editor-foot .btn-primary{padding:7px 18px;}
-.scenario-card{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s;}
-.scenario-card:hover{border-color:rgba(255,255,255,.15);}
-body.light .scenario-card:hover{border-color:rgba(0,0,0,.2);}
-.scenario-card.active{border-color:var(--accent);background:rgba(141,187,255,.08);}
-.scenario-card .sc-header{display:flex;justify-content:space-between;align-items:center;gap:8px;}
-.scenario-card .sc-name{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:8px;}
+/* Scenario bar: one tab per loan offer, the + beside the last one, copy and
+   remove on the side. It wears the teal accent (--accent2) so it reads as the
+   chooser, apart from the blue-accented editor under it. */
+.sc-bar{display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;padding:9px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);}
+.sc-tabs{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0;align-items:center;}
+.sc-tab{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--muted);font-weight:600;font-size:.82rem;cursor:pointer;user-select:none;max-width:190px;white-space:nowrap;transition:all .15s;}
+.sc-tab:hover{border-color:var(--accent2);color:var(--text);}
+.sc-tab.active{background:var(--accent2);color:var(--text-inv);border-color:var(--accent2);font-weight:700;}
+.sc-tab-name{overflow:hidden;text-overflow:ellipsis;}
+.sc-tab-rename{width:110px;font:inherit;font-size:.82rem;padding:1px 4px;border:1px solid var(--border);border-radius:5px;background:var(--panel);color:var(--text);}
 /* The dot is a live colour input: a round swatch that opens the picker. The
    appearance resets below are what let a native colour input be a circle. */
-.scenario-card .sc-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;padding:0;border:none;background:none;cursor:pointer;-webkit-appearance:none;appearance:none;overflow:hidden;transition:box-shadow .15s,transform .15s;}
-.scenario-card .sc-dot::-webkit-color-swatch-wrapper{padding:0;}
-.scenario-card .sc-dot::-webkit-color-swatch{border:none;border-radius:50%;}
-.scenario-card .sc-dot::-moz-color-swatch{border:none;border-radius:50%;}
-.scenario-card .sc-dot:hover{transform:scale(1.15);box-shadow:0 0 0 3px rgba(141,187,255,.3);}
-.scenario-card .sc-dot:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.sc-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;padding:0;border:none;background:none;cursor:pointer;-webkit-appearance:none;appearance:none;overflow:hidden;transition:box-shadow .15s,transform .15s;}
+.sc-dot::-webkit-color-swatch-wrapper{padding:0;}
+.sc-dot::-webkit-color-swatch{border:1px solid rgba(0,0,0,.25);border-radius:50%;}
+.sc-dot::-moz-color-swatch{border:1px solid rgba(0,0,0,.25);border-radius:50%;}
+.sc-dot:hover{transform:scale(1.15);}
+.sc-dot:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.sc-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:all .15s;}
+.sc-add-btn:hover{background:var(--accent2);color:var(--text-inv);border-style:solid;}
+.sc-add-btn:disabled{opacity:.38;cursor:not-allowed;}
+.sc-bar-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding-left:9px;border-left:1px solid var(--border);}
+.sc-act-btn{min-width:30px;height:30px;}
+.sc-empty{margin:0 0 12px;font-size:.84rem;}
+/* The editor is the selected offer's form, open for as long as the offer is. */
+.sc-editor>.field-row:first-child{border-top:none;padding-top:0;}
+/* Optimise runs one offer, so the bar that switches, adds, copies and removes
+   offers stands down; the offer being optimised stays lit. */
+.sc-bar.is-locked .sc-tab:not(.active),.sc-bar.is-locked .sc-add-btn,.sc-bar.is-locked .sc-bar-actions{opacity:.38;pointer-events:none;}
+.sc-bar.is-locked .sc-tab.active{cursor:default;}
 /* Editor swatch — the boxed, unmistakable twin of the dot. */
 .color-series-picker{width:32px;height:26px;border:2px solid var(--border);background:none;cursor:pointer;padding:2px;border-radius:6px;overflow:hidden;flex-shrink:0;-webkit-appearance:none;appearance:none;}
 .color-series-picker::-webkit-color-swatch-wrapper{padding:0;}
 .color-series-picker::-webkit-color-swatch{border:none;border-radius:4px;}
 .color-series-picker::-moz-color-swatch{border:none;border-radius:4px;}
 .color-series-picker:hover{border-color:var(--accent);}
-.scenario-card .sc-actions{display:flex;gap:4px;}
-.scenario-card .sc-summary{color:var(--muted);font-size:.78rem;margin-top:6px;line-height:1.4;}
-.scenario-card .sc-actions .btn-bare{min-width:26px;height:26px;}
-.scenario-card .sc-actions .btn-bare .ico{width:15px;height:15px;}
 .warning{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:rgba(255,210,140,.15);border:1px solid rgba(255,210,140,.3);color:var(--gold);display:none;font-size:.82rem;line-height:1.5;}
 body.light .warning{background:#FFF0D9;border-color:rgba(176,122,0,.2);color:#7A4A00;}
 .neg-carry{margin:0 18px 14px;padding:10px 13px;border-radius:10px;background:var(--warning-bg);border:1px solid rgba(255,210,140,.35);color:var(--warning-text);display:none;font-size:.82rem;line-height:1.5;}
@@ -132,11 +130,7 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .toggle .slider:before{content:'';position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.2s;}
 .toggle input:checked+.slider{background:rgba(141,187,255,.25);border-color:var(--accent);}
 .toggle input:checked+.slider:before{transform:translateX(18px);background:var(--accent);}
-.surface-wrap{width:100%;height:520px;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
-.mode-tabs{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;margin-top:12px;}
-.mode-tab{background:transparent;border:none;border-radius:7px;padding:5px 14px;color:var(--muted);font-weight:600;font-size:.85rem;cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;}
-.mode-tab.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
-.mode-tab:hover:not(.active){color:var(--text);}
+.surface-wrap{width:100%;height:460px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
 .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px;}
 .page-footer-info p:last-child{margin-bottom:0;}
 /* Metric card tooltip */
@@ -174,8 +168,7 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .implied-rate.unsolved{color:var(--negative-em);font-size:.82rem;font-family:inherit;font-weight:500;}
 
 /* overflow:clip still rounds the card's corners but, unlike hidden, does not
-   make the card a scroll container, so the editor's Done can stick to the
-   bottom of the phone's screen once the page carries the panel. */
+   make the card a scroll container. */
 @media(max-width:1100px){
   .controls{overflow:clip;}
 }
@@ -183,13 +176,14 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
   .layout,.metrics{grid-template-columns:1fr;}
   .controls{position:static;max-height:none;}
   .canvas-wrap{height:380px!important;}
+  .surface-wrap{height:380px;}
   .metrics{grid-template-columns:repeat(2,1fr);}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
   .container{padding:10px;}
   .metrics{grid-template-columns:1fr;}
-  .btn-row{flex-direction:column;}
+  .surface-wrap{height:320px;}
   /* Four tabs share a phone's width by what their names need rather than in
      equal quarters, so "Assumptions" is not squeezed past its edges. */
   .ctrl-tab{flex:1 1 auto;padding:11px 3px;}
@@ -215,3 +209,68 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .detail-section .unit-note{margin:-4px 0 12px;}
 .verdict{margin-bottom:18px;}
 .assumes-card{margin-top:18px;}
+
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   Typing keeps the form coherent but does not run the comparison: ▶ Simulate
+   does. The moment an input changes the board steps back and the button steps
+   forward, so nobody reads a verdict that no longer belongs to the numbers on
+   screen. */
+.stale-note{display:none;flex-basis:100%;margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--accent2);line-height:1.45;}
+body.is-stale .stale-note{display:block;}
+body.is-stale main .card{opacity:.45;}
+main .card{transition:opacity var(--motion-fast,.15s);}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2);}
+.metrics[hidden],.detail-section[hidden]{display:none;}
+
+/* ── Optimise mode ──────────────────────────────────────────────────────────
+   One colour marks the whole mode, gold: the gauge beside a field it can
+   sweep, the rows being swept, the note above the gate and the ▶ Optimise
+   button itself. The gauge is shaped like a tip icon, but it is a button:
+   hollow while the field is only a candidate, filled once it is swept. */
+.opt-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;padding:0;margin:0 0 0 2px;border-radius:50%;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.18);color:var(--gold);cursor:pointer;flex-shrink:0;font:inherit;font-size:.7rem;font-weight:800;line-height:1;vertical-align:middle;transition:background .15s,border-color .15s,color .15s,opacity .15s;}
+.opt-btn .tico{width:9px;height:9px;vertical-align:0;}
+.opt-btn:hover{border-color:var(--gold);}
+.opt-btn:focus-visible{outline:1.5px solid var(--gold);outline-offset:1px;}
+.opt-btn.on{background:var(--gold);border-color:var(--gold);color:var(--text-inv);}
+.opt-btn[hidden]{display:none;}
+.opt-btn.is-full{opacity:.32;cursor:not-allowed;}
+.opt-btn.is-full:hover{border-color:rgba(245,158,11,.3);}
+/* A swept row: a gold bar down its left edge, a faint gold wash, and its label
+   at full weight, so it stands out from the rows that stay fixed. */
+.opt-on{border-radius:8px;background:color-mix(in srgb,var(--gold) 10%,transparent);box-shadow:inset 3px 0 0 var(--gold);}
+.field-row.opt-on,.slider-block.opt-on{padding-left:11px;padding-right:8px;}
+.field-row.opt-on .field-label,.slider-block.opt-on .slider-label{font-weight:800;color:var(--text);}
+.btn-primary.is-opt{background:var(--gold);color:var(--text-inv);}
+body.is-optimise .stale-note{display:block;color:var(--gold);}
+.stale-note .sn-stale{color:var(--accent2);}
+.stale-note b{font-weight:800;}
+
+/* The range editor */
+.opt-modal-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(7,12,24,.62);backdrop-filter:blur(2px);}
+.opt-modal-overlay[hidden]{display:none;}
+body.opt-modal-open{overflow:hidden;}
+.opt-modal{display:flex;flex-direction:column;width:min(440px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-xl,16px);box-shadow:0 18px 60px rgba(0,0,0,.45);}
+.opt-modal-head{display:flex;align-items:center;gap:10px;padding:14px 14px 10px 20px;border-bottom:1px solid var(--border);}
+.opt-modal-head h2{margin:0 auto 0 0;font-size:1.02rem;min-width:0;overflow-wrap:anywhere;}
+.opt-modal-close{min-width:34px;height:34px;}
+.opt-modal-close .ico{width:18px;height:18px;}
+.opt-modal-body{padding:12px 20px 4px;}
+.opt-modal-sub{margin:0 0 4px;font-size:.8rem;color:var(--muted);line-height:1.45;}
+.opt-range-row{display:flex;gap:12px;}
+.opt-range-row>.field-row{flex:1 1 0;min-width:0;border-top:none;}
+.opt-modal .field-row[hidden],#optNumFields[hidden]{display:none;}
+.opt-modal .label-note{color:var(--muted);font-weight:400;font-size:.78rem;}
+.opt-pick-list{height:auto;font-size:.83rem;padding:4px 6px;}
+.opt-pick-list option{padding:3px 6px;border-radius:4px;}
+.opt-preview{margin:6px 0 8px;font-size:.78rem;color:var(--muted);line-height:1.45;}
+.opt-preview .bad{color:var(--warning-text);font-weight:700;}
+.opt-modal-foot{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--border);background:var(--panel);}
+#optRemoveBtn{margin-right:auto;}
+.opt-modal-foot .btn-primary,.opt-modal-foot .btn-secondary{padding:8px 16px;flex-shrink:0;white-space:nowrap;}
+
+/* What the sweep ranks by sits beside the chart's title. */
+.opt-metric-wrap{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:default;}
+.opt-metric-wrap .sel-input{width:auto;padding:5px 10px;font-size:.8rem;}
+.opt-tile .sub{line-height:1.4;}
+.muted-note{color:var(--muted);font-size:.85rem;font-weight:400;}
+.comp-sub{display:block;font-weight:400;font-size:.72rem;color:var(--muted);white-space:normal;}

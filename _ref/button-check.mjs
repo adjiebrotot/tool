@@ -210,58 +210,65 @@ for (const file of list) {
 }
 await ctx.close();
 
-/* ── Finance vs Cash: the editor keeps the work and keeps the way out in view ── */
+/* ── Finance vs Cash: the offer on the bar is the offer in the editor ──
+   The loan offers are tabs on a bar with the selected one's form open under
+   it, so there is no list to open an offer from and no Done, ✕ or Esc to
+   close it: an edit applies as it is made and survives switching offers, and
+   ▶ Simulate is what puts it on the board. On a desktop the gate stays in
+   view however far down the form the reader is. */
 if (!ONLY || 'financingvscash'.includes(ONLY) || ONLY.includes('financingvscash')) {
-  console.log('\nfinancingvscash/ scenario editor');
+  console.log('\nfinancingvscash/ scenario bar and editor');
   for (const vp of [{ name: 'desktop', width: 1400, height: 900 }, { name: 'phone', width: 390, height: 844 }]) {
     const c = await newContext({ viewport: { width: vp.width, height: vp.height } });
     const page = await c.newPage();
     await page.goto(ORIGIN + '/financingvscash/', { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    const open = () => page.evaluate(() => {
+    await page.evaluate(() => {
       document.querySelectorAll('[class*="tour-"]').forEach(n => n.remove());
       document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();
-      document.querySelector('.scenario-card .sc-btn[data-action="edit"]').click();
     });
-    await open();
-    // Scroll to the middle of the form the way a reader would: the panel on a
-    // desktop, the page on a phone.
-    const seen = await page.evaluate(() => {
-      const ed = document.getElementById('scenarioEditor');
-      const sc = document.querySelector('.ctrl-scroll');
-      if (getComputedStyle(sc).overflowY === 'auto') sc.scrollTop = sc.scrollHeight / 2;
-      else window.scrollTo(0, ed.getBoundingClientRect().top + window.scrollY + ed.offsetHeight / 2 - innerHeight / 2);
-      const r = document.getElementById('saveScenarioBtn').getBoundingClientRect();
-      const box = (getComputedStyle(sc).overflowY === 'auto' ? sc.getBoundingClientRect() : { top: 0, bottom: innerHeight });
-      const edBox = ed.getBoundingClientRect();
-      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-      return { inView: r.top >= box.top && r.bottom <= box.bottom + 1, onTop: !!hit && !!hit.closest('#saveScenarioBtn'),
-               formBelow: edBox.bottom > box.bottom + 40 };
+    const shape = await page.evaluate(() => {
+      const ed = document.getElementById('scenarioEditor'), bar = document.querySelector('.sc-bar');
+      return { open: getComputedStyle(ed).display !== 'none', tabs: document.querySelectorAll('.sc-tab').length,
+        active: (document.querySelector('.sc-tab.active') || {}).dataset ? document.querySelector('.sc-tab.active').dataset.idx : null,
+        below: !!bar && bar.getBoundingClientRect().bottom <= ed.getBoundingClientRect().top + 1,
+        close: [...document.querySelectorAll('#scenarioEditor button')]
+          .filter(b => !b.classList.contains('opt-btn') && /close|done|cancel|discard|without saving/i.test((b.textContent || '') + (b.title || '') + (b.getAttribute('aria-label') || '')))
+          .map(b => b.id || b.textContent.trim()) };
     });
-    check(`fvc ${vp.name}: halfway down the form, Done is on screen and nothing covers it`,
-      seen.inView && seen.onTop && seen.formBelow, JSON.stringify(seen));
+    check(`fvc ${vp.name}: the selected offer's form is open directly under the scenario bar`,
+      shape.open && shape.tabs === 2 && shape.active === '0' && shape.below, JSON.stringify(shape));
+    check(`fvc ${vp.name}: the editor has no Done, close or discard control`, shape.close.length === 0, shape.close.join(', '));
 
-    for (const [how, act] of [['Done', () => page.click('#saveScenarioBtn')],
-                              ['✕', () => page.evaluate(() => document.getElementById('closeScenarioBtn').click())],
-                              ['Esc', () => page.press('#scName', 'Escape')]]) {
-      await open();
-      const name = 'Kept via ' + how;
-      await page.fill('#scName', name);
-      await page.fill('#scRate', '7.25');
-      await act();
-      await page.waitForTimeout(250);
-      const got = await page.evaluate(() => ({
-        open: getComputedStyle(document.getElementById('scenarioEditor')).display !== 'none',
-        card: document.querySelector('.scenario-card .sc-name').textContent.trim(),
-        sub: document.querySelector('.scenario-card .sc-summary').textContent.trim()
-      }));
-      check(`fvc ${vp.name}: an edit survives closing with ${how}`,
-        !got.open && got.card === name && /7\.25%/.test(got.sub), JSON.stringify(got));
+    if (vp.name === 'desktop') {
+      const seen = await page.evaluate(() => {
+        const sc = document.querySelector('.ctrl-scroll');
+        sc.scrollTop = sc.scrollHeight / 2;
+        const r = document.getElementById('simBtn').getBoundingClientRect();
+        const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return { inView: r.top >= 0 && r.bottom <= innerHeight, onTop: !!hit && !!hit.closest('#simBtn'), scrolled: sc.scrollTop > 0 };
+      });
+      check(`fvc ${vp.name}: halfway down the form, ▶ Simulate is on screen and nothing covers it`,
+        seen.inView && seen.onTop && seen.scrolled, JSON.stringify(seen));
     }
-    const discard = await page.evaluate(() => [...document.querySelectorAll('#scenarioEditor button')]
-      .filter(b => /cancel|without saving|discard/i.test((b.textContent || '') + (b.title || '') + (b.getAttribute('aria-label') || '')))
-      .map(b => b.id || b.textContent.trim()));
-    check(`fvc ${vp.name}: no "close without saving" control is left in the editor`, discard.length === 0, discard.join(', '));
+
+    await page.fill('#scName', 'Kept');
+    await page.fill('#scRate', '7.25');
+    await page.waitForTimeout(300);
+    await page.evaluate(() => document.querySelectorAll('.sc-tab')[1].click());
+    await page.waitForTimeout(100);
+    await page.evaluate(() => document.querySelectorAll('.sc-tab')[0].click());
+    await page.waitForTimeout(100);
+    const kept = await page.evaluate(() => ({
+      name: document.querySelectorAll('.sc-tab')[0].textContent.trim(), title: document.querySelectorAll('.sc-tab')[0].title,
+      field: document.getElementById('scRate').value, stale: document.body.classList.contains('is-stale') }));
+    check(`fvc ${vp.name}: an edit survives switching offers, and sends the board out of date`,
+      kept.name === 'Kept' && /7\.25%/.test(kept.title) && kept.field === '7.25' && kept.stale, JSON.stringify(kept));
+    await page.evaluate(() => document.getElementById('simBtn').click());
+    await page.waitForTimeout(250);
+    const ran = await page.evaluate(() => ({ stale: document.body.classList.contains('is-stale'),
+      cols: [...document.querySelectorAll('#compTableWrap thead th')].map(t => t.textContent.trim()) }));
+    check(`fvc ${vp.name}: ▶ Simulate puts the edit on the board`, !ran.stale && ran.cols.includes('Kept'), JSON.stringify(ran));
     await c.close();
   }
 }

@@ -34,7 +34,7 @@ const lineOf=async name=>page.evaluate(n=>{
 // C1 the dot is a real colour input carrying the palette colour
 const dots=await page.$$('.sc-dot');
 const tag=await page.evaluate(()=>{const d=document.querySelector('.sc-dot');return d.tagName+':'+d.type+':'+d.value;});
-check('C1 the dot on each card is a clickable colour input seeded with the series colour',
+check('C1 the dot on each offer tab is a clickable colour input seeded with the series colour',
   dots.length===2 && /^INPUT:color:#[0-9a-f]{6}$/.test(tag), `${dots.length} dots, first = ${tag}`);
 
 // C2 changing the dot repaints that scenario's line and nothing else
@@ -47,12 +47,14 @@ check('C2 a colour picked on the dot becomes that series\' line colour, leaving 
   after==='#ff00aa' && otherAfter===otherBefore && before!=='#ff00aa',
   `line ${before} -> ${after}; other ${otherBefore} -> ${otherAfter}`);
 
-// C3 the dot does not open the editor
-const editorOpen=await page.evaluate(()=>document.getElementById('scenarioEditor').style.display);
-check('C3 using the dot does not open the scenario editor', editorOpen!=='block', `editor display="${editorOpen}"`);
+// C3 the dot on another offer's tab does not switch the editor to that offer
+await page.evaluate(()=>{const d=document.querySelectorAll('.sc-dot')[1];d.dispatchEvent(new MouseEvent('click',{bubbles:true}));});
+await page.waitForTimeout(150);
+const editing=await page.evaluate(()=>document.querySelector('.sc-tab.active').dataset.idx);
+check('C3 using the dot does not switch the editor to that offer', editing==='0', `editor on offer ${editing}`);
 
 // C4 the editor box mirrors the dot, and vice versa
-await page.evaluate(()=>document.querySelectorAll('.scenario-card')[0].click());
+await page.evaluate(()=>document.querySelectorAll('.sc-tab')[0].click());
 await page.waitForTimeout(150);
 const box=await page.inputValue('#scColor');
 check('C4 the editor swatch opens showing the colour the dot holds', box==='#ff00aa', `#scColor = ${box}`);
@@ -68,12 +70,12 @@ await page.evaluate(()=>{const b=document.getElementById('scColor');b.value='#ff
   b.dispatchEvent(new Event('change',{bubbles:true}));});
 await page.waitForTimeout(200);
 await page.evaluate(()=>{const n=document.getElementById('scName');n.value='Renamed';
-  n.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('saveScenarioBtn').click();});
+  n.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('simBtn').click();});
 await page.waitForTimeout(250);
 check('C7 saving the editor keeps the colour the swatch set', (await lineOf('Renamed'))==='#ffaa00', await lineOf('Renamed'));
 
 // C8 duplicating hands the copy its own palette slot
-await page.evaluate(()=>document.querySelector('.scenario-card [data-action="dup"]').click());
+await page.evaluate(()=>{document.getElementById('dupScenarioBtn').click();document.getElementById('simBtn').click();});
 await page.waitForTimeout(250);
 const dup=await lineOf('Renamed (copy)');
 check('C8 a duplicate takes the next palette colour rather than cloning a custom one',
@@ -86,7 +88,7 @@ check('C9 a custom colour survives a reload', (await lineOf('Renamed'))==='#ffaa
 
 // C10 every palette slot resolves to a colour something can actually paint
 await page.evaluate(()=>{for(let i=0;i<4;i++)document.getElementById('addScenarioBtn').click();
-  document.getElementById('closeScenarioBtn').click();});
+  document.getElementById('simBtn').click();});
 await page.waitForTimeout(400);
 const sixth=await page.evaluate(()=>{const ch=window.__charts.filter(c=>c.canvasId==='chartCanvas').pop();
   return ch.data.datasets.map(d=>d.borderColor);});

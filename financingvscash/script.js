@@ -70,7 +70,7 @@ const fmt={
 function parseNumInput(el){return parseFloat(String(el.value).replace(/,/g,''))||0;}
 function setupFmtInputs(){
   document.querySelectorAll('.fmt-num').forEach(el=>{
-    SharedFmt.attachCurrencyInput(el,{maxDecimals:2,onChange:rerender});
+    SharedFmt.attachCurrencyInput(el,{maxDecimals:2,onChange:syncForm});
     el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.target.blur();}});
   });
 }
@@ -87,11 +87,10 @@ function updateCurrencyPrefixes(){
 const NB_EPS=0.005, snapNB=v=>Math.abs(v)<=NB_EPS?0:v;
 const HOVER_IDLE='Hover over the chart to inspect a period.';
 
-let scenarios=[], editingIdx=-1, activeAmortIdx=0, sensMode='2d';
+let scenarios=[], editingIdx=-1, activeAmortIdx=0; // editingIdx: the offer the editor shows
 let editorApplyTimer=null; // see applyEditorSoon()
 let persist=null; // mini cache handle (assigned at init)
 let editorTermFreq='monthly'; // the frequency the editor's Term field currently shows
-let baseRiskFreeRate=4.5; // global risk-free rate from Base tab
 
 function periodsPerYear(f){return{weekly:52,fortnightly:26,monthly:12,yearly:1}[f]||12;}
 function freqLabel(f){return{weekly:'week',fortnightly:'fortnight',monthly:'month',yearly:'year'}[f]||'period';}
@@ -564,7 +563,10 @@ function clampPriceValue(type,v){
   const t=PRICE_TYPES.includes(type)?type:'discount';
   return Math.min(PRICE_MAX[t],Math.max(0,Number(v)||0));
 }
-function offerPricingOn(){const el=$('offerPricing');return!!(el&&el.checked);}
+/* A run is scored on the inputs it was started with (withInputs, below), so
+   while one is being drawn this reads the run's switch, not the form's. */
+let pricingOverride=null;
+function offerPricingOn(){if(pricingOverride!==null)return pricingOverride;const el=$('offerPricing');return!!(el&&el.checked);}
 function resolveOfferPrice(type,value,cashPrice){
   const t=PRICE_TYPES.includes(type)?type:'discount';
   const v=clampPriceValue(t,value);
@@ -707,79 +709,133 @@ function computeCashBaseline(purchaseCost,availableCash,termYears,riskFreeRate,i
   return{endWealth,investedCash:leftover,inflAdj};
 }
 
-function quickNetBenefit(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled,objective){
-  const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
+/* One offer scored against paying cash, the way the comparison shows it: the
+   midpoint path, the two band paths when a rate floats, and each held to the
+   cash purchase over its own term. Null when the offer cannot be modelled. */
+function scoreScenario(sc,I,rf){
+  const R=rf==null?I.riskFreeRate:rf;
+  const res=computeScenario(sc,I.purchaseCost,I.availableCash,R,I.inflationRate,I.inflationEnabled);
   if(!res)return null;
-  const cb=computeCashBaseline(purchaseCost,availableCash,res.termYears,riskFreeRate,inflationRate,inflationEnabled);
-  const nb=res.endWealth-cb.endWealth;
-  if(objective==='netBenefit')return nb;
-  if(objective==='totalInterest')return res.totalInterest;
-  if(objective==='totalFinanceCost')return res.totalFinanceCost;
-  if(objective==='endWealth')return res.endWealth;
-  if(objective==='inflAdjNetBenefit'){if(!res.inflAdj||!cb.inflAdj)return nb;return(res.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);}
-  return nb;
+  if(scenarioHasFloat(sc)){
+    res.bandLo=computeScenario(sc,I.purchaseCost,I.availableCash,R,I.inflationRate,I.inflationEnabled,'low');
+    res.bandHi=computeScenario(sc,I.purchaseCost,I.availableCash,R,I.inflationRate,I.inflationEnabled,'high');
+  }
+  const cb=computeCashBaseline(I.purchaseCost,I.availableCash,res.termYears,R,I.inflationRate,I.inflationEnabled);
+  res.cashBaseWealth=cb.endWealth;res.netBenefit=res.endWealth-cb.endWealth;
+  if(res.inflAdj&&cb.inflAdj)res.inflAdj.netBenefitReal=(res.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);
+  // The two band paths are scored against the very same baseline, so the
+  // range row reads on the same footing as the midpoint above it.
+  [res.bandLo,res.bandHi].forEach(b=>{if(b){b.cashBaseWealth=cb.endWealth;b.netBenefit=b.endWealth-cb.endWealth;}});
+  return res;
+}
+/* Every figure an optimisation can rank by, for one tested setting. The bands
+   are not run here: a sweep ranks the midpoint, as the tables do. */
+function scenarioMetrics(sc,I,rf){
+  const res=computeScenario(sc,I.purchaseCost,I.availableCash,rf,I.inflationRate,I.inflationEnabled);
+  if(!res)return null;
+  const cb=computeCashBaseline(I.purchaseCost,I.availableCash,res.termYears,rf,I.inflationRate,I.inflationEnabled);
+  return{netBenefit:res.endWealth-cb.endWealth,endWealth:res.endWealth,totalInterest:res.totalInterest,
+    totalFinanceCost:res.totalFinanceCost,effectiveRate:res.effectiveRate,
+    inflAdjNetBenefit:(res.inflAdj&&cb.inflAdj)?(res.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0):null};
 }
 
 /* ─── Rendering ─── */
-let chartInstance=null,sensChartInstance=null,latestResults=null;
+let chartInstance=null,latestResults=null;
+let simInputs=null;  // the inputs the comparison on the board was run on
+let runWarnText='';  // what that run had to say about offers it could not model
 
-function rerender(){
-  const purchaseCost=Math.max(0,parseNumInput($('purchaseCost')));
-  // A blank, zero or unreadable cash field is not permission to assume the user
-  // happens to hold exactly the purchase price. Use what was actually typed and
-  // let the affordability guard below say so out loud.
-  const availableCash=Math.max(0,parseNumInput($('availableCash')));
-  const inflationEnabled=$('inflationToggle').checked;
-  const inflationRate=parseFloat($('inflationRate').value)||0;
-  const riskFreeRate=parseFloat($('baseRf').value)||0;
-  baseRiskFreeRate=riskFreeRate;
-  $('inflationRow').style.display=inflationEnabled?'':'none';
-  const optTarget=$('optTarget').value;
+/* Everything a run reads, copied, so a run is scored on the plan as it stood
+   when Simulate was pressed and an edit made since cannot leak into it. */
+function readInputs(){
+  return{purchaseCost:Math.max(0,parseNumInput($('purchaseCost'))),
+    // A blank, zero or unreadable cash field is not permission to assume the
+    // user happens to hold exactly the purchase price. Use what was typed.
+    availableCash:Math.max(0,parseNumInput($('availableCash'))),
+    inflationEnabled:$('inflationToggle').checked,
+    inflationRate:parseFloat($('inflationRate').value)||0,
+    riskFreeRate:parseFloat($('baseRf').value)||0,
+    rateConvention:$('rateConvention').value==='nominal'?'nominal':'ear',
+    offerPricing:!!$('offerPricing').checked,
+    scenarios:JSON.parse(JSON.stringify(scenarios))};
+}
+// Run fn as if the form held the run's rate convention and pricing switch.
+function withInputs(I,fn){
+  const rc=rateConvention,po=pricingOverride;
+  rateConvention=I.rateConvention;pricingOverride=I.offerPricing;
+  try{return fn();}finally{rateConvention=rc;pricingOverride=po;}
+}
+function cashBlockReason(cash,cost){
+  if(!(cash>0))return 'Available cash reads '+fmt.currencyExact(0)+'. Enter the cash you could put toward this purchase today. Nothing is assumed on your behalf, so the results stay blank until you do.';
+  if(cash<cost)return 'Available cash ('+fmt.currencyExact(cash)+') is less than the cash purchase cost ('+fmt.currencyExact(cost)+'). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the cash purchase cost.';
+  return '';
+}
+function formCashBlock(){return cashBlockReason(Math.max(0,parseNumInput($('availableCash'))),Math.max(0,parseNumInput($('purchaseCost'))));}
+// The banner says what stops the form from running first, else what the run
+// on the board had to say.
+function renderWarn(){
+  const b=formCashBlock(),txt=b?'⚠ '+b:runWarnText,w=$('warnBanner');
+  w.style.display=txt?'block':'none';w.textContent=txt;
+}
+
+/* The form, kept coherent as it is typed: the currency it is read in, the
+   inflation row it shows, the prices on the offer tabs. None of this runs the
+   comparison; ▶ Simulate does. */
+function syncForm(){
   currentCurrencySymbol=$('currencySymbol').value||'$';
   rateConvention=$('rateConvention').value==='nominal'?'nominal':'ear';
+  $('inflationRow').style.display=$('inflationToggle').checked?'':'none';
   updateCurrencyPrefixes();
   $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
-  // A % price follows the cash price, so the cards and the editor's read-out
+  // A % price follows the cash price, so the tabs and the editor's read-out
   // are restated whenever it moves.
-  document.querySelectorAll('#scenarioList .sc-price').forEach(el=>{const sc=scenarios[+el.dataset.idx];if(sc)el.textContent=scPriceTxt(sc);});
+  refreshScenarioTitles();
   if(editorDraft)syncPriceField();
+  renderWarn();
+  updateSimBtnState();
+}
 
-  let warn='';
-  const cashMissing = !(availableCash>0);
-  const cashShortfall = availableCash < purchaseCost;
-  if(cashMissing||cashShortfall){
-    warn=cashMissing
-      ? '⚠ Available cash reads '+fmt.currencyExact(0)+'. Enter the cash you could put toward this purchase today. Nothing is assumed on your behalf, so the results below stay blank until you do.'
-      : '⚠ Available cash ('+fmt.currencyExact(availableCash)+') is less than the cash purchase cost ('+fmt.currencyExact(purchaseCost)+'). Financing something you cannot afford upfront is not modelled here, so please increase your available cash or reduce the cash purchase cost.';
-    $('warnBanner').style.display='block';$('warnBanner').textContent=warn;
-    $('negCarryBanner').style.display='none';
-    // Clear all outputs
-    ['kpiBest','kpiNetBenefit','kpiInterest','kpiCashWealth'].forEach(id=>{$(id).textContent='—';$(id).style.color=cssVar('--text');});
-    ['kpiBestSub','kpiNetSub','kpiIntSub','kpiCashSub'].forEach(id=>{$(id).textContent='';});
-    if(chartInstance){chartInstance.destroy();chartInstance=null;}
-    $('chartLegend').innerHTML='';
-    $('compTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
-    $('amortTabs').innerHTML='';
-    $('amortTableWrap').innerHTML='<p class="muted">Adjust inputs above to run the simulation.</p>';
-    SharedVerdict.set('verdict',null);
-    renderAssumptions(null);
+function blankBoard(msg){
+  latestResults=null;
+  ['kpiBest','kpiNetBenefit','kpiInterest','kpiCashWealth'].forEach(id=>{$(id).textContent='—';$(id).style.color=cssVar('--text');});
+  ['kpiBestSub','kpiNetSub','kpiIntSub','kpiCashSub'].forEach(id=>{$(id).textContent='';});
+  if(chartInstance){chartInstance.destroy();chartInstance=null;}
+  $('chartLegend').innerHTML='';
+  $('compTableWrap').innerHTML='<p class="muted">'+msg+'</p>';
+  $('amortTabs').innerHTML='';
+  $('amortTableWrap').innerHTML='<p class="muted">'+msg+'</p>';
+  $('negCarryBanner').style.display='none';
+  SharedVerdict.set('verdict',null);
+  renderAssumptions(null);
+}
+
+// Whatever ran last, drawn again (a theme, a currency or a view changed).
+function renderBoard(){
+  if(optResult)renderOptBoard();
+  else if(simInputs)renderSimBoard();
+}
+
+function renderSimBoard(){
+  const I=simInputs;if(!I)return;
+  withInputs(I,()=>renderSimBoardIn(I));
+}
+function renderSimBoardIn(I){
+  const {purchaseCost,availableCash,inflationEnabled,inflationRate,riskFreeRate}=I;
+  const optTarget=$('optTarget').value;
+  const blocked=cashBlockReason(availableCash,purchaseCost);
+  if(blocked){
+    runWarnText='⚠ '+blocked;renderWarn();
+    blankBoard('Adjust inputs above to run the simulation.');
     return;
   }
-  $('warnBanner').style.display='none';$('warnBanner').textContent='';
+  runWarnText='';
 
   const results=[];let anyNegCarry=false,anyNegAm=false;const dropped=[];
-  scenarios.forEach((sc,i)=>{
-    const res=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled);
+  I.scenarios.forEach((sc,i)=>{
+    const res=scoreScenario(sc,I);
     if(res){
       res.name=sc.name;res.idx=i;res.color=scenarioColor(sc,i);
       if(res.negCarry)anyNegCarry=true;
       if(res.negAm)anyNegAm=true;
-      // A floating period is simulated three ways. The model itself never knows
-      // about bands: it is simply run again along the min and the max path.
-      if(scenarioHasFloat(sc)){
-        res.bandLo=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled,'low');
-        res.bandHi=computeScenario(sc,purchaseCost,availableCash,riskFreeRate,inflationRate,inflationEnabled,'high');
-      }
     }
     else dropped.push({name:sc.name,why:dropReason(sc,purchaseCost,availableCash)});
     results.push(res);
@@ -801,17 +857,12 @@ function rerender(){
     };
     const byWhy={};
     dropped.forEach(d=>{(byWhy[d.why]=byWhy[d.why]||[]).push(d.name);});
-    $('warnBanner').style.display='block';
     // Name the real cause: blaming the down payment for an unsolvable repayment
     // plan sends the reader to fix the wrong control.
-    $('warnBanner').textContent=Object.keys(byWhy).map(w=>
+    runWarnText=Object.keys(byWhy).map(w=>
       '⚠ '+byWhy[w].join(', ')+(byWhy[w].length>1?' were':' was')+' skipped: '+(REASON[w]||REASON.upfront)).join('  ');
   }
-
-  results.forEach(r=>{if(!r)return;const cb=computeCashBaseline(purchaseCost,availableCash,r.termYears,riskFreeRate,inflationRate,inflationEnabled);r.cashBaseWealth=cb.endWealth;r.netBenefit=r.endWealth-cb.endWealth;if(r.inflAdj&&cb.inflAdj)r.inflAdj.netBenefitReal=(r.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0);
-    // The two band paths are scored against the very same baseline, so the
-    // range row reads on the same footing as the midpoint above it.
-    [r.bandLo,r.bandHi].forEach(b=>{if(b){b.cashBaseWealth=cb.endWealth;b.netBenefit=b.endWealth-cb.endWealth;}});});
+  renderWarn();
 
   const valid=results.filter(r=>r);
   let bestIdx=-1;
@@ -826,7 +877,7 @@ function rerender(){
   // KPI tile, the chart's cash line and the table's cash column all end together.
   const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
   const cashBase=computeCashBaseline(purchaseCost,availableCash,maxTerm,riskFreeRate,inflationRate,inflationEnabled);
-  latestResults={results,cashBase,bestIdx,allNeg,purchaseCost,availableCash,maxTerm,inflationEnabled,inflationRate,riskFreeRate};
+  latestResults={results,cashBase,bestIdx,allNeg,purchaseCost,availableCash,maxTerm,inflationEnabled,inflationRate,riskFreeRate,scenarios:I.scenarios};
 
   // KPIs
   const tie=!!bestResult&&Math.abs(bestResult.netBenefit)<=NB_EPS;
@@ -842,11 +893,7 @@ function rerender(){
 
   renderVerdict(valid,bestResult,tie,allNeg,riskFreeRate,maxTerm);
   renderAssumptions(latestResults);
-  renderMainChart(results);renderComparisonTable(results);renderAmortTabs(results);updateSensScenarioDropdown();
-  // The sweep is built from the same purchase cost, cash and rates as the panel
-  // above it, so it has to move when they do. Leaving it to a button meant a
-  // surface could sit there describing a plan the reader had already edited.
-  scheduleSensitivity();
+  renderMainChart(results);renderComparisonTable(results,latestResults);renderAmortTabs(results);
 }
 
 /* What this assumes, built from the plan on screen: the cash, rates, fees and
@@ -858,7 +905,7 @@ function renderAssumptions(L){
   const pc=v=>(+(Number(v)||0).toFixed(3))+'%';
   const list=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
   if(!L){el.innerHTML='<li><strong>Enter the cash purchase cost and your available cash</strong> to see what the comparison rests on.</li>';return;}
-  const valid=L.results.map((r,i)=>r?{r,sc:scenarios[i]}:null).filter(Boolean);
+  const valid=L.results.map((r,i)=>r?{r,sc:L.scenarios[i]}:null).filter(Boolean);
   const nm=x=>'<span data-no-abbr>'+esc(x.sc.name)+'</span>';
   const items=[];
 
@@ -911,6 +958,7 @@ function renderAssumptions(L){
     ? '<strong>Amounts are in future dollars.</strong> The comparison adds an Inflation-Adj Net Benefit in today\'s money, at '+pc(L.inflationRate)+' a year.'
     : '<strong>Amounts are in future dollars,</strong> with no adjustment for inflation.');
 
+  (L.optLines||[]).forEach(t=>items.push(t));
   el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
 }
 
@@ -964,6 +1012,7 @@ function renderMainChart(results){
   // the finest repayment period on show: three monthly plans read in months
   // (not 0.25 of a year), and a yearly loan beside a weekly one reads in weeks.
   const maxYears=results.reduce((m,r)=>r?Math.max(m,r.n/r.ppy):m,0);
+  if(chartInstance&&chartInstance._fvcOpt){chartInstance.destroy();chartInstance=null;}
   if(maxYears===0){if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
   const axisFreq=results.reduce((f,r)=>r&&periodsPerYear(r.freq)>periodsPerYear(f)?r.freq:f,'yearly');
   const upy=periodsPerYear(axisFreq);
@@ -1090,10 +1139,11 @@ function paymentTxt(r){
 // Horizons are compared in years, but a sub-year term reads better in months.
 function horizonTxt(y){const n=Number(y)||0;return n>0&&n<1?(n*12).toFixed(1)+' mo':n.toFixed(1)+' yr';}
 
-function renderComparisonTable(results){
-  const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">Add financing scenarios to compare.</p>';return;}
-  const inflOn=latestResults.inflationEnabled,pc=latestResults.purchaseCost;
-  let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+escHtml(r.name)+'</th>';});h+='</tr></thead><tbody>';
+function renderComparisonTable(results,L){
+  const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">'+(optResult?'None of the tested settings could be modelled.':'Add financing scenarios to compare.')+'</p>';return;}
+  const inflOn=L.inflationEnabled,pc=L.purchaseCost;
+  // A column may carry a second line under its name (the setting a sweep tested).
+  let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+escHtml(r.name)+(r.sub?'<span class="comp-sub" data-no-abbr>'+escHtml(r.sub)+'</span>':'')+'</th>';});h+='</tr></thead><tbody>';
   const rows=[
     // What the product IS comes before what it costs.
     ['Loan Type','Pay in full',r=>(LOAN_TYPE_LABEL[r.loanType]||LOAN_TYPE_LABEL.annuity)+(r.rateMode==='schedule'?' · scheduled rate':'')],
@@ -1115,8 +1165,8 @@ function renderComparisonTable(results){
     // horizon (the longest scenario) to match the chart and the KPI tile; each
     // scenario column then reconciles against its own row:
     //   Ending Wealth − Cash Purchase at Same Horizon = Net Benefit.
-    ['Comparison Horizon',horizonTxt(latestResults.maxTerm),r=>horizonTxt(r.termYears)],
-    ['Ending Wealth',fmt.currencyExact(latestResults.cashBase.endWealth),r=>fmt.currencyExact(r.endWealth)],
+    ['Comparison Horizon',horizonTxt(L.maxTerm),r=>horizonTxt(r.termYears)],
+    ['Ending Wealth',fmt.currencyExact(L.cashBase.endWealth),r=>fmt.currencyExact(r.endWealth)],
     ['Cash Purchase at Same Horizon','Baseline',r=>fmt.currencyExact(r.cashBaseWealth)],
     ['Net Benefit vs Cash','Baseline',r=>{const v=snapNB(r.netBenefit);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
   ];
@@ -1145,8 +1195,8 @@ function renderComparisonTable(results){
   });
   h+='</tbody></table>';
   // Only worth saying when the columns really do end at different dates.
-  const mixedHorizons=valid.some(r=>Math.abs(r.termYears-latestResults.maxTerm)>1e-9);
-  if(mixedHorizons)h+='<p class="muted" style="margin-top:10px;font-size:.85rem;">These scenarios run for different lengths. The Cash Purchase column is shown at the longest horizon ('+horizonTxt(latestResults.maxTerm)+'), so each shorter scenario is scored against its own same-horizon cash row above, never against the column.</p>';
+  const mixedHorizons=valid.some(r=>Math.abs(r.termYears-L.maxTerm)>1e-9);
+  if(mixedHorizons)h+='<p class="muted" style="margin-top:10px;font-size:.85rem;">These scenarios run for different lengths. The Cash Purchase column is shown at the longest horizon ('+horizonTxt(L.maxTerm)+'), so each shorter scenario is scored against its own same-horizon cash row above, never against the column.</p>';
   $('compTableWrap').innerHTML=h;
 }
 
@@ -1174,196 +1224,15 @@ function renderAmortTabs(results){
   $('amortTableWrap').innerHTML=h;
 }
 
-function updateSensScenarioDropdown(){const s=$('sensScenario'),p=s.value;s.innerHTML='';scenarios.forEach((sc,i)=>{const o=document.createElement('option');o.value=i;o.textContent=sc.name;s.appendChild(o);});if(p&&parseInt(p)<scenarios.length)s.value=p;updateSensTermLabels();}
-
-// The "Term" sweep variable is expressed in the selected scenario's repayment
-// periods (weeks/months/years) rather than a fixed unit of years.
-function sensSelectedFreq(){const sc=scenarios[parseInt($('sensScenario').value)];return sc?sc.freq:'monthly';}
-let sensTermFreq=null; // last frequency the term sweep range was built for
-let sensScKind=null;   // last loan type + rate mode the sweep ranges were built for
-function sensSelectedScenario(){return scenarios[parseInt($('sensScenario').value)]||null;}
-function updateSensTermLabels(){
-  const freq=sensSelectedFreq(),unit=termUnitLabel(freq);
-  const xo=$('sensVarXTermOpt'),yo=$('sensVarYTermOpt');
-  if(xo)xo.textContent='Term ('+unit+')';
-  if(yo)yo.textContent='Term ('+unit+')';
-  // Only offer a sweep the selected scenario can actually answer, and name the
-  // rate sweep for what it does to a scheduled loan.
-  const sc=sensSelectedScenario();
-  const known=!!sc&&sc.loanType==='knownPayment',bal=!!sc&&sc.loanType==='balloon';
-  const shift=!!sc&&sc.rateMode==='schedule';
-  [['sensVarXPayOpt','sensVarX'],['sensVarYPayOpt','sensVarY']].forEach(([oid,sid])=>{
-    const o=$(oid);if(!o)return;o.hidden=!known;o.disabled=!known;
-    if(!known&&$(sid).value==='payment')$(sid).value=sid==='sensVarX'?'financeRate':'riskFreeRate';
-  });
-  [['sensVarXResOpt','sensVarX'],['sensVarYResOpt','sensVarY']].forEach(([oid,sid])=>{
-    const o=$(oid);if(!o)return;o.hidden=!bal;o.disabled=!bal;
-    if(!bal&&$(sid).value==='residual')$(sid).value=sid==='sensVarX'?'financeRate':'riskFreeRate';
-  });
-  [['sensVarXRateOpt','sensVarX'],['sensVarYRateOpt','sensVarY']].forEach(([oid,sid])=>{
-    const o=$(oid);if(!o)return;
-    o.textContent=shift?'Rate Shift (pp)':'Finance Rate (%)';
-    o.hidden=known;o.disabled=known;
-    if(known&&$(sid).value==='financeRate')$(sid).value=sid==='sensVarX'?'payment':'riskFreeRate';
-  });
-  // Switching to a scenario of a different shape makes the old range
-  // meaningless (a 1 to 10 sweep of a repayment amount says nothing), so
-  // re-seed both axes whenever that shape changes.
-  const kind=(sc?sc.loanType:'')+'|'+(sc?sc.rateMode:'');
-  if(kind!==sensScKind){
-    sensScKind=kind;
-    const[xa,xb]=defaultAxisRange($('sensVarX').value,freq,sc);$('sensXStart').value=xa;$('sensXEnd').value=xb;
-    const[ya,yb]=defaultAxisRange($('sensVarY').value,freq,sc);$('sensYStart').value=ya;$('sensYEnd').value=yb;
-  }
-  // A range of 12–84 means months for a monthly loan and years for a yearly
-  // one, so re-seed it whenever the selected scenario's unit changes.
-  if(freq!==sensTermFreq){
-    sensTermFreq=freq;const[a,b]=defaultAxisRange('term',freq,sc);
-    if($('sensVarX').value==='term'){$('sensXStart').value=a;$('sensXEnd').value=b;}
-    if($('sensVarY').value==='term'){$('sensYStart').value=a;$('sensYEnd').value=b;}
-  }
-}
-function defaultAxisRange(vn,freq,sc){
-  if(vn==='term')return{weekly:[52,364],fortnightly:[26,182],monthly:[12,84],yearly:[1,10]}[freq]||[12,84];
-  // A scheduled loan has no single rate to sweep, so the sweep shifts every
-  // period together and the range is a shift in percentage points, not a level.
-  if(vn==='financeRate')return(sc&&sc.rateMode==='schedule')?[-2,4]:[1,10];
-  if(vn==='riskFreeRate')return[1,8];
-  if(vn==='downPayment')return[0,50];
-  if(vn==='residual')return[0,60];
-  if(vn==='payment'){const b=sc?Math.max(1,Math.round((sc.knownPayment||0))):1;return[Math.round(b*0.6),Math.round(b*1.6)||10];}
-  return[1,10];
-}
-
-/* ─── Sensitivity Engine ─── */
-/* ── The sensitivity sweep ──────────────────────────────────────────────────
-   No Run button. A 50-point 2D sweep costs about 1ms and the 50x50 surface
-   about 9ms, so there is nothing here worth making the reader ask for — the
-   sweep just follows its inputs like every other output on the page. The
-   debounce is only there to keep a held arrow key from redrawing the Plotly
-   surface once per repeat. */
-let sensTimer=null;
-function scheduleSensitivity(){clearTimeout(sensTimer);sensTimer=setTimeout(runSensitivity,180);}
-
-function runSensitivity(){
-  const scIdx=parseInt($('sensScenario').value);if(isNaN(scIdx)||!scenarios[scIdx])return;
-  const baseSc={...scenarios[scIdx]};const obj=$('sensObjective').value;const varX=$('sensVarX').value;
-  const xS=parseFloat($('sensXStart').value)||0,xE=parseFloat($('sensXEnd').value)||10;
-  const steps=Math.max(5,Math.min(50,parseInt($('sensSteps').value)||20));
-  // Read the same inputs, the same way, as the main panel: never substitute a
-  // price of our own, and honour the "must be affordable upfront" guard.
-  const pc=Math.max(0,parseNumInput($('purchaseCost'))),ac=Math.max(0,parseNumInput($('availableCash')));
-  const blocked=pc<=0?'Enter a cash purchase cost to run a sweep.'
-    :ac<=0?'Enter your available cash to run a sweep.'
-    :ac<pc?'Available cash is below the cash purchase cost, so there is nothing to sweep.':'';
-  const inflOn=$('inflationToggle').checked,inflR=parseFloat($('inflationRate').value)||0;
-  const rfRate=parseFloat($('baseRf').value)||0;
-
-  function applyVar(sc,vn,val){
-    const m={...sc};
-    if(vn==='financeRate'){
-      if(m.rateMode==='schedule'&&Array.isArray(m.ratePeriods)){
-        // No single rate exists to set, so shift the whole schedule in
-        // percentage points: a rate shock, which is the useful sweep anyway.
-        m.ratePeriods=m.ratePeriods.map(p=>Object.assign({},p,{
-          rate:Math.max(0,(Number(p.rate)||0)+val),
-          rateMin:Math.max(0,(Number(p.rateMin)||0)+val),
-          rateMax:Math.max(0,(Number(p.rateMax)||0)+val)}));
-      } else m.financeRate=val;
-    }
-    else if(vn==='riskFreeRate'){/* now a global, override via closure */m._rfOverride=val;}
-    else if(vn==='downPayment')m.downPaymentPct=Math.min(100,Math.max(0,val));
-    else if(vn==='term'){
-      m.termPeriods=Math.max(1,Math.round(val));
-      // The interest-only span cannot outlast the loan it sits inside.
-      if(m.ioPeriods!==undefined)m.ioPeriods=Math.min(m.termPeriods,m.ioPeriods);
-    }
-    else if(vn==='payment')m.knownPayment=Math.max(0,val);
-    else if(vn==='residual')m.residualPct=Math.min(99,Math.max(0,val));
-    return m;
-  }
-  function getNetBenefit(m,pc,ac,inflR,inflOn,obj){
-    const rf=m._rfOverride!==undefined?m._rfOverride:rfRate;
-    return quickNetBenefit(m,pc,ac,rf,inflR,inflOn,obj);
-  }
-  const xVals=[];for(let i=0;i<steps;i++)xVals.push(xS+i*(xE-xS)/(steps-1));
-
-  if(sensMode==='2d'){
-    $('sens2dSection').style.display='';$('sens3dSection').style.display='none';
-    const objL=$('sensObjective').selectedOptions[0].text,xL=$('sensVarX').selectedOptions[0].text;
-    $('sens2dTitle').textContent=`${objL} vs ${xL}`;
-    // An infeasible point (down payment + fee exceeds available cash) has no
-    // net benefit at all: plot NaN so Chart.js breaks the line instead of
-    // drawing a break-even $0 that never happens.
-    const data=xVals.map(x=>{if(blocked)return null;const m=applyVar(baseSc,varX,x);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);return v===null?NaN:v;});
-    const labels=xVals.map(x=>x.toFixed(2));const color=scenarioColor(scenarios[scIdx],scIdx);
-    const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text');
-    const datasets=[{label:objL,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:2,pointHoverRadius:5,tension:.3,fill:false},{label:'Zero',data:xVals.map(()=>0),borderColor:cssVar('--muted'),borderWidth:1,borderDash:[4,4],pointRadius:0,fill:false}];
-    const sensLe=$('sensLegend'); sensLe.innerHTML='';
-    if(blocked){
-      const b=document.createElement('div'); b.className='legend-item'; b.style.color='var(--muted)';
-      b.textContent=blocked; sensLe.appendChild(b);
-    } else {
-      // The objective line, plus the dashed zero rule it is read against.
-      sensLe.appendChild(SharedLegend.item(SharedLegend.fromDataset(datasets[0]), baseSc.name));
-      sensLe.appendChild(SharedLegend.item(SharedLegend.fromDataset(datasets[1]), (obj==='netBenefit'||obj==='inflAdjNetBenefit')?'Break-even (zero)':'Zero'));
-    }
-    const cfg={type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:SharedChartTip.options({callbacks:{title:c=>`${xL}: ${c[0].label}`,label:c=>Number.isFinite(c.parsed.y)?`${c.dataset.label}: ${fmt.currency(c.parsed.y,true)}`:`${c.dataset.label}: not feasible`}}),zoom:SharedZoom.options({min:0,max:labels.length-1,points:labels.length}),sharedYFit:{auto:{axes:['y']}}},scales:{x:{title:{display:true,text:xL,color:mc},ticks:{color:mc,font:{size:11}},grid:{color:gc}},y:{title:{display:true,text:objL+' ('+moneySymbol()+')',color:mc},ticks:{color:mc,font:{size:11},callback:v=>fmt.currency(v,true)},grid:{color:gc}}}}};
-    if(sensChartInstance){SharedZoom.resetView(sensChartInstance);sensChartInstance.data=cfg.data;sensChartInstance.options=cfg.options;sensChartInstance.update('none');}
-    else sensChartInstance=new Chart($('sensCanvas'),{...cfg,plugins:[SharedZoom.plugin]});
-  } else {
-    // ═══ 3D SURFACE PLOT ═══
-    $('sens2dSection').style.display='none';$('sens3dSection').style.display='';
-    if(blocked){const el=$('plotly3d');if(el)el.innerHTML=`<p class="muted" style="padding:20px;text-align:center;">${blocked}</p>`;return;}
-    const varY=$('sensVarY').value;
-    const yS=parseFloat($('sensYStart').value)||0,yE=parseFloat($('sensYEnd').value)||8;
-    const yVals=[];for(let i=0;i<steps;i++)yVals.push(yS+i*(yE-yS)/(steps-1));
-    const xL=$('sensVarX').selectedOptions[0].text,yL=$('sensVarY').selectedOptions[0].text,zL=$('sensObjective').selectedOptions[0].text;
-    $('sens3dTitle').textContent=`3D Surface: ${zL}`;
-
-    // Build z matrix [y][x]
-    const zData=[];
-    for(let yi=0;yi<steps;yi++){const row=[];for(let xi=0;xi<steps;xi++){let m=applyVar(baseSc,varX,xVals[xi]);m=applyVar(m,varY,yVals[yi]);const v=getNetBenefit(m,pc,ac,inflR,inflOn,obj);row.push(v);}zData.push(row);} // null = infeasible, Plotly leaves a hole
-
-    const isLight=document.body.classList.contains('light');
-    const costLike=obj==='totalInterest'||obj==='totalFinanceCost';
-    const plotData=[{type:'surface',x:xVals,y:yVals,z:zData,
-      colorscale:[[0,'#E63939'],[0.25,'#FFD28C'],[0.5,'#F8FBFF'],[0.75,'#8FCDBD'],[1,'#8DBBFF']],
-      reversescale:costLike,
-      ...(costLike?{}:{cmid:0}),
-      contours:{z:{show:true,usecolormap:true,highlightcolor:'#fff',project:{z:false}}},
-      hovertemplate:`${xL}: %{x:.2f}<br>${yL}: %{y:.2f}<br>${zL}: ${moneySymbol()}%{z:,.0f}<extra></extra>`
-    }];
-    const layout={autosize:true,margin:{l:0,r:0,t:0,b:0},
-      paper_bgcolor:isLight?'#FFFFFF':'#162033',
-      scene:{
-        xaxis:{title:xL,color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52'},
-        yaxis:{title:yL,color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52'},
-        zaxis:{title:zL+' ('+moneySymbol()+')',color:isLight?'#2D3436':'#A8B6CF',gridcolor:isLight?'#E0E6F0':'#2C3A52',tickprefix:moneySymbol(),tickformat:',.0f'},
-        bgcolor:isLight?'#F0F4FF':'#0F1728',
-        camera:{eye:{x:1.8,y:1.8,z:1.2}}
-      },
-      font:{family:'DM Sans',color:isLight?'#2D3436':'#EAF1FF'}
-    };
-    // react(), not newPlot(): the surface is redrawn as the reader types now, and
-    // uirevision tells Plotly the view is the same one, so the camera angle they
-    // set survives the redraw instead of snapping back to the default eye.
-    layout.uirevision='sens';
-    ensurePlotly()
-      .then(()=>Plotly.react('plotly3d',plotData,layout,{responsive:true,displayModeBar:true,displaylogo:false}))
-      .catch(()=>{ const el=$('plotly3d'); if(el) el.innerHTML='<p class="muted" style="padding:20px;text-align:center;">Could not load the 3D plotting library (Plotly). Check your connection and try again.</p>'; });
-  }
-}
-
-/* Lazy-load Plotly on first 3D-surface use so the ~3.5 MB library never blocks
-   the initial page load (it is only needed for the optional 3D sensitivity view). */
+/* Lazy-load Plotly on first use so the ~3.5 MB library never blocks the
+   initial page load (it is only needed for a two-setting optimisation). */
 let _plotlyPromise=null;
 function ensurePlotly(){
   if(window.Plotly) return Promise.resolve();
   if(_plotlyPromise) return _plotlyPromise;
   _plotlyPromise=new Promise((resolve,reject)=>{
     const s=document.createElement('script');
-    s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly.min.js';
     s.onload=()=>resolve();
     s.onerror=()=>{ _plotlyPromise=null; reject(new Error('Failed to load Plotly')); };
     document.head.appendChild(s);
@@ -1400,33 +1269,86 @@ function applyScenarioColor(idx,hex,live){
   if(editingIdx===idx){
     const box=$('scColor');if(box&&box.value!==shown)box.value=shown;
   }
-  if(live){clearTimeout(colorTimer);colorTimer=setTimeout(rerender,120);return;}
+  // A colour is a label, not an assumption: the board is redrawn in place.
+  if(live){clearTimeout(colorTimer);colorTimer=setTimeout(refreshResultLabels,120);return;}
   clearTimeout(colorTimer);
-  rerender();
+  refreshResultLabels();
   if(persist)persist.schedule();
 }
 // Back to the palette slot for this position, which also restores the
 // theme-aware colour a literal hex would otherwise freeze.
 
-// The card names the offer's price only when offers carry one of their own.
+// The tab names the offer's price only when offers carry one of their own.
 function scPriceTxt(sc){
   return offerPricingOn()?' · '+fmt.currency(scenarioPrice(sc,Math.max(0,parseNumInput($('purchaseCost')))))+' price':'';
 }
+// What the offer is, in one line: the tab's tooltip.
+function scSummaryText(sc){
+  return `${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down${scPriceTxt(sc)}${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}`;
+}
+function refreshScenarioTitles(){
+  document.querySelectorAll('#scenarioList .sc-tab').forEach(t=>{const sc=scenarios[+t.dataset.idx];if(sc)t.title=sc.name+': '+scSummaryText(sc);});
+}
+/* ─── Scenario bar ──────────────────────────────────────────────────────────
+   One tab per offer: click to edit it, double-click to rename, the dot picks
+   its colour. The tab that is lit is the offer the editor below shows. */
 function renderScenarioList(){
-  const list=$('scenarioList');list.innerHTML='';
+  const list=$('scenarioList'),addBtn=$('addScenarioBtn');
+  list.innerHTML='';
   scenarios.forEach((sc,i)=>{
-    const div=document.createElement('div');div.className='scenario-card'+(editingIdx===i?' active':'');const color=scenarioColor(sc,i);
-    div.innerHTML=`<div class="sc-header"><div class="sc-name"><input type="color" class="sc-dot" data-idx="${i}" value="${color}" title="Click to change this scenario's colour" aria-label="Colour for ${escHtml(sc.name)}"/>${escHtml(sc.name)}</div><div class="sc-actions">${SharedIcon.button('edit','Edit','sc-btn',`data-action="edit" data-idx="${i}"`)}${SharedIcon.button('duplicate','Duplicate','sc-btn',`data-action="dup" data-idx="${i}"`)}${SharedIcon.button('trash','Delete','sc-btn',`data-action="del" data-idx="${i}"`)}</div></div><div class="sc-summary">${scSummaryRate(sc)} · ${sc.termPeriods} ${termUnitLabel(sc.freq)} ${sc.freq} · ${fmt.pct((sc.downPaymentPct||0)/100,0)} down<span class="sc-price" data-idx="${i}">${scPriceTxt(sc)}</span>${(sc.loanType&&sc.loanType!=='annuity')?' · '+LOAN_TYPE_LABEL[sc.loanType]:''}${scenarioHasFloat(sc)?' · variable':''}</div>`;
-    div.querySelectorAll('.sc-btn').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const a=btn.dataset.action,idx=parseInt(btn.dataset.idx);if(a==='edit')openEditor(idx);else if(a==='dup'){scenarios.push({...scenarios[idx],name:scenarios[idx].name+' (copy)',color:null});renderScenarioList();rerender();}else if(a==='del'){scenarios.splice(idx,1);if(editingIdx===idx){editingIdx=-1;showEditor(false);}else if(editingIdx>idx)editingIdx--;renderScenarioList();rerender();}});});
-    const dot=div.querySelector('.sc-dot');
-    // The dot sits inside the card, whose own click opens the editor; without
-    // this the swatch would open the editor before the colour picker appeared.
+    const tab=document.createElement('div');
+    tab.className='sc-tab'+(editingIdx===i?' active':'');tab.dataset.idx=i;
+    tab.tabIndex=0;tab.setAttribute('role','button');tab.setAttribute('aria-pressed',editingIdx===i?'true':'false');
+    tab.title=sc.name+': '+scSummaryText(sc);
+    const color=scenarioColor(sc,i);
+    tab.innerHTML=`<input type="color" class="sc-dot" data-idx="${i}" data-no-stale value="${color}" title="Click to change this offer's colour" aria-label="Colour for ${escHtml(sc.name)}"/><span class="sc-tab-name" data-no-abbr>${escHtml(sc.name)}</span>`;
+    const dot=tab.querySelector('.sc-dot');
+    // The dot sits inside the tab, whose own click opens the offer; without
+    // this the swatch would switch offers before the colour picker appeared.
     dot.addEventListener('click',e=>e.stopPropagation());
+    dot.addEventListener('dblclick',e=>e.stopPropagation());
     dot.addEventListener('input',e=>{e.stopPropagation();applyScenarioColor(+dot.dataset.idx,e.target.value,true);});
     dot.addEventListener('change',e=>{e.stopPropagation();applyScenarioColor(+dot.dataset.idx,e.target.value,false);});
-    div.addEventListener('click',()=>openEditor(i));list.appendChild(div);
+    // Optimise runs the offer on screen, so the bar stands still meanwhile.
+    tab.addEventListener('click',()=>{if(optVars.length)return;if(i!==editingIdx)openEditor(i);});
+    tab.addEventListener('dblclick',()=>startRenameScenario(tab,i));
+    tab.addEventListener('keydown',e=>{
+      if(e.target!==tab)return;
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();tab.click();}
+      else if(e.key==='F2'){e.preventDefault();startRenameScenario(tab,i);}
+    });
+    list.appendChild(tab);
   });
+  // The + rides directly after the last tab, so it flows and wraps with them.
+  if(addBtn)list.appendChild(addBtn);
+  $('scEmpty').hidden=scenarios.length>0;
+  const none=editingIdx<0||!scenarios[editingIdx];
+  $('dupScenarioBtn').disabled=none||optVars.length>0;$('delScenarioBtn').disabled=none||optVars.length>0;
+  if(addBtn)addBtn.disabled=optVars.length>0;
   if(persist) persist.schedule(); // scenarios are JS state — save on every change
+}
+// A rename is a label, not an assumption, so it redraws the board in place.
+function startRenameScenario(tab,i){
+  const nameSpan=tab.querySelector('.sc-tab-name');const sc=scenarios[i];if(!nameSpan||!sc)return;
+  const input=document.createElement('input');
+  input.type='text';input.className='sc-tab-rename';input.value=sc.name;
+  input.setAttribute('data-no-stale','');input.setAttribute('data-no-persist','');input.setAttribute('aria-label','Rename this offer');
+  input.addEventListener('click',e=>e.stopPropagation());
+  input.addEventListener('dblclick',e=>e.stopPropagation());
+  let done=false;
+  const commit=()=>{
+    if(done)return;done=true;
+    sc.name=input.value.trim()||sc.name;
+    if(i===editingIdx)$('scName').value=sc.name;
+    renderScenarioList();refreshResultLabels();
+  };
+  input.addEventListener('blur',commit);
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();commit();}
+    if(e.key==='Escape'){done=true;renderScenarioList();}
+  });
+  nameSpan.replaceWith(input);
+  input.focus();input.select();
 }
 
 /* ─── Tips that answer the option you picked ───────────────────────────────
@@ -1858,7 +1780,6 @@ function openEditor(idx){
   if(sc.downPaymentPct===undefined&&sc.downPayment!==undefined){
     sc.downPaymentPct=Math.min(100,Math.max(0,(sc.downPayment/(parseNumInput($('purchaseCost'))||1))*100));
   }
-  $('editorTitle').textContent='Edit: '+sc.name;
   $('scName').value=sc.name;
   $('scColor').value=scenarioColor(sc,idx);
   $('scRate').value=sc.financeRate;
@@ -1894,6 +1815,7 @@ function openEditor(idx){
   updateEditorVisibility();updateImpliedRate();
   showEditor(true);
   renderScenarioList();
+  syncOptUi();
 }
 
 function saveEditor(){
@@ -1906,8 +1828,7 @@ function saveEditor(){
   d.name=$('scName').value||'Scenario '+(editingIdx+1);
   if(d.freq!==scenarios[editingIdx].freq)updateTermLabel(d.freq);
   scenarios[editingIdx]=d;
-  $('editorTitle').textContent='Edit: '+d.name;
-  renderScenarioList();rerender();
+  renderScenarioList();refreshResultLabels();
 }
 // Edits apply as they are made, a beat after the last keystroke, so the
 // charts follow the form and closing the editor can never lose work. A click
@@ -1915,29 +1836,45 @@ function saveEditor(){
 // draft without firing input or change.
 function applyEditorSoon(){clearTimeout(editorApplyTimer);editorApplyTimer=setTimeout(saveEditor,200);}
 
-// The list and the Add button hide while the editor is open, so it is plain
-// which scenario is being edited and there is nothing else to click into.
+// The editor is the selected offer's form; with no offers there is nothing
+// to show in it.
 function showEditor(open){
-  $('scenarioEditor').style.display=open?'block':'none';
-  $('tab-scenarios').classList.toggle('editing',open);
+  $('scenarioEditor').style.display=open?'':'none';
 }
-// Closing keeps what is on the form: anything typed in the last 200ms is
-// applied now rather than dropped.
-function closeEditor(){saveEditor();editingIdx=-1;editorDraft=null;showEditor(false);renderScenarioList();}
+// The offer at idx becomes the one on screen, or none when the list is empty.
+function selectScenario(idx){
+  editingIdx=-1;editorDraft=null;
+  if(scenarios.length)openEditor(Math.max(0,Math.min(idx,scenarios.length-1)));
+  else{showEditor(false);renderScenarioList();syncOptUi();}
+}
 
 /* ─── Events ─── */
-$('addScenarioBtn').addEventListener('click',()=>{scenarios.push(defaultScenario());openEditor(scenarios.length-1);rerender();});
+$('addScenarioBtn').addEventListener('click',()=>{if(optVars.length)return;scenarios.push(defaultScenario());openEditor(scenarios.length-1);markStale();});
+$('dupScenarioBtn').addEventListener('click',()=>{
+  if(optVars.length||editingIdx<0)return;
+  saveEditor();
+  const i=editingIdx,copy=JSON.parse(JSON.stringify(scenarios[i]));
+  copy.name=scenarios[i].name+' (copy)';copy.color=null;
+  scenarios.splice(i+1,0,copy);
+  editingIdx=-1;editorDraft=null;openEditor(i+1);markStale();
+});
+$('delScenarioBtn').addEventListener('click',()=>{
+  if(optVars.length||editingIdx<0)return;
+  clearTimeout(editorApplyTimer);
+  const i=editingIdx;scenarios.splice(i,1);
+  selectScenario(i);markStale();
+});
 $('scColor').addEventListener('input',e=>applyScenarioColor(editingIdx,e.target.value,true));
 $('scColor').addEventListener('change',e=>applyScenarioColor(editingIdx,e.target.value,false));
-$('saveScenarioBtn').addEventListener('click',closeEditor);
-$('closeScenarioBtn').addEventListener('click',closeEditor);
 // The colour swatch applies itself (applyScenarioColor), so it stays out.
 ['input','change'].forEach(evt=>$('scenarioEditor').addEventListener(evt,e=>{if(e.target.id!=='scColor')applyEditorSoon();}));
-$('scenarioEditor').addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#saveScenarioBtn,#closeScenarioBtn'))applyEditorSoon();});
-$('scenarioEditor').addEventListener('keydown',e=>{if(e.key==='Escape'&&editingIdx>=0){e.preventDefault();closeEditor();}});
+// The rate and repayment switches and the period rows change the draft
+// without firing input or change, so a click is an edit too. A gauge is not:
+// it picks what Optimise sweeps, not what the offer is.
+$('scenarioEditor').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&!b.closest('.opt-btn')){applyEditorSoon();markStale();}});
 
 // Base RF rate slider
-['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';rerender();});});
+['input','change'].forEach(evt=>{$('baseRf').addEventListener(evt,()=>{$('baseRfVal').textContent=fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';syncForm();});});
 
 // Finance rate slider in editor — live update display
 ['input','change'].forEach(evt=>{$('scDownPct').addEventListener(evt,()=>{$('scDownVal').textContent=fmt.pct(parseFloat($('scDownPct').value||0)/100,0);});});
@@ -2122,57 +2059,24 @@ $('addPaymentPeriodBtn').addEventListener('click',()=>addSchedPeriod('payment'))
 // A longer or shorter payment holiday moves the first instalment, and the rate
 // schedule is counted from that instalment, so its ranges follow the field.
 ['input','change'].forEach(ev=>$('scIoPeriods').addEventListener(ev,()=>clampSchedToStart('rate')));
-$('rateConvention').addEventListener('change',()=>{rerender();updateImpliedRate();});
+$('rateConvention').addEventListener('change',()=>{syncForm();updateImpliedRate();});
 
-['scName','scTerm','scFeeType'].forEach(id=>{['input','change'].forEach(evt=>{$(id).addEventListener(evt,()=>{/* live preview only on save click */});});});
-['scFeeAmt'].forEach(id=>{$(id).addEventListener('blur',()=>{/* handled on save */});});
-['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',rerender);});
-$('currencySymbol').addEventListener('change',rerender);
-$('inflationToggle').addEventListener('change',rerender);
+// How the board is read, not what it was run on, so these redraw it in place.
+['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',()=>{if(!optResult)renderBoard();});});
+$('currencySymbol').addEventListener('change',()=>{syncForm();renderBoard();});
+$('inflationToggle').addEventListener('change',syncForm);
 // Pricing offers separately adds a row to the editor and a price to every card.
 $('offerPricing').addEventListener('change',()=>{
   if(editorDraft){updateEditorVisibility();updateImpliedRate();}
-  renderScenarioList();rerender();
+  renderScenarioList();syncForm();syncOptUi();
 });
-$('inflationRate').addEventListener('change',rerender);
+$('inflationRate').addEventListener('change',syncForm);
 
 document.querySelectorAll('.ctrl-tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('tab-'+btn.dataset.tab).classList.add('active');});});
-$('mode2d').addEventListener('click',()=>{sensMode='2d';$('mode2d').classList.add('active');$('mode3d').classList.remove('active');$('sensYBlock').style.display='none';scheduleSensitivity();});
-$('mode3d').addEventListener('click',()=>{sensMode='3d';$('mode3d').classList.add('active');$('mode2d').classList.remove('active');$('sensYBlock').style.display='';scheduleSensitivity();});
-$('sensScenario').addEventListener('change',updateSensTermLabels);
-/* A sweep range is typed in the unit of the variable it sweeps: % for a rate,
-   the term's own period for a term, money for a repayment. The fields carry
-   that unit after the number and the limits that go with it. */
-function syncSensUnits(){
-  [['X','sensVarX'],['Y','sensVarY']].forEach(([ax,selId])=>{
-    const sel=$(selId); if(!sel) return;
-    const opt=sel.selectedOptions[0], label=opt?opt.textContent:'';
-    const m=label.match(/\(([^)]+)\)\s*$/);
-    const unit=m?m[1]:moneySymbol();
-    const pct=unit==='%', money=!m;
-    ['Start','End'].forEach(w=>{
-      const el=$('sens'+ax+w); if(!el) return;
-      el.min=pct?'0':(money?'0':'1'); el.max=pct?'100':(money?'1000000000000':'3000');
-      const suf=el.parentElement&&el.parentElement.querySelector('.sens-unit'); if(suf) suf.textContent=unit;
-    });
-  });
-}
-$('sensVarX').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarX').value,sensSelectedFreq(),sensSelectedScenario());$('sensXStart').value=a;$('sensXEnd').value=b;syncSensUnits();});
-$('sensVarY').addEventListener('change',syncSensUnits);
-syncSensUnits();
-$('sensVarY').addEventListener('change',()=>{const[a,b]=defaultAxisRange($('sensVarY').value,sensSelectedFreq(),sensSelectedScenario());$('sensYStart').value=a;$('sensYEnd').value=b;});
-// Every control in the Sensitivity panel redraws the sweep, the two above
-// included: their own listeners re-seed the axis range first, and this one runs
-// after them because it was added second.
-['sensScenario','sensObjective','sensVarX','sensXStart','sensXEnd',
- 'sensVarY','sensYStart','sensYEnd','sensSteps'].forEach(id=>{
-  $(id).addEventListener('change',scheduleSensitivity);
-  $(id).addEventListener('input',scheduleSensitivity);
-});
-
-$('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');$('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';if(chartInstance){chartInstance.destroy();chartInstance=null;}if(sensChartInstance){sensChartInstance.destroy();sensChartInstance=null;}rerender();});
-$('chartResetZoom').addEventListener('click',()=>{if(chartInstance)chartInstance.resetZoom();});
-$('sensResetZoom').addEventListener('click',()=>{if(sensChartInstance)sensChartInstance.resetZoom();});
+$('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');$('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';if(chartInstance){chartInstance.destroy();chartInstance=null;}renderBoard();});
+// The surface has no zoom to reset, but it has a camera the reader can drag
+// out of shape, so its ⟳ puts the view back where the chart opened.
+$('chartResetZoom').addEventListener('click',()=>{if(surfaceOnBoard()){Plotly.relayout('optSurface',{'scene.camera':OPT_CAMERA});return;}if(chartInstance)chartInstance.resetZoom();});
 $('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent=HOVER_IDLE;});
 
 /* ─── Quick Start ───────────────────────────────────────────────────────────
@@ -2219,7 +2123,7 @@ $('chartCanvas').addEventListener('mouseleave',()=>{$('hoverBox').textContent=HO
    Interest-only and bullet are the two loan types no preset opens on; neither
    is a mass-market retail comparison, and run.mjs F9 and F15 pin them. */
 var QS_DEFAULTS={currencySymbol:'$',purchaseCost:50000,offerPricing:false,availableCash:50000,riskFree:4.5,
-  rateConvention:'ear',inflationOn:false,inflationRate:2.5,chartMetric:'wealth',optTarget:'netBenefit'};
+  rateConvention:'ear',inflationOn:false,inflationRate:2.5,chartMetric:'wealth',optTarget:'netBenefit',optMetric:'netBenefit'};
 
 /* Every preset holds MORE cash than the purchase price, and none of them holds
    exactly the price. Two reasons, one presentational and one arithmetic. Cash
@@ -2352,8 +2256,8 @@ var QUICK_START_SCENARIOS={
 
 /* Order matters twice here. The purchase cost is written before the scenarios,
    because normaliseScenario() reads it when it upgrades a pre-percentage down
-   payment; and renderScenarioList() runs before rerender(), so the sensitivity
-   dropdown is rebuilt against the list the reader can see. */
+   payment; and the editor opens on the first offer before the run, so the
+   optimisation gauges are drawn against the offer the reader can see. */
 function applyQuickStart(key){
   const s=QUICK_START_SCENARIOS[key];
   if(!s)return;
@@ -2373,6 +2277,9 @@ function applyQuickStart(key){
   $('inflationRate').value=b.inflationRate;
   $('chartMetric').value=b.chartMetric;
   $('optTarget').value=b.optTarget;
+  $('optMetric').value=b.optMetric;
+  // A worked comparison is a comparison: Optimise stands down.
+  optAbort=true;optVars=[];optResult=null;closeOptModal();
 
   /* Every scenario is built over defaultScenario() and then put through the
      same normaliser a hand-edited cache goes through, so a preset can only
@@ -2388,25 +2295,11 @@ function applyQuickStart(key){
 
   // The editor and the amortisation tab are views onto the plan before this one.
   editingIdx=-1;editorDraft=null;activeAmortIdx=0;
-  showEditor(false);
-
-  /* The sensitivity panel is marked data-no-persist, but it is still on screen,
-     so it is part of what a reset has to clear. Nulling the two range caches is
-     the point: they exist to stop the axis range being re-seeded on every
-     keystroke, and left alone they would hand this plan the last plan's sweep
-     range whenever the two happen to share a loan shape. */
-  sensMode='2d';
-  $('mode2d').classList.add('active');$('mode3d').classList.remove('active');
-  $('sensYBlock').style.display='none';
-  $('sens2dSection').style.display='none';$('sens3dSection').style.display='none';
-  $('sensScenario').value='0';
-  $('sensObjective').value='netBenefit';
-  $('sensVarX').value='financeRate';$('sensVarY').value='riskFreeRate';
-  $('sensSteps').value=20;
-  sensScKind=null;sensTermFreq=null;
 
   markQuickStart(key);
-  renderScenarioList();rerender();
+  selectScenario(0);
+  syncForm();
+  runSimulation();
   if(persist)persist.schedule();
 }
 
@@ -2652,87 +2545,860 @@ function downloadChartJsSvgAtSize(canvasId, filename, chartTitle, legendId) {
   const a = document.createElement('a'); a.href=url; a.download=filename;
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
-$('chartPngBtn').addEventListener('click', () => {
-  const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
-  downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend');
-});
-$('sens2dPngBtn').addEventListener('click', () => {
-  const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
-  downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend');
-});
-// The 3D surface exports at its desktop size (the .surface-wrap box on a wide
-// screen), not at whatever width the phone happens to give it.
-const SENS3D_EXPORT_SIZE = { width:940, height:520 };
-async function withSens3dPngAnnotations(callback) {
+// The chart card carries the comparison over time, the optimisation line, or
+// the two-setting surface; each export takes whichever is on the board.
+const OPT_SURFACE_EXPORT_SIZE = { width:940, height:520 };
+function chartTitleText(){ return document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase'; }
+async function withSurfaceMarks(callback) {
   await ensurePlotly();
-  const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
+  const isLight=document.body.classList.contains('light');
   const titleAnnotation = {
     xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
-    showarrow:false, text:`<b>${title3d}</b>`,
-    font:{ size:14, color:document.body.classList.contains('light')?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' },
+    showarrow:false, text:'<b>'+escHtml(optChartTitle())+'</b>',
+    font:{ size:14, color:isLight?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' },
   };
   const wmAnnotation = {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
     showarrow:false, text:'Made using tool.adjiebrotots.com/financingvscash',
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
-  await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation], images:[wmPlotlyImage()] });
+  await Plotly.relayout('optSurface', { annotations:[titleAnnotation, wmAnnotation], images:[wmPlotlyImage()], paper_bgcolor:isLight?'#ffffff':'#0F1728', 'margin.t':40 });
   try { return await callback(); }
-  finally { await Plotly.relayout('plotly3d', { annotations:[], images:[] }); }
+  finally { await Plotly.relayout('optSurface', { annotations:[], images:[], paper_bgcolor:'rgba(0,0,0,0)', 'margin.t':0 }); }
 }
-$('sens3dPngBtn').addEventListener('click', async () => {
-  await withSens3dPngAnnotations(() => Plotly.downloadImage('plotly3d', Object.assign({ format:'png', filename:'financing_sensitivity_3d', scale:3 }, SENS3D_EXPORT_SIZE)));
+$('chartPngBtn').addEventListener('click', () => {
+  if(surfaceOnBoard()) return withSurfaceMarks(() => Plotly.downloadImage('optSurface', Object.assign({ format:'png', filename:'financing_optimisation', scale:3 }, OPT_SURFACE_EXPORT_SIZE)));
+  downloadChartJsPng('chartCanvas', optResult?'financing_optimisation.png':'financing_wealth_chart.png', optResult?optChartTitle():chartTitleText(), 'chartLegend');
 });
 $('chartCopyPngBtn').addEventListener('click', () => {
-  const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
-  SharedShare.copyImage(() => downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', title, 'chartLegend', false), $('chartCopyPngBtn'));
-});
-$('sens2dCopyPngBtn').addEventListener('click', () => {
-  const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
-  SharedShare.copyImage(() => downloadChartJsPng('sensCanvas', 'financing_sensitivity_2d.png', title, 'sensLegend', false), $('sens2dCopyPngBtn'));
-});
-$('sens3dCopyPngBtn').addEventListener('click', () => {
-  SharedShare.copyImage(() => withSens3dPngAnnotations(() => Plotly.toImage('plotly3d', Object.assign({ format:'png', scale:3 }, SENS3D_EXPORT_SIZE))), $('sens3dCopyPngBtn'));
+  if(surfaceOnBoard()) return SharedShare.copyImage(() => withSurfaceMarks(() => Plotly.toImage('optSurface', Object.assign({ format:'png', scale:3 }, OPT_SURFACE_EXPORT_SIZE))), $('chartCopyPngBtn'));
+  SharedShare.copyImage(() => downloadChartJsPng('chartCanvas', 'financing_wealth_chart.png', optResult?optChartTitle():chartTitleText(), 'chartLegend', false), $('chartCopyPngBtn'));
 });
 $('chartSvgBtn').addEventListener('click', () => {
-  const title = document.getElementById('chartTitle')?.textContent || 'Finance vs Cash Purchase';
-  downloadChartJsSvg('chartCanvas', 'financing_wealth_chart.svg', title, 'chartLegend');
-});
-$('sens2dSvgBtn').addEventListener('click', () => {
-  const title = document.getElementById('sens2dTitle')?.textContent || 'Finance vs Cash — 2D Sensitivity';
-  downloadChartJsSvg('sensCanvas', 'financing_sensitivity_2d.svg', title, 'sensLegend');
-});
-$('sens3dSvgBtn').addEventListener('click', async () => {
-  await ensurePlotly();
-  const title3d = document.getElementById('sens3dTitle')?.textContent || 'Finance vs Cash — 3D Sensitivity Surface';
-  const titleAnnotation = {
-    xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
-    showarrow:false, text:`<b>${title3d}</b>`,
-    font:{ size:14, color:document.body.classList.contains('light')?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' },
-  };
-  const wmAnnotation = {
-    xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
-    showarrow:false, text:'Made using tool.adjiebrotots.com/financingvscash',
-    font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
-  };
-  await Plotly.relayout('plotly3d', { annotations:[titleAnnotation, wmAnnotation], images:[wmPlotlyImage()] });
-  await Plotly.downloadImage('plotly3d', Object.assign({ format:'svg', filename:'financing_sensitivity_3d' }, SENS3D_EXPORT_SIZE));
-  await Plotly.relayout('plotly3d', { annotations:[], images:[] });
-});
-
-/* The 3D surface has no zoom to reset, but it does have a camera the reader
-   can drag out of shape, so its ⟳ does the same job the Chart.js ones do:
-   put the view back where the chart opened. The eye is the one the layout
-   above sets. */
-$('sens3dResetView').addEventListener('click', async () => {
-  if(!window.Plotly) return;
-  const el = $('plotly3d');
-  if(!el || !el.data) return;
-  await Plotly.relayout('plotly3d', {'scene.camera': {eye:{x:1.8, y:1.8, z:1.2}}});
+  if(surfaceOnBoard()) return withSurfaceMarks(() => Plotly.downloadImage('optSurface', Object.assign({ format:'svg', filename:'financing_optimisation' }, OPT_SURFACE_EXPORT_SIZE)));
+  downloadChartJsSvg('chartCanvas', optResult?'financing_optimisation.svg':'financing_wealth_chart.svg', optResult?optChartTitle():chartTitleText(), 'chartLegend');
 });
 
 /* Slider readouts are typeable through SharedSlider (shared.js), the same box
    every finance tool carries. */
+
+/* ── The Simulate gate ──────────────────────────────────────────────────────
+   Typing does not run the comparison. It keeps the FORM coherent (syncForm),
+   which is cheap and has to stay live, and it sends the board out of date:
+   the board steps back and ▶ Simulate steps forward, so nobody reads a
+   verdict that no longer belongs to the numbers on screen. Nothing is marked
+   before the first run, because there is no answer to doubt yet. The name and
+   colour of an offer, and the currency it is read in, are labels rather than
+   assumptions (data-no-stale), so they redraw the board in place instead. */
+let stale=false,runInFlight=false,editedInFlight=false;
+let pendingRun=false;  // a run asked for while a sweep was still going (a Quick Start, a file)
+function boardHas(){return !!(latestResults||optResult);}
+function markStale(){
+  if(runInFlight)editedInFlight=true;   // a sweep reads its inputs once, at the start
+  if(stale||!boardHas())return;
+  stale=true;
+  document.body.classList.add('is-stale');
+  const b=$('simBtn');if(b)b.classList.add('needs-run');
+  renderStaleNote();
+}
+function markFresh(){
+  if(!stale)return;
+  stale=false;
+  document.body.classList.remove('is-stale');
+  const b=$('simBtn');if(b)b.classList.remove('needs-run');
+  renderStaleNote();
+}
+// A rename or a new colour reaches the board without a run: the copy the
+// board was drawn from takes the label and the board is drawn again.
+function refreshResultLabels(){
+  let changed=false;
+  const take=(dst,src)=>{if(dst&&src&&(dst.name!==src.name||dst.color!==src.color)){dst.name=src.name;dst.color=src.color;changed=true;}};
+  if(simInputs&&simInputs.scenarios.length===scenarios.length)scenarios.forEach((sc,i)=>take(simInputs.scenarios[i],sc));
+  if(optResult&&scenarios[optResult.idx]){
+    take(optResult.sc0,scenarios[optResult.idx]);
+    if(changed){optResult.name=optResult.sc0.name;optResult.color=scenarioColor(optResult.sc0,optResult.idx);}
+  }
+  if(changed)renderBoard();
+}
+
+const STALE_TEXT='Inputs changed. Press Simulate to run them.';
+function simBtnLabel(){return optVars.length?'▶ Optimise':'▶ Simulate';}
+function renderStaleNote(){
+  const el=$('staleNote');if(!el)return;
+  if(!optVars.length){el.textContent=STALE_TEXT;return;}
+  const sc=liveScenario();if(!sc){el.textContent=STALE_TEXT;return;}
+  const plan=optPlan(sc),two=optVars.length>1;
+  const parts=optVars.map((v,k)=>{
+    const sp=plan.specs[k];if(!sp)return '';
+    const vals=plan.values[k];
+    return '<b>'+escHtml(sp.label)+'</b> '+escHtml(optRangeText(sp,vals))+(two?' ('+vals.length+')':'');
+  }).filter(Boolean);
+  el.innerHTML=(stale?'<span class="sn-stale">Inputs changed.</span> ':'')+
+    'Optimise <span data-no-abbr>'+escHtml(sc.name)+'</span>: '+parts.join(' × ')+', '+plan.runs+(plan.runs===1?' run.':' runs.');
+}
+
+/* The button is greyed out (but still hoverable) whenever the form cannot be
+   run, with the reason as its tooltip. */
+function optPlanReason(){
+  const sc=liveScenario();
+  if(!sc)return 'Add a loan offer to optimise.';
+  const plan=optPlan(sc);
+  for(let k=0;k<optVars.length;k++){
+    const sp=plan.specs[k];
+    if(!sp)return 'A swept setting no longer applies to this offer. Pick it again.';
+    if(plan.values[k].length<2)return sp.kind==='list'?`${sp.label}: pick at least two values.`:`${sp.label}: Start and End give one value. Widen the range.`;
+  }
+  if(plan.runs>OPT_MAX_RUNS)return `${plan.runs} runs is more than the ${OPT_MAX_RUNS} an optimisation allows. Lower the steps.`;
+  return '';
+}
+function simBlockReason(){
+  const c=formCashBlock();if(c)return c;
+  return optVars.length?optPlanReason():'';
+}
+function updateSimBtnState(){
+  const b=$('simBtn');if(!b||b.dataset.running==='1')return;
+  const reason=simBlockReason();
+  if(reason){b.classList.add('is-disabled');b.setAttribute('aria-disabled','true');b.setAttribute('data-tip',reason);}
+  else{b.classList.remove('is-disabled');b.removeAttribute('aria-disabled');b.removeAttribute('data-tip');}
+}
+
+/* ▶ Simulate: the comparison of every offer, on the inputs as they stand.
+   With settings picked to sweep, the gate runs the sweep instead. A form
+   whose cash cannot cover the price runs to the blank board that says so. */
+function runSimulation(){
+  if(runInFlight){pendingRun=true;return;}
+  if(optVars.length&&!formCashBlock())return runOptimisation();
+  saveEditor();
+  simInputs=readInputs();
+  optResult=null;setBoardMode();
+  renderSimBoard();
+  markFresh();
+  if(persist)persist.schedule();
+}
+$('simBtn').addEventListener('click',()=>{
+  // A sweep that cannot run says why on the button; there is nothing to do.
+  if(optVars.length&&!formCashBlock()&&optPlanReason())return;
+  runSimulation();
+});
+
+/* Every control in the sidebar feeds the comparison, so any edit sends the
+   board out of date, the fields the schedules mint on the fly included. The
+   exceptions carry data-no-stale. Capture phase, so a field that stops its
+   own event from bubbling is still counted. */
+let formSyncQueued=false;
+function afterFormEdit(){formSyncQueued=false;syncForm();syncOptUi();}
+{
+  const panel=document.querySelector('aside.controls');
+  if(panel)['input','change'].forEach(ev=>panel.addEventListener(ev,e=>{
+    const t=e.target;
+    if(!t||!t.matches||!t.matches('input,select,textarea'))return;
+    if(t.closest('[data-no-stale]'))return;
+    markStale();
+    // After the field's own handlers, which may convert or reveal others.
+    if(!formSyncQueued){formSyncQueued=true;queueMicrotask(afterFormEdit);}
+  },true));
+}
+
+/* ─── OPTIMISE: WHAT CAN BE SWEPT, AND HOW ─────────────────────────────────────
+   Optimise runs ONE loan offer many times, sweeping up to two of its settings
+   over a range, so a reader can see how the answer moves with them and where
+   it peaks. A setting qualifies only when changing it changes nothing else on
+   the form, so every tested value is an offer the reader could have typed in:
+
+     - plain numbers: the finance rate (or, on a rate schedule, a shift of
+       every period together), the term, the interest-only span or payment
+       holiday, the residual, a known repayment, the offer's own price, the
+       down payment, both fees, and the risk-free rate the cash earns;
+     - a fixed list: the fee treatment.
+
+   A longer or shorter term carries one contained knock-on, the one the form
+   would apply: an interest-only span or holiday cannot outlast the loan.
+
+   Left out on purpose: the loan type, the repayment frequency, the rate and
+   repayment bases (each swaps the fields around it) and the purchase itself.
+
+   Every spec is built from the offer as it stands, so optSpec returning null
+   means "not sweepable here" (a residual on a loan with none, a single rate on
+   a rate schedule), and a swept setting that stops qualifying is dropped. */
+const OPT_MAX_VARS=2;
+const OPT_MAX_STEPS=50;      // values per swept setting
+const OPT_MAX_RUNS=2500;     // runs per optimisation, 50 x 50 at the most
+const OPT_ICON='<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 18.4a8 8 0 1 1 11.4 0"/><path d="M12 13.4 8.6 9.3"/><circle cx="12" cy="13.6" r="1.35"/></svg>';
+const OPT_FEE_TREATMENTS=[{v:'upfront',l:'Paid upfront'},{v:'capitalise',l:'Added to the loan'},{v:'discount',l:'Deducted from the advance'}];
+let optVars=[];       // [{key, start, end, steps, pick}], at most two
+let optResult=null;   // the sweep on the board, or null while it shows a comparison
+let optAbort=false;   // Cancel pressed while a sweep is running
+
+function optClamp(v,lo,hi){return Math.min(hi,Math.max(lo,v));}
+function optRound(v,spec){return spec.int?Math.round(v):+(+v).toFixed(spec.dp==null?2:spec.dp);}
+function optFmtNum(spec,v){
+  const n=Number(v);if(!isFinite(n))return '—';
+  const num=+n.toFixed(spec.int?0:(spec.dp==null?2:spec.dp));
+  const txt=num.toLocaleString('en-US',{maximumFractionDigits:spec.int?0:(spec.dp==null?2:spec.dp)});
+  if(spec.unit==='money')return(num<0?'−':'')+moneyWithSymbol(Math.abs(num),{maximumFractionDigits:2});
+  if(spec.unit==='pp')return(num>0?'+':'')+txt+' pp';
+  if(spec.unit==='%/yr'||spec.unit==='%')return txt+'%';
+  return txt+(spec.unit?' '+spec.unit:'');
+}
+// The offer the editor shows, as the form reads now (the draft is applied to
+// the list a beat later).
+function liveScenario(){
+  if(editingIdx<0||!scenarios[editingIdx])return null;
+  return editorDraft?editorScenarioDraft():scenarios[editingIdx];
+}
+/* key → how to read and write the setting on a tested copy x = {sc, I}, its
+   bounds, its unit, and a default range when the field reads zero. */
+function optSpec(key,sc,pricingOn){
+  if(!sc)return null;
+  const t=LOAN_TYPES.includes(sc.loanType)?sc.loanType:'annuity';
+  const unit=termUnitLabel(sc.freq);
+  const N=o=>{const sp=Object.assign({key,kind:'num',dp:2},o);sp.fmt=v=>optFmtNum(sp,v);return sp;};
+  const sched=supportsSchedule(t)&&sc.rateMode==='schedule';
+  const pOn=pricingOn==null?offerPricingOn():pricingOn;
+  switch(key){
+    case 'financeRate':
+      if(t==='knownPayment'||sched)return null;
+      return N({label:t==='flat'?'Flat Rate':t==='bullet'?'Interest Rate':'Finance Rate',unit:'%/yr',min:0,max:30,zero:[1,10],
+        get:x=>x.sc.financeRate,set:(x,v)=>{x.sc.financeRate=v;}});
+    case 'rateShift':
+      // A schedule has no single rate, so every period moves together, in
+      // percentage points: a rate shock, the useful sweep anyway.
+      if(!sched)return null;
+      return N({label:'Rate shift',unit:'pp',min:-30,max:30,range:[-2,4],
+        get:()=>0,set:(x,v)=>{
+          x.sc.financeRate=Math.max(0,(Number(x.sc.financeRate)||0)+v);
+          if(Array.isArray(x.sc.ratePeriods))x.sc.ratePeriods=x.sc.ratePeriods.map(p=>Object.assign({},p,{
+            rate:Math.max(0,(Number(p.rate)||0)+v),rateMin:Math.max(0,(Number(p.rateMin)||0)+v),rateMax:Math.max(0,(Number(p.rateMax)||0)+v)}));
+        }});
+    case 'term':
+      return N({label:'Term',unit,int:true,min:1,max:3000,
+        get:x=>x.sc.termPeriods,set:(x,v)=>{x.sc.termPeriods=v;}});
+    case 'ioPeriods':
+      if(!usesIoPeriods(t))return null;
+      return N({label:t==='deferred'?'Payment Holiday':'Interest-Only',unit,int:true,min:0,max:3000,
+        get:x=>x.sc.ioPeriods,set:(x,v)=>{x.sc.ioPeriods=v;}});
+    case 'residualPct':
+      if(t!=='balloon')return null;
+      return N({label:'Residual',unit:'%',int:true,min:0,max:99,zero:[0,60],
+        get:x=>x.sc.residualPct,set:(x,v)=>{x.sc.residualPct=v;}});
+    case 'knownPayment':
+      if(t!=='knownPayment'||sc.paymentMode==='schedule')return null;
+      return N({label:'Repayment Amount',unit:'money',min:0,max:1e12,
+        get:x=>x.sc.knownPayment,set:(x,v)=>{x.sc.knownPayment=v;}});
+    case 'priceValue':{
+      if(!pOn)return null;
+      const pt=PRICE_TYPES.includes(sc.priceType)?sc.priceType:'discount';
+      return N({label:'Offer Price',unit:pt==='amount'?'money':pt==='pct'?'% of cash':'% off',min:0,max:PRICE_MAX[pt],
+        zero:pt==='discount'?[0,20]:pt==='pct'?[80,120]:[0,1000],
+        get:x=>x.sc.priceValue,set:(x,v)=>{x.sc.priceValue=clampPriceValue(x.sc.priceType,v);}});
+    }
+    case 'downPaymentPct':
+      return N({label:'Down Payment',unit:'%',int:true,min:0,max:100,zero:[0,50],
+        get:x=>x.sc.downPaymentPct,set:(x,v)=>{x.sc.downPaymentPct=v;}});
+    case 'feeAmt':{
+      const pct=sc.feeType==='pct';
+      return N({label:'Origination Fee',unit:pct?'%':'money',min:0,max:pct?99:1e12,zero:pct?[0,5]:[0,1000],
+        get:x=>x.sc.feeAmt,set:(x,v)=>{x.sc.feeAmt=v;}});
+    }
+    case 'adminFee':
+      return N({label:'Admin Fee',unit:'money',min:0,max:1e9,zero:[0,20],
+        get:x=>x.sc.adminFee,set:(x,v)=>{x.sc.adminFee=v;}});
+    case 'riskFreeRate':
+      return N({label:'Risk-Free Rate',unit:'%/yr',min:0,max:20,zero:[1,8],global:true,
+        get:x=>x.I.riskFreeRate,set:(x,v)=>{x.I.riskFreeRate=v;}});
+    case 'feeTreatment':{
+      const sp={key,kind:'list',label:'Fee Treatment',options:OPT_FEE_TREATMENTS,
+        get:x=>x.sc.feeTreatment||'upfront',set:(x,v)=>{x.sc.feeTreatment=v;}};
+      sp.fmt=v=>{const o=OPT_FEE_TREATMENTS.find(o=>o.v===v);return o?o.l:String(v);};
+      return sp;
+    }
+  }
+  return null;
+}
+// What the form holds now, for the gauges and the default range.
+function optLiveBase(sc){return{sc,I:{riskFreeRate:parseFloat($('baseRf').value)||0}};}
+// A range around the value the field holds now: half to one and a half times
+// it, or the spec's own range when that says more, within the field's bounds.
+function optDefaultRange(spec,base){
+  if(spec.kind==='list')return{pick:spec.options.map(o=>o.v),start:spec.options[0].v,end:spec.options[spec.options.length-1].v,steps:spec.options.length};
+  const cur=Number(spec.get(base))||0;
+  let a,b;
+  if(spec.range){[a,b]=spec.range;}
+  else if(cur>0){a=cur/2;b=cur*1.5;if(spec.int&&b-a<4){a=cur-2;b=cur+2;}}
+  else if(spec.zero){[a,b]=spec.zero;}
+  else{a=spec.min;b=spec.min+10;}
+  a=optRound(optClamp(a,spec.min,spec.max),spec);b=optRound(optClamp(b,spec.min,spec.max),spec);
+  if(b<=a)b=optRound(optClamp(a+(spec.int?4:1),spec.min,spec.max),spec);
+  return{start:a,end:b,steps:spec.int?Math.max(2,Math.min(11,b-a+1)):11};
+}
+function optValues(spec,vr){
+  if(!spec||!vr)return[];
+  if(spec.kind==='list'){
+    const on=new Set((Array.isArray(vr.pick)?vr.pick:[]).map(String));
+    return spec.options.filter(o=>on.has(String(o.v))).map(o=>o.v);
+  }
+  let a=Number(vr.start),b=Number(vr.end);
+  if(!isFinite(a)||!isFinite(b))return[];
+  a=optClamp(a,spec.min,spec.max);b=optClamp(b,spec.min,spec.max);
+  const n=Math.max(2,Math.min(OPT_MAX_STEPS,Math.round(Number(vr.steps)||11)));
+  const out=[];
+  for(let i=0;i<n;i++){const v=optRound(a+(b-a)*i/(n-1),spec);if(!out.includes(v))out.push(v);}
+  return out;
+}
+function optPlan(sc){
+  const specs=optVars.map(v=>optSpec(v.key,sc));
+  const values=optVars.map((v,k)=>optValues(specs[k],v));
+  return{specs,values,runs:values.reduce((n,a)=>n*a.length,1)};
+}
+// "1% to 10%", "12 to 84 months": the unit said once, at the end. A list
+// names the values it picked.
+function optRangeText(spec,vals){
+  if(!vals.length)return '';
+  if(spec.kind==='list')return vals.map(v=>spec.fmt(v)).join(', ');
+  const first=(spec.unit==='money'||spec.unit==='pp')?spec.fmt(vals[0]):optFmtNum(Object.assign({},spec,{unit:''}),vals[0]);
+  return first+' to '+spec.fmt(vals[vals.length-1]);
+}
+// One tested copy of the offer and the inputs it runs on.
+function optVariant(base,specs,vals){
+  const x={sc:JSON.parse(JSON.stringify(base.sc)),I:Object.assign({},base.I)};
+  specs.forEach((sp,k)=>sp.set(x,vals[k]));
+  // An interest-only span or a payment holiday cannot outlast the loan.
+  if(x.sc.ioPeriods!=null&&x.sc.ioPeriods>x.sc.termPeriods)x.sc.ioPeriods=x.sc.termPeriods;
+  return x;
+}
+
+/* ─── OPTIMISE MODE: THE FORM ──────────────────────────────────────────────────
+   A gauge beside every sweepable field opens the range editor. Picking one puts
+   the page in optimise mode: only the offer on screen runs, so the bar that
+   switches offers stands down, ▶ Simulate becomes ▶ Optimise with Cancel
+   beside it, and the note above the gate says what the next run will sweep. */
+function pruneOptVars(){
+  if(!optVars.length)return;
+  const sc=liveScenario();
+  const keep=[];
+  optVars.forEach(v=>{
+    const sp=optSpec(v.key,sc);
+    if(keep.length>=OPT_MAX_VARS||!sp||keep.some(k=>k.key===v.key))return;
+    if(sp.kind==='list'&&!Array.isArray(v.pick))v.pick=optValues(sp,v);
+    keep.push(v);
+  });
+  if(keep.length!==optVars.length){optVars=keep;optChanged();}
+}
+function optRowOf(btn){return btn.closest('.field-row, .slider-block');}
+function syncOptUi(){
+  pruneOptVars();
+  const sc=liveScenario(),on=optVars.length>0;
+  document.body.classList.toggle('is-optimise',on);
+  const lit=new Set();
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    const key=b.dataset.opt,sp=optSpec(key,sc);
+    const vr=optVars.find(v=>v.key===key);
+    b.hidden=!sp;
+    const full=!vr&&optVars.length>=OPT_MAX_VARS;
+    b.classList.toggle('on',!!vr);
+    b.classList.toggle('is-full',full);
+    const label=sp?sp.label:'';
+    b.title=vr&&sp?`Optimising ${label}: ${optRangeText(sp,optValues(sp,vr))}. Click to change.`
+      :full?`Up to ${OPT_MAX_VARS} settings at once. Remove one to pick this.`
+      :`Add ${label} to optimisation`;
+    b.setAttribute('aria-label',b.title);
+    const row=optRowOf(b);
+    if(row&&vr&&sp)lit.add(row);
+  });
+  document.querySelectorAll('.opt-on').forEach(r=>{if(!lit.has(r))r.classList.remove('opt-on');});
+  lit.forEach(r=>r.classList.add('opt-on'));
+  const bar=document.querySelector('.sc-bar');
+  if(bar){bar.classList.toggle('is-locked',on);if(on)bar.title='Optimise runs one loan offer. Cancel to switch, add or remove offers.';else bar.removeAttribute('title');}
+  ['addScenarioBtn','dupScenarioBtn','delScenarioBtn'].forEach(id=>{const e=$(id);if(e)e.disabled=on||(id!=='addScenarioBtn'&&editingIdx<0);});
+  const sb=$('simBtn');
+  if(sb){sb.classList.toggle('is-opt',on);if(sb.dataset.running!=='1')sb.textContent=simBtnLabel();}
+  const cb=$('optCancelBtn');if(cb)cb.style.display=on?'':'none';
+  renderStaleNote();
+  updateSimBtnState();
+}
+// After any change to what is swept: save, and send a sweep on the board (or
+// one still running) out of date. A comparison on the board still answers the
+// form, so it is left alone.
+function optChanged(){
+  if(optResult||runInFlight)markStale();
+  if(persist)persist.schedule();
+}
+
+/* ── The range editor ── */
+let optEditKey=null,optEditReturn=null;
+function optUnitAffix(spec){
+  const pre=spec.unit==='money'?moneySymbol():'';
+  const suf=spec.unit==='money'?'':spec.unit==='%/yr'?'%/yr':spec.unit||'';
+  return{pre,suf};
+}
+function optFieldText(spec,v){return SharedFmt.formatThousands(String(v),{maxDecimals:spec.int?0:(spec.dp==null?2:spec.dp),allowNegative:spec.min<0});}
+function optEditVar(){return optVars.find(v=>v.key===optEditKey)||null;}
+function openOptModal(key,from){
+  const sc=liveScenario(),spec=optSpec(key,sc);
+  if(!sc||!spec)return;
+  let vr=optVars.find(v=>v.key===key);
+  if(!vr){
+    if(optVars.length>=OPT_MAX_VARS)return;
+    vr=Object.assign({key},optDefaultRange(spec,optLiveBase(sc)));
+    optVars.push(vr);
+    syncOptUi();optChanged();
+  }
+  optEditKey=key;optEditReturn=from||null;
+  $('optModalTitle').textContent='Optimise '+spec.label;
+  const listy=spec.kind==='list';
+  $('optNumFields').hidden=listy;
+  $('optListFields').hidden=!listy;
+  if(listy){
+    if(!Array.isArray(vr.pick))vr.pick=optValues(spec,vr);
+    const on=new Set(vr.pick.map(String)),sel=$('optPickSel');
+    sel.innerHTML=spec.options.map((o,i)=>`<option value="${i}"${on.has(String(o.v))?' selected':''}>${escHtml(o.l)}</option>`).join('');
+    sel.size=Math.min(spec.options.length,7);
+  } else {
+    const u=optUnitAffix(spec);
+    [['optStart','optStartPre','optStartSuf',vr.start],['optEnd','optEndPre','optEndSuf',vr.end]].forEach(([id,pre,suf,val])=>{
+      const el=$(id);
+      el.setAttribute('data-min',String(spec.min));el.setAttribute('data-max',String(spec.max));
+      el.classList.toggle('has-suffix',!!u.suf);
+      $(pre).textContent=u.pre;$(pre).hidden=!u.pre;
+      $(suf).textContent=u.suf;$(suf).hidden=!u.suf;
+      el.value=optFieldText(spec,val);
+    });
+    $('optSteps').value=String(vr.steps);
+  }
+  renderOptModalNote();
+  $('optModal').hidden=false;
+  document.body.classList.add('opt-modal-open');
+  const first=listy?$('optPickSel'):$('optStart');
+  setTimeout(()=>{try{first.focus();if(first.select)first.select();}catch(_){}},0);
+}
+function closeOptModal(){
+  const ov=$('optModal');if(!ov||ov.hidden)return;
+  ov.hidden=true;document.body.classList.remove('opt-modal-open');
+  const back=optEditReturn;optEditKey=null;optEditReturn=null;
+  if(back&&document.contains(back))try{back.focus();}catch(_){}
+}
+// What the range comes to, under the fields: how many values run and which.
+function renderOptModalNote(){
+  const el=$('optPreview');if(!el||!optEditKey)return;
+  const sc=liveScenario(),spec=optSpec(optEditKey,sc),vr=optEditVar();
+  if(!spec||!vr){el.textContent='';return;}
+  $('optModalSub').innerHTML='<span data-no-abbr>'+escHtml(sc.name)+'</span>, now '+escHtml(spec.fmt(spec.get(optLiveBase(sc))))+'.'+
+    (spec.global?' The cash purchase is scored at each tested rate too.':'');
+  const vals=optValues(spec,vr);
+  let html;
+  if(vals.length<2)html='<span class="bad">'+(spec.kind==='list'?'Pick at least two values.':'Start and End give one value. Widen the range.')+'</span>';
+  else{
+    const shown=vals.length<=8?vals.map(v=>spec.fmt(v)).join(', '):vals.slice(0,3).map(v=>spec.fmt(v)).join(', ')+' … '+vals.slice(-2).map(v=>spec.fmt(v)).join(', ');
+    html=vals.length+' values: '+escHtml(shown)+'.';
+  }
+  const plan=optPlan(sc);
+  if(plan.runs>OPT_MAX_RUNS)html+=' <span class="bad">'+plan.runs+' runs in all, over the '+OPT_MAX_RUNS+' a run allows: lower the steps.</span>';
+  el.innerHTML=html;
+}
+function optModalEdited(){syncOptUi();optChanged();renderOptModalNote();}
+['optStart','optEnd'].forEach(id=>{
+  const el=$(id);
+  el.addEventListener('input',()=>{
+    const vr=optEditVar(),spec=vr&&optSpec(vr.key,liveScenario());if(!spec)return;
+    if(spec.unit==='money')SharedFmt.liveFormat(el,{maxDecimals:2});
+    const n=SharedFmt.parseFormatted(el.value);
+    if(!isFinite(n)||el.value.trim()==='')return;
+    vr[id==='optStart'?'start':'end']=optClamp(n,spec.min,spec.max);
+    optModalEdited();
+  });
+  el.addEventListener('blur',()=>{
+    const vr=optEditVar(),spec=vr&&optSpec(vr.key,liveScenario());if(!spec)return;
+    el.value=optFieldText(spec,vr[id==='optStart'?'start':'end']);
+  });
+});
+$('optSteps').addEventListener('input',e=>{
+  const vr=optEditVar();if(!vr)return;
+  const n=parseInt(e.target.value,10);if(!isFinite(n))return;
+  vr.steps=optClamp(n,2,OPT_MAX_STEPS);
+  optModalEdited();
+});
+$('optPickSel').addEventListener('change',e=>{
+  const vr=optEditVar(),spec=vr&&optSpec(vr.key,liveScenario());if(!spec||spec.kind!=='list')return;
+  vr.pick=[...e.target.selectedOptions].map(o=>spec.options[+o.value]).filter(Boolean).map(o=>o.v);
+  if(vr.pick.length){vr.start=vr.pick[0];vr.end=vr.pick[vr.pick.length-1];}
+  optModalEdited();
+});
+$('optRemoveBtn').addEventListener('click',()=>{
+  const key=optEditKey;
+  optVars=optVars.filter(v=>v.key!==key);
+  closeOptModal();
+  syncOptUi();optChanged();
+});
+$('optDoneBtn').addEventListener('click',closeOptModal);
+$('optCloseBtn').addEventListener('click',closeOptModal);
+$('optModal').addEventListener('mousedown',e=>{if(e.target===$('optModal'))closeOptModal();});
+document.addEventListener('keydown',e=>{
+  if($('optModal').hidden)return;
+  if(e.key==='Escape'){e.preventDefault();closeOptModal();}
+  else if(e.key==='Enter'&&e.target&&e.target.tagName==='INPUT'){e.preventDefault();e.target.blur();closeOptModal();}
+});
+// One listener for every gauge.
+document.addEventListener('click',e=>{
+  const b=e.target&&e.target.closest&&e.target.closest('.opt-btn');
+  if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  if(b.classList.contains('is-full')&&!optVars.some(v=>v.key===b.dataset.opt))return;
+  openOptModal(b.dataset.opt,b);
+},true);
+$('optCancelBtn').addEventListener('click',()=>{
+  if(runInFlight)optAbort=true;
+  optVars=[];
+  closeOptModal();
+  syncOptUi();optChanged();
+});
+document.querySelectorAll('.opt-btn').forEach(b=>{if(!b.querySelector('svg'))b.innerHTML=OPT_ICON;});
+
+/* ─── OPTIMISE MODE: THE RUN ───────────────────────────────────────────────────
+   The inputs are copied once at the start, so an edit made while the runs are
+   going cannot leak into the later ones, then every combination of the swept
+   values runs through the very engine Simulate uses. Only the figures of each
+   run are kept; the three the tiles and the table show (best, your setting,
+   worst) are run again in full when they are drawn. */
+async function runOptimisation(){
+  if(runInFlight){pendingRun=true;return;}
+  saveEditor();
+  if(optPlanReason())return;
+  const I=readInputs(),idx=editingIdx,sc0=I.scenarios[idx];
+  if(!sc0)return;
+  const vars=optVars.map(v=>Object.assign({},v));
+  const base={sc:sc0,I};
+  const specs=vars.map(v=>optSpec(v.key,sc0,I.offerPricing));
+  const values=vars.map((v,k)=>optValues(specs[k],v));
+  const n0=values[0].length,n1=values[1]?values[1].length:1,total=n0*n1;
+  const btn=$('simBtn');btn.dataset.running='1';btn.disabled=true;btn.classList.remove('is-disabled');btn.removeAttribute('data-tip');
+  btn.innerHTML='<span class="spinner"></span>Optimising…';
+  optAbort=false;editedInFlight=false;runInFlight=true;
+  try{
+    const baseM=withInputs(I,()=>scenarioMetrics(sc0,I,I.riskFreeRate));
+    const grid=new Array(total);
+    let done=0,lastPaint=performance.now();
+    for(let j=0;j<n1;j++)for(let i=0;i<n0;i++){
+      if(optAbort)return;
+      const vals=[values[0][i]].concat(values[1]?[values[1][j]]:[]);
+      const x=optVariant(base,specs,vals);
+      grid[i+j*n0]={m:withInputs(x.I,()=>scenarioMetrics(x.sc,x.I,x.I.riskFreeRate))};
+      done++;
+      if(performance.now()-lastPaint>45){
+        btn.innerHTML=`<span class="spinner"></span>Optimising ${done} of ${total}…`;
+        await new Promise(r=>setTimeout(r,0));
+        lastPaint=performance.now();
+      }
+    }
+    simInputs=I;
+    optResult={idx,name:sc0.name,color:scenarioColor(sc0,idx),sc0,I,vars,specs,values,grid,base:baseM,
+      baseVals:specs.map(sp=>sp.get(base))};
+    setBoardMode();
+    renderOptBoard();
+    markFresh();
+    if(editedInFlight)markStale();
+    if(persist)persist.schedule();
+  } finally {
+    runInFlight=false;
+    btn.disabled=false;btn.textContent=simBtnLabel();delete btn.dataset.running;updateSimBtnState();
+    if(pendingRun){pendingRun=false;setTimeout(runSimulation,0);}
+  }
+}
+
+/* ── Reading the sweep ── */
+const OPT_METRICS={
+  netBenefit:       {label:'Net Benefit vs Cash',      kind:'money',hi:true},
+  endWealth:        {label:'Ending Wealth',            kind:'money',hi:true},
+  totalInterest:    {label:'Total Interest Paid',      kind:'money',hi:false},
+  totalFinanceCost: {label:'Total Financing Cost',     kind:'money',hi:false},
+  effectiveRate:    {label:'Effective Rate (APR)',     kind:'pct',  hi:false},
+  inflAdjNetBenefit:{label:'Inflation-Adj Net Benefit',kind:'money',hi:true}
+};
+function optMetricKey(){
+  const s=$('optMetric');let k=s&&OPT_METRICS[s.value]?s.value:'netBenefit';
+  // Without inflation the real figure is not computed, so the plain one stands in.
+  if(k==='inflAdjNetBenefit'&&optResult&&!optResult.I.inflationEnabled)k='netBenefit';
+  return k;
+}
+function optMetricFmt(k,v){
+  if(v==null||!isFinite(v))return '—';
+  return OPT_METRICS[k].kind==='pct'?fmt.pct(v/100):fmt.currencyExact(snapNB(v));
+}
+function optAxisTitle(k){const m=OPT_METRICS[k];return m.kind==='money'?m.label+' ('+moneySymbol()+')':m.label+' (%)';}
+function optVal(R,idx,k){const g=R.grid[idx];const v=g&&g.m?g.m[k]:null;return v!=null&&isFinite(v)?v:null;}
+// Best and worst honour the metric's direction: more wealth is better, less
+// interest is better. A tie keeps the first tested.
+function optBetter(k,a,b){return OPT_METRICS[k].hi?a>b+1e-9:a<b-1e-9;}
+function optBestIdx(R,k){let b=-1;R.grid.forEach((g,i)=>{const v=optVal(R,i,k);if(v!=null&&(b<0||optBetter(k,v,optVal(R,b,k))))b=i;});return b;}
+function optWorstIdx(R,k){let b=-1;R.grid.forEach((g,i)=>{const v=optVal(R,i,k);if(v!=null&&(b<0||optBetter(k,optVal(R,b,k),v)))b=i;});return b;}
+function optValsAt(R,idx){const n0=R.values[0].length;return[R.values[0][idx%n0]].concat(R.values[1]?[R.values[1][Math.floor(idx/n0)]]:[]);}
+function optSettingText(R,vals){return R.specs.map((sp,k)=>sp.label+' '+sp.fmt(vals[k])).join(', ');}
+function optIsBase(R,vals){return R.specs.every((sp,k)=>String(vals[k])===String(R.baseVals[k]));}
+function optChartTitle(){
+  if(!optResult)return chartTitleText();
+  return 'Optimisation: '+OPT_METRICS[optMetricKey()].label+' by '+optResult.specs.map(sp=>sp.label).join(' and ');
+}
+
+/* The board shows the last thing that ran: a comparison of offers, or a sweep
+   of one. Each hides what belongs to the other: the sweep has no wealth over
+   time and no repayment schedule, the comparison no objective to rank by. */
+function setBoardMode(){
+  const on=!!optResult;
+  document.body.classList.toggle('board-opt',on);
+  $('simMetrics').hidden=on;$('optMetrics').hidden=!on;
+  $('chartSwitchRow').style.display=on?'none':'';
+  $('optMetricWrap').style.display=on?'':'none';
+  $('amortSection').hidden=on;
+  $('compNote').textContent=on?'(cash, the best tested, your current setting and the worst tested)':'';
+  const io=$('optMetric').querySelector('option[value="inflAdjNetBenefit"]');
+  if(io){const off=!(on&&optResult.I.inflationEnabled);io.hidden=off;io.disabled=off;}
+  if(!on){
+    $('chartCanvasWrap').style.display='';$('optSurface').style.display='none';purgeSurface();
+    if(chartInstance&&chartInstance._fvcOpt){chartInstance.destroy();chartInstance=null;}
+    $('hoverBox').textContent=HOVER_IDLE;
+  }
+}
+// A full run of one tested setting, for a tile and a column of the table.
+function optFullRun(R,vals,name,sub,color){
+  const x=vals?optVariant({sc:R.sc0,I:R.I},R.specs,vals):{sc:R.sc0,I:R.I};
+  const res=scoreScenario(x.sc,R.I,x.I.riskFreeRate);
+  if(res){res.name=name;res.sub=sub;res.color=color;res.idx=R.idx;}
+  return res;
+}
+function renderOptBoard(){
+  const R=optResult;if(!R)return;
+  withInputs(R.I,()=>{
+    const mk=optMetricKey(),meta=OPT_METRICS[mk];
+    const best=optBestIdx(R,mk),worst=optWorstIdx(R,mk);
+    const baseSub=R.specs.map((sp,k)=>sp.label+' '+sp.fmt(R.baseVals[k])).join(', ');
+    const cols=[];
+    if(best>=0)cols.push(optFullRun(R,optValsAt(R,best),'Best tested',optSettingText(R,optValsAt(R,best)),cssVar('--gold')));
+    const baseRes=optFullRun(R,null,'Your current setting',baseSub,R.color);
+    cols.push(baseRes);
+    if(worst>=0&&worst!==best)cols.push(optFullRun(R,optValsAt(R,worst),'Worst tested',optSettingText(R,optValsAt(R,worst)),cssVar('--muted')));
+    const I=R.I,valid=cols.filter(Boolean);
+    const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
+    const cashBase=computeCashBaseline(I.purchaseCost,I.availableCash,maxTerm,I.riskFreeRate,I.inflationRate,I.inflationEnabled);
+    const L={results:cols,cashBase,purchaseCost:I.purchaseCost,availableCash:I.availableCash,maxTerm,inflationEnabled:I.inflationEnabled,
+      inflationRate:I.inflationRate,riskFreeRate:I.riskFreeRate};
+
+    // The tiles: best, yours, worst on the objective, and the cash they face.
+    const tone=v=>(meta.kind==='money'&&(mk==='netBenefit'||mk==='inflAdjNetBenefit'))?(snapNB(v)>0?cssVar('--positive-em'):snapNB(v)<0?cssVar('--negative-em'):cssVar('--text')):cssVar('--text');
+    const tile=(id,lab,v,sub)=>{$(id+'Val').textContent=optMetricFmt(mk,v);$(id+'Val').style.color=v==null?cssVar('--text'):tone(v);$(id+'Sub').textContent=sub;if(lab)$(id+'Label').textContent=lab;};
+    tile('optBest','Best '+meta.label,best>=0?optVal(R,best,mk):null,best>=0?optSettingText(R,optValsAt(R,best)):'No tested setting could be modelled.');
+    tile('optBase',null,R.base?R.base[mk]:null,baseSub+(R.base?'':' (cannot be modelled)'));
+    tile('optWorst','Worst '+meta.label,worst>=0?optVal(R,worst,mk):null,worst>=0?optSettingText(R,optValsAt(R,worst)):'');
+    const baseTerm=baseRes?baseRes.termYears:termToYears(R.sc0.termPeriods,R.sc0.freq);
+    const cashAt=computeCashBaseline(I.purchaseCost,I.availableCash,baseTerm,I.riskFreeRate,I.inflationRate,I.inflationEnabled);
+    $('optCashVal').textContent=fmt.currency(cashAt.endWealth,true);$('optCashVal').style.color=cssVar('--text');
+    $('optCashSub').textContent=`After ${horizonTxt(baseTerm)} at ${fmt.pct(I.riskFreeRate/100)} risk-free`;
+
+    renderOptVerdict(best,worst,mk);
+    updateOptChart();
+    renderComparisonTable(cols,L);
+    renderAssumptions({results:[baseRes],scenarios:[R.sc0],cashBase,purchaseCost:I.purchaseCost,availableCash:I.availableCash,
+      maxTerm:baseTerm,inflationEnabled:I.inflationEnabled,inflationRate:I.inflationRate,riskFreeRate:I.riskFreeRate,optLines:optAssumptionLines()});
+    const carry=valid.some(r=>r.negCarry);
+    $('negCarryBanner').style.display=carry?'block':'none';
+    $('negCarryBanner').textContent=carry?'⚠ Negative carry: at some tested settings the effective cost of borrowing exceeds the risk-free rate.':'';
+    const skipped=R.grid.filter(g=>!g.m).length;
+    runWarnText=skipped?'⚠ '+skipped+' of the '+R.grid.length+' tested settings could not be modelled (the down payment and fee beyond the cash, or a repayment no rate can satisfy) and were skipped.':'';
+    renderWarn();
+  });
+}
+// The answer for a sweep, in the page's own terms.
+function renderOptVerdict(best,worst,mk){
+  const R=optResult,meta=OPT_METRICS[mk];
+  const num=t=>'<span class="v-num">'+escHtml(t)+'</span>';
+  const nm=t=>'<span data-no-abbr>'+escHtml(t)+'</span>';
+  const ran=R.grid.filter(g=>g.m).length;
+  const phrase=vals=>R.specs.map((sp,k)=>nm(sp.label)+' at '+num(sp.fmt(vals[k]))).join(' and ');
+  if(best<0){
+    SharedVerdict.set('verdict',{tone:'',title:'None of the tested settings could be modelled.',
+      body:'Each one left the down payment and fee beyond the cash, or a repayment no rate can satisfy. Widen or move the range.'});
+    return;
+  }
+  const bv=optVal(R,best,mk),wv=optVal(R,worst,mk),cur=R.base?R.base[mk]:null;
+  const tol=x=>Math.max(NB_EPS,1e-9*Math.abs(x));
+  const ties=R.grid.filter((g,i)=>{const v=optVal(R,i,mk);return v!=null&&Math.abs(v-bv)<=tol(bv);}).length;
+  const bestVals=optValsAt(R,best);
+  const what=R.specs.length===1?'value':'combination';
+  let title;
+  if(Math.abs(bv-wv)<=tol(bv))title=R.specs.map(sp=>nm(sp.label)).join(' and ')+' made no difference to '+meta.label+' here: every tested '+what+' gave '+num(optMetricFmt(mk,bv))+'.';
+  else if(ties>1)title=meta.label+' is best at '+num(optMetricFmt(mk,bv))+', reached by '+ties+' of the '+ran+' tested, the first with '+phrase(bestVals)+'.';
+  else if(optIsBase(R,bestVals))title='Your current setting is already the best '+meta.label+' of the '+ran+' tested: '+num(optMetricFmt(mk,bv))+'.';
+  else title=meta.label+' is best at '+num(optMetricFmt(mk,bv))+' with '+phrase(bestVals)+', against '+num(optMetricFmt(mk,cur))+' as you have it set.';
+  const body=[];
+  if(Math.abs(bv-wv)>tol(bv))body.push((OPT_METRICS[mk].hi?'The lowest, ':'The highest, ')+num(optMetricFmt(mk,wv))+', came with '+phrase(optValsAt(R,worst))+'.');
+  // Net benefit has a line that matters more than any peak: paying cash.
+  if(mk==='netBenefit'||mk==='inflAdjNetBenefit'){
+    if(snapNB(bv)<0)body.push('Even the best tested setting trails a Cash Purchase.');
+    else if(wv!=null&&snapNB(wv)<0&&snapNB(bv)>0)body.push('Some tested settings beat a Cash Purchase and some trail it; the chart marks break-even at zero.');
+  }
+  body.push('Tested '+ran+' '+(ran===1?what:what+'s')+' on '+nm(R.name)+'.');
+  SharedVerdict.set('verdict',{tone:'',title,body:body.join(' ')});
+}
+// The lines a sweep adds to What this assumes.
+function optAssumptionLines(){
+  const R=optResult;if(!R)return[];
+  const nm=t=>'<span data-no-abbr>'+escHtml(t)+'</span>';
+  const parts=R.specs.map((sp,k)=>{
+    let t=nm(sp.label)+' from '+escHtml(optRangeText(sp,R.values[k]));
+    if(sp.key==='term'&&usesIoPeriods(R.sc0.loanType))t+=', the '+(R.sc0.loanType==='deferred'?'payment holiday':'interest-only span')+' never outlasting it';
+    if(sp.key==='rateShift')t+=', every period of the rate schedule moving together';
+    if(sp.global)t+=', the cash purchase earning the same rate';
+    return t;
+  });
+  return['<strong>Only '+nm(R.name)+' runs, '+R.grid.length+' times,</strong> with '+parts.join(' and ')+'. Everything else stays as set.',
+    '<strong>The best setting is the best on these inputs,</strong> not a forecast: it moves when the cash, the rates or the price do.'];
+}
+
+/* ── The optimisation chart: a line for one swept setting, a surface for two ── */
+let surfaceDrawn=false;
+const OPT_CAMERA={eye:{x:1.65,y:-1.65,z:1.05}};
+function purgeSurface(){if(surfaceDrawn&&window.Plotly){try{Plotly.purge('optSurface');}catch(_){}}surfaceDrawn=false;}
+function surfaceOnBoard(){return!!(optResult&&optResult.specs.length===2&&surfaceDrawn);}
+function optUnitBracket(sp){
+  if(sp.unit==='money')return' ('+moneySymbol()+')';
+  return sp.unit?' ('+(sp.unit==='%/yr'?'%':sp.unit)+')':'';
+}
+function updateOptChart(){
+  const R=optResult;if(!R)return;
+  const mk=optMetricKey(),meta=OPT_METRICS[mk];
+  $('chartTitle').textContent='Optimisation: '+meta.label;
+  const tipEl=$('tipChartMetric');if(tipEl)tipEl.setAttribute('data-tip','<strong>'+meta.label+'</strong> at every tested setting of '+escHtml(R.name)+'. The ring marks the best, the square your current setting.');
+  const two=R.specs.length===2;
+  $('chartCanvasWrap').style.display=two?'none':'';
+  $('optSurface').style.display=two?'':'none';
+  if(two){if(chartInstance){chartInstance.destroy();chartInstance=null;}drawOptSurface();return;}
+  purgeSurface();
+  const sp=R.specs[0],vals=R.values[0],isNum=sp.kind==='num';
+  const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
+  const color=R.color,mark=cssVar('--muted')||'#94a3b8';
+  const yAt=i=>optVal(R,i,mk);
+  const best=optBestIdx(R,mk);
+  const baseIdx=vals.findIndex(v=>String(v)===String(R.baseVals[0]));
+  const pt=(i,y)=>isNum?{x:vals[i],y}:y;
+  const only=(i,y)=>isNum?(i<0?[]:[{x:vals[i],y}]):vals.map((_,k)=>k===i?y:null);
+  const datasets=[
+    {label:meta.label,data:vals.map((_,i)=>pt(i,yAt(i))),borderColor:color,backgroundColor:color+'22',borderWidth:2.4,
+      pointRadius:vals.length>30?0:2.5,pointHoverRadius:5,tension:0,spanGaps:false,fill:false},
+    {label:'Best',data:best>=0?only(best,yAt(best)):[],showLine:false,pointStyle:'circle',pointRadius:7,pointHoverRadius:7,
+      borderColor:tc,backgroundColor:'transparent',borderWidth:2,_opt:'best',legendSpec:{type:'point',color:tc,point:{shape:'ring',stroke:tc,radius:4.5,width:2}}},
+  ];
+  // Your setting sits on the line when it is one of the tested values, and
+  // beside it on a number axis when it is not.
+  const baseY=R.base?R.base[mk]:null;
+  if(baseY!=null&&isFinite(baseY)&&(isNum||baseIdx>=0))datasets.push({label:'Your current setting',data:isNum?[{x:Number(R.baseVals[0]),y:baseY}]:only(baseIdx,baseY),
+    showLine:false,pointStyle:'rect',pointRadius:5,pointHoverRadius:6,borderColor:mark,backgroundColor:mark,_opt:'base',
+    legendSpec:{type:'point',color:mark,point:{shape:'rect',fill:mark,radius:4}}});
+  const xs=isNum?vals.concat(baseY!=null?[Number(R.baseVals[0])]:[]).filter(isFinite):null;
+  const xmin=isNum?Math.min.apply(null,xs):0,xmax=isNum?Math.max.apply(null,xs):vals.length-1;
+  // Net benefit is read against paying cash, so break-even is drawn.
+  if(mk==='netBenefit'||mk==='inflAdjNetBenefit')datasets.push({label:'Break-even (zero)',data:isNum?[{x:xmin,y:0},{x:xmax,y:0}]:vals.map(()=>0),
+    borderColor:mark,borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:0,fill:false,_opt:'zero'});
+  const le=$('chartLegend');le.innerHTML='';
+  datasets.forEach((ds,idx)=>{
+    const item=document.createElement('div');item.className='legend-item';
+    SharedLegend.attach(item,ds.legendSpec||SharedLegend.specOf(ds),ds.label);
+    item.addEventListener('click',()=>{if(!chartInstance)return;const vis=!chartInstance.isDatasetVisible(idx);chartInstance.setDatasetVisibility(idx,vis);item.classList.toggle('hidden',!vis);chartInstance.update();});
+    le.appendChild(item);
+  });
+  const yTick=v=>meta.kind==='pct'?(+v.toFixed(2))+'%':fmt.currency(v,true);
+  const xLabel=ctx=>isNum?sp.fmt(ctx.parsed.x):sp.fmt(vals[ctx.dataIndex]);
+  const yText=ctx=>{const raw=ctx.parsed.y;return raw==null||!isFinite(raw)?'cannot be modelled':optMetricFmt(mk,raw);};
+  const tipLight=document.body.classList.contains('light');
+  const opts={
+    responsive:true,maintainAspectRatio:false,animation:{duration:300},
+    interaction:{mode:'nearest',axis:'x',intersect:false},
+    plugins:{legend:{display:false},tooltip:SharedChartTip.options({
+      filter:item=>item.dataset._opt!=='best'&&item.dataset._opt!=='zero',
+      callbacks:{title:ctx=>ctx[0]?sp.label+': '+xLabel(ctx[0]):'',label:ctx=>`  ${ctx.dataset.label}: ${yText(ctx)}`,
+        afterBody(items){if(items.length)$('hoverBox').textContent=`${sp.label} ${xLabel(items[0])}  ·  `+items.map(i=>`${i.dataset.label}: ${yText(i)}`).join('  |  ');}},
+      backgroundColor:tipLight?'#FFFFFF':'#1e1e2e',titleColor:tipLight?'#2D3436':'#EAF1FF',bodyColor:tipLight?'#4A5A6A':'#A8B6CF',borderColor:tipLight?'#D4DEEF':gc,borderWidth:1,padding:10}),
+      zoom:SharedZoom.options({min:xmin,max:xmax,points:vals.length}),
+      sharedYFit:{auto:{axes:['y']}}},
+    scales:{
+      x:isNum
+        ?{type:'linear',title:{display:true,text:sp.label+optUnitBracket(sp),color:mc,font:{size:12}},ticks:{color:mc,maxTicksLimit:12,font:{size:11},callback:v=>sp.fmt(v)},grid:{color:gc}}
+        :{type:'category',title:{display:true,text:sp.label,color:mc,font:{size:12}},ticks:{color:mc,font:{size:11}},grid:{color:gc}},
+      y:{title:{display:true,text:optAxisTitle(mk),color:mc,font:{size:12}},ticks:{color:mc,font:{size:11},callback:yTick},grid:{color:gc}}}
+  };
+  if(chartInstance)chartInstance.destroy();
+  chartInstance=new Chart($('chartCanvas'),{type:'line',data:isNum?{datasets}:{labels:vals.map(v=>sp.fmt(v)),datasets},options:opts,plugins:[SharedZoom.plugin]});
+  chartInstance._fvcOpt=true;
+  $('hoverBox').textContent='Hover to read each tested value.';
+}
+function drawOptSurface(){
+  const R=optResult;if(!R)return Promise.resolve();
+  const mk=optMetricKey(),meta=OPT_METRICS[mk];
+  const [s0,s1]=R.specs,[v0,v1]=R.values,n0=v0.length;
+  const axisVals=(sp,vals)=>sp.kind==='num'?vals.slice():vals.map((_,i)=>i);
+  const xs=axisVals(s0,v0),ys=axisVals(s1,v1);
+  const z=[],txt=[];
+  for(let j=0;j<v1.length;j++){
+    const row=[],trow=[];
+    for(let i=0;i<n0;i++){
+      const raw=optVal(R,i+j*n0,mk);
+      row.push(raw);
+      trow.push(escHtml(s0.label)+': '+escHtml(s0.fmt(v0[i]))+'<br>'+escHtml(s1.label)+': '+escHtml(s1.fmt(v1[j]))+'<br>'+
+        escHtml(meta.label)+': '+(raw==null?'cannot be modelled':escHtml(optMetricFmt(mk,raw))));
+    }
+    z.push(row);txt.push(trow);
+  }
+  const text=cssVar('--text'),muted=cssVar('--chart-text'),grid=cssVar('--chart-grid'),mark=cssVar('--muted');
+  const best=optBestIdx(R,mk);
+  const at=(sp,vals,v)=>sp.kind==='num'?Number(v):vals.findIndex(x=>String(x)===String(v));
+  // Blue is always the better end: a cost that is low reads blue, as a
+  // net benefit that is high does.
+  const data=[{type:'surface',x:xs,y:ys,z,text:txt,hovertemplate:'%{text}<extra></extra>',
+    colorscale:[[0,cssVar('--gold')],[0.5,cssVar('--line-c')],[1,cssVar('--line-a')]],reversescale:!meta.hi,
+    colorbar:{title:{text:optAxisTitle(mk),side:'right',font:{color:muted,size:11}},tickfont:{color:muted,size:10},thickness:12,len:0.75},
+    contours:{z:{show:true,usecolormap:true,project:{z:false}}}}];
+  if(best>=0){
+    const bv=optValsAt(R,best);
+    data.push({type:'scatter3d',mode:'markers',name:'Best',x:[at(s0,v0,bv[0])],y:[at(s1,v1,bv[1])],z:[optVal(R,best,mk)],
+      marker:{symbol:'circle-open',size:9,color:text,line:{width:3,color:text}},hovertemplate:'Best<extra></extra>'});
+  }
+  const bx=at(s0,v0,R.baseVals[0]),by=at(s1,v1,R.baseVals[1]);
+  const hasBase=R.base&&R.base[mk]!=null&&bx>=0&&by>=0&&isFinite(bx)&&isFinite(by);
+  if(hasBase)data.push({type:'scatter3d',mode:'markers',name:'Your current setting',x:[bx],y:[by],z:[R.base[mk]],
+    marker:{symbol:'square',size:5,color:mark},hovertemplate:'Your current setting<extra></extra>'});
+  const ax=(sp,vals)=>Object.assign({title:{text:sp.label+(sp.kind==='num'?optUnitBracket(sp):'')},color:muted,gridcolor:grid,zerolinecolor:grid,showbackground:false},
+    sp.kind==='list'?{tickvals:vals.map((_,i)=>i),ticktext:vals.map(v=>sp.fmt(v))}:{});
+  const zt=meta.kind==='pct'?{ticksuffix:'%'}:{tickprefix:moneySymbol(),tickformat:',.0f'};
+  const layout={autosize:true,margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',showlegend:false,
+    font:{family:'DM Sans, sans-serif',color:text},
+    scene:{xaxis:ax(s0,v0),yaxis:ax(s1,v1),zaxis:Object.assign({title:{text:optAxisTitle(mk)},color:muted,gridcolor:grid,zerolinecolor:grid,showbackground:false},zt),
+      camera:OPT_CAMERA},
+    uirevision:'opt'};
+  const le=$('chartLegend');le.innerHTML='';
+  const items=[[{type:'area',fill:cssVar('--line-a'),fill2:cssVar('--gold')},meta.label+', blue better, gold worse']];
+  if(best>=0)items.push([{type:'point',color:text,point:{shape:'ring',stroke:text,radius:4.5,width:2}},'Best']);
+  if(hasBase)items.push([{type:'point',color:mark,point:{shape:'rect',fill:mark,radius:4}},'Your current setting']);
+  items.forEach(([spec,label])=>{const it=document.createElement('div');it.className='legend-item';it.style.cursor='default';SharedLegend.attach(it,spec,label);le.appendChild(it);});
+  $('hoverBox').textContent='Drag to turn the surface, scroll to zoom, hover to read a run.';
+  return ensurePlotly()
+    .then(()=>Plotly.react('optSurface',data,layout,{responsive:true,displayModeBar:false,displaylogo:false}))
+    .then(()=>{surfaceDrawn=true;})
+    .catch(()=>{$('optSurface').innerHTML='<p class="muted" style="padding:20px;text-align:center;">Could not load the 3D plotting library (Plotly). Check your connection and try again.</p>';});
+}
+$('optMetric').addEventListener('change',()=>{if(optResult)renderOptBoard();});
+
+// The swept settings a file, a link or the cache carries. Anything unreadable
+// is dropped rather than guessed at; a setting the offer no longer offers is
+// dropped later by pruneOptVars, once the offer is loaded.
+function readOptVars(o){
+  if(!o||!Array.isArray(o.vars))return[];
+  const seen=new Set(),out=[];
+  o.vars.forEach(v=>{
+    if(!v||typeof v.key!=='string'||seen.has(v.key)||out.length>=OPT_MAX_VARS)return;
+    seen.add(v.key);
+    const r={key:v.key,start:Number(v.start),end:Number(v.end),steps:optClamp(parseInt(v.steps,10)||11,2,OPT_MAX_STEPS)};
+    if(Array.isArray(v.pick))r.pick=v.pick.filter(x=>typeof x==='string'||typeof x==='number').slice(0,OPT_MAX_STEPS);
+    out.push(r);
+  });
+  return out;
+}
 
 /* ─── Init ─── */
 // The chart's own choice sits on the chart (M6). The <select> stays as the
@@ -2743,7 +3409,7 @@ SharedSeg.fromSelect($('chartMetric'),{className:'chart-switch',ariaLabel:'Chart
 SharedFold.attach($('amortSection'),{key:'financingvscash',bodies:['#amortUnitNote','#amortTabs','#amortTableWrap']});
 scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
 scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
-setupFmtInputs();renderScenarioList();rerender();
+setupFmtInputs();selectScenario(0);syncForm();runSimulation();
 
 /* Each control that carries a dynamic tip keeps that tip current itself, so no
    other handler has to remember to. */
@@ -2756,19 +3422,34 @@ syncDynamicTips();
 /* ─── Mini cache ───────────────────────────────────────────────────────────
    Persist the base inputs (form controls) plus the scenarios (JS array) so a
    returning user keeps their previous comparison. The scenario editor and the
-   sensitivity panel are marked data-no-persist — they are transient. */
+   range editor are marked data-no-persist: they show state kept elsewhere.
+   The offer on screen and, while it is on, what Optimise sweeps ride along in
+   the extra; state saved before either existed opens on the first offer,
+   comparing, as it always did. Restoring runs the plan, so a file, a link and
+   the cache all open on an answer. */
+let restoredActive=0;
 persist = Persist.init('financingvscash', {
   onRestore: function(){
     $('baseRfVal').textContent = fmt.pct(parseFloat($('baseRf').value)/100)+'/yr';
-    renderScenarioList();
-    updateSensScenarioDropdown();
-    rerender();
+    selectScenario(restoredActive);
+    syncForm();syncOptUi();
+    optResult=null;markFresh();
+    runSimulation();
   },
   extra: {
-    save: function(){ return { scenarios: scenarios }; },
+    save: function(){
+      const o={ scenarios: scenarios, active: editingIdx };
+      if(optVars.length)o.optimise={ vars: optVars.map(v=>Object.assign({},v)) };
+      return o;
+    },
     // An empty list is a real state (the user deleted every scenario), so it
     // must survive a reload instead of falling back to the defaults.
-    restore: function(e){ if(e && Array.isArray(e.scenarios)) scenarios = e.scenarios.map(normaliseScenario).filter(Boolean); }
+    restore: function(e){
+      if(!e)return;
+      if(Array.isArray(e.scenarios)) scenarios = e.scenarios.map(normaliseScenario).filter(Boolean);
+      restoredActive = Number.isInteger(e.active) && e.active>=0 ? e.active : 0;
+      optAbort=true; optVars = readOptVars(e.optimise); closeOptModal();
+    }
   }
 });
 SharedScenario.mount('.quick-start-row', { tool: 'financingvscash', persist: persist });

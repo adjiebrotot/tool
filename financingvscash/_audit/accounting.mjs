@@ -537,25 +537,32 @@ console.log('\n════ E — cross-path consistency: the same number comput
     inflAdjNetBenefit:money(t['Inflation-Adj Net Benefit'][colOf(t,'x')])
   };
   const bad=[];
+  // Sweep the finance rate 1 → 13 in 25 values (steps of 0.5, so 7.00 is a
+  // tested value) through the gauge and ▶ Optimise, the way a reader would.
+  await page.evaluate(()=>document.querySelectorAll('[class*="tour-"]').forEach(n=>n.remove()));
+  await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.opt-btn[data-opt="financeRate"]').click();});
+  await page.waitForTimeout(150);
+  await page.evaluate(()=>{
+    const set=(id,v)=>{const el=document.getElementById(id);el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));};
+    set('optStart','1'); set('optEnd','13'); set('optSteps','25');
+    document.getElementById('optDoneBtn').click();
+    document.getElementById('simBtn').click();
+  });
+  await page.waitForTimeout(600);
   for(const obj of Object.keys(live)){
-    // 1 → 13 in 25 points steps by 0.5, so 7.00 is a grid point.
     const got=await page.evaluate(async (obj)=>{
-      const set=(id,v)=>{const el=document.getElementById(id);el.value=v;
-        ['input','change'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true})));};
-      set('sensObjective',obj); set('sensVarX','financeRate');
-      set('sensXStart','1'); set('sensXEnd','13'); set('sensSteps','25');
-      await new Promise(r=>setTimeout(r,600));
-      const ch=window.__charts.filter(c=>c.canvasId==='sensCanvas').pop();
+      const el=document.getElementById('optMetric');el.value=obj;el.dispatchEvent(new Event('change',{bubbles:true}));
+      await new Promise(r=>setTimeout(r,100));
+      const ch=window.__charts.filter(c=>c.canvasId==='chartCanvas').pop();
       if(!ch) return null;
-      // The sweep plots a plain series against category labels, so the grid
-      // point is found by its label rather than by an x co-ordinate.
-      const i=ch.data.labels.indexOf('7.00');
-      return i<0?null:ch.data.datasets[0].data[i];
+      const p=ch.data.datasets[0].data.find(d=>d&&Math.abs(d.x-7)<1e-9);
+      return p?p.y:null;
     }, obj);
     if(got===null || !near(got, live[obj], Math.max(0.05, Math.abs(live[obj])*1e-6)))
       bad.push(`${obj}: sweep ${got===null?'no grid point':got.toFixed(2)} vs panel ${live[obj].toFixed(2)}`);
   }
-  check('E1 the 2D sweep passes through the live answer on all five objectives',
+  await page.evaluate(()=>document.getElementById('optCancelBtn').click());
+  check('E1 the optimisation sweep passes through the live answer on all five objectives',
     !bad.length, bad.join(' | ') || Object.entries(live).map(([k,v])=>k+'='+v.toFixed(2)).join(', '));
 }
 
@@ -832,7 +839,7 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
     t=await compTable();
     const dn='36 payments, 10% off';
     const withOff=money(t['Net Benefit vs Cash'][colOf(t,dn)]), price=money(t['Purchase Price'][colOf(t,dn)]);
-    await page.evaluate(()=>{const el=document.getElementById('offerPricing');el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}));});
+    await page.evaluate(()=>{const el=document.getElementById('offerPricing');el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}));document.getElementById('simBtn').click();});
     await page.waitForTimeout(300);
     t=await compTable();
     const full=money(t['Net Benefit vs Cash'][colOf(t,dn)]);
@@ -911,7 +918,7 @@ console.log('\n════ P — a price per loan offer: the cash side keeps it
 
 /* Everything the page says about a plan, as text, with the switch's own row
    taken out: the comparison table, the KPIs, the verdict, What this assumes,
-   every amortisation tab, all four chart metrics and the 2D sweep. */
+   every amortisation tab and all four chart metrics. */
 async function snapshot(){
   return await page.evaluate(async ()=>{
     const out={};
@@ -938,11 +945,8 @@ async function snapshot(){
       out.charts[m]=ch?JSON.stringify(ch.data.datasets.map(d=>[d.label,d.data.map(p=>p.y)])):'none';
     }
     el.value=was; el.dispatchEvent(new Event('change',{bubbles:true}));
-    const set=(id,v)=>{const e=document.getElementById(id);e.value=v;['input','change'].forEach(t=>e.dispatchEvent(new Event(t,{bubbles:true})));};
-    set('sensObjective','netBenefit'); set('sensVarX','financeRate'); set('sensXStart','1'); set('sensXEnd','13'); set('sensSteps','25');
-    await new Promise(r=>setTimeout(r,500));
-    const sc=window.__charts.filter(c=>c.canvasId==='sensCanvas').pop();
-    out.sweep=sc?JSON.stringify(sc.data.datasets[0].data):'none';
+    // The sweep is held to the panel by E1; Optimise is a mode of its own.
+    out.sweep='';
     return out;
   });
 }
@@ -998,14 +1002,14 @@ function diffSnap(a,b){
     await load({});
     await page.evaluate(k=>document.querySelector(`.quick-start-btn[data-preset="${k}"]`).click(), key);
     await page.waitForTimeout(400);
-    const flip=async on=>{ await page.evaluate(on=>{const el=document.getElementById('offerPricing');el.checked=on;el.dispatchEvent(new Event('change',{bubbles:true}));},on); await page.waitForTimeout(250); };
+    const flip=async on=>{ await page.evaluate(on=>{const el=document.getElementById('offerPricing');el.checked=on;el.dispatchEvent(new Event('change',{bubbles:true}));document.getElementById('simBtn').click();},on); await page.waitForTimeout(250); };
     let a,b;
     if(key==='deferred'){
       // Take the discount back to 0% off through the page's own editor.
       await page.evaluate(()=>document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()));
-      await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-btn[data-action="edit"][data-idx="1"]').click();});
+      await page.evaluate(()=>{const r=document.querySelector('.controls.ctrl-folded .ctrl-fold-rail');if(r)r.click();document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-tab[data-idx="1"]').click();});
       await page.fill('#scPriceVal','0'); await page.press('#scPriceVal','Tab');
-      await page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+      await page.evaluate(()=>document.getElementById('simBtn').click());
       await page.waitForTimeout(300);
       a=await snapshot(); await flip(false); b=await snapshot();
     } else { a=await snapshot(); await flip(true); b=await snapshot(); }
@@ -1101,7 +1105,7 @@ function diffSnap(a,b){
     scenarios:[sc({name:'x', loanType:'annuity', financeRate:19.9, termPeriods:36, priceType:'amount', priceValue:5400})]});
   await page.evaluate(()=>document.querySelectorAll('[class*="tour-backdrop"],[class*="tour-pop"],[class*="tour-offer"]').forEach(n=>n.remove()));
   const before=(await snapshot()).table;
-  await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-btn[data-action="edit"][data-idx="0"]').click();});
+  await page.evaluate(()=>{const r=document.querySelector('.controls.ctrl-folded .ctrl-fold-rail');if(r)r.click();document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-tab[data-idx="0"]').click();});
   await page.waitForTimeout(150);
   const seq=[];
   for(const to of ['pct','discount','amount']){
@@ -1112,7 +1116,7 @@ function diffSnap(a,b){
   }
   check('P6 switching $ → % of cash → % off → $ restates one price and leaves the answer where it was',
     seq.join(' ')==='pct=90 discount=10 amount=5,400', seq.join(' '));
-  await page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+  await page.evaluate(()=>document.getElementById('simBtn').click());
 }
 
 /* P6b. A markup has no "% off" that says it. The switch is refused and the
@@ -1123,14 +1127,14 @@ function diffSnap(a,b){
     scenarios:[sc({name:'x', loanType:'annuity', financeRate:19.9, termPeriods:36, priceType:'pct', priceValue:110})]});
   await page.evaluate(()=>document.querySelectorAll('[class*="tour-"]').forEach(n=>n.remove()));
   const before=(await snapshot()).table;
-  await page.evaluate(()=>{document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-btn[data-action="edit"][data-idx="0"]').click();});
+  await page.evaluate(()=>{const r=document.querySelector('.controls.ctrl-folded .ctrl-fold-rail');if(r)r.click();document.querySelector('.ctrl-tab[data-tab="scenarios"]').click();document.querySelector('.sc-tab[data-idx="0"]').click();});
   await page.waitForTimeout(150);
   await page.selectOption('#scPriceType','discount'); await page.waitForTimeout(350);
   const got={type:await page.inputValue('#scPriceType'), v:await page.inputValue('#scPriceVal'), sub:await page.textContent('#scPriceSub')};
   const after=(await snapshot()).table;
   check('P6b a markup cannot be switched to % off: the basis and the price stay',
     got.type==='pct' && got.v==='110' && after===before && /cannot be a % off/.test(got.sub), JSON.stringify(got));
-  await page.evaluate(()=>document.getElementById('saveScenarioBtn').click());
+  await page.evaluate(()=>document.getElementById('simBtn').click());
 }
 
 /* P7. A % basis follows the cash price; an amount stays where it was typed. */
@@ -1139,7 +1143,7 @@ function diffSnap(a,b){
     scenarios:[sc({name:'amt', termPeriods:36, priceType:'amount', priceValue:5400}),
                sc({name:'off', termPeriods:36, priceType:'discount', priceValue:10}),
                sc({name:'pct', termPeriods:36, priceType:'pct', priceValue:110})]});
-  await page.evaluate(()=>{const el=document.getElementById('purchaseCost');el.value='8,000';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.dispatchEvent(new Event('blur'));});
+  await page.evaluate(()=>{const el=document.getElementById('purchaseCost');el.value='8,000';el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));el.dispatchEvent(new Event('blur'));document.getElementById('simBtn').click();});
   await page.waitForTimeout(400);
   const t=await compTable();
   const p=n=>money(t['Purchase Price'][colOf(t,n)]);

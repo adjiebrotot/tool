@@ -54,8 +54,8 @@ const setBase = (o)=>page.evaluate(o=>{
 const setScenarios = (list)=>page.evaluate(list=>{
   const fire=(el,evts)=>evts.forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true})));
   let guard=0;
-  while(document.querySelectorAll('.scenario-card').length && guard++<50){
-    document.querySelectorAll('.scenario-card .sc-btn[data-action="del"]')[0].click();
+  while(document.querySelectorAll('.sc-tab').length && guard++<50){
+    document.querySelectorAll('.sc-tab')[0].click();document.getElementById('delScenarioBtn').click();
   }
   list.forEach(s=>{
     document.getElementById('addScenarioBtn').click();
@@ -65,7 +65,7 @@ const setScenarios = (list)=>page.evaluate(list=>{
     if(s.freq) set('scFreq', s.freq, ['change']);   // freq first: it rewrites the term field
     set('scTerm', s.term);
     set('scFeeType','fixed',['change']); set('scFeeAmt',0); set('scAdminFee',0);
-    document.getElementById('saveScenarioBtn').click();
+    document.getElementById('simBtn').click();
   });
 }, list);
 

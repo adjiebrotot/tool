@@ -72,7 +72,7 @@ arrives by — rather than by reaching inside the module.
 | **B** the wash | The sharpest test here needs no replay at all, because it fixes the answer to a constant: borrow at exactly the rate your spare cash earns, charge no fee, and Net Benefit must be **zero** — swept over 5 loan types × 4 frequencies × 3 down payments, and again at a one-period term and a 30-year one. Three deliberate exceptions prove it is measuring something: Nominal must break the wash by exactly the convention gap (the tooltip says the convention touches the loan and never the risk-free rate), a flat rate must break it and lose, and a 100% down payment must land exactly on the cash line. |
 | **C** marginal identities | Each input has to move the books by its own amount and no more: an upfront fee costs `F(1+rf)^T`, an admin fee costs `A·Σ(1+rf_p)^(n−k)`, neither adds a cent of interest; a capitalised fee is borrowed once; a discounted note grosses up so the net advance still meets the price; surplus cash cancels out of Net Benefit exactly (C5); the currency symbol moves nothing; inflation is a deflator, not a second model. |
 | **D** horizons | Each row is scored against its own end of term, the two baselines in a mixed-horizon comparison really do differ, and the headline tile is the winning row rather than the long-horizon tile minus it. |
-| **E** cross-paths | The sensitivity sweep passes through the live answer on all five objectives; every chart metric ends on the figure its own table prints; the CSV is the table, with the Unicode minus translated rather than deleted. |
+| **E** cross-paths | The optimisation sweep passes through the live answer on all five objectives; every chart metric ends on the figure its own table prints; the CSV is the table, with the Unicode minus translated rather than deleted. |
 | **F** structural signs | Net Benefit falls with the finance rate, rises with the risk-free rate, is monotone in the down payment — and the sign of a longer term **flips exactly at the wash**, which pins timing, compounding and the direction of the spread in one test. |
 | **G** degenerate input | Cash below the price is explained rather than modelled; a fixed-then-floating loan brackets its own midpoint only after the revert; interest-only for the whole term, a 99% residual and a one-period loan all still close. |
 | **H** Quick Start | All sixteen preset columns close their books and are scored at their own horizons — including the house preset's 15-year row, which ends before the 30-year rows beside it and so carries a cash baseline of its own. Every preset tip is checked against the numbers behind its button, and where a tip claims an *ordering* (the phone's and the car's smallest instalment finishing last, the card's six-month plan finishing behind its twelve-month one) the ranking is what gets asserted, not three loose numbers. `_ref/quickstart-check.mjs` separately proves each preset is a clean reset, which is what lets this tool ship no Reset button. |
@@ -86,14 +86,14 @@ alternatives are worse; the harness pins the consistency instead.
 
 ## `colour.mjs` — do the two colour controls agree?
 
-A scenario's colour is user-settable from two places — the dot on its card and
+A scenario's colour is user-settable from two places — the dot on its tab and
 the boxed swatch in the editor's Scenario Name row — and it is read by the
-chart line, the variable-rate band, the sensitivity curve and the Best tile.
+chart line, the variable-rate band, the optimisation curve and the Best tile.
 This holds all of that to one answer (`colour.mjs`):
 
 - C1  the dot is a real colour input, seeded with the series colour
 - C2  a colour picked on the dot repaints that series and no other
-- C3  using the dot does not open the editor behind it
+- C3  using the dot on another offer's tab does not switch the editor to it
 - C4  the editor swatch opens showing what the dot holds
 - C5  a colour picked in the editor mirrors back onto the dot and the chart
 - C6  Reset returns the series to its theme-aware palette slot
