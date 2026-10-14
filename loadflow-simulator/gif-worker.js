@@ -1,6 +1,6 @@
 /* Load Flow Simulator: encodes the animated diagram as a GIF, off the main
    thread. One palette for the whole loop (taken from the first frame, whose
-   dashes already show every colour), and every later frame keeps only the
+   arrows already show every colour), and every later frame keeps only the
    pixels that changed: the rest is transparent over the frame before it. */
 import { GIFEncoder, quantize, applyPalette } from './vendor/gifenc.js';
 

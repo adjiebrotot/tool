@@ -51,7 +51,6 @@ body.is-stale .stale-note{display:block;}
 .lf-result{transition:opacity var(--transition-fast);}
 body.is-stale .lf-result{opacity:.45;}
 body.is-stale #sldSvg .lyr-res{opacity:.3;}
-body.is-stale #sldSvg .fl{animation-play-state:paused;}
 
 /* ── Inspector ── */
 .insp-head{display:flex;align-items:center;gap:8px;margin:0 0 4px;}
@@ -92,21 +91,18 @@ body.is-stale #sldSvg .fl{animation-play-state:paused;}
 .sld-viewbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:12px 0 10px;font-size:.84rem;}
 .flow-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;color:var(--text);user-select:none;}
 .flow-toggle input{accent-color:var(--accent);margin:0;width:15px;height:15px;}
-/* The key is the flow drawn as an arrow: active power a dashed shaft and a solid
-   head, reactive power a dotted shaft and an open head. Its shaft moves while
-   that flow's animation is on. */
-.flow-key{display:inline-block;width:32px;height:10px;flex-shrink:0;overflow:visible;fill:none;stroke-linecap:round;stroke-linejoin:round;}
-.flow-key-p{stroke:var(--line-a);}
-.flow-key-p .fk-shaft{stroke-width:2.6;stroke-dasharray:4 3;}
-.flow-key-p .fk-head{fill:var(--line-a);stroke-width:1;}
-.flow-key-q{stroke:var(--gold);}
-.flow-key-q .fk-shaft{stroke-width:3;stroke-dasharray:0.01 7;}
-.flow-key-q .fk-head{stroke-width:2;}
-.flow-key .fk-shaft{animation:lfKey .9s linear infinite;}
+/* The key is a short run of the diagram's own arrows (script.js draws them from
+   LF.GLYPH): solid arrows for active power, open chevrons for reactive. They
+   run while that flow is on and stand still, faded, while it is off. */
+.flow-key{display:inline-block;width:32px;height:10px;flex-shrink:0;overflow:hidden;stroke-linecap:round;stroke-linejoin:round;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);mask-image:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);}
+.flow-key-p{fill:var(--line-a);stroke:var(--line-a);stroke-width:.6;}
+.flow-key-q{fill:none;stroke:var(--gold);stroke-width:1.8;}
+.flow-key .fk-run{animation:lfKey .8s linear infinite;}
 .flow-toggle input:not(:checked)+.flow-key{opacity:.45;}
-.flow-toggle input:not(:checked)+.flow-key .fk-shaft{animation:none;}
-@keyframes lfKey{from{stroke-dashoffset:0;}to{stroke-dashoffset:-7;}}
-@media(prefers-reduced-motion:reduce){.flow-key .fk-shaft{animation:none;}}
+.flow-toggle input:not(:checked)+.flow-key .fk-run{animation:none;}
+@keyframes lfKey{from{transform:translateX(0);}to{transform:translateX(12px);}}
+@media(prefers-reduced-motion:reduce){.flow-key .fk-run{animation:none;}}
 .viewbar-field{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--muted);}
 .viewbar-field .sel-input{width:auto;padding-top:5px;padding-bottom:5px;font-size:.82rem;}
 .sld-body{display:flex;gap:10px;align-items:stretch;}
@@ -169,10 +165,7 @@ html.sld-full-open{overflow:hidden;scrollbar-gutter:auto;}
 /* On a phone the panel stays the sheet from below, lifted over the diagram. */
 @media(max-width:700px){ html.sld-full-open body.lf-sheet .controls{z-index:1001;} }
 
-/* Flow lanes: dashes that move one period (12 px) per T/n seconds. */
-#sldSvg .fl{animation:lfFlow calc(1.6s / var(--n, 1)) linear infinite;}
-#sldSvg .fl.rev{animation-direction:reverse;}
-@keyframes lfFlow{from{stroke-dashoffset:0;}to{stroke-dashoffset:-12;}}
+/* Flow lanes: arrows that move with SMIL (lf-draw.js), paused while the result is stale. */
 #sldSvg.no-p .fl-p,#sldSvg.no-q .fl-q{display:none;}
 
 /* ── Results ── */
