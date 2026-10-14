@@ -4641,8 +4641,8 @@
      A tool's .controls card opens folded, so the first thing a reader sees
      is the answer, not forty fields. Beside the results it folds to a slim
      "Inputs" rail; stacked above them (a phone) it folds to one "Inputs" bar.
-     Either way its open button pulses on arrival. Open, a small Hide button
-     sits at the end of the Quick Start row. The reader's choice is kept per
+     Either way its open icon pulses on arrival. Open, the same icon turned
+     round (Hide) sits at the end of the Quick Start row. The reader's choice is kept per
      page on this device.
 
      Something that needs the card on screen holds it open for as long as it
@@ -4654,12 +4654,13 @@
      mini cache, a scenario file and a Share link never see the fold. */
   function makeCtrl(){
     var TEXT = {
-      en: { name: 'Inputs', show: 'Show', open: 'Show the inputs', close: 'Hide the inputs' },
-      id: { name: 'Input', show: 'Buka', open: 'Tampilkan input', close: 'Sembunyikan input' }
+      en: { name: 'Inputs', open: 'Show the inputs', close: 'Hide the inputs' },
+      id: { name: 'Input', open: 'Tampilkan input', close: 'Sembunyikan input' }
     };
     var GLYPH = '<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></svg>';
-    // Two chevrons pointing the way the card folds (CSS turns them up on a phone).
+    // Two chevrons pointing the way the card moves: left or up to hide it,
+    // right or down to open it (CSS turns them).
     var FOLD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5 6.5 12l5.5 5.5"/><path d="M18 6.5 12.5 12l5.5 5.5"/></svg>';
     var card = null, layout = null, rail = null;
     var userOpen = false, holds = {}, shown = null, key = '';
@@ -4723,8 +4724,9 @@
       rail.setAttribute('aria-controls', card.id);
       rail.setAttribute('aria-label', t.open);
       rail.setAttribute('data-no-abbr', '');
+      // The open icon is Hide's own, turned the other way.
       rail.innerHTML = GLYPH + '<span class="ctrl-fold-name">' + t.name + '</span>' +
-        '<span class="ctrl-fold-go"><span class="ctrl-fold-word">' + t.show + '</span><span class="ctrl-fold-chev" aria-hidden="true"></span></span>';
+        '<span class="ctrl-fold-go">' + FOLD + '</span>';
       rail.addEventListener('click', function(){ set(true, true); });
       rail.addEventListener('animationend', function(){ rail.classList.remove('ctrl-attn'); });
 

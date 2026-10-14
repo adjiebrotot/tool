@@ -437,13 +437,14 @@ stay reachable however far down the panel you are. Anything placed *before*
 
 A `.controls` card that is a direct child of `.layout` opens **folded**, so a
 reader lands on the answer, not on forty fields. shared.js does it; a tool writes
-nothing. Beside the results the card folds to a 56px "Inputs" rail (a round open
-button, the sliders glyph, the word set vertically) and the results take the
-width; stacked above them on a phone it folds to one "Inputs" bar with a **Show**
-button. The open button pulses three times on arrival; there is no callout. Open,
-Hide is one icon (two chevrons pointing the way the card folds) at the end of the
-Quick Start row, beside save and open, so the fold adds no row of its own; the
-scenario buttons drop to a line of their own under it. The choice is kept per page
+nothing. Beside the results the card folds to a 56px "Inputs" rail (the open
+icon, the sliders glyph, the word set vertically) and the results take the width;
+stacked above them on a phone it folds to one "Inputs" bar. Open and Hide are one
+icon, two chevrons pointing the way the card moves: right or down to open, left or
+up to hide. The open icon lights up and pulses three times on arrival; there is no
+callout and no label on the button. Open, Hide sits at the end of the Quick Start
+row, beside save and open, so the fold adds no row of its own; the scenario
+buttons drop to a line of their own under it. The choice is kept per page
 on this device (`abt:ctrl:<path>`); nothing in the fold is a field, so the mini
 cache, scenario files and Share links never see it.
 
