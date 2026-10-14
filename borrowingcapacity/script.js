@@ -1617,6 +1617,11 @@ function init(){
     }
   });
   SharedScenario.mount('.quick-start-row', { tool: 'borrowingcapacity', persist });
+  /* The four caps carry the answer, so they stay open. The tables under them
+     are the working, so each waits closed behind its chevron. */
+  ['buildSection', 'incomeSection', 'commSection'].forEach(id => {
+    SharedFold.attach($(id), { key: 'borrowingcapacity-' + id.replace('Section', ''), bodies: ['.unit-note', '.table-wrap'] });
+  });
   render();
 
   /* The guided tour seeds a scenario over the form, so it needs a way to hand

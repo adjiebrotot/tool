@@ -64,7 +64,7 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | Reset a chart's zoom or view | `⟳` | secondary, square | every chart cluster · Finance vs Cash 3D view · JSON Visualiser `⟳ Reset` |
 | Zoom | `+` / `−` | secondary, square | JSON Visualiser · World Clock · Load Flow Simulator diagram (inside the stage, never in a cluster) |
 | Back to my place / now | crosshair · `↩ Back to now` | secondary | World Clock |
-| Show a chart or table | `Show table ▾` · chart icon · `Compare` | secondary / bare | every finance tool's tables · Sensitivity per-scenario chart and `Compare` |
+| Show a chart or table | `▾` chevron, last in the head row · chart icon · `Compare` | secondary / bare | every finance tool's tables · Sensitivity per-scenario chart and `Compare` |
 | Play a video | `▶` `◀◀` `▶▶` | secondary, square | Video to GIF player |
 
 ## Page furniture

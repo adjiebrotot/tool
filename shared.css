@@ -768,17 +768,24 @@ html{scrollbar-gutter:stable;}
 /* ── Units of a table, said once over it ── */
 .unit-note{color:var(--muted);font-size:.78rem;line-height:1.4;margin:4px 0 10px;}
 
-/* ── Year-by-year table, behind a button ──
-   SharedFold collapses the long table under its own header row; the CSV
-   button beside it still exports the whole thing while it is closed. */
-.fold-btn,.btn-secondary.fold-btn{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;}
-.fold-btn .fold-chev{display:inline-block;transition:transform var(--motion-fast);}
+/* ── Year-by-year table, behind a chevron ──
+   SharedFold collapses the long table under its own header row; the chevron
+   sits last in that row, after the CSV button, which still exports the whole
+   thing while it is closed. The title toggles it too. */
+.fold-btn,.btn-secondary.fold-btn,.btn-cluster .btn-secondary.fold-btn{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:34px;}
+.detail-head>.fold-btn,.chart-head>.fold-btn{margin-left:auto;}
+@media(max-width:600px){.fold-btn,.btn-secondary.fold-btn,.btn-cluster .btn-secondary.fold-btn{min-width:44px;}}
+.fold-btn .fold-chev{width:1.1em;height:1.1em;transition:transform var(--motion-fast);}
 .fold-btn[aria-expanded="true"] .fold-chev{transform:rotate(180deg);}
+.fold-title{cursor:pointer;user-select:none;-webkit-user-select:none;}
 .is-folded .fold-body{display:none!important;}
 
-/* ── What this assumes: the page closes on its own caveats ── */
+/* ── What this assumes: the page closes on its own caveats, folded ── */
 .assumes-card{padding:20px;margin-bottom:18px;}
 .assumes-card h2{margin:0 0 10px;font-size:1.1rem;}
+.assumes-card .assumes-head{flex-wrap:nowrap;margin-bottom:10px;}
+.assumes-card .assumes-head h2{margin:0;}
+.assumes-card.is-folded .assumes-head{margin-bottom:0;}
 .assumptions{margin:0;padding-left:18px;color:var(--muted);font-size:.85rem;line-height:1.65;}
 .assumptions li+li{margin-top:5px;}
 .assumptions strong{color:var(--text);}

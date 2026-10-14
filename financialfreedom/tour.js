@@ -136,7 +136,7 @@ window.__TOUR = {
     {
       target: '#boardCash .detail-section',
       title: '⑩ The table adds up',
-      body: 'Year by year opens from <strong>Show table</strong>, and the CSV button exports ' +
+      body: 'Year by year opens from the <strong>chevron</strong>, and the CSV button exports ' +
             'it either way. Every row is a cash flow statement: the balance at that age, then ' +
             'the income, the spending, what was saved or drawn, and the investment return that ' +
             'closes the year. <strong>Balance plus Saved plus Growth is the next row\u2019s ' +

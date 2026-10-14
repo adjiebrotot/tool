@@ -70,7 +70,7 @@ window.__TOUR = {
             'went in. The <strong>Final Summary</strong> gives each one\u2019s final value, ' +
             'return on investment (ROI), total topped up and trades, plus Sharpe, Sortino ' +
             'and CAGR under <strong>Advanced metrics</strong>. The charts follow; export any ' +
-            'of them, and open the breakdown with <strong>Show table</strong> or download ' +
+            'of them, and open the breakdown with its <strong>chevron</strong> or download ' +
             'it as CSV.'
     },
     {

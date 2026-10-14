@@ -185,7 +185,8 @@ const CLUSTER_PROBE = () => {
         buttons: [...cluster.querySelectorAll('button')].filter(b => b.offsetParent !== null).map(b => {
           const cs = getComputedStyle(b), r = b.getBoundingClientRect();
           return {
-            id: b.id || b.dataset.act || '', label: norm(b.textContent), title: b.getAttribute('title') || '',
+            // The fold chevron (SharedFold) is a glyph with no text of its own.
+            id: b.id || b.dataset.act || '', label: b.classList.contains('fold-btn') ? '▾' : norm(b.textContent), title: b.getAttribute('title') || '',
             cls: b.className, font: cs.fontSize, pad: cs.paddingTop + ' ' + cs.paddingLeft,
             radius: cs.borderTopLeftRadius, width: Math.round(r.width), right: Math.round(r.right),
           };
@@ -606,8 +607,8 @@ const PLOTLY_PROBE = async () => {
 
 /* The order every export cluster reads in. A cluster may carry a subset (a
    table has only CSV), but never a different order. Share is Bagikan on an
-   Indonesian page. */
-const ORDER = [['Share', 'Bagikan'], ['⟳'], ['⬇ CSV']];
+   Indonesian page. A folded table's chevron comes last, after CSV. */
+const ORDER = [['Share', 'Bagikan'], ['⟳'], ['⬇ CSV'], ['▾']];
 const rank = label => {
   const i = ORDER.findIndex(o => o.some(w => label.startsWith(w)));
   return i < 0 ? 99 : i;

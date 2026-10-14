@@ -60,8 +60,8 @@ window.__TOUR = {
             'each month in the other city, or the salary you would need there. The two ' +
             'cities follow side by side, every amount per month. Perfect for relocation ' +
             'planning, a pay negotiation, or a geoarbitrage decision. ' +
-            '<strong>What this assumes</strong>, under the results, lists what the estimate ' +
-            'rests on.'
+            '<strong>What this assumes</strong>, under the results, opens from its chevron ' +
+            'to list what the estimate rests on.'
     },
     {
       target: '#analysisArea',

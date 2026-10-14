@@ -4351,31 +4351,48 @@
 
   /* ── SharedFold — the long table waits behind a button ───────────────────
      A year-by-year table is the most specific thing a tool shows, so it opens
-     closed: its header row (title, CSV button) stays, and a "Show table"
-     button beside the title opens the rest. The reader's choice is kept on
-     this device. The CSV button exports the whole table either way.
+     closed: its header row (title, CSV button) stays, and a chevron at the
+     right end of that row, after the CSV button, opens the rest. The reader's
+     choice is kept on this device. The CSV button exports the whole table
+     either way. Clicking the title toggles it too.
 
          SharedFold.attach(card, { key: 'rentvsownhouse', bodies: [tabs, wrap],
-                                   onOpen: resyncStickyHeader });            */
+                                   onOpen: resyncStickyHeader });
+
+     "What this assumes" (.assumes-card) folds the same way, by itself, on
+     every page: SharedFold.assumes() runs at load.                          */
   function makeFold(){
-    var TEXT = { en: {show: 'Show table', hide: 'Hide table'}, id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel'} };
+    var TEXT = { en: {show: 'Show table', hide: 'Hide table', showA: 'Show assumptions', hideA: 'Hide assumptions'},
+                 id: {show: 'Tampilkan tabel', hide: 'Sembunyikan tabel', showA: 'Tampilkan asumsi', hideA: 'Sembunyikan asumsi'} };
+    var CHEV = '<svg class="fold-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
     function attach(card, opts){
       opts = opts || {};
       if(!card || card.__fold) return null;
       card.__fold = true;
-      var t = TEXT[pageLang()];
+      var L = TEXT[pageLang()];
+      var t = opts.text || {show: L.show, hide: L.hide};
       var bodies = (opts.bodies || []).map(function(b){ return typeof b === 'string' ? card.querySelector(b) : b; }).filter(Boolean);
       bodies.forEach(function(b){ b.classList.add('fold-body'); });
       var host = opts.host ? (typeof opts.host === 'string' ? card.querySelector(opts.host) : opts.host)
                            : card.querySelector('.detail-head, .chart-head');
       var btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'btn-secondary btn-sm fold-btn';
+      btn.className = 'btn-secondary btn-sm btn-icon fold-btn';
       btn.setAttribute('data-no-abbr', '');
+      btn.innerHTML = CHEV;
+      // Last in the row: after the CSV button when there is one.
       var cluster = host ? host.querySelector('.btn-cluster') : null;
-      if(cluster && cluster.parentElement === host) host.insertBefore(btn, cluster);
+      if(cluster && cluster.parentElement === host) cluster.appendChild(btn);
       else if(host) host.appendChild(btn);
       else card.insertBefore(btn, card.firstChild);
+      var title = host ? host.querySelector('h2, h3') : null;
+      if(title){
+        title.classList.add('fold-title');
+        title.addEventListener('click', function(e){
+          if(e.target.closest('.tip-icon, a, button, select, input')) return;
+          set(!open, true);
+        });
+      }
       var key = opts.key ? 'abt:fold:' + opts.key : null;
       var open = false;
       try { open = !!key && localStorage.getItem(key) === '1'; } catch(e){}
@@ -4383,7 +4400,8 @@
         open = !!o;
         card.classList.toggle('is-folded', !open);
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.innerHTML = '<span>' + (open ? t.hide : t.show) + '</span><span class="fold-chev" aria-hidden="true">▾</span>';
+        btn.setAttribute('aria-label', open ? t.hide : t.show);
+        btn.title = open ? t.hide : t.show;
         if(byReader && key){ try { localStorage.setItem(key, open ? '1' : '0'); } catch(e){} }
         if(open && typeof opts.onOpen === 'function') opts.onOpen();
       }
@@ -4391,7 +4409,24 @@
       set(open, false);
       return { open: function(){ set(true, true); }, close: function(){ set(false, true); }, isOpen: function(){ return open; }, button: btn };
     }
-    return { attach: attach };
+    /* Every "What this assumes" card: its title moves into a head row and the
+       list folds under it, closed until the reader opens it. One key a page,
+       shared by its English and Indonesian copies. */
+    function assumes(root){
+      (root || document).querySelectorAll('.assumes-card').forEach(function(card){
+        if(card.__fold) return;
+        var h = card.querySelector('h2, h3');
+        if(!h) return;
+        var head = document.createElement('div');
+        head.className = 'detail-head assumes-head';
+        h.parentNode.insertBefore(head, h);
+        head.appendChild(h);
+        var path = (location.pathname || '/').replace(/index\.html$/, '').replace(/\/id\/$/, '/');
+        var L = TEXT[pageLang()];
+        attach(card, { key: 'assumes:' + path, host: head, bodies: ['.assumptions'], text: {show: L.showA, hide: L.hideA} });
+      });
+    }
+    return { attach: attach, assumes: assumes };
   }
   global.SharedFold = makeFold();
 
@@ -4788,6 +4823,7 @@
     global.SharedAbbr.init();
     initFit();
     if(global.SharedSlider.auto()) global.SharedSlider.scan();
+    global.SharedFold.assumes();
   }
 
   if (document.readyState === 'loading') {

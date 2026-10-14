@@ -156,9 +156,13 @@ meaning of its own.
 
 ### Tables and caveats
 
-A year-by-year table opens closed behind **Show table** (`SharedFold.attach(card,
-{key, bodies})`); its CSV button exports it either way. Every tool closes with
-a `.assumes-card` listing what the answer rests on, built by a
+A year-by-year table, or any long table of working under the answer, opens
+closed behind a chevron (`SharedFold.attach(card, {key, bodies})`): an
+icon-only `▾` button, last in the head row after the `⬇ CSV` button, that turns
+over when open; the title toggles it too. Its CSV button exports it either way.
+Every tool closes with a `.assumes-card` listing what the answer rests on,
+folded the same way and closed by default (`shared.js` folds every
+`.assumes-card` at load, so the HTML stays an `<h2>` and a list), built by a
 `renderAssumptions` call on every redraw from the reader's own plan rather than
 written into the HTML:
 
@@ -1031,7 +1035,7 @@ ignore the pointer, so `e.target` is always the button.
 | Weight | Looks | Use for |
 | --- | --- | --- |
 | Primary (`.btn-primary`) | accent fill, `var(--text-inv)` text | the one thing the panel exists to do: Simulate, Done, Generate |
-| Secondary (`.btn-secondary`, `.btn-sm`) | soft fill, border | a labelled action: `+ Add Scenario`, `⬇ CSV`, `Show table` |
+| Secondary (`.btn-secondary`, `.btn-sm`) | soft fill, border | a labelled action: `+ Add Scenario`, `⬇ CSV` |
 | Bare (`.btn-bare`) | nothing until hovered | an icon-only button that acts on the thing it sits in: a row, a card, a chip, a column header, a panel's corner |
 
 Bare is the default for an icon-only button. The picture already says what it

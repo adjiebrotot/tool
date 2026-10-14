@@ -63,9 +63,9 @@ window.__TOUR = {
       target: '#detailSection',
       title: '⑥ Rinciannya, saat Anda butuh',
       body: 'Arus kas per tahun untuk membeli, menyewa, dan sewa dulu ada di balik ' +
-            '<strong>Tampilkan tabel</strong>, dan tombol CSV tetap mengekspornya. ' +
-            '<strong>Asumsi yang dipakai</strong>, di bawahnya, menjelaskan apa yang ' +
-            'dihitung dan tidak dihitung model ini.'
+            'tombol <strong>panah</strong>-nya, dan tombol CSV tetap mengekspornya. ' +
+            '<strong>Asumsi yang dipakai</strong>, di bawahnya, terbuka dengan cara yang sama dan ' +
+            'menjelaskan apa yang dihitung dan tidak dihitung model ini.'
     },
     {
       target: null,

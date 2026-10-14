@@ -88,9 +88,10 @@ window.__TOUR = {
     {
       target: null,
       title: '✅ You are all set',
-      body: 'Four tables below the chart break down the four caps, the serviceability ' +
-            'build-up line by line, your income shading and your monthly commitments, and ' +
-            '<strong>CSV</strong> exports the lot. The page ends with what it assumes. ' +
+      body: 'Below the chart, the four caps table shows which one binds, and ' +
+            '<strong>CSV</strong> exports the lot. The serviceability build-up, your income ' +
+            'shading and your monthly commitments open from the chevron beside each title, ' +
+            'and so does what the page assumes. ' +
             'Everything runs privately in your browser, free. Replay this tour any time ' +
             'via the <strong>🧭</strong> button in the header.'
     }
