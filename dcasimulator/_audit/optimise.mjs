@@ -156,6 +156,16 @@ function splitWeights(base, moves){
     }
     if (rem > 1e-6) return null;
   }
+  // Whole percents in, whole percents out: floors, then one unit each to the
+  // largest remainders, the earlier member first on a tie.
+  const isWhole = x => Math.abs(x - Math.round(x)) < 1e-9;
+  if (base.every(isWhole) && moves.every(m => isWhole(m.val))){
+    const rest = w.map((x, i) => ({ i, x: Math.round(x * 1e6) / 1e6 })).filter(o => !swept.has(o.i));
+    let spare = Math.round(rest.reduce((a, o) => a + o.x - Math.floor(o.x), 0));
+    rest.forEach(o => { w[o.i] = Math.floor(o.x); });
+    rest.sort((a, b) => (b.x - Math.floor(b.x)) - (a.x - Math.floor(a.x)) || a.i - b.i)
+        .forEach(o => { if (spare > 0){ w[o.i]++; spare--; } });
+  }
   return w;
 }
 
@@ -300,9 +310,13 @@ function valuesOf(v){
   else if (/:freq$/.test(k)) L = ['monthly', 'weekly'];
   else if (/:from$/.test(k)) L = ['monthly', 'weekly'].includes(v.start) ? ['monthly', 'weekly'] : ['top', 'bottom'];
   if (L){ const a = L.indexOf(v.start), b = L.indexOf(v.end); return L.slice(Math.min(a, b), Math.max(a, b) + 1); }
-  return rangeValues(v, /dom$|lookback$|Period$|Len$|macd(Fast|Slow|Signal)$|Oversold$|Threshold$/.test(k));
+  return rangeValues(v, /dom$|lookback$|Period$|Len$|macd(Fast|Slow|Signal)$|Oversold$|Threshold$|^weight:|^rank:/.test(k), /:pct$|:bbStd$/.test(k) ? 1 : 2);
 }
 async function runCase(c){
+  try { await runCaseInner(c); }
+  catch (e) { ok(false, c.name + ': ran to the end', String(e && e.message || e).split('\n')[0]); }
+}
+async function runCaseInner(c){
   if (ONLY && !c.name.includes(ONLY)) return;
   const t0 = Date.now();
   const sc = c.scenario;
@@ -485,16 +499,20 @@ function units(){
     const n = 2 + Math.floor(rnd() * 4);
     let base = Array.from({ length: n }, () => rnd() < 0.15 ? 0 : rnd());
     const sum = base.reduce((a, b) => a + b, 0) || 1; base = base.map(x => x / sum * 100);
+    // Half the cases start on whole percents, as the form holds them.
+    const ints = t % 2 === 0;
+    if (ints){ const f = base.map(Math.floor); let r = 100 - f.reduce((a, b) => a + b, 0); for (let i = 0; r > 0; i = (i + 1) % n){ f[i]++; r--; } base = f; }
     const k = n > 2 && rnd() < 0.5 ? 2 : 1;
     const idx = []; while (idx.length < k){ const i = Math.floor(rnd() * n); if (!idx.includes(i)) idx.push(i); }
     const moves = idx.map(i => {
       const others = [...Array(n).keys()].filter(j => !idx.includes(j));
       const slack = rnd() < 0.6 || !others.length ? 'even' : others[Math.floor(rnd() * others.length)];
-      return { idx: i, val: Math.round(rnd() * 1000) / 10, slack };
+      return { idx: i, val: ints ? Math.round(rnd() * 100) : Math.round(rnd() * 1000) / 10, slack };
     });
     const a = U.applyWeightGroup(base, moves), b = splitWeights(base, moves);
     total++;
     if ((a === null) === (b === null) && (a === null || a.every((x, i) => Math.abs(x - b[i]) < 1e-7))) agree++;
+    if (a && ints && !a.every(x => Number.isInteger(x))) floors = -1e9;   // whole in, whole out
     if (a){ if (Math.abs(a.reduce((x, y) => x + y, 0) - 100) < 1e-7) sums++; if (a.every(x => x >= 0)) floors++; moves.forEach(m => { if (a[m.idx] !== m.val) floors = -1e9; }); }
     else { sums++; floors++; nulls++; }
     const r = U.applyWeightGroup(base, moves.slice().reverse());
@@ -502,7 +520,9 @@ function units(){
   }
   ok(agree === total, `slack split agrees with an independent one in ${agree} of ${total} random cases (${nulls} impossible)`);
   ok(sums === total, 'every split adds back up to what it added up to');
-  ok(floors === total, 'no weight goes below zero and every swept weight lands exactly on its value');
+  ok(floors === total, 'no weight goes below zero, every swept weight lands on its value, whole percents stay whole');
+  const odd = U.applyWeightGroup([50, 30, 20], [{ idx: 2, val: 25, slack: 'even' }]);
+  ok(odd && odd.join() === '48,27,25', 'an odd unit goes to the earlier asset, so the form can hold every split', String(odd));
   ok(orderFree === total, `the order two settings were picked in never changes the split (${orderFree} of ${total})`);
   const even2 = U.applyWeightGroup([60, 30, 10], [{ idx: 0, val: 90, slack: 'even' }]);
   ok(even2 && even2.join() === '90,10,0', 'equal shares stop a weight at zero and the other carries the rest', String(even2));
@@ -513,7 +533,8 @@ function units(){
   ok(U.optValues(num, { start: 0, end: 100, steps: 11 }).join() === '0,10,20,30,40,50,60,70,80,90,100', 'a range runs evenly spaced values, both ends included');
   ok(U.optValues(num, { start: 100, end: 0, steps: 3 }).join() === '0,50,100', 'a range typed backwards runs low to high');
   ok(U.optValues(int, { start: 1, end: 4, steps: 10 }).join() === '1,2,3,4', 'a whole-number field never runs a value twice');
-  ok(U.optValues(num, { start: 0, end: 1, steps: 4 }).join() === '0,0.33,0.67,1', 'a value runs at the precision its field shows');
+  ok(U.optValues(num, { start: 0, end: 1, steps: 4 }).join() === '0,0.33,0.67,1', 'a value runs at the precision its field takes');
+  ok(U.optValues({ kind: 'num', min: 0, max: 100, int: true }, { start: 0, end: 100, steps: 7 }).join() === '0,17,33,50,67,83,100', 'a weight runs whole percents');
   ok(U.optValues(num, { start: -5, end: 500, steps: 2 }).join() === '0,100', 'a range past the field\'s bounds is pulled back inside');
   ok(U.optValues(num, { start: 0, end: 10, steps: 999 }).length === 50, 'no setting runs more than 50 values');
   const list = { kind: 'list', options: [{ v: 1 }, { v: 3 }, { v: 6 }, { v: 12 }] };

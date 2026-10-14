@@ -1993,7 +1993,7 @@ const OPT_TECH = {
   fastMaLen:    {label:'fast MA length',    types:['tech-ma-cross'],                   min:1,   max:200, int:true, unit:'bars'},
   slowMaLen:    {label:'slow MA length',    types:['tech-ma-cross'],                   min:1,   max:400, int:true, unit:'bars'},
   bbPeriod:     {label:'Bollinger period',  types:['tech-bollinger'],                  min:2,   max:100, int:true, unit:'bars'},
-  bbStd:        {label:'Bollinger std dev', types:['tech-bollinger'],                  min:0.5, max:5,   dp:2,     unit:'', spread:1},
+  bbStd:        {label:'Bollinger std dev', types:['tech-bollinger'],                  min:0.5, max:5,   dp:1,     unit:'', spread:1},
   macdFast:     {label:'MACD fast EMA',     types:['tech-macd-cross','tech-macd-hist'], min:1,   max:100, int:true, unit:'bars'},
   macdSlow:     {label:'MACD slow EMA',     types:['tech-macd-cross','tech-macd-hist'], min:1,   max:200, int:true, unit:'bars'},
   macdSignal:   {label:'MACD signal',       types:['tech-macd-cross','tech-macd-hist'], min:1,   max:100, int:true, unit:'bars'},
@@ -2105,11 +2105,11 @@ function optSpec(key, p){
     if(m[1]==='weight'){
       const a=p.assets.find(b=>b.id===id);
       if(!a || !methodNeedsWeights(method)) return null;
-      return num({label:a.name+' weight', unit:'%', min:0, max:100, group:'weight', member:id,
+      return num({label:a.name+' weight', unit:'%', min:0, max:100, int:true, group:'weight', member:id,
         get:()=>a.weight||0, def:()=>({start:0, end:100, steps:11, slack:'even'})});
     }
     if(method!=='dynamic-momentum' || id>=n) return null;
-    return num({label:'Rank '+(id+1)+' weight', unit:'%', min:0, max:100, group:'rank', member:id,
+    return num({label:'Rank '+(id+1)+' weight', unit:'%', min:0, max:100, int:true, group:'rank', member:id,
       get:q=>optRankBase(q)[id], def:()=>({start:0, end:100, steps:11, slack:'even'})});
   }
   m=/^trig:(\d+):(\w+)$/.exec(key);
@@ -2120,7 +2120,7 @@ function optSpec(key, p){
     const tr=a.trigger||makeDefaultTrigger(), type=tr.type||'pct', isPct=type==='pct', ref=trigRef(tr);
     const trig=x=>{ const b=x.assets.find(q=>q.id===id); return b ? b.trigger : null; };
     if(f==='pct'){ if(!isPct) return null;
-      return num({label:a.name+(tr.direction==='rise'?' rises by':' falls by'), unit:'%', min:0.1, max:100,
+      return num({label:a.name+(tr.direction==='rise'?' rises by':' falls by'), unit:'%', min:0.1, max:100, dp:1,
         get:()=>tr.pct!=null?tr.pct:10, apply:(x,v)=>{ const t=trig(x); if(t) t.pct=v; }}); }
     if(f==='lookback'){ if(!isPct || ref==='period') return null;
       return num({label:a.name+' lookback', unit:'bars', min:1, max:1000, int:true,
@@ -2172,8 +2172,9 @@ function optClash(key, vars){
 
 // The values a swept setting takes, in order, as they are run: a list setting
 // runs every option from Start to End, a number runs `steps` evenly spaced
-// values, each rounded to the precision its field shows (so a value on screen is
-// the value that ran) and never twice.
+// values, each rounded to the precision its field takes (whole percents for a
+// weight, tenths for a trigger's move), so every value that ran is one a reader
+// could type, and never twice.
 function optValues(spec, vr){
   if(!spec || !vr) return [];
   if(spec.kind==='list'){
@@ -2229,6 +2230,19 @@ function applyWeightGroup(base, moves){
   for(const x of plan) if(x.d<0){ if(!x.pool.length) return null; const add=-x.d/x.pool.length; x.pool.forEach(i=>{ w[i]+=add; }); }
   for(const named of [true, false])
     for(const x of plan) if(x.d>1e-12 && x.named===named){ if(!x.pool.length || !take(x.pool, x.d)) return null; }
+  // A weight field takes whole percents, so weights that started whole end
+  // whole: each share is rounded down and the units left over go to the largest
+  // remainders, the earlier member first on a tie. The total is unchanged.
+  const whole=x=>Math.abs(x-Math.round(x))<1e-9;
+  if(base.every(x=>whole(Number(x)||0)) && moves.every(mv=>whole(mv.val))){
+    const free=w.map((_,i)=>i).filter(i=>!swept.has(i));
+    const exact=free.map(i=>Math.max(0, Math.round(w[i]*1e6)/1e6));
+    const fl=exact.map(Math.floor);
+    const units=Math.round(exact.reduce((a,b)=>a+b,0)-fl.reduce((a,b)=>a+b,0));
+    const order=free.map((_,k)=>k).sort((a,b)=>((exact[b]-fl[b])-(exact[a]-fl[a])) || a-b);
+    for(let u=0;u<units;u++) fl[order[u]]++;
+    free.forEach((i,k)=>{ w[i]=fl[k]; });
+  }
   return w.map(x=>(x<1e-9 ? 0 : x));
 }
 
