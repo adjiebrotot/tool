@@ -1,0 +1,175 @@
+/* Load Flow Simulator: page-specific layer.
+   Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+
+.container{max-width:1500px;}
+.layout{grid-template-columns:340px 1fr;}
+/* The column layout, the inner scroller and the pinned tab bar come from
+   shared.css; the action row sits below the scroller, so it stays put too. */
+.ctrl-scroll{flex:1 1 auto;}
+.btn-row{flex-shrink:0;display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--border);}
+.btn-row .btn-primary{padding:10px 16px;font-size:.88rem;}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
+h1{font-size:1.85rem;margin:0 0 4px;}
+
+/* ── Quick Start ── */
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label .tico{width:1.05em;height:1.05em;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;font-family:inherit;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
+
+/* ── Control panel ── */
+.ctrl-tab{padding:11px 6px;font-size:.82rem;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.ctrl-tab .tico{width:1.25em;height:1.25em;}
+.field-group>:first-child{border-top:none;}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
+.toggle-label{font-weight:700;font-size:.88rem;flex:1;}
+.note{color:var(--muted);font-size:.79rem;line-height:1.45;margin:0 0 10px;}
+.field-row .field-label{font-weight:700;font-size:.88rem;}
+.field-row.inline{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;}
+.field-row.inline>.field-label{flex:1;min-width:0;}
+.field-row.inline>.currency-wrap,.field-row.inline>.sel-input,.field-row.inline>.seg-group{flex:0 0 52%;}
+.field-row.is-derived .currency-input{color:var(--muted);border-style:dashed;}
+
+/* ── The Run gate ──
+   One solve takes milliseconds, but drawing a network passes through states
+   that cannot be solved (a line still being connected, an island with no
+   source). So the diagram never re-solves on its own: an electrical change
+   steps the results back and lights the button. Moving, renaming and the
+   display options never do. */
+.stale-note{display:none;flex-basis:100%;margin:0 0 2px;font-size:.78rem;font-weight:700;color:var(--accent2);}
+body.is-stale .stale-note{display:block;}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2);}
+.lf-result{transition:opacity var(--transition-fast);}
+body.is-stale .lf-result{opacity:.45;}
+body.is-stale #sldSvg .lyr-res{opacity:.3;}
+body.is-stale #sldSvg .fl{animation-play-state:paused;}
+
+/* ── Inspector ── */
+.insp-head{display:flex;align-items:center;gap:8px;margin:0 0 4px;}
+.insp-head .insp-kind{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:var(--radius-sm);background:var(--input-bg);border:1px solid var(--border);color:var(--accent);flex-shrink:0;}
+.insp-head .insp-kind svg{width:20px;height:20px;}
+.insp-head .txt-input{flex:1;min-width:0;padding:7px 10px;font-weight:700;}
+.insp-sub{color:var(--muted);font-size:.78rem;margin:0 0 10px;line-height:1.4;}
+.insp-done{display:none;}
+.issue-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
+.issue-list li{font-size:.8rem;line-height:1.4;padding:7px 10px;border-radius:var(--radius-sm);background:var(--warning-bg);color:var(--warning-text);cursor:pointer;}
+.issue-list li.err{background:var(--error-bg);color:var(--error-text);}
+.issue-list li.none{background:var(--success-bg);color:var(--success-text);cursor:default;}
+.el-list{display:flex;flex-wrap:wrap;gap:5px;padding:4px 0 6px;}
+.el-chip{background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px 10px;font-size:.76rem;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;}
+.el-chip:hover{border-color:var(--accent);}
+.el-chip.is-free{border-style:dashed;color:var(--muted);}
+.stat-line{font-size:.82rem;color:var(--muted);padding:8px 0 4px;line-height:1.5;}
+.stat-line strong{color:var(--text);font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
+.how-to{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.8rem;line-height:1.55;}
+.how-to li+li{margin-top:3px;}
+.how-to kbd{font-family:'DM Mono',monospace;font-size:.72rem;padding:0 4px;border:1px solid var(--border);border-radius:4px;background:var(--input-bg);color:var(--text);}
+.insp-actions{display:flex;gap:2px;}
+.ends-line{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--muted);flex-wrap:wrap;}
+.ends-line strong{color:var(--text);}
+
+/* ── Label matrix ── */
+.lbl-group{margin-top:10px;}
+.lbl-group:first-of-type{margin-top:0;}
+.lbl-chips{display:flex;flex-wrap:wrap;gap:5px;padding:6px 0 8px;}
+.lbl-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 6px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--input-bg);font-size:.76rem;font-weight:600;color:var(--muted);cursor:pointer;user-select:none;}
+.lbl-chip input{accent-color:var(--accent);margin:0;width:13px;height:13px;}
+.lbl-chip:has(input:checked){color:var(--text);border-color:var(--accent);}
+
+/* ── The diagram card ── */
+.chart-card{padding:18px 20px;margin-bottom:18px;}
+.chart-card>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;min-height:1.1em;}
+.sld-viewbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:12px 0 10px;font-size:.84rem;}
+.flow-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;color:var(--text);user-select:none;}
+.flow-toggle input{accent-color:var(--accent);margin:0;width:15px;height:15px;}
+.flow-key{display:inline-block;width:26px;height:8px;background-repeat:repeat-x;background-position:left center;}
+.flow-key-p{background-image:linear-gradient(90deg,var(--line-a) 0 50%,transparent 50% 100%);background-size:10px 3px;}
+.flow-key-q{background-image:radial-gradient(circle,var(--gold) 0 1.7px,transparent 2.1px);background-size:9px 8px;}
+.viewbar-field{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--muted);}
+.viewbar-field .sel-input{width:auto;padding-top:5px;padding-bottom:5px;font-size:.82rem;}
+.sld-body{display:flex;gap:10px;align-items:stretch;}
+.sld-palette{display:flex;flex-direction:column;gap:4px;flex:0 0 74px;}
+.pal-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 5px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--input-bg);color:var(--text);font-family:inherit;font-size:.66rem;font-weight:700;line-height:1.15;cursor:grab;touch-action:none;user-select:none;transition:border-color var(--motion-fast),background var(--motion-fast);}
+.pal-btn svg{width:30px;height:24px;color:var(--text);}
+.pal-btn:hover{border-color:var(--accent);}
+.pal-btn.is-armed{border-color:var(--accent2);background:rgba(143,205,189,.16);}
+.pal-sep{height:1px;background:var(--border);margin:4px 2px;}
+.pal-row{display:flex;justify-content:space-between;}
+.pal-row .btn-bare{min-width:34px;height:30px;font-size:1.05rem;}
+.pal-clear{font-size:.7rem;justify-content:center;width:100%;}
+.sld-stage{position:relative;flex:1 1 auto;height:620px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--panel);touch-action:pan-y;user-select:none;-webkit-user-select:none;}
+#sldSvg{display:block;width:100%;height:100%;cursor:default;}
+#sldSvg.is-panning{cursor:grabbing;}
+#sldSvg:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+#sldSvg [data-id]{cursor:pointer;}
+#sldSvg text{user-select:none;-webkit-user-select:none;}
+.sld-zoom{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;}
+.sld-zoom .btn-icon{min-width:32px;padding:4px 0;background:var(--panel);font-size:.95rem;}
+.sld-hint{position:absolute;left:12px;bottom:10px;max-width:calc(100% - 70px);font-size:.78rem;color:var(--muted);background:var(--panel);border-radius:var(--radius-sm);padding:3px 8px;pointer-events:none;opacity:0;transition:opacity var(--motion-base);}
+.sld-hint.visible{opacity:.95;}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
+.hover-box strong{color:var(--text);}
+.hover-box .mono{color:var(--text);}
+
+/* Flow lanes: dashes that move one period (12 px) per T/n seconds. */
+#sldSvg .fl{animation:lfFlow calc(1.6s / var(--n, 1)) linear infinite;}
+#sldSvg .fl.rev{animation-direction:reverse;}
+@keyframes lfFlow{from{stroke-dashoffset:0;}to{stroke-dashoffset:-12;}}
+#sldSvg.no-p .fl-p,#sldSvg.no-q .fl-q{display:none;}
+
+/* ── Results ── */
+.metrics{grid-template-columns:repeat(4,1fr);}
+.metric{padding:14px 16px;min-height:96px;}
+.metric .label{display:flex;align-items:center;gap:5px;}
+.metric .value{font-size:1.3rem;}
+.metric .value.neg{color:var(--negative-em);}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.35;}
+.detail-section{padding:20px;margin-bottom:18px;}
+.detail-head{margin-bottom:4px;}
+.detail-head .seg-group{margin-left:4px;}
+.table-wrap{max-height:460px;overflow:auto;}
+th{position:sticky;top:0;background:var(--panel);z-index:1;}
+td.neg{color:var(--negative-em);font-weight:700;}
+td.muted{color:var(--muted);}
+tr.is-sel td{background:rgba(141,187,255,.12);}
+body.light tr.is-sel td{background:rgba(90,145,232,.10);}
+tbody tr{cursor:pointer;}
+
+.page-footer{max-width:1500px;margin:0 auto;padding:0 24px 24px;}
+
+/* ── Embed: the diagram alone, read-only ── */
+html.abt-embed .sld-edit-only,html.abt-embed .sld-zoom{display:none !important;}
+html.abt-embed .sld-stage{background:transparent;border:0;border-radius:0;}
+html.abt-embed .sld-body{gap:0;}
+html.abt-embed .chart-card>.sub{margin-top:0;}
+
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .sld-stage{height:520px;}
+  /* The inspector becomes a sheet over the page while an element is selected. */
+  body.lf-sheet .controls{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:60;max-height:62vh;display:flex;flex-direction:column;border-radius:16px 16px 0 0;box-shadow:var(--shadow-lg);background:var(--panel);padding-bottom:env(safe-area-inset-bottom);}
+  body.lf-sheet .controls .ctrl-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;}
+  body.lf-sheet .controls .quick-start-row{display:none;}
+  body.lf-sheet .insp-done{display:block;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .page-footer{padding:0 10px 16px;}
+  .metrics{grid-template-columns:1fr;}
+  .sld-body{flex-direction:column;}
+  .sld-palette{flex-direction:row;flex:0 0 auto;overflow-x:auto;padding-bottom:2px;}
+  .pal-btn{flex:0 0 64px;}
+  .pal-sep{width:1px;height:auto;margin:2px 4px;}
+  .pal-row{flex-direction:column;justify-content:center;}
+  .pal-clear{width:auto;}
+  .sld-stage{height:60vh;min-height:320px;}
+  .ctrl-tab{font-size:.76rem;}
+  .chart-card{padding:14px 12px;}
+}

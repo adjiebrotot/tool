@@ -1,0 +1,13 @@
+{
+  "name": "loadflow-simulator-build",
+  "private": true,
+  "description": "Build-time only: bundles the PSA.js power flow for loadflow-simulator/engine and vendors gifenc. Nothing here ships.",
+  "type": "module",
+  "scripts": {
+    "build": "node build-engine.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "gifenc": "1.0.3"
+  }
+}

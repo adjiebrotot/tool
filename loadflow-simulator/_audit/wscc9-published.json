@@ -1,0 +1,60 @@
+{
+  "source": "P. M. Anderson and A. A. Fouad, Power System Control and Stability, 2nd ed. (IEEE Press / Wiley, 2003), the WSCC 9-bus system: prefault load-flow solution (Example 2.6, Figure 2.18), 100 MVA base. Bus ids and generator element ids are the Quick Start's.",
+  "tol": {
+    "v": 0.0005001,
+    "ang": 0.0005001,
+    "pq": 0.0005001
+  },
+  "buses": {
+    "1": [
+      1.04,
+      0.0
+    ],
+    "2": [
+      1.025,
+      9.28
+    ],
+    "3": [
+      1.025,
+      4.665
+    ],
+    "4": [
+      1.026,
+      -2.217
+    ],
+    "5": [
+      0.996,
+      -3.989
+    ],
+    "6": [
+      1.013,
+      -3.687
+    ],
+    "7": [
+      1.026,
+      3.72
+    ],
+    "8": [
+      1.016,
+      0.728
+    ],
+    "9": [
+      1.032,
+      1.967
+    ]
+  },
+  "generators": {
+    "19": [
+      71.641,
+      27.046
+    ],
+    "20": [
+      163.0,
+      6.654
+    ],
+    "21": [
+      85.0,
+      -10.86
+    ]
+  }
+}

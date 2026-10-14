@@ -47,6 +47,7 @@ TOOLS = {
     "pisahvsgabung":  ("Made using tool.adjiebrotots.com/pisahvsgabung", 500),
     "jsonvisualiser": ("Made using tool.adjiebrotots.com/jsonvisualiser", 400),
     "sankeycreator":  ("Made using tool.adjiebrotots.com/sankeycreator", 400),
+    "loadflow-simulator": ("Made using tool.adjiebrotots.com/loadflow-simulator", 500),
 }
 
 
