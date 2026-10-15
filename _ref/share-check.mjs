@@ -73,7 +73,7 @@ const check = (name, ok, detail) => {
   ok ? pass++ : fail++;
 };
 
-const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript',
+const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.wasm':'application/wasm',
                '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml',
                '.png':'image/png', '.jpg':'image/jpeg', '.xml':'application/xml',
                '.txt':'text/plain', '.woff2':'font/woff2' };
@@ -463,6 +463,29 @@ const PAGES = [
         }
       });
       await page.waitForTimeout(300);
+    },
+  },
+  {
+    // The ED/UC Simulator's diagram: an SVG with a GIF export, like the load
+    // flow's. The solar and battery preset, so the diagram shows a storage
+    // unit, a unit off and its flows.
+    name: 'educ-simulator', url: '/educ-simulator/', charts: ['sldStage'], gif: true,
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="solar"]');
+      await page.waitForFunction(() => /\S/.test(document.getElementById('sldStage').getAttribute('data-share-sig') || '') && window.Chart && Chart.getChart('storeCanvas'), null, { timeout: 30000 });
+      await page.waitForTimeout(300);
+    },
+  },
+  {
+    // Its four Chart.js charts (no GIF): dispatch, prices, commitment, storage.
+    // Two areas over three days, with its HVDC link congested, has prices that
+    // split; the storage chart needs the solar preset, so that one is opened
+    // there.
+    name: 'educ-simulator/charts', url: '/educ-simulator/', charts: ['dispCanvas', 'priceCanvas', 'commitCanvas', 'storeCanvas'],
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="solar"]');
+      await page.waitForFunction(() => window.Chart && Chart.getChart('storeCanvas') && Chart.getChart('commitCanvas'), null, { timeout: 30000 });
+      await page.waitForTimeout(400);
     },
   },
   {

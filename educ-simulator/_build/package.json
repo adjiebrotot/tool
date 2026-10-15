@@ -1,0 +1,14 @@
+{
+  "name": "educ-simulator-build",
+  "private": true,
+  "description": "Build-time only: bundles the PSA.js optimiser for educ-simulator/engine, vendors the HiGHS solver (highs-js) and gifenc. Nothing here ships.",
+  "type": "module",
+  "scripts": {
+    "build": "node build-engine.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "gifenc": "1.0.3",
+    "highs": "1.15.3"
+  }
+}
