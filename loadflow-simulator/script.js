@@ -725,8 +725,6 @@
     p_nom: 'Rated power. When the slack is shared by rating, it sets this unit\'s share.',
     link_nom: 'Rated power, used only to work out loading.',
     store_nom: 'Rated power, kept for reference. Storage is a fixed injection, so the load flow never reads it.',
-    sym: 'How the unit is drawn. The load flow is the same.<ul><li><strong>Solar:</strong> a solar panel.</li><li><strong>Wind:</strong> a wind turbine.</li><li><strong>Grid:</strong> a hatched square, the sign for a wider grid.</li></ul>',
-    shape: 'How the bus is drawn. The load flow is the same.<ul><li><strong>Bar:</strong> a bar its connections spread along.</li><li><strong>Node:</strong> a dot every connection meets at.</li></ul>',
     upright: 'Stands the bar on end. R does the same to every selected bus.',
     upnode: 'Devices leave the node left and right instead of above and below. R does the same to every selected bus.',
     load_p: 'Active power drawn. A negative figure feeds power in, like rooftop solar.',
@@ -741,7 +739,7 @@
   var typed = function(e){ return !!LF.lineType(e); }, custom = function(e){ return !LF.lineType(e); };
   var ttyped = function(e){ return !!LF.trType(e); }, tcustom = function(e){ return !LF.trType(e); };
   var FIELDS = {
-    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']], tip: UNIT_TIP.shape }),
+    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']] }),
           F_('v_nom', 'Nominal voltage', 'kV', { min: 0.1, max: 1500, tip: UNIT_TIP.v_nom }),
           F_('v_mag_pu_set', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.v_mag_pu_set, show: function(e){ return busHoldsV(e.id); } })],
     Line: [F_('type', 'Line type', '', { kind: 'linetype' }),
@@ -777,7 +775,7 @@
            F_('vset', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.gen_vset, show: function(e){ return e.control !== 'PQ' && e.bus; } }),
            F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom }),
            // Symbol writes both grid and style, which saved diagrams keep apart.
-           F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true, tip: UNIT_TIP.sym })],
+           F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true })],
     Load: [F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.load_p }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.load_q })],
     ShuntImpedance: [F_('shq', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.shunt_q }),
@@ -913,7 +911,7 @@
     var own = typeof e.lb === 'number';
     var d = display(), list = LF.LABELS[e.c];
     var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels' +
-      tipHtml('Off: shows what the Labels tab sets for every ' + LF.WORD[e.c].toLowerCase() + '. On: this one shows the boxes ticked below.') + '</span></div>' +
+      tipHtml(own ? 'This one shows the boxes ticked below, whatever the Labels tab sets.' : 'It shows what the Labels tab sets for every ' + (e.c === 'StorageUnit' ? 'storage unit' : LF.WORD[e.c].toLowerCase()) + '.') + '</span></div>' +
       '<label class="toggle-switch"><input type="checkbox" id="lbOwn"' + (own ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(own){
       html += '<div class="lbl-chips">' + list.map(function(q, i){

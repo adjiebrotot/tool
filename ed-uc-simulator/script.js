@@ -912,31 +912,27 @@
     tx_s: 'The most it may carry, and the base its reactance is per unit on.',
     tx_x: 'Series reactance, per unit on the transformer’s own rating.',
     tx_r: 'Series resistance, per unit on its rating, kept for reference: the DC power flow is lossless.',
-    p_nom: 'The most it can produce.',
     grid_nom: 'The most that can be imported.',
     mc: 'What one more MWh from it costs: fuel and variable running costs. The merit order is sorted by it.',
     grid_mc: 'The price paid for each MWh imported.',
-    committable: 'On: the unit is switched on or off hour by hour, with the costs and limits below. Off: it is always available, from zero to its rating.',
+    committable_on: 'The unit is switched on or off hour by hour, with the costs and limits below.',
+    committable_off: 'The unit is always available, from zero to its rating, with no start-up cost or minimum output.',
     p_min: 'The least it can run at while on, as a share of its rating.',
     min_up: 'Hours it must stay on once started.',
     min_down: 'Hours it must stay off once stopped.',
-    start: 'Paid each time it is switched on.',
-    shut: 'Paid each time it is switched off.',
-    standby: 'Paid for every hour it is on, whatever it produces (a no-load cost).',
-    init: 'Its state just before the first hour. Running, it has already met its minimum up time; off, its minimum down time.',
+    standby: 'Paid for every hour it is on, whatever it produces.',
+    init: 'Its state just before the first hour.<ul><li><strong>Running:</strong> it has already met its minimum up time.</li><li><strong>Off:</strong> it has already met its minimum down time.</li></ul>',
     ramp_up: 'The most its output can rise from one hour to the next, as a share of its rating. 100% is no limit.',
     ramp_down: 'The most its output can fall from one hour to the next. 100% is no limit.',
     load_p: 'Demand at the profile’s highest hour. The profile scales it hour by hour.',
     store_p: 'The most it can charge or discharge at.',
     store_h: 'How long it can discharge at full power. Energy capacity is power × hours.',
     eff: 'Share of the energy put in that comes back out, lost half on the way in and half on the way out.',
-    cyclic: 'On: it must end the horizon holding what it started with, so it cannot just empty itself.',
+    cyclic: 'It must refill what it used by the last hour, so it cannot empty itself for free at the end of the horizon.',
     soc0: 'How full it is at the start, as a share of its energy capacity.',
     link_nom: 'The most it can send, in either direction it runs.',
     link_eff: 'Share of the power sent that arrives at the far end.',
-    link_both: 'Whether it can send power both ways or only from its first end.',
-    sym: 'How the unit is drawn.<ul><li><strong>Solar, Wind:</strong> symbols only; its availability sets what it produces.</li><li><strong>Grid:</strong> a hatched square, the sign for a wider grid.</li></ul>',
-    shape: 'How the bus is drawn.<ul><li><strong>Bar:</strong> a bar its connections spread along.</li><li><strong>Node:</strong> a dot every connection meets at.</li></ul>',
+    link_both: '<ul><li><strong>Both ways:</strong> either direction, up to its rating.</li><li><strong>One way:</strong> only from its first end, the bus it was drawn from.</li></ul>',
     upright: 'Stands the bar on end. R does the same to every selected bus.',
     upnode: 'Devices leave the node left and right instead of above and below. R does the same to every selected bus.'
   };
@@ -945,7 +941,7 @@
   var isCom = function(e){ return !!e.committable; };
   var notCyclic = function(e){ return !e.cyclic; };
   var FIELDS = {
-    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']], tip: TIP.shape }),
+    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']] }),
           F_('v_nom', 'Nominal voltage', 'kV', { min: 0.1, max: 1500, tip: TIP.v_nom })],
     Line: [F_('type', 'Line type', '', { kind: 'linetype' }),
            F_('length', 'Length', 'km', { min: 0, max: 5000, tip: TIP.length, show: typed }),
@@ -956,16 +952,16 @@
     Transformer: [F_('s_nom', 'Rating', 'MVA', { min: 0, max: 1e5, tip: TIP.tx_s }),
            F_('x', 'Reactance', 'p.u.', { min: -10, max: 10, step: 0.0001, tip: TIP.tx_x }),
            F_('r', 'Resistance', 'p.u.', { min: 0, max: 10, step: 0.0001, tip: TIP.tx_r })],
-    Generator: [F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true, tip: TIP.sym }),
-           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_nom : TIP.p_nom; } }),
+    Generator: [F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true }),
+           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_nom : ''; } }),
            F_('marginal_cost', 'Marginal cost', '/MWh', { money: true, min: -1e4, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_mc : TIP.mc; } }),
            F_('prof', 'Availability', '', { kind: 'profile' }),
-           F_('committable', 'Committable', '', { kind: 'toggle', tip: TIP.committable, group: 'Commitment' }),
+           F_('committable', 'Committable', '', { kind: 'toggle', tip: function(e){ return e.committable ? TIP.committable_on : TIP.committable_off; }, group: 'Commitment' }),
            F_('p_min_pu', 'Minimum stable output', '%', { scale: 100, min: 0, max: 100, step: 0.1, tip: TIP.p_min, show: isCom }),
            F_('min_up_time', 'Minimum up time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_up, show: isCom }),
            F_('min_down_time', 'Minimum down time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_down, show: isCom }),
-           F_('start_up_cost', 'Start-up cost', '', { money: true, min: 0, max: 1e8, tip: TIP.start, show: isCom }),
-           F_('shut_down_cost', 'Shut-down cost', '', { money: true, min: 0, max: 1e8, tip: TIP.shut, show: isCom }),
+           F_('start_up_cost', 'Start-up cost', '', { money: true, min: 0, max: 1e8, show: isCom }),
+           F_('shut_down_cost', 'Shut-down cost', '', { money: true, min: 0, max: 1e8, show: isCom }),
            F_('stand_by_cost', 'No-load cost', '/h', { money: true, min: 0, max: 1e7, tip: TIP.standby, show: isCom }),
            F_('init', 'Before the first hour', '', { kind: 'seg', opts: [[1, 'Running'], [0, 'Off']], tip: TIP.init, show: isCom }),
            F_('ramp_limit_up', 'Ramp up limit', '%/h', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.ramp_up, group: 'Ramping' }),
@@ -1101,7 +1097,7 @@
     var own = typeof e.lb === 'number';
     var list = ED.LABELS[e.c];
     var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels' +
-      tipHtml('Off: shows what the Labels tab sets for every ' + ED.WORD[e.c].toLowerCase() + '. On: this one shows the boxes ticked below.') + '</span></div>' +
+      tipHtml(own ? 'This one shows the boxes ticked below, whatever the Labels tab sets.' : 'It shows what the Labels tab sets for every ' + (e.c === 'StorageUnit' ? 'storage unit' : ED.WORD[e.c].toLowerCase()) + '.') + '</span></div>' +
       '<label class="toggle-switch"><input type="checkbox" id="lbOwn"' + (own ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(own){
       html += '<div class="lbl-chips">' + list.map(function(q, i){
