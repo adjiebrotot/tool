@@ -60,12 +60,17 @@ turns its results back. The check holds the far end at p × efficiency and the l
 
 **A5. The engine.** `engine/psa-pf.min.js` hashes to the sha256 in its own banner.
 
+**A6. A diagram on a map.** The map's place (`model.map`) saves and reads back exactly, a
+diagram saved before maps opens with none, and the map never enters what the power flow
+sees. The georeference, the ground scale (Web Mercator) and the great-circle distance are
+held to their formulas, and hostile map values never throw.
+
 **B. The real page in headless Chromium,** served over http because the engine is an ES
 module:
 - First render and first solve are quick.
 - Every Quick Start converges within 10 iterations.
-- The KPIs, verdict and all three CSV tables say exactly what the results say, and the
-  verdict warns exactly when a limit is crossed.
+- The KPIs, the run summary and all three CSV tables say exactly what the results say, and
+  the voltage and loading KPIs turn red exactly when a limit is crossed.
 - A value past a limit is printed with the digits that show it: 0.9497 p.u. against 0.95,
   never 0.950.
 - The SVG export is strict XML, and the PNG is its picture at 2×.
@@ -84,7 +89,23 @@ module:
   - branches to missing buses;
   - negative ratings and duplicate ids;
   - hostile strings;
+  - a hostile map, and a map at the edge of the world;
   - text that is not JSON.
+
+**B7. The map, offline.** Every tile is a white square with a dark band along its top and
+left edges, the power grid answers with nothing and the place search with one known place:
+- turning a map on places the diagram and opens Move the map, and never makes the result
+  stale;
+- a place found while moving the map lands under the middle of the view, the diagram
+  unmoved; typed coordinates move the view there; on a map the view zooms out to a region
+  and in to the street;
+- through wheel zoom, a drag and its release, tile corners put through the SVG's own screen
+  matrix land on the canvas's dark bands, while the map is carried by a CSS transform
+  mid-gesture and once it is repainted;
+- Move the map moves the map alone, and undo puts it back;
+- a typed latitude and longitude lands a bus within half a grid step of it;
+- the SVG and PNG carry the map and its credit; a reload brings the map back; None hides
+  it and keeps its place.
 
 The engine's own build (`_build/build-engine.mjs`) runs a separate check:
 - the shipped, pruned and minified bundle must give results identical, bit for bit, to an

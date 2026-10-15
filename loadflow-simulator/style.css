@@ -165,6 +165,60 @@ html.sld-full-open{overflow:hidden;scrollbar-gutter:auto;}
 /* On a phone the panel stays the sheet from below, lifted over the diagram. */
 @media(max-width:700px){ html.sld-full-open body.lf-sheet .controls{z-index:1001;} }
 
+/* ── The map under the diagram (lf-map.js) ──
+   Two canvases behind the SVG, inside the stage's own stacking context, so
+   every control on the stage stays above them and the SVG stays on top. They
+   are drawn in the same frame as the viewBox, so map and diagram move as one. */
+.sld-stage{isolation:isolate;}
+.sld-map{position:absolute;left:0;top:0;width:100%;height:100%;z-index:-1;pointer-events:none;transform-origin:0 0;will-change:transform;}
+.sld-map[hidden]{display:none;}
+#sldMapGrid{opacity:.82;}
+/* The scale bar, bottom left; the hint moves up above it. */
+.sld-scale{position:absolute;left:12px;bottom:10px;display:flex;align-items:flex-end;gap:6px;pointer-events:none;font:500 .7rem/1.2 'DM Mono',ui-monospace,monospace;color:var(--text);}
+.sld-scale[hidden]{display:none;}
+.sld-scale-bar{display:block;height:6px;border:1.6px solid var(--text);border-top:0;box-shadow:0 1px 0 color-mix(in srgb,var(--panel) 80%,transparent);}
+.sld-scale-txt{background:color-mix(in srgb,var(--panel) 80%,transparent);padding:1px 5px;border-radius:4px;}
+.sld-stage.has-map .sld-hint{bottom:34px;}
+.sld-stage.has-map .sld-zoom .btn-icon{box-shadow:var(--shadow-sm);}
+/* Moving the map: the stage says so, and the diagram steps back a little. */
+.sld-stage.is-mapmove{touch-action:none;}
+.sld-stage.is-mapmove #sldSvg{cursor:move;opacity:.72;}
+.sld-stage.is-mapmove::after{box-shadow:inset 0 0 0 2px var(--accent2);}
+.sld-stage.is-mapmove .sld-hint{opacity:.95;}
+.grid-key{display:inline-block;width:32px;height:10px;flex-shrink:0;fill:none;stroke-width:2.2;stroke-linecap:round;}
+.flow-toggle[hidden]{display:none;}
+.flow-toggle input:not(:checked)+.grid-key{opacity:.45;}
+/* Find a place, and Move the map: a row of its own under the view bar, so the
+   canvas keeps every pixel for the diagram. */
+.sld-mapbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:-2px 0 10px;}
+.sld-mapbar[hidden]{display:none;}
+.map-find{position:relative;flex:1 1 200px;max-width:360px;min-width:0;}
+.map-find-ico{position:absolute;left:9px;top:50%;width:15px;height:15px;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+.map-search{width:100%;padding-left:30px;padding-right:28px;}
+.map-find .city-clear{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:none;border:none;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);line-height:0;padding:4px;display:none;}
+.map-find .city-clear .ico{width:16px;height:16px;}
+.map-find .city-clear:hover{color:var(--text);background:var(--input-bg);}
+.map-search:not(:placeholder-shown)~.city-clear{display:block;}
+.map-results{display:none;}
+.map-results.open{display:block;}
+.map-move{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;white-space:nowrap;}
+.map-move svg{width:15px;height:15px;flex-shrink:0;}
+.map-move[aria-pressed="true"]{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--text-inv);}
+.map-note{font-size:.78rem;color:var(--muted);line-height:1.35;min-width:0;flex:1 1 220px;}
+.map-note:empty{display:none;}
+.map-note.is-err{color:var(--warning-text);}
+/* The map's credit, under the diagram (in full screen and embeds too). */
+.map-credit{margin:6px 2px 0;font-size:.72rem;line-height:1.4;color:var(--muted);text-align:right;}
+.map-credit[hidden]{display:none;}
+.map-credit a{color:inherit;text-decoration:underline;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent);}
+.map-credit .is-err{color:var(--warning-text);}
+.sld-card.is-full .map-credit{flex:0 0 auto;margin-top:4px;}
+.sld-card.is-full .sld-mapbar{flex:0 0 auto;}
+.kv-key{display:flex;flex-wrap:wrap;gap:2px 9px;margin-top:5px;font-family:'DM Mono',monospace;font-size:.72rem;}
+.kv-key span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.kv-key i{display:inline-block;width:12px;height:3px;border-radius:2px;}
+.geo-snap{color:var(--muted);font-size:.74rem;margin:2px 0 6px;line-height:1.4;}
+
 /* Flow lanes: arrows that move with SMIL (lf-draw.js), paused while the result is stale. */
 #sldSvg.no-p .fl-p,#sldSvg.no-q .fl-q{display:none;}
 
