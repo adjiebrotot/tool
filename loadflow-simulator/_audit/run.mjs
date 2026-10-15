@@ -246,6 +246,8 @@ async function fresh(viewport = { width: 1440, height: 1000 }) {
   const c = await browser.newContext({ viewport, acceptDownloads: true });
   // Fonts come from Google; the audit runs offline and needs none of them.
   await c.route(/fonts\.(googleapis|gstatic)\.com|googletagmanager/, r => r.fulfill({ status: 200, body: '' }));
+  // Opened as a returning visitor: a first-visit tour would cover the page.
+  await c.addInitScript(() => { const g = Storage.prototype.getItem; Storage.prototype.getItem = function(k){ return /-tour-v\d+-seen$/.test(k) ? '1' : g.call(this, k); }; });
   const page = await c.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(String(e.message)));

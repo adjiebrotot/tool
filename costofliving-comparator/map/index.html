@@ -113,6 +113,7 @@
 <link rel="stylesheet" href="../../light.css">
 <link rel="stylesheet" href="../../shared.css">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../tour-shared.css">
 </head>
 <body class="light">
 <div class="container">
@@ -150,7 +151,7 @@
   <div class="ctrl-scroll">
   <div class="ctrl-panel active" id="tab-inputs">
 
-    <div class="field-group">
+    <div class="field-group" id="youGroup">
       <div class="group-title">You</div>
       <div class="field-row">
         <div class="field-label">Your city <span class="tip-icon" data-tip="Every other city is compared with this one, and money is shown in its currency first.">?</span></div>
@@ -163,7 +164,7 @@
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="compareGroup">
       <div class="group-title">Compare by</div>
       <div class="toggle-row">
         <span class="toggle-label">Salary <span class="tip-icon" id="modeTip" data-tip="" data-tip-options>?</span></span>
@@ -190,7 +191,7 @@
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="lifestyleGroup">
       <div class="group-title">Lifestyle</div>
       <div class="toggle-row">
         <span class="toggle-label">Detail <span class="tip-icon" id="detailTip" data-tip="" data-tip-options>?</span></span>
@@ -315,5 +316,7 @@
 <script src="../../dropdown.js"></script>
 <script src="../../shared.js"></script>
 <script src="script.js"></script>
+<script src="tour.js"></script>
+<script src="../../tour-shared.js"></script>
 </body>
 </html>
