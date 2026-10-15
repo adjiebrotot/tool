@@ -45,6 +45,14 @@ const WEEKDAY_OPTIONS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Sat
 // while it shrinks back toward it (green above zero, red below).
 // (The up and down shades come from upDownColors(), so they follow the theme.)
 const DEFAULT_RANDOM_SEED = 25823952204;
+// What each technical style reads until the reader changes it.
+const TECH_DEFAULTS = {
+  fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200,
+  rsiPeriod:14, rsiOversold:35,
+  bbPeriod:20, bbStd:2, bbTrigger:'below',
+  macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0,
+  adxPeriod:14, adxThreshold:25
+};
 // Tickers are pooled and fetched once over a wide window so later date-range
 // tweaks reuse the cache instead of hitting the Worker again. Yahoo/Stooq simply
 // return each instrument's available history within this window.
@@ -82,6 +90,15 @@ let currentRiskFreeRate = DEFAULT_RISK_FREE_RATE;
 // day's open by default: review in the evening, place the order next morning.
 const DEFAULT_EXEC_TIMING = 'next-open';
 let currentExecTiming = DEFAULT_EXEC_TIMING;
+
+// Optimise mode (see OPTIMISE below): the settings swept on the active scenario,
+// and the sweep on the board (null while the board shows a comparison).
+let optVars = [];                // [{key, start, end, steps, pick}], at most two
+let optResult = null;
+let optPick = [0, 0];            // which tested values the charts below the sweep show
+let optPickWanted = null;        // a saved file's pick, applied once its sweep has run
+let optAbort = false;            // Cancel pressed while a sweep is running
+let runInFlight = false, editedInFlight = false;
 
 /* ─── PRICE CACHE ─── */
 // Keyed by ticker. Stores the widest date range ever fetched so simulations
@@ -148,16 +165,20 @@ function hideStatus(el){ if(!el) return; el.className='status-bar'; el.textConte
    is marked before the first run, because there is no answer to doubt yet. */
 let stale=false;
 function markStale(){
+  // An edit made while a sweep is running belongs to the next run, not this one.
+  if(runInFlight) editedInFlight=true;
   if(stale || !simResults.length) return;
   stale=true;
   document.body.classList.add('is-stale');
   const b=$('simBtn'); if(b) b.classList.add('needs-run');
+  renderStaleNote();
 }
 function markFresh(){
   if(!stale) return;
   stale=false;
   document.body.classList.remove('is-stale');
   const b=$('simBtn'); if(b) b.classList.remove('needs-run');
+  renderStaleNote();
 }
 function scheduleRun(){ markStale(); } // simulation is manual via ▶ Simulate
 
@@ -165,16 +186,24 @@ function scheduleRun(){ markStale(); } // simulation is manual via ▶ Simulate
 // board in place rather than sending it out of date.
 function refreshResultLabels(){
   if(!simResults.length) return;
+  // A sweep on the board names and colours its runs after the scenario it swept.
+  if(optResult){
+    const s=securities.find(x=>x.id===optResult.sid);
+    if(s){ optResult.name=s.name; Object.assign(optResult.S0, {name:s.name, colorHex:s.colorHex, colorSlot:s.colorSlot}); }
+    updateOptChart(); showOptDetail(); renderStaleNote();
+    return;
+  }
   updatePriceChart(); updateEquityChart(); updateTables();
 }
 
 function getActiveTab(){ const t=document.querySelector('.ctrl-tab.active'); return t?t.dataset.tab:'securities'; }
-function updateSimBtn(){ const b=$('simBtn'); if(!b)return; b.textContent='▶ Simulate'; updateBtnRow(); }
+function updateSimBtn(){ const b=$('simBtn'); if(!b)return; if(b.dataset.running!=='1') b.textContent=simBtnLabel(); updateBtnRow(); }
 // On the Data tab the bottom action becomes "Load tickers" (it consumes the Date
 // Range below and you can't simulate from here anyway); other tabs show Simulate.
 function updateBtnRow(){
   const dataTab = getActiveTab()==='data';
   { const b=$('simBtn'); if(b) b.style.display=dataTab?'none':''; }
+  { const c=$('optCancelBtn'); if(c) c.style.display=(!dataTab && optVars.length)?'':'none'; }
   // On the Data tab the bottom action mirrors the chosen download mode: "Load
   // tickers" for Real, "Add Simulated Asset" for Simulated. Other tabs show Simulate.
   const realMode=(typeof dataMode==='undefined' || dataMode==='real');
@@ -394,13 +423,7 @@ function addSecurity(cfg){
     ...cfg
   };
   // Technical-strategy parameters (merged so cfg can override individual fields).
-  sec.tech = Object.assign({
-    fastMaType:'ema', fastMaLen:50, slowMaType:'sma', slowMaLen:200,
-    rsiPeriod:14, rsiOversold:35,
-    bbPeriod:20, bbStd:2, bbTrigger:'below',
-    macdFast:12, macdSlow:26, macdSignal:9, macdHistThreshold:0,
-    adxPeriod:14, adxThreshold:25
-  }, cfg.tech||{});
+  sec.tech = Object.assign({}, TECH_DEFAULTS, cfg.tech||{});
   // The cfg spread above may carry an old default colour or a colour variable
   // from an older file: what the scenario shows is its slot or a picked colour.
   sec.colorHex = picked; sec.colorSlot = slot; delete sec.colorVar;
@@ -458,7 +481,7 @@ function renderScenarioBar(){
     const dot=document.createElement('input');
     dot.type='color'; dot.className='sc-tab-dot'; dot.value=getSecColor(sec); dot.title='Pick colour';
     dot.addEventListener('click',e=>e.stopPropagation());
-    dot.addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
+    dot.addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); refreshResultLabels(); });
     tab.appendChild(dot);
 
     const name=document.createElement('span');
@@ -469,7 +492,8 @@ function renderScenarioBar(){
     badge.className='sc-tab-badge'; badge.innerHTML=sec.type==='ticker'?SVG_TICKER:SVG_CUSTOM;
     tab.appendChild(badge);
 
-    tab.addEventListener('click',()=>{ if(sec.id!==activeSecurityId){ activeSecurityId=sec.id; renderScenarioBar(); renderScenarioConfig(); } });
+    // Optimise runs the scenario on screen alone, so the bar stands down until Cancel.
+    tab.addEventListener('click',()=>{ if(optVars.length) return; if(sec.id!==activeSecurityId){ activeSecurityId=sec.id; renderScenarioBar(); renderScenarioConfig(); } });
     tab.addEventListener('dblclick',()=>startRenameScenario(tab, sec));
     el.appendChild(tab);
   });
@@ -526,14 +550,14 @@ function renderScenarioConfig(){
       <div class="field-group">
         <div class="group-title">Top-Ups</div>
         <div class="sec-row">
-          <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span></label>
+          <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span> ${optBtnHtml('amount','Amount per top-up')}</label>
           <div class="affix-wrap">
             <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
             <input class="affix-input money-input" id="cfgAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="${fmtN(sec.amount)}"/>
           </div>
         </div>
         <div class="sec-row">
-          <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span></label>
+          <label>Yearly increase <span class="tip-icon" data-tip="Grows the invested amount once a year and compounds: 10 makes year 2 +10% and year 3 +21%. 0 keeps it flat.">?</span> ${optBtnHtml('yearlyIncrease','Yearly increase')}</label>
           <div class="affix-wrap">
             <input class="affix-input money-input has-suffix" id="cfgYearlyInc" type="text" inputmode="numeric" data-min="0" data-max="100" value="${fmtN(sec.yearlyIncrease||0)}"/>
             <span class="suffix">%/yr</span>
@@ -552,7 +576,7 @@ function renderScenarioConfig(){
     </div>`;
 
   $('cfgName').addEventListener('input',e=>{ sec.name=e.target.value; renderScenarioBar(); refreshResultLabels(); });
-  $('cfgColor').addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); if(simResults.length){ updatePriceChart(); updateEquityChart(); updateTables(); } });
+  $('cfgColor').addEventListener('input',e=>{ sec.colorHex=e.target.value; renderScenarioBar(); refreshResultLabels(); });
   const asel=$('cfgAssetSelect');
   // Searchable: type a ticker or any part of its full name (shown as the row's chip).
   if(asel && window.SharedDropdown) SharedDropdown.searchable(asel,{placeholder:'Search ticker or name…', minWidth:380});
@@ -572,6 +596,7 @@ function renderScenarioConfig(){
   wireMoneyField($('cfgAmount'),{maxDecimals:2},v=>{ sec.amount=Math.max(0,v); scheduleRun(); });
   wireMoneyField($('cfgYearlyInc'),{maxDecimals:2},v=>{ sec.yearlyIncrease=Math.max(0,v); scheduleRun(); });
   wireStyleBlock(sec);
+  syncOptUi();
 }
 
 function renderStyleOpt(sec,s){
@@ -658,7 +683,7 @@ function styleBlockInner(sec){
 function periodToggleRow(sec, id){
   const p = (sec.period==='weekly') ? 'weekly' : 'monthly';
   const word = p==='weekly' ? 'week' : 'month';
-  return `<div class="param-row"><label>Frequency <span class="tip-icon" data-tip="One purchase per ${word} at most, on the first day the trigger fires. A ${word} it never fires in is skipped, unless 'Invest at End of ${word.charAt(0).toUpperCase()+word.slice(1)}' is ticked below.">?</span></label>
+  return `<div class="param-row"><label>Frequency <span class="tip-icon" data-tip="One purchase per ${word} at most, on the first day the trigger fires. A ${word} it never fires in is skipped, unless 'Invest at End of ${word.charAt(0).toUpperCase()+word.slice(1)}' is ticked below.">?</span> ${optBtnHtml('period','Frequency')}</label>
       <div class="seg" id="secPeriodSeg${id}" role="group" aria-label="Investment frequency">
         <button type="button" class="seg-btn${p==='monthly'?' active':''}" data-period="monthly">Monthly</button>
         <button type="button" class="seg-btn${p==='weekly'?' active':''}" data-period="weekly">Weekly</button>
@@ -675,51 +700,53 @@ function styleParamsBody(sec){
   const s=sec.style, t=sec.tech||{}, id=sec.id;
   const periodWord = (sec.period==='weekly') ? 'Week' : 'Month';
   const eomChecked = MOMENTUM_STYLES.includes(s) ? sec.momentumEOM : sec.techEOM;
-  const eomRow = `<label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>`;
+  // A gauge (optimise mode) beside each setting that can be swept; the check
+  // box keeps its label to itself, so its gauge sits after it, not inside it.
+  const g=(key,label)=>optBtnHtml(key,label);
+  const eomRow = `<div class="eom-row"><label class="tech-eom"><input type="checkbox" id="secTechEOM${id}" ${eomChecked?'checked':''}/> Invest at End of ${periodWord} if target not reached</label>${g('eom','End-of-period buy')}</div>`;
   // A look-back length, in trading days, with its unit inside the field.
   const days=(elId,min,max,val)=>`<div class="affix-wrap unit-days"><input class="affix-input has-suffix" id="${elId}" type="number" inputmode="numeric" min="${min}" max="${max}" step="1" value="${val}"/><span class="suffix">days</span></div>`;
   const maTypeSel=(elId,val)=>`<select class="sel-input" id="${elId}">
       <option value="sma" ${val==='sma'?'selected':''}>SMA</option>
       <option value="ema" ${val==='ema'?'selected':''}>EMA</option></select>`;
   if(s==='monthly-date')
-    return `<div class="param-row"><label>Day of month</label><input class="num-input" id="secDay${id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}"/></div>`;
+    return `<div class="param-row"><label>Day of month ${g('dayOfMonth','Day of month')}</label><input class="num-input" id="secDay${id}" type="number" min="1" max="31" step="1" value="${Math.min(31,Math.max(1,sec.dayOrDate||1))}"/></div>`;
   if(s==='weekly-day')
-    return `<div class="param-row"><label>Day of week</label><select class="sel-input" id="secDay${id}" style="max-width:160px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select></div>`;
+    return `<div class="param-row"><label>Day of week ${g('weekday','Day of week')}</label><select class="sel-input" id="secDay${id}" style="max-width:160px">${WEEKDAY_OPTIONS.map((d,i)=>`<option value="${i+1}" ${Math.min(7,Math.max(1,sec.dayOrDate))===i+1?'selected':''}>${d}</option>`).join('')}</select></div>`;
   if(MOMENTUM_STYLES.includes(s))
-    return `<div style="padding:4px 0 2px">
+    return `<div class="mom-row">
         <div class="slider-head" style="margin-bottom:4px">
-          <span style="font-size:.8rem;color:var(--muted);font-weight:700">Threshold</span>
+          <span class="mom-label">Threshold ${g('momentumPct', s==='momentum-peak'?'Rise threshold':'Dip threshold')}</span>
           <span id="secMomPctVal${id}" class="slider-value">${(+sec.momentumPct).toFixed(1)}%</span>
         </div>
         <input type="range" id="secMomPct${id}" data-readout="secMomPctVal${id}" min="0.1" max="50" step="0.1" value="${sec.momentumPct}" style="width:100%;accent-color:var(--accent);cursor:pointer"/>
       </div>${eomRow}`;
   if(s==='tech-ma-cross')
-    return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}${days(`secMaFastLen${id}`,1,400,t.fastMaLen)}</div></div>
-      <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}${days(`secMaSlowLen${id}`,1,400,t.slowMaLen)}</div></div>
+    return `<div class="param-row"><label>Fast MA</label><div class="param-grp">${maTypeSel(`secMaFastType${id}`,t.fastMaType)}${g('tech.fastMaType','Fast MA type')}${days(`secMaFastLen${id}`,1,400,t.fastMaLen)}${g('tech.fastMaLen','Fast MA length')}</div></div>
+      <div class="param-row"><label>Slow MA</label><div class="param-grp">${maTypeSel(`secMaSlowType${id}`,t.slowMaType)}${g('tech.slowMaType','Slow MA type')}${days(`secMaSlowLen${id}`,1,400,t.slowMaLen)}${g('tech.slowMaLen','Slow MA length')}</div></div>
       <div class="param-note">Buys on a golden cross, the Fast MA crossing above the Slow MA.</div>${eomRow}`;
   if(s==='tech-rsi')
-    return `<div class="param-row"><label>RSI period</label>${days(`secRsiPeriod${id}`,2,100,t.rsiPeriod)}</div>
-      <div class="param-row"><label>Oversold &lt;</label><input class="num-input" id="secRsiOversold${id}" type="number" min="1" max="99" step="1" value="${t.rsiOversold}"/></div>
+    return `<div class="param-row"><label>RSI period ${g('tech.rsiPeriod','RSI period')}</label>${days(`secRsiPeriod${id}`,2,100,t.rsiPeriod)}</div>
+      <div class="param-row"><label>Oversold &lt; ${g('tech.rsiOversold','Oversold level')}</label><input class="num-input" id="secRsiOversold${id}" type="number" min="1" max="99" step="1" value="${t.rsiOversold}"/></div>
       <div class="param-note">Buys when RSI falls below the oversold threshold.</div>${eomRow}`;
   if(s==='tech-bollinger')
-    return `<div class="param-row"><label>MA period</label>${days(`secBbPeriod${id}`,2,200,t.bbPeriod)}</div>
-      <div class="param-row"><label>Deviations</label><div class="affix-wrap unit-x"><input class="affix-input has-suffix" id="secBbStd${id}" type="number" inputmode="decimal" min="0.5" max="5" step="0.1" value="${t.bbStd}"/><span class="suffix">×</span></div></div>
-      <div class="param-row"><label>Trigger</label><select class="sel-input" id="secBbTrigger${id}" style="max-width:220px"><option value="below" ${t.bbTrigger==='below'?'selected':''}>Close below lower band</option><option value="reclaim" ${t.bbTrigger==='reclaim'?'selected':''}>Reclaim above lower band</option></select></div>
+    return `<div class="param-row"><label>MA period ${g('tech.bbPeriod','Bollinger MA period')}</label>${days(`secBbPeriod${id}`,2,200,t.bbPeriod)}</div>
+      <div class="param-row"><label>Deviations ${g('tech.bbStd','Bollinger deviations')}</label><div class="affix-wrap unit-x"><input class="affix-input has-suffix" id="secBbStd${id}" type="number" inputmode="decimal" min="0.5" max="5" step="0.1" value="${t.bbStd}"/><span class="suffix">×</span></div></div>
+      <div class="param-row"><label>Trigger ${g('tech.bbTrigger','Bollinger trigger')}</label><select class="sel-input" id="secBbTrigger${id}" style="max-width:220px"><option value="below" ${t.bbTrigger==='below'?'selected':''}>Close below lower band</option><option value="reclaim" ${t.bbTrigger==='reclaim'?'selected':''}>Reclaim above lower band</option></select></div>
       <div class="param-note">Bollinger Band = MA ± N standard deviations.</div>${eomRow}`;
+  const macdRows=()=>`<div class="param-row"><label>Fast EMA ${g('tech.macdFast','MACD fast EMA')}</label>${days(`secMacdFast${id}`,1,100,t.macdFast)}</div>
+      <div class="param-row"><label>Slow EMA ${g('tech.macdSlow','MACD slow EMA')}</label>${days(`secMacdSlow${id}`,1,200,t.macdSlow)}</div>
+      <div class="param-row"><label>Signal EMA ${g('tech.macdSignal','MACD signal EMA')}</label>${days(`secMacdSignal${id}`,1,100,t.macdSignal)}</div>`;
   if(s==='tech-macd-cross')
-    return `<div class="param-row"><label>Fast EMA</label>${days(`secMacdFast${id}`,1,100,t.macdFast)}</div>
-      <div class="param-row"><label>Slow EMA</label>${days(`secMacdSlow${id}`,1,200,t.macdSlow)}</div>
-      <div class="param-row"><label>Signal EMA</label>${days(`secMacdSignal${id}`,1,100,t.macdSignal)}</div>
+    return `${macdRows()}
       <div class="param-note">Buys when the MACD line crosses above the signal line.</div>${eomRow}`;
   if(s==='tech-macd-hist')
-    return `<div class="param-row"><label>Fast EMA</label>${days(`secMacdFast${id}`,1,100,t.macdFast)}</div>
-      <div class="param-row"><label>Slow EMA</label>${days(`secMacdSlow${id}`,1,200,t.macdSlow)}</div>
-      <div class="param-row"><label>Signal EMA</label>${days(`secMacdSignal${id}`,1,100,t.macdSignal)}</div>
-      <div class="param-row"><label>Hist &gt;</label><input class="num-input" id="secMacdHist${id}" type="number" step="0.1" value="${t.macdHistThreshold}"/></div>
+    return `${macdRows()}
+      <div class="param-row"><label>Hist &gt; ${g('tech.macdHistThreshold','Histogram threshold')}</label><input class="num-input" id="secMacdHist${id}" type="number" step="0.1" value="${t.macdHistThreshold}"/></div>
       <div class="param-note">Buys when the histogram turns positive after being negative.</div>${eomRow}`;
   if(s==='tech-adx')
-    return `<div class="param-row"><label>ADX period</label>${days(`secAdxPeriod${id}`,2,100,t.adxPeriod)}</div>
-      <div class="param-row"><label>Trend &gt;</label><input class="num-input" id="secAdxThreshold${id}" type="number" min="1" max="100" step="1" value="${t.adxThreshold}"/></div>
+    return `<div class="param-row"><label>ADX period ${g('tech.adxPeriod','ADX period')}</label>${days(`secAdxPeriod${id}`,2,100,t.adxPeriod)}</div>
+      <div class="param-row"><label>Trend &gt; ${g('tech.adxThreshold','ADX threshold')}</label><input class="num-input" id="secAdxThreshold${id}" type="number" min="1" max="100" step="1" value="${t.adxThreshold}"/></div>
       <div class="param-note">Buys only when ADX shows a strong trend (close-based ADX).</div>${eomRow}`;
   return ''; // forward-looking styles have no parameters
 }
@@ -745,6 +772,9 @@ function refreshStyleBlock(sec){
   const c=$(`styleBlock${sec.id}`); if(!c) return;
   c.innerHTML=styleBlockInner(sec);
   wireStyleBlock(sec);
+  // A new style brings its own settings: gauges for them, and a swept setting
+  // the style no longer has is dropped.
+  syncOptUi();
 }
 
 function wireStyleBlock(sec){
@@ -1177,6 +1207,7 @@ function updateRateInfo(){
 // A new scenario defaults to a ticker (the loaded pool) when available, else a
 // custom simulated asset, matching the "ticker first" preference in the editor.
 $('addScenarioBtn').addEventListener('click', ()=>{
+  if(optVars.length) return;
   const tks = loadedTickers();
   const n = securities.length + 1;
   // A scenario references one asset from the shared pool (loaded tickers or simulated
@@ -1187,8 +1218,8 @@ $('addScenarioBtn').addEventListener('click', ()=>{
   else addSecurity({type:'custom', name:'Scenario '+n});
   scheduleRun();
 });
-$('dupScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null){ duplicateSecurity(activeSecurityId); scheduleRun(); } });
-$('delScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null){ removeSecurity(activeSecurityId); scheduleRun(); } });
+$('dupScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null && !optVars.length){ duplicateSecurity(activeSecurityId); scheduleRun(); } });
+$('delScenarioBtn').addEventListener('click', ()=>{ if(activeSecurityId!=null && !optVars.length){ removeSecurity(activeSecurityId); scheduleRun(); } });
 
 /* ─── TICKER POOL WIRING ─── */
 $('loadTickersBtn').addEventListener('click', ()=>loadTickerPool());
@@ -1231,6 +1262,8 @@ $('currencySymbol').addEventListener('change',e=>{
   currentCurrencySymbol=e.target.value;
   const pfx=$('cfgAmountPrefix'); if(pfx) pfx.textContent=currentCurrencySymbol||'$';
   if(simResults.length){ updateTables(); updateEquityChart(); updatePriceChart(); }
+  if(optResult){ updateOptChart(); renderOptPickers(); }
+  syncOptUi();   // the gate's note names money in the new symbol
 });
 $('randomSeed').addEventListener('input',e=>{
   currentRandomSeed = sanitizeSeed(e.target.value);
@@ -1244,7 +1277,10 @@ $('riskFreeRate').addEventListener('input',e=>{
   const n=parseFloat(e.target.value);
   currentRiskFreeRate = Number.isFinite(n) ? Math.max(0,n) : 0;
   // Only the advanced metrics depend on this - re-render the summary in place.
-  if(simResults.length) renderSummary();
+  // A sweep keeps only each run's figures, its Sharpe and Sortino taken at the
+  // old rate, so ranking by the new one takes a fresh run.
+  if(optResult) markStale();
+  else if(simResults.length) renderSummary();
   renderAssumptions();
 });
 
@@ -1461,10 +1497,883 @@ function alignToCommonDates(series){
   });
 }
 
+/* ─── OPTIMISE: WHAT CAN BE SWEPT, AND HOW ─────────────────────────────────────
+   Optimise mode runs ONE scenario many times, sweeping up to two of its
+   settings over a range, so a reader can see how the result moves with them
+   and where it peaks. It follows the Portfolio tool's rule: a setting qualifies
+   only when changing it changes nothing else on the form, so every tested value
+   is a plan the reader could have typed in, with no field quietly appearing,
+   vanishing or being filled with a guess:
+
+     - plain numbers: the amount per top-up and its yearly increase, the day of
+       the month, a momentum threshold, and every number an indicator reads;
+     - fixed lists: the weekday, the Monthly / Weekly frequency, the End of
+       period buy, a moving average's type and the Bollinger trigger.
+
+   The frequency carries one contained knock-on, the one the form applies when
+   it is switched by hand: the amount per purchase follows it, so each year's
+   money stays the same.
+
+   Left out on purpose: the asset and the investment style (each swaps the
+   fields around it), Trade at, the seed, the dates, and the risk-free rate,
+   which only feeds Sharpe and Sortino and moves no money.
+
+   Every spec is built from the scenario as it stands, so `optSpec` returning
+   null means "not sweepable here" (a day of the month under a weekly style, an
+   RSI number under a moving-average one), and a swept setting that stops
+   qualifying is dropped (pruneOptVars). */
+const OPT_MAX_VARS = 2;
+const OPT_MAX_STEPS = 50;      // values per swept setting
+const OPT_MAX_RUNS = 625;      // runs per optimisation, 25 x 25 at the most
+const OPT_ICON = '<svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 18.4a8 8 0 1 1 11.4 0"/><path d="M12 13.4 8.6 9.3"/><circle cx="12" cy="13.6" r="1.35"/></svg>';
+const OPT_FREQS = [{v:'monthly', l:'Monthly'}, {v:'weekly', l:'Weekly'}];
+// The settings an indicator style reads, keyed as in sec.tech, with the styles
+// that show each one and the bounds its field carries.
+const OPT_MA_TYPES = [{v:'sma', l:'SMA'}, {v:'ema', l:'EMA'}];
+const OPT_TECH = {
+  fastMaType:  {label:'Fast MA type',         styles:['tech-ma-cross'], list:OPT_MA_TYPES},
+  fastMaLen:   {label:'Fast MA length',       styles:['tech-ma-cross'], min:1,   max:400, int:true, unit:'days'},
+  slowMaType:  {label:'Slow MA type',         styles:['tech-ma-cross'], list:OPT_MA_TYPES},
+  slowMaLen:   {label:'Slow MA length',       styles:['tech-ma-cross'], min:1,   max:400, int:true, unit:'days'},
+  rsiPeriod:   {label:'RSI period',           styles:['tech-rsi'],      min:2,   max:100, int:true, unit:'days'},
+  rsiOversold: {label:'Oversold level',       styles:['tech-rsi'],      min:1,   max:99,  int:true, unit:'', spread:15},
+  bbPeriod:    {label:'Bollinger MA period',  styles:['tech-bollinger'], min:2,  max:200, int:true, unit:'days'},
+  bbStd:       {label:'Bollinger deviations', styles:['tech-bollinger'], min:0.5, max:5,  dp:1, unit:'×', spread:1},
+  bbTrigger:   {label:'Bollinger trigger',    styles:['tech-bollinger'], list:[{v:'below', l:'Close below lower band'}, {v:'reclaim', l:'Reclaim above lower band'}]},
+  macdFast:    {label:'MACD fast EMA',        styles:['tech-macd-cross','tech-macd-hist'], min:1, max:100, int:true, unit:'days'},
+  macdSlow:    {label:'MACD slow EMA',        styles:['tech-macd-cross','tech-macd-hist'], min:1, max:200, int:true, unit:'days'},
+  macdSignal:  {label:'MACD signal EMA',      styles:['tech-macd-cross','tech-macd-hist'], min:1, max:100, int:true, unit:'days'},
+  // The field takes any number, in the price's own units, so the sweep opens a
+  // step either side of the value it holds.
+  macdHistThreshold:{label:'Histogram threshold', styles:['tech-macd-hist'], min:-1000, max:1000, dp:2, unit:'',
+    def:b=>({start:b-1, end:b+1, steps:11})},
+  adxPeriod:   {label:'ADX period',           styles:['tech-adx'],      min:2,   max:100, int:true, unit:'days'},
+  adxThreshold:{label:'ADX threshold',        styles:['tech-adx'],      min:1,   max:100, int:true, unit:'', spread:15}
+};
+
+function optClamp(v, lo, hi){ return Math.min(hi, Math.max(lo, v)); }
+function optRound(v, spec){ return spec.int ? Math.round(v) : +(+v).toFixed(spec.dp==null ? 2 : spec.dp); }
+// A range around the value the field holds now: half to one and a half times it
+// for a size, a fixed spread for a level, the field's own bounds either way.
+function optAround(spec, base, steps){
+  let a, b;
+  if(spec.spread){ a=base-spec.spread; b=base+spec.spread; }
+  else if(base>0){ a=base/2; b=base*1.5; if(spec.int && b-a<4){ a=base-2; b=base+2; } }
+  else { a=spec.min; b=spec.min+10; }
+  a=optRound(optClamp(a, spec.min, spec.max), spec); b=optRound(optClamp(b, spec.min, spec.max), spec);
+  if(b<=a) b=optRound(optClamp(a+(spec.int?4:1), spec.min, spec.max), spec);
+  return {start:a, end:b, steps: spec.int ? Math.min(steps||11, b-a+1) : (steps||11)};
+}
+// Money keeps its cents (a weekly amount the frequency rescaled is 115.38, not 115).
+function optMoney(n){ return (n<0?'−':'')+(currentCurrencySymbol||'')+SharedFmt.formatThousands(String(Math.abs(n)), {maxDecimals:2}); }
+function optFmtNum(spec, v){
+  const n=Number(v);
+  if(spec.unit==='money') return optMoney(n);
+  const s=spec.int ? String(Math.round(n)) : String(+n.toFixed(spec.dp==null ? 2 : spec.dp));
+  if(spec.unit==='%' || spec.unit==='%/yr') return s+'%';
+  if(spec.unit==='days') return s+(Math.round(n)===1?' day':' days');
+  if(spec.unit==='×') return s+'×';
+  return s;
+}
+
+// The spec of one sweepable setting of scenario `sec`, or null when that setting
+// is not sweepable on `sec` as it stands. A key names the setting:
+//   amount, yearlyIncrease, dayOfMonth, weekday, momentumPct, period, eom,
+//   tech.<f> for f an OPT_TECH key.
+function optSpec(key, sec){
+  if(!sec || typeof key!=='string') return null;
+  const st=sec.style||'', isMom=MOMENTUM_STYLES.includes(st), isTech=TECH_STYLES.includes(st);
+  const num=o=>Object.assign({key, kind:'num', dp:2, steps:11, fmt(v){ return optFmtNum(this, v); }}, o);
+  const list=o=>Object.assign({key, kind:'list', fmt(v){ const x=this.options.find(q=>String(q.v)===String(v)); return x ? x.l : String(v); }}, o);
+  switch(key){
+    case 'amount': return num({label:'Amount per top-up', unit:'money', min:0, max:1e11,
+      get:q=>Number(q.amount)||0, apply:(x,v)=>{ x.amount=v; }});
+    case 'yearlyIncrease': return num({label:'Yearly increase', unit:'%/yr', min:0, max:100,
+      get:q=>Number(q.yearlyIncrease)||0, apply:(x,v)=>{ x.yearlyIncrease=v; },
+      def:b=>({start:0, end:Math.max(10, Math.ceil(b*2)), steps:11})});
+    case 'dayOfMonth': if(st!=='monthly-date') return null;
+      return num({label:'Day of month', unit:'', min:1, max:31, int:true,
+        get:q=>optClamp(parseInt(q.dayOrDate,10)||1, 1, 31), apply:(x,v)=>{ x.dayOrDate=v; },
+        def:()=>({start:1, end:28, steps:28})});
+    case 'weekday': if(st!=='weekly-day') return null;
+      // A weekend day buys on the nearest trading day, Friday, so the sweep
+      // opens on the five trading days; the weekend stays one click away.
+      return list({label:'Day of week', options:WEEKDAY_OPTIONS.map((l,i)=>({v:i+1, l})), defPick:[1,2,3,4,5],
+        get:q=>optClamp(parseInt(q.dayOrDate,10)||1, 1, 7), apply:(x,v)=>{ x.dayOrDate=v; }});
+    case 'momentumPct': if(!isMom) return null;
+      return num({label:st==='momentum-peak' ? 'Rise threshold' : 'Dip threshold', unit:'%', min:0.1, max:50, dp:1,
+        get:q=>parseFloat(q.momentumPct)||5, apply:(x,v)=>{ x.momentumPct=v; }});
+    case 'period': if(!isMom && !isTech) return null;
+      return list({label:'Frequency', options:OPT_FREQS, late:true,
+        get:q=>q.period==='weekly' ? 'weekly' : 'monthly',
+        // The amount is per purchase, so it follows the frequency as it does when
+        // the toggle is switched by hand (rescaleAmount): each year's money stays.
+        apply:(x,v)=>{
+          const from=x.period==='weekly' ? 'weekly' : 'monthly';
+          if(from!==v){ const c=SharedFreq.convert(x.amount, from, v, 2); if(c!==null) x.amount=c; }
+          x.period=v;
+        }});
+    case 'eom': if(!isMom && !isTech) return null;
+      return list({label:'End-of-period buy', options:[{v:'on', l:'On'}, {v:'off', l:'Off'}],
+        get:q=>(isMom ? q.momentumEOM : q.techEOM) ? 'on' : 'off',
+        // The check box sets both, so a variant does too.
+        apply:(x,v)=>{ x.momentumEOM=x.techEOM=(v==='on'); }});
+  }
+  const m=/^tech\.(\w+)$/.exec(key);
+  if(m){
+    const f=m[1], meta=OPT_TECH[f];
+    if(!meta || !meta.styles.includes(st)) return null;
+    const get=q=>{ const t=q.tech||{}; return t[f]!=null ? t[f] : TECH_DEFAULTS[f]; };
+    const apply=(x,v)=>{ x.tech=Object.assign({}, x.tech); x.tech[f]=v; };
+    if(meta.list) return list({label:meta.label, options:meta.list, get, apply});
+    return num({label:meta.label, unit:meta.unit, min:meta.min, max:meta.max, int:!!meta.int, dp:meta.dp==null?2:meta.dp,
+      spread:meta.spread, def:meta.def, get, apply});
+  }
+  return null;
+}
+// The range a setting opens on the first time it is picked.
+function optDefaultRange(spec, sec){
+  if(spec.kind==='list'){
+    const pick=(spec.defPick || spec.options.map(o=>o.v)).slice();
+    return {start:pick[0], end:pick[pick.length-1], steps:pick.length, pick};
+  }
+  const base=Number(spec.get(sec))||0;
+  const r=Object.assign({steps:11}, spec.def ? spec.def(base) : optAround(spec, base, spec.steps));
+  r.start=optRound(optClamp(r.start, spec.min, spec.max), spec); r.end=optRound(optClamp(r.end, spec.min, spec.max), spec);
+  return r;
+}
+
+// The values a swept setting takes, in order, as they are run: a list setting
+// runs the options picked, in the list's order, a number runs `steps` evenly
+// spaced values, each rounded to the precision its field takes (whole days for
+// a look-back, tenths for a threshold), so every value that ran is one a reader
+// could type, and never twice.
+function optValues(spec, vr){
+  if(!spec || !vr) return [];
+  if(spec.kind==='list'){
+    const vals=spec.options.map(o=>o.v);
+    if(Array.isArray(vr.pick)){ const want=new Set(vr.pick.map(String)); return vals.filter(x=>want.has(String(x))); }
+    let a=vals.findIndex(x=>String(x)===String(vr.start)), b=vals.findIndex(x=>String(x)===String(vr.end));
+    if(a<0 || b<0) return [];
+    if(a>b){ const t=a; a=b; b=t; }
+    return vals.slice(a, b+1);
+  }
+  let a=Number(vr.start), b=Number(vr.end);
+  if(!isFinite(a) || !isFinite(b)) return [];
+  a=optClamp(a, spec.min, spec.max); b=optClamp(b, spec.min, spec.max);
+  if(a>b){ const t=a; a=b; b=t; }
+  const n=Math.max(2, Math.min(OPT_MAX_STEPS, Math.round(Number(vr.steps))||2));
+  const out=[];
+  for(let i=0;i<n;i++){
+    const v=optRound(a+(b-a)*i/(n-1), spec);
+    if(!out.length || out[out.length-1]!==v) out.push(v);
+  }
+  return out;
+}
+// One tested plan: a copy of the scenario with the swept values written in,
+// exactly where the form would write them. Nothing live is touched, and the
+// price series is shared, never copied. null when a setting no longer applies.
+function optVariant(sec, vars, vals){
+  const v=Object.assign({}, sec, {tech:Object.assign({}, sec.tech||{})});
+  const late=[];
+  for(let k=0;k<vars.length;k++){
+    const s=optSpec(vars[k].key, sec);
+    if(!s) return null;
+    if(s.late) late.push([s, vals[k]]); else s.apply(v, vals[k]);
+  }
+  // The frequency goes last, so a swept amount is rescaled with it like a typed one.
+  late.forEach(([s, val])=>s.apply(v, val));
+  return v;
+}
+// The figures one run is read by: the summary tile's and the advanced metrics.
+function optMetricsOf(res){
+  const fin=res.finalEquity, dep=res.totalDeposited, net=fin-dep;
+  const m=computeMetrics(res);
+  return { final:fin, net, roi:dep>0 ? net/dep : 0, dep, trades:res.investRows.length,
+           sharpe:m.sharpe, sortino:m.sortino, twr:m.cagrTwr, mwr:m.cagrMwr };
+}
+
+/* ─── OPTIMISE MODE: THE FORM ──────────────────────────────────────────────────
+   A gauge beside every sweepable field opens the range editor. Picking one puts
+   the page in optimise mode: only the scenario on screen runs, so the bar that
+   switches scenarios stands down, ▶ Simulate becomes ▶ Optimise with Cancel
+   beside it, and the note above the gate says what the next run will sweep. */
+function optBtnHtml(key, label){
+  return `<button type="button" class="opt-btn" data-opt="${escapeHtml(key)}" title="Add ${escapeHtml(label)} to optimisation" aria-label="Add ${escapeHtml(label)} to optimisation">${OPT_ICON}</button>`;
+}
+function optPlan(sec){
+  const specs=optVars.map(v=>optSpec(v.key, sec));
+  const values=optVars.map((v,k)=>optValues(specs[k], v));
+  return { specs, values, runs:values.reduce((n,a)=>n*a.length, 1) };
+}
+// "250 to $750", "7 to 21 days": the unit said once, at the end. A list names
+// the values it picked: "Monthly, Weekly", "Monday, Wednesday, Friday".
+function optRangeText(spec, vals){
+  if(!vals.length) return '';
+  if(spec.kind==='list') return vals.length<=4 ? vals.map(v=>spec.fmt(v)).join(', ') : spec.fmt(vals[0])+', '+spec.fmt(vals[1])+' … '+spec.fmt(vals[vals.length-1]);
+  const first=(spec.kind==='num' && spec.unit!=='money') ? optFmtNum(Object.assign({}, spec, {unit:''}), vals[0]) : spec.fmt(vals[0]);
+  return first+' to '+spec.fmt(vals[vals.length-1]);
+}
+// A swept setting that no longer qualifies (its field went away with a style)
+// is dropped, and so is any past the first two.
+function pruneOptVars(){
+  if(!optVars.length) return;
+  const sec=getActiveSec();
+  const keep=[];
+  optVars.forEach(v=>{
+    const s=optSpec(v.key, sec);
+    if(keep.length>=OPT_MAX_VARS || !s || keep.some(k=>k.key===v.key) || (s.kind==='list' && !Array.isArray(v.pick) && !optValues(s, v).length)) return;
+    keep.push(v);
+  });
+  if(keep.length!==optVars.length){ optVars=keep; optChanged(); }
+}
+function optRowOf(btn){ return btn.closest('.param-row, .sec-row, .mom-row, .eom-row'); }
+// Everything the mode shows on the form, from optVars: the gauges, the swept
+// rows, the locked scenario bar, the gate and its note.
+function syncOptUi(){
+  pruneOptVars();
+  const sec=getActiveSec(), on=optVars.length>0;
+  document.body.classList.toggle('is-optimise', on);
+  // A row can hold two gauges (a moving average's type and length), so a row is
+  // lit when any gauge in it is swept, decided once for all of them.
+  const lit=new Set();
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    const key=b.dataset.opt, spec=optSpec(key, sec);
+    const vr=optVars.find(v=>v.key===key);
+    b.hidden=!spec;
+    const full=!vr && optVars.length>=OPT_MAX_VARS;
+    b.classList.toggle('on', !!vr);
+    b.classList.toggle('is-full', full);
+    const label=spec ? spec.label : '';
+    b.title = vr ? `Optimising ${label}: ${optRangeText(spec, optValues(spec, vr))}. Click to change.`
+            : full ? `Up to ${OPT_MAX_VARS} settings at once. Remove one to pick this.`
+            : `Add ${label} to optimisation`;
+    const row=optRowOf(b);
+    if(row && vr && spec) lit.add(row);
+  });
+  document.querySelectorAll('.opt-on').forEach(r=>{ if(!lit.has(r)) r.classList.remove('opt-on'); });
+  lit.forEach(r=>r.classList.add('opt-on'));
+  const bar=document.querySelector('.sc-bar');
+  if(bar){ bar.classList.toggle('is-locked', on); if(on) bar.title='Optimise runs one scenario. Cancel to switch, add or remove scenarios.'; else bar.removeAttribute('title'); }
+  ['addScenarioBtn','dupScenarioBtn','delScenarioBtn'].forEach(id=>{ const e=$(id); if(e) e.disabled=on; });
+  const sb=$('simBtn');
+  if(sb){ sb.classList.toggle('is-opt', on); if(sb.dataset.running!=='1') sb.textContent=simBtnLabel(); }
+  updateBtnRow();
+  renderStaleNote();
+  updateSimBtnState();
+}
+function simBtnLabel(){ return optVars.length ? '▶ Optimise' : '▶ Simulate'; }
+const STALE_TEXT='Inputs changed. Press Simulate to run them.';
+function renderStaleNote(){
+  const el=$('staleNote'); if(!el) return;
+  if(!optVars.length){ el.textContent=STALE_TEXT; return; }
+  const sec=getActiveSec(); if(!sec) return;
+  const plan=optPlan(sec), two=optVars.length>1;
+  const parts=optVars.map((v,k)=>{
+    const s=plan.specs[k]; if(!s) return '';
+    const vals=plan.values[k];
+    return '<b>'+escapeHtml(s.label)+'</b> '+escapeHtml(optRangeText(s, vals))+(two?' ('+vals.length+')':'');
+  }).filter(Boolean);
+  el.innerHTML=(stale ? '<span class="sn-stale">Inputs changed.</span> ' : '')+
+    'Optimise <span data-no-abbr>'+escapeHtml(sec.name)+'</span>: '+parts.join(' × ')+', '+plan.runs+(plan.runs===1?' run.':' runs.');
+}
+// After any change to what is swept: save, and send an optimisation on the board
+// (or one still running) out of date. A comparison on the board still answers
+// the form, so it is left alone. Callers redraw the form with syncOptUi.
+function optChanged(){
+  if(optResult || runInFlight) markStale();
+  if(persist) persist.schedule();
+}
+
+/* ── The range editor ── */
+let optEditKey=null, optEditReturn=null;
+function optUnitAffix(spec){
+  const pre=spec.unit==='money' ? (currentCurrencySymbol||'') : '';
+  const suf={'%':'%', '%/yr':'%/yr', days:'days', '×':'×'}[spec.unit]||'';
+  return {pre, suf};
+}
+function optFieldText(spec, v){
+  return SharedFmt.formatThousands(String(v), {maxDecimals:spec.int?0:(spec.dp==null?2:spec.dp), allowNegative:spec.min<0});
+}
+function openOptModal(key, from){
+  const sec=getActiveSec(), spec=optSpec(key, sec);
+  if(!sec || !spec) return;
+  let vr=optVars.find(v=>v.key===key);
+  if(!vr){
+    if(optVars.length>=OPT_MAX_VARS) return;
+    vr=Object.assign({key}, optDefaultRange(spec, sec));
+    optVars.push(vr);
+    syncOptUi(); optChanged();
+  }
+  optEditKey=key; optEditReturn=from||null;
+  $('optModalTitle').textContent='Optimise '+spec.label;
+  const listy=spec.kind==='list';
+  $('optNumFields').hidden=listy;
+  $('optListFields').hidden=!listy;
+  if(listy){
+    // An old Start..End range opens as the options it ran, picked.
+    if(!Array.isArray(vr.pick)) vr.pick=optValues(spec, vr);
+    const on=new Set(vr.pick.map(String)), sel=$('optPickSel');
+    sel.innerHTML=spec.options.map((o,i)=>`<option value="${i}"${on.has(String(o.v))?' selected':''}>${escapeHtml(o.l)}</option>`).join('');
+    sel.size=Math.min(spec.options.length, 7);
+  } else {
+    const u=optUnitAffix(spec);
+    [['optStart','optStartPre','optStartSuf',vr.start],['optEnd','optEndPre','optEndSuf',vr.end]].forEach(([id,pre,suf,val])=>{
+      const el=$(id);
+      el.setAttribute('data-min', String(spec.min)); el.setAttribute('data-max', String(spec.max));
+      if(spec.int) el.setAttribute('step','1'); else el.removeAttribute('step');
+      el.classList.toggle('money-input', spec.unit==='money');
+      el.classList.toggle('has-suffix', !!u.suf);
+      if(u.suf) el.removeAttribute('data-unitless'); else el.setAttribute('data-unitless','');
+      $(pre).textContent=u.pre; $(pre).hidden=!u.pre;
+      $(suf).textContent=u.suf; $(suf).hidden=!u.suf;
+      el.value=optFieldText(spec, val);
+    });
+    $('optSteps').value=String(vr.steps);
+  }
+  renderOptModalNote();
+  const ov=$('optModal'); ov.hidden=false;
+  document.body.classList.add('opt-modal-open');
+  const first=listy ? $('optPickSel') : $('optStart');
+  setTimeout(()=>{ try{ first.focus(); if(first.select) first.select(); }catch(_){} }, 0);
+}
+function closeOptModal(){
+  const ov=$('optModal'); if(!ov || ov.hidden) return;
+  ov.hidden=true; document.body.classList.remove('opt-modal-open');
+  const back=optEditReturn; optEditKey=null; optEditReturn=null;
+  // The editor's own button may have been redrawn while it was open.
+  const again=back && document.contains(back) ? back : null;
+  if(again) try{ again.focus(); }catch(_){}
+}
+// What the range comes to, under the fields: how many values run and which.
+function renderOptModalNote(){
+  const el=$('optPreview'); if(!el || !optEditKey) return;
+  const sec=getActiveSec(), spec=optSpec(optEditKey, sec), vr=optVars.find(v=>v.key===optEditKey);
+  if(!spec || !vr){ el.textContent=''; return; }
+  $('optModalSub').innerHTML='<span data-no-abbr>'+escapeHtml(sec.name)+'</span>, now '+escapeHtml(spec.fmt(spec.get(sec)))+'.'+
+    (spec.key==='period' ? optFreqDemo(sec) : '');
+  const vals=optValues(spec, vr);
+  let html;
+  if(vals.length<2) html='<span class="bad">'+(spec.kind==='list' ? 'Pick at least two values.' : 'Start and End give one value. Widen the range.')+'</span>';
+  else {
+    const shown=vals.length<=8 ? vals.map(v=>spec.fmt(v)).join(', ') : vals.slice(0,3).map(v=>spec.fmt(v)).join(', ')+' … '+vals.slice(-2).map(v=>spec.fmt(v)).join(', ');
+    html=vals.length+' values: '+escapeHtml(shown)+'.';
+  }
+  const plan=optPlan(sec);
+  if(plan.runs>OPT_MAX_RUNS) html+=' <span class="bad">'+plan.runs+' runs in all, over the '+OPT_MAX_RUNS+' a run allows: lower the steps.</span>';
+  el.innerHTML=html;
+}
+// The frequency rescales the amount per purchase so each year's money stays the
+// same (see optSpec). Shown as the amounts themselves, from the current input.
+function optFreqDemo(sec){
+  const from=sec.period==='weekly' ? 'weekly' : 'monthly';
+  const year=SharedFreq.convert(Number(sec.amount)||0, from, 'yearly', 2);
+  if(year===null) return '';
+  const word={weekly:'week', monthly:'month'};
+  return ' Each frequency keeps '+escapeHtml(optMoney(year))+' a year:<ul class="opt-freq-demo">'+OPT_FREQS.map(o=>{
+    const v=o.v===from ? Number(sec.amount)||0 : SharedFreq.convert(Number(sec.amount)||0, from, o.v, 2);
+    return '<li'+(o.v===from?' class="is-now"':'')+'><span>'+escapeHtml(o.l)+'</span><span>'+escapeHtml(optMoney(v))+' per '+word[o.v]+'</span></li>';
+  }).join('')+'</ul>';
+}
+function optModalEdited(){
+  syncOptUi(); optChanged(); renderOptModalNote();
+}
+function optEditVar(){ return optVars.find(v=>v.key===optEditKey)||null; }
+['optStart','optEnd'].forEach(id=>{
+  const el=$(id); if(!el) return;
+  el.addEventListener('input',()=>{
+    const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActiveSec()); if(!spec) return;
+    if(spec.unit==='money') SharedFmt.liveFormat(el, {maxDecimals:2});
+    const n=SharedFmt.parseFormatted(el.value);
+    if(!isFinite(n) || el.value.trim()==='' || el.value.trim()==='-') return;
+    vr[id==='optStart'?'start':'end']=optClamp(n, spec.min, spec.max);
+    optModalEdited();
+  });
+  el.addEventListener('blur',()=>{
+    const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActiveSec()); if(!spec) return;
+    el.value=optFieldText(spec, vr[id==='optStart'?'start':'end']);
+  });
+});
+$('optSteps').addEventListener('input',e=>{
+  const vr=optEditVar(); if(!vr) return;
+  const n=parseInt(e.target.value,10); if(!isFinite(n)) return;
+  vr.steps=optClamp(n, 2, OPT_MAX_STEPS);
+  optModalEdited();
+});
+$('optPickSel').addEventListener('change',e=>{
+  const vr=optEditVar(), spec=vr&&optSpec(vr.key, getActiveSec()); if(!spec || spec.kind!=='list') return;
+  vr.pick=[...e.target.selectedOptions].map(o=>spec.options[+o.value]).filter(Boolean).map(o=>o.v);
+  if(vr.pick.length){ vr.start=vr.pick[0]; vr.end=vr.pick[vr.pick.length-1]; }
+  optModalEdited();
+});
+$('optRemoveBtn').addEventListener('click',()=>{
+  const key=optEditKey;
+  optVars=optVars.filter(v=>v.key!==key);
+  closeOptModal();
+  syncOptUi(); optChanged();
+});
+$('optDoneBtn').addEventListener('click', closeOptModal);
+$('optCloseBtn').addEventListener('click', closeOptModal);
+$('optModal').addEventListener('mousedown',e=>{ if(e.target===$('optModal')) closeOptModal(); });
+document.addEventListener('keydown',e=>{
+  if($('optModal').hidden) return;
+  if(e.key==='Escape'){ e.preventDefault(); closeOptModal(); }
+  else if(e.key==='Enter' && e.target && e.target.tagName==='INPUT'){ e.preventDefault(); e.target.blur(); closeOptModal(); }
+});
+// One listener for every gauge, the ones drawn later with their style included.
+document.addEventListener('click',e=>{
+  if(!e.target || !e.target.closest) return;
+  const b=e.target.closest('.opt-btn');
+  // A gauge inside a <label> is that label's first control, so a click on the
+  // label's words would press it. Those labels hold no field of their own.
+  if(!b){ const lab=e.target.closest('label'); if(lab && lab.querySelector('.opt-btn')) e.preventDefault(); return; }
+  e.preventDefault(); e.stopPropagation();
+  if(b.classList.contains('is-full') && !optVars.some(v=>v.key===b.dataset.opt)) return;
+  openOptModal(b.dataset.opt, b);
+}, true);
+$('optCancelBtn').addEventListener('click',()=>{
+  if($('simBtn').dataset.running==='1') optAbort=true;
+  optVars=[];
+  closeOptModal();
+  syncOptUi(); optChanged();
+});
+
+/* ─── OPTIMISE MODE: THE RUN ───────────────────────────────────────────────────
+   The scenario is copied once at the start, so an edit made while the runs are
+   going cannot leak into the later ones, then every combination of the swept
+   values runs on the copy through the very engine Simulate uses. Only the
+   figures of each run are kept; the one the charts below show is run again on
+   demand, which keeps a 625-run sweep light. */
+async function runOptimisation(){
+  if(persist) persist.schedule();
+  hideWarning();
+  const blocked=simBlockReason();
+  if(blocked){ showWarning(blocked); return; }
+  const startDate=$('startDate').value, endDate=$('endDate').value;
+  const live=getActiveSec();
+  const simBtn=$('simBtn'); simBtn.dataset.running='1'; simBtn.disabled=true; simBtn.classList.remove('is-disabled'); simBtn.removeAttribute('data-tip'); simBtn.innerHTML='<span class="spinner"></span>Optimising…';
+  optAbort=false; editedInFlight=false; runInFlight=true;
+  try{
+    const prep=await prepareRun([live], startDate, endDate);
+    if(!prep || optAbort) return;
+    const S0=Object.assign({}, live, {tech:Object.assign({}, live.tech||{})});
+    const vars=optVars.map(v=>Object.assign({}, v, Array.isArray(v.pick) ? {pick:v.pick.slice()} : {}));
+    const exec=currentExecTiming;
+    const specs=vars.map(v=>optSpec(v.key, S0)), values=vars.map((v,k)=>optValues(specs[k], v));
+    // The reader's own settings, to measure every tested value against.
+    const baseRes=simulateSecurity(S0, exec);
+    const base=optMetricsOf(baseRes);
+    const n0=values[0].length, n1=values[1] ? values[1].length : 1, total=n0*n1;
+    const grid=new Array(total);
+    let done=0, lastPaint=performance.now();
+    for(let j=0;j<n1;j++) for(let i=0;i<n0;i++){
+      if(optAbort) return;
+      const vals=[values[0][i]].concat(values[1] ? [values[1][j]] : []);
+      const v=optVariant(S0, vars, vals);
+      let m=null;
+      try { m=v ? optMetricsOf(simulateSecurity(v, exec)) : null; } catch(e){ console.error('Optimise run failed', e); }
+      grid[i+j*n0]={i, j, m};
+      done++;
+      if(performance.now()-lastPaint>45){
+        simBtn.innerHTML=`<span class="spinner"></span>Optimising ${done} of ${total}…`;
+        await new Promise(r=>setTimeout(r, 0));
+        lastPaint=performance.now();
+      }
+    }
+    optResult={ sid:S0.id, name:S0.name, S0, vars, specs, values, grid, base, baseVals:specs.map(s=>s.get(S0)), exec };
+    // The charts below open on the best run, or on the run a saved file pointed at.
+    const want=optPickWanted; optPickWanted=null;
+    const best=optBestIdx(optResult, optMetricKey());
+    const fits=want && want.length===vars.length && want.every((x,k)=>Number.isInteger(x) && x>=0 && x<values[k].length) &&
+      grid[want[0]+(want[1]||0)*n0].m;
+    optPick = fits ? want.slice() : (best>=0 ? [best%n0, Math.floor(best/n0)].slice(0, vars.length) : vars.map(()=>0));
+    const axis=prep.axis;
+    const notes=[];
+    if(baseRes.openProxied) notes.push(`${baseRes.openProxied} trade(s) at the previous close, no open price in the data`);
+    if(baseRes.unfilled) notes.push(`${baseRes.unfilled} decision(s) on the last day not filled`);
+    showStatus($('dateRangeStatus'),`Date range: ${axis[0]} → ${axis[axis.length-1]} (${axis.length} days). ${total} runs`+(notes.length?' at your setting: '+notes.join('. ')+'.':'.'), notes.length?'warn':'ok');
+    hideStatus($('fetchStatus'));
+    setBoardMode();
+    renderOptPickers();
+    updateOptChart();
+    showOptDetail();
+    markFresh();
+    if(editedInFlight) markStale();
+  } finally {
+    runInFlight=false;
+    if(optAbort) hideStatus($('fetchStatus'));   // Cancel stopped it part way
+    simBtn.disabled=false; delete simBtn.dataset.running; updateSimBtn(); updateSimBtnState();
+  }
+}
+
+/* ── Reading the sweep ── */
+const OPT_METRICS = {
+  roi:    {label:'ROI',         axis:'ROI (%)',              kind:'pct'},
+  final:  {label:'Final value', axis:'Final value',          kind:'money'},
+  net:    {label:'Net',         axis:'Net',                  kind:'money'},
+  sharpe: {label:'Sharpe',      axis:'Sharpe (ratio)',       kind:'ratio'},
+  sortino:{label:'Sortino',     axis:'Sortino (ratio)',      kind:'ratio'},
+  twr:    {label:'CAGR (TWR)',  axis:'CAGR, TWR (%/yr)',     kind:'pct'},
+  mwr:    {label:'CAGR (MWR)',  axis:'CAGR, MWR (%/yr)',     kind:'pct'}
+};
+function optMetricKey(){ const s=$('optMetric'); return s && OPT_METRICS[s.value] ? s.value : 'roi'; }
+function optAxisTitle(k){ const m=OPT_METRICS[k]; return m.kind==='money' ? m.axis+symInBrackets() : m.axis; }
+function optMetricFmt(k, v){
+  if(v==null || !isFinite(v)) return ' - ';
+  const kind=OPT_METRICS[k].kind;
+  return kind==='pct' ? fmt.pct(v) : kind==='money' ? fmt.currency(v) : v.toFixed(2);
+}
+// What a chart plots for a figure: percentages as percent, the rest as they are.
+function optPlotVal(k, v){ if(v==null || !isFinite(v)) return null; return OPT_METRICS[k].kind==='pct' ? v*100 : v; }
+function optVal(R, idx, k){ const g=R.grid[idx]; return g && g.m && isFinite(g.m[k]) && g.m[k]!=null ? g.m[k] : null; }
+// Runs within rounding of each other are a tie, and a tie goes to the first
+// tested: a top-up amount scales ROI exactly, and its last digits should not
+// crown one amount over another.
+const optTol=x=>1e-9*Math.max(1, Math.abs(x));
+function optExtremeIdx(R, k, sign){
+  let top=null;
+  R.grid.forEach((g,i)=>{ const v=optVal(R,i,k); if(v!=null && (top===null || sign*(v-top)>0)) top=v; });
+  if(top===null) return -1;
+  return R.grid.findIndex((g,i)=>{ const v=optVal(R,i,k); return v!=null && Math.abs(v-top)<=optTol(top); });
+}
+function optBestIdx(R, k){ return optExtremeIdx(R, k, 1); }
+function optWorstIdx(R, k){ return optExtremeIdx(R, k, -1); }
+function optValsAt(R, idx){ const n0=R.values[0].length; return [R.values[0][idx%n0]].concat(R.values[1] ? [R.values[1][Math.floor(idx/n0)]] : []); }
+function optSettingText(R, vals){ return R.specs.map((s,k)=>s.label+' '+s.fmt(vals[k])).join(', '); }
+function optIsBase(R, vals){ return R.specs.every((s,k)=>String(vals[k])===String(R.baseVals[k])); }
+
+// The board shows the last thing that ran: a comparison of scenarios, or a sweep
+// with one of its tested settings in full below it.
+function setBoardMode(){
+  const on=!!optResult;
+  $('optCard').hidden=!on;
+  $('summaryNote').textContent = on ? '(best, your setting and worst)' : '';
+  $('equityNote').textContent = on ? '(one tested setting)' : '';
+  $('detailNote').textContent = on ? '(one tested setting)' : '';
+  $('detailSelect').style.display = on ? 'none' : '';
+  if(!on){
+    purgeSurface();
+    if(optChart){ optChart.destroy(); optChart=null; }
+    $('optLegend').innerHTML=''; $('optPickWrap').innerHTML='';
+    $('optCanvasWrap').style.display=''; $('optSurface').style.display='none';
+  }
+}
+function renderOptPickers(){
+  const R=optResult, wrap=$('optPickWrap'); if(!R || !wrap) return;
+  wrap.innerHTML=R.specs.map((s,k)=>`<label><span data-no-abbr>${escapeHtml(s.label)}</span><select class="sel-input pf-view-select" id="optPick${k}" title="Which tested value the charts below show">${
+    R.values[k].map((v,i)=>`<option value="${i}">${escapeHtml(s.fmt(v))}</option>`).join('')}</select></label>`).join('');
+  R.specs.forEach((_,k)=>{
+    const sel=$('optPick'+k);
+    sel.value=String(optPick[k]||0);
+    sel.addEventListener('change',()=>{ optPick[k]=+sel.value||0; showOptDetail(); if(persist) persist.schedule(); });
+  });
+}
+// A click on the chart picks that tested value (both, on the surface).
+function optSetPick(idx){
+  const R=optResult; if(!R) return;
+  idx.forEach((v,k)=>{ if(Number.isInteger(v) && v>=0 && v<R.values[k].length){ optPick[k]=v; const sel=$('optPick'+k); if(sel) sel.value=String(v); } });
+  showOptDetail();
+  if(persist) persist.schedule();
+}
+// Run the picked combination again, in full, for the charts and the breakdown.
+function showOptDetail(){
+  const R=optResult; if(!R) return;
+  const vals=R.specs.map((_,k)=>R.values[k][optPick[k]||0]);
+  let v=optVariant(R.S0, R.vars, vals), what=optSettingText(R, vals);
+  if(!v){ v=R.S0; what='your current setting'; }
+  const res=simulateSecurity(v, R.exec);
+  simResults=[{ sec:Object.assign({}, v, {name:R.name+' · '+what}), ...res }];
+  activeDetailSec=0;
+  updatePriceChart(); updateEquityChart(); updateTables();
+}
+
+/* ── The optimisation chart: a line for one swept setting, a surface for two ── */
+const OPT_SURFACE_EXPORT_SIZE = { width:940, height:520 };
+let optChart=null, surfaceDrawn=false, surfaceClickWired=false;
+function purgeSurface(){ if(surfaceDrawn && window.Plotly){ try{ Plotly.purge('optSurface'); }catch(_){} } surfaceDrawn=false; surfaceClickWired=false; }
+function optUnitBracket(s){
+  if(s.unit==='money') return symInBrackets();
+  return s.unit ? ' ('+s.unit+')' : '';
+}
+function updateOptChart(){
+  const R=optResult; if(!R) return;
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  $('optTitle').textContent='Optimisation: '+meta.label;
+  const two=R.specs.length===2;
+  $('optCanvasWrap').style.display=two ? 'none' : '';
+  $('optSurface').style.display=two ? '' : 'none';
+  if(two){ if(optChart){ optChart.destroy(); optChart=null; } drawOptSurface(); return; }
+  purgeSurface();
+  const s=R.specs[0], vals=R.values[0], isNum=s.kind==='num';
+  const grid=cssVar('--chart-grid'), muted=cssVar('--chart-text'), text=cssVar('--text');
+  const color=getSecColor(R.S0), mark=cssVar('--muted')||'#94a3b8';
+  const yAt=i=>optPlotVal(mk, optVal(R, i, mk));
+  const best=optBestIdx(R, mk);
+  const baseIdx=vals.findIndex(v=>String(v)===String(R.baseVals[0]));
+  const pt=(i,y)=>isNum ? {x:vals[i], y} : y;
+  const only=(i,y)=>isNum ? (i<0?[]:[{x:vals[i], y}]) : vals.map((_,k)=>k===i?y:null);
+  const datasets=[
+    {label:meta.label, data:vals.map((_,i)=>pt(i, yAt(i))), borderColor:color, backgroundColor:color+'22', borderWidth:2.4,
+      pointRadius:vals.length>30?0:2.5, pointHoverRadius:5, tension:0, spanGaps:false, fill:false},
+    {label:'Best', data:best>=0 ? only(best, yAt(best)) : [], showLine:false, pointStyle:'circle', pointRadius:7, pointHoverRadius:7,
+      borderColor:text, backgroundColor:'transparent', borderWidth:2, _opt:'best', legendSpec:{type:'point', color:text, point:{shape:'ring', stroke:text, radius:4.5, width:2}}},
+  ];
+  // Your setting sits on the line when it is one of the tested values, and beside
+  // it on a number axis when it is not.
+  const baseY=optPlotVal(mk, R.base[mk]);
+  if(isNum || baseIdx>=0) datasets.push({label:'Your current setting', data:isNum ? [{x:Number(R.baseVals[0]), y:baseY}] : only(baseIdx, baseY),
+    showLine:false, pointStyle:'rect', pointRadius:5, pointHoverRadius:6, borderColor:mark, backgroundColor:mark, _opt:'base',
+    legendSpec:{type:'point', color:mark, point:{shape:'rect', fill:mark, radius:4}}});
+  const legendEl=$('optLegend'); legendEl.innerHTML='';
+  datasets.forEach((ds,idx)=>{
+    const item=document.createElement('div'); item.className='legend-item';
+    SharedLegend.attach(item, SharedLegend.specOf(ds), ds.label);
+    item.addEventListener('click',()=>{ if(!optChart) return; const vis=!optChart.isDatasetVisible(idx); optChart.setDatasetVisibility(idx, vis); item.classList.toggle('hidden', !vis); optChart.update(); });
+    legendEl.appendChild(item);
+  });
+  const xs=isNum ? vals.concat([Number(R.baseVals[0])]).filter(isFinite) : null;
+  const xmin=isNum ? Math.min.apply(null, xs) : 0, xmax=isNum ? Math.max.apply(null, xs) : vals.length-1;
+  // Tick labels carry as many decimals as the step between them needs, so a
+  // narrow range does not print the same label down the whole axis.
+  const tickDp=ticks=>{ const st=ticks && ticks.length>1 ? Math.abs(ticks[1].value-ticks[0].value) : 1; return st>0 && st<1 ? Math.min(4, Math.ceil(-Math.log10(st)+1e-9)) : 0; };
+  const yTick=(v,_i,ticks)=>meta.kind==='pct' ? fmt.num(v, Math.max(tickDp(ticks), Math.abs(v)<10?1:0))+'%' : meta.kind==='money' ? fmt.currency(v,true) : fmt.num(v, Math.max(2, tickDp(ticks)));
+  // Every run level (to rounding): draw the line across the middle of a modest
+  // axis instead of stretching rounding noise to fill it.
+  const ys=vals.map((_,i)=>yAt(i)).filter(v=>v!=null);
+  const yLo=ys.length ? Math.min.apply(null, ys) : 0, yHi=ys.length ? Math.max.apply(null, ys) : 0;
+  const flat=ys.length>0 && yHi-yLo<=optTol(yHi)*100;
+  const flatPad=Math.max(Math.abs(yHi)*0.05, meta.kind==='pct' ? 0.5 : meta.kind==='money' ? 1 : 0.05);
+  const xLabel=ctx=>isNum ? s.fmt(ctx.parsed.x) : (s.fmt(vals[ctx.dataIndex]));
+  const yText=ctx=>{ const raw=ctx.parsed.y; return raw==null ? 'not run' : optMetricFmt(mk, meta.kind==='pct' ? raw/100 : raw); };
+  const opts={
+    responsive:true, maintainAspectRatio:false, animation:{duration:300},
+    interaction:{mode:'nearest', axis:'x', intersect:false},
+    // A click picks the tested value nearest the pointer for the charts below.
+    onClick:(evt, _els, chart)=>{
+      const hit=chart.getElementsAtEventForMode(evt, 'nearest', {axis:'x', intersect:false}, false).find(e=>e.datasetIndex===0);
+      if(hit) optSetPick([hit.index]);
+    },
+    plugins:{ legend:{display:false}, tooltip:SharedChartTip.options({
+      filter:item=>item.dataset._opt!=='best',
+      callbacks:{ title:ctx=>ctx[0] ? s.label+': '+xLabel(ctx[0]) : '', label:ctx=>`  ${ctx.dataset.label}: ${yText(ctx)}`,
+        afterBody(items){ if(items.length) $('optHoverBox').textContent=`${s.label} ${xLabel(items[0])}  -  `+items.map(i=>`${i.dataset.label}: ${yText(i)}`).join('  |  '); }},
+      backgroundColor:cssVar('--panel')||'#11172a', titleColor:text, bodyColor:muted, borderColor:grid, borderWidth:1, padding:10}),
+      zoom:SharedZoom.options({min:xmin, max:xmax, points:vals.length}),
+      sharedYFit:{auto:{axes:['y']}}},
+    scales:{
+      x: isNum
+        ? {type:'linear', title:{display:true,text:s.label+optUnitBracket(s),color:muted,font:{size:11}}, ticks:{color:muted,maxTicksLimit:12,font:{size:11},callback:v=>s.fmt(v)}, grid:{color:grid}}
+        : {type:'category', title:{display:true,text:s.label,color:muted,font:{size:11}}, ticks:{color:muted,font:{size:11}}, grid:{color:grid}},
+      y:Object.assign({title:{display:true,text:optAxisTitle(mk),color:muted,font:{size:11}}, ticks:{color:muted,font:{size:11},callback:yTick}, grid:{color:grid}},
+        flat ? {min:yHi-flatPad, max:yHi+flatPad} : {})}
+  };
+  // A level line has nothing for the y refit to fit, so it keeps its fixed axis.
+  if(flat) delete opts.plugins.sharedYFit;
+  if(optChart) optChart.destroy();
+  optChart=new Chart($('optCanvas'),{type:'line', data:isNum ? {datasets} : {labels:vals.map(v=>s.fmt(v)), datasets}, options:opts, plugins:[SharedZoom.plugin]});
+  optChart.update();
+  $('optHoverBox').textContent='Hover to read each tested value, click one to show it below.';
+}
+let _plotlyPromise=null;
+// Plotly (~3.5 MB) draws only the two-setting surface, so it loads on first use.
+function ensurePlotly(){
+  if(window.Plotly) return Promise.resolve();
+  if(_plotlyPromise) return _plotlyPromise;
+  _plotlyPromise=new Promise((resolve,reject)=>{
+    const sc=document.createElement('script');
+    sc.src='https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly.min.js';
+    sc.onload=()=>resolve();
+    sc.onerror=()=>{ _plotlyPromise=null; reject(new Error('Failed to load Plotly')); };
+    document.head.appendChild(sc);
+  });
+  return _plotlyPromise;
+}
+const OPT_CAMERA={eye:{x:1.65, y:-1.65, z:1.05}};
+function drawOptSurface(){
+  const R=optResult; if(!R) return Promise.resolve();
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  const [s0,s1]=R.specs, [v0,v1]=R.values, n0=v0.length;
+  const axisVals=(s,vals)=>s.kind==='num' ? vals.slice() : vals.map((_,i)=>i);
+  const xs=axisVals(s0,v0), ys=axisVals(s1,v1);
+  const z=[], txt=[];
+  for(let j=0;j<v1.length;j++){
+    const row=[], trow=[];
+    for(let i=0;i<n0;i++){
+      const raw=optVal(R, i+j*n0, mk);
+      row.push(optPlotVal(mk, raw));
+      trow.push(escapeHtml(s0.label)+': '+escapeHtml(s0.fmt(v0[i]))+'<br>'+escapeHtml(s1.label)+': '+escapeHtml(s1.fmt(v1[j]))+'<br>'+
+        escapeHtml(meta.label)+': '+(raw==null ? 'not run' : escapeHtml(optMetricFmt(mk, raw))));
+    }
+    z.push(row); txt.push(trow);
+  }
+  const text=cssVar('--text'), muted=cssVar('--chart-text'), grid=cssVar('--chart-grid'), mark=cssVar('--muted');
+  const best=optBestIdx(R, mk);
+  const at=(s,vals,v)=>s.kind==='num' ? Number(v) : vals.findIndex(x=>String(x)===String(v));
+  // hovertext, not hovertemplate '%{text}': Plotly looks %{text} up as text[x][y] on a
+  // surface (transposed), so it showed the wrong cell or a raw '%{text}' off a square grid.
+  const data=[{type:'surface', x:xs, y:ys, z, hovertext:txt, hoverinfo:'text',
+    colorscale:[[0, cssVar('--gold')], [0.5, cssVar('--line-c')], [1, cssVar('--line-a')]],
+    colorbar:{title:{text:optAxisTitle(mk), side:'right', font:{color:muted, size:11}}, tickfont:{color:muted, size:10}, thickness:12, len:0.75},
+    contours:{z:{show:true, usecolormap:true, project:{z:false}}}}];
+  if(best>=0){
+    const bv=optValsAt(R, best);
+    data.push({type:'scatter3d', mode:'markers', name:'Best', x:[at(s0,v0,bv[0])], y:[at(s1,v1,bv[1])], z:[optPlotVal(mk, optVal(R,best,mk))],
+      marker:{symbol:'circle-open', size:9, color:text, line:{width:3, color:text}}, hovertemplate:'Best<extra></extra>'});
+  }
+  const bx=at(s0,v0,R.baseVals[0]), by=at(s1,v1,R.baseVals[1]);
+  const hasBase=bx>=0 && by>=0 && isFinite(bx) && isFinite(by);
+  if(hasBase) data.push({type:'scatter3d', mode:'markers', name:'Your current setting', x:[bx], y:[by], z:[optPlotVal(mk, R.base[mk])],
+    marker:{symbol:'square', size:5, color:mark}, hovertemplate:'Your current setting<extra></extra>'});
+  const ax=(s,vals)=>Object.assign({title:{text:s.label+(s.kind==='num'?optUnitBracket(s):'')}, color:muted, gridcolor:grid, zerolinecolor:grid, showbackground:false},
+    s.kind==='list' ? {tickvals:vals.map((_,i)=>i), ticktext:vals.map(v=>s.fmt(v))} : {});
+  const zt=meta.kind==='pct' ? {ticksuffix:'%'} : meta.kind==='money' ? {tickprefix:currentCurrencySymbol||'', tickformat:',.0f'} : {tickformat:'.2f'};
+  const layout={autosize:true, margin:{l:0, r:0, t:0, b:0}, paper_bgcolor:'rgba(0,0,0,0)', showlegend:false,
+    font:{family:'DM Sans, sans-serif', color:text},
+    scene:{xaxis:ax(s0,v0), yaxis:ax(s1,v1), zaxis:Object.assign({title:{text:optAxisTitle(mk)}, color:muted, gridcolor:grid, zerolinecolor:grid, showbackground:false}, zt),
+      camera:OPT_CAMERA},
+    uirevision:'opt'};
+  // The key under the chart: the two marks (the colour bar names the surface).
+  const legendEl=$('optLegend'); legendEl.innerHTML='';
+  const items=[[{type:'area', fill:cssVar('--line-a'), fill2:cssVar('--gold')}, meta.label+', blue high, gold low']];
+  if(best>=0) items.push([{type:'point', color:text, point:{shape:'ring', stroke:text, radius:4.5, width:2}}, 'Best']);
+  if(hasBase) items.push([{type:'point', color:mark, point:{shape:'rect', fill:mark, radius:4}}, 'Your current setting']);
+  items.forEach(([spec,label])=>{ const it=document.createElement('div'); it.className='legend-item'; it.style.cursor='default'; SharedLegend.attach(it, spec, label); legendEl.appendChild(it); });
+  $('optHoverBox').textContent='Drag to turn the surface, scroll to zoom, hover to read a run, click one to show it below.';
+  // A tested value on an axis, from where a click landed on it.
+  const idxOn=(s,vals,x)=>s.kind==='num' ? vals.findIndex(v=>Math.abs(v-x)<=1e-9*Math.max(1,Math.abs(v))) : Math.round(x);
+  return ensurePlotly()
+    .then(()=>Plotly.react('optSurface', data, layout, {responsive:true, displayModeBar:false, displaylogo:false}))
+    .then(()=>{
+      surfaceDrawn=true;
+      const el=$('optSurface');
+      if(!surfaceClickWired && el.on){
+        surfaceClickWired=true;
+        el.on('plotly_click', ev=>{
+          const p=ev && ev.points && ev.points[0], R2=optResult; if(!p || !R2 || R2.specs.length!==2) return;
+          optSetPick([idxOn(R2.specs[0], R2.values[0], p.x), idxOn(R2.specs[1], R2.values[1], p.y)]);
+        });
+      }
+    })
+    .catch(()=>{ $('optSurface').innerHTML='<p style="padding:20px;text-align:center;color:var(--muted)">Could not load the 3D plotting library (Plotly). Check your connection and try again.</p>'; });
+}
+function wmPlotlyImage(){
+  return { source:WM_LOGO_SRC, xref:'paper', yref:'paper', x:1, y:0.07, xanchor:'right', yanchor:'bottom',
+    sizex:0.035, sizey:0.05, sizing:'contain', opacity:0.22, layer:'above' };
+}
+// A surface export carries the title and the watermark the canvas exports do.
+async function withSurfaceMarks(fn){
+  await ensurePlotly();
+  const isLight=document.body.classList.contains('light');
+  const title={ xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom', showarrow:false,
+    text:'<b>'+escapeHtml(optChartTitle())+'</b>', font:{ size:14, color:isLight?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' } };
+  const wm={ xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom', showarrow:false,
+    text:'Made using tool.adjiebrotots.com/dcasimulator', font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' } };
+  const bg=isLight?'#ffffff':'#0F1728';
+  await Plotly.relayout('optSurface', { annotations:[title, wm], images:[wmPlotlyImage()], paper_bgcolor:bg, 'margin.t':40 });
+  try { return await fn(); }
+  finally { await Plotly.relayout('optSurface', { annotations:[], images:[], paper_bgcolor:'rgba(0,0,0,0)', 'margin.t':0 }); }
+}
+function surfaceOnBoard(){ return !!(optResult && optResult.specs.length===2 && surfaceDrawn); }
+function optChartTitle(){
+  if(!optResult) return 'DCA Scenario Explorer: Optimisation';
+  return 'DCA Scenario Explorer: '+OPT_METRICS[optMetricKey()].label+' by '+optResult.specs.map(s=>s.label).join(' and ');
+}
+
+/* ── The answer, the tiles and the caveats for a sweep ── */
+function renderOptVerdict(){
+  const el=$('verdict'), R=optResult; if(!el || !R) return;
+  const num=t=>'<span class="v-num">'+escapeHtml(t)+'</span>';
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  const ran=R.grid.filter(g=>g.m).length, skipped=R.grid.length-ran;
+  const best=optBestIdx(R, mk), worst=optWorstIdx(R, mk);
+  const phrase=vals=>R.specs.map((s,k)=>nm(s.label)+' at '+num(s.fmt(vals[k]))).join(' and ');
+  const skipNote=skipped ? ' '+skipped+(skipped===1?' combination':' combinations')+' could not run.' : '';
+  if(best<0){
+    SharedVerdict.set(el, { tone:'', title:'None of the tested settings gave a '+meta.label+'.',
+      body:'Every run left '+meta.label+' undefined, usually because no money went in. Widen the range or pick another figure to rank by.'+skipNote });
+    return;
+  }
+  const bv=optVal(R,best,mk), wv=optVal(R,worst,mk), cur=R.base[mk];
+  const tol=optTol;
+  const ties=R.grid.filter((g,i)=>{ const v=optVal(R,i,mk); return v!=null && Math.abs(v-bv)<=tol(bv); }).length;
+  const bestVals=optValsAt(R, best);
+  const what=R.specs.length===1 ? 'value' : 'combination';
+  let title;
+  if(Math.abs(bv-wv)<=tol(bv)) title=R.specs.map(s=>nm(s.label)).join(' and ')+' made no difference to '+meta.label+' here: every tested '+what+' gave '+num(optMetricFmt(mk,bv))+'.';
+  else if(ties>1) title=meta.label+' tops out at '+num(optMetricFmt(mk,bv))+', reached by '+ties+' of the '+ran+' tested, the first with '+phrase(bestVals)+'.';
+  else if(optIsBase(R, bestVals)) title='Your current setting is already the best '+meta.label+' of the '+ran+' tested: '+num(optMetricFmt(mk,bv))+'.';
+  else title=meta.label+' peaks at '+num(optMetricFmt(mk,bv))+' with '+phrase(bestVals)+', against '+num(optMetricFmt(mk,cur))+' as you have it set.';
+  // A rate of return can be won by putting less in (a threshold that rarely
+  // fires, a smaller amount), so when the best run's top-ups differ from the
+  // reader's, the answer says so rather than let a rate pass for money.
+  const bdep=R.grid[best].m.dep, cdep=R.base.dep;
+  const lessMoney=mk!=='final' && mk!=='net' && !optIsBase(R, bestVals) && Math.abs(bdep-cdep)>Math.max(1, Math.abs(cdep)*0.005);
+  const body=(Math.abs(bv-wv)<=tol(bv) ? '' : 'The lowest, '+num(optMetricFmt(mk,wv))+', came with '+phrase(optValsAt(R, worst))+'. ')+
+    (lessMoney ? 'The best run topped up '+num(fmt.currency(bdep))+' against '+num(fmt.currency(cdep))+' at your setting, so Final value or Net under Show compares the money itself. ' : '')+
+    'Tested '+ran+' '+(ran===1?what:what+'s')+' on '+nm(R.name)+'.'+skipNote;
+  SharedVerdict.set(el, { tone:'', title, body });
+}
+function updateOptSummary(){
+  const sg=$('summaryGrid'), R=optResult; if(!sg || !R) return;
+  const mk=optMetricKey(), meta=OPT_METRICS[mk];
+  const best=optBestIdx(R, mk), worst=optWorstIdx(R, mk);
+  const tiles=[];
+  if(best>=0) tiles.push({title:'Best '+meta.label, sub:optSettingText(R, optValsAt(R,best)), m:R.grid[best].m, color:cssVar('--gold')});
+  tiles.push({title:'Your current setting', sub:R.specs.map((s,k)=>s.label+' '+s.fmt(R.baseVals[k])).join(', '), m:R.base, color:getSecColor(R.S0)});
+  if(worst>=0 && worst!==best) tiles.push({title:'Worst '+meta.label, sub:optSettingText(R, optValsAt(R,worst)), m:R.grid[worst].m, color:cssVar('--muted')});
+  const advStyle=`display:${showAdvanced?'grid':'none'}`;
+  // The figure the sweep is ranked by leads each tile's figures, unless the tile
+  // already shows it (final value, net and ROI always do).
+  const shownAlready=mk==='final' || mk==='net' || mk==='roi';
+  sg.innerHTML=tiles.map(t=>`<div class="tile" style="border-left:3px solid ${t.color}">
+      <div class="label">${escapeHtml(t.title)}</div>
+      <div style="font-size:.74rem;color:var(--muted);margin:1px 0 4px" data-no-abbr>${escapeHtml(t.sub)}</div>
+      <div class="value">${fmt.currency(t.m.final)}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:3px">${shownAlready ? '' : escapeHtml(meta.label)+' <b>'+escapeHtml(optMetricFmt(mk, t.m[mk]))+'</b> | '}Net: ${fmt.currency(t.m.net)} | ROI: ${fmt.pct(t.m.roi)}</div>
+      <div style="font-size:.75rem;color:var(--muted)">Topped up: ${fmt.currency(t.m.dep)} | Trades: ${t.m.trades}</div>
+      <div class="adv-metrics" style="${advStyle}">
+        ${metricCell('Sharpe', fmtRatio(t.m.sharpe), METRIC_TIPS.sharpe)}
+        ${metricCell('Sortino', fmtRatio(t.m.sortino), METRIC_TIPS.sortino)}
+        ${metricCell('CAGR (TWR)', fmtMetPct(t.m.twr), METRIC_TIPS.twr)}
+        ${metricCell('CAGR (MWR)', fmtMetPct(t.m.mwr), METRIC_TIPS.mwr)}
+      </div>
+    </div>`).join('');
+}
+// The lines a sweep adds to What this assumes.
+function optAssumptionLines(){
+  const R=optResult; if(!R) return [];
+  const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
+  const parts=R.specs.map((s,k)=>{
+    let t=nm(s.label)+' from '+escapeHtml(optRangeText(s, R.values[k]));
+    if(s.key==='period') t+=', the amount per top-up following it so each year\'s money stays the same';
+    return t;
+  });
+  return [
+    '<strong>Only '+nm(R.name)+' runs, '+R.grid.length+' times,</strong> with '+parts.join(' and ')+'. Everything else stays as set.',
+    '<strong>The best setting is the best for these past prices,</strong> not a forecast: a sweep finds what suited this stretch, and the next one can differ.'
+  ];
+}
+
 /* ─── SIMULATE BUTTON GATING ──────────────────────────────────────────────────
    The Simulate button is greyed out (but still hoverable) whenever a required
    input is missing, with the reason surfaced as a tooltip on hover. ──────────── */
 function simBlockReason(){
+  // Optimise runs the active scenario alone, so only it has to be ready.
+  if(optVars.length){
+    const sec=getActiveSec();
+    if(!sec) return 'Add a scenario to optimise.';
+    if(!$('startDate').value || !$('endDate').value) return 'Set a start and end date in the Data tab.';
+    if(sec.type==='ticker' && !sec.ticker) return 'Pick a ticker for this scenario (load tickers in the Data tab first).';
+    const plan=optPlan(sec);
+    for(let k=0;k<optVars.length;k++){
+      const sp=plan.specs[k];
+      if(!sp) return 'A swept setting no longer applies. Pick it again.';
+      if(plan.values[k].length<2) return sp.kind==='list' ? `${sp.label}: pick at least two values.` : `${sp.label}: Start and End give one value. Widen the range.`;
+    }
+    if(plan.runs>OPT_MAX_RUNS) return `${plan.runs} runs is more than the ${OPT_MAX_RUNS} an optimisation allows. Lower the steps.`;
+    return '';
+  }
   if(!securities.length) return 'Add at least one scenario to simulate.';
   if(!$('startDate').value || !$('endDate').value) return 'Set a start and end date in the Data tab.';
   // A Ticker scenario with no ticker chosen can't run (runSimulation can still
@@ -1480,33 +2389,22 @@ function updateSimBtnState(){
   else { b.classList.remove('is-disabled'); b.removeAttribute('aria-disabled'); b.removeAttribute('data-tip'); }
 }
 
-/* ─── RUN SIMULATION ─── */
-async function runSimulation(){
-  if(persist) persist.schedule(); // runSimulation follows every scenario/input change — save it
-  const blocked=simBlockReason();
-  if(blocked){ showWarning(blocked); return; }
-
-  const startDate=$('startDate').value;
-  const endDate=$('endDate').value;
-
-  const simBtn=$('simBtn');
-  simBtn.dataset.running='1';
-  simBtn.disabled=true;
-  simBtn.classList.remove('is-disabled');
-  simBtn.removeAttribute('data-tip');
-  simBtn.innerHTML='<span class="spinner"></span>Running…';
-
-  try{
+/* ─── PREPARE A RUN ─── */
+// Fetch any uncovered ticker, build each scenario's price series and put them on
+// the trading days they all share. Returns {loadedSecs, axis}, or null after
+// saying why there is nothing to run. Simulate prepares every scenario, Optimise
+// only the one it sweeps.
+async function prepareRun(secs, startDate, endDate){
   showStatus($('fetchStatus'),'Preparing simulation...','loading');
 
   // Reset stale data before rebuilding this run.
-  securities.forEach(sec => { sec.priceData = null; sec.loaded = false; });
+  secs.forEach(sec => { sec.priceData = null; sec.loaded = false; });
 
   // Ticker data should already be pooled and cached (loaded up front in one
   // request). If anything is missing or the date range moved outside the cached
   // window, fetch ONLY those tickers - and do it in a SINGLE batched request
   // rather than one-by-one - so we keep Worker invocations to a minimum.
-  const uniqueTickers = [...new Set(securities
+  const uniqueTickers = [...new Set(secs
     .filter(sec => sec.type==='ticker')
     .map(sec => String(sec.ticker||'').trim().toUpperCase())
     .filter(Boolean))];
@@ -1531,7 +2429,7 @@ async function runSimulation(){
   // Prepare price data for every security.
   // Custom: regenerate GBM for the requested range (cheap, deterministic).
   // Ticker: assign cached slice for the selected range.
-  for(const sec of securities){
+  for(const sec of secs){
     if(sec.type==='custom'){
       // Seed on the asset's identity only (name + return + volatility) so its
       // simulated price path is stable across DCA styles/amounts — otherwise
@@ -1552,17 +2450,41 @@ async function runSimulation(){
   }
 
   // Find common date range
-  const loadedSecs = securities.filter(s=>s.priceData&&s.priceData.dates.length);
-  if(!loadedSecs.length){ showWarning('No securities with data loaded.'); return; }
+  const loadedSecs = secs.filter(s=>s.priceData&&s.priceData.dates.length);
+  if(!loadedSecs.length){ showWarning('No securities with data loaded.'); return null; }
 
   // Every scenario runs on the trading days they all share, as the Portfolio
   // tool does. Trimming only the range left each scenario on its own calendar,
   // so two markets with different holidays (or a 7-day crypto series) drew
   // their points under each other's dates on the charts.
   const aligned = alignToCommonDates(loadedSecs.map(s=>s.priceData));
-  if(aligned[0].dates.length<2){ showWarning('No overlapping trading days between scenarios.'); return; }
+  if(aligned[0].dates.length<2){ showWarning('No overlapping trading days between scenarios.'); return null; }
   loadedSecs.forEach((sec,k)=>{ sec.priceData=aligned[k]; });
-  const axis=aligned[0].dates;
+  return { loadedSecs, axis:aligned[0].dates };
+}
+
+/* ─── RUN SIMULATION ─── */
+async function runSimulation(){
+  // With settings picked to sweep, the gate runs the sweep instead.
+  if(optVars.length) return runOptimisation();
+  if(persist) persist.schedule(); // runSimulation follows every scenario/input change — save it
+  const blocked=simBlockReason();
+  if(blocked){ showWarning(blocked); return; }
+
+  const startDate=$('startDate').value;
+  const endDate=$('endDate').value;
+
+  const simBtn=$('simBtn');
+  simBtn.dataset.running='1';
+  simBtn.disabled=true;
+  simBtn.classList.remove('is-disabled');
+  simBtn.removeAttribute('data-tip');
+  simBtn.innerHTML='<span class="spinner"></span>Running…';
+
+  try{
+  const prep = await prepareRun(securities, startDate, endDate);
+  if(!prep) return;
+  const loadedSecs = prep.loadedSecs, axis = prep.axis;
 
   showStatus($('dateRangeStatus'),`Date range: ${axis[0]} → ${axis[axis.length-1]} (${axis.length} days)`,'ok');
 
@@ -1578,6 +2500,7 @@ async function runSimulation(){
   }
 
   if(!simResults.length){ showWarning('Simulation produced no results.'); return; }
+  optResult=null; setBoardMode();   // the board is a comparison again
   // Say so when a fill had to stand in for a missing open, or a decision on the
   // last day had no next day to fill on.
   const notes=[];
@@ -2042,6 +2965,7 @@ $('showAdvancedToggle').addEventListener('change',e=>{
 function renderSummary(){
   const sg=$('summaryGrid');
   if(!sg) return;
+  if(optResult) return updateOptSummary();   // a sweep: best, your setting and worst
   sg.innerHTML='';
   if(!simResults.length) return;
 
@@ -2093,6 +3017,7 @@ function updateTables(){
    went in instead. */
 function renderVerdict(){
   const el=$('verdict'); if(!el || !window.SharedVerdict) return;
+  if(optResult) return renderOptVerdict();
   if(!simResults.length){ SharedVerdict.set(el, null); return; }
   const num=t=>'<span class="v-num">'+escapeHtml(t)+'</span>';
   const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
@@ -2134,8 +3059,11 @@ function renderAssumptions(){
   const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
   const list=a=>a.length<2 ? a.join('') : a.slice(0,-1).join(', ')+' and '+a[a.length-1];
   const pc=v=>(+(Number(v)||0).toFixed(2))+'%';
-  const runs=simResults.length ? simResults.map(r=>r.sec) : securities;
-  const items=[];
+  // A sweep says what it varied first; the lines below then describe what stayed
+  // fixed, so a line about a swept setting is left to it.
+  const runs=optResult ? [optResult.S0] : simResults.length ? simResults.map(r=>r.sec) : securities;
+  const items=optResult ? optAssumptionLines() : [];
+  const swept=new Set(optResult ? optResult.vars.map(v=>v.key) : []);
   if(!runs.length){ el.innerHTML='<li><strong>Add a scenario and simulate</strong> to see what the run rests on.</li>'; return; }
 
   const tickers=[...new Set(runs.filter(s=>s.type==='ticker').map(s=>String(s.ticker||'').toUpperCase()).filter(Boolean))];
@@ -2158,23 +3086,26 @@ function renderAssumptions(){
 
   if(simResults.length){
     const axis=simResults[0].dailyRows;
-    if(axis.length) items.push('<strong>Every scenario runs '+escapeHtml(axis[0].date)+' to '+escapeHtml(axis[axis.length-1].date)+'</strong>'+
+    if(axis.length) items.push('<strong>'+(optResult ? 'Every run covers ' : 'Every scenario runs ')+escapeHtml(axis[0].date)+' to '+escapeHtml(axis[axis.length-1].date)+'</strong>'+
       (runs.length>1 ? ', the trading days all of their assets share.' : '.'));
   }
 
   const FILL={ 'close':'that day\'s close', 'next-open':'the next day\'s open', 'next-close':'the next day\'s close' };
   items.push('<strong>Every rule decides on a day\'s close and fills at '+escapeHtml(FILL[currentExecTiming]||FILL['next-open'])+'.</strong>');
 
-  const amounts=[...new Set(runs.map(s=>fmt.currency(s.amount)))];
-  const rises=[...new Set(runs.map(s=>Number(s.yearlyIncrease)||0).filter(v=>v))];
-  items.push('<strong>No fees and no tax:</strong> each '+list(amounts)+' top-up buys its whole amount, in fractions of a unit where needed'+
+  // A swept amount (or a swept frequency, which the amount follows) is named in
+  // the sweep's own line above, so this one leaves the figure out.
+  const amtSwept=swept.has('amount') || swept.has('period');
+  const amounts=amtSwept ? [] : [...new Set(runs.map(s=>fmt.currency(s.amount)))];
+  const rises=swept.has('yearlyIncrease') ? [] : [...new Set(runs.map(s=>Number(s.yearlyIncrease)||0).filter(v=>v))];
+  items.push('<strong>No fees and no tax:</strong> each '+(amounts.length ? list(amounts)+' ' : '')+'top-up buys its whole amount, in fractions of a unit where needed'+
     (rises.length ? ', rising '+list(rises.map(pc))+' a year' : '')+'.');
 
-  const signal=runs.filter(s=>MOMENTUM_STYLES.includes(s.style)||TECH_STYLES.includes(s.style));
+  const signal=swept.has('eom') ? [] : runs.filter(s=>MOMENTUM_STYLES.includes(s.style)||TECH_STYLES.includes(s.style));
   if(signal.length){
     const eom=s=>MOMENTUM_STYLES.includes(s.style)?s.momentumEOM:s.techEOM;
     const on=signal.filter(eom), off=signal.filter(s=>!eom(s));
-    const word=s=>(s.period==='weekly'?'week':'month');
+    const word=s=>(swept.has('period') ? 'period' : s.period==='weekly'?'week':'month');
     if(on.length) items.push('<strong>'+list(on.map(s=>nm(s.name)))+' still '+(on.length===1?'buys':'buy')+' at the end of a '+word(on[0])+' with no signal.</strong>');
     if(off.length) items.push('<strong>'+list(off.map(s=>nm(s.name)))+' '+(off.length===1?'skips':'skip')+' a '+word(off[0])+' with no signal,</strong> so less money goes in.');
   }
@@ -2243,6 +3174,7 @@ $('themeToggle').addEventListener('click',()=>{
   document.body.classList.toggle('light');
   $('themeToggle').textContent=document.body.classList.contains('light')?'🌙 Dark':'☀️ Light';
   if(simResults.length){ updatePriceChart(); updateEquityChart(); renderSummary(); }
+  if(optResult) updateOptChart();
   renderSecList();
 });
 
@@ -2275,6 +3207,8 @@ $('simBtn').addEventListener('click', runSimulation);
    deliberately left alone, so switching examples costs no re-download. */
 function resetWorkspace(){
   securities=[]; simResults=[]; latestRows=[];
+  optAbort=true; optVars=[]; optResult=null; optPick=[0,0]; optPickWanted=null;
+  closeOptModal(); $('optMetric').value='roi'; setBoardMode(); syncOptUi();
   markFresh();   // nothing on the board to be out of date
   secIdCounter=0; activeSecurityId=null;
   currentCurrencySymbol='$';
@@ -2553,6 +3487,28 @@ $('equityCopyPngBtn').addEventListener('click', () => {
 });
 $('priceSvgBtn').addEventListener('click', () => downloadChartSvg('priceCanvas', 'dca_price_chart.svg', priceChartExportTitle(), 'priceLegend'));
 $('equitySvgBtn').addEventListener('click', () => downloadChartSvg('equityCanvas', 'dca_portfolio_chart.svg', 'DCA Scenario Explorer: Portfolio Value', 'equityLegend'));
+/* The optimisation card holds a line (Chart.js) or, for two settings, a surface
+   (Plotly), so its buttons ask which is on the board. */
+$('optPngBtn').addEventListener('click', () => {
+  if(surfaceOnBoard()) return withSurfaceMarks(() => Plotly.downloadImage('optSurface', Object.assign({format:'png', filename:'dca_optimisation', scale:3}, OPT_SURFACE_EXPORT_SIZE)));
+  downloadChartPng('optCanvas', 'dca_optimisation.png', optChartTitle(), 'optLegend');
+});
+$('optCopyBtn').addEventListener('click', () => {
+  if(surfaceOnBoard()) return SharedShare.copyImage(() => withSurfaceMarks(() => Plotly.toImage('optSurface', Object.assign({format:'png', scale:3}, OPT_SURFACE_EXPORT_SIZE))), $('optCopyBtn'));
+  SharedShare.copyImage(() => downloadChartPng('optCanvas', 'dca_optimisation.png', optChartTitle(), 'optLegend', false), $('optCopyBtn'));
+});
+$('optSvgBtn').addEventListener('click', () => {
+  if(surfaceOnBoard()) return withSurfaceMarks(() => Plotly.downloadImage('optSurface', Object.assign({format:'svg', filename:'dca_optimisation'}, OPT_SURFACE_EXPORT_SIZE)));
+  downloadChartSvg('optCanvas', 'dca_optimisation.svg', optChartTitle(), 'optLegend');
+});
+$('optResetZoom').addEventListener('click', () => {
+  // The surface has no zoom to undo, but it has a camera to put back.
+  if(surfaceOnBoard()){ Plotly.relayout('optSurface', {'scene.camera':OPT_CAMERA}); return; }
+  if(optChart) optChart.resetZoom();
+});
+$('optCanvas').addEventListener('mouseleave', () => { $('optHoverBox').textContent='Hover to read each tested value, click one to show it below.'; });
+// What the sweep is ranked by is a view of it, so it redraws without a run.
+$('optMetric').addEventListener('change', () => { if(!optResult) return; updateOptChart(); renderSummary(); renderVerdict(); if(persist) persist.schedule(); });
 
 /* ─── DOWNLOAD CSV (Detailed Breakdown of active tab) ─── */
 $('detailSelect').addEventListener('change',e=>{
@@ -2604,8 +3560,28 @@ function buildSettingsObj(){
       tickerPool: ($('tickerPoolInput')||{}).value || '',
       simPool: JSON.parse(JSON.stringify(simPool))
     },
-    securities: securitiesOut
+    securities: securitiesOut,
+    // Optimise mode rides along only while it is on, so a file without it (every
+    // file saved before it existed) opens comparing scenarios, as it always did.
+    ...(optVars.length ? { optimise:{ scenario:Math.max(0, securities.findIndex(s=>s.id===activeSecurityId)),
+      vars:optVars.map(v=>Object.assign({}, v)), metric:optMetricKey(), pick:optPick.slice(0, optVars.length) } } : {})
   };
+}
+// The swept settings a file or link carries. Anything unreadable is dropped
+// rather than guessed at; a setting the scenario no longer offers is dropped
+// later, by pruneOptVars, once the scenario is loaded, which also keeps the
+// first two that still apply.
+function readOptVars(o){
+  if(!o || !Array.isArray(o.vars)) return [];
+  const seen=new Set(), out=[];
+  o.vars.forEach(v=>{
+    if(!v || typeof v.key!=='string' || seen.has(v.key) || out.length>=8) return;
+    seen.add(v.key);
+    const r={ key:v.key, start:v.start, end:v.end, steps:optClamp(parseInt(v.steps,10)||11, 2, OPT_MAX_STEPS) };
+    if(Array.isArray(v.pick)) r.pick=v.pick.filter(x=>typeof x==='string' || typeof x==='number').slice(0, OPT_MAX_STEPS);
+    out.push(r);
+  });
+  return out;
 }
 function importSettings(obj){
   if(!obj || obj.app!=='dca-single'){
@@ -2626,9 +3602,20 @@ function importSettings(obj){
   // Rebuild the scenario list from the file (prices re-fetch on run; the cache
   // makes that free for tickers already loaded).
   securities=[]; simResults=[]; latestRows=[]; secIdCounter=0; activeSecurityId=null;
+  // Cleared before the scenarios go back in, so nothing is pruned against a
+  // half-built list; the sweep is read once its scenario is active.
+  optVars=[]; optResult=null; setBoardMode(); closeOptModal();
   markFresh();
   hideWarning();
   (obj.securities||[]).forEach(s=>addSecurity(s));
+  const o=obj.optimise;
+  if(o){
+    const at=parseInt(o.scenario,10);
+    if(Number.isInteger(at) && at>=0 && at<securities.length) activeSecurityId=securities[at].id;
+    optVars=readOptVars(o);
+    optPickWanted=Array.isArray(o.pick) ? o.pick.map(n=>parseInt(n,10)) : null;
+    if(OPT_METRICS[o.metric]) $('optMetric').value=o.metric;
+  } else optPickWanted=null;
   document.querySelectorAll('.quick-start-btn').forEach(b=>b.classList.remove('active'));
   renderSecList();
   // Returned, so an embedded chart (SharedShare) waits for the prices.

@@ -45,7 +45,7 @@
     "DCA Strategy Comparator",
     "Investment Backtest Explorer"
   ],
-  "keywords": "dollar cost averaging simulator, compare DCA strategies, money market fund vs equity fund, which asset is more worth it, investment backtest, DCA calculator",
+  "keywords": "dollar cost averaging simulator, compare DCA strategies, money market fund vs equity fund, which asset is more worth it, investment backtest, DCA calculator, optimise dca settings, best day of the month to invest, dca parameter sweep",
   "hasPart": [
     {
       "@type": "WebApplication",
@@ -248,6 +248,7 @@
   <div class="btn-row">
     <p class="stale-note" id="staleNote" role="status">Inputs changed. Press Simulate to run them.</p>
     <button class="btn-primary" id="simBtn" style="flex:2">▶ Simulate</button>
+    <button class="btn-secondary" id="optCancelBtn" type="button" style="flex:1;display:none" title="Stop optimising and go back to comparing scenarios">Cancel</button>
     <button class="btn-primary" id="loadTickersBtn" style="flex:2;display:none">⤓ Load tickers</button>
     <button class="btn-primary" id="addSimBtn" style="flex:2;display:none">+ Add Simulated Asset</button>
     <button class="btn-secondary" id="editTickersBtn" data-icon="edit" style="flex:1;display:none">Edit list</button>
@@ -263,7 +264,7 @@
   <!-- SUMMARY -->
   <section class="card summary-row" style="padding:18px">
     <div class="section-title" style="margin-bottom:0">
-      <h2>Final Summary</h2>
+      <h2>Final Summary <span class="opt-note" id="summaryNote"></span></h2>
       <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0" title="Show Sharpe, Sortino and CAGR (TWR / MWR) for each scenario">
         <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Advanced metrics</span>
         <div class="toggle-switch">
@@ -273,6 +274,42 @@
       </label>
     </div>
     <div id="summaryGrid" class="summary-grid"></div>
+  </section>
+
+  <!-- OPTIMISATION: shown only while a sweep is on the board. One swept setting
+       draws a line, two draw a surface; the charts below show one tested setting. -->
+  <section class="chart-card card opt-card" id="optCard" hidden>
+    <div class="section-title">
+      <div><h2 id="optTitle">Optimisation</h2></div>
+      <div class="chart-actions">
+        <label class="opt-metric-wrap">
+          <span>Show</span>
+          <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+            <option value="roi" selected>ROI</option>
+            <option value="final">Final value</option>
+            <option value="net">Net</option>
+            <option value="sharpe">Sharpe</option>
+            <option value="sortino">Sortino</option>
+            <option value="twr">CAGR (TWR)</option>
+            <option value="mwr">CAGR (MWR)</option>
+          </select>
+        </label>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="optSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="optPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" id="optCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" id="optResetZoom" title="Reset zoom">⟳</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend" id="optLegend"></div>
+    <div class="canvas-wrap" id="optCanvasWrap"><canvas id="optCanvas"></canvas></div>
+    <div class="surface-wrap" id="optSurface" style="display:none"></div>
+    <div class="hover-box" id="optHoverBox">Hover to read each tested value.</div>
+    <div class="opt-pick-row" id="optPickRow" data-no-persist>
+      <span class="opt-pick-lead">Shown in the charts below</span><span class="tip-icon" data-tip="Security Prices, Portfolio Value and the breakdown show one tested setting in full. Pick it here, or click it on the chart.">?</span>
+      <span class="opt-pick" id="optPickWrap"></span>
+    </div>
   </section>
 
   <!-- PRICE CHART -->
@@ -320,7 +357,7 @@
   <section class="chart-card card">
     <div class="section-title">
       <div>
-        <h2>Portfolio Value Over Time</h2>
+        <h2>Portfolio Value Over Time <span class="opt-note" id="equityNote"></span></h2>
       </div>
       <div class="chart-actions">
         <div class="chart-toggles">
@@ -351,7 +388,7 @@
   <section class="detail-section card">
     <div class="detail-header">
       <div class="detail-head">
-        <h2>Detailed Breakdown</h2>
+        <h2>Detailed Breakdown <span class="opt-note" id="detailNote"></span></h2>
         <div class="btn-cluster">
           <select class="sel-input pf-view-select" id="detailSelect" title="Choose which scenario to view"></select>
           <button class="btn-secondary btn-sm" id="downloadBtn" title="Download this table as CSV">⬇ CSV</button>
@@ -375,6 +412,44 @@
 </main>
 </section><!-- /layout -->
 </div><!-- /container -->
+
+<!-- OPTIMISE RANGE EDITOR. Edits apply as they are made, so every way out keeps them. -->
+<div class="opt-modal-overlay" id="optModal" hidden data-no-persist>
+  <div class="opt-modal" role="dialog" aria-modal="true" aria-labelledby="optModalTitle">
+    <div class="opt-modal-head">
+      <h2 id="optModalTitle">Optimise</h2>
+      <button type="button" class="btn-bare opt-modal-close" data-icon="close" id="optCloseBtn" title="Close. The range is already kept" aria-label="Close. The range is already kept"></button>
+    </div>
+    <div class="opt-modal-body">
+      <div class="opt-modal-sub" id="optModalSub"></div>
+      <div id="optNumFields">
+        <div class="opt-range-row">
+          <div class="field-row">
+            <div class="field-label">Start value</div>
+            <div class="affix-wrap"><span class="prefix" id="optStartPre"></span><input class="affix-input" id="optStart" type="text" inputmode="decimal" /><span class="suffix" id="optStartSuf"></span></div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">End value</div>
+            <div class="affix-wrap"><span class="prefix" id="optEndPre"></span><input class="affix-input" id="optEnd" type="text" inputmode="decimal" /><span class="suffix" id="optEndSuf"></span></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label">Steps <span class="tip-icon" data-tip="How many values to test, Start and End included, spaced evenly between them.">?</span></div>
+          <div class="affix-wrap"><input class="affix-input has-suffix" id="optSteps" type="number" inputmode="numeric" min="2" max="50" step="1" value="11" /><span class="suffix">values</span></div>
+        </div>
+      </div>
+      <div id="optListFields" class="field-row" hidden>
+        <div class="field-label">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each value you select runs once, in the order the list shows. Hold Ctrl or Cmd to select more than one.">?</span></div>
+        <select class="sel-input opt-pick-list" id="optPickSel" multiple></select>
+      </div>
+      <p class="opt-preview" id="optPreview" role="status"></p>
+    </div>
+    <div class="opt-modal-foot">
+      <button type="button" class="btn-secondary" data-icon="trash" id="optRemoveBtn" title="Remove this from the optimisation" aria-label="Remove this from the optimisation"></button>
+      <button type="button" class="btn-primary" id="optDoneBtn">✓ Done</button>
+    </div>
+  </div>
+</div>
 
 <footer class="page-footer">
   <section class="page-footer-info">

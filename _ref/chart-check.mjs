@@ -422,6 +422,22 @@ const PAGES = [
     },
   },
   {
+    // Optimise mode draws a sweep in its own card: one setting of the seeded
+    // S&P500 scenario, its day of the month, over every day a month can have.
+    name: 'dcasimulator (optimise)',
+    url: '/dcasimulator/',
+    charts: ['optCanvas'],
+    async prep(page) {
+      await page.click('.ctrl-tab[data-tab="securities"]');
+      await page.click('.sc-tab:nth-child(1)');
+      await page.click('.opt-btn[data-opt="dayOfMonth"]');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.waitForFunction(
+        () => !document.getElementById('optCard').hidden && !!window.Chart.getChart(document.getElementById('optCanvas')), null, { timeout: 60000 });
+    },
+  },
+  {
     name: 'dcasimulator/portfolio',
     url: '/dcasimulator/portfolio/',
     charts: ['valueCanvas', 'compCanvas', 'priceCanvas'],

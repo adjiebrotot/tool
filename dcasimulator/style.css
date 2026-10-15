@@ -300,3 +300,96 @@ main .card{transition:opacity var(--transition-fast)}
 /* The answer and the caveats: shared.css styles them; spacing to match this page. */
 main>.verdict{margin-bottom:18px}
 main>.assumes-card{margin-top:18px}
+
+/* ── Optimise mode ──────────────────────────────────────────────────────────
+   Shared with the portfolio page, which loads this file first. One colour
+   marks the whole mode, gold: the gauge beside a field it can sweep, the rows
+   being swept, the note above the gate and the ▶ Optimise button itself, so a
+   reader sees at a glance which settings the next run varies. The gauge is
+   shaped like a tip icon (a small round badge beside the label), but it is a
+   button: hollow while the field is only a candidate, filled once it is being
+   swept. */
+.opt-btn{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;padding:0;margin:0;border-radius:50%;border:1px solid rgba(245,158,11,.3);background:rgba(245,158,11,.18);color:var(--gold);cursor:pointer;flex-shrink:0;font:inherit;font-size:.7rem;font-weight:800;line-height:1;font-style:normal;transition:background var(--transition-fast),border-color var(--transition-fast),color var(--transition-fast),opacity var(--transition-fast)}
+/* An invisible character gives the gauge the text baseline the tip icon's "?"
+   has, so the two sit on one line exactly as two tip icons would. */
+.opt-btn::before{content:'\200b';width:0;overflow:hidden}
+.opt-btn .tico{width:9px;height:9px;vertical-align:0}
+.opt-btn:hover{border-color:var(--gold)}
+.opt-btn:focus-visible{outline:1.5px solid var(--gold);outline-offset:1px}
+.opt-btn.on{background:var(--gold);border-color:var(--gold);color:var(--text-inv)}
+.opt-btn[hidden]{display:none}
+.opt-btn.is-full{opacity:.32;cursor:not-allowed}
+.opt-btn.is-full:hover{border-color:rgba(245,158,11,.3)}
+/* A swept row: a gold bar down its left edge, a faint gold wash, and its
+   label at full weight, so it stands out from the rows that stay fixed. */
+.opt-on{border-radius:8px;background:color-mix(in srgb,var(--gold) 10%,transparent);box-shadow:inset 3px 0 0 var(--gold)}
+.field-row.opt-on{padding-left:11px;padding-right:8px}
+.sec-row.opt-on,.param-row.opt-on,.mom-row.opt-on,.eom-row.opt-on{padding-left:9px;padding-right:6px}
+.field-row.opt-on .field-label,.param-row.opt-on>label,.sec-row.opt-on>label,.mom-row.opt-on .mom-label,.eom-row.opt-on .tech-eom{font-weight:800;color:var(--text)}
+
+/* The gate in optimise mode: ▶ Optimise in gold, Cancel beside it. */
+.btn-primary.is-opt{background:var(--gold);color:var(--text-inv)}
+body.is-optimise .stale-note{display:block;color:var(--gold)}
+.stale-note .sn-stale{color:var(--accent2)}
+.stale-note b{font-weight:800}
+
+/* The range editor */
+.opt-modal-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(7,12,24,.62);backdrop-filter:blur(2px)}
+.opt-modal-overlay[hidden]{display:none}
+body.opt-modal-open{overflow:hidden}
+.opt-modal{display:flex;flex-direction:column;width:min(440px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:0 18px 60px rgba(0,0,0,.45)}
+.opt-modal-head{display:flex;align-items:center;gap:10px;padding:14px 14px 10px 20px;border-bottom:1px solid var(--border)}
+.opt-modal-head h2{margin:0 auto 0 0;font-size:1.02rem;min-width:0;overflow-wrap:anywhere}
+.opt-modal-close{min-width:34px;height:34px}
+.opt-modal-close .ico{width:18px;height:18px}
+.opt-modal-body{padding:12px 20px 4px}
+.opt-modal-sub{margin:0 0 4px;font-size:.8rem;color:var(--muted);line-height:1.45}
+.opt-freq-demo{margin:4px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-variant-numeric:tabular-nums}
+.opt-freq-demo li{display:contents}
+.opt-freq-demo .is-now{color:var(--text);font-weight:600}
+.opt-range-row{display:flex;gap:12px}
+.opt-range-row[hidden]{display:none}
+.opt-modal .label-note{color:var(--muted);font-weight:400;font-size:.78rem}
+.opt-pick-list{height:auto;font-size:.83rem;padding:4px 6px}
+.opt-pick-list option{padding:3px 6px;border-radius:4px}
+.opt-range-row>.field-row{flex:1 1 0;min-width:0;border-top:none}
+.opt-modal .field-row[hidden]{display:none}
+.opt-preview{margin:6px 0 8px;font-size:.78rem;color:var(--muted);line-height:1.45}
+.opt-preview .bad{color:var(--warning-text);font-weight:700}
+.opt-modal-foot{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--border);background:var(--panel)}
+#optRemoveBtn{margin-right:auto}
+.opt-modal-foot .btn-primary,.opt-modal-foot .btn-secondary{padding:8px 16px;flex-shrink:0;white-space:nowrap}
+
+/* The optimisation chart: what it ranks by sits beside it, and two swept
+   settings draw a 3D surface in place of the line. */
+.opt-metric-wrap{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:default}
+.opt-metric-wrap .sel-input{width:auto;padding:5px 10px;font-size:.8rem}
+.surface-wrap{width:100%;height:460px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg)}
+@media(max-width:1100px){.surface-wrap{height:380px}}
+@media(max-width:600px){.surface-wrap{height:320px}}
+
+/* Picking one tested setting to look at in full. */
+.opt-pick{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+.opt-pick[hidden]{display:none}
+.opt-pick label{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--muted)}
+
+/* ── This page's part of Optimise mode ──
+   Only the scenario being optimised runs, so the bar that switches, adds,
+   copies and removes scenarios stands down; its tab stays lit. */
+.sc-bar.is-locked .sc-tab:not(.active),.sc-bar.is-locked .sc-add-btn,.sc-bar.is-locked .sc-bar-actions{opacity:.38;pointer-events:none}
+.sc-bar.is-locked .sc-tab.active{cursor:default}
+/* A gauge after a control on a row that holds two (an MA's type and length);
+   the length field gives up a little width so both gauges stay in the card. */
+.param-grp .opt-btn{margin-left:-2px}
+.param-grp .unit-days{flex:1 1 92px;max-width:112px;min-width:0}
+.mom-label{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:var(--muted);font-weight:700}
+.eom-row{display:flex;align-items:center;gap:6px;border-radius:8px}
+.eom-row .tech-eom{flex:0 1 auto}
+.mom-row{border-radius:8px;padding:4px 0 2px}
+/* The optimisation card only shows while a sweep is on the board. */
+.opt-card[hidden]{display:none}
+.opt-pick-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:.82rem;color:var(--muted)}
+.opt-pick-row[hidden]{display:none}
+.opt-pick-row .opt-pick-lead{font-weight:700}
+.opt-pick .pf-view-select{min-width:90px}
+.opt-note{color:var(--muted);font-size:.85rem;font-weight:400}
