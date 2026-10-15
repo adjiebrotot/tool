@@ -68,11 +68,13 @@ const PAGES = [
            var l = document.getElementById('lb_Bus_vkv'); l.checked = true; l.dispatchEvent(new Event('change', {bubbles: true}));
            document.getElementById('runBtn').click();` },
   // The ED/UC network lives in JS state (Persist extra) as well: a unit's cost
-  // and a load's profile edited in the model, the horizon changed, then solved.
+  // and a load's profile edited in the model, the horizon and its start changed, then solved.
   { path: 'ed-uc-simulator/',           preset: 'uc3',          probe: '.metrics',
     also: `var g = window.__ed.app.model.el.filter(function(x){ return x.id === 4; })[0]; g.marginal_cost = 99; window.__ed.app.change('elec');
            var d = window.__ed.app.model.el.filter(function(x){ return x.id === 5; })[0]; d.prof = 'res'; window.__ed.app.change('elec');
-           var h = document.getElementById('edHours'); h.value = '48'; h.dispatchEvent(new Event('change', {bubbles: true}));
+           var u = document.getElementById('edSpanUnit'); u.value = 'h'; u.dispatchEvent(new Event('change', {bubbles: true}));
+           var h = document.getElementById('edSpan'); h.value = '48'; h.dispatchEvent(new Event('change', {bubbles: true}));
+           var st = document.getElementById('edStart'); st.value = '2026-07-04T06:00'; st.dispatchEvent(new Event('change', {bubbles: true}));
            document.getElementById('runBtn').click();` },
   { path: 'rentvsownhouse/sensitivity/', probe: 'main',
     also: `var y = document.getElementById('yearInput'); y.value = '17';

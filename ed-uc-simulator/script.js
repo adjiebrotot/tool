@@ -136,9 +136,28 @@
     return { labels: labels, colourBy: $('colourBy').value, animP: $('animP').checked, hour: hourNow(), cur: cur() };
   }
   function solveOptions(){
-    return ED.solveOptions({ mode: $('edMode').value, hours: $('edHours').value, limits: $('edLimits').checked, shed: $('edShed').checked,
+    return ED.solveOptions({ mode: $('edMode').value, hours: spanHours(), start: $('edStart').value, limits: $('edLimits').checked, shed: $('edShed').checked,
                              voll: $('edVoll').value, gap: $('edGap').value, time: $('edTime').value });
   }
+  /* The horizon is a number and its unit, hours or days, up to 30 days. */
+  var SPAN_MAX = { h: ED.MAX_HOURS, d: ED.MAX_HOURS / 24 };
+  function spanUnit(){ return $('edSpanUnit').value === 'h' ? 'h' : 'd'; }
+  function spanHours(){
+    var n = Math.round(parseFloat($('edSpan').value));
+    if(!isFinite(n) || n < 1) n = 1;
+    var u = spanUnit();
+    return Math.min(ED.MAX_HOURS, Math.min(SPAN_MAX[u], n) * (u === 'd' ? 24 : 1));
+  }
+  // Shown in days when it is whole days, in hours otherwise.
+  function setSpan(H){
+    H = Math.max(1, Math.min(ED.MAX_HOURS, Math.round(H) || 24));
+    var d = H % 24 === 0;
+    $('edSpanUnit').value = d ? 'd' : 'h';
+    $('edSpanUnit').dataset.prev = d ? 'd' : 'h';
+    $('edSpan').value = String(d ? H / 24 : H);
+  }
+  // Hour t of the result shown, dated from the start it was solved for.
+  function hourText(t, res){ res = res || shownResults(); return ED.hourLabel(t, res ? res.T : 1, res ? res.report.opts.start : $('edStart').value); }
   app.display = display;
 
   /* ── Drawing ── */
@@ -430,14 +449,14 @@
     el.disabled = off;
     $('playBtn').disabled = off;
     document.querySelector('.hour-ctl').toggleAttribute('data-off', off && !res);
-    $('hourOut').textContent = res ? ED.hourLabel(hourNow(), H) : '–';
+    $('hourOut').textContent = res ? hourText(hourNow(), res) : '–';
   }
   function setHour(h, fromChart){
     var res = shownResults();
     if(!res) return;
     h = Math.max(0, Math.min(res.T - 1, h | 0));
     $('edHour').value = String(h);
-    $('hourOut').textContent = ED.hourLabel(h, res.T);
+    $('hourOut').textContent = hourText(h, res);
     render();
     if(window.EDCharts) EDCharts.hour(h);
     writeHover(hovered !== null ? hovered : (app.sel.size === 1 ? app.sel.values().next().value : null));
@@ -462,7 +481,7 @@
     this.textContent = '⏸';
     this.title = 'Pause'; this.setAttribute('aria-label', 'Pause');
     this.setAttribute('aria-pressed', 'true');
-    var step = res.T > 48 ? 250 : 600;
+    var step = res.T > 168 ? 100 : res.T > 48 ? 250 : 600;
     playT = setInterval(function(){
       var r = shownResults();
       if(!r){ stopPlay(); return; }
@@ -488,7 +507,7 @@
   function setSubHour(){
     var res = shownResults();
     if(!res) return;
-    setSub(subLine() + ' Showing ' + ED.hourLabel(hourNow(), res.T) + '.');
+    setSub(subLine() + ' Showing ' + hourText(hourNow(), res) + '.');
   }
   function showResults(){
     var res = app.res, r = res && res.report;
@@ -537,7 +556,7 @@
       $('mUnitsLabel').innerHTML = '<span class="tip-wrap">Units running <i class="tip-icon" data-tip="Units that produced anything over the horizon. Economic dispatch never switches a unit off, it only sets its output.">?</i></span>';
       var ranG = gens.filter(function(e){ return res.dev[e.id].p.some(function(v){ return v > 1e-6; }); }).length;
       $('mUnits').textContent = ranG + ' of ' + gens.length;
-      $('mUnitsSub').textContent = 'Peak demand ' + F.mw(T.peak) + ' MW at ' + ED.hourLabel(T.peakAt, H) + '.';
+      $('mUnitsSub').textContent = 'Peak demand ' + F.mw(T.peak) + ' MW at ' + hourText(T.peakAt, res) + '.';
     }
     // Congestion
     var brs = app.model.el.filter(function(e){ return ED.BRANCH[e.c] && res.br[e.id]; });
@@ -563,7 +582,7 @@
     renderAssumptions();
   }
   function fmtCount(x){ var r = Math.round(x * 10) / 10; return (Math.abs(r - Math.round(r)) < 1e-9 ? String(Math.round(r)) : r.toFixed(1)); }
-  function hoursText(H){ return H === 1 ? 'one hour' : H === 168 ? 'a week' : H % 24 === 0 && H > 24 ? H / 24 + ' days' : H + ' hours'; }
+  function hoursText(H){ return H === 1 ? 'one hour' : H === 24 ? 'a day' : H === 168 ? 'a week' : H % 24 === 0 && H > 24 ? H / 24 + ' days' : H + ' hours'; }
   function clearKpis(){
     ['mCost', 'mPrice', 'mUnits', 'mCong'].forEach(function(id){ $(id).textContent = '–'; $(id + 'Sub').textContent = ''; });
   }
@@ -662,7 +681,7 @@
         for(var t = 0; t < H; t++){
           var wp = 0, wl = 0;
           Object.keys(res.bus).forEach(function(id){ var b = res.bus[id]; if(isFinite(b.price[t])){ wp += b.price[t] * b.load[t]; wl += b.load[t]; } });
-          rows.push({ id: 'h' + t, hour: t, cells: [ED.hourLabel(t, H), F.mw(T.load[t]), F.mw(T.gen[t]), F.mw(T.store[t]), F.mw(T.shed[t]), F.mw(T.curtail[t]), wl > 0 ? F.price(wp / wl, C) : '–', F.money(hourCost(res, t), C)],
+          rows.push({ id: 'h' + t, hour: t, cells: [hourText(t, res), F.mw(T.load[t]), F.mw(T.gen[t]), F.mw(T.store[t]), F.mw(T.shed[t]), F.mw(T.curtail[t]), wl > 0 ? F.price(wp / wl, C) : '–', F.money(hourCost(res, t), C)],
                       neg: T.shed[t] > 1e-6 ? [4] : [] });
         }
       }
@@ -717,7 +736,7 @@
     var res = shownResults(), m = app.model, o = res ? res.report.opts : solveOptions(), li = [], C = cur();
     var has = function(c, f){ return m.el.some(function(e){ return e.c === c && (!f || f(e)); }); };
     var branches = has('Line') || has('Transformer');
-    li.push('<strong>One-hour steps over ' + hoursText(o.hours) + ',</strong> solved together by PSA.js as PyPSA builds the problem, and by the HiGHS solver.');
+    li.push('<strong>One-hour steps over ' + hoursText(o.hours) + ' from ' + ED.hourLabel(0, o.hours, o.start) + ',</strong> solved together by PSA.js as PyPSA builds the problem, and by the HiGHS solver.');
     if(branches) li.push('<strong>A lossless DC power flow:</strong> power divides between paths by reactance, every voltage is 1 p.u., and there is no reactive power.');
     if(o.mode === 'uc') li.push('<strong>Committable units are on or off in each hour.</strong> On, they run between their minimum and their rating; HiGHS proves the cost within ' + (o.gap * 100) + '% of the best possible.');
     else if(o.mode === 'lin') li.push('<strong>Commitment is relaxed:</strong> a unit may be partly on, so its minimum output and start-up costs are shared out, and the cost is a lower bound on the true one.');
@@ -743,7 +762,7 @@
       (has('Link', function(e){ return e.both && e.efficiency < 1; }) ? ' A lossy one that runs both ways costs a token ' + ED.LINK_EPS + ' per MWh sent, so it never sends both ways at once.' : ''));
     var builtIn = m.el.some(function(e){ return (e.c === 'Load' || e.c === 'Generator') && typeof e.prof === 'string' && e.prof; });
     var custom = m.el.some(function(e){ return Array.isArray(e.prof); });
-    if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change through the week:</strong> lower demand at the weekend, cloudier and calmer days. A custom one repeats every day.');
+    if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change from day to day:</strong> demand follows the weekday, lower at the weekend, and solar and wind have cloudier and calmer days. A custom one repeats every day.');
     else if(custom && o.hours > 24) li.push('<strong>Custom profiles repeat every day</strong> of the horizon.');
     li.push('<strong>No reserve is held</strong> and forecasts are perfect: every unit may run to its rating, and solar, wind and demand are known for every hour.');
     if(has('Line', function(e){ return !!ED.lineType(e); }))
@@ -773,7 +792,7 @@
     var res = shownResults(), parts = [], h = hourNow(), C = cur();
     var n = '<strong>' + esc(ED.nameOf(e)) + '</strong>';
     var mono = function(s){ return '<span class="mono">' + s + '</span>'; };
-    var when = res ? ' at ' + ED.hourLabel(h, res.T) : '';
+    var when = res ? ' at ' + hourText(h, res) : '';
     if(e.c === 'Bus'){
       parts.push(n + ', ' + e.v_nom + ' kV bus' + when);
       var r = res && res.bus[e.id];
@@ -1348,7 +1367,13 @@
   function fixForm(){
     var el = $('edVoll'), v = parseFloat(el.value);
     if(isFinite(v)){ var c = Math.min(1e5, Math.max(100, v)); if(c !== v) el.value = c; }
-    ['edMode', 'edHours', 'edGap', 'edTime', 'colourBy'].forEach(function(id){
+    var sp = $('edSpan'), u = spanUnit(), n = Math.round(parseFloat(sp.value));
+    sp.max = String(SPAN_MAX[u]);
+    if(isFinite(n)){ var cn = Math.min(SPAN_MAX[u], Math.max(1, n)); if(String(cn) !== sp.value) sp.value = String(cn); }
+    $('edSpanUnit').dataset.prev = u;
+    var st = $('edStart');
+    if(st.value !== ED.parseStart(st.value)) st.value = ED.parseStart(st.value);
+    ['edMode', 'edSpanUnit', 'edGap', 'edTime', 'colourBy'].forEach(function(id){
       var s = $(id);
       if(s.selectedIndex >= 0) return;
       var d = Array.prototype.filter.call(s.options, function(o){ return o.defaultSelected; })[0] || s.options[0];
@@ -1365,7 +1390,13 @@
     $('vollCur').textContent = cur();
     $('vollCur').hidden = !cur();
   }
-  ['edMode', 'edHours', 'edLimits', 'edShed', 'edVoll', 'edGap', 'edTime'].forEach(function(id){
+  // A new unit keeps the horizon as it was, as near as the new unit can say it.
+  $('edSpanUnit').addEventListener('change', function(){
+    var prev = this.dataset.prev === 'h' ? 'h' : 'd', u = spanUnit(), n = parseFloat($('edSpan').value);
+    if(prev !== u && isFinite(n)) $('edSpan').value = String(u === 'd' ? Math.max(1, Math.round(n / 24)) : Math.round(n * 24));
+    this.dataset.prev = u;
+  });
+  ['edMode', 'edSpan', 'edSpanUnit', 'edStart', 'edLimits', 'edShed', 'edVoll', 'edGap', 'edTime'].forEach(function(id){
     $(id).addEventListener('change', function(){ syncDispatchForm(); updateStale(); renderInspector(); if(!running && app.res) renderAssumptions(); });
   });
   // The currency and the display options read the result; they never send it back to be solved.
@@ -1390,7 +1421,7 @@
     stopPlay();
     resetForm($('tab-dispatch')); resetForm($('tab-display')); resetForm(document.querySelector('.sld-viewbar'));
     if(p.opts.mode) $('edMode').value = p.opts.mode;
-    if(p.opts.hours) $('edHours').value = String(p.opts.hours);
+    setSpan(p.opts.hours || 24);
     applyMotionDefault(true);
     syncDispatchForm();
     app.model = ED.load(p.model);
@@ -1460,7 +1491,7 @@
   // The export's subtitle is the run summary without its timing, which changes on every run.
   function exportCtx(){
     var res = shownResults();
-    var sub = res ? MODE_NAME[res.report.mode] + ', ' + ED.hourLabel(hourNow(), res.T) + ' of ' + hoursText(res.T) + '.' : '';
+    var sub = res ? MODE_NAME[res.report.mode] + ', ' + hourText(hourNow(), res) + ', in ' + hoursText(res.T) + '.' : '';
     return { app: app, ED: ED, display: display(), res: res, stale: isStale(), title: app.model.name || 'Dispatch', sub: sub };
   }
   function busy(on, text){ setSub(on ? text : ''); if(!on && app.res) showResults(); }
@@ -1525,8 +1556,18 @@
     },
     // A scenario file or a Share link: the whole network is replaced and solved.
     // (The mini cache restores inside init, before persist exists; start-up below handles that.)
-    onRestore: function(){ if(persist) return afterRestore(); }
+    onRestore: function(saved){ migrateHorizon(saved); if(persist) return afterRestore(); }
   });
+  /* The horizon used to be one select, edHours, in hours from a Monday at 00:00.
+     State saved then has no number, unit or start: it keeps its horizon, and a
+     start on a Monday (29/12/2025) keeps every weekday where it was. */
+  function migrateHorizon(saved){
+    var f = saved && (saved.__fields || saved);
+    if(!f || typeof f !== 'object') return;
+    if(f['v:edSpan'] == null && f['v:edHours'] != null) setSpan(ED.solveOptions({ hours: f['v:edHours'] }).hours);
+    if(f['v:edStart'] == null && f['v:edMode'] != null) $('edStart').value = '2025-12-29T00:00';
+    syncDispatchForm();
+  }
   function afterRestore(){
     stopPlay();
     app.sel = new Set();
@@ -1550,7 +1591,7 @@
   else if(!EMBED){
     // A first visit opens on the default Quick Start, solved the way it is meant to be.
     var p0 = ED.PRESETS[ED.PRESET_DEFAULT];
-    $('edMode').value = p0.opts.mode; $('edHours').value = String(p0.opts.hours);
+    $('edMode').value = p0.opts.mode; setSpan(p0.opts.hours);
     $('edHour').max = String(p0.opts.hours - 1); $('edHour').value = String(p0.hour);
   }
   syncDispatchForm();

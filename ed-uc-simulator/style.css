@@ -172,10 +172,16 @@ html.sld-full-open{overflow:hidden;scrollbar-gutter:auto;}
 /* ── The hour: a scrubber with play, beside the view options ── */
 .hour-ctl{display:inline-flex;align-items:center;gap:8px;flex:1 1 260px;min-width:220px;}
 .hour-ctl .btn-icon{min-width:32px;padding:4px 0;font-size:.85rem;}
-.hour-field{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.hour-field{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .hour-ctl input[type=range]{flex:1 1 auto;min-width:80px;accent-color:var(--accent);cursor:pointer;margin:0;}
-.hour-out{flex-shrink:0;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-weight:600;font-size:.84rem;color:var(--text);min-width:5.4em;text-align:right;white-space:nowrap;}
+.hour-out{flex-shrink:0;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-weight:600;font-size:.84rem;color:var(--text);min-width:9.6em;text-align:right;white-space:nowrap;}
 .hour-ctl[data-off]{opacity:.45;pointer-events:none;}
+/* On a phone the date takes the room the word Hour had; the label stays for screen readers. */
+@media(max-width:600px){
+  .hour-ctl{min-width:0;}
+  .hour-field{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  .hour-out{min-width:0;font-size:.78rem;}
+}
 
 /* ── Charts ── */
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
@@ -245,6 +251,11 @@ html.abt-embed .chart-card>.sub{margin-top:0;}
   .ctrl-tab{font-size:.76rem;}
   .chart-card{padding:14px 12px;}
 }
+
+/* ── Horizon: a number and its unit side by side ── */
+.span-row{display:flex;gap:8px;}
+.span-row .txt-input{flex:1 1 0;min-width:0;}
+.span-row .sel-input{flex:0 0 108px;width:108px;}
 
 /* ── A profile: 24 bars, one an hour, drawn and dragged in the inspector ── */
 .prof-bars{display:block;width:100%;height:auto;aspect-ratio:256/90;max-height:120px;margin-top:6px;cursor:ns-resize;touch-action:none;user-select:none;}

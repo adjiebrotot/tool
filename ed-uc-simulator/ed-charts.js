@@ -66,7 +66,9 @@
 
   // An axis tick: whole prices without the cents.
   function tickPrice(v, cur){ return Math.abs(v - Math.round(v)) < 1e-9 ? ED.fmt.money(v, cur) : ED.fmt.price(v, cur); }
-  function hourLabels(H){ var a = []; for(var t = 0; t < H; t++) a.push(ED.hourLabel(t, H)); return a; }
+  // The hours are dated from the start the result was solved for.
+  function startOf(){ return ctx && ctx.res && ctx.res.report && ctx.res.report.opts ? ctx.res.report.opts.start : undefined; }
+  function hourLabels(H){ var a = [], st = startOf(); for(var t = 0; t < H; t++) a.push(ED.hourLabel(t, H, st)); return a; }
   function baseOptions(o){
     var grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
     var H = o.H;
@@ -91,10 +93,36 @@
       scales: o.scales(grid, muted)
     };
   }
+  /* Past a day, the time axis ticks on whole hours or whole days of the clock,
+     as many as fit its width and the part of the horizon in view, so the
+     labels never run into each other on a phone or over 30 days. */
+  var STEPS = [1, 2, 3, 6, 12, 24, 48, 72, 168, 336];
+  function clockTicks(H){
+    return function(scale){
+      if(H <= 24) return;
+      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(H, Math.floor(scale.max));
+      var room = Math.max(2, Math.floor((scale.width || 600) / 84)), step = STEPS[STEPS.length - 1];
+      for(var i = 0; i < STEPS.length; i++) if((hi - lo) / STEPS[i] <= room){ step = STEPS[i]; break; }
+      var h0 = ED.cal(startOf()).h0, ticks = [];
+      for(var v = lo; v <= hi; v++){
+        var abs = h0 + v;
+        if(step < 24 ? abs % step === 0 : abs % 24 === 0 && (abs / 24) % (step / 24) === 0) ticks.push({ value: v });
+      }
+      if(ticks.length) scale.ticks = ticks;
+      scale.edStep = step;
+    };
+  }
+  // A tick on a day boundary, with the axis ticking by days, needs only its date.
+  function tickText(scale, v, H){
+    var t = ED.tickLabel(v, H, startOf());
+    return H > 24 && scale && scale.edStep >= 24 ? t.slice(0, 5) : t;
+  }
   function xAxis(H, grid, muted, extra){
     var x = {
-      title: { display: true, text: H > 24 ? 'Day and hour' : 'Hour of the day', color: muted, font: { size: 11 } },
-      ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, autoSkip: true, maxRotation: 0, font: { size: 11 } },
+      title: { display: true, text: H > 24 ? 'Date and time' : 'Time of day', color: muted, font: { size: 11 } },
+      ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, autoSkip: true, maxRotation: 0, font: { size: 11 },
+               callback: function(v){ return tickText(this, v, H); } },
+      afterBuildTicks: clockTicks(H),
       grid: { color: grid }
     };
     for(var k in extra) x[k] = extra[k];
@@ -271,7 +299,7 @@
       options: (function(){
         var o = baseOptions({ H: H + 1, mode: 'nearest', fit: false, zoom: { min: 0, max: H, points: H },
           callbacks: {
-            title: function(items){ return items.length ? items[0].raw.y + ', ' + ED.hourLabel(items[0].raw.t, H) : ''; },
+            title: function(items){ return items.length ? items[0].raw.y + ', ' + ED.hourLabel(items[0].raw.t, H, startOf()) : ''; },
             label: function(c){
               var r = res.dev[c.raw.id], t = c.raw.t;
               return c.dataset.type === 'scatter' ? '  Starts' : '  ' + (r.status[t] > 0.999 ? 'Running' : 'Running ' + Math.round(r.status[t] * 100) + '%') + ', ' + F.mw(r.p[t]) + ' MW';
@@ -279,14 +307,15 @@
             afterBody: function(items){
               if(!items.length) return;
               var raw = items[0].raw, r = res.dev[raw.id];
-              hover('commitHover', raw.y + ' at ' + ED.hourLabel(raw.t, H) + '  |  ' + (r.status[raw.t] > 0.999 ? 'running' : r.status[raw.t] < 0.001 ? 'off' : 'running ' + Math.round(r.status[raw.t] * 100) + '%') + ', ' + F.mw(r.p[raw.t]) + ' MW');
+              hover('commitHover', raw.y + ' at ' + ED.hourLabel(raw.t, H, startOf()) + '  |  ' + (r.status[raw.t] > 0.999 ? 'running' : r.status[raw.t] < 0.001 ? 'off' : 'running ' + Math.round(r.status[raw.t] * 100) + '%') + ', ' + F.mw(r.p[raw.t]) + ' MW');
             }
           },
           scales: function(grid, muted){
             return {
               x: xAxis(H, grid, muted, { type: 'linear', min: 0, max: H,
-                   ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, font: { size: 11 }, stepSize: H > 24 ? 24 : 3,
-                            callback: function(v){ return v === H ? '' : ED.hourLabel(Math.round(v), H); } } }),
+                   ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, font: { size: 11 }, stepSize: 3,
+                            callback: function(v){ return v === H ? '' : tickText(this, Math.round(v), H); } },
+                   afterBuildTicks: clockTicks(H) }),
               y: { type: 'category', title: { display: true, text: 'Unit', color: muted, font: { size: 11 } }, ticks: { color: muted, font: { size: 11 } }, grid: { color: grid, offset: true } }
             };
           } });

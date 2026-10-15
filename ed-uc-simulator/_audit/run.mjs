@@ -123,7 +123,7 @@ function replay(model, opts, res) {
     model.el.forEach(e => { if (e.c === 'Bus') inj[e.id] = res.bus[e.id].shed[t]; });
     gens.forEach(e => { inj[e.bus] += res.dev[e.id].p[t]; });
     stores.forEach(e => { inj[e.bus] += res.dev[e.id].p[t]; });
-    loads.forEach(e => { inj[e.bus] -= ED.loadSeries(e, H)[t]; });
+    loads.forEach(e => { inj[e.bus] -= ED.loadSeries(e, H, o.start)[t]; });
     links.forEach(e => { inj[e.bus0] -= res.br[e.id].p0[t]; inj[e.bus1] -= res.br[e.id].p1[t]; });
     // Balance: what is injected leaves through the AC branches.
     const out = {}; Object.keys(inj).forEach(b => { out[b] = 0; });
@@ -149,7 +149,7 @@ function replay(model, opts, res) {
   }
   // Units: limits, commitment, ramps, start-ups, cost.
   gens.forEach(e => {
-    const d = res.dev[e.id], av = ED.availSeries(e, H);
+    const d = res.dev[e.id], av = ED.availSeries(e, H, o.start);
     const com = e.committable && o.mode !== 'ed';
     for (let t = 0; t < H; t++) {
       const s = com ? d.status[t] : 1;
@@ -390,6 +390,38 @@ for (const [file, re] of [['psa-opt.min.js', /sha256 of the code below: ([0-9a-f
   check('A5 engine/highs.wasm hashes to the sha256 named in highs.mjs', !!m && m[1] === got, got.slice(0, 16));
 }
 
+/* ── A6: the calendar ── */
+console.log('\n── A6 the calendar ──');
+{
+  // The weekday and the clock from JavaScript's own calendar, not the tool's.
+  const wd = iso => (new Date(iso + ':00Z').getUTCDay() + 6) % 7;
+  const P = ED.PROFILES;
+  let worst = 0, n = 0;
+  for (const start of ['2026-01-01T00:00', '2026-01-03T06:00', '2025-12-29T00:00', '2028-02-28T21:00']) {
+    const ms0 = Date.parse(start + ':00Z');
+    for (const key of Object.keys(P)) {
+      const e = { p_set: 1, prof: key }, H = 200;
+      const got = P[key].kind === 'load' ? ED.loadSeries(e, H, start) : ED.availSeries(e, H, start);
+      for (let t = 0; t < H; t++) {
+        const at = new Date(ms0 + t * 3600e3), h = at.getUTCHours();
+        const midnight = Date.parse(start.slice(0, 10) + 'T00:00:00Z');
+        const day = P[key].kind === 'load' ? wd(at.toISOString().slice(0, 16)) : Math.floor((ms0 + t * 3600e3 - midnight) / 864e5) % 7;
+        let want = P[key].h[h] * P[key].d[day];
+        if (P[key].kind === 'gen') want = Math.min(1, want);
+        worst = Math.max(worst, Math.abs(got[t] - want)); n++;
+      }
+    }
+  }
+  check('A6 every built-in profile follows the clock from its start, demand by weekday and units by day of the horizon', worst < 1e-12, n + ' hours, worst ' + worst);
+  const lab = [ED.hourLabel(0, 24, '2026-01-01T00:00'), ED.hourLabel(25, 48, '2026-01-31T23:00'), ED.hourLabel(719, 720, '2028-02-01T00:00'), ED.hourLabel(3, 24, 'not a date')];
+  check('A6 hours are labelled as dates from the start', lab.join('|') === '01/01/2026 00:00|02/02/2026 00:00|01/03/2028 23:00|01/01/2026 03:00', lab.join(' | '));
+  const o1 = ED.solveOptions({ hours: 99999, start: '2026-02-30T05:00' }), o2 = ED.solveOptions({ hours: 720, start: '2026-06-15T07:45' });
+  check('A6 a horizon stops at 30 days, a start is a whole hour of a real date', o1.hours === 720 && o1.start === '2026-01-01T00:00' && o2.hours === 720 && o2.start === '2026-06-15T07:00', JSON.stringify([o1.hours, o1.start, o2.start]));
+  // A run from before the start date began on a Monday at 00:00: no start reproduces it.
+  const e = { p_set: 1, prof: 'com' };
+  check('A6 a Monday start at 00:00 computes what the tool computed before it had a start date', JSON.stringify(ED.loadSeries(e, 168, '2025-12-29T00:00')) === JSON.stringify(ED.loadSeries(e, 168)), 'com, a week');
+}
+
 /* ── B: the page ── */
 console.log('\n── B the page ──');
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json', '.txt': 'text/plain', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json' };
@@ -464,13 +496,16 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     out.clean = !document.getElementById('runBtn').classList.contains('needs-run') && document.getElementById('sldStage').getAttribute('data-share-sig') === sig;
     const b = a.model.el.filter(e => e.c === 'Bus')[0]; b.at = [b.at[0] + 2, b.at[1], b.at[2], b.at[3]]; a.change('geom');
     out.move = !document.getElementById('runBtn').classList.contains('needs-run');
-    const h = document.getElementById('edHours'); h.value = '48'; h.dispatchEvent(new Event('change', { bubbles: true }));
+    const set = (id, v) => { const el = document.getElementById(id); el.value = v; el.dispatchEvent(new Event('change', { bubbles: true })); };
+    set('edSpanUnit', 'd'); set('edSpan', '2');
     out.horizon = document.getElementById('runBtn').classList.contains('needs-run');
     await a.run();
     out.ran = !document.getElementById('runBtn').classList.contains('needs-run') && a.res.T === 48;
+    set('edStart', '2026-03-07T06:00');
+    out.start = document.getElementById('runBtn').classList.contains('needs-run');
     return out;
   });
-  check('B4 the Run gate: an edit is stale, undo clears it, a move does not, a new horizon does, Run refreshes', gate.stale && gate.clean && gate.move && gate.horizon && gate.ran, JSON.stringify(gate));
+  check('B4 the Run gate: an edit is stale, undo clears it, a move does not, a new horizon or start does, Run refreshes', gate.stale && gate.clean && gate.move && gate.horizon && gate.ran && gate.start, JSON.stringify(gate));
   // The SVG export is strict XML.
   const svg = await page.evaluate(() => window.__ed.app.exporter().then(X => X.svgText({ app: window.__ed.app, ED: window.ED, display: window.__ed.display(), res: window.__ed.app.res, stale: false, title: 'T', sub: 'S' })));
   const xmlOk = await page.evaluate(s => !new DOMParser().parseFromString(s, 'image/svg+xml').querySelector('parsererror'), svg);
@@ -485,12 +520,44 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     for (let i = 0; i < N; i++) el.push({ c: 'Load', id: id++, bus: 1 + i, p_set: 80, prof: ['sys', 'res', 'com', 'ind'][i % 4] });
     const a = window.__ed.app;
     a.model = window.ED.load({ v: 1, el }); a.change('elec');
-    const h = document.getElementById('edHours'); h.value = '168'; h.dispatchEvent(new Event('change', { bubbles: true }));
+    document.getElementById('edSpanUnit').value = 'h';
+    const h = document.getElementById('edSpan'); h.value = '168'; h.dispatchEvent(new Event('change', { bubbles: true }));
     const t0 = performance.now();
     await a.run();
     return { ok: a.res.report.ok, ms: performance.now() - t0, err: a.res.report.error };
   });
   check('B6 12 buses, 20 units over a week: the unit commitment solves in under 30 s', big.ok && big.ms < 30000, big.ok ? Math.round(big.ms) + ' ms' : big.err);
+}
+// Thirty days from a start date: every hour is solved, dated and listed.
+{
+  const { page, errs } = await fresh();
+  await page.goto(URL_);
+  await solvedP(page);
+  const r = await page.evaluate(async () => {
+    await window.__ed.applyPreset('uc3');
+    const set = (id, v) => { const el = document.getElementById(id); el.value = v; el.dispatchEvent(new Event('change', { bubbles: true })); };
+    set('edSpanUnit', 'd'); set('edSpan', '30'); set('edStart', '2026-07-01T00:00');
+    const t0 = performance.now();
+    await window.__ed.run();
+    window.__ed.setHour(719);
+    document.querySelector('#tableTabs [data-val="hour"]').click();
+    const rows = document.querySelectorAll('#tableWrap tbody tr');
+    return { ok: window.__ed.app.res.report.ok, T: window.__ed.app.res.T, ms: performance.now() - t0, out: document.getElementById('hourOut').textContent,
+             first: rows[0] && rows[0].cells[0].textContent, last: rows[rows.length - 1] && rows[rows.length - 1].cells[0].textContent, n: rows.length,
+             sub: document.getElementById('sldSub').textContent, maxDays: document.getElementById('edSpan').max };
+  });
+  check('B8 30 days from 01/07/2026: solved, every hour dated in the table, the diagram and its subtitle', r.ok && r.T === 720 && r.n === 720 && r.first === '01/07/2026 00:00' &&
+    r.last === '30/07/2026 23:00' && r.out === '30/07/2026 23:00' && r.sub.includes('30/07/2026 23:00') && r.maxDays === '30' && !errs.length, JSON.stringify(r).slice(0, 220));
+}
+// A mini cache from before the horizon became a number and a unit keeps its horizon and its weekdays.
+{
+  const raw = JSON.stringify({ __fields: { 'v:edMode': 'ed', 'v:edHours': '72' }, __extra: ED.compact(ED.PRESETS.pjm5.model) });
+  const { page, errs } = await fresh(`try { localStorage.setItem('abt:save:educ-simulator:v1', ${JSON.stringify(raw)}); } catch(e){}`);
+  await page.goto(URL_);
+  await solvedP(page);
+  const r = await page.evaluate(() => ({ span: document.getElementById('edSpan').value, unit: document.getElementById('edSpanUnit').value,
+    start: document.getElementById('edStart').value, T: window.__ed.app.res.T, o: window.__ed.solveOptions() }));
+  check('B9 an old saved horizon (72 hours) opens as 3 days from a Monday, as it was solved before', r.span === '3' && r.unit === 'd' && r.start === '2025-12-29T00:00' && r.T === 72 && !errs.length, JSON.stringify(r).slice(0, 200));
 }
 // Hostile saved state, through the mini cache: nothing throws, nothing is injected, a run still happens.
 {

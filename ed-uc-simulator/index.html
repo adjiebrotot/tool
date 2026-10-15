@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "ED/UC Simulator",
   "url": "https://tool.adjiebrotots.com/ed-uc-simulator/",
-  "description": "Economic Dispatch & Unit Commitment (ED/UC) in your browser: draw a single-line diagram and solve it hour by hour, over a day or a week. Start-up and shut-down costs, minimum up and down times, ramp limits, solar and wind profiles, storage, line limits and nodal prices. The engine is PSA.js, a JavaScript port of PyPSA, with the HiGHS solver.",
+  "description": "Economic Dispatch & Unit Commitment (ED/UC) in your browser: draw a single-line diagram and solve it hour by hour, over one hour to 30 days from any start date. Start-up and shut-down costs, minimum up and down times, ramp limits, solar and wind profiles, storage, line limits and nodal prices. The engine is PSA.js, a JavaScript port of PyPSA, with the HiGHS solver.",
   "applicationCategory": "EngineeringApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -46,7 +46,7 @@
     "Drag-and-drop single-line diagram: buses, lines, transformers, generators, solar, wind, grid imports, loads, storage and HVDC links",
     "Unit commitment as a mixed-integer problem or its linear relaxation, or plain economic dispatch",
     "Start-up, shut-down and stand-by costs, minimum stable output, minimum up and down times and ramp limits",
-    "Hourly load, solar and wind profiles over 1 hour to 1 week, or your own",
+    "Hourly load, solar (summer, spring or autumn, winter) and wind profiles over 1 hour to 30 days from any start date, or your own",
     "Line, transformer and link limits with nodal prices (LMP) from a DC optimal power flow",
     "Batteries and other storage, charged and discharged at the best hours",
     "Dispatch, price, commitment and storage charts, with every hour playable on the diagram",
@@ -157,14 +157,18 @@
         </select>
       </div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Horizon <i class="tip-icon" data-tip="Hours solved together, one hour each. Storage and commitment carry over from hour to hour; built-in profiles vary through the week.">?</i></span></div>
-        <select class="sel-input" id="edHours">
-          <option value="1">1 hour</option>
-          <option value="24" selected>24 hours</option>
-          <option value="48">2 days</option>
-          <option value="72">3 days</option>
-          <option value="168">1 week</option>
-        </select>
+        <div class="field-label"><span class="tip-wrap">Horizon <i class="tip-icon" data-tip="Solved together in one-hour steps, up to 30 days. Storage and commitment carry over from one hour to the next.">?</i></span></div>
+        <div class="span-row">
+          <input class="txt-input" id="edSpan" type="number" inputmode="numeric" min="1" max="30" step="1" value="1" aria-label="Horizon length"/>
+          <select class="sel-input" id="edSpanUnit" aria-label="Horizon unit">
+            <option value="h">hours</option>
+            <option value="d" selected>days</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">First hour <i class="tip-icon" data-tip="When the horizon starts. Built-in demand profiles follow the weekday, lower at the weekend.">?</i></span></div>
+        <input class="txt-input" id="edStart" type="datetime-local" min="1900-01-01T00:00" max="2200-12-31T23:00" step="3600" value="2026-01-01T00:00"/>
       </div>
     </div>
     <div class="field-group">
