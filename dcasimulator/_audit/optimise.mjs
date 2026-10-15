@@ -87,7 +87,7 @@ async function openOn(settings, { vp = { width: 1400, height: 1000 } } = {}){
       }
       Object.keys(localStorage).length;
       localStorage.setItem('abt:ctrl:/dcasimulator/portfolio/', '1');
-      ['dcapf-tour-v1-seen', 'dcapf-tour-v2-seen', 'dcapf-tour-v3-seen'].forEach(k => localStorage.setItem(k, '1'));
+      ['dcapf-tour-v1-seen', 'dcapf-tour-v2-seen', 'dcapf-tour-v3-seen', 'dcapf-tour-v4-seen'].forEach(k => localStorage.setItem(k, '1'));
     } catch (e) {}
   }, [SAVE_KEY, settings ? JSON.stringify({ __fields: {}, __extra: settings }) : null]);
   const page = await ctx.newPage();

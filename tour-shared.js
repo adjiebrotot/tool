@@ -22,6 +22,9 @@
    `target`  : CSS selector of the element to spotlight, an array of
                selectors to spotlight together (the step highlights every
                control it talks about), or null for a centered card.
+   `body`    : short HTML. One lead line, then a <ul> of points when there
+               is more than one idea; bold only the term the reader must
+               find or remember.
    `onEnter` : optional callback run when the step is shown. A step whose
                target lives behind a tab, a panel, or a result that has not
                been produced yet MUST open or produce it here, so the step
@@ -196,7 +199,8 @@
     var isFirst = current === 0;
     els.tooltip.innerHTML =
       '<h4 class="pf-tour-title">' + step.title + '</h4>' +
-      '<p class="pf-tour-body">' + step.body + '</p>' +
+      // A div, not a p: a body may hold a <ul> of points, which a p cannot.
+      '<div class="pf-tour-body">' + step.body + '</div>' +
       '<div class="pf-tour-footer">' +
         '<button type="button" class="pf-tour-skip" data-act="skip">' + SKIP_LABEL + '</button>' +
         '<span class="pf-tour-progress">' + (current + 1) + ' / ' + steps.length + '</span>' +

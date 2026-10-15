@@ -208,8 +208,10 @@ await page.goto(PAGE, { waitUntil:'load' });
 // auto-opens 700ms into every reload. The checks below drive the page through
 // page.evaluate(), which a backdrop cannot block, but a step that seeds a Quick
 // Start scenario would still land on top of a test's own inputs. Mark the tour
-// as already seen so the run is deterministic.
-await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v2-seen','1'); } catch(e){} });
+// as already seen so the run is deterministic. The control card opens folded
+// for a first-time visitor (SharedCtrl), which leaves every field inside it
+// off the screen, so open it the way a reader who chose to would have it.
+await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v3-seen','1'); localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch(e){} });
 await page.reload({ waitUntil:'load' });
 await page.waitForTimeout(250);
 
@@ -656,7 +658,7 @@ async function reset(){
       && restoredModes.capsMode === 'detailed'
       && await page.evaluate(() => document.querySelector('#incModeGroup .seg-btn[data-val="detailed"]').classList.contains('active')),
     `restored ${JSON.stringify(restoredModes)}`);
-  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v2-seen','1'); } catch(e){} });
+  await page.evaluate(() => { try { localStorage.clear(); localStorage.setItem('bc-tour-v3-seen','1'); localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch(e){} });
 }
 
 /* ══════════════ B17 — Simple and Detailed describe the same person ══════════════ */

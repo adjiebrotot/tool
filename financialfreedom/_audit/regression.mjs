@@ -223,6 +223,7 @@ async function openPage(which, cache){
       // The old page from git reads v3, this one v4.
       localStorage.setItem('ff-tour-v3-seen', '1');
       localStorage.setItem('ff-tour-v4-seen', '1');
+      localStorage.setItem('ff-tour-v5-seen', '1');
       if(blob) localStorage.setItem(key, blob);
     } catch(e){}
   }, [KEY, cache || null]);

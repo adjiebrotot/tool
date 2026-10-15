@@ -2,34 +2,25 @@
    The shared engine (../tour-shared.js) reads this object. v5 follows the
    scenario bar with its offer's form under it, the ▶ Simulate gate, and
    Optimise in place of the Sensitivity tab, so readers who took v4 are
-   offered it again. v6 gives the optimise gauge a step of its own. */
+   offered it again. v6 gives the optimise gauge a step of its own. v7 trims
+   every step to a lead line and a short list. */
 window.__TOUR = {
-  seenKey: 'fvc-tour-v6-seen',
+  seenKey: 'fvc-tour-v7-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
       target: null,
       title: '👋 Welcome to Finance vs Cash',
-      body: 'This quick tour shows how to decide whether to <strong>pay cash</strong> or ' +
-            '<strong>finance a purchase and invest the difference</strong>. It compares ' +
-            'the total cost of each path, so you can tell if a low-rate or 0% installment ' +
-            'plan actually beats paying in full. It takes about a minute.'
+      body: 'Should you <strong>pay cash</strong>, or <strong>finance and invest the ' +
+            'difference</strong>? This compares what each path leaves you with. About a minute.'
     },
     {
       target: '.quick-start-row',
-      title: '① Start from a worked comparison',
-      body: 'One click fills every tab with a decision people actually face: a ' +
-            '<strong>house</strong> paid outright against 30-year fixed, ' +
-            'fixed-then-variable, and 15-year loans; a <strong>car</strong> over three ' +
-            'years, five years, or five with a balloon; a <strong>phone</strong> on plans ' +
-            'of 12, 24 or 36 payments that quote no rate at all; a ' +
-            '<strong>credit-card 0%</strong> conversion over three tenors; a ' +
-            '<strong>flat-rate motorbike</strong> quoted per month; and a ' +
-            '<strong>payment holiday</strong> against paying from day one. None of them ' +
-            'is decided by the price tag: in the phone and the car the smallest ' +
-            'instalment is the worst deal. Then change any figure over the top of it. ' +
-            'There is no Reset button because each of these rebuilds the whole form from ' +
-            'scratch, so one of them always is one.'
+      title: '① Start from an example',
+      body: 'One click fills every tab with a real decision: a house, a car, a phone plan, ' +
+            'a 0% card conversion and more.' +
+            '<ul><li>Change any figure afterwards</li>' +
+            '<li>Each one rebuilds the whole form, so it also works as a reset</li></ul>'
     },
     {
       target: '#tab-base',
@@ -38,11 +29,9 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="base"]');
         if (tab) tab.click();
       },
-      title: '② Enter the purchase',
-      body: 'On <strong>Purchase</strong>, enter the <strong>cash purchase cost</strong> and ' +
-            'the <strong>cash you have</strong>, in the currency you pick. The ' +
-            '<strong>Assumptions</strong> tab holds the <strong>risk-free rate</strong> ' +
-            'your cash earns while it stays invested, and the inflation adjustment.'
+      title: '② The purchase',
+      body: '<ul><li><strong>Purchase</strong>: the cash price and the cash you have</li>' +
+            '<li>Assumptions: the <strong>risk-free rate</strong> your cash earns, and inflation</li></ul>'
     },
     {
       target: '#tab-scenarios',
@@ -52,15 +41,11 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="scenarios"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '③ Add financing scenarios',
-      body: 'This is <strong>Loan offers</strong>, now open for you. Each offer is a tab ' +
-            'on the bar at the top: click one to edit it below, double-click to rename it, ' +
-            'and click its coloured dot to recolour it everywhere it is drawn. ' +
-            '<strong>+</strong> adds an offer; the buttons on the right copy or remove the ' +
-            'one you are on. <strong>Loan Type</strong> covers the shapes lenders actually ' +
-            'sell, from a flat rate to interest-only, a balloon, or an instalment whose rate ' +
-            'you do not know, and <strong>Rate Basis</strong> switches to a schedule when ' +
-            'the rate is fixed for a while and then floats. Edits save as you go.'
+      title: '③ Loan offers',
+      body: 'Each offer is a tab on the bar; <strong>+</strong> adds one.' +
+            '<ul><li>Double-click to rename, click the dot to recolour</li>' +
+            '<li><strong>Loan Type</strong>: flat rate, interest-only, balloon, unknown rate</li>' +
+            '<li>Rate Basis: fixed for a while, then floating</li></ul>'
     },
     {
       // The gauge lives beside the field it sweeps, so the step keeps Loan
@@ -71,19 +56,15 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '④ Optimise a setting',
-      body: 'The small gold <strong>gauge</strong> beside a field such as the term, the ' +
-            'finance rate or the down payment sweeps it over a range: pick a Start, an ' +
-            'End and how many steps, for up to two settings of the offer you are editing. ' +
-            'Simulate becomes <strong>▶ Optimise</strong>, and the chart shows which value ' +
-            'did best, as a line for one setting or a 3D surface for two. Cancel goes ' +
-            'back to comparing offers.'
+      body: 'The gold <strong>gauge</strong> beside a field sweeps it over a range.' +
+            '<ul><li>Up to two settings, such as term or rate</li>' +
+            '<li>Simulate becomes ▶ Optimise; the chart shows which value did best</li></ul>'
     },
     {
       target: '.controls .btn-row',
-      title: '⑤ Run the comparison',
-      body: 'Typing does not rerun the comparison. The results fade and ' +
-            '<strong>▶ Simulate</strong> lights up, so you never read an answer that no ' +
-            'longer matches the form. Click it to compare every offer against paying cash.'
+      title: '⑤ Simulate',
+      body: 'Edits do not rerun the comparison; the button lights up instead. Press ' +
+            '<strong>▶ Simulate</strong> to compare every offer against cash.'
     },
     {
       target: '#verdict',
@@ -92,37 +73,29 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="base"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '⑥ Read the answer',
-      body: 'The sentence at the top says whether paying cash or a loan comes out ahead, ' +
-            'by how much, and at what effective rate against the risk-free rate.'
+      title: '⑥ The answer',
+      body: '<ul><li>Whether cash or a loan comes out ahead, and by how much</li>' +
+            '<li>The loan’s effective rate against the risk-free rate</li></ul>'
     },
     {
       target: '.metrics',
-      title: '⑦ The figures behind it',
-      body: 'Four KPI cards call it: the <strong>best strategy</strong>, the ' +
-            '<strong>net benefit versus paying cash</strong>, the <strong>total ' +
-            'interest</strong> that strategy pays, and the <strong>wealth a cash ' +
-            'purchase</strong> would leave you with. The <strong>Optimization ' +
-            'Target</strong> in the first card decides what "best" means. A positive net ' +
-            'benefit means financing and investing the difference left you wealthier; a ' +
-            'negative one, as in the default numbers here, means paying cash wins. In ' +
-            'Optimise they become the best and worst tested settings beside yours.'
+      title: '⑦ The figures',
+      body: '<ul><li>Best strategy, by the Optimization Target you choose</li>' +
+            '<li><strong>Net benefit</strong> vs cash: positive means financing wins</li>' +
+            '<li>Total interest, and the wealth a cash purchase leaves</li></ul>'
     },
     {
       target: '.chart-card',
-      title: '⑧ Explore over time',
-      body: 'Switch the chart between <strong>Ending Wealth</strong>, <strong>Net ' +
-            'Benefit</strong>, <strong>Investment Value</strong> and <strong>Loan ' +
-            'Balance</strong> right above it. A floating rate is drawn as a shaded band, so ' +
-            'you see the range rather than one guess. Export any view as SVG or PNG; the ' +
-            'amortization schedule opens from its <strong>chevron</strong> and downloads as ' +
-            'CSV. Everything runs privately in your browser.'
+      title: '⑧ Over time',
+      body: '<ul><li>Switch between Ending Wealth, Net Benefit, Investment Value and Loan Balance</li>' +
+            '<li>A floating rate shows as a shaded band</li>' +
+            '<li>The amortization schedule opens from its chevron or downloads as CSV</li></ul>'
     },
     {
       target: null,
       title: '✅ You are all set',
-      body: 'That is the whole workflow. Free, with no account. Replay this tour any time ' +
-            'via the <strong>🧭</strong> button in the header.'
+      body: '<ul><li>Free, private, no account</li>' +
+            '<li>Replay this tour with the 🧭 button</li></ul>'
     }
   ]
 };

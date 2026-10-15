@@ -184,6 +184,18 @@ No em-dashes in page text, tips or placeholders; a lone `—` marking an empty
 cell is fine. When a tour changes, bump its `seenKey` version so returning
 readers see it again (checks treat any `<tool>-tour-vN-seen` as seen).
 
+### Tour steps
+
+A tour shows where things are; the page and its (i) tips explain them.
+
+- **Short.** A lead line, or a `<ul>` of two to four points, each a fragment
+  (`Simulated: model an asset from its return and volatility`). About 30 words
+  at most.
+- **Bold sparingly.** At most one or two terms a step: the control the reader
+  must find or the one idea to remember. Never every option in a list.
+- **End to end.** Start, inputs, run, answer, details, in the order a first
+  visit meets them, so the reader knows each feature exists and where.
+
 ---
 
 ## CSS Variables & Theming

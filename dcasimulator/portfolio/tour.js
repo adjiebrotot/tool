@@ -2,35 +2,32 @@
    The shared engine (../../tour-shared.js) reads this object. v2 follows the
    redesign: Currency on the Data tab, Settings renamed Assumptions, and the
    answer and summary above the charts, so readers who took v1 see it again.
-   v3 adds Optimise mode (the gold gauge beside a field). */
+   v3 adds Optimise mode (the gold gauge beside a field). v4 trims every step
+   to a lead line and a short list. */
 window.__TOUR = {
-  seenKey: 'dcapf-tour-v3-seen',
+  seenKey: 'dcapf-tour-v4-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
       target: null,
       title: '👋 Welcome to the Portfolio DCA Simulator',
-      body: 'This quick tour shows how to compare whole <strong>portfolio ' +
-            'strategies</strong> side by side, each with its own assets, target weights, ' +
-            'top-up schedule, and rebalancing method, so you can see which approach grows ' +
-            'value fastest. It takes about a minute.'
+      body: 'Compare whole <strong>portfolio strategies</strong> side by side: assets, ' +
+            'weights, top-ups and rebalancing. About a minute.'
     },
     {
       target: '.quick-start-row',
-      title: '① Start from a worked example',
-      body: 'One click loads a full portfolio comparison and runs it: ' +
-            '<strong>80/20 vs 60/40</strong> allocations, ' +
-            '<strong>rebalance monthly vs quarterly</strong>, or ' +
-            '<strong>rebalancing vs constant allocation</strong>. The quickest way to see ' +
-            'the simulator in action.'
+      title: '① Start from an example',
+      body: 'One click loads a comparison and runs it:' +
+            '<ul><li>80/20 vs 60/40</li>' +
+            '<li>Rebalance monthly vs quarterly</li>' +
+            '<li>Rebalancing vs constant allocation</li></ul>'
     },
     {
       target: '.ctrl-tabs',
-      title: '② Data, Portfolios, Assumptions',
-      body: 'Pick the currency and load market data in <strong>Data</strong>, build each ' +
-            'strategy in <strong>Portfolios</strong>, each with its own Risk-Free Account ' +
-            'and fees, and set when orders fill and the seed behind simulated assets in ' +
-            '<strong>Assumptions</strong>.'
+      title: '② Three tabs',
+      body: '<ul><li><strong>Data</strong>: currency and prices</li>' +
+            '<li><strong>Portfolios</strong>: each strategy, with its own cash account and fees</li>' +
+            '<li><strong>Assumptions</strong>: order fills and simulation seed</li></ul>'
     },
     {
       target: '#tab-data',
@@ -40,10 +37,9 @@ window.__TOUR = {
         if (tab) tab.click();
       },
       title: '③ Load your assets',
-      body: 'Enter tickers such as <code>SPY</code>, <code>GOVT</code>, or ' +
-            '<code>DHHF.AX</code> for real Yahoo Finance prices, or switch to ' +
-            '<strong>Simulated</strong> to model an asset by return and volatility. Load ' +
-            'every ticker in one go to stay within the free daily cap.'
+      body: '<ul><li>Real prices: list tickers such as <code>SPY</code> or ' +
+            '<code>DHHF.AX</code> and load them in one go</li>' +
+            '<li><strong>Simulated</strong>: model an asset from its return and volatility</li></ul>'
     },
     {
       // .pf-bar is only the portfolio selector; the assets, weights, top-ups
@@ -55,12 +51,11 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
         if (tab) tab.click();
       },
-      title: '④ Build and compare portfolios',
-      body: 'Each portfolio gets its own three subtabs: <strong>Top-Ups</strong>, ' +
-            '<strong>Assets</strong>, and <strong>Rebalancing</strong>, where the target ' +
-            'weights live. Add as many portfolios as you like with <strong>+</strong> and ' +
-            'the simulator charts them together, so you can compare allocation and ' +
-            'rebalancing choices fairly.'
+      title: '④ Build portfolios',
+      body: 'Add as many as you like with <strong>+</strong>. Each has three subtabs:' +
+            '<ul><li>Top-Ups: how much and how often</li>' +
+            '<li>Assets: what it holds</li>' +
+            '<li>Rebalancing: target weights and when to restore them</li></ul>'
     },
     {
       // The gauge lives beside the field it sweeps, so the step opens the
@@ -73,10 +68,10 @@ window.__TOUR = {
         if (sub) sub.click();
       },
       title: '⑤ Optimise a setting',
-      body: 'The gold <strong>gauge</strong> beside a field sweeps it over a range: pick a ' +
-            'Start, an End and how many steps, for up to two settings of one portfolio. ' +
-            'Simulate becomes <strong>▶ Optimise</strong>, and the chart shows which value ' +
-            'did best, as a line for one setting or a 3D surface for two.'
+      body: 'The gold <strong>gauge</strong> beside a field sweeps it over a range.' +
+            '<ul><li>Up to two settings of one portfolio</li>' +
+            '<li>Simulate becomes ▶ Optimise</li>' +
+            '<li>The chart shows which value did best</li></ul>'
     },
     {
       target: '#simBtn',
@@ -86,20 +81,18 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="portfolios"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '⑥ Run the simulation',
-      body: 'Click <strong>Simulate</strong> to backtest every portfolio on the same ' +
-            'overlapping dates. The sentence at the top of the results says which ended ' +
-            'highest, or which earned the most on what went in when the top-ups differ. ' +
-            'The <strong>Final Summary</strong> under it lines up value, return and risk ' +
-            'metrics, the charts follow, and the breakdown table opens from the ' +
-            '<strong>chevron</strong> beside its title. Everything runs locally in your browser.'
+      title: '⑥ Simulate',
+      body: 'Press <strong>Simulate</strong> to backtest every portfolio on the same dates.' +
+            '<ul><li>The sentence on top names the winner</li>' +
+            '<li>Final Summary lines up value, return and risk</li>' +
+            '<li>Charts follow; the breakdown table opens from its chevron</li></ul>'
     },
     {
       target: null,
       title: '✅ You are all set',
-      body: 'That is the workflow. Prefer comparing single assets instead? Use the ' +
-            '<strong>Single-Asset DCA</strong> tool linked in the header. Replay this tour ' +
-            'any time via the <strong>🧭</strong> button.'
+      body: '<ul><li>Comparing single assets? Use the <strong>Single-Asset DCA</strong> ' +
+            'tool linked in the header</li>' +
+            '<li>Replay this tour with the 🧭 button</li></ul>'
     }
   ]
 };

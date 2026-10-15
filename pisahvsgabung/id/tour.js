@@ -1,9 +1,10 @@
 /* Konfigurasi tur berpemandu untuk kalkulator Pisah Harta vs Gabung Harta
    (versi Indonesia). Mesin bersama (../../tour-shared.js) membaca objek ini.
    v2: tur mengikuti halaman yang didesain ulang, jadi pembaca yang sudah
-   mengikuti v1 ditawari lagi. */
+   mengikuti v1 ditawari lagi. v3 meringkas tiap langkah menjadi satu kalimat
+   pembuka dan daftar pendek. */
 window.__TOUR = {
-  seenKey: 'pvg-id-tour-v2-seen',
+  seenKey: 'pvg-id-tour-v3-seen',
   launchLabel: '🧭 Ikuti tur',
   launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
@@ -12,17 +13,15 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Selamat datang di Pisah vs Gabung Harta',
-      body: 'Tur singkat ini menunjukkan cara membandingkan PPh 21 skema <strong>Pisah ' +
-            'Harta</strong> dan <strong>Gabung Harta</strong> untuk pasangan suami istri, ' +
-            'sehingga Anda tahu skema mana yang menghasilkan total pajak lebih rendah. ' +
-            'Hanya sekitar satu menit.'
+      body: 'Cari skema PPh 21 suami istri dengan <strong>pajak lebih rendah</strong>: ' +
+            'Pisah Harta atau Gabung Harta. Sekitar satu menit.'
     },
     {
       target: '.quick-start-row',
       title: '① Mulai dari contoh',
-      body: 'Pilih contoh rumah tangga. <strong>Penghasilan setara, tanpa anak</strong> adalah ' +
-            'contoh saat halaman dibuka, jadi juga membawa Anda kembali ke awal. Setiap contoh ' +
-            'mengembalikan PTKP dan lapisan tarif ke ketentuan.'
+      body: '<ul><li>Tiap contoh memuat satu rumah tangga</li>' +
+            '<li>Penghasilan setara, tanpa anak adalah contoh awal</li>' +
+            '<li>Tiap contoh mengembalikan PTKP dan lapisan tarif ke ketentuan</li></ul>'
     },
     {
       target: '#tab-inputs',
@@ -31,10 +30,10 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="inputs"]');
         if (tab) tab.click();
       },
-      title: '② Isi data rumah tangga',
-      body: 'Ketuk jumlah <strong>tanggungan</strong>, lalu isi penghasilan sebagai <strong>total ' +
-            'dan porsi istri</strong> atau <strong>per pasangan</strong>, lengkap dengan pengurang ' +
-            'bila ada. Semua nilai dalam rupiah per tahun.'
+      title: '② Rumah tangga Anda',
+      body: '<ul><li>Jumlah <strong>tanggungan</strong></li>' +
+            '<li>Penghasilan sebagai total dan porsi istri, atau per pasangan</li>' +
+            '<li>Pengurang bila ada; semua dalam rupiah per tahun</li></ul>'
     },
     {
       target: '#tab-advanced',
@@ -44,9 +43,8 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="advanced"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '③ Periksa PTKP dan lapisan tarif',
-      body: 'Inilah <strong>PTKP &amp; Lapisan Pajak</strong>, sudah kami bukakan. Nilai PTKP dan lapisan tarif ' +
-            'PPh 21 dimulai dari ketentuan; ubah hanya bila ingin memodelkan aturan lain.'
+      title: '③ PTKP & Lapisan Pajak',
+      body: 'Berisi nilai sesuai ketentuan. Ubah hanya untuk memodelkan aturan lain.'
     },
     {
       target: '#verdict',
@@ -55,35 +53,34 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="inputs"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Baca jawabannya',
-      body: 'Kalimat di atas menyebut apakah <strong>Pisah Harta</strong> atau <strong>Gabung ' +
-            'Harta</strong> yang lebih murah untuk rumah tangga Anda dan selisihnya per tahun, ' +
-            'lalu di mana titik breakeven-nya.'
+      title: '④ Jawabannya',
+      body: '<ul><li>Skema mana yang <strong>lebih murah</strong>, dan selisihnya per tahun</li>' +
+            '<li>Di mana titik breakeven-nya</li></ul>'
     },
     {
       target: '.metrics',
-      title: '⑤ Angka di baliknya',
-      body: 'Kartu pertama adalah penghematan pajaknya, dengan warna skema yang lebih murah. Dua ' +
-            'kartu lain adalah total pajak per tahun tiap skema dan tarif efektifnya.'
+      title: '⑤ Angkanya',
+      body: '<ul><li>Penghematan pajak, dengan warna skema yang lebih murah</li>' +
+            '<li>Total pajak dan tarif efektif tiap skema</li></ul>'
     },
     {
       target: '.chart-card',
-      title: '⑥ Bandingkan di berbagai gaji',
-      body: 'Grafik menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun pada ' +
-            'porsi Anda. Biru adalah Pisah Harta dan emas adalah Gabung Harta; analisis breakeven di ' +
-            'bawah grafik kedua menyebut kapan yang satu menjadi lebih murah dari yang lain.'
+      title: '⑥ Di berbagai gaji',
+      body: '<ul><li>Gaji rumah tangga Rp 100 juta sampai Rp 5 miliar, pada porsi Anda</li>' +
+            '<li>Biru untuk Pisah, emas untuk Gabung</li>' +
+            '<li>Catatan breakeven di bawah grafik kedua menyebut titik tukarnya</li></ul>'
     },
     {
       target: '#detailSection',
-      title: '⑦ Buka rinciannya',
-      body: 'Tombol <strong>panah</strong> membuka pajak pada tiap gaji, dan <strong>CSV</strong> ' +
-            'mengunduhnya baik tabel terbuka maupun tidak. Halaman ditutup dengan asumsi yang dipakai.'
+      title: '⑦ Rinciannya',
+      body: '<ul><li>Tombol panah membuka pajak pada tiap gaji</li>' +
+            '<li><strong>CSV</strong> mengunduhnya kapan saja</li></ul>'
     },
     {
       target: null,
       title: '✅ Selesai',
-      body: 'Itu seluruh alurnya, gratis, privat, dan tanpa akun. Putar ulang tur kapan saja lewat ' +
-            'tombol <strong>🧭</strong> di header.'
+      body: '<ul><li>Gratis, privat, tanpa akun</li>' +
+            '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
     }
   ]
 };

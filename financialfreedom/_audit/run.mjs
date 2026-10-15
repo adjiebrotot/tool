@@ -549,7 +549,7 @@ await page.route('**/*', route => {
 // The guided tour opens itself on a first visit and its backdrop intercepts
 // every click, so mark it seen before anything loads.
 await page.addInitScript(() => {
-  try { localStorage.setItem('ff-tour-v4-seen', '1'); } catch(_e){}
+  try { localStorage.setItem('ff-tour-v4-seen', '1'); localStorage.setItem('ff-tour-v5-seen', '1'); } catch(_e){}
 });
 await page.goto(PAGE, {waitUntil: 'load'});
 await page.waitForFunction(() => !!window.__FF, null, {timeout: 10000});

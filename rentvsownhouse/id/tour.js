@@ -1,8 +1,9 @@
 /* Konfigurasi tur berpemandu untuk alat Sewa vs Beli (versi Indonesia).
    Mesin bersama (../../tour-shared.js) membaca objek ini. Setiap langkah
-   menjelaskan apa yang ada di layar, jadi langkah tentang tab membukanya dulu. */
+   menjelaskan apa yang ada di layar, jadi langkah tentang tab membukanya dulu.
+   v4 meringkas tiap langkah menjadi satu kalimat pembuka dan daftar pendek. */
 window.__TOUR = {
-  seenKey: 'rvo-id-tour-v3-seen',
+  seenKey: 'rvo-id-tour-v4-seen',
   launchLabel: '🧭 Ikuti tur',
   launchShort: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
@@ -11,18 +12,15 @@ window.__TOUR = {
     {
       target: null,
       title: '👋 Selamat datang di Sewa vs Beli',
-      body: 'Tur singkat ini menunjukkan cara memodelkan hasil jangka panjang antara ' +
-            '<strong>menyewa dan membeli rumah</strong>, membandingkan kas, ekuitas, dan ' +
-            'kekayaan bersih dari waktu ke waktu, sehingga Anda tahu pilihan mana yang ' +
-            'lebih menguntungkan. Hanya sekitar satu menit.'
+      body: 'Lihat apakah <strong>menyewa atau membeli</strong> rumah lebih menguntungkan ' +
+            'dari waktu ke waktu. Sekitar satu menit.'
     },
     {
       target: '.quick-start-row',
-      title: '① Mulai dari kota dan jenis hunian',
-      body: 'Cari kota seperti <strong>Perth</strong>, <strong>Tokyo</strong>, atau ' +
-            '<strong>Jakarta</strong>, lalu pilih hunian yang memang ada di kota itu, dari ' +
-            'studio hingga rumah tapak empat kamar. Harga, sewa, dan syarat KPR setempat ' +
-            'langsung terisi dan bisa Anda ganti dengan angka Anda sendiri.'
+      title: '① Mulai dari kota',
+      body: '<ul><li>Cari kota seperti Perth, Tokyo, atau Jakarta</li>' +
+            '<li>Pilih hunian yang memang ada, dari studio hingga empat kamar</li>' +
+            '<li>Harga, sewa, dan syarat KPR setempat terisi; ganti sesuka Anda</li></ul>'
     },
     {
       target: '.ctrl-tabs',
@@ -30,50 +28,42 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="own"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '② Angka yang Anda tahu lebih dulu',
-      body: '<strong>Rumah</strong> berisi harga, uang muka, KPR, dan biaya kepemilikan. ' +
-            '<strong>Sewa</strong> berisi sewa, biayanya, dan skenario opsional <strong>Sewa ' +
-            'Dulu, Beli Kemudian</strong>. <strong>Asumsi</strong> berisi perkiraan masa depan: ' +
-            'suku bunga bebas risiko tabungan, kenaikan harga properti, dan jangka waktu. Setiap isian ' +
-            'menampilkan satuannya, dan angka slider bisa diklik lalu diketik.'
+      title: '② Tiga tab',
+      body: '<ul><li><strong>Rumah</strong>: harga, uang muka, KPR, biaya kepemilikan</li>' +
+            '<li><strong>Sewa</strong>: sewa, biayanya, opsi Sewa Dulu, Beli Kemudian</li>' +
+            '<li><strong>Asumsi</strong>: bunga tabungan, kenaikan harga, jangka waktu</li></ul>'
     },
     {
       target: '#verdict',
-      title: '③ Jawabannya dalam satu kalimat',
-      body: 'Mana yang unggul, seberapa besar dan setelah berapa lama, serta tahun ' +
-            'membeli mulai unggul seterusnya. Biru untuk membeli dan emas untuk menyewa, ' +
-            'di sini dan di grafik.'
+      title: '③ Jawabannya',
+      body: '<ul><li>Mana yang unggul, seberapa besar, setelah berapa lama</li>' +
+            '<li>Biru untuk membeli, emas untuk menyewa</li></ul>'
     },
     {
       target: '.metrics',
       title: '④ Angka kunci',
-      body: '<strong>Perbedaan kekayaan bersih</strong> antara membeli dan menyewa di akhir, ' +
-            '<strong>tahun breakeven</strong>, lalu modal awal yang sama dan anggaran perumahan ' +
-            'bulanan yang dipakai bersama.'
+      body: '<ul><li><strong>Perbedaan kekayaan bersih</strong> di akhir</li>' +
+            '<li><strong>Tahun breakeven</strong>, saat membeli unggul seterusnya</li>' +
+            '<li>Modal awal dan anggaran bulanan yang sama untuk keduanya</li></ul>'
     },
     {
       target: '.chart-card',
-      title: '⑤ Bandingkan dari waktu ke waktu',
-      body: 'Ganti grafik antara <strong>Kekayaan bersih</strong>, <strong>Uang ' +
-            'tunai</strong>, dan <strong>Biaya kumulatif</strong> untuk melihat ' +
-            'bagaimana tiap jalur berjalan tahun demi tahun. Tanda ? di sebelahnya ' +
-            'menjelaskan artinya. Ekspor tampilan apa pun sebagai SVG atau PNG.'
+      title: '⑤ Dari waktu ke waktu',
+      body: '<ul><li>Ganti antara Kekayaan bersih, Uang tunai, dan Biaya kumulatif</li>' +
+            '<li>Tanda ? menjelaskan tiap metrik; ekspor sebagai SVG atau PNG</li></ul>'
     },
     {
       target: '#detailSection',
-      title: '⑥ Rinciannya, saat Anda butuh',
-      body: 'Arus kas per tahun untuk membeli, menyewa, dan sewa dulu ada di balik ' +
-            'tombol <strong>panah</strong>-nya, dan tombol CSV tetap mengekspornya. ' +
-            '<strong>Asumsi yang dipakai</strong>, di bawahnya, terbuka dengan cara yang sama dan ' +
-            'menjelaskan apa yang dihitung dan tidak dihitung model ini.'
+      title: '⑥ Rinciannya',
+      body: '<ul><li>Arus kas per tahun terbuka dari tombol panah; CSV mengekspornya</li>' +
+            '<li>Asumsi yang dipakai, di bawahnya, menjelaskan apa yang dihitung</li></ul>'
     },
     {
       target: null,
       title: '✅ Selesai',
-      body: 'Itu seluruh alurnya, dan semuanya berjalan secara privat di browser Anda, ' +
-            'gratis. Ingin membandingkan banyak skenario sekaligus? Coba <strong>Alat ' +
-            'Analisis Sensitivitas</strong> di bagian atas. Putar ulang tur kapan saja ' +
-            'lewat tombol <strong>🧭</strong>.'
+      body: '<ul><li>Banyak skenario sekaligus? Coba <strong>Alat Analisis ' +
+            'Sensitivitas</strong> di bagian atas</li>' +
+            '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
     }
   ]
 };

@@ -34,7 +34,7 @@ for (const c of cases) {
   const page = await browser.newPage();
   page.on('pageerror', () => {});
   await page.addInitScript(() => {
-    try { localStorage.clear(); localStorage.setItem('rvos-tour-v1-seen', '1'); } catch (e) {}
+    try { localStorage.clear(); localStorage.setItem('rvos-tour-v1-seen', '1'); localStorage.setItem('rvos-tour-v3-seen', '1'); } catch (e) {}
   });
   await page.goto(url, { waitUntil: 'networkidle' });
   await page.evaluate(() => {
