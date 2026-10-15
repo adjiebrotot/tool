@@ -459,7 +459,7 @@ for(const plan of PLANS){
   const zur = await page.evaluate(() => window.__colmap.wage('Zurich|Switzerland', 'min'));
   check('M13 a canton without a minimum wage has no estimate, and says why', zur.v == null && /canton/.test(zur.why), zur.why);
   await pickFrom(page, 'Copenhagen|Denmark');
-  const vt = await page.textContent('#verdict');
+  const vt = await page.textContent('#mapSub');
   check('M13 a home city with no minimum wage says so instead of scaling', /no minimum wage for Copenhagen/i.test(vt), vt.slice(0, 90));
   await seg(page, 'scaleGroup', 'median');
   const du = await page.evaluate(() => window.__colmap.wage('Dubai|United Arab Emirates', 'median'));
@@ -503,7 +503,7 @@ for(const plan of PLANS){
 // over a messy page it lands exactly where it lands on a fresh one.
 {
   const presets = await page.evaluate(() => [...document.querySelectorAll('.quick-start-btn')].map(b => b.dataset.preset));
-  const snap = p => p.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('verdict').innerText,
+  const snap = p => p.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('metrics').innerText,
     on: [...document.querySelectorAll('.seg-btn.active')].map(b => b.dataset.val).join('|') }));
   const bad = [];
   for(const id of presets){
@@ -564,11 +564,11 @@ for(const plan of PLANS){
 
   await fullScreenChecks(page, 'desktop');
 
-  const before = await page.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('verdict').innerText }));
+  const before = await page.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('metrics').innerText }));
   await page.reload({ waitUntil: 'load' });
   await page.waitForFunction(() => window.__colmap && window.__colmap.mapReady());
   await page.waitForTimeout(400);
-  const after = await page.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('verdict').innerText }));
+  const after = await page.evaluate(() => ({ s: window.__colmap.state(), v: document.getElementById('metrics').innerText }));
   check('M10 a reload comes back to the same plan and answer', JSON.stringify(before) === JSON.stringify(after), after.v.slice(0, 80));
 
   // M11 borders, held to the zone file read here without the page's code.

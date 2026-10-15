@@ -45,7 +45,7 @@ savings, ratio and colour that follow (the colour is the share of pay the
 lifestyle takes there over the share it takes at home). Average salaries have
 to be the city's own (New York above Houston). A canton without a minimum wage
 and a country with no published median have no estimate and say why; a home
-city with no minimum wage says so in the verdict. The mode keeps its
+city with no minimum wage says so in the note under the map title. The mode keeps its
 yardstick on a reload, and a plan saved before the mode existed still opens
 as it was.
 
