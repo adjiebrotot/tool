@@ -1,7 +1,7 @@
 # ED/UC Simulator: audit harness
 
 ```sh
-node educ-simulator/_audit/run.mjs
+node ed-uc-simulator/_audit/run.mjs
 ```
 
 It holds the tool's answers to things it did not compute itself. Everything below the page
@@ -76,4 +76,4 @@ The engine's own build (`_build/build-engine.mjs`) runs a separate check:
   results identical, bit for bit, to an unpruned bundle of the PSA.js source.
 
 The Share menu, embeds, exports at every screen size and the GIF are held by
-`_ref/share-check.mjs` (ONLY=educ-simulator), the charts by `_ref/chart-check.mjs`.
+`_ref/share-check.mjs` (ONLY=ed-uc-simulator), the charts by `_ref/chart-check.mjs`.

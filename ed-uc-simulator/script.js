@@ -1491,6 +1491,8 @@
   buildLabelMatrix();
   applyMotionDefault();
   syncDispatchForm();
+  // The tool's first folder was educ-simulator. Its saved state is keyed on that
+  // name (this cache, scenario files, the folded table), so the name stays.
   persist = Persist.init('educ-simulator', {
     extra: {
       save: function(){ return ED.compact(app.model); },

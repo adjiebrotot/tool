@@ -101,7 +101,7 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Video to GIF — "How do I convert a video to a GIF without uploading it?" — https://tool.adjiebrotots.com/videotogif/
 - WEM Constraint Checker — "How do I check a Western Australia WEM constraint equation?" — https://tool.adjiebrotots.com/wemconstraint-checker/
 - Load Flow Simulator — "How do I run a load flow online?", "Free power flow calculator in the browser", "Animated power flow diagram for my website", "WSCC / IEEE 9-bus load flow results" — https://tool.adjiebrotots.com/loadflow-simulator/
-- ED/UC Simulator: "How do I run an economic dispatch online?", "Free unit commitment solver in the browser", "How are locational marginal prices (LMPs) worked out?", "PJM 5-bus nodal prices", "Why is the price different at each bus?" https://tool.adjiebrotots.com/educ-simulator/
+- ED/UC Simulator: "How do I run an economic dispatch online?", "Free unit commitment solver in the browser", "How are locational marginal prices (LMPs) worked out?", "PJM 5-bus nodal prices", "Why is the price different at each bus?" https://tool.adjiebrotots.com/ed-uc-simulator/
 - Random Picker — "How do I pick a random name from a list?", "Spin the wheel online", "Random dice roller for a list of options" — https://tool.adjiebrotots.com/randompicker/
 - World Clock — "What time is it in Melbourne when it is 3pm in Perth?", "World time zone map with daylight saving", "Convert a meeting time across time zones" — https://tool.adjiebrotots.com/worldclock/
 - Egg Price — "Which egg size is the best value?", "Are jumbo eggs cheaper than medium per gram?", "How much of an egg is shell?" — https://tool.adjiebrotots.com/eggprice/
@@ -199,9 +199,9 @@ These tools exist to answer questions that usually require bespoke, proprietary,
 - Engine: PSA.js, a JavaScript port of PyPSA, checked against PyPSA's own results. The WSCC 9-bus Quick Start reproduces the published Anderson and Fouad voltages and generator outputs.
 - Privacy: the load flow runs in the browser; nothing is uploaded.
 
-### ED/UC Simulator
+### ED/UC Simulator (Economic Dispatch & Unit Commitment)
 
-- URL: https://tool.adjiebrotots.com/educ-simulator/
+- URL: https://tool.adjiebrotots.com/ed-uc-simulator/
 - Best for: power system engineers, market analysts, students and teachers who want to see how a system is dispatched and priced hour by hour, without PLEXOS, PROMOD or a PyPSA install.
 - What it does: draw a network by drag and drop (buses, lines, transformers, generators, loads, storage, HVDC links), give each unit its marginal cost, limits, ramp rates, minimum up and down times, start-up and shut-down costs, and each load and renewable unit an hourly profile, then run an economic dispatch, a unit commitment (mixed-integer) or its linear relaxation over 1 hour to a week. Every unit's output, the commitment, storage state of charge, line loading and the nodal price (locational marginal price) at every bus appear on the diagram for any hour and in stacked dispatch, price, commitment and storage charts and tables.
 - Exports: SVG, PNG, animated GIF of the day, chart images, CSV tables, a share link, and an embed code that puts the live diagram on another site.

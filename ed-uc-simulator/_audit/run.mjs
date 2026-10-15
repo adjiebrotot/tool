@@ -1,6 +1,6 @@
 // ED/UC Simulator audit.
 //
-//   node educ-simulator/_audit/run.mjs
+//   node ed-uc-simulator/_audit/run.mjs
 //
 // The tool's answers are held to things it did not compute itself:
 //
@@ -403,12 +403,12 @@ const server = createServer((req, res) => {
 });
 await new Promise(r => server.listen(0, '127.0.0.1', r));
 const ORIGIN = `http://127.0.0.1:${server.address().port}`;
-const URL_ = ORIGIN + '/educ-simulator/';
+const URL_ = ORIGIN + '/ed-uc-simulator/';
 const LIBS = join(ROOT, '_ref', '.libcache');
 const browser = await pw.chromium.launch();
 async function fresh(init) {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
-  await ctx.addInitScript(`try { localStorage.setItem('abt:ctrl:/educ-simulator/', '1'); localStorage.setItem('educ-tour-v1-seen', '1'); } catch(e){}
+  await ctx.addInitScript(`try { localStorage.setItem('abt:ctrl:/ed-uc-simulator/', '1'); localStorage.setItem('educ-tour-v1-seen', '1'); } catch(e){}
     window.__workers = 0; (function(W){ window.Worker = function(u, o){ window.__workers++; return new W(u, o); }; window.Worker.prototype = W.prototype; })(window.Worker);
     ${init || ''}`);
   await ctx.route(/cdnjs\.cloudflare\.com/, r => {

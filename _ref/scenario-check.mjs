@@ -69,7 +69,7 @@ const PAGES = [
            document.getElementById('runBtn').click();` },
   // The ED/UC network lives in JS state (Persist extra) as well: a unit's cost
   // and a load's profile edited in the model, the horizon changed, then solved.
-  { path: 'educ-simulator/',           preset: 'uc3',          probe: '.metrics',
+  { path: 'ed-uc-simulator/',           preset: 'uc3',          probe: '.metrics',
     also: `var g = window.__ed.app.model.el.filter(function(x){ return x.id === 4; })[0]; g.marginal_cost = 99; window.__ed.app.change('elec');
            var d = window.__ed.app.model.el.filter(function(x){ return x.id === 5; })[0]; d.prof = 'res'; window.__ed.app.change('elec');
            var h = document.getElementById('edHours'); h.value = '48'; h.dispatchEvent(new Event('change', {bubbles: true}));
