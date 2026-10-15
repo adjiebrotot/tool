@@ -1015,14 +1015,23 @@
   };
   function profKind(e){ return e.c === 'Load' ? 'load' : 'gen'; }
   function dayValues(e){ var a = []; for(var h = 0; h < 24; h++) a.push(ED.shapeAt(e.prof, h, 1)); return a; }
-  function barsSvg(vals){
-    var s = '<rect x="0" y="0" width="240" height="64" fill="transparent"/>';
+  // One bar an hour, 10 units wide, on a baseline at y 58; 100% is 54 units tall.
+  // The axis runs 00 to 24 under the hour boundaries, and the bar being dragged
+  // or pointed at (at) carries its hour and value above it.
+  function barsSvg(vals, at){
+    var s = '<rect x="-8" y="-14" width="256" height="90" fill="transparent"/>', ticks = '';
     vals.forEach(function(v, h){
-      var bh = Math.max(0.5, v * 54);
-      s += '<rect class="pb" x="' + (h * 10 + 1) + '" y="' + (58 - bh) + '" width="8" height="' + bh + '" rx="1.5"/>';
+      var bh = Math.max(0.5, Math.min(v, 1.2) * 54);
+      s += '<rect class="pb' + (h === at ? ' pb-on' : '') + '" x="' + (h * 10 + 1) + '" y="' + (58 - bh) + '" width="8" height="' + bh + '" rx="1.5"/>';
     });
-    s += '<path class="pb-axis" d="M0 58.5H240"/>';
-    [0, 6, 12, 18].forEach(function(h){ s += '<text class="pb-t" x="' + (h * 10 + 1) + '" y="70">' + ('0' + h).slice(-2) + '</text>'; });
+    for(var h = 0; h <= 24; h++) ticks += 'M' + h * 10 + ' 58.5v' + (h % 3 ? 2 : 3.5);
+    s += '<path class="pb-axis" d="M0 58.5H240' + ticks + '"/>';
+    for(var k = 0; k <= 24; k += 3) s += '<text class="pb-t" x="' + k * 10 + '" y="70.5" text-anchor="middle">' + ('0' + k).slice(-2) + '</text>';
+    if(at !== null && at !== undefined && at >= 0 && at < 24){
+      var v = vals[at], cx = at * 10 + 5, top = 58 - Math.max(0.5, Math.min(v, 1.2) * 54);
+      var x = Math.max(22, Math.min(218, cx)), y = Math.max(-4, top - 4);
+      s += '<text class="pb-v" x="' + x + '" y="' + y + '" text-anchor="middle">' + ('0' + at).slice(-2) + ':00  ' + Math.round(v * 100) + '%</text>';
+    }
     return s;
   }
   function profileHtml(e){
@@ -1033,7 +1042,7 @@
     var label = kind === 'load' ? 'Profile' : 'Availability';
     return '<div class="field-row"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(PROFILE_TIP[kind]) + '</span></div>' +
       '<select class="sel-input" id="f_prof" data-k="prof">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === curK ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
-      '<svg class="prof-bars" id="profBars" viewBox="0 -2 240 76" role="img" aria-label="' + label + ' through the day, hour by hour. Drag a bar to change it.">' + barsSvg(dayValues(e)) + '</svg></div>';
+      '<svg class="prof-bars" id="profBars" viewBox="-8 -14 256 90" role="img" aria-label="' + label + ' through the day, hour by hour, from 00:00 to 24:00. Drag a bar to change it.">' + barsSvg(dayValues(e)) + '</svg></div>';
   }
   function fieldHtml(e, f){
     var id = 'f_' + f.k;
@@ -1264,22 +1273,34 @@
   });
   // Dragging a profile bar sets that hour's value.
   var profDrag = null;
+  // The pointer in the bars' own units, through the SVG's transform, so it holds
+  // at any width the inspector gives them.
   function profAt(ev){
-    var bars = $('profBars');
-    if(!bars) return null;
-    var r = bars.getBoundingClientRect();
-    var x = (ev.clientX - r.left) / r.width * 240, y = (ev.clientY - r.top) / r.height * 76 - 2;
-    return { h: Math.max(0, Math.min(23, Math.floor(x / 10))), v: Math.max(0, Math.min(1, (58 - y) / 54)) };
+    var bars = $('profBars'), m = bars && bars.getScreenCTM && bars.getScreenCTM();
+    if(!m) return null;
+    var pt = bars.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    pt = pt.matrixTransform(m.inverse());
+    return { h: Math.max(0, Math.min(23, Math.floor(pt.x / 10))), v: Math.max(0, Math.min(1, (58 - pt.y) / 54)) };
   }
   function profSet(ev){
     var e = selectedEl(), p = profAt(ev);
     if(!e || !p) return;
     if(!Array.isArray(e.prof)) e.prof = dayValues(e).map(function(v){ return Math.round(v * 100) / 100; });
     e.prof[p.h] = Math.round(p.v * 100) / 100;
-    $('profBars').innerHTML = barsSvg(dayValues(e));
+    peekH = null;
+    $('profBars').innerHTML = barsSvg(dayValues(e), p.h);
     var sel = $('f_prof');
     if(sel) sel.value = 'custom';
     changeFromField('prof' + e.id);
+  }
+  // Pointing at a bar, without pressing, reads it.
+  var peekH = null;
+  function profPeek(ev){
+    var e = selectedEl(), p = profAt(ev);
+    if(!e || !p || (p.h === peekH && $('profBars').querySelector('.pb-v'))) return;
+    peekH = p.h;
+    $('profBars').innerHTML = barsSvg(dayValues(e), p.h);
   }
   insp.addEventListener('pointerdown', function(ev){
     if(!ev.target.closest('#profBars')) return;
@@ -1288,9 +1309,16 @@
     try { $('profBars').setPointerCapture(ev.pointerId); } catch(e){}
     profSet(ev);
   });
-  insp.addEventListener('pointermove', function(ev){ if(profDrag === ev.pointerId) profSet(ev); });
+  insp.addEventListener('pointermove', function(ev){
+    if(profDrag === ev.pointerId) profSet(ev);
+    else if(profDrag === null && ev.pointerType === 'mouse' && ev.target.closest('#profBars')) profPeek(ev);
+  });
   insp.addEventListener('pointerup', function(ev){ if(profDrag === ev.pointerId){ profDrag = null; renderInspector(); } });
   insp.addEventListener('pointercancel', function(){ profDrag = null; });
+  insp.addEventListener('pointerout', function(ev){
+    var bars = $('profBars'), e = selectedEl();
+    if(profDrag === null && bars && e && ev.target.closest('#profBars') && !(ev.relatedTarget && bars.contains(ev.relatedTarget))){ peekH = null; bars.innerHTML = barsSvg(dayValues(e)); }
+  });
 
   /* ── Tabs ── */
   function showTab(nm){

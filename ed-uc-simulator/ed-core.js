@@ -126,9 +126,17 @@
     ind:   { label: 'Industrial', kind: 'load',
              h: [0.78, 0.77, 0.76, 0.76, 0.77, 0.80, 0.88, 0.96, 1.00, 1.00, 0.99, 0.97, 0.95, 0.98, 1.00, 0.99, 0.96, 0.90, 0.86, 0.84, 0.82, 0.81, 0.80, 0.79],
              d: [1, 1, 1, 1, 1, 0.85, 0.8] },
-    solar: { label: 'Solar', kind: 'gen',
+    // Solar through the seasons at a mid latitude: a summer day is long and high,
+    // a winter one short and low, and cloudier more often.
+    solars: { label: 'Solar, summer', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0.02, 0.08, 0.22, 0.40, 0.57, 0.71, 0.81, 0.86, 0.86, 0.81, 0.71, 0.57, 0.40, 0.22, 0.08, 0.02, 0, 0, 0],
+             d: [1, 0.95, 0.8, 1, 0.9, 0.85, 1] },
+    solar: { label: 'Solar, spring or autumn', kind: 'gen', noun: 'solar',
              h: [0, 0, 0, 0, 0, 0, 0.03, 0.15, 0.35, 0.55, 0.70, 0.79, 0.82, 0.79, 0.70, 0.55, 0.35, 0.15, 0.03, 0, 0, 0, 0, 0],
              d: [1, 0.9, 0.6, 1, 0.95, 0.75, 1] },
+    solarw: { label: 'Solar, winter', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0, 0, 0.02, 0.12, 0.27, 0.40, 0.49, 0.52, 0.49, 0.40, 0.27, 0.12, 0.02, 0, 0, 0, 0, 0, 0],
+             d: [0.85, 0.5, 0.35, 0.9, 0.7, 0.45, 0.8] },
     wind:  { label: 'Wind', kind: 'gen',
              h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61],
              d: [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8] }
@@ -447,7 +455,7 @@
       if(e.c === 'Generator' && ED.onBus(model, e) && !(e.p_nom > 0)) warnings.push({ id: e.id, msg: n + ' has no rating, so it supplies nothing.' });
       if(e.c === 'StorageUnit' && ED.onBus(model, e) && !(e.p_nom > 0 && e.max_hours > 0)) warnings.push({ id: e.id, msg: n + ' has no power or energy rating, so it does nothing.' });
       if(e.c === 'Generator' && e.committable && o.mode !== 'ed' && e.p_min_pu > 0 && Array.isArray(e.prof) === false && e.prof && ED.PROFILES[e.prof] && ED.PROFILES[e.prof].kind === 'gen')
-        warnings.push({ id: e.id, msg: n + ' must run at ' + Math.round(e.p_min_pu * 100) + '% or stay off, so in hours its ' + ED.PROFILES[e.prof].label.toLowerCase() + ' availability is lower it is kept off.' });
+        warnings.push({ id: e.id, msg: n + ' must run at ' + Math.round(e.p_min_pu * 100) + '% or stay off, so in hours its ' + (ED.PROFILES[e.prof].noun || ED.PROFILES[e.prof].label.toLowerCase()) + ' availability is lower it is kept off.' });
     });
     // Each group of buses that can trade power has to be able to meet its own load.
     var devs = model.el.filter(function(e){ return DEVICE[e.c] && ED.onBus(model, e); });
