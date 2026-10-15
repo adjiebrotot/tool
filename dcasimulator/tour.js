@@ -2,9 +2,10 @@
    The shared engine (../tour-shared.js) reads this object. v2 follows the
    redesign: Currency on the Data tab, Settings renamed Assumptions, and the
    answer and summary above the charts, so readers who took v1 see it again.
-   v3 trims every step to a lead line and a short list. */
+   v3 trims every step to a lead line and a short list. v4 adds Optimise mode
+   (the gold gauge beside a field). */
 window.__TOUR = {
-  seenKey: 'dca-tour-v3-seen',
+  seenKey: 'dca-tour-v4-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -41,6 +42,20 @@ window.__TOUR = {
             '<li><strong>Simulated</strong>: model an asset from its return and volatility</li></ul>'
     },
     {
+      // The gauge lives beside the field it sweeps, so the step opens the
+      // Scenarios tab, where the first one (Amount per top-up) is on screen.
+      target: '.opt-btn[data-opt="amount"]',
+      onEnter: function () {
+        var tab = document.querySelector('.ctrl-tab[data-tab="securities"]');
+        if (tab && !tab.classList.contains('active')) tab.click();
+      },
+      title: '④ Optimise a setting',
+      body: 'The gold <strong>gauge</strong> beside a field sweeps it over a range.' +
+            '<ul><li>Up to two settings of one scenario</li>' +
+            '<li>Simulate becomes ▶ Optimise</li>' +
+            '<li>The chart shows which value did best</li></ul>'
+    },
+    {
       target: '#simBtn',
       onEnter: function () {
         // Simulate/Reset are hidden while the Data panel is showing, so the
@@ -49,7 +64,7 @@ window.__TOUR = {
         var tab = document.querySelector('.ctrl-tab[data-tab="securities"]');
         if (tab && !tab.classList.contains('active')) tab.click();
       },
-      title: '④ Simulate',
+      title: '⑤ Simulate',
       body: 'Set each scenario’s contribution and schedule, then press ' +
             '<strong>Simulate</strong>. It all runs in your browser.'
     },
@@ -59,7 +74,7 @@ window.__TOUR = {
         // Describing a Final Summary means there has to be one on screen.
         if (window.__DCA_TOUR) window.__DCA_TOUR.ensureResults();
       },
-      title: '⑤ Read the result',
+      title: '⑥ Read the result',
       body: '<ul><li>The sentence on top names the winner and by how much</li>' +
             '<li><strong>Final Summary</strong>: value, ROI and trades, with Sharpe and ' +
             'CAGR under Advanced metrics</li>' +

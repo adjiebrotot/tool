@@ -83,3 +83,22 @@ same checks run either way — only the printed numbers differ.
   the locked portfolio bar, Cancel, saved state (reload, file, an old file, a file
   naming settings that no longer exist) and no page errors.
   Run: `node optimise.mjs` (`ONLY=<case>`, `JOBS=<n>`, 4 at once by default).
+
+- `optimise-single.mjs` - the same promise for the single-asset page's Optimise
+  mode, which sweeps up to two settings of one scenario. For every setting it offers
+  (amount, yearly increase, day of the month, weekday, momentum threshold, frequency
+  with the amount following it, the end-of-period buy, and every indicator number and
+  choice under each technical style) it reads each sampled value's seven figures off
+  the chart (the surface for two settings) and its breakdown CSV, then opens the same
+  scenario in plain Simulate mode, sets that value through the form (the threshold is
+  typed into its slider's readout, the frequency pressed, the box ticked), presses
+  Simulate, and requires the same final value, ROI and net (to 1e-9), the same printed
+  Sharpe, Sortino and CAGRs, and the same CSV row for row. Then the contracts: which
+  fields offer a gauge under each style (never the asset, the style, Trade at, the
+  seed, the risk-free rate or the dates), list values picked one by one, a setting
+  dropped with its style, the two-setting limit, the 625-run cap, the locked scenario
+  bar, Cancel, only the scenario on screen running, a click on the chart picking a
+  value, the risk-free rate sending a sweep out of date, a rename kept in place, saved
+  state (reload, file, an old file, a file naming settings or a scenario that no
+  longer exist) and no page errors.
+  Run: `node optimise-single.mjs` (`ONLY=<case>`, `JOBS=<n>`, 4 at once by default).

@@ -370,6 +370,35 @@ const PAGES = [
     },
   },
   {
+    // Optimise mode: one swept setting draws the sweep as a line in its own
+    // card, read here by its Sharpe.
+    name: 'dcasimulator (optimise)', url: '/dcasimulator/', charts: ['optCanvas'], prices: true,
+    async prep(page) {
+      await dcaPrep('securities', 'stock-etf')(page);
+      await page.click('.opt-btn[data-opt="dayOfMonth"]');
+      await page.fill('#optSteps', '6'); await page.dispatchEvent('#optSteps', 'input');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.waitForFunction(() => !document.getElementById('optCard').hidden && !!window.Chart.getChart(document.getElementById('optCanvas')), null, { timeout: 60000 });
+      await page.selectOption('#optMetric', 'sharpe');
+    },
+  },
+  {
+    // Two swept settings draw a Plotly surface in the same card.
+    name: 'dcasimulator (optimise 3D)', url: '/dcasimulator/', charts: ['optSurface'], prices: true,
+    async prep(page) {
+      await dcaPrep('securities', 'stock-etf')(page);
+      await page.click('.opt-btn[data-opt="dayOfMonth"]');
+      await page.fill('#optSteps', '5'); await page.dispatchEvent('#optSteps', 'input');
+      await page.click('#optDoneBtn');
+      await page.click('.opt-btn[data-opt="yearlyIncrease"]');
+      await page.fill('#optSteps', '4'); await page.dispatchEvent('#optSteps', 'input');
+      await page.click('#optDoneBtn');
+      await page.click('#simBtn');
+      await page.waitForFunction(() => { const d = document.getElementById('optSurface'); return d && d.data && d.data.length; }, null, { timeout: 60000 });
+    },
+  },
+  {
     name: 'dcasimulator/portfolio', url: '/dcasimulator/portfolio/', charts: ['valueCanvas', 'compCanvas', 'priceCanvas'], prices: true,
     async prep(page) {
       await dcaPrep('portfolios', 'rebal-freq')(page);

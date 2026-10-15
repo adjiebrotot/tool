@@ -520,8 +520,11 @@ async function uiChecks(){
   const browser = await chromium.launch();
   const page = async (url) => {
     const pg = await browser.newPage();
-    // A first visit opens the guided tour over the page; mark it seen.
-    await pg.addInitScript(() => { try { ['dca-tour-v1-seen', 'dca-tour-v2-seen', 'dca-tour-v3-seen', 'dcapf-tour-v1-seen', 'dcapf-tour-v2-seen', 'dcapf-tour-v3-seen', 'dcapf-tour-v4-seen'].forEach(k => localStorage.setItem(k, '1')); } catch(_){} });
+    // A first visit opens the guided tour over the page; mark it seen. The
+    // controls card opens folded until it has been opened once (shared.js), and
+    // the scenario buttons live in it, so open it the way every _ref check does.
+    await pg.addInitScript(() => { try { ['dca-tour-v1-seen', 'dca-tour-v2-seen', 'dca-tour-v3-seen', 'dca-tour-v4-seen', 'dcapf-tour-v1-seen', 'dcapf-tour-v2-seen', 'dcapf-tour-v3-seen', 'dcapf-tour-v4-seen'].forEach(k => localStorage.setItem(k, '1'));
+      localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch(_){} });
     await pg.route(u => !u.href.startsWith(`http://127.0.0.1:${port}`), route => {
       const lib = LIBS.find(l => route.request().url().endsWith(l));
       return lib ? route.fulfill({ path: path.join(libDir, path.basename(lib)), contentType: 'text/javascript' }) : route.abort();
