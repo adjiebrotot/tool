@@ -374,20 +374,17 @@
   function showResults(){
     var res = app.res, r = res && res.report;
     var d = display();
-    var vEl = $('verdict');
     ['mConv', 'mLoss', 'mVolt', 'mLoad'].forEach(function(id){ $(id).classList.remove('neg'); });
     if(!r) return;
-    if(r.blocked){
-      SharedVerdict.set(vEl, { tone: 'bad', title: 'Fix ' + (r.blocked.length === 1 ? 'one problem' : r.blocked.length + ' problems') + ' before running.',
-        body: r.blocked.map(function(x){ return esc(x.msg); }).join(' ') });
-      setSub('Not solved: the network has ' + (r.blocked.length === 1 ? 'a problem' : 'problems') + ' to fix first.');
-      clearKpis(); renderTable(); renderAssumptions();
-      return;
-    }
-    if(!r.ok){
-      SharedVerdict.set(vEl, { tone: 'bad', title: 'The load flow could not be solved.', body: esc(r.error || 'No result.') });
-      setSub('Not solved.');
-      clearKpis(); renderTable(); renderAssumptions();
+    // A run that could not solve says why in the Load flow metric.
+    if(r.blocked || !r.ok){
+      var why = r.blocked ? r.blocked.map(function(x){ return x.msg; }).join(' ') : (r.error || 'No result.');
+      setSub(r.blocked ? 'Not solved: the network has ' + (r.blocked.length === 1 ? 'a problem' : 'problems') + ' to fix first.' : 'Not solved.');
+      clearKpis();
+      $('mConv').textContent = r.blocked ? 'Fix ' + (r.blocked.length === 1 ? 'one problem' : r.blocked.length + ' problems') : 'Not solved';
+      $('mConv').classList.add('neg');
+      $('mConvSub').textContent = why;
+      renderTable(); renderAssumptions();
       return;
     }
     var t = res.totals, ac = r.method === 'ac';
@@ -408,32 +405,19 @@
     // The checks' warnings are part of the answer: a load left out or a mismatched
     // voltage changes what the numbers mean.
     var warns = (res.validation && res.validation.warnings) || [];
-    var warnTxt = warns.length ? ' ' + (warns.length === 1 ? 'One warning' : warns.length + ' warnings') + ' in Checks: ' + esc(warns[0].msg) + (warns.length > 1 ? ' …' : '') : '';
+    var warnTxt = warns.length ? ' ' + (warns.length === 1 ? 'One warning' : warns.length + ' warnings') + ' in Checks.' : '';
     var linkLoss = brs.reduce(function(a, e){ return e.c === 'Link' ? a + res.br[e.id].loss : a; }, 0);
     if(bad){
-      SharedVerdict.set(vEl, { tone: 'bad', title: 'The load flow did not converge after ' + r.iters + ' iterations.',
-        body: 'Newton-Raphson stopped without a solution, so no results are shown. Try the DC load flow seed, check that every island can reach its slack, or lower the load.' + warnTxt });
-      setSub('AC load flow, Newton-Raphson, did not converge. Solved by PSA.js in ' + ms + '.');
+      setSub('AC load flow, Newton-Raphson, did not converge. Solved by PSA.js in ' + ms + '.' + warnTxt);
       clearKpis();
       $('mConv').textContent = 'Not converged';
       $('mConv').classList.add('neg');
       $('mConvSub').textContent = 'Largest mismatch ' + (r.mismatch ? r.mismatch.toExponential(1) : '0') + ' MW';
       renderTable(); renderAssumptions();
       return;
-    } else if(!ac){
-      SharedVerdict.set(vEl, { tone: over.length || warns.length ? 'warn' : '',
-        title: 'DC load flow solved: <span class="v-num">' + F.p(t.gen) + ' MW</span> supplied' + (linkLoss > 1e-9 ? ', <span class="v-num">' + F.p(t.load) + ' MW</span> served, <span class="v-num">' + F.p(linkLoss) + ' MW</span> lost in links.' : ' and served.'),
-        body: 'A DC load flow keeps every voltage at 1 p.u. and has no reactive power' + (linkLoss > 1e-9 ? '; its lines and transformers are lossless, and only the links lose their efficiency.' : ' or losses.') + (over.length ? ' ' + over.length + ' branch' + (over.length > 1 ? 'es are' : ' is') + ' above ' + d.loadMax + '% of rating: ' + over.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + '.' : '') + warnTxt });
-    } else {
-      var issues = [];
-      if(outV.length) issues.push(outV.length + ' bus' + (outV.length > 1 ? 'es' : '') + ' outside ' + d.vmin + ' to ' + d.vmax + ' p.u. (' + outV.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + ')');
-      if(over.length) issues.push(over.length + ' branch' + (over.length > 1 ? 'es' : '') + ' above ' + d.loadMax + '% loading (' + over.slice(0, 4).map(LF.nameOf).map(esc).join(', ') + ')');
-      SharedVerdict.set(vEl, { tone: issues.length || warns.length ? 'warn' : '',
-        title: 'Converged in ' + r.iters + ' iteration' + (r.iters === 1 ? '' : 's') + ': <span class="v-num">' + F.p(t.gen) + ' MW</span> supplied, <span class="v-num">' + F.p(t.load) + ' MW</span> served, <span class="v-num">' + F.p(t.loss) + ' MW</span> lost.',
-        body: (issues.length ? 'Outside your limits: ' + issues.join('; ') + '.' : 'Every bus is within ' + d.vmin + ' to ' + d.vmax + ' p.u. and every rated branch within ' + d.loadMax + '% of its rating.') + warnTxt });
     }
     setSub((ac ? 'AC load flow, Newton-Raphson' : 'DC load flow') + (bad ? ', did not converge' : ac ? ', converged in ' + r.iters + ' iteration' + (r.iters === 1 ? '' : 's') : '') +
-           (ac && !bad ? '. Losses ' + F.p(t.loss) + ' MW.' : '.') + ' Solved by PSA.js in ' + ms + '.');
+           (ac && !bad ? '. Losses ' + F.p(t.loss) + ' MW.' : '.') + ' Solved by PSA.js in ' + ms + '.' + warnTxt);
     // KPIs
     $('mConv').textContent = bad ? 'Not converged' : ac ? r.iters + ' iteration' + (r.iters === 1 ? '' : 's') : 'DC, linear';
     if(bad) $('mConv').classList.add('neg');
