@@ -544,7 +544,7 @@
     function joinHalves(a, b, forward){
       if(!a || !b || a.n !== b.n) return;
       var up = forward ? a : b, down = forward ? b : a;
-      up.fadeOut = false; down.fadeIn = false; down.at = up.len;
+      up.fadeOut = false; down.fadeIn = false; down.at = up.len; up.join = down;
     }
 
     /* Branches */
@@ -793,6 +793,35 @@
       out.push(g);
     }
     return out;
+  };
+  /* The stream runs on from one hour to the next. A lane's arrows stand where
+     its phase, v·t − at, puts them, so a lane whose speed changes at time t
+     (seconds on the lanes' clock) would jump by up to a period, and stepping
+     through the hours those jumps read as arrows running the wrong way. Each
+     lane keeps the phase it had in prev (from the last call; null at first),
+     the second half of a branch keeps step with its first, and the state for
+     the next call is returned. */
+  ED.carryLanes = function(prev, lanes, t){
+    var next = {};
+    var key = function(l){ return l.id + '|' + l.kind + '|' + l.d; };
+    lanes.forEach(function(l){
+      if(l.id === undefined) return;
+      var p = prev && prev[key(l)];
+      l.fresh = l.at;
+      l.had = !!p;
+      l.off = p ? mod(p.off + GAP * (l.n - p.n) / ED.FLOW_T * t - (l.fresh - p.fresh), GAP) : 0;
+    });
+    lanes.forEach(function(l){
+      var d = l.join;
+      if(!d || l.id === undefined) return;
+      if(l.had || !d.had) d.off = l.off; else l.off = d.off;
+    });
+    lanes.forEach(function(l){
+      if(l.id === undefined) return;
+      l.at = mod(l.fresh + l.off, GAP);
+      next[key(l)] = { n: l.n, off: l.off, fresh: l.fresh };
+    });
+    return next;
   };
   /* An arrow's opacity over its cycle, as keyTimes and values: it is visible
      while it travels the lane (fading at the ends that fade) and hidden for the

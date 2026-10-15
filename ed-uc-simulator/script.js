@@ -177,10 +177,12 @@
   }
   function shownResults(){ return app.res && app.res.report && app.res.report.ok ? app.res : null; }
   /* The flow arrows outlive a render: a lane keeps its elements, and so its
-     running arrows, while its markup is unchanged. */
-  var under = null, flow = null, over = null, laneEls = new Map();
+     running arrows, while its markup is unchanged, and a lane that changes speed
+     picks up where its arrows are (ED.carryLanes). */
+  var under = null, flow = null, over = null, laneEls = new Map(), laneState = null;
   function syncFlow(lanes){
     var next = new Map(), add = [];
+    laneState = ED.carryLanes(laneState, lanes, svg.getCurrentTime ? svg.getCurrentTime() : 0);
     lanes.forEach(function(l){
       var html = ED.laneSvg([l]), key = html;
       while(next.has(key)) key += '+';
@@ -467,6 +469,7 @@
   app.setHour = setHour;
   $('edHour').addEventListener('input', function(){ stopPlay(); setHour(parseInt(this.value, 10)); });
   var playT = null;
+  function playStep(T){ return T > 168 ? 100 : T > 48 ? 250 : 600; }
   function stopPlay(){
     if(!playT) return;
     clearInterval(playT); playT = null;
@@ -481,7 +484,7 @@
     this.textContent = '⏸';
     this.title = 'Pause'; this.setAttribute('aria-label', 'Pause');
     this.setAttribute('aria-pressed', 'true');
-    var step = res.T > 168 ? 100 : res.T > 48 ? 250 : 600;
+    var step = playStep(res.T);
     playT = setInterval(function(){
       var r = shownResults();
       if(!r){ stopPlay(); return; }
@@ -506,7 +509,7 @@
   }
   function setSubHour(){
     var res = shownResults();
-    if(!res) return;
+    if(!res || busyNow) return;
     setSub(subLine() + ' Showing ' + hourText(hourNow(), res) + '.');
   }
   function showResults(){
@@ -1489,17 +1492,26 @@
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   }
   // The export's subtitle is the run summary without its timing, which changes on every run.
+  function exportSub(res, h){ return MODE_NAME[res.report.mode] + ', ' + hourText(h, res) + ', in ' + hoursText(res.T) + '.'; }
   function exportCtx(){
     var res = shownResults();
-    var sub = res ? MODE_NAME[res.report.mode] + ', ' + hourText(hourNow(), res) + ', in ' + hoursText(res.T) + '.' : '';
-    return { app: app, ED: ED, display: display(), res: res, stale: isStale(), title: app.model.name || 'Dispatch', sub: sub };
+    return { app: app, ED: ED, display: display(), res: res, stale: isStale(), title: app.model.name || 'Dispatch', sub: res ? exportSub(res, hourNow()) : '' };
   }
-  function busy(on, text){ setSub(on ? text : ''); if(!on && app.res) showResults(); }
+  // While the hours are playing, a downloaded GIF plays them too, at the same pace.
+  function gifCtx(){
+    var ctx = exportCtx(), res = ctx.res;
+    if(playT && res && res.T > 1) ctx.series = { step: playStep(res.T), sub: function(h){ return exportSub(res, h); } };
+    return ctx;
+  }
+  // While busy, the hours playing on leave the progress line alone.
+  var busyNow = false;
+  function busy(on, text){ busyNow = on; setSub(on ? text : ''); if(!on && app.res) showResults(); }
   $('svgBtn').addEventListener('click', function(){ exporter().then(function(X){ download(X.svgBlob(exportCtx()), 'svg'); }); });
   $('pngBtn').addEventListener('click', function(){ exporter().then(function(X){ return X.pngBlob(exportCtx()); }).then(function(b){ download(b, 'png'); }); });
   $('gifBtn').addEventListener('click', function(){
     exporter().then(function(X){
-      return X.gifBlob(exportCtx(), function(p){ busy(true, 'Making the GIF… ' + Math.round(p * 100) + '%'); });
+      var ctx = gifCtx();
+      return X.gifBlob(ctx, function(p){ busy(true, (ctx.series ? 'Making the GIF of the hours… ' : 'Making the GIF… ') + Math.round(p * 100) + '%'); });
     }).then(function(b){ busy(false); download(b, 'gif'); }, function(err){ busy(false); alert('The GIF could not be made: ' + (err && err.message || err)); });
   });
   $('copyBtn').addEventListener('click', function(){
