@@ -16,9 +16,15 @@
 //       what the branches lose.
 //   A4b A link with a negative set point loses power, it never makes it.
 //   A5  The engine file is the one its banner names (sha256).
-//   B   The real page in headless Chromium: the KPIs, verdict and CSV say what
+//   A6  A diagram on a map: its place saves and reads back exactly, hostile
+//       map values never throw, and the map never changes what is solved.
+//   B   The real page in headless Chromium: the KPIs, summary and CSV say what
 //       the results say; the Run gate is honest; hostile saved state never
 //       breaks it; every export is valid; and it is fast.
+//   B7  The map, offline on synthetic tiles: it stays on the diagram's very
+//       pixels through every zoom and pan, Move the map moves only the map,
+//       a typed latitude and longitude lands the bus there, and the exports
+//       carry the map and its credit.
 
 import { acFlow, dcFlow, fromModel } from './nr-replay.mjs';
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
@@ -227,6 +233,30 @@ for (const key of Object.keys(LF.PRESETS)) {
   check('A5 the engine\'s code hashes to the sha256 in its banner', !!m && m[1] === got, got.slice(0, 16));
 }
 
+/* ── A6: a diagram on a map ── */
+console.log('\n── A6 a diagram on a map ──');
+{
+  const P = LF.PRESETS.wscc9;
+  const m = LF.load({ ...P, map: { lat: -31.9505, lon: 115.8605, z: 10.25, at: [45, 37], base: 'streets', power: 1 } });
+  const back = LF.load(JSON.parse(JSON.stringify(LF.compact(m))));
+  check('A6 a map saves and reads back exactly', JSON.stringify(back.map) === JSON.stringify(m.map) && back.map.base === 'streets' && back.map.power === 1, JSON.stringify(LF.compact(m).map));
+  check('A6 a diagram saved before maps opens with none, and saves none', !LF.load(P).map && !('map' in LF.compact(LF.load(P))), 'no map key');
+  check('A6 the map never changes what the power flow sees', LF.elecKey(m) === LF.elecKey(LF.load(P)), 'elecKey equal');
+  const g = LF.geo(m.map), ll = LF.geoLatLon(g, 450, 370), pt = LF.geoPoint(g, ll[0], ll[1]);
+  check('A6 the georeference puts the anchor on its place, and back', Math.abs(ll[0] + 31.9505) < 1e-9 && Math.abs(ll[1] - 115.8605) < 1e-9 && Math.abs(pt[0] - 450) < 1e-6 && Math.abs(pt[1] - 370) < 1e-6, ll.map(v => v.toFixed(7)).join(', '));
+  // One diagram px at zoom z is 2πR cos(lat) / (256·2^z) metres; ten grid units of 10 px at z 10 near Perth.
+  const mpp = LF.geoMetresPerPx(g, 370), want = 2 * Math.PI * 6378137 * Math.cos(-31.9505 * Math.PI / 180) / (256 * Math.pow(2, 10.25));
+  check('A6 ground scale is Web Mercator\'s', Math.abs(mpp - want) < 1e-9, mpp.toFixed(3) + ' m per px');
+  // One degree of the equator is 2πR/360 and a quarter meridian πR/2, R = 6371.0088 km (the IUGG mean radius).
+  const deg = LF.km([0, 0], [0, 1]), quarter = LF.km([0, 0], [90, 0]);
+  check('A6 great-circle distance: a degree of the equator and a quarter meridian', Math.abs(deg - 2 * Math.PI * 6371.0088 / 360) < 1e-9 && Math.abs(quarter - Math.PI * 6371.0088 / 2) < 1e-6, `${deg.toFixed(4)} km, ${quarter.toFixed(2)} km`);
+  let threw = 0;
+  const hostile = [null, 5, 'x', [], {}, { lat: 'a', lon: 1 }, { lat: 1e9, lon: -1e9, z: 1e9, at: ['x', 1e12], base: '<b>', power: '<i>' }, { lat: NaN, lon: NaN }, { lat: 0, lon: 0, base: 'SATELLITE', z: -4 }];
+  const read = hostile.map(h => { try { return LF.load({ v: 1, el: [{ c: 'Bus', id: 1, v_nom: 20, at: [0, 0, 8] }], map: h }).map || null; } catch (e) { threw++; return 'threw'; } });
+  const ok = read.every(r => r === null || (Math.abs(r.lat) <= 85.06 && Math.abs(r.lon) <= 180 && r.z >= 0 && r.z <= 22 && LF.MAP_BASES.includes(r.base) && (r.power === 0 || r.power === 1) && r.at.every(Number.isFinite)));
+  check('A6 hostile map values never throw and always read as a usable map or none', !threw && ok, JSON.stringify(read.slice(6)));
+}
+
 /* ── B: the page ── */
 console.log('\n── B the page ──');
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json', '.txt': 'text/plain', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon', '.ttf': 'font/ttf' };
@@ -274,7 +304,7 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
       const a = window.__lf.app, r = a.res, d = window.__lf.display();
       const txt = id => document.getElementById(id).textContent.trim();
       return { conv: r.report.converged, iters: r.report.iters, mm: r.report.mismatch, totals: r.totals, loss: txt('mLoss'), volt: txt('mVolt'), load: txt('mLoad'),
-               verdict: document.getElementById('verdict').className, title: document.querySelector('#verdict h2').textContent,
+               sub: txt('sldSub'), neg: ['mVolt', 'mLoad'].some(id => document.getElementById(id).classList.contains('neg')),
                v: Object.values(r.bus).map(b => b.v), loads: Object.values(r.br).map(b => b.load).filter(isFinite), vmin: d.vmin, vmax: d.vmax, lmax: d.loadMax };
     });
     const F = LF.fmt;
@@ -284,7 +314,10 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
     check(`B2 ${key}: the KPIs say what the results say`,
           s.loss === F.p(s.totals.loss) + ' MW' && s.volt === F.vl(lo, s.vmin, s.vmax) + ' to ' + F.vl(hi, s.vmin, s.vmax) && s.load === F.pctl(top, s.lmax) + '%',
           `${s.loss} | ${s.volt} | ${s.load}`);
-    check(`B2 ${key}: the verdict warns exactly when a limit is crossed`, outside === / warn/.test(s.verdict) && s.title.includes(F.p(s.totals.loss) + ' MW lost'), s.title.slice(0, 90));
+    // The verdict card was dropped (9bb1dc1): the run summary under the diagram
+    // carries the losses, and the voltage and loading figures turn red past a limit.
+    check(`B2 ${key}: the summary says the losses and the KPIs flag exactly when a limit is crossed`,
+          outside === s.neg && s.sub.includes('Losses ' + F.p(s.totals.loss) + ' MW.'), s.sub.slice(0, 90));
     // The CSV of every table carries the same numbers.
     for (const kind of ['bus', 'branch', 'device']) {
       await page.click(`#tableTabs .seg-btn[data-val="${kind}"]`);
@@ -366,6 +399,153 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
   await c.close();
 }
 
+// The map, offline: every tile is a white square with a dark band along its
+// top and left edges, so a tile corner can be found on the canvas. The power
+// grid answers with nothing, and the place search with one known place.
+{
+  const { c, page, errors } = await fresh({ width: 1280, height: 900 });
+  const tile = Buffer.from(await page.evaluate(() => {
+    const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+    const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, 256, 256); g.fillStyle = '#000'; g.fillRect(0, 0, 256, 3); g.fillRect(0, 0, 3, 256);
+    return cv.toDataURL('image/png').split(',')[1];
+  }), 'base64');
+  let tileHits = 0;
+  await c.route(/tile\.openstreetmap\.org|tiles\.maps\.eox\.at/, r => { tileHits++; r.fulfill({ status: 200, headers: { 'content-type': 'image/png', 'access-control-allow-origin': '*' }, body: tile }); });
+  await c.route(/openinframap\.org/, r => r.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' }, body: '' }));
+  await c.route(/nominatim\.openstreetmap\.org/, r => r.fulfill({ status: 200, headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' },
+    body: JSON.stringify([{ lat: '-7.2575', lon: '112.7521', name: 'Surabaya', display_name: 'Surabaya, East Java, Indonesia', boundingbox: ['-7.35', '-7.15', '112.6', '112.85'] }]) }));
+  const settled = () => page.waitForFunction(() => LFMap.idle(), null, { timeout: 10000 }).catch(() => {});
+  await page.goto(URL_);
+  await solved(page);
+  await openCtrl(page);
+  const k0 = await page.evaluate(() => [window.__lf.app.zoomRange(), document.body.classList.contains('is-stale')]);
+  await page.selectOption('#mapBase', 'streets');
+  await settled();
+  const on = await page.evaluate(() => ({ map: window.__lf.app.model.map, move: window.__lf.app.mapMove, stale: document.body.classList.contains('is-stale'),
+    grid: !!document.querySelector('.lf-grid'), range: window.__lf.app.zoomRange(), credit: document.getElementById('mapCredit').textContent }));
+  check('B7 turning a map on places the diagram, opens Move the map, keeps the result and hides the drawing grid',
+        !!on.map && on.map.base === 'streets' && on.map.power === 1 && on.move && !on.stale && !k0[1] && !on.grid && /OpenStreetMap contributors/.test(on.credit) && tileHits > 0, `${tileHits} tiles, ${on.credit}`);
+  // Found by name while moving the map: the place comes to the middle of the view, the diagram stays.
+  const at0 = await page.evaluate(() => JSON.stringify(window.__lf.app.model.el.filter(e => e.c === 'Bus').map(e => e.at)));
+  await page.fill('#mapSearch', 'Surabaya');
+  await page.press('#mapSearch', 'Enter');
+  await page.waitForFunction(() => window.__lf.app.model.map.lat < -7, null, { timeout: 5000 }).catch(() => {});
+  const found = await page.evaluate(() => { const a = window.__lf.app, v = a.view, g = LF.geo(a.model.map); return { mid: LF.geoLatLon(g, v.x + v.w / 2, v.y + v.h / 2), at: JSON.stringify(a.model.el.filter(e => e.c === 'Bus').map(e => e.at)) }; });
+  check('B7 a place found while moving the map lands under the middle of the view, the diagram unmoved',
+        Math.abs(found.mid[0] + 7.25) < 0.02 && Math.abs(found.mid[1] - 112.725) < 0.02 && found.at === at0, found.mid.map(x => x.toFixed(4)).join(', '));
+  // Scaled to a city, the view can zoom out to a region and in to the street; off a map it keeps its old range.
+  const range = await page.evaluate(() => [window.__lf.app.zoomRange(), window.__lf.app.model.map.z]);
+  check('B7 on a map the view zooms out to a region and in to the street; off it, as before', JSON.stringify(k0[0]) === '[0.15,4]' && range[0][0] < 0.15 && range[0][1] > 4, `map z ${range[1].toFixed(2)}, view ${JSON.stringify(range[0])}`);
+  // Esc leaves Move the map.
+  await page.keyboard.press('Escape');
+  const moveOff = await page.evaluate(() => !window.__lf.app.mapMove);
+  // Typed coordinates go straight there, without asking anyone.
+  await page.fill('#mapSearch', '-7.5, 112.25');
+  await page.press('#mapSearch', 'Enter');
+  await page.waitForTimeout(200);
+  const typed = await page.evaluate(() => { const a = window.__lf.app, v = a.view, g = LF.geo(a.model.map); return LF.geoLatLon(g, v.x + v.w / 2, v.y + v.h / 2); });
+  check('B7 typed coordinates move the view there', moveOff && Math.abs(typed[0] + 7.5) < 1e-6 && Math.abs(typed[1] - 112.25) < 1e-6, typed.map(x => x.toFixed(6)).join(', '));
+  await page.click('#fitBtn');
+  await settled();
+  // Alignment: tile corners, put through the SVG's own screen matrix, land on the canvas's dark bands.
+  const box = await page.locator('#sldStage').boundingBox();
+  // While a gesture runs the painted map is carried by a CSS transform; the
+  // canvas's own box (transform included) maps screen px to canvas px.
+  const probe = async (wait = true) => {
+    if (wait) await settled();
+    return page.evaluate(() => {
+      const F = LFMap.frame(), g = F.geo, svg = document.getElementById('sldSvg'), m = svg.getScreenCTM(), cv = document.getElementById('sldMapBase');
+      const rc = cv.getBoundingClientRect(), rs = svg.getBoundingClientRect(), dpr = cv.width / rc.width, dpy = cv.height / rc.height;
+      const carried = !!cv.style.transform;
+      const ctx = cv.getContext('2d', { willReadFrequently: true });
+      // A carried picture may still be the previous zoom's tiles: there, one zoom
+      // coarser, since a coarse tile's corner is a corner at both.
+      const tz = Math.max(0, Math.min(19, Math.round(g.z + Math.log2(F.fr.s)) - (cv.style.transform ? 1 : 0))), T = 256 * Math.pow(2, g.z - tz);
+      const v = window.__lf.app.view, cx = g.X0 + v.x + v.w / 2, cy = g.Y0 + v.y + v.h / 2;
+      const dark = (x, y) => { const d = ctx.getImageData(Math.round((x - rc.left) * dpr), Math.round((y - rc.top) * dpy), 1, 1).data; return d[0] + d[1] + d[2] < 300; };
+      let worst = 0, n = 0;
+      for (const dx of [-2, -1, 0, 1, 2]) for (const dy of [-2, -1, 0, 1, 2]) {
+        const p = svg.createSVGPoint(); p.x = (Math.floor(cx / T) + dx) * T - g.X0; p.y = (Math.floor(cy / T) + dy) * T - g.Y0;
+        const s = p.matrixTransform(m);
+        if (s.x < rs.left + 20 || s.y < rs.top + 20 || s.x > rs.right - 20 || s.y > rs.bottom - 20) continue;
+        let e = Infinity;
+        for (let d = -3; d <= 3; d += 0.5) if (dark(s.x + 12, s.y + d) && dark(s.x + d, s.y + 12)) e = Math.min(e, Math.abs(d));
+        worst = Math.max(worst, e); n++;
+      }
+      // The canvas covers the whole stage, however it is carried.
+      const covers = rc.left <= rs.left + 0.5 && rc.top <= rs.top + 0.5 && rc.right >= rs.right - 0.5 && rc.bottom >= rs.bottom - 0.5;
+      return { worst, n, covers, carried };
+    });
+  };
+  const runs = [await probe()];
+  await page.mouse.click(box.x + box.width / 2, box.y + 60);
+  for (const dy of [-360, 900, 1400, -700]) {
+    await page.mouse.move(box.x + box.width * 0.4, box.y + box.height * 0.6); await page.mouse.wheel(0, dy);
+    await page.waitForTimeout(80); runs.push(await probe());
+  }
+  // A small wheel step is carried, not repainted: probed at once, mid-gesture.
+  for (const dy of [60, -90]) { await page.mouse.wheel(0, dy); runs.push(await probe(false)); }
+  runs.push(await probe());
+  await page.mouse.move(box.x + 400, box.y + 300); await page.mouse.down();
+  for (let i = 1; i <= 5; i++) await page.mouse.move(box.x + 400 + 37 * i, box.y + 300 - 21 * i);
+  runs.push(await probe(false));
+  await page.waitForTimeout(250);
+  runs.push(await probe());
+  await page.mouse.up();
+  runs.push(await probe());
+  const worst = Math.max(...runs.map(r => r.worst)), probes = runs.reduce((a, r) => a + r.n, 0), carried = runs.filter(r => r.carried).length;
+  check('B7 the map stays on the very pixels of the diagram through wheel zoom, a drag and its release, carried or repainted',
+        worst <= 1 && probes >= 20 && carried > 0 && runs.every(r => r.covers), `${probes} tile corners in ${runs.length} views (${carried} carried mid-gesture), worst ${worst} px off`);
+  // Move the map: only the map moves, and undo puts it back.
+  const before = await page.evaluate(() => [JSON.stringify(window.__lf.app.model.map), JSON.stringify(window.__lf.app.model.el.map(e => e.at))]);
+  await page.click('#mapMove');
+  await page.mouse.move(box.x + 500, box.y + 400); await page.mouse.down();
+  for (let i = 1; i <= 4; i++) await page.mouse.move(box.x + 500 + 25 * i, box.y + 400 + 10 * i);
+  await page.mouse.up();
+  await page.mouse.wheel(0, -200);
+  await page.keyboard.press('Escape');
+  const after = await page.evaluate(() => [JSON.stringify(window.__lf.app.model.map), JSON.stringify(window.__lf.app.model.el.map(e => e.at)), window.__lf.app.mapMove, document.body.classList.contains('is-stale')]);
+  await page.keyboard.press('Control+z'); await page.keyboard.press('Control+z');
+  const undone = await page.evaluate(() => JSON.stringify(window.__lf.app.model.map));
+  check('B7 Move the map moves the map alone, never the result, and undo puts it back', after[0] !== before[0] && after[1] === before[1] && !after[2] && !after[3] && undone === before[0], 'moved, then undone');
+  // A typed latitude and longitude puts a bus on the nearest grid point to it.
+  await page.evaluate(() => window.__lf.app.select([4]));
+  await page.fill('#f_lat', '-7.3'); await page.press('#f_lat', 'Tab');
+  await page.fill('#f_lon', '112.6'); await page.press('#f_lon', 'Tab');
+  const bus = await page.evaluate(() => { const a = window.__lf.app, b = LF.byId(a.model)[4], g = LF.geo(a.model.map); return { ll: LF.geoLatLon(g, b.at[0] * 10, b.at[1] * 10), step: LF.geoMetresPerPx(g, b.at[1] * 10) * 10, field: document.getElementById('f_lat').value }; });
+  const off = LF.km(bus.ll, [-7.3, 112.6]) * 1000;
+  check('B7 a typed latitude and longitude lands the bus within half a grid step of it', off <= bus.step * Math.SQRT1_2 + 1e-6, `${off.toFixed(0)} m off, grid step ${bus.step.toFixed(0)} m, field reads ${bus.field}`);
+  await page.evaluate(() => window.__lf.app.select([]));
+  // The exports carry the map and say whose it is.
+  const ex = await page.evaluate(async () => {
+    const a = window.__lf.app, X = await a.exporter();
+    const ctx = { app: a, LF: window.LF, display: window.__lf.display(), res: a.res, stale: false, title: 'audit', sub: '' };
+    const text = await X.svgAsync(ctx);
+    const xml = !new DOMParser().parseFromString(text, 'image/svg+xml').querySelector('parsererror');
+    const size = X.size(ctx);
+    const png = await createImageBitmap(await X.pngBlob(ctx));
+    const cv = document.createElement('canvas'); cv.width = png.width; cv.height = png.height;
+    const g = cv.getContext('2d'); g.drawImage(png, 0, 0);
+    // The map's white tiles show through at its share over the panel: lighter than the panel, near the edge of the picture.
+    const px = g.getImageData(4, Math.round(png.height / 2), 1, 1).data;
+    return { xml, img: /<image href="data:image\/jpeg/.test(text), credit: /OpenStreetMap contributors/.test(text), png: [png.width, png.height], size, px: Array.from(px) };
+  });
+  check('B7 the SVG and PNG carry the map and its credit', ex.xml && ex.img && ex.credit && ex.png[0] === ex.size.w * 2 && ex.px[0] + ex.px[1] + ex.px[2] > 600, `${ex.png.join('x')}, edge pixel ${ex.px.slice(0, 3).join(',')}`);
+  // The mini cache keeps the map.
+  await page.waitForTimeout(700);
+  const saved = await page.evaluate(() => JSON.stringify(window.__lf.app.model.map));
+  await page.reload();
+  await solved(page);
+  const reread = await page.evaluate(() => [JSON.stringify(window.__lf.app.model.map), document.getElementById('mapBase').value]);
+  check('B7 a reload brings the map back from the mini cache', reread[0] === saved && reread[1] === 'streets', reread[1]);
+  // Off: the place stays for later; the grid and the old zoom range come back.
+  await page.selectOption('#mapBase', '');
+  const offState = await page.evaluate(() => ({ map: window.__lf.app.model.map, grid: !!document.querySelector('.lf-grid'), range: window.__lf.app.zoomRange(), hidden: document.getElementById('sldMapBase').hidden }));
+  check('B7 None hides the map and keeps its place', offState.map && offState.map.base === '' && offState.grid && offState.hidden && JSON.stringify(offState.range) === '[0.15,4]', JSON.stringify(offState.map));
+  check('B7 no page errors on a map', errors.length === 0, errors.slice(0, 2).join(' | '));
+  await c.close();
+}
+
 // Hostile saved state, through the mini cache and through a scenario file.
 {
   const KEY = 'abt:save:loadflow-simulator:v1';
@@ -379,6 +559,8 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
     'a branch to a missing bus': { __extra: { v: 1, el: [{ c: 'Bus', id: 1, v_nom: 110, at: [0, 0, 8] }, { c: 'Line', id: 2, bus0: 1, bus1: 9, x: 5 }, { c: 'Load', id: 3, bus: 7, p_set: 1 }] } },
     'negative ratings and duplicate ids': { __extra: { v: 1, el: [{ c: 'Bus', id: 1, v_nom: -5, at: [0, 0, 8] }, { c: 'Bus', id: 1, v_nom: 1e9, at: [9, 0, 8] }, { c: 'Transformer', id: 4, bus0: 1, bus1: 1, s_nom: -10 }] } },
     'hostile strings': { __fields: { 'v:colourBy': EVIL, 'c:animP': EVIL }, __extra: { v: 1, name: EVIL, el: [{ c: 'Bus', id: 1, name: EVIL, v_nom: 20, at: [0, 0, 8] }, { c: 'Generator', id: 2, bus: 1, control: 'Slack', name: EVIL, type: EVIL }] } },
+    'a hostile map': { __extra: { v: 1, el: [{ c: 'Bus', id: 1, v_nom: 20, at: [0, 0, 8] }], map: { lat: EVIL, lon: 1e300, z: EVIL, base: EVIL, power: EVIL, at: EVIL } } },
+    'a map at the edge of the world': { __extra: { v: 1, el: [{ c: 'Bus', id: 1, v_nom: 20, at: [0, 0, 8] }], map: { lat: 89.9, lon: 179.999, z: 22, base: 'satellite', power: 1, at: [5000, -5000] } } },
     'not even JSON': 'not json at all'
   };
   for (const [name, blob] of Object.entries(blobs)) {

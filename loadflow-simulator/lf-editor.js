@@ -33,7 +33,12 @@
     var armed = null, drag = null;
     var pointers = new Map();
 
-    function hint(t){ hintEl.textContent = t || ''; hintEl.classList.toggle('visible', !!t); }
+    // While the map is being moved its instructions stay; any other hint passes.
+    function hint(t){
+      if(!t && app.mapMove && app.moveHint) t = app.moveHint();
+      hintEl.textContent = t || ''; hintEl.classList.toggle('visible', !!t);
+    }
+    app.hint = hint;
     function toDiagram(cx, cy){
       var m = svg.getScreenCTM();
       if(!m) return { x: 0, y: 0 };
@@ -108,6 +113,7 @@
       });
     }
     function arm(tool){
+      if(tool && app.mapMove) app.setMapMove(false);
       armed = tool;
       ghostQ = null; tmp('');
       Array.prototype.forEach.call(pal.querySelectorAll('.pal-btn'), function(b){ b.classList.toggle('is-armed', b.getAttribute('data-tool') === tool); });
@@ -253,13 +259,20 @@
       try { svg.setPointerCapture(ev.pointerId); } catch(e){}
       if(pointers.size === 2){
         // Two fingers: pinch to zoom and pan, whatever the first one started.
+        // Moving the map, they slide and scale the map instead.
         restoreDrag();
         var pts = Array.from(pointers.values());
-        drag = { mode: 'pinch', d0: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), mx: (pts[0].x + pts[1].x) / 2, my: (pts[0].y + pts[1].y) / 2 };
+        var mx = (pts[0].x + pts[1].x) / 2, my = (pts[0].y + pts[1].y) / 2, d0 = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        if(app.mapMove) drag = { mode: 'mappinch', d0: d0, geo0: app.mapGeo(), p0: toDiagram(mx, my), moved: true };
+        else drag = { mode: 'pinch', d0: d0, mx: mx, my: my };
         return;
       }
       if(pointers.size > 2) return;
       var p = toDiagram(ev.clientX, ev.clientY);
+      if(app.mapMove && !ro){
+        drag = { mode: 'mapmove', sx: ev.clientX, sy: ev.clientY, geo0: app.mapGeo(), moved: false };
+        return;
+      }
       var id = hitId(ev.target), h = handleOf(ev.target);
       drag = { mode: 'pan', sx: ev.clientX, sy: ev.clientY, lx: ev.clientX, ly: ev.clientY, p0: p, moved: false, id: id, shift: ev.shiftKey };
       if(ro){ if(id !== null) app.hover(id); return; }
@@ -326,11 +339,27 @@
     svg.addEventListener('pointermove', function(ev){
       if(pointers.has(ev.pointerId)) pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
       if(!drag){
-        if(ev.pointerType === 'mouse') app.hover(hitId(ev.target));
+        if(ev.pointerType === 'mouse') app.hoverAt(hitId(ev.target), ev.clientX, ev.clientY);
         if(armed && !ro) ghostSoon(armed, toDiagram(ev.clientX, ev.clientY));
         return;
       }
       var p = toDiagram(ev.clientX, ev.clientY);
+      if(drag.mode === 'mappinch'){
+        var mp2 = Array.from(pointers.values());
+        if(mp2.length < 2 || !drag.geo0) return;
+        var dd = Math.hypot(mp2[0].x - mp2[1].x, mp2[0].y - mp2[1].y), c2 = toDiagram((mp2[0].x + mp2[1].x) / 2, (mp2[0].y + mp2[1].y) / 2);
+        app.setMapGeo(mapScaled(drag.geo0, drag.p0, c2, drag.d0 > 0 ? dd / drag.d0 : 1));
+        return;
+      }
+      if(drag.mode === 'mapmove'){
+        if(!drag.geo0) return;
+        if(!drag.moved && Math.hypot(ev.clientX - drag.sx, ev.clientY - drag.sy) <= 3) return;
+        drag.moved = true;
+        var kk = pxPerUnit();
+        app.setMapGeo({ z: drag.geo0.z, X0: drag.geo0.X0 - (ev.clientX - drag.sx) / kk, Y0: drag.geo0.Y0 - (ev.clientY - drag.sy) / kk });
+        svg.classList.add('is-panning');
+        return;
+      }
       if(drag.mode === 'pinch'){
         var pts = Array.from(pointers.values());
         if(pts.length < 2) return;
@@ -437,20 +466,36 @@
       }
     });
 
+    // The map scaled by f about the place that was under diagram point a, now under b.
+    function mapScaled(g, a, b, f){
+      var z = Math.max(1, Math.min(19, g.z + Math.log(f) / Math.LN2)), k = Math.pow(2, z - g.z);
+      return { z: z, X0: (g.X0 + a.x) * k - b.x, Y0: (g.Y0 + a.y) * k - b.y };
+    }
     function end(ev){
       pointers.delete(ev.pointerId);
       svg.classList.remove('is-panning');
       if(!drag) return;
       if(drag.mode === 'pinch'){ if(pointers.size < 1) drag = null; return; }
+      if(drag.mode === 'mappinch' || drag.mode === 'mapmove'){
+        var md = drag;
+        if(md.mode === 'mapmove' || pointers.size < 1) drag = null;
+        if(md.moved) app.mapCommit('mapmove');
+        else if(md.mode === 'mapmove' && ev.type !== 'pointercancel') app.hoverAt(null, ev.clientX, ev.clientY);
+        return;
+      }
       // The page took the swipe over: nothing was dragged and nothing is deselected.
       if(ev.type === 'pointercancel' && drag.mode === 'pan'){ drag = null; return; }
       var d = drag; drag = null;
       tmp('');
-      if(ro){ if(!d.moved && d.id !== null) app.hover(d.id); return; }
+      if(ro){ if(!d.moved) app.hoverAt(d.id, ev.clientX, ev.clientY); return; }
       var m = byId();
       switch(d.mode){
         case 'pan':
-          if(!d.moved && d.id === null && !d.shift) app.select([]);
+          if(!d.moved && d.id === null && !d.shift){
+            app.select([]);
+            // A tap on the map reads what is there.
+            if(ev.pointerType !== 'mouse') app.hoverAt(null, ev.clientX, ev.clientY);
+          }
           break;
         case 'move':
           if(d.moved) app.change(d.elec ? 'elec' : 'geom');
@@ -486,7 +531,7 @@
     // allows pan-y); a touch that starts on a part, with a tool armed or with two
     // fingers stays with the diagram.
     svg.addEventListener('touchstart', function(ev){
-      if(ev.touches.length > 1 || armed || hitId(ev.target) !== null || handleOf(ev.target)) ev.preventDefault();
+      if(ev.touches.length > 1 || armed || app.mapMove || hitId(ev.target) !== null || handleOf(ev.target)) ev.preventDefault();
     }, { passive: false });
     svg.addEventListener('pointerup', end);
     svg.addEventListener('pointercancel', end);
@@ -505,6 +550,17 @@
     svg.addEventListener('focus', function(){ setWheel(true); });
     svg.addEventListener('blur', function(){ if(!ro && !stage.matches(':hover')) setWheel(false); });
     svg.addEventListener('wheel', function(ev){
+      // Moving the map, the wheel scales the map about the pointer, the diagram staying put.
+      if(app.mapMove && !ro){
+        ev.preventDefault();
+        var g = app.mapGeo();
+        if(!g) return;
+        var q = toDiagram(ev.clientX, ev.clientY);
+        var wy = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
+        app.setMapGeo(mapScaled(g, q, q, Math.exp(-wy * (ev.ctrlKey ? 0.01 : 0.0015))));
+        app.mapCommit('mapscale');
+        return;
+      }
       if(!wheelOn && !ev.ctrlKey && !ev.metaKey && !stage.closest('.is-full')){
         if(!armed){
           var msg = 'Click the diagram, or hold Ctrl, to zoom with the wheel.';
@@ -532,6 +588,7 @@
       if(k === 'Escape'){
         if(armed){ arm(null); return; }
         if(drag){ restoreDrag(); drag = null; tmp(''); return; }
+        if(app.mapMove){ app.setMapMove(false); return; }
         if(app.sel.size) app.select([]);
         return;
       }
@@ -543,6 +600,19 @@
         ev.preventDefault();
         app.select(app.model.el.map(function(e){ return e.id; }));
         return;
+      }
+      // Moving the map, the keyboard slides it (arrows, Shift for further) and scales it (+ and −).
+      if(app.mapMove){
+        var g = app.mapGeo(), kk = pxPerUnit(), step = (ev.shiftKey ? 100 : 20) / kk;
+        var dirs = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+        if(g && dirs[k]){ ev.preventDefault(); app.setMapGeo({ z: g.z, X0: g.X0 - dirs[k][0] * step, Y0: g.Y0 - dirs[k][1] * step }); app.mapCommit('mapkey'); return; }
+        if(g && (k === '+' || k === '=' || k === '-' || k === '_')){
+          ev.preventDefault();
+          var v = app.view, mid = { x: v.x + v.w / 2, y: v.y + v.h / 2 };
+          app.setMapGeo(mapScaled(g, mid, mid, k === '+' || k === '=' ? 1.25 : 0.8));
+          app.mapCommit('mapkey');
+          return;
+        }
       }
       if(!app.sel.size) return;
       if(k === 'Delete' || k === 'Backspace'){ ev.preventDefault(); app.deleteSelected(); return; }

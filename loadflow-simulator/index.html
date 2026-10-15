@@ -49,6 +49,7 @@
     "Bus voltages, angles, branch loading, losses and currents on the diagram, with limits you set",
     "Animated active and reactive power flows",
     "Export as SVG, PNG or animated GIF, copy, share as a link, or embed the live diagram on your own site",
+    "Geographic single-line diagrams on OpenStreetMap or satellite imagery, with Open Infrastructure Map's power lines and substations as a guide",
     "Runs entirely in the browser: nothing is uploaded"
   ],
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
@@ -73,6 +74,14 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes. Turn on the P and Q flow animations, then use Share to download an SVG, PNG or animated GIF, copy a link, or copy an embed code that shows the live, interactive diagram on your page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I draw a single-line diagram on a real map?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Pick Plain, Streets or Satellite under Map and the diagram sits on OpenStreetMap or Sentinel-2 imagery, with Open Infrastructure Map's power lines and substations drawn over it as a guide. Find a place or type its latitude and longitude, line the map up with Move the map, then place each bus on its real substation. The diagram and the map zoom and pan as one picture."
       }
     },
     {
@@ -231,11 +240,34 @@
           <option value="both" selected>Both</option>
         </select>
       </label>
+      <!-- The map lives in the diagram (model.map), so these follow it rather than the mini cache. -->
+      <label class="viewbar-field"><span class="tip-wrap">Map <i class="tip-icon" id="mapTip" data-tip-options data-tip="">?</i></span>
+        <select class="sel-input" id="mapBase" data-no-persist>
+          <option value="" selected>None</option>
+          <option value="plain">Plain</option>
+          <option value="streets">Streets</option>
+          <option value="satellite">Satellite</option>
+        </select>
+      </label>
+      <label class="flow-toggle" id="mapPowerRow" hidden><input type="checkbox" id="mapPower" data-no-persist/><svg class="grid-key" viewBox="0 0 32 10" aria-hidden="true" focusable="false"></svg><span class="tip-wrap">Power grid <i class="tip-icon" id="mapPowerTip" data-tip="">?</i></span></label>
+    </div>
+    <div class="sld-mapbar sld-edit-only" id="mapBar" hidden data-no-abbr>
+      <div class="map-find">
+        <svg class="map-find-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5.5 5.5"/></svg>
+        <input class="combo-input map-search" id="mapSearch" type="text" placeholder="Find a place, or type lat, lon" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Find a place on the map" aria-controls="mapResults" data-no-persist>
+        <button class="city-clear" id="mapSearchClear" type="button" data-icon="clear" title="Clear the field" aria-label="Clear the field"></button>
+        <div class="combo-list map-results" id="mapResults" role="listbox" aria-label="Places found"></div>
+      </div>
+      <button type="button" class="btn-secondary btn-sm map-move" id="mapMove" aria-pressed="false" title="Slide and scale the map under the diagram to line the two up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v18M3 12h18"/><path d="m9 6 3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span>Move the map</span></button>
+      <span class="map-note" id="mapNote" role="status"></span>
     </div>
     <div class="sld-body">
       <div class="sld-palette sld-edit-only" id="palette" role="toolbar" aria-label="Add to the diagram" data-no-abbr></div>
       <div class="sld-stage" id="sldStage" data-share-chart data-no-abbr>
+        <canvas class="sld-map" id="sldMapBase" hidden aria-hidden="true"></canvas>
+        <canvas class="sld-map" id="sldMapGrid" hidden aria-hidden="true"></canvas>
         <svg id="sldSvg" xmlns="http://www.w3.org/2000/svg" role="img" tabindex="0" aria-label="Single-line diagram. Arrow keys move the selection, Delete removes it, R turns a bus, Ctrl+A selects everything."></svg>
+        <div class="sld-scale" id="sldScale" hidden aria-hidden="true"><span class="sld-scale-bar"></span><span class="sld-scale-txt"></span></div>
         <button class="sld-full" id="sldFull" type="button" title="Enlarge the diagram to fill the screen" aria-label="Enlarge the diagram to fill the screen" aria-pressed="false"><span class="zf-open" aria-hidden="true">⤢</span><svg class="zf-close" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3.5V9H3.5M15 3.5V9h5.5M9 20.5V15H3.5M15 20.5V15h5.5"/></svg></button>
         <div class="sld-zoom">
           <button class="btn-secondary btn-sm btn-icon" id="zoomIn" type="button" title="Zoom in" aria-label="Zoom in">+</button>
@@ -244,6 +276,7 @@
         <div class="sld-hint" id="sldHint" aria-live="polite"></div>
       </div>
     </div>
+    <p class="map-credit" id="mapCredit" hidden></p>
     <div class="hover-box" id="hoverBox">Hover or tap an element to read its values.</div>
   </section>
 
@@ -322,6 +355,7 @@
 <script src="../shared.js"></script>
 <script src="lf-core.js"></script>
 <script src="lf-draw.js"></script>
+<script src="lf-map.js"></script>
 <script src="lf-editor.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>
