@@ -829,7 +829,7 @@
     Load: '<path d="M12 3v9"/><path d="M6 12h12l-6 9z" fill="currentColor"/>',
     ShuntImpedance: '<path d="M12 2v7M5 9h14M5 13h14M12 13v4M7 17h10M9 20h6M11 23h2"/>',
     StorageUnit: '<rect x="5" y="6" width="14" height="13" rx="1.5"/><path d="M9 3v3M15 3v3M9.5 10v5M14.5 11.5v2"/>',
-    Link: '<path d="M2 12h5M17 12h5"/><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M7 17 17 7"/>'
+    Link: '<rect x="1" y="9" width="6" height="6" rx="1"/><path d="M1 15 7 9"/><rect x="17" y="9" width="6" height="6" rx="1"/><path d="M17 15 23 9"/><path d="M7 12h2.4M12 12h0M14.6 12H17" stroke-width="1.3"/>'
   };
   LF.KIND_ICON = KIND_ICON;
   function kindIcon(e){

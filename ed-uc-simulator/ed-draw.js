@@ -317,6 +317,46 @@
   }
 
   // Split a route at its midpoint: [first half, second half], both running from end 0 to end 1.
+  // Length of a route, the point s along it (with the way it runs there) and its piece from s0 to s1.
+  function routeLen(pts){
+    var l = 0;
+    for(var i = 1; i < pts.length; i++) l += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    return l;
+  }
+  function pointAt(pts, s){
+    for(var i = 1; i < pts.length; i++){
+      var a = pts[i - 1], b = pts[i], sl = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if(!sl && i < pts.length - 1) continue;
+      if(s <= sl || i === pts.length - 1){
+        var f = sl ? clamp(s / sl, 0, 1) : 0;
+        return { x: a[0] + (b[0] - a[0]) * f, y: a[1] + (b[1] - a[1]) * f, ux: sl ? (b[0] - a[0]) / sl : 1, uy: sl ? (b[1] - a[1]) / sl : 0 };
+      }
+      s -= sl;
+    }
+    return { x: pts[0][0], y: pts[0][1], ux: 1, uy: 0 };
+  }
+  function cut(pts, s0, s1){
+    var a = pointAt(pts, s0), b = pointAt(pts, s1), out = [[a.x, a.y]], acc = 0;
+    for(var i = 1; i < pts.length - 1; i++){
+      acc += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+      if(acc > s0 && acc < s1) out.push(pts[i]);
+    }
+    out.push([b.x, b.y]);
+    return out;
+  }
+  /* An HVDC converter: a square split by a diagonal, ~ in the half facing its bus
+     (the AC side) and = in the half facing the DC line. (ix, iy) points from the
+     bus into the link. */
+  var CONV_S = 8, CONV_D = 22;
+  function converter(x, y, ix, iy, col, bg){
+    var s = CONV_S, ul = ix + iy > 0;
+    var ax = ul ? x - 6 : x + 0.5, ay = ul ? y - 3.5 : y + 4.5;
+    var dx = ul ? x + 0.5 : x - 6, dy = ul ? y + 3 : y - 5.5;
+    return '<rect x="' + r1(x - s) + '" y="' + r1(y - s) + '" width="' + 2 * s + '" height="' + 2 * s + '" rx="2" fill="' + bg + '" stroke="' + col + '" stroke-width="1.8"/>' +
+      '<path d="M' + r1(x - s) + ' ' + r1(y + s) + 'L' + r1(x + s) + ' ' + r1(y - s) + '" stroke="' + col + '" stroke-width="1.4"/>' +
+      '<path d="M' + r1(ax) + ' ' + r1(ay) + 'q1.5 -2.4 3 0t3 0" fill="none" stroke="' + col + '" stroke-width="1.2"/>' +
+      '<path d="M' + r1(dx) + ' ' + r1(dy) + 'h5.5M' + r1(dx) + ' ' + r1(dy + 2.5) + 'h5.5" stroke="' + col + '" stroke-width="1.2"/>';
+  }
   function halves(pts, md){
     var a = pts.slice(0, md.seg + 1).concat([[md.mx, md.my]]);
     var b = [[md.mx, md.my]].concat(pts.slice(md.seg + 1));
@@ -521,13 +561,17 @@
       }
       if(e.c === 'Link'){
         if(r && (by === 'loading' || by === 'both')) col = lColour(load);
-        base += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="6" stroke-linejoin="round" data-id="' + e.id + '"/>' +
-                '<path d="' + d + '" fill="none" stroke="' + C.bg + '" stroke-width="2.6" stroke-linejoin="round"/>';
-        var s = 8;
-        base += '<rect x="' + r1(g.mx - s) + '" y="' + r1(g.my - s) + '" width="' + 2 * s + '" height="' + 2 * s + '" rx="2" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8"/>' +
-                '<path d="M' + r1(g.mx - s) + ' ' + r1(g.my + s) + 'L' + r1(g.mx + s) + ' ' + r1(g.my - s) + '" stroke="' + col + '" stroke-width="1.4"/>' +
-                '<path d="M' + r1(g.mx - 6) + ' ' + r1(g.my - 3.5) + 'q1.5 -2.4 3 0t3 0" fill="none" stroke="' + col + '" stroke-width="1.2"/>' +
-                '<path d="M' + r1(g.mx + 0.5) + ' ' + r1(g.my + 3) + 'h5.5M' + r1(g.mx + 0.5) + ' ' + r1(g.my + 5.5) + 'h5.5" stroke="' + col + '" stroke-width="1.2"/>';
+        // AC/DC converter, dash-dot DC line, DC/AC converter: each converter sits a
+        // short AC tail from its bus, so a link never reads as an AC line.
+        var len = routeLen(g.pts), cd = Math.min(CONV_D, len / 4);
+        var c0 = pointAt(g.pts, cd), c1 = pointAt(g.pts, len - cd);
+        var lnk = ' fill="none" stroke="' + col + '" stroke-width="2" stroke-linejoin="round"';
+        base += '<g data-id="' + e.id + '">' +
+                '<path d="' + pathD(cut(g.pts, 0, cd)) + '"' + lnk + '/>' +
+                '<path d="' + pathD(cut(g.pts, len - cd, len)) + '"' + lnk + '/>' +
+                '<path d="' + pathD(cut(g.pts, cd, len - cd)) + '"' + lnk + ' stroke-dasharray="10 3 2 3"/>' +
+                converter(c0.x, c0.y, c0.ux, c0.uy, col, C.bg) + converter(c1.x, c1.y, -c1.ux, -c1.uy, col, C.bg) + '</g>';
+        [c0, c1].forEach(function(c){ grow(c.x - CONV_S, c.y - CONV_S); grow(c.x + CONV_S, c.y + CONV_S); });
       } else {
         base += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="' + r1(w) + '" stroke-linejoin="round" stroke-linecap="round" data-id="' + e.id + '"/>';
       }
@@ -540,6 +584,8 @@
       var p0 = r ? at(r.p0) : NaN, p1 = r ? at(r.p1) : NaN;
       if(r){
         var hv = halves(g.pts, g);
+        // A link's arrows run on its DC line only, clear of the converters.
+        if(e.c === 'Link' && cd + CONV_S + 2 < len / 2) hv = [cut(g.pts, cd + CONV_S + 2, len / 2), cut(g.pts, len / 2, len - cd - CONV_S - 2)];
         var a = addLane(hv[0], p0, p0 > 0, maxP, e.id), b = addLane(hv[1], p1, p1 < 0, maxP, e.id);
         if((p0 > 0) === (p1 < 0)) joinHalves(a, b, p0 > 0);
       }
@@ -553,7 +599,7 @@
         if(shows(e, display, 'loss') && e.c === 'Link') lines.push({ t: 'loss ' + F.mw(p0 + p1) + ' MW', mono: true, res: true });
       }
       var horiz = Math.abs(g.ux) > Math.abs(g.uy);
-      var off = e.c === 'Transformer' ? 17 : e.c === 'Link' ? 14 : 8;
+      var off = e.c === 'Transformer' ? 17 : 8;
       want(lines, horiz ? [
         { x: g.mx, y: g.my - off, ax: 'middle', ay: 'bottom' }, { x: g.mx, y: g.my + off, ax: 'middle', ay: 'top' },
         { x: g.mx + 34, y: g.my - off, ax: 'middle', ay: 'bottom' }, { x: g.mx - 34, y: g.my - off, ax: 'middle', ay: 'bottom' },
@@ -564,7 +610,8 @@
         { x: g.mx - off, y: g.my - 28, ax: 'end', ay: 'middle' }, { x: g.mx - off, y: g.my + 28, ax: 'end', ay: 'middle' }
       ], e.id, 2);
       for(var si = 1; si < g.pts.length; si++) segOb(g.pts[si - 1], g.pts[si], 5, 1.5);
-      if(e.c === 'Transformer' || e.c === 'Link') ob(g.mx - 15, g.my - 15, 30, 30, 6);
+      if(e.c === 'Transformer') ob(g.mx - 15, g.my - 15, 30, 30, 6);
+      if(e.c === 'Link') [c0, c1].forEach(function(c){ ob(c.x - 12, c.y - 12, 24, 24, 6); });
     });
 
     /* Devices */
