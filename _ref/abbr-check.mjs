@@ -53,7 +53,7 @@ const check = (name, ok, detail) => {
 
 /* Serve the repo the way the site is served, so paths (and therefore the
    glossary scope a page resolves to) are the real ones. */
-const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript',
+const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.wasm':'application/wasm',
                '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml',
                '.png':'image/png', '.jpg':'image/jpeg', '.xml':'application/xml', '.txt':'text/plain' };
 const server = createServer((req, res) => {

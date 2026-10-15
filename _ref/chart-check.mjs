@@ -48,7 +48,7 @@ const check = (name, ok, detail) => {
 };
 
 /* ── The site, served the way it is served in production ─────────────────── */
-const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript',
+const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.wasm':'application/wasm',
                '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml',
                '.png':'image/png', '.jpg':'image/jpeg', '.xml':'application/xml',
                '.txt':'text/plain', '.woff2':'font/woff2' };
@@ -477,6 +477,19 @@ const PAGES = [
     charts: [],
     async prep(page) {
       await page.waitForFunction(() => /\S/.test(document.getElementById('sldStage').getAttribute('data-share-sig') || ''), null, { timeout: 20000 });
+    },
+  },
+  {
+    // The ED/UC Simulator: its SVG diagram's cluster, and four Chart.js charts
+    // over a day of the solar and battery preset (the commitment chart is
+    // floating bars on a linear hour axis).
+    name: 'educ-simulator',
+    url: '/educ-simulator/',
+    charts: ['dispCanvas', 'priceCanvas', 'commitCanvas', 'storeCanvas'],
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="solar"]');
+      await page.waitForFunction(() => window.Chart && Chart.getChart('storeCanvas') && Chart.getChart('commitCanvas'), null, { timeout: 30000 });
+      await page.waitForTimeout(400);
     },
   },
   {

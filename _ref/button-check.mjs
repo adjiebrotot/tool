@@ -64,7 +64,7 @@ const check = (name, ok, detail) => {
   ok ? pass++ : fail++;
 };
 
-const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript',
+const MIME = { '.html':'text/html', '.js':'text/javascript', '.mjs':'text/javascript', '.wasm':'application/wasm',
                '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml',
                '.png':'image/png', '.jpg':'image/jpeg', '.xml':'application/xml', '.txt':'text/plain' };
 const server = createServer((req, res) => {

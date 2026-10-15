@@ -596,6 +596,10 @@
       if(d.status){ c += e.start_up_cost * d.su[t] + e.shut_down_cost * d.sd[t] + e.stand_by_cost * d.status[t]; }
     });
     Object.keys(res.bus).forEach(function(id){ c += res.bus[id].shed[t] * o.voll; });
+    app.model.el.forEach(function(e){
+      var b = res.br[e.id];
+      if(e.c === 'Link' && b && e.both && e.efficiency < 1) c += ED.LINK_EPS * (Math.max(0, b.p0[t]) + Math.max(0, b.p1[t]));
+    });
     return c;
   }
   function tableData(){
@@ -735,7 +739,8 @@
       var cyc = st.every(function(e){ return e.cyclic; });
       li.push('<strong>Storage loses its round-trip efficiency</strong> half on the way in and half on the way out' + (cyc ? ', and ends the horizon holding what it started with.' : '.'));
     }
-    if(has('Link')) li.push('<strong>HVDC links carry what the optimiser sets,</strong> up to their rating, and lose (1 − efficiency) of it. They are not bound by reactance.');
+    if(has('Link')) li.push('<strong>HVDC links carry what the optimiser sets,</strong> up to their rating, and lose (1 − efficiency) of it. They are not bound by reactance.' +
+      (has('Link', function(e){ return e.both && e.efficiency < 1; }) ? ' A lossy one that runs both ways costs a token ' + ED.LINK_EPS + ' per MWh sent, so it never sends both ways at once.' : ''));
     var builtIn = m.el.some(function(e){ return (e.c === 'Load' || e.c === 'Generator') && typeof e.prof === 'string' && e.prof; });
     var custom = m.el.some(function(e){ return Array.isArray(e.prof); });
     if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change through the week:</strong> lower demand at the weekend, cloudier and calmer days. A custom one repeats every day.');
@@ -930,7 +935,7 @@
     link_nom: 'The most it can send, in either direction it runs.',
     link_eff: 'Share of the power sent that arrives at the far end.',
     link_both: 'Whether it can send power both ways or only from its first end.',
-    sym: 'How the unit is drawn. Grid also draws it as an import.<ul><li><strong>Solar, Wind:</strong> the symbols only; the profile below sets what it can produce.</li><li><strong>Grid:</strong> a hatched square, the sign for a wider grid.</li></ul>',
+    sym: 'How the unit is drawn.<ul><li><strong>Solar, Wind:</strong> symbols only; its availability sets what it produces.</li><li><strong>Grid:</strong> a hatched square, the sign for a wider grid.</li></ul>',
     shape: 'How the bus is drawn.<ul><li><strong>Bar:</strong> a bar its connections spread along.</li><li><strong>Node:</strong> a dot every connection meets at.</li></ul>',
     upright: 'Stands the bar on end. R does the same to every selected bus.',
     upnode: 'Devices leave the node left and right instead of above and below. R does the same to every selected bus.'
@@ -1122,10 +1127,10 @@
     var v = ED.validate(m, solveOptions());
     var counts = {};
     m.el.forEach(function(x){ counts[x.c] = (counts[x.c] || 0) + 1; });
-    var areas = ED.areas(m).length;
+    var isl = ED.islands(m);
     var html = '<div class="field-row"><div class="field-label">Network name</div><input class="txt-input" type="text" id="netName" maxlength="60" value="' + esc(m.name) + '" placeholder="My network"/></div>' +
       '<p class="stat-line"><strong>' + (counts.Bus || 0) + '</strong> buses, <strong>' + ((counts.Line || 0) + (counts.Transformer || 0) + (counts.Link || 0)) + '</strong> branches, <strong>' +
-      (counts.Generator || 0) + '</strong> generators, <strong>' + (counts.Load || 0) + '</strong> loads, <strong>' + (counts.StorageUnit || 0) + '</strong> storage, <strong>' + areas + '</strong> area' + (areas === 1 ? '' : 's') + '.</p>';
+      (counts.Generator || 0) + '</strong> generators, <strong>' + (counts.Load || 0) + '</strong> loads, <strong>' + (counts.StorageUnit || 0) + '</strong> storage, <strong>' + isl + '</strong> island' + (isl === 1 ? '' : 's') + '.</p>';
     html += '<div class="field-group" id="checksGroup"' + (v.errors.length || v.warnings.length ? '' : ' hidden') + '><div class="group-title">Checks</div><div class="fg-body"><ul class="issue-list" id="issueList">' + issuesHtml(v) + '</ul></div></div>';
     html += '<div class="field-group"><div class="group-title">Elements</div>';
     EL_GROUPS.forEach(function(gr){
@@ -1302,9 +1307,9 @@
 
   /* ── Dispatch tab and display options ── */
   var MODE_TIP = {
-    uc: '<strong>Unit commitment, mixed-integer:</strong> each committable unit is on or off in each hour, with its start-up costs, minimum output and minimum up and down times. Exact, and slower.',
-    lin: '<strong>Unit commitment, linear relaxation:</strong> on or off becomes a share between 0 and 1. Quick, its cost a lower bound on the exact one, and it has prices of its own.',
-    ed: '<strong>Economic dispatch:</strong> every unit is available from zero to its rating, cheapest first within the limits. No start-ups, minimum output or up and down times.'
+    uc: '<strong>Unit commitment, mixed-integer:</strong> each committable unit is on or off in each hour, with its start-up costs, minimum output and up and down times. Exact.',
+    lin: '<strong>Unit commitment, linear relaxation:</strong> on or off becomes a share from 0 to 1. Quick, and its cost is a lower bound on the exact one.',
+    ed: '<strong>Economic dispatch:</strong> every unit runs anywhere from zero to its rating, cheapest first. No start-ups, minimum output or up and down times.'
   };
   var LIMITS_TIP = {
     on: 'Lines, transformers and links carry no more than their ratings. A full one splits the price on either side of it.',
@@ -1350,7 +1355,6 @@
   function resetForm(rt){
     Array.prototype.forEach.call(rt.querySelectorAll('input, select'), function(el){
       if(el.closest('[data-no-persist]')) return;
-      if(el.id === 'edCur') return;    // a reader's currency is theirs, whatever the network
       if(el.type === 'checkbox') el.checked = el.defaultChecked;
       else if(el.tagName === 'SELECT') Array.prototype.forEach.call(el.options, function(o){ o.selected = o.defaultSelected; });
       else el.value = el.defaultValue;

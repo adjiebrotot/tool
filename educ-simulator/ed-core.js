@@ -350,6 +350,22 @@
     });
     return order.map(function(r){ return groups[r]; });
   };
+  // AC islands: buses joined by lines and transformers (a link does not join them).
+  ED.islands = function(model){
+    var parent = {};
+    function find(a){ while(parent[a] !== a){ parent[a] = parent[parent[a]]; a = parent[a]; } return a; }
+    var buses = model.el.filter(function(e){ return e.c === 'Bus'; });
+    buses.forEach(function(b){ parent[b.id] = b.id; });
+    model.el.forEach(function(e){
+      if(PASSIVE[e.c] && has(parent, e.bus0) && has(parent, e.bus1) && e.bus0 !== e.bus1){
+        var a = find(e.bus0), b = find(e.bus1);
+        if(a !== b) parent[b] = a;
+      }
+    });
+    var roots = {};
+    buses.forEach(function(b){ roots[find(b.id)] = 1; });
+    return Object.keys(roots).length;
+  };
   ED.onBus = function(model, e){
     var b = e.bus !== null && e.bus !== undefined ? ED.byId(model)[e.bus] : null;
     return !!(b && b.c === 'Bus');
@@ -387,7 +403,8 @@
     var hours = toInt(o.hours);
     return {
       mode: o.mode === 'ed' || o.mode === 'lin' ? o.mode : 'uc',
-      hours: ED.HOURS.indexOf(hours) >= 0 ? hours : 24,
+      // The page offers ED.HOURS; any whole number of hours up to a week solves.
+      hours: hours >= 1 ? Math.min(168, hours) : 24,
       limits: o.limits === false || o.limits === 0 || o.limits === '0' ? false : true,
       shed: o.shed === false || o.shed === 0 || o.shed === '0' ? false : true,
       voll: (function(v){ v = num(v); return isNaN(v) ? 10000 : clamp(v, 100, 1e5); })(o.voll),
@@ -476,6 +493,7 @@
   /* ── The optimisation ── */
   function pyName(id){ return 'e' + id; }
   var BIGF = 1e6;      // the limit sent for a branch that has none
+  ED.LINK_EPS = 0.001; // $/MWh on each direction of a lossy two-way link
   function col(df, name, H){
     if(!df || !df.columns || !df.columns.has || !df.columns.has(name)) return null;
     var c = df.col(name), out = [];
@@ -572,9 +590,11 @@
     links.forEach(function(e){
       // A lossy link that runs both ways is two one-way links: PyPSA applies the
       // efficiency to a negative flow the wrong way round, which would create energy.
+      // Each carries a token cost, ED.LINK_EPS, so the pair never runs both ways at
+      // once to throw away energy that could simply be spilled.
       if(e.both && e.efficiency < 1){
-        n.add('Link', pyName(e.id), { bus0: pyName(e.bus0), bus1: pyName(e.bus1), p_nom: e.p_nom, efficiency: e.efficiency });
-        n.add('Link', pyName(e.id) + 'r', { bus0: pyName(e.bus1), bus1: pyName(e.bus0), p_nom: e.p_nom, efficiency: e.efficiency });
+        n.add('Link', pyName(e.id), { bus0: pyName(e.bus0), bus1: pyName(e.bus1), p_nom: e.p_nom, efficiency: e.efficiency, marginal_cost: ED.LINK_EPS });
+        n.add('Link', pyName(e.id) + 'r', { bus0: pyName(e.bus1), bus1: pyName(e.bus0), p_nom: e.p_nom, efficiency: e.efficiency, marginal_cost: ED.LINK_EPS });
       } else {
         n.add('Link', pyName(e.id), { bus0: pyName(e.bus0), bus1: pyName(e.bus1), p_nom: e.p_nom, efficiency: e.efficiency, p_min_pu: e.both ? -1 : 0 });
       }
@@ -630,8 +650,12 @@
         // A mixed-integer run's binaries come back a hair off 0 and 1.
         var rd = function(a){ return report.milp ? a.map(function(v){ return Math.round(v); }) : a.map(function(v){ return Math.abs(v) < 1e-9 ? 0 : v; }); };
         status[e.id] = rd(col(gt.status, nm, H) || zeros(H));
-        su[e.id] = rd(col(gt.start_up, nm, H) || zeros(H));
-        sd[e.id] = rd(col(gt.shut_down, nm, H) || zeros(H));
+        // Start-ups and shut-downs follow from the commitment. The solver's own
+        // indicators are only bounded below, so one that costs nothing can be
+        // left at 1 in an hour where nothing changed.
+        var prev = e.init ? 1 : 0;
+        su[e.id] = []; sd[e.id] = [];
+        status[e.id].forEach(function(v){ su[e.id].push(Math.max(0, v - prev)); sd[e.id].push(Math.max(0, prev - v)); prev = v; });
       });
 
       // Prices. A linear problem has them as its duals. A mixed-integer one does
@@ -698,7 +722,12 @@
                          load: sent.map(function(v){ return e.p_nom > 0 ? 100 * v / e.p_nom : NaN; }) };
       });
       // Devices
-      var cost = { energy: 0, start: 0, shut: 0, standby: 0, shed: 0 };
+      var cost = { energy: 0, start: 0, shut: 0, standby: 0, shed: 0, link: 0 };
+      B.links.forEach(function(e){
+        if(!(e.both && e.efficiency < 1)) return;
+        var nm = pyName(e.id), f = col(n.links_t.p0, nm, H) || zeros(H), r = col(n.links_t.p0, nm + 'r', H) || zeros(H);
+        for(var t = 0; t < H; t++) cost.link += ED.LINK_EPS * (f[t] + r[t]);
+      });
       B.gens.forEach(function(e){
         var nm = pyName(e.id), p = col(gt.p, nm, H) || zeros(H), avail = ED.availSeries(e, H);
         var com = !!status[e.id];
@@ -731,7 +760,7 @@
                 energy: 0, shedEnergy: 0, curtailEnergy: 0, peak: 0, peakAt: 0, starts: 0, unitHoursOn: 0, unitHours: 0,
                 avgPrice: NaN, minPrice: NaN, maxPrice: NaN };
       T.costs = cost;
-      T.cost = cost.energy + cost.start + cost.shut + cost.standby + cost.shed;
+      T.cost = cost.energy + cost.start + cost.shut + cost.standby + cost.shed + cost.link;
       B.buses.forEach(function(b){ var r = res.bus[b.id]; for(var t = 0; t < H; t++){ T.load[t] += r.load[t]; T.shed[t] += r.shed[t]; } });
       B.gens.forEach(function(e){
         var d = res.dev[e.id];

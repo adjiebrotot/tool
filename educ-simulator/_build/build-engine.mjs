@@ -323,7 +323,8 @@ writeFileSync(join(TOOL, 'engine', 'psa-opt.min.js'), banner + shipCode);
 
 // highs-js: the ES module and its WebAssembly, as published, with a banner.
 const highsJs = readFileSync(join(HIGHS_DIR, 'build', 'highs.mjs'), 'utf8').replace(/\n\/\/# sourceMappingURL=.*$/m, '');
-writeFileSync(join(TOOL, 'engine', 'highs.mjs'), `/*! highs-js ${HIGHS_PKG.version} (github.com/lovasoa/highs-js), the HiGHS solver (highs.dev) as WebAssembly. MIT licence, see engine/LICENSE.txt. */\n` + highsJs);
+const wasmSha = createHash('sha256').update(readFileSync(join(HIGHS_DIR, 'build', 'highs.wasm'))).digest('hex');
+writeFileSync(join(TOOL, 'engine', 'highs.mjs'), `/*! highs-js ${HIGHS_PKG.version} (github.com/lovasoa/highs-js), the HiGHS solver (highs.dev) as WebAssembly, as published. MIT licence, see engine/LICENSE.txt. highs.wasm sha256 ${wasmSha} */\n` + highsJs);
 copyFileSync(join(HIGHS_DIR, 'build', 'highs.wasm'), join(TOOL, 'engine', 'highs.wasm'));
 const highsLicence = readFileSync(join(HIGHS_DIR, 'LICENSE'), 'utf8').trim();
 writeFileSync(join(TOOL, 'engine', 'LICENSE.txt'), MIT + `\n\nhighs-js and HiGHS (highs.mjs, highs.wasm)\n==========================================\n\n${highsLicence}\n`);

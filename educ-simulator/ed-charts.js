@@ -85,7 +85,8 @@
           callbacks: o.callbacks
         }),
         zoom: SharedZoom.options(o.zoom || { min: 0, max: Math.max(1, H - 1), points: H }),
-        sharedYFit: o.fit === false ? undefined : { auto: { axes: o.fitAxes || ['y'], includeZero: true, skip: o.skip } }
+        // A y axis of names (the commitment chart's units) keeps its own range.
+        sharedYFit: o.fit === false ? { auto: { axes: ['y'], fixed: ['y'] } } : { auto: { axes: o.fitAxes || ['y'], includeZero: true, skip: o.skip } }
       },
       scales: o.scales(grid, muted)
     };
