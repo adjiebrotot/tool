@@ -192,17 +192,32 @@
       ev.preventDefault();
       var tool = b.getAttribute('data-tool');
       try { b.setPointerCapture(ev.pointerId); } catch(e){}
-      drag = { mode: 'palette', tool: tool, btn: b, sx: ev.clientX, sy: ev.clientY, moved: false, id: ev.pointerId };
+      drag = { mode: 'palette', tool: tool, btn: b, sx: ev.clientX, sy: ev.clientY, moved: false, id: ev.pointerId, scroll0: pal.scrollLeft };
     });
     if(!ro) pal.addEventListener('pointermove', function(ev){
-      if(!drag || drag.mode !== 'palette' || ev.pointerId !== drag.id) return;
-      if(Math.hypot(ev.clientX - drag.sx, ev.clientY - drag.sy) > 5) drag.moved = true;
+      if(!drag || ev.pointerId !== drag.id) return;
+      // On a phone the palette is a row wider than the screen. The buttons take
+      // the pointer for dragging (touch-action:none), so the browser can't swipe
+      // it; a sideways swipe that starts on a button scrolls the row by hand, and
+      // a drag that heads down still carries the part onto the diagram.
+      if(drag.mode === 'palscroll'){ pal.scrollLeft = drag.scroll0 - (ev.clientX - drag.sx); return; }
+      if(drag.mode !== 'palette') return;
+      var dx = ev.clientX - drag.sx, dy = ev.clientY - drag.sy;
+      if(!drag.moved && Math.hypot(dx, dy) > 5){
+        if(pal.scrollWidth > pal.clientWidth + 1 && Math.abs(dx) > Math.abs(dy)){
+          drag.mode = 'palscroll';
+          pal.scrollLeft = drag.scroll0 - dx;
+          return;
+        }
+        drag.moved = true;
+      }
       if(!drag.moved) return;
       var r = stage.getBoundingClientRect();
       var inside = ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top && ev.clientY <= r.bottom;
       if(inside) ghostSoon(drag.tool, toDiagram(ev.clientX, ev.clientY)); else { ghostQ = null; tmp(''); }
     });
     if(!ro) pal.addEventListener('pointerup', function(ev){
+      if(drag && drag.mode === 'palscroll' && ev.pointerId === drag.id){ drag = null; return; }
       if(!drag || drag.mode !== 'palette' || ev.pointerId !== drag.id) return;
       var d = drag; drag = null;
       ghostQ = null; tmp('');
