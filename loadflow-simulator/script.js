@@ -1311,5 +1311,8 @@
   if(!EMBED) run();
   else engine();
 
+  // The guided tour (tour.js) points at the results, so a network that changed
+  // since its last run is solved first. It never edits the diagram.
+  window.__LF_TOUR = { ensureResults: function(){ if(!running && isStale()) return run(); } };
   window.__lf = { app: app, LF: LF, run: run, engine: engine, applyPreset: applyPreset, display: display, solveOptions: solveOptions };
 })();

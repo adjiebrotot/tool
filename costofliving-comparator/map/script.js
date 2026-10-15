@@ -844,6 +844,54 @@ function applyQuickStart(id){
 function clearPresetMark(){ document.querySelectorAll('.quick-start-btn.active').forEach(b => b.classList.remove('active')); }
 
 // ═══════════════════════════════════════════════════════════
+// GUIDED-TOUR DEMO DATA
+// The tour (tour.js) narrates the Perth Quick Start, so it loads it before
+// the steps that point at a form or a result, and hands the reader's own plan
+// back when it ends. The tour can start before the city data is in; the
+// snapshot and the demo then wait for it, so a plan the mini cache restores
+// late is still the one given back.
+// ═══════════════════════════════════════════════════════════
+const TOUR_DEMO = 'per';
+let tourBox = null, tourSeeded = false, tourSeedWanted = false;
+function tourSnapshot(){
+  if(!S.fromKey && !S.salary && !fromExpense()) return null;   // nothing of theirs: the demo can stay
+  const on = document.querySelector('.quick-start-btn.active');
+  return { s: clone(S), preset: on ? on.dataset.preset : null };
+}
+function tourSeed(){
+  if(tourSeeded) return;
+  if(!dataReady){ tourSeedWanted = true; return; }
+  tourSeeded = true;
+  applyQuickStart(TOUR_DEMO);
+}
+function tourSave(){
+  tourSeeded = false; tourSeedWanted = false;
+  tourBox = dataReady ? { snap: tourSnapshot() } : { late: true, snap: null };
+  return tourBox;
+}
+function tourRestore(box){
+  tourSeeded = false; tourSeedWanted = false;
+  if(tourBox === box) tourBox = null;
+  const snap = box && box.snap;
+  if(!snap || !dataReady) return;
+  Object.keys(S).forEach(k => { delete S[k]; });
+  Object.assign(S, clone(S_DEFAULTS), clone(snap.s));
+  normalise();
+  mountFromPicker();
+  syncInputs();
+  document.querySelectorAll('.quick-start-btn').forEach(b => b.classList.toggle('active', !!snap.preset && b.dataset.preset === snap.preset));
+  render();
+  if(persist) persist.save();
+  if(mapReady) flyTo(homeTransform(), 600);
+}
+// Called from init once the data and the mini cache are in.
+function tourCatchUp(){
+  if(tourBox && tourBox.late){ tourBox.late = false; tourBox.snap = tourSnapshot(); }
+  if(tourSeedWanted){ tourSeedWanted = false; tourSeed(); }
+}
+window.__COLMAP_TOUR = { seed: tourSeed, saveState: tourSave, restoreState: tourRestore };
+
+// ═══════════════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════════════
 let renderQueued = false;
@@ -1858,6 +1906,7 @@ function init(){
   });
   SharedScenario.mount('.quick-start-row', { tool: 'costofliving-comparator-map', persist });
   loadMap();
+  tourCatchUp();
 
   // Test hook for the audit harness: read-only views of the live state.
   window.__colmap = {

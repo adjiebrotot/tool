@@ -150,7 +150,10 @@ async function openPage(url, opts = {}){
     if(opts.live && u.includes('open.er-api.com')) return route.fulfill({ contentType: 'application/json', body: JSON.stringify(opts.live) });
     return route.abort();
   });
-  if(opts.seenTour) await ctx.addInitScript(() => { const g = Storage.prototype.getItem; Storage.prototype.getItem = function(k){ return /-seen$/.test(k) ? '1' : g.call(this, k); }; });
+  // Opened as a returning visitor: a first-visit tour would cover the page,
+  // and with the control card open, as a reader opens it before using the form.
+  await ctx.addInitScript(() => { try { localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); } catch (e) {} });
+  await ctx.addInitScript(() => { const g = Storage.prototype.getItem; Storage.prototype.getItem = function(k){ return /-seen$/.test(k) ? '1' : g.call(this, k); }; });
   await page.goto(url, { waitUntil: 'load' });
   return { ctx, page };
 }
@@ -610,7 +613,7 @@ await mctx.close();
   const fmtC = (v, c) => (v < 0 ? '-' : '') + c + ' ' + Math.abs(v).toLocaleString('en-AU', { maximumFractionDigits: 0 });
   // Detailed: the comparator's Quick Start budgets against the map's.
   const PAIRS = [['sg-au', 'sg'], ['sea', 'jkt'], ['us', 'nyc'], ['eu', 'lon'], ['me', 'dxb']];
-  const { ctx: cctx, page: cp } = await openPage(COMP, { seenTour: true });
+  const { ctx: cctx, page: cp } = await openPage(COMP);
   await cp.waitForFunction(() => document.getElementById('dataUpdatedText').textContent.length > 0);
   const { ctx: m2, page: mp } = await openMap();
   const bad = []; let n = 0;
