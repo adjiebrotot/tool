@@ -48,7 +48,7 @@ TOOLS = {
     "jsonvisualiser": ("Made using tool.adjiebrotots.com/jsonvisualiser", 400),
     "sankeycreator":  ("Made using tool.adjiebrotots.com/sankeycreator", 400),
     "loadflow-simulator": ("Made using tool.adjiebrotots.com/loadflow-simulator", 500),
-    "educ-simulator": ("Made using tool.adjiebrotots.com/educ-simulator", 500),
+    "ed-uc-simulator": ("Made using tool.adjiebrotots.com/ed-uc-simulator", 500),
 }
 
 

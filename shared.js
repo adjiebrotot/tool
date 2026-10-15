@@ -2483,7 +2483,7 @@
     /* ── ED/UC Simulator ──
        The same readers as the Load Flow Simulator, so the field's own units and
        words (MW, MWh, p.u., DC, HVDC) are left alone. */
-    'educ-simulator': {
+    'ed-uc-simulator': {
       'ED/UC': ['Economic Dispatch and Unit Commitment', 'sharing the load among units, and deciding which units run in each hour'],
       PJM:   ['PJM Interconnection', 'the US grid operator whose 5-bus test system is a textbook example of nodal prices'],
       PyPSA: ['Python for Power System Analysis', 'the open-source power system toolbox this engine is ported from'],

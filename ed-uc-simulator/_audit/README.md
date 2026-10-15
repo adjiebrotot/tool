@@ -1,7 +1,7 @@
 # ED/UC Simulator: audit harness
 
 ```sh
-node educ-simulator/_audit/run.mjs
+node ed-uc-simulator/_audit/run.mjs
 ```
 
 It holds the tool's answers to things it did not compute itself. Everything below the page
@@ -56,15 +56,25 @@ the commitment held as found.
 **A5. The engine.** `engine/psa-opt.min.js` hashes to the sha256 in its own banner, and
 `engine/highs.wasm` to the sha256 that `engine/highs.mjs` names.
 
+**A6. The calendar,** against JavaScript's own dates: every built-in profile, from four starts
+(including a mid-morning one and a leap year), takes the clock hour from its start, demand its
+weekday factor (Monday first) and a unit its day of the horizon; hours are labelled
+dd/mm/yyyy HH:00 from the start; a horizon stops at 30 days and a start is a whole hour of a real
+date; and a start on a Monday at 00:00 gives what the tool gave before it had a start date.
+
 **B. The real page in headless Chromium,** served over http because the engine is an ES module
 in a module worker:
 - the first solve runs in the worker;
 - for every Quick Start, the cost and average price cards say what the result says, and the
   hours table (as its CSV) has every hour and its costs add up to the operating cost;
 - the Run gate is honest: an electrical edit is stale, undo clears it, a move does not make it
-  stale, a new horizon does, and Run refreshes;
+  stale, a new horizon or start date does, and Run refreshes;
 - the diagram's SVG export is strict XML;
 - 12 buses and 20 units over a week solve as a unit commitment in a few seconds;
+- 30 days from 01/07/2026 solve, and the hour readout, the subtitle and every row of the hours
+  table are dated from that start;
+- a mini cache from before the horizon was a number and a unit (`edHours`, no start date) opens
+  on the same horizon from a Monday, so it solves as it did;
 - empty, null, non-JSON, future-version and hostile saved state never throws, injects markup
   or stops the page solving.
 
@@ -76,4 +86,4 @@ The engine's own build (`_build/build-engine.mjs`) runs a separate check:
   results identical, bit for bit, to an unpruned bundle of the PSA.js source.
 
 The Share menu, embeds, exports at every screen size and the GIF are held by
-`_ref/share-check.mjs` (ONLY=educ-simulator), the charts by `_ref/chart-check.mjs`.
+`_ref/share-check.mjs` (ONLY=ed-uc-simulator), the charts by `_ref/chart-check.mjs`.

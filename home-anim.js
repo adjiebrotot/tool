@@ -172,6 +172,22 @@
       '<circle class="w" cx="93" cy="20" r="10"/><path class="sB t" d="M86 20q3.5-6 7 0t7 0"/>' +
       '<path class="ld ot fB sB t" d="M51 94H69L60 106Z"/>',
 
+    // A day's dispatch, hour by hour: each stack rises to meet the load (base blue, the pale mid unit
+    // committed from morning, the gold peaker switched on only for the evening peak) under a price line that steps up.
+    'ed-uc-simulator':
+      '<path class="sq" d="M12 100H108"/><g class="sb" stroke-width="9" stroke-linecap="butt">' +
+        '<path class="c ob" d="M19.5 96V72"/><path class="c ob" d="M31 96V74" style="animation-delay:-7.7s"/>' +
+        '<g class="c ob" style="animation-delay:-7.4s"><path d="M42.5 96V70"/><path class="m" d="M42.5 68.5V57.5"/></g>' +
+        '<g class="c ob" style="animation-delay:-7.1s"><path d="M54 96V70"/><path class="m" d="M54 68.5V51.5"/></g>' +
+        '<g class="c ob" style="animation-delay:-6.8s"><path d="M65.5 96V70"/><path class="m" d="M65.5 68.5V51.5"/>' +
+          '<path class="pk oc sg" d="M65.5 50V44" style="animation-delay:-6.8s"/></g>' +
+        '<g class="c ob" style="animation-delay:-6.5s"><path d="M77 96V70"/><path class="m" d="M77 68.5V51.5"/>' +
+          '<path class="pk oc sg" d="M77 50V39" style="animation-delay:-6.5s"/></g>' +
+        '<g class="c ob" style="animation-delay:-6.2s"><path d="M88.5 96V70"/><path class="m" d="M88.5 68.5V51.5"/>' +
+          '<path class="pk oc sg" d="M88.5 50V35" style="animation-delay:-6.2s"/></g>' +
+        '<g class="c ob" style="animation-delay:-5.9s"><path d="M100 96V70"/><path class="m" d="M100 68.5V55.5"/></g></g>' +
+      '<path class="pr sm" pathLength="100" stroke-dasharray="100 110" d="M15 30H36.75V24H59.75V16H94.25V24H104.5"/>',
+
     // Two circles drift apart (separate) and slide into overlap (joint); a heart when joined.
     pisahvsgabung:
       '<g class="cl"><circle class="fb sb" cx="46" cy="58" r="24" fill-opacity=".14"/>' +
@@ -320,6 +336,12 @@
       '@keyframes taLf1{to{stroke-dashoffset:-48}}@keyframes taLf2{to{stroke-dashoffset:-24}}@keyframes taLf3{to{stroke-dashoffset:-20}}' +
       '@keyframes taLf4{0%,50%,100%{transform:none}25%,75%{transform:scale(1.1)}}' +
       '@keyframes taLf5{0%,50%,100%{transform:scale(.7);opacity:0}25%,75%{transform:none;opacity:1}}',
+
+    // Stacks rise 0.3s apart and leave in the same order; the price line draws and then erases at the same pace.
+    'ed-uc-simulator': '&{--d:8s}&.m{stroke-opacity:.45}&.c{animation-name:taEu1}&.pk{animation-name:taEu2}&.pr{animation-name:taEu3;animation-timing-function:linear}' +
+      '@keyframes taEu1{0%{transform:scaleY(0)}6%{transform:scaleY(1.05)}9%,62%{transform:none;opacity:1}68%,100%{transform:none;opacity:0}}' +
+      '@keyframes taEu2{0%,6%{transform:scale(0)}10%{transform:scale(1.25)}13%,68%{transform:none}72%,100%{transform:scale(0)}}' +
+      '@keyframes taEu3{0%{stroke-dashoffset:104}36%,62%{stroke-dashoffset:0}96%,100%{stroke-dashoffset:-104}}',
 
     pisahvsgabung: '&{--d:6s}&.cl{animation-name:taPg1}&.cr{animation-name:taPg2}&.ht{animation-name:taPg3}' +
       '@keyframes taPg1{0%,10%,90%,100%{transform:translateX(-11px)}40%{transform:translateX(1.5px)}48%,68%{transform:none}}' +

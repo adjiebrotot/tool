@@ -483,8 +483,8 @@ const PAGES = [
     // The ED/UC Simulator: its SVG diagram's cluster, and four Chart.js charts
     // over a day of the solar and battery preset (the commitment chart is
     // floating bars on a linear hour axis).
-    name: 'educ-simulator',
-    url: '/educ-simulator/',
+    name: 'ed-uc-simulator',
+    url: '/ed-uc-simulator/',
     charts: ['dispCanvas', 'priceCanvas', 'commitCanvas', 'storeCanvas'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="solar"]');

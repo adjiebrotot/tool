@@ -469,7 +469,7 @@ const PAGES = [
     // The ED/UC Simulator's diagram: an SVG with a GIF export, like the load
     // flow's. The solar and battery preset, so the diagram shows a storage
     // unit, a unit off and its flows.
-    name: 'educ-simulator', url: '/educ-simulator/', charts: ['sldStage'], gif: true,
+    name: 'ed-uc-simulator', url: '/ed-uc-simulator/', charts: ['sldStage'], gif: true,
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="solar"]');
       await page.waitForFunction(() => /\S/.test(document.getElementById('sldStage').getAttribute('data-share-sig') || '') && window.Chart && Chart.getChart('storeCanvas'), null, { timeout: 30000 });
@@ -481,7 +481,7 @@ const PAGES = [
     // Two areas over three days, with its HVDC link congested, has prices that
     // split; the storage chart needs the solar preset, so that one is opened
     // there.
-    name: 'educ-simulator/charts', url: '/educ-simulator/', charts: ['dispCanvas', 'priceCanvas', 'commitCanvas', 'storeCanvas'],
+    name: 'ed-uc-simulator/charts', url: '/ed-uc-simulator/', charts: ['dispCanvas', 'priceCanvas', 'commitCanvas', 'storeCanvas'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="solar"]');
       await page.waitForFunction(() => window.Chart && Chart.getChart('storeCanvas') && Chart.getChart('commitCanvas'), null, { timeout: 30000 });

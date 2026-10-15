@@ -3,7 +3,7 @@
 // browser module, plus the HiGHS solver (highs-js, WebAssembly) it calls and
 // the vendored GIF encoder.
 //
-//   cd educ-simulator/_build && npm install && node build-engine.mjs [--psa=<PSA.js checkout>] [--no-check]
+//   cd ed-uc-simulator/_build && npm install && node build-engine.mjs [--psa=<PSA.js checkout>] [--no-check]
 //
 // PSA.js is only ever READ. Every change below is made in memory by an esbuild
 // plugin, so the checkout is left exactly as it was found:
@@ -51,7 +51,7 @@ if (!existsSync(join(PSA, 'src', 'optimization', 'optimize.js'))) {
   process.exit(1);
 }
 if (!existsSync(join(HIGHS_DIR, 'build', 'highs.mjs'))) {
-  console.error('highs is not installed here. Run npm install in educ-simulator/_build first.');
+  console.error('highs is not installed here. Run npm install in ed-uc-simulator/_build first.');
   process.exit(1);
 }
 
@@ -310,10 +310,10 @@ if (CHECK) {
 
 const PYPSA_VERSION = (await import(pathToFileURL(join(PSA, 'src', 'data', 'definitions.js')).href)).default.pypsa_version;
 const sha = createHash('sha256').update(shipCode).digest('hex');
-const banner = `/*! PSA.js optimiser for the ED/UC Simulator (tool.adjiebrotots.com/educ-simulator/).
+const banner = `/*! PSA.js optimiser for the ED/UC Simulator (tool.adjiebrotots.com/ed-uc-simulator/).
  * Built from github.com/adjiebrotot/PSA.js @ ${COMMIT}${DIRTY}, version ${PKG.version},
  * a JavaScript port of PyPSA (reference ${PYPSA_VERSION}). Solver: highs-js ${HIGHS_PKG.version} (./highs.mjs).
- * Patched at build time (educ-simulator/_build/build-engine.mjs): core/csv.js reduced to
+ * Patched at build time (ed-uc-simulator/_build/build-engine.mjs): core/csv.js reduced to
  * pyFloatRepr (no papaparse); component definitions pruned to what the model reads.
  * MIT licence, see engine/LICENSE.txt. sha256 of the code below: ${sha}
  */

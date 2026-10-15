@@ -136,9 +136,28 @@
     return { labels: labels, colourBy: $('colourBy').value, animP: $('animP').checked, hour: hourNow(), cur: cur() };
   }
   function solveOptions(){
-    return ED.solveOptions({ mode: $('edMode').value, hours: $('edHours').value, limits: $('edLimits').checked, shed: $('edShed').checked,
+    return ED.solveOptions({ mode: $('edMode').value, hours: spanHours(), start: $('edStart').value, limits: $('edLimits').checked, shed: $('edShed').checked,
                              voll: $('edVoll').value, gap: $('edGap').value, time: $('edTime').value });
   }
+  /* The horizon is a number and its unit, hours or days, up to 30 days. */
+  var SPAN_MAX = { h: ED.MAX_HOURS, d: ED.MAX_HOURS / 24 };
+  function spanUnit(){ return $('edSpanUnit').value === 'h' ? 'h' : 'd'; }
+  function spanHours(){
+    var n = Math.round(parseFloat($('edSpan').value));
+    if(!isFinite(n) || n < 1) n = 1;
+    var u = spanUnit();
+    return Math.min(ED.MAX_HOURS, Math.min(SPAN_MAX[u], n) * (u === 'd' ? 24 : 1));
+  }
+  // Shown in days when it is whole days, in hours otherwise.
+  function setSpan(H){
+    H = Math.max(1, Math.min(ED.MAX_HOURS, Math.round(H) || 24));
+    var d = H % 24 === 0;
+    $('edSpanUnit').value = d ? 'd' : 'h';
+    $('edSpanUnit').dataset.prev = d ? 'd' : 'h';
+    $('edSpan').value = String(d ? H / 24 : H);
+  }
+  // Hour t of the result shown, dated from the start it was solved for.
+  function hourText(t, res){ res = res || shownResults(); return ED.hourLabel(t, res ? res.T : 1, res ? res.report.opts.start : $('edStart').value); }
   app.display = display;
 
   /* ── Drawing ── */
@@ -430,14 +449,14 @@
     el.disabled = off;
     $('playBtn').disabled = off;
     document.querySelector('.hour-ctl').toggleAttribute('data-off', off && !res);
-    $('hourOut').textContent = res ? ED.hourLabel(hourNow(), H) : '–';
+    $('hourOut').textContent = res ? hourText(hourNow(), res) : '–';
   }
   function setHour(h, fromChart){
     var res = shownResults();
     if(!res) return;
     h = Math.max(0, Math.min(res.T - 1, h | 0));
     $('edHour').value = String(h);
-    $('hourOut').textContent = ED.hourLabel(h, res.T);
+    $('hourOut').textContent = hourText(h, res);
     render();
     if(window.EDCharts) EDCharts.hour(h);
     writeHover(hovered !== null ? hovered : (app.sel.size === 1 ? app.sel.values().next().value : null));
@@ -462,7 +481,7 @@
     this.textContent = '⏸';
     this.title = 'Pause'; this.setAttribute('aria-label', 'Pause');
     this.setAttribute('aria-pressed', 'true');
-    var step = res.T > 48 ? 250 : 600;
+    var step = res.T > 168 ? 100 : res.T > 48 ? 250 : 600;
     playT = setInterval(function(){
       var r = shownResults();
       if(!r){ stopPlay(); return; }
@@ -488,7 +507,7 @@
   function setSubHour(){
     var res = shownResults();
     if(!res) return;
-    setSub(subLine() + ' Showing ' + ED.hourLabel(hourNow(), res.T) + '.');
+    setSub(subLine() + ' Showing ' + hourText(hourNow(), res) + '.');
   }
   function showResults(){
     var res = app.res, r = res && res.report;
@@ -537,7 +556,7 @@
       $('mUnitsLabel').innerHTML = '<span class="tip-wrap">Units running <i class="tip-icon" data-tip="Units that produced anything over the horizon. Economic dispatch never switches a unit off, it only sets its output.">?</i></span>';
       var ranG = gens.filter(function(e){ return res.dev[e.id].p.some(function(v){ return v > 1e-6; }); }).length;
       $('mUnits').textContent = ranG + ' of ' + gens.length;
-      $('mUnitsSub').textContent = 'Peak demand ' + F.mw(T.peak) + ' MW at ' + ED.hourLabel(T.peakAt, H) + '.';
+      $('mUnitsSub').textContent = 'Peak demand ' + F.mw(T.peak) + ' MW at ' + hourText(T.peakAt, res) + '.';
     }
     // Congestion
     var brs = app.model.el.filter(function(e){ return ED.BRANCH[e.c] && res.br[e.id]; });
@@ -563,7 +582,7 @@
     renderAssumptions();
   }
   function fmtCount(x){ var r = Math.round(x * 10) / 10; return (Math.abs(r - Math.round(r)) < 1e-9 ? String(Math.round(r)) : r.toFixed(1)); }
-  function hoursText(H){ return H === 1 ? 'one hour' : H === 168 ? 'a week' : H % 24 === 0 && H > 24 ? H / 24 + ' days' : H + ' hours'; }
+  function hoursText(H){ return H === 1 ? 'one hour' : H === 24 ? 'a day' : H === 168 ? 'a week' : H % 24 === 0 && H > 24 ? H / 24 + ' days' : H + ' hours'; }
   function clearKpis(){
     ['mCost', 'mPrice', 'mUnits', 'mCong'].forEach(function(id){ $(id).textContent = '–'; $(id + 'Sub').textContent = ''; });
   }
@@ -662,7 +681,7 @@
         for(var t = 0; t < H; t++){
           var wp = 0, wl = 0;
           Object.keys(res.bus).forEach(function(id){ var b = res.bus[id]; if(isFinite(b.price[t])){ wp += b.price[t] * b.load[t]; wl += b.load[t]; } });
-          rows.push({ id: 'h' + t, hour: t, cells: [ED.hourLabel(t, H), F.mw(T.load[t]), F.mw(T.gen[t]), F.mw(T.store[t]), F.mw(T.shed[t]), F.mw(T.curtail[t]), wl > 0 ? F.price(wp / wl, C) : '–', F.money(hourCost(res, t), C)],
+          rows.push({ id: 'h' + t, hour: t, cells: [hourText(t, res), F.mw(T.load[t]), F.mw(T.gen[t]), F.mw(T.store[t]), F.mw(T.shed[t]), F.mw(T.curtail[t]), wl > 0 ? F.price(wp / wl, C) : '–', F.money(hourCost(res, t), C)],
                       neg: T.shed[t] > 1e-6 ? [4] : [] });
         }
       }
@@ -717,7 +736,7 @@
     var res = shownResults(), m = app.model, o = res ? res.report.opts : solveOptions(), li = [], C = cur();
     var has = function(c, f){ return m.el.some(function(e){ return e.c === c && (!f || f(e)); }); };
     var branches = has('Line') || has('Transformer');
-    li.push('<strong>One-hour steps over ' + hoursText(o.hours) + ',</strong> solved together by PSA.js as PyPSA builds the problem, and by the HiGHS solver.');
+    li.push('<strong>One-hour steps over ' + hoursText(o.hours) + ' from ' + ED.hourLabel(0, o.hours, o.start) + ',</strong> solved together by PSA.js as PyPSA builds the problem, and by the HiGHS solver.');
     if(branches) li.push('<strong>A lossless DC power flow:</strong> power divides between paths by reactance, every voltage is 1 p.u., and there is no reactive power.');
     if(o.mode === 'uc') li.push('<strong>Committable units are on or off in each hour.</strong> On, they run between their minimum and their rating; HiGHS proves the cost within ' + (o.gap * 100) + '% of the best possible.');
     else if(o.mode === 'lin') li.push('<strong>Commitment is relaxed:</strong> a unit may be partly on, so its minimum output and start-up costs are shared out, and the cost is a lower bound on the true one.');
@@ -743,7 +762,7 @@
       (has('Link', function(e){ return e.both && e.efficiency < 1; }) ? ' A lossy one that runs both ways costs a token ' + ED.LINK_EPS + ' per MWh sent, so it never sends both ways at once.' : ''));
     var builtIn = m.el.some(function(e){ return (e.c === 'Load' || e.c === 'Generator') && typeof e.prof === 'string' && e.prof; });
     var custom = m.el.some(function(e){ return Array.isArray(e.prof); });
-    if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change through the week:</strong> lower demand at the weekend, cloudier and calmer days. A custom one repeats every day.');
+    if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change from day to day:</strong> demand follows the weekday, lower at the weekend, and solar and wind have cloudier and calmer days. A custom one repeats every day.');
     else if(custom && o.hours > 24) li.push('<strong>Custom profiles repeat every day</strong> of the horizon.');
     li.push('<strong>No reserve is held</strong> and forecasts are perfect: every unit may run to its rating, and solar, wind and demand are known for every hour.');
     if(has('Line', function(e){ return !!ED.lineType(e); }))
@@ -773,7 +792,7 @@
     var res = shownResults(), parts = [], h = hourNow(), C = cur();
     var n = '<strong>' + esc(ED.nameOf(e)) + '</strong>';
     var mono = function(s){ return '<span class="mono">' + s + '</span>'; };
-    var when = res ? ' at ' + ED.hourLabel(h, res.T) : '';
+    var when = res ? ' at ' + hourText(h, res) : '';
     if(e.c === 'Bus'){
       parts.push(n + ', ' + e.v_nom + ' kV bus' + when);
       var r = res && res.bus[e.id];
@@ -912,31 +931,27 @@
     tx_s: 'The most it may carry, and the base its reactance is per unit on.',
     tx_x: 'Series reactance, per unit on the transformer’s own rating.',
     tx_r: 'Series resistance, per unit on its rating, kept for reference: the DC power flow is lossless.',
-    p_nom: 'The most it can produce.',
     grid_nom: 'The most that can be imported.',
     mc: 'What one more MWh from it costs: fuel and variable running costs. The merit order is sorted by it.',
     grid_mc: 'The price paid for each MWh imported.',
-    committable: 'On: the unit is switched on or off hour by hour, with the costs and limits below. Off: it is always available, from zero to its rating.',
+    committable_on: 'The unit is switched on or off hour by hour, with the costs and limits below.',
+    committable_off: 'The unit is always available, from zero to its rating, with no start-up cost or minimum output.',
     p_min: 'The least it can run at while on, as a share of its rating.',
     min_up: 'Hours it must stay on once started.',
     min_down: 'Hours it must stay off once stopped.',
-    start: 'Paid each time it is switched on.',
-    shut: 'Paid each time it is switched off.',
-    standby: 'Paid for every hour it is on, whatever it produces (a no-load cost).',
-    init: 'Its state just before the first hour. Running, it has already met its minimum up time; off, its minimum down time.',
+    standby: 'Paid for every hour it is on, whatever it produces.',
+    init: 'Its state just before the first hour.<ul><li><strong>Running:</strong> it has already met its minimum up time.</li><li><strong>Off:</strong> it has already met its minimum down time.</li></ul>',
     ramp_up: 'The most its output can rise from one hour to the next, as a share of its rating. 100% is no limit.',
     ramp_down: 'The most its output can fall from one hour to the next. 100% is no limit.',
     load_p: 'Demand at the profile’s highest hour. The profile scales it hour by hour.',
     store_p: 'The most it can charge or discharge at.',
     store_h: 'How long it can discharge at full power. Energy capacity is power × hours.',
     eff: 'Share of the energy put in that comes back out, lost half on the way in and half on the way out.',
-    cyclic: 'On: it must end the horizon holding what it started with, so it cannot just empty itself.',
+    cyclic: 'It must refill what it used by the last hour, so it cannot empty itself for free at the end of the horizon.',
     soc0: 'How full it is at the start, as a share of its energy capacity.',
     link_nom: 'The most it can send, in either direction it runs.',
     link_eff: 'Share of the power sent that arrives at the far end.',
-    link_both: 'Whether it can send power both ways or only from its first end.',
-    sym: 'How the unit is drawn.<ul><li><strong>Solar, Wind:</strong> symbols only; its availability sets what it produces.</li><li><strong>Grid:</strong> a hatched square, the sign for a wider grid.</li></ul>',
-    shape: 'How the bus is drawn.<ul><li><strong>Bar:</strong> a bar its connections spread along.</li><li><strong>Node:</strong> a dot every connection meets at.</li></ul>',
+    link_both: '<ul><li><strong>Both ways:</strong> either direction, up to its rating.</li><li><strong>One way:</strong> only from its first end, the bus it was drawn from.</li></ul>',
     upright: 'Stands the bar on end. R does the same to every selected bus.',
     upnode: 'Devices leave the node left and right instead of above and below. R does the same to every selected bus.'
   };
@@ -945,7 +960,7 @@
   var isCom = function(e){ return !!e.committable; };
   var notCyclic = function(e){ return !e.cyclic; };
   var FIELDS = {
-    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']], tip: TIP.shape }),
+    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']] }),
           F_('v_nom', 'Nominal voltage', 'kV', { min: 0.1, max: 1500, tip: TIP.v_nom })],
     Line: [F_('type', 'Line type', '', { kind: 'linetype' }),
            F_('length', 'Length', 'km', { min: 0, max: 5000, tip: TIP.length, show: typed }),
@@ -956,16 +971,16 @@
     Transformer: [F_('s_nom', 'Rating', 'MVA', { min: 0, max: 1e5, tip: TIP.tx_s }),
            F_('x', 'Reactance', 'p.u.', { min: -10, max: 10, step: 0.0001, tip: TIP.tx_x }),
            F_('r', 'Resistance', 'p.u.', { min: 0, max: 10, step: 0.0001, tip: TIP.tx_r })],
-    Generator: [F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true, tip: TIP.sym }),
-           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_nom : TIP.p_nom; } }),
+    Generator: [F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true }),
+           F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_nom : ''; } }),
            F_('marginal_cost', 'Marginal cost', '/MWh', { money: true, min: -1e4, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_mc : TIP.mc; } }),
            F_('prof', 'Availability', '', { kind: 'profile' }),
-           F_('committable', 'Committable', '', { kind: 'toggle', tip: TIP.committable, group: 'Commitment' }),
+           F_('committable', 'Committable', '', { kind: 'toggle', tip: function(e){ return e.committable ? TIP.committable_on : TIP.committable_off; }, group: 'Commitment' }),
            F_('p_min_pu', 'Minimum stable output', '%', { scale: 100, min: 0, max: 100, step: 0.1, tip: TIP.p_min, show: isCom }),
            F_('min_up_time', 'Minimum up time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_up, show: isCom }),
            F_('min_down_time', 'Minimum down time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_down, show: isCom }),
-           F_('start_up_cost', 'Start-up cost', '', { money: true, min: 0, max: 1e8, tip: TIP.start, show: isCom }),
-           F_('shut_down_cost', 'Shut-down cost', '', { money: true, min: 0, max: 1e8, tip: TIP.shut, show: isCom }),
+           F_('start_up_cost', 'Start-up cost', '', { money: true, min: 0, max: 1e8, show: isCom }),
+           F_('shut_down_cost', 'Shut-down cost', '', { money: true, min: 0, max: 1e8, show: isCom }),
            F_('stand_by_cost', 'No-load cost', '/h', { money: true, min: 0, max: 1e7, tip: TIP.standby, show: isCom }),
            F_('init', 'Before the first hour', '', { kind: 'seg', opts: [[1, 'Running'], [0, 'Off']], tip: TIP.init, show: isCom }),
            F_('ramp_limit_up', 'Ramp up limit', '%/h', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.ramp_up, group: 'Ramping' }),
@@ -1019,14 +1034,23 @@
   };
   function profKind(e){ return e.c === 'Load' ? 'load' : 'gen'; }
   function dayValues(e){ var a = []; for(var h = 0; h < 24; h++) a.push(ED.shapeAt(e.prof, h, 1)); return a; }
-  function barsSvg(vals){
-    var s = '<rect x="0" y="0" width="240" height="64" fill="transparent"/>';
+  // One bar an hour, 10 units wide, on a baseline at y 58; 100% is 54 units tall.
+  // The axis runs 00 to 24 under the hour boundaries, and the bar being dragged
+  // or pointed at (at) carries its hour and value above it.
+  function barsSvg(vals, at){
+    var s = '<rect x="-8" y="-14" width="256" height="90" fill="transparent"/>', ticks = '';
     vals.forEach(function(v, h){
-      var bh = Math.max(0.5, v * 54);
-      s += '<rect class="pb" x="' + (h * 10 + 1) + '" y="' + (58 - bh) + '" width="8" height="' + bh + '" rx="1.5"/>';
+      var bh = Math.max(0.5, Math.min(v, 1.2) * 54);
+      s += '<rect class="pb' + (h === at ? ' pb-on' : '') + '" x="' + (h * 10 + 1) + '" y="' + (58 - bh) + '" width="8" height="' + bh + '" rx="1.5"/>';
     });
-    s += '<path class="pb-axis" d="M0 58.5H240"/>';
-    [0, 6, 12, 18].forEach(function(h){ s += '<text class="pb-t" x="' + (h * 10 + 1) + '" y="70">' + ('0' + h).slice(-2) + '</text>'; });
+    for(var h = 0; h <= 24; h++) ticks += 'M' + h * 10 + ' 58.5v' + (h % 3 ? 2 : 3.5);
+    s += '<path class="pb-axis" d="M0 58.5H240' + ticks + '"/>';
+    for(var k = 0; k <= 24; k += 3) s += '<text class="pb-t" x="' + k * 10 + '" y="70.5" text-anchor="middle">' + ('0' + k).slice(-2) + '</text>';
+    if(at !== null && at !== undefined && at >= 0 && at < 24){
+      var v = vals[at], cx = at * 10 + 5, top = 58 - Math.max(0.5, Math.min(v, 1.2) * 54);
+      var x = Math.max(22, Math.min(218, cx)), y = Math.max(-4, top - 4);
+      s += '<text class="pb-v" x="' + x + '" y="' + y + '" text-anchor="middle">' + ('0' + at).slice(-2) + ':00  ' + Math.round(v * 100) + '%</text>';
+    }
     return s;
   }
   function profileHtml(e){
@@ -1037,7 +1061,7 @@
     var label = kind === 'load' ? 'Profile' : 'Availability';
     return '<div class="field-row"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(PROFILE_TIP[kind]) + '</span></div>' +
       '<select class="sel-input" id="f_prof" data-k="prof">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === curK ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
-      '<svg class="prof-bars" id="profBars" viewBox="0 -2 240 76" role="img" aria-label="' + label + ' through the day, hour by hour. Drag a bar to change it.">' + barsSvg(dayValues(e)) + '</svg></div>';
+      '<svg class="prof-bars" id="profBars" viewBox="-8 -14 256 90" role="img" aria-label="' + label + ' through the day, hour by hour, from 00:00 to 24:00. Drag a bar to change it.">' + barsSvg(dayValues(e)) + '</svg></div>';
   }
   function fieldHtml(e, f){
     var id = 'f_' + f.k;
@@ -1101,7 +1125,7 @@
     var own = typeof e.lb === 'number';
     var list = ED.LABELS[e.c];
     var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels' +
-      tipHtml('Off: shows what the Labels tab sets for every ' + ED.WORD[e.c].toLowerCase() + '. On: this one shows the boxes ticked below.') + '</span></div>' +
+      tipHtml(own ? 'This one shows the boxes ticked below, whatever the Labels tab sets.' : 'It shows what the Labels tab sets for every ' + (e.c === 'StorageUnit' ? 'storage unit' : ED.WORD[e.c].toLowerCase()) + '.') + '</span></div>' +
       '<label class="toggle-switch"><input type="checkbox" id="lbOwn"' + (own ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(own){
       html += '<div class="lbl-chips">' + list.map(function(q, i){
@@ -1268,22 +1292,34 @@
   });
   // Dragging a profile bar sets that hour's value.
   var profDrag = null;
+  // The pointer in the bars' own units, through the SVG's transform, so it holds
+  // at any width the inspector gives them.
   function profAt(ev){
-    var bars = $('profBars');
-    if(!bars) return null;
-    var r = bars.getBoundingClientRect();
-    var x = (ev.clientX - r.left) / r.width * 240, y = (ev.clientY - r.top) / r.height * 76 - 2;
-    return { h: Math.max(0, Math.min(23, Math.floor(x / 10))), v: Math.max(0, Math.min(1, (58 - y) / 54)) };
+    var bars = $('profBars'), m = bars && bars.getScreenCTM && bars.getScreenCTM();
+    if(!m) return null;
+    var pt = bars.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    pt = pt.matrixTransform(m.inverse());
+    return { h: Math.max(0, Math.min(23, Math.floor(pt.x / 10))), v: Math.max(0, Math.min(1, (58 - pt.y) / 54)) };
   }
   function profSet(ev){
     var e = selectedEl(), p = profAt(ev);
     if(!e || !p) return;
     if(!Array.isArray(e.prof)) e.prof = dayValues(e).map(function(v){ return Math.round(v * 100) / 100; });
     e.prof[p.h] = Math.round(p.v * 100) / 100;
-    $('profBars').innerHTML = barsSvg(dayValues(e));
+    peekH = null;
+    $('profBars').innerHTML = barsSvg(dayValues(e), p.h);
     var sel = $('f_prof');
     if(sel) sel.value = 'custom';
     changeFromField('prof' + e.id);
+  }
+  // Pointing at a bar, without pressing, reads it.
+  var peekH = null;
+  function profPeek(ev){
+    var e = selectedEl(), p = profAt(ev);
+    if(!e || !p || (p.h === peekH && $('profBars').querySelector('.pb-v'))) return;
+    peekH = p.h;
+    $('profBars').innerHTML = barsSvg(dayValues(e), p.h);
   }
   insp.addEventListener('pointerdown', function(ev){
     if(!ev.target.closest('#profBars')) return;
@@ -1292,9 +1328,16 @@
     try { $('profBars').setPointerCapture(ev.pointerId); } catch(e){}
     profSet(ev);
   });
-  insp.addEventListener('pointermove', function(ev){ if(profDrag === ev.pointerId) profSet(ev); });
+  insp.addEventListener('pointermove', function(ev){
+    if(profDrag === ev.pointerId) profSet(ev);
+    else if(profDrag === null && ev.pointerType === 'mouse' && ev.target.closest('#profBars')) profPeek(ev);
+  });
   insp.addEventListener('pointerup', function(ev){ if(profDrag === ev.pointerId){ profDrag = null; renderInspector(); } });
   insp.addEventListener('pointercancel', function(){ profDrag = null; });
+  insp.addEventListener('pointerout', function(ev){
+    var bars = $('profBars'), e = selectedEl();
+    if(profDrag === null && bars && e && ev.target.closest('#profBars') && !(ev.relatedTarget && bars.contains(ev.relatedTarget))){ peekH = null; bars.innerHTML = barsSvg(dayValues(e)); }
+  });
 
   /* ── Tabs ── */
   function showTab(nm){
@@ -1324,7 +1367,13 @@
   function fixForm(){
     var el = $('edVoll'), v = parseFloat(el.value);
     if(isFinite(v)){ var c = Math.min(1e5, Math.max(100, v)); if(c !== v) el.value = c; }
-    ['edMode', 'edHours', 'edGap', 'edTime', 'colourBy'].forEach(function(id){
+    var sp = $('edSpan'), u = spanUnit(), n = Math.round(parseFloat(sp.value));
+    sp.max = String(SPAN_MAX[u]);
+    if(isFinite(n)){ var cn = Math.min(SPAN_MAX[u], Math.max(1, n)); if(String(cn) !== sp.value) sp.value = String(cn); }
+    $('edSpanUnit').dataset.prev = u;
+    var st = $('edStart');
+    if(st.value !== ED.parseStart(st.value)) st.value = ED.parseStart(st.value);
+    ['edMode', 'edSpanUnit', 'edGap', 'edTime', 'colourBy'].forEach(function(id){
       var s = $(id);
       if(s.selectedIndex >= 0) return;
       var d = Array.prototype.filter.call(s.options, function(o){ return o.defaultSelected; })[0] || s.options[0];
@@ -1341,7 +1390,13 @@
     $('vollCur').textContent = cur();
     $('vollCur').hidden = !cur();
   }
-  ['edMode', 'edHours', 'edLimits', 'edShed', 'edVoll', 'edGap', 'edTime'].forEach(function(id){
+  // A new unit keeps the horizon as it was, as near as the new unit can say it.
+  $('edSpanUnit').addEventListener('change', function(){
+    var prev = this.dataset.prev === 'h' ? 'h' : 'd', u = spanUnit(), n = parseFloat($('edSpan').value);
+    if(prev !== u && isFinite(n)) $('edSpan').value = String(u === 'd' ? Math.max(1, Math.round(n / 24)) : Math.round(n * 24));
+    this.dataset.prev = u;
+  });
+  ['edMode', 'edSpan', 'edSpanUnit', 'edStart', 'edLimits', 'edShed', 'edVoll', 'edGap', 'edTime'].forEach(function(id){
     $(id).addEventListener('change', function(){ syncDispatchForm(); updateStale(); renderInspector(); if(!running && app.res) renderAssumptions(); });
   });
   // The currency and the display options read the result; they never send it back to be solved.
@@ -1366,7 +1421,7 @@
     stopPlay();
     resetForm($('tab-dispatch')); resetForm($('tab-display')); resetForm(document.querySelector('.sld-viewbar'));
     if(p.opts.mode) $('edMode').value = p.opts.mode;
-    if(p.opts.hours) $('edHours').value = String(p.opts.hours);
+    setSpan(p.opts.hours || 24);
     applyMotionDefault(true);
     syncDispatchForm();
     app.model = ED.load(p.model);
@@ -1436,7 +1491,7 @@
   // The export's subtitle is the run summary without its timing, which changes on every run.
   function exportCtx(){
     var res = shownResults();
-    var sub = res ? MODE_NAME[res.report.mode] + ', ' + ED.hourLabel(hourNow(), res.T) + ' of ' + hoursText(res.T) + '.' : '';
+    var sub = res ? MODE_NAME[res.report.mode] + ', ' + hourText(hourNow(), res) + ', in ' + hoursText(res.T) + '.' : '';
     return { app: app, ED: ED, display: display(), res: res, stale: isStale(), title: app.model.name || 'Dispatch', sub: sub };
   }
   function busy(on, text){ setSub(on ? text : ''); if(!on && app.res) showResults(); }
@@ -1491,6 +1546,8 @@
   buildLabelMatrix();
   applyMotionDefault();
   syncDispatchForm();
+  // The tool's first folder was educ-simulator. Its saved state is keyed on that
+  // name (this cache, scenario files, the folded table), so the name stays.
   persist = Persist.init('educ-simulator', {
     extra: {
       save: function(){ return ED.compact(app.model); },
@@ -1499,8 +1556,18 @@
     },
     // A scenario file or a Share link: the whole network is replaced and solved.
     // (The mini cache restores inside init, before persist exists; start-up below handles that.)
-    onRestore: function(){ if(persist) return afterRestore(); }
+    onRestore: function(saved){ migrateHorizon(saved); if(persist) return afterRestore(); }
   });
+  /* The horizon used to be one select, edHours, in hours from a Monday at 00:00.
+     State saved then has no number, unit or start: it keeps its horizon, and a
+     start on a Monday (29/12/2025) keeps every weekday where it was. */
+  function migrateHorizon(saved){
+    var f = saved && (saved.__fields || saved);
+    if(!f || typeof f !== 'object') return;
+    if(f['v:edSpan'] == null && f['v:edHours'] != null) setSpan(ED.solveOptions({ hours: f['v:edHours'] }).hours);
+    if(f['v:edStart'] == null && f['v:edMode'] != null) $('edStart').value = '2025-12-29T00:00';
+    syncDispatchForm();
+  }
   function afterRestore(){
     stopPlay();
     app.sel = new Set();
@@ -1524,7 +1591,7 @@
   else if(!EMBED){
     // A first visit opens on the default Quick Start, solved the way it is meant to be.
     var p0 = ED.PRESETS[ED.PRESET_DEFAULT];
-    $('edMode').value = p0.opts.mode; $('edHours').value = String(p0.opts.hours);
+    $('edMode').value = p0.opts.mode; setSpan(p0.opts.hours);
     $('edHour').max = String(p0.opts.hours - 1); $('edHour').value = String(p0.hour);
   }
   syncDispatchForm();

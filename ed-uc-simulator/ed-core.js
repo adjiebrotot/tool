@@ -112,7 +112,10 @@
   /* ── Hourly shapes ──
      24 values for one day, per unit of a load's peak or a unit's rating, and a
      factor for each day of a week. The keys are frozen; the numbers may be
-     improved. A custom shape repeats as it is every day. */
+     improved. A custom shape repeats as it is every day.
+     The hour of the day is the clock's, from the horizon's start. A demand
+     shape's day factors are weekdays, Monday first, so they follow the start
+     date; a unit's are the weather, so they count days from the start. */
   ED.PROFILES = {
     sys:   { label: 'System day', kind: 'load',
              h: [0.62, 0.58, 0.56, 0.55, 0.56, 0.60, 0.68, 0.77, 0.83, 0.86, 0.88, 0.89, 0.89, 0.88, 0.87, 0.87, 0.89, 0.94, 1.00, 0.99, 0.95, 0.87, 0.77, 0.68],
@@ -126,36 +129,77 @@
     ind:   { label: 'Industrial', kind: 'load',
              h: [0.78, 0.77, 0.76, 0.76, 0.77, 0.80, 0.88, 0.96, 1.00, 1.00, 0.99, 0.97, 0.95, 0.98, 1.00, 0.99, 0.96, 0.90, 0.86, 0.84, 0.82, 0.81, 0.80, 0.79],
              d: [1, 1, 1, 1, 1, 0.85, 0.8] },
-    solar: { label: 'Solar', kind: 'gen',
+    // Solar through the seasons at a mid latitude: a summer day is long and high,
+    // a winter one short and low, and cloudier more often.
+    solars: { label: 'Solar, summer', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0.02, 0.08, 0.22, 0.40, 0.57, 0.71, 0.81, 0.86, 0.86, 0.81, 0.71, 0.57, 0.40, 0.22, 0.08, 0.02, 0, 0, 0],
+             d: [1, 0.95, 0.8, 1, 0.9, 0.85, 1] },
+    solar: { label: 'Solar, spring or autumn', kind: 'gen', noun: 'solar',
              h: [0, 0, 0, 0, 0, 0, 0.03, 0.15, 0.35, 0.55, 0.70, 0.79, 0.82, 0.79, 0.70, 0.55, 0.35, 0.15, 0.03, 0, 0, 0, 0, 0],
              d: [1, 0.9, 0.6, 1, 0.95, 0.75, 1] },
+    solarw: { label: 'Solar, winter', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0, 0, 0.02, 0.12, 0.27, 0.40, 0.49, 0.52, 0.49, 0.40, 0.27, 0.12, 0.02, 0, 0, 0, 0, 0, 0],
+             d: [0.85, 0.5, 0.35, 0.9, 0.7, 0.45, 0.8] },
     wind:  { label: 'Wind', kind: 'gen',
              h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61],
              d: [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8] }
   };
   var own = Object.prototype.hasOwnProperty;
+
+  /* ── The calendar: the horizon starts at a whole hour of a date ──
+     Kept as 'YYYY-MM-DDTHH:00' (a datetime-local value) and worked in UTC, so
+     no daylight saving moves an hour. A run saved before the start date existed
+     began on a Monday at 00:00, which is what no calendar at all reproduces. */
+  ED.START = '2026-01-01T00:00';
+  ED.MAX_HOURS = 720;
+  function startMs(v){
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2})(?::(\d{2}))?/.exec(typeof v === 'string' ? v : '');
+    if(!m) return NaN;
+    var y = +m[1], mo = +m[2], d = +m[3], h = +m[4];
+    var ms = Date.UTC(y, mo - 1, d, h);
+    var t = new Date(ms);
+    if(y < 1900 || y > 2200 || h > 23 || t.getUTCMonth() !== mo - 1 || t.getUTCDate() !== d) return NaN;
+    return ms;
+  }
+  function two(n){ return (n < 10 ? '0' : '') + n; }
+  function isoOf(ms){ var t = new Date(ms); return t.getUTCFullYear() + '-' + two(t.getUTCMonth() + 1) + '-' + two(t.getUTCDate()) + 'T' + two(t.getUTCHours()) + ':00'; }
+  // A start as typed, or anything else, made a whole hour of a real date.
+  ED.parseStart = function(v){ var ms = startMs(v); return isFinite(ms) ? isoOf(ms) : ED.START; };
+  // h0: its hour of the day; wd0: its weekday, Monday 0.
+  ED.cal = function(start){
+    if(start && typeof start === 'object') return start;
+    var ms = startMs(start);
+    if(!isFinite(ms)) return { h0: 0, wd0: 0 };
+    var t = new Date(ms);
+    return { ms: ms, h0: t.getUTCHours(), wd0: (t.getUTCDay() + 6) % 7 };
+  };
+
   // The value of a profile at hour t (0-based from the start of the horizon).
-  ED.shapeAt = function(prof, t, cap){
-    var h = t % 24, d = Math.floor(t / 24) % 7, v;
+  // With no start, the horizon begins on a Monday at 00:00.
+  ED.shapeAt = function(prof, t, cap, start){
+    var c = start ? ED.cal(start) : { h0: 0, wd0: 0 };
+    var abs = c.h0 + t, h = abs % 24, day = Math.floor(abs / 24), v;
     if(Array.isArray(prof)) v = +prof[h];
-    else if(prof && own.call(ED.PROFILES, prof)){ var p = ED.PROFILES[prof]; v = p.h[h] * p.d[d]; }
+    else if(prof && own.call(ED.PROFILES, prof)){
+      var p = ED.PROFILES[prof];
+      v = p.h[h] * p.d[(p.kind === 'load' ? c.wd0 + day : day) % 7];
+    }
     else v = 1;
     if(!isFinite(v) || v < 0) v = 0;
     return cap ? Math.min(cap, v) : v;
   };
   // A load's demand, MW, hour by hour.
-  ED.loadSeries = function(e, H){
-    var out = [];
-    for(var t = 0; t < H; t++) out.push(e.p_set * ED.shapeAt(e.prof, t));
+  ED.loadSeries = function(e, H, start){
+    var out = [], c = ED.cal(start);
+    for(var t = 0; t < H; t++) out.push(e.p_set * ED.shapeAt(e.prof, t, 0, c));
     return out;
   };
   // A unit's availability, per unit of its rating, hour by hour (never above 1).
-  ED.availSeries = function(e, H){
-    var out = [];
-    for(var t = 0; t < H; t++) out.push(ED.shapeAt(e.prof, t, 1));
+  ED.availSeries = function(e, H, start){
+    var out = [], c = ED.cal(start);
+    for(var t = 0; t < H; t++) out.push(ED.shapeAt(e.prof, t, 1, c));
     return out;
   };
-  ED.HOURS = [1, 24, 48, 72, 168];
 
   /* ── Small helpers ── */
   function num(v){ var x = typeof v === 'string' && v.trim() !== '' ? Number(v) : v; return typeof x === 'number' && isFinite(x) ? x : NaN; }
@@ -403,8 +447,9 @@
     var hours = toInt(o.hours);
     return {
       mode: o.mode === 'ed' || o.mode === 'lin' ? o.mode : 'uc',
-      // The page offers ED.HOURS; any whole number of hours up to a week solves.
-      hours: hours >= 1 ? Math.min(168, hours) : 24,
+      // Any whole number of hours up to 30 days, from a whole hour of a date.
+      hours: hours >= 1 ? Math.min(ED.MAX_HOURS, hours) : 24,
+      start: ED.parseStart(o.start),
       limits: o.limits === false || o.limits === 0 || o.limits === '0' ? false : true,
       shed: o.shed === false || o.shed === 0 || o.shed === '0' ? false : true,
       voll: (function(v){ v = num(v); return isNaN(v) ? 10000 : clamp(v, 100, 1e5); })(o.voll),
@@ -447,7 +492,7 @@
       if(e.c === 'Generator' && ED.onBus(model, e) && !(e.p_nom > 0)) warnings.push({ id: e.id, msg: n + ' has no rating, so it supplies nothing.' });
       if(e.c === 'StorageUnit' && ED.onBus(model, e) && !(e.p_nom > 0 && e.max_hours > 0)) warnings.push({ id: e.id, msg: n + ' has no power or energy rating, so it does nothing.' });
       if(e.c === 'Generator' && e.committable && o.mode !== 'ed' && e.p_min_pu > 0 && Array.isArray(e.prof) === false && e.prof && ED.PROFILES[e.prof] && ED.PROFILES[e.prof].kind === 'gen')
-        warnings.push({ id: e.id, msg: n + ' must run at ' + Math.round(e.p_min_pu * 100) + '% or stay off, so in hours its ' + ED.PROFILES[e.prof].label.toLowerCase() + ' availability is lower it is kept off.' });
+        warnings.push({ id: e.id, msg: n + ' must run at ' + Math.round(e.p_min_pu * 100) + '% or stay off, so in hours its ' + (ED.PROFILES[e.prof].noun || ED.PROFILES[e.prof].label.toLowerCase()) + ' availability is lower it is kept off.' });
     });
     // Each group of buses that can trade power has to be able to meet its own load.
     var devs = model.el.filter(function(e){ return DEVICE[e.c] && ED.onBus(model, e); });
@@ -463,8 +508,8 @@
         else errors.push({ id: loads[0].id, msg: where + ' has load but nothing to supply it. Add a generator, or allow load shedding.' });
         return;
       }
-      var lseries = loads.map(function(e){ return ED.loadSeries(e, H); });
-      var gseries = gens.map(function(e){ return ED.availSeries(e, H).map(function(a){ return a * e.p_nom; }); });
+      var lseries = loads.map(function(e){ return ED.loadSeries(e, H, o.start); });
+      var gseries = gens.map(function(e){ return ED.availSeries(e, H, o.start).map(function(a){ return a * e.p_nom; }); });
       var short = null;
       for(var t = 0; t < H; t++){
         var need = 0, can = 0;
@@ -474,7 +519,7 @@
         if(need > can + 1e-6 && (!short || need - can > short.gap)) short = { t: t, gap: need - can, need: need, can: can };
       }
       if(short){
-        var msg = where + ': at ' + ED.hourLabel(short.t, H) + ' the load (' + fmt1(short.need) + ' MW) is more than everything there can supply (' + fmt1(short.can) + ' MW)';
+        var msg = where + ': at ' + ED.hourLabel(short.t, H, o.start) + ' the load (' + fmt1(short.need) + ' MW) is more than everything there can supply (' + fmt1(short.can) + ' MW)';
         if(o.shed) warnings.push({ id: loads[0].id, msg: msg + ', so some of it is shed.' });
         else errors.push({ id: loads[0].id, msg: msg + '. Add capacity, or allow load shedding.' });
       }
@@ -484,10 +529,16 @@
     return { errors: errors, warnings: warnings };
   };
   function fmt1(x){ return (Math.round(x * 10) / 10).toLocaleString('en-AU'); }
-  // "Day 2 18:00" on a horizon longer than a day, "18:00" otherwise.
-  ED.hourLabel = function(t, H){
-    var hh = ('0' + (t % 24)).slice(-2) + ':00';
-    return H > 24 ? 'Day ' + (Math.floor(t / 24) + 1) + ' ' + hh : hh;
+  // Hour t of a horizon that begins at start, as "01/01/2026 18:00".
+  ED.hourLabel = function(t, H, start){
+    var ms = startMs(ED.parseStart(start)) + t * 3600000, d = new Date(ms);
+    return two(d.getUTCDate()) + '/' + two(d.getUTCMonth() + 1) + '/' + d.getUTCFullYear() + ' ' + two(d.getUTCHours()) + ':00';
+  };
+  // The same, short enough for an axis: "18:00" within a day, "02/01 18:00" past one.
+  ED.tickLabel = function(t, H, start){
+    var ms = startMs(ED.parseStart(start)) + t * 3600000, d = new Date(ms);
+    var hh = two(d.getUTCHours()) + ':00';
+    return H > 24 ? two(d.getUTCDate()) + '/' + two(d.getUTCMonth() + 1) + ' ' + hh : hh;
   };
 
   /* ── The optimisation ── */
@@ -534,7 +585,7 @@
     });
     var gens = model.el.filter(function(e){ return e.c === 'Generator' && on(e); });
     gens.forEach(function(e){
-      var avail = ED.availSeries(e, H);
+      var avail = ED.availSeries(e, H, o.start);
       var kw = { bus: pyName(e.bus), p_nom: e.p_nom, marginal_cost: e.marginal_cost, p_max_pu: allOne(avail) ? 1 : avail };
       var com = e.committable && o.mode !== 'ed';
       var up = e.ramp_limit_up < 1 ? e.ramp_limit_up : NaN, down = e.ramp_limit_down < 1 ? e.ramp_limit_down : NaN;
@@ -567,7 +618,7 @@
     var loads = model.el.filter(function(e){ return e.c === 'Load' && on(e); });
     var busLoad = {};
     loads.forEach(function(e){
-      var s = ED.loadSeries(e, H);
+      var s = ED.loadSeries(e, H, o.start);
       n.add('Load', pyName(e.id), { bus: pyName(e.bus), p_set: s });
       var bl = busLoad[e.bus] || (busLoad[e.bus] = zeros(H));
       s.forEach(function(v, t){ bl[t] += v; });
@@ -669,7 +720,7 @@
           var top = -Infinity;
           B.gens.forEach(function(e){
             var on1 = status[e.id] ? status[e.id][h0] : 1;
-            if(on1 && e.p_nom > 0 && ED.shapeAt(e.prof, h0, 1) > 0 && e.marginal_cost > top) top = e.marginal_cost;
+            if(on1 && e.p_nom > 0 && ED.shapeAt(e.prof, h0, 1, o.start) > 0 && e.marginal_cost > top) top = e.marginal_cost;
           });
           fixedSt.top.push(top);
         }
@@ -729,7 +780,7 @@
         for(var t = 0; t < H; t++) cost.link += ED.LINK_EPS * (f[t] + r[t]);
       });
       B.gens.forEach(function(e){
-        var nm = pyName(e.id), p = col(gt.p, nm, H) || zeros(H), avail = ED.availSeries(e, H);
+        var nm = pyName(e.id), p = col(gt.p, nm, H) || zeros(H), avail = ED.availSeries(e, H, o.start);
         var com = !!status[e.id];
         var d = { p: p, avail: avail.map(function(a){ return a * e.p_nom; }), status: com ? status[e.id] : null,
                   su: com ? su[e.id] : null, sd: com ? sd[e.id] : null, cost: 0, energy: 0 };
@@ -747,7 +798,7 @@
         d.energy = en; d.cost = c + cs + cd + cb; d.costStart = cs + cd; d.costStandby = cb;
         res.dev[e.id] = d;
       });
-      B.loads.forEach(function(e){ res.dev[e.id] = { p: ED.loadSeries(e, H) }; });
+      B.loads.forEach(function(e){ res.dev[e.id] = { p: ED.loadSeries(e, H, o.start) }; });
       B.stores.forEach(function(e){
         var nm = pyName(e.id);
         res.dev[e.id] = { p: col(n.storage_units_t.p, nm, H) || zeros(H), soc: col(n.storage_units_t.state_of_charge, nm, H) || zeros(H),
