@@ -37,19 +37,9 @@
     var top = 18, titleH = 26, subH = sub ? 18 : 0;
     var dy = top + titleH + subH + 10;
     var keyH = lanes.length ? 26 : 0, wmH = 30;
-    // On a map, the map fills the width behind the diagram, and its sources
-    // are credited on a line of their own above the watermark.
-    var mp = LF.mapShown(app.model) && window.LFMap ? app.model.map : null;
-    var credit = mp ? LFMap.credits(mp, false).join(' · ') : '', creditH = credit ? 16 : 0;
-    var H = Math.round(dy + dh + 12 + keyH + creditH + wmH);
+    var H = Math.round(dy + dh + 12 + keyH + wmH);
     var P = { scene: scene, C: C, bb: bb, k: k, ox: (W - dw) / 2, oy: dy, dw: dw, dh: dh, H: H, lanes: lanes, anim: anim,
-              title: ctx.title, sub: sub, keyY: dy + dh + 12, bg: paint('--panel'), map: mp, credit: credit, creditY: dy + dh + 12 + keyH + 11,
-              dark: !document.body.classList.contains('light') };
-    if(mp){
-      var pad = 12;
-      P.mapBox = { x: 0, y: dy - pad, w: W, h: dh + 2 * pad };
-      P.mapRect = { x: bb.x - P.ox / k, y: bb.y - pad / k, w: W / k, h: (dh + 2 * pad) / k };
-    }
+              title: ctx.title, sub: sub, keyY: dy + dh + 12, bg: paint('--panel') };
     P.keyLanes = keyItems(P).map(function(it){ return LF.keyLane(it.kind, it.x, it.y, 30, it.kind === 'p' ? C.p : C.q); });
     return P;
   }
@@ -64,18 +54,8 @@
   }
   function esc(s){ return LF.esc(s); }
 
-  // The map behind the diagram, as a canvas S pixels per export px (null without a map).
-  function mapCanvas(P, S){
-    if(!P.map) return Promise.resolve(null);
-    return LFMap.render({ map: P.map, rect: P.mapRect, pw: Math.round(P.mapBox.w * S), ph: Math.round(P.mapBox.h * S), S: S, bg: P.bg, dark: P.dark })
-      .catch(function(){ return null; });
-  }
-  function creditSvg(P){
-    return P.credit ? '<text x="12" y="' + r2(P.creditY) + '" font-family="\'DM Sans\',system-ui,sans-serif" font-size="9.5" fill="' + P.C.muted + '">' + esc(P.credit) + '</text>' : '';
-  }
-
   /* ── SVG ── */
-  function svgText(ctx, mapImg){
+  function svgText(ctx){
     var P = layout(ctx), C = P.C, s = P.scene;
     var inner = '<g transform="translate(' + r2(P.ox) + ' ' + r2(P.oy) + ') scale(' + r4(P.k) + ') translate(' + r2(-P.bb.x) + ' ' + r2(-P.bb.y) + ')">' +
       s.base + LF.laneSvg(P.lanes, true) + LF.labelSvg(s.labels, C) + '</g>';
@@ -87,9 +67,8 @@
     var wmX = W - 12 - WM_PATH_W, wmY = P.H - 11;
     var wm = '<path d="' + WM_PATH + '" transform="translate(' + r2(wmX) + ' ' + wmY + ')" fill="' + C.text + '" opacity="0.22"/>' +
       '<image href="' + WM_LOGO_SRC + '" x="' + r2(wmX - 4 - 13) + '" y="' + (wmY - 13 + 2) + '" width="13" height="13" opacity="0.22"/>';
-    var map = mapImg && P.mapBox ? '<image href="' + mapImg + '" x="' + P.mapBox.x + '" y="' + r2(P.mapBox.y) + '" width="' + P.mapBox.w + '" height="' + r2(P.mapBox.h) + '" preserveAspectRatio="none"/>' : '';
     return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + P.H + '" viewBox="0 0 ' + W + ' ' + P.H + '">' +
-      '<rect width="' + W + '" height="' + P.H + '" fill="' + P.bg + '"/>' + map + creditSvg(P) +
+      '<rect width="' + W + '" height="' + P.H + '" fill="' + P.bg + '"/>' +
       '<text x="' + W / 2 + '" y="34" text-anchor="middle" font-family="\'DM Sans\',system-ui,sans-serif" font-size="15" font-weight="700" fill="' + C.title + '">' + esc(P.title) + '</text>' +
       (P.sub ? '<text x="' + W / 2 + '" y="53" text-anchor="middle" font-family="\'DM Sans\',system-ui,sans-serif" font-size="11.5" fill="' + C.muted + '">' + esc(P.sub) + '</text>' : '') +
       inner + key + wm + '</svg>';
@@ -143,7 +122,6 @@
     g.restore();
     g.textAlign = 'left'; g.font = '500 11.5px "DM Sans", system-ui, sans-serif';
     keyItems(P).forEach(function(it){ g.fillStyle = C.text; g.fillText(it.label, it.x + 38, it.y + 4); });
-    if(P.credit){ g.font = '400 9.5px "DM Sans", system-ui, sans-serif'; g.fillStyle = C.muted; g.fillText(P.credit, 12, P.creditY); }
     g.save();
     g.globalAlpha = 0.22;
     var wmX = W - 12 - WM_PATH_W, wmY = P.H - 11;
@@ -181,15 +159,14 @@
   }
   function layers(ctx, S){
     var P = layout(ctx);
-    return Promise.all([underImage(P, S), logo().catch(function(){ return null; }), fonts(), mapCanvas(P, S)]).then(function(r){
-      return { P: P, under: r[0], over: overCanvas(P, S, r[1]), map: r[3] };
+    return Promise.all([underImage(P, S), logo().catch(function(){ return null; }), fonts()]).then(function(r){
+      return { P: P, under: r[0], over: overCanvas(P, S, r[1]) };
     });
   }
   function frame(Lr, S, t, into){
     var P = Lr.P, c = into || canvas(Math.round(W * S), Math.round(P.H * S)), g = c.getContext('2d');
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.fillStyle = P.bg; g.fillRect(0, 0, c.width, c.height);
-    if(Lr.map) g.drawImage(Lr.map, Math.round(P.mapBox.x * S), Math.round(P.mapBox.y * S));
     g.drawImage(Lr.under, Math.round(P.ox * S), Math.round(P.oy * S), Math.ceil(P.dw * S), Math.ceil(P.dh * S));
     drawLanes(g, P, S, t);
     g.drawImage(Lr.over, 0, 0);
@@ -244,17 +221,9 @@
     return enc.bytes();
   }
 
-  // An SVG with a map carries it as one JPEG inside, so the file stands alone.
-  function svgWithMap(ctx){
-    var P = layout(ctx);
-    return mapCanvas(P, 2).then(function(c){ return svgText(ctx, c ? c.toDataURL('image/jpeg', 0.86) : null); });
-  }
-
   window.LFExport = {
     svgText: svgText,
-    svgAsync: svgWithMap,
     svgBlob: function(ctx){ return new Blob([svgText(ctx)], { type: 'image/svg+xml' }); },
-    svgBlobAsync: function(ctx){ return svgWithMap(ctx).then(function(t){ return new Blob([t], { type: 'image/svg+xml' }); }); },
     pngBlob: function(ctx){
       return layers(ctx, 2).then(function(Lr){ return toBlob(frame(Lr, 2, 0)); });
     },

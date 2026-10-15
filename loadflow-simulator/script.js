@@ -144,22 +144,20 @@
       svg.innerHTML = '<g></g><g class="lyr-res"><g class="lyr-flow"></g></g><g></g>';
       under = svg.firstChild; flow = svg.querySelector('.lyr-flow'); over = svg.lastChild;
     }
-    // On a map the land is the background, so the drawing grid's dots step aside.
     under.innerHTML =
       '<defs><pattern id="lfDots" width="' + G + '" height="' + G + '" patternUnits="userSpaceOnUse"><circle cx="' + G / 2 + '" cy="' + G / 2 + '" r="0.8" fill="' + C.border + '"/></pattern></defs>' +
-      (app.readOnly || mapOn() ? '' : '<rect class="lf-grid" x="-100000" y="-100000" width="200000" height="200000" fill="url(#lfDots)" pointer-events="none"/>') +
+      (app.readOnly ? '' : '<rect class="lf-grid" x="-100000" y="-100000" width="200000" height="200000" fill="url(#lfDots)" pointer-events="none"/>') +
       '<g class="lyr-base">' + sc.base + '</g>';
     syncFlow(sc.lanes);
     over.innerHTML =
       '<g class="lyr-hit">' + hitLayer() + '</g>' +
       '<g class="lyr-lbl">' + LF.labelSvg(sc.labels, C, function(l){ return !l.res; }) + '</g>' +
       '<g class="lyr-res">' + LF.labelSvg(sc.labels, C, function(l){ return l.res; }) + '</g>' +
-      '<g class="lyr-ovl"></g><g class="lyr-pin"></g><g class="lyr-tmp"></g>';
+      '<g class="lyr-ovl"></g><g class="lyr-tmp"></g>';
     svg.classList.toggle('no-p', !d.animP);
     svg.classList.toggle('no-q', !d.animQ);
     $('gifBtn').hidden = !(shownResults() && (d.animP || d.animQ));
     syncLabelMatrix();
-    syncMapUi();
     renderOverlay();
     applyView();
     setSig(d);
@@ -208,9 +206,7 @@
   }
   app.renderOverlay = renderOverlay;
 
-  /* ── The view: pan and zoom are the SVG's viewBox ──
-     A map under the diagram is drawn in the same call, from the same view, so
-     the two are never a frame apart. */
+  /* ── The view: pan and zoom are the SVG's viewBox ── */
   function stageSize(){ return { w: stage.clientWidth || 800, h: stage.clientHeight || 600 }; }
   function applyView(){
     if(!app.view) fit();
@@ -218,26 +214,6 @@
     svg.setAttribute('viewBox', v.x + ' ' + v.y + ' ' + v.w + ' ' + v.h);
     var grid = svg.querySelector('.lf-grid');
     if(grid) grid.style.opacity = stageSize().w / v.w < 0.55 ? '0' : '1';
-    if(window.LFMap) LFMap.view();
-  }
-  /* How far the view zooms. On its own grid the diagram keeps its old range.
-     On a map it can go out to a whole continent and in to the street, for the
-     map's sake: the drawing shrinks and grows with it, as one picture. */
-  function zoomRange(){
-    if(!mapOn()) return [0.15, 4];
-    var z = app.model.map.z;
-    return [Math.min(0.15, Math.pow(2, 2 - z)), Math.max(4, Math.min(32, Math.pow(2, 19 - z)))];
-  }
-  app.zoomRange = zoomRange;
-  // A view outside the range (after the map is turned off or rescaled) comes back inside it, about its middle.
-  function clampView(){
-    if(!app.view) return;
-    var s = stageSize(), v = app.view, k = s.w / v.w, r = zoomRange();
-    if(k >= r[0] - 1e-12 && k <= r[1] + 1e-12) return;
-    k = Math.min(r[1], Math.max(r[0], k));
-    var cx = v.x + v.w / 2, cy = v.y + v.h / 2;
-    app.view = { x: cx - s.w / k / 2, y: cy - s.h / k / 2, w: s.w / k, h: s.h / k };
-    applyView();
   }
   function fit(){
     var bb = app.scene ? app.scene.bbox : { x: 0, y: 0, w: 800, h: 500 };
@@ -253,8 +229,8 @@
   app.zoomAt = function(factor, cx, cy){
     app.fitPending = false; app.userView = true;
     var v = app.view, s = stageSize();
-    var k = s.w / v.w * factor, r = zoomRange();
-    k = Math.min(r[1], Math.max(r[0], k));
+    var k = s.w / v.w * factor;
+    k = Math.min(4, Math.max(0.15, k));
     var w = s.w / k, h = s.h / k;
     if(cx === undefined){ cx = v.x + v.w / 2; cy = v.y + v.h / 2; }
     var fx = (cx - v.x) / v.w, fy = (cy - v.y) / v.h;
@@ -277,247 +253,6 @@
       applyView();
     }).observe(stage);
   }
-
-  /* ── The map under the diagram ──
-     model.map ties the diagram to a place (lf-core.js); lf-map.js draws it.
-     The map is part of the diagram, so it saves, shares, undoes and embeds
-     with it, and it never touches what the load flow solves. */
-  function mapOn(){ return LF.mapShown(app.model); }
-  app.mapOn = mapOn;
-  var mapEls = { base: $('mapBase'), power: $('mapPower'), powerRow: $('mapPowerRow'), powerTip: $('mapPowerTip'), bar: $('mapBar'),
-                 search: $('mapSearch'), clear: $('mapSearchClear'), results: $('mapResults'), move: $('mapMove'), note: $('mapNote'),
-                 credit: $('mapCredit'), tip: $('mapTip'), scale: $('sldScale') };
-  var MAP_TIP = {
-    none: '<strong>None:</strong> the diagram on its drawing grid. Pick a map to draw the network where it really is.',
-    off: '<strong>None:</strong> the diagram on its drawing grid. Its place on the map is kept for when you turn the map back on.',
-    plain: '<strong>Plain:</strong> OpenStreetMap in quiet grey, so the network reads on top. Diagram and map zoom as one picture.',
-    streets: '<strong>Streets:</strong> OpenStreetMap in colour, with roads, towns and land use. Diagram and map zoom as one picture.',
-    satellite: '<strong>Satellite:</strong> cloud-free Sentinel-2 imagery of 2016, sharp to about 10 m. Diagram and map zoom as one picture.'
-  };
-  if(window.LFMap) (function(){
-    var key = '<span class="kv-key">' + LFMap.VCOL.slice(0, 7).map(function(c){ return '<span><i style="background:' + c[1] + '"></i>' + c[0] + '</span>'; }).join('') +
-      '<span><i style="background:' + LFMap.HVDC + '"></i>HVDC</span></span>';
-    mapEls.powerTip.setAttribute('data-tip', 'Open Infrastructure Map\'s lines and substations, coloured by kV and up. Hover one to read it.' + key);
-    // The toggle's key: short runs of the grid's own voltage colours, as on the map.
-    var c = function(kv){ return LFMap.VCOL.filter(function(v){ return v[0] === kv; })[0][1]; };
-    document.querySelector('#mapPowerRow .grid-key').innerHTML =
-      '<path d="M1 3.5h9" stroke="' + c(220) + '"/><path d="M11.5 3.5h9" stroke="' + c(132) + '"/><path d="M22 3.5h9" stroke="' + c(550) + '"/>' +
-      '<path d="M1 7.5h14.5" stroke="' + c(52) + '"/><path d="M16.5 7.5h14.5" stroke="' + c(310) + '"/>';
-  })();
-  var mapStatus = { baseFailed: false, powerFailed: false };
-  function syncMapUi(){
-    var mp = app.model.map, on = mapOn();
-    mapEls.base.value = on ? mp.base : '';
-    mapEls.power.checked = !!(mp && mp.power);
-    mapEls.powerRow.hidden = !on;
-    mapEls.bar.hidden = !on || app.readOnly;
-    mapEls.tip.setAttribute('data-tip', MAP_TIP[on ? mp.base : mp ? 'off' : 'none']);
-    stage.classList.toggle('has-map', on);
-    if(!on && app.mapMove) setMapMove(false);
-    if(!on) closeResults();
-    writeCredit();
-    // The resting readout mentions the map's grid only while there is one.
-    if(hovered === null && !app.sel.size) writeHover(null);
-  }
-  function writeCredit(){
-    var mp = app.model.map, on = mapOn();
-    mapEls.credit.hidden = !on;
-    if(!on){ mapEls.credit.innerHTML = ''; return; }
-    var parts = window.LFMap ? LFMap.credits(mp, true) : [];
-    var err = mapStatus.baseFailed ? 'The map could not load. Check your connection.' : mapStatus.powerFailed ? 'The power grid could not load.' : '';
-    var html = (err ? '<span class="is-err">' + err + '</span> · ' : '') + parts.join(' · ');
-    if(mapEls.credit.innerHTML !== html) mapEls.credit.innerHTML = html;
-  }
-  if(window.LFMap) LFMap.attach({
-    base: $('sldMapBase'), over: $('sldMapGrid'), scale: mapEls.scale,
-    getState: function(){ var s = stageSize(); return { map: app.model.map, view: app.view, W: s.w, H: s.h, dark: !document.body.classList.contains('light') }; },
-    onStatus: function(st){
-      if(st.baseFailed === mapStatus.baseFailed && st.powerFailed === mapStatus.powerFailed) return;
-      mapStatus = st; writeCredit();
-    }
-  });
-  // A first map opens on the reader's own region (from their clock), at a
-  // scale that shows the region in the view the diagram already has.
-  function newMap(base){
-    var v = app.view, s = stageSize(), k = s.w / v.w, pl = window.LFMap ? LFMap.guessPlace() : { lat: 20, lon: 10, zoom: 2 };
-    var at = [Math.round((v.x + v.w / 2) / G), Math.round((v.y + v.h / 2) / G)];
-    var z = Math.min(20, Math.max(1, pl.zoom - Math.log(k) / Math.LN2));
-    return LF.readMap({ lat: pl.lat, lon: pl.lon, z: z, at: at, base: base, power: 1 });
-  }
-  mapEls.base.addEventListener('change', function(){
-    var v = mapEls.base.value, mp = app.model.map, fresh = false;
-    if(v && !mp){ app.model.map = newMap(v); fresh = true; }
-    else if(mp) mp.base = v;
-    else return;
-    app.change('geom');
-    clampView();
-    // A new map has to be found and lined up first: the search waits, and
-    // Move the map is on until the reader is happy with it.
-    if(fresh && !app.readOnly){
-      setMapMove(true);
-      note('Find the place this network is in, or drag the map under it.');
-      setTimeout(function(){ mapEls.search.focus(); }, 0);
-    }
-  });
-  mapEls.power.addEventListener('change', function(){
-    if(!app.model.map) return;
-    app.model.map.power = mapEls.power.checked ? 1 : 0;
-    app.change('geom');
-  });
-
-  /* Move the map: drags and the wheel slide and scale the map under the
-     diagram instead of the view, to line the two up. The diagram stays put. */
-  app.mapMove = false;
-  // A touch screen has no Esc and no wheel, so its hint says what it does have.
-  app.moveHint = function(){
-    return window.matchMedia && window.matchMedia('(pointer: coarse)').matches
-      ? 'Drag to slide the map under the diagram, pinch to scale it. Tap Move the map when it lines up.'
-      : 'Drag to slide the map under the diagram, scroll to scale it. Esc when it lines up.';
-  };
-  mapEls.move.setAttribute('aria-keyshortcuts', 'Escape');
-  function setMapMove(on){
-    on = !!on && mapOn() && !app.readOnly;
-    if(on === app.mapMove) return;
-    app.mapMove = on;
-    mapEls.move.setAttribute('aria-pressed', String(on));
-    stage.classList.toggle('is-mapmove', on);
-    mapEls.search.placeholder = on ? 'Move the map to a place, or lat, lon' : 'Find a place, or type lat, lon';
-    if(on && app.sel.size) app.select([]);
-    if(app.hint) app.hint(on ? app.moveHint() : '');
-    if(!on) note('');
-  }
-  app.setMapMove = setMapMove;
-  mapEls.move.addEventListener('click', function(){ setMapMove(!app.mapMove); });
-  app.mapGeo = function(){ return app.model.map ? LF.geo(app.model.map) : null; };
-  // Re-anchored at the middle of the view, so the saved place is one the reader looked at.
-  app.setMapGeo = function(geo){
-    var mp = app.model.map, v = app.view;
-    if(!mp) return;
-    geo = { z: Math.min(19, Math.max(1, geo.z)), X0: geo.X0, Y0: geo.Y0 };
-    var at = [Math.round((v.x + v.w / 2) / G), Math.round((v.y + v.h / 2) / G)];
-    app.model.map = LF.geoMap(geo, at, mp);
-    if(window.LFMap) LFMap.view();
-  };
-  app.mapCommit = function(key){
-    pushHistory(key);
-    clampView();
-    if(persist) persist.schedule();
-    setSig(display());
-    if(app.sel.size === 1) renderInspector();
-  };
-
-  /* Find a place. While the map is being moved, the place comes to the middle
-     of the view under the diagram, its extent filling the view; otherwise the
-     view goes to it, map and diagram together. */
-  var found = [], foundFocus = -1, asking = 0;
-  function note(t, err){ mapEls.note.textContent = t || ''; mapEls.note.classList.toggle('is-err', !!err); }
-  function closeResults(){ mapEls.results.classList.remove('open'); mapEls.search.setAttribute('aria-expanded', 'false'); foundFocus = -1; }
-  function showFound(list){
-    found = list; foundFocus = -1;
-    var r = mapEls.results;
-    r.innerHTML = list.length ? list.map(function(p, i){
-      return '<div class="combo-opt" role="option" data-i="' + i + '"><span class="combo-text"><span class="combo-main">' + esc(p.name) + '</span>' +
-        (p.sub ? '<span class="combo-sub">' + esc(p.sub) + '</span>' : '') + '</span></div>';
-    }).join('') : '<div class="combo-empty">No place found. Try a town, a region or a substation\'s name.</div>';
-    r.classList.add('open');
-    mapEls.search.setAttribute('aria-expanded', 'true');
-    if(window.SharedDropdown) SharedDropdown.place(mapEls.search, r, { minWidth: 260, maxWidth: 440 });
-  }
-  function ask(){
-    var q = mapEls.search.value.trim();
-    if(!q || !window.LFMap) return;
-    var id = ++asking;
-    note('Searching OpenStreetMap…');
-    LFMap.search(q).then(function(list){
-      if(id !== asking) return;
-      note('');
-      if(list.length === 1){ closeResults(); goTo(list[0]); mapEls.search.blur(); }
-      else showFound(list);
-    }, function(){
-      if(id !== asking) return;
-      note('The place search could not reach OpenStreetMap. Try again, or type lat, lon.', true);
-    });
-  }
-  function bboxSpan(p, z){
-    if(!p.bbox) return null;
-    var e = p.bbox.e < p.bbox.w ? p.bbox.e + 360 : p.bbox.e;
-    var a = LF.project(p.bbox.n, p.bbox.w, z), b = LF.project(p.bbox.s, e, z);
-    return { w: Math.abs(b[0] - a[0]), h: Math.abs(b[1] - a[1]), cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2 };
-  }
-  function goTo(p){
-    var mp = app.model.map;
-    if(!mp) return;
-    var v = app.view, s = stageSize(), geo = LF.geo(mp);
-    var cx = v.x + v.w / 2, cy = v.y + v.h / 2;
-    if(app.mapMove){
-      var z = geo.z, sp0 = bboxSpan(p, 0);
-      if(sp0 && sp0.w > 0 && sp0.h > 0) z = Math.log(Math.min(0.8 * v.w / sp0.w, 0.8 * v.h / sp0.h)) / Math.LN2;
-      z = Math.min(17, Math.max(2, z));
-      var sp = bboxSpan(p, z), c = sp ? [sp.cx, sp.cy] : LF.project(p.lat, p.lon, z);
-      app.setMapGeo({ z: z, X0: c[0] - cx, Y0: c[1] - cy });
-      app.mapCommit('mapfind');
-      pin(cx, cy);
-      note('Moved the map to ' + p.name + '. Fine-tune it by dragging, then press Move the map again.');
-    } else {
-      var k = s.w / v.w, spz = bboxSpan(p, geo.z), r = zoomRange(), pt;
-      if(spz && spz.w > 0 && spz.h > 0){
-        k = Math.min(0.8 * s.w / spz.w, 0.8 * s.h / spz.h);
-        var mid = LF.unproject(spz.cx, spz.cy, geo.z);
-        pt = LF.geoPoint(geo, mid[0], mid[1]);
-      } else pt = LF.geoPoint(geo, p.lat, p.lon);
-      k = Math.min(r[1], Math.max(r[0], k));
-      app.fitPending = false; app.userView = true;
-      app.view = { x: pt[0] - s.w / k / 2, y: pt[1] - s.h / k / 2, w: s.w / k, h: s.h / k };
-      applyView();
-      pin(pt[0], pt[1]);
-      note('');
-    }
-  }
-  // A short-lived mark where a found place is.
-  var pinT = 0;
-  function pin(x, y){
-    var g = svg.querySelector('.lyr-pin');
-    if(!g) return;
-    var k = stageSize().w / app.view.w, r = 7 / k, col = paint()('--accent2');
-    g.innerHTML = '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="' + 2.5 / k + '"/>' +
-      '<circle cx="' + x + '" cy="' + y + '" r="' + 2.2 / k + '" fill="' + col + '"/>';
-    clearTimeout(pinT);
-    pinT = setTimeout(function(){ var gg = svg.querySelector('.lyr-pin'); if(gg) gg.innerHTML = ''; }, 3500);
-  }
-  mapEls.search.addEventListener('keydown', function(e){
-    var opts = mapEls.results.querySelectorAll('.combo-opt'), open = mapEls.results.classList.contains('open');
-    if((e.key === 'ArrowDown' || e.key === 'ArrowUp') && open && opts.length){
-      e.preventDefault();
-      foundFocus = ((foundFocus + (e.key === 'ArrowDown' ? 1 : -1)) % opts.length + opts.length) % opts.length;
-      Array.prototype.forEach.call(opts, function(o, i){ o.classList.toggle('focused', i === foundFocus); });
-      opts[foundFocus].scrollIntoView({ block: 'nearest' });
-    } else if(e.key === 'Enter'){
-      e.preventDefault();
-      if(open && foundFocus >= 0 && found[foundFocus]){ var p = found[foundFocus]; closeResults(); goTo(p); mapEls.search.blur(); }
-      else ask();
-    } else if(e.key === 'Escape'){
-      if(open){ e.preventDefault(); e.stopPropagation(); closeResults(); }
-      else mapEls.search.blur();
-    }
-  });
-  mapEls.search.addEventListener('input', function(){ if(mapEls.results.classList.contains('open')) closeResults(); });
-  mapEls.search.addEventListener('blur', function(){ setTimeout(closeResults, 150); });
-  mapEls.results.addEventListener('mousedown', function(e){
-    var o = e.target.closest('.combo-opt');
-    if(!o) return;
-    e.preventDefault();
-    var p = found[+o.getAttribute('data-i')];
-    closeResults();
-    if(p){ goTo(p); mapEls.search.blur(); }
-  });
-  mapEls.clear.addEventListener('click', function(){ mapEls.search.value = ''; closeResults(); note(''); mapEls.search.focus(); });
-  window.addEventListener('resize', function(){ if(mapEls.results.classList.contains('open')) SharedDropdown.place(mapEls.search, mapEls.results, { minWidth: 260, maxWidth: 440 }); });
-
-  // A bus's place on the map, in degrees.
-  function busLatLon(b){ var g = app.mapGeo(); return g ? LF.geoLatLon(g, b.at[0] * G, b.at[1] * G) : null; }
-  function gridMetres(){ var g = app.mapGeo(); return g ? LF.geoMetresPerPx(g, app.view ? app.view.y + app.view.h / 2 : 0) * G : NaN; }
-  function fmtLen(m){ return m >= 1000 ? (+(m / 1000).toPrecision(m >= 1e5 ? 4 : 3)).toLocaleString('en') + ' km' : Math.round(m) + ' m'; }
-  function fmtDeg(v, pos, neg){ return Math.abs(v).toFixed(4) + '° ' + (v < 0 ? neg : pos); }
 
   /* ── What changed, and what it costs ──
      'geom' moves or renames: drawn again, results still valid.
@@ -831,31 +566,10 @@
     hovered = id;
     writeHover(id !== null && id !== undefined ? id : (app.sel.size === 1 ? app.sel.values().next().value : null));
   };
-  // Over empty diagram on a map, the map's own power grid answers instead:
-  // what a line or substation under the pointer is, from Open Infrastructure Map.
-  app.hoverAt = function(id, cx, cy){
-    if((id === null || id === undefined) && mapOn() && app.model.map.power && window.LFMap){
-      var r = svg.getBoundingClientRect(), ft = LFMap.featureAt(cx - r.left, cy - r.top);
-      if(ft){
-        var d = LFMap.describe(ft), key = 'map:' + ft.kind + d.name + d.what;
-        if(key !== hovered){
-          hovered = key;
-          $('hoverBox').innerHTML = 'On the map: ' + (d.name ? '<strong>' + esc(d.name) + '</strong>, ' : '') + esc(d.what) +
-            (d.operator ? ', run by ' + esc(d.operator) : '') + '.';
-        }
-        return;
-      }
-    }
-    app.hover(id);
-  };
   function writeHover(id){
     var box = $('hoverBox');
     var e = id !== null && id !== undefined ? LF.byId(app.model)[id] : null;
-    if(!e){
-      var grid = mapOn() && app.model.map.power ? ' Over the map, hover a power line or substation to see what it is.' : '';
-      box.innerHTML = (app.readOnly ? 'Hover or tap an element to read its values.' : 'Hover or tap an element to read its values. Drag a part from the toolbar onto the diagram to add it.') + grid;
-      return;
-    }
+    if(!e){ box.innerHTML = app.readOnly ? 'Hover or tap an element to read its values.' : 'Hover or tap an element to read its values. Drag a part from the toolbar onto the diagram to add it.'; return; }
     var res = shownResults(), ac = res && res.report.method === 'ac', parts = [], dsp = display();
     var n = '<strong>' + esc(LF.nameOf(e)) + '</strong>';
     var mono = function(s){ return '<span class="mono">' + s + '</span>'; };
@@ -868,7 +582,6 @@
         parts.push('net injection ' + mono(F.p(r.p) + ' MW' + (ac ? ', ' + F.p(r.q) + ' MVAr' : '')));
         if(r.control) parts.push(r.control + ' bus');
       }
-      if(mapOn()){ var ll = busLatLon(e); parts.push('at ' + mono(fmtDeg(ll[0], 'N', 'S') + ', ' + fmtDeg(ll[1], 'E', 'W'))); }
     } else if(LF.BRANCH[e.c]){
       parts.push(n + ', ' + LF.WORD[e.c].toLowerCase() + ' from ' + esc(name(e.bus0)) + ' to ' + esc(name(e.bus1)));
       var b = res && res.br[e.id];
@@ -895,7 +608,6 @@
   /* ── Selection ── */
   app.select = function(ids, add){
     if(app.readOnly) return;
-    if(ids && ids.length && app.mapMove) setMapMove(false);
     if(!add) app.sel = new Set();
     (ids || []).forEach(function(id){
       if(add && app.sel.has(id)) app.sel.delete(id); else app.sel.add(id);
@@ -1165,18 +877,6 @@
       ' data-min="' + range[0] + '" data-max="' + range[1] + '"' + (f.step ? ' data-step="' + f.step + '"' : '') + ' value="' + fmtField(v) + '"/>' +
       (f.unit ? '<span class="suffix">' + f.unit + '</span>' : '') + '</div></div>';
   }
-  // On a map, how far apart a line's buses are, as the crow flies: a floor
-  // for the route length. A typed line can take it as its length.
-  function mapKm(e){
-    var m = LF.byId(app.model), a = m[e.bus0], b = m[e.bus1];
-    return mapOn() && a && b ? LF.km(busLatLon(a), busLatLon(b)) : NaN;
-  }
-  function mapSpan(e, typedLine){
-    var km = mapKm(e);
-    if(!isFinite(km)) return '';
-    var t = ' On the map its buses are <b>' + LF.fmt.p(km) + ' km</b> apart in a straight line.';
-    return typedLine && km > 0 ? t + ' <button type="button" class="btn-secondary btn-sm" id="useMapLen" style="margin-top:6px" title="A real route is longer than the straight line: set the length higher if you know it">Use ' + LF.fmt.p(km) + ' km as its length</button>' : t;
-  }
   function derivedHtml(e){
     var byId = LF.byId(app.model), F2 = LF.fmt;
     if(e.c === 'Line'){
@@ -1184,10 +884,10 @@
       if(t){
         var r = t.r_per_length * e.length / e.num_parallel, x = t.x_per_length * e.length / e.num_parallel;
         var b = 2 * Math.PI * 1e-9 * t.f_nom * t.c_per_length * e.length * e.num_parallel;
-        return '<p class="derived" id="derived">From the type: <b>' + F2.p(r) + ' Ω</b> + j<b>' + F2.p(x) + ' Ω</b>, <b>' + F2.p(b * 1e6) + ' µS</b>, rated <b>' + F2.p(LF.rating(e, byId[e.bus0])) + ' MVA</b> (' + F2.ka(t.i_nom * e.num_parallel) + ' kA).' + mapSpan(e, true) + '</p>';
+        return '<p class="derived" id="derived">From the type: <b>' + F2.p(r) + ' Ω</b> + j<b>' + F2.p(x) + ' Ω</b>, <b>' + F2.p(b * 1e6) + ' µS</b>, rated <b>' + F2.p(LF.rating(e, byId[e.bus0])) + ' MVA</b> (' + F2.ka(t.i_nom * e.num_parallel) + ' kA).</p>';
       }
       var b0 = byId[e.bus0];
-      if(b0 && b0.v_nom){ var z = b0.v_nom * b0.v_nom; return '<p class="derived" id="derived">Per unit on 100 MVA: <b>' + F2.v(e.r / z * 100) + '</b> + j<b>' + F2.v(e.x / z * 100) + '</b>.' + mapSpan(e) + '</p>'; }
+      if(b0 && b0.v_nom){ var z = b0.v_nom * b0.v_nom; return '<p class="derived" id="derived">Per unit on 100 MVA: <b>' + F2.v(e.r / z * 100) + '</b> + j<b>' + F2.v(e.x / z * 100) + '</b>.</p>'; }
     }
     if(e.c === 'Transformer'){
       var tt = LF.trType(e);
@@ -1199,24 +899,6 @@
     }
     if(e.c === 'Load') return '<p class="derived" id="derived">cos φ <b>' + F2.pf(e.p_set, e.q_set) + '</b>' + (e.q_set < 0 ? ', capacitive' : '') + '.</p>';
     return '';
-  }
-  // Where a bus sits on the map. Typed degrees move it to the nearest grid point.
-  function geoHtml(e){
-    var ll = busLatLon(e), step = gridMetres();
-    var tip = 'Decimal degrees, negative to the ' + '%s. The bus snaps to the drawing grid, one step every ' + fmtLen(step) + ' at this map scale.';
-    var row = function(k, label, v, lo, hi, side){
-      return '<div class="field-row inline"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(tip.replace('%s', side)) + '</span></div>' +
-        '<div class="affix-wrap"><input class="affix-input has-suffix" type="text" inputmode="decimal" id="f_' + k + '" data-geo="' + k + '" data-min="' + lo + '" data-max="' + hi + '" value="' + v.toFixed(5) + '"/><span class="suffix">°</span></div></div>';
-    };
-    return '<div class="field-group"><div class="group-title">On the map</div>' +
-      row('lat', 'Latitude', ll[0], -85, 85, 'south') + row('lon', 'Longitude', ll[1], -180, 180, 'west') + '</div>';
-  }
-  function setBusLatLon(e, lat, lon){
-    var g = app.mapGeo();
-    if(!g) return;
-    var p = LF.geoPoint(g, Math.max(-85, Math.min(85, lat)), lon);
-    e.at = [Math.max(-5000, Math.min(5000, Math.round(p[0] / G))), Math.max(-5000, Math.min(5000, Math.round(p[1] / G))), e.at[2], e.at[3]];
-    app.change('geom');
   }
   function refreshDerived(){
     var el = $('derived');
@@ -1307,7 +989,6 @@
     if(e.c === 'ShuntImpedance' && !e.bus) html += '<p class="note">Put it on a bus to set its rating at that bus\'s voltage.</p>';
     if(e.c === 'Bus') html += '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + (e.style === 'node' ? 'Devices to the sides' + tipHtml(UNIT_TIP.upnode) : 'Upright bar' + tipHtml(UNIT_TIP.upright)) + '</span></div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     html += derivedHtml(e) + '</div>';
-    if(e.c === 'Bus' && mapOn()) html += geoHtml(e);
     html += labelOverrideHtml(e);
     return html + doneHtml();
   }
@@ -1341,12 +1022,6 @@
     if(t.id === 'netName' || t.id === 'elName'){ renderInspector(); return; }
     if(!e) return;
     if(t.id === 'busUpright'){ e.at = [e.at[0], e.at[1], e.at[2], t.checked ? 1 : 0]; app.change('geom'); return; }
-    if(t.hasAttribute('data-geo') && e.c === 'Bus'){
-      var deg = parseFloat(String(t.value).replace(/−/g, '-')), ll = busLatLon(e);
-      if(!isFinite(deg) || !ll){ renderInspector(); return; }
-      if(t.getAttribute('data-geo') === 'lat') setBusLatLon(e, deg, ll[1]); else setBusLatLon(e, ll[0], deg);
-      return;
-    }
     if(t.id === 'lbOwn'){
       if(t.checked){
         var d = display(), mask = 0;
@@ -1391,11 +1066,6 @@
     if(t.closest('.insp-del')){ app.deleteSelected(); return; }
     if(t.closest('.insp-dup')){ app.duplicateSelected(); return; }
     if(t.closest('.insp-close') || t.closest('#inspDone')){ app.select([]); return; }
-    if(t.closest('#useMapLen')){
-      var ln = selectedEl(), km = ln ? mapKm(ln) : NaN;
-      if(ln && isFinite(km) && km > 0){ ln.length = Math.min(5000, +km.toPrecision(4)); app.change('elec'); }
-      return;
-    }
     var seg = t.closest('.seg-group[data-k] .seg-btn');
     if(seg){
       var e = selectedEl(), k = seg.parentElement.getAttribute('data-k'), v = seg.getAttribute('data-val');
@@ -1544,17 +1214,8 @@
   // The export's subtitle is the run summary without its timing, which changes on every run.
   function exportCtx(){ return { app: app, LF: LF, display: display(), res: shownResults(), stale: isStale(), title: app.model.name || 'Load flow', sub: $('sldSub').textContent.replace(/ Solved by PSA\.js in .*$/, '') }; }
   function busy(on, text){ setSub(on ? text : ''); if(!on && app.res) showResults(); }
-  // A diagram on a map waits for the map's tiles, then downloads.
-  $('svgBtn').addEventListener('click', function(){
-    var ctx = exportCtx(), slow = mapOn();
-    if(slow) busy(true, 'Drawing the map for the SVG…');
-    exporter().then(function(X){ return X.svgBlobAsync(ctx); }).then(function(b){ if(slow) busy(false); download(b, 'svg'); }, function(err){ if(slow) busy(false); alert('The SVG could not be made: ' + (err && err.message || err)); });
-  });
-  $('pngBtn').addEventListener('click', function(){
-    var ctx = exportCtx(), slow = mapOn();
-    if(slow) busy(true, 'Drawing the map for the PNG…');
-    exporter().then(function(X){ return X.pngBlob(ctx); }).then(function(b){ if(slow) busy(false); download(b, 'png'); }, function(err){ if(slow) busy(false); alert('The PNG could not be made: ' + (err && err.message || err)); });
-  });
+  $('svgBtn').addEventListener('click', function(){ exporter().then(function(X){ download(X.svgBlob(exportCtx()), 'svg'); }); });
+  $('pngBtn').addEventListener('click', function(){ exporter().then(function(X){ return X.pngBlob(exportCtx()); }).then(function(b){ download(b, 'png'); }); });
   $('gifBtn').addEventListener('click', function(){
     exporter().then(function(X){
       return X.gifBlob(exportCtx(), function(p){ busy(true, 'Making the GIF… ' + Math.round(p * 100) + '%'); });
@@ -1600,7 +1261,7 @@
     if(ev.key !== 'Escape' || !sldFull || ev.defaultPrevented) return;
     var t = ev.target, tag = t && t.tagName;
     if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
-    if(app.sel.size || app.mapMove || document.querySelector('.pal-btn.is-armed') || mapEls.results.classList.contains('open')) return;
+    if(app.sel.size || document.querySelector('.pal-btn.is-armed')) return;
     setSldFull(false);
   }, true);
 

@@ -27,19 +27,7 @@
      style  how it is drawn, never what it computes: (Bus) 'node' draws a dot
             instead of a bar; (Generator) 'pv' a solar panel, 'wind' a wind
             turbine. '' (the default) is the bar and the round generator
-   Only values that differ from DEFAULTS are written.
-
-   A diagram drawn on a map also carries, after el,
-     map: { lat, lon, z, at, base, power }
-       lat, lon  the place under grid point at [x, y] (grid units, default
-                 [0, 0]), in degrees
-       z         the map's scale: one diagram px is one web-map px at zoom z,
-                 so the diagram and the map zoom as one picture
-       base      'plain' (the default), 'streets', 'satellite', or '' for no
-                 map shown with its place kept
-       power     1 draws Open Infrastructure Map's power grid over it
-   No map key is a diagram on its plain grid, as before maps existed. The map
-   never changes what the power flow sees. */
+   Only values that differ from DEFAULTS are written. */
 (function(root){
   'use strict';
   var LF = root.LF = root.LF || {};
@@ -230,84 +218,11 @@
       var savedNext = toInt(raw.next);
       m.next = Math.max(maxId + 1, isNaN(savedNext) ? 1 : clamp(savedNext, 1, 1e6));
       if(m.el.length !== new Set(m.el.map(function(e){ return e.id; })).size) throw new Error('ids');
-      var mp = LF.readMap(raw.map);
-      if(mp) m.map = mp;
     } catch(err){
       if(root.console) root.console.warn('Load flow: could not read that diagram', err);
       return { name: '', next: 1, el: [] };
     }
     return m;
-  };
-
-  /* ── The map under the diagram ──
-     Web Mercator in 256 px tiles. A diagram px (x, y) is world px
-     (X0 + x, Y0 + y) at zoom z, where (X0, Y0) puts map.at on (lat, lon).
-     Mercator keeps angles, so the diagram stays square on the map. */
-  var MAP_BASES = ['plain', 'streets', 'satellite', ''];
-  LF.MAP_BASES = MAP_BASES;
-  LF.MAP_LAT = 85.0511287798;
-  LF.MAP_Z = [0, 22];
-  function wrapLon(lon){ return ((lon + 180) % 360 + 360) % 360 - 180; }
-  function round(x, d){ var f = Math.pow(10, d); return Math.round(x * f) / f; }
-  LF.readMap = function(r){
-    if(!r || typeof r !== 'object' || Array.isArray(r)) return null;
-    var lat = num(r.lat), lon = num(r.lon);
-    if(isNaN(lat) || isNaN(lon)) return null;
-    var z = num(r.z), at = Array.isArray(r.at) ? r.at.map(num) : [];
-    var base = r.base === undefined ? 'plain' : readValue(['e', MAP_BASES], r.base, 'plain');
-    return {
-      lat: round(clamp(lat, -LF.MAP_LAT, LF.MAP_LAT), 7), lon: round(wrapLon(lon), 7),
-      z: isNaN(z) ? 10 : round(clamp(z, LF.MAP_Z[0], LF.MAP_Z[1]), 5),
-      at: [isNaN(at[0]) ? 0 : clamp(Math.round(at[0]), -5000, 5000), isNaN(at[1]) ? 0 : clamp(Math.round(at[1]), -5000, 5000)],
-      base: base, power: readValue(['e', [0, 1]], r.power, 0)
-    };
-  };
-  LF.compactMap = function(mp){
-    var o = { lat: round(mp.lat, 7), lon: round(mp.lon, 7), z: round(mp.z, 5) };
-    if(mp.at[0] || mp.at[1]) o.at = [mp.at[0], mp.at[1]];
-    if(mp.base !== 'plain') o.base = mp.base;
-    if(mp.power) o.power = 1;
-    return o;
-  };
-  LF.mapShown = function(model){ return !!(model && model.map && model.map.base); };
-  // World px of a place at zoom z, and the place at a world px.
-  LF.project = function(lat, lon, z){
-    var s = 256 * Math.pow(2, z), sn = Math.sin(clamp(lat, -LF.MAP_LAT, LF.MAP_LAT) * Math.PI / 180);
-    return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + sn) / (1 - sn)) / (4 * Math.PI)) * s];
-  };
-  LF.unproject = function(X, Y, z){
-    var s = 256 * Math.pow(2, z);
-    return [Math.atan(Math.sinh(Math.PI * (1 - 2 * Y / s))) * 180 / Math.PI, wrapLon(X / s * 360 - 180)];
-  };
-  // The georeference as numbers to draw with: { z, X0, Y0 }.
-  LF.geo = function(mp){
-    var w = LF.project(mp.lat, mp.lon, mp.z);
-    return { z: mp.z, X0: w[0] - mp.at[0] * LF.G, Y0: w[1] - mp.at[1] * LF.G };
-  };
-  LF.geoLatLon = function(geo, x, y){ return LF.unproject(geo.X0 + x, geo.Y0 + y, geo.z); };
-  LF.geoPoint = function(geo, lat, lon){
-    var w = LF.project(lat, lon, geo.z), s = 256 * Math.pow(2, geo.z);
-    // The copy of the world nearest the diagram's own.
-    var dx = w[0] - geo.X0;
-    dx -= Math.round(dx / s) * s;
-    return [dx, w[1] - geo.Y0];
-  };
-  // Ground metres in one diagram px at diagram height y.
-  LF.geoMetresPerPx = function(geo, y){
-    var ll = LF.geoLatLon(geo, 0, y);
-    return 2 * Math.PI * 6378137 * Math.cos(ll[0] * Math.PI / 180) / (256 * Math.pow(2, geo.z));
-  };
-  // A georeference written back as saved values, anchored at grid point at.
-  LF.geoMap = function(geo, at, mp){
-    var ll = LF.geoLatLon(geo, at[0] * LF.G, at[1] * LF.G);
-    return { lat: round(ll[0], 7), lon: round(ll[1], 7), z: round(clamp(geo.z, LF.MAP_Z[0], LF.MAP_Z[1]), 5), at: at.slice(),
-             base: mp ? mp.base : 'plain', power: mp ? mp.power : 0 };
-  };
-  // Great-circle distance in km.
-  LF.km = function(a, b){
-    var r = Math.PI / 180, dLat = (b[0] - a[0]) * r, dLon = (b[1] - a[1]) * r;
-    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    return 2 * 6371.0088 * Math.asin(Math.min(1, Math.sqrt(h)));
   };
 
   /* ── Writing it back, only what differs from the defaults ── */
@@ -331,7 +246,6 @@
       if(typeof e.lb === 'number') o.lb = e.lb;
       return o;
     });
-    if(model.map) out.map = LF.compactMap(model.map);
     return out;
   };
 

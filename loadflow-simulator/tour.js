@@ -71,27 +71,21 @@ window.__TOUR = {
             '<li><strong>Colour by</strong> bus voltage or branch loading: amber nears a limit, red is past it</li></ul>'
     },
     {
-      target: '#mapBase',
-      title: '⑧ Put it on a map',
-      body: '<ul><li><strong>Map</strong> lays the diagram on a street or satellite map, with the real power grid as a guide</li>' +
-            '<li>Find a place, line the map up with <strong>Move the map</strong>, then put each bus on its substation</li></ul>'
-    },
-    {
       target: '.metrics.lf-result',
       onEnter: lfResults,
-      title: '⑨ Read the result',
+      title: '⑧ Read the result',
       body: 'Iterations to converge, losses, the voltage range and the most loaded branch.'
     },
     {
       target: '#tablesCard',
       onEnter: lfResults,
-      title: '⑩ Results by element',
+      title: '⑨ Results by element',
       body: '<ul><li>Opens from its chevron</li>' +
             '<li>Buses, Branches and Devices, each with <strong>⬇ CSV</strong></li></ul>'
     },
     {
       target: '#sldCard .chart-head .btn-cluster',
-      title: '⑪ Export and share',
+      title: '⑩ Export and share',
       body: '<strong>Share</strong> holds it all:' +
             '<ul><li>SVG, PNG or an animated GIF of the diagram</li>' +
             '<li>A link that opens your network, or an embed for a site</li></ul>'
