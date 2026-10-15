@@ -9,13 +9,17 @@
   'use strict';
   var LF = root.LF, G = LF.G;
   var BRANCH_TOOL = { Line: 1, Transformer: 1, Link: 1 };
-  var PALETTE = [['Bus', 'Bus'], ['Line', 'Line'], ['Transformer', 'Transformer'], ['Generator', 'Generator'], ['Grid', 'Grid'],
+  var PALETTE = [['Bus', 'Bus'], ['Node', 'Node'], ['Line', 'Line'], ['Transformer', 'Transformer'], ['Generator', 'Generator'],
+                 ['PV', 'Solar PV'], ['Wind', 'Wind'], ['Grid', 'Grid'],
                  ['Load', 'Load'], ['ShuntImpedance', 'Shunt'], ['StorageUnit', 'Storage'], ['Link', 'HVDC link']];
   var TIP = {
     Bus: 'Bus: drag it onto the diagram',
+    Node: 'Node: a bus drawn as a dot. Drag it onto the diagram',
     Line: 'Line: pick it, then drag from one bus to another',
     Transformer: 'Transformer: pick it, then drag from the high-voltage bus to the other',
     Generator: 'Generator: drag it onto a bus',
+    PV: 'Solar PV: a generator drawn as a solar panel. Drag it onto a bus',
+    Wind: 'Wind turbine: a generator drawn as a turbine. Drag it onto a bus',
     Grid: 'Grid: an external grid, the slack. Drag it onto a bus',
     Load: 'Load: drag it onto a bus',
     ShuntImpedance: 'Shunt, such as a capacitor bank: drag it onto a bus',
@@ -109,7 +113,7 @@
       Array.prototype.forEach.call(pal.querySelectorAll('.pal-btn'), function(b){ b.classList.toggle('is-armed', b.getAttribute('data-tool') === tool); });
       if(!tool) hint('');
       else if(BRANCH_TOOL[tool]) hint(TIP[tool].replace(/^[^:]+: pick it, then d/, 'D') + '. Esc to stop.');
-      else hint('Click the diagram to place it' + (tool === 'Bus' ? '' : ' on a bus') + '. Esc to stop.');
+      else hint('Click the diagram to place it' + (LF.toolClass(tool) === 'Bus' ? '' : ' on a bus') + '. Esc to stop.');
     }
     /* The shadow of a part before it lands: the part itself, drawn by the same code
        as the diagram, where it would go (on the bus it would snap to, in the slot it
@@ -130,10 +134,10 @@
       return ghostSvg({ c: tool, id: -1, bus0: null, bus1: null }, L) + ends;
     }
     function partFor(tool, p){
-      if(tool === 'Bus') return { c: 'Bus', id: -1, v_nom: 1, at: [Math.round(p.x / G), Math.round(p.y / G), 8, 0] };
-      var hit = nearestBus(p, 6 * G);
       var nw = LF.NEW[tool] || {};
-      return { c: tool === 'Grid' ? 'Generator' : tool, id: -1, grid: nw.grid || 0, control: nw.control,
+      if(LF.toolClass(tool) === 'Bus') return { c: 'Bus', id: -1, v_nom: 1, style: nw.style || '', at: [Math.round(p.x / G), Math.round(p.y / G), 8, 0] };
+      var hit = nearestBus(p, 6 * G);
+      return { c: LF.toolClass(tool), id: -1, grid: nw.grid || 0, style: nw.style || '', control: nw.control,
                bus: hit ? hit.id : null, at: hit ? [hit.a, hit.side] : [Math.round(p.x / G), Math.round(p.y / G)] };
     }
     function busGlow(g){
@@ -159,7 +163,7 @@
     }
     function place(tool, p){
       var e;
-      if(tool === 'Bus') e = app.newElement('Bus', { v_nom: guessKv(), at: [Math.round(p.x / G), Math.round(p.y / G), 8, 0] });
+      if(LF.toolClass(tool) === 'Bus') e = app.newElement(tool, { v_nom: guessKv(), at: [Math.round(p.x / G), Math.round(p.y / G), 8, 0] });
       else {
         var hit = nearestBus(p, 6 * G);
         e = hit ? app.newElement(tool, { bus: hit.id, at: [hit.a, hit.side] })
@@ -222,7 +226,7 @@
         else hint('Select two buses, then press ' + tool + ' again to join them.');
         return;
       }
-      var g = tool !== 'Bus' && buses.length === 1 ? app.L.bus[buses[0]] : null;
+      var g = LF.toolClass(tool) !== 'Bus' && buses.length === 1 ? app.L.bus[buses[0]] : null;
       var r = stage.getBoundingClientRect();
       place(tool, g ? { x: g.cx + (g.v ? G : 0), y: g.cy + (g.v ? 0 : G) } : toDiagram(r.left + r.width / 2, r.top + r.height / 2));
     });

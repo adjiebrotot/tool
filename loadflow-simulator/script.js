@@ -103,8 +103,8 @@
     var s = '', L = app.L;
     Object.keys(L.br).forEach(function(id){ s += '<path d="' + LF.pathD(L.br[id].pts) + '" fill="none" stroke="none" stroke-width="16" pointer-events="stroke" data-id="' + id + '"/>'; });
     Object.keys(L.bus).forEach(function(id){
-      var g = L.bus[id];
-      s += '<rect x="' + (Math.min(g.x1, g.x2) - 7) + '" y="' + (Math.min(g.y1, g.y2) - 7) + '" width="' + (Math.abs(g.x2 - g.x1) + 14) + '" height="' + (Math.abs(g.y2 - g.y1) + 14) + '" fill="none" pointer-events="all" data-id="' + id + '"/>';
+      var g = L.bus[id], pad = g.node ? 9 : 7;
+      s += '<rect x="' + (Math.min(g.x1, g.x2) - pad) + '" y="' + (Math.min(g.y1, g.y2) - pad) + '" width="' + (Math.abs(g.x2 - g.x1) + 2 * pad) + '" height="' + (Math.abs(g.y2 - g.y1) + 2 * pad) + '" fill="none" pointer-events="all" data-id="' + id + '"/>';
     });
     Object.keys(L.dev).forEach(function(id){
       var g = L.dev[id];
@@ -186,8 +186,9 @@
       var id = app.sel.values().next().value, H = 'fill="' + C.bg + '" stroke="' + C.accent + '" stroke-width="2"';
       if(L.bus[id]){
         var b = L.bus[id];
-        s += '<rect data-h="end1" x="' + (b.x1 - 5) + '" y="' + (b.y1 - 5) + '" width="10" height="10" rx="2" ' + H + ' style="cursor:' + (b.v ? 'ns' : 'ew') + '-resize"/>';
-        s += '<rect data-h="end2" x="' + (b.x2 - 5) + '" y="' + (b.y2 - 5) + '" width="10" height="10" rx="2" ' + H + ' style="cursor:' + (b.v ? 'ns' : 'ew') + '-resize"/>';
+        // A node has no length to drag.
+        if(!b.node) s += '<rect data-h="end1" x="' + (b.x1 - 5) + '" y="' + (b.y1 - 5) + '" width="10" height="10" rx="2" ' + H + ' style="cursor:' + (b.v ? 'ns' : 'ew') + '-resize"/>';
+        if(!b.node) s += '<rect data-h="end2" x="' + (b.x2 - 5) + '" y="' + (b.y2 - 5) + '" width="10" height="10" rx="2" ' + H + ' style="cursor:' + (b.v ? 'ns' : 'ew') + '-resize"/>';
         var kx = b.v ? b.x2 : b.x2 + 20, ky = b.v ? b.y2 + 20 : b.y2;
         s += '<g data-h="knob" style="cursor:crosshair"><title>Drag to another bus to connect</title><circle cx="' + kx + '" cy="' + ky + '" r="8" fill="' + C.accent + '"/>' +
              '<path d="M' + (kx - 4) + ' ' + ky + 'h8M' + kx + ' ' + (ky - 4) + 'v8" stroke="' + C.bg + '" stroke-width="2" stroke-linecap="round"/></g>';
@@ -651,7 +652,7 @@
   function scaleFor(kv){ return kv <= 1 ? 0.01 : kv <= 36 ? 0.1 : kv <= 150 ? 1 : 5; }
   app.newElement = function(c, extra){
     var m = app.model, id = m.next++;
-    var e = { c: c === 'Grid' ? 'Generator' : c, id: id, name: c === 'Grid' ? 'Grid ' + id : '' };
+    var e = { c: LF.toolClass(c), id: id, name: c === 'Grid' ? 'Grid ' + id : '' };
     var d = LF.DEFAULTS[e.c];
     for(var k in d) e[k] = d[k];
     var nw = LF.NEW[c] || {};
@@ -740,8 +741,10 @@
     p_nom: 'Rated power. When the slack is shared by rating, it sets this unit\'s share.',
     link_nom: 'Rated power, used only to work out loading.',
     store_nom: 'Rated power, kept for reference. Storage is a fixed injection, so the load flow never reads it.',
-    grid: 'Draws the unit as a hatched square, the usual sign for a wider grid. The load flow is the same.',
+    sym: 'How the unit is drawn. The load flow is the same.<ul><li><strong>Solar:</strong> a solar panel.</li><li><strong>Wind:</strong> a wind turbine.</li><li><strong>Grid:</strong> a hatched square, the sign for a wider grid.</li></ul>',
+    shape: 'How the bus is drawn. The load flow is the same.<ul><li><strong>Bar:</strong> a bar its connections spread along.</li><li><strong>Node:</strong> a dot every connection meets at.</li></ul>',
     upright: 'Stands the bar on end. R does the same to every selected bus.',
+    upnode: 'Devices leave the node left and right instead of above and below. R does the same to every selected bus.',
     load_p: 'Active power drawn. A negative figure feeds power in, like rooftop solar.',
     load_q: 'Reactive power drawn, positive for an inductive load.',
     shunt_q: 'Reactive power at the bus\'s nominal voltage, positive for a capacitor. Stored as a susceptance, so it scales with V².',
@@ -754,7 +757,8 @@
   var typed = function(e){ return !!LF.lineType(e); }, custom = function(e){ return !LF.lineType(e); };
   var ttyped = function(e){ return !!LF.trType(e); }, tcustom = function(e){ return !LF.trType(e); };
   var FIELDS = {
-    Bus: [F_('v_nom', 'Nominal voltage', 'kV', { min: 0.1, max: 1500, tip: UNIT_TIP.v_nom }),
+    Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']], tip: UNIT_TIP.shape }),
+          F_('v_nom', 'Nominal voltage', 'kV', { min: 0.1, max: 1500, tip: UNIT_TIP.v_nom }),
           F_('v_mag_pu_set', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.v_mag_pu_set, show: function(e){ return busHoldsV(e.id); } })],
     Line: [F_('type', 'Line type', '', { kind: 'linetype' }),
            F_('length', 'Length', 'km', { min: 0, max: 5000, tip: UNIT_TIP.length, show: typed }),
@@ -788,7 +792,8 @@
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.q_set, show: function(e){ return e.control === 'PQ'; } }),
            F_('vset', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.gen_vset, show: function(e){ return e.control !== 'PQ' && e.bus; } }),
            F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom }),
-           F_('grid', 'Draw as an external grid', '', { kind: 'toggle', tip: UNIT_TIP.grid })],
+           // Symbol writes both grid and style, which saved diagrams keep apart.
+           F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true, tip: UNIT_TIP.sym })],
     Load: [F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: UNIT_TIP.load_p }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.load_q })],
     ShuntImpedance: [F_('shq', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.shunt_q }),
@@ -834,7 +839,10 @@
     Bus: '<path d="M3 12h18" stroke-width="3"/>',
     Line: '<path d="M3 7h5M16 17h5M8 7v10h8" />',
     Transformer: '<circle cx="9.5" cy="12" r="5"/><circle cx="14.5" cy="12" r="5"/>',
+    Node: '<path d="M12 3v5.5M12 15.5V21M3 12h5.5"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/>',
     Generator: '<circle cx="12" cy="12" r="8"/><path d="M8 12q2-3.5 4 0t4 0"/>',
+    PV: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 9.3h16M4 14.7h16M12 4v16"/>',
+    Wind: '<circle cx="12" cy="12" r="8"/><path d="M12 10.3V5.5M10.5 12.9l-4.2 2.4M13.5 12.9l4.2 2.4" stroke-width="2.4"/><circle cx="12" cy="12" r="1.3"/>',
     Grid: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 12l8-8M4 20 20 4M12 20l8-8"/>',
     Load: '<path d="M12 3v9"/><path d="M6 12h12l-6 9z" fill="currentColor"/>',
     ShuntImpedance: '<path d="M12 2v7M5 9h14M5 13h14M12 13v4M7 17h10M9 20h6M11 23h2"/>',
@@ -843,7 +851,8 @@
   };
   LF.KIND_ICON = KIND_ICON;
   function kindIcon(e){
-    var k = e.c === 'Generator' && e.grid ? 'Grid' : e.c;
+    var k = e.c === 'Generator' && e.grid ? 'Grid' : e.c === 'Generator' && e.style === 'pv' ? 'PV' : e.c === 'Generator' && e.style === 'wind' ? 'Wind' :
+            e.c === 'Bus' && e.style === 'node' ? 'Node' : e.c;
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + KIND_ICON[k] + '</svg>';
   }
   function fieldHtml(e, f){
@@ -872,9 +881,9 @@
       return '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div><label class="toggle-switch"><input type="checkbox" data-k="' + f.k + '"' + (e[f.k] ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     }
     if(f.kind === 'seg'){
-      var cur = e[f.k];
+      var cur = f.k === 'sym' ? (e.grid ? 'grid' : e.style) : e[f.k];
       var extra = f.k === 'control' ? tipHtml(CONTROL_TIP[cur], true) : tipHtml(tip);
-      return '<div class="field-row inline"><div class="field-label"><span class="tip-wrap">' + f.label + extra + '</span></div><div class="seg-group" data-k="' + f.k + '" role="group" aria-label="' + f.label + '">' +
+      return '<div class="field-row' + (f.wide ? '' : ' inline') + '"><div class="field-label"><span class="tip-wrap">' + f.label + extra + '</span></div><div class="seg-group" data-k="' + f.k + '" role="group" aria-label="' + f.label + '">' +
         f.opts.map(function(o){ return '<button type="button" class="seg-btn' + (o[0] === cur ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>';
     }
     var range = f.range ? f.range(e) : [f.min, f.max];
@@ -994,7 +1003,7 @@
     html += '<div class="field-group"><div class="group-title">' + (e.c === 'Bus' ? 'Bus' : 'Parameters') + '</div>';
     (FIELDS[e.c] || []).forEach(function(f){ if(!f.show || f.show(e)) html += fieldHtml(e, f); });
     if(e.c === 'ShuntImpedance' && !e.bus) html += '<p class="note">Put it on a bus to set its rating at that bus\'s voltage.</p>';
-    if(e.c === 'Bus') html += '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Upright bar' + tipHtml(UNIT_TIP.upright) + '</span></div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+    if(e.c === 'Bus') html += '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + (e.style === 'node' ? 'Devices to the sides' + tipHtml(UNIT_TIP.upnode) : 'Upright bar' + tipHtml(UNIT_TIP.upright)) + '</span></div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     html += derivedHtml(e) + '</div>';
     html += labelOverrideHtml(e);
     return html + doneHtml();
@@ -1077,6 +1086,9 @@
     if(seg){
       var e = selectedEl(), k = seg.parentElement.getAttribute('data-k'), v = seg.getAttribute('data-val');
       if(!e) return;
+      // The look only: grid and style are drawn, never solved.
+      if(k === 'sym'){ e.grid = v === 'grid' ? 1 : 0; e.style = v === 'grid' ? '' : v; app.change('geom'); return; }
+      if(k === 'style'){ e.style = v; app.change('geom'); return; }
       e[k] = k === 'tap_side' ? +v : v;
       app.change('elec');
     }
