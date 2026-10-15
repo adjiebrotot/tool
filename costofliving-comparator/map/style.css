@@ -1,5 +1,5 @@
-/* Cost of Living Comparator: Map View — page-specific styles. Layout, cards, fields, the verdict and
-   the metrics are shared.css's; only the map, its legend and the city table
+/* Cost of Living Comparator: Map View — page-specific styles. Layout, cards, fields and the metrics
+   are shared.css's; only the map, its legend and the city table
    live here.
 
    The map's colours are tokens, one set per theme, so the canvas reads them
@@ -91,6 +91,11 @@ body.light{
 
 .map-card{padding:16px 18px 12px;margin-bottom:18px;}
 .map-card .chart-head{margin-bottom:6px;}
+/* What is still missing before the map fills, under its title, as the Load
+   Flow Simulator's diagram notes its state. Empty once the map is filled. */
+.map-card>.sub{color:var(--muted);font-size:.8rem;margin:0 0 6px;line-height:1.4;}
+.map-card>.sub:empty{display:none;}
+.map-card>.sub.neg{color:var(--negative-em);}
 .view-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .view-row .toggle-label{min-width:0;color:var(--muted);font-weight:600;}
 .map-foot{font-size:.76rem;color:var(--muted);margin-top:8px;}

@@ -227,15 +227,6 @@
 </aside>
 
 <main class="results">
-  <div class="verdict" id="verdict" aria-live="polite"></div>
-
-  <section class="metrics" id="metrics">
-    <div class="metric card"><div class="label" id="mLabel0">Your city</div><div class="value" id="mVal0">—</div><div class="sub" id="mSub0"></div></div>
-    <div class="metric card"><div class="label" id="mLabel1">Cheapest</div><div class="value" id="mVal1">—</div><div class="sub" id="mSub1"></div></div>
-    <div class="metric card"><div class="label" id="mLabel2">Dearest</div><div class="value" id="mVal2">—</div><div class="sub" id="mSub2"></div></div>
-    <div class="metric card"><div class="label" id="mLabel3">Cheaper than you</div><div class="value" id="mVal3">—</div><div class="sub" id="mSub3"></div></div>
-  </section>
-
   <section class="map-card card" id="mapCard">
     <div class="chart-head">
       <h2><span id="mapTitle">Required net salary</span> <span class="tip-icon" id="mapTitleTip" data-tip="A month.">?</span></h2>
@@ -244,6 +235,7 @@
         <div class="seg-group" id="viewGroup" role="group" aria-label="What the map shows"></div>
       </div>
     </div>
+    <div class="sub" id="mapSub" aria-live="polite"></div>
     <div class="map-legend" id="legend" data-no-abbr></div>
     <div class="map-wrap" id="mapWrap">
       <canvas id="mapCanvas" role="img" aria-label="World map of cities coloured by living cost against yours, each labelled with the figure the view shows. Drag to move, click the map then scroll, or hold Ctrl and scroll, or pinch to zoom, hover or tap a city for its figures."></canvas>
@@ -262,6 +254,12 @@
     <div class="map-foot"><span class="foot-page">Drag to move. Click the map, then scroll to zoom (or hold Ctrl, ⌘ on a Mac, and scroll, or pinch). Tap a city for its figures. The funnel shows major cities only. The blue ⤢ at the top right fills the screen with the map.</span><span class="foot-full">Drag to move. Scroll or pinch to zoom. Tap a city for its figures. The funnel shows major cities only. Esc or the blue button at the top right puts the map back.</span></div>
   </section>
 
+  <section class="metrics" id="metrics">
+    <div class="metric card"><div class="label" id="mLabel0">Your city</div><div class="value" id="mVal0">—</div><div class="sub" id="mSub0"></div></div>
+    <div class="metric card"><div class="label" id="mLabel1">Cheapest</div><div class="value" id="mVal1">—</div><div class="sub" id="mSub1"></div></div>
+    <div class="metric card"><div class="label" id="mLabel2">Dearest</div><div class="value" id="mVal2">—</div><div class="sub" id="mSub2"></div></div>
+    <div class="metric card"><div class="label" id="mLabel3">Cheaper than you</div><div class="value" id="mVal3">—</div><div class="sub" id="mSub3"></div></div>
+  </section>
   <section class="table-card card" id="tableCard">
     <div class="detail-head">
       <h2>Every city</h2>

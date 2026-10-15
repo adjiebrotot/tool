@@ -857,7 +857,7 @@ function render(){
   normalise();
   if(persist) persist.schedule();
   compute();
-  renderVerdict();
+  renderMapNote();
   renderMetrics();
   renderMapHead();
   renderTable();
@@ -882,56 +882,28 @@ function mapTitle(){
   return { name, bits, full: [name].concat(bits).join(', ') };
 }
 
-function renderVerdict(){
+// The map, its metrics and the table carry the answer. The note under the
+// map title only says what is still missing before the map can fill.
+function mapNote(text, warn){
+  const el = $('mapSub');
+  el.textContent = text || '';
+  el.classList.toggle('neg', !!warn);
+}
+function renderMapNote(){
   const R = RESULT;
-  if(!R){ SharedVerdict.set('verdict', { tone: '', title: 'Pick your city to map the world against it.', body: 'Then enter your net salary and living cost, or press a Quick Start.' }); return; }
-  const name = R.from.city, fc = R.fc;
+  if(!R){ mapNote('Pick your city to map the world against it, then enter your net salary and living cost, or press a Quick Start.'); return; }
+  const name = R.from.city;
   if(!(R.sal > 0) || !(R.fe > 0)){
-    SharedVerdict.set('verdict', { tone: '', title: 'Enter your ' + (!(R.sal > 0) && !(R.fe > 0) ? 'net salary and living cost' : !(R.sal > 0) ? 'net salary' : 'living cost') + ' in ' + esc(name) + ' to fill the map.', body: 'Every city then shows what it takes to live as you do.' });
+    mapNote('Enter your ' + (!(R.sal > 0) && !(R.fe > 0) ? 'net salary and living cost' : !(R.sal > 0) ? 'net salary' : 'living cost') + ' in ' + name + ' to fill the map.');
     return;
   }
   if(S.mode === 'scaled' && R.mult == null){
-    SharedVerdict.set('verdict', { tone: '', title: 'There is no ' + SCALES[S.scale].word + ' for ' + esc(name) + ' to scale your salary by.', body: esc(R.wh.why) + ' Pick another yardstick under Scale by.' });
+    mapNote('There is no ' + SCALES[S.scale].word + ' for ' + name + ' to scale your salary by. ' + R.wh.why + ' Pick another yardstick under Scale by.');
     return;
   }
-  const lo = R.byQ[0], hi = R.byQ[R.byQ.length - 1];
-  if(!lo || !hi){ SharedVerdict.set('verdict', { tone: '', title: 'No city can be estimated from ' + esc(name) + '.', body: 'The dataset lacks an index your lifestyle needs.' }); return; }
-  const num = (v, c) => '<span class="v-num">' + fmtC(v, c) + '</span>';
-  const others = R.valid.length - 1;
-  const short = R.fSav < 0 ? ' Your living cost is more than your salary, so every figure carries that shortfall.' : '';
-  if(S.mode === 'global'){
-    const fs = o => o.sav * o.fx;
-    const loS = fs(lo), hiS = fs(hi);
-    const title = 'On ' + num(R.sal, fc) + ' a month, you would save the most in ' + esc(lo.c.city) + ', ' + num(loS, fc) +
-      (hiS < 0 ? ', and fall furthest short in ' + esc(hi.c.city) + ', by ' + num(-hiS, fc) + ' a month.'
-               : ', and the least in ' + esc(hi.c.city) + ', ' + num(hiS, fc) + '.');
-    let body = 'In ' + esc(name) + ' you save ' + fmtC(R.fSav, fc) + ' (' + fmtP(R.r) + '). ' +
-      R.cheaper + ' of ' + others + ' cities let you save more' +
-      (R.short ? '; in ' + R.short + ' your salary does not cover the same lifestyle.' : ', and your salary covers the lifestyle in every one.');
-    SharedVerdict.set('verdict', { tone: '', title, body: body + short });
-    return;
-  }
-  if(S.mode === 'scaled'){
-    const fs = o => o.sav * o.fx, word = SCALES[S.scale].word;
-    const others = R.valid.filter(o => !o.home).length;
-    if(!others){ SharedVerdict.set('verdict', { tone: '', title: 'No other city has a ' + word + ' to scale by.', body: 'Pick another yardstick under Scale by.' }); return; }
-    const title = 'At ' + fmtX(R.mult) + ' the local ' + word + ', your pay would go furthest in ' + esc(lo.c.city) + ', saving ' + num(fs(lo), fc) +
-      (hi.neg ? ' a month, and fall furthest short in ' + esc(hi.c.city) + ', by ' + num(-fs(hi), fc) + ' a month.'
-              : ' a month, and least far in ' + esc(hi.c.city) + ', saving ' + num(fs(hi), fc) + '.');
-    const body = 'You earn ' + fmtC(R.sal, fc) + ', ' + fmtX(R.mult) + ' the ' + word + ' in ' + esc(name) + ' (' + fmtC(R.wh.v, fc) + '). ' +
-      R.cheaper + ' of ' + others + ' cities let the same lifestyle take a smaller share of pay' +
-      (R.short ? '; in ' + R.short + ' the scaled salary does not cover it.' : ', and the scaled salary covers it in every one.') +
-      (R.nodata ? ' ' + R.nodata + ' cities have no ' + word + ' to scale by.' : '');
-    SharedVerdict.set('verdict', { tone: '', title, body: body + short });
-    return;
-  }
-  const keep = S.target === 'ratio' ? 'keep your ' + fmtP(R.r) + ' savings ratio' : 'keep saving ' + num(R.fSav, fc) + ' a month';
-  const fv = o => o.sal * o.fx;
-  const title = 'To live as you do and ' + keep + ', you need ' + num(fv(lo), fc) + ' a month in ' + esc(lo.c.city) +
-    ' and ' + num(fv(hi), fc) + ' in ' + esc(hi.c.city) + ', against ' + num(R.sal, fc) + ' in ' + esc(name) + '.';
-  const body = R.cheaper + ' of ' + others + ' cities need less than you earn now and ' + R.dearer + ' need more. ' +
-    'Hover or tap a city for its figures.';
-  SharedVerdict.set('verdict', { tone: R.fSav < 0 ? 'warn' : '', title, body: body + short });
+  if(!R.byQ[0]){ mapNote('No city can be estimated from ' + name + '. The dataset lacks an index your lifestyle needs.'); return; }
+  if(S.mode === 'scaled' && !R.valid.some(o => !o.home)){ mapNote('No other city has a ' + SCALES[S.scale].word + ' to scale by. Pick another yardstick under Scale by.'); return; }
+  mapNote(R.fSav < 0 ? 'Your living cost is more than your salary, so every figure carries that shortfall.' : '', R.fSav < 0);
 }
 
 function setMetric(i, label, value, sub, neg){
@@ -1913,6 +1885,6 @@ function init(){
 
 loadData().catch(err => {
   console.error(err);
-  SharedVerdict.set('verdict', { tone: 'warn', title: 'The cost of living data could not load.', body: 'Check your connection and reload the page.' });
+  mapNote('The cost of living data could not load. Check your connection and reload the page.', true);
 });
 })();
