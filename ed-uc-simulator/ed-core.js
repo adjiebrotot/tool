@@ -28,6 +28,9 @@
             Monday first by the calendar, that multiply the hourly shape
      ts     (Load, Generator) an uploaded hourly series, in place of prof and
             dprof: { at: 'YYYY-MM-DDTHH:00' its first hour, v: [per unit…] }
+     pbase  (Load, Generator) the built-in shape 24 edited hours in prof
+            started from, so they keep its days and its weekend: '' for none,
+            and a custom shape saved before it existed repeats every day
      init   (Generator) 1 if the unit was running before the first hour
      eff    (StorageUnit) round-trip efficiency, split evenly between
             charging and discharging
@@ -60,8 +63,8 @@
     Transformer: { s_nom: 0, x: 0, r: 0 },
     Generator:   { p_nom: 0, marginal_cost: 0, committable: 0, p_min_pu: 0, start_up_cost: 0, shut_down_cost: 0,
                    stand_by_cost: 0, min_up_time: 0, min_down_time: 0, ramp_limit_up: 1, ramp_limit_down: 1,
-                   init: 1, prof: '', grid: 0, style: '', dprof: '', ts: null },
-    Load:        { p_set: 0, prof: '', dprof: '', ts: null },
+                   init: 1, prof: '', grid: 0, style: '', dprof: '', ts: null, pbase: '' },
+    Load:        { p_set: 0, prof: '', dprof: '', ts: null, pbase: '' },
     StorageUnit: { p_nom: 0, max_hours: 1, eff: 1, soc0: 0, cyclic: 1 },
     Link:        { p_nom: 0, efficiency: 1, both: 1 }
   };
@@ -70,6 +73,8 @@
   // How each saved value is read back: [kind, min, max], ['e', options], ['p'] (a profile),
   // ['w'] (a week of daily factors) or ['t'] (an uploaded series).
   var BIG = 1e5;
+  // The built-in shapes an edited one can start from (ED.PROFILES' keys, frozen).
+  var PBASE = ['', 'sys', 'res', 'com', 'ind', 'solars', 'solar', 'solarw', 'wind'];
   var SPEC = {
     Bus:         { v_nom: ['n', 0.1, 1500], style: ['e', ['', 'node']] },
     Line:        { type: ['s'], length: ['n', 0, 5000], num_parallel: ['i', 1, 20], r: ['n', 0, BIG], x: ['n', -BIG, BIG], s_nom: ['n', 0, BIG] },
@@ -77,8 +82,8 @@
     Generator:   { p_nom: ['n', 0, BIG], marginal_cost: ['n', -1e4, 1e5], committable: ['e', [0, 1]], p_min_pu: ['n', 0, 1],
                    start_up_cost: ['n', 0, 1e8], shut_down_cost: ['n', 0, 1e8], stand_by_cost: ['n', 0, 1e7],
                    min_up_time: ['i', 0, 168], min_down_time: ['i', 0, 168], ramp_limit_up: ['n', 0.01, 1], ramp_limit_down: ['n', 0.01, 1],
-                   init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']], dprof: ['w'], ts: ['t'] },
-    Load:        { p_set: ['n', 0, BIG], prof: ['p'], dprof: ['w'], ts: ['t'] },
+                   init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE] },
+    Load:        { p_set: ['n', 0, BIG], prof: ['p'], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE] },
     StorageUnit: { p_nom: ['n', 0, BIG], max_hours: ['n', 0, 1000], eff: ['n', 0.01, 1], soc0: ['n', 0, 1], cyclic: ['e', [0, 1]] },
     Link:        { p_nom: ['n', 0, BIG], efficiency: ['n', 0.01, 1], both: ['e', [0, 1]] }
   };
@@ -118,27 +123,34 @@
   /* ── Hourly shapes ──
      24 values for one day, per unit of a load's peak or a unit's rating, and a
      factor for each day of a week. The keys are frozen; the numbers may be
-     improved. A custom shape repeats as it is every day.
+     improved. A demand shape may give a weekend day of its own (w), for
+     Saturday and Sunday in place of h: offices and shops wake later and
+     barely peak, homes are busier at midday. A custom shape repeats as it is
+     every day.
      The hour of the day is the clock's, from the horizon's start. A demand
      shape's day factors are weekdays, Monday first, so they follow the start
      date; a unit's are the weather, so they count days from the start.
-     Daily variability (dprof) takes the place of a shape's own day factors:
+     Daily variability (dprof) takes the place of a shape's day factors:
      an hour is worth its hourly value times its weekday's factor, so 80% at
      14:00 on a 50% day is 40% of the peak or the rating. An uploaded series
      (ts) gives every hour itself, by date and time, in place of both, to six places. */
   ED.PROFILES = {
     sys:   { label: 'System day', kind: 'load',
              h: [0.62, 0.58, 0.56, 0.55, 0.56, 0.60, 0.68, 0.77, 0.83, 0.86, 0.88, 0.89, 0.89, 0.88, 0.87, 0.87, 0.89, 0.94, 1.00, 0.99, 0.95, 0.87, 0.77, 0.68],
-             d: [1, 1, 1, 1, 0.98, 0.9, 0.86] },
+             w: [0.66, 0.61, 0.58, 0.56, 0.55, 0.56, 0.59, 0.64, 0.71, 0.77, 0.81, 0.83, 0.83, 0.82, 0.81, 0.81, 0.84, 0.91, 1.00, 0.99, 0.95, 0.88, 0.79, 0.71],
+             d: [0.97, 1, 1, 1, 0.97, 0.88, 0.84] },
     res:   { label: 'Residential', kind: 'load',
              h: [0.45, 0.40, 0.38, 0.37, 0.38, 0.45, 0.62, 0.78, 0.72, 0.62, 0.58, 0.56, 0.55, 0.54, 0.55, 0.60, 0.70, 0.86, 1.00, 0.98, 0.90, 0.78, 0.64, 0.52],
-             d: [1, 1, 1, 1, 1, 1.04, 1.04] },
+             w: [0.50, 0.44, 0.41, 0.39, 0.38, 0.40, 0.46, 0.57, 0.69, 0.76, 0.78, 0.77, 0.75, 0.73, 0.72, 0.74, 0.80, 0.90, 1.00, 0.98, 0.91, 0.80, 0.68, 0.56],
+             d: [0.98, 0.97, 0.97, 0.98, 1, 1.03, 1.02] },
     com:   { label: 'Commercial', kind: 'load',
              h: [0.38, 0.36, 0.35, 0.35, 0.36, 0.40, 0.52, 0.72, 0.88, 0.96, 1.00, 1.00, 0.98, 0.99, 0.98, 0.95, 0.88, 0.74, 0.60, 0.52, 0.47, 0.44, 0.41, 0.39],
-             d: [1, 1, 1, 1, 0.97, 0.6, 0.5] },
+             w: [0.42, 0.40, 0.39, 0.39, 0.39, 0.40, 0.43, 0.49, 0.57, 0.65, 0.70, 0.72, 0.72, 0.71, 0.69, 0.66, 0.62, 0.58, 0.54, 0.51, 0.48, 0.46, 0.44, 0.43],
+             d: [0.98, 1, 1, 1, 0.96, 0.85, 0.75] },
     ind:   { label: 'Industrial', kind: 'load',
              h: [0.78, 0.77, 0.76, 0.76, 0.77, 0.80, 0.88, 0.96, 1.00, 1.00, 0.99, 0.97, 0.95, 0.98, 1.00, 0.99, 0.96, 0.90, 0.86, 0.84, 0.82, 0.81, 0.80, 0.79],
-             d: [1, 1, 1, 1, 1, 0.85, 0.8] },
+             w: [0.79, 0.78, 0.77, 0.77, 0.77, 0.78, 0.81, 0.85, 0.88, 0.89, 0.89, 0.88, 0.87, 0.87, 0.87, 0.87, 0.86, 0.84, 0.83, 0.82, 0.81, 0.80, 0.80, 0.79],
+             d: [0.98, 1, 1, 1, 0.98, 0.88, 0.82] },
     // Solar through the seasons at a mid latitude: a summer day is long and high,
     // a winter one short and low, and cloudier more often.
     solars: { label: 'Solar, summer', kind: 'gen', noun: 'solar',
@@ -186,6 +198,9 @@
 
   ED.DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   function builtIn(e){ return typeof e.prof === 'string' && own.call(ED.PROFILES, e.prof) ? ED.PROFILES[e.prof] : null; }
+  // The built-in shape a profile follows the days of: its own, or the one its edited hours started from.
+  function baseOf(e){ return builtIn(e) || (Array.isArray(e.prof) && typeof e.pbase === 'string' && own.call(ED.PROFILES, e.pbase) ? ED.PROFILES[e.pbase] : null); }
+  ED.baseOf = baseOf;
   function fin(v, cap){ if(!isFinite(v) || v < 0) v = 0; return cap ? Math.min(cap, v) : v; }
   ED.hasTs = function(e){ return !!(e.ts && Array.isArray(e.ts.v) && e.ts.v.length); };
   // Anything but flat and always available.
@@ -201,21 +216,23 @@
       for(t = 0; t < H; t++){ var i = off + t; out[t] = fin(i >= 0 && i < n ? +vs[i] : 0, cap); }
       return out;
     }
-    var p = builtIn(e);
+    var p = baseOf(e);
     var hv = Array.isArray(e.prof) ? e.prof : p ? p.h : null;
     var dv = Array.isArray(e.dprof) ? e.dprof : p ? p.d : null;
     var byWeekday = Array.isArray(e.dprof) || (p && p.kind === 'load');
+    var wv = p && p.w ? p.w : null;
     for(t = 0; t < H; t++){
-      var abs = c.h0 + t, h = abs % 24, day = (abs - h) / 24;
-      v = hv ? +hv[h] : 1;
-      if(dv) v = v * dv[(byWeekday ? c.wd0 + day : day) % 7];
+      var abs = c.h0 + t, h = abs % 24, day = (abs - h) / 24, wd = (c.wd0 + day) % 7;
+      // A weekend hour is the shape's weekend day, moved by as much as its weekday hour was edited.
+      v = wv && wd >= 5 ? Math.max(0, +wv[h] + (+hv[h] - p.h[h])) : hv ? +hv[h] : 1;
+      if(dv) v = v * dv[byWeekday ? wd : day % 7];
       out[t] = fin(v, cap);
     }
     return out;
   };
-  // The 24 hourly values daily variability multiplies.
+  // The 24 hourly values the bars show and daily variability multiplies: a weekday.
   ED.hourShape = function(e){
-    var p = builtIn(e), hv = Array.isArray(e.prof) ? e.prof : p ? p.h : null, out = [];
+    var p = baseOf(e), hv = Array.isArray(e.prof) ? e.prof : p ? p.h : null, out = [];
     for(var h = 0; h < 24; h++) out.push(fin(hv ? +hv[h] : 1));
     return out;
   };
@@ -224,7 +241,7 @@
   // days of the horizon on the weekdays they fall on from start, or all 1.
   ED.weekOf = function(e, start){
     if(Array.isArray(e.dprof)) return e.dprof.slice();
-    var p = builtIn(e);
+    var p = baseOf(e);
     if(!p) return [1, 1, 1, 1, 1, 1, 1];
     if(p.kind === 'load') return p.d.slice();
     var wd0 = ED.cal(start).wd0 || 0, out = [];
@@ -245,8 +262,8 @@
     var abs = c.h0 + t, h = abs % 24, day = Math.floor(abs / 24), v;
     if(Array.isArray(prof)) v = +prof[h];
     else if(prof && own.call(ED.PROFILES, prof)){
-      var p = ED.PROFILES[prof];
-      v = p.h[h] * p.d[(p.kind === 'load' ? c.wd0 + day : day) % 7];
+      var p = ED.PROFILES[prof], wd = (c.wd0 + day) % 7;
+      v = (p.w && wd >= 5 ? p.w : p.h)[h] * p.d[p.kind === 'load' ? wd : day % 7];
     }
     else v = 1;
     if(!isFinite(v) || v < 0) v = 0;
