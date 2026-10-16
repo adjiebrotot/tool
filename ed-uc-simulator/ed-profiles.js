@@ -11,7 +11,10 @@
    - a file that misses any hour of the horizon is turned away, naming it;
    - every other column is a load or a generator, by its name as the
      template writes it ("Load B [p.u.]"), per unit of the peak demand or
-     the rating, or in MW or % when its header says so.
+     the rating, or in MW or % when its header says so;
+   - a column with values gives its element every hour of the horizon (it
+     becomes Custom); a blank cell takes that hour from the element's shape,
+     and a column left out or left empty leaves the element as it is.
 
    What it gives back is a list of changes to make. Nothing is changed when
    anything is wrong, so a file is applied whole or not at all. */
@@ -308,11 +311,14 @@
       if(seen[c.e.id]){ out.errors.push('Two columns are for ' + ED.nameOf(c.e) + ': “' + seen[c.e.id] + '” and “' + c.hd.text + '”. Keep one.'); return; }
       seen[c.e.id] = c.hd.text || ED.nameOf(c.e);
       if(!c.any){ out.notes.push(ED.nameOf(c.e) + ' kept its profile: its column is empty.'); return; }
-      var e = c.e, v = new Array(H), neg = 0, over = 0, peak = 0;
+      var e = c.e, v = new Array(H), neg = 0, over = 0, peak = 0, gaps = 0;
       for(var t3 = 0; t3 < H; t3++){
-        var raw = cellAt(rowAt[t3], c.j), x = cellNum(raw, dc);
+        var raw = cellAt(rowAt[t3], c.j);
+        // A blank cell is no value, not 0: that hour keeps the element's shape.
+        if(blank(raw)){ v[t3] = NaN; gaps++; continue; }
+        var x = cellNum(raw, dc);
         if(isNaN(x)){
-          out.errors.push(ED.nameOf(e) + ': ' + (blank(raw) ? 'there is no value' : '“' + String(raw).slice(0, 30) + '” is not a number') + ' at ' + ED.msLabel(start + t3 * HOUR) + ' (row ' + lineNo[rowAt[t3]] + ').');
+          out.errors.push(ED.nameOf(e) + ': “' + String(raw).slice(0, 30) + '” is not a number at ' + ED.msLabel(start + t3 * HOUR) + ' (row ' + lineNo[rowAt[t3]] + ').');
           return;
         }
         if(c.hd.unit === 'pct') x = x / 100;
@@ -331,17 +337,18 @@
           scale = e.p_nom;
         }
       }
-      for(var t4 = 0; t4 < H; t4++){ v[t4] = r6(Math.min(100, v[t4] / scale)); if(e.c === 'Generator' && v[t4] > 1) over++; }
-      // A column that gives what the profile gives now, to the template's four
-      // places, leaves it as it is: an untouched template changes nothing.
-      if(ch.p_set === undefined || ch.p_set === e.p_set){
-        var now = ED.series(e, H, opts.start, e.c === 'Generator' ? 1 : 0), same = true;
-        for(var t5 = 0; t5 < H && same; t5++) if(Math.abs((e.c === 'Generator' ? Math.min(1, v[t5]) : v[t5]) - now[t5]) > 6e-5) same = false;
-        if(same){ out.notes.push(ED.nameOf(e) + ' is as it was: its column matches its profile now.'); return; }
+      // The blank hours: its shape (Flat, Always available, a built-in or its own bars),
+      // not an earlier file, in the MW it gave before a new peak demand.
+      var shape = gaps ? ED.series(Object.assign({}, e, { ts: null }), H, opts.start, e.c === 'Generator' ? 1 : 0) : null;
+      var keepMw = ch.p_set !== undefined && e.p_set > 0 ? e.p_set / ch.p_set : 1;
+      for(var t4 = 0; t4 < H; t4++){
+        v[t4] = isNaN(v[t4]) ? r6(shape[t4] * keepMw) : r6(Math.min(100, v[t4] / scale));
+        if(e.c === 'Generator' && v[t4] > 1) over++;
       }
       ch.ts = { at: ED.isoOf(start), v: v };
       out.changes.push(ch);
       out.notes.push(ED.nameOf(e) + ' takes its hours from the file, ' + UNIT_WORD[c.hd.unit] + msg + '.' +
+        (gaps ? ' ' + gaps + ' blank hour' + (gaps > 1 ? 's follow' : ' follows') + ' its shape.' : '') +
         (neg ? ' ' + neg + ' negative value' + (neg > 1 ? 's were' : ' was') + ' read as 0.' : '') +
         (over ? ' ' + over + ' hour' + (over > 1 ? 's' : '') + ' above its rating ' + (over > 1 ? 'are' : 'is') + ' held at it.' : ''));
     });
@@ -372,7 +379,7 @@
   };
   ED.TEMPLATE_NOTES = [
     'One row an hour, from the first hour of the horizon. Keep the date and time column: it is how each row finds its hour.',
-    'One column per load and generator, headed with its name. Leave out any you do not want to change.',
+    'One column per load and generator, headed with its name. Leave out, or leave empty, any you do not want to change. A blank cell keeps that hour as its shape gives it; 0 is a value.',
     'Values are per unit: a load’s share of its peak demand, a generator’s share of its rating that is available (1 is all of it).',
     'To give a column in MW instead, end its header with [MW]; in percent, with [%].',
     'Rows outside the horizon are left out, so a longer file is fine. A file that misses an hour of the horizon is turned away.'

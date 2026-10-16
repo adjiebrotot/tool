@@ -1664,7 +1664,6 @@
     $(id).addEventListener('change', function(){ if(id === 'colourBy') syncDispatchForm(); render(); });
   });
   $('labelMatrix').addEventListener('change', function(){ render(); });
-  $('tplXlsxBtn').addEventListener('click', function(){ downloadTemplate('xlsx'); });
   $('tplCsvBtn').addEventListener('click', function(){ downloadTemplate('csv'); });
   $('profAllBtn').addEventListener('click', function(){ openProfileFile(null); });
 
