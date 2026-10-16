@@ -7,7 +7,8 @@
                 same price all the time.
    Commitment   which committable unit runs in which hour (a relaxed run's
                 fractions shade the hour), and where each one starts.
-   Storage      each store's energy, against the price at its bus.
+   Storage      a store's energy, against the price at its bus (one store at a
+                time, picked in the card's head, when there are several).
 
    Every chart marks the hour on the diagram and moves it on a click. The
    exports follow the site's: a 3x PNG and an SVG around it, each with its
@@ -329,18 +330,43 @@
     return ch;
   }
 
+  /* With more than one store the chart shows one at a time, the one picked
+     in its head, against the price at that store's own bus. */
+  var storePick = null;  // the picked store's id; the first store when unset or gone
+  function storePicker(stores, shown){
+    var wrap = $('storePickWrap'), sel = $('storePick');
+    if(!wrap || !sel) return;
+    wrap.hidden = stores.length < 2;
+    sel.innerHTML = '';
+    stores.forEach(function(e){
+      var o = document.createElement('option');
+      o.value = e.id; o.textContent = ED.nameOf(e);
+      sel.appendChild(o);
+    });
+    if(shown) sel.value = shown.id;
+    if(!sel.__wired){
+      sel.__wired = true;
+      sel.addEventListener('change', function(){
+        storePick = sel.value;
+        if(ctx && ctx.res) storeChart(ctx.res, ctx.model, ctx.display);
+      });
+    }
+  }
   function storeChart(res, model, d){
     var H = res.T, F = ED.fmt, cur = d.cur;
     var labels = hourLabels(H), ds = [];
-    var stores = model.el.filter(function(e){ return e.c === 'StorageUnit' && res.dev[e.id]; });
-    var pts = H <= 1 ? 4 : 0;
+    var all = model.el.filter(function(e){ return e.c === 'StorageUnit' && res.dev[e.id]; });
     var nGen = units(model, res).length;
-    stores.forEach(function(e, j){
-      var c = seriesColour(nGen + j);
+    var first = all.filter(function(e){ return String(e.id) === storePick; })[0] || all[0];
+    var stores = first ? [first] : [];
+    storePicker(all, first);
+    var pts = H <= 1 ? 4 : 0;
+    stores.forEach(function(e){
+      var c = seriesColour(nGen + all.indexOf(e));
       ds.push({ label: ED.nameOf(e) + ' energy', data: res.dev[e.id].soc.slice(), borderColor: c, backgroundColor: alpha(c, 0.25),
                 borderWidth: 2.2, pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', yAxisID: 'y' });
     });
-    var first = stores[0], bus = first ? res.bus[first.bus] : null;
+    var bus = first ? res.bus[first.bus] : null;
     if(bus){
       var pc = cssVar('--muted');
       ds.push({ label: 'Price at ' + ED.nameOf(ED.byId(model)[first.bus]), data: bus.price.map(function(v){ return isFinite(v) ? v : null; }), borderColor: pc,
@@ -369,7 +395,7 @@
                          ticks: { color: muted, font: { size: 11 }, callback: function(v){ return tickPrice(v, cur); } }, grid: { drawOnChartArea: false } } };
         } })
     }, 'storeLegend');
-    $('storeSub').textContent = 'Energy held at the end of each hour, against the price where ' + (stores.length > 1 ? 'the first store' : 'it') + ' sits: it charges when power is cheap and discharges when it is dear.';
+    $('storeSub').textContent = 'Energy held at the end of each hour, against the price at the bus where ' + (all.length > 1 ? 'the picked store' : 'it') + ' sits: it charges when power is cheap and discharges when it is dear.';
     return ch;
   }
 
