@@ -41,7 +41,7 @@ window.__TOUR = {
       onEnter: function () { edTab('element'); },
       title: '③ Element',
       body: '<ul><li>A unit’s rating, <strong>marginal cost</strong>, commitment and ramp limits</li>' +
-            '<li>A load’s daily profile: pick one or drag the bars</li></ul>'
+            '<li>A load’s profile: pick one, drag the bars, vary it by weekday or open a file</li></ul>'
     },
     {
       target: ['.ctrl-tabs', '#tab-dispatch'],

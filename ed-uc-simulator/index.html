@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "ED/UC Simulator",
   "url": "https://tool.adjiebrotots.com/ed-uc-simulator/",
-  "description": "Economic Dispatch & Unit Commitment (ED/UC) in your browser: draw a single-line diagram and solve it hour by hour, over one hour to 30 days from any start date. Start-up and shut-down costs, minimum up and down times, ramp limits, solar and wind profiles, storage, line limits and nodal prices. The engine is PSA.js, a JavaScript port of PyPSA, with the HiGHS solver.",
+  "description": "Economic Dispatch & Unit Commitment (ED/UC) in your browser: draw a single-line diagram and solve it hour by hour, over one hour to 30 days from any start date. Start-up and shut-down costs, minimum up and down times, ramp limits, solar and wind profiles with day-of-week variability or hourly series from Excel or CSV, storage, line limits and nodal prices. The engine is PSA.js, a JavaScript port of PyPSA, with the HiGHS solver.",
   "applicationCategory": "EngineeringApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -47,6 +47,8 @@
     "Unit commitment as a mixed-integer problem or its linear relaxation, or plain economic dispatch",
     "Start-up, shut-down and stand-by costs, minimum stable output, minimum up and down times and ramp limits",
     "Hourly load, solar (summer, spring or autumn, winter) and wind profiles over 1 hour to 30 days from any start date, or your own",
+    "Daily variability: Monday to Sunday factors that multiply any hourly profile",
+    "Hourly load and generation profiles from Excel or CSV, matched to the horizon by date and time, with a template to fill in",
     "Line, transformer and link limits with nodal prices (LMP) from a DC optimal power flow",
     "Batteries and other storage, charged and discharged at the best hours",
     "Dispatch, price, commitment and storage charts, with every hour playable on the diagram",
@@ -176,6 +178,16 @@
         <div class="field-label"><span class="tip-wrap">First hour <i class="tip-icon" data-tip="When the horizon starts. Built-in demand profiles follow the weekday, lower at the weekend.">?</i></span></div>
         <input class="txt-input" id="edStart" type="datetime-local" min="1900-01-01T00:00" max="2200-12-31T23:00" step="3600" value="2026-01-01T00:00"/>
       </div>
+    </div>
+    <div class="field-group" id="profFileGroup">
+      <div class="group-title"><span class="tip-wrap">Profiles from a file <i class="tip-icon" data-tip="A column of dates and times places each row on its hour. Rows outside the horizon are left out; a file that misses an hour of it is turned away.">?</i></span></div>
+      <p class="note">The template has a row for each hour of the horizon from the first hour, and a column for each load and generator, filled with its profile now, per unit.</p>
+      <div class="prof-file">
+        <button type="button" class="btn-secondary btn-sm" id="tplXlsxBtn" title="Download the template as an Excel workbook">⬇ Template (.xlsx)</button>
+        <button type="button" class="btn-secondary btn-sm" id="tplCsvBtn" title="Download the template as CSV">⬇ Template (.csv)</button>
+        <button type="button" class="btn-secondary btn-sm" data-icon="open" id="profAllBtn" title="Open a file of hourly profiles, Excel or CSV">Open file</button>
+      </div>
+      <div class="up-msg" id="profAllMsg" role="status" aria-live="polite" hidden></div>
     </div>
     <div class="field-group">
       <div class="group-title">Network</div>

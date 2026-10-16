@@ -62,6 +62,34 @@ weekday factor (Monday first) and a unit its day of the horizon; hours are label
 dd/mm/yyyy HH:00 from the start; a horizon stops at 30 days and a start is a whole hour of a real
 date; and a start on a Monday at 00:00 gives what the tool gave before it had a start date.
 
+**A7. Daily variability and profiles from a file,** against their definition and JavaScript's own
+calendar: every profile (flat, custom and each built-in, for loads and units), with and without
+daily variability, from five starts over 30 days, is its hourly value × its weekday's factor (a
+unit never above 1), and one from a file gives each hour the value its date and time has in the
+file. 80% at 14:00 on a 50% Thursday is 40%. A profile with neither computes what it did before,
+bit for bit; turning daily variability on starts from the profile's own days, so no hour moves;
+both survive saving and reading back, a network saved before them writes neither, and broken
+values never throw. A file that stops short of the horizon is an error naming both spans. Solved:
+the 80% × 50% example dispatches 80 MW at that hour; every Quick Start with daily variability on
+from its own days costs the same to the cent, and with its profiles given as a file the same to
+the file's rounding; 15 seeded networks with daily variability and files pass the A2 replay, with
+the demand and availability the solver saw equal to the definition's.
+
+**A8. Reading a file,** CSV or Excel: the template has a row per hour of the horizon from the first
+hour and a column per load and generator; opened as it is, it changes nothing. A year of shuffled
+rows finds the horizon's hours by date and time and leaves the rest out. A file is turned away,
+saying why, when it is short at the start, the end or both, misses an hour, repeats one (a clock
+change), is half-hourly, has no dates, or holds a word, a blank or a date that is not one; one bad
+column turns the whole file away. Dates written ISO, day first, month first with AM and PM, with a
+month name or a two-digit year land on their hours; commas, semicolons with decimal commas and
+tabs, % and MW headers, negatives and values above a rating are read as they say. A load in MW
+gets the file's highest hour as its peak. The Excel template holds real date cells read back from
+the serial number, and 1904-system and .xls workbooks are read too.
+
+**A9. Fast:** 302,400 profile values (420 loads and units over 30 days) in a few milliseconds, the
+checks over them in tens, a year of hours for 40 columns as CSV in tens of milliseconds and as a
+10 MB Excel workbook in about a second.
+
 **B. The real page in headless Chromium,** served over http because the engine is an ES module
 in a module worker:
 - the first solve runs in the worker;
@@ -77,6 +105,16 @@ in a module worker:
   on the same horizon from a Monday, so it solves as it did;
 - empty, null, non-JSON, future-version and hostile saved state never throws, injects markup
   or stops the page solving.
+- Daily variability through the inspector: the toggle draws Monday to Sunday bars from the
+  shape's own days, says and draws hourly × daily, and solves to the same cost; dragging
+  Thursday's bar to half halves Thursday's demand in the run;
+- the Excel and CSV templates from the Dispatch tab hold the horizon's hours from the first hour
+  and the same numbers; opened as downloaded they change nothing; an edited one is applied, shown
+  in the inspector and used by the run; a horizon past the file's last hour stops the run in the
+  checks and beside the profile; a short file is turned away and changes nothing;
+- From a file in the inspector opens the file chooser, and a column in MW sets the peak demand;
+  choosing a shape again lets the file go; undo brings it back, and a reload keeps it all;
+- a year of hours opened on the page is applied in well under a second.
 
 The engine's own build (`_build/build-engine.mjs`) runs a separate check:
 - PSA.js's own unit commitment and dispatch parity scenarios (`opt_uc`, `opt_uc_more`,

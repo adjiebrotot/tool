@@ -26,7 +26,8 @@
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join, dirname, extname, normalize } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -422,6 +423,349 @@ console.log('\n── A6 the calendar ──');
   check('A6 a Monday start at 00:00 computes what the tool computed before it had a start date', JSON.stringify(ED.loadSeries(e, 168, '2025-12-29T00:00')) === JSON.stringify(ED.loadSeries(e, 168)), 'com, a week');
 }
 
+/* ── A7: daily variability and profiles from a file ── */
+console.log('\n── A7 profiles: hourly × daily, and hours from a file ──');
+await import(pathToFileURL(join(TOOL, 'ed-profiles.js')).href);
+// SheetJS, the library the page loads for Excel files, cached beside the chart libraries.
+const XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const LIBDIR = join(ROOT, '_ref', '.libcache'), XLSX_FILE = join(LIBDIR, 'xlsx.full.min.js');
+if (!existsSync(XLSX_FILE)) { mkdirSync(LIBDIR, { recursive: true }); writeFileSync(XLSX_FILE, await (await fetch(XLSX_URL)).text()); }
+const XLSX = createRequire(import.meta.url)(XLSX_FILE);
+const HOUR = 3600e3;
+/* What a profile is worth in an hour, from its definition and JavaScript's own
+   calendar: a file's value by its date and time; else the hourly value (its
+   own 24, a built-in's, or 1) times the day's factor (daily variability by
+   weekday, a built-in demand shape by weekday, a built-in unit by day of the
+   horizon, or 1); a unit never above 1. */
+function want(e, t, start) {
+  const ms = Date.parse(start + ':00Z') + t * HOUR, at = new Date(ms);
+  let v;
+  if (e.ts && e.ts.v && e.ts.v.length) {
+    const i = (ms - Date.parse(e.ts.at + ':00Z')) / HOUR;
+    v = i >= 0 && i < e.ts.v.length ? e.ts.v[i] : 0;
+  } else {
+    const P = typeof e.prof === 'string' && e.prof ? ED.PROFILES[e.prof] : null, h = at.getUTCHours();
+    const wd = (at.getUTCDay() + 6) % 7, dayN = Math.floor((ms - Date.parse(start.slice(0, 10) + 'T00:00:00Z')) / 864e5);
+    const hv = Array.isArray(e.prof) ? e.prof[h] : P ? P.h[h] : 1;
+    const dv = Array.isArray(e.dprof) ? e.dprof[wd] : P ? P.d[P.kind === 'load' ? wd : dayN % 7] : 1;
+    v = hv * dv;
+  }
+  return e.c === 'Generator' ? Math.min(1, v) : v;
+}
+const STARTS = ['2026-01-01T00:00', '2026-01-03T06:00', '2025-12-29T00:00', '2028-02-28T21:00', '2026-10-04T13:00'];
+{
+  // Every way a profile can be set, from every start, over 30 days, against the definition.
+  const r = rng(77), rnd = n => Array.from({ length: n }, () => Math.round(r() * 120) / 100);
+  const kinds = [];
+  for (const c of ['Load', 'Generator']) {
+    const shapes = ['', 'custom', ...Object.keys(ED.PROFILES).filter(k => ED.PROFILES[k].kind === (c === 'Load' ? 'load' : 'gen'))];
+    for (const sh of shapes) for (const daily of [false, true]) kinds.push({ c, prof: sh === 'custom' ? rnd(24) : sh, dprof: daily ? rnd(7) : '' });
+  }
+  let worst = 0, n = 0, worstFile = 0;
+  for (const start of STARTS) for (const k of kinds) {
+    const e = ED.load({ v: 1, el: [{ c: 'Bus', id: 1 }, { ...k, id: 2, bus: 1, p_set: 1, p_nom: 1 }] }).el[1];
+    const got = ED.series(e, 720, start, e.c === 'Generator' ? 1 : 0);
+    for (let t = 0; t < 720; t++) { worst = Math.max(worst, Math.abs(got[t] - want(e, t, start))); n++; }
+    // The same hours from a file that starts earlier: read by date and time.
+    const f = { ...e, ts: { at: ED.isoOf(Date.parse(start + ':00Z') - 30 * HOUR), v: rnd(720) } };
+    const g = ED.series(f, 690, start, f.c === 'Generator' ? 1 : 0);
+    for (let t = 0; t < 690; t++) worstFile = Math.max(worstFile, Math.abs(g[t] - want(f, t, start)));
+  }
+  check('A7 every profile, built-in, custom or flat, with and without daily variability, is hourly × daily by the calendar', worst === 0, n + ' hours from ' + STARTS.length + ' starts, worst ' + worst);
+  check('A7 a profile from a file gives each hour the value its date and time has in the file', worstFile === 0, 'worst ' + worstFile);
+  // The reader's own example: 80% at 14:00 on a 50% day is 40%.
+  const ex = ED.load({ v: 1, el: [{ c: 'Bus', id: 1 }, { c: 'Generator', id: 2, bus: 1, p_nom: 200, prof: Array(24).fill(1).map((x, h) => h === 14 ? 0.8 : 1), dprof: [1, 1, 1, 0.5, 1, 1, 1] }] }).el[1];
+  const thu14 = ED.availSeries(ex, 24, '2026-01-01T00:00')[14];  // 01/01/2026 is a Thursday
+  check('A7 80% of the rating at 14:00 on a 50% Thursday is 40% (80 MW of 200)', Math.abs(thu14 - 0.4) < 1e-12 && Math.abs(thu14 * ex.p_nom - 80) < 1e-9, thu14 * ex.p_nom + ' MW');
+  // Old networks: no daily variability, no file, exactly as before (the legacy formula, bit for bit).
+  let legacy = 0;
+  for (const start of STARTS) for (const k of kinds.filter(k => !k.dprof)) {
+    const e = { c: k.c, prof: k.prof, dprof: '', ts: null, p_set: 1 };
+    const got = k.c === 'Load' ? ED.loadSeries(e, 200, start) : ED.availSeries(e, 200, start);
+    for (let t = 0; t < 200; t++) if (got[t] !== (k.c === 'Load' ? 1 * ED.shapeAt(k.prof, t, 0, start) : ED.shapeAt(k.prof, t, 1, start))) legacy++;
+  }
+  check('A7 a profile with no daily variability or file computes what it did before, bit for bit', legacy === 0, legacy + ' hours differ');
+  // Turning daily variability on starts from the profile's own days: nothing moves.
+  let jump = 0;
+  for (const start of STARTS) for (const k of kinds.filter(k => !k.dprof)) {
+    const e = { c: k.c, prof: k.prof, dprof: '', ts: null };
+    const before = ED.series(e, 720, start), on = { ...e, dprof: ED.weekOf(e, start) }, after = ED.series(on, 720, start);
+    for (let t = 0; t < 720; t++) jump = Math.max(jump, Math.abs(after[t] - before[t]));
+  }
+  check('A7 turning daily variability on keeps every hour where it was, for every shape and start, over 30 days', jump === 0, 'worst ' + jump);
+}
+{
+  // Saved state: the new keys survive a round trip, old state takes the old defaults, junk never throws.
+  const m = ED.load({ v: 1, el: [{ c: 'Bus', id: 1 }, { c: 'Load', id: 2, bus: 1, p_set: 10, prof: 'res', dprof: [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4] },
+    { c: 'Generator', id: 3, bus: 1, p_nom: 10, ts: { at: '2026-01-01T00:00', v: [0.1, 0.2, 0.3] } }] });
+  const back = ED.load(JSON.parse(JSON.stringify(ED.compact(m))));
+  check('A7 daily variability and a file’s hours survive saving and reading back', JSON.stringify(ED.compact(back)) === JSON.stringify(ED.compact(m)) &&
+    back.el[1].dprof[6] === 0.4 && back.el[2].ts.v[2] === 0.3 && back.el[2].ts.at === '2026-01-01T00:00');
+  const old = ED.compact(ED.load(ED.PRESETS.areas.model));
+  check('A7 a network saved before them writes neither key and reads them as off', !JSON.stringify(old).includes('dprof') && !JSON.stringify(old).includes('"ts"') &&
+    ED.load(old).el.filter(e => e.c === 'Load' || e.c === 'Generator').every(e => e.dprof === '' && e.ts === null));
+  const junk = [{ dprof: [1, 2] }, { dprof: 'x' }, { dprof: [1, 1, 1, 1, 1, 1, 'a'] }, { dprof: [-1, 9, 1, 1, 1, 1, 1] }, { ts: 'x' }, { ts: { at: 'soon', v: [1] } },
+    { ts: { at: '2026-02-30T00:00', v: [1] } }, { ts: { at: '2026-01-01T00:00', v: [] } }, { ts: { at: '2026-01-01T00:00', v: ['a', -5, 1e9, null] } },
+    { ts: { at: '2026-01-01T00:00', v: new Array(5000).fill(0.5) } }, { ts: [1, 2, 3] }, { ts: { at: '2026-01-01T05:30', v: [1] } }];
+  let threw = 0, wrong = [];
+  for (const j of junk) {
+    try {
+      const e = ED.load({ v: 1, el: [{ c: 'Bus', id: 1 }, { c: 'Generator', id: 2, bus: 1, p_nom: 5, ...j }] }).el[1];
+      const okD = e.dprof === '' || (Array.isArray(e.dprof) && e.dprof.length === 7 && e.dprof.every(x => x >= 0 && x <= 2));
+      const okT = e.ts === null || (typeof e.ts.at === 'string' && /T\d\d:00$/.test(e.ts.at) && e.ts.v.length >= 1 && e.ts.v.length <= ED.MAX_HOURS && e.ts.v.every(x => x >= 0 && x <= 100));
+      ED.series(e, 48, '2026-01-01T00:00', 1); ED.validate({ el: [{ c: 'Bus', id: 1, at: [0, 0, 8, 0] }, e] }, { hours: 48 });
+      if (!okD || !okT) wrong.push(JSON.stringify(j).slice(0, 40));
+    } catch (err) { threw++; wrong.push(err.message); }
+  }
+  check('A7 broken daily factors or file hours in saved state never throw, and read as something valid', !threw && !wrong.length, wrong.slice(0, 3).join(' | '));
+  // A file that stops short of the horizon stops the run, naming the element and both spans.
+  const v = ED.validate(m, { hours: 48, start: '2026-01-01T00:00' });
+  const err = v.errors.find(x => x.id === 3);
+  check('A7 a file that does not cover the horizon is an error that names its span and the horizon’s', !!err && /01\/01\/2026 00:00 to 01\/01\/2026 02:00/.test(err.msg) && /02\/01\/2026 23:00/.test(err.msg), err && err.msg);
+}
+
+/* ── A8: reading a file of profiles ── */
+console.log('\n── A8 profiles from a file: matched by date and time ──');
+const csvOf = rows => rows.map(r => r.map(c => /[,"\n]/.test(String(c)) ? '"' + String(c).replace(/"/g, '""') + '"' : c).join(',')).join('\n');
+const isoAt = ms => new Date(ms).toISOString().slice(0, 16).replace('T', ' ');
+function solarNet() { return ED.load(ED.PRESETS.solar.model); }
+const byNm = (m, n) => m.el.find(e => ED.nameOf(e) === n);
+{
+  const m = solarNet(), H = 72, start = '2026-03-06T00:00', s0 = Date.parse(start + ':00Z');
+  const tpl = ED.profileTemplate(m, H, start);
+  const csv = ED.templateCsv(tpl);
+  const lines = csv.trim().split('\r\n');
+  check('A8 the template has a row for each hour of the horizon from the first hour, and a column per load and generator',
+    lines.length === H + 1 && lines[1].startsWith('2026-03-06 00:00,') && lines[H].startsWith('2026-03-08 23:00,') &&
+    lines[0] === 'Date and time,Solar farm [p.u.],Gas turbine [p.u.],Peaker [p.u.],Homes [p.u.],Shops and offices [p.u.]', lines[0]);
+  const same = ED.readProfiles(ED.csvRows(csv), m, { H, start });
+  check('A8 the template opened as it is changes nothing', !same.errors.length && !same.changes.length && same.notes.length === 5, same.errors.join(' ') || same.notes[0]);
+  // Homes halved on the Saturday; rows shuffled, a year of hours around them.
+  const homes = byNm(m, 'Homes'), want0 = ED.series(homes, H, start);
+  const rows = [['Timestamp', 'Homes [p.u.]', 'Something else']];
+  for (let t = -24 * 40; t < H + 24 * 300; t++) {
+    const ms = s0 + t * HOUR, inH = t >= 0 && t < H;
+    rows.push([isoAt(ms), inH ? (t >= 24 && t < 48 ? want0[t] * 0.5 : want0[t]).toFixed(5) : (t % 7 ? '0.5' : ''), 'x']);
+  }
+  const shuffled = [rows[0], ...rows.slice(1).sort(() => rng(5)() - 0.5)];
+  for (let i = shuffled.length - 1; i > 1; i--) { const j = 1 + Math.floor(rng(i)() * i); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+  const out = ED.readProfiles(ED.csvRows(csvOf(shuffled)), m, { H, start });
+  const ch = out.changes[0];
+  let worst = 0;
+  if (ch) for (let t = 0; t < H; t++) worst = Math.max(worst, Math.abs(ch.ts.v[t] - +(t >= 24 && t < 48 ? want0[t] * 0.5 : want0[t]).toFixed(5)));
+  check('A8 a year of shuffled rows: the horizon’s hours are found by date and time, the rest left out, unknown columns named',
+    !out.errors.length && out.changes.length === 1 && ch.id === homes.id && ch.ts.at === start && ch.ts.v.length === H && worst < 1e-9 &&
+    out.used.outside === rows.length - 1 - H && out.notes.some(n => /Something else/.test(n)), out.errors.join(' ') || ('worst ' + worst + ', ' + out.used.outside + ' outside'));
+  // Too little: short at the start, short at the end, a missing hour, a repeated hour, half-hourly, no dates.
+  const mk = (fn, head = ['Date and time', 'Homes']) => { const r = [head]; fn(r); return ED.csvRows(csvOf(r)); };
+  const span = (a, b) => r => { for (let t = a; t < b; t++) r.push([isoAt(s0 + t * HOUR), '0.5']); };
+  const cases = {
+    'short at the start': [mk(span(3, H + 10)), /3 hours short at the start/],
+    'short at the end': [mk(span(-5, H - 1)), /1 hour short at the end/],
+    'short at both ends': [mk(span(2, H - 2)), /2 hours short at the start and 2 hours short at the end/],
+    'a missing hour': [mk(r => { for (let t = 0; t < H; t++) if (t !== 30) r.push([isoAt(s0 + t * HOUR), '0.5']); }), /no row for 07\/03\/2026 06:00/],
+    'a repeated hour (a clock change)': [mk(r => { span(0, H)(r); r.push([isoAt(s0 + 5 * HOUR), '0.4']); }), /both 06\/03\/2026 05:00/],
+    'half-hourly rows': [mk(r => { for (let t = 0; t < 2 * H; t++) r.push([isoAt(s0 + t * HOUR / 2), '0.5']); }), /30 minutes apart/],
+    'no dates': [mk(r => { for (let t = 0; t < H; t++) r.push([String(t), '0.5']); }, ['Hour', 'Homes']), /No column of dates and times/],
+    'a word among the values': [mk(r => { span(0, H)(r); r[10][1] = 'n/a'; }), /“n\/a” is not a number at 06\/03\/2026 09:00 \(row 11\)/],
+    'a blank among the values': [mk(r => { span(0, H)(r); r[12][1] = ''; }), /there is no value at 06\/03\/2026 11:00 \(row 13\)/],
+    'a date that is not one': [mk(r => { span(0, H)(r); r[4][0] = '2026-02-30 03:00'; }), /not a date and time/],
+    'no column for anything here': [mk(span(0, H), ['Date', 'Nobody']), /No column is named after a load or a generator/]
+  };
+  for (const [name, [table, re]] of Object.entries(cases)) {
+    const o = ED.readProfiles(table, m, { H, start });
+    check(`A8 turned away, saying why: ${name}`, o.errors.length > 0 && !o.changes.length && re.test(o.errors.join(' ')), o.errors.join(' ').slice(0, 160));
+  }
+  // One bad column stops the whole file: nothing half applied.
+  const two = [['Date and time', 'Homes', 'Solar farm']];
+  for (let t = 0; t < H; t++) two.push([isoAt(s0 + t * HOUR), '0.5', t === 9 ? 'oops' : '0.3']);
+  const o2 = ED.readProfiles(ED.csvRows(csvOf(two)), m, { H, start });
+  check('A8 one bad column turns the whole file away, so nothing is half applied', o2.errors.length === 1 && o2.changes.length === 0, o2.errors[0]);
+}
+{
+  // The ways spreadsheets write dates, numbers and files.
+  const m = solarNet(), H = 48, start = '2026-01-01T00:00', s0 = Date.parse(start + ':00Z'), homes = byNm(m, 'Homes');
+  const two = n => String(n).padStart(2, '0'), MON = ['Jan', 'Feb'];
+  const fmts = {
+    'ISO with T and seconds': d => `${d.getUTCFullYear()}-${two(d.getUTCMonth() + 1)}-${two(d.getUTCDate())}T${two(d.getUTCHours())}:00:00`,
+    'day first, as Excel writes it in Australia': d => `${d.getUTCDate()}/${two(d.getUTCMonth() + 1)}/${d.getUTCFullYear()} ${d.getUTCHours()}:00`,
+    'month first with AM and PM, as in the US': d => `${d.getUTCMonth() + 1}/${d.getUTCDate()}/${d.getUTCFullYear()} ${(d.getUTCHours() % 12) || 12}:00 ${d.getUTCHours() < 12 ? 'AM' : 'PM'}`,
+    'a month by name': d => `${d.getUTCDate()}-${MON[d.getUTCMonth()]}-${d.getUTCFullYear()} ${two(d.getUTCHours())}:00`,
+    'slashes and a two-digit year': d => `${two(d.getUTCDate())}/${two(d.getUTCMonth() + 1)}/${String(d.getUTCFullYear()).slice(2)} ${two(d.getUTCHours())}:00`
+  };
+  for (const [name, f] of Object.entries(fmts)) {
+    const r = [['Date', 'Homes']];
+    for (let t = 0; t < H; t++) r.push([f(new Date(s0 + t * HOUR)), String((t % 24) / 24)]);
+    const o = ED.readProfiles(ED.csvRows(csvOf(r)), m, { H, start });
+    const ok = !o.errors.length && o.changes[0] && o.changes[0].ts.v.every((v, t) => Math.abs(v - (t % 24) / 24) < 1e-5);
+    check(`A8 dates written ${name} land on their hours`, ok, o.errors.join(' ') || (r[2][0] + ' …'));
+  }
+  // Semicolons and decimal commas, tabs, quotes, a byte order mark, Windows line ends; % and MW columns.
+  const body = (sep, dec) => ['﻿"Date and time"' + sep + '"Homes [%]"' + sep + '"Solar farm (MW)"' + sep + '"Shops and offices"']
+    .concat(Array.from({ length: H }, (_, t) => isoAt(s0 + t * HOUR) + sep + String(40 + t % 10).replace('.', dec) + sep + String(t % 24 === 12 ? 500.5 : 210.25).replace('.', dec) + sep + (t === 3 ? '"1' + dec + '5"' : '-0' + dec + '25'))).join('\r\n');
+  for (const [name, sep, dec] of [['commas', ',', '.'], ['semicolons with decimal commas', ';', ','], ['tabs', '\t', '.']]) {
+    const o = ED.readProfiles(ED.csvRows(body(sep, dec)), m, { H, start });
+    const g = id => (o.changes.find(c => c.id === id) || {}).ts;
+    const h = g(homes.id), sf = g(byNm(m, 'Solar farm').id), sh = g(byNm(m, 'Shops and offices').id);
+    const ok = !o.errors.length && h && sf && sh && Math.abs(h.v[5] - 0.45) < 1e-9 && Math.abs(sf.v[0] - 210.25 / 420) < 1e-5 && Math.abs(sf.v[12] - 500.5 / 420) < 1e-5 &&
+      sh.v[0] === 0 && Math.abs(sh.v[3] - 1.5) < 1e-9 && o.notes.some(n => /Shops and offices takes its hours from the file, per unit\. 47 negative values were read as 0/.test(n)) && o.notes.some(n => /Solar farm takes its hours from the file, in MW\. 2 hours above its rating are held at it/.test(n));
+    check(`A8 a CSV with ${name}: % and MW headers read, negatives read as 0, above the rating held at it`, ok, o.errors.join(' ') || o.notes.join(' ').slice(0, 200));
+  }
+  // A load in MW: its peak demand becomes the file's highest hour, and every hour keeps its MW.
+  const r = [['Date and time', 'Homes [MW]']];
+  for (let t = 0; t < H; t++) r.push([isoAt(s0 + t * HOUR), String(100 + 3.7 * t)]);
+  const o = ED.readProfiles(ED.csvRows(csvOf(r)), m, { H, start }), c = o.changes[0];
+  const mw = c && c.ts.v.map(v => v * c.p_set);
+  check('A8 a load in MW: its peak demand becomes the file’s highest hour and every hour keeps its MW', !!c && c.p_set === 100 + 3.7 * 47 && mw.every((v, t) => Math.abs(v - (100 + 3.7 * t)) < 0.01), c && c.p_set + ' MW');
+  // One element: a file with one column of values, whatever its header, is that element's.
+  const one = [['When', 'Value']];
+  for (let t = 0; t < H; t++) one.push([isoAt(s0 + t * HOUR), '0.7']);
+  const o1 = ED.readProfiles(ED.csvRows(csvOf(one)), m, { H, start, only: homes.id });
+  const bare = ED.readProfiles(ED.csvRows(one.slice(1).map(r => r.join(',')).join('\n')), m, { H, start, only: homes.id });
+  check('A8 for one element, a file with no header row at all is read from its first row', !bare.errors.length && bare.changes.length === 1 && bare.changes[0].ts.v.length === H, bare.errors.join(' '));
+  check('A8 for one element, a file with one column of values is its, whatever the header says', !o1.errors.length && o1.changes.length === 1 && o1.changes[0].id === homes.id && o1.changes[0].ts.v.every(v => v === 0.7));
+  // Two elements with one name: the template tells them apart by id.
+  const dup = ED.load({ v: 1, el: [{ c: 'Bus', id: 1 }, { c: 'Load', id: 2, bus: 1, name: 'Town', p_set: 10 }, { c: 'Load', id: 3, bus: 1, name: 'Town', p_set: 20 }] });
+  const tp = ED.profileTemplate(dup, 24, start);
+  tp.rows.forEach(rw => { rw[2] = 0.25; });
+  const od = ED.readProfiles(ED.csvRows(ED.templateCsv(tp)), dup, { H: 24, start });
+  check('A8 two loads with one name: the template heads them by id, and only the edited one changes', tp.head.join('|') === 'Date and time|Town #2 [p.u.]|Town #3 [p.u.]' &&
+    !od.errors.length && od.changes.length === 1 && od.changes[0].id === 3, tp.head.join(' | '));
+}
+{
+  // Excel: the template as a workbook, read back; a 1904 workbook; dates typed as text.
+  const m = solarNet(), H = 168, start = '2026-07-01T05:00';
+  const tpl = ED.profileTemplate(m, H, start);
+  const buf = ED.templateBook(XLSX, tpl);
+  const wb = XLSX.read(buf, { type: 'array', cellNF: true });
+  const ws = wb.Sheets.Profiles, a2 = ws.A2;
+  check('A8 the Excel template holds real dates (a date cell, not text) and a Read me sheet', a2 && a2.t === 'n' && XLSX.SSF.is_date(a2.z) && wb.SheetNames.join() === 'Profiles,Read me', a2 && (a2.t + ' ' + a2.z));
+  const t1 = ED.sheetRows(XLSX, new Uint8Array(buf));
+  check('A8 its dates read back exactly, from the serial number, with no time zone', t1.rows[1][0] === '2026-07-01 05:00:00' && t1.rows[H][0] === '2026-07-08 04:00:00', t1.rows[1][0] + ' … ' + t1.rows[H][0]);
+  const same = ED.readProfiles(t1, m, { H, start });
+  check('A8 the Excel template opened as it is changes nothing', !same.errors.length && !same.changes.length, same.errors.join(' '));
+  // Solar farm halved in the workbook, in place.
+  for (let i = 1; i <= H; i++) { const ref = 'B' + (i + 1); ws[ref].v = ws[ref].v / 2; }
+  const ed = ED.readProfiles(ED.sheetRows(XLSX, new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }))), m, { H, start });
+  const sf = byNm(m, 'Solar farm'), base = ED.series(sf, H, start, 1);
+  check('A8 an edited Excel workbook changes the column that was edited, hour for hour', !ed.errors.length && ed.changes.length === 1 && ed.changes[0].id === sf.id &&
+    ed.changes[0].ts.v.every((v, t) => Math.abs(v - Math.round(base[t] * 1e4) / 2e4) < 1e-5), ed.errors.join(' '));
+  // A workbook on the 1904 date system, and one whose dates are text.
+  const aoa = [['Date and time', 'Homes']];
+  for (let t = 0; t < H; t++) aoa.push([ED.msSerial(Date.parse(start + ':00Z') + t * HOUR) - 1462, 0.6]);
+  const w4 = XLSX.utils.book_new(), s4 = XLSX.utils.aoa_to_sheet(aoa);
+  for (let t = 0; t < H; t++) s4['A' + (t + 2)].z = 'dd/mm/yyyy hh:mm';
+  XLSX.utils.book_append_sheet(w4, s4, 'Data'); w4.Workbook = { WBProps: { date1904: true } };
+  const o4 = ED.readProfiles(ED.sheetRows(XLSX, new Uint8Array(XLSX.write(w4, { type: 'array', bookType: 'xlsx' }))), m, { H, start });
+  check('A8 a workbook on the 1904 date system lands on the same hours', !o4.errors.length && o4.changes.length === 1 && o4.changes[0].ts.v.every(v => v === 0.6), o4.errors.join(' '));
+  const aoaT = [['Date and time', 'Homes']];
+  for (let t = 0; t < H; t++) aoaT.push([isoAt(Date.parse(start + ':00Z') + t * HOUR), '0.55']);
+  const wt = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wt, XLSX.utils.aoa_to_sheet(aoaT), 'Sheet1');
+  const ot = ED.readProfiles(ED.sheetRows(XLSX, new Uint8Array(XLSX.write(wt, { type: 'array', bookType: 'xls' }))), m, { H, start });
+  check('A8 an old .xls workbook with its dates typed as text is read too', !ot.errors.length && ot.changes.length === 1 && ot.changes[0].ts.v.every(v => v === 0.55), ot.errors.join(' '));
+}
+console.log('\n── A7 solved with daily variability and files ──');
+{
+  // Solved: daily variability and a file change the dispatch exactly as they say, and the replay holds.
+  const one = (prof, dprof) => ED.load({ v: 1, el: [{ c: 'Bus', id: 1, at: [0, 0, 8] },
+    { c: 'Generator', id: 2, name: 'Sun', bus: 1, p_nom: 200, marginal_cost: 0, prof, dprof },
+    { c: 'Generator', id: 3, name: 'Gas', bus: 1, p_nom: 500, marginal_cost: 50 },
+    { c: 'Load', id: 4, bus: 1, p_set: 300 }] });
+  const ex = one(Array.from({ length: 24 }, (_, h) => h === 14 ? 0.8 : 1), [1, 1, 1, 0.5, 1, 1, 1]);
+  const rs = await ED.solve(psa, ex, { mode: 'ed', hours: 48, start: '2026-01-01T00:00' });
+  check('A7 solved: the sun gives 80 MW at 14:00 on its 50% Thursday and 160 MW at 14:00 on Friday, gas the rest',
+    rs.report.ok && Math.abs(rs.dev[2].p[14] - 80) < 1e-6 && Math.abs(rs.dev[3].p[14] - 220) < 1e-6 && Math.abs(rs.dev[2].p[38] - 160) < 1e-6 && Math.abs(rs.dev[2].p[13] - 100) < 1e-6,
+    rs.report.ok ? [rs.dev[2].p[13], rs.dev[2].p[14], rs.dev[2].p[38]].map(x => x.toFixed(2)).join(', ') + ' MW' : rs.report.error);
+  // Daily variability turned on from every Quick Start's own days: the very same result.
+  let diff = [];
+  for (const key of Object.keys(ED.PRESETS)) {
+    const p = ED.PRESETS[key], a = ED.load(p.model), b = ED.load(p.model), o = { ...p.opts, hours: 72, start: '2026-05-14T09:00' };
+    b.el.forEach(e => { if (e.c === 'Load' || e.c === 'Generator') e.dprof = ED.weekOf(e, o.start); });
+    const [ra, rb] = [await ED.solve(psa, a, o), await ED.solve(psa, b, o)];
+    if (!ra.report.ok || !rb.report.ok || ra.totals.cost !== rb.totals.cost) diff.push(key + ' ' + ra.totals.cost + ' vs ' + rb.totals.cost);
+  }
+  check('A7 every Quick Start with daily variability turned on from its own days solves to the very same cost', !diff.length, diff.join('; ') || '4 Quick Starts, 72 hours');
+  // Every Quick Start with its profiles given as a file (the template's four places): the same cost, to rounding.
+  diff = [];
+  for (const key of Object.keys(ED.PRESETS)) {
+    const p = ED.PRESETS[key], a = ED.load(p.model), b = ED.load(p.model), o = { ...p.opts, start: '2026-02-02T00:00' };
+    const H = ED.solveOptions(o).hours;
+    b.el.forEach(e => { if (e.c === 'Load' || e.c === 'Generator') e.ts = { at: o.start, v: ED.series(e, H, o.start, e.c === 'Generator' ? 1 : 0).map(v => Math.round(v * 1e4) / 1e4) }; });
+    const [ra, rb] = [await ED.solve(psa, a, o), await ED.solve(psa, b, o)];
+    const rel = Math.abs(ra.totals.cost - rb.totals.cost) / ra.totals.cost;
+    if (!rb.report.ok || rel > 1e-4) diff.push(key + ' ' + rel.toExponential(1));
+  }
+  check('A7 every Quick Start with its profiles taken from a file solves to the same cost, to the file’s rounding', !diff.length, diff.join('; ') || 'within 1e-4');
+  // Seeded random networks with daily variability and files, replayed from their definition.
+  let bad = [], n = 0;
+  for (let seed = 101; seed <= 115; seed++) {
+    const c = randomCase(seed), r = rng(seed * 7), start = pickStart(r);
+    c.opts.start = start;
+    const H = ED.solveOptions(c.opts).hours, s0 = Date.parse(start + ':00Z');
+    c.model.el.forEach(e => {
+      if (e.c !== 'Load' && e.c !== 'Generator') return;
+      const u = r();
+      if (u < 0.4) e.dprof = Array.from({ length: 7 }, () => Math.round((0.3 + r() * 0.9) * 100) / 100);
+      else if (u < 0.7) e.ts = { at: ED.isoOf(s0 - Math.floor(r() * 5) * HOUR), v: Array.from({ length: H + 6 }, () => Math.round(r() * 110) / 100) };
+    });
+    const res = await ED.solve(psa, c.model, c.opts);
+    if (!res.report.ok) { bad.push(seed + ': ' + res.report.error); continue; }
+    n++;
+    const w = replay(c.model, c.opts, res), fails = holds(w);
+    // And the demand and availability the solver saw are the definition's.
+    let dw = 0;
+    c.model.el.forEach(e => {
+      if (!ED.onBus(c.model, e)) return;
+      for (let t = 0; t < H; t++) {
+        if (e.c === 'Load') dw = Math.max(dw, Math.abs(res.dev[e.id].p[t] - e.p_set * want(e, t, start)));
+        if (e.c === 'Generator') dw = Math.max(dw, Math.abs(res.dev[e.id].avail[t] - e.p_nom * want(e, t, start)));
+      }
+    });
+    if (fails.length || dw > 1e-9) bad.push(seed + ': ' + fails.join(',') + ' profile ' + dw);
+  }
+  check('A7 15 seeded networks with daily variability and files: replayed from their definition, demand and availability as defined', !bad.length && n === 15, bad.slice(0, 3).join(' | ') || n + ' solved');
+}
+function pickStart(r) { return ED.isoOf(Date.UTC(2026, Math.floor(r() * 12), 1 + Math.floor(r() * 28), Math.floor(r() * 24))); }
+
+/* ── A9: fast ── */
+console.log('\n── A9 the profile mechanism is fast ──');
+{
+  const time = (fn, reps = 5) => { fn(); const t0 = performance.now(); for (let i = 0; i < reps; i++) fn(); return (performance.now() - t0) / reps; };
+  // 300 loads and 120 units over 30 days, every kind of profile.
+  const el = [{ c: 'Bus', id: 1, at: [0, 0, 8] }], r = rng(9);
+  const shapes = ['sys', 'res', 'com', 'ind', '', 'custom', 'solar', 'wind'];
+  for (let i = 0; i < 420; i++) {
+    const sh = shapes[i % 8], e = { c: i < 300 ? 'Load' : 'Generator', id: i + 2, bus: 1, p_set: 10, p_nom: 10, prof: sh === 'custom' ? Array.from({ length: 24 }, () => r()) : sh };
+    if (i % 3 === 0) e.dprof = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4];
+    if (i % 5 === 0) e.ts = { at: '2026-01-01T00:00', v: Array.from({ length: 720 }, () => r()) };
+    el.push(e);
+  }
+  const big = ED.load({ v: 1, el });
+  const ms1 = time(() => big.el.forEach(e => { if (e.c !== 'Bus') ED.series(e, 720, '2026-01-01T00:00', e.c === 'Generator' ? 1 : 0); }));
+  check('A9 every hour of 30 days for 420 loads and units (302,400 values) in under 30 ms', ms1 < 30, ms1.toFixed(1) + ' ms');
+  const ms2 = time(() => ED.validate(big, { hours: 720, start: '2026-01-01T00:00' }));
+  check('A9 the checks over those 30 days, run on every edit, in under 50 ms', ms2 < 50, ms2.toFixed(1) + ' ms');
+  // A year of hours for 40 loads and units in a CSV, read against a week.
+  const m = ED.load({ v: 1, el: [{ c: 'Bus', id: 1 }].concat(Array.from({ length: 40 }, (_, i) => ({ c: i % 2 ? 'Load' : 'Generator', id: i + 2, name: 'E' + i, bus: 1, p_set: 50, p_nom: 50 }))) });
+  const head = ['Date and time'].concat(Array.from({ length: 40 }, (_, i) => 'E' + i + ' [p.u.]'));
+  const lines = [head.join(',')], y0 = Date.parse('2026-01-01T00:00:00Z');
+  for (let t = 0; t < 8760; t++) { const row = [isoAt(y0 + t * HOUR)]; for (let k = 0; k < 40; k++) row.push((((t * 7 + k * 13) % 100) / 100).toFixed(3)); lines.push(row.join(',')); }
+  const text = lines.join('\n');
+  let res = null;
+  const ms3 = time(() => { res = ED.readProfiles(ED.csvRows(text), m, { H: 168, start: '2026-06-01T00:00' }); }, 3);
+  check('A9 a year of hours for 40 columns (' + (text.length / 1e6).toFixed(1) + ' MB of CSV) read and matched to a week in under 400 ms', ms3 < 400 && res.changes.length === 40 && res.used.outside === 8760 - 168, ms3.toFixed(0) + ' ms');
+  const tpl = time(() => ED.templateCsv(ED.profileTemplate(big, 720, '2026-01-01T00:00')), 3);
+  check('A9 a 30-day template for 420 loads and units in under 300 ms', tpl < 300, tpl.toFixed(0) + ' ms');
+  const aoa = [head];
+  for (let t = 0; t < 8760; t++) { const row = [ED.msSerial(y0 + t * HOUR)]; for (let k = 0; k < 40; k++) row.push(((t * 7 + k * 13) % 100) / 100); aoa.push(row); }
+  const ws = XLSX.utils.aoa_to_sheet(aoa); for (let t = 0; t < 8760; t++) ws['A' + (t + 2)].z = 'yyyy-mm-dd hh:mm';
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Profiles');
+  const xbuf = new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }));
+  let xr = null;
+  const ms4 = time(() => { xr = ED.readProfiles(ED.sheetRows(XLSX, xbuf), m, { H: 168, start: '2026-06-01T00:00' }); }, 2);
+  check('A9 the same year as an Excel workbook (' + (xbuf.length / 1e6).toFixed(1) + ' MB) read and matched in under 3 s', ms4 < 3000 && xr.changes.length === 40, ms4.toFixed(0) + ' ms');
+}
+
 /* ── B: the page ── */
 console.log('\n── B the page ──');
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json', '.txt': 'text/plain', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json' };
@@ -575,6 +919,139 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     const r = await page.evaluate(() => ({ pwned: !!window.__pwned, res: !!(window.__ed && window.__ed.app.res), imgs: document.querySelectorAll('#sldSvg img, #inspector img').length }));
     check(`B7 saved state "${name}": no error, nothing injected, the page still solves`, !errs.length && !r.pwned && r.res && !r.imgs, errs.slice(0, 2).join(' | '));
   }
+}
+// Daily variability and profiles from a file, through the page's own controls.
+{
+  const { page, errs } = await fresh();
+  await page.goto(URL_);
+  await solvedP(page);
+  await page.evaluate(() => window.__ed.applyPreset('solar'));
+  await solvedP(page);
+  const cost0 = await page.evaluate(() => window.__ed.app.res.totals.cost);
+  const homesId = await page.evaluate(() => window.__ed.app.model.el.find(e => e.name === 'Homes').id);
+  await page.evaluate(id => window.__ed.app.select([id]), homesId);
+  // On: seven bars from the profile's own weekdays, the week drawn, and the same answer.
+  await page.click('label:has(#f_daily)');
+  const on = await page.evaluate(() => ({ bars: document.querySelectorAll('#dayBars .pb-day').length, week: !!document.querySelector('#weekLine .pl'),
+    dprof: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof, cap: [...document.querySelectorAll('#inspector .prof-cap')].map(p => p.textContent).join(' '),
+    steps: [...document.querySelectorAll('#inspector .prof-step b')].map(b => b.textContent) }));
+  await page.evaluate(() => window.__ed.run());
+  const cost1 = await page.evaluate(() => window.__ed.app.res.totals.cost);
+  check('B10 Daily variability on: Monday to Sunday bars from the shape’s own days, hourly × daily said and drawn, and the same answer',
+    on.bars === 7 && on.week && JSON.stringify(on.dprof) === JSON.stringify(ED.PROFILES.res.d) && /80% × 50% = 40%/.test(on.cap) &&
+    on.steps.join('|') === 'Hourly|× Daily|= Each hour' && cost1 === cost0 && !errs.length, JSON.stringify({ ...on, cost0, cost1 }).slice(0, 200));
+  // Drag Thursday's bar down to half: the model, the bars and the week all follow, and the run uses it.
+  // The bars' own units to the screen, through the SVG's transform.
+  const at = (ux, uy) => page.evaluate(([x, y]) => { const s = document.getElementById('dayBars'), p = s.createSVGPoint(); p.x = x; p.y = y; const q = p.matrixTransform(s.getScreenCTM()); return [q.x, q.y]; }, [ux, uy]);
+  const [ax, ay] = await at(120, 30), [bx, by] = await at(120, 58 - 27);
+  await page.mouse.move(ax, ay); await page.mouse.down(); await page.mouse.move(bx, by, { steps: 4 }); await page.mouse.up();
+  const drag = await page.evaluate(() => ({ d: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof.slice(), stale: document.getElementById('runBtn').classList.contains('needs-run') }));
+  await page.evaluate(() => { const set = (id, v) => { const el = document.getElementById(id); el.value = v; el.dispatchEvent(new Event('change', { bubbles: true })); }; set('edSpanUnit', 'd'); set('edSpan', '7'); set('edStart', '2026-01-05T00:00'); });
+  await page.evaluate(() => window.__ed.run());
+  const thu = await page.evaluate(id => { const r = window.__ed.app.res, e = window.__ed.app.model.el.find(x => x.id === id); return { p: r.dev[id].p.slice(72, 96), ps: e.p_set, mon: r.dev[id].p.slice(0, 24) }; }, homesId);
+  const wantThu = ED.PROFILES.res.h.map(v => 300 * v * drag.d[3]);
+  check('B11 dragging Thursday’s bar to half halves Thursday’s demand in the run, hour by hour', Math.abs(drag.d[3] - 0.5) < 0.011 && drag.stale &&
+    thu.p.every((v, h) => Math.abs(v - wantThu[h]) < 1e-9), 'Thursday ' + drag.d[3] + ', 18:00 ' + thu.p[18].toFixed(1) + ' MW');
+  // The templates: both formats, the horizon's hours from the first hour, a column per load and generator.
+  await page.click('.ctrl-tab[data-tab="dispatch"]');
+  const [dx] = await Promise.all([page.waitForEvent('download'), page.click('#tplXlsxBtn')]);
+  const xbuf = readFileSync(await dx.path());
+  const xt = ED.sheetRows(XLSX, new Uint8Array(xbuf));
+  const [dc] = await Promise.all([page.waitForEvent('download'), page.click('#tplCsvBtn')]);
+  const ctext = readFileSync(await dc.path(), 'utf8'), ct = ED.csvRows(ctext);
+  const tmsg = await page.textContent('#profAllMsg');
+  check('B12 the Excel and CSV templates: 168 hours from 05/01/2026 00:00, a column per load and generator, the same numbers in both',
+    dx.suggestedFilename().endsWith('.xlsx') && dc.suggestedFilename().endsWith('.csv') && xt.rows.length === 169 && ct.rows.filter(r => r.join('')).length === 169 &&
+    xt.rows[1][0] === '2026-01-05 00:00:00' && xt.rows[168][0] === '2026-01-11 23:00:00' && ct.rows[1][0] === '2026-01-05 00:00' && xt.rows[0].length === 6 &&
+    xt.rows.slice(1).every((r, i) => r.slice(1).every((v, j) => v === +ct.rows[i + 1][j + 1])) && /168 hours/.test(tmsg),
+    dx.suggestedFilename() + ', ' + dc.suggestedFilename() + ': ' + tmsg.slice(0, 90));
+  // Opened as downloaded: nothing changes.
+  // The dispatch tab's Open file is on its own tab: go there first, as a reader would.
+  const pick = async (sel, file) => {
+    if (sel === '#profAllBtn') await page.click('.ctrl-tab[data-tab="dispatch"]');
+    const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click(sel)]); await fc.setFiles(file);
+  };
+  const tmpd = join(HERE, '.tmp'); mkdirSync(tmpd, { recursive: true });
+  const fAs = (name, body) => { const f = join(tmpd, name); writeFileSync(f, body); return f; };
+  const snapBefore = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
+  await pick('#profAllBtn', await dx.path().then(p => fAs('as-is.xlsx', readFileSync(p))));
+  await page.waitForFunction(() => /as it was/.test(document.getElementById('profAllMsg').textContent));
+  const same = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
+  check('B13 the template opened as downloaded changes nothing', same === snapBefore, (await page.textContent('#profAllMsg')).slice(0, 120));
+  // The CSV template with Solar farm cloudy on Wednesday, opened: the solar farm takes its hours from the file, the run uses them.
+  const rows = ctext.trim().split('\r\n').map(l => l.split(','));
+  const sfCol = rows[0].indexOf('Solar farm [p.u.]');
+  for (let i = 49; i <= 72; i++) rows[i][sfCol] = String(+rows[i][sfCol] * 0.25);
+  const t0 = Date.now();
+  await pick('#profAllBtn', fAs('cloudy-wednesday.csv', rows.map(r => r.join(',')).join('\r\n')));
+  await page.waitForFunction(() => /Solar farm/.test(document.getElementById('profAllMsg').textContent) && !/as it was/.test(document.getElementById('profAllMsg').textContent.split('Solar farm')[1].slice(0, 30)));
+  const applied = Date.now() - t0;
+  const sf = await page.evaluate(() => { const e = window.__ed.app.model.el.find(x => x.name === 'Solar farm'); return { ts: e.ts, id: e.id, p_nom: e.p_nom }; });
+  await page.evaluate(id => window.__ed.app.select([id]), sf.id);
+  const insp = await page.evaluate(() => ({ sel: document.getElementById('f_prof').value, line: !!document.querySelector('#tsLine .pl'), cap: document.querySelector('#inspector .prof-cap').textContent, daily: !!document.getElementById('f_daily') }));
+  await page.evaluate(() => window.__ed.run());
+  const av = await page.evaluate(id => window.__ed.app.res.dev[id].avail, sf.id);
+  check('B14 a CSV with a cloudy Wednesday: the solar farm takes those hours from the file, the run uses them, the inspector shows them',
+    !!sf.ts && sf.ts.at === '2026-01-05T00:00' && sf.ts.v.length === 168 && insp.sel === 'file' && insp.line && !insp.daily && /168 hours from the file, 05\/01\/2026 00:00 to 11\/01\/2026 23:00/.test(insp.cap) &&
+    av.every((v, t) => Math.abs(v - Math.min(1, +rows[t + 1][sfCol]) * sf.p_nom) < 420 * 1e-5) && !errs.length, applied + ' ms to apply; ' + insp.cap.slice(0, 80));
+  // A longer horizon than the file: the run is stopped and says why, in the checks and beside the profile.
+  await page.evaluate(() => { const el = document.getElementById('edSpan'); el.value = '8'; el.dispatchEvent(new Event('change', { bubbles: true })); });
+  const blocked = await page.evaluate(async () => { await window.__ed.run(); const r = window.__ed.app.res;
+    return { ok: r.report.ok, why: (r.report.blocked || []).map(x => x.msg).join(' '), cap: [...document.querySelectorAll('#inspector .prof-cap.is-err')].map(p => p.textContent).join(' ') }; });
+  check('B15 a horizon past the file’s last hour stops the run, saying so in the checks and beside the profile', !blocked.ok && /Solar farm’s uploaded profile runs from 05\/01\/2026 00:00 to 11\/01\/2026 23:00/.test(blocked.why) && /12\/01\/2026 23:00/.test(blocked.cap),
+    blocked.why.slice(0, 120));
+  // A file too short for the horizon is turned away and changes nothing.
+  const snap2 = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
+  await page.evaluate(() => window.__ed.app.select([]));
+  await pick('#profAllBtn', fAs('short.csv', rows.slice(0, 100).map(r => r.join(',')).join('\n')));
+  await page.waitForFunction(() => /was not used/.test(document.getElementById('profAllMsg').textContent));
+  const rej = await page.evaluate(() => ({ msg: document.getElementById('profAllMsg').textContent, err: document.getElementById('profAllMsg').classList.contains('is-err'), snap: JSON.stringify(window.ED.compact(window.__ed.app.model)) }));
+  check('B16 a file that stops short of the horizon is turned away, saying where, and nothing changes', rej.err && rej.snap === snap2 && /short at the end/.test(rej.msg), rej.msg.slice(0, 140));
+  // One element from the inspector: picking From a file opens the file chooser; one column of MW for a load sets its peak.
+  await page.evaluate(() => { const el = document.getElementById('edSpan'); el.value = '7'; el.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.evaluate(id => window.__ed.app.select([id]), homesId);
+  const one = [['Time', 'Demand in MW (MW)']];
+  for (let t = 0; t < 168; t++) one.push([`${String(5 + Math.floor(t / 24)).padStart(2, '0')}/01/2026 ${String(t % 24).padStart(2, '0')}:00`, String(200 + (t % 24) * 5)]);
+  const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.selectOption('#f_prof', 'file')]);
+  await fc.setFiles(fAs('homes-mw.csv', one.map(r => r.join(',')).join('\n')));
+  await page.waitForFunction(() => /homes-mw\.csv(:| was not| could not)/.test((document.getElementById('profMsg') || {}).textContent || ''));
+  const h = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { p_set: e.p_set, v0: e.ts && e.ts.v[0], n: e.ts && e.ts.v.length, msg: document.getElementById('profMsg').textContent, sel: document.getElementById('f_prof').value }; }, homesId);
+  await page.evaluate(() => window.__ed.run());
+  const hp = await page.evaluate(id => window.__ed.app.res.dev[id].p, homesId);
+  check('B17 From a file in the inspector: one column in MW sets the peak demand to its highest hour, and every hour keeps its MW',
+    h.p_set === 315 && h.n === 168 && h.sel === 'file' && hp.every((v, t) => Math.abs(v - (200 + (t % 24) * 5)) < 1e-3) && /peak demand set/.test(h.msg),
+    'sel ' + h.sel + ', worst ' + Math.max(...hp.map((v, t) => Math.abs(v - (200 + (t % 24) * 5)))).toExponential(1) + ' MW; ' + h.msg.slice(0, 120));
+  // Back to a built-in shape: the file is let go.
+  await page.selectOption('#f_prof', 'res');
+  const back = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { ts: e.ts, prof: e.prof, d: Array.isArray(e.dprof) }; }, homesId);
+  check('B18 choosing a shape again lets the file go and keeps the daily variability', back.ts === null && back.prof === 'res' && back.d);
+  // Undo brings the file back; the mini cache keeps both across a reload, and the reload solves them.
+  await page.evaluate(() => window.__ed.app.undo());
+  await page.evaluate(() => window.__ed.run());
+  const before = await page.evaluate(() => ({ cost: window.__ed.app.res.totals.cost, snap: JSON.stringify(window.ED.compact(window.__ed.app.model)) }));
+  await page.waitForTimeout(600);
+  await page.reload();
+  await solvedP(page);
+  const after = await page.evaluate(() => ({ cost: window.__ed.app.res.totals.cost, snap: JSON.stringify(window.ED.compact(window.__ed.app.model)), T: window.__ed.app.res.T }));
+  check('B19 undo brings the file back, and a reload keeps the files and the daily bars and solves to the same cost',
+    before.snap.includes('"ts"') && before.snap.includes('"dprof"') && after.snap === before.snap && after.cost === before.cost && after.T === 168 && !errs.length, '$' + Math.round(after.cost).toLocaleString());
+  // A year of hours for the whole network, opened on the page: how long until it is applied.
+  const y0 = Date.parse('2026-01-01T00:00:00Z'), yr = [['Date and time', 'Homes [p.u.]', 'Shops and offices [p.u.]', 'Solar farm [p.u.]']];
+  for (let t = 0; t < 8760; t++) yr.push([isoAt(y0 + t * HOUR), ((t % 24) / 30 + 0.2).toFixed(4), ((t % 13) / 20 + 0.1).toFixed(4), ((t % 7) / 8).toFixed(4)]);
+  const t1 = Date.now();
+  await pick('#profAllBtn', fAs('year.csv', yr.map(r => r.join(',')).join('\n')));
+  await page.waitForFunction(() => /year\.csv:/.test(document.getElementById('profAllMsg').textContent));
+  const yms = Date.now() - t1, ym = await page.textContent('#profAllMsg');
+  // The page's own time, without the file chooser: read, matched, applied and redrawn.
+  const inPage = await page.evaluate(async text => {
+    const f = new File([text], 'year.csv'), out = [];
+    for (let i = 0; i < 3; i++) { const t0 = performance.now(); await window.__ed.app.applyProfileFile(f, null); out.push(performance.now() - t0); }
+    return Math.min(...out);
+  }, yr.map(r => r.join(',')).join('\n'));
+  check('B20 a year of hours opened on the page is matched to the week and applied in under 250 ms', inPage < 250 && /8,592 rows outside the horizon left out/.test(ym),
+    Math.round(inPage) + ' ms on the page (' + yms + ' ms through the file chooser): ' + ym.slice(0, 80));
+  check('B no page errors with profiles', errs.length === 0, errs.slice(0, 3).join(' | '));
+  rmSync(tmpd, { recursive: true, force: true });
 }
 await browser.close();
 server.close();
