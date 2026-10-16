@@ -1881,7 +1881,11 @@ gives it on a desktop. A diagram drawn to fit its width registers
 `SharedShare.fit(key, width => height)` (the SLDs: the drawing, labels included, at the
 frame's width, plus its 28px margin), so the frame is exactly as tall as the drawing and
 nothing more. A site that strips scripts keeps the `height` the iframe carries, which is
-worked out the same way for a 760px column.
+worked out the same way for a 760px column (plus a view's `height(picked)` for the charts
+ticked in the embed dialog). Anything else the card carries in the frame (the ED/UC
+Simulator's ticked charts, moved under its diagram) is measured with it, and the frame
+sets `--abt-fill-h` on the card to the chart's height, so a card that scrolls (one with no
+resizer on its page) can hold its chart there rather than squeezing it.
 
 **While it loads, the frame says so.** One quiet line in the middle of the frame, "Loading
 data from tool.adjiebrotots.com…" ("Memuat data dari …" on an Indonesian page), in place of a

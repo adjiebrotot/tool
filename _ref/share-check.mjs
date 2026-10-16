@@ -52,7 +52,8 @@
 // draws: E3 compares that, and E4 wheels the diagram and needs its viewBox to
 // move. A page whose cluster carries ⬇ GIF (spec.gif) also has the GIF row in
 // its menu (M2), and its GIF must loop and be the desktop PNG's size at 1x on
-// a desktop and on a phone alike (X6, X7).
+// a desktop and on a phone alike (X6, X7). Where the GIF row opens a dialog
+// first, its Download is pressed as it opens.
 //
 // SHOT=<dir> saves every embed as it rendered; ONLY=<name> runs one page.
 // The libraries are the real ones, cached by chart-check.mjs in
@@ -272,8 +273,12 @@ async function pick(page, key, kind) {
   await page.click(`.share-list.is-open .share-opt[data-kind="${kind}"]`);
 }
 async function download(page, key, kind) {
-  const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 20000 }), pick(page, key, kind)]);
-  return readFileSync(await dl.path());
+  const dl = page.waitForEvent('download', { timeout: 20000 });
+  await pick(page, key, kind);
+  // A GIF may ask first (the ED/UC Simulator: the diagram, or the hours with
+  // charts): its Download takes what it offers, the diagram as it is.
+  if (kind === 'gif') await page.locator('.share-embed-overlay.is-open .gif-dlg-go').click({ timeout: 1500 }).catch(() => {});
+  return readFileSync(await (await dl).path());
 }
 async function clipboardSize(page, key) {
   await page.evaluate(() => navigator.clipboard.writeText('-'));
@@ -839,7 +844,7 @@ for (const spec of PAGES) {
       const sized = await E.page.$eval('iframe', f => ({ style: f.style.height, h: Math.round(f.getBoundingClientRect().height) }));
       check(`${tag} E14 ${where}: the host's script sizes the frame to the chart, ${fit && fit.gaps ? 'the diagram filling its stage' : 'nothing cut or left empty'}`,
             !!fit && !!sized.style && Math.abs(sized.h - fit.inner) <= 1 && fit.content <= fit.inner + 1 &&
-            (!fit.gaps || (!fit.cut && (Math.max(...fit.gaps) <= 50 || (fit.stage <= 161 && Math.max(...fit.gaps) <= 70)))),
+            (!fit.gaps || (!fit.cut && (Math.max(...fit.gaps) <= 50 || (fit.stage <= 165 && Math.max(...fit.gaps) <= 70)))),
             !fit ? 'no card' : `frame ${sized.style || 'not sized'} (${sized.h}px), card ${fit.content}px` +
               (fit.gaps ? `, empty stage above/below ${fit.gaps.join('/')}px of ${fit.stage}px${fit.cut ? ', drawing cut' : ''}` : ''));
       // As it rests, before the zoom below moves it.

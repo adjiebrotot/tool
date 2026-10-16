@@ -3058,8 +3058,15 @@
 
          SharedShare.state({ save, load })        // a tool outside SharedScenario
          SharedShare.view(key, { save, load })    // a popup that has to open first
+         SharedShare.view(key, { save(picked), load, choices, height })
+                                                  // a checklist in the embed dialog
          SharedShare.data({ save, load })         // data the frame cannot fetch (prices)
          SharedShare.fit(key, width => height)    // a diagram as tall as its width draws it
+
+     choices() lists what the embed may carry besides the chart, as
+     [{ value, label }]; the dialog shows them as checkboxes, all off, and
+     hands the ticked values to save(picked) and height(picked), the extra
+     pixels the frame needs for them. Share as link calls save() with none.
 
      key is the chart's canvas or Plotly id ('.class' when it has none). A
      card whose view depends on fields outside it names them in
@@ -3081,7 +3088,7 @@
             embed: ['Embed as HTML', 'Interactive chart for your site'],
             copied: '✓ Copied', copyFail: 'PNG copy failed: ',
             noCopy: 'This browser cannot copy images.', noImage: 'the image could not be drawn',
-            embedTitle: 'Embed this chart', close: 'Close', codeLabel: 'Embed code',
+            embedTitle: 'Embed this chart', close: 'Close', codeLabel: 'Embed code', include: 'Include:',
             embedNote: 'Paste this into any web page. The chart stays interactive and opens on your scenario, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it. Please keep the credit line under the chart.',
             credit: ['Interactive chart: ', ' by '],
             copyCode: 'Copy code', preview: 'Preview in a new tab', building: 'Building the code…',
@@ -3097,7 +3104,7 @@
             embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
-            embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan',
+            embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan', include: 'Sertakan:',
             embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka pada skenario Anda, yang ikut di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawah grafik.',
             credit: ['Grafik interaktif: ', ' oleh '],
             copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
@@ -3519,13 +3526,14 @@
     // (SharedShare.fit) is instead as tall as its drawing is at a typical
     // column's width, plus its margin, so it opens without bands of empty
     // stage above and below it. The resizer() then fits either to the column.
+    // extra: what a view's ticked choices add under the chart.
     var EMBED_W = 760, MARK_H = 22;
-    function frameHeight(card, el){
+    function frameHeight(card, el, extra){
       var fill = fillOf(el), key = keyOf(el);
       var want = fitOf(key, Math.min(fill.clientWidth, EMBED_W - (card.clientWidth - fill.clientWidth))) ||
         desktopHeight(fill) || fill.offsetHeight || 430;
       var chrome = Math.max(0, card.offsetHeight - fill.offsetHeight) + MARK_H;
-      return Math.round(Math.min(1000, Math.max(380, want + chrome)) / 10) * 10;
+      return Math.round((Math.min(1000, Math.max(380, want + chrome)) + (extra || 0)) / 10) * 10;
     }
     // The height a fit hook asks for at this width, or 0 when it has none.
     function fitOf(key, w){
@@ -3652,27 +3660,30 @@
 
     // What the chart shows: the scenario (s), the popup's view (v) and the
     // card's fields, toggles and legend (u). The prices (d) only on request.
-    function payloadOf(card, key, withData){
+    function payloadOf(card, key, withData, picked){
       var payload = {};
       // A hook that cannot hand over its data (prices not loaded) says why.
       if(withData && dataHook) payload.d = dataHook.save();
       if(provider) payload.s = provider.save();
-      if(views[key] && views[key].save) payload.v = views[key].save();
+      if(views[key] && views[key].save) payload.v = views[key].save(picked);
       var u = captureUi(card);
       if(u) payload.u = u;
       return payload;
     }
-    function buildEmbed(m){
+    function buildEmbed(m, picked){
       var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
       if(!key) return Promise.reject(new Error('no chart'));
-      var payload;
-      try { payload = payloadOf(card, key, true); }
+      var payload, extra = 0;
+      try {
+        payload = payloadOf(card, key, true, picked);
+        if(picked && picked.length && views[key] && views[key].height) extra = Math.max(0, +views[key].height(picked) || 0);
+      }
       catch(e){ return Promise.reject(e); }
       var theme = document.body.classList.contains('light') ? 'light' : 'dark', home = pageUrl();
       return Promise.all([pack(payload), openLink(home, key, payload)]).then(function(r){
         var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + r[0];
         var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
-          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1]) + '\n' + resizer(home);
+          '" width="100%" height="' + frameHeight(card, el, extra) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1]) + '\n' + resizer(home);
         return { code: code, src: src, key: key, open: r[1] };
       });
     }
@@ -3759,6 +3770,7 @@
           '<div class="share-embed-head"><h2 id="shareEmbedTitle">' + t.embedTitle + '</h2>' +
             global.SharedIcon.button('close', t.close, 'share-embed-close') + '</div>' +
           '<p class="share-embed-note">' + t.embedNote + '</p>' +
+          '<div class="share-embed-choices" role="group" aria-label="' + attr(t.include.replace(/:$/, '')) + '" hidden></div>' +
           '<textarea class="share-code" readonly spellcheck="false" rows="6" data-no-persist aria-label="' + attr(t.codeLabel) + '"></textarea>' +
           '<p class="share-embed-size" hidden></p>' +
           '<div class="share-embed-actions">' +
@@ -3768,7 +3780,8 @@
         '</div>';
       document.body.appendChild(ov);
       dlg = { el: ov, code: ov.querySelector('.share-code'), copy: ov.querySelector('.share-copy-code'),
-              preview: ov.querySelector('.share-preview'), size: ov.querySelector('.share-embed-size'), back: null };
+              preview: ov.querySelector('.share-preview'), size: ov.querySelector('.share-embed-size'),
+              choices: ov.querySelector('.share-embed-choices'), back: null, n: 0 };
       var shut = function(){
         ov.classList.remove('is-open');
         if(dlg.back) dlg.back.focus({ preventScroll: true });
@@ -3780,7 +3793,7 @@
         if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); shut(); return; }
         if(e.key !== 'Tab') return;
         // Keep the keyboard inside the dialog while it is open.
-        var f = Array.prototype.filter.call(ov.querySelectorAll('button, a[href], textarea'), function(x){ return x.offsetParent !== null; });
+        var f = Array.prototype.filter.call(ov.querySelectorAll('button, a[href], textarea, input'), function(x){ return x.offsetParent !== null; });
         var i = f.indexOf(document.activeElement);
         if(e.shiftKey && i <= 0){ e.preventDefault(); f[f.length - 1].focus(); }
         else if(!e.shiftKey && i === f.length - 1){ e.preventDefault(); f[0].focus(); }
@@ -3804,16 +3817,31 @@
         '<div style="max-width:960px;margin:0 auto">' + code + '</div></body></html>';
     }
     function openEmbed(m){
-      var d = dialog(), t = T();
+      var d = dialog(), t = T(), key = keyOf(chartOf(cardOf(m.cluster))), hook = views[key];
       d.back = m.toggle;
+      // The view's checklist, all off: an embed carries only the chart unless asked.
+      var list = hook && hook.choices ? hook.choices() || [] : [];
+      d.choices.innerHTML = list.length ? '<span class="share-embed-inc">' + html(t.include) + '</span><span class="share-embed-opts">' + list.map(function(c){
+        return '<label><input type="checkbox" data-no-persist value="' + attr(c.value) + '"> ' + html(c.label) + '</label>';
+      }).join('') + '</span>' : '';
+      d.choices.hidden = !list.length;
+      d.choices.onchange = function(){ fillEmbed(m, d, t); };
+      d.el.classList.add('is-open');
+      fillEmbed(m, d, t);
+      d.code.focus({ preventScroll: true });
+    }
+    function fillEmbed(m, d, t){
+      var picked = Array.prototype.filter.call(d.choices.querySelectorAll('input'), function(x){ return x.checked; })
+        .map(function(x){ return x.value; });
+      // A later tick wins over a build still running for an earlier one.
+      var n = ++d.n;
       d.ready = false;
       d.code.value = t.building;
       d.preview.removeAttribute('href');
       d.copy.disabled = true;
       d.size.hidden = true;
-      d.el.classList.add('is-open');
-      d.code.focus({ preventScroll: true });
-      buildEmbed(m).then(function(r){
+      buildEmbed(m, picked).then(function(r){
+        if(n !== d.n) return;
         // Browsers stop following a link at about 2 MB; past a few KB the
         // reader should know why the code is long (a dataset rides in it).
         if(r.code.length > 8000){
@@ -3828,9 +3856,11 @@
         d.preview.href = d.blob;
         d.ready = true;
         d.copy.disabled = false;
-        d.code.focus({ preventScroll: true });
-        d.code.select();
-      }, function(e){ d.code.value = t.noEmbed + (e && e.message ? e.message : e); });
+        if(!d.choices.contains(document.activeElement)){
+          d.code.focus({ preventScroll: true });
+          d.code.select();
+        }
+      }, function(e){ if(n === d.n) d.code.value = t.noEmbed + (e && e.message ? e.message : e); });
     }
 
     /* ── Embed mode: this page, inside someone else's iframe ── */
@@ -3897,14 +3927,22 @@
       // height it asks for, and put back before anything is painted.
       function measure(){
         var want = fitOf(key, fill.clientWidth) || natural, cs = card.style.cssText, fs = fill.style.cssText;
+        var cols = Array.prototype.filter.call(card.querySelectorAll('.abt-embed-col'), function(c){ return c.contains(fill); });
+        var css = cols.map(function(c){ return c.style.cssText; });
         card.style.setProperty('height', 'auto', 'important');
+        cols.forEach(function(c){ c.style.setProperty('min-height', '0', 'important'); });
         fill.style.setProperty('flex', '0 0 auto', 'important');
         fill.style.setProperty('height', want + 'px', 'important');
         fill.style.setProperty('min-height', '0', 'important');
-        var h = card.offsetHeight;
+        var h = card.getBoundingClientRect().height;
         card.style.cssText = cs;
+        cols.forEach(function(c, i){ c.style.cssText = css[i]; });
         fill.style.cssText = fs;
-        return Math.ceil(h);
+        // A card that scrolls (a diagram with charts under it) holds its
+        // chart at this height rather than squeezing it: --abt-fill-h.
+        card.style.setProperty('--abt-fill-h', want + 'px');
+        // One pixel to spare, so rounding never leaves a scrollbar.
+        return Math.ceil(h) + 1;
       }
       function post(){
         queued = false;
