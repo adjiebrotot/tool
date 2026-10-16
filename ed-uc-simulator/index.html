@@ -181,12 +181,10 @@
       </div>
     </div>
     <div class="field-group" id="profFileGroup">
-      <div class="group-title"><span class="tip-wrap">Profiles from a file <i class="tip-icon" data-tip="A column of dates and times places each row on its hour. Rows outside the horizon are left out; a file that misses an hour of it is turned away.">?</i></span></div>
-      <p class="note">The template has a row for each hour of the horizon from the first hour, and a column for each load and generator, filled with its profile now, per unit.</p>
+      <div class="group-title"><span class="tip-wrap">Profiles from a file <i class="tip-icon" data-tip="A row an hour, found by its date and time, and a column per load or generator headed with its name, per unit (end the header with [MW] or [%] for those). A column with values makes its element Custom. A column left out or left empty keeps the element as it is; a blank cell keeps that hour as its shape gives it (0 is a value). Rows outside the horizon are left out; a file that misses an hour of it is turned away. The template is every hour from the first, filled with each profile now.">?</i></span></div>
       <div class="prof-file">
-        <button type="button" class="btn-secondary btn-sm" id="tplXlsxBtn" title="Download the template as an Excel workbook">⬇ Template (.xlsx)</button>
-        <button type="button" class="btn-secondary btn-sm" id="tplCsvBtn" title="Download the template as CSV">⬇ Template (.csv)</button>
-        <button type="button" class="btn-secondary btn-sm" data-icon="open" id="profAllBtn" title="Open a file of hourly profiles, Excel or CSV">Open file</button>
+        <button type="button" class="btn-secondary btn-sm" data-icon="open" id="profAllBtn" title="Take the hours of every load and generator named in an Excel or CSV file">Open file</button>
+        <button type="button" class="btn-secondary btn-sm" id="tplCsvBtn" title="A CSV with a row for each hour of the horizon and a column for each load and generator, filled with its profile now">⬇ Template (.csv)</button>
       </div>
       <div class="up-msg" id="profAllMsg" role="status" aria-live="polite" hidden></div>
     </div>

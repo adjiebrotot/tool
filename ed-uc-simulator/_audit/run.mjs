@@ -564,7 +564,24 @@ const byNm = (m, n) => m.el.find(e => ED.nameOf(e) === n);
     lines.length === H + 1 && lines[1].startsWith('2026-03-06 00:00,') && lines[H].startsWith('2026-03-08 23:00,') &&
     lines[0] === 'Date and time,Solar farm [p.u.],Gas turbine [p.u.],Peaker [p.u.],Homes [p.u.],Shops and offices [p.u.]', lines[0]);
   const same = ED.readProfiles(ED.csvRows(csv), m, { H, start });
-  check('A8 the template opened as it is changes nothing', !same.errors.length && !same.changes.length && same.notes.length === 5, same.errors.join(' ') || same.notes[0]);
+  const sameOk = !same.errors.length && same.changes.length === 5 && same.changes.every(c => { const e = m.el.find(x => x.id === c.id), now = ED.series(e, H, start, e.c === 'Generator' ? 1 : 0);
+    return c.ts.at === start && c.p_set === undefined && c.ts.v.every((v, t) => Math.abs(v - now[t]) < 6e-5); });
+  check('A8 the template opened as it is makes every load and generator Custom, with the hours it had', sameOk, same.errors.join(' ') || same.notes[0]);
+  // Blank cells take the hour from the element's shape; a column left out or left empty leaves its element alone.
+  {
+    const sf = byNm(m, 'Solar farm'), hm = byNm(m, 'Homes'), sh = byNm(m, 'Shops and offices');
+    const shapeSf = ED.series(sf, H, start, 1), shapeHm = ED.series(hm, H, start);
+    const r = [['Date and time', 'Solar farm [p.u.]', 'Homes [MW]', 'Shops and offices']];
+    for (let t = 0; t < H; t++) r.push([isoAt(s0 + t * HOUR), t % 5 === 0 ? '' : t === 7 ? '0' : '0.4', t < 10 ? '' : String(100 + t), '']);
+    const o = ED.readProfiles(ED.csvRows(csvOf(r)), m, { H, start });
+    const g = id => o.changes.find(c => c.id === id);
+    const cs = g(sf.id), ch = g(hm.id), peak = 100 + H - 1;
+    const ok = !o.errors.length && o.changes.length === 2 && !g(sh.id) && cs && ch && ch.p_set === peak &&
+      cs.ts.v.every((v, t) => Math.abs(v - (t % 5 === 0 ? shapeSf[t] : t === 7 ? 0 : 0.4)) < 1e-6) &&
+      ch.ts.v.every((v, t) => Math.abs(v * peak - (t < 10 ? shapeHm[t] * hm.p_set : 100 + t)) < 1e-3) &&
+      o.notes.some(n => /Solar farm takes its hours from the file, per unit\. 15 blank hours follow its shape/.test(n)) && o.notes.some(n => /Shops and offices kept its profile/.test(n));
+    check('A8 blank cells follow the element’s shape (0 is a value), in the MW it gave; an empty column leaves its element alone', ok, o.errors.join(' ') || o.notes.join(' ').slice(0, 200));
+  }
   // Homes halved on the Saturday; rows shuffled, a year of hours around them.
   const homes = byNm(m, 'Homes'), want0 = ED.series(homes, H, start);
   const rows = [['Timestamp', 'Homes [p.u.]', 'Something else']];
@@ -593,7 +610,6 @@ const byNm = (m, n) => m.el.find(e => ED.nameOf(e) === n);
     'half-hourly rows': [mk(r => { for (let t = 0; t < 2 * H; t++) r.push([isoAt(s0 + t * HOUR / 2), '0.5']); }), /30 minutes apart/],
     'no dates': [mk(r => { for (let t = 0; t < H; t++) r.push([String(t), '0.5']); }, ['Hour', 'Homes']), /No column of dates and times/],
     'a word among the values': [mk(r => { span(0, H)(r); r[10][1] = 'n/a'; }), /“n\/a” is not a number at 06\/03\/2026 09:00 \(row 11\)/],
-    'a blank among the values': [mk(r => { span(0, H)(r); r[12][1] = ''; }), /there is no value at 06\/03\/2026 11:00 \(row 13\)/],
     'a date that is not one': [mk(r => { span(0, H)(r); r[4][0] = '2026-02-30 03:00'; }), /not a date and time/],
     'no column for anything here': [mk(span(0, H), ['Date', 'Nobody']), /No column is named after a load or a generator/]
   };
@@ -654,8 +670,9 @@ const byNm = (m, n) => m.el.find(e => ED.nameOf(e) === n);
   const tp = ED.profileTemplate(dup, 24, start);
   tp.rows.forEach(rw => { rw[2] = 0.25; });
   const od = ED.readProfiles(ED.csvRows(ED.templateCsv(tp)), dup, { H: 24, start });
-  check('A8 two loads with one name: the template heads them by id, and only the edited one changes', tp.head.join('|') === 'Date and time|Town #2 [p.u.]|Town #3 [p.u.]' &&
-    !od.errors.length && od.changes.length === 1 && od.changes[0].id === 3, tp.head.join(' | '));
+  const odOf = id => od.changes.find(c => c.id === id);
+  check('A8 two loads with one name: the template heads them by id, and each takes its own column', tp.head.join('|') === 'Date and time|Town #2 [p.u.]|Town #3 [p.u.]' &&
+    !od.errors.length && od.changes.length === 2 && odOf(3).ts.v.every(v => v === 0.25) && odOf(2).ts.v.every((v, t) => Math.abs(v - +tp.rows[t][1]) < 1e-9), tp.head.join(' | '));
 }
 {
   // Excel: the template as a workbook, read back; a 1904 workbook; dates typed as text.
@@ -668,13 +685,15 @@ const byNm = (m, n) => m.el.find(e => ED.nameOf(e) === n);
   const t1 = ED.sheetRows(XLSX, new Uint8Array(buf));
   check('A8 its dates read back exactly, from the serial number, with no time zone', t1.rows[1][0] === '2026-07-01 05:00:00' && t1.rows[H][0] === '2026-07-08 04:00:00', t1.rows[1][0] + ' … ' + t1.rows[H][0]);
   const same = ED.readProfiles(t1, m, { H, start });
-  check('A8 the Excel template opened as it is changes nothing', !same.errors.length && !same.changes.length, same.errors.join(' '));
+  check('A8 the Excel template opened as it is gives every column the hours it had', !same.errors.length && same.changes.length === tpl.els.length &&
+    same.changes.every(c => { const e = m.el.find(x => x.id === c.id), now = ED.series(e, H, start, e.c === 'Generator' ? 1 : 0); return c.ts.v.every((v, t) => Math.abs(v - now[t]) < 6e-5); }), same.errors.join(' '));
   // Solar farm halved in the workbook, in place.
   for (let i = 1; i <= H; i++) { const ref = 'B' + (i + 1); ws[ref].v = ws[ref].v / 2; }
   const ed = ED.readProfiles(ED.sheetRows(XLSX, new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' }))), m, { H, start });
   const sf = byNm(m, 'Solar farm'), base = ED.series(sf, H, start, 1);
-  check('A8 an edited Excel workbook changes the column that was edited, hour for hour', !ed.errors.length && ed.changes.length === 1 && ed.changes[0].id === sf.id &&
-    ed.changes[0].ts.v.every((v, t) => Math.abs(v - Math.round(base[t] * 1e4) / 2e4) < 1e-5), ed.errors.join(' '));
+  const edSf = ed.changes.find(c => c.id === sf.id);
+  check('A8 an edited Excel workbook takes the column that was edited, hour for hour', !ed.errors.length && ed.changes.length === tpl.els.length && !!edSf &&
+    edSf.ts.v.every((v, t) => Math.abs(v - Math.round(base[t] * 1e4) / 2e4) < 1e-5), ed.errors.join(' '));
   // A workbook on the 1904 date system, and one whose dates are text.
   const aoa = [['Date and time', 'Homes']];
   for (let t = 0; t < H; t++) aoa.push([ED.msSerial(Date.parse(start + ':00Z') + t * HOUR) - 1462, 0.6]);
@@ -1030,7 +1049,8 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   await page.evaluate(id => { window.__ed.app.select([]); window.__ed.app.select([id]); }, homesId);
   // The templates: both formats, the horizon's hours from the first hour, a column per load and generator.
   await page.click('.ctrl-tab[data-tab="dispatch"]');
-  const [dx] = await Promise.all([page.waitForEvent('download'), page.click('#tplXlsxBtn')]);
+  // The Excel template is the page's still (app.downloadTemplate); the button is the CSV one.
+  const [dx] = await Promise.all([page.waitForEvent('download'), page.evaluate(() => window.__ed.app.downloadTemplate('xlsx'))]);
   const xbuf = readFileSync(await dx.path());
   const xt = ED.sheetRows(XLSX, new Uint8Array(xbuf));
   const [dc] = await Promise.all([page.waitForEvent('download'), page.click('#tplCsvBtn')]);
@@ -1041,7 +1061,7 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     xt.rows[1][0] === '2026-01-05 00:00:00' && xt.rows[168][0] === '2026-01-11 23:00:00' && ct.rows[1][0] === '2026-01-05 00:00' && xt.rows[0].length === 6 &&
     xt.rows.slice(1).every((r, i) => r.slice(1).every((v, j) => v === +ct.rows[i + 1][j + 1])) && /168 hours/.test(tmsg),
     dx.suggestedFilename() + ', ' + dc.suggestedFilename() + ': ' + tmsg.slice(0, 90));
-  // Opened as downloaded: nothing changes.
+  // Opened as downloaded: every load and generator turns Custom and keeps every hour it had.
   // The dispatch tab's Open file is on its own tab: go there first, as a reader would.
   const pick = async (sel, file) => {
     if (sel === '#profAllBtn') await page.click('.ctrl-tab[data-tab="dispatch"]');
@@ -1049,18 +1069,26 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   };
   const tmpd = join(HERE, '.tmp'); mkdirSync(tmpd, { recursive: true });
   const fAs = (name, body) => { const f = join(tmpd, name); writeFileSync(f, body); return f; };
-  const snapBefore = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
+  const seriesNow = () => page.evaluate(() => { const a = window.__ed.app;
+    const H = 168, st = document.getElementById('edStart').value;
+    return a.model.el.filter(e => e.c === 'Load' || e.c === 'Generator').map(e => ({ id: e.id, ts: window.ED.hasTs(e), v: window.ED.series(e, H, st, e.c === 'Generator' ? 1 : 0) })); });
+  const sBefore = await seriesNow();
   await pick('#profAllBtn', await dx.path().then(p => fAs('as-is.xlsx', readFileSync(p))));
-  await page.waitForFunction(() => /as it was/.test(document.getElementById('profAllMsg').textContent));
-  const same = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
-  check('B13 the template opened as downloaded changes nothing', same === snapBefore, (await page.textContent('#profAllMsg')).slice(0, 120));
+  await page.waitForFunction(() => /as-is\.xlsx:/.test(document.getElementById('profAllMsg').textContent));
+  const sAfter = await seriesNow();
+  await page.evaluate(id => window.__ed.app.select([id]), sAfter[0].id);
+  const selAs = await page.evaluate(() => ({ sel: document.getElementById('f_prof').value, line: !!document.querySelector('#tsLine .pl'), tpl: !!document.getElementById('profTpl') }));
+  await page.evaluate(() => window.__ed.app.select([]));
+  check('B13 the template opened as downloaded: every load and generator is Custom, the inspector shows it so, and no hour moves',
+    sAfter.length === sBefore.length && sAfter.every((x, i) => x.ts && x.v.every((v, t) => Math.abs(v - sBefore[i].v[t]) < 6e-5)) && selAs.sel === 'custom' && selAs.line && selAs.tpl,
+    JSON.stringify(selAs) + ' ' + (await page.textContent('#profAllMsg')).slice(0, 120));
   // The CSV template with Solar farm cloudy on Wednesday, opened: the solar farm takes its hours from the file, the run uses them.
   const rows = ctext.trim().split('\r\n').map(l => l.split(','));
   const sfCol = rows[0].indexOf('Solar farm [p.u.]');
   for (let i = 49; i <= 72; i++) rows[i][sfCol] = String(+rows[i][sfCol] * 0.25);
   const t0 = Date.now();
   await pick('#profAllBtn', fAs('cloudy-wednesday.csv', rows.map(r => r.join(',')).join('\r\n')));
-  await page.waitForFunction(() => /Solar farm/.test(document.getElementById('profAllMsg').textContent) && !/as it was/.test(document.getElementById('profAllMsg').textContent.split('Solar farm')[1].slice(0, 30)));
+  await page.waitForFunction(() => /Solar farm/.test(document.getElementById('profAllMsg').textContent) && /cloudy-wednesday/.test(document.getElementById('profAllMsg').textContent));
   const applied = Date.now() - t0;
   const sf = await page.evaluate(() => { const e = window.__ed.app.model.el.find(x => x.name === 'Solar farm'); return { ts: e.ts, id: e.id, p_nom: e.p_nom }; });
   await page.evaluate(id => window.__ed.app.select([id]), sf.id);
