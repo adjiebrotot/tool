@@ -1234,8 +1234,7 @@
   function labelOverrideHtml(e){
     var own = typeof e.lb === 'number';
     var list = ED.LABELS[e.c];
-    var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels' +
-      tipHtml(own ? 'This one shows the boxes ticked below, whatever the Labels tab sets.' : 'It shows what the Labels tab sets for every ' + (e.c === 'StorageUnit' ? 'storage unit' : ED.WORD[e.c].toLowerCase()) + '.') + '</span></div>' +
+    var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels</span></div>' +
       '<label class="toggle-switch"><input type="checkbox" id="lbOwn"' + (own ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(own){
       html += '<div class="lbl-chips">' + list.map(function(q, i){
@@ -1617,12 +1616,6 @@
     on: 'Lines, transformers and links carry no more than their ratings. A full one splits the price on either side of it.',
     off: 'No branch limit binds, so power still splits by reactance but every bus has the same price, bar losses on links.'
   };
-  var COLOUR_TIP = {
-    none: '<strong>Nothing:</strong> the diagram stays in one colour, whatever the hour.',
-    price: '<strong>Nodal price:</strong> a bus warms toward gold as its price nears the highest of the horizon.',
-    loading: '<strong>Branch loading:</strong> a branch thickens with its loading, turns amber near its limit and red at it.',
-    both: '<strong>Both:</strong> buses by price, branches by loading. Red is a branch at its limit.'
-  };
   function fixForm(){
     var el = $('edVoll'), v = parseFloat(el.value);
     if(isFinite(v)){ var c = Math.min(1e5, Math.max(100, v)); if(c !== v) el.value = c; }
@@ -1643,7 +1636,6 @@
     fixForm();
     $('edModeTip').setAttribute('data-tip', MODE_TIP[$('edMode').value] || '');
     $('edLimitsTip').setAttribute('data-tip', LIMITS_TIP[$('edLimits').checked ? 'on' : 'off']);
-    $('colourByTip').setAttribute('data-tip', COLOUR_TIP[$('colourBy').value] || '');
     $('vollRow').style.display = $('edShed').checked ? '' : 'none';
     $('gapRow').style.display = $('edMode').value === 'uc' ? '' : 'none';
     $('vollCur').textContent = cur();

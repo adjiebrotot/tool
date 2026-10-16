@@ -708,6 +708,17 @@ html{scrollbar-gutter:stable;}
 .detail-row .seg-group{margin-top:0;flex:0 0 auto;}
 .detail-row .seg-btn{flex:0 0 auto;}
 
+/* ── A segmented control sized to its line (SharedSegFit, shared.js) ──
+   Alone on its line in a form column it fills the line; when its options do
+   not fit, the buttons tighten, then settle into even rows. These states are
+   set from measurement, so they win over a tool's own sizing. */
+.seg-group.seg-fill{display:flex!important;width:100%!important;max-width:100%;}
+.seg-group.seg-fill>.seg-btn{flex:1 1 0!important;min-width:max-content;text-align:center;}
+.seg-group.seg-tight>.seg-btn{padding-left:7px!important;padding-right:7px!important;}
+.seg-group.seg-grid{display:grid!important;}
+.seg-group.seg-grid>.seg-btn{min-width:0;text-align:center;}
+.seg-group.seg-measure>.seg-btn{transition:none!important;}
+
 /* ── A count picked from a few values (dependants, adults, 0 to 6) ──
    SharedSeg.fromSelect() draws it from a <select> that stays on the page as
    the field the tool reads and the mini cache saves; the buttons are the

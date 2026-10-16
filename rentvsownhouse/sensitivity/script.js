@@ -362,16 +362,16 @@ const notPct = typeKey => sc => sc[typeKey] !== 'pct';
 /* `shared` rows are one figure for every column (SHARED_KEYS), drawn as one
    cell across the table; their activeIf reads the shared figures. */
 const PARAMS = [
-  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  suf:'uYrs',          min:5,   max:100, step:1,    tip:'horizon', shared:true},
+  {key:'horizon',              labelKey:'pHorizon',              type:'integer',  suf:'uYrs',          min:5,   max:100, step:1,    shared:true},
   {key:'riskFreeRate',         labelKey:'pRiskFreeRate',         type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.05, tip:'sensRiskFree', shared:true},
   {key:'initialCash',          labelKey:'pInitialCash',          type:'currency', auto:true,           min:0,            step:10000,tip:'sensInitialCash', shared:true},
   {key:'monthlyBudget',        labelKey:'pMonthlyBudget',        type:'currency', auto:true, per:'monthly', min:0,       step:100,  tip:'sensMonthlyBudget', shared:true},
   {key:'monthlyBudgetIncrease',labelKey:'pMonthlyBudgetIncrease',type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.1,  tip:'monthlyBudgetIncrease', shared:true,
     activeIf: sh => (Number(sh.monthlyBudget)||0) > 0, offKey:'offNoBudget'},
-  {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                      min:50000,        step:10000,tip:'propertyPrice'},
+  {key:'propertyPrice',        labelKey:'pPropertyPrice',        type:'currency',                      min:50000,        step:10000},
   {key:'downPaymentPct',       labelKey:'pDownPaymentPct',       type:'percent',  suf:'uPctOfPrice',   min:0,   max:100, step:0.5,  tip:'downPaymentPct'},
   {key:'mortgageType',         labelKey:'pMortgageType',         type:'select',   options:[{v:'pi',lk:'optPI'},{v:'io',lk:'optIO'}], tip:'mortgageType'},
-  {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.05, tip:'mortgageRate'},
+  {key:'mortgageRate',         labelKey:'pMortgageRate',         type:'percent',  suf:'uPctPa',        min:0,   max:25,  step:0.05},
   {key:'mortgageTerm',         labelKey:'pMortgageTerm',         type:'integer',  suf:'uYrs',          min:5,   max:50,  step:1,    tip:'mortgageTerm'},
   {key:'houseGrowth',          labelKey:'pHouseGrowth',          type:'percent',  suf:'uPctPa',        min:-10, max:25,  step:0.1,  tip:'houseGrowth'},
   {key:'sellingCostPct',       labelKey:'pSellingCost',          type:'percent',  suf:'uPctOfSale',    min:0,   max:15,  step:0.1,  tip:'sellingCost'},
@@ -1165,7 +1165,7 @@ function buildRenderRows(){
 
   rows.push({type:'sep', sepKey:'sepOwn'});
   rows.push(P('propertyPrice'), P('downPaymentPct'));
-  rows.push({type:'mode', modeKey:'mortgageMode', labelKey:'pMortgageMode', tip:'mortgageMode'});
+  rows.push({type:'mode', modeKey:'mortgageMode', labelKey:'pMortgageMode'});
   if(modes.mortgageMode==='detailed') rows.push(P('mortgageType','mtype'), P('costInterestOnly','mtype',true));
   rows.push(P('mortgageTerm'));
   if(modes.mortgageMode==='simple'){
@@ -1177,7 +1177,7 @@ function buildRenderRows(){
   }
   rows.push(P('houseGrowth'));
   rows.push(P('sellingCostPct'));
-  rows.push({type:'mode', modeKey:'ownCostsMode', labelKey:'pOwnCostsMode', tip:'ownCostsMode'});
+  rows.push({type:'mode', modeKey:'ownCostsMode', labelKey:'pOwnCostsMode'});
   if(modes.ownCostsMode==='simple'){
     rows.push(P('setupCostType','setup'), P('setupCost','setup',true));
     rows.push(P('ownOngoingCostType','own'), P('ownOngoingCostFreq','own',true), P('ownOngoingCost','own',true), P('ownOngoingInflation','own',true));
@@ -1192,7 +1192,7 @@ function buildRenderRows(){
 
   rows.push({type:'sep', sepKey:'sepRent'});
   rows.push(P('rentFreq','rent'), P('rentAmount','rent',true), P('rentInflation'));
-  rows.push({type:'mode', modeKey:'rentCostsMode', labelKey:'pRentCostsMode', tip:'rentCostsMode'});
+  rows.push({type:'mode', modeKey:'rentCostsMode', labelKey:'pRentCostsMode'});
   if(modes.rentCostsMode==='simple'){
     rows.push(P('rentOngoingCostType','rentcost'), P('rentOngoingCostFreq','rentcost',true), P('rentOngoingCost','rentcost',true), P('rentOngoingInflation','rentcost',true));
   } else {

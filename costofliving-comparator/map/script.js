@@ -683,10 +683,6 @@ function mountFromPicker(){
 // INPUTS
 // ═══════════════════════════════════════════════════════════
 const TIPS = {
-  detail: {
-    simple: '<strong>Simple:</strong> one monthly figure, scaled by each city\'s overall cost-of-living index.',
-    detailed: '<strong>Detailed:</strong> rent, groceries, utilities and more as separate rows, each scaled by its own index.',
-  },
   housing: {
     include: '<strong>Include:</strong> rent or a mortgage is part of your living cost, scaled by the index with housing.',
     exclude: '<strong>Exclude:</strong> your living cost leaves housing out, as when an employer pays for it.',
@@ -695,11 +691,6 @@ const TIPS = {
     required: '<strong>Required salary:</strong> the net salary each city needs for your lifestyle and your savings target.',
     global: '<strong>Global salary:</strong> your own salary in every city, at today\'s exchange rate, and what it leaves you after the same lifestyle.',
     scaled: '<strong>Scaled salary:</strong> your salary as a multiple of your city\'s pay, given the same multiple of each city\'s pay, and what it leaves you after the same lifestyle.',
-  },
-  scale: {
-    min: '<strong>Minimum wage:</strong> the legal minimum pay for a full-time month in each city.',
-    avg: '<strong>Average salary:</strong> the average net salary in each city.',
-    median: '<strong>Median salary:</strong> the middle net salary in each city: half earn more, half less.',
   },
   target: {
     ratio: '<strong>Savings ratio:</strong> each city\'s salary saves the same share of pay as you save now.',
@@ -722,11 +713,9 @@ function syncInputs(){
   if(document.activeElement !== $('expense')) $('expense').value = moneyText(S.expense);
   setSeg('detailGroup', S.detail); setSeg('housingGroup', S.housing);
   setSeg('modeGroup', S.mode); setSeg('targetGroup', S.target); setSeg('scaleGroup', S.scale);
-  $('detailTip').setAttribute('data-tip', TIPS.detail[S.detail]);
   $('housingTip').setAttribute('data-tip', TIPS.housing[S.housing]);
   $('modeTip').setAttribute('data-tip', TIPS.mode[S.mode]);
   $('targetTip').setAttribute('data-tip', TIPS.target[S.target]);
-  $('scaleTip').setAttribute('data-tip', TIPS.scale[S.scale]);
   $('simpleBox').hidden = S.detail !== 'simple';
   $('detailBox').hidden = S.detail !== 'detailed';
   $('targetRow').hidden = S.mode !== 'required';

@@ -234,10 +234,6 @@ function onProblemTypeChange() {
   const pt = document.getElementById('problem-type').value;
   setOptionTips();
   const isCont = pt === 'contingency';
-  // Update dynamic tooltips
-  const isOpt = pt === 'optimisation';
-  setTip('tt-lb', isOpt ? 'Lowest value the search is allowed to try for this variable.' : 'First value of the swept range, included in the sweep.');
-  setTip('tt-ub', isOpt ? 'Highest value the search is allowed to try for this variable.' : 'Last value of the swept range, included in the sweep.');
   // Custom section
   document.getElementById('sec-custom').classList.toggle('cond-hidden', pt !== 'custom');
   // Optimisation section
@@ -1318,7 +1314,7 @@ function buildOutputVarHTML(id, data = {}, type = 'attribute') {
       <div class="${!isTs?'cond-hidden':''}" id="${id}-row-output-raw">
         <div class="checkbox-row" style="margin-bottom:4px;">
           <input type="checkbox" id="${id}-output-raw" ${data.output_raw_csv?'checked':''} />
-          <label for="${id}-output-raw">Output raw data (time vs variable, saved as .csv in <code>{output_dir}/raw</code>) ${tip('Save the full time-series as .csv per scenario in {output_dir}/raw/ for post-processing.')}</label>
+          <label for="${id}-output-raw">Output raw data (time vs variable, saved as .csv in <code>{output_dir}/raw</code>)</label>
         </div>
       </div>
       <!-- CUSTOM FUNCTION -->

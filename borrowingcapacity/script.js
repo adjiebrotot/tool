@@ -598,31 +598,6 @@ const SIMPLE_INC = {
   }
 };
 
-/* Tips that answer the mode you are actually in.
-   ---------------------------------------------------------------------------
-   A Simple/Detailed row used to carry both halves of the explanation at once,
-   which is two paragraphs to read a switch you have already made. Each tip now
-   explains the mode that is live, and the shared tooltip adds the line saying
-   the other mode has its own (data-tip-options). Keyed by UI key, then value. */
-const MODE_TIPS = {
-  incMode: {
-    simple:   '<strong>Simple:</strong> counts one gross figure in full, as a lender treats base salary or business profit.',
-    detailed: '<strong>Detailed:</strong> takes each stream with its own shading, the share a lender counts.'
-  },
-  debtsMode: {
-    simple:   '<strong>Simple:</strong> takes the headline figure of each debt you tick, on the standard settings shown beneath it.',
-    detailed: '<strong>Detailed:</strong> sets each rate, term, repayment type and the rate charged on card limits.'
-  },
-  loanMode: {
-    simple:   '<strong>Simple:</strong> asks for the rate and term, then tests you on the standard APRA settings below.',
-    detailed: '<strong>Detailed:</strong> moves the buffer, lender floor, minimum surplus and minimum NSR to one lender&rsquo;s policy.'
-  },
-  capsMode: {
-    simple:   '<strong>Simple:</strong> takes the price, deposit and purchase costs, and reads the LVR ceiling off the LMI switch.',
-    detailed: '<strong>Detailed:</strong> adds the DTI cap and its income basis, a separate bank valuation, and the LVR ceiling as its own dial.'
-  }
-};
-
 // The deposit field asks for two different things, so its tip follows the unit.
 const DEPOSIT_TIPS = {
   amount: 'Savings, a family gift and any grant. Stamp duty and the purchase costs come out of it first.',
@@ -644,11 +619,6 @@ function syncUI(){
   const si = SIMPLE_INC[UI.incWho];
   $('incSimpleLabel').textContent = si.label;
   $('incSimpleTip').setAttribute('data-tip', si.tip);
-
-  // Every Simple/Detailed row explains the mode it is sitting in, not both.
-  Object.entries(MODE_TIPS).forEach(([key, tips]) => {
-    const el = $(key + 'Tip'); if(el) el.setAttribute('data-tip', tips[UI[key]] || '');
-  });
 
   // The deposit field changes what it is asking for with its unit.
   const depPct = str('depositMode') === 'pct';

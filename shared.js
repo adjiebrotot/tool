@@ -4356,6 +4356,111 @@
   }
   global.SharedSeg = { fromSelect: fromSelect };
 
+  /* ── SharedSegFit: a segmented control sized to its line ─────────────────
+     A .seg-group drawn at its natural width went wrong two ways. Alone on its
+     line in a form column, two short buttons left a gap beside them; with more
+     options than the column holds, one button wrapped onto a second row of its
+     own (Symbol: "Generator Solar Wind" over a lone "Grid"). So each group is
+     measured where it stands:
+       - alone on its line, in a column no wider than SEG_FILL_MAX (or drawn
+         full width already), it fills the line and its buttons share the
+         width (.seg-fill);
+       - if it does not fit, its buttons tighten first (.seg-tight);
+       - if it still does not fit, the buttons go into even rows (.seg-grid),
+         the last one spanning what is left, so no row ends in a gap.
+     A wide toolbar, and a control in a table cell, keep their compact size.
+     data-seg-fit="off" opts a group out. */
+  var SEG_FILL_MAX = 560;
+  function segBtns(g){
+    return Array.prototype.filter.call(g.children, function(b){ return b.offsetParent && b.getBoundingClientRect().width; });
+  }
+  function segCramped(g){
+    var btns = segBtns(g), top = null;
+    if(g.scrollWidth > g.clientWidth + 1) return true;
+    for(var i = 0; i < btns.length; i++){
+      var r = btns[i].getBoundingClientRect();
+      if(top === null) top = r.top;
+      else if(Math.abs(r.top - top) > 4) return true;
+      if(btns[i].scrollWidth > btns[i].clientWidth + 1) return true;
+    }
+    return false;
+  }
+  function segAlone(g){
+    var r = g.getBoundingClientRect(), p = g.parentElement;
+    function beside(cr){ return cr.width > 2 && cr.height > 2 && cr.top < r.bottom - 2 && cr.bottom > r.top + 2; }
+    for(var c = p.firstChild; c; c = c.nextSibling){
+      if(c === g) continue;
+      if(c.nodeType === 1){
+        // Out of the flow (a SharedSeg source <select>, a badge) it takes no room.
+        var pos = getComputedStyle(c).position;
+        if(pos !== 'absolute' && pos !== 'fixed' && beside(c.getBoundingClientRect())) return false;
+      }
+      else if(c.nodeType === 3 && /\S/.test(c.textContent)){
+        var range = document.createRange(); range.selectNodeContents(c);
+        if(beside(range.getBoundingClientRect())) return false;
+      }
+    }
+    return true;
+  }
+  function segInner(p){
+    var cs = getComputedStyle(p);
+    return p.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  }
+  function segFitOne(g){
+    var p = g.parentElement;
+    if(!p || !g.offsetParent || g.getAttribute('data-seg-fit') === 'off') return;
+    var key = p.clientWidth + '|' + g.children.length + '|' + g.textContent;
+    if(g.__segKey === key) return;
+    g.__segKey = key;
+    var btns = Array.prototype.slice.call(g.children);
+    // A button's transition would animate the change being measured.
+    g.classList.add('seg-measure');
+    segSize(g, btns, p);
+    g.classList.remove('seg-measure');
+  }
+  function segSize(g, btns, p){
+    g.classList.remove('seg-fill', 'seg-tight', 'seg-grid');
+    g.style.removeProperty('grid-template-columns');
+    btns.forEach(function(b){ b.style.removeProperty('grid-column'); });
+    // Fill only alone on the line, in a form column or already full width. A
+    // table cell is as wide as its columns, which may scroll: never there.
+    var inner = segInner(p);
+    if(!g.closest('td, th') && (inner <= SEG_FILL_MAX || g.getBoundingClientRect().width >= inner - 2) && segAlone(g)) g.classList.add('seg-fill');
+    if(!segCramped(g)) return;
+    g.classList.add('seg-tight');
+    if(!segCramped(g)) return;
+    btns = segBtns(g);
+    var n = btns.length, last = btns[n - 1];
+    if(n < 2) return;
+    g.classList.add('seg-grid');
+    for(var rows = 2; rows <= n; rows++){
+      var cols = Math.ceil(n / rows), left = n % cols;
+      g.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0, 1fr))';
+      last.style.gridColumn = left ? 'span ' + (cols - left + 1) : '';
+      if(!btns.some(function(b){ return b.scrollWidth > b.clientWidth + 1; })) break;
+    }
+  }
+  function initSegFit(){
+    var queued = false, seen = typeof WeakSet === 'function' ? new WeakSet() : null;
+    var ro = global.ResizeObserver ? new ResizeObserver(queue) : null;
+    function run(){
+      queued = false;
+      document.querySelectorAll('.seg-group').forEach(function(g){
+        if(ro && seen && !seen.has(g)){ seen.add(g); ro.observe(g); if(g.parentElement) ro.observe(g.parentElement); }
+        segFitOne(g);
+      });
+    }
+    function queue(){
+      if(queued) return;
+      queued = true;
+      requestAnimationFrame(run);
+    }
+    if(global.MutationObserver) new MutationObserver(queue).observe(document.body, {childList: true, subtree: true});
+    global.addEventListener('resize', queue);
+    queue();
+  }
+  global.SharedSegFit = { fit: segFitOne };
+
   /* ── SharedFold — the long table waits behind a button ───────────────────
      A year-by-year table is the most specific thing a tool shows, so it opens
      closed: its header row (title, CSV button) stays, and a chevron at the
@@ -4829,6 +4934,7 @@
     initTooltip();
     global.SharedAbbr.init();
     initFit();
+    initSegFit();
     if(global.SharedSlider.auto()) global.SharedSlider.scan();
     global.SharedFold.assumes();
   }

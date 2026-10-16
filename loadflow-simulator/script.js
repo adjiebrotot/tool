@@ -910,8 +910,7 @@
   function labelOverrideHtml(e){
     var own = typeof e.lb === 'number';
     var d = display(), list = LF.LABELS[e.c];
-    var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels' +
-      tipHtml(own ? 'This one shows the boxes ticked below, whatever the Labels tab sets.' : 'It shows what the Labels tab sets for every ' + (e.c === 'StorageUnit' ? 'storage unit' : LF.WORD[e.c].toLowerCase()) + '.') + '</span></div>' +
+    var html = '<div class="field-group"><div class="group-title">Labels</div><div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">Its own labels</span></div>' +
       '<label class="toggle-switch"><input type="checkbox" id="lbOwn"' + (own ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(own){
       html += '<div class="lbl-chips">' + list.map(function(q, i){
@@ -1115,14 +1114,7 @@
     $('acGroup').style.display = ac ? '' : 'none';
     $('slackWRow').style.display = $('lfDistSlack').checked ? '' : 'none';
     $('lfMethodTip').setAttribute('data-tip', METHOD_TIP[$('lfMethod').value] || '');
-    $('colourByTip').setAttribute('data-tip', COLOUR_TIP[$('colourBy').value] || '');
   }
-  var COLOUR_TIP = {
-    none: '<strong>Nothing:</strong> the diagram stays in one colour, whatever the result.',
-    voltage: '<strong>Bus voltage:</strong> a bus turns amber as it nears a voltage limit and red past one.',
-    loading: '<strong>Branch loading:</strong> a branch thickens with its loading, turns amber near the limit and red past it.',
-    both: '<strong>Both:</strong> buses by voltage, branches by loading. Amber nears a limit, red is past it.'
-  };
   ['lfMethod', 'lfTol', 'lfSeed', 'lfDistSlack', 'lfSlackW'].forEach(function(id){
     $(id).addEventListener('change', function(){ syncSolverForm(); updateStale(); renderInspector(); });
   });

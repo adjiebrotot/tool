@@ -550,7 +550,7 @@ function renderScenarioConfig(){
       <div class="field-group">
         <div class="group-title">Top-Ups</div>
         <div class="sec-row">
-          <label>Amount per top-up <span class="tip-icon" data-tip="How much is invested on each purchase date, before any yearly increase is applied.">?</span> ${optBtnHtml('amount','Amount per top-up')}</label>
+          <label>Amount per top-up ${optBtnHtml('amount','Amount per top-up')}</label>
           <div class="affix-wrap">
             <span class="prefix" id="cfgAmountPrefix">${escapeHtml(sym)}</span>
             <input class="affix-input money-input" id="cfgAmount" type="text" inputmode="numeric" data-min="0" data-max="100000000000" value="${fmtN(sec.amount)}"/>

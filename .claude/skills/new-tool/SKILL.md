@@ -137,6 +137,9 @@ block. Then register the tool site-wide:
   A tip has to carry a domain fact: a definition, a unit, a rule, a caveat, a behaviour
   nobody could guess. If the only missing word is something like "annual", put it in the
   label instead of hiding it in a hover.
+- **A control that names itself gets no tip**: a Simple/Detailed switch, a display toggle,
+  a "Colour by" picker, a price or rate that is what its label says. Reserve the (i) for the
+  technical and the non-obvious.
 - A tooltip that **explains options** names each one in `<strong>Name:</strong>` and never
   runs them together as a paragraph. Three or fewer short ones: a `<ul>` list. More than
   three, or any needing a long sentence: explain only the **selected** option and add
