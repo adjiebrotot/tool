@@ -407,13 +407,14 @@ console.log('\n── A6 the calendar ──');
         const at = new Date(ms0 + t * 3600e3), h = at.getUTCHours();
         const midnight = Date.parse(start.slice(0, 10) + 'T00:00:00Z');
         const day = P[key].kind === 'load' ? wd(at.toISOString().slice(0, 16)) : Math.floor((ms0 + t * 3600e3 - midnight) / 864e5) % 7;
-        let want = P[key].h[h] * P[key].d[day];
+        const weekend = wd(at.toISOString().slice(0, 16)) >= 5;
+        let want = (P[key].w && weekend ? P[key].w : P[key].h)[h] * P[key].d[day];
         if (P[key].kind === 'gen') want = Math.min(1, want);
         worst = Math.max(worst, Math.abs(got[t] - want)); n++;
       }
     }
   }
-  check('A6 every built-in profile follows the clock from its start, demand by weekday and units by day of the horizon', worst < 1e-12, n + ' hours, worst ' + worst);
+  check('A6 every built-in profile follows the clock from its start, demand by weekday with its own weekend day, and units by day of the horizon', worst < 1e-12, n + ' hours, worst ' + worst);
   const lab = [ED.hourLabel(0, 24, '2026-01-01T00:00'), ED.hourLabel(25, 48, '2026-01-31T23:00'), ED.hourLabel(719, 720, '2028-02-01T00:00'), ED.hourLabel(3, 24, 'not a date')];
   check('A6 hours are labelled as dates from the start', lab.join('|') === '01/01/2026 00:00|02/02/2026 00:00|01/03/2028 23:00|01/01/2026 03:00', lab.join(' | '));
   const o1 = ED.solveOptions({ hours: 99999, start: '2026-02-30T05:00' }), o2 = ED.solveOptions({ hours: 720, start: '2026-06-15T07:45' });
@@ -434,7 +435,8 @@ const XLSX = createRequire(import.meta.url)(XLSX_FILE);
 const HOUR = 3600e3;
 /* What a profile is worth in an hour, from its definition and JavaScript's own
    calendar: a file's value by its date and time; else the hourly value (its
-   own 24, a built-in's, or 1) times the day's factor (daily variability by
+   own 24, a built-in's, a built-in demand shape's weekend day on Saturday and
+   Sunday unless daily variability is set, or 1) times the day's factor (daily variability by
    weekday, a built-in demand shape by weekday, a built-in unit by day of the
    horizon, or 1); a unit never above 1. */
 function want(e, t, start) {
@@ -446,7 +448,7 @@ function want(e, t, start) {
   } else {
     const P = typeof e.prof === 'string' && e.prof ? ED.PROFILES[e.prof] : null, h = at.getUTCHours();
     const wd = (at.getUTCDay() + 6) % 7, dayN = Math.floor((ms - Date.parse(start.slice(0, 10) + 'T00:00:00Z')) / 864e5);
-    const hv = Array.isArray(e.prof) ? e.prof[h] : P ? P.h[h] : 1;
+    const hv = Array.isArray(e.prof) ? e.prof[h] : P ? (P.w && wd >= 5 && !Array.isArray(e.dprof) ? P.w : P.h)[h] : 1;
     const dv = Array.isArray(e.dprof) ? e.dprof[wd] : P ? P.d[P.kind === 'load' ? wd : dayN % 7] : 1;
     v = hv * dv;
   }
@@ -485,14 +487,14 @@ const STARTS = ['2026-01-01T00:00', '2026-01-03T06:00', '2025-12-29T00:00', '202
     for (let t = 0; t < 200; t++) if (got[t] !== (k.c === 'Load' ? 1 * ED.shapeAt(k.prof, t, 0, start) : ED.shapeAt(k.prof, t, 1, start))) legacy++;
   }
   check('A7 a profile with no daily variability or file computes what it did before, bit for bit', legacy === 0, legacy + ' hours differ');
-  // Turning daily variability on starts from the profile's own days: nothing moves.
-  let jump = 0;
-  for (const start of STARTS) for (const k of kinds.filter(k => !k.dprof)) {
-    const e = { c: k.c, prof: k.prof, dprof: '', ts: null };
-    const before = ED.series(e, 720, start), on = { ...e, dprof: ED.weekOf(e, start) }, after = ED.series(on, 720, start);
-    for (let t = 0; t < 720; t++) jump = Math.max(jump, Math.abs(after[t] - before[t]));
-  }
-  check('A7 turning daily variability on keeps every hour where it was, for every shape and start, over 30 days', jump === 0, 'worst ' + jump);
+  // A demand shape's weekend is a day of its own, not a weekday scaled: offices barely peak.
+  const com = ED.loadSeries({ p_set: 100, prof: 'com' }, 168, '2026-01-05T00:00');  // a Monday
+  const P = ED.PROFILES.com, fri11 = com[4 * 24 + 11], sat11 = com[5 * 24 + 11], sun03 = com[6 * 24 + 3];
+  check('A7 a demand shape has a weekday and a weekend day: Commercial at 11:00 on Friday and Saturday, 03:00 on Sunday',
+    Math.abs(fri11 - 100 * P.h[11] * P.d[4]) < 1e-9 && Math.abs(sat11 - 100 * P.w[11] * P.d[5]) < 1e-9 && Math.abs(sun03 - 100 * P.w[3] * P.d[6]) < 1e-9 && sat11 < 0.75 * fri11,
+    [fri11, sat11, sun03].map(x => x.toFixed(1)).join(', ') + ' MW');
+  check('A7 every built-in demand shape differs from day to day: no week is the same seven days', Object.values(ED.PROFILES).filter(p => p.kind === 'load').every(p => p.w && new Set(p.d).size >= 3),
+    Object.keys(ED.PROFILES).filter(k => ED.PROFILES[k].kind === 'load').map(k => k + ' ' + ED.PROFILES[k].d.join('/')).join('; '));
 }
 {
   // Saved state: the new keys survive a round trip, old state takes the old defaults, junk never throws.
@@ -676,17 +678,8 @@ console.log('\n── A7 solved with daily variability and files ──');
   check('A7 solved: the sun gives 80 MW at 14:00 on its 50% Thursday and 160 MW at 14:00 on Friday, gas the rest',
     rs.report.ok && Math.abs(rs.dev[2].p[14] - 80) < 1e-6 && Math.abs(rs.dev[3].p[14] - 220) < 1e-6 && Math.abs(rs.dev[2].p[38] - 160) < 1e-6 && Math.abs(rs.dev[2].p[13] - 100) < 1e-6,
     rs.report.ok ? [rs.dev[2].p[13], rs.dev[2].p[14], rs.dev[2].p[38]].map(x => x.toFixed(2)).join(', ') + ' MW' : rs.report.error);
-  // Daily variability turned on from every Quick Start's own days: the very same result.
   let diff = [];
-  for (const key of Object.keys(ED.PRESETS)) {
-    const p = ED.PRESETS[key], a = ED.load(p.model), b = ED.load(p.model), o = { ...p.opts, hours: 72, start: '2026-05-14T09:00' };
-    b.el.forEach(e => { if (e.c === 'Load' || e.c === 'Generator') e.dprof = ED.weekOf(e, o.start); });
-    const [ra, rb] = [await ED.solve(psa, a, o), await ED.solve(psa, b, o)];
-    if (!ra.report.ok || !rb.report.ok || ra.totals.cost !== rb.totals.cost) diff.push(key + ' ' + ra.totals.cost + ' vs ' + rb.totals.cost);
-  }
-  check('A7 every Quick Start with daily variability turned on from its own days solves to the very same cost', !diff.length, diff.join('; ') || '4 Quick Starts, 72 hours');
   // Every Quick Start with its profiles given as a file (the template's four places): the same cost, to rounding.
-  diff = [];
   for (const key of Object.keys(ED.PRESETS)) {
     const p = ED.PRESETS[key], a = ED.load(p.model), b = ED.load(p.model), o = { ...p.opts, start: '2026-02-02T00:00' };
     const H = ED.solveOptions(o).hours;
@@ -930,28 +923,31 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   const cost0 = await page.evaluate(() => window.__ed.app.res.totals.cost);
   const homesId = await page.evaluate(() => window.__ed.app.model.el.find(e => e.name === 'Homes').id);
   await page.evaluate(id => window.__ed.app.select([id]), homesId);
-  // On: seven bars from the profile's own weekdays, the week drawn, and the same answer.
-  await page.click('label:has(#f_daily)');
-  const on = await page.evaluate(() => ({ bars: document.querySelectorAll('#dayBars .pb-day').length, week: !!document.querySelector('#weekLine .pl'),
-    dprof: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof, cap: [...document.querySelectorAll('#inspector .prof-cap')].map(p => p.textContent).join(' '),
-    steps: [...document.querySelectorAll('#inspector .prof-step b')].map(b => b.textContent) }));
+  // A built-in shape shows the choice alone: no bars, no line, no file buttons, no explanation.
+  const ui = () => page.evaluate(() => ({ sel: document.getElementById('f_prof').value, opts: [...document.querySelectorAll('#f_prof option')].map(o => o.value),
+    line: !!document.querySelector('#tsLine .pl'), open: !!document.getElementById('profOpen'), tpl: !!document.getElementById('profTpl'),
+    extra: document.querySelectorAll('#inspector .prof-bars, #inspector .prof-cap, #inspector .prof-step, #f_daily').length }));
+  const plain = await ui();
+  check('B10 a built-in shape in the inspector is its choice alone, and Custom is the one way to a file',
+    plain.sel === 'res' && plain.opts.includes('custom') && !plain.opts.includes('file') && !plain.line && !plain.open && !plain.tpl && !plain.extra && !errs.length, JSON.stringify(plain));
+  // Custom: the hours drawn and the file buttons, and nothing changes until a file is opened.
+  const snap0 = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
+  await page.selectOption('#f_prof', 'custom');
+  const cu = await ui(), snap1 = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
   await page.evaluate(() => window.__ed.run());
   const cost1 = await page.evaluate(() => window.__ed.app.res.totals.cost);
-  check('B10 Daily variability on: Monday to Sunday bars from the shape’s own days, hourly × daily said and drawn, and the same answer',
-    on.bars === 7 && on.week && JSON.stringify(on.dprof) === JSON.stringify(ED.PROFILES.res.d) && /80% × 50% = 40%/.test(on.cap) &&
-    on.steps.join('|') === 'Hourly|× Daily|= Each hour' && cost1 === cost0 && !errs.length, JSON.stringify({ ...on, cost0, cost1 }).slice(0, 200));
-  // Drag Thursday's bar down to half: the model, the bars and the week all follow, and the run uses it.
-  // The bars' own units to the screen, through the SVG's transform.
-  const at = (ux, uy) => page.evaluate(([x, y]) => { const s = document.getElementById('dayBars'), p = s.createSVGPoint(); p.x = x; p.y = y; const q = p.matrixTransform(s.getScreenCTM()); return [q.x, q.y]; }, [ux, uy]);
-  const [ax, ay] = await at(120, 30), [bx, by] = await at(120, 58 - 27);
-  await page.mouse.move(ax, ay); await page.mouse.down(); await page.mouse.move(bx, by, { steps: 4 }); await page.mouse.up();
-  const drag = await page.evaluate(() => ({ d: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof.slice(), stale: document.getElementById('runBtn').classList.contains('needs-run') }));
+  check('B11 picking Custom draws the horizon’s hours and offers the file and its template, changing nothing until one is opened',
+    cu.sel === 'custom' && cu.line && cu.open && cu.tpl && !cu.extra && snap1 === snap0 && cost1 === cost0 && !errs.length, JSON.stringify(cu));
+  await page.selectOption('#f_prof', 'res');
+  // A profile saved with its own 24 hours and daily factors still shows, as Custom, and solves as it did.
+  await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); e.prof = Array(24).fill(0.5); e.dprof = Array(7).fill(0.8); window.__ed.app.select([]); window.__ed.app.select([id]); }, homesId);
+  const old = await ui();
+  const oldP = await page.evaluate(async id => { await window.__ed.run(); return window.__ed.app.res.dev[id].p.slice(0, 24); }, homesId);
+  check('B11 a profile saved with its own bars and days shows as Custom and runs as it was saved', old.sel === 'custom' && old.line && oldP.every(v => Math.abs(v - 300 * 0.5 * 0.8) < 1e-9) && !errs.length,
+    old.sel + ', ' + oldP[0] + ' MW an hour');
+  await page.selectOption('#f_prof', 'res');
   await page.evaluate(() => { const set = (id, v) => { const el = document.getElementById(id); el.value = v; el.dispatchEvent(new Event('change', { bubbles: true })); }; set('edSpanUnit', 'd'); set('edSpan', '7'); set('edStart', '2026-01-05T00:00'); });
   await page.evaluate(() => window.__ed.run());
-  const thu = await page.evaluate(id => { const r = window.__ed.app.res, e = window.__ed.app.model.el.find(x => x.id === id); return { p: r.dev[id].p.slice(72, 96), ps: e.p_set, mon: r.dev[id].p.slice(0, 24) }; }, homesId);
-  const wantThu = ED.PROFILES.res.h.map(v => 300 * v * drag.d[3]);
-  check('B11 dragging Thursday’s bar to half halves Thursday’s demand in the run, hour by hour', Math.abs(drag.d[3] - 0.5) < 0.011 && drag.stale &&
-    thu.p.every((v, h) => Math.abs(v - wantThu[h]) < 1e-9), 'Thursday ' + drag.d[3] + ', 18:00 ' + thu.p[18].toFixed(1) + ' MW');
   // The templates: both formats, the horizon's hours from the first hour, a column per load and generator.
   await page.click('.ctrl-tab[data-tab="dispatch"]');
   const [dx] = await Promise.all([page.waitForEvent('download'), page.click('#tplXlsxBtn')]);
@@ -988,17 +984,17 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   const applied = Date.now() - t0;
   const sf = await page.evaluate(() => { const e = window.__ed.app.model.el.find(x => x.name === 'Solar farm'); return { ts: e.ts, id: e.id, p_nom: e.p_nom }; });
   await page.evaluate(id => window.__ed.app.select([id]), sf.id);
-  const insp = await page.evaluate(() => ({ sel: document.getElementById('f_prof').value, line: !!document.querySelector('#tsLine .pl'), cap: document.querySelector('#inspector .prof-cap').textContent, daily: !!document.getElementById('f_daily') }));
+  const insp = await page.evaluate(() => ({ sel: document.getElementById('f_prof').value, line: !!document.querySelector('#tsLine .pl'), cap: !!document.querySelector('#inspector .prof-cap'), daily: !!document.getElementById('f_daily') }));
   await page.evaluate(() => window.__ed.run());
   const av = await page.evaluate(id => window.__ed.app.res.dev[id].avail, sf.id);
   check('B14 a CSV with a cloudy Wednesday: the solar farm takes those hours from the file, the run uses them, the inspector shows them',
-    !!sf.ts && sf.ts.at === '2026-01-05T00:00' && sf.ts.v.length === 168 && insp.sel === 'file' && insp.line && !insp.daily && /168 hours from the file, 05\/01\/2026 00:00 to 11\/01\/2026 23:00/.test(insp.cap) &&
-    av.every((v, t) => Math.abs(v - Math.min(1, +rows[t + 1][sfCol]) * sf.p_nom) < 420 * 1e-5) && !errs.length, applied + ' ms to apply; ' + insp.cap.slice(0, 80));
-  // A longer horizon than the file: the run is stopped and says why, in the checks and beside the profile.
+    !!sf.ts && sf.ts.at === '2026-01-05T00:00' && sf.ts.v.length === 168 && insp.sel === 'custom' && insp.line && !insp.daily && !insp.cap &&
+    av.every((v, t) => Math.abs(v - Math.min(1, +rows[t + 1][sfCol]) * sf.p_nom) < 420 * 1e-5) && !errs.length, applied + ' ms to apply; ' + JSON.stringify(insp));
+  // A longer horizon than the file: the run is stopped and says why, in the checks.
   await page.evaluate(() => { const el = document.getElementById('edSpan'); el.value = '8'; el.dispatchEvent(new Event('change', { bubbles: true })); });
   const blocked = await page.evaluate(async () => { await window.__ed.run(); const r = window.__ed.app.res;
-    return { ok: r.report.ok, why: (r.report.blocked || []).map(x => x.msg).join(' '), cap: [...document.querySelectorAll('#inspector .prof-cap.is-err')].map(p => p.textContent).join(' ') }; });
-  check('B15 a horizon past the file’s last hour stops the run, saying so in the checks and beside the profile', !blocked.ok && /Solar farm’s uploaded profile runs from 05\/01\/2026 00:00 to 11\/01\/2026 23:00/.test(blocked.why) && /12\/01\/2026 23:00/.test(blocked.cap),
+    return { ok: r.report.ok, why: (r.report.blocked || []).map(x => x.msg).join(' ') }; });
+  check('B15 a horizon past the file’s last hour stops the run, saying so in the checks', !blocked.ok && /Solar farm’s uploaded profile runs from 05\/01\/2026 00:00 to 11\/01\/2026 23:00/.test(blocked.why),
     blocked.why.slice(0, 120));
   // A file too short for the horizon is turned away and changes nothing.
   const snap2 = await page.evaluate(() => JSON.stringify(window.ED.compact(window.__ed.app.model)));
@@ -1007,24 +1003,25 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   await page.waitForFunction(() => /was not used/.test(document.getElementById('profAllMsg').textContent));
   const rej = await page.evaluate(() => ({ msg: document.getElementById('profAllMsg').textContent, err: document.getElementById('profAllMsg').classList.contains('is-err'), snap: JSON.stringify(window.ED.compact(window.__ed.app.model)) }));
   check('B16 a file that stops short of the horizon is turned away, saying where, and nothing changes', rej.err && rej.snap === snap2 && /short at the end/.test(rej.msg), rej.msg.slice(0, 140));
-  // One element from the inspector: picking From a file opens the file chooser; one column of MW for a load sets its peak.
+  // One element from the inspector: Custom, then Open file; one column of MW for a load sets its peak.
   await page.evaluate(() => { const el = document.getElementById('edSpan'); el.value = '7'; el.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.evaluate(id => window.__ed.app.select([id]), homesId);
   const one = [['Time', 'Demand in MW (MW)']];
   for (let t = 0; t < 168; t++) one.push([`${String(5 + Math.floor(t / 24)).padStart(2, '0')}/01/2026 ${String(t % 24).padStart(2, '0')}:00`, String(200 + (t % 24) * 5)]);
-  const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.selectOption('#f_prof', 'file')]);
+  await page.selectOption('#f_prof', 'custom');
+  const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click('#profOpen')]);
   await fc.setFiles(fAs('homes-mw.csv', one.map(r => r.join(',')).join('\n')));
   await page.waitForFunction(() => /homes-mw\.csv(:| was not| could not)/.test((document.getElementById('profMsg') || {}).textContent || ''));
   const h = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { p_set: e.p_set, v0: e.ts && e.ts.v[0], n: e.ts && e.ts.v.length, msg: document.getElementById('profMsg').textContent, sel: document.getElementById('f_prof').value }; }, homesId);
   await page.evaluate(() => window.__ed.run());
   const hp = await page.evaluate(id => window.__ed.app.res.dev[id].p, homesId);
-  check('B17 From a file in the inspector: one column in MW sets the peak demand to its highest hour, and every hour keeps its MW',
-    h.p_set === 315 && h.n === 168 && h.sel === 'file' && hp.every((v, t) => Math.abs(v - (200 + (t % 24) * 5)) < 1e-3) && /peak demand set/.test(h.msg),
+  check('B17 Custom in the inspector: one column in MW sets the peak demand to its highest hour, and every hour keeps its MW',
+    h.p_set === 315 && h.n === 168 && h.sel === 'custom' && hp.every((v, t) => Math.abs(v - (200 + (t % 24) * 5)) < 1e-3) && /peak demand set/.test(h.msg),
     'sel ' + h.sel + ', worst ' + Math.max(...hp.map((v, t) => Math.abs(v - (200 + (t % 24) * 5)))).toExponential(1) + ' MW; ' + h.msg.slice(0, 120));
   // Back to a built-in shape: the file is let go.
   await page.selectOption('#f_prof', 'res');
   const back = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { ts: e.ts, prof: e.prof, d: Array.isArray(e.dprof) }; }, homesId);
-  check('B18 choosing a shape again lets the file go and keeps the daily variability', back.ts === null && back.prof === 'res' && back.d);
+  check('B18 choosing a shape again lets the file go', back.ts === null && back.prof === 'res' && !back.d);
   // Undo brings the file back; the mini cache keeps both across a reload, and the reload solves them.
   await page.evaluate(() => window.__ed.app.undo());
   await page.evaluate(() => window.__ed.run());
@@ -1033,8 +1030,8 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   await page.reload();
   await solvedP(page);
   const after = await page.evaluate(() => ({ cost: window.__ed.app.res.totals.cost, snap: JSON.stringify(window.ED.compact(window.__ed.app.model)), T: window.__ed.app.res.T }));
-  check('B19 undo brings the file back, and a reload keeps the files and the daily bars and solves to the same cost',
-    before.snap.includes('"ts"') && before.snap.includes('"dprof"') && after.snap === before.snap && after.cost === before.cost && after.T === 168 && !errs.length, '$' + Math.round(after.cost).toLocaleString());
+  check('B19 undo brings the file back, and a reload keeps the files and solves to the same cost',
+    before.snap.includes('"ts"') && after.snap === before.snap && after.cost === before.cost && after.T === 168 && !errs.length, '$' + Math.round(after.cost).toLocaleString());
   // A year of hours for the whole network, opened on the page: how long until it is applied.
   const y0 = Date.parse('2026-01-01T00:00:00Z'), yr = [['Date and time', 'Homes [p.u.]', 'Shops and offices [p.u.]', 'Solar farm [p.u.]']];
   for (let t = 0; t < 8760; t++) yr.push([isoAt(y0 + t * HOUR), ((t % 24) / 30 + 0.2).toFixed(4), ((t % 13) / 20 + 0.1).toFixed(4), ((t % 7) / 8).toFixed(4)]);
