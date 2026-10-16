@@ -268,7 +268,6 @@ html.abt-embed .chart-card>.sub{margin-top:0;}
 .prof-bars .pb-ref{stroke:var(--muted);stroke-opacity:.45;stroke-width:.8;stroke-dasharray:2 2;fill:none;}
 .prof-bars .pb-day{fill:var(--accent2);}
 .prof-toggle{margin-top:6px;}
-.prof-cap{font-size:.76rem;color:var(--muted);line-height:1.45;margin:6px 0 0;}
 
 /* ── A Custom profile: its hours through the horizon, and the file it comes from ── */
 .prof-line{display:block;width:100%;height:auto;aspect-ratio:256/62;max-height:90px;margin-top:6px;user-select:none;}

@@ -766,12 +766,12 @@
     // Each profile by what sets its days: a file, daily variability, or its shape alone.
     var shaped = m.el.filter(function(e){ return (e.c === 'Load' || e.c === 'Generator') && ED.onBus(m, e); });
     var fromFile = shaped.some(ED.hasTs), plain = shaped.filter(function(e){ return !ED.hasTs(e) && !Array.isArray(e.dprof); });
-    var daily = shaped.some(function(e){ return !ED.hasTs(e) && Array.isArray(e.dprof); });
-    var builtIn = plain.some(function(e){ return !!ED.baseOf(e); });
+    var daily = shaped.some(function(e){ return !ED.hasTs(e) && Array.isArray(e.dprof) && ED.dailyOn(e); });
+    var builtIn = plain.some(ED.ownWeek), weather = plain.some(function(e){ return ED.ownWeek(e) && ED.baseOf(e).kind === 'gen'; });
     var custom = plain.some(function(e){ return Array.isArray(e.prof) && !ED.baseOf(e); });
     if(fromFile) li.push('<strong>Profiles from a file are taken hour by hour</strong> as the file gives them, each row placed on its hour by its date and time.');
     if(daily) li.push('<strong>Daily variability multiplies the hourly profile:</strong> 80% at 14:00 on a 50% day is 40% of the peak or rating. The days run Monday to Sunday by the calendar.');
-    if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change from day to day:</strong> demand follows the weekday, with a weekend day of its own that wakes later and runs lower, and solar and wind have cloudier and calmer days.');
+    if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change from day to day:</strong> ' + (weather ? 'demand follows the weekday, with a weekend day of its own that wakes later and runs lower, and the older solar and wind shapes have cloudier and calmer days.' : 'demand follows the weekday, with a weekend day of its own that wakes later and runs lower.'));
     else if(custom && o.hours > 24) li.push('<strong>Custom profiles repeat every day</strong> of the horizon' + (daily ? ' unless daily variability is on.' : '.'));
     li.push('<strong>No reserve is held</strong> and forecasts are perfect: every unit may run to its rating, and solar, wind and demand are known for every hour.');
     if(has('Line', function(e){ return !!ED.lineType(e); }))
@@ -1041,11 +1041,11 @@
      bar keeps the shape it started from (pbase), so its days and its weekend
      still apply; the list shows it as that shape, edited. */
   var PROFILE_TIP = {
-    load: 'Demand as a share of its peak. Built-in shapes follow the weekday, lower at the weekend; drag a bar to adjust one. Custom takes every hour from a file.',
-    gen: 'What share of its rating the unit can produce. Drag a bar to adjust it. Custom takes every hour from a file.'
+    load: 'Demand as a share of its peak. Built-in shapes come with daily variability, lower at the weekend; drag a bar to adjust one. Custom takes every hour from a file.',
+    gen: 'What share of its rating the unit can produce, the same every day. Drag a bar to adjust it. Custom takes every hour from a file.'
   };
   var DAILY_TIP = {
-    off: 'On, seven bars set Monday to Sunday and each hour is hourly × daily. Off, a built-in shape keeps its own week.',
+    off: 'On, seven bars set Monday to Sunday and each hour is hourly × daily. Off, every weekday is the same.',
     on: 'Each hour is its hourly bar × its day’s bar: 80% at 14:00 on a 50% day is 40%. Days run Monday to Sunday by the calendar.'
   };
   function profKind(e){ return e.c === 'Load' ? 'load' : 'gen'; }
@@ -1125,6 +1125,21 @@
     var vals = ED.series(e, n, o.start, e.c === 'Generator' ? 1 : 0);
     return lineSvg(vals, { marks: marks, at: at, label: function(i){ var l = ED.msLabel(a + i * 3600000); return l.slice(0, 5) + l.slice(10); } });
   }
+  // The seven daily factors the day bars show: its own, or what its shape does now.
+  function weekShown(e){ return Array.isArray(e.dprof) ? e.dprof : ED.weekOf(e, solveOptions().start); }
+  // A week of hours, Monday 00:00 to Sunday 24:00, as the run takes it: each
+  // hour its hourly value × its day's factor, a demand shape's weekend hours on
+  // Saturday and Sunday.
+  function weekVals(e){
+    var o = solveOptions(), st = ED.parseStart(o.start), wd0 = ED.cal(st).wd0 || 0;
+    var vals = ED.series(e, 168, st.slice(0, 10) + 'T00:00', e.c === 'Generator' ? 1 : 0), out = [];
+    for(var i = 0; i < 168; i++) out.push(vals[((Math.floor(i / 24) - wd0 + 7) % 7) * 24 + i % 24]);
+    return out;
+  }
+  function weekLineSvg(e, at){
+    var marks = ED.DAYS.map(function(d, k){ return { i: k * 24, w: 24 * 240 / 167, label: d }; });
+    return lineSvg(weekVals(e), { marks: marks, at: at, label: function(i){ return ED.DAYS[Math.floor(i / 24)] + ' ' + ('0' + i % 24).slice(-2) + ':00'; } });
+  }
   // A message from the last file or template, shown where it was asked for.
   var fileMsg = { scope: null, html: '', err: false };
   function fileMsgHtml(scope, id){
@@ -1132,13 +1147,14 @@
       (fileMsg.scope === scope && fileMsg.html ? '' : ' hidden') + '>' + (fileMsg.scope === scope ? fileMsg.html : '') + '</div>';
   }
   function profileHtml(e){
-    var kind = profKind(e), custom = isCustom(e), daily = Array.isArray(e.dprof);
-    var keys = Object.keys(ED.PROFILES).filter(function(k){ return ED.PROFILES[k].kind === kind; });
+    var kind = profKind(e), custom = isCustom(e), daily = ED.dailyOn(e);
     // Edited bars show as the shape they started from; ones saved before that was kept, as Flat.
     var edited = !custom && Array.isArray(e.prof);
     var curK = custom ? 'custom' : edited ? (ED.baseOf(e) ? e.pbase : '') : e.prof;
+    // An old shape is offered only to the element that already has it.
+    var keys = Object.keys(ED.PROFILES).filter(function(k){ return ED.PROFILES[k].kind === kind && (!ED.PROFILES[k].old || k === curK); });
     var opts = [['', kind === 'load' ? 'Flat' : 'Always available']].concat(keys.map(function(k){ return [k, ED.PROFILES[k].label]; })).concat([['custom', 'Custom']]);
-    var label = kind === 'load' ? 'Profile' : 'Availability', of = kind === 'load' ? 'the peak' : 'the rating';
+    var label = kind === 'load' ? 'Profile' : 'Availability';
     var html = '<div class="field-row prof-row"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(PROFILE_TIP[kind]) + '</span></div>' +
       '<select class="sel-input" id="f_prof" data-k="prof">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === curK ? ' selected' : '') + '>' + o[1] + (edited && o[0] === curK ? ', edited' : '') + '</option>'; }).join('') + '</select>';
     if(custom){
@@ -1151,8 +1167,8 @@
       html += '<div class="toggle-row prof-toggle"><div class="toggle-label"><span class="tip-wrap">Daily variability' + tipHtml(DAILY_TIP[daily ? 'on' : 'off']) + '</span></div>' +
         '<label class="toggle-switch"><input type="checkbox" id="f_daily"' + (daily ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
       if(daily){
-        html += '<svg class="prof-bars" id="dayBars" viewBox="-8 -14 256 90" role="img" aria-label="Daily factor, Monday to Sunday. Drag a bar to change it.">' + daysSvg(e.dprof) + '</svg>' +
-          '<p class="prof-cap">80% at 14:00 on a 50% day is 80% × 50% = 40% of ' + of + '.</p>';
+        html += '<svg class="prof-bars" id="dayBars" viewBox="-8 -14 256 90" role="img" aria-label="Daily factor, Monday to Sunday. Drag a bar to change it.">' + daysSvg(weekShown(e)) + '</svg>' +
+          '<svg class="prof-line" id="weekLine" viewBox="-8 -6 256 62" role="img" aria-label="' + label + ' through the week, hour by hour, Monday to Sunday">' + weekLineSvg(e) + '</svg>';
       }
     }
     return html + '</div>';
@@ -1345,8 +1361,10 @@
       return;
     }
     if(t.id === 'f_daily'){
-      // On, the days start from what the profile does now from the first hour, so nothing jumps.
-      e.dprof = t.checked ? ED.weekOf(e, $('edStart').value).map(function(v){ return Math.round(v * 1e6) / 1e6; }) : '';
+      // A shape with days of its own turns them on and off ('' and seven 1s); any
+      // other starts from what it does now from the first hour, so nothing jumps.
+      if(ED.ownWeek(e)) e.dprof = t.checked ? '' : [1, 1, 1, 1, 1, 1, 1];
+      else e.dprof = t.checked ? ED.weekOf(e, $('edStart').value).map(function(v){ return Math.round(v * 1e6) / 1e6; }) : '';
       app.change('elec');
       return;
     }
@@ -1357,7 +1375,8 @@
       // Custom keeps the profile as it is until a file is opened; the template starts from it.
       if(t.value === 'custom'){ customPick[e.id] = 1; renderInspector(); return; }
       delete customPick[e.id];
-      e.ts = null; e.prof = t.value; e.pbase = '';
+      // A shape comes with its own days: a demand shape's daily variability, none for a unit's.
+      e.ts = null; e.prof = t.value; e.pbase = ''; e.dprof = '';
       app.change('elec');
       return;
     }
@@ -1399,12 +1418,12 @@
   });
   // Dragging a profile bar sets that hour's value, or that day's.
   var profDrag = null, peek = null;
-  var BAR_IDS = { profBars: 'h', dayBars: 'd', tsLine: 't' };
-  function barOf(ev){ var el = ev.target && ev.target.closest && ev.target.closest('#profBars, #dayBars, #tsLine'); return el ? BAR_IDS[el.id] : null; }
+  var BAR_IDS = { profBars: 'h', dayBars: 'd', tsLine: 't', weekLine: 'w' };
+  function barOf(ev){ var el = ev.target && ev.target.closest && ev.target.closest('#profBars, #dayBars, #tsLine, #weekLine'); return el ? BAR_IDS[el.id] : null; }
   // The pointer in the bars' own units, through the SVG's transform, so it holds
   // at any width the inspector gives them.
   function profAt(ev, which){
-    var id = which === 'd' ? 'dayBars' : which === 't' ? 'tsLine' : 'profBars';
+    var id = which === 'd' ? 'dayBars' : which === 't' ? 'tsLine' : which === 'w' ? 'weekLine' : 'profBars';
     var bars = $(id), m = bars && bars.getScreenCTM && bars.getScreenCTM();
     if(!m) return null;
     var pt = bars.createSVGPoint();
@@ -1415,18 +1434,21 @@
       var n = solveOptions().hours;
       return { h: Math.max(0, Math.min(n - 1, Math.round(pt.x / 240 * (n - 1)))) };
     }
+    if(which === 'w') return { h: Math.max(0, Math.min(167, Math.round(pt.x / 240 * 167))) };
     return { h: Math.max(0, Math.min(23, Math.floor(pt.x / 10))), v: Math.max(0, Math.min(1, (58 - pt.y) / 54)) };
   }
   function drawProf(e, which, at){
     if($('profBars')) $('profBars').innerHTML = barsSvg(ED.hourShape(e), which === 'h' ? at : null);
-    if($('dayBars') && Array.isArray(e.dprof)) $('dayBars').innerHTML = daysSvg(e.dprof, which === 'd' ? at : null);
+    if($('dayBars')) $('dayBars').innerHTML = daysSvg(weekShown(e), which === 'd' ? at : null);
+    if($('weekLine')) $('weekLine').innerHTML = weekLineSvg(e, which === 'w' ? at : null);
     if($('tsLine')) $('tsLine').innerHTML = profLineSvg(e, which === 't' ? at : null);
   }
   function profSet(ev){
     var e = selectedEl(), which = profDrag && profDrag.which, p = which && profAt(ev, which);
     if(!e || !p) return;
     if(which === 'd'){
-      if(!Array.isArray(e.dprof)) return;
+      // The first drag on a shape's own days makes them the element's.
+      if(!Array.isArray(e.dprof)) e.dprof = weekShown(e).map(round2);
       e.dprof[p.h] = round2(p.v);
     } else {
       // The first drag keeps the shape it started from, so its days and weekend still apply.

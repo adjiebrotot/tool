@@ -24,8 +24,10 @@
      prof   (Load, Generator) the hourly shape: '' for flat, a key of
             ED.PROFILES, or 24 numbers (per unit of the peak or the rating)
      dprof  (Load, Generator) daily variability: '' for none, so a built-in
-            shape keeps its own days and a custom one repeats, or 7 factors,
-            Monday first by the calendar, that multiply the hourly shape
+            shape keeps its own days (a demand shape's, or an old unit
+            shape's) and any other repeats, or 7 factors, Monday first by the
+            calendar, that multiply the hourly shape (seven 1s on a shape with
+            days of its own turn them off)
      ts     (Load, Generator) an uploaded hourly series, in place of prof and
             dprof: { at: 'YYYY-MM-DDTHH:00' its first hour, v: [per unit…] }
      pbase  (Load, Generator) the built-in shape 24 edited hours in prof
@@ -74,7 +76,7 @@
   // ['w'] (a week of daily factors) or ['t'] (an uploaded series).
   var BIG = 1e5;
   // The built-in shapes an edited one can start from (ED.PROFILES' keys, frozen).
-  var PBASE = ['', 'sys', 'res', 'com', 'ind', 'solars', 'solar', 'solarw', 'wind'];
+  var PBASE = ['', 'sys', 'res', 'com', 'ind', 'solars', 'solar', 'solarw', 'wind', 'respv', 'resev', 'pvs', 'pv', 'pvw', 'pveq', 'wnd'];
   var SPEC = {
     Bus:         { v_nom: ['n', 0.1, 1500], style: ['e', ['', 'node']] },
     Line:        { type: ['s'], length: ['n', 0, 5000], num_parallel: ['i', 1, 20], r: ['n', 0, BIG], x: ['n', -BIG, BIG], s_nom: ['n', 0, BIG] },
@@ -97,8 +99,8 @@
     Line:        { r: 2, x: 12, s_nom: 100 },
     Transformer: { s_nom: 100, x: 0.1, r: 0.005 },
     Generator:   { p_nom: 100, marginal_cost: 40, committable: 1, p_min_pu: 0.3, min_up_time: 2, min_down_time: 2, start_up_cost: 1000 },
-    PV:          { p_nom: 100, marginal_cost: 0, style: 'pv', prof: 'solar' },
-    Wind:        { p_nom: 100, marginal_cost: 0, style: 'wind', prof: 'wind' },
+    PV:          { p_nom: 100, marginal_cost: 0, style: 'pv', prof: 'pv' },
+    Wind:        { p_nom: 100, marginal_cost: 0, style: 'wind', prof: 'wnd' },
     Grid:        { p_nom: 1000, marginal_cost: 80, grid: 1 },
     Load:        { p_set: 50, prof: 'sys' },
     StorageUnit: { p_nom: 20, max_hours: 4, eff: 0.85, soc0: 0.5 },
@@ -130,6 +132,14 @@
      The hour of the day is the clock's, from the horizon's start. A demand
      shape's day factors are weekdays, Monday first, so they follow the start
      date; a unit's are the weather, so they count days from the start.
+     A demand shape's day factors (d) are its daily variability: picking it
+     turns daily variability on with them, and off (seven 1s) leaves its hours
+     the same every weekday. A unit's shape has no days of its own: the sun and
+     the wind repeat every day unless daily variability is turned on. The four
+     marked old are the unit shapes saved before that, which kept a week of
+     weather (cloudier and calmer days) of their own: they stay as they were,
+     so an old network computes what it did, and are offered only to an
+     element that already has one.
      Daily variability (dprof) takes the place of a shape's day factors:
      an hour is worth its hourly value times its weekday's factor, so 80% at
      14:00 on a 50% day is 40% of the peak or the rating. An uploaded series
@@ -153,18 +163,43 @@
              d: [0.98, 1, 1, 1, 0.98, 0.88, 0.82] },
     // Solar through the seasons at a mid latitude: a summer day is long and high,
     // a winter one short and low, and cloudier more often.
-    solars: { label: 'Solar, summer', kind: 'gen', noun: 'solar',
+    solars: { label: 'Solar, summer, with weather days', kind: 'gen', noun: 'solar', old: 1,
              h: [0, 0, 0, 0, 0, 0.02, 0.08, 0.22, 0.40, 0.57, 0.71, 0.81, 0.86, 0.86, 0.81, 0.71, 0.57, 0.40, 0.22, 0.08, 0.02, 0, 0, 0],
              d: [1, 0.95, 0.8, 1, 0.9, 0.85, 1] },
-    solar: { label: 'Solar, spring or autumn', kind: 'gen', noun: 'solar',
+    solar: { label: 'Solar, spring or autumn, with weather days', kind: 'gen', noun: 'solar', old: 1,
              h: [0, 0, 0, 0, 0, 0, 0.03, 0.15, 0.35, 0.55, 0.70, 0.79, 0.82, 0.79, 0.70, 0.55, 0.35, 0.15, 0.03, 0, 0, 0, 0, 0],
              d: [1, 0.9, 0.6, 1, 0.95, 0.75, 1] },
-    solarw: { label: 'Solar, winter', kind: 'gen', noun: 'solar',
+    solarw: { label: 'Solar, winter, with weather days', kind: 'gen', noun: 'solar', old: 1,
              h: [0, 0, 0, 0, 0, 0, 0, 0.02, 0.12, 0.27, 0.40, 0.49, 0.52, 0.49, 0.40, 0.27, 0.12, 0.02, 0, 0, 0, 0, 0, 0],
              d: [0.85, 0.5, 0.35, 0.9, 0.7, 0.45, 0.8] },
-    wind:  { label: 'Wind', kind: 'gen',
+    wind:  { label: 'Wind, with weather days', kind: 'gen', old: 1,
              h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61],
-             d: [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8] }
+             d: [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8] },
+    // Homes with rooftop solar, as the grid sees them: the panels cover most of
+    // the midday, so demand dips then and the evening peak stands out.
+    respv: { label: 'Residential (with Rooftop PV)', kind: 'load',
+             h: [0.45, 0.40, 0.38, 0.37, 0.38, 0.44, 0.58, 0.62, 0.42, 0.26, 0.18, 0.14, 0.13, 0.14, 0.20, 0.32, 0.52, 0.82, 1.00, 0.98, 0.90, 0.78, 0.64, 0.52],
+             w: [0.50, 0.44, 0.41, 0.39, 0.38, 0.40, 0.44, 0.48, 0.42, 0.32, 0.26, 0.23, 0.22, 0.23, 0.28, 0.40, 0.60, 0.86, 1.00, 0.98, 0.91, 0.80, 0.68, 0.56],
+             d: [0.98, 0.97, 0.97, 0.98, 1, 1.03, 1.02] },
+    // Homes charging electric cars: the cars plug in on arriving home, so the
+    // evening peak is higher and later, and charging runs on into the night.
+    resev: { label: 'Residential (with EV)', kind: 'load',
+             h: [0.58, 0.52, 0.47, 0.43, 0.41, 0.44, 0.56, 0.68, 0.62, 0.53, 0.49, 0.47, 0.46, 0.46, 0.48, 0.53, 0.63, 0.78, 0.92, 1.00, 0.98, 0.92, 0.82, 0.70],
+             w: [0.62, 0.55, 0.50, 0.46, 0.43, 0.43, 0.46, 0.53, 0.62, 0.70, 0.74, 0.75, 0.74, 0.72, 0.71, 0.72, 0.77, 0.86, 0.95, 1.00, 0.97, 0.90, 0.80, 0.70],
+             d: [0.98, 0.97, 0.97, 0.98, 1, 1.04, 1.03] },
+    // The unit shapes, the same every day: daily variability gives them a week.
+    pvs:   { label: 'Solar, summer', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0.02, 0.08, 0.22, 0.40, 0.57, 0.71, 0.81, 0.86, 0.86, 0.81, 0.71, 0.57, 0.40, 0.22, 0.08, 0.02, 0, 0, 0] },
+    pv:    { label: 'Solar, spring or autumn', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0, 0.03, 0.15, 0.35, 0.55, 0.70, 0.79, 0.82, 0.79, 0.70, 0.55, 0.35, 0.15, 0.03, 0, 0, 0, 0, 0] },
+    pvw:   { label: 'Solar, winter', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0, 0, 0.02, 0.12, 0.27, 0.40, 0.49, 0.52, 0.49, 0.40, 0.27, 0.12, 0.02, 0, 0, 0, 0, 0, 0] },
+    // Near the equator the day is twelve hours all year and the sun climbs high;
+    // afternoons cloud over more often than mornings.
+    pveq:  { label: 'Solar (Equator)', kind: 'gen', noun: 'solar',
+             h: [0, 0, 0, 0, 0, 0, 0.02, 0.14, 0.34, 0.54, 0.70, 0.80, 0.83, 0.78, 0.66, 0.49, 0.29, 0.10, 0.01, 0, 0, 0, 0, 0] },
+    wnd:   { label: 'Wind', kind: 'gen',
+             h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61] }
   };
   var own = Object.prototype.hasOwnProperty;
 
@@ -242,11 +277,20 @@
   ED.weekOf = function(e, start){
     if(Array.isArray(e.dprof)) return e.dprof.slice();
     var p = baseOf(e);
-    if(!p) return [1, 1, 1, 1, 1, 1, 1];
+    if(!p || !p.d) return [1, 1, 1, 1, 1, 1, 1];
     if(p.kind === 'load') return p.d.slice();
     var wd0 = ED.cal(start).wd0 || 0, out = [];
     for(var k = 0; k < 7; k++) out[(wd0 + k) % 7] = p.d[k];
     return out;
+  };
+  // A shape that brings a week of its own (a demand shape, or an old unit shape).
+  ED.ownWeek = function(e){ var p = baseOf(e); return !!(p && p.d); };
+  // Whether a profile varies from weekday to weekday: its own daily factors, or
+  // its shape's, unless they were turned off (seven 1s in place of the shape's).
+  ED.dailyOn = function(e){
+    if(ED.hasTs(e)) return false;
+    if(!Array.isArray(e.dprof)) return ED.ownWeek(e);
+    return !(ED.ownWeek(e) && e.dprof.every(function(v){ return +v === 1; }));
   };
   // Where an uploaded series fails to cover a horizon: null when it covers it.
   ED.tsGap = function(e, H, start){
@@ -263,7 +307,7 @@
     if(Array.isArray(prof)) v = +prof[h];
     else if(prof && own.call(ED.PROFILES, prof)){
       var p = ED.PROFILES[prof], wd = (c.wd0 + day) % 7;
-      v = (p.w && wd >= 5 ? p.w : p.h)[h] * p.d[p.kind === 'load' ? wd : day % 7];
+      v = (p.w && wd >= 5 ? p.w : p.h)[h] * (p.d ? p.d[p.kind === 'load' ? wd : day % 7] : 1);
     }
     else v = 1;
     if(!isFinite(v) || v < 0) v = 0;
@@ -1004,7 +1048,7 @@
   function solar(){
     return { v: 1, name: 'Solar and a battery', el: [
       { c: 'Bus', id: 1, name: 'Town', v_nom: 132, at: [40, 24, 34] },
-      { c: 'Generator', id: 2, name: 'Solar farm', bus: 1, p_nom: 420, marginal_cost: 0, prof: 'solar', style: 'pv', at: [-12, 1] },
+      { c: 'Generator', id: 2, name: 'Solar farm', bus: 1, p_nom: 420, marginal_cost: 0, prof: 'pv', style: 'pv', at: [-12, 1] },
       { c: 'Generator', id: 3, name: 'Gas turbine', bus: 1, p_nom: 260, marginal_cost: 62, committable: 1, p_min_pu: 0.35,
         start_up_cost: 4000, min_up_time: 4, min_down_time: 2, ramp_limit_up: 0.6, ramp_limit_down: 0.6, at: [-3, 1] },
       { c: 'Generator', id: 4, name: 'Peaker', bus: 1, p_nom: 150, marginal_cost: 140, committable: 1, p_min_pu: 0.2,
@@ -1019,7 +1063,7 @@
       { c: 'Bus', id: 1, name: 'North', v_nom: 275, at: [16, 26, 14, 1] },
       { c: 'Bus', id: 2, name: 'South', v_nom: 275, at: [76, 26, 14, 1] },
       { c: 'Link', id: 3, name: 'HVDC link', bus0: 1, bus1: 2, p_nom: 250, efficiency: 0.97 },
-      { c: 'Generator', id: 4, name: 'Wind farms', bus: 1, p_nom: 600, marginal_cost: 0, prof: 'wind', style: 'wind', at: [-4, 1] },
+      { c: 'Generator', id: 4, name: 'Wind farms', bus: 1, p_nom: 600, marginal_cost: 0, prof: 'wnd', style: 'wind', at: [-4, 1] },
       { c: 'Generator', id: 5, name: 'Hydro', bus: 1, p_nom: 150, marginal_cost: 18, ramp_limit_up: 0.5, ramp_limit_down: 0.5, at: [3, 1] },
       { c: 'Load', id: 6, name: 'North load', bus: 1, p_set: 220, prof: 'ind', at: [5, 1] },
       { c: 'Generator', id: 7, name: 'Combined cycle', bus: 2, p_nom: 350, marginal_cost: 55, committable: 1, p_min_pu: 0.4,
