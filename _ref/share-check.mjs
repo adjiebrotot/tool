@@ -494,6 +494,17 @@ const PAGES = [
     },
   },
   {
+    // The Capacity Expansion Planner's five charts on the coal exit preset, the
+    // typical days opened on its second decision year (the link carries it).
+    name: 'capacityexpansion-planner', url: '/capacityexpansion-planner/', charts: ['capCanvas', 'buildCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="coal"]');
+      await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report.ok && __cx.app.res.report.opts.peak === 4000 && !document.getElementById('runBtn').disabled && Chart.getChart('dayCanvas'), null, { timeout: 60000 });
+      await page.evaluate(() => window.__cx.setYear(1));
+      await page.waitForTimeout(400);
+    },
+  },
+  {
     name: 'valuateeverything', url: '/valuateeverything/', charts: ['plotDiv'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="house"]');
