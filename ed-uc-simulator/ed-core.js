@@ -118,7 +118,7 @@
     Transformer: ['name', 'p', 'load'],
     Generator:   ['name', 'p', 'status', 'cost'],
     Load:        ['name', 'p'],
-    StorageUnit: ['name', 'p', 'soc'],
+    StorageUnit: ['name', 'p', 'soc', 'socbar'],
     Link:        ['name', 'p', 'loss']
   };
 

@@ -655,8 +655,20 @@
         s += '<path d="M' + P(22, -11) + 'L' + P(38, -11) + 'L' + P(38, 11) + 'L' + P(22, 11) + 'Z" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1.8" stroke-linejoin="round"' + dash + '/>' +
              '<path d="M' + P(27, -7) + 'L' + P(27, 7) + 'M' + P(32, -3.5) + 'L' + P(32, 3.5) + '"' + strokeW(2.4) + '/>';
       }
+      // The SoC bar: an upright gauge beside the battery, on the side away from its bus.
+      var bar = e.c === 'StorageUnit' && r && r.cap > 0 && shows(e, display, 'socbar');
+      var barSide = ux < 0 ? -1 : 1, barX = 0, barY = 0;
+      if(bar){
+        var bx = g.px + ux * 30, by = g.py + uy * 30;
+        var hw = Math.abs(ux) * 8 + Math.abs(vx) * 11;
+        var frac = clamp(at(r.soc) / r.cap, 0, 1), fh = 20 * frac;
+        barX = barSide > 0 ? bx + hw + 4 : bx - hw - 4 - 6; barY = by - 11;
+        s += '<g class="ed-soc"><rect x="' + r1(barX) + '" y="' + r1(barY) + '" width="6" height="22" rx="1" fill="' + C.bg + '" stroke="' + col + '" stroke-width="1"/>' +
+             (fh > 0.05 ? '<rect x="' + r1(barX + 1) + '" y="' + r1(barY + 1 + 20 - fh) + '" width="4" height="' + r1(fh) + '" fill="' + C.accent + '"/>' : '') + '</g>';
+      }
       base += '<g data-id="' + e.id + '">' + s + '</g>';
       var far = e.c === 'Load' ? 36 : e.c === 'StorageUnit' ? 38 : 33;
+      if(bar){ grow(barX - 1, barY - 1); grow(barX + 7, barY + 23); ob(barX - 1, barY - 1, 8, 24, 6); }
       grow(g.px, g.py); grow(g.px + ux * far + vx * 12, g.py + uy * far + vy * 12); grow(g.px + ux * far - vx * 12, g.py + uy * far - vy * 12);
       var p = r ? at(r.p) : NaN;
       if(r && !g.free){
@@ -679,12 +691,14 @@
       var reach = far - 22;
       ob(cx - 13, cy - 13, 26, 26, 6);
       if(!g.free) segOb([g.px, g.py], [g.sx, g.sy], 4, 2);
+      // A label beside the SoC bar steps past it.
+      var past = bar ? 10 : 0;
       want(lines, uy !== 0 || g.free ? [
-        { x: cx + 16, y: cy, ax: 'start', ay: 'middle' }, { x: cx - 16, y: cy, ax: 'end', ay: 'middle' },
+        { x: cx + 16 + (barSide > 0 ? past : 0), y: cy, ax: 'start', ay: 'middle' }, { x: cx - 16 - (barSide < 0 ? past : 0), y: cy, ax: 'end', ay: 'middle' },
         { x: cx, y: cy + uy * (reach + 4), ax: 'middle', ay: uy > 0 ? 'top' : 'bottom' }
       ] : [
         { x: cx, y: cy + 16, ax: 'middle', ay: 'top' }, { x: cx, y: cy - 16, ax: 'middle', ay: 'bottom' },
-        { x: cx + ux * (reach + 4), y: cy, ax: ux > 0 ? 'start' : 'end', ay: 'middle' }
+        { x: cx + ux * (reach + 4 + past), y: cy, ax: ux > 0 ? 'start' : 'end', ay: 'middle' }
       ], e.id, 1);
     });
 
