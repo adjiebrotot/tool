@@ -98,7 +98,7 @@
     StorageUnit: ['name', 'p', 'soc'],
     Link: ['name', 'p']
   };
-  var QTY = { name: 'Name', price: 'Price', p: 'P', load: 'Loading', loss: 'Losses', status: 'On or off', cost: 'Marginal cost', soc: 'State of charge' };
+  var QTY = { name: 'Name', price: 'Price', p: 'P', load: 'Loading', loss: 'Losses', status: 'On or off', cost: 'Marginal cost', soc: 'State of charge', socbar: 'SoC bar' };
   var CLASS_TITLE = { Bus: 'Buses', Line: 'Lines', Transformer: 'Transformers', Generator: 'Generators and grids', Load: 'Loads',
                       StorageUnit: 'Storage', Link: 'HVDC links' };
   function lbId(c, q){ return 'lb_' + c + '_' + q; }

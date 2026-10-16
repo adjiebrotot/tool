@@ -51,7 +51,7 @@ body.is-stale .stale-note{display:block;}
 .btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2);}
 .ed-result{transition:opacity var(--transition-fast);}
 body.is-stale .ed-result{opacity:.45;}
-body.is-stale #sldSvg .lyr-res{opacity:.3;}
+body.is-stale #sldSvg .lyr-res,body.is-stale #sldSvg .ed-soc{opacity:.3;}
 
 /* ── Inspector ── */
 .insp-head{display:flex;align-items:center;gap:8px;margin:0 0 4px;}
