@@ -767,8 +767,8 @@
     var shaped = m.el.filter(function(e){ return (e.c === 'Load' || e.c === 'Generator') && ED.onBus(m, e); });
     var fromFile = shaped.some(ED.hasTs), plain = shaped.filter(function(e){ return !ED.hasTs(e) && !Array.isArray(e.dprof); });
     var daily = shaped.some(function(e){ return !ED.hasTs(e) && Array.isArray(e.dprof); });
-    var builtIn = plain.some(function(e){ return typeof e.prof === 'string' && e.prof; });
-    var custom = plain.some(function(e){ return Array.isArray(e.prof); });
+    var builtIn = plain.some(function(e){ return !!ED.baseOf(e); });
+    var custom = plain.some(function(e){ return Array.isArray(e.prof) && !ED.baseOf(e); });
     if(fromFile) li.push('<strong>Profiles from a file are taken hour by hour</strong> as the file gives them, each row placed on its hour by its date and time.');
     if(daily) li.push('<strong>Daily variability multiplies the hourly profile:</strong> 80% at 14:00 on a 50% day is 40% of the peak or rating. The days run Monday to Sunday by the calendar.');
     if(builtIn && o.hours > 24) li.push('<strong>Built-in profiles change from day to day:</strong> demand follows the weekday, with a weekend day of its own that wakes later and runs lower, and solar and wind have cloudier and calmer days.');
@@ -1035,17 +1035,60 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + KIND_ICON[k] + '</svg>';
   }
 
-  /* A profile: Flat, a built-in shape, or Custom, which takes every hour of
-     the horizon from a file and draws what it gives. A profile saved with
-     its own 24 hours or daily factors still runs as it did, and shows as Custom. */
+  /* A profile: Flat or a built-in shape, with 24 bars to adjust it and,
+     with daily variability, seven more that multiply them, Monday to Sunday;
+     or Custom, which takes every hour of the horizon from a file. Dragging a
+     bar keeps the shape it started from (pbase), so its days and its weekend
+     still apply; the list shows it as that shape, edited. */
   var PROFILE_TIP = {
-    load: 'Demand as a share of its peak. Built-in shapes follow the weekday, lower at the weekend. Custom takes every hour from a file.',
-    gen: 'What share of its rating the unit can produce. Custom takes every hour from a file.'
+    load: 'Demand as a share of its peak. Built-in shapes follow the weekday, lower at the weekend; drag a bar to adjust one. Custom takes every hour from a file.',
+    gen: 'What share of its rating the unit can produce. Drag a bar to adjust it. Custom takes every hour from a file.'
+  };
+  var DAILY_TIP = {
+    off: 'On, seven bars set Monday to Sunday and each hour is hourly × daily. Off, a built-in shape keeps its own week.',
+    on: 'Each hour is its hourly bar × its day’s bar: 80% at 14:00 on a 50% day is 40%. Days run Monday to Sunday by the calendar.'
   };
   function profKind(e){ return e.c === 'Load' ? 'load' : 'gen'; }
   // Custom picked, and no file opened yet: shown, not saved, so nothing changes until one is.
   var customPick = {};
-  function isCustom(e){ return ED.hasTs(e) || Array.isArray(e.prof) || Array.isArray(e.dprof) || !!customPick[e.id]; }
+  function isCustom(e){ return ED.hasTs(e) || !!customPick[e.id]; }
+  function round2(v){ return Math.round(v * 100) / 100; }
+  // One bar an hour, 10 units wide, on a baseline at y 58; 100% is 54 units tall.
+  // The axis runs 00 to 24 under the hour boundaries, and the bar being dragged
+  // or pointed at (at) carries its hour and value above it.
+  function barsSvg(vals, at){
+    var s = '<rect x="-8" y="-14" width="256" height="90" fill="transparent"/>', ticks = '';
+    vals.forEach(function(v, h){
+      var bh = Math.max(0.5, Math.min(v, 1.2) * 54);
+      s += '<rect class="pb' + (h === at ? ' pb-on' : '') + '" x="' + (h * 10 + 1) + '" y="' + (58 - bh) + '" width="8" height="' + bh + '" rx="1.5"/>';
+    });
+    for(var h = 0; h <= 24; h++) ticks += 'M' + h * 10 + ' 58.5v' + (h % 3 ? 2 : 3.5);
+    s += '<path class="pb-axis" d="M0 58.5H240' + ticks + '"/>';
+    for(var k = 0; k <= 24; k += 3) s += '<text class="pb-t" x="' + k * 10 + '" y="70.5" text-anchor="middle">' + ('0' + k).slice(-2) + '</text>';
+    if(at !== null && at !== undefined && at >= 0 && at < 24){
+      var v = vals[at], cx = at * 10 + 5, top = 58 - Math.max(0.5, Math.min(v, 1.2) * 54);
+      var x = Math.max(22, Math.min(218, cx)), y = Math.max(-4, top - 4);
+      s += '<text class="pb-v" x="' + x + '" y="' + y + '" text-anchor="middle">' + ('0' + at).slice(-2) + ':00  ' + Math.round(v * 100) + '%</text>';
+    }
+    return s;
+  }
+  // Seven bars, Monday to Sunday, on the same scale, with 100% marked: a day may go above it.
+  var DW = 240 / 7, DAY_MAX = 1.2;
+  function daysSvg(vals, at){
+    var s = '<rect x="-8" y="-14" width="256" height="90" fill="transparent"/>';
+    s += '<path class="pb-ref" d="M0 4H240"/><text class="pb-t" x="0" y="1">100%</text>';
+    vals.forEach(function(v, i){
+      var bh = Math.max(0.5, Math.min(v, DAY_MAX) * 54);
+      s += '<rect class="pb pb-day' + (i === at ? ' pb-on' : '') + '" x="' + (i * DW + 3).toFixed(2) + '" y="' + (58 - bh) + '" width="' + (DW - 6).toFixed(2) + '" height="' + bh + '" rx="2"/>';
+      s += '<text class="pb-t" x="' + (i * DW + DW / 2).toFixed(2) + '" y="70.5" text-anchor="middle">' + ED.DAYS[i] + '</text>';
+    });
+    s += '<path class="pb-axis" d="M0 58.5H240"/>';
+    if(at !== null && at !== undefined && at >= 0 && at < 7){
+      var v = vals[at], top = 58 - Math.max(0.5, Math.min(v, DAY_MAX) * 54);
+      s += '<text class="pb-v" x="' + Math.max(22, Math.min(218, at * DW + DW / 2)).toFixed(2) + '" y="' + Math.max(-4, top - 4) + '" text-anchor="middle">' + ED.DAYS[at] + '  ' + Math.round(v * 100) + '%</text>';
+    }
+    return s;
+  }
   // A line of hourly values, 240 units wide, with its days marked and, when pointed at, an hour read out.
   function lineSvg(vals, opts){
     var n = vals.length, top = 1, s = '<rect x="-8" y="-6" width="256" height="62" fill="transparent"/>';
@@ -1082,18 +1125,28 @@
       (fileMsg.scope === scope && fileMsg.html ? '' : ' hidden') + '>' + (fileMsg.scope === scope ? fileMsg.html : '') + '</div>';
   }
   function profileHtml(e){
-    var kind = profKind(e), custom = isCustom(e);
+    var kind = profKind(e), custom = isCustom(e), daily = Array.isArray(e.dprof);
     var keys = Object.keys(ED.PROFILES).filter(function(k){ return ED.PROFILES[k].kind === kind; });
-    var curK = custom ? 'custom' : e.prof;
+    // Edited bars show as the shape they started from; ones saved before that was kept, as Flat.
+    var edited = !custom && Array.isArray(e.prof);
+    var curK = custom ? 'custom' : edited ? (ED.baseOf(e) ? e.pbase : '') : e.prof;
     var opts = [['', kind === 'load' ? 'Flat' : 'Always available']].concat(keys.map(function(k){ return [k, ED.PROFILES[k].label]; })).concat([['custom', 'Custom']]);
-    var label = kind === 'load' ? 'Profile' : 'Availability';
+    var label = kind === 'load' ? 'Profile' : 'Availability', of = kind === 'load' ? 'the peak' : 'the rating';
     var html = '<div class="field-row prof-row"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(PROFILE_TIP[kind]) + '</span></div>' +
-      '<select class="sel-input" id="f_prof" data-k="prof">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === curK ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>';
+      '<select class="sel-input" id="f_prof" data-k="prof">' + opts.map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === curK ? ' selected' : '') + '>' + o[1] + (edited && o[0] === curK ? ', edited' : '') + '</option>'; }).join('') + '</select>';
     if(custom){
-      html += '<svg class="prof-line" id="tsLine" viewBox="-8 -6 256 62" role="img" aria-label="' + label + ', hour by hour through the horizon">' + profLineSvg(e) + '</svg>' +
-        '<div class="prof-file"><button type="button" class="btn-secondary btn-sm" data-icon="open" id="profOpen" title="Take every hour of the horizon from an Excel or CSV file">Open file</button>' +
+      html += '<div class="prof-file"><button type="button" class="btn-secondary btn-sm" data-icon="open" id="profOpen" title="Take every hour of the horizon from an Excel or CSV file">Open file</button>' +
         '<button type="button" class="btn-secondary btn-sm" id="profTpl" title="A CSV with a row for each hour of the horizon, filled with this profile">⬇ Template (.csv)</button></div>' +
-        fileMsgHtml(e.id, 'profMsg');
+        fileMsgHtml(e.id, 'profMsg') +
+        '<svg class="prof-line" id="tsLine" viewBox="-8 -6 256 62" role="img" aria-label="' + label + ', hour by hour through the horizon">' + profLineSvg(e) + '</svg>';
+    } else {
+      html += '<svg class="prof-bars" id="profBars" viewBox="-8 -14 256 90" role="img" aria-label="' + label + ' through the day, hour by hour, from 00:00 to 24:00. Drag a bar to change it.">' + barsSvg(ED.hourShape(e)) + '</svg>';
+      html += '<div class="toggle-row prof-toggle"><div class="toggle-label"><span class="tip-wrap">Daily variability' + tipHtml(DAILY_TIP[daily ? 'on' : 'off']) + '</span></div>' +
+        '<label class="toggle-switch"><input type="checkbox" id="f_daily"' + (daily ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+      if(daily){
+        html += '<svg class="prof-bars" id="dayBars" viewBox="-8 -14 256 90" role="img" aria-label="Daily factor, Monday to Sunday. Drag a bar to change it.">' + daysSvg(e.dprof) + '</svg>' +
+          '<p class="prof-cap">80% at 14:00 on a 50% day is 80% × 50% = 40% of ' + of + '.</p>';
+      }
     }
     return html + '</div>';
   }
@@ -1284,6 +1337,12 @@
       app.change('geom', 'lb' + e.id);
       return;
     }
+    if(t.id === 'f_daily'){
+      // On, the days start from what the profile does now from the first hour, so nothing jumps.
+      e.dprof = t.checked ? ED.weekOf(e, $('edStart').value).map(function(v){ return Math.round(v * 1e6) / 1e6; }) : '';
+      app.change('elec');
+      return;
+    }
     var k = t.getAttribute('data-k');
     if(!k) return;
     if(t.type === 'checkbox'){ e[k] = t.checked ? 1 : 0; app.change('elec'); return; }
@@ -1291,7 +1350,7 @@
       // Custom keeps the profile as it is until a file is opened; the template starts from it.
       if(t.value === 'custom'){ customPick[e.id] = 1; renderInspector(); return; }
       delete customPick[e.id];
-      e.ts = null; e.dprof = ''; e.prof = t.value;
+      e.ts = null; e.prof = t.value; e.pbase = '';
       app.change('elec');
       return;
     }
@@ -1331,25 +1390,74 @@
       app.change('elec');
     }
   });
-  // Pointing at the profile line reads that hour.
-  var peek = null;
-  function profPeek(ev){
-    var e = selectedEl(), line = $('tsLine'), m = line && line.getScreenCTM && line.getScreenCTM();
-    if(!e || !m) return;
-    var pt = line.createSVGPoint();
+  // Dragging a profile bar sets that hour's value, or that day's.
+  var profDrag = null, peek = null;
+  var BAR_IDS = { profBars: 'h', dayBars: 'd', tsLine: 't' };
+  function barOf(ev){ var el = ev.target && ev.target.closest && ev.target.closest('#profBars, #dayBars, #tsLine'); return el ? BAR_IDS[el.id] : null; }
+  // The pointer in the bars' own units, through the SVG's transform, so it holds
+  // at any width the inspector gives them.
+  function profAt(ev, which){
+    var id = which === 'd' ? 'dayBars' : which === 't' ? 'tsLine' : 'profBars';
+    var bars = $(id), m = bars && bars.getScreenCTM && bars.getScreenCTM();
+    if(!m) return null;
+    var pt = bars.createSVGPoint();
     pt.x = ev.clientX; pt.y = ev.clientY;
     pt = pt.matrixTransform(m.inverse());
-    var n = solveOptions().hours, h = Math.max(0, Math.min(n - 1, Math.round(pt.x / 240 * (n - 1))));
-    if(peek === h) return;
-    peek = h;
-    line.innerHTML = profLineSvg(e, h);
+    if(which === 'd') return { h: Math.max(0, Math.min(6, Math.floor(pt.x / DW))), v: Math.max(0, Math.min(DAY_MAX, (58 - pt.y) / 54)) };
+    if(which === 't'){
+      var n = solveOptions().hours;
+      return { h: Math.max(0, Math.min(n - 1, Math.round(pt.x / 240 * (n - 1)))) };
+    }
+    return { h: Math.max(0, Math.min(23, Math.floor(pt.x / 10))), v: Math.max(0, Math.min(1, (58 - pt.y) / 54)) };
   }
-  function onLine(ev){ return !!(ev.target && ev.target.closest && ev.target.closest('#tsLine')); }
-  insp.addEventListener('pointermove', function(ev){ if(ev.pointerType === 'mouse' && onLine(ev)) profPeek(ev); });
+  function drawProf(e, which, at){
+    if($('profBars')) $('profBars').innerHTML = barsSvg(ED.hourShape(e), which === 'h' ? at : null);
+    if($('dayBars') && Array.isArray(e.dprof)) $('dayBars').innerHTML = daysSvg(e.dprof, which === 'd' ? at : null);
+    if($('tsLine')) $('tsLine').innerHTML = profLineSvg(e, which === 't' ? at : null);
+  }
+  function profSet(ev){
+    var e = selectedEl(), which = profDrag && profDrag.which, p = which && profAt(ev, which);
+    if(!e || !p) return;
+    if(which === 'd'){
+      if(!Array.isArray(e.dprof)) return;
+      e.dprof[p.h] = round2(p.v);
+    } else {
+      // The first drag keeps the shape it started from, so its days and weekend still apply.
+      if(!Array.isArray(e.prof)){ e.pbase = typeof e.prof === 'string' ? e.prof : ''; e.prof = ED.hourShape(e).map(round2); }
+      e.prof[p.h] = round2(p.v);
+    }
+    peek = null;
+    drawProf(e, which, p.h);
+    changeFromField((which === 'd' ? 'dprof' : 'prof') + e.id);
+  }
+  // Pointing at a bar or a line, without pressing, reads it.
+  function profPeek(ev, which){
+    var e = selectedEl(), p = profAt(ev, which);
+    if(!e || !p || (peek && peek.which === which && peek.h === p.h)) return;
+    peek = { which: which, h: p.h };
+    drawProf(e, which, p.h);
+  }
+  insp.addEventListener('pointerdown', function(ev){
+    var which = barOf(ev);
+    if(which !== 'h' && which !== 'd') return;
+    ev.preventDefault();
+    profDrag = { id: ev.pointerId, which: which };
+    try { $(which === 'd' ? 'dayBars' : 'profBars').setPointerCapture(ev.pointerId); } catch(e){}
+    profSet(ev);
+  });
+  insp.addEventListener('pointermove', function(ev){
+    if(profDrag && profDrag.id === ev.pointerId) profSet(ev);
+    else if(!profDrag && ev.pointerType === 'mouse'){ var which = barOf(ev); if(which) profPeek(ev, which); }
+  });
+  // Released: the list now reads as the shape, edited.
+  insp.addEventListener('pointerup', function(ev){ if(profDrag && profDrag.id === ev.pointerId){ profDrag = null; renderInspector(); } });
+  insp.addEventListener('pointercancel', function(){ profDrag = null; });
   insp.addEventListener('pointerout', function(ev){
-    var e = selectedEl(), line = $('tsLine');
-    if(!onLine(ev) || !e || !line || (ev.relatedTarget && line.contains(ev.relatedTarget))) return;
-    peek = null; line.innerHTML = profLineSvg(e);
+    var which = barOf(ev), e = selectedEl();
+    if(!which || profDrag || !e) return;
+    var el = ev.target.closest('svg');
+    if(ev.relatedTarget && el && el.contains(ev.relatedTarget)) return;
+    peek = null; drawProf(e, null, null);
   });
 
   /* ── Profiles from a file, and the template to fill in ──
