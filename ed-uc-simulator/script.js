@@ -1112,9 +1112,16 @@
   // Every hour of the horizon, as the run will take it.
   function profLineSvg(e, at){
     var o = solveOptions(), a = ED.startMs(ED.parseStart(o.start)), n = o.hours, marks = [];
-    var step = n > 24 * 10 ? 24 * Math.ceil(n / 24 / 6) : n > 48 ? 24 : 0;
-    var first = (24 - new Date(a).getUTCHours()) % 24;
-    if(step) for(var i = first; i < n; i += step){ var dd = new Date(a + i * 3600000); marks.push({ i: i, label: ('0' + dd.getUTCDate()).slice(-2) + '/' + ('0' + (dd.getUTCMonth() + 1)).slice(-2) }); }
+    var h0 = new Date(a).getUTCHours(), two = function(x){ return ('0' + x).slice(-2); };
+    var date = function(i){ var dd = new Date(a + i * 3600000); return two(dd.getUTCDate()) + '/' + two(dd.getUTCMonth() + 1); };
+    // Up to two days: the clock every few hours, the date at midnight. Longer: the date
+    // at midnight, every day or every few, so no more than about seven are written.
+    var step = n <= 48 ? (n <= 6 ? 1 : n <= 12 ? 3 : n <= 24 ? 6 : 12) : 24 * Math.ceil(n / 24 / 7);
+    var first = n <= 48 ? (step - h0 % step) % step : (24 - h0) % 24;
+    for(var i = first; i < n; i += step){
+      var hh = (h0 + i) % 24;
+      marks.push({ i: i, label: hh === 0 ? date(i) : two(hh) + ':00' });
+    }
     var vals = ED.series(e, n, o.start, e.c === 'Generator' ? 1 : 0);
     return lineSvg(vals, { marks: marks, at: at, label: function(i){ var l = ED.msLabel(a + i * 3600000); return l.slice(0, 5) + l.slice(10); } });
   }
