@@ -3087,7 +3087,7 @@
             embed: ['Embed as HTML', 'Interactive chart for your site'],
             copied: '✓ Copied', copyFail: 'PNG copy failed: ',
             noCopy: 'This browser cannot copy images.', noImage: 'the image could not be drawn',
-            embedTitle: 'Embed this chart', close: 'Close', codeLabel: 'Embed code', include: 'Include',
+            embedTitle: 'Embed this chart', close: 'Close', codeLabel: 'Embed code', include: 'Include:',
             embedNote: 'Paste this into any web page. The chart stays interactive and opens on your scenario, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it. Please keep the credit line under the chart.',
             credit: ['Interactive chart: ', ' by '],
             copyCode: 'Copy code', preview: 'Preview in a new tab', building: 'Building the code…',
@@ -3103,7 +3103,7 @@
             embed: ['Sematkan sebagai HTML', 'Grafik interaktif untuk situs Anda'],
             copied: '✓ Tersalin', copyFail: 'Gagal menyalin PNG: ',
             noCopy: 'Browser ini tidak bisa menyalin gambar.', noImage: 'gambar tidak bisa dibuat',
-            embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan', include: 'Sertakan',
+            embedTitle: 'Sematkan grafik ini', close: 'Tutup', codeLabel: 'Kode sematan', include: 'Sertakan:',
             embedNote: 'Tempel kode ini di halaman web mana pun. Grafiknya tetap interaktif dan terbuka pada skenario Anda, yang ikut di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawah grafik.',
             credit: ['Grafik interaktif: ', ' oleh '],
             copyCode: 'Salin kode', preview: 'Pratinjau di tab baru', building: 'Menyusun kode…',
@@ -3747,7 +3747,7 @@
           '<div class="share-embed-head"><h2 id="shareEmbedTitle">' + t.embedTitle + '</h2>' +
             global.SharedIcon.button('close', t.close, 'share-embed-close') + '</div>' +
           '<p class="share-embed-note">' + t.embedNote + '</p>' +
-          '<div class="share-embed-choices" role="group" aria-label="' + attr(t.include) + '" hidden></div>' +
+          '<div class="share-embed-choices" role="group" aria-label="' + attr(t.include.replace(/:$/, '')) + '" hidden></div>' +
           '<textarea class="share-code" readonly spellcheck="false" rows="6" data-no-persist aria-label="' + attr(t.codeLabel) + '"></textarea>' +
           '<p class="share-embed-size" hidden></p>' +
           '<div class="share-embed-actions">' +

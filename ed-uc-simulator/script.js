@@ -1777,7 +1777,7 @@
     ov.innerHTML =
       '<div class="share-embed card gif-dlg" role="dialog" aria-modal="true" aria-labelledby="gifDlgTitle">' +
         '<div class="share-embed-head"><h2 id="gifDlgTitle">Download as GIF</h2>' + SharedIcon.button('close', 'Close', 'gif-dlg-close') + '</div>' +
-        '<label class="gif-dlg-series"><input type="checkbox" data-no-persist> Time series</label>' +
+        '<label class="gif-dlg-series"><input type="checkbox" data-no-persist> Play the diagram through the hours</label>' +
         '<div class="share-embed-choices gif-dlg-charts" role="group" aria-label="Charts"></div>' +
         '<div class="share-embed-actions"><button type="button" class="btn-primary gif-dlg-go">⬇ Download</button></div>' +
       '</div>';
@@ -1810,7 +1810,7 @@
     d.back = document.querySelector('#sldCard .share-toggle') || $('gifBtn');
     // While the hours play, the time series is ticked to begin with.
     d.series.checked = gifSeries == null ? !!playT : gifSeries;
-    d.charts.innerHTML = list.map(function(k){
+    d.charts.innerHTML = (list.length ? '<span class="share-embed-inc">Include:</span>' : '') + list.map(function(k){
       return '<label><input type="checkbox" data-no-persist value="' + k + '"' + (gifPicked[k] ? ' checked' : '') + '> ' + CHART_NAME[k] + '</label>';
     }).join('');
     d.charts.hidden = !d.series.checked || !list.length;
