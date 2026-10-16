@@ -23,6 +23,11 @@
      lb     a per-element label override, a bitmask over ED.LABELS[c]
      prof   (Load, Generator) the hourly shape: '' for flat, a key of
             ED.PROFILES, or 24 numbers (per unit of the peak or the rating)
+     dprof  (Load, Generator) daily variability: '' for none, so a built-in
+            shape keeps its own days and a custom one repeats, or 7 factors,
+            Monday first by the calendar, that multiply the hourly shape
+     ts     (Load, Generator) an uploaded hourly series, in place of prof and
+            dprof: { at: 'YYYY-MM-DDTHH:00' its first hour, v: [per unit…] }
      init   (Generator) 1 if the unit was running before the first hour
      eff    (StorageUnit) round-trip efficiency, split evenly between
             charging and discharging
@@ -55,14 +60,15 @@
     Transformer: { s_nom: 0, x: 0, r: 0 },
     Generator:   { p_nom: 0, marginal_cost: 0, committable: 0, p_min_pu: 0, start_up_cost: 0, shut_down_cost: 0,
                    stand_by_cost: 0, min_up_time: 0, min_down_time: 0, ramp_limit_up: 1, ramp_limit_down: 1,
-                   init: 1, prof: '', grid: 0, style: '' },
-    Load:        { p_set: 0, prof: '' },
+                   init: 1, prof: '', grid: 0, style: '', dprof: '', ts: null },
+    Load:        { p_set: 0, prof: '', dprof: '', ts: null },
     StorageUnit: { p_nom: 0, max_hours: 1, eff: 1, soc0: 0, cyclic: 1 },
     Link:        { p_nom: 0, efficiency: 1, both: 1 }
   };
   ED.DEFAULTS = DEFAULTS;
 
-  // How each saved value is read back: [kind, min, max], ['e', options] or ['p'] (a profile).
+  // How each saved value is read back: [kind, min, max], ['e', options], ['p'] (a profile),
+  // ['w'] (a week of daily factors) or ['t'] (an uploaded series).
   var BIG = 1e5;
   var SPEC = {
     Bus:         { v_nom: ['n', 0.1, 1500], style: ['e', ['', 'node']] },
@@ -71,8 +77,8 @@
     Generator:   { p_nom: ['n', 0, BIG], marginal_cost: ['n', -1e4, 1e5], committable: ['e', [0, 1]], p_min_pu: ['n', 0, 1],
                    start_up_cost: ['n', 0, 1e8], shut_down_cost: ['n', 0, 1e8], stand_by_cost: ['n', 0, 1e7],
                    min_up_time: ['i', 0, 168], min_down_time: ['i', 0, 168], ramp_limit_up: ['n', 0.01, 1], ramp_limit_down: ['n', 0.01, 1],
-                   init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']] },
-    Load:        { p_set: ['n', 0, BIG], prof: ['p'] },
+                   init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']], dprof: ['w'], ts: ['t'] },
+    Load:        { p_set: ['n', 0, BIG], prof: ['p'], dprof: ['w'], ts: ['t'] },
     StorageUnit: { p_nom: ['n', 0, BIG], max_hours: ['n', 0, 1000], eff: ['n', 0.01, 1], soc0: ['n', 0, 1], cyclic: ['e', [0, 1]] },
     Link:        { p_nom: ['n', 0, BIG], efficiency: ['n', 0.01, 1], both: ['e', [0, 1]] }
   };
@@ -115,7 +121,11 @@
      improved. A custom shape repeats as it is every day.
      The hour of the day is the clock's, from the horizon's start. A demand
      shape's day factors are weekdays, Monday first, so they follow the start
-     date; a unit's are the weather, so they count days from the start. */
+     date; a unit's are the weather, so they count days from the start.
+     Daily variability (dprof) takes the place of a shape's own day factors:
+     an hour is worth its hourly value times its weekday's factor, so 80% at
+     14:00 on a 50% day is 40% of the peak or the rating. An uploaded series
+     (ts) gives every hour itself, by date and time, in place of both, to six places. */
   ED.PROFILES = {
     sys:   { label: 'System day', kind: 'load',
              h: [0.62, 0.58, 0.56, 0.55, 0.56, 0.60, 0.68, 0.77, 0.83, 0.86, 0.88, 0.89, 0.89, 0.88, 0.87, 0.87, 0.89, 0.94, 1.00, 0.99, 0.95, 0.87, 0.77, 0.68],
@@ -174,7 +184,61 @@
     return { ms: ms, h0: t.getUTCHours(), wd0: (t.getUTCDay() + 6) % 7 };
   };
 
-  // The value of a profile at hour t (0-based from the start of the horizon).
+  ED.DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  function builtIn(e){ return typeof e.prof === 'string' && own.call(ED.PROFILES, e.prof) ? ED.PROFILES[e.prof] : null; }
+  function fin(v, cap){ if(!isFinite(v) || v < 0) v = 0; return cap ? Math.min(cap, v) : v; }
+  ED.hasTs = function(e){ return !!(e.ts && Array.isArray(e.ts.v) && e.ts.v.length); };
+  // Anything but flat and always available.
+  ED.hasShape = function(e){ return !!(e.prof || Array.isArray(e.dprof) || ED.hasTs(e)); };
+
+  /* The profile of a load or a unit, per unit, in each hour of a horizon of H
+     hours from start, never above cap when one is given. One pass over the
+     hours: this is what the optimiser, the checks and the charts all read. */
+  ED.series = function(e, H, start, cap){
+    var c = ED.cal(start), out = new Array(H), t, v;
+    if(ED.hasTs(e)){
+      var a = startMs(e.ts.at), off = isFinite(c.ms) ? Math.round((c.ms - a) / 3600000) : 0, vs = e.ts.v, n = vs.length;
+      for(t = 0; t < H; t++){ var i = off + t; out[t] = fin(i >= 0 && i < n ? +vs[i] : 0, cap); }
+      return out;
+    }
+    var p = builtIn(e);
+    var hv = Array.isArray(e.prof) ? e.prof : p ? p.h : null;
+    var dv = Array.isArray(e.dprof) ? e.dprof : p ? p.d : null;
+    var byWeekday = Array.isArray(e.dprof) || (p && p.kind === 'load');
+    for(t = 0; t < H; t++){
+      var abs = c.h0 + t, h = abs % 24, day = (abs - h) / 24;
+      v = hv ? +hv[h] : 1;
+      if(dv) v = v * dv[(byWeekday ? c.wd0 + day : day) % 7];
+      out[t] = fin(v, cap);
+    }
+    return out;
+  };
+  // The 24 hourly values daily variability multiplies.
+  ED.hourShape = function(e){
+    var p = builtIn(e), hv = Array.isArray(e.prof) ? e.prof : p ? p.h : null, out = [];
+    for(var h = 0; h < 24; h++) out.push(fin(hv ? +hv[h] : 1));
+    return out;
+  };
+  // The seven daily factors, Monday first, that do what the profile does now
+  // from start: its own, a built-in demand shape's weekdays, a built-in unit's
+  // days of the horizon on the weekdays they fall on from start, or all 1.
+  ED.weekOf = function(e, start){
+    if(Array.isArray(e.dprof)) return e.dprof.slice();
+    var p = builtIn(e);
+    if(!p) return [1, 1, 1, 1, 1, 1, 1];
+    if(p.kind === 'load') return p.d.slice();
+    var wd0 = ED.cal(start).wd0 || 0, out = [];
+    for(var k = 0; k < 7; k++) out[(wd0 + k) % 7] = p.d[k];
+    return out;
+  };
+  // Where an uploaded series fails to cover a horizon: null when it covers it.
+  ED.tsGap = function(e, H, start){
+    if(!ED.hasTs(e)) return null;
+    var a = startMs(e.ts.at), b = a + e.ts.v.length * 3600000, s = startMs(ED.parseStart(start)), f = s + H * 3600000;
+    return s >= a && f <= b ? null : { from: a, to: b, start: s, end: f };
+  };
+
+  // The value of a prof alone at hour t (0-based from the start of the horizon).
   // With no start, the horizon begins on a Monday at 00:00.
   ED.shapeAt = function(prof, t, cap, start){
     var c = start ? ED.cal(start) : { h0: 0, wd0: 0 };
@@ -190,16 +254,12 @@
   };
   // A load's demand, MW, hour by hour.
   ED.loadSeries = function(e, H, start){
-    var out = [], c = ED.cal(start);
-    for(var t = 0; t < H; t++) out.push(e.p_set * ED.shapeAt(e.prof, t, 0, c));
+    var out = ED.series(e, H, start);
+    for(var t = 0; t < H; t++) out[t] = e.p_set * out[t];
     return out;
   };
   // A unit's availability, per unit of its rating, hour by hour (never above 1).
-  ED.availSeries = function(e, H, start){
-    var out = [], c = ED.cal(start);
-    for(var t = 0; t < H; t++) out.push(ED.shapeAt(e.prof, t, 1, c));
-    return out;
-  };
+  ED.availSeries = function(e, H, start){ return ED.series(e, H, start, 1); };
 
   /* ── Small helpers ── */
   function num(v){ var x = typeof v === 'string' && v.trim() !== '' ? Number(v) : v; return typeof x === 'number' && isFinite(x) ? x : NaN; }
@@ -220,6 +280,16 @@
         return a;
       }
       return dflt;
+    }
+    if(k === 'w'){
+      if(Array.isArray(v) && v.length === 7) return v.map(function(x){ var n = num(x); return isNaN(n) ? 0 : r6(clamp(n, 0, 2)); });
+      return v === '' ? '' : dflt;
+    }
+    if(k === 't'){
+      if(!v || typeof v !== 'object' || !Array.isArray(v.v) || !v.v.length) return dflt;
+      var ms = startMs(v.at);
+      if(!isFinite(ms)) return dflt;
+      return { at: isoOf(ms), v: v.v.slice(0, ED.MAX_HOURS).map(function(x){ var n = num(x); return isNaN(n) ? 0 : r6(clamp(n, 0, 100)); }) };
     }
     if(k === 'e'){
       var opts = spec[1];
@@ -325,7 +395,8 @@
   };
 
   /* ── Writing it back, only what differs from the defaults ── */
-  function same(a, b){ return Array.isArray(a) || Array.isArray(b) ? JSON.stringify(a) === JSON.stringify(b) : a === b; }
+  function same(a, b){ return (a && typeof a === 'object') || (b && typeof b === 'object') ? JSON.stringify(a) === JSON.stringify(b) : a === b; }
+  function copy(x){ return Array.isArray(x) ? x.slice() : x && typeof x === 'object' ? { at: x.at, v: x.v.slice() } : x; }
   ED.compact = function(model){
     var out = { v: ED.VERSION };
     if(model.name) out.name = model.name;
@@ -342,7 +413,7 @@
         if(at.length) o.at = at;
       }
       var d = DEFAULTS[e.c];
-      for(var k in d) if(!same(e[k], d[k])) o[k] = Array.isArray(e[k]) ? e[k].slice() : e[k];
+      for(var k in d) if(!same(e[k], d[k])) o[k] = copy(e[k]);
       if(typeof e.lb === 'number') o.lb = e.lb;
       return o;
     });
@@ -489,6 +560,9 @@
         if(e.c === 'Link' && !(e.p_nom > 0)) warnings.push({ id: e.id, msg: n + ' has no rating, so it carries nothing.' });
       }
       if(DEVICE[e.c] && !ED.onBus(model, e)) warnings.push({ id: e.id, msg: n + ' is not on a bus, so it is left out.' });
+      var gap = DEVICE[e.c] && ED.onBus(model, e) ? ED.tsGap(e, H, o.start) : null;
+      if(gap) errors.push({ id: e.id, msg: n + '’s uploaded profile runs from ' + ED.msLabel(gap.from) + ' to ' + ED.msLabel(gap.to - 3600000) +
+        ', which does not cover the horizon, ' + ED.msLabel(gap.start) + ' to ' + ED.msLabel(gap.end - 3600000) + '. Open a file that covers it, or set the horizon inside it.' });
       if(e.c === 'Generator' && ED.onBus(model, e) && !(e.p_nom > 0)) warnings.push({ id: e.id, msg: n + ' has no rating, so it supplies nothing.' });
       if(e.c === 'StorageUnit' && ED.onBus(model, e) && !(e.p_nom > 0 && e.max_hours > 0)) warnings.push({ id: e.id, msg: n + ' has no power or energy rating, so it does nothing.' });
       if(e.c === 'Generator' && e.committable && o.mode !== 'ed' && e.p_min_pu > 0 && Array.isArray(e.prof) === false && e.prof && ED.PROFILES[e.prof] && ED.PROFILES[e.prof].kind === 'gen')
@@ -530,10 +604,12 @@
   };
   function fmt1(x){ return (Math.round(x * 10) / 10).toLocaleString('en-AU'); }
   // Hour t of a horizon that begins at start, as "01/01/2026 18:00".
-  ED.hourLabel = function(t, H, start){
-    var ms = startMs(ED.parseStart(start)) + t * 3600000, d = new Date(ms);
+  ED.hourLabel = function(t, H, start){ return ED.msLabel(startMs(ED.parseStart(start)) + t * 3600000); };
+  ED.msLabel = function(ms){
+    var d = new Date(ms);
     return two(d.getUTCDate()) + '/' + two(d.getUTCMonth() + 1) + '/' + d.getUTCFullYear() + ' ' + two(d.getUTCHours()) + ':00';
   };
+  ED.startMs = startMs; ED.isoOf = isoOf;
   // The same, short enough for an axis: "18:00" within a day, "02/01 18:00" past one.
   ED.tickLabel = function(t, H, start){
     var ms = startMs(ED.parseStart(start)) + t * 3600000, d = new Date(ms);
@@ -584,8 +660,9 @@
       n.add('Transformer', pyName(e.id), { bus0: pyName(e.bus0), bus1: pyName(e.bus1), x: e.x, r: e.r, s_nom: e.s_nom, s_max_pu: o.limits ? 1 : BIGF / Math.max(e.s_nom, 1e-9) });
     });
     var gens = model.el.filter(function(e){ return e.c === 'Generator' && on(e); });
+    var availOf = {};
     gens.forEach(function(e){
-      var avail = ED.availSeries(e, H, o.start);
+      var avail = availOf[e.id] = ED.availSeries(e, H, o.start);
       var kw = { bus: pyName(e.bus), p_nom: e.p_nom, marginal_cost: e.marginal_cost, p_max_pu: allOne(avail) ? 1 : avail };
       var com = e.committable && o.mode !== 'ed';
       var up = e.ramp_limit_up < 1 ? e.ramp_limit_up : NaN, down = e.ramp_limit_down < 1 ? e.ramp_limit_down : NaN;
@@ -650,7 +727,7 @@
         n.add('Link', pyName(e.id), { bus0: pyName(e.bus0), bus1: pyName(e.bus1), p_nom: e.p_nom, efficiency: e.efficiency, p_min_pu: e.both ? -1 : 0 });
       }
     });
-    return { n: n, buses: buses, lines: lines, trs: trs, gens: gens, loads: loads, stores: stores, links: links, shedBuses: shedBuses, busLoad: busLoad, byId: byId };
+    return { n: n, buses: buses, lines: lines, trs: trs, gens: gens, loads: loads, stores: stores, links: links, shedBuses: shedBuses, busLoad: busLoad, byId: byId, avail: availOf };
   }
 
   function solverOptions(o){ return { mip_rel_gap: o.gap, time_limit: o.time }; }
@@ -720,7 +797,7 @@
           var top = -Infinity;
           B.gens.forEach(function(e){
             var on1 = status[e.id] ? status[e.id][h0] : 1;
-            if(on1 && e.p_nom > 0 && ED.shapeAt(e.prof, h0, 1, o.start) > 0 && e.marginal_cost > top) top = e.marginal_cost;
+            if(on1 && e.p_nom > 0 && B.avail[e.id][h0] > 0 && e.marginal_cost > top) top = e.marginal_cost;
           });
           fixedSt.top.push(top);
         }
@@ -780,7 +857,7 @@
         for(var t = 0; t < H; t++) cost.link += ED.LINK_EPS * (f[t] + r[t]);
       });
       B.gens.forEach(function(e){
-        var nm = pyName(e.id), p = col(gt.p, nm, H) || zeros(H), avail = ED.availSeries(e, H, o.start);
+        var nm = pyName(e.id), p = col(gt.p, nm, H) || zeros(H), avail = B.avail[e.id];
         var com = !!status[e.id];
         var d = { p: p, avail: avail.map(function(a){ return a * e.p_nom; }), status: com ? status[e.id] : null,
                   su: com ? su[e.id] : null, sd: com ? sd[e.id] : null, cost: 0, energy: 0 };
@@ -817,7 +894,7 @@
         var d = res.dev[e.id];
         for(var t = 0; t < H; t++){
           T.gen[t] += d.p[t];
-          if(e.prof) T.curtail[t] += Math.max(0, d.avail[t] - d.p[t]);
+          if(ED.hasShape(e)) T.curtail[t] += Math.max(0, d.avail[t] - d.p[t]);
         }
         if(d.status){
           d.status.forEach(function(v){ T.unitHoursOn += v; });
