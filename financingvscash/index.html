@@ -160,7 +160,7 @@
     <div class="field-group">
       <div class="group-title">Purchase</div>
       <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Cash Purchase Cost <i class="tip-icon" data-tip="The price if you pay in full today. Paying cash is scored at this price.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Cash Purchase Cost</span></div>
         <div class="affix-wrap">
           <span class="prefix" id="purchaseCostPrefix">$</span>
           <input class="affix-input fmt-num" id="purchaseCost" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="50,000"/>
@@ -233,7 +233,7 @@
           </div>
         </div>
         <div class="field-row" id="scRateBlock">
-          <div class="field-label"><span class="tip-wrap" id="scRateLabel">Finance Rate <i class="tip-icon" data-tip="The yearly interest rate on the loan, as the lender quotes it.">?</i></span> <button type="button" class="opt-btn" data-opt="financeRate" title="Add Finance Rate to optimisation" aria-label="Add Finance Rate to optimisation"></button></div>
+          <div class="field-label"><span class="tip-wrap" id="scRateLabel">Finance Rate</span> <button type="button" class="opt-btn" data-opt="financeRate" title="Add Finance Rate to optimisation" aria-label="Add Finance Rate to optimisation"></button></div>
           <div class="affix-wrap"><input class="affix-input has-suffix" id="scRate" type="number" min="0" max="30" step="0.01" value="5"/><span class="suffix">%/yr</span></div>
         </div>
         <div class="field-row" id="scRateScheduleRow" style="display:none;">
@@ -270,10 +270,10 @@
           <div class="field-sub" id="scPriceSub"></div>
         </div>
         <div class="slider-block" id="scDownRow">
-          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment <i class="tip-icon" data-tip="The share of the offer price you pay up front. 0% borrows it all; 100% pays it outright.">?</i></span> <button type="button" class="opt-btn" data-opt="downPaymentPct" title="Add Down Payment to optimisation" aria-label="Add Down Payment to optimisation"></button></div><div class="slider-value" id="scDownVal">0%</div></div>
+          <div class="slider-head"><div class="slider-label"><span class="tip-wrap">Down Payment</span> <button type="button" class="opt-btn" data-opt="downPaymentPct" title="Add Down Payment to optimisation" aria-label="Add Down Payment to optimisation"></button></div><div class="slider-value" id="scDownVal">0%</div></div>
           <input id="scDownPct" type="range" min="0" max="100" step="1" value="0"/>
         </div>
-        <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee <i class="tip-icon" data-tip="A one-off fee to set the loan up, as a fixed amount or a % of the amount financed.">?</i></span> <button type="button" class="opt-btn" data-opt="feeAmt" title="Add Origination Fee to optimisation" aria-label="Add Origination Fee to optimisation"></button></div>
+        <div class="field-row" id="scFeeRow"><div class="field-label"><span class="tip-wrap">Origination Fee</span> <button type="button" class="opt-btn" data-opt="feeAmt" title="Add Origination Fee to optimisation" aria-label="Add Origination Fee to optimisation"></button></div>
           <div class="inline-row"><input class="num-input fmt-num" id="scFeeAmt" type="text" inputmode="decimal" data-min="0" data-max="1000000000000" value="0"/><select class="sel-input" id="scFeeType" style="min-width:70px;"><option value="fixed">$</option><option value="pct">%</option></select></div>
         </div>
         <div class="field-row" id="scFeeTreatmentRow"><div class="field-label"><span class="tip-wrap">Fee Treatment <i class="tip-icon" id="tipFeeTreatment" data-tip="" data-tip-options>?</i></span> <button type="button" class="opt-btn" data-opt="feeTreatment" title="Add Fee Treatment to optimisation" aria-label="Add Fee Treatment to optimisation"></button></div>
@@ -329,7 +329,7 @@
   <div class="verdict card" id="verdict"></div>
 
   <section class="metrics" id="simMetrics">
-    <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy <i class="tip-icon" data-tip="The option that comes out ahead on the Optimization Target below.">?</i></span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div>
+    <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy</span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div>
       <div class="kpi-opt">
         <div class="kpi-opt-label"><span class="tip-wrap">Optimization Target <i class="tip-icon" id="tipOptTarget" data-tip="" data-tip-options>?</i></span></div>
         <select class="sel-input sel-sm" id="optTarget"><option value="netBenefit">Highest Net Benefit</option><option value="lowestInterest">Lowest Total Interest</option><option value="lowestCost">Lowest Financing Cost</option></select>
@@ -342,9 +342,9 @@
   <!-- In Optimise the tiles are the sweep's: its best and worst tested setting
        against the setting on the form, and the cash purchase they all face. -->
   <section class="metrics" id="optMetrics" hidden>
-    <div class="metric card opt-tile" id="optTileBest"><div class="label"><span class="tip-wrap"><span id="optBestLabel">Best</span> <i class="tip-icon" data-tip="The tested setting that comes out ahead on the objective chosen on the chart.">?</i></span></div><div class="value" id="optBestVal">—</div><div class="sub" id="optBestSub"></div></div>
-    <div class="metric card opt-tile" id="optTileBase"><div class="label"><span class="tip-wrap">Your current setting <i class="tip-icon" data-tip="The loan offer exactly as the form has it, scored on the same objective.">?</i></span></div><div class="value" id="optBaseVal">—</div><div class="sub" id="optBaseSub"></div></div>
-    <div class="metric card opt-tile" id="optTileWorst"><div class="label"><span class="tip-wrap"><span id="optWorstLabel">Worst</span> <i class="tip-icon" data-tip="The tested setting that comes out furthest behind on the objective.">?</i></span></div><div class="value" id="optWorstVal">—</div><div class="sub" id="optWorstSub"></div></div>
+    <div class="metric card opt-tile" id="optTileBest"><div class="label"><span class="tip-wrap"><span id="optBestLabel">Best</span></span></div><div class="value" id="optBestVal">—</div><div class="sub" id="optBestSub"></div></div>
+    <div class="metric card opt-tile" id="optTileBase"><div class="label"><span class="tip-wrap">Your current setting</span></div><div class="value" id="optBaseVal">—</div><div class="sub" id="optBaseSub"></div></div>
+    <div class="metric card opt-tile" id="optTileWorst"><div class="label"><span class="tip-wrap"><span id="optWorstLabel">Worst</span></span></div><div class="value" id="optWorstVal">—</div><div class="sub" id="optWorstSub"></div></div>
     <div class="metric card opt-tile" id="optTileCash"><div class="label"><span class="tip-wrap">Cash Purchase Wealth <i class="tip-icon" data-tip="The cash you would have left after paying cash, grown at the risk-free rate over your current setting's term.">?</i></span></div><div class="value" id="optCashVal">—</div><div class="sub" id="optCashSub"></div></div>
   </section>
   <section class="chart-card card">
@@ -429,7 +429,7 @@
         </div>
       </div>
       <div id="optListFields" class="field-row" hidden>
-        <div class="field-label"><span class="tip-wrap">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span> <i class="tip-icon" data-tip="Each value you select runs once, in the order the list shows. Hold Ctrl or Cmd to select more than one.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span></span></div>
         <select class="sel-input opt-pick-list" id="optPickSel" multiple></select>
       </div>
       <p class="opt-preview" id="optPreview" role="status"></p>

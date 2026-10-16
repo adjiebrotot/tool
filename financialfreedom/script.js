@@ -1502,17 +1502,12 @@ function syncVisibility(){
 
 /* Money out follows its own two switches: which mode is on, and what the
    retirement figure is entered against. Each tip carries the state it is in. */
-var TIP_EXPENSE_MODE = {
-  simple: '<strong>Simple:</strong> living expenses while you work, retirement expenses once you stop.',
-  detailed: '<strong>Detailed:</strong> your own stages sit between living and retirement expenses, in age order. Each covers its own ages, working or retired.'
-};
 var TIP_RETIRE_EXPENSE = {
   pct: '<strong>% of living:</strong> follows your living expenses, from the age you stop work. 80% if the mortgage is gone by then.',
   money: '<strong>A week, month or year:</strong> a fixed amount in today’s money, from the age you stop work. It does not follow your living expenses.'
 };
 function syncMoneyOut(){
   var detailed = UI.expenseMode === 'detailed', pct = UI.retireExpensePeriod === 'pct';
-  $('expenseModeTip').setAttribute('data-tip', TIP_EXPENSE_MODE[UI.expenseMode] || TIP_EXPENSE_MODE.simple);
   $('retireExpenseTip').setAttribute('data-tip', pct ? TIP_RETIRE_EXPENSE.pct : TIP_RETIRE_EXPENSE.money);
   /* Detailed frames living and retirement expenses as the first and last
      stage, locked. They are the same two fields as in Simple, so switching
@@ -1883,10 +1878,6 @@ function wireStages(){
    own: a name, the two ages, a figure a week, month or year, its growth from
    the stage's own start, and whether it is still paid once you stop work. */
 
-var TIP_INCOME_MODE = {
-  simple: '<strong>Simple:</strong> one figure that grows from today, and a pension if you have one.',
-  detailed: '<strong>Detailed:</strong> your own stages follow today’s figure in age order, each with its own amount and growth from its start. A pension is a stage too.'
-};
 var TIP_IN_KEEPS = 'On for a pension, rent or part-time work you keep: it still comes in once you stop work. Grow a pension at inflation if indexed, and end it at 120 for life.';
 
 // The locked first stage is named for what the switch says it is.
@@ -1998,7 +1989,6 @@ function syncInStageChrome(){
 
 function syncMoneyIn(){
   var detailed = UI.incomeMode === 'detailed';
-  $('incomeModeTip').setAttribute('data-tip', TIP_INCOME_MODE[UI.incomeMode] || TIP_INCOME_MODE.simple);
   $('moneyIn').classList.toggle('is-detailed', detailed);
   // A script or an extension may still write to a read-only field, so the
   // name is put back on every pass, and it follows the switch above it.

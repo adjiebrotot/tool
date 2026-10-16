@@ -404,7 +404,7 @@
     <div class="field-group">
     <div class="group-title">Fees</div>
     <div class="field-row">
-      <div class="field-label">Buying fee <span class="tip-icon" data-tip="Charged on every purchase, as a share of the amount bought.">?</span> <button type="button" class="opt-btn" data-opt="rebal.buyFee" title="Add Buying fee to optimisation" aria-label="Add Buying fee to optimisation"></button></div>
+      <div class="field-label">Buying fee <button type="button" class="opt-btn" data-opt="rebal.buyFee" title="Add Buying fee to optimisation" aria-label="Add Buying fee to optimisation"></button></div>
       <div class="affix-wrap">
         <input class="affix-input money-input has-suffix" id="buyFee" type="text" inputmode="numeric" data-min="0" data-max="10" value="0.1" />
         <span class="suffix">%</span>
@@ -644,7 +644,7 @@
         </div>
       </div>
       <div id="optListFields" class="field-row" hidden>
-        <div class="field-label">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span> <span class="tip-icon" data-tip="Each value you select runs once, in the order the list shows. Hold Ctrl or Cmd to select more than one.">?</span></div>
+        <div class="field-label">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span></div>
         <select class="sel-input opt-pick-list" id="optPickSel" multiple></select>
       </div>
       <div class="field-row" id="optSlackRow" hidden>

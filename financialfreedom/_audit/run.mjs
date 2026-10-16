@@ -4075,12 +4075,13 @@ const KIDS = [
     `living ${r.livingOpts}; retirement ${r.retireOpts}`);
 }
 
-// F68d-e: Simple and Detailed, and the tips that follow each switch.
+// F68d-e: Simple and Detailed, and the tip that follows the retirement switch.
+// The Detail switch itself carries no tip: Simple and Detailed say what they are.
 {
   const r = await page.evaluate(() => {
     const $ = id => document.getElementById(id), F = window.__FF;
     const seg = v => document.querySelector('#expenseModeGroup .seg-btn[data-val="' + v + '"]').click();
-    const st = () => ({block: $('stagesBlock').style.display, tip: $('expenseModeTip').getAttribute('data-tip'),
+    const st = () => ({block: $('stagesBlock').style.display, tip: !!$('expenseModeTip'),
                        mode: F.UI.expenseMode});
     const simple = st();
     seg('detailed'); const detailed = st();
@@ -4097,10 +4098,10 @@ const KIDS = [
     r.simple.block === 'none' && r.detailed.block === '' && r.back.block === 'none' &&
     r.simple.mode === 'simple' && r.detailed.mode === 'detailed',
     `simple ${r.simple.block || 'shown'}, detailed ${r.detailed.block || 'shown'}`);
-  check('F68e each switch\'s tip names the state it is in, not both',
-    /^<strong>Simple/.test(r.simple.tip) && /^<strong>Detailed/.test(r.detailed.tip) &&
+  check('F68e the Detail switch has no tip, and the retirement tip names the state it is in',
+    !r.simple.tip && !r.detailed.tip &&
     /% of living/.test(r.rtPct) && /fixed amount/i.test(r.rtAmt) && r.rtPct !== r.rtAmt,
-    `${r.simple.tip.slice(0, 30)}… / ${r.detailed.tip.slice(0, 32)}… / ${r.rtAmt.slice(0, 30)}…`);
+    `${r.rtPct.slice(0, 30)}… / ${r.rtAmt.slice(0, 30)}…`);
 }
 
 // F68f: a figure follows its basis, through today's living expenses for a share.

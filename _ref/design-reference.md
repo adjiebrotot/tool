@@ -125,7 +125,8 @@ slider built after load, with `data-readout` naming its readout).
 ### Detail
 
 One Simple/Detailed control per group it changes, labelled **Detail**, first in
-that group.
+that group. It carries no tip: Simple and Detailed say what they are, and the
+fields that appear say the rest.
 
 ### Colour
 
@@ -748,6 +749,19 @@ list, under a bolt in the first column's header).
 A group of mutually-exclusive toggle buttons styled as a single segmented control
 (e.g. "Simple / Detailed", "Save / Earn").
 
+Its width is not the author's job: `SharedSegFit` (`shared.js`) measures every
+`.seg-group` on the page, including ones drawn later, and sizes it to its line.
+
+- **Alone on its line** in a form column (no wider than 560px) or already drawn
+  full width, it fills the line and its buttons share the width (`.seg-fill`),
+  so two short options never leave a gap beside them.
+- **Too many options for the line**, its buttons tighten first (`.seg-tight`),
+  then settle into even rows with the last button spanning what is left
+  (`.seg-grid`), so a wrap never leaves one button alone on a second row.
+- **Beside its label** (a Detail row, an inline field) it keeps its natural size,
+  and so does one in a wide toolbar or a table cell. `data-seg-fit="off"` opts a
+  group out.
+
 ```html
 <div class="toggle-row">
   <span class="toggle-label">I want to do it</span>
@@ -1110,7 +1124,7 @@ nobody reads it. `node _ref/tip-check.mjs` holds every page to it (add a path
 fragment to run one tool) and prints each page's median, which is the number to
 watch.
 
-Four rules follow from that:
+These rules follow from that:
 
 - **A tip nobody needs is deleted, not shortened.** The bar is a domain fact: a
   definition, a unit, a rule, a formula, a caveat, a behaviour you could not
@@ -1123,6 +1137,13 @@ Four rules follow from that:
   the label and drop the tip: "Total Household Gross Salary" plus a tip saying
   the figure is annual became "Total Household Annual Gross Salary".
 - **No em-dashes**, here as everywhere else in user-facing copy.
+- **A control that names itself gets no tip.** The (i) is for the technical
+  and the non-obvious. These never carry one: a Simple/Detailed switch, a
+  display toggle (power flow arrows, "Show in chart"), a "Colour by" or "Scale
+  by" picker whose options name what they colour, an on/off for a thing's own
+  labels, a price, rate, fee or down payment that is exactly what its label says,
+  a range's first and last value, a multi-select whose label already says Ctrl/Cmd,
+  and a Best/Worst tile. Ask "would a reader say *you don't say*?" If yes, delete it.
 - **Don't re-explain what is on screen.** A sub-line under the field, an
   optgroup label, a radio's own description or a KPI's sub-line all count as on
   screen. If the radio buttons already carry a line of their own, the (i) beside
@@ -1180,8 +1201,7 @@ const TIP_STUDY_TYPE = {
 setTip('tt-study-type', TIP_STUDY_TYPE[$('study-type').value] || '');
 ```
 
-The same shape covers a Simple/Detailed switch (`<strong>Simple:</strong> counts
-one gross figure in full.`), a unit that changes
+The same shape covers a unit that changes
 what a field is asking for (deposit as an amount versus a share of the price), and
 a field that is inert until another one is set (a budget-growth slider while the
 budget is automatic). Where a tool already keeps a table of tip text, give the

@@ -14,27 +14,13 @@
 // RVO_APPLY_TIPS picks it up; anything that cannot say which state it is in
 // gets the first variant.
 var RVO_TIPS_EN = {
-  propertyPrice:        "Market price you would pay today. It sets the starting house equity and the loan size.",
   downPaymentPct:       "Share of the price paid upfront. 100% models an all-cash buy, and the renter invests the same amount instead. 20% is not always best.",
-  mortgageMode: {
-    simple:   "<strong>Simple:</strong> principal and interest at one rate for the whole term.",
-    detailed: "<strong>Detailed:</strong> adds the loan type, cost accounting, and a year-by-year rate schedule."
-  },
   mortgageType:         "<ul><li><strong>Principal &amp; Interest:</strong> each payment cuts the balance, building equity.</li><li><strong>Interest Only:</strong> builds no equity. The balance is repaid from cash at the end.</li></ul>",
   costInterestOnly:     "What Accumulated cost counts.<ul><li><strong>On:</strong> interest and ongoing costs, since principal becomes equity.</li><li><strong>Off:</strong> the whole repayment and ongoing costs.</li></ul>",
-  mortgageRate:         "Annual rate on the loan, held flat for the whole term. It sets the repayment and the total interest.",
   rateSchedule:         "Rates by year of the loan, each period <strong>Fixed</strong> or <strong>Floating</strong> in a band. Rent-Then-Buy starts this schedule at its year 1 when it buys.",
   mortgageTerm:         "Years the loan is amortised over. Longer means a smaller repayment and more interest. Once it is repaid, the whole budget turns into savings.",
   sellingCost:          "Agent, marketing, legal and seller taxes if the home is sold. House and net equity are shown after it, as if sold that year.",
   houseGrowth:          "How fast house prices grow each year (RPPI). It drives house equity and the Rent-Then-Buy price. The tool below works it out from past prices.",
-  ownCostsMode: {
-    simple:   "<strong>Simple:</strong> one setup cost and one ongoing cost.",
-    detailed: "<strong>Detailed:</strong> each cost on its own line. Setup as $ or % of price, ongoing per week, month or year with its own inflation, or % of value."
-  },
-  rentCostsMode: {
-    simple:   "<strong>Simple:</strong> one ongoing cost of renting.",
-    detailed: "<strong>Detailed:</strong> each cost on its own line, per week, month or year with its own inflation, or as a % of annual rent."
-  },
   setupCost:            "One-off costs at purchase: stamp duty, conveyancing, inspection. Paid from savings. A later Rent-Then-Buy purchase scales them to its price.",
   ownOngoingCost:       "Yearly costs beyond the loan: rates, insurance, maintenance, strata, land tax. Fixed amounts grow at their own inflation, % items track the value.",
   ownOngoingInflation:  "Yearly rise in fixed-dollar ownership costs. A % of property value already grows with the house.",
@@ -49,7 +35,6 @@ var RVO_TIPS_EN = {
     manual: "Compounds your monthly budget each year, for wage growth or CPI. It widens the surplus, or shrinks the shortfall, over time.",
     auto:   "Grows the monthly budget each year. Inert while the budget is automatic, so set a budget above for it to bite."
   },
-  horizon:              "How many years the comparison runs, up to 100. A longer run lets property growth and the loan payoff play out.",
   rtbEnabled:           "A third scenario: rent for some years, then buy at the price by then, on the same budget. A blank budget or cash grows to fund it, which also moves Own and Rent.",
   rtbBuyAtYear:         "Buy at the end of this year, at the price grown by RPPI. The mortgage starts then as a new loan: full term, rate schedule from its year 1.",
   calcCagr:             "Enter year and price pairs. The yearly growth they imply (CAGR) is applied to House price growth above.",
@@ -75,27 +60,13 @@ var RVO_TIPS_EN = {
   fxTrend:      "How much each currency is expected to gain or lose against the base every year. Minus is depreciation, plus is appreciation: -2% means 1 unit of the base buys 2% more of it each year.",
 };
 var RVO_TIPS_ID = {
-  propertyPrice:        "Harga pasar properti saat ini. Menjadi nilai awal ekuitas rumah dan besaran KPR.",
   downPaymentPct:       "Persentase harga yang dibayar di muka. 100% berarti pembelian tunai, dan penyewa menginvestasikan jumlah yang sama. 20% tidak selalu optimal.",
-  mortgageMode: {
-    simple:   "<strong>Sederhana:</strong> Pokok &amp; Bunga dengan satu suku bunga untuk seluruh jangka waktu.",
-    detailed: "<strong>Rinci:</strong> menambah jenis KPR, akuntansi biaya, dan jadwal bunga per periode."
-  },
   mortgageType:         "<ul><li><strong>Pokok &amp; Bunga:</strong> tiap cicilan mengurangi saldo, membangun ekuitas.</li><li><strong>Bunga Saja:</strong> tidak membangun ekuitas. Pokok dilunasi dari kas di akhir.</li></ul>",
   costInterestOnly:     "Yang dihitung Biaya kumulatif.<ul><li><strong>Aktif:</strong> bunga dan biaya rutin, karena pokok menjadi ekuitas.</li><li><strong>Nonaktif:</strong> seluruh cicilan dan biaya rutin.</li></ul>",
-  mortgageRate:         "Suku bunga tahunan KPR, tetap sepanjang jangka waktu. Menentukan besar cicilan dan total bunga.",
   rateSchedule:         "Bunga per tahun KPR, tiap periode <strong>Tetap</strong> atau <strong>Mengambang</strong> dalam pita. KPR Sewa Dulu memulai jadwal ini dari tahun ke-1 saat membeli.",
   mortgageTerm:         "Jumlah tahun pelunasan pinjaman. Lebih panjang berarti cicilan lebih kecil dan bunga lebih besar. Setelah lunas, seluruh anggaran menjadi tabungan.",
   sellingCost:          "Komisi agen, pemasaran, notaris dan pajak penjual jika rumah dijual. Ekuitas rumah dan bersih ditampilkan setelahnya, seolah dijual tahun itu.",
   houseGrowth:          "Kenaikan harga properti per tahun (RPPI). Mendorong nilai bersih properti dan harga beli Sewa Dulu. Alat di bawah menghitungnya dari harga historis.",
-  ownCostsMode: {
-    simple:   "<strong>Sederhana:</strong> satu biaya awal dan satu biaya rutin.",
-    detailed: "<strong>Rinci:</strong> tiap biaya satu baris. Biaya awal nominal atau % harga, biaya rutin per minggu, bulan atau tahun dengan inflasinya, atau % nilai."
-  },
-  rentCostsMode: {
-    simple:   "<strong>Sederhana:</strong> satu biaya rutin menyewa.",
-    detailed: "<strong>Rinci:</strong> tiap biaya satu baris, per minggu, bulan atau tahun dengan inflasinya sendiri, atau % dari sewa tahunan."
-  },
   setupCost:            "Biaya satu kali saat membeli: BPHTB, notaris, inspeksi. Dibayar dari tabungan. Pembelian Sewa Dulu di kemudian hari menyesuaikannya dengan harganya.",
   ownOngoingCost:       "Biaya tahunan di luar KPR: PBB, asuransi, perawatan, iuran pengelola. Nominal tetap naik sesuai inflasinya, item % mengikuti nilai properti.",
   ownOngoingInflation:  "Kenaikan tahunan biaya kepemilikan bernominal tetap. Item % dari nilai properti sudah naik bersama harga rumah.",
@@ -110,7 +81,6 @@ var RVO_TIPS_ID = {
     manual: "Menaikkan anggaran bulanan Anda tiap tahun secara berbunga, untuk kenaikan gaji atau CPI. Surplus melebar seiring waktu.",
     auto:   "Menaikkan anggaran bulanan tiap tahun. Tidak berpengaruh selama anggaran otomatis, jadi tetapkan anggaran di atas."
   },
-  horizon:              "Berapa tahun perbandingan dijalankan, hingga 100 tahun. Makin panjang, efek kenaikan properti dan pelunasan KPR makin terlihat.",
   rtbEnabled:           "Skenario ketiga: menyewa X tahun, lalu membeli pada harga saat itu, dengan anggaran yang sama. Anggaran atau modal awal kosong ikut naik untuk mendanainya, jadi Beli dan Sewa ikut berubah.",
   rtbBuyAtYear:         "Membeli di akhir tahun ini, pada harga yang tumbuh sesuai RPPI. KPR baru dimulai saat itu: jangka waktu penuh, jadwal bunga dari tahun ke-1.",
   calcCagr:             "Masukkan pasangan tahun dan harga. Kenaikan tahunan (CAGR) hasilnya diterapkan ke Kenaikan harga properti di atas.",
@@ -136,7 +106,7 @@ var RVO_TIPS_ID = {
 };
 // Variant tips keyed by the option selected: explained one option at a time,
 // with the shared "change the option" line under them (data-tip-options).
-var RVO_OPTION_TIPS = ['mortgageMode', 'ownCostsMode', 'rentCostsMode'];
+var RVO_OPTION_TIPS = [];
 
 // RVO_TIPS returns EN by default; pages switch to ID via RVO_TIPS_ID when needed
 var RVO_TIPS = RVO_TIPS_EN;

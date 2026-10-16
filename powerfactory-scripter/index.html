@@ -272,8 +272,8 @@
                 <th>Name <span class="tip-icon" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
                 <th>Object <span class="tip-icon" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
                 <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
-                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span> <span class="tip-icon" id="tt-lb" data-tip="Start of the swept range (inclusive).">?</span></th>
-                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span> <span class="tip-icon" id="tt-ub" data-tip="End of the swept range (inclusive).">?</span></th>
+                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span></th>
+                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span></th>
                 <th class="col-step"><span class="th-two-line" id="th-step-label">Step<br>Size</span> <span class="tip-icon" data-tip="Both bounds are included: lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10]. Integer attributes have no step: pick Range or List here instead.">?</span></th>
                 <th></th>
               </tr>
@@ -478,7 +478,7 @@
         </div>
         <div class="checkbox-row">
           <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
-          <label for="save-intermediate">Save intermediate results every X minutes <span class="tip-icon" data-tip="Writes partial results to CSV as the run goes, so a crash or a lockup does not cost you everything.">?</span></label>
+          <label for="save-intermediate">Save intermediate results every X minutes</label>
         </div>
         <div id="row-save-interval" class="form-row cond-hidden">
           <label>Interval (min) <span class="tip-icon" data-tip="How often partial results are written, in minutes. 10–30 min suits a run lasting several hours.">?</span></label>
