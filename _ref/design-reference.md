@@ -1759,7 +1759,9 @@ so however long it runs it can never push the buttons onto a line of their own.
 
 The cluster is the same on every chart on the site: **Share ⌄** and then **⟳ reset zoom**,
 and a table's **⬇ CSV** is the same cluster in a `.detail-head` beside the table it
-exports. Share opens the site's dropdown list with **Download as SVG, Download as PNG,
+exports. A chart card that folds (`SharedFold.attach(card, {key, bodies, open: true})`)
+ends the cluster with the same `▾` chevron a table has, after ⟳, and opens until the reader
+closes it. Share opens the site's dropdown list with **Download as SVG, Download as PNG,
 Copy to clipboard, Share as link, Embed as HTML**, in that order (see *Share Menu* below). The markup
 still lists the chart's `⬇ SVG`, `⬇ PNG` and `⧉` buttons, because their ids are what the
 tool's script binds; `SharedShare` folds them into the menu at load. The buttons are

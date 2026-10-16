@@ -620,7 +620,8 @@ for (const spec of PAGES) {
     const row = await page.evaluate(`(() => {
       const f = (${FIND})(${JSON.stringify(key)});
       if (!f.cluster) return null;
-      const vis = [...f.cluster.querySelectorAll('button')].filter(b => b.offsetParent !== null);
+      // A card that folds (SharedFold) ends the row with its chevron; it is not part of the toolbar.
+      const vis = [...f.cluster.querySelectorAll('button:not(.fold-btn)')].filter(b => b.offsetParent !== null);
       return vis.map(b => (b.textContent || '').replace(/\\s+/g, ' ').trim());
     })()`);
     check(`${tag} M1 the toolbar reads ${W.share} then ⟳`, !!row && row[0] === W.share && row.slice(1).every(l => l === '⟳'),

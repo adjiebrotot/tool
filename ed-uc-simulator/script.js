@@ -597,7 +597,7 @@
     var show = window.EDCharts ? EDCharts.render(res, app.model, display(), function(h){ stopPlay(); setHour(h, true); }) : {};
     Object.keys(CARD).forEach(function(k){ $(CARD[k]).hidden = !show[k]; });
   }
-  [['disp', 'Dispatch'], ['price', 'Nodal prices'], ['commit', 'Commitment'], ['store', 'Storage']].forEach(function(c){
+  [['disp', 'Dispatch'], ['price', 'Nodal prices'], ['commit', 'Unit Commitment'], ['store', 'Storage']].forEach(function(c){
     var k = c[0];
     var title = function(){ return (app.model.name ? app.model.name + ': ' : '') + c[1]; };
     var file = function(ext){ return fileBase() + '-' + c[1].toLowerCase().replace(/[^a-z]+/g, '-') + '.' + ext; };
@@ -605,6 +605,12 @@
     $(k + 'PngBtn').addEventListener('click', function(){ EDCharts.png(k + 'Canvas', title(), k + 'Legend').then(function(b){ EDCharts.save(b, file('png')); }); });
     $(k + 'CopyBtn').addEventListener('click', function(){ SharedShare.copyImage(function(){ return EDCharts.png(k + 'Canvas', title(), k + 'Legend'); }, this); });
     $(k + 'ZoomBtn').addEventListener('click', function(){ EDCharts.resetZoom(k); });
+    // Every chart but Dispatch folds away under its title, open until the reader closes it.
+    if(k !== 'disp' && window.SharedFold) SharedFold.attach($(CARD[k]), {
+      key: 'educ-simulator-' + k, open: true, text: { show: 'Show chart', hide: 'Hide chart' },
+      bodies: ['#' + k + 'Sub', '#storePickWrap', '#' + k + 'Legend', '.canvas-wrap', '#' + k + 'Hover'],
+      onOpen: function(){ var ch = window.EDCharts && EDCharts.get(k); if(ch) ch.resize(); }
+    });
   });
 
   /* Tables */

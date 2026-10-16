@@ -297,7 +297,7 @@
       <div class="sub" id="mPriceSub"></div>
     </div>
     <div class="metric card">
-      <div class="label" id="mUnitsLabel">Commitment</div>
+      <div class="label" id="mUnitsLabel">Unit Commitment</div>
       <div class="value" id="mUnits">–</div>
       <div class="sub" id="mUnitsSub"></div>
     </div>
@@ -342,7 +342,7 @@
 
   <section class="chart-card card ed-result" id="commitCard">
     <div class="chart-head">
-      <h2>Commitment</h2>
+      <h2>Unit Commitment</h2>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="commitSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="commitPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -367,6 +367,9 @@
       </div>
     </div>
     <div class="sub" id="storeSub"></div>
+    <label class="viewbar-field store-pick" id="storePickWrap" hidden>Storage unit
+      <select class="sel-input" id="storePick"></select>
+    </label>
     <div class="legend" id="storeLegend" data-no-abbr></div>
     <div class="canvas-wrap"><canvas id="storeCanvas"></canvas></div>
     <div class="hover-box" id="storeHover">Hover to read an hour. Click to show it on the diagram.</div>

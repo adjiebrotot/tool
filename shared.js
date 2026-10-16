@@ -4366,6 +4366,8 @@
          SharedFold.attach(card, { key: 'rentvsownhouse', bodies: [tabs, wrap],
                                    onOpen: resyncStickyHeader });
 
+     open: true starts it open (a chart) until the reader closes it.
+
      "What this assumes" (.assumes-card) folds the same way, by itself, on
      every page: SharedFold.assumes() runs at load.                          */
   function makeFold(){
@@ -4401,8 +4403,9 @@
         });
       }
       var key = opts.key ? 'abt:fold:' + opts.key : null;
-      var open = false;
-      try { open = !!key && localStorage.getItem(key) === '1'; } catch(e){}
+      // Closed unless the reader opened it before; opts.open starts it open instead.
+      var open = !!opts.open;
+      try { var kept = key ? localStorage.getItem(key) : null; if(kept === '1' || kept === '0') open = kept === '1'; } catch(e){}
       function set(o, byReader){
         open = !!o;
         card.classList.toggle('is-folded', !open);

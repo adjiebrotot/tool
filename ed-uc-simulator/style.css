@@ -282,3 +282,7 @@ html.abt-embed .chart-card>.sub{margin-top:0;}
 .up-msg{font-size:.78rem;line-height:1.45;margin-top:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--info-bg);color:var(--info-text);}
 .up-msg.is-err{background:var(--error-bg);color:var(--error-text);}
 .up-msg[hidden]{display:none;}
+
+/* Storage card: which store the chart shows, when there are several. */
+.store-pick{margin-top:10px;}
+.store-pick[hidden]{display:none;}
