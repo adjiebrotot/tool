@@ -163,16 +163,16 @@
              d: [0.98, 1, 1, 1, 0.98, 0.88, 0.82] },
     // Solar through the seasons at a mid latitude: a summer day is long and high,
     // a winter one short and low, and cloudier more often.
-    solars: { label: 'Solar, summer, with weather days', kind: 'gen', noun: 'solar', old: 1,
+    solars: { label: 'Solar (Summer, with weather days)', kind: 'gen', noun: 'solar', old: 1,
              h: [0, 0, 0, 0, 0, 0.02, 0.08, 0.22, 0.40, 0.57, 0.71, 0.81, 0.86, 0.86, 0.81, 0.71, 0.57, 0.40, 0.22, 0.08, 0.02, 0, 0, 0],
              d: [1, 0.95, 0.8, 1, 0.9, 0.85, 1] },
-    solar: { label: 'Solar, spring or autumn, with weather days', kind: 'gen', noun: 'solar', old: 1,
+    solar: { label: 'Solar (Spring or Autumn, with weather days)', kind: 'gen', noun: 'solar', old: 1,
              h: [0, 0, 0, 0, 0, 0, 0.03, 0.15, 0.35, 0.55, 0.70, 0.79, 0.82, 0.79, 0.70, 0.55, 0.35, 0.15, 0.03, 0, 0, 0, 0, 0],
              d: [1, 0.9, 0.6, 1, 0.95, 0.75, 1] },
-    solarw: { label: 'Solar, winter, with weather days', kind: 'gen', noun: 'solar', old: 1,
+    solarw: { label: 'Solar (Winter, with weather days)', kind: 'gen', noun: 'solar', old: 1,
              h: [0, 0, 0, 0, 0, 0, 0, 0.02, 0.12, 0.27, 0.40, 0.49, 0.52, 0.49, 0.40, 0.27, 0.12, 0.02, 0, 0, 0, 0, 0, 0],
              d: [0.85, 0.5, 0.35, 0.9, 0.7, 0.45, 0.8] },
-    wind:  { label: 'Wind, with weather days', kind: 'gen', old: 1,
+    wind:  { label: 'Wind (with weather days)', kind: 'gen', old: 1,
              h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61],
              d: [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8] },
     // Homes with rooftop solar, as the grid sees them: the panels cover most of
@@ -188,11 +188,11 @@
              w: [0.62, 0.55, 0.50, 0.46, 0.43, 0.43, 0.46, 0.53, 0.62, 0.70, 0.74, 0.75, 0.74, 0.72, 0.71, 0.72, 0.77, 0.86, 0.95, 1.00, 0.97, 0.90, 0.80, 0.70],
              d: [0.98, 0.97, 0.97, 0.98, 1, 1.04, 1.03] },
     // The unit shapes, the same every day: daily variability gives them a week.
-    pvs:   { label: 'Solar, summer', kind: 'gen', noun: 'solar',
+    pvs:   { label: 'Solar (Summer)', kind: 'gen', noun: 'solar',
              h: [0, 0, 0, 0, 0, 0.02, 0.08, 0.22, 0.40, 0.57, 0.71, 0.81, 0.86, 0.86, 0.81, 0.71, 0.57, 0.40, 0.22, 0.08, 0.02, 0, 0, 0] },
-    pv:    { label: 'Solar, spring or autumn', kind: 'gen', noun: 'solar',
+    pv:    { label: 'Solar (Spring or Autumn)', kind: 'gen', noun: 'solar',
              h: [0, 0, 0, 0, 0, 0, 0.03, 0.15, 0.35, 0.55, 0.70, 0.79, 0.82, 0.79, 0.70, 0.55, 0.35, 0.15, 0.03, 0, 0, 0, 0, 0] },
-    pvw:   { label: 'Solar, winter', kind: 'gen', noun: 'solar',
+    pvw:   { label: 'Solar (Winter)', kind: 'gen', noun: 'solar',
              h: [0, 0, 0, 0, 0, 0, 0, 0.02, 0.12, 0.27, 0.40, 0.49, 0.52, 0.49, 0.40, 0.27, 0.12, 0.02, 0, 0, 0, 0, 0, 0] },
     // Near the equator the day is twelve hours all year and the sun climbs high;
     // afternoons cloud over more often than mornings.
