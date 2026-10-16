@@ -1100,8 +1100,8 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     'sel ' + h.sel + ', worst ' + Math.max(...hp.map((v, t) => Math.abs(v - (200 + (t % 24) * 5)))).toExponential(1) + ' MW; ' + h.msg.slice(0, 120));
   // Back to a built-in shape: the file is let go.
   await page.selectOption('#f_prof', 'res');
-  const back = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { ts: e.ts, prof: e.prof, d: Array.isArray(e.dprof) }; }, homesId);
-  check('B18 choosing a shape again lets the file go and keeps the daily variability', back.ts === null && back.prof === 'res' && back.d);
+  const back = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { ts: e.ts, prof: e.prof, dprof: e.dprof, on: window.ED.dailyOn(e), toggle: !!(document.getElementById('f_daily') || {}).checked }; }, homesId);
+  check('B18 choosing a shape again lets the file go and brings the shape’s own daily variability', back.ts === null && back.prof === 'res' && back.dprof === '' && back.on && back.toggle, JSON.stringify(back));
   // Undo brings the file back; the mini cache keeps both across a reload, and the reload solves them.
   await page.evaluate(() => window.__ed.app.undo());
   await page.evaluate(() => window.__ed.run());
