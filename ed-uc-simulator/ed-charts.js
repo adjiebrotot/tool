@@ -39,14 +39,20 @@
   }
 
   /* ── The hour marker, and a click that moves it ── */
+  var noMarker = false;  // while a GIF takes a still, which draws the marker itself
+  // Where hour h sits on a chart, or null when it is off the axis.
+  function hourPx(chart, h){
+    var x = chart.scales.x, area = chart.chartArea;
+    if(!x || !area) return null;
+    var px = chart.config.type === 'bar' ? x.getPixelForValue(h + 0.5) : x.getPixelForValue(h);
+    return isFinite(px) && px >= area.left - 0.5 && px <= area.right + 0.5 ? px : null;
+  }
   var HOUR_PLUGIN = {
     id: 'edHour',
     afterDatasetsDraw: function(chart){
-      if(!ctx || chart.config.options.plugins.edHour === false) return;
-      var x = chart.scales.x, area = chart.chartArea;
-      if(!x || !area) return;
-      var h = ctx.display.hour, px = chart.config.type === 'bar' ? x.getPixelForValue(h + 0.5) : x.getPixelForValue(h);
-      if(!isFinite(px) || px < area.left - 0.5 || px > area.right + 0.5) return;
+      if(!ctx || noMarker || chart.config.options.plugins.edHour === false) return;
+      var area = chart.chartArea, px = hourPx(chart, ctx.display.hour);
+      if(px == null) return;
       var g = chart.ctx;
       g.save();
       g.strokeStyle = cssVar('--accent');
@@ -430,7 +436,8 @@
     get: function(key){ return charts[CANVAS[key]] || null; },
     resetZoom: function(key){ var c = charts[CANVAS[key]]; if(c) c.resetZoom(); },
     png: chartPng,
-    svg: chartSvg
+    svg: chartSvg,
+    still: chartStill
   };
   function destroy(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
 
@@ -501,6 +508,65 @@
       return new Promise(function(resolve, reject){ c.toBlob(function(b){ if(b) resolve(b); else reject(new Error('The image could not be made.')); }, 'image/png'); });
     });
   }
+  /* A chart for a GIF of the hours: drawn once at the desktop size, 1x, on bg,
+     without the hour marker, which marker(g, x, y, h) draws on each frame. */
+  function chartStill(key, chartTitle, bg, fg){
+    var canvasId = CANVAS[key], chart = charts[canvasId];
+    if(!chart || !ctx || !ctx.res) return null;
+    var card = $(canvasId).closest('.chart-card'), folded = !!(card && card.classList.contains('is-folded'));
+    if(folded) card.classList.remove('is-folded');
+    try {
+      return SharedExport.atDesktopSize(canvasId, function(){
+        var src = $(canvasId), dpr = window.devicePixelRatio || 1, FONT = '"DM Sans", sans-serif';
+        noMarker = true;
+        chart.draw();
+        var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
+        var titleH = 40, markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22;
+        var mc = document.createElement('canvas').getContext('2d');
+        mc.font = '500 11px ' + FONT;
+        var rows = legendRows(legendIdOf(key), function(s){ return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+        var legendH = rows.length ? rows.length * rowH + 8 : 0;
+        var c = document.createElement('canvas');
+        c.width = chartW; c.height = titleH + chartH + legendH;
+        var g = c.getContext('2d');
+        g.fillStyle = bg; g.fillRect(0, 0, c.width, c.height);
+        g.font = '700 14px ' + FONT; g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(chartTitle, c.width / 2, titleH / 2);
+        g.drawImage(src, 0, titleH, chartW, chartH);
+        g.font = '500 11px ' + FONT;
+        rows.forEach(function(row, ri){
+          var x = Math.max(margin, (c.width - row.width) / 2), cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
+          row.items.forEach(function(item){
+            SharedLegend.paint(g, item.swatch, x, cy, 1);
+            x += markW + gap;
+            g.fillStyle = fg; g.textAlign = 'left';
+            g.fillText(item.label, x, cy);
+            x += g.measureText(item.label).width + pad;
+          });
+        });
+        var xs = [];
+        for(var h = 0; h < ctx.res.T; h++) xs.push(hourPx(chart, h));
+        var top = titleH + chart.chartArea.top, bottom = titleH + chart.chartArea.bottom, accent = cssVar('--accent');
+        noMarker = false;
+        chart.draw();
+        return {
+          canvas: c, w: c.width, h: c.height,
+          marker: function(g2, x0, y0, hr){
+            var px = xs[hr];
+            if(px == null) return;
+            g2.save();
+            g2.strokeStyle = accent; g2.globalAlpha = 0.75; g2.lineWidth = 1.5; g2.setLineDash([4, 3]);
+            g2.beginPath(); g2.moveTo(x0 + px, y0 + top); g2.lineTo(x0 + px, y0 + bottom); g2.stroke();
+            g2.restore();
+          }
+        };
+      });
+    } finally {
+      noMarker = false;
+      if(folded) card.classList.add('is-folded');
+    }
+  }
+  function legendIdOf(key){ return key + 'Legend'; }
   // An SVG around the chart's bitmap, with live text for the title and key.
   function chartSvg(canvasId, chartTitle, legendId){
     return SharedExport.atDesktopSize(canvasId, function(){

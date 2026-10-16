@@ -15,7 +15,9 @@
    While the hours are playing, the GIF plays them too (ctx.series), at the
    pace the page plays them (every second hour or fewer for a long run, to keep
    it to MAX_FRAMES frames), the arrows running on from one hour into the next,
-   in one frame size that fits every hour. */
+   in one frame size that fits every hour. The charts the reader ticks
+   (ctx.charts, stills from EDCharts.still) sit under the diagram, their hour
+   marker moving with it. */
 (function(){
   'use strict';
   var ED = window.ED;
@@ -45,9 +47,15 @@
     var top = 18, titleH = 26, subH = sub ? 18 : 0;
     var dy = top + titleH + subH + 10;
     var keyH = lanes.length || (ctx.series && anim.p) ? 26 : 0, wmH = 30;
-    var H = Math.round(dy + dh + 12 + keyH + wmH);
+    var cy = dy + dh + 12 + keyH, charts = [];
+    (ctx.series && res ? ctx.charts || [] : []).forEach(function(ch){
+      cy += 14;
+      charts.push({ still: ch, x: Math.round((W - ch.w) / 2), y: Math.round(cy) });
+      cy += ch.h;
+    });
+    var H = Math.round(cy + wmH);
     var P = { scene: scene, C: C, bb: bb, k: k, ox: (W - dw) / 2, oy: dy, dw: dw, dh: dh, H: H, lanes: lanes, anim: anim,
-              title: ctx.title, sub: sub, keyY: dy + dh + 12, bg: paint('--panel') };
+              title: ctx.title, sub: sub, keyY: dy + dh + 12, bg: paint('--panel'), charts: charts, hour: d.hour };
     P.keyLanes = keyItems(P).map(function(it){ return ED.keyLane(it.kind, it.x, it.y, 30, it.kind === 'p' ? C.p : C.q); });
     return P;
   }
@@ -178,6 +186,13 @@
     g.drawImage(Lr.under, Math.round(P.ox * S), Math.round(P.oy * S), Math.ceil(P.dw * S), Math.ceil(P.dh * S));
     drawLanes(g, P, S, t);
     g.drawImage(Lr.over, 0, 0);
+    P.charts.forEach(function(ch){
+      g.save();
+      g.scale(S, S);
+      g.drawImage(ch.still.canvas, ch.x, ch.y);
+      ch.still.marker(g, ch.x, ch.y, P.hour);
+      g.restore();
+    });
     return c;
   }
   function toBlob(c, type){

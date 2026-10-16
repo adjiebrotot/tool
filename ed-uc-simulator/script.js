@@ -1753,11 +1753,75 @@
     var res = shownResults();
     return { app: app, ED: ED, display: display(), res: res, stale: isStale(), title: app.model.name || 'Dispatch', sub: res ? exportSub(res, hourNow()) : '' };
   }
-  // While the hours are playing, a downloaded GIF plays them too, at the same pace.
-  function gifCtx(){
+  /* Download as GIF asks first: the diagram as it is now, or the hours played
+     through (at the pace ▶ plays them) with the charts ticked under it. */
+  var CHART_NAME = { disp: 'Dispatch', price: 'Nodal prices', commit: 'Unit Commitment', store: 'Storage' };
+  function chartChoices(){
+    return Object.keys(CARD).filter(function(k){ return !$(CARD[k]).hidden && window.EDCharts && EDCharts.get(k); });
+  }
+  function gifCtx(series, picked){
     var ctx = exportCtx(), res = ctx.res;
-    if(playT && res && res.T > 1) ctx.series = { step: playStep(res.T), sub: function(h){ return exportSub(res, h); } };
+    if(series && res && res.T > 1){
+      ctx.series = { step: playStep(res.T), sub: function(h){ return exportSub(res, h); } };
+      var paint = app.paint(), bg = paint('--panel'), fg = paint('--text');
+      ctx.charts = (picked || []).map(function(k){ return EDCharts.still(k, CHART_NAME[k], bg, fg); }).filter(Boolean);
+    }
     return ctx;
+  }
+  var gifDlg = null, gifSeries = null, gifPicked = {};
+  function gifDialog(){
+    if(gifDlg) return gifDlg;
+    var ov = document.createElement('div');
+    ov.className = 'share-embed-overlay';
+    ov.setAttribute('data-no-abbr', '');
+    ov.innerHTML =
+      '<div class="share-embed card gif-dlg" role="dialog" aria-modal="true" aria-labelledby="gifDlgTitle">' +
+        '<div class="share-embed-head"><h2 id="gifDlgTitle">Download as GIF</h2>' + SharedIcon.button('close', 'Close', 'gif-dlg-close') + '</div>' +
+        '<label class="gif-dlg-series"><input type="checkbox" data-no-persist> Time series</label>' +
+        '<div class="share-embed-choices gif-dlg-charts" role="group" aria-label="Charts"></div>' +
+        '<div class="share-embed-actions"><button type="button" class="btn-primary gif-dlg-go">⬇ Download</button></div>' +
+      '</div>';
+    document.body.appendChild(ov);
+    gifDlg = { el: ov, series: ov.querySelector('.gif-dlg-series input'), charts: ov.querySelector('.gif-dlg-charts'), go: ov.querySelector('.gif-dlg-go'), back: null };
+    var shut = function(){ ov.classList.remove('is-open'); if(gifDlg.back) gifDlg.back.focus({ preventScroll: true }); };
+    gifDlg.close = shut;
+    ov.addEventListener('click', function(e){ if(e.target === ov) shut(); });
+    ov.querySelector('.gif-dlg-close').addEventListener('click', shut);
+    ov.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); shut(); return; }
+      if(e.key !== 'Tab') return;
+      var f = Array.prototype.filter.call(ov.querySelectorAll('button, input'), function(x){ return x.offsetParent !== null; });
+      var i = f.indexOf(document.activeElement);
+      if(e.shiftKey && i <= 0){ e.preventDefault(); f[f.length - 1].focus(); }
+      else if(!e.shiftKey && i === f.length - 1){ e.preventDefault(); f[0].focus(); }
+    });
+    gifDlg.series.addEventListener('change', function(){ gifSeries = this.checked; gifDlg.charts.hidden = !this.checked || !gifDlg.charts.firstChild; });
+    gifDlg.charts.addEventListener('change', function(e){ if(e.target.value) gifPicked[e.target.value] = e.target.checked; });
+    gifDlg.go.addEventListener('click', function(){
+      var series = gifDlg.series.checked, picked = [];
+      Array.prototype.forEach.call(gifDlg.charts.querySelectorAll('input'), function(x){ if(x.checked) picked.push(x.value); });
+      shut();
+      makeGif(series, series ? picked : []);
+    });
+    return gifDlg;
+  }
+  function openGifDialog(){
+    var d = gifDialog(), list = chartChoices();
+    d.back = document.querySelector('#sldCard .share-toggle') || $('gifBtn');
+    // While the hours play, the time series is ticked to begin with.
+    d.series.checked = gifSeries == null ? !!playT : gifSeries;
+    d.charts.innerHTML = list.map(function(k){
+      return '<label><input type="checkbox" data-no-persist value="' + k + '"' + (gifPicked[k] ? ' checked' : '') + '> ' + CHART_NAME[k] + '</label>';
+    }).join('');
+    d.charts.hidden = !d.series.checked || !list.length;
+    d.el.classList.add('is-open');
+    d.go.focus({ preventScroll: true });
+  }
+  function makeGif(series, picked){
+    exporter().then(function(X){
+      var ctx = gifCtx(series, picked);
+      return X.gifBlob(ctx, function(p){ busy(true, (ctx.series ? 'Making the GIF of the hours… ' : 'Making the GIF… ') + Math.round(p * 100) + '%'); });
+    }).then(function(b){ busy(false); download(b, 'gif'); }, function(err){ busy(false); alert('The GIF could not be made: ' + (err && err.message || err)); });
   }
   // While busy, the hours playing on leave the progress line alone.
   var busyNow = false;
@@ -1765,10 +1829,35 @@
   $('svgBtn').addEventListener('click', function(){ exporter().then(function(X){ download(X.svgBlob(exportCtx()), 'svg'); }); });
   $('pngBtn').addEventListener('click', function(){ exporter().then(function(X){ return X.pngBlob(exportCtx()); }).then(function(b){ download(b, 'png'); }); });
   $('gifBtn').addEventListener('click', function(){
-    exporter().then(function(X){
-      var ctx = gifCtx();
-      return X.gifBlob(ctx, function(p){ busy(true, (ctx.series ? 'Making the GIF of the hours… ' : 'Making the GIF… ') + Math.round(p * 100) + '%'); });
-    }).then(function(b){ busy(false); download(b, 'gif'); }, function(err){ busy(false); alert('The GIF could not be made: ' + (err && err.message || err)); });
+    var res = shownResults();
+    // One hour has no time series to ask about.
+    if(res && res.T > 1) openGifDialog(); else makeGif(false, []);
+  });
+
+  /* Embed as HTML offers the charts too: ticked ones ride in the link and,
+     in the frame, move into the diagram's card, under it. */
+  function chartHeight(k){
+    var c = $(CARD[k]), w = c.querySelector('.canvas-wrap');
+    var desk = (window.SharedExport && SharedExport.desktopHeight(w)) || (k === 'commit' ? 300 : 380);
+    var chrome = c.classList.contains('is-folded') || !w.offsetHeight ? 130 : c.offsetHeight - w.offsetHeight;
+    return 14 + desk + chrome;
+  }
+  function embedCharts(list){
+    var card = $('sldCard');
+    list.forEach(function(k){
+      if(!CARD.hasOwnProperty(k)) return;
+      var c = $(CARD[k]);
+      c.classList.remove('is-folded');
+      c.classList.add('sld-embed-chart');
+      card.appendChild(c);
+    });
+    card.classList.toggle('sld-with-charts', !!card.querySelector('.sld-embed-chart'));
+  }
+  SharedShare.view('sldStage', {
+    choices: function(){ return chartChoices().map(function(k){ return { value: k, label: CHART_NAME[k] }; }); },
+    save: function(picked){ return picked && picked.length ? { charts: picked } : undefined; },
+    height: function(picked){ return picked.reduce(function(sum, k){ return sum + (CARD.hasOwnProperty(k) ? chartHeight(k) : 0); }, 0); },
+    load: function(v){ if(EMBED && v && Array.isArray(v.charts)) embedCharts(v.charts); }
   });
   $('copyBtn').addEventListener('click', function(){
     var btn = this, d = display();

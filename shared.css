@@ -444,6 +444,10 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
 .share-embed-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .share-embed-head h2{margin:0;font-size:1.05rem;}
 .share-embed-note{margin:8px 0 12px;color:var(--muted);font-size:.84rem;line-height:1.45;}
+.share-embed-choices{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0 0 12px;font-size:.86rem;}
+.share-embed-choices[hidden]{display:none;}
+.share-embed-choices label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+.share-embed-inc{color:var(--muted);font-weight:600;}
 .share-code{display:block;width:100%;box-sizing:border-box;min-height:128px;resize:vertical;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text);font-family:'DM Mono',ui-monospace,monospace;font-size:.76rem;line-height:1.5;word-break:break-all;}
 .share-code:focus{outline:none;border-color:var(--accent);}
 .share-embed-size{margin:8px 0 0;color:var(--muted);font-size:.8rem;}
