@@ -408,7 +408,7 @@ console.log('\n── A6 the calendar ──');
         const midnight = Date.parse(start.slice(0, 10) + 'T00:00:00Z');
         const day = P[key].kind === 'load' ? wd(at.toISOString().slice(0, 16)) : Math.floor((ms0 + t * 3600e3 - midnight) / 864e5) % 7;
         const weekend = wd(at.toISOString().slice(0, 16)) >= 5;
-        let want = (P[key].w && weekend ? P[key].w : P[key].h)[h] * P[key].d[day];
+        let want = (P[key].w && weekend ? P[key].w : P[key].h)[h] * (P[key].d ? P[key].d[day] : 1);
         if (P[key].kind === 'gen') want = Math.min(1, want);
         worst = Math.max(worst, Math.abs(got[t] - want)); n++;
       }
@@ -451,7 +451,7 @@ function want(e, t, start) {
     const wd = (at.getUTCDay() + 6) % 7, dayN = Math.floor((ms - Date.parse(start.slice(0, 10) + 'T00:00:00Z')) / 864e5);
     const own = Array.isArray(e.prof) ? e.prof[h] : P ? P.h[h] : 1;
     const hv = P && P.w && wd >= 5 ? Math.max(0, P.w[h] + (own - P.h[h])) : own;
-    const dv = Array.isArray(e.dprof) ? e.dprof[wd] : P ? P.d[P.kind === 'load' ? wd : dayN % 7] : 1;
+    const dv = Array.isArray(e.dprof) ? e.dprof[wd] : P && P.d ? P.d[P.kind === 'load' ? wd : dayN % 7] : 1;
     v = hv * dv;
   }
   return e.c === 'Generator' ? Math.min(1, v) : v;
@@ -960,16 +960,39 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     bars: document.querySelectorAll('#profBars .pb').length, daily: !!document.getElementById('f_daily'), line: !!document.getElementById('tsLine'), open: !!document.getElementById('profOpen') }));
   check('B10 a built-in shape shows its 24 bars and the daily toggle, and only Custom offers a file',
     plain.sel === 'res' && plain.opts.includes('custom') && !plain.opts.includes('file') && plain.bars === 24 && plain.daily && !plain.line && !plain.open && !errs.length, JSON.stringify(plain));
-  // On: seven bars from the profile's own weekdays, the caption, and the same answer.
+  // A demand shape comes with daily variability on: seven bars from its own weekdays and the week drawn as a line, no caption.
+  const dayState = () => page.evaluate(() => ({ on: document.getElementById('f_daily').checked, bars: document.querySelectorAll('#dayBars .pb-day').length,
+    week: document.querySelectorAll('#weekLine .pb-t').length, dprof: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof,
+    cap: document.querySelectorAll('#inspector .prof-cap').length, steps: document.querySelectorAll('#inspector .prof-step').length }));
+  const on = await dayState();
+  check('B10 a demand shape has daily variability on: Monday to Sunday bars from its own days and the week as a line, no caption',
+    on.on && on.bars === 7 && on.week === 7 && on.dprof === '' && !on.cap && !on.steps && !errs.length, JSON.stringify(on));
+  // Off: every weekday the same (seven 1s, kept apart from the shape's own days), and a different answer; on again, the shape's days and the same answer.
   await page.click('label:has(#f_daily)');
-  const on = await page.evaluate(() => ({ bars: document.querySelectorAll('#dayBars .pb-day').length, week: !!document.querySelector('#weekLine .pl'),
-    dprof: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof, cap: [...document.querySelectorAll('#inspector .prof-cap')].map(p => p.textContent).join(' '),
-    steps: document.querySelectorAll('#inspector .prof-step').length }));
+  const off = await dayState();
+  await page.evaluate(() => window.__ed.run());
+  const costOff = await page.evaluate(() => window.__ed.app.res.totals.cost);
+  await page.click('label:has(#f_daily)');
+  const on2 = await dayState();
   await page.evaluate(() => window.__ed.run());
   const cost1 = await page.evaluate(() => window.__ed.app.res.totals.cost);
-  check('B10 Daily variability on: Monday to Sunday bars from the shape’s own days, hourly × daily said, and the same answer',
-    on.bars === 7 && !on.week && JSON.stringify(on.dprof) === JSON.stringify(ED.PROFILES.res.d) && /80% × 50% = 40%/.test(on.cap) &&
-    !on.steps && cost1 === cost0 && !errs.length, JSON.stringify({ ...on, cost0, cost1 }).slice(0, 200));
+  check('B10 Daily variability off makes every weekday the same, and on again brings back the shape’s own days and the same answer',
+    !off.on && !off.bars && !off.week && JSON.stringify(off.dprof) === '[1,1,1,1,1,1,1]' && costOff !== cost0 &&
+    on2.on && on2.bars === 7 && on2.dprof === '' && cost1 === cost0 && !errs.length, JSON.stringify({ off, on2, cost0, costOff, cost1 }).slice(0, 300));
+  // Picking a shape: a demand shape turns daily variability on, a unit's comes without it.
+  const picks = await page.evaluate(() => {
+    const ed = window.__ed, m = ed.app.model, homes = m.el.find(e => e.name === 'Homes'), pv = m.el.find(e => e.c === 'Generator' && e.style === 'pv');
+    const pick = (e, v) => { ed.app.select([e.id]); const s = document.getElementById('f_prof'); s.value = v; s.dispatchEvent(new Event('change', { bubbles: true }));
+      return { v, prof: e.prof, dprof: e.dprof, on: document.getElementById('f_daily').checked, week: !!document.getElementById('weekLine'), opts: [...s.options].map(o => o.value) }; };
+    homes.dprof = [1, 1, 1, 1, 1, 1, 1];
+    const out = [pick(homes, 'respv'), pick(homes, 'resev'), pick(homes, 'com'), pick(pv, 'pveq'), pick(pv, 'pvs')];
+    pick(homes, 'res'); ed.app.select([homes.id]);
+    return out;
+  });
+  check('B10 picking a demand shape turns daily variability on with its own days; a solar or wind shape has none, and the new shapes are offered',
+    picks.slice(0, 3).every(p => p.on && p.week && p.dprof === '') && picks.slice(3).every(p => !p.on && !p.week && p.dprof === '') &&
+    ['respv', 'resev'].every(k => picks[0].opts.includes(k)) && picks[3].opts.includes('pveq') && !picks[3].opts.some(k => ED.PROFILES[k] && ED.PROFILES[k].old) && !errs.length,
+    JSON.stringify(picks.map(p => [p.v, p.on, p.week])));
   // Drag Thursday's bar down to half: the model, the bars and the week all follow, and the run uses it.
   // The bars' own units to the screen, through the SVG's transform.
   const at = (ux, uy) => page.evaluate(([x, y]) => { const s = document.getElementById('dayBars'), p = s.createSVGPoint(); p.x = x; p.y = y; const q = p.matrixTransform(s.getScreenCTM()); return [q.x, q.y]; }, [ux, uy]);
