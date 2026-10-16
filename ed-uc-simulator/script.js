@@ -1810,9 +1810,9 @@
     d.back = document.querySelector('#sldCard .share-toggle') || $('gifBtn');
     // While the hours play, the time series is ticked to begin with.
     d.series.checked = gifSeries == null ? !!playT : gifSeries;
-    d.charts.innerHTML = (list.length ? '<span class="share-embed-inc">Include:</span>' : '') + list.map(function(k){
+    d.charts.innerHTML = (list.length ? '<span class="share-embed-inc">Include:</span><span class="share-embed-opts">' : '') + list.map(function(k){
       return '<label><input type="checkbox" data-no-persist value="' + k + '"' + (gifPicked[k] ? ' checked' : '') + '> ' + CHART_NAME[k] + '</label>';
-    }).join('');
+    }).join('') + (list.length ? '</span>' : '');
     d.charts.hidden = !d.series.checked || !list.length;
     d.el.classList.add('is-open');
     d.go.focus({ preventScroll: true });

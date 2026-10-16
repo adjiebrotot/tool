@@ -3798,9 +3798,9 @@
       d.back = m.toggle;
       // The view's checklist, all off: an embed carries only the chart unless asked.
       var list = hook && hook.choices ? hook.choices() || [] : [];
-      d.choices.innerHTML = list.length ? '<span class="share-embed-inc">' + html(t.include) + '</span>' + list.map(function(c){
+      d.choices.innerHTML = list.length ? '<span class="share-embed-inc">' + html(t.include) + '</span><span class="share-embed-opts">' + list.map(function(c){
         return '<label><input type="checkbox" data-no-persist value="' + attr(c.value) + '"> ' + html(c.label) + '</label>';
-      }).join('') : '';
+      }).join('') + '</span>' : '';
       d.choices.hidden = !list.length;
       d.choices.onchange = function(){ fillEmbed(m, d, t); };
       d.el.classList.add('is-open');
