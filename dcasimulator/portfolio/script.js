@@ -547,7 +547,7 @@ function maxIso(a, b){ return (a && a > b) ? a : b; }
 function loadBtnLabel(){ return loadedTickers().length ? '⤓ Load additional tickers' : '⤓ Load tickers'; }
 function updateLoadBtnLabel(){ const b=$('loadTickersBtn'); if(b && !b.disabled) b.innerHTML=loadBtnLabel(); }
 
-// The filter shows once the pool holds more chips than this.
+// The filter shows once the pool holds more assets than this.
 const POOL_FILTER_AT=8;
 function renderPoolChips(){
   const box=$('poolChips'); if(!box) return;
@@ -561,12 +561,11 @@ function renderPoolChips(){
     const warn=(e && e.kind==='stock' && e.source==='stooq');
     const nm=tickerName(tk);
     const range=(e && e.dates && e.dates.length)?e.dates[0]+' to '+e.dates[e.dates.length-1]:'';
-    const title=[nm, warn?'Loaded from Stooq (unadjusted for splits/dividends)':'', range].filter(Boolean).join(' · ');
-    return `<span class="pool-chip${warn?' pool-chip-warn':''}" title="${escapeHtml(title)}" data-q="${escapeHtml((tk+' '+nm).toLowerCase())}">${tk}${warn?' ⚠️':''}${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</span>`;
+    return `<li class="pool-row${warn?' pool-row-warn':''}"${warn?' title="Loaded from Stooq (unadjusted for splits/dividends)"':''} data-q="${escapeHtml((tk+' '+nm).toLowerCase())}"><span class="pool-tk">${tk}${warn?' ⚠️':''}</span><span class="pool-info"><span class="pool-nm">${escapeHtml(nm||tk)}</span><span class="pool-range">${range}</span></span>${SharedIcon.button('trash', 'Remove '+tk, 'sm pool-chip-del', `data-tk="${tk}"`)}</li>`;
   }).join('');
   html+=simPool.map(s=>{
     const nm=escapeHtml(s.name);
-    return `<span class="pool-chip pool-chip-sim" title="Simulated · return ${s.returnPct}% · std ${s.stdPct}%" data-q="${escapeHtml(('simulated '+s.name).toLowerCase())}">ƒ ${nm}${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</span>`;
+    return `<li class="pool-row pool-row-sim" data-q="${escapeHtml(('simulated '+s.name).toLowerCase())}"><span class="pool-tk">ƒ sim</span><span class="pool-info"><span class="pool-nm">${nm}</span><span class="pool-range">return ${s.returnPct}% · std ${s.stdPct}%</span></span>${SharedIcon.button('trash', 'Remove '+s.name, 'sm pool-chip-del', `data-sim="${nm}"`)}</li>`;
   }).join('');
   box.innerHTML=html;
   box.querySelectorAll('.pool-chip-del[data-tk]').forEach(b=>b.addEventListener('click', ()=>removeFromPool(b.dataset.tk)));
@@ -574,19 +573,19 @@ function renderPoolChips(){
   const n=tks.length+simPool.length;
   const cnt=$('poolCount'); if(cnt) cnt.textContent='('+n+')';
   const rb=$('refreshPoolBtn'); if(rb) rb.style.display=tks.length?'':'none';
-  // Past a handful of chips the filter shows; the box itself scrolls (style.css).
+  // Past a handful of rows the filter shows; the list itself scrolls (style.css).
   const f=$('poolFilter');
   if(f){ f.style.display=n>POOL_FILTER_AT?'':'none'; if(n<=POOL_FILTER_AT) f.value=''; }
   filterPoolChips();
   updateLoadBtnLabel();
 }
-// Show only the chips whose ticker or full name holds the filter's text.
+// Show only the rows whose ticker or full name holds the filter's text.
 function filterPoolChips(){
   const box=$('poolChips'); if(!box) return;
   const f=$('poolFilter');
   const q=(f && f.style.display!=='none' ? f.value : '').trim().toLowerCase();
   let shown=0;
-  box.querySelectorAll('.pool-chip').forEach(c=>{ const hit=!q || (c.dataset.q||'').includes(q); c.hidden=!hit; if(hit) shown++; });
+  box.querySelectorAll('.pool-row').forEach(c=>{ const hit=!q || (c.dataset.q||'').includes(q); c.hidden=!hit; if(hit) shown++; });
   const empty=$('poolFilterEmpty'); if(empty) empty.hidden=!(q && !shown);
   box.style.display=(q && !shown)?'none':'';
 }
@@ -1413,6 +1412,8 @@ if(window.SharedDropdown){
 $('loadTickersBtn').addEventListener('click', ()=>loadTickerPool());
 { const rb=$('refreshPoolBtn'); if(rb) rb.addEventListener('click', ()=>loadTickerPool(loadedTickers())); }
 { const pf=$('poolFilter'); if(pf) pf.addEventListener('input', filterPoolChips); }
+// The Loaded assets list stays folded until asked for: most visits never need it.
+{ const pt=$('poolToggle'), pb=$('poolBody'); if(pt && pb) pt.addEventListener('click', ()=>{ const open=pb.hidden; pb.hidden=!open; pt.setAttribute('aria-expanded', String(open)); }); }
 $('editTickersBtn').addEventListener('click', ()=>{ setPoolLocked(false); const i=$('tickerPoolInput'); if(i) i.focus(); });
 { const cb=$('clearPoolBtn'); if(cb) cb.addEventListener('click', clearPool); }
 $('tickerPoolInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); loadTickerPool(); } });

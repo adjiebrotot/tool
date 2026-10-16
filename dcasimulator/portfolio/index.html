@@ -137,15 +137,19 @@
       <div class="field-label">Currency Symbol <span class="tip-icon" data-tip="The symbol money is shown in. Nothing is converted between currencies.">?</span></div>
       <select class="sel-input" id="currencySymbol" data-no-stale data-currency-symbols data-currency-none></select>
     </div>
-    <div id="poolChipsWrap" style="display:none">
+    <!-- Loaded assets: folded to one line (name and count) since it is rarely
+         needed; open it to see each asset and its dates, or remove one. -->
+    <div id="poolChipsWrap" class="pool-wrap" style="display:none">
       <div class="pool-chips-head">
-        <span class="section-label" style="margin-top:0">Loaded assets <span class="pool-count" id="poolCount"></span></span>
+        <button id="poolToggle" class="pool-toggle" type="button" aria-expanded="false" aria-controls="poolBody"><svg class="pool-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Loaded assets <span class="pool-count" id="poolCount"></span></span></button>
         <button id="refreshPoolBtn" class="pool-clear-btn pool-refresh-btn" type="button" data-icon="refresh" title="Fetch the latest prices for every loaded ticker, up to today">Refresh</button>
-        <button id="clearPoolBtn" class="pool-clear-btn" type="button" data-icon="trash" title="Remove every loaded ticker and simulated asset">Clear all</button>
       </div>
-      <input class="txt-input pool-filter" id="poolFilter" type="search" data-no-stale data-no-persist autocomplete="off" spellcheck="false" placeholder="Find a loaded asset by ticker or name…" aria-label="Find a loaded asset" style="display:none" />
-      <div id="poolChips" class="pool-chips"></div>
-      <div class="pool-filter-empty" id="poolFilterEmpty" hidden>No loaded asset matches.</div>
+      <div id="poolBody" class="pool-body" hidden>
+        <input class="txt-input pool-filter" id="poolFilter" type="search" data-no-stale data-no-persist autocomplete="off" spellcheck="false" placeholder="Find a loaded asset by ticker or name…" aria-label="Find a loaded asset" style="display:none" />
+        <ul id="poolChips" class="pool-list" data-no-abbr></ul>
+        <div class="pool-filter-empty" id="poolFilterEmpty" hidden>No loaded asset matches.</div>
+        <div class="pool-foot"><button id="clearPoolBtn" class="pool-clear-btn" type="button" data-icon="trash" title="Remove every loaded ticker and simulated asset">Clear all</button></div>
+      </div>
     </div>
 
     <div class="field-group">

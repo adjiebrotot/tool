@@ -55,16 +55,9 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .btn-secondary:hover{border-color:var(--accent)}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
-.pool-chip{display:inline-flex;align-items:center;gap:4px;background:var(--input-bg);border:1px solid var(--border);border-radius:999px;padding:3px 6px 3px 10px;font-size:.78rem;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
-.pool-chip-warn{border-color:var(--gold);color:var(--gold)}
-.pool-chip-sim{border-color:var(--accent2);color:var(--accent2)}
 .seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px}
 .seg-toggle .seg-btn{border-radius:6px;border:none}
 .seg-toggle .seg-btn+.seg-btn{border-left:none}
-/* The chip's delete is shared.css's .btn-bare.sm, drawn a size smaller again
-   so the chip stays one line of text tall. */
-.pool-chip .pool-chip-del{min-width:18px;height:18px;margin-left:1px;border-radius:50%}
-.pool-chip .pool-chip-del .ico{width:12px;height:12px}
 .pool-chips-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);padding-bottom:5px;margin:14px 0 0}
 .pool-chips-head:first-child{margin-top:0}
 .pool-chips-head .section-label{margin:0;padding:0;border-bottom:none;flex:1}
@@ -75,12 +68,30 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .pool-clear-btn:disabled{opacity:.5;cursor:default}
 .pool-clear-btn:disabled:hover{color:var(--muted)}
 .pool-count{font-weight:600;color:var(--muted)}
-/* Loaded assets: a long pool scrolls inside its own box (about four rows of
-   chips) instead of pushing the Data tab down, and past a handful of chips a
-   filter finds one by ticker or full name. */
-.pool-chips{display:flex;flex-wrap:wrap;align-content:flex-start;gap:5px;margin:6px 0 18px;max-height:122px;overflow-y:auto;overscroll-behavior:contain;padding:1px 2px 1px 0}
+/* Loaded assets: folded to one line by default (toggle + count, Refresh beside
+   it). Open, it is a plain list, one asset per row: ticker, its name over its dates,
+   and a bin. A long list scrolls inside its own box, and past a handful of
+   assets a filter finds one by ticker or full name. */
+.pool-wrap{margin-bottom:18px}
+.pool-wrap .pool-chips-head{align-items:center}
+.pool-toggle{flex:1;display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;padding:2px 0;margin:0;cursor:pointer;font-family:inherit;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);text-align:left}
+.pool-toggle:hover{opacity:.8}
+.pool-toggle:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px;border-radius:4px}
+.pool-chev{width:14px;height:14px;flex-shrink:0;transition:transform .15s}
+.pool-toggle[aria-expanded="true"] .pool-chev{transform:rotate(90deg)}
+.pool-list{list-style:none;margin:6px 0 0;padding:0;max-height:232px;overflow-y:auto;overscroll-behavior:contain}
+.pool-row{display:flex;align-items:center;gap:10px;padding:5px 2px 5px 4px;border-bottom:1px solid var(--border);font-size:.8rem}
+.pool-row:last-child{border-bottom:none}
+.pool-row[hidden]{display:none}
+.pool-tk{flex-shrink:0;min-width:64px;font-family:'DM Mono',monospace;font-weight:700;color:var(--text)}
+.pool-info{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.pool-nm{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pool-range{color:var(--muted);font-size:.72rem;font-family:'DM Mono',monospace}
+.pool-row-warn .pool-tk{color:var(--gold)}
+.pool-row-sim .pool-tk{color:var(--accent2)}
+.pool-foot{display:flex;justify-content:flex-end;margin-top:8px}
 .pool-filter{width:100%;margin-top:8px;padding:7px 11px;font-size:.84rem}
-.pool-filter-empty{margin:6px 0 18px;font-size:.8rem;color:var(--muted)}
+.pool-filter-empty{margin:6px 0 0;font-size:.8rem;color:var(--muted)}
 .rate-info{font-weight:600}
 .rate-info.rate-info-low{color:var(--gold)}
 .rate-info:empty{display:none}
