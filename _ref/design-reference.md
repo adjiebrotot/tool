@@ -1866,7 +1866,28 @@ SharedShare.upgrade(overlay);
 ```html
 <iframe src="https://tool.adjiebrotots.com/<tool>/#embed=<chart>&amp;theme=dark&amp;s=…" title="<chart title>"
         width="100%" height="<desktop height>" style="border:0;background:transparent" loading="lazy"></iframe>
+<p …>Interactive chart: <a href="…">…</a> by Adjie Brotot Tools</p>
+<script>addEventListener("message", …)</script>
 ```
+
+**The frame is as tall as what it shows.** The iframe's `width` is the other site's column,
+so no fixed height suits every page: a phone wraps the legend and squeezes the chart, and a
+diagram drawn to its width floats in bands of empty stage. So the frame posts the height it
+needs (`{ abtEmbed: 'height', height }`) whenever its width changes it, and the third line
+of the code, a one-line listener, sets that height on the very iframe that sent it, from the
+tool's own origin only. The height is the card laid out at its own height: its title,
+toolbar, legend and watermark at the frame's width, plus the chart at the height the page
+gives it on a desktop. A diagram drawn to fit its width registers
+`SharedShare.fit(key, width => height)` (the SLDs: the drawing, labels included, at the
+frame's width, plus its 28px margin), so the frame is exactly as tall as the drawing and
+nothing more. A site that strips scripts keeps the `height` the iframe carries, which is
+worked out the same way for a 760px column.
+
+**While it loads, the frame says so.** One quiet line in the middle of the frame, "Loading
+data from tool.adjiebrotots.com…" ("Memuat data dari …" on an Indonesian page), in place of a
+blank or a flash of the whole tool. An inline script at the top of every page's head
+switches embed mode on before the first paint, so the line shows from the start; keep it
+there (beside the `shared.css` link) on a new page.
 
 `s` is the scenario file the save button writes (`SharedScenario.mount` registers it with
 `SharedShare.state`), deflated and base64url-encoded into the `#hash`, which a browser
@@ -1929,7 +1950,9 @@ three rows say what they do in their label alone.
   diagram), marks its element `data-share-chart` and keeps `data-share-sig` set to a
   signature of what it draws, set only once it has drawn (a failure too, so an embed
   settles). The embed waits on it and `_ref/share-check.mjs` compares it; that check also
-  wheels the diagram and needs its `viewBox` to move.
+  wheels the diagram and needs its `viewBox` to move. If it fits itself to its width, it
+  also registers `SharedShare.fit(key, width => height)`, and the check (E14) needs the
+  embed's stage to hold the drawing with no more than its margin above and below.
 - An animated chart's `⧉` passes `copyImage` a third argument, `{ gif: () => gifBlob,
   onDone: kind => … }`: the GIF goes on the clipboard where the browser takes `image/gif`,
   and elsewhere the PNG goes with an HTML copy carrying the GIF, which mail and documents
@@ -1964,7 +1987,8 @@ what they write into `innerHTML`; this is the second lock, not the first.
 `node _ref/share-check.mjs` drives every chart's menu on a desktop and a phone, holds a
 phone's and a wide monitor's PNG, SVG and copy to the desktop's size, opens every embed in
 a page on another site at two widths to prove it draws exactly the data the reader saw on
-a transparent background, follows the link back to prove the whole tool opens on that same
+a transparent background, sized by its host to what it shows (E14), saying it is loading
+until it has drawn (E15), follows the link back to prove the whole tool opens on that same
 chart, and
 replays each page's link with every string swapped for markup and script, which has to be
 drawn as text and run nothing.

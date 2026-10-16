@@ -455,8 +455,13 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
    Only the chart's card is left, filling the frame; the boxes it sat in lose
    their own layout so nothing (a sidebar column, a modal's backdrop) is left
    holding room for what has been hidden. The page stays hidden until the
-   reader's scenario has been loaded and drawn. */
+   reader's scenario has been loaded and drawn; until then one quiet line in
+   the middle of the frame says what it is waiting on, in place of a blank. */
 html.abt-embed-wait body{visibility:hidden;}
+html.abt-embed-wait::before{content:"Loading data from tool.adjiebrotots.com\2026";position:fixed;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;text-align:center;font:500 13px/1.4 "DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:#8a94a6;visibility:visible;animation:abt-embed-pulse 1.6s ease-in-out infinite;}
+html[lang^="id"].abt-embed-wait::before{content:"Memuat data dari tool.adjiebrotots.com\2026";}
+@keyframes abt-embed-pulse{50%{opacity:.45;}}
+@media (prefers-reduced-motion:reduce){html.abt-embed-wait::before{animation:none;}}
 html.abt-embed,html.abt-embed body{height:100%;}
 /* Nothing scrolls, so no gutter is kept for a scrollbar. */
 html.abt-embed{scrollbar-gutter:auto;overflow:hidden;}

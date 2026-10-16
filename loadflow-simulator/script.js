@@ -215,14 +215,39 @@
     var grid = svg.querySelector('.lf-grid');
     if(grid) grid.style.opacity = stageSize().w / v.w < 0.55 ? '0' : '1';
   }
-  function fit(){
+  // The extent fit() frames. A read-only view (an embed) measures what is
+  // drawn, labels included (it has no grid to measure, and the flow's arrows
+  // move), and only ever grows it while the network stays put, so a label
+  // changing width hour by hour does not rock the frame.
+  function drawnBox(){
     var bb = app.scene ? app.scene.bbox : { x: 0, y: 0, w: 800, h: 500 };
+    if(!app.readOnly || !under) return bb;
+    var net = [bb.x, bb.y, bb.w, bb.h].join(), o = app.drawn && app.drawn.net === net ? app.drawn : null;
+    var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    [under.querySelector('.lyr-base'), over.querySelector('.lyr-lbl'), over.querySelector('.lyr-lbl + .lyr-res')].forEach(function(g){
+      var b = null;
+      try { b = g && g.getBBox(); } catch(e){}
+      if(!b || !(b.width > 0 && b.height > 0)) return;
+      x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height);
+    });
+    if(!isFinite(x0)) return o || bb;
+    if(o){ x0 = Math.min(x0, o.x); y0 = Math.min(y0, o.y); x1 = Math.max(x1, o.x + o.w); y1 = Math.max(y1, o.y + o.h); }
+    return (app.drawn = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, net: net });
+  }
+  function fit(){
+    var bb = drawnBox();
     var s = stageSize(), pad = 28;
     var k = Math.min(s.w / (bb.w + 2 * pad), s.h / (bb.h + 2 * pad), 1.5);
     if(!isFinite(k) || k <= 0) k = 1;
     var w = s.w / k, h = s.h / k;
     app.view = { x: bb.x + bb.w / 2 - w / 2, y: bb.y + bb.h / 2 - h / 2, w: w, h: h };
   }
+  // An embed's frame is as tall as the diagram is drawn at the frame's
+  // width, so fit() fills it edge to edge with only its margin to spare.
+  if(window.SharedShare && SharedShare.fit) SharedShare.fit('sldStage', function(width){
+    var bb = drawnBox(), pad = 28;
+    return (bb.h + 2 * pad) * Math.min(width / (bb.w + 2 * pad), 1.5);
+  });
   // app.userView: the reader has panned or zoomed. Until then the diagram is
   // kept framed in whatever room it gets (a resized window, an embed's frame).
   app.fit = function(){ app.userView = false; fit(); applyView(); };

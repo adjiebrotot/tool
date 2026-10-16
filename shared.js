@@ -3059,6 +3059,7 @@
          SharedShare.state({ save, load })        // a tool outside SharedScenario
          SharedShare.view(key, { save, load })    // a popup that has to open first
          SharedShare.data({ save, load })         // data the frame cannot fetch (prices)
+         SharedShare.fit(key, width => height)    // a diagram as tall as its width draws it
 
      key is the chart's canvas or Plotly id ('.class' when it has none). A
      card whose view depends on fields outside it names them in
@@ -3114,7 +3115,7 @@
     var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     // The box a chart and its own controls live in, nearest first.
     var CARD = '.chart-modal, .detail-subsection, .chart-card, .chart-panel, .card';
-    var uid = 0, menus = [], current = null, provider = null, dataHook = null, views = {}, dlg = null;
+    var uid = 0, menus = [], current = null, provider = null, dataHook = null, views = {}, fits = {}, dlg = null;
 
     function T(){ return TEXT[pageLang()]; }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
@@ -3514,12 +3515,34 @@
       return norm(c.textContent);
     }
     // The frame is as tall as the card is on a desktop, so the chart opens
-    // at the height it was designed at.
+    // at the height it was designed at. A diagram drawn to fit its width
+    // (SharedShare.fit) is instead as tall as its drawing is at a typical
+    // column's width, plus its margin, so it opens without bands of empty
+    // stage above and below it. The resizer() then fits either to the column.
+    var EMBED_W = 760, MARK_H = 22;
     function frameHeight(card, el){
-      var fill = fillOf(el);
-      var want = desktopHeight(fill) || fill.offsetHeight || 430;
-      var chrome = Math.max(0, card.offsetHeight - fill.offsetHeight);
+      var fill = fillOf(el), key = keyOf(el);
+      var want = fitOf(key, Math.min(fill.clientWidth, EMBED_W - (card.clientWidth - fill.clientWidth))) ||
+        desktopHeight(fill) || fill.offsetHeight || 430;
+      var chrome = Math.max(0, card.offsetHeight - fill.offsetHeight) + MARK_H;
       return Math.round(Math.min(1000, Math.max(380, want + chrome)) / 10) * 10;
+    }
+    // The height a fit hook asks for at this width, or 0 when it has none.
+    function fitOf(key, w){
+      var f = fits[key], h = 0;
+      if(f && w > 0){ try { h = +f(w); } catch(e){ h = 0; } }
+      return isFinite(h) && h > 0 ? Math.max(160, Math.ceil(h)) : 0;
+    }
+    /* The few lines that let the other site's page size the frame to what it
+       shows. The frame posts its height whenever its width changes it (a
+       phone wraps the legend, a diagram is as tall as its width draws it);
+       this listens for that, from the tool's own origin and that very frame
+       only. A site that strips scripts keeps the height the iframe carries. */
+    function resizer(home){
+      var origin = home.replace(/^(https?:\/\/[^\/]+).*$/, '$1');
+      return '<script>addEventListener("message",function(e){var d=e.data;if(e.origin!=="' + origin +
+        '"||!d||d.abtEmbed!=="height")return;[].forEach.call(document.getElementsByTagName("iframe"),function(f){' +
+        'if(f.contentWindow===e.source)f.style.height=Math.min(4000,Math.max(160,+d.height||0))+"px"})})</script>';
     }
 
     /* What the card shows beyond the scenario: its fields (a metric select, a
@@ -3649,7 +3672,7 @@
       return Promise.all([pack(payload), openLink(home, key, payload)]).then(function(r){
         var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + r[0];
         var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
-          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1]);
+          '" width="100%" height="' + frameHeight(card, el) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1]) + '\n' + resizer(home);
         return { code: code, src: src, key: key, open: r[1] };
       });
     }
@@ -3840,9 +3863,11 @@
     // Only the card is left: every sibling on the way up to the body is
     // hidden, and every box on that way loses its own layout.
     function isolate(card, el, href){
+      var fill = fillOf(el);
+      // The chart's own height on the page, before the frame stretches it.
+      var natural = desktopHeight(fill) || fill.offsetHeight || 430;
       mark(card, href);
       card.classList.add('abt-embed-card');
-      var fill = fillOf(el);
       fill.classList.add('abt-embed-fill');
       for(var n = fill.parentElement; n && n !== card; n = n.parentElement) n.classList.add('abt-embed-col');
       for(var node = card; node && node.parentElement && node !== document.body; node = node.parentElement){
@@ -3858,6 +3883,47 @@
       var ch = global.Chart && global.Chart.getChart ? global.Chart.getChart(el) : null;
       if(ch) ch.resize();
       if(global.Plotly && el.classList.contains('js-plotly-plot')) { try { global.Plotly.Plots.resize(el); } catch(e){} }
+      sizeFrame(card, el, natural);
+    }
+    /* The height the frame asks the other site for: the card's chrome (its
+       title, toolbar, legend and watermark) at the frame's width, plus the
+       chart at its own height, or a diagram at the height its width draws it
+       (SharedShare.fit). The resizer() in the code applies it; it only reads
+       the width, so the frame growing never feeds back into what it asks. */
+    function sizeFrame(card, el, natural){
+      if(global.parent === global) return;
+      var fill = fillOf(el), key = keyOf(el), sent = [], at = 0, queued = false;
+      // The card laid out at its own height for a moment, the chart at the
+      // height it asks for, and put back before anything is painted.
+      function measure(){
+        var want = fitOf(key, fill.clientWidth) || natural, cs = card.style.cssText, fs = fill.style.cssText;
+        card.style.setProperty('height', 'auto', 'important');
+        fill.style.setProperty('flex', '0 0 auto', 'important');
+        fill.style.setProperty('height', want + 'px', 'important');
+        fill.style.setProperty('min-height', '0', 'important');
+        var h = card.offsetHeight;
+        card.style.cssText = cs;
+        fill.style.cssText = fs;
+        return Math.ceil(h);
+      }
+      function post(){
+        queued = false;
+        var h = measure();
+        if(sent.length && Math.abs(h - sent[0]) < 2) return;
+        // A scrollbar on the other page coming and going swings the width,
+        // and with it the height: settle on the taller of the two.
+        if(sent.length > 1 && Math.abs(h - sent[1]) < 2 && Date.now() - at < 1000 && h <= sent[0]) return;
+        at = Date.now();
+        sent.unshift(h);
+        sent.length = Math.min(sent.length, 2);
+        try { global.parent.postMessage({ abtEmbed: 'height', height: h }, '*'); } catch(e){}
+      }
+      function queue(){ if(!queued){ queued = true; global.requestAnimationFrame(post); } }
+      if(global.ResizeObserver) new ResizeObserver(queue).observe(card);
+      else global.addEventListener('resize', queue);
+      // A diagram is redrawn (another hour, a solved scenario) without a resize.
+      if(global.MutationObserver) new MutationObserver(queue).observe(el, { attributes: true, attributeFilter: ['data-share-sig'] });
+      queue();
     }
     // A signature of what the chart is drawing, to tell when it has settled.
     function sig(el){
@@ -3978,6 +4044,7 @@
       copyImage: copyImage,
       state: function(p){ provider = p && typeof p.save === 'function' && typeof p.load === 'function' ? p : null; },
       view: function(key, hook){ if(key) views[key] = hook; },
+      fit: function(key, fn){ if(key && typeof fn === 'function') fits[key] = fn; },
       // Data the scenario draws but cannot rebuild in the frame (prices).
       data: function(hook){ dataHook = hook && typeof hook.save === 'function' && typeof hook.load === 'function' ? hook : null; },
       embedded: EMBED ? { key: EMBED.key, theme: EMBED.theme } : null,
