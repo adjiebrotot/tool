@@ -47,7 +47,8 @@
 // draws: E3 compares that, and E4 wheels the diagram and needs its viewBox to
 // move. A page whose cluster carries ⬇ GIF (spec.gif) also has the GIF row in
 // its menu (M2), and its GIF must loop and be the desktop PNG's size at 1x on
-// a desktop and on a phone alike (X6, X7).
+// a desktop and on a phone alike (X6, X7). Where the GIF row opens a dialog
+// first, its Download is pressed as it opens.
 //
 // SHOT=<dir> saves every embed as it rendered; ONLY=<name> runs one page.
 // The libraries are the real ones, cached by chart-check.mjs in
@@ -267,8 +268,12 @@ async function pick(page, key, kind) {
   await page.click(`.share-list.is-open .share-opt[data-kind="${kind}"]`);
 }
 async function download(page, key, kind) {
-  const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 20000 }), pick(page, key, kind)]);
-  return readFileSync(await dl.path());
+  const dl = page.waitForEvent('download', { timeout: 20000 });
+  await pick(page, key, kind);
+  // A GIF may ask first (the ED/UC Simulator: the diagram, or the hours with
+  // charts): its Download takes what it offers, the diagram as it is.
+  if (kind === 'gif') await page.locator('.share-embed-overlay.is-open .gif-dlg-go').click({ timeout: 1500 }).catch(() => {});
+  return readFileSync(await (await dl).path());
 }
 async function clipboardSize(page, key) {
   await page.evaluate(() => navigator.clipboard.writeText('-'));

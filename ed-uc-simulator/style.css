@@ -219,6 +219,16 @@ html.abt-embed .sld-edit-only,html.abt-embed .sld-zoom,html.abt-embed .sld-full{
 html.abt-embed .sld-stage{background:transparent;border:0;border-radius:0;}
 html.abt-embed .sld-body{gap:0;}
 html.abt-embed .chart-card>.sub{margin-top:0;}
+/* An embed that carries charts: they sit under the diagram, in its card. */
+html.abt-embed .sld-card.sld-with-charts{overflow-y:auto !important;}
+html.abt-embed .sld-card.sld-with-charts .abt-embed-col,html.abt-embed .sld-card.sld-with-charts .abt-embed-fill{min-height:360px !important;}
+html.abt-embed .sld-embed-chart{margin:14px 0 0 !important;padding:0 !important;border:0 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;}
+html.abt-embed .sld-embed-chart .fold-btn{display:none !important;}
+/* Download as GIF: a time series, and the charts under it. */
+.gif-dlg{max-width:420px;}
+.gif-dlg-series{display:inline-flex;align-items:center;gap:6px;margin:14px 0 10px;font-size:.9rem;cursor:pointer;}
+.gif-dlg-charts{margin-left:22px;}
+.gif-dlg .share-embed-opts{display:grid;grid-template-columns:repeat(2,max-content);gap:6px 20px;}
 
 @media(max-width:1100px){
   .layout{grid-template-columns:1fr;}
