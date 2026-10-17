@@ -221,7 +221,9 @@ html.abt-embed .sld-body{gap:0;}
 html.abt-embed .chart-card>.sub{margin-top:0;}
 /* An embed that carries charts: they sit under the diagram, in its card. */
 html.abt-embed .sld-card.sld-with-charts{overflow-y:auto !important;}
-html.abt-embed .sld-card.sld-with-charts .abt-embed-col,html.abt-embed .sld-card.sld-with-charts .abt-embed-fill{min-height:360px !important;}
+/* The diagram keeps the height it asks the frame for (--abt-fill-h, set by
+   SharedShare), or 360px before it has asked. */
+html.abt-embed .sld-card.sld-with-charts .abt-embed-col,html.abt-embed .sld-card.sld-with-charts .abt-embed-fill{min-height:var(--abt-fill-h,360px) !important;}
 html.abt-embed .sld-embed-chart{margin:14px 0 0 !important;padding:0 !important;border:0 !important;border-radius:0 !important;background:transparent !important;box-shadow:none !important;}
 html.abt-embed .sld-embed-chart .fold-btn{display:none !important;}
 /* Download as GIF: a time series, and the charts under it. */

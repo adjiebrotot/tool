@@ -29,6 +29,11 @@
 //      data the reader was looking at (scenario, metric, toggles and legend),
 //      in their theme, with zoom still working, and never touches the
 //      viewer's own saved work. It is checked again at a phone's width.
+//      A third line, a one-line listener, lets the frame size itself to
+//      what it shows (E14): the card with nothing cut and no band of empty
+//      frame, a diagram filling its stage but for its margin. Until it has
+//      drawn, the frame says "Loading data from tool.adjiebrotots.com…"
+//      rather than showing a blank (E15).
 //   5. AN EMBED COSTS NOTHING. Its frame runs on the tool's own origin, so
 //      the market-data Worker's origin lock lets it through, and every viewer
 //      on another site would be a paid invocation. It never calls the Worker:
@@ -576,6 +581,32 @@ async function attack(page, tag, src) {
   await E.ctx.close();
 }
 
+/* While the frame loads it says so, in the page's language, rather than
+   showing a blank (or the whole tool, before shared.js has hidden it): the
+   scripts after the head are held back so the first paint is caught. */
+async function loading(tag, src) {
+  const E = await newPage({ width: 760, height: 560 }, { returning: false });
+  let release;
+  const held = new Promise(r => { release = r; });
+  await E.ctx.route(/\/shared\.js$/, async route => { await held; route.continue(); });
+  const id = 'wait' + hosted.size;
+  hosted.set(id, `<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="${src.replace(/&amp;/g, '&').replace(SITE, ORIGIN)}" width="760" height="560"></iframe></body>`);
+  await E.page.goto(HOST + '/?id=' + id, { waitUntil: 'domcontentloaded' });
+  const frame = await (await E.page.waitForSelector('iframe')).contentFrame();
+  // shared.js may sit at the foot of the body or in the head, before it.
+  await frame.waitForFunction(() => getComputedStyle(document.documentElement, '::before').content !== 'none', null, { timeout: 15000 }).catch(() => {});
+  const r = await frame.evaluate(() => ({
+    text: getComputedStyle(document.documentElement, '::before').content,
+    hidden: !document.body || getComputedStyle(document.body).visibility === 'hidden',
+    lang: document.documentElement.lang,
+  })).catch(e => ({ text: e.message }));
+  release();
+  const want = /^id/.test(r.lang || '') ? 'Memuat data dari tool.adjiebrotots.com' : 'Loading data from tool.adjiebrotots.com';
+  check(`${tag} E15 while it loads, the frame says "${want}…" and hides the page`,
+        (r.text || '').includes(want) && r.hidden, `${r.text}, page ${r.hidden ? 'hidden' : 'showing'}`);
+  await E.ctx.close();
+}
+
 /* 5. A link from before the prices rode in it. It would need the Worker,
    which an embed never calls, so it shows its fallback rather than half a
    chart, and costs nothing. */
@@ -677,12 +708,14 @@ for (const spec of PAGES) {
     const canon = await page.$eval('link[rel="canonical"]', l => l.href);
     const src = (/src="([^"]+)"/.exec(code) || [])[1] || '';
     const height = +((/height="(\d+)"/.exec(code) || [])[1] || 0);
-    const [frameCode, creditCode = ''] = code.split('\n');
-    check(`${tag} E1 the code is one iframe of the tool and its credit line`,
+    const [frameCode, creditCode = '', sizeCode = ''] = code.split('\n');
+    const origin = canon.replace(/^(https?:\/\/[^/]+).*$/, '$1');
+    check(`${tag} E1 the code is one iframe of the tool, its credit line and the script that sizes it`,
           /^<iframe [^\n]*><\/iframe>$/.test(frameCode) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
-          height >= 380 && code.split('\n').length === 2 && frameCode.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400 &&
-          creditCode.length <= BUDGET + 400,
-          `frame ${frameCode.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), credit ${creditCode.length} (at most ${BUDGET + 400}), frame ${height}px tall`);
+          height >= 380 && code.split('\n').length === 3 && frameCode.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400 &&
+          creditCode.length <= BUDGET + 400 &&
+          /^<script>[^<]*<\/script>$/.test(sizeCode) && sizeCode.includes(`e.origin!=="${origin}"`) && sizeCode.length <= 400,
+          `frame ${frameCode.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), credit ${creditCode.length} (at most ${BUDGET + 400}), sizer ${sizeCode.length}, frame ${height}px tall`);
     // The backlink: a plain, visible, followed link on the other site's page,
     // named for the tool rather than for keywords.
     const name = await page.evaluate(() => document.querySelector('meta[property="og:title"]').content.trim());
@@ -748,6 +781,7 @@ for (const spec of PAGES) {
             L2.error || `${L2.how}: ${L2.len} characters, ${L2.old} deflated alone, old link ${L2.same ? 'opens the same' : 'differs'}`);
     }
     if (key === spec.charts[0]) await attack(page, tag, src);
+    if (key === spec.charts[0]) await loading(tag, src);
     if (key === spec.charts[0] && spec.prices) await priceless(page, tag, src);
     const light = await page.evaluate(() => document.body.classList.contains('light'));
 
@@ -789,6 +823,32 @@ for (const spec of PAGES) {
         };
       })()`);
       const where = `at ${vp.width}px`;
+      // E14: the other site's page sizes the frame to the card: nothing cut,
+      // no band of empty frame, and a diagram fills its stage edge to edge
+      // but for its margin (28px, 42 at its largest zoom), rather than
+      // floating in the middle of it (a phone's stage held at its 160px
+      // floor may have a little more to spare).
+      const fit = await frame.evaluate(`(() => {
+        const f = (${FIND})(${JSON.stringify(key)});
+        if (!f.card) return null;
+        const out = { inner: innerHeight, content: f.card.scrollHeight };
+        const svg = f.el && f.el.hasAttribute('data-share-chart') && f.el.querySelector('svg');
+        if (svg) {
+          const vb = svg.viewBox.baseVal, bb = svg.getBBox(), k = svg.clientHeight / vb.height;
+          out.gaps = [Math.round((bb.y - vb.y) * k), Math.round((vb.y + vb.height - bb.y - bb.height) * k)];
+          out.stage = svg.clientHeight;
+          out.cut = bb.x < vb.x - 1 || bb.x + bb.width > vb.x + vb.width + 1 || Math.min(...out.gaps) < -1;
+        }
+        return out;
+      })()`);
+      const sized = await E.page.$eval('iframe', f => ({ style: f.style.height, h: Math.round(f.getBoundingClientRect().height) }));
+      check(`${tag} E14 ${where}: the host's script sizes the frame to the chart, ${fit && fit.gaps ? 'the diagram filling its stage' : 'nothing cut or left empty'}`,
+            !!fit && !!sized.style && Math.abs(sized.h - fit.inner) <= 1 && fit.content <= fit.inner + 1 &&
+            (!fit.gaps || (!fit.cut && (Math.max(...fit.gaps) <= 50 || (fit.stage <= 165 && Math.max(...fit.gaps) <= 70)))),
+            !fit ? 'no card' : `frame ${sized.style || 'not sized'} (${sized.h}px), card ${fit.content}px` +
+              (fit.gaps ? `, empty stage above/below ${fit.gaps.join('/')}px of ${fit.stage}px${fit.cut ? ', drawing cut' : ''}` : ''));
+      // As it rests, before the zoom below moves it.
+      if (SHOT) await E.page.screenshot({ fullPage: true, path: join(SHOT, `${spec.name}-${key}-${vp.width}`.replace(/[^a-z0-9]+/gi, '_') + '.png') });
       // A diagram drawn by the tool zooms by the wheel: its viewBox has to move.
       const svgZoom = await frame.evaluate(`(async () => {
         const f = (${FIND})(${JSON.stringify(key)});
@@ -801,7 +861,6 @@ for (const spec of PAGES) {
         return svg.getAttribute('viewBox') !== before;
       })()`);
       if (svgZoom !== null) view.zoom = svgZoom;
-      if (SHOT) await E.page.screenshot({ path: join(SHOT, `${spec.name}-${key}-${vp.width}`.replace(/[^a-z0-9]+/gi, '_') + '.png') });
       check(`${tag} E2 ${where}: the embed opens on its own chart card alone, filling the frame`,
             ready && !view.failed && view.fills && !view.stray.length && !view.share && !view.wide && view.chartTall >= 160,
             !ready ? 'never finished loading' : view.failed ? 'showed its fallback' :

@@ -24,6 +24,7 @@ tables, tooltips, charts) rather than inventing new ones. Include the shared lay
 <script src="../pwa.js" defer></script>                   <!-- registers the service worker -->
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
+<script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">   <!-- page-specific only -->
 ...
