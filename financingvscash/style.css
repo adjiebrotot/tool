@@ -207,7 +207,6 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .chart-switch-row .seg-source{position:absolute;}
 .seg-group.chart-switch{width:auto;}
 .seg-group.chart-switch .seg-btn{flex:0 0 auto;font-family:inherit;}
-.chart-head h2 .tip-icon{vertical-align:middle;}
 .detail-section .unit-note{margin:-4px 0 12px;}
 .verdict{margin-bottom:18px;}
 .assumes-card{margin-top:18px;}

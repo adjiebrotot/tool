@@ -1277,17 +1277,25 @@ Auto-created by `shared.js`. Appears on hover, positioned intelligently to avoid
 #globalTooltip.flip-below .tt-arrow { bottom: auto; top: -7px; }
 #globalTooltip.flip-below .tt-arrow::before { transform: rotate(45deg) translate(3px, 3px); }
 
-/* Trigger icon */
-.tip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; cursor: help; }
+/* Trigger icon. Label and icon are inline text, never flex items, so a label
+   that wraps keeps its ? right after the last word. */
+.tip-wrap { position: relative; display: inline; cursor: help; }
 .tip-icon {
   display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px;
   border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border); color: var(--muted);
   font-size: 0.7rem; font-weight: 800; cursor: help; flex-shrink: 0; line-height: 1; font-style: normal;
+  vertical-align: 1px;
 }
 .tip-icon:hover { border-color: var(--accent); color: var(--accent); }
 .tip-icon.warn { background: rgba(245,158,11,.18); color: var(--gold); border-color: rgba(245,158,11,.3); }
 .tip-icon.warn:hover { border-color: var(--gold); }
 ```
+
+The **?** always sits right after the label's last word. Keep the label text and
+the icon in a box that is not `display:flex` or `grid` (a `.tip-wrap`, or a
+plain `.field-label`): a flex item that wraps stretches to the full width and
+strands the icon at the far right. `SharedTooltip` also swaps the space before
+each icon for a no-break space, so the icon never drops to a line on its own.
 
 #### JavaScript (from `shared.js`)
 

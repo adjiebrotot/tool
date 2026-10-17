@@ -50,10 +50,14 @@
 #globalTooltip.flip-below .tt-arrow{bottom:auto;top:-7px;}
 #globalTooltip.flip-below .tt-arrow::before{transform:rotate(45deg) translate(3px,3px);}
 
-/* Tooltip trigger icon */
-.tip-wrap{position:relative;display:inline-flex;align-items:center;gap:4px;cursor:help;}
-.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);color:var(--muted);font-size:.7rem;font-weight:800;cursor:help;flex-shrink:0;line-height:1;font-style:normal;}
+/* Tooltip trigger icon. The label and its icon are inline text, never flex
+   items: a flex item that wraps stretches to the full width, which strands
+   the icon at the far right. Inline, the icon follows the label's last word. */
+.tip-wrap{position:relative;display:inline;cursor:help;}
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);color:var(--muted);font-size:.7rem;font-weight:800;cursor:help;flex-shrink:0;line-height:1;font-style:normal;vertical-align:1px;}
 .tip-icon:hover{border-color:var(--accent);color:var(--accent);}
+/* The icon and the space before it, kept on one line (shared.js glueTip). */
+.tip-glue{white-space:nowrap;}
 .tip-icon.warn{background:rgba(245,158,11,.18);color:var(--gold);border-color:rgba(245,158,11,.3);}
 .tip-icon.warn:hover{border-color:var(--gold);}
 
@@ -379,6 +383,9 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
    ============================================================ */
 .chart-head,.detail-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .chart-head h2,.chart-head h3,.detail-head h2,.detail-head h3{display:flex;align-items:center;gap:6px;margin:0;}
+/* A title with a tip is plain text, so a title that wraps keeps its ? after
+   the last word (see .tip-wrap). */
+:is(.chart-head,.detail-head) :is(h2,h3):has(>.tip-icon,>.tip-glue){display:block;}
 .chart-head .btn-cluster,.detail-head .btn-cluster{margin-left:auto;}
 .btn-cluster{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0;}
 /* The size every chart-toolbar button is drawn at. An icon-only button (copy,

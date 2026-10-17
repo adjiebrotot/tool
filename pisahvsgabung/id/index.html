@@ -143,7 +143,7 @@
         <div class="field-group">
           <div class="group-title" data-i18n="groupFamily">Keluarga</div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="dependentsLabel">Tanggungan</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP, dan paling banyak tiga yang dihitung.">?</span></div>
+            <div class="field-label"><span data-i18n="dependentsLabel">Tanggungan</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Anggota keluarga yang Anda tanggung, misalnya anak. Masing-masing menambah PTKP, dan paling banyak tiga yang dihitung.">?</span></div>
             <select class="num-input sel-input" id="dependents">
               <option value="0" selected data-i18n-opt="dep0">Tanpa tanggungan</option>
               <option value="1" data-i18n-opt="dep1">1 tanggungan</option>
@@ -182,7 +182,7 @@
               <div class="derived" id="splitDerived"></div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti biaya jabatan atau iuran pensiun, dikurangkan dari penghasilan kotor sebelum PTKP lalu dibagi sesuai porsi penghasilan masing-masing.">?</span></div>
+              <div class="field-label"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti biaya jabatan atau iuran pensiun, dikurangkan dari penghasilan kotor sebelum PTKP lalu dibagi sesuai porsi penghasilan masing-masing.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -211,7 +211,7 @@
               <div class="derived"><span data-i18n="combinedPrefix">Total</span> <b id="combinedLabel">Rp 500,000,000</b> <span data-i18n="combinedSuffix">per tahun, porsi istri</span> <b id="splitDerivedLabel">50.0%</b></div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Pengurang suami</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="husbandDeductionLabel">Pengurang suami</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor suami, diterapkan sebelum PTKP.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -219,7 +219,7 @@
               </div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Pengurang istri</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="wifeDeductionLabel">Pengurang istri</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya dikurangkan dari penghasilan kotor istri, diterapkan sebelum PTKP.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -253,7 +253,7 @@
         </div>
 
         <div class="field-group bracket-group">
-          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Lapisan tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.">?</span></div>
+          <div class="group-title"><span data-i18n="bracketSectionLabel">Lapisan tarif PPh 21</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Ubah setiap ambang batas dan tarif. Kolom &quot;Dari&quot; terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Menaikkan batas melewati lapisan di bawahnya akan menghapusnya.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom" data-i18n="bracketFrom">Dari (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo" data-i18n="bracketTo">Sampai (Rp)</div>
