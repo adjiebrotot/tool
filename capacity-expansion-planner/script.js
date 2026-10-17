@@ -1085,20 +1085,10 @@
      wide as its title: its unit on the second when the rest is short ("Peak
      demand / MW"), else split where the two lines come out most even ("Years
      it / stands for"). The CSV keeps each title on one line. */
-  function headHtml(x){
-    var m = /^(.{1,14}) (MW|GWh|MWh|%|per \S+)$/.exec(x), w = x.split(' '), at = 1, worst = Infinity;
-    if(m) return esc(m[1]) + '<br>' + esc(m[2]);
-    if(x.length <= 10 || w.length < 2) return esc(x);
-    for(var i = 1; i < w.length; i++){
-      var most = Math.max(w.slice(0, i).join(' ').length, w.slice(i).join(' ').length);
-      if(most < worst){ worst = most; at = i; }
-    }
-    return esc(w.slice(0, at).join(' ')) + '<br>' + esc(w.slice(at).join(' '));
-  }
   function renderTable(){
     var t = tableData();
     $('tableUnits').textContent = t.units;
-    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + headHtml(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x, { wrap: 16 }) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       h += '<tr>' + r.cells.map(function(c, i){ return '<td' + (r.neg.indexOf(i) >= 0 ? ' class="neg"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>';
     });

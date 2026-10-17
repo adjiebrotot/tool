@@ -153,7 +153,6 @@ body.light .canvas-wrap{background:linear-gradient(180deg,rgba(139,184,248,.04),
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.84rem;font-family:'DM Mono',monospace;}
 th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child,td:first-child{text-align:left;font-family:'DM Sans',system-ui,sans-serif;}
-th{color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
 tr:hover td{background:rgba(139,184,248,.04);}
 body.light tr:hover td{background:rgba(90,145,232,.04);}
 .table-wrap{overflow-x:auto;overflow-y:auto;max-height:420px;border:1px solid var(--border);border-radius:var(--radius-md);}
@@ -163,6 +162,8 @@ body.light tr:hover td{background:rgba(90,145,232,.04);}
 .table-wrap thead tr:nth-child(2) th{top:var(--thead-row1-height,34px);z-index:3;}
 /* Column headers wrap onto two lines before the table scrolls sideways. */
 .table-wrap thead tr:nth-child(2) th{white-space:normal;min-width:6em;}
+/* Not the row label: the first cell of the second header row heads a figure column. */
+.table-wrap thead tr:nth-child(2) th:first-child{text-align:right;}
 .table-wrap table td:first-child{
   position:sticky;
   left:0;

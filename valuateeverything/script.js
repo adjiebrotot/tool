@@ -1272,7 +1272,7 @@ function renderTables(r){
   const inMoney = r.o.dated ? `, ${r.o.year} money` : '';
   $('itemsUnit').textContent = `Prices in ${cur || 'the price unit'}${inMoney}. The range is the fair price give or take one typical error.`;
   $('itemsTableWrap').innerHTML = !r.items.length ? blank('No items to buy yet.') :
-    `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap %</th></tr></thead><tbody>` +
+    `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap <span class="th-unit">%</span></th></tr></thead><tbody>` +
     r.items.map(it => {
       const name = `<td><span class="row-dot" style="background:${SharedPalette.at(it.k)}"></span>${esc(it.name)}</td>`;
       if(it.incomplete) return `<tr>${name}<td colspan="5" class="note">Missing ${esc(it.missing.join(', '))}</td></tr>`;
@@ -1329,7 +1329,7 @@ function renderTables(r){
     ? `Prices in ${cur || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`
     : `Prices in ${cur || 'the price unit'}. Miss is the listed price less the model.`;
   $('dataTableWrap').innerHTML =
-    `<table><thead><tr><th>Row</th>${dated ? '<th>Data year</th>' : ''}<th>Listed</th>${dated ? '<th>Today</th>' : ''}<th>Model</th><th>Miss</th><th>Miss %</th></tr></thead><tbody>` +
+    `<table><thead><tr><th>Row</th>${dated ? '<th>Data year</th>' : ''}<th>Listed</th>${dated ? '<th>Today</th>' : ''}<th>Model</th><th>Miss</th><th>Miss <span class="th-unit">%</span></th></tr></thead><tbody>` +
     prep.row.map((row, i) => `<tr><td>${row}</td>${dated ? `<td>${prep.dataYear[i]}</td>` : ''}<td>${fmt.money(prep.price[i], s)}</td>${dated ? `<td>${fmt.money(prep.priceToday[i], s)}</td>` : ''}` +
       `<td>${fmt.money(m.fitted[i], s)}</td><td>${fmt.signedMoney(m.resid[i], s)}</td><td>${fmt.pct(m.resid[i] / m.fitted[i])}</td></tr>`).join('') +
     '</tbody></table>';

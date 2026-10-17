@@ -79,7 +79,8 @@ Before calling it done, every line here must hold:
       sit beside the results they change.
 - [ ] **Units everywhere**: the unit is the field's prefix or suffix, never the label;
       `data-unit` when it lives in a column header, `data-unitless` for a seed. Every y axis
-      names its unit, every x axis is titled, every table says its unit once (`.unit-note`).
+      names its unit, every x axis is titled, every table says its unit once (`.unit-note`) or per column
+      (`<th>Label <span class="th-unit">MW</span></th>`, sentence case, never uppercase).
 - [ ] **Bounds enforced by the form**: min/max on every typed number (`data-min`/`data-max`
       on money), SharedBounds pulls values back; sliders name both ends and take a typed value.
 - [ ] **Colour means one thing**: options take `SharedPalette`'s neutral sequence (blue,

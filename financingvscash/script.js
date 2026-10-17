@@ -1220,7 +1220,7 @@ function renderAmortTabs(results){
   // loan (and the CSV scraped from it) is unchanged.
   const showRate=r.rateMode==='schedule';
   const COLS=showRate?7:6;
-  let h='<table><thead><tr><th>'+periodHdr+'</th>'+(showRate?'<th>Rate (p.a.)</th>':'')+'<th>Start Balance</th><th>Interest</th><th>Principal</th><th>Payment</th><th>End Balance</th></tr></thead><tbody>';
+  let h='<table><thead><tr><th>'+periodHdr+'</th>'+(showRate?'<th>Rate <span class="th-unit">p.a.</span></th>':'')+'<th>Start Balance</th><th>Interest</th><th>Principal</th><th>Payment</th><th>End Balance</th></tr></thead><tbody>';
   let tI=0,tP=0,tPmt=0;
   r.amort.schedule.forEach(p=>{tI+=p.interest;tP+=p.principal;tPmt+=p.payment;h+=`<tr><td>${fmt.num(p.num)}</td>${showRate?'<td>'+fmt.pct(periodRateToAnnualPct(p.rate,r.ppy)/100)+'</td>':''}<td>${fmt.currencyExact(p.startBal)}</td><td>${fmt.currencyExact(p.interest)}</td><td>${fmt.currencyExact(p.principal)}</td><td>${fmt.currencyExact(p.payment)}</td><td>${fmt.currencyExact(p.endBal)}</td></tr>`;});
   h+=`<tr style="font-weight:800;border-top:2px solid var(--accent);"><td>Total</td>${showRate?'<td></td>':''}<td></td><td>${fmt.currencyExact(tI)}</td><td>${fmt.currencyExact(tP)}</td><td>${fmt.currencyExact(tPmt)}</td><td></td></tr>`;

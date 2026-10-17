@@ -89,7 +89,6 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.85rem;}
 th,td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;}
 th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}
-th{color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
 /* shared.css caps .table-wrap at 400px with an inner scroll. These tables are
    bounded by the number of input rows and their closing total matters, so they
    scroll with the page instead of hiding their last row in a clipped box. */
