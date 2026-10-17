@@ -138,7 +138,7 @@ body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
 .detail-head{margin-bottom:4px;}
 .detail-head .seg-group{margin-left:4px;}
 .table-wrap{max-height:460px;overflow:auto;}
-th{position:sticky;top:0;background:var(--panel);z-index:1;}
+th{position:sticky;top:0;background:var(--panel);z-index:1;vertical-align:bottom;line-height:1.35;}
 td.neg{color:var(--negative-em);font-weight:700;}
 
 .page-footer{max-width:1500px;margin:0 auto;padding:0 24px 24px;}

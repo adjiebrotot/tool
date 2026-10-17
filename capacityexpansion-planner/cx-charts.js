@@ -7,8 +7,9 @@
    Energy       every year's energy by source as a stacked area, any
                 shortfall in red, against the demand.
    Typical days the hour-by-hour dispatch of one decision year over its
-                typical days, storage charging below zero, against the demand.
-                It sits under Energy in the same card, folded until asked for.
+                typical days, a gap between one and the next, storage charging
+                below zero, against the demand. It sits under Energy in the
+                same card, folded until asked for.
    Cost         every year's costs by kind, and the levelised cost per MWh.
 
    The plan decides in its decision years, each standing for the years up to
@@ -447,24 +448,41 @@
     });
     return out;
   }
+  /* Where each sampled hour stands on the axis. The typical days are days
+     apart, not one run of time, so a gap stands between them, about as wide
+     whatever the sampling (a week runs on unbroken inside itself): hourAt[p]
+     is the hour at place p, or -1 in a gap, and from[i] where block i starts. */
+  function dayAxis(res){
+    var gap = Math.max(1, Math.round(res.H / 60)), hourAt = [], from = [];
+    res.blocks.forEach(function(b, i){
+      if(i) for(var g = 0; g < gap; g++) hourAt.push(-1);
+      from.push(hourAt.length);
+      for(var t = b.from; t < b.from + b.len; t++) hourAt.push(t);
+    });
+    return { n: hourAt.length, gap: gap, hourAt: hourAt, from: from,
+             spread: function(a, f){ return hourAt.map(function(t){ return t < 0 ? null : f ? f(a[t]) : a[t]; }); } };
+  }
   /* The hours of the day on the axis, as many as fit its width and the part
      in view: every hour up to every other day, always on the clock's hours,
      so the labels never run into each other on a phone. */
   var STEPS = [1, 2, 3, 6, 12, 24, 48];
-  function clockTicks(H){
+  function clockTicks(ax){
     return function(scale){
-      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(H - 1, Math.floor(scale.max));
+      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(ax.n - 1, Math.floor(scale.max));
       var room = Math.max(2, Math.floor((scale.width || 600) / 56)), step = STEPS[STEPS.length - 1];
       for(var i = 0; i < STEPS.length; i++) if((hi - lo) / STEPS[i] <= room){ step = STEPS[i]; break; }
       var ticks = [];
-      for(var v = lo; v <= hi; v++) if(step < 24 ? (v % 24) % step === 0 : v % step === 0) ticks.push({ value: v });
+      for(var v = lo; v <= hi; v++){
+        var t = ax.hourAt[v];
+        if(t >= 0 && (step < 24 ? (t % 24) % step === 0 : t % step === 0)) ticks.push({ value: v });
+      }
       // A label that would stand past the right end of the axis is left off.
       var px = (scale.width || 600) / Math.max(1, hi - lo);
       while(ticks.length > 1 && (hi - ticks[ticks.length - 1].value) * px < 18) ticks.pop();
       if(ticks.length) scale.ticks = ticks;
     };
   }
-  // The typical days named over the plot, with a rule between them.
+  // The typical days named over the plot, with a rule down each gap between them.
   var BLOCK_PLUGIN = {
     id: 'cxBlocks',
     afterDatasetsDraw: function(chart){
@@ -476,11 +494,12 @@
       g.textBaseline = 'top';
       b.blocks.forEach(function(bl, i){
         var x0 = x.getPixelForValue(bl.from - 0.5), x1 = x.getPixelForValue(bl.from + bl.len - 0.5);
-        if(x1 < area.left || x0 > area.right) return;
-        if(i > 0 && x0 >= area.left && x0 <= area.right){
+        var mid = x.getPixelForValue(bl.from - (b.gap + 1) / 2);
+        if(i > 0 && mid >= area.left && mid <= area.right){
           g.strokeStyle = b.rule; g.lineWidth = 1; g.setLineDash([3, 3]);
-          g.beginPath(); g.moveTo(x0, area.top); g.lineTo(x0, area.bottom); g.stroke();
+          g.beginPath(); g.moveTo(mid, area.top); g.lineTo(mid, area.bottom); g.stroke();
         }
+        if(x1 < area.left || x0 > area.right) return;
         var l = Math.max(area.left, x0), r = Math.min(area.right, x1), w = r - l, txt = bl.name;
         g.fillStyle = b.text;
         if(g.measureText(txt).width > w - 8) txt = bl.short;
@@ -490,27 +509,28 @@
     }
   };
   function dayChart(res, model, d){
-    var k = Math.max(0, Math.min(res.periods.length - 1, d.year | 0)), H = res.H, labels = dayLabels(res), ds = [], T = res.totals, o = res.report.opts;
-    var year = res.periods[k];
+    var k = Math.max(0, Math.min(res.periods.length - 1, d.year | 0)), ax = dayAxis(res), ds = [], T = res.totals, o = res.report.opts;
+    var year = res.periods[k], hourLabels = dayLabels(res), labels = ax.spread(hourLabels).map(function(l){ return l || ''; });
+    var pos = function(v){ return Math.max(0, v); }, neg = function(v){ return Math.min(0, v); };
     // Cheapest to run at the bottom, as a merit order.
     var gens = techList(model, res).filter(function(e){ return e.kind !== 'store' && any(res.tech[e.id].p[k]); });
     gens.sort(function(a, b){ return CX.runCost(a, o, year) - CX.runCost(b, o, year) || model.tech.indexOf(a) - model.tech.indexOf(b); });
     var stores = techList(model, res).filter(function(e){ return e.kind === 'store' && any(res.tech[e.id].p[k]); });
     gens.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e), data: res.tech[e.id].p[k].map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.55),
+      ds.push({ label: CX.nameOf(e), data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
                 borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'gen', id: e.id });
     });
     stores.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e) + ' discharging', data: res.tech[e.id].p[k].map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.55),
+      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
                 borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id });
-      ds.push({ label: CX.nameOf(e) + ' charging', data: res.tech[e.id].p[k].map(function(v){ return Math.min(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.22),
+      ds.push({ label: CX.nameOf(e) + ' charging', data: ax.spread(res.tech[e.id].p[k], neg), borderColor: c, backgroundColor: alpha(c, 0.22),
                 borderWidth: 1.2, borderDash: [4, 3], pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'store', order: 2, kind: 'chg', id: e.id });
     });
     if(any(res.shed[k])){
       var neg = cssVar('--negative');
-      ds.push({ label: 'Shortfall (load shed)', data: res.shed[k].slice(), borderColor: neg, backgroundColor: alpha(neg, 0.45),
+      ds.push({ label: 'Shortfall (load shed)', data: ax.spread(res.shed[k]), borderColor: neg, backgroundColor: alpha(neg, 0.45),
                 borderWidth: 1.2, pointRadius: 0, tension: 0, stack: 'gen', order: 2, kind: 'shed' });
     }
     // Each layer fills down to the layer under it in its own stack.
@@ -522,24 +542,24 @@
       shown.fill = 'origin';
       x.legendSpec = SharedLegend.fromDataset(shown);
     });
-    ds.push({ label: 'Demand', data: res.load[k].slice(), borderColor: cssVar('--text'), backgroundColor: 'transparent',
+    ds.push({ label: 'Demand', data: ax.spread(res.load[k]), borderColor: cssVar('--text'), backgroundColor: 'transparent',
               borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load' });
     var short = function(b){ return b.stress ? 'Still day' : b.name.replace(' weekday', ' wkday').replace(' weekend', ' wkend').replace(' season', ''); };
     var ch = make('day', {
       type: 'line', data: { labels: labels, datasets: ds },
       options: (function(){
-        var op = baseOptions({ n: H,
+        var op = baseOptions({ n: ax.n,
           filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'load'; },
           skip: function(x){ return x.kind === 'load'; },
           callbacks: {
             title: function(items){ return items.length ? labels[items[0].dataIndex] : ''; },
             label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(c.parsed.y) + ' MW'; },
             afterBody: function(items){
-              if(!items.length) return;
-              var t = items[0].dataIndex, gsum = 0, ssum = 0;
+              var t = items.length ? ax.hourAt[items[0].dataIndex] : -1, gsum = 0, ssum = 0;
+              if(t < 0) return;
               gens.forEach(function(e){ gsum += Math.max(0, res.tech[e.id].p[k][t]); });
               stores.forEach(function(e){ ssum += res.tech[e.id].p[k][t]; });
-              hover('dayHover', year + ', ' + labels[t] + '  |  demand ' + F.mw(res.load[k][t]) + ' MW, generation ' + F.mw(gsum) + ' MW' +
+              hover('dayHover', year + ', ' + hourLabels[t] + '  |  demand ' + F.mw(res.load[k][t]) + ' MW, generation ' + F.mw(gsum) + ' MW' +
                 (Math.abs(ssum) > 1e-6 ? ', storage ' + F.mw(ssum) + ' MW' : '') + (res.shed[k][t] > 1e-6 ? ', shed ' + F.mw(res.shed[k][t]) + ' MW' : '') +
                 '. Each hour stands for ' + F.pct(res.w[t]) + ' hours of the year.');
             }
@@ -548,14 +568,14 @@
             return {
               x: { title: axisTitle('Typical days, hour by hour', muted),
                    ticks: { color: muted, maxRotation: 0, autoSkip: false, font: { size: 11 },
-                            callback: function(v){ return two((+v) % 24) + ':00'; } },
-                   afterBuildTicks: clockTicks(H),
+                            callback: function(v){ return two(ax.hourAt[v] % 24) + ':00'; } },
+                   afterBuildTicks: clockTicks(ax),
                    grid: { color: grid } },
               y: { stacked: true, title: axisTitle('Power (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } }
             };
           } });
-        op.plugins.cxBlocks = { blocks: res.blocks.map(function(b){ return { from: b.from, len: b.len, name: b.name, short: short(b) }; }),
-                                text: cssVar('--chart-text'), rule: cssVar('--chart-grid') };
+        op.plugins.cxBlocks = { blocks: res.blocks.map(function(b, i){ return { from: ax.from[i], len: b.len, name: b.name, short: short(b) }; }),
+                                gap: ax.gap, text: cssVar('--chart-text'), rule: cssVar('--chart-grid') };
         op.layout = { padding: { top: 18 } };
         return op;
       })()
