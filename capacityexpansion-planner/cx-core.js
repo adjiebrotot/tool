@@ -92,7 +92,7 @@
     nuclear: { name: 'Nuclear', kind: 'firm', capex: 8000, fom: 130, vom: 12, life: 60, avail: 0.9 },
     geo:     { name: 'Geothermal', kind: 'firm', capex: 4500, fom: 100, vom: 5, life: 30, avail: 0.9 },
     diesel:  { name: 'Diesel engines', kind: 'firm', capex: 900, fom: 20, vom: 220, life: 25, co2: 0.7, avail: 0.95 },
-    battery: { name: 'Battery, 4 hours', kind: 'store', capex: 1200, fom: 25, life: 15, learn: -0.03, hours: 4, rte: 0.87 },
+    battery: { name: 'Battery', kind: 'store', capex: 1200, fom: 25, life: 15, learn: -0.03, hours: 4, rte: 0.87 },
     phes:    { name: 'Pumped hydro', kind: 'store', capex: 2500, fom: 20, life: 60, hours: 10, rte: 0.78 }
   };
   CX.NEW_ORDER = ['solar', 'wind', 'ccgt', 'ocgt', 'coal', 'nuclear', 'geo', 'diesel', 'battery', 'phes'];
