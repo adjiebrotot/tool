@@ -1971,6 +1971,11 @@ three rows say what they do in their label alone.
   paste animated. `onDone` hears which, so the tool can say so in words.
 - A view that has to be opened first (a popup) registers a hook:
   `SharedShare.view('.cm-canvas', { save: () => ({…}), load: v => openIt(v) })`.
+- An embed or link names its chart by key for good. A chart merged into another leaves
+  `SharedShare.alias(oldKey, newKey)` behind, and its old embeds and links open the chart
+  it went into (the Capacity Expansion Planner's `buildCanvas`, now part of `capCanvas`).
+- Two charts may share one card as two `.chart-panel`s, each with its own head and
+  cluster: Share finds the nearest panel, so an embed of either shows that one alone.
 - A tool outside `SharedScenario` passes its own `SharedShare.state({ save, load })`; the
   Graph Visualiser's carries the rows of the uploaded file, since nothing else has them.
 - A tool that fetches before it draws returns a promise from its load (the DCA explorers
@@ -2082,6 +2087,7 @@ draws itself:
 | `color` / `colors` | stroke colour; `colors: [a, b]` for a line that changes colour partway |
 | `dash`, `width` | Chart.js `borderDash` and `borderWidth`, drawn at the same scale |
 | `fill`, `fill2` | fill under the line, or the block itself; `fill2` splits a two-colour band |
+| `hatch` | colour of 45° lines over a `bar` or `area` block, for a hatched fill (existing plant under new build) |
 | `point` | `{shape: 'circle' | 'ring' | 'triangle' | 'rect', fill, stroke, width, radius}` |
 
 **Every series on the chart needs an entry.** A dashed reference line, a shaded min–max range,

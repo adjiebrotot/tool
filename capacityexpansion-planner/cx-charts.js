@@ -1,15 +1,22 @@
 /* Capacity Expansion Planner: the charts (Chart.js), and their exports.
 
-   Capacity     what is in service in each decision year, by technology,
-                against the peak demand.
-   When to build  new capacity in each decision year above the line, and
-                what retires (existing plant or plant at the end of its
-                life) below it.
-   Energy       a year's energy by source, any shortfall in red, against the
-                demand.
+   Capacity     what is in service every year, by technology: the plant in
+                service now hatched at the foot, what the plan builds solid
+                above it, each decision year's new build marked over its
+                bars, against the peak demand.
+   Energy       every year's energy by source as a stacked area, any
+                shortfall in red, against the demand.
    Typical days the hour-by-hour dispatch of one decision year over its
-                typical days, storage charging below zero, against the demand.
-   Cost         each year's costs by kind, and the levelised cost per MWh.
+                typical days, a gap between one and the next, storage charging
+                below zero, against the demand. It sits under Energy in the
+                same card, folded until asked for.
+   Cost         every year's costs by kind, and the levelised cost per MWh.
+
+   The plan decides in its decision years, each standing for the years up to
+   the next one, so the charts by year run over every calendar year, each at
+   its decision year's figures: the bars meet, and step where a decision year
+   starts. The decision years are bold on the axis, with a faint rule where
+   each begins.
 
    A technology keeps its colour on every chart: the neutral sequence in the
    order the plan lists them, paler on each lap round it. The exports follow
@@ -26,7 +33,7 @@
 
   var charts = {};       // key -> Chart
   var ctx = null;        // the last render: { res, model, display }
-  var CANVAS = { cap: 'capCanvas', build: 'buildCanvas', energy: 'energyCanvas', day: 'dayCanvas', cost: 'costCanvas' };
+  var CANVAS = { cap: 'capCanvas', energy: 'energyCanvas', day: 'dayCanvas', cost: 'costCanvas' };
   CXCharts.KEYS = Object.keys(CANVAS);
 
   /* ── Colour ── */
@@ -60,9 +67,8 @@
   function colourOf(model, e){ return seriesColour(model.tech.indexOf(e)); }
   function any(a){ for(var i = 0; i < a.length; i++) if(Math.abs(a[i]) > 1e-6) return true; return false; }
   function hover(id, txt){ var el = $(id); if(el) el.textContent = txt; }
-  function yearLabels(res){ return res.periods.map(String); }
   function axisTitle(text, muted){ return { display: true, text: text, color: muted, font: { size: 11 } }; }
-  function curWord(cur){ return cur || 'money'; }
+  var FONT = '"DM Sans", sans-serif';
   function baseOptions(o){
     var grid = cssVar('--chart-grid'), muted = cssVar('--chart-text'), text = cssVar('--text');
     return {
@@ -82,18 +88,51 @@
         zoom: SharedZoom.options({ min: 0, max: Math.max(1, o.n - 1), points: o.n }),
         sharedYFit: { auto: { axes: o.fitAxes || ['y'], includeZero: true, skip: o.skip } }
       },
-      scales: o.scales(grid, muted)
+      scales: o.scales(grid, muted, text)
     };
   }
+  /* The key. Entries that name a group are grouped: a row a group, led by its
+     name, the groups in the order they first come. The group also rides in
+     the entry's own text, hidden, so two entries of one name in two groups
+     (Gas existing and Gas new) stay apart for a screen reader and for the
+     legend a Share link carries. */
   function renderLegend(legendId, chart, datasets){
     var el = $(legendId);
     if(!el) return;
     el.innerHTML = '';
+    var grouped = datasets.some(function(ds){ return !ds.noLegend && ds.group; }), rows = {}, order = [];
+    el.classList.toggle('legend-grouped', grouped);
+    // A group's entries wrap in a box of their own, so a second line of them
+    // starts under the first entry rather than under the group's name.
+    var rowOf = function(name){
+      if(!grouped) return el;
+      if(!rows[name]){
+        var row = document.createElement('div'), box = document.createElement('div');
+        row.className = 'legend-group';
+        if(name){
+          var head = document.createElement('span');
+          head.className = 'legend-group-label';
+          head.textContent = name + ':';
+          row.appendChild(head);
+        }
+        box.className = 'legend-group-items';
+        row.appendChild(box);
+        rows[name] = box;
+        order.push(row);
+      }
+      return rows[name];
+    };
     datasets.forEach(function(ds, idx){
       if(ds.noLegend) return;
       var item = document.createElement('div');
       item.className = 'legend-item';
-      SharedLegend.attach(item, SharedLegend.specOf(ds), ds.label);
+      SharedLegend.attach(item, SharedLegend.specOf(ds), ds.legendLabel || ds.label);
+      if(grouped && ds.group){
+        var tag = document.createElement('span');
+        tag.className = 'vh';
+        tag.textContent = ' (' + ds.group.toLowerCase() + ')';
+        item.appendChild(tag);
+      }
       if(ds.hidden) item.classList.add('hidden');
       item.addEventListener('click', function(){
         var hidden = !item.classList.contains('hidden');
@@ -101,8 +140,9 @@
         chart.setDatasetVisibility(idx, !hidden);
         chart.update();
       });
-      el.appendChild(item);
+      rowOf(ds.group || '').appendChild(item);
     });
+    order.forEach(function(row){ el.appendChild(row); });
   }
   function make(key, cfg, legendId, extraPlugins){
     if(charts[key]) charts[key].destroy();
@@ -111,121 +151,289 @@
     renderLegend(legendId, ch, cfg.data.datasets);
     return ch;
   }
-  function barSet(label, data, c, o){
-    var d = { type: 'bar', label: label, data: data, backgroundColor: alpha(c, o && o.faint ? 0.28 : 0.78), borderColor: c, borderWidth: 1.2,
-              stack: o && o.stack || 's', order: 2, categoryPercentage: 0.72, barPercentage: 0.92 };
-    for(var k in o) if(k !== 'faint') d[k] = o[k];
-    return d;
-  }
   function lineSet(label, data, o){
     var d = { type: 'line', label: label, data: data, borderColor: cssVar('--text'), backgroundColor: 'transparent', borderWidth: 2,
               borderDash: [6, 4], pointRadius: 3, pointHoverRadius: 5, tension: 0, fill: false, order: 1, kind: 'ref' };
     for(var k in o) d[k] = o[k];
     return d;
   }
-  // A year's index from a click on a bar chart.
-  function yearClick(evt, els, chart){
-    if(!ctx || !ctx.onYear) return;
-    var x = chart.scales.x, v = x.getValueForPixel(evt.x);
-    if(!isFinite(v)) return;
-    ctx.onYear(Math.max(0, Math.min(ctx.res.periods.length - 1, Math.round(v))));
+
+  /* ── The years on the axis ──
+     Every calendar year of the plan, each at the figures of the decision
+     year it falls in: at[i] is that decision year's index, dec the indices
+     of the decision years themselves. */
+  function calendar(res){
+    var years = [], at = [], dec = [];
+    res.periods.forEach(function(y, k){
+      for(var j = 0; j < res.years[k]; j++){
+        if(!j) dec.push(years.length);
+        years.push(y + j);
+        at.push(k);
+      }
+    });
+    return {
+      years: years, at: at, dec: dec, n: years.length,
+      isDec: function(i){ return i === 0 || at[i] !== at[i - 1]; },
+      spread: function(a){ return at.map(function(k){ return a[k]; }); }
+    };
+  }
+  // The years a decision year stands for: "2031 to 2035".
+  function spanOf(res, k){ var y = res.periods[k], n = res.years[k]; return n > 1 ? y + ' to ' + (y + n - 1) : String(y); }
+  // A year's title: a decision year says so, any other names the decision year it falls in.
+  function yearTitle(res, cal, i){ return cal.years[i] + (cal.isDec(i) ? ' (decision year)' : ' (' + res.periods[cal.at[i]] + ' decision)'); }
+  /* As many years as fit the axis and the part in view: every year, else the
+     decision years, else every other (third…) decision year, so the labels
+     never run into each other on a phone. */
+  function yearTicks(cal){
+    return function(scale){
+      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(cal.n - 1, Math.floor(scale.max)), pick = [], i, m = 1;
+      var g = scale.ctx;
+      g.save(); g.font = '700 11px ' + FONT;
+      var each = g.measureText(String(cal.years[cal.n - 1])).width + 10;
+      g.restore();
+      var room = Math.max(2, Math.floor((scale.width || 600) / Math.max(24, each)));
+      if(hi - lo + 1 <= room) for(i = lo; i <= hi; i++) pick.push(i);
+      else {
+        var dec = cal.dec.filter(function(v){ return v >= lo && v <= hi; });
+        while(Math.ceil(dec.length / m) > room) m++;
+        cal.dec.forEach(function(v, j){ if(v >= lo && v <= hi && j % m === 0) pick.push(v); });
+        // Zoomed in between two decision years far apart: the years themselves.
+        if(pick.length < 2){
+          pick = [];
+          m = Math.ceil((hi - lo + 1) / room);
+          for(i = lo; i <= hi; i += m) pick.push(i);
+        }
+      }
+      scale.ticks = pick.map(function(v){ return { value: v }; });
+    };
+  }
+  // The x axis of a chart by year: the decision years bold and in the text colour.
+  function yearScale(cal, muted, text, o){
+    var dec = function(c){ return !!(c.tick && cal.isDec(c.tick.value)); };
+    return {
+      stacked: !!(o && o.stacked), offset: !(o && o.offset === false),
+      title: axisTitle('Year', muted),
+      grid: { display: false },
+      ticks: { autoSkip: false, maxRotation: 0,
+               color: function(c){ return dec(c) ? text : muted; },
+               font: function(c){ return { size: 11, weight: dec(c) ? '700' : '400' }; },
+               callback: function(v){ return String(cal.years[v]); } },
+      afterBuildTicks: yearTicks(cal)
+    };
+  }
+  // A faint rule where each decision year starts, behind the data.
+  var PERIOD_PLUGIN = {
+    id: 'cxPeriods',
+    beforeDatasetsDraw: function(chart){
+      var o = chart.config.options.plugins.cxPeriods;
+      if(!o) return;
+      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx;
+      g.save();
+      g.strokeStyle = o.rule; g.lineWidth = 1;
+      o.cal.dec.forEach(function(i){
+        if(!i) return;
+        var px = Math.round(x.getPixelForValue(i + o.shift)) + 0.5;
+        if(px <= area.left + 1 || px >= area.right - 1) return;
+        g.beginPath(); g.moveTo(px, area.top); g.lineTo(px, area.bottom); g.stroke();
+      });
+      g.restore();
+    }
+  };
+  function periods(cal, shift){ return { cal: cal, shift: shift, rule: cssVar('--chart-grid') }; }
+  /* Hatching: 45° lines in the colour over a pale fill of it, a tile the
+     bars repeat, so the lines run on unbroken from one bar into the next. */
+  function hatchFill(fill, line){
+    var n = 6, cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = cv.height = n;
+    g.fillStyle = fill; g.fillRect(0, 0, n, n);
+    g.strokeStyle = line; g.lineWidth = 1;
+    g.beginPath();
+    [-n, 0, n].forEach(function(o){ g.moveTo(o, n); g.lineTo(o + n, 0); });
+    g.stroke();
+    return g.createPattern(cv, 'repeat');
+  }
+  /* A year's bars, each meeting the next: an opaque fill a little wider
+     than its bar, so no sliver shows where two meet, and a top edge only
+     (EDGE_PLUGIN), so a decision year's years read as one block. hatch is
+     the plant in service now: hatched, so it is never taken for a paler
+     colour. */
+  function histSet(label, data, c, o){
+    var hatch = o && o.hatch, fill = mix(c, cssVar('--panel'), hatch ? 0.72 : 0.22), line = alpha(c, 0.7);
+    var d = { type: 'bar', label: label, data: data, backgroundColor: hatch ? hatchFill(fill, line) : fill, borderColor: c, edge: c,
+              borderWidth: 0, inflateAmount: 0.6, stack: 's', order: 2, categoryPercentage: 1, barPercentage: 1,
+              legendSpec: { type: 'bar', color: c, fill: fill, hatch: hatch ? line : null, width: 1.2 } };
+    for(var k in o) if(k !== 'hatch') d[k] = o[k];
+    return d;
+  }
+  /* The top edge of each bar, drawn just after its own bars. A Chart.js
+     border would clip the fill to the border's box, and the overlap that
+     hides the seams with it. */
+  var EDGE_PLUGIN = {
+    id: 'cxEdges',
+    afterDatasetDraw: function(chart, args){
+      var ds = chart.data.datasets[args.index], area = chart.chartArea, g = chart.ctx;
+      if(!ds.edge || args.meta.type !== 'bar') return;
+      g.save();
+      g.beginPath(); g.rect(area.left, area.top - 2, area.right - area.left, area.bottom - area.top + 2); g.clip();
+      g.strokeStyle = ds.edge; g.lineWidth = 1.2;
+      g.beginPath();
+      args.meta.data.forEach(function(el, i){
+        if(!(Math.abs(ds.data[i]) > 1e-9)) return;
+        var p = el.getProps(['x', 'y', 'width']);
+        g.moveTo(p.x - p.width / 2, p.y + 0.6); g.lineTo(p.x + p.width / 2, p.y + 0.6);
+      });
+      g.stroke();
+      g.restore();
+    }
+  };
+  // A reference line by year with a point on each decision year only.
+  function decLine(label, data, cal, o){
+    var d = lineSet(label, data, o);
+    d.legendSpec = SharedLegend.fromDataset(d);
+    d.pointRadius = function(c){ return cal.isDec(c.dataIndex) ? 3 : 0; };
+    d.pointHitRadius = 6;
+    return d;
+  }
+  // The same over bars: flat across a decision year's years, stepping where the bars do.
+  function stepLine(label, data, cal, o){
+    var d = decLine(label, data, cal, o);
+    d.stepped = 'middle';
+    return d;
+  }
+  // A click on a year opens its decision year's typical days.
+  function yearClick(cal){
+    return function(evt, els, chart){
+      if(!ctx || !ctx.onYear) return;
+      var v = chart.scales.x.getValueForPixel(evt.x);
+      if(!isFinite(v)) return;
+      ctx.onYear(cal.at[Math.max(0, Math.min(cal.n - 1, Math.round(v)))]);
+    };
+  }
+  // What a decision year builds or retires, largest first: "800 MW of Wind, 400 MW of Battery".
+  function changes(res, model, k, key){
+    return techList(model, res).filter(function(e){ return res.tech[e.id][key][k] >= 0.05; })
+      .sort(function(a, b){ return res.tech[b.id][key][k] - res.tech[a.id][key][k]; })
+      .map(function(e){ return F.mw(res.tech[e.id][key][k]) + ' MW of ' + CX.nameOf(e); }).join(', ');
   }
 
-  /* ── Capacity in service ── */
+  /* ── Capacity, and when to build ── */
+  /* Each decision year's new build over its bars ("+800 MW"), from the
+     entries still showing, where the years it stands for leave room. */
+  var BUILT_PLUGIN = {
+    id: 'cxBuilt',
+    afterDatasetsDraw: function(chart){
+      var o = chart.config.options.plugins.cxBuilt;
+      if(!o) return;
+      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx, cal = o.cal, sets = chart.data.datasets;
+      g.save();
+      g.beginPath(); g.rect(area.left, 0, area.right - area.left, area.bottom); g.clip();
+      g.font = '600 10.5px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'bottom';
+      g.lineJoin = 'round'; g.lineWidth = 3; g.strokeStyle = o.halo; g.fillStyle = o.text;
+      cal.dec.forEach(function(i){
+        var k = cal.at[i], mw = 0, top = area.bottom;
+        sets.forEach(function(ds, di){
+          if(ds.type !== 'bar' || !chart.isDatasetVisible(di)) return;
+          var el = chart.getDatasetMeta(di).data[i];
+          if(el && ds.data[i] > 1e-6) top = Math.min(top, el.y);
+          if(ds.kind === 'new') mw += o.res.tech[ds.id].built[k];
+        });
+        if(!(mw >= 0.05)) return;
+        var l = Math.max(area.left, x.getPixelForValue(i - 0.5)), r = Math.min(area.right, x.getPixelForValue(i + o.res.years[k] - 0.5));
+        var txt = '+' + F.mw(mw) + ' MW';
+        if(g.measureText(txt).width > r - l - 4) txt = '+' + F.mw(mw);
+        if(g.measureText(txt).width > r - l - 4) return;
+        g.strokeText(txt, (l + r) / 2, top - 3);
+        g.fillText(txt, (l + r) / 2, top - 3);
+      });
+      g.restore();
+    }
+  };
   function capChart(res, model, d){
-    var labels = yearLabels(res), ds = [], K = labels.length;
-    techList(model, res).forEach(function(e){
-      var t = res.tech[e.id];
-      if(!any(t.cap)) return;
-      ds.push(barSet(CX.nameOf(e), t.cap.slice(), colourOf(model, e), { id: e.id }));
-    });
-    ds.push(lineSet('Peak demand', res.totals.peak.slice()));
-    make('cap', {
-      type: 'bar', data: { labels: labels, datasets: ds },
-      options: baseOptions({ n: K, onClick: yearClick,
-        filter: function(item){ return Math.abs(item.parsed.y) > 1e-6 || item.dataset.kind === 'ref'; },
-        skip: function(ds){ return ds.kind === 'ref'; },
-        callbacks: {
-          label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(c.parsed.y) + ' MW'; },
-          afterBody: function(items){
-            if(!items.length) return;
-            var k = items[0].dataIndex, tot = 0;
-            res.order.forEach(function(id){ tot += res.tech[id].cap[k]; });
-            hover('capHover', labels[k] + '  |  ' + F.mw(tot) + ' MW in service for a ' + F.mw(res.totals.peak[k]) + ' MW peak, ' +
-              F.mw(res.totals.firm[k]) + ' MW of it firm or storage');
-          }
-        },
-        scales: function(grid, muted){
-          return { x: { stacked: true, title: axisTitle('Decision year', muted), ticks: { color: muted, font: { size: 11 } }, grid: { color: grid } },
-                   y: { stacked: true, beginAtZero: true, title: axisTitle('Capacity (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } } };
-        } })
-    }, 'capLegend');
-    $('capSub').textContent = 'Every plant in service in each decision year, storage at its power rating. Click a year to see its typical days.';
-  }
-
-  /* ── When to build ── */
-  function buildChart(res, model, d){
-    var labels = yearLabels(res), ds = [], K = labels.length;
-    techList(model, res).forEach(function(e){
+    var cal = calendar(res), labels = cal.years.map(String), ds = [], T = res.totals, techs = techList(model, res);
+    // The plant in service now at the foot, what the plan builds above it.
+    techs.forEach(function(e){
       var t = res.tech[e.id], c = colourOf(model, e);
-      if(any(t.built)) ds.push(barSet(CX.nameOf(e), t.built.slice(), c, { stack: 'b', id: e.id, kind: 'built' }));
+      if(any(t.exist)) ds.push(histSet(CX.nameOf(e) + ', existing', cal.spread(t.exist), c, { id: e.id, kind: 'exist', hatch: true, group: 'Existing', legendLabel: CX.nameOf(e) }));
     });
-    techList(model, res).forEach(function(e){
-      var t = res.tech[e.id], c = colourOf(model, e);
-      if(any(t.retired)) ds.push(barSet(CX.nameOf(e) + ' retired', t.retired.map(function(v){ return -v; }), c, { stack: 'b', id: e.id, kind: 'retired', faint: true }));
+    techs.forEach(function(e){
+      var t = res.tech[e.id], c = colourOf(model, e), nw = t.cap.map(function(v, k){ return Math.max(0, v - t.exist[k]); });
+      if(any(nw)) ds.push(histSet(CX.nameOf(e) + ', new build', cal.spread(nw), c, { id: e.id, kind: 'new', group: 'New build', legendLabel: CX.nameOf(e) }));
     });
-    make('build', {
-      type: 'bar', data: { labels: labels, datasets: ds },
-      options: baseOptions({ n: K, onClick: yearClick,
-        filter: function(item){ return Math.abs(item.parsed.y) > 1e-6; },
-        callbacks: {
-          label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(Math.abs(c.parsed.y)) + ' MW'; },
-          afterBody: function(items){
-            if(!items.length) return;
-            var k = items[0].dataIndex, b = 0, r = 0;
-            res.order.forEach(function(id){ b += res.tech[id].built[k]; r += res.tech[id].retired[k]; });
-            hover('buildHover', labels[k] + '  |  ' + F.mw(b) + ' MW built' + (r > 1e-6 ? ', ' + F.mw(r) + ' MW retired' : ''));
-          }
-        },
-        scales: function(grid, muted){
-          return { x: { stacked: true, title: axisTitle('Decision year', muted), ticks: { color: muted, font: { size: 11 } }, grid: { color: grid } },
-                   y: { stacked: true, title: axisTitle('Capacity (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } } };
-        } })
-    }, 'buildLegend');
-    $('buildSub').textContent = ds.length ? 'New capacity in service from each decision year above the line; what retires by then below it, paler.' : 'Nothing is built or retired over the plan.';
+    ds.push(stepLine('Peak demand', cal.spread(T.peak), cal, { group: 'Demand' }));
+    var op = baseOptions({ n: cal.n, onClick: yearClick(cal),
+      filter: function(item){ return Math.abs(item.parsed.y) > 1e-6 || item.dataset.kind === 'ref'; },
+      skip: function(x){ return x.kind === 'ref'; },
+      callbacks: {
+        title: function(items){ return items.length ? yearTitle(res, cal, items[0].dataIndex) : ''; },
+        label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(c.parsed.y) + ' MW'; },
+        afterBody: function(items){
+          if(!items.length) return;
+          var k = cal.at[items[0].dataIndex], tot = 0;
+          res.order.forEach(function(id){ tot += res.tech[id].cap[k]; });
+          var built = changes(res, model, k, 'built'), gone = changes(res, model, k, 'retired');
+          hover('capHover', spanOf(res, k) + '  |  ' + F.mw(tot) + ' MW in service for a ' + F.mw(T.peak[k]) + ' MW peak, ' +
+            F.mw(T.firm[k]) + ' MW of it firm or storage.' + (built ? ' ' + res.periods[k] + ' builds ' + built + '.' : '') +
+            (gone ? ' Retired by then: ' + gone + '.' : ''));
+        }
+      },
+      scales: function(grid, muted, text){
+        return { x: yearScale(cal, muted, text, { stacked: true }),
+                 y: { stacked: true, beginAtZero: true, title: axisTitle('Capacity (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } } };
+      } });
+    op.plugins.cxPeriods = periods(cal, -0.5);
+    op.plugins.cxBuilt = { cal: cal, res: res, text: cssVar('--text'), halo: cssVar('--panel') };
+    op.layout = { padding: { top: 16 } };
+    make('cap', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'capLegend', [PERIOD_PLUGIN, EDGE_PLUGIN, BUILT_PLUGIN]);
+    $('capSub').textContent = 'What is in service each year, storage at its power rating. The plan builds in the decision years, in bold, each standing for the years up to the next' +
+      (T.built >= 0.05 ? ', with what each builds over its bars' : ', and here builds nothing') + '. Click a year for its typical days.';
   }
 
   /* ── Energy by source ── */
   function energyChart(res, model, d){
-    var labels = yearLabels(res), ds = [], K = labels.length, T = res.totals;
+    var cal = calendar(res), labels = cal.years.map(String), ds = [], T = res.totals;
+    var gwh = function(a){ return cal.spread(a).map(function(v){ return v / 1000; }); };
+    var area = function(label, data, c, o){
+      var x = { type: 'line', label: label, data: data, borderColor: c, backgroundColor: alpha(c, 0.55), borderWidth: 1.2,
+                pointRadius: 0, pointHoverRadius: 4, pointHitRadius: 6, tension: 0, stack: 'e', order: 2 };
+      for(var k in o) x[k] = o[k];
+      return x;
+    };
     techList(model, res).forEach(function(e){
       var t = res.tech[e.id];
       if(!any(t.gen)) return;
-      ds.push(barSet(CX.nameOf(e) + (e.kind === 'store' ? ' (discharge)' : ''), t.gen.map(function(v){ return v / 1000; }), colourOf(model, e), { id: e.id }));
+      ds.push(area(CX.nameOf(e) + (e.kind === 'store' ? ' (discharge)' : ''), gwh(t.gen), colourOf(model, e), { id: e.id }));
     });
-    if(any(T.shedEnergy)) ds.push(barSet('Shortfall (load shed)', T.shedEnergy.map(function(v){ return v / 1000; }), cssVar('--negative'), { kind: 'shed' }));
-    ds.push(lineSet('Demand', T.energy.map(function(v){ return v / 1000; })));
-    make('energy', {
-      type: 'bar', data: { labels: labels, datasets: ds },
-      options: baseOptions({ n: K, onClick: yearClick,
-        filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
-        skip: function(ds){ return ds.kind === 'ref'; },
-        callbacks: {
-          label: function(c){ return '  ' + c.dataset.label + ': ' + F.gwh(c.parsed.y * 1000) + ' GWh'; },
-          afterBody: function(items){
-            if(!items.length) return;
-            var k = items[0].dataIndex;
-            hover('energyHover', labels[k] + '  |  demand ' + F.gwh(T.energy[k]) + ' GWh, ' + F.pct(T.gen[k] > 0 ? 100 * T.cleanGen[k] / T.gen[k] : NaN) + '% of generation free of CO2, ' +
-              F.co2(T.emis[k]) + ' of CO2' + (T.curtail[k] > 1 ? ', ' + F.gwh(T.curtail[k]) + ' GWh of sun and wind spilled' : '') + (T.shedEnergy[k] > 1e-3 ? ', ' + F.gwh(T.shedEnergy[k]) + ' GWh shed' : ''));
-          }
-        },
-        scales: function(grid, muted){
-          return { x: { stacked: true, title: axisTitle('Decision year', muted), ticks: { color: muted, font: { size: 11 } }, grid: { color: grid } },
-                   y: { stacked: true, beginAtZero: true, title: axisTitle('Energy (GWh a year)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.gwh(v * 1000); } }, grid: { color: grid } } };
-        } })
-    }, 'energyLegend');
+    if(any(T.shedEnergy)) ds.push(area('Shortfall (load shed)', gwh(T.shedEnergy), cssVar('--negative'), { kind: 'shed' }));
+    // Each layer fills down to the one under it; its key shows it as a block.
+    ds.forEach(function(x, i){
+      x.fill = i ? i - 1 : 'origin';
+      var shown = {}; for(var key in x) shown[key] = x[key];
+      shown.fill = 'origin';
+      x.legendSpec = SharedLegend.fromDataset(shown);
+    });
+    ds.push(decLine('Demand', gwh(T.energy), cal, { stack: 'load' }));
+    var op = baseOptions({ n: cal.n, onClick: yearClick(cal),
+      filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
+      skip: function(x){ return x.kind === 'ref'; },
+      callbacks: {
+        title: function(items){ return items.length ? yearTitle(res, cal, items[0].dataIndex) : ''; },
+        label: function(c){ return '  ' + c.dataset.label + ': ' + F.gwh(c.parsed.y * 1000) + ' GWh'; },
+        afterBody: function(items){
+          if(!items.length) return;
+          var k = cal.at[items[0].dataIndex];
+          hover('energyHover', spanOf(res, k) + '  |  demand ' + F.gwh(T.energy[k]) + ' GWh a year, ' + F.pct(T.gen[k] > 0 ? 100 * T.cleanGen[k] / T.gen[k] : NaN) + '% of generation free of CO2, ' +
+            F.co2(T.emis[k]) + ' of CO2' + (T.curtail[k] > 1 ? ', ' + F.gwh(T.curtail[k]) + ' GWh of sun and wind spilled' : '') + (T.shedEnergy[k] > 1e-3 ? ', ' + F.gwh(T.shedEnergy[k]) + ' GWh shed' : ''));
+        }
+      },
+      scales: function(grid, muted, text){
+        return { x: yearScale(cal, muted, text, { offset: false }),
+                 y: { stacked: true, beginAtZero: true, title: axisTitle('Energy (GWh a year)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.gwh(v * 1000); } }, grid: { color: grid } } };
+      } });
+    op.plugins.cxPeriods = periods(cal, 0);
+    make('energy', { type: 'line', data: { labels: labels, datasets: ds }, options: op }, 'energyLegend', [PERIOD_PLUGIN]);
     var stores = model.tech.some(function(e){ return e.kind === 'store' && res.tech[e.id] && any(res.tech[e.id].gen); });
-    $('energySub').textContent = 'A year of each decision year’s energy by source.' + (stores ? ' Storage counts what it gives back, so its losses stand the bars a little above demand.' : '');
+    $('energySub').textContent = 'Each year’s energy by source, a decision year standing for the years up to the next.' +
+      (stores ? ' Storage counts what it gives back, so its losses stand the area a little above demand.' : '') + ' Click a year to see its typical days below.';
   }
 
   /* ── Typical days: one decision year, hour by hour ── */
@@ -240,24 +448,41 @@
     });
     return out;
   }
+  /* Where each sampled hour stands on the axis. The typical days are days
+     apart, not one run of time, so a gap stands between them, about as wide
+     whatever the sampling (a week runs on unbroken inside itself): hourAt[p]
+     is the hour at place p, or -1 in a gap, and from[i] where block i starts. */
+  function dayAxis(res){
+    var gap = Math.max(1, Math.round(res.H / 60)), hourAt = [], from = [];
+    res.blocks.forEach(function(b, i){
+      if(i) for(var g = 0; g < gap; g++) hourAt.push(-1);
+      from.push(hourAt.length);
+      for(var t = b.from; t < b.from + b.len; t++) hourAt.push(t);
+    });
+    return { n: hourAt.length, gap: gap, hourAt: hourAt, from: from,
+             spread: function(a, f){ return hourAt.map(function(t){ return t < 0 ? null : f ? f(a[t]) : a[t]; }); } };
+  }
   /* The hours of the day on the axis, as many as fit its width and the part
      in view: every hour up to every other day, always on the clock's hours,
      so the labels never run into each other on a phone. */
   var STEPS = [1, 2, 3, 6, 12, 24, 48];
-  function clockTicks(H){
+  function clockTicks(ax){
     return function(scale){
-      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(H - 1, Math.floor(scale.max));
+      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(ax.n - 1, Math.floor(scale.max));
       var room = Math.max(2, Math.floor((scale.width || 600) / 56)), step = STEPS[STEPS.length - 1];
       for(var i = 0; i < STEPS.length; i++) if((hi - lo) / STEPS[i] <= room){ step = STEPS[i]; break; }
       var ticks = [];
-      for(var v = lo; v <= hi; v++) if(step < 24 ? (v % 24) % step === 0 : v % step === 0) ticks.push({ value: v });
+      for(var v = lo; v <= hi; v++){
+        var t = ax.hourAt[v];
+        if(t >= 0 && (step < 24 ? (t % 24) % step === 0 : t % step === 0)) ticks.push({ value: v });
+      }
       // A label that would stand past the right end of the axis is left off.
       var px = (scale.width || 600) / Math.max(1, hi - lo);
       while(ticks.length > 1 && (hi - ticks[ticks.length - 1].value) * px < 18) ticks.pop();
       if(ticks.length) scale.ticks = ticks;
     };
   }
-  // The typical days named over the plot, with a rule between them.
+  // The typical days named over the plot, with a rule down each gap between them.
   var BLOCK_PLUGIN = {
     id: 'cxBlocks',
     afterDatasetsDraw: function(chart){
@@ -269,11 +494,12 @@
       g.textBaseline = 'top';
       b.blocks.forEach(function(bl, i){
         var x0 = x.getPixelForValue(bl.from - 0.5), x1 = x.getPixelForValue(bl.from + bl.len - 0.5);
-        if(x1 < area.left || x0 > area.right) return;
-        if(i > 0 && x0 >= area.left && x0 <= area.right){
+        var mid = x.getPixelForValue(bl.from - (b.gap + 1) / 2);
+        if(i > 0 && mid >= area.left && mid <= area.right){
           g.strokeStyle = b.rule; g.lineWidth = 1; g.setLineDash([3, 3]);
-          g.beginPath(); g.moveTo(x0, area.top); g.lineTo(x0, area.bottom); g.stroke();
+          g.beginPath(); g.moveTo(mid, area.top); g.lineTo(mid, area.bottom); g.stroke();
         }
+        if(x1 < area.left || x0 > area.right) return;
         var l = Math.max(area.left, x0), r = Math.min(area.right, x1), w = r - l, txt = bl.name;
         g.fillStyle = b.text;
         if(g.measureText(txt).width > w - 8) txt = bl.short;
@@ -283,27 +509,28 @@
     }
   };
   function dayChart(res, model, d){
-    var k = Math.max(0, Math.min(res.periods.length - 1, d.year | 0)), H = res.H, labels = dayLabels(res), ds = [], T = res.totals, o = res.report.opts;
-    var year = res.periods[k];
+    var k = Math.max(0, Math.min(res.periods.length - 1, d.year | 0)), ax = dayAxis(res), ds = [], T = res.totals, o = res.report.opts;
+    var year = res.periods[k], hourLabels = dayLabels(res), labels = ax.spread(hourLabels).map(function(l){ return l || ''; });
+    var pos = function(v){ return Math.max(0, v); }, neg = function(v){ return Math.min(0, v); };
     // Cheapest to run at the bottom, as a merit order.
     var gens = techList(model, res).filter(function(e){ return e.kind !== 'store' && any(res.tech[e.id].p[k]); });
     gens.sort(function(a, b){ return CX.runCost(a, o, year) - CX.runCost(b, o, year) || model.tech.indexOf(a) - model.tech.indexOf(b); });
     var stores = techList(model, res).filter(function(e){ return e.kind === 'store' && any(res.tech[e.id].p[k]); });
     gens.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e), data: res.tech[e.id].p[k].map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.55),
+      ds.push({ label: CX.nameOf(e), data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
                 borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'gen', id: e.id });
     });
     stores.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e) + ' discharging', data: res.tech[e.id].p[k].map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.55),
+      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
                 borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id });
-      ds.push({ label: CX.nameOf(e) + ' charging', data: res.tech[e.id].p[k].map(function(v){ return Math.min(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.22),
+      ds.push({ label: CX.nameOf(e) + ' charging', data: ax.spread(res.tech[e.id].p[k], neg), borderColor: c, backgroundColor: alpha(c, 0.22),
                 borderWidth: 1.2, borderDash: [4, 3], pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'store', order: 2, kind: 'chg', id: e.id });
     });
     if(any(res.shed[k])){
       var neg = cssVar('--negative');
-      ds.push({ label: 'Shortfall (load shed)', data: res.shed[k].slice(), borderColor: neg, backgroundColor: alpha(neg, 0.45),
+      ds.push({ label: 'Shortfall (load shed)', data: ax.spread(res.shed[k]), borderColor: neg, backgroundColor: alpha(neg, 0.45),
                 borderWidth: 1.2, pointRadius: 0, tension: 0, stack: 'gen', order: 2, kind: 'shed' });
     }
     // Each layer fills down to the layer under it in its own stack.
@@ -315,24 +542,24 @@
       shown.fill = 'origin';
       x.legendSpec = SharedLegend.fromDataset(shown);
     });
-    ds.push({ label: 'Demand', data: res.load[k].slice(), borderColor: cssVar('--text'), backgroundColor: 'transparent',
+    ds.push({ label: 'Demand', data: ax.spread(res.load[k]), borderColor: cssVar('--text'), backgroundColor: 'transparent',
               borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load' });
     var short = function(b){ return b.stress ? 'Still day' : b.name.replace(' weekday', ' wkday').replace(' weekend', ' wkend').replace(' season', ''); };
     var ch = make('day', {
       type: 'line', data: { labels: labels, datasets: ds },
       options: (function(){
-        var op = baseOptions({ n: H,
+        var op = baseOptions({ n: ax.n,
           filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'load'; },
           skip: function(x){ return x.kind === 'load'; },
           callbacks: {
             title: function(items){ return items.length ? labels[items[0].dataIndex] : ''; },
             label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(c.parsed.y) + ' MW'; },
             afterBody: function(items){
-              if(!items.length) return;
-              var t = items[0].dataIndex, gsum = 0, ssum = 0;
+              var t = items.length ? ax.hourAt[items[0].dataIndex] : -1, gsum = 0, ssum = 0;
+              if(t < 0) return;
               gens.forEach(function(e){ gsum += Math.max(0, res.tech[e.id].p[k][t]); });
               stores.forEach(function(e){ ssum += res.tech[e.id].p[k][t]; });
-              hover('dayHover', year + ', ' + labels[t] + '  |  demand ' + F.mw(res.load[k][t]) + ' MW, generation ' + F.mw(gsum) + ' MW' +
+              hover('dayHover', year + ', ' + hourLabels[t] + '  |  demand ' + F.mw(res.load[k][t]) + ' MW, generation ' + F.mw(gsum) + ' MW' +
                 (Math.abs(ssum) > 1e-6 ? ', storage ' + F.mw(ssum) + ' MW' : '') + (res.shed[k][t] > 1e-6 ? ', shed ' + F.mw(res.shed[k][t]) + ' MW' : '') +
                 '. Each hour stands for ' + F.pct(res.w[t]) + ' hours of the year.');
             }
@@ -341,53 +568,53 @@
             return {
               x: { title: axisTitle('Typical days, hour by hour', muted),
                    ticks: { color: muted, maxRotation: 0, autoSkip: false, font: { size: 11 },
-                            callback: function(v){ return two((+v) % 24) + ':00'; } },
-                   afterBuildTicks: clockTicks(H),
+                            callback: function(v){ return two(ax.hourAt[v] % 24) + ':00'; } },
+                   afterBuildTicks: clockTicks(ax),
                    grid: { color: grid } },
               y: { stacked: true, title: axisTitle('Power (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } }
             };
           } });
-        op.plugins.cxBlocks = { blocks: res.blocks.map(function(b){ return { from: b.from, len: b.len, name: b.name, short: short(b) }; }),
-                                text: cssVar('--chart-text'), rule: cssVar('--chart-grid') };
+        op.plugins.cxBlocks = { blocks: res.blocks.map(function(b, i){ return { from: ax.from[i], len: b.len, name: b.name, short: short(b) }; }),
+                                gap: ax.gap, text: cssVar('--chart-text'), rule: cssVar('--chart-grid') };
         op.layout = { padding: { top: 18 } };
         return op;
       })()
     }, 'dayLegend', [BLOCK_PLUGIN]);
     ch.options.scales.y.stacked = true;
-    $('daySub').textContent = year + ' hour by hour over its typical days, cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '. Pick another year beside the chart.';
+    $('daySub').textContent = year + ' hour by hour over its typical days, cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '. Pick another year above the chart.';
   }
 
   /* ── Cost by year ── */
   function costChart(res, model, d){
-    var labels = yearLabels(res), K = labels.length, T = res.totals, cur = d.cur, pal = SharedPalette.neutral(), ds = [];
-    var m = function(a){ return a.map(function(v){ return v / 1e6; }); };
+    var cal = calendar(res), labels = cal.years.map(String), T = res.totals, cur = d.cur, pal = SharedPalette.neutral(), ds = [];
+    var m = function(a){ return cal.spread(a).map(function(v){ return v / 1e6; }); };
     var parts = [['Capital (annuities)', T.capex, pal[0]], ['Fixed O&M', T.fom, pal[1 % pal.length]], ['Fuel and running', T.vom, pal[2 % pal.length]],
                  ['Carbon', T.co2cost, pal[3 % pal.length]]];
-    parts.forEach(function(p){ if(any(p[1])) ds.push(barSet(p[0], m(p[1]), p[2], {})); });
-    if(any(T.shedCost)) ds.push(barSet('Lost load cost', m(T.shedCost), cssVar('--negative'), { kind: 'shed' }));
+    parts.forEach(function(p){ if(any(p[1])) ds.push(histSet(p[0], m(p[1]), p[2], {})); });
+    if(any(T.shedCost)) ds.push(histSet('Lost load cost', m(T.shedCost), cssVar('--negative'), { kind: 'shed' }));
     var avg = T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; });
-    ds.push(lineSet('Levelised cost', avg, { yAxisID: 'y2', borderDash: [], kind: 'ref' }));
+    ds.push(stepLine('Levelised cost', cal.spread(avg), cal, { yAxisID: 'y2', borderDash: [], kind: 'ref' }));
     var u = cur ? cur + ' m' : 'millions';
-    make('cost', {
-      type: 'bar', data: { labels: labels, datasets: ds },
-      options: baseOptions({ n: K, onClick: yearClick, fitAxes: ['y', 'y2'],
-        filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
-        skip: function(x){ return x.kind === 'ref'; },
-        callbacks: {
-          label: function(c){ return c.dataset.yAxisID === 'y2' ? '  ' + c.dataset.label + ': ' + F.price(c.parsed.y, cur) + '/MWh' : '  ' + c.dataset.label + ': ' + F.big(c.parsed.y * 1e6, cur); },
-          afterBody: function(items){
-            if(!items.length) return;
-            var k = items[0].dataIndex;
-            hover('costHover', labels[k] + '  |  ' + F.big(T.cost[k], cur) + ' a year, ' + F.price(avg[k], cur) + ' per MWh served');
-          }
-        },
-        scales: function(grid, muted){
-          return { x: { stacked: true, title: axisTitle('Decision year', muted), ticks: { color: muted, font: { size: 11 } }, grid: { color: grid } },
-                   y: { stacked: true, beginAtZero: true, title: axisTitle('Cost (' + u + ' a year)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.big(v * 1e6, ''); } }, grid: { color: grid } },
-                   y2: { position: 'right', beginAtZero: true, title: axisTitle('Levelised cost (' + (cur || '') + '/MWh)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.money(v, cur); } }, grid: { drawOnChartArea: false } } };
-        } })
-    }, 'costLegend');
-    $('costSub').textContent = 'A year’s costs in each decision year, at today’s prices and not discounted, with the levelised cost per MWh served on the right (capital as its annuity at the discount rate).';
+    var op = baseOptions({ n: cal.n, onClick: yearClick(cal), fitAxes: ['y', 'y2'],
+      filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
+      skip: function(x){ return x.kind === 'ref'; },
+      callbacks: {
+        title: function(items){ return items.length ? yearTitle(res, cal, items[0].dataIndex) : ''; },
+        label: function(c){ return c.dataset.yAxisID === 'y2' ? '  ' + c.dataset.label + ': ' + F.price(c.parsed.y, cur) + '/MWh' : '  ' + c.dataset.label + ': ' + F.big(c.parsed.y * 1e6, cur); },
+        afterBody: function(items){
+          if(!items.length) return;
+          var k = cal.at[items[0].dataIndex];
+          hover('costHover', spanOf(res, k) + '  |  ' + F.big(T.cost[k], cur) + ' a year, ' + F.price(avg[k], cur) + ' per MWh served');
+        }
+      },
+      scales: function(grid, muted, text){
+        return { x: yearScale(cal, muted, text, { stacked: true }),
+                 y: { stacked: true, beginAtZero: true, title: axisTitle('Cost (' + u + ' a year)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.big(v * 1e6, ''); } }, grid: { color: grid } },
+                 y2: { position: 'right', beginAtZero: true, title: axisTitle('Levelised cost (' + (cur || '') + '/MWh)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.money(v, cur); } }, grid: { drawOnChartArea: false } } };
+      } });
+    op.plugins.cxPeriods = periods(cal, -0.5);
+    make('cost', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'costLegend', [PERIOD_PLUGIN, EDGE_PLUGIN]);
+    $('costSub').textContent = 'Each year’s costs at today’s prices and not discounted, a decision year standing for the years up to the next, with the levelised cost per MWh served on the right (capital as its annuity at the discount rate).';
   }
 
   /* ── Render all, or clear ── */
@@ -398,7 +625,6 @@
     if(!CXCharts.ok()) return show;
     ctx = { res: res, model: model, display: d, onYear: onYear };
     capChart(res, model, d); show.cap = true;
-    buildChart(res, model, d); show.build = true;
     energyChart(res, model, d); show.energy = true;
     dayChart(res, model, d); show.day = true;
     costChart(res, model, d); show.cost = true;
@@ -425,9 +651,32 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
   }
+  /* The exported key, packed into rows. A grouped key exports the way it
+     reads on the page: each group starts a row of its own, led by its name,
+     with only the entries still showing (financialfreedom's). A row carries
+     head (the name, or null where it continues a group) and headW, which is
+     inside its width; grouped rows share one left edge, so the names line up. */
   function legendRows(legendId, measure, maxW, markW, gap, pad){
-    var items = SharedLegend.itemsOf(legendId);
-    return items.length ? SharedLegend.layout(items, measure, maxW, markW, gap, pad) : [];
+    var el = $(legendId), out = [];
+    if(!el) return out;
+    var groups = el.querySelectorAll('.legend-group');
+    if(!groups.length){
+      var items = SharedLegend.itemsOf(el);
+      return items.length ? SharedLegend.layout(items, measure, maxW, markW, gap, pad) : [];
+    }
+    var headOf = function(g){ var lab = g.querySelector('.legend-group-label'); return lab ? lab.textContent.trim() : ''; };
+    // One column for the names, as wide as the widest, so every row's entries start in line.
+    var headW = Math.max.apply(null, Array.prototype.map.call(groups, function(g){ var h = headOf(g); return h ? measure(h, true) + pad / 2 : 0; }));
+    Array.prototype.forEach.call(groups, function(g){
+      var items = SharedLegend.itemsOf(g), head = headOf(g);
+      if(!items.length) return;
+      SharedLegend.layout(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
+        out.push({ items: row.items, head: i === 0 ? head : null, headW: headW, width: row.width + headW });
+      });
+    });
+    var widest = Math.max.apply(null, out.map(function(r){ return r.width; }));
+    out.forEach(function(r){ r.width = widest; });
+    return out;
   }
   var wmLogoImg = new Image();
   CX.WM_PATH_W = 323.96;
@@ -444,8 +693,8 @@
       var titleH = Math.round(40 * OUT), markW = SharedLegend.W * OUT, gap = Math.round(7 * OUT), pad = Math.round(20 * OUT);
       var margin = Math.round(16 * OUT), rowH = Math.round(22 * OUT), wmH = Math.round(26 * OUT);
       var mc = document.createElement('canvas').getContext('2d');
-      mc.font = '500 ' + Math.round(11 * OUT) + 'px ' + FONT;
-      var rows = legendRows(legendId, function(s){ return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+      var keyFont = '500 ' + Math.round(11 * OUT) + 'px ' + FONT, headFont = '600 ' + Math.round(11 * OUT) + 'px ' + FONT;
+      var rows = legendRows(legendId, function(s, head){ mc.font = head ? headFont : keyFont; return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
       var legendH = rows.length ? rows.length * rowH + Math.round(8 * OUT) : 0;
       var c = document.createElement('canvas');
       c.width = chartW; c.height = chartH + titleH + legendH + wmH;
@@ -454,9 +703,11 @@
       g.font = '700 ' + Math.round(14 * OUT) + 'px ' + FONT; g.fillStyle = tone.fg; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.fillText(chartTitle, c.width / 2, titleH / 2);
       g.drawImage(src, 0, titleH, chartW, chartH);
-      g.font = '500 ' + Math.round(11 * OUT) + 'px ' + FONT;
+      g.font = keyFont;
       rows.forEach(function(row, ri){
         var x = Math.max(margin, (c.width - row.width) / 2), cy = titleH + chartH + Math.round(4 * OUT) + rowH * ri + rowH / 2;
+        if(row.head){ g.font = headFont; g.fillStyle = tone.fg; g.textAlign = 'left'; g.fillText(row.head, x, cy); g.font = keyFont; }
+        x += row.headW || 0;
         row.items.forEach(function(item){
           SharedLegend.paint(g, item.swatch, x, cy, OUT);
           x += markW + gap;
@@ -489,8 +740,8 @@
       var tone = exportTokens(), FONT = 'DM Sans, sans-serif';
       var titleH = 40, markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22, wmH = 26;
       var mc = document.createElement('canvas').getContext('2d');
-      mc.font = '500 11px DM Sans, sans-serif';
-      var rows = legendRows(legendId, function(s){ return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+      var measure = function(s, head){ mc.font = (head ? '600' : '500') + ' 11px DM Sans, sans-serif'; return mc.measureText(s).width; };
+      var rows = legendRows(legendId, measure, chartW - margin * 2, markW, gap, pad);
       var legendH = rows.length ? rows.length * rowH + 8 : 0;
       var W = chartW, Hh = chartH + titleH + legendH + wmH;
       var NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
@@ -513,11 +764,13 @@
       svg.appendChild(img);
       rows.forEach(function(row, ri){
         var x = Math.max(margin, (W - row.width) / 2), cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
+        if(row.head) text(row.head, x, cy, { size: '11', weight: '600' });
+        x += row.headW || 0;
         row.items.forEach(function(item){
           svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
           x += markW + gap;
           text(item.label, x, cy, { size: '11', weight: '500' });
-          x += mc.measureText(item.label).width + pad;
+          x += measure(item.label) + pad;
         });
       });
       var wm = document.createElementNS(NS, 'path');

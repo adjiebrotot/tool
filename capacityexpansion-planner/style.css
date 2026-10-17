@@ -110,12 +110,26 @@ body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
 .metric .sub{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.35;}
 .chart-card{padding:18px 20px;margin-bottom:18px;}
 .chart-card[hidden]{display:none;}
-.chart-card>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;min-height:1.1em;}
+.chart-card>.sub,.chart-panel>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;min-height:1.1em;}
+/* Two charts in one card: the second under a rule, its title a step below
+   the card's. Each panel is its own chart to Share (SharedShare finds the
+   nearest .chart-panel). */
+.chart-panel+.chart-panel{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
+.chart-panel h3{margin:0;font-size:1rem;}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
 .legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
 .legend-item.hidden{opacity:.35;}
+/* A key grouped by what its entries are (existing plant, new build): one row
+   a group, led by its name, the names in one column so the rows' entries
+   start in line. financialfreedom's. */
+.legend.legend-grouped{flex-direction:column;gap:8px;}
+.legend-group{display:flex;gap:14px;align-items:flex-start;}
+.legend-group-label{color:var(--muted);font-weight:600;flex:0 0 6.2em;line-height:1.45;}
+.legend-group-items{display:flex;gap:6px 14px;flex-wrap:wrap;flex:1 1 auto;min-width:0;}
+/* Words for a screen reader and a Share link only. */
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 .canvas-wrap{height:380px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
-#capCard .canvas-wrap canvas,#buildCard .canvas-wrap canvas,#energyCard .canvas-wrap canvas,#costCard .canvas-wrap canvas{cursor:pointer;}
+#capCard .canvas-wrap canvas,#energyPanel .canvas-wrap canvas,#costCard .canvas-wrap canvas{cursor:pointer;}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
 .viewbar-field{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--muted);font-size:.84rem;}
 .viewbar-field .sel-input{width:auto;padding-top:5px;padding-bottom:5px;font-size:.82rem;}
@@ -124,13 +138,15 @@ body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
 .detail-head{margin-bottom:4px;}
 .detail-head .seg-group{margin-left:4px;}
 .table-wrap{max-height:460px;overflow:auto;}
-th{position:sticky;top:0;background:var(--panel);z-index:1;}
+th{position:sticky;top:0;background:var(--panel);z-index:1;vertical-align:bottom;line-height:1.35;}
 td.neg{color:var(--negative-em);font-weight:700;}
 
 .page-footer{max-width:1500px;margin:0 auto;padding:0 24px 24px;}
 
 /* ── Embed: the chart alone ── */
-html.abt-embed .chart-card>.sub{margin-top:0;}
+html.abt-embed .chart-card>.sub,html.abt-embed .chart-panel>.sub{margin-top:0;}
+/* A panel framed alone sits in the card's own padding, as a whole card would. */
+html.abt-embed .chart-panel.abt-embed-card{padding:18px 20px;}
 
 @media(max-width:1100px){
   .layout{grid-template-columns:1fr;}
@@ -144,6 +160,11 @@ html.abt-embed .chart-card>.sub{margin-top:0;}
   .page-footer{padding:0 10px 16px;}
   .metrics{grid-template-columns:1fr;}
   .canvas-wrap{height:300px;}
-  .chart-card{padding:14px 12px;}
+  .chart-card,html.abt-embed .chart-panel.abt-embed-card{padding:14px 12px;}
   .add-menu{grid-template-columns:1fr;}
+  /* On a phone a group's entries wrap, so its name takes a line of its own. */
+  .legend.legend-grouped{gap:4px;}
+  .legend-group{flex-wrap:wrap;row-gap:4px;}
+  .legend-group-label{flex-basis:100%;}
+  .legend-group+.legend-group{margin-top:6px;}
 }

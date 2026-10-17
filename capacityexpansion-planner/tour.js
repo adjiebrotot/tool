@@ -72,8 +72,9 @@ window.__TOUR = {
       target: '#capCard',
       onEnter: cxResults,
       title: '⑧ The charts',
-      body: '<ul><li>Capacity, <strong>when to build</strong>, energy and cost by year</li>' +
-            '<li>Click a year to see its typical days hour by hour</li></ul>'
+      body: '<ul><li>Capacity and <strong>when to build</strong>, energy and cost, year by year</li>' +
+            '<li>Decision years in <strong>bold</strong>; each stands for the years up to the next</li>' +
+            '<li>Click a year to open its typical days, hour by hour</li></ul>'
     },
     {
       target: '#tablesCard',

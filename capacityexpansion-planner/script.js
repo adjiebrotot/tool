@@ -418,7 +418,9 @@
      re-solves on its own: a change steps the results back and lights the button. */
   function solveKey(){ return JSON.stringify(CX.compact(app.model)) + '|' + JSON.stringify(plan()); }
   function isStale(){ return !app.res || solveKey() !== app.solvedKey; }
-  var running = false, runQueued = null, queuedResolve = null;
+  var running = false, runQueued = null, queuedResolve = null, current = null;
+  // The solve in hand and any queued behind it, done when they are.
+  function solved(){ return running ? (runQueued || current) : Promise.resolve(); }
   function updateStale(){
     var stale = !running && isStale();
     document.body.classList.toggle('is-stale', stale && !!app.res);
@@ -446,7 +448,7 @@
     setVerdictBusy(o, model);
     var job = v.errors.length ? Promise.resolve({ report: { ok: false, error: '', blocked: v.errors } })
       : call({ model: CX.compact(model), opts: o }).then(function(d){ return d.res; });
-    return job.then(function(res){
+    return current = job.then(function(res){
       res.validation = v;
       app.res = res;
       app.resModel = model;
@@ -575,9 +577,12 @@
     ['mBuilt', 'mNpv', 'mAvg', 'mClean'].forEach(function(id){ $(id).textContent = '–'; $(id + 'Sub').textContent = ''; });
   }
 
-  /* ── Charts ── */
-  var CARD = { cap: 'capCard', build: 'buildCard', energy: 'energyCard', day: 'dayCard', cost: 'costCard' };
-  var CHART_NAME = { cap: 'Capacity in service', build: 'When to build', energy: 'Energy by source', day: 'Typical days', cost: 'Cost by year' };
+  /* ── Charts ──
+     Each chart's own card, or its panel where two share one: Energy by
+     source and, folded under it, the Typical days. */
+  var CARD = { cap: 'capCard', energy: 'energyPanel', day: 'dayCard', cost: 'costCard' };
+  var CHART_NAME = { cap: 'Capacity and when to build', energy: 'Energy by source', day: 'Typical days', cost: 'Cost by year' };
+  var folds = {};
   function display(){ return { cur: cur(), year: app.year }; }
   function syncYearPick(res){
     var sel = $('dayYear');
@@ -592,14 +597,22 @@
     syncYearPick(res);
     var show = window.CXCharts ? CXCharts.render(res, solvedModel(), display(), function(k){ setYear(k, true); }) : {};
     Object.keys(CARD).forEach(function(k){ $(CARD[k]).hidden = !show[k]; });
+    $('energyCard').hidden = !show.energy && !show.day;
   }
+  // A folded chart opens before anything is done with it.
+  function unfold(k){ var f = folds[k]; if(f && !f.isOpen()) f.open(); }
+  // A year clicked on a chart by year opens its typical days.
   function setYear(k, scroll){
     var res = shownResults();
     if(!res) return;
     app.year = Math.max(0, Math.min(res.periods.length - 1, k | 0));
     $('dayYear').value = String(app.year);
     CXCharts.year(app.year);
-    if(scroll && !EMBED) $('dayCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if(scroll && !EMBED){
+      unfold('energy');
+      unfold('day');
+      $('dayCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }
   $('dayYear').addEventListener('change', function(){ setYear(+this.value); });
   function fileBase(){ return 'capacity-plan'; }
@@ -610,12 +623,19 @@
     $(k + 'PngBtn').addEventListener('click', function(){ CXCharts.png(k, title()).then(function(b){ CXCharts.save(b, file('png')); }); });
     $(k + 'CopyBtn').addEventListener('click', function(){ SharedShare.copyImage(function(){ return CXCharts.png(k, title()); }, this); });
     $(k + 'ZoomBtn').addEventListener('click', function(){ CXCharts.resetZoom(k); });
-    // Every chart but the first folds away under its title, open until the reader closes it.
-    if(k !== 'cap' && window.SharedFold) SharedFold.attach($(CARD[k]), {
-      key: 'capacityexpansion-planner-' + k, open: true, text: { show: 'Show chart', hide: 'Hide chart' },
+    /* Every chart but the first folds away under its title, open until the
+       reader closes it; the typical days start folded. An embed shows its
+       one chart open, whatever this device last chose. */
+    if(k === 'cap' || EMBED || !window.SharedFold) return;
+    folds[k] = SharedFold.attach($(CARD[k]), {
+      key: 'capacityexpansion-planner-' + (k === 'day' ? 'typical-days' : k), open: k !== 'day', text: { show: 'Show chart', hide: 'Hide chart' },
       bodies: ['#' + k + 'Sub'].concat(k === 'day' ? ['.day-pick'] : [], ['#' + k + 'Legend', '.canvas-wrap', '#' + k + 'Hover']),
       onOpen: function(){ var ch = CXCharts.get(k); if(ch) ch.resize(); }
     });
+    // Its Share menu and zoom reset open it first, so an export draws the chart.
+    $(CARD[k]).querySelector('.chart-head').addEventListener('click', function(e){
+      if(e.target.closest('.btn-cluster') && !e.target.closest('.fold-btn')) unfold(k);
+    }, true);
   });
 
   /* ── Tables ── */
@@ -666,10 +686,24 @@
     }
     return { head: head, rows: rows, units: units };
   }
+  /* A long header goes on two lines, so a column of short figures is not as
+     wide as its title: its unit on the second when the rest is short ("Peak
+     demand / MW"), else split where the two lines come out most even ("Years
+     it / stands for"). The CSV keeps each title on one line. */
+  function headHtml(x){
+    var m = /^(.{1,14}) (MW|GWh|MWh|%|per \S+)$/.exec(x), w = x.split(' '), at = 1, worst = Infinity;
+    if(m) return esc(m[1]) + '<br>' + esc(m[2]);
+    if(x.length <= 10 || w.length < 2) return esc(x);
+    for(var i = 1; i < w.length; i++){
+      var most = Math.max(w.slice(0, i).join(' ').length, w.slice(i).join(' ').length);
+      if(most < worst){ worst = most; at = i; }
+    }
+    return esc(w.slice(0, at).join(' ')) + '<br>' + esc(w.slice(at).join(' '));
+  }
   function renderTable(){
     var t = tableData();
     $('tableUnits').textContent = t.units;
-    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + headHtml(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       h += '<tr>' + r.cells.map(function(c, i){ return '<td' + (r.neg.indexOf(i) >= 0 ? ' class="neg"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>';
     });
@@ -810,10 +844,16 @@
   SharedScenario.mount('.quick-start-row', { tool: 'capacityexpansion-planner', persist: persist });
   // The chart's view rides in a link: which year the typical days show. It is
   // set before the plan is solved, so the chart opens on it.
+  // An embed or a link sizes and settles once its plan is solved, which a
+  // restore only starts: every chart waits on the solve.
   SharedShare.view('dayCanvas', {
     save: function(){ return app.year ? { year: app.year } : undefined; },
-    load: function(v){ if(v && isFinite(v.year)) app.year = v.year | 0; }
+    // A link to the typical days opens them.
+    load: function(v){ if(v && isFinite(v.year)) app.year = v.year | 0; unfold('energy'); unfold('day'); return solved(); }
   });
+  ['capCanvas', 'energyCanvas', 'costCanvas'].forEach(function(key){ SharedShare.view(key, { load: solved }); });
+  // When to build went into the capacity chart: its embeds and links open that.
+  if(SharedShare.alias) SharedShare.alias('buildCanvas', 'capCanvas');
 
   /* ── Start: draw at once, solve as soon as the engine is in ── */
   if(!restoredAtLoad && !EMBED){
@@ -833,5 +873,5 @@
   // The guided tour (tour.js) points at the results, so a plan that changed
   // since its last run is solved first.
   window.__CX_TOUR = { ensureResults: function(){ if(!running && isStale()) return run(); } };
-  window.__cx = { app: app, CX: CX, run: run, applyPreset: applyPreset, plan: plan, setYear: setYear };
+  window.__cx = { app: app, CX: CX, run: run, applyPreset: applyPreset, plan: plan, setYear: setYear, unfold: unfold };
 })();
