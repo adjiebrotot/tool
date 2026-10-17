@@ -174,41 +174,53 @@
   CX.SUN_WEEK = [1, 0.9, 0.6, 1, 0.95, 0.75, 1];
   CX.WIND_WEEK = [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8];
 
-  /* ── Climates: the seasons a year is sampled by (keys frozen) ──
+  /* ── Climates: the seasons a year is sampled by (keys frozen; new ones are added beside them) ──
      dem is a season's peak as a share of the year's, sol the solar shape
      of its days (and solf a factor on it, for a cloudier wet season), wind
      a factor on the wind shape. The peak season is the one at 1. */
   CX.CLIMATES = {
-    sum:  { label: 'Temperate, peak in summer', seasons: [
+    sum:  { label: 'Summer peak, Dec to Feb', seasons: [
             { name: 'Summer', days: 91.25, dem: 1.00, sol: 'pvs', solf: 1, wind: 0.85, mon: [11, 0, 1] },
             { name: 'Autumn', days: 91.25, dem: 0.86, sol: 'pv', solf: 1, wind: 1.00, mon: [2, 3, 4] },
             { name: 'Winter', days: 91.25, dem: 0.90, sol: 'pvw', solf: 1, wind: 1.20, mon: [5, 6, 7] },
             { name: 'Spring', days: 91.25, dem: 0.84, sol: 'pv', solf: 1, wind: 0.95, mon: [8, 9, 10] }] },
-    win:  { label: 'Temperate, peak in winter', seasons: [
+    win:  { label: 'Winter peak, Jun to Aug', seasons: [
             { name: 'Summer', days: 91.25, dem: 0.84, sol: 'pvs', solf: 1, wind: 0.85, mon: [11, 0, 1] },
             { name: 'Autumn', days: 91.25, dem: 0.88, sol: 'pv', solf: 1, wind: 1.00, mon: [2, 3, 4] },
             { name: 'Winter', days: 91.25, dem: 1.00, sol: 'pvw', solf: 1, wind: 1.20, mon: [5, 6, 7] },
             { name: 'Spring', days: 91.25, dem: 0.86, sol: 'pv', solf: 1, wind: 0.95, mon: [8, 9, 10] }] },
-    trop: { label: 'Tropical, the same all year', seasons: [
+    trop: { label: 'Tropical, wet Nov to Apr', seasons: [
             { name: 'Dry season', days: 182.5, dem: 1.00, sol: 'pveq', solf: 1, wind: 0.9, mon: [4, 5, 6, 7, 8, 9] },
             { name: 'Wet season', days: 182.5, dem: 0.96, sol: 'pveq', solf: 0.8, wind: 1.1, mon: [10, 11, 0, 1, 2, 3] }] }
   };
-  /* The months of each season (mon, January 0) are the southern hemisphere's;
-     the north's are six months on. They only date a year of hours: which
-     season a day of a file falls in, and the dates of the full-year template. */
-  CX.HEMIS = { s: 'Southern', n: 'Northern' };
-  CX.MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  CX.seasonMonths = function(climate, hemi, i){
-    return CX.CLIMATES[climate].seasons[i].mon.map(function(m){ return hemi === 'n' ? (m + 6) % 12 : m; });
-  };
-  // The days of year y: the first (days since 1970) and how many.
-  CX.yearDays = function(y){ var d0 = Math.floor(Date.UTC(y, 0, 1) / 86400000); return { d0: d0, n: Math.floor(Date.UTC(y + 1, 0, 1) / 86400000) - d0 }; };
-  // The season (its index) month m (January 0) falls in.
-  CX.seasonOfMonth = function(climate, hemi, m){
+  /* The months of each season (mon, January 0) say when it is, so a year
+     of hours from a file falls into its seasons, and the full-year template
+     is dated. The climates above are the southern hemisphere's; each has a
+     northern one (key + '-n') with the very same seasons, six months on, so
+     a plan runs the same on either and only the dates differ. peaks names
+     the season a temperate climate's demand is highest in, and flip is the
+     climate of the same months that peaks in the other. */
+  var NORTH = { sum: 'Summer peak, Jun to Aug', win: 'Winter peak, Dec to Feb', trop: 'Tropical, wet May to Oct' };
+  Object.keys(NORTH).forEach(function(k){
+    var seasons = CX.CLIMATES[k].seasons.map(function(z){ var o = {}; for(var q in z) o[q] = z[q]; o.mon = z.mon.map(function(m){ return (m + 6) % 12; }); return o; });
+    CX.CLIMATES[k + '-n'] = { label: NORTH[k], seasons: seasons };
+  });
+  Object.keys(CX.CLIMATES).forEach(function(k){
+    var base = k.replace(/-n$/, ''), n = k === base ? '' : '-n';
+    CX.CLIMATES[k].peaks = base === 'sum' ? 'Summer' : base === 'win' ? 'Winter' : null;
+    CX.CLIMATES[k].flip = base === 'sum' ? 'win' + n : base === 'win' ? 'sum' + n : null;
+    CX.CLIMATES[k].north = !!n;
+  });
+  // The months of season i, and the season (its index) month m (January 0) falls in.
+  CX.seasonMonths = function(climate, i){ return CX.CLIMATES[climate].seasons[i].mon.slice(); };
+  CX.seasonOfMonth = function(climate, m){
     var S = CX.CLIMATES[climate].seasons;
-    for(var i = 0; i < S.length; i++) if(CX.seasonMonths(climate, hemi, i).indexOf(m) >= 0) return i;
+    for(var i = 0; i < S.length; i++) if(S[i].mon.indexOf(m) >= 0) return i;
     return 0;
   };
+  CX.MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // The days of year y: the first (days since 1970) and how many.
+  CX.yearDays = function(y){ var d0 = Math.floor(Date.UTC(y, 0, 1) / 86400000); return { d0: d0, n: Math.floor(Date.UTC(y + 1, 0, 1) / 86400000) - d0 }; };
   CX.SAMPLES = ['day', 'day2', 'week'];
   // The days each sampling holds, and how fine it is.
   CX.RES_DAYS = { day: 1, day2: 2, week: 7 };

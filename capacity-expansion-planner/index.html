@@ -49,7 +49,7 @@
     "Build limits, whole units of a set size, an earliest build year",
     "Peak demand growing every year with a load profile built in or drawn hour by hour, with daily variability by weekday and weekend or Monday to Sunday, or from your own CSV or Excel file by season and day, or a full year of 8,760 hours averaged into a typical week for each season",
     "Templates to fill in: hourly or daily variability, the same in every season or each season its own, or every hour of a year, each with its still, overcast peak day",
-    "Typical days, a weekday and a weekend day, or weeks for every season, set by the profiles so they always agree, in a summer-peaking, winter-peaking or tropical climate, and a still, overcast peak day",
+    "Typical days, a weekday and a weekend day, or weeks for every season, set by the profiles so they always agree, in a summer-peaking, winter-peaking or tropical climate north or south of the equator, and a still, overcast peak day
     "Carbon price that rises every year, a net-zero year, and load shedding at the value of lost load",
     "Capacity, new build and retirements, energy mix, hourly dispatch and cost by year, with tables to download",
     "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
@@ -168,24 +168,20 @@
     <!-- The load profile lives in the plan (model.load), which the mini cache
          saves as a whole, so none of its controls is saved on its own. A plan
          saved before kept its shape in this select (v:cxProfile). The climate
-         and the hemisphere come first and are saved as fields: every profile
-         below, and each farm's, is told by their seasons. -->
+         comes first and is saved as a field: every profile below, and each
+         farm's, is told by its seasons, and its months date them. -->
     <div class="field-group">
       <div class="group-title">Load profile</div>
       <div class="field-row">
         <div class="field-label"><span class="tip-wrap">Climate <i class="tip-icon" data-tip="" id="climateTip" data-tip-options>?</i></span></div>
+        <!-- sum, win and trop are the southern hemisphere's, as every plan saved before them; the -n ones the north's. -->
         <select class="sel-input" id="cxClimate">
-          <option value="sum" selected>Temperate, peak in summer</option>
-          <option value="win">Temperate, peak in winter</option>
-          <option value="trop">Tropical, the same all year</option>
-        </select>
-      </div>
-      <!-- Only dates the seasons, for a year of hours from a file and its template: the plan is the same in both. -->
-      <div class="field-row inline">
-        <div class="field-label"><span class="tip-wrap">Hemisphere <i class="tip-icon" data-tip="The months of each season, by which a full year of hours from a file is sorted: summer is December to February in the south, June to August in the north. The plan is the same in both.">?</i></span></div>
-        <select class="sel-input" id="cxHemi" aria-describedby="climateNote">
-          <option value="s" selected>Southern</option>
-          <option value="n">Northern</option>
+          <option value="sum" selected>Summer peak, Dec to Feb</option>
+          <option value="sum-n">Summer peak, Jun to Aug</option>
+          <option value="win">Winter peak, Jun to Aug</option>
+          <option value="win-n">Winter peak, Dec to Feb</option>
+          <option value="trop">Tropical, wet Nov to Apr</option>
+          <option value="trop-n">Tropical, wet May to Oct</option>
         </select>
       </div>
       <p class="derived" id="climateNote" aria-live="polite"></p>

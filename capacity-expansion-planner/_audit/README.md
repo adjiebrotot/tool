@@ -60,10 +60,10 @@ load, a solar and a wind farm in 526 plans (every climate, daily variability, st
 load shape, and the 400 seeded random plans of A1, with files, their own peak days and
 seasons missing), one at a time and all three at once. A whole year written from a profile
 reads back to the week each season it runs: plans that run a week run on the very same hours
-with all three from a year, in either hemisphere, and the rest give the same week to the
+with all three from a year, in every climate north and south, and the rest give the same week to the
 last bit. Every template the menu offers (one typical day, a weekday and a weekend day, a
 week; the same in every season, their average by days, or each season its own) reads back at
-its days with its peak day. A year of hours (in order or dated, both hemispheres, a leap
+its days with its peak day. A year of hours (in order or dated, north and south, a leap
 year, the hour ending, month first, a Season column, a marked peak day, MW, a solar farm)
 is held to an averaging written out here: each day to its season by its month or its Season
 cell, each week's hour the mean of its weekday's hours, the peak day apart. Every layout the
@@ -79,11 +79,12 @@ day missing an hour, blank, in two seasons or on two days) is refused with a rea
 nothing in it is used, and 300 seeded garbage tables never throw.
 
 **A6. The same plan from its profiles as files.** Every Quick Start at its own days, "grow"
-and "island" with no still day too, "island" as a week each season and a temperate grid as a
-week each season, is solved as it is and again with the load and every solar and wind farm
-swapped for their templates read back (each season's own days, or a whole year in each
-hemisphere): the very same plan, every build and the objective to the digit, and its
-present cost, levelised cost and new capacity to the last bit.
+and "island" with no still day too, "island" as a week each season south and north of the
+equator, and a grid peaking June to August as a week each season, is solved as it is and
+again with the load and every solar and wind farm swapped for their templates read back
+(each season's own days, or a whole year): the very same plan, every build and the
+objective to the digit, and its present cost, levelised cost and new capacity to the last
+bit.
 
 **A4. The engine.** `psa-opt.min.js` hashes to the sha256 in its own banner, and `highs.wasm`
 to the sha256 that `highs.mjs` names. The engine's build (`ed-uc-simulator/_build/build-engine.mjs`)
@@ -100,8 +101,8 @@ bar drags its day; the template menu offers its seven templates with their rows 
 the climate and the first year, each downloads a template that reads back at its days with
 its peak day (a full year every hour of the first year in its seasons), and the menu is
 driven by the keyboard as the Share menu is; a full year opened in the page is a week each
-season and its peak day, and says so; the climate and the hemisphere sit in the load profile,
-and the hemisphere dates the seasons, is saved, and never asks for a new run; a week in MW opened
+season and its peak day, and says so; the climate sits in the load profile, one select whose
+months date its seasons; a week in MW opened
 from a file sets the peak and the week and solves as in Node; a solar farm from a file reports
 the capacity factor its hours give, and its template menu cuts its day into a weekday and a
 weekend day for each season; a v1 mini cache (a residential week, a day drawn by hand)

@@ -27,8 +27,8 @@
    - A year of hours (dated rows over more than a week, or 8,760 or 8,784
      rows in order from 1 January of the plan's first year) is averaged into
      a typical week for each season, Monday to Sunday: each day in the season
-     its Season column names, else the one its month falls in for the
-     hemisphere (CX.seasonOfMonth). A load's day with the year's highest
+     its Season column names, else the one its month falls in, as the
+     climate dates its seasons (CX.seasonOfMonth). A load's day with the year's highest
      hour, or the day its Season column marks peak, is its peak day, and is
      left out of the averages.
    - Units: per unit (a load's highest hour is its peak; a farm's share of
@@ -234,12 +234,12 @@
   // A season cell: its season, '*' for every season or none named (a bare "Peak day"), or null if it is not one.
   function seasonCell(c){ var hd = headerOf(c); return hd.season || (hd.every || isPeak(c) ? '*' : null); }
 
-  // The names of the seasons each climate has, and which one the file's fit.
+  // The names of the seasons each climate has, and which one the file's fit: the one now, else one with its months on the same side of the year.
   function climateFor(names, cur){
     var fits = function(k){ var own2 = CX.CLIMATES[k].seasons.map(function(s){ return s.name; }); return names.every(function(n){ return own2.indexOf(n) >= 0; }); };
     if(fits(cur)) return cur;
-    var keys = Object.keys(CX.CLIMATES).filter(fits);
-    return keys.length ? keys[0] : null;
+    var keys = Object.keys(CX.CLIMATES).filter(fits), north = !!(CX.CLIMATES[cur] && CX.CLIMATES[cur].north);
+    return keys.filter(function(k){ return CX.CLIMATES[k].north === north; })[0] || keys[0] || null;
   }
   var DAYS_OF = { day: [null], day2: ['wd', 'we'], week: [0, 1, 2, 3, 4, 5, 6] };
   function slotName(r, di, h){
@@ -257,7 +257,6 @@
   /* Read a file's rows as one profile.
      opts: { kind: 'load' | 'pv' | 'wind', who: its name for messages,
              climate: the climate's key now, peak: the peak demand now (MW),
-             hemi: 's' or 'n', whose months a year of hours is sorted by,
              year: the plan's first year, where a year in order begins,
              current(climate): the profile now as the run takes it, a grid
              ({ r, s }: a load per unit of the year's peak, a farm's
@@ -270,7 +269,7 @@
     var out = { errors: [], ts: null, notes: [], peak: null, climate: null, used: null };
     var fail = function(msg){ out.errors.push(msg); out.ts = null; return out; };
     var seasonNames = function(k){ return CX.CLIMATES[k].seasons.map(function(s){ return s.name; }); };
-    var hemi = opts.hemi === 'n' ? 'n' : 's', C0 = opts.climate;
+    var C0 = opts.climate;
     // Notes and blank rows are skipped; line numbers are the file's.
     var rows = [], lineNo = [];
     rows0.forEach(function(r, i){
@@ -597,7 +596,7 @@
       var cl = climateOf(nm);
       if(!cl) return out;
       var seasons = seasonNames(cl), byMonth = 0;
-      recs.forEach(function(rc){ rc.season = rc.named || seasons[CX.seasonOfMonth(cl, hemi, rc.mon)]; if(!rc.named) byMonth++; });
+      recs.forEach(function(rc){ rc.season = rc.named || seasons[CX.seasonOfMonth(cl, rc.mon)]; if(!rc.named) byMonth++; });
       // Values, in the file's unit.
       var neg = 0;
       recs.forEach(function(rc){
@@ -649,8 +648,7 @@
       }
       var days = Object.keys(dayset).length;
       out.notes.push('A year of hours, ' + dayText(minDay) + ' to ' + dayText(maxDay) + ' (' + days.toLocaleString('en-AU') + ' days), is averaged into a typical week for each season, Monday to Sunday, ' +
-        (byMonth ? (byMonth < recs.length ? 'by its Season column, and the rest ' : '') + 'by month for the ' + CX.HEMIS[hemi].toLowerCase() + ' hemisphere (' +
-          list(CX.CLIMATES[cl].seasons.map(function(s, z){ var m = CX.seasonMonths(cl, hemi, z); return s.name + ' ' + CX.MONTHS[m[0]] + ' to ' + CX.MONTHS[m[m.length - 1]]; })) + ').' : 'by its Season column.'));
+        (byMonth ? (byMonth < recs.length ? 'by its Season column, and the rest ' : '') + 'by month (' + monthsOf(cl) + ').' : 'by its Season column.'));
       if(pk) out.notes.push((auto ? 'Its highest hour, ' + two(auto.h) + ':00 on ' + dayText(pkDay) + ', makes that day' : 'The day its Season column marks, ' + dayText(pkDay) + ', is') +
         ' the still, overcast peak day (' + pkS + '), left out of the typical weeks.' + (pkGap ? ' ' + pkGap + ' of its hours missing take the typical week’s.' : ''));
       if(thin) out.notes.push(thin + ' hour' + (thin > 1 ? 's' : '') + ' of the typical weeks had no day of that weekday in the season, and take the season’s average hour.');
@@ -708,15 +706,14 @@
       if(pkv) res.pk = { s: pk.s, h: pkv.map(per) };
       if(load && unit === 'mw') out.peak = r4(most * peak0);
 
-      // A temperate load that peaks in winter is winter-peaking, and in summer summer-peaking: its peak day says, else its typical days.
-      if(load && (climate === 'sum' || climate === 'win')){
+      // A temperate load that peaks in winter is winter-peaking, and in summer summer-peaking, its months kept: its peak day says, else its typical days.
+      if(load && CX.CLIMATES[climate].peaks){
         var hot = res.pk && (res.pk.s === 'Summer' || res.pk.s === 'Winter') ? res.pk.s : null;
         if(!hot && res.s.Summer && res.s.Winter){
           var ms = Math.max.apply(null, res.s.Summer), mw = Math.max.apply(null, res.s.Winter);
           hot = mw > ms ? 'Winter' : ms > mw ? 'Summer' : null;
         }
-        if(hot === 'Winter' && climate === 'sum') climate = 'win';
-        else if(hot === 'Summer' && climate === 'win') climate = 'sum';
+        if(hot && hot !== CX.CLIMATES[climate].peaks) climate = CX.CLIMATES[climate].flip;
       }
       if(climate !== opts.climate){ out.climate = climate; out.notes.push('The climate is now ' + CX.CLIMATES[climate].label.replace(/^./, function(z){ return z.toLowerCase(); }) + ', to match the file.'); }
       out.ts = res;
@@ -730,6 +727,10 @@
     }
   };
   function dayText(day){ var d = new Date(day * 86400000); return d.getUTCDate() + ' ' + CX.MONTHS[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+  // "Summer Dec to Feb, Autumn Mar to May, …" as the climate dates its seasons.
+  function monthsOf(climate){
+    return list(CX.CLIMATES[climate].seasons.map(function(s, i){ var m = CX.seasonMonths(climate, i); return s.name + ' ' + CX.MONTHS[m[0]] + ' to ' + CX.MONTHS[m[m.length - 1]]; }));
+  }
 
   /* ── The templates: a profile as the run takes it, with notes on every way
      it can be filled in ──
@@ -750,23 +751,21 @@
     return { r: g.r, s: { '*': out } };
   };
   // The first day of year y in season si, where the full-year template puts the peak day.
-  function peakDate(y, climate, hemi, si){
+  function peakDate(y, climate, si){
     var Y = CX.yearDays(y);
-    for(var k = 0; k < Y.n; k++) if(CX.seasonOfMonth(climate, hemi, new Date((Y.d0 + k) * 86400000).getUTCMonth()) === si) return Y.d0 + k;
+    for(var k = 0; k < Y.n; k++) if(CX.seasonOfMonth(climate, new Date((Y.d0 + k) * 86400000).getUTCMonth()) === si) return Y.d0 + k;
     return Y.d0;
   }
   var DAY_WORDS = { day: 'Day "Every day"', day2: 'Day Weekday or Weekend', week: 'Day Mon to Sun' };
   var WHAT = { day: 'one typical day', day2: 'a weekday and a weekend day', week: 'a typical week, Monday to Sunday' };
-  // opts: { kind, who, climate, r, seasonal, year (for a whole year), hemi }.
+  // opts: { kind, who, climate, r, seasonal, year (for a whole year) }.
   CX.templateNotes = function(o){
     var C = CX.CLIMATES[o.climate], names = C.seasons.map(function(s){ return s.name; }), load = o.kind === 'load', per = 24 * CX.RES_DAYS[o.r];
     var lines = [];
     if(o.year){
-      var Y = CX.yearDays(o.year), hemi = o.hemi === 'n' ? 'n' : 's';
+      var Y = CX.yearDays(o.year);
       lines.push('# Capacity Expansion Planner: ' + o.who + ', ' + C.label + '. Every hour of ' + o.year + ' (' + (24 * Y.n).toLocaleString('en-AU') + ' rows), averaged into a typical week for each season, Monday to Sunday, when it is opened.');
-      lines.push('# Rows: Time, an hour a row in order. Season: the season its day goes into, by month for the ' + CX.HEMIS[hemi].toLowerCase() + ' hemisphere (' +
-        list(C.seasons.map(function(s, i){ var m = CX.seasonMonths(o.climate, hemi, i); return s.name + ' ' + CX.MONTHS[m[0]] + ' to ' + CX.MONTHS[m[m.length - 1]]; })) +
-        '). Change any to suit, or leave the column out to go by the months.');
+      lines.push('# Rows: Time, an hour a row in order. Season: the season its day goes into, by month (' + monthsOf(o.climate) + '). Change any to suit, or leave the column out to go by the months.');
     } else {
       lines.push('# Capacity Expansion Planner: ' + o.who + ', ' + C.label + '. ' + WHAT[o.r].replace(/^./, function(z){ return z.toUpperCase(); }) +
         (o.seasonal ? ' for each season (' + list(names) + ')' : ', the same in every season') + ', then the still, overcast peak day.');
@@ -787,18 +786,18 @@
   // A value to the last digit it holds: the shortest text that reads back to it.
   function val(v){ return String(+v || 0); }
   /* opts: { kind, who, climate, grid: { r, s } (each season, or '*'),
-             seasonal, peak: { s, h } (its season and 24 hours), year, hemi }.
+             seasonal, peak: { s, h } (its season and 24 hours), year }.
      A whole year (year set) takes the grid's week for each season. */
   CX.templateCsv = function(opts){
     var g = opts.grid, C = CX.CLIMATES[opts.climate], names = C.seasons.map(function(s){ return s.name; });
     var head = opts.kind === 'load' ? 'Load [p.u.]' : 'Output [p.u.]', pk = opts.peak, out = [];
     if(opts.year){
-      var hemi = opts.hemi === 'n' ? 'n' : 's', Y = CX.yearDays(opts.year), weeks = names.map(function(n){ return expand(g, 'week', n); });
-      var pkSi = pk ? Math.max(0, names.indexOf(pk.s)) : -1, pkDay = pk ? peakDate(opts.year, opts.climate, hemi, pkSi) : null;
-      CX.templateNotes({ kind: opts.kind, who: opts.who, climate: opts.climate, r: 'week', year: opts.year, hemi: hemi }).forEach(function(l){ out.push(csvCell(l)); });
+      var Y = CX.yearDays(opts.year), weeks = names.map(function(n){ return expand(g, 'week', n); });
+      var pkSi = pk ? Math.max(0, names.indexOf(pk.s)) : -1, pkDay = pk ? peakDate(opts.year, opts.climate, pkSi) : null;
+      CX.templateNotes({ kind: opts.kind, who: opts.who, climate: opts.climate, r: 'week', year: opts.year }).forEach(function(l){ out.push(csvCell(l)); });
       out.push(['Time', 'Season', head].join(','));
       for(var k = 0; k < Y.n; k++){
-        var day = Y.d0 + k, dt = new Date(day * 86400000), si = CX.seasonOfMonth(opts.climate, hemi, dt.getUTCMonth()), wd = (dt.getUTCDay() + 6) % 7;
+        var day = Y.d0 + k, dt = new Date(day * 86400000), si = CX.seasonOfMonth(opts.climate, dt.getUTCMonth()), wd = (dt.getUTCDay() + 6) % 7;
         var date = dt.getUTCFullYear() + '-' + two(dt.getUTCMonth() + 1) + '-' + two(dt.getUTCDate()), isPk = day === pkDay;
         for(var h = 0; h < 24; h++)
           out.push(date + ' ' + two(h) + ':00,' + (isPk ? names[pkSi] + ' peak day' : names[si]) + ',' + val(isPk ? pk.h[h] : weeks[si][wd * 24 + h]));

@@ -286,7 +286,7 @@ console.log('\n── A0 saved plans ──');
   // A v1 plan with the form it was saved with samples the year exactly as v1 did.
   const drawn = Array.from({ length: 24 }, (_, h) => +(0.4 + 0.5 * Math.sin(h / 4) ** 2).toFixed(2));
   let worst = 0, n = 0, wrong = 0;
-  for (const climate of Object.keys(CX.CLIMATES)) for (const sample of CX.SAMPLES) for (const stress of [true, false])
+  for (const climate of ['sum', 'win', 'trop']) for (const sample of CX.SAMPLES) for (const stress of [true, false])
   for (const profile of [...CX.LOAD_KEYS.filter(k => k !== 'flat'), 'custom', 'drawn', 'mars']) {
     const prof = profile === 'drawn' ? drawn : '', form = profile === 'drawn' ? 'custom' : profile;
     const raw = { v: 1, tech: [{ id: 1, kind: 'pv', cf: 0.21 }, { id: 2, kind: 'wind', cf: 0.37 }, { id: 3, kind: 'firm' }], prof };
@@ -609,12 +609,12 @@ console.log('\n── A5 profiles from a file ──');
     const Sx = CX.sample(m, Object.assign({}, o, { stress: true })), a = seriesOf(m, Sx, who), k = Sx.days.findIndex(d => d.stress);
     return { s: Sx.seasons[Sx.days[k].s].name, h: a.slice(k * 24, k * 24 + 24) };
   };
-  function template(m, o, who, key, hemi) {
+  function template(m, o, who, key) {
     const S = CX.sample(m, o), kind = kindOf(m, who), year = key === 'year', r = year ? 'week' : key.split('.')[0], seasonal = /\.s$/.test(key);
     let g = CX.gridOf(S, seriesOf(m, S, who), r);
     if (!seasonal && !year) g = CX.everySeason(g, o.climate);
-    const text = CX.templateCsv({ kind, who: 'it', climate: o.climate, grid: g, seasonal, peak: peakOf(m, o, who), year: year ? o.start : null, hemi });
-    const got = CX.readProfileFile(CX.csvRows(text), { kind, who: 'It', climate: o.climate, peak: o.peak, hemi, year: o.start, current: nowOf(m, o, kind, who === 'load' ? null : m.tech.find(x => x.id === who)) });
+    const text = CX.templateCsv({ kind, who: 'it', climate: o.climate, grid: g, seasonal, peak: peakOf(m, o, who), year: year ? o.start : null });
+    const got = CX.readProfileFile(CX.csvRows(text), { kind, who: 'It', climate: o.climate, peak: o.peak, year: o.start, current: nowOf(m, o, kind, who === 'load' ? null : m.tech.find(x => x.id === who)) });
     return { text, got, g };
   }
   // The plan with profiles swapped for files read back, saved and opened again as the mini cache would.
@@ -647,14 +647,14 @@ console.log('\n── A5 profiles from a file ──');
   }
   let one = 0, all = 0, yr = 0, yrWeek = 0, flipped = 0, tplBad = [];
   plans.forEach((c, ci) => {
-    const m = CX.load(c.plan), o = CX.options({ climate: c.climate, stress: c.stress }), S = CX.sample(m, o), hemi = ci % 2 ? 'n' : 's';
+    const m = CX.load(c.plan), o = CX.options({ climate: c.climate, stress: c.stress }), S = CX.sample(m, o);
     const whos = ['load', 1, 2], back = {};
     // A load's file whose peak day is in winter makes a temperate climate winter-peaking (and in summer, summer-peaking), which changes nothing a file-run load or a farm runs on.
     let o2 = o;
-    const flips = got => got.climate && ['sum', 'win'].indexOf(got.climate) >= 0 && ['sum', 'win'].indexOf(c.climate) >= 0;
+    const flips = got => got.climate && got.climate === CX.CLIMATES[c.climate].flip;
     for (const who of whos) {
       const own = CX.need(profOf(m, who), kindOf(m, who) === 'load' ? 'load' : kindOf(m, who));
-      const { got } = template(m, o, who, own + '.s', hemi);
+      const { got } = template(m, o, who, own + '.s');
       if (got.errors.length || (got.climate && !(who === 'load' && flips(got)))) { tplBad.push(ci + ' ' + who + ': ' + (got.errors[0] || got.climate)); continue; }
       if (got.climate) { o2 = Object.assign({}, o, { climate: got.climate }); flipped++; }
       back[who] = got.ts;
@@ -666,7 +666,7 @@ console.log('\n── A5 profiles from a file ──');
     if (S.sample === 'week' || ci % 5 === 0) {
       const yb = {};
       for (const who of whos) {
-        const { got } = template(m, o, who, 'year', hemi);
+        const { got } = template(m, o, who, 'year');
         if (got.errors.length || (got.climate && !(who === 'load' && flips(got))) || got.ts.r !== 'week') { tplBad.push('plan ' + ci + ', ' + who + ', a year: ' + (got.errors[0] || got.climate || got.ts.r)); continue; }
         yb[who] = got.ts;
         if (S.sample !== 'week') {
@@ -682,7 +682,7 @@ console.log('\n── A5 profiles from a file ──');
     one + ' profiles (load, solar and wind, ' + plans.length + ' plans: every climate, daily variability, still day and shape, and 400 seeded random ones with files, peak days and seasons missing), ' + all + ' plans with all three swapped (' + flipped + ' whose file peaks in the other temperate season, which flips summer and winter peaking and changes nothing it runs); every weight, demand and availability to the last bit' +
     (tplBad.length ? '; ' + tplBad.slice(0, 3).join(' | ') : ''));
   check('A5 a whole year written from a profile reads back to the week each season it runs', tplBad.filter(x => /year/.test(x)).length === 0,
-    yrWeek + ' plans that run a week run on the very same hours with all three from a year (both hemispheres); ' + yr + ' years from plans that run fewer days give the same week to the last bit');
+    yrWeek + ' plans that run a week run on the very same hours with all three from a year (every climate, north and south); ' + yr + ' years from plans that run fewer days give the same week to the last bit');
 
   // Every template the menu offers reads back at its days: each season its own as the run takes it, or one for every season, their average by days.
   let menuN = 0;
@@ -691,7 +691,7 @@ console.log('\n── A5 profiles from a file ──');
     const m = CX.load({ v: 2, load: L, tech: [{ id: 1, kind: 'pv', cf: 0.21, prof: { dv: 1 } }, { id: 2, kind: 'wind', cf: 0.33 }] }), o = CX.options({ climate });
     const S = CX.sample(m, o);
     for (const who of ['load', 1, 2]) for (const key of ['day', 'day2', 'week', 'day.s', 'day2.s', 'week.s']) {
-      const { got, g, text } = template(m, o, who, key, 's'), r = key.split('.')[0], seasonal = /\.s$/.test(key);
+      const { got, g, text } = template(m, o, who, key), r = key.split('.')[0], seasonal = /\.s$/.test(key);
       menuN++;
       const rows = text.split('\r\n').filter(l => l && !/^"?#/.test(l)).length - 1, want = 24 * NDAYS[r] * (seasonal ? S.seasons.length : 1) + 24;
       if (got.errors.length || got.ts.r !== r || got.climate || rows !== want) { menuBad.push(climate + ' ' + who + ' ' + key + ': ' + (got.errors[0] || got.ts.r + ', ' + rows + ' rows')); continue; }
@@ -717,10 +717,11 @@ console.log('\n── A5 profiles from a file ──');
      (the load's highest hour's, or the one marked) left out of them. */
   const MON = { sum: ['Summer', 'Summer', 'Autumn', 'Autumn', 'Autumn', 'Winter', 'Winter', 'Winter', 'Spring', 'Spring', 'Spring', 'Summer'],
                 trop: ['Wet season', 'Wet season', 'Wet season', 'Wet season', 'Dry season', 'Dry season', 'Dry season', 'Dry season', 'Dry season', 'Dry season', 'Wet season', 'Wet season'] };
-  const seasonAt = (climate, hemi, mon) => MON[climate === 'win' ? 'sum' : climate][hemi === 'n' ? (mon + 6) % 12 : mon];
-  function yearWant(hours, climate, hemi, load, over) {
+  // The south's months, as the climate keys without -n have them; the north's six months on.
+  const seasonAt = (climate, mon) => { const b = climate.replace(/-n$/, ''); return MON[b === 'win' ? 'sum' : b][climate === b ? mon : (mon + 6) % 12]; };
+  function yearWant(hours, climate, load) {
     // hours: [{ t (hours since 1970), v, season? , pk? }]
-    const recs = hours.map(x => { const d = new Date(x.t * 3600e3); return Object.assign({}, x, { day: Math.floor(x.t / 24), h: d.getUTCHours(), wd: (d.getUTCDay() + 6) % 7, season: x.season || seasonAt(climate, hemi, d.getUTCMonth()) }); });
+    const recs = hours.map(x => { const d = new Date(x.t * 3600e3); return Object.assign({}, x, { day: Math.floor(x.t / 24), h: d.getUTCHours(), wd: (d.getUTCDay() + 6) % 7, season: x.season || seasonAt(climate, d.getUTCMonth()) }); });
     let pkDay = null, pkS = '';
     const marked = recs.filter(x => x.pk);
     if (marked.length) { pkDay = marked[0].day; pkS = marked[0].season; }
@@ -741,35 +742,35 @@ console.log('\n── A5 profiles from a file ──');
   const loadYear = (t, R) => { const d = new Date(t * 3600e3), h = d.getUTCHours(), m = d.getUTCMonth(); return +(600 + 300 * Math.sin(Math.PI * Math.max(0, h - 6) / 15) + 150 * Math.cos(2 * Math.PI * m / 12) + 80 * R() - ((d.getUTCDay() % 6 === 0) ? 90 : 0)).toFixed(1); };
   const sunYear = (t, R) => { const d = new Date(t * 3600e3), h = d.getUTCHours(); return +(Math.max(0, Math.sin(Math.PI * (h - 6) / 12)) * (0.5 + 0.5 * R())).toFixed(4); };
   const years = [];
-  { // In order, a value a row with no labels, the southern hemisphere.
+  { // In order, a value a row with no labels, summer December to February.
     const hrs = yearOf(2026, 71, loadYear);
-    years.push(['8,760 rows in order, no labels, south', hrs.map(x => x.v).join('\n'), { kind: 'load', climate: 'sum', hemi: 's', year: 2026 }, yearWant(hrs, 'sum', 's', true)]);
+    years.push(['8,760 rows in order, no labels, summer Dec to Feb', hrs.map(x => x.v).join('\n'), { kind: 'load', climate: 'sum', year: 2026 }, yearWant(hrs, 'sum', true)]);
   }
   { // Dated in MW, the north: the peak demand is the year's highest hour.
     const hrs = yearOf(2027, 72, loadYear);
-    years.push(['ISO date-times in MW, north', 'Time,Demand [MW]\n' + hrs.map(x => ymd(x.t) + ',' + x.v).join('\n'), { kind: 'load', climate: 'sum', hemi: 'n', year: 2026 }, yearWant(hrs, 'sum', 'n', true), { peak: Math.max(...hrs.map(x => x.v)) }]);
+    years.push(['ISO date-times in MW, summer Jun to Aug', 'Time,Demand [MW]\n' + hrs.map(x => ymd(x.t) + ',' + x.v).join('\n'), { kind: 'load', climate: 'sum-n', year: 2026 }, yearWant(hrs, 'sum-n', true), { peak: Math.max(...hrs.map(x => x.v)) }]);
   }
   { // A Date and an Hour 1 to 24, the hour ending; tropical.
     const hrs = yearOf(2026, 73, loadYear);
-    years.push(['Date and Hour 1 to 24, tropical', 'Date,Hour,Load\n' + hrs.map(x => ymd(x.t).slice(0, 10) + ',' + (new Date(x.t * 3600e3).getUTCHours() + 1) + ',' + x.v).join('\n'), { kind: 'load', climate: 'trop', hemi: 's', year: 2026 }, yearWant(hrs, 'trop', 's', true)]);
+    years.push(['Date and Hour 1 to 24, tropical, wet May to Oct', 'Date,Hour,Load\n' + hrs.map(x => ymd(x.t).slice(0, 10) + ',' + (new Date(x.t * 3600e3).getUTCHours() + 1) + ',' + x.v).join('\n'), { kind: 'load', climate: 'trop-n', year: 2026 }, yearWant(hrs, 'trop-n', true)]);
   }
   { // Times 01:00 to the next year's 00:00, the hour ending; month first.
     const hrs = yearOf(2026, 74, loadYear), us = t => { const d = new Date(t * 3600e3); return (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear() + ' ' + d.getUTCHours() + ':00'; };
-    years.push(['M/D/YYYY times 01:00 to 00:00, the hour ending', 'Timestamp,Load\n' + hrs.map(x => us(x.t + 1) + ',' + x.v).join('\n'), { kind: 'load', climate: 'win', hemi: 's', year: 2026 }, yearWant(hrs, 'win', 's', true)]);
+    years.push(['M/D/YYYY times 01:00 to 00:00, the hour ending', 'Timestamp,Load\n' + hrs.map(x => us(x.t + 1) + ',' + x.v).join('\n'), { kind: 'load', climate: 'win', year: 2026 }, yearWant(hrs, 'win', true)]);
   }
   { // A leap year in order from 1 January of the plan's first year, 8,784 rows.
     const hrs = yearOf(2028, 75, loadYear);
-    years.push(['8,784 rows in order, a leap year', 'Load\n' + hrs.map(x => x.v).join('\n'), { kind: 'load', climate: 'sum', hemi: 'n', year: 2028 }, yearWant(hrs, 'sum', 'n', true)]);
+    years.push(['8,784 rows in order, a leap year, winter-peaking Dec to Feb', 'Load\n' + hrs.map(x => x.v).join('\n'), { kind: 'load', climate: 'win-n', year: 2028 }, yearWant(hrs, 'win-n', true)]);
   }
   { // A Season column: March goes to Winter, and one day is marked the peak day.
     const hrs = yearOf(2026, 76, loadYear), mk = Math.floor(Date.UTC(2026, 6, 15) / 864e5);
     hrs.forEach(x => { const d = new Date(x.t * 3600e3); if (d.getUTCMonth() === 2) x.season = 'Winter'; if (Math.floor(x.t / 24) === mk) { x.pk = true; x.season = 'Winter'; } });
-    years.push(['a Season column, March in Winter, a day marked peak', 'Time,Season,Load\n' + hrs.map(x => ymd(x.t) + ',' + (x.pk ? 'Winter peak day' : x.season || seasonAt('sum', 's', new Date(x.t * 3600e3).getUTCMonth())) + ',' + x.v).join('\n'),
-      { kind: 'load', climate: 'sum', hemi: 's', year: 2026 }, yearWant(hrs, 'sum', 's', true)]);
+    years.push(['a Season column, March in Winter, a day marked peak', 'Time,Season,Load\n' + hrs.map(x => ymd(x.t) + ',' + (x.pk ? 'Winter peak day' : x.season || seasonAt('sum', new Date(x.t * 3600e3).getUTCMonth())) + ',' + x.v).join('\n'),
+      { kind: 'load', climate: 'sum', year: 2026 }, yearWant(hrs, 'sum', true)]);
   }
   { // A solar farm's year: no peak day unless one is marked; its shares as they are.
     const hrs = yearOf(2026, 77, sunYear);
-    years.push(['a solar farm\'s year, no peak day', 'Time,Output\n' + hrs.map(x => ymd(x.t) + ',' + x.v).join('\n'), { kind: 'pv', climate: 'sum', hemi: 's', year: 2026 }, yearWant(hrs, 'sum', 's', false)]);
+    years.push(['a solar farm\'s year, no peak day, tropical', 'Time,Output\n' + hrs.map(x => ymd(x.t) + ',' + x.v).join('\n'), { kind: 'pv', climate: 'trop', year: 2026 }, yearWant(hrs, 'trop', false)]);
   }
   let yOk = 0;
   const yBad = [];
@@ -784,7 +785,7 @@ console.log('\n── A5 profiles from a file ──');
     else yOk++;
   }
   check('A5 a year of hours is averaged into a typical week for each season, its peak day kept apart', yBad.length === 0,
-    yOk + ' years (in order and dated, both hemispheres, a leap year, the hour ending, month first, a Season column, a marked peak day, MW, a solar farm), each to an averaging written out here' + (yBad.length ? '; ' + yBad.slice(0, 3).join(' | ') : ''));
+    yOk + ' years (in order and dated, north and south of the equator, a leap year, the hour ending, month first, a Season column, a marked peak day, MW, a solar farm), each to an averaging written out here' + (yBad.length ? '; ' + yBad.slice(0, 3).join(' | ') : ''));
 
 
   // Every layout the reader promises.
@@ -906,11 +907,11 @@ console.log('\n── A5 profiles from a file ──');
      plan must be the very same, every build and the objective to the digit
      (raw), and its present cost and new capacity to the last bit. */
   console.log('\n── A6 the same plan from its profiles as files ──');
-  const filesFor = (m, o, key, hemi) => {
+  const filesFor = (m, o, key) => {
     const list = [];
     for (const who of ['load', ...m.tech.filter(e => e.kind === 'pv' || e.kind === 'wind').map(e => e.id)]) {
       const own = CX.need(profOf(m, who), who === 'load' ? 'load' : kindOf(m, who)), k = key === 'own' ? own + '.s' : key;
-      const { got } = template(m, o, who, k, hemi);
+      const { got } = template(m, o, who, k);
       if (got.errors.length || got.climate) throw new Error(who + ' ' + k + ': ' + (got.errors[0] || got.climate));
       list.push([who, got.ts]);
     }
@@ -920,19 +921,21 @@ console.log('\n── A5 profiles from a file ──');
   const exactRuns = [];
   for (const key of Object.keys(CX.PRESETS)) for (const stress of [true, false]) {
     if (!stress && key !== 'grow' && key !== 'island') continue;
-    exactRuns.push({ name: '"' + key + '"' + (stress ? '' : ' with no still day'), fields: Object.assign({}, CX.PRESETS[key].fields, { stress }), plan: CX.PRESETS[key].plan, from: [['own', 's']] });
+    exactRuns.push({ name: '"' + key + '"' + (stress ? '' : ' with no still day'), fields: Object.assign({}, CX.PRESETS[key].fields, { stress }), plan: CX.PRESETS[key].plan, from: ['own'] });
   }
-  exactRuns.push({ name: '"island" as a week each season', fields: Object.assign({}, CX.PRESETS.island.fields), plan: Object.assign({}, CX.PRESETS.island.plan, { load: { base: 'res', dv: 1, dm: 'week' } }), from: [['week.s', 's'], ['year', 's'], ['year', 'n']] });
-  exactRuns.push({ name: 'a temperate grid as a week each season', fields: { end: 2031 }, plan: Object.assign({}, CX.PRESETS.grow.plan, { load: { base: 'sys', dv: 1, dm: 'week' } }), from: [['week.s', 's'], ['year', 'n']] });
+  const islandWeek = Object.assign({}, CX.PRESETS.island.plan, { load: { base: 'res', dv: 1, dm: 'week' } });
+  exactRuns.push({ name: '"island" as a week each season', fields: Object.assign({}, CX.PRESETS.island.fields), plan: islandWeek, from: ['week.s', 'year'] });
+  exactRuns.push({ name: '"island" north of the equator as a week each season', fields: Object.assign({}, CX.PRESETS.island.fields, { climate: 'trop-n' }), plan: islandWeek, from: ['year'] });
+  exactRuns.push({ name: 'a temperate grid peaking Jun to Aug as a week each season', fields: { end: 2031, climate: 'sum-n' }, plan: Object.assign({}, CX.PRESETS.grow.plan, { load: { base: 'sys', dv: 1, dm: 'week' } }), from: ['week.s', 'year'] });
   for (const x of exactRuns) {
     const m = CX.load(x.plan), o = CX.options(x.fields), res0 = await CX.solve(psa, CX.load(x.plan), x.fields), out = [];
     let ok = res0.report.ok;
-    for (const [key, hemi] of x.from) {
+    for (const key of x.from) {
       let res1;
-      try { res1 = await CX.solve(psa, filesFor(m, o, key, hemi), x.fields); } catch (e) { ok = false; out.push(key + ': ' + e.message); continue; }
+      try { res1 = await CX.solve(psa, filesFor(m, o, key), x.fields); } catch (e) { ok = false; out.push(key + ': ' + e.message); continue; }
       const same = samePlanAs(res0, res1);
       ok = ok && same;
-      out.push((key === 'own' ? 'each at its own days for each season' : key === 'year' ? 'a year each (' + CX.HEMIS[hemi].toLowerCase() + ')' : 'a week each season') + (same ? '' : ' DIFFERS: ' + e1(res1.raw[2]) + ' against ' + e1(res0.raw[2])));
+      out.push((key === 'own' ? 'each at its own days for each season' : key === 'year' ? 'a year each' : 'a week each season') + (same ? '' : ' DIFFERS: ' + e1(res1.raw[2]) + ' against ' + e1(res0.raw[2])));
     }
     check('A6 ' + x.name + ' from its profiles as files is the very same plan', ok, res0.report.H + ' hours a year × ' + res0.report.K + ', ' + CX.fmt.mw(res0.totals.built) + ' MW, ' + CX.fmt.big(res0.totals.npv, '$') + '; ' + out.join(', '));
   }
@@ -1056,7 +1059,7 @@ console.log('\n── B the page ──');
     return readFileSync(await dl.path(), 'utf8');
   };
   const tplRead = (t, kind) => page.evaluate(([t, kind]) => {
-    const o = __cx.plan(), g = CX.readProfileFile(CX.csvRows(t), { kind, who: 'x', climate: o.climate, peak: 1000, hemi: document.getElementById('cxHemi').value, year: o.start });
+    const o = __cx.plan(), g = CX.readProfileFile(CX.csvRows(t), { kind, who: 'x', climate: o.climate, peak: 1000, year: o.start });
     return g.errors.length ? g.errors[0] : g.ts.r + '|' + Object.keys(g.ts.s).join('/') + '|' + (g.ts.pk ? 'peak day' : 'none');
   }, [t, kind]);
   const dataRows = t => t.split('\r\n').filter(l => l && !/^"?#/.test(l)).length - 1;
@@ -1103,17 +1106,15 @@ console.log('\n── B the page ──');
   const samePlan = (a, b) => a[0] === b[0] && a[1] === b[1] && Math.abs(a[2] - b[2]) <= 1e-9 * Math.abs(b[2]) && a[3].length === b[3].length && a[3].every((x, i) => x[0] === b[3][i][0] && Math.abs(x[1] - b[3][i][1]) < 1e-4);
   check('B a week of the load in MW from a file sets the peak and the week, and solves as here', fileRun.sample === 'week' && fileRun.peak === 1320 && samePlan(fileRun.raw, here2.raw),
     fileRun.sample + ', peak ' + fileRun.peak + ', objective ' + e1(fileRun.raw[2]) + ' to ' + e1(Math.abs(fileRun.raw[2] - here2.raw[2])));
-  // The climate and the hemisphere sit in the load profile; the hemisphere dates the seasons, is saved, and never asks for a new run.
-  const place = await page.evaluate(() => ({ climate: document.getElementById('cxClimate').closest('.field-group').querySelector('.group-title').textContent,
-    hemi: document.getElementById('cxHemi').closest('.field-group').querySelector('.group-title').textContent, note: document.getElementById('climateNote').textContent }));
-  await page.selectOption('#cxHemi', 'n');
-  await page.waitForTimeout(1200);
-  const hemiN = await page.evaluate(() => ({ stale: document.body.classList.contains('is-stale') || document.getElementById('runBtn').classList.contains('needs-run'), note: document.getElementById('climateNote').textContent,
-    saved: (() => { try { return localStorage.getItem('abt:save:capacityexpansion-planner:v1') || ''; } catch (e) { return ''; } })() }));
-  await page.selectOption('#cxHemi', 's');
-  check('B the climate and the hemisphere sit in the load profile; the hemisphere dates the seasons, is saved, and never asks for a new run',
-    place.climate === 'Load profile' && place.hemi === 'Load profile' && /summer \(Dec to Feb\)/.test(place.note) && /summer \(Jun to Aug\)/.test(hemiN.note) && !hemiN.stale && /"v:cxHemi":"n"/.test(hemiN.saved),
-    place.climate + ', ' + hemiN.note.slice(0, 60) + ', stale ' + hemiN.stale);
+  // The climate sits in the load profile, one select that names its months, so the seasons' dates follow it.
+  const place = await page.evaluate(() => ({ group: document.getElementById('cxClimate').closest('.field-group').querySelector('.group-title').textContent,
+    opts: [...document.getElementById('cxClimate').options].map(o => o.value).join(' '), hemi: !!document.getElementById('cxHemi'), note: document.getElementById('climateNote').textContent }));
+  await page.selectOption('#cxClimate', 'sum-n');
+  const north = await page.evaluate(() => document.getElementById('climateNote').textContent);
+  await page.selectOption('#cxClimate', 'sum');
+  check('B the climate sits in the load profile, one select that names the months, which date its seasons',
+    place.group === 'Load profile' && place.opts === 'sum sum-n win win-n trop trop-n' && !place.hemi && /summer \(Dec to Feb\)/.test(place.note) && /summer \(Jun to Aug\)/.test(north),
+    place.group + ', ' + place.opts + '; ' + north.slice(0, 50));
   // A solar farm from a file in %: the capacity factor its card reports is the run's.
   await page.evaluate(() => document.querySelector('.ctrl-tab[data-tab="tech"]').click());
   const pvId = await page.evaluate(() => __cx.app.model.tech.find(e => e.kind === 'pv').id);
