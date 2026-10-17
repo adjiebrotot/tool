@@ -40,11 +40,13 @@
 
   /* ── The hour marker, and a click that moves it ── */
   var noMarker = false;  // while a GIF takes a still, which draws the marker itself
-  // Where hour h sits on a chart, or null when it is off the axis.
+  /* Where hour h sits on a chart, or null when it is off the axis. Every chart
+     puts hour t at x = t (the commitment's bars are centred on it), so one
+     hour is at one place on all of them. */
   function hourPx(chart, h){
     var x = chart.scales.x, area = chart.chartArea;
     if(!x || !area) return null;
-    var px = chart.config.type === 'bar' ? x.getPixelForValue(h + 0.5) : x.getPixelForValue(h);
+    var px = x.getPixelForValue(h);
     return isFinite(px) && px >= area.left - 0.5 && px <= area.right + 0.5 ? px : null;
   }
   var HOUR_PLUGIN = {
@@ -67,8 +69,7 @@
     if(!ctx || !ctx.onHour) return;
     var x = chart.scales.x, v = x.getValueForPixel(evt.x);
     if(!isFinite(v)) return;
-    var h = chart.config.type === 'bar' ? Math.floor(v) : Math.round(v);
-    ctx.onHour(Math.max(0, Math.min(ctx.res.T - 1, h)));
+    ctx.onHour(Math.max(0, Math.min(ctx.res.T - 1, Math.round(v))));
   }
 
   // An axis tick: whole prices without the cents.
@@ -281,8 +282,26 @@
     return ch;
   }
 
+  /* A unit's name on the commitment chart's axis: two lines rather than one
+     long one, so a long name does not narrow the chart, or one shortened line
+     when the rows are too close for two. The hover keeps the whole name. */
+  var NAME_LINE = 14;
+  function axisName(s, twoFit){
+    s = String(s);
+    if(s.length <= NAME_LINE) return s;
+    if(!twoFit) return s.slice(0, NAME_LINE + 3) + '…';
+    var words = s.split(' '), a = '', i = 0;
+    while(i < words.length && (a ? a.length + 1 : 0) + words[i].length <= NAME_LINE){ a += (a ? ' ' : '') + words[i]; i++; }
+    var rest = words.slice(i).join(' ');
+    if(!a){ a = s.slice(0, NAME_LINE - 1) + '-'; rest = s.slice(NAME_LINE - 1); }
+    return [a, rest.length > NAME_LINE ? rest.slice(0, NAME_LINE - 1) + '…' : rest];
+  }
+
   function commitChart(res, model, d){
     var H = res.T, F = ED.fmt;
+    // Hour t's bar runs from t - 0.5 to t + 0.5, so its middle is where the
+    // line charts put hour t, and the axis runs from the first hour's to the last's.
+    var x0 = H > 1 ? 0 : -0.5, x1 = H > 1 ? H - 1 : 0.5;
     var gens = units(model, res).filter(function(e){ return res.dev[e.id].status; });
     var names = gens.map(function(e){ return ED.nameOf(e); });
     var on = [], onColour = [], starts = [];
@@ -290,8 +309,8 @@
       var r = res.dev[e.id], c = seriesColour(units(model, res).indexOf(e));
       for(var t = 0; t < H; t++){
         var s = r.status[t];
-        if(s > 1e-3){ on.push({ x: [t, t + 1], y: names[i], t: t, id: e.id, s: s }); onColour.push(alpha(c, 0.25 + 0.6 * Math.min(1, s))); }
-        if(r.su[t] > 0.5) starts.push({ x: t, y: names[i], t: t, id: e.id });
+        if(s > 1e-3){ on.push({ x: [t - 0.5, t + 0.5], y: names[i], t: t, id: e.id, s: s }); onColour.push(alpha(c, 0.25 + 0.6 * Math.min(1, s))); }
+        if(r.su[t] > 0.5) starts.push({ x: Math.max(x0, t - 0.5), y: names[i], t: t, id: e.id });
       }
     });
     var accent = cssVar('--text');
@@ -304,7 +323,7 @@
     var ch = make('commit', {
       type: 'bar', data: { labels: names, datasets: ds },
       options: (function(){
-        var o = baseOptions({ H: H + 1, mode: 'nearest', fit: false, zoom: { min: 0, max: H, points: H },
+        var o = baseOptions({ H: H, mode: 'nearest', fit: false, zoom: { min: x0, max: x1, points: H },
           callbacks: {
             title: function(items){ return items.length ? items[0].raw.y + ', ' + ED.hourLabel(items[0].raw.t, H, startOf()) : ''; },
             label: function(c){
@@ -319,11 +338,14 @@
           },
           scales: function(grid, muted){
             return {
-              x: xAxis(H, grid, muted, { type: 'linear', min: 0, max: H,
-                   ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, font: { size: 11 }, stepSize: 3,
-                            callback: function(v){ return v === H ? '' : tickText(this, Math.round(v), H); } },
+              x: xAxis(H, grid, muted, { type: 'linear', min: x0, max: x1,
+                   ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, font: { size: 11 }, stepSize: 3, includeBounds: false,
+                            callback: function(v){ return Math.abs(v - Math.round(v)) > 1e-9 ? '' : tickText(this, Math.round(v), H); } },
                    afterBuildTicks: clockTicks(H) }),
-              y: { type: 'category', title: { display: true, text: 'Unit', color: muted, font: { size: 11 } }, ticks: { color: muted, font: { size: 11 } }, grid: { color: grid, offset: true } }
+              y: { type: 'category', title: { display: true, text: 'Unit', color: muted, font: { size: 11 } },
+                   ticks: { color: muted, font: { size: 11 },
+                            callback: function(v){ return axisName(this.getLabelForValue(v), (this.height || 300) / Math.max(1, names.length) >= 30); } },
+                   grid: { color: grid, offset: true } }
             };
           } });
         o.indexAxis = 'y';
@@ -437,7 +459,8 @@
     resetZoom: function(key){ var c = charts[CANVAS[key]]; if(c) c.resetZoom(); },
     png: chartPng,
     svg: chartSvg,
-    still: chartStill
+    still: chartStill,
+    stillEdges: stillEdges
   };
   function destroy(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
 
@@ -508,16 +531,52 @@
       return new Promise(function(resolve, reject){ c.toBlob(function(b){ if(b) resolve(b); else reject(new Error('The image could not be made.')); }, 'image/png'); });
     });
   }
-  /* A chart for a GIF of the hours: drawn once at the desktop size, 1x, on bg,
-     without the hour marker, which marker(g, x, y, h) draws on each frame. */
-  function chartStill(key, chartTitle, bg, fg){
+  // fn(chart, canvas) with the chart laid out as an export draws it: at the desktop size, unfolded.
+  function atExportSize(key, fn){
     var canvasId = CANVAS[key], chart = charts[canvasId];
-    if(!chart || !ctx || !ctx.res) return null;
+    if(!chart) return null;
     var card = $(canvasId).closest('.chart-card'), folded = !!(card && card.classList.contains('is-folded'));
     if(folded) card.classList.remove('is-folded');
+    try { return SharedExport.atDesktopSize(canvasId, function(){ return fn(chart, $(canvasId)); }); }
+    finally { if(folded) card.classList.add('is-folded'); }
+  }
+  /* A GIF's charts sit one above another with one hour marker moving down
+     them all, so their plot areas share both edges: the widest axes on each
+     side among them (stillEdges), every chart padded out to those (padTo). */
+  function stillEdges(keys){
+    var e = { left: 0, right: 0 };
+    keys.forEach(function(k){
+      atExportSize(k, function(chart){
+        e.left = Math.max(e.left, chart.chartArea.left);
+        e.right = Math.max(e.right, chart.width - chart.chartArea.right);
+      });
+    });
+    return e;
+  }
+  // Pads a chart until its plot area runs from edge.left to edge.right short of
+  // its right side. Returns the padding to put back.
+  function padTo(chart, edge){
+    var lay = chart.options.layout, was = lay.padding, pl = 0, pr = 0;
+    for(var i = 0; i < 4; i++){
+      var dl = edge.left - chart.chartArea.left, dr = edge.right - (chart.width - chart.chartArea.right);
+      if(Math.abs(dl) < 0.5 && Math.abs(dr) < 0.5) break;
+      pl = Math.max(0, pl + dl); pr = Math.max(0, pr + dr);
+      lay.padding = { left: pl, right: pr, top: 0, bottom: 0 };
+      chart.update('none');
+      lay = chart.options.layout;
+    }
+    return was;
+  }
+  /* A chart for a GIF of the hours: drawn once at the desktop size, 1x, on bg,
+     without the hour marker, which marker(g, x, y, h) draws on each frame.
+     With edge (from stillEdges), its plot area spans exactly that. */
+  function chartStill(key, chartTitle, bg, fg, edge){
+    if(!charts[CANVAS[key]] || !ctx || !ctx.res) return null;
+    var padded = false, was;
     try {
-      return SharedExport.atDesktopSize(canvasId, function(){
-        var src = $(canvasId), dpr = window.devicePixelRatio || 1, FONT = '"DM Sans", sans-serif';
+      return atExportSize(key, function(chart, src){
+        if(edge){ was = padTo(chart, edge); padded = true; }
+        var dpr = window.devicePixelRatio || 1, FONT = '"DM Sans", sans-serif';
         noMarker = true;
         chart.draw();
         var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
@@ -548,7 +607,8 @@
         for(var h = 0; h < ctx.res.T; h++) xs.push(hourPx(chart, h));
         var top = titleH + chart.chartArea.top, bottom = titleH + chart.chartArea.bottom, accent = cssVar('--accent');
         noMarker = false;
-        chart.draw();
+        if(padded){ chart.options.layout.padding = was; padded = false; chart.update('none'); }
+        else chart.draw();
         return {
           canvas: c, w: c.width, h: c.height,
           marker: function(g2, x0, y0, hr){
@@ -563,7 +623,7 @@
       });
     } finally {
       noMarker = false;
-      if(folded) card.classList.add('is-folded');
+      if(padded){ var ch = charts[CANVAS[key]]; ch.options.layout.padding = was; ch.update('none'); }
     }
   }
   function legendIdOf(key){ return key + 'Legend'; }

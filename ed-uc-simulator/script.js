@@ -1789,7 +1789,9 @@
     if(series && res && res.T > 1){
       ctx.series = { step: playStep(res.T), sub: function(h){ return exportSub(res, h); } };
       var paint = app.paint(), bg = paint('--panel'), fg = paint('--text');
-      ctx.charts = (picked || []).map(function(k){ return EDCharts.still(k, CHART_NAME[k], bg, fg); }).filter(Boolean);
+      // Every chart's plot area on the same edges, so the hour marker runs straight down them.
+      var keys = (picked || []).filter(function(k){ return EDCharts.get(k); }), edge = EDCharts.stillEdges(keys);
+      ctx.charts = keys.map(function(k){ return EDCharts.still(k, CHART_NAME[k], bg, fg, edge); }).filter(Boolean);
     }
     return ctx;
   }
