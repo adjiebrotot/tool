@@ -115,7 +115,16 @@
     win: 'four seasons, demand highest in winter when the sun is lowest, and windier winters.',
     trop: 'a dry and a wet season, twelve hours of high sun every day, a little cloudier in the wet.'
   };
-  function climateTip(k){ return '<strong>' + CX.CLIMATES[k].label + ':</strong> ' + CLIMATE_TIP[k.replace(/-n$/, '')]; }
+  // Where each is found, the hemisphere its months are, with a country or two.
+  var CLIMATE_WHERE = {
+    sum: 'Southern hemisphere, e.g. Australia, Argentina.',
+    'sum-n': 'Northern hemisphere, e.g. the United States, Japan.',
+    win: 'Southern hemisphere, e.g. New Zealand, South Africa.',
+    'win-n': 'Northern hemisphere, e.g. the United Kingdom, France.',
+    trop: 'Southern tropics, e.g. Indonesia, northern Australia.',
+    'trop-n': 'Northern tropics, e.g. Thailand, India.'
+  };
+  function climateTip(k){ return '<strong>' + CX.CLIMATES[k].label + ':</strong> ' + CLIMATE_TIP[k.replace(/-n$/, '')] + ' ' + CLIMATE_WHERE[k]; }
   var SAMPLE_TIP = {
     day: '<strong>One typical day:</strong> each season is one day, standing for every day of it, as no profile varies from day to day. The quickest.',
     day2: '<strong>A weekday and a weekend day:</strong> each season is a weekday for five days in seven and a weekend day for the other two.',
@@ -132,15 +141,6 @@
     });
     return 'Set by ' + CX.list(who) + '.';
   }
-  // The seasons, their months, and the demand in each the built-in shapes run at.
-  function climateNote(o){
-    var Cl = CX.CLIMATES[o.climate], n = Cl.seasons.length;
-    var names = CX.list(Cl.seasons.map(function(s, i){ var m = CX.seasonMonths(o.climate, i); return s.name.toLowerCase() + ' (' + CX.MONTHS[m[0]] + ' to ' + CX.MONTHS[m[m.length - 1]] + ')'; }));
-    var each = n === 4 ? ', a quarter of the year each' : n === 2 ? ', half the year each' : '';
-    var lv = CX.isCustom(app.model.load) ? 'The load profile’s file sets the demand in each.' :
-      'Demand at ' + CX.list(Cl.seasons.map(function(s){ return F.pct(100 * s.dem) + '%'; })) + ' of the peak.';
-    return '<b>' + n + '</b> seasons, ' + names + each + '. ' + lv;
-  }
   function syncForm(){
     var o = plan(), C = cur();
     Array.prototype.forEach.call(document.querySelectorAll('.cur-prefix'), function(p){ p.textContent = C; p.hidden = !C; });
@@ -156,7 +156,6 @@
     $('cxSample').value = S.sample;
     setTip('sampleTip', SAMPLE_TIP[S.sample]);
     $('sampleWhy').innerHTML = sampleWhy(S);
-    $('climateNote').innerHTML = climateNote(o);
     $('yearsNote').innerHTML = P.length === 1 ? 'One decision year, <b>' + P[0].year + '</b>.' :
       '<b>' + P.length + '</b> decision years: ' + P.map(function(p){ return p.year; }).join(', ') + (P[P.length - 1].years < o.step ? ', the last for ' + P[P.length - 1].years + (P[P.length - 1].years === 1 ? ' year' : ' years') : '') + '.';
     $('loadNote').innerHTML = 'A year of <b>' + F.gwh(S.energy * o.peak) + ' GWh</b> in ' + o.start + ', a load factor of <b>' + F.pct(100 * S.loadFactor) + '%</b>.';

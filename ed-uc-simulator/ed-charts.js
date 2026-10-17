@@ -136,10 +136,36 @@
     for(var k in extra) x[k] = extra[k];
     return x;
   }
+  /* The key. Entries that name a group are grouped: a row a group, led by its
+     name, the groups in the order they first come (the Capacity Expansion
+     Planner's). An entry's own text stays its label alone, as a Share link
+     names it. */
   function renderLegend(legendId, chart, datasets){
     var el = $(legendId);
     if(!el) return;
     el.innerHTML = '';
+    var grouped = datasets.some(function(ds){ return !ds.noLegend && ds.group; }), rows = {}, order = [];
+    el.classList.toggle('legend-grouped', grouped);
+    // A group's entries wrap in a box of their own, so a second line of them
+    // starts under the first entry rather than under the group's name.
+    var rowOf = function(name){
+      if(!grouped) return el;
+      if(!rows[name]){
+        var row = document.createElement('div'), box = document.createElement('div');
+        row.className = 'legend-group';
+        if(name){
+          var head = document.createElement('span');
+          head.className = 'legend-group-label';
+          head.textContent = name + ':';
+          row.appendChild(head);
+        }
+        box.className = 'legend-group-items';
+        row.appendChild(box);
+        rows[name] = box;
+        order.push(row);
+      }
+      return rows[name];
+    };
     datasets.forEach(function(ds, idx){
       if(ds.noLegend) return;
       var item = document.createElement('div');
@@ -152,8 +178,9 @@
         chart.setDatasetVisibility(idx, !hidden);
         chart.update();
       });
-      el.appendChild(item);
+      rowOf(ds.group || '').appendChild(item);
     });
+    order.forEach(function(row){ el.appendChild(row); });
   }
   function make(key, cfg, legendId){
     var id = CANVAS[key];
@@ -172,6 +199,20 @@
     return gens;
   }
 
+  /* A dotted fill: dots of the colour over a pale wash of it, so storage
+     never reads as one more generator. The tile is drawn at the screen's
+     pixel ratio, so the dots stay round and sharp. */
+  function dotFill(fill, dot){
+    var n = 5, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = cv.height = n * k;
+    g.scale(k, k);
+    g.fillStyle = fill; g.fillRect(0, 0, n, n);
+    g.fillStyle = dot;
+    [[1.25, 1.25], [3.75, 3.75]].forEach(function(p){ g.beginPath(); g.arc(p[0], p[1], 0.95, 0, Math.PI * 2); g.fill(); });
+    var pat = g.createPattern(cv, 'repeat');
+    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
+    return pat;
+  }
   function dispatchChart(res, model, d){
     var H = res.T, F = ED.fmt, cur = d.cur;
     var labels = hourLabels(H), ds = [];
@@ -181,19 +222,21 @@
     gens.forEach(function(e, i){
       var c = seriesColour(i);
       ds.push({ label: ED.nameOf(e), data: res.dev[e.id].p.map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.55),
-                borderWidth: 1.2, pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'gen', id: e.id });
+                borderWidth: 1.2, pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'gen', id: e.id, group: 'Generator' });
     });
     stores.forEach(function(e, j){
       var c = seriesColour(gens.length + j);
-      ds.push({ label: ED.nameOf(e) + ' discharging', data: res.dev[e.id].p.map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.55),
-                borderWidth: 1.2, pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'dis', id: e.id });
-      ds.push({ label: ED.nameOf(e) + ' charging', data: res.dev[e.id].p.map(function(v){ return Math.min(0, v); }), borderColor: c, backgroundColor: alpha(c, 0.22),
-                borderWidth: 1.2, borderDash: [4, 3], pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'store', order: 2, kind: 'chg', id: e.id });
+      ds.push({ label: ED.nameOf(e) + ' discharging', data: res.dev[e.id].p.map(function(v){ return Math.max(0, v); }), borderColor: c, backgroundColor: dotFill(alpha(c, 0.3), c),
+                borderWidth: 1.2, pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'dis', id: e.id, group: 'Storage',
+                dots: { fill: alpha(c, 0.3), dot: c } });
+      ds.push({ label: ED.nameOf(e) + ' charging', data: res.dev[e.id].p.map(function(v){ return Math.min(0, v); }), borderColor: c, backgroundColor: dotFill(alpha(c, 0.12), alpha(c, 0.6)),
+                borderWidth: 1.2, borderDash: [4, 3], pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'store', order: 2, kind: 'chg', id: e.id, group: 'Storage',
+                dots: { fill: alpha(c, 0.12), dot: alpha(c, 0.6) } });
     });
     if(res.totals.shedEnergy > 1e-6){
       var neg = cssVar('--negative');
       ds.push({ label: 'Load shed', data: res.totals.shed.slice(), borderColor: neg, backgroundColor: alpha(neg, 0.45),
-                borderWidth: 1.2, pointRadius: pts, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'shed' });
+                borderWidth: 1.2, pointRadius: pts, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'shed', group: 'Demand' });
     }
     // Each layer fills down to the layer under it in its own stack (Chart.js's
     // 'stack' fill can reach past an empty layer to the wrong one).
@@ -201,13 +244,14 @@
     ds.forEach(function(d, i){
       d.fill = lastIn[d.stack] === undefined ? 'origin' : lastIn[d.stack];
       lastIn[d.stack] = i;
-      // The key and the hover show it filled, whatever it fills down to.
+      // The key and the hover show it filled, whatever it fills down to, and
+      // a dotted fill as dotted (a pattern is no colour a swatch can read).
       var shown = {}; for(var k in d) shown[k] = d[k];
       shown.fill = 'origin';
-      d.legendSpec = SharedLegend.fromDataset(shown);
+      d.legendSpec = SharedLegend.fromDataset(shown, d.dots ? { fill: d.dots.fill, dots: d.dots.dot } : null);
     });
     ds.push({ label: 'Demand', data: res.totals.load.slice(), borderColor: cssVar('--text'), backgroundColor: 'transparent',
-              borderWidth: 2, borderDash: [6, 4], pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load' });
+              borderWidth: 2, borderDash: [6, 4], pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load', group: 'Demand' });
     var ch = make('disp', {
       type: 'line', data: { labels: labels, datasets: ds },
       options: baseOptions({ H: H,
@@ -482,9 +526,33 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   }
+  /* The exported key, packed into rows. A grouped key exports the way it
+     reads on the page: each group starts a row of its own, led by its name,
+     with only the entries still showing. A row carries head (the name, or
+     null where it continues a group) and headW, which is inside its width;
+     grouped rows share one left edge, so the names line up. measure(s, head)
+     measures a name in its own weight. */
   function legendRows(legendId, measure, maxW, markW, gap, pad){
-    var items = SharedLegend.itemsOf(legendId);
-    return items.length ? SharedLegend.layout(items, measure, maxW, markW, gap, pad) : [];
+    var el = $(legendId), out = [];
+    if(!el) return out;
+    var groups = el.querySelectorAll('.legend-group');
+    if(!groups.length){
+      var items = SharedLegend.itemsOf(el);
+      return items.length ? SharedLegend.layout(items, measure, maxW, markW, gap, pad) : [];
+    }
+    var headOf = function(g){ var lab = g.querySelector('.legend-group-label'); return lab ? lab.textContent.trim() : ''; };
+    // One column for the names, as wide as the widest, so every row's entries start in line.
+    var headW = Math.max.apply(null, Array.prototype.map.call(groups, function(g){ var h = headOf(g); return h ? measure(h, true) + pad / 2 : 0; }));
+    Array.prototype.forEach.call(groups, function(g){
+      var items = SharedLegend.itemsOf(g), head = headOf(g);
+      if(!items.length) return;
+      SharedLegend.layout(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
+        out.push({ items: row.items, head: i === 0 ? head : null, headW: headW, width: row.width + headW });
+      });
+    });
+    var widest = Math.max.apply(null, out.map(function(r){ return r.width; }));
+    out.forEach(function(r){ r.width = widest; });
+    return out;
   }
   // A 3x PNG of the chart at its desktop size, with its title, key and watermark.
   function chartPng(canvasId, chartTitle, legendId){
@@ -496,8 +564,8 @@
       var titleH = Math.round(40 * OUT), markW = SharedLegend.W * OUT, gap = Math.round(7 * OUT), pad = Math.round(20 * OUT);
       var margin = Math.round(16 * OUT), rowH = Math.round(22 * OUT), wmH = Math.round(26 * OUT);
       var mc = document.createElement('canvas').getContext('2d');
-      mc.font = '500 ' + Math.round(11 * OUT) + 'px ' + FONT;
-      var rows = legendRows(legendId, function(s){ return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+      var keyFont = '500 ' + Math.round(11 * OUT) + 'px ' + FONT, headFont = '600 ' + Math.round(11 * OUT) + 'px ' + FONT;
+      var rows = legendRows(legendId, function(s, head){ mc.font = head ? headFont : keyFont; return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
       var legendH = rows.length ? rows.length * rowH + Math.round(8 * OUT) : 0;
       var c = document.createElement('canvas');
       c.width = chartW; c.height = chartH + titleH + legendH + wmH;
@@ -506,9 +574,11 @@
       g.font = '700 ' + Math.round(14 * OUT) + 'px ' + FONT; g.fillStyle = tone.fg; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.fillText(chartTitle, c.width / 2, titleH / 2);
       g.drawImage(src, 0, titleH, chartW, chartH);
-      g.font = '500 ' + Math.round(11 * OUT) + 'px ' + FONT;
+      g.font = keyFont;
       rows.forEach(function(row, ri){
         var x = Math.max(margin, (c.width - row.width) / 2), cy = titleH + chartH + Math.round(4 * OUT) + rowH * ri + rowH / 2;
+        if(row.head){ g.font = headFont; g.fillStyle = tone.fg; g.textAlign = 'left'; g.fillText(row.head, x, cy); g.font = keyFont; }
+        x += row.headW || 0;
         row.items.forEach(function(item){
           SharedLegend.paint(g, item.swatch, x, cy, OUT);
           x += markW + gap;
@@ -582,8 +652,7 @@
         var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
         var titleH = 40, markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22;
         var mc = document.createElement('canvas').getContext('2d');
-        mc.font = '500 11px ' + FONT;
-        var rows = legendRows(legendIdOf(key), function(s){ return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+        var rows = legendRows(legendIdOf(key), function(s, head){ mc.font = (head ? '600' : '500') + ' 11px ' + FONT; return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
         var legendH = rows.length ? rows.length * rowH + 8 : 0;
         var c = document.createElement('canvas');
         c.width = chartW; c.height = titleH + chartH + legendH;
@@ -595,6 +664,8 @@
         g.font = '500 11px ' + FONT;
         rows.forEach(function(row, ri){
           var x = Math.max(margin, (c.width - row.width) / 2), cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
+          if(row.head){ g.font = '600 11px ' + FONT; g.fillStyle = fg; g.textAlign = 'left'; g.fillText(row.head, x, cy); g.font = '500 11px ' + FONT; }
+          x += row.headW || 0;
           row.items.forEach(function(item){
             SharedLegend.paint(g, item.swatch, x, cy, 1);
             x += markW + gap;
@@ -636,8 +707,8 @@
       var tone = exportTokens(), FONT = 'DM Sans, sans-serif';
       var titleH = 40, markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22, wmH = 26;
       var mc = document.createElement('canvas').getContext('2d');
-      mc.font = '500 11px DM Sans, sans-serif';
-      var rows = legendRows(legendId, function(s){ return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+      var measure = function(s, head){ mc.font = (head ? '600' : '500') + ' 11px DM Sans, sans-serif'; return mc.measureText(s).width; };
+      var rows = legendRows(legendId, measure, chartW - margin * 2, markW, gap, pad);
       var legendH = rows.length ? rows.length * rowH + 8 : 0;
       var W = chartW, Hh = chartH + titleH + legendH + wmH;
       var NS = 'http://www.w3.org/2000/svg', xl = 'http://www.w3.org/1999/xlink';
@@ -660,11 +731,13 @@
       svg.appendChild(img);
       rows.forEach(function(row, ri){
         var x = Math.max(margin, (W - row.width) / 2), cy = titleH + chartH + 4 + rowH * ri + rowH / 2;
+        if(row.head) text(row.head, x, cy, { size: '11', weight: '600' });
+        x += row.headW || 0;
         row.items.forEach(function(item){
           svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
           x += markW + gap;
           text(item.label, x, cy, { size: '11', weight: '500' });
-          x += mc.measureText(item.label).width + pad;
+          x += measure(item.label) + pad;
         });
       });
       var wm = document.createElementNS(NS, 'path');

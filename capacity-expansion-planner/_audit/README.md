@@ -102,7 +102,7 @@ the climate and the first year, each downloads a template that reads back at its
 its peak day (a full year every hour of the first year in its seasons), and the menu is
 driven by the keyboard as the Share menu is; a full year opened in the page is a week each
 season and its peak day, and says so; the climate sits in the load profile, one select whose
-months date its seasons; a week in MW opened
+months date its seasons, its tip naming the hemisphere and a country or two; a week in MW opened
 from a file sets the peak and the week and solves as in Node; a solar farm from a file reports
 the capacity factor its hours give, and its template menu cuts its day into a weekday and a
 weekend day for each season; a v1 mini cache (a residential week, a day drawn by hand)
