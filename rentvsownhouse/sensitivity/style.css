@@ -43,7 +43,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 .sens-wrap{overflow-x:auto;padding-bottom:2px;}
 @supports not selector(::-webkit-scrollbar){.sens-wrap{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}}
 table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
-.dt th{padding:10px 11px;background:var(--input-bg);border:1px solid var(--border);white-space:nowrap;text-align:left;vertical-align:middle;}
+.dt th{padding:10px 11px;background:var(--input-bg);border:1px solid var(--border);white-space:nowrap;text-align:center;vertical-align:middle;}
 .dt td{padding:7px 9px;border:1px solid var(--border);vertical-align:middle;}
 .dt .num-td{font-family:'DM Mono',monospace;text-align:right;}
 .dt .label-td{font-weight:600;min-width:200px;white-space:nowrap;color:var(--text);background:var(--input-bg);}

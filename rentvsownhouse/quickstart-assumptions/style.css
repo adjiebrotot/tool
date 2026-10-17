@@ -31,6 +31,7 @@
 .qa-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.84rem}
 .qa-table th,.qa-table td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;vertical-align:top}
 .qa-table th{background:var(--panel);vertical-align:middle}
+.qa-table thead th,.qa-table thead th:first-child{text-align:center}
 .qa-table th:first-child,.qa-table td:first-child{text-align:left;font-family:'DM Sans',sans-serif}
 .qa-table tbody tr:last-child td{border-bottom:none}
 .qa-table tbody tr:hover td{background:rgba(141,187,255,.05)}
@@ -61,7 +62,6 @@ body.light .dl-json-link{background:rgba(46,158,122,0.08);border-color:rgba(46,1
 body.light .dl-json-link:hover{background:rgba(46,158,122,0.16);border-color:var(--accent2)}
 .qa-terms td.qa-val{text-align:left;white-space:normal;min-width:150px;font-family:'DM Sans',sans-serif}
 .qa-terms td.qa-basis{text-align:left;white-space:normal;min-width:260px;font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;line-height:1.45}
-.qa-terms th:nth-child(2),.qa-terms th:nth-child(3){text-align:left}
 .qa-list{margin:4px 0 0;padding-left:18px;font-size:.84rem;line-height:1.55}
 .qa-list li{margin:3px 0}
 .qa-sources a{color:var(--accent);text-decoration:none;word-break:break-word}

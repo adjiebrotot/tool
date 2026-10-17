@@ -535,11 +535,13 @@ th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;whi
 th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif;}
 /* A header reads like a field label over mono figures: sentence case DM Sans
    in the text colour, its unit one step down (regular weight, muted) on a line
-   of its own, the whole header centred in its row. A column header wraps, in
+   of its own, centred over its column both ways (the :first-child selector
+   outranks the left-aligned first column). A column header wraps, in
    balanced lines, before the table scrolls sideways: figures stay on one line,
    so a column is never narrower than its widest figure, and only a header
    longer than that breaks. */
 th{color:var(--text);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.005em;line-height:1.3;vertical-align:middle;}
+thead th,thead th:first-child{text-align:center;}
 thead th{white-space:normal;text-wrap:balance;}
 th .th-unit{display:block;font-weight:400;color:var(--muted);}
 .table-wrap{overflow:auto;max-height:400px;}

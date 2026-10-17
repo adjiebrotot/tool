@@ -71,8 +71,6 @@
     .table-wrap{overflow:auto;max-height:400px}
     .table-wrap thead tr:first-child th{position:sticky;top:0;background:var(--panel);z-index:3}
     .table-wrap thead tr:nth-child(2) th{position:sticky;top:34px;background:var(--panel);z-index:2}
-    /* Not the row label: the first cell of the second header row heads a figure column. */
-    .table-wrap thead tr:nth-child(2) th:first-child{text-align:right}
     tr:hover td{background:rgba(255,255,255,0.03)}
     body.light tr:hover td{background:rgba(0,0,0,0.03)}
     .detail-section{padding:20px;margin-top:18px}

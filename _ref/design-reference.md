@@ -1583,6 +1583,7 @@ th {
   line-height: 1.3;
   vertical-align: middle;
 }
+thead th, thead th:first-child { text-align: center; }
 thead th { white-space: normal; text-wrap: balance; }
 th .th-unit { display: block; font-weight: 400; color: var(--muted); }
 .table-wrap { overflow: auto; max-height: 400px; }
@@ -1594,9 +1595,12 @@ body.light tr:hover td { background: rgba(90,145,232,0.04); }
 field: the header reads like `.field-label` (DM Sans, text colour, bold) and its
 unit like `.field-sub` (regular weight, `--muted`), so a column says
 `Peak demand` with a lighter `MW` beneath. Sentence case, never uppercase: the
-sans face over DM Mono figures already sets the header apart. Every header is
-centred in its row, so a one-line header sits level with the middle of a
-two-line one rather than dropping to the bottom.
+sans face over DM Mono figures already sets the header apart. Every column
+header is centred both ways: over its column, whatever way the figures below
+align, and in its row, so a one-line header sits level with the middle of a
+two-line one rather than dropping to the bottom. A tool never re-aligns a
+column header (no `text-align` on a `thead th`, no inline style); row headers
+in the body keep the column's own alignment.
 
 **A long header wraps before the table scrolls.** Figures never wrap, so a
 column is never narrower than its widest figure; a column header is free to

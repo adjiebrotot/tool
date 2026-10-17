@@ -347,7 +347,6 @@
   .dyn-table th {
     background: var(--surface);
     padding: 6px 8px;
-    text-align: left;
     border-bottom: 1px solid var(--border);
   }
   #input-table th {
