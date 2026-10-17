@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Capacity Expansion Planner Explainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F0F4FF;--panel:#FFFFFF;--text:#2D3436;--muted:#7F8C8D;--border:#E0E6F0;
+  --accent:#5A91E8;--accent-strong:#3A71C8;--accent2:#2E9E7A;--neg:#E63939;
+  --grid:#C8D4E8;--chart-text:#4A5A6A;
+  --shadow:0 4px 32px rgba(120,160,220,0.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg)}
+.scene{position:absolute;inset:0;opacity:0}
+.abs{position:absolute}
+.kicker{position:absolute;left:140px;top:64px;font:700 22px 'DM Sans';letter-spacing:.16em;color:var(--accent-strong)}
+.head{position:absolute;left:140px;top:100px;width:1640px;font:800 54px/1.12 'DM Sans';letter-spacing:-.01em}
+.mono{font-family:'DM Mono',monospace}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+.say{position:absolute;font:500 34px/1.3 'DM Sans';color:var(--text)}
+.say b{color:var(--accent-strong);font-weight:700}
+.muted{color:var(--muted)}
+svg text{font-family:'DM Sans',sans-serif}
+#brand{position:absolute;right:56px;top:40px;font:600 20px 'DM Sans';color:var(--muted);opacity:0;display:flex;align-items:center;gap:10px}
+#chapters{position:absolute;left:0;right:0;bottom:30px;display:flex;justify-content:center;gap:14px;opacity:0}
+.chap{position:relative;padding:10px 20px 14px;font:600 19px 'DM Sans';color:var(--muted);border-radius:12px}
+.chap .bar{position:absolute;left:20px;right:20px;bottom:6px;height:4px;border-radius:2px;background:var(--border);overflow:hidden}
+.chap .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);width:0}
+.chap.on{color:var(--text);background:var(--panel);box-shadow:0 1px 8px rgba(120,160,220,0.12)}
+/* s3 */
+.step{position:absolute;left:140px;width:1040px;height:166px;border-radius:20px;padding:26px 32px 0 128px}
+.step .ic{position:absolute;left:30px;top:30px;width:72px;height:72px;border-radius:18px;background:#EAF2FF;display:flex;align-items:center;justify-content:center}
+.step h3{font:800 36px 'DM Sans';margin-bottom:8px}
+.step p{font:500 24px/1.38 'DM Sans';color:var(--muted)}
+.shot{position:absolute;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);background:#fff}
+.shot img{display:block;width:100%}
+/* s5 */
+.obj h4{font:800 30px 'DM Sans';margin-bottom:14px}
+.obj .row{font:500 24px/1.5 'DM Sans';color:var(--text);display:flex;gap:12px;align-items:center}
+.obj .dot{width:12px;height:12px;border-radius:50%;flex:none}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:#EAF2FF;color:#174A9C;font:600 22px 'DM Sans'}
+/* s6 */
+.kpi{position:absolute;left:1240px;width:560px;height:148px;padding:20px 26px}
+.kpi .l{font:700 17px 'DM Sans';letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.kpi .v{font:600 46px 'DM Mono';margin:4px 0 2px;letter-spacing:-.02em}
+.kpi .s{font:500 19px/1.35 'DM Sans';color:var(--muted)}
+/* s7 */
+#frame{position:absolute;left:304px;top:178px;width:1312px;border-radius:18px;overflow:hidden;box-shadow:0 10px 50px rgba(80,120,190,0.25);border:1px solid var(--border);background:#fff}
+#chrome{height:44px;background:#E9EEF8;display:flex;align-items:center;gap:9px;padding:0 18px;border-bottom:1px solid var(--border)}
+#chrome i{width:13px;height:13px;border-radius:50%;display:block}
+#chrome .url{margin-left:22px;flex:1;max-width:620px;height:28px;border-radius:8px;background:#fff;font:500 16px 'DM Sans';color:var(--muted);display:flex;align-items:center;padding:0 14px}
+#view{position:relative;width:1312px;height:738px;overflow:hidden;background:#F0F4FF}
+.still{position:absolute;left:0;top:0;width:1312px;height:738px;opacity:0;transform-origin:50% 40%}
+.still img{position:absolute;left:0;top:0;width:1312px;height:738px}
+.hl{position:absolute;border:4px solid var(--accent);border-radius:16px;box-shadow:0 0 0 9999px rgba(30,45,80,0.20),0 0 24px rgba(90,145,232,.55);opacity:0}
+.cap7{position:absolute;left:140px;top:100px;width:1640px;font:800 50px/1.12 'DM Sans';opacity:0}
+/* s8 */
+.ex{display:inline-block;padding:14px 26px;border-radius:14px;border:2px solid var(--border);background:#fff;font:600 26px 'DM Sans';color:var(--muted);margin:0 8px}
+.ex.on{border-color:#2E9E7A;background:#EAF7F2;color:var(--text)}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script src="data.js"></script>
+<script src="boxes.js"></script>
+<script>
+(function(){
+'use strict';
+var NS = 'http://www.w3.org/2000/svg', stage = document.getElementById('stage');
+var clamp = function(x, a, b){ a = a === undefined ? 0 : a; b = b === undefined ? 1 : b; return Math.max(a, Math.min(b, x)); };
+var eo = function(x){ return 1 - Math.pow(1 - x, 3); };
+var eio = function(x){ return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+var P = function(t, a, b){ return eo(clamp((t - a) / (b - a))); };
+var Pio = function(t, a, b){ return eio(clamp((t - a) / (b - a))); };
+var fmt = function(n){ return Math.round(n).toLocaleString('en-US'); };
+function S(tag, at, parent){ var e = document.createElementNS(NS, tag); for(var k in at) e.setAttribute(k, at[k]); if(parent) parent.appendChild(e); return e; }
+function H(tag, cls, html, parent, style){ var e = document.createElement(tag); if(cls) e.className = cls; if(html !== undefined && html !== null) e.innerHTML = html; if(style) e.setAttribute('style', style); if(parent) parent.appendChild(e); return e; }
+function show(n, p, dy){ dy = dy === undefined ? 26 : dy; n.style.opacity = p; n.style.transform = 'translateY(' + ((1 - p) * dy) + 'px)'; }
+function hex(c){ if(c[0] === '#') return [1, 3, 5].map(function(i){ return parseInt(c.substr(i, 2), 16); }); return c.match(/\d+/g).slice(0, 3).map(Number); }
+function mix(c, d, a){ var x = hex(c), y = hex(d); return 'rgb(' + x.map(function(v, i){ return Math.round(v + (y[i] - v) * a); }).join(',') + ')'; }
+
+var D = window.D, C = D.cols;
+var T = {}; D.tech.forEach(function(t){ T[t.id] = t; });
+var COL = { 1: C[0], 2: C[1], 3: C[2], 4: C[3], 5: C[4], 6: C[5] };
+var NAME = { 1: 'Coal', 2: 'Gas (CCGT)', 3: 'Gas (OCGT)', 4: 'Solar PV', 5: 'Wind', 6: 'Battery' };
+var FILL = function(id){ return mix(COL[id], '#ffffff', 0.22); };
+
+/* Shared SVG patterns: hatch for the plant in service now, dots for storage, as the tool draws them. */
+function defs(svg){
+  var d = S('defs', {}, svg);
+  [[1, 'hC'], [2, 'hG']].forEach(function(a){
+    var p = S('pattern', { id: a[1], width: 12, height: 12, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, d);
+    S('rect', { width: 12, height: 12, fill: mix(COL[a[0]], '#ffffff', 0.72) }, p);
+    S('line', { x1: 0, y1: 0, x2: 0, y2: 12, stroke: mix(COL[a[0]], '#ffffff', 0.25), 'stroke-width': 4 }, p);
+  });
+  var q = S('pattern', { id: 'dB', width: 10, height: 10, patternUnits: 'userSpaceOnUse' }, d);
+  S('rect', { width: 10, height: 10, fill: mix(COL[6], '#ffffff', 0.55) }, q);
+  S('circle', { cx: 2.5, cy: 2.5, r: 1.6, fill: mix(COL[6], '#2D5BA8', 0.35) }, q);
+  S('circle', { cx: 7.5, cy: 7.5, r: 1.6, fill: mix(COL[6], '#2D5BA8', 0.35) }, q);
+  var g = S('pattern', { id: 'hR', width: 10, height: 10, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(-45)' }, d);
+  S('rect', { width: 10, height: 10, fill: 'rgba(230,57,57,0.10)' }, g);
+  S('line', { x1: 0, y1: 0, x2: 0, y2: 10, stroke: 'rgba(230,57,57,0.45)', 'stroke-width': 3 }, g);
+  return d;
+}
+var defsSvg = S('svg', { width: 0, height: 0, style: 'position:absolute;left:0;top:0' }, stage); defs(defsSvg);
+function techFill(id, existing){ if(existing) return id === 1 ? 'url(#hC)' : 'url(#hG)'; return id === 6 ? 'url(#dB)' : FILL(id); }
+
+var scenes = [];
+function scene(t0, t1, build){ var el = H('div', 'scene', null, stage); var s = { t0: t0, t1: t1, el: el }; s.draw = build(el, s); scenes.push(s); return s; }
+function kicker(el, txt){ return H('div', 'kicker', txt, el); }
+function head(el, txt, extra){ return H('div', 'head', txt, el, extra); }
+
+/* ─────────── 1. Title ─────────── */
+scene(0, 5, function(el){
+  var svg = S('svg', { width: 1920, height: 1080, class: 'abs', style: 'left:0;top:0' }, el);
+  // A soft skyline of capacity bars rising behind the title.
+  var bars = [], n = 32;
+  for(var i = 0; i < n; i++){
+    var h = 120 + 260 * Math.pow(1.045, i) / Math.pow(1.045, n) + 60 * Math.sin(i * 1.7);
+    var id = [1, 2, 3, 4, 5, 6][i % 6];
+    bars.push({ r: S('rect', { x: i * 60 + 4, width: 52, rx: 6, fill: mix(COL[id], '#F0F4FF', 0.78) }, svg), h: h, d: i * 0.035 });
+  }
+  var icon = S('svg', { width: 150, height: 150, viewBox: '0 0 24 24', class: 'abs', style: 'left:885px;top:250px' }, el);
+  var ib = [[4, 15, 3, 5], [9, 11, 3, 9], [14, 13, 3, 7], [19, 8, 3, 12]].map(function(b){ return S('rect', { x: b[0] - 1.5, y: b[1], width: b[2], height: b[3], rx: .8, fill: '#5A91E8' }, icon); });
+  var plus = S('path', { d: 'M19 1.5v5M16.5 4h5', stroke: '#2E9E7A', 'stroke-width': 1.9, 'stroke-linecap': 'round', fill: 'none' }, icon);
+  var t1 = H('div', 'abs', 'Capacity Expansion Planner', el, 'left:0;width:1920px;top:420px;text-align:center;font:800 104px/1.1 DM Sans;letter-spacing:-.02em');
+  var t2 = H('div', 'abs', 'What to build, and when.', el, 'left:0;width:1920px;top:556px;text-align:center;font:700 52px DM Sans;color:#3A71C8');
+  var t3 = H('div', 'abs', 'Which plants and batteries to build, how big, and in which year,<br>to meet a growing demand hour by hour at the least cost.', el, 'left:0;width:1920px;top:648px;text-align:center;font:500 32px/1.45 DM Sans;color:#7F8C8D');
+  return function(t){
+    bars.forEach(function(b){ var p = P(t, 0.1 + b.d, 1.6 + b.d); b.r.setAttribute('y', 1080 - b.h * p); b.r.setAttribute('height', b.h * p); });
+    ib.forEach(function(r, i){ var p = P(t, 0.3 + i * 0.12, 0.9 + i * 0.12); r.style.transformOrigin = '0 22px'; r.style.transform = 'scaleY(' + p + ')'; r.style.transformBox = 'fill-box'; r.style.transformOrigin = 'bottom'; });
+    plus.style.opacity = P(t, 0.9, 1.3);
+    show(t1, P(t, 0.6, 1.4)); show(t2, P(t, 1.2, 2.0)); show(t3, P(t, 1.8, 2.6));
+  };
+});
+
+/* ─────────── 2. The question ─────────── */
+scene(5, 16, function(el){
+  kicker(el, 'THE QUESTION');
+  var h = head(el, 'A grid that keeps growing, and a plant that closes');
+  var svg = S('svg', { width: 1920, height: 1080, class: 'abs', style: 'left:0;top:0' }, el);
+  var X0 = 170, X1 = 1180, Y0 = 900, Y1 = 300, VMAX = 2200, yrs = [], N = 25;
+  for(var y = 2026; y <= 2050; y++) yrs.push(y);
+  var bw = (X1 - X0) / N, yv = function(v){ return Y0 - v / VMAX * (Y0 - Y1); };
+  var axis = S('g', {}, svg);
+  [0, 500, 1000, 1500, 2000].forEach(function(v){
+    S('line', { x1: X0, x2: X1, y1: yv(v), y2: yv(v), stroke: '#C8D4E8', 'stroke-width': 1.5 }, axis);
+    S('text', { x: X0 - 16, y: yv(v) + 7, 'text-anchor': 'end', 'font-size': 20, fill: '#4A5A6A' }, axis).textContent = fmt(v);
+  });
+  [2026, 2031, 2036, 2041, 2046].forEach(function(v){
+    S('text', { x: X0 + (v - 2026 + .5) * bw, y: Y0 + 36, 'text-anchor': 'middle', 'font-size': 21, 'font-weight': 700, fill: '#4A5A6A' }, axis).textContent = v;
+  });
+  S('text', { x: 0, y: 0, transform: 'translate(' + (X0 - 92) + ',' + ((Y0 + Y1) / 2) + ') rotate(-90)', 'text-anchor': 'middle', 'font-size': 19, fill: '#7F8C8D' }, axis).textContent = 'MW';
+  var gas = [], coal = [], gap = [];
+  var peak = function(y){ return 1000 * Math.pow(1.03, y - 2026); };
+  yrs.forEach(function(y, i){
+    var x = X0 + i * bw + 3;
+    gas.push(S('rect', { x: x, width: bw - 6, fill: 'url(#hG)', stroke: COL[2], 'stroke-width': 1.5 }, svg));
+    coal.push(S('rect', { x: x, width: bw - 6, fill: 'url(#hC)', stroke: COL[1], 'stroke-width': 1.5 }, svg));
+    var fleet = y >= 2036 ? 300 : 1000, pk = peak(y);
+    gap.push(pk > fleet ? S('rect', { x: x, width: bw - 6, y: yv(pk), height: yv(fleet) - yv(pk), fill: 'url(#hR)', opacity: 0 }, svg) : null);
+  });
+  var clip = S('clipPath', { id: 'dclip' }, defsSvg.querySelector('defs')), clipR = S('rect', { x: X0 - 10, y: 0, width: 0, height: 1080 }, clip);
+  var pts = yrs.map(function(y, i){ return (X0 + (i + .5) * bw) + ',' + yv(peak(y)); }).join(' ');
+  S('polyline', { points: pts, fill: 'none', stroke: '#2D3436', 'stroke-width': 4, 'stroke-dasharray': '12 9', 'clip-path': 'url(#dclip)' }, svg);
+  var ret = S('g', { opacity: 0 }, svg);
+  var rx = X0 + 10 * bw;
+  S('line', { x1: rx, x2: rx, y1: Y1 - 20, y2: Y0, stroke: '#E63939', 'stroke-width': 3, 'stroke-dasharray': '6 6' }, ret);
+  S('text', { x: rx + 14, y: Y1 - 2, 'font-size': 24, 'font-weight': 700, fill: '#E63939' }, ret).textContent = 'Coal retires, 2036';
+  var gl = S('g', { opacity: 0 }, svg);
+  S('text', { x: X0 + 18.5 * bw, y: yv(1150), 'text-anchor': 'middle', 'font-size': 28, 'font-weight': 800, fill: '#C02F2F' }, gl).textContent = '1,506 MW short';
+  S('text', { x: X0 + 18.5 * bw, y: yv(1150) + 32, 'text-anchor': 'middle', 'font-size': 21, 'font-weight': 600, fill: '#C02F2F' }, gl).textContent = 'at the 2046 peak';
+  // Legend
+  var lg = H('div', 'abs', '<span style="display:inline-flex;align-items:center;gap:10px;margin-right:30px"><svg width="34" height="20"><rect width="34" height="20" rx="4" fill="' + mix(COL[1], '#ffffff', .6) + '" stroke="' + COL[1] + '"/></svg>Coal, in service</span>' +
+    '<span style="display:inline-flex;align-items:center;gap:10px;margin-right:30px"><svg width="34" height="20"><rect width="34" height="20" rx="4" fill="' + mix(COL[2], '#ffffff', .6) + '" stroke="' + COL[2] + '"/></svg>Gas (CCGT), in service</span>' +
+    '<span style="display:inline-flex;align-items:center;gap:10px"><svg width="40" height="20"><line x1="0" x2="40" y1="10" y2="10" stroke="#2D3436" stroke-width="4" stroke-dasharray="10 6"/></svg>Peak demand</span>', el,
+    'left:' + X0 + 'px;top:226px;font:500 22px DM Sans;color:#4A5A6A');
+  var s1 = H('div', 'say', 'Peak demand grows <b>3% a year</b>:<br>1,000 MW now, 1,806 MW by 2046.', el, 'left:1270px;top:330px;width:560px');
+  var s2 = H('div', 'say', 'The <b>700 MW coal plant</b> retires in 2036, leaving 300 MW of gas.', el, 'left:1270px;top:500px;width:560px');
+  var s3 = H('div', 'say', '<span style="font-weight:800;font-size:38px">What should be built, how big, and in which year, at the least cost?</span>', el, 'left:1270px;top:680px;width:560px');
+  return function(t){
+    show(h, P(t, 0, .6)); axis.style.opacity = P(t, .2, .8); show(lg, P(t, .4, 1));
+    yrs.forEach(function(y, i){
+      var p = P(t, .6 + i * .05, 1.3 + i * .05);
+      gas[i].setAttribute('y', yv(300 * p)); gas[i].setAttribute('height', yv(0) - yv(300 * p));
+      var cp = y >= 2036 ? p * (1 - P(t, 5.6, 6.6)) : p;
+      coal[i].setAttribute('y', yv(300 + 700 * cp)); coal[i].setAttribute('height', yv(300) - yv(300 + 700 * cp));
+      coal[i].style.opacity = y >= 2036 ? 1 - P(t, 5.6, 6.6) * .6 : 1;
+      if(gap[i]) gap[i].setAttribute('opacity', P(t, 7 + (i - 10) * .05, 7.6 + (i - 10) * .05));
+    });
+    clipR.setAttribute('width', (X1 - X0 + 20) * Pio(t, 2.2, 4.6));
+    ret.setAttribute('opacity', P(t, 5.2, 5.7));
+    gl.setAttribute('opacity', P(t, 7.8, 8.4));
+    show(s1, P(t, 2.6, 3.2)); show(s2, P(t, 5.2, 5.8)); show(s3, P(t, 8.4, 9.1));
+  };
+});
+
+/* ─────────── 3. The inputs ─────────── */
+scene(16, 28, function(el){
+  kicker(el, 'THE INPUTS');
+  var h = head(el, 'You describe the system in four tabs');
+  var icons = {
+    plan: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3A71C8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M4 16l5-5 4 3 7-8"/><circle cx="20" cy="6" r="1.2" fill="#3A71C8"/></svg>',
+    tech: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3A71C8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V11l5 3V11l5 3V5h4v16z"/><path d="M3 21h18"/></svg>',
+    policy: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3A71C8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
+    assume: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3A71C8" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>'
+  };
+  var steps = [
+    ['plan', 'Demand', 'The peak now, how fast it grows, and the load profile for your climate. The years to plan and how often to decide.'],
+    ['tech', 'Supply', 'What is in service and when it retires, and what can be built (solar, wind, gas, batteries and more) at what cost.'],
+    ['policy', 'Policy', 'Load shedding at the value of lost load, a carbon price that can rise every year, and a net-zero year.'],
+    ['assume', 'Assumptions', 'The discount rate, the typical days each year is run over, and the solver.']
+  ];
+  var nodes = steps.map(function(s, i){
+    var n = H('div', 'step', '<div class="ic">' + icons[s[0]] + '</div><h3>' + s[1] + '</h3><p>' + s[2] + '</p>', el, 'top:' + (226 + i * 182) + 'px');
+    return n;
+  });
+  var shots = steps.map(function(s){
+    var w = H('div', 'shot', '<img src="shots/ctrl-' + s[0] + '.png">', el, 'left:1300px;top:206px;width:440px;height:760px');
+    return w;
+  });
+  var SEG = 2.6, A = 1.0;
+  return function(t){
+    show(h, P(t, 0, .6));
+    nodes.forEach(function(n, i){
+      var a = A + i * SEG, appear = P(t, .3 + i * .15, .9 + i * .15);
+      var on = clamp(P(t, a, a + .35) - P(t, a + SEG, a + SEG + .35));
+      if(i === 3) on = P(t, a, a + .35);
+      show(n, appear, 20);
+      n.style.background = 'rgba(255,255,255,' + (0.0 + on) + ')';
+      n.style.boxShadow = on > .01 ? '0 4px 32px rgba(120,160,220,' + (0.18 * on) + ')' : 'none';
+      n.style.border = '1px solid rgba(224,230,240,' + on + ')';
+      n.style.opacity = appear * (0.42 + 0.58 * on);
+      n.querySelector('h3').style.color = on > .5 ? '#3A71C8' : '#2D3436';
+    });
+    shots.forEach(function(w, i){
+      var a = A + i * SEG, p = i === 0 ? P(t, .6, 1.2) : P(t, a, a + .45);
+      var q = i === 3 ? 0 : P(t, a + SEG, a + SEG + .45);
+      w.style.opacity = p * (1 - q);
+      w.style.transform = 'translateX(' + ((1 - p) * 40 - q * 40) + 'px)';
+    });
+  };
+});
+
+/* ─────────── 4. Hour by hour ─────────── */
+scene(28, 41, function(el){
+  kicker(el, 'HOW IT THINKS');
+  var h = head(el, 'Every year is run hour by hour');
+  var svg = S('svg', { width: 1920, height: 1080, class: 'abs', style: 'left:0;top:0' }, el);
+  var K = 4, X0 = 180, X1 = 1140, Y0 = 640, YT = 220, VMIN = -600, VMAX = 2200;
+  var svgOuter = svg; svg = S('g', {}, svgOuter); var mainG = svg;
+  var yv = function(v){ return Y0 - (v - 0) / VMAX * (Y0 - YT); }; // 0 at Y0, negatives below
+  var xv = function(hh){ return X0 + hh / 23 * (X1 - X0); };
+  var ax = S('g', {}, svg);
+  [-500, 0, 500, 1000, 1500, 2000].forEach(function(v){
+    S('line', { x1: X0, x2: X1, y1: yv(v), y2: yv(v), stroke: v === 0 ? '#9AAAC2' : '#C8D4E8', 'stroke-width': v === 0 ? 2 : 1.4 }, ax);
+    S('text', { x: X0 - 14, y: yv(v) + 7, 'text-anchor': 'end', 'font-size': 19, fill: '#4A5A6A' }, ax).textContent = (v < 0 ? '−' : '') + fmt(Math.abs(v));
+  });
+  [0, 6, 12, 18, 23].forEach(function(hh){
+    S('text', { x: xv(hh), y: yv(VMIN) + 18, 'text-anchor': 'middle', 'font-size': 19, fill: '#4A5A6A' }, ax).textContent = (hh < 10 ? '0' : '') + hh + ':00';
+  });
+  S('text', { x: X0, y: YT - 18, 'font-size': 22, 'font-weight': 700, fill: '#4A5A6A' }, ax).textContent = '2046, a summer typical day (MW)';
+  var day = function(id, from){ return T[id].p[K].slice(from, from + 24); };
+  var load = function(from){ return D.load[K].slice(from, from + 24); };
+  var order = [4, 5, 2, 3, 6];
+  var areas = {}; order.forEach(function(id){ areas[id] = S('path', { fill: techFill(id), stroke: COL[id], 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg); });
+  var chg = S('path', { fill: 'url(#dB)', stroke: COL[6], 'stroke-width': 2, 'stroke-dasharray': '6 4', opacity: .9 }, svg);
+  var clip = S('clipPath', { id: 'lclip' }, defsSvg.querySelector('defs')), clipR = S('rect', { x: X0 - 10, y: 0, width: 0, height: 1080 }, clip);
+  var L = load(0);
+  S('polyline', { points: L.map(function(v, i){ return xv(i) + ',' + yv(v); }).join(' '), fill: 'none', stroke: '#2D3436', 'stroke-width': 4, 'stroke-dasharray': '12 8', 'clip-path': 'url(#lclip)' }, svg);
+  function band(base, top, xs){
+    var d = 'M' + xs(0) + ',' + top[0];
+    for(var i = 1; i < top.length; i++) d += 'L' + xs(i) + ',' + top[i];
+    for(var j = base.length - 1; j >= 0; j--) d += 'L' + xs(j) + ',' + base[j];
+    return d + 'Z';
+  }
+  // Callouts
+  var call = [
+    ['#2D3436', 'Demand', 'the summer day, peaking at 1,806 MW at 18:00', 'dash'],
+    [COL[4], 'Solar PV', 'the cheapest energy, but only while the sun is up', 4],
+    [COL[5], 'Wind', 'day and night, whenever it blows', 5],
+    [COL[6], 'Battery', 'stores the midday sun for the evening peak', 6],
+    [COL[2], 'Gas', 'firm: fills whatever is left, at a fuel cost', 2]
+  ].map(function(c, i){
+    var sw = c[3] === 'dash' ? '<svg width="44" height="24"><line x1="2" x2="42" y1="12" y2="12" stroke="#2D3436" stroke-width="4" stroke-dasharray="10 6"/></svg>'
+      : '<svg width="44" height="24"><rect x="2" y="2" width="40" height="20" rx="5" fill="' + (c[3] === 6 ? mix(COL[6], '#ffffff', .4) : FILL(c[3])) + '" stroke="' + c[0] + '" stroke-width="2"/></svg>';
+    return H('div', 'abs', '<div style="display:flex;gap:16px;align-items:flex-start"><span style="flex:none;margin-top:6px">' + sw + '</span>' + '<div><div style="font:800 30px DM Sans">' + c[1] + '</div><div style="font:500 23px/1.35 DM Sans;color:#7F8C8D">' + c[2] + '</div></div></div>', el, 'left:1240px;top:' + (220 + i * 92) + 'px;width:600px');
+  });
+  // The typical-day strip
+  var strip = S('g', { opacity: 0 }, svgOuter);
+  var SX0 = 180, SW = 300, SG = 22, SY0 = 910, SH = 470, sv = function(v){ return SY0 - v / 2200 * SH; };
+  var blocks = D.blocks.map(function(b, i){
+    var g = S('g', {}, strip), x0 = SX0 + i * (SW + SG);
+    var bx = S('rect', { x: x0 - 10, y: SY0 - SH - 48, width: SW + 20, height: SH + 74, rx: 16, fill: '#ffffff', stroke: i === 0 ? '#5A91E8' : '#E0E6F0', 'stroke-width': i === 0 ? 3 : 1.5 }, g);
+    var xs = function(k){ return x0 + k / 23 * SW; };
+    var base = new Array(24).fill(0).map(function(){ return 0; }), cum = base.slice();
+    [4, 5, 2, 3, 1].forEach(function(id){
+      var v = day(id, b.from).map(function(x){ return Math.max(0, x); });
+      var top = cum.map(function(c, k){ return c + v[k]; });
+      S('path', { d: band(cum.map(sv), top.map(sv), xs), fill: FILL(id), stroke: COL[id], 'stroke-width': 1.2 }, g);
+      cum = top;
+    });
+    var bv = day(6, b.from).map(function(x){ return Math.max(0, x); }), topb = cum.map(function(c, k){ return c + bv[k]; });
+    S('path', { d: band(cum.map(sv), topb.map(sv), xs), fill: 'url(#dB)', stroke: COL[6], 'stroke-width': 1.2 }, g);
+    S('polyline', { points: load(b.from).map(function(v, k){ return xs(k) + ',' + sv(v); }).join(' '), fill: 'none', stroke: '#2D3436', 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, g);
+    var nm = b.name;
+    S('text', { x: x0, y: SY0 - SH - 18, 'font-size': 21, 'font-weight': 800, fill: '#2D3436' }, g).textContent = nm;
+    S('text', { x: x0 + SW, y: SY0 - SH - 18, 'text-anchor': 'end', 'font-size': 20, 'font-weight': 600, fill: '#3A71C8' }, g).textContent = '× ' + Math.round(b.days) + ' days';
+    return g;
+  });
+  var stripT = H('div', 'abs', 'Each decision year: a typical day for every season, weighted by the days it stands for, plus a still, overcast day at the peak.', el, 'left:140px;top:212px;width:1640px;font:600 30px/1.35 DM Sans;color:#4A5A6A');
+  return function(t){
+    show(h, P(t, 0, .6)); ax.style.opacity = P(t, .2, .8);
+    var outA = 1 - P(t, 7.9, 8.4); mainG.style.opacity = outA; call.forEach(function(c){ c.style.visibility = outA > 0 ? 'visible' : 'hidden'; });
+    clipR.setAttribute('width', (X1 - X0 + 20) * Pio(t, .6, 2.0));
+    var q = { 4: P(t, 2.2, 3.4), 5: P(t, 3.6, 4.8), 6: P(t, 5.0, 6.2), 2: P(t, 6.4, 7.4), 3: P(t, 6.8, 7.8) };
+    var cum = new Array(24).fill(0);
+    order.forEach(function(id){
+      var v = day(id, 0).map(function(x){ return Math.max(0, x) * q[id]; });
+      var top = cum.map(function(c, k){ return c + v[k]; });
+      areas[id].setAttribute('d', band(cum.map(yv), top.map(yv), xv));
+      areas[id].style.opacity = q[id] > 0 ? 1 : 0;
+      cum = top;
+    });
+    var neg = day(6, 0).map(function(x){ return Math.min(0, x) * q[6]; });
+    chg.setAttribute('d', band(new Array(24).fill(yv(0)), neg.map(yv), xv));
+    chg.style.opacity = q[6] > 0 ? .9 : 0;
+    show(call[0], P(t, .8, 1.4)); show(call[1], P(t, 2.2, 2.8)); show(call[2], P(t, 3.6, 4.2)); show(call[3], P(t, 5.0, 5.6)); show(call[4], P(t, 6.4, 7.0));
+    call.forEach(function(c){ c.style.opacity = Math.min(parseFloat(c.style.opacity), outA); });
+    show(stripT, P(t, 8.4, 9.0));
+    strip.setAttribute('opacity', 1);
+    blocks.forEach(function(g, i){ var p = P(t, 8.7 + i * .25, 9.3 + i * .25); g.style.opacity = p; g.style.transform = 'translateY(' + (1 - p) * 24 + 'px)'; });
+  };
+});
+
+/* ─────────── 5. The optimiser ─────────── */
+scene(41, 52, function(el){
+  kicker(el, 'THE OPTIMISER');
+  var h = head(el, 'Every option, in every decision year, solved at once');
+  var svg = S('svg', { width: 1920, height: 1080, class: 'abs', style: 'left:0;top:0' }, el);
+  var rows = [4, 5, 6, 2, 3], yrs = D.periods, GX = 420, GY = 300, CW = 140, RH = 116;
+  var frame = S('g', {}, svg);
+  yrs.forEach(function(y, c){ S('text', { x: GX + c * CW + CW / 2, y: GY - 22, 'text-anchor': 'middle', 'font-size': 24, 'font-weight': 800, fill: '#4A5A6A' }, frame).textContent = y; });
+  rows.forEach(function(id, r){
+    S('rect', { x: 180, y: GY + r * RH + RH / 2 - 12, width: 24, height: 24, rx: 6, fill: id === 6 ? mix(COL[6], '#ffffff', .4) : FILL(id), stroke: COL[id], 'stroke-width': 2 }, frame);
+    S('text', { x: 216, y: GY + r * RH + RH / 2 + 9, 'font-size': 26, 'font-weight': 700, fill: '#2D3436' }, frame).textContent = NAME[id];
+    S('line', { x1: 180, x2: GX + 5 * CW, y1: GY + (r + 1) * RH, y2: GY + (r + 1) * RH, stroke: '#E0E6F0', 'stroke-width': 1.5 }, frame);
+  });
+  S('line', { x1: 180, x2: GX + 5 * CW, y1: GY, y2: GY, stroke: '#C8D4E8', 'stroke-width': 2 }, frame);
+  var scan = S('rect', { y: GY, width: CW, height: RH * rows.length, fill: 'rgba(90,145,232,0.10)', rx: 10, opacity: 0 }, svg);
+  var cells = [];
+  rows.forEach(function(id, r){
+    yrs.forEach(function(y, c){
+      var mw = T[id].built[c], cx = GX + c * CW + CW / 2, cy = GY + r * RH + RH / 2;
+      var g = S('g', {}, svg);
+      var qm = S('text', { x: cx, y: cy + 11, 'text-anchor': 'middle', 'font-size': 32, 'font-weight': 700, fill: '#B8C4D8' }, g); qm.textContent = '?';
+      var R = mw > 0.5 ? Math.max(30, Math.sqrt(mw) * 1.3) : 0;
+      var b = S('circle', { cx: cx, cy: cy, r: 0, fill: mix(COL[id], '#ffffff', id === 6 ? 0.35 : 0.6), stroke: COL[id], 'stroke-width': 2.5 }, g);
+      var lbl = S('text', { x: cx, y: cy + 9, 'text-anchor': 'middle', 'font-size': mw > 0.5 ? 25 : 24, 'font-weight': 800, fill: mw > 0.5 ? '#2D3436' : '#B8C4D8', 'font-family': 'DM Mono', opacity: 0 }, g);
+      lbl.textContent = mw > 0.5 ? fmt(mw) : '0';
+      
+      cells.push({ c: c, R: R, b: b, lbl: lbl, qm: qm });
+    });
+  });
+  var unit = H('div', 'abs', 'MW to build in each decision year', el, 'left:' + GX + 'px;top:888px;width:' + (5 * CW) + 'px;text-align:center;font:600 21px DM Sans;color:#7F8C8D');
+  var obj = H('div', 'abs card obj',
+    '<h4>Minimise the present cost of the whole plan</h4>' +
+    [['#5A91E8', 'Capital'], ['#B45309', 'Fixed O&amp;M'], ['#4A9E87', 'Fuel and running'], ['#7F8C8D', 'Carbon'], ['#E63939', 'Lost load']].map(function(r){ return '<div class="row"><span class="dot" style="background:' + r[0] + '"></span>' + r[1] + '</div>'; }).join('') +
+    '<div class="row muted" style="margin-top:6px">discounted to today at 7% a year</div>' +
+    '<h4 style="margin-top:22px">so that</h4>' +
+    '<div class="row">• demand is met in every sampled hour</div><div class="row">• storage gives back only what it stored</div><div class="row">• build limits, unit sizes and lifetimes hold</div>',
+    el, 'left:1240px;top:236px;width:580px;padding:30px 34px');
+  var chip = H('div', 'abs', '<span class="chip">PSA.js (a port of PyPSA) + HiGHS, in your browser</span>', el, 'left:1240px;top:842px');
+  var foot = H('div', 'say', 'A plant is built in the first year it <b>pays its way</b>, or when demand needs it.', el, 'left:180px;top:940px;width:1640px;font-size:30px;text-align:left');
+  return function(t){
+    show(h, P(t, 0, .6)); frame.style.opacity = P(t, .3, 1);
+    show(obj, P(t, 1.2, 1.9)); show(chip, P(t, 1.8, 2.4));
+    var sp = clamp((t - 3.2) / 4.4), col = Math.min(4, Math.floor(sp * 5));
+    scan.setAttribute('opacity', t > 3.2 && t < 7.9 ? .9 * (1 - P(t, 7.4, 7.9)) : 0);
+    scan.setAttribute('x', GX + Math.min(4 * CW, sp * 5 * CW - CW / 2 < 0 ? 0 : Math.min(4, sp * 5 - .5) * CW));
+    cells.forEach(function(k){
+      var a = 3.3 + k.c * .88, p = P(t, a, a + .55);
+      k.qm.style.opacity = P(t, .5, 1) * (1 - P(t, a - .1, a + .2));
+      k.b.setAttribute('r', k.R * p);
+      k.lbl.setAttribute('opacity', P(t, a + .2, a + .6));
+    });
+    show(unit, P(t, 7.6, 8.1)); show(foot, P(t, 8.1, 8.7));
+  };
+});
+
+/* ─────────── 6. The answer ─────────── */
+scene(52, 63, function(el){
+  kicker(el, 'THE ANSWER');
+  var h = head(el, 'Build 5,311 MW by 2046, starting with 217 MW of Solar PV and 108 MW of Gas (OCGT) in 2026.', 'font-size:46px;width:1660px');
+  var svg = S('svg', { width: 1920, height: 1080, class: 'abs', style: 'left:0;top:0' }, el);
+  var X0 = 190, X1 = 1150, Y0 = 930, Y1 = 370, VMAX = 6000, yv = function(v){ return Y0 - v / VMAX * (Y0 - Y1); };
+  var ax = S('g', {}, svg);
+  [0, 1000, 2000, 3000, 4000, 5000, 6000].forEach(function(v){
+    S('line', { x1: X0, x2: X1, y1: yv(v), y2: yv(v), stroke: '#C8D4E8', 'stroke-width': 1.4 }, ax);
+    S('text', { x: X0 - 14, y: yv(v) + 7, 'text-anchor': 'end', 'font-size': 19, fill: '#4A5A6A' }, ax).textContent = fmt(v);
+  });
+  var BW = (X1 - X0) / 5;
+  D.periods.forEach(function(y, k){ S('text', { x: X0 + k * BW + 22, y: Y0 + 34, 'font-size': 22, 'font-weight': 800, fill: '#4A5A6A' }, ax).textContent = y; });
+  S('text', { x: 0, y: 0, transform: 'translate(' + (X0 - 92) + ',' + ((Y0 + Y1) / 2) + ') rotate(-90)', 'text-anchor': 'middle', 'font-size': 19, fill: '#7F8C8D' }, ax).textContent = 'Capacity (MW)';
+  // Layers bottom-up as the tool stacks them: in service (hatched), then new build.
+  var layers = [[1, true], [2, true], [2, false], [3, false], [4, false], [5, false], [6, false]];
+  var cols = D.periods.map(function(y, k){
+    var g = S('g', {}, svg), parts = [], cum = 0;
+    layers.forEach(function(L){
+      var t = T[L[0]], v = L[1] ? t.exist[k] : t.cap[k] - t.exist[k];
+      if(v < 0.5) return;
+      parts.push({ r: S('rect', { x: X0 + k * BW + 1, width: BW - 2, fill: techFill(L[0], L[1]), stroke: COL[L[0]], 'stroke-width': 1.5 }, g), lo: cum, hi: cum + v });
+      cum += v;
+    });
+    var built = D.tech.reduce(function(s, t){ return s + t.built[k]; }, 0);
+    var lab = S('text', { x: X0 + (k + .5) * BW, y: yv(cum) - 14, 'text-anchor': 'middle', 'font-size': 23, 'font-weight': 800, fill: '#2D3436', opacity: 0 }, g);
+    lab.textContent = '+' + fmt(built) + ' MW';
+    var pk = D.peak[k], dl = S('g', { opacity: 0 }, g);
+    S('line', { x1: X0 + k * BW + 10, x2: X0 + (k + 1) * BW - 4, y1: yv(pk), y2: yv(pk), stroke: '#2D3436', 'stroke-width': 3.5, 'stroke-dasharray': '10 7' }, dl);
+    S('circle', { cx: X0 + k * BW + 14, cy: yv(pk), r: 6, fill: '#2D3436' }, dl);
+    return { parts: parts, total: cum, lab: lab, dl: dl };
+  });
+  var lg = H('div', 'abs', [[1, true, 'Coal'], [2, true, 'Gas (CCGT)'], [2, false, 'Gas (CCGT)'], [3, false, 'Gas (OCGT)'], [4, false, 'Solar PV'], [5, false, 'Wind'], [6, false, 'Battery']].map(function(L, i){
+    var f = L[1] ? mix(COL[L[0]], '#ffffff', .6) : (L[0] === 6 ? mix(COL[6], '#ffffff', .4) : FILL(L[0]));
+    return (i === 0 ? '<span style="display:inline-block;width:110px;color:#7F8C8D;font-weight:700">In service</span>' : i === 2 ? '<br><span style="display:inline-block;width:110px;color:#7F8C8D;font-weight:700;margin-top:10px">New</span>' : '') +
+      '<span style="display:inline-flex;align-items:center;gap:8px;margin-right:16px"><svg width="26" height="18"><rect x="1" y="1" width="24" height="16" rx="4" fill="' + f + '" stroke="' + COL[L[0]] + '" stroke-width="1.5"' + (L[1] ? ' stroke-dasharray="3 2"' : '') + '/></svg>' + L[2] + '</span>';
+  }).join('') + '<span style="display:inline-flex;align-items:center;gap:8px;margin-left:44px"><svg width="34" height="18"><line x1="0" x2="34" y1="9" y2="9" stroke="#2D3436" stroke-width="3.5" stroke-dasharray="8 5"/></svg>Peak demand</span>', el, 'left:' + X0 + 'px;top:258px;font:500 19px DM Sans;color:#4A5A6A;width:1100px');
+  var kpis = [
+    ['New capacity', '5,311 MW', 'Solar PV 2,219 MW, Wind 1,500 MW, and more'],
+    ['Present cost', '$5.49 bn', 'Every cost of the plan, discounted to 2026 at 7%'],
+    ['Levelised cost of energy', '$56.71/MWh', 'Over the whole plan: $47.65 in 2026, $65.48 in 2046'],
+    ['Clean energy in 2046', '76%', 'CO2 5.08 Mt in 2026, 1.01 Mt in 2046']
+  ].map(function(k, i){ return H('div', 'kpi card', '<div class="l">' + k[0] + '</div><div class="v">' + k[1] + '</div><div class="s">' + k[2] + '</div>', el, 'top:' + (262 + i * 166) + 'px'); });
+  return function(t){
+    show(h, P(t, 0, .7)); ax.style.opacity = P(t, .3, .9); show(lg, P(t, .5, 1.1));
+    cols.forEach(function(c, k){
+      var a = 1.0 + k * .75, p = Pio(t, a, a + .9);
+      c.parts.forEach(function(pt){
+        var lo = pt.lo * p, hi = pt.hi * p;
+        pt.r.setAttribute('y', yv(hi)); pt.r.setAttribute('height', Math.max(0, yv(lo) - yv(hi)));
+      });
+      c.lab.setAttribute('opacity', P(t, a + .8, a + 1.1)); c.lab.setAttribute('y', yv(c.total * p) - 14);
+      c.dl.setAttribute('opacity', P(t, a + .6, a + 1));
+    });
+    kpis.forEach(function(n, i){ var p = P(t, 5.2 + i * .35, 5.8 + i * .35); n.style.opacity = p; n.style.transform = 'translateX(' + (1 - p) * 50 + 'px)'; });
+  };
+});
+
+/* ─────────── 7. In the tool ─────────── */
+scene(63, 75, function(el){
+  kicker(el, 'IN THE TOOL');
+  var fr = H('div', '', '<div id="chrome"><i style="background:#FF6B6B"></i><i style="background:#FFC94D"></i><i style="background:#4CD07D"></i><div class="url">tool.adjiebrotots.com/capacity-expansion-planner/</div></div><div id="view"></div>', el);
+  fr.id = 'frame';
+  var view = fr.querySelector('#view'), s = 1312 / 1600;
+  var B = window.BOXES;
+  function still(name){ var w = H('div', 'still', '<img src="shots/' + name + '.png">', view); return w; }
+  function hl(w, box, pad){ pad = pad || 8; return H('div', 'hl', '', w, 'left:' + (box[0] * s - pad) + 'px;top:' + (box[1] * s - pad) + 'px;width:' + (box[2] * s + 2 * pad) + 'px;height:' + (box[3] * s + 2 * pad) + 'px'); }
+  var v0 = still('v0'), v1 = still('v1'), v2 = still('v2'), v3 = still('v3');
+  var hGrow = hl(v0, B.v0.grow, 7), hRun = hl(v0, B.v0.run, 7);
+  var vb = B.v0.verdict, hVer = hl(v0, [vb[0], vb[1], vb[2], B.v0.capCard[1] - vb[1] - 16], 8);
+  var hCap = hl(v1, B.v1.capCard, 6), hDay = hl(v2, B.v2.dayCard, 6);
+  var cc = B.v3.costCard, tc = B.v3.tablesCard, hCost = hl(v3, [cc[0], cc[1], cc[2], tc[1] + tc[3] - cc[1]], 6);
+  var caps = [
+    ['Pick an example, or enter your own system', 0, 1.9],
+    ['Press Run plan. It solves in seconds.', 1.9, 3.7],
+    ['The answer first: what to build, and what it costs', 3.7, 5.6],
+    ['Capacity, and when to build it, year by year', 5.6, 7.7],
+    ['Click a year to see its typical days, hour by hour', 7.7, 9.8],
+    ['Cost by year, and every table as a CSV', 9.8, 12.2]
+  ].map(function(c){ return { n: H('div', 'cap7', c[0], el), a: c[1], b: c[2] }; });
+  var sts = [[v0, 0, 5.6], [v1, 5.6, 7.7], [v2, 7.7, 9.8], [v3, 9.8, 12.2]];
+  function win(t, a, b, f){ return clamp(P(t, a, a + (f || .35)) - P(t, b - (f || .35), b)); }
+  return function(t){
+    show(fr, P(t, 0, .6), 30);
+    sts.forEach(function(x, i){
+      var o = i === 0 ? 1 - P(t, x[2] - .35, x[2]) : (i === 3 ? P(t, x[1] - .35, x[1]) : win(t, x[1] - .35, x[2]));
+      x[0].style.opacity = o;
+      var z = 1 + 0.035 * clamp((t - x[1]) / (x[2] - x[1]));
+      x[0].style.transform = 'scale(' + z + ')';
+    });
+    hGrow.style.opacity = win(t, .5, 1.9); hRun.style.opacity = win(t, 2.1, 3.7); hVer.style.opacity = win(t, 3.9, 5.6);
+    hCap.style.opacity = win(t, 6.0, 7.7); hDay.style.opacity = win(t, 8.1, 9.8); hCost.style.opacity = P(t, 10.2, 10.6) * (1 - P(t, 11.7, 12));
+    caps.forEach(function(c, i){ var o = i === 5 ? P(t, c.a + .1, c.a + .5) : win(t, c.a + .1, c.b - .05, .3); c.n.style.opacity = o; c.n.style.transform = 'translateY(' + (1 - Math.min(1, P(t, c.a + .1, c.a + .5))) * 16 + 'px)'; });
+  };
+});
+
+/* ─────────── 8. Outro ─────────── */
+scene(75, 82, function(el){
+  var a = H('div', 'abs', 'Runs entirely in your browser.', el, 'left:0;width:1920px;top:250px;text-align:center;font:800 76px DM Sans;letter-spacing:-.01em');
+  var b = H('div', 'abs', 'Nothing is uploaded. Free to use.', el, 'left:0;width:1920px;top:352px;text-align:center;font:600 40px DM Sans;color:#7F8C8D');
+  var c = H('div', 'abs', '<div style="font:700 22px DM Sans;letter-spacing:.14em;color:#7F8C8D;margin-bottom:22px">START FROM AN EXAMPLE</div><span class="ex on">Growing grid</span><span class="ex">Net zero</span><span class="ex">Coal exit</span><span class="ex">Island</span>', el, 'left:0;width:1920px;top:470px;text-align:center');
+  var d = H('div', 'abs', '<span style="display:inline-block;padding:22px 44px;border-radius:20px;background:#5A91E8;color:#fff;font:700 44px DM Sans;box-shadow:0 8px 30px rgba(90,145,232,.35)">tool.adjiebrotots.com/capacity-expansion-planner</span>', el, 'left:0;width:1920px;top:680px;text-align:center');
+  var e = H('div', 'abs', 'Plans are indicative: check them with a validated planning model and your own data before any investment decision.', el, 'left:0;width:1920px;top:900px;text-align:center;font:500 24px DM Sans;color:#7F8C8D');
+  return function(t){ show(a, P(t, .2, .9)); show(b, P(t, .6, 1.3)); show(c, P(t, 1.1, 1.8)); show(d, P(t, 1.7, 2.4)); show(e, P(t, 2.4, 3.0)); };
+});
+
+/* Brand mark and chapter bar */
+var brand = H('div', '', '<svg width="26" height="26" viewBox="0 0 24 24"><rect x="2.5" y="15" width="3" height="5" rx=".8" fill="#5A91E8"/><rect x="7.5" y="11" width="3" height="9" rx=".8" fill="#5A91E8"/><rect x="12.5" y="13" width="3" height="7" rx=".8" fill="#5A91E8"/><rect x="17.5" y="8" width="3" height="12" rx=".8" fill="#5A91E8"/><path d="M19 1.5v5M16.5 4h5" stroke="#2E9E7A" stroke-width="1.9" stroke-linecap="round"/></svg>Capacity Expansion Planner', stage);
+brand.id = 'brand';
+var CH = [['The question', 5, 16], ['The inputs', 16, 28], ['Hour by hour', 28, 41], ['The optimiser', 41, 52], ['The answer', 52, 63], ['In the tool', 63, 75]];
+var chapters = H('div', '', '', stage); chapters.id = 'chapters';
+var chNodes = CH.map(function(c){ return H('div', 'chap', c[0] + '<span class="bar"><i></i></span>', chapters); });
+
+var END = 82;
+window.DURATION = END;
+window.renderAt = function(t){
+  scenes.forEach(function(s){
+    var vis = t >= s.t0 - 0.001 && t <= s.t1 + 0.001;
+    if(!vis){ s.el.style.opacity = 0; s.el.style.display = 'none'; return; }
+    s.el.style.display = 'block';
+    var fin = s.t0 === 0 ? 1 : P(t, s.t0, s.t0 + .45), fout = s.t1 === END ? 1 : 1 - P(t, s.t1 - .45, s.t1);
+    s.el.style.opacity = Math.min(fin, fout);
+    s.draw(t - s.t0);
+  });
+  var on = clamp(P(t, 4.6, 5.3) - P(t, 74.6, 75.2));
+  chapters.style.opacity = on; brand.style.opacity = on;
+  CH.forEach(function(c, i){
+    var n = chNodes[i], act = t >= c[1] && t < c[2];
+    n.classList.toggle('on', act);
+    n.querySelector('i').style.width = (clamp((t - c[1]) / (c[2] - c[1])) * 100) + '%';
+  });
+};
+window.renderAt(0);
+})();
+</script>
+</body>
+</html>
