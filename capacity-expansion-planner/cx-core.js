@@ -72,9 +72,14 @@
      sd      (load) 'bars': the still day is the weekday as the bars draw it,
              as v1 had it (absent: the peak season's day with the highest hour)
      ts      from a file: { r: 'day' | 'day2' | 'week', s: { <season>: [24 ×
-             1, 2 or 7 days] } }, one series a season of the climate by name
-             or '*' for every season. A load's is per unit (its highest hour
-             is the peak), a farm's per unit of its rating, as it is.
+             1, 2 or 7 days] }, pk }, one series a season of the climate by
+             name or '*' for every season. A load's is per unit (its highest
+             hour is the peak), a farm's per unit of its rating, as it is.
+             pk (absent before it existed): { s: its season or '', h: [24] },
+             the still, overcast peak day, the profile's own hours on it. A
+             load's highest hour may then be on it alone, and its typical
+             days stay below; without it the still day is built as ever.
+             Values are kept as read, so a template reads back exactly.
    Only values that differ from DEFAULTS, or from a blank profile, are written. */
 (function(root){
   'use strict';
@@ -169,25 +174,53 @@
   CX.SUN_WEEK = [1, 0.9, 0.6, 1, 0.95, 0.75, 1];
   CX.WIND_WEEK = [1, 0.75, 1.2, 0.55, 0.9, 1.25, 0.8];
 
-  /* ── Climates: the seasons a year is sampled by (keys frozen) ──
+  /* ── Climates: the seasons a year is sampled by (keys frozen; new ones are added beside them) ──
      dem is a season's peak as a share of the year's, sol the solar shape
      of its days (and solf a factor on it, for a cloudier wet season), wind
      a factor on the wind shape. The peak season is the one at 1. */
   CX.CLIMATES = {
-    sum:  { label: 'Temperate, peak in summer', seasons: [
-            { name: 'Summer', days: 91.25, dem: 1.00, sol: 'pvs', solf: 1, wind: 0.85 },
-            { name: 'Autumn', days: 91.25, dem: 0.86, sol: 'pv', solf: 1, wind: 1.00 },
-            { name: 'Winter', days: 91.25, dem: 0.90, sol: 'pvw', solf: 1, wind: 1.20 },
-            { name: 'Spring', days: 91.25, dem: 0.84, sol: 'pv', solf: 1, wind: 0.95 }] },
-    win:  { label: 'Temperate, peak in winter', seasons: [
-            { name: 'Summer', days: 91.25, dem: 0.84, sol: 'pvs', solf: 1, wind: 0.85 },
-            { name: 'Autumn', days: 91.25, dem: 0.88, sol: 'pv', solf: 1, wind: 1.00 },
-            { name: 'Winter', days: 91.25, dem: 1.00, sol: 'pvw', solf: 1, wind: 1.20 },
-            { name: 'Spring', days: 91.25, dem: 0.86, sol: 'pv', solf: 1, wind: 0.95 }] },
-    trop: { label: 'Tropical, the same all year', seasons: [
-            { name: 'Dry season', days: 182.5, dem: 1.00, sol: 'pveq', solf: 1, wind: 0.9 },
-            { name: 'Wet season', days: 182.5, dem: 0.96, sol: 'pveq', solf: 0.8, wind: 1.1 }] }
+    sum:  { label: 'Summer peak, Dec to Feb', seasons: [
+            { name: 'Summer', days: 91.25, dem: 1.00, sol: 'pvs', solf: 1, wind: 0.85, mon: [11, 0, 1] },
+            { name: 'Autumn', days: 91.25, dem: 0.86, sol: 'pv', solf: 1, wind: 1.00, mon: [2, 3, 4] },
+            { name: 'Winter', days: 91.25, dem: 0.90, sol: 'pvw', solf: 1, wind: 1.20, mon: [5, 6, 7] },
+            { name: 'Spring', days: 91.25, dem: 0.84, sol: 'pv', solf: 1, wind: 0.95, mon: [8, 9, 10] }] },
+    win:  { label: 'Winter peak, Jun to Aug', seasons: [
+            { name: 'Summer', days: 91.25, dem: 0.84, sol: 'pvs', solf: 1, wind: 0.85, mon: [11, 0, 1] },
+            { name: 'Autumn', days: 91.25, dem: 0.88, sol: 'pv', solf: 1, wind: 1.00, mon: [2, 3, 4] },
+            { name: 'Winter', days: 91.25, dem: 1.00, sol: 'pvw', solf: 1, wind: 1.20, mon: [5, 6, 7] },
+            { name: 'Spring', days: 91.25, dem: 0.86, sol: 'pv', solf: 1, wind: 0.95, mon: [8, 9, 10] }] },
+    trop: { label: 'Tropical, wet Nov to Apr', seasons: [
+            { name: 'Dry season', days: 182.5, dem: 1.00, sol: 'pveq', solf: 1, wind: 0.9, mon: [4, 5, 6, 7, 8, 9] },
+            { name: 'Wet season', days: 182.5, dem: 0.96, sol: 'pveq', solf: 0.8, wind: 1.1, mon: [10, 11, 0, 1, 2, 3] }] }
   };
+  /* The months of each season (mon, January 0) say when it is, so a year
+     of hours from a file falls into its seasons, and the full-year template
+     is dated. The climates above are the southern hemisphere's; each has a
+     northern one (key + '-n') with the very same seasons, six months on, so
+     a plan runs the same on either and only the dates differ. peaks names
+     the season a temperate climate's demand is highest in, and flip is the
+     climate of the same months that peaks in the other. */
+  var NORTH = { sum: 'Summer peak, Jun to Aug', win: 'Winter peak, Dec to Feb', trop: 'Tropical, wet May to Oct' };
+  Object.keys(NORTH).forEach(function(k){
+    var seasons = CX.CLIMATES[k].seasons.map(function(z){ var o = {}; for(var q in z) o[q] = z[q]; o.mon = z.mon.map(function(m){ return (m + 6) % 12; }); return o; });
+    CX.CLIMATES[k + '-n'] = { label: NORTH[k], seasons: seasons };
+  });
+  Object.keys(CX.CLIMATES).forEach(function(k){
+    var base = k.replace(/-n$/, ''), n = k === base ? '' : '-n';
+    CX.CLIMATES[k].peaks = base === 'sum' ? 'Summer' : base === 'win' ? 'Winter' : null;
+    CX.CLIMATES[k].flip = base === 'sum' ? 'win' + n : base === 'win' ? 'sum' + n : null;
+    CX.CLIMATES[k].north = !!n;
+  });
+  // The months of season i, and the season (its index) month m (January 0) falls in.
+  CX.seasonMonths = function(climate, i){ return CX.CLIMATES[climate].seasons[i].mon.slice(); };
+  CX.seasonOfMonth = function(climate, m){
+    var S = CX.CLIMATES[climate].seasons;
+    for(var i = 0; i < S.length; i++) if(S[i].mon.indexOf(m) >= 0) return i;
+    return 0;
+  };
+  CX.MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // The days of year y: the first (days since 1970) and how many.
+  CX.yearDays = function(y){ var d0 = Math.floor(Date.UTC(y, 0, 1) / 86400000); return { d0: d0, n: Math.floor(Date.UTC(y + 1, 0, 1) / 86400000) - d0 }; };
   CX.SAMPLES = ['day', 'day2', 'week'];
   // The days each sampling holds, and how fine it is.
   CX.RES_DAYS = { day: 1, day2: 2, week: 7 };
@@ -244,17 +277,27 @@
     if(!Array.isArray(v) || v.length !== n) return '';
     return v.map(function(x){ var k = num(x); return isNaN(k) ? 1 : r6(clamp(k, 0, 2)); });
   }
-  // A profile from a file: its sampling and a series a season, each the right length.
+  /* A profile from a file: its sampling and a series a season, each the
+     right length, and its peak day if it has a whole one. Values are kept as
+     they were saved: a file's were rounded to 6 places before the peak day
+     came, and still read to exactly those. */
   function readTs(v, cap){
     if(!v || typeof v !== 'object' || !own.call(CX.RES_DAYS, v.r) || !v.s || typeof v.s !== 'object' || Array.isArray(v.s)) return null;
     var n = 24 * CX.RES_DAYS[v.r], out = {}, k = 0;
+    var vals = function(a){ return a.map(function(x){ var q = num(x); return isNaN(q) ? 0 : clamp(q, 0, cap); }); };
     Object.keys(v.s).forEach(function(name){
       var a = v.s[name], key = name === '*' ? '*' : str(name, 40).trim();
       if(k >= CX.MAX_SEASONS || !key || /^(__proto__|constructor|prototype)$/.test(key) || own.call(out, key) || !Array.isArray(a) || a.length !== n) return;
-      out[key] = a.map(function(x){ var q = num(x); return isNaN(q) ? 0 : r6(clamp(q, 0, cap)); });
+      out[key] = vals(a);
       k++;
     });
-    return k ? { r: v.r, s: out } : null;
+    if(!k) return null;
+    var ts = { r: v.r, s: out }, pk = v.pk;
+    if(pk && typeof pk === 'object' && Array.isArray(pk.h) && pk.h.length === 24){
+      var ps = typeof pk.s === 'string' ? str(pk.s, 40).trim() : '';
+      ts.pk = { s: /^(__proto__|constructor|prototype)$/.test(ps) ? '' : ps, h: vals(pk.h) };
+    }
+    return ts;
   }
 
   /* ── Profiles: a load's, or a solar or wind farm's (kind 'gen') ── */
@@ -493,10 +536,11 @@
      a weekend hour is the shape's weekend day moved by as much as its weekday
      hour was edited, and every hour takes its day's factor. From a file: the
      season's own hours. The still day is the peak season's highest day, or
-     (sd 'bars') its weekday as the bars draw it. */
+     (sd 'bars') its weekday as the bars draw it, or a file's peak day. */
   function loadDay(L, s, wd, stress){
     var out = new Array(24), h, v;
     if(CX.isCustom(L)){
+      if(stress && L.ts.pk){ for(h = 0; h < 24; h++) out[h] = Math.max(0, +L.ts.pk.h[h] || 0); return out; }
       var ser = CX.tsSeries(L.ts, s.name), at = CX.dayOf(L.ts.r, wd) * 24;
       for(h = 0; h < 24; h++) out[h] = Math.max(0, +ser[at + h] || 0);
       return out;
@@ -522,6 +566,9 @@
         if(m > top0){ top0 = m; peakS = i; peakWd = wd; }
       });
     });
+    // A file's peak day names its season, which the still day then stands in.
+    var pkS = custom && L.ts.pk ? seasons.map(function(s){ return s.name; }).indexOf(L.ts.pk.s) : -1;
+    if(pkS >= 0) peakS = pkS;
     var stressWd = !custom && L.sd === 'bars' ? 0 : peakWd;
     var days = [];
     seasons.forEach(function(s, i){
@@ -545,6 +592,8 @@
         w.push(dy.weight);
       }
     });
+    // A file's peak day holds the year's highest hour whether or not the still day is run.
+    if(custom && L.ts.pk) L.ts.pk.h.forEach(function(v){ if(+v > top) top = +v; });
     for(var t = 0; t < H; t++) load[t] = top > 0 ? load[t] / top : 0;
     // Each farm's own: the climate's with its week of weather, or its file's hours.
     var gen = {};
@@ -552,10 +601,11 @@
       if(e.kind !== 'pv' && e.kind !== 'wind') return;
       var p = e.prof, isPv = e.kind === 'pv', base = isPv ? sun : wind, out = new Array(H), k = 0;
       if(CX.isCustom(p)){
-        // The still day takes the clearest (or windiest) of the season's days in the file, as the climate's takes a clear one.
-        var ser = seasons.map(function(s){ return CX.tsSeries(p.ts, s.name); }), nd = CX.RES_DAYS[p.ts.r], best = 0, most = -1;
+        // The still day takes the file's peak day as it is, else the clearest (or windiest) of the season's days in it, as the climate's takes a clear one.
+        var ser = seasons.map(function(s){ return CX.tsSeries(p.ts, s.name); }), nd = CX.RES_DAYS[p.ts.r], best = 0, most = -1, pk = p.ts.pk;
         for(var q = 0; q < nd; q++){ var tot = 0; for(var hq = 0; hq < 24; hq++) tot += +ser[peakS][q * 24 + hq] || 0; if(tot > most){ most = tot; best = q; } }
         days.forEach(function(dy){
+          if(dy.stress && pk){ for(var hp = 0; hp < 24; hp++) out[k++] = Math.max(0, +pk.h[hp] || 0); return; }
           var at = (dy.stress ? best : CX.dayOf(p.ts.r, dy.wd)) * 24, still = dy.stress ? (isPv ? CX.STRESS.sun : CX.STRESS.wind) : 1;
           for(var h = 0; h < 24; h++) out[k++] = Math.max(0, +ser[dy.s][at + h] || 0) * still;
         });

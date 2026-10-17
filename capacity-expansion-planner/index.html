@@ -45,10 +45,11 @@
   "featureList": [
     "The size and the year of every new plant and battery, for 1 to 60 years ahead in steps of 1 to 10 years",
     "Existing capacity with a retirement year, and new builds with capital cost, fixed and running costs, lifetime and a yearly cost decline",
-    "Solar and wind following the climate's sun and wind scaled to their capacity factors, with a week of cloudier and calmer days, or their own hourly profiles from a CSV or Excel file; firm plants derated for outages, storage with its hours and round-trip efficiency",
+    "Solar and wind following the climate's sun and wind scaled to their capacity factors, with a week of cloudier and calmer days, or their own hourly profiles from a CSV or Excel file of typical days or a full year; firm plants derated for outages, storage with its hours and round-trip efficiency",
     "Build limits, whole units of a set size, an earliest build year",
-    "Peak demand growing every year with a load profile built in or drawn hour by hour, with daily variability by weekday and weekend or Monday to Sunday, or from your own CSV or Excel file by season and day",
-    "Typical days, a weekday and a weekend day, or weeks for every season, set by the profiles so they always agree, in a summer-peaking, winter-peaking or tropical climate, and a still, overcast peak day",
+    "Peak demand growing every year with a load profile built in or drawn hour by hour, with daily variability by weekday and weekend or Monday to Sunday, or from your own CSV or Excel file by season and day, or a full year of 8,760 hours averaged into a typical week for each season",
+    "Templates to fill in: hourly or daily variability, the same in every season or each season its own, or every hour of a year, each with its still, overcast peak day",
+    "Typical days, a weekday and a weekend day, or weeks for every season, set by the profiles so they always agree, in a summer-peaking, winter-peaking or tropical climate north or south of the equator, and a still, overcast peak day
     "Carbon price that rises every year, a net-zero year, and load shedding at the value of lost load",
     "Capacity, new build and retirements, energy mix, hourly dispatch and cost by year, with tables to download",
     "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
@@ -88,7 +89,7 @@
       "name": "How is the load profile taken into account?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Each decision year is run hour by hour over typical days of every season, each weighted by how many days of the year it stands for, plus a still and overcast day at the peak. The load profile can be one typical day, a weekday and a weekend day, or a full week, built in, drawn or from your own CSV or Excel file, and the typical days follow it. Solar, wind and batteries are matched to the shape of the demand hour by hour, so the plan sizes firm capacity for the evening peak and storage for the hours the sun is down."
+        "text": "Each decision year is run hour by hour over typical days of every season, each weighted by how many days of the year it stands for, plus a still and overcast day at the peak. The load profile can be one typical day, a weekday and a weekend day, or a full week, built in, drawn or from your own CSV or Excel file, for every season or each its own, or a full year of hours, which is averaged into a typical week for each season with its peak day kept, and the typical days follow it. Solar, wind and batteries are matched to the shape of the demand hour by hour, so the plan sizes firm capacity for the evening peak and storage for the hours the sun is down."
       }
     }
   ]
@@ -164,26 +165,28 @@
         <input id="cxGrowth" type="range" min="-2" max="10" step="0.1" value="3" data-readout="cxGrowthVal" data-unit="%/yr"/>
       </div>
     </div>
-    <!-- The seasons come first: every profile below, and each farm's, is told by them. -->
-    <div class="field-group">
-      <div class="group-title">Seasons</div>
-      <div class="field-row">
-        <div class="field-label"><span class="tip-wrap">Climate <i class="tip-icon" data-tip="" id="climateTip" data-tip-options>?</i></span></div>
-        <select class="sel-input" id="cxClimate">
-          <option value="sum" selected>Temperate, peak in summer</option>
-          <option value="win">Temperate, peak in winter</option>
-          <option value="trop">Tropical, the same all year</option>
-        </select>
-        <p class="derived" id="climateNote" aria-live="polite"></p>
-      </div>
-    </div>
     <!-- The load profile lives in the plan (model.load), which the mini cache
          saves as a whole, so none of its controls is saved on its own. A plan
-         saved before kept its shape in this select (v:cxProfile). -->
+         saved before kept its shape in this select (v:cxProfile). The climate
+         comes first and is saved as a field: every profile below, and each
+         farm's, is told by its seasons, and its months date them. -->
     <div class="field-group">
       <div class="group-title">Load profile</div>
+      <div class="field-row">
+        <div class="field-label"><span class="tip-wrap">Climate <i class="tip-icon" data-tip="" id="climateTip" data-tip-options>?</i></span></div>
+        <!-- sum, win and trop are the southern hemisphere's, as every plan saved before them; the -n ones the north's. -->
+        <select class="sel-input" id="cxClimate">
+          <option value="sum" selected>Summer peak, Dec to Feb</option>
+          <option value="sum-n">Summer peak, Jun to Aug</option>
+          <option value="win">Winter peak, Jun to Aug</option>
+          <option value="win-n">Winter peak, Dec to Feb</option>
+          <option value="trop">Tropical, wet Nov to Apr</option>
+          <option value="trop-n">Tropical, wet May to Oct</option>
+        </select>
+      </div>
+      <p class="derived" id="climateNote" aria-live="polite"></p>
       <div class="field-row prof-row" data-prof="load" data-no-persist data-no-abbr>
-        <div class="field-label"><span class="tip-wrap">Profile <i class="tip-icon" data-tip="Demand through a day, as a share of its peak. Drag a bar to adjust it. Custom takes its hours from a CSV or Excel file, by season and by day if you like.">?</i></span></div>
+        <div class="field-label"><span class="tip-wrap">Profile <i class="tip-icon" data-tip="Demand through a day, as a share of its peak. Drag a bar to adjust it. Custom takes its hours from a CSV or Excel file: typical days, by season if you like, or a full year.">?</i></span></div>
         <select class="sel-input" id="cxProfile" data-pk="base" aria-label="Load profile">
           <option value="sys" selected>System day</option>
           <option value="res">Residential</option>

@@ -108,6 +108,8 @@ body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
 .prof-line .pb-t{fill:var(--muted);font:500 7.5px 'DM Mono',monospace;}
 .prof-line .pb-v{fill:var(--text);font:600 8px 'DM Mono',monospace;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round;pointer-events:none;}
 .prof-file{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+/* The template menu (script.js) wears the Share menu's list; a rule parts its three kinds. */
+.share-list .tpl-sep{height:1px;margin:4px 10px;background:var(--border);}
 .up-msg{font-size:.78rem;line-height:1.45;margin-top:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--info-bg);color:var(--info-text);}
 .up-msg.is-err{background:var(--error-bg);color:var(--error-text);}
 .up-msg[hidden]{display:none;}

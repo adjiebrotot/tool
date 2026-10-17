@@ -109,11 +109,13 @@
 
   /* Kept live on every keystroke, whatever the gate says: affixes, readouts,
      which rows the choices show, the dependent tips and the notes under them. */
+  // Each climate's, north or south: its months are in its name.
   var CLIMATE_TIP = {
-    sum: '<strong>Temperate, peak in summer:</strong> four seasons, demand highest in summer, long sunny days then and short low ones in winter, and windier winters.',
-    win: '<strong>Temperate, peak in winter:</strong> four seasons, demand highest in winter when the sun is lowest, and windier winters.',
-    trop: '<strong>Tropical, the same all year:</strong> a dry and a wet season, twelve hours of high sun every day, a little cloudier in the wet.'
+    sum: 'four seasons, demand highest in summer, long sunny days then and short low ones in winter, and windier winters.',
+    win: 'four seasons, demand highest in winter when the sun is lowest, and windier winters.',
+    trop: 'a dry and a wet season, twelve hours of high sun every day, a little cloudier in the wet.'
   };
+  function climateTip(k){ return '<strong>' + CX.CLIMATES[k].label + ':</strong> ' + CLIMATE_TIP[k.replace(/-n$/, '')]; }
   var SAMPLE_TIP = {
     day: '<strong>One typical day:</strong> each season is one day, standing for every day of it, as no profile varies from day to day. The quickest.',
     day2: '<strong>A weekday and a weekend day:</strong> each season is a weekday for five days in seven and a weekend day for the other two.',
@@ -130,10 +132,10 @@
     });
     return 'Set by ' + CX.list(who) + '.';
   }
-  // The seasons, and the demand in each the built-in shapes run at.
+  // The seasons, their months, and the demand in each the built-in shapes run at.
   function climateNote(o){
     var Cl = CX.CLIMATES[o.climate], n = Cl.seasons.length;
-    var names = CX.list(Cl.seasons.map(function(s){ return s.name.toLowerCase(); }));
+    var names = CX.list(Cl.seasons.map(function(s, i){ var m = CX.seasonMonths(o.climate, i); return s.name.toLowerCase() + ' (' + CX.MONTHS[m[0]] + ' to ' + CX.MONTHS[m[m.length - 1]] + ')'; }));
     var each = n === 4 ? ', a quarter of the year each' : n === 2 ? ', half the year each' : '';
     var lv = CX.isCustom(app.model.load) ? 'The load profile’s file sets the demand in each.' :
       'Demand at ' + CX.list(Cl.seasons.map(function(s){ return F.pct(100 * s.dem) + '%'; })) + ' of the peak.';
@@ -148,7 +150,7 @@
     $('vollRow').hidden = !$('cxShed').checked;
     $('nzRow').hidden = !$('cxNetZero').checked;
     $('gapRow').hidden = !app.model.tech.some(function(e){ return e.build && e.unit > 0; });
-    setTip('climateTip', CLIMATE_TIP[o.climate]);
+    setTip('climateTip', climateTip(o.climate));
     var P = CX.periods(o), S = app.S = CX.sample(app.model, o);
     // Each season follows the profiles: shown in Assumptions, never chosen there.
     $('cxSample').value = S.sample;
@@ -235,18 +237,28 @@
   }
   /* Lines of hourly values in segments, a season's days each, 240 units wide
      with a gap between, each named under it: the days of one segment alone,
-     every season's name when there are more. at is an hour across them all. */
-  var LINE_GAP = 5;
+     every season's name when there are more. A weekday and a weekend day are
+     days apart, not one run of time, so each is a run of its own with a gap
+     and the dashed rule between, as on the typical days chart; a week runs
+     on unbroken. at is an hour across them all. */
+  var LINE_GAP = 5, DAY_GAP = 3;
+  function lineRun(x0, w, m, from){ return { x0: x0, w: w, m: m, from: from, X: function(k){ return x0 + (m > 1 ? k * w / (m - 1) : w / 2); } }; }
   function lineGeom(segs){
-    var n = 0, x0 = 0, out = [];
-    segs.forEach(function(g){ n += g.vals.length; });
-    var span = 240 - LINE_GAP * Math.max(0, segs.length - 1);
-    segs.forEach(function(g, i){
-      var w = n ? span * g.vals.length / n : 0, m = g.vals.length, left = x0;
-      out.push({ x0: left, w: w, m: m, X: function(k){ return left + (m > 1 ? k * w / (m - 1) : w / 2); }, from: i ? out[i - 1].from + out[i - 1].m : 0 });
-      x0 += w + LINE_GAP;
+    var n = 0, gaps = 0, x = 0, from = 0;
+    // A lone segment's weekday and weekend take the full gap; beside other seasons a narrower one keeps each season together.
+    var dayGap = segs.length > 1 ? DAY_GAP : LINE_GAP, runsOf = function(g){ return g.r === 'day2' && g.vals.length === 48 ? 2 : 1; };
+    segs.forEach(function(g, i){ n += g.vals.length; gaps += (i ? LINE_GAP : 0) + (runsOf(g) - 1) * dayGap; });
+    var u = n ? (240 - gaps) / n : 0;
+    return segs.map(function(g, i){
+      var k = runsOf(g), len = g.vals.length / k, runs = [], left;
+      if(i) x += LINE_GAP;
+      left = x;
+      for(var p = 0; p < k; p++){ if(p) x += dayGap; runs.push(lineRun(x, u * len, len, from + p * len)); x += u * len; }
+      var seg = { x0: left, w: x - left, m: g.vals.length, from: from, runs: runs,
+        X: function(j){ var q = runs[Math.max(0, Math.min(k - 1, Math.floor(j / len)))]; return q.X(j - (q.from - seg.from)); } };
+      from += g.vals.length;
+      return seg;
     });
-    return out;
   }
   function dayWord(r, k){ var d = Math.floor(k / 24); return r === 'week' ? CX.DAYS[d] + ' ' : r === 'day2' ? (d ? 'Weekend ' : 'Weekday ') : ''; }
   function linesSvg(segs, at){
@@ -254,11 +266,15 @@
     segs.forEach(function(g){ g.vals.forEach(function(v){ if(v > top) top = v; }); });
     var Y = function(v){ return 42 - Math.min(Math.max(v, 0), top) / top * 40; };
     segs.forEach(function(g, i){
-      var q = G[i], d = '';
-      for(var k = 0; k < q.m; k++) d += (k ? 'L' : 'M') + q.X(k).toFixed(1) + ' ' + Y(g.vals[k]).toFixed(1);
-      if(!d) return;
-      s += '<path class="pl-area" d="' + d + 'L' + q.X(q.m - 1).toFixed(1) + ' 42L' + q.X(0).toFixed(1) + ' 42Z"/><path class="pl" d="' + d + '"/>';
-      for(var dd = 24; dd < q.m; dd += 24) s += '<path class="pb-ref" d="M' + q.X(dd).toFixed(1) + ' 10V42"/>';
+      var q = G[i];
+      if(!q.m) return;
+      q.runs.forEach(function(u, p){
+        var d = '';
+        for(var k = 0; k < u.m; k++) d += (k ? 'L' : 'M') + u.X(k).toFixed(1) + ' ' + Y(g.vals[u.from - q.from + k]).toFixed(1);
+        s += '<path class="pl-area" d="' + d + 'L' + u.X(u.m - 1).toFixed(1) + ' 42L' + u.X(0).toFixed(1) + ' 42Z"/><path class="pl" d="' + d + '"/>';
+        for(var dd = 24; dd < u.m; dd += 24) s += '<path class="pb-ref" d="M' + u.X(dd).toFixed(1) + ' 10V42"/>';
+        if(p){ var prev = q.runs[p - 1]; s += '<path class="pb-ref" d="M' + ((prev.x0 + prev.w + u.x0) / 2).toFixed(1) + ' 10V42"/>'; }
+      });
       if(segs.length === 1 && g.r !== 'day'){
         for(var dl = 0; dl < q.m; dl += 24) s += '<text class="pb-t" x="' + q.X(dl + 11.5).toFixed(1) + '" y="52" text-anchor="middle">' + dayWord(g.r, dl).trim() + '</text>';
       } else if(segs.length === 1){
@@ -279,10 +295,13 @@
     return s;
   }
   function lineHit(segs, x){
-    var G = lineGeom(segs), best = null;
-    G.forEach(function(q){
-      var k = Math.round((x - q.x0) / (q.w || 1) * (q.m - 1)), d = x < q.x0 ? q.x0 - x : x > q.x0 + q.w ? x - q.x0 - q.w : 0;
-      if(!best || d < best.d) best = { d: d, i: q.from + Math.max(0, Math.min(q.m - 1, k)) };
+    var best = null;
+    lineGeom(segs).forEach(function(seg){
+      seg.runs.forEach(function(q){
+        if(!q.m) return;
+        var k = Math.round((x - q.x0) / (q.w || 1) * (q.m - 1)), d = x < q.x0 ? q.x0 - x : x > q.x0 + q.w ? x - q.x0 - q.w : 0;
+        if(!best || d < best.d) best = { d: d, i: q.from + Math.max(0, Math.min(q.m - 1, k)) };
+      });
     });
     return best ? best.i : null;
   }
@@ -315,6 +334,8 @@
 
   /* The editors' markup: drawings left empty, drawn once they are in. */
   var SVG_BARS = ' viewBox="-8 -14 256 90" role="img"', SVG_LINE = ' viewBox="-8 -6 256 62" role="img"';
+  // The Share button's chevron, which turns over while the template menu is open.
+  var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
   function dailyHtml(scope, x){
     var on = !!x.p.dv, load = x.kind === 'load';
     var html = '<div class="toggle-row prof-toggle"><div class="toggle-label"><span class="tip-wrap">Daily variability' +
@@ -322,7 +343,7 @@
       '<label class="toggle-switch"><input type="checkbox" data-pk="dv" aria-label="Daily variability"' + (on ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(!on) return html;
     if(load) html += '<div class="seg-group prof-seg" data-pk="dm" role="group" aria-label="Which days differ">' +
-      [['day2', 'Weekdays and weekend'], ['week', 'Full week']].map(function(o){ return '<button type="button" class="seg-btn' + (x.p.dm === o[0] ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+      [['day2', 'Weekdays/end'], ['week', 'Full week']].map(function(o){ return '<button type="button" class="seg-btn' + (x.p.dm === o[0] ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
     html += '<svg class="prof-bars" data-bars="d"' + SVG_BARS + ' aria-label="' + (load && x.p.dm !== 'week' ? 'Demand on a weekday and at the weekend' : load ? 'Demand each day, Monday to Sunday' : 'The weather each day, Monday to Sunday') + ', as a share of the bars above. Drag a bar to change it."></svg>';
     if(load) html += '<svg class="prof-line" data-line="w"' + SVG_LINE + ' aria-label="Demand through ' + (x.p.dm === 'week' ? 'the week, Monday to Sunday' : 'a weekday and a weekend day') + ', hour by hour"></svg>';
     return html;
@@ -330,10 +351,11 @@
   function fileHtml(scope, x){
     var m = fileMsg[scope], has = CX.isCustom(x.p), o = plan();
     var html = '<div class="prof-file"><button type="button" class="btn-secondary btn-sm" data-icon="open" data-act="open" title="Take its hours from a CSV or Excel file">Open file</button>' +
-      '<button type="button" class="btn-secondary btn-sm" data-act="tpl" title="A CSV of its hours as they run now, with notes on how to fill it in">⬇ Template (.csv)</button></div>' +
+      '<button type="button" class="btn-secondary btn-sm share-toggle" data-act="tpl" aria-haspopup="menu" aria-expanded="false" aria-controls="tplMenu" title="A CSV of its hours as they run now, by the hour or by the day, with notes on how to fill it in">' +
+      '<span>⬇ Template (.csv)</span>' + CHEVRON + '</button></div>' +
       '<div class="up-msg' + (m && m.err ? ' is-err' : '') + '" role="status" aria-live="polite"' + (m && m.html ? '' : ' hidden') + '>' + (m ? m.html : '') + '</div>' +
       '<svg class="prof-line" data-line="t"' + SVG_LINE + ' aria-label="' + esc(x.Who) + ' through each season’s typical days, hour by hour"></svg>';
-    if(has) html += '<p class="derived">From its file: ' + describe(x.p.ts, o.climate) + (x.kind === 'load' ? ', its highest hour the peak.' : ', as a share of its rating.') + '</p>';
+    if(has) html += '<p class="derived">From its file: ' + describe(x.p.ts, o.climate) + (x.p.ts.pk ? ', and its own still, overcast peak day' : '') + (x.kind === 'load' ? ', its highest hour the peak.' : ', as a share of its rating.') + '</p>';
     else html += '<p class="derived">Open a file, or start from the template, which holds it as it runs now. Until then it runs as ' +
       (x.kind === 'load' ? 'the ' + esc(CX.PROFILES[CX.loadBase(x.p)].label) + (Array.isArray(x.p.hrs) ? ', edited' : '') : 'the climate’s ' + (x.kind === 'pv' ? 'sun' : 'wind')) + '.</p>';
     return html;
@@ -403,7 +425,18 @@
     var seg = t.closest('[data-pk="dm"] .seg-btn');
     if(seg){ var v = seg.getAttribute('data-val'); if(x.p.dm !== v){ x.p.dm = v; changed(); renderProfile(scope); } return; }
     var act = t.closest('[data-act]');
-    if(act) (act.getAttribute('data-act') === 'open' ? openFile : downloadTemplate)(scope);
+    if(!act) return;
+    if(act.getAttribute('data-act') === 'open') openFile(scope);
+    else if(tplAt && tplAt.btn === act) closeTpl();
+    else { openTpl(act); tplRows()[0].focus({ preventScroll: true }); }
+  });
+  ctl.addEventListener('keydown', function(ev){
+    var act = ev.target.closest && ev.target.closest('[data-act="tpl"]');
+    if(!act || (ev.key !== 'ArrowDown' && ev.key !== 'ArrowUp')) return;
+    ev.preventDefault();
+    openTpl(act);
+    var r = tplRows();
+    r[ev.key === 'ArrowDown' ? 0 : r.length - 1].focus({ preventScroll: true });
   });
   // Dragging a bar sets that hour's value, or that day's; pointing at a bar or a line reads it.
   var drag = null, peek = null;
@@ -491,12 +524,13 @@
     if(!sheetP){ sheetP = loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', function(){ return window.XLSX || null; }); sheetP.catch(function(){ sheetP = null; }); }
     return sheetP;
   }
-  // A profile as the run takes it now, through its own days, for the plan's climate or another.
-  function gridNow(scope, climate){
+  // A profile as the run takes it now, for the plan's climate or another, through its own days or the days r asks for.
+  function needOf(x){ return CX.need(x.p, x.kind === 'load' ? 'load' : x.kind); }
+  function gridNow(scope, climate, r){
     var x = profAt(scope), o = plan();
     if(climate) o.climate = climate;
     var S = CX.sample(app.model, o);
-    return CX.gridOf(S, x.kind === 'load' ? S.load : CX.avail(x.e, S).a, CX.need(x.p, x.kind === 'load' ? 'load' : x.kind));
+    return CX.gridOf(S, x.kind === 'load' ? S.load : CX.avail(x.e, S).a, r || needOf(x));
   }
   function slug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'profile'; }
   function downloadAs(blob, name){
@@ -506,16 +540,123 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   }
-  function downloadTemplate(scope){
+  /* A template, from the profile as the run takes it now: typical days (key
+     'day', 'day2' or 'week') the same in every season, their seasonal
+     average, or with '.s' each season its own, or 'year', every hour of the
+     plan's first year dated in the climate's seasons; absent, its own
+     days for each season. Each ends with the still, overcast peak day as it
+     runs, whether or not the plan runs it. Days the profile does not have
+     yet repeat the ones it has; fewer keep its Monday, and its Saturday for
+     the weekend day (CX.gridOf). */
+  var TPL_KEYS = ['day', 'day2', 'week', 'day.s', 'day2.s', 'week.s', 'year'];
+  var TPL_FILE = { day: 'hourly', day2: 'weekdays-end', week: 'week', 'day.s': 'hourly-seasonal', 'day2.s': 'weekdays-end-seasonal', 'week.s': 'week-seasonal', year: 'year' };
+  var FINER = { day: 0, day2: 1, week: 2 };
+  function tplOf(key, x){
+    if(TPL_KEYS.indexOf(key) < 0) key = needOf(x) + '.s';
+    return { key: key, year: key === 'year', r: key === 'year' ? 'week' : key.split('.')[0], seasonal: /\.s$/.test(key) };
+  }
+  function seriesOf(x, S){ return x.kind === 'load' ? S.load : CX.avail(x.e, S).a; }
+  function tplRowCount(key, o){
+    if(key === 'year') return 24 * CX.yearDays(o.start).n;
+    return 24 * CX.RES_DAYS[key.split('.')[0]] * (/\.s$/.test(key) ? CX.CLIMATES[o.climate].seasons.length : 1);
+  }
+  function downloadTemplate(scope, key){
     var x = profAt(scope), o = plan();
     if(!x) return Promise.resolve();
+    var own = needOf(x), T = tplOf(key, x);
     return profilesLib().then(function(){
-      var g = gridNow(scope);
-      downloadAs(new Blob([CX.templateCsv({ kind: x.kind, who: x.who, climate: o.climate, grid: g })], { type: 'text/csv' }),
-        fileBase() + '-' + (x.kind === 'load' ? 'load' : slug(x.who)) + '-profile.csv');
-      setFileMsg(scope, 'The template holds ' + describe(g, o.climate) + ', as ' + esc(x.who) + ' runs now, with notes on how to fill it in. Change it and open it here.', false);
+      var S = CX.sample(app.model, o), a = seriesOf(x, S), g = CX.gridOf(S, a, T.r);
+      var Sx = o.stress ? S : CX.sample(app.model, Object.assign({}, o, { stress: true })), ax = o.stress ? a : seriesOf(x, Sx), k = 0;
+      Sx.days.forEach(function(d, i){ if(d.stress) k = i; });
+      var peak = { s: Sx.seasons[Sx.days[k].s].name, h: ax.slice(k * 24, k * 24 + 24) };
+      if(!T.seasonal && !T.year) g = CX.everySeason(g, o.climate);
+      downloadAs(new Blob([CX.templateCsv({ kind: x.kind, who: x.who, climate: o.climate, grid: g, seasonal: T.seasonal, peak: peak, year: T.year ? o.start : null })], { type: 'text/csv' }),
+        fileBase() + '-' + (x.kind === 'load' ? 'load' : slug(x.who)) + '-' + TPL_FILE[T.key] + (T.year ? '-' + o.start : '') + '.csv');
+      var why = [];
+      if(T.r !== own) why.push(FINER[T.r] > FINER[own] ? 'its ' + SAMPLE_PHRASE[own] + ' repeated' : 'its Monday' + (T.r === 'day2' ? ' and Saturday' : '') + ' from its ' + SAMPLE_PHRASE[own]);
+      if(!T.seasonal && !T.year) why.push('the average of its seasons');
+      var what = T.year ? 'every hour of ' + o.start + ' (' + tplRowCount('year', o).toLocaleString('en-AU') + ' hours), each day in its season by month' : describe(g, o.climate);
+      setFileMsg(scope, 'The template holds ' + what + ', then the still, overcast peak day, ' + (why.length ? 'from ' + esc(x.who) + ' as it runs now (' + why.join(', ') + ')' : 'as ' + esc(x.who) + ' runs now') +
+        ', with notes on how to fill it in. Change it and open it here.', false);
     }).catch(function(err){ setFileMsg(scope, esc(err && err.message || String(err)), true); });
   }
+  /* Which template: one menu for every profile, opened from its ⬇ Template
+     button, worn and driven as a chart's Share menu is (SharedShare): the
+     site's dropdown list, arrows, Home, End, and Escape or Tab back to the
+     button. In the body, so no card or scrolling panel can clip it. Its row
+     counts follow the climate's seasons and the plan's first year. */
+  var TPL_ROWS = [['day', 'Hourly variability', 'One typical day'],
+                  ['day2', 'Daily variability, weekdays/end', 'A weekday and a weekend day'],
+                  ['week', 'Daily variability, full week', 'Monday to Sunday'], null,
+                  ['day.s', 'Hourly + seasonal', 'A typical day each season'],
+                  ['day2.s', 'Daily + seasonal, weekdays/end', 'A weekday and a weekend day each season'],
+                  ['week.s', 'Daily + seasonal, full week', 'A week each season'], null,
+                  ['year', 'Full year', 'Every hour of the year, read into a week each season']];
+  var tplMenu = document.createElement('ul'), tplAt = null;
+  tplMenu.className = 'combo-list share-list';
+  tplMenu.id = 'tplMenu';
+  tplMenu.setAttribute('role', 'menu');
+  tplMenu.setAttribute('aria-label', 'Template');
+  tplMenu.setAttribute('data-no-abbr', '');
+  tplMenu.innerHTML = TPL_ROWS.map(function(r){
+    if(!r) return '<li role="separator" class="tpl-sep"></li>';
+    return '<li role="none"><button type="button" role="menuitem" class="combo-opt share-opt" data-r="' + r[0] + '"><span class="share-ico" aria-hidden="true">⬇</span>' +
+      '<span class="combo-text"><span class="combo-main">' + r[1] + '</span><span class="combo-sub">' + r[2] + '</span></span></button></li>';
+  }).join('');
+  document.body.appendChild(tplMenu);
+  function tplCounts(){
+    var o = plan();
+    Array.prototype.forEach.call(tplMenu.querySelectorAll('.share-opt'), function(b){
+      var key = b.getAttribute('data-r'), row = TPL_ROWS.filter(function(r){ return r && r[0] === key; })[0];
+      b.querySelector('.combo-sub').textContent = (key === 'year' ? row[2].replace('the year', o.start) : row[2]) + ': ' + tplRowCount(key, o).toLocaleString('en-AU') + ' rows';
+    });
+  }
+  function tplRows(){ return Array.prototype.slice.call(tplMenu.querySelectorAll('.share-opt')); }
+  function where(btn){ var r = btn.getBoundingClientRect(); return r.left + ',' + r.top; }
+  function openTpl(btn){
+    closeTpl();
+    tplAt = { scope: scopeOf(btn), btn: btn, at: where(btn) };
+    tplCounts();
+    tplMenu.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+    if(window.SharedDropdown) SharedDropdown.place(btn, tplMenu, { minWidth: 340, maxHeight: 460 });
+  }
+  function closeTpl(refocus){
+    if(!tplAt) return;
+    var b = tplAt.btn;
+    tplAt = null;
+    tplMenu.classList.remove('is-open');
+    b.setAttribute('aria-expanded', 'false');
+    if(refocus && b.isConnected) b.focus({ preventScroll: true });
+  }
+  tplMenu.addEventListener('click', function(ev){
+    var b = ev.target.closest('.share-opt'), scope = tplAt && tplAt.scope;
+    if(!b || !scope) return;
+    closeTpl(true);
+    downloadTemplate(scope, b.getAttribute('data-r'));
+  });
+  // Once the keyboard is in the list, the mouse moves the lit row with it.
+  tplMenu.addEventListener('mousemove', function(ev){
+    var b = ev.target.closest('.share-opt');
+    if(b && b !== document.activeElement && tplMenu.contains(document.activeElement)) b.focus({ preventScroll: true });
+  });
+  tplMenu.addEventListener('keydown', function(ev){
+    var r = tplRows(), i = r.indexOf(document.activeElement), to = null;
+    if(ev.key === 'ArrowDown') to = r[(i + 1) % r.length];
+    else if(ev.key === 'ArrowUp') to = r[(i - 1 + r.length) % r.length];
+    else if(ev.key === 'Home') to = r[0];
+    else if(ev.key === 'End') to = r[r.length - 1];
+    else if(ev.key === 'Escape' || ev.key === 'Tab'){ ev.preventDefault(); ev.stopPropagation(); closeTpl(true); return; }
+    else return;
+    ev.preventDefault();
+    to.focus();
+  });
+  // A press anywhere else closes it, before any other menu's own handler can stop the click.
+  document.addEventListener('click', function(ev){ if(tplAt && !tplMenu.contains(ev.target) && !tplAt.btn.contains(ev.target)) closeTpl(); }, true);
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && tplAt) closeTpl(true); });
+  // A scroll that moves its button closes it; one still settling from before it opened does not.
+  window.addEventListener('scroll', function(ev){ if(tplAt && !tplMenu.contains(ev.target) && where(tplAt.btn) !== tplAt.at) closeTpl(); }, true);
+  window.addEventListener('resize', function(){ closeTpl(); });
   var fileInput = document.createElement('input');
   fileInput.type = 'file'; fileInput.id = 'profFile'; fileInput.hidden = true;
   fileInput.accept = '.csv,.tsv,.txt,.xlsx,.xlsm,.xls,.ods,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
@@ -538,7 +679,7 @@
   }
   // Read a file and use it, whole or not at all. Resolves to what CX.readProfileFile said.
   function applyFile(file, scope){
-    if(file.size > 10 * 1024 * 1024){ setFileMsg(scope, 'That file is over 10 MB. A profile is at most a week of hours a season.', true); return Promise.resolve(null); }
+    if(file.size > 10 * 1024 * 1024){ setFileMsg(scope, 'That file is over 10 MB. A profile is at most a year of hours.', true); return Promise.resolve(null); }
     setFileMsg(scope, 'Reading ' + esc(file.name) + '…', false);
     var o = plan();
     return Promise.all([profilesLib(), file.arrayBuffer ? file.arrayBuffer() : new Response(file).arrayBuffer()]).then(function(r){
@@ -547,7 +688,7 @@
     }).then(function(table){
       var x = profAt(scope);
       if(!x) return null;
-      var out = CX.readProfileFile(table, { kind: x.kind, who: x.Who, climate: o.climate, peak: o.peak, current: function(cl){ return gridNow(scope, cl); } });
+      var out = CX.readProfileFile(table, { kind: x.kind, who: x.Who, climate: o.climate, peak: o.peak, year: o.start, current: function(cl){ return gridNow(scope, cl); } });
       if(out.errors.length){ setFileMsg(scope, '<b>' + esc(file.name) + ' was not used.</b> ' + out.errors.map(esc).join(' '), true); return out; }
       if(out.climate) $('cxClimate').value = out.climate;
       if(out.peak) $('cxPeak').value = String(out.peak);
@@ -578,7 +719,7 @@
     max: 'The most of it in service at any one time, existing included: a limit of land, fuel or connection. Blank is no limit.',
     unit: 'Built only in whole units of this size, as large plants are. It makes the plan a mixed-integer problem, which takes longer.',
     cf: 'Its year’s output over its rating × 8,760 hours. The climate’s sun or wind through the typical days is scaled to give it.',
-    prof: 'Its output through each season’s days, as a share of its rating: the climate’s, scaled to the capacity factor, or Custom, from a CSV or Excel file.',
+    prof: 'Its output through each season’s days, as a share of its rating: the climate’s, scaled to the capacity factor, or Custom, from a CSV or Excel file of typical days or a full year.',
     vom: 'Fuel and variable O&M for each MWh it generates, before any carbon price.',
     co2: 'CO2 for each MWh it generates. The carbon price and the net-zero year apply to it.',
     avail: 'Share of its rating it can give in any hour, after outages and maintenance.',
@@ -1125,11 +1266,11 @@
     li.push('<strong>' + P.length + ' decision year' + (P.length === 1 ? '' : 's') + ' from ' + o.start + ' to ' + o.end + ',</strong> each standing for the years up to the next at its own demand: ' +
       F.mw(o.peak) + ' MW at the peak in ' + o.start + ', growing ' + F.pct(o.growth) + '% a year.');
     var L = m.load, fileLoad = CX.isCustom(L), per = { day: 'one typical day', day2: 'a weekday and a weekend day', week: 'a typical week' }[S.sample];
-    li.push('<strong>Each year is run hour by hour over ' + per + ' a season</strong> of a ' + Cl.label.toLowerCase().replace(/,.*/, '') + ' climate (' +
+    li.push('<strong>Each year is run hour by hour over ' + per + ' a season</strong> of a ' + (Cl.peaks ? 'temperate' : 'tropical') + ' climate (' +
       (fileLoad ? CX.list(Cl.seasons.map(function(s){ return s.name.toLowerCase(); })) + ', at the levels of the load profile’s file' :
         Cl.seasons.map(function(s){ return s.name.toLowerCase() + ' at ' + Math.round(s.dem * 100) + '% of the peak'; }).join(', ')) + '), each hour weighted by the hours of the year it stands for.');
     // The load profile, as it runs.
-    if(fileLoad) li.push('<strong>Demand follows its file</strong>: ' + describe(L.ts, o.climate) + ', its highest hour the peak.');
+    if(fileLoad) li.push('<strong>Demand follows its file</strong>: ' + describe(L.ts, o.climate) + (L.ts.pk ? ', and its own still, overcast peak day' : '') + ', its highest hour the peak.');
     else {
       var pf = CX.PROFILES[CX.loadBase(L)], days = '';
       if(L.dv && L.dm === 'week') days = ', each day of the week at its own level (' + CX.loadWeek(L).map(function(v, i){ return CX.DAYS[i] + ' ' + Math.round(v * 100) + '%'; }).join(', ') + ')';
