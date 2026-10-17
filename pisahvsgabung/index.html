@@ -142,7 +142,7 @@
         <div class="field-group">
           <div class="group-title" data-i18n="groupFamily">Family</div>
           <div class="field-row">
-            <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="dependentsLabel">Dependants (tanggungan)</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Family members you support, such as children. Each one adds to the tax-free allowance (PTKP), and at most three count.">?</span></div>
+            <div class="field-label"><span data-i18n="dependentsLabel">Dependants (tanggungan)</span> <span class="tip-icon" data-i18n-tip="dependentsTip" data-tip="Family members you support, such as children. Each one adds to the tax-free allowance (PTKP), and at most three count.">?</span></div>
             <select class="num-input sel-input" id="dependents">
               <option value="0" selected data-i18n-opt="dep0">No dependants</option>
               <option value="1" data-i18n-opt="dep1">1 dependant</option>
@@ -181,7 +181,7 @@
               <div class="derived" id="splitDerived"></div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="deductionLabel">Deductions, both spouses (pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
+              <div class="field-label"><span data-i18n="deductionLabel">Deductions, both spouses (pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -210,7 +210,7 @@
               <div class="derived"><span data-i18n="combinedPrefix">Together</span> <b id="combinedLabel">Rp 500,000,000</b> <span data-i18n="combinedSuffix">a year, wife's share</span> <b id="splitDerivedLabel">50.0%</b></div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="husbandDeductionLabel">Husband's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="husbandDeductionLabel">Husband's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -218,7 +218,7 @@
               </div>
             </div>
             <div class="field-row">
-              <div class="field-label" style="display:flex;align-items:center;gap:6px"><span data-i18n="wifeDeductionLabel">Wife's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="wifeDeductionLabel">Wife's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -252,7 +252,7 @@
         </div>
 
         <div class="field-group bracket-group">
-          <div class="group-title" style="display:flex;align-items:center;gap:6px"><span data-i18n="bracketSectionLabel">Tax brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket has no upper limit. Raising a limit past the ones beneath it deletes them.">?</span></div>
+          <div class="group-title"><span data-i18n="bracketSectionLabel">Tax brackets (PPh 21)</span> <span class="tip-icon" data-i18n-tip="bracketTip" data-tip="Edit each threshold and rate. The &quot;From&quot; column fills itself in, and only the last bracket has no upper limit. Raising a limit past the ones beneath it deletes them.">?</span></div>
           <div class="bracket-row-header">
             <div class="bracket-col-label" id="bracketColFrom" data-i18n="bracketFrom">From (Rp)</div>
             <div class="bracket-col-label" id="bracketColTo" data-i18n="bracketTo">Up to (Rp)</div>

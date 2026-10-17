@@ -164,7 +164,7 @@
 
         <!-- REAL: download market data for tickers -->
         <div id="dataRealPanel">
-          <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="Loads are capped at 5 a day per device, shared with the single-asset tool. One load covers 25 tickers, so list them all at once. Cache hits are free.">!</span></div>
+          <div class="field-label" style="margin-bottom:6px">Tickers <span class="tip-icon warn" data-tip="Loads are capped at 5 a day per device, shared with the single-asset tool. One load covers 25 tickers, so list them all at once. Cache hits are free.">!</span></div>
           <textarea class="txt-input" id="tickerPoolInput" data-no-stale rows="2" placeholder="e.g. SPY, GOVT, DHHF.AX, AAA.AX" style="text-transform:uppercase;width:100%;resize:vertical;font-family:inherit;line-height:1.4"></textarea>
           <a href="../ticker/" class="ticker-ref-link">See common yfinance ticker codes here →</a>
           <div class="field-sub rate-info" id="rateInfo" style="margin-top:6px"></div>
@@ -177,18 +177,18 @@
           <input class="txt-input" id="simNameInput" data-no-stale placeholder="e.g. Equities" style="width:100%" />
           <div style="display:flex;gap:8px;margin-top:10px">
             <div style="flex:1">
-              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Return <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
+              <div class="field-label" style="margin:0 0 4px">Return <span class="tip-icon" data-tip="The average yearly return the simulated price path is built around, using Geometric Brownian Motion.">?</span></div>
               <div class="affix-wrap"><input class="affix-input has-suffix" id="simReturnInput" data-no-stale type="number" inputmode="decimal" min="-50" max="100" step="0.5" value="8" /><span class="suffix">%/yr</span></div>
             </div>
             <div style="flex:1">
-              <div class="field-label" style="margin:0 0 4px;display:flex;align-items:center;gap:6px">Standard deviation <span class="tip-icon" data-tip="Yearly volatility: how far returns swing around the average. Higher makes the simulated path swing harder.">?</span></div>
+              <div class="field-label" style="margin:0 0 4px">Standard deviation <span class="tip-icon" data-tip="Yearly volatility: how far returns swing around the average. Higher makes the simulated path swing harder.">?</span></div>
               <div class="affix-wrap"><input class="affix-input has-suffix" id="simStdInput" data-no-stale type="number" inputmode="decimal" min="0" max="100" step="0.5" value="15" /><span class="suffix">%/yr</span></div>
             </div>
           </div>
           <div class="status-bar" id="simStatus"></div>
         </div>
 
-        <div class="field-label" style="display:flex;align-items:center;gap:6px;margin:14px 0 6px">Date Range <span class="tip-icon" data-tip="The run covers the trading days every asset shares, the risk-free ticker included, so the portfolio is only valued where every asset has a price.">?</span></div>
+        <div class="field-label" style="margin:14px 0 6px">Date Range <span class="tip-icon" data-tip="The run covers the trading days every asset shares, the risk-free ticker included, so the portfolio is only valued where every asset has a price.">?</span></div>
         <div style="display:flex;gap:8px">
         <div style="flex:1">
           <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px">Start</div>

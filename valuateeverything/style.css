@@ -25,7 +25,7 @@ main{min-width:0;}
 /* ── Columns editor ── */
 .col-head,.col-row{display:grid;grid-template-columns:minmax(0,1fr) 104px 64px 28px;gap:6px;align-items:center;}
 .col-head{padding:10px 0 4px;color:var(--muted);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
-.col-head span{display:inline-flex;align-items:center;gap:4px;}
+.col-head>span{display:block;}
 .col-row{padding:4px 0;}
 .col-row .txt-input{padding:7px 9px;font-size:.84rem;}
 .col-row select{width:100%;padding:7px 26px 7px 9px;font-size:.84rem;}

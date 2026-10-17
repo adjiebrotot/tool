@@ -48,7 +48,7 @@ body.light{
 /* Mode and Scale by keep their three options on one line. */
 #modeGroup,#scaleGroup{flex-wrap:nowrap;}
 #modeGroup .seg-btn,#scaleGroup .seg-btn{flex:1 1 0;min-width:0;padding-left:6px;padding-right:6px;}
-.toggle-label{display:inline-flex;align-items:center;gap:5px;font-size:.9rem;font-weight:700;color:var(--text);}
+.toggle-label{display:block;font-size:.9rem;font-weight:700;color:var(--text);}
 .seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
 .seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.84rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;}
 .seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}

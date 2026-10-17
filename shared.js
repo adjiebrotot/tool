@@ -2270,6 +2270,53 @@
     window.addEventListener('resize', function(){
       if (activeIcon) position();
     });
+
+    glueTips(document.body);
+    if (global.MutationObserver) {
+      new MutationObserver(function(records){
+        for (var i = 0; i < records.length; i++)
+          for (var j = 0; j < records[i].addedNodes.length; j++) glueTips(records[i].addedNodes[j]);
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+  }
+
+  /* The trigger icon flows inline after its label (see .tip-wrap in
+     shared.css), and a browser may break a line before any inline box, so a
+     label that just fits would leave the icon alone on the next line. The
+     space before the icon moves into a no-wrap span with it, as a no-break
+     space, which keeps the icon with the label's last word. Not in a flex or
+     grid box: there the text is an item of its own and nothing wraps around
+     the icon anyway. */
+  function glueTip(icon){
+    var glue = icon.parentElement;
+    if (!glue) return;
+    var glued = glue.classList.contains('tip-glue');
+    var at = glued ? glue : icon;
+    if (!at.previousSibling && at.parentElement && at.parentElement.classList.contains('tip-wrap')) at = at.parentElement;
+    var prev = at.previousSibling, parent = at.parentElement;
+    if (!prev || !parent || (prev.nodeType !== 3 && prev.nodeType !== 1)) return;
+    if (prev.nodeType === 3 && !prev.data.trim() && !prev.previousSibling) return;
+    if (/flex|grid/.test(getComputedStyle(parent).display)) return;
+    var space = prev.nodeType === 3 && /[ \t\n\r\f]+$/.test(prev.data);
+    if (space) prev.data = prev.data.replace(/[ \t\n\r\f]+$/, '');
+    if (glued) return;
+    glue = document.createElement('span');
+    glue.className = 'tip-glue';
+    icon.parentNode.insertBefore(glue, icon);
+    // No space before the icon: a zero-width no-break space glues it instead.
+    glue.appendChild(document.createTextNode(space ? '\u00a0' : '\ufeff'));
+    glue.appendChild(icon);
+  }
+  function glueTips(root){
+    if (!root) return;
+    if (root.nodeType === 3) {
+      var next = root.nextSibling;
+      if (next && next.nodeType === 1) root = next; else return;
+    }
+    if (root.nodeType !== 1) return;
+    if (root.classList.contains('tip-icon')) { glueTip(root); return; }
+    var icons = root.querySelectorAll('.tip-icon');
+    for (var i = 0; i < icons.length; i++) glueTip(icons[i]);
   }
 
   global.SharedTooltip = { init: initTooltip };
