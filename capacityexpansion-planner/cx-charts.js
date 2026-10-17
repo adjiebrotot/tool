@@ -9,7 +9,7 @@
                 demand.
    Typical days the hour-by-hour dispatch of one decision year over its
                 typical days, storage charging below zero, against the demand.
-   Cost         each year's costs by kind, and the average cost per MWh.
+   Cost         each year's costs by kind, and the levelised cost per MWh.
 
    A technology keeps its colour on every chart: the neutral sequence in the
    order the plan lists them, paler on each lap round it. The exports follow
@@ -366,7 +366,7 @@
     parts.forEach(function(p){ if(any(p[1])) ds.push(barSet(p[0], m(p[1]), p[2], {})); });
     if(any(T.shedCost)) ds.push(barSet('Lost load cost', m(T.shedCost), cssVar('--negative'), { kind: 'shed' }));
     var avg = T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; });
-    ds.push(lineSet('Average cost', avg, { yAxisID: 'y2', borderDash: [], kind: 'ref' }));
+    ds.push(lineSet('Levelised cost', avg, { yAxisID: 'y2', borderDash: [], kind: 'ref' }));
     var u = cur ? cur + ' m' : 'millions';
     make('cost', {
       type: 'bar', data: { labels: labels, datasets: ds },
@@ -384,10 +384,10 @@
         scales: function(grid, muted){
           return { x: { stacked: true, title: axisTitle('Decision year', muted), ticks: { color: muted, font: { size: 11 } }, grid: { color: grid } },
                    y: { stacked: true, beginAtZero: true, title: axisTitle('Cost (' + u + ' a year)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.big(v * 1e6, ''); } }, grid: { color: grid } },
-                   y2: { position: 'right', beginAtZero: true, title: axisTitle('Average cost (' + (cur || '') + '/MWh)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.money(v, cur); } }, grid: { drawOnChartArea: false } } };
+                   y2: { position: 'right', beginAtZero: true, title: axisTitle('Levelised cost (' + (cur || '') + '/MWh)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.money(v, cur); } }, grid: { drawOnChartArea: false } } };
         } })
     }, 'costLegend');
-    $('costSub').textContent = 'A year’s costs in each decision year, at today’s prices and not discounted, with the average cost per MWh served on the right.';
+    $('costSub').textContent = 'A year’s costs in each decision year, at today’s prices and not discounted, with the levelised cost per MWh served on the right (capital as its annuity at the discount rate).';
   }
 
   /* ── Render all, or clear ── */

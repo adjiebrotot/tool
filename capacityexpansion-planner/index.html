@@ -107,6 +107,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
+<script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="../tour-shared.css">
@@ -205,7 +206,7 @@
        the technology list, which the mini cache saves as a whole, so none of
        them is saved on its own. ── -->
   <div class="ctrl-panel" id="tab-tech">
-    <div class="field-row inline">
+    <div class="field-row detail-row">
       <div class="field-label">Detail</div>
       <select class="sel-input" id="cxDetail" aria-label="Detail">
         <option value="simple" selected>Simple</option>
@@ -318,10 +319,10 @@
 </aside>
 
 <main>
-  <div class="verdict card" id="verdict"></div>
   <div class="checks card" id="checksCard" hidden>
     <ul class="issue-list" id="issueList" data-no-abbr></ul>
   </div>
+  <div class="verdict card" id="verdict"></div>
 
   <section class="metrics cx-result">
     <div class="metric card">
@@ -335,7 +336,7 @@
       <div class="sub" id="mNpvSub"></div>
     </div>
     <div class="metric card">
-      <div class="label"><span class="tip-wrap">Average cost of supply <i class="tip-icon" data-tip="The present cost over the present value of the energy served: the flat price per MWh that would pay for the whole plan.">?</i></span></div>
+      <div class="label"><span class="tip-wrap">Levelised cost of energy <i class="tip-icon" data-tip="Every year’s cost discounted to the first year, over every year’s energy served discounted the same way: the flat price per MWh, in today’s money, that would pay for the whole plan.">?</i></span></div>
       <div class="value" id="mAvg">–</div>
       <div class="sub" id="mAvgSub"></div>
     </div>

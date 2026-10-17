@@ -221,13 +221,37 @@
     F_('hours', 'Hours at full power', 'h', { min: 0.25, max: 1000, tip: TIP.hours, show: function(e){ return e.kind === 'store'; }, group: 'Running' }),
     F_('rte', 'Round-trip efficiency', '%', { scale: 100, min: 10, max: 100, step: 0.1, tip: TIP.rte, show: function(e){ return e.kind === 'store'; } })
   ];
-  var KIND_ICON = {
+  var TECH_ICON = {
     pv: '<rect x="4" y="5" width="16" height="11" rx="1.2"/><path d="M4 10.5h16M9.3 5v11M14.7 5v11M12 16v4M8 20h8"/>',
     wind: '<path d="M12 21V11"/><circle cx="12" cy="9" r="1.4"/><path d="M12 7.6V3M10.8 9.7 6.8 12M13.2 9.7l4 2.3"/>',
     firm: '<path d="M4 20.5V11l4 2.5V11l4 2.5V7h3l.8 13.5z"/><path d="M15.8 4.5c.7-1 2.2-1 2.9 0"/>',
-    store: '<rect x="5" y="6" width="14" height="13" rx="1.5"/><path d="M9 3v3M15 3v3M9.5 10v5M14.5 11.5v2"/>'
+    store: '<rect x="5" y="6" width="14" height="13" rx="1.5"/><path d="M9 3v3M15 3v3M9.5 10v5M14.5 11.5v2"/>',
+    // A flame inside the loop of its steam cycle.
+    ccgt: '<path d="M19.5 9.5A8 8 0 1 0 20 13"/><path d="M20.5 5.8 19.6 9.6 15.9 8.6"/><path d="M12 7.5c.4 1.6 2.6 2.6 2.6 5.1a2.6 2.6 0 0 1-5.2 0c0-1.3.7-2 1.3-2.6.2 1 .7 1.5 1.3 1.5 0-1.5-.5-2.6 0-4z"/>',
+    // A flame with speed lines: quick to start.
+    ocgt: '<path d="M14 3.5c.6 2.6 4.5 4.3 4.5 8.8a4.5 4.5 0 0 1-9 0c0-2.3 1.2-3.6 2.3-4.6.3 1.8 1.2 2.6 2.2 2.6 0-2.6-.9-4.5 0-6.8z"/><path d="M3 10.5h4M2.5 14h4.5M3.5 17.5h4"/>',
+    // A mine cart of coal.
+    coal: '<path d="M3.5 10.5h17l-2.2 7H5.7z"/><circle cx="8" cy="19.6" r="1.4"/><circle cx="16" cy="19.6" r="1.4"/><path d="M6.5 10.5a2.3 2.3 0 0 1 4.3-1.2 2.4 2.4 0 0 1 4.4.2 2.2 2.2 0 0 1 2.6 1"/>',
+    // An atom.
+    nuclear: '<circle cx="12" cy="12" r="1.5" fill="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(-60 12 12)"/>',
+    // Steam rising from a well above hot ground.
+    geo: '<path d="M3 14h18"/><path d="M4 18c1.3-1 2.7 1 4 0s2.7-1 4 0 2.7 1 4 0 2.7-1 4 0"/><path d="M12 14v-3.5M10.5 10.5h3"/><path d="M9.5 8c-1.3-1.5 1.3-2.5 0-4.5M14.5 8c-1.3-1.5 1.3-2.5 0-4.5"/>',
+    // An engine block.
+    diesel: '<path d="M6.5 8h8l2 2.5h1.5V13h2.5v4H18v1.5h-2.5L13.5 20.5H8L6 18.5H4V11h2.5z"/><path d="M8.5 8V5.5h5V8M3 14.5h1"/><circle cx="11" cy="14.5" r="2.2"/>',
+    // Water between a high and a low reservoir.
+    phes: '<path d="M2.5 4v5.5h7V4M14.5 13v6.5h7V13"/><path d="M4 7c.8-.6 1.7.6 2.5 0s1.7-.6 2.5 0M16 17c.8-.6 1.7.6 2.5 0s1.7-.6 2.5 0"/><path d="M9.5 7.5c4 0 8 1 8 4"/><path d="M15.7 9.9l1.8 1.8 1.6-2"/>'
   };
-  function kindIcon(e){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + KIND_ICON[e.kind] + '</svg>'; }
+  // A technology's picture comes from its name, as "+ Add" names it, and
+  // failing that from its kind, so a saved plan needs no key of its own for it.
+  var FIRM_ICON = [[/nuclear|reactor|\bsmr\b/, 'nuclear'], [/geotherm/, 'geo'], [/diesel|engine|reciprocat/, 'diesel'], [/coal|lignite/, 'coal'],
+                   [/peaker|open.cycle|ocgt/, 'ocgt'], [/gas|combined|ccgt/, 'ccgt']];
+  function iconKey(e){
+    var n = CX.nameOf(e).toLowerCase();
+    if(e.kind === 'store') return /pump|hydro|phes/.test(n) ? 'phes' : 'store';
+    if(e.kind === 'firm') for(var i = 0; i < FIRM_ICON.length; i++) if(FIRM_ICON[i][0].test(n)) return FIRM_ICON[i][1];
+    return e.kind;
+  }
+  function techIcon(e){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + TECH_ICON[iconKey(e)] + '</svg>'; }
   function tipHtml(t){ return t ? ' <i class="tip-icon" data-tip="' + esc(t) + '">?</i>' : ''; }
   function fmtField(v){ if(!isFinite(v)) return ''; return String(+(+v).toPrecision(8)); }
   function shown(e, f){ return (!f.detail || detailed()) && (!f.show || f.show(e)); }
@@ -264,7 +288,7 @@
     var open = app.open === e.id, html = '';
     html += '<div class="tech-card' + (open ? ' is-open' : '') + '" data-id="' + e.id + '">';
     html += '<div class="tech-head"><span class="tech-sw" style="background:' + CXCharts.colour(i) + '"></span>' +
-      '<button type="button" class="tech-toggle" aria-expanded="' + open + '"><span class="tech-ico">' + kindIcon(e) + '</span><span class="tech-text"><span class="tech-name">' + esc(CX.nameOf(e)) + '</span>' +
+      '<button type="button" class="tech-toggle" aria-expanded="' + open + '"><span class="tech-ico">' + techIcon(e) + '</span><span class="tech-text"><span class="tech-name">' + esc(CX.nameOf(e)) + '</span>' +
       '<span class="tech-sum">' + esc(summary(e)) + '</span></span><span class="tech-chev" aria-hidden="true">▾</span></button>' +
       '<span class="tech-actions">' + SharedIcon.button('duplicate', 'Duplicate this technology', 'tech-dup') + SharedIcon.button('trash', 'Remove this technology', 'tech-del') + '</span></div>';
     if(open){
@@ -351,6 +375,7 @@
     if(!kind) return;
     var head = el.closest('.tech-card').querySelector('.tech-head');
     head.querySelector('.tech-name').textContent = CX.nameOf(e);
+    if(el.getAttribute('data-k') === 'name') head.querySelector('.tech-ico').innerHTML = techIcon(e);
     head.querySelector('.tech-sum').textContent = summary(e);
     var d = el.closest('.tech-body').querySelector('.tech-derived'), tmp = document.createElement('div');
     tmp.innerHTML = derivedHtml(e);
@@ -369,7 +394,7 @@
     var menu = $('addMenu'), btn = $('addTechBtn');
     menu.innerHTML = CX.NEW_ORDER.map(function(k){
       var t = CX.NEW[k];
-      return '<button type="button" class="add-opt" data-key="' + k + '"><span class="tech-ico">' + kindIcon(t) + '</span>' + esc(t.name) + '</button>';
+      return '<button type="button" class="add-opt" data-key="' + k + '"><span class="tech-ico">' + techIcon(t) + '</span>' + esc(t.name) + '</button>';
     }).join('');
     function show(on){ menu.hidden = !on; btn.setAttribute('aria-expanded', String(on)); }
     btn.addEventListener('click', function(){ show(menu.hidden); });
@@ -479,7 +504,7 @@
   function sharePct(x){ var p = 100 * x; return p >= 0.1 ? F.pct(p) : String(+p.toPrecision(2)); }
   function verdict(res, model){
     var o = res.report.opts, T = res.totals, C = cur(), years = res.periods, K = years.length;
-    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, ' + F.price(T.avgCost, C) + ' per MWh served.';
+    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, a levelised cost of energy of ' + F.price(T.avgCost, C) + ' per MWh served.';
     var shed = shedShare(T) > SHED_NOTE ? ' ' + sharePct(shedShare(T)) + '% of demand goes unserved on the toughest days, where building for it would cost more than the value of lost load.' : '';
     if(!(T.built >= 0.5)){
       return { tone: '', title: 'Build nothing: what is in service ' + (shed ? 'is the cheapest plan to ' + o.end + '.' : 'meets the demand to ' + o.end + '.'), body: cost + shed };
@@ -530,10 +555,11 @@
     var capex = pv(T.capex), fixed = pv(T.fom), runC = pv(T.vom) + pv(T.co2cost), lost = pv(T.shedCost);
     $('mNpvSub').textContent = 'Discounted to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '%: capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
       (lost > 0.5 ? ', lost load ' + F.big(lost, C) : '') + '.';
-    // Average cost
+    // Levelised cost of energy: present cost over the present value of the energy served
     $('mAvg').textContent = F.price(T.avgCost, C) + '/MWh';
     var a0 = T.served[0] > 0 ? T.cost[0] / T.served[0] : NaN, a1 = T.served[K - 1] > 0 ? T.cost[K - 1] / T.served[K - 1] : NaN;
-    $('mAvgSub').textContent = K > 1 ? F.price(a0, C) + ' in ' + res.periods[0] + ', ' + F.price(a1, C) + ' in ' + last + ', at today’s prices.' : 'At today’s prices.';
+    var over = 'Over the whole plan, discounted at ' + F.pct(res.report.opts.rate) + '%.';
+    $('mAvgSub').textContent = K > 1 ? over + ' A year alone: ' + F.price(a0, C) + ' in ' + res.periods[0] + ', ' + F.price(a1, C) + ' in ' + last + '.' : over;
     // Clean energy in the last year, or the shortfall when there is one
     var shedAll = shedShare(T);
     var clean = T.gen[K - 1] > 0 ? 100 * T.cleanGen[K - 1] / T.gen[K - 1] : NaN;
@@ -625,11 +651,11 @@
       if(T.co2cost.some(function(v){ return v > 0.5; })) row('Carbon', T.co2cost, function(v){ return F.money(v, C); });
       if(T.shedCost.some(function(v){ return v > 0.5; })) row('Lost load cost', T.shedCost, function(v){ return F.money(v, C); });
       row('Total', T.cost, function(v){ return F.money(v, C); });
-      row('Average cost per MWh', T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; }), function(v){ return F.price(v, C); });
+      row('Levelised cost per MWh', T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; }), function(v){ return F.price(v, C); });
       row('Discount factor', res.disc, function(v){ return (Math.round(v * 1000) / 1000).toFixed(3); });
       units = 'A year’s costs in each decision year, in ' + (C || 'currency units') + ' at the first year’s prices and not discounted. The discount factor turns a year’s cost into today’s money for every year the decision year stands for.';
     } else {
-      head = ['Decision year', 'Years it stands for', 'Peak demand MW', 'Demand GWh', 'Unserved GWh', 'Capacity MW', 'Firm and storage MW', 'Clean share %', 'CO2', 'Cost a year', 'Average cost per MWh'];
+      head = ['Decision year', 'Years it stands for', 'Peak demand MW', 'Demand GWh', 'Unserved GWh', 'Capacity MW', 'Firm and storage MW', 'Clean share %', 'CO2', 'Cost a year', 'Levelised cost per MWh'];
       yrs.forEach(function(y, k){
         var cap = 0; techs.forEach(function(e){ cap += res.tech[e.id].cap[k]; });
         rows.push({ cells: [String(y), String(res.years[k]), F.mw(T.peak[k]), F.gwh(T.energy[k]), F.gwh(T.shedEnergy[k]), F.mw(cap), F.mw(T.firm[k]),
