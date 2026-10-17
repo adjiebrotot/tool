@@ -76,6 +76,13 @@ const PAGES = [
            var h = document.getElementById('edSpan'); h.value = '48'; h.dispatchEvent(new Event('change', {bubbles: true}));
            var st = document.getElementById('edStart'); st.value = '2026-07-04T06:00'; st.dispatchEvent(new Event('change', {bubbles: true}));
            document.getElementById('runBtn').click();` },
+  // The planner's technologies live in JS state (Persist extra): a cost and a
+  // build limit edited in the list, the demand and the years changed, then solved.
+  { path: 'capacityexpansion-planner/', preset: 'coal',        probe: '.metrics',
+    also: `var t = window.__cx.app.model.tech.filter(function(x){ return x.id === 6; })[0]; t.capex = 850; t.max = 3000;
+           var g = document.getElementById('cxGrowth'); g.value = '2.4'; g.dispatchEvent(new Event('input', {bubbles: true}));
+           var e = document.getElementById('cxEnd'); e.value = '2040'; e.dispatchEvent(new Event('change', {bubbles: true}));
+           document.getElementById('runBtn').click();` },
   { path: 'rentvsownhouse/sensitivity/', probe: 'main',
     also: `var y = document.getElementById('yearInput'); y.value = '17';
            y.dispatchEvent(new Event('input', {bubbles: true})); y.dispatchEvent(new Event('change', {bubbles: true}));

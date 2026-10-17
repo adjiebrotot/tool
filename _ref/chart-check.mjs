@@ -493,6 +493,19 @@ const PAGES = [
     },
   },
   {
+    // The Capacity Expansion Planner: four bar charts by decision year (one
+    // with a second axis) and the typical days' dispatch, hour by hour, of the
+    // coal exit preset, which retires plant and sheds a little demand.
+    name: 'capacityexpansion-planner',
+    url: '/capacityexpansion-planner/',
+    charts: ['capCanvas', 'buildCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="coal"]');
+      await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report.ok && __cx.app.res.report.opts.peak === 4000 && !document.getElementById('runBtn').disabled && Chart.getChart('dayCanvas'), null, { timeout: 60000 });
+      await page.waitForTimeout(400);
+    },
+  },
+  {
     // A Plotly plot like the Graph Visualiser's. The zoom promises are tested
     // on a series that climbs steeply, so the left of it sits well under the
     // whole run's top, which is what the y refit has to come down to.

@@ -26,6 +26,10 @@
 // through a reference bundle (csv shim only, definitions untouched, not
 // minified) and the shipping bundle and requires every number to be identical.
 //
+// The Capacity Expansion Planner (../capacityexpansion-planner) loads this same
+// engine for PyPSA's multi-period investment problem, so its Quick Starts are
+// run through both bundles too, and must give the same plan to the number.
+//
 // Output: ../engine/psa-opt.min.js, ../engine/highs.mjs, ../engine/highs.wasm,
 //         ../engine/LICENSE.txt, ../vendor/gifenc.js
 
@@ -282,7 +286,25 @@ async function selfTest(refMod, shipMod) {
       }
     }
   }
-  return { lp, values, networks, solves, presets };
+  // 3. The Capacity Expansion Planner's Quick Starts, in two samplings of the year,
+  // through cx-core.js: shipping bundle identical to the source.
+  let plans = 0;
+  const cxPath = join(TOOL, '..', 'capacityexpansion-planner', 'cx-core.js');
+  if (existsSync(cxPath)) {
+    await import(pathToFileURL(cxPath).href + '?t=' + Date.now());
+    const CX = globalThis.CX;
+    for (const key of Object.keys(CX.PRESETS)) {
+      for (const sample of ['day', 'day2']) {
+        const opts = { ...(CX.PRESETS[key].fields || {}), sample };
+        const model = CX.load(CX.PRESETS[key].plan);
+        const ra = await CX.solve(refMod, model, opts), rb = await CX.solve(shipMod, model, opts);
+        if (!ra.report.ok) throw new Error(`planner preset ${key} (${sample}) did not solve: ${ra.report.error}`);
+        if (JSON.stringify(ra.raw) !== JSON.stringify(rb.raw)) throw new Error(`planner preset ${key} (${sample}): shipping bundle differs from the source`);
+        plans++;
+      }
+    }
+  }
+  return { lp, values, networks, solves, presets, plans };
 }
 
 /* ── Main ── */
@@ -304,7 +326,7 @@ if (CHECK) {
     const refMod = await import(pathToFileURL(join(dir, 'ref.mjs')).href);
     const shipMod = await import(pathToFileURL(join(dir, 'ship.mjs')).href);
     const r = await selfTest(refMod, shipMod);
-    console.log(`self-test: ${r.solves} PyPSA scenarios solved; ${r.lp} LP files, ${r.values} objectives and statuses, ${r.networks} networks match PyPSA; ${r.presets} preset runs identical to the source`);
+    console.log(`self-test: ${r.solves} PyPSA scenarios solved; ${r.lp} LP files, ${r.values} objectives and statuses, ${r.networks} networks match PyPSA; ${r.presets} preset runs and ${r.plans} capacity plans identical to the source`);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
 

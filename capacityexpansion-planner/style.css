@@ -1,0 +1,143 @@
+/* Capacity Expansion Planner: page-specific layer, the ED/UC Simulator's
+   with a technology list in place of the diagram.
+   Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+
+.container{max-width:1500px;}
+.layout{grid-template-columns:360px 1fr;}
+/* The column layout, the inner scroller and the pinned tab bar come from
+   shared.css; the action row sits below the scroller, so it stays put too. */
+.ctrl-scroll{flex:1 1 auto;}
+.btn-row{flex-shrink:0;display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--border);}
+.btn-row .btn-primary{padding:10px 16px;font-size:.88rem;}
+.btn-back{text-decoration:none;display:inline-flex;align-items:center;}
+h1{font-size:1.85rem;margin:0 0 4px;}
+
+/* ── Quick Start ── */
+.quick-start-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.quick-start-label .tico{width:1.05em;height:1.05em;}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;font-family:inherit;}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
+.quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
+
+/* ── Control panel ── */
+.ctrl-tab{padding:10px 4px;font-size:.78rem;line-height:1.3;}
+.ctrl-tabs.stacked .tico{width:1.45em;height:1.45em;}
+.field-group>:first-child{border-top:none;}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
+.toggle-label{font-weight:700;font-size:.88rem;flex:1;}
+.note{color:var(--muted);font-size:.79rem;line-height:1.45;margin:0 0 10px;}
+.field-row .field-label{font-weight:700;font-size:.88rem;}
+.field-row.inline{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;}
+.field-row.inline>.field-label{flex:1;min-width:0;}
+.field-row.inline>.affix-wrap,.field-row.inline>.sel-input,.field-row.inline>.txt-input{flex:0 0 52%;}
+.field-row.inline>.seg-group{flex:0 0 auto;min-width:52%;flex-wrap:nowrap;}
+.field-row.inline>.seg-group>.seg-btn{flex:1 0 auto;padding:5px 8px;text-align:center;}
+.field-row[hidden],.field-group[hidden]{display:none;}
+.derived{color:var(--muted);font-size:.79rem;line-height:1.45;margin:6px 0 0;}
+.derived b{color:var(--text);font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-weight:600;}
+.field-group>.derived{padding:8px 0 4px;border-top:1px solid var(--border);}
+
+/* ── The Run gate ──
+   A solve takes from a fraction of a second to a minute, so the page never
+   re-solves on its own: a change steps the results back and lights the button. */
+.stale-note{display:none;flex-basis:100%;margin:0 0 2px;font-size:.78rem;font-weight:700;color:var(--accent2);}
+body.is-stale .stale-note{display:block;}
+.btn-primary.needs-run{box-shadow:0 0 0 2px var(--card-bg),0 0 0 4px var(--accent2);}
+.cx-result{transition:opacity var(--transition-fast);}
+body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
+
+/* ── The technology list ── */
+#techList{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.tech-card{border:1px solid var(--border);border-radius:var(--radius-md);background:var(--input-bg);overflow:clip;}
+.tech-card.is-open{border-color:var(--accent);background:var(--card-bg);}
+.tech-head{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 0;}
+.tech-sw{flex:0 0 4px;align-self:stretch;border-radius:0 3px 3px 0;margin:-6px 4px -6px 0;}
+.tech-toggle{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:8px;background:none;border:0;padding:2px 0;color:var(--text);font-family:inherit;text-align:left;cursor:pointer;}
+.tech-ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:0 0 28px;border-radius:var(--radius-sm);background:var(--panel);border:1px solid var(--border);color:var(--accent);}
+.tech-ico svg{width:18px;height:18px;}
+.tech-text{display:flex;flex-direction:column;min-width:0;flex:1 1 auto;}
+.tech-name{font-weight:700;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tech-sum{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tech-chev{color:var(--muted);font-size:.8rem;transition:transform var(--motion-fast);}
+.tech-card.is-open .tech-chev{transform:rotate(180deg);}
+.tech-actions{display:flex;gap:2px;flex-shrink:0;}
+.tech-body{padding:0 12px 10px;border-top:1px solid var(--border);}
+.tech-body>.field-row:first-child{border-top:none;}
+.tech-sub{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:12px 0 2px;border-top:1px solid var(--border);margin-top:4px;}
+.tech-body .field-row{padding:8px 0 10px;}
+.tech-body .toggle-row{padding:8px 0;}
+.add-tech{margin-top:10px;position:relative;}
+.btn-add{width:100%;border-style:dashed;padding:9px 14px;font-size:.86rem;}
+.add-menu{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
+.add-menu[hidden]{display:none;}
+.add-opt{display:flex;align-items:center;gap:7px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text);font-family:inherit;font-size:.78rem;font-weight:600;text-align:left;cursor:pointer;}
+.add-opt:hover{border-color:var(--accent);}
+.add-opt .tech-ico{width:24px;height:24px;flex-basis:24px;}
+.add-opt .tech-ico svg{width:16px;height:16px;}
+
+/* ── The load profile: 24 bars, dragged to make it Custom ── */
+.prof-bars{display:block;width:100%;height:auto;aspect-ratio:256/90;max-height:120px;margin-top:6px;cursor:ns-resize;touch-action:none;user-select:none;}
+.prof-bars .pb{fill:var(--accent);opacity:.75;}
+.prof-bars:hover .pb{opacity:.9;}
+.prof-bars .pb.pb-on{opacity:1;}
+.prof-bars .pb-axis{stroke:var(--muted);stroke-opacity:.55;stroke-width:1;fill:none;}
+.prof-bars .pb-t{fill:var(--muted);font:500 8px 'DM Mono',monospace;}
+.prof-bars .pb-v{fill:var(--text);font:600 8.5px 'DM Mono',monospace;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round;pointer-events:none;}
+
+/* ── Checks ── */
+.checks{padding:12px 14px;margin-bottom:18px;}
+.checks[hidden]{display:none;}
+.issue-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
+.issue-list li{font-size:.82rem;line-height:1.45;padding:7px 10px;border-radius:var(--radius-sm);background:var(--warning-bg);color:var(--warning-text);}
+.issue-list li.err{background:var(--error-bg);color:var(--error-text);}
+
+/* ── Results ── */
+.metrics{grid-template-columns:repeat(4,1fr);}
+.metric{padding:14px 16px;min-height:96px;}
+.metric .label{display:flex;align-items:center;gap:5px;}
+.metric .value{font-size:1.3rem;}
+.metric .value.warn{color:var(--warning-text);}
+.metric .value.neg{color:var(--negative-em);}
+.metric .sub{color:var(--muted);font-size:.78rem;margin-top:5px;line-height:1.35;}
+.chart-card{padding:18px 20px;margin-bottom:18px;}
+.chart-card[hidden]{display:none;}
+.chart-card>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;min-height:1.1em;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 14px;font-size:.84rem;}
+.legend-item{display:flex;align-items:center;gap:7px;cursor:pointer;transition:opacity .15s;}
+.legend-item.hidden{opacity:.35;}
+.canvas-wrap{height:380px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+#capCard .canvas-wrap canvas,#buildCard .canvas-wrap canvas,#energyCard .canvas-wrap canvas,#costCard .canvas-wrap canvas{cursor:pointer;}
+.hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
+.viewbar-field{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--muted);font-size:.84rem;}
+.viewbar-field .sel-input{width:auto;padding-top:5px;padding-bottom:5px;font-size:.82rem;}
+.day-pick{margin-top:10px;}
+.detail-section{padding:20px;margin-bottom:18px;}
+.detail-head{margin-bottom:4px;}
+.detail-head .seg-group{margin-left:4px;}
+.table-wrap{max-height:460px;overflow:auto;}
+th{position:sticky;top:0;background:var(--panel);z-index:1;}
+td.neg{color:var(--negative-em);font-weight:700;}
+
+.page-footer{max-width:1500px;margin:0 auto;padding:0 24px 24px;}
+
+/* ── Embed: the chart alone ── */
+html.abt-embed .chart-card>.sub{margin-top:0;}
+
+@media(max-width:1100px){
+  .layout{grid-template-columns:1fr;}
+  .controls{position:static;max-height:none;}
+  .metrics{grid-template-columns:repeat(2,1fr);}
+  .canvas-wrap{height:340px;}
+}
+@media(max-width:600px){
+  h1{font-size:1.35rem;}
+  .container{padding:10px;}
+  .page-footer{padding:0 10px 16px;}
+  .metrics{grid-template-columns:1fr;}
+  .canvas-wrap{height:300px;}
+  .chart-card{padding:14px 12px;}
+  .add-menu{grid-template-columns:1fr;}
+}

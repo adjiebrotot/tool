@@ -69,6 +69,19 @@ const PAGES = [
   { path: 'dcasimulator' },
   { path: 'dcasimulator/portfolio' },
   { path: 'valuateeverything' },
+  // Solves its default plan on arrival (the engine is the ED/UC Simulator's).
+  // Its technology fields are in a card that opens on a click: the gas plant's,
+  // detailed, which shows every kind of field a firm plant has.
+  { path: 'capacityexpansion-planner', setup: async page => {
+      await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report && __cx.app.res.report.ok, null, { timeout: 60000 });
+      await page.evaluate(() => {
+        const d = document.getElementById('cxDetail'); d.value = 'detailed'; d.dispatchEvent(new Event('change', { bubbles: true }));
+        document.querySelector('.ctrl-tab[data-tab="tech"]').click();
+        document.querySelector('.tech-card[data-id="2"] .tech-toggle').click();
+        document.querySelector('.ctrl-tab[data-tab="plan"]').click();
+      });
+      await page.waitForTimeout(400);
+  } },
   // No results until two cities are picked, so it picks two.
   { path: 'costofliving-comparator', answer: '#ss_summary', setup: async page => {
       await page.evaluate(() => {
@@ -95,7 +108,7 @@ const PAGES = [
 ].filter(p => !process.env.ONLY || p.path === process.env.ONLY);
 
 /* ── The site, served as in production ───────────────────────────────────── */
-const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
+const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.css': 'text/css', '.json': 'application/json',
                '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/json' };
 const server = createServer((req, res) => {
   const rel = normalize(decodeURIComponent(req.url.split('?')[0])).replace(/^(\.\.[/\\])+/, '');
