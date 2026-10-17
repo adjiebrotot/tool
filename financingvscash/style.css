@@ -112,7 +112,7 @@ th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;whi
 /* A note row spanning the table wraps instead of setting its width. */
 td[colspan]{white-space:normal;}
 th:first-child,td:first-child{text-align:left;white-space:normal;}
-th{color:var(--muted);font-size:.78rem;font-weight:600;position:sticky;top:0;background:var(--bg);z-index:1;}
+th{position:sticky;top:0;background:var(--bg);z-index:1;}
 .table-wrap{overflow:auto;max-height:450px;}
 tr:hover td{background:rgba(255,255,255,.03);}
 body.light tr:hover td{background:rgba(0,0,0,.03);}

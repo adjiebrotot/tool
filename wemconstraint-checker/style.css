@@ -164,10 +164,8 @@ body.light .tb-status{background:rgba(0,0,0,.04)}
 .fbar input{padding:5px 9px;font-size:.8rem;width:220px}
 .tbl-wrap{overflow-x:auto;max-height:68vh;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:.82rem}
-th{position:sticky;top:0;z-index:2;background:var(--panel);color:var(--muted);
-  font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;
-  padding:8px 12px;border-bottom:1px solid var(--bdr);white-space:nowrap}
+th{position:sticky;top:0;z-index:2;background:var(--panel);
+  padding:8px 12px;border-bottom:1px solid var(--bdr)}
 td{padding:8px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr.dr:hover td{background:rgba(141,187,255,.04)}

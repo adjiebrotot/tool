@@ -518,15 +518,8 @@
   }
   .ref-table th {
     background: var(--surface);
-    color: var(--label);
-    font-weight: 600;
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     padding: 7px 12px;
-    text-align: left;
     border-bottom: 1px solid var(--border);
-    white-space: nowrap;
   }
   .ref-table td {
     padding: 7px 12px;
@@ -537,7 +530,7 @@
   }
   .ref-table tbody tr:last-child td { border-bottom: none; }
   .ref-table td:first-child { color: var(--text); font-weight: 500; }
-  .ref-table td.num, .ref-table th.num { text-align: right; font-family: var(--mono); white-space: nowrap; }
+  .ref-table td.num { text-align: right; font-family: var(--mono); white-space: nowrap; }
   .ref-table tr.hl td { background: rgba(255,210,140,0.08); }
   body.light .ref-table tr.hl td { background: rgba(180,83,9,0.06); }
   .ref-table td .swatch {

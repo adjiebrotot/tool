@@ -109,7 +109,8 @@ of month) carries `data-unitless`. Sentence-style rows ("From age 28 to 33",
 
 Outputs: every y axis names its unit (`Price ($)`, `Total tax (Rp a year)`,
 `Balance, today's money`), every x axis is titled, and every table says its
-unit once over it (`.unit-note`).
+unit once over it (`.unit-note`) or, where columns differ, under each column
+header (`.th-unit`).
 
 ### Bounds
 
@@ -1574,16 +1575,54 @@ table {
 th, td { padding: 9px 7px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; white-space: normal; font-family: 'DM Sans', sans-serif; }
 th {
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.3;
+  vertical-align: middle;
 }
+thead th, thead th:first-child { text-align: center; }
+thead th { white-space: normal; text-wrap: balance; }
+th .th-unit { display: block; font-weight: 400; color: var(--muted); }
 .table-wrap { overflow: auto; max-height: 400px; }
 tr:hover td { background: rgba(141,187,255,0.04); }
 body.light tr:hover td { background: rgba(90,145,232,0.04); }
 ```
+
+**A header is a label, its unit is the note under it.** The pair mirrors a form
+field: the header reads like `.field-label` (DM Sans, text colour, bold) and its
+unit like `.field-sub` (regular weight, `--muted`), so a column says
+`Peak demand` with a lighter `MW` beneath. Sentence case, never uppercase: the
+sans face over DM Mono figures already sets the header apart. Every column
+header is centred both ways: over its column, whatever way the figures below
+align, and in its row, so a one-line header sits level with the middle of a
+two-line one rather than dropping to the bottom. A tool never re-aligns a
+column header (no `text-align` on a `thead th`, no inline style); row headers
+in the body keep the column's own alignment.
+
+**A long header wraps before the table scrolls.** Figures never wrap, so a
+column is never narrower than its widest figure; a column header is free to
+break onto more lines (in balanced lines, `text-wrap: balance`) when the table
+would otherwise overflow, and stays on one line while there is room. Leave
+column headers wrappable: `white-space: nowrap` on a header belongs only to one
+that holds a control (a picker, an add button) or to a row whose height a
+sticky row below it depends on.
+
+```html
+<th>Peak demand <span class="th-unit">MW</span></th>
+```
+
+Keep the space before the span: a CSV built from `textContent` then reads
+`Peak demand MW`. A tool that keeps its headers as strings for the table and the
+CSV alike (`'Peak demand MW'`, `'Margin (MW)'`) renders them with
+`SharedTable.head(text)`, which splits off a trailing unit it knows
+(MW, MWh, GWh, kV, kA, MVAr, %, °, p.u., `per …`). A spanning group header over several
+columns stays `--muted`, one step above the columns it names.
+
+A tool stylesheet sizes and places its headers (padding, sticky, background,
+borders, alignment) but never restates their colour, face, weight or case.
 
 For sticky headers / a frozen first column on wide tables, make the header cells
 `position: sticky; top: 0;` (and the first column `position: sticky; left: 0;`) with a

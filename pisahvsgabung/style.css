@@ -68,7 +68,6 @@
     table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:12px}
     th,td{padding:9px 7px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
     th:first-child,td:first-child{text-align:left;white-space:normal;font-family:'DM Sans',sans-serif}
-    th{color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
     .table-wrap{overflow:auto;max-height:400px}
     .table-wrap thead tr:first-child th{position:sticky;top:0;background:var(--panel);z-index:3}
     .table-wrap thead tr:nth-child(2) th{position:sticky;top:34px;background:var(--panel);z-index:2}
@@ -96,7 +95,8 @@
     .ptkp-label-sm{font-size:12px;color:var(--muted)}
     .input-mode-toggle{display:flex;width:100%}
     .input-mode-toggle .seg-btn{flex:1 1 0;text-align:center}
-    .tbl-group-header{text-align:center}
+    /* One line: the second header row sticks at a fixed 34px below this one. */
+    .tbl-group-header{text-align:center;color:var(--muted);white-space:nowrap}
     .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px}
     .page-footer-info p:last-child{margin-bottom:0}
     @media(max-width:1100px){.summary-grid{grid-template-columns:repeat(3,1fr)}}

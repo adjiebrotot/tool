@@ -82,9 +82,8 @@ body.gl3d #eggCanvas{display:block;}
 .table-card{padding:6px 0 0;}
 .table-wrap{max-height:none;padding:0 12px;}
 .pack-table th,.pack-table td{padding:7px 6px;vertical-align:middle;}
-.pack-table th{text-align:left;}
 .pack-table td{text-align:left;}
-.pack-table th:nth-child(5),.pack-table th:nth-child(6),.pack-table td:nth-child(5),.pack-table td:nth-child(6){text-align:right;}
+.pack-table td:nth-child(5),.pack-table td:nth-child(6){text-align:right;}
 .cell-name{min-width:130px;font-weight:700;}
 .pack-table .affix-wrap{width:120px;}
 .pack-table .affix-wrap.cell-eggs{width:80px;}

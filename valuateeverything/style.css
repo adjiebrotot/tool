@@ -73,7 +73,7 @@ body.grid-modal-open{overflow:hidden;}
 .grid-modal-body .grid-shell{display:flex;flex-direction:column;min-height:0;}
 .grid-modal-body .grid-wrap{flex:0 1 auto;min-height:0;max-height:none;}
 .grid-modal .grid{font-size:.86rem;}
-.grid-modal .grid th{max-width:none;font-size:.76rem;padding:10px 8px;}
+.grid-modal .grid th{max-width:none;padding:10px 8px;}
 .grid-modal .grid td{padding:5px 6px;}
 .grid-modal .cell-wrap{min-width:96px;}
 .grid-modal .grid td.t-price .cell-wrap{min-width:130px;}
@@ -83,7 +83,7 @@ body.grid-modal-open{overflow:hidden;}
 .grid-modal-note{margin-right:auto;font-size:.76rem;color:var(--muted);}
 .grid-modal-foot .btn-primary{padding:8px 20px;flex-shrink:0;white-space:nowrap;}
 .grid{width:100%;border-collapse:collapse;font-size:.8rem;}
-.grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:8px 6px;text-align:left;vertical-align:bottom;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--muted);white-space:normal;line-height:1.25;min-width:56px;max-width:120px;border-bottom:1px solid var(--border);}
+.grid th{position:sticky;top:0;z-index:1;background:var(--panel);padding:8px 6px;text-align:center;vertical-align:middle;white-space:normal;line-height:1.25;min-width:56px;max-width:120px;border-bottom:1px solid var(--border);}
 .grid td{padding:4px 4px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;vertical-align:middle;}
 .grid th:first-child,.grid td:first-child{padding-left:8px;}
 .grid tr:hover td{background:transparent;}

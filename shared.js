@@ -4748,6 +4748,22 @@
   }
   global.SharedVerdict = { set: setVerdict };
 
+  /* ── SharedTable.head — a column header with its unit set apart ───────────
+     A tool keeps one header string for the table and its CSV ('Peak demand
+     MW', 'Margin (MW)'); this returns the HTML for the <th>: the label, then
+     the trailing unit in a .th-unit span that shared.css drops to its own
+     lighter line. The space before the span keeps textContent readable.
+     The label wraps on its own (shared.css) when the column is tight. A
+     string with no unit it knows comes back as the label alone. */
+  var TH_UNIT = /^(.+?) \(?(MW|MWh|GWh|TWh|kW|kWh|MVA|MVAr|kV|kA|Hz|%|°|p\.u\.|per \S+)\)?$/;
+  function escTh(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function tableHead(text){
+    var s = String(text == null ? '' : text), m = TH_UNIT.exec(s);
+    if(!m) return escTh(s);
+    return escTh(m[1]) + ' <span class="th-unit">' + escTh(m[2]) + '</span>';
+  }
+  global.SharedTable = { head: tableHead };
+
   /* ── SharedPalette — neutral options never wear red ───────────────────────
      Two options a reader is choosing between (own or rent, separate or joint,
      loan A or loan B) are neither good nor bad, so they take the neutral

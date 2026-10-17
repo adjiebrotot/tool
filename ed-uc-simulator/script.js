@@ -725,7 +725,7 @@
   function renderTable(){
     var t = tableData();
     $('tableUnits').textContent = t.units;
-    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + esc(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       var selected = r.hour !== undefined ? r.hour === hourNow() : app.sel.has(r.id);
       h += '<tr data-row="' + r.id + '"' + (selected ? ' class="is-sel"' : '') + '>' + r.cells.map(function(c, i){
