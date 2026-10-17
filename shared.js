@@ -4753,24 +4753,14 @@
      MW', 'Margin (MW)'); this returns the HTML for the <th>: the label, then
      the trailing unit in a .th-unit span that shared.css drops to its own
      lighter line. The space before the span keeps textContent readable.
-     opts.wrap balances a label longer than that many characters onto two
-     lines. A string with no unit it knows comes back as the label alone. */
+     The label wraps on its own (shared.css) when the column is tight. A
+     string with no unit it knows comes back as the label alone. */
   var TH_UNIT = /^(.+?) \(?(MW|MWh|GWh|TWh|kW|kWh|MVA|MVAr|kV|kA|Hz|%|°|p\.u\.|per \S+)\)?$/;
   function escTh(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-  function balance(label, wrap){
-    var w = label.split(' ');
-    if(!(label.length > wrap) || w.length < 2) return escTh(label);
-    var at = 1, worst = Infinity;
-    for(var i = 1; i < w.length; i++){
-      var most = Math.max(w.slice(0, i).join(' ').length, w.slice(i).join(' ').length);
-      if(most < worst){ worst = most; at = i; }
-    }
-    return escTh(w.slice(0, at).join(' ')) + '<br>' + escTh(w.slice(at).join(' '));
-  }
-  function tableHead(text, opts){
-    var wrap = (opts && opts.wrap) || Infinity, m = TH_UNIT.exec(String(text == null ? '' : text));
-    if(!m) return balance(String(text == null ? '' : text), wrap);
-    return balance(m[1], wrap) + ' <span class="th-unit">' + escTh(m[2]) + '</span>';
+  function tableHead(text){
+    var s = String(text == null ? '' : text), m = TH_UNIT.exec(s);
+    if(!m) return escTh(s);
+    return escTh(m[1]) + ' <span class="th-unit">' + escTh(m[2]) + '</span>';
   }
   global.SharedTable = { head: tableHead };
 

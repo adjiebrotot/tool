@@ -165,7 +165,7 @@ body.light .tb-status{background:rgba(0,0,0,.04)}
 .tbl-wrap{overflow-x:auto;max-height:68vh;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:.82rem}
 th{position:sticky;top:0;z-index:2;background:var(--panel);
-  padding:8px 12px;border-bottom:1px solid var(--bdr);white-space:nowrap}
+  padding:8px 12px;border-bottom:1px solid var(--bdr)}
 td{padding:8px 12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr.dr:hover td{background:rgba(141,187,255,.04)}

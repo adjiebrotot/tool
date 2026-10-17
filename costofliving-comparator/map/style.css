@@ -186,7 +186,7 @@ html.map-full-open{overflow:hidden;scrollbar-gutter:auto;}
 .table-tools .txt-input{max-width:280px;padding:8px 11px;font-size:.88rem;}
 .table-tools .unit-note{margin:0;}
 .city-table{font-size:.82rem;}
-.city-table th{position:sticky;top:0;background:var(--panel);z-index:1;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.city-table th{position:sticky;top:0;background:var(--panel);z-index:1;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
 .city-table th.num,.city-table td.num{text-align:right;}
 .city-table td{padding:6px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
 .city-table td.name{font-family:'DM Sans',sans-serif;font-weight:600;}

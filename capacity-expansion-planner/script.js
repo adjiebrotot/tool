@@ -1088,7 +1088,7 @@
   function renderTable(){
     var t = tableData();
     $('tableUnits').textContent = t.units;
-    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x, { wrap: 16 }) + '</th>'; }).join('') + '</tr></thead><tbody>';
+    var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       h += '<tr>' + r.cells.map(function(c, i){ return '<td' + (r.neg.indexOf(i) >= 0 ? ' class="neg"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>';
     });

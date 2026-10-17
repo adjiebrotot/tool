@@ -72,7 +72,7 @@
     .table-wrap thead tr:first-child th{position:sticky;top:0;background:var(--panel);z-index:3}
     .table-wrap thead tr:nth-child(2) th{position:sticky;top:34px;background:var(--panel);z-index:2}
     /* Not the row label: the first cell of the second header row heads a figure column. */
-    .table-wrap thead tr:nth-child(2) th:first-child{text-align:right;white-space:nowrap}
+    .table-wrap thead tr:nth-child(2) th:first-child{text-align:right}
     tr:hover td{background:rgba(255,255,255,0.03)}
     body.light tr:hover td{background:rgba(0,0,0,0.03)}
     .detail-section{padding:20px;margin-top:18px}
@@ -97,7 +97,8 @@
     .ptkp-label-sm{font-size:12px;color:var(--muted)}
     .input-mode-toggle{display:flex;width:100%}
     .input-mode-toggle .seg-btn{flex:1 1 0;text-align:center}
-    .tbl-group-header{text-align:center;color:var(--muted)}
+    /* One line: the second header row sticks at a fixed 34px below this one. */
+    .tbl-group-header{text-align:center;color:var(--muted);white-space:nowrap}
     .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px}
     .page-footer-info p:last-child{margin-bottom:0}
     @media(max-width:1100px){.summary-grid{grid-template-columns:repeat(3,1fr)}}

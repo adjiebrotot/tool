@@ -411,7 +411,6 @@
     padding: 6px 8px;
     text-align: center;
     border-bottom: 1px solid var(--border);
-    white-space: nowrap;
   }
   .dyn-table td {
     padding: 5px 4px;

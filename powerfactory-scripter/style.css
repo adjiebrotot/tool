@@ -349,7 +349,6 @@
     padding: 6px 8px;
     text-align: left;
     border-bottom: 1px solid var(--border);
-    white-space: nowrap;
   }
   #input-table th {
     text-align: center;

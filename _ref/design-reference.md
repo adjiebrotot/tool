@@ -1581,8 +1581,9 @@ th {
   font-weight: 600;
   letter-spacing: 0.005em;
   line-height: 1.3;
-  vertical-align: bottom;
+  vertical-align: middle;
 }
+thead th { white-space: normal; text-wrap: balance; }
 th .th-unit { display: block; font-weight: 400; color: var(--muted); }
 .table-wrap { overflow: auto; max-height: 400px; }
 tr:hover td { background: rgba(141,187,255,0.04); }
@@ -1593,9 +1594,17 @@ body.light tr:hover td { background: rgba(90,145,232,0.04); }
 field: the header reads like `.field-label` (DM Sans, text colour, bold) and its
 unit like `.field-sub` (regular weight, `--muted`), so a column says
 `Peak demand` with a lighter `MW` beneath. Sentence case, never uppercase: the
-sans face over DM Mono figures already sets the header apart. Every header sits
-on the bottom of its cell, so units line up along one row and a header with no
-unit lines up with them.
+sans face over DM Mono figures already sets the header apart. Every header is
+centred in its row, so a one-line header sits level with the middle of a
+two-line one rather than dropping to the bottom.
+
+**A long header wraps before the table scrolls.** Figures never wrap, so a
+column is never narrower than its widest figure; a column header is free to
+break onto more lines (in balanced lines, `text-wrap: balance`) when the table
+would otherwise overflow, and stays on one line while there is room. Leave
+column headers wrappable: `white-space: nowrap` on a header belongs only to one
+that holds a control (a picker, an add button) or to a row whose height a
+sticky row below it depends on.
 
 ```html
 <th>Peak demand <span class="th-unit">MW</span></th>
@@ -1604,9 +1613,8 @@ unit lines up with them.
 Keep the space before the span: a CSV built from `textContent` then reads
 `Peak demand MW`. A tool that keeps its headers as strings for the table and the
 CSV alike (`'Peak demand MW'`, `'Margin (MW)'`) renders them with
-`SharedTable.head(text, { wrap: 16 })`, which splits off a trailing unit it knows
-(MW, MWh, GWh, kV, kA, MVAr, %, °, p.u., `per …`) and balances a label longer
-than `wrap` characters onto two lines. A spanning group header over several
+`SharedTable.head(text)`, which splits off a trailing unit it knows
+(MW, MWh, GWh, kV, kA, MVAr, %, °, p.u., `per …`). A spanning group header over several
 columns stays `--muted`, one step above the columns it names.
 
 A tool stylesheet sizes and places its headers (padding, sticky, background,
