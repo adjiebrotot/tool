@@ -10,6 +10,14 @@ Every tool here is a self-contained static page in its own folder (`<toolname>/i
 belongs next to the existing ones. These are the things that matter most — follow them, but
 use judgement; copying a nearby tool that already does something well beats reinventing it.
 
+**The folder name is the tool's address** (`tool.adjiebrotots.com/<toolname>/`), and once
+published it is kept for good, so choose it with care. Keep it simple: one plain word when
+one word says it (`worldclock`, `eggprice`, `randompicker`). When it needs to be longer, for
+the reader or for search, write it as lowercase words separated by a hyphen between every
+word (`capacity-expansion-planner`, `ed-uc-simulator`), never words run together and then
+hyphenated halfway (`capacityexpansion-planner`). Moving a published tool later means a
+forwarding page at the old address and a `MOVED` entry in `_ref/share-check.mjs`.
+
 ## 1. Design — use the design reference
 
 `_ref/design-reference.md` is the single source of truth for the look and feel (the "Generic

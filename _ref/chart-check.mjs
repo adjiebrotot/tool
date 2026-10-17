@@ -496,8 +496,8 @@ const PAGES = [
     // The Capacity Expansion Planner: four bar charts by decision year (one
     // with a second axis) and the typical days' dispatch, hour by hour, of the
     // coal exit preset, which retires plant and sheds a little demand.
-    name: 'capacityexpansion-planner',
-    url: '/capacityexpansion-planner/',
+    name: 'capacity-expansion-planner',
+    url: '/capacity-expansion-planner/',
     charts: ['capCanvas', 'buildCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="coal"]');

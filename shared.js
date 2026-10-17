@@ -2540,7 +2540,7 @@
     /* ── Capacity Expansion Planner ──
        Planners and students of the power sector: the field's own units (MW,
        GWh, kW) are left alone, its cost and technology shorthand is not. */
-    'capacityexpansion-planner': {
+    'capacity-expansion-planner': {
       'O&M': ['Operation and Maintenance', 'the staff, parts and servicing a plant needs to keep running'],
       PV:    ['Photovoltaic', 'solar panels that turn sunlight straight into electricity'],
       EV:    ['Electric Vehicle', 'a car charged from the grid, which adds to the evening demand'],
@@ -4329,7 +4329,7 @@
      already has a tool's own typing box beside it keeps that box. */
   var FINANCE = ['rentvsownhouse', 'pisahvsgabung', 'borrowingcapacity', 'financingvscash',
                  'financialfreedom', 'dcasimulator', 'costofliving-comparator', 'valuateeverything',
-                 'capacityexpansion-planner'];
+                 'capacity-expansion-planner'];
   function inFinanceTool(){
     var path = String((global.location && global.location.pathname) || '');
     return path.split('/').some(function(seg){ return FINANCE.indexOf(seg) > -1; });

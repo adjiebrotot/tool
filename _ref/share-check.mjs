@@ -501,7 +501,7 @@ const PAGES = [
   {
     // The Capacity Expansion Planner's five charts on the coal exit preset, the
     // typical days opened on its second decision year (the link carries it).
-    name: 'capacityexpansion-planner', url: '/capacityexpansion-planner/', charts: ['capCanvas', 'buildCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
+    name: 'capacity-expansion-planner', url: '/capacity-expansion-planner/', charts: ['capCanvas', 'buildCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="coal"]');
       await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report.ok && __cx.app.res.report.opts.peak === 4000 && !document.getElementById('runBtn').disabled && Chart.getChart('dayCanvas'), null, { timeout: 60000 });
@@ -953,7 +953,11 @@ const DICT_SHA256 = { a: '4d72827e85280530d51be554f9df8295152278423b8e8d1ab53225
     check(`F1 share-dict-${letter}.txt is the file links were made with`, got === want, got.slice(0, 16));
   }
   const kept = JSON.parse(readFileSync(join(HERE, 'share-links.json'), 'utf8'));
-  for (const k of kept) {
+  // A tool that moved forwards its old address (query and hash too), so a kept
+  // link's page is checked where the tool lives now.
+  const MOVED = { '/capacityexpansion-planner/': '/capacity-expansion-planner/' };
+  for (const kept0 of kept) {
+    const k = { ...kept0, page: MOVED[kept0.page] || kept0.page };
     if (ONLY && !k.page.includes(ONLY) && ONLY !== "kept") continue;
     const tag = `${k.page} [${k.chart}] ${k.s.charAt(0)}-link`;
     const K = await newPage({ width: 1440, height: 1000 });

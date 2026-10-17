@@ -36,8 +36,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 // loadflow-simulator's presets reset its load flow, label and view options; its
 // engine cannot load over file://, which leaves the forms under test untouched.
 // ed-uc-simulator's do the same for its dispatch, label and view options, and
-// capacityexpansion-planner's for its plan, its currency and its Detail switch.
-const TOOLS = (process.env.ONLY ? process.env.ONLY.split(',') : ['borrowingcapacity', 'rentvsownhouse', 'financialfreedom', 'financingvscash', 'pisahvsgabung', 'valuateeverything', 'loadflow-simulator', 'ed-uc-simulator', 'capacityexpansion-planner']);
+// capacity-expansion-planner's for its plan, its currency and its Detail switch.
+const TOOLS = (process.env.ONLY ? process.env.ONLY.split(',') : ['borrowingcapacity', 'rentvsownhouse', 'financialfreedom', 'financingvscash', 'pisahvsgabung', 'valuateeverything', 'loadflow-simulator', 'ed-uc-simulator', 'capacity-expansion-planner']);
 
 /* Where a tool seeds a detailed list from the simple field it replaces, the two
    have to agree at the moment of switching — that is the documented promise of

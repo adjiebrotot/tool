@@ -26,7 +26,7 @@
 // through a reference bundle (csv shim only, definitions untouched, not
 // minified) and the shipping bundle and requires every number to be identical.
 //
-// The Capacity Expansion Planner (../capacityexpansion-planner) loads this same
+// The Capacity Expansion Planner (../capacity-expansion-planner) loads this same
 // engine for PyPSA's multi-period investment problem, so its Quick Starts are
 // run through both bundles too, and must give the same plan to the number.
 //
@@ -289,7 +289,7 @@ async function selfTest(refMod, shipMod) {
   // 3. The Capacity Expansion Planner's Quick Starts, in two samplings of the year,
   // through cx-core.js: shipping bundle identical to the source.
   let plans = 0;
-  const cxPath = join(TOOL, '..', 'capacityexpansion-planner', 'cx-core.js');
+  const cxPath = join(TOOL, '..', 'capacity-expansion-planner', 'cx-core.js');
   if (existsSync(cxPath)) {
     await import(pathToFileURL(cxPath).href + '?t=' + Date.now());
     const CX = globalThis.CX;
