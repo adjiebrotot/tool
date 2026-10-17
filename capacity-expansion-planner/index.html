@@ -349,7 +349,7 @@
 
   <section class="chart-card card cx-result" id="capCard">
     <div class="chart-head">
-      <h2>Capacity in service</h2>
+      <h2>Capacity and when to build</h2>
       <div class="btn-cluster">
         <button class="btn-secondary btn-sm" id="capSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
         <button class="btn-secondary btn-sm" id="capPngBtn" title="Download this chart as PNG">⬇ PNG</button>
@@ -360,58 +360,46 @@
     <div class="sub" id="capSub"></div>
     <div class="legend" id="capLegend" data-no-abbr></div>
     <div class="canvas-wrap"><canvas id="capCanvas"></canvas></div>
-    <div class="hover-box" id="capHover">Hover a year to read what is in service.</div>
+    <div class="hover-box" id="capHover">Hover a year to read what is in service, and what its decision year builds and retires.</div>
   </section>
 
-  <section class="chart-card card cx-result" id="buildCard">
-    <div class="chart-head">
-      <h2>When to build</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="buildSvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="buildPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm btn-icon" id="buildCopyBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm btn-icon" id="buildZoomBtn" title="Reset zoom">⟳</button>
+  <!-- One card, two charts: a year's energy by source, and under it, folded
+       until asked for, a decision year hour by hour. Each panel is a chart of
+       its own to Share, so an embed of one never shows the other. -->
+  <section class="chart-card card cx-result chart-duo" id="energyCard">
+    <div class="chart-panel" id="energyPanel">
+      <div class="chart-head">
+        <h2>Energy by source</h2>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="energySvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="energyPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" id="energyCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" id="energyZoomBtn" title="Reset zoom">⟳</button>
+        </div>
       </div>
+      <div class="sub" id="energySub"></div>
+      <div class="legend" id="energyLegend" data-no-abbr></div>
+      <div class="canvas-wrap"><canvas id="energyCanvas"></canvas></div>
+      <div class="hover-box" id="energyHover">Hover a year to read where its energy comes from.</div>
     </div>
-    <div class="sub" id="buildSub"></div>
-    <div class="legend" id="buildLegend" data-no-abbr></div>
-    <div class="canvas-wrap"><canvas id="buildCanvas"></canvas></div>
-    <div class="hover-box" id="buildHover">Hover a year to read what is built and what retires.</div>
-  </section>
-
-  <section class="chart-card card cx-result" id="energyCard">
-    <div class="chart-head">
-      <h2>Energy by source</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="energySvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="energyPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm btn-icon" id="energyCopyBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm btn-icon" id="energyZoomBtn" title="Reset zoom">⟳</button>
+    <div class="chart-panel day-panel" id="dayCard">
+      <div class="chart-head">
+        <h3>Typical days</h3>
+        <div class="btn-cluster">
+          <button class="btn-secondary btn-sm" id="daySvgBtn" title="Download this chart as SVG">⬇ SVG</button>
+          <button class="btn-secondary btn-sm" id="dayPngBtn" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm btn-icon" id="dayCopyBtn" title="Copy PNG to clipboard">⧉</button>
+          <button class="btn-secondary btn-sm btn-icon" id="dayZoomBtn" title="Reset zoom">⟳</button>
+        </div>
       </div>
+      <div class="sub" id="daySub"></div>
+      <label class="viewbar-field day-pick">Year
+        <select class="sel-input" id="dayYear" data-no-persist></select>
+      </label>
+      <div class="legend" id="dayLegend" data-no-abbr></div>
+      <div class="canvas-wrap"><canvas id="dayCanvas"></canvas></div>
+      <div class="hover-box" id="dayHover">Hover an hour to read the dispatch.</div>
     </div>
-    <div class="sub" id="energySub"></div>
-    <div class="legend" id="energyLegend" data-no-abbr></div>
-    <div class="canvas-wrap"><canvas id="energyCanvas"></canvas></div>
-    <div class="hover-box" id="energyHover">Hover a year to read where its energy comes from.</div>
-  </section>
-
-  <section class="chart-card card cx-result" id="dayCard">
-    <div class="chart-head">
-      <h2>Typical days</h2>
-      <div class="btn-cluster">
-        <button class="btn-secondary btn-sm" id="daySvgBtn" title="Download this chart as SVG">⬇ SVG</button>
-        <button class="btn-secondary btn-sm" id="dayPngBtn" title="Download this chart as PNG">⬇ PNG</button>
-        <button class="btn-secondary btn-sm btn-icon" id="dayCopyBtn" title="Copy PNG to clipboard">⧉</button>
-        <button class="btn-secondary btn-sm btn-icon" id="dayZoomBtn" title="Reset zoom">⟳</button>
-      </div>
-    </div>
-    <div class="sub" id="daySub"></div>
-    <label class="viewbar-field day-pick">Year
-      <select class="sel-input" id="dayYear" data-no-persist></select>
-    </label>
-    <div class="legend" id="dayLegend" data-no-abbr></div>
-    <div class="canvas-wrap"><canvas id="dayCanvas"></canvas></div>
-    <div class="hover-box" id="dayHover">Hover an hour to read the dispatch.</div>
   </section>
 
   <section class="chart-card card cx-result" id="costCard">

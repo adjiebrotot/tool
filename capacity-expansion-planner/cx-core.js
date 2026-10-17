@@ -86,8 +86,8 @@
   CX.NEW = {
     solar:   { name: 'Solar PV', kind: 'pv', capex: 1000, fom: 15, life: 30, learn: -0.02, cf: 0.22 },
     wind:    { name: 'Wind', kind: 'wind', capex: 1600, fom: 40, life: 25, learn: -0.01, cf: 0.35 },
-    ccgt:    { name: 'Gas, combined cycle', kind: 'firm', capex: 1200, fom: 25, vom: 60, life: 30, co2: 0.37, avail: 0.92 },
-    ocgt:    { name: 'Gas peaker', kind: 'firm', capex: 800, fom: 15, vom: 95, life: 30, co2: 0.55, avail: 0.95 },
+    ccgt:    { name: 'Gas (CCGT)', kind: 'firm', capex: 1200, fom: 25, vom: 60, life: 30, co2: 0.37, avail: 0.92 },
+    ocgt:    { name: 'Gas (OCGT)', kind: 'firm', capex: 800, fom: 15, vom: 95, life: 30, co2: 0.55, avail: 0.95 },
     coal:    { name: 'Coal', kind: 'firm', capex: 3000, fom: 50, vom: 35, life: 40, co2: 0.95, avail: 0.85 },
     nuclear: { name: 'Nuclear', kind: 'firm', capex: 8000, fom: 130, vom: 12, life: 60, avail: 0.9 },
     geo:     { name: 'Geothermal', kind: 'firm', capex: 4500, fom: 100, vom: 5, life: 30, avail: 0.9 },

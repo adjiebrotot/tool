@@ -1234,6 +1234,8 @@
        dash    Chart.js borderDash, e.g. [2,3];   width  borderWidth
        fill    fill colour — under the line for an area line, the whole block
                for a band;  fill2  second fill, for a band filled either side
+       hatch   colour of 45° lines over a bar or area block — a hatched fill
+               (existing plant under new build, say) keyed as hatched
        point   {shape:'circle'|'ring'|'triangle'|'rect', fill, stroke, width,
                 radius} — a marker drawn at the centre of the swatch
      ──────────────────────────────────────────────────────────────────────── */
@@ -1269,6 +1271,7 @@
       width: s.width == null ? 2 : s.width,
       fill: isTransparent(s.fill) ? null : legCss(s.fill),
       fill2: isTransparent(s.fill2) ? null : legCss(s.fill2),
+      hatch: isTransparent(s.hatch) ? null : legCss(s.hatch),
       point: null
     };
     if(out.type === 'line' && out.width <= 0 && out.fill) out.type = 'area';
@@ -1335,6 +1338,18 @@
 
   /* The one description of what a swatch looks like. Everything below draws
      these primitives; `k` scales the whole box for high-resolution exports. */
+  /* 45° lines rising left to right across a block, cut to its edges, so a
+     hatched fill keys as hatched in the swatch, the PNG and the SVG alike. */
+  function legHatch(out, x, y, w, h, color, k){
+    var gap = 3.2 * k;
+    for(var c = gap / 2 - h; c < w; c += gap){
+      var x1 = x + c, y1 = y + h, x2 = x + c + h, y2 = y;
+      if(x1 < x){ y1 -= x - x1; x1 = x; }
+      if(x2 > x + w){ y2 += x2 - (x + w); x2 = x + w; }
+      if(x2 - x1 > 0.3 * k) out.push({t:'line', x1:x1, y1:y1, x2:x2, y2:y2, stroke:color, sw:1 * k});
+    }
+  }
+
   function legMarks(spec, k){
     k = k || 1;
     var s = normSpec(spec), W = LEG_W * k, H = LEG_H * k, cy = H / 2, out = [];
@@ -1344,6 +1359,7 @@
     if(s.type === 'bar'){
       var bw = W * 0.56;
       out.push({t:'rect', x:(W - bw)/2, y:cy - 4.5*k, w:bw, h:9*k, r:1.5*k, fill:s.fill || s.color});
+      if(s.hatch) legHatch(out, (W - bw)/2, cy - 4.5*k, bw, 9*k, s.hatch, k);
     } else if(s.type === 'candle'){
       // Body with a wick standing clear above and below it, so a candlestick
       // series reads as candles rather than as a block of colour.
@@ -1359,6 +1375,7 @@
       } else {
         out.push({t:'rect', x:0, y:cy - 4.5*k, w:W, h:9*k, r:2*k, fill:s.fill || s.color});
       }
+      if(s.hatch) legHatch(out, 0, cy - 4.5*k, W, 9*k, s.hatch, k);
     } else if(s.type !== 'point'){
       // A line, with the area under it shaded when the series is filled.
       if(s.fill) out.push({t:'rect', x:0, y:cy, w:W, h:H/2, r:0, fill:s.fill});
@@ -3120,13 +3137,17 @@
                                                   // a checklist in the embed dialog
          SharedShare.data({ save, load })         // data the frame cannot fetch (prices)
          SharedShare.fit(key, width => height)    // a diagram as tall as its width draws it
+         SharedShare.alias(oldKey, key)           // a chart merged into another keeps its links
 
      choices() lists what the embed may carry besides the chart, as
      [{ value, label }]; the dialog shows them as checkboxes, all off, and
      hands the ticked values to save(picked) and height(picked), the extra
      pixels the frame needs for them. Share as link calls save() with none.
 
-     key is the chart's canvas or Plotly id ('.class' when it has none). A
+     key is the chart's canvas or Plotly id ('.class' when it has none). An
+     embed or link names its chart by that key for good, so a chart that goes
+     into another one leaves alias(oldKey, key) behind, and its old embeds and
+     links open the chart it went into. A
      card whose view depends on fields outside it names them in
      data-share-view="<selector>", and their fields and toggles ride along.
 
@@ -3180,7 +3201,9 @@
     var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
     // The box a chart and its own controls live in, nearest first.
     var CARD = '.chart-modal, .detail-subsection, .chart-card, .chart-panel, .card';
-    var uid = 0, menus = [], current = null, provider = null, dataHook = null, views = {}, fits = {}, dlg = null;
+    var uid = 0, menus = [], current = null, provider = null, dataHook = null, views = {}, fits = {}, aliases = {}, dlg = null;
+    // The chart a key names now: itself, or the chart it went into.
+    function keyNow(key){ return Object.prototype.hasOwnProperty.call(aliases, key) ? aliases[key] : key; }
 
     function T(){ return TEXT[pageLang()]; }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
@@ -4055,7 +4078,7 @@
       document.documentElement.classList.add('abt-embed-failed');
     }
     function startEmbed(){
-      var E = EMBED, payload = {}, back = null;
+      var E = { key: keyNow(EMBED.key), theme: EMBED.theme, s: EMBED.s }, payload = {}, back = null;
       Promise.resolve()
         .then(function(){ applyTheme(E.theme); })
         .then(function(){ return E.s ? unpack(E.s) : {}; })
@@ -4106,7 +4129,7 @@
        a scenario file would, so it becomes the reader's own saved work; the
        address loses its #open first, so a reload keeps what they change. */
     function startOpen(){
-      var O = OPEN, payload = {};
+      var O = { key: keyNow(OPEN.key), s: OPEN.s }, payload = {};
       try { global.history.replaceState(null, '', global.location.pathname + global.location.search); } catch(e){}
       unpack(O.s)
         .then(function(p){
@@ -4141,6 +4164,7 @@
       state: function(p){ provider = p && typeof p.save === 'function' && typeof p.load === 'function' ? p : null; },
       view: function(key, hook){ if(key) views[key] = hook; },
       fit: function(key, fn){ if(key && typeof fn === 'function') fits[key] = fn; },
+      alias: function(from, to){ if(from && to && from !== to) aliases[from] = to; },
       // Data the scenario draws but cannot rebuild in the frame (prices).
       data: function(hook){ dataHook = hook && typeof hook.save === 'function' && typeof hook.load === 'function' ? hook : null; },
       embedded: EMBED ? { key: EMBED.key, theme: EMBED.theme } : null,

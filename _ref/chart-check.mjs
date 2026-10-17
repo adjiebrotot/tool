@@ -493,15 +493,17 @@ const PAGES = [
     },
   },
   {
-    // The Capacity Expansion Planner: four bar charts by decision year (one
-    // with a second axis) and the typical days' dispatch, hour by hour, of the
+    // The Capacity Expansion Planner: two stacked histograms and a stacked
+    // area over every calendar year (the cost one with a second axis), and
+    // the typical days' dispatch, hour by hour, opened from its fold, of the
     // coal exit preset, which retires plant and sheds a little demand.
     name: 'capacity-expansion-planner',
     url: '/capacity-expansion-planner/',
-    charts: ['capCanvas', 'buildCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
+    charts: ['capCanvas', 'energyCanvas', 'dayCanvas', 'costCanvas'],
     async prep(page) {
       await page.click('.quick-start-btn[data-preset="coal"]');
       await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report.ok && __cx.app.res.report.opts.peak === 4000 && !document.getElementById('runBtn').disabled && Chart.getChart('dayCanvas'), null, { timeout: 60000 });
+      await page.evaluate(() => window.__cx.unfold('day'));
       await page.waitForTimeout(400);
     },
   },
