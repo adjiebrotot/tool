@@ -13,7 +13,7 @@ function cxResults() {
   if (window.__CX_TOUR) window.__CX_TOUR.ensureResults();
 }
 window.__TOUR = {
-  seenKey: 'capacityexpansion-planner-tour-v1-seen',
+  seenKey: 'capacityexpansion-planner-tour-v2-seen',
   launchLabel: '🧭 Take a tour',
   steps: [
     {
@@ -34,7 +34,7 @@ window.__TOUR = {
       onEnter: function () { cxTab('plan'); },
       title: '② Demand',
       body: '<ul><li>The <strong>peak</strong> now and how fast it grows</li>' +
-            '<li>Its daily shape: pick one or drag the bars</li>' +
+            '<li>The climate, then the load profile: drag its bars, add daily variability, or open your own file</li>' +
             '<li>The years to plan, and how often to decide</li></ul>'
     },
     {
@@ -43,6 +43,7 @@ window.__TOUR = {
       title: '③ Supply',
       body: '<ul><li>What is in service and when it <strong>retires</strong></li>' +
             '<li>What can be built, at what cost</li>' +
+            '<li>Solar and wind: the climate’s profile or your own file</li>' +
             '<li>Detailed for lifetimes, limits and unit sizes</li></ul>'
     },
     {
@@ -55,7 +56,7 @@ window.__TOUR = {
       target: ['.ctrl-tabs', '#tab-assume'],
       onEnter: function () { cxTab('assume'); },
       title: '⑤ Assumptions',
-      body: 'The discount rate, the climate, and the <strong>typical days</strong> each year is run over.'
+      body: 'The discount rate, the solver, and the <strong>typical days</strong> each year is run over, which follow the profiles.'
     },
     {
       target: '#runBtn',

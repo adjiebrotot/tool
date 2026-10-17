@@ -295,8 +295,10 @@ async function selfTest(refMod, shipMod) {
     const CX = globalThis.CX;
     for (const key of Object.keys(CX.PRESETS)) {
       for (const sample of ['day', 'day2']) {
-        const opts = { ...(CX.PRESETS[key].fields || {}), sample };
+        // The plan's load profile sets its sampling: daily variability by weekday and weekend for the second.
+        const opts = { ...(CX.PRESETS[key].fields || {}) };
         const model = CX.load(CX.PRESETS[key].plan);
+        if (sample === 'day2' && model.load) { model.load.dv = 1; model.load.dm = 'day2'; }
         const ra = await CX.solve(refMod, model, opts), rb = await CX.solve(shipMod, model, opts);
         if (!ra.report.ok) throw new Error(`planner preset ${key} (${sample}) did not solve: ${ra.report.error}`);
         if (JSON.stringify(ra.raw) !== JSON.stringify(rb.raw)) throw new Error(`planner preset ${key} (${sample}): shipping bundle differs from the source`);

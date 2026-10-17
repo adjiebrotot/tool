@@ -28,7 +28,11 @@
    technology means that default). Add new keys with a default that
    reproduces the old result, and migrate in load().
 
-     { v:1, next:<id>, tech:[ technology… ], prof:'' | [24 numbers] }
+     { v:2, next:<id>, tech:[ technology… ], load:<profile> }
+
+   v1 kept the load profile and the sampling in the form (the Load profile
+   and Each season fields) and the 24 hours drawn by hand in prof; CX.upgrade
+   turns one into the same plan written as v2.
 
    A technology is { id:<int>, name, kind, …values }, kind one of
      pv     solar: output follows the sun, scaled to its capacity factor
@@ -53,14 +57,31 @@
      co2     (firm) tonnes of CO2 per MWh
      hours   (store) hours at full power
      rte     (store) round-trip efficiency
-   prof is the 24-hour demand shape when the Load profile field is Custom.
-   Only values that differ from DEFAULTS are written. */
+     prof    (pv, wind) its profile, below
+   A profile says how a load or a farm moves through the hours of each
+   season's typical days:
+     base    load: a key of CX.PROFILES ('sys' … 'flat'), or 'custom' (ts);
+             pv, wind: '' the climate's sun or wind, scaled to cf, or 'custom'
+     hrs     (load) a weekday's 24 hours, edited from base's (absent: base's)
+     dv      1: daily variability, the days of a week differ
+     dm      (load) 'day2' a weekday and a weekend day, or 'week' Monday to
+             Sunday; pv and wind vary by the week's weather only, so 'week'
+     f2      (load) [weekday, weekend] factors (absent: 1 and 1)
+     f7      seven factors, Monday first (absent: the base's own days, or for
+             pv and wind the climate's weather, CX.SUN_WEEK and CX.WIND_WEEK)
+     sd      (load) 'bars': the still day is the weekday as the bars draw it,
+             as v1 had it (absent: the peak season's day with the highest hour)
+     ts      from a file: { r: 'day' | 'day2' | 'week', s: { <season>: [24 ×
+             1, 2 or 7 days] } }, one series a season of the climate by name
+             or '*' for every season. A load's is per unit (its highest hour
+             is the peak), a farm's per unit of its rating, as it is.
+   Only values that differ from DEFAULTS, or from a blank profile, are written. */
 (function(root){
   'use strict';
   var CX = root.CX = root.CX || {};
   var own = Object.prototype.hasOwnProperty;
 
-  CX.VERSION = 1;
+  CX.VERSION = 2;
   CX.KINDS = ['pv', 'wind', 'firm', 'store'];
   CX.KIND_WORD = { pv: 'Solar', wind: 'Wind', firm: 'Firm', store: 'Storage' };
 
@@ -137,9 +158,12 @@
     pveq:  { label: 'Solar (Equator)', kind: 'gen',
              h: [0, 0, 0, 0, 0, 0, 0.02, 0.14, 0.34, 0.54, 0.70, 0.80, 0.83, 0.78, 0.66, 0.49, 0.29, 0.10, 0.01, 0, 0, 0, 0, 0] },
     wnd:   { label: 'Wind', kind: 'gen',
-             h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61] }
+             h: [0.62, 0.66, 0.70, 0.72, 0.70, 0.66, 0.60, 0.52, 0.44, 0.38, 0.33, 0.30, 0.29, 0.31, 0.35, 0.40, 0.46, 0.52, 0.56, 0.58, 0.60, 0.61, 0.60, 0.61] },
+    // The same every hour and every day: a data centre, a smelter, or 24 hours drawn by hand.
+    flat:  { label: 'Flat', kind: 'load',
+             h: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] }
   };
-  CX.LOAD_KEYS = ['sys', 'res', 'com', 'ind', 'respv', 'resev'];
+  CX.LOAD_KEYS = ['sys', 'res', 'com', 'ind', 'respv', 'resev', 'flat'];
   CX.DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   // A week of weather, Monday first: the ED/UC Simulator's cloudier and calmer days.
   CX.SUN_WEEK = [1, 0.9, 0.6, 1, 0.95, 0.75, 1];
@@ -165,6 +189,10 @@
             { name: 'Wet season', days: 182.5, dem: 0.96, sol: 'pveq', solf: 0.8, wind: 1.1 }] }
   };
   CX.SAMPLES = ['day', 'day2', 'week'];
+  // The days each sampling holds, and how fine it is.
+  CX.RES_DAYS = { day: 1, day2: 2, week: 7 };
+  var FINE = { day: 0, day2: 1, week: 2 };
+  CX.MAX_SEASONS = 12;
   // The still, overcast peak day: the days a year it stands for, and its sun and wind.
   CX.STRESS = { days: 2, sun: 0.25, wind: 0.1 };
   CX.MAX_HOURS = 6000;     // decision years × sampled hours the browser is asked to solve
@@ -211,27 +239,86 @@
     if(!Array.isArray(v) || v.length !== 24) return '';
     return v.map(function(x){ var n = num(x); return isNaN(n) ? 0 : r6(clamp(n, 0, 2)); });
   }
+  // A day's factors: n numbers from 0 to 2, or '' for none of its own.
+  function readFactors(v, n){
+    if(!Array.isArray(v) || v.length !== n) return '';
+    return v.map(function(x){ var k = num(x); return isNaN(k) ? 1 : r6(clamp(k, 0, 2)); });
+  }
+  // A profile from a file: its sampling and a series a season, each the right length.
+  function readTs(v, cap){
+    if(!v || typeof v !== 'object' || !own.call(CX.RES_DAYS, v.r) || !v.s || typeof v.s !== 'object' || Array.isArray(v.s)) return null;
+    var n = 24 * CX.RES_DAYS[v.r], out = {}, k = 0;
+    Object.keys(v.s).forEach(function(name){
+      var a = v.s[name], key = name === '*' ? '*' : str(name, 40).trim();
+      if(k >= CX.MAX_SEASONS || !key || /^(__proto__|constructor|prototype)$/.test(key) || own.call(out, key) || !Array.isArray(a) || a.length !== n) return;
+      out[key] = a.map(function(x){ var q = num(x); return isNaN(q) ? 0 : r6(clamp(q, 0, cap)); });
+      k++;
+    });
+    return k ? { r: v.r, s: out } : null;
+  }
+
+  /* ── Profiles: a load's, or a solar or wind farm's (kind 'gen') ── */
+  CX.blankProfile = function(kind){
+    return kind === 'load' ? { base: 'sys', hrs: '', dv: 0, dm: 'day2', f2: '', f7: '', ts: null, sd: '' } : { base: '', dv: 0, f7: '', ts: null };
+  };
+  CX.readProfile = function(raw, kind){
+    var load = kind === 'load', p = CX.blankProfile(kind);
+    if(!raw || typeof raw !== 'object') return p;
+    if(load) p.base = CX.LOAD_KEYS.indexOf(raw.base) >= 0 || raw.base === 'custom' ? raw.base : 'sys';
+    else p.base = raw.base === 'custom' ? 'custom' : '';
+    p.dv = flag(raw.dv, false) ? 1 : 0;
+    p.f7 = readFactors(raw.f7, 7);
+    p.ts = readTs(raw.ts, load ? 100 : 1);
+    if(load){
+      p.hrs = readProf(raw.hrs);
+      p.dm = raw.dm === 'week' ? 'week' : 'day2';
+      p.f2 = readFactors(raw.f2, 2);
+      p.sd = raw.sd === 'bars' ? 'bars' : '';
+    }
+    return p;
+  };
+  function compactProfile(p, kind){
+    var b = CX.blankProfile(kind), o = {}, any = false;
+    if(!p) return null;
+    for(var k in b){
+      var v = p[k];
+      if(v === b[k] || v === undefined) continue;
+      o[k] = Array.isArray(v) ? v.slice() : v && typeof v === 'object' ? JSON.parse(JSON.stringify(v)) : v;
+      any = true;
+    }
+    return any ? o : null;
+  }
+  // Whether a profile takes its hours from a file it has.
+  CX.isCustom = function(p){ return !!(p && p.base === 'custom' && p.ts); };
+  /* The sampling a profile asks for: a file's own, one typical day without
+     daily variability, and with it a load's choice, or a farm's week of weather. */
+  CX.need = function(p, kind){
+    if(CX.isCustom(p)) return p.ts.r;
+    if(!p || !p.dv) return 'day';
+    return kind === 'load' ? p.dm : 'week';
+  };
+  CX.finer = function(a, b){ return FINE[b] > FINE[a] ? b : a; };
 
   CX.autoName = function(e){ return CX.KIND_WORD[e.kind] + ' ' + e.id; };
   CX.nameOf = function(e){ return e.name || CX.autoName(e); };
 
-  /* ── Reading a saved plan: never throws ── */
-  function migrate(raw){
-    // v1 is the first saved form. A later version converts older ones here.
-    return raw;
-  }
-  CX.blank = function(){ return { next: 1, tech: [], prof: '' }; };
+  /* ── Reading a saved plan: never throws ──
+     A plan saved before v2 also needs the form it was saved with to say what
+     its load did (CX.upgrade). Read alone it keeps what that needs in legacy,
+     which is never written back. */
+  CX.blank = function(){ return { next: 1, tech: [], load: CX.blankProfile('load') }; };
   CX.load = function(raw){
     var m = CX.blank();
     try {
       if(!raw || typeof raw !== 'object') return m;
-      raw = migrate(raw);
+      var v2 = num(raw.v) >= 2;
       var list = Array.isArray(raw.tech) ? raw.tech.slice(0, CX.MAX_TECH) : [];
       var used = {}, pending = [];
       list.forEach(function(r){
         if(!r || typeof r !== 'object') return;
         var e = { id: toInt(r.id) };
         for(var k in DEFAULTS) e[k] = own.call(r, k) ? readValue(SPEC[k], r[k], DEFAULTS[k]) : DEFAULTS[k];
+        e.prof = CX.readProfile(r.prof, 'gen');
         if(!(e.id > 0) || e.id > 1e6 || used[e.id]) pending.push(e);
         else used[e.id] = 1;
         m.tech.push(e);
@@ -244,12 +331,38 @@
       m.tech.forEach(function(e){ if(e.id > maxId) maxId = e.id; });
       var savedNext = toInt(raw.next);
       m.next = Math.max(maxId + 1, isNaN(savedNext) ? 1 : clamp(savedNext, 1, 1e6));
-      m.prof = readProf(raw.prof);
+      if(v2) m.load = CX.readProfile(raw.load, 'load');
+      else m.legacy = { prof: readProf(raw.prof) };
     } catch(err){
       if(root.console) root.console.warn('Capacity Expansion Planner: could not read that plan', err);
       return CX.blank();
     }
     return m;
+  };
+
+  /* A v1 plan with the form it was saved with ({ profile, sample }, as the
+     Load profile and Each season fields held them), written as v2 so it
+     computes exactly what it did:
+       - Custom with 24 hours drawn was those hours every day, at each season's
+         level: Flat, edited. Custom with none was the System day.
+       - A weekday and a weekend day is daily variability by weekday and
+         weekend at 100% each; a typical week is the shape's own seven days,
+         and the cloudier and calmer days of every solar and wind farm. */
+  CX.upgrade = function(model, f){
+    f = f && typeof f === 'object' ? f : {};
+    var L = CX.blankProfile('load'), drawn = model.legacy && model.legacy.prof;
+    var prof = typeof f.profile === 'string' ? f.profile : 'sys';
+    if(prof === 'custom'){ if(Array.isArray(drawn)){ L.base = 'flat'; L.hrs = drawn.slice(); } }
+    else if(CX.LOAD_KEYS.indexOf(prof) >= 0 && prof !== 'flat') L.base = prof;
+    if(f.sample === 'day2' || f.sample === 'week'){ L.dv = 1; L.dm = f.sample; }
+    if(f.sample === 'week'){
+      // Its still day was the weekday as the bars drew it, which in a week can be below a weekend's peak.
+      L.sd = 'bars';
+      model.tech.forEach(function(e){ if(e.kind === 'pv' || e.kind === 'wind') e.prof.dv = 1; });
+    }
+    model.load = L;
+    delete model.legacy;
+    return model;
   };
 
   /* ── Writing it back, only what differs from the defaults ── */
@@ -258,9 +371,12 @@
       var o = { id: e.id };
       for(var k in DEFAULTS) if(e[k] !== DEFAULTS[k]) o[k] = e[k];
       if(o.name === CX.autoName(e)) delete o.name;
+      var pc = compactProfile(e.prof, 'gen');
+      if(pc) o.prof = pc;
       return o;
     }) };
-    if(Array.isArray(model.prof)) out.prof = model.prof.slice();
+    var lc = compactProfile(model.load, 'load');
+    if(lc) out.load = lc;
     return out;
   };
   CX.newTech = function(model, key){
@@ -268,6 +384,7 @@
     for(var k in DEFAULTS) t[k] = DEFAULTS[k];
     var nw = CX.NEW[key] || {};
     for(var k2 in nw) t[k2] = nw[k2];
+    t.prof = CX.blankProfile('gen');
     return t;
   };
 
@@ -281,11 +398,10 @@
     var start = Math.round(inRange(o.start, 2000, 2100, 2026));
     var end = Math.round(inRange(o.end, 2000, 2150, 2050));
     end = clamp(end, start, start + 60);
-    var prof = typeof o.profile === 'string' ? o.profile : '';
+    // The load profile and the sampling are the plan's own (model.load, CX.sampling), not options.
     return {
       peak: inRange(o.peak, 1, BIG, 1000),
       growth: inRange(o.growth, -5, 15, 3),
-      profile: CX.LOAD_KEYS.indexOf(prof) >= 0 || prof === 'custom' ? prof : 'sys',
       start: start, end: end,
       step: pick(o.step, STEPS, 5),
       shed: flag(o.shed, true),
@@ -296,7 +412,6 @@
       nzYear: Math.round(inRange(o.nzYear, 2000, 2150, 2045)),
       rate: inRange(o.rate, 0, 20, 7),
       climate: own.call(CX.CLIMATES, o.climate) ? o.climate : 'sum',
-      sample: CX.SAMPLES.indexOf(o.sample) >= 0 ? o.sample : 'day',
       stress: flag(o.stress, true),
       time: pick(o.time, [10, 30, 60, 300], 60),
       gap: pick(o.gap, [0.0001, 0.001, 0.01], 0.001)
@@ -327,75 +442,178 @@
   };
 
   /* ── The typical days a year is sampled by ──
-     For each season of the climate: one weekday ('day'), a weekday and a
-     weekend day ('day2'), or a Monday-to-Sunday week ('week'), and, with
-     stress on, a still and overcast weekday at the year's peak, standing for
-     CX.STRESS.days of the peak season. Each hour carries w, the hours of a
-     year it stands for, so the weights add up to 8,760.
+     The profiles set it, so they can never disagree with it: each season is
+     one weekday ('day'), a weekday and a weekend day ('day2'), or a Monday-
+     to-Sunday week ('week'), the finest any profile in the plan asks for
+     (CX.need). A profile coarser than the sampling repeats: one typical day
+     every day, a weekday Monday to Friday and a weekend day Saturday and
+     Sunday. With stress on, a still and overcast day at the year's peak
+     stands for CX.STRESS.days of the peak season. Each hour carries w, the
+     hours of a year it stands for, so the weights add up to 8,760.
      load is per unit of the year's peak (the highest hour is 1); sun and
-     wind are the raw shapes each solar and wind farm scales to its capacity
-     factor (CX.avail). */
-  function loadShape(model, o){
-    if(o.profile === 'custom' && Array.isArray(model.prof)) return { h: model.prof };
-    return CX.PROFILES[o.profile === 'custom' ? 'sys' : o.profile];
+     wind are the climate's raw shapes, and gen[id] each farm's own, which
+     CX.avail scales to its capacity factor (or, from a file, takes as it is). */
+  CX.inPlan = function(e, o, last){
+    return (e.exist > 0 && (!e.retire || e.retire > o.start)) || (!!e.build && (!e.from || e.from <= last));
+  };
+  // The sampling, and what sets it: null for the load, a technology's id for its farm.
+  CX.sampling = function(model, o){
+    var P = CX.periods(o), last = P[P.length - 1].year, list = [{ who: null, r: CX.need(model.load, 'load') }], r = 'day';
+    model.tech.forEach(function(e){
+      if((e.kind === 'pv' || e.kind === 'wind') && CX.inPlan(e, o, last)) list.push({ who: e.id, r: CX.need(e.prof, e.kind) });
+    });
+    list.forEach(function(x){ r = CX.finer(r, x.r); });
+    return { r: r, by: r === 'day' ? [] : list.filter(function(x){ return x.r === r; }).map(function(x){ return x.who; }) };
+  };
+  // The day of a profile's own sampling that stands for weekday wd (Monday 0).
+  CX.dayOf = function(r, wd){ return r === 'week' ? wd : r === 'day2' ? (wd >= 5 ? 1 : 0) : 0; };
+  // A file's series for a season: its own, else the one for every season, else the average of those it has.
+  CX.tsSeries = function(ts, name){
+    if(own.call(ts.s, name)) return ts.s[name];
+    if(own.call(ts.s, '*')) return ts.s['*'];
+    var keys = Object.keys(ts.s), n = keys.length;
+    return ts.s[keys[0]].map(function(_, i){ var t = 0; keys.forEach(function(k){ t += ts.s[k][i]; }); return t / n; });
+  };
+  // The climate's seasons a file has no series for.
+  CX.tsMissing = function(ts, seasons){
+    if(!ts || own.call(ts.s, '*')) return [];
+    return seasons.filter(function(s){ return !own.call(ts.s, s.name); }).map(function(s){ return s.name; });
+  };
+  // A load's built-in shape: its base, or for Custom with no file the System day.
+  CX.loadBase = function(L){ return L && L.base !== 'custom' && own.call(CX.PROFILES, L.base) ? L.base : 'sys'; };
+  function baseOf(L){ return CX.PROFILES[CX.loadBase(L)]; }
+  // The 24 bars: a weekday's hours.
+  CX.loadHours = function(L){ var p = baseOf(L); return (Array.isArray(L.hrs) ? L.hrs : p.h).slice(); };
+  // The daily bars: [weekday, weekend], or Monday to Sunday.
+  CX.loadDays2 = function(L){ return Array.isArray(L.f2) ? L.f2.slice() : [1, 1]; };
+  CX.loadWeek = function(L){ var p = baseOf(L); return Array.isArray(L.f7) ? L.f7.slice() : p.d ? p.d.slice() : [1, 1, 1, 1, 1, 1, 1]; };
+  CX.genWeek = function(p, kind){ return p && Array.isArray(p.f7) ? p.f7.slice() : (kind === 'pv' ? CX.SUN_WEEK : CX.WIND_WEEK).slice(); };
+  /* A load's 24 hours on weekday wd of season s, before the year's peak is
+     made 1. Built in: the bars, at the season's level; with daily variability
+     a weekend hour is the shape's weekend day moved by as much as its weekday
+     hour was edited, and every hour takes its day's factor. From a file: the
+     season's own hours. The still day is the peak season's highest day, or
+     (sd 'bars') its weekday as the bars draw it. */
+  function loadDay(L, s, wd, stress){
+    var out = new Array(24), h, v;
+    if(CX.isCustom(L)){
+      var ser = CX.tsSeries(L.ts, s.name), at = CX.dayOf(L.ts.r, wd) * 24;
+      for(h = 0; h < 24; h++) out[h] = Math.max(0, +ser[at + h] || 0);
+      return out;
+    }
+    var p = baseOf(L), hv = Array.isArray(L.hrs) ? L.hrs : p.h, daily = L.dv && !(stress && L.sd === 'bars'), we = wd >= 5;
+    var f = daily ? (L.dm === 'week' ? CX.loadWeek(L)[wd] : CX.loadDays2(L)[we ? 1 : 0]) : 1;
+    for(h = 0; h < 24; h++){
+      v = daily && we && p.w ? p.w[h] + (hv[h] - p.h[h]) : hv[h];
+      if(daily) v *= f;
+      out[h] = Math.max(0, +v || 0) * s.dem;
+    }
+    return out;
   }
   CX.sample = function(model, o){
-    var C = CX.CLIMATES[o.climate], seasons = C.seasons, shape = loadShape(model, o);
-    var peakS = 0;
-    seasons.forEach(function(s, i){ if(s.dem > seasons[peakS].dem) peakS = i; });
+    var C = CX.CLIMATES[o.climate], seasons = C.seasons, L = model.load || CX.blankProfile('load');
+    var smp = CX.sampling(model, o), r = smp.r, custom = CX.isCustom(L);
+    var wds = r === 'week' ? [0, 1, 2, 3, 4, 5, 6] : r === 'day2' ? [0, 5] : [0];
+    // The peak season holds the highest hour (the first of equals), and its highest day is the still day.
+    var peakS = 0, peakWd = 0, top0 = -1;
+    seasons.forEach(function(s, i){
+      wds.forEach(function(wd){
+        var m = Math.max.apply(null, loadDay(L, s, wd, false));
+        if(m > top0){ top0 = m; peakS = i; peakWd = wd; }
+      });
+    });
+    var stressWd = !custom && L.sd === 'bars' ? 0 : peakWd;
     var days = [];
     seasons.forEach(function(s, i){
       var n = s.days - (o.stress && i === peakS ? CX.STRESS.days : 0);
-      if(o.sample === 'week'){
-        for(var d = 0; d < 7; d++) days.push({ s: i, wd: d, we: d >= 5, weight: n / 7, week: true });
-      } else if(o.sample === 'day2'){
+      if(r === 'week'){
+        for(var d = 0; d < 7; d++) days.push({ s: i, wd: d, we: d >= 5, weight: n / 7 });
+      } else if(r === 'day2'){
         days.push({ s: i, wd: 0, we: false, weight: n * 5 / 7 });
         days.push({ s: i, wd: 5, we: true, weight: n * 2 / 7 });
       } else days.push({ s: i, wd: 0, we: false, weight: n });
     });
-    if(o.stress) days.push({ s: peakS, wd: 0, we: false, weight: CX.STRESS.days, stress: true });
+    if(o.stress) days.push({ s: peakS, wd: stressWd, we: stressWd >= 5, weight: CX.STRESS.days, stress: true });
     var H = days.length * 24, w = [], load = [], sun = [], wind = [], top = 0;
     days.forEach(function(dy){
-      var s = seasons[dy.s], sol = CX.PROFILES[s.sol].h, wn = CX.PROFILES.wnd.h;
+      var s = seasons[dy.s], sol = CX.PROFILES[s.sol].h, wn = CX.PROFILES.wnd.h, ld = loadDay(L, s, dy.wd, dy.stress);
       for(var h = 0; h < 24; h++){
-        var v = dy.we && shape.w ? shape.w[h] : shape.h[h];
-        if(dy.week && shape.d) v *= shape.d[dy.wd];
-        v = Math.max(0, +v || 0) * s.dem;
-        load.push(v);
-        if(v > top) top = v;
-        sun.push(sol[h] * s.solf * (dy.stress ? CX.STRESS.sun : 1) * (dy.week ? CX.SUN_WEEK[dy.wd] : 1));
-        wind.push(wn[h] * s.wind * (dy.stress ? CX.STRESS.wind : 1) * (dy.week ? CX.WIND_WEEK[dy.wd] : 1));
+        load.push(ld[h]);
+        if(ld[h] > top) top = ld[h];
+        sun.push(sol[h] * s.solf * (dy.stress ? CX.STRESS.sun : 1));
+        wind.push(wn[h] * s.wind * (dy.stress ? CX.STRESS.wind : 1));
         w.push(dy.weight);
       }
     });
     for(var t = 0; t < H; t++) load[t] = top > 0 ? load[t] / top : 0;
-    // The blocks the dispatch chart names: a week is one block of seven days.
+    // Each farm's own: the climate's with its week of weather, or its file's hours.
+    var gen = {};
+    model.tech.forEach(function(e){
+      if(e.kind !== 'pv' && e.kind !== 'wind') return;
+      var p = e.prof, isPv = e.kind === 'pv', base = isPv ? sun : wind, out = new Array(H), k = 0;
+      if(CX.isCustom(p)){
+        // The still day takes the clearest (or windiest) of the season's days in the file, as the climate's takes a clear one.
+        var ser = seasons.map(function(s){ return CX.tsSeries(p.ts, s.name); }), nd = CX.RES_DAYS[p.ts.r], best = 0, most = -1;
+        for(var q = 0; q < nd; q++){ var tot = 0; for(var hq = 0; hq < 24; hq++) tot += +ser[peakS][q * 24 + hq] || 0; if(tot > most){ most = tot; best = q; } }
+        days.forEach(function(dy){
+          var at = (dy.stress ? best : CX.dayOf(p.ts.r, dy.wd)) * 24, still = dy.stress ? (isPv ? CX.STRESS.sun : CX.STRESS.wind) : 1;
+          for(var h = 0; h < 24; h++) out[k++] = Math.max(0, +ser[dy.s][at + h] || 0) * still;
+        });
+      } else {
+        var f = p && p.dv && r === 'week' ? CX.genWeek(p, e.kind) : null;
+        days.forEach(function(dy){ for(var h = 0; h < 24; h++){ out[k] = f && !dy.stress ? base[k] * f[dy.wd] : base[k]; k++; } });
+      }
+      gen[e.id] = out;
+    });
+    // The blocks the dispatch chart names: a week is one block of seven days,
+    // a weekday and a weekend day two under one season (group).
     var blocks = [], at = 0;
     days.forEach(function(dy){
       var s = seasons[dy.s];
-      if(dy.week && dy.wd > 0){ blocks[blocks.length - 1].len += 24; at += 24; return; }
-      blocks.push({ from: at, len: 24, stress: !!dy.stress,
-        name: dy.stress ? 'Still, overcast day' : dy.week ? s.name + ' week' : o.sample === 'day2' ? s.name + (dy.we ? ' weekend' : ' weekday') : s.name,
-        season: s.name, days: dy.week ? s.days - (o.stress && dy.s === peakS ? CX.STRESS.days : 0) : dy.weight });
+      if(r === 'week' && !dy.stress && dy.wd > 0){ blocks[blocks.length - 1].len += 24; at += 24; return; }
+      blocks.push({ from: at, len: 24, stress: !!dy.stress, wd: dy.wd,
+        name: dy.stress ? 'Still, overcast day' : r === 'week' ? s.name + ' week' : r === 'day2' ? s.name + (dy.we ? ' weekend' : ' weekday') : s.name,
+        group: dy.stress ? 'Still, overcast day' : s.name, day: r === 'day2' ? (dy.we ? 'Weekend' : 'Weekday') : '',
+        season: s.name, days: r === 'week' && !dy.stress ? s.days - (o.stress && dy.s === peakS ? CX.STRESS.days : 0) : dy.weight });
       at += 24;
     });
     var energy = 0;
     for(var t2 = 0; t2 < H; t2++) energy += w[t2] * load[t2];
-    return { H: H, w: w, load: load, sun: sun, wind: wind, blocks: blocks, peakSeason: seasons[peakS].name,
-             energy: energy, loadFactor: energy / 8760, days: days };
+    return { H: H, w: w, load: load, sun: sun, wind: wind, gen: gen, blocks: blocks, peakSeason: seasons[peakS].name,
+             energy: energy, loadFactor: energy / 8760, days: days, sample: r, sampleBy: smp.by, seasons: seasons };
+  };
+  /* Any hourly series of a sample, through each season's days at sampling r
+     (coarser or finer than the sample's: a day stands for the weekdays it
+     covers), the still day left out: { r, s: { <season>: [24 × days] } }. */
+  CX.gridOf = function(S, a, r){
+    var out = {}, wds = r === 'week' ? [0, 1, 2, 3, 4, 5, 6] : r === 'day2' ? [0, 5] : [0];
+    S.seasons.forEach(function(s, i){
+      var v = [];
+      wds.forEach(function(wd){
+        var want = S.sample === 'week' ? wd : S.sample === 'day2' && wd >= 5 ? 5 : 0, k = -1;
+        S.days.forEach(function(d, j){ if(k < 0 && d.s === i && !d.stress && d.wd === want) k = j; });
+        for(var h = 0; h < 24; h++) v.push(a[k * 24 + h]);
+      });
+      out[s.name] = v;
+    });
+    return { r: r, s: out };
   };
 
   /* A technology's availability in each sampled hour, per unit of its
      rating: solar and wind scaled so the year's output is its capacity
-     factor (no hour above 1), a firm plant its availability every hour.
-     reach is false when the shape cannot give that much even at 1 in every
-     hour it has any. */
+     factor (no hour above 1), or from a file as the file gives it (literal),
+     a firm plant its availability every hour. reach is false when the shape
+     cannot give that much even at 1 in every hour it has any. */
   CX.avail = function(e, S){
     var H = S.H, out = new Array(H), t;
     if(e.kind === 'firm'){ for(t = 0; t < H; t++) out[t] = e.avail; return { a: out, reach: true }; }
     if(e.kind === 'store'){ for(t = 0; t < H; t++) out[t] = 1; return { a: out, reach: true }; }
-    var raw = e.kind === 'pv' ? S.sun : S.wind;
+    var raw = S.gen && e.id != null && S.gen[e.id] ? S.gen[e.id] : e.kind === 'pv' ? S.sun : S.wind;
     var energy = function(k){ var s = 0; for(var i = 0; i < H; i++) s += S.w[i] * Math.min(1, k * raw[i]); return s / 8760; };
+    if(CX.isCustom(e.prof)){
+      for(t = 0; t < H; t++) out[t] = Math.min(1, raw[t]);
+      return { a: out, reach: true, cf: energy(1), literal: true };
+    }
     var lo = 0, hi = 1, i;
     while(energy(hi) < e.cf && hi < 1e6) hi *= 2;
     var reach = energy(hi) >= e.cf - 1e-9;
@@ -409,11 +627,20 @@
     var o = CX.options(options), P = CX.periods(o), errors = [], warnings = [];
     var last = P[P.length - 1].year, S = CX.sample(model, o);
     if(!model.tech.length) errors.push({ id: null, msg: 'Add at least one technology.' });
+    var fewer = S.sample === 'day' ? 'Take fewer decision years.' : 'Take fewer decision years, or less daily variability in the profiles (' + list(S.sampleBy.map(whoName(model))) + ').';
     if(P.length * S.H > CX.MAX_HOURS)
       errors.push({ id: null, msg: P.length + ' decision years of ' + S.H + ' hours each is ' + (P.length * S.H).toLocaleString('en-AU') +
-        ' hours to solve, more than the ' + CX.MAX_HOURS.toLocaleString('en-AU') + ' this tool takes. Take fewer decision years or fewer typical days.' });
+        ' hours to solve, more than the ' + CX.MAX_HOURS.toLocaleString('en-AU') + ' this tool takes. ' + fewer });
     else if(P.length * S.H > CX.SLOW_HOURS)
-      warnings.push({ id: null, msg: 'That is ' + (P.length * S.H).toLocaleString('en-AU') + ' hours to solve, which can take a minute. Fewer decision years or typical days are quicker.' });
+      warnings.push({ id: null, msg: 'That is ' + (P.length * S.H).toLocaleString('en-AU') + ' hours to solve, which can take a minute. ' + fewer.replace(/^Take/, 'It is quicker with') });
+    // Profiles: Custom with no file runs on its fallback; a file without a season of this climate averages its others.
+    var Cl = CX.CLIMATES[o.climate], L = model.load;
+    var checkProfile = function(p, id, who, fallback){
+      if(p.base === 'custom' && !p.ts) warnings.push({ id: id, msg: who + ' is Custom with no file opened yet, so it runs as ' + fallback + '.' });
+      var miss = CX.isCustom(p) ? CX.tsMissing(p.ts, Cl.seasons) : [];
+      if(miss.length) warnings.push({ id: id, msg: who + '’s file has no ' + list(miss) + ', so ' + (miss.length > 1 ? 'they take' : 'it takes') + ' the average of its ' + list(Object.keys(p.ts.s)) + '.' });
+    };
+    if(L) checkProfile(L, null, 'The load profile', 'the System day');
     var supply = false;
     model.tech.forEach(function(e){
       var n = CX.nameOf(e);
@@ -427,6 +654,7 @@
       } else if(e.exist > 0 && e.retire && e.retire <= o.start)
         warnings.push({ id: e.id, msg: n + '’s existing ' + fmtNum(e.exist) + ' MW retires by ' + e.retire + ', before the first year, so only new builds count.' });
       if((e.kind === 'pv' || e.kind === 'wind') && (existsAtStart || canBuild)){
+        checkProfile(e.prof, e.id, n + '’s profile', 'the climate’s ' + (e.kind === 'pv' ? 'sun' : 'wind'));
         var av = CX.avail(e, S);
         if(!av.reach) warnings.push({ id: e.id, msg: n + ': the ' + (e.kind === 'pv' ? 'sun' : 'wind') + ' shape gives at most ' + Math.round(av.cf * 1000) / 10 + '% capacity factor, so it runs at that, not ' + Math.round(e.cf * 1000) / 10 + '%.' });
       }
@@ -442,6 +670,18 @@
     return { errors: errors, warnings: warnings };
   };
   function fmtNum(x){ return (Math.round(x * 10) / 10).toLocaleString('en-AU'); }
+  // "a, b and c".
+  function list(parts){ return parts.length < 2 ? parts.join('') : parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1]; }
+  CX.list = list;
+  // Who a sampling is set by: the load, or a farm by its name.
+  function whoName(model){
+    return function(id){
+      if(id === null) return 'the load';
+      var e = model.tech.filter(function(x){ return x.id === id; })[0];
+      return e ? CX.nameOf(e) : 'a farm';
+    };
+  }
+  CX.whoName = whoName;
 
   /* ── The optimisation ── */
   function tile(a, K){ var o = new Array(a.length * K); for(var k = 0; k < K; k++) for(var t = 0; t < a.length; t++) o[k * a.length + t] = a[t]; return o; }
@@ -491,8 +731,8 @@
     infeasible: 'The plan is infeasible: nothing that can be built meets the demand in every hour. Check the Checks list, or allow load shedding.',
     infeasible_or_unbounded: 'The plan is infeasible: nothing that can be built meets the demand in every hour. Check the Checks list, or allow load shedding.',
     unbounded: 'The plan is unbounded: some cost can fall without end.',
-    time_limit: 'The solver ran out of time before it proved the best plan. Allow more time, a larger gap, fewer decision years or fewer typical days.',
-    iteration_limit: 'The solver stopped at its iteration limit. Take fewer decision years or fewer typical days.'
+    time_limit: 'The solver ran out of time before it proved the best plan. Allow more time, a larger gap, fewer decision years or less daily variability.',
+    iteration_limit: 'The solver stopped at its iteration limit. Take fewer decision years or less daily variability.'
   };
 
   /* Solve a plan with a PSA.js module ({Network, logger}). Returns plain
@@ -605,7 +845,7 @@
     var sum = function(a, k, f){ var s = 0; for(var t = 0; t < H; t++){ var v = a[k * H + t]; s += S.w[t] * (f ? f(v) : v); } return s; };
     var pos = function(v){ return v > 0 ? v : 0; }, neg = function(v){ return v < 0 ? -v : 0; };
     var res = { periods: years, years: P.map(function(p){ return p.years; }), disc: disc, H: H, w: S.w.slice(), blocks: S.blocks,
-                peakSeason: S.peakSeason, tech: {}, order: [], load: [], shed: [], totals: {} };
+                sample: S.sample, peakSeason: S.peakSeason, tech: {}, order: [], load: [], shed: [], totals: {} };
     var shedP = o.shed && n.generators.index.has('shed') ? gp('shed') : zeros(N);
     for(var k = 0; k < K; k++){
       res.load.push(loadAll.slice(k * H, (k + 1) * H));
@@ -760,9 +1000,9 @@
   };
 
   /* ── Quick Start plans (keys are frozen; contents may be improved) ──
-     Each is the plan's form fields and its technologies, in the saved form,
-     read through CX.load like any saved plan. A field a preset leaves out
-     takes its default. */
+     Each is the plan's form fields and its technologies and load profile, in
+     the saved form, read through CX.load like any saved plan. A field a
+     preset leaves out takes its default. */
   function T(id, key, extra){
     var t = { id: id }, nw = CX.NEW[key];
     for(var k in nw) t[k] = nw[k];
@@ -772,7 +1012,7 @@
   CX.PRESETS = {
     // A summer-peaking grid of 1 GW growing 3% a year, its coal closing in 2036.
     grow: { fields: {},
-      plan: { v: 1, tech: [
+      plan: { v: 2, tech: [
         T(1, 'coal', { name: 'Coal', exist: 700, retire: 2036, build: 0 }),
         T(2, 'ccgt', { exist: 300 }),
         T(3, 'ocgt'),
@@ -782,7 +1022,7 @@
       ] } },
     // The same grid with a rising carbon price and no CO2 from 2041.
     nz: { fields: { carbon: 40, carbonGrow: 5, netZero: true, nzYear: 2041 },
-      plan: { v: 1, tech: [
+      plan: { v: 2, tech: [
         T(1, 'coal', { name: 'Coal', exist: 700, retire: 2036, build: 0 }),
         T(2, 'ccgt', { exist: 300 }),
         T(3, 'ocgt'),
@@ -792,8 +1032,8 @@
         T(7, 'phes', { from: 2031 })
       ] } },
     // A winter-peaking grid of 4 GW, flat demand, closing two coal stations.
-    coal: { fields: { peak: 4000, growth: 1, climate: 'win', profile: 'sys', start: 2026, end: 2045, carbon: 25 },
-      plan: { v: 1, tech: [
+    coal: { fields: { peak: 4000, growth: 1, climate: 'win', start: 2026, end: 2045, carbon: 25 },
+      plan: { v: 2, tech: [
         T(1, 'coal', { name: 'Coal, older station', exist: 2000, retire: 2031, build: 0 }),
         T(2, 'coal', { name: 'Coal, newer station', exist: 1500, retire: 2041, build: 0 }),
         T(3, 'ccgt', { exist: 800, unit: 400 }),
@@ -803,8 +1043,8 @@
         T(7, 'battery')
       ] } },
     // A tropical island grid on diesel, growing fast, with sun and geothermal to build.
-    island: { fields: { peak: 120, growth: 6, climate: 'trop', profile: 'res', start: 2026, end: 2045 },
-      plan: { v: 1, tech: [
+    island: { fields: { peak: 120, growth: 6, climate: 'trop', start: 2026, end: 2045 },
+      plan: { v: 2, load: { base: 'res' }, tech: [
         T(1, 'diesel', { exist: 150 }),
         T(2, 'solar', { cf: 0.18 }),
         T(3, 'battery'),

@@ -71,10 +71,12 @@
     });
   }
 
-  /* ── The form ── */
-  var FIELD = { peak: 'cxPeak', growth: 'cxGrowth', profile: 'cxProfile', start: 'cxStart', end: 'cxEnd', step: 'cxStep',
+  /* ── The form ──
+     The load profile and the sampling are the plan's own (app.model.load,
+     CX.sampling): their selects show them and are never saved. */
+  var FIELD = { peak: 'cxPeak', growth: 'cxGrowth', start: 'cxStart', end: 'cxEnd', step: 'cxStep',
                 shed: 'cxShed', voll: 'cxVoll', carbon: 'cxCarbon', carbonGrow: 'cxCarbonGrow', netZero: 'cxNetZero', nzYear: 'cxNzYear',
-                rate: 'cxRate', climate: 'cxClimate', sample: 'cxSample', stress: 'cxStress', time: 'cxTime', gap: 'cxGap' };
+                rate: 'cxRate', climate: 'cxClimate', stress: 'cxStress', time: 'cxTime', gap: 'cxGap' };
   function rawForm(){
     var o = {};
     Object.keys(FIELD).forEach(function(k){ var el = $(FIELD[k]); o[k] = el.type === 'checkbox' ? el.checked : el.value; });
@@ -97,6 +99,13 @@
       else el.value = el.defaultValue;
     });
   }
+  // A select a saved value is gone from takes its default, never a blank.
+  function fixSelects(){
+    Object.keys(FIELD).forEach(function(k){
+      var el = $(FIELD[k]);
+      if(el.tagName === 'SELECT' && el.selectedIndex < 0) Array.prototype.forEach.call(el.options, function(o){ o.selected = o.defaultSelected; });
+    });
+  }
 
   /* Kept live on every keystroke, whatever the gate says: affixes, readouts,
      which rows the choices show, the dependent tips and the notes under them. */
@@ -106,11 +115,30 @@
     trop: '<strong>Tropical, the same all year:</strong> a dry and a wet season, twelve hours of high sun every day, a little cloudier in the wet.'
   };
   var SAMPLE_TIP = {
-    day: '<strong>One typical day:</strong> each season is one weekday, standing for every day of it. The quickest.',
-    day2: '<strong>A weekday and a weekend day:</strong> each season is a weekday for five days in seven and the profile’s weekend day for the other two.',
-    week: '<strong>A typical week:</strong> Monday to Sunday for each season, with cloudier and calmer days, so storage and firm plants meet a run of poor weather.'
+    day: '<strong>One typical day:</strong> each season is one day, standing for every day of it, as no profile varies from day to day. The quickest.',
+    day2: '<strong>A weekday and a weekend day:</strong> each season is a weekday for five days in seven and a weekend day for the other two.',
+    week: '<strong>A typical week:</strong> Monday to Sunday for each season, so storage and firm plants meet a run of days that differ.'
   };
   function setTip(id, html){ var el = $(id); if(el) el.setAttribute('data-tip', html); }
+  // What sets the sampling: the load's or a farm's daily variability, or a file.
+  function sampleWhy(S){
+    if(S.sample === 'day') return 'Set by the profiles: none varies from day to day.';
+    var who = S.sampleBy.map(function(id){
+      var x = profAt(id === null ? 'load' : String(id));
+      if(!x) return 'a profile';
+      return esc(x.who) + '’s ' + (CX.isCustom(x.p) ? 'file' : x.kind === 'load' ? 'daily variability' : 'week of weather');
+    });
+    return 'Set by ' + CX.list(who) + '.';
+  }
+  // The seasons, and the demand in each the built-in shapes run at.
+  function climateNote(o){
+    var Cl = CX.CLIMATES[o.climate], n = Cl.seasons.length;
+    var names = CX.list(Cl.seasons.map(function(s){ return s.name.toLowerCase(); }));
+    var each = n === 4 ? ', a quarter of the year each' : n === 2 ? ', half the year each' : '';
+    var lv = CX.isCustom(app.model.load) ? 'The load profile’s file sets the demand in each.' :
+      'Demand at ' + CX.list(Cl.seasons.map(function(s){ return F.pct(100 * s.dem) + '%'; })) + ' of the peak.';
+    return '<b>' + n + '</b> seasons, ' + names + each + '. ' + lv;
+  }
   function syncForm(){
     var o = plan(), C = cur();
     Array.prototype.forEach.call(document.querySelectorAll('.cur-prefix'), function(p){ p.textContent = C; p.hidden = !C; });
@@ -121,22 +149,58 @@
     $('nzRow').hidden = !$('cxNetZero').checked;
     $('gapRow').hidden = !app.model.tech.some(function(e){ return e.build && e.unit > 0; });
     setTip('climateTip', CLIMATE_TIP[o.climate]);
-    setTip('sampleTip', SAMPLE_TIP[o.sample]);
-    var P = CX.periods(o), S = CX.sample(app.model, o);
+    var P = CX.periods(o), S = app.S = CX.sample(app.model, o);
+    // Each season follows the profiles: shown in Assumptions, never chosen there.
+    $('cxSample').value = S.sample;
+    setTip('sampleTip', SAMPLE_TIP[S.sample]);
+    $('sampleWhy').innerHTML = sampleWhy(S);
+    $('climateNote').innerHTML = climateNote(o);
     $('yearsNote').innerHTML = P.length === 1 ? 'One decision year, <b>' + P[0].year + '</b>.' :
       '<b>' + P.length + '</b> decision years: ' + P.map(function(p){ return p.year; }).join(', ') + (P[P.length - 1].years < o.step ? ', the last for ' + P[P.length - 1].years + (P[P.length - 1].years === 1 ? ' year' : ' years') : '') + '.';
     $('loadNote').innerHTML = 'A year of <b>' + F.gwh(S.energy * o.peak) + ' GWh</b> in ' + o.start + ', a load factor of <b>' + F.pct(100 * S.loadFactor) + '%</b>.';
     $('sampleNote').innerHTML = '<b>' + S.H + '</b> hours a decision year, <b>' + (S.H * P.length).toLocaleString('en-AU') + '</b> in all.';
-    drawBars();
+    drawProfiles();
   }
 
-  /* ── The load profile: 24 bars, dragged to make it Custom ── */
-  function weekday(){
-    var o = plan();
-    if(o.profile === 'custom') return Array.isArray(app.model.prof) ? app.model.prof : CX.PROFILES.sys.h.slice();
-    return CX.PROFILES[o.profile].h;
+  /* ── Profiles: the load's under Demand, each solar and wind farm's in its card ──
+     A profile is a built-in shape (the load's 24 bars, or the climate's sun
+     or wind), with daily variability to make the days of a week differ, or
+     Custom, which takes its hours from a CSV or Excel file (cx-profiles.js),
+     by season and day. Every editor sits in an element marked data-prof
+     ('load', or a technology's id), so one set of listeners serves them all,
+     and its drawings redraw in place as the plan changes (drawProfiles).
+     Picking Custom shows the file buttons and changes nothing until a file
+     is opened, as on the ED/UC Simulator; a file opened this visit comes
+     back when Custom is picked again. */
+  var customPick = {}, lastTs = {}, fileMsg = {};
+  function techFor(id){ return app.model.tech.filter(function(x){ return x.id === id; })[0] || null; }
+  function profAt(scope){
+    if(scope === 'load') return { p: app.model.load, kind: 'load', e: null, who: 'the load profile', Who: 'The load profile' };
+    var e = techFor(+scope);
+    return e && (e.kind === 'pv' || e.kind === 'wind') ? { p: e.prof, kind: e.kind, e: e, who: CX.nameOf(e), Who: CX.nameOf(e) } : null;
   }
-  var barAt = null;
+  function scopeOf(el){ var c = el && el.closest && el.closest('[data-prof]'); return c ? c.getAttribute('data-prof') : null; }
+  function showsCustom(scope, p){ return CX.isCustom(p) || !!customPick[scope]; }
+  function round2(v){ return Math.round(v * 100) / 100; }
+  var DAILY_TIP = {
+    off: 'On, the days of a week differ: a weekday and a weekend day, or each day from Monday to Sunday. Each season is then sampled that way.',
+    day2: 'Each hour is its bar × its day’s bar: 80% at 18:00 on a 90% weekend is 72%. A built-in shape has a weekend day of its own, which its bar scales.',
+    week: 'Each hour is its bar × its day’s bar: 80% at 18:00 on a 90% Sunday is 72%. A built-in shape has a weekend day of its own for Saturday and Sunday.',
+    genOff: 'On, seven bars set the weather of each day, Monday to Sunday, so storage meets a run of cloudy or calm days. Each season is then a week.',
+    gen: 'Each hour is the climate’s × its day’s bar, then scaled to the capacity factor: a 60% day gives 60% of a clear one.'
+  };
+  var SAMPLE_PHRASE = { day: 'one typical day', day2: 'a weekday and a weekend day', week: 'a typical week' };
+  // A profile's hours, as "a typical week (168 hours) for each of its 4 seasons".
+  function describe(g, climate){
+    var keys = Object.keys(g.s), n = CX.CLIMATES[climate].seasons.length;
+    return SAMPLE_PHRASE[g.r] + ' (' + 24 * CX.RES_DAYS[g.r] + ' hours) ' +
+      (keys.length === 1 && keys[0] === '*' ? 'for every season' : keys.length === n ? 'for each of its ' + n + ' seasons' : 'for ' + CX.list(keys));
+  }
+
+  /* The drawings. One bar an hour, 10 units wide, on a baseline at y 58;
+     100% is 54 units tall. The axis runs 00 to 24 under the hour
+     boundaries, and the bar being dragged or pointed at (at) carries its
+     hour and value above it. */
   function barsSvg(vals, at){
     var s = '<rect x="-8" y="-14" width="256" height="90" fill="transparent"/>', ticks = '';
     vals.forEach(function(v, h){
@@ -152,32 +216,353 @@
     }
     return s;
   }
-  function drawBars(){ $('profBars').innerHTML = barsSvg(weekday(), barAt); }
-  (function(){
-    var svg = $('profBars'), drag = false;
-    function hourAt(ev){
-      var r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width * 256 - 8, y = (ev.clientY - r.top) / r.height * 90 - 14;
-      return { h: Math.max(0, Math.min(23, Math.floor(x / 10))), v: Math.max(0, Math.min(1.2, (58 - y) / 54)) };
+  // A bar a day (two, or Monday to Sunday) on the same scale, with 100% marked: a day may go above it.
+  var DAY_MAX = 1.2;
+  function daysSvg(vals, names, at){
+    var n = vals.length, DW = 240 / n, bw = Math.min(DW - 6, 56), s = '<rect x="-8" y="-14" width="256" height="90" fill="transparent"/>';
+    s += '<path class="pb-ref" d="M0 4H240"/><text class="pb-t" x="0" y="1">100%</text>';
+    vals.forEach(function(v, i){
+      var bh = Math.max(0.5, Math.min(v, DAY_MAX) * 54);
+      s += '<rect class="pb pb-day' + (i === at ? ' pb-on' : '') + '" x="' + (i * DW + (DW - bw) / 2).toFixed(2) + '" y="' + (58 - bh).toFixed(2) + '" width="' + bw.toFixed(2) + '" height="' + bh.toFixed(2) + '" rx="2"/>';
+      s += '<text class="pb-t" x="' + (i * DW + DW / 2).toFixed(2) + '" y="70.5" text-anchor="middle">' + names[i] + '</text>';
+    });
+    s += '<path class="pb-axis" d="M0 58.5H240"/>';
+    if(at !== null && at !== undefined && at >= 0 && at < n){
+      var v = vals[at], top = 58 - Math.max(0.5, Math.min(v, DAY_MAX) * 54);
+      s += '<text class="pb-v" x="' + Math.max(22, Math.min(218, at * DW + DW / 2)).toFixed(2) + '" y="' + Math.max(-4, top - 4).toFixed(2) + '" text-anchor="middle">' + names[at] + '  ' + Math.round(v * 100) + '%</text>';
     }
-    function set(ev){
-      var p = hourAt(ev), vals = weekday().slice();
-      vals[p.h] = Math.round(p.v * 100) / 100;
-      app.model.prof = vals;
-      if($('cxProfile').value !== 'custom') $('cxProfile').value = 'custom';
-      barAt = p.h;
-      changed();
+    return s;
+  }
+  /* Lines of hourly values in segments, a season's days each, 240 units wide
+     with a gap between, each named under it: the days of one segment alone,
+     every season's name when there are more. at is an hour across them all. */
+  var LINE_GAP = 5;
+  function lineGeom(segs){
+    var n = 0, x0 = 0, out = [];
+    segs.forEach(function(g){ n += g.vals.length; });
+    var span = 240 - LINE_GAP * Math.max(0, segs.length - 1);
+    segs.forEach(function(g, i){
+      var w = n ? span * g.vals.length / n : 0, m = g.vals.length, left = x0;
+      out.push({ x0: left, w: w, m: m, X: function(k){ return left + (m > 1 ? k * w / (m - 1) : w / 2); }, from: i ? out[i - 1].from + out[i - 1].m : 0 });
+      x0 += w + LINE_GAP;
+    });
+    return out;
+  }
+  function dayWord(r, k){ var d = Math.floor(k / 24); return r === 'week' ? CX.DAYS[d] + ' ' : r === 'day2' ? (d ? 'Weekend ' : 'Weekday ') : ''; }
+  function linesSvg(segs, at){
+    var top = 1, s = '<rect x="-8" y="-6" width="256" height="62" fill="transparent"/>', G = lineGeom(segs);
+    segs.forEach(function(g){ g.vals.forEach(function(v){ if(v > top) top = v; }); });
+    var Y = function(v){ return 42 - Math.min(Math.max(v, 0), top) / top * 40; };
+    segs.forEach(function(g, i){
+      var q = G[i], d = '';
+      for(var k = 0; k < q.m; k++) d += (k ? 'L' : 'M') + q.X(k).toFixed(1) + ' ' + Y(g.vals[k]).toFixed(1);
+      if(!d) return;
+      s += '<path class="pl-area" d="' + d + 'L' + q.X(q.m - 1).toFixed(1) + ' 42L' + q.X(0).toFixed(1) + ' 42Z"/><path class="pl" d="' + d + '"/>';
+      for(var dd = 24; dd < q.m; dd += 24) s += '<path class="pb-ref" d="M' + q.X(dd).toFixed(1) + ' 10V42"/>';
+      if(segs.length === 1 && g.r !== 'day'){
+        for(var dl = 0; dl < q.m; dl += 24) s += '<text class="pb-t" x="' + q.X(dl + 11.5).toFixed(1) + '" y="52" text-anchor="middle">' + dayWord(g.r, dl).trim() + '</text>';
+      } else if(segs.length === 1){
+        for(var hl = 0; hl < 24; hl += 6) s += '<text class="pb-t" x="' + q.X(hl).toFixed(1) + '" y="52" text-anchor="' + (hl ? 'middle' : 'start') + '">' + ('0' + hl).slice(-2) + ':00</text>';
+      } else s += '<text class="pb-t" x="' + (q.x0 + q.w / 2).toFixed(1) + '" y="52" text-anchor="middle">' + esc(q.w < 40 ? g.name.slice(0, 3) : g.name.replace(/ season$/, '')) + '</text>';
+    });
+    s += '<path class="pb-axis" d="M0 42.5H240"/>';
+    if(top > 1) s += '<path class="pb-ref" d="M0 ' + Y(1).toFixed(1) + 'H240"/>';
+    if(at !== null && at !== undefined && at >= 0){
+      for(var j = 0; j < segs.length; j++){
+        var q2 = G[j], k2 = at - q2.from;
+        if(k2 < 0 || k2 >= q2.m) continue;
+        var ax = q2.X(k2), g2 = segs[j];
+        s += '<circle class="pl-dot" cx="' + ax.toFixed(1) + '" cy="' + Y(g2.vals[k2]).toFixed(1) + '" r="2.4"/>' +
+             '<text class="pb-v" x="' + Math.max(56, Math.min(184, ax)).toFixed(1) + '" y="0" text-anchor="middle">' + esc((segs.length > 1 ? g2.name + ', ' : '') + dayWord(g2.r, k2) + ('0' + k2 % 24).slice(-2) + ':00') + '  ' + Math.round(g2.vals[k2] * 100) + '%</text>';
+      }
     }
-    svg.addEventListener('pointerdown', function(ev){ drag = true; try { svg.setPointerCapture(ev.pointerId); } catch(e){} set(ev); ev.preventDefault(); });
-    svg.addEventListener('pointermove', function(ev){ if(drag) set(ev); else { barAt = hourAt(ev).h; drawBars(); } });
-    svg.addEventListener('pointerup', function(){ drag = false; });
-    svg.addEventListener('pointerleave', function(){ if(!drag){ barAt = null; drawBars(); } });
-  })();
-  // Picking Custom starts from the shape on screen, so nothing moves until a bar is dragged.
-  var lastProfile = $('cxProfile').value;
-  $('cxProfile').addEventListener('change', function(){
-    if(this.value === 'custom' && !Array.isArray(app.model.prof) && CX.PROFILES[lastProfile]) app.model.prof = CX.PROFILES[lastProfile].h.slice();
-    lastProfile = this.value;
+    return s;
+  }
+  function lineHit(segs, x){
+    var G = lineGeom(segs), best = null;
+    G.forEach(function(q){
+      var k = Math.round((x - q.x0) / (q.w || 1) * (q.m - 1)), d = x < q.x0 ? q.x0 - x : x > q.x0 + q.w ? x - q.x0 - q.w : 0;
+      if(!best || d < best.d) best = { d: d, i: q.from + Math.max(0, Math.min(q.m - 1, k)) };
+    });
+    return best ? best.i : null;
+  }
+  /* What a line shows: w, the load's week (or weekday and weekend) in its
+     peak season; s and t, every season's days as the run takes them (a
+     farm's availability, a load per unit of the year's peak). */
+  function lineSegs(scope, which){
+    var x = profAt(scope), S = app.S || (app.S = CX.sample(app.model, plan()));
+    if(!x) return [];
+    var a = x.kind === 'load' ? S.load : CX.avail(x.e, S).a, r = CX.need(x.p, x.kind === 'load' ? 'load' : x.kind), g = CX.gridOf(S, a, r);
+    if(which === 'w') return [{ name: S.peakSeason, vals: g.s[S.peakSeason], r: r }];
+    return S.seasons.map(function(sn){ return { name: sn.name, vals: g.s[sn.name], r: r }; });
+  }
+  // The day bars: a load's weekday and weekend, or Monday to Sunday; a farm's week of weather.
+  function dayBars(x){
+    if(x.kind === 'load' && x.p.dm !== 'week') return { vals: CX.loadDays2(x.p), names: ['Weekday', 'Weekend'], key: 'f2' };
+    return { vals: x.kind === 'load' ? CX.loadWeek(x.p) : CX.genWeek(x.p, x.kind), names: CX.DAYS, key: 'f7' };
+  }
+  function drawSvg(svg, at){
+    var scope = scopeOf(svg), x = profAt(scope);
+    if(!x) return;
+    var bars = svg.getAttribute('data-bars');
+    if(bars === 'h') svg.innerHTML = barsSvg(CX.loadHours(x.p), at);
+    else if(bars === 'd'){ var d = dayBars(x); svg.innerHTML = daysSvg(d.vals, d.names, at); }
+    else svg.innerHTML = linesSvg(lineSegs(scope, svg.getAttribute('data-line')), at);
+  }
+  function drawProfiles(){
+    Array.prototype.forEach.call(document.querySelectorAll('[data-prof] svg[data-bars], [data-prof] svg[data-line]'), function(svg){ drawSvg(svg, null); });
+  }
+
+  /* The editors' markup: drawings left empty, drawn once they are in. */
+  var SVG_BARS = ' viewBox="-8 -14 256 90" role="img"', SVG_LINE = ' viewBox="-8 -6 256 62" role="img"';
+  function dailyHtml(scope, x){
+    var on = !!x.p.dv, load = x.kind === 'load';
+    var html = '<div class="toggle-row prof-toggle"><div class="toggle-label"><span class="tip-wrap">Daily variability' +
+      tipHtml(load ? DAILY_TIP[on ? x.p.dm : 'off'] : DAILY_TIP[on ? 'gen' : 'genOff']) + '</span></div>' +
+      '<label class="toggle-switch"><input type="checkbox" data-pk="dv" aria-label="Daily variability"' + (on ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+    if(!on) return html;
+    if(load) html += '<div class="seg-group prof-seg" data-pk="dm" role="group" aria-label="Which days differ">' +
+      [['day2', 'Weekdays and weekend'], ['week', 'Full week']].map(function(o){ return '<button type="button" class="seg-btn' + (x.p.dm === o[0] ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+    html += '<svg class="prof-bars" data-bars="d"' + SVG_BARS + ' aria-label="' + (load && x.p.dm !== 'week' ? 'Demand on a weekday and at the weekend' : load ? 'Demand each day, Monday to Sunday' : 'The weather each day, Monday to Sunday') + ', as a share of the bars above. Drag a bar to change it."></svg>';
+    if(load) html += '<svg class="prof-line" data-line="w"' + SVG_LINE + ' aria-label="Demand through ' + (x.p.dm === 'week' ? 'the week, Monday to Sunday' : 'a weekday and a weekend day') + ', hour by hour"></svg>';
+    return html;
+  }
+  function fileHtml(scope, x){
+    var m = fileMsg[scope], has = CX.isCustom(x.p), o = plan();
+    var html = '<div class="prof-file"><button type="button" class="btn-secondary btn-sm" data-icon="open" data-act="open" title="Take its hours from a CSV or Excel file">Open file</button>' +
+      '<button type="button" class="btn-secondary btn-sm" data-act="tpl" title="A CSV of its hours as they run now, with notes on how to fill it in">⬇ Template (.csv)</button></div>' +
+      '<div class="up-msg' + (m && m.err ? ' is-err' : '') + '" role="status" aria-live="polite"' + (m && m.html ? '' : ' hidden') + '>' + (m ? m.html : '') + '</div>' +
+      '<svg class="prof-line" data-line="t"' + SVG_LINE + ' aria-label="' + esc(x.Who) + ' through each season’s typical days, hour by hour"></svg>';
+    if(has) html += '<p class="derived">From its file: ' + describe(x.p.ts, o.climate) + (x.kind === 'load' ? ', its highest hour the peak.' : ', as a share of its rating.') + '</p>';
+    else html += '<p class="derived">Open a file, or start from the template, which holds it as it runs now. Until then it runs as ' +
+      (x.kind === 'load' ? 'the ' + esc(CX.PROFILES[CX.loadBase(x.p)].label) + (Array.isArray(x.p.hrs) ? ', edited' : '') : 'the climate’s ' + (x.kind === 'pv' ? 'sun' : 'wind')) + '.</p>';
+    return html;
+  }
+  // The load's editor, under its select.
+  function renderLoadProf(){
+    var L = app.model.load, sel = $('cxProfile'), x = profAt('load'), custom = showsCustom('load', L);
+    var curK = custom ? 'custom' : CX.loadBase(L), edited = !custom && Array.isArray(L.hrs);
+    Array.prototype.forEach.call(sel.options, function(op){
+      if(!op.hasAttribute('data-label')) op.setAttribute('data-label', op.textContent);
+      op.textContent = op.getAttribute('data-label') + (edited && op.value === curK ? ', edited' : '');
+    });
+    sel.value = curK;
+    var html = custom ? fileHtml('load', x) :
+      '<svg class="prof-bars" data-bars="h"' + SVG_BARS + ' aria-label="Demand through a weekday, hour by hour, from 00:00 to 24:00. Drag a bar to change it."></svg>' + dailyHtml('load', x);
+    var box = $('loadProf');
+    box.innerHTML = html;
+    if(window.SharedIcon) SharedIcon.hydrate(box);
+    drawProfiles();
+  }
+  // A farm's: its select and its line (and its file), then after the capacity factor its daily variability.
+  function genProfHtml(e){
+    var scope = String(e.id), x = profAt(scope), custom = showsCustom(scope, e.prof), word = e.kind === 'pv' ? 'sun' : 'wind';
+    var html = '<div class="field-row prof-row" data-prof="' + e.id + '"><div class="field-label"><span class="tip-wrap">Profile' + tipHtml(TIP.prof) + '</span></div>' +
+      '<select class="sel-input" data-pk="base" aria-label="Profile"><option value=""' + (custom ? '' : ' selected') + '>The climate’s ' + word + '</option><option value="custom"' + (custom ? ' selected' : '') + '>Custom</option></select>';
+    html += custom ? fileHtml(scope, x) : '<svg class="prof-line" data-line="s"' + SVG_LINE + ' aria-label="Its output through each season’s typical days, hour by hour, as a share of its rating"></svg>';
+    return html + '</div>';
+  }
+  function genDailyHtml(e){ return '<div class="prof-daily" data-prof="' + e.id + '">' + dailyHtml(String(e.id), profAt(String(e.id))) + '</div>'; }
+  function renderProfile(scope){ if(scope === 'load') renderLoadProf(); else renderTechs(); }
+  function setFileMsg(scope, html, err){
+    fileMsg[scope] = { html: html, err: !!err };
+    var box = document.querySelector('[data-prof="' + scope + '"] .up-msg');
+    if(box){ box.innerHTML = html; box.hidden = !html; box.classList.toggle('is-err', !!err); }
+  }
+
+  /* Picking a shape: a built-in one starts from its own hours and days; the
+     daily variability chosen stays. Custom waits for a file. */
+  function pickBase(scope, x, v){
+    var p = x.p;
+    if(v === 'custom'){
+      if(CX.isCustom(p)) return;
+      if(lastTs[scope]){ p.base = 'custom'; p.ts = lastTs[scope]; delete customPick[scope]; changed(); renderProfile(scope); return; }
+      customPick[scope] = 1;
+      renderProfile(scope);
+      return;
+    }
+    var was = CX.isCustom(p) ? 'custom' : x.kind === 'load' ? CX.loadBase(p) : '';
+    delete customPick[scope];
+    if(v === was && p.base !== 'custom'){ renderProfile(scope); return; }
+    if(CX.isCustom(p)) lastTs[scope] = p.ts;
+    p.ts = null; p.base = v;
+    if(x.kind === 'load'){ p.hrs = ''; p.f2 = ''; p.f7 = ''; p.sd = ''; }
+    changed(); renderProfile(scope);
+  }
+  var ctl = document.querySelector('.controls');
+  ctl.addEventListener('change', function(ev){
+    var t = ev.target, scope = scopeOf(t), x = scope && profAt(scope);
+    if(!x || !t.hasAttribute('data-pk')) return;
+    var pk = t.getAttribute('data-pk');
+    if(pk === 'base') pickBase(scope, x, t.value);
+    else if(pk === 'dv'){ x.p.dv = t.checked ? 1 : 0; changed(); renderProfile(scope); }
   });
+  ctl.addEventListener('click', function(ev){
+    var t = ev.target, scope = scopeOf(t), x = scope && profAt(scope);
+    if(!x) return;
+    var seg = t.closest('[data-pk="dm"] .seg-btn');
+    if(seg){ var v = seg.getAttribute('data-val'); if(x.p.dm !== v){ x.p.dm = v; changed(); renderProfile(scope); } return; }
+    var act = t.closest('[data-act]');
+    if(act) (act.getAttribute('data-act') === 'open' ? openFile : downloadTemplate)(scope);
+  });
+  // Dragging a bar sets that hour's value, or that day's; pointing at a bar or a line reads it.
+  var drag = null, peek = null;
+  function svgPoint(svg, ev){
+    var m = svg.getScreenCTM && svg.getScreenCTM();
+    if(!m) return null;
+    var pt = svg.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    return pt.matrixTransform(m.inverse());
+  }
+  function hitOf(svg, ev){
+    var pt = svgPoint(svg, ev), scope = scopeOf(svg), x = profAt(scope), bars = svg.getAttribute('data-bars');
+    if(!pt || !x) return null;
+    if(bars === 'h') return { i: Math.max(0, Math.min(23, Math.floor(pt.x / 10))), v: Math.max(0, Math.min(1.2, (58 - pt.y) / 54)) };
+    if(bars === 'd'){ var n = dayBars(x).vals.length; return { i: Math.max(0, Math.min(n - 1, Math.floor(pt.x / (240 / n)))), v: Math.max(0, Math.min(DAY_MAX, (58 - pt.y) / 54)) }; }
+    var i = lineHit(lineSegs(scope, svg.getAttribute('data-line')), pt.x);
+    return i === null ? null : { i: i };
+  }
+  function setBar(svg, hit){
+    var x = profAt(scopeOf(svg)), p = x.p;
+    if(svg.getAttribute('data-bars') === 'h'){
+      // The first drag keeps the shape it started from, so its weekend and days still apply.
+      if(!Array.isArray(p.hrs)) p.hrs = CX.loadHours(p).map(round2);
+      p.hrs[hit.i] = round2(hit.v);
+    } else {
+      var d = dayBars(x);
+      if(!Array.isArray(p[d.key])) p[d.key] = d.vals.map(round2);
+      p[d.key][hit.i] = round2(hit.v);
+    }
+  }
+  ctl.addEventListener('pointerdown', function(ev){
+    var svg = ev.target.closest && ev.target.closest('[data-prof] svg[data-bars]');
+    if(!svg) return;
+    ev.preventDefault();
+    drag = { id: ev.pointerId, svg: svg };
+    try { svg.setPointerCapture(ev.pointerId); } catch(e){}
+    var hit = hitOf(svg, ev);
+    if(hit){ setBar(svg, hit); changed(); drawSvg(svg, hit.i); }
+  });
+  ctl.addEventListener('pointermove', function(ev){
+    if(drag && drag.id === ev.pointerId){
+      var hit = hitOf(drag.svg, ev);
+      if(hit){ setBar(drag.svg, hit); changed(); drawSvg(drag.svg, hit.i); }
+      return;
+    }
+    if(drag || ev.pointerType !== 'mouse') return;
+    var svg = ev.target.closest && ev.target.closest('[data-prof] svg[data-bars], [data-prof] svg[data-line]');
+    if(!svg){ if(peek){ drawSvg(peek.svg, null); peek = null; } return; }
+    var h = hitOf(svg, ev);
+    if(!h || (peek && peek.svg === svg && peek.i === h.i)) return;
+    if(peek && peek.svg !== svg) drawSvg(peek.svg, null);
+    peek = { svg: svg, i: h.i };
+    drawSvg(svg, h.i);
+  });
+  // Released: the list now reads as the shape, edited.
+  function release(ev){
+    if(!drag || drag.id !== ev.pointerId) return;
+    var scope = scopeOf(drag.svg);
+    drag = null; peek = null;
+    renderProfile(scope);
+  }
+  ctl.addEventListener('pointerup', release);
+  ctl.addEventListener('pointercancel', release);
+  ctl.addEventListener('pointerleave', function(){ if(peek && !drag){ drawSvg(peek.svg, null); peek = null; } });
+
+  /* ── Profiles from a file, and the template to fill in ──
+     cx-profiles.js reads the file and writes the template; it loads the
+     first time either is asked for, and SheetJS only for an Excel file. */
+  var profilesP = null, sheetP = null;
+  function loadScript(src, ready){
+    return new Promise(function(resolve, reject){
+      if(ready()) return resolve(ready());
+      var el = document.createElement('script');
+      el.src = src;
+      el.onload = function(){ ready() ? resolve(ready()) : reject(new Error(src + ' did not load.')); };
+      el.onerror = function(){ reject(new Error('Could not load ' + src.split('/').pop() + '. Check your connection.')); };
+      document.head.appendChild(el);
+    });
+  }
+  function profilesLib(){
+    if(!profilesP){ profilesP = loadScript('cx-profiles.js', function(){ return CX.readProfileFile ? CX : null; }); profilesP.catch(function(){ profilesP = null; }); }
+    return profilesP;
+  }
+  function sheetLib(){
+    if(!sheetP){ sheetP = loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', function(){ return window.XLSX || null; }); sheetP.catch(function(){ sheetP = null; }); }
+    return sheetP;
+  }
+  // A profile as the run takes it now, through its own days, for the plan's climate or another.
+  function gridNow(scope, climate){
+    var x = profAt(scope), o = plan();
+    if(climate) o.climate = climate;
+    var S = CX.sample(app.model, o);
+    return CX.gridOf(S, x.kind === 'load' ? S.load : CX.avail(x.e, S).a, CX.need(x.p, x.kind === 'load' ? 'load' : x.kind));
+  }
+  function slug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'profile'; }
+  function downloadAs(blob, name){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }
+  function downloadTemplate(scope){
+    var x = profAt(scope), o = plan();
+    if(!x) return Promise.resolve();
+    return profilesLib().then(function(){
+      var g = gridNow(scope);
+      downloadAs(new Blob([CX.templateCsv({ kind: x.kind, who: x.who, climate: o.climate, grid: g })], { type: 'text/csv' }),
+        fileBase() + '-' + (x.kind === 'load' ? 'load' : slug(x.who)) + '-profile.csv');
+      setFileMsg(scope, 'The template holds ' + describe(g, o.climate) + ', as ' + esc(x.who) + ' runs now, with notes on how to fill it in. Change it and open it here.', false);
+    }).catch(function(err){ setFileMsg(scope, esc(err && err.message || String(err)), true); });
+  }
+  var fileInput = document.createElement('input');
+  fileInput.type = 'file'; fileInput.id = 'profFile'; fileInput.hidden = true;
+  fileInput.accept = '.csv,.tsv,.txt,.xlsx,.xlsm,.xls,.ods,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
+  fileInput.setAttribute('data-no-persist', '');
+  document.body.appendChild(fileInput);
+  var fileScope = null;
+  function openFile(scope){ fileScope = scope; fileInput.value = ''; fileInput.click(); }
+  fileInput.addEventListener('change', function(){
+    var f = fileInput.files && fileInput.files[0];
+    if(f && fileScope) applyFile(f, fileScope);
+  });
+  // Text in whatever encoding a spreadsheet saved it: UTF-8, or UTF-16 with its mark.
+  function decodeText(buf){
+    var b = new Uint8Array(buf, 0, Math.min(2, buf.byteLength));
+    return new TextDecoder(b[0] === 0xFF && b[1] === 0xFE ? 'utf-16le' : b[0] === 0xFE && b[1] === 0xFF ? 'utf-16be' : 'utf-8').decode(buf);
+  }
+  function isSheet(name, buf){
+    var b = new Uint8Array(buf, 0, Math.min(4, buf.byteLength));
+    return /\.(xlsx|xlsm|xls|ods|xlsb)$/i.test(name) || (b[0] === 0x50 && b[1] === 0x4B && b[2] === 3 && b[3] === 4) || (b[0] === 0xD0 && b[1] === 0xCF && b[2] === 0x11 && b[3] === 0xE0);
+  }
+  // Read a file and use it, whole or not at all. Resolves to what CX.readProfileFile said.
+  function applyFile(file, scope){
+    if(file.size > 10 * 1024 * 1024){ setFileMsg(scope, 'That file is over 10 MB. A profile is at most a week of hours a season.', true); return Promise.resolve(null); }
+    setFileMsg(scope, 'Reading ' + esc(file.name) + '…', false);
+    var o = plan();
+    return Promise.all([profilesLib(), file.arrayBuffer ? file.arrayBuffer() : new Response(file).arrayBuffer()]).then(function(r){
+      var buf = r[1];
+      return isSheet(file.name, buf) ? sheetLib().then(function(X){ return CX.sheetRows(X, new Uint8Array(buf)); }) : CX.csvRows(decodeText(buf));
+    }).then(function(table){
+      var x = profAt(scope);
+      if(!x) return null;
+      var out = CX.readProfileFile(table, { kind: x.kind, who: x.Who, climate: o.climate, peak: o.peak, current: function(cl){ return gridNow(scope, cl); } });
+      if(out.errors.length){ setFileMsg(scope, '<b>' + esc(file.name) + ' was not used.</b> ' + out.errors.map(esc).join(' '), true); return out; }
+      if(out.climate) $('cxClimate').value = out.climate;
+      if(out.peak) $('cxPeak').value = String(out.peak);
+      x.p.base = 'custom'; x.p.ts = out.ts; lastTs[scope] = out.ts;
+      delete customPick[scope];
+      fileMsg[scope] = { html: ['<b>' + esc(file.name) + '</b> is in use.'].concat(out.notes.map(esc)).join(' '), err: false };
+      changed();
+      renderProfile(scope);
+      return out;
+    }).catch(function(err){
+      setFileMsg(scope, '<b>' + esc(file.name) + ' could not be read.</b> ' + esc(err && err.message || String(err)), true);
+      return null;
+    });
+  }
+  app.applyFile = applyFile; app.downloadTemplate = downloadTemplate;
 
   /* ── The technology list ── */
   var TIP = {
@@ -192,7 +577,8 @@
     from: 'The first decision year it can be built in, for a plant that takes years to permit or build. Blank is the first year.',
     max: 'The most of it in service at any one time, existing included: a limit of land, fuel or connection. Blank is no limit.',
     unit: 'Built only in whole units of this size, as large plants are. It makes the plan a mixed-integer problem, which takes longer.',
-    cf: 'Its year’s output over its rating × 8,760 hours. The typical days’ sun or wind shape is scaled to give it.',
+    cf: 'Its year’s output over its rating × 8,760 hours. The climate’s sun or wind through the typical days is scaled to give it.',
+    prof: 'Its output through each season’s days, as a share of its rating: the climate’s, scaled to the capacity factor, or Custom, from a CSV or Excel file.',
     vom: 'Fuel and variable O&M for each MWh it generates, before any carbon price.',
     co2: 'CO2 for each MWh it generates. The carbon price and the net-zero year apply to it.',
     avail: 'Share of its rating it can give in any hour, after outages and maintenance.',
@@ -201,6 +587,8 @@
   };
   function F_(k, label, unit, o){ o = o || {}; o.k = k; o.label = label; o.unit = unit; return o; }
   var isPvWind = function(e){ return e.kind === 'pv' || e.kind === 'wind'; };
+  // A farm on the climate's sun or wind: a file, or Custom picked for one, has no capacity factor to set.
+  var onClimate = function(e){ return isPvWind(e) && !showsCustom(String(e.id), e.prof); };
   var builds = function(e){ return !!e.build; };
   var FIELDS = [
     F_('kind', 'Kind', '', { kind: 'seg', opts: [['pv', 'Solar'], ['wind', 'Wind'], ['firm', 'Firm'], ['store', 'Storage']], detail: true }),
@@ -214,7 +602,9 @@
     F_('from', 'Earliest year', '', { kind: 'year', tip: TIP.from, show: builds, detail: true, blank: 'First year' }),
     F_('max', 'Most in service', 'MW', { min: 0, max: 1e6, tip: TIP.max, show: builds, detail: true, blank: 'No limit', zeroBlank: true }),
     F_('unit', 'Unit size', 'MW', { min: 0, max: 1e5, tip: TIP.unit, show: builds, detail: true, blank: 'Any size', zeroBlank: true }),
-    F_('cf', 'Capacity factor', '%', { scale: 100, min: 1, max: 95, step: 0.1, tip: TIP.cf, show: isPvWind, group: 'Running' }),
+    F_('prof', 'Profile', '', { kind: 'profile', show: isPvWind, group: 'Running' }),
+    F_('cf', 'Capacity factor', '%', { scale: 100, min: 1, max: 95, step: 0.1, tip: TIP.cf, show: onClimate }),
+    F_('dv', 'Daily variability', '', { kind: 'daily', show: onClimate }),
     F_('vom', 'Running cost', '/MWh', { money: true, min: 0, max: 1e5, tip: TIP.vom, show: function(e){ return e.kind === 'firm' || detailed(); }, group: 'Running' }),
     F_('co2', 'Emissions', 't/MWh', { min: 0, max: 3, step: 0.001, tip: TIP.co2, show: function(e){ return e.kind === 'firm'; } }),
     F_('avail', 'Availability', '%', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.avail, show: function(e){ return e.kind === 'firm'; }, detail: true }),
@@ -257,6 +647,8 @@
   function shown(e, f){ return (!f.detail || detailed()) && (!f.show || f.show(e)); }
   function fieldHtml(e, f){
     var tip = typeof f.tip === 'function' ? f.tip(e) : f.tip;
+    if(f.kind === 'profile') return genProfHtml(e);
+    if(f.kind === 'daily') return genDailyHtml(e);
     if(f.kind === 'toggle'){
       return '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div><label class="toggle-switch"><input type="checkbox" data-k="' + f.k + '"' + (e[f.k] ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     }
@@ -293,11 +685,11 @@
       '<span class="tech-actions">' + SharedIcon.button('duplicate', 'Duplicate this technology', 'tech-dup') + SharedIcon.button('trash', 'Remove this technology', 'tech-del') + '</span></div>';
     if(open){
       html += '<div class="tech-body"><div class="field-row inline"><div class="field-label">Name</div><input class="txt-input" type="text" data-k="name" maxlength="40" value="' + esc(CX.nameOf(e)) + '"/></div>';
-      var group = null;
+      var group = null, printed = null;
       FIELDS.forEach(function(f){
         if(f.group) group = f.group;
         if(!shown(e, f)) return;
-        if(group){ html += '<div class="tech-sub">' + group + '</div>'; group = null; }
+        if(group && group !== printed){ html += '<div class="tech-sub">' + group + '</div>'; printed = group; }
         html += fieldHtml(e, f);
       });
       html += derivedHtml(e) + '</div>';
@@ -312,13 +704,16 @@
       if(e.learn) bits.push('<b>' + F.money(e.capex * Math.pow(1 + e.learn, o.end - o.start), C) + '/kW</b> to build by ' + o.end);
     }
     if(e.kind === 'store') bits.push('<b>' + F.mw(e.hours) + ' h</b> of energy for every MW, ' + F.pct(100 * Math.sqrt(e.rte)) + '% efficient each way' + (e.capex > 0 ? ', ' + F.money(e.capex / e.hours, C) + ' a kWh' : ''));
-    return bits.length ? '<p class="derived tech-derived">' + bits.join('; ') + '.</p>' : '';
+    if(isPvWind(e) && CX.isCustom(e.prof)) bits.push('its file gives a capacity factor of <b>' + F.pct(100 * CX.avail(e, CX.sample(app.model, o)).cf) + '%</b> over the year');
+    var text = bits.join('; ');
+    return bits.length ? '<p class="derived tech-derived">' + text.charAt(0).toUpperCase() + text.slice(1) + '.</p>' : '';
   }
   function renderTechs(){
     var list = $('techList');
     if(!app.model.tech.length){ list.innerHTML = '<p class="note">No technologies yet. Add one below.</p>'; return; }
     list.innerHTML = app.model.tech.map(cardHtml).join('');
     SharedIcon.hydrate(list);
+    drawProfiles();
   }
   function techOf(el){ var c = el.closest('.tech-card'); if(!c) return null; var id = +c.getAttribute('data-id'); return app.model.tech.filter(function(e){ return e.id === id; })[0] || null; }
   $('techList').addEventListener('click', function(ev){
@@ -739,13 +1134,28 @@
     if(!m.tech.length){ $('assumptions').innerHTML = '<li>Add the plants in service and the technologies that can be built, then press Run plan.</li>'; return; }
     li.push('<strong>' + P.length + ' decision year' + (P.length === 1 ? '' : 's') + ' from ' + o.start + ' to ' + o.end + ',</strong> each standing for the years up to the next at its own demand: ' +
       F.mw(o.peak) + ' MW at the peak in ' + o.start + ', growing ' + F.pct(o.growth) + '% a year.');
-    li.push('<strong>Each year is run hour by hour over ' + S.blocks.length + ' typical ' + (o.sample === 'week' ? 'weeks and days' : 'days') + '</strong> of a ' + Cl.label.toLowerCase().replace(/,.*/, '') + ' climate (' +
-      Cl.seasons.map(function(s){ return s.name.toLowerCase() + ' at ' + Math.round(s.dem * 100) + '% of the peak'; }).join(', ') + '), each hour weighted by the hours of the year it stands for.');
-    if(o.stress) li.push('<strong>A still, overcast weekday at the peak</strong> stands for ' + CX.STRESS.days + ' days of ' + S.peakSeason.toLowerCase() + ', with a quarter of the sun and a tenth of the wind.');
+    var L = m.load, fileLoad = CX.isCustom(L), per = { day: 'one typical day', day2: 'a weekday and a weekend day', week: 'a typical week' }[S.sample];
+    li.push('<strong>Each year is run hour by hour over ' + per + ' a season</strong> of a ' + Cl.label.toLowerCase().replace(/,.*/, '') + ' climate (' +
+      (fileLoad ? CX.list(Cl.seasons.map(function(s){ return s.name.toLowerCase(); })) + ', at the levels of the load profile’s file' :
+        Cl.seasons.map(function(s){ return s.name.toLowerCase() + ' at ' + Math.round(s.dem * 100) + '% of the peak'; }).join(', ')) + '), each hour weighted by the hours of the year it stands for.');
+    // The load profile, as it runs.
+    if(fileLoad) li.push('<strong>Demand follows its file</strong>: ' + describe(L.ts, o.climate) + ', its highest hour the peak.');
+    else {
+      var pf = CX.PROFILES[CX.loadBase(L)], days = '';
+      if(L.dv && L.dm === 'week') days = ', each day of the week at its own level (' + CX.loadWeek(L).map(function(v, i){ return CX.DAYS[i] + ' ' + Math.round(v * 100) + '%'; }).join(', ') + ')';
+      else if(L.dv) days = ', a weekday at ' + Math.round(CX.loadDays2(L)[0] * 100) + '% and a weekend day at ' + Math.round(CX.loadDays2(L)[1] * 100) + '%' + (pf.w ? ' of its own weekend shape' : '');
+      li.push('<strong>Demand follows the ' + esc(pf.label) + ' profile' + (Array.isArray(L.hrs) ? ', edited,' : '') + '</strong> through each day' + (days || ', the same every day of the week') + '.');
+    }
+    if(o.stress) li.push('<strong>A still, overcast day at the peak</strong> stands for ' + CX.STRESS.days + ' days of ' + S.peakSeason.toLowerCase() + ', with a quarter of the sun and a tenth of the wind.');
     li.push('<strong>One copper-plate bus:</strong> every plant can serve every load, with no grid limits or losses, and every hour is known in advance.');
     li.push('<strong>Capital is paid as an annuity at ' + F.pct(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan, and every year’s cost is discounted to ' + o.start + ' at the same rate. All money is at ' + o.start + ' prices.');
     var sol = m.tech.filter(function(e){ return isPvWind(e) && (e.exist > 0 || e.build); });
-    if(sol.length) li.push('<strong>Solar and wind follow their shape</strong> through each typical day, scaled so a year gives ' + list(sol.map(function(e){ return CX.nameOf(e) + ' ' + F.pct(100 * e.cf) + '%'; })) + ' of its rating × 8,760 h. Output may be spilled.');
+    var own = sol.filter(function(e){ return !CX.isCustom(e.prof); }), filed = sol.filter(function(e){ return CX.isCustom(e.prof); });
+    var weather = own.filter(function(e){ return e.prof.dv && S.sample === 'week'; });
+    if(own.length) li.push('<strong>Solar and wind follow the climate’s sun and wind</strong> through each typical day' + (weather.length ? ', with ' + list(weather.map(function(e){ return esc(CX.nameOf(e)); })) + ' over a week of weather,' : '') +
+      ' scaled so a year gives ' + list(own.map(function(e){ return esc(CX.nameOf(e)) + ' ' + F.pct(100 * e.cf) + '%'; })) + ' of its rating × 8,760 h. Output may be spilled.');
+    if(filed.length) li.push('<strong>' + list(filed.map(function(e){ return esc(CX.nameOf(e)); })) + ' follow' + (filed.length === 1 ? 's its file' : ' their files') + '</strong>, as a share of the rating each hour: ' +
+      list(filed.map(function(e){ return esc(CX.nameOf(e)) + ' a capacity factor of ' + F.pct(100 * CX.avail(e, S).cf) + '%'; })) + '. Output may be spilled.');
     var firm = m.tech.filter(function(e){ return e.kind === 'firm' && (e.exist > 0 || e.build); });
     if(firm.some(function(e){ return e.avail < 1; })) li.push('<strong>Firm plants give at most their availability in any hour</strong>: ' + list(firm.filter(function(e){ return e.avail < 1; }).map(function(e){ return CX.nameOf(e) + ' ' + F.pct(100 * e.avail) + '%'; })) + '. They can run anywhere from zero to that, with no start-up costs or minimum output.');
     else if(firm.length) li.push('<strong>Firm plants can run anywhere from zero to their rating</strong> in any hour, with no start-up costs, minimum output or outages.');
@@ -775,10 +1185,11 @@
     app.model = CX.load(p.plan);
     app.open = null;
     app.year = 0;
-    lastProfile = $('cxProfile').value;
+    customPick = {}; lastTs = {}; fileMsg = {};
     app.res = null; app.solvedKey = null;
-    renderTechs();
     syncForm();
+    renderLoadProf();
+    renderTechs();
     if(persist) persist.save();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){ b.classList.toggle('active', b.getAttribute('data-preset') === key); });
     return run();
@@ -829,15 +1240,28 @@
     },
     // A scenario file or a Share link: the whole plan is replaced and solved.
     // (The mini cache restores inside init, before persist exists; start-up below handles that.)
-    onRestore: function(){ if(persist) return afterRestore(); }
+    onRestore: function(saved){ upgradeSaved(saved); if(persist) return afterRestore(); }
   });
+  /* A plan saved before v2 kept its load profile and its sampling in the
+     form (Load profile and Each season, which no longer save): read them
+     from what was saved, so the cache, a file and a link all open on the
+     plan they held. A blob with no plan in it applies them to the plan on
+     screen. */
+  function upgradeSaved(saved){
+    var f = saved && (saved.__fields || saved), x = saved && saved.__extra;
+    if(!f || typeof f !== 'object') return;
+    if(x && typeof x === 'object' && !Array.isArray(x) && CX.num(x.v) >= 2) return;
+    CX.upgrade(app.model, { profile: f['v:cxProfile'], sample: f['v:cxSample'] });
+  }
   function afterRestore(){
     app.open = null;
     app.year = 0;
     app.res = null; app.solvedKey = null;
-    lastProfile = $('cxProfile').value;
-    renderTechs();
+    customPick = {}; lastTs = {}; fileMsg = {};
+    fixSelects();
     syncForm();
+    renderLoadProf();
+    renderTechs();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn.active'), function(b){ b.classList.remove('active'); });
     return run();
   }
@@ -860,9 +1284,10 @@
     var p0 = CX.PRESETS[CX.PRESET_DEFAULT];
     Object.keys(p0.fields || {}).forEach(function(k){ setField(k, p0.fields[k]); });
   }
-  lastProfile = $('cxProfile').value;
-  renderTechs();
+  fixSelects();
   syncForm();
+  renderLoadProf();
+  renderTechs();
   renderChecks(CX.validate(app.model, plan()));
   showResults();
   updateStale();

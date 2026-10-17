@@ -8,8 +8,10 @@
                 shortfall in red, against the demand.
    Typical days the hour-by-hour dispatch of one decision year over its
                 typical days, a gap between one and the next, storage charging
-                below zero, against the demand. It sits under Energy in the
-                same card, folded until asked for.
+                below zero, against the demand. Its axis follows the sampling:
+                the hours of one day a season; a weekday and a weekend day
+                under one season's name; or a week, by its days. It sits under
+                Energy in the same card, folded until asked for.
    Cost         every year's costs by kind, and the levelised cost per MWh.
 
    The plan decides in its decision years, each standing for the years up to
@@ -482,27 +484,70 @@
       if(ticks.length) scale.ticks = ticks;
     };
   }
-  // The typical days named over the plot, with a rule down each gap between them.
+  /* The axis of a sampling. One day a season: the clock. A weekday and a
+     weekend day: each named under its middle. A week: each day's name at its
+     00:00. Zoomed in to a day or two, any of them shows the clock again (a
+     week's midnights by their day). text holds each tick's label, centre the
+     ticks that sit mid-block, which draw no grid line. */
+  function dayTicks(ax, res){
+    var mode = res.sample || 'day', clock = clockTicks(ax), st = { text: {}, centre: {} }, wdAt = [];
+    res.blocks.forEach(function(b){ for(var t = b.from; t < b.from + b.len; t++) wdAt[t] = ((b.wd || 0) + Math.floor((t - b.from) / 24)) % 7; });
+    st.build = function(scale){
+      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(ax.n - 1, Math.floor(scale.max)), width = scale.width || 600, ticks = [], v, t;
+      st.text = {}; st.centre = {}; st.small = false;
+      if(mode === 'week' && hi - lo > 60){
+        var room = Math.max(2, Math.floor(width / 28)), days = 0;
+        for(v = lo; v <= hi; v++){ t = ax.hourAt[v]; if(t >= 0 && t % 24 === 0) days++; }
+        var step = days <= room ? 1 : days / 2 <= room ? 2 : 7;
+        for(v = lo; v <= hi; v++){
+          t = ax.hourAt[v];
+          if(t >= 0 && t % 24 === 0 && wdAt[t] % step === 0){ ticks.push({ value: v }); st.text[v] = CX.DAYS[wdAt[t]]; }
+        }
+      } else if(mode === 'day2' && hi - lo > 36){
+        res.blocks.forEach(function(b, i){
+          v = ax.from[i] + 12;
+          if(v < lo || v > hi) return;
+          ticks.push({ value: v }); st.text[v] = b.day; st.centre[v] = 1;
+        });
+        // Narrower than the names: shortened, never left out, so a weekend is never read as a weekday.
+        var each = width / Math.max(1, ticks.length);
+        if(each < 58) ticks.forEach(function(k){ st.text[k.value] = each < 34 ? (st.text[k.value] === 'Weekend' ? 'WE' : 'WD') : st.text[k.value] === 'Weekend' ? 'Wkend' : 'Wkday'; });
+        st.small = each < 58;
+      } else {
+        clock(scale);
+        scale.ticks.forEach(function(k){ var h = ax.hourAt[k.value]; st.text[k.value] = mode === 'week' && h % 24 === 0 ? CX.DAYS[wdAt[h]] : two(h % 24) + ':00'; });
+        return;
+      }
+      if(ticks.length) scale.ticks = ticks;
+    };
+    return st;
+  }
+  // The typical days named over the plot, one name over the days of a season, with a rule down each gap between seasons.
   var BLOCK_PLUGIN = {
     id: 'cxBlocks',
     afterDatasetsDraw: function(chart){
       var b = chart.config.options.plugins.cxBlocks;
       if(!b) return;
-      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx;
+      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx, groups = [];
+      b.blocks.forEach(function(bl, i){
+        var last = groups[groups.length - 1];
+        if(last && last.name === bl.group){ last.to = bl.from + bl.len; return; }
+        groups.push({ name: bl.group, short: bl.short, from: bl.from, to: bl.from + bl.len, first: i });
+      });
       g.save();
       g.font = '600 11px "DM Sans", sans-serif';
       g.textBaseline = 'top';
-      b.blocks.forEach(function(bl, i){
-        var x0 = x.getPixelForValue(bl.from - 0.5), x1 = x.getPixelForValue(bl.from + bl.len - 0.5);
-        var mid = x.getPixelForValue(bl.from - (b.gap + 1) / 2);
+      groups.forEach(function(gr, i){
+        var x0 = x.getPixelForValue(gr.from - 0.5), x1 = x.getPixelForValue(gr.to - 0.5);
+        var mid = x.getPixelForValue(gr.from - (b.gap + 1) / 2);
         if(i > 0 && mid >= area.left && mid <= area.right){
           g.strokeStyle = b.rule; g.lineWidth = 1; g.setLineDash([3, 3]);
           g.beginPath(); g.moveTo(mid, area.top); g.lineTo(mid, area.bottom); g.stroke();
         }
         if(x1 < area.left || x0 > area.right) return;
-        var l = Math.max(area.left, x0), r = Math.min(area.right, x1), w = r - l, txt = bl.name;
+        var l = Math.max(area.left, x0), r = Math.min(area.right, x1), w = r - l, txt = gr.name;
         g.fillStyle = b.text;
-        if(g.measureText(txt).width > w - 8) txt = bl.short;
+        if(g.measureText(txt).width > w - 8) txt = gr.short;
         if(g.measureText(txt).width <= w - 8){ g.textAlign = 'center'; g.fillText(txt, (l + r) / 2, area.top + 4); }
       });
       g.restore();
@@ -544,7 +589,9 @@
     });
     ds.push({ label: 'Demand', data: ax.spread(res.load[k]), borderColor: cssVar('--text'), backgroundColor: 'transparent',
               borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load' });
-    var short = function(b){ return b.stress ? 'Still day' : b.name.replace(' weekday', ' wkday').replace(' weekend', ' wkend').replace(' season', ''); };
+    var short = function(b){ return b.stress ? 'Still day' : (b.group || b.name).replace(' season', ''); };
+    var mode = res.sample || 'day', ticks = dayTicks(ax, res);
+    var AXIS = { day: 'Typical days, hour by hour', day2: 'A weekday and a weekend day a season, hour by hour', week: 'Typical weeks, day by day' };
     var ch = make('day', {
       type: 'line', data: { labels: labels, datasets: ds },
       options: (function(){
@@ -566,22 +613,23 @@
           },
           scales: function(grid, muted){
             return {
-              x: { title: axisTitle('Typical days, hour by hour', muted),
-                   ticks: { color: muted, maxRotation: 0, autoSkip: false, font: { size: 11 },
-                            callback: function(v){ return two(ax.hourAt[v] % 24) + ':00'; } },
-                   afterBuildTicks: clockTicks(ax),
-                   grid: { color: grid } },
+              x: { title: axisTitle(AXIS[mode] || AXIS.day, muted),
+                   ticks: { color: muted, maxRotation: 0, autoSkip: false, font: function(){ return { size: ticks.small ? 10 : 11 }; },
+                            callback: function(v){ return ticks.text[v] !== undefined ? ticks.text[v] : two(ax.hourAt[v] % 24) + ':00'; } },
+                   afterBuildTicks: ticks.build,
+                   grid: { color: function(c){ return c.tick && ticks.centre[c.tick.value] ? 'transparent' : grid; } } },
               y: { stacked: true, title: axisTitle('Power (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } }
             };
           } });
-        op.plugins.cxBlocks = { blocks: res.blocks.map(function(b, i){ return { from: ax.from[i], len: b.len, name: b.name, short: short(b) }; }),
+        op.plugins.cxBlocks = { blocks: res.blocks.map(function(b, i){ return { from: ax.from[i], len: b.len, name: b.name, group: b.group || b.name, short: short(b) }; }),
                                 gap: ax.gap, text: cssVar('--chart-text'), rule: cssVar('--chart-grid') };
         op.layout = { padding: { top: 18 } };
         return op;
       })()
     }, 'dayLegend', [BLOCK_PLUGIN]);
     ch.options.scales.y.stacked = true;
-    $('daySub').textContent = year + ' hour by hour over its typical days, cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '. Pick another year above the chart.';
+    var over = { day: 'its typical days', day2: 'a weekday and a weekend day of each season', week: 'a typical week of each season' }[mode] || 'its typical days';
+    $('daySub').textContent = year + ' hour by hour over ' + over + ', cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '. Pick another year above the chart.';
   }
 
   /* ── Cost by year ── */
