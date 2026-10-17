@@ -34,7 +34,7 @@ window.__TOUR = {
       onEnter: function () { cxTab('plan'); },
       title: '② Demand',
       body: '<ul><li>The <strong>peak</strong> now and how fast it grows</li>' +
-            '<li>The climate, then the load profile: drag its bars, add daily variability, or open your own file</li>' +
+            '<li>The climate, then the load profile: drag its bars, add daily variability, or open your own file, of typical days or a full year</li>' +
             '<li>The years to plan, and how often to decide</li></ul>'
     },
     {

@@ -101,8 +101,7 @@
   }
   // A select a saved value is gone from takes its default, never a blank.
   function fixSelects(){
-    Object.keys(FIELD).forEach(function(k){
-      var el = $(FIELD[k]);
+    Object.keys(FIELD).map(function(k){ return $(FIELD[k]); }).concat([$('cxHemi')]).forEach(function(el){
       if(el.tagName === 'SELECT' && el.selectedIndex < 0) Array.prototype.forEach.call(el.options, function(o){ o.selected = o.defaultSelected; });
     });
   }
@@ -130,10 +129,11 @@
     });
     return 'Set by ' + CX.list(who) + '.';
   }
-  // The seasons, and the demand in each the built-in shapes run at.
+  // The seasons, their months in the hemisphere, and the demand in each the built-in shapes run at.
+  function hemi(){ return $('cxHemi').value === 'n' ? 'n' : 's'; }
   function climateNote(o){
     var Cl = CX.CLIMATES[o.climate], n = Cl.seasons.length;
-    var names = CX.list(Cl.seasons.map(function(s){ return s.name.toLowerCase(); }));
+    var names = CX.list(Cl.seasons.map(function(s, i){ var m = CX.seasonMonths(o.climate, hemi(), i); return s.name.toLowerCase() + ' (' + CX.MONTHS[m[0]] + ' to ' + CX.MONTHS[m[m.length - 1]] + ')'; }));
     var each = n === 4 ? ', a quarter of the year each' : n === 2 ? ', half the year each' : '';
     var lv = CX.isCustom(app.model.load) ? 'The load profile’s file sets the demand in each.' :
       'Demand at ' + CX.list(Cl.seasons.map(function(s){ return F.pct(100 * s.dem) + '%'; })) + ' of the peak.';
@@ -353,7 +353,7 @@
       '<span>⬇ Template (.csv)</span>' + CHEVRON + '</button></div>' +
       '<div class="up-msg' + (m && m.err ? ' is-err' : '') + '" role="status" aria-live="polite"' + (m && m.html ? '' : ' hidden') + '>' + (m ? m.html : '') + '</div>' +
       '<svg class="prof-line" data-line="t"' + SVG_LINE + ' aria-label="' + esc(x.Who) + ' through each season’s typical days, hour by hour"></svg>';
-    if(has) html += '<p class="derived">From its file: ' + describe(x.p.ts, o.climate) + (x.kind === 'load' ? ', its highest hour the peak.' : ', as a share of its rating.') + '</p>';
+    if(has) html += '<p class="derived">From its file: ' + describe(x.p.ts, o.climate) + (x.p.ts.pk ? ', and its own still, overcast peak day' : '') + (x.kind === 'load' ? ', its highest hour the peak.' : ', as a share of its rating.') + '</p>';
     else html += '<p class="derived">Open a file, or start from the template, which holds it as it runs now. Until then it runs as ' +
       (x.kind === 'load' ? 'the ' + esc(CX.PROFILES[CX.loadBase(x.p)].label) + (Array.isArray(x.p.hrs) ? ', edited' : '') : 'the climate’s ' + (x.kind === 'pv' ? 'sun' : 'wind')) + '.</p>';
     return html;
@@ -538,29 +538,58 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   }
-  /* The template, at the days r asks for (absent: its own). Days it does not
-     have yet repeat the ones it has; fewer days than it has keep its Monday,
-     and its Saturday for the weekend day (CX.gridOf). */
-  function downloadTemplate(scope, r){
+  /* A template, from the profile as the run takes it now: typical days (key
+     'day', 'day2' or 'week') the same in every season, their seasonal
+     average, or with '.s' each season its own, or 'year', every hour of the
+     plan's first year dated in the hemisphere's seasons; absent, its own
+     days for each season. Each ends with the still, overcast peak day as it
+     runs, whether or not the plan runs it. Days the profile does not have
+     yet repeat the ones it has; fewer keep its Monday, and its Saturday for
+     the weekend day (CX.gridOf). */
+  var TPL_KEYS = ['day', 'day2', 'week', 'day.s', 'day2.s', 'week.s', 'year'];
+  var TPL_FILE = { day: 'hourly', day2: 'weekdays-end', week: 'week', 'day.s': 'hourly-seasonal', 'day2.s': 'weekdays-end-seasonal', 'week.s': 'week-seasonal', year: 'year' };
+  var FINER = { day: 0, day2: 1, week: 2 };
+  function tplOf(key, x){
+    if(TPL_KEYS.indexOf(key) < 0) key = needOf(x) + '.s';
+    return { key: key, year: key === 'year', r: key === 'year' ? 'week' : key.split('.')[0], seasonal: /\.s$/.test(key) };
+  }
+  function seriesOf(x, S){ return x.kind === 'load' ? S.load : CX.avail(x.e, S).a; }
+  function tplRowCount(key, o){
+    if(key === 'year') return 24 * CX.yearDays(o.start).n;
+    return 24 * CX.RES_DAYS[key.split('.')[0]] * (/\.s$/.test(key) ? CX.CLIMATES[o.climate].seasons.length : 1);
+  }
+  function downloadTemplate(scope, key){
     var x = profAt(scope), o = plan();
     if(!x) return Promise.resolve();
-    var own = needOf(x);
-    if(!Object.prototype.hasOwnProperty.call(CX.RES_DAYS, r)) r = own;
+    var own = needOf(x), T = tplOf(key, x);
     return profilesLib().then(function(){
-      var g = gridNow(scope, null, r);
-      downloadAs(new Blob([CX.templateCsv({ kind: x.kind, who: x.who, climate: o.climate, grid: g })], { type: 'text/csv' }),
-        fileBase() + '-' + (x.kind === 'load' ? 'load' : slug(x.who)) + '-profile.csv');
-      setFileMsg(scope, 'The template holds ' + describe(g, o.climate) + (r === own ? ', as ' + esc(x.who) + ' runs now' : ', from ' + esc(x.who) + '’s ' + SAMPLE_PHRASE[own] + ' as it runs now') +
+      var S = CX.sample(app.model, o), a = seriesOf(x, S), g = CX.gridOf(S, a, T.r);
+      var Sx = o.stress ? S : CX.sample(app.model, Object.assign({}, o, { stress: true })), ax = o.stress ? a : seriesOf(x, Sx), k = 0;
+      Sx.days.forEach(function(d, i){ if(d.stress) k = i; });
+      var peak = { s: Sx.seasons[Sx.days[k].s].name, h: ax.slice(k * 24, k * 24 + 24) };
+      if(!T.seasonal && !T.year) g = CX.everySeason(g, o.climate);
+      downloadAs(new Blob([CX.templateCsv({ kind: x.kind, who: x.who, climate: o.climate, grid: g, seasonal: T.seasonal, peak: peak, year: T.year ? o.start : null, hemi: hemi() })], { type: 'text/csv' }),
+        fileBase() + '-' + (x.kind === 'load' ? 'load' : slug(x.who)) + '-' + TPL_FILE[T.key] + (T.year ? '-' + o.start : '') + '.csv');
+      var why = [];
+      if(T.r !== own) why.push(FINER[T.r] > FINER[own] ? 'its ' + SAMPLE_PHRASE[own] + ' repeated' : 'its Monday' + (T.r === 'day2' ? ' and Saturday' : '') + ' from its ' + SAMPLE_PHRASE[own]);
+      if(!T.seasonal && !T.year) why.push('the average of its seasons');
+      var what = T.year ? 'every hour of ' + o.start + ' (' + tplRowCount('year', o).toLocaleString('en-AU') + ' hours), dated in the ' + CX.HEMIS[hemi()].toLowerCase() + ' hemisphere’s seasons' : describe(g, o.climate);
+      setFileMsg(scope, 'The template holds ' + what + ', then the still, overcast peak day, ' + (why.length ? 'from ' + esc(x.who) + ' as it runs now (' + why.join(', ') + ')' : 'as ' + esc(x.who) + ' runs now') +
         ', with notes on how to fill it in. Change it and open it here.', false);
     }).catch(function(err){ setFileMsg(scope, esc(err && err.message || String(err)), true); });
   }
   /* Which template: one menu for every profile, opened from its ⬇ Template
      button, worn and driven as a chart's Share menu is (SharedShare): the
      site's dropdown list, arrows, Home, End, and Escape or Tab back to the
-     button. In the body, so no card or scrolling panel can clip it. */
-  var TPL_ROWS = [['day', 'Hourly variability', 'One typical day, 24 rows'],
-                  ['day2', 'Daily variability, weekdays/end', 'A weekday and a weekend day, 48 rows'],
-                  ['week', 'Daily variability, full week', 'Monday to Sunday, 168 rows']];
+     button. In the body, so no card or scrolling panel can clip it. Its row
+     counts follow the climate's seasons and the plan's first year. */
+  var TPL_ROWS = [['day', 'Hourly variability', 'One typical day'],
+                  ['day2', 'Daily variability, weekdays/end', 'A weekday and a weekend day'],
+                  ['week', 'Daily variability, full week', 'Monday to Sunday'], null,
+                  ['day.s', 'Hourly + seasonal', 'A typical day each season'],
+                  ['day2.s', 'Daily + seasonal, weekdays/end', 'A weekday and a weekend day each season'],
+                  ['week.s', 'Daily + seasonal, full week', 'A week each season'], null,
+                  ['year', 'Full year', 'Every hour of the year, read into a week each season']];
   var tplMenu = document.createElement('ul'), tplAt = null;
   tplMenu.className = 'combo-list share-list';
   tplMenu.id = 'tplMenu';
@@ -568,18 +597,27 @@
   tplMenu.setAttribute('aria-label', 'Template');
   tplMenu.setAttribute('data-no-abbr', '');
   tplMenu.innerHTML = TPL_ROWS.map(function(r){
+    if(!r) return '<li role="separator" class="tpl-sep"></li>';
     return '<li role="none"><button type="button" role="menuitem" class="combo-opt share-opt" data-r="' + r[0] + '"><span class="share-ico" aria-hidden="true">⬇</span>' +
       '<span class="combo-text"><span class="combo-main">' + r[1] + '</span><span class="combo-sub">' + r[2] + '</span></span></button></li>';
   }).join('');
   document.body.appendChild(tplMenu);
+  function tplCounts(){
+    var o = plan();
+    Array.prototype.forEach.call(tplMenu.querySelectorAll('.share-opt'), function(b){
+      var key = b.getAttribute('data-r'), row = TPL_ROWS.filter(function(r){ return r && r[0] === key; })[0];
+      b.querySelector('.combo-sub').textContent = (key === 'year' ? row[2].replace('the year', o.start) : row[2]) + ': ' + tplRowCount(key, o).toLocaleString('en-AU') + ' rows';
+    });
+  }
   function tplRows(){ return Array.prototype.slice.call(tplMenu.querySelectorAll('.share-opt')); }
   function where(btn){ var r = btn.getBoundingClientRect(); return r.left + ',' + r.top; }
   function openTpl(btn){
     closeTpl();
     tplAt = { scope: scopeOf(btn), btn: btn, at: where(btn) };
+    tplCounts();
     tplMenu.classList.add('is-open');
     btn.setAttribute('aria-expanded', 'true');
-    if(window.SharedDropdown) SharedDropdown.place(btn, tplMenu, { minWidth: 320, maxHeight: 320 });
+    if(window.SharedDropdown) SharedDropdown.place(btn, tplMenu, { minWidth: 340, maxHeight: 460 });
   }
   function closeTpl(refocus){
     if(!tplAt) return;
@@ -639,7 +677,7 @@
   }
   // Read a file and use it, whole or not at all. Resolves to what CX.readProfileFile said.
   function applyFile(file, scope){
-    if(file.size > 10 * 1024 * 1024){ setFileMsg(scope, 'That file is over 10 MB. A profile is at most a week of hours a season.', true); return Promise.resolve(null); }
+    if(file.size > 10 * 1024 * 1024){ setFileMsg(scope, 'That file is over 10 MB. A profile is at most a year of hours.', true); return Promise.resolve(null); }
     setFileMsg(scope, 'Reading ' + esc(file.name) + '…', false);
     var o = plan();
     return Promise.all([profilesLib(), file.arrayBuffer ? file.arrayBuffer() : new Response(file).arrayBuffer()]).then(function(r){
@@ -648,7 +686,7 @@
     }).then(function(table){
       var x = profAt(scope);
       if(!x) return null;
-      var out = CX.readProfileFile(table, { kind: x.kind, who: x.Who, climate: o.climate, peak: o.peak, current: function(cl){ return gridNow(scope, cl); } });
+      var out = CX.readProfileFile(table, { kind: x.kind, who: x.Who, climate: o.climate, peak: o.peak, hemi: hemi(), year: o.start, current: function(cl){ return gridNow(scope, cl); } });
       if(out.errors.length){ setFileMsg(scope, '<b>' + esc(file.name) + ' was not used.</b> ' + out.errors.map(esc).join(' '), true); return out; }
       if(out.climate) $('cxClimate').value = out.climate;
       if(out.peak) $('cxPeak').value = String(out.peak);
@@ -679,7 +717,7 @@
     max: 'The most of it in service at any one time, existing included: a limit of land, fuel or connection. Blank is no limit.',
     unit: 'Built only in whole units of this size, as large plants are. It makes the plan a mixed-integer problem, which takes longer.',
     cf: 'Its year’s output over its rating × 8,760 hours. The climate’s sun or wind through the typical days is scaled to give it.',
-    prof: 'Its output through each season’s days, as a share of its rating: the climate’s, scaled to the capacity factor, or Custom, from a CSV or Excel file.',
+    prof: 'Its output through each season’s days, as a share of its rating: the climate’s, scaled to the capacity factor, or Custom, from a CSV or Excel file of typical days or a full year.',
     vom: 'Fuel and variable O&M for each MWh it generates, before any carbon price.',
     co2: 'CO2 for each MWh it generates. The carbon price and the net-zero year apply to it.',
     avail: 'Share of its rating it can give in any hour, after outages and maintenance.',
@@ -1330,6 +1368,8 @@
     el.addEventListener('input', changed);
     el.addEventListener('change', changed);
   });
+  // The hemisphere only dates the seasons, so it never asks for a new run.
+  $('cxHemi').addEventListener('change', function(){ syncForm(); if(persist) persist.schedule(); });
 
   /* ── Mini cache, scenario files and Share links ── */
   var persist = null, restoredAtLoad = false;
