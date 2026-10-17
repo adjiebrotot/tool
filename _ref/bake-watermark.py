@@ -49,7 +49,7 @@ TOOLS = {
     "sankeycreator":  ("Made using tool.adjiebrotots.com/sankeycreator", 400),
     "loadflow-simulator": ("Made using tool.adjiebrotots.com/loadflow-simulator", 500),
     "ed-uc-simulator": ("Made using tool.adjiebrotots.com/ed-uc-simulator", 500),
-    "capacityexpansion-planner": ("Made using tool.adjiebrotots.com/capacityexpansion-planner", 500),
+    "capacity-expansion-planner": ("Made using tool.adjiebrotots.com/capacity-expansion-planner", 500),
 }
 
 

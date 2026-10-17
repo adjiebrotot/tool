@@ -72,7 +72,7 @@ const PAGES = [
   // Solves its default plan on arrival (the engine is the ED/UC Simulator's).
   // Its technology fields are in a card that opens on a click: the gas plant's,
   // detailed, which shows every kind of field a firm plant has.
-  { path: 'capacityexpansion-planner', setup: async page => {
+  { path: 'capacity-expansion-planner', setup: async page => {
       await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report && __cx.app.res.report.ok, null, { timeout: 60000 });
       await page.evaluate(() => {
         const d = document.getElementById('cxDetail'); d.value = 'detailed'; d.dispatchEvent(new Event('change', { bubbles: true }));

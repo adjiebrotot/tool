@@ -24,7 +24,7 @@ Created by **Adjie Brotosukmono** (adjiebrotot), an Indonesian power systems eng
 | [WEM Constraint Checker](https://tool.adjiebrotots.com/wemconstraint-checker/) | Check WA WEM constraint equations in the browser. |
 | [Load Flow Simulator](https://tool.adjiebrotots.com/loadflow-simulator/) | Draw a single-line diagram and run an AC Newton-Raphson or DC load flow in the browser, on PSA.js (a JavaScript port of PyPSA, checked against PyPSA). Animated P and Q flows, voltages, loading and losses on the diagram, exported as SVG, PNG or GIF, or embedded live on another site. |
 | [ED/UC Simulator](https://tool.adjiebrotots.com/ed-uc-simulator/) | Economic Dispatch & Unit Commitment. Draw a network and run an economic dispatch or unit commitment over 1 hour to 30 days in the browser, on PSA.js (PyPSA's linear optimal power flow) and the HiGHS solver in WebAssembly. Nodal prices, line limits, ramp limits, minimum up and down times, start-up costs, storage and HVDC links, shown on the diagram hour by hour and in dispatch, price, commitment and storage charts. |
-| [Capacity Expansion Planner](https://tool.adjiebrotots.com/capacityexpansion-planner/) | What to build, and when. From a growing peak demand and its load profile, the plants in service and the technologies that can be built, it finds the size and year of every new plant and battery at the least present cost, running each decision year hour by hour over typical days of every season and a still, overcast peak day. PSA.js runs PyPSA's multi-period investment optimisation on the HiGHS solver in WebAssembly, with carbon prices, a net-zero year, build limits and unit sizes. |
+| [Capacity Expansion Planner](https://tool.adjiebrotots.com/capacity-expansion-planner/) | What to build, and when. From a growing peak demand and its load profile, the plants in service and the technologies that can be built, it finds the size and year of every new plant and battery at the least present cost, running each decision year hour by hour over typical days of every season and a still, overcast peak day. PSA.js runs PyPSA's multi-period investment optimisation on the HiGHS solver in WebAssembly, with carbon prices, a net-zero year, build limits and unit sizes. |
 | [Graph Visualiser](https://tool.adjiebrotots.com/graphvisualiser/) | Turn CSV/spreadsheet data into interactive charts without coding. |
 | [Sankey Diagram Creator](https://tool.adjiebrotots.com/sankeycreator/) | Build Sankey diagrams and export SVG/PNG. |
 | [JSON Visualiser](https://tool.adjiebrotots.com/jsonvisualiser/) | Lazy-loaded tree that handles millions of JSON keys/values without error. |
@@ -82,7 +82,7 @@ mini-cache files reopened, against a recorded baseline or, with
 
 Harnesses live in `costofliving-comparator/`, `costofliving-comparator/map/`, `dcasimulator/`, `financialfreedom/`,
 `financingvscash/`, `financingvscash/loan-types/`, `pisahvsgabung/`, `rentvsownhouse/`,
-`rentvsownhouse/sensitivity/`, `valuateeverything/`, `worldclock/`, `loadflow-simulator/`, `ed-uc-simulator/`, and `capacityexpansion-planner/`. The World Clock's harness checks every clock on
+`rentvsownhouse/sensitivity/`, `valuateeverything/`, `worldclock/`, `loadflow-simulator/`, `ed-uc-simulator/`, and `capacity-expansion-planner/`. The World Clock's harness checks every clock on
 its map, for all 407 zones and across Time Travel jumps over daylight-saving changes,
 against Python's `zoneinfo`, which reads the system's tz database rather than Chromium's.
 Its map, `worldclock/zones.json`, is built by `worldclock/_build/build.mjs` from a
@@ -129,7 +129,7 @@ flows from its own B-θ solve, limits, ramps, up and down times, storage and cos
 shares nothing with PSA.js, and checks unit commitment against a brute-force search of every
 schedule. Its engine, PSA.js's optimiser with HiGHS in WebAssembly, is bundled by
 `ed-uc-simulator/_build/build-engine.mjs`, which checks the bundle against PyPSA's own fixtures.
-The Capacity Expansion Planner's harness (`capacityexpansion-planner/_audit/run.mjs`) replays every
+The Capacity Expansion Planner's harness (`capacity-expansion-planner/_audit/run.mjs`) replays every
 plan from its definition with code that shares nothing with PSA.js: the build years and lifetimes
 that put each plant in service, the demand met in every sampled hour, every limit and storage
 balance, the annuities, discounting and costs, which must equal PyPSA's objective, and the plan's

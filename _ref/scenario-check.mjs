@@ -78,7 +78,7 @@ const PAGES = [
            document.getElementById('runBtn').click();` },
   // The planner's technologies live in JS state (Persist extra): a cost and a
   // build limit edited in the list, the demand and the years changed, then solved.
-  { path: 'capacityexpansion-planner/', preset: 'coal',        probe: '.metrics',
+  { path: 'capacity-expansion-planner/', preset: 'coal',        probe: '.metrics',
     also: `var t = window.__cx.app.model.tech.filter(function(x){ return x.id === 6; })[0]; t.capex = 850; t.max = 3000;
            var g = document.getElementById('cxGrowth'); g.value = '2.4'; g.dispatchEvent(new Event('input', {bubbles: true}));
            var e = document.getElementById('cxEnd'); e.value = '2040'; e.dispatchEvent(new Event('change', {bubbles: true}));

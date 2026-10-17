@@ -1,6 +1,7 @@
 # Adjie Brotools
 
-Static, client-side tools at tool.adjiebrotots.com, one folder per tool. Building a tool:
+Static, client-side tools at tool.adjiebrotots.com, one folder per tool, named as one simple
+word or as hyphen-separated words (`capacity-expansion-planner`, never `capacityexpansion-planner`). Building a tool:
 `.claude/skills/new-tool/SKILL.md`. Design system: `_ref/design-reference.md`.
 
 ## Change an existing tool with the least damage

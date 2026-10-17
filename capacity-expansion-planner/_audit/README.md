@@ -1,7 +1,7 @@
 # Capacity Expansion Planner: audit harness
 
 ```sh
-node capacityexpansion-planner/_audit/run.mjs
+node capacity-expansion-planner/_audit/run.mjs
 ```
 
 It holds the tool's answers to things it did not compute itself. Everything below the page

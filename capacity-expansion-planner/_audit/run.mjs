@@ -1,6 +1,6 @@
 // Capacity Expansion Planner audit.
 //
-//   node capacityexpansion-planner/_audit/run.mjs
+//   node capacity-expansion-planner/_audit/run.mjs
 //
 // The tool's answers are held to things it did not compute itself:
 //
@@ -428,7 +428,7 @@ console.log('\n── B the page ──');
     const page = await ctx.newPage();
     page.__errors = [];
     page.on('pageerror', e => page.__errors.push(e.message));
-    await page.goto(ORIGIN + '/capacityexpansion-planner/', { waitUntil: 'load' });
+    await page.goto(ORIGIN + '/capacity-expansion-planner/', { waitUntil: 'load' });
     return { ctx, page };
   };
   const solved = page => page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report && !document.getElementById('runBtn').disabled, null, { timeout: 90000 });
