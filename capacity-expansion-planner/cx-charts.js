@@ -97,7 +97,8 @@
      name, the groups in the order they first come. The group also rides in
      the entry's own text, hidden, so two entries of one name in two groups
      (Gas existing and Gas new) stay apart for a screen reader and for the
-     legend a Share link carries. */
+     legend a Share link carries, unless the entry says groupTag: false, as
+     a key whose names never repeat does, so its links keep their names. */
   function renderLegend(legendId, chart, datasets){
     var el = $(legendId);
     if(!el) return;
@@ -129,7 +130,7 @@
       var item = document.createElement('div');
       item.className = 'legend-item';
       SharedLegend.attach(item, SharedLegend.specOf(ds), ds.legendLabel || ds.label);
-      if(grouped && ds.group){
+      if(grouped && ds.group && ds.groupTag !== false){
         var tag = document.createElement('span');
         tag.className = 'vh';
         tag.textContent = ' (' + ds.group.toLowerCase() + ')';
@@ -253,6 +254,20 @@
     [-n, 0, n].forEach(function(o){ g.moveTo(o, n); g.lineTo(o + n, 0); });
     g.stroke();
     return g.createPattern(cv, 'repeat');
+  }
+  /* A dotted fill: dots of the colour over a pale wash of it, so storage
+     never reads as one more generator. The tile is drawn at the screen's
+     pixel ratio, so the dots stay round and sharp. */
+  function dotFill(fill, dot){
+    var n = 5, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = cv.height = n * k;
+    g.scale(k, k);
+    g.fillStyle = fill; g.fillRect(0, 0, n, n);
+    g.fillStyle = dot;
+    [[1.25, 1.25], [3.75, 3.75]].forEach(function(p){ g.beginPath(); g.arc(p[0], p[1], 0.95, 0, Math.PI * 2); g.fill(); });
+    var pat = g.createPattern(cv, 'repeat');
+    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
+    return pat;
   }
   /* A year's bars, each meeting the next: an opaque fill a little wider
      than its bar, so no sliver shows where two meet, and a top edge only
@@ -564,19 +579,21 @@
     gens.forEach(function(e){
       var c = colourOf(model, e);
       ds.push({ label: CX.nameOf(e), data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
-                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'gen', id: e.id });
+                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'gen', id: e.id, group: 'Generator', groupTag: false });
     });
     stores.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
-                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id });
-      ds.push({ label: CX.nameOf(e) + ' charging', data: ax.spread(res.tech[e.id].p[k], neg), borderColor: c, backgroundColor: alpha(c, 0.22),
-                borderWidth: 1.2, borderDash: [4, 3], pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'store', order: 2, kind: 'chg', id: e.id });
+      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: dotFill(alpha(c, 0.3), c),
+                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id, group: 'Storage', groupTag: false,
+                dots: { fill: alpha(c, 0.3), dot: c } });
+      ds.push({ label: CX.nameOf(e) + ' charging', data: ax.spread(res.tech[e.id].p[k], neg), borderColor: c, backgroundColor: dotFill(alpha(c, 0.12), alpha(c, 0.6)),
+                borderWidth: 1.2, borderDash: [4, 3], pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'store', order: 2, kind: 'chg', id: e.id, group: 'Storage', groupTag: false,
+                dots: { fill: alpha(c, 0.12), dot: alpha(c, 0.6) } });
     });
     if(any(res.shed[k])){
       var neg = cssVar('--negative');
       ds.push({ label: 'Shortfall (load shed)', data: ax.spread(res.shed[k]), borderColor: neg, backgroundColor: alpha(neg, 0.45),
-                borderWidth: 1.2, pointRadius: 0, tension: 0, stack: 'gen', order: 2, kind: 'shed' });
+                borderWidth: 1.2, pointRadius: 0, tension: 0, stack: 'gen', order: 2, kind: 'shed', group: 'Demand', groupTag: false });
     }
     // Each layer fills down to the layer under it in its own stack.
     var lastIn = {};
@@ -585,10 +602,11 @@
       lastIn[x.stack] = i;
       var shown = {}; for(var key in x) shown[key] = x[key];
       shown.fill = 'origin';
-      x.legendSpec = SharedLegend.fromDataset(shown);
+      // A pattern is no colour a swatch can read: a dotted fill keys as dotted.
+      x.legendSpec = SharedLegend.fromDataset(shown, x.dots ? { fill: x.dots.fill, dots: x.dots.dot } : null);
     });
     ds.push({ label: 'Demand', data: ax.spread(res.load[k]), borderColor: cssVar('--text'), backgroundColor: 'transparent',
-              borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load' });
+              borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load', group: 'Demand', groupTag: false });
     var short = function(b){ return b.stress ? 'Still day' : (b.group || b.name).replace(' season', ''); };
     var mode = res.sample || 'day', ticks = dayTicks(ax, res);
     var AXIS = { day: 'Typical days, hour by hour', day2: 'A weekday and a weekend day a season, hour by hour', week: 'Typical weeks, day by day' };

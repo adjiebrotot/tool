@@ -1236,6 +1236,8 @@
                for a band;  fill2  second fill, for a band filled either side
        hatch   colour of 45° lines over a bar or area block — a hatched fill
                (existing plant under new build, say) keyed as hatched
+       dots    colour of a dotted fill over a block or the area under a line
+               (storage among generators, say) keyed as dotted
        point   {shape:'circle'|'ring'|'triangle'|'rect', fill, stroke, width,
                 radius} — a marker drawn at the centre of the swatch
      ──────────────────────────────────────────────────────────────────────── */
@@ -1272,6 +1274,7 @@
       fill: isTransparent(s.fill) ? null : legCss(s.fill),
       fill2: isTransparent(s.fill2) ? null : legCss(s.fill2),
       hatch: isTransparent(s.hatch) ? null : legCss(s.hatch),
+      dots: isTransparent(s.dots) ? null : legCss(s.dots),
       point: null
     };
     if(out.type === 'line' && out.width <= 0 && out.fill) out.type = 'area';
@@ -1350,6 +1353,15 @@
     }
   }
 
+  /* Dots in staggered rows across a block, kept inside its edges, so a
+     dotted fill keys as dotted in the swatch, the PNG and the SVG alike. */
+  function legDots(out, x, y, w, h, color, k){
+    var gap = 3 * k, r = 0.75 * k, row = 0;
+    for(var cy = y + gap / 2; cy <= y + h - r; cy += gap, row++)
+      for(var cx = x + (row % 2 ? gap : gap / 2); cx <= x + w - r; cx += gap)
+        out.push({t:'circle', cx:cx, cy:cy, r:r, fill:color});
+  }
+
   function legMarks(spec, k){
     k = k || 1;
     var s = normSpec(spec), W = LEG_W * k, H = LEG_H * k, cy = H / 2, out = [];
@@ -1360,6 +1372,7 @@
       var bw = W * 0.56;
       out.push({t:'rect', x:(W - bw)/2, y:cy - 4.5*k, w:bw, h:9*k, r:1.5*k, fill:s.fill || s.color});
       if(s.hatch) legHatch(out, (W - bw)/2, cy - 4.5*k, bw, 9*k, s.hatch, k);
+      if(s.dots) legDots(out, (W - bw)/2, cy - 4.5*k, bw, 9*k, s.dots, k);
     } else if(s.type === 'candle'){
       // Body with a wick standing clear above and below it, so a candlestick
       // series reads as candles rather than as a block of colour.
@@ -1376,9 +1389,11 @@
         out.push({t:'rect', x:0, y:cy - 4.5*k, w:W, h:9*k, r:2*k, fill:s.fill || s.color});
       }
       if(s.hatch) legHatch(out, 0, cy - 4.5*k, W, 9*k, s.hatch, k);
+      if(s.dots) legDots(out, 0, cy - 4.5*k, W, 9*k, s.dots, k);
     } else if(s.type !== 'point'){
       // A line, with the area under it shaded when the series is filled.
       if(s.fill) out.push({t:'rect', x:0, y:cy, w:W, h:H/2, r:0, fill:s.fill});
+      if(s.fill && s.dots) legDots(out, 0, cy, W, H/2, s.dots, k);
       if(lw > 0){
         if(s.colors) {
           out.push({t:'line', x1:0, y1:cy, x2:W/2, y2:cy, stroke:s.colors[0], sw:lw, dash:dash});

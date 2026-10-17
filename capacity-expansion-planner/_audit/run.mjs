@@ -1108,13 +1108,14 @@ console.log('\n── B the page ──');
     fileRun.sample + ', peak ' + fileRun.peak + ', objective ' + e1(fileRun.raw[2]) + ' to ' + e1(Math.abs(fileRun.raw[2] - here2.raw[2])));
   // The climate sits in the load profile, one select that names its months, so the seasons' dates follow it.
   const place = await page.evaluate(() => ({ group: document.getElementById('cxClimate').closest('.field-group').querySelector('.group-title').textContent,
-    opts: [...document.getElementById('cxClimate').options].map(o => o.value).join(' '), hemi: !!document.getElementById('cxHemi'), note: document.getElementById('climateNote').textContent }));
+    opts: [...document.getElementById('cxClimate').options].map(o => o.value).join(' '), hemi: !!document.getElementById('cxHemi'), note: !!document.getElementById('climateNote'), tip: document.getElementById('climateTip').getAttribute('data-tip') }));
   await page.selectOption('#cxClimate', 'sum-n');
-  const north = await page.evaluate(() => document.getElementById('climateNote').textContent);
+  const north = await page.evaluate(() => document.getElementById('climateTip').getAttribute('data-tip'));
   await page.selectOption('#cxClimate', 'sum');
-  check('B the climate sits in the load profile, one select that names the months, which date its seasons',
-    place.group === 'Load profile' && place.opts === 'sum sum-n win win-n trop trop-n' && !place.hemi && /summer \(Dec to Feb\)/.test(place.note) && /summer \(Jun to Aug\)/.test(north),
-    place.group + ', ' + place.opts + '; ' + north.slice(0, 50));
+  check('B the climate sits in the load profile, one select that names the months, its tip naming the hemisphere and a country or two',
+    place.group === 'Load profile' && place.opts === 'sum sum-n win win-n trop trop-n' && !place.hemi && !place.note &&
+      /Dec to Feb:.*Southern hemisphere, e\.g\. Australia/.test(place.tip) && /Jun to Aug:.*Northern hemisphere, e\.g\. the United States/.test(north),
+    place.group + ', ' + place.opts + '; ' + north.slice(-60));
   // A solar farm from a file in %: the capacity factor its card reports is the run's.
   await page.evaluate(() => document.querySelector('.ctrl-tab[data-tab="tech"]').click());
   const pvId = await page.evaluate(() => __cx.app.model.tech.find(e => e.kind === 'pv').id);
