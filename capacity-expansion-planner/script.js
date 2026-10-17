@@ -235,18 +235,28 @@
   }
   /* Lines of hourly values in segments, a season's days each, 240 units wide
      with a gap between, each named under it: the days of one segment alone,
-     every season's name when there are more. at is an hour across them all. */
-  var LINE_GAP = 5;
+     every season's name when there are more. A weekday and a weekend day are
+     days apart, not one run of time, so each is a run of its own with a gap
+     and the dashed rule between, as on the typical days chart; a week runs
+     on unbroken. at is an hour across them all. */
+  var LINE_GAP = 5, DAY_GAP = 3;
+  function lineRun(x0, w, m, from){ return { x0: x0, w: w, m: m, from: from, X: function(k){ return x0 + (m > 1 ? k * w / (m - 1) : w / 2); } }; }
   function lineGeom(segs){
-    var n = 0, x0 = 0, out = [];
-    segs.forEach(function(g){ n += g.vals.length; });
-    var span = 240 - LINE_GAP * Math.max(0, segs.length - 1);
-    segs.forEach(function(g, i){
-      var w = n ? span * g.vals.length / n : 0, m = g.vals.length, left = x0;
-      out.push({ x0: left, w: w, m: m, X: function(k){ return left + (m > 1 ? k * w / (m - 1) : w / 2); }, from: i ? out[i - 1].from + out[i - 1].m : 0 });
-      x0 += w + LINE_GAP;
+    var n = 0, gaps = 0, x = 0, from = 0;
+    // A lone segment's weekday and weekend take the full gap; beside other seasons a narrower one keeps each season together.
+    var dayGap = segs.length > 1 ? DAY_GAP : LINE_GAP, runsOf = function(g){ return g.r === 'day2' && g.vals.length === 48 ? 2 : 1; };
+    segs.forEach(function(g, i){ n += g.vals.length; gaps += (i ? LINE_GAP : 0) + (runsOf(g) - 1) * dayGap; });
+    var u = n ? (240 - gaps) / n : 0;
+    return segs.map(function(g, i){
+      var k = runsOf(g), len = g.vals.length / k, runs = [], left;
+      if(i) x += LINE_GAP;
+      left = x;
+      for(var p = 0; p < k; p++){ if(p) x += dayGap; runs.push(lineRun(x, u * len, len, from + p * len)); x += u * len; }
+      var seg = { x0: left, w: x - left, m: g.vals.length, from: from, runs: runs,
+        X: function(j){ var q = runs[Math.max(0, Math.min(k - 1, Math.floor(j / len)))]; return q.X(j - (q.from - seg.from)); } };
+      from += g.vals.length;
+      return seg;
     });
-    return out;
   }
   function dayWord(r, k){ var d = Math.floor(k / 24); return r === 'week' ? CX.DAYS[d] + ' ' : r === 'day2' ? (d ? 'Weekend ' : 'Weekday ') : ''; }
   function linesSvg(segs, at){
@@ -254,11 +264,15 @@
     segs.forEach(function(g){ g.vals.forEach(function(v){ if(v > top) top = v; }); });
     var Y = function(v){ return 42 - Math.min(Math.max(v, 0), top) / top * 40; };
     segs.forEach(function(g, i){
-      var q = G[i], d = '';
-      for(var k = 0; k < q.m; k++) d += (k ? 'L' : 'M') + q.X(k).toFixed(1) + ' ' + Y(g.vals[k]).toFixed(1);
-      if(!d) return;
-      s += '<path class="pl-area" d="' + d + 'L' + q.X(q.m - 1).toFixed(1) + ' 42L' + q.X(0).toFixed(1) + ' 42Z"/><path class="pl" d="' + d + '"/>';
-      for(var dd = 24; dd < q.m; dd += 24) s += '<path class="pb-ref" d="M' + q.X(dd).toFixed(1) + ' 10V42"/>';
+      var q = G[i];
+      if(!q.m) return;
+      q.runs.forEach(function(u, p){
+        var d = '';
+        for(var k = 0; k < u.m; k++) d += (k ? 'L' : 'M') + u.X(k).toFixed(1) + ' ' + Y(g.vals[u.from - q.from + k]).toFixed(1);
+        s += '<path class="pl-area" d="' + d + 'L' + u.X(u.m - 1).toFixed(1) + ' 42L' + u.X(0).toFixed(1) + ' 42Z"/><path class="pl" d="' + d + '"/>';
+        for(var dd = 24; dd < u.m; dd += 24) s += '<path class="pb-ref" d="M' + u.X(dd).toFixed(1) + ' 10V42"/>';
+        if(p){ var prev = q.runs[p - 1]; s += '<path class="pb-ref" d="M' + ((prev.x0 + prev.w + u.x0) / 2).toFixed(1) + ' 10V42"/>'; }
+      });
       if(segs.length === 1 && g.r !== 'day'){
         for(var dl = 0; dl < q.m; dl += 24) s += '<text class="pb-t" x="' + q.X(dl + 11.5).toFixed(1) + '" y="52" text-anchor="middle">' + dayWord(g.r, dl).trim() + '</text>';
       } else if(segs.length === 1){
@@ -279,10 +293,13 @@
     return s;
   }
   function lineHit(segs, x){
-    var G = lineGeom(segs), best = null;
-    G.forEach(function(q){
-      var k = Math.round((x - q.x0) / (q.w || 1) * (q.m - 1)), d = x < q.x0 ? q.x0 - x : x > q.x0 + q.w ? x - q.x0 - q.w : 0;
-      if(!best || d < best.d) best = { d: d, i: q.from + Math.max(0, Math.min(q.m - 1, k)) };
+    var best = null;
+    lineGeom(segs).forEach(function(seg){
+      seg.runs.forEach(function(q){
+        if(!q.m) return;
+        var k = Math.round((x - q.x0) / (q.w || 1) * (q.m - 1)), d = x < q.x0 ? q.x0 - x : x > q.x0 + q.w ? x - q.x0 - q.w : 0;
+        if(!best || d < best.d) best = { d: d, i: q.from + Math.max(0, Math.min(q.m - 1, k)) };
+      });
     });
     return best ? best.i : null;
   }
@@ -315,6 +332,8 @@
 
   /* The editors' markup: drawings left empty, drawn once they are in. */
   var SVG_BARS = ' viewBox="-8 -14 256 90" role="img"', SVG_LINE = ' viewBox="-8 -6 256 62" role="img"';
+  // The Share button's chevron, which turns over while the template menu is open.
+  var CHEVRON = '<svg class="share-chev" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
   function dailyHtml(scope, x){
     var on = !!x.p.dv, load = x.kind === 'load';
     var html = '<div class="toggle-row prof-toggle"><div class="toggle-label"><span class="tip-wrap">Daily variability' +
@@ -322,7 +341,7 @@
       '<label class="toggle-switch"><input type="checkbox" data-pk="dv" aria-label="Daily variability"' + (on ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     if(!on) return html;
     if(load) html += '<div class="seg-group prof-seg" data-pk="dm" role="group" aria-label="Which days differ">' +
-      [['day2', 'Weekdays and weekend'], ['week', 'Full week']].map(function(o){ return '<button type="button" class="seg-btn' + (x.p.dm === o[0] ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+      [['day2', 'Weekdays/end'], ['week', 'Full week']].map(function(o){ return '<button type="button" class="seg-btn' + (x.p.dm === o[0] ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
     html += '<svg class="prof-bars" data-bars="d"' + SVG_BARS + ' aria-label="' + (load && x.p.dm !== 'week' ? 'Demand on a weekday and at the weekend' : load ? 'Demand each day, Monday to Sunday' : 'The weather each day, Monday to Sunday') + ', as a share of the bars above. Drag a bar to change it."></svg>';
     if(load) html += '<svg class="prof-line" data-line="w"' + SVG_LINE + ' aria-label="Demand through ' + (x.p.dm === 'week' ? 'the week, Monday to Sunday' : 'a weekday and a weekend day') + ', hour by hour"></svg>';
     return html;
@@ -330,7 +349,8 @@
   function fileHtml(scope, x){
     var m = fileMsg[scope], has = CX.isCustom(x.p), o = plan();
     var html = '<div class="prof-file"><button type="button" class="btn-secondary btn-sm" data-icon="open" data-act="open" title="Take its hours from a CSV or Excel file">Open file</button>' +
-      '<button type="button" class="btn-secondary btn-sm" data-act="tpl" title="A CSV of its hours as they run now, with notes on how to fill it in">⬇ Template (.csv)</button></div>' +
+      '<button type="button" class="btn-secondary btn-sm share-toggle" data-act="tpl" aria-haspopup="menu" aria-expanded="false" aria-controls="tplMenu" title="A CSV of its hours as they run now, by the hour or by the day, with notes on how to fill it in">' +
+      '<span>⬇ Template (.csv)</span>' + CHEVRON + '</button></div>' +
       '<div class="up-msg' + (m && m.err ? ' is-err' : '') + '" role="status" aria-live="polite"' + (m && m.html ? '' : ' hidden') + '>' + (m ? m.html : '') + '</div>' +
       '<svg class="prof-line" data-line="t"' + SVG_LINE + ' aria-label="' + esc(x.Who) + ' through each season’s typical days, hour by hour"></svg>';
     if(has) html += '<p class="derived">From its file: ' + describe(x.p.ts, o.climate) + (x.kind === 'load' ? ', its highest hour the peak.' : ', as a share of its rating.') + '</p>';
@@ -403,7 +423,18 @@
     var seg = t.closest('[data-pk="dm"] .seg-btn');
     if(seg){ var v = seg.getAttribute('data-val'); if(x.p.dm !== v){ x.p.dm = v; changed(); renderProfile(scope); } return; }
     var act = t.closest('[data-act]');
-    if(act) (act.getAttribute('data-act') === 'open' ? openFile : downloadTemplate)(scope);
+    if(!act) return;
+    if(act.getAttribute('data-act') === 'open') openFile(scope);
+    else if(tplAt && tplAt.btn === act) closeTpl();
+    else { openTpl(act); tplRows()[0].focus({ preventScroll: true }); }
+  });
+  ctl.addEventListener('keydown', function(ev){
+    var act = ev.target.closest && ev.target.closest('[data-act="tpl"]');
+    if(!act || (ev.key !== 'ArrowDown' && ev.key !== 'ArrowUp')) return;
+    ev.preventDefault();
+    openTpl(act);
+    var r = tplRows();
+    r[ev.key === 'ArrowDown' ? 0 : r.length - 1].focus({ preventScroll: true });
   });
   // Dragging a bar sets that hour's value, or that day's; pointing at a bar or a line reads it.
   var drag = null, peek = null;
@@ -491,12 +522,13 @@
     if(!sheetP){ sheetP = loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js', function(){ return window.XLSX || null; }); sheetP.catch(function(){ sheetP = null; }); }
     return sheetP;
   }
-  // A profile as the run takes it now, through its own days, for the plan's climate or another.
-  function gridNow(scope, climate){
+  // A profile as the run takes it now, for the plan's climate or another, through its own days or the days r asks for.
+  function needOf(x){ return CX.need(x.p, x.kind === 'load' ? 'load' : x.kind); }
+  function gridNow(scope, climate, r){
     var x = profAt(scope), o = plan();
     if(climate) o.climate = climate;
     var S = CX.sample(app.model, o);
-    return CX.gridOf(S, x.kind === 'load' ? S.load : CX.avail(x.e, S).a, CX.need(x.p, x.kind === 'load' ? 'load' : x.kind));
+    return CX.gridOf(S, x.kind === 'load' ? S.load : CX.avail(x.e, S).a, r || needOf(x));
   }
   function slug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'profile'; }
   function downloadAs(blob, name){
@@ -506,16 +538,85 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   }
-  function downloadTemplate(scope){
+  /* The template, at the days r asks for (absent: its own). Days it does not
+     have yet repeat the ones it has; fewer days than it has keep its Monday,
+     and its Saturday for the weekend day (CX.gridOf). */
+  function downloadTemplate(scope, r){
     var x = profAt(scope), o = plan();
     if(!x) return Promise.resolve();
+    var own = needOf(x);
+    if(!Object.prototype.hasOwnProperty.call(CX.RES_DAYS, r)) r = own;
     return profilesLib().then(function(){
-      var g = gridNow(scope);
+      var g = gridNow(scope, null, r);
       downloadAs(new Blob([CX.templateCsv({ kind: x.kind, who: x.who, climate: o.climate, grid: g })], { type: 'text/csv' }),
         fileBase() + '-' + (x.kind === 'load' ? 'load' : slug(x.who)) + '-profile.csv');
-      setFileMsg(scope, 'The template holds ' + describe(g, o.climate) + ', as ' + esc(x.who) + ' runs now, with notes on how to fill it in. Change it and open it here.', false);
+      setFileMsg(scope, 'The template holds ' + describe(g, o.climate) + (r === own ? ', as ' + esc(x.who) + ' runs now' : ', from ' + esc(x.who) + '’s ' + SAMPLE_PHRASE[own] + ' as it runs now') +
+        ', with notes on how to fill it in. Change it and open it here.', false);
     }).catch(function(err){ setFileMsg(scope, esc(err && err.message || String(err)), true); });
   }
+  /* Which template: one menu for every profile, opened from its ⬇ Template
+     button, worn and driven as a chart's Share menu is (SharedShare): the
+     site's dropdown list, arrows, Home, End, and Escape or Tab back to the
+     button. In the body, so no card or scrolling panel can clip it. */
+  var TPL_ROWS = [['day', 'Hourly variability', 'One typical day, 24 rows'],
+                  ['day2', 'Daily variability, weekdays/end', 'A weekday and a weekend day, 48 rows'],
+                  ['week', 'Daily variability, full week', 'Monday to Sunday, 168 rows']];
+  var tplMenu = document.createElement('ul'), tplAt = null;
+  tplMenu.className = 'combo-list share-list';
+  tplMenu.id = 'tplMenu';
+  tplMenu.setAttribute('role', 'menu');
+  tplMenu.setAttribute('aria-label', 'Template');
+  tplMenu.setAttribute('data-no-abbr', '');
+  tplMenu.innerHTML = TPL_ROWS.map(function(r){
+    return '<li role="none"><button type="button" role="menuitem" class="combo-opt share-opt" data-r="' + r[0] + '"><span class="share-ico" aria-hidden="true">⬇</span>' +
+      '<span class="combo-text"><span class="combo-main">' + r[1] + '</span><span class="combo-sub">' + r[2] + '</span></span></button></li>';
+  }).join('');
+  document.body.appendChild(tplMenu);
+  function tplRows(){ return Array.prototype.slice.call(tplMenu.querySelectorAll('.share-opt')); }
+  function where(btn){ var r = btn.getBoundingClientRect(); return r.left + ',' + r.top; }
+  function openTpl(btn){
+    closeTpl();
+    tplAt = { scope: scopeOf(btn), btn: btn, at: where(btn) };
+    tplMenu.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+    if(window.SharedDropdown) SharedDropdown.place(btn, tplMenu, { minWidth: 320, maxHeight: 320 });
+  }
+  function closeTpl(refocus){
+    if(!tplAt) return;
+    var b = tplAt.btn;
+    tplAt = null;
+    tplMenu.classList.remove('is-open');
+    b.setAttribute('aria-expanded', 'false');
+    if(refocus && b.isConnected) b.focus({ preventScroll: true });
+  }
+  tplMenu.addEventListener('click', function(ev){
+    var b = ev.target.closest('.share-opt'), scope = tplAt && tplAt.scope;
+    if(!b || !scope) return;
+    closeTpl(true);
+    downloadTemplate(scope, b.getAttribute('data-r'));
+  });
+  // Once the keyboard is in the list, the mouse moves the lit row with it.
+  tplMenu.addEventListener('mousemove', function(ev){
+    var b = ev.target.closest('.share-opt');
+    if(b && b !== document.activeElement && tplMenu.contains(document.activeElement)) b.focus({ preventScroll: true });
+  });
+  tplMenu.addEventListener('keydown', function(ev){
+    var r = tplRows(), i = r.indexOf(document.activeElement), to = null;
+    if(ev.key === 'ArrowDown') to = r[(i + 1) % r.length];
+    else if(ev.key === 'ArrowUp') to = r[(i - 1 + r.length) % r.length];
+    else if(ev.key === 'Home') to = r[0];
+    else if(ev.key === 'End') to = r[r.length - 1];
+    else if(ev.key === 'Escape' || ev.key === 'Tab'){ ev.preventDefault(); ev.stopPropagation(); closeTpl(true); return; }
+    else return;
+    ev.preventDefault();
+    to.focus();
+  });
+  // A press anywhere else closes it, before any other menu's own handler can stop the click.
+  document.addEventListener('click', function(ev){ if(tplAt && !tplMenu.contains(ev.target) && !tplAt.btn.contains(ev.target)) closeTpl(); }, true);
+  document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape' && tplAt) closeTpl(true); });
+  // A scroll that moves its button closes it; one still settling from before it opened does not.
+  window.addEventListener('scroll', function(ev){ if(tplAt && !tplMenu.contains(ev.target) && where(tplAt.btn) !== tplAt.at) closeTpl(); }, true);
+  window.addEventListener('resize', function(){ closeTpl(); });
   var fileInput = document.createElement('input');
   fileInput.type = 'file'; fileInput.id = 'profFile'; fileInput.hidden = true;
   fileInput.accept = '.csv,.tsv,.txt,.xlsx,.xlsm,.xls,.ods,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';

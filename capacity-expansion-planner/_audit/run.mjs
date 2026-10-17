@@ -18,8 +18,9 @@
 //   A5  Profiles from a file: every layout the reader promises (24, 48 or
 //       168 rows, labelled or in order, days as columns, a season column,
 //       dates, notes, units) reads to what it holds; a template read back is
-//       the profile it was written from; a bad file is refused with a reason
-//       and nothing in it is used; garbage never throws.
+//       the profile it was written from, and every template its menu offers
+//       reads back at its own days; a bad file is refused with a reason and
+//       nothing in it is used; garbage never throws.
 //   A2  Every plan replayed from its definition, by code that shares nothing
 //       with PSA.js: what is in service in each decision year (build year and
 //       lifetime), the demand met in every sampled hour, every output inside
@@ -596,6 +597,25 @@ console.log('\n── A5 profiles from a file ──');
     }
   }
   check('A5 a template read back is the profile it was written from', tripBad.length === 0 && worst < 1e-4, trips + ' templates (load, solar and wind; one day, a weekday and a weekend day, a week; three climates), worst ' + e1(worst) + ' (written to 4 places)' + (tripBad.length ? '; ' + tripBad.slice(0, 3).join(' | ') : ''));
+  // Every template the menu offers, whatever days the profile runs at: it reads back at the days it holds, with the hours it was written with.
+  let menuWorst = 0, menuN = 0;
+  const menuBad = [];
+  for (const climate of Object.keys(CX.CLIMATES)) for (const L of [{ base: 'com' }, { base: 'res', dv: 1, dm: 'day2', f2: [1, 0.85] }, { base: 'resev', dv: 1, dm: 'week' }]) {
+    const m = CX.load({ v: 2, load: L, tech: [{ id: 1, kind: 'pv', cf: 0.21, prof: { dv: 1 } }, { id: 2, kind: 'wind', cf: 0.33 }] }), o = CX.options({ climate });
+    const S = CX.sample(m, o);
+    for (const who of ['load', 1, 2]) for (const r of ['day', 'day2', 'week']) {
+      const e = who === 'load' ? null : m.tech.find(x => x.id === who), kind = who === 'load' ? 'load' : e.kind;
+      const g = CX.gridOf(S, kind === 'load' ? S.load : CX.avail(e, S).a, r);
+      const got = CX.readProfileFile(CX.csvRows(CX.templateCsv({ kind, who: who === 'load' ? 'the load profile' : CX.nameOf(e), climate, grid: g })), { kind, who: 'it', climate, peak: 1000, current: nowOf(m, o, kind, e) });
+      menuN++;
+      if (got.errors.length || got.ts.r !== r || got.climate) { menuBad.push(climate + ' ' + who + ' ' + r + ': ' + (got.errors[0] || got.ts.r)); continue; }
+      // A load reads back per unit of its highest hour, which days cut from a week may not hold.
+      let top = 0;
+      if (kind === 'load') Object.values(g.s).forEach(a => a.forEach(v => { if (v > top) top = v; }));
+      for (const sn of Object.keys(g.s)) g.s[sn].forEach((v, t) => { menuWorst = Math.max(menuWorst, Math.abs((kind === 'load' ? v / top : v) - CX.tsSeries(got.ts, sn)[t])); });
+    }
+  }
+  check('A5 every template the menu offers reads back at its days, from any profile', menuBad.length === 0 && menuWorst < 2e-4, menuN + ' templates (one day, a weekday and a weekend day, a week, each from a profile at one day, at a weekday and a weekend day, and at a week), worst ' + e1(menuWorst) + (menuBad.length ? '; ' + menuBad.slice(0, 3).join(' | ') : ''));
 
   // Every layout the reader promises.
   const H = [...Array(24).keys()], hh = h => String(h).padStart(2, '0') + ':00', SEAS = ['Summer', 'Autumn', 'Winter', 'Spring'];
@@ -779,9 +799,13 @@ console.log('\n── B the page ──');
   const s0 = await sampleNow();
   await page.locator('[data-prof="load"] .prof-toggle .toggle-switch').click();
   const s1 = await sampleNow();
+  // The line of the week draws a weekday and a weekend day apart, and a week as one run.
+  const runs = () => page.evaluate(() => document.querySelectorAll('[data-prof="load"] svg[data-line="w"] .pl').length);
+  const runs1 = await runs(), seg1 = await page.evaluate(() => document.querySelector('[data-prof="load"] [data-pk="dm"] .seg-btn[data-val="day2"]').textContent);
   await page.click('[data-prof="load"] [data-pk="dm"] .seg-btn[data-val="week"]');
-  const s2 = await sampleNow();
+  const s2 = await sampleNow(), runs2 = await runs();
   check('B daily variability sets each season: one day, a weekday and a weekend day, a week, never chosen in Assumptions', s0.v === 'day' && s1.v === 'day2' && s2.v === 'week' && s0.off && /daily variability/.test(s2.why), [s0.v, s1.v, s2.v].join(' → ') + '; ' + s2.why);
+  check('B Weekdays/end draws the weekday and the weekend day apart, a full week in one run', seg1 === 'Weekdays/end' && runs1 === 2 && runs2 === 1, seg1 + ': ' + runs1 + ' runs, a week ' + runs2);
   // Dragging a daily bar changes that day.
   const before = await page.evaluate(() => __cx.app.model.load.f7);
   const bars = page.locator('[data-prof="load"] svg[data-bars="d"]'), box = await bars.boundingBox();
@@ -789,12 +813,33 @@ console.log('\n── B the page ──');
   await page.mouse.down(); await page.mouse.up();
   const after = await page.evaluate(() => __cx.app.model.load.f7);
   check('B a daily bar drags that day of the week', !Array.isArray(before) && Array.isArray(after) && after.length === 7 && after[6] < 0.84 && after[0] === 0.97, JSON.stringify(after));
-  // The template, filled in as a week in MW, read back by the page.
+  // The template, picked from its menu, filled in as a week in MW, read back by the page.
   await page.selectOption('#cxProfile', 'custom');
-  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('[data-prof="load"] [data-act="tpl"]')]);
-  const tplText = readFileSync(await dl.path(), 'utf8');
-  const tplOk = await page.evaluate(t => { const g = CX.readProfileFile(CX.csvRows(t), { kind: 'load', who: 'x', climate: 'sum', peak: 1000 }); return g.errors.length ? g.errors[0] : g.ts.r; }, tplText);
+  const tplOf = async (sel, r) => {
+    await page.click(sel + ' [data-act="tpl"]');
+    await page.waitForSelector('#tplMenu.is-open', { timeout: 3000 });
+    const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#tplMenu .share-opt[data-r="' + r + '"]')]);
+    return readFileSync(await dl.path(), 'utf8');
+  };
+  const tplRead = (t, kind) => page.evaluate(([t, kind]) => { const g = CX.readProfileFile(CX.csvRows(t), { kind, who: 'x', climate: __cx.plan().climate, peak: 1000 }); return g.errors.length ? g.errors[0] : g.ts.r; }, [t, kind]);
+  const dataRows = t => t.split('\r\n').filter(l => /^[A-Za-z]*,?\d\d:00,/.test(l)).length;
+  const tplText = await tplOf('[data-prof="load"]', 'week');
+  const tplOk = await tplRead(tplText, 'load');
   check('B the load\'s template is a week of every season with its notes, and reads back', tplOk === 'week' && /^"# Capacity Expansion Planner/.test(tplText) && tplText.split('\r\n').filter(l => /^(Mon|Sun),/.test(l)).length === 48, tplOk + ', ' + tplText.split('\r\n').length + ' lines');
+  const tplDay = await tplOf('[data-prof="load"]', 'day'), tplDay2 = await tplOf('[data-prof="load"]', 'day2');
+  const got1 = await tplRead(tplDay, 'load'), got2 = await tplRead(tplDay2, 'load');
+  const shut = await page.evaluate(() => !document.querySelector('#tplMenu.is-open') && document.querySelector('[data-prof="load"] [data-act="tpl"]').getAttribute('aria-expanded') === 'false' && document.activeElement === document.querySelector('[data-prof="load"] [data-act="tpl"]'));
+  check('B the template menu also gives one typical day and a weekday and a weekend day, each reading back at its days', got1 === 'day' && got2 === 'day2' && dataRows(tplDay) === 24 && dataRows(tplDay2) === 48 && shut,
+    got1 + ' (' + dataRows(tplDay) + ' rows), ' + got2 + ' (' + dataRows(tplDay2) + ' rows), closed ' + shut);
+  // The keyboard: ArrowDown opens it on its first row, Escape closes it back to the button.
+  await page.focus('[data-prof="load"] [data-act="tpl"]');
+  await page.keyboard.press('ArrowDown');
+  const keyOpen = await page.evaluate(() => !!document.querySelector('#tplMenu.is-open') && document.activeElement === document.querySelector('#tplMenu .share-opt[data-r="day"]'));
+  await page.keyboard.press('End');
+  const keyEnd = await page.evaluate(() => document.activeElement === document.querySelector('#tplMenu .share-opt[data-r="week"]'));
+  await page.keyboard.press('Escape');
+  const keyShut = await page.evaluate(() => !document.querySelector('#tplMenu.is-open') && document.activeElement === document.querySelector('[data-prof="load"] [data-act="tpl"]'));
+  check('B the template menu is driven by the keyboard as the Share menu is', keyOpen && keyEnd && keyShut, [keyOpen, keyEnd, keyShut].join(' '));
   const Hs = [...Array(24).keys()];
   const weekCsv = 'Day,Hour,Summer [MW],Autumn [MW],Winter [MW],Spring [MW]\n' + CX.DAYS.flatMap((d, i) => Hs.map(h => { const v = 900 + 300 * Math.sin(Math.PI * Math.max(0, h - 6) / 16) * (i >= 5 ? 0.8 : 1); return [d, h, (v * 1.1).toFixed(1), (v * 0.9).toFixed(1), v.toFixed(1), (v * 0.95).toFixed(1)].join(','); })).join('\n');
   const choose = async (sel, name, text) => { const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click(sel)]); await fc.setFiles({ name, mimeType: 'text/csv', buffer: Buffer.from(text) }); };
@@ -819,6 +864,10 @@ console.log('\n── B the page ──');
   await page.waitForFunction(id => __cx.app.model.tech.find(e => e.id === id).prof.base === 'custom', pvId, { timeout: 15000 });
   const pvCf = await page.evaluate(id => { const e = __cx.app.model.tech.find(x => x.id === id), S = CX.sample(__cx.app.model, __cx.plan()); return { cf: CX.fmt.pct(100 * CX.avail(e, S).cf), text: document.querySelector('.tech-card[data-id="' + id + '"] .tech-derived').textContent, cfShown: !!document.querySelector('.tech-card[data-id="' + id + '"] input[data-k="cf"]') }; }, pvId);
   check('B a solar farm from a file reports the capacity factor its hours give, and asks for none', pvCf.text.indexOf('capacity factor of ' + pvCf.cf + '%') >= 0 && !pvCf.cfShown, pvCf.text.slice(-50));
+  // A farm's Custom has the same template menu: its one typical day from the file, cut into a weekday and a weekend day.
+  const pvTpl = await tplOf(card, 'day2'), pvR = await tplRead(pvTpl, 'pv');
+  const pvMsg = await page.evaluate(c => document.querySelector(c + ' .up-msg').textContent, card);
+  check('B a solar farm\'s template menu gives a weekday and a weekend day from its one typical day, and says so', pvR === 'day2' && dataRows(pvTpl) === 48 && /\r\nWeekend,00:00,/.test(pvTpl) && /from .+one typical day/.test(pvMsg), pvR + ', ' + dataRows(pvTpl) + ' rows; ' + pvMsg.slice(0, 90));
   check('B no page errors', page.__errors.length === 0, page.__errors.join(' | ').slice(0, 200));
   await ctx.close();
   // A plan saved before the profiles opens as it was: the load's shape and sampling from its form.

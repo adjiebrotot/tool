@@ -55,6 +55,8 @@ more than the best of them.
 
 **A5. Profiles from a file** (`cx-profiles.js`). A template read back is the profile it was
 written from, for the load, a solar and a wind farm, at every sampling and climate. Every
+template its menu offers (one typical day, a weekday and a weekend day, a week), cut from a
+profile at any of the three, reads back at its own days with the hours it was written with. Every
 layout the reader promises reads to what it holds: 24, 48 or 168 rows, labelled or in order,
 hours 1 to 24 or 1 PM, days as names (English or Indonesian) or columns, a season and its day
 as columns, a Season column, a week of dates, notes, semicolons with decimal commas, percent
@@ -73,9 +75,12 @@ the same plan from both.
 solved in the page is the same plan as in Node, to the number, and its KPIs say what the
 result says; the Capacity table totals what is in service; the Run gate dims a changed plan
 until it is run; a technology card edits its technology and duplicates it under a new id;
-daily variability sets each season's sampling, shown (never chosen) in Assumptions, and a
-daily bar drags its day; the load's template downloads and reads back; a week in MW opened
+daily variability sets each season's sampling, shown (never chosen) in Assumptions,
+Weekdays/end draws its weekday and weekend day apart and a full week in one run, and a daily
+bar drags its day; each row of the load's template menu downloads a template that reads back
+at its days, and the menu is driven by the keyboard as the Share menu is; a week in MW opened
 from a file sets the peak and the week and solves as in Node; a solar farm from a file reports
-the capacity factor its hours give; a v1 mini cache (a residential week, a day drawn by hand)
+the capacity factor its hours give, and its template menu cuts its day into a weekday and a
+weekend day; a v1 mini cache (a residential week, a day drawn by hand)
 opens as it was and solves as in Node; and hostile saved state opens, reads back to a valid
 plan and solves.

@@ -482,8 +482,8 @@
     var rows = { day: '24 rows, 00:00 to 23:00', day2: '48 rows, Weekday 00:00 to 23:00 then Weekend 00:00 to 23:00', week: '168 rows, Mon 00:00 to Sun 23:00' };
     return [
       '# Capacity Expansion Planner: ' + who + ', ' + C.label + '. This file holds ' + SAMPLE_WORDS[r] + ' (' + rows[r] + ').',
-      load ? '# Rows: for one typical day give 24 rows with no Day column. For a weekday and a weekend day write Weekday or Weekend in the Day column (48 rows). For a full week write Mon to Sun (168 rows).'
-           : '# Rows: for one typical day give 24 rows with no Day column. For a week of weather write Mon to Sun in the Day column (168 rows).',
+      '# Rows: for one typical day give 24 rows with no Day column. For a weekday and a weekend day write Weekday or Weekend in the Day column (48 rows). For a ' +
+        (load ? 'full week' : 'week of weather') + ' write Mon to Sun (168 rows).',
       '# Columns: one a season (' + list(names) + ') ' + (load ? 'per unit of the peak demand: the highest hour of the year is 1. Or in MW with [MW] in the header, which sets the peak demand too.'
            : 'as the share of its rating it can give that hour, from 0 to 1, or in % with [%] in the header. Its capacity factor follows from them.'),
       '# One column alone serves every season. A blank cell, or a season left out, keeps the profile as it is now. Lines that start with # are notes.'
