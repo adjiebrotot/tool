@@ -64,8 +64,8 @@ turns its results back. The check holds the far end at p × efficiency and the l
 module:
 - First render and first solve are quick.
 - Every Quick Start converges within 10 iterations.
-- The KPIs, verdict and all three CSV tables say exactly what the results say, and the
-  verdict warns exactly when a limit is crossed.
+- The KPIs, the subtitle and all three CSV tables say exactly what the results say, and the
+  voltage and loading KPIs turn red exactly when a limit is crossed.
 - A value past a limit is printed with the digits that show it: 0.9497 p.u. against 0.95,
   never 0.950.
 - The SVG export is strict XML, and the PNG is its picture at 2×.

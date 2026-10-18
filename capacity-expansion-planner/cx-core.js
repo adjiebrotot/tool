@@ -703,6 +703,21 @@
         else warnings.push({ id: e.id, msg: n + ' has nothing in service and cannot be built, so it is left out.' });
       } else if(e.exist > 0 && e.retire && e.retire <= o.start)
         warnings.push({ id: e.id, msg: n + '’s existing ' + fmtNum(e.exist) + ' MW retires by ' + e.retire + ', before the first year, so only new builds count.' });
+      /* A decision year stands for every year up to the next, and a plant counts in
+         one when it is in service at its start (PyPSA's rule), so a retirement or a
+         life that ends partway through a step runs, and is paid for, to its end. */
+      if(existsAtStart && e.retire && e.retire <= o.end){
+        var pr = null;
+        P.forEach(function(p){ if(p.year < e.retire) pr = p; });
+        if(pr && pr.year + pr.years > e.retire)
+          warnings.push({ id: e.id, msg: n + ' retires in ' + e.retire + ', partway through decision year ' + pr.year + ' (' + pr.year + ' to ' + (pr.year + pr.years - 1) + '), so the plan keeps it, and its fixed O&M, to ' + (pr.year + pr.years - 1) + '.' });
+      }
+      if(canBuild){
+        var first = P.filter(function(p){ return !e.from || p.year >= e.from; })[0], serve = 0;
+        P.forEach(function(p){ if(CX.active(first.year, e.life, p.year)) serve += p.years; });
+        if(Math.abs(serve - Math.min(e.life, o.end + 1 - first.year)) > 1e-9)
+          warnings.push({ id: e.id, msg: n + '’s ' + fmtNum(e.life) + '-year life ends partway through a decision step, and a plant counts for the whole of each decision year it is in service at, so one built in ' + first.year + ' serves, and pays its annuity, for ' + serve + ' years.' });
+      }
       if((e.kind === 'pv' || e.kind === 'wind') && (existsAtStart || canBuild)){
         checkProfile(e.prof, e.id, n + '’s profile', 'the climate’s ' + (e.kind === 'pv' ? 'sun' : 'wind'));
         var av = CX.avail(e, S);

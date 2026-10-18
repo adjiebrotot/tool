@@ -16,7 +16,7 @@
 //       what the branches lose.
 //   A4b A link with a negative set point loses power, it never makes it.
 //   A5  The engine file is the one its banner names (sha256).
-//   B   The real page in headless Chromium: the KPIs, verdict and CSV say what
+//   B   The real page in headless Chromium: the KPIs, subtitle and CSV say what
 //       the results say; the Run gate is honest; hostile saved state never
 //       breaks it; every export is valid; and it is fast.
 
@@ -274,7 +274,7 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
       const a = window.__lf.app, r = a.res, d = window.__lf.display();
       const txt = id => document.getElementById(id).textContent.trim();
       return { conv: r.report.converged, iters: r.report.iters, mm: r.report.mismatch, totals: r.totals, loss: txt('mLoss'), volt: txt('mVolt'), load: txt('mLoad'),
-               verdict: document.getElementById('verdict').className, title: document.querySelector('#verdict h2').textContent,
+               flagged: ['mVolt', 'mLoad'].some(id => document.getElementById(id).classList.contains('neg')), title: document.getElementById('sldSub').textContent,
                v: Object.values(r.bus).map(b => b.v), loads: Object.values(r.br).map(b => b.load).filter(isFinite), vmin: d.vmin, vmax: d.vmax, lmax: d.loadMax };
     });
     const F = LF.fmt;
@@ -284,7 +284,7 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
     check(`B2 ${key}: the KPIs say what the results say`,
           s.loss === F.p(s.totals.loss) + ' MW' && s.volt === F.vl(lo, s.vmin, s.vmax) + ' to ' + F.vl(hi, s.vmin, s.vmax) && s.load === F.pctl(top, s.lmax) + '%',
           `${s.loss} | ${s.volt} | ${s.load}`);
-    check(`B2 ${key}: the verdict warns exactly when a limit is crossed`, outside === / warn/.test(s.verdict) && s.title.includes(F.p(s.totals.loss) + ' MW lost'), s.title.slice(0, 90));
+    check(`B2 ${key}: the KPIs turn red exactly when a limit is crossed, and the subtitle states the losses`, outside === s.flagged && s.title.includes('Losses ' + F.p(s.totals.loss) + ' MW.'), s.title.slice(0, 90));
     // The CSV of every table carries the same numbers.
     for (const kind of ['bus', 'branch', 'device']) {
       await page.click(`#tableTabs .seg-btn[data-val="${kind}"]`);

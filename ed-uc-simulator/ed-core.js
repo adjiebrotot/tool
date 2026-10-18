@@ -727,6 +727,18 @@
       var kw = { bus: pyName(e.bus), p_nom: e.p_nom, marginal_cost: e.marginal_cost, p_max_pu: allOne(avail) ? 1 : avail };
       var com = e.committable && o.mode !== 'ed';
       var up = e.ramp_limit_up < 1 ? e.ramp_limit_up : NaN, down = e.ramp_limit_down < 1 ? e.ramp_limit_down : NaN;
+      /* A committable unit's start-up and shut-down ramps. PyPSA writes its ramp rows
+         with the change in status, so a start-up hour also has to clear the shut-down
+         ramp less the ramp down, and the hour before a shut-down the start-up ramp less
+         the ramp up. Left at the full rating, a unit that ramps 31% an hour could only
+         start at 69% or more, and load was shed instead. A unit that starts reaches at
+         most its minimum plus one hour's ramp up, and one that stops falls from at most
+         its minimum plus one hour's ramp down, which leaves those floors at or below its
+         minimum. Off before the first hour, it starts no higher than that in it too,
+         as PyPSA has it from p_init (PSA.js has no ramp row in the first hour). */
+      var suRamp = Math.min(1, up + e.p_min_pu), sdRamp = Math.min(1, down + e.p_min_pu);
+      var startCap = com && !e.init && !isNaN(up) && suRamp < avail[0];
+      if(startCap){ avail = avail.slice(); avail[0] = suRamp; kw.p_max_pu = avail; }
       if(com && !fixed){
         kw.committable = true;
         kw.p_min_pu = e.p_min_pu;
@@ -735,18 +747,18 @@
         // "Running before" has already met its minimum up time, "off" its minimum down time.
         kw.up_time_before = e.init ? Math.max(1, e.min_up_time) : 0;
         kw.down_time_before = e.init ? 0 : Math.max(1, e.min_down_time);
-        if(!isNaN(up)) kw.ramp_limit_up = up;
-        if(!isNaN(down)) kw.ramp_limit_down = down;
+        if(!isNaN(up)){ kw.ramp_limit_up = up; kw.ramp_limit_start_up = suRamp; }
+        if(!isNaN(down)){ kw.ramp_limit_down = down; kw.ramp_limit_shut_down = sdRamp; }
       } else if(com && fixed){
         var st = fixed[e.id];
         // Off, it stays out, except as the next unit to start: above the dearest
         // unit running in that hour it may set the price.
         kw.p_max_pu = avail.map(function(a, t){ return st[t] || e.marginal_cost >= fixed.top[t] ? a : 0; });
         kw.p_min_pu = st.map(function(s, t){ return s ? Math.min(e.p_min_pu, avail[t]) : 0; });
-        // A start-up or shut-down hour is not ramp limited (PyPSA's own start-up and
-        // shut-down ramps are left at the full rating).
-        if(!noRamp && !isNaN(up)) kw.ramp_limit_up = st.map(function(s, t){ return t > 0 && s && !st[t - 1] ? NaN : up; });
-        if(!noRamp && !isNaN(down)) kw.ramp_limit_down = st.map(function(s, t){ return t > 0 && !s && st[t - 1] ? NaN : down; });
+        // A start-up hour rises by its start-up ramp and a shut-down hour falls by its
+        // shut-down ramp, as in the commitment run.
+        if(!noRamp && !isNaN(up)) kw.ramp_limit_up = st.map(function(s, t){ return t > 0 && s && !st[t - 1] ? suRamp : up; });
+        if(!noRamp && !isNaN(down)) kw.ramp_limit_down = st.map(function(s, t){ return t > 0 && !s && st[t - 1] ? sdRamp : down; });
       } else {
         if(!isNaN(up)) kw.ramp_limit_up = up;
         if(!isNaN(down)) kw.ramp_limit_down = down;

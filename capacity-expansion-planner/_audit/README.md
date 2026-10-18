@@ -14,7 +14,10 @@ their range and profiles that make no sense all read back to a valid plan and ne
 every Quick Start written and read again is the same plan; only values that differ from the
 defaults are written. A plan saved before the profiles (v1), upgraded with the form it was
 saved with (its Load profile and Each season), samples the year exactly as the v1 rules did,
-written out here: every climate, sampling, still day and load shape, one drawn by hand.
+written out here: every climate, sampling, still day and load shape, one drawn by hand. A
+decision year counts in whole (a plant in service at its start serves all of its years, as
+PyPSA has it), so a retirement or a life that ends partway through a step is named in Checks
+with the year it runs to, and one the step divides is not.
 
 **A1. The typical days, rebuilt from their documented rules** by code written here, for every
 climate, daily variability (none, a weekday and a weekend day, a week), still day on and off
@@ -69,7 +72,7 @@ is held to an averaging written out here: each day to its season by its month or
 cell, each week's hour the mean of its weekday's hours, the peak day apart. Every layout the
 reader promises reads to what it holds: 24, 48 or 168 rows, labelled or in order, hours 1 to
 24 or 1 PM, days as names (English or Indonesian) or columns, a season and its day as
-columns, a Season column, a week of dates, notes, semicolons with decimal commas, percent
+columns, a Season column, a week of dates, notes, semicolons with decimal commas, tabs with thousands separators (1,234.5), percent
 cells, a season left out or a blank cell kept, and a peak day by its Day or Season cell or
 among a column a season. A load in MW sets the peak demand; a farm in %, or above 1, is read
 as a share; a load's seasons set the climate. A bad file (an hour missing or twice, off the

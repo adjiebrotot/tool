@@ -1050,7 +1050,9 @@
     var first = 0;
     while(first < K && !(totals[first] >= 0.5)) first++;
     var lead = buildsIn(res, first).slice(0, 2).map(function(id){ return F.mw(res.tech[id].built[first]) + ' MW of ' + nameById(id); });
-    var title = 'Build <span class="v-num">' + F.mw(T.built) + ' MW</span> by ' + years[K - 1] + ', starting with ' + list(lead) + ' in ' + years[first] + '.';
+    // One decision year has nothing to start with: it builds all of it then.
+    var title = K === 1 ? 'Build <span class="v-num">' + F.mw(T.built) + ' MW</span> in ' + years[0] + ', led by ' + list(lead) + '.'
+      : 'Build <span class="v-num">' + F.mw(T.built) + ' MW</span> by ' + years[K - 1] + ', starting with ' + list(lead) + ' in ' + years[first] + '.';
     var body = [];
     var big = first;
     totals.forEach(function(v, k){ if(v > totals[big] + 1e-6) big = k; });
@@ -1102,7 +1104,7 @@
     var clean = T.gen[K - 1] > 0 ? 100 * T.cleanGen[K - 1] / T.gen[K - 1] : NaN;
     $('mCleanLabel').innerHTML = '<span class="tip-wrap">Clean energy in ' + last + ' <i class="tip-icon" data-tip="The share of that year’s generation from plants that emit no CO2. Storage moves energy, so it is not counted.">?</i></span>';
     $('mClean').textContent = F.pct(clean) + '%';
-    $('mCleanSub').textContent = 'CO2 ' + F.co2(T.emis[0]) + ' in ' + res.periods[0] + ', ' + F.co2(T.emis[K - 1]) + ' in ' + last + '.' +
+    $('mCleanSub').textContent = 'CO2 ' + F.co2(T.emis[0]) + ' in ' + res.periods[0] + (K > 1 ? ', ' + F.co2(T.emis[K - 1]) + ' in ' + last : '') + '.' +
       (shedAll > SHED_NOTE ? ' Unserved: ' + sharePct(shedAll) + '% of demand.' : '');
     renderCharts();
     renderTable();
@@ -1279,6 +1281,7 @@
     if(o.stress) li.push('<strong>A still, overcast day at the peak</strong> stands for ' + CX.STRESS.days + ' days of ' + S.peakSeason.toLowerCase() + ', with a quarter of the sun and a tenth of the wind.');
     li.push('<strong>One copper-plate bus:</strong> every plant can serve every load, with no grid limits or losses, and every hour is known in advance.');
     li.push('<strong>Capital is paid as an annuity at ' + F.pct(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan, and every year’s cost is discounted to ' + o.start + ' at the same rate. All money is at ' + o.start + ' prices.');
+    if(o.step > 1) li.push('<strong>A decision year counts in whole:</strong> a plant in service in it runs, and is paid for, in every year it stands for, so a retirement or a life that ends partway through a step runs on to the step’s end.');
     var sol = m.tech.filter(function(e){ return isPvWind(e) && (e.exist > 0 || e.build); });
     var own = sol.filter(function(e){ return !CX.isCustom(e.prof); }), filed = sol.filter(function(e){ return CX.isCustom(e.prof); });
     var weather = own.filter(function(e){ return e.prof.dv && S.sample === 'week'; });

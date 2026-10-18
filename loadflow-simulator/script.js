@@ -793,9 +793,9 @@
            F_('b', 'Magnetising susceptance', 'p.u.', { min: -1, max: 1, step: 0.0001, tip: UNIT_TIP.tx_b, show: tcustom }),
            F_('model', 'Equivalent circuit', '', { kind: 'seg', opts: [['t', 'T model'], ['pi', 'π model']], tip: UNIT_TIP.tx_model })],
     Generator: [F_('control', 'Control', '', { kind: 'seg', opts: [['Slack', 'Slack'], ['PV', 'PV'], ['PQ', 'PQ']] }),
-           // A slack's dispatch only counts when the slack is distributed: each unit then
-           // supplies its dispatch plus its share of what is left over.
-           F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: function(e){ return e.control === 'Slack' ? UNIT_TIP.slack_p : UNIT_TIP.gen_p; }, show: function(e){ return e.control !== 'Slack' || $('lfDistSlack').checked; } }),
+           // A slack's dispatch only counts when the slack is distributed: each unit, PV
+           // and PQ ones too, then supplies its dispatch plus its share of what is left over.
+           F_('p_set', 'Active power', 'MW', { min: -1e5, max: 1e5, tip: function(e){ return e.control === 'Slack' || $('lfDistSlack').checked ? UNIT_TIP.slack_p : UNIT_TIP.gen_p; }, show: function(e){ return e.control !== 'Slack' || $('lfDistSlack').checked; } }),
            F_('q_set', 'Reactive power', 'MVAr', { min: -1e5, max: 1e5, tip: UNIT_TIP.q_set, show: function(e){ return e.control === 'PQ'; } }),
            F_('vset', 'Voltage set point', 'p.u.', { min: 0.5, max: 1.5, step: 0.001, tip: UNIT_TIP.gen_vset, show: function(e){ return e.control !== 'PQ' && e.bus; } }),
            F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: UNIT_TIP.p_nom }),
@@ -1036,6 +1036,7 @@
     if(!f || !isFinite(x)) return;
     var range = f.range ? f.range(e) : [f.min, f.max];
     if(x < range[0] || x > range[1]) return; // the change event pulls it back
+    if(f.step === 1) x = Math.round(x);       // a count or a tap step is whole even mid-typing
     setVal(e, f, x);
     changeFromField('f' + e.id + k);
   });

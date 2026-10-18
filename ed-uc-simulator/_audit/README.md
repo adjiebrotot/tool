@@ -27,7 +27,9 @@ PSA.js or PyPSA:
   a time, within its rating;
 - every unit stays between its minimum (while on) and its available output, a committable unit
   is on or off (or between, in the relaxation), ramp limits hold between two hours it runs in,
-  and minimum up and down times hold, counted from its state before the first hour;
+  a unit that starts reaches at most its minimum plus one hour's ramp up and the hour before it
+  stops runs at most its minimum plus one hour's ramp down, and minimum up and down times hold,
+  counted from its state before the first hour;
 - start-ups and shut-downs follow the commitment;
 - storage energy follows what flows in and out at the square root of the round-trip efficiency,
   stays within its capacity and ends where it started when it is cyclic;
@@ -46,6 +48,15 @@ running units' minimums, shedding at the value of lost load. The tool's mixed-in
 cost no more than the cheapest of them plus HiGHS's 0.01% gap, and no less than it minus the
 solver's feasibility tolerance. The linear relaxation and economic dispatch of the same case are
 relaxations of it, so they must never cost more.
+
+**A3b. A ramp limit never stops a unit starting or stopping.** PyPSA writes a committable unit's
+ramp rows with the change in status, so with its start-up and shut-down ramps left at the full
+rating a unit that ramps 31% an hour could start only at 69% of its rating or more, and stop only
+from 52% or more, and load was shed instead. One 217 MW unit (minimum 41%, ramps 48% up and 31%
+down) must serve 100 MW for two hours from off, from the first hour, and until it stops, each at
+its cost with nothing shed; asked for 217 MW for two hours between idle ones, it starts at its
+minimum plus a ramp and stops from its minimum plus a ramp down. The same networks solved in
+PyPSA 1.4 give the same answers.
 
 **A4. The prices are marginal costs.** On an uncongested case, a unit running strictly between
 its limits sets the price at its bus to its marginal cost; a unit at its available output is no
@@ -82,8 +93,9 @@ saying why, when it is short at the start, the end or both, misses an hour, repe
 change), is half-hourly, has no dates, or holds a word, a blank or a date that is not one; one bad
 column turns the whole file away. Dates written ISO, day first, month first with AM and PM, with a
 month name or a two-digit year land on their hours; commas, semicolons with decimal commas and
-tabs, % and MW headers, negatives and values above a rating are read as they say. A load in MW
-gets the file's highest hour as its peak. The Excel template holds real date cells read back from
+tabs, % and MW headers, negatives and values above a rating are read as they say, and a number
+with both marks takes the last as its decimal (1,234.5 in a tab-separated file, 1.234,5 with
+semicolons). A load in MW gets the file's highest hour as its peak. The Excel template holds real date cells read back from
 the serial number, and 1904-system and .xls workbooks are read too.
 
 **A9. Fast:** 302,400 profile values (420 loads and units over 30 days) in a few milliseconds, the
