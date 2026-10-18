@@ -29,7 +29,9 @@
 
    3D MODELS: the wheel, slot machine and Galton board are three.js models
    (models3d.js) whenever WebGL is available, with the original 2D versions
-   as the fallback. The models are driven by the same numbers as the 2D
+   as the fallback. Each scene (the die's too) is built the first time its
+   mode is shown, so opening the page pays for one scene, not four. The
+   models are driven by the same numbers as the 2D
    versions (wheel angle, reel pixel offset, ball path), so they only show
    an outcome that was already decided. On the 3D board a ball's path ends
    on top of its bin's pile instead of at the bin mouth; the coin flips that
@@ -124,7 +126,7 @@ let choices = [];
 let animating = false;
 let persistApi = null;
 let lastPick = null; // { index, name } — drives the "remove from list" action
-let gl = null;       // { wheel, slot, galton } three.js models, or null to use the 2D versions
+let gl = null;       // {} when the 3D models are in use (each filled in by model() once shown), null for the 2D versions
 let celebrateUntil = 0;
 const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 function isLight() { return document.body.classList.contains('light'); }
@@ -176,12 +178,26 @@ function setMode(mode) {
   hideNoWinFlash();
   updateActionAvailability();
   // Canvases sized while hidden read back as 0, so refresh once visible.
-  if (mode === 'dice') refreshDice();
+  if (mode === 'dice') { ensureDice(); refreshDice(); }
   if (mode === 'galton') { invalidateGaltonBoard(); drawGaltonBoard(null); }
   if (mode === 'wheel') buildWheel();
   if (mode === 'slot') refreshSlot3D();
+  markShareStage();
   kickIdle();
   if (persistApi) persistApi.schedule();
+}
+
+/* SHARE / EMBED. The Share menu on the stage card (SharedShare in shared.js)
+   links to or embeds the picker on screen, on its own: the stage of the
+   current mode carries data-share-chart, so its id (stage-wheel, stage-dice,
+   stage-slot, stage-galton) is what an embed or a link names, for good.
+   data-share-sig says what the stage shows; an embed waits for it to settle. */
+function markShareStage() {
+  document.querySelectorAll('.stage').forEach(st => {
+    const on = st.id === 'stage-' + currentMode;
+    st.toggleAttribute('data-share-chart', on);
+    if (on) st.setAttribute('data-share-sig', [currentMode, isLight() ? 'light' : 'dark', choices.length, choices.join('\n')].join('|'));
+  });
 }
 
 document.querySelectorAll('.mode-tab').forEach(btn => {
@@ -198,16 +214,31 @@ document.querySelectorAll('.mode-tab').forEach(btn => {
    Either way the outcome is picked by the same code before anything moves. */
 function initModels() {
   if (typeof M3D === 'undefined' || !M3D.available()) return null;
-  try {
-    return {
-      wheel: M3D.Wheel($('wheel3dCanvas')),
-      slot: M3D.SlotMachine($('slot3dCanvas')),
-      galton: M3D.GaltonBoard($('galton3dCanvas'))
-    };
-  } catch (e) {
-    console.warn('3D models unavailable, using 2D', e);
-    return null;
+  return {};
+}
+
+const MODEL_BUILD = {
+  wheel: () => M3D.Wheel($('wheel3dCanvas')),
+  slot: () => M3D.SlotMachine($('slot3dCanvas')),
+  galton: () => M3D.GaltonBoard($('galton3dCanvas'))
+};
+/* A mode's model, built the first time that mode is on screen. null while
+   it is not built yet (there is nothing to update until it is shown) and
+   whenever the 2D versions are in use. A model that fails to build switches
+   every mode back to 2D, so check gl again after a null. */
+function model(name) {
+  if (!gl) return null;
+  if (!gl[name] && currentMode === name) {
+    try {
+      gl[name] = MODEL_BUILD[name]();
+    } catch (e) {
+      console.warn('3D models unavailable, using 2D', e);
+      gl = null;
+      document.body.classList.remove('gl3d');
+      return null;
+    }
   }
+  return gl[name] || null;
 }
 
 function sizeModel(model, el) {
@@ -228,17 +259,18 @@ let idleRaf = 0, idleLast = 0;
 function idleLoop(now) {
   idleRaf = 0;
   if (!gl || document.hidden || (currentMode !== 'wheel' && currentMode !== 'slot')) return;
+  const m = gl[currentMode];
+  if (!m) return;
   if (!animating && now - idleLast > 32) {
     const dt = Math.min(0.05, (now - idleLast) / 1000);
     idleLast = now;
     if (currentMode === 'wheel') {
-      gl.wheel.settleFlapper(dt);
-      gl.wheel.tick(now / 1000, bulbMode(now));
-      gl.wheel.render();
+      m.settleFlapper(dt);
+      m.tick(now / 1000, bulbMode(now));
     } else {
-      gl.slot.tick(now, bulbMode(now));
-      gl.slot.render();
+      m.tick(now, bulbMode(now));
     }
+    m.render();
   }
   idleRaf = requestAnimationFrame(idleLoop);
 }
@@ -251,7 +283,7 @@ document.addEventListener('visibilitychange', kickIdle);
 let wheelRotation = 0;
 
 function resetWheelRotation() {
-  if (gl) gl.wheel.setRotation(0);
+  if (gl && gl.wheel) gl.wheel.setRotation(0);
   const c = $('wheelCanvas');
   c.style.transition = 'none';
   c.style.transform = 'rotate(0deg)';
@@ -264,15 +296,17 @@ function wheelColors(n) {
 }
 
 function buildWheel() {
-  if (gl) {
-    sizeModel(gl.wheel, $('wheel3d'));
-    gl.wheel.setTheme(isLight());
-    gl.wheel.setSegments(choices, wheelColors(choices.length));
-    gl.wheel.setRotation(wheelRotation);
-    gl.wheel.tick(performance.now() / 1000, bulbMode(performance.now()));
-    gl.wheel.render();
+  const m = model('wheel');
+  if (m) {
+    sizeModel(m, $('wheel3d'));
+    m.setTheme(isLight());
+    m.setSegments(choices, wheelColors(choices.length));
+    m.setRotation(wheelRotation);
+    m.tick(performance.now() / 1000, bulbMode(performance.now()));
+    m.render();
     return;
   }
+  if (gl) return; // 3D, but the wheel is not on screen yet: it is drawn when it is
   const canvas = $('wheelCanvas');
   const { cssW, cssH } = sizeCanvasForDPR(canvas);
   const dpr = window.devicePixelRatio || 1;
@@ -345,7 +379,8 @@ function spinWheel() {
     const total = spins * 360 + delta;
     wheelRotation += total;
 
-    if (gl) {
+    const m = model('wheel');
+    if (m) {
       // Same ease and duration as the CSS transition, driven frame by frame so
       // the flapper can react to each peg.
       const from = wheelRotation - total, to = wheelRotation;
@@ -355,9 +390,9 @@ function spinWheel() {
         const t = Math.max(0, Math.min(1, (now - t0) / WHEEL_SPIN_MS));
         const dt = Math.min(0.05, Math.max(0, now - last) / 1000);
         last = now;
-        gl.wheel.setRotation(t < 1 ? from + total * WHEEL_EASE(t) : to, dt);
-        gl.wheel.tick(now / 1000, bulbMode(now));
-        gl.wheel.render();
+        m.setRotation(t < 1 ? from + total * WHEEL_EASE(t) : to, dt);
+        m.tick(now / 1000, bulbMode(now));
+        m.render();
         if (t < 1) requestAnimationFrame(frame);
         else resolve(result);
       };
@@ -399,9 +434,9 @@ let TEXT_UP = null;     // per face: the direction the writing reads "up", in th
 let DIE_CORNERS = null;
 let three = null;
 
-/* Each face carries one choice, engraved into the plastic and painted, in
-   place of pips. Face f holds choice f; faces past the end of the list are
-   engraved "Nobody", the rolls that pick no one. */
+/* Each face carries one choice, painted on, in place of pips. Face f holds
+   choice f; faces past the end of the list read "Nobody", the rolls that
+   pick no one. */
 const DIE_BLANK = 'Nobody';
 function dieFaceLabel(face) {
   return face <= Math.min(choices.length, 6) ? choices[face - 1] : null;
@@ -412,7 +447,7 @@ function themeDieColors() {
     body: '#f6f2e9',                          // ivory acetate
     ink: '#c8121c',                           // casino red
     blank: '#5d6470',                         // slate, for the faces that pick nobody
-    shadow: document.body.classList.contains('light') ? 0.2 : 0.42
+    shadow: document.body.classList.contains('light') ? 0.75 : 1
   };
 }
 
@@ -429,28 +464,20 @@ function drawDieLabel(g, S, lay, fill) {
   g.fillStyle = fill;
   lay.lines.forEach((ln, i) => g.fillText(ln, S / 2, S / 2 + (i - (lay.lines.length - 1) / 2) * lay.lh));
 }
-function scaledLayout(lay, k) { return { lines: lay.lines, px: lay.px * k, lh: lay.lh * k }; }
-
 function dieCanvas(S) {
   const c = document.createElement('canvas');
   c.width = c.height = S;
   return c;
 }
 
-// Colour map: ivory face with the label painted into its engraving.
+// Colour map: an ivory face with the label painted on, a faint dark lip
+// round the paint so it reads as printed rather than floating.
 function makeFaceTexture(lay, blank, col) {
   const S = 512;
   const c = dieCanvas(S);
   const g = c.getContext('2d');
   g.fillStyle = col.body;
   g.fillRect(0, 0, S, S);
-  // Faint mottling so the plastic does not read as a flat CG fill.
-  for (let i = 0; i < 900; i++) {
-    g.fillStyle = `rgba(${Math.random() < 0.5 ? '120,100,70' : '255,255,255'},${0.018 + Math.random() * 0.02})`;
-    const x = Math.random() * S, y = Math.random() * S, rr = 4 + Math.random() * 18;
-    g.beginPath(); g.arc(x, y, rr, 0, Math.PI * 2); g.fill();
-  }
-  // Worn lip where the paint meets the plastic, then the paint itself, in shade.
   g.save();
   g.lineJoin = 'round';
   g.strokeStyle = 'rgba(90,60,40,0.22)';
@@ -460,57 +487,10 @@ function makeFaceTexture(lay, blank, col) {
   lay.lines.forEach((ln, i) => g.strokeText(ln, S / 2, S / 2 + (i - (lay.lines.length - 1) / 2) * lay.lh));
   g.restore();
   drawDieLabel(g, S, lay, blank ? col.blank : col.ink);
-  drawDieLabel(g, S, lay, 'rgba(20,0,0,0.22)');
   const tex = new THREE.CanvasTexture(c);
   tex.anisotropy = 8;
   if (THREE.sRGBEncoding !== undefined) tex.encoding = THREE.sRGBEncoding;
   return tex;
-}
-
-/* Normal map: the label is cut into the face. The engraving is a blurred
-   mask of the text used as a height field (sunk where the text is), and the
-   normals are its slope, so light catches the far wall of every stroke. */
-function makeEngravingMaps(lay) {
-  const S = 256;
-  const mask = dieCanvas(S);
-  const mg = mask.getContext('2d');
-  mg.fillStyle = '#000';
-  mg.fillRect(0, 0, S, S);
-  mg.filter = 'blur(1.4px)'; // ignored where unsupported: the bevel is just crisper
-  drawDieLabel(mg, S, scaledLayout(lay, S / 512), '#fff');
-  mg.filter = 'none';
-  const a = mg.getImageData(0, 0, S, S).data;
-  const h = (x, y) => a[(Math.min(S - 1, Math.max(0, y)) * S + Math.min(S - 1, Math.max(0, x))) * 4] / 255;
-
-  const nc = dieCanvas(S);
-  const ng = nc.getContext('2d');
-  const img = ng.createImageData(S, S);
-  const d = img.data;
-  const depth = 2.4;
-  for (let y = 0; y < S; y++) {
-    for (let x = 0; x < S; x++) {
-      const nx = depth * (h(x + 1, y) - h(x - 1, y)) / 2;
-      const ny = -depth * (h(x, y + 1) - h(x, y - 1)) / 2;
-      const len = Math.hypot(nx, ny, 1);
-      const o = (y * S + x) * 4;
-      d[o] = Math.round((nx / len * 0.5 + 0.5) * 255);
-      d[o + 1] = Math.round((ny / len * 0.5 + 0.5) * 255);
-      d[o + 2] = Math.round((1 / len * 0.5 + 0.5) * 255);
-      d[o + 3] = 255;
-    }
-  }
-  ng.putImageData(img, 0, 0);
-  const normal = new THREE.CanvasTexture(nc);
-  normal.anisotropy = 8;
-
-  /* Surface map shared by clearcoat (red channel) and roughness (green): the
-     plastic is lacquered and glossy, the paint down in the engraving is matte. */
-  const sc = dieCanvas(S);
-  const sg = sc.getContext('2d');
-  sg.fillStyle = 'rgb(255,82,0)';
-  sg.fillRect(0, 0, S, S);
-  drawDieLabel(sg, S, scaledLayout(lay, S / 512), 'rgb(30,190,0)');
-  return { normal, surface: new THREE.CanvasTexture(sc) };
 }
 
 function makeShadowTexture() {
@@ -538,27 +518,20 @@ function applyDieTextures(force) {
   if (Array.isArray(three.die.material)) {
     three.die.material.forEach(m => {
       if (m.map) m.map.dispose();
-      if (m.normalMap) m.normalMap.dispose();
-      if (m.roughnessMap) m.roughnessMap.dispose();
       m.dispose();
     });
   }
   const measure = dieCanvas(8).getContext('2d');
   three.die.material = labels.map(label => {
     const lay = layoutDieLabel(measure, 512, label);
-    const { normal, surface } = makeEngravingMaps(lay);
-    return new THREE.MeshPhysicalMaterial({
+    return new THREE.MeshStandardMaterial({
       map: makeFaceTexture(lay, label == null, col),
-      normalMap: normal,
-      roughness: 1,
-      roughnessMap: surface,
-      clearcoat: 1,
-      clearcoatMap: surface,
-      clearcoatRoughness: 0.12,
+      roughness: 0.3,
       metalness: 0
     });
   });
-  three.floor.material.opacity = col.shadow;
+  three.shadowK = col.shadow;
+  updateDieShadow();
 }
 
 /* Reads the writing direction of each face off the geometry's UVs: the
@@ -585,8 +558,17 @@ function faceTextUp(geo) {
   return out;
 }
 
+// Built the first time the dice are shown (see setMode).
+let diceTried = false;
+function ensureDice() {
+  if (diceTried) return;
+  diceTried = true;
+  three = initThree();
+  applyDieTextures(true);
+}
+
 function initThree() {
-  if (typeof THREE === 'undefined') {
+  if (typeof THREE === 'undefined' || typeof M3D === 'undefined' || !M3D.available()) {
     $('diceFallback').hidden = false;
     $('diceCanvas').style.display = 'none';
     return null;
@@ -607,8 +589,6 @@ function initThree() {
   if (THREE.sRGBEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
   scene.environment = M3D.studioEnvironment(renderer);
@@ -619,42 +599,28 @@ function initThree() {
   scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.25));
   const key = new THREE.DirectionalLight(0xfff6ea, 1.1);
   key.position.set(4, 10, 5);
-  key.castShadow = true;
-  key.shadow.mapSize.set(1024, 1024);
-  key.shadow.camera.left = -8; key.shadow.camera.right = 8;
-  key.shadow.camera.top = 8; key.shadow.camera.bottom = -8;
-  key.shadow.camera.near = 1; key.shadow.camera.far = 30;
-  key.shadow.bias = -0.0006;
-  key.shadow.normalBias = 0.02;
-  key.shadow.radius = 5;
   scene.add(key);
 
-  const dieGeo = M3D.roundedBox(2, 2, 2, DIE_EDGE_R, 7);
+  const dieGeo = M3D.roundedBox(2, 2, 2, DIE_EDGE_R, 4);
   TEXT_UP = faceTextUp(dieGeo);
   const die = new THREE.Mesh(dieGeo, []);
-  die.castShadow = true;
   die.position.y = 1;
   // Face 2 on top, its writing turned a little off square so it reads naturally.
   const up2 = TEXT_UP[2];
   if (up2) die.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.atan2(-0.3, -1) - Math.atan2(up2.x, up2.z));
   scene.add(die);
 
-  // The table only shows the shadow the key light casts on it.
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.25 }));
-  floor.rotation.x = -Math.PI / 2;
-  floor.receiveShadow = true;
-  scene.add(floor);
-
-  // Soft contact shadow: the occlusion right under the die a light alone misses.
+  // Soft painted shadow under the die (no shadow map: it is the one shadow
+  // the table needs, and a shadow map costs a depth pass every frame).
   const shadow = new THREE.Mesh(
-    new THREE.PlaneGeometry(3.4, 3.4),
+    new THREE.PlaneGeometry(3.8, 3.8),
     new THREE.MeshBasicMaterial({ map: makeShadowTexture(), transparent: true, depthWrite: false })
   );
   shadow.rotation.x = -Math.PI / 2;
   shadow.position.y = 0.005;
   scene.add(shadow);
 
-  return { renderer, scene, camera, die, floor, shadow, rolling: false };
+  return { renderer, scene, camera, die, shadow, shadowK: 1, rolling: false };
 }
 
 /* Tray the die is allowed to roam: the patch of table the camera sees,
@@ -723,7 +689,7 @@ function updateDieShadow() {
   three.shadow.position.x = p.x;
   three.shadow.position.z = p.z;
   three.shadow.scale.setScalar(0.8 + 0.5 * (1 - k));
-  three.shadow.material.opacity = 0.15 + 0.85 * k;
+  three.shadow.material.opacity = (0.15 + 0.85 * k) * three.shadowK;
 }
 
 /* Rigid-body throw of a rounded cube. Collision uses the eight corner
@@ -1017,7 +983,7 @@ function applyReel(R) {
   R.strip.style.transform = `translate3d(0,${off}px,0)`;
   const b = Math.min(7, Math.abs(R.vel) / 420);
   R.strip.style.filter = b > 0.25 ? `blur(${b.toFixed(2)}px)` : 'none';
-  if (gl) gl.slot.setReel(R.i, R.pos, SLOT_ITEM_H, Math.abs(R.vel));
+  if (gl && gl.slot) gl.slot.setReel(R.i, R.pos, SLOT_ITEM_H, Math.abs(R.vel));
 }
 
 // Symbol colours follow the name, so duplicate lines print identically.
@@ -1049,10 +1015,14 @@ function buildSlotReels3D() {
 
 function refreshSlot3D() {
   if (!gl || currentMode !== 'slot') return;
-  sizeModel(gl.slot, $('slot3d'));
-  gl.slot.setTheme(isLight());
-  gl.slot.tick(performance.now(), bulbMode(performance.now()));
-  gl.slot.render();
+  const fresh = !gl.slot;
+  const m = model('slot');
+  if (!m) return;
+  if (fresh) { buildSlotReels3D(); return; } // prints the reels, then comes back here
+  sizeModel(m, $('slot3d'));
+  m.setTheme(isLight());
+  m.tick(performance.now(), bulbMode(performance.now()));
+  m.render();
 }
 
 function buildSlotStrips() {
@@ -1085,12 +1055,12 @@ function buildSlotStrips() {
     R.pos = ((i * 2 + 1) * SLOT_ITEM_H) % R.loopLen; // stagger the idle offsets
     applyReel(R);
   });
-  if (gl) buildSlotReels3D();
+  if (gl && gl.slot) buildSlotReels3D();
 }
 
 function pullLever() {
   const lever = $('slotLever');
-  if (gl) gl.slot.pull(performance.now());
+  if (gl && gl.slot) gl.slot.pull(performance.now());
   lever.classList.add('pulled');
   setTimeout(() => lever.classList.remove('pulled'), 210);
 }
@@ -1149,14 +1119,14 @@ function spinSlot() {
           if (t >= 1) {
             R.pos = R.to; R.vel = 0; R.state = 'done';
             R.el.classList.add('landed');
-            if (gl) gl.slot.flashReel(R.i, now);
+            if (gl && gl.slot) gl.slot.flashReel(R.i, now);
             setTimeout(() => R.el.classList.remove('landed'), 300);
             done++;
           }
         }
         applyReel(R);
       });
-      if (gl) { gl.slot.tick(now, bulbMode(now)); gl.slot.render(); }
+      if (gl && gl.slot) { gl.slot.tick(now, bulbMode(now)); gl.slot.render(); }
 
       if (done < 3) requestAnimationFrame(frame);
       else resolve(result);
@@ -1168,10 +1138,10 @@ function spinSlot() {
 $('slotLever').addEventListener('click', () => { if (currentMode === 'slot') onAction(); });
 // On the 3D machine the lever is part of the model: clicking it pulls.
 $('slot3dCanvas').addEventListener('click', e => {
-  if (gl && currentMode === 'slot' && gl.slot.hitsLever(e.clientX, e.clientY)) onAction();
+  if (gl && gl.slot && currentMode === 'slot' && gl.slot.hitsLever(e.clientX, e.clientY)) onAction();
 });
 $('slot3dCanvas').addEventListener('mousemove', e => {
-  if (!gl) return;
+  if (!gl || !gl.slot) return;
   $('slot3dCanvas').style.cursor = !animating && gl.slot.hitsLever(e.clientX, e.clientY) ? 'pointer' : '';
 });
 $('slotLever').addEventListener('keydown', e => {
@@ -1238,24 +1208,26 @@ function renderGalton3D(balls) {
   const canvas = $('galton3dCanvas');
   const rect = canvas.getBoundingClientRect();
   if (!rect.width) return;
-  gl.galton.resize(rect.width, rect.height);
+  const m = model('galton');
+  if (!m) return;
+  m.resize(rect.width, rect.height);
   if (boardDirty) {
     const layout = galtonLayout3D();
     const key = [Math.round(layout.cssW), Math.round(layout.cssH), layout.rows, layout.valid, isLight()].join(':');
-    if (key !== galtonBoardKey) { galtonBoardKey = key; gl.galton.build(layout, isLight()); }
-    gl.galton.setCounts(galtonCounts, choices);
+    if (key !== galtonBoardKey) { galtonBoardKey = key; m.build(layout, isLight()); }
+    m.setCounts(galtonCounts, choices);
     boardDirty = false;
   }
   const list = !balls ? [] : (Array.isArray(balls) ? balls : [balls]);
-  gl.galton.setFlying(list);
-  gl.galton.render();
+  m.setFlying(list);
+  m.render();
 }
 
 /* In 3D a ball does not vanish into a bar: it drops through the mouth of its
    bin and comes to rest on top of the pile. Only the end of the path changes;
    the coin flips that chose the bin are untouched. */
 function landOnPile(path, layout, pending) {
-  if (!gl) return;
+  if (!gl || !gl.galton) return;
   const bin = path.slot;
   const before = (galtonCounts[bin] || 0) + (pending[bin] || 0);
   pending[bin] = (pending[bin] || 0) + 1;
@@ -1349,7 +1321,7 @@ function renderGaltonStatic() {
 
 // Takes a single { x, y } ball, an array of them (batch drops), or null.
 function drawGaltonBoard(balls) {
-  if (gl) { renderGalton3D(balls); return; }
+  if (gl) { renderGalton3D(balls); if (gl) return; }
   const canvas = $('galtonCanvas');
   const { dpr } = sizeCanvasForDPR(canvas);
   if (boardDirty || !boardCanvas || boardCanvas.width !== canvas.width || boardCanvas.height !== canvas.height) {
@@ -1470,7 +1442,7 @@ async function dropGaltonBall() {
   const path = planGaltonPath(layout);
   landOnPile(path, layout, {});
   const ball = { stops: path.stops, slot: path.slot, delay: 0, landed: false };
-  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), gl ? gl.galton.ballRadiusPx() : 6.5);
+  await animateGaltonDrops([ball], layout, Math.max(90, 200 - layout.rows * 6), gl && gl.galton ? gl.galton.ballRadiusPx() : 6.5);
 
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
@@ -1505,7 +1477,7 @@ async function dropGaltonBatch(n) {
 
   galtonSkip = false;
   $('galtonSkipBtn').hidden = false;
-  await animateGaltonDrops(balls, layout, hop, gl ? gl.galton.ballRadiusPx() : 5.4);
+  await animateGaltonDrops(balls, layout, hop, gl && gl.galton ? gl.galton.ballRadiusPx() : 5.4);
   $('galtonSkipBtn').hidden = true;
   galtonSkip = false;
   drawGaltonBoard(null);
@@ -1597,7 +1569,7 @@ function slump(el, ms) {
 function showNoWin(mode, res) {
   if (mode === 'slot') {
     slump(document.querySelector('.slot-cabinet'), 620);
-    if (gl && !reduceMotion) gl.slot.shake(performance.now(), 'lose');
+    if (gl && gl.slot && !reduceMotion) gl.slot.shake(performance.now(), 'lose');
     flashNoWin('slotFlash', 'No match — pull again');
   } else if (mode === 'dice') {
     slump($('diceScene'), 620);
@@ -1722,7 +1694,7 @@ async function onAction() {
     burstConfetti();
     if (gl && (currentMode === 'wheel' || currentMode === 'slot')) celebrateUntil = performance.now() + 2400;
     if (currentMode === 'slot') {
-      if (gl && !reduceMotion) gl.slot.shake(performance.now(), 'win');
+      if (gl && gl.slot && !reduceMotion) gl.slot.shake(performance.now(), 'win');
       const cab = document.querySelector('.slot-cabinet');
       cab.classList.add('win');
       setTimeout(() => cab.classList.remove('win'), 540);
@@ -1740,7 +1712,8 @@ $('themeToggle').addEventListener('click', () => {
   drawGaltonBoard(null);
   applyDieTextures();
   refreshDice();
-  if (gl) buildSlotReels3D(); // symbol colours follow the theme palette
+  if (gl && gl.slot) buildSlotReels3D(); // symbol colours follow the theme palette
+  markShareStage();
 });
 
 // ── RECOMPUTE ON CHOICE EDITS ────────────────────────────────────────────
@@ -1756,6 +1729,7 @@ function recomputeAll() {
   buildSlotStrips();
   buildGalton();
   if (currentMode === 'dice') refreshDice();
+  markShareStage();
 }
 // Rebuild only once the user leaves the textarea; rebuilding on every keystroke
 // re-rendered the wheel, dice, slots and Galton board constantly.
@@ -1770,23 +1744,46 @@ window.addEventListener('resize', debounce(() => {
 }, 150));
 
 // ── INIT ─────────────────────────────────────────────────────────────────
+let ready = false; // set once the page is built; a load before that is drawn by the init below
 persistApi = Persist.init('randompicker', {
   extra: {
     save() { return { mode: currentMode }; },
-    restore(ex) { if (ex && ex.mode) currentMode = ex.mode; }
+    // A mode this page no longer has (or a link's garbage) keeps the current one.
+    restore(ex) { if (ex && ACTION_LABEL[ex.mode]) currentMode = ex.mode; }
+  },
+  onRestore() {
+    if (!ready) return;
+    recomputeAll();
+    setMode(currentMode);
   }
 });
+// An embed opens straight on its own mode, so the frame never builds the wheel's scene first.
+{
+  const emb = /^stage-(\w+)$/.exec((SharedShare.embedded && SharedShare.embedded.key) || '');
+  if (emb && ACTION_LABEL[emb[1]]) currentMode = emb[1];
+}
+// A link or an embed carries the same blob the mini cache keeps: the choices and the mode.
+SharedShare.state({
+  save: () => persistApi.snapshot(),
+  load: blob => persistApi.load(blob)
+});
+Object.keys(ACTION_LABEL).forEach(mode => SharedShare.view('stage-' + mode, {
+  load() {
+    if (animating || (mode === 'dice' && choices.length > 6)) return;
+    setMode(mode);
+  }
+}));
 gl = initModels();
 document.body.classList.toggle('gl3d', !!gl);
 initSlotReels();
-three = initThree();
 setMode(currentMode);
 recomputeAll();
+ready = true;
 // Canvas text only uses DM Sans once it has loaded, so repaint anything drawn before that.
 if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(() => {
     applyDieTextures(true);
-    if (gl) gl.wheel.invalidate();
+    if (gl && gl.wheel) gl.wheel.invalidate();
     recomputeAll();
     refreshDice();
   });

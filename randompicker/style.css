@@ -46,6 +46,8 @@
 
 /* ---------- stage ---------- */
 .stage-card{padding:28px 20px;display:flex;flex-direction:column;align-items:center;min-height:480px;position:relative;overflow:hidden;}
+/* Share sits in the card's corner, clear of the picker, so it takes no row of its own */
+.stage-share{position:absolute;top:14px;right:14px;z-index:2;width:auto;}
 .stage{display:none;width:100%;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
 .stage.active{display:flex;}
 
@@ -148,7 +150,7 @@ body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:no
 #galtonSkipBtn[hidden]{display:none;}
 
 /* ---------- action button ---------- */
-.action-row{display:flex;justify-content:center;padding:4px 0 8px;}
+.action-row{display:flex;justify-content:center;padding:18px 0 0;}
 .btn-action{padding:16px 44px;font-size:1.08rem;font-weight:800;border:none;border-radius:999px;cursor:pointer;color:var(--text-inv);background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 26px rgba(141,187,255,.35);transition:transform 150ms,opacity 150ms;letter-spacing:.02em;font-family:inherit;}
 .btn-action:hover:not(:disabled){transform:translateY(-2px);}
 .btn-action:active:not(:disabled){transform:scale(.97);}
@@ -173,7 +175,10 @@ body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:no
   .sidebar{position:static;}
 }
 @media(max-width:600px){
-  .stage-card{padding:20px 12px;min-height:420px;}
+  /* the picker fills the card's width here, so room above it for Share */
+  .stage-card{padding:58px 12px 20px;min-height:420px;}
+  html.abt-embed .stage-card{padding-top:20px;}
+  .stage-share{left:12px;right:12px;top:12px;}  /* full width, as every cluster is on a phone */
   .dice-scene{height:300px;}
   .slot-machine{transform:scale(.84);}
   .slot3d{height:380px;}

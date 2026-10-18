@@ -3172,7 +3172,13 @@
      A cluster may also carry ⬇ GIF for an animated chart: its row sits after
      PNG and shows only while that button does, and the tool's ⧉ handler can
      pass copyImage a third argument, { gif: fn, onDone: fn }, to put the
-     animation on the clipboard where the browser allows it. */
+     animation on the clipboard where the browser allows it.
+
+     A tool that is not a chart (the Random Picker's wheel) can share itself
+     with no picture to download: an empty <div class="btn-cluster"
+     data-share="tool"> gets a menu of Share as link and Embed as HTML alone,
+     always shown, and its dialog, credit line and watermark say "tool"
+     where a chart's say "chart". */
   function makeShare(){
     var TEXT = {
       en: { share: 'Share', shareTitle: 'Download, copy, link or embed this chart',
@@ -3190,7 +3196,13 @@
             backlink: 'Try your own scenarios at',
             long: 'This code is {kb} KB, because the data the chart draws travels inside it.',
             tooBig: 'This chart carries too much data to fit in a link. Embed a smaller part of it.',
-            failed: 'This chart could not be loaded here.', openTool: 'Open the tool' },
+            failed: 'This chart could not be loaded here.', openTool: 'Open the tool',
+            // A data-share="tool" cluster: the words that would say "chart".
+            tool: { shareTitle: 'Link to or embed this tool', embed: ['Embed as HTML', 'Interactive tool for your site'],
+                    embedTitle: 'Embed this tool',
+                    embedNote: 'Paste this into any web page. The tool stays interactive and opens set up as you have it now, which travels inside the link: nothing is uploaded, but anyone who sees the page can read it. Please keep the credit line under it.',
+                    credit: ['Interactive tool: ', ' by '], noEmbed: 'This tool could not be embedded: ',
+                    backlink: 'Make your own at', failed: 'This tool could not be loaded here.' } },
       id: { share: 'Bagikan', shareTitle: 'Unduh, salin, tautkan, atau sematkan grafik ini',
             svg: ['Unduh sebagai SVG'], png: ['Unduh sebagai PNG'], gif: ['Unduh sebagai GIF'], copy: ['Salin ke papan klip'],
             link: ['Bagikan sebagai tautan', 'Membuka alat ini pada skenario Anda'],
@@ -3206,7 +3218,12 @@
             backlink: 'Coba skenario Anda sendiri di',
             long: 'Kode ini {kb} KB, karena data yang digambar grafik ikut di dalamnya.',
             tooBig: 'Grafik ini membawa terlalu banyak data untuk muat di tautan. Sematkan bagian yang lebih kecil.',
-            failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka alatnya' }
+            failed: 'Grafik ini tidak bisa dimuat di sini.', openTool: 'Buka alatnya',
+            tool: { shareTitle: 'Tautkan atau sematkan alat ini', embed: ['Sematkan sebagai HTML', 'Alat interaktif untuk situs Anda'],
+                    embedTitle: 'Sematkan alat ini',
+                    embedNote: 'Tempel kode ini di halaman web mana pun. Alatnya tetap interaktif dan terbuka seperti yang Anda atur sekarang, yang ikut di dalam tautannya: tidak ada yang diunggah, tetapi siapa pun yang melihat halaman itu bisa membacanya. Mohon biarkan baris kredit di bawahnya.',
+                    credit: ['Alat interaktif: ', ' oleh '], noEmbed: 'Alat ini tidak bisa disematkan: ',
+                    backlink: 'Buat versi Anda sendiri di', failed: 'Alat ini tidak bisa dimuat di sini.' } }
     };
     var LINK_ICO = '<svg viewBox="0 0 24 24" width="15" height="15" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/></svg>';
     // Share as link and Embed are drawn by this menu, not by a button the tool binds.
@@ -3221,6 +3238,16 @@
     function keyNow(key){ return Object.prototype.hasOwnProperty.call(aliases, key) ? aliases[key] : key; }
 
     function T(){ return TEXT[pageLang()]; }
+    // The words for one menu: a tool's (data-share="tool") say "tool" for "chart".
+    function W(m){
+      var t = T();
+      if(!m || !m.tool) return t;
+      var w = {}, k;
+      for(k in t) w[k] = t[k];
+      for(k in t.tool) w[k] = t.tool[k];
+      return w;
+    }
+    function toolCluster(card){ return !!(card && card.querySelector('.btn-cluster[data-share="tool"]')); }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
     function html(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function attr(s){ return html(s).replace(/"/g, '&quot;'); }
@@ -3245,8 +3272,9 @@
         var k = b.tagName === 'BUTTON' ? kindOf(b) : null;
         if(k && !src[k]){ src[k] = b; if(!first) first = b; }
       });
-      if(!first) return;
-      var t = T();
+      var tool = cluster.getAttribute('data-share') === 'tool';
+      if(!first && !tool) return;
+      var t = W({ tool: tool });
       var wrap = document.createElement('span');
       wrap.className = 'share-menu';
       var toggle = document.createElement('button');
@@ -3280,10 +3308,10 @@
       var hold = document.createElement('span');
       hold.className = 'share-src';
       hold.hidden = true;
-      cluster.insertBefore(wrap, first);
+      cluster.insertBefore(wrap, first || cluster.firstChild);
       cluster.insertBefore(hold, wrap.nextSibling);
       ['svg', 'png', 'gif', 'copy'].forEach(function(k){ if(src[k]) hold.appendChild(src[k]); });
-      var m = { cluster: cluster, wrap: wrap, toggle: toggle, list: list, src: src };
+      var m = { cluster: cluster, wrap: wrap, toggle: toggle, list: list, src: src, tool: tool };
       cluster.__share = m;
       menus.push(m);
       wire(m);
@@ -3295,7 +3323,7 @@
     }
     function shown(b){ return !!b && !b.hidden && b.style.display !== 'none'; }
     function sync(m){
-      var any = shown(m.src.svg) || shown(m.src.png) || shown(m.src.copy);
+      var any = m.tool || shown(m.src.svg) || shown(m.src.png) || shown(m.src.copy);
       m.wrap.style.display = any ? '' : 'none';
       if(!any && current === m) close(m);
     }
@@ -3779,7 +3807,7 @@
       return Promise.all([pack(payload), openLink(home, key, payload)]).then(function(r){
         var src = home + '#embed=' + encodeURIComponent(key) + '&theme=' + theme + '&s=' + r[0];
         var code = '<iframe src="' + attr(src) + '" title="' + attr(chartTitle(card) || toolName()) +
-          '" width="100%" height="' + frameHeight(card, el, extra) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1]) + '\n' + resizer(home);
+          '" width="100%" height="' + frameHeight(card, el, extra) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' + credit(r[1], W(m)) + '\n' + resizer(home);
         return { code: code, src: src, key: key, open: r[1] };
       });
     }
@@ -3839,9 +3867,10 @@
       var m = document.querySelector('meta[property="og:site_name"]');
       return norm(m && m.content) || 'Adjie Brotot Tools';
     }
-    function credit(home){
-      return '<p style="margin:6px 0 0;font-size:13px;text-align:right">' + html(T().credit[0]) +
-        '<a href="' + attr(home) + '">' + html(toolName()) + '</a>' + html(T().credit[1]) + html(siteName()) + '</p>';
+    function credit(home, t){
+      t = t || T();
+      return '<p style="margin:6px 0 0;font-size:13px;text-align:right">' + html(t.credit[0]) +
+        '<a href="' + attr(home) + '">' + html(toolName()) + '</a>' + html(t.credit[1]) + html(siteName()) + '</p>';
     }
 
     /* ── The embed dialog ── */
@@ -3877,7 +3906,8 @@
       document.body.appendChild(ov);
       dlg = { el: ov, code: ov.querySelector('.share-code'), copy: ov.querySelector('.share-copy-code'),
               preview: ov.querySelector('.share-preview'), size: ov.querySelector('.share-embed-size'),
-              choices: ov.querySelector('.share-embed-choices'), back: null, n: 0 };
+              choices: ov.querySelector('.share-embed-choices'), title: ov.querySelector('#shareEmbedTitle'),
+              note: ov.querySelector('.share-embed-note'), back: null, n: 0 };
       var shut = function(){
         ov.classList.remove('is-open');
         if(dlg.back) dlg.back.focus({ preventScroll: true });
@@ -3913,8 +3943,11 @@
         '<div style="max-width:960px;margin:0 auto">' + code + '</div></body></html>';
     }
     function openEmbed(m){
-      var d = dialog(), t = T(), key = keyOf(chartOf(cardOf(m.cluster))), hook = views[key];
+      var d = dialog(), t = W(m), key = keyOf(chartOf(cardOf(m.cluster))), hook = views[key];
       d.back = m.toggle;
+      // One dialog serves every menu, so it takes this menu's words each time.
+      d.title.textContent = t.embedTitle;
+      d.note.textContent = t.embedNote;
       // The view's checklist, all off: an embed carries only the chart unless asked.
       var list = hook && hook.choices ? hook.choices() || [] : [];
       d.choices.innerHTML = list.length ? '<span class="share-embed-inc">' + html(t.include) + '</span><span class="share-embed-opts">' + list.map(function(c){
@@ -3983,7 +4016,7 @@
       a.rel = 'noopener';
       a.title = toolName();
       a.setAttribute('data-no-abbr', '');
-      a.innerHTML = LOGO + '<span>' + html(T().backlink) + ' ' + html(home.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</span>';
+      a.innerHTML = LOGO + '<span>' + html(W({ tool: toolCluster(card) }).backlink) + ' ' + html(home.replace(/^https?:\/\//, '').replace(/\/$/, '')) + '</span>';
       card.appendChild(a);
     }
     // Only the card is left: every sibling on the way up to the body is
@@ -4084,8 +4117,9 @@
         })();
       });
     }
-    function embedFailed(){
-      var t = T(), box = document.createElement('div');
+    function embedFailed(key){
+      var el = key ? findChart(key) : null;
+      var t = W({ tool: toolCluster(cardOf(el)) }), box = document.createElement('div');
       box.className = 'share-embed-fail';
       box.innerHTML = '<p>' + t.failed + '</p><p><a href="' + attr(pageUrl()) + '" target="_blank" rel="noopener">' +
         t.openTool + ': ' + html(toolName()) + '</a></p>';
@@ -4131,7 +4165,7 @@
           // an embed never calls: say so rather than draw half the chart.
           if(embedFetchRefused) throw new Error('this link carries no prices; copy the embed code again');
         })
-        .catch(function(err){ if(global.console) console.warn('Embed:', err); embedFailed(); })
+        .catch(function(err){ if(global.console) console.warn('Embed:', err); embedFailed(E.key); })
         .then(function(){ document.documentElement.classList.remove('abt-embed-wait'); });
     }
     if(EMBED){
