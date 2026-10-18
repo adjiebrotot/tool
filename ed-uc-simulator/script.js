@@ -786,7 +786,8 @@
     if(branches && !o.limits) li.push('<strong>Line and transformer limits are ignored,</strong> so power still splits by reactance but nothing congests.');
     if(has('Generator', function(e){ return e.committable; }) && o.mode !== 'ed')
       li.push('<strong>Committable units start the horizon as set:</strong> one running has met its minimum up time, one off its minimum down time.');
-    if(has('Generator', function(e){ return e.ramp_limit_up < 1 || e.ramp_limit_down < 1; })) li.push('<strong>Ramp limits cap the change in output from one hour to the next;</strong> a start-up or shut-down hour is not limited.');
+    if(has('Generator', function(e){ return e.ramp_limit_up < 1 || e.ramp_limit_down < 1; })) li.push('<strong>Ramp limits cap the change in output from one hour to the next.</strong>' +
+      (o.mode !== 'ed' && has('Generator', function(e){ return e.committable && (e.ramp_limit_up < 1 || e.ramp_limit_down < 1); }) ? ' A committable unit that starts up reaches at most its minimum plus one hour’s ramp up, and one that shuts down falls from at most its minimum plus one hour’s ramp down.' : ''));
     if(has('StorageUnit')){
       var st = m.el.filter(function(e){ return e.c === 'StorageUnit' && ED.onBus(m, e); });
       var cyc = st.every(function(e){ return e.cyclic; });
@@ -981,8 +982,8 @@
     min_down: 'Hours it must stay off once stopped.',
     standby: 'Paid for every hour it is on, whatever it produces.',
     init: 'Its state just before the first hour.<ul><li><strong>Running:</strong> it has already met its minimum up time.</li><li><strong>Off:</strong> it has already met its minimum down time.</li></ul>',
-    ramp_up: 'The most its output can rise from one hour to the next, as a share of its rating. 100% is no limit.',
-    ramp_down: 'The most its output can fall from one hour to the next. 100% is no limit.',
+    ramp_up: 'The most its output can rise from one hour to the next, as a share of its rating. 100% is no limit. A committable unit starting up reaches at most its minimum plus this.',
+    ramp_down: 'The most its output can fall from one hour to the next. 100% is no limit. A committable unit shuts down from at most its minimum plus this.',
     load_p: 'Demand at the profile’s highest hour. The profile scales it hour by hour.',
     store_p: 'The most it can charge or discharge at.',
     store_h: 'How long it can discharge at full power. Energy capacity is power × hours.',
@@ -1367,6 +1368,7 @@
     var f = fieldOf(e, k), x = parseFloat(String(t.value).replace(/−/g, '-').replace(/,/g, ''));
     if(!f || !isFinite(x)) return;
     if(x < f.min || x > f.max) return; // the change event pulls it back
+    if(f.step === 1) x = Math.round(x);   // hours and counts are whole even mid-typing
     setVal(e, f, x);
     changeFromField('f' + e.id + k);
   });

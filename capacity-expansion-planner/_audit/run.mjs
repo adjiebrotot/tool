@@ -304,6 +304,20 @@ console.log('\n── A0 saved plans ──');
   check('A0 a v1 plan, upgraded with its form, samples the year exactly as v1 did', wrong === 0 && worst === 0, n + ' plans (every climate, sampling, still day and profile, one drawn by hand), worst ' + e1(worst) + (wrong ? ', ' + wrong + ' sampled otherwise' : ''));
 }
 
+/* A decision year counts in whole: a plant in service at its start serves all of its
+   years, so a retirement or a life that ends partway through a step runs to the step's
+   end. The Checks say so, with that year, and stay quiet when the step divides it. */
+{
+  const plan = (retire, life) => CX.load({ v: 2, tech: [{ id: 1, name: 'Coal', kind: 'firm', exist: 900, retire, build: 0 }, Object.assign({ id: 2 }, CX.NEW.battery, { life })] });
+  const say = (m, o) => CX.validate(m, o).warnings.map(w => w.msg).filter(x => / retires in |-year life /.test(x)).join(' | ');
+  const o5 = { start: 2026, end: 2050, step: 5 }, o10 = { start: 2026, end: 2050, step: 10 }, o1 = { start: 2026, end: 2050, step: 1 };
+  const a = say(plan(2033, 15), o5), b = say(plan(2036, 15), o5), c = say(plan(2033, 15), o10), d = say(plan(2033, 15), o1), e = say(plan(2048, 23), o5);
+  check('A0 a retirement or a life partway through a decision step is named in Checks with the year it runs to',
+        /retires in 2033.*to 2035\./.test(a) && !/life/.test(a) && !b && /retires in 2033.*to 2035\./.test(c) && /15-year life.*for 20 years/.test(c) && !d &&
+        /retires in 2048.*to 2050\./.test(e) && /23-year life.*for 25 years/.test(e),
+        [a, b, c, d, e].map(x => x || '(none)').join(' || ').slice(0, 160));
+}
+
 /* ── A1: the typical days ── */
 console.log('\n── A1 the typical days ──');
 {

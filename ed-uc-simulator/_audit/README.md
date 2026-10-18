@@ -27,7 +27,9 @@ PSA.js or PyPSA:
   a time, within its rating;
 - every unit stays between its minimum (while on) and its available output, a committable unit
   is on or off (or between, in the relaxation), ramp limits hold between two hours it runs in,
-  and minimum up and down times hold, counted from its state before the first hour;
+  a unit that starts reaches at most its minimum plus one hour's ramp up and the hour before it
+  stops runs at most its minimum plus one hour's ramp down, and minimum up and down times hold,
+  counted from its state before the first hour;
 - start-ups and shut-downs follow the commitment;
 - storage energy follows what flows in and out at the square root of the round-trip efficiency,
   stays within its capacity and ends where it started when it is cyclic;
@@ -46,6 +48,15 @@ running units' minimums, shedding at the value of lost load. The tool's mixed-in
 cost no more than the cheapest of them plus HiGHS's 0.01% gap, and no less than it minus the
 solver's feasibility tolerance. The linear relaxation and economic dispatch of the same case are
 relaxations of it, so they must never cost more.
+
+**A3b. A ramp limit never stops a unit starting or stopping.** PyPSA writes a committable unit's
+ramp rows with the change in status, so with its start-up and shut-down ramps left at the full
+rating a unit that ramps 31% an hour could start only at 69% of its rating or more, and stop only
+from 52% or more, and load was shed instead. One 217 MW unit (minimum 41%, ramps 48% up and 31%
+down) must serve 100 MW for two hours from off, from the first hour, and until it stops, each at
+its cost with nothing shed; asked for 217 MW for two hours between idle ones, it starts at its
+minimum plus a ramp and stops from its minimum plus a ramp down. The same networks solved in
+PyPSA 1.4 give the same answers.
 
 **A4. The prices are marginal costs.** On an uncongested case, a unit running strictly between
 its limits sets the price at its bus to its marginal cost; a unit at its available output is no

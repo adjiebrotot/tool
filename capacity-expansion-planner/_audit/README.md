@@ -14,7 +14,10 @@ their range and profiles that make no sense all read back to a valid plan and ne
 every Quick Start written and read again is the same plan; only values that differ from the
 defaults are written. A plan saved before the profiles (v1), upgraded with the form it was
 saved with (its Load profile and Each season), samples the year exactly as the v1 rules did,
-written out here: every climate, sampling, still day and load shape, one drawn by hand.
+written out here: every climate, sampling, still day and load shape, one drawn by hand. A
+decision year counts in whole (a plant in service at its start serves all of its years, as
+PyPSA has it), so a retirement or a life that ends partway through a step is named in Checks
+with the year it runs to, and one the step divides is not.
 
 **A1. The typical days, rebuilt from their documented rules** by code written here, for every
 climate, daily variability (none, a weekday and a weekend day, a week), still day on and off

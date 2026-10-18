@@ -14,6 +14,8 @@
 //   A3  Unit commitment is optimal: small cases solved again by enumerating
 //       every commitment schedule there is, each dispatched by merit order.
 //       The relaxation and economic dispatch are never dearer than it.
+//   A3b A ramp limit never stops a unit starting or stopping: a ramp-limited
+//       unit serves a load it can carry instead of shedding it.
 //   A4  The prices are marginal costs: a unit running strictly between its
 //       limits on an uncongested system sets the price; one below it runs flat
 //       out, one above it does not run.
@@ -167,6 +169,13 @@ function replay(model, opts, res) {
       if (!both || o.mode === 'lin') continue;
       if (e.ramp_limit_up < 1) bump('ramp', Math.max(0, d.p[t] - d.p[t - 1] - e.ramp_limit_up * e.p_nom - 1e-6));
       if (e.ramp_limit_down < 1) bump('ramp', Math.max(0, d.p[t - 1] - d.p[t] - e.ramp_limit_down * e.p_nom - 1e-6));
+    }
+    // A unit that starts reaches at most its minimum plus one hour's ramp up, and the
+    // hour before it stops runs at most its minimum plus one hour's ramp down.
+    if (com && o.mode === 'uc') for (let t = 0; t < H; t++) {
+      const was = t ? d.status[t - 1] : (e.init ? 1 : 0);
+      if (e.ramp_limit_up < 1 && d.status[t] > 0.5 && was < 0.5) bump('ramp', Math.max(0, d.p[t] - Math.min(1, e.p_min_pu + e.ramp_limit_up) * e.p_nom - 1e-6));
+      if (e.ramp_limit_down < 1 && t && d.status[t] < 0.5 && was > 0.5) bump('ramp', Math.max(0, d.p[t - 1] - Math.min(1, e.p_min_pu + e.ramp_limit_down) * e.p_nom - 1e-6));
     }
     if (com && o.mode === 'uc') {
       const st = d.status.map(Math.round);
@@ -348,6 +357,28 @@ for (let seed = 101; seed <= 115; seed++) {
   check(`A3 seed ${seed}: the relaxation and economic dispatch are never dearer`, lin.report.ok && ed.report.ok &&
         lin.totals.cost <= got * (1 + 1e-6) + 1e-6 && ed.totals.cost <= got * (1 + 1e-6) + 1e-6,
         'relaxed ' + (lin.totals.cost || NaN).toFixed(2) + ', dispatch ' + (ed.totals.cost || NaN).toFixed(2));
+}
+
+/* ── A3b: a ramp limit never stops a unit starting or stopping ──
+   PyPSA writes its ramp rows with the change in status, so with the start-up and
+   shut-down ramps at the full rating a unit that ramps 31% an hour could only start at
+   69% of its rating or more, and only stop from 52% or more: load was shed instead.
+   One 217 MW unit, minimum 41%, ramps 48% up and 31% down, start-up cost 100 and
+   10 per MWh: it must serve 100 MW in the middle two hours, and 100 MW from the first
+   hour (off before) or until the third (running before), for 2,100 or 2,000. */
+console.log('\n── A3b ramp limits and start-ups ──');
+for (const [loads, init, want] of [[[0, 100, 100, 0], 0, 2100], [[100, 100, 100], 0, 3100], [[100, 100, 0, 0], 1, 2000], [[0, 217, 217, 0, 0], 0, null]]) {
+  const peak = Math.max(...loads);
+  const model = ED.load({ v: 1, el: [{ c: 'Bus', id: 1, v_nom: 110, at: [10, 10, 20] },
+    { c: 'Generator', id: 2, bus: 1, p_nom: 217, marginal_cost: 10, committable: 1, p_min_pu: 0.41, start_up_cost: 100, min_up_time: 1, min_down_time: 1,
+      ramp_limit_up: 0.48, ramp_limit_down: 0.31, init },
+    { c: 'Load', id: 3, bus: 1, p_set: peak, prof: Array.from({ length: 24 }, (_, h) => h < loads.length ? loads[h] / peak : 0) }] });
+  const res = await ED.solve(psa, model, { mode: 'uc', hours: loads.length, voll: 10000 });
+  const p = res.report.ok ? res.dev[2].p : [];
+  // Where the load needs more than one hour's ramp from the minimum, the unit starts as high as it may and sheds the rest.
+  const capOk = want !== null || (Math.abs(p[1] - 0.89 * 217) < 1e-4 && Math.abs(p[2] - 0.72 * 217) < 1e-4);
+  check(`A3b load ${loads.join('/')} MW, ${init ? 'running' : 'off'} before: ${want === null ? 'starts at its minimum plus a ramp, stops from its minimum plus a ramp down' : 'served, costs ' + want}`,
+        res.report.ok && (want === null ? capOk : Math.abs(res.totals.cost - want) < 1e-6), res.report.ok ? 'cost ' + res.totals.cost.toFixed(2) + ', output ' + p.map(v => +v.toFixed(2)).join('/') : res.report.error);
 }
 
 /* ── A4: prices are marginal costs ── */

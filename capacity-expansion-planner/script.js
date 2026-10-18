@@ -1279,6 +1279,7 @@
     if(o.stress) li.push('<strong>A still, overcast day at the peak</strong> stands for ' + CX.STRESS.days + ' days of ' + S.peakSeason.toLowerCase() + ', with a quarter of the sun and a tenth of the wind.');
     li.push('<strong>One copper-plate bus:</strong> every plant can serve every load, with no grid limits or losses, and every hour is known in advance.');
     li.push('<strong>Capital is paid as an annuity at ' + F.pct(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan, and every year’s cost is discounted to ' + o.start + ' at the same rate. All money is at ' + o.start + ' prices.');
+    if(o.step > 1) li.push('<strong>A decision year counts in whole:</strong> a plant in service in it runs, and is paid for, in every year it stands for, so a retirement or a life that ends partway through a step runs on to the step’s end.');
     var sol = m.tech.filter(function(e){ return isPvWind(e) && (e.exist > 0 || e.build); });
     var own = sol.filter(function(e){ return !CX.isCustom(e.prof); }), filed = sol.filter(function(e){ return CX.isCustom(e.prof); });
     var weather = own.filter(function(e){ return e.prof.dv && S.sample === 'week'; });
