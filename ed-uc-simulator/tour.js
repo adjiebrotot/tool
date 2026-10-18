@@ -72,7 +72,7 @@ window.__TOUR = {
       target: '#dispCard',
       onEnter: edResults,
       title: '⑧ The charts',
-      body: '<ul><li>Dispatch in merit order, nodal prices, commitment and storage</li>' +
+      body: '<ul><li>Dispatch in merit order (any curtailment under it), nodal prices, commitment and storage</li>' +
             '<li>Click any of them to show that hour on the diagram</li></ul>'
     },
     {
