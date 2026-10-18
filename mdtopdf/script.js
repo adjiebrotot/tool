@@ -131,7 +131,10 @@
     });
     toc.appendChild(title);
     toc.appendChild(ul);
-    root.insertBefore(toc, root.firstChild);
+    // Front matter stays on top, the way it sits in the file.
+    const first = root.firstElementChild;
+    const fm = first && first.classList.contains('md-frontmatter') ? first : null;
+    root.insertBefore(toc, fm ? fm.nextSibling : root.firstChild);
   }
 
   function prepMermaidBlocks(root) {
@@ -186,6 +189,7 @@
   function enhanceTables(root) {
     root.querySelectorAll('table').forEach(table => {
       const parent = table.parentNode;
+      if (parent && parent.closest && parent.closest('table')) return; // nested (front matter)
       if (parent && parent.classList && parent.classList.contains('table-scroll')) return;
       const wrap = document.createElement('div');
       wrap.className = 'table-scroll';
@@ -326,11 +330,175 @@
     stickyRaf = requestAnimationFrame(updateStickyHeader);
   }
 
+  /* ────────────────────────────────────────────────────────────────
+     YAML FRONT MATTER
+     A leading `---` … `---` block (Jekyll, Hugo, Claude skills…) is
+     metadata, not Markdown. Left to marked, the opening fence becomes a
+     rule and the closing one turns the lines above it into a setext <h2>
+     (which then lands in the TOC). It is lifted out first and shown as a
+     key / value table, keys down the left.
+     Only a block that reads as a YAML mapping counts; anything else is
+     left to Markdown exactly as before.
+     ──────────────────────────────────────────────────────────────── */
+  function splitFrontMatter(text) {
+    const m = /^﻿?---[ \t]*\r?\n(?:([\s\S]*?)\r?\n)?(?:---|\.\.\.)[ \t]*(?:\r?\n|$)/.exec(text);
+    if (!m) return null;
+    const data = parseYaml((m[1] || '').split(/\r?\n/));
+    if (!data) return null;
+    return { data, body: text.slice(m[0].length) };
+  }
+
+  // A small YAML reader for front matter: mappings, lists, plain / quoted
+  // scalars, and | or > block scalars. Returns an ordered [[key, value]]
+  // list, or null when the text isn't a YAML mapping.
+  function parseYaml(lines) {
+    let i = 0;
+    const blank = s => /^\s*(#.*)?$/.test(s);
+    const indentOf = s => s.match(/^ */)[0].length;
+    const KEY = /^("(?:[^"\\]|\\.)*"|'(?:[^']|'')*'|[^\s#'"\-[{|>][^:]*?|-[^\s:][^:]*?)[ \t]*:(?:[ \t]+(.*))?$/;
+    function skipBlank() { while (i < lines.length && blank(lines[i])) i++; }
+
+    function unquote(s) {
+      s = s.trim();
+      if (/^"[\s\S]*"$/.test(s)) {
+        return s.slice(1, -1).replace(/\\(["\\\/nt])/g, (_, c) => ({ n: '\n', t: '\t' }[c] || c));
+      }
+      if (/^'[\s\S]*'$/.test(s)) return s.slice(1, -1).replace(/''/g, "'");
+      return s.replace(/\s+#.*$/, '');
+    }
+
+    // | and > scalars: the more-indented lines that follow, kept or folded.
+    function blockScalar(head, ind) {
+      const out = [];
+      let bi = -1;
+      while (i < lines.length) {
+        const ln = lines[i];
+        if (!ln.trim()) { out.push(''); i++; continue; }
+        const d = indentOf(ln);
+        if (d <= ind) break;
+        if (bi < 0) bi = d;
+        out.push(ln.slice(Math.min(bi, d)));
+        i++;
+      }
+      while (out.length && !out[out.length - 1]) out.pop();
+      if (head[0] === '|') return out.join('\n');
+      return out.join('\n').replace(/([^\n])\n(?=[^\n])/g, '$1 ');
+    }
+
+    // A scalar after `key:` or `- `, including plain or quoted text that
+    // continues on more-indented lines.
+    function scalar(first, ind) {
+      if (/^[|>][+-]?\d*\s*(#.*)?$/.test(first)) return blockScalar(first, ind);
+      let s = first;
+      while (i < lines.length && lines[i].trim() && indentOf(lines[i]) > ind &&
+             !(s[0] !== '"' && s[0] !== "'" && KEY.test(lines[i].trim()))) {
+        s += ' ' + lines[i].trim();
+        i++;
+      }
+      return unquote(s);
+    }
+
+    // What follows a bare `key:` or `-`: a nested block, or nothing.
+    function child(ind, allowSameIndentList) {
+      skipBlank();
+      if (i >= lines.length) return '';
+      const d = indentOf(lines[i]);
+      const isItem = /^-(\s|$)/.test(lines[i].trim());
+      if (d > ind || (allowSameIndentList && d === ind && isItem)) return node(d);
+      return '';
+    }
+
+    function node(ind) {
+      skipBlank();
+      return /^-(\s|$)/.test(lines[i].trim()) ? list(ind) : map(ind);
+    }
+
+    function list(ind) {
+      const out = [];
+      for (;;) {
+        skipBlank();
+        if (i >= lines.length) break;
+        const ln = lines[i], d = indentOf(ln);
+        if (d !== ind || !/^-(\s|$)/.test(ln.trim())) {
+          if (d > ind) throw 0;
+          break;
+        }
+        const rest = ln.trim().slice(1).trim();
+        if (!rest || rest[0] === '#') { i++; out.push(child(ind, false)); continue; }
+        if (KEY.test(rest)) {
+          // `- key: value` starts a mapping indented past the dash.
+          lines[i] = ' '.repeat(ind + 2) + rest;
+          out.push(map(ind + 2));
+          continue;
+        }
+        i++;
+        out.push(scalar(rest, ind));
+      }
+      return out;
+    }
+
+    function map(ind) {
+      const out = [];
+      for (;;) {
+        skipBlank();
+        if (i >= lines.length) break;
+        const ln = lines[i], d = indentOf(ln);
+        if (d < ind) break;
+        const m = d === ind && KEY.exec(ln.trim());
+        if (!m) throw 0;
+        i++;
+        const key = unquote(m[1]);
+        const rest = (m[2] || '').trim();
+        out.push([key, (!rest || rest[0] === '#') ? child(ind, true) : scalar(rest, ind)]);
+      }
+      return out;
+    }
+
+    try {
+      skipBlank();
+      if (i >= lines.length) return [];
+      if (indentOf(lines[i]) !== 0) return null;
+      const data = map(0);
+      skipBlank();
+      return i < lines.length ? null : data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // A mapping is a vertical table, one row per key with the key as the row
+  // header on the left; a list is one cell per row. Both nest inside cells
+  // as needed. Rows (not columns) keep it readable however many keys there
+  // are, and let a long front matter split across PDF pages.
+  function frontMatterTable(value, top) {
+    const cls = top ? ' class="md-frontmatter"' : '';
+    if (Array.isArray(value) && value.every(Array.isArray)) {
+      if (!value.length) return '';
+      return '<table' + cls + '><tbody>' +
+        value.map(([k, v]) =>
+          '<tr><th scope="row">' + escHtml(k) + '</th><td>' + frontMatterTable(v) + '</td></tr>').join('') +
+        '</tbody></table>';
+    }
+    if (Array.isArray(value)) {
+      return '<table><tbody>' +
+        value.map(v => '<tr><td>' + frontMatterTable(v) + '</td></tr>').join('') +
+        '</tbody></table>';
+    }
+    return escHtml(value).replace(/\n/g, '<br>');
+  }
+
   function render() {
     if (!state.text) return;
     let html;
     try {
-      html = marked.parse(state.text, { gfm: true, breaks: false, headerIds: false, mangle: false });
+      const fm = splitFrontMatter(state.text);
+      html = (fm ? frontMatterTable(fm.data, true) : '') +
+        marked.parse(fm ? fm.body : state.text, { gfm: true, breaks: false, headerIds: false, mangle: false });
     } catch (e) {
       html = '<p>Could not parse this Markdown.</p>';
     }

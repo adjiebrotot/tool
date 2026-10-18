@@ -252,6 +252,26 @@ body {
 }
 .md-body tbody tr:nth-child(even) td { background: rgba(0,0,0,0.015); }
 
+/* YAML front matter: a key / value table, keys down the left as row headers.
+   Lists and nested mappings become smaller tables inside their cell. */
+.md-body table.md-frontmatter tbody tr td { background: none; }
+.md-body table.md-frontmatter th[scope="row"] {
+  width: 1%;
+  white-space: nowrap;
+  background: var(--input-bg);
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: 700;
+  color: var(--text);
+}
+.md-body table.md-frontmatter table {
+  width: auto;
+  margin: 0;
+  font-size: inherit;
+}
+.md-body table.md-frontmatter table th,
+.md-body table.md-frontmatter table td { padding: 4px 8px; }
+
 /* Sticky table header (screen view only).
    A floating clone of a table's header row, pinned to the top of the
    document scroll area while a long table is scrolled through, so column
