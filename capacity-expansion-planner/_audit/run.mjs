@@ -819,6 +819,7 @@ console.log('\n── A5 profiles from a file ──');
     ['a week of dates and times', 'Timestamp,Load\n' + Array.from({ length: 168 }, (_, i) => { const d = new Date(Date.UTC(2026, 2, 4) + i * 3600e3); return d.toISOString().slice(0, 16).replace('T', ' ') + ',' + (d.getUTCDay() % 6 === 0 ? 0.7 : 1); }).join('\n'), { r: 'week', keys: ['*'], at: [24 * 5, 0.7] }],
     ['a day of dates, day first', 'Date,Load\n' + H.map(h => '04/03/2026 ' + hh(h) + ',' + shape(h)).join('\n'), { r: 'day', keys: ['*'] }],
     ['notes, semicolons and decimal commas', '# A note, with a comma\n"# A quoted note"\nUur;Vraag\n' + H.map(h => h + ';' + String(shape(h)).replace('.', ',')).join('\n'), { r: 'day', keys: ['*'], at: [12, shape(12)] }],
+    ['tabs and thousands separators, in MW', 'Hour\tLoad [MW]\n' + H.map(h => h + '\t' + (2000 * shape(h)).toLocaleString('en-US', { minimumFractionDigits: 1 })).join('\n'), { r: 'day', keys: ['*'], at: [12, shape(12)] }],
     ['percent cells', 'Hour,Load\n' + H.map(h => h + ',' + Math.round(shape(h) * 100) + '%').join('\n'), { r: 'day', keys: ['*'] }],
     ['Fall for Autumn, a column left out kept', 'Hour,Summer,Fall,Winter\n' + H.map(h => [h, 1, 0.8, 0.9].join(',')).join('\n'), { r: 'day', keys: SEAS, kept: 'Spring' }],
     ['a blank cell kept', 'Hour,Load\n' + H.map(h => h + ',' + (h === 3 ? '' : 1)).join('\n'), { r: 'day', keys: SEAS, blank: 1 }],

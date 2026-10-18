@@ -1050,7 +1050,9 @@
     var first = 0;
     while(first < K && !(totals[first] >= 0.5)) first++;
     var lead = buildsIn(res, first).slice(0, 2).map(function(id){ return F.mw(res.tech[id].built[first]) + ' MW of ' + nameById(id); });
-    var title = 'Build <span class="v-num">' + F.mw(T.built) + ' MW</span> by ' + years[K - 1] + ', starting with ' + list(lead) + ' in ' + years[first] + '.';
+    // One decision year has nothing to start with: it builds all of it then.
+    var title = K === 1 ? 'Build <span class="v-num">' + F.mw(T.built) + ' MW</span> in ' + years[0] + ', led by ' + list(lead) + '.'
+      : 'Build <span class="v-num">' + F.mw(T.built) + ' MW</span> by ' + years[K - 1] + ', starting with ' + list(lead) + ' in ' + years[first] + '.';
     var body = [];
     var big = first;
     totals.forEach(function(v, k){ if(v > totals[big] + 1e-6) big = k; });
@@ -1102,7 +1104,7 @@
     var clean = T.gen[K - 1] > 0 ? 100 * T.cleanGen[K - 1] / T.gen[K - 1] : NaN;
     $('mCleanLabel').innerHTML = '<span class="tip-wrap">Clean energy in ' + last + ' <i class="tip-icon" data-tip="The share of that year’s generation from plants that emit no CO2. Storage moves energy, so it is not counted.">?</i></span>';
     $('mClean').textContent = F.pct(clean) + '%';
-    $('mCleanSub').textContent = 'CO2 ' + F.co2(T.emis[0]) + ' in ' + res.periods[0] + ', ' + F.co2(T.emis[K - 1]) + ' in ' + last + '.' +
+    $('mCleanSub').textContent = 'CO2 ' + F.co2(T.emis[0]) + ' in ' + res.periods[0] + (K > 1 ? ', ' + F.co2(T.emis[K - 1]) + ' in ' + last : '') + '.' +
       (shedAll > SHED_NOTE ? ' Unserved: ' + sharePct(shedAll) + '% of demand.' : '');
     renderCharts();
     renderTable();

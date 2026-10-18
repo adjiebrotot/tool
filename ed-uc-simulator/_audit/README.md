@@ -93,8 +93,9 @@ saying why, when it is short at the start, the end or both, misses an hour, repe
 change), is half-hourly, has no dates, or holds a word, a blank or a date that is not one; one bad
 column turns the whole file away. Dates written ISO, day first, month first with AM and PM, with a
 month name or a two-digit year land on their hours; commas, semicolons with decimal commas and
-tabs, % and MW headers, negatives and values above a rating are read as they say. A load in MW
-gets the file's highest hour as its peak. The Excel template holds real date cells read back from
+tabs, % and MW headers, negatives and values above a rating are read as they say, and a number
+with both marks takes the last as its decimal (1,234.5 in a tab-separated file, 1.234,5 with
+semicolons). A load in MW gets the file's highest hour as its peak. The Excel template holds real date cells read back from
 the serial number, and 1904-system and .xls workbooks are read too.
 
 **A9. Fast:** 302,400 profile values (420 loads and units over 30 days) in a few milliseconds, the

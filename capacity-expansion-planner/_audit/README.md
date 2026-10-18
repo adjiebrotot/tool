@@ -72,7 +72,7 @@ is held to an averaging written out here: each day to its season by its month or
 cell, each week's hour the mean of its weekday's hours, the peak day apart. Every layout the
 reader promises reads to what it holds: 24, 48 or 168 rows, labelled or in order, hours 1 to
 24 or 1 PM, days as names (English or Indonesian) or columns, a season and its day as
-columns, a Season column, a week of dates, notes, semicolons with decimal commas, percent
+columns, a Season column, a week of dates, notes, semicolons with decimal commas, tabs with thousands separators (1,234.5), percent
 cells, a season left out or a blank cell kept, and a peak day by its Day or Season cell or
 among a column a season. A load in MW sets the peak demand; a farm in %, or above 1, is read
 as a share; a load's seasons set the climate. A bad file (an hour missing or twice, off the

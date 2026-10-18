@@ -689,6 +689,15 @@ const byNm = (m, n) => m.el.find(e => ED.nameOf(e) === n);
   const o = ED.readProfiles(ED.csvRows(csvOf(r)), m, { H, start }), c = o.changes[0];
   const mw = c && c.ts.v.map(v => v * c.p_set);
   check('A8 a load in MW: its peak demand becomes the file’s highest hour and every hour keeps its MW', !!c && c.p_set === 100 + 3.7 * 47 && mw.every((v, t) => Math.abs(v - (100 + 3.7 * t)) < 0.01), c && c.p_set + ' MW');
+  // A tab-separated file from an English spreadsheet groups thousands with commas: 1,234.5 is
+  // a thousand and more, never 1.2345. With both marks, the last one is the decimal.
+  for (const [name, sep, txt] of [['tabs and thousands separators', '\t', v => v.toLocaleString('en-US', { minimumFractionDigits: 1 })],
+                                  ['semicolons, thousands points and decimal commas', ';', v => v.toLocaleString('de-DE', { minimumFractionDigits: 1 })]]) {
+    const rows = ['Date and time' + sep + 'Homes [MW]'].concat(Array.from({ length: H }, (_, t) => isoAt(s0 + t * HOUR) + sep + txt(1000 + 12.5 * t)));
+    const ot = ED.readProfiles(ED.csvRows(rows.join('\n')), m, { H, start }), ct = ot.changes[0];
+    check(`A8 a file with ${name} reads ${txt(1234.5)} as 1234.5`, !!ct && Math.abs(ct.p_set - (1000 + 12.5 * (H - 1))) < 1e-9 && ct.ts.v.every((v, t) => Math.abs(v * ct.p_set - (1000 + 12.5 * t)) < 0.01),
+          ot.errors.join(' ') || (ct && ct.p_set + ' MW'));
+  }
   // One element: a file with one column of values, whatever its header, is that element's.
   const one = [['When', 'Value']];
   for (let t = 0; t < H; t++) one.push([isoAt(s0 + t * HOUR), '0.7']);

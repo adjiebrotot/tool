@@ -130,7 +130,8 @@
     if(!s) return NaN;
     var pct = s.charAt(s.length - 1) === '%';
     if(pct) s = s.slice(0, -1);
-    if(dc && s.indexOf(',') >= 0) s = s.replace(/\./g, '').replace(',', '.');
+    // With both marks the last one is the decimal: 1.234,5 written with a decimal comma, 1,234.5 without.
+    if(dc && s.indexOf(',') >= 0 && !(s.lastIndexOf('.') > s.lastIndexOf(','))) s = s.replace(/\./g, '').replace(',', '.');
     else if(/^[-+]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(s)) s = s.replace(/,/g, '');
     if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
     var v = parseFloat(s);
