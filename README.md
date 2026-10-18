@@ -198,6 +198,12 @@ and the iframe and the credit line must each stay under 2,500 characters. Links 
 find every field they name still on the page, so a renamed field is caught before it ships. It reuses chart-check's library cache;
 `SHOT=<dir>` saves each embed as it rendered, and `ONLY=<name>` runs one page.
 
+A tool that is not a chart can share itself too: an empty `<div class="btn-cluster" data-share="tool">`
+gets a Share menu of Share as link and Embed as HTML alone, worded as a tool ("Embed this tool",
+"Interactive tool: … by …"). The Random Picker uses it to embed one picker (the wheel, the die,
+the slot machine or the Galton board) with the reader's choices; `node randompicker/_audit/embed.mjs`
+holds that embed to the same promises in every mode.
+
 `node _ref/tip-check.mjs` loads every page and holds every tooltip to the budget that makes one
 readable where it pops up: one thought per tip, 200 characters of rendered text at the outside and
 150 as the aim, no em-dash, and never empty. It also drives every dropdown and segmented control

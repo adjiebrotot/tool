@@ -6,8 +6,13 @@
 
    These only DRAW. Every outcome is decided in script.js before a
    model is asked to move, and the model is then driven to show that
-   outcome. Nothing in this file calls Math.random() to pick anything;
-   the only randomness here is cosmetic (wood grain, plastic mottling).
+   outcome. Nothing in this file calls Math.random() to pick anything.
+
+   KEPT LIGHT ON PURPOSE. The models are a little flat: plain standard
+   materials (no clearcoat), soft painted shadows instead of shadow maps,
+   and modest segment counts. Each costs a shader program or geometry to
+   build before the first frame, and script.js only builds the scene of
+   the mode on screen, so the page opens fast on a phone.
 
    All builders are plain functions that return a small API object,
    so script.js can fall back to its 2D versions when three.js or
@@ -21,7 +26,12 @@ const M3D = (() => {
     if (typeof THREE === 'undefined') return false;
     try {
       const c = document.createElement('canvas');
-      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+      const ctx = c.getContext('webgl2') || c.getContext('webgl');
+      if (!ctx) return false;
+      // Hand the probe's context back now rather than whenever it is collected.
+      const lose = ctx.getExtension('WEBGL_lose_context');
+      if (lose) lose.loseContext();
+      return true;
     } catch (e) { return false; }
   }
 
@@ -113,6 +123,25 @@ const M3D = (() => {
     return colorTexture(c);
   }
 
+  /* A soft painted shadow: a blurred ellipse on a plane, in place of a
+     shadow map (which costs a depth pass per light and its own shaders). */
+  let shadowTex = null;
+  function softShadow(w, h, opacity) {
+    if (!shadowTex) {
+      const c = makeCanvas(128, 128);
+      const g = c.getContext('2d');
+      const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      grad.addColorStop(0, 'rgba(0,0,0,0.6)');
+      grad.addColorStop(0.5, 'rgba(0,0,0,0.26)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = grad;
+      g.fillRect(0, 0, 128, 128);
+      shadowTex = new THREE.CanvasTexture(c);
+    }
+    return new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity, depthWrite: false }));
+  }
+
   // ── Materials ──────────────────────────────────────────────────────────
   // Hex colours are sRGB; the renderer works in linear light, so convert.
   const lin = hex => new THREE.Color(hex).convertSRGBToLinear();
@@ -122,8 +151,8 @@ const M3D = (() => {
     gold: () => new THREE.MeshStandardMaterial({ color: lin(0xf0c064), metalness: 1, roughness: 0.24 }),
     brass: () => new THREE.MeshStandardMaterial({ color: lin(0xe2b86a), metalness: 1, roughness: 0.28 }),
     steel: () => new THREE.MeshStandardMaterial({ color: lin(0xe8ecf0), metalness: 1, roughness: 0.08 }),
-    lacquer: (color, rough) => new THREE.MeshPhysicalMaterial({
-      color: lin(color), roughness: rough == null ? 0.38 : rough, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.1
+    lacquer: (color, rough) => new THREE.MeshStandardMaterial({
+      color: lin(color), roughness: rough == null ? 0.3 : rough * 0.8, metalness: 0
     })
   };
 
@@ -134,7 +163,7 @@ const M3D = (() => {
   function studioEnvironment(renderer) {
     const env = new THREE.Scene();
     env.add(new THREE.Mesh(
-      new THREE.SphereGeometry(30, 32, 16),
+      new THREE.SphereGeometry(30, 16, 8),
       new THREE.MeshBasicMaterial({ color: new THREE.Color(0.32, 0.33, 0.36), side: THREE.BackSide })));
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80),
       new THREE.MeshBasicMaterial({ color: new THREE.Color(0.1, 0.1, 0.11) }));
@@ -163,8 +192,6 @@ const M3D = (() => {
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = opts.exposure || 1;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     if (opts.clipping) renderer.localClippingEnabled = true;
     const scene = new THREE.Scene();
     scene.environment = studioEnvironment(renderer);
@@ -183,16 +210,9 @@ const M3D = (() => {
     return st;
   }
 
-  function shadowLight(scene, pos, span, intensity) {
+  function keyLight(scene, pos, intensity) {
     const key = new THREE.DirectionalLight(0xfff4e6, intensity == null ? 1 : intensity);
     key.position.set(pos[0], pos[1], pos[2]);
-    key.castShadow = true;
-    key.shadow.mapSize.set(2048, 2048);
-    const c = key.shadow.camera;
-    c.left = -span; c.right = span; c.top = span; c.bottom = -span;
-    c.near = 0.5; c.far = 60;
-    key.shadow.bias = -0.0004;
-    key.shadow.normalBias = 0.02;
     scene.add(key);
     scene.add(key.target);
     return key;
@@ -204,7 +224,7 @@ const M3D = (() => {
      radius r around the nearest point of the inner core. Normals come out
      exact. UVs are re-spaced to match (used by the die's face textures). */
   function roundedBox(w, h, d, r, bandSegs) {
-    bandSegs = bandSegs || 5;
+    bandSegs = bandSegs || 3;
     const seg = bandSegs * 2 + 1;
     const geo = new THREE.BoxGeometry(w, h, d, seg, seg, seg);
     const half = [w / 2, h / 2, d / 2];
@@ -252,7 +272,7 @@ const M3D = (() => {
 
   // Row of bulbs with a soft halo each; intensity is set per bulb every tick.
   function bulbString(parent, points, radius, glowTex) {
-    const geo = new THREE.SphereGeometry(radius, 16, 12);
+    const geo = new THREE.SphereGeometry(radius, 10, 8);
     const bulbs = points.map(p => {
       const mat = new THREE.MeshStandardMaterial({ color: lin(0xfff3d0), emissive: lin(0xffb52e), emissiveIntensity: 1, roughness: 0.25 });
       const m = new THREE.Mesh(geo, mat);
@@ -300,22 +320,20 @@ const M3D = (() => {
     camera.lookAt(0, 0.08, 0);
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x3a3a44, 0.35));
-    const key = shadowLight(scene, [-3.2, 4.8, 9], 3.6, 1.05);
+    const key = keyLight(scene, [-3.2, 4.8, 9], 1.05);
 
-    const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.22 }));
-    wall.position.z = -0.55;
-    wall.receiveShadow = true;
+    // The wheel's shadow on the wall, down and to the right of the key light.
+    const wall = softShadow(2 * R + 1.9, 2 * R + 1.9, 0.3);
+    wall.position.set(0.32, -0.3, -0.5);
     scene.add(wall);
 
     // Static frame: a navy backing ring and a gold tube, with bulbs set into it.
-    const backing = new THREE.Mesh(new THREE.CylinderGeometry(R + 0.5, R + 0.5, 0.26, 160).rotateX(Math.PI / 2),
+    const backing = new THREE.Mesh(new THREE.CylinderGeometry(R + 0.5, R + 0.5, 0.26, 96).rotateX(Math.PI / 2),
       mats.lacquer(0x101a33, 0.45));
     backing.position.z = -0.24;
-    backing.castShadow = true; backing.receiveShadow = true;
     scene.add(backing);
-    const frame = new THREE.Mesh(new THREE.TorusGeometry(R + 0.3, 0.13, 32, 220), mats.gold());
+    const frame = new THREE.Mesh(new THREE.TorusGeometry(R + 0.3, 0.13, 12, 120), mats.gold());
     frame.position.z = -0.02;
-    frame.castShadow = true; frame.receiveShadow = true;
     scene.add(frame);
     const glow = glowTexture();
     const bulbPts = [];
@@ -329,27 +347,25 @@ const M3D = (() => {
     // Turning disc.
     const wheel = new THREE.Group();
     scene.add(wheel);
-    const faceCanvas = makeCanvas(2048, 2048);
-    const faceTex = colorTexture(faceCanvas, 16);
-    const face = new THREE.Mesh(new THREE.CircleGeometry(R, 180),
-      new THREE.MeshPhysicalMaterial({ map: faceTex, roughness: 0.5, metalness: 0, clearcoat: 0.8, clearcoatRoughness: 0.12, envMapIntensity: 0.8 }));
+    // The face is painted at half this size: drawFace works in FACE_PX units.
+    const FACE_PX = 2048;
+    const faceCanvas = makeCanvas(FACE_PX / 2, FACE_PX / 2);
+    const faceTex = colorTexture(faceCanvas, 8);
+    const face = new THREE.Mesh(new THREE.CircleGeometry(R, 96),
+      new THREE.MeshStandardMaterial({ map: faceTex, roughness: 0.42, metalness: 0, envMapIntensity: 0.8 }));
     face.position.z = 0.12;
-    face.receiveShadow = true;
     wheel.add(face);
-    const edge = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 0.24, 180, 1, true).rotateX(Math.PI / 2), mats.gold());
-    edge.castShadow = true;
+    const edge = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 0.24, 96, 1, true).rotateX(Math.PI / 2), mats.gold());
     wheel.add(edge);
-    const bead = new THREE.Mesh(new THREE.TorusGeometry(R - 0.012, 0.035, 12, 220), mats.chrome());
+    const bead = new THREE.Mesh(new THREE.TorusGeometry(R - 0.012, 0.035, 6, 120), mats.chrome());
     bead.position.z = 0.12;
     wheel.add(bead);
-    const hubRing = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, 0.1, 64).rotateX(Math.PI / 2), mats.gold());
+    const hubRing = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, 0.1, 40).rotateX(Math.PI / 2), mats.gold());
     hubRing.position.z = 0.17;
-    hubRing.castShadow = true;
     wheel.add(hubRing);
-    const hubDome = new THREE.Mesh(new THREE.SphereGeometry(0.27, 48, 24, 0, TAU, 0, Math.PI / 2).rotateX(Math.PI / 2), mats.chrome());
+    const hubDome = new THREE.Mesh(new THREE.SphereGeometry(0.27, 24, 12, 0, TAU, 0, Math.PI / 2).rotateX(Math.PI / 2), mats.chrome());
     hubDome.scale.z = 0.55;
     hubDome.position.z = 0.21;
-    hubDome.castShadow = true;
     wheel.add(hubDome);
 
     let pegs = null, pegHeads = null;
@@ -359,8 +375,8 @@ const M3D = (() => {
       if (n < 1) { pegs = pegHeads = null; return; }
       const thin = n > 40 ? 0.6 : 1;
       pegs = new THREE.InstancedMesh(
-        new THREE.CylinderGeometry(0.026 * thin, 0.026 * thin, 0.24, 12).rotateX(Math.PI / 2), mats.chrome(), n);
-      pegHeads = new THREE.InstancedMesh(new THREE.SphereGeometry(0.042 * thin, 16, 12), mats.chrome(), n);
+        new THREE.CylinderGeometry(0.026 * thin, 0.026 * thin, 0.24, 8).rotateX(Math.PI / 2), mats.chrome(), n);
+      pegHeads = new THREE.InstancedMesh(new THREE.SphereGeometry(0.042 * thin, 10, 8), mats.chrome(), n);
       const m = new THREE.Matrix4();
       for (let i = 0; i < n; i++) {
         const a = Math.PI / 2 - (i / n) * TAU; // boundary i, clockwise from twelve o'clock
@@ -368,7 +384,6 @@ const M3D = (() => {
         m.makeTranslation(x, y, 0.24); pegs.setMatrixAt(i, m);
         m.makeTranslation(x, y, 0.36); pegHeads.setMatrixAt(i, m);
       }
-      pegs.castShadow = pegHeads.castShadow = true;
       wheel.add(pegs); wheel.add(pegHeads);
     }
 
@@ -379,17 +394,16 @@ const M3D = (() => {
     flapShape.absarc(0, 0, 0.19, 0, Math.PI, false);
     flapShape.bezierCurveTo(-0.19, -0.2, -0.07, -0.44, 0, -0.6);
     const flapGeo = new THREE.ExtrudeGeometry(flapShape, {
-      depth: 0.06, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.045, bevelSegments: 8, curveSegments: 40
+      depth: 0.06, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.045, bevelSegments: 2, curveSegments: 14
     });
     const flapper = new THREE.Group();
     flapper.position.set(0, R + 0.3, 0.36);
     const flapMesh = new THREE.Mesh(flapGeo, mats.lacquer(0xc8141f, 0.3));
-    flapMesh.castShadow = true;
     flapper.add(flapMesh);
-    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.3, 24).rotateX(Math.PI / 2), mats.chrome());
+    const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.3, 16).rotateX(Math.PI / 2), mats.chrome());
     pin.position.z = 0.03;
     flapper.add(pin);
-    const pinCap = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 16), mats.chrome());
+    const pinCap = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 8), mats.chrome());
     pinCap.position.z = 0.18;
     flapper.add(pinCap);
     scene.add(flapper);
@@ -399,8 +413,9 @@ const M3D = (() => {
     const FLAP_MAX = 0.55;
 
     function drawFace(labels, colors) {
-      const S = faceCanvas.width, g = faceCanvas.getContext('2d');
+      const S = FACE_PX, g = faceCanvas.getContext('2d');
       const cx = S / 2, cy = S / 2, r = S / 2;
+      g.setTransform(faceCanvas.width / S, 0, 0, faceCanvas.width / S, 0, 0);
       g.clearRect(0, 0, S, S);
       n = labels.length;
       if (!n) {
@@ -459,7 +474,8 @@ const M3D = (() => {
         g.font = `800 ${fit.px}px "DM Sans", sans-serif`;
         const light = luminance(colors[i]) > 0.6;
         g.fillStyle = light ? '#15202e' : '#ffffff';
-        if (!light) { g.shadowColor = 'rgba(0,0,0,0.35)'; g.shadowBlur = 8; g.shadowOffsetY = 3; }
+        // Shadow sizes are in canvas pixels, which the transform does not scale.
+        if (!light) { g.shadowColor = 'rgba(0,0,0,0.35)'; g.shadowBlur = 4; g.shadowOffsetY = 1.5; }
         g.fillText(fit.text, flipped ? -outer : outer, 0);
         g.restore();
       }
@@ -509,7 +525,7 @@ const M3D = (() => {
         if (dt != null) stepFlapper(deg, dt); else lastDeg = deg;
       },
       settleFlapper(dt) { stepFlapper(lastDeg == null ? 0 : lastDeg, dt); return Math.abs(flap) > 0.002 || Math.abs(flapVel) > 0.02; },
-      setTheme(light) { wall.material.opacity = light ? 0.2 : 0.42; },
+      setTheme(light) { wall.material.opacity = light ? 0.26 : 0.5; },
       tick(t, mode) { for (let k = 0; k < bulbs.count; k++) bulbs.set(k, chase(k, bulbs.count, t, mode)); },
       resize: st.resize,
       render: st.render,
@@ -552,12 +568,12 @@ const M3D = (() => {
     const st = createStage(canvas, { fov: 30, exposure: 1.0, clipping: true });
     const { scene, camera } = st;
     scene.add(new THREE.HemisphereLight(0xffffff, 0x302a2a, 0.4));
-    const key = shadowLight(scene, [-4, 7, 9], 5, 1.0);
+    keyLight(scene, [-4, 7, 9], 1.0);
 
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.18 }));
+    // The cabinet's shadow on the floor, thrown back and to the right.
+    const floor = softShadow(6.4, 4.2, 0.3);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -2.62;
-    floor.receiveShadow = true;
+    floor.position.set(0.7, -2.61, -1.3);
     scene.add(floor);
 
     const machine = new THREE.Group();
@@ -565,24 +581,22 @@ const M3D = (() => {
     const W = 4.3, H = 4.9, D = 2.2;
     const bodyY = -0.17; // body spans y -2.62 .. 2.28, front face at z = 0
     const cherry = mats.lacquer(0x7d0f1b, 0.34);
-    const body = new THREE.Mesh(roundedBox(W, H, D, 0.28, 6), cherry);
+    const body = new THREE.Mesh(roundedBox(W, H, D, 0.28), cherry);
     body.position.set(0, bodyY, -D / 2);
-    body.castShadow = true; body.receiveShadow = true;
     machine.add(body);
 
     // Chrome pinstripes up the front corners.
     const trimMat = mats.chrome();
     for (const sx of [-1, 1]) {
-      const trim = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, H - 0.7, 16), trimMat);
+      const trim = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, H - 0.7, 8), trimMat);
       trim.position.set(sx * (W / 2 - 0.08), bodyY, -0.06);
       machine.add(trim);
     }
 
     // Marquee on top, lit from inside.
     const topY = bodyY + H / 2;
-    const marquee = new THREE.Mesh(roundedBox(W + 0.2, 1.05, D - 0.1, 0.22, 5), mats.lacquer(0x1b1b22, 0.3));
+    const marquee = new THREE.Mesh(roundedBox(W + 0.2, 1.05, D - 0.1, 0.22), mats.lacquer(0x1b1b22, 0.3));
     marquee.position.set(0, topY + 0.5, -D / 2 + 0.02);
-    marquee.castShadow = true;
     machine.add(marquee);
     const signCanvas = makeCanvas(1024, 200);
     {
@@ -623,15 +637,13 @@ const M3D = (() => {
     // A dark housing the reels sit inside, faced with a bevelled chrome frame.
     const tunnelShape = roundedRectShape(WW + 0.3, WH + 0.3, 0.2);
     tunnelShape.holes.push(roundedRectPath(WW, WH, 0.1));
-    const tunnel = new THREE.Mesh(new THREE.ExtrudeGeometry(tunnelShape, { depth: BEZEL_D - 0.08, bevelEnabled: false, curveSegments: 16 }), mats.dark());
+    const tunnel = new THREE.Mesh(new THREE.ExtrudeGeometry(tunnelShape, { depth: BEZEL_D - 0.08, bevelEnabled: false, curveSegments: 8 }), mats.dark());
     tunnel.position.set(0, winY, 0);
-    tunnel.castShadow = true;
     machine.add(tunnel);
     const bezel = new THREE.Mesh(new THREE.ExtrudeGeometry(bezelShape, {
-      depth: 0.06, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 6, curveSegments: 16
+      depth: 0.06, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 2, curveSegments: 8
     }), mats.chrome());
     bezel.position.set(0, winY, BEZEL_D - 0.1);
-    bezel.castShadow = true;
     machine.add(bezel);
 
     // Reels are clipped to the window so only the arc behind the glass shows.
@@ -671,7 +683,7 @@ const M3D = (() => {
     }
     const arrow = new THREE.Shape();
     arrow.moveTo(0, 0.13); arrow.lineTo(0.2, 0); arrow.lineTo(0, -0.13); arrow.lineTo(0, 0.13);
-    const arrowGeo = new THREE.ExtrudeGeometry(arrow, { depth: 0.04, bevelEnabled: true, bevelThickness: 0.015, bevelSize: 0.015, bevelSegments: 3 });
+    const arrowGeo = new THREE.ExtrudeGeometry(arrow, { depth: 0.05, bevelEnabled: false });
     for (const sx of [-1, 1]) {
       const a = new THREE.Mesh(arrowGeo, payMat);
       a.position.set(sx * (WW / 2 + 0.2), winY, BEZEL_D + 0.06);
@@ -679,11 +691,7 @@ const M3D = (() => {
       machine.add(a);
     }
 
-    const glass = new THREE.Mesh(new THREE.PlaneGeometry(WW, WH), new THREE.MeshPhysicalMaterial({
-      color: 0xffffff, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.1, envMapIntensity: 1.6, depthWrite: false
-    }));
-    glass.position.set(0, winY, BEZEL_D + 0.02);
-    machine.add(glass);
+    // The glass is only its streak of reflection: a pane over the reels.
     const streakCanvas = makeCanvas(256, 256);
     {
       const g = streakCanvas.getContext('2d');
@@ -701,29 +709,26 @@ const M3D = (() => {
     machine.add(streak);
 
     // Control deck: a sloped panel with three buttons.
-    const deck = new THREE.Mesh(roundedBox(W - 0.3, 0.7, 0.62, 0.12, 4), mats.lacquer(0x1b1b22, 0.3));
+    const deck = new THREE.Mesh(roundedBox(W - 0.3, 0.7, 0.62, 0.12), mats.lacquer(0x1b1b22, 0.3));
     deck.position.set(0, -1.02, 0.34);
     deck.rotation.x = 0.42;
-    deck.castShadow = true; deck.receiveShadow = true;
     machine.add(deck);
     [[-1.0, 0xffc233], [0, 0x2fbf5a], [1.0, 0xff3b3b]].forEach(([x, col]) => {
-      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.19, 0.1, 32),
-        new THREE.MeshPhysicalMaterial({ color: lin(col), emissive: lin(col), emissiveIntensity: 0.3, roughness: 0.2, clearcoat: 1 }));
+      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.19, 0.1, 20),
+        new THREE.MeshStandardMaterial({ color: lin(col), emissive: lin(col), emissiveIntensity: 0.3, roughness: 0.2 }));
       b.position.set(x, 0.37, 0); // on the deck's top face, tilted with it
-      b.castShadow = true;
       deck.add(b);
     });
 
     // Coin tray.
-    const tray = new THREE.Mesh(roundedBox(3.1, 0.42, 0.9, 0.14, 4), mats.chrome());
+    const tray = new THREE.Mesh(roundedBox(3.1, 0.42, 0.9, 0.14), mats.chrome());
     tray.position.set(0, -2.12, 0.28);
-    tray.castShadow = true; tray.receiveShadow = true;
     machine.add(tray);
     const trayIn = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 0.62), new THREE.MeshStandardMaterial({ color: 0x0c0c10, roughness: 0.8 }));
     trayIn.rotation.x = -Math.PI / 2;
     trayIn.position.set(0, -1.905, 0.3);
     machine.add(trayIn);
-    const slotPlate = new THREE.Mesh(roundedBox(0.9, 0.5, 0.08, 0.04, 3), mats.chrome());
+    const slotPlate = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.5, 0.08), mats.chrome());
     slotPlate.position.set(1.35, -1.68, 0.03);
     machine.add(slotPlate);
     const coinSlit = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.3), new THREE.MeshBasicMaterial({ color: 0x050505 }));
@@ -734,8 +739,7 @@ const M3D = (() => {
     const lever = new THREE.Group();
     lever.position.set(W / 2 + 0.2, 0.05, -1.0);
     machine.add(lever);
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.34, 40).rotateZ(Math.PI / 2), mats.chrome());
-    hub.castShadow = true;
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.34, 24).rotateZ(Math.PI / 2), mats.chrome());
     const hubMount = new THREE.Group();
     hubMount.position.copy(lever.position);
     hubMount.add(hub);
@@ -743,16 +747,14 @@ const M3D = (() => {
     const arm = new THREE.Group();
     arm.position.x = 0.2;
     lever.add(arm);
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.075, 2.3, 24), mats.chrome());
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.075, 2.3, 12), mats.chrome());
     rod.position.y = 1.15;
-    rod.castShadow = true;
     arm.add(rod);
-    const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.14, 24), mats.chrome());
+    const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.14, 12), mats.chrome());
     collar.position.y = 0.12;
     arm.add(collar);
-    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.29, 48, 32), mats.lacquer(0xd0101c, 0.22));
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.29, 24, 16), mats.lacquer(0xd0101c, 0.22));
     knob.position.y = 2.42;
-    knob.castShadow = true;
     arm.add(knob);
     const LEVER_REST = -0.14, LEVER_PULLED = 1.15;
     lever.rotation.x = LEVER_REST;
@@ -817,9 +819,8 @@ const M3D = (() => {
         const mat = new THREE.MeshStandardMaterial({
           map: rl.sharp, roughness: 0.55, metalness: 0, clippingPlanes: clip, emissive: 0xffffff, emissiveIntensity: 0
         });
-        rl.mesh = new THREE.Mesh(reelGeometry(REEL_W, radius, Math.max(96, M * 10)), mat);
+        rl.mesh = new THREE.Mesh(reelGeometry(REEL_W, radius, Math.max(64, M * 6)), mat);
         rl.mesh.position.set(rl.x, winY, REEL_FRONT - radius);
-        rl.mesh.receiveShadow = true;
         machine.add(rl.mesh);
       });
     }
@@ -884,7 +885,7 @@ const M3D = (() => {
         }
         return pullT0 >= 0 || wobble !== null || reels.some(rl => rl.flashT >= 0);
       },
-      setTheme(light) { floor.material.opacity = light ? 0.16 : 0.36; },
+      setTheme(light) { floor.material.opacity = light ? 0.24 : 0.46; },
       resize: st.resize,
       render: st.render
     };
@@ -903,7 +904,7 @@ const M3D = (() => {
     const { scene, camera } = st;
     const K = 0.01;
     scene.add(new THREE.HemisphereLight(0xffffff, 0x3a3228, 0.45));
-    const key = shadowLight(scene, [-2.2, 4.5, 6], 4, 1.1);
+    const key = keyLight(scene, [-2.2, 4.5, 6], 1.1);
 
     const root = new THREE.Group();
     scene.add(root);
@@ -913,18 +914,15 @@ const M3D = (() => {
     const plateCanvas = makeCanvas(2048, 160);
     const plateTex = colorTexture(plateCanvas);
     const steel = mats.steel();
-    const ballGeo = new THREE.SphereGeometry(1, 32, 20);
+    const ballGeo = new THREE.SphereGeometry(1, 16, 10);
     const flying = new THREE.InstancedMesh(ballGeo, steel, 64);
-    flying.castShadow = true;
     flying.count = 0;
     root.add(flying);
     const STACK_MAX = 4000;
     const stacked = new THREE.InstancedMesh(ballGeo, steel, STACK_MAX);
-    stacked.castShadow = true; stacked.receiveShadow = true;
     stacked.count = 0;
     root.add(stacked);
-    const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.03, transparent: true, opacity: 0.07, envMapIntensity: 1.4, depthWrite: false });
-    let glass = null, streak = null;
+    let streak = null;
 
     const wx = x => (x - L.cssW / 2) * K;
     const wy = y => (L.cssH / 2 - y) * K;
@@ -938,7 +936,7 @@ const M3D = (() => {
       // Deterministic grain so a redraw does not reshuffle the board.
       let seed = 7;
       const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-      for (let i = 0; i < 340; i++) {
+      for (let i = 0; i < 160; i++) {
         const y = rnd() * h, amp = 2 + rnd() * 9, fq = 0.0015 + rnd() * 0.005, ph = rnd() * TAU;
         g.strokeStyle = `rgba(${dark},${0.035 + rnd() * 0.09})`;
         g.lineWidth = 0.6 + rnd() * 2.4;
@@ -956,16 +954,16 @@ const M3D = (() => {
     }
 
     function clearBoard() {
-      [boardMesh, pins, dividers, plate, glass, streak, ...rails, ...hopper].forEach(o => {
+      [boardMesh, pins, dividers, plate, streak, ...rails, ...hopper].forEach(o => {
         if (!o) return;
         root.remove(o);
         if (o.geometry) o.geometry.dispose();
-        if (o.material && o.material !== glassMat && o.material !== steel) {
+        if (o.material && o.material !== steel) {
           if (o.material.map && o.material.map !== plateTex) o.material.map.dispose();
           o.material.dispose();
         }
       });
-      boardMesh = pins = dividers = plate = glass = streak = null;
+      boardMesh = pins = dividers = plate = streak = null;
       rails = []; hopper = [];
     }
 
@@ -1010,20 +1008,18 @@ const M3D = (() => {
       const woodTex = colorTexture(woodCanvas(1024, Math.round(1024 * L.cssH / L.cssW), light));
       boardMesh = new THREE.Mesh(new THREE.PlaneGeometry(Wd, Hd),
         new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.55, metalness: 0 }));
-      boardMesh.receiveShadow = true;
       root.add(boardMesh);
 
       // Frame rails, a touch darker than the board.
       const railMat = mats.lacquer(light ? 0x7a4a26 : 0x3b2415, 0.4);
       const t = 12 * K, dep = 0.34;
       [[0, Hd / 2 - t / 2, Wd, t], [0, -Hd / 2 + t / 2, Wd, t], [-Wd / 2 + t / 2, 0, t, Hd], [Wd / 2 - t / 2, 0, t, Hd]].forEach(([x, y, w, h]) => {
-        const m = new THREE.Mesh(roundedBox(w, h, dep, 0.035, 3), railMat);
+        const m = new THREE.Mesh(roundedBox(w, h, dep, 0.035, 2), railMat);
         m.position.set(x, y, dep / 2);
-        m.castShadow = true; m.receiveShadow = true;
         root.add(m); rails.push(m);
       });
 
-      if (L.rows < 1 || !L.valid) { glassAndStreak(Wd, Hd); return; }
+      if (L.rows < 1 || !L.valid) { glassStreak(Wd, Hd); return; }
 
       // Hopper: two brass-edged boards funnelling to the first pin.
       const hopMat = mats.lacquer(light ? 0x7b4d2a : 0x2e1c10, 0.4);
@@ -1035,14 +1031,13 @@ const M3D = (() => {
         const m = new THREE.Mesh(new THREE.BoxGeometry(4 * K, len, 0.3), hopMat);
         m.position.set(wx((x0 + x1) / 2), wy((y0 + y1) / 2), 0.15);
         m.rotation.z = Math.atan2(-(y1 - y0), x1 - x0) - Math.PI / 2;
-        m.castShadow = true;
         root.add(m); hopper.push(m);
       });
 
       // Pins.
       const pinR = Math.max(2.2, Math.min(4.4, L.slot * 0.085)) * K;
       const total = (L.rows * (L.rows + 1)) / 2;
-      pins = new THREE.InstancedMesh(new THREE.CylinderGeometry(pinR, pinR, 0.26, 16).rotateX(Math.PI / 2), mats.brass(), total);
+      pins = new THREE.InstancedMesh(new THREE.CylinderGeometry(pinR, pinR, 0.26, 10).rotateX(Math.PI / 2), mats.brass(), total);
       const m4 = new THREE.Matrix4();
       let k = 0;
       for (let r = 0; r < L.rows; r++) {
@@ -1051,7 +1046,6 @@ const M3D = (() => {
           pins.setMatrixAt(k++, m4);
         }
       }
-      pins.castShadow = true;
       root.add(pins);
 
       // Bin dividers: thin brass slats between bins and at both ends.
@@ -1063,7 +1057,6 @@ const M3D = (() => {
         m4.makeTranslation(wx(x), wy((L.binTopY + L.binBottomY) / 2), 0.14);
         dividers.setMatrixAt(b, m4);
       }
-      dividers.castShadow = true;
       root.add(dividers);
 
       // Name plate under the bins.
@@ -1072,16 +1065,13 @@ const M3D = (() => {
       plate = new THREE.Mesh(new THREE.PlaneGeometry(Wd - 24 * K, plH),
         new THREE.MeshStandardMaterial({ map: plateTex, roughness: 0.45, metalness: 0.6 }));
       plate.position.set(0, wy((L.binBottomY + L.cssH - 12) / 2), 0.004);
-      plate.receiveShadow = true;
       root.add(plate);
 
-      glassAndStreak(Wd, Hd);
+      glassStreak(Wd, Hd);
     }
 
-    function glassAndStreak(Wd, Hd) {
-      glass = new THREE.Mesh(new THREE.PlaneGeometry(Wd, Hd), glassMat);
-      glass.position.z = 0.33;
-      root.add(glass);
+    // The glass over the board is only its streak of reflection.
+    function glassStreak(Wd, Hd) {
       const sc = makeCanvas(256, 256);
       const g = sc.getContext('2d');
       const grad = g.createLinearGradient(0, 0, 256, 256);

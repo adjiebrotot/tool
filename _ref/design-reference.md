@@ -2017,6 +2017,14 @@ three rows say what they do in their label alone.
   cluster: Share finds the nearest panel, so an embed of either shows that one alone.
 - A tool outside `SharedScenario` passes its own `SharedShare.state({ save, load })`; the
   Graph Visualiser's carries the rows of the uploaded file, since nothing else has them.
+- A tool that is not a chart, with no picture to download, still shares itself: an empty
+  `<div class="btn-cluster" data-share="tool">` in its card gets a menu of **Share as link**
+  and **Embed as HTML** alone, always shown, and its dialog, credit line ("Interactive tool:
+  … by …") and watermark ("Make your own at …") say *tool* where a chart's say *chart*. The
+  card's own element carries `data-share-chart` and `data-share-sig` as a diagram does, and
+  anything the frame must show (the tool's main button) lives inside the card. The Random
+  Picker marks the stage on screen (`stage-wheel`, `stage-dice`, …), so an embed is that one
+  picker; `node randompicker/_audit/embed.mjs` checks it.
 - A tool that fetches before it draws returns a promise from its load (the DCA explorers
   return their simulation's), and the embed waits on it.
 - An embed carries the scenario and never what the tool can rebuild: simulated paths stay

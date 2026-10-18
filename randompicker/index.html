@@ -139,6 +139,9 @@ Salad</textarea>
 
       <div class="card stage-card" data-no-abbr>
 
+        <!-- Share as link / Embed as HTML: the picker on screen, on its own (SharedShare) -->
+        <div class="btn-cluster stage-share" data-share="tool"></div>
+
         <!-- WHEEL -->
         <div class="stage active" id="stage-wheel">
           <div class="wheel-wrap">
@@ -154,7 +157,7 @@ Salad</textarea>
         <div class="stage" id="stage-dice">
           <div class="dice-scene" id="diceScene">
             <canvas id="diceCanvas"></canvas>
-            <div class="dice-fallback" id="diceFallback" hidden>The 3D dice library did not load. Check your connection, or pick with another mode.</div>
+            <div class="dice-fallback" id="diceFallback" hidden>The 3D dice could not start here (the library did not load, or this browser has no WebGL). Pick with another mode.</div>
           </div>
           <div class="dice-legend" id="diceLegend"></div>
           <div class="stage-foot dice-foot">
@@ -220,11 +223,11 @@ Salad</textarea>
           </div>
         </div>
 
-      </div><!-- /stage-card -->
+        <div class="action-row">
+          <button class="btn-action" id="actionBtn" data-no-persist>Spin the wheel</button>
+        </div>
 
-      <div class="action-row">
-        <button class="btn-action" id="actionBtn" data-no-persist>Spin the wheel</button>
-      </div>
+      </div><!-- /stage-card -->
 
     </div><!-- /main-col -->
   </div><!-- /layout -->
