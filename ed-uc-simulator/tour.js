@@ -40,7 +40,7 @@ window.__TOUR = {
       target: ['.ctrl-tabs', '#tab-element'],
       onEnter: function () { edTab('element'); },
       title: '③ Element',
-      body: '<ul><li>A unit’s rating, <strong>marginal cost</strong>, commitment and ramp limits</li>' +
+      body: '<ul><li>A unit’s type, rating, minimum stable loading, <strong>marginal cost</strong> (flat, or rising with its output), commitment and ramp limits</li>' +
             '<li>A load’s profile: pick one and drag its bars, vary it by weekday, or Custom to take every hour from a file</li></ul>'
     },
     {

@@ -276,7 +276,7 @@ async function selfTest(refMod, shipMod) {
     const ED = globalThis.ED;
     for (const key of Object.keys(ED.PRESETS)) {
       const base = ED.PRESETS[key].opts || {};
-      for (const mode of ['uc', 'lin', 'ed']) {
+      for (const mode of ['uc', 'lin', 'edm', 'ed']) {
         const opts = { ...base, mode };
         const model = ED.load(ED.PRESETS[key].model);
         const ra = await ED.solve(refMod, model, opts), rb = await ED.solve(shipMod, model, opts);

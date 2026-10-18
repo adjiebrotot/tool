@@ -195,7 +195,7 @@
   /* ── Who generates what, in merit order ── */
   function units(model, res){
     var gens = model.el.filter(function(e){ return e.c === 'Generator' && res.dev[e.id]; });
-    gens.sort(function(a, b){ return a.marginal_cost - b.marginal_cost || a.id - b.id; });
+    gens.sort(function(a, b){ return ED.meritCost(a) - ED.meritCost(b) || a.id - b.id; });
     return gens;
   }
 
