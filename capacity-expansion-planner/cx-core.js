@@ -455,7 +455,7 @@
       nzYear: Math.round(inRange(o.nzYear, 2000, 2150, 2045)),
       rate: inRange(o.rate, 0, 20, 7),
       climate: own.call(CX.CLIMATES, o.climate) ? o.climate : 'sum',
-      stress: flag(o.stress, true),
+      stress: flag(o.stress, false),
       time: pick(o.time, [10, 30, 60, 300], 60),
       gap: pick(o.gap, [0.0001, 0.001, 0.01], 0.001)
     };
