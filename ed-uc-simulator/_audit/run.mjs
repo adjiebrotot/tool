@@ -16,10 +16,18 @@
 //       The relaxation and economic dispatch are never dearer than it.
 //   A3b A ramp limit never stops a unit starting or stopping: a ramp-limited
 //       unit serves a load it can carry instead of shedding it.
+//   A3c Unit commitment with cost curves is optimal: the same enumeration,
+//       each hour filled piece by piece.
 //   A4  The prices are marginal costs: a unit running strictly between its
 //       limits on an uncongested system sets the price; one below it runs flat
-//       out, one above it does not run.
+//       out, one above it does not run. A cost curve's unit inside a piece sets
+//       that piece's slope.
 //   A5  The engine files are the ones their banners name (sha256).
+//   A10 Held to PyPSA 1.4 itself: cost curves against its piecewise marginal
+//       cost and its exact quadratic cost, minimum stable loading against its
+//       p_min_pu (fixtures from pypsa-bench.py).
+//   A11 Saved state from before: a v1 unit that is not committable keeps
+//       computing what it did, and new keys that are missing or broken fall back.
 //   B   The real page in headless Chromium: the solve runs in its worker; the
 //       KPIs and the CSV tables say what the results say; the Run gate is
 //       honest; hostile saved state never breaks it; the SVG export is strict
@@ -109,18 +117,37 @@ function dcFlows(model, inject) {
 
 /* Every promise a result makes, checked from the model and the options alone.
    Returns the worst breach of each kind (0 when none). */
+/* A cost curve from its definition: the cost of an hour at P MW is
+   a·P + q·P² + k·P³ (k only for a quadratic marginal cost), solved as pieces:
+   CURVE_PIECES in all, equal from 0 to the minimum stable loading and on to
+   the rating (that split in proportion, at least one each side), each at the
+   chord of the curve. */
+function curveDef(e) {
+  const k = e.mcurve === 'quad' ? e.marginal_cost_cubic : 0, q = e.marginal_cost_quadratic;
+  if (!((e.mcurve === 'lin' && q) || (e.mcurve === 'quad' && (q || k))) || !(e.p_nom > 0)) return null;
+  const C = P => e.marginal_cost * P + q * P * P + k * P * P * P, N = ED.CURVE_PIECES, P = e.p_nom, pm = Math.min(1, Math.max(0, e.p_min_pu)) * P;
+  const lo = pm > 0 && pm < P ? Math.min(N - 1, Math.max(1, Math.floor(N * pm / P + 0.5))) : 0, base = lo ? pm : 0, x = [0];
+  for (let i = 1; i <= lo; i++) x.push(i === lo ? pm : pm * i / lo);
+  for (let j = 1; j <= N - lo; j++) x.push(j === N - lo ? P : base + (P - base) * j / (N - lo));
+  return { x, s: x.slice(1).map((v, i) => (C(v) - C(x[i])) / (v - x[i])) };
+}
+function energyDef(e, p) {
+  const d = curveDef(e);
+  if (!d) return e.marginal_cost * p;
+  return d.s.reduce((c, s, i) => c + s * Math.min(Math.max(p - d.x[i], 0), d.x[i + 1] - d.x[i]), 0);
+}
 function replay(model, opts, res) {
   const o = ED.solveOptions(opts), H = o.hours, byId = ED.byId(model);
   const on = e => ED.onBus(model, e);
   const ok = e => byId[e.bus0] && byId[e.bus1] && byId[e.bus0].c === 'Bus' && byId[e.bus1].c === 'Bus' && e.bus0 !== e.bus1;
-  const w = { balance: 0, flow: 0, limit: 0, gen: 0, ramp: 0, updown: 0, starts: 0, store: 0, link: 0, cost: 0, objective: 0 };
+  const w = { balance: 0, flow: 0, limit: 0, gen: 0, ramp: 0, updown: 0, starts: 0, store: 0, link: 0, curve: 0, cost: 0, objective: 0 };
   const bump = (k, v) => { if (v > w[k]) w[k] = v; };
   const gens = model.el.filter(e => e.c === 'Generator' && on(e));
   const loads = model.el.filter(e => e.c === 'Load' && on(e));
   const stores = model.el.filter(e => e.c === 'StorageUnit' && on(e));
   const links = model.el.filter(e => e.c === 'Link' && ok(e));
   const passive = model.el.filter(e => (e.c === 'Line' || e.c === 'Transformer') && ok(e));
-  let cost = 0;
+  let cost = 0, constant = 0;
   for (let t = 0; t < H; t++) {
     const inj = {};
     model.el.forEach(e => { if (e.c === 'Bus') inj[e.id] = res.bus[e.id].shed[t]; });
@@ -150,18 +177,28 @@ function replay(model, opts, res) {
       bump('link', Math.max(0, Math.max(Math.abs(a), Math.abs(b)) - e.p_nom - 1e-6));
     });
   }
-  // Units: limits, commitment, ramps, start-ups, cost.
+  // Units: limits, commitment, ramps, start-ups, cost. Unit commitment commits the
+  // committable units and keeps the rest on throughout; economic dispatch keeps every
+  // unit on; the economic dispatch from zero holds no minimum.
+  const commits = o.mode === 'uc' || o.mode === 'lin';
   gens.forEach(e => {
     const d = res.dev[e.id], av = ED.availSeries(e, H, o.start);
-    const com = e.committable && o.mode !== 'ed';
+    const com = e.committable && commits, onThroughout = o.mode === 'edm' || (commits && !e.committable);
+    const def = curveDef(e), pc = ED.costPieces(e);
+    if (!def !== !pc || (def && (def.x.length !== pc.x.length || def.x.some((v, i) => Math.abs(v - pc.x[i]) > 1e-9 * e.p_nom) ||
+        def.s.some((v, i) => Math.abs(v - pc.s[i]) > 1e-9 * Math.max(1, Math.abs(v)))))) bump('curve', 1);
+    if (def) for (let i = 1; i < def.s.length; i++) bump('curve', Math.max(0, def.s[i - 1] - def.s[i] - 1e-9));   // fills in order: no binaries needed
     for (let t = 0; t < H; t++) {
       const s = com ? d.status[t] : 1;
       if (com && o.mode === 'uc') bump('gen', Math.min(Math.abs(s), Math.abs(s - 1)));
       if (com) bump('gen', Math.max(0, -s, s - 1));
       bump('gen', Math.max(0, d.p[t] - av[t] * e.p_nom * s - 1e-9));
-      bump('gen', Math.max(0, (com ? e.p_min_pu * e.p_nom * s : 0) - d.p[t] - 1e-9));
-      cost += e.marginal_cost * d.p[t];
+      const floor = com ? e.p_min_pu * e.p_nom * s : onThroughout ? Math.min(e.p_min_pu, av[t]) * e.p_nom : 0;
+      bump('gen', Math.max(0, floor - d.p[t] - 1e-9));
+      cost += energyDef(e, d.p[t]);
       if (com) cost += e.start_up_cost * d.su[t] + e.shut_down_cost * d.sd[t] + e.stand_by_cost * s;
+      // On in every hour of an economic dispatch, a committable unit pays its no-load cost, outside the objective.
+      else if (o.mode === 'edm' && e.committable){ cost += e.stand_by_cost; constant += e.stand_by_cost; }
     }
     // Ramps hold between two hours it runs in (a start-up or shut-down hour is free).
     for (let t = 1; t < H; t++) {
@@ -209,10 +246,10 @@ function replay(model, opts, res) {
   // A lossy two-way link's token cost on what it sends (it never sends both ways at once, checked above).
   links.forEach(e => { if (e.both && e.efficiency < 1) for (let t = 0; t < H; t++) cost += ED.LINK_EPS * (Math.max(0, res.br[e.id].p0[t]) + Math.max(0, res.br[e.id].p1[t])); });
   bump('cost', Math.abs(cost - res.totals.cost) / Math.max(1, Math.abs(cost)));
-  bump('objective', Math.abs(res.totals.cost - res.totals.objective) / Math.max(1, Math.abs(cost)));
+  bump('objective', Math.abs(res.totals.cost - constant - res.totals.objective) / Math.max(1, Math.abs(cost)));
   return w;
 }
-const TOL = { balance: 1e-5, flow: 1e-4, limit: 1e-7, gen: 1e-6, ramp: 1e-5, updown: 0, starts: 1e-6, store: 1e-7, link: 1e-5, cost: 1e-7, objective: 1e-7 };
+const TOL = { balance: 1e-5, flow: 1e-4, limit: 1e-7, gen: 1e-6, ramp: 1e-5, updown: 0, starts: 1e-6, store: 1e-7, link: 1e-5, curve: 0, cost: 1e-7, objective: 1e-7 };
 function holds(w) { return Object.keys(TOL).filter(k => !(w[k] <= TOL[k])); }
 
 /* ── A1: PJM 5-bus against Li and Bo ── */
@@ -238,7 +275,7 @@ console.log('\n── A1 PJM 5-bus against the published dispatch and prices ─
 /* ── A2: every result replayed ── */
 console.log('\n── A2 every result replayed from the problem’s definition ──');
 const cases = [];
-for (const key of Object.keys(ED.PRESETS)) for (const mode of ['uc', 'lin', 'ed']) cases.push({ name: key + ' ' + mode, model: ED.load(ED.PRESETS[key].model), opts: { ...ED.PRESETS[key].opts, mode } });
+for (const key of Object.keys(ED.PRESETS)) for (const mode of ['uc', 'lin', 'edm', 'ed']) cases.push({ name: key + ' ' + mode, model: ED.load(ED.PRESETS[key].model), opts: { ...ED.PRESETS[key].opts, mode } });
 // Seeded random networks over everything the tool can draw.
 function randomCase(seed) {
   const r = rng(seed), pick = a => a[Math.floor(r() * a.length)];
@@ -271,6 +308,29 @@ function randomCase(seed) {
   return { name: 'random ' + seed, model: ED.load({ v: 1, el }), opts: { mode: pick(['uc', 'uc', 'lin', 'ed']), hours: pick([24, 24, 48]), limits: r() < 0.85, shed: true } };
 }
 for (let s = 1; s <= 30; s++) cases.push(randomCase(s));
+/* The same networks given cost curves, linear and quadratic, and minimum stable
+   loading on units that are not committable, solved in every mode. A minimum
+   that leaves an hour no dispatch (the checks say so) is dropped. */
+function curveCase(seed) {
+  const c = randomCase(seed), r = rng(seed * 7919), pick = a => a[Math.floor(r() * a.length)];
+  const el = ED.compact(c.model).el;
+  el.forEach(e => {
+    if (e.c !== 'Generator') return;
+    if (r() < 0.6) {
+      const P = e.p_nom, rise = (0.1 + r() * 0.6) * Math.max(10, Math.abs(e.marginal_cost)), quad = r() < 0.5;
+      e.mcurve = quad ? 'quad' : 'lin';
+      e.marginal_cost_quadratic = (quad ? rise * 0.4 : rise) / P / 2;
+      if (quad) e.marginal_cost_cubic = rise * (r() < 0.75 ? 0.6 : -0.15) / (P * P) / 3;
+    }
+    if (!e.committable && r() < 0.5) e.p_min_pu = Math.round(r() * 35) / 100;
+  });
+  const opts = { ...c.opts, mode: pick(['uc', 'lin', 'edm', 'edm', 'ed']) };
+  let model = ED.load({ v: 2, el });
+  if (ED.validate(model, opts).errors.length) { el.forEach(e => { if (e.c === 'Generator' && !e.committable) e.p_min_pu = 0; }); model = ED.load({ v: 2, el }); }
+  if (ED.validate(model, opts).errors.length) opts.mode = 'uc';
+  return { name: 'curves ' + seed + ' ' + opts.mode, model, opts };
+}
+for (let s = 31; s <= 50; s++) cases.push(curveCase(s));
 let solvedN = 0;
 for (const c of cases) {
   const res = await ED.solve(psa, c.model, c.opts);
@@ -288,7 +348,7 @@ console.log('\n── A3 unit commitment is optimal: every schedule enumerated �
    dispatch runs every unit at its minimum and fills the rest cheapest first,
    shedding what cannot be met at the value of lost load. Infeasible when the
    minimums alone exceed the load (nothing can absorb the surplus). */
-function hourCost(units, on, load, voll) {
+let hourCost = function(units, on, load, voll) {
   let min = 0, cost = 0;
   const run = units.filter((u, i) => on[i]);
   run.forEach(u => { min += u.pmin; cost += u.mc * u.pmin; });
@@ -296,7 +356,7 @@ function hourCost(units, on, load, voll) {
   let rest = load - min;
   run.slice().sort((a, b) => a.mc - b.mc).forEach(u => { const q = Math.min(rest, u.pmax - u.pmin); cost += q * u.mc; rest -= q; });
   return cost + rest * voll;
-}
+};
 function bruteForce(units, loads, voll) {
   const n = units.length, H = loads.length;
   // Each unit's feasible on/off strings, with their start, shut-down and stand-by costs.
@@ -359,6 +419,61 @@ for (let seed = 101; seed <= 115; seed++) {
         'relaxed ' + (lin.totals.cost || NaN).toFixed(2) + ', dispatch ' + (ed.totals.cost || NaN).toFixed(2));
 }
 
+/* ── A3c: unit commitment with cost curves, against every schedule ──
+   As A3, with each unit's cost curve: a unit that runs pays its pieces up to
+   its minimum, and the rest of the load is filled from every running unit's
+   pieces above it, cheapest first (a curve's pieces get dearer, so a unit's
+   own fill in order). */
+console.log('\n── A3c unit commitment with cost curves is optimal ──');
+function curveHourCost(units, on, load, voll) {
+  let min = 0, cost = 0;
+  const blocks = [];
+  units.forEach((u, i) => {
+    if (!on[i]) return;
+    min += u.pmin;
+    u.d.s.forEach((s, k) => {
+      const a = u.d.x[k], b = u.d.x[k + 1];
+      if (b <= u.pmin + 1e-9) cost += s * (b - a);
+      else { if (a < u.pmin) cost += s * (u.pmin - a); blocks.push({ s, w: b - Math.max(a, u.pmin) }); }
+    });
+  });
+  if (min > load + 1e-9) return Infinity;
+  let rest = load - min;
+  blocks.sort((a, b) => a.s - b.s).forEach(bk => { const q = Math.min(rest, bk.w); cost += q * bk.s; rest -= q; });
+  return cost + rest * voll;
+}
+for (let seed = 121; seed <= 130; seed++) {
+  const r = rng(seed), H = 5, n = 3;
+  const el = [{ c: 'Bus', id: 1, v_nom: 110, at: [10, 10, 20] }];
+  const units = Array.from({ length: n }, (_, i) => {
+    const pmax = Math.round(50 + r() * 150), pmin = Math.round(pmax * r() * 0.5), a = Math.round(10 + r() * 80), quad = r() < 0.5;
+    const rise = (0.2 + r() * 0.8) * a;
+    const g = { c: 'Generator', id: 2 + i, bus: 1, p_nom: pmax, marginal_cost: a, committable: 1, p_min_pu: pmin / pmax,
+      mcurve: quad ? 'quad' : 'lin', marginal_cost_quadratic: (quad ? rise / 2 : rise) / pmax / 2, marginal_cost_cubic: quad ? rise / 2 / (pmax * pmax) / 3 : 0,
+      start_up_cost: Math.round(r() * 3000), stand_by_cost: r() < 0.3 ? Math.round(r() * 200) : 0, min_up_time: Math.floor(r() * 3), min_down_time: Math.floor(r() * 3), init: r() < 0.5 ? 1 : 0 };
+    el.push(g);
+    return { pmax, pmin, d: curveDef(ED.load({ v: 2, el: [el[0], g] }).el[1]), su: g.start_up_cost, sd: 0, sb: g.stand_by_cost, up: g.min_up_time, down: g.min_down_time, init: g.init };
+  });
+  const loads = Array.from({ length: H }, () => Math.round(60 + r() * 260)), voll = 3000, peak = Math.max(...loads);
+  el.push({ c: 'Load', id: 9, bus: 1, p_set: peak, prof: Array.from({ length: 24 }, (_, h) => h < H ? loads[h] / peak : 0) });
+  const model = ED.load({ v: 2, el });
+  // The enumeration of A3, with each hour filled piece by piece.
+  const keep = hourCost;
+  hourCost = curveHourCost;
+  const want = bruteForce(units, loads, voll);
+  hourCost = keep;
+  const opts = { mode: 'uc', hours: H, voll, gap: 0.0001 };
+  const res = await ED.solve(psa, model, opts);
+  if (!res.report.ok){ check(`A3c seed ${seed} solves`, false, res.report.error); continue; }
+  const got = res.totals.objective;
+  check(`A3c seed ${seed}: ${n} units with cost curves, ${H} hours, the MILP finds the cheapest of every schedule`,
+        got >= want * (1 - 1e-6) - 1e-6 && got <= want * (1 + 1e-4) + 1e-6, 'tool ' + got.toFixed(4) + ', enumerated ' + want.toFixed(4));
+  const lin = await ED.solve(psa, model, { ...opts, mode: 'lin' }), ed = await ED.solve(psa, model, { ...opts, mode: 'ed' });
+  check(`A3c seed ${seed}: the relaxation and the economic dispatch from zero are never dearer`, lin.report.ok && ed.report.ok &&
+        lin.totals.cost <= got * (1 + 1e-6) + 1e-6 && ed.totals.cost <= got * (1 + 1e-6) + 1e-6,
+        'relaxed ' + (lin.totals.cost || NaN).toFixed(2) + ', dispatch ' + (ed.totals.cost || NaN).toFixed(2));
+}
+
 /* ── A3b: a ramp limit never stops a unit starting or stopping ──
    PyPSA writes its ramp rows with the change in status, so with the start-up and
    shut-down ramps at the full rating a unit that ramps 31% an hour could only start at
@@ -383,10 +498,12 @@ for (const [loads, init, want] of [[[0, 100, 100, 0], 0, 2100], [[100, 100, 100]
 
 /* ── A4: prices are marginal costs ── */
 console.log('\n── A4 the prices are marginal costs ──');
-for (const [key, mode] of [['uc3', 'ed'], ['uc3', 'uc'], ['solar', 'uc'], ['pjm5', 'ed']]) {
-  const model = ED.load(ED.PRESETS[key].model), opts = { ...ED.PRESETS[key].opts, mode };
-  // Under unit commitment, without ramp limits, so every hour's price is a merit-order one.
-  if (mode === 'uc') model.el.forEach(e => { if (e.c === 'Generator'){ e.ramp_limit_up = 1; e.ramp_limit_down = 1; } });
+const curved = JSON.parse(readFileSync(join(HERE, 'pypsa-cases.json'), 'utf8')).cases;
+const presetOr = key => key.startsWith('pypsa:') ? curved[+key.slice(6)].model : ED.PRESETS[key].model;
+for (const [key, mode] of [['uc3', 'ed'], ['uc3', 'uc'], ['solar', 'uc'], ['pjm5', 'ed'], ['pjm5', 'edm'], ['pypsa:0', 'edm'], ['pypsa:0', 'ed'], ['pypsa:0', 'uc'], ['pypsa:6', 'uc']]) {
+  const model = ED.load(presetOr(key)), opts = { ...(ED.PRESETS[key] || { opts: { hours: 24 } }).opts, mode };
+  // Under unit commitment and economic dispatch, without ramp limits, so every hour's price is a merit-order one.
+  if (mode === 'uc' || mode === 'edm') model.el.forEach(e => { if (e.c === 'Generator'){ e.ramp_limit_up = 1; e.ramp_limit_down = 1; } });
   const res = await ED.solve(psa, model, opts);
   let worst = 0, n = 0;
   const gens = model.el.filter(e => e.c === 'Generator');
@@ -395,16 +512,117 @@ for (const [key, mode] of [['uc3', 'ed'], ['uc3', 'uc'], ['solar', 'uc'], ['pjm5
       const d = res.dev[e.id], price = res.bus[e.bus].price[t];
       const on = d.status ? d.status[t] > 0.5 : true;
       if (!on) return;
-      const lo = (d.status ? e.p_min_pu : 0) * e.p_nom, hi = d.avail[t];
+      const held = d.status || mode === 'edm' || ((mode === 'uc' || mode === 'lin') && !e.committable);
+      const lo = (held ? Math.min(e.p_min_pu, d.avail[t] / e.p_nom) : 0) * e.p_nom, hi = d.avail[t];
       if (!(hi > 1e-9)) return;   // nothing available: no price to set
       const ramp = e.ramp_limit_up < 1 || e.ramp_limit_down < 1;
       if (ramp && mode !== 'ed') return;   // a ramp-bound hour has a price of its own making
-      if (d.p[t] > lo + 1e-4 && d.p[t] < hi - 1e-4 && !ramp) { worst = Math.max(worst, Math.abs(price - e.marginal_cost)); n++; }
-      else if (d.p[t] >= hi - 1e-4 && !ramp) { worst = Math.max(worst, Math.max(0, e.marginal_cost - price)); n++; }
-      else if (d.p[t] <= 1e-6 && !d.status) { worst = Math.max(worst, Math.max(0, price - e.marginal_cost)); n++; }
+      // A cost curve's unit: the slope of the piece it is in, its first piece's at zero, its last one's flat out.
+      const def = curveDef(e), at = def ? def.x.findIndex((x, k) => k && d.p[t] < x - 1e-4) - 1 : -1;
+      const inside = !def || (at >= 0 && d.p[t] > def.x[at] + 1e-4);
+      const mcHere = def ? def.s[Math.max(0, at)] : e.marginal_cost, mcTop = def ? def.s[def.s.length - 1] : e.marginal_cost, mcLow = def ? def.s[0] : e.marginal_cost;
+      if (d.p[t] > lo + 1e-4 && d.p[t] < hi - 1e-4 && !ramp) { if (inside) { worst = Math.max(worst, Math.abs(price - mcHere)); n++; } }
+      else if (d.p[t] >= hi - 1e-4 && !ramp) { worst = Math.max(worst, Math.max(0, (def ? def.s[Math.max(0, def.x.findIndex(x => x >= hi - 1e-9) - 1)] : mcTop) - price)); n++; }
+      else if (d.p[t] <= 1e-6 && !d.status) { worst = Math.max(worst, Math.max(0, price - mcLow)); n++; }
     });
   }
-  check(`A4 ${key} ${mode}: a unit between its limits sets the price at its bus; flat out it is no dearer, idle no cheaper`, worst < 1e-6, n + ' unit-hours, worst ' + e1(worst) + ' $/MWh');
+  check(`A4 ${key} ${mode}: a unit between its limits sets the price at its bus; flat out it is no dearer, idle no cheaper`, worst < 1e-6 && n > 0, n + ' unit-hours, worst ' + e1(worst) + ' $/MWh');
+}
+
+/* ── A10: held to PyPSA itself ──
+   pypsa-cases.mjs writes networks in the tool's saved form with their hourly
+   series; pypsa-bench.py builds each one in PyPSA 1.4 its own way and solves it:
+   a cost curve as PyPSA's piecewise marginal_cost, the linear relaxation as the
+   same pieces in plain components (PyPSA's piecewise turns it into a
+   mixed-integer problem), and a linear marginal cost also as PyPSA's exact
+   quadratic cost. The fixtures are checked in, so this needs no Python. */
+console.log('\n── A10 held to PyPSA: cost curves and minimum stable loading ──');
+{
+  const C = JSON.parse(readFileSync(join(HERE, 'pypsa-cases.json'), 'utf8'));
+  const Fx = JSON.parse(readFileSync(join(HERE, 'pypsa-fixtures.json'), 'utf8'));
+  check('A10 the fixtures are PyPSA\'s answers to these very cases', Fx.cases.length === C.cases.length && Fx.pieces === ED.CURVE_PIECES &&
+        C.cases.every((c, i) => Fx.cases[i].name === c.name), 'PyPSA ' + Fx.pypsa + ', ' + Fx.cases.length + ' cases');
+  for (let i = 0; i < C.cases.length; i++) {
+    const c = C.cases[i], f = Fx.cases[i], model = ED.load(c.model), o = c.opts, H = o.hours;
+    // The series the cases carry are the tool's own, so the two sides solve the same hours.
+    const sameSeries = model.el.every(e => e.c === 'Load' ? ED.loadSeries(e, H, o.start).every((v, t) => v === c.series[e.id][t]) :
+      e.c === 'Generator' ? ED.availSeries(e, H, o.start).every((v, t) => v === c.series[e.id][t]) : true);
+    const res = await ED.solve(psa, model, o);
+    if (!res.report.ok) { check(`A10 ${c.name} solves`, false, res.report.error); continue; }
+    const got = res.totals.objective, rel = (got - f.objective) / Math.abs(f.objective);
+    const storage = model.el.some(e => e.c === 'StorageUnit');
+    let dp = 0, dpr = 0;
+    for (const [id, a] of Object.entries(f.p)) a.forEach((v, t) => { dp = Math.max(dp, Math.abs(v - res.dev[id].p[t])); });
+    if (f.price) for (const [id, a] of Object.entries(f.price)) a.forEach((v, t) => { dpr = Math.max(dpr, Math.abs(v - res.bus[id].price[t])); });
+    const mip = o.mode === 'uc' && !!f.status;
+    if (c.cost === 'quadratic') {
+      // The pieces lie on or above the exact cost, by at most q × w² / 4 a unit and hour on a
+      // piece w MW wide; a price lands within half a piece's rise, q × w, of the exact one.
+      let bound = 0, step = 0;
+      model.el.filter(ED.hasCurve).forEach(e => {
+        const x = ED.costPieces(e).x, w = Math.max(...x.slice(1).map((v, k) => v - x[k]));
+        bound += e.marginal_cost_quadratic * w * w / 4 * H; step = Math.max(step, e.marginal_cost_quadratic * w);
+      });
+      check(`A10 ${c.name}: the pieces cost no less than PyPSA's exact quadratic optimum and no more than their chord error above it`,
+            sameSeries && got >= f.objective * (1 - 1e-9) - 1e-6 && got - f.objective <= bound + 1e-6,
+            'tool ' + got.toFixed(4) + ', PyPSA ' + f.objective.toFixed(4) + ' (+' + (100 * rel).toFixed(4) + '%, bound ' + bound.toFixed(2) + ')');
+      check(`A10 ${c.name}: every nodal price within half a piece's rise of PyPSA's exact one`, dpr <= step + 1e-9, 'worst ' + dpr.toFixed(4) + ' of ' + step.toFixed(4) + ' $/MWh');
+      continue;
+    }
+    check(`A10 ${c.name}: the objective is PyPSA's` + (mip ? ' within the 0.01% gap' : ''), sameSeries &&
+          (mip ? rel >= -1e-7 && rel <= 1e-4 : Math.abs(rel) <= 1e-9), 'tool ' + got.toFixed(4) + ', PyPSA ' + f.objective.toFixed(4) + ' (' + e1(rel) + ')');
+    // A linear problem's dispatch and prices are PyPSA's too, bar storage, whose hours can trade at no cost.
+    if (!mip && !storage) check(`A10 ${c.name}: every unit's output in every hour is PyPSA's`, dp <= 1e-5, 'worst ' + e1(dp) + ' MW');
+    if (!mip && f.price) check(`A10 ${c.name}: every nodal price in every hour is PyPSA's`, dpr <= 1e-6, 'worst ' + e1(dpr) + ' $/MWh');
+  }
+}
+
+/* ── A11: saved state from before keeps its meaning ── */
+console.log('\n── A11 saved state from before, and broken new keys ──');
+{
+  // v1 held a minimum only while committed: a unit that is not committable ran from zero.
+  const v1 = { v: 1, el: [{ c: 'Bus', id: 1, v_nom: 110, at: [10, 10, 20] },
+    { c: 'Generator', id: 2, bus: 1, p_nom: 100, marginal_cost: 50, p_min_pu: 0.4 },
+    { c: 'Generator', id: 3, bus: 1, p_nom: 100, marginal_cost: 30, committable: 1, p_min_pu: 0.4, min_up_time: 1, min_down_time: 1 },
+    { c: 'Load', id: 4, bus: 1, p_set: 160, prof: 'sys' }] };
+  const before = JSON.stringify(v1), m1 = ED.load(v1), m2 = ED.load({ ...v1, v: 2 });
+  const g = (m, id) => m.el.find(e => e.id === id);
+  check('A11 a v1 unit that is not committable loses the minimum it never had; a committable one keeps its own; the object read is left as it was',
+        g(m1, 2).p_min_pu === 0 && g(m1, 3).p_min_pu === 0.4 && g(m2, 2).p_min_pu === 0.4 && JSON.stringify(v1) === before && ED.compact(m1).v === 2 &&
+        !('p_min_pu' in ED.compact(m1).el.find(e => e.id === 2)));
+  const r1 = await ED.solve(psa, m1, { mode: 'uc', hours: 24 }), r2 = await ED.solve(psa, m2, { mode: 'uc', hours: 24 });
+  check('A11 so the v1 unit still runs from zero, and the same unit saved as v2 never runs below its 40 MW',
+        r1.report.ok && r2.report.ok && r1.dev[2].p.some(v => v < 40 - 1e-6) && r2.dev[2].p.every(v => v >= 40 - 1e-6),
+        'v1 lowest ' + Math.min(...r1.dev[2].p).toFixed(2) + ' MW, v2 lowest ' + Math.min(...r2.dev[2].p).toFixed(2) + ' MW');
+  // Missing, unknown and broken new keys fall back; nothing throws.
+  const bad = ED.load({ v: 2, el: [{ c: 'Bus', id: 1, v_nom: 110, at: [0, 0, 10] },
+    { c: 'Generator', id: 2, bus: 1, p_nom: 100, marginal_cost: 30, mcurve: 'cubic', marginal_cost_quadratic: -5, marginal_cost_cubic: 'x' },
+    { c: 'Generator', id: 3, bus: 1, p_nom: 100, marginal_cost: 30, mcurve: 'LIN', marginal_cost_quadratic: 1e9 },
+    { c: 'Generator', id: 4, bus: 1, p_nom: 100, marginal_cost: 30, mcurve: null }] }).el;
+  check('A11 an unknown curve is a scalar, a negative slope 0, a word 0, a curve in capitals read, a huge slope held at its bound',
+        bad[1].mcurve === '' && bad[1].marginal_cost_quadratic === 0 && bad[1].marginal_cost_cubic === 0 && bad[2].mcurve === 'lin' &&
+        bad[2].marginal_cost_quadratic === 1e3 && bad[3].mcurve === '' && !ED.hasCurve(bad[1]), JSON.stringify(bad.slice(1).map(e => [e.mcurve, e.marginal_cost_quadratic, e.marginal_cost_cubic])));
+  // The economic dispatch saved before 'edm' keeps its value and its meaning; an unknown mode is unit commitment.
+  check('A11 the old economic dispatch keeps its value, the new one has its own, and an unknown mode is unit commitment',
+        ED.solveOptions({ mode: 'ed' }).mode === 'ed' && ED.solveOptions({ mode: 'edm' }).mode === 'edm' && ED.solveOptions({ mode: 'xyz' }).mode === 'uc');
+  const pj = ED.load(ED.PRESETS.pjm5.model), pe = await ED.solve(psa, pj, { mode: 'ed', hours: 24 }), pm = await ED.solve(psa, pj, { mode: 'edm', hours: 24 });
+  check('A11 with no minimums anywhere, the two economic dispatches are the same problem (PJM 5-bus)', pe.report.ok && pm.report.ok && JSON.stringify(pe.raw) === JSON.stringify(pm.raw));
+  // A flat curve is the scalar it equals: the same problem, bit for bit.
+  const u3 = ED.load(ED.PRESETS.uc3.model), flat = ED.load(ED.compact(u3));
+  flat.el.filter(e => e.c === 'Generator').forEach(e => { e.mcurve = 'quad'; });
+  const ra = await ED.solve(psa, u3, { mode: 'uc', hours: 24 }), rb = await ED.solve(psa, flat, { mode: 'uc', hours: 24 });
+  check('A11 a curve with no slope and no curvature solves as its scalar, bit for bit', JSON.stringify(ra.raw) === JSON.stringify(rb.raw));
+  // A marginal cost that falls as the output rises cannot be solved in pieces without binaries: the checks stop it.
+  const fall = ED.load(ED.compact(u3));
+  Object.assign(fall.el.find(e => e.name === 'Coal'), { mcurve: 'quad', marginal_cost_quadratic: 0.01, marginal_cost_cubic: -0.0001 });
+  const v = ED.validate(fall, { mode: 'uc', hours: 24 });
+  check('A11 a marginal cost that falls is an error in the checks, naming the unit', v.errors.some(x => /Coal’s marginal cost falls/.test(x.msg)), v.errors.map(x => x.msg).join(' ').slice(0, 160));
+  // Minimums that cannot all fit under the load stop the run, saying where.
+  const over = ED.load(ED.compact(u3));
+  over.el.filter(e => e.c === 'Generator').forEach(e => { e.p_min_pu = 0.6; });
+  const vo = ED.validate(over, { mode: 'edm', hours: 24 }), vu = ED.validate(over, { mode: 'uc', hours: 24 });
+  check('A11 economic dispatch with minimums above the night\'s load is an error in the checks; unit commitment can switch units off',
+        vo.errors.some(x => /cannot go below/.test(x.msg)) && !vu.errors.length, vo.errors.map(x => x.msg).join(' ').slice(0, 200));
 }
 
 /* ── A5: the engine files ── */
@@ -1060,6 +1278,7 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   const drag = await page.evaluate(() => ({ d: window.__ed.app.model.el.find(e => e.name === 'Homes').dprof.slice(), stale: document.getElementById('runBtn').classList.contains('needs-run') }));
   await page.evaluate(() => { const set = (id, v) => { const el = document.getElementById(id); el.value = v; el.dispatchEvent(new Event('change', { bubbles: true })); }; set('edSpanUnit', 'd'); set('edSpan', '7'); set('edStart', '2026-01-05T00:00'); });
   await page.evaluate(() => window.__ed.run());
+  await solvedP(page);
   const thu = await page.evaluate(id => { const r = window.__ed.app.res, e = window.__ed.app.model.el.find(x => x.id === id); return { p: r.dev[id].p.slice(72, 96), ps: e.p_set, mon: r.dev[id].p.slice(0, 24) }; }, homesId);
   const wantThu = ED.PROFILES.res.h.map(v => 300 * v * drag.d[3]);
   check('B11 dragging Thursday’s bar to half halves Thursday’s demand in the run, hour by hour', Math.abs(drag.d[3] - 0.5) < 0.011 && drag.stale &&
@@ -1072,6 +1291,7 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
   const ed = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); const s = document.getElementById('f_prof');
     return { prof18: e.prof[18], pbase: e.pbase, sel: s.value, label: s.options[s.selectedIndex].textContent }; }, homesId);
   await page.evaluate(() => window.__ed.run());
+  await solvedP(page);
   const edP = await page.evaluate(id => window.__ed.app.res.dev[id].p.slice(), homesId);
   const R_ = ED.PROFILES.res, dd = ed.prof18 - R_.h[18];
   // 05/01/2026 is a Monday: day k's 18:00 is hour 24k + 18, Saturday and Sunday on the weekend day.
@@ -1197,6 +1417,121 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
     Math.round(inPage) + ' ms on the page (' + yms + ' ms through the file chooser): ' + ym.slice(0, 80));
   check('B no page errors with profiles', errs.length === 0, errs.slice(0, 3).join(' | '));
   rmSync(tmpd, { recursive: true, force: true });
+}
+// A generator's type, its minimum stable loading and its cost curve, through the inspector.
+{
+  const { page, errs } = await fresh();
+  await page.goto(URL_);
+  await solvedP(page);
+  await page.evaluate(() => window.__ed.applyPreset('uc3'));
+  await solvedP(page);
+  const idOf = n => page.evaluate(name => window.__ed.app.model.el.find(e => e.name === name).id, n);
+  const coal = await idOf('Coal'), cc = await idOf('Combined cycle');
+  const shown = () => page.evaluate(() => {
+    const q = s => !!document.querySelector('#inspector ' + s), lbl = document.querySelector('#inspector .seg-group[data-k="sym"]');
+    return { type: lbl ? lbl.closest('.field-row').querySelector('.field-label').textContent.trim() : '', pmin: q('#f_p_min_pu'), curve: q('.seg-group[data-k="mcurve"]'),
+      com: q('input[data-k="committable"]'), ramp: q('#f_ramp_limit_up'), mc: q('#f_marginal_cost'), groups: [...document.querySelectorAll('#inspector .group-title')].map(g => g.textContent),
+      profs: [...(document.getElementById('f_prof') || { options: [] }).options].map(o => o.value), sub: document.querySelector('#inspector .insp-sub').textContent };
+  });
+  await page.evaluate(id => window.__ed.app.select([id]), coal);
+  const g0 = await shown();
+  await page.click('.seg-group[data-k="sym"] .seg-btn[data-val="pv"]');
+  const s1 = await shown(), m1 = await page.evaluate(id => window.ED.compact(window.__ed.app.model).el.find(e => e.id === id), coal);
+  const stale = await page.evaluate(() => document.getElementById('runBtn').classList.contains('needs-run'));
+  check('B21 Type: a Generator offers its minimum stable loading, a marginal cost curve, commitment and ramping', g0.type.startsWith('Type') && g0.pmin && g0.curve && g0.com && g0.ramp &&
+    g0.groups.join() === 'Parameters,Cost,Commitment,Ramping,Labels' && !g0.profs.includes('pv') && /^Generator\./.test(g0.sub), JSON.stringify(g0).slice(0, 200));
+  check('B21 Type Solar: what it does not offer goes back to its default and is hidden, its availability is the sun\'s, and the run is out of date',
+    !s1.pmin && !s1.curve && !s1.com && !s1.ramp && s1.mc && s1.groups.join() === 'Parameters,Labels' && s1.profs.includes('pv') && !s1.profs.includes('wnd') && /^Solar\./.test(s1.sub) &&
+    m1.style === 'pv' && m1.prof === 'pv' && !('committable' in m1) && !('p_min_pu' in m1) && !('ramp_limit_up' in m1) && !('start_up_cost' in m1) && stale, JSON.stringify(m1));
+  await page.click('.seg-group[data-k="sym"] .seg-btn[data-val=""]');
+  const s2 = await shown(), m2 = await page.evaluate(id => window.ED.compact(window.__ed.app.model).el.find(e => e.id === id), coal);
+  check('B21 back to a Generator: it starts as a new one does, committable with a 30% minimum stable loading, always available',
+    s2.pmin && s2.com && m2.committable === 1 && m2.p_min_pu === 0.3 && m2.prof === undefined && m2.style === undefined &&
+    await page.inputValue('#f_p_min_pu') === '30' && /While on/.test(await page.textContent('#derived')), JSON.stringify(m2));
+  await page.evaluate(() => window.__ed.app.undo()); await page.evaluate(() => window.__ed.app.undo());
+  // A cost curve on the combined cycle.
+  await page.evaluate(id => window.__ed.app.select([id]), cc);
+  await page.click('.seg-group[data-k="mcurve"] .seg-btn[data-val="lin"]');
+  const lin = await page.evaluate(id => {
+    const e = window.__ed.app.model.el.find(x => x.id === id), sv = document.getElementById('costCurve');
+    return { mcurve: e.mcurve, q: e.marginal_cost_quadratic, slope: (document.getElementById('f_marginal_cost_quadratic') || {}).value, cubic: !!document.getElementById('f_marginal_cost_cubic'),
+      line: !!(sv && sv.querySelector('path.pl')), steps: !!(sv && sv.querySelector('path.cc-step')), a: document.querySelector('#f_marginal_cost').closest('.field-row').textContent };
+  }, cc);
+  check('B22 Linear: a slope to fill in, seeded so the curve rises, and the curve drawn with the pieces it is solved as',
+    lin.mcurve === 'lin' && lin.q > 0 && +lin.slope === lin.q * 2 && !lin.cubic && lin.line && lin.steps && /At 0 MW/.test(lin.a), JSON.stringify(lin));
+  const typeIn = async (sel, v) => { await page.fill(sel, v); await page.dispatchEvent(sel, 'change'); };
+  const d0 = await page.getAttribute('#costCurve path.pl', 'd');
+  await typeIn('#f_marginal_cost_quadratic', '0.05');
+  await page.click('.seg-group[data-k="mcurve"] .seg-btn[data-val="quad"]');
+  await typeIn('#f_marginal_cost_cubic', '0.0003');
+  const quad = await page.evaluate(id => { const e = window.__ed.app.model.el.find(x => x.id === id); return { mcurve: e.mcurve, q: e.marginal_cost_quadratic, k: e.marginal_cost_cubic, d: document.querySelector('#costCurve path.pl').getAttribute('d'), line: document.getElementById('costLine').textContent }; }, cc);
+  check('B22 Quadratic: a curvature too; the values are stored in PyPSA\'s convention (a·P + q·P² + k·P³ an hour) and the curve redraws',
+    quad.mcurve === 'quad' && Math.abs(quad.q - 0.025) < 1e-12 && Math.abs(quad.k - 0.0001) < 1e-12 && quad.d !== d0 && /From .*\/MWh at 96 MW to .*\/MWh at 240 MW/.test(quad.line), JSON.stringify(quad).slice(0, 240));
+  // Pointing at the curve reads it.
+  await page.evaluate(() => document.getElementById('costCurve').scrollIntoView({ block: 'center' }));
+  const bb = await page.locator('#costCurve').boundingBox();
+  await page.mouse.move(bb.x + bb.width * 0.6, bb.y + bb.height * 0.5);
+  const read = await page.evaluate(() => (document.querySelector('#costCurve text.pb-v') || {}).textContent || '');
+  check('B22 pointing at the curve reads its output and marginal cost there', /MW .*\/MWh/.test(read), read);
+  await page.evaluate(() => window.__ed.run());
+  await solvedP(page);
+  const snap = await page.evaluate(() => ({ model: window.ED.compact(window.__ed.app.model), opts: window.__ed.solveOptions(), cost: window.__ed.app.res.totals.cost, card: document.getElementById('mCost').textContent,
+    want: window.ED.fmt.money(window.__ed.app.res.totals.cost, document.getElementById('edCur').value), assume: document.getElementById('assumptions').textContent }));
+  const here = await ED.solve(psa, ED.load(snap.model), snap.opts);
+  check('B22 the run in the page is the core\'s on the same network, its cost card says so, and What this assumes names the pieces',
+    here.report.ok && Math.abs(here.totals.cost - snap.cost) < 1e-6 * snap.cost && snap.card === snap.want && /solved as 16 straight pieces/.test(snap.assume), '$' + Math.round(snap.cost).toLocaleString());
+  // The diagram's cost label reads the marginal cost at the hour's output.
+  await page.evaluate(() => { const b = document.getElementById('lb_Generator_cost'); if (b && !b.checked) b.click(); });
+  const lab = await page.evaluate(id => {
+    const e = window.__ed.app.model.el.find(x => x.id === id), h = +document.getElementById('edHour').value, p = window.__ed.app.res.dev[id].p[h];
+    const want = window.ED.fmt.price(window.ED.mcAt(e, p), document.getElementById('edCur').value) + '/MWh';
+    return { want, has: [...document.querySelectorAll('#sldSvg text')].some(t => t.textContent === want) };
+  }, cc);
+  check('B22 the diagram labels a curve\'s unit with its marginal cost at the hour\'s output', lab.has, lab.want);
+  await page.click('.seg-group[data-k="mcurve"] .seg-btn[data-val=""]');
+  await page.evaluate(() => window.__ed.run());
+  await solvedP(page);
+  const back = await page.evaluate(() => ({ cost: window.__ed.app.res.totals.cost, curve: !!document.getElementById('costCurve') }));
+  const plain = await ED.solve(psa, ED.load(ED.PRESETS.uc3.model), ED.PRESETS.uc3.opts);
+  check('B22 Scalar again: the curve goes, and the unit costs its marginal cost at any output, as before', !back.curve && Math.abs(back.cost - plain.totals.cost) < 1e-6, '$' + back.cost.toFixed(2));
+  check('B22 no page errors', !errs.length, errs.slice(0, 2).join(' | '));
+}
+// Minimum stable loading on a unit that is not committable, and the two economic dispatches.
+{
+  const { page, errs } = await fresh();
+  await page.goto(URL_);
+  await solvedP(page);
+  const mode0 = await page.inputValue('#edMode');
+  const sun = await page.evaluate(() => window.__ed.app.model.el.find(e => e.name === 'Sundance').id);
+  await page.evaluate(id => window.__ed.app.select([id]), sun);
+  const d0 = await page.textContent('#derived');
+  await page.fill('#f_p_min_pu', '25'); await page.dispatchEvent('#f_p_min_pu', 'change');
+  await page.evaluate(() => window.__ed.run());
+  await solvedP(page);
+  const edm = await page.evaluate(id => window.__ed.app.res.dev[id].p.slice(), sun);
+  await page.evaluate(() => { const el = document.getElementById('edMode'); el.value = 'ed'; el.dispatchEvent(new Event('change', { bubbles: true })); });
+  await page.evaluate(() => window.__ed.run());
+  await solvedP(page);
+  const ed = await page.evaluate(id => ({ p: window.__ed.app.res.dev[id].p.slice(), label: document.querySelector('#edMode option:checked').textContent, tip: document.getElementById('edModeTip').getAttribute('data-tip') }), sun);
+  check('B23 PJM 5-bus opens as an economic dispatch that holds minimums, and a unit that is not committable shows its minimum stable loading, always on',
+    mode0 === 'edm' && /Always on/.test(d0), mode0 + '; ' + d0);
+  check('B23 at 25%, Sundance never runs below 50 MW; the economic dispatch with no minimum output runs it from zero, as Li and Bo have it at 18:00',
+    edm.every(v => v >= 50 - 1e-6) && Math.abs(ed.p[18]) < 1e-6 && /no minimum output/.test(ed.label) && /from zero/.test(ed.tip) && !errs.length,
+    'lowest ' + Math.min(...edm).toFixed(2) + ' MW; 18:00 ' + ed.p[18].toFixed(3) + ' MW');
+}
+// A cache from before: the old economic dispatch keeps its meaning, and a v1 unit that is not committable keeps running from zero.
+{
+  const m = JSON.parse(JSON.stringify(ED.PRESETS.uc3.model));
+  m.v = 1;
+  m.el.forEach(e => { if (e.c === 'Generator') e.committable = 0; });
+  const raw = JSON.stringify({ __fields: { 'v:edMode': 'ed', 'v:edSpan': '1', 'v:edSpanUnit': 'd', 'v:edStart': '2026-01-01T00:00' }, __extra: m });
+  const { page, errs } = await fresh(`try { localStorage.setItem('abt:save:educ-simulator:v1', ${JSON.stringify(raw)}); } catch(e){}`);
+  await page.goto(URL_);
+  await solvedP(page);
+  const r = await page.evaluate(() => ({ mode: document.getElementById('edMode').value, cost: window.__ed.app.res.totals.cost, mins: window.__ed.app.model.el.filter(e => e.c === 'Generator').map(e => e.p_min_pu) }));
+  const want = await ED.solve(psa, ED.load({ ...m, el: m.el.map(e => { const o = { ...e }; delete o.p_min_pu; return o; }) }), { mode: 'ed', hours: 24, start: '2026-01-01T00:00' });
+  check('B24 a cache from before keeps "Economic dispatch" as it was, every unit from zero, and its units that are not committable lose the minimum they never had',
+    r.mode === 'ed' && r.mins.every(v => v === 0) && Math.abs(r.cost - want.totals.cost) < 1e-6 && !errs.length, r.mode + ', $' + r.cost.toFixed(2));
 }
 await browser.close();
 server.close();

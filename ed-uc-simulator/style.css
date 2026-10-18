@@ -303,6 +303,22 @@ html.abt-embed .sld-embed-chart .fold-btn{display:none !important;}
 .prof-line .pb-t{fill:var(--muted);font:500 7.5px 'DM Mono',monospace;}
 .prof-line .pb-v{fill:var(--text);font:600 8px 'DM Mono',monospace;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round;pointer-events:none;}
 .prof-file{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+
+/* ── A cost curve: marginal cost against output, from minimum to rating, and its linearisation ── */
+.affix-wrap .affix-input.has-suffix.long-suffix{padding-right:118px;}
+.cost-curve{display:block;width:100%;height:auto;aspect-ratio:256/84;max-height:120px;margin-top:8px;cursor:crosshair;user-select:none;}
+.cost-curve .pl{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-linejoin:round;}
+.cost-curve .cc-step{fill:none;stroke:var(--accent2);stroke-width:1;stroke-dasharray:3 2;}
+.cost-curve .pl-dot{fill:var(--accent);stroke:var(--panel);stroke-width:1;}
+.cost-curve .pb-axis{stroke:var(--muted);stroke-opacity:.55;stroke-width:1;fill:none;}
+.cost-curve .pb-ref{stroke:var(--muted);stroke-opacity:.45;stroke-width:.7;stroke-dasharray:2 2;fill:none;}
+.cost-curve .pb-t{fill:var(--muted);font:500 7.5px 'DM Mono',monospace;}
+.cost-curve .pb-v{fill:var(--text);font:600 8px 'DM Mono',monospace;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round;pointer-events:none;}
+.cc-key{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:.72rem;color:var(--muted);}
+.cc-key span{display:inline-flex;align-items:center;gap:5px;}
+.cc-key i{display:inline-block;width:14px;height:0;border-top:1.5px solid var(--accent);}
+.cc-key i.cc-k-step{border-top:1.5px dashed var(--accent2);}
+
 .up-msg{font-size:.78rem;line-height:1.45;margin-top:8px;padding:7px 10px;border-radius:var(--radius-sm);background:var(--info-bg);color:var(--info-text);}
 .up-msg.is-err{background:var(--error-bg);color:var(--error-text);}
 .up-msg[hidden]{display:none;}

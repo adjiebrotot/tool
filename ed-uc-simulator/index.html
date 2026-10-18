@@ -44,8 +44,10 @@
   "keywords": "economic dispatch calculator, unit commitment online, unit commitment MILP, locational marginal price calculator, LMP, DC optimal power flow, PJM 5-bus, PyPSA in the browser, HiGHS solver, battery dispatch, merit order",
   "featureList": [
     "Drag-and-drop single-line diagram: buses, lines, transformers, generators, solar, wind, grid imports, loads, storage and HVDC links",
-    "Unit commitment as a mixed-integer problem or its linear relaxation, or plain economic dispatch",
-    "Start-up, shut-down and stand-by costs, minimum stable output, minimum up and down times and ramp limits",
+    "Unit commitment as a mixed-integer problem or its linear relaxation, or economic dispatch with every unit held at or above its minimum stable loading",
+    "Generator, solar, wind and grid types, each offering what it can do",
+    "Scalar, linear or quadratic marginal cost curves, solved in straight pieces as PyPSA's piecewise marginal cost",
+    "Start-up, shut-down and stand-by costs, minimum stable loading, minimum up and down times and ramp limits",
     "Hourly load, solar (summer, spring or autumn, winter, equator) and wind profiles over 1 hour to 30 days from any start date, or your own",
     "Built-in demand profiles that follow the weekday, with a weekend day of their own",
     "Daily variability: Monday to Sunday factors that multiply any hourly profile",
@@ -90,7 +92,7 @@
       "name": "What is the difference between economic dispatch and unit commitment?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Economic dispatch shares the load among units that are all available, cheapest first, within their limits. Unit commitment also decides which units run in each hour, so it weighs start-up costs, minimum stable output and minimum up and down times. The simulator solves both on the same network so you can compare them."
+        "text": "Economic dispatch shares the load among units that are all available, cheapest first, within their limits. Unit commitment also decides which units run in each hour, so it weighs start-up costs, minimum stable loading and minimum up and down times. The simulator solves both on the same network so you can compare them."
       }
     }
   ]
@@ -163,7 +165,8 @@
         <select class="sel-input" id="edMode">
           <option value="uc">Unit commitment, mixed-integer</option>
           <option value="lin">Unit commitment, linear relaxation</option>
-          <option value="ed">Economic dispatch</option>
+          <option value="edm">Economic dispatch</option>
+          <option value="ed">Economic dispatch, no minimum output</option>
         </select>
       </div>
       <div class="field-row">

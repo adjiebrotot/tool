@@ -34,6 +34,13 @@
             started from, so they keep its days and its weekend: '' for none,
             and a custom shape saved before it existed repeats every day
      init   (Generator) 1 if the unit was running before the first hour
+     mcurve (Generator) how its marginal cost follows its output: '' a
+            scalar (marginal_cost), 'lin' marginal_cost + 2 × the quadratic
+            coefficient × P, 'quad' that + 3 × the cubic coefficient × P²
+     marginal_cost_quadratic, marginal_cost_cubic (Generator) the cost
+            curve's P² and P³ coefficients per hour, PyPSA's convention: a
+            unit at P MW costs marginal_cost × P + quadratic × P² + cubic × P³.
+            Read only when mcurve asks for them.
      eff    (StorageUnit) round-trip efficiency, split evenly between
             charging and discharging
      soc0   (StorageUnit) state of charge at the start, per unit of capacity
@@ -43,12 +50,17 @@
      style  how it is drawn, never what it computes
    A Line's s_nom of 0 means no limit, as in MATPOWER. A ramp limit of 1
    (100% of the rating per hour) means none. Only values that differ from
-   DEFAULTS are written. */
+   DEFAULTS are written.
+
+   v2: a generator's p_min_pu (minimum stable loading) holds whenever the unit
+   is on, so one that is not committable never runs below it. Under v1 it held
+   only while committed, so load() drops it from a v1 unit that is not
+   committable, where it did nothing. */
 (function(root){
   'use strict';
   var ED = root.ED = root.ED || {};
 
-  ED.VERSION = 1;
+  ED.VERSION = 2;
   ED.G = 10;
 
   var CLASSES = ['Bus', 'Line', 'Transformer', 'Generator', 'Load', 'StorageUnit', 'Link'];
@@ -65,7 +77,8 @@
     Transformer: { s_nom: 0, x: 0, r: 0 },
     Generator:   { p_nom: 0, marginal_cost: 0, committable: 0, p_min_pu: 0, start_up_cost: 0, shut_down_cost: 0,
                    stand_by_cost: 0, min_up_time: 0, min_down_time: 0, ramp_limit_up: 1, ramp_limit_down: 1,
-                   init: 1, prof: '', grid: 0, style: '', dprof: '', ts: null, pbase: '' },
+                   init: 1, prof: '', grid: 0, style: '', dprof: '', ts: null, pbase: '',
+                   mcurve: '', marginal_cost_quadratic: 0, marginal_cost_cubic: 0 },
     Load:        { p_set: 0, prof: '', dprof: '', ts: null, pbase: '' },
     StorageUnit: { p_nom: 0, max_hours: 1, eff: 1, soc0: 0, cyclic: 1 },
     Link:        { p_nom: 0, efficiency: 1, both: 1 }
@@ -84,7 +97,8 @@
     Generator:   { p_nom: ['n', 0, BIG], marginal_cost: ['n', -1e4, 1e5], committable: ['e', [0, 1]], p_min_pu: ['n', 0, 1],
                    start_up_cost: ['n', 0, 1e8], shut_down_cost: ['n', 0, 1e8], stand_by_cost: ['n', 0, 1e7],
                    min_up_time: ['i', 0, 168], min_down_time: ['i', 0, 168], ramp_limit_up: ['n', 0.01, 1], ramp_limit_down: ['n', 0.01, 1],
-                   init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE] },
+                   init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE],
+                   mcurve: ['e', ['', 'lin', 'quad']], marginal_cost_quadratic: ['n', 0, 1e3], marginal_cost_cubic: ['n', -1e3, 1e3] },
     Load:        { p_set: ['n', 0, BIG], prof: ['p'], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE] },
     StorageUnit: { p_nom: ['n', 0, BIG], max_hours: ['n', 0, 1000], eff: ['n', 0.01, 1], soc0: ['n', 0, 1], cyclic: ['e', [0, 1]] },
     Link:        { p_nom: ['n', 0, BIG], efficiency: ['n', 0.01, 1], both: ['e', [0, 1]] }
@@ -380,7 +394,19 @@
 
   /* ── Reading a saved network: never throws ── */
   function migrate(raw){
-    // v1 is the first saved form. A later version converts older ones here.
+    // v1 held a unit's minimum only while it was committed: one not committable
+    // ran from zero whatever its p_min_pu said, so that value goes. A copy, so
+    // the caller's object (a Quick Start's, a history step) is left as it was.
+    var v = toInt(raw.v);
+    if(!(v >= 2) && Array.isArray(raw.el)){
+      raw = Object.assign({}, raw, { el: raw.el.map(function(r){
+        if(!r || typeof r !== 'object' || r.c !== 'Generator' || !has(r, 'p_min_pu')) return r;
+        if(readValue(SPEC.Generator.committable, r.committable, DEFAULTS.Generator.committable)) return r;
+        var o = Object.assign({}, r);
+        delete o.p_min_pu;
+        return o;
+      }) });
+    }
     return raw;
   }
 
@@ -573,12 +599,95 @@
     return t ? t.x_per_length * e.length / e.num_parallel : e.x;
   };
 
+  /* ── Units: what each type uses, its minimum and its cost curve ──
+     A generator's type is how it is drawn, grid and style, and decides which
+     of its values the inspector offers. The optimiser reads the values alone,
+     so a value a type does not offer is kept at its default. */
+  ED.genType = function(e){ return e.grid ? 'grid' : e.style === 'pv' || e.style === 'wind' ? e.style : ''; };
+  // The modes: 'uc' and 'lin' commit units; 'edm' dispatches every unit as on,
+  // between its minimum stable loading and its rating; 'ed', the economic
+  // dispatch saved before 'edm', runs every unit from zero.
+  ED.commits = function(mode){ return mode === 'uc' || mode === 'lin'; };
+  // Whether a unit never runs below its minimum in any hour: it is on throughout.
+  ED.alwaysOn = function(e, mode){ return mode === 'edm' || (ED.commits(mode) && !e.committable); };
+  // That floor, per unit of its rating, hour by hour (never above what is available), or null.
+  ED.floorOf = function(e, avail, mode){
+    if(!(e.p_min_pu > 0) || !ED.alwaysOn(e, mode)) return null;
+    return avail.map(function(a){ return Math.min(e.p_min_pu, a); });
+  };
+
+  /* A cost curve. Linear: the marginal cost rises in a straight line with the
+     output; quadratic: along a parabola. The cost of an hour at P MW is the
+     area under it, marginal_cost × P + quadratic × P² + cubic × P³, a
+     quadratic or cubic objective HiGHS cannot take in a mixed-integer problem,
+     so every mode solves it as straight pieces: equal ones from 0 to the
+     minimum stable loading and on to the rating, each at the chord's slope,
+     exact at every breakpoint and above the curve between them. A cost that
+     never falls as the output rises (a convex curve) fills its pieces in
+     order, so they need no binaries; PyPSA's piecewise marginal_cost gives the
+     same pieces the same answer. */
+  ED.CURVE_PIECES = 16;
+  // A curve that is flat (both coefficients 0) is the scalar it equals.
+  ED.hasCurve = function(e){
+    return e.c === 'Generator' && ((e.mcurve === 'lin' && !!e.marginal_cost_quadratic) ||
+      (e.mcurve === 'quad' && !!(e.marginal_cost_quadratic || e.marginal_cost_cubic)));
+  };
+  function curveCoef(e){
+    return { a: e.marginal_cost, q: e.marginal_cost_quadratic || 0, k: e.mcurve === 'quad' ? e.marginal_cost_cubic || 0 : 0 };
+  }
+  // The marginal cost at P MW, per MWh, from the curve itself.
+  ED.mcAt = function(e, P){
+    if(!ED.hasCurve(e)) return e.marginal_cost;
+    var c = curveCoef(e);
+    return c.a + 2 * c.q * P + 3 * c.k * P * P;
+  };
+  // The cost of an hour at P MW, from the curve itself.
+  ED.curveCost = function(e, P){
+    var c = curveCoef(e);
+    return c.a * P + c.q * P * P + c.k * P * P * P;
+  };
+  // The pieces the optimiser takes: breakpoints x (MW) and each piece's slope s. Null for a scalar.
+  ED.costPieces = function(e){
+    if(!ED.hasCurve(e) || !(e.p_nom > 0)) return null;
+    var N = ED.CURVE_PIECES, P = e.p_nom, pm = clamp(e.p_min_pu, 0, 1) * P;
+    var lo = pm > 0 && pm < P ? clamp(Math.round(N * pm / P), 1, N - 1) : 0, base = lo ? pm : 0, hi = N - lo, x = [0], s = [];
+    for(var i = 1; i <= lo; i++) x.push(i === lo ? pm : pm * i / lo);
+    for(var j = 1; j <= hi; j++) x.push(j === hi ? P : base + (P - base) * j / hi);
+    for(var k = 0; k + 1 < x.length; k++) s.push((ED.curveCost(e, x[k + 1]) - ED.curveCost(e, x[k])) / (x[k + 1] - x[k]));
+    return { x: x, s: s };
+  };
+  // Where the pieces fall as the output rises, or null: the curve has to rise or stay flat.
+  ED.curveFalls = function(e){
+    var pc = ED.costPieces(e);
+    if(!pc) return null;
+    for(var k = 1; k < pc.s.length; k++) if(pc.s[k] < pc.s[k - 1] - 1e-9 * Math.max(1, Math.abs(pc.s[k - 1]))) return { at: pc.x[k], from: pc.s[k - 1], to: pc.s[k] };
+    return null;
+  };
+  // An hour's energy cost at P MW, as the optimiser counts it.
+  ED.energyCost = function(e, P){
+    var pc = ED.costPieces(e);
+    if(!pc) return e.marginal_cost * P;
+    var c = 0;
+    for(var k = 0; k < pc.s.length; k++) c += pc.s[k] * clamp(P - pc.x[k], 0, pc.x[k + 1] - pc.x[k]);
+    return c;
+  };
+  // The cheapest and the dearest MWh it can offer up to availPU of its rating, as the optimiser sees them.
+  ED.mcRange = function(e, availPU){
+    var pc = ED.costPieces(e);
+    if(!pc) return [e.marginal_cost, e.marginal_cost];
+    var top = availPU * e.p_nom, k = 0;
+    while(k + 1 < pc.s.length && pc.x[k + 1] < top - 1e-9) k++;
+    return [pc.s[0], pc.s[k]];
+  };
+  // Its place in the merit order: its average cost across its rating.
+  ED.meritCost = function(e){ return ED.hasCurve(e) && e.p_nom > 0 ? ED.energyCost(e, e.p_nom) / e.p_nom : e.marginal_cost; };
+
   /* ── Options: what to solve, read from the form, never trusted ── */
   ED.solveOptions = function(o){
     o = o || {};
     var hours = toInt(o.hours);
     return {
-      mode: o.mode === 'ed' || o.mode === 'lin' ? o.mode : 'uc',
+      mode: o.mode === 'ed' || o.mode === 'edm' || o.mode === 'lin' ? o.mode : 'uc',
       // Any whole number of hours up to 30 days, from a whole hour of a date.
       hours: hours >= 1 ? Math.min(ED.MAX_HOURS, hours) : 24,
       start: ED.parseStart(o.start),
@@ -626,8 +735,10 @@
         ', which does not cover the horizon, ' + ED.msLabel(gap.start) + ' to ' + ED.msLabel(gap.end - 3600000) + '. Open a file that covers it, or set the horizon inside it.' });
       if(e.c === 'Generator' && ED.onBus(model, e) && !(e.p_nom > 0)) warnings.push({ id: e.id, msg: n + ' has no rating, so it supplies nothing.' });
       if(e.c === 'StorageUnit' && ED.onBus(model, e) && !(e.p_nom > 0 && e.max_hours > 0)) warnings.push({ id: e.id, msg: n + ' has no power or energy rating, so it does nothing.' });
-      if(e.c === 'Generator' && e.committable && o.mode !== 'ed' && e.p_min_pu > 0 && Array.isArray(e.prof) === false && e.prof && ED.PROFILES[e.prof] && ED.PROFILES[e.prof].kind === 'gen')
+      if(e.c === 'Generator' && e.committable && ED.commits(o.mode) && e.p_min_pu > 0 && Array.isArray(e.prof) === false && e.prof && ED.PROFILES[e.prof] && ED.PROFILES[e.prof].kind === 'gen')
         warnings.push({ id: e.id, msg: n + ' must run at ' + Math.round(e.p_min_pu * 100) + '% or stay off, so in hours its ' + (ED.PROFILES[e.prof].noun || ED.PROFILES[e.prof].label.toLowerCase()) + ' availability is lower it is kept off.' });
+      var falls = e.c === 'Generator' ? ED.curveFalls(e) : null;
+      if(falls) errors.push({ id: e.id, msg: n + '’s marginal cost falls above ' + fmt1(falls.at) + ' MW. A cost curve has to rise or stay flat as the output rises: raise its slope or its curvature.' });
     });
     // Each group of buses that can trade power has to be able to meet its own load.
     var devs = model.el.filter(function(e){ return DEVICE[e.c] && ED.onBus(model, e); });
@@ -658,6 +769,27 @@
         if(o.shed) warnings.push({ id: loads[0].id, msg: msg + ', so some of it is shed.' });
         else errors.push({ id: loads[0].id, msg: msg + '. Add capacity, or allow load shedding.' });
       }
+    });
+    // Units that are on throughout never run below their minimum, and nothing
+    // but load and storage can take that power: more than both in an hour has no dispatch.
+    ED.areas(model).forEach(function(area){
+      var inA = function(e){ return area.buses.indexOf(e.bus) >= 0; };
+      var floors = devs.filter(function(e){ return e.c === 'Generator' && inA(e) && e.p_nom > 0 && e.p_min_pu > 0 && ED.alwaysOn(e, o.mode); });
+      if(!floors.length) return;
+      var loads = devs.filter(function(e){ return e.c === 'Load' && inA(e); }).map(function(e){ return ED.loadSeries(e, H, o.start); });
+      var sink = 0;
+      devs.forEach(function(e){ if(e.c === 'StorageUnit' && inA(e) && e.max_hours > 0) sink += e.p_nom; });
+      var fs = floors.map(function(e){ return ED.floorOf(e, ED.availSeries(e, H, o.start), o.mode).map(function(f){ return f * e.p_nom; }); });
+      var over = null;
+      for(var t = 0; t < H; t++){
+        var must = 0, take = sink;
+        fs.forEach(function(s){ must += s[t]; });
+        loads.forEach(function(s){ take += s[t]; });
+        if(must > take + 1e-6 && (!over || must - take > over.gap)) over = { t: t, gap: must - take, must: must, take: take };
+      }
+      if(over) errors.push({ id: floors[0].id, msg: (area.buses.length > 1 ? 'The area with ' + nm(area.buses[0]) : nm(area.buses[0])) + ': at ' + ED.hourLabel(over.t, H, o.start) +
+        ' the units that stay on cannot go below ' + fmt1(over.must) + ' MW, more than the load and storage there can take (' + fmt1(over.take) + ' MW). ' +
+        (o.mode === 'edm' ? 'Lower a minimum stable loading, or solve as a unit commitment.' : 'Lower a minimum stable loading, or make a unit committable.') });
     });
     if(!gensAll.length && !o.shed && devs.some(function(e){ return e.c === 'Load' && e.p_set > 0; }) && !errors.length)
       errors.push({ id: null, msg: 'Add a generator, or allow load shedding.' });
@@ -696,7 +828,12 @@
      the unit commitment (id -> 0/1 per hour): the units become ordinary
      dispatchable ones, held off where they were off and between their minimum
      and their rating where they were on, so the linear problem left has duals,
-     which are the prices. noRamp drops their ramp limits too. */
+     which are the prices. noRamp drops their ramp limits too.
+     A unit with a cost curve stands on a bus of its own, at no cost, and its
+     output reaches its bus through one lossless link per piece of the curve,
+     each as wide as the piece and priced at its slope: its commitment, minimum,
+     ramps and availability stay on the one unit, and the optimiser fills the
+     cheaper pieces first. Every part is a plain PyPSA component. */
   function build(psa, model, o, fixed, noRamp){
     var H = o.hours;
     var byId = ED.byId(model);
@@ -725,7 +862,7 @@
     gens.forEach(function(e){
       var avail = availOf[e.id] = ED.availSeries(e, H, o.start);
       var kw = { bus: pyName(e.bus), p_nom: e.p_nom, marginal_cost: e.marginal_cost, p_max_pu: allOne(avail) ? 1 : avail };
-      var com = e.committable && o.mode !== 'ed';
+      var com = e.committable && ED.commits(o.mode);
       var up = e.ramp_limit_up < 1 ? e.ramp_limit_up : NaN, down = e.ramp_limit_down < 1 ? e.ramp_limit_down : NaN;
       /* A committable unit's start-up and shut-down ramps. PyPSA writes its ramp rows
          with the change in status, so a start-up hour also has to clear the shut-down
@@ -753,15 +890,27 @@
         var st = fixed[e.id];
         // Off, it stays out, except as the next unit to start: above the dearest
         // unit running in that hour it may set the price.
-        kw.p_max_pu = avail.map(function(a, t){ return st[t] || e.marginal_cost >= fixed.top[t] ? a : 0; });
+        kw.p_max_pu = avail.map(function(a, t){ return st[t] || ED.mcRange(e, a)[0] >= fixed.top[t] ? a : 0; });
         kw.p_min_pu = st.map(function(s, t){ return s ? Math.min(e.p_min_pu, avail[t]) : 0; });
         // A start-up hour rises by its start-up ramp and a shut-down hour falls by its
         // shut-down ramp, as in the commitment run.
         if(!noRamp && !isNaN(up)) kw.ramp_limit_up = st.map(function(s, t){ return t > 0 && s && !st[t - 1] ? suRamp : up; });
         if(!noRamp && !isNaN(down)) kw.ramp_limit_down = st.map(function(s, t){ return t > 0 && !s && st[t - 1] ? sdRamp : down; });
       } else {
+        // On throughout: never below its minimum, or what is available when that is less.
+        var floor = ED.floorOf(e, avail, o.mode);
+        if(floor) kw.p_min_pu = floor.every(function(f){ return f === floor[0]; }) ? floor[0] : floor;
         if(!isNaN(up)) kw.ramp_limit_up = up;
         if(!isNaN(down)) kw.ramp_limit_down = down;
+      }
+      var pc = ED.costPieces(e);
+      if(pc){
+        var ub = pyName(e.id) + 'u';
+        n.add('Bus', ub, { v_nom: byId[e.bus].v_nom });
+        kw.bus = ub; kw.marginal_cost = 0;
+        pc.s.forEach(function(s, k){
+          n.add('Link', pyName(e.id) + 'c' + k, { bus0: ub, bus1: pyName(e.bus), p_nom: pc.x[k + 1] - pc.x[k], efficiency: 1, marginal_cost: s });
+        });
       }
       n.add('Generator', pyName(e.id), kw);
     });
@@ -833,7 +982,7 @@
       if(psa.stdTypes && !Object.keys(ED.types.line).length) ED.setTypes(psa.stdTypes());
       var B = build(psa, model, o, null);
       var n = B.n;
-      var comGens = B.gens.filter(function(e){ return e.committable && o.mode !== 'ed'; });
+      var comGens = B.gens.filter(function(e){ return e.committable && ED.commits(o.mode); });
       report.milp = o.mode === 'uc' && comGens.length > 0;
       var ret = await runOpt(n, optArgs(o, o.mode === 'lin'));
       report.status = String(ret[0]); report.condition = String(ret[1]);
@@ -865,12 +1014,12 @@
       if(report.milp){
         var fixedSt = { top: [] };
         comGens.forEach(function(e){ fixedSt[e.id] = status[e.id].slice(); });
-        // The dearest unit running in each hour, of those that can run.
+        // The dearest MWh a unit running can offer in each hour, of those that can run.
         for(var h0 = 0; h0 < H; h0++){
           var top = -Infinity;
           B.gens.forEach(function(e){
-            var on1 = status[e.id] ? status[e.id][h0] : 1;
-            if(on1 && e.p_nom > 0 && B.avail[e.id][h0] > 0 && e.marginal_cost > top) top = e.marginal_cost;
+            var on1 = status[e.id] ? status[e.id][h0] : 1, a1 = B.avail[e.id][h0], mc1 = ED.mcRange(e, a1)[1];
+            if(on1 && e.p_nom > 0 && a1 > 0 && mc1 > top) top = mc1;
           });
           fixedSt.top.push(top);
         }
@@ -936,14 +1085,16 @@
                   su: com ? su[e.id] : null, sd: com ? sd[e.id] : null, cost: 0, energy: 0 };
         var en = 0, c = e.marginal_cost * 0;
         p.forEach(function(v){ en += v; });
-        c = e.marginal_cost * en;
+        // A cost curve is counted piece by piece, as the optimiser counts it.
+        if(ED.hasCurve(e)){ c = 0; p.forEach(function(v){ c += ED.energyCost(e, v); }); }
+        else c = e.marginal_cost * en;
         cost.energy += c;
         var cs = 0, cd = 0, cb = 0;
         if(com){
           su[e.id].forEach(function(v){ cs += v * e.start_up_cost; });
           sd[e.id].forEach(function(v){ cd += v * e.shut_down_cost; });
           status[e.id].forEach(function(v){ cb += v * e.stand_by_cost; });
-        }
+        } else if(o.mode === 'edm' && e.committable) cb = H * e.stand_by_cost; // on in every hour, so it pays its no-load cost in each
         cost.start += cs; cost.shut += cd; cost.standby += cb;
         d.energy = en; d.cost = c + cs + cd + cb; d.costStart = cs + cd; d.costStandby = cb;
         res.dev[e.id] = d;
@@ -1021,7 +1172,7 @@
     // 18:00 at the published 300, 300 and 400 MW.
     var Z = 230 * 230 / 100;
     var line = function(id, a, b, r, x, s, name){ return { c: 'Line', id: id, name: name, bus0: a, bus1: b, r: +(r * Z).toFixed(4), x: +(x * Z).toFixed(4), s_nom: s }; };
-    return { v: 1, name: 'PJM 5-bus', el: [
+    return { v: 2, name: 'PJM 5-bus', el: [
       { c: 'Bus', id: 1, name: 'A', v_nom: 230, at: [16, 14, 10] },
       { c: 'Bus', id: 2, name: 'B', v_nom: 230, at: [50, 14, 10] },
       { c: 'Bus', id: 3, name: 'C', v_nom: 230, at: [84, 26, 10, 1] },
@@ -1046,7 +1197,7 @@
   function uc3(){
     // Three thermal units on one bus: a slow, cheap baseload unit, a combined
     // cycle that can cycle daily and a quick, dear peaker.
-    return { v: 1, name: 'Three-unit commitment', el: [
+    return { v: 2, name: 'Three-unit commitment', el: [
       { c: 'Bus', id: 1, name: 'System', v_nom: 220, at: [40, 24, 30] },
       { c: 'Generator', id: 2, name: 'Coal', bus: 1, p_nom: 380, marginal_cost: 28, committable: 1, p_min_pu: 0.45,
         start_up_cost: 18000, shut_down_cost: 0, min_up_time: 8, min_down_time: 8, ramp_limit_up: 0.25, ramp_limit_down: 0.25, at: [-10, 1] },
@@ -1058,7 +1209,7 @@
     ] };
   }
   function solar(){
-    return { v: 1, name: 'Solar and a battery', el: [
+    return { v: 2, name: 'Solar and a battery', el: [
       { c: 'Bus', id: 1, name: 'Town', v_nom: 132, at: [40, 24, 34] },
       { c: 'Generator', id: 2, name: 'Solar farm', bus: 1, p_nom: 420, marginal_cost: 0, prof: 'pv', style: 'pv', at: [-12, 1] },
       { c: 'Generator', id: 3, name: 'Gas turbine', bus: 1, p_nom: 260, marginal_cost: 62, committable: 1, p_min_pu: 0.35,
@@ -1071,7 +1222,7 @@
     ] };
   }
   function areas(){
-    return { v: 1, name: 'Two areas, wind and an HVDC link', el: [
+    return { v: 2, name: 'Two areas, wind and an HVDC link', el: [
       { c: 'Bus', id: 1, name: 'North', v_nom: 275, at: [16, 26, 14, 1] },
       { c: 'Bus', id: 2, name: 'South', v_nom: 275, at: [76, 26, 14, 1] },
       { c: 'Link', id: 3, name: 'HVDC link', bus0: 1, bus1: 2, p_nom: 250, efficiency: 0.97 },
@@ -1086,7 +1237,7 @@
     ] };
   }
   ED.PRESETS = {
-    pjm5:  { model: pjm5(),   opts: { mode: 'ed', hours: 24 }, hour: 18 },
+    pjm5:  { model: pjm5(),   opts: { mode: 'edm', hours: 24 }, hour: 18 },
     uc3:   { model: uc3(),    opts: { mode: 'uc', hours: 24 }, hour: 18 },
     solar: { model: solar(),  opts: { mode: 'uc', hours: 24 }, hour: 12 },
     areas: { model: areas(),  opts: { mode: 'uc', hours: 72 }, hour: 18 }

@@ -686,7 +686,9 @@
         }
         if(e.c === 'StorageUnit' && shows(e, display, 'soc') && r.cap > 0) lines.push({ t: 'SoC ' + Math.round(100 * at(r.soc) / r.cap) + '%', mono: true, res: true });
       }
-      if(e.c === 'Generator' && shows(e, display, 'cost')) lines.push({ t: F.price(e.marginal_cost, cur) + '/MWh', mono: true, fill: C.muted });
+      // A cost curve reads its marginal cost at the hour's output, or its range before a run.
+      if(e.c === 'Generator' && shows(e, display, 'cost')) lines.push({ t: !ED.hasCurve(e) ? F.price(e.marginal_cost, cur) + '/MWh' : r ? F.price(ED.mcAt(e, Math.max(0, p)), cur) + '/MWh' :
+        F.price(ED.mcAt(e, Math.max(0, Math.min(1, e.p_min_pu)) * e.p_nom), cur) + '–' + F.price(ED.mcAt(e, e.p_nom), '') + '/MWh', mono: true, fill: C.muted });
       var cx = g.free ? g.cx : g.px + ux * (22 + 11), cy = g.free ? g.cy : g.py + uy * (22 + 11);
       var reach = far - 22;
       ob(cx - 13, cy - 13, 26, 26, 6);

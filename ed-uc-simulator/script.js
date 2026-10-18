@@ -645,8 +645,9 @@
     app.model.el.forEach(function(e){
       var d = res.dev[e.id];
       if(e.c !== 'Generator' || !d) return;
-      c += e.marginal_cost * d.p[t];
+      c += ED.energyCost(e, d.p[t]);
       if(d.status){ c += e.start_up_cost * d.su[t] + e.shut_down_cost * d.sd[t] + e.stand_by_cost * d.status[t]; }
+      else if(o.mode === 'edm' && e.committable) c += e.stand_by_cost;
     });
     Object.keys(res.bus).forEach(function(id){ c += res.bus[id].shed[t] * o.voll; });
     app.model.el.forEach(function(e){
@@ -774,7 +775,13 @@
     if(branches) li.push('<strong>A lossless DC power flow:</strong> power divides between paths by reactance, every voltage is 1 p.u., and there is no reactive power.');
     if(o.mode === 'uc') li.push('<strong>Committable units are on or off in each hour.</strong> On, they run between their minimum and their rating; HiGHS proves the cost within ' + (o.gap * 100) + '% of the best possible.');
     else if(o.mode === 'lin') li.push('<strong>Commitment is relaxed:</strong> a unit may be partly on, so its minimum output and start-up costs are shared out, and the cost is a lower bound on the true one.');
-    else if(has('Generator', function(e){ return e.committable; })) li.push('<strong>Economic dispatch:</strong> every unit can run anywhere from zero to its rating, so start-up costs, minimum output and minimum up and down times are left out.');
+    else if(o.mode === 'edm') li.push('<strong>Economic dispatch: every unit is on in every hour,</strong> between its minimum stable loading and its rating, so there are no start-ups and no minimum up or down times' +
+      (has('Generator', function(e){ return e.committable && e.stand_by_cost > 0; }) ? '. Committable units pay their no-load cost in every hour.' : '.'));
+    else if(has('Generator', function(e){ return e.committable || e.p_min_pu > 0; })) li.push('<strong>Economic dispatch with no minimum output:</strong> every unit can run anywhere from zero to its rating, so start-up costs, minimum stable loading and minimum up and down times are left out.');
+    if(ED.commits(o.mode) && has('Generator', function(e){ return !e.committable && e.p_min_pu > 0; }))
+      li.push('<strong>Units that are not committable are always on,</strong> never below their minimum stable loading, or below what is available when that is less.');
+    if(has('Generator', ED.hasCurve)) li.push('<strong>A marginal cost that rises with the output is solved as ' + ED.CURVE_PIECES + ' straight pieces</strong> of its cost curve, from 0 MW to the minimum stable loading and on to the rating: exact at every breakpoint and a little above the curve between them, so prices step from piece to piece.' +
+      (o.mode === 'lin' ? ' In the relaxation the pieces follow the unit’s output, not the share of it that is on.' : ''));
     if(res){
       if(res.report.pricing === 'fixed' || res.report.pricing === 'fixed-noramp')
         li.push('<strong>Prices come from a second, linear run</strong> with the commitment held as found. A unit that is off can only set the price above every unit running, as the next to start.' +
@@ -784,10 +791,10 @@
     if(o.shed) li.push('<strong>Load that cannot be served is shed at ' + F.money(o.voll, C) + ' per MWh,</strong> which caps every price.');
     else li.push('<strong>Every MW of demand must be served:</strong> with no load shedding, a shortfall makes the problem infeasible.');
     if(branches && !o.limits) li.push('<strong>Line and transformer limits are ignored,</strong> so power still splits by reactance but nothing congests.');
-    if(has('Generator', function(e){ return e.committable; }) && o.mode !== 'ed')
+    if(has('Generator', function(e){ return e.committable; }) && ED.commits(o.mode))
       li.push('<strong>Committable units start the horizon as set:</strong> one running has met its minimum up time, one off its minimum down time.');
     if(has('Generator', function(e){ return e.ramp_limit_up < 1 || e.ramp_limit_down < 1; })) li.push('<strong>Ramp limits cap the change in output from one hour to the next.</strong>' +
-      (o.mode !== 'ed' && has('Generator', function(e){ return e.committable && (e.ramp_limit_up < 1 || e.ramp_limit_down < 1); }) ? ' A committable unit that starts up reaches at most its minimum plus one hour’s ramp up, and one that shuts down falls from at most its minimum plus one hour’s ramp down.' : ''));
+      (ED.commits(o.mode) && has('Generator', function(e){ return e.committable && (e.ramp_limit_up < 1 || e.ramp_limit_down < 1); }) ? ' A committable unit that starts up reaches at most its minimum plus one hour’s ramp up, and one that shuts down falls from at most its minimum plus one hour’s ramp down.' : ''));
     if(has('StorageUnit')){
       var st = m.el.filter(function(e){ return e.c === 'StorageUnit' && ED.onBus(m, e); });
       var cyc = st.every(function(e){ return e.cyclic; });
@@ -860,7 +867,7 @@
         if(e.c === 'Generator'){
           parts.push('output ' + mono(F.mw(dv.p[h]) + ' MW') + ' of ' + mono(F.mw(dv.avail[h]) + ' MW') + ' available');
           if(dv.status) parts.push(dv.status[h] > 0.999 ? (dv.su[h] > 0.5 ? 'starts this hour' : 'running') : dv.status[h] < 0.001 ? (dv.sd[h] > 0.5 ? 'shuts down this hour' : 'off') : 'running ' + Math.round(dv.status[h] * 100) + '%');
-          parts.push('at ' + mono(F.price(e.marginal_cost, C) + '/MWh'));
+          parts.push((ED.hasCurve(e) ? 'marginal cost ' : 'at ') + mono(F.price(ED.mcAt(e, dv.p[h]), C) + '/MWh'));
         } else if(e.c === 'StorageUnit'){
           parts.push(dv.p[h] > 1e-6 ? 'discharging ' + mono(F.mw(dv.p[h]) + ' MW') : dv.p[h] < -1e-6 ? 'charging ' + mono(F.mw(-dv.p[h]) + ' MW') : 'idle');
           parts.push('holding ' + mono(F.mwh(dv.soc[h]) + ' MWh') + ' of ' + mono(F.mwh(dv.cap) + ' MWh'));
@@ -974,10 +981,20 @@
     tx_r: 'Series resistance, per unit on its rating, kept for reference: the DC power flow is lossless.',
     grid_nom: 'The most that can be imported.',
     mc: 'What one more MWh from it costs: fuel and variable running costs. The merit order is sorted by it.',
+    mcurve: '<ul><li><strong>Scalar:</strong> every MWh costs the same.</li><li><strong>Linear:</strong> it rises in a straight line with the output, a + b × P.</li><li><strong>Quadratic:</strong> it rises along a curve, a + b × P + c × P².</li></ul>',
+    mc_b: { lin: 'How much dearer each MWh gets per MW more output: b in a + b × P. An hour at P MW then costs a × P + b × P² / 2.',
+            quad: 'How much dearer each MWh gets per MW more output at the start: b in a + b × P + c × P².' },
+    mc_c: 'Bends the line: c in a + b × P + c × P². Above 0 it gets dearer faster as the output rises. An hour costs a × P + b × P² / 2 + c × P³ / 3.',
     grid_mc: 'The price paid for each MWh imported.',
     committable_on: 'The unit is switched on or off hour by hour, with the costs and limits below.',
     committable_off: 'The unit is always available, from zero to its rating, with no start-up cost or minimum output.',
-    p_min: 'The least it can run at while on, as a share of its rating.',
+    p_min: { com: 'The least it can run at while on, as a share of its rating. Unit commitment switches it off rather than run it lower.',
+             on: 'It is always on, so it never runs below this share of its rating, or below what is available when that is less.',
+             ed: 'The least it runs at while on. Economic dispatch with no minimum output leaves it out and runs every unit from zero.' },
+    type: { '': '<strong>Generator:</strong> a thermal or hydro unit: a minimum stable loading, a marginal cost that can rise with its output, commitment and ramp limits.',
+            pv: '<strong>Solar:</strong> produces up to what the sun gives in each hour, and any of it can be spilled. No minimum, commitment or ramp limit.',
+            wind: '<strong>Wind:</strong> produces up to what the wind gives in each hour, and any of it can be spilled. No minimum, commitment or ramp limit.',
+            grid: '<strong>Grid:</strong> an external grid, imported from at its price up to its limit in any hour.' },
     min_up: 'Hours it must stay on once started.',
     min_down: 'Hours it must stay off once stopped.',
     standby: 'Paid for every hour it is on, whatever it produces.',
@@ -999,6 +1016,16 @@
   function F_(k, label, unit, o){ o = o || {}; o.k = k; o.label = label; o.unit = unit; return o; }
   var typed = function(e){ return !!ED.lineType(e); }, custom = function(e){ return !ED.lineType(e); };
   var isCom = function(e){ return !!e.committable; };
+  /* A generator's type decides what it offers: a Generator everything, Solar,
+     Wind and Grid their rating, price and availability. Another type shows a
+     Generator's value too when it holds something other than the default, so
+     nothing the run reads is ever hidden; changing the type resets them. */
+  var isGenType = function(e){ return e.c === 'Generator' && !ED.genType(e); };
+  function holds(e, k){ var d = ED.DEFAULTS[e.c][k]; return JSON.stringify(e[k]) !== JSON.stringify(d); }
+  function genField(k, also){ return function(e){ return (isGenType(e) || holds(e, k)) && (!also || also(e)); }; }
+  var curveShown = genField('mcurve');
+  var isCurve = function(e){ return e.mcurve === 'lin' || e.mcurve === 'quad'; };
+  function pMinTip(e){ return solveOptions().mode === 'ed' ? TIP.p_min.ed : e.committable && solveOptions().mode !== 'edm' ? TIP.p_min.com : TIP.p_min.on; }
   var notCyclic = function(e){ return !e.cyclic; };
   var FIELDS = {
     Bus: [F_('style', 'Shape', '', { kind: 'seg', opts: [['', 'Bar'], ['node', 'Node']] }),
@@ -1012,20 +1039,25 @@
     Transformer: [F_('s_nom', 'Rating', 'MVA', { min: 0, max: 1e5, tip: TIP.tx_s }),
            F_('x', 'Reactance', 'p.u.', { min: -10, max: 10, step: 0.0001, tip: TIP.tx_x }),
            F_('r', 'Resistance', 'p.u.', { min: 0, max: 10, step: 0.0001, tip: TIP.tx_r })],
-    Generator: [F_('sym', 'Symbol', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true }),
+    Generator: [F_('sym', 'Type', '', { kind: 'seg', opts: [['', 'Generator'], ['pv', 'Solar'], ['wind', 'Wind'], ['grid', 'Grid']], wide: true, tipOptions: true, tip: function(e){ return TIP.type[ED.genType(e)]; } }),
            F_('p_nom', 'Rating', 'MW', { min: 0, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_nom : ''; } }),
-           F_('marginal_cost', 'Marginal cost', '/MWh', { money: true, min: -1e4, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_mc : TIP.mc; } }),
+           F_('p_min_pu', 'Minimum stable loading', '%', { scale: 100, min: 0, max: 100, step: 0.1, tip: pMinTip, show: genField('p_min_pu'), after: function(e){ return derivedHtml(e); } }),
+           F_('marginal_cost', 'Marginal cost', '/MWh', { money: true, min: -1e4, max: 1e5, tip: function(e){ return e.grid ? TIP.grid_mc : TIP.mc; }, show: function(e){ return !curveShown(e); } }),
            F_('prof', 'Availability', '', { kind: 'profile' }),
-           F_('committable', 'Committable', '', { kind: 'toggle', tip: function(e){ return e.committable ? TIP.committable_on : TIP.committable_off; }, group: 'Commitment' }),
-           F_('p_min_pu', 'Minimum stable output', '%', { scale: 100, min: 0, max: 100, step: 0.1, tip: TIP.p_min, show: isCom }),
-           F_('min_up_time', 'Minimum up time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_up, show: isCom }),
-           F_('min_down_time', 'Minimum down time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_down, show: isCom }),
-           F_('start_up_cost', 'Start-up cost', '', { money: true, min: 0, max: 1e8, show: isCom }),
-           F_('shut_down_cost', 'Shut-down cost', '', { money: true, min: 0, max: 1e8, show: isCom }),
-           F_('stand_by_cost', 'No-load cost', '/h', { money: true, min: 0, max: 1e7, tip: TIP.standby, show: isCom }),
-           F_('init', 'Before the first hour', '', { kind: 'seg', opts: [[1, 'Running'], [0, 'Off']], tip: TIP.init, show: isCom }),
-           F_('ramp_limit_up', 'Ramp up limit', '%/h', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.ramp_up, group: 'Ramping' }),
-           F_('ramp_limit_down', 'Ramp down limit', '%/h', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.ramp_down })],
+           F_('mcurve', 'Marginal cost', '', { kind: 'seg', opts: [['', 'Scalar'], ['lin', 'Linear'], ['quad', 'Quadratic']], wide: true, tip: TIP.mcurve, show: curveShown, group: 'Cost' }),
+           F_('marginal_cost', function(e){ return isCurve(e) ? 'At 0 MW' : 'At any output'; }, '/MWh', { money: true, min: -1e4, max: 1e5, tip: function(e){ return isCurve(e) ? '' : TIP.mc; }, show: curveShown }),
+           F_('marginal_cost_quadratic', 'Slope', '/MWh per MW', { money: true, stack: true, scale: 2, min: 0, max: 2e3, tip: function(e){ return TIP.mc_b[e.mcurve === 'quad' ? 'quad' : 'lin']; }, show: function(e){ return curveShown(e) && isCurve(e); } }),
+           F_('marginal_cost_cubic', 'Curvature', '/MWh per MW²', { money: true, stack: true, scale: 3, min: -3e3, max: 3e3, tip: TIP.mc_c, show: function(e){ return curveShown(e) && e.mcurve === 'quad'; } }),
+           F_('curve', '', '', { kind: 'costcurve', show: function(e){ return curveShown(e) && isCurve(e); } }),
+           F_('committable', 'Committable', '', { kind: 'toggle', tip: function(e){ return e.committable ? TIP.committable_on : TIP.committable_off; }, show: genField('committable'), group: 'Commitment' }),
+           F_('min_up_time', 'Minimum up time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_up, show: genField('min_up_time', isCom) }),
+           F_('min_down_time', 'Minimum down time', 'h', { min: 0, max: 168, step: 1, tip: TIP.min_down, show: genField('min_down_time', isCom) }),
+           F_('start_up_cost', 'Start-up cost', '', { money: true, min: 0, max: 1e8, show: genField('start_up_cost', isCom) }),
+           F_('shut_down_cost', 'Shut-down cost', '', { money: true, min: 0, max: 1e8, show: genField('shut_down_cost', isCom) }),
+           F_('stand_by_cost', 'No-load cost', '/h', { money: true, min: 0, max: 1e7, tip: TIP.standby, show: genField('stand_by_cost', isCom) }),
+           F_('init', 'Before the first hour', '', { kind: 'seg', opts: [[1, 'Running'], [0, 'Off']], tip: TIP.init, show: genField('init', isCom) }),
+           F_('ramp_limit_up', 'Ramp up limit', '%/h', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.ramp_up, show: genField('ramp_limit_up'), group: 'Ramping' }),
+           F_('ramp_limit_down', 'Ramp down limit', '%/h', { scale: 100, min: 1, max: 100, step: 0.1, tip: TIP.ramp_down, show: genField('ramp_limit_down') })],
     Load: [F_('p_set', 'Peak demand', 'MW', { min: 0, max: 1e5, tip: TIP.load_p }),
            F_('prof', 'Profile', '', { kind: 'profile' })],
     StorageUnit: [F_('p_nom', 'Power rating', 'MW', { min: 0, max: 1e5, tip: TIP.store_p }),
@@ -1184,7 +1216,12 @@
     var edited = !custom && Array.isArray(e.prof);
     var curK = custom ? 'custom' : edited ? (ED.baseOf(e) ? e.pbase : '') : e.prof;
     // An old shape is offered only to the element that already has it.
-    var keys = Object.keys(ED.PROFILES).filter(function(k){ return ED.PROFILES[k].kind === kind && (!ED.PROFILES[k].old || k === curK); });
+    // A unit is offered the shapes of its type: the sun's to Solar, the wind's to Wind, none to a Generator or a Grid.
+    var keys = Object.keys(ED.PROFILES).filter(function(k){
+      var p = ED.PROFILES[k];
+      if(k === curK) return true;
+      return p.kind === kind && !p.old && (kind === 'load' || shapeType(p) === ED.genType(e));
+    });
     var opts = [['', kind === 'load' ? 'Flat' : 'Always available']].concat(keys.map(function(k){ return [k, ED.PROFILES[k].label]; })).concat([['custom', 'Custom']]);
     var label = kind === 'load' ? 'Profile' : 'Availability';
     var html = '<div class="field-row prof-row"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(PROFILE_TIP[kind]) + '</span></div>' +
@@ -1208,7 +1245,9 @@
   function fieldHtml(e, f){
     var id = 'f_' + f.k;
     var tip = typeof f.tip === 'function' ? f.tip(e) : f.tip;
+    var label = typeof f.label === 'function' ? f.label(e) : f.label;
     if(f.kind === 'profile') return profileHtml(e);
+    if(f.kind === 'costcurve') return costCurveHtml(e);
     if(f.kind === 'linetype'){
       var types = ED.types.line;
       var names = Object.keys(types).filter(function(n){ return types[n].f_nom > 0; });
@@ -1225,17 +1264,18 @@
       return '<div class="field-row"><div class="field-label"><span class="tip-wrap">' + f.label + tipHtml('PyPSA’s standard line types. A type sets the reactance and the rating; Custom takes your own.') + '</span></div><select class="sel-input" id="' + id + '" data-k="' + f.k + '">' + html + '</select></div>';
     }
     if(f.kind === 'toggle'){
-      return '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div><label class="toggle-switch"><input type="checkbox" data-k="' + f.k + '"' + (e[f.k] ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+      return '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + label + tipHtml(tip) + '</span></div><label class="toggle-switch"><input type="checkbox" data-k="' + f.k + '"' + (e[f.k] ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
     }
     if(f.kind === 'seg'){
-      var cur0 = f.k === 'sym' ? (e.grid ? 'grid' : e.style) : e[f.k];
-      return '<div class="field-row' + (f.wide ? '' : ' inline') + '"><div class="field-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div><div class="seg-group" data-k="' + f.k + '" role="group" aria-label="' + f.label + '">' +
+      var cur0 = f.k === 'sym' ? ED.genType(e) : e[f.k];
+      return '<div class="field-row' + (f.wide ? '' : ' inline') + '"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(tip, f.tipOptions) + '</span></div><div class="seg-group" data-k="' + f.k + '" role="group" aria-label="' + label + '">' +
         f.opts.map(function(o){ return '<button type="button" class="seg-btn' + (o[0] === cur0 ? ' active' : '') + '" data-val="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>';
     }
     var v = getVal(e, f);
     var pre = f.money && cur() ? '<span class="prefix">' + esc(cur()) + '</span>' : '';
-    return '<div class="field-row inline"><div class="field-label"><span class="tip-wrap">' + f.label + tipHtml(tip) + '</span></div>' +
-      '<div class="affix-wrap">' + pre + '<input class="affix-input' + (f.unit ? ' has-suffix' : '') + '" type="text" inputmode="decimal" id="' + id + '" data-k="' + f.k + '"' +
+    // A unit too long to sit beside a short box puts the box under its label, full width.
+    return '<div class="field-row' + (f.stack ? '' : ' inline') + '"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(tip) + '</span></div>' +
+      '<div class="affix-wrap">' + pre + '<input class="affix-input' + (f.unit ? ' has-suffix' : '') + (f.stack ? ' long-suffix' : '') + '" type="text" inputmode="decimal" id="' + id + '" data-k="' + f.k + '"' +
       ' data-min="' + f.min + '" data-max="' + f.max + '"' + (f.step ? ' data-step="' + f.step + '"' : '') + ' value="' + fmtField(v) + '"/>' +
       (f.unit ? '<span class="suffix">' + f.unit + '</span>' : '') + '</div></div>';
   }
@@ -1250,18 +1290,91 @@
       var b0 = byId[e.bus0];
       if(b0 && b0.v_nom){ var z = b0.v_nom * b0.v_nom; return '<p class="derived" id="derived">Reactance per unit on 100 MVA: <b>' + F.v(e.x / z * 100) + '</b>.' + (e.s_nom > 0 ? '' : ' No limit.') + '</p>'; }
     }
-    if(e.c === 'Generator' && e.committable && e.p_nom > 0) return '<p class="derived" id="derived">While on: <b>' + F.mw(e.p_min_pu * e.p_nom) + '</b> to <b>' + F.mw(e.p_nom) + ' MW</b>.</p>';
+    if(e.c === 'Generator' && e.p_nom > 0) return '<p class="derived" id="derived">' + (e.committable ? 'While on' : 'Always on') + ': <b>' + F.mw(e.p_min_pu * e.p_nom) + '</b> to <b>' + F.mw(e.p_nom) + ' MW</b>.</p>';
     if(e.c === 'StorageUnit') return '<p class="derived" id="derived">Energy capacity <b>' + F.mwh(e.p_nom * e.max_hours) + ' MWh</b>; each way <b>' + F.pct(100 * Math.sqrt(e.eff)) + '%</b> efficient.</p>';
     return '';
   }
   function refreshDerived(){
     var el = $('derived');
-    if(!el || app.sel.size !== 1) return;
+    if(app.sel.size !== 1) return;
     var e = ED.byId(app.model)[app.sel.values().next().value];
     if(!e) return;
-    var tmp = document.createElement('div');
-    tmp.innerHTML = derivedHtml(e);
-    if(tmp.firstChild) el.innerHTML = tmp.firstChild.innerHTML;
+    if(el){
+      var tmp = document.createElement('div');
+      tmp.innerHTML = derivedHtml(e);
+      if(tmp.firstChild) el.innerHTML = tmp.firstChild.innerHTML;
+    }
+    if($('costCurve')){ $('costCurve').innerHTML = costSvg(e); $('costKey').innerHTML = costKeyHtml(e); $('costLine').innerHTML = costLineHtml(e); }
+  }
+
+  /* A cost curve: its marginal cost against its output, from its minimum
+     stable loading to its rating, with its linearisation, the pieces the
+     optimiser solves it as. Pointing at it reads it. */
+  var CC = { x0: 34, x1: 248, y0: 12, y1: 64 };
+  // The output the graph starts from: its minimum stable loading, or 0 MW when it has none.
+  function costFrom(e, P){ var pm = Math.max(0, Math.min(1, e.p_min_pu)) * P; return pm < P ? pm : 0; }
+  function costScale(e){
+    var P = e.p_nom > 0 ? e.p_nom : 1, a = costFrom(e, P), pc = ED.costPieces(e), lo = Infinity, hi = -Infinity, pts = [];
+    for(var i = 0; i <= 64; i++){ var x = a + (P - a) * i / 64, v = ED.mcAt(e, x); pts.push([x, v]); if(v < lo) lo = v; if(v > hi) hi = v; }
+    var cLo = lo, cHi = hi;
+    if(pc) pc.s.forEach(function(v, k){ if(pc.x[k + 1] > a + 1e-9){ if(v < lo) lo = v; if(v > hi) hi = v; } });
+    if(!(hi - lo > 1e-9)){ lo -= 1; hi += 1; }
+    var pad = (hi - lo) * 0.08;
+    lo -= pad; hi += pad;
+    return { P: P, a: a, pc: pc, pts: pts, lo: cLo, hi: cHi,
+      X: function(x){ return CC.x0 + (CC.x1 - CC.x0) * (Math.max(a, Math.min(P, x)) - a) / (P - a); },
+      Y: function(v){ return CC.y1 - (CC.y1 - CC.y0) * (v - lo) / (hi - lo); } };
+  }
+  function costSvg(e, atP){
+    var k = costScale(e), X = k.X, Y = k.Y, P = k.P, C = cur();
+    var r = function(v){ return (Math.round(v * 10) / 10).toFixed(1); };
+    var s = '<rect x="0" y="0" width="256" height="84" fill="transparent"/>';
+    s += '<path class="pb-axis" d="M' + CC.x0 + ' ' + (CC.y0 - 2) + 'V' + (CC.y1 + 0.5) + 'H' + CC.x1 + '"/>';
+    if(k.pc){
+      var d = '';
+      k.pc.s.forEach(function(v, i){
+        if(k.pc.x[i + 1] <= k.a + 1e-9) return;
+        d += (d ? 'V' : 'M' + r(X(Math.max(k.a, k.pc.x[i]))) + ' ') + r(Y(v)) + 'H' + r(X(k.pc.x[i + 1]));
+      });
+      s += '<path class="cc-step" d="' + d + '"/>';
+    }
+    s += '<path class="pl" d="' + k.pts.map(function(p, i){ return (i ? 'L' : 'M') + r(X(p[0])) + ' ' + r(Y(p[1])); }).join('') + '"/>';
+    // The axes: its output in MW along the bottom, the price per MWh up the side.
+    var tick = function(x, t, a){ return '<text class="pb-t" x="' + r(x) + '" y="74" text-anchor="' + a + '">' + t + '</text>'; };
+    s += tick(CC.x0, F.mwr(k.a), 'middle') + tick(CC.x1, F.mwr(P) + ' MW', 'end');
+    s += '<text class="pb-t" x="2" y="6">' + esc(C) + '/MWh</text>';
+    s += '<text class="pb-t" x="' + (CC.x0 - 3) + '" y="' + r(Y(k.hi) + 2.5) + '" text-anchor="end">' + F.price(k.hi, '') + '</text>';
+    if(Y(k.lo) - Y(k.hi) > 9) s += '<text class="pb-t" x="' + (CC.x0 - 3) + '" y="' + r(Y(k.lo) + 2.5) + '" text-anchor="end">' + F.price(k.lo, '') + '</text>';
+    if(atP !== null && atP !== undefined && isFinite(atP)){
+      var v = ED.mcAt(e, atP), ax = X(atP);
+      s += '<path class="pb-ref" d="M' + r(ax) + ' ' + CC.y0 + 'V' + CC.y1 + '"/><circle class="pl-dot" cx="' + r(ax) + '" cy="' + r(Y(v)) + '" r="2.4"/>' +
+           '<text class="pb-v" x="' + r(Math.max(110, Math.min(196, ax))) + '" y="6" text-anchor="middle">' + F.mw(atP) + ' MW  ' + esc(F.price(v, C)) + '/MWh</text>';
+    }
+    return s;
+  }
+  function costKeyHtml(e){
+    return '<span><i class="cc-k-curve"></i>Marginal cost</span><span><i class="cc-k-step"></i>Linearisation</span>';
+  }
+  function costLineHtml(e){
+    if(!(e.p_nom > 0)) return 'Give it a rating to draw its curve.';
+    var C = cur(), pm = costFrom(e, e.p_nom);
+    return 'From <b>' + esc(F.price(ED.mcAt(e, pm), C)) + '/MWh</b> at ' + F.mwr(pm) + ' MW to <b>' + esc(F.price(ED.mcAt(e, e.p_nom), C)) + '/MWh</b> at ' + F.mwr(e.p_nom) + ' MW.';
+  }
+  function costCurveHtml(e){
+    return '<svg class="cost-curve" id="costCurve" viewBox="0 0 256 84" role="img" aria-label="Marginal cost against output, from its minimum stable loading to its rating">' + costSvg(e) + '</svg>' +
+      '<div class="cc-key" id="costKey">' + costKeyHtml(e) + '</div>' +
+      '<p class="derived" id="costLine">' + costLineHtml(e) + '</p>';
+  }
+  // The output under the pointer, in MW, or null off the plot.
+  function costAt(ev, e){
+    var el = $('costCurve'), m = el && el.getScreenCTM && el.getScreenCTM();
+    if(!m || !(e.p_nom > 0)) return null;
+    var pt = el.createSVGPoint();
+    pt.x = ev.clientX; pt.y = ev.clientY;
+    pt = pt.matrixTransform(m.inverse());
+    if(pt.x < CC.x0 - 6 || pt.x > CC.x1 + 6) return null;
+    var a0 = costFrom(e, e.p_nom);
+    return Math.max(a0, Math.min(e.p_nom, a0 + (pt.x - CC.x0) / (CC.x1 - CC.x0) * (e.p_nom - a0)));
   }
   function labelOverrideHtml(e){
     var own = typeof e.lb === 'number';
@@ -1329,7 +1442,7 @@
   }
   function elementHtml(e){
     var byId = ED.byId(app.model);
-    var kind = e.c === 'Generator' && e.grid ? 'External grid' : e.c === 'Generator' ? 'Generator' : e.c === 'StorageUnit' ? 'Storage unit' : e.c === 'Link' ? 'HVDC link' : e.c;
+    var kind = e.c === 'Generator' ? { '': 'Generator', pv: 'Solar', wind: 'Wind', grid: 'External grid' }[ED.genType(e)] : e.c === 'StorageUnit' ? 'Storage unit' : e.c === 'Link' ? 'HVDC link' : e.c;
     var where = '';
     if(ED.BRANCH[e.c]) where = 'From <strong>' + esc(ED.nameOf(byId[e.bus0])) + '</strong> to <strong>' + esc(ED.nameOf(byId[e.bus1])) + '</strong>';
     else if(ED.DEVICE[e.c]) where = e.bus ? 'On <strong>' + esc(ED.nameOf(byId[e.bus])) + '</strong>' : 'Not on a bus: drag it onto one';
@@ -1337,13 +1450,15 @@
       '<input class="txt-input" type="text" id="elName" maxlength="40" value="' + esc(ED.nameOf(e)) + '" aria-label="Name"/>' +
       '<span class="insp-actions">' + SharedIcon.button('duplicate', 'Duplicate (Ctrl+D)', 'insp-dup') + SharedIcon.button('trash', 'Delete (Del)', 'insp-del') + SharedIcon.button('close', 'Deselect (Esc)', 'insp-close') + '</span></div>' +
       '<p class="insp-sub">' + kind + (where ? '. ' + where + '.' : '.') + '</p>';
-    html += '<div class="field-group"><div class="group-title">' + (e.c === 'Bus' ? 'Bus' : 'Parameters') + '</div>';
+    // A group is drawn only when its type offers something in it.
+    var groups = [{ title: e.c === 'Bus' ? 'Bus' : 'Parameters', html: '' }];
     (FIELDS[e.c] || []).forEach(function(f){
-      if(f.group) html += '</div><div class="field-group"><div class="group-title">' + f.group + '</div>';
-      if(!f.show || f.show(e)) html += fieldHtml(e, f);
+      if(f.group) groups.push({ title: f.group, html: '' });
+      if(!f.show || f.show(e)) groups[groups.length - 1].html += fieldHtml(e, f) + (f.after ? f.after(e) : '');
     });
-    if(e.c === 'Bus') html += '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + (e.style === 'node' ? 'Devices to the sides' + tipHtml(TIP.upnode) : 'Upright bar' + tipHtml(TIP.upright)) + '</span></div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
-    html += derivedHtml(e) + '</div>';
+    if(e.c === 'Bus') groups[0].html += '<div class="toggle-row"><div class="toggle-label"><span class="tip-wrap">' + (e.style === 'node' ? 'Devices to the sides' + tipHtml(TIP.upnode) : 'Upright bar' + tipHtml(TIP.upright)) + '</span></div><label class="toggle-switch"><input type="checkbox" id="busUpright"' + (e.at[3] === 1 ? ' checked' : '') + '/><span class="toggle-track"><span class="toggle-knob"></span></span></label></div>';
+    if(e.c !== 'Generator') groups[0].html += derivedHtml(e);
+    groups.forEach(function(g){ if(g.html) html += '<div class="field-group"><div class="group-title">' + g.title + '</div>' + g.html + '</div>'; });
     html += labelOverrideHtml(e);
     return html + doneHtml();
   }
@@ -1441,13 +1556,45 @@
     if(seg){
       var e = selectedEl(), k = seg.parentElement.getAttribute('data-k'), v = seg.getAttribute('data-val');
       if(!e) return;
-      // The look only: grid and style are drawn, never solved.
-      if(k === 'sym'){ e.grid = v === 'grid' ? 1 : 0; e.style = v === 'grid' ? '' : v; app.change('geom'); return; }
+      if(k === 'sym'){ setType(e, v); app.change('elec'); return; }
+      if(k === 'mcurve'){ setCurve(e, v); app.change('elec'); return; }
       if(k === 'style'){ e.style = v; app.change('geom'); return; }
       e[k] = k === 'init' || k === 'both' ? +v : v;
       app.change('elec');
     }
   });
+  /* A new type keeps the rating, the price and a file of hours. What it does
+     not offer goes back to its default, and a generator made from another type
+     starts its commitment as a new one does, minimum stable loading and all.
+     Its availability becomes the sun's or the wind's for Solar and Wind, and
+     always available for a Generator or a Grid, unless it already fits. */
+  var GEN_ONLY = ['committable', 'p_min_pu', 'start_up_cost', 'shut_down_cost', 'stand_by_cost', 'min_up_time', 'min_down_time',
+                  'ramp_limit_up', 'ramp_limit_down', 'init', 'mcurve', 'marginal_cost_quadratic', 'marginal_cost_cubic'];
+  function setType(e, v){
+    var was = ED.genType(e), d = ED.DEFAULTS.Generator;
+    if(v === was) return;
+    e.grid = v === 'grid' ? 1 : 0;
+    e.style = v === 'pv' || v === 'wind' ? v : '';
+    if(v) GEN_ONLY.forEach(function(k){ e[k] = d[k]; });
+    else ['committable', 'p_min_pu', 'min_up_time', 'min_down_time', 'start_up_cost'].forEach(function(k){ e[k] = ED.NEW.Generator[k]; });
+    if(!ED.hasTs(e) && shapeType(ED.baseOf(e)) !== (v === 'pv' || v === 'wind' ? v : '')){
+      e.prof = v === 'pv' ? 'pv' : v === 'wind' ? 'wnd' : '';
+      e.pbase = ''; e.dprof = '';
+    }
+  }
+  // The type a built-in unit shape belongs to: 'pv', 'wind', or '' for none.
+  function shapeType(p){ return p && p.kind === 'gen' ? (p.noun === 'solar' ? 'pv' : 'wind') : ''; }
+  /* A curve picked with no slope yet starts with one, so it draws as a curve:
+     the marginal cost rises by a quarter of itself across the rating, half of
+     that in the bend for Quadratic. */
+  function setCurve(e, v){
+    e.mcurve = v;
+    if(!v || !(e.p_nom > 0)) return;
+    var rise = Math.max(1, Math.abs(e.marginal_cost) * 0.25), r2 = function(x){ return +x.toPrecision(2); };
+    if(!e.marginal_cost_quadratic) e.marginal_cost_quadratic = r2((v === 'quad' ? rise / 2 : rise) / e.p_nom) / 2;
+    if(v === 'quad' && !e.marginal_cost_cubic) e.marginal_cost_cubic = r2(rise / 2 / (e.p_nom * e.p_nom)) / 3;
+  }
+
   // Dragging a profile bar sets that hour's value, or that day's.
   var profDrag = null, peek = null;
   var BAR_IDS = { profBars: 'h', dayBars: 'd', tsLine: 't', weekLine: 'w' };
@@ -1498,7 +1645,16 @@
     peek = { which: which, h: p.h };
     drawProf(e, which, p.h);
   }
+  // Pointing at the cost curve, or touching it, reads the marginal cost at that output.
+  function costPeek(ev){
+    var e = selectedEl(), el = $('costCurve');
+    if(!e || !el) return false;
+    if(!(ev.target && ev.target.closest && ev.target.closest('#costCurve'))) return false;
+    el.innerHTML = costSvg(e, costAt(ev, e));
+    return true;
+  }
   insp.addEventListener('pointerdown', function(ev){
+    if(costPeek(ev)) return;
     var which = barOf(ev);
     if(which !== 'h' && which !== 'd') return;
     ev.preventDefault();
@@ -1507,6 +1663,7 @@
     profSet(ev);
   });
   insp.addEventListener('pointermove', function(ev){
+    if(!profDrag && costPeek(ev)) return;
     if(profDrag && profDrag.id === ev.pointerId) profSet(ev);
     else if(!profDrag && ev.pointerType === 'mouse'){ var which = barOf(ev); if(which) profPeek(ev, which); }
   });
@@ -1514,6 +1671,8 @@
   insp.addEventListener('pointerup', function(ev){ if(profDrag && profDrag.id === ev.pointerId){ profDrag = null; renderInspector(); } });
   insp.addEventListener('pointercancel', function(){ profDrag = null; });
   insp.addEventListener('pointerout', function(ev){
+    var cc = $('costCurve');
+    if(cc && ev.target && ev.target.closest && ev.target.closest('#costCurve') && !(ev.relatedTarget && cc.contains(ev.relatedTarget))){ var ce = selectedEl(); if(ce) cc.innerHTML = costSvg(ce); return; }
     var which = barOf(ev), e = selectedEl();
     if(!which || profDrag || !e) return;
     var el = ev.target.closest('svg');
@@ -1643,7 +1802,8 @@
   var MODE_TIP = {
     uc: '<strong>Unit commitment, mixed-integer:</strong> each committable unit is on or off in each hour, with its start-up costs, minimum output and up and down times. Exact.',
     lin: '<strong>Unit commitment, linear relaxation:</strong> on or off becomes a share from 0 to 1. Quick, and its cost is a lower bound on the exact one.',
-    ed: '<strong>Economic dispatch:</strong> every unit runs anywhere from zero to its rating, cheapest first. No start-ups, minimum output or up and down times.'
+    edm: '<strong>Economic dispatch:</strong> every unit is on in every hour, between its minimum stable loading and its rating, cheapest first. No start-ups or up and down times.',
+    ed: '<strong>Economic dispatch, no minimum output:</strong> every unit runs anywhere from zero to its rating, cheapest first. No start-ups, minimum output or up and down times.'
   };
   var LIMITS_TIP = {
     on: 'Lines, transformers and links carry no more than their ratings. A full one splits the price on either side of it.',

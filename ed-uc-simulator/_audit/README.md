@@ -25,20 +25,27 @@ PSA.js or PyPSA:
   over its rating);
 - no branch passes its limit, and a link delivers its efficiency times what it sends, one way at
   a time, within its rating;
-- every unit stays between its minimum (while on) and its available output, a committable unit
-  is on or off (or between, in the relaxation), ramp limits hold between two hours it runs in,
+- every unit stays between its minimum and its available output: a committable unit while it is
+  committed, every other unit in every hour (under economic dispatch every unit, and under the
+  economic dispatch with no minimum output none), below what is available when that is less; a
+  committable unit is on or off (or between, in the relaxation), ramp limits hold between two hours it runs in,
   a unit that starts reaches at most its minimum plus one hour's ramp up and the hour before it
   stops runs at most its minimum plus one hour's ramp down, and minimum up and down times hold,
   counted from its state before the first hour;
 - start-ups and shut-downs follow the commitment;
 - storage energy follows what flows in and out at the square root of the round-trip efficiency,
   stays within its capacity and ends where it started when it is cyclic;
-- the cost recomputed from all of that equals the tool's cost, which equals PyPSA's objective.
+- a cost curve is its definition's pieces: 16 in all, equal from 0 MW to the minimum stable loading
+  and on to the rating, each at the chord of a·P + q·P² + k·P³, never falling, so they fill in order;
+- the cost recomputed from all of that, each curve piece by piece, equals the tool's cost, which
+  equals PyPSA's objective (plus, under economic dispatch, the committable units' no-load cost in
+  every hour, which the objective leaves out as a constant).
 
-The cases are every Quick Start in all three modes and 30 seeded random networks (typed and
+The cases are every Quick Start in all four modes, 30 seeded random networks (typed and
 custom lines, transformers, committable units with every kind of cost and limit, solar and wind
 availability, every load profile, storage, lossy and lossless links one way or both, limits on
-and off, 24 and 48 hours).
+and off, 24 and 48 hours), and the same networks again (seeds 31 to 50) with linear and quadratic
+cost curves and minimum stable loading on units that are not committable, in every mode.
 
 **A3. Unit commitment is optimal.** Fifteen seeded one-bus cases of three units over five or six
 hours, with minimum output, start-up, shut-down and stand-by costs, minimum up and down times
@@ -48,6 +55,12 @@ running units' minimums, shedding at the value of lost load. The tool's mixed-in
 cost no more than the cheapest of them plus HiGHS's 0.01% gap, and no less than it minus the
 solver's feasibility tolerance. The linear relaxation and economic dispatch of the same case are
 relaxations of it, so they must never cost more.
+
+**A3c. Unit commitment with cost curves is optimal.** Ten seeded one-bus cases of three committable
+units with linear or quadratic marginal costs over five hours, enumerated as in A3, each hour
+paying every running unit's pieces up to its minimum and filling the rest from all their pieces
+above it, cheapest first. The relaxation and the economic dispatch with no minimum output never
+cost more.
 
 **A3b. A ramp limit never stops a unit starting or stopping.** PyPSA writes a committable unit's
 ramp rows with the change in status, so with its start-up and shut-down ramps left at the full
@@ -60,12 +73,54 @@ PyPSA 1.4 give the same answers.
 
 **A4. The prices are marginal costs.** On an uncongested case, a unit running strictly between
 its limits sets the price at its bus to its marginal cost; a unit at its available output is no
-dearer than the price, and an idle one no cheaper. Checked under economic dispatch, and under
-unit commitment (ramp limits removed), where the prices come from the second, linear run with
-the commitment held as found.
+dearer than the price, and an idle one no cheaper. Checked under the economic dispatch with no
+minimum output, under economic dispatch and under unit commitment (both with ramp limits removed),
+where the prices come from the second, linear run with the commitment held as found; each check
+has to look at some unit-hours. With a cost curve, a unit inside one of its pieces sets that piece's
+slope (uc3 with curves under both economic dispatches and unit commitment, and the solar case
+with a quadratic gas turbine); a unit at a breakpoint is left out, its price is anywhere between
+the two slopes.
 
 **A5. The engine.** `engine/psa-opt.min.js` hashes to the sha256 in its own banner, and
 `engine/highs.wasm` to the sha256 that `engine/highs.mjs` names.
+
+**A10. Held to PyPSA itself.** `pypsa-cases.mjs` writes eleven networks in the tool's saved form
+with the hourly series the tool derives from their profiles; `pypsa-bench.py` builds each one in
+PyPSA 1.4 its own way, from the saved form, and solves it with HiGHS; its answers are checked in
+as `pypsa-fixtures.json`, so the audit needs no Python:
+- a cost curve against PyPSA's piecewise `marginal_cost` (the same breakpoints, cumulative):
+  uc3 with a linear coal unit, a quadratic combined cycle and a linear peaker under unit
+  commitment and both economic dispatches; Two areas with curves and a hydro unit that is not
+  committable held at 20%; the solar case with a quadratic gas turbine; uc3 with no unit
+  committable and minimums held. The objective is PyPSA's to 1e-9 (a mixed-integer one within
+  the 0.01% gap), and a linear problem's dispatch (bar storage, which can trade hours at no cost)
+  and every nodal price are PyPSA's;
+- the linear relaxation against the same pieces built as plain PyPSA components (PyPSA's piecewise
+  cost scales its pieces with the unit's status, which makes the relaxation mixed-integer);
+- linear marginal costs against PyPSA's exact quadratic cost (`marginal_cost_quadratic`, a QP):
+  the pieces never cost less than the exact optimum and no more than their chord error above it
+  (q × w² / 4 a unit and hour), and every price is within half a piece's rise (q × w).
+
+Rebuild the fixtures after changing the cases or the model:
+
+```sh
+node ed-uc-simulator/_audit/pypsa-cases.mjs
+python ed-uc-simulator/_audit/pypsa-bench.py   # PyPSA 1.4 or later, with highspy
+```
+
+HiGHS solves the exact quadratic cost in economic dispatch and the relaxation, but not in a
+mixed-integer unit commitment: it has no MIQP solver ("Cannot solve MIQP problems with HiGHS",
+in PyPSA 1.4 as in the browser). A quadratic marginal cost is a cubic cost, which no QP takes.
+So every mode solves a curve as pieces.
+
+**A11. Saved state from before.** A v1 network's unit that is not committable loses the
+minimum it never had (it ran from zero), a committable one keeps its own, and the object read is
+left as it was; solved, the v1 unit still runs below its minimum and the same unit saved as v2
+never does. Unknown, negative, word and capitalised curve values fall back or are read. The old
+economic dispatch keeps its value (`ed`) and its meaning beside the new one (`edm`), and with no
+minimums anywhere they are the same problem. A flat curve solves as its scalar, bit for bit; a
+falling one, and minimums that cannot fit under the load in economic dispatch, are errors in the
+checks.
 
 **A6. The calendar,** against JavaScript's own dates: every built-in profile, from four starts
 (including a mid-morning one and a leap year), takes the clock hour from its start, demand its
@@ -127,12 +182,24 @@ in a module worker:
 - From a file in the inspector opens the file chooser, and a column in MW sets the peak demand;
   choosing a shape again lets the file go; undo brings it back, and a reload keeps it all;
 - a year of hours opened on the page is applied in well under a second.
+- A generator's type through the inspector: a Generator offers its minimum stable loading, a
+  marginal cost curve, commitment and ramping; Solar resets and hides what it does not use and
+  takes the sun's availability; back to a Generator, it starts as a new one, committable at 30%.
+- A cost curve through the inspector: Linear seeds a rising slope and draws the curve with its
+  pieces; Quadratic adds a curvature; both are stored in PyPSA's convention; pointing at the curve
+  reads it; the page's run is the core's on the same network and What this assumes names the
+  pieces; the diagram labels the unit with its marginal cost at the hour's output; Scalar again
+  costs what it did.
+- PJM 5-bus opens as the economic dispatch that holds minimums; Sundance at 25% never runs below
+  50 MW, and the economic dispatch with no minimum output runs it from zero, as Li and Bo have it.
+- A cache from before keeps its economic dispatch as it was, and its units that are not
+  committable lose the minimum they never had.
 
 The engine's own build (`_build/build-engine.mjs`) runs a separate check:
 - PSA.js's own unit commitment and dispatch parity scenarios (`opt_uc`, `opt_uc_more`,
   `opt_committable_extendable`, `opt_misc`) through the shipped bundle: every LP file, objective,
   status and network must match PyPSA's fixtures;
-- every Quick Start in all three modes through the shipped, pruned and minified bundle must give
+- every Quick Start in all four modes through the shipped, pruned and minified bundle must give
   results identical, bit for bit, to an unpruned bundle of the PSA.js source.
 
 The Share menu, embeds, exports at every screen size and the GIF are held by
