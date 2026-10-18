@@ -217,6 +217,12 @@ function initModels() {
   return {};
 }
 
+/* An embed builds nothing until its own choices and mode are in (the view
+   hook below lets go), so it never builds a scene for the default list
+   and then again for the reader's. */
+const inEmbed = !!SharedShare.embedded;
+let holdModels = inEmbed;
+
 const MODEL_BUILD = {
   wheel: () => M3D.Wheel($('wheel3dCanvas')),
   slot: () => M3D.SlotMachine($('slot3dCanvas')),
@@ -227,7 +233,7 @@ const MODEL_BUILD = {
    whenever the 2D versions are in use. A model that fails to build switches
    every mode back to 2D, so check gl again after a null. */
 function model(name) {
-  if (!gl) return null;
+  if (!gl || holdModels) return null;
   if (!gl[name] && currentMode === name) {
     try {
       gl[name] = MODEL_BUILD[name]();
@@ -561,7 +567,7 @@ function faceTextUp(geo) {
 // Built the first time the dice are shown (see setMode).
 let diceTried = false;
 function ensureDice() {
-  if (diceTried) return;
+  if (diceTried || holdModels) return;
   diceTried = true;
   three = initThree();
   applyDieTextures(true);
@@ -1589,6 +1595,8 @@ function showWinner(name) {
 function closeWinner() { $('winnerOverlay').classList.remove('open'); }
 
 $('winnerCloseBtn').addEventListener('click', closeWinner);
+// An embed only closes the banner (style.css hides Remove and its hint there).
+if (inEmbed) $('winnerCloseBtn').textContent = 'Close';
 $('winnerOverlay').addEventListener('click', e => { if (e.target === $('winnerOverlay')) closeWinner(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWinner(); });
 
@@ -1603,7 +1611,8 @@ function removeChoiceAt(i) {
 }
 
 $('winnerRemoveBtn').addEventListener('click', () => {
-  if (animating || !lastPick) return;
+  // An embed's list is the author's: a visitor picks from it and closes, never trims it.
+  if (inEmbed || animating || !lastPick) return;
   removeChoiceAt(resolveRemovalIndex(lastPick));
   lastPick = null;
   closeWinner();
@@ -1763,13 +1772,18 @@ persistApi = Persist.init('randompicker', {
   if (emb && ACTION_LABEL[emb[1]]) currentMode = emb[1];
 }
 // A link or an embed carries the same blob the mini cache keeps: the choices and the mode.
+// Every load and mode switch draws before it returns, so an embed shows on the next frame.
 SharedShare.state({
   save: () => persistApi.snapshot(),
-  load: blob => persistApi.load(blob)
+  load: blob => persistApi.load(blob),
+  sync: true
 });
 Object.keys(ACTION_LABEL).forEach(mode => SharedShare.view('stage-' + mode, {
   load() {
-    if (animating || (mode === 'dice' && choices.length > 6)) return;
+    // The embed's state is in: build the one scene it shows.
+    const held = holdModels;
+    holdModels = false;
+    if (animating || (mode === 'dice' && choices.length > 6)) { if (held) setMode(currentMode); return; }
     setMode(mode);
   }
 }));
