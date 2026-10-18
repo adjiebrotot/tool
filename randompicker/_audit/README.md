@@ -24,7 +24,7 @@ Run: `node odds.mjs` — exits non-zero if any check fails.
   another origin it shows the stage card alone with the reader's choices,
   their theme, the mode's button and the watermark; markup in a choice is
   drawn as text and runs nothing; the picker plays there without writing to
-  the viewer's cache; the host sizes the frame to the card; and the links
+  the viewer's cache, and its winner banner only closes (no Remove from list); the host sizes the frame to the card; and the links
   back open the whole tool on that mode and those choices. It also checks
   that only the scene on screen is built (one WebGL scene, not four), that
   Share sits clear of the picker on a desktop and a phone, and that old saved

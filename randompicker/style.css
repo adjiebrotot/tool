@@ -168,6 +168,8 @@ body.gl3d .wheel-wrap,body.gl3d .slot-machine,body.gl3d #galtonCanvas{display:no
 .winner-actions .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:7px;}
 .winner-actions .ico{width:16px;height:16px;}
 .winner-hint{color:var(--muted);font-size:.78rem;margin-top:12px;line-height:1.45;}
+/* An embed's list belongs to its author: the winner banner only closes. */
+html.abt-embed #winnerRemoveBtn,html.abt-embed .winner-hint{display:none;}
 
 /* ---------- responsive ---------- */
 @media(max-width:1100px){

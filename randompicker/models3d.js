@@ -803,8 +803,9 @@ const M3D = (() => {
         if (rl.mesh) {
           machine.remove(rl.mesh);
           rl.mesh.geometry.dispose();
-          rl.sharp.dispose(); rl.blurred.dispose(); rl.mesh.material.dispose();
+          rl.sharp.dispose(); if (rl.blurred) rl.blurred.dispose(); rl.mesh.material.dispose();
           rl.mesh = null;
+          rl.slots = null;
         }
         const slots = slotLists[i];
         const M = slots.length;
@@ -812,8 +813,16 @@ const M3D = (() => {
         if (!M) return;
         const cellPx = Math.max(40, Math.min(168, Math.floor(4096 / M)));
         rl.sharp = colorTexture(buildReelTexture(slots, labelColors, cellPx, false));
-        rl.blurred = colorTexture(buildReelTexture(slots, labelColors, cellPx, true));
-        [rl.sharp, rl.blurred].forEach(t => { t.wrapT = THREE.RepeatWrapping; });
+        rl.sharp.wrapT = THREE.RepeatWrapping;
+        // The smeared print is only seen mid-spin: painted once the first frame is up.
+        rl.blurred = null;
+        rl.paintBlur = () => {
+          if (rl.blurred || rl.slots !== slots) return;
+          rl.blurred = colorTexture(buildReelTexture(slots, labelColors, cellPx, true));
+          rl.blurred.wrapT = THREE.RepeatWrapping;
+        };
+        rl.slots = slots;
+        (window.requestIdleCallback || (f => setTimeout(f, 300)))(rl.paintBlur);
         const radius = (M * CELL) / TAU;
         rl.radius = radius;
         const mat = new THREE.MeshStandardMaterial({
@@ -840,6 +849,7 @@ const M3D = (() => {
         if (!rl.mesh) return;
         rl.mesh.rotation.x = (pos / itemH + 1.5) * TAU / rl.M;
         const blur = speed > 900;
+        if (blur) rl.paintBlur();
         if ((rl.mesh.material.map === rl.blurred) !== blur) {
           rl.mesh.material.map = blur ? rl.blurred : rl.sharp;
           rl.mesh.material.needsUpdate = true;

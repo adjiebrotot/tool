@@ -16,6 +16,7 @@
 //       runs nothing
 //   E4  the picker works in the frame and writes nothing to the viewer's cache
 //   E5  the frame is sized by its host to the card, nothing cut
+//   E6  a winner in the frame can only be closed: no Remove from list
 //   L1  Share as link and the links back open the whole tool on that mode
 //       and those choices
 //   P1  a cache saved before Share existed (or with a mode that is gone)
@@ -227,12 +228,21 @@ for (const mode of ['wheel', 'dice', 'slot', 'galton'].filter(m => !process.env.
   const played = await frame.waitForFunction(() => historyArr.length === 1 && !animating, null, { timeout: 20000 }).then(() => true, () => false);
   const after = await frame.evaluate(() => ({
     pick: historyArr[0], winner: document.querySelector('#winnerOverlay').classList.contains('open'),
-    name: document.querySelector('#winnerName').textContent, saved: localStorage.getItem('abt:save:randompicker:v1')
+    name: document.querySelector('#winnerName').textContent, saved: localStorage.getItem('abt:save:randompicker:v1'),
+    remove: document.querySelector('#winnerRemoveBtn').offsetParent !== null || document.querySelector('.winner-hint').offsetParent !== null,
+    close: document.querySelector('#winnerCloseBtn').textContent
   }));
   const okPick = after.pick && (after.pick.noWin ? !after.winner : after.winner && CHOICES.map(inert).includes(after.name));
   check(`${mode} E4 the picker plays in the frame and leaves the viewer's cache alone`,
         played && okPick && after.saved === null, JSON.stringify(after));
-  if (after.winner) await frame.click('#winnerCloseBtn');
+  // E6: the list is the author's, so a visitor can only close the banner.
+  if (after.winner) {
+    await frame.evaluate(() => document.querySelector('#winnerRemoveBtn').click());
+    const kept = await frame.evaluate(() => parseChoices().length);
+    check(`${mode} E6 the winner banner only closes in the frame: no Remove, and the list stays`,
+          !after.remove && after.close === 'Close' && kept === CHOICES.length, JSON.stringify({ remove: after.remove, close: after.close, kept }));
+    await frame.click('#winnerCloseBtn');
+  }
 
   await E.ctx.close();
 

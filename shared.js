@@ -3147,6 +3147,8 @@
      gesture still working.
 
          SharedShare.state({ save, load })        // a tool outside SharedScenario
+         SharedShare.state({ save, load, sync: true })
+                                                  // ...that draws in the same tick it loads
          SharedShare.view(key, { save, load })    // a popup that has to open first
          SharedShare.view(key, { save(picked), load, choices, height })
                                                   // a checklist in the embed dialog
@@ -3169,6 +3171,9 @@
      A chart drawn by the tool itself (an SVG diagram, not Chart.js or Plotly)
      marks its element data-share-chart and keeps data-share-sig set to a
      signature of what it draws, which embeds wait on and the checks compare.
+     A tool whose load, view() and drawing all finish before they return
+     passes sync: true, and its embed shows on the next frame instead of
+     after the pauses and settling polls a chart that draws later needs.
      A cluster may also carry ⬇ GIF for an animated chart: its row sits after
      PNG and shows only while that button does, and the tool's ⧉ handler can
      pass copyImage a third argument, { gif: fn, onDone: fn }, to put the
@@ -4105,8 +4110,10 @@
       if(el.hasAttribute && el.hasAttribute('data-share-sig')) return el.getAttribute('data-share-sig');
       return '';
     }
-    function settled(key){
+    function settled(key, quick){
       return new Promise(function(resolve){
+        // A tool that draws as it loads has settled once it draws anything.
+        if(quick && sig(findChart(key))) return global.requestAnimationFrame(function(){ resolve(); });
         var last = null, same = 0, t0 = Date.now();
         (function poll(){
           var s = sig(findChart(key));
@@ -4128,6 +4135,7 @@
     }
     function startEmbed(){
       var E = { key: keyNow(EMBED.key), theme: EMBED.theme, s: EMBED.s }, payload = {}, back = null;
+      var quick = !!(provider && provider.sync), pause = function(ms){ return quick ? Promise.resolve() : wait(ms); };
       Promise.resolve()
         .then(function(){ applyTheme(E.theme); })
         .then(function(){ return E.s ? unpack(E.s) : {}; })
@@ -4145,20 +4153,20 @@
           if(payload.d && dataHook) dataHook.load(payload.d);
           if(payload.s && provider) return provider.load(payload.s);
         })
-        .then(function(){ return wait(250); })
+        .then(function(){ return pause(250); })
         .then(function(){
           // A tool behind a Simulate gate draws on its button, not on load.
           var run = document.querySelector('.needs-run');
-          if(run && !run.disabled){ run.click(); return wait(250); }
+          if(run && !run.disabled){ run.click(); return pause(250); }
         })
         .then(function(){ var h = views[E.key]; if(h && h.load) return h.load(payload.v || {}); })
-        .then(function(){ return wait(250); })
+        .then(function(){ return pause(250); })
         .then(function(){ var card = cardOf(findChart(E.key)); if(card && payload.u) return applyUi(card, payload.u); })
-        .then(function(){ return wait(200); })
+        .then(function(){ return pause(200); })
         .then(function(){
           var el = findChart(E.key), card = cardOf(el);
           if(!card) throw new Error('no chart ' + E.key + ' on this page');
-          return back.then(function(href){ isolate(card, el, href); return settled(E.key); });
+          return back.then(function(href){ isolate(card, el, href); return settled(E.key, quick); });
         })
         .then(function(){
           // A link from before prices rode in it would need the Worker, which
@@ -4169,8 +4177,19 @@
         .then(function(){ document.documentElement.classList.remove('abt-embed-wait'); });
     }
     if(EMBED){
-      if(document.readyState === 'complete') setTimeout(startEmbed, 0);
-      else global.addEventListener('load', function(){ setTimeout(startEmbed, 0); });
+      var started = false, go = function(){ if(!started){ started = true; setTimeout(startEmbed, 0); } };
+      if(document.readyState === 'complete') go();
+      else {
+        global.addEventListener('load', go);
+        // A sync tool is drawn by the end of its own script, so it need not
+        // wait for the page's other files (analytics, images): only for the
+        // webfont its canvases draw in, and not for long.
+        document.addEventListener('DOMContentLoaded', function(){
+          if(!(provider && provider.sync)) return;
+          var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+          Promise.race([fonts, wait(400)]).then(go, go);
+        });
+      }
     }
 
     /* ── Open mode: a link back from an embed ──
