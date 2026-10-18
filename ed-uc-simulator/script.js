@@ -1782,9 +1782,25 @@
   }
   /* Download as GIF asks first: the diagram as it is now, or the hours played
      through (at the pace ▶ plays them) with the charts ticked under it. */
-  var CHART_NAME = { disp: 'Dispatch', price: 'Nodal prices', commit: 'Unit Commitment', store: 'Storage' };
+  var CHART_NAME = { disp: 'Dispatch', curt: 'Curtailment', price: 'Nodal prices', commit: 'Unit Commitment', store: 'Storage' };
+  /* The charts a GIF or an embed can carry. Curtailment is the pane under
+     Dispatch, offered after it while the chart shows one. */
   function chartChoices(){
-    return Object.keys(CARD).filter(function(k){ return !$(CARD[k]).hidden && window.EDCharts && EDCharts.get(k); });
+    var list = Object.keys(CARD).filter(function(k){ return !$(CARD[k]).hidden && window.EDCharts && EDCharts.get(k); });
+    var at = list.indexOf('disp');
+    if(at >= 0 && EDCharts.curtShown()) list.splice(at + 1, 0, 'curt');
+    return list;
+  }
+  // The panes of Dispatch a pick asks for. A pick from before Curtailment was one has none of it.
+  function dispParts(picked){
+    var has = function(k){ return picked.indexOf(k) >= 0; };
+    return { disp: has('disp') || !has('curt'), curt: has('curt') };
+  }
+  // The cards a pick fills: either pane of Dispatch is the Dispatch card.
+  function pickedCards(picked){
+    var out = [];
+    picked.forEach(function(k){ k = k === 'curt' ? 'disp' : k; if(CARD.hasOwnProperty(k) && out.indexOf(k) < 0) out.push(k); });
+    return out;
   }
   function gifCtx(series, picked){
     var ctx = exportCtx(), res = ctx.res;
@@ -1792,8 +1808,10 @@
       ctx.series = { step: playStep(res.T), sub: function(h){ return exportSub(res, h); } };
       var paint = app.paint(), bg = paint('--panel'), fg = paint('--text');
       // Every chart's plot area on the same edges, so the hour marker runs straight down them.
-      var keys = (picked || []).filter(function(k){ return EDCharts.get(k); }), edge = EDCharts.stillEdges(keys);
-      ctx.charts = keys.map(function(k){ return EDCharts.still(k, CHART_NAME[k], bg, fg, edge); }).filter(Boolean);
+      var want = dispParts(picked || []), keys = pickedCards(picked || []).filter(function(k){ return EDCharts.get(k); }), edge = EDCharts.stillEdges(keys, want);
+      ctx.charts = keys.map(function(k){
+        return k === 'disp' ? EDCharts.still(k, want.disp ? CHART_NAME.disp : CHART_NAME.curt, bg, fg, edge, want) : EDCharts.still(k, CHART_NAME[k], bg, fg, edge);
+      }).filter(Boolean);
     }
     return ctx;
   }
@@ -1865,27 +1883,32 @@
 
   /* Embed as HTML offers the charts too: ticked ones ride in the link and,
      in the frame, move into the diagram's card, under it. */
-  function chartHeight(k){
-    var c = $(CARD[k]), w = c.querySelector('.canvas-wrap');
-    var desk = (window.SharedExport && SharedExport.desktopHeight(w)) || (k === 'commit' ? 300 : 380);
+  function chartHeight(k, picked){
+    var c = $(CARD[k]), w = c.querySelector('.canvas-wrap'), probe = w;
+    // Dispatch is as tall as the panes picked for it make it.
+    if(k === 'disp'){ probe = document.createElement('div'); probe.className = ('canvas-wrap ' + EDCharts.paneClass(dispParts(picked))).trim(); }
+    var desk = (window.SharedExport && SharedExport.desktopHeight(probe)) || (k === 'commit' ? 300 : 380);
     var chrome = c.classList.contains('is-folded') || !w.offsetHeight ? 130 : c.offsetHeight - w.offsetHeight;
     return 14 + desk + chrome;
   }
   function embedCharts(list){
-    var card = $('sldCard');
-    list.forEach(function(k){
-      if(!CARD.hasOwnProperty(k)) return;
+    var card = $('sldCard'), want = dispParts(list);
+    // Dispatch draws the panes picked for it, and alone its curtailment is named for what it is.
+    if(window.EDCharts) EDCharts.parts(want);
+    if(!want.disp) $('dispCard').querySelector('h2').textContent = CHART_NAME.curt;
+    pickedCards(list).forEach(function(k){
       var c = $(CARD[k]);
       c.classList.remove('is-folded');
       c.classList.add('sld-embed-chart');
       card.appendChild(c);
     });
     card.classList.toggle('sld-with-charts', !!card.querySelector('.sld-embed-chart'));
+    if(app.res) renderCharts();
   }
   SharedShare.view('sldStage', {
     choices: function(){ return chartChoices().map(function(k){ return { value: k, label: CHART_NAME[k] }; }); },
     save: function(picked){ return picked && picked.length ? { charts: picked } : undefined; },
-    height: function(picked){ return picked.reduce(function(sum, k){ return sum + (CARD.hasOwnProperty(k) ? chartHeight(k) : 0); }, 0); },
+    height: function(picked){ return pickedCards(picked).reduce(function(sum, k){ return sum + chartHeight(k, picked); }, 0); },
     load: function(v){ if(EMBED && v && Array.isArray(v.charts)) embedCharts(v.charts); }
   });
   $('copyBtn').addEventListener('click', function(){

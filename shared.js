@@ -1234,8 +1234,9 @@
        dash    Chart.js borderDash, e.g. [2,3];   width  borderWidth
        fill    fill colour — under the line for an area line, the whole block
                for a band;  fill2  second fill, for a band filled either side
-       hatch   colour of 45° lines over a bar or area block — a hatched fill
-               (existing plant under new build, say) keyed as hatched
+       hatch   colour of 45° lines over a bar or area block, or the area under
+               a line — a hatched fill (existing plant under new build,
+               curtailed output under the output, say) keyed as hatched
        dots    colour of a dotted fill over a block or the area under a line
                (storage among generators, say) keyed as dotted
        point   {shape:'circle'|'ring'|'triangle'|'rect', fill, stroke, width,
@@ -1393,6 +1394,7 @@
     } else if(s.type !== 'point'){
       // A line, with the area under it shaded when the series is filled.
       if(s.fill) out.push({t:'rect', x:0, y:cy, w:W, h:H/2, r:0, fill:s.fill});
+      if(s.fill && s.hatch) legHatch(out, 0, cy, W, H/2, s.hatch, k);
       if(s.fill && s.dots) legDots(out, 0, cy, W, H/2, s.dots, k);
       if(lw > 0){
         if(s.colors) {
@@ -2951,6 +2953,8 @@
     var H = global.Chart && global.Chart.helpers;
     if(!H || !scale._getLabelSizes || !scale.ticks || !scale.ticks.length || scale.isHorizontal()) return;
     var o = scale.options;
+    // A pane hidden after it was fitted (Dispatch's curtailment) keeps the hook but takes no width.
+    if(o.display === false) return;
     var lines = o.title && o.title.display ? (Array.isArray(o.title.text) ? o.title.text.length : 1) : 0;
     var title = lines ? H.toFont(o.title.font).lineHeight * lines + H.toPadding(o.title.padding).height : 0;
     var tick = o.grid && o.grid.display !== false && o.grid.drawTicks !== false ? (o.grid.tickLength || 0) : 0;

@@ -2,7 +2,9 @@
 
    Dispatch     each unit's output stacked in merit order (cheapest at the
                 bottom), storage charging below zero, load shed in red, and
-                the demand line over them.
+                the demand line over them; under it, on the same hours, a
+                pane of the power units had and did not use (curtailed),
+                hatched in each unit's colour, while there is any.
    Nodal prices one line per bus, or one system price when every bus has the
                 same price all the time.
    Commitment   which committable unit runs in which hour (a relaxed run's
@@ -23,6 +25,9 @@
   var charts = {};       // canvas id -> Chart
   var ctx = null;        // the last render: { res, model, display, onHour }
   var CANVAS = { disp: 'dispCanvas', price: 'priceCanvas', commit: 'commitCanvas', store: 'storeCanvas' };
+  // What the Dispatch chart draws: its own pane, the curtailment pane under it.
+  // An embed that picked only one of them draws only that one.
+  var parts = { disp: true, curt: true };
 
   // A colour for the i-th series: the neutral sequence, paler on each lap round it.
   function seriesColour(i){
@@ -139,11 +144,15 @@
   /* The key. Entries that name a group are grouped: a row a group, led by its
      name, the groups in the order they first come (the Capacity Expansion
      Planner's). An entry's own text stays its label alone, as a Share link
-     names it. */
+     names it. A unit's curtailment is keyed inside the unit's own entry,
+     "Solar farm (▨ Curtailed)", so the two wrap as one; a click on either
+     shows or hides that one series, and chart.$edPanes re-lays the panes. */
   function renderLegend(legendId, chart, datasets){
     var el = $(legendId);
     if(!el) return;
     el.innerHTML = '';
+    var unitItem = {};
+    var paren = function(s){ var p = document.createElement('span'); p.className = 'legend-paren'; p.textContent = s; return p; };
     var grouped = datasets.some(function(ds){ return !ds.noLegend && ds.group; }), rows = {}, order = [];
     el.classList.toggle('legend-grouped', grouped);
     // A group's entries wrap in a box of their own, so a second line of them
@@ -168,24 +177,40 @@
     };
     datasets.forEach(function(ds, idx){
       if(ds.noLegend) return;
-      var item = document.createElement('div');
+      var item = document.createElement('div'), unit = ds.kind === 'curt' ? unitItem[ds.id] : null;
       item.className = 'legend-item';
-      SharedLegend.attach(item, SharedLegend.specOf(ds), ds.label);
+      SharedLegend.attach(item, SharedLegend.specOf(ds), unit ? 'Curtailed' : ds.label);
+      if(ds.kind) item.setAttribute('data-kind', ds.kind);
+      if(ds.kind === 'gen'){ unitItem[ds.id] = item; item.setAttribute('data-unit', ds.id); }
       if(ds.hidden) item.classList.add('hidden');
       item.addEventListener('click', function(){
         var hidden = !item.classList.contains('hidden');
         item.classList.toggle('hidden', hidden);
         chart.setDatasetVisibility(idx, !hidden);
+        if(chart.$edPanes) chart.$edPanes();
         chart.update();
       });
-      rowOf(ds.group || '').appendChild(item);
+      if(!unit){ rowOf(ds.group || '').appendChild(item); return; }
+      // The exports read data-of to key it the same way, and data-full when its unit is not keyed.
+      item.classList.add('legend-curt');
+      item.setAttribute('data-of', ds.id);
+      item.setAttribute('data-full', ds.label);
+      item.title = ds.label;
+      item.insertBefore(paren('('), item.firstChild);
+      item.appendChild(paren(')'));
+      var pair = document.createElement('span');
+      pair.className = 'legend-pair';
+      unit.parentNode.insertBefore(pair, unit);
+      pair.appendChild(unit);
+      pair.appendChild(item);
     });
     order.forEach(function(row){ el.appendChild(row); });
   }
   function make(key, cfg, legendId){
     var id = CANVAS[key];
     if(charts[id]) charts[id].destroy();
-    cfg.plugins = [SharedZoom.plugin, HOUR_PLUGIN];
+    // SharedPane keeps each pane's axis text inside it, on Dispatch with its curtailment pane.
+    cfg.plugins = [SharedZoom.plugin, HOUR_PLUGIN, SharedPane.plugin];
     var ch = charts[id] = new Chart($(id), cfg);
     if(legendId) renderLegend(legendId, ch, cfg.data.datasets);
     return ch;
@@ -213,6 +238,66 @@
     if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
     return pat;
   }
+  /* A hatched fill: 45° lines of the colour over a pale wash of it, for the
+     power a unit had and did not use, so it never reads as output (dots are
+     storage's). Drawn at the screen's pixel ratio, like the dots. */
+  function hatchFill(fill, line){
+    var n = 6, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = cv.height = n * k;
+    g.scale(k, k);
+    g.fillStyle = fill; g.fillRect(0, 0, n, n);
+    g.strokeStyle = line; g.lineWidth = 1;
+    g.beginPath();
+    [-n, 0, n].forEach(function(o){ g.moveTo(o, n); g.lineTo(o + n, 0); });
+    g.stroke();
+    var pat = g.createPattern(cv, 'repeat');
+    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
+    return pat;
+  }
+
+  /* The class the Dispatch chart's box takes for the panes it draws: taller
+     with the curtailment pane under the dispatch, shorter with that pane alone. */
+  function paneClass(want){ return want.disp && want.curt ? 'has-curt' : want.curt ? 'curt-only' : ''; }
+  /* The curtailment pane sits under the dispatch, on the same hours, while any
+     unit's curtailment is showing in the key; hide every one and the dispatch
+     has the whole chart back. want ({ disp, curt }) is what to draw instead
+     of parts, for a GIF of one pane. The caller updates the chart. */
+  function panes(chart, want){
+    var sc = chart.options.scales, wrap = chart.canvas && chart.canvas.parentElement;
+    var curt = !!sc.yCurt && chart.data.datasets.some(function(d, i){ return d.kind === 'curt' && chart.isDatasetVisible(i); });
+    var disp = !curt || (want || parts).disp;
+    if(sc.yCurt){
+      sc.y.stack = sc.yCurt.stack = sc.yCurtGap.stack = disp && curt ? 'edDisp' : undefined;
+      // Chart.js scales an axis by its weight in a stack or out of one, so it only has one in it.
+      sc.y.stackWeight = disp && curt ? 3 : 1;
+      sc.y.display = disp;
+      sc.yCurt.display = curt;
+    }
+    if(chart.$edSub) $('dispSub').textContent = !disp ? 'The power units had available and did not use (curtailed), stacked in merit order.'
+      : chart.$edSub + (curt ? ' Under them, the power units had available and did not use (curtailed).' : '');
+    var cls = paneClass({ disp: disp, curt: curt });
+    if(wrap && (wrap.classList.contains('has-curt') !== (cls === 'has-curt') || wrap.classList.contains('curt-only') !== (cls === 'curt-only'))){
+      wrap.classList.toggle('has-curt', cls === 'has-curt');
+      wrap.classList.toggle('curt-only', cls === 'curt-only');
+      chart.resize();
+    }
+  }
+  /* fn() with the Dispatch chart drawing only the panes in want, then the
+     chart as it was, its key's choices and all: a GIF that picked one pane. */
+  function asParts(key, want, fn){
+    var chart = charts[CANVAS[key]];
+    if(key !== 'disp' || !want || !chart || !chart.options.scales.yCurt) return fn();
+    var ds = chart.data.datasets, vis = ds.map(function(d, i){ return chart.isDatasetVisible(i); });
+    ds.forEach(function(d, i){ if(d.kind === 'curt' ? !want.curt : !want.disp) chart.setDatasetVisibility(i, false); });
+    panes(chart, want);
+    chart.update('none');
+    try { return fn(); }
+    finally {
+      vis.forEach(function(v, i){ chart.setDatasetVisibility(i, v); });
+      panes(chart);
+      chart.update('none');
+    }
+  }
   function dispatchChart(res, model, d){
     var H = res.T, F = ED.fmt, cur = d.cur;
     var labels = hourLabels(H), ds = [];
@@ -238,6 +323,23 @@
       ds.push({ label: 'Load shed', data: res.totals.shed.slice(), borderColor: neg, backgroundColor: alpha(neg, 0.45),
                 borderWidth: 1.2, pointRadius: pts, tension: 0, fill: 'origin', stack: 'gen', order: 2, kind: 'shed', group: 'Demand' });
     }
+    /* What each unit had available and did not use, the way the totals count
+       it (units with a shape only), stacked in merit order in the pane under
+       the dispatch, in the unit's own colour, hatched. Only units that were
+       curtailed at all, and none when the embed did not pick it. */
+    var curts = 0;
+    if(parts.curt) gens.forEach(function(e, i){
+      var r = res.dev[e.id], sum = 0;
+      if(!ED.hasShape(e) || !r.avail) return;
+      var data = r.avail.map(function(a, t){ var v = a - r.p[t]; return v > 1e-6 ? v : 0; });
+      data.forEach(function(v){ sum += v; });
+      if(sum <= 1e-6) return;
+      var c = seriesColour(i), wash = alpha(c, 0.25);
+      ds.push({ label: ED.nameOf(e) + ' curtailed', data: data, borderColor: c, backgroundColor: hatchFill(wash, c),
+                borderWidth: 1.2, pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: 'origin', stack: 'curt', yAxisID: 'yCurt', order: 2, kind: 'curt', id: e.id, group: 'Generator',
+                hatch: { fill: wash, line: c } });
+      curts++;
+    });
     // Each layer fills down to the layer under it in its own stack (Chart.js's
     // 'stack' fill can reach past an empty layer to the wrong one).
     var lastIn = {};
@@ -245,13 +347,25 @@
       d.fill = lastIn[d.stack] === undefined ? 'origin' : lastIn[d.stack];
       lastIn[d.stack] = i;
       // The key and the hover show it filled, whatever it fills down to, and
-      // a dotted fill as dotted (a pattern is no colour a swatch can read).
+      // a dotted or hatched fill as one (a pattern is no colour a swatch can read).
       var shown = {}; for(var k in d) shown[k] = d[k];
       shown.fill = 'origin';
-      d.legendSpec = SharedLegend.fromDataset(shown, d.dots ? { fill: d.dots.fill, dots: d.dots.dot } : null);
+      d.legendSpec = SharedLegend.fromDataset(shown, d.dots ? { fill: d.dots.fill, dots: d.dots.dot } : d.hatch ? { fill: d.hatch.fill, hatch: d.hatch.line } : null);
     });
     ds.push({ label: 'Demand', data: res.totals.load.slice(), borderColor: cssVar('--text'), backgroundColor: 'transparent',
               borderWidth: 2, borderDash: [6, 4], pointRadius: pts, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load', group: 'Demand' });
+    // Named, because Chart.js puts a series that names no axis on the first one
+    // defined, which is the curtailment's. An embed of the curtailment alone
+    // keeps the dispatch out of the chart and its key.
+    ds.forEach(function(d){
+      if(d.kind === 'curt') return;
+      d.yAxisID = 'y';
+      if(curts && !parts.disp){ d.hidden = true; d.noLegend = true; }
+    });
+    // The chart opens on its panes (panes() keeps them after), its box already the height they take.
+    var both = curts > 0 && parts.disp, wrap = $(CANVAS.disp).parentElement, cls = paneClass({ disp: !curts || parts.disp, curt: curts > 0 });
+    wrap.classList.toggle('has-curt', cls === 'has-curt');
+    wrap.classList.toggle('curt-only', cls === 'curt-only');
     var ch = make('disp', {
       type: 'line', data: { labels: labels, datasets: ds },
       options: baseOptions({ H: H,
@@ -270,15 +384,33 @@
         filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'load'; },
         // The stack's top meets the demand line (plus any charging), so the line is not added to it.
         skip: function(ds){ return ds.kind === 'load'; },
+        fitAxes: ['y', 'yCurt'],
         scales: function(grid, muted){
-          return { x: xAxis(H, grid, muted),
-                   y: { stacked: true, title: { display: true, text: 'Power (MW)', color: muted, font: { size: 11 } },
-                        ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mwr(v); } }, grid: { color: grid } } };
+          var s = { x: xAxis(H, grid, muted) };
+          /* The curtailment pane stacks under the dispatch on one canvas, the
+             way Financial Freedom's balance sits under its flows: Chart.js
+             stacks a group's axes in the order they are defined, the bottom
+             one first, then a spacer so the two read as two pictures. panes()
+             puts them in the stack only while there is curtailment to show. */
+          if(curts){
+            s.yCurt = { position: 'left', stack: both ? 'edDisp' : undefined, stacked: true, stackWeight: 1, title: { display: true, text: 'Curtailed (MW)', color: muted, font: { size: 11 } },
+                        // Few ticks, and no label on the top one (the axis rounds its top to a
+                        // tick), so its labels never meet the dispatch's across the join on a phone.
+                        ticks: { color: muted, font: { size: 11 }, maxTicksLimit: 4, includeBounds: false,
+                                 callback: function(v, i, all){ return i === all.length - 1 && all.length > 2 ? '' : F.mwr(v); } }, grid: { color: grid } };
+            s.yCurtGap = { position: 'left', stack: both ? 'edDisp' : undefined, stackWeight: 0.12, min: 0, max: 1, display: false,
+                           ticks: { display: false }, grid: { display: false, drawTicks: false }, border: { display: false } };
+          }
+          s.y = { stack: both ? 'edDisp' : undefined, display: !curts || parts.disp, stacked: true, stackWeight: both ? 3 : 1, title: { display: true, text: 'Power (MW)', color: muted, font: { size: 11 } },
+                  ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mwr(v); } }, grid: { color: grid } };
+          return s;
         } })
     }, 'dispLegend');
     // The demand line is not stacked with the units.
     ch.options.scales.y.stacked = true;
-    $('dispSub').textContent = 'Units stacked in merit order, cheapest at the bottom' + (stores.length ? ', with storage charging below zero' : '') + '.';
+    ch.$edSub = 'Units stacked in merit order, cheapest at the bottom' + (stores.length ? ', with storage charging below zero' : '') + '.';
+    ch.$edPanes = function(){ panes(ch); };
+    panes(ch);
     return ch;
   }
 
@@ -500,6 +632,14 @@
     },
     clear: function(){ Object.keys(charts).forEach(destroy); },
     get: function(key){ return charts[CANVAS[key]] || null; },
+    // Whether Dispatch shows its curtailment pane: there is some, and the key has not hidden it all.
+    curtShown: function(){
+      var ch = charts[CANVAS.disp];
+      return !!(ch && ch.options.scales.yCurt && ch.data.datasets.some(function(d, i){ return d.kind === 'curt' && ch.isDatasetVisible(i); }));
+    },
+    // The panes Dispatch draws from the next render on ({ disp, curt }), as an embed picked them.
+    parts: function(p){ parts = { disp: p.disp !== false, curt: p.curt !== false }; },
+    paneClass: paneClass,
     resetZoom: function(key){ var c = charts[CANVAS[key]]; if(c) c.resetZoom(); },
     png: chartPng,
     svg: chartSvg,
@@ -531,28 +671,77 @@
      with only the entries still showing. A row carries head (the name, or
      null where it continues a group) and headW, which is inside its width;
      grouped rows share one left edge, so the names line up. measure(s, head)
-     measures a name in its own weight. */
-  function legendRows(legendId, measure, maxW, markW, gap, pad){
+     measures a name in its own weight. want ({ disp, curt }) keeps only the
+     Dispatch entries of the panes a GIF picked. */
+  function legendRows(legendId, measure, maxW, markW, gap, pad, want){
     var el = $(legendId), out = [];
     if(!el) return out;
     var groups = el.querySelectorAll('.legend-group');
     if(!groups.length){
-      var items = SharedLegend.itemsOf(el);
-      return items.length ? SharedLegend.layout(items, measure, maxW, markW, gap, pad) : [];
+      var items = keyItems(el, want);
+      return items.length ? packKey(items, measure, maxW, markW, gap, pad) : [];
     }
     var headOf = function(g){ var lab = g.querySelector('.legend-group-label'); return lab ? lab.textContent.trim() : ''; };
+    var kept = Array.prototype.map.call(groups, function(g){ return { head: headOf(g), items: keyItems(g, want) }; })
+      .filter(function(g){ return g.items.length; });
+    if(!kept.length) return out;
     // One column for the names, as wide as the widest, so every row's entries start in line.
-    var headW = Math.max.apply(null, Array.prototype.map.call(groups, function(g){ var h = headOf(g); return h ? measure(h, true) + pad / 2 : 0; }));
-    Array.prototype.forEach.call(groups, function(g){
-      var items = SharedLegend.itemsOf(g), head = headOf(g);
-      if(!items.length) return;
-      SharedLegend.layout(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
-        out.push({ items: row.items, head: i === 0 ? head : null, headW: headW, width: row.width + headW });
+    var headW = Math.max.apply(null, kept.map(function(g){ return g.head ? measure(g.head, true) + pad / 2 : 0; }));
+    kept.forEach(function(g){
+      packKey(g.items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
+        out.push({ items: row.items, head: i === 0 ? g.head : null, headW: headW, width: row.width + headW });
       });
     });
     var widest = Math.max.apply(null, out.map(function(r){ return r.width; }));
     out.forEach(function(r){ r.width = widest; });
     return out;
+  }
+  /* A key's visible entries, with the mark each draws. A unit's curtailment
+     rides in its unit's entry as sub, so it exports as it reads on the page,
+     "Solar farm (▨ Curtailed)"; with its unit not exported it is an entry of
+     its own under its whole name. */
+  function keyItems(box, want){
+    var out = [];
+    Array.prototype.forEach.call(box.querySelectorAll('.legend-item:not(.hidden)'), function(el){
+      var kind = el.getAttribute('data-kind'), lab = el.querySelector('.legend-label'), spec = null;
+      if(want && (kind === 'curt' ? !want.curt : !want.disp)) return;
+      try { spec = JSON.parse(el.getAttribute('data-swatch')); } catch(e){ spec = null; }
+      var label = (lab ? lab.textContent : el.textContent).trim(), prev = out[out.length - 1], of = el.getAttribute('data-of');
+      if(!spec || !label) return;
+      if(of != null && prev && prev.unit === of && !prev.sub){ prev.sub = { swatch: spec, label: label }; return; }
+      out.push({ label: el.getAttribute('data-full') || label, swatch: spec, unit: el.getAttribute('data-unit') });
+    });
+    return out;
+  }
+  /* One exported entry from x: its swatch and label, and a curtailment after
+     them as " (▨ Curtailed)". swatch(spec, x) and text(s, x) draw it; without
+     them it is only measured. Returns its width. */
+  function keyEntry(item, x, measure, markW, gap, swatch, text){
+    var x0 = x, lab = item.sub ? item.label + ' (' : item.label;
+    if(swatch) swatch(item.swatch, x);
+    x += markW + gap;
+    if(text) text(lab, x);
+    x += measure(lab);
+    if(item.sub){
+      x += gap / 2;
+      if(swatch) swatch(item.sub.swatch, x);
+      x += markW + gap;
+      if(text) text(item.sub.label + ')', x);
+      x += measure(item.sub.label + ')');
+    }
+    return x - x0;
+  }
+  // SharedLegend.layout for these entries: as many centred rows as they need.
+  function packKey(items, measure, maxW, markW, gap, pad){
+    var rows = [], row = [], w = 0;
+    items.forEach(function(it){
+      var iw = keyEntry(it, 0, measure, markW, gap);
+      if(row.length && w + pad + iw > maxW){ rows.push({ items: row, width: w }); row = []; w = 0; }
+      w += (row.length ? pad : 0) + iw;
+      row.push(it);
+    });
+    if(row.length) rows.push({ items: row, width: w });
+    return rows;
   }
   // A 3x PNG of the chart at its desktop size, with its title, key and watermark.
   function chartPng(canvasId, chartTitle, legendId){
@@ -565,7 +754,8 @@
       var margin = Math.round(16 * OUT), rowH = Math.round(22 * OUT), wmH = Math.round(26 * OUT);
       var mc = document.createElement('canvas').getContext('2d');
       var keyFont = '500 ' + Math.round(11 * OUT) + 'px ' + FONT, headFont = '600 ' + Math.round(11 * OUT) + 'px ' + FONT;
-      var rows = legendRows(legendId, function(s, head){ mc.font = head ? headFont : keyFont; return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+      var measure = function(s, head){ mc.font = head ? headFont : keyFont; return mc.measureText(s).width; };
+      var rows = legendRows(legendId, measure, chartW - margin * 2, markW, gap, pad);
       var legendH = rows.length ? rows.length * rowH + Math.round(8 * OUT) : 0;
       var c = document.createElement('canvas');
       c.width = chartW; c.height = chartH + titleH + legendH + wmH;
@@ -580,11 +770,8 @@
         if(row.head){ g.font = headFont; g.fillStyle = tone.fg; g.textAlign = 'left'; g.fillText(row.head, x, cy); g.font = keyFont; }
         x += row.headW || 0;
         row.items.forEach(function(item){
-          SharedLegend.paint(g, item.swatch, x, cy, OUT);
-          x += markW + gap;
-          g.fillStyle = tone.fg; g.textAlign = 'left';
-          g.fillText(item.label, x, cy);
-          x += g.measureText(item.label).width + pad;
+          x += keyEntry(item, x, measure, markW, gap, function(spec, at){ SharedLegend.paint(g, spec, at, cy, OUT); },
+                        function(t, at){ g.fillStyle = tone.fg; g.textAlign = 'left'; g.fillText(t, at, cy); }) + pad;
         });
       });
       g.save();
@@ -613,12 +800,14 @@
   /* A GIF's charts sit one above another with one hour marker moving down
      them all, so their plot areas share both edges: the widest axes on each
      side among them (stillEdges), every chart padded out to those (padTo). */
-  function stillEdges(keys){
+  function stillEdges(keys, want){
     var e = { left: 0, right: 0 };
     keys.forEach(function(k){
-      atExportSize(k, function(chart){
-        e.left = Math.max(e.left, chart.chartArea.left);
-        e.right = Math.max(e.right, chart.width - chart.chartArea.right);
+      asParts(k, want, function(){
+        atExportSize(k, function(chart){
+          e.left = Math.max(e.left, chart.chartArea.left);
+          e.right = Math.max(e.right, chart.width - chart.chartArea.right);
+        });
       });
     });
     return e;
@@ -639,9 +828,13 @@
   }
   /* A chart for a GIF of the hours: drawn once at the desktop size, 1x, on bg,
      without the hour marker, which marker(g, x, y, h) draws on each frame.
-     With edge (from stillEdges), its plot area spans exactly that. */
-  function chartStill(key, chartTitle, bg, fg, edge){
+     With edge (from stillEdges), its plot area spans exactly that. want
+     ({ disp, curt }) draws Dispatch with only the panes the GIF picked. */
+  function chartStill(key, chartTitle, bg, fg, edge, want){
     if(!charts[CANVAS[key]] || !ctx || !ctx.res) return null;
+    return asParts(key, want, function(){ return stillOf(key, chartTitle, bg, fg, edge, want); });
+  }
+  function stillOf(key, chartTitle, bg, fg, edge, want){
     var padded = false, was;
     try {
       return atExportSize(key, function(chart, src){
@@ -652,7 +845,8 @@
         var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
         var titleH = 40, markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22;
         var mc = document.createElement('canvas').getContext('2d');
-        var rows = legendRows(legendIdOf(key), function(s, head){ mc.font = (head ? '600' : '500') + ' 11px ' + FONT; return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+        var measure = function(s, head){ mc.font = (head ? '600' : '500') + ' 11px ' + FONT; return mc.measureText(s).width; };
+        var rows = legendRows(legendIdOf(key), measure, chartW - margin * 2, markW, gap, pad, want);
         var legendH = rows.length ? rows.length * rowH + 8 : 0;
         var c = document.createElement('canvas');
         c.width = chartW; c.height = titleH + chartH + legendH;
@@ -667,11 +861,8 @@
           if(row.head){ g.font = '600 11px ' + FONT; g.fillStyle = fg; g.textAlign = 'left'; g.fillText(row.head, x, cy); g.font = '500 11px ' + FONT; }
           x += row.headW || 0;
           row.items.forEach(function(item){
-            SharedLegend.paint(g, item.swatch, x, cy, 1);
-            x += markW + gap;
-            g.fillStyle = fg; g.textAlign = 'left';
-            g.fillText(item.label, x, cy);
-            x += g.measureText(item.label).width + pad;
+            x += keyEntry(item, x, measure, markW, gap, function(spec, at){ SharedLegend.paint(g, spec, at, cy, 1); },
+                          function(t, at){ g.fillStyle = fg; g.textAlign = 'left'; g.fillText(t, at, cy); }) + pad;
           });
         });
         var xs = [];
@@ -734,10 +925,8 @@
         if(row.head) text(row.head, x, cy, { size: '11', weight: '600' });
         x += row.headW || 0;
         row.items.forEach(function(item){
-          svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
-          x += markW + gap;
-          text(item.label, x, cy, { size: '11', weight: '500' });
-          x += measure(item.label) + pad;
+          x += keyEntry(item, x, measure, markW, gap, function(spec, at){ svg.appendChild(SharedLegend.svgNode(spec, at, cy, 1)); },
+                        function(t, at){ text(t, at, cy, { size: '11', weight: '500' }); }) + pad;
         });
       });
       var wm = document.createElementNS(NS, 'path');

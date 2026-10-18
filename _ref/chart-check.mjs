@@ -493,6 +493,18 @@ const PAGES = [
     },
   },
   {
+    // Its Dispatch chart with the curtailment pane stacked under it: two
+    // areas over three days, whose wind farms are curtailed at night.
+    name: 'ed-uc-simulator/curtailment',
+    url: '/ed-uc-simulator/',
+    charts: ['dispCanvas'],
+    async prep(page) {
+      await page.click('.quick-start-btn[data-preset="areas"]');
+      await page.waitForFunction(() => window.Chart && Chart.getChart('dispCanvas') && Chart.getChart('dispCanvas').scales.yCurt && !document.getElementById('runBtn').disabled, null, { timeout: 60000 });
+      await page.waitForTimeout(400);
+    },
+  },
+  {
     // The Capacity Expansion Planner: two stacked histograms and a stacked
     // area over every calendar year (the cost one with a second axis), and
     // the typical days' dispatch, hour by hour, opened from its fold, of the
