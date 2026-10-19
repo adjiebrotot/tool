@@ -148,9 +148,24 @@ body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
 .legend-group{display:flex;gap:14px;align-items:flex-start;}
 .legend-group-label{color:var(--muted);font-weight:600;flex:0 0 6.2em;line-height:1.45;}
 .legend-group-items{display:flex;gap:6px 14px;flex-wrap:wrap;flex:1 1 auto;min-width:0;}
+/* The demand and its shortfall, "Demand (▨ Shortfall)", or a farm and its
+   curtailment, "Wind (▨ Curtailed)": one entry to the eye, two to click.
+   A store's name leads its charging and discharging, "Battery (▦ Charging
+   ▦ Discharging)", and shows or hides both. A pair wider than the key
+   wraps inside itself rather than running out of it. The ED/UC
+   Simulator's. */
+.legend-pair{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;}
+.legend-item.legend-sub{gap:4px;}
+.legend-sub+.legend-sub{margin-left:4px;}
+.legend-sub .legend-paren:last-child{margin-left:-3px;}
+.legend-host{cursor:pointer;transition:opacity .15s;}
+.legend-host.hidden{opacity:.35;}
 /* Words for a screen reader and a Share link only. */
 .vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 .canvas-wrap{height:380px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+/* The typical days with the curtailment pane under them. A top-level rule,
+   so an export reads this height. */
+.canvas-wrap.has-curt{height:520px;}
 #capCard .canvas-wrap canvas,#energyPanel .canvas-wrap canvas,#costCard .canvas-wrap canvas{cursor:pointer;}
 .hover-box{margin-top:10px;color:var(--muted);font-size:.84rem;min-height:22px;line-height:1.5;}
 .viewbar-field{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--muted);font-size:.84rem;}
@@ -175,6 +190,7 @@ html.abt-embed .chart-panel.abt-embed-card{padding:18px 20px;}
   .controls{position:static;max-height:none;}
   .metrics{grid-template-columns:repeat(2,1fr);}
   .canvas-wrap{height:340px;}
+  .canvas-wrap.has-curt{height:470px;}
 }
 @media(max-width:600px){
   h1{font-size:1.35rem;}
@@ -182,6 +198,7 @@ html.abt-embed .chart-panel.abt-embed-card{padding:18px 20px;}
   .page-footer{padding:0 10px 16px;}
   .metrics{grid-template-columns:1fr;}
   .canvas-wrap{height:300px;}
+  .canvas-wrap.has-curt{height:420px;}
   .chart-card,html.abt-embed .chart-panel.abt-embed-card{padding:14px 12px;}
   .add-menu{grid-template-columns:1fr;}
   /* On a phone a group's entries wrap, so its name takes a line of its own. */

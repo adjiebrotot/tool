@@ -5,10 +5,14 @@
                 above it, each decision year's new build marked over its
                 bars, against the peak demand.
    Energy       every year's energy by source as a stacked area, any
-                shortfall in red, against the demand.
+                shortfall hatched in the demand's colour, against the demand.
    Typical days the hour-by-hour dispatch of one decision year over its
                 typical days, a gap between one and the next, storage charging
-                below zero, against the demand. Its axis follows the sampling:
+                below zero, any shortfall hatched in the demand's colour,
+                against the demand; under it, on the same hours, a pane of the
+                sun and wind the plan had and did not use (curtailed),
+                hatched in each one's colour, while there is any. Its axis
+                follows the sampling:
                 the hours of one day a season; a weekday and a weekend day
                 under one season's name; or a week, by its days. It sits under
                 Energy in the same card, folded until asked for.
@@ -21,7 +25,9 @@
    each begins.
 
    A technology keeps its colour on every chart: the neutral sequence in the
-   order the plan lists them, paler on each lap round it. The exports follow
+   order the plan lists them, paler on each lap round it, filled as strongly
+   on each (SHADE), and the demand keeps its dashed line in the text colour,
+   any shortfall hatched in that colour under it. The exports follow
    the ED/UC Simulator's: a 3x PNG and an SVG around it, each with its title,
    its key and the watermark, drawn at the desktop size whatever the screen
    (SharedExport). */
@@ -63,12 +69,19 @@
   }
   CXCharts.colour = seriesColour;
   CXCharts.mix = mix;
+  /* How strongly a technology's colour fills its areas (alpha(c, SHADE)) and
+     its bars, which are opaque so no seam shows where two meet (mix(c, panel,
+     1 - SHADE), the same colour over the chart's ground): one technology is
+     one colour on every chart. */
+  var SHADE = 0.55;
 
   /* ── Shared pieces ── */
   function techList(model, res){ return model.tech.filter(function(e){ return res.tech[e.id]; }); }
   function colourOf(model, e){ return seriesColour(model.tech.indexOf(e)); }
   function any(a){ for(var i = 0; i < a.length; i++) if(Math.abs(a[i]) > 1e-6) return true; return false; }
   function hover(id, txt){ var el = $(id); if(el) el.textContent = txt; }
+  // An axis tick in MW: a whole one without the place F.mw keeps below 100 MW.
+  function tickMw(v){ var t = F.mw(v); return Math.abs(v - Math.round(v)) < 1e-9 ? t.replace(/\.0$/, '') : t; }
   function axisTitle(text, muted){ return { display: true, text: text, color: muted, font: { size: 11 } }; }
   var FONT = '"DM Sans", sans-serif';
   function baseOptions(o){
@@ -98,12 +111,37 @@
      the entry's own text, hidden, so two entries of one name in two groups
      (Gas existing and Gas new) stay apart for a screen reader and for the
      legend a Share link carries, unless the entry says groupTag: false, as
-     a key whose names never repeat does, so its links keep their names. */
+     a key whose names never repeat does, so its links keep their names.
+     A series with pairOf is keyed inside the entry of the series whose pair
+     it names, under its pairLabel (the ED/UC Simulator's): the shortfall
+     inside the demand's, "Demand (▨ Shortfall)", a farm's curtailment inside
+     the farm's, "Wind (▨ Curtailed)", so the two wrap as one; a click on
+     either shows or hides that one series, and chart.$cxPanes re-lays the
+     panes. A pair whose series have no entry of their own to lead them is
+     led by pairName alone: a store's charging and discharging, "Battery
+     (▦ Charging ▦ Discharging)", where a click on the name shows or hides
+     both. */
   function renderLegend(legendId, chart, datasets){
     var el = $(legendId);
     if(!el) return;
     el.innerHTML = '';
-    var grouped = datasets.some(function(ds){ return !ds.noLegend && ds.group; }), rows = {}, order = [];
+    var grouped = datasets.some(function(ds){ return !ds.noLegend && ds.group; }), rows = {}, order = [], hosts = {}, subs = [];
+    var paren = function(s){ var p = document.createElement('span'); p.className = 'legend-paren'; p.textContent = s; return p; };
+    var subsOf = function(host){ return host.parentNode ? Array.prototype.slice.call(host.parentNode.querySelectorAll('.legend-sub')) : []; };
+    var hiddenAll = function(items){ return items.every(function(it){ return it.classList.contains('hidden'); }); };
+    // A name leading a pair dims as its entries do, when they are all hidden.
+    var dim = function(host){ if(host && host.classList.contains('legend-host')) host.classList.toggle('hidden', hiddenAll(subsOf(host))); };
+    var nameHost = function(name, key){
+      var h = document.createElement('span');
+      h.className = 'legend-host';
+      h.textContent = name;
+      h.setAttribute('data-pair', key);
+      h.addEventListener('click', function(){
+        var items = subsOf(h), show = hiddenAll(items);
+        items.forEach(function(it){ if(it.classList.contains('hidden') === show) it.click(); });
+      });
+      return h;
+    };
     el.classList.toggle('legend-grouped', grouped);
     // A group's entries wrap in a box of their own, so a second line of them
     // starts under the first entry rather than under the group's name.
@@ -129,6 +167,22 @@
       if(ds.noLegend) return;
       var item = document.createElement('div');
       item.className = 'legend-item';
+      if(ds.hidden) item.classList.add('hidden');
+      item.addEventListener('click', function(){
+        var hidden = !item.classList.contains('hidden');
+        item.classList.toggle('hidden', hidden);
+        chart.setDatasetVisibility(idx, !hidden);
+        dim(item.$host);
+        if(chart.$cxPanes) chart.$cxPanes();
+        chart.update();
+      });
+      if(ds.pairOf != null){
+        // A name leads its pair where the pair's first series comes.
+        if(ds.pairName != null && !hosts[ds.pairOf]) rowOf(ds.group || '').appendChild(hosts[ds.pairOf] = nameHost(ds.pairName, ds.pairOf));
+        // Its host may come later (the demand comes after the shortfall), so it is keyed once all are in.
+        subs.push({ item: item, ds: ds });
+        return;
+      }
       SharedLegend.attach(item, SharedLegend.specOf(ds), ds.legendLabel || ds.label);
       if(grouped && ds.group && ds.groupTag !== false){
         var tag = document.createElement('span');
@@ -136,14 +190,35 @@
         tag.textContent = ' (' + ds.group.toLowerCase() + ')';
         item.appendChild(tag);
       }
-      if(ds.hidden) item.classList.add('hidden');
-      item.addEventListener('click', function(){
-        var hidden = !item.classList.contains('hidden');
-        item.classList.toggle('hidden', hidden);
-        chart.setDatasetVisibility(idx, !hidden);
-        chart.update();
-      });
+      if(ds.pair != null){ hosts[ds.pair] = item; item.setAttribute('data-pair', ds.pair); }
       rowOf(ds.group || '').appendChild(item);
+    });
+    var inHost = {}, keys = [];
+    subs.forEach(function(s){
+      var item = s.item, ds = s.ds, host = hosts[ds.pairOf];
+      SharedLegend.attach(item, SharedLegend.specOf(ds), host ? ds.pairLabel : ds.label);
+      if(!host){ rowOf(ds.group || '').appendChild(item); return; }
+      // The exports read data-of to key it the same way, and data-full when its host is not keyed.
+      // A Share link names it by its whole label, which tells two stores' "Charging" apart.
+      item.classList.add('legend-sub');
+      item.setAttribute('data-of', ds.pairOf);
+      item.setAttribute('data-full', ds.label);
+      item.setAttribute('data-legend-key', ds.label);
+      item.title = ds.label;
+      item.$host = host;
+      if(!inHost[ds.pairOf]){ inHost[ds.pairOf] = []; keys.push(ds.pairOf); }
+      inHost[ds.pairOf].push(item);
+    });
+    // The host, then its entries inside one pair of brackets.
+    keys.forEach(function(key){
+      var host = hosts[key], items = inHost[key], pair = document.createElement('span');
+      pair.className = 'legend-pair';
+      host.parentNode.insertBefore(pair, host);
+      pair.appendChild(host);
+      items[0].insertBefore(paren('('), items[0].firstChild);
+      items[items.length - 1].appendChild(paren(')'));
+      items.forEach(function(it){ pair.appendChild(it); });
+      dim(host);
     });
     order.forEach(function(row){ el.appendChild(row); });
   }
@@ -157,6 +232,19 @@
   function lineSet(label, data, o){
     var d = { type: 'line', label: label, data: data, borderColor: cssVar('--text'), backgroundColor: 'transparent', borderWidth: 2,
               borderDash: [6, 4], pointRadius: 3, pointHoverRadius: 5, tension: 0, fill: false, order: 1, kind: 'ref' };
+    for(var k in o) d[k] = o[k];
+    return d;
+  }
+  /* The demand that goes unserved, on top of the stack up to the demand
+     line: hatched in the line's own colour, with no edge of its own, so it
+     reads as part of the demand and never as one more source. It keys
+     inside the demand's entry, "Demand (▨ Shortfall)", its mark the demand
+     line it runs up to over its hatch. */
+  function shortfall(data, o){
+    var ink = cssVar('--text'), wash = alpha(ink, 0.2);
+    var d = { type: 'line', label: 'Shortfall (load shed)', data: data, borderColor: ink, backgroundColor: hatchFill(wash, ink), borderWidth: 0,
+              pointRadius: 0, pointHoverRadius: 4, tension: 0, order: 2, kind: 'shed', pairOf: 'load', pairLabel: 'Shortfall',
+              legendSpec: SharedLegend.spec({ color: ink, dash: [6, 4], width: 2, fill: wash, hatch: ink }) };
     for(var k in o) d[k] = o[k];
     return d;
   }
@@ -244,16 +332,22 @@
   };
   function periods(cal, shift){ return { cal: cal, shift: shift, rule: cssVar('--chart-grid') }; }
   /* Hatching: 45° lines in the colour over a pale fill of it, a tile the
-     bars repeat, so the lines run on unbroken from one bar into the next. */
-  function hatchFill(fill, line){
-    var n = 6, cv = document.createElement('canvas'), g = cv.getContext('2d');
-    cv.width = cv.height = n;
+     bars and areas repeat, so the lines run on unbroken from one bar into
+     the next. They rise left to right (curtailment, the shortfall), or fall
+     with down (the plant in service now), so the two never read as one.
+     Drawn at the screen's pixel ratio, like the dots. */
+  function hatchFill(fill, line, down){
+    var n = 6, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = cv.height = n * k;
+    g.scale(k, k);
     g.fillStyle = fill; g.fillRect(0, 0, n, n);
     g.strokeStyle = line; g.lineWidth = 1;
     g.beginPath();
-    [-n, 0, n].forEach(function(o){ g.moveTo(o, n); g.lineTo(o + n, 0); });
+    [-n, 0, n].forEach(function(o){ g.moveTo(o, down ? 0 : n); g.lineTo(o + n, down ? n : 0); });
     g.stroke();
-    return g.createPattern(cv, 'repeat');
+    var pat = g.createPattern(cv, 'repeat');
+    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
+    return pat;
   }
   /* A dotted fill: dots of the colour over a pale wash of it, so storage
      never reads as one more generator. The tile is drawn at the screen's
@@ -272,13 +366,13 @@
   /* A year's bars, each meeting the next: an opaque fill a little wider
      than its bar, so no sliver shows where two meet, and a top edge only
      (EDGE_PLUGIN), so a decision year's years read as one block. hatch is
-     the plant in service now: hatched, so it is never taken for a paler
-     colour. */
+     the plant in service now: hatched, falling left to right, so it is never
+     taken for a paler colour, or for curtailment, whose hatching rises. */
   function histSet(label, data, c, o){
-    var hatch = o && o.hatch, fill = mix(c, cssVar('--panel'), hatch ? 0.72 : 0.22), line = alpha(c, 0.7);
-    var d = { type: 'bar', label: label, data: data, backgroundColor: hatch ? hatchFill(fill, line) : fill, borderColor: c, edge: c,
+    var hatch = o && o.hatch, fill = mix(c, cssVar('--panel'), hatch ? 0.72 : 1 - SHADE), line = alpha(c, 0.7);
+    var d = { type: 'bar', label: label, data: data, backgroundColor: hatch ? hatchFill(fill, line, true) : fill, borderColor: c, edge: c,
               borderWidth: 0, inflateAmount: 0.6, stack: 's', order: 2, categoryPercentage: 1, barPercentage: 1,
-              legendSpec: { type: 'bar', color: c, fill: fill, hatch: hatch ? line : null, width: 1.2 } };
+              legendSpec: { type: 'bar', color: c, fill: fill, hatch: hatch ? line : null, hatchDir: 'down', width: 1.2 } };
     for(var k in o) if(k !== 'hatch') d[k] = o[k];
     return d;
   }
@@ -410,7 +504,7 @@
     var cal = calendar(res), labels = cal.years.map(String), ds = [], T = res.totals;
     var gwh = function(a){ return cal.spread(a).map(function(v){ return v / 1000; }); };
     var area = function(label, data, c, o){
-      var x = { type: 'line', label: label, data: data, borderColor: c, backgroundColor: alpha(c, 0.55), borderWidth: 1.2,
+      var x = { type: 'line', label: label, data: data, borderColor: c, backgroundColor: alpha(c, SHADE), borderWidth: 1.2,
                 pointRadius: 0, pointHoverRadius: 4, pointHitRadius: 6, tension: 0, stack: 'e', order: 2 };
       for(var k in o) x[k] = o[k];
       return x;
@@ -420,15 +514,15 @@
       if(!any(t.gen)) return;
       ds.push(area(CX.nameOf(e) + (e.kind === 'store' ? ' (discharge)' : ''), gwh(t.gen), colourOf(model, e), { id: e.id }));
     });
-    if(any(T.shedEnergy)) ds.push(area('Shortfall (load shed)', gwh(T.shedEnergy), cssVar('--negative'), { kind: 'shed' }));
+    if(any(T.shedEnergy)) ds.push(shortfall(gwh(T.shedEnergy), { stack: 'e', pointHitRadius: 6 }));
     // Each layer fills down to the one under it; its key shows it as a block.
     ds.forEach(function(x, i){
       x.fill = i ? i - 1 : 'origin';
       var shown = {}; for(var key in x) shown[key] = x[key];
       shown.fill = 'origin';
-      x.legendSpec = SharedLegend.fromDataset(shown);
+      x.legendSpec = x.legendSpec || SharedLegend.fromDataset(shown);
     });
-    ds.push(decLine('Demand', gwh(T.energy), cal, { stack: 'load' }));
+    ds.push(decLine('Demand', gwh(T.energy), cal, { stack: 'load', pair: 'load' }));
     var op = baseOptions({ n: cal.n, onClick: yearClick(cal),
       filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
       skip: function(x){ return x.kind === 'ref'; },
@@ -568,33 +662,68 @@
       g.restore();
     }
   };
+  /* The curtailment pane sits under the typical days, on the same hours,
+     while any farm's curtailment is showing in the key (the ED/UC
+     Simulator's Dispatch); hide every one and the dispatch has the whole
+     chart back. The caller updates the chart. */
+  var CURT_SUB = ' Under them, the sun and wind the plan had and did not use (curtailed).';
+  function dayPanes(chart){
+    var sc = chart.options.scales, wrap = chart.canvas && chart.canvas.parentElement;
+    if(!sc.yCurt) return;
+    var curt = chart.data.datasets.some(function(d, i){ return d.kind === 'curt' && chart.isDatasetVisible(i); });
+    sc.y.stack = sc.yCurt.stack = sc.yCurtGap.stack = curt ? 'cxDay' : undefined;
+    // Chart.js scales an axis by its weight in a stack or out of one, so it only has one in it.
+    sc.y.stackWeight = curt ? 3 : 1;
+    sc.yCurt.display = curt;
+    $('daySub').textContent = chart.$cxSub[0] + (curt ? CURT_SUB : '') + chart.$cxSub[1];
+    if(wrap && wrap.classList.contains('has-curt') !== curt){
+      wrap.classList.toggle('has-curt', curt);
+      chart.resize();
+    }
+  }
   function dayChart(res, model, d){
     var k = Math.max(0, Math.min(res.periods.length - 1, d.year | 0)), ax = dayAxis(res), ds = [], T = res.totals, o = res.report.opts;
     var year = res.periods[k], hourLabels = dayLabels(res), labels = ax.spread(hourLabels).map(function(l){ return l || ''; });
     var pos = function(v){ return Math.max(0, v); }, neg = function(v){ return Math.min(0, v); };
     // Cheapest to run at the bottom, as a merit order.
+    var merit = function(a, b){ return CX.runCost(a, o, year) - CX.runCost(b, o, year) || model.tech.indexOf(a) - model.tech.indexOf(b); };
     var gens = techList(model, res).filter(function(e){ return e.kind !== 'store' && any(res.tech[e.id].p[k]); });
-    gens.sort(function(a, b){ return CX.runCost(a, o, year) - CX.runCost(b, o, year) || model.tech.indexOf(a) - model.tech.indexOf(b); });
+    gens.sort(merit);
     var stores = techList(model, res).filter(function(e){ return e.kind === 'store' && any(res.tech[e.id].p[k]); });
     gens.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e), data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, 0.55),
-                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'gen', id: e.id, group: 'Generator', groupTag: false });
+      ds.push({ label: CX.nameOf(e), data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: alpha(c, SHADE),
+                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'gen', id: e.id, group: 'Generator', groupTag: false, pair: e.id });
     });
     stores.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: dotFill(alpha(c, 0.3), c),
-                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id, group: 'Storage', groupTag: false,
-                dots: { fill: alpha(c, 0.3), dot: c } });
+      // Keyed under the store's name, "Battery (▦ Charging ▦ Discharging)", charging first.
       ds.push({ label: CX.nameOf(e) + ' charging', data: ax.spread(res.tech[e.id].p[k], neg), borderColor: c, backgroundColor: dotFill(alpha(c, 0.12), alpha(c, 0.6)),
                 borderWidth: 1.2, borderDash: [4, 3], pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'store', order: 2, kind: 'chg', id: e.id, group: 'Storage', groupTag: false,
-                dots: { fill: alpha(c, 0.12), dot: alpha(c, 0.6) } });
+                pairOf: 'store' + e.id, pairName: CX.nameOf(e), pairLabel: 'Charging', dots: { fill: alpha(c, 0.12), dot: alpha(c, 0.6) } });
+      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: dotFill(alpha(c, 0.3), c),
+                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id, group: 'Storage', groupTag: false,
+                pairOf: 'store' + e.id, pairName: CX.nameOf(e), pairLabel: 'Discharging', dots: { fill: alpha(c, 0.3), dot: c } });
     });
-    if(any(res.shed[k])){
-      var neg = cssVar('--negative');
-      ds.push({ label: 'Shortfall (load shed)', data: ax.spread(res.shed[k]), borderColor: neg, backgroundColor: alpha(neg, 0.45),
-                borderWidth: 1.2, pointRadius: 0, tension: 0, stack: 'gen', order: 2, kind: 'shed', group: 'Demand', groupTag: false });
-    }
+    if(any(res.shed[k])) ds.push(shortfall(ax.spread(res.shed[k]), { stack: 'gen', group: 'Demand', groupTag: false }));
+    /* What each farm had and did not use, the way the totals count it (sun
+       and wind only), stacked in merit order in the pane under the dispatch,
+       in the farm's own colour, hatched. Only farms curtailed at all. */
+    var curts = 0, curtAt = res.load[k].map(function(){ return 0; });
+    techList(model, res).filter(function(e){ return e.kind === 'pv' || e.kind === 'wind'; }).sort(merit).forEach(function(e){
+      var t = res.tech[e.id], cap = t.cap[k], sum = 0;
+      if(!t.avail || !(cap > 0)) return;
+      // A thousandth of a MW is the solver's tolerance, not power left unused.
+      var spill = t.avail.map(function(a, h){ var v = a * cap - t.p[k][h]; return v > 1e-3 ? v : 0; });
+      spill.forEach(function(v){ sum += v; });
+      if(!(sum > 0)) return;
+      spill.forEach(function(v, h){ curtAt[h] += v; });
+      var c = colourOf(model, e), wash = alpha(c, 0.25);
+      ds.push({ label: CX.nameOf(e) + ' curtailed', data: ax.spread(spill), borderColor: c, backgroundColor: hatchFill(wash, c),
+                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'curt', yAxisID: 'yCurt', order: 2, kind: 'curt', id: e.id,
+                group: 'Generator', groupTag: false, pairOf: e.id, pairLabel: 'Curtailed', hatch: { fill: wash, line: c } });
+      curts++;
+    });
     // Each layer fills down to the layer under it in its own stack.
     var lastIn = {};
     ds.forEach(function(x, i){
@@ -602,18 +731,23 @@
       lastIn[x.stack] = i;
       var shown = {}; for(var key in x) shown[key] = x[key];
       shown.fill = 'origin';
-      // A pattern is no colour a swatch can read: a dotted fill keys as dotted.
-      x.legendSpec = SharedLegend.fromDataset(shown, x.dots ? { fill: x.dots.fill, dots: x.dots.dot } : null);
+      // A pattern is no colour a swatch can read: a dotted or hatched fill keys as one.
+      x.legendSpec = x.legendSpec || SharedLegend.fromDataset(shown, x.dots ? { fill: x.dots.fill, dots: x.dots.dot } : x.hatch ? { fill: x.hatch.fill, hatch: x.hatch.line } : null);
     });
     ds.push({ label: 'Demand', data: ax.spread(res.load[k]), borderColor: cssVar('--text'), backgroundColor: 'transparent',
-              borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load', group: 'Demand', groupTag: false });
+              borderWidth: 2, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 4, tension: 0, fill: false, stack: 'load', order: 1, kind: 'load', group: 'Demand', groupTag: false, pair: 'load' });
+    // Named, because Chart.js puts a series that names no axis on the first one defined, which is the curtailment's.
+    ds.forEach(function(x){ if(x.kind !== 'curt') x.yAxisID = 'y'; });
+    // The chart opens on its panes (dayPanes keeps them after), its box already the height they take.
+    $(CANVAS.day).parentElement.classList.toggle('has-curt', curts > 0);
     var short = function(b){ return b.stress ? 'Still day' : (b.group || b.name).replace(' season', ''); };
     var mode = res.sample || 'day', ticks = dayTicks(ax, res);
     var AXIS = { day: 'Typical days, hour by hour', day2: 'A weekday and a weekend day a season, hour by hour', week: 'Typical weeks, day by day' };
+    // SharedPane keeps each pane's axis text inside it, the curtailment pane's under the dispatch.
     var ch = make('day', {
       type: 'line', data: { labels: labels, datasets: ds },
       options: (function(){
-        var op = baseOptions({ n: ax.n,
+        var op = baseOptions({ n: ax.n, fitAxes: ['y', 'yCurt'],
           filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'load'; },
           skip: function(x){ return x.kind === 'load'; },
           callbacks: {
@@ -626,28 +760,47 @@
               stores.forEach(function(e){ ssum += res.tech[e.id].p[k][t]; });
               hover('dayHover', year + ', ' + hourLabels[t] + '  |  demand ' + F.mw(res.load[k][t]) + ' MW, generation ' + F.mw(gsum) + ' MW' +
                 (Math.abs(ssum) > 1e-6 ? ', storage ' + F.mw(ssum) + ' MW' : '') + (res.shed[k][t] > 1e-6 ? ', shed ' + F.mw(res.shed[k][t]) + ' MW' : '') +
+                (curtAt[t] > 0 ? ', curtailed ' + F.mw(curtAt[t]) + ' MW' : '') +
                 '. Each hour stands for ' + F.pct(res.w[t]) + ' hours of the year.');
             }
           },
           scales: function(grid, muted){
-            return {
+            var s = {
               x: { title: axisTitle(AXIS[mode] || AXIS.day, muted),
                    ticks: { color: muted, maxRotation: 0, autoSkip: false, font: function(){ return { size: ticks.small ? 10 : 11 }; },
                             callback: function(v){ return ticks.text[v] !== undefined ? ticks.text[v] : two(ax.hourAt[v] % 24) + ':00'; } },
                    afterBuildTicks: ticks.build,
-                   grid: { color: function(c){ return c.tick && ticks.centre[c.tick.value] ? 'transparent' : grid; } } },
-              y: { stacked: true, title: axisTitle('Power (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } }
+                   grid: { color: function(c){ return c.tick && ticks.centre[c.tick.value] ? 'transparent' : grid; } } }
             };
+            /* The curtailment pane stacks under the dispatch on one canvas:
+               Chart.js stacks a group's axes in the order they are defined,
+               the bottom one first, then a spacer so the two read as two
+               pictures. dayPanes() puts them in the stack only while there
+               is curtailment to show. */
+            if(curts){
+              s.yCurt = { position: 'left', stack: 'cxDay', stacked: true, stackWeight: 1, title: axisTitle('Curtailed (MW)', muted),
+                          // Few ticks, and no label on the top one (the axis rounds its top to a
+                          // tick), so its labels never meet the dispatch's across the join on a phone.
+                          ticks: { color: muted, font: { size: 11 }, maxTicksLimit: 4, includeBounds: false,
+                                   callback: function(v, i, all){ return i === all.length - 1 && all.length > 2 ? '' : tickMw(v); } }, grid: { color: grid } };
+              s.yCurtGap = { position: 'left', stack: 'cxDay', stackWeight: 0.12, min: 0, max: 1, display: false,
+                             ticks: { display: false }, grid: { display: false, drawTicks: false }, border: { display: false } };
+            }
+            s.y = { stack: curts ? 'cxDay' : undefined, stacked: true, stackWeight: curts ? 3 : 1, title: axisTitle('Power (MW)', muted),
+                    ticks: { color: muted, font: { size: 11 }, callback: tickMw }, grid: { color: grid } };
+            return s;
           } });
         op.plugins.cxBlocks = { blocks: res.blocks.map(function(b, i){ return { from: ax.from[i], len: b.len, name: b.name, group: b.group || b.name, short: short(b) }; }),
                                 gap: ax.gap, text: cssVar('--chart-text'), rule: cssVar('--chart-grid') };
         op.layout = { padding: { top: 18 } };
         return op;
       })()
-    }, 'dayLegend', [BLOCK_PLUGIN]);
+    }, 'dayLegend', [BLOCK_PLUGIN, SharedPane.plugin]);
     ch.options.scales.y.stacked = true;
     var over = { day: 'its typical days', day2: 'a weekday and a weekend day of each season', week: 'a typical week of each season' }[mode] || 'its typical days';
-    $('daySub').textContent = year + ' hour by hour over ' + over + ', cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '. Pick another year above the chart.';
+    ch.$cxSub = [year + ' hour by hour over ' + over + ', cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '.', ' Pick another year above the chart.'];
+    $('daySub').textContent = ch.$cxSub[0] + (curts ? CURT_SUB : '') + ch.$cxSub[1];
+    ch.$cxPanes = function(){ dayPanes(ch); };
   }
 
   /* ── Cost by year ── */
@@ -727,22 +880,75 @@
     if(!el) return out;
     var groups = el.querySelectorAll('.legend-group');
     if(!groups.length){
-      var items = SharedLegend.itemsOf(el);
-      return items.length ? SharedLegend.layout(items, measure, maxW, markW, gap, pad) : [];
+      var items = keyItems(el);
+      return items.length ? packKey(items, measure, maxW, markW, gap, pad) : [];
     }
     var headOf = function(g){ var lab = g.querySelector('.legend-group-label'); return lab ? lab.textContent.trim() : ''; };
     // One column for the names, as wide as the widest, so every row's entries start in line.
     var headW = Math.max.apply(null, Array.prototype.map.call(groups, function(g){ var h = headOf(g); return h ? measure(h, true) + pad / 2 : 0; }));
     Array.prototype.forEach.call(groups, function(g){
-      var items = SharedLegend.itemsOf(g), head = headOf(g);
+      var items = keyItems(g), head = headOf(g);
       if(!items.length) return;
-      SharedLegend.layout(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
+      packKey(items, measure, maxW - headW, markW, gap, pad).forEach(function(row, i){
         out.push({ items: row.items, head: i === 0 ? head : null, headW: headW, width: row.width + headW });
       });
     });
     var widest = Math.max.apply(null, out.map(function(r){ return r.width; }));
     out.forEach(function(r){ r.width = widest; });
     return out;
+  }
+  /* A key's visible entries, with the mark each draws. An entry keyed inside
+     another's (the shortfall, a farm's curtailment, a store's charging and
+     discharging) rides in it among subs, so it exports as it reads on the
+     page, "Demand (▨ Shortfall)"; with its host not exported it is an entry
+     of its own under its whole name. A store's name leads its entries with
+     no mark of its own, and goes when they are all hidden. */
+  function keyItems(box){
+    var out = [];
+    Array.prototype.forEach.call(box.querySelectorAll('.legend-item:not(.hidden), .legend-host'), function(el){
+      var lab = el.querySelector('.legend-label'), spec = null;
+      var label = (lab ? lab.textContent : el.textContent).trim(), prev = out[out.length - 1], of = el.getAttribute('data-of');
+      if(el.classList.contains('legend-host')){ if(label) out.push({ label: label, swatch: null, pair: el.getAttribute('data-pair'), subs: [] }); return; }
+      try { spec = JSON.parse(el.getAttribute('data-swatch')); } catch(e){ spec = null; }
+      if(!spec || !label) return;
+      if(of != null && prev && prev.pair === of){ prev.subs.push({ swatch: spec, label: label }); return; }
+      out.push({ label: el.getAttribute('data-full') || label, swatch: spec, pair: el.getAttribute('data-pair'), subs: [] });
+    });
+    return out.filter(function(it){ return it.swatch || it.subs.length; });
+  }
+  /* One exported entry from x: its swatch and label, and the entries keyed
+     inside it after them in one pair of brackets, " (▨ Shortfall)".
+     swatch(spec, x) and text(s, x) draw it; without them it is only
+     measured. Returns its width. */
+  function keyEntry(item, x, measure, markW, gap, swatch, text){
+    var x0 = x, subs = item.subs || [], lab = subs.length ? item.label + ' (' : item.label;
+    if(item.swatch){
+      if(swatch) swatch(item.swatch, x);
+      x += markW + gap;
+    }
+    if(text) text(lab, x);
+    x += measure(lab);
+    subs.forEach(function(sub, i){
+      var t = sub.label + (i === subs.length - 1 ? ')' : '');
+      x += i ? gap : gap / 2;
+      if(swatch) swatch(sub.swatch, x);
+      x += markW + gap;
+      if(text) text(t, x);
+      x += measure(t);
+    });
+    return x - x0;
+  }
+  // SharedLegend.layout for these entries: as many centred rows as they need.
+  function packKey(items, measure, maxW, markW, gap, pad){
+    var rows = [], row = [], w = 0;
+    items.forEach(function(it){
+      var iw = keyEntry(it, 0, measure, markW, gap);
+      if(row.length && w + pad + iw > maxW){ rows.push({ items: row, width: w }); row = []; w = 0; }
+      w += (row.length ? pad : 0) + iw;
+      row.push(it);
+    });
+    if(row.length) rows.push({ items: row, width: w });
+    return rows;
   }
   var wmLogoImg = new Image();
   CX.WM_PATH_W = 330.01;
@@ -760,7 +966,8 @@
       var margin = Math.round(16 * OUT), rowH = Math.round(22 * OUT), wmH = Math.round(26 * OUT);
       var mc = document.createElement('canvas').getContext('2d');
       var keyFont = '500 ' + Math.round(11 * OUT) + 'px ' + FONT, headFont = '600 ' + Math.round(11 * OUT) + 'px ' + FONT;
-      var rows = legendRows(legendId, function(s, head){ mc.font = head ? headFont : keyFont; return mc.measureText(s).width; }, chartW - margin * 2, markW, gap, pad);
+      var measure = function(s, head){ mc.font = head ? headFont : keyFont; return mc.measureText(s).width; };
+      var rows = legendRows(legendId, measure, chartW - margin * 2, markW, gap, pad);
       var legendH = rows.length ? rows.length * rowH + Math.round(8 * OUT) : 0;
       var c = document.createElement('canvas');
       c.width = chartW; c.height = chartH + titleH + legendH + wmH;
@@ -775,11 +982,8 @@
         if(row.head){ g.font = headFont; g.fillStyle = tone.fg; g.textAlign = 'left'; g.fillText(row.head, x, cy); g.font = keyFont; }
         x += row.headW || 0;
         row.items.forEach(function(item){
-          SharedLegend.paint(g, item.swatch, x, cy, OUT);
-          x += markW + gap;
-          g.fillStyle = tone.fg; g.textAlign = 'left';
-          g.fillText(item.label, x, cy);
-          x += g.measureText(item.label).width + pad;
+          x += keyEntry(item, x, measure, markW, gap, function(spec, at){ SharedLegend.paint(g, spec, at, cy, OUT); },
+                        function(t, at){ g.fillStyle = tone.fg; g.textAlign = 'left'; g.fillText(t, at, cy); }) + pad;
         });
       });
       g.save();
@@ -833,10 +1037,8 @@
         if(row.head) text(row.head, x, cy, { size: '11', weight: '600' });
         x += row.headW || 0;
         row.items.forEach(function(item){
-          svg.appendChild(SharedLegend.svgNode(item.swatch, x, cy, 1));
-          x += markW + gap;
-          text(item.label, x, cy, { size: '11', weight: '500' });
-          x += measure(item.label) + pad;
+          x += keyEntry(item, x, measure, markW, gap, function(spec, at){ svg.appendChild(SharedLegend.svgNode(spec, at, cy, 1)); },
+                        function(t, at){ text(t, at, cy, { size: '11', weight: '500' }); }) + pad;
         });
       });
       var wm = document.createElementNS(NS, 'path');

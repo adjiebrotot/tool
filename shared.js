@@ -1237,6 +1237,9 @@
        hatch   colour of 45° lines over a bar or area block, or the area under
                a line — a hatched fill (existing plant under new build,
                curtailed output under the output, say) keyed as hatched
+       hatchDir 'down' for lines falling left to right, so a second hatched
+               fill (existing plant, beside curtailment) keys apart from the
+               first; they rise left to right otherwise
        dots    colour of a dotted fill over a block or the area under a line
                (storage among generators, say) keyed as dotted
        point   {shape:'circle'|'ring'|'triangle'|'rect', fill, stroke, width,
@@ -1278,6 +1281,7 @@
       dots: isTransparent(s.dots) ? null : legCss(s.dots),
       point: null
     };
+    if(out.hatch && s.hatchDir === 'down') out.hatchDir = 'down';
     if(out.type === 'line' && out.width <= 0 && out.fill) out.type = 'area';
     if(s.point){
       var p = s.point === true ? {} : s.point;
@@ -1342,14 +1346,17 @@
 
   /* The one description of what a swatch looks like. Everything below draws
      these primitives; `k` scales the whole box for high-resolution exports. */
-  /* 45° lines rising left to right across a block, cut to its edges, so a
-     hatched fill keys as hatched in the swatch, the PNG and the SVG alike. */
-  function legHatch(out, x, y, w, h, color, k){
+  /* 45° lines rising left to right across a block (falling, down), cut to its
+     edges, so a hatched fill keys as hatched in the swatch, the PNG and the
+     SVG alike. */
+  function legHatch(out, x, y, w, h, color, k, down){
     var gap = 3.2 * k;
     for(var c = gap / 2 - h; c < w; c += gap){
       var x1 = x + c, y1 = y + h, x2 = x + c + h, y2 = y;
       if(x1 < x){ y1 -= x - x1; x1 = x; }
       if(x2 > x + w){ y2 += x2 - (x + w); x2 = x + w; }
+      // Falling: the same line mirrored top to bottom in the block.
+      if(down){ y1 = 2 * y + h - y1; y2 = 2 * y + h - y2; }
       if(x2 - x1 > 0.3 * k) out.push({t:'line', x1:x1, y1:y1, x2:x2, y2:y2, stroke:color, sw:1 * k});
     }
   }
@@ -1372,7 +1379,7 @@
     if(s.type === 'bar'){
       var bw = W * 0.56;
       out.push({t:'rect', x:(W - bw)/2, y:cy - 4.5*k, w:bw, h:9*k, r:1.5*k, fill:s.fill || s.color});
-      if(s.hatch) legHatch(out, (W - bw)/2, cy - 4.5*k, bw, 9*k, s.hatch, k);
+      if(s.hatch) legHatch(out, (W - bw)/2, cy - 4.5*k, bw, 9*k, s.hatch, k, s.hatchDir === 'down');
       if(s.dots) legDots(out, (W - bw)/2, cy - 4.5*k, bw, 9*k, s.dots, k);
     } else if(s.type === 'candle'){
       // Body with a wick standing clear above and below it, so a candlestick
@@ -1389,12 +1396,12 @@
       } else {
         out.push({t:'rect', x:0, y:cy - 4.5*k, w:W, h:9*k, r:2*k, fill:s.fill || s.color});
       }
-      if(s.hatch) legHatch(out, 0, cy - 4.5*k, W, 9*k, s.hatch, k);
+      if(s.hatch) legHatch(out, 0, cy - 4.5*k, W, 9*k, s.hatch, k, s.hatchDir === 'down');
       if(s.dots) legDots(out, 0, cy - 4.5*k, W, 9*k, s.dots, k);
     } else if(s.type !== 'point'){
       // A line, with the area under it shaded when the series is filled.
       if(s.fill) out.push({t:'rect', x:0, y:cy, w:W, h:H/2, r:0, fill:s.fill});
-      if(s.fill && s.hatch) legHatch(out, 0, cy, W, H/2, s.hatch, k);
+      if(s.fill && s.hatch) legHatch(out, 0, cy, W, H/2, s.hatch, k, s.hatchDir === 'down');
       if(s.fill && s.dots) legDots(out, 0, cy, W, H/2, s.dots, k);
       if(lw > 0){
         if(s.colors) {
@@ -3274,6 +3281,11 @@
     }
     function toolCluster(card){ return !!(card && card.querySelector('.btn-cluster[data-share="tool"]')); }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+    /* A key entry is named in a link by its words, or by data-legend-key where
+       its words alone would not tell it apart (two stores' "Charging" inside
+       their names' brackets). A link written before it named itself still
+       finds it by its words. */
+    function legendKey(it){ return it.getAttribute('data-legend-key') || norm(it.textContent); }
     function html(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function attr(s){ return html(s).replace(/"/g, '&quot;'); }
     function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -3758,7 +3770,7 @@
           if(l){ (isOn(b) ? u.on : u.off).push(l); any = true; }
         });
         each(root.querySelectorAll('.legend-item'), function(it){
-          var l = norm(it.textContent);
+          var l = legendKey(it);
           if(l){ u.legend[l] = it.classList.contains('hidden') ? 1 : 0; any = true; }
         });
       });
@@ -3796,7 +3808,8 @@
         var hit = null;
         rootsOf(card).forEach(function(root){
           each(root.querySelectorAll('.legend-item'), function(it){
-            var l = norm(it.textContent);
+            var l = legendKey(it);
+            if(!legend.hasOwnProperty(l)) l = norm(it.textContent);
             if(!hit && legend.hasOwnProperty(l) && !!legend[l] !== it.classList.contains('hidden')) hit = it;
           });
         });
