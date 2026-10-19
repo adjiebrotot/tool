@@ -1197,9 +1197,9 @@
         if(T.shedEnergy.some(function(v){ return v > 1e-3; })) row('Shortfall (load shed)', T.shedEnergy, F.gwh, yrs.map(function(_, i){ return T.shedEnergy[i] > 1e-3 ? i + 1 : -1; }));
         row('Demand', T.energy, F.gwh);
       }
-      units = { cap: 'MW in service in each decision year, storage at its power rating.',
-                build: 'MW coming into service in each decision year; what retires by then is below zero.',
-                energy: 'GWh in a year of each decision year. Storage counts what it gives back.' }[tableKind];
+      units = { cap: 'MW in service, storage at its power rating.',
+                build: 'MW coming into service; retirements are below zero.',
+                energy: 'GWh a year; storage counts what it gives back.' }[tableKind];
     } else if(tableKind === 'cost'){
       head = ['Cost'].concat(yrs.map(String));
       row('Capital (annuities)', T.capex, function(v){ return F.money(v, C); });
@@ -1210,7 +1210,7 @@
       row('Total', T.cost, function(v){ return F.money(v, C); });
       row('Levelised cost per MWh', T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; }), function(v){ return F.price(v, C); });
       row('Discount factor', res.disc, function(v){ return (Math.round(v * 1000) / 1000).toFixed(3); });
-      units = 'A year’s costs in each decision year, in ' + (C || 'currency units') + ' at the first year’s prices and not discounted. The discount factor turns a year’s cost into today’s money for every year the decision year stands for.';
+      units = 'Money in ' + (C || 'currency units') + ' a year at the first year’s prices, not discounted.';
     } else {
       head = ['Decision year', 'Years it stands for', 'Peak demand MW', 'Demand GWh', 'Unserved GWh', 'Capacity MW', 'Firm and storage MW', 'Clean share %', 'CO2', 'Cost a year', 'Levelised cost per MWh'];
       yrs.forEach(function(y, k){
@@ -1219,7 +1219,7 @@
           F.pct(T.gen[k] > 0 ? 100 * T.cleanGen[k] / T.gen[k] : NaN), F.co2(T.emis[k]), F.money(T.cost[k], C), F.price(T.served[k] > 0 ? T.cost[k] / T.served[k] : NaN, C)],
           neg: T.shedEnergy[k] > 1e-3 ? [4] : [] });
       });
-      units = 'One row per decision year. Money in ' + (C || 'currency units') + ' at the first year’s prices; firm capacity is derated by availability.';
+      units = 'Money in ' + (C || 'currency units') + ' at the first year’s prices.';
     }
     return { head: head, rows: rows, units: units };
   }

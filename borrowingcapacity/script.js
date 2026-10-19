@@ -1590,7 +1590,7 @@ function init(){
   /* The four caps carry the answer, so they stay open. The tables under them
      are the working, so each waits closed behind its chevron. */
   ['buildSection', 'incomeSection', 'commSection'].forEach(id => {
-    SharedFold.attach($(id), { key: 'borrowingcapacity-' + id.replace('Section', ''), bodies: ['.unit-note', '.table-wrap'] });
+    SharedFold.attach($(id), { key: 'borrowingcapacity-' + id.replace('Section', ''), bodies: ['.table-wrap'] });
   });
   render();
 

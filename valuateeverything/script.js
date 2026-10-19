@@ -1270,7 +1270,7 @@ function renderTables(r){
 
   // Items to buy
   const inMoney = r.o.dated ? `, ${r.o.year} money` : '';
-  $('itemsUnit').textContent = `Prices in ${cur || 'the price unit'}${inMoney}. The range is the fair price give or take one typical error.`;
+  $('itemsUnit').textContent = `Prices in ${cur || 'the price unit'}${inMoney}; the range is the fair price give or take one typical error.`;
   $('itemsTableWrap').innerHTML = !r.items.length ? blank('No items to buy yet.') :
     `<table><thead><tr><th>Item</th><th>Asking</th><th>Fair price</th><th>Range</th><th>Gap</th><th>Gap <span class="th-unit">%</span></th></tr></thead><tbody>` +
     r.items.map(it => {
@@ -1285,8 +1285,8 @@ function renderTables(r){
   // Model terms
   const isLog = m.model === 'log';
   $('coefUnit').textContent = isLog
-    ? `The model is for ln P, the natural log of the price${r.o.dated ? ` in ${r.o.year} money` : ''}. % per unit is e^α − 1. The standardised weight is the effect of one typical spread of the feature.`
-    : `Coefficients are in ${cur || 'price'}${inMoney}, per unit of the feature. The standardised weight is the effect of one typical spread of the feature, so weights compare across units.`;
+    ? `The model is for ln P, the natural log of the price${r.o.dated ? ` in ${r.o.year} money` : ''}.`
+    : `Coefficients in ${cur || 'price'}${inMoney} per unit of the feature.`;
   const termUnit = (u, pow) => pow === 2 ? (/[²³]$/.test(u) ? ` (${u})²` : ` (${u}²)`) : ` (${u})`;
   const termName = (f, pow) => (f.type === 'year' ? `Age from ${f.name}` : f.name) + (pow === 2 ? '²' : '') + (f.unit ? termUnit(f.unit, pow) : f.type === 'year' ? termUnit('yrs', pow) : '');
   const rows = [];
@@ -1299,7 +1299,7 @@ function renderTables(r){
     if(t2 >= 0) rows.push({ term: termName(f, 2), coef: m.coef.q[j], w: m.beta[t2 + 1], pct: null });
   });
   $('coefTableWrap').innerHTML =
-    `<table><thead><tr><th>Term</th><th>Coefficient</th>${isLog ? '<th>% per unit</th>' : ''}<th>Standardised weight</th></tr></thead><tbody>` +
+    `<table><thead><tr><th>Term</th><th>Coefficient</th>${isLog ? '<th>% per unit</th>' : ''}<th>Standardised weight <i class="tip-icon" data-tip="The effect of one typical spread of the feature, so weights compare across units.">?</i></th></tr></thead><tbody>` +
     rows.map(x => x.dropped
       ? `<tr><td>${esc(x.term)}</td><td colspan="${isLog ? 3 : 2}" class="note">Dropped: the same in every listing</td></tr>`
       : `<tr><td>${esc(x.term)}</td><td>${fmt.num(x.coef, 4)}</td>${isLog ? `<td>${x.pct === null ? '—' : fmt.pct(x.pct, 2)}</td>` : ''}<td>${x.w === null ? '—' : (isLog ? fmt.num(x.w, 4) : fmt.signedMoney(x.w, s))}</td></tr>`).join('') +
@@ -1326,8 +1326,8 @@ function renderTables(r){
   // Without a data year, Listed and Today are the same figure, so only one is shown.
   const dated = r.o.dated;
   $('dataUnit').textContent = dated
-    ? `Prices in ${cur || 'the price unit'}. Listed is what it was seen at, Today is that restated in ${r.o.year} money. Miss is Today less the model.`
-    : `Prices in ${cur || 'the price unit'}. Miss is the listed price less the model.`;
+    ? `Prices in ${cur || 'the price unit'}; Today is Listed restated in ${r.o.year} money.`
+    : `Prices in ${cur || 'the price unit'}.`;
   $('dataTableWrap').innerHTML =
     `<table><thead><tr><th>Row</th>${dated ? '<th>Data year</th>' : ''}<th>Listed</th>${dated ? '<th>Today</th>' : ''}<th>Model</th><th>Miss</th><th>Miss <span class="th-unit">%</span></th></tr></thead><tbody>` +
     prep.row.map((row, i) => `<tr><td>${row}</td>${dated ? `<td>${prep.dataYear[i]}</td>` : ''}<td>${fmt.money(prep.price[i], s)}</td>${dated ? `<td>${fmt.money(prep.priceToday[i], s)}</td>` : ''}` +

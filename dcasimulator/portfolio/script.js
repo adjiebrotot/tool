@@ -3747,9 +3747,6 @@ function breakdownRows(rows){
 function updateTable(){
   const head=$('compHead'), body=$('compBody');
   if(!simResults.length){ return; }
-  const note=$('compUnitNote');
-  if(note) note.textContent=(currentCurrencySymbol ? 'Amounts in '+currentCurrencySymbol+'.' : 'Amounts in the currency of the prices.')+
-    ' Interest and Fees are running totals; one row per event, between the first and the last trading day.';
   const res=simResults.find(r=>r.id===activeDetailId)||simResults[0];
   // Interest and Fees are running totals, so any row closes on its own:
   // Portfolio Value - Deposited - Interest + Fees is what the market added.

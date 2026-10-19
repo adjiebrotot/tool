@@ -274,7 +274,7 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
       const a = window.__lf.app, r = a.res, d = window.__lf.display();
       const txt = id => document.getElementById(id).textContent.trim();
       return { conv: r.report.converged, iters: r.report.iters, mm: r.report.mismatch, totals: r.totals, loss: txt('mLoss'), volt: txt('mVolt'), load: txt('mLoad'),
-               flagged: ['mVolt', 'mLoad'].some(id => document.getElementById(id).classList.contains('neg')), title: document.getElementById('sldSub').textContent,
+               flagged: ['mVolt', 'mLoad'].some(id => document.getElementById(id).classList.contains('neg')), title: window.__lf.exportCtx().sub, sub: document.getElementById('sldSub').textContent,
                v: Object.values(r.bus).map(b => b.v), loads: Object.values(r.br).map(b => b.load).filter(isFinite), vmin: d.vmin, vmax: d.vmax, lmax: d.loadMax };
     });
     const F = LF.fmt;
@@ -284,7 +284,7 @@ const solved = page => page.waitForFunction(() => window.__lf && window.__lf.app
     check(`B2 ${key}: the KPIs say what the results say`,
           s.loss === F.p(s.totals.loss) + ' MW' && s.volt === F.vl(lo, s.vmin, s.vmax) + ' to ' + F.vl(hi, s.vmin, s.vmax) && s.load === F.pctl(top, s.lmax) + '%',
           `${s.loss} | ${s.volt} | ${s.load}`);
-    check(`B2 ${key}: the KPIs turn red exactly when a limit is crossed, and the subtitle states the losses`, outside === s.flagged && s.title.includes('Losses ' + F.p(s.totals.loss) + ' MW.'), s.title.slice(0, 90));
+    check(`B2 ${key}: the KPIs turn red exactly when a limit is crossed, the export's subtitle states the losses, and the page's says nothing the KPIs do`, outside === s.flagged && s.title.includes('Losses ' + F.p(s.totals.loss) + ' MW.') && !/Losses|iteration/.test(s.sub), s.title.slice(0, 90));
     // The CSV of every table carries the same numbers.
     for (const kind of ['bus', 'branch', 'device']) {
       await page.click(`#tableTabs .seg-btn[data-val="${kind}"]`);

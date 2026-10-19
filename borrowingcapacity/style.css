@@ -136,7 +136,6 @@ td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;whit
 .stream-head span:last-child{flex:0 0 92px;text-align:right;}
 /* A status that is neither good nor bad: there is room left under this cap. */
 .badge-muted{background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border);}
-.detail-section .unit-note{margin:-2px 0 10px;}
 .detail-section.is-folded .detail-head{margin-bottom:0;}
 .verdict{margin-bottom:18px;}
 .assumes-card{margin-bottom:18px;}

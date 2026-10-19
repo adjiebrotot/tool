@@ -523,19 +523,21 @@
   function esc(s){ return ED.esc(s); }
   function name(id){ var e = ED.byId(app.model)[id]; return e ? ED.nameOf(e) : '?'; }
   var MODE_NAME = { uc: 'Unit commitment, mixed-integer', lin: 'Unit commitment, linear relaxation', ed: 'Economic dispatch' };
+  /* The line under the diagram says only what the metrics and the hour
+     control do not: load shed, a warning in Checks, a run that failed, work
+     in progress. */
   function subLine(){
     var res = app.res, r = res && res.report;
     if(!r || !r.ok) return '';
-    var ms = r.ms < 1 ? '<1 ms' : r.ms < 1000 ? Math.round(r.ms) + ' ms' : (Math.round(r.ms / 100) / 10) + ' s';
     var warns = (res.validation && res.validation.warnings) || [];
     var warnTxt = warns.length ? ' ' + (warns.length === 1 ? 'One warning' : warns.length + ' warnings') + ' in Checks.' : '';
     var shed = res.totals.shedEnergy > 1e-6 ? ' ' + F.mwh(res.totals.shedEnergy) + ' MWh of load shed.' : '';
-    return MODE_NAME[r.mode] + ', optimal. Solved by PSA.js and HiGHS in ' + ms + '.' + shed + warnTxt;
+    return (shed + warnTxt).trim();
   }
   function setSubHour(){
     var res = shownResults();
     if(!res || busyNow) return;
-    setSub(subLine() + ' Showing ' + hourText(hourNow(), res) + '.');
+    setSub(subLine());
   }
   function showResults(){
     var res = app.res, r = res && res.report;
@@ -662,7 +664,7 @@
     var sum = function(a){ var s = 0; if(a) for(var t = 0; t < a.length; t++) s += a[t]; return s; };
     if(tableKind === 'unit'){
       head = ['Unit', 'Kind', 'Bus', 'Rating MW', 'Energy MWh', 'Capacity factor %', 'Hours on', 'Starts', 'Cost', 'Average cost per MWh'];
-      units = 'Energy and cost over the whole horizon, in ' + (C || 'currency units') + '. Storage energy is what it discharged less what it charged.';
+      units = 'Totals over the horizon, money in ' + (C || 'currency units') + '.';
       m.el.forEach(function(e){
         if(e.c !== 'Generator' && e.c !== 'StorageUnit') return;
         var d = res && res.dev[e.id];
@@ -676,7 +678,7 @@
       });
     } else if(tableKind === 'bus'){
       head = ['Bus', 'Nominal kV', 'Average price', 'Lowest price', 'Highest price', 'Demand MWh', 'Shed MWh'];
-      units = 'Prices in ' + (C || 'currency units') + ' per MWh; the average is weighted by the demand at the bus, or plain where there is none.';
+      units = 'Prices in ' + (C || 'currency units') + ' per MWh.';
       m.el.forEach(function(e){
         if(e.c !== 'Bus') return;
         var b = res && res.bus[e.id];
@@ -692,7 +694,7 @@
       });
     } else if(tableKind === 'branch'){
       head = ['Branch', 'Kind', 'From', 'To', 'Limit MW', 'Highest flow MW', 'Highest loading %', 'Hours at limit', 'Energy MWh', 'Losses MWh'];
-      units = 'Flows in MW at the end they enter. Energy is what crossed the branch either way; only HVDC links lose any.';
+      units = '';
       m.el.forEach(function(e){
         if(!ED.BRANCH[e.c]) return;
         var r = res && res.br[e.id];
@@ -710,7 +712,7 @@
       });
     } else {
       head = ['Hour', 'Demand MW', 'Generation MW', 'Storage MW', 'Shed MW', 'Curtailed MW', 'Average price', 'Cost'];
-      units = 'Each hour of the horizon. Storage is positive when discharging. The price is the demand-weighted average over the buses, in ' + (C || 'currency units') + ' per MWh, and the cost is that hour’s share of the operating cost.';
+      units = 'Money in ' + (C || 'currency units') + '; storage is positive when discharging.';
       if(res){
         var T = res.totals;
         for(var t = 0; t < H; t++){
@@ -726,6 +728,7 @@
   function renderTable(){
     var t = tableData();
     $('tableUnits').textContent = t.units;
+    $('tableUnits').hidden = !t.units;
     var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       var selected = r.hour !== undefined ? r.hour === hourNow() : app.sel.has(r.id);

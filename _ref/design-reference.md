@@ -108,9 +108,13 @@ of month) carries `data-unitless`. Sentence-style rows ("From age 28 to 33",
 "Grows 3 %/yr from today") keep the unit words in the sentence.
 
 Outputs: every y axis names its unit (`Price ($)`, `Total tax (Rp a year)`,
-`Balance, today's money`), every x axis is titled, and every table says its
-unit once over it (`.unit-note`) or, where columns differ, under each column
-header (`.th-unit`).
+`Balance, today's money`), every x axis is titled, and every table shows its
+unit in its column headers (`.th-unit`, or `$ a month` in the label) or in its
+cells (`$1,200`). A `.unit-note` over a table is for what neither can carry (the
+currency of year columns, today's or future money, a running total) and is one
+short sentence; a table whose headers and cells already say it all has none.
+It never restates the title, explains a self-evident column or gives a usage
+hint.
 
 ### Bounds
 
@@ -1846,12 +1850,21 @@ labelled by a glyph, so each one carries a `title` saying what it does (and
       <button class="btn-secondary btn-sm btn-icon" id="resetZoomBtn" title="Reset zoom">⟳</button>
     </div>
   </div>
-  <div class="sub" id="chartSub"></div>                <!-- optional, BELOW the row -->
+  <div class="sub" id="chartSub"></div>                <!-- rare, BELOW the row: see below -->
   <div class="legend" id="chartLegend"></div>          <!-- custom HTML legend -->
   <div class="canvas-wrap"><canvas id="chartCanvas"></canvas></div>
   <div class="hover-box" id="chartHoverBox">Hover to inspect data points.</div>
 </section>
 ```
+
+**A chart has no subtitle by default.** The title, the key, the axis titles and the
+hover box say what the chart shows; a line under the title that describes it again
+(what is stacked, what a line means, which way is better, where to click) is noise, on
+the page and in an embed. A `.sub` is there only for what the chart cannot show and
+the reader would otherwise get wrong, and it is one concise sentence: the money basis
+where no axis names it ("In future dollars, not adjusted for inflation."), a series
+let run off the top, a chart left empty because the run failed. One that only applies
+sometimes is set by the script and hidden (`hidden`, or `:empty`) the rest of the time.
 
 `.chart-head`, `.detail-head`, `.btn-cluster`, `.btn-sm` and `.btn-icon` — including the
 phone layout, where the cluster takes the full width under the title and its buttons share
