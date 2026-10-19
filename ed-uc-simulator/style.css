@@ -194,11 +194,12 @@ html.sld-full-open{overflow:hidden;scrollbar-gutter:auto;}
 .legend-group{display:flex;gap:14px;align-items:flex-start;}
 .legend-group-label{color:var(--muted);font-weight:600;flex:0 0 6.2em;line-height:1.45;}
 .legend-group-items{display:flex;gap:6px 14px;flex-wrap:wrap;flex:1 1 auto;min-width:0;}
-/* A unit and its curtailment, "Solar farm (▨ Curtailed)": one entry to the eye,
-   two to click, kept on one line. */
+/* A unit and its curtailment, "Solar farm (▨ Curtailed)", or the demand and
+   its shortfall, "Demand (▨ Shortfall)": one entry to the eye, two to click,
+   kept on one line. */
 .legend-pair{display:flex;align-items:center;gap:6px;}
-.legend-item.legend-curt{gap:4px;}
-.legend-curt .legend-paren:last-child{margin-left:-3px;}
+.legend-item.legend-sub{gap:4px;}
+.legend-sub .legend-paren:last-child{margin-left:-3px;}
 .canvas-wrap{height:380px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
 /* Dispatch with its curtailment pane under it, or that pane alone (an embed or
    GIF that picked only it). Top-level rules, so an export reads these heights. */

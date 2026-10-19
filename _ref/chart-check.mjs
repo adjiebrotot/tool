@@ -520,6 +520,20 @@ const PAGES = [
     },
   },
   {
+    // Its typical days with the curtailment pane stacked under them: the
+    // default plan's last decision year, whose sun and wind are curtailed at
+    // midday.
+    name: 'capacity-expansion-planner/curtailment',
+    url: '/capacity-expansion-planner/',
+    charts: ['dayCanvas'],
+    async prep(page) {
+      await page.waitForFunction(() => window.__cx && __cx.app.res && __cx.app.res.report.ok && !document.getElementById('runBtn').disabled && Chart.getChart('dayCanvas'), null, { timeout: 60000 });
+      await page.evaluate(() => { window.__cx.unfold('day'); window.__cx.setYear(__cx.app.res.periods.length - 1); });
+      await page.waitForFunction(() => Chart.getChart('dayCanvas').scales.yCurt, null, { timeout: 10000 });
+      await page.waitForTimeout(400);
+    },
+  },
+  {
     // A Plotly plot like the Graph Visualiser's. The zoom promises are tested
     // on a series that climbs steeply, so the left of it sits well under the
     // whole run's top, which is what the y refit has to come down to.
