@@ -1041,7 +1041,7 @@
   function sharePct(x){ var p = 100 * x; return p >= 0.1 ? F.pct(p) : String(+p.toPrecision(2)); }
   function verdict(res, model){
     var o = res.report.opts, T = res.totals, C = cur(), years = res.periods, K = years.length;
-    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, a levelised cost of energy of ' + F.price(T.avgCost, C) + ' per MWh served.';
+    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served.';
     var shed = shedShare(T) > SHED_NOTE ? ' ' + sharePct(shedShare(T)) + '% of demand goes unserved on the toughest days, where building for it would cost more than the value of lost load.' : '';
     if(!(T.built >= 0.5)){
       return { tone: '', title: 'Build nothing: what is in service ' + (shed ? 'is the cheapest plan to ' + o.end + '.' : 'meets the demand to ' + o.end + '.'), body: cost + shed };
