@@ -106,6 +106,13 @@ abbr.abbr:focus-visible,.abbr:focus-visible{outline:none;}
 /* Page footer info card */
 .page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}
 .page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}
+.page-footer-info a{color:var(--accent-strong);}
+
+/* Footer collaboration line (finance / engineering tools and the home page).
+   It leads the footer in full-strength text behind an accent bar; every
+   paragraph after it is fine print (disclaimer, credits). */
+footer p.footer-collab{margin:0 0 10px;padding:1px 0 1px 10px;border-left:3px solid var(--accent);color:var(--text);font-size:.85rem;line-height:1.55;}
+footer .footer-collab ~ p{font-size:.74rem;line-height:1.5;margin-bottom:8px;}
 
 /* Legend swatch — the mark a series is actually drawn with (SharedLegend).
    A line stays a line, a dotted line stays dotted, a shaded range stays a

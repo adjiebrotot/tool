@@ -221,6 +221,9 @@ Scale the rigor to the risk:
 - **Finance / tax / engineering tools** — include the full disclaimer footer (the "as is, no
   warranty, get your own professional advice" block) plus licence + made-in, as in
   `financingvscash/index.html` / `rentvsownhouse/footer.js`.
+  The footer opens with the one-line `p.footer-collab` (hobby, open to collaborate, a "let’s
+  talk" mailto and the bug/help email), copied from those footers.
+  Everything after it (disclaimer, credits) is fine print, sized by `shared.css`.
 - **Plain tools with no potentially harmful finance/engineering content** — no disclaimer
   needed. Just the licence (GNU GPL) and the "Made in Australia by Indonesian engineer" line.
 
