@@ -982,9 +982,9 @@
     grid_nom: 'The most that can be imported.',
     mc: 'What one more MWh from it costs: fuel and variable running costs. The merit order is sorted by it.',
     mcurve: '<ul><li><strong>Scalar:</strong> every MWh costs the same.</li><li><strong>Linear:</strong> it rises in a straight line with the output, a + b × P.</li><li><strong>Quadratic:</strong> it rises along a curve, a + b × P + c × P².</li></ul>',
-    mc_b: { lin: 'How much dearer each MWh gets per MW more output: b in a + b × P. An hour at P MW then costs a × P + b × P² / 2.',
-            quad: 'How much dearer each MWh gets per MW more output at the start: b in a + b × P + c × P².' },
-    mc_c: 'Bends the line: c in a + b × P + c × P². Above 0 it gets dearer faster as the output rises. An hour costs a × P + b × P² / 2 + c × P³ / 3.',
+    mc_b: { lin: 'How much dearer each MWh gets per MW more output: b in a + b × P. An hour at P MW then costs a × P + b × P² / 2. Below 0 each MWh gets cheaper, which a cost curve cannot do: it has to rise or stay flat.',
+            quad: 'How much dearer each MWh gets per MW more output at the start: b in a + b × P + c × P². Below 0 it starts by getting cheaper, so the curvature has to turn it back up straight away.' },
+    mc_c: 'Bends the line: c in a + b × P + c × P². Above 0 it gets dearer faster as the output rises; below 0, slower. An hour costs a × P + b × P² / 2 + c × P³ / 3.',
     grid_mc: 'The price paid for each MWh imported.',
     committable_on: 'The unit is switched on or off hour by hour, with the costs and limits below.',
     committable_off: 'The unit is always available, from zero to its rating, with no start-up cost or minimum output.',
@@ -1046,7 +1046,7 @@
            F_('prof', 'Availability', '', { kind: 'profile' }),
            F_('mcurve', 'Marginal cost', '', { kind: 'seg', opts: [['', 'Scalar'], ['lin', 'Linear'], ['quad', 'Quadratic']], wide: true, tip: TIP.mcurve, show: curveShown, group: 'Cost' }),
            F_('marginal_cost', function(e){ return isCurve(e) ? 'At 0 MW' : 'At any output'; }, '/MWh', { money: true, min: -1e4, max: 1e5, tip: function(e){ return isCurve(e) ? '' : TIP.mc; }, show: curveShown }),
-           F_('marginal_cost_quadratic', 'Slope', '/MWh per MW', { money: true, stack: true, scale: 2, min: 0, max: 2e3, tip: function(e){ return TIP.mc_b[e.mcurve === 'quad' ? 'quad' : 'lin']; }, show: function(e){ return curveShown(e) && isCurve(e); } }),
+           F_('marginal_cost_quadratic', 'Slope', '/MWh per MW', { money: true, stack: true, scale: 2, min: -2e3, max: 2e3, tip: function(e){ return TIP.mc_b[e.mcurve === 'quad' ? 'quad' : 'lin']; }, show: function(e){ return curveShown(e) && isCurve(e); } }),
            F_('marginal_cost_cubic', 'Curvature', '/MWh per MW²', { money: true, stack: true, scale: 3, min: -3e3, max: 3e3, tip: TIP.mc_c, show: function(e){ return curveShown(e) && e.mcurve === 'quad'; } }),
            F_('curve', '', '', { kind: 'costcurve', show: function(e){ return curveShown(e) && isCurve(e); } }),
            F_('committable', 'Committable', '', { kind: 'toggle', tip: function(e){ return e.committable ? TIP.committable_on : TIP.committable_off; }, show: genField('committable'), group: 'Commitment' }),
@@ -1275,7 +1275,7 @@
     var pre = f.money && cur() ? '<span class="prefix">' + esc(cur()) + '</span>' : '';
     // A unit too long to sit beside a short box puts the box under its label, full width.
     return '<div class="field-row' + (f.stack ? '' : ' inline') + '"><div class="field-label"><span class="tip-wrap">' + label + tipHtml(tip) + '</span></div>' +
-      '<div class="affix-wrap">' + pre + '<input class="affix-input' + (f.unit ? ' has-suffix' : '') + (f.stack ? ' long-suffix' : '') + '" type="text" inputmode="decimal" id="' + id + '" data-k="' + f.k + '"' +
+      '<div class="affix-wrap">' + pre + '<input class="affix-input' + (f.unit ? ' has-suffix' : '') + (f.stack ? ' long-suffix' : '') + '" type="text" inputmode="' + (f.min < 0 ? 'text' : 'decimal') + '" id="' + id + '" data-k="' + f.k + '"' +
       ' data-min="' + f.min + '" data-max="' + f.max + '"' + (f.step ? ' data-step="' + f.step + '"' : '') + ' value="' + fmtField(v) + '"/>' +
       (f.unit ? '<span class="suffix">' + f.unit + '</span>' : '') + '</div></div>';
   }

@@ -98,7 +98,7 @@
                    start_up_cost: ['n', 0, 1e8], shut_down_cost: ['n', 0, 1e8], stand_by_cost: ['n', 0, 1e7],
                    min_up_time: ['i', 0, 168], min_down_time: ['i', 0, 168], ramp_limit_up: ['n', 0.01, 1], ramp_limit_down: ['n', 0.01, 1],
                    init: ['e', [0, 1]], prof: ['p'], grid: ['e', [0, 1]], style: ['e', ['', 'pv', 'wind']], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE],
-                   mcurve: ['e', ['', 'lin', 'quad']], marginal_cost_quadratic: ['n', 0, 1e3], marginal_cost_cubic: ['n', -1e3, 1e3] },
+                   mcurve: ['e', ['', 'lin', 'quad']], marginal_cost_quadratic: ['n', -1e3, 1e3], marginal_cost_cubic: ['n', -1e3, 1e3] },
     Load:        { p_set: ['n', 0, BIG], prof: ['p'], dprof: ['w'], ts: ['t'], pbase: ['e', PBASE] },
     StorageUnit: { p_nom: ['n', 0, BIG], max_hours: ['n', 0, 1000], eff: ['n', 0.01, 1], soc0: ['n', 0, 1], cyclic: ['e', [0, 1]] },
     Link:        { p_nom: ['n', 0, BIG], efficiency: ['n', 0.01, 1], both: ['e', [0, 1]] }
