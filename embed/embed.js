@@ -22,11 +22,10 @@
    ────────────────────────────────────────────────────────────────────────── */
 (function(global){
   var doc = document, root = doc.documentElement;
-  var SITE = location.origin + '/';
-  var LOADING = { en: 'Loading data from ', id: 'Memuat data dari ' };
+  var SITE = location.origin + '/', HOME = 'https://tool.adjiebrotots.com';
   var FAILED = { en: ['This chart could not be shown here.', 'Open it on '], id: ['Grafik ini tidak bisa ditampilkan di sini.', 'Buka di '] };
   var RESET = { en: 'Reset zoom', id: 'Atur ulang zoom' }, PLAY = { en: ['Play', 'Pause'], id: ['Putar', 'Jeda'] };
-  var snap = null, lang = 'en', pool = [], card, stage, legendBox, modesBox, resetBox, current = null, frameAt = -1, picks = [];
+  var snap = null, lang = 'en', pool = [], card, stage, legendBox, modesBox, resetBox, frameAt = -1, picks = [];
   // What the reader hid in the key, by entry, so it stays hidden in every view.
   var legendOff = {};
 
@@ -56,7 +55,7 @@
   }
   // A link out of the frame goes back to this site, or nowhere.
   function ownUrl(u){
-    try { var x = new URL(u, SITE); return x.origin === location.origin ? x.href : null; } catch(e){ return null; }
+    try { var x = new URL(u, SITE); return x.origin === location.origin || x.origin === HOME ? x.href : null; } catch(e){ return null; }
   }
 
   /* ── Revive what the snapshot froze ──
@@ -233,7 +232,7 @@
     (Array.isArray(t.k) ? t.k : []).forEach(function(k){ var c = legendNode(k, entries, onToggle); if(c) n.appendChild(c); });
     return n;
   }
-  function buildLegend(entries, onToggle, tree){
+  function buildLegend(legendBox, entries, onToggle, tree){
     legendBox.textContent = '';
     legendBox.classList.remove('grouped', 'tree');
     if(tree && entries && entries.length){
@@ -303,6 +302,12 @@
     };
   }
   function drawChart(f){
+    if(chart) chart.destroy();
+    chart = chartIn(f, stage, legendBox, snap.t);
+    resetButton(!!(chart.options.plugins.zoom && chart.resetZoom), function(){ chart.resetZoom(); });
+  }
+  // One chart from its frame, into a stage and a key.
+  function chartIn(f, into, keyBox, label){
     var C = global.Chart;
     var cfg = { type: f.type, data: { labels: revive(f.labels), datasets: revive(f.datasets) }, options: revive(f.options) || {} };
     var o = cfg.options;
@@ -323,24 +328,47 @@
       sc.ticks.callback = global.ChartKit.tickCallback(f.ticks[id], arr);
     });
     cfg.plugins = (f.plugins || []).map(global.ChartKit.pluginOf).filter(Boolean);
-    stage.textContent = '';
+    into.textContent = '';
     var box = el('div', 'fill'), cv = el('canvas');
     cv.setAttribute('role', 'img');
-    if(snap.t) cv.setAttribute('aria-label', snap.t);
+    if(label) cv.setAttribute('aria-label', label);
     box.appendChild(cv);
-    stage.appendChild(box);
-    if(chart) chart.destroy();
-    chart = new C(cv, cfg);
-    var zoomable = !!(o.plugins.zoom && chart.resetZoom);
-    resetButton(zoomable, function(){ chart.resetZoom(); });
-    buildLegend(f.legend, function(e){
-      e.ds.forEach(function(d){ if(d < chart.data.datasets.length) chart.setDatasetVisibility(d, !e.off); });
-      chart.update();
+    into.appendChild(box);
+    var ch = new C(cv, cfg);
+    buildLegend(keyBox, f.legend, function(e){
+      e.ds.forEach(function(d){ if(d < ch.data.datasets.length) ch.setDatasetVisibility(d, !e.off); });
+      ch.update();
     }, f.legendTree);
     (f.legend || []).forEach(function(e){
-      if(e.off) (e.ds || []).forEach(function(d){ if(d < chart.data.datasets.length) chart.setDatasetVisibility(d, false); });
+      if(e.off) (e.ds || []).forEach(function(d){ if(d < ch.data.datasets.length) ch.setDatasetVisibility(d, false); });
     });
-    chart.update('none');
+    ch.update('none');
+    return ch;
+  }
+
+  /* ── Charts under the main one (the ED/UC diagram's ticked charts) ──
+     Drawn once; a view only moves what their options change with it (the
+     hour marker following the diagram's slider). */
+  var panels = [];
+  function buildPanels(){
+    (snap.panels || []).forEach(function(p){
+      var sec = el('section', 'panel'), st = el('div', 'stage'), key = el('div', 'legend');
+      if(p.t) sec.appendChild(el('h2', 'panel-title', p.t));
+      if(p.legendTop){ key.classList.add('top'); sec.appendChild(key); sec.appendChild(st); }
+      else { sec.appendChild(st); sec.appendChild(key); }
+      st.style.setProperty('--h', Math.max(120, Math.min(900, +p.h || 300)) + 'px');
+      card.insertBefore(sec, card.querySelector('.mark'));
+      panels.push({ f: p, stage: st, key: key, chart: null });
+    });
+  }
+  function drawPanels(f){
+    panels.forEach(function(p, j){
+      if(!p.chart && global.Chart) p.chart = chartIn(p.f, p.stage, p.key, p.f.t);
+      var px = f && f.px && f.px[j];
+      if(!p.chart || !px) return;
+      Object.keys(px).forEach(function(id){ p.chart.options.plugins[id] = revive(px[id]); });
+      p.chart.update('none');
+    });
   }
   // The ⟳ beside the views, as on the tool's own card; one per drawing.
   function resetButton(on, fn){
@@ -371,6 +399,9 @@
     var box = el('div', 'fill plot');
     stage.appendChild(box);
     var data = plotlyText(revive(f.data)), layout = plotlyText(revive(f.layout)) || {};
+    // Pictures by address would be fetched from wherever a link says.
+    delete layout.images;
+    (data || []).forEach(function(t){ if(t) delete t.source; });
     layout.autosize = true;
     var cfg = revive(f.cfg) || {};
     cfg.responsive = true;
@@ -381,21 +412,22 @@
 
   /* ── A diagram (SVG) ── */
   var NS = 'http://www.w3.org/2000/svg';
-  var SVG_TAGS = /^(svg|g|path|line|polyline|polygon|rect|circle|ellipse|text|tspan|defs|marker|lineargradient|radialgradient|stop|clippath|pattern|title|use|symbol|mask)$/i;
-  var SVG_ATTRS = /^(d|x|y|x1|x2|y1|y2|cx|cy|r|rx|ry|width|height|points|transform|viewbox|fill|stroke|stroke-width|stroke-dasharray|stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-opacity|fill-opacity|opacity|font-size|font-weight|font-family|font-style|text-anchor|dominant-baseline|alignment-baseline|letter-spacing|id|marker-start|marker-mid|marker-end|markerwidth|markerheight|refx|refy|orient|markerunits|offset|stop-color|stop-opacity|gradientunits|gradienttransform|clip-path|clippathunits|patternunits|preserveaspectratio|dx|dy|paint-order|vector-effect|visibility|display|mask|href|xlink:href|data-k)$/i;
   var CASE = { viewbox: 'viewBox', markerwidth: 'markerWidth', markerheight: 'markerHeight', refx: 'refX', refy: 'refY',
     markerunits: 'markerUnits', gradientunits: 'gradientUnits', gradienttransform: 'gradientTransform',
     clippathunits: 'clipPathUnits', patternunits: 'patternUnits', preserveaspectratio: 'preserveAspectRatio',
-    lineargradient: 'linearGradient', radialgradient: 'radialGradient', clippath: 'clipPath' };
+    lineargradient: 'linearGradient', radialgradient: 'radialGradient', clippath: 'clipPath',
+    animatemotion: 'animateMotion', animatetransform: 'animateTransform', attributename: 'attributeName',
+    keytimes: 'keyTimes', keypoints: 'keyPoints', keysplines: 'keySplines', calcmode: 'calcMode',
+    repeatcount: 'repeatCount', repeatdur: 'repeatDur' };
+  // Rebuilt from chart-kit.js's lists alone, whatever the link says.
   function svgNode(t){
+    var K = global.ChartKit;
     if(typeof t === 'string') return doc.createTextNode(t);
-    if(!Array.isArray(t) || typeof t[0] !== 'string' || !SVG_TAGS.test(t[0])) return null;
+    if(!Array.isArray(t) || typeof t[0] !== 'string' || !K.svgTags.test(t[0])) return null;
     var tag = CASE[t[0].toLowerCase()] || t[0], n = doc.createElementNS(NS, tag), a = t[1] || {};
     Object.keys(a).forEach(function(k){
       var lk = k.toLowerCase(), v = String(a[k]);
-      if(!SVG_ATTRS.test(lk)) return;
-      if((lk === 'href' || lk === 'xlink:href') && !/^#[\w-]+$/.test(v)) return;
-      if(/url\(/i.test(v) && !/^url\(#[\w-]+\)$/.test(v.trim())) return;
+      if(!K.svgAttrOk(tag, lk, v)) return;
       if(lk === 'xlink:href') n.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', v);
       else n.setAttribute(CASE[lk] || lk, v);
     });
@@ -484,7 +516,7 @@
     if(snap.kind === 'chartjs') drawChart(f);
     else if(snap.kind === 'plotly') drawPlotly(f);
     else drawSvg(f, snap.frames[0]);
-    current = f;
+    drawPanels(f);
     queueSize();
   }
 
@@ -494,6 +526,12 @@
      one-line listener in the embed code sets it on the iframe. */
   var sent = 0, queued = false;
   function measure(){
+    // A diagram is as tall as its drawing at this width (never past 1.5x).
+    var vb = snap.kind === 'svg' && snap.frames[0] && String(snap.frames[0].vb || '').split(/[\s,]+/).map(Number);
+    if(vb && vb.length === 4 && vb[2] > 0 && vb[3] > 0){
+      var w = stage.clientWidth || card.clientWidth;
+      stage.style.setProperty('--h', Math.round(Math.max(160, Math.min(1200, vb[3] * Math.min(w / vb[2], 1.5)))) + 'px');
+    }
     var h = stage.style.getPropertyValue('--h');
     card.classList.add('measuring');
     var out = Math.ceil(card.getBoundingClientRect().height) + 1;
@@ -545,6 +583,7 @@
       return fonts();
     }).then(function(){
       build();
+      buildPanels();
       show();
       root.classList.remove('wait');
       if(global.ResizeObserver) new ResizeObserver(queueSize).observe(card);

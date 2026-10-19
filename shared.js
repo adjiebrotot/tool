@@ -2904,7 +2904,8 @@
       });
       return kit;
     }
-    function viewerUrl(){ return new URL('embed/', SCRIPT_URL).href; }
+    // The viewer on the site's own address, as the links back are.
+    function viewerUrl(){ return pageUrl().replace(/^(https?:\/\/[^\/]+).*$/, '$1') + '/embed/'; }
     // Deflated alone: a snapshot is data no dictionary knows.
     function packPlain(obj){
       var bytes = new TextEncoder().encode(JSON.stringify(obj));
@@ -2919,7 +2920,8 @@
     var PLOTLY_2D = /^(scatter|bar|pie|heatmap|contour|histogram|histogram2d|histogram2dcontour|box|violin|image)$/;
     function libsOf(snap){
       if(snap.kind === 'chartjs') return 'c';
-      if(snap.kind !== 'plotly') return 'd';
+      // A diagram with charts under it needs Chart.js for those.
+      if(snap.kind !== 'plotly') return snap.panels ? 'dc' : 'd';
       var types = [];
       snap.frames.forEach(function(f){ (f.traces || []).forEach(function(t){ if(types.indexOf(t) < 0) types.push(t); }); });
       var all = function(re){ return types.every(function(t){ return re.test(t); }); };
@@ -2928,13 +2930,19 @@
       if(all(PLOTLY_3D)) return 'pgl3d';
       return 'pfull';
     }
-    function snapshotOf(m, card, el, key){
+    function snapshotOf(m, card, el, key, picked){
       var payload;
       try { payload = payloadOf(card, key, false); } catch(e){ return Promise.reject(e); }
       var t = W(m), fill = fillOf(el), home = pageUrl();
       return Promise.all([
         loadSnapshotter().then(function(){
-          return global.SharedSnapshot.take({ card: card, el: el, key: key, roots: rootsOf(card), legendKey: legendKey,
+          // Charts the view hook adds under this one (the ED/UC Simulator's ticked charts).
+          var hook = views[key], extras = hook && hook.panels && picked && picked.length ? hook.panels(picked) || [] : [];
+          extras = extras.map(function(k){
+            var x = findChart(k), c = cardOf(x);
+            return x && c ? { key: k, el: x, roots: rootsOf(c), title: chartTitle(c) } : null;
+          }).filter(Boolean);
+          return global.SharedSnapshot.take({ card: card, el: el, key: key, roots: rootsOf(card), legendKey: legendKey, extras: extras,
             find: findChart, settle: function(k){ return frames(2).then(function(){ return settled(k); }); } });
         }),
         openLink(home, key, payload)
@@ -2958,12 +2966,13 @@
       var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
       if(!key) return Promise.reject(new Error('no chart'));
       if(!m.tool){
-        return snapshotOf(m, card, el, key).then(function(snap){
+        return snapshotOf(m, card, el, key, picked).then(function(snap){
           return packPlain(snap).then(function(s){
             var home = pageUrl(), src = viewerUrl() + '#t=' + libsOf(snap) +
               (snap.kit ? '&kit=' + snap.kit.replace(/\/chart-kit\.js$/, '') : '') + '&l=' + snap.l + '&s=' + s;
+            var extra = picked && picked.length && views[key] && views[key].height ? Math.max(0, +views[key].height(picked) || 0) : 0;
             var code = '<iframe src="' + attr(src) + '" title="' + attr(snap.t || toolName()) +
-              '" width="100%" height="' + frameHeight(card, el, 0) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' +
+              '" width="100%" height="' + frameHeight(card, el, extra) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' +
               credit(snap.back, W(m)) + '\n' + resizer(home);
             return { code: code, src: src, key: key, open: snap.back, snap: snap };
           });
@@ -3409,7 +3418,7 @@
       data: function(hook){ dataHook = hook && typeof hook.save === 'function' && typeof hook.load === 'function' ? hook : null; },
       embedded: EMBED ? { key: EMBED.key, theme: EMBED.theme } : null,
       // For the checks in _ref/: the code a cluster's Embed row would show.
-      embedCode: function(cluster){ var m = cluster && cluster.__share; return m ? buildEmbed(m) : Promise.reject(new Error('no menu')); },
+      embedCode: function(cluster, picked){ var m = cluster && cluster.__share; return m ? buildEmbed(m, picked) : Promise.reject(new Error('no menu')); },
       // The address a cluster's Share as link row would copy.
       shareLink: function(cluster){ var m = cluster && cluster.__share; return m ? buildLink(m) : Promise.reject(new Error('no menu')); },
       pack: pack, unpack: unpack

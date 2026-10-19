@@ -183,17 +183,23 @@ what it offers. The menu reads Download as SVG, Download as PNG, Copy to clipboa
 as HTML, opens flush under its button and answers the keyboard. A PNG, an SVG or a copied
 image taken on a phone or a wide monitor is the very size a desktop gives, so an exported
 chart always has the proportions it was designed at rather than the screen's. And every
-chart's embed code (one iframe of the tool, its scenario deflated into the link's `#hash`
-against the frozen dictionary `share-dict-a.txt`, which `node _ref/share-dict.mjs` builds)
-is pasted into a page on another site and opened at a desktop and a
-phone width, where it has to show that one chart card alone with its own small watermark
-(the circled A and a line back to the tool, drawn inside the frame), draw exactly the data the
-reader was looking at, in their theme and on a transparent background, keep its zoom, and
-leave the viewer's own saved work untouched. Its links back (the watermark and the credit
-line) have to open the whole tool on that same scenario. Every page is moved off its defaults before it is shared, so an embed that lost
-the scenario fails. Because anyone can send a link, each page's link is also replayed with
-every string swapped for markup and script, which has to be drawn as text and run nothing,
-and the iframe and the credit line must each stay under 2,500 characters. Links kept in
+chart's embed code (one iframe of the embed viewer, `embed/`, carrying the chart written down
+as data while the tool had it: its datasets, hover card, axis labels, key and every view the
+card marks `data-embed-mode`) is pasted into a page on another site and opened at a desktop
+and a phone width, where it has to show that one chart card alone with its own small
+watermark (the circled A and a line back to the tool, drawn inside the frame), draw exactly
+the data the reader was looking at and what the tool draws in each view it offers, in their
+theme and on a transparent background, keep its zoom, fetch nothing of the tool and never
+the market-data Worker, and leave the viewer's own saved work untouched. Its links back (the
+watermark and the credit line, the scenario deflated into the `#hash` against the frozen
+dictionary `share-dict-a.txt`, which `node _ref/share-dict.mjs` builds) have to open the
+whole tool on that same scenario. Every page is moved off its defaults before it is shared,
+so an embed that lost the scenario fails. Because anyone can send a link, each embed is also
+replayed with every string swapped for markup and script, which has to be drawn as text and
+run nothing, and links written to attack the viewer (a script in a diagram, a function by an
+unknown name, a tool kit from elsewhere, a link out) have to load and run nothing. The credit
+line stays under 2,900 characters, the iframe under 120 KB (600 KB for a decade of daily
+prices). Links kept in
 `_ref/share-links.json`, as real readers copied them, must keep decoding to what they held and
 find every field they name still on the page, so a renamed field is caught before it ships. It reuses chart-check's library cache;
 `SHOT=<dir>` saves each embed as it rendered, and `ONLY=<name>` runs one page.

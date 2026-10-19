@@ -37,6 +37,8 @@ tables, tooltips, charts) rather than inventing new ones. Include the shared lay
 <link rel="stylesheet" href="style.css">   <!-- page-specific only -->
 ...
 <script src="../dropdown.js"></script>     <!-- every dropdown's open list (dropdown.css comes via shared.css) -->
+<script src="../chart-kit.js"></script>    <!-- what a chart is drawn with: SharedLegend, SharedChartTip, SharedZoom, SharedPane, ChartKit -->
+<script src="chart-kit.js"></script>       <!-- only if the tool has chart pieces of its own (below) -->
 <script src="../shared.js"></script>       <!-- helpers: SharedFmt, tooltips, Persist… -->
 <script src="script.js"></script>
 ```
@@ -213,6 +215,16 @@ Scale the rigor to the risk:
   `PAGES` in `_ref/share-check.mjs`, which proves a phone exports the desktop picture and the
   chart's embed redraws the same data. A chart whose view needs more than its inputs (a popup,
   a panel outside its card) registers `SharedShare.view` or names it in `data-share-view`.
+- **An embed is the chart, drawn without the tool** (the embed viewer, `embed/`; see *An
+  embed is the chart, not the tool* in the design reference). Mark each control in a chart's
+  card that switches between views of what is already computed (a metric, line or candles, a
+  year, an hour) with `data-embed-mode`, so the embed offers it; every other control stays
+  out. Anything a chart is drawn with beyond Chart.js and `chart-kit.js` (a plugin, a custom
+  interaction mode, a scale hook, a bespoke y fitter, a fill pattern) goes in the tool's own
+  `chart-kit.js`, registered with `ChartKit.plugin` / `ChartKit.fn` / `ChartKit.make`, and
+  reads its data from its arguments or the chart's options, never the tool's variables.
+  Share-check's E3 and V1 fail if the embed draws anything the tool does not, and Embed as
+  HTML prints `Embed snapshot left out: …` in the console for a function it could not carry.
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 

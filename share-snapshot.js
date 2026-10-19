@@ -902,8 +902,7 @@
      tags and attributes a drawing is made of: no script, no event handler,
      no link out, no foreign content. Classes become the styles they resolve
      to here, so the diagram needs none of the tool's stylesheets. */
-  var SVG_TAGS = /^(svg|g|path|line|polyline|polygon|rect|circle|ellipse|text|tspan|defs|marker|lineargradient|radialgradient|stop|clippath|pattern|title|use|symbol|mask)$/i;
-  var SVG_ATTRS = /^(d|x|y|x1|x2|y1|y2|cx|cy|r|rx|ry|width|height|points|transform|viewbox|fill|stroke|stroke-width|stroke-dasharray|stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-opacity|fill-opacity|opacity|font-size|font-weight|font-family|font-style|text-anchor|dominant-baseline|alignment-baseline|letter-spacing|id|marker-start|marker-mid|marker-end|markerwidth|markerheight|refx|refy|orient|markerunits|offset|stop-color|stop-opacity|gradientunits|gradienttransform|x1|clip-path|clippathunits|patternunits|preserveaspectratio|dx|dy|paint-order|vector-effect|visibility|display|mask|href|xlink:href|data-k)$/i;
+  var SVG_TAGS = K.svgTags;
   var STYLE_PROPS = ['fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin', 'opacity',
     'fill-opacity', 'stroke-opacity', 'font-size', 'font-weight', 'font-family', 'text-anchor', 'dominant-baseline', 'paint-order', 'display', 'visibility'];
   function svgTree(node, root, defaults){
@@ -912,13 +911,9 @@
     var tag = node.tagName, attrs = {};
     each(node.attributes, function(a){
       var n = a.name.toLowerCase();
-      if(!SVG_ATTRS.test(n)) return;
-      var v = a.value;
-      if((n === 'href' || n === 'xlink:href') && !/^#[\w-]+$/.test(v)) return;
-      if(/url\(/i.test(v) && !/^url\(#[\w-]+\)$/.test(v.trim())) return;
-      attrs[n] = v;
+      if(K.svgAttrOk(tag, n, a.value)) attrs[n] = a.value;
     });
-    if(node !== root && tag.toLowerCase() !== 'tspan'){
+    if(node !== root && !/^(tspan|animate|animatemotion|animatetransform|set|mpath)$/i.test(tag)){
       var cs = global.getComputedStyle(node), st = {};
       STYLE_PROPS.forEach(function(p){
         var v = cs.getPropertyValue(p);
@@ -945,8 +940,22 @@
     STYLE_PROPS.forEach(function(p){ defaults[p] = cs.getPropertyValue(p); });
     svg.removeChild(probe);
     var tree = svgTree(svg, svg, defaults);
-    var vb = svg.getAttribute('viewBox');
-    return { svg: tree, vb: vb, sig: el.getAttribute('data-share-sig') || '' };
+    return { svg: tree, vb: drawnBox(svg) || svg.getAttribute('viewBox'), sig: el.getAttribute('data-share-sig') || '' };
+  }
+  /* The drawing's own extent, with the 28-unit margin a diagram is framed
+     in, not the view the tool's stage happens to show: a background that
+     runs on for ever (the grid of dots) is left out of the measure. */
+  function drawnBox(svg){
+    var hid = [];
+    each(svg.querySelectorAll('*'), function(n){
+      try { var b = n.getBBox && n.getBBox(); if(b && (b.width > 20000 || b.height > 20000)){ hid.push([n, n.style.display]); n.style.display = 'none'; } } catch(e){}
+    });
+    var bb = null;
+    try { bb = svg.getBBox(); } catch(e){}
+    hid.forEach(function(h){ h[0].style.display = h[1]; });
+    if(!bb || !(bb.width > 0) || !(bb.height > 0)) return null;
+    var pad = 28;
+    return [bb.x - pad, bb.y - pad, bb.width + 2 * pad, bb.height + 2 * pad].map(function(v){ return Math.round(v * 10) / 10; }).join(' ');
   }
   /* Two frames of one diagram differ in a few labels and colours, so a
      frame after the first is written as the changes to it: the path to each
@@ -992,7 +1001,38 @@
       if(kind === 'plotly') return plotlyFrame(cur, pool, warn);
       var s = svgFrame(cur, warn);
       if(!first){ first = s; return s; }
-      return { diff: svgDiff(first.svg, s.svg, [], []), vb: s.vb };
+      // One frame for every view: the first one's.
+      return { diff: svgDiff(first.svg, s.svg, [], []) };
+    }
+    /* Charts under this one (o.extras): each written down once, with the
+       first view; after that only what its options change with the view
+       (the hour marker that follows the diagram's slider). */
+    var extras = (o.extras || []).map(function(x){ return { x: x, base: null }; });
+    function captureExtras(f){
+      extras.forEach(function(e, j){
+        var ch = global.Chart && global.Chart.getChart(o.find(e.x.key) || e.x.el);
+        if(!ch) return;
+        if(!e.base){
+          var p = chartjsFrame(o.find(e.x.key) || e.x.el, pool, warn);
+          p.legend = legendOf(e.x.roots, o.find(e.x.key) || e.x.el, o.legendKey);
+          if(p.legend) p.legendTree = legendTree(e.x.roots);
+          p.t = e.x.title;
+          var it0 = null;
+          e.x.roots.forEach(function(r){ if(!it0) it0 = r.querySelector('.legend-item'); });
+          if(it0 && (it0.compareDocumentPosition(ch.canvas) & Node.DOCUMENT_POSITION_FOLLOWING)) p.legendTop = 1;
+          p.h = Math.round((ch.canvas.parentElement && ch.canvas.parentElement.offsetHeight) || 300);
+          e.base = freeze(ch.config._config.options.plugins || {}, '', null) || {};
+          e.panel = p;
+          return;
+        }
+        // Only the plugins whose options moved, each whole.
+        var now = freeze(ch.config._config.options.plugins || {}, '', null) || {}, moved = {}, any = false;
+        Object.keys(now).forEach(function(id){
+          if(id === 'tooltip' || JSON.stringify(now[id]) === JSON.stringify(e.base[id])) return;
+          moved[id] = now[id]; any = true;
+        });
+        if(any){ f.px = f.px || {}; f.px[j] = moved; }
+      });
     }
     function setAll(c){ modes.forEach(function(m, i){ m.set(c[i]); }); }
     var chain = Promise.resolve();
@@ -1004,7 +1044,9 @@
         // A slider's step is named by its read-out once it is set.
         modes.forEach(function(m, i){ if(m.read && !m.opts[c[i]].l) m.opts[c[i]].l = m.read(); });
         map[c.join(',')] = frames.length;
-        frames.push(capture());
+        var f = capture();
+        captureExtras(f);
+        frames.push(f);
       });
     });
     function restore(){ setAll(own); return o.settle(o.key); }
@@ -1015,10 +1057,13 @@
         modes: modes.map(function(m, i){ return m.fixed ? { l: m.label, k: 'fixed', o: [m.opts[own[i]]], at: own[i] } : { l: m.label, k: m.kind, o: m.opts, at: own[i] }; }),
         map: map, frames: frames, pool: pool.list
       };
+      var panels = extras.map(function(e){ return e.panel; }).filter(Boolean);
+      if(panels.length) snap.panels = panels;
       if(warn.length && global.console) console.info('Embed snapshot left out:', warn.filter(function(w, i){ return warn.indexOf(w) === i; }).join(', '));
       return snap;
     });
   }
 
-  global.SharedSnapshot = { take: take, learnFormat: learnFormat };
+  // modes: the views a card offers, for _ref/share-check.mjs to set one by one.
+  global.SharedSnapshot = { take: take, learnFormat: learnFormat, modes: modesOf };
 })(window);

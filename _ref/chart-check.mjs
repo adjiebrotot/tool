@@ -71,6 +71,10 @@ const CDN = [
   // The Graph Visualiser plots with Plotly, and keeps the same two promises by
   // hand, so its library is cached here too.
   'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly.min.js',
+  // The embed viewer loads the smallest Plotly bundle that has a figure's traces.
+  'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly-basic.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly-cartesian.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly-gl3d.min.js',
 ];
 mkdirSync(LIBS, { recursive: true });
 for (const url of CDN) {

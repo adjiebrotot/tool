@@ -15,11 +15,13 @@
   var h = location.hash, get = function(k){ var m = new RegExp('(?:^#|&)' + k + '=([^&]*)').exec(h); return m ? decodeURIComponent(m[1]) : ''; };
   if(get('l') === 'id') document.documentElement.lang = 'id';
   var CDN = 'https://cdnjs.cloudflare.com/ajax/libs/', t = get('t'), kit = get('kit'), list = [];
-  if(t === 'c'){
+  if(t === 'c' || t === 'dc'){
     list.push(CDN + 'Chart.js/4.4.1/chart.umd.min.js', CDN + 'hammer.js/2.0.8/hammer.min.js',
               CDN + 'chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js', '../chart-kit.js');
     // A tool's own pieces live at <tool>/chart-kit.js, and nowhere else.
     if(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/.test(kit)) list.push('../' + kit + '/chart-kit.js');
+  } else if(t === 'd'){
+    list.push('../chart-kit.js');
   } else if(/^p(basic|cartesian|gl3d|full)$/.test(t)){
     list.push(CDN + 'plotly.js/2.27.1/plotly' + (t === 'pfull' ? '' : '-' + t.slice(1)) + '.min.js');
   }

@@ -2069,7 +2069,11 @@
     choices: function(){ return chartChoices().map(function(k){ return { value: k, label: CHART_NAME[k] }; }); },
     save: function(picked){ return picked && picked.length ? { charts: picked } : undefined; },
     height: function(picked){ return pickedCards(picked).reduce(function(sum, k){ return sum + chartHeight(k, picked); }, 0); },
-    load: function(v){ if(EMBED && v && Array.isArray(v.charts)) embedCharts(v.charts); }
+    load: function(v){ if(EMBED && v && Array.isArray(v.charts)) embedCharts(v.charts); },
+    // In the embed viewer the ticked charts are panels under the diagram, their hour marker on its slider.
+    panels: function(picked){
+      return pickedCards(picked || []).map(function(k){ var c = $(CARD[k]) && $(CARD[k]).querySelector('canvas'); return c && c.id; }).filter(Boolean);
+    }
   });
   $('copyBtn').addEventListener('click', function(){
     var btn = this, d = display();

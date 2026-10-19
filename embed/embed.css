@@ -32,13 +32,18 @@ html.wait[lang^="id"]::before{content:"Memuat data dari tool.adjiebrotots.com\20
    the frame asks the other page for. */
 .card.measuring{height:auto;}
 .card.measuring .stage{flex:0 0 auto;height:var(--h);}
+/* Charts under a diagram: each at its own height, the diagram taking the rest. */
+.panel{display:flex;flex-direction:column;padding-top:10px;}
+.panel .stage{flex:0 0 auto;height:var(--h);}
+.panel-title{margin:0 4px 6px;font-size:.92rem;font-weight:700;}
 
 .tools{display:flex;gap:6px;margin-left:auto;}
 .reset{width:28px;height:28px;padding:0;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--panel);color:var(--muted);font:600 14px/1 inherit;cursor:pointer;opacity:.75;}
 .reset:hover,.reset:focus-visible{opacity:1;color:var(--text);}
 
 /* The views the card offers */
-.seg{display:inline-flex;gap:2px;padding:3px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);}
+.modes{max-width:100%;}
+.seg{display:inline-flex;flex-wrap:wrap;max-width:100%;gap:2px;padding:3px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);}
 .seg-btn{background:transparent;border:0;border-radius:7px;padding:4px 11px;font:inherit;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background var(--motion-fast),color var(--motion-fast);}
 .seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
 .seg-btn .short{display:none;}

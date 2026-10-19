@@ -130,7 +130,28 @@
     });
   });
 
+  /* ── What a diagram in a shared link may be made of ──
+     A diagram travels as a tree of tags and attributes (share-snapshot.js)
+     and is rebuilt by the viewer from these alone: shapes, text, paint and
+     the animation of its flow arrows, never a script, an event handler, a
+     link out or foreign content. Both ends read the same lists. */
+  var SVG_TAGS = /^(svg|g|path|line|polyline|polygon|rect|circle|ellipse|text|tspan|defs|marker|lineargradient|radialgradient|stop|clippath|pattern|title|use|symbol|mask|animate|animatemotion|animatetransform|mpath)$/i;
+  var SVG_ATTRS = /^(d|x|y|x1|x2|y1|y2|cx|cy|r|rx|ry|width|height|points|transform|viewbox|fill|stroke|stroke-width|stroke-dasharray|stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-opacity|fill-opacity|opacity|font-size|font-weight|font-family|font-style|text-anchor|dominant-baseline|alignment-baseline|letter-spacing|id|marker-start|marker-mid|marker-end|markerwidth|markerheight|refx|refy|orient|markerunits|offset|stop-color|stop-opacity|gradientunits|gradienttransform|clip-path|clippathunits|patternunits|preserveaspectratio|dx|dy|paint-order|vector-effect|visibility|display|mask|href|xlink:href|attributename|type|from|to|by|values|keytimes|keypoints|keysplines|calcmode|dur|begin|end|repeatcount|repeatdur|path|rotate|additive|accumulate|restart)$/i;
+  var ANIMATED = /^(opacity|transform|fill-opacity|stroke-opacity|stroke-dashoffset)$/;
+  function svgAttrOk(tag, name, v){
+    name = String(name).toLowerCase(); v = String(v);
+    if(!SVG_ATTRS.test(name)) return false;
+    if(name === 'href' || name === 'xlink:href') return /^#[\w-]+$/.test(v);
+    if(/url\(/i.test(v) && !/^url\(#[\w-]+\)$/.test(v.trim())) return false;
+    if(name === 'attributename') return ANIMATED.test(v);
+    // Timing is numbers only: an animation starts on the clock, never on an event.
+    if(name === 'begin' || name === 'end' || name === 'dur' || name === 'repeatdur') return /^[\d.\s;:+-]*(ms|s|min|h)?(;[\d.\s:+-]*(ms|s|min|h)?)*$|^indefinite$/.test(v);
+    if(name === 'path') return /^[MmLlHhVvCcSsQqTtAaZz\d\s.,eE+-]*$/.test(v);
+    return true;
+  }
+
   global.ChartKit = {
+    svgTags: SVG_TAGS, svgAttrs: SVG_ATTRS, svgAttrOk: svgAttrOk,
     hatch: hatch, dots: dots,
     fn: fn, make: make, plugin: plugin, refOf: refOf, revive: revive,
     formatTick: formatTick, tickCallback: tickCallback,
