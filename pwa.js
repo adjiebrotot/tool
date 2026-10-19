@@ -8,7 +8,9 @@
  * Nothing shows once the app is already running installed.
  */
 (function () {
-  if (!('serviceWorker' in navigator)) return;
+  // A page inside someone else's frame (an embed) is not the app: no worker,
+  // no banner, no update checks.
+  if (!('serviceWorker' in navigator) || window.self !== window.top) return;
   var script = document.currentScript;
   var root = script ? new URL('.', script.src) : new URL('/', location.href);
 
