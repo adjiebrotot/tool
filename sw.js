@@ -20,7 +20,7 @@ const CDN_MAX = 80;
 
 const PRECACHE = [
   './',
-  'shared.css', 'shared.js', 'dropdown.css', 'dropdown.js', 'light.css', 'dark.css',
+  'shared.css', 'chart-kit.js', 'shared.js', 'dropdown.css', 'dropdown.js', 'light.css', 'dark.css',
   'tour-shared.css', 'tour-shared.js', 'pwa.js', 'home-anim.js',
   // What a Share link is deflated against, so the app opens one offline.
   'share-dict-a.txt',

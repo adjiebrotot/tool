@@ -1899,7 +1899,7 @@ and it is driven by the keyboard as a menu is (arrows, Home, End, Escape back to
 | ⬇ Download as GIF | clicks `⬇ GIF`, only on an animated chart | shown only while the tool shows its `⬇ GIF` (the Load Flow Simulator, while a flow animates); one loop, the PNG's picture at 1x |
 | ⧉ Copy to clipboard | clicks `⧉`, whose handler copies through `SharedShare.copyImage` | the PNG above; "✓ Copied" flashes on Share, a failure says why in words |
 | Share as link (chain-link icon) | copies `<tool>/#open=<chart>&s=…` | the same address as the embed's *Links back* below: the tool on the reader's scenario and this chart's view; "✓ Link copied" flashes on Share |
-| </> Embed as HTML | opens the embed dialog | one line: an iframe of the tool, its watermark drawn inside the frame |
+| </> Embed as HTML | opens the embed dialog | an iframe of the embed viewer carrying this chart as data, a credit line, and a one-line sizer |
 
 ```js
 // Every ⧉ handler: copyImage writes inside the click (Safari needs that).
@@ -1908,64 +1908,89 @@ $('copyBtn').addEventListener('click', () => SharedShare.copyImage(() => chartPn
 SharedShare.upgrade(overlay);
 ```
 
-**The embed is the tool itself.** The code is
+**An embed is the chart, not the tool.** A reader who embeds a chart wants the chart on
+their page: readable, zoomable, switchable between the views it has, and fast. So the frame
+never loads the tool. Embed as HTML writes the chart down as data while the tool has it on
+screen (`share-snapshot.js`, loaded the first time it is needed), and the **embed viewer**
+(`embed/`) draws that with Chart.js, Plotly or plain SVG and `chart-kit.js` alone: no tool
+script, no model, no solve, no market data in the other site's frame. A chart opens in the
+time Chart.js takes to load, about a fifth of a second, where the whole tool took three to
+seven. The code is
 
 ```html
-<iframe src="https://tool.adjiebrotots.com/<tool>/#embed=<chart>&amp;theme=dark&amp;s=…" title="<chart title>"
+<iframe src="https://tool.adjiebrotots.com/embed/#t=c&amp;kit=<tool>&amp;l=en&amp;s=z…" title="<chart title>"
         width="100%" height="<desktop height>" style="border:0;background:transparent" loading="lazy"></iframe>
-<p …>Interactive chart: <a href="…">…</a> by Adjie Brotot Tools</p>
+<p …>Interactive chart: <a href="<tool>/#open=<chart>&amp;s=…">…</a> by Adjie Brotot Tools</p>
 <script>addEventListener("message", …)</script>
 ```
 
+`t` names the libraries the viewer needs (`c` Chart.js, `d` a diagram, `dc` a diagram with
+charts under it, `pbasic`/`pcartesian`/`pgl3d`/`pfull` the smallest Plotly bundle with every
+trace the figure uses), `kit` the tool whose `chart-kit.js` it draws with, and `l` the
+language of its loading line, so the viewer fetches all of them while the page is still
+being read, before it has unpacked anything. `s` is the snapshot, deflated alone (`z`):
+
+| The snapshot writes down | How |
+| --- | --- |
+| The datasets and their looks | every value to eight significant figures (a part in a hundred million, under any pixel); a per-point callback (`pointRadius: ctx => …`) resolved to the values it gave; a line's `segment` callbacks segment by segment; a tool's own record hung on a dataset (the scenario a line came from) left behind past 4 KB |
+| The options | as they are, with each function carried by its **ChartKit** name, or dropped where the snapshot carries what it gave (ticks, the hover card) |
+| The hover card | baked: the tool's own tooltip callbacks run for every point, and the viewer's hand back their lines. A series' rows are written as the words around each value and the format the value is written in, with only the rows that format gets wrong spelt out, so a decade of daily prices costs a few KB |
+| The axis labels | a category axis's labels one by one; a numeric axis's as a table over its whole numbers where that is short (years, hours, an index into dates), and a format learned from the tool's callback for everything else (each decade's prefix, suffix, unit and decimals), its misses kept as they are; a tick's look (a decision year bold, the zero line stronger) as a table by tick |
+| The key | every entry's swatch spec, words and the datasets it shows and hides (found by pressing it and pressing it back), and the key's layout (groups, pairs, brackets) as a tree of its boxes' classes and words |
+| The views the card offers | every combination of the controls the tool marks `data-embed-mode`, each set, drawn and written down as its own frame, the reader's own view put back after |
+| A Plotly chart | its figure (`data`, `layout`) |
+| A diagram (`data-share-chart`) | its SVG as a tree of tags and attributes, styles resolved to presentation attributes, framed on its drawing (`drawnBox`, 28 units of margin); a view after the first written as the changes to it |
+
+Everything the snapshot reads, it puts back as it found it: a view pressed to be written down
+is pressed back, and whatever a tooltip callback writes into the page while it is run (the
+read-out under a chart) is undone, so the reader's page and saved work are untouched.
+
+**A function travels by name.** Data travels; a function does not. A plugin, an interaction
+mode, a scale hook, a fitter or a fill a chart needs is registered in `ChartKit`
+(`chart-kit.js`), by the site's shared pieces there and by a tool's own in
+`<tool>/chart-kit.js`, loaded by the tool before its scripts and by the viewer:
+
+```js
+ChartKit.plugin(PLUGIN);                         // a Chart.js plugin, by its id
+var skip = ChartKit.fn('cx.skipRef', fn);         // a function, by name
+var fit = ChartKit.make('ff.yFit', makeYFit);     // a factory: fit(args…) is tagged with
+                                                 // its name and arguments (data, pooled)
+ChartKit.hatch(fill, line, down); ChartKit.dots(fill, dot);   // the fills a key can name
+```
+
+A tool piece reads its data from its arguments or the chart's own options, never from the
+tool's variables (`plugins.edHour.hour`, `plugins.cxBuilt.built`), so a shared chart carries
+it. A function the snapshot meets with no name is reported in the console when the reader
+embeds (`Embed snapshot left out: …`), and `_ref/share-check.mjs` compares what the viewer
+draws with what the tool draws, so a piece left behind shows up there. The names, the
+plugin ids and the snapshot's format (`v: 1`) are what old embeds are keyed on: rename the
+words, never the name.
+
+**The views a card offers.** A control in the card that switches between views of the
+result the tool already computed (a metric, candles or a line, the year of the typical days,
+the hour of the diagram, which portfolio) carries `data-embed-mode`, on a select, a checkbox,
+a range, a box of buttons, or on buttons themselves (buttons with the same value are one
+choice, a lone button a switch). Its value names it for a screen reader when no label does.
+Every other control in a card stays as the reader left it and is not in the embed: an
+input that changes what is computed belongs to the tool, a click away through the line under
+the chart. A slider (the ED/UC hour) is offered with ▶, each of its steps a frame, the
+other views as the reader left them.
+
 **The frame is as tall as what it shows.** The iframe's `width` is the other site's column,
-so no fixed height suits every page: a phone wraps the legend and squeezes the chart, and a
-diagram drawn to its width floats in bands of empty stage. So the frame posts the height it
-needs (`{ abtEmbed: 'height', height }`) whenever its width changes it, and the third line
-of the code, a one-line listener, sets that height on the very iframe that sent it, from the
-tool's own origin only. The height is the card laid out at its own height: its title,
-toolbar, legend and watermark at the frame's width, plus the chart at the height the page
-gives it on a desktop. A diagram drawn to fit its width registers
-`SharedShare.fit(key, width => height)` (the SLDs: the drawing, labels included, at the
-frame's width, plus its 28px margin), so the frame is exactly as tall as the drawing and
-nothing more. A site that strips scripts keeps the `height` the iframe carries, which is
-worked out the same way for a 760px column (plus a view's `height(picked)` for the charts
-ticked in the embed dialog). Anything else the card carries in the frame (the ED/UC
-Simulator's ticked charts, moved under its diagram) is measured with it, and the frame
-sets `--abt-fill-h` on the card to the chart's height, so a card that scrolls (one with no
-resizer on its page) can hold its chart there rather than squeezing it.
+so the viewer posts the height it needs (`{ abtEmbed: 'height', height }`) whenever its width
+changes it, and the third line of the code sets that height on the very iframe that sent it,
+from the site's own origin only. The height is the card laid out at its own height: its
+title and views, the key and the watermark at the frame's width, plus the chart at the height
+the tool gives it on a desktop, or a diagram as tall as its drawing is at that width (no more
+than 1.5×). A site that strips scripts keeps the `height` the iframe carries, worked out for
+a 760px column. A view hook's `panels(picked)` adds charts under the main one (the ED/UC
+Simulator's ticked charts under its diagram): each drawn once, a view only moving what their
+options change with it (the hour marker following the slider).
 
 **While it loads, the frame says so.** One quiet line in the middle of the frame, "Loading
-data from tool.adjiebrotots.com…" ("Memuat data dari …" on an Indonesian page), in place of a
-blank or a flash of the whole tool. An inline script at the top of every page's head
-switches embed mode on before the first paint, so the line shows from the start; keep it
-there (beside the `shared.css` link) on a new page.
+data from tool.adjiebrotots.com…" ("Memuat data dari …" when `l=id`), in place of a blank.
 
-`s` is the scenario file the save button writes (`SharedScenario.mount` registers it with
-`SharedShare.state`), deflated and base64url-encoded into the `#hash`, which a browser
-never sends to a server, so nothing is uploaded. It is deflated against a **dictionary**,
-`share-dict-a.txt`: what the tools save on their defaults and Quick Start presets (built by
-`node _ref/share-dict.mjs`), so a field name, a default value or a whole preset the
-dictionary also holds costs one back-reference of 2 to 4 bytes. That brings a finance
-tool's scenario to about 60 to 200 characters, where deflate alone needed 450 to 1,100.
-The first letter of `s` says how it was written: `a` for that dictionary, `z` for deflate
-alone (the format links were first written in, and still chosen when it comes out shorter,
-as for a page of data no dictionary knows) or `j` for plain JSON. A dictionary is frozen
-once shipped, since every link made with it decodes only against those bytes: a better one
-is the next letter, added to `DICTS` in `shared.js` beside the old file, which stays.
-A sent link outlives the tool it was made on, so `_ref/share-links.json` keeps real links
-in every format the site has written, and `share-check.mjs` holds them (F1, F2): each still
-decodes to exactly what it held, the dictionary's hash is pinned, and every field, chart
-and view button a kept link names is still on the page. Renaming or removing a field
-therefore fails the check: keep reading the old name in the tool's load (a migration)
-before shipping, and add new links to the file rather than editing old ones. The page reads the hash before any tool script runs and opens in **embed
-mode**: the mini cache neither restores nor saves (the viewer's own work is left alone),
-the tour stays away, the scenario is opened the way a saved file is, the chart's view is
-put back (fields, pressed buttons and legend entries inside its card), and only that card
-is shown, filling the frame, on no background of its own (the page, the body and the card
-are transparent), so the other site's page shows through. Zoom, pan and hover all keep
-working.
-
-**The watermark lives in the frame.** Under the chart, hard right, embed mode draws the
+**The watermark lives in the frame.** Under the chart, hard right, the viewer draws the
 site's circled A and one line, "Try your own scenarios at tool.adjiebrotots.com/<tool>",
 linking back to the tool (opened in a new tab, see *Links back* below). It is the PNG and SVG
 watermark's equivalent: small (0.66rem), muted, at 70% opacity until hovered. Being part
@@ -1984,34 +2009,48 @@ watermark in the frame stays either way, and the dialog asks the reader to keep 
 
 **Links back open the reader's scenario.** The watermark and the credit link both point at
 `<tool>/#open=<chart>&s=…`: the canonical address (the part a crawler credits, since it
-ignores the `#hash`) set up on the scenario and view the embed shows. `s` is the embed's
-payload without its prices (`d`), since the whole tool fetches its own, so it is about as
-long as the iframe's for a finance tool: 100 to 230 characters in all. Opened as a page (open mode), the tool drops
-`#open` from the address, loads the scenario the way a saved file is loaded (it becomes the
-reader's own saved work, so a reload keeps what they change), puts the chart's view back
-and scrolls the chart into view. Its strings are made inert as an embed's are.
+ignores the `#hash`) set up on the scenario and view the embed shows. `s` here is the
+scenario file the save button writes (`SharedScenario.mount` registers it with
+`SharedShare.state`), deflated and base64url-encoded into the `#hash`, which a browser
+never sends to a server, so nothing is uploaded. It is deflated against a **dictionary**,
+`share-dict-a.txt`: what the tools save on their defaults and Quick Start presets (built by
+`node _ref/share-dict.mjs`), so a field name, a default value or a whole preset the
+dictionary also holds costs one back-reference of 2 to 4 bytes. That brings a finance
+tool's scenario to about 60 to 200 characters, where deflate alone needed 450 to 1,100.
+The first letter of `s` says how it was written: `a` for that dictionary, `z` for deflate
+alone (the format links were first written in, and still chosen when it comes out shorter)
+or `j` for plain JSON. A dictionary is frozen once shipped, since every link made with it
+decodes only against those bytes: a better one is the next letter, added to `DICTS` in
+`shared.js` beside the old file, which stays. A sent link outlives the tool it was made on,
+so `_ref/share-links.json` keeps real links in every format the site has written, and
+`share-check.mjs` holds them (F1, F2): each still decodes to exactly what it held, the
+dictionary's hash is pinned, and every field, chart and view button a kept link names is
+still on the page. Renaming or removing a field therefore fails the check: keep reading the
+old name in the tool's load (a migration) before shipping, and add new links to the file
+rather than editing old ones. Opened as a page (open mode), the tool drops `#open` from the
+address, loads the scenario the way a saved file is loaded (it becomes the reader's own
+saved work, so a reload keeps what they change), puts the chart's view back and scrolls the
+chart into view. Its strings are made inert (below).
 
 Only the two rows the menu draws itself carry a second line: Share as link ("Opens the
 tool on your scenario") and Embed as HTML ("Interactive chart for your site"); the other
 three rows say what they do in their label alone.
 
 - A view that lives outside the card names it: `data-share-view="#tab-sens"` on the card
-  (Finance vs Cash's sensitivity sweep), and its fields and toggles ride along.
+  (Finance vs Cash's sensitivity sweep), and its fields and toggles ride along in a link,
+  its `data-embed-mode` controls in an embed.
 - A chart the tool draws itself, not Chart.js or Plotly (the Load Flow Simulator's SVG
   diagram), marks its element `data-share-chart` and keeps `data-share-sig` set to a
-  signature of what it draws, set only once it has drawn (a failure too, so an embed
-  settles). The embed waits on it and `_ref/share-check.mjs` compares it; that check also
-  wheels the diagram and needs its `viewBox` to move. If it fits itself to its width, it
-  also registers `SharedShare.fit(key, width => height)`, and the check (E14) needs the
-  embed's stage to hold the drawing with no more than its margin above and below.
+  signature of what it draws, set only once it has drawn (a failure too, so a snapshot
+  settles). The snapshot waits on it; its flow arrows' animation travels with it.
 - An animated chart's `⧉` passes `copyImage` a third argument, `{ gif: () => gifBlob,
   onDone: kind => … }`: the GIF goes on the clipboard where the browser takes `image/gif`,
   and elsewhere the PNG goes with an HTML copy carrying the GIF, which mail and documents
   paste animated. `onDone` hears which, so the tool can say so in words.
 - A view that has to be opened first (a popup) registers a hook:
   `SharedShare.view('.cm-canvas', { save: () => ({…}), load: v => openIt(v) })`.
-- An embed or link names its chart by key for good. A chart merged into another leaves
-  `SharedShare.alias(oldKey, newKey)` behind, and its old embeds and links open the chart
+- A link names its chart by key for good. A chart merged into another leaves
+  `SharedShare.alias(oldKey, newKey)` behind, and its old links open the chart
   it went into (the Capacity Expansion Planner's `buildCanvas`, now part of `capCanvas`).
 - Two charts may share one card as two `.chart-panel`s, each with its own head and
   cluster: Share finds the nearest panel, so an embed of either shows that one alone.
@@ -2020,46 +2059,54 @@ three rows say what they do in their label alone.
 - A tool that is not a chart, with no picture to download, still shares itself: an empty
   `<div class="btn-cluster" data-share="tool">` in its card gets a menu of **Share as link**
   and **Embed as HTML** alone, always shown, and its dialog, credit line ("Interactive tool:
-  … by …") and watermark ("Make your own at …") say *tool* where a chart's say *chart*. The
-  card's own element carries `data-share-chart` and `data-share-sig` as a diagram does, and
-  anything the frame must show (the tool's main button) lives inside the card. The Random
-  Picker marks the stage on screen (`stage-wheel`, `stage-dice`, …), so an embed is that one
-  picker; `node randompicker/_audit/embed.mjs` checks it.
-- A tool that fetches before it draws returns a promise from its load (the DCA explorers
-  return their simulation's), and the embed waits on it.
-- An embed carries the scenario and never what the tool can rebuild: simulated paths stay
-  out of the saved file, which keeps the code near 1 KB. The Graph Visualiser is the
-  exception, since its data is the scenario, and the dialog says how many
-  KB the code is when it passes 8 KB (and refuses past the ~2 MB a browser will follow).
-- **An embed never calls the market-data Worker.** The frame runs on this origin, so the
-  Worker's origin lock lets it through, and every viewer on the other site would be a paid
-  invocation. `yfFetchPricesBatch` refuses inside a frame, and a tool on market prices
-  registers `SharedShare.data({ save, load })`: `save` packs the scenario's window of each
-  ticker from its cache (`SharedYF.snapCache`, exact, about 4.7 KB per ticker-year of daily
-  OHLC once deflated) and refuses until the prices are loaded; `load` puts them in the
-  frame's cache (`SharedYF.restoreCache`) before the scenario runs. The embed draws the
-  prices of the day it was shared and never updates. A link from before prices rode in it
-  shows the fallback, not half a chart.
+  … by …") and watermark ("Make your own at …") say *tool* where a chart's say *chart*. A
+  tool is the thing it shares (the Random Picker's wheel is spun in the frame), so its
+  embed is the whole page in **embed mode**: `<tool>/#embed=<chart>&theme=…&s=…`, the page
+  reading the hash before any tool script runs, the mini cache neither restoring nor saving,
+  the tour staying away, and only that card shown, filling the frame. It starts as soon as
+  the tool's scripts have run and the font is in, giving each step two frames rather than a
+  fixed wait, and fetches its dictionary beside the page's other files. The card's own
+  element carries `data-share-chart` and `data-share-sig` as a diagram does, and anything the
+  frame must show (the tool's main button) lives inside the card. The Random Picker marks
+  the stage on screen (`stage-wheel`, `stage-dice`, …), so an embed is that one picker;
+  `node randompicker/_audit/embed.mjs` checks it. An old `#embed=` link to a chart opens the
+  same way.
+- **An embed never calls the market-data Worker.** The viewer runs on this origin, where
+  the Worker's origin lock would let it through, and every viewer on the other site would
+  be a paid invocation. The prices a chart draws are in the chart it carries, so the frame
+  fetches nothing but the viewer and its libraries. A whole-page tool embed in a frame is
+  refused the Worker too (`yfFetchPricesBatch`), and a tool on market prices registers
+  `SharedShare.data({ save, load })` for a `#open` link, which packs no prices.
 
 **A link is not a file.** A reader opens a file they chose; a link can be sent by anyone.
-So embed mode only switches on inside a frame (opened as a page of its own, the link is just
-the tool), and every string that arrives through a link is made inert before the tool sees
-it: `<`, `>`, `"`, `'` and the backtick become look-alikes (‹ › ” ʼ) that can only be text, so no scenario
-name or column header can become markup or close a quote in a template. Tools still escape
-what they write into `innerHTML`; this is the second lock, not the first.
+So nothing that arrives in a link is ever read as markup or code. The viewer puts every
+string into the page as text; rebuilds a diagram only from the tags and attributes
+`chart-kit.js` lists (shapes, text, paint, and the animation of opacity and transform on
+the clock, never a script, an event handler, a link out or foreign content); revives a
+function only as one `ChartKit` registered by name; escapes every value of a swatch; lets
+Plotly read only plain emphasis and line breaks in its strings; loads a tool kit only from
+`<tool>/chart-kit.js` on its own origin; and points its links out only back at this site.
+Open mode and a tool's embed mode only switch on as they should (embed mode inside a frame:
+opened as a page of its own, the link is just the tool), and every string that arrives
+through such a link is made inert before the tool sees it: `<`, `>`, `"`, `'` and the
+backtick become look-alikes (‹ › ” ʼ) that can only be text, so no scenario name or column
+header can become markup or close a quote in a template. Tools still escape what they
+write into `innerHTML`; this is the second lock, not the first.
 
 `node _ref/share-check.mjs` drives every chart's menu on a desktop and a phone, holds a
 phone's and a wide monitor's PNG, SVG and copy to the desktop's size, opens every embed in
-a page on another site at two widths to prove it draws exactly the data the reader saw on
-a transparent background, sized by its host to what it shows (E14), saying it is loading
-until it has drawn (E15), follows the link back to prove the whole tool opens on that same
-chart, and
-replays each page's link with every string swapped for markup and script, which has to be
-drawn as text and run nothing.
+a page on another site at two widths to prove it shows that one card, draws exactly the
+data the reader saw (E3) and what the tool draws in every view it offers (V1), on a
+transparent background, sized by its host to what it shows (E14), saying it is loading
+until it has drawn (E15), fetching nothing of the tool (E10) and never the Worker (E9),
+follows the link back to prove the whole tool opens on that same chart (E12), replays
+each embed with every string swapped for markup and script, which has to be drawn as text
+and run nothing (E7), and opens links written to attack the viewer, which have to load
+and run nothing (E16).
 
 ---
 
-### Zoom and the Y Axis (`SharedZoom`, shared.js)
+### Zoom and the Y Axis (`SharedZoom`, chart-kit.js)
 
 Every zoomable chart makes the reader two promises, and `SharedZoom` keeps them in one
 place so they cannot drift apart tool by tool.

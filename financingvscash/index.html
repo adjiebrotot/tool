@@ -353,7 +353,7 @@
       <h2><span id="chartTitle">Ending Wealth Over Time</span> <i class="tip-icon" id="tipChartMetric" data-tip="" data-tip-options>?</i></h2>
       <label class="opt-metric-wrap" id="optMetricWrap" style="display:none">
         <span>Objective</span>
-        <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+        <select class="sel-input" id="optMetric" data-embed-mode title="What the optimisation chart plots and ranks by">
           <option value="netBenefit" selected>Net Benefit vs Cash</option>
           <option value="endWealth">Ending Wealth</option>
           <option value="totalInterest">Total Interest Paid</option>
@@ -371,7 +371,7 @@
     </div>
     <div class="chart-switch-row" id="chartSwitchRow">
       <span class="chart-switch-label">Chart Metric</span>
-      <select class="sel-input" id="chartMetric"><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
+      <select class="sel-input" id="chartMetric" data-embed-mode><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
     </div>
     <div class="legend" id="chartLegend"></div>
     <div class="canvas-wrap" id="chartCanvasWrap"><canvas id="chartCanvas"></canvas></div>
@@ -448,13 +448,13 @@
       <strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.
     </p>
     <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
-      <img src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <img loading="lazy" src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
-        <img src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <img loading="lazy" src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
         <span style="color:var(--muted);font-size:0.76rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <img src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <img loading="lazy" src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
         <span style="color:var(--muted);font-size:0.76rem">Made in Australia by Indonesian engineer.</span>
       </div>
     </div>
@@ -463,6 +463,7 @@
 
 <script src="../dropdown.js"></script>
 
+<script src="../chart-kit.js"></script>
 <script src="../shared.js"></script>
 <script src="script.js"></script>
 <script src="tour.js"></script>

@@ -45,32 +45,11 @@
   }
 
   /* ── The hour marker, and a click that moves it ── */
-  var noMarker = false;  // while a GIF takes a still, which draws the marker itself
-  /* Where hour h sits on a chart, or null when it is off the axis. Every chart
-     puts hour t at x = t (the commitment's bars are centred on it), so one
-     hour is at one place on all of them. */
-  function hourPx(chart, h){
-    var x = chart.scales.x, area = chart.chartArea;
-    if(!x || !area) return null;
-    var px = x.getPixelForValue(h);
-    return isFinite(px) && px >= area.left - 0.5 && px <= area.right + 0.5 ? px : null;
-  }
-  var HOUR_PLUGIN = {
-    id: 'edHour',
-    afterDatasetsDraw: function(chart){
-      if(!ctx || noMarker || chart.config.options.plugins.edHour === false) return;
-      var area = chart.chartArea, px = hourPx(chart, ctx.display.hour);
-      if(px == null) return;
-      var g = chart.ctx;
-      g.save();
-      g.strokeStyle = cssVar('--accent');
-      g.globalAlpha = 0.75;
-      g.lineWidth = 1.5;
-      g.setLineDash([4, 3]);
-      g.beginPath(); g.moveTo(px, area.top); g.lineTo(px, area.bottom); g.stroke();
-      g.restore();
-    }
-  };
+  /* The marker itself is drawn by EDKit's plugin (chart-kit.js beside this
+     file), at the hour each chart's options carry (plugins.edHour.hour), so
+     a shared chart keeps it; EDKit.quiet hides it while a GIF takes a still,
+     which draws the marker itself. */
+  var HOUR_PLUGIN = EDKit.HOUR_PLUGIN, hourPx = EDKit.hourPx;
   function clickHour(evt, els, chart){
     if(!ctx || !ctx.onHour) return;
     var x = chart.scales.x, v = x.getValueForPixel(evt.x);
@@ -94,6 +73,7 @@
       onClick: clickHour,
       plugins: {
         legend: { display: false },
+        edHour: { hour: ctx && ctx.display ? ctx.display.hour : 0 },
         tooltip: SharedChartTip.options({
           backgroundColor: cssVar('--panel'), titleColor: text, bodyColor: muted,
           borderColor: grid, borderWidth: 1, padding: 10,
@@ -107,36 +87,17 @@
       scales: o.scales(grid, muted)
     };
   }
-  /* Past a day, the time axis ticks on whole hours or whole days of the clock,
-     as many as fit its width and the part of the horizon in view, so the
-     labels never run into each other on a phone or over 30 days. */
-  var STEPS = [1, 2, 3, 6, 12, 24, 48, 72, 168, 336];
-  function clockTicks(H){
-    return function(scale){
-      if(H <= 24) return;
-      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(H, Math.floor(scale.max));
-      var room = Math.max(2, Math.floor((scale.width || 600) / 84)), step = STEPS[STEPS.length - 1];
-      for(var i = 0; i < STEPS.length; i++) if((hi - lo) / STEPS[i] <= room){ step = STEPS[i]; break; }
-      var h0 = ED.cal(startOf()).h0, ticks = [];
-      for(var v = lo; v <= hi; v++){
-        var abs = h0 + v;
-        if(step < 24 ? abs % step === 0 : abs % 24 === 0 && (abs / 24) % (step / 24) === 0) ticks.push({ value: v });
-      }
-      if(ticks.length) scale.ticks = ticks;
-      scale.edStep = step;
-    };
-  }
-  // A tick on a day boundary, with the axis ticking by days, needs only its date.
-  function tickText(scale, v, H){
-    var t = ED.tickLabel(v, H, startOf());
-    return H > 24 && scale && scale.edStep >= 24 ? t.slice(0, 5) : t;
-  }
+  /* Past a day, the time axis ticks on whole hours or whole days of the clock
+     (EDKit.clockTicks), and a tick on a day boundary, with the axis ticking by
+     days, shows only its date (EDKit.tickText). Every hour's label is worked
+     out here, once, so a shared chart carries them. */
+  function hourTicks(H){ var a = [], st = startOf(); for(var t = 0; t <= H; t++) a.push(ED.tickLabel(t, H, st)); return a; }
   function xAxis(H, grid, muted, extra){
     var x = {
       title: { display: true, text: H > 24 ? 'Date and time' : 'Time of day', color: muted, font: { size: 11 } },
       ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, autoSkip: true, maxRotation: 0, font: { size: 11 },
-               callback: function(v){ return tickText(this, v, H); } },
-      afterBuildTicks: clockTicks(H),
+               callback: EDKit.tickText(hourTicks(H), H, false) },
+      afterBuildTicks: EDKit.clockTicks(H, ED.cal(startOf()).h0),
       grid: { color: grid }
     };
     for(var k in extra) x[k] = extra[k];
@@ -271,34 +232,12 @@
   /* A dotted fill: dots of the colour over a pale wash of it, so storage
      never reads as one more generator. The tile is drawn at the screen's
      pixel ratio, so the dots stay round and sharp. */
-  function dotFill(fill, dot){
-    var n = 5, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
-    cv.width = cv.height = n * k;
-    g.scale(k, k);
-    g.fillStyle = fill; g.fillRect(0, 0, n, n);
-    g.fillStyle = dot;
-    [[1.25, 1.25], [3.75, 3.75]].forEach(function(p){ g.beginPath(); g.arc(p[0], p[1], 0.95, 0, Math.PI * 2); g.fill(); });
-    var pat = g.createPattern(cv, 'repeat');
-    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
-    return pat;
-  }
+  var dotFill = ChartKit.dots;
   /* A hatched fill: 45° lines of the colour over a pale wash of it, for the
      power a unit had and did not use and the demand it could not meet, so
      neither reads as output (dots are storage's). Drawn at the screen's pixel
      ratio, like the dots. */
-  function hatchFill(fill, line){
-    var n = 6, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
-    cv.width = cv.height = n * k;
-    g.scale(k, k);
-    g.fillStyle = fill; g.fillRect(0, 0, n, n);
-    g.strokeStyle = line; g.lineWidth = 1;
-    g.beginPath();
-    [-n, 0, n].forEach(function(o){ g.moveTo(o, n); g.lineTo(o + n, 0); });
-    g.stroke();
-    var pat = g.createPattern(cv, 'repeat');
-    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
-    return pat;
-  }
+  var hatchFill = ChartKit.hatch;
 
   /* The class the Dispatch chart's box takes for the panes it draws: taller
      with the curtailment pane under the dispatch, shorter with that pane alone. */
@@ -437,7 +376,7 @@
         },
         filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'load'; },
         // The stack's top meets the demand line (plus any charging), so the line is not added to it.
-        skip: function(ds){ return ds.kind === 'load'; },
+        skip: EDKit.skipLoad,
         fitAxes: ['y', 'yCurt'],
         scales: function(grid, muted){
           var s = { x: xAxis(H, grid, muted) };
@@ -570,8 +509,8 @@
             return {
               x: xAxis(H, grid, muted, { type: 'linear', min: x0, max: x1,
                    ticks: { color: muted, maxTicksLimit: H > 24 ? 8 : 12, font: { size: 11 }, stepSize: 3, includeBounds: false,
-                            callback: function(v){ return Math.abs(v - Math.round(v)) > 1e-9 ? '' : tickText(this, Math.round(v), H); } },
-                   afterBuildTicks: clockTicks(H) }),
+                            callback: EDKit.tickText(hourTicks(H), H, true) },
+                   afterBuildTicks: EDKit.clockTicks(H, ED.cal(startOf()).h0) }),
               y: { type: 'category', title: { display: true, text: 'Unit', color: muted, font: { size: 11 } },
                    ticks: { color: muted, font: { size: 11 },
                             callback: function(v){ return axisName(this.getLabelForValue(v), (this.height || 300) / Math.max(1, names.length) >= 30); } },
@@ -682,7 +621,12 @@
     hour: function(h){
       if(!ctx) return;
       ctx.display.hour = h;
-      Object.keys(charts).forEach(function(id){ if(charts[id]) charts[id].draw(); });
+      Object.keys(charts).forEach(function(id){
+        var ch = charts[id], o = ch && ch.config.options.plugins;
+        if(!ch) return;
+        if(o && o.edHour && typeof o.edHour === 'object') o.edHour.hour = h;
+        ch.draw();
+      });
     },
     clear: function(){ Object.keys(charts).forEach(destroy); },
     get: function(key){ return charts[CANVAS[key]] || null; },
@@ -901,7 +845,7 @@
       return atExportSize(key, function(chart, src){
         if(edge){ was = padTo(chart, edge); padded = true; }
         var dpr = window.devicePixelRatio || 1, FONT = '"DM Sans", sans-serif';
-        noMarker = true;
+        EDKit.quiet = true;
         chart.draw();
         var chartW = Math.round(src.width / dpr), chartH = Math.round(src.height / dpr);
         var titleH = 40, markW = SharedLegend.W, gap = 7, pad = 20, margin = 16, rowH = 22;
@@ -929,7 +873,7 @@
         var xs = [];
         for(var h = 0; h < ctx.res.T; h++) xs.push(hourPx(chart, h));
         var top = titleH + chart.chartArea.top, bottom = titleH + chart.chartArea.bottom, accent = cssVar('--accent');
-        noMarker = false;
+        EDKit.quiet = false;
         if(padded){ chart.options.layout.padding = was; padded = false; chart.update('none'); }
         else chart.draw();
         return {
@@ -945,7 +889,7 @@
         };
       });
     } finally {
-      noMarker = false;
+      EDKit.quiet = false;
       if(padded){ var ch = charts[CANVAS[key]]; ch.options.layout.padding = was; ch.update('none'); }
     }
   }

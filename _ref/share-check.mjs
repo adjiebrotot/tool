@@ -16,33 +16,35 @@
 //      taken on a phone have the very size and proportion a desktop gives, so
 //      a chart exported on a phone is not the phone's squat one, and a wide
 //      monitor exports that same picture too rather than a wider one.
-//   3. AN EMBED IS THE SAME CHART. The code is one iframe of the tool's own
-//      address and one credit line under it, a plain followed link to the
-//      tool by its name, which is the backlink (E11). The line back to the
-//      tool is also drawn inside
-//      the frame, under the chart, with the site's logo, where the other site
-//      cannot edit it out. Both links open the whole tool set up on the
-//      scenario the embed shows (E12), and the frame has no background of
-//      its own, so the other site's page shows through (E13). Opened as another site would open it,
-//      inside a page on another site, it shows that one chart card and
-//      nothing else, draws exactly the
-//      data the reader was looking at (scenario, metric, toggles and legend),
-//      in their theme, with zoom still working, and never touches the
-//      viewer's own saved work. It is checked again at a phone's width.
-//      A third line, a one-line listener, lets the frame size itself to
-//      what it shows (E14): the card with nothing cut and no band of empty
-//      frame, a diagram filling its stage but for its margin. Until it has
-//      drawn, the frame says "Loading data from tool.adjiebrotots.com…"
-//      rather than showing a blank (E15).
-//   5. AN EMBED COSTS NOTHING. Its frame runs on the tool's own origin, so
-//      the market-data Worker's origin lock lets it through, and every viewer
-//      on another site would be a paid invocation. It never calls the Worker:
-//      the prices its scenario draws ride in the link (E9), and a link from
-//      before they did fails in plain view rather than fetching (E10).
+//   3. AN EMBED IS THE SAME CHART, AND NOTHING ELSE. The code is one iframe
+//      of the embed viewer (embed/), one credit line under it, a plain
+//      followed link to the tool by its name, which is the backlink (E11),
+//      and a one-line listener that lets the frame size itself to what it
+//      shows (E14). The link carries the chart written down as data while
+//      the tool had it (share-snapshot.js), and the viewer draws it with
+//      Chart.js, Plotly or plain SVG and chart-kit.js alone: no tool, no
+//      model, no market data in the other site's frame (E10). Inside a page
+//      on another site it shows that one chart card and nothing else (E2),
+//      draws exactly the data the reader was looking at, in their theme (E3),
+//      with zoom still working and the viewer's own saved work untouched
+//      (E4), and every view the card offers (data-embed-mode) draws what the
+//      tool draws in that view (V1). The line back to the tool is drawn in
+//      the frame under the chart, with the site's logo (E8); both links open
+//      the whole tool on the scenario the embed shows (E12). The frame has no
+//      background of its own (E13), and until it has drawn it says "Loading
+//      data from tool.adjiebrotots.com…" rather than showing a blank (E15).
+//      Opened as a page of its own, the link is the chart alone (E6). It is
+//      checked again at a phone's width.
+//   5. AN EMBED COSTS NOTHING. The viewer runs on the tool's own origin, so
+//      the market-data Worker's origin lock would let it through, and every
+//      viewer on another site would be a paid invocation. It never calls the
+//      Worker (E9): the prices a chart draws are in the chart it carries.
 //   4. A LINK CAN ONLY CARRY TEXT. Anyone can send one, so every string in a
-//      real scenario is swapped for markup and a script that would close a
-//      quote in a template; the embed has to draw it as text and run nothing.
-//      And opened as a page of its own, an embed link is just the tool.
+//      real embed is swapped for markup and a script that would close a
+//      quote in a template; the viewer has to draw it as text and run
+//      nothing (E7). And a link written to attack the viewer itself, naming
+//      a script, a function, a tool kit or a link out of the site, loads and
+//      runs none of it (E16).
 //
 // Every page is moved off its defaults before it is shared, so an embed that
 // dropped the scenario would draw the defaults and fail rule 3.
@@ -111,6 +113,10 @@ const CDN = [
   'https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly.min.js',
+  // The embed viewer loads the smallest Plotly bundle that has a figure's traces.
+  'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly-basic.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly-cartesian.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.1/plotly-gl3d.min.js',
 ];
 for (const url of CDN) {
   if (!existsSync(join(LIBS, basename(url)))) {
@@ -549,13 +555,14 @@ const PAGES = [
     async prep(page) { await page.click('#graphCost'); } },
 ];
 
-/* An embed carries the scenario, never what the tool can fetch or rebuild
-   (prices, simulated paths). Past this, something heavy has leaked into the
-   saved state and the code is no longer one a reader can paste. */
-const BUDGET = 2500;
-// A tool on market prices carries them too (rule 5): the scenario's window of
-// daily OHLC for each ticker, which is tens of KB a decade.
+/* An embed carries the chart it draws, written down as data: the views the
+   card offers, the hover card and the key. Past this, something heavy has
+   leaked into it and the code is no longer one a reader can paste. A chart
+   of daily prices carries a decade of them. */
+const BUDGET = 120 * 1024;
 const PRICE_BUDGET = 600 * 1024;
+// The credit line and its link back carry the scenario alone.
+const CREDIT_BUDGET = 2500;
 
 const WORDS = {
   en: { share: 'Share', rows: ['Download as SVG', 'Download as PNG', 'Copy to clipboard', 'Share as link', 'Embed as HTML'], gif: 'Download as GIF',
@@ -564,28 +571,82 @@ const WORDS = {
         back: 'Coba skenario Anda sendiri di', copied: '✓ Tersalin', linkCopied: '✓ Tautan tersalin' },
 };
 
-/* 4. Every string in the reader's real scenario becomes an attack: markup,
-   and a quote-closer for a template that builds JS. Drawn in a frame on
-   another site, none of it may run or become an element. */
+/* The viewer's own probes: the chart it drew, its card, its views. */
+const VIEW = `(() => {
+  const r = v => typeof v === 'number' ? Math.round(v * 1e6) / 1e6 : v;
+  const cv = document.querySelector('.card .stage canvas');
+  const ch = cv && window.Chart && window.Chart.getChart(cv);
+  if (ch) return JSON.stringify({
+    labels: (ch.data.labels || []).map(String),
+    sets: ch.data.datasets.map((d, i) => ({ label: d.label, shown: ch.isDatasetVisible(i),
+      data: (d.data || []).map(v => v && typeof v === 'object' ? [r(v.x), r(v.y), r(v.o), r(v.c)] : r(v)) })),
+  });
+  const pl = document.querySelector('.card .js-plotly-plot');
+  if (pl && pl.data) return JSON.stringify(pl.data.map(t => ({ type: t.type, name: t.name, visible: t.visible,
+    x: t.x && Array.from(t.x).map(r), y: t.y && Array.from(t.y).map(r),
+    z: t.z && Array.from(t.z).map(z => Array.isArray(z) ? z.map(r) : r(z)) })));
+  const svg = document.querySelector('.card svg.diagram');
+  return svg ? 'svg|' + [...svg.querySelectorAll('text')].map(t => t.textContent.replace(/\\s+/g, ' ').trim()).join('|') : null;
+}) ()`;
+// The tool's side of the same comparison: a diagram by the words it draws.
+const DRAWN_ANY = `(key) => {
+  const el = (${FIND})(key).el;
+  if (el && el.hasAttribute('data-share-chart')) { const svg = el.querySelector('svg'); return svg ? 'svg|' + [...svg.querySelectorAll('text')].map(t => t.textContent.replace(/\\s+/g, ' ').trim()).join('|') : null; }
+  return (${DRAWN})(key);
+}`;
+/* The viewer draws values to eight significant figures: two drawings are the
+   same when every number agrees to a part in a million (at the 1e-6 the
+   probes round to) and everything else matches exactly. */
+function sameDrawing(a, b) {
+  if (a === b) return true;
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  if (a.startsWith('svg|') || b.startsWith('svg|')) return a === b;
+  let x, y;
+  try { x = JSON.parse(a); y = JSON.parse(b); } catch (e) { return false; }
+  const near = (p, q) => {
+    if (typeof p === 'number' && typeof q === 'number') return Math.abs(p - q) <= 2e-6 * Math.max(1, Math.abs(p), Math.abs(q));
+    if (Array.isArray(p) && Array.isArray(q)) return p.length === q.length && p.every((v, i) => near(v, q[i]));
+    if (p && q && typeof p === 'object' && typeof q === 'object') {
+      const kp = Object.keys(p), kq = Object.keys(q);
+      return kp.length === kq.length && kp.every(k => near(p[k], q[k]));
+    }
+    return p === q;
+  };
+  return near(x, y);
+}
+function hostPage(id, src, vp) {
+  hosted.set(id, `<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="${src}" width="${vp.width}" height="${vp.height}"></iframe></body>`);
+  return HOST + '/?id=' + id;
+}
+const viewerSrc = src => src.replace(/&amp;/g, '&').replace(SITE, ORIGIN);
+
+/* 4. Every string in the reader's real embed becomes an attack: markup, and
+   a quote-closer for a template that builds JS. Drawn in a frame on another
+   site, none of it may run or become an element. */
 const EVIL = `"><img src=x onerror="window.__pwned=1">';window.__pwned=1;//`;
+// A link as the viewer reads it: deflated alone (z), as Embed as HTML writes it.
+const ZPACK = `(async o => {
+  const bytes = new TextEncoder().encode(JSON.stringify(o));
+  const z = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
+  let bin = ''; z.forEach(b => { bin += String.fromCharCode(b); });
+  return 'z' + btoa(bin).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');
+})`;
+// The words that say what a thing is, rather than what it reads, stay.
+const STRUCTURE = new Set(['kind', 'k', 'type', 'by', 'l', 'th', 'n', 'kit']);
 async function attack(page, tag, src) {
-  const s = decodeURIComponent(/&amp;s=([^&]+)$/.exec(src)[1]);
-  const bad = await page.evaluate(([s, evil]) => SharedShare.unpack(s).then(p => {
-    const poison = v => typeof v === 'string' ? evil : Array.isArray(v) ? v.map(poison)
-      : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, poison(x)])) : v;
-    // The file's own tags stay, or it is refused before anything is drawn.
-    const keep = p.s ? { tool: p.s.tool, kind: p.s.kind, app: p.s.app } : {};
-    p.s = poison(p.s);
-    Object.keys(keep).forEach(k => { if (keep[k] !== undefined) p.s[k] = keep[k]; });
-    return SharedShare.pack(p);
-  }), [s, EVIL]);
+  const s = decodeURIComponent(/[#&]s=([^&]+)$/.exec(viewerSrc(src))[1]);
+  const bad = await page.evaluate(`SharedShare.unpack(${JSON.stringify(s)}).then(p => {
+    const keep = new Set(${JSON.stringify([...STRUCTURE])}), evil = ${JSON.stringify(EVIL)};
+    const poison = (v, key) => typeof v === 'string' ? (keep.has(key) ? v : evil)
+      : Array.isArray(v) ? v.map((x, i) => (i === 0 && typeof x === 'string' && Array.isArray(v[2])) ? x : poison(x, key))
+      : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, poison(x, k)])) : v;
+    return (${ZPACK})(poison(p));
+  })`);
   const E = await newPage({ width: 760, height: 560 }, { returning: false });
-  const id = 'evil' + hosted.size;
-  const base = src.split('&amp;s=')[0].replace(/&amp;/g, '&').replace(SITE, ORIGIN);
-  hosted.set(id, `<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="${base}&s=${bad}" width="760" height="560"></iframe></body>`);
-  await E.page.goto(HOST + '/?id=' + id, { waitUntil: 'load' });
+  const base = viewerSrc(src).replace(/([#&])s=[^&]+$/, '$1s=' + bad);
+  await E.page.goto(hostPage('evil' + hosted.size, base, { width: 760, height: 560 }), { waitUntil: 'load' });
   const frame = await (await E.page.waitForSelector('iframe')).contentFrame();
-  await frame.waitForFunction(() => !document.documentElement.classList.contains('abt-embed-wait'), null, { timeout: 45000 }).catch(() => {});
+  await frame.waitForFunction(() => !document.documentElement.classList.contains('wait'), null, { timeout: 30000 }).catch(() => {});
   await E.page.waitForTimeout(600);
   const r = await frame.evaluate(() => ({ ran: !!window.__pwned, imgs: document.querySelectorAll('img[src="x"]').length }));
   check(`${tag} E7 a link whose every string is markup and script draws it as text and runs none of it`,
@@ -593,19 +654,63 @@ async function attack(page, tag, src) {
   await E.ctx.close();
 }
 
+/* A link written to attack the viewer itself: a tool kit from outside the
+   site, a function by a name nothing registered, a diagram carrying a script,
+   an event handler and a link out, a watermark pointing at javascript:. */
+async function hostile(page, tag) {
+  const bad = await page.evaluate(`(${ZPACK})({
+    v: 1, kind: 'svg', l: 'en', th: 'dark', t: 'x', n: 'x', w: 'x', back: 'javascript:window.__pwned=1',
+    modes: [], map: {}, pool: [],
+    frames: [{ vb: '0 0 100 50', svg: ['svg', { viewBox: '0 0 100 50', onload: 'window.__pwned=1' }, [
+      ['script', {}, ['window.__pwned=1']],
+      ['foreignObject', {}, [['img', { src: 'x', onerror: 'window.__pwned=1' }, []]]],
+      ['a', { href: 'javascript:window.__pwned=1' }, [['text', { x: '10', y: '20' }, ['x']]]],
+      ['use', { href: 'https://evil.example/x.svg#a' }, []],
+      ['rect', { x: '0', y: '0', width: '10', height: '10', onclick: 'window.__pwned=1', fill: 'url(https://evil.example/x)' }, []],
+      ['animate', { attributeName: 'href', values: 'javascript:window.__pwned=1', begin: 'click' }, []],
+      ['set', { attributeName: 'onload', to: 'window.__pwned=1' }, []],
+    ]] }],
+  })`);
+  const chartBad = await page.evaluate(`(${ZPACK})({
+    v: 1, kind: 'chartjs', l: 'en', th: 'dark', t: 'x', n: 'x', w: 'x', back: 'https://evil.example/', modes: [], map: {}, pool: [],
+    frames: [{ type: 'line', labels: ['a'], datasets: [{ label: '<img src=x onerror="window.__pwned=1">', data: [1],
+      borderColor: { $k: { n: 'Function', a: ['window.__pwned=1'] } } }],
+      options: { plugins: { tooltip: { external: { $k: { n: 'eval' } } } } }, plugins: ['constructor', '__proto__'],
+      legend: [{ l: '<img src=x onerror="window.__pwned=1">', sw: { color: 'red" onload="window.__pwned=1', type: 'line' }, ds: [0] }] }],
+  })`);
+  const E = await newPage({ width: 760, height: 560 }, { returning: false });
+  const requests = [];
+  E.page.on('request', r => requests.push(r.url()));
+  const url = hostPage('hostile' + hosted.size, `${ORIGIN}/embed/#t=c&kit=..%2F..%2Fevil&l=en&s=${chartBad}`, { width: 760, height: 560 });
+  await E.page.goto(url, { waitUntil: 'load' });
+  await E.page.waitForTimeout(1200);
+  const f1 = await (await E.page.waitForSelector('iframe')).contentFrame();
+  const r1 = await f1.evaluate(() => ({ ran: !!window.__pwned, imgs: document.querySelectorAll('img').length,
+    mark: (document.querySelector('.mark') || {}).href || '' })).catch(e => ({ ran: false, imgs: 0, mark: e.message }));
+  await E.page.goto(hostPage('hostile' + hosted.size, `${ORIGIN}/embed/#t=d&l=en&s=${bad}`, { width: 760, height: 560 }), { waitUntil: 'load' });
+  await E.page.waitForTimeout(1200);
+  const f2 = await (await E.page.waitForSelector('iframe')).contentFrame();
+  const r2 = await f2.evaluate(() => ({ ran: !!window.__pwned, bad: document.body.querySelectorAll('script, foreignObject, a[href^="javascript"], [onload], [onclick], set').length,
+    use: [...document.querySelectorAll('use')].map(u => u.getAttribute('href')).filter(Boolean), mark: (document.querySelector('.mark') || {}).href || '' }));
+  const outside = requests.filter(u => !u.startsWith(ORIGIN) && !u.startsWith(HOST) && !/cdnjs\.cloudflare\.com|fonts\.(googleapis|gstatic)\.com/.test(u));
+  const kit = requests.filter(u => /evil/.test(u));
+  check(`${tag} E16 a link that names a script, a function, a tool kit or a link out of the site loads and runs none of it`,
+        !r1.ran && !r2.ran && !r1.imgs && !r2.bad && !r2.use.length && !kit.length && !outside.length &&
+        !/^javascript:|evil/.test(r1.mark) && !/^javascript:/.test(r2.mark),
+        `ran ${r1.ran || r2.ran}, elements ${r1.imgs + r2.bad}, use ${r2.use.join(' ')}, fetched ${kit.concat(outside).slice(0, 2).join(' ')}, marks ${r1.mark} ${r2.mark}`);
+  await E.ctx.close();
+}
+
 /* While the frame loads it says so, in the page's language, rather than
-   showing a blank (or the whole tool, before shared.js has hidden it): the
-   scripts after the head are held back so the first paint is caught. */
+   showing a blank: the viewer's script is held back so the first paint is
+   caught. */
 async function loading(tag, src) {
   const E = await newPage({ width: 760, height: 560 }, { returning: false });
   let release;
   const held = new Promise(r => { release = r; });
-  await E.ctx.route(/\/shared\.js$/, async route => { await held; route.continue(); });
-  const id = 'wait' + hosted.size;
-  hosted.set(id, `<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="${src.replace(/&amp;/g, '&').replace(SITE, ORIGIN)}" width="760" height="560"></iframe></body>`);
-  await E.page.goto(HOST + '/?id=' + id, { waitUntil: 'domcontentloaded' });
+  await E.ctx.route(/\/embed\/embed\.js$/, async route => { await held; route.continue(); });
+  await E.page.goto(hostPage('wait' + hosted.size, viewerSrc(src), { width: 760, height: 560 }), { waitUntil: 'domcontentloaded' });
   const frame = await (await E.page.waitForSelector('iframe')).contentFrame();
-  // shared.js may sit at the foot of the body or in the head, before it.
   await frame.waitForFunction(() => getComputedStyle(document.documentElement, '::before').content !== 'none', null, { timeout: 15000 }).catch(() => {});
   const r = await frame.evaluate(() => ({
     text: getComputedStyle(document.documentElement, '::before').content,
@@ -619,23 +724,62 @@ async function loading(tag, src) {
   await E.ctx.close();
 }
 
-/* 5. A link from before the prices rode in it. It would need the Worker,
-   which an embed never calls, so it shows its fallback rather than half a
-   chart, and costs nothing. */
-async function priceless(page, tag, src) {
-  const s = decodeURIComponent(/&amp;s=([^&]+)$/.exec(src)[1]);
-  const old = await page.evaluate(s => SharedShare.unpack(s).then(p => { const had = !!p.d; delete p.d; return SharedShare.pack(p).then(x => [had, x]); }), s);
-  const E = await newPage({ width: 760, height: 560 }, { returning: false });
-  const id = 'old' + hosted.size;
-  const base = src.split('&amp;s=')[0].replace(/&amp;/g, '&').replace(SITE, ORIGIN);
-  hosted.set(id, `<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="${base}&s=${old[1]}" width="760" height="560"></iframe></body>`);
-  await E.page.goto(HOST + '/?id=' + id, { waitUntil: 'load' });
-  const frame = await (await E.page.waitForSelector('iframe')).contentFrame();
-  await frame.waitForFunction(() => !document.documentElement.classList.contains('abt-embed-wait'), null, { timeout: 45000 }).catch(() => {});
-  const failed = await frame.evaluate(() => document.documentElement.classList.contains('abt-embed-failed'));
-  check(`${tag} E10 a link without its prices shows its fallback and never calls the Worker`,
-        old[0] && failed && E.worker() === 0, `prices were in the link: ${old[0]}, fallback: ${failed}, ${E.worker()} Worker request(s)`);
-  await E.ctx.close();
+/* V1: every view the card offers draws in the viewer what the tool draws in
+   it. Each choice of each view is picked in the frame and set in the tool
+   (the others as the reader left them), and the two drawings compared. */
+async function views(page, tag, key, frame) {
+  const offered = await frame.evaluate(() => [...document.querySelectorAll('.modes > *')].map(e =>
+    e.matches('.seg') ? { kind: 'seg', n: e.children.length } : e.matches('select') ? { kind: 'select', n: e.options.length }
+      : e.matches('.range') ? { kind: 'range', n: +e.querySelector('input').max + 1 } : { kind: 'check', n: 2 }));
+  if (!offered.length) return;
+  const tool = await page.evaluate(`(() => {
+    const f = (${FIND})(${JSON.stringify(key)}), extra = f.card.getAttribute('data-share-view');
+    // In the order SharedShare reads them: the card, with the boxes it names put first.
+    const roots = [f.card];
+    if (extra) document.querySelectorAll(extra).forEach(r => { if (!roots.includes(r)) roots.unshift(r); });
+    window.__modes = SharedSnapshot.modes(roots);
+    return window.__modes.map(m => ({ kind: m.kind, n: m.opts.length, own: m.get() }));
+  })()`);
+  let bad = [], tried = 0;
+  const offeredIdx = tool.map((m, i) => i).filter(i => true);
+  for (let mi = 0; mi < Math.min(tool.length, offered.length); mi++) {
+    const n = Math.min(tool[mi].n, 4), own = tool[mi].own;
+    for (let j = 0; j < n; j++) {
+      if (j === own && n > 1) continue;
+      await page.evaluate(([mi, j]) => window.__modes[mi].set(j), [mi, j]);
+      let want = null;
+      for (let t = 0, last = null; t < 60; t++) {
+        await page.waitForTimeout(120);
+        const d = await page.evaluate(`(${DRAWN_ANY})(${JSON.stringify(key)})`);
+        if (d && d === last) { want = d; break; }
+        last = d;
+      }
+      await frame.evaluate(([mi, j]) => {
+        const c = document.querySelectorAll('.modes > *')[mi];
+        if (c.matches('.seg')) c.children[j].click();
+        else if (c.matches('select')) { c.value = String(j); c.dispatchEvent(new Event('change')); }
+        else if (c.matches('.range')) { const r = c.querySelector('input'); r.value = String(j); r.dispatchEvent(new Event('input')); }
+        else if ((c.getAttribute('aria-pressed') === 'true') !== !!j) c.click();
+      }, [mi, j]);
+      await frame.waitForTimeout(250);
+      const got = await frame.evaluate(VIEW);
+      tried++;
+      if (!sameDrawing(want, got)) bad.push(`view ${mi + 1} choice ${j + 1}`);
+      // Put both back as the reader had them.
+      await page.evaluate(([mi, own]) => window.__modes[mi].set(own), [mi, own]);
+      await frame.evaluate(([mi, own]) => {
+        const c = document.querySelectorAll('.modes > *')[mi];
+        if (c.matches('.seg')) c.children[own].click();
+        else if (c.matches('select')) { c.value = String(own); c.dispatchEvent(new Event('change')); }
+        else if (c.matches('.range')) { const r = c.querySelector('input'); r.value = String(own); r.dispatchEvent(new Event('input')); }
+        else if ((c.getAttribute('aria-pressed') === 'true') !== !!own) c.click();
+      }, [mi, own]);
+      await page.waitForTimeout(400);
+    }
+  }
+  check(`${tag} V1 every view the card offers draws in the frame what the tool draws in it`,
+        offered.length === tool.length && !bad.length,
+        offered.length !== tool.length ? `${offered.length} offered, the card marks ${tool.length}` : `${tried} choices${bad.length ? '; differ: ' + bad.join(', ') : ''}`);
 }
 
 async function reach(spec, viewport) {
@@ -715,19 +859,20 @@ for (const spec of PAGES) {
     await page.waitForFunction(() => {
       const d = document.querySelector('.share-embed-overlay.is-open .share-code');
       return d && /^<iframe/.test(d.value);
-    }, null, { timeout: 10000 });
+    }, null, { timeout: 60000 });
     const code = await page.$eval('.share-code', t => t.value);
     const canon = await page.$eval('link[rel="canonical"]', l => l.href);
     const src = (/src="([^"]+)"/.exec(code) || [])[1] || '';
     const height = +((/height="(\d+)"/.exec(code) || [])[1] || 0);
     const [frameCode, creditCode = '', sizeCode = ''] = code.split('\n');
     const origin = canon.replace(/^(https?:\/\/[^/]+).*$/, '$1');
-    check(`${tag} E1 the code is one iframe of the tool, its credit line and the script that sizes it`,
-          /^<iframe [^\n]*><\/iframe>$/.test(frameCode) && src.startsWith(canon + '#embed=' + encodeURIComponent(key) + '&amp;') &&
-          height >= 380 && code.split('\n').length === 3 && frameCode.length <= (spec.prices ? PRICE_BUDGET : BUDGET) + 400 &&
-          creditCode.length <= BUDGET + 400 &&
+    const budget = spec.prices ? PRICE_BUDGET : BUDGET;
+    check(`${tag} E1 the code is one iframe of the embed viewer, its credit line and the script that sizes it`,
+          /^<iframe [^\n]*><\/iframe>$/.test(frameCode) && src.startsWith(SITE + '/embed/#t=') && /&amp;s=[jz]/.test(src) &&
+          height >= 160 && code.split('\n').length === 3 && frameCode.length <= budget + 400 &&
+          creditCode.length <= CREDIT_BUDGET + 400 &&
           /^<script>[^<]*<\/script>$/.test(sizeCode) && sizeCode.includes(`e.origin!=="${origin}"`) && sizeCode.length <= 400,
-          `frame ${frameCode.length} characters (at most ${(spec.prices ? PRICE_BUDGET : BUDGET) + 400}), credit ${creditCode.length} (at most ${BUDGET + 400}), sizer ${sizeCode.length}, frame ${height}px tall`);
+          `frame ${(frameCode.length / 1024).toFixed(1)} KB (at most ${budget / 1024} KB), credit ${creditCode.length} (at most ${CREDIT_BUDGET + 400}), sizer ${sizeCode.length}, frame ${height}px tall`);
     // The backlink: a plain, visible, followed link on the other site's page,
     // named for the tool rather than for keywords.
     const name = await page.evaluate(() => document.querySelector('meta[property="og:title"]').content.trim());
@@ -741,18 +886,23 @@ for (const spec of PAGES) {
           !/rel=|display:\s*none|visibility|opacity/.test(creditCode),
           creditCode.replace(/<[^>]+>/g, ''));
     await page.keyboard.press('Escape');
-    const want = await page.evaluate(`(${DRAWN})(${JSON.stringify(key)})`);
-    const T6 = await D.ctx.newPage();
-    await T6.goto(src.replace(/&amp;/g, '&').replace(SITE, ORIGIN), { waitUntil: 'load' });
-    check(`${tag} E6 opened as a page of its own, the link is the whole tool`,
-          !(await T6.evaluate(() => document.documentElement.classList.contains('abt-embed'))));
-    await T6.close();
+    const want = await page.evaluate(`(${DRAWN_ANY})(${JSON.stringify(key)})`);
+    // E6: the link opened as a page of its own is the chart alone, as the frame shows it.
+    {
+      const T6 = await newPage({ width: 1000, height: 700 }, { returning: false });
+      await T6.page.goto(viewerSrc(src), { waitUntil: 'load' });
+      await T6.page.waitForFunction(() => !document.documentElement.classList.contains('wait'), null, { timeout: 30000 }).catch(() => {});
+      const alone = await T6.page.evaluate(VIEW).catch(() => null);
+      check(`${tag} E6 opened as a page of its own, the link is the chart alone`,
+            sameDrawing(want, alone) && T6.errors.length === 0, T6.errors.slice(0, 2).join(' | ') || (alone ? 'drew something else' : 'drew nothing'));
+      await T6.ctx.close();
+    }
     // E12: the link back opens the whole tool on the reader's scenario, for a
     // visitor who has none saved, fetching its own prices.
     {
       const O = await newPage({ width: 1440, height: 1000 });
       await O.page.goto(openHref.replace(SITE, ORIGIN), { waitUntil: 'load' });
-      const drew = await O.page.waitForFunction(`(() => { const w = ${JSON.stringify(want)}; return (${DRAWN})(${JSON.stringify(key)}) === w; })()`,
+      const drew = await O.page.waitForFunction(`(() => { const w = ${JSON.stringify(want)}; return (${DRAWN_ANY})(${JSON.stringify(key)}) === w; })()`,
         null, { timeout: 20000 }).then(() => true, () => false);
       const st = await O.page.evaluate(() => ({ embed: document.documentElement.classList.contains('abt-embed'), hash: location.hash }));
       check(`${tag} E12 the link back opens the whole tool on the scenario the embed shows`,
@@ -794,62 +944,64 @@ for (const spec of PAGES) {
     }
     if (key === spec.charts[0]) await attack(page, tag, src);
     if (key === spec.charts[0]) await loading(tag, src);
-    if (key === spec.charts[0] && spec.prices) await priceless(page, tag, src);
+    if (key === spec.charts[0] && spec === PAGES[0]) await hostile(page, tag);
     const light = await page.evaluate(() => document.body.classList.contains('light'));
 
     for (const vp of [{ width: 760, height: Math.max(380, height) }, { width: 360, height: Math.max(380, height) }]) {
       const E = await newPage(vp, { returning: false });
+      const fetched = [];
+      E.page.on('request', r => fetched.push(r.url()));
       const id = String(hosted.size + 1);
       hosted.set(id, '<!doctype html><meta charset="utf-8"><body style="margin:0">' + code.split(SITE).join(ORIGIN) + '</body>');
       await E.page.goto(HOST + '/?id=' + id, { waitUntil: 'load' });
       const frame = await (await E.page.waitForSelector('iframe')).contentFrame();
-      const ready = await frame.waitForFunction(() => document.documentElement.classList.contains('abt-embed') &&
-        !document.documentElement.classList.contains('abt-embed-wait'), null, { timeout: 45000 }).then(() => true, () => false);
+      const ready = await frame.waitForFunction(() => !document.documentElement.classList.contains('wait'), null, { timeout: 30000 }).then(() => true, () => false);
       await E.page.waitForTimeout(400);
-      const got = await frame.evaluate(`(${DRAWN})(${JSON.stringify(key)})`);
+      const got = await frame.evaluate(VIEW);
       const view = await frame.evaluate(`(() => {
-        const f = (${FIND})(${JSON.stringify(key)});
-        const cr = f.card && f.card.getBoundingClientRect();
-        // Any visible text outside the card is the rest of the page showing through.
+        const card = document.querySelector('body > .card'), cr = card && card.getBoundingClientRect();
+        const el = card && card.querySelector('.stage canvas, .stage .js-plotly-plot, .stage svg.diagram');
+        // Any visible text outside the card would be something else showing.
         const stray = [...document.body.querySelectorAll('h1,h2,h3,p,label,button,a,input,select')]
-          .filter(e => e.offsetParent !== null && !(f.card && f.card.contains(e)) && !e.closest('.share-list,.share-embed-overlay,[class*="tooltip"],[class*="chart-tip"]'))
+          .filter(e => e.offsetParent !== null && !(card && card.contains(e)) && !e.closest('[class*="chart-tip"]'))
           .map(e => (e.textContent || e.value || e.tagName).trim().slice(0, 30));
-        const ch = f.el && window.Chart && window.Chart.getChart(f.el);
+        const ch = el && el.tagName === 'CANVAS' && window.Chart && window.Chart.getChart(el);
         return {
-          failed: document.documentElement.classList.contains('abt-embed-failed'),
+          failed: document.documentElement.classList.contains('failed'),
           fills: !!cr && cr.top <= 1 && Math.abs(cr.height - innerHeight) <= 2 && Math.abs(cr.width - innerWidth) <= 2,
-          chartTall: f.el ? Math.round(f.el.getBoundingClientRect().height) : 0,
+          chartTall: el ? Math.round(el.getBoundingClientRect().height) : 0,
           stray, light: document.body.classList.contains('light'),
-          zoom: ch ? !!(ch.options.plugins && ch.options.plugins.zoom && ch.options.plugins.zoom.zoom) : !!(f.el && f.el._fullLayout),
+          zoom: ch ? !!(ch.options.plugins && ch.options.plugins.zoom && ch.options.plugins.zoom.zoom) : !!(el && el._fullLayout),
           saved: Object.keys(localStorage).filter(k => /^abt:save:/.test(k)),
           mark: (() => {
-            const m = f.card && f.card.querySelector(':scope > .abt-embed-mark');
+            const m = card && card.querySelector(':scope > .mark');
             if (!m || m.offsetParent === null) return null;
             const r = m.getBoundingClientRect();
             return { href: m.href, text: m.textContent.replace(/\\s+/g, ' ').trim(), logo: !!m.querySelector('svg circle'),
                      px: parseFloat(getComputedStyle(m).fontSize), inFrame: r.bottom <= innerHeight + 1 && r.right <= innerWidth + 1 };
           })(),
-          share: f.cluster ? f.cluster.querySelector('.share-menu').offsetParent !== null : false,
           wide: document.documentElement.scrollWidth > innerWidth + 1,
-          bg: [document.documentElement, document.body, f.card].filter(Boolean).map(e => getComputedStyle(e).backgroundColor),
+          bg: [document.documentElement, document.body, card].filter(Boolean).map(e => getComputedStyle(e).backgroundColor),
         };
       })()`);
       const where = `at ${vp.width}px`;
       // E14: the other site's page sizes the frame to the card: nothing cut,
       // no band of empty frame, and a diagram fills its stage edge to edge
-      // but for its margin (28px, 42 at its largest zoom), rather than
-      // floating in the middle of it (a phone's stage held at its 160px
-      // floor may have a little more to spare).
+      // but for its margin (28px, 42 at its largest zoom).
       const fit = await frame.evaluate(`(() => {
-        const f = (${FIND})(${JSON.stringify(key)});
-        if (!f.card) return null;
-        const out = { inner: innerHeight, content: f.card.scrollHeight };
-        const svg = f.el && f.el.hasAttribute('data-share-chart') && f.el.querySelector('svg');
+        const card = document.querySelector('body > .card');
+        if (!card) return null;
+        const out = { inner: innerHeight, content: card.scrollHeight };
+        const svg = card.querySelector('svg.diagram');
         if (svg) {
-          const vb = svg.viewBox.baseVal, bb = svg.getBBox(), k = svg.clientHeight / vb.height;
-          out.gaps = [Math.round((bb.y - vb.y) * k), Math.round((vb.y + vb.height - bb.y - bb.height) * k)];
+          const vb = svg.viewBox.baseVal, k = Math.min(svg.clientWidth / vb.width, svg.clientHeight / vb.height);
+          const g = [...svg.children].filter(n => { try { const b = n.getBBox(); return b.width < 20000 && b.height < 20000; } catch (e) { return false; } });
+          let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+          g.forEach(n => { const b = n.getBBox(); if (!b.width && !b.height) return; x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height); });
+          const shownH = svg.clientHeight / k;
+          out.gaps = [Math.round((y0 - (vb.y + vb.height / 2 - shownH / 2)) * k), Math.round(((vb.y + vb.height / 2 + shownH / 2) - y1) * k)];
           out.stage = svg.clientHeight;
-          out.cut = bb.x < vb.x - 1 || bb.x + bb.width > vb.x + vb.width + 1 || Math.min(...out.gaps) < -1;
+          out.cut = x0 < vb.x - 1 || x1 > vb.x + vb.width + 1 || Math.min(...out.gaps) < -1;
         }
         return out;
       })()`);
@@ -859,27 +1011,24 @@ for (const spec of PAGES) {
             (!fit.gaps || (!fit.cut && (Math.max(...fit.gaps) <= 50 || (fit.stage <= 165 && Math.max(...fit.gaps) <= 70)))),
             !fit ? 'no card' : `frame ${sized.style || 'not sized'} (${sized.h}px), card ${fit.content}px` +
               (fit.gaps ? `, empty stage above/below ${fit.gaps.join('/')}px of ${fit.stage}px${fit.cut ? ', drawing cut' : ''}` : ''));
-      // As it rests, before the zoom below moves it.
       if (SHOT) await E.page.screenshot({ fullPage: true, path: join(SHOT, `${spec.name}-${key}-${vp.width}`.replace(/[^a-z0-9]+/gi, '_') + '.png') });
-      // A diagram drawn by the tool zooms by the wheel: its viewBox has to move.
+      // A diagram zooms by the wheel: its viewBox has to move.
       const svgZoom = await frame.evaluate(`(async () => {
-        const f = (${FIND})(${JSON.stringify(key)});
-        if (!f.el || !f.el.hasAttribute('data-share-chart')) return null;
-        const svg = f.el.querySelector('svg'), before = svg && svg.getAttribute('viewBox');
-        if (!svg) return false;
-        const r = svg.getBoundingClientRect();
-        svg.dispatchEvent(new WheelEvent('wheel', { deltaY: -240, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, cancelable: true }));
+        const svg = document.querySelector('.card svg.diagram');
+        if (!svg) return null;
+        const before = svg.getAttribute('viewBox'), r = svg.getBoundingClientRect();
+        svg.parentElement.dispatchEvent(new WheelEvent('wheel', { deltaY: -240, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, cancelable: true }));
         await new Promise(res => requestAnimationFrame(() => requestAnimationFrame(res)));
         return svg.getAttribute('viewBox') !== before;
       })()`);
       if (svgZoom !== null) view.zoom = svgZoom;
       check(`${tag} E2 ${where}: the embed opens on its own chart card alone, filling the frame`,
-            ready && !view.failed && view.fills && !view.stray.length && !view.share && !view.wide && view.chartTall >= 160,
+            ready && !view.failed && view.fills && !view.stray.length && !view.wide && view.chartTall >= 160,
             !ready ? 'never finished loading' : view.failed ? 'showed its fallback' :
             view.stray.length ? 'also shows: ' + view.stray.slice(0, 4).join(' / ') : `chart ${view.chartTall}px tall`);
       check(`${tag} E3 ${where}: it draws exactly the data the reader saw, in their theme`,
-            !!want && got === want && view.light === light,
-            got === want ? (light ? 'light' : 'dark') : `drawn ${got ? got.length : 0} chars vs ${want ? want.length : 0}, first difference at ${[...(got || '')].findIndex((c, i) => c !== want[i])}`);
+            !!want && sameDrawing(want, got) && view.light === light,
+            sameDrawing(want, got) ? (light ? 'light' : 'dark') : `drawn ${got ? got.length : 0} chars vs ${want ? want.length : 0}`);
       check(`${tag} E4 ${where}: zoom still works, and the viewer's saved work is left alone`,
             view.zoom && !view.saved.length, view.saved.length ? 'wrote ' + view.saved.join(', ') : '');
       const host = canon.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -890,8 +1039,14 @@ for (const spec of PAGES) {
       check(`${tag} E13 ${where}: the frame has no background of its own`,
             view.bg.every(c => c === 'rgba(0, 0, 0, 0)' || c === 'transparent'), view.bg.join(', '));
       check(`${tag} E5 ${where}: no page errors`, E.errors.length === 0, E.errors.slice(0, 2).join(' | '));
+      // E10: the frame loads the viewer, its libraries, the chart kits and
+      // fonts; nothing of the tool, and no data.
+      const tool = fetched.filter(u => u.startsWith(ORIGIN) && !/\/embed\/|\/chart-kit\.js$|\/(dark|light)\.css$|\/logos\//.test(u.split('?')[0]));
+      check(`${tag} E10 ${where}: the frame fetches nothing of the tool, only the viewer and its libraries`,
+            !tool.length, tool.slice(0, 3).map(u => u.replace(ORIGIN, '')).join(', '));
       if (spec.prices) check(`${tag} E9 ${where}: it draws from the prices in its link and never calls the Worker`,
                              E.worker() === 0, `${E.worker()} Worker request(s)`);
+      if (vp.width === 760) await views(page, tag, key, frame);
       await E.ctx.close();
     }
   }

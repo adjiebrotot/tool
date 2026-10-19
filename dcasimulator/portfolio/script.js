@@ -3386,64 +3386,7 @@ function buildPriceOHLC(closes){
   return { o,h,l,c:closes.slice() };
 }
 
-// Candlestick renderer for the price chart. Draws candles for any visible dataset
-// carrying _ohlc and fits the price y-axis to the visible candles so wicks aren't
-// clipped. Inactive unless the Candlesticks toggle is on, so line mode is untouched.
-const pfCandlePlugin = {
-  id:'pfCandles',
-  afterDataLimits(chart, args){
-    if(!showCandles) return;
-    const scale=args.scale;
-    if(!scale || scale.id!=='y') return;
-    if(!chart.data.datasets.some(ds=>ds._ohlc)) return;   // only the price chart
-    const xs=chart.scales.x;
-    const iMin = xs ? Math.floor(xs.min) : 0;
-    const iMax = xs ? Math.ceil(xs.max) : Infinity;
-    let lo=Infinity, hi=-Infinity;
-    chart.data.datasets.forEach((ds,di)=>{
-      if(!chart.isDatasetVisible(di)) return;
-      if(typeof ds.yAxisID==='string' && ds.yAxisID.indexOf('yOsc_')===0) return;
-      if(ds._ohlc){
-        const {h,l}=ds._ohlc;
-        const end=Math.min(h.length-1,iMax);
-        for(let i=Math.max(0,iMin);i<=end;i++){ if(h[i]!=null&&h[i]>hi)hi=h[i]; if(l[i]!=null&&l[i]<lo)lo=l[i]; }
-      } else {
-        const data=ds.data; const end=Math.min(data.length-1,iMax);
-        for(let i=Math.max(0,iMin);i<=end;i++){ const v=data[i]; if(v==null) continue; if(v>hi)hi=v; if(v<lo)lo=v; }
-      }
-    });
-    if(hi>lo){ const pad=(hi-lo)*0.04; scale.min=lo-pad; scale.max=hi+pad; }
-  },
-  afterDatasetsDraw(chart){
-    if(!showCandles) return;
-    if(!chart.data.datasets.some(ds=>ds._ohlc)) return;
-    const x=chart.scales.x, y=chart.scales.y;
-    if(!x||!y) return;
-    const ctx=chart.ctx, area=chart.chartArea;
-    const step=Math.abs(x.getPixelForValue(1)-x.getPixelForValue(0))||6;
-    const w=Math.max(1, Math.min(step*0.7, 16));
-    ctx.save();
-    ctx.beginPath(); ctx.rect(area.left,area.top,area.right-area.left,area.bottom-area.top); ctx.clip();
-    const ud=upDownColors();
-    chart.data.datasets.forEach((ds,di)=>{
-      if(!ds._ohlc || !chart.isDatasetVisible(di)) return;
-      const {o,h,l,c}=ds._ohlc;
-      for(let i=0;i<c.length;i++){
-        if(c[i]==null||o[i]==null) continue;
-        const px=x.getPixelForValue(i);
-        if(px<area.left-w||px>area.right+w) continue;
-        const up=c[i]>=o[i], col=up?ud.up:ud.down;
-        ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1;
-        ctx.beginPath(); ctx.moveTo(px,y.getPixelForValue(h[i])); ctx.lineTo(px,y.getPixelForValue(l[i])); ctx.stroke();
-        const yO=y.getPixelForValue(o[i]), yC=y.getPixelForValue(c[i]);
-        const top=Math.min(yO,yC), bot=Math.max(yO,yC);
-        ctx.fillRect(px-w/2, top, w, Math.max(1,bot-top));
-      }
-    });
-    ctx.restore();
-  }
-};
-if(window.Chart && Chart.register) Chart.register(pfCandlePlugin);
+// Candlesticks: the simulator's plugin (../chart-kit.js, dcaCandles).
 
 // The "Show Indicators" toggle is only meaningful when the selected portfolio runs
 // the Rule-Based method with at least one technical trigger - hide it otherwise.

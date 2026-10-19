@@ -6,10 +6,11 @@ word or as hyphen-separated words (`capacity-expansion-planner`, never `capacity
 
 ## Change an existing tool with the least damage
 
-A reader's work outlives the version of the tool it was made on. It lives in four places,
-all carrying the same saved state: the mini cache (`Persist`, in their browser), scenario
-files they saved, Share as link URLs and embeds on other sites. Every one of them has to
-keep opening, and keep meaning what it meant, after any change. Upgrades here are nearly
+A reader's work outlives the version of the tool it was made on. It lives in four places:
+the mini cache (`Persist`, in their browser), scenario files they saved and Share as link
+URLs, all three carrying the same saved state, and embeds on other sites, which carry the
+chart drawn from it (below). Every one of them has to keep opening, and keep meaning what
+it meant, after any change. Upgrades here are nearly
 always additive (a new input, a new option) or a merge of inputs that were redundant, so
 write each change as that.
 
@@ -35,6 +36,13 @@ write each change as that.
 - **A changed meaning gets a new key.** If a value changes units or meaning (a percentage
   becomes an amount), save it under a new key and convert the old one in the load. Reusing
   the key would make every old link quietly compute something else.
+- **An embed keeps the names it was drawn with.** An embed is the chart written down as data
+  and drawn by the embed viewer (`embed/`) without the tool, so a change to a tool's inputs
+  or model never reaches it. What it is keyed on is the snapshot's format (`v: 1`, read by
+  `embed/embed.js`), every `ChartKit` name and Chart.js plugin id it carries (`chart-kit.js`,
+  `<tool>/chart-kit.js`) and the `data-embed-mode` views' order in a card. Rename the words,
+  never those names; a piece that changes what it takes registers a new name beside the old;
+  a new snapshot shape is a new `v`, with the viewer still reading `v: 1`.
 - **Never edit or delete what old links need.** `share-dict-*.txt` and the entries in
   `_ref/share-links.json` are frozen: add, never change. A better Share dictionary is the
   next letter (`_ref/share-dict.mjs`).
