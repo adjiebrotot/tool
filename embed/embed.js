@@ -586,8 +586,14 @@
       buildPanels();
       show();
       root.classList.remove('wait');
-      if(global.ResizeObserver) new ResizeObserver(queueSize).observe(card);
-      else global.addEventListener('resize', queueSize);
+      // The card is the frame's height; what grows is inside it (views that
+      // wrap, a key that takes a second row, a font arriving late).
+      if(global.ResizeObserver){
+        var ro = new ResizeObserver(queueSize);
+        [card].concat(Array.prototype.slice.call(card.children)).forEach(function(n){ ro.observe(n); });
+      }
+      global.addEventListener('resize', queueSize);
+      if(doc.fonts && doc.fonts.ready) doc.fonts.ready.then(queueSize);
       queueSize();
     }).catch(function(e){
       if(global.console) console.warn('Embed:', e);

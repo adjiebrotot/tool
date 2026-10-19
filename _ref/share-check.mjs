@@ -734,7 +734,9 @@ async function views(page, tag, key, frame) {
   if (!offered.length) return;
   const tool = await page.evaluate(`(() => {
     const f = (${FIND})(${JSON.stringify(key)}), extra = f.card.getAttribute('data-share-view');
-    const roots = [f.card].concat(extra ? [...document.querySelectorAll(extra)] : []);
+    // In the order SharedShare reads them: the card, with the boxes it names put first.
+    const roots = [f.card];
+    if (extra) document.querySelectorAll(extra).forEach(r => { if (!roots.includes(r)) roots.unshift(r); });
     window.__modes = SharedSnapshot.modes(roots);
     return window.__modes.map(m => ({ kind: m.kind, n: m.opts.length, own: m.get() }));
   })()`);
