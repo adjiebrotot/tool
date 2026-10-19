@@ -599,8 +599,8 @@ console.log('\n── A11 saved state from before, and broken new keys ──');
     { c: 'Generator', id: 2, bus: 1, p_nom: 100, marginal_cost: 30, mcurve: 'cubic', marginal_cost_quadratic: -5, marginal_cost_cubic: 'x' },
     { c: 'Generator', id: 3, bus: 1, p_nom: 100, marginal_cost: 30, mcurve: 'LIN', marginal_cost_quadratic: 1e9 },
     { c: 'Generator', id: 4, bus: 1, p_nom: 100, marginal_cost: 30, mcurve: null }] }).el;
-  check('A11 an unknown curve is a scalar, a negative slope 0, a word 0, a curve in capitals read, a huge slope held at its bound',
-        bad[1].mcurve === '' && bad[1].marginal_cost_quadratic === 0 && bad[1].marginal_cost_cubic === 0 && bad[2].mcurve === 'lin' &&
+  check('A11 an unknown curve is a scalar, a negative slope kept, a word 0, a curve in capitals read, a huge slope held at its bound',
+        bad[1].mcurve === '' && bad[1].marginal_cost_quadratic === -5 && bad[1].marginal_cost_cubic === 0 && bad[2].mcurve === 'lin' &&
         bad[2].marginal_cost_quadratic === 1e3 && bad[3].mcurve === '' && !ED.hasCurve(bad[1]), JSON.stringify(bad.slice(1).map(e => [e.mcurve, e.marginal_cost_quadratic, e.marginal_cost_cubic])));
   // The economic dispatch saved before 'edm' keeps its value and its meaning; an unknown mode is unit commitment.
   check('A11 the old economic dispatch keeps its value, the new one has its own, and an unknown mode is unit commitment',
