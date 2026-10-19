@@ -117,13 +117,31 @@
      inside the demand's, "Demand (▨ Shortfall)", a farm's curtailment inside
      the farm's, "Wind (▨ Curtailed)", so the two wrap as one; a click on
      either shows or hides that one series, and chart.$cxPanes re-lays the
-     panes. */
+     panes. A pair whose series have no entry of their own to lead them is
+     led by pairName alone: a store's charging and discharging, "Battery
+     (▦ Charging ▦ Discharging)", where a click on the name shows or hides
+     both. */
   function renderLegend(legendId, chart, datasets){
     var el = $(legendId);
     if(!el) return;
     el.innerHTML = '';
     var grouped = datasets.some(function(ds){ return !ds.noLegend && ds.group; }), rows = {}, order = [], hosts = {}, subs = [];
     var paren = function(s){ var p = document.createElement('span'); p.className = 'legend-paren'; p.textContent = s; return p; };
+    var subsOf = function(host){ return host.parentNode ? Array.prototype.slice.call(host.parentNode.querySelectorAll('.legend-sub')) : []; };
+    var hiddenAll = function(items){ return items.every(function(it){ return it.classList.contains('hidden'); }); };
+    // A name leading a pair dims as its entries do, when they are all hidden.
+    var dim = function(host){ if(host && host.classList.contains('legend-host')) host.classList.toggle('hidden', hiddenAll(subsOf(host))); };
+    var nameHost = function(name, key){
+      var h = document.createElement('span');
+      h.className = 'legend-host';
+      h.textContent = name;
+      h.setAttribute('data-pair', key);
+      h.addEventListener('click', function(){
+        var items = subsOf(h), show = hiddenAll(items);
+        items.forEach(function(it){ if(it.classList.contains('hidden') === show) it.click(); });
+      });
+      return h;
+    };
     el.classList.toggle('legend-grouped', grouped);
     // A group's entries wrap in a box of their own, so a second line of them
     // starts under the first entry rather than under the group's name.
@@ -154,11 +172,17 @@
         var hidden = !item.classList.contains('hidden');
         item.classList.toggle('hidden', hidden);
         chart.setDatasetVisibility(idx, !hidden);
+        dim(item.$host);
         if(chart.$cxPanes) chart.$cxPanes();
         chart.update();
       });
-      // Its host may come later (the demand comes after the shortfall), so it is keyed once all are in.
-      if(ds.pairOf != null){ subs.push({ item: item, ds: ds }); return; }
+      if(ds.pairOf != null){
+        // A name leads its pair where the pair's first series comes.
+        if(ds.pairName != null && !hosts[ds.pairOf]) rowOf(ds.group || '').appendChild(hosts[ds.pairOf] = nameHost(ds.pairName, ds.pairOf));
+        // Its host may come later (the demand comes after the shortfall), so it is keyed once all are in.
+        subs.push({ item: item, ds: ds });
+        return;
+      }
       SharedLegend.attach(item, SharedLegend.specOf(ds), ds.legendLabel || ds.label);
       if(grouped && ds.group && ds.groupTag !== false){
         var tag = document.createElement('span');
@@ -169,22 +193,32 @@
       if(ds.pair != null){ hosts[ds.pair] = item; item.setAttribute('data-pair', ds.pair); }
       rowOf(ds.group || '').appendChild(item);
     });
+    var inHost = {}, keys = [];
     subs.forEach(function(s){
       var item = s.item, ds = s.ds, host = hosts[ds.pairOf];
       SharedLegend.attach(item, SharedLegend.specOf(ds), host ? ds.pairLabel : ds.label);
       if(!host){ rowOf(ds.group || '').appendChild(item); return; }
       // The exports read data-of to key it the same way, and data-full when its host is not keyed.
+      // A Share link names it by its whole label, which tells two stores' "Charging" apart.
       item.classList.add('legend-sub');
       item.setAttribute('data-of', ds.pairOf);
       item.setAttribute('data-full', ds.label);
+      item.setAttribute('data-legend-key', ds.label);
       item.title = ds.label;
-      item.insertBefore(paren('('), item.firstChild);
-      item.appendChild(paren(')'));
-      var pair = document.createElement('span');
+      item.$host = host;
+      if(!inHost[ds.pairOf]){ inHost[ds.pairOf] = []; keys.push(ds.pairOf); }
+      inHost[ds.pairOf].push(item);
+    });
+    // The host, then its entries inside one pair of brackets.
+    keys.forEach(function(key){
+      var host = hosts[key], items = inHost[key], pair = document.createElement('span');
       pair.className = 'legend-pair';
       host.parentNode.insertBefore(pair, host);
       pair.appendChild(host);
-      pair.appendChild(item);
+      items[0].insertBefore(paren('('), items[0].firstChild);
+      items[items.length - 1].appendChild(paren(')'));
+      items.forEach(function(it){ pair.appendChild(it); });
+      dim(host);
     });
     order.forEach(function(row){ el.appendChild(row); });
   }
@@ -663,12 +697,13 @@
     });
     stores.forEach(function(e){
       var c = colourOf(model, e);
-      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: dotFill(alpha(c, 0.3), c),
-                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id, group: 'Storage', groupTag: false,
-                dots: { fill: alpha(c, 0.3), dot: c } });
+      // Keyed under the store's name, "Battery (▦ Charging ▦ Discharging)", charging first.
       ds.push({ label: CX.nameOf(e) + ' charging', data: ax.spread(res.tech[e.id].p[k], neg), borderColor: c, backgroundColor: dotFill(alpha(c, 0.12), alpha(c, 0.6)),
                 borderWidth: 1.2, borderDash: [4, 3], pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'store', order: 2, kind: 'chg', id: e.id, group: 'Storage', groupTag: false,
-                dots: { fill: alpha(c, 0.12), dot: alpha(c, 0.6) } });
+                pairOf: 'store' + e.id, pairName: CX.nameOf(e), pairLabel: 'Charging', dots: { fill: alpha(c, 0.12), dot: alpha(c, 0.6) } });
+      ds.push({ label: CX.nameOf(e) + ' discharging', data: ax.spread(res.tech[e.id].p[k], pos), borderColor: c, backgroundColor: dotFill(alpha(c, 0.3), c),
+                borderWidth: 1.2, pointRadius: 0, pointHoverRadius: 4, tension: 0, stack: 'gen', order: 2, kind: 'dis', id: e.id, group: 'Storage', groupTag: false,
+                pairOf: 'store' + e.id, pairName: CX.nameOf(e), pairLabel: 'Discharging', dots: { fill: alpha(c, 0.3), dot: c } });
     });
     if(any(res.shed[k])) ds.push(shortfall(ax.spread(res.shed[k]), { stack: 'gen', group: 'Demand', groupTag: false }));
     /* What each farm had and did not use, the way the totals count it (sun
@@ -863,37 +898,44 @@
     return out;
   }
   /* A key's visible entries, with the mark each draws. An entry keyed inside
-     another's (the shortfall, a farm's curtailment) rides in it as sub, so it
-     exports as it reads on the page, "Demand (▨ Shortfall)"; with its host
-     not exported it is an entry of its own under its whole name. */
+     another's (the shortfall, a farm's curtailment, a store's charging and
+     discharging) rides in it among subs, so it exports as it reads on the
+     page, "Demand (▨ Shortfall)"; with its host not exported it is an entry
+     of its own under its whole name. A store's name leads its entries with
+     no mark of its own, and goes when they are all hidden. */
   function keyItems(box){
     var out = [];
-    Array.prototype.forEach.call(box.querySelectorAll('.legend-item:not(.hidden)'), function(el){
+    Array.prototype.forEach.call(box.querySelectorAll('.legend-item:not(.hidden), .legend-host'), function(el){
       var lab = el.querySelector('.legend-label'), spec = null;
-      try { spec = JSON.parse(el.getAttribute('data-swatch')); } catch(e){ spec = null; }
       var label = (lab ? lab.textContent : el.textContent).trim(), prev = out[out.length - 1], of = el.getAttribute('data-of');
+      if(el.classList.contains('legend-host')){ if(label) out.push({ label: label, swatch: null, pair: el.getAttribute('data-pair'), subs: [] }); return; }
+      try { spec = JSON.parse(el.getAttribute('data-swatch')); } catch(e){ spec = null; }
       if(!spec || !label) return;
-      if(of != null && prev && prev.pair === of && !prev.sub){ prev.sub = { swatch: spec, label: label }; return; }
-      out.push({ label: el.getAttribute('data-full') || label, swatch: spec, pair: el.getAttribute('data-pair') });
+      if(of != null && prev && prev.pair === of){ prev.subs.push({ swatch: spec, label: label }); return; }
+      out.push({ label: el.getAttribute('data-full') || label, swatch: spec, pair: el.getAttribute('data-pair'), subs: [] });
     });
-    return out;
+    return out.filter(function(it){ return it.swatch || it.subs.length; });
   }
-  /* One exported entry from x: its swatch and label, and the entry keyed
-     inside it after them, " (▨ Shortfall)". swatch(spec, x) and text(s, x)
-     draw it; without them it is only measured. Returns its width. */
+  /* One exported entry from x: its swatch and label, and the entries keyed
+     inside it after them in one pair of brackets, " (▨ Shortfall)".
+     swatch(spec, x) and text(s, x) draw it; without them it is only
+     measured. Returns its width. */
   function keyEntry(item, x, measure, markW, gap, swatch, text){
-    var x0 = x, lab = item.sub ? item.label + ' (' : item.label;
-    if(swatch) swatch(item.swatch, x);
-    x += markW + gap;
+    var x0 = x, subs = item.subs || [], lab = subs.length ? item.label + ' (' : item.label;
+    if(item.swatch){
+      if(swatch) swatch(item.swatch, x);
+      x += markW + gap;
+    }
     if(text) text(lab, x);
     x += measure(lab);
-    if(item.sub){
-      x += gap / 2;
-      if(swatch) swatch(item.sub.swatch, x);
+    subs.forEach(function(sub, i){
+      var t = sub.label + (i === subs.length - 1 ? ')' : '');
+      x += i ? gap : gap / 2;
+      if(swatch) swatch(sub.swatch, x);
       x += markW + gap;
-      if(text) text(item.sub.label + ')', x);
-      x += measure(item.sub.label + ')');
-    }
+      if(text) text(t, x);
+      x += measure(t);
+    });
     return x - x0;
   }
   // SharedLegend.layout for these entries: as many centred rows as they need.

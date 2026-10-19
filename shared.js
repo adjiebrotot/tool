@@ -3281,6 +3281,11 @@
     }
     function toolCluster(card){ return !!(card && card.querySelector('.btn-cluster[data-share="tool"]')); }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+    /* A key entry is named in a link by its words, or by data-legend-key where
+       its words alone would not tell it apart (two stores' "Charging" inside
+       their names' brackets). A link written before it named itself still
+       finds it by its words. */
+    function legendKey(it){ return it.getAttribute('data-legend-key') || norm(it.textContent); }
     function html(s){ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function attr(s){ return html(s).replace(/"/g, '&quot;'); }
     function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -3765,7 +3770,7 @@
           if(l){ (isOn(b) ? u.on : u.off).push(l); any = true; }
         });
         each(root.querySelectorAll('.legend-item'), function(it){
-          var l = norm(it.textContent);
+          var l = legendKey(it);
           if(l){ u.legend[l] = it.classList.contains('hidden') ? 1 : 0; any = true; }
         });
       });
@@ -3803,7 +3808,8 @@
         var hit = null;
         rootsOf(card).forEach(function(root){
           each(root.querySelectorAll('.legend-item'), function(it){
-            var l = norm(it.textContent);
+            var l = legendKey(it);
+            if(!legend.hasOwnProperty(l)) l = norm(it.textContent);
             if(!hit && legend.hasOwnProperty(l) && !!legend[l] !== it.classList.contains('hidden')) hit = it;
           });
         });
