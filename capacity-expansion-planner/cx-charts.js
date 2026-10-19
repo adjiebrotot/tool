@@ -274,30 +274,8 @@
   function yearTitle(res, cal, i){ return cal.years[i] + (cal.isDec(i) ? ' (decision year)' : ' (' + res.periods[cal.at[i]] + ' decision)'); }
   /* As many years as fit the axis and the part in view: every year, else the
      decision years, else every other (third…) decision year, so the labels
-     never run into each other on a phone. */
-  function yearTicks(cal){
-    return function(scale){
-      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(cal.n - 1, Math.floor(scale.max)), pick = [], i, m = 1;
-      var g = scale.ctx;
-      g.save(); g.font = '700 11px ' + FONT;
-      var each = g.measureText(String(cal.years[cal.n - 1])).width + 10;
-      g.restore();
-      var room = Math.max(2, Math.floor((scale.width || 600) / Math.max(24, each)));
-      if(hi - lo + 1 <= room) for(i = lo; i <= hi; i++) pick.push(i);
-      else {
-        var dec = cal.dec.filter(function(v){ return v >= lo && v <= hi; });
-        while(Math.ceil(dec.length / m) > room) m++;
-        cal.dec.forEach(function(v, j){ if(v >= lo && v <= hi && j % m === 0) pick.push(v); });
-        // Zoomed in between two decision years far apart: the years themselves.
-        if(pick.length < 2){
-          pick = [];
-          m = Math.ceil((hi - lo + 1) / room);
-          for(i = lo; i <= hi; i += m) pick.push(i);
-        }
-      }
-      scale.ticks = pick.map(function(v){ return { value: v }; });
-    };
-  }
+     never run into each other on a phone (CXKit.yearTicks). */
+  function yearTicks(cal){ return CXKit.yearTicks(cal.dec, cal.n, cal.years[cal.n - 1]); }
   // The x axis of a chart by year: the decision years bold and in the text colour.
   function yearScale(cal, muted, text, o){
     var dec = function(c){ return !!(c.tick && cal.isDec(c.tick.value)); };
@@ -312,57 +290,19 @@
       afterBuildTicks: yearTicks(cal)
     };
   }
-  // A faint rule where each decision year starts, behind the data.
-  var PERIOD_PLUGIN = {
-    id: 'cxPeriods',
-    beforeDatasetsDraw: function(chart){
-      var o = chart.config.options.plugins.cxPeriods;
-      if(!o) return;
-      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx;
-      g.save();
-      g.strokeStyle = o.rule; g.lineWidth = 1;
-      o.cal.dec.forEach(function(i){
-        if(!i) return;
-        var px = Math.round(x.getPixelForValue(i + o.shift)) + 0.5;
-        if(px <= area.left + 1 || px >= area.right - 1) return;
-        g.beginPath(); g.moveTo(px, area.top); g.lineTo(px, area.bottom); g.stroke();
-      });
-      g.restore();
-    }
-  };
-  function periods(cal, shift){ return { cal: cal, shift: shift, rule: cssVar('--chart-grid') }; }
+  // A faint rule where each decision year starts, behind the data (CXKit).
+  var PERIOD_PLUGIN = CXKit.PERIOD_PLUGIN;
+  function periods(cal, shift){ return { dec: cal.dec, shift: shift, rule: cssVar('--chart-grid') }; }
   /* Hatching: 45° lines in the colour over a pale fill of it, a tile the
      bars and areas repeat, so the lines run on unbroken from one bar into
      the next. They rise left to right (curtailment, the shortfall), or fall
      with down (the plant in service now), so the two never read as one.
      Drawn at the screen's pixel ratio, like the dots. */
-  function hatchFill(fill, line, down){
-    var n = 6, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
-    cv.width = cv.height = n * k;
-    g.scale(k, k);
-    g.fillStyle = fill; g.fillRect(0, 0, n, n);
-    g.strokeStyle = line; g.lineWidth = 1;
-    g.beginPath();
-    [-n, 0, n].forEach(function(o){ g.moveTo(o, down ? 0 : n); g.lineTo(o + n, down ? n : 0); });
-    g.stroke();
-    var pat = g.createPattern(cv, 'repeat');
-    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
-    return pat;
-  }
+  var hatchFill = ChartKit.hatch;
   /* A dotted fill: dots of the colour over a pale wash of it, so storage
      never reads as one more generator. The tile is drawn at the screen's
      pixel ratio, so the dots stay round and sharp. */
-  function dotFill(fill, dot){
-    var n = 5, k = Math.max(1, Math.ceil(window.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
-    cv.width = cv.height = n * k;
-    g.scale(k, k);
-    g.fillStyle = fill; g.fillRect(0, 0, n, n);
-    g.fillStyle = dot;
-    [[1.25, 1.25], [3.75, 3.75]].forEach(function(p){ g.beginPath(); g.arc(p[0], p[1], 0.95, 0, Math.PI * 2); g.fill(); });
-    var pat = g.createPattern(cv, 'repeat');
-    if(pat && pat.setTransform && root.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
-    return pat;
-  }
+  var dotFill = ChartKit.dots;
   /* A year's bars, each meeting the next: an opaque fill a little wider
      than its bar, so no sliver shows where two meet, and a top edge only
      (EDGE_PLUGIN), so a decision year's years read as one block. hatch is
@@ -376,27 +316,8 @@
     for(var k in o) if(k !== 'hatch') d[k] = o[k];
     return d;
   }
-  /* The top edge of each bar, drawn just after its own bars. A Chart.js
-     border would clip the fill to the border's box, and the overlap that
-     hides the seams with it. */
-  var EDGE_PLUGIN = {
-    id: 'cxEdges',
-    afterDatasetDraw: function(chart, args){
-      var ds = chart.data.datasets[args.index], area = chart.chartArea, g = chart.ctx;
-      if(!ds.edge || args.meta.type !== 'bar') return;
-      g.save();
-      g.beginPath(); g.rect(area.left, area.top - 2, area.right - area.left, area.bottom - area.top + 2); g.clip();
-      g.strokeStyle = ds.edge; g.lineWidth = 1.2;
-      g.beginPath();
-      args.meta.data.forEach(function(el, i){
-        if(!(Math.abs(ds.data[i]) > 1e-9)) return;
-        var p = el.getProps(['x', 'y', 'width']);
-        g.moveTo(p.x - p.width / 2, p.y + 0.6); g.lineTo(p.x + p.width / 2, p.y + 0.6);
-      });
-      g.stroke();
-      g.restore();
-    }
-  };
+  /* The top edge of each bar, drawn just after its own bars (CXKit). */
+  var EDGE_PLUGIN = CXKit.EDGE_PLUGIN;
   // A reference line by year with a point on each decision year only.
   function decLine(label, data, cal, o){
     var d = lineSet(label, data, o);
@@ -429,36 +350,8 @@
 
   /* ── Capacity, and when to build ── */
   /* Each decision year's new build over its bars ("+800 MW"), from the
-     entries still showing, where the years it stands for leave room. */
-  var BUILT_PLUGIN = {
-    id: 'cxBuilt',
-    afterDatasetsDraw: function(chart){
-      var o = chart.config.options.plugins.cxBuilt;
-      if(!o) return;
-      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx, cal = o.cal, sets = chart.data.datasets;
-      g.save();
-      g.beginPath(); g.rect(area.left, 0, area.right - area.left, area.bottom); g.clip();
-      g.font = '600 10.5px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'bottom';
-      g.lineJoin = 'round'; g.lineWidth = 3; g.strokeStyle = o.halo; g.fillStyle = o.text;
-      cal.dec.forEach(function(i){
-        var k = cal.at[i], mw = 0, top = area.bottom;
-        sets.forEach(function(ds, di){
-          if(ds.type !== 'bar' || !chart.isDatasetVisible(di)) return;
-          var el = chart.getDatasetMeta(di).data[i];
-          if(el && ds.data[i] > 1e-6) top = Math.min(top, el.y);
-          if(ds.kind === 'new') mw += o.res.tech[ds.id].built[k];
-        });
-        if(!(mw >= 0.05)) return;
-        var l = Math.max(area.left, x.getPixelForValue(i - 0.5)), r = Math.min(area.right, x.getPixelForValue(i + o.res.years[k] - 0.5));
-        var txt = '+' + F.mw(mw) + ' MW';
-        if(g.measureText(txt).width > r - l - 4) txt = '+' + F.mw(mw);
-        if(g.measureText(txt).width > r - l - 4) return;
-        g.strokeText(txt, (l + r) / 2, top - 3);
-        g.fillText(txt, (l + r) / 2, top - 3);
-      });
-      g.restore();
-    }
-  };
+     entries still showing, where the years it stands for leave room (CXKit). */
+  var BUILT_PLUGIN = CXKit.BUILT_PLUGIN;
   function capChart(res, model, d){
     var cal = calendar(res), labels = cal.years.map(String), ds = [], T = res.totals, techs = techList(model, res);
     // The plant in service now at the foot, what the plan builds above it.
@@ -473,7 +366,7 @@
     ds.push(stepLine('Peak demand', cal.spread(T.peak), cal, { group: 'Demand' }));
     var op = baseOptions({ n: cal.n, onClick: yearClick(cal),
       filter: function(item){ return Math.abs(item.parsed.y) > 1e-6 || item.dataset.kind === 'ref'; },
-      skip: function(x){ return x.kind === 'ref'; },
+      skip: CXKit.skipRef,
       callbacks: {
         title: function(items){ return items.length ? yearTitle(res, cal, items[0].dataIndex) : ''; },
         label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(c.parsed.y) + ' MW'; },
@@ -492,7 +385,9 @@
                  y: { stacked: true, beginAtZero: true, title: axisTitle('Capacity (MW)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.mw(v); } }, grid: { color: grid } } };
       } });
     op.plugins.cxPeriods = periods(cal, -0.5);
-    op.plugins.cxBuilt = { cal: cal, res: res, text: cssVar('--text'), halo: cssVar('--panel') };
+    var built = {};
+    techs.forEach(function(e){ built[e.id] = res.tech[e.id].built; });
+    op.plugins.cxBuilt = { dec: cal.dec, at: cal.at, years: res.years, built: built, text: cssVar('--text'), halo: cssVar('--panel') };
     op.layout = { padding: { top: 16 } };
     make('cap', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'capLegend', [PERIOD_PLUGIN, EDGE_PLUGIN, BUILT_PLUGIN]);
     $('capSub').textContent = 'What is in service each year, storage at its power rating. The plan builds in the decision years, in bold, each standing for the years up to the next' +
@@ -525,7 +420,7 @@
     ds.push(decLine('Demand', gwh(T.energy), cal, { stack: 'load', pair: 'load' }));
     var op = baseOptions({ n: cal.n, onClick: yearClick(cal),
       filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
-      skip: function(x){ return x.kind === 'ref'; },
+      skip: CXKit.skipRef,
       callbacks: {
         title: function(items){ return items.length ? yearTitle(res, cal, items[0].dataIndex) : ''; },
         label: function(c){ return '  ' + c.dataset.label + ': ' + F.gwh(c.parsed.y * 1000) + ' GWh'; },
@@ -573,95 +468,18 @@
     return { n: hourAt.length, gap: gap, hourAt: hourAt, from: from,
              spread: function(a, f){ return hourAt.map(function(t){ return t < 0 ? null : f ? f(a[t]) : a[t]; }); } };
   }
-  /* The hours of the day on the axis, as many as fit its width and the part
-     in view: every hour up to every other day, always on the clock's hours,
-     so the labels never run into each other on a phone. */
-  var STEPS = [1, 2, 3, 6, 12, 24, 48];
-  function clockTicks(ax){
-    return function(scale){
-      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(ax.n - 1, Math.floor(scale.max));
-      var room = Math.max(2, Math.floor((scale.width || 600) / 56)), step = STEPS[STEPS.length - 1];
-      for(var i = 0; i < STEPS.length; i++) if((hi - lo) / STEPS[i] <= room){ step = STEPS[i]; break; }
-      var ticks = [];
-      for(var v = lo; v <= hi; v++){
-        var t = ax.hourAt[v];
-        if(t >= 0 && (step < 24 ? (t % 24) % step === 0 : t % step === 0)) ticks.push({ value: v });
-      }
-      // A label that would stand past the right end of the axis is left off.
-      var px = (scale.width || 600) / Math.max(1, hi - lo);
-      while(ticks.length > 1 && (hi - ticks[ticks.length - 1].value) * px < 18) ticks.pop();
-      if(ticks.length) scale.ticks = ticks;
-    };
-  }
-  /* The axis of a sampling. One day a season: the clock. A weekday and a
-     weekend day: each named under its middle. A week: each day's name at its
-     00:00. Zoomed in to a day or two, any of them shows the clock again (a
-     week's midnights by their day). text holds each tick's label, centre the
-     ticks that sit mid-block, which draw no grid line. */
+  /* The day axis's ticks (CXKit.dayTicks): the clock, a weekday and a weekend
+     day each named under its middle, or a week by its days, as fit its width
+     and the part in view. The labels, their size and which ticks draw no grid
+     line are kept on the scale for the label, font and grid callbacks. */
   function dayTicks(ax, res){
-    var mode = res.sample || 'day', clock = clockTicks(ax), st = { text: {}, centre: {} }, wdAt = [];
+    var wdAt = [];
     res.blocks.forEach(function(b){ for(var t = b.from; t < b.from + b.len; t++) wdAt[t] = ((b.wd || 0) + Math.floor((t - b.from) / 24)) % 7; });
-    st.build = function(scale){
-      var lo = Math.max(0, Math.ceil(scale.min)), hi = Math.min(ax.n - 1, Math.floor(scale.max)), width = scale.width || 600, ticks = [], v, t;
-      st.text = {}; st.centre = {}; st.small = false;
-      if(mode === 'week' && hi - lo > 60){
-        var room = Math.max(2, Math.floor(width / 28)), days = 0;
-        for(v = lo; v <= hi; v++){ t = ax.hourAt[v]; if(t >= 0 && t % 24 === 0) days++; }
-        var step = days <= room ? 1 : days / 2 <= room ? 2 : 7;
-        for(v = lo; v <= hi; v++){
-          t = ax.hourAt[v];
-          if(t >= 0 && t % 24 === 0 && wdAt[t] % step === 0){ ticks.push({ value: v }); st.text[v] = CX.DAYS[wdAt[t]]; }
-        }
-      } else if(mode === 'day2' && hi - lo > 36){
-        res.blocks.forEach(function(b, i){
-          v = ax.from[i] + 12;
-          if(v < lo || v > hi) return;
-          ticks.push({ value: v }); st.text[v] = b.day; st.centre[v] = 1;
-        });
-        // Narrower than the names: shortened, never left out, so a weekend is never read as a weekday.
-        var each = width / Math.max(1, ticks.length);
-        if(each < 58) ticks.forEach(function(k){ st.text[k.value] = each < 34 ? (st.text[k.value] === 'Weekend' ? 'WE' : 'WD') : st.text[k.value] === 'Weekend' ? 'Wkend' : 'Wkday'; });
-        st.small = each < 58;
-      } else {
-        clock(scale);
-        scale.ticks.forEach(function(k){ var h = ax.hourAt[k.value]; st.text[k.value] = mode === 'week' && h % 24 === 0 ? CX.DAYS[wdAt[h]] : two(h % 24) + ':00'; });
-        return;
-      }
-      if(ticks.length) scale.ticks = ticks;
-    };
-    return st;
+    return CXKit.dayTicks({ hourAt: ax.hourAt, from: ax.from, n: ax.n, mode: res.sample || 'day', wdAt: wdAt, days: CX.DAYS,
+                            names: res.blocks.map(function(b){ return b.day; }) });
   }
-  // The typical days named over the plot, one name over the days of a season, with a rule down each gap between seasons.
-  var BLOCK_PLUGIN = {
-    id: 'cxBlocks',
-    afterDatasetsDraw: function(chart){
-      var b = chart.config.options.plugins.cxBlocks;
-      if(!b) return;
-      var x = chart.scales.x, area = chart.chartArea, g = chart.ctx, groups = [];
-      b.blocks.forEach(function(bl, i){
-        var last = groups[groups.length - 1];
-        if(last && last.name === bl.group){ last.to = bl.from + bl.len; return; }
-        groups.push({ name: bl.group, short: bl.short, from: bl.from, to: bl.from + bl.len, first: i });
-      });
-      g.save();
-      g.font = '600 11px "DM Sans", sans-serif';
-      g.textBaseline = 'top';
-      groups.forEach(function(gr, i){
-        var x0 = x.getPixelForValue(gr.from - 0.5), x1 = x.getPixelForValue(gr.to - 0.5);
-        var mid = x.getPixelForValue(gr.from - (b.gap + 1) / 2);
-        if(i > 0 && mid >= area.left && mid <= area.right){
-          g.strokeStyle = b.rule; g.lineWidth = 1; g.setLineDash([3, 3]);
-          g.beginPath(); g.moveTo(mid, area.top); g.lineTo(mid, area.bottom); g.stroke();
-        }
-        if(x1 < area.left || x0 > area.right) return;
-        var l = Math.max(area.left, x0), r = Math.min(area.right, x1), w = r - l, txt = gr.name;
-        g.fillStyle = b.text;
-        if(g.measureText(txt).width > w - 8) txt = gr.short;
-        if(g.measureText(txt).width <= w - 8){ g.textAlign = 'center'; g.fillText(txt, (l + r) / 2, area.top + 4); }
-      });
-      g.restore();
-    }
-  };
+  // The typical days named over the plot, one name over the days of a season, with a rule down each gap between seasons (CXKit).
+  var BLOCK_PLUGIN = CXKit.BLOCK_PLUGIN;
   /* The curtailment pane sits under the typical days, on the same hours,
      while any farm's curtailment is showing in the key (the ED/UC
      Simulator's Dispatch); hide every one and the dispatch has the whole
@@ -749,7 +567,7 @@
       options: (function(){
         var op = baseOptions({ n: ax.n, fitAxes: ['y', 'yCurt'],
           filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'load'; },
-          skip: function(x){ return x.kind === 'load'; },
+          skip: CXKit.skipLoad,
           callbacks: {
             title: function(items){ return items.length ? labels[items[0].dataIndex] : ''; },
             label: function(c){ return '  ' + c.dataset.label + ': ' + F.mw(c.parsed.y) + ' MW'; },
@@ -767,10 +585,9 @@
           scales: function(grid, muted){
             var s = {
               x: { title: axisTitle(AXIS[mode] || AXIS.day, muted),
-                   ticks: { color: muted, maxRotation: 0, autoSkip: false, font: function(){ return { size: ticks.small ? 10 : 11 }; },
-                            callback: function(v){ return ticks.text[v] !== undefined ? ticks.text[v] : two(ax.hourAt[v] % 24) + ':00'; } },
-                   afterBuildTicks: ticks.build,
-                   grid: { color: function(c){ return c.tick && ticks.centre[c.tick.value] ? 'transparent' : grid; } } }
+                   ticks: { color: muted, maxRotation: 0, autoSkip: false, font: CXKit.dayFont, callback: CXKit.dayText(ax.hourAt) },
+                   afterBuildTicks: ticks,
+                   grid: { color: CXKit.dayGrid(grid) } }
             };
             /* The curtailment pane stacks under the dispatch on one canvas:
                Chart.js stacks a group's axes in the order they are defined,
@@ -816,7 +633,7 @@
     var u = cur ? cur + ' m' : 'millions';
     var op = baseOptions({ n: cal.n, onClick: yearClick(cal), fitAxes: ['y', 'y2'],
       filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
-      skip: function(x){ return x.kind === 'ref'; },
+      skip: CXKit.skipRef,
       callbacks: {
         title: function(items){ return items.length ? yearTitle(res, cal, items[0].dataIndex) : ''; },
         label: function(c){ return c.dataset.yAxisID === 'y2' ? '  ' + c.dataset.label + ': ' + F.price(c.parsed.y, cur) + '/MWh' : '  ' + c.dataset.label + ': ' + F.big(c.parsed.y * 1e6, cur); },

@@ -71,6 +71,10 @@
       var lo = +v.$tab[0] || 0, tab = arr(v.$tab[1]) || [];
       return function(ctx){ var t = ctx && ctx.tick ? Math.round(ctx.tick.value) - lo : -1, r = tab[t]; return r == null ? undefined : r; };
     }
+    if(Array.isArray(v.$z) && v.$z.length === 2){
+      var z = v.$z;
+      return function(ctx){ return ctx && ctx.tick && Math.abs(ctx.tick.value) < 1e-9 ? z[0] : z[1]; };
+    }
     if(Array.isArray(v.$seg)){ var seg = v.$seg; return function(ctx){ var r = seg[ctx.p0DataIndex]; return r == null ? undefined : r; }; }
     var o = {};
     Object.keys(v).forEach(function(k){
@@ -196,8 +200,51 @@
   }
 
   /* ── The key ── */
-  function buildLegend(entries, onToggle){
+  // One entry of the key: its swatch and words, pressed to show or hide its series.
+  function legendItem(e, onToggle){
+    if(Object.prototype.hasOwnProperty.call(legendOff, e.l)) e.off = legendOff[e.l];
+    var it = el('button', 'legend-item' + (e.off ? ' hidden' : ''));
+    it.type = 'button';
+    if(!(e.ds && e.ds.length)){ it.disabled = true; it.classList.add('static'); }
+    if(e.pre) it.appendChild(el('span', 'legend-paren', e.pre));
+    var sw = el('span');
+    sw.innerHTML = global.SharedLegend.swatchHtml(global.SharedLegend.spec(e.sw || {}));
+    it.appendChild(sw.firstChild);
+    it.appendChild(el('span', 'legend-label', e.l));
+    if(e.post) it.appendChild(el('span', 'legend-paren', e.post));
+    if(e.sr) it.appendChild(el('span', 'vh', ' ' + e.sr));
+    it.setAttribute('aria-pressed', e.off ? 'false' : 'true');
+    it.addEventListener('click', function(){
+      e.off = e.off ? 0 : 1;
+      legendOff[e.l] = e.off;
+      it.classList.toggle('hidden', !!e.off);
+      it.setAttribute('aria-pressed', e.off ? 'false' : 'true');
+      onToggle(e);
+    });
+    return it;
+  }
+  // The key laid out as the tool laid it out: its boxes by class, its words as text.
+  function legendNode(t, entries, onToggle){
+    if(typeof t === 'string') return doc.createTextNode(t + ' ');
+    if(!t || typeof t !== 'object') return null;
+    if(typeof t.i === 'number') return entries[t.i] ? legendItem(entries[t.i], onToggle) : null;
+    var n = el('span', String(t.c || '').replace(/[^\w\s-]/g, ''));
+    (Array.isArray(t.k) ? t.k : []).forEach(function(k){ var c = legendNode(k, entries, onToggle); if(c) n.appendChild(c); });
+    return n;
+  }
+  function buildLegend(entries, onToggle, tree){
     legendBox.textContent = '';
+    legendBox.classList.remove('grouped', 'tree');
+    if(tree && entries && entries.length){
+      var root = legendNode(tree, entries, onToggle);
+      if(root){
+        legendBox.classList.add('tree');
+        Array.prototype.slice.call(root.childNodes).forEach(function(c){ legendBox.appendChild(c); });
+        root.className.split(/\s+/).forEach(function(c){ if(c) legendBox.classList.add(c); });
+        legendBox.hidden = false;
+        return;
+      }
+    }
     var grouped = (entries || []).some(function(e){ return e.g; }), groups = {};
     legendBox.classList.toggle('grouped', grouped);
     function home(e){
@@ -210,25 +257,7 @@
       }
       return groups[name];
     }
-    (entries || []).forEach(function(e, i){
-      if(Object.prototype.hasOwnProperty.call(legendOff, e.l)) e.off = legendOff[e.l];
-      var it = el('button', 'legend-item' + (e.off ? ' hidden' : ''));
-      it.type = 'button';
-      if(!(e.ds && e.ds.length)){ it.disabled = true; it.classList.add('static'); }
-      var sw = el('span');
-      sw.innerHTML = global.SharedLegend.swatchHtml(global.SharedLegend.spec(e.sw || {}));
-      it.appendChild(sw.firstChild);
-      it.appendChild(el('span', 'legend-label', e.l));
-      it.setAttribute('aria-pressed', e.off ? 'false' : 'true');
-      it.addEventListener('click', function(){
-        e.off = e.off ? 0 : 1;
-        legendOff[e.l] = e.off;
-        it.classList.toggle('hidden', !!e.off);
-        it.setAttribute('aria-pressed', e.off ? 'false' : 'true');
-        onToggle(e);
-      });
-      home(e).appendChild(it);
-    });
+    (entries || []).forEach(function(e){ home(e).appendChild(legendItem(e, onToggle)); });
     legendBox.hidden = !legendBox.children.length;
   }
 
@@ -290,7 +319,7 @@
     buildLegend(f.legend, function(e){
       e.ds.forEach(function(d){ if(d < chart.data.datasets.length) chart.setDatasetVisibility(d, !e.off); });
       chart.update();
-    });
+    }, f.legendTree);
     (f.legend || []).forEach(function(e){
       if(e.off) (e.ds || []).forEach(function(d){ if(d < chart.data.datasets.length) chart.setDatasetVisibility(d, false); });
     });

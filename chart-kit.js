@@ -98,7 +98,40 @@
     };
   }
 
+  /* ── Fills a key can name ──
+     Two tiles a chart fills an area or a bar with, so that it never reads as
+     one more solid series: 45° hatching (rising left to right, or falling
+     with down) and staggered dots, each in a colour over a pale wash of it,
+     drawn at the screen's pixel ratio so the lines stay crisp and the dots
+     round. Made by name, so a shared chart carries the fill, not a picture. */
+  function tile(n, paint){
+    var k = Math.max(1, Math.ceil(global.devicePixelRatio || 1)), cv = document.createElement('canvas'), g = cv.getContext('2d');
+    cv.width = cv.height = n * k;
+    g.scale(k, k);
+    paint(g, n);
+    var pat = g.createPattern(cv, 'repeat');
+    if(pat && pat.setTransform && global.DOMMatrix) pat.setTransform(new DOMMatrix().scale(1 / k));
+    return pat;
+  }
+  var hatch = make('kit.hatch', function(fill, line, down){
+    return tile(6, function(g, n){
+      g.fillStyle = fill; g.fillRect(0, 0, n, n);
+      g.strokeStyle = line; g.lineWidth = 1;
+      g.beginPath();
+      [-n, 0, n].forEach(function(o){ g.moveTo(o, down ? 0 : n); g.lineTo(o + n, down ? n : 0); });
+      g.stroke();
+    });
+  });
+  var dots = make('kit.dots', function(fill, dot){
+    return tile(5, function(g, n){
+      g.fillStyle = fill; g.fillRect(0, 0, n, n);
+      g.fillStyle = dot;
+      [[1.25, 1.25], [3.75, 3.75]].forEach(function(p){ g.beginPath(); g.arc(p[0], p[1], 0.95, 0, Math.PI * 2); g.fill(); });
+    });
+  });
+
   global.ChartKit = {
+    hatch: hatch, dots: dots,
     fn: fn, make: make, plugin: plugin, refOf: refOf, revive: revive,
     formatTick: formatTick, tickCallback: tickCallback,
     pluginOf: function(id){ return PLUGINS.hasOwnProperty(id) ? PLUGINS[id] : null; },

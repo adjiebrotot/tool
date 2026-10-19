@@ -84,10 +84,21 @@
   // A ChartKit name, with a factory's arguments as data (long ones pooled).
   function kitRef(r){
     if(!r.a) return { n: r.n };
-    return { n: r.n, a: r.a.map(function(x){
-      var f = freeze(x, '', null);
-      return Array.isArray(f) && f.length > 8 && POOL ? POOL.ref(f) : f;
-    }) };
+    return { n: r.n, a: r.a.map(function(x){ return pooled(freeze(x, '', null)); }) };
+  }
+
+  // Long runs of numbers anywhere in a value go to the pool.
+  function pooled(v){
+    if(Array.isArray(v)){
+      if(v.length > 8 && POOL && v.every(function(x){ return typeof x === 'number' || x === null; })) return POOL.ref(v);
+      return v.map(pooled);
+    }
+    if(v && typeof v === 'object' && !v.$p && !v.$k){
+      var o = {};
+      Object.keys(v).forEach(function(k){ o[k] = pooled(v[k]); });
+      return o;
+    }
+    return v;
   }
 
   /* ── Undo what the page does while it is read ──
@@ -165,11 +176,15 @@
         for(var v = Math.ceil(lo / step) * step, n = 0; v <= hi && n < 60; v += step, n++) add(v);
       }
     }
-    var three = [{ value: 0 }, { value: 1 }, { value: 2 }];
+    /* The axis's own ticks go with every value asked, as Chart.js passes
+       them: a callback that picks its decimals from the spacing of the ticks
+       answers as it does on the view the chart opens on. */
+    var real = scale.ticks && scale.ticks.length > 2 ? scale.ticks.map(function(t){ return { value: t.value }; }) : null;
+    var three = real || [{ value: 0 }, { value: 1 }, { value: 2 }], last = three.length - 1;
     var outs = probes.map(function(v){ return callTick(cb, scale, v, 0, three); });
     // A callback that blanks the last label of the axis (so it never runs
     // into the axis title) does it for every value.
-    var hideLast = probes.slice(0, 12).every(function(v, i){ return outs[i] === null || callTick(cb, scale, v, 2, three) === ''; }) &&
+    var hideLast = probes.slice(0, 12).every(function(v, i){ return outs[i] === null || callTick(cb, scale, v, last, three) === ''; }) &&
                    outs.some(function(o){ return o; });
     var parsed = probes.map(function(v, i){ return readLabel(v, outs[i]); });
     var buckets = {}, zero = null;
@@ -288,7 +303,15 @@
       Object.keys(o).forEach(function(k){
         var f = o[k];
         if(typeof f !== 'function' || K.refOf(f) || (part === 'ticks' && k === 'callback') || (part === 'grid' && /^tick(Width|Color)$/.test(k))) return;
-        if(!(isFinite(lim.lo) && isFinite(lim.hi) && lim.hi - lim.lo <= 6000)){ warn.push('options.scales.' + scale.id + '.' + part + '.' + k); return; }
+        var target0 = opts.scales && opts.scales[scale.id];
+        if(!(isFinite(lim.lo) && isFinite(lim.hi) && lim.hi - lim.lo <= 6000)){
+          // A wide numeric axis: a look that only changes at zero (the zero
+          // line drawn stronger) is kept as that; anything else is reported.
+          var z = zeroOnly(f, chart, scale, lim);
+          if(z && target0){ target0[part] = target0[part] || {}; target0[part][k] = { $z: z }; }
+          else warn.push('options.scales.' + scale.id + '.' + part + '.' + k);
+          return;
+        }
         var lo = Math.floor(lim.lo), tab = [];
         for(var v = lo, i = 0; v <= Math.ceil(lim.hi); v++, i++){
           var r;
@@ -302,6 +325,23 @@
         target[part][k] = { $tab: [lo, pool.ref(tab)] };
       });
     });
+  }
+
+  function zeroOnly(f, chart, scale, lim){
+    var call = function(v){
+      try { return JSON.stringify(freeze(f({ chart: chart, scale: scale, tick: { value: v }, index: 0, type: 'tick' }, scale.options), '', null)); }
+      catch(e){ return 'x'; }
+    };
+    var at0 = call(0), rest = null, ok = true, span = lim.hi - lim.lo;
+    for(var i = 0; i <= 40 && ok; i++){
+      [lim.lo + span * i / 40, -(i + 1) * Math.pow(10, i % 9), (i + 1) * Math.pow(10, i % 9)].forEach(function(v){
+        if(!ok || Math.abs(v) < 1e-12) return;
+        var r = call(v);
+        if(rest === null) rest = r; else if(r !== rest) ok = false;
+      });
+    }
+    if(!ok || rest === null || at0 === 'x' || rest === 'x' || at0 === undefined) return null;
+    return [JSON.parse(at0), JSON.parse(rest)];
   }
 
   // Which data-element options a scriptable dataset property stands for.
@@ -352,7 +392,9 @@
     return chart.data.datasets.map(function(ds, d){
       var o = {};
       Object.keys(ds).forEach(function(k){
-        if(k === 'data' || k.charAt(0) === '_' || k.charAt(0) === '$') return;
+        // A tool may keep its own data on a dataset (_ohlc for the candles);
+        // only Chart.js's own bookkeeping stays behind.
+        if(k === 'data' || k === '_chartjs' || k === '_meta' || k.charAt(0) === '$') return;
         var v = ds[k];
         if(k === 'segment' && v && typeof v === 'object'){ o.segment = bakeSegment(chart, d, ds, v); return; }
         if(typeof v === 'function' && !K.refOf(v)){
@@ -360,7 +402,7 @@
           if(r !== undefined) o[k] = r; else warn.push('datasets.' + d + '.' + k);
           return;
         }
-        var f = freeze(v, 'datasets.' + d + '.' + k, function(fn, path){ warn.push(path); });
+        var f = pooled(freeze(v, 'datasets.' + d + '.' + k, function(fn, path){ warn.push(path); }));
         if(f !== undefined) o[k] = f;
       });
       o.data = pool.ref(freeze(ds.data || [], '', null) || []);
@@ -559,6 +601,18 @@
       return items.map(function(it){
         var key = legendKey(it), labelEl = it.querySelector('.legend-label');
         var entry = { l: norm(labelEl ? labelEl.textContent : it.textContent), off: it.classList.contains('hidden') ? 1 : 0, ds: [] };
+        // Words the entry carries beside its swatch and label (a bracket).
+        var sw0 = it.querySelector('.legend-swatch'), pre = '', post = '', sr = '';
+        each(it.childNodes, function(n){
+          if(n === sw0 || n === labelEl || (n.contains && (n.contains(sw0) || n.contains(labelEl)))) return;
+          var t = n.textContent || '';
+          // Words for a screen reader only ("(existing)") stay for one.
+          if(n.nodeType === 1 && n.getBoundingClientRect().width <= 1){ sr += t; return; }
+          if(labelEl && (labelEl.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING)) post += t; else pre += t;
+        });
+        if(norm(pre)) entry.pre = norm(pre);
+        if(norm(post)) entry.post = norm(post);
+        if(norm(sr)) entry.sr = norm(sr);
         // A key in groups (flows, balances) keeps its group's name.
         var grp = it.closest('.legend-group'), gl = grp && grp.querySelector('.legend-group-label');
         if(gl) entry.g = norm(gl.textContent);
@@ -582,6 +636,32 @@
         return entry;
       });
     });
+  }
+
+  /* The key's layout: the box that holds every entry, written as a tree of
+     its divs and spans (their classes and words), each entry by its place
+     in the list. Groups, pairs and brackets come through as the tool laid
+     them out; the viewer styles them by class. */
+  function legendTree(roots){
+    var items = [];
+    roots.forEach(function(r){ each(r.querySelectorAll('.legend-item'), function(it){ items.push(it); }); });
+    if(!items.length) return null;
+    var box = items[0].parentElement;
+    while(box && !items.every(function(it){ return box.contains(it); })) box = box.parentElement;
+    if(!box) return null;
+    var up = box.closest('.legend');
+    if(up) box = up;
+    function walk(n){
+      if(n.nodeType === 3) return /\S/.test(n.data) ? norm(n.data) : null;
+      if(n.nodeType !== 1 || !/^(DIV|SPAN|P)$/.test(n.tagName) || n.hidden) return null;
+      var at = items.indexOf(n);
+      if(at >= 0) return { i: at };
+      var c = Array.prototype.filter.call(n.classList, function(k){ return /^[a-z][\w-]{0,40}$/.test(k); }).join(' ');
+      var kids = [];
+      each(n.childNodes, function(k){ var t = walk(k); if(t != null) kids.push(t); });
+      return kids.length ? { c: c, k: kids } : null;
+    }
+    return walk(box);
   }
 
   /* ══ Views the card offers ══════════════════════════════════════════════
@@ -769,6 +849,7 @@
       if(kind === 'chartjs'){
         var f = chartjsFrame(cur, pool, warn);
         f.legend = legendOf(o.roots, cur, o.legendKey);
+        if(f.legend) f.legendTree = legendTree(o.roots);
         // Above the chart or under it, where the tool has it.
         var first = null;
         o.roots.forEach(function(r){ if(!first) first = r.querySelector('.legend-item'); });
