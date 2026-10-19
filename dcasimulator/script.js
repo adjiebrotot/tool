@@ -3077,9 +3077,6 @@ function endpointRowHtml(d, label){
 function renderDetailTable(idx){
   const res=simResults[idx];
   if(!res) return;
-  const note=$('detailUnitNote');
-  if(note) note.textContent=(currentCurrencySymbol ? 'Amounts in '+currentCurrencySymbol+'.' : 'Amounts in the currency of the prices.')+
-    ' One row per buy, between the first and the last trading day.';
   const tbody=$('detailBody');
   if(!res.investRows.length){ tbody.innerHTML='<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px">No investment dates in range.</td></tr>'; return; }
   const daily=res.dailyRows;
@@ -3600,7 +3597,7 @@ function initializeDefaultSecurities(){
 /* The breakdown table is the most specific thing on the page, so it opens
    closed behind its chevron; the CSV button exports it either way. */
 if(window.SharedFold) SharedFold.attach(document.querySelector('main .detail-section'),
-  { key:'dcasimulator', bodies:['#detailUnitNote','.table-wrap'] });
+  { key:'dcasimulator', bodies:['.table-wrap'] });
 renderAssumptions();
 
 // Restore any previously cached price history so reloads/return visits cost

@@ -1192,8 +1192,8 @@ const solvedP = page => page.waitForFunction(() => window.__ed && window.__ed.ap
              first: rows[0] && rows[0].cells[0].textContent, last: rows[rows.length - 1] && rows[rows.length - 1].cells[0].textContent, n: rows.length,
              sub: document.getElementById('sldSub').textContent, maxDays: document.getElementById('edSpan').max };
   });
-  check('B8 30 days from 01/07/2026: solved, every hour dated in the table, the diagram and its subtitle', r.ok && r.T === 720 && r.n === 720 && r.first === '01/07/2026 00:00' &&
-    r.last === '30/07/2026 23:00' && r.out === '30/07/2026 23:00' && r.sub.includes('30/07/2026 23:00') && r.maxDays === '30' && !errs.length, JSON.stringify(r).slice(0, 220));
+  check('B8 30 days from 01/07/2026: solved, every hour dated in the table and the diagram, and not restated under it', r.ok && r.T === 720 && r.n === 720 && r.first === '01/07/2026 00:00' &&
+    r.last === '30/07/2026 23:00' && r.out === '30/07/2026 23:00' && !r.sub.includes('23:00') && r.maxDays === '30' && !errs.length, JSON.stringify(r).slice(0, 220));
 }
 // A mini cache from before the horizon became a number and a unit keeps its horizon and its weekdays.
 {

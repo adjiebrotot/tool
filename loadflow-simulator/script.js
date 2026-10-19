@@ -393,18 +393,23 @@
 
   /* ── Results ── */
   var F = LF.fmt;
+  /* The line under the diagram says only what the metrics do not: a run that
+     failed, a warning in Checks, work in progress. An export, which goes out
+     without the metrics, carries how it was solved instead. */
   function setSub(t){ $('sldSub').textContent = t; }
+  var exportSub = '';
   function esc(s){ return LF.esc(s); }
   function name(id){ var e = LF.byId(app.model)[id]; return e ? LF.nameOf(e) : '?'; }
   function showResults(){
     var res = app.res, r = res && res.report;
     var d = display();
     ['mConv', 'mLoss', 'mVolt', 'mLoad'].forEach(function(id){ $(id).classList.remove('neg'); });
+    exportSub = '';
     if(!r) return;
     // A run that could not solve says why in the Load flow metric.
     if(r.blocked || !r.ok){
       var why = r.blocked ? r.blocked.map(function(x){ return x.msg; }).join(' ') : (r.error || 'No result.');
-      setSub(r.blocked ? 'Not solved: the network has ' + (r.blocked.length === 1 ? 'a problem' : 'problems') + ' to fix first.' : 'Not solved.');
+      setSub(exportSub = r.blocked ? 'Not solved: the network has ' + (r.blocked.length === 1 ? 'a problem' : 'problems') + ' to fix first.' : 'Not solved.');
       clearKpis();
       $('mConv').textContent = r.blocked ? 'Fix ' + (r.blocked.length === 1 ? 'one problem' : r.blocked.length + ' problems') : 'Not solved';
       $('mConv').classList.add('neg');
@@ -426,14 +431,14 @@
     brs.forEach(function(e){ var l = res.br[e.id].load; if(isFinite(l) && (!top || l > res.br[top.id].load)) top = e; });
     var over = brs.filter(function(e){ var l = res.br[e.id].load; return isFinite(l) && l > d.loadMax + 1e-9; });
     var bad = !r.converged;
-    var ms = r.ms < 1 ? '<1 ms' : Math.round(r.ms) + ' ms';
     // The checks' warnings are part of the answer: a load left out or a mismatched
     // voltage changes what the numbers mean.
     var warns = (res.validation && res.validation.warnings) || [];
-    var warnTxt = warns.length ? ' ' + (warns.length === 1 ? 'One warning' : warns.length + ' warnings') + ' in Checks.' : '';
+    var warnTxt = warns.length ? (warns.length === 1 ? 'One warning' : warns.length + ' warnings') + ' in Checks.' : '';
     var linkLoss = brs.reduce(function(a, e){ return e.c === 'Link' ? a + res.br[e.id].loss : a; }, 0);
     if(bad){
-      setSub('AC load flow, Newton-Raphson, did not converge. Solved by PSA.js in ' + ms + '.' + warnTxt);
+      exportSub = 'AC load flow, Newton-Raphson, did not converge.';
+      setSub('Did not converge.' + (warnTxt ? ' ' + warnTxt : ''));
       clearKpis();
       $('mConv').textContent = 'Not converged';
       $('mConv').classList.add('neg');
@@ -441,8 +446,8 @@
       renderTable(); renderAssumptions();
       return;
     }
-    setSub((ac ? 'AC load flow, Newton-Raphson' : 'DC load flow') + (bad ? ', did not converge' : ac ? ', converged in ' + r.iters + ' iteration' + (r.iters === 1 ? '' : 's') : '') +
-           (ac && !bad ? '. Losses ' + F.p(t.loss) + ' MW.' : '.') + ' Solved by PSA.js in ' + ms + '.' + warnTxt);
+    exportSub = (ac ? 'AC load flow, Newton-Raphson, converged in ' + r.iters + ' iteration' + (r.iters === 1 ? '' : 's') + '. Losses ' + F.p(t.loss) + ' MW.' : 'DC load flow.');
+    setSub(warnTxt);
     // KPIs
     $('mConv').textContent = bad ? 'Not converged' : ac ? r.iters + ' iteration' + (r.iters === 1 ? '' : 's') : 'DC, linear';
     if(bad) $('mConv').classList.add('neg');
@@ -473,7 +478,7 @@
     var ac = res && res.report.method === 'ac';
     if(tableKind === 'bus'){
       head = ['Bus', 'Nominal kV', 'V p.u.', 'V kV', 'Angle °', 'P MW', 'Q MVAr', 'Type', 'Island'];
-      units = 'Voltages in per unit and kV, angles in degrees. P and Q are the net power each bus takes in from its sources and loads.';
+      units = 'P and Q are the net power each bus takes in.';
       m.el.forEach(function(e){
         if(e.c !== 'Bus') return;
         var r = res && res.bus[e.id];
@@ -483,7 +488,7 @@
       });
     } else if(tableKind === 'branch'){
       head = ['Branch', 'Kind', 'From', 'To', 'P from MW', 'Q from MVAr', 'P to MW', 'Q to MVAr', 'Losses MW', 'Loading %', 'Current kA'];
-      units = 'Power in MW and MVAr flowing into the branch at each end, so the two ends add up to the losses.';
+      units = 'Power flowing into the branch at each end.';
       m.el.forEach(function(e){
         if(!LF.BRANCH[e.c]) return;
         var r = res && res.br[e.id];
@@ -494,7 +499,7 @@
       });
     } else {
       head = ['Device', 'Kind', 'Bus', 'P MW', 'Q MVAr', 'cos φ'];
-      units = 'Sources and storage are positive when supplying, loads when drawing. A shunt shows the reactive power it supplies.';
+      units = 'Positive when a source supplies or a load draws.';
       m.el.forEach(function(e){
         if(!LF.DEVICE[e.c]) return;
         var r = res && res.dev[e.id];
@@ -1228,7 +1233,7 @@
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   }
   // The export's subtitle is the run summary without its timing, which changes on every run.
-  function exportCtx(){ return { app: app, LF: LF, display: display(), res: shownResults(), stale: isStale(), title: app.model.name || 'Load flow', sub: $('sldSub').textContent.replace(/ Solved by PSA\.js in .*$/, '') }; }
+  function exportCtx(){ return { app: app, LF: LF, display: display(), res: shownResults(), stale: isStale(), title: app.model.name || 'Load flow', sub: exportSub }; }
   function busy(on, text){ setSub(on ? text : ''); if(!on && app.res) showResults(); }
   $('svgBtn').addEventListener('click', function(){ exporter().then(function(X){ download(X.svgBlob(exportCtx()), 'svg'); }); });
   $('pngBtn').addEventListener('click', function(){ exporter().then(function(X){ return X.pngBlob(exportCtx()); }).then(function(b){ download(b, 'png'); }); });
@@ -1330,5 +1335,5 @@
   // The guided tour (tour.js) points at the results, so a network that changed
   // since its last run is solved first. It never edits the diagram.
   window.__LF_TOUR = { ensureResults: function(){ if(!running && isStale()) return run(); } };
-  window.__lf = { app: app, LF: LF, run: run, engine: engine, applyPreset: applyPreset, display: display, solveOptions: solveOptions };
+  window.__lf = { app: app, LF: LF, run: run, engine: engine, applyPreset: applyPreset, display: display, solveOptions: solveOptions, exportCtx: exportCtx };
 })();

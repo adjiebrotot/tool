@@ -322,7 +322,6 @@
         <button class="btn-secondary btn-sm btn-icon" id="dispZoomBtn" title="Reset zoom">⟳</button>
       </div>
     </div>
-    <div class="sub" id="dispSub"></div>
     <div class="legend" id="dispLegend" data-no-abbr></div>
     <div class="canvas-wrap"><canvas id="dispCanvas"></canvas></div>
     <div class="hover-box" id="dispHover">Hover to read an hour. Click to show it on the diagram.</div>
@@ -338,7 +337,7 @@
         <button class="btn-secondary btn-sm btn-icon" id="priceZoomBtn" title="Reset zoom">⟳</button>
       </div>
     </div>
-    <div class="sub" id="priceSub"></div>
+    <div class="sub" id="priceSub" hidden></div>
     <div class="legend" id="priceLegend" data-no-abbr></div>
     <div class="canvas-wrap"><canvas id="priceCanvas"></canvas></div>
     <div class="hover-box" id="priceHover">Hover to read an hour. Click to show it on the diagram.</div>
@@ -354,7 +353,6 @@
         <button class="btn-secondary btn-sm btn-icon" id="commitZoomBtn" title="Reset zoom">⟳</button>
       </div>
     </div>
-    <div class="sub" id="commitSub"></div>
     <div class="legend" id="commitLegend" data-no-abbr></div>
     <div class="canvas-wrap commit-wrap"><canvas id="commitCanvas"></canvas></div>
     <div class="hover-box" id="commitHover">Hover to read a unit's hour. Click to show it on the diagram.</div>
@@ -370,7 +368,6 @@
         <button class="btn-secondary btn-sm btn-icon" id="storeZoomBtn" title="Reset zoom">⟳</button>
       </div>
     </div>
-    <div class="sub" id="storeSub"></div>
     <label class="viewbar-field store-pick" id="storePickWrap" hidden>Storage unit
       <select class="sel-input" id="storePick" data-embed-mode></select>
     </label>

@@ -3088,7 +3088,7 @@ function renderTable(res){
   $('tableWrap').innerHTML =
     '<table><thead><tr><th>Year</th><th>Age</th><th>Balance</th><th>Income</th><th>Expense</th>' +
     '<th>Saved / drawn</th><th>Growth</th></tr></thead><tbody>' + rows + '</tbody></table>';
-  $('tableSub').innerHTML = escapeHtml(fmt.symbol) + ' in ' + moneyMode(res) + ', a year per row.' +
+  $('tableSub').innerHTML = escapeHtml(fmt.symbol) + ' in ' + moneyMode(res) + '.' +
     info('Balance is the pot AT that age; the other columns are the twelve months after it. ' +
          (res.ui.savingsMode === 'income'
            ? 'Income is what you entered.'

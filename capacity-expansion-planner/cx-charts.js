@@ -390,8 +390,6 @@
     op.plugins.cxBuilt = { dec: cal.dec, at: cal.at, years: res.years, built: built, text: cssVar('--text'), halo: cssVar('--panel') };
     op.layout = { padding: { top: 16 } };
     make('cap', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'capLegend', [PERIOD_PLUGIN, EDGE_PLUGIN, BUILT_PLUGIN]);
-    $('capSub').textContent = 'What is in service each year, storage at its power rating. The plan builds in the decision years, in bold, each standing for the years up to the next' +
-      (T.built >= 0.05 ? ', with what each builds over its bars' : ', and here builds nothing') + '. Click a year for its typical days.';
   }
 
   /* ── Energy by source ── */
@@ -437,9 +435,6 @@
       } });
     op.plugins.cxPeriods = periods(cal, 0);
     make('energy', { type: 'line', data: { labels: labels, datasets: ds }, options: op }, 'energyLegend', [PERIOD_PLUGIN]);
-    var stores = model.tech.some(function(e){ return e.kind === 'store' && res.tech[e.id] && any(res.tech[e.id].gen); });
-    $('energySub').textContent = 'Each year’s energy by source, a decision year standing for the years up to the next.' +
-      (stores ? ' Storage counts what it gives back, so its losses stand the area a little above demand.' : '') + ' Click a year to see its typical days below.';
   }
 
   /* ── Typical days: one decision year, hour by hour ── */
@@ -484,7 +479,6 @@
      while any farm's curtailment is showing in the key (the ED/UC
      Simulator's Dispatch); hide every one and the dispatch has the whole
      chart back. The caller updates the chart. */
-  var CURT_SUB = ' Under them, the sun and wind the plan had and did not use (curtailed).';
   function dayPanes(chart){
     var sc = chart.options.scales, wrap = chart.canvas && chart.canvas.parentElement;
     if(!sc.yCurt) return;
@@ -493,7 +487,6 @@
     // Chart.js scales an axis by its weight in a stack or out of one, so it only has one in it.
     sc.y.stackWeight = curt ? 3 : 1;
     sc.yCurt.display = curt;
-    $('daySub').textContent = chart.$cxSub[0] + (curt ? CURT_SUB : '') + chart.$cxSub[1];
     if(wrap && wrap.classList.contains('has-curt') !== curt){
       wrap.classList.toggle('has-curt', curt);
       chart.resize();
@@ -614,9 +607,6 @@
       })()
     }, 'dayLegend', [BLOCK_PLUGIN, SharedPane.plugin]);
     ch.options.scales.y.stacked = true;
-    var over = { day: 'its typical days', day2: 'a weekday and a weekend day of each season', week: 'a typical week of each season' }[mode] || 'its typical days';
-    ch.$cxSub = [year + ' hour by hour over ' + over + ', cheapest to run at the bottom' + (stores.length ? ', storage charging below zero' : '') + '.', ' Pick another year above the chart.'];
-    $('daySub').textContent = ch.$cxSub[0] + (curts ? CURT_SUB : '') + ch.$cxSub[1];
     ch.$cxPanes = function(){ dayPanes(ch); };
   }
 
@@ -650,7 +640,7 @@
       } });
     op.plugins.cxPeriods = periods(cal, -0.5);
     make('cost', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'costLegend', [PERIOD_PLUGIN, EDGE_PLUGIN]);
-    $('costSub').textContent = 'Each year’s costs at today’s prices and not discounted, a decision year standing for the years up to the next, with the levelised cost per MWh served on the right (capital as its annuity at the discount rate).';
+    $('costSub').textContent = 'At today’s prices, not discounted.';
   }
 
   /* ── Render all, or clear ── */

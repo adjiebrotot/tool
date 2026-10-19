@@ -3417,7 +3417,7 @@ function readOptVars(o){
 SharedSeg.fromSelect($('chartMetric'),{className:'chart-switch',ariaLabel:'Chart Metric',
   labelOf:o=>({wealth:'Ending Wealth',netBenefit:'Net Benefit',investmentValue:'Investment Value',loanBalance:'Loan Balance'})[o.value]||o.textContent});
 // One row per repayment is the most specific thing here, so it opens closed.
-SharedFold.attach($('amortSection'),{key:'financingvscash',bodies:['#amortUnitNote','#amortTabs','#amortTableWrap']});
+SharedFold.attach($('amortSection'),{key:'financingvscash',bodies:['#amortTabs','#amortTableWrap']});
 scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
 scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
 setupFmtInputs();selectScenario(0);syncForm();runSimulation();

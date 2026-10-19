@@ -257,8 +257,6 @@
       sc.y.display = disp;
       sc.yCurt.display = curt;
     }
-    if(chart.$edSub) $('dispSub').textContent = !disp ? 'The power units had available and did not use (curtailed), stacked in merit order.'
-      : chart.$edSub + (curt ? ' Under them, the power units had available and did not use (curtailed).' : '');
     var cls = paneClass({ disp: disp, curt: curt });
     if(wrap && (wrap.classList.contains('has-curt') !== (cls === 'has-curt') || wrap.classList.contains('curt-only') !== (cls === 'curt-only'))){
       wrap.classList.toggle('has-curt', cls === 'has-curt');
@@ -401,7 +399,6 @@
     }, 'dispLegend');
     // The demand line is not stacked with the units.
     ch.options.scales.y.stacked = true;
-    ch.$edSub = 'Units stacked in merit order, cheapest at the bottom' + (stores.length ? ', with storage charging below zero' : '') + '.';
     ch.$edPanes = function(){ panes(ch); };
     panes(ch);
     return ch;
@@ -443,11 +440,8 @@
                         ticks: { color: muted, font: { size: 11 }, callback: function(v){ return tickPrice(v, cur); } }, grid: { color: grid } } };
         } })
     }, 'priceLegend');
-    var sub = noPrice ? 'No prices: the run with the commitment fixed could not be solved.'
-      : res.report.pricing === 'lp' ? 'The cost of one more MW at each bus, the dual of its power balance.'
-      : 'The cost of one more MW at each bus with the commitment held as found, the way markets price a unit commitment.';
-    if(uniform) sub += ' Every bus has the same price: no branch limit binds.';
-    $('priceSub').textContent = sub;
+    $('priceSub').textContent = noPrice ? 'No prices: the run with the commitment fixed could not be solved.' : '';
+    $('priceSub').hidden = !noPrice;
     return ch;
   }
 
@@ -521,9 +515,6 @@
         return o;
       })()
     }, 'commitLegend');
-    var su = res.totals.starts;
-    $('commitSub').textContent = (res.report.milp ? 'Each committable unit’s hours on' : 'Each committable unit’s share of the hour it is on, from the relaxation') +
-      ', and its ' + (Math.round(su * 10) / 10) + ' start' + (Math.abs(su - 1) < 1e-9 ? '' : 's') + ' over the horizon.';
     return ch;
   }
 
@@ -592,7 +583,6 @@
                          ticks: { color: muted, font: { size: 11 }, callback: function(v){ return tickPrice(v, cur); } }, grid: { drawOnChartArea: false } } };
         } })
     }, 'storeLegend');
-    $('storeSub').textContent = 'Energy held at the end of each hour, against the price at the bus where ' + (all.length > 1 ? 'the picked store' : 'it') + ' sits: it charges when power is cheap and discharges when it is dear.';
     return ch;
   }
 

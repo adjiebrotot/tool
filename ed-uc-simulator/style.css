@@ -89,6 +89,7 @@ body.is-stale #sldSvg .lyr-res,body.is-stale #sldSvg .ed-soc{opacity:.3;}
 /* ── The diagram card ── */
 .chart-card{padding:18px 20px;margin-bottom:18px;}
 .chart-card>.sub{color:var(--muted);font-size:.8rem;margin:5px 0 0;line-height:1.4;min-height:1.1em;}
+.chart-card>.sub:empty{display:none;}
 .sld-viewbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:12px 0 10px;font-size:.84rem;}
 .flow-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600;color:var(--text);user-select:none;}
 .flow-toggle input{accent-color:var(--accent);margin:0;width:15px;height:15px;}
