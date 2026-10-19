@@ -2794,7 +2794,7 @@
         return isOn(b) || b.getAttribute('aria-pressed') === 'false';
       });
     }
-    var NOT_A_HANDLE = /^data-(tip|i18n|no-|icon|persist)/;
+    var NOT_A_HANDLE = /^data-(tip|i18n|no-|icon|persist|embed)/;
     function locator(el){
       if(el.id) return '#' + (global.CSS && CSS.escape ? CSS.escape(el.id) : el.id);
       for(var i = 0; i < el.attributes.length; i++){

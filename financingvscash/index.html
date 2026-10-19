@@ -353,7 +353,7 @@
       <h2><span id="chartTitle">Ending Wealth Over Time</span> <i class="tip-icon" id="tipChartMetric" data-tip="" data-tip-options>?</i></h2>
       <label class="opt-metric-wrap" id="optMetricWrap" style="display:none">
         <span>Objective</span>
-        <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+        <select class="sel-input" id="optMetric" data-embed-mode title="What the optimisation chart plots and ranks by">
           <option value="netBenefit" selected>Net Benefit vs Cash</option>
           <option value="endWealth">Ending Wealth</option>
           <option value="totalInterest">Total Interest Paid</option>
@@ -371,7 +371,7 @@
     </div>
     <div class="chart-switch-row" id="chartSwitchRow">
       <span class="chart-switch-label">Chart Metric</span>
-      <select class="sel-input" id="chartMetric"><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
+      <select class="sel-input" id="chartMetric" data-embed-mode><option value="wealth">Ending Wealth Over Time</option><option value="netBenefit">Net Benefit vs Cash</option><option value="investmentValue">Investment Value Over Time</option><option value="loanBalance">Loan Balance Over Time</option></select>
     </div>
     <div class="legend" id="chartLegend"></div>
     <div class="canvas-wrap" id="chartCanvasWrap"><canvas id="chartCanvas"></canvas></div>

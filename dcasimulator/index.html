@@ -289,7 +289,7 @@
       <div class="chart-actions">
         <label class="opt-metric-wrap">
           <span>Show</span>
-          <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+          <select class="sel-input" id="optMetric" data-embed-mode title="What the optimisation chart plots and ranks by">
             <option value="roi" selected>ROI</option>
             <option value="final">Final value</option>
             <option value="net">Net</option>
@@ -326,21 +326,21 @@
         <label class="toggle-row" id="candleToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Show each visible security as OHLC candlesticks (actual prices) instead of a line">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Candlesticks</span>
           <div class="toggle-switch">
-            <input type="checkbox" id="showCandleToggle"/>
+            <input type="checkbox" id="showCandleToggle" data-embed-mode/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>
         <label class="toggle-row" id="buyDateToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Mark each purchase date with a small ▲ below its security's price line">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Buy Date</span>
           <div class="toggle-switch">
-            <input type="checkbox" id="showBuyDateToggle"/>
+            <input type="checkbox" id="showBuyDateToggle" data-embed-mode/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>
         <label class="toggle-row" id="techToggleWrap" style="gap:8px;cursor:pointer;padding:0;display:none" title="Overlay the technical indicators behind each security's strategy">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Indicators</span>
           <div class="toggle-switch">
-            <input type="checkbox" id="showTechToggle"/>
+            <input type="checkbox" id="showTechToggle" data-embed-mode/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>
@@ -369,7 +369,7 @@
         <label class="toggle-row" style="gap:8px;cursor:pointer;padding:0">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Total Deposited</span>
           <div class="toggle-switch">
-            <input type="checkbox" id="showDepositedToggle" checked/>
+            <input type="checkbox" id="showDepositedToggle" data-embed-mode checked/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>

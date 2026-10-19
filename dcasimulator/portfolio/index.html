@@ -482,7 +482,7 @@
       <div class="chart-actions">
         <label class="opt-metric-wrap" id="optMetricWrap" style="display:none">
           <span>Show</span>
-          <select class="sel-input" id="optMetric" title="What the optimisation chart plots and ranks by">
+          <select class="sel-input" id="optMetric" data-embed-mode title="What the optimisation chart plots and ranks by">
             <option value="roi" selected>ROI</option>
             <option value="final">Final value</option>
             <option value="net">Net</option>
@@ -495,7 +495,7 @@
         <label class="toggle-row" id="showTopupsWrap" style="gap:8px;cursor:pointer;padding:0">
           <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Top-Ups</span>
           <div class="toggle-switch">
-            <input type="checkbox" id="showTopupsToggle" checked/>
+            <input type="checkbox" id="showTopupsToggle" data-embed-mode checked/>
             <div class="toggle-track"><div class="toggle-knob"></div></div>
           </div>
         </label>
@@ -522,7 +522,7 @@
         <h2>Detailed Breakdown <span id="detailNote" style="color:var(--muted);font-size:.85rem;font-weight:400">(one portfolio: prices, composition &amp; events)</span></h2>
         <div class="btn-cluster">
           <span id="detailPfLabel" style="font-size:.82rem;font-weight:600;color:var(--muted)">Portfolio</span>
-          <select class="sel-input pf-view-select" id="detailPfSelect" title="Choose which portfolio to view"></select>
+          <select class="sel-input pf-view-select" id="detailPfSelect" data-embed-mode title="Choose which portfolio to view"></select>
           <span class="opt-pick" id="optPickWrap" hidden data-no-persist></span>
         </div>
       </div>
@@ -538,21 +538,21 @@
           <label class="toggle-row" id="priceCandleToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Show each visible asset as OHLC candlesticks (actual prices) instead of a line">
             <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Candlesticks</span>
             <div class="toggle-switch">
-              <input type="checkbox" id="priceCandleToggle"/>
+              <input type="checkbox" id="priceCandleToggle" data-embed-mode/>
               <div class="toggle-track"><div class="toggle-knob"></div></div>
             </div>
           </label>
           <label class="toggle-row" id="priceBuyDateToggleWrap" style="gap:8px;cursor:pointer;padding:0" title="Mark each buy date with a small ▲ below the asset's price line">
             <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Buy Date</span>
             <div class="toggle-switch">
-              <input type="checkbox" id="priceBuyDateToggle"/>
+              <input type="checkbox" id="priceBuyDateToggle" data-embed-mode/>
               <div class="toggle-track"><div class="toggle-knob"></div></div>
             </div>
           </label>
           <label class="toggle-row" id="priceTechToggleWrap" style="gap:8px;cursor:pointer;padding:0;display:none" title="Overlay the technical indicators behind each asset's rule-based trigger">
             <span style="font-size:.82rem;font-weight:600;color:var(--muted)">Show Indicators</span>
             <div class="toggle-switch">
-              <input type="checkbox" id="priceTechToggle"/>
+              <input type="checkbox" id="priceTechToggle" data-embed-mode/>
               <div class="toggle-track"><div class="toggle-knob"></div></div>
             </div>
           </label>
@@ -575,7 +575,7 @@
       <div class="section-title">
         <div><h3 class="detail-subtitle">Composition Over Time <span class="muted-note">(stacked)</span></h3></div>
         <div class="chart-actions">
-          <div class="seg-toggle" id="compViewToggle">
+          <div class="seg-toggle" id="compViewToggle" data-embed-mode>
             <button class="seg-btn active" data-cv="dollar" type="button">$ Value</button>
             <button class="seg-btn" data-cv="percent" type="button">% of Portfolio</button>
           </div>

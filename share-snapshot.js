@@ -87,10 +87,19 @@
     return { n: r.n, a: r.a.map(function(x){ return pooled(freeze(x, '', null)); }) };
   }
 
+  /* A drawn value to eight significant figures: a part in a hundred
+     million, far under a pixel, and half the digits of a double. */
+  function fig(v){ return typeof v === 'number' && isFinite(v) && v % 1 ? +v.toPrecision(8) : v; }
+  function figs(v){
+    if(typeof v === 'number') return fig(v);
+    if(Array.isArray(v)) return v.map(figs);
+    if(v && typeof v === 'object' && !v.$p && !v.$k){ var o = {}; Object.keys(v).forEach(function(k){ o[k] = figs(v[k]); }); return o; }
+    return v;
+  }
   // Long runs of numbers anywhere in a value go to the pool.
   function pooled(v){
     if(Array.isArray(v)){
-      if(v.length > 8 && POOL && v.every(function(x){ return typeof x === 'number' || x === null; })) return POOL.ref(v);
+      if(v.length > 8 && POOL && v.every(function(x){ return typeof x === 'number' || x === null; })) return POOL.ref(v.map(fig));
       return v.map(pooled);
     }
     if(v && typeof v === 'object' && !v.$p && !v.$k){
@@ -403,9 +412,14 @@
           return;
         }
         var f = pooled(freeze(v, 'datasets.' + d + '.' + k, function(fn, path){ warn.push(path); }));
-        if(f !== undefined) o[k] = f;
+        if(f === undefined) return;
+        /* A tool's own record hung on a dataset (the scenario a line was
+           drawn from) is not drawn: past a few KB, once its runs of numbers
+           are pooled, it stays behind. */
+        if(f && typeof f === 'object' && JSON.stringify(f).length > 4096){ warn.push('datasets.' + d + '.' + k + ' (too big)'); return; }
+        o[k] = f;
       });
-      o.data = pool.ref(freeze(ds.data || [], '', null) || []);
+      o.data = pool.ref(figs(freeze(ds.data || [], '', null) || []));
       if(vis[d]) delete o.hidden; else o.hidden = true;
       return o;
     });
@@ -512,16 +526,92 @@
     Object.keys(out.r).forEach(function(d){
       var rows = out.r[d];
       for(var i = 0; i < rows.length; i++) if(rows[i] === undefined) rows[i] = null;
-      out.r[d] = pool.ref(rows);
+      // Learned from the values the viewer will have, to the same figures.
+      out.r[d] = compactRows(rows, sets[d] && figs(freeze(sets[d].data || [], '', null)), pool);
     });
     if(byIndex){
+      var labels = (chart.data.labels || []).map(function(l){ return l == null ? '' : String(l); });
       ['t', 'bb', 'ab', 'f'].forEach(function(k){
-        var arr = [], any = false;
-        for(var i = 0; i < n; i++){ arr.push(out[k][i] || null); if(out[k][i]) any = true; }
-        out[k] = any ? pool.ref(arr) : null;
+        var arr = [], any = false, asLabels = true;
+        for(var i = 0; i < n; i++){
+          var v = out[k][i] || null;
+          arr.push(v);
+          if(v) any = true;
+          if(!(v ? v.length === 1 && v[0] === labels[i] : !labels[i])) asLabels = false;
+        }
+        // A title that is the point's own label is written as that.
+        out[k] = !any ? null : k === 't' && asLabels && labels.length >= n ? 'L' : pool.ref(arr);
       });
     }
     return out;
+  }
+
+  /* A series' rows on the hover card, written short. A row is nearly
+     always the same words around the point's value ("  SPY - ETF: $271"),
+     so where it is, the rows are kept as those words and the format the
+     value is written in (learned as an axis's labels are), and only the
+     rows that format gets wrong are written out. Exactly the same rows,
+     for a fraction of the length on a long daily series. */
+  function compactRows(rows, data, pool){
+    var idx = [], vals = [], text = [], raw = function(){ return pool.ref(rows); };
+    if(!data) return raw();
+    for(var i = 0; i < rows.length; i++){
+      var r = rows[i];
+      if(r === null) continue;
+      if(!Array.isArray(r) || r.length !== 1) return raw();
+      var p = data[i], v = p && typeof p === 'object' ? p.y : p;
+      if(typeof v !== 'number' || !isFinite(v)) return raw();
+      idx.push(i); vals.push(v); text.push(r[0]);
+    }
+    if(idx.length < 24) return raw();
+    // The words around the value: the longest run every row starts and ends
+    // with, cut back to a space so a figure is never split.
+    var pre = text[0], suf = text[0];
+    text.forEach(function(t){
+      while(pre && t.indexOf(pre) !== 0) pre = pre.slice(0, -1);
+      while(suf && t.slice(-suf.length) !== suf) suf = suf.slice(1);
+    });
+    pre = pre.slice(0, pre.lastIndexOf(' ') + 1);
+    var sp = suf.indexOf(' ');
+    suf = sp < 0 ? '' : suf.slice(sp);
+    var mids = text.map(function(t){ return t.slice(pre.length, t.length - suf.length); });
+    var fmt = learnRows(vals, mids);
+    if(!fmt) return raw();
+    var miss = {}, n = 0;
+    idx.forEach(function(at, k){
+      if(K.formatTick(fmt, vals[k]) !== mids[k]){ miss[at] = mids[k]; n++; }
+    });
+    if(n > idx.length * 0.2) return raw();
+    // Where the rows are: every point with a value, but these.
+    var gaps = [];
+    for(var j = 0, k = 0; j < data.length; j++){
+      if(idx[k] === j){ k++; continue; }
+      var q = data[j], w = q && typeof q === 'object' ? q.y : q;
+      if(typeof w === 'number' && isFinite(w)) gaps.push(j);
+    }
+    return { $rows: { p: pre, s: suf, f: fmt, x: n ? miss : undefined, z: gaps.length ? gaps : undefined, n: rows.length } };
+  }
+  function learnRows(vals, mids){
+    var buckets = {}, zero = null;
+    vals.forEach(function(v, i){
+      if(v === 0){ if(zero === null) zero = mids[i]; return; }
+      var p = readLabel(v, mids[i]), key = bucketOf(v), b = buckets[key];
+      if(!p) return;
+      if(!b){ buckets[key] = { pre: p.pre, suf: p.suf, j: p.j, d: p.d, dmin: p.d, g: p.g, ds: p.ds, n: 1 }; return; }
+      if(b.bad) return;
+      if(b.pre !== p.pre || b.suf !== p.suf || b.j !== p.j){ b.bad = true; return; }
+      b.d = Math.max(b.d, p.d); b.dmin = Math.min(b.dmin, p.d);
+      if(p.g) b.g = p.g;
+      if(p.ds) b.ds = p.ds;
+    });
+    var fmt = { b: {}, z: zero }, any = false;
+    Object.keys(buckets).forEach(function(k){
+      var b = buckets[k];
+      if(b.bad) return;
+      fmt.b[k] = [b.pre, b.suf, b.j, b.d, b.dmin < b.d ? 1 : 0, b.g || '', b.ds || '.'];
+      any = true;
+    });
+    return any ? fmt : null;
   }
 
   /* The chart at the view it opens on, with every dataset shown, while `fn`
@@ -684,31 +774,48 @@
     }
     return el.offsetParent !== null || (el.getClientRects && el.getClientRects().length > 0);
   }
+  // A label's words without the field inside it or its tip.
+  function words(l){
+    var c = l.cloneNode(true);
+    each(c.querySelectorAll('select, option, input, textarea, .tip-icon, .vh'), function(x){ x.remove(); });
+    return norm(c.textContent);
+  }
   function labelFor(el){
     var v = el.getAttribute('data-embed-mode');
     if(v) return v;
-    if(el.id){ var l = document.querySelector('label[for="' + el.id + '"]'); if(l) return norm(l.textContent); }
+    if(el.id){ var l = document.querySelector('label[for="' + el.id + '"]'); if(l) return words(l); }
     var wrap = el.closest('label');
-    return wrap ? norm(wrap.textContent) : (el.getAttribute('aria-label') || '');
+    return wrap ? words(wrap) : (el.getAttribute('aria-label') || el.getAttribute('title') || '');
   }
   function fire(el){
     el.dispatchEvent(new Event('input', { bubbles: true }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
   function isOn(b){ return b.classList.contains('active') || b.getAttribute('aria-pressed') === 'true' || b.getAttribute('aria-checked') === 'true'; }
+  /* The mark can sit on a select, a checkbox, a range, a box of buttons
+     (one of them pressed), or on buttons themselves: buttons that carry the
+     same label are one choice between them, and a button alone is a switch
+     (the Rent and Own lines beside a metric choice in one row). */
   function modesOf(roots){
-    var out = [], seen = [];
+    var out = [], seen = [], groups = {};
     roots.forEach(function(r){
       var list = r.matches('[data-embed-mode]') ? [r] : [];
       each(r.querySelectorAll('[data-embed-mode]'), function(x){ list.push(x); });
       list.forEach(function(el){
         if(seen.indexOf(el) >= 0 || !shown(el)) return;
         seen.push(el);
-        var m = modeOf(el);
-        if(m && m.opts.length > 1) out.push(m);
+        if(el.tagName === 'BUTTON'){
+          var name = el.getAttribute('data-embed-mode') || '';
+          var key = name ? 'n:' + name : 'b:' + seen.length;
+          if(!groups[key]){ groups[key] = { label: name, btns: [] }; out.push(groups[key]); }
+          groups[key].btns.push(el);
+          return;
+        }
+        out.push(el);
       });
     });
-    return out;
+    return out.map(function(x){ return x.btns ? buttonsMode(x.label, x.btns) : modeOf(x); })
+              .filter(function(m){ return m && m.opts.length > 1; });
   }
   function modeOf(el){
     var label = labelFor(el);
@@ -723,8 +830,21 @@
         get: function(){ return el.checked ? 1 : 0; },
         set: function(i){ if(el.checked !== !!i){ el.checked = !!i; fire(el); } } };
     }
-    // A group of buttons, one pressed; or a single toggle button.
-    var btns = el.tagName === 'BUTTON' ? [el] : Array.prototype.filter.call(el.querySelectorAll('button'), shown);
+    // A slider: every step a view, named by what its read-out says there.
+    if(el.tagName === 'INPUT' && el.type === 'range'){
+      var lo = +el.min || 0, hi = +el.max, step = +el.step || 1, vals = [];
+      for(var v = lo; v <= hi + 1e-9 && vals.length < 400; v += step) vals.push(String(+v.toFixed(6)));
+      var out = el.getAttribute('aria-describedby') && document.getElementById(el.getAttribute('aria-describedby'));
+      return { label: label, kind: 'range', opts: vals.map(function(){ return { l: '' }; }),
+        get: function(){ return Math.max(0, vals.indexOf(String(+(+el.value).toFixed(6)))); },
+        set: function(i){ if(el.value !== vals[i]){ el.value = vals[i]; fire(el); } },
+        read: function(){ return out ? norm(out.textContent) : el.value; } };
+    }
+    // A box of buttons, one pressed.
+    var btns = Array.prototype.filter.call(el.querySelectorAll('button'), shown);
+    return buttonsMode(label, btns);
+  }
+  function buttonsMode(label, btns){
     if(!btns.length) return null;
     if(btns.length === 1){
       var b = btns[0];
@@ -736,8 +856,21 @@
       get: function(){ for(var i = 0; i < btns.length; i++) if(isOn(btns[i])) return i; return 0; },
       set: function(i){ if(!isOn(btns[i])) btns[i].click(); } };
   }
-  // Every combination, the reader's own first, up to MAX_FRAMES.
+  /* Every combination, the reader's own first: up to MAX_FRAMES, or every
+     step of a slider (a day of hours) with the other views as they are. */
   function combos(modes){
+    var slide = modes.filter(function(m){ return m.kind === 'range'; });
+    if(slide.length){
+      var own0 = modes.map(function(m){ return m.get(); }), out0 = [];
+      modes.forEach(function(m, i){
+        if(m.kind !== 'range') return;
+        m.opts.forEach(function(o, k){ var c = own0.slice(); c[i] = k; out0.push(c); });
+      });
+      modes.forEach(function(m){ if(m.kind !== 'range') m.fixed = true; });
+      var ownKey = own0.join(',');
+      out0.sort(function(a, b){ return (b.join(',') === ownKey) - (a.join(',') === ownKey); });
+      return out0.slice(0, 400);
+    }
     var out = [[]];
     modes.forEach(function(m){
       var next = [];
@@ -868,6 +1001,8 @@
         setAll(c);
         return o.settle(o.key);
       }).then(function(){
+        // A slider's step is named by its read-out once it is set.
+        modes.forEach(function(m, i){ if(m.read && !m.opts[c[i]].l) m.opts[c[i]].l = m.read(); });
         map[c.join(',')] = frames.length;
         frames.push(capture());
       });
@@ -876,7 +1011,8 @@
     return chain.then(restore, function(e){ return restore().then(function(){ throw e; }); }).then(function(){
       var snap = {
         v: 1, kind: kind,
-        modes: modes.map(function(m, i){ return { l: m.label, k: m.kind, o: m.opts, at: own[i] }; }),
+        // A view held fixed (beside a slider) is not offered.
+        modes: modes.map(function(m, i){ return m.fixed ? { l: m.label, k: 'fixed', o: [m.opts[own[i]]], at: own[i] } : { l: m.label, k: m.kind, o: m.opts, at: own[i] }; }),
         map: map, frames: frames, pool: pool.list
       };
       if(warn.length && global.console) console.info('Embed snapshot left out:', warn.filter(function(w, i){ return warn.indexOf(w) === i; }).join(', '));

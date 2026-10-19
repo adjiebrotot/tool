@@ -261,7 +261,7 @@
       <div class="hour-ctl">
         <button class="btn-secondary btn-sm btn-icon" id="playBtn" type="button" title="Play the hours" aria-label="Play the hours" aria-pressed="false">▶</button>
         <label class="hour-field" for="edHour">Hour</label>
-        <input type="range" id="edHour" min="0" max="23" step="1" value="18" aria-describedby="hourOut"/>
+        <input type="range" id="edHour" data-embed-mode min="0" max="23" step="1" value="18" aria-describedby="hourOut"/>
         <output class="hour-out" id="hourOut" for="edHour">18:00</output>
       </div>
       <label class="flow-toggle"><input type="checkbox" id="animP" checked/><svg class="flow-key flow-key-p" viewBox="0 0 32 10" aria-hidden="true" focusable="false"></svg><span class="tip-wrap">Power flow</span></label>
@@ -372,7 +372,7 @@
     </div>
     <div class="sub" id="storeSub"></div>
     <label class="viewbar-field store-pick" id="storePickWrap" hidden>Storage unit
-      <select class="sel-input" id="storePick"></select>
+      <select class="sel-input" id="storePick" data-embed-mode></select>
     </label>
     <div class="legend" id="storeLegend" data-no-abbr></div>
     <div class="canvas-wrap"><canvas id="storeCanvas"></canvas></div>

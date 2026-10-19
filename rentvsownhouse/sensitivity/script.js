@@ -25,6 +25,7 @@ const LANG_SENS = {
     gcTitle: 'All scenarios',
     gcScenariosLabel: 'Scenarios:',
     gcShowOwn: 'Own',
+    gcMetricGroup: 'What the chart shows',
     gcShowRent: 'Rent',
     metricNetEquity: 'Net equity',
     metricLiquidCash: 'Liquid cash',
@@ -187,6 +188,7 @@ const LANG_SENS = {
     gcTitle: 'Semua skenario',
     gcScenariosLabel: 'Skenario:',
     gcShowOwn: 'Beli',
+    gcMetricGroup: 'Yang ditampilkan grafik',
     gcShowRent: 'Sewa',
     metricNetEquity: 'Kekayaan bersih',
     metricLiquidCash: 'Uang tunai',
@@ -2026,7 +2028,7 @@ function buildChartModal(){
       ${SharedIcon.button('close', T('closeTitle'), 'chart-modal-close cm-close', 'data-act="close"')}
       <div class="chart-head">
         <h2 class="chart-modal-title"></h2>
-        <div class="chart-controls">
+        <div class="chart-controls" data-embed-mode>
           <button class="graph-btn cm-met" data-met="netEquity">${metricBtnLabel('metricNetEquity')}</button>
           <button class="graph-btn cm-met" data-met="cash">${metricBtnLabel('metricLiquidCash')}</button>
           <button class="graph-btn cm-met" data-met="cost">${metricBtnLabel('metricAccumCost')}</button>
@@ -2173,11 +2175,11 @@ function buildGlobalChartModal(){
       <div class="chart-head">
         <h2 class="chart-modal-title gc-title"></h2>
         <div class="chart-controls">
-          <button class="graph-btn gc-met" data-met="netEquity">${metricBtnLabel('metricNetEquity')}</button>
-          <button class="graph-btn gc-met" data-met="cash">${metricBtnLabel('metricLiquidCash')}</button>
-          <button class="graph-btn gc-met" data-met="cost">${metricBtnLabel('metricAccumCost')}</button>
-          <button class="graph-btn gc-toggle gc-own" data-series="own"><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
-          <button class="graph-btn gc-toggle gc-rent" data-series="rent"><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
+          <button class="graph-btn gc-met" data-met="netEquity" data-embed-mode="${escAttr(T('gcMetricGroup'))}">${metricBtnLabel('metricNetEquity')}</button>
+          <button class="graph-btn gc-met" data-met="cash" data-embed-mode="${escAttr(T('gcMetricGroup'))}">${metricBtnLabel('metricLiquidCash')}</button>
+          <button class="graph-btn gc-met" data-met="cost" data-embed-mode="${escAttr(T('gcMetricGroup'))}">${metricBtnLabel('metricAccumCost')}</button>
+          <button class="graph-btn gc-toggle gc-own" data-series="own" data-embed-mode><span class="ricon ricon-own" aria-hidden="true"></span>${T('gcShowOwn')}</button>
+          <button class="graph-btn gc-toggle gc-rent" data-series="rent" data-embed-mode><span class="ricon ricon-rent" aria-hidden="true"></span>${T('gcShowRent')}</button>
         </div>
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" data-act="svg" title="${escAttr(T('btnSvgTitle'))}">⬇ SVG</button>

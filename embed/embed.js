@@ -131,6 +131,7 @@
     picks = (snap.modes || []).map(function(m){ return Math.max(0, m.at | 0); });
     (snap.modes || []).forEach(function(m, mi){
       var opts = m.o || [];
+      if(m.k === 'fixed') return;
       if(m.k === 'check'){
         var b = el('button', 'chip', m.l);
         b.type = 'button';
@@ -263,14 +264,30 @@
 
   /* ── Chart.js ── */
   var chart = null;
-  function tipCallbacks(T){
+  /* A series' rows, unpacked: written out, or the words around each
+     value in the format the value is written in, with the rows that
+     format would get wrong kept as they are. */
+  function rowsOf(spec, data){
+    if(!spec || !spec.$rows) return arr(spec) || [];
+    var R = spec.$rows, out = [], gap = {}, miss = R.x || {};
+    (R.z || []).forEach(function(i){ gap[i] = 1; });
+    for(var i = 0; i < (R.n | 0); i++){
+      var p = data && data[i], v = p && typeof p === 'object' ? p.y : p;
+      if(typeof v !== 'number' || !isFinite(v) || gap[i]){ out.push(null); continue; }
+      var mid = Object.prototype.hasOwnProperty.call(miss, i) ? miss[i] : global.ChartKit.formatTick(R.f, v);
+      out.push([String(R.p || '') + mid + String(R.s || '')]);
+    }
+    return out;
+  }
+  function tipCallbacks(T, f){
     if(!T) return null;
-    var rows = {};
-    Object.keys(T.r || {}).forEach(function(d){ rows[d] = arr(T.r[d]); });
+    var rows = {}, sets = revive(f.datasets) || [];
+    Object.keys(T.r || {}).forEach(function(d){ rows[d] = rowsOf(T.r[d], sets[d] && sets[d].data); });
+    if(T.t === 'L'){ var lab = (arr(f.labels) || []).map(function(l){ return [String(l)]; }); T = Object.assign({}, T, { t: lab }); }
     var byI = T.by === 'i';
     var keyOf = function(it){ return byI ? it.dataIndex : it.datasetIndex + ',' + it.dataIndex; };
     var group = function(src){
-      var a = byI ? arr(src) : src;
+      var a = byI ? (Array.isArray(src) ? src : arr(src)) : src;
       return function(items){
         if(!a || !items || !items.length) return '';
         var v = a[keyOf(items[0])];
@@ -293,7 +310,7 @@
     o.maintainAspectRatio = false;
     o.animation = false;
     o.plugins = o.plugins || {};
-    var tip = tipCallbacks(f.tip);
+    var tip = tipCallbacks(f.tip, f);
     if(tip){
       o.plugins.tooltip = o.plugins.tooltip || {};
       o.plugins.tooltip.callbacks = tip.callbacks;

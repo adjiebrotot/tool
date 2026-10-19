@@ -275,7 +275,7 @@
     <div class="chart-opts">
       <div class="opt">
         <span class="opt-label">View</span>
-        <select id="viewDim">
+        <select id="viewDim" data-embed-mode="View">
           <option value="2d">2D</option>
           <option value="3d">3D</option>
         </select>
@@ -292,7 +292,7 @@
         <label class="opt-label" for="holdAt"><span class="tip-wrap">Hold others at <i class="tip-icon" data-tip="The value given to every feature not on an axis. Listings are shifted to it too, so each dot compares like for like with the line.">?</i></span></label>
         <select id="holdAt"></select>
       </div>
-      <label class="opt chk-opt"><input type="checkbox" id="showData" checked><span>Show data points</span></label>
+      <label class="opt chk-opt"><input type="checkbox" id="showData" checked data-embed-mode><span>Show data points</span></label>
     </div>
     <div class="plot-wrap"><div id="plotDiv"></div><div class="plot-empty" id="plotEmpty" hidden></div></div>
     <div class="hover-box" id="chartNote"></div>
