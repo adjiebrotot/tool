@@ -1011,7 +1011,7 @@ function updateDetailTable(rows){
           <th>${T('tblHusband')}</th>
           <th>${T('tblWife')}</th>
           <th>${T('tblHusband')}</th>
-          <th>${T('tblWife')}</th>
+          <th class="col-rule">${T('tblWife')}</th>
         </tr>
       </thead>
       <tbody>${unique.map(r=>`<tr><td>${fmt.salaryLabel(r.salary)}</td><td>${fmt.idr(r.husbandNet,true)}</td><td>${fmt.idr(r.wifeNet,true)}</td><td>${fmt.idr(r.ptkpH,true)}</td><td>${fmt.idr(r.ptkpW,true)}</td><td>${fmt.idr(r.taxableH,true)}</td><td>${fmt.idr(r.taxableW,true)}</td><td>${fmt.idr(r.taxH,true)}</td><td>${fmt.idr(r.taxW,true)}</td><td>${fmt.idr(r.pisahTax,true)}</td></tr>`).join('')}</tbody></table>`;

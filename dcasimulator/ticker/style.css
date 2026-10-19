@@ -28,14 +28,15 @@
 /* A country without an explanatory note puts its table straight under the
    heading, so give the table its own top gap rather than relying on the note. */
 .country-block h2+.ticker-table-wrap{margin-top:12px}
-/* Scrolls sideways only, so Firefox is asked for the thin themed bar back
-   (Chrome and Safari take the shared ::-webkit-scrollbar rules instead). */
-.ticker-table-wrap{overflow-x:auto;overflow-y:hidden;border:1px solid var(--border);border-radius:var(--radius-md)}
+/* The frame and its rules are shared.css's .table-wrap. A list reads in full
+   with the page, so it scrolls sideways only, and Firefox is asked for the thin
+   themed bar back (Chrome and Safari take the shared ::-webkit-scrollbar rules
+   instead). */
+.ticker-table-wrap{max-height:none;overflow-y:hidden}
 @supports not selector(::-webkit-scrollbar){.ticker-table-wrap{scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;}}
 table.ticker-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:.86rem}
 table.ticker-table th,table.ticker-table td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
-table.ticker-table thead th{position:sticky;top:0;background:var(--panel);z-index:1;white-space:normal;text-align:center}
-table.ticker-table tbody tr:last-child td{border-bottom:none}
+table.ticker-table thead th{white-space:normal;text-align:center;border-bottom:none}
 table.ticker-table tbody tr:hover td{background:rgba(141,187,255,0.05)}
 body.light table.ticker-table tbody tr:hover td{background:rgba(90,145,232,0.05)}
 table.ticker-table td.tk{font-weight:700;color:var(--accent)}
