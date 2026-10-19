@@ -35,7 +35,7 @@
   "@type": "WebApplication",
   "name": "Capacity Expansion Planner",
   "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/",
-  "description": "Generation capacity expansion planning in your browser: from a peak demand, its growth and its hourly load profile, find how much solar, wind, gas, coal, nuclear, geothermal, batteries and pumped hydro to build in each decision year, and when the existing fleet retires, at the least present cost over the plan. Each year is run hour by hour over typical days of every season and a still, overcast peak day. The engine is PSA.js, a JavaScript port of PyPSA's multi-period investment optimisation, with the HiGHS solver.",
+  "description": "Generation capacity expansion planning in your browser: from a peak demand, its growth and its hourly load profile, find how much solar, wind, gas, coal, nuclear, geothermal, batteries and pumped hydro to build in each decision year, and when the existing fleet retires, at the least present cost over the plan. Each year is run hour by hour over typical days of every season, and a still, overcast peak day when you add one. The engine is PSA.js, a JavaScript port of PyPSA's multi-period investment optimisation, with the HiGHS solver.",
   "applicationCategory": "EngineeringApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
@@ -49,7 +49,7 @@
     "Build limits, whole units of a set size, an earliest build year",
     "Peak demand growing every year with a load profile built in or drawn hour by hour, with daily variability by weekday and weekend or Monday to Sunday, or from your own CSV or Excel file by season and day, or a full year of 8,760 hours averaged into a typical week for each season",
     "Templates to fill in: hourly or daily variability, the same in every season or each season its own, or every hour of a year, each with its still, overcast peak day",
-    "Typical days, a weekday and a weekend day, or weeks for every season, set by the profiles so they always agree, in a summer-peaking, winter-peaking or tropical climate north or south of the equator, and a still, overcast peak day
+    "Typical days, a weekday and a weekend day, or weeks for every season, set by the profiles so they always agree, in a summer-peaking, winter-peaking or tropical climate north or south of the equator, and a still, overcast peak day to add if you want one
     "Carbon price that rises every year, a net-zero year, and load shedding at the value of lost load",
     "Capacity, new build and retirements, energy mix, hourly dispatch and cost by year, with tables to download",
     "Runs entirely in the browser with PSA.js (a port of PyPSA) and the HiGHS solver: nothing is uploaded"
@@ -89,7 +89,7 @@
       "name": "How is the load profile taken into account?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Each decision year is run hour by hour over typical days of every season, each weighted by how many days of the year it stands for, plus a still and overcast day at the peak. The load profile can be one typical day, a weekday and a weekend day, or a full week, built in, drawn or from your own CSV or Excel file, for every season or each its own, or a full year of hours, which is averaged into a typical week for each season with its peak day kept, and the typical days follow it. Solar, wind and batteries are matched to the shape of the demand hour by hour, so the plan sizes firm capacity for the evening peak and storage for the hours the sun is down."
+        "text": "Each decision year is run hour by hour over typical days of every season, each weighted by how many days of the year it stands for, plus, if you switch it on, a still and overcast day at the peak. The load profile can be one typical day, a weekday and a weekend day, or a full week, built in, drawn or from your own CSV or Excel file, for every season or each its own, or a full year of hours, which is averaged into a typical week for each season with its peak day kept, and the typical days follow it. Solar, wind and batteries are matched to the shape of the demand hour by hour, so the plan sizes firm capacity for the evening peak and storage for the hours the sun is down."
       }
     }
   ]
@@ -303,7 +303,7 @@
       </div>
       <div class="toggle-row">
         <div class="toggle-label"><span class="tip-wrap">Still, overcast peak day <i class="tip-icon" data-tip="Adds a day at the year’s peak with a quarter of the sun and a tenth of the wind, standing for two days a year, so the plan holds firm capacity for it.">?</i></span></div>
-        <label class="toggle-switch"><input type="checkbox" id="cxStress" checked/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+        <label class="toggle-switch"><input type="checkbox" id="cxStress"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
       </div>
       <p class="derived" id="sampleNote" aria-live="polite"></p>
     </div>
