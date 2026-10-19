@@ -2875,9 +2875,100 @@
       if(u) payload.u = u;
       return payload;
     }
+    /* ── The embed viewer ──
+       A chart is embedded as a picture of itself in data: the snapshot
+       (share-snapshot.js, loaded the first time it is needed) writes down
+       what the chart draws, every view the card offers and its key, and the
+       viewer (embed/) draws that with Chart.js alone. The other site's frame
+       loads no tool, runs no model and fetches nothing but the viewer. A
+       tool that shares itself (data-share="tool") is the tool, so it still
+       embeds as the whole page, below. */
+    var snapshotter = null;
+    function loadSnapshotter(){
+      if(global.SharedSnapshot) return Promise.resolve();
+      if(!snapshotter) snapshotter = new Promise(function(res, rej){
+        var s = document.createElement('script');
+        s.src = new URL('share-snapshot.js', SCRIPT_URL).href;
+        s.onload = function(){ global.SharedSnapshot ? res() : rej(new Error('share-snapshot.js did not load')); };
+        s.onerror = function(){ snapshotter = null; rej(new Error('share-snapshot.js did not load')); };
+        document.head.appendChild(s);
+      });
+      return snapshotter;
+    }
+    // A chart's own tool kit (<tool>/chart-kit.js), which the viewer loads too.
+    function toolKit(){
+      var root = new URL('.', SCRIPT_URL).href, kit = null;
+      each(document.querySelectorAll('script[src]'), function(sc){
+        var src = sc.src.split('?')[0];
+        if(/\/chart-kit\.js$/.test(src) && src !== root + 'chart-kit.js' && src.indexOf(root) === 0) kit = src.slice(root.length);
+      });
+      return kit;
+    }
+    function viewerUrl(){ return new URL('embed/', SCRIPT_URL).href; }
+    // Deflated alone: a snapshot is data no dictionary knows.
+    function packPlain(obj){
+      var bytes = new TextEncoder().encode(JSON.stringify(obj));
+      return global.CompressionStream ? pipe(bytes, global.CompressionStream).then(function(z){ return 'z' + b64(z); })
+                                      : Promise.resolve('j' + b64(bytes));
+    }
+    /* Which libraries the viewer loads, named in the link so it can fetch
+       them before it has unpacked the snapshot: Chart.js (c), the smallest
+       Plotly bundle that has every trace the figure uses, or none for a
+       diagram (d). */
+    var PLOTLY_3D = /^(scatter|surface|scatter3d|mesh3d|cone|streamtube|volume|isosurface)$/;
+    var PLOTLY_2D = /^(scatter|bar|pie|heatmap|contour|histogram|histogram2d|histogram2dcontour|box|violin|image)$/;
+    function libsOf(snap){
+      if(snap.kind === 'chartjs') return 'c';
+      if(snap.kind !== 'plotly') return 'd';
+      var types = [];
+      snap.frames.forEach(function(f){ (f.traces || []).forEach(function(t){ if(types.indexOf(t) < 0) types.push(t); }); });
+      var all = function(re){ return types.every(function(t){ return re.test(t); }); };
+      if(all(/^(scatter|bar|pie)$/)) return 'pbasic';
+      if(all(PLOTLY_2D)) return 'pcartesian';
+      if(all(PLOTLY_3D)) return 'pgl3d';
+      return 'pfull';
+    }
+    function snapshotOf(m, card, el, key){
+      var payload;
+      try { payload = payloadOf(card, key, false); } catch(e){ return Promise.reject(e); }
+      var t = W(m), fill = fillOf(el), home = pageUrl();
+      return Promise.all([
+        loadSnapshotter().then(function(){
+          return global.SharedSnapshot.take({ card: card, el: el, key: key, roots: rootsOf(card), legendKey: legendKey,
+            find: findChart, settle: function(k){ return frames(2).then(function(){ return settled(k); }); } });
+        }),
+        openLink(home, key, payload)
+      ]).then(function(r){
+        var snap = r[0];
+        snap.key = key;
+        snap.n = toolName();
+        snap.t = chartTitle(card);
+        snap.l = pageLang();
+        snap.th = document.body.classList.contains('light') ? 'light' : 'dark';
+        snap.back = r[1];
+        snap.w = t.backlink;
+        snap.site = siteName();
+        snap.h = Math.round(desktopHeight(fill) || fill.offsetHeight || 430);
+        var kit = toolKit();
+        if(kit) snap.kit = kit;
+        return snap;
+      });
+    }
     function buildEmbed(m, picked){
       var card = cardOf(m.cluster), el = chartOf(card), key = keyOf(el);
       if(!key) return Promise.reject(new Error('no chart'));
+      if(!m.tool){
+        return snapshotOf(m, card, el, key).then(function(snap){
+          return packPlain(snap).then(function(s){
+            var home = pageUrl(), src = viewerUrl() + '#t=' + libsOf(snap) +
+              (snap.kit ? '&kit=' + snap.kit.replace(/\/chart-kit\.js$/, '') : '') + '&l=' + snap.l + '&s=' + s;
+            var code = '<iframe src="' + attr(src) + '" title="' + attr(snap.t || toolName()) +
+              '" width="100%" height="' + frameHeight(card, el, 0) + '" style="border:0;background:transparent" loading="lazy"></iframe>\n' +
+              credit(snap.back, W(m)) + '\n' + resizer(home);
+            return { code: code, src: src, key: key, open: snap.back, snap: snap };
+          });
+        });
+      }
       var payload, extra = 0;
       try {
         payload = payloadOf(card, key, true, picked);

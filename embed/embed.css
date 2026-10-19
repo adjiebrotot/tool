@@ -1,0 +1,86 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Embed viewer — one chart card filling the frame, on no background of its
+   own, so the other site's page shows through. Colours are the site's tokens
+   (dark.css, light.css); the swatch and hover-card rules are shared.css's,
+   repeated here so the viewer needs neither shared.css nor a tool's styles.
+   ────────────────────────────────────────────────────────────────────────── */
+html,body{margin:0;padding:0;height:100%;background:transparent;}
+body{font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased;}
+*,*::before,*::after{box-sizing:border-box;}
+
+/* Until it has drawn, the frame says so (a blank frame looks broken). */
+html.wait body{visibility:hidden;}
+html.wait::before{content:"Loading data from tool.adjiebrotots.com\2026";position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;font:500 13px/1.4 'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#8a94a6;animation:pulse 1.6s ease-in-out infinite;}
+html.wait[lang^="id"]::before{content:"Memuat data dari tool.adjiebrotots.com\2026";}
+@keyframes pulse{50%{opacity:.45;}}
+@media (prefers-reduced-motion:reduce){html.wait::before{animation:none;}}
+
+.card{display:flex;flex-direction:column;height:100vh;padding:2px 4px 0;}
+.card>*{flex:0 0 auto;}
+.head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:2px 4px 8px;}
+.title{flex:1 1 auto;min-width:0;margin:0;font-size:1.05rem;font-weight:700;line-height:1.3;}
+.modes{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+
+.stage{position:relative;flex:1 1 auto;min-height:160px;}
+.fill{position:absolute;inset:0;}
+.fill canvas{display:block;}
+.dia{overflow:hidden;touch-action:none;cursor:grab;}
+.dia:active{cursor:grabbing;}
+.diagram{display:block;width:100%;height:100%;}
+/* The card at its own height, the chart at the tool's desktop height: what
+   the frame asks the other page for. */
+.card.measuring{height:auto;}
+.card.measuring .stage{flex:0 0 auto;height:var(--h);}
+
+.tools{display:flex;gap:6px;margin-left:auto;}
+.reset{width:28px;height:28px;padding:0;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--panel);color:var(--muted);font:600 14px/1 inherit;cursor:pointer;opacity:.75;}
+.reset:hover,.reset:focus-visible{opacity:1;color:var(--text);}
+
+/* The views the card offers */
+.seg{display:inline-flex;gap:2px;padding:3px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);}
+.seg-btn{background:transparent;border:0;border-radius:7px;padding:4px 11px;font:inherit;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background var(--motion-fast),color var(--motion-fast);}
+.seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
+.seg-btn .short{display:none;}
+@media (max-width:420px){.seg-btn.has-short .short{display:inline;}.seg-btn.has-short .long{display:none;}}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border:1px solid var(--border);border-radius:var(--radius-pill);background:transparent;font:inherit;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;}
+.chip[aria-pressed="true"]{background:var(--accent-strong);border-color:var(--accent-strong);color:var(--text-inv);}
+.pick{padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text);font:inherit;font-size:.8rem;}
+.pick option{background:var(--panel);color:var(--text);}
+.range{display:inline-flex;align-items:center;gap:8px;}
+.range input{width:min(220px,40vw);accent-color:var(--accent-strong);}
+.range-at{font-size:.8rem;color:var(--muted);min-width:4em;font-variant-numeric:tabular-nums;}
+.play{padding:4px 9px;}
+
+/* The key */
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;padding:8px 4px 0;font-size:.8rem;}
+.legend.top{justify-content:flex-start;padding:0 4px 8px;}
+.legend.grouped{flex-direction:column;align-items:center;gap:4px;}
+.legend-group{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 14px;}
+.legend-group-label{color:var(--muted);font-weight:600;}
+.legend-item{display:inline-flex;align-items:center;gap:7px;padding:2px 0;border:0;background:none;font:inherit;color:var(--text);cursor:pointer;transition:opacity var(--motion-fast);}
+.legend-item.hidden{opacity:.35;}
+.legend-item.static{cursor:default;}
+.legend-item:disabled{color:var(--text);}
+.legend-swatch{display:inline-flex;align-items:center;justify-content:center;width:22px;height:12px;flex-shrink:0;line-height:0;}
+.legend-swatch svg{display:block;overflow:visible;}
+.legend-label{white-space:normal;text-align:left;}
+
+/* The line back to the tool, under the chart, hard right */
+.mark{display:inline-flex;align-self:flex-end;align-items:center;gap:4px;margin:4px 6px 6px;color:var(--muted);font-size:.66rem;font-weight:500;line-height:1.2;text-align:right;text-decoration:none;opacity:.7;transition:opacity var(--motion-fast);}
+.mark:hover,.mark:focus-visible{opacity:1;}
+.mark-logo{flex:none;}
+
+/* The hover card (SharedChartTip) */
+.chart-tip{position:fixed;z-index:99998;left:0;top:0;pointer-events:none;max-width:min(340px,calc(100vw - 16px));background:var(--panel-raised,var(--panel));border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;font-size:.8rem;line-height:1.5;color:var(--muted);box-shadow:var(--shadow-lg);opacity:0;transition:opacity var(--motion-fast);}
+.chart-tip.visible{opacity:1;}
+.chart-tip-title{color:var(--text);font-weight:700;margin-bottom:5px;}
+.chart-tip-row{display:flex;align-items:flex-start;gap:7px;}
+.chart-tip-row .legend-swatch{height:1.5em;}
+.chart-tip-label{min-width:0;white-space:normal;overflow-wrap:break-word;}
+.chart-tip-note,.chart-tip-footer{color:var(--muted);}
+.chart-tip-footer{margin-top:5px;color:var(--text);}
+
+.failed body{visibility:visible;}
+.fail{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:16px;text-align:center;font-size:.9rem;color:#8a94a6;}
+.fail p{margin:4px 0;}
+.fail a{color:inherit;}

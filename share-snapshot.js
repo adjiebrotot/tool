@@ -1,0 +1,807 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Share snapshot — a chart written down as data, for the embed viewer
+   Loaded by shared.js the first time a reader opens Embed as HTML.
+
+   The embed viewer (embed/) draws a shared chart with Chart.js and
+   chart-kit.js alone: no tool script, no model, nothing computed in the
+   other site's frame. So everything the chart shows is written down here,
+   while the tool is open and has computed it:
+
+     - the datasets and their looks, with every per-point callback resolved
+       to the values it gave;
+     - the options, with each function carried by its ChartKit name
+       (chart-kit.js) or dropped where the snapshot carries its output;
+     - the hover card, baked: the tool's own tooltip callbacks are run for
+       every point, and the viewer hands back their lines;
+     - the axis labels: a category axis's labels one by one, a numeric
+       axis's as a table over its whole numbers where it is short, and a
+       format learned from the tool's own callback for everything else;
+     - the key (legend entries, their swatches and the datasets each one
+       shows and hides, found by pressing it);
+     - every view the card offers (the controls marked data-embed-mode):
+       each combination is set, drawn and written down as its own frame,
+       and the reader's own view is put back after.
+
+   A Plotly chart is written down as its figure; a diagram the tool draws
+   itself (data-share-chart) as its SVG, element by element, with only the
+   tags and attributes a drawing needs.
+
+   Everything here reads the page and puts it back as it found it: a mode
+   pressed to be written down is pressed back, and whatever a tooltip
+   callback writes into the page while it is run is undone.
+   ────────────────────────────────────────────────────────────────────────── */
+(function(global){
+  var K = global.ChartKit;
+  var MAX_FRAMES = 24;
+
+  function each(list, fn){ Array.prototype.forEach.call(list || [], fn); }
+  function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+
+  /* ── A pool of arrays, so a series that several frames share is written once ── */
+  function Pool(){ this.list = []; this.at = {}; }
+  Pool.prototype.ref = function(arr){
+    var s = JSON.stringify(arr);
+    if(!Object.prototype.hasOwnProperty.call(this.at, s)){ this.at[s] = this.list.length; this.list.push(arr); }
+    return { $p: this.at[s] };
+  };
+
+  /* ── Plain data out of a configuration ──
+     Numbers, strings, booleans, arrays and plain objects pass; a function
+     passes as its ChartKit name, or goes to `onFn`, which returns what to
+     write in its place (undefined drops it). Keys starting $ or _ are
+     Chart.js's own bookkeeping and stay behind. */
+  var POOL = null;
+  function freeze(v, path, onFn, seen){
+    if(v === null || typeof v === 'boolean' || typeof v === 'string') return v;
+    if(typeof v === 'number') return isFinite(v) ? v : undefined;
+    if(typeof v === 'function'){
+      var r = K.refOf(v);
+      return r ? { $k: kitRef(r) } : (onFn ? onFn(v, path) : undefined);
+    }
+    if(v === undefined) return undefined;
+    if(ArrayBuffer.isView(v)) return Array.prototype.slice.call(v);
+    if(K.refOf(v)) return { $k: kitRef(K.refOf(v)) };
+    seen = seen || [];
+    if(typeof v !== 'object' || seen.indexOf(v) >= 0) return undefined;
+    var proto = Object.getPrototypeOf(v);
+    if(!Array.isArray(v) && proto !== Object.prototype && proto !== null) return undefined;
+    seen.push(v);
+    var out;
+    if(Array.isArray(v)){
+      out = v.map(function(x, i){ var f = freeze(x, path + '.' + i, onFn, seen); return f === undefined ? null : f; });
+    } else {
+      out = {};
+      Object.keys(v).forEach(function(k){
+        if(k.charAt(0) === '$' || k.charAt(0) === '_') return;
+        var f = freeze(v[k], path + '.' + k, onFn, seen);
+        if(f !== undefined) out[k] = f;
+      });
+    }
+    seen.pop();
+    return out;
+  }
+
+  // A ChartKit name, with a factory's arguments as data (long ones pooled).
+  function kitRef(r){
+    if(!r.a) return { n: r.n };
+    return { n: r.n, a: r.a.map(function(x){
+      var f = freeze(x, '', null);
+      return Array.isArray(f) && f.length > 8 && POOL ? POOL.ref(f) : f;
+    }) };
+  }
+
+  /* ── Undo what the page does while it is read ──
+     A tooltip callback may write a read-out into the page (the line under a
+     chart), and pressing a legend entry rebuilds the key. Every change to
+     the document while `fn` runs is recorded and taken back after, in
+     reverse, so the reader's page is left exactly as it was. */
+  function untouched(fn){
+    var log = [], mo = new MutationObserver(function(r){ log.push.apply(log, r); });
+    mo.observe(document.body, { subtree: true, childList: true, characterData: true, characterDataOldValue: true,
+                                attributes: true, attributeOldValue: true });
+    var out;
+    try { out = fn(); }
+    finally {
+      log.push.apply(log, mo.takeRecords());
+      mo.disconnect();
+      for(var i = log.length - 1; i >= 0; i--){
+        var r = log[i];
+        try {
+          if(r.type === 'characterData') r.target.data = r.oldValue;
+          else if(r.type === 'attributes'){
+            if(r.oldValue === null) r.target.removeAttribute(r.attributeName);
+            else r.target.setAttribute(r.attributeName, r.oldValue);
+          } else {
+            each(r.addedNodes, function(n){ if(n.parentNode === r.target) r.target.removeChild(n); });
+            for(var j = r.removedNodes.length - 1; j >= 0; j--){
+              var before = r.nextSibling && r.nextSibling.parentNode === r.target ? r.nextSibling : null;
+              r.target.insertBefore(r.removedNodes[j], before);
+            }
+          }
+        } catch(e){}
+      }
+    }
+    return out;
+  }
+
+  /* ══ Chart.js ═══════════════════════════════════════════════════════════ */
+
+  // A scale's own default label, which needs nothing written down.
+  function defaultTick(chart, scale, cb){
+    var C = global.Chart, def = null;
+    try { def = C.registry.getScale(scale.type).defaults.ticks.callback; } catch(e){}
+    var F = C.Ticks && C.Ticks.formatters;
+    return cb === def || (F && (cb === F.values || cb === F.numeric || cb === F.logarithmic)) ||
+      (C.defaults.scale && C.defaults.scale.ticks && cb === C.defaults.scale.ticks.callback);
+  }
+  function tickOut(v){
+    if(v == null) return null;
+    if(Array.isArray(v)) return v.map(function(x){ return x == null ? '' : String(x); });
+    return String(v);
+  }
+  function callTick(cb, scale, v, i, all){
+    try { return tickOut(cb.call(scale, v, i, all)); } catch(e){ return null; }
+  }
+  function ticksOf(n){ var t = []; for(var i = 0; i < n; i++) t.push({ value: i }); return t; }
+
+  /* A numeric axis's labels, learned from its callback. Labels on this site
+     are a number with words around it ("$1.2M", "Rp 2,5 jt", "950 MW"), and
+     the words, the unit and the decimals change with the size of the number.
+     So the callback is asked for numbers of every size, each answer is read
+     as prefix, figure and suffix, and every decade of each sign keeps its
+     own: the prefix and suffix, the power of ten the figure is in, its
+     decimals and its separators. The viewer formats any value the same way.
+     Answers the format gets wrong are kept as they are. */
+  function learnFormat(cb, scale, lo, hi){
+    var probes = [], seen = {};
+    function add(v){ v = +(+v).toPrecision(12); if(isFinite(v) && !seen[v]){ seen[v] = 1; probes.push(v); } }
+    add(0);
+    var M = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 7.5, 8, 9.5];
+    for(var e = -3; e <= 13; e++) M.forEach(function(m){ add(m * Math.pow(10, e)); add(-m * Math.pow(10, e)); });
+    var span = hi - lo;
+    if(isFinite(span) && span > 0){
+      for(var s = 0; s < 8; s++){
+        var step = niceStep(span / (6 * Math.pow(2.2, s)));
+        for(var v = Math.ceil(lo / step) * step, n = 0; v <= hi && n < 60; v += step, n++) add(v);
+      }
+    }
+    var three = [{ value: 0 }, { value: 1 }, { value: 2 }];
+    var outs = probes.map(function(v){ return callTick(cb, scale, v, 0, three); });
+    // A callback that blanks the last label of the axis (so it never runs
+    // into the axis title) does it for every value.
+    var hideLast = probes.slice(0, 12).every(function(v, i){ return outs[i] === null || callTick(cb, scale, v, 2, three) === ''; }) &&
+                   outs.some(function(o){ return o; });
+    var parsed = probes.map(function(v, i){ return readLabel(v, outs[i]); });
+    var buckets = {}, zero = null;
+    probes.forEach(function(v, i){
+      var p = parsed[i];
+      if(v === 0){ zero = outs[i]; return; }
+      var key = bucketOf(v);
+      if(!p){ buckets[key] = buckets[key] || { bad: true }; buckets[key].bad = true; return; }
+      var b = buckets[key];
+      if(!b){ buckets[key] = { pre: p.pre, suf: p.suf, j: p.j, d: p.d, dmin: p.d, g: p.g, ds: p.ds }; return; }
+      if(b.bad) return;
+      if(b.pre !== p.pre || b.suf !== p.suf || b.j !== p.j){ b.bad = true; return; }
+      b.d = Math.max(b.d, p.d); b.dmin = Math.min(b.dmin, p.d);
+      if(p.g) b.g = p.g;
+      if(p.ds) b.ds = p.ds;
+    });
+    var fmt = { b: {}, z: zero };
+    Object.keys(buckets).forEach(function(k){
+      var b = buckets[k];
+      if(b.bad) return;
+      fmt.b[k] = [b.pre, b.suf, b.j, b.d, b.dmin < b.d ? 1 : 0, b.g || '', b.ds || '.'];
+    });
+    if(hideLast) fmt.hl = 1;
+    var miss = {}, nmiss = 0, keys = Object.keys(fmt.b).length;
+    probes.forEach(function(v, i){
+      var mine = K.formatTick ? K.formatTick(fmt, v) : null;
+      if(mine !== outs[i]){ miss[v] = outs[i]; nmiss++; }
+    });
+    if(!keys) return null;
+    if(nmiss) fmt.x = miss;
+    return fmt;
+  }
+  function bucketOf(v){ return (v < 0 ? '-' : '+') + Math.floor(Math.log10(Math.abs(v)) + 1e-9); }
+  function niceStep(x){
+    if(!(x > 0)) return 1;
+    var e = Math.pow(10, Math.floor(Math.log10(x))), f = x / e;
+    return (f < 1.5 ? 1 : f < 2.25 ? 2 : f < 3.5 ? 2.5 : f < 7.5 ? 5 : 10) * e;
+  }
+  /* "−$1,234.5k" for 1,234,500 → prefix "−$", figure 1234.5 in thousands,
+     one decimal, "," between thousands, suffix "k". null if the figure is
+     not the value in some power of ten. */
+  function readLabel(v, s){
+    if(typeof s !== 'string') return null;
+    var m = /\d(?:[\d.,  ' ]*\d)?/.exec(s);
+    if(!m) return null;
+    var tok = m[0], pre = s.slice(0, m.index), suf = s.slice(m.index + tok.length);
+    var av = Math.abs(v), best = null;
+    ['.', ','].forEach(function(ds){
+      if(best) return;
+      var gs = ds === '.' ? /[,  ' ]/g : /[.  ' ]/g;
+      var parts = tok.split(ds);
+      if(parts.length > 2) return;
+      var whole = parts[0], frac = parts[1] || '';
+      if(/[^\d]/.test(frac)) return;
+      var g = (whole.match(gs) || [])[0] || '';
+      var digits = whole.replace(gs, '');
+      if(/[^\d]/.test(digits)) return;
+      if(g && !/^\d{1,3}(?:[,.  ' ]\d{3})*$/.test(whole)) return;
+      var num = parseFloat(digits + (frac ? '.' + frac : ''));
+      if(!(num > 0)) return;
+      var d = frac.length, half = 0.5 * Math.pow(10, -d) + 1e-9;
+      for(var j = -6; j <= 15; j++){
+        var x = av / Math.pow(10, j);
+        if(Math.abs(x - num) <= half * 1.0001 || Math.abs(x - num) / num < 1e-9){
+          best = { pre: pre, suf: suf, j: j, d: d, g: g, ds: frac ? ds : '' };
+          return;
+        }
+      }
+    });
+    return best;
+  }
+
+  /* An axis's labels: null when the chart's own default draws them, a
+     ChartKit name when the callback has one, else a table and a format. */
+  function bakeTicks(chart, scale, pool){
+    var cb = scale.options && scale.options.ticks && scale.options.ticks.callback;
+    if(typeof cb !== 'function' || defaultTick(chart, scale, cb) || K.refOf(cb)) return null;
+    if(scale.type === 'category'){
+      var labels = scale.getLabels ? scale.getLabels() : (chart.data.labels || []);
+      var all = ticksOf(labels.length);
+      return { cat: pool.ref(labels.map(function(l, i){ return callTick(cb, scale, i, i, all); })) };
+    }
+    var lim = baseRange(chart, scale), out = {};
+    // A short run of whole numbers (years, hours, an index into dates) is
+    // written out label by label: those are the labels such an axis shows.
+    if(isFinite(lim.lo) && isFinite(lim.hi) && lim.hi - lim.lo <= 6000){
+      var lo = Math.floor(lim.lo), tab = [], three = [{ value: 0 }, { value: 1 }, { value: 2 }];
+      for(var v = lo; v <= Math.ceil(lim.hi); v++) tab.push(callTick(cb, scale, v, 0, three));
+      out.int = [lo, pool.ref(tab)];
+      // Between them: what the callback says for a half (often nothing).
+      var halves = [lo + 0.5, lo + 1.25, Math.floor((lim.lo + lim.hi) / 2) + 0.5].map(function(h){ return callTick(cb, scale, h, 0, three); });
+      if(halves.every(function(h){ return h === '' || h === null; })) out.frac = '';
+    }
+    var fmt = learnFormat(cb, scale, lim.lo, lim.hi);
+    if(fmt) out.fmt = fmt;
+    return out;
+  }
+  // The widest the axis goes: the zoom limits, or what it shows unzoomed.
+  function baseRange(chart, scale){
+    var lim = chart.options.plugins && chart.options.plugins.zoom && chart.options.plugins.zoom.limits;
+    var l = lim && lim[scale.id];
+    var lo = l && isFinite(l.min) ? l.min : scale.min, hi = l && isFinite(l.max) ? l.max : scale.max;
+    return { lo: lo, hi: hi };
+  }
+
+  /* A tick's look as a callback (a decision year bold, the zero line
+     stronger): its answer for every tick the axis can show, as a table by
+     tick value. */
+  function bakeTickStyles(chart, scale, opts, pool, warn){
+    var raw = chart.config._config.options && chart.config._config.options.scales && chart.config._config.options.scales[scale.id];
+    if(!raw) return;
+    var lim = scale.type === 'category' ? { lo: 0, hi: (scale.getLabels ? scale.getLabels().length : 0) - 1 } : baseRange(chart, scale);
+    ['ticks', 'grid'].forEach(function(part){
+      var o = raw[part];
+      if(!o) return;
+      Object.keys(o).forEach(function(k){
+        var f = o[k];
+        if(typeof f !== 'function' || K.refOf(f) || (part === 'ticks' && k === 'callback') || (part === 'grid' && /^tick(Width|Color)$/.test(k))) return;
+        if(!(isFinite(lim.lo) && isFinite(lim.hi) && lim.hi - lim.lo <= 6000)){ warn.push('options.scales.' + scale.id + '.' + part + '.' + k); return; }
+        var lo = Math.floor(lim.lo), tab = [];
+        for(var v = lo, i = 0; v <= Math.ceil(lim.hi); v++, i++){
+          var r;
+          try { r = f({ chart: chart, scale: scale, tick: { value: v }, index: i, type: 'tick' }, scale.options); } catch(e){ r = undefined; }
+          r = freeze(r, '', null);
+          tab.push(r === undefined ? null : r);
+        }
+        var target = opts.scales && opts.scales[scale.id];
+        if(!target) return;
+        target[part] = target[part] || {};
+        target[part][k] = { $tab: [lo, pool.ref(tab)] };
+      });
+    });
+  }
+
+  // Which data-element options a scriptable dataset property stands for.
+  var PER_POINT = /^(point|hover)|Radius$|^radius$|^rotation$/;
+  function perElement(chart, ds){
+    var t = ds.type || chart.config.type;
+    return /^(bar|pie|doughnut|polarArea|bubble|scatter)$/.test(t);
+  }
+  function resolveScriptable(chart, d, ds, key, f){
+    var meta = chart.getDatasetMeta(d), ctl = meta && meta.controller;
+    if(!ctl || !ctl.getContext) return undefined;
+    try {
+      if(PER_POINT.test(key) || perElement(chart, ds)){
+        var n = (ds.data || []).length, arr = [], same = true;
+        for(var i = 0; i < n; i++){
+          var v = freeze(f(ctl.getContext(i, false, 'default'), ctl.chart && ctl.chart.options), '', null);
+          arr.push(v === undefined ? null : v);
+          if(i && JSON.stringify(v) !== JSON.stringify(arr[0])) same = false;
+        }
+        return same ? arr[0] : arr;
+      }
+      return freeze(f(ctl.getContext(), ctl.chart && ctl.chart.options), '', null);
+    } catch(e){ return undefined; }
+  }
+  /* A line's look segment by segment (a colour that changes at the year a
+     house is bought): each segment's answer, by the index it starts at. */
+  function bakeSegment(chart, d, ds, seg){
+    var out = {}, n = (ds.data || []).length;
+    Object.keys(seg).forEach(function(k){
+      var f = seg[k];
+      if(typeof f !== 'function'){ var v = freeze(f, '', null); if(v !== undefined) out[k] = v; return; }
+      var arr = [];
+      for(var i = 0; i < n - 1; i++){
+        var r;
+        try { r = f({ type: 'segment', chart: chart, datasetIndex: d, p0DataIndex: i, p1DataIndex: i + 1,
+                      p0: { parsed: chart.getDatasetMeta(d)._parsed ? chart.getDatasetMeta(d)._parsed[i] : null },
+                      p1: { parsed: chart.getDatasetMeta(d)._parsed ? chart.getDatasetMeta(d)._parsed[i + 1] : null } }); }
+        catch(e){ r = undefined; }
+        r = freeze(r, '', null);
+        arr.push(r === undefined ? null : r);
+      }
+      out[k] = { $seg: arr };
+    });
+    return out;
+  }
+
+  function freezeDatasets(chart, vis, pool, warn){
+    return chart.data.datasets.map(function(ds, d){
+      var o = {};
+      Object.keys(ds).forEach(function(k){
+        if(k === 'data' || k.charAt(0) === '_' || k.charAt(0) === '$') return;
+        var v = ds[k];
+        if(k === 'segment' && v && typeof v === 'object'){ o.segment = bakeSegment(chart, d, ds, v); return; }
+        if(typeof v === 'function' && !K.refOf(v)){
+          var r = resolveScriptable(chart, d, ds, k, v);
+          if(r !== undefined) o[k] = r; else warn.push('datasets.' + d + '.' + k);
+          return;
+        }
+        var f = freeze(v, 'datasets.' + d + '.' + k, function(fn, path){ warn.push(path); });
+        if(f !== undefined) o[k] = f;
+      });
+      o.data = pool.ref(freeze(ds.data || [], '', null) || []);
+      if(vis[d]) delete o.hidden; else o.hidden = true;
+      return o;
+    });
+  }
+
+  // Functions in the options whose output the snapshot carries instead.
+  var BAKED = /\.sharedYFit\.fit\.[^.]+$|^options\.scales\.[^.]+\.(ticks|grid)\.[^.]+$|\.plugins\.tooltip\..*$|^options\.on(Click|Hover|Resize)$|\.grid\.(tickWidth|tickColor)$/;
+  function freezeOptions(chart, warn){
+    var o = freeze(chart.config._config.options || {}, 'options', function(fn, path){
+      if(!BAKED.test(path)) warn.push(path);
+    });
+    o.animation = false;
+    // The view the chart opens on: the zoom it was built with, not the
+    // reader's pan or pinch.
+    var base = chart.$zoomBase || {};
+    Object.keys(o.scales || {}).forEach(function(id){
+      var sc = o.scales[id], b = base[id];
+      if(!b) return;
+      if(b.hasMin && isFinite(b.min)) sc.min = b.min; else delete sc.min;
+      if(b.hasMax && isFinite(b.max)) sc.max = b.max; else delete sc.max;
+    });
+    // A title SharedPane shortened to fit its pane goes whole: the viewer's
+    // pane is its own height.
+    var raw = chart.config._config.options && chart.config._config.options.scales;
+    Object.keys(raw || {}).forEach(function(id){
+      var t = raw[id] && raw[id].title;
+      if(t && t.$full != null && o.scales && o.scales[id] && o.scales[id].title) o.scales[id].title.text = t.$full;
+    });
+    /* Fitters hung on the instance win, as they do in SharedZoom. A bespoke
+       fitter travels by its ChartKit name (a tool kit's factory and the
+       series it fits); one with no name is fitted generically over the same
+       axes, which is near but not exact, and reported. */
+    var y = o.plugins && o.plugins.sharedYFit || {};
+    var rawFit = chart.$fitY || (chart.config._config.options.plugins && chart.config._config.options.plugins.sharedYFit &&
+                 chart.config._config.options.plugins.sharedYFit.fit);
+    var auto = chart.$autoFitY ? freeze(chart.$autoFitY, 'fit', function(fn, path){ warn.push(path); }) : y.auto;
+    var fit = null, loose = [];
+    Object.keys(rawFit || {}).forEach(function(id){
+      var r = K.refOf(rawFit[id]);
+      if(r){ fit = fit || {}; fit[id] = { $k: kitRef(r) }; }
+      else loose.push(id);
+    });
+    if(loose.length){
+      warn.push('fitted generically: ' + loose.join(', '));
+      auto = Object.assign({}, auto || {}, { axes: ((auto && auto.axes) || []).concat(loose) });
+    }
+    if(fit || auto){
+      o.plugins = o.plugins || {};
+      o.plugins.sharedYFit = {};
+      if(fit) o.plugins.sharedYFit.fit = fit;
+      if(auto) o.plugins.sharedYFit.auto = auto;
+    }
+    return o;
+  }
+
+  /* ── The hover card, baked ──
+     Chart.js builds the card from the tool's callbacks for the points under
+     the pointer. Here every point is put under it in turn, with the card's
+     drawing switched off, and the lines it would show are kept: the title
+     and the notes by the point the card is anchored on, each series' row by
+     its point. The viewer's callbacks hand them back. */
+  function bakeTips(chart, pool){
+    var tip = chart.tooltip, topt = chart.options.plugins && chart.options.plugins.tooltip;
+    if(!tip || !topt || topt.enabled === false && !topt.external) return null;
+    var mode = (topt.mode || (chart.options.interaction && chart.options.interaction.mode) || 'nearest');
+    var byIndex = mode === 'index' || mode === 'x';
+    var sets = chart.data.datasets, n = 0;
+    sets.forEach(function(ds){ n = Math.max(n, (ds.data || []).length); });
+    var out = { by: byIndex ? 'i' : 'el', t: {}, bb: {}, ab: {}, f: {}, r: {} };
+    function lines(v){ return (v || []).filter(function(x){ return x != null && String(x) !== ''; }).map(String); }
+    function keep(key, model){
+      var t = lines(model.title), bb = lines(model.beforeBody), ab = lines(model.afterBody), f = lines(model.footer);
+      if(t.length) out.t[key] = t;
+      if(bb.length) out.bb[key] = bb;
+      if(ab.length) out.ab[key] = ab;
+      if(f.length) out.f[key] = f;
+      (model.dataPoints || []).forEach(function(p, k){
+        var body = (model.body || [])[k] || {}, row = lines(body.lines);
+        var b = lines(body.before), a = lines(body.after);
+        var rows = out.r[p.datasetIndex] || (out.r[p.datasetIndex] = []);
+        rows[p.dataIndex] = b.length || a.length ? { b: b, l: row, a: a } : row;
+      });
+    }
+    function show(active){
+      try { tip.setActiveElements(active, { x: active[0].element.x, y: active[0].element.y }); }
+      catch(e){ return null; }
+      return tip;
+    }
+    var metas = sets.map(function(ds, d){ return chart.getDatasetMeta(d); });
+    if(byIndex){
+      for(var i = 0; i < n; i++){
+        var act = [];
+        metas.forEach(function(meta, d){ if(meta.data && meta.data[i]) act.push({ datasetIndex: d, index: i, element: meta.data[i] }); });
+        if(act.length && show(act)) keep(i, tip);
+      }
+    } else {
+      metas.forEach(function(meta, d){
+        (meta.data || []).forEach(function(el, i){
+          if(el && show([{ datasetIndex: d, index: i, element: el }])) keep(d + ',' + i, tip);
+        });
+      });
+    }
+    try { tip.setActiveElements([], { x: 0, y: 0 }); } catch(e){}
+    Object.keys(out.r).forEach(function(d){
+      var rows = out.r[d];
+      for(var i = 0; i < rows.length; i++) if(rows[i] === undefined) rows[i] = null;
+      out.r[d] = pool.ref(rows);
+    });
+    if(byIndex){
+      ['t', 'bb', 'ab', 'f'].forEach(function(k){
+        var arr = [], any = false;
+        for(var i = 0; i < n; i++){ arr.push(out[k][i] || null); if(out[k][i]) any = true; }
+        out[k] = any ? pool.ref(arr) : null;
+      });
+    }
+    return out;
+  }
+
+  /* The chart at the view it opens on, with every dataset shown, while `fn`
+     reads it; then the reader's own view and choices put back. */
+  function opened(chart, fn){
+    var vis = chart.data.datasets.map(function(ds, d){ return chart.isDatasetVisible(d); });
+    var scales = chart.options.scales || {}, zoom = {}, base = chart.$zoomBase || {};
+    Object.keys(scales).forEach(function(id){
+      zoom[id] = { min: scales[id].min, max: scales[id].max };
+      var b = base[id];
+      if(b){ if(b.hasMin) scales[id].min = b.min; else delete scales[id].min;
+             if(b.hasMax) scales[id].max = b.max; else delete scales[id].max; }
+    });
+    var topt = chart.options.plugins && chart.options.plugins.tooltip, ext = topt && topt.external;
+    if(topt) topt.external = function(){};
+    vis.forEach(function(v, d){ if(!v) chart.setDatasetVisibility(d, true); });
+    chart.update('none');
+    try { return fn(vis, ext); }
+    finally {
+      if(topt) topt.external = ext;
+      vis.forEach(function(v, d){ if(!v) chart.setDatasetVisibility(d, false); });
+      Object.keys(zoom).forEach(function(id){
+        if(zoom[id].min === undefined) delete scales[id].min; else scales[id].min = zoom[id].min;
+        if(zoom[id].max === undefined) delete scales[id].max; else scales[id].max = zoom[id].max;
+      });
+      chart.update('none');
+    }
+  }
+
+  function chartjsFrame(el, pool, warn){
+    var chart = global.Chart.getChart(el);
+    if(!chart) throw new Error('the chart is not drawn yet');
+    return untouched(function(){
+      return opened(chart, function(vis, ext){
+        var f = {
+          type: chart.config.type,
+          labels: pool.ref(freeze(chart.data.labels || [], '', null) || []),
+          datasets: freezeDatasets(chart, vis, pool, warn),
+          options: freezeOptions(chart, warn),
+          plugins: (chart.config.plugins || []).map(function(p){ return p && p.id; }).filter(function(id){
+            if(K.pluginOf(id)) return true;
+            warn.push('plugin ' + id);
+            return false;
+          }),
+          ticks: {},
+          tip: null
+        };
+        Object.keys(chart.scales).forEach(function(id){
+          var t = bakeTicks(chart, chart.scales[id], pool);
+          if(t) f.ticks[id] = t;
+          bakeTickStyles(chart, chart.scales[id], f.options, pool, warn);
+        });
+        f.tip = bakeTips(chart, pool);
+        // The card's own drawing was switched off while the tips were read.
+        var tipOpts = f.options.plugins && f.options.plugins.tooltip;
+        if(tipOpts && K.refOf(ext)) tipOpts.external = { $k: K.refOf(ext) };
+        return f;
+      });
+    });
+  }
+
+  /* ══ The key ═══════════════════════════════════════════════════════════
+     Each entry is pressed and pressed again: the datasets it hides are the
+     ones it shows and hides. An entry that hides nothing is a plain key. */
+  function legendOf(roots, el, legendKey){
+    var items = [];
+    roots.forEach(function(r){ each(r.querySelectorAll('.legend-item'), function(it){ items.push(it); }); });
+    if(!items.length) return null;
+    var chart = function(){ return global.Chart && global.Chart.getChart ? global.Chart.getChart(el) : null; };
+    var visible = function(){ var c = chart(); return c ? c.data.datasets.map(function(ds, d){ return c.isDatasetVisible(d); }) : []; };
+    var find = function(key){
+      var hit = null;
+      roots.forEach(function(r){ each(r.querySelectorAll('.legend-item'), function(it){ if(!hit && legendKey(it) === key) hit = it; }); });
+      return hit;
+    };
+    return untouched(function(){
+      return items.map(function(it){
+        var key = legendKey(it), labelEl = it.querySelector('.legend-label');
+        var entry = { l: norm(labelEl ? labelEl.textContent : it.textContent), off: it.classList.contains('hidden') ? 1 : 0, ds: [] };
+        // A key in groups (flows, balances) keeps its group's name.
+        var grp = it.closest('.legend-group'), gl = grp && grp.querySelector('.legend-group-label');
+        if(gl) entry.g = norm(gl.textContent);
+        try { entry.sw = JSON.parse(it.getAttribute('data-swatch') || 'null'); } catch(e){ entry.sw = null; }
+        if(!entry.sw){
+          var dot = it.querySelector('.dot, .legend-swatch');
+          var col = dot ? global.getComputedStyle(dot).backgroundColor : '';
+          entry.sw = { type: 'point', color: col || '#888888', point: { shape: 'circle', radius: 5 } };
+        }
+        var before = visible();
+        it.click();
+        var after = visible();
+        before.forEach(function(v, d){ if(v !== after[d]) entry.ds.push(d); });
+        var again = find(key);
+        if(again) again.click();
+        if(!entry.ds.length){
+          // Nothing moved: the entry names its series by label, or none.
+          var c = chart();
+          if(c) c.data.datasets.forEach(function(ds, d){ if(norm(ds.label) === entry.l) entry.ds.push(d); });
+        }
+        return entry;
+      });
+    });
+  }
+
+  /* ══ Views the card offers ══════════════════════════════════════════════
+     A control the tool marks data-embed-mode="<label>" (a select, a
+     checkbox, or a group of buttons) is offered in the viewer as the same
+     choice; every other control in the card stays as the reader left it and
+     is not shown. */
+  function textOf(b){
+    var long = b.querySelector('.lbl-long');
+    var c = b.cloneNode(true);
+    each(c.querySelectorAll('.lbl-short, .tip-icon, [aria-hidden="true"]'), function(x){ x.remove(); });
+    return norm(long ? long.textContent : c.textContent);
+  }
+  function shortOf(b){ var s = b.querySelector('.lbl-short'); return s ? norm(s.textContent) : ''; }
+  function shown(el){
+    if(!el) return false;
+    if(el.tagName === 'SELECT' && el.classList.contains('seg-source')){
+      var seg = el.parentElement && el.parentElement.querySelector('.seg-group');
+      return !!(seg && seg.offsetParent);
+    }
+    return el.offsetParent !== null || (el.getClientRects && el.getClientRects().length > 0);
+  }
+  function labelFor(el){
+    var v = el.getAttribute('data-embed-mode');
+    if(v) return v;
+    if(el.id){ var l = document.querySelector('label[for="' + el.id + '"]'); if(l) return norm(l.textContent); }
+    var wrap = el.closest('label');
+    return wrap ? norm(wrap.textContent) : (el.getAttribute('aria-label') || '');
+  }
+  function fire(el){
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  function isOn(b){ return b.classList.contains('active') || b.getAttribute('aria-pressed') === 'true' || b.getAttribute('aria-checked') === 'true'; }
+  function modesOf(roots){
+    var out = [], seen = [];
+    roots.forEach(function(r){
+      var list = r.matches('[data-embed-mode]') ? [r] : [];
+      each(r.querySelectorAll('[data-embed-mode]'), function(x){ list.push(x); });
+      list.forEach(function(el){
+        if(seen.indexOf(el) >= 0 || !shown(el)) return;
+        seen.push(el);
+        var m = modeOf(el);
+        if(m && m.opts.length > 1) out.push(m);
+      });
+    });
+    return out;
+  }
+  function modeOf(el){
+    var label = labelFor(el);
+    if(el.tagName === 'SELECT'){
+      var opts = Array.prototype.filter.call(el.options, function(o){ return !o.disabled && !o.hidden; });
+      return { label: label, kind: 'select', opts: opts.map(function(o){ return { l: norm(o.textContent) }; }),
+        get: function(){ return Math.max(0, opts.map(function(o){ return o.value; }).indexOf(el.value)); },
+        set: function(i){ if(el.value !== opts[i].value){ el.value = opts[i].value; fire(el); } } };
+    }
+    if(el.tagName === 'INPUT' && el.type === 'checkbox'){
+      return { label: label, kind: 'check', opts: [{ l: 'off' }, { l: 'on' }],
+        get: function(){ return el.checked ? 1 : 0; },
+        set: function(i){ if(el.checked !== !!i){ el.checked = !!i; fire(el); } } };
+    }
+    // A group of buttons, one pressed; or a single toggle button.
+    var btns = el.tagName === 'BUTTON' ? [el] : Array.prototype.filter.call(el.querySelectorAll('button'), shown);
+    if(!btns.length) return null;
+    if(btns.length === 1){
+      var b = btns[0];
+      return { label: label || textOf(b), kind: 'check', opts: [{ l: 'off' }, { l: 'on' }],
+        get: function(){ return isOn(b) ? 1 : 0; },
+        set: function(i){ if(isOn(b) !== !!i) b.click(); } };
+    }
+    return { label: label, kind: 'seg', opts: btns.map(function(b){ var o = { l: textOf(b) }, s = shortOf(b); if(s) o.s = s; return o; }),
+      get: function(){ for(var i = 0; i < btns.length; i++) if(isOn(btns[i])) return i; return 0; },
+      set: function(i){ if(!isOn(btns[i])) btns[i].click(); } };
+  }
+  // Every combination, the reader's own first, up to MAX_FRAMES.
+  function combos(modes){
+    var out = [[]];
+    modes.forEach(function(m){
+      var next = [];
+      out.forEach(function(c){ m.opts.forEach(function(o, i){ next.push(c.concat(i)); }); });
+      out = next;
+    });
+    var own = modes.map(function(m){ return m.get(); }).join(',');
+    out.sort(function(a, b){ return (b.join(',') === own) - (a.join(',') === own); });
+    return out.slice(0, MAX_FRAMES);
+  }
+
+  /* ══ Plotly ═════════════════════════════════════════════════════════════ */
+  function plotlyFrame(el, pool, warn){
+    if(!el.data || !el.layout) throw new Error('the chart is not drawn yet');
+    var data = el.data.map(function(tr, i){
+      var t = freeze(tr, 'data.' + i, function(fn, path){ warn.push(path); });
+      ['x', 'y', 'z', 'text', 'customdata', 'hovertext'].forEach(function(k){ if(Array.isArray(t[k]) && t[k].length > 8) t[k] = pool.ref(t[k]); });
+      return t;
+    });
+    var layout = freeze(el.layout, 'layout', function(fn, path){ warn.push(path); });
+    delete layout.width; delete layout.height;
+    var traces = {};
+    data.forEach(function(t){ traces[t.type || 'scatter'] = 1; });
+    return { data: data, layout: layout, cfg: freeze(el._context ? { displaylogo: el._context.displaylogo, displayModeBar: el._context.displayModeBar, scrollZoom: el._context.scrollZoom, modeBarButtonsToRemove: el._context.modeBarButtonsToRemove, responsive: true } : { responsive: true }, 'cfg', null), traces: Object.keys(traces) };
+  }
+
+  /* ══ A diagram the tool draws (SVG) ═════════════════════════════════════
+     Written down as a tree of [tag, attributes, children or text], only the
+     tags and attributes a drawing is made of: no script, no event handler,
+     no link out, no foreign content. Classes become the styles they resolve
+     to here, so the diagram needs none of the tool's stylesheets. */
+  var SVG_TAGS = /^(svg|g|path|line|polyline|polygon|rect|circle|ellipse|text|tspan|defs|marker|lineargradient|radialgradient|stop|clippath|pattern|title|use|symbol|mask)$/i;
+  var SVG_ATTRS = /^(d|x|y|x1|x2|y1|y2|cx|cy|r|rx|ry|width|height|points|transform|viewbox|fill|stroke|stroke-width|stroke-dasharray|stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-opacity|fill-opacity|opacity|font-size|font-weight|font-family|font-style|text-anchor|dominant-baseline|alignment-baseline|letter-spacing|id|marker-start|marker-mid|marker-end|markerwidth|markerheight|refx|refy|orient|markerunits|offset|stop-color|stop-opacity|gradientunits|gradienttransform|x1|clip-path|clippathunits|patternunits|preserveaspectratio|dx|dy|paint-order|vector-effect|visibility|display|mask|href|xlink:href|data-k)$/i;
+  var STYLE_PROPS = ['fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-linecap', 'stroke-linejoin', 'opacity',
+    'fill-opacity', 'stroke-opacity', 'font-size', 'font-weight', 'font-family', 'text-anchor', 'dominant-baseline', 'paint-order', 'display', 'visibility'];
+  function svgTree(node, root, defaults){
+    if(node.nodeType === 3) return node.data;
+    if(node.nodeType !== 1 || !SVG_TAGS.test(node.tagName)) return null;
+    var tag = node.tagName, attrs = {};
+    each(node.attributes, function(a){
+      var n = a.name.toLowerCase();
+      if(!SVG_ATTRS.test(n)) return;
+      var v = a.value;
+      if((n === 'href' || n === 'xlink:href') && !/^#[\w-]+$/.test(v)) return;
+      if(/url\(/i.test(v) && !/^url\(#[\w-]+\)$/.test(v.trim())) return;
+      attrs[n] = v;
+    });
+    if(node !== root && tag.toLowerCase() !== 'tspan'){
+      var cs = global.getComputedStyle(node), st = {};
+      STYLE_PROPS.forEach(function(p){
+        var v = cs.getPropertyValue(p);
+        if(!v || v === defaults[p] || attrs[p] != null) return;
+        if(/url\(/i.test(v) && !/^url\("?#[\w-]+"?\)$/.test(v.trim())) return;
+        st[p] = v.replace(/url\("?(#[\w-]+)"?\)/, 'url($1)');
+      });
+      Object.keys(st).forEach(function(p){ attrs[p] = st[p]; });
+    }
+    var kids = [];
+    each(node.childNodes, function(c){
+      if(c.nodeType === 3 && !/\S/.test(c.data)) return;
+      var t = svgTree(c, root, defaults);
+      if(t != null) kids.push(t);
+    });
+    return [tag, attrs, kids];
+  }
+  function svgFrame(el, warn){
+    var svg = el.tagName && el.tagName.toLowerCase() === 'svg' ? el : el.querySelector('svg');
+    if(!svg) throw new Error('the diagram is not drawn yet');
+    var probe = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    svg.appendChild(probe);
+    var cs = global.getComputedStyle(probe), defaults = {};
+    STYLE_PROPS.forEach(function(p){ defaults[p] = cs.getPropertyValue(p); });
+    svg.removeChild(probe);
+    var tree = svgTree(svg, svg, defaults);
+    var vb = svg.getAttribute('viewBox');
+    return { svg: tree, vb: vb, sig: el.getAttribute('data-share-sig') || '' };
+  }
+  /* Two frames of one diagram differ in a few labels and colours, so a
+     frame after the first is written as the changes to it: the path to each
+     node that differs, and what it now is. */
+  function svgDiff(a, b, path, out){
+    if(JSON.stringify(a) === JSON.stringify(b)) return out;
+    if(!Array.isArray(a) || !Array.isArray(b) || a[0] !== b[0] || a[2].length !== b[2].length){
+      out.push([path, b]);
+      return out;
+    }
+    if(JSON.stringify(a[1]) !== JSON.stringify(b[1])) out.push([path.concat('@'), b[1]]);
+    for(var i = 0; i < a[2].length; i++) svgDiff(a[2][i], b[2][i], path.concat(i), out);
+    return out;
+  }
+
+  /* ══ The snapshot ═══════════════════════════════════════════════════════ */
+  function kindOf(el){
+    if(el.hasAttribute('data-share-chart')) return 'svg';
+    if(global.Chart && global.Chart.getChart && global.Chart.getChart(el)) return 'chartjs';
+    if(el.classList.contains('js-plotly-plot')) return 'plotly';
+    return null;
+  }
+  /* o: { card, el, key, roots, legendKey, settle(key) → Promise } from shared.js.
+     Resolves to the snapshot, the views put back as they were. */
+  function take(o){
+    var el = o.el, kind = kindOf(el), pool = new Pool(), warn = [];
+    POOL = pool;
+    if(!kind) return Promise.reject(new Error('this chart cannot be embedded'));
+    var modes = modesOf(o.roots), list = combos(modes), own = modes.map(function(m){ return m.get(); });
+    var frames = [], map = {}, first = null;
+    function capture(){
+      var cur = o.find(o.key) || el;
+      if(kind === 'chartjs'){
+        var f = chartjsFrame(cur, pool, warn);
+        f.legend = legendOf(o.roots, cur, o.legendKey);
+        // Above the chart or under it, where the tool has it.
+        var first = null;
+        o.roots.forEach(function(r){ if(!first) first = r.querySelector('.legend-item'); });
+        if(first && (first.compareDocumentPosition(cur) & Node.DOCUMENT_POSITION_FOLLOWING)) f.legendTop = 1;
+        return f;
+      }
+      if(kind === 'plotly') return plotlyFrame(cur, pool, warn);
+      var s = svgFrame(cur, warn);
+      if(!first){ first = s; return s; }
+      return { diff: svgDiff(first.svg, s.svg, [], []), vb: s.vb };
+    }
+    function setAll(c){ modes.forEach(function(m, i){ m.set(c[i]); }); }
+    var chain = Promise.resolve();
+    list.forEach(function(c){
+      chain = chain.then(function(){
+        setAll(c);
+        return o.settle(o.key);
+      }).then(function(){
+        map[c.join(',')] = frames.length;
+        frames.push(capture());
+      });
+    });
+    function restore(){ setAll(own); return o.settle(o.key); }
+    return chain.then(restore, function(e){ return restore().then(function(){ throw e; }); }).then(function(){
+      var snap = {
+        v: 1, kind: kind,
+        modes: modes.map(function(m, i){ return { l: m.label, k: m.kind, o: m.opts, at: own[i] }; }),
+        map: map, frames: frames, pool: pool.list
+      };
+      if(warn.length && global.console) console.info('Embed snapshot left out:', warn.filter(function(w, i){ return warn.indexOf(w) === i; }).join(', '));
+      return snap;
+    });
+  }
+
+  global.SharedSnapshot = { take: take, learnFormat: learnFormat };
+})(window);

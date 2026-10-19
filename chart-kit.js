@@ -35,7 +35,9 @@
     FNS[name] = factory;
     return function(){
       var args = Array.prototype.slice.call(arguments), f = factory.apply(null, args);
-      if(typeof f === 'function'){
+      // A function, or an object a chart draws with (a fill pattern): either
+      // carries the name and arguments it was made from.
+      if(f && (typeof f === 'function' || typeof f === 'object')){
         try { Object.defineProperty(f, '$kit', { value: { n: name, a: args }, configurable: true }); } catch(e){}
       }
       return f;
@@ -43,17 +45,62 @@
   }
   function plugin(p){ if(p && p.id) PLUGINS[p.id] = p; return p; }
   // A reference as the snapshot carries it, or null for a function with no name.
-  function refOf(f){ return typeof f === 'function' && f.$kit ? f.$kit : null; }
-  // The function a reference names: a named function itself, or a factory's
-  // product for the arguments it was made with.
+  function refOf(f){ return f && (typeof f === 'function' || typeof f === 'object') && f.$kit ? f.$kit : null; }
+  // What a reference names: a named function itself, or a factory's product
+  // for the arguments it was made with.
   function revive(ref){
     var f = ref && FNS.hasOwnProperty(ref.n) ? FNS[ref.n] : null;
     if(!f) return null;
     if(ref.a){ try { f = f.apply(null, ref.a); } catch(e){ return null; } }
-    return typeof f === 'function' ? f : null;
+    return f && (typeof f === 'function' || typeof f === 'object') ? f : null;
   }
+  /* ── Axis labels a snapshot carries (share-snapshot.js) ──
+     A category axis carries its labels; a numeric one a table over its whole
+     numbers and a format learned from the tool's callback: for each sign and
+     decade, [prefix, suffix, power of ten, decimals, trim zeros, thousands
+     separator, decimal separator], plus the labels the format gets wrong. */
+  function tickKey(v){ return String(+(+v).toPrecision(12)); }
+  function formatTick(fmt, v){
+    if(!fmt) return String(v);
+    if(fmt.x && Object.prototype.hasOwnProperty.call(fmt.x, tickKey(v))) return fmt.x[tickKey(v)];
+    if(v === 0 || Math.abs(v) < 1e-12) return fmt.z != null ? fmt.z : '0';
+    var sign = v < 0 ? '-' : '+', dec = Math.floor(Math.log10(Math.abs(v)) + 1e-9);
+    var b = fmt.b && fmt.b[sign + dec];
+    if(!b){
+      var best = null, gap = Infinity;
+      Object.keys(fmt.b || {}).forEach(function(k){
+        var g = Math.abs(parseInt(k.slice(1), 10) - dec);
+        if(k.charAt(0) === sign && g < gap){ gap = g; best = k; }
+      });
+      if(!best) return String(v);
+      b = fmt.b[best];
+    }
+    var s = (Math.abs(v) / Math.pow(10, b[2])).toFixed(Math.max(0, Math.min(20, b[3] | 0)));
+    if(b[4] && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+    var parts = s.split('.');
+    if(b[5]) parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, b[5]);
+    return String(b[0]) + parts.join(b[6] || '.') + String(b[1]);
+  }
+  // The tick callback the viewer draws an axis with. `arr` reads a pooled array.
+  function tickCallback(spec, arr){
+    var cat = spec.cat ? arr(spec.cat) : null, lo = spec.int ? spec.int[0] : 0, tab = spec.int ? arr(spec.int[1]) : null;
+    var fmt = spec.fmt || null, C = global.Chart;
+    return function(v, i, ticks){
+      if(cat) return v >= 0 && v < cat.length ? cat[v] : '';
+      if(fmt && fmt.hl && ticks && i === ticks.length - 1 && ticks.length > 2) return '';
+      if(tab){
+        var r = Math.round(v);
+        if(Math.abs(v - r) < 1e-9){ if(r - lo >= 0 && r - lo < tab.length) return tab[r - lo]; }
+        else if(spec.frac === '') return '';
+      }
+      if(fmt) return formatTick(fmt, v);
+      return C && C.Ticks ? C.Ticks.formatters.numeric.call(this, v, i, ticks) : String(v);
+    };
+  }
+
   global.ChartKit = {
     fn: fn, make: make, plugin: plugin, refOf: refOf, revive: revive,
+    formatTick: formatTick, tickCallback: tickCallback,
     pluginOf: function(id){ return PLUGINS.hasOwnProperty(id) ? PLUGINS[id] : null; },
     plugins: function(){ return Object.keys(PLUGINS); }
   };

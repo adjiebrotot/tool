@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" class="wait">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Embedded chart | Adjie Brotools</title>
+<link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
+<!-- The chart's own libraries start downloading now, while the page is still
+     being read: which ones is in the link (t: chart kind, kit: the tool's own
+     chart pieces), so nothing waits for the snapshot to be unpacked. They run
+     in order, and embed.js last. -->
+<script>
+(function(){
+  var h = location.hash, get = function(k){ var m = new RegExp('(?:^#|&)' + k + '=([^&]*)').exec(h); return m ? decodeURIComponent(m[1]) : ''; };
+  if(get('l') === 'id') document.documentElement.lang = 'id';
+  var CDN = 'https://cdnjs.cloudflare.com/ajax/libs/', t = get('t'), kit = get('kit'), list = [];
+  if(t === 'c'){
+    list.push(CDN + 'Chart.js/4.4.1/chart.umd.min.js', CDN + 'hammer.js/2.0.8/hammer.min.js',
+              CDN + 'chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js', '../chart-kit.js');
+    // A tool's own pieces live at <tool>/chart-kit.js, and nowhere else.
+    if(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/.test(kit)) list.push('../' + kit + '/chart-kit.js');
+  } else if(/^p(basic|cartesian|gl3d|full)$/.test(t)){
+    list.push(CDN + 'plotly.js/2.27.1/plotly' + (t === 'pfull' ? '' : '-' + t.slice(1)) + '.min.js');
+  }
+  list.push('embed.js');
+  list.forEach(function(src){
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = false;
+    document.head.appendChild(s);
+  });
+})();
+</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../dark.css">
+<link rel="stylesheet" href="../light.css">
+<link rel="stylesheet" href="embed.css">
+</head>
+<body></body>
+</html>
