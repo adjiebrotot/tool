@@ -211,7 +211,9 @@ async function applySens(page, sc){
 }
 
 async function mainCsv(page, t){
-  return page.evaluate((t)=>{ window.__csv=null; document.querySelector('.tab-btn[data-table="'+t+'"]').click(); document.getElementById('downloadBtn').click(); return window.__csv; }, t);
+  // The main page opens in today's money; Sensitivity, like the engine, reads
+  // future's money, so the main page's export is taken with the switch off.
+  return page.evaluate((t)=>{ window.__csv=null; const sr=document.getElementById('showReal');if(sr&&sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));} document.querySelector('.tab-btn[data-table="'+t+'"]').click(); document.getElementById('downloadBtn').click(); return window.__csv; }, t);
 }
 async function sensCsv(page, w){
   return page.evaluate((w)=>{ window.__csv=null; document.querySelector('.btn-scen-action.dl-'+w+'[data-si="0"]').click(); return window.__csv; }, w);

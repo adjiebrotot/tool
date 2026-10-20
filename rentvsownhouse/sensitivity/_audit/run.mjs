@@ -58,7 +58,9 @@ async function open(url){
 // ── main tool CSVs at defaults ──
 const main = await open(MAIN);
 async function mainCsv(table){
-  await main.evaluate((t)=>{ window.__csv=null; document.querySelector('.tab-btn[data-table="'+t+'"]')?.click(); document.getElementById('downloadBtn').click(); }, table);
+  // The main page opens in today's money; Sensitivity, like the engine, reads
+  // future's money, so the main page's export is taken with the switch off.
+  await main.evaluate((t)=>{ window.__csv=null; const sr=document.getElementById('showReal');if(sr&&sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));} document.querySelector('.tab-btn[data-table="'+t+'"]')?.click(); document.getElementById('downloadBtn').click(); }, table);
   return await main.evaluate(()=>window.__csv);
 }
 const mainOwn = await mainCsv('own');
@@ -128,6 +130,10 @@ const sensRent = await sensCsv('rent');
     'house growth (rppi)': 'house price growth (rppi)', 'own costs mode': 'own costs detail', 'rent costs mode': 'rent costs detail',
     'anggaran rumah bulanan': 'anggaran perumahan bulanan', 'mode kpr': 'rincian kpr', 'tipe kpr': 'jenis kpr',
     'periode bunga 1': 'bunga, periode 1', 'mode biaya beli': 'rincian biaya beli', 'mode biaya sewa': 'rincian biaya sewa',
+    // ...and the growth rates, "inflation" until General inflation became the
+    // one inflation on the calculator.
+    'own cost inflation': 'own cost growth', 'rent inflation': 'rent growth', 'rent cost inflation': 'rent cost growth',
+    'inflasi biaya rutin beli': 'kenaikan biaya rutin beli', 'inflasi biaya rutin sewa': 'kenaikan biaya rutin sewa',
   };
   // The parameter section: rows up to the first blank line, as label -> values
   // (the unit column is allowed to have changed).

@@ -278,7 +278,9 @@ const SCHED = [
 
 async function fullCase(title, setup){
   console.log('\n── '+title+' ──');
-  await page.evaluate(()=>window.__RVO.resetAll());
+  // The replay is of the engine's own figures, so the page is read in future's
+  // money: Show in today's money (on by default) is turned off after every reset.
+  await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
   await page.waitForTimeout(200);
   await setup();
   const {S} = await state();
@@ -472,7 +474,7 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
 {
   console.log('\n── F11 Rent-Then-Buy on/off vs Own and Rent ──');
   for(const [lbl, extra] of [['set budget, set cash', {monthlyBudget:6000, initialCash:250000}], ['floating schedule, set budget and cash', 'float']]){
-    await page.evaluate(()=>window.__RVO.resetAll());
+    await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
     if(extra==='float'){ await setSchedule(SCHED); await setInputs({monthlyBudget:6500, initialCash:250000}); } else await setInputs(extra);
     const offOwn = await grabCsv('own'), offRent = await grabCsv('rent');
     const offCards = await grabCards();
@@ -485,7 +487,7 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
       `cash ${offCards.initialCash}→${onCards.initialCash}, budget ${offCards.budget}→${onCards.budget}, own yr30 ${offOwn[offOwn.length-1].Net_Equity}→${onOwn[onOwn.length-1].Net_Equity}`);
   }
   // Automatic figures: switching it on can only raise the budget and cash (they now fund it too)
-  await page.evaluate(()=>window.__RVO.resetAll());
+  await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
   await setInputs({rtbEnabled:true, rtbBuyYear:8});
   const rtb = await grabCsv('rtb');
   const minCash = Math.min(...rtb.map(r=>r.End_Cash));
@@ -495,7 +497,7 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
 // ═══ Case F12: selling costs and borrowed cash, stated directly ═══
 {
   console.log('\n── F12 selling costs; cash below zero ──');
-  await page.evaluate(()=>window.__RVO.resetAll());
+  await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
   const own = await grabCsv('own');
   const exp0 = 192000 - 32000 - 800000*0.025 ; // start cash − setup − selling cost on today's price
   check('I13 year-0 Own net equity = starting cash − setup − selling cost (buy and sell at once)',
@@ -522,7 +524,7 @@ await fullCase('F9 low growth, high cash return: Own ahead in year 1, behind at 
 // ═══ Case F10: the CAGR helper's figure is the one the model runs on ═══
 {
   console.log('\n── F10 CAGR helper → house growth ──');
-  await page.evaluate(()=>window.__RVO.resetAll());
+  await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
   const applied = await page.evaluate(()=>{
     const years=[...document.querySelectorAll('#cagrRows .cagr-year')], prices=[...document.querySelectorAll('#cagrRows .cagr-price')];
     years[0].value='2015'; prices[0].value='500000'; years[1].value='2025'; prices[1].value='779500';

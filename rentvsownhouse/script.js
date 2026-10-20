@@ -83,7 +83,7 @@ const LANG = {
     optPerMonth: 'a month',
     optPerWeek: 'a week',
     optPctBuyPrice: '% of buy price',
-    labelInflation: 'Inflation',
+    labelInflation: 'Growth',
     labelSetupCost: 'Setup cost (stamp duty, legal, etc.)',
     optDollar: '$',
     labelOwnOngoing: 'Ongoing costs of owning',
@@ -92,17 +92,26 @@ const LANG = {
     optWeekly: 'a week',
     optFixedAmount: 'Fixed amount',
     optPctPropertyValue: '% of property value',
-    labelOwnInflation: 'Own ongoing cost inflation',
+    labelOwnInflation: 'Ongoing cost growth',
     sectionRentalPayments: 'Rental payments',
     labelRentAmount: 'Rent amount',
     rentPrefix: 'Rent = ',
     perMo: '/mo',
-    labelRentInflation: 'Rent inflation',
+    labelRentInflation: 'Rent growth',
     sectionCostsRenting: 'Costs of renting',
     labelRentOngoing: 'Ongoing costs of renting',
     optPctAnnualRent: '% of yearly rent',
-    labelRentOngoingInflation: 'Rent ongoing cost inflation',
+    labelRentOngoingInflation: 'Ongoing cost growth',
     labelCurrencySymbol: 'Currency Symbol',
+    sectionPrices: 'Prices',
+    labelGeneralInflation: 'General inflation',
+    helpGeneralInflation: (now, later, yrs) => `The ${now} home costs ${later} in year ${yrs} at this rate. It changes no figure in the plan, only how Show in today’s money reads them.`,
+    helpGeneralInflationZero: 'Prices hold still, so today’s money and future’s money read the same.',
+    labelShowReal: 'Show in today’s money',
+    showRealTip: 'The plan is the same either way.<ul><li><strong>On:</strong> every figure in today’s money, at general inflation.</li><li><strong>Off:</strong> in the money of each year, as the bank account will read.</li></ul>',
+    moneyToday: 'today’s money',
+    moneyFuture: 'future’s money',
+    csvToday: g => `# In today's money, at ${g} general inflation a year`,
     /* KPI */
     kpiInitialCashLabel: 'Initial cash',
     kpiInitialCashTip: 'Starting cash in every scenario. Left blank, it is the most any scenario needs up front: deposit plus setup, a year of rent, or what Rent-Then-Buy needs today to fund its later deposit.',
@@ -221,13 +230,15 @@ const LANG = {
     phCagrPrice: 'Price, e.g. 450,000',
     kpiBreakevenNone: 'No breakeven within the horizon',
     kpiDiffSubYear: (n) => `Net equity in year ${n}`,
-    chartSub: 'In future dollars, not adjusted for inflation.',
+    chartSub: 'In future’s money, not adjusted for inflation.',
+    chartSubToday: g => `In today’s money, at ${g} general inflation a year.`,
     axisYear: 'Year',
     axisNetEquity: 'Net equity',
     axisCash: 'Liquid cash',
     axisCost: 'Accumulated cost',
     tableTitle: 'Cashflow by year',
-    tableUnitNote: 'Each year’s figures, in future dollars.',
+    tableUnitNote: 'Each year’s figures, in future’s money.',
+    tableUnitNoteToday: 'Each year’s figures, in today’s money: divided by general inflation up to the end of that year.',
     exportNetEquity: 'Rent vs Own: net equity over time',
     exportCash: 'Rent vs Own: liquid cash over time',
     exportCost: 'Rent vs Own: accumulated cost',
@@ -239,7 +250,8 @@ const LANG = {
     verdictTie: (yrs) => `Owning and renting end level after ${yrs} years.`,
     verdictBreakeven: (be) => `Owning pulls ahead for good in year ${be}.`,
     verdictNoBreakeven: (yrs) => `Owning does not pull ahead for good within ${yrs} years.`,
-    verdictEquity: (own, rent, yrs) => `Net equity in year ${yrs}: owning ${own}, renting ${rent}, in future dollars.`,
+    verdictEquity: (own, rent, yrs) => `Net equity in year ${yrs}: owning ${own}, renting ${rent}, in future’s money.`,
+    verdictEquityToday: (own, rent, yrs) => `Net equity in year ${yrs}: owning ${own}, renting ${rent}, in today’s money.`,
     verdictRTB: (val, yr) => `Rent-Then-Buy, buying after ${yr} years, ends at ${val}.`,
     assumesTitle: 'What this assumes',
   },
@@ -322,7 +334,7 @@ const LANG = {
     optPerMonth: 'per bulan',
     optPerWeek: 'per minggu',
     optPctBuyPrice: '% dari harga beli',
-    labelInflation: 'Inflasi',
+    labelInflation: 'Kenaikan',
     labelSetupCost: 'Biaya awal pembelian (BPHTB, notaris, dll.)',
     optDollar: '$',
     labelOwnOngoing: 'Biaya rutin kepemilikan',
@@ -331,7 +343,7 @@ const LANG = {
     optWeekly: 'per minggu',
     optFixedAmount: 'Jumlah tetap',
     optPctPropertyValue: '% dari nilai properti',
-    labelOwnInflation: 'Inflasi biaya rutin kepemilikan',
+    labelOwnInflation: 'Kenaikan biaya rutin',
     sectionRentalPayments: 'Pembayaran sewa',
     labelRentAmount: 'Biaya sewa',
     rentPrefix: 'Sewa = ',
@@ -340,8 +352,17 @@ const LANG = {
     sectionCostsRenting: 'Biaya menyewa',
     labelRentOngoing: 'Biaya rutin menyewa',
     optPctAnnualRent: '% dari sewa tahunan',
-    labelRentOngoingInflation: 'Inflasi biaya rutin menyewa',
+    labelRentOngoingInflation: 'Kenaikan biaya rutin',
     labelCurrencySymbol: 'Simbol Mata Uang',
+    sectionPrices: 'Harga',
+    labelGeneralInflation: 'Inflasi umum',
+    helpGeneralInflation: (now, later, yrs) => `Rumah seharga ${now} menjadi ${later} di tahun ke-${yrs} dengan laju ini. Tidak ada angka rencana yang berubah, hanya cara Tampilkan dalam nilai hari ini membacanya.`,
+    helpGeneralInflationZero: 'Harga tetap, jadi nilai hari ini dan nilai masa depan sama.',
+    labelShowReal: 'Tampilkan dalam nilai hari ini',
+    showRealTip: 'Rencananya sama saja.<ul><li><strong>Nyala:</strong> semua angka dalam nilai hari ini, menurut inflasi umum.</li><li><strong>Mati:</strong> dalam nilai uang tiap tahun, seperti di rekening.</li></ul>',
+    moneyToday: 'nilai hari ini',
+    moneyFuture: 'nilai masa depan',
+    csvToday: g => `# In today's money, at ${g} general inflation a year`,
     /* KPI */
     kpiInitialCashLabel: 'Modal awal',
     kpiInitialCashTip: 'Kas awal di semua skenario. Jika dikosongkan, dipakai kebutuhan awal terbesar: Uang Muka (DP) + biaya awal, sewa setahun, atau kas yang dibutuhkan Sewa Dulu sekarang untuk DP-nya nanti.',
@@ -458,12 +479,14 @@ const LANG = {
     kpiBreakevenNone: 'Tidak ada breakeven dalam jangka waktu',
     kpiDiffSubYear: (n) => `Kekayaan bersih di tahun ke-${n}`,
     chartSub: 'Dalam nilai masa depan, tidak disesuaikan dengan inflasi.',
+    chartSubToday: g => `Dalam nilai hari ini, dengan inflasi umum ${g} per tahun.`,
     axisYear: 'Tahun',
     axisNetEquity: 'Kekayaan bersih',
     axisCash: 'Uang tunai',
     axisCost: 'Biaya kumulatif',
     tableTitle: 'Arus kas per tahun',
     tableUnitNote: 'Angka tiap tahun, dalam nilai masa depan.',
+    tableUnitNoteToday: 'Angka tiap tahun, dalam nilai hari ini: dibagi inflasi umum sampai akhir tahun itu.',
     exportNetEquity: 'Sewa vs Beli: kekayaan bersih dari waktu ke waktu',
     exportCash: 'Sewa vs Beli: uang tunai dari waktu ke waktu',
     exportCost: 'Sewa vs Beli: biaya kumulatif',
@@ -476,6 +499,7 @@ const LANG = {
     verdictBreakeven: (be) => `Membeli mulai unggul seterusnya di tahun ke-${be}.`,
     verdictNoBreakeven: (yrs) => `Membeli tidak unggul seterusnya dalam ${yrs} tahun.`,
     verdictEquity: (own, rent, yrs) => `Kekayaan bersih di tahun ke-${yrs}: membeli ${own}, menyewa ${rent}, dalam nilai masa depan.`,
+    verdictEquityToday: (own, rent, yrs) => `Kekayaan bersih di tahun ke-${yrs}: membeli ${own}, menyewa ${rent}, dalam nilai hari ini.`,
     verdictRTB: (val, yr) => `Sewa Dulu, Beli Kemudian (membeli setelah ${yr} tahun) berakhir di ${val}.`,
     assumesTitle: 'Asumsi yang dipakai',
   },
@@ -590,6 +614,7 @@ const DEFAULTS = {
   rtbBuyYear: 5,
   monthlyBudgetIncrease: 0,
   currencySymbol: '$',
+  generalInflation: 2.5,
   mortgageMode: 'simple',
   ratePeriods: null,
   ownCostsMode: 'simple',
@@ -679,6 +704,92 @@ function ownOngoingYearlyAt(yr, propValue){ return E.ownOngoingYearlyAt(S, yr, p
 function rentOngoingYearlyAt(yr, rentMonthly){ return E.rentOngoingYearlyAt(S, yr, rentMonthly); }
 function computeModel(variant){ return E.computeModel(S, variant); }
 
+/* ── TODAY'S MONEY ──
+   The engine runs in the money of each year, the way the bank account will
+   read. Show in today's money re-reads every figure at today's prices: it is
+   divided by general inflation compounded to the end of its own year, a
+   balance at that year end and a year's flows with the year they belong to,
+   so every row of the table still adds up across. A running total
+   (accumulated cost) is the sum of its own years each read that way, never
+   the total divided once. Year 0 is today and never moves. Off, none of this
+   runs and every figure is the engine's own.
+
+     today(x in year y) = x / (1 + general inflation)^y
+
+   Own and rent in the same year share a divisor, so which one is ahead, and
+   the breakeven year, never change with the switch. */
+const NOT_MONEY = new Set(['year', 'ownRateYr', 'rtbRateYr']);
+const RUNNING = /AccumCost|AccumInterest|^cost(Own|Rent|RTB)/;
+function showToday(){ return !!$('showReal').checked; }
+function priceLevel(yr){ return Math.pow(1 + (S.generalInflation||0)/100, yr); }
+function moneyName(){ return T(showToday() ? 'moneyToday' : 'moneyFuture'); }
+// A rate as typed: fmt.pct reads anything at or under 1 as a fraction.
+function pctText(v){ return (+(Number(v)||0).toFixed(2)) + '%'; }
+function todayRows(rows){
+  if(!rows) return rows;
+  const last = {}, run = {};
+  return rows.map(r=>{
+    const d = priceLevel(r.year), o = {};
+    Object.keys(r).forEach(k=>{
+      const v = r[k];
+      if(typeof v !== 'number' || NOT_MONEY.has(k)){ o[k] = v; return; }
+      if(RUNNING.test(k)){
+        run[k] = (run[k]||0) + (v - (k in last ? last[k] : 0)) / d;
+        last[k] = v; o[k] = run[k];
+        return;
+      }
+      o[k] = v / d;
+    });
+    return o;
+  });
+}
+/* The repayment range in today's money: a level repayment shrinks year by
+   year, so the range is taken over every in-term year and every rate path. */
+function todayPayRange(list, key, from, to){
+  let lo = Infinity, hi = -Infinity;
+  list.forEach(rows=>(rows||[]).forEach(r=>{
+    if(r.year < from || r.year > to) return;
+    const p = (r[key]||0) / 12;
+    if(p > 0){ const t = p / priceLevel(r.year); lo = Math.min(lo, t); hi = Math.max(hi, t); }
+  }));
+  return isFinite(lo) ? [lo, hi] : [0, 0];
+}
+/* The page's copy of a run: the engine's own, or every figure the results
+   show re-read in today's money. What the reader typed (today's rent, the
+   year-1 budget the warnings check) stays as typed. */
+function shownState(state, paths){
+  if(!showToday()) return state;
+  const rows = todayRows(state.rows);
+  const last = rows[rows.length-1];
+  const o = Object.assign({}, state, {rows});
+  o.summary = Object.assign({}, state.summary, {
+    ownNetEquity: last.ownNetEquity, rentNetEquity: last.rentNetEquity,
+    diff: last.ownNetEquity - last.rentNetEquity,
+    ownPropValue: last.ownPropValue, ownHouseEquity: last.ownHouseEquity,
+    ownCash: last.ownCash, rentCash: last.rentCash,
+    ownAccumCost: last.ownAccumCost, rentAccumCost: last.rentAccumCost,
+  });
+  // A shortfall is named by its deepest point, which is a figure too.
+  const short = (list, key) => {
+    let year = null, worst = 0;
+    (list||[]).forEach(r=>{ if(r[key] < -0.5){ if(year===null) year = r.year; worst = Math.min(worst, r[key]); } });
+    return year===null ? null : {year, worst};
+  };
+  o.shortfalls = {own: short(rows, 'cashOwn'), rent: short(rows, 'cashRent'), rtb: null};
+  const term = Math.min(S.mortgageTerm, S.horizon);
+  [o.mPaymentMin, o.mPaymentMax] = todayPayRange(paths.map(p=>p.rows), 'ownMortgagePayment', 1, term);
+  if(state.rtbRows){
+    const b = S.rtbBuyYear;
+    o.rtbRows = Object.assign({}, state.rtbRows, {
+      rows: todayRows(state.rtbRows.rows),
+      rtbPropValueAtBuy: state.rtbRows.rtbPropValueAtBuy / priceLevel(b),
+    });
+    o.shortfalls.rtb = short(o.rtbRows.rows, 'cashRTB');
+    [o.rtbPaymentMin, o.rtbPaymentMax] = todayPayRange(paths.map(p=>p.rtbRows && p.rtbRows.rows), 'rtbMortgagePayment', b+1, Math.min(b + S.mortgageTerm, S.horizon));
+  }
+  return o;
+}
+
 /* The simple cost fields whose type picks money or a "%", and what that "%" is
    a share of. */
 const COST_TYPES = [
@@ -730,6 +841,8 @@ function readInputs(){
   S.rtbBuyYear      = parseIntSafe($('rtbBuyYear').value, DEFAULTS.rtbBuyYear);
   S.monthlyBudgetIncrease = parseFloatSafe($('monthlyBudgetIncrease').value, 0);
   S.currencySymbol  = $('currencySymbol').value || '$';
+  // Read by nothing in the model: only Show in today's money uses it.
+  S.generalInflation = Math.max(0, parseFloatSafe($('generalInflation').value, DEFAULTS.generalInflation));
   // Simple mode: always P&I, cost = interest only (their controls are hidden)
   if(S.mortgageMode !== 'detailed'){
     S.mortgageType = 'pi';
@@ -789,6 +902,12 @@ function refreshLabels(){
   $('rentInflationVal').textContent       = pctYr(S.rentInflation);
   $('ownOngoingInflationVal').textContent = pctYr(S.ownOngoingInflation);
   $('rentOngoingInflationVal').textContent= pctYr(S.rentOngoingInflation);
+  $('generalInflationVal').textContent    = pctYr(S.generalInflation);
+  // What the rate does to the reader's own home: in today's money the price
+  // never moves on screen, so the rate reads as inert until a figure is named.
+  $('helpGeneralInflation').textContent = S.generalInflation > 0
+    ? T('helpGeneralInflation')(fmt.currency(S.propertyPrice), fmt.currency(S.propertyPrice * priceLevel(S.horizon)), S.horizon)
+    : T('helpGeneralInflationZero');
   // Show inflation sliders only for fixed-$ mode
   $('ownOngoingInflationRow').style.display  = S.ownOngoingCostType==='dollar' ? '' : 'none';
   $('rentOngoingInflationRow').style.display = S.rentOngoingCostType==='dollar' ? '' : 'none';
@@ -909,7 +1028,7 @@ function renderChart(rows){
   const series = getGraphSeries();
   buildLegend(series, !!latestHasBand);
   const sym = $('currencySymbol').value || '$';
-  const yAxisTitle = `${T(activeGraph==='netEquity' ? 'axisNetEquity' : activeGraph==='cash' ? 'axisCash' : 'axisCost')} (${sym})`;
+  const yAxisTitle = `${T(activeGraph==='netEquity' ? 'axisNetEquity' : activeGraph==='cash' ? 'axisCash' : 'axisCost')} (${sym}, ${moneyName()})`;
   // Use integer year numbers for labels — must be plain numbers, not strings
   const labels   = rows.map(r=> (typeof r.year === 'number' && isFinite(r.year)) ? r.year : 0);
   const rtbBuyYearIdx = S.rtbEnabled ? labels.indexOf(S.rtbBuyYear) : -1;
@@ -1128,7 +1247,7 @@ function renderVerdict(state){
   else if(diff > 0) title = T('verdictOwn')(fmt.currency(diff, true), yrs);
   else title = T('verdictRent')(fmt.currency(-diff, true), yrs);
   const body = [breakeven ? T('verdictBreakeven')(breakeven) : T('verdictNoBreakeven')(yrs),
-                T('verdictEquity')(fmt.currency(summary.ownNetEquity, true), fmt.currency(summary.rentNetEquity, true), yrs)];
+                T(showToday() ? 'verdictEquityToday' : 'verdictEquity')(fmt.currency(summary.ownNetEquity, true), fmt.currency(summary.rentNetEquity, true), yrs)];
   if(S.rtbEnabled && state.rtbRows && state.rtbRows.rows && state.rtbRows.rows.length){
     const last = state.rtbRows.rows[state.rtbRows.rows.length-1];
     body.push(T('verdictRTB')(fmt.currency(last.rtbNetEquity, true), S.rtbBuyYear));
@@ -1171,8 +1290,18 @@ function renderAssumptions(state){
     ? L(`rent rises ${pc(S.rentInflation)} a year from ${m(state.rentMonthly0)}${perMo}`, `sewa naik ${pc(S.rentInflation)} per tahun dari ${m(state.rentMonthly0)}${perMo}`)
     : L('renting costs no rent', 'menyewa tanpa biaya sewa');
   items.push(L(
-    `<strong>The home grows ${pc(S.houseGrowth)} a year,</strong> to ${fmt.currency(state.summary.ownPropValue, true)} by year ${yrs}, and ${rentPart}. Every figure is in future dollars, not today's money.`,
-    `<strong>Nilai rumah naik ${pc(S.houseGrowth)} per tahun,</strong> menjadi ${fmt.currency(state.summary.ownPropValue, true)} di tahun ${yrs}, dan ${rentPart}. Semua angka dalam nilai uang masa depan, bukan nilai hari ini.`));
+    `<strong>The home grows ${pc(S.houseGrowth)} a year,</strong> to ${fmt.currency(state.summary.ownPropValue, true)} by year ${yrs}, and ${rentPart}.`,
+    `<strong>Nilai rumah naik ${pc(S.houseGrowth)} per tahun,</strong> menjadi ${fmt.currency(state.summary.ownPropValue, true)} di tahun ${yrs}, dan ${rentPart}.`));
+  // Which money the page is in, named with the rate that makes it so.
+  const g = S.generalInflation;
+  items.push(showToday()
+    ? (g > 0
+      ? L(`<strong>Figures are in today's money, with prices rising ${pc(g)} a year.</strong> Each year's are divided by that general inflation up to the end of the year, so the home's ${fmt.currency(state.summary.ownPropValue, true)} is what it would buy today. The amounts you enter are today's prices.`,
+          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi ${fmt.currency(state.summary.ownPropValue, true)} untuk rumah adalah daya belinya hari ini. Angka yang Anda isi adalah harga hari ini.`)
+      : L(`<strong>Figures are in today's money, with prices held still,</strong> so they read the same as the money of each year.`,
+          `<strong>Angka dalam nilai hari ini, dengan harga tetap,</strong> jadi sama dengan nilai uang tiap tahun.`))
+    : L(`<strong>Figures are in future's money,</strong> as the bank account will read them${g > 0 ? `. With prices rising ${pc(g)} a year, ${fmt.currency(100)} in year ${yrs} buys what ${fmt.currency(100/priceLevel(yrs))} does today` : ''}.`,
+        `<strong>Angka dalam nilai masa depan,</strong> seperti yang akan tertera di rekening${g > 0 ? `. Dengan harga naik ${pc(g)} per tahun, ${fmt.currency(100)} di tahun ke-${yrs} setara ${fmt.currency(100/priceLevel(yrs))} hari ini` : ''}.`));
 
   const loan = S.propertyPrice * (1 - S.downPaymentPct/100);
   if(S.mortgageMode !== 'detailed'){
@@ -1276,7 +1405,7 @@ function updateSummary(state){
   $('rentSummary').innerHTML = `
     <div class="tile"><div class="label">${T('tileNetEquity')} (${T('thYear')} ${yrs})</div><div class="value ${summary.rentNetEquity>=0?'pos':'neg'}">${fmt.currency(summary.rentNetEquity,true)}</div></div>
     <div class="tile"><div class="label">${T('tileAccumCost')} (${T('thYear')} ${yrs})</div><div class="value neg">${fmt.currency(summary.rentAccumCost,true)}</div></div>
-    <div class="tile"><div class="label">${T('tileYearlyRent')} (${T('thYear')} 1)</div><div class="value">${fmt.currency(rentMonthly0*12,true)}</div></div>
+    <div class="tile"><div class="label">${T('tileYearlyRent')} (${T('thYear')} 1)</div><div class="value">${fmt.currency(showToday() ? state.rows[1].rentRent : rentMonthly0*12,true)}</div></div>
     <div class="tile"><div class="label">${T('tileYearlyRent')} (${T('thYear')} ${yrs})</div><div class="value">${fmt.currency(state.rows[state.rows.length-1].rentRent,true)}</div></div>
     <div class="tile"><div class="label">${T('tileLiquidCash')} (${T('thYear')} 1)</div><div class="value">${fmt.currency(state.rows[1]?.rentCash||0,true)}</div></div>
     <div class="tile"><div class="label">${T('tileLiquidCash')} (${T('thYear')} ${yrs})</div><div class="value">${fmt.currency(summary.rentCash,true)}</div></div>
@@ -1445,7 +1574,11 @@ function updateRTBSummary(state){
 function rerender(){
   readInputs();
   refreshLabels();
-  const state = computeModel('mid');
+  const run = computeModel('mid');
+  // Every rate path the page reads, so today's money can re-read them all.
+  const paths = [run];
+  if(scheduleHasFloat()) paths.push(computeModel('low'), computeModel('high'));
+  const state = shownState(run, paths);
   latestRows = state.rows;
   cachedRtbRows = state.rtbRows ? state.rtbRows.rows : null;
 
@@ -1469,8 +1602,8 @@ function rerender(){
   // Floating-rate band: simulate the full model at the min and max rate paths
   latestHasBand = scheduleHasFloat();
   if(latestHasBand){
-    const lowState  = computeModel('low');
-    const highState = computeModel('high');
+    const lowState  = shownState(paths[1], paths);
+    const highState = shownState(paths[2], paths);
     const bandKeys  = ['netEquityOwn','cashOwn','costOwn','netEquityRent','cashRent','costRent'];
     const lowRtbByYear = {}, highRtbByYear = {};
     if(lowState.rtbRows)  lowState.rtbRows.rows.forEach(r=>{ lowRtbByYear[r.year]=r; });
@@ -1507,6 +1640,9 @@ function rerender(){
     });
   }
 
+  // The two one-line notes name the money on show.
+  $('chartSub').textContent = showToday() ? T('chartSubToday')(pctText(S.generalInflation)) : T('chartSub');
+  $('tableUnitNote').textContent = T(showToday() ? 'tableUnitNoteToday' : 'tableUnitNote');
   renderChart(latestRows);
   updateKPIs(state);
   updateSummary(state);
@@ -1553,6 +1689,8 @@ function resetAll(){
   $('rtbEnabled').checked   = DEFAULTS.rtbEnabled;
   $('rtbBuyYear').value     = DEFAULTS.rtbBuyYear;
   $('monthlyBudgetIncrease').value = DEFAULTS.monthlyBudgetIncrease;
+  $('generalInflation').value = DEFAULTS.generalInflation;
+  $('showReal').checked = true;
   document.querySelector('input[name="mortgageType"][value="pi"]').checked=true;
   $('radioPI').classList.add('selected'); $('radioIO').classList.remove('selected');
   updateMortgageModeUI();
@@ -1853,6 +1991,8 @@ function downloadCsv(){
     if(!cachedRtbRows||!cachedRtbRows.length) return;
     csv = RVOExport.rtbCashflowCSV(cachedRtbRows); filename='rent_then_buy_cashflow.csv';
   } else { return; }
+  // The file says which money it is in, right under the line naming the tool.
+  if(showToday()) csv = csv.replace('\n', '\n' + T('csvToday')(pctText(S.generalInflation)) + '\n');
   RVOExport.downloadCSV(filename, csv);
 }
 
@@ -2260,7 +2400,7 @@ COST_TYPES.forEach(({amountId, typeId, freqId, of})=>{
  'mortgageRate','mortgageTerm','houseGrowth','sellingCostPct','setupCost','setupCostType',
  'ownOngoingCost','ownOngoingCostFreq','ownOngoingCostType','ownOngoingInflation',
  'rentAmount','rentFreq','rentInflation','rentOngoingCost','rentOngoingCostFreq','rentOngoingCostType','rentOngoingInflation',
- 'rtbBuyYear','monthlyBudgetIncrease','initialCash','currencySymbol'
+ 'rtbBuyYear','monthlyBudgetIncrease','initialCash','currencySymbol','generalInflation'
 ].forEach(id=>{
   const el=$(id); if(!el) return;
   ['input','change'].forEach(ev=>el.addEventListener(ev, ()=>{
@@ -2270,6 +2410,8 @@ COST_TYPES.forEach(({amountId, typeId, freqId, of})=>{
 });
 
 $('rtbEnabled').addEventListener('change', rerender);
+// Show in today's money re-reads the page; the plan underneath does not move.
+$('showReal').addEventListener('change', rerender);
 $('costInterestOnly').addEventListener('change', rerender);
 
 document.querySelectorAll('[data-money="true"]').forEach(el=>{
@@ -2447,8 +2589,16 @@ window.__RVO = { resetAll: resetAll };
    plus the parts of S that live only in JS — the mortgage/costs modes and the
    editable rate-period and cost-item collections — so a returning user keeps
    their full model. */
+/* A plan saved before Show in today's money existed was read in future's
+   money, and opens that way, so its figures mean what they meant. A cache,
+   a scenario file and a link all come through here. */
+function migrateShowReal(saved){
+  const f = saved && (saved.__fields || saved);
+  if(f && typeof f === 'object' && !Object.prototype.hasOwnProperty.call(f, 'c:showReal')) $('showReal').checked = false;
+}
 persist = Persist.init('rentvsownhouse', {
-  onRestore: function(){
+  onRestore: function(saved){
+    migrateShowReal(saved);
     updateMortgageModeUI();
     renderRatePeriodRows();
     updateCostsModeUI();

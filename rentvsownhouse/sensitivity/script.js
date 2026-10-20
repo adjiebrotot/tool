@@ -112,15 +112,15 @@ const LANG_SENS = {
     pOwnOngoingCost: 'Ongoing cost (own)',
     pOwnOngoingCostFreq: 'Own cost frequency',
     pOwnOngoingCostType: 'Own cost type',
-    pOwnOngoingInflation: 'Own cost inflation',
+    pOwnOngoingInflation: 'Own cost growth',
     pCostInterestOnly: 'Cost = interest only',
     pRentAmount: 'Rent amount',
     pRentFreq: 'Rent frequency',
-    pRentInflation: 'Rent inflation',
+    pRentInflation: 'Rent growth',
     pRentOngoingCost: 'Ongoing cost (rent)',
     pRentOngoingCostFreq: 'Rent cost frequency',
     pRentOngoingCostType: 'Rent cost type',
-    pRentOngoingInflation: 'Rent cost inflation',
+    pRentOngoingInflation: 'Rent cost growth',
     pMortgageMode: 'Mortgage detail',
     pOwnCostsMode: 'Own costs detail',
     pRentCostsMode: 'Rent costs detail',
@@ -137,7 +137,7 @@ const LANG_SENS = {
     optFloating: 'Floating',
     uYr: 'Year',
     uToYr: 'to year',
-    lblInfl: 'inflation',
+    lblInfl: 'growth',
     optPerYear: '/ yr',
     optPerMonth: '/ mo',
     optPerWeek: '/ wk',
@@ -271,7 +271,7 @@ const LANG_SENS = {
     pOwnOngoingCost: 'Biaya rutin (beli)',
     pOwnOngoingCostFreq: 'Frekuensi biaya rutin beli',
     pOwnOngoingCostType: 'Tipe biaya rutin beli',
-    pOwnOngoingInflation: 'Inflasi biaya rutin beli',
+    pOwnOngoingInflation: 'Kenaikan biaya rutin beli',
     pCostInterestOnly: 'Biaya = bunga saja',
     pRentAmount: 'Biaya sewa',
     pRentFreq: 'Frekuensi sewa',
@@ -279,7 +279,7 @@ const LANG_SENS = {
     pRentOngoingCost: 'Biaya rutin (sewa)',
     pRentOngoingCostFreq: 'Frekuensi biaya rutin sewa',
     pRentOngoingCostType: 'Tipe biaya rutin sewa',
-    pRentOngoingInflation: 'Inflasi biaya rutin sewa',
+    pRentOngoingInflation: 'Kenaikan biaya rutin sewa',
     pMortgageMode: 'Rincian KPR',
     pOwnCostsMode: 'Rincian biaya beli',
     pRentCostsMode: 'Rincian biaya sewa',
@@ -296,7 +296,7 @@ const LANG_SENS = {
     optFloating: 'Mengambang',
     uYr: 'Tahun',
     uToYr: 'hingga tahun',
-    lblInfl: 'inflasi',
+    lblInfl: 'kenaikan',
     optPerYear: '/ thn',
     optPerMonth: '/ bln',
     optPerWeek: '/ mgg',
@@ -1754,8 +1754,13 @@ function parseCSVText(text){
 // Reverse maps: translated label → param key / mode key (both languages).
 /* Row labels a CSV saved before the October 2026 relabel carries. The importer
    reads rows by label, so an old file must still find its rows under the
-   names it was written with, in either language. */
+   names it was written with, in either language. The growth rates were
+   "inflation" until General inflation became the one inflation on the
+   calculator. */
 const LEGACY_ROW_LABELS = {
+  pOwnOngoingInflation:  ['Own cost inflation', 'Inflasi biaya rutin beli'],
+  pRentInflation:        ['Rent inflation'],
+  pRentOngoingInflation: ['Rent cost inflation', 'Inflasi biaya rutin sewa'],
   pHorizon:       ['Horizon'],
   pHouseGrowth:   ['House Growth (RPPI)'],
   pMonthlyBudget: ['Anggaran Rumah Bulanan'],
