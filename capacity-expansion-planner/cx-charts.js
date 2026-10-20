@@ -620,7 +620,8 @@
     if(any(T.shedCost)) ds.push(histSet('Lost load cost', m(T.shedCost), cssVar('--negative'), { kind: 'shed' }));
     var avg = T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; });
     ds.push(stepLine('Levelised cost', cal.spread(avg), cal, { yAxisID: 'y2', borderDash: [], kind: 'ref' }));
-    var u = cur ? cur + ' m' : 'millions';
+    // Money is at the first year's prices, as each year pays it: Present cost is what discounts it.
+    var u = cur ? cur + ' m' : 'millions', y0 = res.periods[0];
     var op = baseOptions({ n: cal.n, onClick: yearClick(cal), fitAxes: ['y', 'y2'],
       filter: function(item){ return Math.abs(item.parsed.y) > 1e-9 || item.dataset.kind === 'ref'; },
       skip: CXKit.skipRef,
@@ -635,13 +636,18 @@
       },
       scales: function(grid, muted, text){
         return { x: yearScale(cal, muted, text, { stacked: true }),
-                 y: { stacked: true, beginAtZero: true, title: axisTitle('Cost (' + u + ' a year)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.big(v * 1e6, ''); } }, grid: { color: grid } },
-                 y2: { position: 'right', beginAtZero: true, title: axisTitle('Levelised cost (' + (cur || '') + '/MWh)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.money(v, cur); } }, grid: { drawOnChartArea: false } } };
+                 y: { stacked: true, beginAtZero: true, title: axisTitle('Cost (' + u + ' a year, ' + y0 + ' prices)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.big(v * 1e6, ''); } }, grid: { color: grid } },
+                 y2: { position: 'right', beginAtZero: true, title: axisTitle('Levelised cost (' + (cur || '') + '/MWh, ' + y0 + ' prices)', muted), ticks: { color: muted, font: { size: 11 }, callback: function(v){ return F.money(v, cur); } }, grid: { drawOnChartArea: false } } };
       } });
     op.plugins.cxPeriods = periods(cal, -0.5);
     make('cost', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'costLegend', [PERIOD_PLUGIN, EDGE_PLUGIN]);
-    $('costSub').textContent = 'At today’s prices, not discounted.';
+    $('costSub').innerHTML = '<span class="tip-wrap">At ' + y0 + ' prices, before discounting <i class="tip-icon" data-tip="' + CXCharts.undiscounted(res) + '">?</i></span>';
   }
+
+  // What a year's cost before discounting is, and how Present cost discounts it.
+  CXCharts.undiscounted = function(res){
+    return 'Each year’s cost as that year pays it. Present cost discounts every year to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '% and adds them up.';
+  };
 
   /* ── Render all, or clear ── */
   CXCharts.ok = function(){ return typeof Chart !== 'undefined'; };

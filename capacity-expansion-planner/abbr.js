@@ -16,5 +16,5 @@ SharedAbbr.glossary('capacity-expansion-planner', {
   VoLL:  ['Value of Lost Load', 'what a MWh of demand left unserved is taken to cost'],
   OCGT:  ['Open-Cycle Gas Turbine', 'a gas turbine on its own: cheap to build and quick to start, but it burns more gas per MWh, so it suits the few peak hours'],
   CCGT:  ['Combined-Cycle Gas Turbine', 'a gas turbine whose hot exhaust raises steam for a second turbine: dearer to build, but it burns far less gas per MWh'],
-  LCOE:  ['Levelised Cost of Energy', 'every year’s cost over every year’s energy served, both discounted: the flat price per MWh that would pay for the whole plan']
+  LCOE:  ['Levelised Cost of Energy', 'every year’s cost over every year’s energy served, both discounted to the plan’s first year: the flat price per MWh, at that year’s prices, that would pay for the whole plan']
 });

@@ -131,6 +131,21 @@
     week: '<strong>A typical week:</strong> Monday to Sunday for each season, so storage and firm plants meet a run of days that differ.'
   };
   function setTip(id, html){ var el = $(id); if(el) el.setAttribute('data-tip', html); }
+  /* Every money figure is at the first year's prices (the plan has no
+     inflation) and every year is discounted back to it: these tips name it. */
+  function inTen(o){ return Math.pow(1 + o.rate / 100, -10).toFixed(2); }
+  function rateTip(o){
+    return 'A real rate, above inflation, as every cost is at ' + o.start + ' prices. It sets the capital annuity, and ' +
+      (o.rate > 0 ? 'a cost in ' + (o.start + 10) + ' counts ' + inTen(o) + ' of the same cost in ' + o.start + '.' : 'at zero every year’s cost counts the same.');
+  }
+  // A table's money note, its explanation in a tip.
+  function moneyNote(res, C, tip){
+    return 'Money in ' + esc(C || 'currency units') + ' a year at ' + res.periods[0] + ' prices, before discounting. <i class="tip-icon" data-tip="' + esc(tip) + '">?</i>';
+  }
+  function kpiTips(o){
+    setTip('npvTip', 'Every year’s cost from ' + o.start + ' to ' + o.end + ' at ' + o.start + ' prices, discounted to ' + o.start + ' and summed: capital annuities, fixed and running costs, carbon and lost load.');
+    setTip('avgTip', 'One flat price per MWh from ' + o.start + ' to ' + o.end + ', at ' + o.start + ' prices, that pays the present cost. A year alone is its cost over its energy, with no discounting.');
+  }
   // What sets the sampling: the load's or a farm's daily variability, or a file.
   function sampleWhy(S){
     if(S.sample === 'day') return 'Set by the profiles: none varies from day to day.';
@@ -155,6 +170,10 @@
     // Each season follows the profiles: shown in Assumptions, never chosen there.
     $('cxSample').value = S.sample;
     setTip('sampleTip', SAMPLE_TIP[S.sample]);
+    setTip('rateTip', rateTip(o));
+    setTip('carbonTip', 'Paid on every tonne of CO2 a plant emits, on top of its running cost: the price in ' + o.start + ', at ' + o.start + ' prices, before its growth.');
+    setTip('vollTip', 'What a MWh not served costs the people who lose it, at ' + o.start + ' prices. Capacity that is used fewer hours than its cost over this is not built.');
+    if(!(app.res && app.res.report && app.res.report.ok)) kpiTips(o);
     $('sampleWhy').innerHTML = sampleWhy(S);
     $('yearsNote').innerHTML = P.length === 1 ? 'One decision year, <b>' + P[0].year + '</b>.' :
       '<b>' + P.length + '</b> decision years: ' + P.map(function(p){ return p.year; }).join(', ') + (P[P.length - 1].years < o.step ? ', the last for ' + P[P.length - 1].years + (P[P.length - 1].years === 1 ? ' year' : ' years') : '') + '.';
@@ -709,9 +728,9 @@
     exist: 'Capacity already built. It runs, and pays its fixed O&M, until it retires.',
     retire: 'The first year it is no longer in service. Leave it blank to keep it to the end of the plan.',
     build: 'Lets the plan build new capacity of it in any decision year from its earliest year.',
-    capex: 'Overnight cost of a new kW in the first year, before interest. It is paid as an annuity over its life at the discount rate.',
-    capexStore: 'Overnight cost of a new kW of power with its hours of storage, so a 4-hour battery at 1,200 a kW is 300 a kWh.',
-    fom: 'Paid every year on each kW in service, whether it runs or not.',
+    capex: 'Overnight cost of a new kW at {y} prices, before interest, for one built in {y}; Cost change moves it for later years. It is paid as an annuity over its life.',
+    capexStore: 'Overnight cost at {y} prices of a new kW of power with its hours of storage, so a 4-hour battery at 1,200 a kW is 300 a kWh.',
+    fom: 'Paid every year on each kW in service, whether it runs or not. The same in every year, at {y} prices.',
     life: 'Years a new plant runs once built. It retires after that and may be built again.',
     learn: 'How the capital cost moves each year, compounded: −2% makes it 2% cheaper every year the plan waits.',
     from: 'The first decision year it can be built in, for a plant that takes years to permit or build. Blank is the first year.',
@@ -719,7 +738,7 @@
     unit: 'Built only in whole units of this size, as large plants are. It makes the plan a mixed-integer problem, which takes longer.',
     cf: 'Its year’s output over its rating × 8,760 hours. The climate’s sun or wind through the typical days is scaled to give it.',
     prof: 'Its output through each season’s days, as a share of its rating: the climate’s, scaled to the capacity factor, or Custom, from a CSV or Excel file of typical days or a full year.',
-    vom: 'Fuel and variable O&M for each MWh it generates, before any carbon price.',
+    vom: 'Fuel and variable O&M for each MWh it generates, before any carbon price. The same in every year, at {y} prices.',
     co2: 'CO2 for each MWh it generates. The carbon price and the net-zero year apply to it.',
     avail: 'Share of its rating it can give in any hour, after outages and maintenance.',
     hours: 'How long it can discharge at full power: energy capacity is power × hours.',
@@ -787,6 +806,8 @@
   function shown(e, f){ return (!f.detail || detailed()) && (!f.show || f.show(e)); }
   function fieldHtml(e, f){
     var tip = typeof f.tip === 'function' ? f.tip(e) : f.tip;
+    // A money field's tip names the plan's price year, its first.
+    if(tip) tip = tip.replace(/\{y\}/g, plan().start);
     if(f.kind === 'profile') return genProfHtml(e);
     if(f.kind === 'daily') return genDailyHtml(e);
     if(f.kind === 'toggle'){
@@ -1041,7 +1062,7 @@
   function sharePct(x){ var p = 100 * x; return p >= 0.1 ? F.pct(p) : String(+p.toPrecision(2)); }
   function verdict(res, model){
     var o = res.report.opts, T = res.totals, C = cur(), years = res.periods, K = years.length;
-    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served.';
+    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served (' + o.start + ' prices, ' + F.pct(o.rate) + '% discount rate).';
     var shed = shedShare(T) > SHED_NOTE ? ' ' + sharePct(shedShare(T)) + '% of demand goes unserved on the toughest days, where building for it would cost more than the value of lost load.' : '';
     if(!(T.built >= 0.5)){
       return { tone: '', title: 'Build nothing: what is in service ' + (shed ? 'is the cheapest plan to ' + o.end + '.' : 'meets the demand to ' + o.end + '.'), body: cost + shed };
@@ -1092,12 +1113,14 @@
     $('mNpv').textContent = F.big(T.npv, C);
     var pv = function(a){ var s = 0; a.forEach(function(v, k){ s += v * res.disc[k]; }); return s; };
     var capex = pv(T.capex), fixed = pv(T.fom), runC = pv(T.vom) + pv(T.co2cost), lost = pv(T.shedCost);
-    $('mNpvSub').textContent = 'Discounted to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '%: capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
+    var o = res.report.opts;
+    kpiTips(o);
+    $('mNpvSub').textContent = 'At ' + o.start + ' prices, ' + F.pct(o.rate) + '% discount rate: capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
       (lost > 0.5 ? ', lost load ' + F.big(lost, C) : '') + '.';
     // Levelised cost of energy: present cost over the present value of the energy served
     $('mAvg').textContent = F.price(T.avgCost, C) + '/MWh';
     var a0 = T.served[0] > 0 ? T.cost[0] / T.served[0] : NaN, a1 = T.served[K - 1] > 0 ? T.cost[K - 1] / T.served[K - 1] : NaN;
-    var over = 'Over the whole plan, discounted at ' + F.pct(res.report.opts.rate) + '%.';
+    var over = 'At ' + o.start + ' prices.';
     $('mAvgSub').textContent = K > 1 ? over + ' A year alone: ' + F.price(a0, C) + ' in ' + res.periods[0] + ', ' + F.price(a1, C) + ' in ' + last + '.' : over;
     // Clean energy in the last year, or the shortfall when there is one
     var shedAll = shedShare(T);
@@ -1210,7 +1233,7 @@
       row('Total', T.cost, function(v){ return F.money(v, C); });
       row('Levelised cost per MWh', T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; }), function(v){ return F.price(v, C); });
       row('Discount factor', res.disc, function(v){ return (Math.round(v * 1000) / 1000).toFixed(3); });
-      units = 'Money in ' + (C || 'currency units') + ' a year at the first year’s prices, not discounted.';
+      units = moneyNote(res, C, 'Present cost is each Total times its Discount factor, added up: every year discounted to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '%.');
     } else {
       head = ['Decision year', 'Years it stands for', 'Peak demand MW', 'Demand GWh', 'Unserved GWh', 'Capacity MW', 'Firm and storage MW', 'Clean share %', 'CO2', 'Cost a year', 'Levelised cost per MWh'];
       yrs.forEach(function(y, k){
@@ -1219,7 +1242,7 @@
           F.pct(T.gen[k] > 0 ? 100 * T.cleanGen[k] / T.gen[k] : NaN), F.co2(T.emis[k]), F.money(T.cost[k], C), F.price(T.served[k] > 0 ? T.cost[k] / T.served[k] : NaN, C)],
           neg: T.shedEnergy[k] > 1e-3 ? [4] : [] });
       });
-      units = 'Money in ' + (C || 'currency units') + ' at the first year’s prices.';
+      units = moneyNote(res, C, CXCharts.undiscounted(res));
     }
     return { head: head, rows: rows, units: units };
   }
@@ -1229,7 +1252,7 @@
      it / stands for"). The CSV keeps each title on one line. */
   function renderTable(){
     var t = tableData();
-    $('tableUnits').textContent = t.units;
+    $('tableUnits').innerHTML = t.units;
     var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       h += '<tr>' + r.cells.map(function(c, i){ return '<td' + (r.neg.indexOf(i) >= 0 ? ' class="neg"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>';
@@ -1280,7 +1303,10 @@
     }
     if(o.stress) li.push('<strong>A still, overcast day at the peak</strong> stands for ' + CX.STRESS.days + ' days of ' + S.peakSeason.toLowerCase() + ', with a quarter of the sun and a tenth of the wind.');
     li.push('<strong>One copper-plate bus:</strong> every plant can serve every load, with no grid limits or losses, and every hour is known in advance.');
-    li.push('<strong>Capital is paid as an annuity at ' + F.pct(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan, and every year’s cost is discounted to ' + o.start + ' at the same rate. All money is at ' + o.start + ' prices.');
+    li.push('<strong>All money is at ' + o.start + ' prices,</strong> the costs you enter and every result: the plan has no inflation, so the ' + F.pct(o.rate) + '% discount rate is a real one. Every year’s cost is discounted to ' + o.start + ' at it' +
+      (o.rate > 0 ? ', so a cost in ' + (o.start + 10) + ' counts ' + inTen(o) + ' of the same cost in ' + o.start + '.' : '.'));
+    li.push('<strong>Capital is paid as an annuity at ' + F.pct(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan' +
+      (o.rate > 0 ? '. The first payment falls in the year it enters service, so a plant that lives out its life inside the plan pays ' + String(+(1 + o.rate / 100).toFixed(4)) + ' times its overnight cost, valued in the year it is built: in effect a year’s interest at the discount rate.' : '.'));
     if(o.step > 1) li.push('<strong>A decision year counts in whole:</strong> a plant in service in it runs, and is paid for, in every year it stands for, so a retirement or a life that ends partway through a step runs on to the step’s end.');
     var sol = m.tech.filter(function(e){ return isPvWind(e) && (e.exist > 0 || e.build); });
     var own = sol.filter(function(e){ return !CX.isCustom(e.prof); }), filed = sol.filter(function(e){ return CX.isCustom(e.prof); });
@@ -1356,6 +1382,7 @@
     if(detailSeg) detailSeg.group.setAttribute('data-seg-fit', 'off');
   }
   $('cxDetail').addEventListener('change', function(){ renderTechs(); });
+  $('cxStart').addEventListener('change', function(){ renderTechs(); });
   $('cxCur').addEventListener('change', function(){ renderTechs(); if(app.res) showResults(); });
   Object.keys(FIELD).forEach(function(k){
     var el = $(FIELD[k]);

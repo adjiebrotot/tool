@@ -468,7 +468,7 @@
     for(var y = o.start; y <= o.end; y += o.step) out.push({ year: y, years: Math.min(o.step, o.end + 1 - y) });
     return out;
   };
-  // Discount factors: what a year's money in each period is worth today, summed over its years.
+  // Discount factors: what a year's money in each period is worth in the first year, summed over its years.
   CX.discount = function(o, P){
     var r = o.rate / 100;
     return P.map(function(p){
