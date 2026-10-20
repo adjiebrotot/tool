@@ -188,6 +188,32 @@
         '<g class="c ob" style="animation-delay:-5.9s"><path d="M100 96V70"/><path class="m" d="M100 68.5V55.5"/></g></g>' +
       '<path class="pr sm" pathLength="100" stroke-dasharray="100 110" d="M15 30H36.75V24H59.75V16H94.25V24H104.5"/>',
 
+    // Installed capacity stacked by technology, one bar per plan year, each rising over the last:
+    // coal (grey) shrinks and retires to a dashed ghost, solar, wind and the battery on top grow,
+    // and the peak-demand line climbs beneath the tops as the bars are built.
+    'capacity-expansion-planner':
+      '<path class="sq" d="M12 100H108"/>' +
+      '<g class="c ob"><rect class="co" x="21" y="76" width="14" height="24" rx="1.5"/>' +
+        '<rect class="fb" fill-opacity=".4" x="21" y="64.5" width="14" height="10" rx="1.5"/>' +
+        '<rect class="fg" x="21" y="54" width="14" height="9" rx="1.5"/></g>' +
+      '<g class="c ob" style="animation-delay:-6.3s"><rect class="co" x="43" y="84" width="14" height="16" rx="1.5"/>' +
+        '<rect class="fb" fill-opacity=".4" x="43" y="72.5" width="14" height="10" rx="1.5"/>' +
+        '<rect class="fm" x="43" y="62" width="14" height="9" rx="1.5"/>' +
+        '<rect class="fg" x="43" y="46" width="14" height="14.5" rx="1.5"/></g>' +
+      '<g class="c ob" style="animation-delay:-5.6s"><rect class="co" x="65" y="92" width="14" height="8" rx="1.5"/>' +
+        '<rect class="fb" fill-opacity=".4" x="65" y="80.5" width="14" height="10" rx="1.5"/>' +
+        '<rect class="fm" x="65" y="66" width="14" height="13" rx="1.5"/>' +
+        '<rect class="fg" x="65" y="48" width="14" height="16.5" rx="1.5"/>' +
+        '<rect class="fb" x="65" y="38" width="14" height="8.5" rx="1.5"/></g>' +
+      '<g class="c ob" style="animation-delay:-4.9s"><rect class="cg" x="88" y="92.5" width="12" height="6" rx="1.5"/>' +
+        '<rect class="fb" fill-opacity=".4" x="87" y="80.5" width="14" height="10" rx="1.5"/>' +
+        '<rect class="fm" x="87" y="64" width="14" height="15" rx="1.5"/>' +
+        '<rect class="fg" x="87" y="44" width="14" height="18.5" rx="1.5"/>' +
+        '<rect class="fb" x="87" y="28" width="14" height="14.5" rx="1.5"/></g>' +
+      '<g stroke-dasharray="100 110"><path class="dm sw" stroke-width="7" pathLength="100" d="M14 68L101 41"/>' +
+        '<path class="dm sB" pathLength="100" d="M14 68L101 41"/></g>' +
+      '<path class="ah oc sB" d="M93 39.3L101 41L95.5 46.9"/>',
+
     // Two circles drift apart (separate) and slide into overlap (joint); a heart when joined.
     pisahvsgabung:
       '<g class="cl"><circle class="fb sb" cx="46" cy="58" r="24" fill-opacity=".14"/>' +
@@ -342,6 +368,14 @@
       '@keyframes taEu1{0%{transform:scaleY(0)}6%{transform:scaleY(1.05)}9%,62%{transform:none;opacity:1}68%,100%{transform:none;opacity:0}}' +
       '@keyframes taEu2{0%,6%{transform:scale(0)}10%{transform:scale(1.25)}13%,68%{transform:none}72%,100%{transform:scale(0)}}' +
       '@keyframes taEu3{0%{stroke-dashoffset:104}36%,62%{stroke-dashoffset:0}96%,100%{stroke-dashoffset:-104}}',
+
+    // Bars rise 0.7s apart and fade together; the demand line draws across as they rise.
+    'capacity-expansion-planner': '&{--d:7s}&.co{fill:var(--muted);fill-opacity:.55}' +
+      '&.cg{stroke:var(--muted);stroke-width:2px;stroke-dasharray:3 3.5;stroke-opacity:.8}' +
+      '&.c{animation-name:taCe1}&.dm{animation-name:taCe2;animation-timing-function:linear}&.ah{animation-name:taCe3}' +
+      '@keyframes taCe1{0%{transform:scaleY(0)}8%{transform:scaleY(1.05)}11%,66%{transform:none;opacity:1}74%,100%{transform:none;opacity:0}}' +
+      '@keyframes taCe2{0%{stroke-dashoffset:100}40%,66%{stroke-dashoffset:0;opacity:1}74%,100%{stroke-dashoffset:0;opacity:0}}' +
+      '@keyframes taCe3{0%,38%{transform:scale(0);opacity:0}44%{transform:scale(1.3);opacity:1}48%,66%{transform:none;opacity:1}74%,100%{transform:none;opacity:0}}',
 
     pisahvsgabung: '&{--d:6s}&.cl{animation-name:taPg1}&.cr{animation-name:taPg2}&.ht{animation-name:taPg3}' +
       '@keyframes taPg1{0%,10%,90%,100%{transform:translateX(-11px)}40%{transform:translateX(1.5px)}48%,68%{transform:none}}' +
