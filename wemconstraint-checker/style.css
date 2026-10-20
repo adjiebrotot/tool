@@ -159,10 +159,12 @@ body.light .tb-status{background:rgba(0,0,0,.04)}
 .res-hd{padding:11px 18px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;
   justify-content:space-between;flex-wrap:wrap;gap:8px}
 .res-hd h2{margin:0;font-size:.95rem;font-weight:700}
-.fbar{padding:7px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fbar{padding:7px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fbar label{font-size:.78rem;color:var(--muted);font-weight:600}
 .fbar input{padding:5px 9px;font-size:.8rem;width:220px}
-.tbl-wrap{overflow-x:auto;max-height:68vh;overflow-y:auto}
+/* The frame, its pinned header and its column rules are shared.css's
+   .table-wrap; inset here from the card's edges, under the filter. */
+.tbl-wrap{max-height:68vh;margin:0 14px 14px}
 table{width:100%;border-collapse:collapse;font-size:.82rem}
 th{position:sticky;top:0;z-index:2;background:var(--panel);
   padding:8px 12px;border-bottom:1px solid var(--bdr)}

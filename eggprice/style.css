@@ -80,7 +80,8 @@ body.gl3d #eggCanvas{display:block;}
 
 /* ---------- table ---------- */
 .table-card{padding:6px 0 0;}
-.table-wrap{max-height:none;padding:0 12px;}
+/* An input table: its own format, outside shared.css's .table-wrap frame. */
+.pack-wrap{overflow:auto;padding:0 12px;}
 .pack-table th,.pack-table td{padding:7px 6px;vertical-align:middle;}
 .pack-table td{text-align:left;}
 .pack-table td:nth-child(5),.pack-table td:nth-child(6){text-align:right;}

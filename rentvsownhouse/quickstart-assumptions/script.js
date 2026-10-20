@@ -139,7 +139,7 @@ function drawCity(c){
   if(homes.length){
     const sym = c.currencySymbol;
     h += `<h3>Homes</h3><p class="unit-note">Money in ${esc(c.currencyCode)} (${esc(sym)}). Rent per ${PER_WORD[freq]}, running costs per year.</p>`;
-    h += `<div class="qa-table-wrap"><table class="qa-table qa-homes"><thead><tr>
+    h += `<div class="table-wrap qa-table-wrap"><table class="qa-table qa-homes"><thead><tr>
       <th>Home</th><th>Size</th><th>Price</th><th>Rent / ${PER_WORD[freq]}</th><th>Gross yield</th><th>Price growth</th>
       <th>Setup cost</th><th>Owner costs / yr</th><th>Renter costs / yr</th><th></th></tr></thead><tbody>`;
     homes.forEach(t => {
@@ -164,7 +164,7 @@ function drawCity(c){
   }
 
   // The city's loan, tax and market terms, each with its basis.
-  h += `<h3>City-wide figures</h3><div class="qa-table-wrap"><table class="qa-table qa-terms"><thead><tr><th>Figure</th><th>Value</th><th>Basis</th></tr></thead><tbody>`;
+  h += `<h3>City-wide figures</h3><div class="table-wrap explainer qa-table-wrap"><table class="qa-table qa-terms"><thead><tr><th>Figure</th><th>Value</th><th>Basis</th></tr></thead><tbody>`;
   CITY_ROWS.forEach(r => {
     if(r.when && !r.when(c)) return;
     const val = r.value ? r.value(c) : cityValue(c, r);

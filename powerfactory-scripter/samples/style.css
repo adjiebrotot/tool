@@ -612,20 +612,18 @@
   }
   .faq-answer strong { color: var(--text); font-weight: 600; }
 
+  /* The frame and its rules are shared.css's .table-wrap. */
   .faq-table-wrapper {
-    overflow-x: auto;
+    max-height: none;
     margin-top: 10px;
   }
   .faq-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 12.5px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
   }
+  .faq-table thead th { background: var(--surface); }
   .faq-table th {
-    background: var(--surface);
     padding: 6px 12px;
     border-bottom: 1px solid var(--border);
   }
