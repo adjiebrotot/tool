@@ -188,31 +188,35 @@
         '<g class="c ob" style="animation-delay:-5.9s"><path d="M100 96V70"/><path class="m" d="M100 68.5V55.5"/></g></g>' +
       '<path class="pr sm" pathLength="100" stroke-dasharray="100 110" d="M15 30H36.75V24H59.75V16H94.25V24H104.5"/>',
 
-    // Installed capacity stacked by technology, one bar per plan year, each rising over the last:
-    // coal (grey) shrinks and retires to a dashed ghost, solar, wind and the battery on top grow,
-    // and the peak-demand line climbs beneath the tops as the bars are built.
+    // A coal plant puffs smoke, shakes and sinks into a cloud of ash; from the ashes two wind turbines
+    // rise and spin up, solar panels pop open and the sun comes out. The still frame is the clean farm.
     'capacity-expansion-planner':
       '<path class="sq" d="M12 100H108"/>' +
-      '<g class="c ob"><rect class="co" x="21" y="76" width="14" height="24" rx="1.5"/>' +
-        '<rect class="fb" fill-opacity=".4" x="21" y="64.5" width="14" height="10" rx="1.5"/>' +
-        '<rect class="fg" x="21" y="54" width="14" height="9" rx="1.5"/></g>' +
-      '<g class="c ob" style="animation-delay:-6.3s"><rect class="co" x="43" y="84" width="14" height="16" rx="1.5"/>' +
-        '<rect class="fb" fill-opacity=".4" x="43" y="72.5" width="14" height="10" rx="1.5"/>' +
-        '<rect class="fm" x="43" y="62" width="14" height="9" rx="1.5"/>' +
-        '<rect class="fg" x="43" y="46" width="14" height="14.5" rx="1.5"/></g>' +
-      '<g class="c ob" style="animation-delay:-5.6s"><rect class="co" x="65" y="92" width="14" height="8" rx="1.5"/>' +
-        '<rect class="fb" fill-opacity=".4" x="65" y="80.5" width="14" height="10" rx="1.5"/>' +
-        '<rect class="fm" x="65" y="66" width="14" height="13" rx="1.5"/>' +
-        '<rect class="fg" x="65" y="48" width="14" height="16.5" rx="1.5"/>' +
-        '<rect class="fb" x="65" y="38" width="14" height="8.5" rx="1.5"/></g>' +
-      '<g class="c ob" style="animation-delay:-4.9s"><rect class="cg" x="88" y="92.5" width="12" height="6" rx="1.5"/>' +
-        '<rect class="fb" fill-opacity=".4" x="87" y="80.5" width="14" height="10" rx="1.5"/>' +
-        '<rect class="fm" x="87" y="64" width="14" height="15" rx="1.5"/>' +
-        '<rect class="fg" x="87" y="44" width="14" height="18.5" rx="1.5"/>' +
-        '<rect class="fb" x="87" y="28" width="14" height="14.5" rx="1.5"/></g>' +
-      '<g stroke-dasharray="100 110"><path class="dm sw" stroke-width="7" pathLength="100" d="M14 68L101 41"/>' +
-        '<path class="dm sB" pathLength="100" d="M14 68L101 41"/></g>' +
-      '<path class="ah oc sB" d="M93 39.3L101 41L95.5 46.9"/>',
+      '<g class="cp ob"><path class="cs cf" fill-opacity=".3" d="M18 100Q28 79 23 56H45Q40 79 50 100Z"/>' +
+        '<rect class="cs cf" fill-opacity=".55" x="74" y="36" width="9" height="34" rx="1.5"/>' +
+        '<path class="sw t" d="M75.5 45H81.5"/><rect class="fw cs" x="54" y="70" width="38" height="30" rx="1.5"/>' +
+        '<path class="cs" stroke-width="5" stroke-linecap="butt" stroke-opacity=".6" d="M60 82h6m6 0h6m6 0h6"/></g>' +
+      '<g class="cf" fill-opacity=".5"><circle class="sk oc" cx="78.5" cy="28" r="5"/>' +
+        '<circle class="sk oc" cx="34" cy="48" r="6" style="animation-delay:-7.6s"/></g>' +
+      '<g class="sn oc" style="animation-delay:-7.7s"><circle class="fg" cx="92" cy="30" r="7"/>' +
+        '<path class="sg t" d="M92 17V20M92 40V43M79 30H82M102 30H105M85 23L82.8 20.8M99 23L101.2 20.8M85 37L82.8 39.2M99 37L101.2 39.2"/></g>' +
+      '<g class="tw ob sB" stroke-width="3.5"><path d="M30 100V36"/><path d="M60 100V60"/></g>' +
+      '<g class="hb" style="transform-origin:30px 34px"><g class="bl" style="transform-origin:30px 34px">' +
+        '<g class="w t"><path d="M30 34C27.6 28 28 21 30 14C32 21 32.4 28 30 34Z"/>' +
+        '<path d="M30 34C27.6 28 28 21 30 14C32 21 32.4 28 30 34Z" transform="rotate(120 30 34)"/>' +
+        '<path d="M30 34C27.6 28 28 21 30 14C32 21 32.4 28 30 34Z" transform="rotate(240 30 34)"/></g></g>' +
+        '<circle class="fB" cx="30" cy="34" r="3"/></g>' +
+      '<g class="hb" style="transform-origin:60px 58px;animation-delay:-7.8s"><g class="bl" style="transform-origin:60px 58px;animation-delay:-1.3s">' +
+        '<g class="fw sm t"><path d="M60 58C58.3 54 58.6 49 60 44C61.4 49 61.7 54 60 58Z"/>' +
+        '<path d="M60 58C58.3 54 58.6 49 60 44C61.4 49 61.7 54 60 58Z" transform="rotate(120 60 58)"/>' +
+        '<path d="M60 58C58.3 54 58.6 49 60 44C61.4 49 61.7 54 60 58Z" transform="rotate(240 60 58)"/></g></g>' +
+        '<circle class="fB" cx="60" cy="58" r="2.5"/></g>' +
+      '<g class="pn ob" style="animation-delay:-7.6s"><path class="sq" d="M79.5 92V100"/>' +
+        '<path class="fb sB t" d="M70 92H86L89 80H73Z"/><path class="sw" stroke-width="2" d="M71.5 86H87.5M78 92L81 80"/></g>' +
+      '<g class="pn ob" style="animation-delay:-7.5s"><path class="sq" d="M99.5 92V100"/>' +
+        '<path class="fb sB t" d="M90 92H106L109 80H93Z"/><path class="sw" stroke-width="2" d="M91.5 86H107.5M98 92L101 80"/></g>' +
+      '<g class="ds ob cf" fill-opacity=".45"><circle cx="36" cy="91" r="9"/><circle cx="56" cy="88" r="12"/>' +
+        '<circle cx="77" cy="91" r="10"/><circle cx="66" cy="95" r="6"/></g>',
 
     // Two circles drift apart (separate) and slide into overlap (joint); a heart when joined.
     pisahvsgabung:
@@ -369,13 +373,22 @@
       '@keyframes taEu2{0%,6%{transform:scale(0)}10%{transform:scale(1.25)}13%,68%{transform:none}72%,100%{transform:scale(0)}}' +
       '@keyframes taEu3{0%{stroke-dashoffset:104}36%,62%{stroke-dashoffset:0}96%,100%{stroke-dashoffset:-104}}',
 
-    // Bars rise 0.7s apart and fade together; the demand line draws across as they rise.
-    'capacity-expansion-planner': '&{--d:7s}&.co{fill:var(--muted);fill-opacity:.55}' +
-      '&.cg{stroke:var(--muted);stroke-width:2px;stroke-dasharray:3 3.5;stroke-opacity:.8}' +
-      '&.c{animation-name:taCe1}&.dm{animation-name:taCe2;animation-timing-function:linear}&.ah{animation-name:taCe3}' +
-      '@keyframes taCe1{0%{transform:scaleY(0)}8%{transform:scaleY(1.05)}11%,66%{transform:none;opacity:1}74%,100%{transform:none;opacity:0}}' +
-      '@keyframes taCe2{0%{stroke-dashoffset:100}40%,66%{stroke-dashoffset:0;opacity:1}74%,100%{stroke-dashoffset:0;opacity:0}}' +
-      '@keyframes taCe3{0%,38%{transform:scale(0);opacity:0}44%{transform:scale(1.3);opacity:1}48%,66%{transform:none;opacity:1}74%,100%{transform:none;opacity:0}}',
+    // The coal plant stands, shakes and sinks as the ash cloud swells; the farm rises from it, holds, then fades
+    // so the plant can stand again. Coal, smoke and ash are hidden in the still frame. Blades turn whole thirds.
+    'capacity-expansion-planner': '&{--d:8s}&.cs{stroke:var(--muted)}&.cf{fill:var(--muted)}' +
+      '&.cp,&.sk,&.ds{opacity:0}&.hb,&.bl{transform-box:view-box}' +
+      '&.cp{animation-name:taCe1}&.sk{animation-name:taCe2}&.ds{animation-name:taCe3}&.tw{animation-name:taCe4}' +
+      '&.hb,&.pn,&.sn{animation-name:taCe5}&.bl{animation-name:taCe6;animation-timing-function:linear}' +
+      '@keyframes taCe1{0%{transform:none;opacity:0}6%,26%{transform:none;opacity:1}27.5%{transform:translateX(-1.5px)}' +
+        '29%{transform:translateX(1.5px)}30.5%{transform:none;opacity:1;animation-timing-function:cubic-bezier(.5,0,1,1)}' +
+        '40%{transform:scaleY(0);opacity:.5}41%,100%{transform:scaleY(0);opacity:0}}' +
+      '@keyframes taCe2{0%,4%{transform:none;opacity:0}8%{opacity:1}15%{transform:translateY(-10px) scale(1.5);opacity:0}' +
+        '16%{transform:none;opacity:0}20%{opacity:1}27%,100%{transform:translateY(-10px) scale(1.5);opacity:0}}' +
+      '@keyframes taCe3{0%,30%{transform:scale(0);opacity:0}36%{transform:none;opacity:1}48%{transform:scale(1.15);opacity:.7}' +
+        '58%,100%{transform:scale(1.3);opacity:0}}' +
+      '@keyframes taCe4{0%,42%{transform:scaleY(0)}52%{transform:scaleY(1.04)}56%,86%{transform:none;opacity:1}93%,100%{transform:none;opacity:0}}' +
+      '@keyframes taCe5{0%,50%{transform:scale(0);opacity:0}56%{transform:scale(1.15);opacity:1}60%,86%{transform:none;opacity:1}93%,100%{transform:none;opacity:0}}' +
+      '@keyframes taCe6{to{transform:rotate(720deg)}}',
 
     pisahvsgabung: '&{--d:6s}&.cl{animation-name:taPg1}&.cr{animation-name:taPg2}&.ht{animation-name:taPg3}' +
       '@keyframes taPg1{0%,10%,90%,100%{transform:translateX(-11px)}40%{transform:translateX(1.5px)}48%,68%{transform:none}}' +
