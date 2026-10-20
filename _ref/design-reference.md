@@ -1402,21 +1402,40 @@ faint tint. Printing drops it.
 
 #### Adding terms
 
-Terms live in `SharedAbbr.GLOSSARY` in `shared.js`, keyed by scope:
+Only the site-wide terms (`'*'`) live in `shared.js`. Every tool keeps its own
+in `<tool>/abbr.js`, loaded right after `shared.js` on each of its pages, so a
+page never downloads another tool's terms and the same letters can mean one
+thing on one tool and another elsewhere (`PV` is photovoltaic on the Capacity
+Expansion Planner, a bus type to a load-flow engineer):
+
+```html
+<script src="../shared.js"></script>
+<script src="abbr.js"></script>          <!-- ../abbr.js from a sub-page -->
+```
 
 ```js
-'*': { CAGR: ['Compound Annual Growth Rate', 'the one yearly rate from start value to end value'] },
-borrowingcapacity: { LVR: ['Loan-to-Value Ratio', 'the loan as a share of the property value'] },
-'dcasimulator/ticker': { ASX: ['Australian Securities Exchange'] },
-pisahvsgabung: { PTKP: { en: ['Penghasilan Tidak Kena Pajak', 'the slice of income that is not taxed'],
-                         id: ['Penghasilan Tidak Kena Pajak', 'bagian penghasilan yang tidak dikenai pajak'] } }
+// borrowingcapacity/abbr.js
+SharedAbbr.glossary('borrowingcapacity', {
+  LVR: ['Loan-to-Value Ratio', 'the loan as a share of the property value']
+});
+// dcasimulator/abbr.js: the tool's scope, and one sub-page's
+SharedAbbr.glossary('dcasimulator/ticker', { ASX: ['Australian Securities Exchange'] });
+// pisahvsgabung/abbr.js: a tool with an Indonesian page
+SharedAbbr.glossary('pisahvsgabung', {
+  PTKP: { en: ['Penghasilan Tidak Kena Pajak', 'the slice of income that is not taxed'],
+          id: ['Penghasilan Tidak Kena Pajak', 'bagian penghasilan yang tidak dikenai pajak'] }
+});
 ```
 
 - An entry is `[expansion, optional one-line gloss]`, or `{ en, id }` when the
   Indonesian page needs its own wording (picked up from `<html lang="id">`).
 - `'*'` applies site-wide; a tool key covers that folder and its sub-pages; a
   `tool/sub-page` key covers one page. The scope comes from the URL, so a new
-  tool only needs its own block. `<body data-abbr-scope="…">` overrides it.
+  tool only needs its own file. `<body data-abbr-scope="…">` overrides it.
+- A sub-page with a large vocabulary of its own keeps it in its own
+  `abbr.js` beside the page, loaded after the tool's, so the tool's other pages
+  do not carry it: `rentvsownhouse/quickstart-assumptions/abbr.js` holds every
+  market's agencies, taxes and places for that page alone.
 - A page can register its own at runtime: `SharedAbbr.add({ WACC: ['Weighted Average Cost of Capital'] })`.
 - **Never define a term in the page itself**, with `<abbr title="…">`, a `title`
   attribute or a `?` icon whose whole tooltip is the expansion. `abbr` is a
@@ -1457,7 +1476,7 @@ real meaning. Units that sit next to numbers in running prose ("163 MW") are out
 for the same reason. `node _ref/abbr-check.mjs` drives every page and prints how
 often each term is decorated, which is the clutter budget to check against.
 
-Other API: `SharedAbbr.define(term)`, `.terms()`, `.scan(root)`, `.refresh()`,
+Other API: `SharedAbbr.glossary(scope, map)`, `SharedAbbr.define(term)`, `.terms()`, `.scan(root)`, `.refresh()`,
 `.undecorate(root)` (strip the decoration, e.g. from a clone before export),
 `.stop()`.
 

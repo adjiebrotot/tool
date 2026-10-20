@@ -84,14 +84,6 @@ window.RVO_QUICKSTART = {
       label: { en: '4 bedrooms', id: '4 kamar tidur' },
       name:  { en: '4-bedroom apartment', id: 'Apartemen 4 kamar tidur' },
       short: { en: '4BR apartment', id: 'Apartemen 4KT' } },
-    { key: 'house-studio', form: 'house', beds: 0,
-      label: { en: 'Studio', id: 'Studio' },
-      name:  { en: 'Studio landed house', id: 'Rumah tapak studio' },
-      short: { en: 'Studio house', id: 'Rumah studio' } },
-    { key: 'house-1br',    form: 'house', beds: 1,
-      label: { en: '1 bedroom', id: '1 kamar tidur' },
-      name:  { en: '1-bedroom landed house', id: 'Rumah tapak 1 kamar tidur' },
-      short: { en: '1BR house', id: 'Rumah 1KT' } },
     { key: 'house-2br',    form: 'house', beds: 2,
       label: { en: '2 bedrooms', id: '2 kamar tidur' },
       name:  { en: '2-bedroom landed house', id: 'Rumah tapak 2 kamar tidur' },
@@ -157,9 +149,7 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Studios are a thin niche in Perth: REIWA does not report them as a segment, and most are small CBD units under about 40 m2 that many lenders restrict.",
-        "apt-4br": "Perth unit stock tops out at 3 bedrooms (REIWA reports no 4-bedroom unit medians); 4-bedroom apartments are rare penthouses.",
-        "house-studio": "Houses without a bedroom do not exist as a market segment in Perth.",
-        "house-1br": "1-bedroom houses are a rarity in Perth: REIWA reports house medians only from 2 bedrooms, and granny flats sit on the main house's title."
+        "apt-4br": "Perth unit stock tops out at 3 bedrooms (REIWA reports no 4-bedroom unit medians); 4-bedroom apartments are rare penthouses."
       },
       notes: {
         market: "Perth is a house-led market where units are a minority of stock. REIWA medians rose about 17% for houses and 22% for units in the year to Sep 2026.",
@@ -246,9 +236,7 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Melbourne studios are mostly small post-2000 CBD and student units under about 40 m2 that most lenders restrict or decline, so a normal 80% loan is not typical.",
-        "apt-4br": "4-bedroom apartments are rare in Melbourne, mostly luxury penthouses; families buy houses or townhouses, so no typical price or rent exists.",
-        "house-studio": "Houses without a bedroom do not exist as a market segment in Melbourne.",
-        "house-1br": "1-bedroom houses are a rarity in Melbourne (a few tiny cottages); granny flats sit on the main house's title and cannot normally be sold separately."
+        "apt-4br": "4-bedroom apartments are rare in Melbourne, mostly luxury penthouses; families buy houses or townhouses, so no typical price or rent exists."
       },
       notes: {
         market: "Melbourne houses fell 3.1% in the June 2026 quarter to a $1.04M median (Domain). Inner-city units have barely grown in a decade, so rents rose faster than prices.",
@@ -342,9 +330,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "4-bedroom apartments are rare in Sydney: only about 0.6% of rented Greater Sydney flats (2,098 of 350,000 bonds held, June 2026) have 4+ bedrooms, mostly penthouses.",
-        "house-studio": "Houses without a bedroom do not exist as a market segment in Sydney.",
-        "house-1br": "1-bedroom houses are rare as stand-alone titles in Sydney; most 1-bedroom dwellings on house blocks are granny flats, which cannot be subdivided from the main house's title."
+        "apt-4br": "4-bedroom apartments are rare in Sydney: only about 0.6% of rented Greater Sydney flats (2,098 of 350,000 bonds held, June 2026) have 4+ bedrooms, mostly penthouses."
       },
       notes: {
         market: "Australia's priciest market. NSW sales data, Jan to Mar 2026: Greater Sydney median $1.55M for houses (non-strata) and $855k for strata units.",
@@ -433,9 +419,7 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Brisbane studios are a thin niche of student and serviced units near the CBD; the RTA does not report a studio rent category, and lenders restrict units under about 40 m2.",
-        "apt-4br": "4-bedroom apartments are rare luxury penthouses in Brisbane; RTA rent data stop at 3-bedroom flats and families buy houses instead.",
-        "house-studio": "Houses without a bedroom do not exist as a market segment in Brisbane.",
-        "house-1br": "1-bedroom houses are a rarity in Brisbane; RTA rent data for houses start at 2 bedrooms and granny flats sit on the main house's title."
+        "apt-4br": "4-bedroom apartments are rare luxury penthouses in Brisbane; RTA rent data stop at 3-bedroom flats and families buy houses instead."
       },
       notes: {
         market: "Brisbane is a house-led market that boomed from 2020. Cotality suburb data show many middle-ring house medians up 10 to 20% in the past year.",
@@ -499,9 +483,7 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Auckland studios are mostly CBD shoebox units under 40 m2, often leasehold; major banks want 35-50% deposits on them or need a separate bedroom (ANZ), so a normal mortgage is not available.",
-        "apt-4br": "Auckland apartments are overwhelmingly studio to 2-bedroom; 4-bedroom apartments exist only as occasional penthouses, too few to price.",
-        "house-studio": "No bedroom-less houses on their own title are built or traded in Auckland.",
-        "house-1br": "One-bedroom homes on their own title are rare in Auckland; small dwellings are minor units on a shared section or apartments, so no typical price can be quoted."
+        "apt-4br": "Auckland apartments are overwhelmingly studio to 2-bedroom; 4-bedroom apartments exist only as occasional penthouses, too few to price."
       },
       notes: {
         market: "Auckland is mostly standalone houses plus fast-growing townhouse stock; apartments are a small share. REINZ median about $950,000 in Aug 2026, flat on a year earlier.",
@@ -565,8 +547,6 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Private studios are a small niche: URA guidelines curb shoebox units outside the city centre, so small condos are built as 1-bedders and market data has no studio category.",
-        "house-studio": "Singapore's landed homes (about 5% of households) are terrace, semi-D and detached family houses on scarce land; none are built without bedrooms.",
-        "house-1br": "Landed homes in Singapore are built as 4-5 bedroom family houses on scarce land; 1-bedroom landed homes do not exist.",
         "house-2br": "Even the smallest Singapore landed homes, intermediate terraces, are built with 4 or more bedrooms, so a 2-bedroom landed home is not a market segment."
       },
       notes: {
@@ -636,8 +616,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Klang Valley landed homes are terraces, semi-Ds and bungalows built as family houses; none are built without bedrooms.",
-        "house-1br": "Klang Valley terrace and other landed houses are built with three or more bedrooms; 1-bedroom landed homes do not exist as a segment.",
         "house-2br": "Klang Valley terraces are almost all built with three or more bedrooms; 2-bedroom landed homes survive only as old village or low-cost units, too few to price."
       },
       notes: {
@@ -742,8 +720,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Jakarta landed houses are built with at least two bedrooms; single-room dwellings exist only as informal kampung rooms and kos, not titled homes a bank will finance.",
-        "house-1br": "The smallest titled houses on the market (type 36 and up) have two bedrooms; 1-bedroom landed homes are informal kontrakan petak rooms without KPR-eligible title."
       },
       notes: {
         market: "About 232,000 strata apartments, many investor-owned, with about 29,000 new units unsold in Q1 2026. Most Jakartans live in landed houses (rumah tapak), mostly with 3 or more bedrooms.",
@@ -817,9 +793,7 @@ window.RVO_QUICKSTART = {
         "apt-studio": "Bali studios for sale are leasehold resort or condotel units (Uluwatu, Canggu) sold to foreign investors at about Rp 68M/m2; there is no strata-title owner-occupier market a KPR would finance.",
         "apt-1br": "The 1-bedroom condos listed in Bali are almost all leasehold, off-plan resort units run for short-term letting, not a local resale and rental market with KPR financing.",
         "apt-2br": "Bali's low-rise zoning and villa-led building mean few apartment blocks; the 2-bedroom condos listed are leasehold resort units priced far above freehold villas per m2.",
-        "apt-4br": "Four-bedroom apartments essentially do not exist in Bali; large homes are built as villas and houses under the low-rise zoning.",
-        "house-studio": "Studio landed houses are not built in Bali; even the smallest villas have a separate bedroom suite.",
-        "house-1br": "One-bedroom villas are built mostly as leasehold rentals for foreigners (most 1BR Canggu listings are leasehold); freehold 1BR homes bought by locals with a KPR are rare."
+        "apt-4br": "Four-bedroom apartments essentially do not exist in Bali; large homes are built as villas and houses under the low-rise zoning."
       },
       notes: {
         market: "The Badung and Denpasar belt is villa-led and low-rise. The 1,163 condos listed are mostly leasehold resort units for foreigners, so local homes here are freehold houses and villas.",
@@ -896,8 +870,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Bangkok landed homes are built in estates as 2 to 4 bedroom townhouses or detached houses; studio-size landed homes are not a market segment.",
-        "house-1br": "One-bedroom landed homes are rare in Bangkok; even the smallest estate townhouses and old shophouses have 2 or more bedrooms, while 1-bedroom buyers choose condos."
       },
       notes: {
         market: "Central Bangkok is a condo market (studios to 2 bedrooms, luxury large units on Sukhumvit and Sathorn); townhouses and detached houses sit in suburban estates. Supply is ample in 2026.",
@@ -974,8 +946,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Landed homes in Metro Manila subdivisions are built with at least two bedrooms, so studio houses are not a traded segment.",
-        "house-1br": "One-bedroom landed homes exist only as rare socialized rowhouses on the fringe, not an established Metro Manila segment with normal bank financing."
       },
       notes: {
         market: "Central Metro Manila is condo-led (Makati, BGC, Ortigas, QC), with a record unsold stock of about 82,900 units (LPC Q2 2026). Landed homes sit in gated villages and subdivisions further out.",
@@ -1029,12 +999,6 @@ window.RVO_QUICKSTART = {
           setupCalc: "Registration 0.5% x 5.5bn = 27.5m; notary 3.2m + 0.04% x 0.5bn = 3.4m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 35.4m = 0.64%; extras and bank fees (estimate, not sourced)",
           costCalc: "Management 15,000/m2 x 72 m2 x 12 = 13.0m + fire insurance 0.8m + repairs 6.0m + land-use tax 0.2m = 20.0m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
         },
-        "house-1br": {
-          propertyPrice: 2900000000, rentAmount: 6500000, houseGrowth: 6, setupCost: 0.73, ownOngoingCost: 3400000, rentOngoingCost: 500000, sqm: 45, landSqm: 30,
-          where: "Small tube houses in motorbike alleys of the former Go Vap, Tan Binh and Binh Thanh districts, about 95m VND per m2 of land; cheaper than a 1BR condo because the plot is tiny and the alley narrow",
-          setupCalc: "Registration 0.5% x 2.9bn = 14.5m; notary 1.0m + 0.06% x 1.9bn = 2.14m; notary extras and land-office fees 1.5m; bank valuation and mortgage registration 3.0m; total 21.1m = 0.73%; extras and bank fees (estimate, not sourced)",
-          costCalc: "Building upkeep 3.0m + optional fire insurance 0.3m + land-use tax 0.1m = 3.4m/yr; renter: contents insurance 0.5m/yr (estimate, not sourced)"
-        },
         "house-2br": {
           propertyPrice: 5800000000, rentAmount: 11000000, houseGrowth: 6, setupCost: 0.64, ownOngoingCost: 5700000, rentOngoingCost: 500000, sqm: 90, landSqm: 48,
           where: "Two-storey alley townhouses (nha pho hem) in the former Go Vap and Tan Binh districts, listed at 87m to 125m VND per m2 of land; yield is low because price is mostly land",
@@ -1049,8 +1013,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "HCMC condo stock tops out at 3 bedrooms; 4-bedroom units exist only as rare penthouses or duplexes in a few luxury projects, too few to quote a typical price and rent.",
-        "house-studio": "Even the smallest alley tube houses are built with a separate bedroom on an upper floor or mezzanine, so a studio landed house is not a market segment."
+        "apt-4br": "HCMC condo stock tops out at 3 bedrooms; 4-bedroom units exist only as rare penthouses or duplexes in a few luxury projects, too few to quote a typical price and rent."
       },
       notes: {
         market: "Inner areas mix high-rise condos (former Thu Duc, Binh Thanh, District 7) with narrow tube townhouses (nha pho) in alleys, which are land-heavy and rent for low yields.",
@@ -1126,8 +1089,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Land scarcity means Hong Kong has no market for studio-sized landed houses; homes this small are flats in high-rise blocks.",
-        "house-1br": "Hong Kong's landed houses are large New Territories estate houses or luxury villas; 1-bedroom houses do not exist as a segment because of land scarcity.",
         "house-2br": "Small homes on their own land are essentially absent: a New Territories village house floor (about 700 sq ft) is sold and mortgaged as a separate flat, not a landed house."
       },
       notes: {
@@ -1190,8 +1151,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Taipei's few landed houses (透天厝) are multi-storey row houses, so a studio-sized landed house is not a product in this market.",
-        "house-1br": "透天厝 make up only about 1% of Taipei City home sales and are multi-storey homes with several rooms; 1-bedroom landed houses are not traded as a segment.",
         "house-2br": "Only about 60 landed houses (透天厝) sold in Taipei City from Oct 2025 to Aug 2026, about 1.3% of home sales and mostly old fringe row houses: too few to quote a 2-bedroom price.",
         "house-4br": "Taipei City registered only about 60 透天厝 sales and 35 whole-house rentals in spring and summer 2026, so 4-bedroom landed houses are a rarity there; landed houses are found mainly outside the city."
       },
@@ -1278,8 +1237,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Shanghai's landed homes are suburban villas and townhouses built as family homes; studio-sized landed homes are not built or traded.",
-        "house-1br": "New villa land has been banned since 2003 and the remaining villas and townhouses have 3 or more bedrooms, so there is no 1-bedroom landed segment.",
         "house-2br": "Small landed homes are old lane houses (shikumen) in the centre, mostly subdivided public tenancies without full title, so no normal 2-bedroom landed market exists."
       },
       notes: {
@@ -1357,8 +1314,6 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Residential studios are rare; most Beijing studios are 40 to 50-year commercial-use lofts that need larger deposits and short loans and pay higher taxes, so not a normal first-home segment.",
-        "house-studio": "Beijing's landed homes are suburban villas and townhouses in Shunyi and Changping with 3 or more bedrooms; studio landed homes are not built.",
-        "house-1br": "New villa land has been banned since 2003 and existing villas are family homes of 3 or more bedrooms, so there is no 1-bedroom landed segment.",
         "house-2br": "Small landed homes are hutong courtyard houses (siheyuan) in Dongcheng and Xicheng, scarce and often with mixed public and private title, so no normal 2-bedroom landed market exists."
       },
       notes: {
@@ -1431,8 +1386,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Tokyo detached houses are family homes; a studio kodate essentially does not exist as a market.",
-        "house-1br": "One-bedroom detached houses are very rare in Tokyo; even small lots are built as 3-storey 3LDK-4LDK houses.",
         "house-2br": "Tokyo kodate are built as 3LDK-4LDK family homes (median 92-96 m2); 2-bedroom houses are mostly old stock sold as land for rebuilding, so no typical price or rent exists."
       },
       notes: {
@@ -1506,8 +1459,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Seoul has no market for studio detached houses; one-person households live in officetels, villas and one-room units in multi-household houses.",
-        "house-1br": "One-bedroom detached houses are not a Seoul market; small house plots are built as multi-household buildings (dagagu) let room by room.",
         "house-2br": "Small detached houses in Seoul are mostly old houses bought for the land or redevelopment and let as split units, so no typical whole-house price and rent can be quoted."
       },
       notes: {
@@ -1586,8 +1537,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Land in Mumbai is too scarce and costly for small houses; one-room houses exist only as chawl or slum rooms, not as a mortgageable landed segment.",
-        "house-1br": "Small landed homes survive only in old gaothan villages and koliwadas, often with unclear title, so banks rarely lend and no typical price can be quoted.",
         "house-2br": "Two-bedroom landed houses are a rarity in Mumbai: about 780 'independent houses' are listed metro-wide, many in Vasai or Palghar, versus over 1,000 2BHK flats in Andheri West alone.",
         "house-4br": "Bungalows in Juhu, Bandra (Pali Hill) and Malabar Hill are an ultra-luxury curiosity trading at ₹50 crore and up, too few and too varied to quote a typical price or rent."
       },
@@ -1673,8 +1622,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Dubai villa and townhouse communities are built with 2 bedrooms or more; a studio house does not exist as a segment.",
-        "house-1br": "One-bedroom villas or townhouses are essentially absent: master communities start at 2-bedroom units (e.g. The Springs Type 4M), so no typical price or rent can be quoted."
       },
       notes: {
         market: "Expat-driven freehold market of tower apartments plus villas and townhouses in master communities. Values fell about 10% after February 2026 (ValuStrat) after a 2021 to 2025 boom.",
@@ -1752,9 +1699,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "Only about 120 four-bed flats are for sale (vs about 2,900 two-beds), mostly a few Al Raha Beach and Reem towers; the larger Corniche 4-bed rental stock is outside expat freehold zones.",
-        "house-studio": "Abu Dhabi villa and townhouse communities start at 2 bedrooms; a studio house does not exist as a segment.",
-        "house-1br": "One-bedroom townhouses are essentially absent from Abu Dhabi master communities, which start at 2 bedrooms, so no typical price or rent can be quoted."
+        "apt-4br": "Only about 120 four-bed flats are for sale (vs about 2,900 two-beds), mostly a few Al Raha Beach and Reem towers; the larger Corniche 4-bed rental stock is outside expat freehold zones."
       },
       notes: {
         market: "Expats may buy freehold only in investment zones (Reem, Yas, Saadiyat, Raha, Reef). Flats rose 16.4% and villas 10.1% in the year to H1 2026 (Cavendish Maxwell).",
@@ -1837,9 +1782,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "Four-bedroom flats are a thin, split niche (964 for sale in Oct 2026 against 24,599 two-beds): prime mansion flats or ex-council maisonettes. London families buy houses.",
-        "house-studio": "Studio houses do not exist as a segment in London; the smallest houses are one-bedroom mews or cottage conversions.",
-        "house-1br": "One-bedroom houses are rare in London (294 for sale on OnTheMarket in Oct 2026 against 2,873 two-bed and 6,866 four-bed houses), mostly mews cottages with erratic prices; one-bedroom homes are flats."
+        "apt-4br": "Four-bedroom flats are a thin, split niche (964 for sale in Oct 2026 against 24,599 two-beds): prime mansion flats or ex-council maisonettes. London families buy houses."
       },
       notes: {
         market: "Inner London is mostly leasehold flats; outer zones are Victorian terraces and 1930s semis. About half of London homes are owner-occupied, per Census 2021 (estimate, not sourced).",
@@ -1919,8 +1862,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Studio houses do not exist as a segment in Zurich; Swiss single-family and row houses are family homes, mostly 4.5 rooms or more.",
-        "house-1br": "One-bedroom houses are essentially absent: only about 100 houses a year change hands in the whole city, and Swiss houses are built as family homes of 4.5 to 6.5 rooms.",
         "house-2br": "Houses of 3 to 3.5 rooms are rare in Zurich and its suburbs, where row and detached houses are family homes of mostly 4.5 to 6.5 rooms; 2-bedroom buyers buy condos."
       },
       notes: {
@@ -2003,8 +1944,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Paris itself has almost no houses and petite couronne pavillons are built with at least two bedrooms, so studio houses do not exist as a segment.",
-        "house-1br": "Houses inside Paris are a rarity and the suburban pavillon stock is mostly 3-5 rooms, so 1-bedroom houses are too few to quote a typical price or rent."
       },
       notes: {
         market: "Paris is mostly small pre-1940 flats in copropriété; about a third of households own and about a quarter of homes are social housing (estimate, not sourced). Houses sit in the petite couronne.",
@@ -2076,8 +2015,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Berlin's houses are family homes on their own plots; a house with no separate bedroom is not built or traded as a segment.",
-        "house-1br": "Berlin's house stock is 4-6 room detached, semi-detached and terraced homes; 1-bedroom houses are too rare to quote a price or rent.",
         "house-2br": "Small 3-room Siedlungshäuser trade occasionally in the outer districts but are almost never let, and most Berlin houses have 4-6 rooms, so no typical rent can be quoted."
       },
       notes: {
@@ -2149,8 +2086,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Amsterdam's houses are family row houses; a house with no separate bedroom is not built or traded as a segment.",
-        "house-1br": "The private house stock is 4-5 room row houses outside the ring; 1-bedroom houses are too rare to quote a price or rent.",
         "house-2br": "Small 2-bedroom cottages exist mainly in Noord's garden villages and are largely social rentals owned by housing associations, so no free-sector price and rent can be quoted."
       },
       notes: {
@@ -2243,9 +2178,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "Four-bedroom condos are a sliver of LA condo stock, mostly Wilshire Corridor and Century City penthouses at several million dollars; LA families wanting four bedrooms buy or rent houses.",
-        "house-studio": "Studio detached houses are not a market segment in LA; the nearest equivalent is a backyard ADU, which is generally not sold separately from the main house.",
-        "house-1br": "One-bedroom houses are rare in LA (a few pre-war cottages); single-family stock is overwhelmingly 2 to 4 bedrooms, so no typical price or rent can be quoted."
+        "apt-4br": "Four-bedroom condos are a sliver of LA condo stock, mostly Wilshire Corridor and Century City penthouses at several million dollars; LA families wanting four bedrooms buy or rent houses."
       },
       notes: {
         market: "A renter-majority city. Condos cluster in central districts; houses are mostly 2 to 4 bed single-family homes in the Valley and Eastside. Zillow LA values were flat in the year to Aug 2026.",
@@ -2334,9 +2267,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "Four-bedroom condos are a thin luxury niche in SF (full-floor Pacific Heights or Russian Hill flats); condo stock runs studio to 2 bedrooms, too few sales to quote a price.",
-        "house-studio": "Studio detached houses do not exist as a segment in San Francisco's housing stock.",
-        "house-1br": "One-bedroom houses are a rarity in SF, where single-family stock is row houses of 2 to 4 bedrooms on 25-ft lots, so no typical price or rent can be quoted."
+        "apt-4br": "Four-bedroom condos are a thin luxury niche in SF (full-floor Pacific Heights or Russian Hill flats); condo stock runs studio to 2 bedrooms, too few sales to quote a price."
       },
       notes: {
         market: "A renter-majority city. Condos cluster in SoMa, Mission Bay and Nob Hill; houses are 2 to 4 bed row houses on 25-ft lots. AI wealth lifted the July 2026 house median to $2.05M, up 25% on a year.",
@@ -2420,9 +2351,7 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-studio": "Studio condos are a thin niche in Houston; studios are overwhelmingly rented in purpose-built apartment complexes rather than owned, so no typical sale price can be quoted.",
-        "apt-4br": "Four-bedroom condos are very rare in Houston (a few luxury River Oaks and Uptown tower units); families wanting four bedrooms buy plentiful, cheaper detached houses.",
-        "house-studio": "Studio detached houses do not exist as a segment in Houston.",
-        "house-1br": "One-bedroom houses are a curiosity in Houston, where detached stock is overwhelmingly 3 to 4 bedrooms on large lots, so no typical price or rent can be quoted."
+        "apt-4br": "Four-bedroom condos are very rare in Houston (a few luxury River Oaks and Uptown tower units); families wanting four bedrooms buy plentiful, cheaper detached houses."
       },
       notes: {
         market: "No zoning and abundant land keep 3 to 4 bed houses cheap. Condos are a small market of Uptown and Montrose towers with high HOA dues and 8.8 months of supply (HAR, Aug 2026).",
@@ -2496,8 +2425,6 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "house-studio": "Studio houses do not exist as a segment; New York City houses are 2-bedroom and larger, often two-family buildings.",
-        "house-1br": "One-bedroom houses are a rarity; the city's row houses and detached homes are built with two or more bedrooms, and small homes trade as 2-family buildings."
       },
       notes: {
         market: "Most New Yorkers rent. Manhattan resale is mostly co-ops (about 1,900 co-op vs 1,266 condo resale closings in 3Q 2026, Corcoran), so apartments here are co-ops; houses are in the outer boroughs.",
@@ -2565,9 +2492,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "Four-bedroom condos are a thin luxury niche of Gold Coast and Streeterville penthouses; Chicago families wanting four bedrooms buy houses or two-flats.",
-        "house-studio": "Studio houses do not exist as a segment; Chicago's house stock is bungalows, cottages and two-flats with two or more bedrooms.",
-        "house-1br": "One-bedroom houses are a rarity; even the smallest Chicago workers' cottages and bungalows are built with two or more bedrooms."
+        "apt-4br": "Four-bedroom condos are a thin luxury niche of Gold Coast and Streeterville penthouses; Chicago families wanting four bedrooms buy houses or two-flats."
       },
       notes: {
         market: "Downtown and lakefront condo towers plus bungalows, frame houses and two-flats in the neighbourhoods. Chicago condo values are about where they were 20 years ago (Zillow).",
@@ -2635,9 +2560,7 @@ window.RVO_QUICKSTART = {
         }
       },
       unavailable: {
-        "apt-4br": "Four-bedroom condos are virtually absent: TRREB's Q2 2026 condo report tops out at three bedrooms (about 5% of downtown sales), and larger families buy houses.",
-        "house-studio": "Studio houses do not exist as a segment; Toronto's freehold stock is semis, row houses and detached homes with two or more bedrooms.",
-        "house-1br": "One-bedroom houses are a rarity; even the smallest Toronto bungalows and worker cottages have two bedrooms."
+        "apt-4br": "Four-bedroom condos are virtually absent: TRREB's Q2 2026 condo report tops out at three bedrooms (about 5% of downtown sales), and larger families buy houses."
       },
       notes: {
         market: "Downtown condo towers plus older freehold semis and detached houses. Condo prices are down 6.4% in a year (TRREB HPI, Sept 2026) amid heavy supply; detached down 4.5%.",
@@ -2700,8 +2623,6 @@ window.RVO_QUICKSTART = {
       },
       unavailable: {
         "apt-4br": "Four-bedroom condos are virtually absent in Vancouver towers, where units top out at two or three bedrooms; families needing four bedrooms buy houses.",
-        "house-studio": "Studio houses do not exist as a segment; land costs mean every detached lot carries a large multi-bedroom house.",
-        "house-1br": "One-bedroom houses are a rarity; Vancouver's detached stock is large houses on 33-ft lots, often with suites.",
         "house-2br": "Two-bedroom landed houses are rare: land value makes almost every detached lot a large multi-suite house, and smaller ground-level homes are strata townhouses without land title."
       },
       notes: {
@@ -2760,9 +2681,14 @@ window.RVO_QS = (function(D){
     return h.indexOf('apt-2br') >= 0 ? 'apt-2br' : (h[0] || null);
   }
   function id(cityKey, typeKey){ return cityKey + '/' + typeKey; }
+  // Home types since dropped (a studio and a 1-bedroom landed house were real
+  // segments almost nowhere), so an old link to one opens the nearest home.
+  var RETIRED = { 'house-studio': 'house-2br', 'house-1br': 'house-2br' };
   function split(sid){
     var s = String(sid || ''), i = s.indexOf('/');
-    return i < 0 ? { city: s, type: defaultType(s) } : { city: s.slice(0, i), type: s.slice(i + 1) };
+    if(i < 0) return { city: s, type: defaultType(s) };
+    var t = s.slice(i + 1);
+    return { city: s.slice(0, i), type: Object.prototype.hasOwnProperty.call(RETIRED, t) ? RETIRED[t] : t };
   }
   function lang(l){ return l === 'id' ? 'id' : 'en'; }
   function typeText(typeKey, part, l){

@@ -171,8 +171,10 @@ with a soft dashed grey line and shows the expansion in the shared tooltip on ho
 (LVR → Loan-to-Value Ratio). It runs on its own, so a tool that loads `shared.css` +
 `shared.js` already has it. Two things a new tool owes it:
 
-- **Add its terms** to `SharedAbbr.GLOSSARY` in `shared.js`, under a key matching the
-  tool's folder (`'*'` for anything site-wide). An entry is
+- **Add its terms** in `<tool>/abbr.js`, as `SharedAbbr.glossary('<tool folder>', { … })`,
+  and load it right after `shared.js` on every page of the tool (`../abbr.js` from a
+  sub-page). Never add a tool's terms to `shared.js`: only site-wide ones (`'*'`) live
+  there, so no page downloads another tool's vocabulary. An entry is
   `[expansion, optional one-line gloss]`, or `{ en: […], id: […] }` for a tool with an
   Indonesian page. **Subject-matter jargon only**: the vocabulary of the field the tool
   works in (LVR, PTKP, RMS). Never file formats or everyday computing words (CSV, PDF,
