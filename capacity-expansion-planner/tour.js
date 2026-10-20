@@ -67,7 +67,7 @@ window.__TOUR = {
       target: '#verdict',
       onEnter: cxResults,
       title: '⑦ The answer',
-      body: 'What to build first and when, and what the whole plan costs today.'
+      body: 'What to build first and when, and what the whole plan costs: at the prices of its <strong>First year</strong>, with every year discounted back to it.'
     },
     {
       target: '#capCard',
