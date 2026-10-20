@@ -641,8 +641,13 @@
       } });
     op.plugins.cxPeriods = periods(cal, -0.5);
     make('cost', { type: 'bar', data: { labels: labels, datasets: ds }, options: op }, 'costLegend', [PERIOD_PLUGIN, EDGE_PLUGIN]);
-    $('costSub').textContent = 'Each year’s cost as that year pays it, at ' + y0 + ' prices; Present cost discounts them to ' + y0 + ' at ' + F.pct(res.report.opts.rate) + '%.';
+    $('costSub').innerHTML = '<span class="tip-wrap">At ' + y0 + ' prices, before discounting <i class="tip-icon" data-tip="' + CXCharts.undiscounted(res) + '">?</i></span>';
   }
+
+  // What a year's cost before discounting is, and how Present cost discounts it.
+  CXCharts.undiscounted = function(res){
+    return 'Each year’s cost as that year pays it. Present cost discounts every year to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '% and adds them up.';
+  };
 
   /* ── Render all, or clear ── */
   CXCharts.ok = function(){ return typeof Chart !== 'undefined'; };

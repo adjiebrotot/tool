@@ -138,9 +138,13 @@
     return 'A real rate, above inflation, as every cost is at ' + o.start + ' prices. It sets the capital annuity, and ' +
       (o.rate > 0 ? 'a cost in ' + (o.start + 10) + ' counts ' + inTen(o) + ' of the same cost in ' + o.start + '.' : 'at zero every year’s cost counts the same.');
   }
+  // A table's money note, its explanation in a tip.
+  function moneyNote(res, C, tip){
+    return 'Money in ' + esc(C || 'currency units') + ' a year at ' + res.periods[0] + ' prices, before discounting. <i class="tip-icon" data-tip="' + esc(tip) + '">?</i>';
+  }
   function kpiTips(o){
     setTip('npvTip', 'Every year’s cost from ' + o.start + ' to ' + o.end + ' at ' + o.start + ' prices, discounted to ' + o.start + ' and summed: capital annuities, fixed and running costs, carbon and lost load.');
-    setTip('avgTip', 'One flat price per MWh from ' + o.start + ' to ' + o.end + ', at ' + o.start + ' prices, that pays the present cost: present cost over the energy served, discounted the same way.');
+    setTip('avgTip', 'One flat price per MWh from ' + o.start + ' to ' + o.end + ', at ' + o.start + ' prices, that pays the present cost. A year alone is its cost over its energy, with no discounting.');
   }
   // What sets the sampling: the load's or a farm's daily variability, or a file.
   function sampleWhy(S){
@@ -1058,7 +1062,7 @@
   function sharePct(x){ var p = 100 * x; return p >= 0.1 ? F.pct(p) : String(+p.toPrecision(2)); }
   function verdict(res, model){
     var o = res.report.opts, T = res.totals, C = cur(), years = res.periods, K = years.length;
-    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span> and an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served, both at ' + o.start + ' prices, with every year discounted to ' + o.start + ' at ' + F.pct(o.rate) + '%.';
+    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served (' + o.start + ' prices, ' + F.pct(o.rate) + '% discount rate).';
     var shed = shedShare(T) > SHED_NOTE ? ' ' + sharePct(shedShare(T)) + '% of demand goes unserved on the toughest days, where building for it would cost more than the value of lost load.' : '';
     if(!(T.built >= 0.5)){
       return { tone: '', title: 'Build nothing: what is in service ' + (shed ? 'is the cheapest plan to ' + o.end + '.' : 'meets the demand to ' + o.end + '.'), body: cost + shed };
@@ -1111,14 +1115,13 @@
     var capex = pv(T.capex), fixed = pv(T.fom), runC = pv(T.vom) + pv(T.co2cost), lost = pv(T.shedCost);
     var o = res.report.opts;
     kpiTips(o);
-    $('mNpvSub').textContent = 'Present value in ' + o.start + ' at ' + o.start + ' prices (' + F.pct(o.rate) + '% discount rate): capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
+    $('mNpvSub').textContent = 'At ' + o.start + ' prices, ' + F.pct(o.rate) + '% discount rate: capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
       (lost > 0.5 ? ', lost load ' + F.big(lost, C) : '') + '.';
     // Levelised cost of energy: present cost over the present value of the energy served
     $('mAvg').textContent = F.price(T.avgCost, C) + '/MWh';
     var a0 = T.served[0] > 0 ? T.cost[0] / T.served[0] : NaN, a1 = T.served[K - 1] > 0 ? T.cost[K - 1] / T.served[K - 1] : NaN;
-    // A year alone needs no discounting: its cost and its energy share one discount factor.
-    var over = 'Flat at ' + o.start + ' prices from ' + o.start + ' to ' + o.end + ' (' + F.pct(o.rate) + '% discount rate).';
-    $('mAvgSub').textContent = K > 1 ? over + ' Each year alone, also at ' + o.start + ' prices: ' + F.price(a0, C) + ' in ' + res.periods[0] + ', ' + F.price(a1, C) + ' in ' + last + '.' : over;
+    var over = 'At ' + o.start + ' prices.';
+    $('mAvgSub').textContent = K > 1 ? over + ' A year alone: ' + F.price(a0, C) + ' in ' + res.periods[0] + ', ' + F.price(a1, C) + ' in ' + last + '.' : over;
     // Clean energy in the last year, or the shortfall when there is one
     var shedAll = shedShare(T);
     var clean = T.gen[K - 1] > 0 ? 100 * T.cleanGen[K - 1] / T.gen[K - 1] : NaN;
@@ -1230,7 +1233,7 @@
       row('Total', T.cost, function(v){ return F.money(v, C); });
       row('Levelised cost per MWh', T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; }), function(v){ return F.price(v, C); });
       row('Discount factor', res.disc, function(v){ return (Math.round(v * 1000) / 1000).toFixed(3); });
-      units = 'Money in ' + (C || 'currency units') + ' a year at ' + res.periods[0] + ' prices, as each year pays it; Present cost is each Total times its Discount factor (' + F.pct(res.report.opts.rate) + '%), added up.';
+      units = moneyNote(res, C, 'Present cost is each Total times its Discount factor, added up: every year discounted to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '%.');
     } else {
       head = ['Decision year', 'Years it stands for', 'Peak demand MW', 'Demand GWh', 'Unserved GWh', 'Capacity MW', 'Firm and storage MW', 'Clean share %', 'CO2', 'Cost a year', 'Levelised cost per MWh'];
       yrs.forEach(function(y, k){
@@ -1239,7 +1242,7 @@
           F.pct(T.gen[k] > 0 ? 100 * T.cleanGen[k] / T.gen[k] : NaN), F.co2(T.emis[k]), F.money(T.cost[k], C), F.price(T.served[k] > 0 ? T.cost[k] / T.served[k] : NaN, C)],
           neg: T.shedEnergy[k] > 1e-3 ? [4] : [] });
       });
-      units = 'Money in ' + (C || 'currency units') + ' at ' + res.periods[0] + ' prices; Cost a year is that year’s own cost, before discounting.';
+      units = moneyNote(res, C, CXCharts.undiscounted(res));
     }
     return { head: head, rows: rows, units: units };
   }
@@ -1249,7 +1252,7 @@
      it / stands for"). The CSV keeps each title on one line. */
   function renderTable(){
     var t = tableData();
-    $('tableUnits').textContent = t.units;
+    $('tableUnits').innerHTML = t.units;
     var h = '<table><thead><tr>' + t.head.map(function(x){ return '<th>' + SharedTable.head(x) + '</th>'; }).join('') + '</tr></thead><tbody>';
     t.rows.forEach(function(r){
       h += '<tr>' + r.cells.map(function(c, i){ return '<td' + (r.neg.indexOf(i) >= 0 ? ' class="neg"' : '') + '>' + esc(c) + '</td>'; }).join('') + '</tr>';
