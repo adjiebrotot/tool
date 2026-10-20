@@ -1109,8 +1109,9 @@ const DICT_SHA256 = { a: '4d72827e85280530d51be554f9df8295152278423b8e8d1ab53225
     check(`F1 share-dict-${letter}.txt is the file links were made with`, got === want, got.slice(0, 16));
   }
   const kept = JSON.parse(readFileSync(join(HERE, 'share-links.json'), 'utf8'));
-  // A tool that moved forwards its old address (query and hash too), so a kept
-  // link's page is checked where the tool lives now.
+  // A kept link made at a tool's old address is checked where the tool lives
+  // now. (/capacityexpansion-planner/ no longer forwards: it was removed before
+  // the planner went on the home page.)
   const MOVED = { '/capacityexpansion-planner/': '/capacity-expansion-planner/' };
   for (const kept0 of kept) {
     const k = { ...kept0, page: MOVED[kept0.page] || kept0.page };
