@@ -259,7 +259,11 @@ const api = await page.evaluate(async () => {
   out.added = host.querySelector('abbr.abbr') ? host.querySelector('abbr.abbr').getAttribute('data-abbr') : '';
   host.remove();
 
-  document.body.setAttribute('data-abbr-scope', 'wemconstraint-checker');
+  // A tool's terms live in its own abbr.js, so this page has none of another
+  // tool's until a scope is registered here.
+  out.foreign = window.SharedAbbr.define('RHS') === '';
+  window.SharedAbbr.glossary('abbr-check-scope', { RHS: ['Right-Hand Side'] });
+  document.body.setAttribute('data-abbr-scope', 'abbr-check-scope');
   window.SharedAbbr.refresh();
   out.scoped = window.SharedAbbr.define('RHS').includes('Right-Hand Side');
   out.scopedOut = window.SharedAbbr.define('LVR') === '';
@@ -268,7 +272,8 @@ const api = await page.evaluate(async () => {
   return out;
 });
 check('SharedAbbr.add registers a term', api.added === 'WACC', api.added);
-check('data-abbr-scope switches the glossary', api.scoped === true && api.scopedOut === true, JSON.stringify(api));
+check('a page carries no other tool\'s terms', api.foreign === true);
+check('SharedAbbr.glossary registers a scope, data-abbr-scope switches to it', api.scoped === true && api.scopedOut === true, JSON.stringify(api));
 
 await page.close();
 

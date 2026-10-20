@@ -1522,6 +1522,11 @@
        'borrowingcapacity' that tool's folder, sub-pages included,
        'dcasimulator/ticker'  one sub-page only.
      The scope is read from the URL path, or from data-abbr-scope on <body>.
+     Only '*' lives here. A tool's terms live in its own <tool>/abbr.js,
+     loaded right after this file on its pages, which registers them:
+       SharedAbbr.glossary('borrowingcapacity', { LVR: [...], … });
+     so a page never downloads another tool's terms, and the same letters
+     can mean one thing on one tool and another elsewhere.
 
      An entry is [expansion, optional one-line gloss], or { en: …, id: … }
      when the Indonesian page needs its own wording (<html lang="id">).
@@ -1552,227 +1557,11 @@
          tools and is never spelled out anywhere on the page. */
       'p.a.': { en: ['per annum', 'per year, so the rate is stated on a yearly basis'],
                 id: ['per annum', 'per tahun, tarif dinyatakan dalam basis tahunan'] }
-    },
-
-    /* ── Finance vs Cash (consumer and asset lending) ── */
-    financingvscash: {
-      APR:  ['Annual Percentage Rate', 'what a loan really costs a year once the shape of the repayments is taken into account. A 5% flat loan carries an APR near 9%'],
-      EAR:  ['Effective Annual Rate', 'a rate that already allows for compounding within the year, so 1% a month is 12.68% EAR, not 12%'],
-    },
-
-    /* ── Loan Types Explained ──
-       The explainer names the markets each structure is sold in, so it carries
-       vocabulary the tool itself never has to: the local name for a lender, a
-       product or a contract a reader outside that market will not know. */
-    'financingvscash/loan-types': {
-      Murabaha:      ['cost-plus sale', 'an Islamic finance contract: the bank buys the asset and resells it to you at an agreed markup, paid in instalments. The markup behaves exactly like a flat rate'],
-      multifinance:  ['a non-bank consumer lender', 'the South-East Asian term for the vehicle and appliance credit companies that quote a flat rate per month'],
-      KPR:           ['Kredit Pemilikan Rumah', 'the Indonesian home loan'],
-      Lombard:       ['a loan secured against a securities portfolio', 'drawn and repaid in one lump, so it is usually a bullet']
-    },
-
-    /* ── Borrowing Capacity (Australian home lending) ── */
-    borrowingcapacity: {
-      APRA: ['Australian Prudential Regulation Authority', 'the regulator that sets the serviceability buffer lenders must add'],
-      DSP:  ['Disability Support Pension', 'a Centrelink payment, counted in full as income'],
-      DTI:  ['Debt-to-Income ratio', 'total debt divided by gross income. Past 6.0 the loan is reportable to APRA as high DTI'],
-      HECS: ['Higher Education Contribution Scheme', 'the older name for the same study loan'],
-      HELP: ['Higher Education Loan Program', 'the Australian study loan, repaid through the tax system'],
-      HEM:  ['Household Expenditure Measure', 'the benchmark living cost a lender falls back on when your declared expenses look too low'],
-      LITO: ['Low Income Tax Offset', 'a rebate that trims the tax bill on lower incomes and tapers away as income rises'],
-      LMI:  ['Lenders Mortgage Insurance', 'a one-off premium that lets a lender go past 80% LVR. It protects the lender, not you'],
-      LOC:  ['Line of Credit', 'a revolving facility, assessed on its limit rather than its balance'],
-      LVR:  ['Loan-to-Value Ratio', 'the loan as a share of the property value, or of the bank valuation if that is lower'],
-      NPAT: ['Net Profit After Tax', 'the business profit a lender counts as self-employed income'],
-      NSR:  ['Net Service Ratio', 'assessed income divided by every outgoing. It has to clear 1.00'],
-      PAYG: ['Pay As You Go', 'salary taxed at the source by your employer'],
-      UMI:  ['Uncommitted Monthly Income', 'what is left each month after living costs, commitments and the new repayment']
-    },
-
-    /* ── Cost of Living Comparator ── */
-    'costofliving-comparator': {
-      FX: ['Foreign Exchange', 'the rate one currency converts into another at']
-    },
-
-    /* ── DCA Scenario Explorer, Portfolio mode and the ticker reference ── */
-    valuateeverything: {
-      RMSE: ['Root Mean Square Error', 'how far a listing usually sits from the model, in price']
-    },
-    dcasimulator: {
-      ADX:   ['Average Directional Index', 'how strong a trend is, whichever way it points'],
-      DCA:   ['Dollar-Cost Averaging', 'investing a set amount on a set schedule instead of all at once'],
-      EMA:   ['Exponential Moving Average', 'a moving average that weights recent prices most, so it turns faster than a plain one'],
-      ESG:   ['Environmental, Social and Governance', 'a screen some funds apply to what they are allowed to hold'],
-      IRR:   ['Internal Rate of Return', 'the annual rate at which your deposits and the final value balance out'],
-      MA:    ['Moving Average', 'the average price over a rolling window, which smooths the day-to-day noise out of a trend'],
-      MACD:  ['Moving Average Convergence Divergence', 'the gap between two moving averages, read as a trend signal'],
-      MWR:   ['Money-Weighted Return', 'the growth of your actual money, so the timing of every deposit counts'],
-      OHLC:  ['Open, High, Low, Close', 'the four prices a candlestick shows for one period'],
-      REIT:  ['Real Estate Investment Trust', 'a listed trust that owns income-producing property'],
-      RSI:   ['Relative Strength Index', 'a 0 to 100 momentum gauge. Low readings read as oversold'],
-      TWR:   ['Time-Weighted Return', 'the growth of the asset itself, ignoring when money went in'],
-      UCITS: ['Undertakings for Collective Investment in Transferable Securities', 'the European fund standard, common on cross-border ETFs']
-    },
-    'dcasimulator/ticker': {
-      ASX:    ['Australian Securities Exchange'],
-      BSE:    ['Bombay Stock Exchange'],
-      HKEX:   ['Hong Kong Exchanges and Clearing'],
-      IDX:    ['Indonesia Stock Exchange', 'Bursa Efek Indonesia'],
-      CAC:    ['Cotation Assistée en Continu', 'the CAC 40 is the headline index of the Paris exchange'],
-      KOSDAQ: ['Korea Securities Dealers Automated Quotations', 'the Korea Exchange board for smaller and growth companies'],
-      KOSPI:  ['Korea Composite Stock Price Index', 'the main board of the Korea Exchange'],
-      LSE:    ['London Stock Exchange'],
-      NASDAQ: ['National Association of Securities Dealers Automated Quotations', 'the US exchange where most technology names list'],
-      NSE:    ['National Stock Exchange of India'],
-      NYSE:   ['New York Stock Exchange'],
-      SGX:    ['Singapore Exchange'],
-      SIX:    ['Swiss Infrastructure and Exchange', 'the Swiss stock exchange'],
-      TSE:    ['Tokyo Stock Exchange'],
-      XETRA:  ['Exchange Electronic Trading', 'the electronic market of the Frankfurt Stock Exchange']
-    },
-
-    /* ── Financial Freedom Calculator ── */
-    financialfreedom: {
-      FIRE: ['Financial Independence, Retire Early', 'the idea this tool does the arithmetic for: save hard, invest, then live off the pot'],
-      MDD:  ['Maximum Drawdown', 'the deepest peak-to-trough fall an asset has had, which is what the crash test lands on you'],
-      SORR: ['Sequence-of-Returns Risk', 'the risk that the bad years arrive early in retirement, when the pot is largest and has the longest left to fund'],
-      SWR:  ['Safe Withdrawal Rate', 'the share of the pot you can spend each year without running out']
-    },
-
-    /* ── Rent vs Own Home (and its Sensitivity page, EN + ID) ── */
-    rentvsownhouse: {
-      RTB:   { en: ['Rent-Then-Buy', 'the third scenario: rent first, then buy partway through the run'],
-               id: ['Rent-Then-Buy', 'skenario ketiga: menyewa dulu, lalu membeli di tengah periode'] },
-      RPPI:  { en: ['Residential Property Price Index', 'the official measure of how fast house prices move'],
-               id: ['Residential Property Price Index', 'Indeks Harga Properti Residensial, ukuran resmi laju pergerakan harga rumah'] },
-      DP:    { en: ['Down Payment', 'the deposit paid upfront, the rest is borrowed'],
-               id: ['Down Payment', 'uang muka yang dibayar di depan, sisanya dipinjam'] },
-      KPR:   { en: ['Kredit Pemilikan Rumah', 'the Indonesian home loan'],
-               id: ['Kredit Pemilikan Rumah', 'pinjaman bank untuk membeli rumah'] },
-      BPHTB: { en: ['Bea Perolehan Hak atas Tanah dan Bangunan', 'the Indonesian buyer duty on transferring property title'],
-               id: ['Bea Perolehan Hak atas Tanah dan Bangunan', 'pajak pembeli saat hak atas properti dialihkan'] },
-      PBB:   { en: ['Pajak Bumi dan Bangunan', 'the annual Indonesian land and building tax'],
-               id: ['Pajak Bumi dan Bangunan', 'pajak tahunan atas tanah dan bangunan'] }
-    },
-
-    /* ── PPh 21 Pisah vs Gabung (Indonesian personal income tax) ── */
-    pisahvsgabung: {
-      PPh:   { en: ['Pajak Penghasilan', 'Indonesian income tax. PPh 21 is the tax on personal employment income'],
-               id: ['Pajak Penghasilan', 'PPh 21 adalah pajak atas penghasilan orang pribadi dari pekerjaan'] },
-      PTKP:  { en: ['Penghasilan Tidak Kena Pajak', 'the slice of yearly income that is not taxed at all'],
-               id: ['Penghasilan Tidak Kena Pajak', 'bagian penghasilan setahun yang tidak dikenai pajak'] },
-      PKP:   { en: ['Penghasilan Kena Pajak', 'income left after PTKP and deductions, the figure the brackets run on'],
-               id: ['Penghasilan Kena Pajak', 'penghasilan setelah PTKP dan pengurang, dasar perhitungan lapisan tarif'] },
-      SPT:   { en: ['Surat Pemberitahuan Tahunan', 'the annual tax return'],
-               id: ['Surat Pemberitahuan Tahunan', 'laporan pajak yang disampaikan setiap tahun'] },
-      /* The single letters the PTKP section spells its codes out of, and the
-         ones the computed-PTKP line uses for each spouse. Both pages carry
-         both sets, so a reader switching language still gets a definition. */
-      TK: { en: ['Tidak Kawin', 'not married'],
-            id: ['Tidak Kawin', 'belum atau tidak menikah'] },
-      K:  { en: ['Kawin', 'married'],
-            id: ['Kawin', 'menikah'] },
-      I:  { en: ['Istri', 'the wife, whose income is combined into one filing'],
-            id: ['Istri', 'penghasilan istri digabung dalam satu SPT'] },
-      H:  { en: ['Husband', 'the husband\u2019s side of the Pisah Harta filing'],
-            id: ['Husband', 'sisi suami dalam skema Pisah Harta'] },
-      W:  { en: ['Wife', 'the wife\u2019s side of the Pisah Harta filing'],
-            id: ['Wife', 'sisi istri dalam skema Pisah Harta'] },
-      S:  { en: ['Suami', 'the husband\u2019s side of the Pisah Harta filing'],
-            id: ['Suami', 'sisi suami dalam skema Pisah Harta'] }
-      /* The numbered status codes (TK/0 … K/I/3) are added below: they only
-         differ by the dependant count, so writing all twelve out by hand would
-         be twelve chances to let one drift out of step with the others. */
-    },
-
-    /* ── PowerFactory Scripter (and its samples page) ── */
-    'powerfactory-scripter': {
-      AC:   ['Alternating Current', 'the mains supply, where current reverses direction each cycle'],
-      API:  ['Application Programming Interface', 'here, the PowerFactory Python folder a script imports from'],
-      EMT:  ['Electromagnetic Transient', 'the instantaneous-value simulation. Slower than RMS, but it keeps switching and waveform detail'],
-      HV:   ['High Voltage'],
-      LV:   ['Low Voltage'],
-      HVDC: ['High Voltage Direct Current', 'a DC link used to move bulk power or tie two AC systems together'],
-      IEEE: ['Institute of Electrical and Electronics Engineers', 'the body whose published test systems these presets are built on'],
-      /* MW is deliberately absent here: on the samples pages it is a unit next to
-         a number ("163 MW", "0.61 MW per MW of G2"), and underlining every one
-         would bury the terms that actually need explaining. So are N-1 and N-2:
-         the page names the element count next to them every time they appear. */
-      Op:   ['Operator', 'the comparison the filter applies to the value, such as = or >'],
-      'p.u.': ['per unit', 'a quantity scaled against its rated base, so 1.0 is nameplate'],
-      PF:   ['PowerFactory', 'the DIgSILENT PowerFactory power system simulator'],
-      RMS:  ['Root Mean Square', 'the phasor-domain dynamic simulation, fast enough for stability studies'],
-      SG:   ['Synchronous Generator', 'the rotating machine most large power stations use'],
-      THD:  ['Total Harmonic Distortion', 'how much harmonic content distorts a waveform, as a share of the fundamental']
-    },
-
-    /* ── Load Flow Simulator ──
-       Its readers work in power systems, so the field's own units and words
-       (p.u., MW, MVAr, kV, AC, DC, HV, HVDC, PV, PQ) are left alone. Only the
-       names a power engineer may not have met are explained. */
-    'loadflow-simulator': {
-      PyPSA: ['Python for Power System Analysis', 'the open-source power system toolbox this engine is ported from'],
-      WSCC:  ['Western Systems Coordinating Council', 'the US body whose 9-bus test system became a textbook standard']
-    },
-
-    /* ── ED/UC Simulator ──
-       The same readers as the Load Flow Simulator, so the field's own units and
-       words (MW, MWh, p.u., DC, HVDC) are left alone. */
-    'ed-uc-simulator': {
-      'ED/UC': ['Economic Dispatch and Unit Commitment', 'sharing the load among units, and deciding which units run in each hour'],
-      PJM:   ['PJM Interconnection', 'the US grid operator whose 5-bus test system is a textbook example of nodal prices'],
-      PyPSA: ['Python for Power System Analysis', 'the open-source power system toolbox this engine is ported from'],
-      VoLL:  ['Value of Lost Load', 'what a MWh of demand left unserved is taken to cost']
-    },
-
-    /* ── Capacity Expansion Planner ──
-       Planners and students of the power sector: the field's own units (MW,
-       GWh, kW) are left alone, its cost and technology shorthand is not. */
-    'capacity-expansion-planner': {
-      'O&M': ['Operation and Maintenance', 'the staff, parts and servicing a plant needs to keep running'],
-      PV:    ['Photovoltaic', 'solar panels that turn sunlight straight into electricity'],
-      EV:    ['Electric Vehicle', 'a car charged from the grid, which adds to the evening demand'],
-      PyPSA: ['Python for Power System Analysis', 'the open-source power system toolbox this engine is ported from'],
-      VoLL:  ['Value of Lost Load', 'what a MWh of demand left unserved is taken to cost'],
-      OCGT:  ['Open-Cycle Gas Turbine', 'a gas turbine on its own: cheap to build and quick to start, but it burns more gas per MWh, so it suits the few peak hours'],
-      CCGT:  ['Combined-Cycle Gas Turbine', 'a gas turbine whose hot exhaust raises steam for a second turbine: dearer to build, but it burns far less gas per MWh'],
-      LCOE:  ['Levelised Cost of Energy', 'every year’s cost over every year’s energy served, both discounted: the flat price per MWh that would pay for the whole plan']
-    },
-
-    /* ── WEM Constraint Checker (Western Australian electricity market) ── */
-    'wemconstraint-checker': {
-      LHS: ['Left-Hand Side', 'the flow side of the constraint equation, what is actually flowing'],
-      MW:  ['Megawatt', 'a million watts of active power'],
-      RHS: ['Right-Hand Side', 'the limit side of the constraint equation, what the flow has to stay under'],
-      WEM: ['Wholesale Electricity Market', 'the Western Australian electricity market']
     }
+
+    /* Every other scope is a tool's own: <tool>/abbr.js registers it through
+       SharedAbbr.glossary(), loaded only by that tool's pages. */
   };
-
-  /* PTKP status codes carry the dependant count, and the tool lets a reader pick
-     0 to 3, so "K/I/2" has to define itself as readily as "K/I/0" does. One pass
-     writes the whole ladder, which keeps the three families worded alike. */
-  (function expandPtkpCodes(scope, max){
-    var dep = {
-      en: ['no dependants', 'one dependant', 'two dependants', 'three dependants'],
-      id: ['tanpa tanggungan', 'satu tanggungan', 'dua tanggungan', 'tiga tanggungan']
-    };
-    var family = [
-      { code: 'TK/', en: 'Tidak Kawin', id: 'Tidak Kawin',
-        enGloss: 'single, ', idGloss: 'lajang, ' },
-      { code: 'K/',  en: 'Kawin', id: 'Kawin',
-        enGloss: 'married, ', idGloss: 'kawin, ' },
-      { code: 'K/I/', en: 'Kawin, Istri berpenghasilan', id: 'Kawin, penghasilan Istri digabung',
-        enGloss: 'married with the spouse income combined, ', idGloss: 'kawin dengan penghasilan istri digabung, ' }
-    ];
-    for (var f = 0; f < family.length; f++) {
-      for (var n = 0; n <= max; n++) {
-        scope[family[f].code + n] = {
-          en: [family[f].en + ', ' + n + ' tanggungan', family[f].enGloss + dep.en[n]],
-          id: [family[f].id + ', ' + n + ' tanggungan', family[f].idGloss + dep.id[n]]
-        };
-      }
-    }
-  })(ABBR_GLOSSARY.pisahvsgabung, 3);
 
   function makeAbbr(global){
     /* Regions that must never be decorated: interactive controls, code, an
@@ -1978,6 +1767,14 @@
     return {
       GLOSSARY: ABBR_GLOSSARY,
       init: init,
+      /* Register a scope's terms (a tool's abbr.js), merged into any already
+         there. Returns the scope's map. */
+      glossary: function(scope, map){
+        var dst = ABBR_GLOSSARY[scope] || (ABBR_GLOSSARY[scope] = {});
+        for (var k in map) if (Object.prototype.hasOwnProperty.call(map, k)) dst[k] = map[k];
+        if (started && hasDom()) { build(); scan(document.body); }
+        return dst;
+      },
       /* Register page-specific terms, same entry shape as the glossary. */
       add: function(map){
         if (!map) return;

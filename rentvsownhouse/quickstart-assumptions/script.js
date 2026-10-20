@@ -133,7 +133,7 @@ function drawCity(c){
   h += `<div class="qa-head"><h2>${esc(c.city)}<span class="qa-h-sub">${esc(c.country)}</span></h2>`;
   h += `<span class="qa-chips"><span class="qa-chip">${esc(c.region)}</span><span class="qa-chip">${esc(c.currencyCode)} (${esc(c.currencySymbol)})</span><span class="qa-chip">as of ${esc(month(c.asOf))}</span></span></div>`;
   if(notes.market) h += `<p class="qa-lead">${esc(notes.market)}</p>`;
-  if(c.buyer) h += `<p class="qa-buyer"><strong>Buyer:</strong> ${esc(c.buyer)}</p>`;
+  if(c.buyer) h += `<p class="qa-buyer"><strong>Buyer persona:</strong> ${esc(c.buyer)}</p>`;
 
   // Homes first: they are what a reader picked.
   if(homes.length){
