@@ -43,6 +43,9 @@
 //       enumerating every build of two plants in each year on a grid, each
 //       hour dispatched by merit order: the tool's plan must cost no more
 //       than the best of them.
+//   A7  The discount rate typed as nominal and inflation runs on the real
+//       rate Fisher gives, and the same real rate typed either way is the
+//       very same plan, to the last bit.
 //   A4  The engine files are the ones their banners name (sha256): the
 //       planner runs on the ED/UC Simulator's build of PSA.js.
 //   B   The real page in headless Chromium: the solve runs in its worker and
@@ -956,6 +959,69 @@ console.log('\n── A5 profiles from a file ──');
   }
 }
 
+/* ── A7: the discount rate typed as nominal and inflation ── */
+console.log('\n── A7 nominal or real discount rate ──');
+// Everything a solve gives but the options it was asked with (which name the mode).
+const solvedAs = res => { const c = JSON.parse(JSON.stringify(res)); delete c.report.opts; delete c.report.ms; return JSON.stringify(c); };
+{
+  // Fisher, written out here: (1 + nominal) / (1 + inflation) - 1, held to the real rate's ends.
+  const fisher = (n, i) => Math.min(20, Math.max(0, ((1 + n / 100) / (1 + i / 100) - 1) * 100));
+  let worst = 0, pairs = 0;
+  for (let n = 0; n <= 250; n++) for (let i = 0; i <= 150; i++) {
+    const got = CX.options({ rateMode: 'nominal', nomRate: n / 10, inflation: i / 10 }).rate;
+    worst = Math.max(worst, Math.abs(got - fisher(n / 10, i / 10)));
+    pairs++;
+  }
+  check('A7 every nominal rate and inflation on the sliders (0.1 apart) runs on the real rate Fisher gives', worst < 1e-9, pairs + ' pairs, worst ' + e1(worst) + ' %');
+  // A pair made from a real rate runs on exactly that real rate, to the last bit.
+  let exact = 0, tried = 0, miss = '';
+  for (let r10 = 0; r10 <= 200; r10++) for (const i of [0, 0.5, 1, 2, 2.5, 3, 3.7, 5, 8, 10, 15]) {
+    const r = r10 / 10, n = +((100 + r) * (100 + i) / 100 - 100).toFixed(10);
+    tried++;
+    if (CX.options({ rateMode: 'nominal', nomRate: n, inflation: i }).rate === CX.options({ rate: r }).rate) exact++;
+    else if (!miss) miss = r + '% real from ' + n + ' and ' + i;
+  }
+  check('A7 a nominal rate and inflation that make a real rate run on exactly it', exact === tried, exact + ' of ' + tried + (miss ? ', first miss ' + miss : ''));
+  const o0 = CX.options({ rate: 4.5 }), oNo = CX.options({ rateMode: 'nominal', nomRate: 2, inflation: 5 }), oHi = CX.options({ rateMode: 'nominal', nomRate: 40, inflation: 0 });
+  check('A7 a plan saved before the mode is Real, on its own rate, and nominal values it never had change nothing',
+    o0.rateMode === 'real' && o0.rate === 4.5 && CX.options({ rate: 4.5, nomRate: 22, inflation: 9 }).rate === 4.5 && CX.options({}).rate === 7 && CX.options({}).rateMode === 'real',
+    JSON.stringify({ rateMode: o0.rateMode, rate: o0.rate }));
+  check('A7 a nominal rate below inflation runs at 0, and one too high at 20, the real rate\'s ends', oNo.rate === 0 && oHi.rate === 20, oNo.rate + ', ' + oHi.rate);
+  const junk = [{ rateMode: 'fisher', rate: 'x' }, { rateMode: 'nominal', nomRate: 'lots', inflation: null }, { rateMode: 'NOMINAL', rate: 3 }, { rateMode: 'nominal', nomRate: -40, inflation: 99 }, { rateMode: ['nominal'], nomRate: {}, inflation: '1e400' }];
+  const jr = junk.map(j => { try { const o = CX.options(j); return isFinite(o.rate) && o.rate >= 0 && o.rate <= 20 && (o.rateMode === 'real' || o.rateMode === 'nominal') ? o.rateMode + ' ' + +o.rate.toFixed(4) : 'BAD'; } catch (e) { return 'THROWS'; } });
+  check('A7 garbage for the mode, the nominal rate or inflation reads back to a valid rate and never throws', jr.every(x => x !== 'BAD' && x !== 'THROWS') && jr[0] === 'real 7' && jr[2] === 'real 3' && jr[1] === 'nominal ' + +CX.realRate(10.2, 3).toFixed(4), jr.join(', '));
+  // Read again, the options are the same: the page posts them to the worker, which reads them again.
+  let idem = 0;
+  const R = rng(77);
+  for (let t = 0; t < 500; t++) {
+    const a = CX.options({ rateMode: R() < 0.5 ? 'nominal' : 'real', rate: R() * 25 - 3, nomRate: R() * 35 - 3, inflation: R() * 22 - 2 });
+    if (JSON.stringify(CX.options(JSON.parse(JSON.stringify(a)))) === JSON.stringify(a)) idem++;
+  }
+  check('A7 options read again are the same options, in either mode', idem === 500, idem + ' of 500');
+
+  // The same real rate, typed as real or as nominal and inflation: the very same plan.
+  const cases = [];
+  for (const k of Object.keys(CX.PRESETS)) for (const [r, i] of [[7, 3], [10, 5], [4.5, 2.5], [0, 2]])
+    cases.push({ name: 'Quick Start ' + k + ' at ' + r + '% real, ' + i + '% inflation', plan: CX.PRESETS[k].plan, fields: Object.assign({}, CX.PRESETS[k].fields, { rate: r }), i });
+  for (let s = 1; s <= 8; s++) {
+    const c = randomPlan(2000 + s);
+    cases.push({ name: 'random plan ' + s + ' at ' + c.opts.rate + '% real', plan: CX.compact(c.model), fields: c.opts, i: [0, 1.5, 3, 6, 12][s % 5] });
+  }
+  for (const c of cases) {
+    const r = CX.options(c.fields).rate, n = +((100 + r) * (100 + c.i) / 100 - 100).toFixed(10);
+    const nom = Object.assign({}, c.fields, { rateMode: 'nominal', nomRate: n, inflation: c.i, rate: 13 });
+    if (CX.validate(CX.load(c.plan), c.fields).errors.length) continue;
+    const a = await CX.solve(psa, CX.load(c.plan), c.fields), b = await CX.solve(psa, CX.load(c.plan), nom);
+    const same = a.report.ok && b.report.ok && solvedAs(a) === solvedAs(b) && b.report.opts.rate === r;
+    const w = b.report.ok ? replay(CX.load(c.plan), nom, b) : null, bad = w ? holds(w) : ['unsolved'];
+    check('A7 ' + c.name + ' typed as ' + n + '% nominal is the very same plan, and holds every promise', same && bad.length === 0,
+      (same ? CX.fmt.mw(a.totals.built) + ' MW, ' + CX.fmt.big(a.totals.npv, '$') + ', objective ' + a.totals.objective : 'DIFFERS: ' + e1(b.totals && b.totals.npv) + ' against ' + e1(a.totals && a.totals.npv)) + (bad.length ? '; ' + bad.join(', ') : ''));
+  }
+  // And inflation counts: the nominal rate taken as if it were real is another plan.
+  const g = CX.PRESETS.grow, a = await CX.solve(psa, CX.load(g.plan), Object.assign({}, g.fields, { rate: 10.2 })), b = await CX.solve(psa, CX.load(g.plan), Object.assign({}, g.fields, { rateMode: 'nominal', nomRate: 10.2, inflation: 3 }));
+  check('A7 inflation counts: 10.2% nominal with 3% inflation is not 10.2% real', Math.abs(a.totals.npv - b.totals.npv) / a.totals.npv > 0.01, CX.fmt.big(b.totals.npv, '$') + ' against ' + CX.fmt.big(a.totals.npv, '$'));
+}
+
 /* ── A4: the engine ── */
 console.log('\n── A4 the engine ──');
 {
@@ -1159,6 +1225,54 @@ console.log('\n── B the page ──');
     const here3 = await CX.solve(psa, CX.load(want), got.opts);
     check('B a v1 plan (' + label + ') opens as it was and solves as here', JSON.stringify(got.load) === JSON.stringify(want.load) && JSON.stringify(got.tech) === JSON.stringify(want.tech.map(t => t.prof || null)) && JSON.stringify(got.raw) === JSON.stringify(here3.raw) && old.page.__errors.length === 0,
       JSON.stringify(got.load).slice(0, 90) + ', select ' + got.sel);
+    await old.ctx.close();
+  }
+  // The discount rate as nominal and inflation, in the page: the same real rate is the same plan.
+  {
+    const nm = await open();
+    const pg = nm.page;
+    await solved(pg);
+    await pg.click('.ctrl-tab[data-tab="assume"]');
+    await pg.click('#tab-assume .seg-btn[data-val="nominal"]');
+    const sw = await pg.evaluate(() => ({ nom: document.getElementById('cxNomRate').value, realHidden: document.getElementById('realRateRow').hidden, nomShown: !document.getElementById('nomRateRows').hidden && document.getElementById('nomRateRows').offsetHeight > 0, note: document.getElementById('realRateNote').textContent, rate: __cx.plan().rate, mode: __cx.plan().rateMode }));
+    check('B Nominal starts from the real rate and inflation (7% and 3% make 10.2%), shows its sliders and the real rate it makes', sw.nom === '10.2' && sw.realHidden && sw.nomShown && sw.mode === 'nominal' && sw.rate === CX.realRate(10.2, 3) && /A real rate of 6\.99 %\/yr: \(1 \+ 10\.2%\) ÷ \(1 \+ 3\.0%\) − 1\./.test(sw.note), JSON.stringify(sw).slice(0, 220));
+    // Typed into the readouts, as a reader would.
+    for (const [id, v] of [['cxNomRateVal', '15.5'], ['cxInflationVal', '5']]) {
+      await pg.click('#' + id);
+      await pg.keyboard.type(v);
+      await pg.keyboard.press('Enter');
+    }
+    const typed = await pg.evaluate(() => ({ nom: document.getElementById('cxNomRate').value, infl: document.getElementById('cxInflation').value, rate: __cx.plan().rate, stale: document.body.classList.contains('is-stale') }));
+    await pg.evaluate(() => __cx.run());
+    const nomRun = await pg.evaluate(() => ({ raw: __cx.app.res.raw, kpi: document.getElementById('mNpv').textContent, lcoe: document.getElementById('mAvg') ? document.getElementById('mAvg').textContent : '', sub: document.getElementById('mNpvSub').textContent, model: CX.compact(__cx.app.model), opts: __cx.plan(), assume: document.getElementById('assumptions').textContent }));
+    check('B 15.5% nominal and 5% inflation typed in run on a real 10%, and the results say how it was found', typed.nom === '15.5' && typed.infl === '5' && typed.rate === 10 && typed.stale && /10\.0% real discount rate, from 15\.5% nominal and 5\.0% inflation/.test(nomRun.sub) && /15\.5% nominal discount rate, less 5\.0% inflation, is a real 10\.0%/.test(nomRun.assume), JSON.stringify(typed) + ' ' + nomRun.sub.slice(0, 100));
+    // Opened again, the mini cache keeps the mode and both figures.
+    await pg.waitForTimeout(1200); // the mini cache saves 400 ms after a change
+    await pg.reload({ waitUntil: 'load' });
+    await solved(pg);
+    const back = await pg.evaluate(() => ({ mode: document.getElementById('cxRateMode').value, nom: document.getElementById('cxNomRate').value, infl: document.getElementById('cxInflation').value, seg: (document.querySelector('#tab-assume .seg-btn.active') || {}).textContent, raw: __cx.app.res.raw }));
+    check('B the mini cache keeps Nominal, its rate and inflation, and opens on the same plan', back.mode === 'nominal' && back.nom === '15.5' && back.infl === '5' && back.seg === 'Nominal' && JSON.stringify(back.raw) === JSON.stringify(nomRun.raw), JSON.stringify(Object.assign({}, back, { raw: undefined })));
+    // Back to Real: the real rate it ran on, 10%, and the very same plan.
+    await pg.click('.ctrl-tab[data-tab="assume"]');
+    await pg.click('#tab-assume .seg-btn[data-val="real"]');
+    const rr = await pg.evaluate(() => ({ rate: document.getElementById('cxRate').value, realShown: !document.getElementById('realRateRow').hidden, nomHidden: document.getElementById('nomRateRows').hidden }));
+    await pg.evaluate(() => __cx.run());
+    const realRun = await pg.evaluate(() => ({ raw: __cx.app.res.raw, kpi: document.getElementById('mNpv').textContent, lcoe: document.getElementById('mAvg') ? document.getElementById('mAvg').textContent : '', sub: document.getElementById('mNpvSub').textContent, opts: __cx.plan() }));
+    const hereN = await CX.solve(psa, CX.load(nomRun.model), nomRun.opts), hereR = await CX.solve(psa, CX.load(nomRun.model), realRun.opts);
+    check('B Real takes the real rate Nominal ran on, and 10% real is the very same plan as 15.5% nominal with 5% inflation, in the page and here',
+      rr.rate === '10' && rr.realShown && rr.nomHidden && realRun.opts.rateMode === 'real' && JSON.stringify(realRun.raw) === JSON.stringify(nomRun.raw) && realRun.kpi === nomRun.kpi && realRun.lcoe === nomRun.lcoe &&
+      JSON.stringify(hereN.raw) === JSON.stringify(nomRun.raw) && solvedAs(hereN) === solvedAs(hereR) && /^At \d{4} prices, 10\.0% discount rate:/.test(realRun.sub),
+      JSON.stringify(rr) + ', ' + realRun.kpi + ' / ' + nomRun.kpi + ', LCOE ' + realRun.lcoe + ' / ' + nomRun.lcoe);
+    check('B no page errors switching the discount rate', pg.__errors.length === 0, pg.__errors.join(' | ').slice(0, 200));
+    await nm.ctx.close();
+  }
+  // A mini cache saved before the mode opens on Real, at the rate it was saved with.
+  {
+    const old = await open(init => { try { localStorage.setItem('abt:save:capacityexpansion-planner:v1', init); } catch (e) {} },
+      JSON.stringify({ __fields: { 'v:cxPeak': '1000', 'v:cxStart': '2026', 'v:cxEnd': '2040', 'v:cxStep': '5', 'v:cxRate': '4.5' }, __extra: Object.assign({}, CX.PRESETS.grow.plan) }));
+    await solved(old.page);
+    const got = await old.page.evaluate(() => ({ mode: document.getElementById('cxRateMode').value, rate: __cx.plan().rate, shown: !document.getElementById('realRateRow').hidden, res: __cx.app.res.report.opts.rate }));
+    check('B a mini cache saved before the mode opens on Real at its own rate', got.mode === 'real' && got.rate === 4.5 && got.shown && got.res === 4.5 && old.page.__errors.length === 0, JSON.stringify(got));
     await old.ctx.close();
   }
   // Hostile saved state: the mini cache holds nonsense, and the page still opens and solves.

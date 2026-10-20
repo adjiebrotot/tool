@@ -441,6 +441,13 @@
     var start = Math.round(inRange(o.start, 2000, 2100, 2026));
     var end = Math.round(inRange(o.end, 2000, 2150, 2050));
     end = clamp(end, start, start + 60);
+    /* The discount rate the plan runs on is always real (rate). Real mode
+       (the default, and every plan saved before the mode) takes it as typed;
+       Nominal mode takes it from a nominal rate and inflation by Fisher,
+       (1 + nominal) / (1 + inflation) - 1, held to the same ends. */
+    var rateMode = o.rateMode === 'nominal' ? 'nominal' : 'real';
+    var nomRate = inRange(o.nomRate, 0, 50, 10.2), inflation = inRange(o.inflation, 0, 20, 3);
+    var rate = rateMode === 'nominal' ? CX.realRate(nomRate, inflation) : inRange(o.rate, 0, 20, 7);
     // The load profile and the sampling are the plan's own (model.load, CX.sampling), not options.
     return {
       peak: inRange(o.peak, 1, BIG, 1000),
@@ -453,12 +460,30 @@
       carbonGrow: inRange(o.carbonGrow, 0, 30, 0),
       netZero: flag(o.netZero, false),
       nzYear: Math.round(inRange(o.nzYear, 2000, 2150, 2045)),
-      rate: inRange(o.rate, 0, 20, 7),
+      rateMode: rateMode,
+      rate: rate,
+      nomRate: nomRate,
+      inflation: inflation,
       climate: own.call(CX.CLIMATES, o.climate) ? o.climate : 'sum',
       stress: flag(o.stress, false),
       time: pick(o.time, [10, 30, 60, 300], 60),
       gap: pick(o.gap, [0.0001, 0.001, 0.01], 0.001)
     };
+  };
+
+  /* The real rate, in % a year, that a nominal rate and inflation (both in %)
+     come to. Rounded to 10 decimals so a pair that makes a round real rate
+     (10.21 and 3 come to 7) runs on exactly it; below 0 it is taken as 0,
+     above 20 as 20, the real rate's own ends. */
+  CX.realRate = function(nominal, inflation){
+    return clamp(+((nominal - inflation) / (100 + inflation) * 100).toFixed(10), 0, 20);
+  };
+
+  // The discount rate a plan ran on, in words: "7.0% discount rate", or from a nominal rate and inflation.
+  CX.rateWords = function(o){
+    var F = CX.fmt;
+    return o.rateMode === 'nominal' ? F.rate(o.rate) + '% real discount rate, from ' + F.rate(o.nomRate) + '% nominal and ' + F.rate(o.inflation) + '% inflation'
+      : F.rate(o.rate) + '% discount rate';
   };
 
   /* The decision years: the first, then every step, each standing for the
@@ -1027,6 +1052,8 @@
       return signed(x, a >= 100 ? group(fixed(a, 0)) : a >= 10 ? fixed(a, 1) : fixed(a, 2));
     },
     pct: function(x){ return isFinite(x) ? (Math.abs(x) >= 10 ? fixed(x, 0) : fixed(x, 1)) : '–'; },
+    // A rate in %, to the hundredth it needs: 7.0, 6.99, 10.2.
+    rate: function(x){ return isFinite(x) ? (Math.abs(x * 10 - Math.round(x * 10)) < 1e-6 ? fixed(x, 1) : fixed(x, 2)) : '–'; },
     // Money, whole units with the symbol.
     money: function(x, cur){
       if(!isFinite(x)) return '–';

@@ -56,7 +56,7 @@ window.__TOUR = {
       target: ['.ctrl-tabs', '#tab-assume'],
       onEnter: function () { cxTab('assume'); },
       title: '⑤ Assumptions',
-      body: 'The discount rate, the solver, and the <strong>typical days</strong> each year is run over, which follow the profiles.'
+      body: 'The discount rate, real or nominal with inflation, the solver, and the <strong>typical days</strong> each year is run over, which follow the profiles.'
     },
     {
       target: '#runBtn',
