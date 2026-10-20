@@ -646,7 +646,7 @@
 
   // What a year's cost before discounting is, and how Present cost discounts it.
   CXCharts.undiscounted = function(res){
-    return 'Each year’s cost as that year pays it. Present cost discounts every year to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '% and adds them up.';
+    return 'Each year’s cost as that year pays it. Present cost discounts every year to ' + res.periods[0] + ' at a ' + CX.rateWords(res.report.opts) + ', and adds them up.';
   };
 
   /* ── Render all, or clear ── */

@@ -35,7 +35,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .field-row.inline>.affix-wrap,.field-row.inline>.sel-input,.field-row.inline>.txt-input{flex:0 0 52%;}
 .field-row.inline>.seg-group{flex:0 0 auto;min-width:52%;flex-wrap:nowrap;}
 .field-row.inline>.seg-group>.seg-btn{flex:1 0 auto;padding:5px 8px;text-align:center;}
-.field-row[hidden],.field-group[hidden]{display:none;}
+.field-row[hidden],.field-group[hidden],.slider-block[hidden]{display:none;}
 /* SharedSeg draws its groups as a count (full width, figures in mono). These
    are words: Detail sits at its own size beside its label, and every group
    keeps the page's type, centred in its button. */

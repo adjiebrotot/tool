@@ -76,7 +76,7 @@
      CX.sampling): their selects show them and are never saved. */
   var FIELD = { peak: 'cxPeak', growth: 'cxGrowth', start: 'cxStart', end: 'cxEnd', step: 'cxStep',
                 shed: 'cxShed', voll: 'cxVoll', carbon: 'cxCarbon', carbonGrow: 'cxCarbonGrow', netZero: 'cxNetZero', nzYear: 'cxNzYear',
-                rate: 'cxRate', climate: 'cxClimate', stress: 'cxStress', time: 'cxTime', gap: 'cxGap' };
+                rate: 'cxRate', rateMode: 'cxRateMode', nomRate: 'cxNomRate', inflation: 'cxInflation', climate: 'cxClimate', stress: 'cxStress', time: 'cxTime', gap: 'cxGap' };
   function rawForm(){
     var o = {};
     Object.keys(FIELD).forEach(function(k){ var el = $(FIELD[k]); o[k] = el.type === 'checkbox' ? el.checked : el.value; });
@@ -138,6 +138,12 @@
     return 'A real rate, above inflation, as every cost is at ' + o.start + ' prices. It sets the capital annuity, and ' +
       (o.rate > 0 ? 'a cost in ' + (o.start + 10) + ' counts ' + inTen(o) + ' of the same cost in ' + o.start + '.' : 'at zero every year’s cost counts the same.');
   }
+  // Nominal mode: the real rate the plan runs on, and how it was found.
+  function realRateNote(o){
+    var raw = (o.nomRate - o.inflation) / (100 + o.inflation) * 100;
+    return 'A real rate of <b>' + F.rate(o.rate) + ' %/yr</b>: (1 + ' + F.rate(o.nomRate) + '%) ÷ (1 + ' + F.rate(o.inflation) + '%) − 1' +
+      (raw < 0 ? ', below zero, so taken as 0.' : raw > 20 ? ', taken as its highest, 20.' : '.') + ' ' + rateTip(o).replace(/^A real rate, above inflation, as every/, 'Every');
+  }
   // A table's money note, its explanation in a tip.
   function moneyNote(res, C, tip){
     return 'Money in ' + esc(C || 'currency units') + ' a year at ' + res.periods[0] + ' prices, before discounting. <i class="tip-icon" data-tip="' + esc(tip) + '">?</i>';
@@ -162,6 +168,11 @@
     $('cxGrowthVal').textContent = (+$('cxGrowth').value).toFixed(1) + ' %/yr';
     $('cxCarbonGrowVal').textContent = (+$('cxCarbonGrow').value).toFixed(1) + ' %/yr';
     $('cxRateVal').textContent = (+$('cxRate').value).toFixed(1) + ' %/yr';
+    $('cxNomRateVal').textContent = (+$('cxNomRate').value).toFixed(1) + ' %/yr';
+    $('cxInflationVal').textContent = (+$('cxInflation').value).toFixed(1) + ' %/yr';
+    $('realRateRow').hidden = o.rateMode === 'nominal';
+    $('nomRateRows').hidden = o.rateMode !== 'nominal';
+    $('realRateNote').innerHTML = realRateNote(o);
     $('vollRow').hidden = !$('cxShed').checked;
     $('nzRow').hidden = !$('cxNetZero').checked;
     $('gapRow').hidden = !app.model.tech.some(function(e){ return e.build && e.unit > 0; });
@@ -861,7 +872,7 @@
     var o = plan(), C = cur(), bits = [];
     if(e.build && e.capex > 0){
       var a = CX.annuity(o.rate / 100, e.life);
-      bits.push('A new kW costs <b>' + F.money(e.capex * a + e.fom, C) + '</b> a year to own at ' + F.pct(o.rate) + '%');
+      bits.push('A new kW costs <b>' + F.money(e.capex * a + e.fom, C) + '</b> a year to own at ' + F.rate(o.rate) + '%');
       if(e.learn) bits.push('<b>' + F.money(e.capex * Math.pow(1 + e.learn, o.end - o.start), C) + '/kW</b> to build by ' + o.end);
     }
     if(e.kind === 'store') bits.push('<b>' + F.mw(e.hours) + ' h</b> of energy for every MW, ' + F.pct(100 * Math.sqrt(e.rte)) + '% efficient each way' + (e.capex > 0 ? ', ' + F.money(e.capex / e.hours, C) + ' a kWh' : ''));
@@ -1062,7 +1073,7 @@
   function sharePct(x){ var p = 100 * x; return p >= 0.1 ? F.pct(p) : String(+p.toPrecision(2)); }
   function verdict(res, model){
     var o = res.report.opts, T = res.totals, C = cur(), years = res.periods, K = years.length;
-    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served (' + o.start + ' prices, ' + F.pct(o.rate) + '% discount rate).';
+    var cost = 'Present cost <span class="v-num">' + F.big(T.npv, C) + '</span>, an LCOE of ' + F.price(T.avgCost, C) + ' per MWh served (' + o.start + ' prices, ' + CX.rateWords(o) + ').';
     var shed = shedShare(T) > SHED_NOTE ? ' ' + sharePct(shedShare(T)) + '% of demand goes unserved on the toughest days, where building for it would cost more than the value of lost load.' : '';
     if(!(T.built >= 0.5)){
       return { tone: '', title: 'Build nothing: what is in service ' + (shed ? 'is the cheapest plan to ' + o.end + '.' : 'meets the demand to ' + o.end + '.'), body: cost + shed };
@@ -1115,7 +1126,7 @@
     var capex = pv(T.capex), fixed = pv(T.fom), runC = pv(T.vom) + pv(T.co2cost), lost = pv(T.shedCost);
     var o = res.report.opts;
     kpiTips(o);
-    $('mNpvSub').textContent = 'At ' + o.start + ' prices, ' + F.pct(o.rate) + '% discount rate: capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
+    $('mNpvSub').textContent = 'At ' + o.start + ' prices, ' + CX.rateWords(o) + ': capital ' + F.big(capex, C) + ', fixed ' + F.big(fixed, C) + ', running ' + F.big(runC, C) +
       (lost > 0.5 ? ', lost load ' + F.big(lost, C) : '') + '.';
     // Levelised cost of energy: present cost over the present value of the energy served
     $('mAvg').textContent = F.price(T.avgCost, C) + '/MWh';
@@ -1233,7 +1244,7 @@
       row('Total', T.cost, function(v){ return F.money(v, C); });
       row('Levelised cost per MWh', T.cost.map(function(c, k){ return T.served[k] > 0 ? c / T.served[k] : NaN; }), function(v){ return F.price(v, C); });
       row('Discount factor', res.disc, function(v){ return (Math.round(v * 1000) / 1000).toFixed(3); });
-      units = moneyNote(res, C, 'Present cost is each Total times its Discount factor, added up: every year discounted to ' + res.periods[0] + ' at ' + F.pct(res.report.opts.rate) + '%.');
+      units = moneyNote(res, C, 'Present cost is each Total times its Discount factor, added up: every year discounted to ' + res.periods[0] + ' at a ' + CX.rateWords(res.report.opts) + '.');
     } else {
       head = ['Decision year', 'Years it stands for', 'Peak demand MW', 'Demand GWh', 'Unserved GWh', 'Capacity MW', 'Firm and storage MW', 'Clean share %', 'CO2', 'Cost a year', 'Levelised cost per MWh'];
       yrs.forEach(function(y, k){
@@ -1303,9 +1314,9 @@
     }
     if(o.stress) li.push('<strong>A still, overcast day at the peak</strong> stands for ' + CX.STRESS.days + ' days of ' + S.peakSeason.toLowerCase() + ', with a quarter of the sun and a tenth of the wind.');
     li.push('<strong>One copper-plate bus:</strong> every plant can serve every load, with no grid limits or losses, and every hour is known in advance.');
-    li.push('<strong>All money is at ' + o.start + ' prices,</strong> the costs you enter and every result: the plan has no inflation, so the ' + F.pct(o.rate) + '% discount rate is a real one. Every year’s cost is discounted to ' + o.start + ' at it' +
+    li.push('<strong>All money is at ' + o.start + ' prices,</strong> the costs you enter and every result: the plan has no inflation, so ' + (o.rateMode === 'nominal' ? 'the ' + F.rate(o.nomRate) + '% nominal discount rate, less ' + F.rate(o.inflation) + '% inflation, is a real ' + F.rate(o.rate) + '%, (1 + nominal) ÷ (1 + inflation) − 1' : 'the ' + F.rate(o.rate) + '% discount rate is a real one') + '. Every year’s cost is discounted to ' + o.start + ' at it' +
       (o.rate > 0 ? ', so a cost in ' + (o.start + 10) + ' counts ' + inTen(o) + ' of the same cost in ' + o.start + '.' : '.'));
-    li.push('<strong>Capital is paid as an annuity at ' + F.pct(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan' +
+    li.push('<strong>Capital is paid as an annuity at ' + F.rate(o.rate) + '% a year</strong> over each plant’s life, only for its years inside the plan' +
       (o.rate > 0 ? '. The first payment falls in the year it enters service, so a plant that lives out its life inside the plan pays ' + String(+(1 + o.rate / 100).toFixed(4)) + ' times its overnight cost, valued in the year it is built: in effect a year’s interest at the discount rate.' : '.'));
     if(o.step > 1) li.push('<strong>A decision year counts in whole:</strong> a plant in service in it runs, and is paid for, in every year it stands for, so a retirement or a life that ends partway through a step runs on to the step’s end.');
     var sol = m.tech.filter(function(e){ return isPvWind(e) && (e.exist > 0 || e.build); });
@@ -1380,7 +1391,17 @@
     var detailSeg = SharedSeg.fromSelect($('cxDetail'), { ariaLabel: 'Detail', labelOf: function(o){ return o.textContent; } });
     // Beside its label it keeps its own size.
     if(detailSeg) detailSeg.group.setAttribute('data-seg-fit', 'off');
+    var rateSeg = SharedSeg.fromSelect($('cxRateMode'), { ariaLabel: 'Discount rate as', labelOf: function(o){ return o.textContent; } });
+    if(rateSeg) rateSeg.group.setAttribute('data-seg-fit', 'off');
   }
+  /* Switching how the discount rate is typed keeps the rate the plan runs on,
+     to the slider's tenth: Nominal starts from the real rate and inflation,
+     Real from the real rate the nominal one comes to. (Before changed, below.) */
+  $('cxRateMode').addEventListener('change', function(){
+    var infl = +$('cxInflation').value;
+    if(this.value === 'nominal') $('cxNomRate').value = String(+((100 + +$('cxRate').value) * (100 + infl) / 100 - 100).toFixed(1));
+    else $('cxRate').value = String(+CX.realRate(+$('cxNomRate').value, infl).toFixed(1));
+  });
   $('cxDetail').addEventListener('change', function(){ renderTechs(); });
   $('cxStart').addEventListener('change', function(){ renderTechs(); });
   $('cxCur').addEventListener('change', function(){ renderTechs(); if(app.res) showResults(); });

@@ -89,6 +89,16 @@ again with the load and every solar and wind farm swapped for their templates re
 objective to the digit, and its present cost, levelised cost and new capacity to the last
 bit.
 
+**A7. The discount rate, real or nominal.** Nominal mode runs on the real rate Fisher gives,
+(1 + nominal) / (1 + inflation) − 1, written out here, for every pair the sliders reach
+(0.1 apart), held to 0–20%; a nominal rate and inflation made from a real rate run on exactly
+that real rate, to the last bit, for 2,211 pairs; a plan saved before the mode opens Real on
+its own rate; garbage in the mode, the nominal rate or inflation never throws; and options read
+again are the same options. Every Quick Start at four real rates and inflations, and 8 seeded
+random plans, solved with the real rate and again typed as nominal and inflation, are the very
+same plan (every build, dispatch and cost, to the last bit) and hold every promise of A2; and
+inflation counts (a nominal rate taken as real is another plan).
+
 **A4. The engine.** `psa-opt.min.js` hashes to the sha256 in its own banner, and `highs.wasm`
 to the sha256 that `highs.mjs` names. The engine's build (`ed-uc-simulator/_build/build-engine.mjs`)
 also runs this tool's Quick Starts through the reference and shipping bundles and requires
@@ -109,5 +119,5 @@ months date its seasons, its tip naming the hemisphere and a country or two; a w
 from a file sets the peak and the week and solves as in Node; a solar farm from a file reports
 the capacity factor its hours give, and its template menu cuts its day into a weekday and a
 weekend day for each season; a v1 mini cache (a residential week, a day drawn by hand)
-opens as it was and solves as in Node; and hostile saved state opens, reads back to a valid
+opens as it was and solves as in Node; Nominal starts from the real rate and inflation and says the real rate it makes; 15.5% nominal and 5% inflation typed in are the very same plan, KPIs and LCOE as 10% real, in the page and in Node, with the results saying how the rate was found; the mini cache keeps Nominal; a mini cache saved before the mode opens Real at its own rate; and hostile saved state opens, reads back to a valid
 plan and solves.

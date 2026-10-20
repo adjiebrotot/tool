@@ -281,12 +281,39 @@
 
   <!-- ── Assumptions: the guesses and how the year is sampled ── -->
   <div class="ctrl-panel" id="tab-assume">
-    <div class="slider-block">
+    <!-- The engine always runs on a real rate (o.rate). Real mode types it
+         (cxRate, as before the mode existed); Nominal mode types a nominal
+         rate and inflation and derives the real rate from them (CX.options). -->
+    <div class="field-row inline">
+      <div class="field-label"><span class="tip-wrap">Discount rate <i class="tip-icon" data-tip="<strong>Real:</strong> type the real rate, above inflation. <strong>Nominal:</strong> type a nominal rate and inflation, and the real rate is worked out from them. Either way every cost stays at the first year’s prices.">?</i></span></div>
+      <select class="sel-input" id="cxRateMode" aria-label="Discount rate as">
+        <option value="real" selected>Real</option>
+        <option value="nominal">Nominal</option>
+      </select>
+    </div>
+    <div class="slider-block" id="realRateRow">
       <div class="slider-head">
-        <div class="slider-label"><span class="tip-wrap">Discount rate <i class="tip-icon" id="rateTip" data-tip="A real rate, above inflation, as every cost is at the first year’s prices. It turns capital into a yearly annuity, and discounts every later year’s cost back to the first.">?</i></span></div>
+        <div class="slider-label"><span class="tip-wrap">Real discount rate <i class="tip-icon" id="rateTip" data-tip="A real rate, above inflation, as every cost is at the first year’s prices. It turns capital into a yearly annuity, and discounts every later year’s cost back to the first.">?</i></span></div>
         <div class="slider-value" id="cxRateVal">7.0 %/yr</div>
       </div>
-      <input id="cxRate" type="range" min="0" max="15" step="0.5" value="7" data-readout="cxRateVal" data-unit="%/yr"/>
+      <input id="cxRate" type="range" min="0" max="15" step="0.1" value="7" data-readout="cxRateVal" data-unit="%/yr"/>
+    </div>
+    <div id="nomRateRows" hidden>
+      <div class="slider-block">
+        <div class="slider-head">
+          <div class="slider-label"><span class="tip-wrap">Nominal discount rate <i class="tip-icon" data-tip="The rate money is borrowed or expected to earn at, inflation included.">?</i></span></div>
+          <div class="slider-value" id="cxNomRateVal">10.2 %/yr</div>
+        </div>
+        <input id="cxNomRate" type="range" min="0" max="25" step="0.1" value="10.2" data-readout="cxNomRateVal" data-unit="%/yr"/>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head">
+          <div class="slider-label"><span class="tip-wrap">Inflation <i class="tip-icon" data-tip="How fast prices rise each year. The plan stays at the first year’s prices, so inflation only turns the nominal rate into a real one.">?</i></span></div>
+          <div class="slider-value" id="cxInflationVal">3.0 %/yr</div>
+        </div>
+        <input id="cxInflation" type="range" min="0" max="15" step="0.1" value="3" data-readout="cxInflationVal" data-unit="%/yr"/>
+      </div>
+      <p class="derived" id="realRateNote" aria-live="polite"></p>
     </div>
     <div class="field-group">
       <div class="group-title">Typical days</div>
