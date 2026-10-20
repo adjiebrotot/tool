@@ -132,6 +132,13 @@ body.light tr:hover td{background:rgba(0,0,0,.03);}
 .toggle .slider:before{content:'';position:absolute;height:18px;width:18px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.2s;}
 .toggle input:checked+.slider{background:rgba(141,187,255,.25);border-color:var(--accent);}
 .toggle input:checked+.slider:before{transform:translateX(18px);background:var(--accent);}
+.note{color:var(--muted);font-size:.79rem;line-height:1.45;margin:6px 0 0;}
+.note strong{color:var(--text);}
+/* Show in today's money: how the board reads, so it sits over the results,
+   boxed as Financial Freedom boxes it. */
+.money-bar{display:flex;justify-content:flex-end;margin:0 0 14px;}
+.money-bar .money-toggle{border-top:none;padding:6px 12px;gap:10px;flex:0 0 auto;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
+.money-bar .money-toggle .toggle-label{font-size:.84rem;flex:0 1 auto;}
 .surface-wrap{width:100%;height:460px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
 .page-footer{max-width:1400px;margin:0 auto;padding:0 24px 24px;}
 .page-footer-info p:last-child{margin-bottom:0;}

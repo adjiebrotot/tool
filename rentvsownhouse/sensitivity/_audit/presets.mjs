@@ -89,7 +89,9 @@ const pickMain = (page, sid) => page.evaluate((sid)=>{
   if(sel.value !== t){ sel.value = t; sel.dispatchEvent(new Event('change', {bubbles:true})); }
   return sel.value === t;
 }, sid);
-const mainCsv = (page, t) => page.evaluate((t)=>{ window.__csv=null; document.querySelector('.tab-btn[data-table="'+t+'"]').click(); document.getElementById('downloadBtn').click(); return window.__csv; }, t);
+// The main page opens in today's money; Sensitivity, like the engine, reads
+// future's money, so the main page's export is taken with the switch off.
+const mainCsv = (page, t) => page.evaluate((t)=>{ window.__csv=null; const sr=document.getElementById('showReal');if(sr&&sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));} document.querySelector('.tab-btn[data-table="'+t+'"]').click(); document.getElementById('downloadBtn').click(); return window.__csv; }, t);
 const sensCsv = (page, w, si=0) => page.evaluate(([w,si])=>{ window.__csv=null; document.querySelector('.btn-scen-action.dl-'+w+'[data-si="'+si+'"]').click(); return window.__csv; }, [w,si]);
 const diffAt=(a,b)=>{ if(!a||!b) return 'missing export'; const A=a.split('\n'), B=b.split('\n'); for(let i=0;i<Math.max(A.length,B.length);i++) if(A[i]!==B[i]) return `line ${i+1}\n      main: ${A[i]}\n      sens: ${B[i]}`; return null; };
 const header = page => page.evaluate(()=>({

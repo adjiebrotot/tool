@@ -160,12 +160,12 @@ async function upload(page, csv){
     return a.text===b.text && c.text===d.text; };
   const unused = async () => page.evaluate(()=>document.querySelectorAll('#tableWrap td.inactive-td').length);
   const cases = [
-    ['an owning cost\'s inflation under a % type', [['Own cost type','','pct','pct'],['Ongoing cost (own)','','1','1'],['Own cost inflation','','0','6']],
-                                                   [['Own cost type','','dollar','dollar'],['Own cost inflation','','0','6']]],
+    ['an owning cost\'s inflation under a % type', [['Own cost type','','pct','pct'],['Ongoing cost (own)','','1','1'],['Own cost growth','','0','6']],
+                                                   [['Own cost type','','dollar','dollar'],['Own cost growth','','0','6']]],
     ['an owning cost\'s frequency under a % type', [['Own cost type','','pct','pct'],['Ongoing cost (own)','','1','1'],['Own cost frequency','','yearly','weekly']],
                                                    [['Own cost type','','dollar','dollar'],['Own cost frequency','','yearly','weekly']]],
-    ['a renting cost\'s inflation under a % type', [['Rent cost type','','pct','pct'],['Ongoing cost (rent)','','4','4'],['Rent cost inflation','','0','6']],
-                                                   [['Rent cost type','','dollar','dollar'],['Rent cost inflation','','0','6']]],
+    ['a renting cost\'s inflation under a % type', [['Rent cost type','','pct','pct'],['Ongoing cost (rent)','','4','4'],['Rent cost growth','','0','6']],
+                                                   [['Rent cost type','','dollar','dollar'],['Rent cost growth','','0','6']]],
     ['a renting cost\'s frequency under a % type', [['Rent cost type','','pct','pct'],['Ongoing cost (rent)','','4','4'],['Rent cost frequency','','yearly','monthly']],
                                                    [['Rent cost type','','dollar','dollar'],['Rent cost frequency','','yearly','monthly']]],
   ];

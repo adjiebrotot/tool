@@ -734,9 +734,74 @@ function scenarioMetrics(sc,I,rf){
   const res=computeScenario(sc,I.purchaseCost,I.availableCash,rf,I.inflationRate,I.inflationEnabled);
   if(!res)return null;
   const cb=computeCashBaseline(I.purchaseCost,I.availableCash,res.termYears,rf,I.inflationRate,I.inflationEnabled);
-  return{netBenefit:res.endWealth-cb.endWealth,endWealth:res.endWealth,totalInterest:res.totalInterest,
+  res.cashBaseWealth=cb.endWealth;res.netBenefit=res.endWealth-cb.endWealth;
+  // The same figures in today's money, so the switch can re-read a sweep
+  // without running it again.
+  const t=todayView(res,I.inflationRate);
+  return{netBenefit:res.netBenefit,endWealth:res.endWealth,totalInterest:res.totalInterest,
     totalFinanceCost:res.totalFinanceCost,effectiveRate:res.effectiveRate,
-    inflAdjNetBenefit:(res.inflAdj&&cb.inflAdj)?(res.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0):null};
+    inflAdjNetBenefit:(res.inflAdj&&cb.inflAdj)?(res.inflAdj.endWealthReal||0)-(cb.inflAdj.endWealthReal||0):null,
+    today:{netBenefit:t.netBenefit,endWealth:t.endWealth,totalInterest:t.totalInterest,
+      totalFinanceCost:t.totalFinanceCost,effectiveRate:t.effectiveRate}};
+}
+
+/* ─── Today's money ───────────────────────────────────────────────────────
+   The engine runs in the money of each date, the way a lender quotes a loan
+   and a statement reads it. Show in today's money re-reads every figure at
+   today's prices: a balance or a payment is divided by inflation compounded
+   from today to its own date, and a total is the sum of its own parts each
+   read that way, never one total divided once. What happens at the purchase
+   (the price, the down payment, a fee paid up front) is already today's.
+   Off, none of this runs and every figure is the engine's own.
+
+     today(x at t years) = x / (1 + inflation)^t
+
+   Ending Wealth less the cash at the same horizon is Net Benefit in either
+   money, since both are read at the same date. */
+function todayOn(){return !!$('inflationToggle').checked;}
+function moneyMode(){return todayOn()?"today's money":"future's money";}
+function priceLevel(rate,years){return Math.pow(1+(Number(rate)||0)/100,years);}
+function todayView(r,rate){
+  if(!r)return r;
+  const at=k=>priceLevel(rate,k/r.ppy); // repayment k falls k/ppy years from today
+  const end=priceLevel(rate,r.termYears);
+  const schedule=r.amort.schedule.map(p=>{const d=at(p.num);
+    return Object.assign({},p,{startBal:p.startBal/d,interest:p.interest/d,principal:p.principal/d,payment:p.payment/d,endBal:p.endBal/d});});
+  let totalInterest=0,totalPaid=0,totalAdminFee=0;
+  schedule.forEach(p=>{totalInterest+=p.interest;totalPaid+=p.payment;});
+  for(let k=1;k<=r.n;k++)totalAdminFee+=r.adminFee/at(k);
+  let cumInterest=0,cumPaid=0,cumAdmin=0;
+  const timeline=r.timeline.map((t,k)=>{const d=at(t.period);
+    if(k>0){const prev=r.timeline[k-1];cumInterest+=(t.cumInterest-prev.cumInterest)/d;cumPaid+=(t.cumPaid-prev.cumPaid)/d;cumAdmin+=((t.cumAdmin||0)-(prev.cumAdmin||0))/d;}
+    return Object.assign({},t,{investBal:t.investBal/d,loanBal:t.loanBal/d,wealth:t.wealth/d,cumInterest,cumPaid,cumAdmin});});
+  const last=schedule.length?schedule[schedule.length-1]:null;
+  const o=Object.assign({},r,{
+    today:true,nominal:r,inflationRate:rate,timeline,
+    amort:Object.assign({},r.amort,{schedule,totalInterest,totalPaid,
+      payment:schedule.length?schedule[0].payment:0,finalPayment:last?last.payment:0,residualAmt:r.residualAmt/end}),
+    endWealth:r.endWealth/end,totalInterest,totalAdminFee,totalFee:r.fee+totalAdminFee,
+    totalFinanceCost:totalInterest+r.fee+totalAdminFee,totalOOP:r.down+r.cashFee+totalPaid+totalAdminFee,
+    payment:schedule.length?schedule[0].payment:0,finalPayment:last?last.payment:0,residualAmt:r.residualAmt/end});
+  if(r.cashBaseWealth!=null){o.cashBaseWealth=r.cashBaseWealth/end;o.netBenefit=o.endWealth-o.cashBaseWealth;}
+  if(r.bandLo)o.bandLo=todayView(r.bandLo,rate);
+  if(r.bandHi)o.bandHi=todayView(r.bandHi,rate);
+  return o;
+}
+// The board's copy of a run: the engine's own figures, or today's money.
+function shownResult(r,rate){return r&&todayOn()?todayView(r,rate):r;}
+function shownCash(cb,years,rate){return todayOn()?Object.assign({},cb,{endWealth:cb.endWealth/priceLevel(rate,years)}):cb;}
+
+/* What the rate does to the reader's own purchase. Read in future's money the
+   rate seems to do nothing at all, so the note names a price at a date. */
+function renderInflationNote(){
+  const el=$('inflationNote');if(!el)return;
+  const rate=parseFloat($('inflationRate').value)||0;
+  const price=Math.max(0,parseNumInput($('purchaseCost')));
+  const yrs=scenarios.reduce((m,sc)=>Math.max(m,termToYears(sc.termPeriods,sc.freq)),0);
+  if(!(price>0)||!(yrs>0)){el.textContent='';return;}
+  el.textContent=rate<=0
+    ? 'Prices hold still, so today\u2019s money and future\u2019s money read the same.'
+    : 'What costs '+fmt.currency(price)+' today costs '+fmt.currency(price*priceLevel(rate,yrs))+' in '+horizonTxt(yrs)+'. Show in today\u2019s money, beside the results, reads every figure at today\u2019s prices.';
 }
 
 /* ─── Rendering ─── */
@@ -751,7 +816,9 @@ function readInputs(){
     // A blank, zero or unreadable cash field is not permission to assume the
     // user happens to hold exactly the purchase price. Use what was typed.
     availableCash:Math.max(0,parseNumInput($('availableCash'))),
-    inflationEnabled:$('inflationToggle').checked,
+    // Show in today's money is how the board reads, not what it runs on, so
+    // the run always carries the real figures and the switch picks.
+    inflationEnabled:(parseFloat($('inflationRate').value)||0)>0,
     inflationRate:parseFloat($('inflationRate').value)||0,
     riskFreeRate:parseFloat($('baseRf').value)||0,
     rateConvention:$('rateConvention').value==='nominal'?'nominal':'ear',
@@ -777,14 +844,14 @@ function renderWarn(){
   w.style.display=txt?'block':'none';w.textContent=txt;
 }
 
-/* The form, kept coherent as it is typed: the currency it is read in, the
-   inflation row it shows, the prices on the offer tabs. None of this runs the
+/* The form, kept coherent as it is typed: the currency it is read in, what
+   the inflation rate does to the price, the prices on the offer tabs. None of this runs the
    comparison; ▶ Simulate does. */
 function syncForm(){
   currentCurrencySymbol=$('currencySymbol').value||'$';
   rateConvention=$('rateConvention').value==='nominal'?'nominal':'ear';
-  $('inflationRow').style.display=$('inflationToggle').checked?'':'none';
   updateCurrencyPrefixes();
+  renderInflationNote();
   $('scFeeType').querySelector('option[value="fixed"]').textContent=moneySymbol();
   // A % price follows the cash price, so the tabs and the editor's read-out
   // are restated whenever it moves.
@@ -829,9 +896,14 @@ function renderSimBoardIn(I){
   }
   runWarnText='';
 
-  const results=[];let anyNegCarry=false,anyNegAm=false;const dropped=[];
+  const results=[],runs=[];let anyNegCarry=false,anyNegAm=false;const dropped=[];
   I.scenarios.forEach((sc,i)=>{
-    const res=scoreScenario(sc,I);
+    const run=scoreScenario(sc,I);
+    if(run){run.name=sc.name;run.idx=i;run.color=scenarioColor(sc,i);}
+    runs.push(run);
+    // Everything below reads the board's copy, so in today's money the
+    // ranking, the tiles and the tables all rest on the same figures.
+    const res=shownResult(run,inflationRate);
     if(res){
       res.name=sc.name;res.idx=i;res.color=scenarioColor(sc,i);
       if(res.negCarry)anyNegCarry=true;
@@ -876,7 +948,7 @@ function renderSimBoardIn(I){
   // Comparison horizon = the longest scenario actually being compared, so the
   // KPI tile, the chart's cash line and the table's cash column all end together.
   const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
-  const cashBase=computeCashBaseline(purchaseCost,availableCash,maxTerm,riskFreeRate,inflationRate,inflationEnabled);
+  const cashBase=shownCash(computeCashBaseline(purchaseCost,availableCash,maxTerm,riskFreeRate,inflationRate,inflationEnabled),maxTerm,inflationRate);
   latestResults={results,cashBase,bestIdx,allNeg,purchaseCost,availableCash,maxTerm,inflationEnabled,inflationRate,riskFreeRate,scenarios:I.scenarios};
 
   // KPIs
@@ -893,7 +965,16 @@ function renderSimBoardIn(I){
 
   renderVerdict(valid,bestResult,tie,allNeg,riskFreeRate,maxTerm);
   renderAssumptions(latestResults);
-  renderMainChart(results);renderComparisonTable(results,latestResults);renderAmortTabs(results);
+  // The chart samples between repayments and past the end of a term, so it
+  // takes the engine's own run and reads each point at its own date.
+  renderMainChart(runs);renderComparisonTable(results,latestResults);renderAmortTabs(results);
+  syncMoneyNotes();
+}
+// The one-line unit notes over the two tables follow the switch.
+function syncMoneyNotes(){
+  const today=todayOn();
+  $('compUnitNote').textContent=(today?'In today\u2019s money':'In future\u2019s money')+', each scenario at the end of its own term.';
+  $('amortUnitNote').textContent=today?'In today\u2019s money: each payment divided by inflation up to the date it is paid.':'In future\u2019s money, as the lender schedules it.';
 }
 
 /* What this assumes, built from the plan on screen: the cash, rates, fees and
@@ -954,9 +1035,14 @@ function renderAssumptions(L){
     if(floating.length)items.push('<strong>The floating rate in '+list(floating.map(nm))+' is run three times,</strong> at its minimum, middle and maximum. The chart shades that range; the tables use the middle.');
   }
 
-  items.push(L.inflationEnabled
-    ? '<strong>Amounts are in future dollars.</strong> The comparison adds an Inflation-Adj Net Benefit in today\'s money, at '+pc(L.inflationRate)+' a year.'
-    : '<strong>Amounts are in future dollars,</strong> with no adjustment for inflation.');
+  // Named from the run's own rate and the switch as it stands.
+  const yrs=L.maxTerm>0?horizonTxt(L.maxTerm):'';
+  if(todayOn())items.push(L.inflationRate>0
+    ? '<strong>Figures are in today\'s money, with prices rising '+pc(L.inflationRate)+' a year.</strong> Each one is divided by that inflation up to its own date, so a level instalment shrinks as it is repaid.'
+    : '<strong>Figures are in today\'s money, with prices held still,</strong> so they read the same as the money of each date.');
+  else items.push(L.inflationRate>0
+    ? '<strong>Figures are in future\'s money,</strong> as the lender and your statements will read them. With prices rising '+pc(L.inflationRate)+' a year'+(yrs?', '+fmt.currency(100)+' in '+yrs+' buys what '+fmt.currency(100/priceLevel(L.inflationRate,L.maxTerm))+' does today':'')+'.'
+    : '<strong>Figures are in future\'s money,</strong> with prices held still.');
 
   (L.optLines||[]).forEach(t=>items.push(t));
   el.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');
@@ -986,6 +1072,7 @@ function renderVerdict(valid,best,tie,allNeg,rf,maxTerm){
   }
   const r=best&&!allNeg?best:closest;
   if(r&&r.effectiveRate!=null) body.push(`Its effective rate is ${fmt.pct(r.effectiveRate/100)} a year against a ${fmt.pct(rf/100)} Risk-Free Rate.`);
+  if(todayOn()) body.push('Figures are in today\u2019s money.');
   SharedVerdict.set('verdict',{tone:'',title,body:body.join(' ')});
 }
 
@@ -1024,6 +1111,9 @@ function renderMainChart(results){
   // ends part-way through a period gets that end point too.
   const maxX=snapUnit(maxYears*upy);
   const xs=[];for(let k=0;k<maxX;k++)xs.push(k);xs.push(maxX);
+  // In today's money each point is read at its own date (x is in axis periods).
+  const today=todayOn(),infl=latestResults.inflationRate;
+  const dfl=x=>today?priceLevel(infl,x/upy):1;
 
   // Metric value of a result at a (possibly fractional) period index. Within the
   // recorded timeline it interpolates between periods; past the loan term the
@@ -1052,17 +1142,17 @@ function renderMainChart(results){
   // run in lockstep.
   const pushSeries=(ds,label)=>{datasets.push(ds);legendItems.push({label,spec:SharedLegend.specOf(ds)});};
   if(metric==='wealth'){
-    const cd=xs.map(x=>({x,y:left*Math.pow(1+rfAnnual,x/upy)}));
+    const cd=xs.map(x=>({x,y:left*Math.pow(1+rfAnnual,x/upy)/dfl(x)}));
     pushSeries({label:'Cash Purchase',data:cd,borderColor:cssVar('--muted'),backgroundColor:'transparent',borderWidth:2,borderDash:[6,4],pointRadius:0,pointHoverRadius:4,tension:.3,fill:false},'Cash Purchase');
   }
   results.forEach(r=>{if(!r)return;const color=r.color;
     const rfP_r=Math.pow(1+rfAnnual,1/r.ppy)-1;
-    const data=xs.map(x=>({x,y:periodValue(r, x/upy*r.ppy, rfP_r)}));
+    const data=xs.map(x=>({x,y:periodValue(r, x/upy*r.ppy, rfP_r)/dfl(x)}));
     r.bandSeries=null;
     pushSeries({label:r.name,data,borderColor:color,backgroundColor:color+'22',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:.3,fill:false,fvcRef:r},r.name);
     if(r.bandLo&&r.bandHi){
-      const lo=xs.map(x=>periodValue(r.bandLo, x/upy*r.bandLo.ppy, rfP_r));
-      const hi=xs.map(x=>periodValue(r.bandHi, x/upy*r.bandHi.ppy, rfP_r));
+      const lo=xs.map(x=>periodValue(r.bandLo, x/upy*r.bandLo.ppy, rfP_r)/dfl(x));
+      const hi=xs.map(x=>periodValue(r.bandHi, x/upy*r.bandHi.ppy, rfP_r)/dfl(x));
       let maxDiff=0;for(let k=0;k<xs.length;k++)maxDiff=Math.max(maxDiff,Math.abs(hi[k]-lo[k]));
       // A band narrower than fifty cents is noise, not information.
       if(maxDiff>0.5){
@@ -1082,7 +1172,8 @@ function renderMainChart(results){
   // lines solid, the range as the block it is shaded with.
   const le=$('chartLegend');le.innerHTML='';
   legendItems.forEach(l=>{const d=document.createElement('div');d.className='legend-item';SharedLegend.attach(d,l.spec,l.label);le.appendChild(d);});
-  const yAxisLabel={wealth:`Wealth (${moneySymbol()})`,netBenefit:`Net Benefit (${moneySymbol()})`,investmentValue:`Investment Value (${moneySymbol()})`,loanBalance:`Loan Balance (${moneySymbol()})`}[metric]||`Value (${moneySymbol()})`;
+  const unit=`(${moneySymbol()}, ${moneyMode()})`;
+  const yAxisLabel={wealth:`Wealth ${unit}`,netBenefit:`Net Benefit ${unit}`,investmentValue:`Investment Value ${unit}`,loanBalance:`Loan Balance ${unit}`}[metric]||`Value ${unit}`;
   const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
   const tipLight=document.body.classList.contains('light');
   const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#2D3436':'#EAF1FF',tipBody=tipLight?'#4A5A6A':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
@@ -1132,6 +1223,15 @@ function paymentTxt(r){
   body.forEach(p=>{lo=Math.min(lo,p.payment);hi=Math.max(hi,p.payment);});
   if(!isFinite(lo))return'—';
   const per='/'+freqLabel(r.freq);
+  // In today's money even a level instalment shrinks as prices rise, so the
+  // span reads in date order, first to last; whether there are instalments
+  // at all is the contract's question, asked of the engine's own figures.
+  if(r.today){
+    const nom=paymentTxt(r.nominal);
+    if(nom==='—'||nom==='None until the final payment')return nom;
+    const a=body[0].payment,b=body[body.length-1].payment;
+    return Math.abs(b-a)<0.005?fmt.currencyExact(a)+per:fmt.currencyExact(a)+' → '+fmt.currencyExact(b)+per;
+  }
   if(Math.abs(hi-lo)<0.005)return lo>0.005?fmt.currencyExact(lo)+per:'None until the final payment';
   return fmt.currencyExact(lo)+' → '+fmt.currencyExact(hi)+per;
 }
@@ -1150,7 +1250,10 @@ function loanTypeCell(r){
 
 function renderComparisonTable(results,L){
   const valid=results.filter(r=>r);if(!valid.length){$('compTableWrap').innerHTML='<p class="muted">'+(optResult?'None of the tested settings could be modelled.':'Add financing scenarios to compare.')+'</p>';return;}
-  const inflOn=L.inflationEnabled,pc=L.purchaseCost;
+  const pc=L.purchaseCost;
+  // Which rows a loan earns is a question about the contract, so it is asked
+  // of the engine's own figures even while the board reads today's money.
+  const nom=r=>r.nominal||r;
   // A column may carry a second line under its name (the setting a sweep tested).
   let h='<table><thead><tr><th>Metric</th><th>Cash Purchase</th>';valid.forEach(r=>{h+='<th>'+escHtml(r.name)+(r.sub?'<span class="comp-sub" data-no-abbr>'+escHtml(r.sub)+'</span>':'')+'</th>';});h+='</tr></thead><tbody>';
   const rows=[
@@ -1164,7 +1267,13 @@ function renderComparisonTable(results,L){
     // What the loan really costs, so a flat 5% and an annuity 5% can be read
     // against each other instead of against their headline numbers.
     ['Effective Rate (APR)','—',r=>r.effectiveRate===null?'—':fmt.pct(r.effectiveRate/100)],
-    ['Admin Fee (per payment)','—',r=>(r.adminFee>0)?fmt.currencyExact(r.adminFee)+'/'+freqLabel(r.freq):'—'],
+    ['Admin Fee (per payment)','—',r=>{
+      if(!(r.adminFee>0))return'—';
+      const per='/'+freqLabel(r.freq);
+      if(!r.today)return fmt.currencyExact(r.adminFee)+per;
+      // The same fee every time, so in today's money it shrinks, first to last.
+      const a=r.adminFee/priceLevel(L.inflationRate,1/r.ppy),b=r.adminFee/priceLevel(L.inflationRate,r.n/r.ppy);
+      return Math.abs(b-a)<0.005?fmt.currencyExact(a)+per:fmt.currencyExact(a)+' → '+fmt.currencyExact(b)+per;}],
     ['Total Interest Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalInterest)],
     ['Total Admin Fees',fmt.currency(0),r=>fmt.currencyExact(r.totalAdminFee||0)],
     ['Total Fees Paid',fmt.currency(0),r=>fmt.currencyExact(r.totalFee)],
@@ -1179,17 +1288,16 @@ function renderComparisonTable(results,L){
     ['Cash Purchase at Same Horizon','Baseline',r=>fmt.currencyExact(r.cashBaseWealth)],
     ['Net Benefit vs Cash','Baseline',r=>{const v=snapNB(r.netBenefit);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}],
   ];
-  if(inflOn)rows.push(['Inflation-Adj Net Benefit','Baseline',r=>{if(!r.inflAdj||r.inflAdj.netBenefitReal===undefined)return'—';const v=snapNB(r.inflAdj.netBenefitReal);return`<span style="color:${v>0?cssVar('--positive-em'):v<0?cssVar('--negative-em'):cssVar('--text')};font-weight:700">${fmt.currencyExact(v)}</span>`;}]);
   // Rows that only earn their place when some scenario actually has the thing.
   const rowAt=lbl=>rows.findIndex(x=>x[0]===lbl);
   if(offerPricingOn())
     rows.splice(rowAt('Loan Type')+1,0,['Purchase Price',fmt.currencyExact(pc),r=>fmt.currencyExact(r.price)]);
-  if(valid.some(r=>r.residualAmt>0))
-    rows.splice(rowAt('Financed Amount')+1,0,['Residual / Balloon','—',r=>r.residualAmt>0?fmt.currencyExact(r.residualAmt):'—']);
-  if(valid.some(r=>r.amort&&r.amort.schedule.length>1&&Math.abs(r.finalPayment-r.payment)>0.005))
+  if(valid.some(r=>nom(r).residualAmt>0))
+    rows.splice(rowAt('Financed Amount')+1,0,['Residual / Balloon','—',r=>nom(r).residualAmt>0?fmt.currencyExact(r.residualAmt):'—']);
+  if(valid.some(r=>r.amort&&r.amort.schedule.length>1&&Math.abs(nom(r).finalPayment-nom(r).payment)>0.005))
     rows.splice(rowAt('Periodic Payment')+1,0,['Final Payment','—',r=>{
       const sch=r.amort&&r.amort.schedule;
-      return(!sch||sch.length<2||Math.abs(r.finalPayment-r.payment)<=0.005)?'—':fmt.currencyExact(r.finalPayment);
+      return(!sch||sch.length<2||Math.abs(nom(r).finalPayment-nom(r).payment)<=0.005)?'—':fmt.currencyExact(r.finalPayment);
     }]);
   // The midpoint stays in the Ending Wealth row above; the spread gets its own,
   // so every existing cell still reads as a single number.
@@ -1225,7 +1333,7 @@ function renderAmortTabs(results){
   r.amort.schedule.forEach(p=>{tI+=p.interest;tP+=p.principal;tPmt+=p.payment;h+=`<tr><td>${fmt.num(p.num)}</td>${showRate?'<td>'+fmt.pct(periodRateToAnnualPct(p.rate,r.ppy)/100)+'</td>':''}<td>${fmt.currencyExact(p.startBal)}</td><td>${fmt.currencyExact(p.interest)}</td><td>${fmt.currencyExact(p.principal)}</td><td>${fmt.currencyExact(p.payment)}</td><td>${fmt.currencyExact(p.endBal)}</td></tr>`;});
   h+=`<tr style="font-weight:800;border-top:2px solid var(--accent);"><td>Total</td>${showRate?'<td></td>':''}<td></td><td>${fmt.currencyExact(tI)}</td><td>${fmt.currencyExact(tP)}</td><td>${fmt.currencyExact(tPmt)}</td><td></td></tr>`;
   if(r.fee>0)h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">+ Origination Fee: ${fmt.currencyExact(r.fee)}${r.feeTreatment==='upfront'?'':' ('+(r.feeTreatment==='capitalise'?'added to the loan':'deducted from the advance')+', so it is repaid inside the payments above)'}</td></tr>`;
-  if(r.totalAdminFee>0)h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">+ Admin Fees: ${fmt.currencyExact(r.totalAdminFee)} (${fmt.num(r.amort.schedule.length)} × ${fmt.currencyExact(r.adminFee)}/${freqLabel(r.freq)})</td></tr>`;
+  if(r.totalAdminFee>0)h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">+ Admin Fees: ${fmt.currencyExact(r.totalAdminFee)} (${fmt.num(r.amort.schedule.length)} × ${fmt.currencyExact(r.adminFee)}/${freqLabel(r.freq)}${r.today&&r.inflationRate>0?' as charged, each read at today\u2019s prices':''})</td></tr>`;
   h+=`<tr><td colspan="${COLS}" style="text-align:left;color:var(--muted);">= Grand Total: ${fmt.currencyExact(tPmt+r.cashFee+r.totalAdminFee+r.down)} (incl. ${fmt.currencyExact(r.down)} down)</td></tr>`;
   h+='</tbody></table>';
   // The schedule can only show one rate path, so say which one it is.
@@ -2073,7 +2181,8 @@ $('rateConvention').addEventListener('change',()=>{syncForm();updateImpliedRate(
 // How the board is read, not what it was run on, so these redraw it in place.
 ['chartMetric','optTarget'].forEach(id=>{$(id).addEventListener('change',()=>{if(!optResult)renderBoard();});});
 $('currencySymbol').addEventListener('change',()=>{syncForm();renderBoard();});
-$('inflationToggle').addEventListener('change',syncForm);
+// Show in today's money re-reads the board in place: nothing is run again.
+$('inflationToggle').addEventListener('change',()=>{syncInflAdjOption();renderBoard();});
 // Pricing offers separately adds a row to the editor and a price to every card.
 $('offerPricing').addEventListener('change',()=>{
   if(editorDraft){updateEditorVisibility();updateImpliedRate();}
@@ -2282,7 +2391,6 @@ function applyQuickStart(key){
   $('rateConvention').value=b.rateConvention;
   rateConvention=b.rateConvention;
   $('inflationToggle').checked=!!b.inflationOn;
-  $('inflationRow').style.display=b.inflationOn?'':'none';
   $('inflationRate').value=b.inflationRate;
   $('chartMetric').value=b.chartMetric;
   $('optTarget').value=b.optTarget;
@@ -3120,20 +3228,30 @@ const OPT_METRICS={
   totalInterest:    {label:'Total Interest Paid',      kind:'money',hi:false},
   totalFinanceCost: {label:'Total Financing Cost',     kind:'money',hi:false},
   effectiveRate:    {label:'Effective Rate (APR)',     kind:'pct',  hi:false},
-  inflAdjNetBenefit:{label:'Inflation-Adj Net Benefit',kind:'money',hi:true}
+  inflAdjNetBenefit:{label:'Net Benefit in today\'s money',kind:'money',hi:true}
 };
 function optMetricKey(){
   const s=$('optMetric');let k=s&&OPT_METRICS[s.value]?s.value:'netBenefit';
-  // Without inflation the real figure is not computed, so the plain one stands in.
-  if(k==='inflAdjNetBenefit'&&optResult&&!optResult.I.inflationEnabled)k='netBenefit';
+  // In today's money the plain Net Benefit already is that figure, and with
+  // prices held still the two are one, so the plain one stands in.
+  if(k==='inflAdjNetBenefit'&&(todayOn()||(optResult&&!optResult.I.inflationEnabled)))k='netBenefit';
   return k;
+}
+// A sweep keeps both readings of every tested setting; the switch picks one.
+function optPick(m,k){if(!m)return null;const v=(todayOn()&&m.today&&k in m.today)?m.today[k]:m[k];return v!=null&&isFinite(v)?v:null;}
+function optBaseVal(R,k){return optPick(R.base,k);}
+// Net Benefit in today's money is a second, separate objective only while the
+// board reads future's money.
+function syncInflAdjOption(){
+  const io=$('optMetric').querySelector('option[value="inflAdjNetBenefit"]');
+  if(io){const off=!(optResult&&optResult.I.inflationEnabled&&!todayOn());io.hidden=off;io.disabled=off;}
 }
 function optMetricFmt(k,v){
   if(v==null||!isFinite(v))return '—';
   return OPT_METRICS[k].kind==='pct'?fmt.pct(v/100):fmt.currencyExact(snapNB(v));
 }
-function optAxisTitle(k){const m=OPT_METRICS[k];return m.kind==='money'?m.label+' ('+moneySymbol()+')':m.label+' (%)';}
-function optVal(R,idx,k){const g=R.grid[idx];const v=g&&g.m?g.m[k]:null;return v!=null&&isFinite(v)?v:null;}
+function optAxisTitle(k){const m=OPT_METRICS[k];return m.kind==='money'?m.label+' ('+moneySymbol()+(k==='inflAdjNetBenefit'?'':', '+moneyMode())+')':m.label+' (%)';}
+function optVal(R,idx,k){const g=R.grid[idx];return g?optPick(g.m,k):null;}
 // Best and worst honour the metric's direction: more wealth is better, less
 // interest is better. A tie keeps the first tested.
 function optBetter(k,a,b){return OPT_METRICS[k].hi?a>b+1e-9:a<b-1e-9;}
@@ -3158,8 +3276,7 @@ function setBoardMode(){
   $('optMetricWrap').style.display=on?'':'none';
   $('amortSection').hidden=on;
   $('compNote').textContent=on?'(cash, the best tested, your current setting and the worst tested)':'';
-  const io=$('optMetric').querySelector('option[value="inflAdjNetBenefit"]');
-  if(io){const off=!(on&&optResult.I.inflationEnabled);io.hidden=off;io.disabled=off;}
+  syncInflAdjOption();
   if(!on){
     $('chartCanvasWrap').style.display='';$('optSurface').style.display='none';purgeSurface();
     if(chartInstance&&chartInstance._fvcOpt){chartInstance.destroy();chartInstance=null;}
@@ -3169,7 +3286,7 @@ function setBoardMode(){
 // A full run of one tested setting, for a tile and a column of the table.
 function optFullRun(R,vals,name,sub,color){
   const x=vals?optVariant({sc:R.sc0,I:R.I},R.specs,vals):{sc:R.sc0,I:R.I};
-  const res=scoreScenario(x.sc,R.I,x.I.riskFreeRate);
+  const res=shownResult(scoreScenario(x.sc,R.I,x.I.riskFreeRate),R.I.inflationRate);
   if(res){res.name=name;res.sub=sub;res.color=color;res.idx=R.idx;}
   return res;
 }
@@ -3186,7 +3303,7 @@ function renderOptBoard(){
     if(worst>=0&&worst!==best)cols.push(optFullRun(R,optValsAt(R,worst),'Worst tested',optSettingText(R,optValsAt(R,worst)),cssVar('--muted')));
     const I=R.I,valid=cols.filter(Boolean);
     const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
-    const cashBase=computeCashBaseline(I.purchaseCost,I.availableCash,maxTerm,I.riskFreeRate,I.inflationRate,I.inflationEnabled);
+    const cashBase=shownCash(computeCashBaseline(I.purchaseCost,I.availableCash,maxTerm,I.riskFreeRate,I.inflationRate,I.inflationEnabled),maxTerm,I.inflationRate);
     const L={results:cols,cashBase,purchaseCost:I.purchaseCost,availableCash:I.availableCash,maxTerm,inflationEnabled:I.inflationEnabled,
       inflationRate:I.inflationRate,riskFreeRate:I.riskFreeRate};
 
@@ -3194,16 +3311,17 @@ function renderOptBoard(){
     const tone=v=>(meta.kind==='money'&&(mk==='netBenefit'||mk==='inflAdjNetBenefit'))?(snapNB(v)>0?cssVar('--positive-em'):snapNB(v)<0?cssVar('--negative-em'):cssVar('--text')):cssVar('--text');
     const tile=(id,lab,v,sub)=>{$(id+'Val').textContent=optMetricFmt(mk,v);$(id+'Val').style.color=v==null?cssVar('--text'):tone(v);$(id+'Sub').textContent=sub;if(lab)$(id+'Label').textContent=lab;};
     tile('optBest','Best '+meta.label,best>=0?optVal(R,best,mk):null,best>=0?optSettingText(R,optValsAt(R,best)):'No tested setting could be modelled.');
-    tile('optBase',null,R.base?R.base[mk]:null,baseSub+(R.base?'':' (cannot be modelled)'));
+    tile('optBase',null,optBaseVal(R,mk),baseSub+(R.base?'':' (cannot be modelled)'));
     tile('optWorst','Worst '+meta.label,worst>=0?optVal(R,worst,mk):null,worst>=0?optSettingText(R,optValsAt(R,worst)):'');
     const baseTerm=baseRes?baseRes.termYears:termToYears(R.sc0.termPeriods,R.sc0.freq);
-    const cashAt=computeCashBaseline(I.purchaseCost,I.availableCash,baseTerm,I.riskFreeRate,I.inflationRate,I.inflationEnabled);
+    const cashAt=shownCash(computeCashBaseline(I.purchaseCost,I.availableCash,baseTerm,I.riskFreeRate,I.inflationRate,I.inflationEnabled),baseTerm,I.inflationRate);
     $('optCashVal').textContent=fmt.currency(cashAt.endWealth,true);$('optCashVal').style.color=cssVar('--text');
     $('optCashSub').textContent=`After ${horizonTxt(baseTerm)} at ${fmt.pct(I.riskFreeRate/100)} risk-free`;
 
     renderOptVerdict(best,worst,mk);
     updateOptChart();
     renderComparisonTable(cols,L);
+    syncMoneyNotes();
     renderAssumptions({results:[baseRes],scenarios:[R.sc0],cashBase,purchaseCost:I.purchaseCost,availableCash:I.availableCash,
       maxTerm:baseTerm,inflationEnabled:I.inflationEnabled,inflationRate:I.inflationRate,riskFreeRate:I.riskFreeRate,optLines:optAssumptionLines()});
     const carry=valid.some(r=>r.negCarry);
@@ -3226,7 +3344,7 @@ function renderOptVerdict(best,worst,mk){
       body:'Each one left the down payment and fee beyond the cash, or a repayment no rate can satisfy. Widen or move the range.'});
     return;
   }
-  const bv=optVal(R,best,mk),wv=optVal(R,worst,mk),cur=R.base?R.base[mk]:null;
+  const bv=optVal(R,best,mk),wv=optVal(R,worst,mk),cur=optBaseVal(R,mk);
   const tol=x=>Math.max(NB_EPS,1e-9*Math.abs(x));
   const ties=R.grid.filter((g,i)=>{const v=optVal(R,i,mk);return v!=null&&Math.abs(v-bv)<=tol(bv);}).length;
   const bestVals=optValsAt(R,best);
@@ -3296,7 +3414,7 @@ function updateOptChart(){
   ];
   // Your setting sits on the line when it is one of the tested values, and
   // beside it on a number axis when it is not.
-  const baseY=R.base?R.base[mk]:null;
+  const baseY=optBaseVal(R,mk);
   if(baseY!=null&&isFinite(baseY)&&(isNum||baseIdx>=0))datasets.push({label:'Your current setting',data:isNum?[{x:Number(R.baseVals[0]),y:baseY}]:only(baseIdx,baseY),
     showLine:false,pointStyle:'rect',pointRadius:5,pointHoverRadius:6,borderColor:mark,backgroundColor:mark,_opt:'base',
     legendSpec:{type:'point',color:mark,point:{shape:'rect',fill:mark,radius:4}}});
@@ -3371,8 +3489,8 @@ function drawOptSurface(){
       marker:{symbol:'circle-open',size:9,color:text,line:{width:3,color:text}},hovertemplate:'Best<extra></extra>'});
   }
   const bx=at(s0,v0,R.baseVals[0]),by=at(s1,v1,R.baseVals[1]);
-  const hasBase=R.base&&R.base[mk]!=null&&bx>=0&&by>=0&&isFinite(bx)&&isFinite(by);
-  if(hasBase)data.push({type:'scatter3d',mode:'markers',name:'Your current setting',x:[bx],y:[by],z:[R.base[mk]],
+  const hasBase=optBaseVal(R,mk)!=null&&bx>=0&&by>=0&&isFinite(bx)&&isFinite(by);
+  if(hasBase)data.push({type:'scatter3d',mode:'markers',name:'Your current setting',x:[bx],y:[by],z:[optBaseVal(R,mk)],
     marker:{symbol:'square',size:5,color:mark},hovertemplate:'Your current setting<extra></extra>'});
   const ax=(sp,vals)=>Object.assign({title:{text:sp.label+(sp.kind==='num'?optUnitBracket(sp):'')},color:muted,gridcolor:grid,zerolinecolor:grid,showbackground:false},
     sp.kind==='list'?{tickvals:vals.map((_,i)=>i),ticktext:vals.map(v=>sp.fmt(v))}:{});
@@ -3417,7 +3535,7 @@ function readOptVars(o){
 SharedSeg.fromSelect($('chartMetric'),{className:'chart-switch',ariaLabel:'Chart Metric',
   labelOf:o=>({wealth:'Ending Wealth',netBenefit:'Net Benefit',investmentValue:'Investment Value',loanBalance:'Loan Balance'})[o.value]||o.textContent});
 // One row per repayment is the most specific thing here, so it opens closed.
-SharedFold.attach($('amortSection'),{key:'financingvscash',bodies:['#amortTabs','#amortTableWrap']});
+SharedFold.attach($('amortSection'),{key:'financingvscash',bodies:['#amortUnitNote','#amortTabs','#amortTableWrap']});
 scenarios.push(defaultScenario('60mo Monthly @ 5%',5));
 scenarios.push({...defaultScenario('36mo Monthly @ 7%',7),termPeriods:36,financeRate:7});
 setupFmtInputs();selectScenario(0);syncForm();runSimulation();

@@ -66,7 +66,9 @@ function pmt(P,annualPct,years){ const r=annualPct/100/12,n=years*12; return r==
 function balanceAfter(P,annualPct,years,months){ const r=annualPct/100/12; const m=pmt(P,annualPct,years); let b=P; for(let i=0;i<months;i++){ b=b-(m-b*r); } return b; }
 
 // ═══ Case A: defaults (800k, 20% down, 6%, 30y term, 30y horizon) ═══
-await page.evaluate(()=>window.__RVO.resetAll());
+// The replay is of the engine's own figures, so the page is read in future's
+// money: Show in today's money (on by default) is turned off after every reset.
+await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
 await page.waitForTimeout(200);
 {
   const own = await grabCsv('own');
@@ -110,7 +112,7 @@ await setInputs({horizon:10});
 }
 
 // ═══ Case C: RTB at year 5 ═══
-await page.evaluate(()=>window.__RVO.resetAll());
+await page.evaluate(()=>{window.__RVO.resetAll();const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));}});
 await page.waitForTimeout(200);
 await setInputs({rtbEnabled:true, rtbBuyYear:5});
 {

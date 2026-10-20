@@ -102,5 +102,29 @@ This holds all of that to one answer (`colour.mjs`):
 - C9  a custom colour survives a reload through the mini cache
 - C10 every palette slot resolves to a paintable colour, never an empty string
 
-Run: `node run.mjs`, `node reconcile.mjs`, `node accounting.mjs` and
-`node colour.mjs`
+## `today.mjs` — Show in today's money
+
+The switch beside the results (the old Enable Inflation Adjustment switch,
+moved and keeping its `inflationToggle` handle) re-reads the board at today's
+prices. It is not a second model, so every check reads the page with the
+switch off and on and holds the second to a replay of the first: a balance or
+a payment at t years over (1+i)^t, a total as the sum of its own parts each
+deflated to its date, purchase-day figures untouched.
+
+- T1  Ending Wealth, the cash at the same horizon and Net Benefit at each
+      row's own horizon (the floating range too); purchase-day rows fixed
+- T2  every schedule row over (1+i)^(k/ppy), still balancing, Total footing
+- T3  interest, admin fees, fees, financing cost and out-of-pocket replayed
+      row by row from the future schedule
+- T4  every point of the four chart metrics, and each line ending on its row
+- T5  the tiles and the verdict on the same figures, the Best tile the top row
+      on show, the board never sent out of date by the switch
+- T6  back again to the cent; at 0% inflation the two moneys are one page
+- T7  the switch is saved with the plan
+- T8  a sweep passes through today's table on four objectives; the separate
+      Net Benefit in today's money objective only while reading future's money
+- T9  the CSV is the schedule on screen
+- T10 the note under Inflation; T11 What this assumes
+
+Run: `node run.mjs`, `node reconcile.mjs`, `node accounting.mjs`,
+`node colour.mjs` and `node today.mjs`

@@ -144,9 +144,9 @@ const pathOf = (s0, rCol, rBase, parity) => k => parity ? s0 * Math.pow((1+rCol/
 const rowsFor = c => [
   ['Property price', c.price], ['Down payment', c.dp], ['Mortgage rate', c.rate], ['Mortgage term', c.term],
   ['House price growth (RPPI)', c.growth], ['Selling cost', c.sell], ['Setup cost type', 'dollar'], ['Setup cost', c.setup],
-  ['Own cost type', 'dollar'], ['Own cost frequency', 'yearly'], ['Ongoing cost (own)', c.ownCost], ['Own cost inflation', c.ownInfl],
-  ['Rent frequency', 'monthly'], ['Rent amount', c.rent], ['Rent inflation', c.rentInfl],
-  ['Rent cost type', 'dollar'], ['Rent cost frequency', 'yearly'], ['Ongoing cost (rent)', c.rentCost], ['Rent cost inflation', c.rentCostInfl],
+  ['Own cost type', 'dollar'], ['Own cost frequency', 'yearly'], ['Ongoing cost (own)', c.ownCost], ['Own cost growth', c.ownInfl],
+  ['Rent frequency', 'monthly'], ['Rent amount', c.rent], ['Rent growth', c.rentInfl],
+  ['Rent cost type', 'dollar'], ['Rent cost frequency', 'yearly'], ['Ongoing cost (rent)', c.rentCost], ['Rent cost growth', c.rentCostInfl],
 ];
 function tableCSV(cols, shared, fx){
   const names = cols.map(c => c.name);

@@ -32,4 +32,15 @@ Detailed mortgage mode can hold, its single rate must be the schedule's
 average over the term, and the calculator must open it in Detailed mode on
 exactly those periods.
 
+`node today.mjs` holds Show in today's money to a replay of the page in
+future's money: every cashflow table cell (the CSV, to the dollar) and chart
+point divided by General inflation compounded to the end of its year, running
+totals summed year by year, every row still reconciling; the cards, tiles,
+repayment range and Rent-Then-Buy price on the same figures, the breakeven
+year unmoved; the switch on for a new reader and after a Quick Start, off for a
+plan saved before it existed; back again exactly; 0% making the two moneys one
+page; and the Indonesian page on the same figures. `run.mjs` and
+`integrity.mjs` replay the engine's own figures, so they read the page with
+the switch off.
+
 (See also ../audit/ — the earlier JS↔Python cross-model audit.)

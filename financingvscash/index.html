@@ -299,15 +299,14 @@
         <select class="sel-input" id="rateConvention"><option value="ear" selected>Effective annual (EAR)</option><option value="nominal">Nominal annual (APR)</option></select>
       </div>
     </div>
+    <!-- One inflation rate, always in use: Show in today's money, beside the
+         results, reads every figure at today's prices with it. -->
     <div class="field-group">
-      <div class="group-title">Inflation</div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span class="tip-wrap">Enable Inflation Adjustment <i class="tip-icon" id="tipInflation" data-tip="<ul><li><strong>On:</strong> also shows the Net Benefit in today's dollars (Inflation-Adj Net Benefit), discounted at the inflation rate below.</li><li><strong>Off:</strong> nominal future dollars only.</li></ul>">?</i></span></div>
-        <label class="toggle"><input type="checkbox" id="inflationToggle"/><span class="slider"></span></label>
-      </div>
-      <div class="field-row" id="inflationRow" style="display:none;">
-        <div class="field-label">Inflation Rate</div>
+      <div class="group-title">Prices</div>
+      <div class="field-row" id="inflationRow">
+        <div class="field-label"><span class="tip-wrap">Inflation <i class="tip-icon" id="tipInflation" data-tip="How fast prices rise each year. It never changes the loans or the cash, only how their figures read in today's money.">?</i></span></div>
         <div class="affix-wrap"><input class="affix-input has-suffix" id="inflationRate" type="number" min="0" max="30" step="0.1" value="2.5"/><span class="suffix">%/yr</span></div>
+        <p class="note" id="inflationNote"></p>
       </div>
     </div>
   </div>
@@ -328,6 +327,17 @@
 <main>
   <!-- THE ANSWER, IN ONE SENTENCE -->
   <div class="verdict card" id="verdict"></div>
+
+  <!-- A way of READING every figure on the board, not an assumption, so it
+       sits with the results it changes rather than in the input panel. It is
+       the old Enable Inflation Adjustment switch moved here, and keeps its
+       handle (inflationToggle), so a saved plan and a kept link still find it. -->
+  <div class="money-bar">
+    <div class="toggle-row money-toggle" data-no-stale>
+      <div class="toggle-label"><span class="tip-wrap">Show in today's money <i class="tip-icon" data-tip="The loans and the cash are the same either way.<ul><li><strong>On:</strong> every figure in today's money: each one divided by inflation (Assumptions tab) up to its own date.</li><li><strong>Off:</strong> in the money of each date, as the lender and your statements will read it.</li></ul>Offers that end on different dates compare fairly in today's money.">?</i></span></div>
+      <label class="toggle-switch"><input type="checkbox" id="inflationToggle"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+    </div>
+  </div>
 
   <section class="metrics" id="simMetrics">
     <div class="metric card"><div class="label"><span class="tip-wrap">Best Strategy</span></div><div class="value" id="kpiBest">—</div><div class="sub" id="kpiBestSub"></div>
@@ -359,7 +369,7 @@
           <option value="totalInterest">Total Interest Paid</option>
           <option value="totalFinanceCost">Total Financing Cost</option>
           <option value="effectiveRate">Effective Rate (APR)</option>
-          <option value="inflAdjNetBenefit">Inflation-Adj Net Benefit</option>
+          <option value="inflAdjNetBenefit">Net Benefit in today's money</option>
         </select>
       </label>
       <div class="btn-cluster">
@@ -380,7 +390,7 @@
   </section>
   <section class="detail-section card">
     <h2>Scenario Comparison <span class="muted-note" id="compNote"></span></h2>
-    <p class="unit-note" id="compUnitNote">In future dollars, each scenario at the end of its own term.</p>
+    <p class="unit-note" id="compUnitNote">In future’s money, each scenario at the end of its own term.</p>
     <div class="table-wrap" id="compTableWrap"></div>
   </section>
   <section class="detail-section card" id="amortSection" style="margin-top:18px;">
@@ -390,6 +400,7 @@
         <button class="btn-secondary btn-sm" id="downloadBtn" type="button" title="Download this table as CSV">⬇ CSV</button>
       </div>
     </div>
+    <p class="unit-note" id="amortUnitNote">In future’s money, as the lender schedules it.</p>
     <div class="tab-bar" id="amortTabs"></div>
     <div class="table-wrap" id="amortTableWrap"></div>
   </section>

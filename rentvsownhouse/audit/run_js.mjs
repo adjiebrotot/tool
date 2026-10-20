@@ -25,6 +25,9 @@ const page = await browser.newPage();
 page.on('pageerror', e => console.log('PAGEERROR:', e.message));
 await page.goto(pageUrl, { waitUntil: 'networkidle' });
 
+// The cross-model audit compares the engine's own figures, in future's money.
+await page.evaluate(() => { const sr=document.getElementById('showReal');if(sr.checked){sr.checked=false;sr.dispatchEvent(new Event('change',{bubbles:true}));} });
+
 // Capture CSV instead of triggering a download.
 await page.evaluate(() => {
   window.__csv = null;

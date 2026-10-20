@@ -317,7 +317,7 @@
       </div>
       <div class="field-row" id="ownOngoingInflationRow">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelOwnInflation">Inflasi biaya rutin kepemilikan</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelOwnInflation">Kenaikan biaya rutin</span> <span class="tip-icon" data-tip-key="ownOngoingInflation">?</span></div>
           <span class="slider-value" id="ownOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="ownOngoingInflation" min="0" max="15" step="0.01" value="0"/>
@@ -395,7 +395,7 @@
       </div>
       <div class="field-row" id="rentOngoingInflationRow">
         <div class="slider-head">
-          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Inflasi biaya rutin menyewa</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
+          <div class="field-label"><span data-i18n="labelRentOngoingInflation">Kenaikan biaya rutin</span> <span class="tip-icon" data-tip-key="rentOngoingInflation">?</span></div>
           <span class="slider-value" id="rentOngoingInflationVal">0.00%/yr</span>
         </div>
         <input type="range" id="rentOngoingInflation" min="0" max="15" step="0.01" value="0"/>
@@ -432,6 +432,20 @@
 
   <!-- ASSUMPTIONS TAB -->
   <div class="ctrl-panel" id="tab-general">
+    <!-- One general inflation rate, used for nothing but reading: Show in
+         today's money, beside the results, divides every figure by it. The
+         rent and cost growth rates on the other tabs move the plan itself. -->
+    <div class="field-group">
+      <div class="group-title" data-i18n="sectionPrices">Harga</div>
+      <div class="field-row">
+        <div class="slider-head">
+          <div class="field-label"><span data-i18n="labelGeneralInflation">Inflasi umum</span> <span class="tip-icon" data-tip-key="generalInflation">?</span></div>
+          <span class="slider-value" id="generalInflationVal">2.50%/yr</span>
+        </div>
+        <input type="range" id="generalInflation" min="0" max="15" step="0.01" value="2.5"/>
+        <div class="derived" id="helpGeneralInflation"></div>
+      </div>
+    </div>
     <div class="field-group">
       <div class="group-title" data-i18n="sectionSavings">Tabungan dan jangka waktu</div>
       <div class="field-row">
@@ -526,6 +540,18 @@
 <main>
   <!-- THE ANSWER, IN ONE SENTENCE -->
   <div class="verdict card" id="verdict"></div>
+
+  <!-- A way of READING every figure on the page, not an assumption, so it
+       sits with the results it changes rather than in the input panel. -->
+  <div class="money-bar">
+    <div class="toggle-row money-toggle">
+      <span class="toggle-label"><span data-i18n="labelShowReal">Tampilkan dalam nilai hari ini</span> <span class="tip-icon" data-i18n-tip="showRealTip">?</span></span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="showReal" checked/>
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+      </label>
+    </div>
+  </div>
 
   <!-- KPI CARDS: the answer first, the two figures it starts from after -->
   <section class="metrics">

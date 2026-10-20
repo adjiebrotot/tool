@@ -115,7 +115,12 @@ between two runs, which cancels everything the two runs share.
   across all seven symbols.
 - **C7 · Inflation is a deflator, not a second model.** Under P13 the
   inflation-adjusted figure must equal `nominal / (1+i)^T` exactly, and switching
-  the toggle must not move any nominal figure.
+  the toggle must not move any nominal figure. (The switch is now Show in
+  today's money, beside the results, and re-reads the whole board rather than
+  adding a row: Net Benefit and Ending Wealth in today's money must be the
+  future figures over `(1+i)^T` at each row's own horizon, purchase-day figures
+  must not move, and switching back must restore the board to the cent.
+  `today.mjs` holds the rest of the board to the same reading.)
 
 ---
 

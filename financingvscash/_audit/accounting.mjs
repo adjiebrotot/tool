@@ -459,28 +459,37 @@ console.log('\n════ C — marginal identities: each input moves the book
     new Set(digits).size===1, digits[0]);
 }
 
-/* C7. The inflation tooltip promises a discount of the same figures, not a
-   second model, so real must be nominal/(1+i)^T and nothing nominal may move. */
+/* C7. Show in today's money re-reads the same figures, it is not a second
+   model: Net Benefit and Ending Wealth in today's money must be the future
+   figures over (1+i)^T at each scenario's OWN horizon, the purchase-day
+   figures may not move at all, and switching back gives the page back to the
+   cent. (Before the switch moved beside the results this was the separate
+   Inflation-Adj Net Benefit row; the identity is the same.) */
 {
   const s1=sc({name:'a', loanType:'annuity', financeRate:7, downPaymentPct:20, termPeriods:60});
   const s2=sc({name:'b', loanType:'balloon', financeRate:9, downPaymentPct:0, termPeriods:36, residualPct:40});
-  await load({fields:{'v:availableCash':'80000'}, scenarios:[s1,s2]});
+  const flip=on=>page.evaluate(on=>{const el=document.getElementById('inflationToggle');el.checked=on;el.dispatchEvent(new Event('change',{bubbles:true}));},on);
+  await load({fields:{'v:availableCash':'80000','v:inflationRate':'3'}, scenarios:[s1,s2]});
   const off=await compTable();
-  await load({fields:{'v:availableCash':'80000','c:inflationToggle':true,'v:inflationRate':'3'}, scenarios:[s1,s2]});
+  await flip(true);
   const on=await compTable();
+  await flip(false);
+  const back=await compTable();
   const bad=[];
   for(const nm of ['a','b']){
     const i=colOf(on,nm);
     const years=nm==='a'?5:3;
-    const nomNB=money(on['Net Benefit vs Cash'][i]);
-    const realNB=money(on['Inflation-Adj Net Benefit'][i]);
-    if(!near(realNB, nomNB/Math.pow(1.03,years), 0.05)) bad.push(`${nm} real ${realNB.toFixed(2)} ≠ ${(nomNB/Math.pow(1.03,years)).toFixed(2)}`);
-    ['Ending Wealth','Total Interest Paid','Total Financing Cost','Net Benefit vs Cash'].forEach(k=>{
-      if(!near(money(off[k][colOf(off,nm)]), money(on[k][i]), 0.005)) bad.push(`${nm} ${k} moved when the toggle flipped`);
+    for(const k of ['Net Benefit vs Cash','Ending Wealth','Cash Purchase at Same Horizon']){
+      const nom=money(off[k][colOf(off,nm)]), real=money(on[k][i]);
+      if(!near(real, nom/Math.pow(1.03,years), 0.05)) bad.push(`${nm} ${k}: today ${real.toFixed(2)} ≠ ${(nom/Math.pow(1.03,years)).toFixed(2)}`);
+    }
+    ['Down Payment Amount','Financed Amount'].forEach(k=>{
+      if(off[k][colOf(off,nm)]!==on[k][i]) bad.push(`${nm} ${k} moved when the switch flipped`);
     });
   }
-  check('C7 inflation is a deflator, not a second model: real = nominal/(1+i)^T and no nominal figure moves',
-    !bad.length, bad.join(' | ') || 'both scenarios discount at their OWN horizon (5 yr and 3 yr), nominals untouched');
+  if(JSON.stringify(off)!==JSON.stringify(back)) bad.push('switching back did not restore the table');
+  check('C7 today\'s money is a deflator, not a second model: real = future/(1+i)^T, purchase-day figures fixed, and back again',
+    !bad.length, bad.join(' | ') || 'both scenarios discount at their OWN horizon (5 yr and 3 yr); the table returns byte-identical');
 }
 
 console.log('\n════ D — horizon integrity: what is each scenario compared against? ════');
@@ -527,14 +536,18 @@ console.log('\n════ E — cross-path consistency: the same number comput
    the answer the panel is already showing — for every objective it offers. */
 {
   const s=sc({name:'x', loanType:'annuity', financeRate:7, downPaymentPct:20, termPeriods:60, feeAmt:900, adminFee:15});
-  await load({fields:{'v:availableCash':'90000','c:inflationToggle':true,'v:inflationRate':'2.5'}, scenarios:[s]});
+  await load({fields:{'v:availableCash':'90000','v:inflationRate':'2.5'}, scenarios:[s]});
   const t=await compTable();
+  // Net Benefit in today's money is the same table read through the switch.
+  await page.evaluate(()=>{const el=document.getElementById('inflationToggle');el.checked=true;el.dispatchEvent(new Event('change',{bubbles:true}));});
+  const tr=await compTable();
+  await page.evaluate(()=>{const el=document.getElementById('inflationToggle');el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}));});
   const live={
     netBenefit:money(t['Net Benefit vs Cash'][colOf(t,'x')]),
     totalInterest:money(t['Total Interest Paid'][colOf(t,'x')]),
     totalFinanceCost:money(t['Total Financing Cost'][colOf(t,'x')]),
     endWealth:money(t['Ending Wealth'][colOf(t,'x')]),
-    inflAdjNetBenefit:money(t['Inflation-Adj Net Benefit'][colOf(t,'x')])
+    inflAdjNetBenefit:money(tr['Net Benefit vs Cash'][colOf(tr,'x')])
   };
   const bad=[];
   // Sweep the finance rate 1 → 13 in 25 values (steps of 0.5, so 7.00 is a
@@ -729,6 +742,9 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
     await load({});   // clean cache first, so the preset is doing the work
     await page.evaluate(k=>document.querySelector(`.quick-start-btn[data-preset="${k}"]`).click(), key);
     await page.waitForTimeout(450);
+    // The house opens in today's money; the books close in the money the
+    // contract is written in, so they are read with the switch off.
+    await page.evaluate(()=>{const el=document.getElementById('inflationToggle');if(el.checked){el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}));}});
     const t=await compTable();
     const cols=t.__cols.slice(2);
     seen.push(`${key}(${cols.length})`);
