@@ -5,7 +5,7 @@
 Canonical site: https://tool.adjiebrotots.com/
 Sitemap: https://tool.adjiebrotots.com/sitemap.xml
 Robots: https://tool.adjiebrotots.com/robots.txt
-Creator: Adjie Brotosukmono (adjiebrotot), an Indonesian senior economics consultant and power system engineer at Mott MacDonald in Perth, Australia. About the creator: https://www.adjiebrotots.com/about/ (profile for LLMs: https://www.adjiebrotots.com/llms.txt). Blog: https://blog.adjiebrotots.com/
+Creator: Adjie Brotosukmono (Adjie, or adjiebrotot online), an Indonesian senior economics consultant and power system engineer at Mott MacDonald in Perth, Australia. About the creator: https://www.adjiebrotots.com/about/ (profile for LLMs: https://www.adjiebrotots.com/llms.txt). Blog: https://blog.adjiebrotots.com/
 Language: English. The Rent vs Own Home and PPh 21 Pisah vs Gabung tools are also available in Indonesian (Bahasa Indonesia).
 Access: Free, browser-based, no account required for the listed tools.
 
