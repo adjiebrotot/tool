@@ -18,6 +18,12 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
+// The maker of every tool: the one person node that www, the blog and the tool pages share.
+const AUTHOR = {
+  author: { '@type': 'Person', '@id': 'https://www.adjiebrotots.com/#person', name: 'Adjie Brotosukmono', url: 'https://www.adjiebrotots.com/' },
+  publisher: { '@id': 'https://www.adjiebrotots.com/#person' },
+};
+
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
@@ -25,7 +31,7 @@ const TOOLS = [
     description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP, lapisan tarif pajak, grafik, dan analisis titik impas.',
     ogTitle: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
     ogDescription: 'Bandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK) di Indonesia.',
-    sameDirAssets: ['script.js', 'style.css'],
+    sameDirAssets: ['script.js', 'style.css', 'abbr.js'],
     extraReplacements: [],
     ldJson: [
       {
@@ -46,6 +52,7 @@ const TOOLS = [
           'Semua perhitungan berjalan lokal di browser — data penghasilan Anda tidak pernah meninggalkan perangkat',
           'Ekspor grafik dan CSV gratis tanpa paywall',
         ],
+        ...AUTHOR,
       },
       {
         '@context': 'https://schema.org',
@@ -92,7 +99,7 @@ const TOOLS = [
     description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
-    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'quickstart-data.js'],
+    sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'quickstart-data.js', 'abbr.js'],
     extraReplacements: [["renderRVOFooter('../logos/')", "renderRVOFooter('../../logos/')"]],
     ldJson: [
       {
@@ -124,6 +131,7 @@ const TOOLS = [
           { '@type': 'WebApplication', name: 'Analisis Sensitivitas Sewa vs Beli Rumah', url: 'https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/' },
           { '@type': 'WebPage', name: 'Rent vs Own Quick Start Assumptions', url: 'https://tool.adjiebrotots.com/rentvsownhouse/quickstart-assumptions/' },
         ],
+        ...AUTHOR,
       },
       {
         '@context': 'https://schema.org',
@@ -233,6 +241,7 @@ const TOOLS = [
           name: 'Simulasi Sewa vs Beli Rumah',
           url: 'https://tool.adjiebrotots.com/rentvsownhouse/id/',
         },
+        ...AUTHOR,
       },
       {
         '@context': 'https://schema.org',

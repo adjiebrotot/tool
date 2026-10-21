@@ -118,7 +118,10 @@ Run `node _ref/button-check.mjs` (ONLY=<path> for one page).
 
 Copy the SEO block from an existing tool's `<head>` and adapt it: `<title>`, `<meta
 name="description">`, canonical link, Open Graph + Twitter tags, and a JSON-LD `WebApplication`
-block. Then register the tool site-wide:
+block. Its `author` and `publisher` are the person node every tool page shares (`"@id":
+"https://www.adjiebrotots.com/#person"`, copied as the other tools have it), never a Person of
+its own with another url or job title: that id is what joins the tools, the blog and
+www.adjiebrotots.com into one maker. Then register the tool site-wide:
 
 - Add a `<url>` entry to `sitemap.xml`, right after its parent's if it is a sub-page
   (entries run home first, then by path).
@@ -241,7 +244,9 @@ Scale the rigor to the risk:
   talk" mailto and the bug/help email), copied from those footers.
   Everything after it (disclaimer, credits) is fine print, sized by `shared.css`.
 - **Plain tools with no potentially harmful finance/engineering content** — no disclaimer
-  needed. Just the licence (GNU GPL) and the "Made in Australia by Indonesian engineer" line.
+  needed. Just the licence (GNU GPL) and the "Made in Australia by Adjie Brotosukmono, an
+  Indonesian engineer" line, the name linked to https://www.adjiebrotots.com/about/ with
+  `rel="author"`.
 
 ## Simulate and Reset buttons
 

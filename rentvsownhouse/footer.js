@@ -35,7 +35,7 @@
       +   '</div>'
       +   '<div style="display:flex;align-items:center;gap:10px">'
       +     '<img src="' + logosPath + 'indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
-      +     '<span style="color:var(--muted);font-size:0.76rem">Made in Australia by Indonesian engineer.</span>'
+      +     '<span style="color:var(--muted);font-size:0.76rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>'
       +   '</div>'
       + '</div>';
   };
