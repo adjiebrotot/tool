@@ -414,7 +414,7 @@
   }
   .page-footer-info p { margin: 0 0 10px; color: var(--muted); line-height: 1.55; font-size: 0.82rem; }
   .page-footer-info p:last-child { margin-bottom: 0; }
-  .page-footer-info a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.14em; }
+  .page-footer-info a { color: var(--accent); text-decoration: none; }
 
   /* Responsive */
   @media (max-width: 900px) {

@@ -6,10 +6,15 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <script src="../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
@@ -171,8 +176,9 @@
     <footer class="wc-foot">
       <button class="wc-foot-peek" id="footPeek" type="button">© Credits &amp; licence ↓</button>
       <div class="wc-foot-body" id="footBody">
+      <span class="wc-foot-item"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></span>
       <span class="wc-foot-item"><img loading="lazy" src="../logos/gpl.png" alt="GNU GPL"> Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a></span>
-      <span class="wc-foot-item"><img loading="lazy" src="../logos/australian.png" alt="Australian Made"><img loading="lazy" src="../logos/indonesian.png" alt="100% Indonesia"> Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
+      <span class="wc-foot-item"><img loading="lazy" src="../logos/australian.png" alt="Australian flag"><img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge"> Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
       <span class="wc-foot-item">Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors via <a href="https://github.com/evansiroky/timezone-boundary-builder" target="_blank" rel="noopener">timezone-boundary-builder</a>, <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a></span>
       </div>
     </footer>

@@ -108,6 +108,11 @@ abbr.abbr:focus-visible,.abbr:focus-visible{outline:none;}
 .page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}
 .page-footer-info a{color:var(--accent-strong);}
 
+/* Footer links are plain text; the underline shows on hover only. */
+footer a{text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+footer p.footer-links{font-size:.8rem;}
+
 /* Footer collaboration line (finance / engineering tools and the home page).
    It leads the footer in full-strength text behind an accent bar; every
    paragraph after it is fine print (disclaimer, credits). */

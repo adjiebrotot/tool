@@ -13,7 +13,8 @@
       '.page-footer-info{margin-top:8px;padding:16px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;}',
       '.page-footer-info p{margin:0 0 12px;color:var(--muted);line-height:1.6;font-size:.9rem;}',
       '.page-footer-info p:last-child{margin-bottom:0;}',
-      '.page-footer-info a{color:var(--accent-strong);}',
+      '.page-footer-info a{color:var(--accent-strong);text-decoration:none;}',
+      '.page-footer-info a:hover{text-decoration:underline;}',
     ].join('');
     document.head.appendChild(style);
   }
@@ -23,18 +24,22 @@
     containerId = containerId || 'siteFooterContent';
     var el = document.getElementById(containerId);
     if(!el) return;
+    var rootPath = logosPath.replace(/logos\/$/, '');
+    // An Indonesian page links the Indonesian Disclaimer and Privacy Policy.
+    var isId = document.documentElement.lang === 'id';
+    var legal = isId
+      ? '<a href="' + rootPath + 'disclaimer/id/">Penafian</a> · <a href="' + rootPath + 'privacy/id/">Kebijakan Privasi</a>'
+      : '<a href="' + rootPath + 'disclaimer/">Disclaimer</a> · <a href="' + rootPath + 'privacy/">Privacy Policy</a>';
     el.innerHTML = '<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>'
-      + '<p>'
-      + '<strong>Disclaimer:</strong> This tool is provided on an “as is” and “as available” basis, free of charge, without any representations or warranties of any kind, whether express or implied. Any outputs, results, interpretations, or decisions made using this tool are solely the responsibility of the user. Users are responsible for obtaining their own professional advice before making any decisions.'
-      + '</p>'
+      + '<p class="footer-links">' + legal + ' · <a href="https://blog.adjiebrotots.com/">Blog</a></p>'
       + '<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">'
-      +   '<img src="' + logosPath + 'australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
+      +   '<img src="' + logosPath + 'australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
       +   '<div style="display:flex;align-items:center;gap:10px">'
       +     '<img src="' + logosPath + 'gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
       +     '<span style="color:var(--muted);font-size:0.76rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>: free to use, modify, and share with source code disclosed.</span>'
       +   '</div>'
       +   '<div style="display:flex;align-items:center;gap:10px">'
-      +     '<img src="' + logosPath + 'indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
+      +     '<img src="' + logosPath + 'indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">'
       +     '<span style="color:var(--muted);font-size:0.76rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>'
       +   '</div>'
       + '</div>';
