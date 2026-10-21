@@ -376,6 +376,10 @@ function bake(tool) {
   }
   for (const [from, to] of tool.extraReplacements) html = html.replaceAll(from, to);
 
+  /* ── footer links go to the Indonesian Disclaimer and Privacy Policy ── */
+  html = html.replace(/<a href="((?:\.\.\/)+)disclaimer\/">Disclaimer<\/a> · <a href="\1privacy\/">Privacy Policy<\/a>/,
+    '<a href="$1disclaimer/id/">Penafian</a> · <a href="$1privacy/id/">Kebijakan Privasi</a>');
+
   /* ── language toggle points back to the English page ── */
   html = html.replace(
     '<a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>',

@@ -6,10 +6,15 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <script src="../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -99,7 +104,7 @@
     <ul>
       <li>Your figures, text and files are worked on in your own browser. They are not sent to me and I do not store them.</li>
       <li>A few tools look things up on other services (map search, exchange rates, market prices). Only what the lookup needs is sent, as listed below.</li>
-      <li>The site uses Google Analytics, which sets cookies, to count visits. I see totals, not who you are.</li>
+      <li>The site uses Google Analytics to count visits. I see totals, not who you are. In the EEA, the UK and Switzerland, its cookies are only set if you accept them.</li>
       <li>There are no ads and no accounts, and I do not sell your data. If you email me, I get your email address and message.</li>
     </ul>
     <p class="policy-updated">Last updated: 21 October 2026</p>
@@ -150,9 +155,11 @@
     <h2>Cookies</h2>
     <dl class="policy-list">
       <dt><code>_ga</code>, <code>_ga_…</code></dt>
-      <dd>Google Analytics cookies that tell a new visit from a repeat one. They last up to two years.</dd>
+      <dd>Google Analytics cookies that tell a new visit from a repeat one. They last up to two years. In the EEA, the UK and Switzerland they are only set after you accept; until then Analytics counts the visit without cookies.</dd>
       <dt><code>yf_req</code></dt>
       <dd>Set by the DCA tools to count today's price requests from this browser. It expires at the end of the day.</dd>
+      <dt>Your cookie choice</dt>
+      <dd>Kept in your browser's local storage (<code>abt-consent</code>) so you are not asked again.</dd>
     </dl>
     <p>The site shows no ads today. If I add ads (for example Google AdSense), I will update this page first, including how advertising cookies work and how to opt out.</p>
   </section>
@@ -160,11 +167,12 @@
   <section class="card policy">
     <h2>Your choices and rights</h2>
     <ul>
+      <li>Change your Analytics cookie choice at any time: <button type="button" class="btn-theme" onclick="window.AbtConsent &amp;&amp; AbtConsent.open()">Cookie settings</button></li>
       <li>Block or delete cookies in your browser. The tools still work.</li>
       <li>Install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics opt-out add-on</a> to stop Analytics on every site.</li>
       <li>Clear this site's data in your browser to remove everything it stored on your device.</li>
     </ul>
-    <p>Depending on where you live (for example under Australian privacy law, the GDPR or a US state privacy law), you may have the right to ask what personal information is held about you, and to have it corrected or deleted, or to object to its use. Where the GDPR applies, I use analytics on the basis of my legitimate interest in understanding how the site is used. I hold no accounts or profiles, so most such data sits with Google, GitHub or Cloudflare, but email me and I will help with anything I can reach. You can also complain to your local privacy regulator; in Australia that is the <a href="https://www.oaic.gov.au/" target="_blank" rel="noopener">Office of the Australian Information Commissioner</a>.</p>
+    <p>Depending on where you live (for example under Australian privacy law, the GDPR or a US state privacy law), you may have the right to ask what personal information is held about you, and to have it corrected or deleted, or to object to its use. Where the GDPR or UK GDPR applies, Analytics cookies are only used with your consent, which you can withdraw with the button above. I hold no accounts or profiles, so most such data sits with Google, GitHub or Cloudflare, but email me and I will help with anything I can reach. You can also complain to your local privacy regulator; in Australia that is the <a href="https://www.oaic.gov.au/" target="_blank" rel="noopener">Office of the Australian Information Commissioner</a>.</p>
     <p>The tools are not aimed at children under 13, and I do not knowingly collect their personal information.</p>
   </section>
 
@@ -179,13 +187,13 @@
   <section class="page-footer-info">
     <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
     <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
-      <img loading="lazy" src="../logos/australian.png" alt="Australian Made" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+      <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
         <img loading="lazy" src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
         <span style="color:var(--muted);font-size:0.85rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <img loading="lazy" src="../logos/indonesian.png" alt="100% Indonesia" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+        <img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
         <span style="color:var(--muted);font-size:0.85rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
       </div>
     </div>
