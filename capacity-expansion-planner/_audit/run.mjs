@@ -1235,7 +1235,7 @@ console.log('\n── B the page ──');
     await pg.click('.ctrl-tab[data-tab="assume"]');
     await pg.click('#tab-assume .seg-btn[data-val="nominal"]');
     const sw = await pg.evaluate(() => ({ nom: document.getElementById('cxNomRate').value, realHidden: document.getElementById('realRateRow').hidden, nomShown: !document.getElementById('nomRateRows').hidden && document.getElementById('nomRateRows').offsetHeight > 0, note: document.getElementById('realRateNote').textContent, rate: __cx.plan().rate, mode: __cx.plan().rateMode }));
-    check('B Nominal starts from the real rate and inflation (7% and 3% make 10.2%), shows its sliders and the real rate it makes', sw.nom === '10.2' && sw.realHidden && sw.nomShown && sw.mode === 'nominal' && sw.rate === CX.realRate(10.2, 3) && /A real rate of 6\.99 %\/yr: \(1 \+ 10\.2%\) ÷ \(1 \+ 3\.0%\) − 1\./.test(sw.note), JSON.stringify(sw).slice(0, 220));
+    check('B Nominal starts from the real rate and inflation (7% and 3% make 10.2%), shows its sliders and the real rate it makes', sw.nom === '10.2' && sw.realHidden && sw.nomShown && sw.mode === 'nominal' && sw.rate === CX.realRate(10.2, 3) && sw.note === 'The real rate is 6.99 %/yr', JSON.stringify(sw).slice(0, 220));
     // Typed into the readouts, as a reader would.
     for (const [id, v] of [['cxNomRateVal', '15.5'], ['cxInflationVal', '5']]) {
       await pg.click('#' + id);

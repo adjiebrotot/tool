@@ -138,11 +138,9 @@
     return 'A real rate, above inflation, as every cost is at ' + o.start + ' prices. It sets the capital annuity, and ' +
       (o.rate > 0 ? 'a cost in ' + (o.start + 10) + ' counts ' + inTen(o) + ' of the same cost in ' + o.start + '.' : 'at zero every year’s cost counts the same.');
   }
-  // Nominal mode: the real rate the plan runs on, and how it was found.
+  // Nominal mode: the real rate the plan runs on.
   function realRateNote(o){
-    var raw = (o.nomRate - o.inflation) / (100 + o.inflation) * 100;
-    return 'A real rate of <b>' + F.rate(o.rate) + ' %/yr</b>: (1 + ' + F.rate(o.nomRate) + '%) ÷ (1 + ' + F.rate(o.inflation) + '%) − 1' +
-      (raw < 0 ? ', below zero, so taken as 0.' : raw > 20 ? ', taken as its highest, 20.' : '.') + ' ' + rateTip(o).replace(/^A real rate, above inflation, as every/, 'Every');
+    return 'The real rate is <b>' + F.rate(o.rate) + ' %/yr</b>';
   }
   // A table's money note, its explanation in a tip.
   function moneyNote(res, C, tip){
