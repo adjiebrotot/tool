@@ -515,7 +515,7 @@ body {
 /* ── FOOTER ── */
 .page-footer { flex-shrink: 0; padding: 16px 20px; }
 .page-footer-info { margin-top: 0; }
-.page-footer-info a { color: var(--accent); text-decoration: underline; text-underline-offset: 0.14em; }
+.page-footer-info a { color: var(--accent); text-decoration: none; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 720px) {

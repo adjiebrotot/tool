@@ -235,18 +235,20 @@ Scale the rigor to the risk:
 - **Plain utility/visualiser tools with no risky finance/engineering output** — a visual check
   is enough: load the page, exercise the main flow, confirm it looks right and nothing errors.
 
-## 6. Disclaimer footer
+## 6. Footer
 
-- **Finance / tax / engineering tools** — include the full disclaimer footer (the "as is, no
-  warranty, get your own professional advice" block) plus licence + made-in, as in
-  `financingvscash/index.html` / `rentvsownhouse/footer.js`.
-  The footer opens with the one-line `p.footer-collab` (hobby, open to collaborate, a "let’s
-  talk" mailto and the bug/help email), copied from those footers.
-  Everything after it (disclaimer, credits) is fine print, sized by `shared.css`.
-- **Plain tools with no potentially harmful finance/engineering content** — no disclaimer
-  needed. Just the licence (GNU GPL) and the "Made in Australia by Adjie Brotosukmono, an
-  Indonesian engineer" line, the name linked to https://www.adjiebrotots.com/about/ with
-  `rel="author"`.
+- **Every tool** carries the links row `p.footer-links`: Disclaimer · Privacy Policy · Blog,
+  linking `<root>/disclaimer/`, `<root>/privacy/` and https://blog.adjiebrotots.com/ with
+  relative paths. The disclaimer text itself lives on `/disclaimer/`, never inline in a footer;
+  a caveat specific to one tool goes on that page, or in its own short footer paragraph.
+  Footer links are not underlined (underline on hover only, set in `shared.css`).
+- **Finance / tax / engineering tools** open the footer with the one-line `p.footer-collab`
+  (hobby, open to collaborate, a "let’s talk" mailto and the bug/help email), then the links
+  row, then licence + made-in, as in `financingvscash/index.html` / `rentvsownhouse/footer.js`.
+  Everything after the collab line is fine print, sized by `shared.css`.
+- **Plain tools** — the links row above the licence (GNU GPL) and the "Made in Australia by
+  Adjie Brotosukmono, an Indonesian engineer" line, the name linked to
+  https://www.adjiebrotots.com/about/ with `rel="author"`.
 
 ## Simulate and Reset buttons
 
