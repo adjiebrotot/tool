@@ -51,13 +51,6 @@
   // On a phone the header holds Back, language, tour and theme in one row,
   // and the long label is what pushes it to a second, so it shortens there.
   var LAUNCH_SHORT = CFG.launchShort || (LAUNCH_LABEL === '🧭 Take a tour' ? '🧭 Tour' : '');
-  /* No emoji in the interface: the compass the labels start with is drawn as
-     a line icon, the same weight as every other icon on the site, and the
-     wave in front of a welcome title is dropped. Done here, as the copy is
-     shown, so each tool's tour.js keeps its words as they are. */
-  var COMPASS = '<svg class="ico pf-tour-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>';
-  function plain(s) { return String(s || '').replace(/^\s*(?:\uD83E\uDDED|\uD83D\uDC4B)\s*/, ''); }
-  function iconise(html) { return String(html || '').replace(/\uD83E\uDDED/g, COMPASS).replace(/\uD83D\uDC4B\s*/g, ''); }
   var steps = Array.isArray(CFG.steps) ? CFG.steps : [];
 
   /* Button copy. Defaults are English; the translated pages pass their own
@@ -205,9 +198,9 @@
     var isLast = current === steps.length - 1;
     var isFirst = current === 0;
     els.tooltip.innerHTML =
-      '<h4 class="pf-tour-title">' + plain(step.title) + '</h4>' +
+      '<h4 class="pf-tour-title">' + step.title + '</h4>' +
       // A div, not a p: a body may hold a <ul> of points, which a p cannot.
-      '<div class="pf-tour-body">' + iconise(step.body) + '</div>' +
+      '<div class="pf-tour-body">' + step.body + '</div>' +
       '<div class="pf-tour-footer">' +
         '<button type="button" class="pf-tour-skip" data-act="skip">' + SKIP_LABEL + '</button>' +
         '<span class="pf-tour-progress">' + (current + 1) + ' / ' + steps.length + '</span>' +
@@ -391,18 +384,15 @@
     if (LAUNCH_SHORT) {
       var long = document.createElement('span');
       long.className = 'pf-tour-long';
-      long.textContent = plain(LAUNCH_LABEL);
+      long.textContent = LAUNCH_LABEL;
       var short = document.createElement('span');
       short.className = 'pf-tour-short';
-      short.textContent = plain(LAUNCH_SHORT);
-      btn.insertAdjacentHTML('beforeend', COMPASS);
+      short.textContent = LAUNCH_SHORT;
       btn.appendChild(long);
       btn.appendChild(short);
     } else {
-      btn.innerHTML = COMPASS;
-      btn.appendChild(document.createTextNode(plain(LAUNCH_LABEL)));
+      btn.textContent = LAUNCH_LABEL;
     }
-    btn.classList.add('has-ico');
     btn.setAttribute('aria-label', 'Take a guided tour of this tool');
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.

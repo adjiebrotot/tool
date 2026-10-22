@@ -558,9 +558,10 @@ follows the button's colour in both themes and lights up with the active tab.
 - `.tico` is styled in shared.css; a tool only sizes it when a tab bar needs
   something other than 1.35em.
 
-Emoji are not the interface: the theme toggle is a drawn sun and moon
-(`theme.js`) and the tour launcher a drawn compass (`tour-shared.js`). The footer
-flags are images. Buttons follow the same rule: see
+Emoji outside a tab bar are fine where they are decoration rather than an icon
+(the 🧭 tour launcher, a 👋 welcome, a 🙂 in a footer line, the footer flags).
+The theme toggle is the one exception: it is the drawn sun and moon of the
+family bar (`theme.js`), the same on all three sites. Buttons follow the same rule: see
 **Buttons and Icons** for the one picture each job gets.
 
 ### Field Group (grouping rows in a control panel)
@@ -1091,9 +1092,9 @@ because that is how ✕ came to mean both "close" and "delete" on the same page.
 | **Add** a new item | + | `+ Add stage` (ASCII plus) | ＋ (full-width) |
 | **Reorder** by dragging | ⠿ | `⠿` grip | |
 
-Emoji are decoration, never an icon: an emoji standing in for one of the jobs
-above does not belong. The theme toggle and the tour launcher are drawn (see
-Tab Icons). A status is not a button: a copy that fails says so in words
+Emoji are decoration, never an icon: 🧭 tour, 🚀 Time Travel and the footer
+flags stay; an emoji standing in for one of the jobs above does not. The theme
+toggle is drawn (see the Dark / Light Toggle Button). A status is not a button: a copy that fails says so in words
 (`alert('PNG copy failed: …')`), not with a ✕.
 
 Static markup names its icon and `shared.js` draws it at load:

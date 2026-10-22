@@ -148,7 +148,3 @@
   .pf-tour-long { display: none; }
   .pf-tour-short { display: inline; }
 }
-
-/* The compass the launcher and the tour copy show, drawn as a line icon. */
-.pf-tour-ico { width: 16px; height: 16px; flex: none; }
-.pf-tour-body .pf-tour-ico { width: 1em; height: 1em; vertical-align: -.15em; }

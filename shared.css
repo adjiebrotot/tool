@@ -221,6 +221,8 @@ body .btn-theme.theme-ico.theme-ico{width:36px;height:36px;min-width:0;padding:0
 html[data-abt-theme="light"] .theme-ico .ico-moon,html[data-abt-theme="dark"] .theme-ico .ico-sun{display:none;}
 /* The way back to the tool directory carries the family mark. */
 a.btn-theme.btn-back::before{content:"";width:16px;height:16px;flex:none;margin-right:7px;background:url("logos/logo.svg") center/contain no-repeat;}
+/* A phone keeps the header buttons on one row; the mark gives way first. */
+@media (max-width:480px){a.btn-theme.btn-back::before{display:none;}}
 a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* ============================================================
