@@ -60,7 +60,7 @@
 <link rel="manifest" href="../../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
 <script src="../../pwa.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../fonts.css">
 <link rel="stylesheet" href="../../dark.css">
 <link rel="stylesheet" href="../../light.css">
 <link rel="stylesheet" href="../../shared.css">
@@ -88,6 +88,7 @@
 <script src="../../shared.js"></script>
 </head>
 <body class="light">
+<script src="../../theme.js"></script>
 <div class="container">
 
   <!-- HEADER -->
@@ -112,7 +113,7 @@
       <li>Situs ini menggunakan Google Analytics untuk menghitung kunjungan. Saya melihat jumlah totalnya, bukan siapa Anda. Di Wilayah Ekonomi Eropa (EEA), Inggris, dan Swiss, cookie-nya hanya dipasang jika Anda menyetujuinya.</li>
       <li>Tidak ada iklan dan tidak ada akun, dan saya tidak menjual data Anda. Jika Anda mengirim email kepada saya, saya menerima alamat email dan pesan Anda.</li>
     </ul>
-    <p class="policy-updated">Terakhir diperbarui: 21 Oktober 2026</p>
+    <p class="policy-updated">Terakhir diperbarui: 22 Oktober 2026</p>
   </section>
 
   <section class="card policy">
@@ -125,6 +126,7 @@
     <ul>
       <li><strong>Masukan dan file Anda.</strong> Setiap perhitungan, grafik, dan konversi berjalan di browser Anda. File yang Anda buka di suatu alat (CSV, video, dokumen) tidak diunggah.</li>
       <li><strong>Pekerjaan yang diingat.</strong> Sebagian besar alat menyimpan masukan dan pengaturan terakhir Anda, dan sebagian menyimpan salinan harga atau kurs mata uang yang diunduh, di penyimpanan lokal (local storage) browser Anda.</li>
+      <li><strong>Terang atau gelap.</strong> Pilihan tema Anda disimpan dalam satu cookie kecil, <code>abt-theme</code>, yang dipakai bersama oleh www.adjiebrotots.com, blog, dan situs ini agar ketiganya terbuka seperti terakhir Anda tinggalkan. Isinya hanya <code>light</code> atau <code>dark</code>.</li>
       <li><strong>Skenario yang disimpan</strong> diunduh sebagai file ke perangkat Anda.</li>
       <li><strong>Tautan berbagi dan grafik sematan</strong> memuat masukan atau data grafik Anda di dalam tautan itu sendiri, setelah tanda <code>#</code>, yang tidak dikirim oleh browser ke server web. Siapa pun yang Anda beri tautan dapat membaca isinya.</li>
       <li><strong>Salinan luring.</strong> Sebuah service worker menyimpan salinan halaman, kode, dan font situs ini agar alat-alat dimuat dengan cepat dan dapat berfungsi tanpa koneksi internet. Yang disimpan adalah file situs, bukan masukan Anda.</li>
@@ -139,7 +141,7 @@
       <dt>Hosting</dt>
       <dd>GitHub Pages menjadi hosting situs ini dan dapat menyimpan log permintaan untuk keperluan keamanan (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Pernyataan Privasi GitHub</a>).</dd>
       <dt>Font dan pustaka kode</dt>
-      <dd>Google Fonts, cdnjs (Cloudflare), dan jsDelivr.</dd>
+      <dd>cdnjs (Cloudflare) dan jsDelivr. Font situs ini sendiri dimuat dari GitHub Pages bersama file lainnya; Canvas Builder juga memuat Google Fonts, untuk font Lora dan Caveat yang bisa Anda pilih untuk kanvas.</dd>
       <dt>Google Analytics</dt>
       <dd>Mencatat halaman yang Anda lihat, berapa lama Anda berada di situs, situs yang mengarahkan Anda ke sini, jenis perangkat dan browser Anda, serta perkiraan lokasi Anda. Saya menggunakannya untuk melihat alat mana yang dipakai dan apa yang perlu diperbaiki. Menurut Google, Google Analytics 4 tidak menyimpan alamat IP. Google Analytics tidak berjalan pada grafik sematan. Lihat <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">cara Google menggunakan informasi ini</a>.</dd>
       <dt>Peta (Load Flow Simulator)</dt>

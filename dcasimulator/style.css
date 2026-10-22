@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+@import url('../fonts.css');
 :root {
   --line-f:#B3D1FF;
 }
@@ -16,13 +16,13 @@ body{font-family:'DM Sans',Inter,system-ui,sans-serif;color:var(--text);backgrou
 .header{padding:22px 28px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
 h1{font-size:1.9rem;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
 h2{font-size:1.1rem;font-weight:700;margin-bottom:10px}
-h3{font-size:.82rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+h3{font-size:.82rem;color:var(--muted);font-weight:700;margin-bottom:8px}
 p,.muted{color:var(--muted);line-height:1.55}
 .layout{display:grid;grid-template-columns:380px 1fr;gap:18px}
 /* The column layout, the inner scroller and the pinned tab bar come from
    shared.css (.controls:has(.ctrl-scroll) / .ctrl-scroll / .ctrl-tabs). */
 .controls{padding:0;position:sticky;top:16px;align-self:start;overflow:hidden;height:auto}
-.ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.ctrl-tab{flex:1 1 0;padding:12px 6px;text-align:center;font-weight:700;font-size:.82rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:14px 16px 18px}
 .ctrl-panel.active{display:block}
@@ -53,7 +53,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .btn-accent2:disabled{opacity:.5;cursor:not-allowed}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:.88rem;transition:border-color .15s;font-family:inherit}
 .btn-secondary:hover{border-color:var(--accent)}
-.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap;font-family:inherit}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
 .seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px}
 .seg-toggle .seg-btn{border-radius:6px;border:none}
@@ -61,7 +61,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .pool-chips-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border);padding-bottom:5px;margin:14px 0 0}
 .pool-chips-head:first-child{margin-top:0}
 .pool-chips-head .section-label{margin:0;padding:0;border-bottom:none;flex:1}
-.pool-clear-btn{display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;padding:0;font-family:inherit;transition:color .12s;white-space:nowrap}
+.pool-clear-btn{display:inline-flex;align-items:center;gap:4px;background:transparent;border:none;color:var(--muted);font-size:.8125rem;font-weight:700;cursor:pointer;padding:0;font-family:inherit;transition:color .12s;white-space:nowrap}
 .pool-clear-btn .ico{width:13px;height:13px}
 .pool-clear-btn:hover{color:var(--negative-em)}
 .pool-refresh-btn:hover{color:var(--accent)}
@@ -74,7 +74,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
    assets a filter finds one by ticker or full name. */
 .pool-wrap{margin-bottom:18px}
 .pool-wrap .pool-chips-head{align-items:center}
-.pool-toggle{flex:1;display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;padding:2px 0;margin:0;cursor:pointer;font-family:inherit;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);text-align:left}
+.pool-toggle{flex:1;display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;padding:2px 0;margin:0;cursor:pointer;font-family:inherit;font-size:.8125rem;font-weight:800;color:var(--accent);text-align:left}
 .pool-toggle:hover{opacity:.8}
 .pool-toggle:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px;border-radius:4px}
 .pool-chev{width:14px;height:14px;flex-shrink:0;transition:transform .15s}
@@ -99,7 +99,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 /* ─── SCENARIO BAR - one tab per scenario (mirrors the portfolio bar) ─── */
 .sc-bar{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;padding:9px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg)}
 .sc-tabs{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0;align-items:center}
-.sc-tab{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--muted);font-weight:600;font-size:.82rem;cursor:pointer;user-select:none;max-width:180px;white-space:nowrap;transition:all .15s}
+.sc-tab{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--muted);font-weight:600;font-size:.82rem;cursor:pointer;user-select:none;max-width:180px;white-space:nowrap;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s}
 .sc-tab:hover{border-color:var(--accent2);color:var(--text)}
 .sc-tab.active{background:var(--accent2);color:var(--text-inv);border-color:var(--accent2);font-weight:700}
 .sc-tab-name{overflow:hidden;text-overflow:ellipsis}
@@ -109,7 +109,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .sc-tab-dot::-webkit-color-swatch{border:1px solid rgba(0,0,0,.25);border-radius:50%}
 .sc-tab-dot::-moz-color-swatch{border:1px solid rgba(0,0,0,.25);border-radius:50%}
 .sc-tab-rename{width:92px;font:inherit;font-size:.82rem;padding:1px 4px;border:1px solid var(--border);border-radius:5px;background:var(--panel);color:var(--text)}
-.sc-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:all .15s}
+.sc-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s}
 .sc-add-btn:hover{background:var(--accent2);color:var(--text-inv);border-style:solid}
 .sc-bar-actions{display:flex;flex-direction:column;gap:5px;flex-shrink:0;padding-left:9px;border-left:1px solid var(--border)}
 .sc-act-btn{min-width:30px;height:30px}
@@ -143,13 +143,13 @@ tr:hover td{background:rgba(141,187,255,.05)}
 body.light tr:hover td{background:rgba(90,145,232,.05)}
 .detail-section{padding:20px;margin-bottom:18px}
 .tab-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;font-family:inherit}
+.tab-btn{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--muted);transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;font-family:inherit}
 .tab-btn.active{background:var(--accent);color:var(--text-inv);border-color:var(--accent)}
 /* Sized by its own content inside the export cluster: .num-input is width:100%,
    which in a flex row would stretch the select and push the CSV button onto a
    line of its own. */
 .pf-view-select{font-size:.8rem;padding:5px 10px;min-width:130px;max-width:220px;width:auto;flex:0 0 auto}
-.detail-row-tag{display:block;margin-left:0;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--accent);vertical-align:middle}
+.detail-row-tag{display:block;margin-left:0;font-size:.8125rem;font-weight:700;color:var(--accent);vertical-align:middle}
 tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 
 /* Securities Manager */
@@ -185,7 +185,7 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 .toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0 0}
 .toggle-label{font-weight:700;font-size:.88rem;flex:1}
 /* Section label */
-.section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.section-label{font-size:.8125rem;font-weight:800;color:var(--accent);margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .section-label:first-child{margin-top:0}
 /* Header */
 .header-left h1{font-size:1.85rem;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
@@ -256,7 +256,7 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 
 /* Investment Style - category picker (progressive disclosure) */
 .cat-pills{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.cat-pill{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:7px 8px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;font-family:inherit}
+.cat-pill{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:7px 8px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;font-family:inherit}
 .cat-pill:hover{border-color:var(--accent);color:var(--text)}
 .cat-pill.active{background:var(--accent);color:var(--text-inv);border-color:var(--accent)}
 .style-params{margin-top:6px}
@@ -279,7 +279,7 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 .tech-eom input{accent-color:var(--accent);cursor:pointer;width:14px;height:14px;flex-shrink:0}
 /* Monthly / Weekly segmented control (momentum + technical frequency) */
 .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--input-bg);flex-shrink:0}
-.seg-btn{padding:5px 13px;font-size:.78rem;font-weight:700;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.seg-btn{padding:5px 13px;font-size:.78rem;font-weight:700;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s}
 .seg-btn+.seg-btn{border-left:1px solid var(--border)}
 .seg-btn.active{background:var(--accent);color:var(--text-inv)}
 .seg-btn:not(.active):hover{color:var(--text)}
@@ -289,7 +289,7 @@ tr.detail-endpoint td{background:rgba(141,187,255,.06);font-weight:600}
 .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .quick-start-label .tico{width:1.05em;height:1.05em}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap}
-.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap;font-family:inherit}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15)}
 .quick-start-btn:disabled{opacity:.55;cursor:wait}

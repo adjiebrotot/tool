@@ -45,63 +45,107 @@
   <meta name="twitter:description" content="Free browser-based tools for finance, tax, property, and engineering decisions. All calculations run locally — no uploads, no paywall.">
   <meta name="twitter:image" content="https://tool.adjiebrotots.com/logos/logo.png">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="dropdown.css">
 
   <style>
+    /* The family palette (dark.css / light.css hold the same values for the
+       tools): night is the default, body.light is day, chosen by theme.js. */
     :root {
-      /* Light theme: Generic Soft UI Design System */
-      --bg: #F0F4FF;
-      --panel: #FFFFFF;
-      --panel-raised: #FFFFFF;
-      --text: #2D3436;
-      --muted: #7F8C8D;
-      --border: #E0E6F0;
-      --border-strong: #C8D4E8;
-      --accent: #5A91E8;
-      --accent-strong: #3A71C8;
-      --text-inv: #FFFFFF;
-      --accent2: #2E9E7A;
-      --accent3: #E63939;
-      --gold: #B45309;
-      --input-bg: #F8FBFF;
-      --card-bg: #FFFFFF;
-      --shadow: 0 2px 16px rgba(120, 160, 220, 0.12);
-      --shadow-sm: 0 1px 8px rgba(120, 160, 220, 0.08);
-      --shadow-lg: 0 4px 32px rgba(120, 160, 220, 0.18);
+      --bg: #0F1728;
+      --panel: #162033;
+      --panel-raised: #1C2942;
+      --text: #EAF1FF;
+      --muted: #A8B6CF;
+      --border: #2C3A52;
+      --border-strong: #3D5070;
+      --accent: #8DBBFF;
+      --accent-strong: #B3D1FF;
+      --text-inv: #0F1728;
+      --accent2: #8FCDBD;
+      --accent3: #FF8B8B;
+      --gold: #FFD28C;
+      --brand: #8DBBFF;
+      --ink-line: #8DBBFF;
+      --input-bg: rgba(255, 255, 255, 0.06);
+      --card-bg: #162033;
+      --shadow: none;
+      --shadow-sm: none;
+      --shadow-lg: 0 10px 30px rgba(2, 6, 16, 0.55);
+      --sticker: 2px 2px 0 var(--ink-line);
+      --sticker-hover: 4px 4px 0 var(--ink-line);
+      --sticker-accent: 2px 2px 0 #3A71C8;
+      --sticker-accent-hover: 3px 3px 0 #3A71C8;
       --radius-sm: 8px;
-      --radius-md: 10px;
-      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-lg: 14px;
       --radius-xl: 14px;
-      --radius-2xl: 20px;
+      --radius-2xl: 14px;
       --radius-pill: 999px;
+      --fs-xs: .8125rem; --fs-sm: .875rem; --fs-base: 1rem; --fs-md: 1.25rem; --fs-lg: 1.5625rem; --fs-xl: 1.953rem; --fs-2xl: 2.441rem;
       /* Data semantic colours */
-      --data-pos: #0052CC;
-      --data-pos-em: #0052CC;
-      --data-neg: #E63939;
-      --data-neg-em: #E63939;
-      --data-pos-bg: #EAF2FF;
-      --data-neg-bg: #FDECEC;
-      --data-pos-border: #8FB5FF;
-      --data-neg-border: #F3A5A5;
+      --data-pos: #8DBBFF;
+      --data-pos-em: #7FB2FF;
+      --data-neg: #FF8B8B;
+      --data-neg-em: #FF8B8B;
+      --data-pos-bg: #10284D;
+      --data-neg-bg: #4A1C1C;
+      --data-pos-border: #2D67C7;
+      --data-neg-border: #C85F5F;
+      --soon-bg: #4A3412;
       /* Motion */
       --motion-fast: 150ms;
       --motion-base: 250ms;
       --motion-slow: 400ms;
-      /* Homepage convenience aliases */
+      --max-width: 1180px;
+      /* Scrollbars, thin and themed on both axes */
+      --scrollbar-thumb: #3C4C68;
+      --scrollbar-thumb-hover: #5B7398;
+    }
+    body.light {
+      --bg: #F0F4FF;
+      --panel: #FFFFFF;
+      --panel-raised: #FFFFFF;
+      --text: #14203A;
+      --muted: #4C5B76;
+      --border: #DCE3F0;
+      --border-strong: #C8D4E8;
+      --accent: #3A71C8;
+      --accent-strong: #0052CC;
+      --text-inv: #FFFFFF;
+      --accent2: #1F7F63;
+      --accent3: #E66A6A;
+      --gold: #B45309;
+      --brand: #0052CC;
+      --ink-line: #14203A;
+      --input-bg: #F8FBFF;
+      --card-bg: #FFFFFF;
+      --shadow-lg: 0 10px 30px rgba(20, 32, 58, 0.16);
+      --sticker: 2px 2px 0 var(--ink-line);
+      --sticker-hover: 4px 4px 0 var(--ink-line);
+      --sticker-accent: 2px 2px 0 #14203A;
+      --sticker-accent-hover: 3px 3px 0 #14203A;
+      --data-pos: #0052CC;
+      --data-pos-em: #0052CC;
+      --data-neg: #E63939;
+      --data-neg-em: #C6382F;
+      --data-pos-bg: #EAF2FF;
+      --data-neg-bg: #FDECEC;
+      --data-pos-border: #8FB5FF;
+      --data-neg-border: #F3A5A5;
+      --soon-bg: #FFF0D9;
+      --scrollbar-thumb: #C3D0E6;
+      --scrollbar-thumb-hover: #9AB2D8;
+    }
+    /* Homepage convenience aliases, resolved against whichever theme is on. */
+    body {
       --surface: var(--panel);
       --surface-soft: var(--input-bg);
       --active-bg: var(--data-pos-bg);
       --active-text: var(--data-pos);
-      --soon-bg: #FFF0D9;
       --soon-text: var(--gold);
       --deprecated-bg: var(--data-neg-bg);
       --deprecated-text: var(--data-neg);
-      --max-width: 1180px;
-      /* Scrollbars — thin and themed on both axes */
-      --scrollbar-thumb: #C3D0E6;
-      --scrollbar-thumb-hover: #9AB2D8;
     }
 
     * { box-sizing: border-box; }
@@ -150,21 +194,117 @@
     }
 
     .site-header {
-      padding: 2.5rem 0 1.25rem;
+      padding: 1rem 0 1.25rem;
     }
 
     .hero {
-      padding: 2rem 0 1rem;
+      padding: 1rem 0 1rem;
     }
 
+    /* The hero: who and what on the left, six of the tools' own drawings on
+       the right, each a way in. A flat panel; the stickers are what you press. */
     .hero-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: center;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius-2xl);
-      box-shadow: var(--shadow-lg);
       padding: clamp(1.5rem, 4vw, 3rem);
-      overflow: hidden;
       position: relative;
+    }
+
+    .hero .hero-lede {
+      font-size: var(--fs-md);
+      color: var(--text);
+      line-height: 1.45;
+      margin: 0 0 0.9rem;
+      max-width: 34ch;
+    }
+
+    /* A handwritten aside, drawn from data-note so it never becomes page text
+       (the same device as the www homepage). */
+    .hand-note {
+      display: inline-block;
+      margin-top: 1rem;
+      font-family: 'Caveat', 'Comic Sans MS', cursive;
+      font-weight: 600;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      color: var(--gold);
+      transform: rotate(-3deg);
+      transform-origin: left center;
+    }
+    .hand-note::before { content: attr(data-note); }
+
+    .hero-tiles {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .hero-tile {
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+      border: 1.5px solid var(--ink-line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--sticker);
+      overflow: hidden;
+      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
+    }
+    .hero-tile:nth-child(odd) { transform: rotate(-1.2deg); }
+    .hero-tile:nth-child(even) { transform: rotate(1deg); }
+    .hero-tile:hover,
+    .hero-tile:focus-visible {
+      transform: translate(-2px, -2px) rotate(0deg);
+      box-shadow: var(--sticker-hover);
+      outline: none;
+    }
+    .hero-tile:focus-visible { box-shadow: var(--sticker-hover), 0 0 0 3px var(--accent); }
+    .hero-tile .tool-anim {
+      display: block;
+      aspect-ratio: 1 / 1;
+      min-height: 0;
+      border-right: 0;
+      border-bottom: 1.5px solid var(--ink-line);
+    }
+    .hero-tile-name {
+      padding: 0.45rem 0.6rem 0.55rem;
+      font-size: var(--fs-sm);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    /* The family bar: mark and name left, the three sites and the theme right. */
+    .family-bar { padding: 1.1rem 0 0; }
+    .family-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .family-brand { display: inline-flex; align-items: center; gap: 0.55rem; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; }
+    .family-brand img { width: 30px; height: 30px; }
+    .family-brand b { color: var(--brand); font-weight: 800; }
+    .family-nav { display: flex; align-items: center; gap: 0.25rem; }
+    .family-nav a { padding: 0.45rem 0.7rem; border-radius: var(--radius-sm); font-weight: 700; font-size: var(--fs-sm); color: var(--text); }
+    .family-nav a:hover { color: var(--brand); }
+    .family-nav a[aria-current="page"] { color: var(--brand); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+    .family-nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .family-theme {
+      width: 40px; height: 40px; margin-left: 0.4rem; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; border: 2px solid var(--ink-line);
+      background: var(--panel); color: var(--text); cursor: pointer;
+      box-shadow: 3px 3px 0 var(--ink-line);
+      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
+    }
+    .family-theme:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink-line); }
+    .family-theme:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink-line); }
+    .family-theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .family-theme svg { width: 19px; height: 19px; }
+    html[data-abt-theme="light"] .family-theme .ico-moon,
+    html[data-abt-theme="dark"] .family-theme .ico-sun { display: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-tile, .hero-tile:hover, .hero-tile:focus-visible { transform: none; }
     }
 
     .eyebrow {
@@ -181,8 +321,8 @@
     }
 
     h1 {
-      margin: 1rem 0 0.8rem;
-      font-size: clamp(2.2rem, 4vw, 4rem);
+      margin: 0 0 0.8rem;
+      font-size: clamp(2.5rem, 5.5vw, 4.6rem);
       line-height: 1.05;
       letter-spacing: -0.03em;
     }
@@ -194,12 +334,10 @@
       font-size: clamp(1rem, 1.7vw, 1.15rem);
     }
 
+    /* One wordmark rule on all three sites: "Adjie" in ink, the rest in the
+       brand blue, solid. */
     h1 .brand-b {
-      background: linear-gradient(115deg, var(--accent) 0%, var(--accent-strong) 55%, var(--accent2) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
+      color: var(--brand);
     }
 
     .hero-tagline {
@@ -241,7 +379,7 @@
       padding: 0;
       border: 0;
       background: none;
-      color: var(--accent);
+      color: var(--accent-strong);
       font: inherit;
       font-weight: 700;
       text-decoration: none;
@@ -353,9 +491,19 @@
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
       padding: 1rem;
     }
+
+    .filter-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 0 1rem; }
+    .filter-head h2 { margin: 0; font-size: var(--fs-base); }
+    .filter-fold {
+      min-height: 36px; padding: 0.35rem 0.85rem; font: inherit; font-size: var(--fs-sm); font-weight: 700;
+      color: var(--text); background: var(--panel); cursor: pointer;
+      border: 1.5px solid var(--ink-line); border-radius: var(--radius-sm); box-shadow: var(--sticker);
+      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
+    }
+    .filter-fold:active { transform: translate(1px, 1px); box-shadow: 0 0 0 transparent; }
+    .filter-fold:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .filter-grid {
       display: grid;
@@ -447,20 +595,26 @@
 
     /* A tool card: its animation on the left, then the title, one line or
        two on what it does, its categories in small print, and the button. */
+    /* A card you can press, so it wears the family sticker: an ink outline
+       and a hard 2px offset that grows as it lifts on hover. */
     .tool-card {
       display: grid;
       grid-template-columns: 148px minmax(0, 1fr);
       background: var(--card-bg);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--ink-line);
       border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
+      box-shadow: var(--sticker);
       overflow: hidden;
-      transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
     }
 
     .tool-card:hover {
-      border-color: var(--border-strong);
-      box-shadow: var(--shadow-lg);
+      transform: translate(-2px, -2px);
+      box-shadow: var(--sticker-hover);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tool-card:hover { transform: none; }
     }
 
     .tool-card.is-hidden {
@@ -474,7 +628,7 @@
       min-height: 148px;
       padding: 0.6rem;
       background: var(--data-pos-bg);
-      border-right: 1px solid var(--border);
+      border-right: 1.5px solid var(--ink-line);
       contain: layout paint style;
     }
 
@@ -579,7 +733,7 @@
       padding: 0;
       list-style: none;
       color: var(--muted);
-      font-size: 0.75rem;
+      font-size: var(--fs-xs);
       font-weight: 500;
       line-height: 1.5;
     }
@@ -623,11 +777,16 @@
       background: var(--accent);
       color: var(--text-inv);
       border: none;
+      box-shadow: var(--sticker-accent);
     }
 
     .tool-link:hover {
-      opacity: 0.85;
-      box-shadow: 0 4px 16px rgba(90, 145, 232, 0.30);
+      background: var(--accent-strong);
+    }
+
+    .tool-actions .tool-link,
+    .tool-actions .tool-options-toggle {
+      box-shadow: none;
     }
 
     .tool-link-disabled {
@@ -666,9 +825,9 @@
 
     /* Each half darkens on its own hover, and the shadow lifts the whole unit,
        so the split button still reads as one control. */
-    .tool-actions:hover {
+    .tool-actions {
       border-radius: var(--radius-md);
-      box-shadow: 0 4px 16px rgba(90, 145, 232, 0.30);
+      box-shadow: var(--sticker-accent);
     }
 
     .tool-actions .tool-link:hover,
@@ -744,7 +903,12 @@
       color: #e2e8f0;
       border-radius: var(--radius-xl);
       padding: 1.35rem;
-      box-shadow: var(--shadow);
+    }
+
+    /* At night the dark slab would melt into the page; it takes the panel. */
+    body:not(.light) .footer-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
     }
 
     .footer-card p {
@@ -801,17 +965,35 @@
       top: 1rem;
     }
 
+    @media (min-width: 641px) {
+      .filter-fold { display: none; }
+    }
+
     @media (max-width: 900px) {
       .filter-grid,
       .tool-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
         grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 640px) {
       .container {
-        width: min(calc(100% - 1rem), var(--max-width));
+        width: min(calc(100% - 2rem), var(--max-width));
       }
+
+      .family-nav a { padding: 0.4rem 0.45rem; }
+      .family-brand span { display: none; }
+
+      .hero-tiles { gap: 0.6rem; }
+      .hero-tile-name { font-size: var(--fs-xs); padding: 0.35rem 0.45rem 0.45rem; }
+
+      /* On a phone the keyword search stays; the three selects and the reset
+         fold behind one button, so the first screen shows tools, not a form. */
+      .filter-panel.can-fold:not(.is-open) .field:not(.field-search) { display: none; }
 
       .site-header {
         padding-top: 1rem;
@@ -1387,21 +1569,50 @@
   </script>
 </head>
 <body class="light" itemscope itemtype="https://schema.org/WebPage">
+<script src="theme.js"></script>
   <a class="skip-link" href="#tool-directory">Skip to tool directory</a>
 
-  <header class="site-header">
-    <div class="container hero">
-      <div class="hero-card">
-        <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
-        <p class="hero-tagline" aria-hidden="true">
-          Help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span>
-        </p>
-        <p class="visually-hidden" itemprop="description">
-          Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
-        </p>
-      </div>
+  <!-- The family bar: the same mark, words and links on www, the blog and here. -->
+  <header class="family-bar">
+    <div class="container family-inner">
+      <a class="family-brand" href="./">
+        <img src="logos/logo.svg" alt="" width="30" height="30">
+        <span>Adjie <b>Brotools</b></span>
+      </a>
+      <nav class="family-nav" aria-label="Adjie's sites">
+        <a href="https://www.adjiebrotots.com/">Home</a>
+        <a href="https://blog.adjiebrotots.com/">Blog</a>
+        <a href="./" aria-current="page">Tools</a>
+        <button class="family-theme" id="themeToggle" type="button" aria-label="Switch between day and night"></button>
+      </nav>
     </div>
   </header>
+
+  <div class="site-header">
+    <div class="container hero">
+      <div class="hero-card">
+        <div class="hero-copy">
+          <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
+          <p class="hero-lede">Free calculators and simulators for money, energy and data, made in Perth. Every one runs in your browser.</p>
+          <p class="hero-tagline" aria-hidden="true">
+            Help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span>
+          </p>
+          <p class="visually-hidden" itemprop="description">
+            Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
+          </p>
+          <span class="hand-note" data-note="tools that help me, hope they help you too" aria-hidden="true" data-nosnippet></span>
+        </div>
+        <nav class="hero-tiles" aria-label="A few of the tools">
+          <a class="hero-tile" href="rentvsownhouse/"><span class="tool-anim" data-anim="rentvsownhouse" aria-hidden="true"></span><span class="hero-tile-name">Rent vs Own</span></a>
+          <a class="hero-tile" href="capacity-expansion-planner/"><span class="tool-anim" data-anim="capacity-expansion-planner" aria-hidden="true"></span><span class="hero-tile-name">Capacity Planner</span></a>
+          <a class="hero-tile" href="loadflow-simulator/"><span class="tool-anim" data-anim="loadflow-simulator" aria-hidden="true"></span><span class="hero-tile-name">Load Flow</span></a>
+          <a class="hero-tile" href="dcasimulator/"><span class="tool-anim" data-anim="dcasimulator" aria-hidden="true"></span><span class="hero-tile-name">DCA Explorer</span></a>
+          <a class="hero-tile" href="sankeycreator/"><span class="tool-anim" data-anim="sankeycreator" aria-hidden="true"></span><span class="hero-tile-name">Sankey Creator</span></a>
+          <a class="hero-tile" href="worldclock/"><span class="tool-anim" data-anim="worldclock" aria-hidden="true"></span><span class="hero-tile-name">World Clock</span></a>
+        </nav>
+      </div>
+    </div>
+  </div>
 
   <main>
     <section class="container" aria-labelledby="tool-directory-heading" id="tool-directory">
@@ -1416,7 +1627,10 @@
       </div>
 
       <section class="filter-panel" aria-labelledby="filter-heading">
-        <h2 id="filter-heading" style="margin:0 0 1rem; font-size:1.1rem;">Filter tools</h2>
+        <div class="filter-head">
+          <h2 id="filter-heading">Filter tools</h2>
+          <button type="button" class="filter-fold" id="filterFold" aria-expanded="false" aria-controls="filters" hidden>More filters</button>
+        </div>
         <form class="filter-grid" id="filters" action="#tool-directory">
           <div class="field">
             <label for="statusFilter">Status</label>
@@ -1439,7 +1653,7 @@
             </select>
           </div>
 
-          <div class="field">
+          <div class="field field-search">
             <label for="searchFilter">Keyword</label>
             <input id="searchFilter" name="search" type="search" placeholder="Search title or description" autocomplete="off">
           </div>
@@ -2168,7 +2382,7 @@
   <footer>
     <div class="container">
       <div class="footer-card">
-        <p class="footer-collab"><strong>A hobby project by <a href="https://www.adjiebrotots.com/about/">Adjie</a>, open to collaboration.</strong> These tools are free and earn me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>; I’m based in Perth and occasionally visit Jakarta. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+        <p class="footer-collab"><strong>A hobby project by <a href="https://www.adjiebrotots.com/about/">Adjie</a>, open to collaboration.</strong> These tools are free and earn me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>; I’m based in Perth and occasionally visit Jakarta. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>.</p>
         <p class="footer-links"><a href="disclaimer/">Disclaimer</a> · <a href="privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
         <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.12);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
           <img loading="lazy" src="logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
@@ -2473,6 +2687,27 @@
       panel.classList.add('is-link');
       panel.addEventListener('click', () => link.click());
     });
+
+    // Day and night. theme.js chose the start and draws the sun and moon; the
+    // click flips the class, and theme.js saves the reader's pick.
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('light');
+    });
+
+    // On a phone the selects fold behind "More filters" (CSS does the
+    // folding, only below 640px); without this script they all stay shown.
+    (function () {
+      const panel = document.querySelector('.filter-panel');
+      const btn = document.getElementById('filterFold');
+      if (!panel || !btn) return;
+      panel.classList.add('can-fold');
+      btn.hidden = false;
+      btn.addEventListener('click', () => {
+        const open = panel.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'Fewer filters' : 'More filters';
+      });
+    })();
   </script>
 </body>
 </html>

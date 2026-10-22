@@ -369,8 +369,8 @@ function renderChart() {
   const isLight  = document.body.classList.contains('light');
   const paperBg  = 'rgba(0,0,0,0)';
   const plotBg   = isLight ? 'rgba(255,255,255,0.5)' : 'rgba(22,32,51,0.5)';
-  const fontColor= isLight ? '#2D3436' : '#EAF1FF';
-  const gridColor= isLight ? '#E0E6F0' : '#2C3A52';
+  const fontColor= isLight ? '#14203A' : '#EAF1FF';
+  const gridColor= isLight ? '#DCE3F0' : '#2C3A52';
 
   let traces=[], layout={};
 

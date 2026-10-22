@@ -9,7 +9,7 @@
 body.light {
   --accent3:#FFD6E0;
   --input-bg:rgba(0,0,0,0.04);--card-bg:rgba(255,255,255,0.85);
-  --shadow:0 2px 16px rgba(120,160,220,0.10);--shadow-lg:0 4px 32px rgba(120,160,220,0.14);
+  --shadow:none;--shadow-lg:0 10px 30px rgba(20,32,58,0.16);
   --value-highlight:#5A91E8;
   --error-bg:#FFB3BA;--error-text:#4A1018;
 }
@@ -35,7 +35,7 @@ body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-hei
 .card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
 
 /* CONTROL PANEL */
-.ctrl-tab{flex:1;padding:12px 8px;text-align:center;font-weight:700;font-size:.85rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 150ms;font-family:inherit}
+.ctrl-tab{flex:1;padding:12px 8px;text-align:center;font-weight:700;font-size:.85rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
 .ctrl-panel{display:none;padding:16px 18px 18px}
 .ctrl-panel.active{display:block}
@@ -83,11 +83,11 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 
 /* DIMENSION BUTTONS */
 .dim-btns{display:flex;gap:7px}
-.dim-btn{flex:1;padding:9px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);font-weight:700;font-size:.88rem;cursor:pointer;transition:all 150ms;font-family:inherit;text-align:center}
+.dim-btn{flex:1;padding:9px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);font-weight:700;font-size:.88rem;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit;text-align:center}
 .dim-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
 
 /* UPLOAD ZONE */
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 200ms;margin-bottom:10px;position:relative}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:color 200ms,background-color 200ms,border-color 200ms,box-shadow 200ms,opacity 200ms,transform 200ms,fill 200ms,stroke 200ms;margin-bottom:10px;position:relative}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(141,187,255,.04)}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .upload-icon{margin-bottom:6px;color:var(--muted);line-height:0}
@@ -101,7 +101,7 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:7px 14px;font-weight:700;font-size:.83rem;cursor:pointer;transition:border-color 150ms;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-secondary:hover{border-color:var(--accent)}
 .btn-secondary:active{transform:scale(.97)}
-.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all 150ms;white-space:nowrap;font-family:inherit}
+.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;white-space:nowrap;font-family:inherit}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 
@@ -137,7 +137,7 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 
 /* COLORMAP GRID */
 .colormap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px}
-.colormap-btn{padding:7px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:.76rem;font-weight:700;color:var(--muted);text-align:center;transition:all 150ms;font-family:inherit}
+.colormap-btn{padding:7px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:.76rem;font-weight:700;color:var(--muted);text-align:center;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit}
 .colormap-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
 .colormap-preview{height:7px;border-radius:4px;margin-bottom:4px}
 

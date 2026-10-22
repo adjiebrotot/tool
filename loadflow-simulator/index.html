@@ -104,7 +104,7 @@
 <script src="../pwa.js" defer></script>
 <!-- The load flow engine starts downloading with the page and never blocks it. -->
 <link rel="modulepreload" href="engine/psa-pf.min.js">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../fonts.css">
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
@@ -113,6 +113,7 @@
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 <div class="container">
 <section class="header card">
   <div>
@@ -308,7 +309,7 @@
 </div>
 <footer class="page-footer">
   <section class="page-footer-info">
-    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>.</p>
     <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
     <p>
       The load flow engine is <a href="https://github.com/adjiebrotot/PSA.js" target="_blank" rel="noopener">PSA.js</a>, a JavaScript port of <a href="https://github.com/PyPSA/PyPSA" target="_blank" rel="noopener">PyPSA</a>, used under the <a href="engine/LICENSE.txt" target="_blank" rel="noopener">MIT licence</a>.

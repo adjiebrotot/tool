@@ -17,9 +17,9 @@
 body.light, .export-light-theme {
   --bg:#EFF3FC;
   --panel:#FFFFFF; --panel-raised:#FFFFFF;
-  --text:#1A2236; --muted:#6B7A99;
+  --text:#14203A; --muted:#4C5B76;
   --border:#DDE4F2;
-  --accent:#4B8EF0; --accent-strong:#2D6FD9;
+  --accent:#3A71C8; --accent-strong:#0052CC;
   --accent2:#3BA88A; --accent3:#C46A7E; --accent4:#C07A20;
   --input-bg:rgba(30,60,120,.05);
   --card-bg:rgba(255,255,255,.95);
@@ -250,8 +250,7 @@ select.tb-control { font-weight:500; border-radius:var(--radius-sm); --sel-pad:2
   pointer-events:none; user-select:none;
 }
 body.light .cell-hd, .export-light-theme .cell-hd { background:rgba(0,0,0,.02); }
-.cell-title { font-size:.67rem; font-weight:800; text-transform:uppercase;
-  letter-spacing:.09em; color:var(--muted); line-height:1.2; }
+.cell-title {font-size:.8125rem; font-weight:800; color:var(--muted); line-height:1.2;}
 .cell-icon  { font-size:.9rem; opacity:.5; }
 .cell-body  { position:relative; width:100%; height:calc(100% - 30px); overflow:hidden; }
 .add-hint   {
@@ -327,7 +326,7 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 .fbar-sel { padding:3px 6px; font-size:.78rem; border-radius:6px; max-width:76px; --sel-pad:20px; --sel-chev:5px; }
 .fbar-del-btn {
   display:inline-flex; color:var(--muted); cursor:pointer; opacity:.7;
-  padding:4px; border-radius:5px; transition:all .15s; line-height:1; flex-shrink:0;
+  padding:4px; border-radius:5px; transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s; line-height:1; flex-shrink:0;
 }
 .fbar-del-btn .ico { width:15px; height:15px; }
 .fbar-del-btn:hover { opacity:1; color:#E63939; background:var(--error-bg); }
@@ -408,3 +407,6 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 }
 /* Scrollbars come from shared.css: no vertical bar anywhere, a themed
    horizontal one where a surface scrolls sideways. */
+
+/* The footer links take the site colour, not the browser default blue. */
+footer a { color: var(--accent-strong); }

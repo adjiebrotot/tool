@@ -1068,9 +1068,9 @@ $('downloadSvgBtn').addEventListener('click', () => {
   setTimeout(() => {
     try {
       const isDark = document.body.classList.contains('dark');
-      const fg          = isDark ? '#EAF1FF'  : '#2D3436';
+      const fg          = isDark ? '#EAF1FF'  : '#14203A';
       const panelBg     = isDark ? '#1C2942'  : '#FFFFFF';
-      const borderColor = isDark ? '#2C3A52'  : '#E0E6F0';
+      const borderColor = isDark ? '#2C3A52'  : '#DCE3F0';
       const connectorColor = isDark ? '#2C3A52' : '#C8D4E8';
 
       const NS = 'http://www.w3.org/2000/svg';

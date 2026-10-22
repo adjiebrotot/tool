@@ -108,7 +108,7 @@
 <!-- The optimiser is the ED/UC Simulator's build of PSA.js. It starts downloading
      with the page and never blocks it; its solver follows on the first run. -->
 <link rel="modulepreload" href="../ed-uc-simulator/engine/psa-opt.min.js">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../fonts.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -120,6 +120,7 @@
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 <div class="container">
 <section class="header card">
   <div>
@@ -494,7 +495,7 @@
 </div>
 <footer class="page-footer">
   <section class="page-footer-info">
-    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a>.</p>
     <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
     <p>
       The optimisation engine is <a href="https://github.com/adjiebrotot/PSA.js" target="_blank" rel="noopener">PSA.js</a>, a JavaScript port of <a href="https://github.com/PyPSA/PyPSA" target="_blank" rel="noopener">PyPSA</a>, and the solver is <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a> through <a href="https://github.com/lovasoa/highs-js" target="_blank" rel="noopener">highs-js</a>, all used under the <a href="../ed-uc-simulator/engine/LICENSE.txt" target="_blank" rel="noopener">MIT licence</a>.

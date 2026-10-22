@@ -17,7 +17,7 @@ const $=id=>document.getElementById(id);
 /* Scenarios are options a reader is choosing between, neither good nor bad, so
    they take the neutral sequence (SharedPalette): blue, gold, teal, rose, then
    purple and a light blue. Red stays for money lost. A slot that resolves to a
-   colour an earlier slot already has (dark mode's --line-e is its gold) is
+   colour an earlier slot already has (a tool's own override can repeat one) is
    skipped, so two scenarios never share a colour while slots remain. */
 const SCENARIO_COLORS=['--line-a','--gold','--line-c','--line-d','--line-e','--line-f'];
 /* A missing custom property resolves to an empty string, which would paint
@@ -1176,7 +1176,7 @@ function renderMainChart(results){
   const yAxisLabel={wealth:`Wealth ${unit}`,netBenefit:`Net Benefit ${unit}`,investmentValue:`Investment Value ${unit}`,loanBalance:`Loan Balance ${unit}`}[metric]||`Value ${unit}`;
   const gc=cssVar('--chart-grid'),mc=cssVar('--chart-text'),tc=cssVar('--text');
   const tipLight=document.body.classList.contains('light');
-  const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#2D3436':'#EAF1FF',tipBody=tipLight?'#4A5A6A':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
+  const tipBg=tipLight?'#FFFFFF':'#1e1e2e',tipTitle=tipLight?'#14203A':'#EAF1FF',tipBody=tipLight?'#4C5B76':'#A8B6CF',tipBorder=tipLight?'#D4DEEF':gc;
   const cfg={type:'line',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},interaction:{mode:'index',intersect:false},onHover:(e,els,ch)=>{
     const hb=$('hoverBox');if(!hb)return;
     if(!els.length){hb.textContent=HOVER_IDLE;return;}
@@ -2483,7 +2483,7 @@ function downloadChartJsPngAtSize(canvasId, filename, chartTitle, legendId, shou
   const chartH = Math.round(src.height / dpr * OUT);
   const isLight = document.body.classList.contains('light');
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = '"DM Sans", sans-serif';
 
   // Every visible entry with the mark it draws, so the export carries the
@@ -2585,7 +2585,7 @@ function downloadChartJsSvgAtSize(canvasId, filename, chartTitle, legendId) {
   const chartH = Math.round(src.height / dpr);
   const isLight = document.body.classList.contains('light');
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = 'DM Sans, sans-serif';
   // Every visible entry with the mark it draws, so the export carries the
   // same key the page shows.
@@ -2672,7 +2672,7 @@ async function withSurfaceMarks(callback) {
   const titleAnnotation = {
     xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom',
     showarrow:false, text:'<b>'+escHtml(optChartTitle())+'</b>',
-    font:{ size:14, color:isLight?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' },
+    font:{ size:14, color:isLight?'#14203A':'#EAF1FF', family:'DM Sans, sans-serif' },
   };
   const wmAnnotation = {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
@@ -3441,7 +3441,7 @@ function updateOptChart(){
       filter:item=>item.dataset._opt!=='best'&&item.dataset._opt!=='zero',
       callbacks:{title:ctx=>ctx[0]?sp.label+': '+xLabel(ctx[0]):'',label:ctx=>`  ${ctx.dataset.label}: ${yText(ctx)}`,
         afterBody(items){if(items.length)$('hoverBox').textContent=`${sp.label} ${xLabel(items[0])}  ·  `+items.map(i=>`${i.dataset.label}: ${yText(i)}`).join('  |  ');}},
-      backgroundColor:tipLight?'#FFFFFF':'#1e1e2e',titleColor:tipLight?'#2D3436':'#EAF1FF',bodyColor:tipLight?'#4A5A6A':'#A8B6CF',borderColor:tipLight?'#D4DEEF':gc,borderWidth:1,padding:10}),
+      backgroundColor:tipLight?'#FFFFFF':'#1e1e2e',titleColor:tipLight?'#14203A':'#EAF1FF',bodyColor:tipLight?'#4C5B76':'#A8B6CF',borderColor:tipLight?'#D4DEEF':gc,borderWidth:1,padding:10}),
       zoom:SharedZoom.options({min:xmin,max:xmax,points:vals.length}),
       sharedYFit:{auto:{axes:['y']}}},
     scales:{

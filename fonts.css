@@ -1,0 +1,19 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   The site's typefaces, served from this site (assets/fonts/), not a CDN.
+   DM Sans (roman and italic, variable 300 to 800 with optical size), DM Mono
+   400 and 500 for figures, and Caveat for the odd handwritten note. Each comes
+   in two files: Latin (English and Indonesian, punctuation, arrows, maths, the
+   euro) and Latin Extended (accented names, other currency signs), so a page
+   only fetches the second when it shows one of those characters.
+   Licence: SIL Open Font License, assets/fonts/OFL.txt.
+   ────────────────────────────────────────────────────────────────────────── */
+@font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 300 800; font-display: swap; src: url('assets/fonts/dm-sans.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+2215, U+221E, U+2248, U+2260, U+2264-2265, U+FEFF, U+FFFD; }
+@font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 300 800; font-display: swap; src: url('assets/fonts/dm-sans-ext.woff2') format('woff2'); unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0192, U+20A0-20AB, U+20AD-20C0; }
+@font-face { font-family: 'DM Sans'; font-style: italic; font-weight: 300 800; font-display: swap; src: url('assets/fonts/dm-sans-italic.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+2215, U+221E, U+2248, U+2260, U+2264-2265, U+FEFF, U+FFFD; }
+@font-face { font-family: 'DM Sans'; font-style: italic; font-weight: 300 800; font-display: swap; src: url('assets/fonts/dm-sans-italic-ext.woff2') format('woff2'); unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0192, U+20A0-20AB, U+20AD-20C0; }
+/* DM Mono comes in 400 and 500 only; asking for 600 gets the 500. */
+@font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 300 400; font-display: swap; src: url('assets/fonts/dm-mono-400.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+2215, U+221E, U+2248, U+2260, U+2264-2265, U+FEFF, U+FFFD; }
+@font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 300 400; font-display: swap; src: url('assets/fonts/dm-mono-400-ext.woff2') format('woff2'); unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0192, U+20A0-20AB, U+20AD-20C0; }
+@font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 500 800; font-display: swap; src: url('assets/fonts/dm-mono-500.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+2215, U+221E, U+2248, U+2260, U+2264-2265, U+FEFF, U+FFFD; }
+@font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 500 800; font-display: swap; src: url('assets/fonts/dm-mono-500-ext.woff2') format('woff2'); unicode-range: U+0100-0130, U+0132-0151, U+0154-017F, U+0192, U+20A0-20AB, U+20AD-20C0; }
+@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500 700; font-display: swap; src: url('assets/fonts/caveat.woff2') format('woff2'); }

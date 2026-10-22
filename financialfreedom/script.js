@@ -3327,7 +3327,7 @@ wmLogoImg.src = WM_LOGO_SRC;
 // in dark mode looks like the one on screen.
 function exportTokens(){
   var light = document.body.classList.contains('light');
-  return {bg: light ? '#ffffff' : '#0F1728', fg: light ? '#2D3436' : '#EAF1FF'};
+  return {bg: light ? '#ffffff' : '#0F1728', fg: light ? '#14203A' : '#EAF1FF'};
 }
 
 // Every visible entry, carrying the swatch it draws, so the exported key is

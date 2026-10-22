@@ -69,15 +69,15 @@
     var css = document.createElement('style');
     css.textContent =
       '#abtConsent{position:fixed;left:16px;right:16px;bottom:16px;z-index:10000;max-width:520px;margin:0 auto;' +
-      'padding:14px 16px;border-radius:14px;border:1px solid var(--border,#E0E6F0);' +
-      'background:var(--panel,#fff);color:var(--text,#2D3436);box-shadow:0 8px 28px rgba(0,0,0,.18);' +
+      'padding:14px 16px;border-radius:14px;border:1px solid var(--border,#DCE3F0);' +
+      'background:var(--panel,#fff);color:var(--text,#14203A);box-shadow:0 8px 28px rgba(0,0,0,.18);' +
       'font:400 .85rem/1.5 "DM Sans",system-ui,sans-serif;}' +
       '#abtConsent p{margin:0 0 10px;}' +
       '#abtConsent a{color:var(--accent-strong,var(--accent,#2563EB));text-decoration:none;}' +
       '#abtConsent a:hover{text-decoration:underline;}' +
       '#abtConsent .abt-consent-row{display:flex;gap:8px;justify-content:flex-end;}' +
       '#abtConsent button{font:600 .82rem/1 "DM Sans",system-ui,sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer;' +
-      'border:1px solid var(--border,#E0E6F0);background:transparent;color:inherit;}' +
+      'border:1px solid var(--border,#DCE3F0);background:transparent;color:inherit;}' +
       '#abtConsent button[data-choice="granted"]{background:var(--accent,#2563EB);border-color:var(--accent,#2563EB);color:#fff;}';
     var box = document.createElement('div');
     box.id = 'abtConsent';

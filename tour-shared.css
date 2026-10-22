@@ -105,7 +105,7 @@
   border: 1px solid transparent;
   transition: filter .12s ease, background .12s ease;
 }
-.pf-tour-btn-primary { background: var(--accent); color: #0F1728; }
+.pf-tour-btn-primary { background: var(--accent); color: var(--text-inv); }
 .pf-tour-btn-primary:hover { filter: brightness(1.08); }
 .pf-tour-btn-ghost {
   background: transparent;
@@ -148,3 +148,7 @@
   .pf-tour-long { display: none; }
   .pf-tour-short { display: inline; }
 }
+
+/* The compass the launcher and the tour copy show, drawn as a line icon. */
+.pf-tour-ico { width: 16px; height: 16px; flex: none; }
+.pf-tour-body .pf-tour-ico { width: 1em; height: 1em; vertical-align: -.15em; }

@@ -48,7 +48,7 @@
 /* Schedule editor */
 .sched-box{margin-top:4px}
 .weekday-grid{display:flex;gap:5px;flex-wrap:wrap}
-.weekday-chip{flex:1 1 0;min-width:38px;padding:6px 4px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit;user-select:none;white-space:nowrap}
+.weekday-chip{flex:1 1 0;min-width:38px;padding:6px 4px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:var(--input-bg);color:var(--muted);border-radius:8px;cursor:pointer;text-align:center;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;font-family:inherit;user-select:none;white-space:nowrap}
 .weekday-chip.wp-chip{flex:0 0 auto;padding:6px 14px}
 .weekday-chip:hover{border-color:var(--accent);color:var(--text)}
 .weekday-chip.active{background:var(--accent);color:var(--text-inv);border-color:var(--accent)}
@@ -64,7 +64,7 @@
    #pfEditSection sub-tabs below it. */
 .pf-bar{display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;padding:9px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg)}
 .pf-tabs{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0;align-items:center}
-.pf-tab{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--muted);font-weight:600;font-size:.82rem;cursor:pointer;user-select:none;max-width:170px;white-space:nowrap;transition:all .15s}
+.pf-tab{display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--muted);font-weight:600;font-size:.82rem;cursor:pointer;user-select:none;max-width:170px;white-space:nowrap;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s}
 .pf-tab:hover{border-color:var(--accent2);color:var(--text)}
 .pf-tab.active{background:var(--accent2);color:var(--text-inv);border-color:var(--accent2);font-weight:700}
 .pf-tab-name{overflow:hidden;text-overflow:ellipsis}
@@ -75,7 +75,7 @@
 .pf-tab-rename{width:92px;font:inherit;font-size:.82rem;padding:1px 4px;border:1px solid var(--border);border-radius:5px;background:var(--panel);color:var(--text)}
 
 /* Inline + Add button - sits directly beside the last portfolio tab and wraps with them */
-.pf-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:all .15s}
+.pf-add-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:1.2rem;line-height:1;border:1px dashed var(--accent2);border-radius:8px;background:transparent;color:var(--accent2);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s}
 .pf-add-btn:hover{background:var(--accent2);color:var(--text-inv);border-style:solid}
 
 /* Copy & Delete grouped on the side, stacked vertically and divided from the tabs */
@@ -99,7 +99,7 @@
 
 /* Sub-tabs for editing the selected portfolio (Assets / Top-Ups / Rebalancing) */
 .sub-tabs{display:flex;gap:4px;margin-bottom:12px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px}
-.sub-tab{flex:1 1 0;padding:7px 4px;text-align:center;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-radius:7px;transition:all .15s;white-space:nowrap;font-family:inherit}
+.sub-tab{flex:1 1 0;padding:7px 4px;text-align:center;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-radius:7px;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap;font-family:inherit}
 .sub-tab:hover{color:var(--text)}
 .sub-tab.active{background:var(--accent);color:var(--text-inv)}
 @media(max-width:600px){
@@ -114,7 +114,7 @@
 
 /* Segmented view toggle (Composition chart: $ value / % of portfolio) */
 .seg-toggle{display:inline-flex;gap:2px;background:var(--input-bg);border:1px solid var(--border);border-radius:9px;padding:3px;flex-shrink:0}
-.seg-btn{padding:4px 11px;font-size:.78rem;font-weight:700;border:none;background:transparent;color:var(--muted);border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s}
+.seg-btn{padding:4px 11px;font-size:.78rem;font-weight:700;border:none;background:transparent;color:var(--muted);border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s}
 .seg-btn:hover{color:var(--text)}
 .seg-btn.active{background:var(--accent);color:var(--text-inv)}
 

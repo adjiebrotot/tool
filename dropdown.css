@@ -22,7 +22,7 @@
    ────────────────────────────────────────────────────────────────────────── */
 
 :root{--sel-chevron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23A8B6CF'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");}
-body.light{--sel-chevron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237F8C8D'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");}
+body.light{--sel-chevron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234C5B76'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");}
 
 /* ── The field ─────────────────────────────────────────────────────────────
    :where() keeps these at zero specificity, so a tool's sizing rule wins
@@ -69,7 +69,7 @@ select:not([multiple]):not([size]){
    dropdown.js runs) cannot read CSS variables on <option>, so its colours
    are written out. */
 :where(select) option,:where(select) optgroup{background:#162033;color:#EAF1FF;font-weight:400;}
-body.light :where(select) option,body.light :where(select) optgroup{background:#FFFFFF;color:#2D3436;}
+body.light :where(select) option,body.light :where(select) optgroup{background:#FFFFFF;color:#14203A;}
 
 /* The design system's named select: a full-width form field. */
 .sel-input{width:100%;}
@@ -120,6 +120,6 @@ body.light :where(select) option,body.light :where(select) optgroup{background:#
 .combo-chip{flex-shrink:0;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 8px;border-radius:var(--radius-pill);background:var(--input-bg);border:1px solid var(--border);font-size:.72rem;font-weight:500;color:var(--muted);}
 .combo-opt:hover .combo-chip,.combo-opt.focused .combo-chip{color:inherit;border-color:currentColor;background:transparent;}
 /* An <optgroup>'s label, and a combobox's section header. */
-.combo-group{padding:8px 10px 3px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:default;}
+.combo-group{padding:8px 10px 3px;font-size:.8125rem;font-weight:700;color:var(--muted);cursor:default;}
 .combo-group:first-child{padding-top:4px;}
 .combo-empty{padding:8px 10px;font-size:.82rem;color:var(--muted);}

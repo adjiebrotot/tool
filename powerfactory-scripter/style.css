@@ -2,7 +2,7 @@
      DESIGN: Industrial/Technical — dark sidebar, steel-toned panels,
      monospace accents. Built for engineers, not marketers.
   ===================================================================== */
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  @import url('../fonts.css');
   :root {
     --surface:   #162033;
     --card:      #1C2942;
@@ -21,9 +21,9 @@
     --card:      #FFFFFF;
     --danger:    #E63939;
     --warn:      #B45309;
-    --label:     #7F8C8D;
+    --label:     #4C5B76;
     --highlight: #F8FBFF;
-    --shadow:    0 2px 16px rgba(120,160,220,0.10);
+    --shadow:none;
   }
 
   /* Light mode overrides for hardcoded dark values */
@@ -392,7 +392,7 @@
     white-space: nowrap;
   }
   .btn:hover { opacity: 0.85; }
-  .btn-primary   { background: var(--accent);  color: #0F1728; }
+  .btn-primary   { background: var(--accent);  color: var(--text-inv); }
   .btn-success   { background: var(--accent2); color: #0F1728; }
   .btn-danger    { background: rgba(255,139,139,0.18);  color: var(--danger); border: 1px solid rgba(255,139,139,0.35); }
   .btn-ghost     { background: var(--highlight); color: var(--text); border: 1px solid var(--border); }
@@ -543,14 +543,10 @@
     padding: 10px 14px;
     margin-bottom: 14px;
   }
-  #validation-errors h4 {
-    color: var(--danger);
-    font-size: 12px;
+  #validation-errors h4 {color: var(--danger);
+    font-size:.8125rem;
     font-weight: 700;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+    margin-bottom: 6px;}
   #validation-errors ul {
     list-style: none;
     padding: 0;
@@ -571,14 +567,10 @@
     padding: 10px 14px;
     margin-bottom: 14px;
   }
-  #validation-warnings h4 {
-    color: var(--warn);
-    font-size: 12px;
+  #validation-warnings h4 {color: var(--warn);
+    font-size:.8125rem;
     font-weight: 700;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
+    margin-bottom: 6px;}
   #validation-warnings ul {
     list-style: none;
     padding: 0;
@@ -695,15 +687,11 @@
     margin: 12px 0;
   }
 
-  .sub-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  .sub-label {font-family: var(--mono);
+    font-size:.8125rem;
     color: var(--muted);
     margin-bottom: 8px;
-    margin-top: 4px;
-  }
+    margin-top: 4px;}
 
   /* ── INFO BOX ────────────────────────────────────────────────────── */
   .info-box {
@@ -749,7 +737,7 @@
   .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
   .quick-start-label .tico{width:1.05em;height:1.05em}
   .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap}
-  .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+  .quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap;font-family:inherit}
   .quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
   .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15)}
   .quick-start-btn:disabled{opacity:.55;cursor:wait}

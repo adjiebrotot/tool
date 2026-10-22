@@ -3,10 +3,10 @@
 /* Light mode keeps this page's own shades of the light tokens. */
 body.light {
   --bg:#F0F4FF; --bg-subtle:#F8FBFF; --panel:#FFFFFF; --panel-raised:#FFFFFF;
-  --text:#2D3436; --muted:#7F8C8D; --text-inv:#FFFFFF; --border:#E0E6F0;
-  --accent:#8BB8F8; --accent-strong:#5A91E8; --accent2:#4A9E87; --accent3:#C46A7E;
+  --text:#14203A; --muted:#4C5B76; --text-inv:#FFFFFF; --border:#DCE3F0;
+  --accent:#3A71C8; --accent-strong:#0052CC; --accent2:#4A9E87; --accent3:#C46A7E;
   --positive:#0052CC; --negative:#E63939;
-  --positive-em:#0052CC; --negative-em:#E63939;
+  --positive-em:#0052CC; --negative-em:#C6382F;
   --positive-bg:#EAF2FF; --negative-bg:#FDECEC;
   --positive-border:#8FB5FF; --negative-border:#F3A5A5;
   --success-bg:#C8F7C5; --success-text:#1A4A18;
@@ -14,9 +14,9 @@ body.light {
   --warning-bg:#FFF0D9; --warning-text:#7A4A00;
   --info-bg:#EAF2FF; --info-text:#174A9C; --info-border:#8FB5FF;
   --input-bg:rgba(0,0,0,0.04); --card-bg:rgba(255,255,255,0.92);
-  --shadow-sm:0 1px 8px rgba(120,160,220,0.06);
-  --shadow:0 2px 16px rgba(120,160,220,0.10);
-  --shadow-lg:0 4px 32px rgba(120,160,220,0.14);
+  --shadow-sm:none;
+  --shadow:none;
+  --shadow-lg:0 10px 30px rgba(20,32,58,0.16);
   --override-bg:rgba(255,200,80,0.18); --override-border:#e0a800;
   --line-a:#5A91E8; --line-b:#E63939; --line-c:#4A9E87; --line-d:#C46A7E;
 }
@@ -39,13 +39,13 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .quick-start-label .tico{width:1.05em;height:1.05em;}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
-.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap;font-family:inherit;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:color-mix(in srgb,var(--accent2) 15%,transparent);}
 .toggle-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .toggle-label{font-size:0.88rem;color:var(--muted);font-weight:500;white-space:nowrap;}
 .seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;}
-.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 14px;font-size:0.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 14px;font-size:0.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color 140ms,background-color 140ms,border-color 140ms,box-shadow 140ms,opacity 140ms,transform 140ms,fill 140ms,stroke 140ms;font-family:inherit;white-space:nowrap;flex-shrink:0;}
 /* "Include housing | Exclude housing" plus its tip only just fit a 360px
    phone at full padding, so a little goes on narrow screens. */
 @media(max-width:400px){.seg-btn{padding:5px 10px;}}
@@ -55,8 +55,8 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 /* City pickers */
 .city-row-card{padding:16px 20px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
 .city-block{flex:1;min-width:200px;max-width:400px;}
-.city-block label{display:block;font-size:0.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px;}
-.arrow-sep{font-size:1.4rem;line-height:1;color:var(--muted);background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:7px 11px;margin-bottom:4px;cursor:pointer;font-family:inherit;transition:all 140ms;}
+.city-block label{display:block;font-size:.8125rem;font-weight:700;color:var(--muted);margin-bottom:5px;}
+.arrow-sep{font-size:1.4rem;line-height:1;color:var(--muted);background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:7px 11px;margin-bottom:4px;cursor:pointer;font-family:inherit;transition:color 140ms,background-color 140ms,border-color 140ms,box-shadow 140ms,opacity 140ms,transform 140ms,fill 140ms,stroke 140ms;}
 .arrow-sep:hover{color:var(--accent-strong);border-color:var(--accent-strong);}
 .arrow-sep:disabled{cursor:default;opacity:.55;color:var(--border);}
 .arrow-sep:disabled:hover{color:var(--border);border-color:var(--border);}
@@ -64,7 +64,7 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;font-size:0.88rem;}
 /* FX scenario slider (simple mode, inside the FX card) */
 .fx-shock{width:100%;margin-top:12px;padding-top:11px;border-top:1px dashed var(--border);}
 .fx-shock-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px;flex-wrap:wrap;}
-.fx-shock-title{font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.fx-shock-title{font-size:.8125rem;font-weight:700;color:var(--muted);}
 .fx-shock-val{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;font-size:0.82rem;font-weight:700;color:var(--muted);}
 .fx-shock.shocked .fx-shock-val{color:var(--accent-strong);}
 .fx-shock input[type=range]{width:100%;accent-color:var(--accent-strong);cursor:pointer;margin:0;}
@@ -114,7 +114,7 @@ select{padding:7px 10px;font-size:0.85rem;width:100%;border-radius:var(--radius-
 .col-header{font-weight:800;font-size:1rem;margin-bottom:2px;}
 .col-sub{font-size:0.8rem;color:var(--muted);margin-bottom:14px;font-family:'DM Mono',monospace;}
 .field-row{display:block;margin-bottom:13px;padding:0;border-top:none;}
-.field-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.field-label{font-size:.8125rem;font-weight:700;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
 .input-wrap{position:relative;}
 /* The tag only overlays an input when it sits inside .input-wrap. Used
    anywhere else (e.g. beside a table cell input) it stays in flow — an
@@ -173,12 +173,12 @@ table.dt{width:100%;border-collapse:collapse;font-size:0.84rem;}
 .dt .qty-line select{width:auto;font-size:0.77rem;padding:4px 6px;--sel-pad:22px;--sel-chev:6px;}
 
 /* Buttons */
-.btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;}
+.btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color 140ms,background-color 140ms,border-color 140ms,box-shadow 140ms,opacity 140ms,transform 140ms,fill 140ms,stroke 140ms;font-family:inherit;}
 .btn-add:hover{border-color:var(--accent-strong);color:var(--accent-strong);}
 
 .btn-primary{background:var(--accent-strong);color:var(--text-inv);border:none;border-radius:9px;padding:9px 20px;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:inherit;transition:opacity 140ms;}
 .btn-primary:hover{opacity:.85;}
-.btn-theme{background:var(--card-bg);border:1px solid var(--border);border-radius:9px;padding:7px 16px;font-size:0.85rem;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;transition:all 140ms;}
+.btn-theme{background:var(--card-bg);border:1px solid var(--border);border-radius:9px;padding:7px 16px;font-size:0.85rem;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;transition:color 140ms,background-color 140ms,border-color 140ms,box-shadow 140ms,opacity 140ms,transform 140ms,fill 140ms,stroke 140ms;}
 .btn-theme:hover{border-color:var(--accent-strong);color:var(--accent-strong);}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 

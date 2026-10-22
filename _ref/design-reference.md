@@ -1,19 +1,53 @@
 # Design Reference
 
-This file documents the **Generic Soft UI Design System** — a reusable, theme-aware
-component and token library for building data-driven dashboards, calculators, and
-visualisation tools. It is domain-agnostic and can be dropped into any web project.
+This file documents the **Adjie family design system**: the tokens, components and
+rules shared by www.adjiebrotots.com, this site and blog.adjiebrotots.com. The
+three sites draw from one palette (the one the www homepage paints its skyline
+in) and one set of devices; www wears them loudest, the tools and the blog
+quieter.
 
-Fonts: **DM Sans** (sans-serif) + **DM Mono** (monospace).
+**The family, in one screen**
+
+- **Palette.** Navy ink on a sky ground by day (`#14203A` on `#F0F4FF`), the same
+  sky at night (`#EAF1FF` on `#0F1728`). One blue in shades: `#0052CC` brand,
+  `#3A71C8` fills and links, `#5A91E8` large marks only (it fails AA as text). Gold
+  (`#B45309` / `#FFD28C`) is the warm opposite of the blue, the sun and the
+  highlighter; teal is third. Roughly 60% ground, 30% ink and panels, 10% accent.
+  Neutrals are tinted towards the navy, never flat grey.
+- **The wordmark.** "Adjie" in ink, the rest (`Brotot`, `Brotools`, `Brotot Blog`)
+  in `--brand`, solid, beside the circled-A logo. Never a gradient.
+- **The family bar.** Logo and wordmark left; Home (www), Blog, Tools and the
+  round sun and moon toggle right; the current site underlined.
+- **The sticker.** What a reader can press wears an ink outline and a hard offset
+  shadow (`--sticker`, 2px; www's homepage uses 3 to 4px and a tilt) that grows as
+  it lifts on hover and goes flat when pressed. Surfaces at rest are flat: a step
+  in tone, never a soft glow. Only what floats (menu, tooltip, dialog, sheet)
+  wears `--shadow-lg`.
+- **Type.** DM Sans for everything, on a major-third scale (`--fs-*`, 16px body).
+  DM Mono only for figures that must line up (DM Sans has no tabular figures).
+  Caveat for one handwritten aside a page at most, drawn from a `data-note`
+  attribute so it never becomes page text. Small labels are sentence case, never
+  tiny tracked capitals.
+- **Day or night** follows the reader's pick, shared by the three sites through
+  the `abt-theme` cookie on `.adjiebrotots.com` (`theme.js` here), else the
+  device setting (www alone falls back to the clock in Perth).
+
+Fonts: **DM Sans** (sans-serif) + **DM Mono** (figures) + **Caveat** (one aside),
+served from `assets/fonts/` through `fonts.css`, never a font CDN.
 Tokens live in `dark.css` (default) and `light.css` (applied via `body.light`).
 Shared, theme-independent components live in `shared.css` / `shared.js`. Dropdowns live
 in their own pair, `dropdown.css` / `dropdown.js`, so the home page (which loads neither
 shared file) uses the very same ones.
 
-To use this system in a new page, include the shared stylesheets and scripts (in this
-order), then layer your own page-specific overrides on top:
+To use this system in a new page, load `theme.js` straight after `<body class="light">`
+(it picks day or night before the first paint and draws the toggle), include the
+shared stylesheets and scripts (in this order), then layer your own page-specific
+overrides on top:
 
 ```html
+<body class="light">
+<script src="theme.js"></script>
+...
 <link rel="stylesheet" href="dark.css">
 <link rel="stylesheet" href="light.css">
 <link rel="stylesheet" href="shared.css">   <!-- imports dropdown.css -->
@@ -24,10 +58,11 @@ order), then layer your own page-specific overrides on top:
 <script src="script.js"></script>
 ```
 
-And add the font import at the top of your page's `style.css`:
+And add the font import at the top of your page's `style.css` (the path is
+relative to the stylesheet):
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+@import url('../fonts.css');
 ```
 
 ---
@@ -210,41 +245,50 @@ A tour shows where things are; the page and its (i) tips explain them.
 
 ```css
 :root {
-  --bg:#0F1728; --panel:#162033; --panel-raised:#1C2942; --text:#EAF1FF; --muted:#A8B6CF; --border:#2C3A52;
-  --accent:#8DBBFF; --accent-strong:#B3D1FF; --accent2:#8FCDBD; --accent3:#FF8B8B; --gold:#FFD28C;
-  --input-bg:rgba(255,255,255,0.06); --card-bg:rgba(255,255,255,0.03); --bg-subtle:#111C2F; --text-inv:#0F1728;
-
-  --shadow:    0 2px 16px rgba(120,160,220,0.12);
-  --shadow-sm: 0 1px 8px rgba(120,160,220,0.08);
-  --shadow-lg: 0 4px 32px rgba(120,160,220,0.18);
-
-  --radius-sm:8px; --radius-md:10px; --radius-lg:12px; --radius-xl:14px; --radius-2xl:20px; --radius-pill:999px;
-
+  --bg:#0F1728;--panel:#162033;--panel-raised:#1C2942;--text:#EAF1FF;--muted:#A8B6CF;--border:#2C3A52;
+  --accent:#8DBBFF;--accent-strong:#B3D1FF;--accent2:#8FCDBD;--accent3:#FF8B8B;--gold:#FFD28C;
+  --brand:#8DBBFF;--ink-line:#8DBBFF;
+  --input-bg:rgba(255,255,255,0.06);--card-bg:rgba(255,255,255,0.03);--bg-subtle:#111C2F;--text-inv:#0F1728;
+  /* Surfaces at rest are flat: a step in tone, never a glow. Only what really
+     floats (a menu, a tooltip, a dialog, a bottom sheet) wears --shadow-lg. */
+  --shadow:none;
+  --shadow-sm:none;
+  --shadow-lg:0 10px 30px rgba(2,6,16,0.55);
+  /* The sticker: a hard offset in the ink line, the www homepage's signature,
+     worn quieter here by buttons and cards a reader can press. */
+  --sticker:2px 2px 0 var(--ink-line);
+  --sticker-hover:3px 3px 0 var(--ink-line);
+  /* A filled blue button needs an offset that differs from its own fill. */
+  --sticker-accent:2px 2px 0 #3A71C8;--sticker-accent-hover:3px 3px 0 #3A71C8;
+  /* Two corner sizes and the pill: --radius-sm for controls, --radius-lg for
+     surfaces. The in-between names stay as aliases so older rules still read. */
+  --radius-sm:8px;--radius-md:8px;--radius-lg:14px;--radius-xl:14px;--radius-2xl:14px;--radius-pill:999px;
+  /* Type scale: a major third (1.25) on 16px. Five steps do the visible work. */
+  --fs-xs:.8125rem;--fs-sm:.875rem;--fs-base:1rem;--fs-md:1.25rem;--fs-lg:1.5625rem;--fs-xl:1.953rem;--fs-2xl:2.441rem;
   /* Directional data colours */
-  --positive:#0052CC; --positive-em:#7FB2FF; --negative:#E63939; --negative-em:#FF8B8B;
-  --positive-bg:#10284D; --negative-bg:#4A1C1C;
-  --positive-border:#2D67C7; --negative-border:#C85F5F;
-
-  /* Aliases (legacy data-pos/data-neg naming) */
-  --data-pos:var(--positive); --data-pos-em:var(--positive-em); --data-pos-bg:var(--positive-bg); --data-pos-border:var(--positive-border);
-  --data-neg:var(--negative); --data-neg-em:var(--negative-em); --data-neg-bg:var(--negative-bg); --data-neg-border:var(--negative-border);
-
-  /* Status / feedback colours */
-  --success-bg:#103529; --success-text:#9BE7B4;
-  --error-bg:#4A1D26;   --error-text:#FFB3BA;
-  --warning-bg:#4A3412; --warning-text:#FFD28C;
-  --info-bg:#132E56;    --info-text:#A8C9FF; --info-border:#2D67C7;
-
-  /* Chart tokens */
-  --chart-text:#A8B6CF; --chart-grid:#2C3A52;
-
-  /* Chart line colours (scenarios) */
-  --line-a:#8DBBFF; --line-b:#FF8B8B; --line-c:#8FCDBD; --line-d:#F1C0D0; --line-e:#FFD28C;
-  --line-rtb-rent:#FF8B8B; --line-rtb-own:#8DBBFF;
-
+  --positive:#0052CC;--positive-em:#7FB2FF;--negative:#E63939;--negative-em:#FF8B8B;
+  --positive-bg:#10284D;--negative-bg:#4A1C1C;
+  --positive-border:#2D67C7;--negative-border:#C85F5F;
+  /* Aliases for legacy data-pos/data-neg naming */
+  --data-pos:var(--positive);--data-pos-em:var(--positive-em);--data-pos-bg:var(--positive-bg);--data-pos-border:var(--positive-border);
+  --data-neg:var(--negative);--data-neg-em:var(--negative-em);--data-neg-bg:var(--negative-bg);--data-neg-border:var(--negative-border);
+  /* Status/feedback colours */
+  --success-bg:#103529;--success-text:#9BE7B4;
+  --error-bg:#4A1D26;--error-text:#FFB3BA;
+  --warning-bg:#4A3412;--warning-text:#FFD28C;
+  --info-bg:#132E56;--info-text:#A8C9FF;--info-border:#2D67C7;
+  /* Chart tokens (dark) */
+  --chart-text:#A8B6CF;--chart-grid:#2C3A52;
+  /* Chart line colours */
+  --line-a:#8DBBFF;--line-b:#FF8B8B;--line-c:#8FCDBD;--line-d:#F1C0D0;--line-e:#C9A7EB;
+  --line-rtb-rent:#FFD28C;--line-rtb-own:#8DBBFF;
+  /* Abbreviations (dashed underline + hover definition, see shared.css/.abbr) */
+  --abbr-line:rgba(168,182,207,.42);--abbr-line-hover:rgba(141,187,255,.85);--abbr-hover-bg:rgba(141,187,255,.10);
+  /* Scrollbars (see shared.css): both bars wear these colours site-wide */
+  --scrollbar-thumb:#3C4C68;--scrollbar-thumb-hover:#5B7398;
   /* Motion */
-  --motion-fast:150ms; --motion-base:250ms; --motion-slow:400ms;
-  --transition-fast:var(--motion-fast); --transition-base:var(--motion-base);
+  --motion-fast:150ms;--motion-base:250ms;--motion-slow:400ms;
+  --transition-fast:var(--motion-fast);--transition-base:var(--motion-base);
 }
 ```
 
@@ -252,35 +296,39 @@ A tour shows where things are; the page and its (i) tips explain them.
 
 ```css
 body.light {
-  --bg:#F0F4FF; --panel:#FFFFFF; --panel-raised:#FFFFFF; --text:#2D3436; --muted:#7F8C8D; --border:#E0E6F0;
-  --accent:#5A91E8; --accent-strong:#3A71C8; --accent2:#2E9E7A; --accent3:#FFD6E0; --gold:#B45309;
-  --input-bg:rgba(0,0,0,0.04); --card-bg:rgba(255,255,255,0.85); --bg-subtle:#F8FBFF; --text-inv:#FFFFFF;
-
-  --shadow:    0 2px 16px rgba(120,160,220,0.12);
-  --shadow-sm: 0 1px 8px rgba(120,160,220,0.08);
-  --shadow-lg: 0 4px 32px rgba(120,160,220,0.18);
-
+  --bg:#F0F4FF;--panel:#FFFFFF;--panel-raised:#FFFFFF;--text:#14203A;--muted:#4C5B76;--border:#DCE3F0;
+  --accent:#3A71C8;--accent-strong:#0052CC;--accent2:#1F7F63;--accent3:#E66A6A;--gold:#B45309;
+  --brand:#0052CC;--ink-line:#14203A;
+  --input-bg:rgba(20,32,58,0.045);--card-bg:rgba(255,255,255,0.85);--bg-subtle:#F8FBFF;--text-inv:#FFFFFF;
+  --shadow:none;
+  --shadow-sm:none;
+  --shadow-lg:0 10px 30px rgba(20,32,58,0.16);
+  /* Redeclared, not inherited: a var() inside a token resolves where it is set. */
+  --sticker:2px 2px 0 var(--ink-line);
+  --sticker-hover:3px 3px 0 var(--ink-line);
+  /* A filled blue button needs an offset that differs from its own fill. */
+  --sticker-accent:2px 2px 0 #14203A;--sticker-accent-hover:3px 3px 0 #14203A;
   /* Directional data colours */
-  --positive:#0052CC; --positive-em:#0052CC; --negative:#E63939; --negative-em:#E63939;
-  --positive-bg:#EAF2FF; --negative-bg:#FDECEC;
-  --positive-border:#8FB5FF; --negative-border:#F3A5A5;
-
-  /* Aliases (legacy data-pos/data-neg naming) */
-  --data-pos:var(--positive); --data-pos-em:var(--positive-em); --data-pos-bg:var(--positive-bg); --data-pos-border:var(--positive-border);
-  --data-neg:var(--negative); --data-neg-em:var(--negative-em); --data-neg-bg:var(--negative-bg); --data-neg-border:var(--negative-border);
-
-  /* Status / feedback colours */
-  --success-bg:#C8F7C5; --success-text:#1A4A18;
-  --error-bg:#FFB3BA;   --error-text:#4A1018;
-  --warning-bg:#FFF0D9; --warning-text:#7A4A00;
-  --info-bg:#EAF2FF;    --info-text:#174A9C; --info-border:#8FB5FF;
-
-  /* Chart tokens */
-  --chart-text:#4A5A6A; --chart-grid:#C8D4E8;
-
-  /* Chart line colours (scenarios) */
-  --line-a:#5A91E8; --line-b:#E63939; --line-c:#4A9E87; --line-d:#C46A7E; --line-e:#9B59B6;
-  --line-rtb-rent:#E63939; --line-rtb-own:#5A91E8;
+  --positive:#0052CC;--positive-em:#0052CC;--negative:#E63939;--negative-em:#C6382F;
+  --positive-bg:#EAF2FF;--negative-bg:#FDECEC;
+  --positive-border:#8FB5FF;--negative-border:#F3A5A5;
+  /* Aliases for legacy data-pos/data-neg naming */
+  --data-pos:var(--positive);--data-pos-em:var(--positive-em);--data-pos-bg:var(--positive-bg);--data-pos-border:var(--positive-border);
+  --data-neg:var(--negative);--data-neg-em:var(--negative-em);--data-neg-bg:var(--negative-bg);--data-neg-border:var(--negative-border);
+  /* Status/feedback colours */
+  --success-bg:#C8F7C5;--success-text:#1A4A18;
+  --error-bg:#FFB3BA;--error-text:#4A1018;
+  --warning-bg:#FFF0D9;--warning-text:#7A4A00;
+  --info-bg:#EAF2FF;--info-text:#174A9C;--info-border:#8FB5FF;
+  /* Chart tokens (light) — dedicated per spec, NOT text.secondary */
+  --chart-text:#4C5B76;--chart-grid:#C8D4E8;
+  /* Abbreviations (dashed underline + hover definition, see shared.css/.abbr) */
+  --abbr-line:rgba(110,124,142,.50);--abbr-line-hover:rgba(58,113,200,.85);--abbr-hover-bg:rgba(90,145,232,.09);
+  /* Scrollbars (see shared.css): both bars wear these colours site-wide */
+  --scrollbar-thumb:#C3D0E6;--scrollbar-thumb-hover:#9AB2D8;
+  /* Chart line colours */
+  --line-a:#5A91E8;--line-b:#E63939;--line-c:#4A9E87;--line-d:#C46A7E;--line-e:#9B59B6;
+  --line-rtb-rent:#B45309;--line-rtb-own:#5A91E8;
 }
 ```
 
@@ -317,18 +365,19 @@ body {
 ## Typography
 
 ```css
-h1 { margin: 0 0 8px; font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
-h2 { margin: 0 0 10px; font-size: 1.15rem; font-weight: 700; }
-h3 {
-  margin: 0 0 8px;
-  font-size: 0.75rem;
-  color: var(--muted);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
+/* The scale (dark.css): a major third on 16px. */
+--fs-xs:.8125rem; --fs-sm:.875rem; --fs-base:1rem; --fs-md:1.25rem; --fs-lg:1.5625rem; --fs-xl:1.953rem; --fs-2xl:2.441rem;
+
+body { font-size: 16px; }
+h1 { margin: 0 0 8px; font-size: var(--fs-xl); font-weight: 800; letter-spacing: -0.02em; }
+h2 { margin: 0 0 10px; font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.01em; }
+h3 { margin: 0 0 8px; font-size: var(--fs-xs); color: var(--muted); font-weight: 700; }
 p, .muted { color: var(--muted); line-height: 1.5; margin: 0; }
 ```
+
+Labels (`h3`, `.group-title`, metric and tile labels) are sentence case at 13px,
+never uppercase with tracking. Uppercase stays only where the content itself is
+written that way (a ticker, a slot-machine marquee).
 
 ---
 
@@ -389,21 +438,22 @@ p, .muted { color: var(--muted); line-height: 1.5; margin: 0; }
 <button class="btn-theme" id="themeToggle">🌙 Dark</button>
 ```
 
+The tool keeps its own click handler (it re-draws the charts); `theme.js` does the
+rest: it sets the starting class from the reader's pick (cookie `abt-theme`, shared
+with www and the blog), else the tool's old key, else the device setting; it keeps
+the old keys (`pf-theme`, `fvc-theme`, `jv-theme`) in step; it saves a reader's
+click (never one from code, such as an embed asking for its theme); and it redraws
+the button as the round sun and moon of the other two sites, whatever text the
+tool writes into it. A page that flips `body.dark` instead of `body.light` says so
+with `<body data-dark-class="dark">`.
+
 ```css
-.btn-theme {
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  border-radius: var(--radius-md);
-  padding: 8px 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  font-family: inherit;
-}
-.btn-theme:hover { border-color: var(--accent); color: var(--text); }
+/* shared.css: the header buttons wear the sticker. */
+.btn-theme { background: var(--panel); border: 1.5px solid var(--ink-line); color: var(--text);
+  border-radius: var(--radius-sm); box-shadow: var(--sticker); }
+.btn-theme:hover  { transform: translate(-1px,-1px); box-shadow: var(--sticker-hover); }
+.btn-theme:active { transform: translate(1px,1px); box-shadow: 0 0 0 var(--ink-line); }
+.btn-theme.theme-ico { width: 36px; height: 36px; border-radius: var(--radius-pill); }
 ```
 
 ```js
@@ -508,14 +558,15 @@ follows the button's colour in both themes and lights up with the active tab.
 - `.tico` is styled in shared.css; a tool only sizes it when a tab bar needs
   something other than 1.35em.
 
-Emoji outside a tab bar are fine where they are decoration rather than an icon
-(the 🌙 / ☀️ theme toggle, the footer flags). Buttons follow the same rule: see
+Emoji are not the interface: the theme toggle is a drawn sun and moon
+(`theme.js`) and the tour launcher a drawn compass (`tour-shared.js`). The footer
+flags are images. Buttons follow the same rule: see
 **Buttons and Icons** for the one picture each job gets.
 
 ### Field Group (grouping rows in a control panel)
 
 Related rows in a control panel go in a `.field-group`: a tinted, rounded box with a
-small uppercase `.group-title`. Styled in shared.css, so a tool writes only the markup.
+small sentence-case `.group-title` in the strong accent. Styled in shared.css, so a tool writes only the markup.
 Put a lone setting that belongs to no group (a currency picker at the top of a tab)
 outside any box rather than in a one-row group.
 
@@ -1040,9 +1091,9 @@ because that is how ✕ came to mean both "close" and "delete" on the same page.
 | **Add** a new item | + | `+ Add stage` (ASCII plus) | ＋ (full-width) |
 | **Reorder** by dragging | ⠿ | `⠿` grip | |
 
-Emoji are decoration, never an icon: the 🌙 / ☀️ theme toggle, 🧭 tour, 🚀 Time
-Travel and the footer flags stay; an emoji standing in for one of the jobs above
-does not. A status is not a button: a copy that fails says so in words
+Emoji are decoration, never an icon: an emoji standing in for one of the jobs
+above does not belong. The theme toggle and the tour launcher are drawn (see
+Tab Icons). A status is not a button: a copy that fails says so in words
 (`alert('PNG copy failed: …')`), not with a ✕.
 
 Static markup names its icon and `shared.js` draws it at load:
@@ -1498,10 +1549,8 @@ Other API: `SharedAbbr.glossary(scope, map)`, `SharedAbbr.define(term)`, `.terms
 .metric { padding: 12px 14px; min-height: 82px; }
 .metric .label {
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: var(--fs-xs);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   margin-bottom: 6px;
 }
 .metric .value {
@@ -1571,10 +1620,8 @@ Always pair with a sign (`+` / `−`), arrow (`▲` / `▼`), or explicit descri
 .tile { padding: 14px; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-xl); }
 .tile .label {
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: var(--fs-xs);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   margin-bottom: 6px;
   line-height: 1.3;
 }
@@ -1774,20 +1821,29 @@ const fmt = {
 - Blue family (`--accent`, `--positive`) → brand leadership + critical positive data
 - Red family (`--negative`, `--line-b`) → direction only: money out, a loss, a bar to clear, an error; never an option a reader is choosing between (see Finance Tool Skeleton → Colour)
 - Mint (`--accent2`) → secondary supportive / calm / soft success
-- Rose / gold (`--accent3` light, `--gold`) → accent / warm emphasis / tertiary
+- Rose (`--accent3`, the same rose in both themes) / gold (`--gold`) → accent / warm emphasis / tertiary
 - Monospace (`DM Mono`) → all numeric values and data
 
 ---
 
 ## Border Radius & Motion Tokens
 
+Two corner sizes and the pill, decided once. The in-between names stay as
+aliases so older rules still read.
+
 ```css
---radius-sm: 8px;    /* small chips, inputs */
---radius-md: 10px;   /* buttons, inputs, selects */
---radius-lg: 12px;   /* callout boxes, highlighted stats */
---radius-xl: 14px;   /* cards, panels, tiles */
---radius-2xl: 20px;  /* large surfaces */
---radius-pill: 999px;/* badges, deltas, toggles */
+--radius-sm: 8px;    /* controls: inputs, selects, buttons, chips */
+--radius-md: 8px;    /* alias of sm */
+--radius-lg: 14px;   /* surfaces: cards, panels, tiles, callouts */
+--radius-xl: 14px;   /* alias of lg */
+--radius-2xl: 14px;  /* alias of lg */
+--radius-pill: 999px;/* badges, deltas, toggles, the round theme button */
+
+--sticker: 2px 2px 0 var(--ink-line);        /* buttons and cards a reader can press */
+--sticker-hover: 3px 3px 0 var(--ink-line);  /* lifted on hover */
+--sticker-accent: 2px 2px 0 …;               /* a filled blue button: an offset that differs from its fill */
+--shadow / --shadow-sm: none;                /* surfaces at rest are flat */
+--shadow-lg: 0 10px 30px …;                  /* only what floats: menus, tooltips, dialogs, sheets */
 
 --motion-fast: 150ms; /* hover/focus transitions */
 --motion-base: 250ms; /* theme switch, toggles */

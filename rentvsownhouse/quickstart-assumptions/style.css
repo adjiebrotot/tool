@@ -19,7 +19,7 @@
 .qa-h-sub{margin-left:8px;font-size:.86rem;font-weight:500;color:var(--muted)}
 .qa-chips{display:flex;flex-wrap:wrap;gap:6px}
 .qa-chip{font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--input-bg);color:var(--muted);white-space:nowrap}
-.qa-city h3{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 6px}
+.qa-city h3{font-size:.8125rem;font-weight:700;color:var(--muted);margin:18px 0 6px}
 .qa-city h4{font-size:.82rem;margin:12px 0 4px}
 .qa-lead{font-size:.9rem;line-height:1.55;margin:6px 0 4px}
 .qa-buyer{font-size:.84rem;color:var(--muted);line-height:1.5;margin:0}
@@ -46,7 +46,7 @@ body.light .qa-table tbody tr:hover td{background:rgba(90,145,232,.05)}
 .qa-matrix .qa-city-th,.qa-matrix .qa-city-td{position:sticky;left:0;z-index:1;background:var(--panel);text-align:left;min-width:150px}
 .qa-matrix td.qa-city-td a{font-weight:700;color:var(--text);text-decoration:none}
 .qa-matrix td.qa-city-td a:hover{color:var(--accent)}
-.qa-matrix .qa-region td{position:static;background:var(--input-bg);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:5px 10px}
+.qa-matrix .qa-region td{position:static;background:var(--input-bg);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.8125rem;font-weight:700;text-align:left;padding:5px 10px}
 .qa-cell{display:block;color:var(--text);text-decoration:none;border-radius:var(--radius-sm);padding:2px 4px}
 .qa-cell:hover,.qa-cell:focus-visible{background:var(--input-bg);color:var(--accent)}
 .qa-price{font-weight:600}

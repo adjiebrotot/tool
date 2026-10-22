@@ -60,7 +60,7 @@
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
 <script src="../pwa.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../fonts.css">
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <link rel="stylesheet" href="../shared.css">
@@ -88,6 +88,7 @@
 <script src="../shared.js"></script>
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 <div class="container">
 
   <!-- HEADER -->
@@ -110,7 +111,7 @@
       <li>The site uses Google Analytics to count visits. I see totals, not who you are. In the EEA, the UK and Switzerland, its cookies are only set if you accept them.</li>
       <li>There are no ads and no accounts, and I do not sell your data. If you email me, I get your email address and message.</li>
     </ul>
-    <p class="policy-updated">Last updated: 21 October 2026</p>
+    <p class="policy-updated">Last updated: 22 October 2026</p>
   </section>
 
   <section class="card policy">
@@ -123,6 +124,7 @@
     <ul>
       <li><strong>Your inputs and files.</strong> Every calculation, chart and conversion runs in your browser. Files you open in a tool (a CSV, a video, a document) are not uploaded.</li>
       <li><strong>Remembered work.</strong> Most tools keep your last inputs and settings, and some keep a copy of downloaded prices or exchange rates, in your browser's local storage.</li>
+      <li><strong>Day or night.</strong> Your theme choice is kept in one small cookie, <code>abt-theme</code>, shared by www.adjiebrotots.com, the blog and this site so all three open the way you left them. It holds only <code>light</code> or <code>dark</code>.</li>
       <li><strong>Saved scenarios</strong> are downloaded as files to your device.</li>
       <li><strong>Share links and embedded charts</strong> carry your inputs or chart data in the link itself, after the <code>#</code>, which browsers do not send to the web server. Anyone you give a link to can read what is in it.</li>
       <li><strong>Offline copies.</strong> A service worker keeps copies of the site's pages, code and fonts so tools load fast and work offline. It stores site files, not your inputs.</li>
@@ -137,7 +139,7 @@
       <dt>Hosting</dt>
       <dd>GitHub Pages hosts the site and may keep request logs for security (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>).</dd>
       <dt>Fonts and code libraries</dt>
-      <dd>Google Fonts, cdnjs (Cloudflare) and jsDelivr.</dd>
+      <dd>cdnjs (Cloudflare) and jsDelivr. The site's own fonts come from GitHub Pages with everything else; Canvas Builder also loads Google Fonts, for the Lora and Caveat fonts you can pick for a canvas.</dd>
       <dt>Google Analytics</dt>
       <dd>Records the pages you view, how long you stay, the site that sent you, your device and browser type, and your approximate location. I use it to see which tools are used and what needs work. Google says Google Analytics 4 does not store IP addresses. It does not run on embedded charts. See <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">how Google uses this information</a>.</dd>
       <dt>Map (Load Flow Simulator)</dt>
