@@ -277,11 +277,11 @@ export function mountCanvas(app) {
         rows.push(h('div', { key: i, className: 'pfb-n-row' },
           p ? h('div', { className: 'pfb-n-in' + (p.stray ? ' is-stray' : '') },
             H('target', Pos.Left, p.id, 'pfb-h-data pfb-t-' + (p.stray ? 'any' : p.type), p.stray ? 'stray' : p.type, p.stray ? typeTip('none') : typeTip(p.type, p.tip)),
-            h('span', { className: 'pfb-n-plab' }, portLabel(p)),
-            !wired && d.fb[p.id] !== undefined ? h('span', { className: 'pfb-n-fb' }, '= ' + d.fb[p.id]) : null,
+            h('span', { className: 'pfb-n-plab', title: portLabel(p) }, portLabel(p)),
+            !wired && d.fb[p.id] !== undefined ? h('span', { className: 'pfb-n-fb', title: String(d.fb[p.id]) }, '= ' + d.fb[p.id]) : null,
             !wired && p.required && d.fb[p.id] === undefined ? h('span', { className: 'pfb-n-need' }, 'needs a value') : null) : h('div', { className: 'pfb-n-in pfb-n-empty' }),
           q ? h('div', { className: 'pfb-n-out' + (q.stray ? ' is-stray' : '') },
-            h('span', { className: 'pfb-n-plab' }, portLabel(q)),
+            h('span', { className: 'pfb-n-plab', title: portLabel(q) }, portLabel(q)),
             H('source', Pos.Right, q.id, 'pfb-h-data pfb-t-' + (q.stray ? 'any' : q.type), q.stray ? 'stray' : q.type, q.stray ? typeTip('none') : typeTip(q.type, q.tip))) : h('div', { className: 'pfb-n-out pfb-n-empty' })));
       }
       kids.push(h('div', { key: 'io', className: 'pfb-n-io' }, rows));

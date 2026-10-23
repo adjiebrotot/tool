@@ -5,7 +5,7 @@
 // wires.
 
 import { defineBlock } from '../core/registry.js';
-import { checkPythonCode, isPyName } from '../core/blockkit.js';
+import { checkPythonCode, isPyName, clip } from '../core/blockkit.js';
 
 const CAT = 'adv';
 const OUT_TYPES = [['num', 'Number'], ['text', 'Text'], ['bool', 'Yes / No'], ['list', 'List of numbers'], ['items', 'List'], ['any', 'Anything']];
@@ -46,7 +46,7 @@ defineBlock({
   },
   summary(s) {
     const first = String(s.code || '').split('\n').find(l => l.trim()) || '';
-    return first.trim().slice(0, 40);
+    return clip(first);
   },
   emit(cx) {
     const ins = rowsOf(cx.s.inputs), outs = rowsOf(cx.s.outputs);
@@ -103,5 +103,5 @@ defineBlock({
   desc: 'A note on the canvas for you and your colleagues. It also goes into the script as a comment.',
   keywords: ['note', 'comment', 'text', 'annotation', 'remark', 'documentation'],
   settings: [{ key: 'text', label: 'Text', kind: 'textarea', default: '' }],
-  summary(s) { return String(s.text || '').split('\n')[0].slice(0, 60); },
+  summary(s) { return clip(String(s.text || '').split('\n')[0]); },
 });

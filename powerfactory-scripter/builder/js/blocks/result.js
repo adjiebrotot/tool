@@ -20,6 +20,7 @@
 // tests carry them meanwhile, _audit/blocks/analysis/requested_runtime.py).
 
 import { defineBlock } from '../core/registry.js';
+import { clip } from '../core/blockkit.js';
 
 const CAT = 'result';
 
@@ -531,7 +532,7 @@ defineBlock({
   ],
   summary(s) {
     const ys = columnList(s.ys);
-    return ys.length ? `${ys.join(', ').slice(0, 40)} against ${String(s.x || '').trim() || '?'}` : 'No columns yet';
+    return ys.length ? `${clip(ys.join(', '), 40)} against ${String(s.x || '').trim() || '?'}` : 'No columns yet';
   },
   helpers: ['plot_table'],
   packages: ['matplotlib'],

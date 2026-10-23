@@ -11,7 +11,7 @@
 // are listed in this agent's Requests; the test stub carries them meanwhile.
 
 import { defineBlock } from '../core/registry.js';
-import { parseValues, allNumbers, placeholders, portIdFor } from '../core/blockkit.js';
+import { parseValues, allNumbers, placeholders, portIdFor, clip } from '../core/blockkit.js';
 
 const CAT = 'flow';
 
@@ -348,7 +348,7 @@ defineBlock({
     { key: 'level', label: 'As', kind: 'select', default: 'info', options: [['info', 'Information'], ['warn', 'Warning'], ['error', 'Error']] },
   ],
   ports(s) { return { inputs: textInputs(s.text) }; },
-  summary(s) { return String(s.text || '').slice(0, 40); },
+  summary(s) { return clip(s.text); },
   helpers: ['log'],
   emit(cx) {
     const pinnedLevel = (cx.node.pin || []).includes('level');

@@ -57,6 +57,13 @@ export function placeholders(template) {
 // The port id for a placeholder or formula name ("in" is the flow input).
 export function portIdFor(name) { return name === 'in' ? 'in_' : name; }
 
+// A summary line kept short, with an ellipsis when it was cut (the canvas clamps it to two
+// lines; a cut that ends mid-word without one reads as a typo).
+export function clip(text, max = 80) {
+  const t = String(text || '').trim();
+  return t.length > max ? t.slice(0, max - 1).trimEnd() + '…' : t;
+}
+
 // ---------------------------------------------------------------------------------------------
 // Formulas (math.formula): an expression over named inputs, written into the script as
 // (lambda a, b: <expr>). Names are resolved here (C22): inputs, abs/min/max/round, the math
