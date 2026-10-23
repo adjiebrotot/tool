@@ -561,18 +561,25 @@
       border: 1.5px solid var(--border);
       border-radius: var(--radius-xl);
       overflow: hidden;
-      transition: transform var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
+      position: relative;
+      top: 0;
+      left: 0;
+      transition: top var(--motion-fast), left var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
     }
 
+    /* The lift is an offset, not a transform: a transform would make the card
+       the containing block of its fixed sub-tool menu, which the card's
+       overflow then clips away. */
     .tool-card:hover,
     .tool-card:focus-within {
-      transform: translate(-2px, -2px);
+      top: -2px;
+      left: -2px;
       border-color: var(--ink-line);
       box-shadow: var(--sticker-hover);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .tool-card:hover, .tool-card:focus-within { transform: none; }
+      .tool-card:hover, .tool-card:focus-within { top: 0; left: 0; }
     }
 
     .tool-card.is-hidden {
