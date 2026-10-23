@@ -4,12 +4,19 @@
 // through spec.set(value). The inspector owns undo: an edit made while a field has the focus
 // joins one undo step, closed on blur (spec.done()).
 //
-// spec = { st, value, set(value), done(), fid, kinds?, classOf?(), suggest?(), study? }
+// spec = { st, value, set(value), done(), fid, kinds?, classOf?(), suggest?(), columns?(), study? }
+//
+// A setting with `suggest: 'columns'` names a column of a results table (one per line in a
+// textarea). spec.columns() gives { items: [{ value, main, group? }], known: [...] | null,
+// table, empty }: the list offers `items`; when `known` is set (every column of the table is
+// known), a name outside it is flagged under the field. It stays free text: a table read from
+// a file has columns the page cannot see.
 
 import { el, esc, tipText } from './dom.js';
 import { optionPairs, ELEMENT_CLASSES } from '../core/registry.js';
 import { attachCombo } from './combo.js';
 import { attrSuggestions } from './attrs.js';
+import { columnList } from '../core/blockkit.js';
 
 const MATCH_OPTIONS = [
   ['one', 'Exactly one (stop if none or several)'],
@@ -31,6 +38,7 @@ function focusHooks(node, spec) {
 
 export function textField(spec) {
   const st = spec.st;
+  if (st.suggest === 'columns' && spec.columns) return columnField(spec, false);
   const i = el('input', { type: 'text', class: 'txt-input', value: spec.value === undefined || spec.value === null ? '' : String(spec.value), placeholder: st.placeholder || '', spellcheck: 'false', 'aria-label': st.label || st.key });
   i.addEventListener('input', () => spec.set(i.value));
   focusHooks(i, spec);
@@ -103,6 +111,7 @@ export function boolField(spec) {
 
 export function textareaField(spec, code) {
   const st = spec.st;
+  if (!code && st.suggest === 'columns' && spec.columns) return columnField(spec, true);
   const t = el('textarea', { class: 'txt-input' + (code ? ' pfb-codearea' : ''), rows: String(st.rows || (code ? 8 : 3)), placeholder: st.placeholder || '', spellcheck: 'false', 'aria-label': st.label || st.key });
   t.value = spec.value === undefined || spec.value === null ? '' : String(spec.value);
   t.addEventListener('input', () => spec.set(t.value));
@@ -123,6 +132,55 @@ export function textareaField(spec, code) {
   }
   focusHooks(t, spec);
   return t;
+}
+
+// A column name (or, `many`, one per line / separated by commas) with the table's columns
+// offered under it, and a line under the field when a name is not one of them.
+function columnField(spec, many) {
+  const st = spec.st;
+  const value = spec.value === undefined || spec.value === null ? '' : String(spec.value);
+  const i = many
+    ? el('textarea', { class: 'txt-input', rows: String(st.rows || 3), placeholder: st.placeholder || '', spellcheck: 'false', 'aria-label': st.label || st.key })
+    : el('input', { type: 'text', class: 'txt-input', value, placeholder: st.placeholder || '', spellcheck: 'false', 'aria-label': st.label || st.key });
+  if (many) i.value = value;
+  const hint = el('div', { class: 'field-sub pfb-col-hint', hidden: true });
+  const names = () => (many ? columnList(i.value) : [i.value.trim()].filter(Boolean));
+  const check = () => {
+    const c = spec.columns() || {};
+    const bad = c.known ? names().filter(n => !c.known.includes(n)) : [];
+    hint.textContent = !bad.length ? '' : (bad.length === 1 ? '"' + bad[0] + '" is not a column of "' + c.table + '"' : bad.map(b => '"' + b + '"').join(', ') + ' are not columns of "' + c.table + '"') + '. Pick from the list; names must match exactly.';
+    hint.hidden = !bad.length;
+    i.classList.toggle('pfb-col-bad', bad.length > 0);
+  };
+  // In a list, what is being typed is the last line when it is not a whole column name yet.
+  const partial = () => {
+    if (!many) return i.value;
+    const last = i.value.split(/\r?\n/).pop();
+    const c = spec.columns() || {};
+    return (c.items || []).some(it => it.value === last.trim()) ? '' : last;
+  };
+  i.addEventListener('input', () => { spec.set(i.value); check(); });
+  focusHooks(i, spec);
+  attachCombo(i, (q) => {
+    const c = spec.columns() || {};
+    const used = many ? names() : [];
+    // A field that already holds a whole column name shows them all, to switch to another.
+    const typed = many ? partial() : (c.items || []).some(it => it.value === q.trim()) ? '' : q;
+    const ql = typed.trim().toLowerCase();
+    return (c.items || []).filter(it => !used.includes(it.value) && (!ql || it.value.toLowerCase().includes(ql)));
+  }, (it) => {
+    if (many) {
+      const lines = i.value.split(/\r?\n/);
+      if (partial().trim()) lines.pop();
+      while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+      i.value = [...lines, it.value].join('\n');
+    } else i.value = it.value;
+    spec.set(i.value);
+    check();
+    if (spec.done) spec.done();
+  }, { empty: () => (spec.columns() || {}).empty || 'No columns known yet: type the name as in the table.', minWidth: 240 });
+  check();
+  return el('div', { class: 'pfb-colfield' }, i, hint);
 }
 
 // An attribute name: free text with suggestions for the element's class (description first,

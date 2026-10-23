@@ -735,3 +735,9 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-qa-item.focused { --pfb-icon-cut: var(--accent); }
 .pfb-flow .react-flow__panel.react-flow__minimap svg { width: 168px; height: 112px; }
 .pfb-flow .react-flow__minimap { opacity: .9; }
+
+/* A column name field (fields.js columnField): the table's columns offered under it, and a line
+   when a name is not one of them. */
+.pfb-colfield { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pfb-col-hint { color: var(--pfb-warn); }
+.pfb-colfield .pfb-col-bad { border-color: var(--pfb-warn); }

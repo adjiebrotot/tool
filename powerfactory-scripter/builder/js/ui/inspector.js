@@ -58,7 +58,7 @@ export function mountInspector(app) {
     const ports = ops.nodePorts(s.wf, node);
     const wired = ports.inputs.map(p => p.id + '=' + s.wf.edges.filter(e => e.to === node.id && ops.handleIdOf(s.wf, node.id, e.in, 'in') === p.id).map(e => e.from + '.' + e.out).join('|'));
     const vis = visibleSettings(node).map(st => st.key + (st.kind === 'list' ? '[' + (settingsOf(node)[st.key] || []).map(r => r.id).join(',') + ']' : ''));
-    const sugg = def.settings.filter(st => st.suggest).map(st => suggestions(s.wf, st.suggest).join('|'));
+    const sugg = def.settings.filter(st => st.suggest && st.suggest !== 'columns').map(st => suggestions(s.wf, st.suggest).join('|'));
     return [x.node ? 'node' : 'wf', node.id, node.type, (node.pin || []).join(','), wired.join(';'), vis.join(','), [...moreOpen].join(','), sugg.join(';'), ports.missing].join('#');
   }
   function fullOf(s) {
@@ -152,6 +152,35 @@ export function mountInspector(app) {
     return '';
   }
 
+  // The columns a column field can name (fields.js columnField): those of the table its block
+  // reads, named by the setting `columnsOf` (default 'table'), or for '@port' the table behind
+  // the row wired into that input (For each item over a table). Without a table, every table's
+  // columns, grouped. From the generator's `tables` (codegen.js), so they are the names the run
+  // writes; a table filled from a file has columns only the file knows.
+  function columnsFor(nodeId, st) {
+    const s = store.get(), tables = (s.gen && s.gen.tables) || {};
+    const node = ops.nodeById(s.wf, nodeId);
+    if (!node) return {};
+    const from = st.columnsOf || 'table';
+    let name = null;
+    if (from.startsWith('@')) {
+      const e = s.wf.edges.find(x => x.to === node.id && ops.handleIdOf(s.wf, node.id, x.in, 'in') === from.slice(1));
+      const src = e && ops.nodeById(s.wf, e.from);
+      const ss = src && getBlock(src.type) ? settingsOf(src) : null;
+      if (ss && ss.source === 'table') name = String(ss.table || '').trim() || 'Results';
+    } else name = String(settingsOf(node)[from] || '').trim() || 'Results';
+    if (name === null) {
+      const items = [];
+      for (const t of Object.keys(tables).sort((a, b) => a.localeCompare(b))) for (const c of tables[t].columns) items.push({ value: c, main: c, group: t });
+      return { items, known: null, empty: 'No results table has columns yet: type the name as in the table.' };
+    }
+    const T = tables[name];
+    const items = T ? T.columns.map(c => ({ value: c, main: c })) : [];
+    if (!T) return { items, known: null, table: name, empty: 'No block fills the table "' + name + '" yet: add rows to it first, or type the name.' };
+    if (T.file) return { items, known: null, table: name, empty: '"' + name + '" is read from a file: type a column name exactly as in its header row.' };
+    return { items, known: T.columns, table: name, empty: '"' + name + '" has no columns yet.' };
+  }
+
   function specFor(node, st, value) {
     return {
       st, value,
@@ -161,6 +190,7 @@ export function mountInspector(app) {
       kinds: st.kind === 'element' ? kindsFor(node, st) : null,
       classOf: () => classOf(node.id, st),
       suggest: () => suggestions(wf(), st.suggest),
+      columns: () => columnsFor(node.id, st),
     };
   }
 
@@ -200,6 +230,7 @@ export function mountInspector(app) {
           kinds: Array.isArray(col.kinds) ? col.kinds : null,
           classOf: () => classOf(node.id, cst, row.id, st.key),
           suggest: () => suggestions(wf(), col.suggest),
+          columns: () => columnsFor(node.id, col),
         };
         const field = buildField(spec);
         r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));

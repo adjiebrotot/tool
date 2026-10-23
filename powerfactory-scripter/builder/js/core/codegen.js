@@ -40,7 +40,10 @@
 //     wired into an input; cx.settingLine(NAME, key, words) (Start only); cx.consumers(outId,
 //     from): the blocks an output feeds (of block `from` when given); cx.valOf(nodeId, key):
 //     another block's setting as cx.val gives it; cx.check(queryExpr, match): an element the
-//     block finds by itself, listed for CHECK_ONLY.
+//     block finds by itself, listed for CHECK_ONLY. cx.columns(table, names, { ctx, status,
+//     file }): the columns this block writes into a results table (the loop values first when
+//     ctx, then Status when status); `file: true` when they come from a file the page cannot
+//     see. The result's `tables` collects them per table name, for the inspector's suggestions.
 //   - A block's `pinLiteral(key, s)` (optional) gives the value written on its SETTINGS line
 //     when that setting is pinned (a typed list as a Python list).
 //   - A calculator's `varName(s, node)` (optional) gives the name hint for its variable when
@@ -54,7 +57,7 @@
 import {
   getBlock, settingsOf, hasFlowIn, canConnect, whyNot, displayName, visibleSettings, effectsOf,
 } from './registry.js';
-import { pyLit, pyStr, pyNum, pyComment, pyCommentText, isAtom, isNameExpr, paren } from './pylit.js';
+import { pyLit, pyStr, pyNum, pyComment, pyCommentText, isAtom, isNameExpr, paren, parsePyLiteral } from './pylit.js';
 import { baseReserved, allocateNames, constantName, snake } from './names.js';
 import { parseRuntime, resolveHelpers } from './runtime-loader.js';
 import { P, endWords } from './problems.js';
@@ -744,6 +747,10 @@ function generateInner(workflow, opts) {
       element: (key, port) => elementExpr(X, key, port, opt),
       monitors: () => (env ? collectMonitors(X, env, opt.pre || []) : []),
       skipTables: () => (env && env.struct ? skipTablesFor(env.struct.id) : []),
+      columns: (table, names, o) => {
+        if (opt.probe) return;
+        tableRecs.set(X, { table: String(table), names: (names || []).map(String).filter(Boolean), ctx: !!(o && o.ctx), status: !!(o && o.status), file: !!(o && o.file) });
+      },
       // Lines to write once the nearest loop or search has ended (for example "every pass on
       // one graph"): queued per block, written after the structure's own after-lines.
       afterStruct: (lines) => {
@@ -931,6 +938,13 @@ function generateInner(workflow, opts) {
     return entries;
   };
 
+  // Results tables, for the result's `tables`: what each block writes (cx.columns) and the label
+  // each loop or search pushes (a Python string literal, read back).
+  const tableRecs = new Map(), ctxLabels = new Map();
+  const noteCtx = (L, expr) => {
+    const v = parsePyLiteral(String(expr));
+    if (v && typeof v.value === 'string') ctxLabels.set(L, v.value);
+  };
   const skipTablesFor = (L) => {
     const names = [];
     const r = region.get(L);
@@ -1327,6 +1341,7 @@ function generateInner(workflow, opts) {
     if (ctx) {
       const it = isObj(r.iter) && r.iter.i ? ', ' + r.iter.i + ', ' + (r.iter.n ? r.iter.n : 'None') : '';
       body.add('ctx_push(' + ctx[0] + ', ' + ctx[1] + it + ')');
+      noteCtx(L, ctx[0]);
     }
     if (markTok && restore === 'pass') body.add(markTok + ' = pf_mark()');
     const tryBuf = body.sub();
@@ -1386,6 +1401,7 @@ function generateInner(workflow, opts) {
       ctx = [pyStr(I.label), params.length === 1 ? params[0] : params.length ? '", ".join(as_text(v) for v in (' + params.join(', ') + ',))' : 'None'];
     }
     body.add('ctx_push(' + ctx[0] + ', ' + ctx[1] + ')');
+    noteCtx(C, ctx[0]);
     if (markTok) body.add(markTok + ' = pf_mark()');
     const tryBuf = body.sub();
     tryBuf.addLines(r.bodyStart);
@@ -1635,6 +1651,31 @@ function generateInner(workflow, opts) {
   const stepsObj = {};
   for (const [k, v] of steps) stepsObj[k] = v;
 
+  // The columns of each results table, in the order the run first writes them (ResultTable.add:
+  // the loop values outermost first, a repeated label numbered as ctx_dict does, then Status,
+  // then the row's own columns). A table filled from a file is marked: its columns are unknown.
+  const tables = {};
+  for (const id of order) {
+    const t = tableRecs.get(id);
+    if (!t) continue;
+    const T = tables[t.table] || (tables[t.table] = { columns: [], file: false });
+    if (t.file) T.file = true;
+    const row = [];
+    if (t.ctx) {
+      const seen = new Set();
+      for (const r of regions[id] || []) {
+        const lab = ctxLabels.get(r.id);
+        if (lab === undefined) continue;
+        let key = lab, k = 2;
+        while (seen.has(key)) key = lab + ' (' + (k++) + ')';
+        seen.add(key); row.push(key);
+      }
+    }
+    if (t.status) row.push('Status');
+    row.push(...t.names);
+    for (const c of row) if (!T.columns.includes(c)) T.columns.push(c);
+  }
+
   return {
     code,
     problems: problemList,
@@ -1644,5 +1685,6 @@ function generateInner(workflow, opts) {
     steps: stepsObj,
     settingsMap,
     spans,
+    tables,
   };
 }

@@ -4,7 +4,8 @@
 // second) and for names already in use (Remember a value, results tables).
 //
 // attachCombo(input, getItems, onPick): getItems(query) returns (or resolves to) an array of
-// { value, main, sub?, chip?, group? }; onPick(item) is called with the chosen one.
+// { value, main, sub?, chip?, group? }; onPick(item) is called with the chosen one. opts.empty
+// (text, or a function giving it) is what an empty list says.
 
 import { el } from './dom.js';
 
@@ -42,7 +43,7 @@ export function attachCombo(input, getItems, onPick, opts = {}) {
     }
     list.textContent = '';
     if (!items.length) {
-      list.appendChild(el('div', { class: 'combo-empty', text: opts.empty || 'No suggestions: type the name yourself.' }));
+      list.appendChild(el('div', { class: 'combo-empty', text: (typeof opts.empty === 'function' ? opts.empty() : opts.empty) || 'No suggestions: type the name yourself.' }));
     }
     let lastGroup = null;
     items.forEach((it, i) => {
