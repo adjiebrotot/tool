@@ -1050,7 +1050,7 @@ function renderWeightTable(){
   tableWrap.innerHTML=`<div class="weight-table">${
     p.assets.map(a=>`
       <div class="weight-row">
-        <span class="wt-name">${assetDotHtml(a)}<span class="wt-label">${a.name}</span>${optBtnHtml('weight:'+a.id, a.name+' weight')}</span>
+        <span class="wt-name">${assetDotHtml(a)}<span class="wt-label">${a.name}</span></span>
         <span class="wt-input"><input class="num-input" id="wt${a.id}" type="number" data-unit="%" min="0" max="100" step="1" value="${a.weight}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="wtTotalCell"></span></div></div>`;
@@ -1146,7 +1146,7 @@ function renderRankWeightTable(){
   wrap.innerHTML=`<div class="weight-table">${
     rw.map((w,idx)=>`
       <div class="weight-row">
-        <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span>${optBtnHtml('rank:'+idx, 'Rank '+(idx+1)+' weight')}</span>
+        <span class="wt-name"><span class="wt-label">Rank ${idx+1}${idx===0?' · best':''}</span></span>
         <span class="wt-input"><input class="num-input" id="rw${idx}" type="number" data-unit="%" min="0" max="100" step="1" value="${w}"/><span class="wt-pct">%</span></span>
       </div>`).join('')
   }<div class="weight-row wt-total"><span class="wt-name">Total</span><span class="wt-input" id="rwTotalCell"></span></div></div>`;
@@ -2023,7 +2023,9 @@ function simulatePortfolio(p, assets, common, rfPx, exec){
        month);
      - weights, whose knock-on is contained: they have to add up to 100%, so a
        swept weight hands its change to a slack, one named member or all the
-       others in equal shares (see applyWeightGroup).
+       others in equal shares (see applyWeightGroup). The target weights and the
+       rank weights are each one group, swept from one gauge on the table's
+       heading: up to two members and one slack they all share (OPT_GROUPS).
 
    The top-up period carries one contained knock-on as well, the one the form
    applies when the period is switched by hand: the amount per top-up follows it,
@@ -2231,6 +2233,32 @@ function optClash(key, vars){
                   : 'The period is already swept, and it decides which days apply. Remove it first.';
 }
 
+// Weights are swept as a group, from one gauge on the table's heading whose
+// key is the group's name. Its members are the weight:<id> or rank:<index>
+// settings, so a saved sweep names them as it always did, and every member
+// hands its change to the one slack the group shares: two slacks would make a
+// mix depend on which weight was picked first. One member always stays out of
+// the sweep, so there is someone to take up the difference.
+const OPT_GROUPS = {
+  weight:{label:'Target Weights', noun:'asset'},
+  rank:  {label:'Rank Weights',   noun:'rank'}
+};
+function optGroupOfKey(key){ const m=/^(weight|rank)(:\d+)?$/.exec(key||''); return m ? m[1] : null; }
+// The members `p` offers, in the table's order: [{key, m, name}], m being what
+// a slack names (an asset id, or a rank's index). Empty when the group is not
+// sweepable on `p` (a method without those weights, a single asset).
+function optGroupMembers(group, p){
+  if(!p) return [];
+  return p.assets.map((a,i)=>group==='weight' ? {key:'weight:'+a.id, m:a.id, name:a.name} : {key:'rank:'+i, m:i, name:'Rank '+(i+1)})
+    .filter(x=>optSpec(x.key, p));
+}
+function optGroupVars(group, vars){ return (vars||optVars).filter(v=>optGroupOfKey(v.key)===group); }
+function optGroupSlack(group){ const v=optGroupVars(group)[0]; return v && v.slack!=null ? v.slack : 'even'; }
+// How many members the group may sweep now: two settings in all, one member left out.
+function optGroupRoom(group, p){
+  return Math.min(OPT_MAX_VARS-(optVars.length-optGroupVars(group).length), optGroupMembers(group, p).length-1);
+}
+
 // The values a swept setting takes, in order, as they are run: a list setting
 // runs the options picked, in the list's order (a range saved before picking
 // existed, with only Start and End, runs every option between them), a number runs `steps` evenly spaced
@@ -2323,31 +2351,38 @@ function optVariant(p, assets, exec, vars, vals){
     assets:assets.map(a=>Object.assign({}, a, {trigger:Object.assign({}, a.trigger||{}, {tech:Object.assign({}, (a.trigger&&a.trigger.tech)||{})})})),
     exec
   };
-  const groups={weight:[], rank:[]}, late=[];
+  const late=[];
   for(let k=0;k<vars.length;k++){
     const s=optSpec(vars[k].key, p);
     if(!s) return null;
-    if(s.group) groups[s.group].push({member:s.member, val:vals[k], slack:vars[k].slack});
-    else if(s.late) late.push([s, vals[k]]);
+    if(s.group) continue;
+    if(s.late) late.push([s, vals[k]]);
     else s.apply(v, vals[k]);
   }
   // A period goes last, so a swept amount is rescaled with it like a typed one.
   late.forEach(([s, val])=>s.apply(v, val));
-  if(groups.weight.length){
-    const ids=p.assets.map(a=>a.id);
-    const w=applyWeightGroup(p.assets.map(a=>a.weight||0), groups.weight.map(g=>({idx:ids.indexOf(g.member), val:g.val,
-      slack:(g.slack==null || g.slack==='even') ? 'even' : ids.indexOf(+g.slack)})));
+  for(const group of Object.keys(OPT_GROUPS)){
+    if(!optGroupVars(group, vars).length) continue;
+    const w=optGroupWeights(p, vars, vals, group);
     if(!w) return null;
-    v.assets.forEach(a=>{ const i=ids.indexOf(a.id); if(i>=0) a.weight=w[i]; });
-    v.weights=w;
-  }
-  if(groups.rank.length){
-    const w=applyWeightGroup(optRankBase(p), groups.rank.map(g=>({idx:g.member, val:g.val,
-      slack:(g.slack==null || g.slack==='even') ? 'even' : +g.slack})));
-    if(!w) return null;
-    v.p.rebal.rankWeights=w;
+    if(group==='weight'){ const ids=p.assets.map(a=>a.id); v.assets.forEach(a=>{ const i=ids.indexOf(a.id); if(i>=0) a.weight=w[i]; }); v.weights=w; }
+    else v.p.rebal.rankWeights=w;
   }
   return v;
+}
+// A group's weights with its swept members at `vals` (one per var, in the
+// order of `vars`), or null when the slack cannot absorb the moves. Every
+// member hands its change to the group's one slack, the first member's.
+function optGroupWeights(p, vars, vals, group){
+  const ks=vars.map((v,k)=>k).filter(k=>optGroupOfKey(vars[k].key)===group);
+  if(!ks.length) return null;
+  const sl=vars[ks[0]].slack, even=sl==null || sl==='even';
+  if(group==='weight'){
+    const ids=p.assets.map(a=>a.id);
+    return applyWeightGroup(p.assets.map(a=>a.weight||0), ks.map(k=>({idx:ids.indexOf(+vars[k].key.split(':')[1]), val:vals[k],
+      slack:even ? 'even' : ids.indexOf(+sl)})));
+  }
+  return applyWeightGroup(optRankBase(p), ks.map(k=>({idx:+vars[k].key.split(':')[1], val:vals[k], slack:even ? 'even' : +sl})));
 }
 // The figures one run is read by: the summary tile's and the advanced metrics.
 function optMetricsOf(rows, rfPx, rfRate){
@@ -2381,23 +2416,35 @@ function optRangeText(spec, vals){
   return first+' to '+spec.fmt(vals[vals.length-1]);
 }
 // A swept setting that no longer qualifies (its field went away with a method,
-// an asset or a trigger type) is dropped, and so is the later of two that clash.
+// an asset or a trigger type) is dropped, and so is the later of two that clash,
+// or a group member that would leave no other member to take up the difference.
 function pruneOptVars(){
   if(!optVars.length) return;
   const p=getActive();
   const keep=[];
+  let resynced=false;
   optVars.forEach(v=>{
     const s=optSpec(v.key, p);
     if(keep.length>=OPT_MAX_VARS || !s || (s.kind==='list' && !Array.isArray(v.pick) && !optValues(s, v).length) || optClash(v.key, keep)) return;
-    // A slack that is gone, or is itself being swept, falls back to sharing.
-    if(s.group && v.slack!=='even'){
-      const others=optVars.filter(o=>o!==v).map(o=>optSpec(o.key, p)).filter(o=>o && o.group===s.group).map(o=>o.member);
-      const exists=s.group==='weight' ? p.assets.some(a=>a.id===+v.slack) : (+v.slack>=0 && +v.slack<p.assets.length);
-      if(!exists || +v.slack===s.member || others.includes(+v.slack)) v.slack='even';
-    }
+    if(s.group && optGroupVars(s.group, keep).length>=optGroupMembers(s.group, p).length-1) return;
     keep.push(v);
   });
+  // One slack per group, the first member's. A sweep saved when each weight
+  // had its own keeps the first one's. A slack that is gone, or is itself
+  // being swept, falls back to sharing.
+  Object.keys(OPT_GROUPS).forEach(group=>{
+    const mine=optGroupVars(group, keep);
+    if(!mine.length) return;
+    const swept=mine.map(v=>optSpec(v.key, p).member);
+    let sl=mine[0].slack==null ? 'even' : mine[0].slack;
+    if(sl!=='even'){
+      const exists=group==='weight' ? p.assets.some(a=>a.id===+sl) : (+sl>=0 && +sl<p.assets.length);
+      if(!exists || swept.includes(+sl)) sl='even';
+    }
+    mine.forEach(v=>{ if(v.slack!==sl){ v.slack=sl; resynced=true; } });
+  });
   if(keep.length!==optVars.length){ optVars=keep; optChanged(); }
+  else if(resynced && persist) persist.schedule();
 }
 function optRowOf(btn){ return btn.closest('.sched-inline, .sched-wd-row, .param-row, .weight-row, .field-row'); }
 // Everything the mode shows on the form, from optVars: the gauges, the swept
@@ -2410,7 +2457,21 @@ function syncOptUi(){
   // lit when any gauge in it is swept, decided once for all of them.
   const lit=new Set();
   document.querySelectorAll('.opt-btn').forEach(b=>{
-    const key=b.dataset.opt, spec=optSpec(key, p);
+    const key=b.dataset.opt;
+    if(OPT_GROUPS[key]){
+      // A group's gauge is lit while any of its members is swept, and those
+      // members' rows are lit in the table.
+      const mine=optGroupVars(key), full=!mine.length && optVars.length>=OPT_MAX_VARS;
+      b.hidden=!optGroupMembers(key, p).length;
+      b.classList.toggle('on', !!mine.length);
+      b.classList.toggle('is-full', full);
+      b.title = mine.length ? `Optimising ${OPT_GROUPS[key].label}: `+mine.map(v=>{ const s=optSpec(v.key, p); return s ? s.label+' '+optRangeText(s, optValues(s, v)) : ''; }).join(', ')+'. Click to change.'
+              : full ? `Up to ${OPT_MAX_VARS} settings at once. Remove one to pick this.`
+              : `Add ${OPT_GROUPS[key].label} to optimisation`;
+      mine.forEach(v=>{ const s=optSpec(v.key, p), f=s && $((key==='weight'?'wt':'rw')+s.member), row=f && f.closest('.weight-row'); if(row) lit.add(row); });
+      return;
+    }
+    const spec=optSpec(key, p);
     const vr=optVars.find(v=>v.key===key);
     b.hidden=!spec;
     const clash=!vr && optClash(key, optVars);
@@ -2470,6 +2531,9 @@ function optFieldText(spec, v){
   return SharedFmt.formatThousands(String(v), {maxDecimals:spec.int?0:(spec.dp==null?2:spec.dp)});
 }
 function openOptModal(key, from){
+  // A weight opens its group's editor: the members and the slack they share.
+  const group=optGroupOfKey(key);
+  if(group) return openOptGroupModal(group, from);
   const p=getActive(), spec=optSpec(key, p);
   if(!p || !spec) return;
   let vr=optVars.find(v=>v.key===key);
@@ -2484,6 +2548,8 @@ function openOptModal(key, from){
   const listy=spec.kind==='list';
   $('optNumFields').hidden=listy;
   $('optListFields').hidden=!listy;
+  $('optGroupFields').hidden=true;
+  $('optSlackRow').hidden=true;
   if(listy){
     // An old Start..End range opens as the options it ran, picked.
     if(!Array.isArray(vr.pick)) vr.pick=optValues(spec, vr);
@@ -2505,23 +2571,73 @@ function openOptModal(key, from){
     });
     $('optSteps').value=String(vr.steps);
   }
-  const slackRow=$('optSlackRow');
-  slackRow.hidden=!spec.group;
-  if(spec.group){
-    const swept=optVars.filter(v=>v!==vr).map(v=>optSpec(v.key, p)).filter(s=>s && s.group===spec.group).map(s=>s.member);
-    const members=spec.group==='weight'
-      ? p.assets.map(a=>({v:a.id, l:a.name}))
-      : p.assets.map((_,i)=>({v:i, l:'Rank '+(i+1)}));
-    const opts=[{v:'even', l:'All the others, in equal shares'}].concat(members.filter(m=>m.v!==spec.member && !swept.includes(m.v)));
-    $('optSlack').innerHTML=opts.map(o=>`<option value="${escapeHtml(String(o.v))}">${escapeHtml(o.l)}</option>`).join('');
-    $('optSlack').value=String(vr.slack==null ? 'even' : vr.slack);
-    if($('optSlack').value!==String(vr.slack)) { $('optSlack').value='even'; vr.slack='even'; }
-  }
   renderOptModalNote();
+  showOptModal(listy ? $('optPickSel') : $('optStart'));
+}
+function showOptModal(first){
   const ov=$('optModal'); ov.hidden=false;
   document.body.classList.add('opt-modal-open');
-  const first=listy ? $('optPickSel') : $('optStart');
-  setTimeout(()=>{ try{ first.focus(); if(first.select) first.select(); }catch(_){} }, 0);
+  if(first) setTimeout(()=>{ try{ first.focus(); if(first.select) first.select(); }catch(_){} }, 0);
+}
+// The weights editor: a switch per member, the range of each one swept, and
+// the one slack they share. Opened on a group with nothing swept, it puts the
+// first member in, as any other gauge adds its setting.
+function openOptGroupModal(group, from){
+  const p=getActive(), members=optGroupMembers(group, p);
+  if(!p || !members.length) return;
+  if(!optGroupVars(group).length){
+    if(optGroupRoom(group, p)<1) return;
+    optAddMember(members[0].key, p);
+  }
+  optEditKey=group; optEditReturn=from||null;
+  $('optModalTitle').textContent='Optimise '+OPT_GROUPS[group].label;
+  $('optNumFields').hidden=true;
+  $('optListFields').hidden=true;
+  $('optGroupFields').hidden=false;
+  renderOptGroupFields();
+  renderOptModalNote();
+  showOptModal($('optMembers').querySelector('input[data-opt-f="start"]'));
+}
+function optAddMember(key, p){
+  const group=optGroupOfKey(key), spec=optSpec(key, p);
+  if(!group || !spec || optVars.some(v=>v.key===key)) return;
+  optVars.push(Object.assign({key}, optDefaultRange(spec, p), {slack:optGroupSlack(group)}));
+  syncOptUi(); optChanged();
+}
+function renderOptGroupFields(){
+  const group=optEditKey, p=getActive();
+  if(!OPT_GROUPS[group] || !p) return;
+  const members=optGroupMembers(group, p), mine=optGroupVars(group), room=optGroupRoom(group, p);
+  const others=optVars.filter(v=>!mine.includes(v)).map(v=>optSpec(v.key, p)).filter(Boolean);
+  // Why a switch that is off cannot be turned on.
+  const why=mine.length>=members.length-1 ? `One ${OPT_GROUPS[group].noun} has to stay out of the sweep to take up the difference.`
+    : others.length ? `Up to ${OPT_MAX_VARS} settings at once, and ${others[0].label} is one. Remove it to sweep two weights.`
+    : `Up to ${OPT_MAX_VARS} settings at once. Turn one off to sweep this.`;
+  $('optMembers').innerHTML=members.map(m=>{
+    const vr=mine.find(v=>v.key===m.key), spec=optSpec(m.key, p), off=!vr && mine.length>=room;
+    const a=group==='weight' ? p.assets.find(x=>x.id===m.m) : null;
+    const name=escapeHtml(m.name), key=escapeHtml(m.key);
+    const head=`<label class="opt-member-head"${off ? ` title="${escapeHtml(why)}"` : ''}>
+        <span class="opt-member-name">${a ? `<span class="color-dot" style="background:${assetColor(a)}"></span>` : ''}<span data-no-abbr>${name}</span></span>
+        <span class="opt-member-now">now ${escapeHtml(spec.fmt(spec.get(p)))}</span>
+        <span class="toggle-switch"><input type="checkbox" data-opt-member="${key}"${vr ? ' checked' : ''}${off ? ' disabled' : ''} aria-label="Sweep ${name}"/><span class="toggle-track"><span class="toggle-knob"></span></span></span>
+      </label>`;
+    if(!vr) return `<div class="opt-member">${head}</div>`;
+    const suf=escapeHtml(optUnitAffix(spec).suf);
+    const end=(f, label)=>`<div class="field-row"><div class="field-label">${label}</div><div class="affix-wrap"><input class="affix-input has-suffix" type="text" inputmode="decimal" data-opt-member="${key}" data-opt-f="${f}" data-min="${spec.min}" data-max="${spec.max}"${spec.int ? ' step="1"' : ''} value="${escapeHtml(optFieldText(spec, vr[f]))}" aria-label="${name} ${label.toLowerCase()}"/><span class="suffix">${suf}</span></div></div>`;
+    return `<div class="opt-member is-on">${head}
+      <div class="opt-range-row opt-member-range">${end('start', 'Start')}${end('end', 'End')}
+        <div class="field-row"><div class="field-label">Steps</div><div class="affix-wrap"><input class="affix-input has-suffix" type="number" inputmode="numeric" min="2" max="${OPT_MAX_STEPS}" step="1" data-opt-member="${key}" data-opt-f="steps" value="${vr.steps}" aria-label="${name} steps"/><span class="suffix">values</span></div></div>
+      </div></div>`;
+  }).join('');
+  const slackRow=$('optSlackRow');
+  slackRow.hidden=!mine.length;
+  if(mine.length){
+    const swept=mine.map(v=>optSpec(v.key, p).member);
+    const opts=[{v:'even', l:'All the others, in equal shares'}].concat(members.filter(m=>!swept.includes(m.m)).map(m=>({v:m.m, l:m.name})));
+    $('optSlack').innerHTML=opts.map(o=>`<option value="${escapeHtml(String(o.v))}">${escapeHtml(o.l)}</option>`).join('');
+    $('optSlack').value=String(optGroupSlack(group));
+  }
 }
 function closeOptModal(){
   const ov=$('optModal'); if(!ov || ov.hidden) return;
@@ -2532,9 +2648,10 @@ function closeOptModal(){
   if(again) try{ again.focus(); }catch(_){}
 }
 // What the range comes to, under the fields: how many values run and which, and
-// for a weight how many of them the slack cannot absorb.
+// for weights how many of their mixes the slack cannot absorb.
 function renderOptModalNote(){
   const el=$('optPreview'); if(!el || !optEditKey) return;
+  if(OPT_GROUPS[optEditKey]) return renderOptGroupNote(el, optEditKey);
   const p=getActive(), spec=optSpec(optEditKey, p), vr=optVars.find(v=>v.key===optEditKey);
   if(!spec || !vr){ el.textContent=''; return; }
   $('optModalSub').innerHTML='<span data-no-abbr>'+escapeHtml(p.name)+'</span>, now '+escapeHtml(spec.fmt(spec.get(p)))+'.'+
@@ -2542,23 +2659,44 @@ function renderOptModalNote(){
   const vals=optValues(spec, vr);
   let html;
   if(vals.length<2) html='<span class="bad">'+(spec.kind==='list' ? 'Pick at least two values.' : 'Start and End give one value. Widen the range.')+'</span>';
-  else {
-    const shown=vals.length<=8 ? vals.map(v=>spec.fmt(v)).join(', ') : vals.slice(0,3).map(v=>spec.fmt(v)).join(', ')+' … '+vals.slice(-2).map(v=>spec.fmt(v)).join(', ');
-    html=vals.length+' values: '+escapeHtml(shown)+'.';
-    if(spec.group){
-      const others=optVars.filter(v=>v!==vr);
-      let bad=0;
-      vals.forEach(val=>{
-        const v=optVariant(p, p.assets, currentExecTiming, others.concat([vr]),
-          others.map(o=>{ const s=optSpec(o.key,p); return s ? s.get(p) : 0; }).concat([val]));
-        if(!v) bad++;
-      });
-      if(bad) html+=' <span class="bad">'+bad+' of them cannot add up to 100% and will be skipped.</span>';
-    }
-  }
+  else html=optValuesText(spec, vals);
+  el.innerHTML=html+optRunCapNote(getActive());
+}
+function optValuesText(spec, vals){
+  const shown=vals.length<=8 ? vals.map(v=>spec.fmt(v)).join(', ') : vals.slice(0,3).map(v=>spec.fmt(v)).join(', ')+' … '+vals.slice(-2).map(v=>spec.fmt(v)).join(', ');
+  return vals.length+' values: '+escapeHtml(shown)+'.';
+}
+function optRunCapNote(p){
   const plan=optPlan(p);
-  if(plan.runs>OPT_MAX_RUNS) html+=' <span class="bad">'+plan.runs+' runs in all, over the '+OPT_MAX_RUNS+' a run allows: lower the steps.</span>';
-  el.innerHTML=html;
+  return plan.runs>OPT_MAX_RUNS ? ' <span class="bad">'+plan.runs+' runs in all, over the '+OPT_MAX_RUNS+' a run allows: lower the steps.</span>' : '';
+}
+// How many mixes a group's swept members make, and how many of them the slack
+// cannot absorb: those are skipped, never forced.
+function optGroupCount(p, group){
+  const mine=optGroupVars(group), vals=mine.map(v=>{ const s=optSpec(v.key, p); return s ? optValues(s, v) : []; });
+  let total=0, bad=0;
+  const walk=(k, acc)=>{
+    if(k===mine.length){ total++; if(!optGroupWeights(p, mine, acc, group)) bad++; return; }
+    vals[k].forEach(x=>walk(k+1, acc.concat([x])));
+  };
+  if(mine.length) walk(0, []);
+  return {mine, vals, total, bad};
+}
+function renderOptGroupNote(el, group){
+  const p=getActive();
+  $('optModalSub').innerHTML='<span data-no-abbr>'+escapeHtml(p.name)+'</span>. The weights have to add up to 100%, so every weight you sweep hands its change to the one slack below.';
+  const c=optGroupCount(p, group), specs=c.mine.map(v=>optSpec(v.key, p));
+  if(!c.mine.length){ el.textContent='Turn on '+(group==='weight' ? 'an asset' : 'a rank')+' to sweep its weight.'; return; }
+  const short=c.vals.findIndex(a=>a.length<2);
+  let html;
+  if(short>=0) html='<span class="bad">'+escapeHtml(specs[short].label)+': Start and End give one value. Widen the range.</span>';
+  else {
+    html=c.mine.length===1 ? optValuesText(specs[0], c.vals[0])
+      : c.total+' mixes: '+specs.map((s,k)=>escapeHtml(s.label+' '+optRangeText(s, c.vals[k]))+' ('+c.vals[k].length+')').join(' × ')+'.';
+    if(c.bad===c.total) html+=' <span class="bad">None of them can add up to 100%. Widen a range or pick another slack.</span>';
+    else if(c.bad) html+=' <span class="bad">'+c.bad+' of them cannot add up to 100% and will be skipped.</span>';
+  }
+  el.innerHTML=html+optRunCapNote(p);
 }
 // The top-up period rescales the amount per top-up so each year's money stays
 // the same (see optSpec). Shown as the amounts themselves, from the current input.
@@ -2605,13 +2743,43 @@ $('optPickSel').addEventListener('change',e=>{
   optModalEdited();
 });
 $('optSlack').addEventListener('change',e=>{
-  const vr=optEditVar(); if(!vr) return;
-  vr.slack=e.target.value==='even' ? 'even' : +e.target.value;
+  const group=OPT_GROUPS[optEditKey] ? optEditKey : null; if(!group) return;
+  const sl=e.target.value==='even' ? 'even' : +e.target.value;
+  optGroupVars(group).forEach(v=>{ v.slack=sl; });
   optModalEdited();
+});
+// The members' switches and ranges are redrawn as members come and go, so they
+// are listened to on their box.
+$('optMembers').addEventListener('change',e=>{
+  const t=e.target, key=t && t.dataset.optMember;
+  if(!key || t.type!=='checkbox') return;
+  if(t.checked) optAddMember(key, getActive());
+  else { optVars=optVars.filter(v=>v.key!==key); syncOptUi(); optChanged(); }
+  renderOptGroupFields(); renderOptModalNote();
+  const again=$('optMembers').querySelector(`input[type="checkbox"][data-opt-member="${key}"]`);
+  if(again) try{ again.focus(); }catch(_){}
+});
+$('optMembers').addEventListener('input',e=>{
+  const t=e.target, f=t && t.dataset.optF; if(!f) return;
+  const vr=optVars.find(v=>v.key===t.dataset.optMember), spec=vr && optSpec(vr.key, getActive()); if(!spec) return;
+  if(f==='steps'){
+    const n=parseInt(t.value,10); if(!isFinite(n)) return;
+    vr.steps=optClamp(n, 2, OPT_MAX_STEPS);
+  } else {
+    const n=SharedFmt.parseFormatted(t.value);
+    if(!isFinite(n) || t.value.trim()==='') return;
+    vr[f]=optClamp(n, spec.min, spec.max);
+  }
+  optModalEdited();
+});
+$('optMembers').addEventListener('focusout',e=>{
+  const t=e.target, f=t && t.dataset.optF; if(f!=='start' && f!=='end') return;
+  const vr=optVars.find(v=>v.key===t.dataset.optMember), spec=vr && optSpec(vr.key, getActive()); if(!spec) return;
+  t.value=optFieldText(spec, vr[f]);
 });
 $('optRemoveBtn').addEventListener('click',()=>{
   const key=optEditKey;
-  optVars=optVars.filter(v=>v.key!==key);
+  optVars=optVars.filter(v=>v.key!==key && optGroupOfKey(v.key)!==key);
   closeOptModal();
   syncOptUi(); optChanged();
 });
@@ -2779,29 +2947,65 @@ function setBoardMode(){
   $('detailPfLabel').style.display = on ? 'none' : '';
   $('detailPfSelect').style.display = on ? 'none' : '';
   $('optPickWrap').hidden = !on;
-  if(!on){ hideStatus($('optPickStatus')); $('valueCanvasWrap').style.display=''; $('optSurface').style.display='none'; purgeSurface(); }
+  if(!on){ $('valueCanvasWrap').style.display=''; $('optSurface').style.display='none'; purgeSurface(); }
+}
+// The pickers beside the breakdown: one per swept setting, except that a
+// group's weights share one, which lists each mix that ran with every weight in
+// it. Only what ran is offered (a mix the slack could not absorb never did),
+// so whatever is picked is a run the breakdown can show. A picker's options
+// carry the value indices of the settings it covers (data-dims), in order.
+function optPickers(R){
+  const out=[];
+  R.specs.forEach((s,k)=>{
+    const g=s.group && out.find(x=>x.group===s.group);
+    if(g) g.dims.push(k); else out.push({group:s.group||null, dims:[k]});
+  });
+  const n0=R.values[0].length;
+  out.forEach(pk=>{
+    const seen=new Set();
+    pk.opts=[];
+    R.grid.forEach((g,idx)=>{
+      if(!g || !g.m) return;
+      const at=[idx%n0, Math.floor(idx/n0)], ix=pk.dims.map(k=>at[k]), id=ix.join(',');
+      if(!seen.has(id)){ seen.add(id); pk.opts.push(ix); }
+    });
+    pk.opts.sort((a,b)=>a[0]-b[0] || (a[1]||0)-(b[1]||0));
+  });
+  return out;
+}
+// "Equities 40% · Bonds 10% · Gold 50%": a group's weights at one tested pick.
+function optMixText(R, group, ix, dims){
+  const vals=R.specs.map((_,k)=>R.values[k][dims.includes(k) ? ix[dims.indexOf(k)] : 0]);
+  const w=optGroupWeights(R.P0, R.vars, vals, group);
+  if(!w) return '';
+  const pct=x=>String(+(+x).toFixed(2))+'%';
+  return group==='weight' ? R.P0.assets.map((a,i)=>a.name+' '+pct(w[i])).join(' · ') : w.map((x,i)=>'Rank '+(i+1)+' '+pct(x)).join(' · ');
 }
 function renderOptPickers(){
   const R=optResult, wrap=$('optPickWrap'); if(!R || !wrap) return;
-  wrap.innerHTML=R.specs.map((s,k)=>`<label><span data-no-abbr>${escapeHtml(s.label)}</span><select class="sel-input pf-view-select" id="optPick${k}" title="Which tested value the breakdown shows">${
-    R.values[k].map((v,i)=>`<option value="${i}">${escapeHtml(s.fmt(v))}</option>`).join('')}</select></label>`).join('');
-  R.specs.forEach((_,k)=>{
-    const sel=$('optPick'+k);
-    sel.value=String(optPick[k]||0);
-    sel.addEventListener('change',()=>{ optPick[k]=+sel.value||0; showOptDetail(); if(persist) persist.schedule(); });
+  const pickers=optPickers(R);
+  wrap.innerHTML=pickers.map((pk,n)=>{
+    const label=pk.group ? OPT_GROUPS[pk.group].label : R.specs[pk.dims[0]].label;
+    const text=ix=>pk.group ? optMixText(R, pk.group, ix, pk.dims) : R.specs[pk.dims[0]].fmt(R.values[pk.dims[0]][ix[0]]);
+    return `<label><span data-no-abbr>${escapeHtml(label)}</span><select class="sel-input pf-view-select${pk.group ? ' opt-mix-select' : ''}" id="optPick${n}" data-dims="${pk.dims.join(',')}" title="Which tested ${pk.group ? 'mix' : 'value'} the breakdown shows">${
+      pk.opts.map(ix=>`<option value="${ix.join(',')}">${escapeHtml(text(ix))}</option>`).join('')}</select></label>`;
+  }).join('');
+  pickers.forEach((pk,n)=>{
+    const sel=$('optPick'+n);
+    const read=()=>{ const ix=sel.value.split(',').map(Number); pk.dims.forEach((k,x)=>{ optPick[k]=ix[x]||0; }); };
+    sel.value=pk.dims.map(k=>optPick[k]||0).join(',');
+    if(sel.selectedIndex<0 && sel.options.length){ sel.selectedIndex=0; read(); }
+    sel.addEventListener('change',()=>{ read(); showOptDetail(); if(persist) persist.schedule(); });
   });
 }
-// Run the picked combination again, in full, for the Detailed Breakdown.
+// Run the picked combination again, in full, for the Detailed Breakdown. The
+// pickers only offer runs that happened; a pick that is not one (nothing ran)
+// shows the reader's own setting.
 function showOptDetail(){
   const R=optResult; if(!R) return;
   const vals=R.specs.map((_,k)=>R.values[k][optPick[k]||0]);
   let v=optVariant(R.P0, R.A0, R.exec, R.vars, vals), what=optSettingText(R, vals);
-  // A pick the weights cannot reach was never run, so the breakdown says so and
-  // shows the reader's own setting rather than whatever was there before.
-  if(!v){
-    v={p:R.P0, assets:R.A0, exec:R.exec}; what='your current setting';
-    showStatus($('optPickStatus'),'Those values cannot add up to 100%, so that run was skipped. The breakdown shows your current setting.','warn');
-  } else hideStatus($('optPickStatus'));
+  if(!v){ v={p:R.P0, assets:R.A0, exec:R.exec}; what='your current setting'; }
   const rows=simulatePortfolio(v.p, v.assets, R.common, R.rfPx, v.exec);
   simResults=[{ id:R.pid, name:R.name+' · '+what, colorHex:R.colorHex, colorSlot:R.colorSlot, rows, rfPx:R.rfPx,
     rfRate:(v.p.rf.mode==='ticker'?0:(v.p.rf.rate||0)), method:v.p.rebal.method,
@@ -3035,12 +3239,12 @@ function optAssumptionLines(){
   const R=optResult; if(!R) return [];
   const nm=t=>'<span data-no-abbr>'+escapeHtml(t)+'</span>';
   const parts=R.specs.map((s,k)=>{
-    const vals=R.values[k], v=R.vars[k];
-    let t=nm(s.label)+' from '+escapeHtml(optRangeText(s, vals));
-    if(s.group){
-      // Who takes up the difference: the named slack, else every member of the
-      // group that is not swept (named too when that is just one).
-      const sl=v.slack, swept=R.specs.filter(o=>o.group===s.group).map(o=>o.member);
+    let t=nm(s.label)+' from '+escapeHtml(optRangeText(s, R.values[k]));
+    if(s.group && !R.specs.some((o,j)=>j>k && o.group===s.group)){
+      // Who takes up the difference, said once for the group: the named slack,
+      // else every member of the group that is not swept (named too when that
+      // is just one).
+      const sl=R.vars[R.specs.findIndex(o=>o.group===s.group)].slack, swept=R.specs.filter(o=>o.group===s.group).map(o=>o.member);
       const all=s.group==='weight' ? R.P0.assets.map(a=>({m:a.id, n:a.name})) : R.P0.assets.map((_,i)=>({m:i, n:'Rank '+(i+1)}));
       const named=(sl==null || sl==='even') ? null : all.find(x=>x.m===+sl);
       const pool=named ? [named] : all.filter(x=>!swept.includes(x.m));
@@ -3084,6 +3288,10 @@ function simBlockReason(){
       if(plan.values[k].length<2) return sp.kind==='list' ? `${sp.label}: pick at least two values.` : `${sp.label}: Start and End give one value. Widen the range.`;
     }
     if(plan.runs>OPT_MAX_RUNS) return `${plan.runs} runs is more than the ${OPT_MAX_RUNS} an optimisation allows. Lower the steps.`;
+    for(const group of Object.keys(OPT_GROUPS)){
+      const c=optGroupCount(p, group);
+      if(c.total && c.bad===c.total) return `None of the ${OPT_GROUPS[group].label} mixes can add up to 100%. Widen a range or pick another slack.`;
+    }
     return '';
   }
   if(!portfolios.length) return 'Add at least one portfolio to simulate.';

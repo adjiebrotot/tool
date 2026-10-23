@@ -430,7 +430,7 @@ const PAGES = [
     async prep(page) {
       await dcaPrep('portfolios', 'rebal-freq')(page);
       await page.click('.sub-tab[data-sub="rebal"]');
-      await page.click('.opt-btn[data-opt="weight:1"]');
+      await page.click('.opt-btn[data-opt="weight"]');
       await page.click('#optDoneBtn');
       await page.click('#simBtn');
       await page.waitForFunction(() => document.getElementById('valueTitle').textContent.startsWith('Optimisation') && !!window.Chart.getChart(document.getElementById('valueCanvas')), null, { timeout: 60000 });
@@ -443,8 +443,9 @@ const PAGES = [
     async prep(page) {
       await dcaPrep('portfolios', 'rebal-freq')(page);
       await page.click('.sub-tab[data-sub="rebal"]');
-      await page.click('.opt-btn[data-opt="weight:1"]');
-      await page.fill('#optSteps', '5'); await page.dispatchEvent('#optSteps', 'input');
+      await page.click('.opt-btn[data-opt="weight"]');
+      const steps = '#optMembers input[data-opt-f="steps"]';
+      await page.fill(steps, '5'); await page.dispatchEvent(steps, 'input');
       await page.click('#optDoneBtn');
       await page.click('.opt-btn[data-opt="rebal.buyFee"]');
       await page.fill('#optSteps', '4'); await page.dispatchEvent('#optSteps', 'input');

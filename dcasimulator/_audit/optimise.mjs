@@ -17,6 +17,10 @@
 
    Weights are swept with a slack; the weights the form is filled with come from
    an independently written split (sorted greedy, not the page's water-fill).
+   The target weights (and the rank weights) are one group: one gauge on the
+   table's heading, up to two members, one slack they all share (a file that
+   gave each its own runs on the first one's), and one picker beside the
+   breakdown that offers only the mixes that ran.
    Then the contracts around it: which fields offer a gauge under each method
    (and which never do), a setting dropped when its field goes away, a period
    and its day setting kept apart, the two-setting limit, the run cap, the
@@ -268,29 +272,50 @@ async function setByForm(page, key, v, sc, ctx){
   }
   throw new Error('no form driver for ' + key);
 }
+// A combination's weights, worked out here: each group's swept members move and
+// the group's one slack (its first member's) takes the difference. Null when
+// the slack cannot absorb it, so the combination cannot run.
+function weightsAt(sc, vars, vals){
+  const p = sc.portfolios[0], ids = p.assets.map(a => a.id), out = {};
+  for (const g of ['weight', 'rank']){
+    const ks = vars.map((v, k) => k).filter(k => vars[k].key.startsWith(g + ':'));
+    if (!ks.length) continue;
+    const sl = vars[ks[0]].slack, even = sl == null || sl === 'even';
+    const moves = ks.map(k => { const m = +vars[k].key.split(':')[1];
+      return g === 'weight' ? { idx: ids.indexOf(m), val: vals[k], slack: even ? 'even' : ids.indexOf(+sl) } : { idx: m, val: vals[k], slack: even ? 'even' : +sl }; });
+    const base = g === 'weight' ? p.assets.map(a => a.weight) : (p.rebal.rankWeights.length ? p.rebal.rankWeights.slice() : p.assets.map(() => 100 / p.assets.length));
+    const w = splitWeights(base, moves);
+    if (!w) return null;
+    out[g] = w;
+  }
+  return out;
+}
 // Weights are a group: the form gets every member, the split worked out here.
 async function setWeightsByForm(page, sc, vars, vals){
-  const p = sc.portfolios[0];
-  const wMoves = [], rMoves = [];
-  vars.forEach((v, k) => {
-    let m;
-    if ((m = /^weight:(\d+)$/.exec(v.key))){ const ids = p.assets.map(a => a.id); wMoves.push({ idx: ids.indexOf(+m[1]), val: vals[k], slack: v.slack == null || v.slack === 'even' ? 'even' : ids.indexOf(+v.slack) }); }
-    if ((m = /^rank:(\d+)$/.exec(v.key))) rMoves.push({ idx: +m[1], val: vals[k], slack: v.slack == null || v.slack === 'even' ? 'even' : +v.slack });
-  });
-  if (wMoves.length){
-    const w = splitWeights(p.assets.map(a => a.weight), wMoves);
-    if (!w) return false;
-    await sub(page, 'rebal');
-    for (let i = 0; i < p.assets.length; i++) await page.fill('#wt' + p.assets[i].id, String(w[i]));
-  }
-  if (rMoves.length){
-    const base = p.rebal.rankWeights.length ? p.rebal.rankWeights.slice() : p.assets.map(() => 100 / p.assets.length);
-    const w = splitWeights(base, rMoves);
-    if (!w) return false;
-    await sub(page, 'rebal');
-    for (let i = 0; i < w.length; i++) await page.fill('#rw' + i, String(w[i]));
-  }
+  const p = sc.portfolios[0], w = weightsAt(sc, vars, vals);
+  if (!w) return false;
+  await sub(page, 'rebal');
+  if (w.weight) for (let i = 0; i < p.assets.length; i++) await page.fill('#wt' + p.assets[i].id, String(w.weight[i]));
+  if (w.rank) for (let i = 0; i < w.rank.length; i++) await page.fill('#rw' + i, String(w.rank[i]));
   return true;
+}
+// Pick one tested combination beside the breakdown, as a reader would: each
+// picker covers the settings its data-dims names. False when a picker does not
+// offer it (it never ran).
+async function pickRun(page, pk){
+  const sels = await page.evaluate(pk => [...document.querySelectorAll('#optPickWrap select')].map(s => {
+    const v = s.dataset.dims.split(',').map(k => pk[+k]).join(',');
+    return { id: s.id, v, has: [...s.options].some(o => o.value === v) };
+  }), pk);
+  if (!sels.every(x => x.has)) return false;
+  for (const x of sels) await page.selectOption('#' + x.id, { value: x.v });
+  return true;
+}
+
+// Type into one swept member's field in the weights editor.
+async function memberSet(page, key, f, v){
+  const sel = `#optMembers input[data-opt-member="${key}"][data-opt-f="${f}"]`;
+  await page.fill(sel, String(v)); await page.dispatchEvent(sel, 'input');
 }
 
 /* ── one case: a sweep, checked value by value against the form ── */
@@ -325,8 +350,17 @@ async function runCaseInner(c){
   if (vars.length === 2) await page.waitForFunction(() => { const d = document.getElementById('optSurface'); return d && d.data && d.data.length; }, null, { timeout: 30000 });
   ok(await page.evaluate(() => document.getElementById('valueTitle').textContent.startsWith('Optimisation')), c.name + ': opens and runs in optimise mode');
   const vals = vars.map(v => valuesOf(v));
-  const pickCounts = await page.evaluate(() => [...document.querySelectorAll('#optPickWrap select')].map(s => s.options.length));
-  ok(JSON.stringify(pickCounts) === JSON.stringify(vals.map(a => a.length)), c.name + ': the sweep runs the values its range names', `${pickCounts} vs ${vals.map(a => a.length)}`);
+  // The pickers: one per setting, a weight group's members sharing one, each
+  // offering exactly the value tuples that ran.
+  const groupOf = k => (/^(weight|rank):/.exec(vars[k].key) || [])[1] || null;
+  const wantDims = [];
+  vars.forEach((v, k) => { const d = groupOf(k) && wantDims.find(x => groupOf(x[0]) === groupOf(k)); if (d) d.push(k); else wantDims.push([k]); });
+  const combos = vars.length === 1 ? vals[0].map((_, i) => [i]) : vals[0].flatMap((_, i) => vals[1].map((_, j) => [i, j]));
+  const ran = combos.filter(pk => weightsAt(sc, vars, pk.map((i, k) => vals[k][i])));
+  const want = wantDims.map(dims => [...new Set(ran.map(pk => dims.map(k => pk[k]).join(',')))].sort());
+  const pickers = await page.evaluate(() => [...document.querySelectorAll('#optPickWrap select')].map(s => ({ dims: s.dataset.dims.split(',').map(Number), opts: [...s.options].map(o => o.value).sort() })));
+  ok(JSON.stringify(pickers.map(x => x.dims)) === JSON.stringify(wantDims) && JSON.stringify(pickers.map(x => x.opts)) === JSON.stringify(want),
+    c.name + ': the pickers offer exactly the runs that happened, a weight group in one', `${JSON.stringify(pickers)} vs ${JSON.stringify(wantDims)} ${JSON.stringify(want)}`);
   const sweep = await readSweep(page);
   const n0 = vals[0].length;
   const at = (k, i, j) => sweep.two ? sweep[k][j][i] : sweep[k][i];
@@ -336,11 +370,7 @@ async function runCaseInner(c){
   if (vars.length === 1) sample(n0).forEach(i => picks.push([i]));
   else { const s0 = sample(n0), s1 = sample(vals[1].length); picks.push([s0[0], s1[s1.length - 1]], [s0[s0.length - 1], s1[0]], [s0[Math.floor(s0.length / 2)], s1[Math.floor(s1.length / 2)]]); }
   const optCsv = [];
-  for (const pk of picks){
-    for (let k = 0; k < pk.length; k++) await page.selectOption('#optPick' + k, { index: pk[k] });
-    const skipped = await page.evaluate(() => document.getElementById('optPickStatus').textContent);
-    optCsv.push(skipped ? null : await csvNow(page));
-  }
+  for (const pk of picks) optCsv.push(await pickRun(page, pk) ? await csvNow(page) : null);
   const optErrors = opt.errors.slice();
   await closeAll(opt);
   for (let n = 0; n < picks.length; n++){
@@ -356,7 +386,7 @@ async function runCaseInner(c){
     for (const k of order) if (!/^(weight|rank):/.test(vars[k].key)) await setByForm(sp, vars[k].key, v[k], sc);
     const finalOpt = at('final', pk[0], pk[1]);
     if (!feasible){
-      ok(finalOpt == null && optCsv[n] == null, `${c.name}: ${label} cannot add up to 100%, and the sweep skipped it`);
+      ok(finalOpt == null && optCsv[n] == null, `${c.name}: ${label} cannot add up to 100%, so the sweep skipped it and the picker does not offer it`);
       await closeAll(sim); continue;
     }
     await sp.click('#simBtn');
@@ -473,6 +503,9 @@ const CASES = [
   { name: 'Two: amount x top-up period',  scenario: S.cw, vars: [V('topup.amount', 500, 1500, 3), V('topupSched.period', 'monthly', 'quarterly')] },
   { name: 'Two: weight x RSI period',     scenario: S.rule, vars: [V('weight:1', 20, 80, 3, 'even'), V('trig:3:rsiPeriod', 7, 21, 3)] },
   { name: 'Two: two weights, Gold as the only slack', scenario: S.cw, vars: [V('weight:1', 40, 70, 3, 'even'), V('weight:2', 10, 40, 3, 'even')] },
+  { name: 'Two: two weights, Bonds named as their slack (some skipped)', scenario: S.cw, vars: [V('weight:1', 40, 70, 3, 2), V('weight:3', 0, 40, 3, 2)] },
+  { name: 'Two: two weights saved with two slacks run on the first one\'s', scenario: S.cw, vars: [V('weight:1', 40, 70, 3, 3), V('weight:2', 0, 40, 3, 'even')] },
+  { name: 'Two: two rank weights, one slack', scenario: S.mom, vars: [V('rank:0', 30, 70, 3, 'even'), V('rank:1', 10, 40, 3, 'even')] },
   { name: 'Two: rank x lookback',         scenario: S.mom, vars: [V('rank:0', 30, 70, 3, 'even'), V('rebal.lookbackMonths', 3, 12)] },
   { name: 'Two: rebalance day x buying fee', scenario: S.cw, vars: [V('rebalSched.dom', 1, 20, 3), V('rebal.buyFee', 0, 0.5, 3)] },
 ];
@@ -571,15 +604,18 @@ async function contracts(){
     return { all, errs };
   };
   let g = await gaugesOn(S.cw);
-  ok(['weight:1', 'weight:2', 'weight:3', 'rebalSched.period', 'rebalSched.quarterStart', 'rebalSched.dom', 'topup.amount', 'topupSched.period', 'topupSched.dom', 'rf.rate', 'rebal.buyFee', 'rebal.sellFee', 'topup.yearlyIncrease'].every(k => g.all.includes(k)),
+  ok(['weight', 'rebalSched.period', 'rebalSched.quarterStart', 'rebalSched.dom', 'topup.amount', 'topupSched.period', 'topupSched.dom', 'rf.rate', 'rebal.buyFee', 'rebal.sellFee', 'topup.yearlyIncrease'].every(k => g.all.includes(k)),
     'constant weight on a schedule offers weights, fees, both schedules and the cash rate', g.all.join(' '));
+  ok(!g.all.some(k => /^weight:/.test(k)) && await (async () => { const o2 = await openOn(deep(S.cw)); await sub(o2.page, 'rebal');
+      const r = await o2.page.evaluate(() => ({ head: !!document.querySelector('#rebalWeights > .field-label .opt-btn[data-opt="weight"]'), rows: document.querySelectorAll('#weightTableWrap .opt-btn').length })); await closeAll(o2); return r.head && !r.rows; })(),
+    'the target weights offer one gauge, on their heading, and none on their rows');
   ok(!g.all.includes('execTiming') && await (async () => { const o2 = await openOn(deep(S.cw)); const none = await o2.page.evaluate(() => !document.getElementById('execTiming').closest('.field-row').querySelector('.opt-btn')); await closeAll(o2); return none; })(),
     'Trade at offers no gauge');
-  ok(!g.all.some(k => /^rank:|lookbackMonths|^trig:/.test(k)), 'constant weight offers no rank, lookback or trigger gauge');
+  ok(!g.all.some(k => /^rank$|^rank:|lookbackMonths|^trig:/.test(k)), 'constant weight offers no rank, lookback or trigger gauge');
   g = await gaugesOn(S.cwTopup);
   ok(!g.all.some(k => k.startsWith('rebalSched.')), 'Rebalance Timing at top-up offers no rebalance-schedule gauge');
   g = await gaugesOn(S.mom);
-  ok(['rank:0', 'rank:1', 'rank:2', 'rebal.lookbackMonths'].every(k => g.all.includes(k)) && !g.all.some(k => k.startsWith('weight:')), 'trend following offers rank weights and the lookback, no target weights', g.all.join(' '));
+  ok(['rank', 'rebal.lookbackMonths'].every(k => g.all.includes(k)) && !g.all.some(k => /^weight|^rank:/.test(k)), 'trend following offers rank weights (one gauge) and the lookback, no target weights', g.all.join(' '));
   g = await gaugesOn(S.rule);
   ok(['trig:1:pct', 'trig:1:from', 'trig:2:pct', 'trig:2:lookback', 'trig:2:from', 'trig:3:freq', 'trig:3:rsiPeriod', 'trig:3:rsiOversold'].every(k => g.all.includes(k)), 'rule-based offers each trigger\'s numbers, anchor and frequency', g.all.join(' '));
   ok(!g.all.includes('trig:1:lookback'), 'a calendar anchor offers no lookback gauge (it has no lookback)');
@@ -652,6 +688,54 @@ async function contracts(){
   ok(o.errors.length === 0, 'no page errors driving the mode', o.errors.join(' | '));
   await closeAll(o);
 
+  // The weights editor: one gauge, a switch per asset, ranges for the ones on,
+  // one slack for all of them.
+  o = await openOn(deep(S.cw));
+  p = o.page;
+  await sub(p, 'rebal');
+  const ed = () => p.evaluate(() => ({ open: !document.getElementById('optModal').hidden, title: document.getElementById('optModalTitle').textContent,
+    on: [...document.querySelectorAll('#optMembers input[type="checkbox"]')].map(c => c.dataset.optMember + (c.checked ? '+' : c.disabled ? 'x' : '-')).join(' '),
+    ranges: [...document.querySelectorAll('#optMembers .opt-member-range')].length, why: [...document.querySelectorAll('#optMembers .opt-member-head[title]')].map(l => l.title).join(' | '),
+    slack: [...document.getElementById('optSlack').options].map(o => o.value).join(','), selects: [...document.querySelectorAll('#optModal select')].filter(x => x.offsetParent).length,
+    prev: document.getElementById('optPreview').textContent, lit: [...document.querySelectorAll('#weightTableWrap .weight-row.opt-on .wt-label')].map(x => x.textContent).join(','),
+    gauge: document.querySelector('.opt-btn[data-opt="weight"]').classList.contains('on') }));
+  await p.click('.opt-btn[data-opt="weight"]');
+  let e1 = await ed();
+  ok(e1.open && e1.title === 'Optimise Target Weights' && e1.on === 'weight:1+ weight:2- weight:3-' && e1.ranges === 1 && e1.slack === 'even,2,3' && /^11 values: 0%/.test(e1.prev) && e1.gauge && e1.lit === 'Equities',
+    'the Target Weights gauge opens the weights editor with the first asset swept and its row lit', JSON.stringify(e1));
+  await p.click('#optMembers .opt-member:nth-child(3) .opt-member-head');
+  e1 = await ed();
+  ok(e1.on === 'weight:1+ weight:2x weight:3+' && e1.ranges === 2 && /stay out of the sweep/.test(e1.why) && e1.slack === 'even,2' && e1.selects === 1 && /^121 mixes: .* (\d+) of them cannot add up/.test(e1.prev) && e1.lit === 'Equities,Gold',
+    'two weights swept: the third stays out to take up the difference, and the two share one slack', JSON.stringify(e1));
+  await p.selectOption('#optSlack', { value: '2' });
+  await memberSet(p, 'weight:1', 'start', 40); await memberSet(p, 'weight:1', 'end', 70); await memberSet(p, 'weight:1', 'steps', 4);
+  await memberSet(p, 'weight:3', 'end', 60); await memberSet(p, 'weight:3', 'steps', 4);
+  e1 = await ed();
+  ok(/^16 mixes: Equities weight 40 to 70% \(4\) × Gold weight 0 to 60% \(4\)\. 4 of them cannot add up to 100%/.test(e1.prev), 'the editor counts the mixes and the ones the slack cannot absorb', e1.prev);
+  await p.click('#optDoneBtn');
+  await p.click('#simBtn'); await waitIdle(p);
+  await p.waitForFunction(() => { const d = document.getElementById('optSurface'); return d && d.data && d.data.length; }, null, { timeout: 30000 });
+  const pair = await p.evaluate(() => ({ pickers: [...document.querySelectorAll('#optPickWrap select')].map(s => s.options.length), assum: document.getElementById('assumptions').innerText }));
+  ok(pair.pickers.join() === '12' && /Equities weight from 40 to 70% and Gold weight from 0 to 60%, Bonds taking up the difference\./.test(pair.assum) && (pair.assum.match(/taking up the difference|sharing the difference/g) || []).length === 1,
+    'two weights run as one picker of the 12 mixes that ran, and What this assumes names their one slack once', JSON.stringify(pair).slice(0, 400));
+  const [dlw] = await Promise.all([p.waitForEvent('download'), p.evaluate(() => document.querySelector('.quick-start-row .scenario-io-btn[aria-label*="save" i]').click())]);
+  const fw = JSON.parse(readFileSync(await dlw.path(), 'utf8')).optimise;
+  ok(fw.vars.map(v => v.key + ':' + v.slack).join(' ') === 'weight:1:2 weight:3:2', 'the file carries the members as before, each with the one slack', JSON.stringify(fw.vars));
+  await tab(p, 'portfolios'); await sub(p, 'rebal');
+  await p.click('.opt-btn[data-opt="weight"]');
+  await p.click('#optMembers .opt-member:nth-child(3) .opt-member-head');
+  e1 = await ed();
+  ok(e1.on === 'weight:1+ weight:2- weight:3-' && e1.slack === 'even,2,3', 'turning a weight off frees the others again', JSON.stringify(e1));
+  await p.click('#optRemoveBtn');
+  ok(await p.evaluate(() => document.getElementById('simBtn').textContent) === '▶ Simulate', 'the trash takes the whole group out of the sweep');
+  await sub(p, 'rebal');
+  await p.click('.opt-btn[data-opt="rebal.buyFee"]'); await p.click('#optDoneBtn');
+  await p.click('.opt-btn[data-opt="weight"]');
+  e1 = await ed();
+  ok(e1.on === 'weight:1+ weight:2x weight:3x' && /Buying fee/.test(e1.why), 'with another setting swept, one weight at most, and the switches say why', JSON.stringify(e1));
+  ok(o.errors.length === 0, 'no page errors in the weights editor', o.errors.join(' | '));
+  await closeAll(o);
+
   // Pruning: a swept setting whose field goes away is dropped, never kept stale.
   o = await openOn(Object.assign(deep(S.cw), { optimise: { vars: [V('weight:1', 0, 100, 3, 'even')], metric: 'roi' } }));
   p = o.page;
@@ -714,9 +798,16 @@ async function contracts(){
   ok(/1 combination was skipped|skipped because the weights could not add up/.test(v.verdict), 'the verdict says how many runs were skipped', v.verdict);
   ok(v.tiles.join('|') === 'Best ROI|Your current setting|Worst ROI', 'the tiles are best, your setting and worst', v.tiles.join('|'));
   ok(/Gold taking up the difference/.test(v.assum) && /not a forecast/.test(v.assum), 'What this assumes names the slack and the caveat', v.assum.slice(0, 300));
-  await p.selectOption('#optPick0', { index: 3 });
-  const imp = await p.evaluate(() => document.getElementById('optPickStatus').textContent);
-  ok(/cannot add up to 100%/.test(imp), 'picking a skipped value says why there is no breakdown', imp);
+  const mix = await p.evaluate(() => ({ pickers: [...document.querySelectorAll('#optPickWrap label')].map(l => l.querySelector('span').textContent + ': ' + [...l.querySelector('select').options].map(o => o.textContent).join(' | ')),
+    warn: document.querySelector('.detail-header').innerText }));
+  ok(mix.pickers.length === 1 && mix.pickers[0] === 'Target Weights: Equities 50% · Bonds 0% · Gold 50% | Equities 50% · Bonds 20% · Gold 30% | Equities 50% · Bonds 40% · Gold 10%' && !/cannot add up/.test(mix.warn),
+    'the picker lists only the mixes that ran, every weight named, and no warning', JSON.stringify(mix));
+  await closeAll(o);
+  // A sweep whose every mix is skipped has nothing to show, so the gate stays shut.
+  o = await openOn(Object.assign(deep(S.cw), { optimise: { vars: [V('weight:2', 60, 100, 3, 3)], metric: 'roi' } }));
+  const shut = await o.page.evaluate(() => ({ dis: document.getElementById('simBtn').classList.contains('is-disabled'), tip: document.getElementById('simBtn').getAttribute('data-tip'), title: document.getElementById('valueTitle').textContent }));
+  ok(shut.dis && /None of the Target Weights mixes can add up to 100%/.test(shut.tip || '') && !shut.title.startsWith('Optimisation'), 'a sweep that cannot add up anywhere never runs, and the gate says why', JSON.stringify(shut));
+  ok(o.errors.length === 0, 'no page errors on a sweep that cannot run', o.errors.join(' | '));
   await closeAll(o);
   o = await openOn(Object.assign(deep(S.cw), { optimise: { vars: [V('topup.yearlyIncrease', 0, 6, 4), V('rf.rate', 0, 4, 3)], metric: 'net' } }));
   p = o.page;
@@ -756,7 +847,7 @@ async function contracts(){
   await sub(p, 'rebal');
   await p.click('.opt-btn[data-opt="trig:3:rsiPeriod"]'); await p.fill('#optStart', '2'); await p.dispatchEvent('#optStart', 'input');
   await p.fill('#optEnd', '100'); await p.dispatchEvent('#optEnd', 'input'); await p.fill('#optSteps', '25'); await p.dispatchEvent('#optSteps', 'input'); await p.click('#optDoneBtn');
-  await p.click('.opt-btn[data-opt="weight:1"]'); await p.fill('#optSteps', '24'); await p.dispatchEvent('#optSteps', 'input'); await p.click('#optDoneBtn');
+  await p.click('.opt-btn[data-opt="weight"]'); await memberSet(p, 'weight:1', 'steps', 24); await p.click('#optDoneBtn');
   await p.click('#simBtn');
   await p.waitForFunction(() => /Optimising \d+ of 600/.test(document.getElementById('simBtn').textContent), null, { timeout: 30000 });
   await p.click('#optCancelBtn');
@@ -768,7 +859,8 @@ async function contracts(){
   // A phone: the range editor fits and its Done is on screen.
   o = await openOn(deep(S.cw), { vp: { width: 390, height: 760 } });
   p = o.page; await sub(p, 'rebal');
-  await p.click('.opt-btn[data-opt="weight:1"]');
+  await p.click('.opt-btn[data-opt="weight"]');
+  await p.click('#optMembers .opt-member:nth-child(2) .opt-member-head');
   const ph = await p.evaluate(() => { const r = document.getElementById('optDoneBtn').getBoundingClientRect(), m = document.querySelector('.opt-modal').getBoundingClientRect(); return { done: r.bottom <= innerHeight && r.top >= 0, fits: m.left >= 0 && m.right <= innerWidth }; });
   ok(ph.done && ph.fits, 'on a phone the range editor fits and Done is on screen', JSON.stringify(ph));
   await closeAll(o);
