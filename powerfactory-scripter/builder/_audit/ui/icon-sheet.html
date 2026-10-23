@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Block icons</title>
+<link rel="stylesheet" href="../../../../dark.css">
+<link rel="stylesheet" href="../../../../light.css">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  body { margin: 0; padding: 16px; font: 12px 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow: auto !important; height: auto !important; }
+  h2 { font-size: 13px; margin: 14px 0 6px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+  .cell { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); --pfb-icon-cut: var(--panel); }
+  .cell .big { width: 30px; height: 30px; color: var(--cat); }
+  .cell .small { width: 16px; height: 16px; color: var(--cat); }
+  .cell span { font-size: 11px; line-height: 1.25; }
+  .themes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .light-pane { background: #F0F4FF; padding: 8px; border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="themes"><div id="dark"></div><div id="light" class="light-pane"></div></div>
+<script type="module">
+  import { blockIcon } from '../../js/ui/icons.js';
+  import * as R from '../../js/core/registry.js';
+  for (const f of ['start', 'model', 'study', 'check', 'result', 'flow', 'values', 'search', 'advanced']) await import('../../js/blocks/' + f + '.js');
+  const missing = [];
+  function draw(host, light) {
+    if (light) host.classList.add('light');
+    for (const c of R.CATEGORIES) {
+      const bs = R.blocksIn(c.id);
+      if (!bs.length) continue;
+      const h = document.createElement('h2'); h.textContent = c.title; host.appendChild(h);
+      const g = document.createElement('div'); g.className = 'grid'; host.appendChild(g);
+      for (const b of bs) {
+        const d = document.createElement('div'); d.className = 'cell'; d.style.setProperty('--cat', 'var(' + c.color + ')');
+        d.innerHTML = blockIcon(b.type, b.kind, 'big') + blockIcon(b.type, b.kind, 'small') + '<span>' + b.title + '</span>';
+        g.appendChild(d);
+      }
+    }
+  }
+  draw(document.getElementById('dark'), false);
+  draw(document.getElementById('light'), true);
+  document.body.dataset.ready = '1';
+</script>
+</body>
+</html>

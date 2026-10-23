@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory Workflow Builder | Adjie Brotools</title>
+<meta name="description" content="Build DIgSILENT PowerFactory study workflows from blocks: study cases, load flow, RMS, EMT, harmonics, loops, checks and result tables. Get one ready-to-run Python file. Runs in your browser with no upload.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/builder/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="PowerFactory Workflow Builder">
+<meta property="og:description" content="Wire PowerFactory study blocks into your own workflow and get one ready-to-run Python file. Runs locally in your browser with no upload.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/builder/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PowerFactory Workflow Builder">
+<meta name="twitter:description" content="Wire PowerFactory study blocks into your own workflow and get one ready-to-run Python file. Runs locally in your browser with no upload.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "PowerFactory Workflow Builder",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/builder/",
+  "description": "Wire PowerFactory study blocks into your own workflow and get one ready-to-run Python file. Runs locally in your browser with no upload.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "alternateName": ["PowerFactory No-Code Workflow Builder", "DIgSILENT PowerFactory Node Editor"],
+  "keywords": "PowerFactory workflow builder, no-code PowerFactory automation, DIgSILENT PowerFactory Python, grid compliance study automation, frequency nadir headroom study, RMS EMT harmonic automation",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "PowerFactory Scripter",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "PowerFactory Scripter", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/" },
+    { "@type": "ListItem", "position": 3, "name": "Workflow Builder", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/builder/" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does the PowerFactory Workflow Builder make?",
+      "acceptedAnswer": { "@type": "Answer", "text": "One Python file that drives DIgSILENT PowerFactory 2024 through its Python API: it connects, runs the steps you wired in order (study cases, load flow, RMS or EMT simulations, checks, loops) and saves the results tables and graphs." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my workflow uploaded anywhere?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. The page runs in your browser. The workflow is kept in this browser and in the files you save; the Python file is written on your own computer." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I open a script I made earlier and change it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every downloaded .py carries the workflow on its last line, so Open reads it back, together with any values you edited in its SETTINGS section." }
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<!-- Highlight.js for the Python preview. Async: a blocked CDN must never hold the page up; the
+     preview shows plain text until (or unless) it arrives. Its colours come from style.css. -->
+<script async id="pfbHljs" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Canvas library CSS (vendored, see vendor/README.md), before the site layers so they win -->
+<link rel="stylesheet" href="vendor/xyflow-base.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../tour-shared.css">
+<!-- The editor's modules, fetched early so the one-by-one block imports (js/ui/main.js) are quick. -->
+<link rel="modulepreload" href="js/ui/main.js">
+<link rel="modulepreload" href="js/core/registry.js">
+<link rel="modulepreload" href="js/core/workflow.js">
+<link rel="modulepreload" href="js/core/codegen.js">
+</head>
+<body class="light pfb-page">
+
+<!-- THE APP fills the screen: the canvas underneath, everything else floats over it (the World
+     Clock's map layout). Everything inside is drawn by js/app.js and saved as one workflow in the
+     mini cache (Persist extra), so no field in here is saved on its own (data-no-persist), and
+     none of it is decorated by the abbreviation layer (data-no-abbr: the canvas is React's). -->
+<main class="pfb-app" id="pfbApp" data-no-abbr data-no-persist>
+
+  <section class="pfb-canvas" id="pfbCanvas" aria-label="Workflow canvas">
+    <div class="pfb-flow" id="pfbFlow"></div>
+    <div class="pfb-canvas-msg" id="pfbCanvasMsg" hidden>The canvas did not load. The settings, the Python and the files still work.</div>
+    <div class="pfb-starter" id="pfbStarter" hidden>
+      <div class="pfb-starter-card pfb-card">
+        <h2 class="pfb-starter-title">Start a workflow</h2>
+        <p>Open a worked example, or click blocks in the Blocks panel: each one joins the end of the flow.</p>
+        <div class="pfb-starter-btns" id="pfbStarterBtns"></div>
+        <button type="button" class="pfb-starter-blank" id="pfbStarterBlank">Start blank</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top: the title, the workflow actions, the way back -->
+  <div class="pfb-top">
+    <section class="pfb-brand pfb-card" aria-label="About this tool">
+      <h1 class="pfb-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/> <path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/> <path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/> </svg><span>PowerFactory Workflow Builder</span></h1>
+      <div class="pfb-brand-sub" id="scripterLinkDiv">Wire study blocks, get one ready-to-run Python file. <a href="../">Form-based Scripter</a> · <a href="../samples/">Samples</a></div>
+    </section>
+
+    <div class="pfb-toolbar pfb-card" id="pfbToolbar" role="toolbar" aria-label="Workflow">
+      <button class="btn-bare pfb-tb" id="pfbUndo" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled>↶</button>
+      <button class="btn-bare pfb-tb" id="pfbRedo" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled>↷</button>
+      <span class="pfb-tb-sep" aria-hidden="true"></span>
+      <button class="btn-bare pfb-tb" id="pfbZoomOut" type="button" title="Zoom out" aria-label="Zoom out">−</button>
+      <button class="btn-bare pfb-tb" id="pfbZoomIn" type="button" title="Zoom in" aria-label="Zoom in">+</button>
+      <button class="btn-bare pfb-tb" id="pfbFit" type="button" title="Fit the whole workflow in view" aria-label="Fit the whole workflow in view">⟳</button>
+      <span class="pfb-tb-sep" aria-hidden="true"></span>
+      <button class="btn-bare pfb-tb pfb-tb-text" id="pfbQsBtn" type="button" aria-expanded="false" aria-controls="pfbQuickStart" title="Open a worked example" aria-label="Quick start: open a worked example"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span>Quick start</span></button>
+      <span class="pfb-tb-sep" aria-hidden="true"></span>
+      <button class="btn-bare pfb-tb pfb-tb-icon" id="pfbSave" type="button" data-icon="save" title="Save the workflow to a file" aria-label="Save the workflow to a file"></button>
+      <button class="btn-bare pfb-tb pfb-tb-icon" id="pfbOpen" type="button" data-icon="open" title="Open a workflow file (.json or a .py made here)" aria-label="Open a workflow file (.json or a .py made here)"></button>
+      <input type="file" id="pfbOpenInput" accept=".json,.py" hidden>
+      <button class="btn-bare pfb-tb pfb-tb-icon pfb-tb-clear" id="pfbClear" type="button" data-icon="trash" title="Clear the canvas (asks first, and Undo brings it back)" aria-label="Clear the canvas"></button>
+      <button class="btn-primary pfb-download" id="pfbDownload" type="button" title="Download the Python file">⬇ Download .py</button>
+    </div>
+
+    <nav class="pfb-nav header-nav" aria-label="Site">
+      <a class="btn-theme pfb-back" href="https://tool.adjiebrotots.com/" title="Other tools"><span aria-hidden="true">←</span><span class="pfb-nav-label">&nbsp;Other Tools</span></a>
+      <button class="btn-theme" id="themeToggle" type="button">☀️ Light</button>
+    </nav>
+  </div>
+
+  <div class="warning pfb-alert" id="pfbAlert" role="alert"></div>
+
+  <!-- Quick start: the worked examples, opened from the action bar -->
+  <div class="quick-start-row pfb-qs pfb-card" id="pfbQuickStart" hidden>
+    <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick start</span>
+    <div class="quick-start-btns" id="pfbTemplates"></div>
+  </div>
+
+  <!-- Left: the Blocks panel. Drag its title bar to move it, the chevron folds it, a double-click
+       on the title bar puts it back on the side. -->
+  <aside class="pfb-dock pfb-palette" id="pfbPalette" data-dock="pal" aria-label="Blocks">
+    <div class="pfb-dock-head" title="Drag to move. Double-click to put it back on the side.">
+      <span class="pfb-grip" aria-hidden="true">⠿</span>
+      <span class="pfb-dock-title">Blocks</span>
+      <button type="button" class="btn-bare pfb-dock-fold" id="pfbPalToggle" aria-expanded="true" aria-controls="pfbPalBody" title="Fold the Blocks panel" aria-label="Fold the Blocks panel">▾</button>
+    </div>
+    <div class="pfb-dock-body" id="pfbPalBody">
+      <div class="pfb-pal-head">
+        <input class="txt-input pfb-pal-search" id="pfbPalSearch" type="search" placeholder="Search blocks, e.g. load flow" aria-label="Search the blocks" autocomplete="off" spellcheck="false">
+        <button type="button" class="btn-bare pfb-pal-close" id="pfbPalClose" title="Fold the Blocks panel" aria-label="Fold the Blocks panel" hidden>▴</button>
+      </div>
+      <div class="pfb-pal-hint">Click a block to add it after the selected one, or drag it onto the canvas.</div>
+      <div class="pfb-pal-list" id="pfbPalList"></div>
+    </div>
+  </aside>
+
+  <!-- Right: Settings, Python and Problems, the same kind of panel. -->
+  <aside class="pfb-dock pfb-side" id="pfbSide" data-dock="side" aria-label="Settings, Python and Problems">
+    <div class="pfb-dock-head pfb-side-head" title="Drag to move. Double-click to put it back on the side.">
+      <span class="pfb-grip" aria-hidden="true">⠿</span>
+      <div class="ctrl-tabs pfb-tabs" role="tablist">
+        <button class="ctrl-tab active" data-tab="settings" role="tab" aria-selected="true" aria-controls="tab-settings" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button>
+        <button class="ctrl-tab" data-tab="python" role="tab" aria-selected="false" aria-controls="tab-python" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7.5 3.5 12 8 16.5"/><path d="M16 7.5 20.5 12 16 16.5"/><path d="M13.5 5 10.5 19"/></svg><span>Python</span></button>
+        <button class="ctrl-tab" data-tab="problems" role="tab" aria-selected="false" aria-controls="tab-problems" type="button"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h10.5l3.5 3.5v11.5H5z"/><path d="M8.5 10.5l1.5 1.5 3-3"/><path d="M8.5 16h7"/></svg><span>Problems</span><span class="pfb-badge" id="pfbProbCount" hidden></span></button>
+      </div>
+      <button type="button" class="btn-bare pfb-dock-fold" id="pfbSheetToggle" aria-expanded="true" aria-controls="pfbSideBody" title="Fold this panel" aria-label="Fold this panel">▾</button>
+    </div>
+    <div class="pfb-dock-body pfb-panels" id="pfbSideBody">
+      <div class="ctrl-panel active" id="tab-settings" role="tabpanel"><div class="pfb-inspector" id="pfbInspector"></div></div>
+      <div class="ctrl-panel pfb-py-panel" id="tab-python" role="tabpanel">
+        <div class="pfb-py-bar">
+          <span class="pfb-py-status" id="pfbPyStatus">Written as you build.</span>
+          <button class="btn-secondary btn-sm btn-icon" id="pfbCopy" type="button" title="Copy the Python to the clipboard" aria-label="Copy the Python to the clipboard">⧉</button>
+          <button class="btn-secondary btn-sm" id="pfbDownload2" type="button" title="Download the Python file">⬇ .py</button>
+        </div>
+        <div class="pfb-code-wrap" id="pfbCodeWrap">
+          <div class="pfb-code-mark" id="pfbCodeMark" hidden></div>
+          <pre class="pfb-code" id="pfbCode"><code class="language-python" id="pfbCodeInner"></code></pre>
+        </div>
+      </div>
+      <div class="ctrl-panel" id="tab-problems" role="tabpanel"><div class="pfb-problems" id="pfbProblems"></div></div>
+    </div>
+  </aside>
+
+  <details class="pfb-legend pfb-card" id="pfbLegend">
+    <summary>Wire colours</summary>
+    <ul class="pfb-legend-list" id="pfbLegendList"></ul>
+  </details>
+
+  <!-- Bottom: the footer in one quiet line (the World Clock's footer). -->
+  <footer class="pfb-foot" id="pfbFoot">
+    <button type="button" class="pfb-foot-more" id="pfbFootMore" aria-expanded="false" aria-controls="pfbFoot" aria-label="Show the whole footer" title="About, contact and licence"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4"/><circle cx="8" cy="4.7" r=".4" fill="currentColor"/></svg></button>
+    <span class="pfb-foot-item footer-collab">A hobby project, open to collaboration: <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a></span>
+    <span class="pfb-foot-item footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></span>
+    <span class="pfb-foot-item"><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"> Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a></span>
+    <span class="pfb-foot-item"><img loading="lazy" src="../../logos/australian.png" alt="Australian flag"><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"> Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
+  </footer>
+</main>
+
+<div class="pfb-toasts" id="pfbToasts" role="status" aria-live="polite" data-no-abbr data-no-persist></div>
+
+<!-- Canvas library, vendored (vendor/README.md): react, react-dom, the jsx shim, then xyflow. -->
+<script src="vendor/react.production.min.js"></script>
+<script src="vendor/react-dom.production.min.js"></script>
+<script src="vendor/jsx-shim.js"></script>
+<script src="vendor/xyflow-react.umd.js"></script>
+<script src="../../dropdown.js"></script>
+<script src="../../chart-kit.js"></script>
+<script src="../../shared.js"></script>
+<script src="../abbr.js"></script>
+<script src="tour.js"></script>
+<script src="../../tour-shared.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

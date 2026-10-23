@@ -1,0 +1,381 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "N-1 screening",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "After a base load flow this takes out each line and transformer in service in turn (the base case first), runs the load flow and reads the loading of every line and 2-winding transformer and the voltage of every busbar. Each outage gets a row, also one that does not converge (with its reason); the worst outage is printed at the end. Fill in the project."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "pf.ldf",
+      "x": 320,
+      "y": 0,
+      "label": "Base load flow",
+      "s": {
+        "net": "case",
+        "qlim": "case",
+        "taps": "case"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.cont.define",
+      "x": 640,
+      "y": 300,
+      "label": "",
+      "s": {
+        "lines": true,
+        "trafos": true,
+        "gens": false,
+        "xnets": false,
+        "query": "",
+        "order": "1",
+        "inService": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.cont.foreach",
+      "x": 640,
+      "y": 0,
+      "label": "Contingency",
+      "s": {
+        "name": "",
+        "group": "*.ElmLne",
+        "how": "outserv",
+        "t": 1,
+        "base": true,
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "pf.ldf",
+      "x": 960,
+      "y": 0,
+      "label": "",
+      "s": {
+        "net": "case",
+        "qlim": "case",
+        "taps": "case"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "pf.get",
+      "x": 1280,
+      "y": 0,
+      "label": "Line loading",
+      "s": {
+        "el": {
+          "cls": "ElmLne",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "c:loading",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n13",
+      "type": "pf.get",
+      "x": 1600,
+      "y": 0,
+      "label": "Transformer loading",
+      "s": {
+        "el": {
+          "cls": "ElmTr2",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "c:loading",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "pf.get",
+      "x": 1920,
+      "y": 0,
+      "label": "Busbar voltage",
+      "s": {
+        "el": {
+          "cls": "ElmTerm",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "m:u",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "out.table.add",
+      "x": 2240,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "N-1",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Highest loading (%)"
+          },
+          {
+            "id": "c2",
+            "name": "Most loaded line"
+          },
+          {
+            "id": "c3",
+            "name": "Lowest voltage (p.u.)"
+          },
+          {
+            "id": "c4",
+            "name": "Lowest voltage at"
+          },
+          {
+            "id": "c5",
+            "name": "Highest transformer loading (%)"
+          },
+          {
+            "id": "c6",
+            "name": "Most loaded transformer"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n10",
+      "type": "out.table.save",
+      "x": 960,
+      "y": 600,
+      "label": "",
+      "s": {
+        "table": "N-1",
+        "fmt": "csv",
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n11",
+      "type": "flow.log",
+      "x": 1280,
+      "y": 600,
+      "label": "Print the worst outage",
+      "s": {
+        "text": "Worst outage: {worst}, with a line loaded to {loading:.1f} %",
+        "level": "info"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n12",
+      "type": "out.table.column",
+      "x": 1280,
+      "y": 900,
+      "label": "Worst outage",
+      "s": {
+        "table": "N-1",
+        "col": "Contingency",
+        "pick": "max",
+        "of": "Highest loading (%)",
+        "as": "text"
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "ok",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n5",
+      "out": "body",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n6",
+      "out": "ok",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n7",
+      "out": "next",
+      "to": "n13",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n13",
+      "out": "next",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n8",
+      "out": "next",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n5",
+      "out": "done",
+      "to": "n10",
+      "in": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n10",
+      "out": "next",
+      "to": "n11",
+      "in": "in"
+    },
+    {
+      "id": "e10",
+      "from": "n4",
+      "out": "conts",
+      "to": "n5",
+      "in": "conts"
+    },
+    {
+      "id": "e11",
+      "from": "n7",
+      "out": "max",
+      "to": "n9",
+      "in": "c1"
+    },
+    {
+      "id": "e12",
+      "from": "n7",
+      "out": "at_max",
+      "to": "n9",
+      "in": "c2"
+    },
+    {
+      "id": "e13",
+      "from": "n8",
+      "out": "min",
+      "to": "n9",
+      "in": "c3"
+    },
+    {
+      "id": "e14",
+      "from": "n8",
+      "out": "at_min",
+      "to": "n9",
+      "in": "c4"
+    },
+    {
+      "id": "e15",
+      "from": "n13",
+      "out": "max",
+      "to": "n9",
+      "in": "c5"
+    },
+    {
+      "id": "e16",
+      "from": "n13",
+      "out": "at_max",
+      "to": "n9",
+      "in": "c6"
+    },
+    {
+      "id": "e17",
+      "from": "n12",
+      "out": "value",
+      "to": "n11",
+      "in": "worst"
+    },
+    {
+      "id": "e18",
+      "from": "n12",
+      "out": "of",
+      "to": "n11",
+      "in": "loading"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

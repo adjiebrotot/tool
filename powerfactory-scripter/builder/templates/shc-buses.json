@@ -1,0 +1,328 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "Short circuit at every busbar",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "This runs an IEC 60909 maximum three-phase short circuit at each busbar in service in turn (or at the busbars named on For each element) and reads the initial short-circuit current and power there. Each busbar gets a row, and a bar chart of the currents is drawn at the end. Fill in the project."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "pf.foreach_element",
+      "x": 320,
+      "y": 0,
+      "label": "Busbar",
+      "s": {
+        "name": "",
+        "el": {
+          "cls": "ElmTerm",
+          "name": "*",
+          "match": "all"
+        },
+        "inService": true,
+        "attr": "",
+        "op": "=",
+        "value": "",
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [
+        "el"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.shc",
+      "x": 640,
+      "y": 0,
+      "label": "",
+      "s": {
+        "method": "iec",
+        "fault": "3ph",
+        "current": "max",
+        "at": "element",
+        "target": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "rf": 0,
+        "xf": 0
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.get",
+      "x": 960,
+      "y": 0,
+      "label": "Ikss",
+      "s": {
+        "el": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "attr": "m:Ikss",
+        "unit": "kA",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "pf.get",
+      "x": 1280,
+      "y": 0,
+      "label": "Skss",
+      "s": {
+        "el": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "attr": "m:Skss",
+        "unit": "MVA",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "out.table.add",
+      "x": 1600,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "Short circuit",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Ikss (kA)"
+          },
+          {
+            "id": "c2",
+            "name": "Skss (MVA)"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "out.table.save",
+      "x": 640,
+      "y": 480,
+      "label": "",
+      "s": {
+        "table": "Short circuit",
+        "fmt": "csv",
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "out.plot.xy",
+      "x": 960,
+      "y": 480,
+      "label": "Fault current at every busbar",
+      "s": {
+        "lines": [
+          {
+            "id": "l1",
+            "name": "Ikss (kA)"
+          }
+        ],
+        "kind": "bar",
+        "title": "",
+        "xlabel": "Busbar",
+        "xunit": "",
+        "ylabel": "Initial short-circuit current",
+        "yunit": "kA",
+        "limits": [],
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n10",
+      "type": "out.table.column",
+      "x": 960,
+      "y": 810,
+      "label": "Busbars",
+      "s": {
+        "table": "Short circuit",
+        "col": "Busbar",
+        "pick": "all",
+        "of": "",
+        "as": "text"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n11",
+      "type": "out.table.column",
+      "x": 1280,
+      "y": 810,
+      "label": "Fault currents",
+      "s": {
+        "table": "Short circuit",
+        "col": "Ikss (kA)",
+        "pick": "all",
+        "of": "",
+        "as": "num"
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "ok",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n5",
+      "out": "next",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n6",
+      "out": "next",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n3",
+      "out": "done",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n8",
+      "out": "next",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n3",
+      "out": "item",
+      "to": "n4",
+      "in": "target"
+    },
+    {
+      "id": "e9",
+      "from": "n3",
+      "out": "item",
+      "to": "n5",
+      "in": "obj"
+    },
+    {
+      "id": "e10",
+      "from": "n3",
+      "out": "item",
+      "to": "n6",
+      "in": "obj"
+    },
+    {
+      "id": "e11",
+      "from": "n5",
+      "out": "value",
+      "to": "n7",
+      "in": "c1"
+    },
+    {
+      "id": "e12",
+      "from": "n6",
+      "out": "value",
+      "to": "n7",
+      "in": "c2"
+    },
+    {
+      "id": "e13",
+      "from": "n10",
+      "out": "value",
+      "to": "n9",
+      "in": "x"
+    },
+    {
+      "id": "e14",
+      "from": "n11",
+      "out": "value",
+      "to": "n9",
+      "in": "l1"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

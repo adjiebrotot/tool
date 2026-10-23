@@ -1,0 +1,208 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "Load flow on every study case",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "This runs the load flow of every study case of the project (or of the cases named on For each study case, for example 0*) and reads the voltage of every busbar in service. Each case gets a row with its lowest and highest voltage and where they are; a case that does not converge keeps its row with the reason. Fill in the project."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "pf.case.foreach",
+      "x": 320,
+      "y": 0,
+      "label": "Study case",
+      "s": {
+        "name": "",
+        "pattern": "*",
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [
+        "pattern"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.ldf",
+      "x": 640,
+      "y": 0,
+      "label": "",
+      "s": {
+        "net": "case",
+        "qlim": "case",
+        "taps": "case"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.get",
+      "x": 960,
+      "y": 0,
+      "label": "Busbar voltage",
+      "s": {
+        "el": {
+          "cls": "ElmTerm",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "m:u",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "out.table.add",
+      "x": 1280,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "Load flow",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Lowest voltage (p.u.)"
+          },
+          {
+            "id": "c2",
+            "name": "Lowest at"
+          },
+          {
+            "id": "c3",
+            "name": "Highest voltage (p.u.)"
+          },
+          {
+            "id": "c4",
+            "name": "Highest at"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "out.table.save",
+      "x": 640,
+      "y": 480,
+      "label": "",
+      "s": {
+        "table": "Load flow",
+        "fmt": "csv",
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "ok",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n5",
+      "out": "next",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n3",
+      "out": "done",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n5",
+      "out": "min",
+      "to": "n6",
+      "in": "c1"
+    },
+    {
+      "id": "e7",
+      "from": "n5",
+      "out": "at_min",
+      "to": "n6",
+      "in": "c2"
+    },
+    {
+      "id": "e8",
+      "from": "n5",
+      "out": "max",
+      "to": "n6",
+      "in": "c3"
+    },
+    {
+      "id": "e9",
+      "from": "n5",
+      "out": "at_max",
+      "to": "n6",
+      "in": "c4"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

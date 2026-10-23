@@ -1,0 +1,495 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "Fault ride-through check",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "This applies a 150 ms three-phase fault at the connection point busbar, runs an RMS simulation and checks the busbar voltage against an LVRT curve that starts at the clearing time (an example: type your grid code's points on LVRT curve). It also checks that the plant active power is back to 90 % of its pre-fault value, and stays there for 0.5 s, within 1 s of clearing; a run that stops early (loss of synchronism) still gets its row, with the curves it reached. Fill in the project, the busbar and the two Record rows on Run RMS simulation."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "pf.evt.shc",
+      "x": 320,
+      "y": 0,
+      "label": "Connection point fault",
+      "s": {
+        "target": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "t": 1,
+        "duration": 0.15,
+        "fault": "3ph",
+        "phase1": "a",
+        "phase2": "ab",
+        "clear": "fault",
+        "rf": 0,
+        "xf": 0,
+        "loc": null
+      },
+      "pin": [
+        "target"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.rms",
+      "x": 640,
+      "y": 0,
+      "label": "",
+      "s": {
+        "tstop": 5,
+        "tstart": null,
+        "step": null,
+        "net": "case",
+        "record": [
+          {
+            "id": "r1",
+            "el": {
+              "cls": "ElmTerm",
+              "name": "",
+              "match": "one"
+            },
+            "var": "m:u1",
+            "combine": "none"
+          },
+          {
+            "id": "r2",
+            "el": {
+              "cls": "ElmGenstat",
+              "name": "",
+              "match": "one"
+            },
+            "var": "m:P:bus1",
+            "combine": "none"
+          }
+        ],
+        "caseEvents": "auto",
+        "fast": false,
+        "extendTo": 0,
+        "ufls": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "chk.limit",
+      "x": 960,
+      "y": 0,
+      "label": "LVRT curve",
+      "s": {
+        "against": "curve",
+        "lo": null,
+        "hi": null,
+        "curve": [
+          {
+            "id": "k1",
+            "x": 0.02,
+            "low": 0.5,
+            "high": ""
+          },
+          {
+            "id": "k2",
+            "x": 0.3,
+            "low": 0.5,
+            "high": ""
+          },
+          {
+            "id": "k3",
+            "x": 1.35,
+            "low": 0.85,
+            "high": ""
+          }
+        ],
+        "x0": 0,
+        "extend": true,
+        "after": null,
+        "before": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "sig.at",
+      "x": 960,
+      "y": 390,
+      "label": "Pre-fault power",
+      "s": {
+        "t": 0
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "math.arith",
+      "x": 1280,
+      "y": 390,
+      "label": "90 % of pre-fault power",
+      "s": {
+        "op": "mul",
+        "a": 0,
+        "b": 0.9,
+        "each": false
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "sig.cross",
+      "x": 1280,
+      "y": 690,
+      "label": "Power recovery",
+      "s": {
+        "direction": "above",
+        "level": 0.9,
+        "after": null,
+        "hold": 0.5
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "chk.verdict",
+      "x": 1280,
+      "y": 0,
+      "label": "Power recovery time (s)",
+      "s": {
+        "op": "le",
+        "limit": 1,
+        "tol": 0
+      },
+      "pin": [
+        "limit"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n10",
+      "type": "out.table.add",
+      "x": 1600,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "FRT",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "LVRT"
+          },
+          {
+            "id": "c2",
+            "name": "Voltage margin (p.u.)"
+          },
+          {
+            "id": "c3",
+            "name": "Power recovery time (s)"
+          },
+          {
+            "id": "c4",
+            "name": "Power recovery"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n11",
+      "type": "out.table.save",
+      "x": 1920,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "FRT",
+        "fmt": "csv",
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n12",
+      "type": "out.plot.series",
+      "x": 2240,
+      "y": 0,
+      "label": "Voltage at the connection point",
+      "s": {
+        "lines": [
+          {
+            "id": "l1",
+            "name": ""
+          }
+        ],
+        "collect": "pass",
+        "title": "",
+        "ylabel": "Voltage",
+        "unit": "",
+        "limits": [],
+        "events": true,
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n13",
+      "type": "out.plot.series",
+      "x": 2560,
+      "y": 0,
+      "label": "Plant active power",
+      "s": {
+        "lines": [
+          {
+            "id": "l1",
+            "name": ""
+          }
+        ],
+        "collect": "pass",
+        "title": "",
+        "ylabel": "Active power",
+        "unit": "",
+        "limits": [],
+        "events": true,
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "next",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "ok",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n4",
+      "out": "early",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n5",
+      "out": "pass",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n5",
+      "out": "fail",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n9",
+      "out": "pass",
+      "to": "n10",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n9",
+      "out": "fail",
+      "to": "n10",
+      "in": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n10",
+      "out": "next",
+      "to": "n11",
+      "in": "in"
+    },
+    {
+      "id": "e10",
+      "from": "n11",
+      "out": "next",
+      "to": "n12",
+      "in": "in"
+    },
+    {
+      "id": "e11",
+      "from": "n12",
+      "out": "next",
+      "to": "n13",
+      "in": "in"
+    },
+    {
+      "id": "e12",
+      "from": "n4",
+      "out": "r1",
+      "to": "n5",
+      "in": "x"
+    },
+    {
+      "id": "e13",
+      "from": "n3",
+      "out": "t_clear",
+      "to": "n5",
+      "in": "x0"
+    },
+    {
+      "id": "e14",
+      "from": "n4",
+      "out": "r2",
+      "to": "n6",
+      "in": "series"
+    },
+    {
+      "id": "e15",
+      "from": "n3",
+      "out": "t_fault",
+      "to": "n6",
+      "in": "t"
+    },
+    {
+      "id": "e16",
+      "from": "n6",
+      "out": "value",
+      "to": "n7",
+      "in": "a"
+    },
+    {
+      "id": "e17",
+      "from": "n4",
+      "out": "r2",
+      "to": "n8",
+      "in": "series"
+    },
+    {
+      "id": "e18",
+      "from": "n7",
+      "out": "value",
+      "to": "n8",
+      "in": "level"
+    },
+    {
+      "id": "e19",
+      "from": "n3",
+      "out": "t_clear",
+      "to": "n8",
+      "in": "after"
+    },
+    {
+      "id": "e20",
+      "from": "n8",
+      "out": "delay",
+      "to": "n9",
+      "in": "value"
+    },
+    {
+      "id": "e21",
+      "from": "n5",
+      "out": "text",
+      "to": "n10",
+      "in": "c1"
+    },
+    {
+      "id": "e22",
+      "from": "n5",
+      "out": "margin",
+      "to": "n10",
+      "in": "c2"
+    },
+    {
+      "id": "e23",
+      "from": "n8",
+      "out": "delay",
+      "to": "n10",
+      "in": "c3"
+    },
+    {
+      "id": "e24",
+      "from": "n9",
+      "out": "text",
+      "to": "n10",
+      "in": "c4"
+    },
+    {
+      "id": "e25",
+      "from": "n4",
+      "out": "r1",
+      "to": "n12",
+      "in": "l1"
+    },
+    {
+      "id": "e26",
+      "from": "n4",
+      "out": "r2",
+      "to": "n13",
+      "in": "l1"
+    },
+    {
+      "id": "e27",
+      "from": "n7",
+      "out": "value",
+      "to": "n13",
+      "in": "limit"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "templates": [
+    {
+      "id": "headroom",
+      "title": "Headroom study",
+      "desc": "For each dispatch of generator A: a new study case, load flow, unit trip and RMS run; when the frequency settles, its nadir goes into a table.",
+      "file": "headroom.json"
+    },
+    {
+      "id": "ldf-cases",
+      "title": "Load flow on every study case",
+      "desc": "Runs the load flow of every study case and tables the lowest and highest busbar voltage of each, with where they are.",
+      "file": "ldf-cases.json"
+    },
+    {
+      "id": "n-1",
+      "title": "N-1 screening",
+      "desc": "Takes out each line and transformer in turn (base case first), runs the load flow and tables the highest loading and lowest voltage.",
+      "file": "n-1.json"
+    },
+    {
+      "id": "shc-buses",
+      "title": "Short circuit at every busbar",
+      "desc": "Runs an IEC 60909 maximum three-phase short circuit at each busbar in turn and tables Ikss and Skss, with a bar chart of the fault currents.",
+      "file": "shc-buses.json"
+    },
+    {
+      "id": "find-limit",
+      "title": "Largest dispatch with a safe nadir",
+      "desc": "Searches the largest dispatch of generator A for which the frequency after a unit trip stays above the UFLS level, by halving the gap.",
+      "file": "find-limit.json"
+    },
+    {
+      "id": "frt",
+      "title": "Fault ride-through check",
+      "desc": "A 150 ms fault at the connection point: checks the voltage against an LVRT curve and the time the plant power takes to recover to 90 %.",
+      "file": "frt.json"
+    },
+    {
+      "id": "cct",
+      "title": "Critical clearing time",
+      "desc": "Searches the longest fault duration at a busbar for which the rotor angle spread of the generators stays below a limit, by halving the gap.",
+      "file": "cct.json"
+    }
+  ]
+}
