@@ -151,6 +151,13 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-palette { left: 12px; top: var(--pfb-dock-top); width: var(--pfb-pal-w); max-height: calc(100% - var(--pfb-dock-top) - 44px); }
 .pfb-side { right: 12px; top: var(--pfb-dock-top); bottom: 44px; width: var(--pfb-side-w); }
 .pfb-side.is-folded { bottom: auto; }
+/* Its left edge drags to set its width (layout.js) */
+.pfb-side-size { position: absolute; left: 0; top: 0; bottom: 0; width: 7px; z-index: 3; cursor: ew-resize; touch-action: none; }
+.pfb-side-size::after { content: ''; position: absolute; left: 2px; top: 50%; width: 3px; height: 36px; margin-top: -18px; border-radius: 2px; background: var(--border); opacity: 0; transition: opacity var(--motion-fast); }
+.pfb-side-size:hover::after, .pfb-side-size:focus-visible::after, .pfb-side.is-sizing .pfb-side-size::after { opacity: 1; background: var(--accent); }
+.pfb-side-size:focus-visible { outline: none; }
+.pfb-side.is-folded .pfb-side-size { display: none; }
+.pfb-side.is-sizing { user-select: none; }
 .pfb-dock.is-free { right: auto; bottom: auto; }
 .pfb-palette.is-free { max-height: calc(100% - var(--pfb-free-top, 72px) - 44px); }
 .pfb-side.is-free { height: min(720px, calc(100% - var(--pfb-free-top, 72px) - 44px)); }
@@ -701,6 +708,7 @@ h1.pfb-title span { text-wrap: balance; }
   /* The right dock is a bottom sheet: its tab bar always, the panel when opened */
   .pfb-side { left: 0; right: 0; bottom: 0; top: auto; width: auto; height: 58%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; border-bottom: 0; }
   .pfb-side.is-folded { height: auto; bottom: 0; }
+  .pfb-side-size { display: none; }
   .pfb-tabs .ctrl-tab { padding: 8px 4px; font-size: .78rem; }
   .pfb-legend { display: none; }
   .pfb-starter { left: 8px; right: 8px; padding-bottom: 64px; }
