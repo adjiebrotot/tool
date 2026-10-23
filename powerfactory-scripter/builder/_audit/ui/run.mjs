@@ -1379,6 +1379,24 @@ await test('real blocks smoke', async () => {
   await sleep(150);
   const ep = await S.page.$$eval('#pfbInspector [data-port="gen"] select.pfb-el-cls option', ns => ns.map(o => o.textContent));
   check('the real dispatch block offers generator classes, plain names first', ep[0] === 'Synchronous generator (ElmSym)', JSON.stringify(ep));
+  // previews: what a graph or table block makes, in the reader's names, with the loop's values
+  await S.page.evaluate(() => PFB.loadTemplate('headroom', { quiet: true }));
+  await S.page.waitForFunction(() => !!document.querySelector('.react-flow__node[data-id="n15"] .pfb-pv'), null, { timeout: 5000 });
+  await settle(S, 300);
+  const pv = await S.page.evaluate(() => {
+    const q = (id) => document.querySelector(`.react-flow__node[data-id="${id}"] .pfb-pv`);
+    const own = (el) => [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
+    const t = q('n14'), g = q('n15');
+    return {
+      file: t && t.querySelector('.pfb-pv-file').textContent,
+      heads: t ? [...t.querySelectorAll('th')].map(th => th.textContent) : [],
+      loopVals: t ? [...t.querySelectorAll('td.is-loop')].map(td => td.textContent) : [],
+      graph: g ? [...g.querySelectorAll('text')].map(own) : [],
+      none: !q('n6'),
+    };
+  });
+  check('a table block previews its file, its columns and the loop\'s first values', pv.file === 'Headroom.csv' && pv.heads[0] === 'Dispatch (MW)' && pv.heads.includes('Nadir (Hz)') && pv.loopVals.join() === '100,150,200', JSON.stringify(pv));
+  check('a graph block previews its axes in the reader\'s words; a load flow has no preview', pv.graph.includes('Dispatch (MW)') && pv.graph.includes('Nadir (Hz)') && pv.none, JSON.stringify(pv.graph));
   // the tour with the real demo
   await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Mine', nodes: [{ id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }], edges: [] }, { quiet: true }));
   await sleep(300);

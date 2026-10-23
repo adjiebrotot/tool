@@ -242,3 +242,35 @@ export function checkPythonCode(code) {
 export function isPyName(name) {
   return NAME.test(String(name)) && !PY_KEYWORDS.includes(name) && !PY_SOFT_KEYWORDS.includes(name);
 }
+
+// ---------------------------------------------------------------------------------------------
+// Names of values wired into results blocks (also used by the canvas previews, which must not
+// load a block file of their own)
+
+// Port labels that say nothing about the value, so the block's name says it instead.
+const GENERIC = /^(value|values|item|result|text|list|number|yes \/ no|time series|series|curve|clean curve)$/i;
+
+// The column name for a value wired in: "Nadir (Hz)", "Dispatch (MW)". src = { nodeLabel (the
+// reader's label on the source block, '' when none), title (its block title or display name),
+// first (the port is the block's first output), port: { label, id, unit } }.
+export function columnName(src) {
+  const port = (src && src.port) || {};
+  const plab = String(port.label || port.id || '').trim();
+  const own = String((src && src.nodeLabel) || '').trim();
+  const title = String((src && src.title) || '').trim();
+  const generic = !plab || GENERIC.test(plab);
+  let name;
+  if (own) name = generic || (src && src.first) ? own : `${own} ${plab}`;
+  else name = generic ? (title || plab || 'Value') : plab;
+  const unit = String(port.unit || '').trim();
+  if (unit && !name.includes(`(${unit})`)) name += ` (${unit})`;
+  return name.slice(0, 80);
+}
+
+// "Nadir (Hz), RoCoF (Hz/s)" or one per line -> ["Nadir (Hz)", "RoCoF (Hz/s)"]
+export function columnList(text) {
+  const t = String(text === undefined || text === null ? '' : text);
+  const lines = t.split(/\r\n|\n|\r/).map(x => x.trim()).filter(Boolean);
+  const parts = lines.length > 1 ? lines : (lines[0] || '').split(/[;,]/).map(x => x.trim());
+  return parts.filter(Boolean);
+}

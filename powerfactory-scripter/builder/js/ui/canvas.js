@@ -7,9 +7,10 @@
 // the flow input (an arrow-shaped port in the header row) and flow outputs (right edge, with
 // labels), data inputs on the left and outputs on the right with label and unit, coloured by
 // type, "= value" beside an unwired input that has a fallback, the "ends" caption beside an
-// unwired flow output, the step number, a problem badge and error border, the summary line, the
-// Missing block look, and notes as sticky notes. Behind the blocks, each loop's body is drawn as
-// one dashed outline round its blocks, the loop's name on a tab (loopFrames, frames.js).
+// unwired flow output, the step number, a problem badge and error border, the summary line, a
+// mock preview of what a graph or table block makes (previews.js), the Missing block look, and
+// notes as sticky notes. Behind the blocks, each loop's body is drawn as one dashed outline
+// round its blocks, the loop's name on a tab (loopFrames, frames.js).
 //
 // Gotchas kept from the PoC (notes/reactflow-poc.md): nodeTypes built once; never call
 // updateNodeInternals on mount (it breaks the first fitView), only when a node's handles change;
@@ -23,6 +24,7 @@ import * as ops from './ops.js';
 import { fallbackText } from './inspector.js';
 import { blockIcon } from './icons.js';
 import { frameShape } from './frames.js';
+import { previewSpec, renderPreview } from './previews.js';
 import { $, esc, tipText, icon, isPhone } from './dom.js';
 
 const typeTip = (t, extra) => {
@@ -151,6 +153,7 @@ export function mountCanvas(app) {
         chip: !inside ? '' : reg.length ? '↻ ' + chain : 'Not in ↻ ' + inside.label,
         chipTip: !inside ? '' : reg.length ? 'Runs on each ' + (reg[reg.length - 1].kind === 'callback' ? 'try' : 'pass') + ' of ' + chain : 'Drawn inside the frame of ' + inside.label + ', but it does not run on its ' + (inside.kind === 'callback' ? 'tries' : 'passes'),
         text: n.type === 'note' ? String(settingsOf(n).text || '') : '',
+        preview: def ? previewSpec(s.wf, gen, n) : null,
       };
       const key = JSON.stringify(d);
       const c = decoCache.get(n.id);
@@ -347,6 +350,8 @@ export function mountCanvas(app) {
       }
       kids.push(h('div', { key: 'io', className: 'pfb-n-io' }, rows));
     }
+    // What the block makes, drawn with mock values and the reader's names (previews.js).
+    if (d.preview) kids.push(h('div', { key: 'pv', className: 'pfb-pv', title: 'What it makes: your names, mock values' }, renderPreview(h, d.preview)));
     if (d.chip) kids.push(h('div', { key: 'chip', className: 'pfb-n-chip', title: d.chipTip }, d.chip));
     if (d.missing) kids.push(h('div', { key: 'miss', className: 'pfb-n-miss' }, 'Not in this version of the Builder: kept, but it does not run.'));
     const cls = 'pfb-node pfb-k-' + d.kind + (d.missing ? ' pfb-missing' : '') + (d.level ? ' pfb-lv-' + d.level : '') + (selected ? ' is-sel' : '');
