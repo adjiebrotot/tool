@@ -2,14 +2,15 @@
 // grown by a margin, the gaps between neighbours closed (a morphological closing on an 8-unit
 // grid: a gap narrower than `bridge` fills in, a wide empty area beside a row stays out), traced
 // as rounded outlines. A row of blocks becomes one band, a block under the row joins it as an
-// L; blocks too far apart are separate pieces, each outlined. Plain functions, no DOM.
+// L; blocks too far apart stay one frame, joined by a thin corridor (`corridor` units across).
+// Plain functions, no DOM.
 
 const CELL = 8;
 
 // rects: [{ x1, y1, x2, y2 }] in canvas units. Returns null for no rects, else
 // { d (SVG path, even-odd), box (bounds of the outline), tabs ([{ x, y }]: the left end of each
 // piece's top edge, where its name tab sits on the line), hit(x, y) (inside the frame?) }.
-export function frameShape(rects, { pad = 14, bridge = 80, radius = 12 } = {}) {
+export function frameShape(rects, { pad = 14, bridge = 80, radius = 12, corridor = 16 } = {}) {
   if (!rects.length) return null;
   const r = Math.max(1, Math.ceil(bridge / 2 / CELL));
   let bx1 = Infinity, by1 = Infinity, bx2 = -Infinity, by2 = -Infinity;
@@ -40,7 +41,12 @@ export function frameShape(rects, { pad = 14, bridge = 80, radius = 12 } = {}) {
   };
   a = pass(pass(a, true, true), false, true);
   a = pass(pass(a, true, false), false, false);
+  // What counts as inside for hit(): the closing alone, so a block crossed by a corridor below
+  // does not read as drawn inside the frame.
+  const body = a;
+  a = joinPieces(a, w, h, Math.max(1, Math.round(corridor / CELL)));
   const on = (x, y) => x >= 0 && y >= 0 && x < w && y < h && a[y * w + x] === 1;
+  const inBody = (x, y) => x >= 0 && y >= 0 && x < w && y < h && body[y * w + x] === 1;
 
   // Trace the edges between filled and empty cells into closed loops (clockwise round the filled
   // side), then drop the points in the middle of straight runs.
@@ -97,6 +103,65 @@ export function frameShape(rects, { pad = 14, bridge = 80, radius = 12 } = {}) {
     }
   }
   tabs.sort((s, t) => s.y - t.y || s.x - t.x);
-  const hit = (x, y) => on(Math.floor(x / CELL) - gx0, Math.floor(y / CELL) - gy0);
+  const hit = (x, y) => inBody(Math.floor(x / CELL) - gx0, Math.floor(y / CELL) - gy0);
   return { d, box, tabs, hit };
+}
+
+// One frame is one loop, so it is drawn as one piece: pieces the closing left apart are joined by
+// thin corridors (`wide` cells across). One search grows every piece out at once through the
+// empty cells; where two growths meet, the cells they started from are the nearest pair of those
+// two pieces. The shortest set of such links that joins every piece (Kruskal) is drawn, each as
+// an L: along the row of one end, then along the column of the other.
+function joinPieces(src, w, h, wide) {
+  const a = src.slice(), n = w * h;
+  const label = new Int32Array(n).fill(-1), from = new Int32Array(n).fill(-1), dist = new Int32Array(n);
+  let pieces = 0, q = [];
+  for (let i = 0; i < n; i++) {
+    if (!a[i] || label[i] >= 0) continue;
+    const stack = [i]; label[i] = pieces;
+    while (stack.length) {
+      const c = stack.pop(), x = c % w, y = (c - x) / w;
+      from[c] = c; q.push(c);
+      if (x + 1 < w && a[c + 1] && label[c + 1] < 0) { label[c + 1] = pieces; stack.push(c + 1); }
+      if (x > 0 && a[c - 1] && label[c - 1] < 0) { label[c - 1] = pieces; stack.push(c - 1); }
+      if (y + 1 < h && a[c + w] && label[c + w] < 0) { label[c + w] = pieces; stack.push(c + w); }
+      if (y > 0 && a[c - w] && label[c - w] < 0) { label[c - w] = pieces; stack.push(c - w); }
+    }
+    pieces++;
+  }
+  if (pieces < 2) return a;
+  const best = new Map();   // "p,q" (p < q) -> { len, s, t }
+  const meet = (c, k) => {
+    const p = label[c], r = label[k];
+    if (p === r) return;
+    const key = p < r ? p + ',' + r : r + ',' + p, len = dist[c] + dist[k] + 1, e = best.get(key);
+    if (!e || len < e.len) best.set(key, { len, p, r, s: from[c], t: from[k] });
+  };
+  for (let head = 0; head < q.length; head++) {
+    const c = q[head], x = c % w, y = (c - x) / w;
+    const step = (k) => {
+      if (from[k] < 0) { from[k] = from[c]; label[k] = label[c]; dist[k] = dist[c] + 1; q.push(k); }
+      else meet(c, k);
+    };
+    if (x + 1 < w) step(c + 1);
+    if (x > 0) step(c - 1);
+    if (y + 1 < h) step(c + w);
+    if (y > 0) step(c - w);
+  }
+  const root = Array.from({ length: pieces }, (_, i) => i);
+  const find = (i) => { while (root[i] !== i) i = root[i] = root[root[i]]; return i; };
+  const lo = Math.floor((wide - 1) / 2), hi = wide - 1 - lo;
+  const fill = (x1, y1, x2, y2) => {
+    for (let y = Math.max(0, Math.min(y1, y2)); y <= Math.min(h - 1, Math.max(y1, y2)); y++)
+      for (let x = Math.max(0, Math.min(x1, x2)); x <= Math.min(w - 1, Math.max(x1, x2)); x++) a[y * w + x] = 1;
+  };
+  for (const e of [...best.values()].sort((u, v) => u.len - v.len)) {
+    const p = find(e.p), r = find(e.r);
+    if (p === r) continue;
+    root[p] = r;
+    const sx = e.s % w, sy = (e.s - sx) / w, tx = e.t % w, ty = (e.t - tx) / w;
+    fill(sx, sy - lo, tx + (tx >= sx ? hi : -lo), sy + hi);
+    fill(tx - lo, sy, tx + hi, ty);
+  }
+  return a;
 }
