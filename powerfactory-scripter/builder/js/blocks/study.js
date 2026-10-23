@@ -183,7 +183,7 @@ function simBlock(kind) {
   const statics = [
     { id: 'result', label: 'Result', type: 'res', var: rms ? 'rms' : 'emt', tip: 'For Read time series, to read curves the Record list does not have.' },
     { id: 't_end', label: 'Stopped at', type: 'num', unit: 's', var: 't_end', tip: 'The simulation time reached.' },
-    { id: 'status', label: 'Status', type: 'text', var: 'status', tip: 'ok, early (stopped before the stop time) or no_init (did not initialise).' },
+    { id: 'status', label: 'Status', type: 'text', var: 'status', tip: '`ok`, `early` (stopped before the stop time) or `no_init` (did not initialise).' },
   ];
   return {
     type, cat: CAT, kind: 'branch', title,

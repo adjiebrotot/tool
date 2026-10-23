@@ -140,7 +140,7 @@ defineBlock({
     { id: 'value', label: 'Value', type: 'num', scope: 'body', var: 'value', tip: 'The value of this try.' },
     { id: 'limit', label: 'Limit', type: 'num', scope: 'done', var: 'limit', tip: 'The last value that passed (always a value that was tried); empty when none passed.' },
     { id: 'found', label: 'Found', type: 'bool', scope: 'done', var: 'limit_found', tip: 'Yes when the search narrowed down to the tolerance.' },
-    { id: 'status', label: 'Status', type: 'text', scope: 'done', var: 'search_status', tip: 'DONE, ALL PASS, ALL FAIL, INCONSISTENT, MAX STEPS, STOPPED or UNKNOWN.' },
+    { id: 'status', label: 'Status', type: 'text', scope: 'done', var: 'search_status', tip: '`done`, `all pass`, `all fail`, `inconsistent`, `max steps`, `stopped` or `unknown`.' },
     { id: 'passing', label: 'Passing value', type: 'num', scope: 'done', var: 'passing' },
     { id: 'failing', label: 'Failing value', type: 'num', scope: 'done', var: 'failing' },
     { id: 'history', label: 'History', type: 'hist', scope: 'done', var: 'history', tip: 'Every try, for Draw convergence curve.' },
@@ -197,7 +197,7 @@ defineBlock({
   keywords: ['report', 'score', 'objective', 'pass', 'fail', 'result of try', 'search', 'optimise', 'find limit', 'trial', 'feedback'],
   inputs: [
     { id: 'score', label: 'Score', type: 'num', tip: 'For Optimise: the number to make small (or large).' },
-    { id: 'pass', label: 'Pass', type: 'any', tip: 'For Find limit: yes / no, or a PASS / FAIL or TRUE / FALSE text. Empty or UNDEFINED: no answer.' },
+    { id: 'pass', label: 'Pass', type: 'any', tip: 'For Find limit: yes / no, or a `pass` / `fail` or `true` / `false` text. Empty or `undefined`: no answer.' },
   ],
   settings: [
     { key: 'passIs', label: 'Pass is', kind: 'select', default: 'yes', more: true, noPin: true,

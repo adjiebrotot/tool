@@ -49,6 +49,29 @@ export function tipText(s, max = TIP_MAX - 4) {
 // As data-tip markup (the shared tooltip reads it as HTML).
 export const tipAttr = (s) => esc(tipText(s));
 
+// A tip with markup for values: `true` in the plain text becomes a .pfb-tip-val span (a script-like
+// look, so a value needs no capitals). Escapes the rest; the budget counts rendered text.
+export function tipRich(s, max = TIP_MAX - 4) {
+  const t = tipText(s, max + 2 * (String(s || '').split('`').length - 1));
+  return esc(t).replace(/`([^`]+)`/g, '<span class="pfb-tip-val">$1</span>').replace(/`/g, '');
+}
+
+// A port's tip: "Data type: Number", the type's own words only for a type a reader may not know,
+// then the port's tip on its own line when it adds something. T is a TYPES entry (or nothing:
+// a port that is gone); a mandatory input leads with the chip.
+const PLAIN_TYPES = ['num', 'bool', 'text', 'any'];
+export function portTip(t, T, extra, mandatory) {
+  const chip = mandatory ? '<span class="pfb-tip-chip">Mandatory</span> ' : '';
+  if (!T) return chip + tipRich('A port that is gone from this block.', TIP_MAX - 4 - (mandatory ? 10 : 0));
+  const flow = t === 'flow';
+  const head = flow ? T.label + ': ' + T.words : 'Data type: ' + T.label + (PLAIN_TYPES.includes(t) ? '' : '. ' + T.words.replace(/\.$/, '') + '.');
+  const room = TIP_MAX - 4 - (mandatory ? 10 : 0) - head.length - 1;
+  const lead = flow ? '<strong>' + esc(T.label) + ':</strong>' + esc(' ' + T.words)
+    : '<strong>Data type:</strong> ' + esc(head.slice('Data type: '.length));
+  const more = extra && room > 12 ? '<br>' + tipRich(extra, room) : '';
+  return chip + lead + more;
+}
+
 export function icon(name) {
   return (window.SharedIcon && typeof SharedIcon.svg === 'function') ? SharedIcon.svg(name) : '';
 }

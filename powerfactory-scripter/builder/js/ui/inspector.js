@@ -8,7 +8,7 @@
 // row added...) or when the workflow changed from elsewhere (undo, the canvas); a redraw puts
 // the focus and the caret back where they were.
 
-import { $, el, esc, tipText, icon, iconButton } from './dom.js';
+import { $, el, esc, tipText, portTip, icon, iconButton } from './dom.js';
 import { getBlock, settingsOf, visibleSettings, displayName, TYPES, optionPairs } from '../core/registry.js';
 import { suggestions } from '../core/workflow.js';
 import * as ops from './ops.js';
@@ -102,9 +102,9 @@ export function mountInspector(app) {
     if (scroller && fid) scroller.scrollTop = scrollTop;
   }
 
-  function tipIcon(text) {
-    if (!text) return null;
-    return el('span', { class: 'tip-icon', 'data-tip': esc(tipText(text)) }, '?');
+  function tipIcon(text, html) {
+    if (!text && !html) return null;
+    return el('span', { class: 'tip-icon', 'data-tip': html || esc(tipText(text)) }, '?');
   }
   function reqMark() { return el('span', { class: 'pfb-req', text: 'Required' }); }
 
@@ -369,13 +369,13 @@ export function mountInspector(app) {
   function inputRow(node, def, p, ss, visible) {
     const s = store.get();
     const edge = s.wf.edges.find(e => e.to === node.id && ops.handleIdOf(s.wf, node.id, e.in, 'in') === p.id);
-    const tip = p.stray ? '' : [TYPES[p.type] ? TYPES[p.type].label + ': ' + TYPES[p.type].words : '', p.tip || ''].filter(Boolean).join(' ');
+    const tip = p.stray ? '' : portTip(p.type, TYPES[p.type], p.tip || '', false);
     const fst = p.fallback ? def.settings.find(z => z.key === p.fallback) : null;
     const missingValue = !edge && p.required && !fst;
     const row = el('div', { class: 'pfb-in' + (missingValue ? ' pfb-todo' : ''), dataset: { port: p.id } },
       el('div', { class: 'pfb-lab' },
         el('span', { class: 'pfb-dot pfb-t-' + (TYPES[p.type] ? p.type : 'any') }),
-        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon(tip), missingValue ? reqMark() : null,
+        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon('', tip), missingValue ? reqMark() : null,
         el('span', { class: 'pfb-lab-fill' }),
         !edge && fst ? pinButton(node, fst) : null));
     if (p.stray) {

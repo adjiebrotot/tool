@@ -25,14 +25,10 @@ import { fallbackText, inputNeed } from './inspector.js';
 import { blockIcon } from './icons.js';
 import { frameShape } from './frames.js';
 import { previewSpec, renderPreview } from './previews.js';
-import { $, esc, tipText, TIP_MAX, icon, isPhone } from './dom.js';
+import { $, esc, tipText, TIP_MAX, icon, isPhone, portTip } from './dom.js';
 
 // A port's tip (the shared tooltip reads it as HTML); a mandatory input leads with a chip.
-const typeTip = (t, extra, mandatory) => {
-  const T = TYPES[t];
-  const chip = mandatory ? '<span class="pfb-tip-chip">Mandatory</span> ' : '';
-  return chip + esc(tipText((T ? T.label + ': ' + T.words : 'A port that is gone from this block.') + (extra ? ' ' + extra : ''), TIP_MAX - 4 - (mandatory ? 10 : 0)));
-};
+const typeTip = (t, extra, mandatory) => portTip(t, TYPES[t], extra, mandatory);
 const portLabel = (p) => (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '');
 
 // The padding for fitView: the free part of the screen between the floating panels, or a plain

@@ -263,7 +263,7 @@ defineBlock({
   desc: 'Reads a CSV file or an Excel sheet into a named table, one case per row or per column, for For each item to loop over its rows. Use it for a case workbook.',
   keywords: ['read', 'import', 'load', 'open', 'CSV', 'Excel', 'xlsx', 'spreadsheet', 'workbook', 'cases', 'case table', 'input file', 'dispatch table'],
   outputs: [
-    { id: 'name', label: 'Table name', type: 'text', var: 'table_name', tip: 'The name of the table it filled.' },
+    { id: 'name', label: 'Table name', type: 'text', var: 'table_name' },
     { id: 'n', label: 'Rows', type: 'num', var: 'rows_read', tip: 'How many cases were read.' },
   ],
   settings: [

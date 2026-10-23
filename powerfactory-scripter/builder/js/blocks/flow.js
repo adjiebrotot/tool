@@ -46,7 +46,7 @@ defineBlock({
   keywords: ['if', 'condition', 'decision', 'branch', 'check', 'compare', 'yes no', 'only if', 'settles'],
   flowOuts: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'No' }],
   inputs: [
-    { id: 'a', label: 'Value', type: 'any', required: true, tip: 'The value to check.' },
+    { id: 'a', label: 'Value', type: 'any', required: true },
     { id: 'b', label: 'Compare with', type: 'num', fallback: 'b', tip: 'The number to compare the value with (not used for "is true").' },
   ],
   settings: [
@@ -58,7 +58,7 @@ defineBlock({
   ports(s) {
     return {
       inputs: [
-        { id: 'a', label: 'Value', type: 'any', required: true, tip: 'The value to check.' },
+        { id: 'a', label: 'Value', type: 'any', required: true },
         { id: 'b', label: s.op === 'true' ? 'Compare with (not used)' : 'Compare with', type: 'num', fallback: 'b' },
       ],
     };

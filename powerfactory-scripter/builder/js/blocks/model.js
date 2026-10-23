@@ -354,7 +354,7 @@ defineBlock({
     { id: 'at_max', label: 'Where highest', type: 'obj', var: 'at_highest', tip: 'The element with the highest value.' },
     { id: 'at_min', label: 'Where lowest', type: 'obj', var: 'at_lowest', tip: 'The element with the lowest value.' },
     { id: 'values', label: 'All values', type: 'list', var: 'values' },
-    { id: 'n', label: 'How many', type: 'num', var: 'count', tip: 'How many values were read.' },
+    { id: 'n', label: 'How many', type: 'num', var: 'count' },
   ],
   settings: [
     elementSetting('el', 'Element', 'ElmTerm'),
