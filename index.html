@@ -203,17 +203,6 @@
       padding: clamp(1.5rem, 5vw, 3.5rem) 0 1rem;
     }
 
-    /* The hero: the name, one sentence on what this is (ending in the words
-       the typewriter cycles through), and a handwritten aside. No panel and
-       no pictures: the tool cards below carry the drawings. */
-    .hero .hero-lede {
-      font-size: var(--fs-md);
-      color: var(--text);
-      line-height: 1.5;
-      margin: 0;
-      max-width: 44ch;
-    }
-
     /* The typewriter has a line of its own, one line tall whatever word it is
        typing, so the page below never moves while it types. */
     .hero .hero-type {
@@ -226,11 +215,13 @@
       line-height: 1.6;
     }
 
-    /* A handwritten aside, drawn from data-note so it never becomes page text
-       (the same device as the www homepage). */
+    /* The hero: the name, a handwritten aside right under it, then the line
+       the typewriter cycles through. No panel and no pictures: the tool cards
+       below carry the drawings. The aside is drawn from data-note so it never
+       becomes page text (the same device as the www homepage). */
     .hand-note {
       display: inline-block;
-      margin-top: 0.75rem;
+      margin: 0 0 0.35rem;
       font-family: 'Caveat', 'Comic Sans MS', cursive;
       font-weight: 600;
       font-size: 1.35rem;
@@ -570,18 +561,25 @@
       border: 1.5px solid var(--border);
       border-radius: var(--radius-xl);
       overflow: hidden;
-      transition: transform var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
+      position: relative;
+      top: 0;
+      left: 0;
+      transition: top var(--motion-fast), left var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
     }
 
+    /* The lift is an offset, not a transform: a transform would make the card
+       the containing block of its fixed sub-tool menu, which the card's
+       overflow then clips away. */
     .tool-card:hover,
     .tool-card:focus-within {
-      transform: translate(-2px, -2px);
+      top: -2px;
+      left: -2px;
       border-color: var(--ink-line);
       box-shadow: var(--sticker-hover);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .tool-card:hover, .tool-card:focus-within { transform: none; }
+      .tool-card:hover, .tool-card:focus-within { top: 0; left: 0; }
     }
 
     .tool-card.is-hidden {
@@ -1571,12 +1569,11 @@
   <div class="site-header">
     <div class="container hero">
       <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
-      <p class="hero-lede">Free calculators and simulators for money, energy and data, made in Perth, that run in your browser.</p>
+      <span class="hand-note" data-note="tools that help me, hope they help you too" aria-hidden="true" data-nosnippet></span>
       <p class="hero-type" aria-hidden="true">They help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span></p>
       <p class="visually-hidden" itemprop="description">
         Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
       </p>
-      <span class="hand-note" data-note="tools that help me, hope they help you too" aria-hidden="true" data-nosnippet></span>
     </div>
   </div>
     </div>

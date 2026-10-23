@@ -50,3 +50,7 @@ write each change as that.
 Before shipping a change to a tool's inputs, run `node _ref/share-check.mjs` (its kept-links
 checks, F1 and F2, fail when a field an old link names is gone) and `node _ref/scenario-check.mjs`.
 When a field does fail F2, fix the tool so the old name still loads. Don't edit the kept link.
+
+After changing an optimiser tool's solver (`capacity-expansion-planner/cx-core.js`, `ed-uc-simulator/ed-core.js`,
+their workers or `ed-uc-simulator/engine/`), run `node _ref/presolve.mjs` so its pre-solved Quick Starts
+match again (`--check` says whether they do; until then the tool just solves as before).
