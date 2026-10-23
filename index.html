@@ -45,6 +45,8 @@
   <meta name="twitter:description" content="Free browser-based tools for finance, tax, property, and engineering decisions. All calculations run locally — no uploads, no paywall.">
   <meta name="twitter:image" content="https://tool.adjiebrotots.com/logos/logo.png">
 
+  <link rel="preload" href="assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/caveat.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="dropdown.css">
 
@@ -210,6 +212,18 @@
       line-height: 1.5;
       margin: 0;
       max-width: 44ch;
+    }
+
+    /* The typewriter has a line of its own, one line tall whatever word it is
+       typing, so the page below never moves while it types. */
+    .hero .hero-type {
+      margin: 0.35rem 0 0;
+      height: 1.6em;
+      overflow: hidden;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: var(--fs-md);
+      line-height: 1.6;
     }
 
     /* A handwritten aside, drawn from data-note so it never becomes page text
@@ -685,14 +699,9 @@
 
     /* Categories are small print: they feed the filters and the search, and
        sit at the foot of the card so they line up across a row. */
-    /* The categories still feed the search (it reads the card's text) and the
-       filters, but the domain headings already say them, so they are not
-       shown on the card. */
-    .tool-tags { display: none; }
+    .tool-footer { margin-top: 0.15rem; }
 
-    .tool-footer { margin-top: auto; }
-
-    .tool-tags-shown {
+    .tool-tags {
       margin: auto 0 0;
       padding: 0;
       list-style: none;
@@ -955,8 +964,9 @@
         width: min(calc(100% - 2rem), var(--max-width));
       }
 
-      .family-nav a { padding: 0 6px; }
-      .family-brand span { display: none; }
+      /* On a phone the bar keeps the name, as the blog's does, and leaves the
+         links to the footer. */
+      .family-nav a { display: none; }
 
 
       /* On a phone the keyword search stays; the three selects and the reset
@@ -1561,7 +1571,8 @@
   <div class="site-header">
     <div class="container hero">
       <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
-      <p class="hero-lede">Free calculators and simulators, made in Perth, that run in your browser. They help you with <span class="typewriter" aria-hidden="true"><span id="typeText" class="type-text"></span></span><span class="visually-hidden">money, energy and data</span></p>
+      <p class="hero-lede">Free calculators and simulators for money, energy and data, made in Perth, that run in your browser.</p>
+      <p class="hero-type" aria-hidden="true">They help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span></p>
       <p class="visually-hidden" itemprop="description">
         Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
       </p>
