@@ -315,6 +315,28 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-k-pure .pfb-n-head { border-radius: 12.5px 12.5px 0 0; }
 .pfb-k-pure .pfb-n-head::before { border-radius: 12.5px 12.5px 0 0; }
 
+/* Loop frames: a loop's body as one dashed, tinted area behind its blocks (canvas.js loopFrames).
+   Under the wires and blocks (z-index -1 inside the viewport), over the dotted ground. The tab is
+   the only part that takes a click (it selects the loop); the rest lets clicks through to the
+   canvas. Selecting the loop block draws its frame solid. */
+.pfb-frames { position: absolute; left: 0; top: 0; z-index: -1; pointer-events: none; }
+.pfb-frame { position: absolute; left: 0; top: 0; border-radius: 16px; background: color-mix(in srgb, var(--cat) 6%, transparent); transition: background-color var(--motion-fast, .15s); }
+.pfb-frame-line { position: absolute; inset: 0; overflow: visible; }
+.pfb-frame-line rect { fill: none; stroke: color-mix(in srgb, var(--cat) 60%, transparent); stroke-width: 1.5; stroke-dasharray: 9 6; stroke-linecap: round; }
+.pfb-frame.is-sel { background: color-mix(in srgb, var(--cat) 10%, transparent); }
+.pfb-frame.is-sel .pfb-frame-line rect { stroke: var(--cat); stroke-dasharray: none; stroke-width: 2; }
+.pfb-frame-tab {
+  position: absolute; top: 7px; left: 12px; max-width: calc(100% - 24px);
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px 2px 8px;
+  border-radius: 999px; background: color-mix(in srgb, var(--cat) 15%, var(--bg));
+  color: color-mix(in srgb, var(--cat) 55%, var(--text)); font-size: 11px; font-weight: 700; line-height: 16px;
+  white-space: nowrap; overflow: hidden; pointer-events: auto; cursor: pointer;
+}
+.pfb-frame-tab:hover { background: color-mix(in srgb, var(--cat) 24%, var(--bg)); }
+.pfb-frame-ico { font-size: 12px; }
+.pfb-frame-sep { opacity: .55; }
+.pfb-frame-name { overflow: hidden; text-overflow: ellipsis; }
+
 /* Notes are sticky notes */
 .pfb-note {
   position: relative;

@@ -822,6 +822,16 @@ await test('canvas decorations', async () => {
     const node = (id) => document.querySelector(`.react-flow__node[data-id="${id}"] .pfb-node`);
     return {
       end: q('n4', '.pfb-end'), chip: q('n4', '.pfb-n-chip'), step: q('n3', '.pfb-n-step'),
+      frame: (() => {
+        const f = document.querySelector('.pfb-frame');
+        if (!f) return null;
+        const r = f.getBoundingClientRect(), holds = {};
+        for (const id of ['n2', 'n3', 'n4']) {
+          const b = document.querySelector(`.react-flow__node[data-id="${id}"]`).getBoundingClientRect();
+          holds[id] = b.left >= r.left && b.top >= r.top && b.right <= r.right && b.bottom <= r.bottom;
+        }
+        return { tab: f.querySelector('.pfb-frame-tab').textContent, holds, n: document.querySelectorAll('.pfb-frame').length };
+      })(),
       flowInHead: !!document.querySelector('.react-flow__node[data-id="n3"] .pfb-n-head .react-flow__handle.target[data-handleid="in"]'),
       flowOutLabel: q('n4', '.pfb-n-flabel'),
       tint: getComputedStyle(node('n3')).getPropertyValue('--cat').trim() === getComputedStyle(document.body).getPropertyValue('--cat-model').trim() &&
@@ -836,7 +846,8 @@ await test('canvas decorations', async () => {
     };
   });
   check('an unwired flow output shows where the route goes', d.end === 'skips to the next pass of Dispatch (MW)', d.end);
-  check('blocks on an Each pass route show the loop chip', /↻ Dispatch \(MW\)/.test(d.chip || ''), d.chip);
+  check('a loop\'s body is drawn in one frame named after the loop, the loop block outside it', d.frame && d.frame.n === 1 && /Each pass.*Dispatch \(MW\)/.test(d.frame.tab) && d.frame.holds.n3 && d.frame.holds.n4 && !d.frame.holds.n2, JSON.stringify(d.frame));
+  check('a framed block needs no loop chip', d.chip === null, d.chip);
   check('the step number is shown', d.step === '3', d.step);
   check('the flow input sits in the header row', d.flowInHead);
   check('flow outputs carry their labels', d.flowOutLabel === 'Converged', d.flowOutLabel);
@@ -877,6 +888,18 @@ await test('canvas decorations', async () => {
   await D.page.evaluate(() => PFB.select(['n6']));
   await sleep(120);
   check('the inspector says it is missing', /Missing block/.test(await D.page.textContent('#pfbInspector .pfb-insp-title')));
+  // The frame follows a block while it is dragged
+  await loadWf(D, BASE);
+  const fw0 = await D.page.evaluate(() => document.querySelector('.pfb-frame').getBoundingClientRect().width);
+  const hb = await D.page.locator('.react-flow__node[data-id="n4"] .pfb-n-head').boundingBox();
+  await D.page.mouse.move(hb.x + 30, hb.y + hb.height / 2);
+  await D.page.mouse.down();
+  await D.page.mouse.move(hb.x + 230, hb.y + hb.height / 2, { steps: 8 });
+  await sleep(120);
+  const fw1 = await D.page.evaluate(() => document.querySelector('.pfb-frame').getBoundingClientRect().width);
+  await D.page.mouse.up();
+  await sleep(200);
+  check('a loop frame grows with a body block while it is dragged', fw1 > fw0 + 150, fw0 + ' -> ' + fw1);
 });
 
 await test('Python tab', async () => {
