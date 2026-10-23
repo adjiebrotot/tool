@@ -355,7 +355,7 @@
          Timing), only shown for weight-based methods; future weight-free methods
          leave this hidden. Pie + editable table are built in script.js. -->
     <div id="rebalWeights" style="display:none">
-      <div class="field-label" style="margin-top:10px">Target Weights <span class="tip-icon" id="weightTip" data-tip="The share of the portfolio each asset should hold. The weights must add up to 100%.">?</span></div>
+      <div class="field-label" style="margin-top:10px">Target Weights <span class="tip-icon" id="weightTip" data-tip="The share of the portfolio each asset should hold. The weights must add up to 100%.">?</span> <button type="button" class="opt-btn" data-opt="weight" title="Add Target Weights to optimisation" aria-label="Add Target Weights to optimisation"></button></div>
       <div class="weight-main">
         <div class="weight-pie-wrap"><canvas id="weightPieCanvas" width="200" height="200"></canvas></div>
         <div id="weightTableWrap" class="weight-table-wrap"></div>
@@ -373,7 +373,7 @@
           <option value="12">12 months</option>
         </select>
       </div>
-      <div class="field-label" style="margin-top:10px">Rank Weights <span class="tip-icon" data-tip="The share of each top-up going to each rank, Rank 1 being the strongest trailing return. Which asset fills a rank changes as performance does.">?</span></div>
+      <div class="field-label" style="margin-top:10px">Rank Weights <span class="tip-icon" data-tip="The share of each top-up going to each rank, Rank 1 being the strongest trailing return. Which asset fills a rank changes as performance does.">?</span> <button type="button" class="opt-btn" data-opt="rank" title="Add Rank Weights to optimisation" aria-label="Add Rank Weights to optimisation"></button></div>
       <div id="rankWeightTableWrap" class="weight-table-wrap"></div>
     </div>
 
@@ -540,7 +540,6 @@
           <span class="opt-pick" id="optPickWrap" hidden data-no-persist></span>
         </div>
       </div>
-      <div class="status-bar" id="optPickStatus"></div>
     </div>
 
     <!-- SECURITY PRICES SUBSECTION -->
@@ -662,8 +661,14 @@
         <div class="field-label">Values to test <span class="label-note">(Ctrl/Cmd = multi-select)</span></div>
         <select class="sel-input opt-pick-list" id="optPickSel" multiple></select>
       </div>
+      <!-- Weights are one group with one editor: up to two members swept, and the
+           one slack they share. The members are drawn by openOptGroupModal. -->
+      <div id="optGroupFields" hidden>
+        <div class="field-label">Weights to sweep <span class="tip-icon" data-tip="Turn on up to two weights. Each runs Steps values from Start to End, both ends included; with two, every pair of their values is a mix that runs.">?</span></div>
+        <div class="opt-members" id="optMembers"></div>
+      </div>
       <div class="field-row" id="optSlackRow" hidden>
-        <div class="field-label">Slack <span class="tip-icon" data-tip="Weights have to add up to 100%, so another weight moves the other way: one you pick, or all the others in equal shares.">?</span></div>
+        <div class="field-label">Slack <span class="tip-icon" data-tip="Weights must add up to 100%, so another moves the other way: one you pick, or all the others in equal shares. Every swept weight uses this one.">?</span></div>
         <select class="sel-input" id="optSlack"></select>
       </div>
       <p class="opt-preview" id="optPreview" role="status"></p>

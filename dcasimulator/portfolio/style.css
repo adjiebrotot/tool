@@ -175,6 +175,26 @@ main .card{transition:opacity var(--transition-fast)}
 .sched-wd-row{display:flex;align-items:center;gap:6px}
 .sched-wd-row>.weekday-grid{flex:1 1 auto;min-width:0}
 .sched-inline.opt-on,.sched-wd-row.opt-on{padding:4px 6px 4px 9px}
+/* The weights editor: a switch per member, gold while it is swept, and the
+   range of each one swept under it. A switch that cannot be turned on says why
+   in its row's title. */
+.opt-members{margin:6px 0 2px;border-top:1px solid var(--border)}
+.opt-member{border-bottom:1px solid var(--border)}
+.opt-member:last-child{border-bottom:none}
+.opt-member-head{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;font-size:.86rem}
+.opt-member-name{display:flex;align-items:center;gap:7px;flex:1 1 auto;min-width:0;font-weight:600;color:var(--text)}
+.opt-member-name>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt-member-name .color-dot{width:11px;height:11px;border:none}
+.opt-member.is-on .opt-member-name{font-weight:800}
+.opt-member-now{color:var(--muted);font-size:.78rem;white-space:nowrap}
+.opt-member-head input:checked+.toggle-track{background:var(--gold);border-color:var(--gold)}
+.opt-member-head input:focus-visible+.toggle-track{outline:2px solid var(--gold);outline-offset:2px}
+.opt-member-head:has(input:disabled){cursor:not-allowed}
+.opt-member-head input:disabled+.toggle-track{opacity:.4;cursor:not-allowed}
+.opt-member-range{gap:8px}
+.opt-member-range>.field-row{padding:0 0 10px}
+/* A mix names every weight, so its picker may run wider than one value's. */
+.opt-pick .opt-mix-select{max-width:min(100%,440px)}
 
 /* Only the portfolio being optimised runs, so the bar that switches, adds,
    copies and removes portfolios stands down; its tab stays lit. */

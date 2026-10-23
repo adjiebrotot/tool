@@ -78,7 +78,10 @@ same checks run either way — only the printed numbers differ.
   against an independently written one. Then the contracts: which fields offer a
   gauge under each method (trigger type and direction, the method, the reserve and
   Rebalance Timing never do, nor does Trade at), list values picked one by one in
-  the editor, a swept setting dropped when its field goes away, a
+  the editor, the weights editor (one gauge on the table's heading, up to two
+  weights with one slack they share, a file that gave each its own running on the
+  first one's, one picker offering only the mixes that ran, and a gate that stays
+  shut when none can), a swept setting dropped when its field goes away, a
   period and its day never swept together, the two-setting limit, the 625-run cap,
   the locked portfolio bar, Cancel, saved state (reload, file, an old file, a file
   naming settings that no longer exist) and no page errors.
