@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+@import url('../../fonts.css');
 
 /* =============================================================================================
    PowerFactory Workflow Builder
@@ -6,6 +6,9 @@
    own tokens below are declared on `body`, so a token built from another (var(--accent)) is
    worked out again under body.light and both themes follow without any script.
    Class prefix: .pfb-. The canvas (React Flow) is themed through its --xy-* variables.
+   The Adjie family design (_ref/design-reference.md): flat surfaces, --shadow-lg only on what
+   floats over the canvas, the sticker on what a reader presses (shared.css), labels in
+   sentence case at 13px, DM Mono for figures and the title (as on the Scripter).
    ============================================================================================= */
 
 body {
@@ -85,10 +88,11 @@ body.pfb-page { margin: 0; background: var(--bg); }
 h1.pfb-title {
   margin: 0; display: flex; align-items: center; gap: .35em;
   font-family: var(--pfb-mono); font-weight: 600; font-size: 14px; line-height: 1.3;
-  color: var(--accent); letter-spacing: .03em; white-space: nowrap;
+  color: var(--accent); letter-spacing: .03em;
 }
 h1.pfb-title .tool-glyph { flex-shrink: 0; }
-h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
+/* A narrow bar wraps the title onto two lines; the H1 is never cut. */
+h1.pfb-title span { text-wrap: balance; }
 .pfb-brand-sub { margin-top: 2px; font-size: 11.5px; line-height: 1.4; color: var(--muted); }
 .pfb-brand-sub a { color: var(--accent); font-weight: 700; text-decoration: none; white-space: nowrap; }
 .pfb-brand-sub a:hover { text-decoration: underline; }
@@ -109,12 +113,9 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-tb .ico { width: 17px; height: 17px; }
 .pfb-tb-clear:hover:not(:disabled) { color: var(--negative-em); }
 .pfb-tb-sep { width: 1px; height: 20px; margin: 0 5px; background: var(--border); flex-shrink: 0; }
-.pfb-toolbar .pfb-download { margin-left: 6px; padding: 7px 15px; font-size: .84rem; white-space: nowrap; border-radius: var(--radius-pill); }
-.pfb-toolbar .pfb-download.pfb-has-problems { box-shadow: 0 0 0 2px var(--pfb-warn) inset; }
+.pfb-toolbar .pfb-download { flex-shrink: 0; margin-left: 6px; padding: 7px 15px; font-size: .84rem; white-space: nowrap; border-radius: var(--radius-pill); }
 
 .pfb-nav { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.pfb-nav .btn-theme { background: var(--panel); box-shadow: var(--shadow); text-decoration: none; white-space: nowrap; }
-.pfb-nav .btn-theme:hover { color: var(--accent); }
 
 .pfb-alert.warning { position: absolute; z-index: 40; top: calc(var(--pfb-dock-top) + 4px); left: 50%; transform: translateX(-50%); width: min(560px, calc(100% - 24px)); margin: 0; }
 
@@ -138,7 +139,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-dock.is-dragging { box-shadow: 0 10px 40px color-mix(in srgb, var(--text) 18%, transparent); }
 .pfb-dock.is-dragging .pfb-dock-head { cursor: grabbing; }
 .pfb-grip { color: var(--muted); font-size: 14px; line-height: 1; opacity: .7; flex-shrink: 0; }
-.pfb-dock-title { flex: 1 1 auto; font-weight: 800; font-size: .82rem; letter-spacing: .02em; }
+.pfb-dock-title { flex: 1 1 auto; font-weight: 800; font-size: .82rem; }
 .pfb-dock-fold { flex-shrink: 0; min-width: 28px; height: 28px; border-radius: var(--radius-sm); color: var(--muted); font-size: 13px; transition: transform var(--motion-fast); }
 .pfb-dock-fold:hover { color: var(--text); background: var(--input-bg); }
 .pfb-dock.is-folded .pfb-dock-fold { transform: rotate(-90deg); }
@@ -168,10 +169,10 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-tb-text .tico { width: 15px; height: 15px; color: var(--gold); }
 .pfb-tb[aria-expanded="true"] { background: var(--input-bg); }
 .quick-start-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.quick-start-label { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: .74rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; text-transform: uppercase; letter-spacing: .06em; }
+.quick-start-label { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: .8125rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 .quick-start-label .tico { width: 1.05em; height: 1.05em; }
 .quick-start-btns { display: flex; gap: 5px; flex-wrap: wrap; }
-.quick-start-btn { background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 8px; color: var(--muted); padding: 4px 9px; font-size: .74rem; font-weight: 600; cursor: pointer; transition: all var(--motion-fast); white-space: nowrap; font-family: inherit; }
+.quick-start-btn { background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 8px; color: var(--muted); padding: 4px 9px; font-size: .74rem; font-weight: 600; cursor: pointer; transition: color var(--motion-fast), background-color var(--motion-fast), border-color var(--motion-fast); white-space: nowrap; font-family: inherit; }
 .quick-start-btn:hover { border-color: var(--accent); color: var(--text); }
 .quick-start-btn.active { border-color: var(--accent2); color: var(--text); background: color-mix(in srgb, var(--accent2) 15%, transparent); }
 .pfb-pal-hint { padding: 4px 12px 6px; font-size: .72rem; color: var(--muted); line-height: 1.4; }
@@ -185,7 +186,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-cat-head:hover { background: var(--input-bg); }
 .pfb-cat-dot { width: 9px; height: 9px; border-radius: 3px; background: var(--cat); flex-shrink: 0; }
 .pfb-cat-title { flex: 1 1 auto; }
-.pfb-cat-n { color: var(--muted); font-weight: 600; font-size: .72rem; }
+.pfb-cat-n { flex-shrink: 0; color: var(--muted); font-weight: 600; font-size: .72rem; }
 .pfb-cat-chev { color: var(--muted); width: 1em; text-align: center; }
 .pfb-cat-items { display: flex; flex-direction: column; gap: 2px; padding: 2px 0 6px; }
 .pfb-pal-item {
@@ -231,10 +232,12 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 
 /* The minimap and the wire legend sit in the corners the docks leave free. */
 .pfb-flow .react-flow__panel.react-flow__minimap { right: var(--pfb-safe-right); bottom: 34px; margin: 0; }
-.pfb-legend { position: absolute; z-index: 12; left: var(--pfb-safe-left); bottom: 40px; font-size: .76rem; max-width: 220px; border-radius: var(--radius-md); box-shadow: var(--shadow); }
+.pfb-legend { position: absolute; z-index: 12; left: var(--pfb-safe-left); bottom: 40px; font-size: .76rem; max-width: 360px; border-radius: var(--radius-md); box-shadow: var(--shadow); }
 .pfb-legend > summary { cursor: pointer; padding: 5px 10px; color: var(--muted); font-weight: 700; list-style-position: inside; }
-.pfb-legend-list { list-style: none; margin: 0; padding: 2px 10px 8px; display: grid; gap: 3px; max-height: 260px; overflow-y: auto; }
-.pfb-leg { display: flex; align-items: center; gap: 8px; color: var(--text); }
+/* Two columns, so all the wire types show without a scrollbar (a scrollbar inside a shrink-to-fit
+   box takes its width from the names and cut them). */
+.pfb-legend-list { list-style: none; margin: 0; padding: 2px 10px 8px; display: grid; grid-template-columns: repeat(2, max-content); gap: 3px 16px; max-height: 260px; overflow: hidden auto; }
+.pfb-leg { display: flex; align-items: center; gap: 8px; color: var(--text); white-space: nowrap; }
 .pfb-leg-sw { width: 22px; height: 3px; border-radius: 2px; background: var(--hc, var(--muted)); flex-shrink: 0; }
 .pfb-leg-sw.is-flow { height: 5px; background: var(--pfb-wire-flow); }
 
@@ -252,7 +255,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-node {
   position: relative;
   min-width: 210px;
-  max-width: 300px;
+  max-width: 320px;
   background: var(--panel-raised);
   border: 1.5px solid var(--border);
   border-radius: 10px;
@@ -286,7 +289,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-n-badge { flex-shrink: 0; font-size: 13px; line-height: 1; cursor: help; }
 .pfb-n-badge.pfb-lv-error { color: var(--pfb-err); }
 .pfb-n-badge.pfb-lv-warning { color: var(--pfb-warn); }
-.pfb-n-badge.pfb-lv-todo { font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); background: var(--input-bg); text-transform: uppercase; letter-spacing: .04em; }
+.pfb-n-badge.pfb-lv-todo { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); background: var(--input-bg); }
 .pfb-n-sum { padding: 5px 12px 2px; color: var(--muted); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .pfb-n-endrow { display: flex; justify-content: flex-end; padding: 3px 12px 0; }
 .pfb-end { color: var(--muted); font-style: italic; font-size: 10.5px; line-height: 1.3; }
@@ -298,10 +301,11 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-n-row { display: flex; justify-content: space-between; align-items: stretch; gap: 10px; min-height: 22px; }
 .pfb-n-in, .pfb-n-out { position: relative; display: flex; align-items: center; gap: 5px; padding: 2px 13px; min-width: 0; }
 .pfb-n-in { flex: 1 1 auto; flex-wrap: wrap; row-gap: 0; }
-.pfb-n-out { flex: 0 1 auto; justify-content: flex-end; text-align: right; }
+.pfb-n-out { flex: 0 0 auto; max-width: 70%; justify-content: flex-end; text-align: right; }
 .pfb-n-empty { padding: 0; }
-.pfb-n-plab { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
-.pfb-n-fb { color: var(--muted); font-family: var(--pfb-mono); font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.pfb-n-empty + .pfb-n-out { max-width: none; }
+.pfb-n-plab { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
+.pfb-n-fb { color: var(--muted); font-family: var(--pfb-mono); font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
 .pfb-n-need { color: var(--muted); font-style: italic; font-size: 10.5px; }
 .pfb-n-in.is-stray .pfb-n-plab, .pfb-n-out.is-stray .pfb-n-plab { color: var(--pfb-err); text-decoration: line-through; }
 .pfb-n-chip { display: inline-block; margin: 0 10px 8px; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--cat-flow) 16%, transparent); color: var(--muted); font-size: 10.5px; font-weight: 600; max-width: calc(100% - 20px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -310,6 +314,83 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-k-pure { border-radius: 14px; }
 .pfb-k-pure .pfb-n-head { border-radius: 12.5px 12.5px 0 0; }
 .pfb-k-pure .pfb-n-head::before { border-radius: 12.5px 12.5px 0 0; }
+
+/* Loop frames: a loop's body as one dashed, tinted outline hugging its blocks (canvas.js
+   loopFrames, frames.js). Under the wires and blocks (z-index -1 inside the viewport), over the
+   dotted ground. The tab sits on the line, like a fieldset's legend, and is the only part that
+   takes a click (it selects the loop); the rest lets clicks through to the canvas. Selecting
+   the loop block draws its outline solid. */
+.pfb-frames { position: absolute; left: 0; top: 0; z-index: -1; pointer-events: none; }
+.pfb-frame { position: absolute; left: 0; top: 0; }
+.pfb-frame-line { position: absolute; inset: 0; overflow: visible; }
+.pfb-frame-line path {
+  fill: color-mix(in srgb, var(--cat) 6%, transparent); fill-rule: evenodd;
+  stroke: color-mix(in srgb, var(--cat) 60%, transparent); stroke-width: 1.5; stroke-dasharray: 9 6; stroke-linecap: round;
+  transition: fill var(--motion-fast, .15s);
+}
+.pfb-frame.is-sel .pfb-frame-line path { fill: color-mix(in srgb, var(--cat) 10%, transparent); stroke: var(--cat); stroke-dasharray: none; stroke-width: 2; }
+.pfb-frame-tab {
+  position: absolute; transform: translateY(-50%); max-width: 320px;
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px 2px 8px;
+  border-radius: 999px; background: color-mix(in srgb, var(--cat) 15%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--cat) 35%, var(--bg));
+  color: color-mix(in srgb, var(--cat) 55%, var(--text)); font-size: 11px; font-weight: 700; line-height: 16px;
+  white-space: nowrap; overflow: hidden; pointer-events: auto; cursor: pointer;
+}
+.pfb-frame-tab:hover { background: color-mix(in srgb, var(--cat) 24%, var(--bg)); }
+.pfb-frame-ico { font-size: 12px; }
+.pfb-frame-sep { opacity: .55; }
+.pfb-frame-name { overflow: hidden; text-overflow: ellipsis; }
+
+/* Previews: what a graph or table block makes, drawn with the reader's names and mock values
+   (previews.js). The values are grey; the lines take a muted copy of the chart colours so the
+   legend still says which is which. contain: inline-size keeps the preview from widening the
+   block: it takes the width the ports give it. */
+.pfb-pv { contain: inline-size; margin: 2px 10px 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg-subtle); overflow: hidden; }
+.pfb-pv-svg { display: block; width: 100%; height: auto; }
+.pfb-pv text { font-family: 'DM Sans', system-ui, sans-serif; fill: var(--muted); }
+.pfb-pv .pv-title { font-size: 9.5px; font-weight: 700; fill: color-mix(in srgb, var(--text) 75%, var(--muted)); }
+.pfb-pv .pv-ax { font-size: 8px; font-weight: 600; }
+.pfb-pv .pv-small { font-size: 7.2px; }
+.pfb-pv .pv-note { font-size: 7.2px; font-style: italic; }
+.pfb-pv .pv-axis { fill: none; stroke: color-mix(in srgb, var(--muted) 60%, transparent); stroke-width: .8; }
+.pfb-pv .pv-grid { stroke: var(--border); stroke-width: .6; stroke-dasharray: 2 2; }
+.pfb-pv .pv-line { fill: none; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.pfb-pv .pv-thin { stroke-width: .8; }
+.pfb-pv .pv-s0 { --pv: color-mix(in srgb, var(--line-a) 55%, var(--muted)); }
+.pfb-pv .pv-s1 { --pv: color-mix(in srgb, var(--line-b) 50%, var(--muted)); }
+.pfb-pv .pv-s2 { --pv: color-mix(in srgb, var(--line-c) 55%, var(--muted)); }
+.pfb-pv .pv-s3 { --pv: color-mix(in srgb, var(--line-e) 50%, var(--muted)); }
+.pfb-pv .pv-line { stroke: var(--pv, var(--muted)); }
+.pfb-pv .pv-dot, .pfb-pv .pv-bar { fill: var(--pv, var(--muted)); }
+.pfb-pv .pv-bar { fill-opacity: .75; }
+.pfb-pv .pv-limit { stroke: color-mix(in srgb, var(--negative-em) 55%, var(--muted)); stroke-width: .9; stroke-dasharray: 4 3; }
+.pfb-pv .pv-event { stroke: var(--muted); stroke-width: .8; stroke-dasharray: 1 2.2; opacity: .8; }
+.pfb-pv .pv-mark { fill: var(--panel-raised); stroke: color-mix(in srgb, var(--text) 60%, var(--muted)); stroke-width: 1.2; }
+.pfb-pv .pv-legbg { fill: color-mix(in srgb, var(--panel-raised) 85%, transparent); stroke: var(--border); stroke-width: .6; }
+.pfb-pv .pv-quad { fill: color-mix(in srgb, var(--line-a) 55%, var(--muted)); stroke: var(--panel-raised); stroke-width: .5; }
+.pfb-pv .pv-cell { fill: color-mix(in srgb, var(--line-a) 60%, var(--muted)); }
+.pfb-pv .pv-stop { stop-color: color-mix(in srgb, var(--line-a) 60%, var(--muted)); }
+.pfb-pv .pv-cellnum { font-size: 7px; font-family: 'DM Mono', ui-monospace, monospace; fill: var(--muted); }
+.pfb-pv .pv-cellnum.is-dark { fill: var(--panel-raised); }
+.pfb-pv .pv-pass { fill: color-mix(in srgb, var(--accent2) 65%, var(--muted)); }
+.pfb-pv .pv-fail { fill: var(--panel-raised); stroke: color-mix(in srgb, var(--negative-em) 60%, var(--muted)); stroke-width: 1.2; }
+.pfb-pv .pv-band { fill: color-mix(in srgb, var(--line-a) 22%, transparent); }
+.pfb-pv-table { font-size: 10px; }
+.pfb-pv-cap { display: flex; align-items: center; gap: 5px; padding: 5px 8px 4px; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 0; }
+.pfb-pv-cap svg { flex-shrink: 0; }
+.pfb-pv-file { font-weight: 700; color: color-mix(in srgb, var(--text) 75%, var(--muted)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pfb-pv-capnote { flex-shrink: 0; font-style: italic; }
+.pfb-pv table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.pfb-pv th, .pfb-pv td { padding: 2px 6px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Headers are what the preview is for (where each value goes), so they wrap, two lines at most. */
+.pfb-pv th { padding-top: 4px; padding-bottom: 3px; font-weight: 700; color: color-mix(in srgb, var(--text) 75%, var(--muted)); border-bottom: 1px solid var(--border); vertical-align: bottom; line-height: 1.2; }
+.pfb-pv th > .pv-th { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
+.pfb-node:has(.pfb-pv-table) { min-width: 300px; }
+.pfb-pv td { color: var(--muted); font-family: var(--pfb-mono); font-size: 9.5px; opacity: .8; }
+.pfb-pv tr:last-child td { padding-bottom: 5px; }
+.pfb-pv td.is-loop { opacity: 1; color: color-mix(in srgb, var(--cat-flow) 70%, var(--text)); }
+.pfb-pv .pv-more { width: 32px; padding: 0 4px; text-align: center; }
 
 /* Notes are sticky notes */
 .pfb-note {
@@ -367,11 +448,12 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-side-head .pfb-grip { align-self: center; }
 .pfb-side-head .pfb-dock-fold { align-self: center; }
 .pfb-tabs.ctrl-tabs { flex: 1 1 auto; min-width: 0; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; display: flex; gap: 2px; }
-.pfb-tabs .ctrl-tab { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px 10px; font-size: .82rem; flex: 1 1 auto; }
+.pfb-tabs .ctrl-tab { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px 10px; font-size: .82rem; flex: 1 1 auto; white-space: nowrap; }
 .pfb-tabs .tico { width: 16px; height: 16px; flex-shrink: 0; }
 .pfb-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; font-size: .68rem; font-weight: 800; background: var(--input-bg); color: var(--muted); border: 1px solid var(--border); }
 .pfb-badge.pfb-lv-error { background: var(--error-bg); color: var(--error-text); border-color: transparent; }
 .pfb-badge.pfb-lv-warning { background: var(--warning-bg); color: var(--warning-text); border-color: transparent; }
+.pfb-badge-warn { gap: 3px; margin-left: -2px; background: var(--warning-bg); color: var(--warning-text); border-color: transparent; }
 .pfb-panels { overflow-y: auto; overscroll-behavior: contain; display: block; }
 .pfb-panels > .ctrl-panel { padding: 14px 16px 22px; }
 .pfb-panels:has(> .pfb-py-panel.active) { overflow: hidden; display: flex; flex-direction: column; }
@@ -392,7 +474,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-lab { display: flex; align-items: center; gap: 6px; min-height: 22px; }
 .pfb-lab .field-label { font-size: .86rem; }
 .pfb-lab-fill { flex: 1 1 auto; }
-.pfb-req { font-size: .66rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 1px 6px; border-radius: 999px; background: var(--info-bg); color: var(--info-text); }
+.pfb-req { font-size: .72rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--info-bg); color: var(--info-text); }
 .pfb-todo > .pfb-lab .field-label { color: var(--info-text); }
 .toggle-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--border); }
 .toggle-label { font-weight: 700; font-size: .86rem; flex: 1; }
@@ -414,7 +496,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-link { border: 0; background: transparent; color: var(--accent); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; padding: 0 2px; }
 .pfb-link:hover { text-decoration: underline; }
 .pfb-more { padding-bottom: 8px; }
-.pfb-more-btn { display: block; width: 100%; text-align: left; border: 0; background: transparent; color: var(--accent); font: inherit; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; padding: 10px 0 6px; cursor: pointer; }
+.pfb-more-btn { display: block; width: 100%; text-align: left; border: 0; background: transparent; color: var(--accent-strong); font: inherit; font-size: .8125rem; font-weight: 700; padding: 10px 0 6px; cursor: pointer; }
 .pfb-insp-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
 .pfb-insp-actions .btn-secondary { display: inline-flex; align-items: center; gap: 6px; }
 .pfb-insp-actions .pfb-del:hover { border-color: var(--negative-em); color: var(--negative-em); }
@@ -427,7 +509,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-list { display: flex; flex-direction: column; gap: 8px; }
 .pfb-list-row { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 10px 10px; background: var(--panel); display: flex; flex-direction: column; gap: 6px; }
 .pfb-list-head { display: flex; align-items: center; justify-content: space-between; }
-.pfb-list-n { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.pfb-list-n { font-size: .8125rem; font-weight: 700; color: var(--muted); }
 .pfb-list-cell { display: flex; flex-direction: column; gap: 3px; }
 .pfb-list-cell > .tip-icon { display: none; }
 .pfb-list-bool { flex-direction: row; align-items: center; justify-content: space-between; }
@@ -438,13 +520,13 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-elpick { display: flex; flex-direction: column; gap: 6px; }
 .pfb-el-row { display: flex; align-items: center; gap: 6px; }
 .pfb-el-row > .txt-input { flex: 1 1 auto; }
-.pfb-el-matchrow { justify-content: space-between; }
-.pfb-el-lab { font-size: .76rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
-.pfb-el-match { width: auto !important; max-width: 70%; }
+/* The label sits above its select, as every other field's does: side by side, one of them was cut. */
+.pfb-el-matchrow { flex-direction: column; align-items: stretch; gap: 3px; }
+.pfb-el-lab { font-size: .76rem; color: var(--muted); font-weight: 600; }
 
 /* "How it works" */
 .pfb-how { margin-top: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: none; }
-.pfb-how-title { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); }
+.pfb-how-title { font-size: .8125rem; font-weight: 700; color: var(--accent-strong); }
 .pfb-how-row { display: flex; align-items: flex-start; gap: 10px; font-size: .84rem; line-height: 1.45; }
 .pfb-how-small { color: var(--muted); font-size: .8rem; }
 .pfb-how-wire { width: 44px; height: 12px; flex-shrink: 0; margin-top: 4px; fill: none; }
@@ -457,6 +539,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 .pfb-py-panel.active { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; padding: 0 !important; }
 .pfb-py-bar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex: 0 0 auto; }
 .pfb-py-status { flex: 1 1 auto; font-size: .78rem; color: var(--muted); line-height: 1.35; }
+.pfb-py-bar .btn-secondary { flex-shrink: 0; white-space: nowrap; }
 .pfb-py-status.pfb-py-warn { color: var(--pfb-warn); }
 .pfb-code-wrap { flex: 1 1 auto; min-height: 0; overflow: auto; position: relative; background: var(--bg-subtle); }
 .pfb-code {
@@ -486,8 +569,10 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 
 /* ---- Problems ----------------------------------------------------------------------------- */
 .pfb-prob-none { padding: 14px; border-radius: var(--radius-md); background: var(--success-bg); color: var(--success-text); font-size: .88rem; }
-.pfb-prob-head { margin: 14px 0 6px; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+.pfb-prob-head { margin: 14px 0 6px; font-size: .8125rem; font-weight: 700; color: var(--muted); }
 .pfb-prob-head:first-child { margin-top: 0; }
+.pfb-prob-head { display: flex; align-items: center; gap: 6px; }
+.pfb-prob-head-n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--input-bg); border: 1px solid var(--border); color: var(--muted); font-size: .68rem; display: inline-flex; align-items: center; justify-content: center; }
 .pfb-prob-head.pfb-lv-error { color: var(--pfb-err); }
 .pfb-prob-list { display: flex; flex-direction: column; gap: 6px; }
 .pfb-prob { display: flex; gap: 9px; padding: 9px 11px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--card-bg); font-size: .84rem; line-height: 1.45; }
@@ -507,7 +592,7 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 
 /* ---- Quick-add ---------------------------------------------------------------------------- */
 .pfb-qa { position: fixed; z-index: 700; width: 310px; max-width: calc(100vw - 16px); max-height: min(380px, calc(100vh - 16px)); display: flex; flex-direction: column; gap: 6px; padding: 8px; font-size: .84rem; color: var(--text); }
-.pfb-qa-title { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 2px 4px; }
+.pfb-qa-title { font-size: .8125rem; font-weight: 700; color: var(--muted); padding: 2px 4px; }
 .pfb-qa-search { padding: 7px 10px; font-size: .84rem; }
 .pfb-qa-list { overflow-y: auto; display: flex; flex-direction: column; gap: 1px; outline: none; overscroll-behavior: contain; }
 .pfb-qa-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
@@ -578,7 +663,8 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
 
 /* ---- Narrower screens --------------------------------------------------------------------- */
 @media (max-width: 1280px) {
-  .pfb-app { --pfb-pal-w: 240px; --pfb-side-w: 352px; }
+  .pfb-app { --pfb-pal-w: 240px; --pfb-side-w: 368px; }
+  .pfb-tabs .ctrl-tab { gap: 5px; padding-left: 6px; padding-right: 6px; }
   .pfb-brand-sub { display: none; }
   .pfb-foot .footer-collab { display: none; }
   .pfb-foot-more { display: inline-flex; }
@@ -600,8 +686,11 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
   .pfb-tb-text span { display: none; }
   .pfb-tb-text { padding: 0 6px; }
   .pfb-dl-word { display: none; }
-  .pfb-tb { min-width: 32px; height: 32px; font-size: 17px; }
-  .pfb-toolbar .pfb-download { padding: 6px 12px; font-size: .8rem; }
+  /* Nine buttons and Download share a phone's width: the gaps go, the buttons stay 28px wide. */
+  .pfb-toolbar { gap: 0; }
+  .pfb-tb { min-width: 28px; height: 32px; font-size: 17px; }
+  .pfb-tb-sep { margin: 0 3px; }
+  .pfb-toolbar .pfb-download { margin-left: 4px; padding: 6px 10px; font-size: .8rem; }
   .pfb-palette { left: 8px; width: min(320px, calc(100vw - 16px)); max-height: calc(100% - var(--pfb-dock-top) - 60px); }
   .pfb-dock-head { cursor: default; }
   .pfb-grip { display: none; }
@@ -615,7 +704,6 @@ h1.pfb-title span { overflow: hidden; text-overflow: ellipsis; }
   .pfb-starter { left: 8px; right: 8px; padding-bottom: 64px; }
   .pfb-foot { bottom: 52px; font-size: .6rem; }
   .react-flow__handle.pfb-h::after { inset: -9px; }
-  .pfb-n-plab { max-width: 110px; }
 }
 @media (pointer: coarse) {
   .react-flow__handle.pfb-h::after { inset: -9px; }

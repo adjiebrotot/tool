@@ -74,9 +74,9 @@ TEMPLATES.push({
     n6: ['pf.ldf', 5, 0, '', {}],
     n7: ['pf.evt.trip', 6, 0, 'Contingency unit', { el: EL('ElmSym'), t: 1 }, ['el']],
     n8: ['pf.rms', 7, 0, '', { tstop: 20, extendTo: 60, record: [{ id: 'r1', el: EL('ElmTerm'), var: 'm:fehz', combine: 'none' }] }],
-    n9: ['sig.settle', 8, 1, '', {}],
+    n9: ['sig.settle', 8, 1.2, '', {}],
     n10: ['flow.if', 8, 0, 'Settles?', { op: 'true' }],
-    n11: ['sig.nadir', 9, 1, '', { extendTo: 60 }],
+    n11: ['sig.nadir', 9, 1.2, '', { extendTo: 60 }],
     n12: ['out.table.add', 9, 0, '', { table: 'Headroom', cols: [
       { id: 'c1', name: 'Nadir (Hz)' }, { id: 'c2', name: 'Time of nadir (s)' }, { id: 'c3', name: 'Settling time (s)' }, { id: 'c4', name: 'UFLS' }] }],
     n13: ['out.plot.series', 10, 0, 'Bus frequency', { collect: 'loop', ylabel: 'Frequency' }],

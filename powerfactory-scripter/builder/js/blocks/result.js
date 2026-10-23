@@ -20,6 +20,10 @@
 // tests carry them meanwhile, _audit/blocks/analysis/requested_runtime.py).
 
 import { defineBlock } from '../core/registry.js';
+import { clip, columnName, columnList } from '../core/blockkit.js';
+
+// Kept here too: the tests (and older callers) import them from this file.
+export { columnName, columnList };
 
 const CAT = 'result';
 
@@ -47,26 +51,6 @@ const titleOf = (cx) => textOr(cx, 'title', String(cx.node.label || '').trim());
 
 // ---------------------------------------------------------------------------------------------
 // Columns and curves from wires
-
-// Port labels that say nothing about the value, so the block's name says it instead.
-const GENERIC = /^(value|values|item|result|text|list|number|yes \/ no|time series|series|curve|clean curve)$/i;
-
-// The column name for a value wired in: "Nadir (Hz)", "Dispatch (MW)". src = { nodeLabel (the
-// reader's label on the source block, '' when none), title (its block title or display name),
-// first (the port is the block's first output), port: { label, id, unit } }.
-export function columnName(src) {
-  const port = (src && src.port) || {};
-  const plab = String(port.label || port.id || '').trim();
-  const own = String((src && src.nodeLabel) || '').trim();
-  const title = String((src && src.title) || '').trim();
-  const generic = !plab || GENERIC.test(plab);
-  let name;
-  if (own) name = generic || (src && src.first) ? own : `${own} ${plab}`;
-  else name = generic ? (title || plab || 'Value') : plab;
-  const unit = String(port.unit || '').trim();
-  if (unit && !name.includes(`(${unit})`)) name += ` (${unit})`;
-  return name.slice(0, 80);
-}
 
 function nextRowId(rows, prefix) {
   const used = new Set(rows.map(r => r.id));
@@ -503,14 +487,6 @@ defineBlock({
   },
 });
 
-// "Nadir (Hz), RoCoF (Hz/s)" or one per line -> ["Nadir (Hz)", "RoCoF (Hz/s)"]
-export function columnList(text) {
-  const t = String(text === undefined || text === null ? '' : text);
-  const lines = t.split(/\r\n|\n|\r/).map(x => x.trim()).filter(Boolean);
-  const parts = lines.length > 1 ? lines : (lines[0] || '').split(/[;,]/).map(x => x.trim());
-  return parts.filter(Boolean);
-}
-
 defineBlock({
   type: 'out.plot.table', cat: CAT, kind: 'action', oncePerRun: true,
   title: 'Draw graph from results table',
@@ -531,7 +507,7 @@ defineBlock({
   ],
   summary(s) {
     const ys = columnList(s.ys);
-    return ys.length ? `${ys.join(', ').slice(0, 40)} against ${String(s.x || '').trim() || '?'}` : 'No columns yet';
+    return ys.length ? `${clip(ys.join(', '), 40)} against ${String(s.x || '').trim() || '?'}` : 'No columns yet';
   },
   helpers: ['plot_table'],
   packages: ['matplotlib'],

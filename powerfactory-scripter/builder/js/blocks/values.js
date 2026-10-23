@@ -10,7 +10,7 @@
 // gives an empty result instead of an error.
 
 import { defineBlock } from '../core/registry.js';
-import { parseValues, allNumbers, placeholders, portIdFor, parseFormula } from '../core/blockkit.js';
+import { parseValues, allNumbers, placeholders, portIdFor, parseFormula, clip } from '../core/blockkit.js';
 
 const CAT = 'value';
 
@@ -39,7 +39,7 @@ defineBlock({
   keywords: ['text', 'string', 'name', 'label', 'constant'],
   outputs: [{ id: 'value', label: 'Text', type: 'text' }],
   settings: [{ key: 'value', label: 'Text', kind: 'text', default: '' }],
-  summary(s) { return s.value ? `"${String(s.value).slice(0, 30)}"` : 'Empty'; },
+  summary(s) { return s.value ? `"${clip(s.value, 60)}"` : 'Empty'; },
   emit(cx) { return cx.val('value'); },
 });
 
@@ -148,7 +148,7 @@ defineBlock({
     const t = numOrList(s);
     return { inputs: f.inputs.map(n => ({ id: portIdFor(n), label: n, type: t })), outputs: [{ id: 'value', label: 'Result', type: t, var: 'result' }] };
   },
-  summary(s) { return String(s.expr || '').slice(0, 40); },
+  summary(s) { return clip(s.expr); },
   helpers: ['apply_formula'],
   emit(cx) {
     const f = parseFormula(cx.s.expr);
@@ -287,7 +287,7 @@ defineBlock({
   settings: [{ key: 'template', label: 'Template', kind: 'text', default: 'Dispatch {p} MW',
     tip: 'Each {name} becomes an input. {name:.2f} shows a number with 2 decimals; {{ and }} give a brace.' }],
   ports(s) { return { inputs: placeholders(s.template).names.map(n => ({ id: portIdFor(n), label: n, type: 'cell' })) }; },
-  summary(s) { return String(s.template || '').slice(0, 40); },
+  summary(s) { return clip(s.template); },
   helpers: ['text_format'],
   emit(cx) {
     const p = placeholders(cx.s.template);

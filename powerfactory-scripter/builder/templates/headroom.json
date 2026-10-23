@@ -179,7 +179,7 @@
       "id": "n9",
       "type": "sig.settle",
       "x": 2560,
-      "y": 300,
+      "y": 360,
       "label": "",
       "s": {
         "t_event": null,
@@ -211,7 +211,7 @@
       "id": "n11",
       "type": "sig.nadir",
       "x": 2880,
-      "y": 300,
+      "y": 360,
       "label": "",
       "s": {
         "t_event": null,

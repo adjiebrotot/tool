@@ -822,6 +822,16 @@ await test('canvas decorations', async () => {
     const node = (id) => document.querySelector(`.react-flow__node[data-id="${id}"] .pfb-node`);
     return {
       end: q('n4', '.pfb-end'), chip: q('n4', '.pfb-n-chip'), step: q('n3', '.pfb-n-step'),
+      frame: (() => {
+        const f = document.querySelector('.pfb-frame');
+        if (!f) return null;
+        const r = f.getBoundingClientRect(), holds = {};
+        for (const id of ['n2', 'n3', 'n4']) {
+          const b = document.querySelector(`.react-flow__node[data-id="${id}"]`).getBoundingClientRect();
+          holds[id] = b.left >= r.left && b.top >= r.top && b.right <= r.right && b.bottom <= r.bottom;
+        }
+        return { tab: f.querySelector('.pfb-frame-tab').textContent, holds, n: document.querySelectorAll('.pfb-frame').length };
+      })(),
       flowInHead: !!document.querySelector('.react-flow__node[data-id="n3"] .pfb-n-head .react-flow__handle.target[data-handleid="in"]'),
       flowOutLabel: q('n4', '.pfb-n-flabel'),
       tint: getComputedStyle(node('n3')).getPropertyValue('--cat').trim() === getComputedStyle(document.body).getPropertyValue('--cat-model').trim() &&
@@ -836,7 +846,8 @@ await test('canvas decorations', async () => {
     };
   });
   check('an unwired flow output shows where the route goes', d.end === 'skips to the next pass of Dispatch (MW)', d.end);
-  check('blocks on an Each pass route show the loop chip', /↻ Dispatch \(MW\)/.test(d.chip || ''), d.chip);
+  check('a loop\'s body is drawn in one frame named after the loop, the loop block outside it', d.frame && d.frame.n === 1 && /Each pass.*Dispatch \(MW\)/.test(d.frame.tab) && d.frame.holds.n3 && d.frame.holds.n4 && !d.frame.holds.n2, JSON.stringify(d.frame));
+  check('a framed block needs no loop chip', d.chip === null, d.chip);
   check('the step number is shown', d.step === '3', d.step);
   check('the flow input sits in the header row', d.flowInHead);
   check('flow outputs carry their labels', d.flowOutLabel === 'Converged', d.flowOutLabel);
@@ -877,6 +888,30 @@ await test('canvas decorations', async () => {
   await D.page.evaluate(() => PFB.select(['n6']));
   await sleep(120);
   check('the inspector says it is missing', /Missing block/.test(await D.page.textContent('#pfbInspector .pfb-insp-title')));
+  // The frame follows a block while it is dragged
+  await loadWf(D, BASE);
+  const fw0 = await D.page.evaluate(() => document.querySelector('.pfb-frame').getBoundingClientRect().width);
+  const hb = await D.page.locator('.react-flow__node[data-id="n4"] .pfb-n-head').boundingBox();
+  await D.page.mouse.move(hb.x + 30, hb.y + hb.height / 2);
+  await D.page.mouse.down();
+  await D.page.mouse.move(hb.x + 230, hb.y + hb.height / 2, { steps: 8 });
+  await sleep(120);
+  const fw1 = await D.page.evaluate(() => document.querySelector('.pfb-frame').getBoundingClientRect().width);
+  await D.page.mouse.up();
+  await sleep(200);
+  check('a loop frame grows with a body block while it is dragged', fw1 > fw0 + 150, fw0 + ' -> ' + fw1);
+  // The frame hugs its blocks: three blocks in an L leave the L's empty corner outside it
+  const wl = clone(BASE);
+  wl.nodes.push({ id: 'n5', type: 'fx.set', x: 656, y: 272, label: '', s: { el: { cls: 'ElmSym', name: 'G 03', match: 'one' } } });
+  wl.edges.push({ id: 'e5', from: 'n4', out: 'ok', to: 'n5', in: 'in' });
+  await loadWf(D, wl);
+  await settle(D, 250);
+  const hug = await D.page.evaluate(() => {
+    const path = document.querySelector('.pfb-frame path');
+    const inFill = (x, y) => !!path && path.isPointInFill(new DOMPoint(x, y));
+    return { corner: inFill(656 + 150, 40), n3: inFill(336 + 40, 16 + 30), n4: inFill(336 + 40, 272 + 30), n5: inFill(656 + 40, 272 + 30), tabs: document.querySelectorAll('.pfb-frame-tab').length };
+  });
+  check('a loop frame hugs its blocks (an L of blocks leaves its empty corner out)', !hug.corner && hug.n3 && hug.n4 && hug.n5 && hug.tabs === 1, JSON.stringify(hug));
 });
 
 await test('Python tab', async () => {
@@ -929,6 +964,16 @@ await test('Problems tab', async () => {
   check('a problem click selects the block', JSON.stringify((await selOf(D)).nodes) === '["n1"]');
   const label = await D.page.textContent('#pfbDownload');
   check('the download button carries the count (errors + to-dos)', label.trim() === '⬇ Download .py (1 problem)', label);
+  // A warning is counted apart, so the first badge always agrees with the Download label.
+  const ww = clone(BASE);
+  ww.nodes.push({ id: 'n9', type: 'fx.set', x: 700, y: 420, label: 'Stray', s: { el: { cls: 'ElmSym', name: 'G 03', match: 'one' } } });
+  await loadWf(D, ww);
+  await settle(D);
+  const counts = await D.page.evaluate(() => {
+    const w = document.getElementById('pfbWarnCount');
+    return { fix: document.getElementById('pfbProbCount').textContent, warn: w.hidden ? '' : w.textContent, dl: document.getElementById('pfbDownload').textContent.trim(), levels: PFB.store.get().gen.problems.map(p => p.level) };
+  });
+  check('warnings have their own badge and the first badge agrees with Download', counts.fix === '1' && counts.warn === '1' && counts.dl === '⬇ Download .py (1 problem)', JSON.stringify(counts));
   // Fix buttons: remove a wire to a port that is gone, add Start
   const w = clone(BASE);
   w.edges.push({ id: 'e5', from: 'n4', out: 'ok', to: 'n3', in: 'nope' });
@@ -1334,6 +1379,24 @@ await test('real blocks smoke', async () => {
   await sleep(150);
   const ep = await S.page.$$eval('#pfbInspector [data-port="gen"] select.pfb-el-cls option', ns => ns.map(o => o.textContent));
   check('the real dispatch block offers generator classes, plain names first', ep[0] === 'Synchronous generator (ElmSym)', JSON.stringify(ep));
+  // previews: what a graph or table block makes, in the reader's names, with the loop's values
+  await S.page.evaluate(() => PFB.loadTemplate('headroom', { quiet: true }));
+  await S.page.waitForFunction(() => !!document.querySelector('.react-flow__node[data-id="n15"] .pfb-pv'), null, { timeout: 5000 });
+  await settle(S, 300);
+  const pv = await S.page.evaluate(() => {
+    const q = (id) => document.querySelector(`.react-flow__node[data-id="${id}"] .pfb-pv`);
+    const own = (el) => [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
+    const t = q('n14'), g = q('n15');
+    return {
+      file: t && t.querySelector('.pfb-pv-file').textContent,
+      heads: t ? [...t.querySelectorAll('th')].map(th => th.textContent) : [],
+      loopVals: t ? [...t.querySelectorAll('td.is-loop')].map(td => td.textContent) : [],
+      graph: g ? [...g.querySelectorAll('text')].map(own) : [],
+      none: !q('n6'),
+    };
+  });
+  check('a table block previews its file, its columns and the loop\'s first values', pv.file === 'Headroom.csv' && pv.heads[0] === 'Dispatch (MW)' && pv.heads.includes('Nadir (Hz)') && pv.loopVals.join() === '100,150,200', JSON.stringify(pv));
+  check('a graph block previews its axes in the reader\'s words; a load flow has no preview', pv.graph.includes('Dispatch (MW)') && pv.graph.includes('Nadir (Hz)') && pv.none, JSON.stringify(pv.graph));
   // the tour with the real demo
   await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Mine', nodes: [{ id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }], edges: [] }, { quiet: true }));
   await sleep(300);

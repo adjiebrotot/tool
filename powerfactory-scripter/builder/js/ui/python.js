@@ -9,8 +9,12 @@ import { $, el, downloadText } from './dom.js';
 import { fileNameFor } from '../core/codegen.js';
 import { toast } from './toasts.js';
 
+// What must be fixed before the script runs: errors and to-dos. Warnings are likely mistakes the
+// script still runs with. The Download label and the Problems tab's first badge both count this.
+export const isBlocking = (p) => p.level === 'error' || p.level === 'todo';
+
 export function blockingCount(gen) {
-  return ((gen && gen.problems) || []).filter(p => p.level === 'error' || p.level === 'todo').length;
+  return ((gen && gen.problems) || []).filter(isBlocking).length;
 }
 
 export function mountPython(app) {

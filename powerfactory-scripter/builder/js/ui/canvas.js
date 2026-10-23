@@ -7,8 +7,10 @@
 // the flow input (an arrow-shaped port in the header row) and flow outputs (right edge, with
 // labels), data inputs on the left and outputs on the right with label and unit, coloured by
 // type, "= value" beside an unwired input that has a fallback, the "ends" caption beside an
-// unwired flow output, the step number, a problem badge and error border, the loop chip, the
-// summary line, the Missing block look, and notes as sticky notes.
+// unwired flow output, the step number, a problem badge and error border, the summary line, a
+// mock preview of what a graph or table block makes (previews.js), the Missing block look, and
+// notes as sticky notes. Behind the blocks, each loop's body is drawn as one dashed outline
+// round its blocks, the loop's name on a tab (loopFrames, frames.js).
 //
 // Gotchas kept from the PoC (notes/reactflow-poc.md): nodeTypes built once; never call
 // updateNodeInternals on mount (it breaks the first fitView), only when a node's handles change;
@@ -21,6 +23,8 @@ import { settingsOf, summaryOf, displayName } from '../core/registry.js';
 import * as ops from './ops.js';
 import { fallbackText } from './inspector.js';
 import { blockIcon } from './icons.js';
+import { frameShape } from './frames.js';
+import { previewSpec, renderPreview } from './previews.js';
 import { $, esc, tipText, icon, isPhone } from './dom.js';
 
 const typeTip = (t, extra) => {
@@ -99,10 +103,11 @@ export function mountCanvas(app) {
   // ---- Decorations from the workflow and the last generate(), memoised per node so a block's
   // drawing only changes when something it shows changed.
   const decoCache = new Map();
-  let decoMemo = { wf: null, gen: null, map: new Map(), errEdges: new Set() };
-  function decorations(s) {
-    if (decoMemo.wf === s.wf && decoMemo.gen === s.gen) return decoMemo;
+  let decoMemo = { wf: null, gen: null, measured: null, map: new Map(), errEdges: new Set() };
+  function decorations(s, measured) {
+    if (decoMemo.wf === s.wf && decoMemo.gen === s.gen && decoMemo.measured === measured) return decoMemo;
     const gen = s.gen || {};
+    const frames = loopFrames(s.wf, gen, {}, measured);
     const probs = new Map();
     const errEdges = new Set();
     for (const p of gen.problems || []) {
@@ -128,6 +133,10 @@ export function mountCanvas(app) {
       const ps = probs.get(n.id) || [];
       const level = ps.some(p => p.level === 'error') ? 'error' : ps.some(p => p.level === 'warning') ? 'warning' : ps.some(p => p.level === 'todo') ? 'todo' : '';
       const reg = (gen.regions && gen.regions[n.id]) || [];
+      // The frames say which loop a block runs in; a block that only sits inside a frame it does
+      // not run under keeps a chip saying where it does run.
+      const inside = frames.find(F => !F.members.has(n.id) && F.id !== n.id && titleIn(rectOf(n, {}, measured), F));
+      const chain = reg.map(r => r.label).join(' › ');
       const d = {
         kind: def ? def.kind : 'missing', type: n.type, cat: def ? def.cat : '', title: def ? def.title : 'Missing block',
         name: def ? displayName(n) : 'Missing block', summary: def ? summaryOf(n, s.wf) : String(n.type),
@@ -141,8 +150,10 @@ export function mountCanvas(app) {
         wiredIn: [...wiredIn].sort(), ends, fb, level,
         msgs: ps.filter(p => p.level === level).map(p => p.msg),
         step: gen.steps && gen.steps[n.id] !== undefined ? gen.steps[n.id] : null,
-        chip: reg.length ? reg.map(r => r.label).join(' › ') : '',
+        chip: !inside ? '' : reg.length ? '↻ ' + chain : 'Not in ↻ ' + inside.label,
+        chipTip: !inside ? '' : reg.length ? 'Runs on each ' + (reg[reg.length - 1].kind === 'callback' ? 'try' : 'pass') + ' of ' + chain : 'Drawn inside the frame of ' + inside.label + ', but it does not run on its ' + (inside.kind === 'callback' ? 'tries' : 'passes'),
         text: n.type === 'note' ? String(settingsOf(n).text || '') : '',
+        preview: def ? previewSpec(s.wf, gen, n) : null,
       };
       const key = JSON.stringify(d);
       const c = decoCache.get(n.id);
@@ -150,8 +161,61 @@ export function mountCanvas(app) {
       else { decoCache.set(n.id, { key, deco: d }); map.set(n.id, d); }
     }
     for (const id of [...decoCache.keys()]) if (!map.has(id)) decoCache.delete(id);
-    decoMemo = { wf: s.wf, gen: s.gen, map, errEdges };
+    decoMemo = { wf: s.wf, gen: s.gen, measured, map, errEdges };
     return decoMemo;
+  }
+
+  // ---- Loop frames. A loop's body (every block that runs on each pass or try: the generator's
+  // regions) is drawn as one dashed, tinted outline that hugs its blocks (frames.js), with the
+  // loop's name on a tab sitting on the line. An outer loop's margin is wider by a step for each
+  // loop inside it, so its outline runs round the inner ones. The loop block itself stays
+  // outside, its Each pass / Each try wire leading in.
+  const SIZE0 = { width: 220, height: 100 };
+  function rectOf(n, dragPos, measured) {
+    const p = dragPos[n.id] || { x: n.x, y: n.y }, m = measured[n.id] || SIZE0;
+    return { x1: p.x, y1: p.y, x2: p.x + m.width, y2: p.y + m.height };
+  }
+  // A block reads as part of a frame when its title sits inside it. (Its title, not its whole
+  // box: the chip this decides makes the block taller, and must not undo itself.)
+  const titleIn = (a, F) => F.shape.hit((a.x1 + a.x2) / 2, a.y1 + 16);
+  function loopFrames(wf, gen, dragPos, measured) {
+    const regions = (gen && gen.regions) || {};
+    const byId = new Map(wf.nodes.map(n => [n.id, n]));
+    const loops = new Map();
+    for (const n of wf.nodes) {
+      (regions[n.id] || []).forEach((r, depth) => {
+        if (!byId.has(r.id)) return;
+        if (!loops.has(r.id)) loops.set(r.id, { id: r.id, label: r.label, kind: r.kind, depth, members: new Set(), inner: 0 });
+        loops.get(r.id).members.add(n.id);
+      });
+    }
+    // How many loops deep each loop's body goes (0: no loop inside it).
+    const sorted = [...loops.values()].sort((a, b) => b.depth - a.depth);
+    for (const L of sorted) for (const M of sorted) if (M !== L && L.members.has(M.id)) L.inner = Math.max(L.inner, M.inner + 1);
+    const frames = [];
+    for (const L of sorted) {
+      const shape = frameShape([...L.members].map(id => rectOf(byId.get(id), dragPos, measured)), { pad: 14 + 20 * L.inner, bridge: 160 });
+      if (!shape) continue;
+      const def = getBlock(byId.get(L.id).type);
+      frames.push({ ...L, cat: def ? def.cat : 'flow', shape });
+    }
+    return frames.reverse();   // outer first, so an inner frame is drawn over its outer one
+  }
+  function LoopFrames({ frames, sel }) {
+    return h(RF.ViewportPortal, null, h('div', { className: 'pfb-frames', 'aria-hidden': 'true' }, frames.map(F => {
+      const b = F.shape.box, w = b.x2 - b.x1, ht = b.y2 - b.y1;
+      const each = F.kind === 'callback' ? 'Each try' : 'Each pass';
+      const tip = 'These blocks run on each ' + (F.kind === 'callback' ? 'try' : 'pass') + ' of ' + F.label + '. Click to select it.';
+      return h('div', {
+        key: F.id, className: 'pfb-frame' + (sel.has(F.id) ? ' is-sel' : ''), 'data-loop': F.id,
+        style: { transform: `translate(${b.x1}px, ${b.y1}px)`, width: w + 'px', height: ht + 'px', '--cat': 'var(--cat-' + F.cat + ')' },
+      },
+      h('svg', { className: 'pfb-frame-line', width: w, height: ht, viewBox: `${b.x1} ${b.y1} ${w} ${ht}` }, h('path', { d: F.shape.d })),
+      F.shape.tabs.map((t, i) => h('span', {
+        key: i, className: 'pfb-frame-tab', title: tip, onClick: () => store.select([F.id], []),
+        style: { left: (t.x - b.x1 + 14) + 'px', top: (t.y - b.y1) + 'px' },
+      }, h('span', { className: 'pfb-frame-ico' }, '↻'), h('span', null, each), h('span', { className: 'pfb-frame-sep' }, '·'), h('span', { className: 'pfb-frame-name' }, F.label))));
+    })));
   }
 
   const nodeCache = new Map();
@@ -250,7 +314,7 @@ export function mountCanvas(app) {
 
     const headOut = P.flowOuts.length === 1 && !P.flowOuts[0].label ? P.flowOuts[0] : null;
     const badge = d.level && d.msgs.length
-      ? h('span', { className: 'pfb-n-badge pfb-lv-' + d.level, 'data-tip': esc(tipText(d.msgs.join(' '))), role: 'img', 'aria-label': d.level === 'todo' ? 'To do' : 'Problem' }, d.level === 'todo' ? 'to do' : '⚠')
+      ? h('span', { className: 'pfb-n-badge pfb-lv-' + d.level, 'data-tip': esc(tipText(d.msgs.join(' '))), role: 'img', 'aria-label': d.level === 'todo' ? 'To do' : 'Problem' }, d.level === 'todo' ? 'To do' : '⚠')
       : null;
     const head = h('div', { className: 'pfb-n-head' },
       P.flowIn ? H('target', Pos.Left, 'in', 'pfb-h-flow', 'flow', flowTip) : null,
@@ -277,16 +341,18 @@ export function mountCanvas(app) {
         rows.push(h('div', { key: i, className: 'pfb-n-row' },
           p ? h('div', { className: 'pfb-n-in' + (p.stray ? ' is-stray' : '') },
             H('target', Pos.Left, p.id, 'pfb-h-data pfb-t-' + (p.stray ? 'any' : p.type), p.stray ? 'stray' : p.type, p.stray ? typeTip('none') : typeTip(p.type, p.tip)),
-            h('span', { className: 'pfb-n-plab' }, portLabel(p)),
-            !wired && d.fb[p.id] !== undefined ? h('span', { className: 'pfb-n-fb' }, '= ' + d.fb[p.id]) : null,
+            h('span', { className: 'pfb-n-plab', title: portLabel(p) }, portLabel(p)),
+            !wired && d.fb[p.id] !== undefined ? h('span', { className: 'pfb-n-fb', title: String(d.fb[p.id]) }, '= ' + d.fb[p.id]) : null,
             !wired && p.required && d.fb[p.id] === undefined ? h('span', { className: 'pfb-n-need' }, 'needs a value') : null) : h('div', { className: 'pfb-n-in pfb-n-empty' }),
           q ? h('div', { className: 'pfb-n-out' + (q.stray ? ' is-stray' : '') },
-            h('span', { className: 'pfb-n-plab' }, portLabel(q)),
+            h('span', { className: 'pfb-n-plab', title: portLabel(q) }, portLabel(q)),
             H('source', Pos.Right, q.id, 'pfb-h-data pfb-t-' + (q.stray ? 'any' : q.type), q.stray ? 'stray' : q.type, q.stray ? typeTip('none') : typeTip(q.type, q.tip))) : h('div', { className: 'pfb-n-out pfb-n-empty' })));
       }
       kids.push(h('div', { key: 'io', className: 'pfb-n-io' }, rows));
     }
-    if (d.chip) kids.push(h('div', { key: 'chip', className: 'pfb-n-chip', title: 'Runs on each pass of ' + d.chip }, '↻ ' + d.chip));
+    // What the block makes, drawn with mock values and the reader's names (previews.js).
+    if (d.preview) kids.push(h('div', { key: 'pv', className: 'pfb-pv', title: 'What it makes: your names, mock values' }, renderPreview(h, d.preview)));
+    if (d.chip) kids.push(h('div', { key: 'chip', className: 'pfb-n-chip', title: d.chipTip }, d.chip));
     if (d.missing) kids.push(h('div', { key: 'miss', className: 'pfb-n-miss' }, 'Not in this version of the Builder: kept, but it does not run.'));
     const cls = 'pfb-node pfb-k-' + d.kind + (d.missing ? ' pfb-missing' : '') + (d.level ? ' pfb-lv-' + d.level : '') + (selected ? ' is-sel' : '');
     return h('div', { className: cls, style: { '--cat': d.cat ? 'var(--cat-' + d.cat + ')' : 'var(--muted)' } }, kids);
@@ -311,8 +377,10 @@ export function mountCanvas(app) {
       if (mq.addEventListener) mq.addEventListener('change', on); else mq.addListener(on);
       return () => { if (mq.removeEventListener) mq.removeEventListener('change', on); else mq.removeListener(on); };
     }, []);
-    const deco = decorations(s);
+    const deco = decorations(s, measured);
     const nodes = React.useMemo(() => rfNodes(s, deco, dragPos, measured), [s.wf, s.sel, deco, dragPos, measured]);
+    const frames = React.useMemo(() => loopFrames(s.wf, s.gen, dragPos, measured), [s.wf, s.gen, dragPos, measured]);
+    const selSet = React.useMemo(() => new Set(s.sel.nodes), [s.sel]);
     const edges = React.useMemo(() => rfEdges(s, deco), [s.wf, s.sel, deco]);
 
     const onNodesChange = React.useCallback((changes) => {
@@ -435,6 +503,7 @@ export function mountCanvas(app) {
       proOptions: { hideAttribution: true }, ariaLabelConfig: undefined,
     },
     h(RF.Background, { variant: RF.BackgroundVariant ? RF.BackgroundVariant.Dots : 'dots', gap: ops.GRID, size: 1.3 }),
+    RF.ViewportPortal ? h(LoopFrames, { frames, sel: selSet }) : null,
     phone ? null : h(RF.MiniMap, { pannable: true, zoomable: true, ariaLabel: 'Map of the whole workflow', nodeClassName: (n) => 'pfb-mm pfb-mm-' + ((n.data && n.data.deco && n.data.deco.cat) || 'x'), nodeBorderRadius: 4 })));
   }
 
