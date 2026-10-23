@@ -71,6 +71,17 @@
     });
   }
 
+  // Solved results kept (../solve-cache.js). A result read from it leaves the
+  // engine unloaded, so it loads once the page is idle, ready for the next Run.
+  var solves = window.SolveCache ? SolveCache.create('capacity-expansion-planner') : { get: function(){ return Promise.resolve(null); }, put: function(){} };
+  var warmed = false;
+  function warm(){
+    if(warmed) return;
+    warmed = true;
+    var go = function(){ call({ init: true }).catch(function(){ warmed = false; }); };
+    if(window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 1500);
+  }
+
   /* ── The form ──
      The load profile and the sampling are the plan's own (app.model.load,
      CX.sampling): their selects show them and are never saved. */
@@ -1011,9 +1022,16 @@
     var v = CX.validate(model, o);
     renderChecks(v);
     setVerdictBusy(o, model);
+    // A plan solved before (a Quick Start, or this reader's own) opens solved.
+    var fresh = false;
     var job = v.errors.length ? Promise.resolve({ report: { ok: false, error: '', blocked: v.errors } })
-      : call({ model: CX.compact(model), opts: o }).then(function(d){ return d.res; });
+      : solves.get(key).then(function(hit){
+        if(hit){ warm(); return hit; }
+        fresh = true;
+        return call({ model: CX.compact(model), opts: o }).then(function(d){ return d.res; });
+      });
     return current = job.then(function(res){
+      if(fresh) solves.put(key, res);
       res.validation = v;
       app.res = res;
       app.resModel = model;
@@ -1477,5 +1495,5 @@
   // The guided tour (tour.js) points at the results, so a plan that changed
   // since its last run is solved first.
   window.__CX_TOUR = { ensureResults: function(){ if(!running && isStale()) return run(); } };
-  window.__cx = { app: app, CX: CX, run: run, applyPreset: applyPreset, plan: plan, setYear: setYear, unfold: unfold };
+  window.__cx = { app: app, CX: CX, run: run, applyPreset: applyPreset, plan: plan, setYear: setYear, unfold: unfold, solveKey: solveKey };
 })();

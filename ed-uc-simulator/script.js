@@ -73,6 +73,8 @@
     });
   }
   var typesP = null;
+  // Solved results kept (../solve-cache.js).
+  var solves = window.SolveCache ? SolveCache.create('ed-uc-simulator') : { get: function(){ return Promise.resolve(null); }, put: function(){} };
   function loadTypes(){
     if(!typesP){
       typesP = call({ init: true }).then(function(d){ ED.setTypes(d.types); renderInspector(); return d.types; });
@@ -423,21 +425,29 @@
     setSub('Solving' + (opts.mode === 'uc' ? ' the unit commitment' : opts.mode === 'lin' ? ' the relaxed unit commitment' : ' the economic dispatch') + '…');
     var v = ED.validate(model, opts);
     renderIssues(v);
-    var job;
+    var job, fresh = false;
     if(v.errors.length){
       job = Promise.resolve({ report: { ok: false, error: '', blocked: v.errors }, bus: {}, br: {}, dev: {}, totals: {} });
     } else {
-      job = loadTypes().catch(function(){}).then(function(){
-        // Checked again once the line types are known.
-        var v2 = ED.validate(model, opts);
-        renderIssues(v2);
-        if(v2.errors.length) return { report: { ok: false, error: '', blocked: v2.errors }, bus: {}, br: {}, dev: {}, totals: {} };
-        v = v2;
-        return call({ model: ED.compact(model), opts: opts }).then(function(d){ return d.res; });
+      // A network solved before (a Quick Start, or this reader's own) opens
+      // solved, with the checks it was solved with (they need the line types,
+      // which come with the engine, so it loads behind it).
+      job = solves.get(key).then(function(hit){
+        if(hit && hit.validation){ v = hit.validation; renderIssues(v); loadTypes().catch(function(){}); return hit; }
+        return loadTypes().catch(function(){}).then(function(){
+          // Checked again once the line types are known.
+          var v2 = ED.validate(model, opts);
+          renderIssues(v2);
+          if(v2.errors.length) return { report: { ok: false, error: '', blocked: v2.errors }, bus: {}, br: {}, dev: {}, totals: {} };
+          v = v2;
+          fresh = true;
+          return call({ model: ED.compact(model), opts: opts }).then(function(d){ return d.res; });
+        });
       });
     }
     return job.then(function(res){
       res.validation = v;
+      if(fresh) solves.put(key, res);
       app.res = res;
       app.solvedKey = key;
       try { performance.mark('ed-solved'); } catch(e){}
@@ -2188,5 +2198,5 @@
   // The guided tour (tour.js) points at the results, so a network that changed
   // since its last run is solved first. It never edits the diagram.
   window.__ED_TOUR = { ensureResults: function(){ if(!running && isStale()) return run(); } };
-  window.__ed = { app: app, ED: ED, run: run, applyPreset: applyPreset, display: display, solveOptions: solveOptions, setHour: setHour };
+  window.__ed = { app: app, ED: ED, run: run, applyPreset: applyPreset, display: display, solveOptions: solveOptions, setHour: setHour, solveKey: solveKey };
 })();

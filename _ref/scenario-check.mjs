@@ -154,6 +154,10 @@ async function open(path){
   page.on('pageerror', e => errors.push(e.message));
   page.on('dialog', d => { page.__dialogs = (page.__dialogs || []).concat(d.message()); d.dismiss(); });
   await page.route('**/*', r => r.request().url().startsWith(BASE) ? r.continue() : r.abort());
+  // The optimiser tools' engine does not load from this server, so they never
+  // solve here; their Quick Starts solved ahead of time (solve-cache.js) are
+  // hidden too, or a Quick Start would show answers a saved file cannot.
+  await page.route('**/presolved/**', r => r.fulfill({ status: 404, body: '' }));
   await page.addInitScript(STUB);
   await page.goto(BASE + path, {waitUntil: 'load'});
   await settle(page);
