@@ -198,8 +198,8 @@
       {
         target: '#pfbDownload',
         onEnter: function () { whenReady(function (p) { p.openTab('python'); if (p.isPhone()) p.setSheet(false); }); },
-        title: 'Download the script',
-        body: 'The <strong>Python</strong> tab shows the script as you build. <strong>⬇ Download .py</strong> saves it; Open reads a saved .py back later.'
+        title: 'Download the study',
+        body: 'The <strong>Python</strong> tab shows the script as you build. <strong>⬇ Download</strong> saves the whole study - the script, the workflow and any data file you attached - as one .zip; Open reads a saved workflow back later.'
       }
     ]
   };

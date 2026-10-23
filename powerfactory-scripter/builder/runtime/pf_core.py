@@ -738,7 +738,9 @@ def pf_get(obj, attr, unit=None, total=False, default=None):
     if hasattr(v, "item") and not isinstance(v, (list, tuple, str)):
         v = v.item()
     v = _convert(obj, attr, v, unit, False)
-    if total and isinstance(v, (int, float)):
+    # A yes/no value is an int in Python, so it is left alone: "out of service" of a unit with
+    # three parallel machines must stay 1, not become 3.
+    if total and isinstance(v, (int, float)) and not isinstance(v, bool):
         try:
             v = v * obj.GetAttribute("ngnum")
         except Exception:

@@ -30,6 +30,7 @@ import { mountFiles } from './files.js';
 import { mountTemplates } from './templates.js';
 import { mountKeyboard } from './keyboard.js';
 import { mountLayout, initTheme } from './layout.js';
+import { attachedSize, CACHE_LIMIT } from './attach.js';
 
 export const PERSIST_NS = 'powerfactory-scripter-builder';   // frozen handle (DESIGN 1.1)
 // The category files, in palette order of their files (blocks/index.js lists the same).
@@ -63,13 +64,22 @@ export async function boot() {
 
   let restoredBlob;            // what Persist found (restore runs inside init)
   let cachedExtra;             // the cached workflow as it was, kept while autosave is held
+  // What goes into the mini cache. Attached data files come along so a reload finds them
+  // again, unless they are together too big for a browser's storage: then the workflow is
+  // cached without them (Save writes a .json that keeps everything) and the blocks say so.
+  function cacheBlob() {
+    const s = store.get();
+    const blob = W.serialize({ ...s.wf, view: s.view });
+    if (blob.files && attachedSize(s.wf) > CACHE_LIMIT) delete blob.files;
+    return blob;
+  }
   const persistReady = typeof window.Persist === 'object' && window.Persist && typeof Persist.init === 'function';
   let persist = null;
   if (persistReady) {
     try {
       persist = Persist.init(PERSIST_NS, {
         extra: {
-          save: () => (app.held ? cachedExtra : W.serialize({ ...store.get().wf, view: store.get().view })),
+          save: () => (app.held ? cachedExtra : cacheBlob()),
           restore: (obj) => { restoredBlob = obj; },
         },
       });

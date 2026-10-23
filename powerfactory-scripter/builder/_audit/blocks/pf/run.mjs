@@ -133,6 +133,7 @@ const FILL = {
   'pf.evt.trip': { el: EL('ElmSym', 'G2') },
   'pf.evt.load': { load: EL('ElmLod', 'Load A') },
   'pf.evt.param': { el: EL('ElmDsl', 'AVR 1'), param: 'Vref' },
+  'pf.evt.steps': { el: EL('ElmVac', 'Grid Max SC'), param: 's:u0', steps: [{ id: 's1', t: 1, v: 1.3 }, { id: 's2', t: 2, v: 1.2 }, { id: 's3', t: 12, v: 1.1 }] },
   'sig.series': { el: EL('ElmTerm', 'Bus 5') },
 };
 
@@ -323,7 +324,7 @@ test('frozen handles: the type ids of section 9 are all defined', () => {
   const want = ['pf.element', 'pf.foreach_element', 'pf.set', 'pf.get', 'pf.dispatch', 'pf.scale', 'pf.outserv', 'pf.undo', 'pf.case.activate', 'pf.case.create',
     'pf.case.foreach', 'pf.scen.activate', 'pf.scen.create', 'pf.scen.save', 'pf.scen.deactivate', 'pf.scen.foreach', 'pf.var.activate', 'pf.var.deactivate',
     'pf.var.create', 'pf.var.foreach', 'pf.testgen', 'pf.ldf', 'pf.rms', 'pf.emt', 'pf.hldf', 'pf.shc', 'pf.evt.shc', 'pf.evt.switch', 'pf.evt.trip', 'pf.evt.load',
-    'pf.evt.param', 'sig.series', 'pf.cont.define', 'pf.cont.foreach'];
+    'pf.evt.param', 'pf.evt.steps', 'sig.series', 'pf.cont.define', 'pf.cont.foreach'];
   for (const t of want) ok(REG.getBlock(t), `missing ${t}`);
   ok(REG.getBlock('sig.series').cat === 'study', 'sig.series lives in the study category');
   for (const t of MINE) ok(want.includes(t), `not in the catalogue: ${t}`);
@@ -579,6 +580,7 @@ const S9 = (studyCase) => ['start', { project: N9, studyCase, outputDir: OUT }];
 const S39 = (studyCase) => ['start', { project: N39, studyCase, outputDir: OUT }];
 const PY = (inputs, outputs, code) => ['adv.python', { inputs: inputs.map((n, k) => ({ id: 'i' + (k + 1), name: n })), outputs: outputs.map(([n, t], k) => ({ id: 'o' + (k + 1), name: n, type: t })), code }];
 const LOG = (text) => ['flow.log', { text }];
+const NL = String.fromCharCode(10);   // a newline inside a Python code block
 
 const LIVE = {
   ldf: {
@@ -784,6 +786,59 @@ const LIVE = {
       ok(/CONT 2 Line 16 - 21 .*Open Line 16 - 21/.test(c[1]) && /CONT 3 Line 16 - 24 .*Open Line 16 - 24/.test(c[2]) && !/Line 16 - 21/.test(c[2]), c.slice(1).join('\n'));
     },
   },
+  steps: {
+    project: N39, timeout: 900,
+    wf: W({
+      n1: S39('2.1 Simulation Fault Bus 16 Stable'),
+      // Three parameter steps, as PowerFactory's own event list holds them, then read back from
+      // the study case before the run: the times must be in seconds whatever the project shows.
+      n2: ['pf.evt.steps', { el: EL('ElmDsl', 'AVR 02'), param: 'Ka', steps: [{ id: 's1', t: 1, v: 20 }, { id: 's2', t: 2.5, v: 60 }, { id: 's3', t: 4, v: 6.2 }] }],
+      n3: PY([], [['evs', 'text'], ['unit', 'text']], [
+        "folder = app.GetActiveStudyCase().GetContents('*.IntEvt')[0]",
+        "evs = []",
+        "unit = ''",
+        "for e in sorted(folder.GetContents('*.EvtParam'), key=lambda x: x.GetAttribute('time')):",
+        "    unit = str(e.GetAttributeUnit('time'))",
+        "    evs.append('%s@%g=%s' % (e.GetAttribute('variable'), e.GetAttribute('time'), e.GetAttribute('value')))",
+        "evs = ' '.join(evs)",
+      ].join(NL)),
+      n4: LOG('EVTS {e} | time unit {u}'),
+      n5: ['pf.rms', { tstop: 5, record: [{ id: 'r1', el: EL('ElmTerm', 'Bus 02'), var: 'm:u1', combine: 'none' }] }],
+      n6: PY(['s'], [['ev', 'text'], ['n', 'num']], `ev = str(s.events)${NL}n = len(s.t)`),
+      n7: LOG('STEPRUN {ev} | n {n}'),
+      // "times" works from the value the parameter has now (Ka = 6.2 in this demo).
+      n8: ['pf.evt.steps', { el: EL('ElmDsl', 'AVR 02'), param: 'Ka', mode: 'times', steps: [{ id: 's1', t: 1, v: 2 }, { id: 's2', t: 3, v: 1 }] }],
+      n9: PY([], [['evs', 'text']], [
+        "folder = app.GetActiveStudyCase().GetContents('*.IntEvt')[0]",
+        "evs = ' '.join(sorted('%s=%s' % (e.GetAttribute('variable'), e.GetAttribute('value')) for e in folder.GetContents('*.EvtParam')))",
+      ].join(NL)),
+      n10: LOG('TIMESMODE {e}'),
+      n11: ['pf.rms', { tstop: 4 }],
+      n12: ['sig.series', { el: EL('ElmTerm', 'Bus 02'), var: 'm:u1' }],
+      n13: PY(['s'], [['ev', 'text']], 'ev = str(s.events)'), n14: LOG('TIMESRUN {ev}'),
+      n15: ['flow.log', { text: 'STEPS DONE' }],
+    }, ['n1>n2', 'n2>n3', 'n3>n4', 'n4>n5', 'n5.ok>n6', 'n6>n7', 'n7>n8', 'n8>n9', 'n9>n10', 'n10>n11', 'n11.ok>n13', 'n13>n14', 'n14>n15'],
+    ['n3.o1>n4.e', 'n3.o2>n4.u', 'n5.r1>n6.i1', 'n6.o1>n7.ev', 'n6.o2>n7.n', 'n9.o1>n10.e', 'n11.result>n12.res', 'n12.series>n13.i1', 'n13.o1>n14.ev'], 'PFB live param steps'),
+    check(out) {
+      const e = /EVTS (.+) \| time unit (.*)$/m.exec(out.text);
+      ok(e, 'the event list line: ' + out.text.slice(-2000));
+      // Written in seconds, in time order, with the value as the text PowerFactory takes.
+      ok(/^Ka@1=20 Ka@2\.5=60 Ka@4=6\.2$/.test(e[1].trim()), 'three EvtParam events in seconds: ' + e[1]);
+      const r = /STEPRUN (.+) \| n (\d+)$/m.exec(out.text);
+      ok(r, 'the run line');
+      ok((r[1].match(/Ka = /g) || []).length === 3, 'all three events belong to the run: ' + r[1]);
+      ok(/1\.0, 'Ka = 20/.test(r[1]) && /2\.5, 'Ka = 60/.test(r[1]) && /4\.0, 'Ka = 6\.2/.test(r[1]), 'times and values on the run: ' + r[1]);
+      ok(Number(r[2]) > 100, 'the run produced a curve: ' + r[2]);
+      // "times" multiplies the value the parameter has (Ka = 6.2 here): 12.4 and 6.2. Each block
+      // owns its own events, keyed by its block id, so the first block's three are still in the
+      // study case; the run below is what decides which of them are used.
+      const m = /TIMESMODE (.+)$/m.exec(out.text);
+      ok(m && /^Ka=12\.4 Ka=20 Ka=6\.2 Ka=6\.2 Ka=60$/.test(m[1].trim()), 'the times mode adds its own two events (12.4 and 6.2) beside the three of the block before: ' + (m && m[1]));
+      const tr = /TIMESRUN (.+)$/m.exec(out.text);
+      ok(tr && (tr[1].match(/Ka = /g) || []).length === 2 && /Ka = 12\.4/.test(tr[1]), 'the second run has only its own two events: ' + (tr && tr[1]));
+      has(out.text, 'STEPS DONE');
+    },
+  },
   vars: {
     project: N39, timeout: 600,
     wf: W({
@@ -881,7 +936,7 @@ function liveTree(tag) {
 
 if (!NO_LIVE) {
   const treeBefore = liveTree('before');
-  const order = ['sweep', 'ldf', 'cases', 'testgen', 'shc', 'shcevent', 'emt', 'trip', 'events', 'n1', 'vars'];
+  const order = ['sweep', 'ldf', 'cases', 'testgen', 'shc', 'shcevent', 'emt', 'trip', 'events', 'steps', 'n1', 'vars'];
   for (const name of order) {
     if (LIVE_ONLY.length && !LIVE_ONLY.includes(name)) continue;
     const t0 = Date.now();

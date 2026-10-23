@@ -12,11 +12,13 @@
 // known), a name outside it is flagged under the field. It stays free text: a table read from
 // a file has columns the page cannot see.
 
-import { el, esc, tipText } from './dom.js';
+import { el, esc, tipText, iconButton, downloadText } from './dom.js';
 import { optionPairs, ELEMENT_CLASSES } from '../core/registry.js';
 import { attachCombo } from './combo.js';
 import { attrSuggestions } from './attrs.js';
 import { columnList } from '../core/blockkit.js';
+import { templateCsv, MAX_FILE } from './attach.js';
+import { scheduleField } from './schedule.js';
 
 const MATCH_OPTIONS = [
   ['one', 'Exactly one (stop if none or several)'],
@@ -91,7 +93,20 @@ export function selectField(spec) {
   const st = spec.st;
   const s = el('select', { class: 'sel-input', 'aria-label': st.label || st.key });
   const v = spec.value === undefined || spec.value === null ? '' : String(spec.value);
-  for (const [val, label] of optionPairs(st)) s.appendChild(el('option', { value: val, text: label }));
+  // optionsFor(s) leaves out the options that cannot apply right now. The value in use is always
+  // offered, so a workflow saved with an option that no longer fits still shows what it holds.
+  let pairs = optionPairs(st);
+  if (typeof st.optionsFor === 'function' && spec.settings) {
+    try {
+      const want = st.optionsFor(spec.settings);
+      if (Array.isArray(want) && want.length) {
+        const keep = new Set(want.map(String));
+        const some = pairs.filter(p => keep.has(p[0]) || p[0] === v);
+        if (some.length) pairs = some;
+      }
+    } catch (e) { /* keep them all */ }
+  }
+  for (const [val, label] of pairs) s.appendChild(el('option', { value: val, text: label }));
   s.value = v;
   s.addEventListener('change', () => { spec.set(s.value); if (spec.done) spec.done(); });
   if (spec.fid) s.dataset.fid = spec.fid;
@@ -252,15 +267,137 @@ export function elementField(spec) {
   box.appendChild(el('div', { class: 'pfb-el-row' },
     name,
     el('span', { class: 'tip-icon', 'data-tip': esc(tipText('Letter case counts. * matches anything, e.g. G* for every name that starts with G.')) }, '?')));
-  box.appendChild(el('div', { class: 'pfb-el-row pfb-el-matchrow' }, el('span', { class: 'pfb-el-lab', text: 'If the name matches' }), match));
+  // "If the name matches" only has something to decide once the name can match more than one
+  // element: a name with * or ?, or a picker already set to first or all. It appears as soon as
+  // a wildcard is typed and goes again when it is taken out.
+  const matchRow = el('div', { class: 'pfb-el-row pfb-el-matchrow' }, el('span', { class: 'pfb-el-lab', text: 'If the name matches' }), match);
+  const manyPossible = () => /[*?]/.test(name.value) || match.value !== 'one';
+  const syncMatchRow = () => { matchRow.hidden = !manyPossible(); };
+  syncMatchRow();
+  name.addEventListener('input', syncMatchRow);
+  match.addEventListener('change', syncMatchRow);
+  box.appendChild(matchRow);
   // A single kind shows as chosen but is only saved with the first edit (the name is needed
   // anyway): drawing the inspector never changes the workflow.
+  return box;
+}
+
+// ---------------------------------------------------------------------------------------------
+// An attached data file (a case table). The card is the whole story: the file, what was read
+// out of it, and the line that says the file stays in this browser.
+//
+// spec.file = { has, pick(File), clear(), setSheet(name), redecode(), bytes(), error }
+// pick / setSheet / redecode return a promise of { ok, error }.
+
+// The file's own name out of a path, whichever slash it uses.
+const baseName = (p) => String(p || '').split('/').pop().split(String.fromCharCode(92)).pop();
+
+const kb = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1) + ' MB' : n >= 1000 ? Math.round(n / 1000) + ' kB' : n + ' B');
+
+const PRIVACY = 'This page has no server: the file is read here in your browser and kept inside your own workflow. Nothing is uploaded anywhere.';
+
+export function fileField(spec) {
+  const st = spec.st, F = spec.file || {};
+  const meta = spec.value && typeof spec.value === 'object' ? spec.value : {};
+  const box = el('div', { class: 'pfb-file' });
+  const input = el('input', { type: 'file', accept: st.accept || '.csv,.txt,.tsv,.xlsx,.xlsm', hidden: true });
+  const msg = el('div', { class: 'field-sub pfb-file-msg', hidden: true });
+  const say = (text, bad) => { msg.textContent = text || ''; msg.hidden = !text; msg.classList.toggle('pfb-file-bad', !!bad); };
+  let busy = false;
+  const run = (p, working) => {
+    if (busy) return;
+    busy = true;
+    say(working);
+    Promise.resolve(p).then((r) => { busy = false; if (r && r.ok === false) say(r.error || 'The file could not be read.', true); else say(''); },
+      (e) => { busy = false; say((e && e.message) || 'The file could not be read.', true); });
+  };
+  input.addEventListener('change', () => {
+    const f = input.files && input.files[0];
+    input.value = '';
+    if (!f) return;
+    if (f.size > MAX_FILE) { say(`${f.name} is ${kb(f.size)}. Files up to ${kb(MAX_FILE)} can be attached; for a bigger one keep it next to the script and type its name below.`, true); return; }
+    run(F.pick(f), 'Reading ' + f.name + '…');
+  });
+  box.appendChild(input);
+
+  if (!meta.name) {
+    const named = String((F.path && F.path()) || '').trim();
+    const drop = el('button', { type: 'button', class: 'pfb-file-drop', 'aria-label': 'Attach a data file' },
+      el('span', { class: 'pfb-file-drop-main', text: named ? '⬆ Attach ' + baseName(named) : '⬆ Choose a CSV or Excel file' }),
+      el('span', { class: 'pfb-file-drop-sub', text: named
+        ? 'The script reads it where it runs. Attach it to put it in the study package and to see its columns here.'
+        : 'or drop it here. The columns are read here in your browser.' }));
+    drop.addEventListener('click', () => input.click());
+    const stop = (e) => { e.preventDefault(); e.stopPropagation(); };
+    drop.addEventListener('dragover', (e) => { stop(e); e.dataTransfer.dropEffect = 'copy'; drop.classList.add('over'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+    drop.addEventListener('drop', (e) => {
+      stop(e);
+      drop.classList.remove('over');
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) run(F.pick(f), 'Reading ' + f.name + '…');
+    });
+    if (spec.fid) drop.dataset.fid = spec.fid;
+    box.appendChild(drop);
+  } else {
+    const head = el('div', { class: 'pfb-file-head' },
+      el('span', { class: 'pfb-file-name', text: meta.name, title: meta.name }),
+      el('span', { class: 'pfb-file-size', text: meta.size ? kb(meta.size) : '' }));
+    const swap = el('button', { type: 'button', class: 'btn-bare pfb-file-swap', text: 'Replace' });
+    swap.addEventListener('click', () => input.click());
+    const del = iconButton('trash', 'Remove this file', 'sm');
+    del.addEventListener('click', () => { F.clear(); });
+    head.appendChild(swap);
+    head.appendChild(del);
+    if (spec.fid) swap.dataset.fid = spec.fid;
+    box.appendChild(head);
+
+    if (!F.has) {
+      box.appendChild(el('div', { class: 'pfb-file-note pfb-file-bad' },
+        el('span', { text: 'This workflow came from a .py, which never carries data. Replace to attach ' + meta.name + ' again, or leave it: the script still reads that file name where it runs.' })));
+    }
+    if (Array.isArray(meta.sheets) && meta.sheets.length > 1) {
+      const sel = el('select', { class: 'sel-input sel-sm', 'aria-label': 'Sheet' });
+      for (const nm of meta.sheets) sel.appendChild(el('option', { value: nm, text: nm }));
+      sel.value = meta.sheet || meta.sheets[0];
+      sel.disabled = !F.has;
+      sel.addEventListener('change', () => run(F.setSheet(sel.value), 'Reading ' + sel.value + '…'));
+      box.appendChild(el('div', { class: 'pfb-file-row' }, el('span', { class: 'pfb-file-lab', text: 'Sheet' }), sel));
+    }
+    const cols = Array.isArray(meta.cols) ? meta.cols : [];
+    if (cols.length) {
+      const chips = el('div', { class: 'pfb-file-cols' });
+      for (const c of cols.slice(0, 24)) chips.appendChild(el('span', { class: 'pfb-chip', text: c, title: c }));
+      if (cols.length > 24) chips.appendChild(el('span', { class: 'pfb-chip pfb-chip-more', text: '+' + (cols.length - 24) + ' more' }));
+      box.appendChild(el('div', { class: 'pfb-file-sum', text: `${meta.rows} ${meta.rows === 1 ? 'row' : 'rows'}, ${cols.length} ${cols.length === 1 ? 'column' : 'columns'}:` }));
+      box.appendChild(chips);
+      box.appendChild(el('div', { class: 'pfb-file-note' },
+        el('span', { text: 'Every column can be used as a value: Table column reads one, and For each item loops over the rows.' })));
+    } else if (F.has) {
+      box.appendChild(el('div', { class: 'pfb-file-sum pfb-file-bad', text: 'No columns were found. Check which row holds the names under More options.' }));
+    }
+  }
+
+  const tmpl = el('button', { type: 'button', class: 'btn-bare pfb-file-tmpl', text: '⬇ Example file' });
+  tmpl.addEventListener('click', () => downloadText(templateCsv(meta.cols), 'case-table-template.csv', 'text/csv'));
+  box.appendChild(el('div', { class: 'pfb-file-foot' },
+    el('span', { class: 'pfb-file-priv' },
+      el('span', { class: 'pfb-lock', 'aria-hidden': 'true', text: '🔒' }),
+      el('span', { text: 'Read in your browser. Nothing is uploaded.' }),
+      el('span', { class: 'tip-icon', 'data-tip': esc(tipText(PRIVACY)) }, '?')),
+    tmpl));
+  box.appendChild(msg);
+  // A decode option changed under the card (which row holds the names, the decimal comma):
+  // the file is still here, so read it again rather than showing columns that are out of date.
+  if (meta.name && F.has && F.stale) setTimeout(() => F.stale(meta), 0);
   return box;
 }
 
 export function buildField(spec) {
   switch (spec.st.kind) {
     case 'number': return numberField(spec);
+    case 'file': return fileField(spec);
+    case 'schedule': return scheduleField(spec);
     case 'select': return selectField(spec);
     case 'bool': return boolField(spec);
     case 'textarea': return textareaField(spec, false);

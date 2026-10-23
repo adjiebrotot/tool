@@ -32,8 +32,9 @@ Optimise / Find limit searches.
   fields one by one but caches the whole workflow through `extra` (`js/ui/main.js`).
 - **Layout** (`js/ui/layout.js`): the canvas fills the screen (the World Clock's map layout) and
   everything floats over it: the title card, the action bar (undo, redo, zoom, fit, Quick start,
-  save, open, clear, Download .py), the Blocks panel on the left and the Settings / Python /
-  Problems panel on the right. Both panels are docks: drag a title bar to move one, its chevron
+  save, open, clear, Download), the Blocks panel on the left and the Settings / Python /
+  Problems panel on the right. **Download** writes the study package (§2.1); the Python tab's
+  small .py button still hands back the script alone. Both panels are docks: drag a title bar to move one, its chevron
   folds it, a double-click puts it back on its side (kept per viewer in localStorage
   `pfb-docks`). Fit view keeps the workflow in the part of the screen the docks leave free and
   never zooms below 0.5 (a long workflow shows its start). On a phone the Blocks panel starts
@@ -56,18 +57,36 @@ Optimise / Find limit searches.
 | Path | What it is |
 |---|---|
 | `index.html`, `style.css`, `tour.js` | the page, its styles (tokens only, both themes), the guided tour |
-| `js/app.js`, `js/ui/*.js` | the editor: store, ops, canvas, palette, inspector (fields, element picker, attribute suggestions), Python and Problems tabs, files (Save / Open), templates, quick-add, keyboard, toasts, layout (docks), block icons |
-| `js/core/registry.js` | the block contract: types, wire rules (`canConnect`, `whyNot`), categories, `defineBlock`, `settingsOf` (keeps old saved values meaningful), `portsOf`, `ELEMENT_CLASSES` |
+| `js/app.js`, `js/ui/*.js` | the editor: store, ops, canvas, palette, inspector (fields, element picker, attribute suggestions, the attached-file card, the schedule editor), Python and Problems tabs, files (Save / Open), the study package, templates, quick-add, keyboard, toasts, layout (docks), block icons |
+| `js/core/registry.js` | the block contract: types, wire rules (`canConnect`, `whyNot`), categories, `defineBlock`, `settingsOf` (keeps old saved values meaningful), `portsOf`, `visibleSettings` (§4.1), `ELEMENT_CLASSES` |
+| `js/core/attrdata.js` | what the page knows about a PowerFactory attribute (its unit, whether a class has a parameter), from the parent tool's reference data; the blocks ask it which choices can apply |
+| `js/core/tabledata.js`, `zip.js` | reading an attached CSV / Excel file in the browser, and the ZIP the study package is written as |
 | `js/core/workflow.js` | the saved format: `loadWorkflow` (never throws, migrations), `serialize`, the `# PFB1` line in the .py |
 | `js/core/codegen.js` | the generator (its header comment is the emit contract for block authors) |
 | `js/core/names.js`, `pylit.js`, `problems.js`, `runtime-loader.js`, `blockkit.js` | identifiers and the reserved set, Python literals and safe comments, the problem messages, runtime slicing, shared block helpers |
-| `js/blocks/*.js` | the 91 blocks, one file per palette category |
+| `js/blocks/*.js` | the 92 blocks, one file per palette category |
 | `runtime/base.py` | generic helpers (logging, run folder, loop labels and skip rows, tables, series, conversions, maths) |
 | `runtime/pf_core.py`, `pf_model.py`, `pf_studies.py` | PowerFactory helpers; documented in `runtime/API-pf.md` |
 | `runtime/signals.py`, `outputs.py`, `optimise.py` | checks, graphs, searches; documented in `runtime/API-analysis.md` |
 | `templates/` | Quick Start workflows (`index.json` + one file each; ids are frozen): `headroom`, `ldf-cases`, `n-1`, `shc-buses`, `find-limit`, `frt`, `cct`; made by `_audit/templates/build.mjs` |
 | `vendor/` | React 18.3.1, ReactDOM, `@xyflow/react` 12.12.0, the JSX shim; `vendor/README.md` has sources and SHA-256 |
 | `_audit/` | the test suites (§8) |
+
+### 2.1 The study package
+
+A study is not only its script, so **Download** writes one `.zip` (`js/ui/package.js`):
+
+```
+<name>.py      the script
+<name>.json    the workflow, for the Builder's Open button
+<data files>   every file attached to a Read table from file block, under the name the script reads
+README.txt     what is in it and how to run it
+```
+
+The data files sit beside the script rather than in a folder, because `read_table` looks for a
+plain name next to the script: unpack it anywhere and it runs. `js/core/zip.js` writes the archive
+with the browser's own `CompressionStream` (and stores the files uncompressed where a browser has
+none, which is still a valid `.zip`).
 
 ## 3. Saved state and compatibility
 
@@ -81,6 +100,13 @@ reads back). All three are the same workflow:
   "edges": [ { "id": "e3", "from": "n4", "out": "ok", "to": "n5", "in": "in" } ],
   "view": { "x": 0, "y": 0, "zoom": 1 } }
 ```
+
+A data file a reader attaches to a **Read table from file** block travels beside the workflow, in
+`wf.files` (`{ "<block id>": { name, mime, b64 } }`, `js/ui/ops.js`): the `.json`, the mini cache
+and the study package carry it, a generated `.py` never does (`embedInPython` drops it, so a
+script stays code and not somebody's spreadsheet). What the page read out of the file - its sheet
+names, its column names, how many rows - is a small `file` setting on the block, so a `.py`
+reopened in the Builder still knows the table's columns and offers them.
 
 **Frozen handles** (rename the words a reader sees, never these): block `type` ids, setting keys,
 select option values (always strings), port ids, template ids, the Persist namespace, the `PFB1`
@@ -106,9 +132,9 @@ outputs, such as Converged / Did not converge), `loop`, `callback` (Optimise, Fi
 |---|---|
 | Start | Start (project, study case, output folder, put changed values back, nominal frequency, run mode) |
 | PowerFactory: cases and data (21) | elements, set / read attributes, dispatch (plant total, ngnum aware), scale (from the original value), service, put back; study cases, operation scenarios, variations: activate, create, save, loop through; test generator |
-| PowerFactory: studies (13) | load flow, RMS and EMT (Record rows give time-series outputs; Reached the end / Stopped early / Did not initialise), harmonic load flow, short circuit; events (short circuit with clearing, switch, trip, load step, DSL parameter); contingencies (define, loop through); read a series from a result |
+| PowerFactory: studies (14) | load flow, RMS and EMT (Record rows give time-series outputs; Reached the end / Stopped early / Did not initialise), harmonic load flow, short circuit; events (short circuit with clearing, switch, trip, load step, one parameter change, parameter steps over time); contingencies (define, loop through); read a series from a result |
 | Power system checks (10) | remove spikes, frequency nadir (the ESS headroom rules: collapse, UFLS TRUE / FALSE / UNDEFINED), peak, settling time, RoCoF, value at time, final value, first crossing, check limits (incl. a curve), pass / fail |
-| Results and graphs (11) | add row (named tables, skipped passes kept with a Status), save (CSV / Excel), table column (incl. the worst row), read a table from a file, time series / 2D / 3D / heat map / table / convergence graphs, series to CSV |
+| Results and graphs (11) | add row (named tables, skipped passes kept with a Status), save (CSV / Excel), table column (incl. the worst row), read a table from an attached file, time series / 2D / 3D / heat map / table / convergence graphs, series to CSV |
 | Flow (11) | If, for a range, for each item (incl. the rows of a table), repeat, repeat until, skip, stop the loop, stop the workflow, print, remember / recall a value |
 | Values and maths (19) | numbers, text, lists, ranges, arithmetic, formula, functions, compare, logic, statistics, text from values |
 | Optimise and search (3) | Optimise, Find limit (bisection), Report this try |
@@ -119,6 +145,31 @@ step, noun for a calculator), a desc of at most 200 characters, keywords, string
 units in `unit`, `fallback` settings for unwired inputs, `effects`, and an `emit(cx)` that uses
 runtime helpers rather than inline PowerFactory code. Add its helper to the right runtime file
 (`# @helper` section, docstring, `@needs`, `@imports`), then cover it in that category's test suite.
+
+### 4.1 Only what can be chosen
+
+A form that offers a choice which cannot apply is worse than no choice: it reads as though it
+would do something. So a setting is drawn only where its value can change what the script does.
+
+- `showIf(s, cx)` decides it. `cx.wired` is the set of input ports a wire goes into right now and
+  `cx.inLoop` says whether the block sits inside a loop (from the generator's `regions`); an
+  answer the caller does not have is `undefined`, which a block must read as **show it**.
+- `optionsFor(s, cx)` on a select leaves out the options that cannot apply. It is the safe half of
+  the pair: `ui/fields.js` always keeps the value in use in the list, so an old workflow never
+  loses what it holds. Hiding a whole select instead would leave its value silently in force.
+- A setting the reader **pinned** is always shown (`visibleSettings`): the generator writes its
+  `SETTINGS` line whether or not it applies, and a line with no field behind it is a puzzle.
+- A **required** setting is never hidden: the generator's "fill this in" to-do runs over
+  `visibleSettings`, so hiding one would quietly delete its problem.
+- Where the answer is a PowerFactory fact - what unit an attribute has, whether a class has
+  `ngnum` - ask `js/core/attrdata.js`. It reads the parent tool's reference data lazily and
+  answers `undefined` until it lands; the inspector primes it and redraws when it arrives.
+  `ElmLne` `c:loading` is a percentage, so Read attribute shows neither a unit nor the parallel
+  machines; `ElmSym` `pgini` is in MW, so it shows both and the unit list holds only MW and kW.
+- The element picker's "If the name matches" row appears only once the name can match several
+  (a `*` or `?`, or a picker already set to first or all).
+
+`_audit/choice/run.mjs` holds the rules and the contract they must keep.
 
 ## 5. Code generation, in brief
 
@@ -160,6 +211,19 @@ Python and statically checks every section (needs, docstrings, ASCII, each secti
   out-of-service elements and its order is not stable (sorted by name).
 - Only one PowerFactory engine can run at a time; engine mode refuses while the GUI is open, so the
   generated script checks for it and also runs from inside PowerFactory.
+- A parameter event (`EvtParam`) takes its new value as **text** and works on any `Elm*`, not only
+  a DSL model: the real-world pattern is a voltage profile on an AC voltage source, `variable`
+  `s:u0`, one event per step. Its `time` follows the project's display unit, so it is written
+  through `set_seconds` like every other event time.
+- `GetAttributeUnit` gives the unit a project *shows* for an attribute, and `None` for a result
+  variable before any calculation. Conversion is only possible inside one family (power, reactive
+  power, apparent power, time, voltage, current, energy); a percentage, a per-unit value or an
+  angle cannot be converted at all, which is why the Unit choice is not offered for them.
+- Verified 2026-10-24, against three guesses that looked right and were not: an EMT run
+  (`ComInc.iopt_sim = "ins"`) **does** accept the balanced network `iopt_net = "sym"` and runs
+  with it; `ComShc.iopt_cur` (maximum / minimum currents) is kept by every method including
+  complete and IEC 61363; and `ComShc.iopt_shc` keeps all four fault types for every method. None
+  of those three choices may be narrowed.
 
 ## 8. Tests
 
@@ -168,6 +232,8 @@ Run from the repository root (`D:\Repository\tool`):
 | Command | Checks |
 |---|---|
 | `node powerfactory-scripter/builder/_audit/codegen/run.mjs` | the generator: names, literals, loading old state, every structural case, a 300-graph fuzzer, every script compiled, flow-only workflows executed against a stub runtime |
+| `node powerfactory-scripter/builder/_audit/choice/run.mjs` | "only what can be chosen" (§4.1): every rule by the case it was written for, and the contract (no `showIf` throws, no `optionsFor` invents an option, a pinned setting stays, a required one is never hidden, the unit families match the runtime) |
+| `node powerfactory-scripter/builder/_audit/data/run.mjs` | reading an attached CSV / Excel file: the page and `read_table` give the same table for the same fixtures, and the study package .zip is read back by Python's own `zipfile` |
 | `node powerfactory-scripter/builder/_audit/blocks/pf/run.mjs [--no-live]` | the PowerFactory blocks: generation of every setting variant, validators, and live runs on the sandboxes (load flow on every case, dispatch sweep, study cases and scenarios, short circuit, harmonics, fault event, EMT, RMS trip, N-1, variations, test generator, events), each ending with a sandbox audit |
 | `node powerfactory-scripter/builder/_audit/blocks/analysis/run.mjs [--live]` | the analysis blocks, executed on the two real traces in `_audit/runtime/fixtures/` |
 | `node powerfactory-scripter/builder/_audit/templates/run.mjs` | every Quick Start template: generates, compiles, runs live, and loads on the page |

@@ -1,32 +1,11 @@
-// Attribute suggestions for `attr` settings, from the parent tool's reference data:
-//   ../element_params.json                              input data per class (e:...)
-//   ../variables/elements/element_variables_index.json   which classes have a result file
-//   ../variables/elements/<Class>.json                   result variables per study (m:, c:, n:, s:)
-// Loaded only when a reader first opens an attribute field (element_params.json is ~700 KB).
+// Attribute suggestions for `attr` settings. The reference data itself is loaded by
+// core/attrdata.js (element_params.json, variables/elements/*.json), which the blocks also ask
+// what a unit is, so the files are read once however they are first wanted.
 // Each suggestion shows the description first and the code second ("Voltage, Magnitude  m:u").
 // A result variable read at a terminal of a branch carries a ":busN" suffix in the data; the list
 // offers the class's real terminals instead (ElmTr2 :bushv / :buslv ...), never the placeholder.
 
-const ROOT = '../';
-let paramsP = null, indexP = null;
-const classP = {};
-
-function getJson(url) {
-  return fetch(url).then(r => (r.ok ? r.json() : null)).catch(() => null);
-}
-function loadParams() { return paramsP || (paramsP = getJson(ROOT + 'element_params.json')); }
-function loadIndex() { return indexP || (indexP = getJson(ROOT + 'variables/elements/element_variables_index.json')); }
-async function loadClass(cls) {
-  if (!/^[A-Z][A-Za-z0-9]*$/.test(cls)) return null;
-  if (!classP[cls]) {
-    classP[cls] = loadIndex().then(idx => {
-      // Only classes the index lists have a file: asking for any other would be a 404.
-      if (!idx || !idx[cls]) return null;
-      return getJson(ROOT + 'variables/elements/' + cls + '.json');
-    });
-  }
-  return classP[cls];
-}
+import { loadParams, loadClass } from '../core/attrdata.js';
 
 // The terminals a result variable can be read at, per class (DESIGN 8).
 export const BUS_SUFFIXES = {

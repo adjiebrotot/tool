@@ -96,6 +96,41 @@ function withNode(wf, id, fn) {
   return hit ? { ...wf, nodes } : wf;
 }
 
+// ---------------------------------------------------------------------------------------------
+// Attached data files (DESIGN 3: `wf.files`, a block id -> { name, mime, b64 })
+//
+// A file a reader attaches to a Read table from file block travels with the workflow: it is
+// saved in the .json, kept in the mini cache and written into the study package beside the
+// script. It is left out of the .py (workflow.js embedInPython), so a script never carries a
+// reader's data; opening such a .py says the file has to be attached again.
+
+export function fileOf(wf, id) {
+  const f = wf && wf.files && wf.files[id];
+  return f && typeof f === 'object' && typeof f.b64 === 'string' ? f : null;
+}
+export function filesOf(wf) {
+  const out = {};
+  for (const [id, f] of Object.entries((wf && wf.files) || {})) if (fileOf(wf, id)) out[id] = f;
+  return out;
+}
+export function setFile(wf, id, file) {
+  const files = { ...((wf && wf.files) || {}) };
+  if (file) files[id] = { name: String(file.name || ''), mime: String(file.mime || ''), b64: String(file.b64 || '') };
+  else delete files[id];
+  if (!Object.keys(files).length) { const { files: _drop, ...rest } = wf; return rest; }
+  return { ...wf, files };
+}
+// Keep only the files of blocks that are still there (after a delete).
+function pruneFiles(wf) {
+  if (!wf.files) return wf;
+  const ids = new Set(wf.nodes.map(n => n.id));
+  const files = {};
+  for (const [id, f] of Object.entries(wf.files)) if (ids.has(id)) files[id] = f;
+  if (Object.keys(files).length === Object.keys(wf.files).length) return wf;
+  if (!Object.keys(files).length) { const { files: _drop, ...rest } = wf; return rest; }
+  return { ...wf, files };
+}
+
 export function setName(wf, name) { return { ...wf, name: String(name) }; }
 export function setLabel(wf, id, label) { return withNode(wf, id, n => { n.label = String(label || ''); }); }
 export function setSetting(wf, id, key, value) { return withNode(wf, id, n => { n.s[key] = value; }); }
@@ -187,7 +222,8 @@ export function deleteNodes(wf, ids) {
   const goneNodes = wf.nodes.filter(n => want.has(n.id));
   const goneEdges = wf.edges.filter(e => want.has(e.from) || want.has(e.to));
   if (!goneNodes.length) return { wf, nodes: [], edges: [], refused };
-  return { wf: { ...wf, nodes, edges: wf.edges.filter(e => !(want.has(e.from) || want.has(e.to))) }, nodes: goneNodes, edges: goneEdges, refused };
+  const next = pruneFiles({ ...wf, nodes, edges: wf.edges.filter(e => !(want.has(e.from) || want.has(e.to))) });
+  return { wf: next, nodes: goneNodes, edges: goneEdges, refused };
 }
 
 // Wire c = { from, out, to, in }. A flow output leads to one next step and a data input takes
@@ -344,7 +380,9 @@ export function copyFragment(wf, ids) {
   const nodes = wf.nodes.filter(n => set.has(n.id) && n.type !== 'start');
   const keep = new Set(nodes.map(n => n.id));
   const edges = wf.edges.filter(e => keep.has(e.from) && keep.has(e.to));
-  const out = serialize({ app: APP_ID, v: FORMAT_VERSION, name: 'Copied blocks', nodes, edges });
+  const files = {};
+  for (const n of nodes) { const f = fileOf(wf, n.id); if (f) files[n.id] = f; }
+  const out = serialize({ app: APP_ID, v: FORMAT_VERSION, name: 'Copied blocks', nodes, edges, ...(Object.keys(files).length ? { files } : {}) });
   delete out.view;
   return out;
 }
@@ -372,6 +410,11 @@ export function pasteFragment(wf, frag, dx = 40, dy = 40) {
     edges.push({ ...e, id, from: map.get(e.from), to: map.get(e.to) });
   }
   cur = { ...cur, edges: [...cur.edges, ...edges] };
+  // An attached data file comes along with the block it belongs to.
+  for (const [oldId, att] of Object.entries(f.files || {})) {
+    const id = map.get(oldId);
+    if (id && att && typeof att === 'object' && typeof att.b64 === 'string') cur = setFile(cur, id, att);
+  }
   return { wf: cur, ids: nodes.map(n => n.id), notes, skippedStart };
 }
 

@@ -5,8 +5,9 @@
 // scrolls to its lines and marks them (the generator's spans; the "# -- Step n:" comments as a
 // fallback). A download with problems says so once and carries the count on its label.
 
-import { $, el, downloadText } from './dom.js';
+import { $, el, downloadText, downloadBlob } from './dom.js';
 import { fileNameFor } from '../core/codegen.js';
+import { buildPackage, packagedFiles } from './package.js';
 import { toast } from './toasts.js';
 
 // What must be fixed before the script runs: errors and to-dos. Warnings are likely mistakes the
@@ -50,13 +51,16 @@ export function mountPython(app) {
   function labels() {
     const g = store.get().gen;
     const n = blockingCount(g);
-    const t = '⬇ Download .py' + (n ? ' (' + n + ' problem' + (n === 1 ? '' : 's') + ')' : '');
-    // The words sit in spans so a phone can show the short form, "⬇ .py (2)", from CSS alone.
-    if (dl1.textContent !== t) {
-      dl1.innerHTML = '⬇ <span class="pfb-dl-word">Download </span>.py' +
+    const data = packagedFiles(store.get().wf).length;
+    const t = '⬇ Download' + (n ? ' (' + n + ' problem' + (n === 1 ? '' : 's') + ')' : '');
+    // The words sit in spans so a phone can show the short form, "⬇ (2)", from CSS alone.
+    if (dl1.dataset.label !== t) {
+      dl1.dataset.label = t;
+      dl1.innerHTML = '⬇ <span class="pfb-dl-word">Download</span>' +
         (n ? ' <span class="pfb-dl-n">(' + n + '<span class="pfb-dl-word"> problem' + (n === 1 ? '' : 's') + '</span>)</span>' : '');
     }
-    dl1.title = n ? 'Download the Python file. It stops before it connects to PowerFactory until the problems are fixed.' : 'Download the Python file';
+    const what = 'Download the study package: the script, the workflow' + (data ? ' and ' + (data === 1 ? 'the data file' : data + ' data files') : '') + ', in one .zip.';
+    dl1.title = n ? what + ' The script stops before it connects to PowerFactory until the problems are fixed.' : what;
     dl1.classList.toggle('pfb-has-problems', !!n);
     if (status) {
       status.textContent = !g ? 'Writing the script…'
@@ -125,7 +129,7 @@ export function mountPython(app) {
     const g = store.get().gen;
     if (!g) return;
     const ok = () => toast('Copied the Python to the clipboard.');
-    const failed = (e) => alert('Copy failed: ' + (e && e.message ? e.message : 'the browser did not allow it') + '. Use Download .py instead.');
+    const failed = (e) => alert('Copy failed: ' + (e && e.message ? e.message : 'the browser did not allow it') + '. Use the Download button instead.');
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(g.code).then(ok, failed);
     else {
       try {
@@ -136,24 +140,46 @@ export function mountPython(app) {
       } catch (e) { failed(e); }
     }
   }
-  function download() {
+  // The problems are said once per set of them, whichever Download is used.
+  function askFirst() {
+    const g = store.get().gen;
+    const probs = ((g && g.problems) || []).filter(isBlocking);
+    const sig = probs.map(p => p.level + p.msg).join('\n');
+    if (!probs.length || askedFor === sig) return true;
+    const first = probs.slice(0, 3).map(p => '• ' + p.msg).join('\n');
+    const yes = confirm('This workflow has ' + (probs.length === 1 ? 'one problem' : probs.length + ' problems') + ' to fix:\n' + first + (probs.length > 3 ? '\n…' : '') +
+      '\n\nThe script will stop before connecting until these are fixed. Download it anyway?');
+    if (!yes) { app.openTab('problems'); return false; }
+    askedFor = sig;
+    return true;
+  }
+
+  // ⬇ Download hands back the whole study, zipped: the script, the workflow and every data file
+  // attached to it. The .py button in the Python tab still gives the script on its own, for a
+  // quick look or a paste into PowerFactory.
+  async function download() {
     app.flushGenerate();
     const s = store.get(), g = s.gen;
-    if (!g) return;
-    const probs = (g.problems || []).filter(p => p.level === 'error' || p.level === 'todo');
-    const sig = probs.map(p => p.level + p.msg).join('\n');
-    if (probs.length && askedFor !== sig) {
-      const first = probs.slice(0, 3).map(p => '• ' + p.msg).join('\n');
-      const yes = confirm('This workflow has ' + (probs.length === 1 ? 'one problem' : probs.length + ' problems') + ' to fix:\n' + first + (probs.length > 3 ? '\n…' : '') +
-        '\n\nThe script will stop before connecting until these are fixed. Download it anyway?');
-      if (!yes) { app.openTab('problems'); return; }
-      askedFor = sig;
+    if (!g || !askFirst()) return;
+    try {
+      const pkg = await buildPackage({ ...s.wf, view: s.view }, g, (g.problems || []).filter(isBlocking));
+      downloadBlob(pkg.blob, pkg.name);
+      store.markSaved();
+      toast(pkg.note);
+    } catch (e) {
+      toast('The study package could not be made (' + ((e && e.message) || e) + '), so the script alone was downloaded.', { level: 'error' });
+      downloadText(g.code, fileNameFor(s.wf), 'text/x-python');
     }
+  }
+  function downloadPy() {
+    app.flushGenerate();
+    const s = store.get(), g = s.gen;
+    if (!g || !askFirst()) return;
     downloadText(g.code, fileNameFor(s.wf), 'text/x-python');
   }
   copyBtn.addEventListener('click', copy);
   dl1.addEventListener('click', download);
-  dl2.addEventListener('click', download);
+  dl2.addEventListener('click', downloadPy);
 
-  return { render, seePython, download, copy, markNode };
+  return { render, seePython, download, downloadPy, copy, markNode };
 }

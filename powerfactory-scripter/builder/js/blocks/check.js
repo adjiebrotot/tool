@@ -60,7 +60,8 @@ defineBlock({
     { key: 'signal', label: 'The curve is', kind: 'select', default: 'auto', more: true,
       options: [['auto', 'Found from its unit and name'], ['frequency', 'A frequency or speed'], ['other', 'Something else (its own unit)']],
       tip: 'A frequency is compared in Hz even when it is in p.u.; anything else in its own unit.' },
-    nominalSetting,
+    // A curve read in its own unit has no nominal frequency to scale by.
+    { ...nominalSetting, showIf: (s) => s.signal !== 'other' },
   ],
   summary(s) { return `Spikes over ${n(s.trigger)} Hz`; },
   helpers: ['despike'],
@@ -99,7 +100,7 @@ defineBlock({
   ],
   settings: [
     tEventSetting(),
-    { key: 'floorBelow', label: 'Collapse floor, below nominal', kind: 'number', default: 5, unit: 'Hz', min: 0, step: 0.5,
+    { key: 'floorBelow', label: 'Collapse floor, below nominal', kind: 'number', default: 5, more: true, unit: 'Hz', min: 0, step: 0.5,
       tip: 'Falling this far below nominal is a collapse: 5 Hz is 45 Hz at 50 Hz and 55 Hz at 60 Hz. Empty: no floor.' },
     { key: 'uflsBelow', label: 'UFLS level, below nominal', kind: 'number', default: 1, unit: 'Hz', min: 0, step: 0.1,
       tip: 'Under-frequency load shedding starts this far below nominal: 1 Hz is 49 Hz at 50 Hz and 59 Hz at 60 Hz.' },
@@ -177,6 +178,11 @@ defineBlock({
     { id: 'band', label: 'Band', type: 'num', fallback: 'band', tip: 'Half the width of the band: in % of the step, or in the curve\'s unit (see Band is).' },
     { id: 'target', label: 'Final value', type: 'num', fallback: 'target', tip: 'Only for Settle around "a value I give".' },
   ],
+  ports(s) {
+    // Settling around the curve's own final value: there is no value to give.
+    if (s.reference === 'given') return {};
+    return { inputs: [seriesIn(), tEventIn(), { id: 'band', label: 'Band', type: 'num', fallback: 'band', tip: 'Half the width of the band: in % of the step, or in the unit of the curve (see Band is).' }] };
+  },
   outputs: [
     { id: 'settles', label: 'Settles', type: 'bool', pick: '.settles', var: 'settles', tip: 'Yes when it is inside the band for good before the end of the run.' },
     { id: 'time', label: 'Settling time', type: 'num', unit: 's', pick: '.time', var: 'settling_time', tip: 'From the event to the moment it stays inside the band.' },
@@ -190,7 +196,8 @@ defineBlock({
     tEventSetting(),
     { key: 'bandMode', label: 'Band is', kind: 'select', default: 'pct', options: [['pct', '% of the step'], ['abs', 'In the curve\'s unit']] },
     { key: 'band', label: 'Band', kind: 'number', default: 10, min: 0, tip: 'Half the width of the band around the final value, e.g. 10 (% of the step) or 0.01 (Hz).' },
-    { key: 'hold', label: 'Final value from the last', kind: 'number', default: 1, unit: 's', min: 0, tip: 'The final value is the average of the last part of the run.' },
+    { key: 'hold', label: 'Final value from the last', kind: 'number', default: 1, more: true, unit: 's', min: 0, showIf: (s) => s.reference !== 'given',
+      tip: 'The final value is the average of the last part of the run.' },
     { key: 'reference', label: 'Settle around', kind: 'select', default: 'final', options: [['final', 'Its final value'], ['given', 'A value I give']] },
     { key: 'target', label: 'Final value', kind: 'number', default: null, showIf: (s) => s.reference === 'given' },
     { key: 'guard', label: 'Not settled if outside in the last', kind: 'number', default: 1, unit: 's', min: 0, more: true,
@@ -244,7 +251,7 @@ defineBlock({
     { key: 'window', label: 'Window', kind: 'number', default: 0.5, unit: 's', min: 0, step: 0.1, tip: 'The rolling window the change is measured over (0.5 s in most grid codes).' },
     { key: 'fallback', label: 'When there is no nadir', kind: 'select', default: 'window', more: true,
       options: [['window', 'Search for the search window'], ['tstop', 'Search to the end of the run'], ['none', 'Give no value']] },
-    { key: 'searchWindow', label: 'Search window', kind: 'number', default: 10, unit: 's', min: 0, more: true },
+    { key: 'searchWindow', label: 'Search window', kind: 'number', default: 10, unit: 's', min: 0, more: true, showIf: (s) => s.fallback === 'window' },
     { key: 'absolute', label: 'Always positive', kind: 'bool', default: false, more: true },
     { key: 'decimals', label: 'Decimals', kind: 'number', default: 4, min: 0, max: 12, step: 1, more: true },
     nominalSetting,
@@ -307,7 +314,7 @@ defineBlock({
     { key: 'direction', label: 'Goes', kind: 'select', default: 'above', options: [['above', 'Above the level'], ['below', 'Below the level']] },
     { key: 'level', label: 'Level', kind: 'number', default: 0.9 },
     { key: 'after', label: 'Look from', kind: 'number', default: null, unit: 's', placeholder: 'First event of the run' },
-    { key: 'hold', label: 'And stays there for', kind: 'number', default: 0, unit: 's', min: 0, tip: '0: the first touch counts.' },
+    { key: 'hold', label: 'And stays there for', kind: 'number', default: 0, more: true, unit: 's', min: 0, tip: '0: the first touch counts.' },
   ],
   summary(s) { return `${s.direction === 'below' ? 'Below' : 'Above'} ${n(s.level)}`; },
   helpers: ['first_cross'],

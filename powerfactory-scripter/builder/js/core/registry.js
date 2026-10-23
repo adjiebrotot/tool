@@ -33,6 +33,14 @@
 //   core/codegen.js.
 //   A setting may carry `noPin: true`: the generator uses it while writing the code (a loop's
 //   restore, a formula's text), so it cannot become a SETTINGS line (the inspector hides the pin).
+//   A setting may also carry `showIf(s)` (drawn only while this is true) and, for a select,
+//   `optionsFor(s)` -> the subset of its options worth offering right now. Both only change what
+//   the inspector draws: the saved value is untouched and the generator still reads it, so a
+//   setting is only hidden where its value cannot change what the script does. optionsFor may
+//   leave out any option; the one in use is always offered, so saved state never loses its
+//   value. Where the choice turns on a PowerFactory fact (an attribute's unit, whether a class
+//   has ngnum), ask core/attrdata.js, whose answers are `undefined` until its files are in: that
+//   must read as "show it", and the page redraws when they land.
 //   An input port may carry `required: true` (unwired with no fallback = a to-do item) and
 //   `at: 'bodyEnd'` (Repeat until). A setting may carry `suggest: 'vars' | 'tables'` (the
 //   inspector offers the names already used by Remember a value / Add row blocks) or
@@ -119,8 +127,11 @@ export const CATEGORIES = [
 export const KINDS = ['start', 'action', 'branch', 'loop', 'callback', 'pure', 'terminal', 'note'];
 
 // Setting kinds the inspector can draw. `element` holds { cls, name, match } (a PowerFactory
-// class, a name with * wildcards, and one / first / all), `list` holds rows with stable ids.
-export const SETTING_KINDS = ['text', 'number', 'select', 'bool', 'textarea', 'code', 'list', 'attr', 'element'];
+// class, a name with * wildcards, and one / first / all), `list` holds rows with stable ids,
+// `file` holds what the page read from an attached data file ({ name, size, sheet, sheets,
+// cols, rows }; the bytes live in wf.files, never in a node), and `schedule` holds the steps of
+// a dynamic event ([{ id, t, v }], drawn as a table and a graph of the same rows).
+export const SETTING_KINDS = ['text', 'number', 'select', 'bool', 'textarea', 'code', 'list', 'attr', 'element', 'file', 'schedule'];
 
 // What a block does to the model, for the "results read after the model changed" check:
 // writes: 'model' (element data), 'case' (switches study case, scenario or variation),
@@ -235,8 +246,20 @@ export function settingsOf(node) {
     } else if (st.kind === 'number') {
       if (v === '' || v === undefined || v === null) v = st.default === undefined ? null : st.default;
       else { const n = typeof v === 'number' ? v : Number(String(v).replace(',', '.')); v = Number.isFinite(n) ? n : (st.default === undefined ? null : st.default); }
-    } else if (st.kind === 'list') {
+    } else if (st.kind === 'list' || st.kind === 'schedule') {
       v = normaliseRows(Array.isArray(v) ? v : (clone(st.default) || []), st);
+    } else if (st.kind === 'file') {
+      const d = isPlainObject(st.default) ? st.default : {};
+      const f = isPlainObject(v) ? v : d;
+      v = {
+        name: typeof f.name === 'string' ? f.name : '',
+        size: Number.isFinite(Number(f.size)) ? Number(f.size) : 0,
+        sheet: typeof f.sheet === 'string' ? f.sheet : '',
+        sheets: Array.isArray(f.sheets) ? f.sheets.filter(x => typeof x === 'string') : [],
+        cols: Array.isArray(f.cols) ? f.cols.filter(x => typeof x === 'string') : [],
+        rows: Number.isFinite(Number(f.rows)) ? Number(f.rows) : 0,
+        sig: typeof f.sig === 'string' ? f.sig : '',
+      };
     } else if (st.kind === 'element') {
       v = isPlainObject(v) ? { cls: '', name: '', match: 'one', ...v } : { cls: '', name: '', match: 'one', ...(isPlainObject(st.default) ? st.default : {}) };
     } else if (v === undefined || v === null) {
@@ -326,15 +349,29 @@ export function displayName(node) {
 // Settings that apply right now (a setting with showIf hidden by another setting is skipped,
 // and an input fallback is only shown while that input is not wired). `more: true` settings
 // are returned too; the inspector folds them under "More options".
-export function visibleSettings(node, wiredInputs = new Set()) {
+//
+// showIf is called as showIf(s, cx), where cx tells the block what it cannot read from its own
+// settings:
+//   cx.wired    a Set of the input port ids a wire goes into right now
+//   cx.inLoop   true / false when the caller knows whether the block sits inside a loop,
+//               `undefined` when it does not (the generator does not pass it)
+// Anything cx cannot answer is `undefined`, which a block must read as "show it".
+//
+// A setting the reader pinned is always shown: the generator writes its SETTINGS line whether or
+// not it applies (it never looks here), so a hidden pinned setting would be a line at the top of
+// the script with no field behind it.
+export function visibleSettings(node, wiredInputs = new Set(), ctx = null) {
   const def = getBlock(node && node.type);
   if (!def) return [];
   const s = settingsOf(node);
   const { inputs } = portsOf(node);
+  const pinned = new Set(Array.isArray(node && node.pin) ? node.pin : []);
   const fallbackOfWired = new Set(inputs.filter(p => p.fallback && wiredInputs.has(p.id)).map(p => p.fallback));
+  const cx = { wired: wiredInputs, inLoop: ctx && ctx.inLoop, ...(ctx || {}) };
   return def.settings.filter(st => {
+    if (pinned.has(st.key)) return true;
     if (fallbackOfWired.has(st.key)) return false;
-    if (typeof st.showIf === 'function') { try { return !!st.showIf(s); } catch (e) { return true; } }
+    if (typeof st.showIf === 'function') { try { return !!st.showIf(s, cx); } catch (e) { return true; } }
     return true;
   });
 }

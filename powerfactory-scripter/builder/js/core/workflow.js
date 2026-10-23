@@ -455,6 +455,9 @@ export function workflowHash(code) {
 export function embedInPython(code, wf, settingsMap) {
   const obj = serialize(wf);
   delete obj.view;
+  // Attached data files travel in the .json and in the study package, never inside a script:
+  // a .py is code to read, not a place to carry a reader's spreadsheet.
+  delete obj.files;
   obj.settings = isPlainObject(settingsMap) ? settingsMap : {};
   let text = String(code === undefined || code === null ? '' : code).replace(/\s+$/, '');
   const lines = text.split('\n');

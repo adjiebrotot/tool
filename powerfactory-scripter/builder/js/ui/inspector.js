@@ -15,13 +15,16 @@ import * as ops from './ops.js';
 import { buildField } from './fields.js';
 import { glyph, KIND_WORDS } from './glyphs.js';
 import { blockIcon } from './icons.js';
+import { readBytes, describe, decodeSig, fileBytes, toB64, looksExcel } from './attach.js';
+import { prime as primeAttrData, onLoad as onAttrData } from '../core/attrdata.js';
 
 const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const portLabel = (p) => (p ? (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '') : '');
 
 export function isEmptyValue(st, v) {
   if (st.kind === 'element') return !(isObj(v) && String(v.name || '').trim());
-  if (st.kind === 'list') return !(Array.isArray(v) && v.length);
+  if (st.kind === 'file') return !(isObj(v) && String(v.name || '').trim());
+  if (st.kind === 'list' || st.kind === 'schedule') return !(Array.isArray(v) && v.length);
   if (st.kind === 'number') return v === null || v === undefined || v === '';
   if (st.kind === 'bool') return false;
   return String(v === undefined || v === null ? '' : v).trim() === '';
@@ -34,6 +37,20 @@ export function mountInspector(app) {
   let selfEdit = false, lastShape = null, lastFull = null;
 
   const wf = () => store.get().wf;
+
+  // What a block's showIf(s, cx) is told beyond its own settings: which inputs are wired, and
+  // whether it sits inside a loop (the generator keeps that on gen.regions). Anything not known
+  // is left out, and a block reads a missing answer as "show it".
+  function wiredSet(w, node) {
+    const out = new Set();
+    for (const e of w.edges) if (e.to === node.id) out.add(ops.handleIdOf(w, node.id, e.in, 'in'));
+    return out;
+  }
+  function showCtx(s, node) {
+    const regions = s.gen && s.gen.regions && s.gen.regions[node.id];
+    return { inLoop: Array.isArray(regions) ? regions.some(r => r.kind === 'loop') : undefined };
+  }
+
   function edit(next, key) {
     selfEdit = true;
     try { store.commit(next, { key }); } finally { selfEdit = false; }
@@ -57,7 +74,14 @@ export function mountInspector(app) {
     if (!def) return 'missing:' + node.id;
     const ports = ops.nodePorts(s.wf, node);
     const wired = ports.inputs.map(p => p.id + '=' + s.wf.edges.filter(e => e.to === node.id && ops.handleIdOf(s.wf, node.id, e.in, 'in') === p.id).map(e => e.from + '.' + e.out).join('|'));
-    const vis = visibleSettings(node).map(st => st.key + (st.kind === 'list' ? '[' + (settingsOf(node)[st.key] || []).map(r => r.id).join(',') + ']' : ''));
+    const sNode = settingsOf(node);
+    const vis = visibleSettings(node, wiredSet(s.wf, node), showCtx(s, node)).map(st => {
+      if (st.kind === 'list') return st.key + '[' + (sNode[st.key] || []).map(r => r.id).join(',') + ']';
+      // The file card is redrawn whenever what was read out of the file changes, or the file
+      // itself comes or goes (its bytes live beside the workflow, not in the block).
+      if (st.kind === 'file') { const f = sNode[st.key] || {}; return st.key + '[' + f.name + ':' + f.sheet + ':' + (f.cols || []).length + ':' + f.rows + ':' + (ops.fileOf(s.wf, node.id) ? 1 : 0) + ']'; }
+      return st.key;
+    });
     const sugg = def.settings.filter(st => st.suggest && st.suggest !== 'columns').map(st => suggestions(s.wf, st.suggest).join('|'));
     return [x.node ? 'node' : 'wf', node.id, node.type, (node.pin || []).join(','), wired.join(';'), vis.join(','), [...moreOpen].join(','), sugg.join(';'), ports.missing].join('#');
   }
@@ -67,8 +91,13 @@ export function mountInspector(app) {
     return shapeOf(s) + '#' + (node ? JSON.stringify([node.label, node.s]) : '') + '#' + (x.node ? '' : s.wf.name);
   }
 
+  // The reference data landed: what a block offers may have narrowed.
+  onAttrData(() => { lastShape = null; lastFull = null; render(); });
+
   store.subscribe((s, prev) => {
-    if (s.sel === prev.sel && s.wf === prev.wf) return;
+    // The script is written a moment after the workflow changes, and with it the generator says
+    // which loops a block sits in: a block whose choices turn on that is drawn again then.
+    if (s.sel === prev.sel && s.wf === prev.wf && s.gen === prev.gen) return;
     const shape = shapeOf(s);
     if (selfEdit && shape === lastShape) { lastFull = fullOf(s); return; }
     const full = fullOf(s);
@@ -109,7 +138,7 @@ export function mountInspector(app) {
   function reqMark() { return el('span', { class: 'pfb-req', text: 'Required' }); }
 
   function pinButton(node, st) {
-    if (!node || node.type === 'start' || st.kind === 'list' || st.noPin) return null;
+    if (!node || node.type === 'start' || st.kind === 'list' || st.kind === 'schedule' || st.kind === 'file' || st.noPin) return null;
     const on = (node.pin || []).includes(st.key);
     const label = on ? 'Shown at the top of the script: click to keep it in the workflow only' : 'Put at the top of the script';
     const b = el('button', { type: 'button', class: 'btn-bare pfb-pin' + (on ? ' on' : ''), title: label, 'aria-label': label, 'aria-pressed': on ? 'true' : 'false' });
@@ -177,14 +206,75 @@ export function mountInspector(app) {
     const T = tables[name];
     const items = T ? T.columns.map(c => ({ value: c, main: c })) : [];
     if (!T) return { items, known: null, table: name, empty: 'No block fills the table "' + name + '" yet: add rows to it first, or type the name.' };
-    if (T.file) return { items, known: null, table: name, empty: '"' + name + '" is read from a file: type a column name exactly as in its header row.' };
+    // A table read from a file knows its columns once the file is attached (the page read its
+    // header row); without the file it still only knows what the header row said.
+    if (T.file && !T.read) return { items, known: null, table: name, empty: '"' + name + '" is read from a file: attach it on Read table from file, or type a column name exactly as in its header row.' };
     return { items, known: T.columns, table: name, empty: '"' + name + '" has no columns yet.' };
+  }
+
+  // An attached data file: reading it, re-reading it when a decode option changed, and taking
+  // it off again. Every one of these commits in one step (the setting and the file together),
+  // so undo puts the block back as it was.
+  function fileSpecFor(node, st) {
+    const sheetKey = st.sheetKey || 'sheet';
+    const optsOf = (s, sheet) => ({
+      sheet: sheet !== undefined ? sheet : String(s[sheetKey] || ''),
+      layout: String(s[st.layoutKey || 'layout'] || 'rows'),
+      header: Number(s[st.headerKey || 'header'] || 1),
+      decimalComma: !!s[st.commaKey || 'decimalComma'],
+    });
+    const store2 = store;
+    async function apply(name, bytes, mime, sheet) {
+      const s = settingsOf(ops.nodeById(wf(), node.id) || node);
+      const opts = optsOf(s, sheet);
+      let meta;
+      try { meta = await describe(name, bytes, opts); } catch (e) { return { ok: false, error: `${name} could not be read: ${(e && e.message) || e}` }; }
+      let next = ops.setSetting(wf(), node.id, st.key, meta);
+      next = ops.setFile(next, node.id, { name, mime, b64: toB64(bytes) });
+      // The file's own name is what the script reads, so it also fills the path setting the
+      // generator already uses: the two never disagree.
+      if (st.pathKey) next = ops.setSetting(next, node.id, st.pathKey, name);
+      next = ops.setSetting(next, node.id, sheetKey, opts.sheet);
+      edit(next, 'file:' + node.id);
+      done();
+      return { ok: true };
+    }
+    const bytesNow = () => fileBytes(ops.fileOf(store2.get().wf, node.id));
+    return {
+      has: !!bytesNow(),
+      path: () => (st.pathKey ? String(settingsOf(ops.nodeById(wf(), node.id) || node)[st.pathKey] || '') : ''),
+      pick: (f) => readBytes(f).then(b => apply(f.name, b, f.type || (looksExcel(f.name) ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv'), ''),
+        (e) => ({ ok: false, error: (e && e.message) || 'the browser could not read this file' })),
+      setSheet: (name) => {
+        const b = bytesNow();
+        const f = ops.fileOf(store2.get().wf, node.id);
+        if (!b || !f) return { ok: false, error: 'This file is not attached any more: choose it again.' };
+        return apply(f.name, b, f.mime, name);
+      },
+      clear: () => {
+        let next = ops.setSetting(wf(), node.id, st.key, { name: '', size: 0, sheet: '', sheets: [], cols: [], rows: 0, sig: '' });
+        next = ops.setFile(next, node.id, null);
+        if (st.pathKey) next = ops.setSetting(next, node.id, st.pathKey, '');
+        edit(next, 'file:' + node.id);
+        done();
+      },
+      // A decode option changed after the file was read: read it again with the new one.
+      stale: (meta) => {
+        const b = bytesNow();
+        if (!b || !meta || !meta.name) return;
+        const want = decodeSig(optsOf(settingsOf(ops.nodeById(wf(), node.id) || node)));
+        if (meta.sig === want) return;
+        const f = ops.fileOf(store2.get().wf, node.id);
+        apply(f.name, b, f.mime, undefined);
+      },
+    };
   }
 
   function specFor(node, st, value) {
     return {
-      st, value,
+      st, value, settings: settingsOf(node),
       fid: node.id + ':' + st.key,
+      file: st.kind === 'file' ? fileSpecFor(node, st) : null,
       set: (v) => edit(ops.setSetting(wf(), node.id, st.key, v), 'f:' + node.id + ':' + st.key),
       done,
       kinds: st.kind === 'element' ? kindsFor(node, st) : null,
@@ -223,7 +313,7 @@ export function mountInspector(app) {
       for (const col of st.columns || []) {
         const cst = { ...col, label: col.label || col.key };
         const spec = {
-          st: cst, value: row[col.key],
+          st: cst, value: row[col.key], settings: { ...s, ...row },
           fid: node.id + ':' + st.key + ':' + row.id + ':' + col.key,
           set: (v) => edit(ops.setRowField(wf(), node.id, st.key, row.id, col.key, v), 'f:' + node.id + ':' + st.key + ':' + row.id + ':' + col.key),
           done,
@@ -277,7 +367,7 @@ export function mountInspector(app) {
       buildField({ st: nameSt, value: s.wf.name, fid: 'wf:name', set: (v) => edit(ops.setName(wf(), v), 'wf:name'), done })));
     if (start && getBlock('start')) {
       const ss = settingsOf(start);
-      const vis = visibleSettings(start);
+      const vis = visibleSettings(start, wiredSet(s.wf, start), showCtx(s, start));
       for (const st of vis.filter(z => !z.more)) group.appendChild(settingRow(start, st, ss));
       frag.appendChild(group);
       const more = moreGroup(start, vis.filter(z => z.more), ss, 'start');
@@ -311,6 +401,12 @@ export function mountInspector(app) {
     const def = getBlock(node.type);
     const frag = el('div', { class: 'pfb-insp' });
     if (!def) return renderMissing(node);
+    // A block whose choices turn on a PowerFactory fact (an attribute's unit, whether the class
+    // has parallel machines) reads it from core/attrdata.js: start it here, and the panel is
+    // drawn again when it lands, with the choices that cannot apply gone.
+    if ((def.settings || []).some(st => st.kind === 'attr' || typeof st.showIf === 'function' || typeof st.optionsFor === 'function')) {
+      primeAttrData(classOf(node.id, {}));
+    }
     const cat = (def.cat && ('var(--cat-' + def.cat + ')')) || 'var(--muted)';
     frag.appendChild(el('div', { class: 'pfb-insp-head' },
       el('span', { class: 'pfb-insp-glyph', style: { '--cat': cat }, html: blockIcon(def.type, def.kind) }),
@@ -340,7 +436,7 @@ export function mountInspector(app) {
 
     // Inputs
     const fallbackKeys = new Set(ports.inputs.map(p => p.fallback).filter(Boolean));
-    const visible = visibleSettings(node, new Set());
+    const visible = visibleSettings(node, wiredSet(s.wf, node), showCtx(s, node));
     if (ports.inputs.length) {
       const g = el('div', { class: 'field-group pfb-inputs' }, el('div', { class: 'group-title', text: 'Inputs' }));
       for (const p of ports.inputs) g.appendChild(inputRow(node, def, p, ss, visible));

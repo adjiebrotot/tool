@@ -80,7 +80,7 @@ defineBlock({
     { key: 'method', label: 'Method', kind: 'select', default: 'de', options: METHODS, tip: 'Most need the scipy package (the script checks before it starts); A grid of values does not.' },
     { key: 'maxTries', label: 'Max tries', kind: 'number', default: 30, min: 1, step: 1, tip: 'Each try is one run of the Each try route (often a simulation), so keep it small.' },
     { key: 'gridSteps', label: 'Values per variable', kind: 'number', default: 5, min: 2, step: 1, more: true, showIf: (s) => s.method === 'grid' },
-    { key: 'seed', label: 'Random seed', kind: 'number', default: 1, step: 1, more: true, tip: 'The same seed gives the same tries.' },
+    { key: 'seed', label: 'Random seed', kind: 'number', default: 1, step: 1, more: true, showIf: (s) => s.method === 'de' || s.method === 'bayes', tip: 'The same seed gives the same tries.' },
   ],
   ports: optimisePorts,
   summary(s) {

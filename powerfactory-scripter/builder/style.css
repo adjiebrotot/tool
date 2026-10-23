@@ -748,3 +748,58 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-colfield { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .pfb-col-hint { color: var(--pfb-warn); }
 .pfb-colfield .pfb-col-bad { border-color: var(--pfb-warn); }
+
+/* The attached data file card (fields.js fileField): the file, what was read out of it, and the
+   line that says it never leaves this browser. */
+.pfb-file { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.pfb-file-drop { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 14px 12px; width: 100%;
+  border: 1.5px dashed var(--border); border-radius: var(--radius-md); background: var(--bg-subtle); color: var(--text);
+  cursor: pointer; text-align: center; transition: border-color var(--motion-fast), background var(--motion-fast); }
+.pfb-file-drop:hover, .pfb-file-drop:focus-visible, .pfb-file-drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--bg-subtle)); }
+.pfb-file-drop-main { font-size: .84rem; font-weight: 700; }
+.pfb-file-drop-sub { font-size: .74rem; color: var(--muted); }
+.pfb-file-head { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--panel); }
+.pfb-file-name { flex: 1 1 auto; min-width: 0; font-size: .82rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pfb-file-size { flex-shrink: 0; font-size: .72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pfb-file-swap { flex-shrink: 0; font-size: .74rem; font-weight: 700; color: var(--accent); padding: 2px 4px; }
+.pfb-file-row { display: flex; align-items: center; gap: 8px; }
+.pfb-file-lab { font-size: .76rem; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.pfb-file-row > select { flex: 1 1 auto; min-width: 0; }
+.pfb-file-sum { font-size: .76rem; color: var(--muted); }
+.pfb-file-cols { display: flex; flex-wrap: wrap; gap: 4px; }
+.pfb-chip { display: inline-block; max-width: 100%; padding: 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--t-table) 16%, var(--bg-subtle));
+  border: 1px solid color-mix(in srgb, var(--t-table) 35%, transparent); font-size: .72rem; line-height: 1.5;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pfb-chip-more { background: var(--bg-subtle); border-color: var(--border); color: var(--muted); }
+.pfb-file-note { font-size: .74rem; color: var(--muted); line-height: 1.45; }
+.pfb-file-foot { display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
+.pfb-file-priv { display: inline-flex; align-items: center; gap: 4px; font-size: .72rem; color: var(--muted); }
+.pfb-lock { font-size: .78rem; line-height: 1; }
+.pfb-file-tmpl { font-size: .74rem; font-weight: 700; color: var(--accent); padding: 2px 4px; white-space: nowrap; }
+.pfb-file-msg { color: var(--muted); }
+.pfb-file-bad { color: var(--pfb-err); }
+
+/* The schedule editor (ui/schedule.js): one list of steps, drawn as a graph and as a table. */
+.pfb-sched { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pfb-sched-plotwrap { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-subtle); padding: 4px; }
+.pfb-sched-plot { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; }
+.pfb-sched-grid { stroke: var(--border); stroke-width: .6; }
+.pfb-sched-axis { stroke: var(--line-d); stroke-width: 1; }
+.pfb-sched-tick, .pfb-sched-axlab { fill: var(--muted); font-size: 8px; font-family: inherit; }
+.pfb-sched-empty { fill: var(--muted); font-size: 9.5px; font-family: inherit; }
+.pfb-sched-line { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.pfb-sched-lead { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.pfb-sched-hit { fill: transparent; }
+.pfb-sched-dot { fill: var(--panel); stroke: var(--accent); stroke-width: 2; }
+.pfb-sched-pt { cursor: grab; }
+.pfb-sched-pt:hover .pfb-sched-dot, .pfb-sched-pt:focus-visible .pfb-sched-dot { fill: var(--accent); }
+.pfb-sched-pt:focus-visible { outline: none; }
+.pfb-sched-pt:focus-visible .pfb-sched-hit { fill: color-mix(in srgb, var(--accent) 22%, transparent); }
+.pfb-sched-pt.dragging { cursor: grabbing; }
+.pfb-sched-table { display: flex; flex-direction: column; gap: 4px; }
+.pfb-sched-row { display: grid; grid-template-columns: 1fr 1fr 28px; gap: 6px; align-items: center; }
+.pfb-sched-head { font-size: .74rem; font-weight: 700; color: var(--muted); }
+.pfb-insp .pfb-sched-in { padding: 6px 9px; font-size: .82rem; font-variant-numeric: tabular-nums; }
+.pfb-sched-foot { display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
+.pfb-sched-add { border-style: dashed; }
+.pfb-sched-hint { display: inline-flex; align-items: center; gap: 4px; font-size: .72rem; color: var(--muted); }

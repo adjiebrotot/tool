@@ -21,6 +21,7 @@ import { existsSync, statSync, createReadStream, readFileSync, writeFileSync, mk
 import { join, normalize, extname, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import os from 'node:os';
+import { readZip } from '../../js/core/zip.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..', '..', '..', '..');          // D:\Repository\tool
@@ -596,6 +597,19 @@ await test('element picker', async () => {
   check('the name field has the Data Manager placeholder', (await D.page.getAttribute('#pfbInspector [data-port="el"] .pfb-el-name', 'placeholder')) === 'Exactly as in the Data Manager, e.g. G 02');
   await D.page.selectOption('#pfbInspector [data-port="el"] select.pfb-el-cls', 'ElmGenstat');
   await D.page.fill('#pfbInspector [data-port="el"] .pfb-el-name', 'PV 1');
+  // "If the name matches" only has something to decide once the name can match several, so it
+  // is hidden for a plain name and comes back as soon as a wildcard is typed.
+  const matchRow = '#pfbInspector [data-port="el"] .pfb-el-matchrow';
+  check('an exact name does not ask what to do when it matches several', await D.page.isHidden(matchRow));
+  await D.page.fill('#pfbInspector [data-port="el"] .pfb-el-name', 'PV *');
+  await sleep(80);
+  check('a name with * asks', await D.page.isVisible(matchRow));
+  await D.page.fill('#pfbInspector [data-port="el"] .pfb-el-name', 'PV 1');
+  await sleep(80);
+  check('and it goes again when the * is taken out', await D.page.isHidden(matchRow));
+  await D.page.evaluate(() => { const w = PFB.store.get().wf; PFB.store.commit({ ...w, nodes: w.nodes.map(n => (n.id === 'n3' ? { ...n, s: { ...n.s, el: { ...n.s.el, match: 'all' } } } : n)) }); });
+  await sleep(150);
+  check('a picker already set to all keeps the row', await D.page.isVisible(matchRow));
   await D.page.selectOption('#pfbInspector [data-port="el"] select.pfb-el-match', 'all');
   await sleep(150);
   const el = (await wfOf(D)).nodes.find(n => n.id === 'n3').s.el;
@@ -700,7 +714,7 @@ await test('workflow settings with nothing selected', async () => {
   check('Workflow name edits wf.name and the script', wf.name === 'Headroom test' && /WORKFLOW_NAME = "Headroom test"/.test(code), wf.name);
   check('Start\'s settings are edited here', wf.nodes[0].s.project === 'Nine-bus System' && /PROJECT = "Nine-bus System"/.test(code));
   const label = await D.page.textContent('#pfbDownload');
-  check('with no problems the download button carries no count', label.trim() === '⬇ Download .py', label);
+  check('with no problems the download button carries no count', label.trim() === '⬇ Download', label);
 });
 
 await test('undo and redo', async () => {
@@ -963,7 +977,7 @@ await test('Problems tab', async () => {
   await sleep(200);
   check('a problem click selects the block', JSON.stringify((await selOf(D)).nodes) === '["n1"]');
   const label = await D.page.textContent('#pfbDownload');
-  check('the download button carries the count (errors + to-dos)', label.trim() === '⬇ Download .py (1 problem)', label);
+  check('the download button carries the count (errors + to-dos)', label.trim() === '⬇ Download (1 problem)', label);
   // A warning is counted apart, so the first badge always agrees with the Download label.
   const ww = clone(BASE);
   ww.nodes.push({ id: 'n9', type: 'fx.set', x: 700, y: 420, label: 'Stray', s: { el: { cls: 'ElmSym', name: 'G 03', match: 'one' } } });
@@ -973,7 +987,7 @@ await test('Problems tab', async () => {
     const w = document.getElementById('pfbWarnCount');
     return { fix: document.getElementById('pfbProbCount').textContent, warn: w.hidden ? '' : w.textContent, dl: document.getElementById('pfbDownload').textContent.trim(), levels: PFB.store.get().gen.problems.map(p => p.level) };
   });
-  check('warnings have their own badge and the first badge agrees with Download', counts.fix === '1' && counts.warn === '1' && counts.dl === '⬇ Download .py (1 problem)', JSON.stringify(counts));
+  check('warnings have their own badge and the first badge agrees with Download', counts.fix === '1' && counts.warn === '1' && counts.dl === '⬇ Download (1 problem)', JSON.stringify(counts));
   // Fix buttons: remove a wire to a port that is gone, add Start
   const w = clone(BASE);
   w.edges.push({ id: 'e5', from: 'n4', out: 'ok', to: 'n3', in: 'nope' });
@@ -1025,10 +1039,17 @@ await test('Save and Open (.json and .py)', async () => {
   await settle(D);
   D.dialogs.length = 0;
   const [dp] = await Promise.all([D.page.waitForEvent('download'), D.page.click('#pfbDownload')]);
-  const pyPath = join(TMP, dp.suggestedFilename());
-  await dp.saveAs(pyPath);
-  const py = readFileSync(pyPath, 'utf8');
-  check('Download .py writes the script with its # PFB1 line', dp.suggestedFilename() === 'round_trip.py' && /^# PFB1 \{/m.test(py) && D.dialogs.length === 0, dp.suggestedFilename());
+  const zipPath = join(TMP, dp.suggestedFilename());
+  await dp.saveAs(zipPath);
+  // The study package: the script, the workflow and a README, in one .zip anyone can unpack.
+  const entries = await readZip(new Uint8Array(readFileSync(zipPath)));
+  const py = new TextDecoder().decode(entries.get('round_trip.py') || new Uint8Array());
+  check('Download writes the study package (.zip)',
+    dp.suggestedFilename() === 'round_trip.zip' && [...entries.keys()].sort().join(',') === 'README.txt,round_trip.json,round_trip.py' && D.dialogs.length === 0,
+    dp.suggestedFilename() + ' ' + [...entries.keys()].join(','));
+  check('the script in the package carries its # PFB1 line', /^# PFB1 \{/m.test(py));
+  check('the workflow in the package opens as a workflow', JSON.parse(new TextDecoder().decode(entries.get('round_trip.json'))).app === 'pf-builder');
+  check('the README says how to run it', /How to run it/.test(new TextDecoder().decode(entries.get('README.txt'))));
   const edited = py.replace(/^PROJECT = "Nine-bus System"/m, 'PROJECT = "39 Bus New England System"');
   const pyPath2 = join(TMP, 'edited.py');
   writeFileSync(pyPath2, edited);

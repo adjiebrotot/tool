@@ -93,7 +93,10 @@ export function debounce(fn, ms) {
 
 // Save text as a file on this device (Blob + a[download]), the parent tool's pattern.
 export function downloadText(text, filename, type = 'text/plain') {
-  const blob = new Blob([text], { type: type + ';charset=utf-8' });
+  downloadBlob(new Blob([text], { type: type + ';charset=utf-8' }), filename);
+}
+
+export function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = el('a', { href: url, download: filename, style: { display: 'none' } });
   document.body.appendChild(a);

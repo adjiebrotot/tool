@@ -282,8 +282,10 @@ test('handles: nadir floor / UFLS are offsets below nominal, defaults match the 
   ok(REG.getBlock('opt.report').within === 'callback');
   ok(REG.getBlock('out.table.save').oncePerRun && REG.getBlock('out.plot.table').oncePerRun);
   ok(REG.getBlock('out.table.column').volatile === true);
+  const drSrc = REG.getBlock('data.read').settings.find(x => x.key === 'src');
+  ok(drSrc && drSrc.kind === 'file' && drSrc.required && drSrc.pathKey === 'path', 'data.read: the attached file is the required setting and fills path');
   const dr = REG.getBlock('data.read').settings.find(x => x.key === 'path');
-  ok(dr.required && dr.pin === true, 'data.read path: required and pinned by default');
+  ok(dr.pin === true && typeof dr.showIf === 'function' && dr.showIf({ src: { name: 'x.csv' } }) === false, 'data.read path: pinned by default, hidden once a file is attached');
   for (const t of ['out.plot.series', 'out.plot.xy', 'out.plot.3d', 'out.plot.heatmap', 'out.plot.table', 'out.plot.conv']) eq(REG.getBlock(t).packages, ['matplotlib'], t);
 });
 
@@ -572,7 +574,18 @@ test('validator: limits, variables, files and settling targets that cannot work'
   const g4 = gen(W({ n1: ['start', { project: 'P' }], n2: ['data.read', { path: 'C:\\old\\cases.xls' }] }, ['n1>n2']), 'read xls');
   ok(hasP(g4, 'error', /an old \.xls file/), ptext(g4));
   const g5 = gen(W({ n1: ['start', { project: 'P' }], n2: ['data.read', {}] }, ['n1>n2']), 'read no file');
-  ok(hasP(g5, 'todo', /Fill in File on Read table from file/), ptext(g5));
+  ok(hasP(g5, 'todo', /Attach the data file for Read table from file/), ptext(g5));
+  // A file attached in the page: the script still reads it by name, and the generator now knows
+  // the table's columns, so a column field can offer them.
+  const g5b = gen(W({ n1: ['start', { project: 'P' }], n2: ['data.read', { table: 'Cases', path: 'cases.csv', src: { name: 'cases.csv', size: 40, sheet: '', sheets: [], cols: ['Case', 'P (MW)'], rows: 2, sig: '|rows|1|0' } }] }, ['n1>n2']), 'read attached');
+  ok(!(g5b.problems || []).some(p => p.level === 'error' || p.level === 'todo'), ptext(g5b));
+  eq(g5b.tables.Cases.columns, ['Case', 'P (MW)'], 'attached file columns');
+  ok(g5b.tables.Cases.file === true && g5b.tables.Cases.read === true, 'attached file table is marked read');
+  // The columns travel in the .py (they are small and Open needs them); the file's own bytes
+  // never do, so a script is code and not somebody's spreadsheet.
+  const pfb1 = (g5b.code.match(/^# PFB1 .*$/m) || [""])[0];
+  has(pfb1, '"cols"', 'the PFB1 line keeps the columns');
+  hasNot(pfb1, '"files"', 'the PFB1 line carries no attached file');
   const g6 = gen(W({ n1: ['start', { project: 'P' }], n2: ['data.read', { path: 'C:\\Studies\\cases.xlsx' }, { pin: ['path'] }] }, ['n1>n2']), 'read pinned');
   has(g6.code, '\nCASES_TABLE_FILE = r"C:\\Studies\\cases.xlsx"\n'.replace('CASES_TABLE_FILE', Object.keys(g6.settingsMap).find(k => g6.settingsMap[k][0] === 'n2')));
   has(g6.code, 'preflight(["openpyxl"])');

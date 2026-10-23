@@ -34,6 +34,8 @@ const B = {
   emt: '<path d="M2.5 12c1.2-6.5 2.4-6.5 3.6 0s2.4 6.5 3.6 0 2.4-6.5 3.6 0 2.4 6.5 3.6 0 2.4-6.5 3.6 0"/>',
   hldf: '<path d="M2.5 12c1.5-7 3.2-7 4.7 0 .5 2.2 1 2.2 1.5 0s1-2.2 1.5 0c1.5 7 3.2 7 4.7 0 .5-2.2 1-2.2 1.5 0s1 2.2 1.5 0"/>',
   shc: '<path d="M13.5 2.5 5.5 13.5h6l-1.2 8 8.2-11h-6z"/>',
+  // A value held, then stepped again: the staircase a parameter event draws over time.
+  steps: '<path d="M2.5 19.5h4.2V14h4.6V8.2h4.6V3.5h5.6"/><circle cx="6.7" cy="14" r="1.3" fill="currentColor"/><circle cx="11.3" cy="8.2" r="1.3" fill="currentColor"/>',
   series: '<path d="M3.5 3.5v17h17"/><path d="M6.5 9c2.5 0 3 7 6 7s3.5-4 7-4"/>',
   // checks on a curve
   despike: '<path d="M2.5 16h5.5l1.5-11 1.5 11h10.5"/><path d="M14.5 4.5l5 5M19.5 4.5l-5 5"/>',
@@ -127,7 +129,7 @@ const MAP = {
   'pf.ldf': ['ldf'], 'pf.rms': ['rms', 'play'], 'pf.emt': ['emt', 'play'], 'pf.hldf': ['hldf'], 'pf.shc': ['shc'],
   'sig.series': ['series', 'read'],
   'pf.evt.shc': ['shc', 'clock'], 'pf.evt.switch': ['switch', 'clock'], 'pf.evt.trip': ['gen', 'cross'],
-  'pf.evt.load': ['load', 'clock'], 'pf.evt.param': ['dsl', 'clock'],
+  'pf.evt.load': ['load', 'clock'], 'pf.evt.param': ['dsl', 'clock'], 'pf.evt.steps': ['steps', 'clock'],
   'pf.cont.define': ['line'], 'pf.cont.foreach': ['line', 'loop'],
   // Power system checks
   'sig.despike': ['despike'], 'sig.nadir': ['nadir'], 'sig.peak': ['peak'], 'sig.settle': ['settle'],
