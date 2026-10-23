@@ -9,7 +9,7 @@
 // type, "= value" beside an unwired input that has a fallback, the "ends" caption beside an
 // unwired flow output, the step number, a problem badge and error border, the summary line, the
 // Missing block look, and notes as sticky notes. Behind the blocks, each loop's body is drawn as
-// one dashed frame with the loop's name on its tab (loopFrames).
+// one dashed outline round its blocks, the loop's name on a tab (loopFrames, frames.js).
 //
 // Gotchas kept from the PoC (notes/reactflow-poc.md): nodeTypes built once; never call
 // updateNodeInternals on mount (it breaks the first fitView), only when a node's handles change;
@@ -22,6 +22,7 @@ import { settingsOf, summaryOf, displayName } from '../core/registry.js';
 import * as ops from './ops.js';
 import { fallbackText } from './inspector.js';
 import { blockIcon } from './icons.js';
+import { frameShape } from './frames.js';
 import { $, esc, tipText, icon, isPhone } from './dom.js';
 
 const typeTip = (t, extra) => {
@@ -132,7 +133,7 @@ export function mountCanvas(app) {
       const reg = (gen.regions && gen.regions[n.id]) || [];
       // The frames say which loop a block runs in; a block that only sits inside a frame it does
       // not run under keeps a chip saying where it does run.
-      const inside = frames.find(F => !F.members.has(n.id) && F.id !== n.id && titleIn(rectOf(n, {}, measured), F.rect));
+      const inside = frames.find(F => !F.members.has(n.id) && F.id !== n.id && titleIn(rectOf(n, {}, measured), F));
       const chain = reg.map(r => r.label).join(' › ');
       const d = {
         kind: def ? def.kind : 'missing', type: n.type, cat: def ? def.cat : '', title: def ? def.title : 'Missing block',
@@ -162,17 +163,18 @@ export function mountCanvas(app) {
   }
 
   // ---- Loop frames. A loop's body (every block that runs on each pass or try: the generator's
-  // regions) is drawn as one dashed, tinted area behind its blocks, with the loop's name on a tab.
-  // Inner loops are worked out first, so an outer frame takes in the inner frame with room around
-  // it. The loop block itself stays outside, its Each pass / Each try wire leading in.
-  const FRAME_PAD = 18, FRAME_TAB = 26, SIZE0 = { width: 220, height: 100 };
+  // regions) is drawn as one dashed, tinted outline that hugs its blocks (frames.js), with the
+  // loop's name on a tab sitting on the line. An outer loop's margin is wider by a step for each
+  // loop inside it, so its outline runs round the inner ones. The loop block itself stays
+  // outside, its Each pass / Each try wire leading in.
+  const SIZE0 = { width: 220, height: 100 };
   function rectOf(n, dragPos, measured) {
     const p = dragPos[n.id] || { x: n.x, y: n.y }, m = measured[n.id] || SIZE0;
     return { x1: p.x, y1: p.y, x2: p.x + m.width, y2: p.y + m.height };
   }
   // A block reads as part of a frame when its title sits inside it. (Its title, not its whole
   // box: the chip this decides makes the block taller, and must not undo itself.)
-  const titleIn = (a, b) => { const x = (a.x1 + a.x2) / 2, y = a.y1 + 16; return x >= b.x1 && x <= b.x2 && y >= b.y1 && y <= b.y2; };
+  const titleIn = (a, F) => F.shape.hit((a.x1 + a.x2) / 2, a.y1 + 16);
   function loopFrames(wf, gen, dragPos, measured) {
     const regions = (gen && gen.regions) || {};
     const byId = new Map(wf.nodes.map(n => [n.id, n]));
@@ -180,32 +182,36 @@ export function mountCanvas(app) {
     for (const n of wf.nodes) {
       (regions[n.id] || []).forEach((r, depth) => {
         if (!byId.has(r.id)) return;
-        if (!loops.has(r.id)) loops.set(r.id, { id: r.id, label: r.label, kind: r.kind, depth, members: new Set() });
+        if (!loops.has(r.id)) loops.set(r.id, { id: r.id, label: r.label, kind: r.kind, depth, members: new Set(), inner: 0 });
         loops.get(r.id).members.add(n.id);
       });
     }
+    // How many loops deep each loop's body goes (0: no loop inside it).
+    const sorted = [...loops.values()].sort((a, b) => b.depth - a.depth);
+    for (const L of sorted) for (const M of sorted) if (M !== L && L.members.has(M.id)) L.inner = Math.max(L.inner, M.inner + 1);
     const frames = [];
-    for (const L of [...loops.values()].sort((a, b) => b.depth - a.depth)) {
-      let box = null;
-      const take = (r) => { box = box ? { x1: Math.min(box.x1, r.x1), y1: Math.min(box.y1, r.y1), x2: Math.max(box.x2, r.x2), y2: Math.max(box.y2, r.y2) } : { ...r }; };
-      for (const id of L.members) take(rectOf(byId.get(id), dragPos, measured));
-      for (const F of frames) if (L.members.has(F.id)) take(F.rect);
+    for (const L of sorted) {
+      const shape = frameShape([...L.members].map(id => rectOf(byId.get(id), dragPos, measured)), { pad: 14 + 20 * L.inner, bridge: 160 });
+      if (!shape) continue;
       const def = getBlock(byId.get(L.id).type);
-      frames.push({ ...L, cat: def ? def.cat : 'flow', rect: { x1: box.x1 - FRAME_PAD, y1: box.y1 - FRAME_PAD - FRAME_TAB, x2: box.x2 + FRAME_PAD, y2: box.y2 + FRAME_PAD } });
+      frames.push({ ...L, cat: def ? def.cat : 'flow', shape });
     }
     return frames.reverse();   // outer first, so an inner frame is drawn over its outer one
   }
   function LoopFrames({ frames, sel }) {
     return h(RF.ViewportPortal, null, h('div', { className: 'pfb-frames', 'aria-hidden': 'true' }, frames.map(F => {
-      const w = F.rect.x2 - F.rect.x1, ht = F.rect.y2 - F.rect.y1;
+      const b = F.shape.box, w = b.x2 - b.x1, ht = b.y2 - b.y1;
       const each = F.kind === 'callback' ? 'Each try' : 'Each pass';
+      const tip = 'These blocks run on each ' + (F.kind === 'callback' ? 'try' : 'pass') + ' of ' + F.label + '. Click to select it.';
       return h('div', {
-        key: F.id, className: 'pfb-frame' + (sel.has(F.id) ? ' is-sel' : ''),
-        style: { transform: `translate(${F.rect.x1}px, ${F.rect.y1}px)`, width: w + 'px', height: ht + 'px', '--cat': 'var(--cat-' + F.cat + ')' },
+        key: F.id, className: 'pfb-frame' + (sel.has(F.id) ? ' is-sel' : ''), 'data-loop': F.id,
+        style: { transform: `translate(${b.x1}px, ${b.y1}px)`, width: w + 'px', height: ht + 'px', '--cat': 'var(--cat-' + F.cat + ')' },
       },
-      h('svg', { className: 'pfb-frame-line', width: w, height: ht }, h('rect', { x: 0.75, y: 0.75, width: Math.max(0, w - 1.5), height: Math.max(0, ht - 1.5), rx: 16 })),
-      h('span', { className: 'pfb-frame-tab', title: 'These blocks run on each ' + (F.kind === 'callback' ? 'try' : 'pass') + ' of ' + F.label + '. Click to select it.', onClick: () => store.select([F.id], []) },
-        h('span', { className: 'pfb-frame-ico' }, '↻'), h('span', null, each), h('span', { className: 'pfb-frame-sep' }, '·'), h('span', { className: 'pfb-frame-name' }, F.label)));
+      h('svg', { className: 'pfb-frame-line', width: w, height: ht, viewBox: `${b.x1} ${b.y1} ${w} ${ht}` }, h('path', { d: F.shape.d })),
+      F.shape.tabs.map((t, i) => h('span', {
+        key: i, className: 'pfb-frame-tab', title: tip, onClick: () => store.select([F.id], []),
+        style: { left: (t.x - b.x1 + 14) + 'px', top: (t.y - b.y1) + 'px' },
+      }, h('span', { className: 'pfb-frame-ico' }, '↻'), h('span', null, each), h('span', { className: 'pfb-frame-sep' }, '·'), h('span', { className: 'pfb-frame-name' }, F.label))));
     })));
   }
 

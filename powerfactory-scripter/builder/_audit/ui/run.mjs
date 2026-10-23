@@ -900,6 +900,18 @@ await test('canvas decorations', async () => {
   await D.page.mouse.up();
   await sleep(200);
   check('a loop frame grows with a body block while it is dragged', fw1 > fw0 + 150, fw0 + ' -> ' + fw1);
+  // The frame hugs its blocks: three blocks in an L leave the L's empty corner outside it
+  const wl = clone(BASE);
+  wl.nodes.push({ id: 'n5', type: 'fx.set', x: 656, y: 272, label: '', s: { el: { cls: 'ElmSym', name: 'G 03', match: 'one' } } });
+  wl.edges.push({ id: 'e5', from: 'n4', out: 'ok', to: 'n5', in: 'in' });
+  await loadWf(D, wl);
+  await settle(D, 250);
+  const hug = await D.page.evaluate(() => {
+    const path = document.querySelector('.pfb-frame path');
+    const inFill = (x, y) => !!path && path.isPointInFill(new DOMPoint(x, y));
+    return { corner: inFill(656 + 150, 40), n3: inFill(336 + 40, 16 + 30), n4: inFill(336 + 40, 272 + 30), n5: inFill(656 + 40, 272 + 30), tabs: document.querySelectorAll('.pfb-frame-tab').length };
+  });
+  check('a loop frame hugs its blocks (an L of blocks leaves its empty corner out)', !hug.corner && hug.n3 && hug.n4 && hug.n5 && hug.tabs === 1, JSON.stringify(hug));
 });
 
 await test('Python tab', async () => {
