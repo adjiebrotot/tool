@@ -447,9 +447,19 @@ the button as the round sun and moon of the other two sites, whatever text the
 tool writes into it. A page that flips `body.dark` instead of `body.light` says so
 with `<body data-dark-class="dark">`.
 
+**One header button, every page, all three sites.** 36px tall, 14px semibold text,
+12px sides, 8px corners, a 1.5px ink outline and the 2px sticker; the theme toggle
+is the same height, round and icon-only (the sun by day, the moon at night; its
+label says what a press does: "Switch to night" / "Switch to day"). The language
+switch is a globe and the other language's code (`ID` / `EN`), the same on the
+tools and the blog. The way back is `← Other Tools` (or `← Back to …` on a
+sub-page) with `class="btn-theme btn-back"`. The links in the family bar (Home,
+Blog, Tools) are 36px tall too. www's homepage keeps its louder 44px toggle.
+
 ```css
 /* shared.css: the header buttons wear the sticker. */
-.btn-theme { background: var(--panel); border: 1.5px solid var(--ink-line); color: var(--text);
+.btn-theme { height: 36px; padding: 0 12px; font-size: 14px; font-weight: 600;
+  background: var(--panel); border: 1.5px solid var(--ink-line); color: var(--text);
   border-radius: var(--radius-sm); box-shadow: var(--sticker); }
 .btn-theme:hover  { transform: translate(-1px,-1px); box-shadow: var(--sticker-hover); }
 .btn-theme:active { transform: translate(1px,1px); box-shadow: 0 0 0 var(--ink-line); }

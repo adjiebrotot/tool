@@ -198,36 +198,25 @@
     }
 
     .hero {
-      padding: 1rem 0 1rem;
+      padding: clamp(1.5rem, 5vw, 3.5rem) 0 1rem;
     }
 
-    /* The hero: who and what on the left, six of the tools' own drawings on
-       the right, each a way in. A flat panel; the stickers are what you press. */
-    .hero-card {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-      gap: clamp(1.5rem, 4vw, 3rem);
-      align-items: center;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-2xl);
-      padding: clamp(1.5rem, 4vw, 3rem);
-      position: relative;
-    }
-
+    /* The hero: the name, one sentence on what this is (ending in the words
+       the typewriter cycles through), and a handwritten aside. No panel and
+       no pictures: the tool cards below carry the drawings. */
     .hero .hero-lede {
       font-size: var(--fs-md);
       color: var(--text);
-      line-height: 1.45;
-      margin: 0 0 0.9rem;
-      max-width: 34ch;
+      line-height: 1.5;
+      margin: 0;
+      max-width: 44ch;
     }
 
     /* A handwritten aside, drawn from data-note so it never becomes page text
        (the same device as the www homepage). */
     .hand-note {
       display: inline-block;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       font-family: 'Caveat', 'Comic Sans MS', cursive;
       font-weight: 600;
       font-size: 1.35rem;
@@ -238,45 +227,6 @@
     }
     .hand-note::before { content: attr(data-note); }
 
-    .hero-tiles {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.9rem;
-    }
-
-    .hero-tile {
-      display: flex;
-      flex-direction: column;
-      background: var(--panel);
-      border: 1.5px solid var(--ink-line);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--sticker);
-      overflow: hidden;
-      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
-    }
-    .hero-tile:nth-child(odd) { transform: rotate(-1.2deg); }
-    .hero-tile:nth-child(even) { transform: rotate(1deg); }
-    .hero-tile:hover,
-    .hero-tile:focus-visible {
-      transform: translate(-2px, -2px) rotate(0deg);
-      box-shadow: var(--sticker-hover);
-      outline: none;
-    }
-    .hero-tile:focus-visible { box-shadow: var(--sticker-hover), 0 0 0 3px var(--accent); }
-    .hero-tile .tool-anim {
-      display: block;
-      aspect-ratio: 1 / 1;
-      min-height: 0;
-      border-right: 0;
-      border-bottom: 1.5px solid var(--ink-line);
-    }
-    .hero-tile-name {
-      padding: 0.45rem 0.6rem 0.55rem;
-      font-size: var(--fs-sm);
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
     /* The family bar: mark and name left, the three sites and the theme right. */
     .family-bar { padding: 1.1rem 0 0; }
     .family-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -284,28 +234,26 @@
     .family-brand img { width: 30px; height: 30px; }
     .family-brand b { color: var(--brand); font-weight: 800; }
     .family-nav { display: flex; align-items: center; gap: 0.25rem; }
-    .family-nav a { padding: 0.45rem 0.7rem; border-radius: var(--radius-sm); font-weight: 700; font-size: var(--fs-sm); color: var(--text); }
+    .family-nav a { display: inline-flex; align-items: center; height: 36px; padding: 0 10px; border-radius: var(--radius-sm); font-weight: 700; font-size: var(--fs-sm); color: var(--text); }
     .family-nav a:hover { color: var(--brand); }
     .family-nav a[aria-current="page"] { color: var(--brand); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
     .family-nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    /* The same round toggle as the tool pages and the blog: 36px, the sticker. */
     .family-theme {
-      width: 40px; height: 40px; margin-left: 0.4rem; padding: 0;
+      box-sizing: border-box; width: 36px; height: 36px; margin-left: 0.4rem; padding: 0;
       display: inline-flex; align-items: center; justify-content: center;
-      border-radius: 50%; border: 2px solid var(--ink-line);
+      border-radius: 50%; border: 1.5px solid var(--ink-line);
       background: var(--panel); color: var(--text); cursor: pointer;
-      box-shadow: 3px 3px 0 var(--ink-line);
-      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
+      box-shadow: var(--sticker);
+      transition: box-shadow var(--motion-fast);
     }
-    .family-theme:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink-line); }
-    .family-theme:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink-line); }
+    .family-theme:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink-line); }
+    .family-theme:active { transform: translate(1px, 1px); box-shadow: 0 0 0 var(--ink-line); }
     .family-theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-    .family-theme svg { width: 19px; height: 19px; }
+    .family-theme svg { width: 18px; height: 18px; }
     html[data-abt-theme="light"] .family-theme .ico-moon,
     html[data-abt-theme="dark"] .family-theme .ico-sun { display: none; }
 
-    @media (prefers-reduced-motion: reduce) {
-      .hero-tile, .hero-tile:hover, .hero-tile:focus-visible { transform: none; }
-    }
 
     .eyebrow {
       display: inline-flex;
@@ -338,15 +286,6 @@
        brand blue, solid. */
     h1 .brand-b {
       color: var(--brand);
-    }
-
-    .hero-tagline {
-      margin: 0;
-      max-width: 68ch;
-      color: var(--muted);
-      font-size: clamp(1.05rem, 1.9vw, 1.3rem);
-      font-weight: 500;
-      min-height: 1.6em;
     }
 
     .install-banner {
@@ -486,18 +425,24 @@
       max-width: 56ch;
     }
 
+    /* The filters are one quiet row under the heading: search first, then
+       the three selects (each names itself: "All domains"), then Reset. The
+       labels stay for screen readers only. */
     .filter-panel {
-      margin: 1.5rem 0 1.75rem;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 1rem;
+      margin: 0.5rem 0 1.75rem;
     }
 
-    .filter-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 0 1rem; }
-    .filter-head h2 { margin: 0; font-size: var(--fs-base); }
+    .filter-panel .field label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
     .filter-fold {
-      min-height: 36px; padding: 0.35rem 0.85rem; font: inherit; font-size: var(--fs-sm); font-weight: 700;
+      box-sizing: border-box; height: 40px; padding: 0 0.85rem; font: inherit; font-size: var(--fs-sm); font-weight: 700;
       color: var(--text); background: var(--panel); cursor: pointer;
       border: 1.5px solid var(--ink-line); border-radius: var(--radius-sm); box-shadow: var(--sticker);
       transition: transform var(--motion-fast), box-shadow var(--motion-fast);
@@ -507,9 +452,9 @@
 
     .filter-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 0.9rem;
-      align-items: end;
+      grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)) auto;
+      gap: 0.6rem;
+      align-items: center;
     }
 
     .field {
@@ -525,11 +470,12 @@
 
     .field input,
     .filter-reset {
+      box-sizing: border-box;
       width: 100%;
-      min-height: 44px;
+      height: 40px;
       border-radius: var(--radius-md);
       border: 1.5px solid var(--border);
-      padding: 0.7rem 0.95rem;
+      padding: 0 0.85rem;
       font: inherit;
       background: var(--input-bg);
       color: var(--text);
@@ -537,10 +483,15 @@
       transition: border-color var(--motion-fast);
     }
 
+    /* Reset is a quiet text button: it matters only once something is set. */
     .filter-reset {
       cursor: pointer;
-      font-weight: 700;
-      background: var(--input-bg);
+      width: auto;
+      font-weight: 600;
+      font-size: var(--fs-sm);
+      color: var(--accent-strong);
+      background: none;
+      border-color: transparent;
       transition: border-color var(--motion-fast), opacity var(--motion-fast);
     }
 
@@ -561,17 +512,17 @@
     /* The filters' look is the site's dropdown (dropdown.css); this only
        sizes them to the row of fields beside them. */
     .field select {
+      box-sizing: border-box;
       width: 100%;
-      min-height: 44px;
-      font-size: 1rem;
-      padding: 0.7rem 0.95rem;
+      height: 40px;
+      font-size: var(--fs-sm);
+      padding: 0.5rem 0.85rem;
     }
 
     .results-summary {
-      margin-top: 0.9rem;
+      margin: 0.6rem 0 0;
       color: var(--muted);
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: var(--fs-sm);
     }
 
     .tool-grid {
@@ -595,26 +546,28 @@
 
     /* A tool card: its animation on the left, then the title, one line or
        two on what it does, its categories in small print, and the button. */
-    /* A card you can press, so it wears the family sticker: an ink outline
-       and a hard 2px offset that grows as it lifts on hover. */
+    /* Twenty-odd cards stay quiet at rest (a hairline of border, no shadow)
+       so the page is not a wall of outlines; the one under the pointer takes
+       the family sticker: an ink outline and a hard offset as it lifts. */
     .tool-card {
       display: grid;
       grid-template-columns: 148px minmax(0, 1fr);
       background: var(--card-bg);
-      border: 1.5px solid var(--ink-line);
+      border: 1.5px solid var(--border);
       border-radius: var(--radius-xl);
-      box-shadow: var(--sticker);
       overflow: hidden;
-      transition: transform var(--motion-fast), box-shadow var(--motion-fast);
+      transition: transform var(--motion-fast), box-shadow var(--motion-fast), border-color var(--motion-fast);
     }
 
-    .tool-card:hover {
+    .tool-card:hover,
+    .tool-card:focus-within {
       transform: translate(-2px, -2px);
+      border-color: var(--ink-line);
       box-shadow: var(--sticker-hover);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .tool-card:hover { transform: none; }
+      .tool-card:hover, .tool-card:focus-within { transform: none; }
     }
 
     .tool-card.is-hidden {
@@ -628,7 +581,7 @@
       min-height: 148px;
       padding: 0.6rem;
       background: var(--data-pos-bg);
-      border-right: 1.5px solid var(--ink-line);
+      border-right: 1px solid var(--border);
       contain: layout paint style;
     }
 
@@ -696,6 +649,10 @@
       mask: var(--status-icon) center / contain no-repeat;
     }
 
+    /* Active is the normal case, so only a tool that is not out yet (or is
+       retired) shows a status mark. */
+    .status-badge.status-active { display: none; }
+
     .status-active {
       color: var(--accent2);
     }
@@ -728,7 +685,14 @@
 
     /* Categories are small print: they feed the filters and the search, and
        sit at the foot of the card so they line up across a row. */
-    .tool-tags {
+    /* The categories still feed the search (it reads the card's text) and the
+       filters, but the domain headings already say them, so they are not
+       shown on the card. */
+    .tool-tags { display: none; }
+
+    .tool-footer { margin-top: auto; }
+
+    .tool-tags-shown {
       margin: auto 0 0;
       padding: 0;
       list-style: none;
@@ -764,7 +728,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 40px;
+      box-sizing: border-box;
+      height: 36px;
       padding: 0.55rem 1.05rem;
       border-radius: var(--radius-md);
       font-weight: 700;
@@ -811,7 +776,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 40px;
+      box-sizing: border-box;
+      height: 36px;
       padding: 0 0.75rem;
       border: none;
       border-left: 1px solid rgba(255, 255, 255, 0.35);
@@ -970,14 +936,18 @@
     }
 
     @media (max-width: 900px) {
-      .filter-grid,
       .tool-grid {
         grid-template-columns: 1fr;
       }
 
-      .hero-card {
-        grid-template-columns: 1fr;
+      .filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
+
+      .filter-grid .field-search {
+        grid-column: 1 / -1;
+      }
+
     }
 
     @media (max-width: 640px) {
@@ -985,14 +955,15 @@
         width: min(calc(100% - 2rem), var(--max-width));
       }
 
-      .family-nav a { padding: 0.4rem 0.45rem; }
+      .family-nav a { padding: 0 6px; }
       .family-brand span { display: none; }
 
-      .hero-tiles { gap: 0.6rem; }
-      .hero-tile-name { font-size: var(--fs-xs); padding: 0.35rem 0.45rem 0.45rem; }
 
       /* On a phone the keyword search stays; the three selects and the reset
          fold behind one button, so the first screen shows tools, not a form. */
+      .filter-grid { grid-template-columns: minmax(0, 1fr) auto; }
+      .filter-grid .field-search { grid-column: auto; }
+      .filter-grid .field:not(.field-search) { grid-column: 1 / -1; }
       .filter-panel.can-fold:not(.is-open) .field:not(.field-search) { display: none; }
 
       .site-header {
@@ -1003,7 +974,6 @@
         margin-top: 1rem;
       }
 
-      .filter-panel,
       .footer-card {
         padding: 1rem;
       }
@@ -1590,27 +1560,14 @@
 
   <div class="site-header">
     <div class="container hero">
-      <div class="hero-card">
-        <div class="hero-copy">
-          <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
-          <p class="hero-lede">Free calculators and simulators for money, energy and data, made in Perth. Every one runs in your browser.</p>
-          <p class="hero-tagline" aria-hidden="true">
-            Help you with <span class="typewriter"><span id="typeText" class="type-text"></span></span>
-          </p>
-          <p class="visually-hidden" itemprop="description">
-            Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
-          </p>
-          <span class="hand-note" data-note="tools that help me, hope they help you too" aria-hidden="true" data-nosnippet></span>
-        </div>
-        <nav class="hero-tiles" aria-label="A few of the tools">
-          <a class="hero-tile" href="rentvsownhouse/"><span class="tool-anim" data-anim="rentvsownhouse" aria-hidden="true"></span><span class="hero-tile-name">Rent vs Own</span></a>
-          <a class="hero-tile" href="capacity-expansion-planner/"><span class="tool-anim" data-anim="capacity-expansion-planner" aria-hidden="true"></span><span class="hero-tile-name">Capacity Planner</span></a>
-          <a class="hero-tile" href="loadflow-simulator/"><span class="tool-anim" data-anim="loadflow-simulator" aria-hidden="true"></span><span class="hero-tile-name">Load Flow</span></a>
-          <a class="hero-tile" href="dcasimulator/"><span class="tool-anim" data-anim="dcasimulator" aria-hidden="true"></span><span class="hero-tile-name">DCA Explorer</span></a>
-          <a class="hero-tile" href="sankeycreator/"><span class="tool-anim" data-anim="sankeycreator" aria-hidden="true"></span><span class="hero-tile-name">Sankey Creator</span></a>
-          <a class="hero-tile" href="worldclock/"><span class="tool-anim" data-anim="worldclock" aria-hidden="true"></span><span class="hero-tile-name">World Clock</span></a>
-        </nav>
-      </div>
+      <h1 itemprop="headline"><span class="brand-a">Adjie</span> <span class="brand-b">Brotools</span></h1>
+      <p class="hero-lede">Free calculators and simulators, made in Perth, that run in your browser. They help you with <span class="typewriter" aria-hidden="true"><span id="typeText" class="type-text"></span></span><span class="visually-hidden">money, energy and data</span></p>
+      <p class="visually-hidden" itemprop="description">
+        Tools that actually help adjiebrotot (me) in everyday life to make intelligent, well-calculated decisions (and help with the work too). Shared to the world for you to use it as well, because why not.
+      </p>
+      <span class="hand-note" data-note="tools that help me, hope they help you too" aria-hidden="true" data-nosnippet></span>
+    </div>
+  </div>
     </div>
   </div>
 
@@ -1627,11 +1584,13 @@
       </div>
 
       <section class="filter-panel" aria-labelledby="filter-heading">
-        <div class="filter-head">
-          <h2 id="filter-heading">Filter tools</h2>
-          <button type="button" class="filter-fold" id="filterFold" aria-expanded="false" aria-controls="filters" hidden>More filters</button>
-        </div>
+        <h2 id="filter-heading" class="visually-hidden">Filter tools</h2>
         <form class="filter-grid" id="filters" action="#tool-directory">
+          <div class="field field-search">
+            <label for="searchFilter">Keyword</label>
+            <input id="searchFilter" name="search" type="search" placeholder="Search tools" autocomplete="off">
+          </div>
+          <button type="button" class="filter-fold" id="filterFold" aria-expanded="false" aria-controls="filters" hidden>More filters</button>
           <div class="field">
             <label for="statusFilter">Status</label>
             <select id="statusFilter" name="status">
@@ -1653,14 +1612,9 @@
             </select>
           </div>
 
-          <div class="field field-search">
-            <label for="searchFilter">Keyword</label>
-            <input id="searchFilter" name="search" type="search" placeholder="Search title or description" autocomplete="off">
-          </div>
 
           <div class="field">
-            <label for="resetFilters">&nbsp;</label>
-            <button class="filter-reset" id="resetFilters" type="reset">Reset filters</button>
+            <button class="filter-reset" id="resetFilters" type="reset">Reset</button>
           </div>
         </form>
         <p class="results-summary" id="resultsSummary" aria-live="polite">Showing 5 tools.</p>

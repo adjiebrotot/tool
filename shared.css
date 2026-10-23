@@ -207,23 +207,24 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 .btn-theme:hover{transform:translate(-1px,-1px);box-shadow:var(--sticker-hover);}
 .btn-theme:active{transform:translate(1px,1px);box-shadow:0 0 0 var(--ink-line);}
 .btn-theme:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
-/* Many tools still carry their own copy of the old .btn-theme rule, loaded
-   after this file. The look (not the size or the layout, which stay theirs)
-   is set again here at a weight their single-class rules cannot beat. */
-body .btn-theme.btn-theme{background:var(--panel);border:1.5px solid var(--ink-line);color:var(--text);border-radius:var(--radius-sm);box-shadow:var(--sticker);transition:box-shadow var(--transition-fast),color var(--transition-fast);}
+/* One header button everywhere: 36px tall, 14px semibold text, 12px sides,
+   the sticker. Many tools still carry their own copy of the old .btn-theme
+   rule, loaded after this file, so the look and the size are set again here
+   at a weight their single-class rules cannot beat (their layout rules,
+   such as flex on a phone, still apply). */
+body .btn-theme.btn-theme{display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;height:36px;min-height:36px;padding:0 12px;font-family:inherit;font-size:14px;font-weight:600;line-height:1;white-space:nowrap;text-decoration:none;background:var(--panel);border:1.5px solid var(--ink-line);color:var(--text);border-radius:var(--radius-sm);box-shadow:var(--sticker);transition:box-shadow var(--transition-fast),color var(--transition-fast);}
 body .btn-theme.btn-theme:hover{transform:translate(-1px,-1px);box-shadow:var(--sticker-hover);color:var(--text);border-color:var(--ink-line);}
 body .btn-theme.btn-theme:active{transform:translate(1px,1px);box-shadow:0 0 0 transparent;}
 /* The theme toggle: one round icon, the same sun and moon as www and the blog. */
-body .btn-theme.theme-ico.theme-ico{width:36px;height:36px;min-width:0;padding:0;flex:none;justify-content:center;border-radius:var(--radius-pill);display:inline-flex;align-items:center;}
+body .btn-theme.theme-ico.theme-ico{width:36px;height:36px;min-width:0;padding:0;flex:none;border-radius:var(--radius-pill);}
 .btn-theme.theme-ico svg{width:18px;height:18px;}
 /* theme.js marks <html data-abt-theme> with what is showing (one tool flips
    body.dark rather than body.light, so the body class alone cannot say). */
 html[data-abt-theme="light"] .theme-ico .ico-moon,html[data-abt-theme="dark"] .theme-ico .ico-sun{display:none;}
-/* The way back to the tool directory carries the family mark. */
-a.btn-theme.btn-back::before{content:"";width:16px;height:16px;flex:none;margin-right:7px;background:url("logos/logo.svg") center/contain no-repeat;}
-/* A phone keeps the header buttons on one row; the mark gives way first. */
-@media (max-width:480px){a.btn-theme.btn-back::before{display:none;}}
 a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
+/* The language switch: a globe and the other language's code, as on the blog. */
+#langToggle.btn-theme::before{content:"";width:15px;height:15px;flex:none;background:currentColor;-webkit-mask:var(--globe) center/contain no-repeat;mask:var(--globe) center/contain no-repeat;}
+#langToggle{--globe:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18'/%3E%3C/svg%3E");}
 
 /* ============================================================
    SCENARIO SAVE / OPEN (SharedScenario in shared.js)
@@ -246,7 +247,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 /* In a header the buttons also carry .btn-theme, so they wear whatever the
    page's own header buttons wear; only the shape is set here. */
 .header-right .scenario-io{align-self:stretch;}
-.scenario-io-btn.btn-theme{display:inline-flex;width:38px;height:auto;min-height:34px;padding:0;}
+.scenario-io-btn.btn-theme.btn-theme{width:36px;padding:0;}
 
 /* ============================================================
    CONTROL PANEL — TABS

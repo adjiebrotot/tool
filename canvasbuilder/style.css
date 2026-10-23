@@ -61,7 +61,7 @@ html,body { margin:0; padding:0; height:100vh; width:100%; overflow:hidden;
 .divider { width:1px; height:24px; background:var(--border); flex-shrink:0; margin:0 2px; }
 .tb-control {
   background:var(--input-bg); border:1.5px solid var(--border); color:var(--text);
-  border-radius:8px; padding:6px 10px; font-family:'DM Sans',sans-serif;
+  box-sizing:border-box; height:36px; border-radius:8px; padding:6px 10px; font-family:'DM Sans',sans-serif;
   font-size:.84rem; font-weight:600; cursor:pointer;
   transition:border-color 150ms; outline:none; appearance:none; -webkit-appearance:none;
 }
@@ -71,16 +71,19 @@ select.tb-control { font-weight:500; border-radius:var(--radius-sm); --sel-pad:2
 #canvasTypeSelect { min-width:220px; }
 #canvasNameInput  { min-width:170px; cursor:text; }
 .btn {
-  display:inline-flex; align-items:center; gap:5px;
-  background:var(--input-bg); border:1.5px solid var(--border); color:var(--text);
-  border-radius:8px; padding:6px 13px; font-family:'DM Sans',sans-serif;
-  font-size:.84rem; font-weight:700; cursor:pointer;
-  transition:border-color 150ms,opacity 150ms,transform 100ms; white-space:nowrap; flex-shrink:0;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; box-sizing:border-box;
+  height:36px; background:var(--panel); border:1.5px solid var(--ink-line); color:var(--text);
+  border-radius:var(--radius-sm); padding:0 12px; font-family:'DM Sans',sans-serif;
+  font-size:14px; font-weight:600; line-height:1; cursor:pointer; text-decoration:none;
+  box-shadow:var(--sticker); transition:box-shadow 150ms,opacity 150ms; white-space:nowrap; flex-shrink:0;
 }
-.btn:hover { border-color:var(--accent); box-shadow:var(--shadow-sm); }
-.btn:active { transform:scale(.97); }
-.btn-primary { background:var(--accent-strong); border-color:var(--accent-strong); color:var(--text-inv); }
-.btn-primary:hover { opacity:.88; border-color:var(--accent-strong); }
+/* The same header button as every tool (shared.css .btn-theme): the sticker
+   lifts on hover and goes flat when pressed. */
+.btn:hover { transform:translate(-1px,-1px); box-shadow:var(--sticker-hover); }
+.btn:active { transform:translate(1px,1px); box-shadow:0 0 0 transparent; }
+.btn:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.btn-primary { background:var(--accent); color:var(--text-inv); box-shadow:var(--sticker-accent); }
+.btn-primary:hover { box-shadow:var(--sticker-accent-hover); }
 .btn .ico { width:15px; height:15px; }
 .dirty-dot { width:7px; height:7px; background:var(--negative-em); border-radius:50%;
   display:none; flex-shrink:0; }
@@ -397,7 +400,7 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
   .toolbar { flex-wrap:wrap; overflow:visible; gap:6px; padding:8px 12px; }
   .toolbar .divider { display:none; }
   .brand { order:0; margin-right:auto; }
-  #themeBtn, .toolbar a.btn { order:1; padding:6px 10px; }
+  #themeBtn, .toolbar a.btn { order:1; }
   /* Bases that add up past one row keep the picker and title together on
      the second and the five actions together on the third at every width. */
   #canvasTypeSelect { order:2; flex:1 1 60%; min-width:0; font-size:.8rem; padding-right:24px; }
