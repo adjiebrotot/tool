@@ -19,7 +19,7 @@ import { blockIcon } from './icons.js';
 const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const portLabel = (p) => (p ? (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '') : '');
 
-function isEmptyValue(st, v) {
+export function isEmptyValue(st, v) {
   if (st.kind === 'element') return !(isObj(v) && String(v.name || '').trim());
   if (st.kind === 'list') return !(Array.isArray(v) && v.length);
   if (st.kind === 'number') return v === null || v === undefined || v === '';
@@ -457,6 +457,17 @@ export function mountInspector(app) {
 }
 
 // Exported for the tests: the value text a canvas shows next to an unwired input with a fallback.
+// Is an input mandatory (the block cannot run without it), and is it given? Mandatory: the port
+// says required, its fallback setting does, or it is an element the block looks up (codegen.js
+// writes its SETTINGS line as REQUIRED). Given: wired, or its fallback setting holds a value.
+export function inputNeed(node, p, wired) {
+  const def = getBlock(node.type);
+  const st = def && p.fallback ? def.settings.find(z => z.key === p.fallback) : null;
+  const required = !!(p.required || (st && st.required) || (st && st.kind === 'element' && p.type === 'obj'));
+  const given = !!wired || !!(st && !isEmptyValue(st, settingsOf(node)[st.key]));
+  return { required, missing: required && !given };
+}
+
 export function fallbackText(node, p) {
   const def = getBlock(node.type);
   const st = def && p.fallback ? def.settings.find(z => z.key === p.fallback) : null;

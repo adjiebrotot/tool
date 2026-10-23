@@ -21,15 +21,17 @@
 import { getBlock, TYPES, canConnect } from '../core/registry.js';
 import { settingsOf, summaryOf, displayName } from '../core/registry.js';
 import * as ops from './ops.js';
-import { fallbackText } from './inspector.js';
+import { fallbackText, inputNeed } from './inspector.js';
 import { blockIcon } from './icons.js';
 import { frameShape } from './frames.js';
 import { previewSpec, renderPreview } from './previews.js';
-import { $, esc, tipText, icon, isPhone } from './dom.js';
+import { $, esc, tipText, TIP_MAX, icon, isPhone } from './dom.js';
 
-const typeTip = (t, extra) => {
+// A port's tip (the shared tooltip reads it as HTML); a mandatory input leads with a chip.
+const typeTip = (t, extra, mandatory) => {
   const T = TYPES[t];
-  return esc(tipText((T ? T.label + ': ' + T.words : 'A port that is gone from this block.') + (extra ? ' ' + extra : '')));
+  const chip = mandatory ? '<span class="pfb-tip-chip">Mandatory</span> ' : '';
+  return chip + esc(tipText((T ? T.label + ': ' + T.words : 'A port that is gone from this block.') + (extra ? ' ' + extra : ''), TIP_MAX - 4 - (mandatory ? 10 : 0)));
 };
 const portLabel = (p) => (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '');
 
@@ -137,6 +139,10 @@ export function mountCanvas(app) {
       // not run under keeps a chip saying where it does run.
       const inside = frames.find(F => !F.members.has(n.id) && F.id !== n.id && titleIn(rectOf(n, {}, measured), F));
       const chain = reg.map(r => r.label).join(' › ');
+      const needOf = (p) => {
+        const x = def && !p.stray ? inputNeed(n, p, wiredIn.has(p.id)) : { required: false, missing: false };
+        return { mandatory: x.required, missing: x.missing };
+      };
       const d = {
         kind: def ? def.kind : 'missing', type: n.type, cat: def ? def.cat : '', title: def ? def.title : 'Missing block',
         name: def ? displayName(n) : 'Missing block', summary: def ? summaryOf(n, s.wf) : String(n.type),
@@ -144,7 +150,7 @@ export function mountCanvas(app) {
         ports: {
           flowIn: !!ports.flowIn,
           flowOuts: ports.flowOuts.map(p => ({ id: p.id, label: p.label || '' })),
-          inputs: ports.inputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, required: !!p.required, tip: p.tip || '' })),
+          inputs: ports.inputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, required: !!p.required, tip: p.tip || '', ...needOf(p) })),
           outputs: ports.outputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, tip: p.tip || '' })),
         },
         wiredIn: [...wiredIn].sort(), ends, fb, level,
@@ -339,8 +345,8 @@ export function mountCanvas(app) {
         const p = P.inputs[i], q = P.outputs[i];
         const wired = p && d.wiredIn.includes(p.id);
         rows.push(h('div', { key: i, className: 'pfb-n-row' },
-          p ? h('div', { className: 'pfb-n-in' + (p.stray ? ' is-stray' : '') },
-            H('target', Pos.Left, p.id, 'pfb-h-data pfb-t-' + (p.stray ? 'any' : p.type), p.stray ? 'stray' : p.type, p.stray ? typeTip('none') : typeTip(p.type, p.tip)),
+          p ? h('div', { className: 'pfb-n-in' + (p.stray ? ' is-stray' : '') + (p.mandatory ? ' is-req' : '') + (p.missing ? ' is-missing' : '') },
+            H('target', Pos.Left, p.id, 'pfb-h-data pfb-t-' + (p.stray ? 'any' : p.type) + (p.mandatory ? ' is-req' : ''), p.stray ? 'stray' : p.type, p.stray ? typeTip('none') : typeTip(p.type, p.tip, p.mandatory)),
             h('span', { className: 'pfb-n-plab', title: portLabel(p) }, portLabel(p)),
             !wired && d.fb[p.id] !== undefined ? h('span', { className: 'pfb-n-fb', title: String(d.fb[p.id]) }, '= ' + d.fb[p.id]) : null,
             !wired && p.required && d.fb[p.id] === undefined ? h('span', { className: 'pfb-n-need' }, 'needs a value') : null) : h('div', { className: 'pfb-n-in pfb-n-empty' }),
