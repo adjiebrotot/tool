@@ -434,9 +434,8 @@ h1.pfb-title span { text-wrap: balance; }
 .react-flow__handle.pfb-h.is-req { background: var(--hc, var(--muted)); }
 .pfb-n-in.is-missing > .pfb-n-plab { color: var(--pfb-warn); font-weight: 600; }
 #globalTooltip .pfb-tip-chip { display: inline-block; margin-right: 2px; padding: 0 7px; border-radius: 999px; font-size: .68rem; font-weight: 700; line-height: 1.6; vertical-align: 1px; color: var(--pfb-warn); background: color-mix(in srgb, var(--pfb-warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--pfb-warn) 40%, transparent); }
-/* The site's Caveat, declared here because this page does not load fonts.css. */
-@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 500 700; font-display: swap; src: url('../../assets/fonts/caveat.woff2') format('woff2'); }
-#globalTooltip .pfb-tip-val { font-family: 'Caveat', 'Segoe Script', 'Brush Script MT', cursive; font-size: 1.12em; font-weight: 600; letter-spacing: .01em; color: var(--text); }
+/* An exact value in a port tip (TRUE, NADIR, no_init), in the code font. */
+#globalTooltip .pfb-tip-val { font-family: var(--pfb-mono); font-size: .92em; padding: 0 3px; border-radius: 4px; background: var(--input-bg); color: var(--text); }
 .react-flow__handle.pfb-h-flow { width: 12px; height: 14px; border: 0; border-radius: 0; background: transparent; }
 .react-flow__handle.pfb-h-flow::before { content: ''; position: absolute; inset: 0; background: var(--pfb-wire-flow); clip-path: polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 100%); }
 .react-flow__handle.pfb-h.connectingto, .react-flow__handle.pfb-h:hover { box-shadow: 0 0 0 4px var(--pfb-glow); }

@@ -854,7 +854,7 @@ await test('canvas decorations', async () => {
   check('blocks are tinted by category', d.tint === true, d.tint);
   check('a to-do shows on its block', /to do/i.test(d.todo || ''), d.todo);
   check('ports show label and unit', d.unit === 'Value (MW)', d.unit);
-  check('hovering a port says its type in words', /Data type:<\/strong> Time series\. A curve over time/.test(d.typeTip || ''), d.typeTip);
+  check('hovering a port says its type in words', /<strong>Time series<\/strong>: A curve over time/.test(d.typeTip || ''), d.typeTip);
   check('minimap and wire legend are there, no default controls', d.minimap && d.legend >= 13 && d.noRfControls, JSON.stringify(d));
   // An error: border, badge and the offending wire in the error colour
   const w = clone(BASE);
