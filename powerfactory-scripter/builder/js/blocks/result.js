@@ -6,7 +6,8 @@
 //
 // Tables are named and workflow-level (U4): Add row has a "Table name" and no table port; Save
 // results table, Table column, Graph from results table, For each item and Read table from file
-// refer to the same name (the inspector offers the names in use: `suggest: 'tables'`). Table
+// refer to the same name (the inspector offers the names in use: `suggest: 'tables'`; a column
+// setting, `suggest: 'columns'`, offers the columns of the table it names). Table
 // names are never pinned (noPin): the loops write skip rows into a table by its name, so the
 // name in the code and the one the loop uses must stay the same.
 //
@@ -158,8 +159,10 @@ defineBlock({
     const name = tableName(cx.s);
     const cols = uniqueNames(wiredRows(cx, 'cols', 'name', 'Column', { keepUnwired: true, defaultName: true }));
     const args = [];
+    const status = !!cx.s.onSkip && cx.skipTables().includes(name);
     if (!cx.s.ctx) args.push('with_ctx=False');
-    if (cx.s.onSkip && cx.skipTables().includes(name)) args.push('status=True');
+    if (status) args.push('status=True');
+    if (cx.columns) cx.columns(name, cols.map(c => c.name), { ctx: !!cx.s.ctx, status });
     const tail = args.length ? ', ' + args.join(', ') : '';
     const head = `table(${cx.lit(name)}).add(`;
     if (cols.length <= 1) return [`${head}{${cols.map(c => `${cx.lit(c.name)}: ${c.expr}`).join(', ')}}${tail})`];
@@ -214,10 +217,10 @@ defineBlock({
   outputs: [{ id: 'value', label: 'Values', type: 'list', var: 'column' }],
   settings: [
     tableSetting('Results', 'The table to read, as named on Add row or Read table from file.'),
-    { key: 'col', label: 'Column', kind: 'text', default: '', required: true, placeholder: 'e.g. Nadir (Hz)', tip: 'The column name exactly as in the table, with its unit.' },
+    { key: 'col', label: 'Column', kind: 'text', default: '', required: true, suggest: 'columns', placeholder: 'e.g. Nadir (Hz)', tip: 'The column name exactly as in the table, with its unit.' },
     { key: 'pick', label: 'Give', kind: 'select', default: 'all', noPin: true,
       options: [['all', 'Every value (a list)'], ['max', 'The value in the row where a column is highest'], ['min', 'The value in the row where a column is lowest']] },
-    { key: 'of', label: 'Highest / lowest of column', kind: 'text', default: '', showIf: (s) => s.pick !== 'all', placeholder: 'Empty: the column itself',
+    { key: 'of', label: 'Highest / lowest of column', kind: 'text', default: '', suggest: 'columns', showIf: (s) => s.pick !== 'all', placeholder: 'Empty: the column itself',
       tip: 'For example Column = Contingency and this = Loading (%) gives the contingency with the highest loading.' },
     { key: 'as', label: 'The values are', kind: 'select', default: 'num', noPin: true, options: [['num', 'Numbers'], ['text', 'Text, such as names']] },
   ],
@@ -260,7 +263,7 @@ defineBlock({
   desc: 'Reads a CSV file or an Excel sheet into a named table, one case per row or per column, for For each item to loop over its rows. Use it for a case workbook.',
   keywords: ['read', 'import', 'load', 'open', 'CSV', 'Excel', 'xlsx', 'spreadsheet', 'workbook', 'cases', 'case table', 'input file', 'dispatch table'],
   outputs: [
-    { id: 'name', label: 'Table name', type: 'text', var: 'table_name', tip: 'The name of the table it filled.' },
+    { id: 'name', label: 'Table name', type: 'text', var: 'table_name' },
     { id: 'n', label: 'Rows', type: 'num', var: 'rows_read', tip: 'How many cases were read.' },
   ],
   settings: [
@@ -284,6 +287,7 @@ defineBlock({
     if (/\.xls[xm]\s*$/i.test(String(cx.s.path || ''))) cx.package('openpyxl');
     const name = tableName(cx.s);
     const t = cx.name(name + ' table');
+    if (cx.columns) cx.columns(name, [], { file: true });
     cx.out('name', cx.lit(name));
     cx.out('n', `len(${t}.rows)`);
     return [`${t} = read_table(${cx.lit(name)}, ${cx.val('path')}, sheet=${cx.val('sheet')}, layout=${cx.val('layout')}, ` +
@@ -495,10 +499,10 @@ defineBlock({
   outputs: [fileOut()],
   settings: [
     tableSetting('Results', 'The table to draw, as named on Add row.'),
-    { key: 'x', label: 'X axis column', kind: 'text', default: '', required: true, placeholder: 'e.g. Dispatch (MW)' },
-    { key: 'ys', label: 'Columns to draw', kind: 'textarea', default: '', required: true, noPin: true, placeholder: 'e.g. Nadir (Hz)', tip: 'One per line, or separated by commas. Names exactly as in the table, with units.' },
+    { key: 'x', label: 'X axis column', kind: 'text', default: '', required: true, suggest: 'columns', placeholder: 'e.g. Dispatch (MW)' },
+    { key: 'ys', label: 'Columns to draw', kind: 'textarea', default: '', required: true, noPin: true, suggest: 'columns', placeholder: 'e.g. Nadir (Hz)', tip: 'One per line, or separated by commas. Names exactly as in the table, with units.' },
     { key: 'kind', label: 'Draw as', kind: 'select', default: 'line', options: PLOT_KIND },
-    { key: 'group', label: 'One line per value of column', kind: 'text', default: '', more: true, placeholder: 'e.g. Study case' },
+    { key: 'group', label: 'One line per value of column', kind: 'text', default: '', more: true, suggest: 'columns', placeholder: 'e.g. Study case' },
     titleSetting,
     { key: 'ylabel', label: 'Y axis', kind: 'text', default: '', placeholder: 'The column\'s name' },
     { key: 'yunit', label: 'Y unit', kind: 'text', default: '', more: true },

@@ -46,7 +46,7 @@ defineBlock({
   keywords: ['if', 'condition', 'decision', 'branch', 'check', 'compare', 'yes no', 'only if', 'settles'],
   flowOuts: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'No' }],
   inputs: [
-    { id: 'a', label: 'Value', type: 'any', required: true, tip: 'The value to check.' },
+    { id: 'a', label: 'Value', type: 'any', required: true },
     { id: 'b', label: 'Compare with', type: 'num', fallback: 'b', tip: 'The number to compare the value with (not used for "is true").' },
   ],
   settings: [
@@ -58,7 +58,7 @@ defineBlock({
   ports(s) {
     return {
       inputs: [
-        { id: 'a', label: 'Value', type: 'any', required: true, tip: 'The value to check.' },
+        { id: 'a', label: 'Value', type: 'any', required: true },
         { id: 'b', label: s.op === 'true' ? 'Compare with (not used)' : 'Compare with', type: 'num', fallback: 'b' },
       ],
     };
@@ -169,9 +169,9 @@ defineBlock({
     { key: 'table', label: 'Table name', kind: 'text', default: 'Results', suggest: 'tables', showIf: (s) => s.source === 'table',
       tip: 'The results table to read, filled earlier by Add row or Read table from file.' },
     { key: 'cols', label: 'Columns to use', kind: 'list', default: [{ id: 'c1', name: 'Case', type: 'text' }], rowPrefix: 'c', showIf: (s) => s.source === 'table',
-      columns: [{ key: 'name', label: 'Column', kind: 'text', default: '' }, { key: 'type', label: 'Holds', kind: 'select', default: 'num', options: [['num', 'Numbers'], ['text', 'Text']] }],
+      columns: [{ key: 'name', label: 'Column', kind: 'text', default: '', suggest: 'columns' }, { key: 'type', label: 'Holds', kind: 'select', default: 'num', options: [['num', 'Numbers'], ['text', 'Text']] }],
       tip: 'Each column you list here becomes an output of the loop, with that row\'s value on each pass.' },
-    { key: 'runCol', label: 'Only rows where this column says yes', kind: 'text', default: '', noPin: true, showIf: (s) => s.source === 'table', more: true,
+    { key: 'runCol', label: 'Only rows where this column says yes', kind: 'text', default: '', noPin: true, suggest: 'columns', showIf: (s) => s.source === 'table', more: true,
       placeholder: 'e.g. Run?', tip: 'Leave empty to use every row. A row runs when this column holds yes, true, 1 or pass.' },
     restoreSetting, onErrorSetting,
   ],

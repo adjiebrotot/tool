@@ -151,6 +151,13 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-palette { left: 12px; top: var(--pfb-dock-top); width: var(--pfb-pal-w); max-height: calc(100% - var(--pfb-dock-top) - 44px); }
 .pfb-side { right: 12px; top: var(--pfb-dock-top); bottom: 44px; width: var(--pfb-side-w); }
 .pfb-side.is-folded { bottom: auto; }
+/* Its left edge drags to set its width (layout.js) */
+.pfb-side-size { position: absolute; left: 0; top: 0; bottom: 0; width: 7px; z-index: 3; cursor: ew-resize; touch-action: none; }
+.pfb-side-size::after { content: ''; position: absolute; left: 2px; top: 50%; width: 3px; height: 36px; margin-top: -18px; border-radius: 2px; background: var(--border); opacity: 0; transition: opacity var(--motion-fast); }
+.pfb-side-size:hover::after, .pfb-side-size:focus-visible::after, .pfb-side.is-sizing .pfb-side-size::after { opacity: 1; background: var(--accent); }
+.pfb-side-size:focus-visible { outline: none; }
+.pfb-side.is-folded .pfb-side-size { display: none; }
+.pfb-side.is-sizing { user-select: none; }
 .pfb-dock.is-free { right: auto; bottom: auto; }
 .pfb-palette.is-free { max-height: calc(100% - var(--pfb-free-top, 72px) - 44px); }
 .pfb-side.is-free { height: min(720px, calc(100% - var(--pfb-free-top, 72px) - 44px)); }
@@ -280,7 +287,9 @@ h1.pfb-title span { text-wrap: balance; }
   font-weight: 700;
   font-size: 12.5px;
 }
-.pfb-n-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--cat); border-radius: 8.5px 8.5px 0 0; }
+/* The category strip along the top: an inset shadow, so it bends with the head's rounded corners
+   and sits flush inside the block's border (selected or not) instead of pinching at the ends. */
+.pfb-n-head { box-shadow: inset 0 3px 0 var(--cat); }
 .pfb-n-glyph { color: var(--cat); display: inline-flex; flex-shrink: 0; }
 .pfb-n-glyph svg { width: 15px; height: 15px; }
 .pfb-n-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: text; }
@@ -420,6 +429,13 @@ h1.pfb-title span { text-wrap: balance; }
   transition: box-shadow var(--motion-fast), opacity var(--motion-fast);
 }
 .react-flow__handle.pfb-h::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; }
+/* A mandatory input is a filled dot (an optional one stays an open ring); while it has no
+   value, its name turns the warning colour. The tip leads with a Mandatory chip. */
+.react-flow__handle.pfb-h.is-req { background: var(--hc, var(--muted)); }
+.pfb-n-in.is-missing > .pfb-n-plab { color: var(--pfb-warn); font-weight: 600; }
+#globalTooltip .pfb-tip-chip { display: inline-block; margin-right: 2px; padding: 0 7px; border-radius: 999px; font-size: .68rem; font-weight: 700; line-height: 1.6; vertical-align: 1px; color: var(--pfb-warn); background: color-mix(in srgb, var(--pfb-warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--pfb-warn) 40%, transparent); }
+/* An exact value in a port tip (TRUE, NADIR, no_init), in the code font. */
+#globalTooltip .pfb-tip-val { font-family: var(--pfb-mono); font-size: .92em; padding: 0 3px; border-radius: 4px; background: var(--input-bg); color: var(--text); }
 .react-flow__handle.pfb-h-flow { width: 12px; height: 14px; border: 0; border-radius: 0; background: transparent; }
 .react-flow__handle.pfb-h-flow::before { content: ''; position: absolute; inset: 0; background: var(--pfb-wire-flow); clip-path: polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 100%); }
 .react-flow__handle.pfb-h.connectingto, .react-flow__handle.pfb-h:hover { box-shadow: 0 0 0 4px var(--pfb-glow); }
@@ -699,6 +715,7 @@ h1.pfb-title span { text-wrap: balance; }
   /* The right dock is a bottom sheet: its tab bar always, the panel when opened */
   .pfb-side { left: 0; right: 0; bottom: 0; top: auto; width: auto; height: 58%; border-radius: var(--radius-xl) var(--radius-xl) 0 0; border-bottom: 0; }
   .pfb-side.is-folded { height: auto; bottom: 0; }
+  .pfb-side-size { display: none; }
   .pfb-tabs .ctrl-tab { padding: 8px 4px; font-size: .78rem; }
   .pfb-legend { display: none; }
   .pfb-starter { left: 8px; right: 8px; padding-bottom: 64px; }
@@ -725,3 +742,9 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-qa-item.focused { --pfb-icon-cut: var(--accent); }
 .pfb-flow .react-flow__panel.react-flow__minimap svg { width: 168px; height: 112px; }
 .pfb-flow .react-flow__minimap { opacity: .9; }
+
+/* A column name field (fields.js columnField): the table's columns offered under it, and a line
+   when a name is not one of them. */
+.pfb-colfield { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pfb-col-hint { color: var(--pfb-warn); }
+.pfb-colfield .pfb-col-bad { border-color: var(--pfb-warn); }

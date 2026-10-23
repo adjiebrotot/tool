@@ -354,7 +354,7 @@ defineBlock({
     { id: 'at_max', label: 'Where highest', type: 'obj', var: 'at_highest', tip: 'The element with the highest value.' },
     { id: 'at_min', label: 'Where lowest', type: 'obj', var: 'at_lowest', tip: 'The element with the lowest value.' },
     { id: 'values', label: 'All values', type: 'list', var: 'values' },
-    { id: 'n', label: 'How many', type: 'num', var: 'count', tip: 'How many values were read.' },
+    { id: 'n', label: 'How many', type: 'num', var: 'count' },
   ],
   settings: [
     elementSetting('el', 'Element', 'ElmTerm'),
@@ -425,7 +425,7 @@ defineBlock({
       tip: 'Leave empty to keep the reactive power as it is.' },
     { key: 'cols', label: 'Columns and generators', kind: 'list', default: [], rowPrefix: 'g', showIf: (s) => s.mode === 'row',
       columns: [
-        { key: 'col', label: 'Column', kind: 'text', default: '', placeholder: 'e.g. G 02' },
+        { key: 'col', label: 'Column', kind: 'text', default: '', placeholder: 'e.g. G 02', suggest: 'columns', columnsOf: '@row' },
         { key: 'gen', label: 'Generator (no name: the column name)', kind: 'element', kinds: GEN_KINDS, default: { cls: 'ElmSym', name: '', match: 'one' } },
       ],
       tip: 'Each row becomes an input: wire the column value of the table row into it. An empty cell takes that generator out of service; 0 keeps it in service at 0 MW.' },

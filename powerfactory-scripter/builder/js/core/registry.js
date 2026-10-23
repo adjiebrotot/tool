@@ -35,7 +35,9 @@
 //   restore, a formula's text), so it cannot become a SETTINGS line (the inspector hides the pin).
 //   An input port may carry `required: true` (unwired with no fallback = a to-do item) and
 //   `at: 'bodyEnd'` (Repeat until). A setting may carry `suggest: 'vars' | 'tables'` (the
-//   inspector offers the names already used by Remember a value / Add row blocks).
+//   inspector offers the names already used by Remember a value / Add row blocks) or
+//   `suggest: 'columns'` (the columns of the table named by the setting `columnsOf`, default
+//   'table'; '@port' for the table behind the row wired into that input).
 
 // Data types a port can carry. `flow` is the control wire; the rest are data. `words` is what
 // the canvas says on hover, for a reader who does not know the type names.

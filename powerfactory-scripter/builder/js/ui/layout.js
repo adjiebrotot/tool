@@ -4,6 +4,8 @@
 // the title bar puts it back on its side. Where they sit and whether they are folded is a
 // per-viewer convenience kept in localStorage. On a phone the Blocks panel starts folded and the
 // right panel is a bottom sheet (its tab bar always shows, the panel opens over the canvas).
+// The right panel's left edge drags to make it wider or narrower (a double-click puts the width
+// back), so the Python reads without scrolling sideways; the width is kept with the dock state.
 // Also the tabs, the wire legend and the theme toggle (shared with the parent: 'pf-theme').
 
 import { $, el, lsGet, lsSet, isPhone } from './dom.js';
@@ -12,6 +14,7 @@ import { TYPES } from '../core/registry.js';
 const DOCK_KEY = 'pfb-docks';
 const MARGIN = 12;          // px between a dock and the screen edge
 const FOOT = 40;            // px kept free at the bottom for the footer line
+const SIDE_MIN = 320;       // px, the narrowest the right panel is made by hand
 
 export function initTheme(store) {
   const btn = $('themeToggle');
@@ -39,14 +42,20 @@ export function mountLayout(app) {
   const docks = { pal: $('pfbPalette'), side: $('pfbSide') };
   const folds = { pal: $('pfbPalToggle'), side: $('pfbSheetToggle') };
   const foldWords = { pal: 'the Blocks panel', side: 'this panel' };
+  const sizer = docks.side ? docks.side.appendChild(el('div', {
+    class: 'pfb-side-size', role: 'separator', tabindex: '0', 'aria-orientation': 'vertical',
+    'aria-label': 'Panel width', 'aria-valuemin': String(SIDE_MIN),
+    title: 'Drag to make this panel wider or narrower. Double-click to reset.',
+  })) : null;
 
-  // ---- Saved dock state: { pal: { folded, free, x, y }, side: { ... } }
+  // ---- Saved dock state: { pal: { folded, free, x, y }, side: { ..., w (px, 0: the default) } }
   let saved = {};
   try { saved = JSON.parse(lsGet(DOCK_KEY, '{}')) || {}; } catch (e) { saved = {}; }
   const state = {
     pal: { folded: false, free: false, x: 0, y: 0, ...(saved.pal || {}) },
-    side: { folded: false, free: false, x: 0, y: 0, ...(saved.side || {}) },
+    side: { folded: false, free: false, x: 0, y: 0, w: 0, ...(saved.side || {}) },
   };
+  if (!Number.isFinite(state.side.w)) state.side.w = 0;
   // A phone starts with the Blocks panel folded and the sheet closed, whatever a desktop saved.
   if (isPhone()) { state.pal.folded = true; state.side.folded = true; }
   const save = () => { if (!isPhone()) lsSet(DOCK_KEY, JSON.stringify(state)); };
@@ -64,6 +73,11 @@ export function mountLayout(app) {
     d.classList.toggle('is-folded', !!s.folded);
     const free = s.free && !phone;
     d.classList.toggle('is-free', free);
+    if (key === 'side') {
+      if (s.w && !phone) { s.w = sideWidth(s.w); d.style.setProperty('--pfb-side-w', s.w + 'px'); }
+      else d.style.removeProperty('--pfb-side-w');
+      if (sizer) sizer.setAttribute('aria-valuenow', String(Math.round(d.offsetWidth)));
+    }
     if (free) {
       const p = clamp(key, s.x, s.y);
       s.x = p.x; s.y = p.y;
@@ -95,6 +109,13 @@ export function mountLayout(app) {
       x: Math.round(Math.max(MARGIN - w + 80, Math.min(W - 80, x))),
       y: Math.round(Math.max(MARGIN, Math.min(H - headH - MARGIN, y))),
     };
+  }
+
+  // A width for the right panel that leaves the canvas some room (and the Blocks panel beside it).
+  function sideWidth(w) {
+    const pal = docks.pal && !state.pal.folded && !state.pal.free ? docks.pal.offsetWidth + MARGIN : 0;
+    const most = Math.max(SIDE_MIN, shell.clientWidth - pal - 2 * MARGIN - 160);
+    return Math.round(Math.max(SIDE_MIN, Math.min(most, w)));
   }
 
   // Room the canvas keeps clear of the docks (fit view, the minimap, the legend).
@@ -166,6 +187,50 @@ export function mountLayout(app) {
       if (e.target.closest('button, a, input, select, textarea')) return;
       state[key].free = false;
       apply(key);
+      save();
+    });
+  }
+
+  // ---- The right panel's width: drag its left edge, or arrow keys on it; a double-click resets.
+  function setSideWidth(w) {
+    const d = docks.side, s = state.side;
+    const right = d.getBoundingClientRect().right - shell.getBoundingClientRect().left;
+    s.w = sideWidth(w);
+    if (s.free) s.x = right - s.w;     // a moved panel keeps its right edge where it was
+    apply('side');
+  }
+  if (sizer) {
+    sizer.addEventListener('pointerdown', (e) => {
+      if (isPhone() || e.button !== 0) return;
+      e.preventDefault();
+      const d = docks.side, w0 = d.offsetWidth, x0 = e.clientX;
+      try { sizer.setPointerCapture(e.pointerId); } catch (err) { /* fine */ }
+      d.classList.add('is-sizing');
+      const move = (ev) => setSideWidth(w0 + (x0 - ev.clientX));
+      const up = () => {
+        sizer.removeEventListener('pointermove', move);
+        sizer.removeEventListener('pointerup', up);
+        sizer.removeEventListener('pointercancel', up);
+        d.classList.remove('is-sizing');
+        save();
+      };
+      sizer.addEventListener('pointermove', move);
+      sizer.addEventListener('pointerup', up);
+      sizer.addEventListener('pointercancel', up);
+    });
+    sizer.addEventListener('dblclick', () => {
+      const d = docks.side, right = d.getBoundingClientRect().right - shell.getBoundingClientRect().left;
+      state.side.w = 0;
+      apply('side');
+      if (state.side.free) { state.side.x = right - d.offsetWidth; apply('side'); }
+      save();
+    });
+    sizer.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 96 : 24;
+      const by = e.key === 'ArrowLeft' ? step : e.key === 'ArrowRight' ? -step : 0;
+      if (!by) return;
+      e.preventDefault();
+      setSideWidth(docks.side.offsetWidth + by);
       save();
     });
   }

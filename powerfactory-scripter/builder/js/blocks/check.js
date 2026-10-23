@@ -84,14 +84,14 @@ defineBlock({
     tEventIn(),
     nominalIn,
     { id: 'extendTo', label: 'Run extended to', type: 'num', unit: 's', fallback: 'extendTo',
-      tip: 'The run block\'s Extend to time, so a run still falling above the UFLS level at that time is UFLS FALSE instead of UNDEFINED. Empty: not extended.' },
+      tip: 'The run block\'s Extend to time, so a run still falling above the UFLS level at that time is `FALSE` instead of `UNDEFINED`. Empty: not extended.' },
   ],
   outputs: [
-    { id: 'nadir', label: 'Nadir', type: 'num', unit: 'Hz', pick: '.value', var: 'nadir', tip: 'The lowest frequency when it turned around (verdict NADIR); empty for a collapse.' },
+    { id: 'nadir', label: 'Nadir', type: 'num', unit: 'Hz', pick: '.value', var: 'nadir', tip: 'The lowest frequency when it turned around (verdict `NADIR`); empty for a collapse.' },
     { id: 'time', label: 'Nadir time', type: 'num', unit: 's', pick: '.time', var: 'nadir_time' },
     { id: 'turned', label: 'Turned around', type: 'bool', pick: '.turned', var: 'turned_around', tip: 'Yes when the frequency stopped falling and recovered: the "does it settle" check of a headroom study.' },
-    { id: 'verdict', label: 'Verdict', type: 'text', pick: '.verdict', var: 'verdict', tip: 'NADIR, COLLAPSE or NO DATA. Wire it into RoCoF too.' },
-    { id: 'ufls', label: 'UFLS', type: 'text', pick: '.ufls', var: 'ufls', tip: 'TRUE (below the UFLS level), FALSE, or UNDEFINED (the run ended while still falling above it).' },
+    { id: 'verdict', label: 'Verdict', type: 'text', pick: '.verdict', var: 'verdict', tip: '`NADIR`, `COLLAPSE` or `NO DATA`. Wire it into RoCoF too.' },
+    { id: 'ufls', label: 'UFLS', type: 'text', pick: '.ufls', var: 'ufls', tip: '`TRUE` (below the UFLS level), `FALSE`, or `UNDEFINED` (the run ended while still falling above it).' },
     { id: 'minimum', label: 'Minimum', type: 'num', unit: 'Hz', pick: '.minimum', var: 'minimum', tip: 'The minimum the verdict rests on, also for a collapse.' },
     { id: 'min_time', label: 'Minimum time', type: 'num', unit: 's', pick: '.min_time', var: 'minimum_time' },
     { id: 'still', label: 'Still falling', type: 'bool', pick: '.still_falling', var: 'still_falling', tip: 'Yes when the run ended still at its lowest.' },
@@ -230,14 +230,14 @@ defineBlock({
     seriesIn('Frequency', 'A bus frequency in Hz or p.u.'),
     tEventIn(),
     { id: 'nadir_t', label: 'Nadir time', type: 'num', unit: 's', tip: 'From Frequency nadir: the search ends there. Empty: worked out here.' },
-    { id: 'verdict', label: 'Verdict', type: 'text', tip: 'From Frequency nadir. When it is not NADIR the search runs for the search window instead.' },
+    { id: 'verdict', label: 'Verdict', type: 'text', tip: 'From Frequency nadir. When it is not `NADIR` the search runs for the search window instead.' },
     nominalIn,
   ],
   outputs: [
     { id: 'rocof', label: 'RoCoF', type: 'num', unit: 'Hz/s', pick: '.value', var: 'rocof', tip: 'Signed: a falling frequency gives a negative value.' },
     { id: 'time', label: 'Window start', type: 'num', unit: 's', pick: '.time', var: 'rocof_time' },
     { id: 't2', label: 'Window end', type: 'num', unit: 's', pick: '.t2', var: 'rocof_end' },
-    { id: 'basis', label: 'Basis', type: 'text', pick: '.basis', var: 'rocof_basis', tip: 'Where the search ended: nadir, window or tstop; "/short" when that was shorter than the window.' },
+    { id: 'basis', label: 'Basis', type: 'text', pick: '.basis', var: 'rocof_basis', tip: 'Where the search ended: `nadir`, `window` or `tstop`; `/short` when that was shorter than the window.' },
   ],
   settings: [
     tEventSetting(),
@@ -352,8 +352,8 @@ defineBlock({
     { id: 'hi', label: 'Highest allowed', type: 'num', fallback: 'hi' },
   ],
   outputs: [
-    { id: 'ok', label: 'Passed', type: 'bool', var: 'within_limits', tip: 'Yes, No, or empty when there was nothing to check (NO DATA).' },
-    { id: 'text', label: 'Result', type: 'text', var: 'limit_result', tip: 'PASS, FAIL or NO DATA.' },
+    { id: 'ok', label: 'Passed', type: 'bool', var: 'within_limits', tip: 'Empty when there was nothing to check (`NO DATA`).' },
+    { id: 'text', label: 'Result', type: 'text', var: 'limit_result', tip: '`PASS`, `FAIL` or `NO DATA`.' },
     { id: 'margin', label: 'Margin', type: 'num', var: 'margin', tip: 'The smallest distance inside the limits; negative when a limit is broken.' },
     { id: 'at', label: 'Worst at', type: 'num', var: 'worst_at', tip: 'The time (for a curve) or the position of the worst point.' },
     { id: 'worst', label: 'Worst value', type: 'num', var: 'worst_value' },
@@ -433,12 +433,12 @@ defineBlock({
   keywords: ['pass', 'fail', 'verdict', 'check', 'criterion', 'compliance', 'limit', 'compare', 'PASS FAIL', 'requirement', 'UFLS'],
   flowOuts: passFailOuts(VERDICT_TITLE),
   inputs: [
-    { id: 'value', label: 'Value', type: 'any', required: true, tip: 'A number (or every value of a list or curve), or a yes / no or TRUE / FALSE for "is true" and "is false".' },
+    { id: 'value', label: 'Value', type: 'any', required: true, tip: 'A number (or every value of a list or curve), or a yes / no or `TRUE` / `FALSE` for "is true" and "is false".' },
     { id: 'limit', label: 'Limit', type: 'num', fallback: 'limit' },
   ],
   outputs: [
-    { id: 'ok', label: 'Passed', type: 'bool', var: 'passed', tip: 'Yes, No, or empty when there was no value (NO DATA).' },
-    { id: 'text', label: 'Result', type: 'text', var: 'result_text', tip: 'PASS, FAIL or NO DATA.' },
+    { id: 'ok', label: 'Passed', type: 'bool', var: 'passed', tip: 'Empty when there was no value (`NO DATA`).' },
+    { id: 'text', label: 'Result', type: 'text', var: 'result_text', tip: '`PASS`, `FAIL` or `NO DATA`.' },
     { id: 'margin', label: 'Margin', type: 'num', var: 'margin', tip: 'How far inside the limit the value is; negative when it fails.' },
   ],
   settings: [
@@ -448,7 +448,7 @@ defineBlock({
   ],
   ports(s, node) {
     const name = nameOf(node, VERDICT_TITLE);
-    const value = { id: 'value', label: 'Value', type: 'any', required: true, tip: 'A number (or every value of a list or curve), or a yes / no or TRUE / FALSE for "is true" and "is false".' };
+    const value = { id: 'value', label: 'Value', type: 'any', required: true, tip: 'A number (or every value of a list or curve), or a yes / no or `TRUE` / `FALSE` for "is true" and "is false".' };
     return { inputs: noLimit(s.op) ? [value] : [value, { id: 'limit', label: 'Limit', type: 'num', fallback: 'limit' }], flowOuts: passFailOuts(name) };
   },
   summary(s) { return noLimit(s.op) ? `Value ${vopText(s.op)}` : `Value ${vopText(s.op)} ${n(s.limit)}`; },

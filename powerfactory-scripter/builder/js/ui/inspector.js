@@ -8,7 +8,7 @@
 // row added...) or when the workflow changed from elsewhere (undo, the canvas); a redraw puts
 // the focus and the caret back where they were.
 
-import { $, el, esc, tipText, icon, iconButton } from './dom.js';
+import { $, el, esc, tipText, portTip, icon, iconButton } from './dom.js';
 import { getBlock, settingsOf, visibleSettings, displayName, TYPES, optionPairs } from '../core/registry.js';
 import { suggestions } from '../core/workflow.js';
 import * as ops from './ops.js';
@@ -19,7 +19,7 @@ import { blockIcon } from './icons.js';
 const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const portLabel = (p) => (p ? (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '') : '');
 
-function isEmptyValue(st, v) {
+export function isEmptyValue(st, v) {
   if (st.kind === 'element') return !(isObj(v) && String(v.name || '').trim());
   if (st.kind === 'list') return !(Array.isArray(v) && v.length);
   if (st.kind === 'number') return v === null || v === undefined || v === '';
@@ -58,7 +58,7 @@ export function mountInspector(app) {
     const ports = ops.nodePorts(s.wf, node);
     const wired = ports.inputs.map(p => p.id + '=' + s.wf.edges.filter(e => e.to === node.id && ops.handleIdOf(s.wf, node.id, e.in, 'in') === p.id).map(e => e.from + '.' + e.out).join('|'));
     const vis = visibleSettings(node).map(st => st.key + (st.kind === 'list' ? '[' + (settingsOf(node)[st.key] || []).map(r => r.id).join(',') + ']' : ''));
-    const sugg = def.settings.filter(st => st.suggest).map(st => suggestions(s.wf, st.suggest).join('|'));
+    const sugg = def.settings.filter(st => st.suggest && st.suggest !== 'columns').map(st => suggestions(s.wf, st.suggest).join('|'));
     return [x.node ? 'node' : 'wf', node.id, node.type, (node.pin || []).join(','), wired.join(';'), vis.join(','), [...moreOpen].join(','), sugg.join(';'), ports.missing].join('#');
   }
   function fullOf(s) {
@@ -102,9 +102,9 @@ export function mountInspector(app) {
     if (scroller && fid) scroller.scrollTop = scrollTop;
   }
 
-  function tipIcon(text) {
-    if (!text) return null;
-    return el('span', { class: 'tip-icon', 'data-tip': esc(tipText(text)) }, '?');
+  function tipIcon(text, html) {
+    if (!text && !html) return null;
+    return el('span', { class: 'tip-icon', 'data-tip': html || esc(tipText(text)) }, '?');
   }
   function reqMark() { return el('span', { class: 'pfb-req', text: 'Required' }); }
 
@@ -152,6 +152,35 @@ export function mountInspector(app) {
     return '';
   }
 
+  // The columns a column field can name (fields.js columnField): those of the table its block
+  // reads, named by the setting `columnsOf` (default 'table'), or for '@port' the table behind
+  // the row wired into that input (For each item over a table). Without a table, every table's
+  // columns, grouped. From the generator's `tables` (codegen.js), so they are the names the run
+  // writes; a table filled from a file has columns only the file knows.
+  function columnsFor(nodeId, st) {
+    const s = store.get(), tables = (s.gen && s.gen.tables) || {};
+    const node = ops.nodeById(s.wf, nodeId);
+    if (!node) return {};
+    const from = st.columnsOf || 'table';
+    let name = null;
+    if (from.startsWith('@')) {
+      const e = s.wf.edges.find(x => x.to === node.id && ops.handleIdOf(s.wf, node.id, x.in, 'in') === from.slice(1));
+      const src = e && ops.nodeById(s.wf, e.from);
+      const ss = src && getBlock(src.type) ? settingsOf(src) : null;
+      if (ss && ss.source === 'table') name = String(ss.table || '').trim() || 'Results';
+    } else name = String(settingsOf(node)[from] || '').trim() || 'Results';
+    if (name === null) {
+      const items = [];
+      for (const t of Object.keys(tables).sort((a, b) => a.localeCompare(b))) for (const c of tables[t].columns) items.push({ value: c, main: c, group: t });
+      return { items, known: null, empty: 'No results table has columns yet: type the name as in the table.' };
+    }
+    const T = tables[name];
+    const items = T ? T.columns.map(c => ({ value: c, main: c })) : [];
+    if (!T) return { items, known: null, table: name, empty: 'No block fills the table "' + name + '" yet: add rows to it first, or type the name.' };
+    if (T.file) return { items, known: null, table: name, empty: '"' + name + '" is read from a file: type a column name exactly as in its header row.' };
+    return { items, known: T.columns, table: name, empty: '"' + name + '" has no columns yet.' };
+  }
+
   function specFor(node, st, value) {
     return {
       st, value,
@@ -161,6 +190,7 @@ export function mountInspector(app) {
       kinds: st.kind === 'element' ? kindsFor(node, st) : null,
       classOf: () => classOf(node.id, st),
       suggest: () => suggestions(wf(), st.suggest),
+      columns: () => columnsFor(node.id, st),
     };
   }
 
@@ -200,6 +230,7 @@ export function mountInspector(app) {
           kinds: Array.isArray(col.kinds) ? col.kinds : null,
           classOf: () => classOf(node.id, cst, row.id, st.key),
           suggest: () => suggestions(wf(), col.suggest),
+          columns: () => columnsFor(node.id, col),
         };
         const field = buildField(spec);
         r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));
@@ -338,13 +369,13 @@ export function mountInspector(app) {
   function inputRow(node, def, p, ss, visible) {
     const s = store.get();
     const edge = s.wf.edges.find(e => e.to === node.id && ops.handleIdOf(s.wf, node.id, e.in, 'in') === p.id);
-    const tip = p.stray ? '' : [TYPES[p.type] ? TYPES[p.type].label + ': ' + TYPES[p.type].words : '', p.tip || ''].filter(Boolean).join(' ');
+    const tip = p.stray ? '' : portTip(p.type, TYPES[p.type], p.tip || '', false);
     const fst = p.fallback ? def.settings.find(z => z.key === p.fallback) : null;
     const missingValue = !edge && p.required && !fst;
     const row = el('div', { class: 'pfb-in' + (missingValue ? ' pfb-todo' : ''), dataset: { port: p.id } },
       el('div', { class: 'pfb-lab' },
         el('span', { class: 'pfb-dot pfb-t-' + (TYPES[p.type] ? p.type : 'any') }),
-        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon(tip), missingValue ? reqMark() : null,
+        el('span', { class: 'field-label', text: portLabel(p) }), tipIcon('', tip), missingValue ? reqMark() : null,
         el('span', { class: 'pfb-lab-fill' }),
         !edge && fst ? pinButton(node, fst) : null));
     if (p.stray) {
@@ -426,6 +457,17 @@ export function mountInspector(app) {
 }
 
 // Exported for the tests: the value text a canvas shows next to an unwired input with a fallback.
+// Is an input mandatory (the block cannot run without it), and is it given? Mandatory: the port
+// says required, its fallback setting does, or it is an element the block looks up (codegen.js
+// writes its SETTINGS line as REQUIRED). Given: wired, or its fallback setting holds a value.
+export function inputNeed(node, p, wired) {
+  const def = getBlock(node.type);
+  const st = def && p.fallback ? def.settings.find(z => z.key === p.fallback) : null;
+  const required = !!(p.required || (st && st.required) || (st && st.kind === 'element' && p.type === 'obj'));
+  const given = !!wired || !!(st && !isEmptyValue(st, settingsOf(node)[st.key]));
+  return { required, missing: required && !given };
+}
+
 export function fallbackText(node, p) {
   const def = getBlock(node.type);
   const st = def && p.fallback ? def.settings.find(z => z.key === p.fallback) : null;

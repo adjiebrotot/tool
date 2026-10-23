@@ -49,6 +49,28 @@ export function tipText(s, max = TIP_MAX - 4) {
 // As data-tip markup (the shared tooltip reads it as HTML).
 export const tipAttr = (s) => esc(tipText(s));
 
+// A tip with markup for values: an exact value the block gives or takes, written `TRUE` in the
+// plain text, becomes a .pfb-tip-val span (code font). Escapes the rest; the budget counts
+// rendered text.
+export function tipRich(s, max = TIP_MAX - 4) {
+  const t = tipText(s, max + 2 * (String(s || '').split('`').length - 1));
+  return esc(t).replace(/`([^`]+)`/g, '<span class="pfb-tip-val">$1</span>').replace(/`/g, '');
+}
+
+// A port's tip: the data type in bold (a mandatory input's chip before it), the type's own words
+// only for a type a reader may not know, then the port's tip on its own line when it adds
+// something. T is a TYPES entry (or nothing: a port that is gone).
+const PLAIN_TYPES = ['num', 'bool', 'text', 'any'];
+export function portTip(t, T, extra, mandatory) {
+  const chip = mandatory ? '<span class="pfb-tip-chip">Mandatory</span> ' : '';
+  const budget = TIP_MAX - 4 - (mandatory ? 10 : 0);
+  if (!T) return chip + tipRich('A port that is gone from this block.', budget);
+  const words = PLAIN_TYPES.includes(t) ? '' : ': ' + T.words;
+  const room = budget - T.label.length - words.length - 1;
+  const more = extra && room > 12 ? '<br>' + tipRich(extra, room) : '';
+  return chip + '<strong>' + esc(T.label) + '</strong>' + esc(words) + more;
+}
+
 export function icon(name) {
   return (window.SharedIcon && typeof SharedIcon.svg === 'function') ? SharedIcon.svg(name) : '';
 }
