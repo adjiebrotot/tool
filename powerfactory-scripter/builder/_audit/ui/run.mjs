@@ -929,6 +929,16 @@ await test('Problems tab', async () => {
   check('a problem click selects the block', JSON.stringify((await selOf(D)).nodes) === '["n1"]');
   const label = await D.page.textContent('#pfbDownload');
   check('the download button carries the count (errors + to-dos)', label.trim() === '⬇ Download .py (1 problem)', label);
+  // A warning is counted apart, so the first badge always agrees with the Download label.
+  const ww = clone(BASE);
+  ww.nodes.push({ id: 'n9', type: 'fx.set', x: 700, y: 420, label: 'Stray', s: { el: { cls: 'ElmSym', name: 'G 03', match: 'one' } } });
+  await loadWf(D, ww);
+  await settle(D);
+  const counts = await D.page.evaluate(() => {
+    const w = document.getElementById('pfbWarnCount');
+    return { fix: document.getElementById('pfbProbCount').textContent, warn: w.hidden ? '' : w.textContent, dl: document.getElementById('pfbDownload').textContent.trim(), levels: PFB.store.get().gen.problems.map(p => p.level) };
+  });
+  check('warnings have their own badge and the first badge agrees with Download', counts.fix === '1' && counts.warn === '1' && counts.dl === '⬇ Download .py (1 problem)', JSON.stringify(counts));
   // Fix buttons: remove a wire to a port that is gone, add Start
   const w = clone(BASE);
   w.edges.push({ id: 'e5', from: 'n4', out: 'ok', to: 'n3', in: 'nope' });

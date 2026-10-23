@@ -10,24 +10,34 @@
 import { $, el, esc, icon } from './dom.js';
 import { displayName } from '../core/registry.js';
 import * as ops from './ops.js';
+import { isBlocking } from './python.js';
 
 const ORDER = { error: 0, todo: 1, warning: 2 };
 const HEADS = { error: 'Errors: the script stops before it connects', todo: 'To do', warning: 'Warnings' };
 
 export function mountProblems(app) {
   const store = app.store;
-  const host = $('pfbProblems'), badge = $('pfbProbCount');
+  const host = $('pfbProblems'), badge = $('pfbProbCount'), warnBadge = $('pfbWarnCount');
 
   function render() {
     const s = store.get();
     const g = s.gen;
     const ps = ((g && g.problems) || []).slice().sort((a, b) => (ORDER[a.level] ?? 3) - (ORDER[b.level] ?? 3));
-    const worst = ps.length ? ps[0].level : '';
+    // Two counts that never disagree with the Download label: what must be fixed (errors and
+    // to-dos, the same count Download carries) and, apart, the warnings.
+    const toFix = ps.filter(isBlocking).length, warns = ps.length - toFix;
     if (badge) {
-      badge.hidden = !ps.length;
-      badge.textContent = String(ps.length);
-      badge.className = 'pfb-badge' + (worst ? ' pfb-lv-' + worst : '');
-      badge.setAttribute('aria-label', ps.length + ' problem' + (ps.length === 1 ? '' : 's'));
+      badge.hidden = !toFix;
+      badge.textContent = String(toFix);
+      badge.className = 'pfb-badge' + (toFix ? ' pfb-lv-' + ps[0].level : '');
+      badge.setAttribute('aria-label', toFix + ' to fix');
+      badge.title = toFix + (toFix === 1 ? ' problem' : ' problems') + ' to fix before the script runs';
+    }
+    if (warnBadge) {
+      warnBadge.hidden = !warns;
+      warnBadge.lastChild.textContent = String(warns);
+      warnBadge.setAttribute('aria-label', warns + ' warning' + (warns === 1 ? '' : 's'));
+      warnBadge.title = warns + (warns === 1 ? ' warning: a likely mistake' : ' warnings: likely mistakes') + '; the script still runs';
     }
     host.textContent = '';
     if (!g) { host.appendChild(el('p', { class: 'pfb-muted', text: 'Checking the workflow…' })); return; }
@@ -39,7 +49,8 @@ export function mountProblems(app) {
     for (const p of ps) {
       if (p.level !== level) {
         level = p.level;
-        host.appendChild(el('div', { class: 'pfb-prob-head pfb-lv-' + level, text: HEADS[level] || 'Notes' }));
+        const n = ps.filter(q => q.level === level).length;
+        host.appendChild(el('div', { class: 'pfb-prob-head pfb-lv-' + level }, el('span', { text: HEADS[level] || 'Notes' }), el('span', { class: 'pfb-prob-head-n', text: String(n) })));
         list = el('div', { class: 'pfb-prob-list', role: 'list' });
         host.appendChild(list);
       }
