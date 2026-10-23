@@ -305,7 +305,7 @@ export function mountCanvas(app) {
 
     const headOut = P.flowOuts.length === 1 && !P.flowOuts[0].label ? P.flowOuts[0] : null;
     const badge = d.level && d.msgs.length
-      ? h('span', { className: 'pfb-n-badge pfb-lv-' + d.level, 'data-tip': esc(tipText(d.msgs.join(' '))), role: 'img', 'aria-label': d.level === 'todo' ? 'To do' : 'Problem' }, d.level === 'todo' ? 'to do' : '⚠')
+      ? h('span', { className: 'pfb-n-badge pfb-lv-' + d.level, 'data-tip': esc(tipText(d.msgs.join(' '))), role: 'img', 'aria-label': d.level === 'todo' ? 'To do' : 'Problem' }, d.level === 'todo' ? 'To do' : '⚠')
       : null;
     const head = h('div', { className: 'pfb-n-head' },
       P.flowIn ? H('target', Pos.Left, 'in', 'pfb-h-flow', 'flow', flowTip) : null,

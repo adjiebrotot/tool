@@ -103,6 +103,7 @@
      preview shows plain text until (or unless) it arrives. Its colours come from style.css. -->
 <script async id="pfbHljs" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <!-- Canvas library CSS (vendored, see vendor/README.md), before the site layers so they win -->
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="vendor/xyflow-base.css">
 <link rel="stylesheet" href="../../dark.css">
 <link rel="stylesheet" href="../../light.css">
@@ -117,6 +118,7 @@
 <link rel="modulepreload" href="js/core/codegen.js">
 </head>
 <body class="light pfb-page">
+<script src="../../theme.js"></script>
 
 <!-- THE APP fills the screen: the canvas underneath, everything else floats over it (the World
      Clock's map layout). Everything inside is drawn by js/app.js and saved as one workflow in the
@@ -162,7 +164,7 @@
     </div>
 
     <nav class="pfb-nav header-nav" aria-label="Site">
-      <a class="btn-theme pfb-back" href="https://tool.adjiebrotots.com/" title="Other tools"><span aria-hidden="true">←</span><span class="pfb-nav-label">&nbsp;Other Tools</span></a>
+      <a class="btn-theme btn-back pfb-back" href="https://tool.adjiebrotots.com/" title="Other tools"><span aria-hidden="true">←</span><span class="pfb-nav-label">&nbsp;Other Tools</span></a>
       <button class="btn-theme" id="themeToggle" type="button">☀️ Light</button>
     </nav>
   </div>
