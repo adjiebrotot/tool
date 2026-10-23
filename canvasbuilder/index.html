@@ -88,7 +88,10 @@
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
 <script src="../pwa.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts.css">
+<!-- Lora and Caveat are fonts a reader can pick for their canvas -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
@@ -97,6 +100,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 
 <header class="toolbar">
   <div class="brand">
@@ -120,7 +124,7 @@
   <button class="btn"             id="sampleBtn" title="Fill the canvas with a worked example">Sample</button>
   <div class="divider"></div>
   <button class="btn" id="themeBtn">🌙 Dark</button>
-  <a href="https://tool.adjiebrotots.com/" class="btn">← Other Tools</a>
+  <a href="https://tool.adjiebrotots.com/" class="btn btn-back">← Other Tools</a>
   <input type="file" id="jsonFileInput" accept=".json" style="display:none">
 </header>
 

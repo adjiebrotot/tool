@@ -1040,8 +1040,9 @@ for (const spec of PAGES) {
             view.bg.every(c => c === 'rgba(0, 0, 0, 0)' || c === 'transparent'), view.bg.join(', '));
       check(`${tag} E5 ${where}: no page errors`, E.errors.length === 0, E.errors.slice(0, 2).join(' | '));
       // E10: the frame loads the viewer, its libraries, the chart kits and
-      // fonts; nothing of the tool, and no data.
-      const tool = fetched.filter(u => u.startsWith(ORIGIN) && !/\/embed\/|\/chart-kit\.js$|\/(dark|light)\.css$|\/logos\//.test(u.split('?')[0]));
+      // fonts (the site's own, fonts.css and assets/fonts/); nothing of the
+      // tool, and no data.
+      const tool = fetched.filter(u => u.startsWith(ORIGIN) && !/\/embed\/|\/chart-kit\.js$|\/(dark|light|fonts)\.css$|\/logos\/|\/assets\/fonts\//.test(u.split('?')[0]));
       check(`${tag} E10 ${where}: the frame fetches nothing of the tool, only the viewer and its libraries`,
             !tool.length, tool.slice(0, 3).map(u => u.replace(ORIGIN, '')).join(', '));
       if (spec.prices) check(`${tag} E9 ${where}: it draws from the prices in its link and never calls the Worker`,

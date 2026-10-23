@@ -376,8 +376,9 @@
     var themeBtn = nav.querySelector('#themeToggle');
     var model = themeBtn || nav.querySelector('.btn-theme') || nav.querySelector('button, a');
     if (model && model.className) {
-      // Drop the back-link modifier — it belongs to the "Other Tools" link.
-      btn.className = model.className.replace(/\bbtn-back\b/g, '').trim();
+      // Drop the back-link modifier — it belongs to the "Other Tools" link —
+      // and the round icon-only shape the theme toggle wears.
+      btn.className = model.className.replace(/\b(?:btn-back|theme-ico)\b/g, '').trim();
     }
     if (!btn.className) btn.className = 'pf-tour-launch';
     if (LAUNCH_SHORT) {

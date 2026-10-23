@@ -150,14 +150,16 @@ footer .footer-collab ~ p{font-size:.74rem;line-height:1.5;margin-bottom:8px;}
    RESET & BASE
    ============================================================ */
 *,*::before,*::after{box-sizing:border-box;min-width:0;}
-body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background var(--transition-base),color var(--transition-base);overflow-x:hidden;}
+body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.5;color:var(--text);background:var(--bg);transition:background var(--transition-base),color var(--transition-base);overflow-x:hidden;}
 
 /* ============================================================
    TYPOGRAPHY
    ============================================================ */
-h1{margin:0 0 8px;font-size:2rem;font-weight:800;letter-spacing:-0.02em;}
-h2{margin:0 0 10px;font-size:1.15rem;font-weight:700;}
-h3{margin:0 0 8px;font-size:.75rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+/* The type scale lives in dark.css (--fs-*): a major third on 16px. Small
+   labels are sentence case at 13px, never tiny tracked capitals. */
+h1{margin:0 0 8px;font-size:var(--fs-xl);font-weight:800;letter-spacing:-0.02em;}
+h2{margin:0 0 10px;font-size:var(--fs-md);font-weight:700;letter-spacing:-0.01em;}
+h3{margin:0 0 8px;font-size:var(--fs-xs);color:var(--muted);font-weight:700;}
 p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 .mono{font-family:'DM Mono',monospace;font-variant-numeric:tabular-nums;}
 
@@ -171,7 +173,7 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
    leftover height and is the only part that scrolls, and anything placed
    before it (a quick-start row) stays put. Opt in by wrapping the tab bar
    and the panels in <div class="ctrl-scroll">. */
-.controls:has(.ctrl-scroll){display:flex;flex-direction:column;max-height:calc(100vh - 32px);}
+.controls:has(.ctrl-scroll){display:flex;flex-direction:column;max-height:calc(100vh - 32px);max-height:calc(100svh - 32px);}
 .ctrl-scroll{flex:0 1 auto;min-height:0;overflow-y:auto;}
 
 /* ============================================================
@@ -197,9 +199,32 @@ p,.muted{color:var(--muted);line-height:1.5;margin:0;}
 /* ============================================================
    DARK / LIGHT TOGGLE BUTTON
    ============================================================ */
-.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all var(--transition-fast);white-space:nowrap;font-family:inherit;}
-.btn-theme:hover{border-color:var(--accent);color:var(--text);}
+/* Header buttons wear the family sticker, quieter than on the www homepage:
+   a panel with an ink outline and a 2px hard offset. Pressing pushes it in.
+   The lift snaps rather than slides: a button may anchor a menu (Share), and
+   the menu is placed from where the button is at the moment of the click. */
+.btn-theme{background:var(--panel);border:1.5px solid var(--ink-line);color:var(--text);border-radius:var(--radius-sm);padding:7px 13px;font-size:var(--fs-sm);font-weight:600;cursor:pointer;box-shadow:var(--sticker);transition:box-shadow var(--transition-fast),color var(--transition-fast);white-space:nowrap;font-family:inherit;}
+.btn-theme:hover{transform:translate(-1px,-1px);box-shadow:var(--sticker-hover);}
+.btn-theme:active{transform:translate(1px,1px);box-shadow:0 0 0 var(--ink-line);}
+.btn-theme:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+/* One header button everywhere: 36px tall, 14px semibold text, 12px sides,
+   the sticker. Many tools still carry their own copy of the old .btn-theme
+   rule, loaded after this file, so the look and the size are set again here
+   at a weight their single-class rules cannot beat (their layout rules,
+   such as flex on a phone, still apply). */
+body .btn-theme.btn-theme{display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;height:36px;min-height:36px;padding:0 12px;font-family:inherit;font-size:14px;font-weight:600;line-height:1;white-space:nowrap;text-decoration:none;background:var(--panel);border:1.5px solid var(--ink-line);color:var(--text);border-radius:var(--radius-sm);box-shadow:var(--sticker);transition:box-shadow var(--transition-fast),color var(--transition-fast);}
+body .btn-theme.btn-theme:hover{transform:translate(-1px,-1px);box-shadow:var(--sticker-hover);color:var(--text);border-color:var(--ink-line);}
+body .btn-theme.btn-theme:active{transform:translate(1px,1px);box-shadow:0 0 0 transparent;}
+/* The theme toggle: one round icon, the same sun and moon as www and the blog. */
+body .btn-theme.theme-ico.theme-ico{width:36px;height:36px;min-width:0;padding:0;flex:none;border-radius:var(--radius-pill);}
+.btn-theme.theme-ico svg{width:18px;height:18px;}
+/* theme.js marks <html data-abt-theme> with what is showing (one tool flips
+   body.dark rather than body.light, so the body class alone cannot say). */
+html[data-abt-theme="light"] .theme-ico .ico-moon,html[data-abt-theme="dark"] .theme-ico .ico-sun{display:none;}
 a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
+/* The language switch: a globe and the other language's code, as on the blog. */
+#langToggle.btn-theme::before{content:"";width:15px;height:15px;flex:none;background:currentColor;-webkit-mask:var(--globe) center/contain no-repeat;mask:var(--globe) center/contain no-repeat;}
+#langToggle{--globe:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18'/%3E%3C/svg%3E");}
 
 /* ============================================================
    SCENARIO SAVE / OPEN (SharedScenario in shared.js)
@@ -222,7 +247,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 /* In a header the buttons also carry .btn-theme, so they wear whatever the
    page's own header buttons wear; only the shape is set here. */
 .header-right .scenario-io{align-self:stretch;}
-.scenario-io-btn.btn-theme{display:inline-flex;width:38px;height:auto;min-height:34px;padding:0;}
+.scenario-io-btn.btn-theme.btn-theme{width:36px;padding:0;}
 
 /* ============================================================
    CONTROL PANEL — TABS
@@ -230,7 +255,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 /* Pinned to the top of .ctrl-scroll, so the tabs stay reachable however far
    down the panel is scrolled. */
 .ctrl-tabs{display:flex;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:3;background:var(--panel);}
-.ctrl-tab{flex:1;padding:13px 10px;text-align:center;font-weight:700;font-size:.88rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--transition-fast);font-family:inherit;}
+.ctrl-tab{flex:1;padding:13px 10px;text-align:center;font-weight:700;font-size:.88rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color var(--transition-fast),border-color var(--transition-fast);font-family:inherit;}
 .ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent);}
 .ctrl-panel{display:none;padding:16px 18px 20px;}
 .ctrl-panel.active{display:block;}
@@ -266,7 +291,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
    the same way as the group's own. */
 .field-group{border:1px solid var(--border);border-radius:12px;padding:0 14px 6px;margin-top:14px;background:var(--bg-subtle);}
 .ctrl-panel>.field-group:first-child{margin-top:0;}
-.group-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);padding:10px 0 2px;}
+.group-title{font-size:var(--fs-xs);font-weight:700;color:var(--accent-strong);padding:10px 0 2px;}
 .field-group>.field-row,.field-group>.toggle-row,.field-group>.slider-block{border-top:1px solid var(--border);}
 .field-group>.slider-block{padding-top:12px;}
 .field-group>.fg-sub>.field-row,.field-group>.fg-sub>.toggle-row,.field-group>.fg-sub>.slider-block{border-top:1px solid var(--border);}
@@ -326,17 +351,17 @@ body.light .radio-opt.selected{background:rgba(139,184,248,0.10);}
    BUTTONS
    ============================================================ */
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px 18px;border-top:1px solid var(--border);}
-.btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity var(--transition-fast),transform var(--transition-fast);font-family:inherit;letter-spacing:.01em;}
-.btn-primary:hover{opacity:.88;}
-.btn-primary:active{transform:scale(.97);}
+.btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:var(--fs-sm);cursor:pointer;box-shadow:var(--sticker-accent);transition:opacity var(--transition-fast),box-shadow var(--transition-fast);font-family:inherit;letter-spacing:.01em;}
+.btn-primary:hover{transform:translate(-1px,-1px);box-shadow:var(--sticker-accent-hover);}
+.btn-primary:active{transform:translate(2px,2px);box-shadow:0 0 0 transparent;}
 /* Soft-disabled: greyed out but still hoverable so the data-tip reason shows.
    Kept distinct from the native [disabled] (used only while a run is in flight). */
 .btn-primary.is-disabled{opacity:.45;cursor:not-allowed;}
-.btn-primary.is-disabled:hover{opacity:.45;}
+.btn-primary.is-disabled:hover{opacity:.45;transform:none;box-shadow:var(--sticker-accent);}
 .btn-primary.is-disabled:active{transform:none;}
-.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:700;font-size:.9rem;cursor:pointer;transition:border-color var(--transition-fast);font-family:inherit;}
-.btn-secondary:hover{border-color:var(--accent);}
-.btn-secondary:active{transform:scale(.97);}
+.btn-secondary{background:var(--panel);color:var(--text);border:1.5px solid var(--ink-line);border-radius:var(--radius-md);padding:10px 21px;font-weight:700;font-size:var(--fs-sm);cursor:pointer;box-shadow:var(--sticker);transition:box-shadow var(--transition-fast);font-family:inherit;}
+.btn-secondary:hover{transform:translate(-1px,-1px);box-shadow:var(--sticker-hover);}
+.btn-secondary:active{transform:translate(1px,1px);box-shadow:0 0 0 transparent;}
 /* Native [disabled], site-wide. Without this a disabled .btn-primary or
    .btn-secondary looked exactly like a live one, and its hover still faded and
    its press still squashed it, so nothing told the reader it would do nothing.
@@ -512,7 +537,7 @@ html.abt-embed-failed body>*:not(.share-embed-fail){display:none !important;}
    ============================================================ */
 .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:18px;}
 .metric{padding:12px 14px;min-height:82px;}
-.metric .label{color:var(--muted);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.metric .label{color:var(--muted);font-size:var(--fs-xs);font-weight:600;margin-bottom:6px;}
 .metric .value{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:700;letter-spacing:-0.01em;font-variant-numeric:tabular-nums;}
 
 /* ============================================================
@@ -520,7 +545,7 @@ html.abt-embed-failed body>*:not(.share-embed-fail){display:none !important;}
    ============================================================ */
 .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
 .tile{padding:14px;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-xl);}
-.tile .label{color:var(--muted);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;line-height:1.3;}
+.tile .label{color:var(--muted);font-size:var(--fs-xs);font-weight:600;margin-bottom:6px;line-height:1.3;}
 .tile .value{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums;}
 
 /* ============================================================
@@ -745,7 +770,7 @@ html{scrollbar-gutter:stable;}
 /* Zero specificity (:where), so a tool that already draws its own group keeps
    every property it sets and only picks up the ones it leaves open. */
 :where(.seg-group){display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
-:where(.seg-group)>:where(.seg-btn){background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
+:where(.seg-group)>:where(.seg-btn){background:transparent;border:none;border-radius:6px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast);font-family:inherit;white-space:nowrap;}
 :where(.seg-group)>:where(.seg-btn.active){background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
 :where(.seg-group)>:where(.seg-btn:hover:not(.active)){color:var(--text);}
 :where(.seg-group)>:where(.seg-btn:focus-visible){outline:2px solid var(--accent);outline-offset:1px;}

@@ -2959,7 +2959,7 @@ async function withSurfaceMarks(fn){
   await ensurePlotly();
   const isLight=document.body.classList.contains('light');
   const title={ xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom', showarrow:false,
-    text:'<b>'+escapeHtml(valueChartTitle())+'</b>', font:{ size:14, color:isLight?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' } };
+    text:'<b>'+escapeHtml(valueChartTitle())+'</b>', font:{ size:14, color:isLight?'#14203A':'#EAF1FF', family:'DM Sans, sans-serif' } };
   const wm={ xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom', showarrow:false,
     text:'Made using tool.adjiebrotots.com/dcasimulator/portfolio', font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' } };
   const bg=isLight?'#ffffff':'#0F1728';
@@ -3945,7 +3945,7 @@ function exportChartPngAtSize(canvasId, filename, chartTitle, legendId, download
   const dpr=window.devicePixelRatio||1, OUT=3;
   const chartW=Math.round(src.width/dpr*OUT), chartH=Math.round(src.height/dpr*OUT);
   const isLight=document.body.classList.contains('light');
-  const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#2D3436':'#EAF1FF', FONT='"DM Sans", sans-serif';
+  const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#14203A':'#EAF1FF', FONT='"DM Sans", sans-serif';
   // Each entry keeps the mark it is drawn with, so the exported key is the
   // page's key rather than a row of identical dots.
   const items=legendId?SharedLegend.itemsOf(legendId):[];
@@ -3997,7 +3997,7 @@ function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId){
   const dpr=window.devicePixelRatio||1;
   const chartW=Math.round(srcC.width/dpr), chartH=Math.round(srcC.height/dpr);
   const isLight=document.body.classList.contains('light');
-  const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#2D3436':'#EAF1FF';
+  const bg=isLight?'#ffffff':'#0F1728', fg=isLight?'#14203A':'#EAF1FF';
   const FONT='DM Sans, sans-serif';
   const items=legendId?SharedLegend.itemsOf(legendId):[];
   const titleH=chartTitle?40:0;

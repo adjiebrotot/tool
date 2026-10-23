@@ -675,7 +675,7 @@
   /* ── Exports ── */
   function exportTokens(){
     var light = document.body.classList.contains('light');
-    return { bg: light ? '#ffffff' : '#0F1728', fg: light ? '#2D3436' : '#EAF1FF' };
+    return { bg: light ? '#ffffff' : '#0F1728', fg: light ? '#14203A' : '#EAF1FF' };
   }
   function saveBlob(blob, filename){
     var a = document.createElement('a');

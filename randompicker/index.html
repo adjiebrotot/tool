@@ -83,7 +83,8 @@
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
 <script src="../pwa.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts.css">
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
 <script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
@@ -94,6 +95,7 @@
 <script src="../shared.js"></script>
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 <div class="container">
 
   <!-- HEADER -->

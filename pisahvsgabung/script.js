@@ -1297,7 +1297,7 @@ function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, should
   const chartH = Math.round(src.height / dpr * OUT);
   const isLight = document.body.classList.contains('light');
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = '"DM Sans", sans-serif';
 
   // Visible entries with the mark each one draws, so the exported key and the
@@ -1399,7 +1399,7 @@ function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId) {
   const chartH = Math.round(src.height / dpr);
   const isLight = document.body.classList.contains('light');
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = 'DM Sans, sans-serif';
   // Visible entries with the mark each one draws, so the exported key and the
   // page's key are the same key.

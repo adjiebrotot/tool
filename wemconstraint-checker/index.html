@@ -89,8 +89,8 @@
   ]
 }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="../dark.css">
@@ -104,6 +104,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 <div class="wrap">
 
 <!-- HEADER -->
@@ -114,6 +115,7 @@
   </div>
   <div class="hdr-r">
     <button id="dlBtn" class="btn-s" style="display:none">⬇ CSV</button>
+    <a class="btn-theme btn-back" href="https://tool.adjiebrotots.com/">← Other Tools</a>
     <button id="themeBtn" class="btn-t">☀️ Light</button>
   </div>
 </section>

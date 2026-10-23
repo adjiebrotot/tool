@@ -3815,8 +3815,8 @@
      loan A or loan B) are neither good nor bad, so they take the neutral
      sequence: blue, then gold, then teal, rose, purple. Red and the positive
      blue stay for direction (a gain, a loss, money in, money out). Duplicates
-     are dropped by their resolved colour, because in dark mode --line-e and
-     --gold are the same gold. Blue against gold stays distinct for all three
+     are dropped by their resolved colour, in case a tool sets two slots to the
+     same colour (dark mode's --line-e was once the gold). Blue against gold stays distinct for all three
      common kinds of colour blindness (see the design reference). */
   var NEUTRAL_VARS = ['--line-a', '--gold', '--line-c', '--line-d', '--line-e'];
   function neutralColours(el){

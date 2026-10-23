@@ -17,9 +17,9 @@
 body.light, .export-light-theme {
   --bg:#EFF3FC;
   --panel:#FFFFFF; --panel-raised:#FFFFFF;
-  --text:#1A2236; --muted:#6B7A99;
+  --text:#14203A; --muted:#4C5B76;
   --border:#DDE4F2;
-  --accent:#4B8EF0; --accent-strong:#2D6FD9;
+  --accent:#3A71C8; --accent-strong:#0052CC;
   --accent2:#3BA88A; --accent3:#C46A7E; --accent4:#C07A20;
   --input-bg:rgba(30,60,120,.05);
   --card-bg:rgba(255,255,255,.95);
@@ -61,7 +61,7 @@ html,body { margin:0; padding:0; height:100vh; width:100%; overflow:hidden;
 .divider { width:1px; height:24px; background:var(--border); flex-shrink:0; margin:0 2px; }
 .tb-control {
   background:var(--input-bg); border:1.5px solid var(--border); color:var(--text);
-  border-radius:8px; padding:6px 10px; font-family:'DM Sans',sans-serif;
+  box-sizing:border-box; height:36px; border-radius:8px; padding:6px 10px; font-family:'DM Sans',sans-serif;
   font-size:.84rem; font-weight:600; cursor:pointer;
   transition:border-color 150ms; outline:none; appearance:none; -webkit-appearance:none;
 }
@@ -71,16 +71,19 @@ select.tb-control { font-weight:500; border-radius:var(--radius-sm); --sel-pad:2
 #canvasTypeSelect { min-width:220px; }
 #canvasNameInput  { min-width:170px; cursor:text; }
 .btn {
-  display:inline-flex; align-items:center; gap:5px;
-  background:var(--input-bg); border:1.5px solid var(--border); color:var(--text);
-  border-radius:8px; padding:6px 13px; font-family:'DM Sans',sans-serif;
-  font-size:.84rem; font-weight:700; cursor:pointer;
-  transition:border-color 150ms,opacity 150ms,transform 100ms; white-space:nowrap; flex-shrink:0;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; box-sizing:border-box;
+  height:36px; background:var(--panel); border:1.5px solid var(--ink-line); color:var(--text);
+  border-radius:var(--radius-sm); padding:0 12px; font-family:'DM Sans',sans-serif;
+  font-size:14px; font-weight:600; line-height:1; cursor:pointer; text-decoration:none;
+  box-shadow:var(--sticker); transition:box-shadow 150ms,opacity 150ms; white-space:nowrap; flex-shrink:0;
 }
-.btn:hover { border-color:var(--accent); box-shadow:var(--shadow-sm); }
-.btn:active { transform:scale(.97); }
-.btn-primary { background:var(--accent-strong); border-color:var(--accent-strong); color:var(--text-inv); }
-.btn-primary:hover { opacity:.88; border-color:var(--accent-strong); }
+/* The same header button as every tool (shared.css .btn-theme): the sticker
+   lifts on hover and goes flat when pressed. */
+.btn:hover { transform:translate(-1px,-1px); box-shadow:var(--sticker-hover); }
+.btn:active { transform:translate(1px,1px); box-shadow:0 0 0 transparent; }
+.btn:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.btn-primary { background:var(--accent); color:var(--text-inv); box-shadow:var(--sticker-accent); }
+.btn-primary:hover { box-shadow:var(--sticker-accent-hover); }
 .btn .ico { width:15px; height:15px; }
 .dirty-dot { width:7px; height:7px; background:var(--negative-em); border-radius:50%;
   display:none; flex-shrink:0; }
@@ -250,8 +253,7 @@ select.tb-control { font-weight:500; border-radius:var(--radius-sm); --sel-pad:2
   pointer-events:none; user-select:none;
 }
 body.light .cell-hd, .export-light-theme .cell-hd { background:rgba(0,0,0,.02); }
-.cell-title { font-size:.67rem; font-weight:800; text-transform:uppercase;
-  letter-spacing:.09em; color:var(--muted); line-height:1.2; }
+.cell-title {font-size:.8125rem; font-weight:800; color:var(--muted); line-height:1.2;}
 .cell-icon  { font-size:.9rem; opacity:.5; }
 .cell-body  { position:relative; width:100%; height:calc(100% - 30px); overflow:hidden; }
 .add-hint   {
@@ -327,7 +329,7 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 .fbar-sel { padding:3px 6px; font-size:.78rem; border-radius:6px; max-width:76px; --sel-pad:20px; --sel-chev:5px; }
 .fbar-del-btn {
   display:inline-flex; color:var(--muted); cursor:pointer; opacity:.7;
-  padding:4px; border-radius:5px; transition:all .15s; line-height:1; flex-shrink:0;
+  padding:4px; border-radius:5px; transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s; line-height:1; flex-shrink:0;
 }
 .fbar-del-btn .ico { width:15px; height:15px; }
 .fbar-del-btn:hover { opacity:1; color:#E63939; background:var(--error-bg); }
@@ -398,7 +400,7 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
   .toolbar { flex-wrap:wrap; overflow:visible; gap:6px; padding:8px 12px; }
   .toolbar .divider { display:none; }
   .brand { order:0; margin-right:auto; }
-  #themeBtn, .toolbar a.btn { order:1; padding:6px 10px; }
+  #themeBtn, .toolbar a.btn { order:1; }
   /* Bases that add up past one row keep the picker and title together on
      the second and the five actions together on the third at every width. */
   #canvasTypeSelect { order:2; flex:1 1 60%; min-width:0; font-size:.8rem; padding-right:24px; }
@@ -408,3 +410,6 @@ body.light .text-item.selected, .export-light-theme .text-item.selected { box-sh
 }
 /* Scrollbars come from shared.css: no vertical bar anywhere, a themed
    horizontal one where a surface scrolls sideways. */
+
+/* The footer links take the site colour, not the browser default blue. */
+footer a { color: var(--accent-strong); }

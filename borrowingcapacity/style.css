@@ -1,6 +1,6 @@
 /* Borrowing Capacity — page-specific layer.
    Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+@import url('../fonts.css');
 
 :root{ --input-bg:rgba(28,41,66,0.7); }
 
@@ -16,7 +16,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .quick-start-label .tico{width:1.05em;height:1.05em;}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
-.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);white-space:nowrap;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
 
@@ -51,13 +51,13 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .mode-row+.mode-row{border-top:1px solid var(--border);}
 .mode-label{font-weight:700;font-size:.88rem;color:var(--text);flex:1 0 auto;display:inline-flex;align-items:center;gap:5px;}
 .seg-group{display:inline-flex;flex-wrap:wrap;max-width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;}
-.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.seg-btn{background:transparent;border:none;border-radius:7px;padding:5px 12px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);font-family:inherit;white-space:nowrap;flex-shrink:0;}
 .seg-btn.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm);}
 .seg-btn:hover:not(.active){color:var(--text);}
 
 /* ── Checklists: reveal a group only once the user says they have it ── */
 .chk-block{border:1px solid var(--border);border-radius:12px;padding:10px 12px 8px;margin-top:14px;background:var(--bg-subtle);}
-.chk-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:4px;}
+.chk-title{font-size:.8125rem;font-weight:800;color:var(--accent);margin-bottom:4px;}
 .chk-row{display:flex;align-items:flex-start;gap:9px;padding:5px 0;cursor:pointer;font-size:.84rem;line-height:1.35;color:var(--text);}
 .chk-row input{accent-color:var(--accent);width:15px;height:15px;margin:1px 0 0;flex-shrink:0;cursor:pointer;}
 .chk-row:hover{color:var(--accent);}
@@ -131,7 +131,7 @@ td.note{font-family:'DM Sans',sans-serif;color:var(--muted);font-size:.8rem;whit
 /* ── Redesign: shared skeleton fit ── */
 /* Column heads over the income streams: the amount a year, then the share a
    lender counts. Same widths as .inline-row below them. */
-.stream-head{display:flex;gap:8px;padding:2px 0 4px;color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.stream-head{display:flex;gap:8px;padding:2px 0 4px;color:var(--muted);font-size:.8125rem;font-weight:700;}
 .stream-head span:first-child{flex:1;}
 .stream-head span:last-child{flex:0 0 92px;text-align:right;}
 /* A status that is neither good nor bad: there is room left under this cap. */

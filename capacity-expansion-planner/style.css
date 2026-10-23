@@ -1,7 +1,7 @@
 /* Capacity Expansion Planner: page-specific layer, the ED/UC Simulator's
    with a technology list in place of the diagram.
    Tokens and shared components come from ../dark.css, ../light.css, ../shared.css. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+@import url('../fonts.css');
 
 .container{max-width:1500px;}
 .layout{grid-template-columns:360px 1fr;}
@@ -18,7 +18,7 @@ h1{font-size:1.85rem;margin:0 0 4px;}
 .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0;}
 .quick-start-label .tico{width:1.05em;height:1.05em;}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;}
-.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;font-family:inherit;}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);white-space:nowrap;font-family:inherit;}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text);}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15);}
 
@@ -72,7 +72,7 @@ body.is-stale .cx-result,body.is-stale #verdict{opacity:.45;}
 .tech-actions{display:flex;gap:2px;flex-shrink:0;}
 .tech-body{padding:0 12px 10px;border-top:1px solid var(--border);}
 .tech-body>.field-row:first-child{border-top:none;}
-.tech-sub{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:12px 0 2px;border-top:1px solid var(--border);margin-top:4px;}
+.tech-sub{font-size:.8125rem;font-weight:700;color:var(--muted);padding:12px 0 2px;border-top:1px solid var(--border);margin-top:4px;}
 .tech-body .field-row{padding:8px 0 10px;}
 .tech-body .toggle-row{padding:8px 0;}
 .add-tech{margin-top:10px;position:relative;}

@@ -50,7 +50,7 @@
     bar.style.cssText = 'position:fixed;left:0;right:0;bottom:16px;margin:0 auto;width:max-content;z-index:2147483000;' +
       'display:flex;align-items:center;gap:12px;max-width:calc(100% - 32px);padding:8px 14px;' +
       'border:1px solid var(--border,#d0d7e2);border-radius:10px;background:var(--panel,#fff);' +
-      'color:var(--text,#2d3436);box-shadow:0 4px 20px rgba(0,0,0,.15);font:inherit;font-size:0.9rem;';
+      'color:var(--text,#14203A);box-shadow:0 4px 20px rgba(0,0,0,.15);font:inherit;font-size:0.9rem;';
     bar.innerHTML = '<span>A newer version is out.</span>' +
       '<button type="button" style="padding:0;border:0;background:none;font:inherit;font-weight:700;' +
       'color:var(--accent-strong,var(--accent,#3a71c8));text-decoration:underline;cursor:pointer">Reload</button>';

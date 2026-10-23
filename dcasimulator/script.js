@@ -2266,7 +2266,7 @@ async function withSurfaceMarks(fn){
   await ensurePlotly();
   const isLight=document.body.classList.contains('light');
   const title={ xref:'paper', yref:'paper', x:0.5, y:1.06, xanchor:'center', yanchor:'bottom', showarrow:false,
-    text:'<b>'+escapeHtml(optChartTitle())+'</b>', font:{ size:14, color:isLight?'#2D3436':'#EAF1FF', family:'DM Sans, sans-serif' } };
+    text:'<b>'+escapeHtml(optChartTitle())+'</b>', font:{ size:14, color:isLight?'#14203A':'#EAF1FF', family:'DM Sans, sans-serif' } };
   const wm={ xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom', showarrow:false,
     text:'Made using tool.adjiebrotots.com/dcasimulator', font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' } };
   const bg=isLight?'#ffffff':'#0F1728';
@@ -3228,7 +3228,7 @@ function downloadChartPngAtSize(canvasId, filename, chartTitle, legendId, should
   const chartH = Math.round(src.height / dpr * OUT);
   const isLight = document.body.classList.contains('light');
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = '"DM Sans", sans-serif';
 
   // Visible legend entries, each with the mark it is drawn with, so the
@@ -3330,7 +3330,7 @@ function downloadChartSvgAtSize(canvasId, filename, chartTitle, legendId, legend
   const chartH = Math.round(src.height / dpr);
   const isLight = document.body.classList.contains('light');
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = 'DM Sans, sans-serif';
   const legendItems = legendItemsOverride ? legendItemsOverride.slice()
     : (legendId ? SharedLegend.itemsOf(legendId) : []);

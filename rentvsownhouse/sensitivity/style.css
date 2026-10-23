@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+@import url('../../fonts.css');
 *{box-sizing:border-box;min-width:0;margin:0;}
 /* Zero padding everywhere but the shared dropdown fields, whose padding
    dropdown.css sets at zero specificity: a plain * here would wipe it. */
@@ -12,7 +12,7 @@ body{margin:0;font-family:'DM Sans',system-ui,-apple-system,sans-serif;color:var
 .header-left h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;}
 .header-left p{color:var(--muted);font-size:.88rem;line-height:1.5;}
 .header-right{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
-.btn-theme{background:var(--input-bg);border:1.5px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--motion-fast);white-space:nowrap;font-family:inherit;}
+.btn-theme{background:var(--input-bg);border:1.5px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);white-space:nowrap;font-family:inherit;}
 .btn-theme:hover{border-color:var(--accent);color:var(--text);}
 a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
@@ -25,7 +25,7 @@ a.btn-theme{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* Segmented controls */
 .seg-group{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;}
-.seg-btn{background:transparent;border:none;padding:7px 14px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--motion-fast);font-family:inherit;white-space:nowrap;}
+.seg-btn{background:transparent;border:none;padding:7px 14px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);font-family:inherit;white-space:nowrap;}
 .seg-btn.active{background:var(--accent);color:var(--text-inv);}
 .seg-btn:not(.active):hover{color:var(--text);}
 /* A label with a shorter phone-width form shows the long one by default. */
@@ -87,11 +87,11 @@ table.dt{width:100%;border-collapse:collapse;font-size:.84rem;}
 .scen-header-sub{font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;}
 
 /* Buttons */
-.btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 140ms;font-family:inherit;white-space:nowrap;}
+.btn-add{background:transparent;border:1px dashed var(--border);border-radius:8px;padding:5px 13px;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color 140ms,background-color 140ms,border-color 140ms,box-shadow 140ms,opacity 140ms,transform 140ms,fill 140ms,stroke 140ms;font-family:inherit;white-space:nowrap;}
 .btn-add:hover{border-color:var(--accent-strong);color:var(--accent-strong);}
 
 /* Group separator row */
-.dt tr.group-sep-tr td{background:var(--bg);color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 11px 5px;border-top:2px solid var(--border);border-bottom:none;}
+.dt tr.group-sep-tr td{background:var(--bg);color:var(--muted);font-size:.8125rem;font-weight:700;padding:8px 11px 5px;border-top:2px solid var(--border);border-bottom:none;}
 
 /* Output separator */
 .dt tr.sep-tr td{padding:0;border-top:2px dashed var(--accent);border-bottom:none;border-left:1px solid var(--border);border-right:1px solid var(--border);height:2px;}
@@ -258,7 +258,7 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 .chart-modal .graph-btn{
   background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);
   color:var(--muted);padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;
-  transition:all var(--motion-fast);letter-spacing:.01em;
+  transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);letter-spacing:.01em;
 }
 .chart-modal .graph-btn.active{border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);}
 .chart-modal .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:.86rem;}
@@ -272,7 +272,7 @@ tr.out-actions td.label-td{font-weight:600;color:var(--muted);}
 .chart-modal .gc-toggle{opacity:.5;}
 .chart-modal .gc-toggle.active{opacity:1;border-color:var(--accent);color:var(--text);background:rgba(139,184,248,.12);}
 .gc-scenarios-wrap{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
-.gc-scenarios-label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding-top:5px;white-space:nowrap;}
+.gc-scenarios-label{font-size:.8125rem;font-weight:700;color:var(--muted);padding-top:5px;white-space:nowrap;}
 .gc-scenarios{display:flex;gap:8px 14px;flex-wrap:wrap;flex:1;}
 .gc-scen-item{display:inline-flex;align-items:center;gap:6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:4px 9px;cursor:pointer;font-size:.82rem;}
 .gc-scen-item:hover{border-color:var(--accent);}

@@ -110,7 +110,8 @@
 <script src="../pwa.js" defer></script>
 <!-- The optimiser starts downloading with the page and never blocks it; its solver follows on the first run. -->
 <link rel="modulepreload" href="engine/psa-opt.min.js">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../fonts.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
@@ -122,6 +123,7 @@
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
+<script src="../theme.js"></script>
 <div class="container">
 <section class="header card">
   <div>

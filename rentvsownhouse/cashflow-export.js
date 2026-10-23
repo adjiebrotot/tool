@@ -163,7 +163,7 @@ function exportChartPNGAtSize(src, opts){
   const chartH = Math.round(src.height / dpr * OUT);
   const isLight = isLightTheme();
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = '"DM Sans", sans-serif';
 
   const titleFontPx = Math.round(14 * OUT);
@@ -263,7 +263,7 @@ function exportChartSVGAtSize(src, opts){
   const chartH = Math.round(src.height / dpr);
   const isLight = isLightTheme();
   const bgColor = isLight ? '#ffffff' : '#0F1728';
-  const fgColor = isLight ? '#2D3436' : '#EAF1FF';
+  const fgColor = isLight ? '#14203A' : '#EAF1FF';
   const FONT = 'DM Sans, sans-serif';
   const titleH = 40;
   const markW = SharedLegend.W, legGap = 7, legPad = 20, legMargin = 16, legRowH = 22, wmH = 26;

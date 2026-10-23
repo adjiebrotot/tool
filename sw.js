@@ -7,8 +7,10 @@
  * cache, so a tool opened once still opens offline. The service worker itself
  * is re-checked by the browser on every visit, and pwa.js asks an app left
  * open to reload when a newer deploy is out.
- * Libraries and fonts from the CDNs are pinned by URL, so they are served
- * from the cache first and refreshed in the background.
+ * Libraries from the CDNs are pinned by URL, so they are served from the
+ * cache first and refreshed in the background. The site's own fonts live in
+ * assets/fonts/ (fonts.css); only Canvas Builder still asks Google Fonts, for
+ * the Lora and Caveat a reader can pick for a canvas.
  *
  * Bump VERSION only to throw every cached file away (the cache refreshes
  * itself otherwise).
@@ -20,8 +22,9 @@ const CDN_MAX = 80;
 
 const PRECACHE = [
   './',
+  'fonts.css', 'assets/fonts/dm-sans.woff2', 'assets/fonts/dm-mono-400.woff2', 'assets/fonts/dm-mono-500.woff2',
   'shared.css', 'chart-kit.js', 'shared.js', 'dropdown.css', 'dropdown.js', 'light.css', 'dark.css',
-  'tour-shared.css', 'tour-shared.js', 'pwa.js', 'consent.js', 'home-anim.js',
+  'tour-shared.css', 'tour-shared.js', 'pwa.js', 'consent.js', 'home-anim.js', 'theme.js',
   // What a Share link is deflated against, so the app opens one offline.
   'share-dict-a.txt',
   'manifest.webmanifest',
