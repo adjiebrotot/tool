@@ -105,6 +105,11 @@ Alongside `index.html` the page loads `pf-script-builder.js` (the generated-Pyth
 `script.js` (the UI), `custom-functions.js` (the pre-made Custom Calculation library, shared with
 `samples/`), `style.css`, and `tour.js` (guided tour config for `../tour-shared.js`).
 
+Two sub-pages live under this folder: `samples/` (Samples and Guides) and `builder/`, the
+PowerFactory Workflow Builder, a node-based editor that writes one Python file from blocks wired
+on a canvas. The builder has its own technical README (`builder/README.md`); it shares this
+folder's reference data (`element_params.json`, `variables/`) for its attribute suggestions.
+
 ---
 
 ## 3. UI Layout and Sections

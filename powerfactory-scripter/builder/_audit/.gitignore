@@ -1,0 +1,9 @@
+# Written by the audit runners on every run (the fixtures and the runners themselves are kept).
+generated/
+out/
+logs/
+templates/live/
+blocks/pf/live/
+__pycache__/
+*.pyc
+*.pkl

@@ -1,0 +1,353 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "Critical clearing time",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "This searches the longest three-phase fault at a busbar that the system survives: each try applies the fault for the duration tried, runs an RMS simulation and checks that the rotor angle spread of all synchronous generators stays below the limit (180 degrees). A simulation that stops early counts as unstable. Fill in the project and the faulted busbar."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "opt.limit",
+      "x": 320,
+      "y": 0,
+      "label": "Fault duration (s)",
+      "s": {
+        "name": "",
+        "lower": 0.05,
+        "upper": 0.5,
+        "tol": 0.01,
+        "maxSteps": 12,
+        "passes": "low",
+        "bracket": "given",
+        "onUnknown": "stop",
+        "integer": false
+      },
+      "pin": [
+        "lower",
+        "upper",
+        "tol"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.evt.shc",
+      "x": 640,
+      "y": 0,
+      "label": "Fault",
+      "s": {
+        "target": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "t": 1,
+        "duration": 0.1,
+        "fault": "3ph",
+        "phase1": "a",
+        "phase2": "ab",
+        "clear": "fault",
+        "rf": 0,
+        "xf": 0,
+        "loc": null
+      },
+      "pin": [
+        "target"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.rms",
+      "x": 960,
+      "y": 0,
+      "label": "",
+      "s": {
+        "tstop": 5,
+        "tstart": null,
+        "step": null,
+        "net": "case",
+        "record": [
+          {
+            "id": "r1",
+            "el": {
+              "cls": "ElmSym",
+              "name": "*",
+              "match": "all"
+            },
+            "var": "c:firel",
+            "combine": "spread"
+          }
+        ],
+        "caseEvents": "auto",
+        "fast": false,
+        "extendTo": 0,
+        "ufls": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "chk.limit",
+      "x": 1280,
+      "y": 0,
+      "label": "Rotor angle spread (deg)",
+      "s": {
+        "against": "value",
+        "lo": null,
+        "hi": 180,
+        "curve": [
+          {
+            "id": "k1",
+            "x": 0,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k2",
+            "x": 0.15,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k3",
+            "x": 0.15,
+            "low": 0.7,
+            "high": ""
+          },
+          {
+            "id": "k4",
+            "x": 1.5,
+            "low": 0.9,
+            "high": ""
+          }
+        ],
+        "x0": 0,
+        "extend": false,
+        "after": null,
+        "before": null
+      },
+      "pin": [
+        "hi"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "opt.report",
+      "x": 1600,
+      "y": 0,
+      "label": "",
+      "s": {
+        "passIs": "yes"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "opt.report",
+      "x": 1280,
+      "y": 390,
+      "label": "Unstable",
+      "s": {
+        "passIs": "yes"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "val.bool",
+      "x": 960,
+      "y": 390,
+      "label": "Stable",
+      "s": {
+        "value": false
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n10",
+      "type": "flow.log",
+      "x": 640,
+      "y": 720,
+      "label": "Print the CCT",
+      "s": {
+        "text": "Critical clearing time: {cct:.3f} s (search {status})",
+        "level": "info"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n11",
+      "type": "out.plot.conv",
+      "x": 960,
+      "y": 720,
+      "label": "Search for the critical clearing time",
+      "s": {
+        "title": "",
+        "ylabel": "Fault duration",
+        "unit": "s",
+        "kind": "auto",
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "next",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n5",
+      "out": "ok",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n6",
+      "out": "pass",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n6",
+      "out": "fail",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n5",
+      "out": "early",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n3",
+      "out": "done",
+      "to": "n10",
+      "in": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n10",
+      "out": "next",
+      "to": "n11",
+      "in": "in"
+    },
+    {
+      "id": "e10",
+      "from": "n3",
+      "out": "value",
+      "to": "n4",
+      "in": "duration"
+    },
+    {
+      "id": "e11",
+      "from": "n5",
+      "out": "r1",
+      "to": "n6",
+      "in": "x"
+    },
+    {
+      "id": "e12",
+      "from": "n6",
+      "out": "ok",
+      "to": "n7",
+      "in": "pass"
+    },
+    {
+      "id": "e13",
+      "from": "n9",
+      "out": "value",
+      "to": "n8",
+      "in": "pass"
+    },
+    {
+      "id": "e14",
+      "from": "n3",
+      "out": "limit",
+      "to": "n10",
+      "in": "cct"
+    },
+    {
+      "id": "e15",
+      "from": "n3",
+      "out": "status",
+      "to": "n10",
+      "in": "status"
+    },
+    {
+      "id": "e16",
+      "from": "n3",
+      "out": "history",
+      "to": "n11",
+      "in": "history"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

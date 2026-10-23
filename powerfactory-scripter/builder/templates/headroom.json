@@ -1,0 +1,477 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "Headroom study",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "For each dispatch of Generator A this makes a study case with its own operation scenario, runs a load flow, trips the contingency unit and runs an RMS simulation. A pass that does not converge or whose frequency does not settle skips to the next dispatch; the others add the nadir to the Headroom table and the frequency graph, and each study case is kept with its own operation scenario holding that dispatch. Fill in the project, Generator A, the contingency unit, the busbar on Run RMS simulation and the dispatch range."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "flow.range",
+      "x": 320,
+      "y": 0,
+      "label": "Dispatch (MW)",
+      "s": {
+        "name": "",
+        "from": 100,
+        "to": 300,
+        "step": 50,
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [
+        "from",
+        "to",
+        "step"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.case.create",
+      "x": 640,
+      "y": 0,
+      "label": "",
+      "s": {
+        "name": "Headroom {loop values}",
+        "template": "",
+        "scenario": "copy",
+        "exists": "reuse",
+        "activate": true,
+        "keep": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.dispatch",
+      "x": 960,
+      "y": 0,
+      "label": "Generator A",
+      "s": {
+        "mode": "one",
+        "gen": {
+          "cls": "ElmSym",
+          "name": "",
+          "match": "one"
+        },
+        "p": 100,
+        "q": null,
+        "cols": [],
+        "basis": "total",
+        "qmode": "keep",
+        "unit": "MW",
+        "outerComp": true
+      },
+      "pin": [
+        "gen"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n16",
+      "type": "pf.scen.save",
+      "x": 1280,
+      "y": 0,
+      "label": "",
+      "s": {},
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "pf.ldf",
+      "x": 1600,
+      "y": 0,
+      "label": "",
+      "s": {
+        "net": "case",
+        "qlim": "case",
+        "taps": "case"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "pf.evt.trip",
+      "x": 1920,
+      "y": 0,
+      "label": "Contingency unit",
+      "s": {
+        "el": {
+          "cls": "ElmSym",
+          "name": "",
+          "match": "one"
+        },
+        "t": 1
+      },
+      "pin": [
+        "el"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "pf.rms",
+      "x": 2240,
+      "y": 0,
+      "label": "",
+      "s": {
+        "tstop": 20,
+        "tstart": null,
+        "step": null,
+        "net": "case",
+        "record": [
+          {
+            "id": "r1",
+            "el": {
+              "cls": "ElmTerm",
+              "name": "",
+              "match": "one"
+            },
+            "var": "m:fehz",
+            "combine": "none"
+          }
+        ],
+        "caseEvents": "auto",
+        "fast": false,
+        "extendTo": 60,
+        "ufls": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "sig.settle",
+      "x": 2560,
+      "y": 300,
+      "label": "",
+      "s": {
+        "t_event": null,
+        "bandMode": "pct",
+        "band": 10,
+        "hold": 1,
+        "reference": "final",
+        "target": null,
+        "guard": 1
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n10",
+      "type": "flow.if",
+      "x": 2560,
+      "y": 0,
+      "label": "Settles?",
+      "s": {
+        "op": "true",
+        "b": 0,
+        "tol": 1e-9
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n11",
+      "type": "sig.nadir",
+      "x": 2880,
+      "y": 300,
+      "label": "",
+      "s": {
+        "t_event": null,
+        "floorBelow": 5,
+        "uflsBelow": 1,
+        "window": 10,
+        "minRecovery": 0.05,
+        "tailGuard": 1,
+        "delay": 0,
+        "requiresUfls": true,
+        "nominal": null,
+        "extendTo": 60
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n12",
+      "type": "out.table.add",
+      "x": 2880,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "Headroom",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Nadir (Hz)"
+          },
+          {
+            "id": "c2",
+            "name": "Time of nadir (s)"
+          },
+          {
+            "id": "c3",
+            "name": "Settling time (s)"
+          },
+          {
+            "id": "c4",
+            "name": "UFLS"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n13",
+      "type": "out.plot.series",
+      "x": 3200,
+      "y": 0,
+      "label": "Bus frequency",
+      "s": {
+        "lines": [
+          {
+            "id": "l1",
+            "name": ""
+          }
+        ],
+        "collect": "loop",
+        "title": "",
+        "ylabel": "Frequency",
+        "unit": "",
+        "limits": [],
+        "events": true,
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n14",
+      "type": "out.table.save",
+      "x": 640,
+      "y": 720,
+      "label": "",
+      "s": {
+        "table": "Headroom",
+        "fmt": "csv",
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n15",
+      "type": "out.plot.table",
+      "x": 960,
+      "y": 720,
+      "label": "Nadir against dispatch",
+      "s": {
+        "table": "Headroom",
+        "x": "Dispatch (MW)",
+        "ys": "Nadir (Hz)",
+        "kind": "line",
+        "group": "",
+        "title": "",
+        "ylabel": "",
+        "yunit": "",
+        "limits": [],
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "next",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n5",
+      "out": "next",
+      "to": "n16",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n16",
+      "out": "next",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n6",
+      "out": "ok",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n7",
+      "out": "next",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n8",
+      "out": "ok",
+      "to": "n10",
+      "in": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n10",
+      "out": "yes",
+      "to": "n12",
+      "in": "in"
+    },
+    {
+      "id": "e10",
+      "from": "n12",
+      "out": "next",
+      "to": "n13",
+      "in": "in"
+    },
+    {
+      "id": "e11",
+      "from": "n3",
+      "out": "done",
+      "to": "n14",
+      "in": "in"
+    },
+    {
+      "id": "e12",
+      "from": "n14",
+      "out": "next",
+      "to": "n15",
+      "in": "in"
+    },
+    {
+      "id": "e13",
+      "from": "n3",
+      "out": "value",
+      "to": "n5",
+      "in": "p"
+    },
+    {
+      "id": "e14",
+      "from": "n8",
+      "out": "r1",
+      "to": "n9",
+      "in": "series"
+    },
+    {
+      "id": "e15",
+      "from": "n9",
+      "out": "settles",
+      "to": "n10",
+      "in": "a"
+    },
+    {
+      "id": "e16",
+      "from": "n8",
+      "out": "r1",
+      "to": "n11",
+      "in": "series"
+    },
+    {
+      "id": "e17",
+      "from": "n11",
+      "out": "minimum",
+      "to": "n12",
+      "in": "c1"
+    },
+    {
+      "id": "e18",
+      "from": "n11",
+      "out": "min_time",
+      "to": "n12",
+      "in": "c2"
+    },
+    {
+      "id": "e19",
+      "from": "n9",
+      "out": "time",
+      "to": "n12",
+      "in": "c3"
+    },
+    {
+      "id": "e20",
+      "from": "n11",
+      "out": "ufls",
+      "to": "n12",
+      "in": "c4"
+    },
+    {
+      "id": "e21",
+      "from": "n8",
+      "out": "r1",
+      "to": "n13",
+      "in": "l1"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}
