@@ -417,8 +417,12 @@ function around(type, s, { wired = true, loop = false, pin = [], label = '' } = 
   feed(X);
   if (def.kind === 'branch') {
     nodes.n70 = ['flow.log', { text: 'passed' }];
-    nodes.n71 = ['flow.log', { text: 'failed' }];
-    flow.push(`${X}.pass>n70`, `${X}.fail>n71`);
+    flow.push(`${X}.pass>n70`);
+    // Go on either way leaves one output (Pass's id): there is no Fail to wire.
+    if (ports.flowOuts.some(p => p.id === 'fail')) {
+      nodes.n71 = ['flow.log', { text: 'failed' }];
+      flow.push(`${X}.fail>n71`);
+    }
     nodes.n72 = ['flow.log', { text: 'margin {m}' }];
     flow.push('n70>n72');
     data.push(`${X}.margin>n72.m`);
@@ -722,7 +726,7 @@ test(`run: a range sweep with a guard skip: Status column and a skip row in one 
   const text = fs.readFileSync(tableCsv[0], 'utf8');
   has(text.split(/\r?\n/)[0], 'Status');
   has(text, 'Nadir check did not pass');
-  hasNot(res.stdout, 'has rows that were not saved');
+  hasNot(res.stdout, 'End of the run: saving');
   const p = pngs(res);
   eq(p.length, 3, p.join('\n'));
   ok(p.every(isPng), 'PNG files');
@@ -791,6 +795,112 @@ test('run: Find limit on the headroom rule (UFLS FALSE passes, Report this try w
   ok(m, res.stdout.slice(-2000));
   eq(m[2], 'DONE');
   near(Number(m[1]), 284.1, 1.5, 'UFLS starts near 284 MW');
+});
+
+test('run: Find limit reads Pass at the end of each try (no Report this try): the same limit as through Report this try', () => {
+  const out = outDir('headroom_direct');
+  const wf = W({
+    n1: START(out), n2: ['opt.limit', { lower: 100, upper: 400, tol: 1, maxSteps: 20, passIs: 'no' }, { label: 'Trip (MW)' }], n3: ['fixa.synth', {}], n4: ['sig.nadir', {}],
+    n6: ['flow.log', { text: 'HEADROOM {lim} {st}' }],
+  }, ['n1>n2', 'n2.done>n6'], ['n2.value>n3.mw', 'n3.series>n4.series', 'n4.ufls>n2.pass', 'n2.limit>n6.lim', 'n2.status>n6.st'], 'Headroom direct');
+  const res = run(wf, 'run headroom direct');
+  eq(unexpected(res.gen), [], ptext(res.gen));
+  has(mainBody(res.gen.code), 'trial.report(ok=logic("not", nadir_result.ufls))');
+  const m = /HEADROOM ([\d.]+) (\S+)/.exec(res.stdout);
+  ok(m, res.stdout.slice(-2000));
+  eq(m[2], 'DONE');
+  near(Number(m[1]), 284.1, 1.5, 'UFLS starts near 284 MW');
+});
+
+test('run: Optimise reads Score at the end of each try (grid): the same best as through Report this try', () => {
+  const out = outDir('opt_direct');
+  const wf = W({
+    n1: START(out), n2: ['opt.optimise', { vars: [{ id: 'v1', name: 'x', lower: -5, upper: 5 }, { id: 'v2', name: 'y', lower: -5, upper: 5 }], method: 'grid', gridSteps: 9, maxTries: 100 }],
+    n3: ['math.formula', { expr: '(x - 1.5)**2 + (y + 2)**2 + 3' }],
+    n5: ['out.table.add', { table: 'Best', ctx: false, cols: [{ id: 'c1', name: 'x' }, { id: 'c2', name: 'y' }, { id: 'c3', name: 'score' }] }],
+  }, ['n1>n2', 'n2.done>n5'], ['n2.v1>n3.x', 'n2.v2>n3.y', 'n3.value>n2.score', 'n2.best_v1>n5.c1', 'n2.best_v2>n5.c2', 'n2.score>n5.c3'], 'Optimise direct');
+  const res = run(wf, 'run optimise direct');
+  const [b] = rowsOf(res, 'Best');
+  ok(b, JSON.stringify(res.tables));
+  near(b.x, 1.25, 0.3, 'x'); near(b.y, -2.5, 0.3, 'y');
+  ok(b.score < 3.32, 'score ' + b.score);
+});
+
+test('run: Report this try with a fixed answer: Fail on one route, the Pass value on the other; No answer stops the search as UNKNOWN', () => {
+  const out = outDir('report_answers');
+  const mk = (answer, onUnknown) => W({
+    n1: START(out), n2: ['opt.limit', { lower: 0, upper: 200, tol: 0.5, maxSteps: 30, onUnknown }, { label: 'Dispatch (MW)' }],
+    n3: ['math.compare', { op: 'le', b: 137.5 }], n4: ['flow.if', { op: 'true' }, { label: 'Low enough?' }], n5: ['opt.report', { answer }, { label: 'Too high' }],
+    n6: ['flow.log', { text: 'LIMIT {lim} {st}' }],
+  }, ['n1>n2', 'n2.body>n4', 'n4.no>n5', 'n2.done>n6'], ['n2.value>n3.a', 'n3.value>n4.a', 'n3.value>n2.pass', 'n2.limit>n6.lim', 'n2.status>n6.st'], 'Report ' + answer);
+  const res = run(mk('fail', 'stop'), 'run report fail');
+  eq(unexpected(res.gen), [], ptext(res.gen));
+  const body = mainBody(res.gen.code);
+  has(body, 'trial.report(score=None, ok=False)');
+  ok(/report\(score=None, ok=False\)\n\s+except StopWorkflow/.test(body), 'the Fail route ends the try without reading Pass again: ' + body);
+  ok(/if low_enough:\n\s+trial\.report\(ok=compared\)\n\s+return trial/.test(body), 'an unwired Yes ends the try by itself, so Pass is read there: ' + body);
+  const m = /LIMIT ([\d.]+) (\S+)/.exec(res.stdout);
+  ok(m, res.stdout.slice(-2000));
+  ok(Number(m[1]) <= 137.5 && Number(m[1]) > 137.0, 'limit ' + m[1]);
+  eq(m[2], 'DONE');
+  const res2 = run(mk('none', 'stop'), 'run report none');
+  has(mainBody(res2.gen.code), 'trial.report()');
+  const m2 = /LIMIT (\S+) (\S+)/.exec(res2.stdout);
+  ok(m2 && m2[2] === 'UNKNOWN', res2.stdout.slice(-2000));
+});
+
+test('run: First time above / below with a level of 90 % of the curve before the fault gives what Value at time x 0.9 gives', () => {
+  const out = outDir('cross_pct');
+  const wf = W({
+    n1: START(out), n2: ['fixa.csvseries', { path: FIX9, label: 'Bus 7 m:u1', unit: 'p.u.', events: '1.0:fault, 1.1:clear' }],
+    n3: ['sig.cross', { levelMode: 'pct', pct: 90, after: 1.1, hold: 0.1 }, { label: 'Percent' }],
+    n4: ['sig.at', { t: 1.0 }], n5: ['math.arith', { op: 'mul', b: 0.9 }], n6: ['sig.cross', { after: 1.1, hold: 0.1 }, { label: 'Value' }],
+    n7: ['sig.cross', { levelMode: 'pct', pct: 90, refT: 0.5, after: 1.1, hold: 0.1 }, { label: 'At 0.5 s' }],
+    n8: ['out.table.add', { table: 'X', ctx: false, cols: ['Tp', 'Lp', 'Tv', 'Lv', 'L05'].map((name, i) => ({ id: 'c' + (i + 1), name })) }],
+  }, ['n1>n8'], ['n2.series>n3.series', 'n2.series>n4.series', 'n4.value>n5.a', 'n5.value>n6.level', 'n2.series>n6.series', 'n2.series>n7.series',
+    'n3.time>n8.c1', 'n3.threshold>n8.c2', 'n6.time>n8.c3', 'n6.threshold>n8.c4', 'n7.threshold>n8.c5'], 'Cross percent');
+  const res = run(wf, 'run cross pct');
+  const [r] = rowsOf(res, 'X');
+  ok(r, res.stdout.slice(-2000));
+  near(r.Lp, r.Lv, 1e-12, 'the same level');
+  near(r.Tp, r.Tv, 1e-12, 'the same time');
+  ok(r.Tp > 1.1 && r.Tp < 2.0, 'recovery time ' + r.Tp);
+  near(r.L05, 0.9 * 1.025769, 1e-6, '90 % of the value at 0.5 s');
+});
+
+test('run: Go on either way: a failed check goes on to the next step, and NO DATA does not say it takes Fail', () => {
+  const out = outDir('go_on');
+  const wf = W({
+    n1: START(out), n2: ['val.number', { value: 58 }], n3: ['chk.verdict', { op: 'ge', limit: 59, goOn: true }], n4: ['flow.log', { text: 'NEXT {t}' }],
+    n5: ['fixa.empty', {}], n6: ['sig.nadir', {}], n7: ['chk.limit', { lo: 59, goOn: true }], n8: ['flow.log', { text: 'AFTER LIMIT {t}' }],
+  }, ['n1>n3', 'n3.pass>n4', 'n4>n7', 'n7.pass>n8'], ['n2.value>n3.value', 'n3.text>n4.t', 'n5.series>n6.series', 'n6.minimum>n7.x', 'n7.text>n8.t'], 'Go on');
+  const res = run(wf, 'run go on');
+  eq(unexpected(res.gen), [], ptext(res.gen));
+  hasNot(mainBody(res.gen.code), 'if not (pass_fail.ok is True)');
+  has(res.stdout, 'NEXT FAIL');
+  has(res.stdout, 'AFTER LIMIT NO DATA');
+  has(res.stdout, 'so it did not pass.');
+  hasNot(res.stdout, 'takes Fail');
+  // Its one output, unwired, ends a route like a step's does (not "skips").
+  const lp = gen(W({ n1: START(out), n2: ['flow.range', {}, { label: 'Case' }], n3: ['val.number', { value: 58 }], n4: ['chk.verdict', { op: 'ge', limit: 59, goOn: true }] },
+    ['n1>n2', 'n2.body>n4'], ['n3.value>n4.value']), 'go on in a loop');
+  eq(lp.ends['n4:pass'], 'goes on to the next pass of Case');
+  hasNot(mainBody(lp.code), 'case_skipped(');
+});
+
+test('run: results tables are saved at the end of the run as Start says (CSV by default, Excel, both), with a plain log line', () => {
+  for (const [fmt, want] of [['csv', ['csv']], ['xlsx', ['xlsx']], ['both', ['csv', 'xlsx']]]) {
+    const out = outDir('tablefmt_' + fmt);
+    const wf = W({ n1: START(out, fmt === 'csv' ? {} : { tableFmt: fmt }), n2: ['flow.range', { from: 1, to: 2, step: 1 }, { label: 'Case' }], n3: ['out.table.add', { table: 'Auto', cols: [{ id: 'c1', name: 'x' }] }] },
+      ['n1>n2', 'n2.body>n3'], ['n2.value>n3.c1'], 'Table format ' + fmt);
+    const res = run(wf, 'run table fmt ' + fmt);
+    const got = res.files.filter(f => /^Auto\./.test(path.basename(f))).map(f => path.extname(f).slice(1)).sort();
+    eq(got, want, fmt + ': ' + res.files.join(', '));
+    has(res.stdout, "End of the run: saving the results table 'Auto'.");
+    hasNot(res.stdout, 'were not saved');
+    if (fmt !== 'csv') has(res.stdout, "STUB preflight ['openpyxl', 'pandas']");
+    else hasNot(res.stdout, 'pandas');
+  }
 });
 
 test('run: Optimise finds the minimum of a quadratic (differential evolution, and a grid without scipy)', () => {

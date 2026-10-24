@@ -13,6 +13,13 @@
 // notes as sticky notes. Behind the blocks, each loop's body is drawn as one dashed outline
 // round its blocks, the loop's name on a tab (loopFrames, frames.js).
 //
+// Folded ports: a block draws its main ports and every wired one; the rest wait behind "+N more"
+// (a click shows them, kept per viewer in localStorage `pfb-unfold`, never in the workflow). A
+// port folds while it is unwired and either says so (`more` on the port: true, or a function of
+// the settings and the wiring) or is an input whose value is typed under More options or cannot
+// apply with these settings. A required input never folds. While a wire is being dragged, the
+// folded ports it fits are shown, so it can be dropped on them.
+//
 // Gotchas kept from the PoC (notes/reactflow-poc.md): nodeTypes built once; never call
 // updateNodeInternals on mount (it breaks the first fitView), only when a node's handles change;
 // every control in a node is `nodrag nopan`; onError is passed because the build is silent;
@@ -26,11 +33,17 @@ import { fallbackText, inputNeed } from './inspector.js';
 import { blockIcon } from './icons.js';
 import { frameShape } from './frames.js';
 import { previewSpec, renderPreview } from './previews.js';
-import { $, esc, tipText, TIP_MAX, icon, isPhone, portTip } from './dom.js';
+import { $, esc, tipText, TIP_MAX, icon, isPhone, portTip, lsGet, lsSet } from './dom.js';
 
 // A port's tip (the shared tooltip reads it as HTML); a mandatory input leads with a chip.
 const typeTip = (t, extra, mandatory) => portTip(t, TYPES[t], extra, mandatory);
 const portLabel = (p) => (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '');
+
+// The blocks a reader opened ("+N more"), per viewer: node id and type, so another block that
+// takes the id in another workflow is not opened by it.
+const UNFOLD_KEY = 'pfb-unfold';
+const unfolded = (() => { try { const a = JSON.parse(lsGet(UNFOLD_KEY, '[]')); return new Set(Array.isArray(a) ? a.filter(x => typeof x === 'string') : []); } catch (e) { return new Set(); } })();
+const foldKey = (id, type) => id + ':' + type;
 
 // The padding for fitView: the free part of the screen between the floating panels, or a plain
 // 20 % when the layout cannot say.
@@ -140,6 +153,10 @@ export function mountCanvas(app) {
         const x = def && !p.stray ? inputNeed(n, p, wiredIn.has(p.id)) : { required: false, missing: false };
         return { mandatory: x.required, missing: x.missing };
       };
+      // Folded ports (ops.foldedPorts): unwired, not needed, and marked `more` or typed under More.
+      const folds = def ? ops.foldedPorts(s.wf, n, gen.regions) : null;
+      const foldIn = (p) => !!folds && folds.inputs.has(p.id);
+      const foldOut = (p) => !!folds && folds.outputs.has(p.id);
       const d = {
         kind: def ? def.kind : 'missing', type: n.type, cat: def ? def.cat : '', title: def ? def.title : 'Missing block',
         name: def ? displayName(n) : 'Missing block', summary: def ? summaryOf(n, s.wf) : String(n.type),
@@ -147,8 +164,8 @@ export function mountCanvas(app) {
         ports: {
           flowIn: !!ports.flowIn,
           flowOuts: ports.flowOuts.map(p => ({ id: p.id, label: p.label || '' })),
-          inputs: ports.inputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, required: !!p.required, tip: p.tip || '', ...needOf(p) })),
-          outputs: ports.outputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, tip: p.tip || '' })),
+          inputs: ports.inputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, required: !!p.required, tip: p.tip || '', ...needOf(p), fold: foldIn(p) })),
+          outputs: ports.outputs.map(p => ({ id: p.id, label: p.label || p.id, unit: p.unit || '', type: TYPES[p.type] ? p.type : 'any', stray: !!p.stray, tip: p.tip || '', fold: foldOut(p) })),
         },
         wiredIn: [...wiredIn].sort(), ends, fb, level,
         msgs: ps.filter(p => p.level === level).map(p => p.msg),
@@ -289,10 +306,18 @@ export function mountCanvas(app) {
   const BlockNode = React.memo(function BlockNode(props) {
     const { id, data, selected } = props;
     const d = data.deco;
-    const P = d.ports;
+    const fold = React.useContext(FoldCtx);
+    const open = fold.isOpen(id, d.type);
+    // A folded port shows while the block is opened, or while a wire it fits is being dragged.
+    const fits = (p, side) => !!fold.conn && (side === 'in' ? fold.conn.side === 'out' && canConnect(fold.conn.type, p.type) : fold.conn.side === 'in' && canConnect(p.type, fold.conn.type));
+    const ins = d.ports.inputs.filter(p => !p.fold || open || fits(p, 'in'));
+    const outs = d.ports.outputs.filter(p => !p.fold || open || fits(p, 'out'));
+    const nFold = d.ports.inputs.filter(p => p.fold).length + d.ports.outputs.filter(p => p.fold).length;
+    const hidden = d.ports.inputs.length + d.ports.outputs.length - ins.length - outs.length;
+    const P = { ...d.ports, inputs: ins, outputs: outs };
     const uni = RF.useUpdateNodeInternals();
     const first = React.useRef(true);
-    const sig = (P.flowIn ? 'i' : '') + '|' + P.flowOuts.map(o => o.id + (o.label ? '+' : '')).join(',') + '|' + P.inputs.map(p => p.id).join(',') + '|' + P.outputs.map(p => p.id).join(',') + '|' + Object.keys(d.ends).join(',') + '|' + (d.summary ? 1 : 0) + (d.chip ? 1 : 0);
+    const sig = (P.flowIn ? 'i' : '') + '|' + P.flowOuts.map(o => o.id + (o.label ? '+' : '')).join(',') + '|' + P.inputs.map(p => p.id).join(',') + '|' + P.outputs.map(p => p.id).join(',') + '|' + Object.keys(d.ends).join(',') + '|' + (d.summary ? 1 : 0) + (d.chip ? 1 : 0) + (nFold ? 1 : 0);
     React.useEffect(() => { if (first.current) { first.current = false; return; } uni(id); }, [sig]);
     const [editing, setEditing] = React.useState(false);
     const cancel = React.useRef(false);
@@ -358,6 +383,15 @@ export function mountCanvas(app) {
       }
       kids.push(h('div', { key: 'io', className: 'pfb-n-io' }, rows));
     }
+    if (nFold) {
+      const label = open ? 'Fewer' : '+' + hidden + ' more';
+      const tip = open ? 'Fold the ports that are not wired and not needed' : 'Show the other ' + hidden + (hidden === 1 ? ' port' : ' ports') + ' of this block';
+      if (open || hidden) {
+        kids.push(h('div', { key: 'fold', className: 'pfb-n-fold' },
+          h('button', { type: 'button', className: 'pfb-n-more nodrag nopan', title: tip, 'aria-expanded': open ? 'true' : 'false',
+            onClick: (e) => { e.stopPropagation(); fold.toggle(id, d.type); } }, label)));
+      }
+    }
     // What the block makes, drawn with mock values and the reader's names (previews.js).
     if (d.preview) kids.push(h('div', { key: 'pv', className: 'pfb-pv', title: 'What it makes: your names, mock values' }, renderPreview(h, d.preview)));
     if (d.chip) kids.push(h('div', { key: 'chip', className: 'pfb-n-chip', title: d.chipTip }, d.chip));
@@ -367,6 +401,7 @@ export function mountCanvas(app) {
   });
   const nodeTypes = { pfb: BlockNode };
   const PhoneCtx = React.createContext(false);
+  const FoldCtx = React.createContext({ isOpen: () => false, toggle() {}, conn: null });
 
   // ---- The canvas component
   let dragKey = null, dragSeq = 0;
@@ -376,6 +411,18 @@ export function mountCanvas(app) {
     const [dragPos, setDragPos] = React.useState({});
     const [measured, setMeasured] = React.useState({});
     const [phone, setPhone] = React.useState(isPhone());
+    const [foldRev, setFoldRev] = React.useState(0);
+    const [conn, setConn] = React.useState(null);
+    const foldCtx = React.useMemo(() => ({
+      conn,
+      isOpen: (nid, type) => unfolded.has(foldKey(nid, type)),
+      toggle: (nid, type) => {
+        const k = foldKey(nid, type);
+        if (unfolded.has(k)) unfolded.delete(k); else unfolded.add(k);
+        lsSet(UNFOLD_KEY, JSON.stringify([...unfolded].slice(-400)));
+        setFoldRev(r => r + 1);
+      },
+    }), [conn, foldRev]);
     const dragRef = React.useRef(dragPos);
     dragRef.current = dragPos;
     measuredRef.current = measured;
@@ -438,10 +485,13 @@ export function mountCanvas(app) {
       if (!p || !p.nodeId) return;
       const side = p.handleType === 'source' ? 'out' : 'in';
       const port = ops.portAt(store.get().wf, p.nodeId, p.handleId || 'in', side);
-      setConnecting(port && !port.stray ? { side, type: port.type } : null);
+      const c = port && !port.stray ? { side, type: port.type } : null;
+      setConnecting(c);
+      setConn(c && c.type !== 'flow' ? c : null);
     }, []);
     const onConnectEnd = React.useCallback((e, cs) => {
       setConnecting(null);
+      setConn(null);
       if (!cs || cs.isValid || !cs.fromHandle) return;
       const pt = (e && e.changedTouches && e.changedTouches.length) ? e.changedTouches[0] : e;
       const from = cs.fromHandle;
@@ -499,7 +549,7 @@ export function mountCanvas(app) {
     }, []);
     const onError = React.useCallback((code, m) => console.warn('[React Flow ' + code + '] ' + m), []);
 
-    return h(PhoneCtx.Provider, { value: phone }, h(RF.ReactFlow, {
+    return h(PhoneCtx.Provider, { value: phone }, h(FoldCtx.Provider, { value: foldCtx }, h(RF.ReactFlow, {
       nodes, edges, nodeTypes, colorMode: s.theme === 'light' ? 'light' : 'dark',
       onNodesChange, onEdgesChange, isValidConnection, onConnect, onConnectStart, onConnectEnd,
       onDragOver, onDragLeave, onDrop, onNodeDragStop, onMoveStart, onMoveEnd, onPaneClick, onNodeDoubleClick, onInit, onError,
@@ -512,7 +562,7 @@ export function mountCanvas(app) {
     },
     h(RF.Background, { variant: RF.BackgroundVariant ? RF.BackgroundVariant.Dots : 'dots', gap: ops.GRID, size: 1.3 }),
     RF.ViewportPortal ? h(LoopFrames, { frames, sel: selSet }) : null,
-    phone ? null : h(RF.MiniMap, { pannable: true, zoomable: true, ariaLabel: 'Map of the whole workflow', nodeClassName: (n) => 'pfb-mm pfb-mm-' + ((n.data && n.data.deco && n.data.deco.cat) || 'x'), nodeBorderRadius: 4 })));
+    phone ? null : h(RF.MiniMap, { pannable: true, zoomable: true, ariaLabel: 'Map of the whole workflow', nodeClassName: (n) => 'pfb-mm pfb-mm-' + ((n.data && n.data.deco && n.data.deco.cat) || 'x'), nodeBorderRadius: 4 }))));
   }
 
   class Boundary extends React.Component {

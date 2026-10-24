@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -32,7 +33,7 @@
       "y": -300,
       "label": "About this template",
       "s": {
-        "text": "After a base load flow this takes out each line and transformer in service in turn (the base case first), runs the load flow and reads the loading of every line and 2-winding transformer and the voltage of every busbar. Each outage gets a row, also one that does not converge (with its reason); the worst outage is printed at the end. Fill in the project."
+        "text": "After a base load flow this takes out each line and transformer in service in turn (the base case first), runs the load flow and reads the loading of every line and 2-winding transformer and the voltage of every busbar (three reads side by side: they run one after another, then the row is added). Each outage gets a row, also one that does not converge (with its reason); the worst outage is printed at the end. Fill in the project."
       },
       "pin": [],
       "sv": 1
@@ -52,24 +53,6 @@
       "sv": 1
     },
     {
-      "id": "n4",
-      "type": "pf.cont.define",
-      "x": 640,
-      "y": 300,
-      "label": "",
-      "s": {
-        "lines": true,
-        "trafos": true,
-        "gens": false,
-        "xnets": false,
-        "query": "",
-        "order": "1",
-        "inService": true
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
       "id": "n5",
       "type": "pf.cont.foreach",
       "x": 640,
@@ -77,7 +60,13 @@
       "label": "Contingency",
       "s": {
         "name": "",
-        "group": "*.ElmLne",
+        "lines": true,
+        "trafos": true,
+        "gens": false,
+        "xnets": false,
+        "query": "",
+        "order": "1",
+        "inService": true,
         "how": "outserv",
         "t": 1,
         "base": true,
@@ -85,7 +74,7 @@
         "onError": "skip"
       },
       "pin": [],
-      "sv": 1
+      "sv": 2
     },
     {
       "id": "n6",
@@ -124,8 +113,8 @@
     {
       "id": "n13",
       "type": "pf.get",
-      "x": 1600,
-      "y": 0,
+      "x": 1280,
+      "y": 360,
       "label": "Transformer loading",
       "s": {
         "el": {
@@ -144,8 +133,8 @@
     {
       "id": "n8",
       "type": "pf.get",
-      "x": 1920,
-      "y": 0,
+      "x": 1280,
+      "y": 180,
       "label": "Busbar voltage",
       "s": {
         "el": {
@@ -164,7 +153,7 @@
     {
       "id": "n9",
       "type": "out.table.add",
-      "x": 2240,
+      "x": 1600,
       "y": 0,
       "label": "",
       "s": {
@@ -202,24 +191,10 @@
       "sv": 1
     },
     {
-      "id": "n10",
-      "type": "out.table.save",
-      "x": 960,
-      "y": 600,
-      "label": "",
-      "s": {
-        "table": "N-1",
-        "fmt": "csv",
-        "stem": ""
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
       "id": "n11",
       "type": "flow.log",
-      "x": 1280,
-      "y": 600,
+      "x": 960,
+      "y": 660,
       "label": "Print the worst outage",
       "s": {
         "text": "Worst outage: {worst}, with a line loaded to {loading:.1f} %",
@@ -231,8 +206,8 @@
     {
       "id": "n12",
       "type": "out.table.column",
-      "x": 1280,
-      "y": 900,
+      "x": 960,
+      "y": 930,
       "label": "Worst outage",
       "s": {
         "table": "N-1",
@@ -276,45 +251,45 @@
     },
     {
       "id": "e5",
-      "from": "n7",
-      "out": "next",
+      "from": "n6",
+      "out": "ok",
       "to": "n13",
       "in": "in"
     },
     {
       "id": "e6",
-      "from": "n13",
-      "out": "next",
+      "from": "n6",
+      "out": "ok",
       "to": "n8",
       "in": "in"
     },
     {
       "id": "e7",
-      "from": "n8",
+      "from": "n7",
       "out": "next",
       "to": "n9",
       "in": "in"
     },
     {
       "id": "e8",
-      "from": "n5",
-      "out": "done",
-      "to": "n10",
+      "from": "n13",
+      "out": "next",
+      "to": "n9",
       "in": "in"
     },
     {
       "id": "e9",
-      "from": "n10",
+      "from": "n8",
       "out": "next",
-      "to": "n11",
+      "to": "n9",
       "in": "in"
     },
     {
       "id": "e10",
-      "from": "n4",
-      "out": "conts",
-      "to": "n5",
-      "in": "conts"
+      "from": "n5",
+      "out": "done",
+      "to": "n11",
+      "in": "in"
     },
     {
       "id": "e11",

@@ -172,9 +172,23 @@ export async function boot() {
     store.endCoalesce();
     if (r.replaced.length) {
       const old = r.replaced[0];
-      const flow = ops.isFlowEdge(before, old);
-      const other = flow ? ops.nodeById(before, old.to) : ops.nodeById(before, old.from);
-      toast(flow ? 'A step leads to one next step: the wire to ' + nameOf(other) + ' was replaced.' : 'An input takes one wire: the wire from ' + nameOf(other) + ' was replaced.', { undo: app.undo });
+      toast('An input takes one wire: the wire from ' + nameOf(ops.nodeById(before, old.from)) + ' was replaced.', { undo: app.undo });
+    } else if (r.parallel && r.parallel.length) {
+      // A second step on one flow output: parallel routes. Say what that means, and offer the
+      // old way (moving the wire) for a reader who meant that.
+      const src = ops.nodeById(r.wf, c.from);
+      const port = ops.portAt(r.wf, c.from, c.out, 'out');
+      const what = (port && port.port.label ? port.port.label + ' of ' : '') + nameOf(src);
+      const n = r.parallel.length + 1;
+      toast(what + ' now leads to ' + n + ' steps: parallel routes, run one after another, then on from where their wires meet.', {
+        undo: app.undo, ms: 9000,
+        action: { label: 'Move the wire instead', run: () => {
+          const ids = r.parallel.map(e => e.id).filter(id => wf().edges.some(e => e.id === id));
+          if (!ids.length) return;
+          commit(ops.removeEdges(wf(), ids));
+          store.endCoalesce();
+        } },
+      });
     }
     return true;
   };
@@ -201,11 +215,21 @@ export async function boot() {
     });
   };
 
-  // A wire dropped on empty canvas: the blocks that fit it.
+  // A wire dropped on empty canvas: the blocks that fit it, best first; those that cannot work
+  // there (a step that needs a loop or a search around it, an input that takes another kind of
+  // value) greyed at the end, saying why.
   app.quickAddAt = (x, y, ref) => {
     const port = ops.portAt(wf(), ref.nodeId, ref.handleId, ref.side);
     if (!port || port.stray) return;
-    const items = ops.blocksFor({ side: ref.side, type: port.type }).map(m => ({ main: m.def.title, sub: m.port.label && m.kind !== 'flowIn' ? 'into ' + m.port.label : (m.def.desc || '').slice(0, 70), cat: m.def.cat, kind: m.def.kind, keywords: (m.def.keywords || []).join(' '), def: m.def }));
+    const regions = (store.get().gen || {}).regions || null;
+    const chain = port.type !== 'flow' ? null
+      : ref.side === 'out' ? ops.chainAfterPort(wf(), regions, ref.nodeId, port.port.id)
+        : (regions ? regions[ref.nodeId] || [] : null);
+    const items = ops.blocksFor({ side: ref.side, type: port.type }, { chain }).map(m => ({
+      main: m.def.title, off: m.off || '',
+      sub: m.off || (m.port.label && m.kind !== 'flowIn' ? 'into ' + m.port.label : (m.def.desc || '').slice(0, 70)),
+      cat: m.def.cat, kind: m.def.kind, keywords: (m.def.keywords || []).join(' '), def: m.def,
+    }));
     if (ref.side === 'out' && port.type === 'bool' && R.getBlock('flow.if')) {
       items.unshift({ main: 'Continue only if Yes', sub: 'An If after the step this comes from: Yes goes on, No skips.', kind: 'branch', cat: 'flow', first: true, special: 'ifyes' });
     }
@@ -224,6 +248,26 @@ export async function boot() {
     });
   };
 
+  // The step a palette click wires a new step after: the selected one, else the last one added,
+  // else the last step by id.
+  function clickAnchor(s) {
+    const selId = s.sel.nodes.length === 1 ? s.sel.nodes[0] : null;
+    const sel = selId ? ops.nodeById(s.wf, selId) : null;
+    const lastId = s.lastAdded && ops.nodeById(s.wf, s.lastAdded) ? s.lastAdded : null;
+    const statements = s.wf.nodes.filter(n => ops.isStatement(n) && R.getBlock(n.type) && R.portsOf(n).flowOuts.length);
+    const lastStatement = (lastId && ops.isStatement(ops.nodeById(s.wf, lastId)) && R.portsOf(ops.nodeById(s.wf, lastId)).flowOuts.length ? ops.nodeById(s.wf, lastId) : null)
+      || statements.slice().sort((a, b) => W.compareIds(b.id, a.id))[0] || null;
+    return sel && ops.isStatement(sel) && R.getBlock(sel.type) && R.portsOf(sel).flowOuts.length ? sel : lastStatement;
+  }
+  // The loops and searches around the spot a palette click adds a step to (null: not known yet).
+  app.addContext = () => {
+    const s = store.get();
+    const regions = s.gen && s.gen.regions;
+    if (!regions) return null;
+    const anchor = clickAnchor(s);
+    return ops.chainAfterStep(s.wf, regions, anchor ? anchor.id : null);
+  };
+
   // Palette click (U15): after the selected block (or the last one added), wired.
   app.clickAdd = (type) => {
     const def = R.getBlock(type);
@@ -235,12 +279,9 @@ export async function boot() {
     const selId = s.sel.nodes.length === 1 ? s.sel.nodes[0] : null;
     const sel = selId ? ops.nodeById(s.wf, selId) : null;
     const lastId = s.lastAdded && ops.nodeById(s.wf, s.lastAdded) ? s.lastAdded : null;
-    const statements = s.wf.nodes.filter(n => ops.isStatement(n) && R.getBlock(n.type) && R.portsOf(n).flowOuts.length);
-    const lastStatement = (lastId && ops.isStatement(ops.nodeById(s.wf, lastId)) && R.portsOf(ops.nodeById(s.wf, lastId)).flowOuts.length ? ops.nodeById(s.wf, lastId) : null)
-      || statements.slice().sort((a, b) => W.compareIds(b.id, a.id))[0] || null;
     let next = s.wf, node, anchor = null;
     if (ops.isStatementDef(def) && def.kind !== 'start') {
-      anchor = sel && ops.isStatement(sel) && R.getBlock(sel.type) && R.portsOf(sel).flowOuts.length ? sel : lastStatement;
+      anchor = clickAnchor(s);
       const at = anchor ? ops.freeSpot(next, anchor.x + width(anchor.id) + 70, anchor.y, sizes) : ops.freeSpot(next, canvas.viewCenter().x - 110, canvas.viewCenter().y - 50, sizes);
       ({ wf: next, node } = ops.addNode(next, type, at.x, at.y));
       if (anchor) next = ops.insertAfter(next, anchor.id, node.id);
@@ -330,6 +371,14 @@ export async function boot() {
       const next = ops.moveToDone(wf(), op.edgeId, op.loopId);
       if (next !== wf()) { commit(next); store.endCoalesce(); toast('Moved it to After all passes.', { undo: app.undo }); }
     } else if (op.op === 'addStart') app.addStart();
+    else if (op.op === 'insertAfter' && op.nodeId && op.type) {
+      const r = ops.addAfterStep(wf(), op.nodeId, op.type, canvas.sizes());
+      if (r) {
+        commit(r.wf, { sel: { nodes: [r.node.id], edges: [] }, lastAdded: r.node.id });
+        store.endCoalesce();
+        toast('Added ' + nameOf(r.node) + ' after ' + nameOf(ops.nodeById(r.wf, op.nodeId)) + '.', { undo: app.undo });
+      }
+    }
   };
   app.clear = () => {
     const w = wf();

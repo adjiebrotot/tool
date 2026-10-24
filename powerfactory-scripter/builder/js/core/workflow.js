@@ -269,6 +269,11 @@ function loadInner(input, notes) {
       } else {
         if (sv !== undefined && !Number.isFinite(sv)) delete node.sv;
         const full = settingsOf(node);
+        // A setting that took over a renamed one (settingAlias) is pinned when the old one was,
+        // so its SETTINGS line stays at the top of the script.
+        for (const [oldKey, newKey] of Object.entries(def.settingAlias || {})) {
+          if (node.pin.includes(oldKey) && !node.pin.includes(newKey)) node.pin.push(newKey);
+        }
         // A select value this version does not know (an option a newer Builder added) is kept
         // as saved, so saving here does not lose it; the generator uses the default meanwhile.
         if (sv === undefined || sv === version) {
@@ -344,7 +349,6 @@ function nameOf(raw) {
 // Notes for wires that no longer fit (kept, saved back unchanged, flagged in Problems too).
 function checkEdges(wf, byId, notes) {
   const intoInput = new Set();
-  const fromFlowOut = new Set();
   for (const e of wf.edges) {
     const a = byId.get(e.from), b = byId.get(e.to);
     const da = getBlock(a.type), db = getBlock(b.type);
@@ -362,11 +366,7 @@ function checkEdges(wf, byId, notes) {
       if (intoInput.has(k)) notes.push({ level: 'warning', msg: 'Two wires go into ' + (pb.port.label || pb.port.id) + ' of ' + displayName(b) + '. Only the first is used: remove the other.', nodeId: b.id, edgeId: e.id });
       intoInput.add(k);
     }
-    if (pa.kind === 'flowOut') {
-      const k = a.id + ':' + pa.port.id;
-      if (fromFlowOut.has(k)) notes.push({ level: 'warning', msg: 'Two wires leave ' + (pa.port.label || 'the flow output') + ' of ' + displayName(a) + '. A step leads to one next step: only the first is used.', nodeId: a.id, edgeId: e.id });
-      fromFlowOut.add(k);
-    }
+    // Several wires leaving one flow output are parallel routes (codegen.js emitFork).
   }
 }
 
@@ -537,14 +537,17 @@ function readBackGraphStyle(wf, text, notes) {
 }
 
 function applySetting(wf, ref, value) {
-  const [nodeId, key, sub] = ref;
+  const [nodeId, key0, sub] = ref;
   if (nodeId === '*') {
-    if (key !== 'name' || typeof value !== 'string') return 'bad';
+    if (key0 !== 'name' || typeof value !== 'string') return 'bad';
     if (wf.name === value) return 'same';
     wf.name = value; return 'changed';
   }
   const node = wf.nodes.find(n => n.id === nodeId);
   const def = node && getBlock(node.type);
+  // A SETTINGS line of a setting that was renamed since (settingAlias) goes to its new key.
+  const alias = def && def.settingAlias && !(def.settings || []).some(x => x.key === key0) ? def.settingAlias[key0] : null;
+  const key = alias || key0;
   const st = def && (def.settings || []).find(x => x.key === key);
   if (!st) return 'bad';
   const cur = node.s[key];

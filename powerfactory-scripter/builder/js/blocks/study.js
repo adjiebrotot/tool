@@ -8,7 +8,7 @@
 // contingencies section of pf_model.py). Times are seconds whatever the project shows (the
 // runtime writes them in PowerFactory's internal unit).
 
-import { defineBlock } from '../core/registry.js';
+import { defineBlock, defineFamily } from '../core/registry.js';
 import {
   GEN_KINDS, elementSetting, objInput, numInput, elemText, nameSetting, restoreSetting, onErrorSetting, passLabel,
   listName, pinned, routeAt, enterLoop, inLoopWith, noteFor, notesOf, noteCalc,
@@ -80,8 +80,8 @@ defineBlock({
   keywords: ['load flow', 'power flow', 'ldf', 'ComLdf', 'convergence', 'converged', 'steady state', 'Newton-Raphson', 'slack', 'voltage', 'loading', 'AC', 'DC'],
   flowOuts: [{ id: 'ok', label: 'Converged' }, { id: 'fail', label: 'Did not converge', stopMsg: 'Load flow did not converge' }],
   outputs: [
-    { id: 'converged', label: 'Converged', type: 'bool', var: 'converged' },
-    { id: 'slack_mw', label: 'Slack power', type: 'num', unit: 'MW', var: 'slack_mw', tip: 'Active power of the reference machines and slack external grids (empty when it did not converge).' },
+    { id: 'converged', label: 'Converged', type: 'bool', var: 'converged', more: true },
+    { id: 'slack_mw', label: 'Slack power', type: 'num', unit: 'MW', var: 'slack_mw', more: true, tip: 'Active power of the reference machines and slack external grids (empty when it did not converge).' },
   ],
   settings: [
     { key: 'net', label: 'Calculation', kind: 'select', default: 'case', options: [['case', AS_CASE], ['ac', 'AC balanced'], ['unbalanced', 'AC unbalanced, 3-phase'], ['dc', 'DC']] },
@@ -116,7 +116,7 @@ defineBlock({
   desc: 'Runs a harmonic load flow (ComHldf) in the active study case, with the load flow set to the same network type first. THD is then readable on busbars as m:THD.',
   keywords: ['harmonics', 'harmonic load flow', 'ComHldf', 'THD', 'distortion', 'm:THD', 'power quality', 'filter', 'hldf'],
   flowOuts: [{ id: 'ok', label: 'Finished' }, { id: 'fail', label: 'Failed', stopMsg: 'Harmonic load flow failed' }],
-  outputs: [{ id: 'finished', label: 'Finished', type: 'bool', var: 'hldf_ok' }],
+  outputs: [{ id: 'finished', label: 'Finished', type: 'bool', var: 'hldf_ok', more: true }],
   settings: [{ key: 'net', label: 'Network', kind: 'select', default: 'case', options: [['case', AS_CASE], ['balanced', 'Balanced'], ['unbalanced', 'Unbalanced']] }],
   summary(s) { return s.net === 'case' ? 'Settings of the study case' : s.net === 'balanced' ? 'Balanced' : 'Unbalanced'; },
   helpers: ['run_harmonic'],
@@ -139,7 +139,7 @@ defineBlock({
   keywords: ['short circuit', 'fault level', 'ComShc', 'IEC 60909', 'Ikss', 'Skss', 'm:Ikss', 'fault current', 'shc', 'ANSI', 'VDE', 'busbars'],
   flowOuts: [{ id: 'ok', label: 'Finished' }, { id: 'fail', label: 'Failed', stopMsg: 'Short circuit failed' }],
   inputs: [objInput('target', 'Fault at', 'target', SHC_TARGETS), numInput('rf', 'Fault resistance', 'rf', 'Ohm'), numInput('xf', 'Fault reactance', 'xf', 'Ohm')],
-  outputs: [{ id: 'finished', label: 'Finished', type: 'bool', var: 'shc_ok' }],
+  outputs: [{ id: 'finished', label: 'Finished', type: 'bool', var: 'shc_ok', more: true }],
   settings: [
     { key: 'method', label: 'Method', kind: 'select', default: 'iec', options: [['iec', 'IEC 60909'], ['vde', 'VDE 0102'], ['ansi', 'ANSI'], ['complete', 'Complete'], ['iec61363', 'IEC 61363']] },
     { key: 'fault', label: 'Fault type', kind: 'select', default: '3ph', options: [['3ph', 'Three-phase'], ['2ph', 'Two-phase'], ['1ph', 'Single-phase to ground'], ['2phg', 'Two-phase to ground']] },
@@ -182,9 +182,9 @@ function simBlock(kind) {
   const type = rms ? 'pf.rms' : 'pf.emt';
   const title = `Run ${W} simulation`;
   const statics = [
-    { id: 'result', label: 'Result', type: 'res', var: rms ? 'rms' : 'emt', tip: 'For Read time series, to read curves the Record list does not have.' },
-    { id: 't_end', label: 'Stopped at', type: 'num', unit: 's', var: 't_end', tip: 'The simulation time reached.' },
-    { id: 'status', label: 'Status', type: 'text', var: 'status', tip: '`ok`, `early` (stopped before the stop time) or `no_init` (did not initialise).' },
+    { id: 'result', label: 'Result', type: 'res', var: rms ? 'rms' : 'emt', more: true, tip: 'For Read time series, to read curves the Record list does not have.' },
+    { id: 't_end', label: 'Stopped at', type: 'num', unit: 's', var: 't_end', more: true, tip: 'The simulation time reached.' },
+    { id: 'status', label: 'Status', type: 'text', var: 'status', more: true, tip: '`ok`, `early` (stopped before the stop time) or `no_init` (did not initialise).' },
   ];
   return {
     type, cat: CAT, kind: 'branch', title,
@@ -203,8 +203,8 @@ function simBlock(kind) {
     outputs: statics,
     settings: [
       { key: 'tstop', label: 'Stop time', kind: 'number', default: rms ? 10 : 0.5, unit: 's', min: 0, step: rms ? 1 : 0.05 },
-      { key: 'tstart', label: 'Start time', kind: 'number', default: null, unit: 's', placeholder: AS_CASE, tip: 'Usually a little before 0, for example -0.1 s. Empty: as in the study case.' },
-      { key: 'step', label: 'Step size', kind: 'number', default: null, unit: 's', placeholder: AS_CASE,
+      { key: 'tstart', label: 'Start time', kind: 'number', default: null, unit: 's', more: true, placeholder: AS_CASE, tip: 'Usually a little before 0, for example -0.1 s. Empty: as in the study case.' },
+      { key: 'step', label: 'Step size', kind: 'number', default: null, unit: 's', more: true, placeholder: AS_CASE,
         tip: rms ? 'The RMS integration step (dtgrd), for example 0.01 s. Empty: as in the study case.' : 'The EMT integration step (dtemt), for example 0.00005 s (50 us). Empty: as in the study case.' },
       { key: 'net', label: 'Network', kind: 'select', default: 'case', options: [['case', AS_CASE], ['sym', 'Balanced, positive sequence (sym)'], ['rst', 'Unbalanced, 3-phase (rst)']],
         tip: 'Unbalanced faults (single-phase, two-phase) need the unbalanced network.' },
@@ -328,6 +328,12 @@ function simBlock(kind) {
 }
 defineBlock(simBlock('rms'));
 defineBlock(simBlock('emt'));
+defineFamily({
+  id: 'sim', title: 'Run simulation',
+  desc: 'Runs an RMS (stability) or EMT (electromagnetic transients) simulation with the events added before it. Each Record row is a time series. Choose which under Kind.',
+  keywords: ['simulation', 'RMS', 'EMT', 'dynamic', 'stability', 'transients', 'ComInc', 'ComSim', 'time domain', 'run'],
+  members: ['pf.rms', 'pf.emt'], dflt: 'pf.rms',
+});
 
 defineBlock({
   type: 'sig.series', cat: CAT, kind: 'pure',
@@ -377,7 +383,7 @@ const tInput = () => numInput('t', 'Time', 't', 's', 'When it happens, in second
 const tSetting = { key: 't', label: 'Time', kind: 'number', default: 1, unit: 's', step: 0.1 };
 const EVENT_FX = { writes: ['model'], reads: [] };
 const keyOf = (cx) => cx.lit(cx.id);
-const tOut = { id: 't', label: 'Time', type: 'num', unit: 's', var: 'event_time', tip: 'The event time, for the checks after the run.' };
+const tOut = { id: 't', label: 'Time', type: 'num', unit: 's', var: 'event_time', more: true, tip: 'The event time, for the checks after the run.' };
 
 // A dynamic event drawn as a profile: the same EvtParam events PowerFactory's event list holds,
 // written from a list of (time, value) steps the reader types in a table or drags on a graph.
@@ -400,8 +406,8 @@ defineBlock({
     numInput('loc', 'Location on the line', 'loc', '%'),
   ],
   outputs: [
-    { id: 't_fault', label: 'Fault time', type: 'num', unit: 's', var: 't_fault' },
-    { id: 't_clear', label: 'Clearing time', type: 'num', unit: 's', var: 't_clear', tip: 'Empty when the fault is not cleared.' },
+    { id: 't_fault', label: 'Fault time', type: 'num', unit: 's', var: 't_fault', more: true },
+    { id: 't_clear', label: 'Clearing time', type: 'num', unit: 's', var: 't_clear', more: true, tip: 'Empty when the fault is not cleared.' },
   ],
   settings: [
     elementSetting('target', 'Fault at', 'ElmTerm'),
@@ -554,8 +560,8 @@ defineBlock({
     'TOV', 'over voltage', 'under voltage', 'set point', 'reference', 'ramp', 'steps', 'schedule', 'ElmVac', 'AC voltage source', 's:u0', 'usetp'],
   inputs: [objInput('element', 'Element', 'el', STEP_CLASSES, 'The element whose value the steps change (for example the AC voltage source that feeds the model).')],
   outputs: [
-    { id: 't_first', label: 'First step', type: 'num', unit: 's', var: 't_first', tip: 'When the first step happens, for the checks after the run.' },
-    { id: 't_last', label: 'Last step', type: 'num', unit: 's', var: 't_last' },
+    { id: 't_first', label: 'First step', type: 'num', unit: 's', var: 't_first', more: true, tip: 'When the first step happens, for the checks after the run.' },
+    { id: 't_last', label: 'Last step', type: 'num', unit: 's', var: 't_last', more: true },
   ],
   settings: [
     elementSetting('el', 'Element', 'ElmVac', { example: 'Grid Max SC' }),
@@ -597,10 +603,55 @@ defineBlock({
   },
 });
 
+defineFamily({
+  id: 'event', title: 'Add simulation event',
+  desc: 'Adds an event to the next simulation: a short circuit, a switch, a trip, a load step, one parameter change or parameter steps. Choose which under Kind.',
+  keywords: ['event', 'simulation event', 'fault', 'short circuit', 'switch', 'trip', 'load step', 'parameter', 'EvtShc', 'EvtSwitch', 'EvtParam', 'EvtLod'],
+  members: ['pf.evt.shc', 'pf.evt.switch', 'pf.evt.trip', 'pf.evt.load', 'pf.evt.param', 'pf.evt.steps'], dflt: 'pf.evt.shc',
+});
+
 // ---------------------------------------------------------------------------------------------
 // Contingencies
 
 const GROUPS = [['lines', '*.ElmLne'], ['trafos', '*.ElmTr2', '*.ElmTr3'], ['gens', '*.ElmSym'], ['xnets', '*.ElmXnet']];
+
+// The outages a For each contingency loop makes by itself while nothing is wired into
+// Contingencies: the same choices as the Contingencies block (same keys, same meaning), so the
+// loop needs no block of its own for an N-1 or N-2 of lines, transformers, generators or
+// external grids. Version 2 replaced the one "N-1 of" pattern (key `group`) with these; migrate
+// moves an old pattern into Other elements and leaves the boxes off, so old work makes the same
+// contingencies.
+const contUnwired = (s, cx) => !(cx && cx.wired && cx.wired.has('conts'));
+const CONT_CHOICES = [
+  { key: 'lines', label: 'Lines', kind: 'bool', default: true, showIf: contUnwired },
+  { key: 'trafos', label: 'Transformers', kind: 'bool', default: false, showIf: contUnwired },
+  { key: 'gens', label: 'Synchronous generators', kind: 'bool', default: false, showIf: contUnwired },
+  { key: 'xnets', label: 'External grids', kind: 'bool', default: false, showIf: contUnwired },
+  { key: 'query', label: 'Other elements', kind: 'text', default: '', placeholder: 'e.g. Line 1*.ElmLne, T*.ElmTr2', showIf: contUnwired,
+    tip: 'Name.Class with * wildcards, separated by commas; every matching element in service is one outage.' },
+  { key: 'order', label: 'Outages at a time', kind: 'select', default: '1', more: true, options: [['1', 'One (N-1)'], ['2', 'Two (N-2, every pair)']], showIf: contUnwired },
+  { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true, more: true, showIf: contUnwired,
+    tip: 'Elements already out of service are left out (and named in the log), so nothing out is ever put in service.' },
+];
+// define_contingencies(app, [queries ...], order, in_service) from these settings (pinned ones
+// as their SETTINGS names).
+function contCall(cx, extra) {
+  const groups = [];
+  for (const [key, ...qs] of GROUPS) {
+    if (pinned(cx, key)) groups.push(`*(${cx.lit(qs)} if ${cx.val(key)} else [])`);
+    else if (cx.s[key]) for (const q of qs) groups.push(cx.lit(q));
+  }
+  if (pinned(cx, 'query')) groups.push(`*[q.strip() for q in str(${cx.val('query')}).split(",") if q.strip()]`);
+  else for (const q of String(cx.s.query || '').split(',').map(x => x.trim()).filter(Boolean)) groups.push(cx.lit(q));
+  if (extra) groups.push(extra);
+  const order = pinned(cx, 'order') ? `int(${cx.val('order')})` : String(Number(cx.s.order) === 2 ? 2 : 1);
+  return `define_contingencies(app, [${groups.join(', ')}], ${order}, ${cx.val('inService')})`;
+}
+const contWhat = (s) => {
+  const what = GROUPS.filter(g => s[g[0]]).map(g => ({ lines: 'lines', trafos: 'transformers', gens: 'generators', xnets: 'external grids' })[g[0]]);
+  if (String(s.query || '').trim()) what.push(String(s.query).trim());
+  return what;
+};
 
 defineBlock({
   // Worked out again where it is used (see pf.element in model.js for why not 'case' yet).
@@ -610,74 +661,67 @@ defineBlock({
   keywords: ['contingency', 'contingencies', 'N-1', 'N-2', 'outage', 'security', 'define', 'lines', 'transformers', 'ElmLne', 'ElmTr2', 'set'],
   inputs: [objInput('elements', 'Also these elements', null, null, 'Optional: more elements to take out, for example from Element with all.')],
   outputs: [{ id: 'conts', label: 'Contingencies', type: 'cset', var: 'contingencies' }],
-  settings: [
-    { key: 'lines', label: 'Lines', kind: 'bool', default: true },
-    { key: 'trafos', label: 'Transformers', kind: 'bool', default: false },
-    { key: 'gens', label: 'Synchronous generators', kind: 'bool', default: false },
-    { key: 'xnets', label: 'External grids', kind: 'bool', default: false },
-    { key: 'query', label: 'Other elements', kind: 'text', default: '', placeholder: 'e.g. Line 1*.ElmLne, T*.ElmTr2', tip: 'Name.Class with * wildcards, separated by commas.' },
-    { key: 'order', label: 'Outages at a time', kind: 'select', default: '1', more: true, options: [['1', 'One (N-1)'], ['2', 'Two (N-2, every pair)']] },
-    { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true, more: true, tip: 'Elements already out of service are left out (and named in the log), so nothing out is ever put in service.' },
-  ],
-  summary(s) {
-    const what = GROUPS.filter(g => s[g[0]]).map(g => ({ lines: 'lines', trafos: 'transformers', gens: 'generators', xnets: 'external grids' })[g[0]]);
-    if (String(s.query || '').trim()) what.push(String(s.query).trim());
-    return `N-${s.order}: ${what.join(', ') || 'nothing chosen yet'}`;
-  },
+  settings: CONT_CHOICES.map(({ showIf, ...st }) => st),
+  summary(s) { return `N-${s.order}: ${contWhat(s).join(', ') || 'nothing chosen yet'}`; },
   helpers: ['contingencies'],
   emit(cx) {
     routeAt(cx);
     cx.helper('contingencies');
-    const groups = [];
-    for (const [key, ...qs] of GROUPS) {
-      if (pinned(cx, key)) groups.push(`*(${cx.lit(qs)} if ${cx.val(key)} else [])`);
-      else if (cx.s[key]) for (const q of qs) groups.push(cx.lit(q));
-    }
-    if (pinned(cx, 'query')) groups.push(`*[q.strip() for q in str(${cx.val('query')}).split(",") if q.strip()]`);
-    else for (const q of String(cx.s.query || '').split(',').map(x => x.trim()).filter(Boolean)) groups.push(cx.lit(q));
-    if (cx.has('elements')) groups.push(cx.in('elements'));
-    return `define_contingencies(app, [${groups.join(', ')}], int(${cx.val('order')}), ${cx.val('inService')})`;
+    return contCall(cx, cx.has('elements') ? cx.in('elements') : null);
   },
   validate(cx) {
     notesOf(cx);
-    if (!GROUPS.some(g => cx.s[g[0]]) && !String(cx.s.query || '').trim() && !cx.has('elements')) cx.todo(`Choose what ${cx.label} takes out (lines, transformers, generators or other elements).`);
+    if (!contWhat(cx.s).length && !cx.has('elements')) cx.todo(`Choose what ${cx.label} takes out (lines, transformers, generators or other elements).`);
   },
 });
 
 defineBlock({
-  type: 'pf.cont.foreach', cat: CAT, kind: 'loop',
+  type: 'pf.cont.foreach', cat: CAT, kind: 'loop', version: 2,
   title: 'For each contingency',
-  desc: 'Repeats the Each pass steps for each outage: the base case first, then each contingency taken out of service (or opened by an event for a simulation). Always put back after.',
-  keywords: ['for each', 'contingency', 'N-1', 'N-2', 'outage', 'loop', 'security assessment', 'trip', 'restore', 'base case', 'contingency analysis'],
+  desc: 'Repeats the Each pass steps for each outage: the base case first, then each line, transformer or other element taken out of service (or opened by an event for a simulation).',
+  keywords: ['for each', 'contingency', 'N-1', 'N-2', 'outage', 'loop', 'security assessment', 'trip', 'restore', 'base case', 'contingency analysis', 'lines', 'transformers'],
   inputs: [
-    { id: 'conts', label: 'Contingencies', type: 'cset', tip: 'From Contingencies. Not wired: N-1 of the elements named in the settings.' },
+    { id: 'conts', label: 'Contingencies', type: 'cset', tip: 'Optional: from Contingencies. Not wired: the outages chosen in the settings.' },
     numInput('t', 'Outage time', 't', 's', 'For a simulation: when the elements open.'),
   ],
   outputs: [
     { id: 'cont', label: 'Contingency', type: 'cell', scope: 'body', var: 'contingency', tip: 'The contingency of this pass (shows its name in tables and messages).' },
-    { id: 'contname', label: 'Name', type: 'text', scope: 'body', var: 'contingency_name' },
-    { id: 'elements', label: 'Elements out', type: 'obj', scope: 'body', var: 'elements_out' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'contname', label: 'Name', type: 'text', scope: 'body', var: 'contingency_name', more: true },
+    { id: 'elements', label: 'Elements out', type: 'obj', scope: 'body', var: 'elements_out', more: true },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Contingency'),
-    { key: 'group', label: 'When nothing is wired: N-1 of', kind: 'text', default: '*.ElmLne', placeholder: 'e.g. *.ElmLne', tip: 'Name.Class with * wildcards; every matching element in service is one contingency.' },
+    ...CONT_CHOICES,
     { key: 'how', label: 'Take out by', kind: 'select', default: 'outserv', noPin: true,
       options: [['outserv', 'Setting it out of service (load flow, short circuit)'], ['event', 'A switch event at the outage time (simulation)']] },
     { key: 't', label: 'Outage time', kind: 'number', default: 1, unit: 's', showIf: (s) => s.how === 'event' },
     { key: 'base', label: 'Base case first (nothing out)', kind: 'bool', default: true, more: true },
     restoreSetting, onErrorSetting,
   ],
+  // Before version 2 the loop took one pattern (`group`, "*.ElmLne" by default) and made its N-1:
+  // that pattern is now Other elements, with the boxes off, so the same outages come out. A
+  // pinned pattern stays pinned (settingAlias carries the pin to `query` as well).
+  settingAlias: { group: 'query' },
+  migrate(s, fromSv) {
+    if (Number(fromSv) >= 2) return {};
+    const g = typeof s.group === 'string' ? s.group.trim() : '*.ElmLne';
+    return { lines: false, trafos: false, gens: false, xnets: false, query: g, order: '1', inService: true };
+  },
   ports(s) {
     return {
       inputs: [
-        { id: 'conts', label: 'Contingencies', type: 'cset', tip: 'From Contingencies. Not wired: N-1 of the elements named in the settings.' },
+        { id: 'conts', label: 'Contingencies', type: 'cset', tip: 'Optional: from Contingencies. Not wired: the outages chosen in the settings.' },
         ...(s.how === 'event' ? [numInput('t', 'Outage time', 't', 's', 'For a simulation: when the elements open.')] : []),
       ],
     };
   },
-  summary(s) { return `${s.base ? 'Base case, then ' : ''}each outage` + (s.how === 'event' ? ` as events at ${s.t} s` : ''); },
+  summary(s, node, wf) {
+    const wired = !!(wf && node && Array.isArray(wf.edges) && wf.edges.some(e => e && e.to === node.id && e.in === 'conts'));
+    const what = wired ? 'each outage' : `each N-${s.order} outage of ${contWhat(s).join(', ') || 'nothing chosen yet'}`;
+    return `${s.base ? 'Base case, then ' : ''}${what}` + (s.how === 'event' ? ` as events at ${s.t} s` : '');
+  },
   helpers: ['contingencies'],
   effects: { writes: ['model'], reads: [] },
   emit(cx) {
@@ -689,7 +733,7 @@ defineBlock({
     const c = cx.out('cont');
     cx.out('contname', `${c}.name`);
     cx.out('elements', `${c}.elements`);
-    const lines = [`${conts} = ${cx.has('conts') ? `list(${cx.in('conts')} or [])` : `define_contingencies(app, [${cx.val('group')}], 1, True)`}`];
+    const lines = [`${conts} = ${cx.has('conts') ? `list(${cx.in('conts')} or [])` : contCall(cx)}`];
     const base = cx.val('base');
     const n = `len(${conts}) + (1 if ${base} else 0)`;
     cx.out('count', n);
@@ -708,6 +752,6 @@ defineBlock({
   },
   validate(cx) {
     notesOf(cx);
-    if (!cx.has('conts') && !String(cx.s.group || '').trim()) cx.todo(`Wire Contingencies into ${cx.label}, or name the elements for its N-1 (for example *.ElmLne).`);
+    if (!cx.has('conts') && !contWhat(cx.s).length) cx.todo(`Choose what ${cx.label} takes out (lines, transformers, generators or other elements), or wire Contingencies into it.`);
   },
 });

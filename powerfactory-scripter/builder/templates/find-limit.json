@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -32,7 +33,7 @@
       "y": -300,
       "label": "About this template",
       "s": {
-        "text": "This searches the largest dispatch of Generator A for which the frequency after the contingency unit trips stays above the UFLS level (1 Hz below nominal, set on Frequency nadir), by halving the gap between a passing and a failing dispatch. A try whose load flow does not converge counts as a fail. Fill in the project, Generator A (it can be the contingency unit itself), the contingency unit, the busbar on Run RMS simulation and the dispatch range."
+        "text": "This searches the largest dispatch of Generator A for which the frequency after the contingency unit trips stays above the UFLS level (1 Hz below nominal, set on Frequency nadir), by halving the gap between a passing and a failing dispatch. Find limit reads UFLS at the end of each try (FALSE passes); a try whose load flow does not converge, or whose simulation stops early, counts as a fail. Fill in the project, Generator A (it can be the contingency unit itself), the contingency unit, the busbar on Run RMS simulation and the dispatch range."
       },
       "pin": [],
       "sv": 1
@@ -52,7 +53,8 @@
         "passes": "low",
         "bracket": "given",
         "onUnknown": "fail",
-        "integer": false
+        "integer": false,
+        "passIs": "no"
       },
       "pin": [
         "lower",
@@ -175,18 +177,6 @@
       "sv": 1
     },
     {
-      "id": "n9",
-      "type": "opt.report",
-      "x": 1920,
-      "y": 0,
-      "label": "",
-      "s": {
-        "passIs": "no"
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
       "id": "n10",
       "type": "flow.log",
       "x": 640,
@@ -254,62 +244,55 @@
     },
     {
       "id": "e6",
-      "from": "n7",
-      "out": "ok",
-      "to": "n9",
-      "in": "in"
-    },
-    {
-      "id": "e7",
       "from": "n3",
       "out": "done",
       "to": "n10",
       "in": "in"
     },
     {
-      "id": "e8",
+      "id": "e7",
       "from": "n10",
       "out": "next",
       "to": "n11",
       "in": "in"
     },
     {
-      "id": "e9",
+      "id": "e8",
       "from": "n3",
       "out": "value",
       "to": "n4",
       "in": "p"
     },
     {
-      "id": "e10",
+      "id": "e9",
       "from": "n7",
       "out": "r1",
       "to": "n8",
       "in": "series"
     },
     {
-      "id": "e11",
+      "id": "e10",
       "from": "n8",
       "out": "ufls",
-      "to": "n9",
+      "to": "n3",
       "in": "pass"
     },
     {
-      "id": "e12",
+      "id": "e11",
       "from": "n3",
       "out": "limit",
       "to": "n10",
       "in": "limit"
     },
     {
-      "id": "e13",
+      "id": "e12",
       "from": "n3",
       "out": "status",
       "to": "n10",
       "in": "status"
     },
     {
-      "id": "e14",
+      "id": "e13",
       "from": "n3",
       "out": "history",
       "to": "n11",

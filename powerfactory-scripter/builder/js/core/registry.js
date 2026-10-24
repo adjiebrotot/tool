@@ -29,6 +29,16 @@
 //     packages: ['matplotlib']  Python packages preflight() checks before connecting.
 //     varName(s, node) -> hint  a calculator's variable name when it has no label.
 //     pinLiteral(key, s) -> value  what a pinned setting's SETTINGS line holds (a parsed list).
+//     reports: true             Report this try: answers for its route of a search's try, so the
+//                               search's end-of-try input is not read again on that route.
+//     ends: 'pass' | 'loop' | 'workflow'  what a terminal ends (Skip, Stop the loop, Stop the
+//                               workflow); the palette and quick-add grey out the two that need
+//                               a loop or a search where there is none (ui/ops.js whyNotHere).
+//   A port may carry `more: true` (or a function (settings, { wired, srcPort })): the canvas
+//   folds it behind "+N more" while it is unwired (ui/ops.js foldedPorts); and an input of type
+//   'any' may carry `takes: [types]`, the values it can use, so quick-add greys it out for others.
+//   A setting may carry `meaning` (default: its key) when a block family shares its key with a
+//   different meaning (defineFamily below).
 //   The full emit contract (what emit returns per kind, the cx object) is at the top of
 //   core/codegen.js.
 //   A setting may carry `noPin: true`: the generator uses it while writing the code (a loop's
@@ -198,6 +208,48 @@ function checkPorts(flowOuts, inputs, outputs, fail) {
 export function getBlock(type) { return BLOCKS.get(type); }
 export function allBlocks() { return [...BLOCKS.values()]; }
 export function blocksIn(cat) { return allBlocks().filter(b => b.cat === cat); }
+
+// ---------------------------------------------------------------------------------------------
+// Block families: blocks that do one job in a few ways (the statistics, the six simulation
+// events, the graphs ...). The palette lists a family once, under its own title, and a click adds
+// its usual member (`dflt`); a member's Settings tab has a Kind switch between the members
+// (ui/ops.js switchKind), which changes the block's type and keeps its id, name, settings, pins
+// and wires. Nothing about a family is saved: a workflow holds the member's own type, as it
+// always did, so a family is words and grouping only and may be regrouped freely.
+//
+// A setting key two members share must mean the same thing in both, because a Kind switch
+// carries its value across (_audit/families/run.mjs holds this). Where it cannot, the setting
+// says what it means with `meaning` (default: its key); a switch between different meanings
+// gives the new kind's default instead. A value the reader left at the old kind's default takes
+// the new kind's default (an RMS run of 10 s becomes an EMT run of 0.5 s).
+//
+// defineFamily({ id, title, desc, keywords, members: [types, in order], dflt, convert? }) after
+// the members are defined; `convert` lists keys whose kind differs between members on purpose
+// (the value of a Number, a Text and a Yes / No), which settingsOf converts.
+const FAMILIES = new Map();
+const FAMILY_OF = new Map();
+
+export function defineFamily(fam) {
+  const fail = (m) => { throw new Error(`defineFamily: "${fam && fam.id}" ${m}`); };
+  if (!fam || typeof fam.id !== 'string' || !/^[a-z][a-z0-9_.]*$/.test(fam.id)) fail('needs an id');
+  if (FAMILIES.has(fam.id)) fail('is defined twice');
+  if (!fam.title) fail('needs a title');
+  const members = Array.isArray(fam.members) ? fam.members : [];
+  if (members.length < 2) fail('needs at least two members');
+  const defs = members.map(t => BLOCKS.get(t) || fail(`has an unknown member "${t}" (define the blocks first)`));
+  if (new Set(defs.map(d => d.cat)).size !== 1) fail('has members in different categories');
+  for (const t of members) if (FAMILY_OF.has(t)) fail(`member "${t}" is already in family "${FAMILY_OF.get(t)}"`);
+  const dflt = fam.dflt || members[0];
+  if (!members.includes(dflt)) fail('has a default that is not a member');
+  const full = Object.freeze({ keywords: [], desc: '', convert: [], ...fam, members: members.slice(), dflt, cat: defs[0].cat });
+  FAMILIES.set(fam.id, full);
+  for (const t of members) FAMILY_OF.set(t, fam.id);
+  return full;
+}
+export function familyOf(type) { const id = FAMILY_OF.get(type); return id ? FAMILIES.get(id) : null; }
+export function allFamilies() { return [...FAMILIES.values()]; }
+// What a setting means, for a Kind switch: its `meaning`, else its key.
+export function meaningOf(st) { return (st && (st.meaning || st.key)) || ''; }
 
 // Does this kind of block take the flow input `in`?
 export function hasFlowIn(def) {
@@ -381,7 +433,7 @@ function clone(v) {
 }
 
 // Only for tests: start from an empty registry.
-export function _resetForTests() { BLOCKS.clear(); }
+export function _resetForTests() { BLOCKS.clear(); FAMILIES.clear(); FAMILY_OF.clear(); }
 
 // ---------------------------------------------------------------------------------------------
 // Additions (wave 1, core). See the list at the top of this file.

@@ -10,6 +10,7 @@
 //   { op: 'removeEdge', edgeId }             remove one wire
 //   { op: 'moveToDone', edgeId, loopId }     move this wire's start to "After all passes" of the loop
 //   { op: 'addStart' }                       add a Start block
+//   { op: 'insertAfter', nodeId, type }      add a block of `type` right after this step, wired in
 //
 // Plain ES module, no DOM. Every function returns { level, msg, nodeId?, edgeId?, fix? }.
 
@@ -35,7 +36,8 @@ export const P = {
   portGone: (block, port, id, edgeId) => ({ level: 'error', msg: `A wire on ${q(block)} uses a port it no longer has ("${q(port)}"). Remove the wire and connect it again.`, nodeId: id, edgeId, fix: { label: 'Remove the wire', op: { op: 'removeEdge', edgeId } } }),
   wrongWire: (from, fromPort, to, toPort, why, id, edgeId) => ({ level: 'error', msg: `The wire from ${q(from)} (${portName(fromPort)}) to ${q(to)} (${portName(toPort)}) does not fit: ${why} Remove it.`, nodeId: id, edgeId, fix: { label: 'Remove the wire', op: { op: 'removeEdge', edgeId } } }),
   twoIntoInput: (block, port, id, edgeId) => ({ level: 'warning', msg: `Two wires go into ${portName(port)} of ${q(block)}. An input takes one wire, so only the first is used: remove the other.`, nodeId: id, edgeId, fix: { label: 'Remove the wire', op: { op: 'removeEdge', edgeId } } }),
-  twoFromFlowOut: (block, port, id, edgeId) => ({ level: 'warning', msg: `Two wires leave ${port && port.label ? port.label + ' of ' : ''}${q(block)}. A step leads to one next step, so only the first is used: remove the other.`, nodeId: id, edgeId, fix: { label: 'Remove the wire', op: { op: 'removeEdge', edgeId } } }),
+  parallelClash: (writer, reader, from, id) => ({ level: 'warning', msg: `${q(reader)} reads results on a parallel route after ${q(from)}, and ${q(writer)}, on a route the script runs before it, changes the model or runs a calculation, so ${q(reader)} reads what ${q(writer)} left. Put them one after the other instead.`, nodeId: id }),
+  parallelEnds: (term, from, id) => ({ level: 'warning', msg: `${q(term)} is on a parallel route after ${q(from)}. The routes run one after another, so when it ends the pass the routes after it in the script do not run. Move it to where the routes meet again.`, nodeId: id }),
   happyUnwired: (block, happy, fail, id) => ({ level: 'warning', msg: `${happy} of ${q(block)} is not wired while ${fail} is. Wire the step that should run when it is ${happy.toLowerCase()}.`, nodeId: id }),
 
   // ---- Values on the route
@@ -44,6 +46,8 @@ export const P = {
   insideSearch: (consumer, port, producer, search, id, edgeId) => ({ level: 'error', msg: `${q(consumer)} needs ${portName(port)} from ${q(producer)}, but values made inside the tries of ${q(search)} are not available after it. Use the After the search outputs of ${q(search)}, Report this try or Remember a value.`, nodeId: id, edgeId }),
   bodyEndOutside: (loop, port, id) => ({ level: 'error', msg: `${q(loop)} checks ${portName(port)} at the end of each pass, but that value is not made on every pass. Make it on the Each pass route of ${q(loop)} (not on a side branch) or before the loop.`, nodeId: id }),
   bodyEndOnSkip: (loop, id) => ({ level: 'warning', msg: `When a pass of ${q(loop)} ends early, its condition cannot be checked (the value is made later in the pass), so the loop goes on to the next pass.`, nodeId: id }),
+  bodyEndOutsideTry: (search, port, id) => ({ level: 'error', msg: `${q(search)} reads ${portName(port)} at the end of each try, but that value is not made on every try. Make it on the Each try route of ${q(search)} (not on a side branch), or report with Report this try.`, nodeId: id }),
+  bodyEndOnRouteTry: (search, id) => ({ level: 'warning', msg: `On a route of ${q(search)}'s tries that ends without the value its end-of-try input reads, the try gives no answer. Put Report this try on that route to say how it went.`, nodeId: id }),
   resultsAfterWrite: (reader, writer, id) => ({ level: 'error', msg: `${q(reader)} reads results after ${q(writer)} changed the model. Move it before ${q(writer)}, or run the calculation again first.`, nodeId: id }),
   resultsAfterWriteInLoop: (reader, writer, loop, id) => ({ level: 'error', msg: `${q(reader)} reads results at the start of each pass of ${q(loop)}, but ${q(writer)} changed the model on the pass before. Run a calculation before ${q(reader)} in the pass.`, nodeId: id }),
   monitorUnavailable: (consumer, port, run, id) => ({ level: 'error', msg: `${q(consumer)} needs ${portName(port)} recorded during ${q(run)}, but it is not known yet when the simulation runs. Pick the element on ${q(consumer)}, or loop over the elements with For each element after the simulation.`, nodeId: id }),

@@ -863,7 +863,7 @@ def final_value(series, last=0.0):
 
 # @helper first_cross
 # @needs sig_common
-def first_cross(series, level, direction="above", after=None, hold=0.0):
+def first_cross(series, level, direction="above", after=None, hold=0.0, pct=None, ref_t=None):
     """The first time a series reaches a level and stays there for `hold` seconds.
 
     direction "above" (value >= level) or "below" (value <= level); after: start looking at
@@ -871,9 +871,24 @@ def first_cross(series, level, direction="above", after=None, hold=0.0):
     is interpolated between samples. A crossing whose hold time runs past the end of the run
     does not count. hold 0 takes the first touch.
 
+    With pct the level is pct % of the series' own value at ref_t (s; default the first
+    workflow event, else the first sample), read as value_at does: at an event instant, the
+    value just before the event. FRT: pct 90 is 90 % of the power before the fault.
+
     Returns a SigResult: time (s), delay (time - after, s), found (True / False; None with no
-    data), level, after, reason."""
+    data), level (the one looked for), after, reason."""
     ts, ys = _sg_points(series)
+    if pct is not None:
+        p = as_float(pct)
+        if not ts or p is None:
+            return SigResult(time=None, delay=None, found=None, level=None, after=as_float(after),
+                             reason="no samples were recorded" if not ts else "no percentage given")
+        tr = _sg_t_event(series, ref_t, ts)
+        base = _sg_interp(ts, ys, tr)
+        if base is None:
+            return SigResult(time=None, delay=None, found=None, level=None, after=as_float(after),
+                             reason=f"the curve has no value at {tr:.4g} s to take {p:g} % of")
+        level = base * p / 100.0
     lv = as_float(level)
     if not ts or lv is None:
         return SigResult(time=None, delay=None, found=None, level=lv, after=as_float(after),

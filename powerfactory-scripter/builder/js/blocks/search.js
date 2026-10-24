@@ -47,15 +47,21 @@ const METHODS = [
   ['bayes', 'Bayesian (expensive runs; uses scikit-optimize when installed)'],
 ];
 
+// Read at the end of each try, as Repeat until reads its condition: the score of the try,
+// without a Report this try block (codegen.js writes it where a route of the try ends by itself).
+const SCORE_IN = { id: 'score', label: 'Score', type: 'num', at: 'bodyEnd',
+  tip: 'Read at the end of each try: the number to make small (or large). Or use Report this try on the Each try route.' };
+
 const optimisePorts = (s) => {
   const vars = variablesOf(s);
   return {
+    inputs: [SCORE_IN],
     outputs: [
       ...vars.map(v => ({ id: v.id, label: v.name, type: 'num', scope: 'body', var: v.name, tip: 'The value of this try.' })),
       ...vars.map(v => ({ id: 'best_' + v.id, label: `Best ${v.name}`, type: 'num', scope: 'done', var: `best ${v.name}` })),
       { id: 'score', label: 'Best score', type: 'num', scope: 'done', var: 'best_score' },
-      { id: 'found', label: 'Found', type: 'bool', scope: 'done', var: 'found', tip: 'Yes when at least one try passed and gave a score.' },
-      { id: 'history', label: 'History', type: 'hist', scope: 'done', var: 'history', tip: 'Every try, for Draw convergence curve.' },
+      { id: 'found', label: 'Found', type: 'bool', scope: 'done', var: 'found', more: true, tip: 'Yes when at least one try passed and gave a score.' },
+      { id: 'history', label: 'History', type: 'hist', scope: 'done', var: 'history', more: true, tip: 'Every try, for Draw convergence curve.' },
     ],
   };
 };
@@ -65,6 +71,7 @@ defineBlock({
   title: 'Optimise',
   desc: 'Tries values of one or more variables to make a score as small (or large) as possible, e.g. the dispatch with the best nadir. Report this try gives each score.',
   keywords: ['optimise', 'optimize', 'minimise', 'maximise', 'best', 'search', 'tune', 'parameter', 'differential evolution', 'Nelder-Mead', 'grid search', 'objective'],
+  inputs: [SCORE_IN],
   outputs: optimisePorts({ vars: [{ id: 'v1', name: 'Value' }] }).outputs,
   settings: [
     { key: 'vars', label: 'Variables', kind: 'list', rowPrefix: 'v', rowLabel: 'Variable', addLabel: 'variable',
@@ -105,6 +112,7 @@ defineBlock({
       params,
       labels: vars.map(v => v.name),
       goal: cx.s.goal === 'max' ? 'max' : 'min',
+      bodyEnd: cx.has('score') ? (bx) => [`${bx.trial}.report(score=${bx.in('score')})`] : undefined,
       call: [`${res} = optimise(${cx.fn}, [${spec.join(', ')}], goal=${cx.lit(cx.s.goal === 'max' ? 'max' : 'min')}, method=${cx.val('method')}, ` +
         `max_tries=${cx.val('maxTries')}, seed=${cx.val('seed')}, grid_steps=${cx.val('gridSteps')}, label=${cx.lit(cx.label)})`],
     };
@@ -125,6 +133,17 @@ defineBlock({
 
 const PASSES = [['low', 'Low values pass (find the largest that passes)'], ['high', 'High values pass (find the smallest that passes)']];
 
+// Read at the end of each try (see SCORE_IN): whether the try passed.
+const PASS_IN = { id: 'pass', label: 'Pass', type: 'any', takes: ['bool', 'text', 'num', 'cell'], at: 'bodyEnd',
+  tip: 'Read at the end of each try: yes / no, `PASS` / `FAIL` or `TRUE` / `FALSE`; empty or `UNDEFINED` is no answer. Or use Report this try on the Each try route.' };
+const PASS_IS = [['yes', 'The value wired in'], ['no', 'The opposite (for example UFLS FALSE passes)']];
+// "UFLS FALSE passes": the opposite of the value, with UNDEFINED kept unknown (logic "not").
+function passExpr(cx, expr) {
+  if (cx.s.passIs !== 'no') return expr;
+  cx.helper('logic');
+  return `logic("not", ${expr})`;
+}
+
 defineBlock({
   type: 'opt.limit', cat: CAT, kind: 'callback',
   title: 'Find limit',
@@ -135,19 +154,20 @@ defineBlock({
     { id: 'upper', label: 'Highest value', type: 'num', fallback: 'upper' },
     { id: 'tol', label: 'Tolerance', type: 'num', fallback: 'tol', tip: 'The search ends when the gap between passing and failing is this small.' },
     { id: 'maxSteps', label: 'Max tries', type: 'num', fallback: 'maxSteps' },
+    PASS_IN,
   ],
   outputs: [
     { id: 'value', label: 'Value', type: 'num', scope: 'body', var: 'value', tip: 'The value of this try.' },
     { id: 'limit', label: 'Limit', type: 'num', scope: 'done', var: 'limit', tip: 'The last value that passed (always a value that was tried); empty when none passed.' },
-    { id: 'found', label: 'Found', type: 'bool', scope: 'done', var: 'limit_found', tip: 'Yes when the search narrowed down to the tolerance.' },
+    { id: 'found', label: 'Found', type: 'bool', scope: 'done', var: 'limit_found', more: true, tip: 'Yes when the search narrowed down to the tolerance.' },
     { id: 'status', label: 'Status', type: 'text', scope: 'done', var: 'search_status', tip: '`DONE`, `ALL PASS`, `ALL FAIL`, `INCONSISTENT`, `MAX STEPS`, `STOPPED` or `UNKNOWN`.' },
-    { id: 'passing', label: 'Passing value', type: 'num', scope: 'done', var: 'passing' },
-    { id: 'failing', label: 'Failing value', type: 'num', scope: 'done', var: 'failing' },
-    { id: 'history', label: 'History', type: 'hist', scope: 'done', var: 'history', tip: 'Every try, for Draw convergence curve.' },
+    { id: 'passing', label: 'Passing value', type: 'num', scope: 'done', var: 'passing', more: true },
+    { id: 'failing', label: 'Failing value', type: 'num', scope: 'done', var: 'failing', more: true },
+    { id: 'history', label: 'History', type: 'hist', scope: 'done', var: 'history', more: true, tip: 'Every try, for Draw convergence curve.' },
   ],
   settings: [
-    { key: 'name', label: 'Name (table column and file names)', kind: 'text', default: '', placeholder: 'The block\'s name, or Value',
-      tip: 'What the searched value is called in results tables, file names and the log.' },
+    { key: 'name', label: 'Name (table column and file names)', kind: 'text', default: '', more: true, meaning: 'passName', placeholder: 'The name on the canvas, or Value',
+      tip: 'What the searched value is called in results tables, file names and the log, when that is not the name on the canvas. Empty: the name on the canvas, or "Value".' },
     { key: 'lower', label: 'Lowest value', kind: 'number', default: 0 },
     { key: 'upper', label: 'Highest value', kind: 'number', default: 100 },
     { key: 'tol', label: 'Tolerance', kind: 'number', default: 1, min: 0, tip: 'The search ends when the gap between passing and failing is this small.' },
@@ -160,6 +180,9 @@ defineBlock({
       options: [['stop', 'Stops the search (status UNKNOWN)'], ['fail', 'Counts as a fail'], ['pass', 'Counts as a pass']],
       tip: 'For example a load flow that does not converge, or UFLS UNDEFINED.' },
     { key: 'integer', label: 'Whole numbers only', kind: 'bool', default: false, more: true },
+    { key: 'passIs', label: 'Pass is', kind: 'select', default: 'yes', noPin: true, options: PASS_IS,
+      showIf: (s, cx) => !(cx && cx.wired) || cx.wired.has('pass'),
+      tip: 'For the value wired into Pass. The opposite turns yes into no and TRUE into FALSE, so UFLS can be wired straight in; UNDEFINED stays unknown.' },
   ],
   summary(s) { return `${s.lower} to ${s.upper}, within ${s.tol}`; },
   helpers: ['find_limit'],
@@ -176,6 +199,7 @@ defineBlock({
       labels: [name],
       goal: 'min',
       ctx: [cx.lit(name), v],
+      bodyEnd: cx.has('pass') ? (bx) => [`${bx.trial}.report(ok=${passExpr(bx, bx.in('pass'))})`] : undefined,
       call: [`${res} = find_limit(${cx.fn}, ${cx.in('lower')}, ${cx.in('upper')}, ${cx.in('tol')}, max_steps=${cx.in('maxSteps')}, ` +
         `passes=${cx.val('passes')}, bracket=${cx.val('bracket')}, on_unknown=${cx.val('onUnknown')}, label=${cx.lit(name)}, integer=${cx.val('integer')})`],
     };
@@ -190,32 +214,45 @@ defineBlock({
 // ---------------------------------------------------------------------------------------------
 // Report this try
 
+const ANSWERS = [['wired', 'The Pass value wired in'], ['pass', 'Pass'], ['fail', 'Fail'], ['none', 'No answer']];
+const SCORE_REPORT = { id: 'score', label: 'Score', type: 'num', tip: 'For Optimise: the number to make small (or large).' };
+const PASS_REPORT = { id: 'pass', label: 'Pass', type: 'any', takes: ['bool', 'text', 'num', 'cell'], tip: 'For Find limit: yes / no, or a `PASS` / `FAIL` or `TRUE` / `FALSE` text. Empty or `UNDEFINED`: no answer.' };
+
 defineBlock({
-  type: 'opt.report', cat: CAT, kind: 'action', within: 'callback',
+  type: 'opt.report', cat: CAT, kind: 'action', within: 'callback', reports: true,
   title: 'Report this try',
   desc: 'Tells Optimise or Find limit how this try went: a score, a pass (yes, no, or unknown such as UFLS UNDEFINED), or both. Only works on the Each try route.',
-  keywords: ['report', 'score', 'objective', 'pass', 'fail', 'result of try', 'search', 'optimise', 'find limit', 'trial', 'feedback'],
-  inputs: [
-    { id: 'score', label: 'Score', type: 'num', tip: 'For Optimise: the number to make small (or large).' },
-    { id: 'pass', label: 'Pass', type: 'any', tip: 'For Find limit: yes / no, or a `PASS` / `FAIL` or `TRUE` / `FALSE` text. Empty or `UNDEFINED`: no answer.' },
-  ],
+  keywords: ['report', 'score', 'objective', 'pass', 'fail', 'result of try', 'search', 'optimise', 'find limit', 'trial', 'feedback', 'unstable', 'no answer'],
+  inputs: [SCORE_REPORT, PASS_REPORT],
   settings: [
-    { key: 'passIs', label: 'Pass is', kind: 'select', default: 'yes', more: true, noPin: true,
-      options: [['yes', 'The value wired in'], ['no', 'The opposite (for example UFLS FALSE passes)']],
+    { key: 'answer', label: 'Report', kind: 'select', default: 'wired', noPin: true, options: ANSWERS,
+      tip: 'Pass, Fail or No answer says so whatever is wired: for a route that only ends one way, such as a simulation that stopped early.' },
+    { key: 'passIs', label: 'Pass is', kind: 'select', default: 'yes', more: true, noPin: true, options: PASS_IS,
+      showIf: (s) => s.answer === 'wired',
       tip: 'The opposite turns yes into no and TRUE into FALSE, so UFLS can be wired straight in; UNDEFINED stays unknown.' },
   ],
-  summary(s) { return s.passIs === 'no' ? 'Passes when the wired value is no / FALSE' : ''; },
+  // A fixed answer has no Pass value to take, so the port is not there (a wire left on it is
+  // kept and flagged).
+  ports(s) { return { inputs: s.answer === 'wired' ? [SCORE_REPORT, PASS_REPORT] : [SCORE_REPORT] }; },
+  summary(s) {
+    if (s.answer === 'pass') return 'Reports a pass';
+    if (s.answer === 'fail') return 'Reports a fail';
+    if (s.answer === 'none') return 'Reports no answer';
+    return s.passIs === 'no' ? 'Passes when the wired value is no / FALSE' : '';
+  },
   helpers: ['logic'],
   emit(cx) {
     if (!cx.trial) return ['pass  # Report this try only works on the Each try route of Optimise or Find limit'];
-    let ok = 'None';
-    if (cx.has('pass')) {
-      ok = cx.in('pass');
-      if (cx.s.passIs === 'no') { cx.helper('logic'); ok = `logic("not", ${ok})`; }
-    }
-    return [`${cx.trial}.report(score=${cx.has('score') ? cx.in('score') : 'None'}, ok=${ok})`];
+    const score = cx.has('score') ? cx.in('score') : 'None';
+    const a = cx.s.answer;
+    if (a === 'pass' || a === 'fail') return [`${cx.trial}.report(score=${score}, ok=${a === 'pass' ? 'True' : 'False'})`];
+    // No answer: a wired score still counts, and an unknown goes in beside it (Trial.report with
+    // nothing records an unknown).
+    if (a === 'none') return score === 'None' ? [`${cx.trial}.report()`] : [`${cx.trial}.report(score=${score})`, `${cx.trial}.report()`];
+    const ok = cx.has('pass') ? passExpr(cx, cx.in('pass')) : 'None';
+    return [`${cx.trial}.report(score=${score}, ok=${ok})`];
   },
   validate(cx) {
-    if (!cx.has('score') && !cx.has('pass')) cx.todo(`Connect a Score or a Pass to ${cx.label}, so the search knows how the try went.`);
+    if (cx.s.answer === 'wired' && !cx.has('score') && !cx.has('pass')) cx.todo(`Connect a Score or a Pass to ${cx.label}, so the search knows how the try went.`);
   },
 });
