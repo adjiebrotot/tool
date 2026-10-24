@@ -838,7 +838,7 @@ body.pfb-gs-open { overflow: hidden; }
 .pfb-gs-close .ico { width: 18px; height: 18px; }
 .pfb-gs-body { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 380px); }
 .pfb-gs-view { min-width: 0; overflow: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; background: var(--bg-subtle); border-right: 1px solid var(--border); }
-.pfb-gs-kindrows { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; }
+.pfb-gs-kinds { align-self: flex-start; width: auto; max-width: 100%; }
 .pfb-gs-canvas { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; line-height: 0; background: var(--card-bg); }
 .pfb-gs-canvas svg { display: block; width: 100%; height: auto; }
 .pfb-gs-canvas.pfb-gs-clear { background: repeating-conic-gradient(color-mix(in srgb, var(--muted) 22%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px; }
@@ -887,6 +887,5 @@ body.pfb-gs-open { overflow: hidden; }
   .pfb-gs-head { padding: 10px 8px 8px 16px; }
   .pfb-gs-note, .pfb-gs-cap { display: none; }
   .pfb-gs-foot .btn-primary { flex: 1 1 auto; }
-  .pfb-gs-kinds .seg-btn { padding: 5px 9px; }
   .pfb-gs-form { padding: 0 12px 12px; }
 }

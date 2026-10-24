@@ -56,21 +56,15 @@ export function mountGraphStyle(app) {
     const close = iconButton('close', 'Close. Your changes are already kept', 'pfb-gs-close');
     close.addEventListener('click', closeIt);
     form = el('div', { class: 'pfb-gs-form' });
-    // Every graph the script draws, in two rows: lines and bars, then maps and 3D.
-    const seg = el('div', { class: 'pfb-gs-kindrows' });
+    // Every graph the script draws, in one dropdown: lines and bars, then maps and 3D.
+    const seg = el('select', { class: 'sel-input pfb-gs-kinds', 'aria-label': 'Sample graph' });
     for (const [row, words] of [['lines', 'Lines and bars'], ['maps', 'Maps and 3D']]) {
-      const group = el('div', { class: 'seg-group pfb-gs-kinds', role: 'group', 'aria-label': 'Sample graph: ' + words.toLowerCase() });
-      for (const [k, name] of PREVIEW_KINDS.filter(x => x[2] === row)) {
-        const b = el('button', { type: 'button', class: 'seg-btn' + (k === kind ? ' active' : ''), dataset: { kind: k }, 'aria-pressed': k === kind ? 'true' : 'false', text: name });
-        b.addEventListener('click', () => {
-          kind = k; lsSet(LS_KIND, k);
-          for (const x of seg.querySelectorAll('.seg-btn')) { const on = x.dataset.kind === k; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); }
-          paintPreview();
-        });
-        group.appendChild(b);
-      }
+      const group = el('optgroup', { label: words });
+      for (const [k, name] of PREVIEW_KINDS.filter(x => x[2] === row)) group.appendChild(el('option', { value: k, text: name }));
       seg.appendChild(group);
     }
+    seg.value = kind;
+    seg.addEventListener('change', () => { kind = seg.value; lsSet(LS_KIND, kind); paintPreview(); });
     view = el('div', { class: 'pfb-gs-canvas' });
     capEl = el('p', { class: 'pfb-gs-cap' });
     const reset = el('button', { type: 'button', class: 'btn-secondary', text: '↺ Reset', title: 'Put the Adjie Brotools style back (Undo brings yours back)' });

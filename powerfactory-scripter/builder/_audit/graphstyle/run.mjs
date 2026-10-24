@@ -523,7 +523,7 @@ else {
       ok(await page.isVisible('.pfb-gs-canvas svg'), 'a preview is drawn');
       const { PREVIEW_KINDS } = await imp('js/ui/graphpreview.js');
       for (const k of PREVIEW_KINDS.map(x => x[0]).reverse()) {
-        await page.click('.pfb-gs-kinds [data-kind="' + k + '"]');
+        await page.selectOption('.pfb-gs-kinds', k);
         ok(await page.isVisible('.pfb-gs-canvas svg'), 'the ' + k + ' preview is drawn');
       }
       eq(await page.$$eval('.pfb-gs-tpl', b => b.map(x => x.dataset.tpl)), G.TEMPLATES.map(t => t.id), 'every template is offered');
