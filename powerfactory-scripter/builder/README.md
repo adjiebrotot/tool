@@ -151,6 +151,20 @@ it still draws as it did and is still named after it.
   of the spots around the point (beside, under, over, 2 pt at a time out to 48 pt) it takes the
   one that crosses the least of the curves, limit and event lines, other labels, the key and the
   plot's edge. `graphpreview.js` places it the same way (`MARK_SPOTS`).
+- The key never covers data. `legend: "inside"` is placed by `_po_inside_key` after the layout,
+  not by matplotlib's `loc="best"` (which only covers the least, and with many lines covers
+  most of them): the first of `_PO_INSIDE_LOCS` (corners, then the middle of each side), with
+  its own columns and then one more, where it covers no curve, dot, limit or event line, bar,
+  band or word; with none clear it goes under the graph. Under or over the graph its rows are
+  filled evenly; to the right it takes more columns rather than run past 80 % of the height.
+  Lines that are all passes of one loop ("Dispatch (MW) = 100" ...) write the loop's name once,
+  as the key's title (`_po_key_title`). `graphpreview.js` does the same (`INSIDE_LOCS`,
+  `keyTitle`).
+- A 3D graph's numbers and axis titles lie outside its axes' box, where tight_layout does not
+  look: `_po_fit3d` shrinks the box until they clear the colour bar, the credit and the edges.
+- The modal's sample graphs (`PREVIEW_KINDS`) are every kind the script draws: time series,
+  many passes, 2D lines, points, bars, a search (convergence), heat map, 3D surface, wire frame
+  and points. Their ids are kept in the reader's browser: add, never rename.
 - A script that draws a graph gets `GRAPH_STYLE = {...}` in SETTINGS, one key per line with its
   choices in a comment; `outputs.py` `_po_st` reads it over `_PO_DEFAULT` with the same checks as
   `normalizeStyle`. Edited in the .py, it is read back on Open (`readBackGraphStyle`); a value
@@ -159,8 +173,9 @@ it still draws as it did and is still named after it.
   values and the ramp ids. A key added later must default to the look before it. A key a newer
   Builder saved is kept on the workflow untouched.
 - `_PO_DEFAULT` must equal the `brotools` template, and `_PO_RAMPS`, `_PO_CHOICES`,
-  `_PO_RANGES`, `_PO_LINE_DASHES` and `_PO_MARK_SPOTS` their twins in `graphstyle.js` and
-  `graphpreview.js`: `_audit/graphstyle/run.mjs` holds them together.
+  `_PO_RANGES`, `_PO_LINE_DASHES`, `_PO_MARK_SPOTS`, `_PO_INSIDE_LOCS` and `_po_key_title`
+  their twins in `graphstyle.js` and `graphpreview.js`: `_audit/graphstyle/run.mjs` holds
+  them together.
 
 ## 4. Blocks
 

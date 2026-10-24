@@ -15,6 +15,8 @@
 //   (e) the study package brings DM Sans when the graphs use it;
 //   (f) matplotlib draws every template (PNG of the right size, transparent, SVG and PDF copies,
 //       DM Sans picked up from a fonts folder beside the script), when matplotlib is installed;
+//       a key inside the graph covers no line, point or bar (else it goes under the graph), and
+//       a 3D graph's numbers and axis titles clear its colour bar and the credit at the foot;
 //   (g) the page: the button in the workflow's settings and on a graph block, the modal, a
 //       template, a choice, a colour, undo, Escape, phone width, no console errors (Playwright).
 //
@@ -210,6 +212,28 @@ await test('line patterns and the places a mark\'s label may go: the preview and
     MARK_SPOTS.map(([dx, dy, ha, va, f]) => [dx, dy, ha, va, Math.round(f * 1e6) / 1e6]), 'the label spots');
 });
 
+await test('the key: its places inside and its title from a loop\'s name, the same in the preview and the script', async () => {
+  const { INSIDE_LOCS, keyTitle } = await imp('js/ui/graphpreview.js');
+  const CASES = [
+    ['Dispatch (MW) = 100', 'Dispatch (MW) = 125'],
+    ['Dispatch (MW) = 100', 'Load = 125'],
+    ['Study case = Base, Dispatch = 100', 'Study case = Base, Dispatch = 125'],
+    ['Bus 5', 'Bus 7'],
+    ['Dispatch (MW) = 100'],
+    ['Dispatch (MW) = 100', 'Bus 7'],
+    [' = 1', ' = 2'],
+    ['a = b = c', 'a = d'],
+  ];
+  eq(CASES.map(keyTitle), ['Dispatch (MW)', null, null, null, null, null, null, null], 'the page');
+  if (!hasPython) { skipped.push('python'); return; }
+  const got = python([
+    'NS = loader.load(None, {"OUTPUT_DIR": ' + JSON.stringify(TMP) + '}, LIB)',
+    'print("<<JSON>>" + json.dumps({"locs": NS["_PO_INSIDE_LOCS"], "titles": [NS["_po_key_title"](c) for c in json.loads(sys.argv[1])]}))',
+  ].join('\n'), [JSON.stringify(CASES)]);
+  eq(got.locs, INSIDE_LOCS, 'the places inside');
+  eq(got.titles, CASES.map(keyTitle), 'the titles');
+});
+
 await test('line colours: the page\'s preview and the script pick the same', () => {
   if (!hasPython) { skipped.push('python'); return; }
   const styles = G.TEMPLATES.map(t => t.style);
@@ -373,11 +397,80 @@ await test('matplotlib draws every template: PNG size, transparency, SVG and PDF
   });
 });
 
+await test('matplotlib: a key inside covers no data (else it goes under the graph); 3D numbers clear the colour bar and the foot', () => {
+  if (!hasMpl) { skipped.push('matplotlib'); return; }
+  const styles = G.TEMPLATES.map(t => t.style).concat([{ ...G.defaultStyle(), template: 'x-inside', legend: 'inside', legend_frame: true }]);
+  const got = python([
+    'import math',
+    'out = []',
+    'def dip(t, depth, tau, rec):',
+    '    if t < 1: return 50.0',
+    '    x = t - 1',
+    '    return 50 - depth * (1 - math.exp(-x / tau)) * math.exp(-x / 6) - rec * (1 - math.exp(-x / 3))',
+    'for st in json.loads(sys.argv[1]):',
+    '    NS = loader.load(None, {"OUTPUT_DIR": os.getcwd(), "WORKFLOW_NAME": "key_" + st["template"], "GRAPH_STYLE": st, "__file__": os.path.join(os.getcwd(), "study.py")}, LIB)',
+    '    real = NS["_po_save"]',
+    '    seen = []',
+    '    def spy(fig, stem, real=real, seen=seen, NS=NS):',
+    '        path = real(fig, stem)',
+    '        r = fig.canvas.get_renderer()',
+    '        for ax in fig.axes:',
+    '            if getattr(ax, "name", "") == "3d":',
+    '                tb = ax.get_tightbbox(r)',
+    '                bars = [o.get_tightbbox(r) for o in fig.axes if o is not ax]',
+    '                foot = 14.0 / 72.0 * fig.dpi',
+    '                seen.append({"stem": stem, "d3": True, "bar": bool(all(tb.x1 <= b.x0 + 1 for b in bars)), "foot": bool(tb.y0 >= foot - 1),',
+    '                             "edges": bool(tb.x0 >= -1 and tb.x1 <= fig.bbox.width + 1 and tb.y1 <= fig.bbox.height + 1)})',
+    '                continue',
+    '            leg = ax.get_legend()',
+    '            if leg is None: continue',
+    '            e = leg.get_window_extent(r)',
+    '            box = (e.x0, e.y0, e.x1, e.y1)',
+    '            hits = 0',
+    '            for ln in ax.get_lines():',
+    '                xy = ln.get_transform().transform(ln.get_xydata())',
+    '                if str(ln.get_linestyle()) not in ("None", "none", ""):',
+    '                    hits += sum(1 for a, b in zip(xy, xy[1:]) if NS["_po_seg_in"](a[0], a[1], b[0], b[1], box) > 0)',
+    '                if str(ln.get_marker()) not in ("None", "none", ""):',
+    '                    hits += sum(1 for a in xy if box[0] <= a[0] <= box[2] and box[1] <= a[1] <= box[3])',
+    '            for p in ax.patches:',
+    '                b = p.get_window_extent(r)',
+    '                hits += 1 if min(b.x1, box[2]) > max(b.x0, box[0]) and min(b.y1, box[3]) > max(b.y0, box[1]) else 0',
+    '            seen.append({"stem": stem, "hits": hits})',
+    '        return path',
+    '    NS["_po_save"] = spy',
+    '    S = NS["Series"]',
+    '    ts = [i * 0.05 for i in range(401)]',
+    '    many = [S(ts, [dip(t, 0.35 + 0.06 * i, 1.1, 0.12 + 0.025 * i) for t in ts], "Dispatch (MW) = %d" % (100 + 25 * i), "Hz") for i in range(12)]',
+    '    three = [S(ts, [dip(t, 0.9 - 0.15 * i, 1.2, 0.35) for t in ts], "Bus %d" % i, "Hz", [(1.0, "Trip")]) for i in range(3)]',
+    '    NS["plot_series"](many, title="Every pass", ylabel="Frequency", stem="many")',
+    '    NS["plot_series"](three, title="Frequency", ylabel="Frequency", limits=[(49.2, "UFLS")], stem="three")',
+    '    NS["plot_xy"](["L1", "L2", "L3", "L4"], {"Base": [62, 81, 95, 71], "N-1": [74, 97, 108, 85]}, kind="bar", limits=[(100, "100 %")], stem="bars")',
+    '    xs = [100 + 25 * i for i in range(9)]; ys = [-50 + 25 * j for j in range(7)]',
+    '    X = [a for b in ys for a in xs]; Y = [b for b in ys for a in xs]; Z = [0.8 + a * a / 40000 + b * b / 9000 for a, b in zip(X, Y)]',
+    '    for kd in ("surface", "wireframe", "scatter"):',
+    '        NS["plot_3d"](X, Y, Z, kind=kd, title="Losses", xlabel="Dispatch", xunit="MW", ylabel="Q", yunit="Mvar", zlabel="Loss", zunit="MW", stem="d3_" + kd)',
+    '    out.append({"seen": seen, "errors": NS["_LOG"]["errors"]})',
+    'print("<<JSON>>" + json.dumps(out))',
+  ].join('\n'), [JSON.stringify(styles)]);
+  styles.forEach((st, i) => {
+    const r = got[i];
+    eq(r.errors, 0, st.template + ': no graph failed');
+    eq(r.seen.filter(x => x.d3).length, 3, st.template + ': three 3D graphs');
+    for (const x of r.seen) {
+      if (x.d3) { ok(x.bar && x.foot && x.edges, st.template + ' ' + x.stem + ': 3D numbers and titles clear: ' + JSON.stringify(x)); continue; }
+      eq(x.hits, 0, st.template + ' ' + x.stem + ': the key covers no data');
+    }
+  });
+});
+
 // ---------------------------------------------------------------------------------------------
 // (g) The page
 
 let pw = null;
 try { pw = (await import('file:///D:/opt/node22/lib/node_modules/playwright/index.js')).default; } catch (e) { pw = null; }
+// Elsewhere: Playwright installed for Node (found through NODE_PATH, as a global install is).
+if (!pw) { try { pw = (await import('node:module')).createRequire(import.meta.url)('playwright'); } catch (e) { pw = null; } }
 
 if (!pw) skipped.push('Playwright');
 else {
@@ -428,8 +521,9 @@ else {
       await page.click('#pfbInspector .pfb-gs-open');
       await page.waitForSelector('.pfb-gs-overlay:not([hidden])');
       ok(await page.isVisible('.pfb-gs-canvas svg'), 'a preview is drawn');
-      for (const k of ['bars', 'many', 'heat', 'series']) {
-        await page.click('.pfb-gs-kinds [data-kind="' + k + '"]');
+      const { PREVIEW_KINDS } = await imp('js/ui/graphpreview.js');
+      for (const k of PREVIEW_KINDS.map(x => x[0]).reverse()) {
+        await page.selectOption('.pfb-gs-kinds', k);
         ok(await page.isVisible('.pfb-gs-canvas svg'), 'the ' + k + ' preview is drawn');
       }
       eq(await page.$$eval('.pfb-gs-tpl', b => b.map(x => x.dataset.tpl)), G.TEMPLATES.map(t => t.id), 'every template is offered');
