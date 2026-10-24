@@ -364,13 +364,14 @@ def _po_title(ax, title, context=True):
                     ha="left" if left else "center", va="bottom")
 
 
-def _po_legend(ax, handles=None, labels=None):
+def _po_legend(ax, handles=None, labels=None, where=None):
     # The key where the style puts it: under the graph (one row, or as many as the width
     # needs, above the credit), above it (under the title), to its right, inside it, or none.
+    # An inside key is placed for good by _po_save (_po_inside_key), once the layout is done.
     st = _po_s()
     if handles is None:
         handles, labels = ax.get_legend_handles_labels()
-    where = st["legend"]
+    where = where or st["legend"]
     if not handles or where == "none":
         return None
     fig = ax.figure
@@ -378,37 +379,188 @@ def _po_legend(ax, handles=None, labels=None):
     kw = {"fontsize": fs, "frameon": bool(st["legend_frame"]), "handlelength": 2.0, "columnspacing": 1.6}
     if st["legend_frame"]:
         kw.update(facecolor=st["plot_background"], edgecolor=st["grid"], framealpha=1.0)
+    given = list(labels)
+    head = _po_key_title(given)
+    if head:
+        labels = [str(v).split(" = ", 1)[1] for v in given]
+        kw.update(title=head, title_fontsize=fs)
     renderer = fig.canvas.get_renderer()
     w_px, h_px = fig.get_size_inches() * fig.dpi
     n = len(handles)
     if where == "inside":
-        leg = ax.legend(handles, labels, loc="best", ncol=1 if n <= 10 else 2, **kw)
+        ax.pfb_inside = (handles, labels, kw, given)
+        leg = ax.legend(handles, labels, loc="upper right", ncol=1 if n <= 10 else 2, **kw)
     elif where == "right":
-        leg = ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0,
-                        ncol=1 if n <= 16 else 2, **kw)
+        # One column (two past 16 lines), or as many more as keep it within the graph's height.
+        leg = None
+        for ncol in range(1 if n <= 16 else 2, n + 1):
+            leg = ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0,
+                            ncol=ncol, **kw)
+            if leg.get_window_extent(renderer).height <= h_px * 0.8:
+                break
     else:
         left = st["title_align"] == "left"
         foot = 16.0 / 72.0 * fig.dpi / h_px
         leg = None
-        for ncol in range(min(n, 12), 0, -1):
+
+        def make(ncol):
             if leg is not None:
                 leg.remove()
             if where == "top":
-                leg = ax.legend(handles, labels, loc="lower left" if left else "lower center",
-                                bbox_to_anchor=(0.0 if left else 0.5, 1.0), borderaxespad=0.4, ncol=ncol, **kw)
-            else:
-                leg = fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, foot),
-                                 borderaxespad=0.0, ncol=ncol, **kw)
+                return ax.legend(handles, labels, loc="lower left" if left else "lower center",
+                                 bbox_to_anchor=(0.0 if left else 0.5, 1.0), borderaxespad=0.4, ncol=ncol, **kw)
+            return fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, foot),
+                              borderaxespad=0.0, ncol=ncol, **kw)
+        for ncol in range(min(n, 12), 0, -1):
+            leg = make(ncol)
             if leg.get_window_extent(renderer).width <= w_px * 0.92 or ncol == 1:
                 break
+        # Rows filled evenly: as few columns as keep that many rows (12 lines in 11 columns
+        # would leave one alone on a second row; 6 columns hold them in two full rows).
+        even = -(-n // -(-n // ncol))
+        if even != ncol:
+            leg = make(even)
         height = leg.get_window_extent(renderer).height
         if where == "top":
             _PO["top"] = height / fig.dpi * 72.0 + 2.0
         else:
             _PO["bottom"] = foot + height / h_px
+    _po_key_ink(leg)
+    return leg
+
+
+def _po_key_title(labels):
+    # Every line a pass of one loop ("Dispatch (MW) = 100", "Dispatch (MW) = 125" ...): the
+    # loop's name, written once as the key's title, each line then named by its value alone.
+    # None when the lines are named any other way (or by more than one loop value).
+    parts = [str(v).split(" = ", 1) for v in labels]
+    if len(parts) < 2 or any(len(p) != 2 or not p[0].strip() or " = " in p[1] for p in parts):
+        return None
+    head = parts[0][0]
+    return head if all(p[0] == head for p in parts) else None
+
+
+def _po_key_ink(leg):
+    st = _po_s()
     for t in leg.get_texts():
         t.set_color(st["text"])
-    return leg
+    leg.get_title().set_color(st["text"])
+
+
+def _po_fit3d(fig, foot):
+    # mplot3d writes its numbers and axis titles outside the axes' box, where tight_layout does
+    # not look: on a small figure they run into the colour bar and the credit at the foot. The
+    # box is made smaller (it stays where it is on the left) until they clear both and the
+    # figure's edges. foot: the strip kept at the bottom, a fraction of the height.
+    try:
+        renderer = fig.canvas.get_renderer()
+    except Exception:
+        return
+    w, h = fig.bbox.width, fig.bbox.height
+    gap = 4.0 * fig.dpi / 72.0
+    for ax in [a for a in fig.axes if getattr(a, "name", "") == "3d"]:
+        for _ in range(5):
+            tb = ax.get_tightbbox(renderer)
+            if tb is None:
+                break
+            box = ax.get_window_extent(renderer)
+            right = w - gap
+            for other in fig.axes:
+                if other is not ax:
+                    o = other.get_tightbbox(renderer)
+                    if o is not None and o.x0 > (box.x0 + box.x1) / 2:
+                        right = min(right, o.x0 - gap)
+            cut = (max(0.0, gap - tb.x0), max(0.0, tb.x1 - right),
+                   max(0.0, foot * h + gap - tb.y0), max(0.0, tb.y1 - (h - gap)))
+            if max(cut) < 1.0:
+                break
+            pos = ax.get_position()
+            ax.set_position([pos.x0 + cut[0] / w, pos.y0 + cut[2] / h,
+                             max(0.05, pos.width - (cut[0] + cut[1]) / w), max(0.05, pos.height - (cut[2] + cut[3]) / h)])
+
+
+# Where an inside key may go, in turn: the corners, then the middle of each side.
+_PO_INSIDE_LOCS = ("upper right", "upper left", "lower left", "lower right",
+                   "center right", "center left", "upper center", "lower center")
+
+
+def _po_inside_key(ax):
+    # An inside key goes to the first place where it covers nothing drawn: no curve, point,
+    # limit or event line, bar, band or word. matplotlib's loc="best" only covers the least,
+    # which with many lines is still most of them. Its own columns are tried, then one more
+    # (shorter, so it fits a band above or below the curves). Returns False, with the key
+    # taken off, when no place is clear: _po_save then puts it under the graph.
+    import numpy as np
+    from matplotlib.collections import PathCollection
+    handles, labels, kw, _given = ax.pfb_inside
+    fig = ax.figure
+    renderer = fig.canvas.get_renderer()
+    segs, pts, boxes = [], [], []
+    for ln in ax.get_lines():
+        if not ln.get_visible():
+            continue
+        try:
+            xy = np.asarray(ln.get_transform().transform(ln.get_xydata()), dtype=float)
+        except Exception:
+            continue
+        if xy.ndim != 2 or not len(xy):
+            continue
+        if str(ln.get_linestyle()).lower() not in ("none", "", " "):
+            a, b = xy[:-1], xy[1:]
+            ok = np.isfinite(a).all(axis=1) & np.isfinite(b).all(axis=1)
+            segs.append(np.hstack([a[ok], b[ok]]))
+        if str(ln.get_marker()).lower() not in ("none", "", " "):
+            pts.append(xy[np.isfinite(xy).all(axis=1)])
+    for c in ax.collections:
+        try:
+            if isinstance(c, PathCollection) and len(c.get_offsets()):
+                xy = np.asarray(c.get_offset_transform().transform(c.get_offsets()), dtype=float)
+                pts.append(xy[np.isfinite(xy).all(axis=1)])
+            else:
+                e = c.get_window_extent(renderer)
+                boxes.append((e.x0, e.y0, e.x1, e.y1))
+        except Exception:
+            pass
+    for art in list(ax.patches) + list(ax.texts):
+        try:
+            if art.get_visible() and (not hasattr(art, "get_text") or art.get_text()):
+                e = art.get_window_extent(renderer)
+                boxes.append((e.x0, e.y0, e.x1, e.y1))
+        except Exception:
+            pass
+    seg = np.vstack(segs) if segs else np.zeros((0, 4))
+    pt = np.vstack(pts) if pts else np.zeros((0, 2))
+    pad = 3.0 * fig.dpi / 72.0
+
+    def clear(l, b, r, t):
+        if len(pt) and ((pt[:, 0] >= l) & (pt[:, 0] <= r) & (pt[:, 1] >= b) & (pt[:, 1] <= t)).any():
+            return False
+        for l2, b2, r2, t2 in boxes:
+            if min(r, r2) > max(l, l2) and min(t, t2) > max(b, b2):
+                return False
+        if len(seg):
+            # Segments whose own box meets this one; any end inside is a hit, else trace it.
+            near = seg[(np.minimum(seg[:, 0], seg[:, 2]) <= r) & (np.maximum(seg[:, 0], seg[:, 2]) >= l) &
+                       (np.minimum(seg[:, 1], seg[:, 3]) <= t) & (np.maximum(seg[:, 1], seg[:, 3]) >= b)]
+            for x, y in ((near[:, 0], near[:, 1]), (near[:, 2], near[:, 3])):
+                if ((x >= l) & (x <= r) & (y >= b) & (y <= t)).any():
+                    return False
+            for x0, y0, x1, y1 in near:
+                if _po_seg_in(x0, y0, x1, y1, (l, b, r, t)) > 0:
+                    return False
+        return True
+
+    n = len(handles)
+    base = 1 if n <= 10 else 2
+    for ncol in ((base, base + 1) if n >= 4 else (base,)):
+        for loc in _PO_INSIDE_LOCS:
+            leg = ax.legend(handles, labels, loc=loc, ncol=ncol, **kw)
+            e = leg.get_window_extent(renderer)
+            if clear(e.x0 - pad, e.y0 - pad, e.x1 + pad, e.y1 + pad):
+                _po_key_ink(leg)
+                return True
+    ax.get_legend().remove()
+    return False
 
 
 def _po_snap(ax):
@@ -569,14 +721,27 @@ def _po_save(fig, stem):
     _po_watermark(fig)
     # Room at the foot for the credit (and the footnote), or for a key under the graph.
     strip = 14.0 / 72.0 / float(fig.get_size_inches()[1])
+
+    def layout():
+        fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
+        # The axes changed size, so the tick step may have too: end on a tick again.
+        if any([_po_snap(a) for a in fig.axes if getattr(a, "pfb_snap", False)]):
+            fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
     try:
         with warnings.catch_warnings():
             # 3D axes and colour bars make tight_layout warn; the layout is still usable.
             warnings.simplefilter("ignore")
-            fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
-            # The axes changed size, so the tick step may have too: end on a tick again.
-            if any([_po_snap(a) for a in fig.axes if getattr(a, "pfb_snap", False)]):
-                fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
+            layout()
+            # A key inside the graph that would cover data goes under it instead.
+            moved = False
+            for a in fig.axes:
+                if getattr(a, "pfb_inside", None) and not _po_inside_key(a):
+                    _po_legend(a, a.pfb_inside[0], a.pfb_inside[3], where="bottom")
+                    moved = True
+                a.pfb_inside = None
+            if moved:
+                layout()
+            _po_fit3d(fig, max(strip, _PO["bottom"]))
     except Exception:
         pass
     for a in fig.axes:

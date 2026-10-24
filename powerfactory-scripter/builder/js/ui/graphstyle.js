@@ -56,15 +56,20 @@ export function mountGraphStyle(app) {
     const close = iconButton('close', 'Close. Your changes are already kept', 'pfb-gs-close');
     close.addEventListener('click', closeIt);
     form = el('div', { class: 'pfb-gs-form' });
-    const seg = el('div', { class: 'seg-group pfb-gs-kinds', role: 'group', 'aria-label': 'Sample graph' });
-    for (const [k, words] of PREVIEW_KINDS) {
-      const b = el('button', { type: 'button', class: 'seg-btn' + (k === kind ? ' active' : ''), dataset: { kind: k }, 'aria-pressed': k === kind ? 'true' : 'false', text: words });
-      b.addEventListener('click', () => {
-        kind = k; lsSet(LS_KIND, k);
-        for (const x of seg.children) { const on = x.dataset.kind === k; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); }
-        paintPreview();
-      });
-      seg.appendChild(b);
+    // Every graph the script draws, in two rows: lines and bars, then maps and 3D.
+    const seg = el('div', { class: 'pfb-gs-kindrows' });
+    for (const [row, words] of [['lines', 'Lines and bars'], ['maps', 'Maps and 3D']]) {
+      const group = el('div', { class: 'seg-group pfb-gs-kinds', role: 'group', 'aria-label': 'Sample graph: ' + words.toLowerCase() });
+      for (const [k, name] of PREVIEW_KINDS.filter(x => x[2] === row)) {
+        const b = el('button', { type: 'button', class: 'seg-btn' + (k === kind ? ' active' : ''), dataset: { kind: k }, 'aria-pressed': k === kind ? 'true' : 'false', text: name });
+        b.addEventListener('click', () => {
+          kind = k; lsSet(LS_KIND, k);
+          for (const x of seg.querySelectorAll('.seg-btn')) { const on = x.dataset.kind === k; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+          paintPreview();
+        });
+        group.appendChild(b);
+      }
+      seg.appendChild(group);
     }
     view = el('div', { class: 'pfb-gs-canvas' });
     capEl = el('p', { class: 'pfb-gs-cap' });
@@ -180,7 +185,7 @@ export function mountGraphStyle(app) {
     const strip = el('div', { class: 'pfb-gs-ramp', style: { background: 'linear-gradient(90deg,' + G.RAMPS[s.ramp].stops.join(',') + ')' } });
     const field = selectField({ st: { key: 'ramp', label: 'Colour ramp', options: opts }, value: s.ramp, fid: 'gs:ramp', set: (v) => { patch('ramp', v); strip.style.background = 'linear-gradient(90deg,' + G.RAMPS[v].stops.join(',') + ')'; }, done });
     return el('div', { class: 'field-row pfb-set', dataset: { key: 'ramp' } },
-      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: 'Colour ramp' }), tip('Heat maps, 3D graphs, and a graph with more lines than twice the colours (every pass of a sweep).')),
+      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: 'Colour ramp' }), tip('Heat maps, 3D surfaces and points, and a graph with more lines than twice the colours (every pass of a sweep).')),
       field, strip);
   }
 
@@ -236,7 +241,7 @@ export function mountGraphStyle(app) {
       num(s, 'line_width', 'Line width', 'pt'),
       sel(s, 'markers', 'Points on 2D lines', 'A dot at each value of a 2D graph or a graph from a results table. Time series never have them.'),
       sel(s, 'line_styles', 'Line patterns', 'Solid, dashed, dotted ... in turn tells the lines apart where colour is lost: a paper printed in black and white (IEEE asks for it). Bars and points stay as they are.'),
-      sel(s, 'legend', 'Key', 'Where the key (legend) goes when a graph has more than one line.'),
+      sel(s, 'legend', 'Key', 'Where the key (legend) goes when a graph has more than one line. Inside takes the first corner or side where it covers no line, point or bar; with none clear it goes under the graph. Lines named by one loop (Dispatch (MW) = 100, 125 ...) write its name once, over the key.'),
       bool(s, 'legend_frame', 'Box around the key')));
     const [pw, ph] = G.pixelsOf(s);
     form.appendChild(group('Image',

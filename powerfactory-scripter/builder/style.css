@@ -436,9 +436,10 @@ h1.pfb-title span { text-wrap: balance; }
 .react-flow__handle.pfb-h.is-req { background: var(--hc, var(--muted)); }
 .pfb-n-in.is-missing > .pfb-n-plab { color: var(--pfb-warn); font-weight: 600; }
 /* An unwired input the block does not wait for (set in Settings, or optional) is greyed, its
-   port an open grey ring; hovering it or dragging a wire onto it shows its type colour again. */
-.pfb-n-in.is-idle > .pfb-n-plab { color: var(--muted); }
-.pfb-n-in.is-idle > .react-flow__handle.pfb-h { background: var(--panel-raised); filter: grayscale(1); opacity: .55; }
+   port an open grey ring; hovering it or dragging a wire onto it shows its type colour again.
+   Muted alone sits too near the text colour to tell apart, so its words fade toward the block. */
+.pfb-n-in.is-idle > .pfb-n-plab, .pfb-n-in.is-idle > .pfb-n-fb { color: color-mix(in srgb, var(--muted) 58%, var(--panel-raised)); }
+.pfb-n-in.is-idle > .react-flow__handle.pfb-h { background: var(--panel-raised); filter: grayscale(1); opacity: .45; }
 .pfb-n-in.is-idle > .react-flow__handle.pfb-h:hover, .pfb-n-in.is-idle > .react-flow__handle.pfb-h.connectingto { filter: none; opacity: 1; }
 .pfb-connecting .pfb-n-in.is-idle > .react-flow__handle.pfb-h:not(.connectingto) { opacity: .25; }
 #globalTooltip .pfb-tip-chip { display: inline-block; margin-right: 2px; padding: 0 7px; border-radius: 999px; font-size: .68rem; font-weight: 700; line-height: 1.6; vertical-align: 1px; color: var(--pfb-warn); background: color-mix(in srgb, var(--pfb-warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--pfb-warn) 40%, transparent); }
@@ -837,7 +838,7 @@ body.pfb-gs-open { overflow: hidden; }
 .pfb-gs-close .ico { width: 18px; height: 18px; }
 .pfb-gs-body { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 380px); }
 .pfb-gs-view { min-width: 0; overflow: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; background: var(--bg-subtle); border-right: 1px solid var(--border); }
-.pfb-gs-kinds { align-self: flex-start; }
+.pfb-gs-kindrows { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; }
 .pfb-gs-canvas { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; line-height: 0; background: var(--card-bg); }
 .pfb-gs-canvas svg { display: block; width: 100%; height: auto; }
 .pfb-gs-canvas.pfb-gs-clear { background: repeating-conic-gradient(color-mix(in srgb, var(--muted) 22%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px; }
