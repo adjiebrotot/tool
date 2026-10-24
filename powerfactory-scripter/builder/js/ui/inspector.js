@@ -1,7 +1,8 @@
 // The Settings tab (DESIGN 8, U16): what the selected block is, its inputs (each wired input
 // names its source, with "Type a value instead"), its settings, More options folded, and
 // Duplicate / Delete. With nothing selected it shows the workflow's own settings (the workflow
-// name and Start's settings) and a "How it works" card.
+// name, Start's settings and the graph style) and a "How it works" card. A graph block shows
+// the graph style too: both open the Graph style modal (graphstyle.js).
 //
 // Plain DOM. Edits go straight into the workflow (no Apply); one undo step per field, closed on
 // blur. The panel is redrawn only when what it shows changes shape (another block, a wire, a
@@ -17,6 +18,8 @@ import { glyph, KIND_WORDS } from './glyphs.js';
 import { blockIcon } from './icons.js';
 import { readBytes, describe, decodeSig, fileBytes, toB64, looksExcel } from './attach.js';
 import { prime as primeAttrData, onLoad as onAttrData } from '../core/attrdata.js';
+import { styleOf, styleName } from '../core/graphstyle.js';
+import { previewSvg } from './graphpreview.js';
 
 const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const portLabel = (p) => (p ? (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '') : '');
@@ -88,7 +91,7 @@ export function mountInspector(app) {
   function fullOf(s) {
     const x = selected(s);
     const node = x.node || (!x.many && !x.edge ? s.wf.nodes.find(n => n.type === 'start') : null);
-    return shapeOf(s) + '#' + (node ? JSON.stringify([node.label, node.s]) : '') + '#' + (x.node ? '' : s.wf.name);
+    return shapeOf(s) + '#' + (node ? JSON.stringify([node.label, node.s]) : '') + '#' + (x.node ? '' : s.wf.name) + '#' + JSON.stringify(s.wf.graph || null);
   }
 
   // The reference data landed: what a block offers may have narrowed.
@@ -382,8 +385,28 @@ export function mountInspector(app) {
       }
       frag.appendChild(warn);
     }
+    frag.appendChild(graphGroup());
     frag.appendChild(howItWorks());
     return frag;
+  }
+
+  // The graph style: a button showing it, which opens the Graph style modal.
+  function graphButton() {
+    const st = styleOf(wf());
+    const name = styleName(st);
+    const b = el('button', { type: 'button', class: 'btn-secondary pfb-gs-open', title: 'Edit how the graphs look', 'aria-label': 'Edit the graph style (now ' + name + ')' },
+      el('span', { class: 'pfb-gs-open-thumb', html: previewSvg(st, { kind: 'series', width: 64, thumb: true }) }),
+      el('span', { class: 'pfb-gs-open-name', text: name }),
+      el('span', { class: 'pfb-gs-open-go', html: icon('edit') + '<span>Edit</span>' }));
+    b.addEventListener('click', () => { if (app.openGraphStyle) app.openGraphStyle(b); });
+    return b;
+  }
+  function graphGroup() {
+    return el('div', { class: 'field-group pfb-gs-group' }, el('div', { class: 'group-title', text: 'Graphs' }),
+      el('div', { class: 'field-row pfb-set', dataset: { key: 'graphstyle' } },
+        el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: 'Graph style' }),
+          tipIcon('How every graph of this workflow looks: colours, font, grid, key and image size. The script writes it in SETTINGS as GRAPH_STYLE.')),
+        graphButton()));
   }
 
   function howItWorks() {
@@ -452,6 +475,14 @@ export function mountInspector(app) {
     const more = moreGroup(node, visible.filter(st => st.more && !fallbackKeys.has(st.key)), ss, node.type);
     if (more) frag.appendChild(more);
     if (ports.error) frag.appendChild(el('div', { class: 'pfb-insp-note pfb-insp-error', text: 'Its ports could not be worked out from these settings: ' + ports.error }));
+    // A graph block: how it looks is the workflow's graph style, changed from here too.
+    if ((def.helpers || []).some(h => /^plot_/.test(h))) {
+      frag.appendChild(el('div', { class: 'field-group pfb-gs-group' }, el('div', { class: 'group-title', text: 'Look' }),
+        el('div', { class: 'field-row pfb-set', dataset: { key: 'graphstyle' } },
+          el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: 'Graph style' }),
+            tipIcon('Every graph of the workflow shares one style. Changing it here changes them all.')),
+          graphButton())));
+    }
 
     const acts = el('div', { class: 'pfb-insp-actions' });
     if (node.type !== 'start') {

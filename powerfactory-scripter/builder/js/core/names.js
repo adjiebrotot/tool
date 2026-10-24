@@ -45,12 +45,12 @@ export const COMMON_MODULES = ['os', 'sys', 'time', 'math', 'csv', 're', 'json',
   'platform', 'ctypes', 'winreg', 'powerfactory', 'pf', 'np', 'numpy', 'pd', 'pandas', 'plt',
   'matplotlib', 'scipy', 'openpyxl', 'tqdm', 'optimize'];
 // The generator's own names in main() and in the copied structure (6.6), plus the SETTINGS
-// globals Start writes (7.1).
+// globals Start writes (7.1) and GRAPH_STYLE (core/graphstyle.js).
 export const CODEGEN_NAMES = ['app', 'main', 'mark', 'trial', 'err', 'e', 'stop', 'fin', 'problem',
   'self', 'cls', 'args', 'kwargs'];
 export const SETTINGS_NAMES = ['WORKFLOW_NAME', 'PF_API_PATH', 'PROJECT', 'STUDY_CASE', 'OUTPUT_DIR',
   'RUN_MODE', 'PF_USER', 'SHOW_PF', 'UNDO_CHANGES', 'FAST_MODE', 'CONNECT_TIMEOUT', 'F_NOMINAL',
-  'CHECK_ONLY', 'PROBLEMS'];
+  'CHECK_ONLY', 'PROBLEMS', 'GRAPH_STYLE'];
 
 // The fixed part of the reserved set; the runtime's own names are added per generate().
 export function baseReserved() {

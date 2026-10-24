@@ -51,6 +51,11 @@ Optimise / Find limit searches.
   page shows. It runs on every change (debounced).
 - **Runtime** (`runtime/*.py`): real Python files of helpers. The generator copies in only the
   sections a workflow needs, with their dependencies and imports.
+- **Graph style** (`js/core/graphstyle.js`, `js/ui/graphstyle.js`, `js/ui/graphpreview.js`): how
+  every graph of a workflow looks, one setting of the whole workflow (§3.1). With nothing
+  selected the Settings tab shows it under Graphs (and a graph block under Look); its Edit button
+  opens a modal with six templates, every part of the look, and a preview drawn the way
+  `outputs.py` lays the graph out with matplotlib.
 
 ## 2. Files
 
@@ -62,12 +67,14 @@ Optimise / Find limit searches.
 | `js/core/attrdata.js` | what the page knows about a PowerFactory attribute (its unit, whether a class has a parameter), from the parent tool's reference data; the blocks ask it which choices can apply |
 | `js/core/tabledata.js`, `zip.js` | reading an attached CSV / Excel file in the browser, and the ZIP the study package is written as |
 | `js/core/workflow.js` | the saved format: `loadWorkflow` (never throws, migrations), `serialize`, the `# PFB1` line in the .py |
+| `js/core/graphstyle.js` | the graph style (§3.1): its keys, templates, palettes, ramps and fonts, `normalizeStyle`, the GRAPH_STYLE lines, the line colours as `outputs.py` picks them |
 | `js/core/codegen.js` | the generator (its header comment is the emit contract for block authors) |
 | `js/core/names.js`, `pylit.js`, `problems.js`, `runtime-loader.js`, `blockkit.js` | identifiers and the reserved set, Python literals and safe comments, the problem messages, runtime slicing, shared block helpers |
 | `js/blocks/*.js` | the 92 blocks, one file per palette category |
 | `runtime/base.py` | generic helpers (logging, run folder, loop labels and skip rows, tables, series, conversions, maths) |
 | `runtime/pf_core.py`, `pf_model.py`, `pf_studies.py` | PowerFactory helpers; documented in `runtime/API-pf.md` |
 | `runtime/signals.py`, `outputs.py`, `optimise.py` | checks, graphs, searches; documented in `runtime/API-analysis.md` |
+| `runtime/fonts/` | DM Sans Regular and Bold (static instances of the site's own DM Sans) and its SIL Open Font License, packed into the study package when the graphs are drawn in it |
 | `templates/` | Quick Start workflows (`index.json` + one file each; ids are frozen): `headroom`, `ldf-cases`, `n-1`, `shc-buses`, `find-limit`, `frt`, `cct`; made by `_audit/templates/build.mjs` |
 | `vendor/` | React 18.3.1, ReactDOM, `@xyflow/react` 12.12.0, the JSX shim; `vendor/README.md` has sources and SHA-256 |
 | `_audit/` | the test suites (§8) |
@@ -80,6 +87,7 @@ A study is not only its script, so **Download** writes one `.zip` (`js/ui/packag
 <name>.py      the script
 <name>.json    the workflow, for the Builder's Open button
 <data files>   every file attached to a Read table from file block, under the name the script reads
+fonts/         DM Sans and its licence, when the script draws graphs in it (the default style)
 README.txt     what is in it and how to run it
 ```
 
@@ -120,6 +128,29 @@ line format. Rules the loader follows (`loadWorkflow`, `settingsOf`):
   a changed meaning gets a new key and a `migrate(s, fromSv)` in the block (or `MIGRATIONS[v]` in
   `workflow.js` for the whole format);
 - while a block file fails to load, autosave is held so the mini cache is never overwritten.
+
+### 3.1 The graph style
+
+How the graphs look is one setting of the whole workflow, saved as `graph` beside `nodes` and
+`edges` (so the .json, the mini cache and the `# PFB1` line all carry it). It is saved in full,
+so a workflow keeps its look if a template changes later. A workflow without it, which is every
+workflow saved before graph styles, draws in the default: the **Adjie Brotools** style, the
+site's own charts (the light theme's chart tokens, the neutral series sequence blue, gold, teal,
+rose, purple, DM Sans, a bold centred title, the key under the graph, the value axis ending on a
+tick). That default is a new look for old workflows by design; the **Builder classic** template
+is the look before graph styles, for anyone who wants it back.
+
+- Templates: `brotools` (default), `brotools-night`, `minimal`, `report` (serif, framed, 300 dpi,
+  colour-blind safe lines), `slides` (16:9, large text), `classic`.
+- A script that draws a graph gets `GRAPH_STYLE = {...}` in SETTINGS, one key per line with its
+  choices in a comment; `outputs.py` `_po_st` reads it over `_PO_DEFAULT` with the same checks as
+  `normalizeStyle`. Edited in the .py, it is read back on Open (`readBackGraphStyle`); a value
+  that cannot be used takes the default's and is named in a note.
+- **Frozen handles**: the workflow key `graph`, the style's keys, the template ids, the select
+  values and the ramp ids. A key added later must default to the look before it. A key a newer
+  Builder saved is kept on the workflow untouched.
+- `_PO_DEFAULT` must equal the `brotools` template, and `_PO_RAMPS`, `_PO_CHOICES` and
+  `_PO_RANGES` their twins in `graphstyle.js`: `_audit/graphstyle/run.mjs` holds them together.
 
 ## 4. Blocks
 
@@ -244,6 +275,7 @@ Run from the repository root (`D:\Repository\tool`):
 | `node powerfactory-scripter/builder/_audit/blocks/analysis/run.mjs [--live]` | the analysis blocks, executed on the two real traces in `_audit/runtime/fixtures/` |
 | `node powerfactory-scripter/builder/_audit/templates/run.mjs` | every Quick Start template: generates, compiles, runs live, and loads on the page |
 | `node powerfactory-scripter/builder/_audit/ui/run.mjs` | the editor in Chromium at desktop and phone width |
+| `node powerfactory-scripter/builder/_audit/graphstyle/run.mjs` | the graph style (§3.1): the rules for saved styles, the frozen handles, the page and the script agreeing (every case `_po_st` reads, the line colours), GRAPH_STYLE written and read back, DM Sans in the package, every template drawn by matplotlib, and the modal in Chromium |
 | `python powerfactory-scripter/builder/_audit/runtime/analysis/test_analysis.py` | the analysis helpers offline |
 | `python "%PFB_PFRUN%" powerfactory-scripter/builder/_audit/runtime/live/live_tests.py` | the PowerFactory helpers live on both sandboxes |
 | `node _ref/button-check.mjs builder`, `dropdown-check`, `tip-check`, `node _ref/abbr-check.mjs` | the site-wide checks (on Windows the filter must be a fragment without slashes) |

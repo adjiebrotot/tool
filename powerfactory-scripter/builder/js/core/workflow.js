@@ -6,7 +6,8 @@
 //   { "app": "pf-builder", "v": 1, "name": "...",
 //     "nodes": [ { "id", "type", "x", "y", "label", "s": {settings}, "pin": [keys], "sv" } ],
 //     "edges": [ { "id", "from", "out", "to", "in" } ],
-//     "view": { "x", "y", "zoom" } }
+//     "view": { "x", "y", "zoom" },
+//     "graph": { the graph style, core/graphstyle.js; absent = the default style } }
 // The PFB1 line of a .py carries the same object without `view`, plus two keys of its own:
 // "settings" (SETTINGS constant -> [nodeId, settingKey(, subKey)]; nodeId "*" is the workflow
 // itself, e.g. WORKFLOW_NAME -> ["*", "name"]) and "hash" (of the WORKFLOW section, to tell the
@@ -23,6 +24,7 @@
 import { getBlock, settingsOf, findPort, canConnect, displayName, optionPairs } from './registry.js';
 import { parsePyLiteral } from './pylit.js';
 import { parseValues } from './blockkit.js';
+import { normalizeStyle, sameStyle, unusableKeys } from './graphstyle.js';
 
 export const APP_ID = 'pf-builder';
 export const FORMAT_VERSION = 1;
@@ -324,6 +326,7 @@ function loadInner(input, notes) {
       notes.push({ level: 'warning', msg: 'Code outside SETTINGS was edited by hand in this file; those edits are not read back.' });
     }
     if (pfbSettings) readBackSettings(wf, pyText, pfbSettings, notes);
+    readBackGraphStyle(wf, pyText, notes);
   }
   return { wf, notes };
 }
@@ -505,6 +508,32 @@ function readBackSettings(wf, text, map, notes) {
   }
   if (changed.length) notes.push({ level: 'info', msg: 'Read ' + (changed.length === 1 ? 'a value' : changed.length + ' values') + ' edited in the file: ' + changed.join(', ') + '.' });
   if (unreadable.length) notes.push({ level: 'warning', msg: 'These SETTINGS lines in the file could not be read back, so the workflow keeps its own values: ' + unreadable.join(', ') + '.' });
+}
+
+// GRAPH_STYLE = { ... } in SETTINGS, edited in the file, is read back as the workflow's graph
+// style. A value that cannot be used keeps the default's (as the script itself does) and is
+// named in a note; keys this version does not know are kept on the workflow as they were.
+function readBackGraphStyle(wf, text, notes) {
+  const lines = String(text).split(/\r\n|\n|\r/);
+  const a = lines.findIndex(l => /^# ==== SETTINGS/.test(l));
+  if (a < 0) return;
+  let b = lines.findIndex((l, i) => i > a && /^# ==== /.test(l));
+  if (b < 0) b = lines.length;
+  const i0 = lines.findIndex((l, i) => i > a && i < b && /^GRAPH_STYLE\s*=/.test(l));
+  if (i0 < 0) return;
+  let i1 = lines.findIndex((l, i) => i >= i0 && i < b && /^\}/.test(l));
+  if (i1 < 0) i1 = i0;
+  const lit = parsePyLiteral(lines.slice(i0, i1 + 1).join('\n').replace(/^GRAPH_STYLE\s*=\s*/, ''));
+  if (!lit || !isPlainObject(lit.value)) {
+    notes.push({ level: 'warning', msg: 'GRAPH_STYLE in the file could not be read back, so the workflow keeps its own graph style.' });
+    return;
+  }
+  const bad = unusableKeys(lit.value);
+  if (bad.length) notes.push({ level: 'warning', msg: 'These GRAPH_STYLE values in the file cannot be used, so they take the Adjie Brotools style\'s: ' + bad.join(', ') + '.' });
+  const next = normalizeStyle(lit.value);
+  if (sameStyle(next, wf.graph)) return;
+  wf.graph = { ...(isPlainObject(wf.graph) ? wf.graph : {}), ...next };
+  notes.push({ level: 'info', msg: 'Read the graph style edited in the file (GRAPH_STYLE).' });
 }
 
 function applySetting(wf, ref, value) {

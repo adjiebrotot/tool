@@ -22,6 +22,7 @@
 //      end, allocated in node order so adding a block never renames another block's variables
 //      (C24b). The reserved set covers Python, the runtime's names and the generator's (C5).
 //   5. The file layout of 6.6, with the helpers copied from the runtime and the # PFB1 line.
+//      A script that draws a graph also gets GRAPH_STYLE in SETTINGS (core/graphstyle.js).
 //
 // Contract for blocks (what emit returns per kind, the cx object): DESIGN 6.1 / 6.2, with these
 // choices where the spec was silent (block authors: read these):
@@ -62,6 +63,7 @@ import { baseReserved, allocateNames, constantName, snake } from './names.js';
 import { parseRuntime, resolveHelpers } from './runtime-loader.js';
 import { P, endWords } from './problems.js';
 import { compareIds, embedInPython } from './workflow.js';
+import { styleOf, pyStyleLines } from './graphstyle.js';
 
 export const MAX_LINES = 20000;
 export const MAX_LEVELS = 6;
@@ -1514,6 +1516,11 @@ function generateInner(workflow, opts) {
   add(commentLines('The name of this workflow: used for the run folder and in the log.').join('\n'));
   add('WORKFLOW_NAME = ' + pyStr(wfName));
   for (const l of startSettingLines) add(l);
+  // How the graphs look (Workflow > Graph style), only when the script draws one.
+  if (resolved.names.includes('plot_common')) {
+    add('');
+    for (const l of pyStyleLines(styleOf(wf), { pyLit, commentLines })) add(l);
+  }
   // Pinned settings of the blocks that run.
   for (const id of order) {
     if (!reached.has(id) && !needed.has(id)) continue;

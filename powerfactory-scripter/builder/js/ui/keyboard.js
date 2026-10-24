@@ -2,7 +2,8 @@
 // Delete / Backspace delete the selection (Start refuses), Ctrl+C / Ctrl+X / Ctrl+V copy, cut and
 // paste blocks with the wires between them, Ctrl+D duplicates, Ctrl+A selects every block,
 // Escape clears the selection. None of them fire while the focus is in a text field, so text
-// editing keeps its own undo and copy.
+// editing keeps its own undo and copy. While the Graph style modal is open only undo and redo
+// do (it changes the workflow too); the rest would act on a canvas the reader cannot see.
 //
 // The clipboard holds a small workflow (JSON), so blocks copied here paste into another tab of
 // the Builder too; it is read back through loadWorkflow() like any other way in.
@@ -49,6 +50,7 @@ export function mountKeyboard(app) {
     const sel = store.get().sel;
     if (mod && k === 'z' && !e.shiftKey) { e.preventDefault(); app.undo(); return; }
     if (mod && (k === 'y' || (k === 'z' && e.shiftKey))) { e.preventDefault(); app.redo(); return; }
+    if (app.graphStyleOpen && app.graphStyleOpen()) return;
     if (mod && k === 'd') { if (sel.nodes.length) { e.preventDefault(); app.duplicate(sel.nodes); } return; }
     if (mod && k === 'a' && canvasFocus()) { e.preventDefault(); store.select(store.get().wf.nodes.map(n => n.id), []); return; }
     if (!mod && !e.altKey && (e.key === 'Delete' || e.key === 'Backspace')) {
@@ -66,7 +68,7 @@ export function mountKeyboard(app) {
     }
   });
   document.addEventListener('copy', (e) => {
-    if (isTyping(e.target) || textSelected() || tourOpen()) return;
+    if (isTyping(e.target) || textSelected() || tourOpen() || (app.graphStyleOpen && app.graphStyleOpen())) return;
     const ids = store.get().sel.nodes;
     if (!ids.length) return;
     const frag = copySelection();
@@ -75,7 +77,7 @@ export function mountKeyboard(app) {
     e.preventDefault();
   });
   document.addEventListener('paste', (e) => {
-    if (isTyping(e.target) || tourOpen()) return;
+    if (isTyping(e.target) || tourOpen() || (app.graphStyleOpen && app.graphStyleOpen())) return;
     const text = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
     if (!looksLikeFragment(text)) return;
     pasteSeen = true;
