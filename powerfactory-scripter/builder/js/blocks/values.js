@@ -9,7 +9,7 @@
 // Requests; the test stub carries them meanwhile). All of them are None-safe: an empty input
 // gives an empty result instead of an error.
 
-import { defineBlock } from '../core/registry.js';
+import { defineBlock, defineFamily } from '../core/registry.js';
 import { parseValues, allNumbers, placeholders, portIdFor, parseFormula, clip } from '../core/blockkit.js';
 
 const CAT = 'value';
@@ -93,6 +93,15 @@ defineBlock({
   validate(cx) {
     if (!cx.has('step') && Number(cx.s.step) === 0) cx.error(`${cx.label}: the step is 0. Use a step that is not 0.`);
   },
+});
+
+// The five constants are one palette entry, Value, with a Kind switch; their `value` keys are a
+// number, a text and a yes / no, which settingsOf converts when the kind changes.
+defineFamily({
+  id: 'value', title: 'Value',
+  desc: 'A value you type: a number, a text, a yes / no, a list, or a range of numbers. Choose which under Kind in its settings.',
+  keywords: ['value', 'constant', 'number', 'text', 'yes no', 'list', 'range', 'parameter'],
+  members: ['val.number', 'val.text', 'val.bool', 'val.list', 'val.range'], dflt: 'val.number', convert: ['value'],
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -275,6 +284,13 @@ for (const [kind, title, what, kw, varName] of STATS) {
     },
   });
 }
+
+defineFamily({
+  id: 'stats', title: 'Statistics',
+  desc: 'The maximum, minimum, average, median, sum, count, standard deviation or a percentile of a list or a time series. Choose which under Kind.',
+  keywords: ['statistics', 'maximum', 'minimum', 'average', 'mean', 'median', 'sum', 'count', 'standard deviation', 'percentile', 'worst'],
+  members: STATS.map(x => 'math.' + x[0]), dflt: 'math.max',
+});
 
 // ---------------------------------------------------------------------------------------------
 defineBlock({

@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -285,23 +286,9 @@
       "sv": 1
     },
     {
-      "id": "n14",
-      "type": "out.table.save",
-      "x": 640,
-      "y": 720,
-      "label": "",
-      "s": {
-        "table": "Headroom",
-        "fmt": "csv",
-        "stem": ""
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
       "id": "n15",
       "type": "out.plot.table",
-      "x": 960,
+      "x": 640,
       "y": 720,
       "label": "Nadir against dispatch",
       "s": {
@@ -395,74 +382,67 @@
       "id": "e11",
       "from": "n3",
       "out": "done",
-      "to": "n14",
-      "in": "in"
-    },
-    {
-      "id": "e12",
-      "from": "n14",
-      "out": "next",
       "to": "n15",
       "in": "in"
     },
     {
-      "id": "e13",
+      "id": "e12",
       "from": "n3",
       "out": "value",
       "to": "n5",
       "in": "p"
     },
     {
-      "id": "e14",
+      "id": "e13",
       "from": "n8",
       "out": "r1",
       "to": "n9",
       "in": "series"
     },
     {
-      "id": "e15",
+      "id": "e14",
       "from": "n9",
       "out": "settles",
       "to": "n10",
       "in": "a"
     },
     {
-      "id": "e16",
+      "id": "e15",
       "from": "n8",
       "out": "r1",
       "to": "n11",
       "in": "series"
     },
     {
-      "id": "e17",
+      "id": "e16",
       "from": "n11",
       "out": "minimum",
       "to": "n12",
       "in": "c1"
     },
     {
-      "id": "e18",
+      "id": "e17",
       "from": "n11",
       "out": "min_time",
       "to": "n12",
       "in": "c2"
     },
     {
-      "id": "e19",
+      "id": "e18",
       "from": "n9",
       "out": "time",
       "to": "n12",
       "in": "c3"
     },
     {
-      "id": "e20",
+      "id": "e19",
       "from": "n11",
       "out": "ufls",
       "to": "n12",
       "in": "c4"
     },
     {
-      "id": "e21",
+      "id": "e20",
       "from": "n8",
       "out": "r1",
       "to": "n13",

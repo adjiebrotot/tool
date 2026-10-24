@@ -123,25 +123,25 @@ const EXPECT = {
   headroom: {
     todo: [PROJECT_TODO, 'Choose the element for Generator on Generator A.', 'Choose the element for Generator on Contingency unit.', 'Fill in the element of Record curve 1 on Run RMS simulation.'],
     pins: { n3: ['from', 'to', 'step'], n5: ['gen'], n7: ['el'] },
-    types: ['flow.range', 'pf.case.create', 'pf.dispatch', 'pf.ldf', 'pf.evt.trip', 'pf.rms', 'sig.settle', 'flow.if', 'sig.nadir', 'out.table.add', 'out.plot.series', 'out.table.save', 'out.plot.table'],
+    types: ['flow.range', 'pf.case.create', 'pf.dispatch', 'pf.scen.save', 'pf.ldf', 'pf.evt.trip', 'pf.rms', 'sig.settle', 'flow.if', 'sig.nadir', 'out.table.add', 'out.plot.series', 'out.plot.table'],
   },
-  'ldf-cases': { todo: [PROJECT_TODO], pins: { n3: ['pattern'] }, types: ['pf.case.foreach', 'pf.ldf', 'pf.get', 'out.table.add', 'out.table.save'] },
-  'n-1': { todo: [PROJECT_TODO], pins: {}, types: ['pf.ldf', 'pf.cont.define', 'pf.cont.foreach', 'pf.get', 'out.table.add', 'out.table.save', 'out.table.column', 'flow.log'] },
-  'shc-buses': { todo: [PROJECT_TODO], pins: { n3: ['el'] }, types: ['pf.foreach_element', 'pf.shc', 'pf.get', 'out.table.add', 'out.table.save', 'out.plot.xy', 'out.table.column'] },
+  'ldf-cases': { todo: [PROJECT_TODO], pins: { n3: ['pattern'] }, types: ['pf.case.foreach', 'pf.ldf', 'pf.get', 'out.table.add'] },
+  'n-1': { todo: [PROJECT_TODO], pins: {}, types: ['pf.ldf', 'pf.cont.foreach', 'pf.get', 'out.table.add', 'out.table.column', 'flow.log'] },
+  'shc-buses': { todo: [PROJECT_TODO], pins: { n3: ['el'] }, types: ['pf.foreach_element', 'pf.shc', 'pf.get', 'out.table.add', 'out.plot.xy', 'out.table.column'] },
   'find-limit': {
     todo: [PROJECT_TODO, 'Choose the element for Generator on Generator A.', 'Choose the element for Generator on Contingency unit.', 'Fill in the element of Record curve 1 on Run RMS simulation.'],
     pins: { n3: ['lower', 'upper', 'tol'], n4: ['gen'], n6: ['el'], n8: ['uflsBelow'] },
-    types: ['opt.limit', 'pf.dispatch', 'pf.ldf', 'pf.evt.trip', 'pf.rms', 'sig.nadir', 'opt.report', 'flow.log', 'out.plot.conv'],
+    types: ['opt.limit', 'pf.dispatch', 'pf.ldf', 'pf.evt.trip', 'pf.rms', 'sig.nadir', 'flow.log', 'out.plot.conv'],
   },
   frt: {
     todo: [PROJECT_TODO, 'Choose the element for Fault at on Connection point fault.', 'Fill in the element of Record curve 1 on Run RMS simulation.', 'Fill in the element of Record curve 2 on Run RMS simulation.'],
     pins: { n3: ['target'], n9: ['limit'] },
-    types: ['pf.evt.shc', 'pf.rms', 'chk.limit', 'sig.at', 'math.arith', 'sig.cross', 'chk.verdict', 'out.table.add', 'out.table.save', 'out.plot.series'],
+    types: ['pf.evt.shc', 'pf.rms', 'chk.limit', 'sig.cross', 'chk.verdict', 'out.table.add', 'out.plot.series'],
   },
   cct: {
     todo: [PROJECT_TODO, 'Choose the element for Fault at on Fault.'],
     pins: { n3: ['lower', 'upper', 'tol'], n4: ['target'], n6: ['hi'] },
-    types: ['opt.limit', 'pf.evt.shc', 'pf.rms', 'chk.limit', 'opt.report', 'val.bool', 'flow.log', 'out.plot.conv'],
+    types: ['opt.limit', 'pf.evt.shc', 'pf.rms', 'chk.limit', 'opt.report', 'flow.log', 'out.plot.conv'],
   },
 };
 

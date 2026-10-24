@@ -6,7 +6,7 @@
 // The saved handles (node and edge ids, port ids, setting keys) follow DESIGN section 3.
 
 import {
-  getBlock, portsOf, findPort, canConnect, whyNot, hasFlowIn, settingsOf, allBlocks,
+  getBlock, portsOf, findPort, canConnect, whyNot, hasFlowIn, settingsOf, allBlocks, familyOf, meaningOf, TYPES, visibleSettings,
 } from '../core/registry.js';
 import { makeNode, newNodeId, newEdgeId, missingPorts, loadWorkflow, serialize, APP_ID, FORMAT_VERSION, compareIds } from '../core/workflow.js';
 
@@ -55,6 +55,77 @@ export function nodePorts(wf, node) {
     }
   }
   return res;
+}
+
+// What the Settings tab draws for a block's inputs (README 4.1):
+//   rows      the inputs that get a row: wired ones (named by their source), stray ones, those
+//             whose value is typed in a field there (a fallback setting that is shown and not
+//             under More options), and required ones with nothing to type;
+//   toWire    the unwired inputs with nothing to type that are main ports (a graph's curves):
+//             one shared line;
+//   optional  the same for the ports the canvas folds (`more`): another line;
+//   inInputs  the setting keys the Inputs rows stand for (not drawn again under Settings);
+//   moreInputs  setting key -> input, for a fallback setting typed under More options.
+// An input whose fallback setting cannot apply with these settings gets nothing at all.
+// `visible` is visibleSettings() for the block as it is wired now.
+export function inputPlan(wf, node, visible) {
+  const def = getBlock(node && node.type);
+  const ports = nodePorts(wf, node);
+  const shown = new Set((visible || []).map(st => st.key));
+  const wired = new Set(wf.edges.filter(e => e.to === node.id).map(e => handleIdOf(wf, node.id, e.in, 'in')));
+  const rows = [], toWire = [], optional = [], inInputs = new Set(), moreInputs = new Map();
+  for (const p of ports.inputs) {
+    const fst = def && p.fallback ? (def.settings || []).find(z => z.key === p.fallback) : null;
+    if (p.stray || wired.has(p.id)) { rows.push(p); if (fst) inInputs.add(fst.key); continue; }
+    if (fst) {
+      if (!shown.has(fst.key)) continue;
+      if (fst.more) { moreInputs.set(fst.key, p); continue; }
+      rows.push(p);
+      inInputs.add(fst.key);
+      continue;
+    }
+    if (p.required) rows.push(p); else if (p.more) optional.push(p); else toWire.push(p);
+  }
+  return { rows, toWire, optional, inInputs, moreInputs };
+}
+
+// The ports the canvas folds behind "+N more" (canvas.js): { inputs: Set, outputs: Set } of ids.
+// A port folds while it is unwired and either says so (`more` on the port: true, or a function
+// (settings, { wired, srcPort }) for a block whose main ports depend on what it reads) or is an
+// input whose value is typed under More options or cannot apply with these settings. An input
+// the block cannot run without (required, or an element it looks up) never folds. `regions`:
+// the generator's, for "is it in a loop" (undefined is fine).
+export function foldedPorts(wf, node, regions) {
+  const out = { inputs: new Set(), outputs: new Set() };
+  const def = getBlock(node && node.type);
+  if (!def) return out;
+  const ports = nodePorts(wf, node);
+  const wiredIn = new Set(), wiredOut = new Set();
+  for (const e of wf.edges) {
+    if (e.to === node.id) wiredIn.add(handleIdOf(wf, node.id, e.in, 'in'));
+    if (e.from === node.id) wiredOut.add(handleIdOf(wf, node.id, e.out, 'out'));
+  }
+  const s = settingsOf(node);
+  const reg = regions && regions[node.id];
+  const inLoop = Array.isArray(reg) ? reg.some(r => r.kind === 'loop') : undefined;
+  let shown;
+  try { shown = new Set(visibleSettings(node, wiredIn, { inLoop }).map(st => st.key)); } catch (e) { shown = new Set((def.settings || []).map(st => st.key)); }
+  const cx = {
+    wired: wiredIn,
+    srcPort: (pid) => { const e = wf.edges.find(x => x.to === node.id && handleIdOf(wf, node.id, x.in, 'in') === pid); const a = e && portAt(wf, e.from, e.out, 'out'); return a ? a.port : null; },
+  };
+  const says = (p) => {
+    if (typeof p.more === 'function') { try { return !!p.more(s, cx); } catch (e) { return false; } }
+    return !!p.more;
+  };
+  for (const p of ports.inputs) {
+    if (p.stray || wiredIn.has(p.id) || p.required) continue;
+    const fst = p.fallback ? (def.settings || []).find(z => z.key === p.fallback) : null;
+    if (fst && (fst.required || (fst.kind === 'element' && p.type === 'obj'))) continue;
+    if (says(p) || (fst && (fst.more || !shown.has(fst.key)))) out.inputs.add(p.id);
+  }
+  for (const p of ports.outputs) if (!p.stray && !wiredOut.has(p.id) && says(p)) out.outputs.add(p.id);
+  return out;
 }
 
 // The port an edge end or a canvas handle refers to: { kind: 'flowIn'|'flowOut'|'input'|'output',
@@ -129,6 +200,55 @@ function pruneFiles(wf) {
   if (Object.keys(files).length === Object.keys(wf.files).length) return wf;
   if (!Object.keys(files).length) { const { files: _drop, ...rest } = wf; return rest; }
   return { ...wf, files };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Kind switch (block families, core/registry.js defineFamily)
+
+const sameValue = (a, b) => JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);
+
+// Change a block to another member of its family: same id, name, pins and wires; the settings go
+// across by key. A key the old kind did not have keeps what the block holds for it (from an
+// earlier switch) or takes its default; one that means something else on the new kind
+// (meaningOf) takes the new default; a value left at the old kind's default takes the new kind's
+// default. Keys the new kind does not know stay in the block, so switching back finds them.
+// Wires on ports the new kind does not have are kept and flagged, as the loader does.
+export function switchKind(wf, id, type) {
+  const node = nodeById(wf, id);
+  const from = node && getBlock(node.type), to = getBlock(type);
+  const fam = node && familyOf(node.type);
+  if (!from || !to || node.type === type || !fam || !fam.members.includes(type)) return wf;
+  const old = settingsOf(node);
+  const s = isObj(node.s) ? { ...node.s } : {};
+  for (const st of to.settings || []) {
+    const ost = (from.settings || []).find(z => z.key === st.key);
+    if (!ost) continue;
+    if (meaningOf(ost) !== meaningOf(st)) s[st.key] = clone(st.default === undefined ? null : st.default);
+    else if (sameValue(old[st.key], ost.default) && !sameValue(ost.default, st.default)) s[st.key] = clone(st.default === undefined ? null : st.default);
+  }
+  return withNode(wf, id, n => { n.type = type; n.s = s; n.sv = to.version || 1; });
+}
+
+// The wires a Kind switch would leave hanging: on a port the new kind does not have, or one that
+// no longer takes what the wire carries. [{ edge, port, gone: true | false (does not fit) }].
+export function hangingWires(wf, id, type) {
+  const next = switchKind(wf, id, type);
+  if (next === wf) return [];
+  const fits = (w, e) => {
+    const a = portAt(w, e.from, e.out, 'out'), b = portAt(w, e.to, e.in, 'in');
+    return { a, b, ok: !!(a && b && !a.stray && !b.stray && !whyNot(a.type, b.type)) };
+  };
+  const out = [];
+  for (const e of next.edges) {
+    if (e.from !== id && e.to !== id) continue;
+    if (!fits(wf, e).ok) continue;      // already hanging: not this switch's doing
+    const { a, b, ok } = fits(next, e);
+    if (ok) continue;
+    const mine = e.from === id ? a : b;
+    const gone = !mine || mine.stray;
+    out.push({ edge: e, port: gone ? (e.from === id ? e.out : e.in) : (mine.port.label || mine.port.id), gone });
+  }
+  return out;
 }
 
 export function setName(wf, name) { return { ...wf, name: String(name) }; }
@@ -226,23 +346,25 @@ export function deleteNodes(wf, ids) {
   return { wf: next, nodes: goneNodes, edges: goneEdges, refused };
 }
 
-// Wire c = { from, out, to, in }. A flow output leads to one next step and a data input takes
-// one wire, so the wire already there is replaced (returned in `replaced`, for the undo toast).
-// A flow input may take many wires (routes joining).
+// Wire c = { from, out, to, in }. A data input takes one wire, so the wire already there is
+// replaced (returned in `replaced`, for the undo toast). A flow output may lead to several steps:
+// a new wire from a used one adds a parallel route (the wires already there are returned in
+// `parallel`, so the toast can offer to replace them instead). A flow input may take many wires
+// (routes joining).
 export function connect(wf, c) {
   const a = portAt(wf, c.from, c.out, 'out'), b = portAt(wf, c.to, c.in, 'in');
-  if (!a || !b) return { wf, edge: null, replaced: [] };
+  if (!a || !b) return { wf, edge: null, replaced: [], parallel: [] };
   const outId = a.port.id, inId = b.port.id;
   const same = wf.edges.find(e => e.from === c.from && e.to === c.to && handleIdOf(wf, e.from, e.out, 'out') === outId && handleIdOf(wf, e.to, e.in, 'in') === inId);
-  if (same) return { wf, edge: same, replaced: [] };
+  if (same) return { wf, edge: same, replaced: [], parallel: [] };
   const replaced = [];
   const edges = wf.edges.filter(e => {
-    if (a.kind === 'flowOut' && e.from === c.from && handleIdOf(wf, e.from, e.out, 'out') === outId) { replaced.push(e); return false; }
     if (b.kind === 'input' && e.to === c.to && handleIdOf(wf, e.to, e.in, 'in') === inId) { replaced.push(e); return false; }
     return true;
   });
+  const parallel = a.kind === 'flowOut' ? edges.filter(e => e.from === c.from && handleIdOf(wf, e.from, e.out, 'out') === outId) : [];
   const edge = { id: newEdgeId(wf), from: c.from, out: outId, to: c.to, in: inId };
-  return { wf: { ...wf, edges: [...edges, edge] }, edge, replaced };
+  return { wf: { ...wf, edges: [...edges, edge] }, edge, replaced, parallel };
 }
 
 // The flow successors of a node (targets of its flow wires).
@@ -321,6 +443,17 @@ export function insertAfter(wf, anchorId, nodeId) {
   if (!outs.length) return wf;
   const e = wf.edges.find(x => x.from === anchorId && handleIdOf(wf, anchorId, x.out, 'out') === outs[0].id && isFlowEdge(wf, x));
   return e ? spliceOnEdge(wf, e.id, nodeId) : wf;
+}
+
+// A new block of `type` right after step `anchorId` (a Problems fix): placed below it, wired in
+// after it (between it and the step it led to). Null when the anchor is gone or the type unknown.
+export function addAfterStep(wf, anchorId, type, sizes) {
+  const anchor = nodeById(wf, anchorId);
+  if (!anchor || !getBlock(anchor.type) || !getBlock(type)) return null;
+  const m = sizes && sizes[anchorId];
+  const at = freeSpot(wf, anchor.x + 40, anchor.y + ((m && m.height) || 110) + 60, sizes);
+  const added = addNode(wf, type, at.x, at.y);
+  return { wf: insertAfter(added.wf, anchorId, added.node.id), node: added.node };
 }
 
 // The first output of `src` whose type the first possible input of `dst` takes: [outId, inId].
@@ -423,33 +556,87 @@ export function duplicate(wf, ids, dx = 40, dy = 40) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Where a new block would sit: the loops and searches around it
+
+// Why a block cannot work at a spot whose surrounding loops and searches are `chain` (outermost
+// first, [{ kind: 'loop' | 'callback' }]); '' when it can, or when the spot is not known (null).
+// Report this try needs a search around it; Skip to next pass and Stop the loop a loop or a
+// search (codegen.js: withinOnly, terminalOutside).
+export function whyNotHere(def, chain) {
+  if (!def || !Array.isArray(chain)) return '';
+  if (def.within === 'callback' && !chain.some(c => c.kind === 'callback')) return 'Only inside Optimise or Find limit';
+  if (def.within === 'loop' && !chain.some(c => c.kind === 'loop')) return 'Only inside a loop';
+  if ((def.ends === 'pass' || def.ends === 'loop') && !chain.length) return 'Only inside a loop or a search';
+  return '';
+}
+
+// The loops and searches around a block wired after `nodeId`'s flow output `out` (the generator's
+// regions; null when they are not known yet). Each pass / Each try of a loop or search is inside
+// it, After all passes is not.
+export function chainAfterPort(wf, regions, nodeId, out) {
+  if (!regions) return null;
+  const node = nodeById(wf, nodeId);
+  const def = node && getBlock(node.type);
+  const base = Array.isArray(regions[nodeId]) ? regions[nodeId] : [];
+  if (def && (def.kind === 'loop' || def.kind === 'callback') && out === 'body') return [...base, { id: nodeId, kind: def.kind }];
+  return base;
+}
+
+// The same for a palette click, which wires the new block after `anchorId` (insertAfter): into
+// its first free flow output, else into the wire of its first one.
+export function chainAfterStep(wf, regions, anchorId) {
+  if (!regions) return null;
+  if (!anchorId) return [];
+  const anchor = nodeById(wf, anchorId);
+  if (!anchor || !getBlock(anchor.type)) return [];
+  const free = freeFlowOut(wf, anchorId);
+  const outs = portsOf(anchor).flowOuts;
+  const out = free ? free.id : (outs[0] ? outs[0].id : null);
+  return chainAfterPort(wf, regions, anchorId, out);
+}
+
+// ---------------------------------------------------------------------------------------------
 // Which blocks fit a dragged wire (quick-add)
 
 function defaultPorts(def) {
   try { return portsOf({ type: def.type, s: {} }); } catch (e) { return { flowIn: hasFlowIn(def), flowOuts: def.flowOuts, inputs: def.inputs, outputs: def.outputs }; }
 }
 
-// from = { side: 'out'|'in', type }: blocks with a port on the other side that takes it.
-// Returns [{ def, port: {id, ...}, kind: 'flowIn'|'flowOut'|'input'|'output' }].
-export function blocksFor(from) {
+// An input that takes any value but only makes sense with some (`takes` on the port: Activate
+// study case takes a study case or its name, not a curve): why it cannot use `type`, or ''.
+function takesWhy(port, type) {
+  if (!port || port.type !== 'any' || !Array.isArray(port.takes) || port.takes.includes(type)) return '';
+  const what = TYPES[type] ? TYPES[type].label.toLowerCase() : 'this';
+  return 'Its ' + String(port.label || port.id) + ' input does not take ' + (/^[aeiou]/.test(what) ? 'an ' : 'a ') + what;
+}
+
+// from = { side: 'out'|'in', type }: blocks with a port on the other side that takes it, best
+// first: a port of exactly that type, then one that takes it, then one that takes any value.
+// A block that cannot work there says why in `off` and goes last: an input that takes any value
+// but not this one (takesWhy), or a step that needs a loop or a search around it (whyNotHere;
+// opts.chain: the loops and searches at that spot, null when not known).
+// Returns [{ def, port: {id, ...}, kind: 'flowIn'|'flowOut'|'input'|'output', rank, off }].
+export function blocksFor(from, opts = {}) {
   const out = [];
+  const rankOf = (have, want) => (have === want ? 0 : want === 'any' || have === 'any' ? 2 : 1);
   for (const def of allBlocks()) {
     if (def.kind === 'start' || def.kind === 'note') continue;
     const p = defaultPorts(def);
     if (from.type === 'flow') {
-      if (from.side === 'out' && p.flowIn) out.push({ def, port: { id: 'in' }, kind: 'flowIn' });
-      if (from.side === 'in' && p.flowOuts.length) out.push({ def, port: p.flowOuts[0], kind: 'flowOut' });
+      if (from.side === 'out' && p.flowIn) out.push({ def, port: { id: 'in' }, kind: 'flowIn', rank: 0, off: whyNotHere(def, opts.chain) });
+      if (from.side === 'in' && p.flowOuts.length) out.push({ def, port: p.flowOuts[0], kind: 'flowOut', rank: 0, off: whyNotHere(def, opts.chain) });
       continue;
     }
     if (from.side === 'out') {
-      const i = p.inputs.find(x => x.type === from.type) || p.inputs.find(x => canConnect(from.type, x.type));
-      if (i) out.push({ def, port: i, kind: 'input' });
+      const i = p.inputs.find(x => x.type === from.type) || p.inputs.find(x => x.type !== 'any' && canConnect(from.type, x.type)) || p.inputs.find(x => canConnect(from.type, x.type));
+      if (i) out.push({ def, port: i, kind: 'input', rank: rankOf(from.type, i.type), off: takesWhy(i, from.type) });
     } else {
-      const o = p.outputs.find(x => x.type === from.type) || p.outputs.find(x => canConnect(x.type, from.type));
-      if (o) out.push({ def, port: o, kind: 'output' });
+      const o = p.outputs.find(x => x.type === from.type) || p.outputs.find(x => x.type !== 'any' && canConnect(x.type, from.type)) || p.outputs.find(x => canConnect(x.type, from.type));
+      if (o) out.push({ def, port: o, kind: 'output', rank: rankOf(o.type, from.type), off: '' });
     }
   }
-  return out;
+  const at = new Map(out.map((m, k) => [m, k]));
+  return out.sort((a, b) => ((a.off ? 1 : 0) - (b.off ? 1 : 0)) || (a.rank - b.rank) || (at.get(a) - at.get(b)));
 }
 
 // Blocks that turn a value of type `ta` into one `tb` takes (a refused wire's converters).
@@ -519,11 +706,12 @@ export function continueIfYes(wf, srcNodeId, srcOut, x, y, steps) {
     // The output the route goes on along: the first wired one, else the first.
     const used = outs.find(o => next.edges.some(e => e.from === step && handleIdOf(next, step, e.out, 'out') === o.id)) || outs[0];
     if (used) {
-      const e = next.edges.find(z => z.from === step && handleIdOf(next, step, z.out, 'out') === used.id && isFlowEdge(next, z));
-      if (e) {
-        next = removeEdges(next, [e.id]);
+      // Every step it led to (one, or several parallel routes) now follows Yes.
+      const es = next.edges.filter(z => z.from === step && handleIdOf(next, step, z.out, 'out') === used.id && isFlowEdge(next, z));
+      if (es.length) {
+        next = removeEdges(next, es.map(e => e.id));
         next = connect(next, { from: step, out: used.id, to: N.id, in: 'in' }).wf;
-        next = connect(next, { from: N.id, out: 'yes', to: e.to, in: e.in }).wf;
+        for (const e of es) next = connect(next, { from: N.id, out: 'yes', to: e.to, in: e.in }).wf;
       } else {
         next = connect(next, { from: step, out: used.id, to: N.id, in: 'in' }).wf;
       }

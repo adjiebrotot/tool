@@ -70,7 +70,7 @@ Optimise / Find limit searches.
 | `js/core/graphstyle.js` | the graph style (§3.1): its keys, templates, palettes, ramps and fonts, `normalizeStyle`, the GRAPH_STYLE lines, the line colours as `outputs.py` picks them |
 | `js/core/codegen.js` | the generator (its header comment is the emit contract for block authors) |
 | `js/core/names.js`, `pylit.js`, `problems.js`, `runtime-loader.js`, `blockkit.js` | identifiers and the reserved set, Python literals and safe comments, the problem messages, runtime slicing, shared block helpers |
-| `js/blocks/*.js` | the 92 blocks, one file per palette category |
+| `js/blocks/*.js` | the 92 blocks, one file per palette category; 11 families of them are one palette entry each (58 entries, §4.2) |
 | `runtime/base.py` | generic helpers (logging, run folder, loop labels and skip rows, tables, series, conversions, maths) |
 | `runtime/pf_core.py`, `pf_model.py`, `pf_studies.py` | PowerFactory helpers; documented in `runtime/API-pf.md` |
 | `runtime/signals.py`, `outputs.py`, `optimise.py` | checks, graphs, searches; documented in `runtime/API-analysis.md` |
@@ -127,7 +127,18 @@ line format. Rules the loader follows (`loadWorkflow`, `settingsOf`):
 - a renamed port or setting keeps working through the block's `portAlias` / `settingAlias`;
   a changed meaning gets a new key and a `migrate(s, fromSv)` in the block (or `MIGRATIONS[v]` in
   `workflow.js` for the whole format);
-- while a block file fails to load, autosave is held so the mini cache is never overwritten.
+- while a block file fails to load, autosave is held so the mini cache is never overwritten;
+- a block family (§4.2) is never saved: a workflow holds the member's own type, so a Kind switch
+  is an ordinary type change and families can be regrouped freely;
+- several wires leaving one flow output are parallel routes (§5); before they were a warning
+  and only the first was used, so no saved workflow changes meaning (the page never made them).
+
+Changes since the first release that old work rests on: For each contingency is version 2 (its
+one "N-1 of" pattern `group` became Other elements, `query`, with the Lines / Transformers /
+Generators / External grids boxes off, through `migrate` and `settingAlias`, which also carries a
+pin and a .py's SETTINGS line across); Start's `tableFmt` defaults to `csv`, the old behaviour;
+Check limits' and Pass / fail's `goOn`, First time above / below's `levelMode`, Report this try's
+`answer` and Find limit's `passIs` default to what the blocks did before.
 
 ### 3.1 The graph style
 
@@ -186,14 +197,14 @@ outputs, such as Converged / Did not converge), `loop`, `callback` (Optimise, Fi
 
 | Category | Blocks |
 |---|---|
-| Start | Start (project, study case, output folder, put changed values back, nominal frequency, run mode) |
+| Start | Start (project, study case, output folder, put changed values back, how results tables are saved, nominal frequency, run mode) |
 | PowerFactory: cases and data (21) | elements, set / read attributes, dispatch (plant total, ngnum aware), scale (from the original value), service, put back; study cases, operation scenarios, variations: activate, create, save, loop through; test generator |
-| PowerFactory: studies (14) | load flow, RMS and EMT (Record rows give time-series outputs; Reached the end / Stopped early / Did not initialise), harmonic load flow, short circuit; events (short circuit with clearing, switch, trip, load step, one parameter change, parameter steps over time); contingencies (define, loop through); read a series from a result |
-| Power system checks (10) | remove spikes, frequency nadir (the ESS headroom rules: collapse, UFLS TRUE / FALSE / UNDEFINED), peak, settling time, RoCoF, value at time, final value, first crossing, check limits (incl. a curve), pass / fail |
+| PowerFactory: studies (14) | load flow, RMS and EMT (Record rows give time-series outputs; Reached the end / Stopped early / Did not initialise), harmonic load flow, short circuit; events (short circuit with clearing, switch, trip, load step, one parameter change, parameter steps over time); contingencies (define; loop through, by itself an N-1 or N-2 of lines, transformers, generators, external grids or other elements); read a series from a result |
+| Power system checks (10) | remove spikes, frequency nadir (the ESS headroom rules: collapse, UFLS TRUE / FALSE / UNDEFINED), peak, settling time, RoCoF, value at time, final value, first crossing (at a value, or a % of the curve's value at a time), check limits (incl. a curve) and pass / fail (both can go on either way) |
 | Results and graphs (11) | add row (named tables, skipped passes kept with a Status), save (CSV / Excel), table column (incl. the worst row), read a table from an attached file, time series / 2D / 3D / heat map / table / convergence graphs, series to CSV |
 | Flow (11) | If, for a range, for each item (incl. the rows of a table), repeat, repeat until, skip, stop the loop, stop the workflow, print, remember / recall a value |
 | Values and maths (19) | numbers, text, lists, ranges, arithmetic, formula, functions, compare, logic, statistics, text from values |
-| Optimise and search (3) | Optimise, Find limit (bisection), Report this try |
+| Optimise and search (3) | Optimise (Score read at the end of each try), Find limit (bisection; Pass read at the end of each try), Report this try (the wired value, or Pass / Fail / No answer) |
 | Advanced (2) | Python code, Note |
 
 **Adding a block:** pick the category file, call `defineBlock` with a beginner title (verb for a
@@ -201,6 +212,21 @@ step, noun for a calculator), a desc of at most 200 characters, keywords, string
 units in `unit`, `fallback` settings for unwired inputs, `effects`, and an `emit(cx)` that uses
 runtime helpers rather than inline PowerFactory code. Add its helper to the right runtime file
 (`# @helper` section, docstring, `@needs`, `@imports`), then cover it in that category's test suite.
+
+### 4.0 Blocks that end a search's try, and checks that go on either way
+
+- Find limit has a **Pass** input and Optimise a **Score** input read at the end of each try,
+  as Repeat until reads its condition (`at: 'bodyEnd'`), so a try needs no Report this try. It
+  is read where a route of the try ends by itself (including an unwired output that is not a
+  failure, such as If's Yes), never after an early exit (Skip, an unwired Did not converge or
+  Fail: that try gives no answer, and the search's "A try that gives no answer" decides), and not
+  on a route where Report this try already answered. Find limit's **Pass is** turns UFLS FALSE
+  into a pass, as Report this try's does.
+- Report this try's **Report** says Pass, Fail or No answer whatever is wired, for a route that
+  only ends one way (a simulation that stopped early: Fail).
+- Check limits and Pass / fail have **Go on either way**: one plain output on the Pass port's
+  id (a saved Pass wire keeps working), written as a plain step, so a check that only fills a
+  table row does not end the pass when it fails.
 
 ### 4.1 Only what can be chosen
 
@@ -227,10 +253,72 @@ would do something. So a setting is drawn only where its value can change what t
 
 `_audit/choice/run.mjs` holds the rules and the contract they must keep.
 
+The Settings tab draws an input as a row only when it is wired, typed there, or needed; an input
+whose setting cannot apply is not drawn, one whose setting is under More options is typed there
+("Or wire a value into ... on the canvas"), and the inputs with nothing to type share a line ("To
+wire on the canvas: ..." for main ports, "Optional inputs: ..." for the ones the canvas folds).
+`ui/ops.js inputPlan` decides it. A loop's table-column name is under More options: empty, it is
+the name on the canvas.
+
+### 4.2 Block families and the Kind switch
+
+`defineFamily` (core/registry.js) groups blocks that do one job in a few ways. The palette lists
+a family once, under its own title with its number of kinds; a click adds its usual member (or,
+where that cannot work, the first member that can); a search lists the members that match by
+their own name. The Settings tab of a member has a **Kind** switch (`ui/ops.js switchKind`): same
+id, name, pins and wires; a setting the two kinds share goes across, unless it means something
+else there (`meaning`) or the reader left it at the old kind's default, which both take the new
+kind's default; keys the new kind does not have stay in the block for the way back. A switch
+that would leave wires on ports the new kind lacks names them first and waits for "Switch
+anyway"; the wires are then kept and flagged, as the loader does.
+
+| Family | Members (the usual one first) |
+|---|---|
+| Value | Number, Text, Yes / No, List of values, Range of numbers |
+| Statistics | Maximum, Minimum, Average, Median, Sum, Count, Standard deviation, Percentile |
+| Skip or stop | Skip to next pass, Stop the loop, Stop the workflow |
+| Study case / Operation scenario / Network variation | Activate, Create, For each |
+| Deactivate scenario or variation | Deactivate operation scenario, Deactivate variation |
+| Run simulation | Run RMS simulation, Run EMT simulation |
+| Add simulation event | short circuit, switch, trip, load step, parameter change, parameter steps |
+| Read from a curve | Peak, Value at time, Final value, First time above / below |
+| Draw graph | time series, 2D, 3D, heat map, from results table, convergence |
+
+`_audit/families/run.mjs` holds the guard: a setting key two members share means the same thing
+(same kind or a declared `convert`, same unit, the same label for every option both offer, the
+same words unless `LABEL_OK` says why), and a key that differs in `meaning` is reset by a switch.
+
+### 4.3 What is offered where
+
+Quick-add (a wire dropped on empty canvas) lists the blocks with a port of exactly the wire's
+type first, then those that take it, then those that take any value. A block that cannot work
+there is greyed, says why and goes to the end: an input that takes any value but not this one
+(`takes` on the port: Activate study case takes an element or a text, not a curve), Skip to next
+pass or Stop the loop where no loop or search is around the spot, Report this try outside a
+search (`ui/ops.js whyNotHere`, from the generator's regions). The palette greys and sinks the
+same blocks for the spot a click would add to (they can still be dragged).
+
+### 4.4 Folded ports
+
+A block on the canvas draws its main ports and every wired one; the rest wait behind "+N more"
+(`more` on a port, or an input whose setting is under More options or cannot apply;
+`ui/ops.js foldedPorts`). A required input never folds; while a wire is dragged, the folded
+ports it fits are shown; whether a block is opened is kept per viewer in localStorage
+`pfb-unfold`, never in the workflow. Read attribute shows Value for one element and Highest /
+Lowest for a list.
+
 ## 5. Code generation, in brief
 
 - Structure checks first: one Start, flow wires form no circle, loop bodies are closed regions,
   terminals sit inside a loop or search.
+- Parallel routes: a flow output wired to several steps is a fork. The routes are written one
+  after another in node order, each up to the step where they all meet again, which then runs
+  once and sees their values. Each route starts from what the steps before left (a value made on
+  one route is not available on another), and a route that changes the model or runs a
+  calculation before another route reads results is a warning, as is Skip on a route that runs
+  before others. PowerFactory's Python API runs one call at a time on one engine, so the routes
+  never run at the same time: the gain is a workflow that says the reads do not depend on each
+  other, not speed.
 - Structured emission: a branch with one live output becomes a guard clause (`if not ok:
   case_skipped(...); continue`); routes that rejoin become if / elif with the join after; a dead
   end inside a loop goes on to the next pass, inside a search ends the try, otherwise ends the
@@ -243,6 +331,13 @@ would do something. So a setting is drawn only where its value can change what t
 - Layout of the file: docstring, imports, SETTINGS (Start's and pinned settings, each with what it
   is), PROBLEMS (a workflow with errors stops before connecting), CHECK_ONLY, `main()`, the copied
   helpers, then the `# PFB1` line.
+- Results tables are saved when the run ends (also after an error) in Start's "Save the results
+  tables as" (`TABLE_FORMAT`, CSV by default); Save results table is for a save partway through
+  the run, another file name, or its Path output. Excel there checks pandas and openpyxl before
+  connecting, as a Save block does.
+- Create study case keeps its case and a copy of its scenario: a change to operating data written
+  into that scenario and never saved is undone by the put-back at the end of the pass, so the
+  kept case would not hold it. The writer warns, with "Add Save operation scenario here".
 
 ## 6. Runtime helpers
 
@@ -295,6 +390,7 @@ Run from the repository root (`D:\Repository\tool`):
 |---|---|
 | `node powerfactory-scripter/builder/_audit/codegen/run.mjs` | the generator: names, literals, loading old state, every structural case, a 300-graph fuzzer, every script compiled, flow-only workflows executed against a stub runtime |
 | `node powerfactory-scripter/builder/_audit/choice/run.mjs` | "only what can be chosen" (§4.1): every rule by the case it was written for, and the contract (no `showIf` throws, no `optionsFor` invents an option, a pinned setting stays, a required one is never hidden, the unit families match the runtime) |
+| `node powerfactory-scripter/builder/_audit/families/run.mjs` | block families (92 blocks, 58 palette entries) and the guard that a shared setting key means the same, the Kind switch and the wires it would leave hanging, quick-add order and greying, the Settings inputs plan, the ports the canvas folds, parallel wiring |
 | `node powerfactory-scripter/builder/_audit/data/run.mjs` | reading an attached CSV / Excel file: the page and `read_table` give the same table for the same fixtures, and the study package .zip is read back by Python's own `zipfile` |
 | `node powerfactory-scripter/builder/_audit/blocks/pf/run.mjs [--no-live]` | the PowerFactory blocks: generation of every setting variant, validators, and 19 live runs on the sandboxes, each ending with a sandbox audit. Single blocks: load flow on every case, dispatch sweep, study cases and scenarios, short circuit, fault event, EMT, RMS trip, N-1, variations, test generator, events, parameter steps. Whole shapes a reader builds: `nested` (three loops inside each other), `branch` (routes, skip to next pass, stop the loop), `series` (four curves from one run, every check, a graph and a CSV), `optimise` (a bisection and an optimiser closing the loop through the load flow), `untilxl` (repeat until, an .xlsx read by the script, a table saved as CSV and Excel), `casetable` (an attached case table driving the dispatch) and `packaged` (the .zip the Download button writes, unpacked by Python and run from where it landed) |
 | `node powerfactory-scripter/builder/_audit/blocks/analysis/run.mjs [--live]` | the analysis blocks, executed on the two real traces in `_audit/runtime/fixtures/` |

@@ -747,11 +747,20 @@ def table(name="Results"):
 
 
 def flush_tables():
-    """Save every table that has rows no block has saved yet (called when the workflow ends)."""
-    for t in _TABLES.values():
-        if len(t.rows) > t.saved_rows:
-            log(f"Table '{t.name}' has rows that were not saved; saving it now.")
-            t.save()
+    """Save every table that has rows no block has saved yet (called when the workflow ends),
+    as TABLE_FORMAT says (SETTINGS: "csv", "xlsx" or "both"; csv when it is not set). This is
+    the normal way a results table reaches the run folder; Save results table is only needed
+    to save partway through the run, under another file name, or for its file path."""
+    fmt = str(globals().get("TABLE_FORMAT", "csv") or "csv").strip().lower()
+    if fmt not in ("csv", "xlsx", "both"):
+        log(f"TABLE_FORMAT {fmt!r} is not csv, xlsx or both, so the tables are saved as CSV.", "warn")
+        fmt = "csv"
+    todo = [t for t in _TABLES.values() if len(t.rows) > t.saved_rows]
+    if todo:
+        names = ", ".join(f"'{t.name}'" for t in todo)
+        log(f"End of the run: saving the results table{'s' if len(todo) > 1 else ''} {names}.")
+    for t in todo:
+        t.save(fmt=fmt)
 
 
 def _cell(v):

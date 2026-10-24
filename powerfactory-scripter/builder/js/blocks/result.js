@@ -20,7 +20,7 @@
 // plot_convergence / save_series_csv; table_pick and read_table are requested for base.py (the
 // tests carry them meanwhile, _audit/blocks/analysis/requested_runtime.py).
 
-import { defineBlock } from '../core/registry.js';
+import { defineBlock, defineFamily } from '../core/registry.js';
 import { clip, columnName, columnList } from '../core/blockkit.js';
 
 // Kept here too: the tests (and older callers) import them from this file.
@@ -115,7 +115,7 @@ function limitsLit(cx, extra = []) {
 const stemSetting = { key: 'stem', label: 'File name', kind: 'text', default: '', more: true, placeholder: 'From the title', tip: 'Without the extension. Inside a loop the loop values are added, so every pass gets its own file.' };
 const titleSetting = { key: 'title', label: 'Title', kind: 'text', default: '', placeholder: 'The block\'s name', tip: 'Inside a loop the loop values are written under it.' };
 // The path of the file a block writes. Its id stays `file` (saved wires name it).
-const fileOut = (tip, label) => ({ id: 'file', label: label || 'Path', type: 'text', var: 'graph_file', tip: tip || 'The path of the PNG written (empty when there was nothing to draw).' });
+const fileOut = (tip, label) => ({ id: 'file', label: label || 'Path', type: 'text', var: 'graph_file', more: true, tip: tip || 'The path of the PNG written (empty when there was nothing to draw).' });
 
 // `name = call` when the file output is used, else the call alone.
 function withFile(cx, call) {
@@ -201,7 +201,7 @@ defineBlock({
     if (s.fmt !== 'both') return { outputs: [fileOut(s.fmt === 'xlsx' ? 'The path of the Excel file written (the CSV when Excel could not be written).' : 'The path of the CSV written.')] };
     return { outputs: [
       fileOut('The path of the CSV written.', 'CSV path'),
-      { id: 'xlsx', label: 'XLSX path', type: 'text', var: 'xlsx_file', tip: 'The path of the Excel file written (empty when none was).' },
+      { id: 'xlsx', label: 'XLSX path', type: 'text', var: 'xlsx_file', more: true, tip: 'The path of the Excel file written (empty when none was).' },
     ] };
   },
   settings: [
@@ -277,8 +277,8 @@ defineBlock({
   desc: 'Attach a CSV or Excel file: its columns become a named table the rest of the workflow reads, one case per row. Use it for a case workbook or a dispatch table.',
   keywords: ['read', 'import', 'load', 'open', 'upload', 'attach', 'CSV', 'Excel', 'xlsx', 'spreadsheet', 'workbook', 'cases', 'case table', 'input file', 'dispatch table'],
   outputs: [
-    { id: 'name', label: 'Table name', type: 'text', var: 'table_name' },
-    { id: 'n', label: 'Rows', type: 'num', var: 'rows_read', tip: 'How many cases were read.' },
+    { id: 'name', label: 'Table name', type: 'text', var: 'table_name', more: true },
+    { id: 'n', label: 'Rows', type: 'num', var: 'rows_read', more: true, tip: 'How many cases were read.' },
   ],
   settings: [
     tableSetting('Cases', 'The name of the table to fill. For each item (the rows of a results table) and the other table blocks use it.'),
@@ -336,11 +336,11 @@ const curveSetting = (word, tip) => ({
 
 const seriesPortsOf = (s) => [
   ...rowInputs(s, 'lines', 'name', 'series', 'Curve', '+ drop a curve', 'Drop a time series here to add a curve.'),
-  { id: 'mark', label: 'Mark', type: 'num', tip: 'Wire Nadir or Minimum of Frequency nadir (or a Peak) to mark that point; another value needs Mark time too.' },
-  { id: 'mark_t', label: 'Mark time', type: 'num', unit: 's' },
-  { id: 'limit', label: 'Limit line', type: 'num', tip: 'A dashed line at this value, for example a limit worked out by another block.' },
-  { id: 't_event', label: 'Event time', type: 'num', unit: 's', tip: 'A dotted line at this time. The run\'s own events are drawn anyway.' },
-  { id: 'note', label: 'Footnote', type: 'text', tip: 'A line under the graph, for example the Note of Remove spikes.' },
+  { id: 'mark', label: 'Mark', type: 'num', more: true, tip: 'Wire Nadir or Minimum of Frequency nadir (or a Peak) to mark that point; another value needs Mark time too.' },
+  { id: 'mark_t', label: 'Mark time', type: 'num', unit: 's', more: true },
+  { id: 'limit', label: 'Limit line', type: 'num', more: true, tip: 'A dashed line at this value, for example a limit worked out by another block.' },
+  { id: 't_event', label: 'Event time', type: 'num', unit: 's', more: true, tip: 'A dotted line at this time. The run\'s own events are drawn anyway.' },
+  { id: 'note', label: 'Footnote', type: 'text', more: true, tip: 'A line under the graph, for example the Note of Remove spikes.' },
 ];
 
 // The mark: a check result when the value comes straight from one (its time comes with it and
@@ -562,7 +562,7 @@ defineBlock({
     titleSetting,
     { key: 'ylabel', label: 'Y axis', kind: 'text', default: '', placeholder: 'Score, or the value searched' },
     { key: 'unit', label: 'Unit', kind: 'text', default: '', more: true },
-    { key: 'kind', label: 'The search is', kind: 'select', default: 'auto', more: true, options: [['auto', 'Found from the history'], ['optimise', 'Optimise'], ['limit', 'Find limit']] },
+    { key: 'kind', label: 'The search is', kind: 'select', default: 'auto', more: true, meaning: 'searchKind', options: [['auto', 'Found from the history'], ['optimise', 'Optimise'], ['limit', 'Find limit']] },
     stemSetting,
   ],
   summary() { return 'Every try of the search'; },
@@ -573,6 +573,15 @@ defineBlock({
     return withFile(cx, `plot_convergence(${cx.in('history')}, kind=${cx.val('kind')}, title=${titleOf(cx)}, ylabel=${textOr(cx, 'ylabel')}, ` +
       `unit=${textOr(cx, 'unit')}, stem=${textOrNone(cx, 'stem')})`);
   },
+});
+
+// The six graphs are one palette entry. `kind` is how a graph draws (lines, points, bars, a
+// surface) on all of them but the convergence curve, where it is the kind of search.
+defineFamily({
+  id: 'graph', title: 'Draw graph',
+  desc: 'Draws a PNG: curves over time, lists against x (lines, points or bars), a 3D surface, a heat map, columns of a results table, or how a search went. Choose which under Kind.',
+  keywords: ['graph', 'plot', 'chart', 'draw', 'PNG', 'figure', 'time series', '2D', '3D', 'heat map', 'convergence', 'matplotlib'],
+  members: ['out.plot.series', 'out.plot.xy', 'out.plot.3d', 'out.plot.heatmap', 'out.plot.table', 'out.plot.conv'], dflt: 'out.plot.series',
 });
 
 defineBlock({

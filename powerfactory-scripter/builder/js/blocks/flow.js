@@ -10,7 +10,7 @@
 // Python helpers used here that base.py does not have yet (num_range, compare, text_format)
 // are listed in this agent's Requests; the test stub carries them meanwhile.
 
-import { defineBlock } from '../core/registry.js';
+import { defineBlock, defineFamily } from '../core/registry.js';
 import { parseValues, allNumbers, placeholders, portIdFor, clip } from '../core/blockkit.js';
 
 const CAT = 'flow';
@@ -18,8 +18,8 @@ const CAT = 'flow';
 // Empty (the default) means: the block's label when it has one, else `fallback` ("Value"), so a
 // loop labelled "Dispatch (MW)" gives a "Dispatch (MW)" column without typing it twice.
 const nameSetting = (fallback) => ({
-  key: 'name', label: 'Name (table column and file names)', kind: 'text', default: '', placeholder: `The block's name, or ${fallback}`,
-  tip: `What each pass is called: the column in results tables, part of file names and the log label. Empty: the block's name, or "${fallback}".`,
+  key: 'name', label: 'Name (table column and file names)', kind: 'text', default: '', more: true, meaning: 'passName', placeholder: `The name on the canvas, or ${fallback}`,
+  tip: `What each pass is called in results tables, file names and the log, when that is not the name on the canvas. Empty: the name on the canvas, or "${fallback}".`,
 });
 const restoreSetting = {
   key: 'restore', label: 'After each pass', kind: 'select', default: 'pass', more: true, noPin: true,
@@ -35,6 +35,8 @@ const passLabel = (cx, fallback) => cx.lit(String(cx.s.name || '').trim() || Str
 // "dispatch_mw_values" for a loop the reader labelled "Dispatch (MW)", else just "values".
 const listName = (cx, what) => cx.name((String(cx.node.label || '').trim() ? cx.label + ' ' : '') + what);
 
+// What If can check: a value, a yes / no, a text or a list; not a whole curve or table.
+const IF_TAKES = ['num', 'bool', 'text', 'cell', 'list', 'items', 'obj'];
 const OPS = [['true', 'is true'], ['gt', '>'], ['ge', '≥'], ['lt', '<'], ['le', '≤'], ['eq', '='], ['ne', '≠']];
 const opText = (op) => (OPS.find(o => o[0] === op) || OPS[0])[1];
 
@@ -46,7 +48,7 @@ defineBlock({
   keywords: ['if', 'condition', 'decision', 'branch', 'check', 'compare', 'yes no', 'only if', 'settles'],
   flowOuts: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'No' }],
   inputs: [
-    { id: 'a', label: 'Value', type: 'any', required: true },
+    { id: 'a', label: 'Value', type: 'any', takes: IF_TAKES, required: true },
     { id: 'b', label: 'Compare with', type: 'num', fallback: 'b', tip: 'The number to compare the value with (not used for "is true").' },
   ],
   settings: [
@@ -58,7 +60,7 @@ defineBlock({
   ports(s) {
     return {
       inputs: [
-        { id: 'a', label: 'Value', type: 'any', required: true },
+        { id: 'a', label: 'Value', type: 'any', takes: IF_TAKES, required: true },
         { id: 'b', label: s.op === 'true' ? 'Compare with (not used)' : 'Compare with', type: 'num', fallback: 'b' },
       ],
     };
@@ -96,8 +98,8 @@ defineBlock({
   ],
   outputs: [
     { id: 'value', label: 'Value', type: 'num', scope: 'body', var: 'value', tip: 'The number of this pass.' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', tip: 'The pass number, 1 for the first pass.' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true, tip: 'The pass number, 1 for the first pass.' },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Value'),
@@ -128,8 +130,8 @@ defineBlock({
 
 // ---------------------------------------------------------------------------------------------
 const listPorts = (s) => {
-  const index = { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' };
-  const count = { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' };
+  const index = { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true };
+  const count = { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true };
   if (s.source === 'table') {
     const cols = (Array.isArray(s.cols) ? s.cols : []).map(r => ({
       id: r.id, label: String(r.name || r.id), type: r.type === 'text' ? 'text' : 'num', scope: 'body', var: String(r.name || r.id),
@@ -155,8 +157,8 @@ defineBlock({
   inputs: [{ id: 'items', label: 'List', type: 'items' }],
   outputs: [
     { id: 'item', label: 'Item', type: 'num', scope: 'body', var: 'item' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Item'),
@@ -275,7 +277,7 @@ defineBlock({
   ],
   outputs: [
     { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' },
-    { id: 'met', label: 'Condition met', type: 'bool', scope: 'done', var: 'met', tip: 'Yes when the loop ended because the condition was true.' },
+    { id: 'met', label: 'Condition met', type: 'bool', scope: 'done', var: 'met', more: true, tip: 'Yes when the loop ended because the condition was true.' },
   ],
   settings: [
     nameSetting('Pass'),
@@ -305,7 +307,7 @@ defineBlock({
 
 // ---------------------------------------------------------------------------------------------
 defineBlock({
-  type: 'flow.next', cat: CAT, kind: 'terminal',
+  type: 'flow.next', cat: CAT, kind: 'terminal', ends: 'pass',
   title: 'Skip to next pass',
   desc: 'Ends this pass of the loop now and goes on with the next pass. The reason goes into the log and the results table.',
   keywords: ['skip', 'continue', 'next pass', 'next', 'ignore'],
@@ -315,7 +317,7 @@ defineBlock({
 });
 
 defineBlock({
-  type: 'flow.break', cat: CAT, kind: 'terminal',
+  type: 'flow.break', cat: CAT, kind: 'terminal', ends: 'loop',
   title: 'Stop the loop',
   desc: 'Ends the loop now: no more passes. The steps wired to After all passes run next.',
   keywords: ['break', 'stop loop', 'exit loop', 'end loop', 'found'],
@@ -325,13 +327,22 @@ defineBlock({
 });
 
 defineBlock({
-  type: 'flow.stop', cat: CAT, kind: 'terminal',
+  type: 'flow.stop', cat: CAT, kind: 'terminal', ends: 'workflow',
   title: 'Stop the workflow',
   desc: 'Stops the whole workflow cleanly: changed values are put back and the tables are saved.',
   keywords: ['stop', 'end', 'exit', 'abort', 'quit'],
   settings: [{ key: 'msg', label: 'Message', kind: 'text', default: 'Stopped by the workflow', noPin: true, tip: 'Shown in the log.' }],
   summary(s) { return s.msg ? s.msg : ''; },
   emit(cx) { return { kind: 'stop', msg: String(cx.s.msg || '').trim() || 'Stopped by the workflow' }; },
+});
+
+// `ends`: what the block ends (the quick-add list and the palette grey out the two that need a
+// loop or a search where there is none).
+defineFamily({
+  id: 'end', title: 'Skip or stop',
+  desc: 'Ends this pass of the loop (Skip to next pass), the whole loop (Stop the loop) or the workflow (Stop the workflow), with a message. Choose which under Kind.',
+  keywords: ['skip', 'stop', 'continue', 'break', 'exit', 'end', 'abort', 'next pass'],
+  members: ['flow.next', 'flow.break', 'flow.stop'], dflt: 'flow.next',
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -405,7 +416,7 @@ defineBlock({
   keywords: ['recall', 'variable', 'get value', 'remembered', 'read value', 'where'],
   outputs: [
     { id: 'value', label: 'Value', type: 'num' },
-    { id: 'where', label: 'Where', type: 'text', tip: 'For Keep the lowest / highest: the loop values of the pass that set it.' },
+    { id: 'where', label: 'Where', type: 'text', more: true, tip: 'For Keep the lowest / highest: the loop values of the pass that set it.' },
   ],
   settings: [
     { key: 'name', label: 'Name', kind: 'text', default: 'Result', suggest: 'vars' },
@@ -415,7 +426,7 @@ defineBlock({
   ],
   ports(s) {
     const t = ['num', 'text', 'list', 'items', 'bool', 'any'].includes(s.as) ? s.as : 'num';
-    return { outputs: [{ id: 'value', label: 'Value', type: t }, { id: 'where', label: 'Where', type: 'text' }] };
+    return { outputs: [{ id: 'value', label: 'Value', type: t }, { id: 'where', label: 'Where', type: 'text', more: true }] };
   },
   summary(s) { return s.name; },
   helpers: ['vars'],

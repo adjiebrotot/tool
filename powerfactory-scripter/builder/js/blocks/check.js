@@ -16,7 +16,7 @@
 // (F_NOMINAL), else the trace itself; the collapse floor and the UFLS level are stored as
 // offsets below nominal (E8), so a 60 Hz project needs no other numbers.
 
-import { defineBlock } from '../core/registry.js';
+import { defineBlock, defineFamily } from '../core/registry.js';
 
 const CAT = 'check';
 
@@ -49,8 +49,8 @@ defineBlock({
   inputs: [seriesIn('Time series', 'Meant for frequency traces (Hz, or p.u. frequency or speed). Other curves work in their own unit.')],
   outputs: [
     { id: 'series', label: 'Clean curve', type: 'series', pick: '.series', var: 'clean', tip: 'The same curve with the spike samples taken out (not filled in).' },
-    { id: 'n', label: 'Spikes removed', type: 'num', pick: '.n', var: 'spikes' },
-    { id: 'note', label: 'Note', type: 'text', pick: '.note', var: 'spike_note', tip: 'One line saying what was removed, for a graph footnote or a table column.' },
+    { id: 'n', label: 'Spikes removed', type: 'num', pick: '.n', var: 'spikes', more: true },
+    { id: 'note', label: 'Note', type: 'text', pick: '.note', var: 'spike_note', more: true, tip: 'One line saying what was removed, for a graph footnote or a table column.' },
   ],
   settings: [
     { key: 'window', label: 'Median window', kind: 'number', default: 0.2, unit: 's', min: 0, step: 0.05, tip: 'Each sample is compared with the median of the samples within half this time on each side.' },
@@ -90,13 +90,13 @@ defineBlock({
   outputs: [
     { id: 'nadir', label: 'Nadir', type: 'num', unit: 'Hz', pick: '.value', var: 'nadir', tip: 'The lowest frequency when it turned around (verdict `NADIR`); empty for a collapse.' },
     { id: 'time', label: 'Nadir time', type: 'num', unit: 's', pick: '.time', var: 'nadir_time' },
-    { id: 'turned', label: 'Turned around', type: 'bool', pick: '.turned', var: 'turned_around', tip: 'Yes when the frequency stopped falling and recovered: the "does it settle" check of a headroom study.' },
-    { id: 'verdict', label: 'Verdict', type: 'text', pick: '.verdict', var: 'verdict', tip: '`NADIR`, `COLLAPSE` or `NO DATA`. Wire it into RoCoF too.' },
+    { id: 'turned', label: 'Turned around', type: 'bool', pick: '.turned', var: 'turned_around', more: true, tip: 'Yes when the frequency stopped falling and recovered: the "does it settle" check of a headroom study.' },
+    { id: 'verdict', label: 'Verdict', type: 'text', pick: '.verdict', var: 'verdict', more: true, tip: '`NADIR`, `COLLAPSE` or `NO DATA`. Wire it into RoCoF too.' },
     { id: 'ufls', label: 'UFLS', type: 'text', pick: '.ufls', var: 'ufls', tip: '`TRUE` (below the UFLS level), `FALSE`, or `UNDEFINED` (the run ended while still falling above it).' },
-    { id: 'minimum', label: 'Minimum', type: 'num', unit: 'Hz', pick: '.minimum', var: 'minimum', tip: 'The minimum the verdict rests on, also for a collapse.' },
-    { id: 'min_time', label: 'Minimum time', type: 'num', unit: 's', pick: '.min_time', var: 'minimum_time' },
-    { id: 'still', label: 'Still falling', type: 'bool', pick: '.still_falling', var: 'still_falling', tip: 'Yes when the run ended still at its lowest.' },
-    { id: 'recovery', label: 'Recovery', type: 'num', unit: 'Hz', pick: '.recovery', var: 'recovery', tip: 'How far the frequency rose after its minimum.' },
+    { id: 'minimum', label: 'Minimum', type: 'num', unit: 'Hz', pick: '.minimum', var: 'minimum', more: true, tip: 'The minimum the verdict rests on, also for a collapse.' },
+    { id: 'min_time', label: 'Minimum time', type: 'num', unit: 's', pick: '.min_time', var: 'minimum_time', more: true },
+    { id: 'still', label: 'Still falling', type: 'bool', pick: '.still_falling', var: 'still_falling', more: true, tip: 'Yes when the run ended still at its lowest.' },
+    { id: 'recovery', label: 'Recovery', type: 'num', unit: 'Hz', pick: '.recovery', var: 'recovery', more: true, tip: 'How far the frequency rose after its minimum.' },
   ],
   settings: [
     tEventSetting(),
@@ -186,11 +186,11 @@ defineBlock({
   outputs: [
     { id: 'settles', label: 'Settles', type: 'bool', pick: '.settles', var: 'settles', tip: 'Yes when it is inside the band for good before the end of the run.' },
     { id: 'time', label: 'Settling time', type: 'num', unit: 's', pick: '.time', var: 'settling_time', tip: 'From the event to the moment it stays inside the band.' },
-    { id: 'at', label: 'Settled at', type: 'num', unit: 's', pick: '.at', var: 'settled_at', tip: 'The simulation time it stays inside the band from.' },
-    { id: 'initial', label: 'Initial value', type: 'num', pick: '.initial', var: 'initial', tip: 'The value just before the event.' },
-    { id: 'final', label: 'Final value', type: 'num', pick: '.final', var: 'final' },
-    { id: 'rise', label: 'Rise time', type: 'num', unit: 's', pick: '.rise_time', var: 'rise_time', tip: 'From 10 % to 90 % of the step.' },
-    { id: 'overshoot', label: 'Overshoot', type: 'num', unit: '%', pick: '.overshoot_pct', var: 'overshoot_pct', tip: 'How far it went past the final value, in % of the step.' },
+    { id: 'at', label: 'Settled at', type: 'num', unit: 's', pick: '.at', var: 'settled_at', more: true, tip: 'The simulation time it stays inside the band from.' },
+    { id: 'initial', label: 'Initial value', type: 'num', pick: '.initial', var: 'initial', more: true, tip: 'The value just before the event.' },
+    { id: 'final', label: 'Final value', type: 'num', pick: '.final', var: 'final', more: true },
+    { id: 'rise', label: 'Rise time', type: 'num', unit: 's', pick: '.rise_time', var: 'rise_time', more: true, tip: 'From 10 % to 90 % of the step.' },
+    { id: 'overshoot', label: 'Overshoot', type: 'num', unit: '%', pick: '.overshoot_pct', var: 'overshoot_pct', more: true, tip: 'How far it went past the final value, in % of the step.' },
   ],
   settings: [
     tEventSetting(),
@@ -242,9 +242,9 @@ defineBlock({
   ],
   outputs: [
     { id: 'rocof', label: 'RoCoF', type: 'num', unit: 'Hz/s', pick: '.value', var: 'rocof', tip: 'Signed: a falling frequency gives a negative value.' },
-    { id: 'time', label: 'Window start', type: 'num', unit: 's', pick: '.time', var: 'rocof_time' },
-    { id: 't2', label: 'Window end', type: 'num', unit: 's', pick: '.t2', var: 'rocof_end' },
-    { id: 'basis', label: 'Basis', type: 'text', pick: '.basis', var: 'rocof_basis', tip: 'Where the search ended: `nadir`, `window` or `tstop`; `/short` when that was shorter than the window.' },
+    { id: 'time', label: 'Window start', type: 'num', unit: 's', pick: '.time', var: 'rocof_time', more: true },
+    { id: 't2', label: 'Window end', type: 'num', unit: 's', pick: '.t2', var: 'rocof_end', more: true },
+    { id: 'basis', label: 'Basis', type: 'text', pick: '.basis', var: 'rocof_basis', more: true, tip: 'Where the search ended: `nadir`, `window` or `tstop`; `/short` when that was shorter than the window.' },
   ],
   settings: [
     tEventSetting(),
@@ -295,34 +295,64 @@ defineBlock({
 });
 
 // ---------------------------------------------------------------------------------------------
+// The level of First time above / below is a value, or a percentage of the curve's own value at
+// a time (FRT: back to 90 % of the power before the fault). The time defaults to the first event
+// of the run, where the value read is the one just before the event (value_at).
+const LEVEL_MODES = [['value', 'A value'], ['pct', '% of the curve\'s value at a time']];
+const crossPorts = (s) => [
+  seriesIn(),
+  ...(s.levelMode === 'pct'
+    ? [{ id: 'pct', label: 'Percent', type: 'num', unit: '%', fallback: 'pct', tip: 'The level is this percentage of the curve\'s value at the time below, for example 90.' },
+      { id: 'ref_t', label: 'Of the value at', type: 'num', unit: 's', fallback: 'refT', tip: 'The time of the value the percentage is taken of. Empty: the first event of the run (the value just before it).' }]
+    : [{ id: 'level', label: 'Level', type: 'num', fallback: 'level', tip: 'In the curve\'s unit, for example 0.9 (p.u.).' }]),
+  { id: 'after', label: 'Look from', type: 'num', unit: 's', fallback: 'after', tip: 'Start looking at this time, for example the clearing time. Empty: the first event of the run.' },
+];
+
 defineBlock({
   type: 'sig.cross', cat: CAT, kind: 'pure',
   title: 'First time above / below',
-  desc: 'When a curve first goes above (or below) a level and stays there, e.g. the voltage recovering to 0.9 p.u. after the fault is cleared.',
-  keywords: ['crossing', 'above', 'below', 'threshold', 'level', 'recovery time', 'recovers', 'FRT', 'reaches', 'delay', 'first time'],
-  inputs: [
-    seriesIn(),
-    { id: 'level', label: 'Level', type: 'num', fallback: 'level', tip: 'In the curve\'s unit, for example 0.9 (p.u.) or 90 % of the power before the fault.' },
-    { id: 'after', label: 'Look from', type: 'num', unit: 's', fallback: 'after', tip: 'Start looking at this time, for example the clearing time. Empty: the first event of the run.' },
-  ],
+  desc: 'When a curve first goes above (or below) a level and stays there, e.g. the voltage back to 0.9 p.u., or the power back to 90 % of its value before the fault.',
+  keywords: ['crossing', 'above', 'below', 'threshold', 'level', 'recovery time', 'recovers', 'FRT', 'reaches', 'delay', 'first time', 'percent', 'pre-fault', 'active power recovery'],
+  inputs: crossPorts({ levelMode: 'value' }),
   outputs: [
     { id: 'time', label: 'Time', type: 'num', unit: 's', pick: '.time', var: 'cross_time' },
     { id: 'delay', label: 'Delay', type: 'num', unit: 's', pick: '.delay', var: 'delay', tip: 'Time minus Look from.' },
-    { id: 'found', label: 'Found', type: 'bool', pick: '.found', var: 'found' },
+    { id: 'found', label: 'Found', type: 'bool', pick: '.found', var: 'found', more: true },
+    { id: 'threshold', label: 'Level', type: 'num', pick: '.level', var: 'cross_level', more: true, tip: 'The level it looked for, in the curve\'s unit (with a percentage: the value it works out to), for a limit line on a graph.' },
   ],
   settings: [
     { key: 'direction', label: 'Goes', kind: 'select', default: 'above', options: [['above', 'Above the level'], ['below', 'Below the level']] },
-    { key: 'level', label: 'Level', kind: 'number', default: 0.9 },
+    { key: 'levelMode', label: 'Level is', kind: 'select', default: 'value', noPin: true, options: LEVEL_MODES },
+    { key: 'level', label: 'Level', kind: 'number', default: 0.9, showIf: (s) => s.levelMode !== 'pct' },
+    { key: 'pct', label: 'Percent', kind: 'number', default: 90, unit: '%', min: 0, showIf: (s) => s.levelMode === 'pct' },
+    { key: 'refT', label: 'Of the value at', kind: 'number', default: null, unit: 's', placeholder: 'First event of the run', showIf: (s) => s.levelMode === 'pct',
+      tip: 'The time of the value the percentage is taken of. Empty: the first event of the run (the value just before it, e.g. the power before the fault).' },
     { key: 'after', label: 'Look from', kind: 'number', default: null, unit: 's', placeholder: 'First event of the run' },
     { key: 'hold', label: 'And stays there for', kind: 'number', default: 0, more: true, unit: 's', min: 0, tip: '0: the first touch counts.' },
   ],
-  summary(s) { return `${s.direction === 'below' ? 'Below' : 'Above'} ${n(s.level)}`; },
+  ports(s) { return { inputs: crossPorts(s) }; },
+  summary(s) {
+    const lv = s.levelMode === 'pct' ? `${n(s.pct)} % of its value ${s.refT === null || s.refT === undefined ? 'before the first event' : `at ${n(s.refT)} s`}` : n(s.level);
+    return `${s.direction === 'below' ? 'Below' : 'Above'} ${lv}`;
+  },
   helpers: ['first_cross'],
   varName: resultName('crossing'),
   emit(cx) {
     cx.helper('first_cross');
-    return `first_cross(${cx.in('series')}, ${cx.in('level')}, direction=${cx.val('direction')}, after=${cx.in('after')}, hold=${cx.val('hold')})`;
+    const level = cx.s.levelMode === 'pct' ? 'None' : cx.in('level');
+    const pct = cx.s.levelMode === 'pct' ? `, pct=${cx.in('pct')}, ref_t=${cx.in('ref_t')}` : '';
+    return `first_cross(${cx.in('series')}, ${level}, direction=${cx.val('direction')}, after=${cx.in('after')}, hold=${cx.val('hold')}${pct})`;
   },
+  validate(cx) {
+    if (cx.s.levelMode === 'pct' && !cx.has('pct') && (cx.s.pct === null || cx.s.pct === undefined)) cx.todo(`Give the percentage on ${cx.label}.`);
+  },
+});
+
+defineFamily({
+  id: 'curve', title: 'Read from a curve',
+  desc: 'One value of a curve: its peak, its value at a time, its final value, or when it first goes above or below a level. Choose which under Kind.',
+  keywords: ['curve', 'time series', 'peak', 'value at time', 'final value', 'first time above', 'crossing', 'recovery', 'read'],
+  members: ['sig.peak', 'sig.at', 'sig.final', 'sig.cross'], dflt: 'sig.peak',
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -333,15 +363,24 @@ const passFailOuts = (name) => [
   { id: 'pass', label: 'Pass' },
   { id: 'fail', label: 'Fail', stopMsg: `${name} did not pass` },
 ];
+// "Go on either way": one plain output on the Pass port's id, so a wire saved on Pass keeps
+// working, and the block is written as a plain step (no early exit for a failed check).
+const goOnOuts = [{ id: 'pass', label: '' }];
+const goOnSetting = { key: 'goOn', label: 'Go on either way', kind: 'bool', default: false, noPin: true,
+  tip: 'Pass or fail, the next step is the same: for a result that only goes into a table row. Off: Fail takes its own route, and an unwired Fail ends the pass.' };
 const nameOf = (node, title) => (node && typeof node.label === 'string' && node.label.trim()) || title;
 
 function branchLines(cx, r, call) {
+  const then = cx.s.goOn ? '), so it did not pass.' : '), so it takes Fail.';
   return [
     `${r} = ${call}`,
     `if ${r}.ok is None:`,
-    `    log(${cx.lit(cx.label + ': NO DATA (')} + str(${r}.get("reason") or "nothing to check") + ${cx.lit('), so it takes Fail.')}, "warn")`,
+    `    log(${cx.lit(cx.label + ': NO DATA (')} + str(${r}.get("reason") or "nothing to check") + ${cx.lit(then)}, "warn")`,
   ];
 }
+// The routes a check gives the generator: Pass when it passed, else Fail; one plain route when
+// it goes on either way.
+const checkRoutes = (cx, r) => (cx.s.goOn ? { branches: [], elseOut: 'pass' } : { branches: [{ out: 'pass', test: `${r}.ok is True` }], elseOut: 'fail' });
 
 const LIMIT_TITLE = 'Check limits';
 const curveRows = (s) => (Array.isArray(s.curve) ? s.curve : []);
@@ -359,11 +398,11 @@ defineBlock({
     { id: 'hi', label: 'Highest allowed', type: 'num', fallback: 'hi' },
   ],
   outputs: [
-    { id: 'ok', label: 'Passed', type: 'bool', var: 'within_limits', tip: 'Empty when there was nothing to check (`NO DATA`).' },
+    { id: 'ok', label: 'Passed', type: 'bool', var: 'within_limits', more: true, tip: 'Empty when there was nothing to check (`NO DATA`).' },
     { id: 'text', label: 'Result', type: 'text', var: 'limit_result', tip: '`PASS`, `FAIL` or `NO DATA`.' },
     { id: 'margin', label: 'Margin', type: 'num', var: 'margin', tip: 'The smallest distance inside the limits; negative when a limit is broken.' },
-    { id: 'at', label: 'Worst at', type: 'num', var: 'worst_at', tip: 'The time (for a curve) or the position of the worst point.' },
-    { id: 'worst', label: 'Worst value', type: 'num', var: 'worst_value' },
+    { id: 'at', label: 'Worst at', type: 'num', var: 'worst_at', more: true, tip: 'The time (for a curve) or the position of the worst point.' },
+    { id: 'worst', label: 'Worst value', type: 'num', var: 'worst_value', more: true },
   ],
   settings: [
     { key: 'against', label: 'Check against', kind: 'select', default: 'value', noPin: true,
@@ -383,6 +422,7 @@ defineBlock({
     { key: 'extend', label: 'Hold the last point after the curve ends', kind: 'bool', default: false, more: true, showIf: (s) => s.against === 'curve' },
     { key: 'after', label: 'Only a curve from', kind: 'number', default: null, unit: 's', more: true, placeholder: 'Start of the run' },
     { key: 'before', label: 'Only a curve until', kind: 'number', default: null, unit: 's', more: true, placeholder: 'End of the run' },
+    goOnSetting,
   ],
   ports(s, node) {
     const name = nameOf(node, LIMIT_TITLE);
@@ -390,14 +430,15 @@ defineBlock({
     const inputs = s.against === 'curve'
       ? [x, { id: 'x0', label: 'Curve starts at', type: 'num', unit: 's', fallback: 'x0' }, { id: 'xs', label: 'x of each value', type: 'list', tip: 'Only for a list of values: where each one sits on the curve.' }]
       : [x, { id: 'lo', label: 'Lowest allowed', type: 'num', fallback: 'lo' }, { id: 'hi', label: 'Highest allowed', type: 'num', fallback: 'hi' }];
-    return { inputs, flowOuts: passFailOuts(name) };
+    return { inputs, flowOuts: s.goOn ? goOnOuts : passFailOuts(name) };
   },
   summary(s) {
-    if (s.against === 'curve') return `Against a curve of ${curveRows(s).length} points`;
+    const either = s.goOn ? ', goes on either way' : '';
+    if (s.against === 'curve') return `Against a curve of ${curveRows(s).length} points${either}`;
     const lo = n(s.lo), hi = n(s.hi);
-    if (lo && hi) return `Between ${lo} and ${hi}`;
-    if (lo) return `At least ${lo}`;
-    if (hi) return `At most ${hi}`;
+    if (lo && hi) return `Between ${lo} and ${hi}${either}`;
+    if (lo) return `At least ${lo}${either}`;
+    if (hi) return `At most ${hi}${either}`;
     return 'No limits yet';
   },
   helpers: ['check_limits', 'log'],
@@ -412,7 +453,7 @@ defineBlock({
     } else {
       call = `check_limits(${cx.in('x')}, lo=${cx.in('lo')}, hi=${cx.in('hi')}, after=${cx.val('after')}, before=${cx.val('before')})`;
     }
-    return { lines: branchLines(cx, r, call), branches: [{ out: 'pass', test: `${r}.ok is True` }], elseOut: 'fail' };
+    return { lines: branchLines(cx, r, call), ...checkRoutes(cx, r) };
   },
   validate(cx) {
     if (cx.s.against === 'curve') {
@@ -444,21 +485,22 @@ defineBlock({
     { id: 'limit', label: 'Limit', type: 'num', fallback: 'limit' },
   ],
   outputs: [
-    { id: 'ok', label: 'Passed', type: 'bool', var: 'passed', tip: 'Empty when there was no value (`NO DATA`).' },
+    { id: 'ok', label: 'Passed', type: 'bool', var: 'passed', more: true, tip: 'Empty when there was no value (`NO DATA`).' },
     { id: 'text', label: 'Result', type: 'text', var: 'result_text', tip: '`PASS`, `FAIL` or `NO DATA`.' },
-    { id: 'margin', label: 'Margin', type: 'num', var: 'margin', tip: 'How far inside the limit the value is; negative when it fails.' },
+    { id: 'margin', label: 'Margin', type: 'num', var: 'margin', more: true, tip: 'How far inside the limit the value is; negative when it fails.' },
   ],
   settings: [
     { key: 'op', label: 'Pass when the value', kind: 'select', default: 'ge', options: VOPS },
     { key: 'limit', label: 'Limit', kind: 'number', default: 0, showIf: (s) => !noLimit(s.op) },
     { key: 'tol', label: 'Tolerance for = and ≠', kind: 'number', default: 0, more: true, showIf: (s) => s.op === 'eq' || s.op === 'ne' },
+    goOnSetting,
   ],
   ports(s, node) {
     const name = nameOf(node, VERDICT_TITLE);
     const value = { id: 'value', label: 'Value', type: 'any', required: true, tip: 'A number (or every value of a list or curve), or a yes / no or `TRUE` / `FALSE` for "is true" and "is false".' };
-    return { inputs: noLimit(s.op) ? [value] : [value, { id: 'limit', label: 'Limit', type: 'num', fallback: 'limit' }], flowOuts: passFailOuts(name) };
+    return { inputs: noLimit(s.op) ? [value] : [value, { id: 'limit', label: 'Limit', type: 'num', fallback: 'limit' }], flowOuts: s.goOn ? goOnOuts : passFailOuts(name) };
   },
-  summary(s) { return noLimit(s.op) ? `Value ${vopText(s.op)}` : `Value ${vopText(s.op)} ${n(s.limit)}`; },
+  summary(s) { return (noLimit(s.op) ? `Value ${vopText(s.op)}` : `Value ${vopText(s.op)} ${n(s.limit)}`) + (s.goOn ? ', goes on either way' : ''); },
   helpers: ['verdict', 'log'],
   emit(cx) {
     cx.helper('verdict', 'log');
@@ -470,6 +512,6 @@ defineBlock({
     // operator edited in the .py still works.
     const limit = cx.ports.inputs.some(p => p.id === 'limit') ? cx.in('limit') : cx.val('limit');
     const call = `verdict(${cx.in('value')}, ${cx.val('op')}, ${limit}, ${cx.val('tol')})`;
-    return { lines: branchLines(cx, r, call), branches: [{ out: 'pass', test: `${r}.ok is True` }], elseOut: 'fail' };
+    return { lines: branchLines(cx, r, call), ...checkRoutes(cx, r) };
   },
 });

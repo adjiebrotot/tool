@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -138,34 +139,8 @@
         "x0": 0,
         "extend": true,
         "after": null,
-        "before": null
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
-      "id": "n6",
-      "type": "sig.at",
-      "x": 960,
-      "y": 390,
-      "label": "Pre-fault power",
-      "s": {
-        "t": 0
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
-      "id": "n7",
-      "type": "math.arith",
-      "x": 1280,
-      "y": 390,
-      "label": "90 % of pre-fault power",
-      "s": {
-        "op": "mul",
-        "a": 0,
-        "b": 0.9,
-        "each": false
+        "before": null,
+        "goOn": true
       },
       "pin": [],
       "sv": 1
@@ -173,12 +148,15 @@
     {
       "id": "n8",
       "type": "sig.cross",
-      "x": 1280,
-      "y": 690,
+      "x": 960,
+      "y": 390,
       "label": "Power recovery",
       "s": {
         "direction": "above",
+        "levelMode": "pct",
         "level": 0.9,
+        "pct": 90,
+        "refT": null,
         "after": null,
         "hold": 0.5
       },
@@ -194,7 +172,8 @@
       "s": {
         "op": "le",
         "limit": 1,
-        "tol": 0
+        "tol": 0,
+        "goOn": true
       },
       "pin": [
         "limit"
@@ -234,23 +213,9 @@
       "sv": 1
     },
     {
-      "id": "n11",
-      "type": "out.table.save",
-      "x": 1920,
-      "y": 0,
-      "label": "",
-      "s": {
-        "table": "FRT",
-        "fmt": "csv",
-        "stem": ""
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
       "id": "n12",
       "type": "out.plot.series",
-      "x": 2240,
+      "x": 1920,
       "y": 0,
       "label": "Voltage at the connection point",
       "s": {
@@ -274,7 +239,7 @@
     {
       "id": "n13",
       "type": "out.plot.series",
-      "x": 2560,
+      "x": 2240,
       "y": 0,
       "label": "Plant active power",
       "s": {
@@ -334,155 +299,106 @@
     },
     {
       "id": "e6",
-      "from": "n5",
-      "out": "fail",
-      "to": "n9",
-      "in": "in"
-    },
-    {
-      "id": "e7",
       "from": "n9",
       "out": "pass",
       "to": "n10",
       "in": "in"
     },
     {
-      "id": "e8",
-      "from": "n9",
-      "out": "fail",
-      "to": "n10",
-      "in": "in"
-    },
-    {
-      "id": "e9",
+      "id": "e7",
       "from": "n10",
-      "out": "next",
-      "to": "n11",
-      "in": "in"
-    },
-    {
-      "id": "e10",
-      "from": "n11",
       "out": "next",
       "to": "n12",
       "in": "in"
     },
     {
-      "id": "e11",
+      "id": "e8",
       "from": "n12",
       "out": "next",
       "to": "n13",
       "in": "in"
     },
     {
-      "id": "e12",
+      "id": "e9",
       "from": "n4",
       "out": "r1",
       "to": "n5",
       "in": "x"
     },
     {
-      "id": "e13",
+      "id": "e10",
       "from": "n3",
       "out": "t_clear",
       "to": "n5",
       "in": "x0"
     },
     {
-      "id": "e14",
-      "from": "n4",
-      "out": "r2",
-      "to": "n6",
-      "in": "series"
-    },
-    {
-      "id": "e15",
-      "from": "n3",
-      "out": "t_fault",
-      "to": "n6",
-      "in": "t"
-    },
-    {
-      "id": "e16",
-      "from": "n6",
-      "out": "value",
-      "to": "n7",
-      "in": "a"
-    },
-    {
-      "id": "e17",
+      "id": "e11",
       "from": "n4",
       "out": "r2",
       "to": "n8",
       "in": "series"
     },
     {
-      "id": "e18",
-      "from": "n7",
-      "out": "value",
-      "to": "n8",
-      "in": "level"
-    },
-    {
-      "id": "e19",
+      "id": "e12",
       "from": "n3",
       "out": "t_clear",
       "to": "n8",
       "in": "after"
     },
     {
-      "id": "e20",
+      "id": "e13",
       "from": "n8",
       "out": "delay",
       "to": "n9",
       "in": "value"
     },
     {
-      "id": "e21",
+      "id": "e14",
       "from": "n5",
       "out": "text",
       "to": "n10",
       "in": "c1"
     },
     {
-      "id": "e22",
+      "id": "e15",
       "from": "n5",
       "out": "margin",
       "to": "n10",
       "in": "c2"
     },
     {
-      "id": "e23",
+      "id": "e16",
       "from": "n8",
       "out": "delay",
       "to": "n10",
       "in": "c3"
     },
     {
-      "id": "e24",
+      "id": "e17",
       "from": "n9",
       "out": "text",
       "to": "n10",
       "in": "c4"
     },
     {
-      "id": "e25",
+      "id": "e18",
       "from": "n4",
       "out": "r1",
       "to": "n12",
       "in": "l1"
     },
     {
-      "id": "e26",
+      "id": "e19",
       "from": "n4",
       "out": "r2",
       "to": "n13",
       "in": "l1"
     },
     {
-      "id": "e27",
-      "from": "n7",
-      "out": "value",
+      "id": "e20",
+      "from": "n8",
+      "out": "threshold",
       "to": "n13",
       "in": "limit"
     }

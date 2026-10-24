@@ -418,16 +418,18 @@ test('loadWorkflow: settings keep their meaning (strings, was, alias, migrate, l
   eq(W8.serialize(wf).nodes.find(n => n.id === 'n5').s.op, 'nonsense', '... and it is saved back');
 });
 
-test('loadWorkflow: two wires into one input, two from one flow output', () => {
+test('loadWorkflow: two wires into one input; two from one flow output are parallel routes', () => {
   const raw = W({ n1: START, n2: ['flow.log', { text: '{a}' }], n3: ['flow.log', { text: 'b' }], n4: ['val.number', { value: 1 }], n5: ['val.number', { value: 2 }] },
     ['n1>n2', 'n1>n3'], ['n4.value>n2.a', 'n5.value>n2.a']);
   const { wf, notes } = W8.loadWorkflow(raw);
   eq(wf.edges.length, 4);
-  ok(notes.some(n => /Two wires go into/.test(n.msg)) && notes.some(n => /Two wires leave/.test(n.msg)));
+  ok(notes.some(n => /Two wires go into/.test(n.msg)), JSON.stringify(notes));
+  ok(!notes.some(n => /Two wires leave/.test(n.msg)), 'several wires from a flow output are allowed: ' + JSON.stringify(notes));
   const r = gen(wf, 'two-wires');
   ok(hasProblem(r, 'warning', /Two wires go into a of Print a message/), problemText(r));
   has(body(r.code), 'text_format("{a}", {"a": 1})', 'the first wire is used');
-  ok(hasProblem(r, 'warning', /Two wires leave/));
+  has(body(r.code), 'log(text_format("{a}", {"a": 1}))\nlog("b")', 'both routes run, in node order');
+  ok(!hasProblem(r, 'warning', /Two wires leave/), problemText(r));
 });
 
 // =============================================================================================
@@ -652,6 +654,105 @@ test('structure: a search (callback) with dead end, Skip and Stop inside it and 
     ok(o.stdout.includes('STUB try 5 ok=None'), 'try 5 stops the search');
     ok(o.logs.includes('best 3'), o.logs.join('|'));
   } });
+});
+
+// ---- Parallel routes: a flow output wired to several steps (codegen.js emitFork)
+
+test('parallel routes: three steps after one output meet again: each runs once, in node order, then the join, which sees their values', () => {
+  const wf = W({
+    n1: START, n2: ['test.calc', {}], n5: ['test.read', {}, { label: 'C' }], n3: ['test.read', {}, { label: 'A' }], n4: ['test.read', {}, { label: 'B' }],
+    n6: ['test.addrow', {}],
+  }, ['n1>n2', 'n2>n5', 'n2>n3', 'n2>n4', 'n3>n6', 'n4>n6', 'n5>n6'], ['n3.value>n6.c1', 'n4.value>n6.c2', 'n5.value>n6.c3']);
+  const r = gen(wf, 'parallel-join');
+  eq(r.problems, [], problemText(r));
+  const b = body(r.code);
+  const at = (s) => b.indexOf(s);
+  ok(at('touch_model("calc Test calculation")') >= 0 && at('a = 1.0') > at('touch_model("calc') && at('b = 1.0') > at('a = 1.0') && at('c = 1.0') > at('b = 1.0'), b);
+  ok(at('table(') > at('c = 1.0') || at('addrow(') > at('c = 1.0') || b.lastIndexOf('a,') > at('c = 1.0') || /c\b/.test(b.slice(at('c = 1.0') + 7)), b);
+  eq((b.match(/= 1\.0/g) || []).length, 3, 'each route once');
+  eq(r.steps.n6, 6, 'the join is the last step');
+});
+
+test('parallel routes: Each pass of a loop to two steps that never meet; a branch output to two steps that meet', () => {
+  const wf = W({
+    n1: START, n2: ['flow.range', { from: 1, to: 2, step: 1 }, { label: 'V' }], n3: ['flow.log', { text: 'A {v}' }], n4: ['flow.log', { text: 'B {v}' }],
+    n5: ['test.check', {}], n6: ['flow.log', { text: 'C' }], n7: ['flow.log', { text: 'D' }], n8: ['flow.log', { text: 'joined' }],
+  }, ['n1>n2', 'n2.body>n4', 'n2.body>n3', 'n2.done>n5', 'n5.ok>n6', 'n5.ok>n7', 'n6>n8', 'n7>n8'], ['n2.value>n3.v', 'n2.value>n4.v']);
+  const r = gen(wf, 'parallel-loop');
+  eq(errors(r), [], problemText(r));
+  eq(r.regions.n3.map(x => x.label), ['V']);
+  eq(r.regions.n4.map(x => x.label), ['V']);
+  toRun.push({ name: 'exec: parallel routes in a loop and after a branch', code: r.code, check(o) {
+    eq(o.logs.filter(l => /^(A|B|C|D|joined)\b/.test(l)), ['A 1', 'B 1', 'A 2', 'B 2', 'C', 'D', 'joined']);
+  } });
+});
+
+test('parallel routes: a route that changes the model or runs a calculation before another route reads results is reported; after it, not', () => {
+  const mk = (writeId, readId) => W({ n1: START, n2: ['test.calc', {}], [writeId]: ['test.write', {}], [readId]: ['test.read', {}], n9: ['flow.log', { text: 'r {x}' }] },
+    ['n1>n2', `n2>${writeId}`, `n2>${readId}`, `${writeId}>n9`, `${readId}>n9`], [`${readId}.value>n9.x`]);
+  const bad = gen(mk('n3', 'n4'), 'parallel-clash');
+  ok(hasProblem(bad, 'warning', /reads results on a parallel route after Test calculation, and Test write model, on a route the script runs before it/), problemText(bad));
+  ok(!hasProblem(bad, 'error', /reads results after/), 'each route starts from the state before them: ' + problemText(bad));
+  const good = gen(mk('n4', 'n3'), 'parallel-no-clash');
+  ok(!hasProblem(good, 'warning', /parallel route/), problemText(good));
+  const after = gen(W({ n1: START, n2: ['test.calc', {}], n3: ['test.write', {}], n4: ['test.calc', {}], n5: ['test.read', {}], n9: ['flow.log', { text: 'r {x}' }] },
+    ['n1>n2', 'n2>n3', 'n2>n4', 'n4>n5', 'n3>n9', 'n5>n9'], ['n5.value>n9.x']), 'parallel-own-calc');
+  ok(!hasProblem(after, 'warning', /parallel route/), 'a route with its own calculation reads its own results: ' + problemText(after));
+  ok(hasProblem(after, 'error', /reads results after Test write model changed the model/) === false, problemText(after));
+});
+
+test('parallel routes: Skip on a route the script runs before another warns; on the last route it does not', () => {
+  const mk = (skipId, logId) => W({ n1: START, n2: ['flow.range', {}], [skipId]: ['flow.next', { msg: 'skip' }], [logId]: ['flow.log', { text: 'x' }] },
+    ['n1>n2', `n2.body>${skipId}`, `n2.body>${logId}`]);
+  ok(hasProblem(gen(mk('n3', 'n4'), 'parallel-skip-first'), 'warning', /Skip to next pass is on a parallel route after For a range of numbers/));
+  ok(!hasProblem(gen(mk('n4', 'n3'), 'parallel-skip-last'), 'warning', /parallel route/));
+});
+
+test('parallel routes: a value made on one route is not there on another; a circle through them is found', () => {
+  const r = gen(W({ n1: START, n2: ['test.read', {}], n3: ['flow.log', { text: '{x}' }] }, ['n1>n2', 'n1>n3'], ['n2.value>n3.x']), 'parallel-other-route');
+  ok(hasProblem(r, 'error', /Print a message needs x, but Test read result has not run yet on this route/), problemText(r));
+  const c = gen(W({ n1: START, n2: ['flow.log', { text: 'a' }], n3: ['flow.log', { text: 'b' }], n4: ['flow.log', { text: 'c' }] }, ['n1>n2', 'n2>n3', 'n2>n4', 'n4>n2']), 'parallel-circle');
+  ok(hasProblem(c, 'error', /go round in a circle: Print a message, Print a message, Print a message/) || hasProblem(c, 'error', /circle/), problemText(c));
+});
+
+// ---- A search's end-of-try input (Find limit's Pass, Optimise's Score)
+
+test('search: Pass read at the end of each try: not after an early exit, not where Report this try answered, and said when a route lacks it', () => {
+  const wf = W({
+    n1: START, n2: ['opt.limit', { lower: 0, upper: 10 }, { label: 'Level' }], n3: ['test.check', {}], n4: ['math.compare', { op: 'le', b: 5 }],
+    n5: ['flow.if', { op: 'gt', b: 8 }, { label: 'Far?' }], n6: ['opt.report', { answer: 'fail' }],
+  }, ['n1>n2', 'n2.body>n3', 'n3.ok>n5', 'n5.yes>n6'], ['n2.value>n3.value', 'n2.value>n4.a', 'n4.value>n2.pass', 'n2.value>n5.a']);
+  const r = gen(wf, 'search-pass');
+  // (This suite's runtime has no optimise.py, so its helpers are reported missing.)
+  eq(errors(r).filter(p => !/Helper \w+ is missing/.test(p.msg)), [], problemText(r));
+  const b = body(r.code);
+  has(b, ['        if not passed:', '            case_skipped("Check failed")', '            return trial'].join('\n'), 'an early exit gives no answer');
+  // Far? No ends the try by itself (Pass is read there); Yes reports a fail, and then the end of
+  // the try does not read Pass again.
+  has(b, ['        if not far:', '            compared = compare(level, "le", 5, 1e-9)  # Compare', '            trial.report(ok=compared)', '            return trial'].join('\n'), 'the end of a route reads Pass');
+  has(b, ['        trial.report(score=None, ok=False)', '    except StopWorkflow:'].join('\n'), 'Report this try answers its route');
+  eq((b.match(/trial\.report\(/g) || []).length, 2, 'two answers: ' + b);
+  const side = gen(W({
+    n1: START, n2: ['opt.limit', {}], n3: ['test.check', {}], n4: ['test.read', {}], n5: ['flow.log', { text: 'failed' }], n6: ['math.compare', { op: 'gt', b: 0 }],
+  }, ['n1>n2', 'n2.body>n3', 'n3.ok>n4', 'n3.fail>n5'], ['n4.value>n6.a', 'n6.value>n2.pass']), 'search-pass-side');
+  ok(hasProblem(side, 'warning', /On a route of Find limit's tries that ends without the value its end-of-try input reads/), problemText(side));
+});
+
+test('search: Score read at the end of each try of Optimise; Report this try with No answer adds an unknown beside a score', () => {
+  const r = gen(W({ n1: START, n2: ['opt.optimise', {}], n3: ['math.arith', { op: 'mul', b: 2 }] }, ['n1>n2'], ['n2.v1>n3.a', 'n3.value>n2.score']), 'optimise-score');
+  eq(errors(r).filter(p => !/Helper \w+ is missing/.test(p.msg)), [], problemText(r));
+  has(body(r.code), 'trial.report(score=');
+  const n = gen(W({ n1: START, n2: ['opt.optimise', {}], n3: ['opt.report', { answer: 'none' }], n4: ['val.number', { value: 3 }] }, ['n1>n2', 'n2.body>n3'], ['n4.value>n3.score']), 'report-none');
+  has(body(n.code), '        trial.report(score=3)\n        trial.report()');
+});
+
+test('Start: an Excel table format checks pandas and openpyxl before connecting, only when the script has a table', () => {
+  const pre = (r) => (/preflight\((\[[^\]]*\])\)/.exec(r.code) || [])[1];
+  const S = (tableFmt) => ['start', { project: 'P', tableFmt }];
+  eq(pre(gen(W({ n1: S('xlsx'), n2: ['out.table.add', { cols: [] }] }, ['n1>n2']), 'fmt-xlsx')), '["openpyxl", "pandas"]');
+  eq(pre(gen(W({ n1: S('both'), n2: ['flow.log', { text: 'x' }] }, ['n1>n2']), 'fmt-no-table')), '[]');
+  eq(pre(gen(W({ n1: S('csv'), n2: ['out.table.add', { cols: [] }] }, ['n1>n2']), 'fmt-csv')), '[]');
+  has(gen(W({ n1: S('both') }, []), 'fmt-line').code, 'TABLE_FORMAT = "both"');
 });
 
 test('structure: Skip and Stop outside any loop are errors', () => {

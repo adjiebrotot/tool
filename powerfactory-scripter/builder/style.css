@@ -206,6 +206,10 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-pal-item:hover, .pfb-pal-item:focus-visible { background: var(--input-bg); border-color: var(--border); outline: none; }
 .pfb-pal-item:focus-visible { border-color: var(--accent); }
 .pfb-pal-item.is-off { opacity: .5; cursor: default; }
+/* A block that cannot work where a click adds it: greyed, says why, still draggable */
+.pfb-pal-item.is-dim { opacity: .55; }
+.pfb-pal-item.is-dim .pfb-pal-off { color: var(--muted); font-style: italic; }
+.pfb-pal-kinds { margin-left: 6px; padding: 0 6px; border-radius: 999px; background: var(--input-bg); color: var(--muted); font-size: .68rem; font-weight: 600; white-space: nowrap; }
 .pfb-pal-glyph { color: var(--cat); flex-shrink: 0; display: inline-flex; margin-top: 1px; }
 .pfb-pal-glyph svg, .pfb-glyph { width: 16px; height: 16px; }
 .pfb-pal-text { display: flex; flex-direction: column; min-width: 0; }
@@ -321,6 +325,10 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-n-in.is-stray .pfb-n-plab, .pfb-n-out.is-stray .pfb-n-plab { color: var(--pfb-err); text-decoration: line-through; }
 .pfb-n-chip { display: inline-block; margin: 0 10px 8px; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--cat-flow) 16%, transparent); color: var(--muted); font-size: 10.5px; font-weight: 600; max-width: calc(100% - 20px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pfb-n-miss { padding: 4px 12px 8px; color: var(--muted); font-size: 11px; font-style: italic; }
+/* "+N more": the folded ports of a block (canvas.js) */
+.pfb-n-fold { display: flex; justify-content: center; padding: 0 10px 6px; margin-top: -2px; }
+.pfb-n-more { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 10.5px; font-weight: 700; padding: 1px 8px; border-radius: 999px; cursor: pointer; }
+.pfb-n-more:hover, .pfb-n-more:focus-visible { background: var(--input-bg); color: var(--text); outline: none; }
 .pfb-k-start .pfb-n-head { padding-left: 12px; }
 .pfb-k-pure { border-radius: 14px; }
 .pfb-k-pure .pfb-n-head { border-radius: 12.5px 12.5px 0 0; }
@@ -522,6 +530,15 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--hc, var(--muted)); flex-shrink: 0; }
 .pfb-in-src { font-size: .84rem; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .pfb-unwire { align-self: flex-start; }
+.pfb-in-optional .field-sub { line-height: 1.6; }
+.pfb-opt-lead { font-weight: 600; }
+.pfb-opt-in { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; cursor: help; }
+.pfb-opt-in .pfb-dot { width: 8px; height: 8px; }
+.pfb-or-wire { margin-top: 2px; }
+.pfb-kind-ask { background: var(--warning-bg); color: var(--warning-text); }
+.pfb-kind-wires { margin: 0 0 10px; padding-left: 18px; }
+.pfb-kind-wires li { margin: 2px 0; }
+.pfb-kind-acts { display: flex; gap: 8px; flex-wrap: wrap; }
 .pfb-link { border: 0; background: transparent; color: var(--accent); font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; padding: 0 2px; }
 .pfb-link:hover { text-decoration: underline; }
 .pfb-more { padding-bottom: 8px; }
@@ -628,6 +645,8 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-qa-item.focused { background: var(--accent); color: var(--text-inv); }
 .pfb-qa-item.focused .pfb-qa-sub, .pfb-qa-item.focused .pfb-qa-glyph { color: inherit; }
 .pfb-qa-first { border: 1px dashed var(--accent); }
+.pfb-qa-item.is-off { opacity: .5; cursor: default; }
+.pfb-qa-item.is-off .pfb-qa-sub { font-style: italic; }
 .pfb-qa-glyph { color: var(--cat); display: inline-flex; margin-top: 1px; flex-shrink: 0; }
 .pfb-qa-glyph svg { width: 15px; height: 15px; }
 .pfb-qa-text { display: flex; flex-direction: column; min-width: 0; }
@@ -659,6 +678,7 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-toast-error { border-left-color: var(--pfb-err); }
 .pfb-toast-msg { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
 .pfb-toast-undo { flex-shrink: 0; }
+.pfb-toast-act { flex-shrink: 0; }
 
 /* ---- Footer: one quiet line along the bottom (the World Clock's footer) -------------------- */
 .pfb-foot {
