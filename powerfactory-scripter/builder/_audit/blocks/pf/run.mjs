@@ -1130,9 +1130,10 @@ const LIVE = {
           "scales = ', '.join(str(r.get('Scale')) for r in t.rows)"].join(NL)),
       n4: LOG('BOOK rows {r} | cols {c} | first {f} | scales {s}'),
       n5: PY([], [['base', 'num']], "base = pf_find(app, 'Load A.ElmLod', 'one').GetAttribute('plini')"),
-      // Raise the load 8 % of its base each pass until a line goes over 100 %.
-      n6: ['flow.until', { max: 12 }, { label: 'Ramp' }],
-      n7: ['math.formula', { expr: 'a * (1 + 0.08 * b)' }],
+      // Raise the load a quarter of its base each pass until a line goes over 100 %. The lines
+      // of this demo are lightly loaded, so it takes about eleven passes to get there.
+      n6: ['flow.until', { max: 20 }, { label: 'Ramp' }],
+      n7: ['math.formula', { expr: 'a * (1 + 0.25 * b)' }],
       n8: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
       n9: ['pf.ldf', {}],
       n10: ['pf.element', { el: EL('ElmLne', '*', 'all') }],
@@ -1160,10 +1161,12 @@ const LIVE = {
       ok(b[1] === '3', 'three rows out of the Dispatch sheet: ' + b[1]);
       ok(b[2].trim() === 'Case | G 01 (MW) | G 02 (MW) | Scale', 'the names come from row 2: ' + b[2]);
       ok(b[3] === 'Max', 'the first case: ' + b[3]);
-      ok(b[4].trim() === '1.0, 0.5, 0.75', 'the numbers are numbers: ' + b[4]);
+      // A whole number comes back whole (openpyxl gives 1, not 1.0) - the page's own reader
+      // agrees, which _audit/data checks on this very file.
+      ok(b[4].trim() === '1, 0.5, 0.75', 'the numbers are numbers: ' + b[4]);
       // The loop stopped itself the pass after the loading passed 100 %.
       const ramp = out.lines.filter(l => / RAMP /.test(l)).map(l => /RAMP (\d+) \| load ([\d.]+) \| worst ([\d.]+)/.exec(l)).filter(Boolean);
-      ok(ramp.length >= 2 && ramp.length <= 12, 'the ramp ran a sensible number of passes: ' + ramp.length);
+      ok(ramp.length >= 3 && ramp.length < 20, 'the ramp stopped itself before its maximum: ' + ramp.length);
       const worst = ramp.map(r => Number(r[3]));
       ok(worst[worst.length - 1] > 100, 'the last pass is the one that went over: ' + worst[worst.length - 1]);
       ok(worst.slice(0, -1).every(w => w <= 100), 'and no earlier pass did: ' + worst.join(', '));
@@ -1185,6 +1188,10 @@ const LIVE = {
   // What a reader actually does: attach the case table, press Download, unpack the .zip and run
   // the script inside it. The file is not put next to the script by the harness - it travels in
   // the package, because the workflow carries it (wf.files, as the page saves it).
+  //
+  // It is called live_cases_in.csv on purpose: the casetable run above leaves a file of that name
+  // in the folder the runs are started from, so this also proves the script reads the one that
+  // came with it rather than the one that happens to share its name (base.py _rt_find).
   packaged: {
     project: N9, timeout: 900, pack: true,
     wf: (() => {
