@@ -143,15 +143,16 @@ await test('templates: whole, valid, distinct; names and matching', () => {
 await test('frozen handles are still there', () => {
   const KEYS = ['template', 'colors', 'ramp', 'background', 'plot_background', 'text', 'muted', 'grid', 'axis', 'font',
     'font_size', 'title_size', 'title_bold', 'title_align', 'grid_axes', 'grid_style', 'frame', 'ticks', 'thousands',
-    'line_width', 'markers', 'legend', 'legend_frame', 'width', 'height', 'dpi', 'transparent', 'also_save'];
+    'line_width', 'markers', 'line_styles', 'legend', 'legend_frame', 'width', 'height', 'dpi', 'transparent', 'also_save'];
   for (const k of KEYS) ok(G.STYLE_KEYS.includes(k), 'style key "' + k + '"');
   const CHOICES = {
     title_align: ['center', 'left'], grid_axes: ['both', 'y', 'x', 'none'], grid_style: ['solid', 'dashed', 'dotted'],
     frame: ['left-bottom', 'box', 'bottom', 'none'], ticks: ['out', 'in', 'none'], markers: ['auto', 'always', 'never'],
-    legend: ['bottom', 'top', 'right', 'inside', 'none'], also_save: ['', 'svg', 'pdf'],
+    legend: ['bottom', 'top', 'right', 'inside', 'none'], also_save: ['', 'svg', 'pdf'], line_styles: ['solid', 'vary'],
   };
   for (const [k, vals] of Object.entries(CHOICES)) for (const v of vals) ok(G.CHOICES[k].some(([x]) => x === v), k + ' value "' + v + '"');
-  for (const id of ['brotools', 'brotools-night', 'minimal', 'report', 'slides', 'classic']) ok(G.templateById(id), 'template "' + id + '"');
+  for (const id of ['brotools', 'brotools-night', 'minimal', 'report', 'slides', 'classic',
+    'ieee', 'ieee-wide', 'elsevier', 'matlab', 'matplotlib', 'ggplot', 'office']) ok(G.templateById(id), 'template "' + id + '"');
   for (const id of ['blue', 'night', 'viridis', 'cividis', 'magma', 'coolwarm', 'greys', 'classic']) ok(G.RAMPS[id], 'ramp "' + id + '"');
   ok(baseReserved().has('GRAPH_STYLE'), 'GRAPH_STYLE is reserved, so a pinned setting never takes its name');
 });
@@ -189,6 +190,20 @@ await test('Python reads every style the way the page does (_po_st = normalizeSt
   eq(got.ranges, G.RANGES, 'the ranges');
   eq(got.hex, G.COLOR_KEYS, 'the colour keys');
   CASES.forEach((c, i) => eq(num(got.cases[i]), num(G.normalizeStyle(c)), 'case ' + i + ' ' + String(JSON.stringify(c)).slice(0, 80)));
+});
+
+await test('line patterns and the places a mark\'s label may go: the preview and the script agree', async () => {
+  // A style saved before line patterns existed draws every line solid, as it did.
+  eq(G.normalizeStyle({ markers: 'never' }).line_styles, 'solid', 'an old style keeps solid lines');
+  if (!hasPython) { skipped.push('python'); return; }
+  const { MARK_SPOTS } = await imp('js/ui/graphpreview.js');
+  const got = python([
+    'NS = loader.load(None, {"OUTPUT_DIR": ' + JSON.stringify(TMP) + '}, LIB)',
+    'print("<<JSON>>" + json.dumps({"dashes": NS["_PO_LINE_DASHES"], "spots": NS["_PO_MARK_SPOTS"]}))',
+  ].join('\n'));
+  eq(got.dashes, G.LINE_DASHES, 'the line patterns');
+  eq(got.spots.map(([dx, dy, ha, va, f]) => [dx, dy, ha, va === 'center_baseline' ? 'center' : va, Math.round(f * 1e6) / 1e6]),
+    MARK_SPOTS.map(([dx, dy, ha, va, f]) => [dx, dy, ha, va, Math.round(f * 1e6) / 1e6]), 'the label spots');
 });
 
 await test('line colours: the page\'s preview and the script pick the same', () => {

@@ -41,6 +41,7 @@ const BROTOOLS = {
   thousands: true,
   line_width: 2,
   markers: 'auto',
+  line_styles: 'solid',
   legend: 'bottom',
   legend_frame: false,
   width: 10,
@@ -82,6 +83,10 @@ export const PALETTES = [
   { id: 'greys', name: 'Greys (for print)', colors: ['#111111', '#555555', '#888888', '#B0B0B0'] },
 ];
 
+// The line patterns in turn when line_styles is "vary" (null: solid), as dash and gap lengths
+// in multiples of the line width. Keep equal to _PO_LINE_DASHES in runtime/outputs.py.
+export const LINE_DASHES = [null, [4, 2], [1, 1.6], [4, 1.6, 1, 1.6], [7, 2], [4, 1.6, 1, 1.6, 1, 1.6]];
+
 // The fonts offered. Any family name works in the script; one this computer lacks falls back to
 // a family of the same kind (outputs.py _po_family), and DM Sans comes with the study package.
 export const FONTS = [
@@ -109,11 +114,15 @@ export const CHOICES = {
   frame: [['left-bottom', 'Left and bottom'], ['box', 'All four sides'], ['bottom', 'Bottom only'], ['none', 'None']],
   ticks: [['out', 'Outside'], ['in', 'Inside'], ['none', 'None']],
   markers: [['auto', 'Up to 40 points'], ['always', 'Always'], ['never', 'Never']],
+  line_styles: [['solid', 'All solid'], ['vary', 'Solid, dashed, dotted ... in turn (for black and white print)']],
   legend: [['bottom', 'Under the graph'], ['top', 'Above the graph'], ['right', 'Right of the graph'], ['inside', 'Inside, where it fits'], ['none', 'No key']],
   also_save: [['', 'Nothing else'], ['svg', 'An SVG too (vector, for editing)'], ['pdf', 'A PDF too (vector, for LaTeX and print)']],
 };
 
-// The templates, in the order the modal shows them. Each is a whole style.
+// The templates, in the order the modal shows them. Each is a whole style. `group: 'standard'`
+// marks the ones that follow a publisher's or a program's house style; the modal lists them
+// apart. Sizes follow the publisher's column widths (IEEE 3.5 in and 7.16 in, Elsevier 90 mm
+// and 190 mm); the dpi is the most the style allows (600), which line art asks for.
 export const TEMPLATES = [
   {
     id: 'brotools', name: 'Adjie Brotools', desc: 'The site\u2019s own charts: soft blue grid, the key under the graph.',
@@ -168,6 +177,95 @@ export const TEMPLATES = [
       text: '#0B0B0B', muted: '#52514E', grid: '#E1E0D9', axis: '#C3C2B7',
       font: 'DejaVu Sans', font_size: 9, title_size: 12, title_bold: false, title_align: 'left',
       thousands: false, line_width: 1.5, legend: 'inside', dpi: 120,
+    },
+  },
+  {
+    id: 'ieee', name: 'IEEE, one column', group: 'standard',
+    desc: 'IEEE Transactions and conference papers: 3.5 in wide, Times 8 pt, a full frame with ticks inside, lines that stay apart in black and white.',
+    style: {
+      ...BROTOOLS, template: 'ieee',
+      colors: ['#000000', '#0072B2', '#D55E00', '#009E73', '#CC79A7', '#E69F00'], ramp: 'greys',
+      text: '#000000', muted: '#000000', grid: '#C8C8C8', axis: '#000000',
+      font: 'Times New Roman', font_size: 8, title_size: 8, title_bold: false,
+      grid_style: 'dotted', frame: 'box', ticks: 'in', thousands: false,
+      line_width: 1, line_styles: 'vary', legend: 'inside', legend_frame: true,
+      width: 3.5, height: 2.6, dpi: 600, also_save: 'pdf',
+    },
+  },
+  {
+    id: 'ieee-wide', name: 'IEEE, two columns', group: 'standard',
+    desc: 'An IEEE figure across both columns: 7.16 in wide, otherwise as IEEE, one column.',
+    style: {
+      ...BROTOOLS, template: 'ieee-wide',
+      colors: ['#000000', '#0072B2', '#D55E00', '#009E73', '#CC79A7', '#E69F00'], ramp: 'greys',
+      text: '#000000', muted: '#000000', grid: '#C8C8C8', axis: '#000000',
+      font: 'Times New Roman', font_size: 8, title_size: 8, title_bold: false,
+      grid_style: 'dotted', frame: 'box', ticks: 'in', thousands: false,
+      line_width: 1, line_styles: 'vary', legend: 'inside', legend_frame: true,
+      width: 7.16, height: 3, dpi: 600, also_save: 'pdf',
+    },
+  },
+  {
+    id: 'elsevier', name: 'Elsevier, one column', group: 'standard',
+    desc: 'Elsevier journals (Electric Power Systems Research, IJEPES): 90 mm wide, Arial 8 pt, colour-blind safe lines, the key in a box.',
+    style: {
+      ...BROTOOLS, template: 'elsevier',
+      colors: ['#0072B2', '#D55E00', '#009E73', '#E69F00', '#CC79A7', '#56B4E9', '#000000'], ramp: 'cividis',
+      text: '#000000', muted: '#000000', grid: '#DDDDDD', axis: '#000000',
+      font: 'Arial', font_size: 8, title_size: 8, title_bold: false,
+      grid_axes: 'none', frame: 'box', ticks: 'in', thousands: false,
+      line_width: 1, legend: 'inside', legend_frame: true,
+      width: 3.54, height: 2.6, dpi: 600, also_save: 'pdf',
+    },
+  },
+  {
+    id: 'matlab', name: 'MATLAB', group: 'standard',
+    desc: 'The look of a MATLAB figure with grid on: its line colours, Arial (Helvetica on Windows), a full frame with ticks inside, the key in a box.',
+    style: {
+      ...BROTOOLS, template: 'matlab',
+      colors: ['#0072BD', '#D95319', '#EDB120', '#7E2F8E', '#77AC30', '#4DBEEE', '#A2142F'], ramp: 'viridis',
+      text: '#000000', muted: '#262626', grid: '#DFDFDF', axis: '#262626',
+      font: 'Arial', font_size: 9, title_size: 11, title_bold: true,
+      frame: 'box', ticks: 'in', thousands: false,
+      line_width: 1.2, legend: 'inside', legend_frame: true,
+      width: 5.6, height: 4.2,
+    },
+  },
+  {
+    id: 'matplotlib', name: 'Matplotlib', group: 'standard',
+    desc: 'matplotlib\u2019s own defaults: Tableau colours, DejaVu Sans, a full frame, no grid.',
+    style: {
+      ...BROTOOLS, template: 'matplotlib',
+      colors: ['#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#E377C2', '#7F7F7F', '#BCBD22', '#17BECF'], ramp: 'viridis',
+      text: '#000000', muted: '#000000', grid: '#B0B0B0', axis: '#000000',
+      font: 'DejaVu Sans', font_size: 10, title_size: 12, title_bold: false,
+      grid_axes: 'none', frame: 'box', thousands: false,
+      line_width: 1.5, legend: 'inside', legend_frame: true,
+      width: 6.4, height: 4.8, dpi: 150,
+    },
+  },
+  {
+    id: 'ggplot', name: 'ggplot2', group: 'standard',
+    desc: 'R\u2019s ggplot2: a grey panel with white grid lines, no frame, the key at the right.',
+    style: {
+      ...BROTOOLS, template: 'ggplot',
+      colors: ['#F8766D', '#00BA38', '#619CFF', '#C77CFF', '#00BFC4', '#B79F00', '#F564E3'], ramp: 'viridis',
+      plot_background: '#EBEBEB', text: '#000000', muted: '#4D4D4D', grid: '#FFFFFF', axis: '#333333',
+      font: 'Arial', font_size: 9, title_size: 12, title_bold: false, title_align: 'left',
+      frame: 'none', thousands: false, line_width: 1.2, legend: 'right',
+      width: 7, height: 4.3,
+    },
+  },
+  {
+    id: 'office', name: 'Excel and Office', group: 'standard',
+    desc: 'A chart as Excel and PowerPoint draw it: Office colours, Calibri, value lines only, the key under the graph.',
+    style: {
+      ...BROTOOLS, template: 'office',
+      colors: ['#4472C4', '#ED7D31', '#A5A5A5', '#FFC000', '#5B9BD5', '#70AD47', '#264478', '#9E480E'], ramp: 'blue',
+      text: '#595959', muted: '#595959', grid: '#D9D9D9', axis: '#BFBFBF',
+      font: 'Calibri', font_size: 9, title_size: 14, title_bold: false,
+      grid_axes: 'y', frame: 'bottom', ticks: 'none', line_width: 2.25,
+      width: 6, height: 3.6,
     },
   },
 ];

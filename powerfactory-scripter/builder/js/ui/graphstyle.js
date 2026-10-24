@@ -186,18 +186,24 @@ export function mountGraphStyle(app) {
 
   function templatesRow(s) {
     const match = G.matchTemplate(s);
-    const grid = el('div', { class: 'pfb-gs-tpls', role: 'group', 'aria-label': 'Templates' });
-    for (const t of G.TEMPLATES) {
-      const on = !!match && match.id === t.id;
-      const b = el('button', { type: 'button', class: 'pfb-gs-tpl' + (on ? ' on' : ''), dataset: { tpl: t.id }, 'aria-pressed': on ? 'true' : 'false', title: t.desc },
-        // Every card at one shape, so the grid stays even (Report and Presentation are other sizes).
-        el('span', { class: 'pfb-gs-thumb', html: previewSvg({ ...t.style, width: 10, height: 5.6 }, { kind: 'series', width: 128, thumb: true }) }),
-        el('span', { class: 'pfb-gs-tpl-name', text: t.name }),
-        t.id === G.DEFAULT_TEMPLATE ? el('span', { class: 'pfb-gs-tpl-tag', text: 'Default' }) : null);
-      b.addEventListener('click', () => { setStyle(G.styleFromTemplate(t.id)); renderForm(); });
-      grid.appendChild(b);
+    const box = el('div', { class: 'pfb-gs-tplbox' });
+    // The site's own looks, then the standard ones (journals and programs).
+    for (const [std, title] of [[false, 'Adjie Brotools and general'], [true, 'Standard: papers and programs']]) {
+      const grid = el('div', { class: 'pfb-gs-tpls', role: 'group', 'aria-label': title + ' templates' });
+      for (const t of G.TEMPLATES.filter(x => (x.group === 'standard') === std)) {
+        const on = !!match && match.id === t.id;
+        const b = el('button', { type: 'button', class: 'pfb-gs-tpl' + (on ? ' on' : ''), dataset: { tpl: t.id }, 'aria-pressed': on ? 'true' : 'false', title: t.desc },
+          // Every card at one shape, so the grid stays even (Report and Presentation are other sizes).
+          el('span', { class: 'pfb-gs-thumb', html: previewSvg({ ...t.style, width: 10, height: 5.6 }, { kind: 'series', width: 128, thumb: true }) }),
+          el('span', { class: 'pfb-gs-tpl-name', text: t.name }),
+          t.id === G.DEFAULT_TEMPLATE ? el('span', { class: 'pfb-gs-tpl-tag', text: 'Default' }) : null);
+        b.addEventListener('click', () => { setStyle(G.styleFromTemplate(t.id)); renderForm(); });
+        grid.appendChild(b);
+      }
+      box.appendChild(el('div', { class: 'pfb-gs-tplhead', text: title }));
+      box.appendChild(grid);
     }
-    return el('div', { class: 'pfb-gs-tplbox' }, grid);
+    return box;
   }
 
   function fontRow(s) {
@@ -235,6 +241,7 @@ export function mountGraphStyle(app) {
     form.appendChild(group('Lines and key',
       num(s, 'line_width', 'Line width', 'pt'),
       sel(s, 'markers', 'Points on 2D lines', 'A dot at each value of a 2D graph or a graph from a results table. Time series never have them.'),
+      sel(s, 'line_styles', 'Line patterns', 'Solid, dashed, dotted ... in turn tells the lines apart where colour is lost: a paper printed in black and white (IEEE asks for it). Bars and points stay as they are.'),
       sel(s, 'legend', 'Key', 'Where the key (legend) goes when a graph has more than one line.'),
       bool(s, 'legend_frame', 'Box around the key')));
     const [pw, ph] = G.pixelsOf(s);

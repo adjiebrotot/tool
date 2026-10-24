@@ -531,6 +531,48 @@ def test_plots():
         real_close(fig)
     texts = [t.get_text() for t in fig.texts] if fig else []
     check("watermark is not a text object", not any("tool.adjiebrotots" in t for t in texts))
+    # A mark's label keeps clear of a limit line that runs just under the point (the nadir
+    # 0.06 Hz above the UFLS level), of the curves and of the plot's edge, in a wide graph and
+    # in a small IEEE one; and the lines vary their pattern only when the style asks.
+    near = ramp_series(_dip(), 0, 20, 0.01, "Bus 1 m:fehz", "Hz", ev)
+    nn = NS["nadir"](near, nominal=50)
+    ieee = {"font": "Times New Roman", "font_size": 8, "title_size": 8, "frame": "box", "ticks": "in",
+            "line_width": 1, "line_styles": "vary", "legend": "inside", "legend_frame": True,
+            "width": 3.5, "height": 2.6, "dpi": 300}
+    for name, style in (("default", None), ("IEEE", ieee)):
+        seen = []
+        NS["_po_close"] = lambda fig: seen.append(fig)
+        if style:
+            NS["GRAPH_STYLE"] = style
+        try:
+            NS["plot_series"]([near, Series(near.t, [v + 0.1 for v in near.y], "Bus 2 m:fehz", "Hz")],
+                              title="mark " + name, ylabel="Frequency", marks=[nn],
+                              limits=[(round(nn.value - 0.06, 3), "UFLS")])
+        finally:
+            NS["_po_close"] = real_close
+            NS.pop("GRAPH_STYLE", None)
+        fig = seen[0] if seen else None
+        if fig is None:
+            check(f"mark label ({name}): graph drawn", False)
+            continue
+        ax = fig.axes[0]
+        r = fig.canvas.get_renderer()
+        lab = [t for t in ax.texts if t.get_text().startswith("Nadir")]
+        check(f"mark label ({name}): written once", len(lab) == 1, str([t.get_text() for t in ax.texts]))
+        if lab:
+            bb = lab[0].get_window_extent(r)
+            fr = ax.get_window_extent(r)
+            ly = ax.transData.transform((0, nn.value - 0.06))[1]
+            check(f"mark label ({name}): clear of the limit line", not (bb.y0 - 1 <= ly <= bb.y1 + 1), f"{bb} line at {ly}")
+            check(f"mark label ({name}): inside the plot", bb.x0 >= fr.x0 and bb.x1 <= fr.x1 and bb.y0 >= fr.y0 and bb.y1 <= fr.y1,
+                  f"{bb} in {fr}")
+            for ln in ax.get_lines()[:2]:
+                xy = ax.transData.transform(list(zip(ln.get_xdata(), ln.get_ydata())))
+                hit = [(x, y) for x, y in xy if bb.x0 <= x <= bb.x1 and bb.y0 <= y <= bb.y1]
+                check(f"mark label ({name}): clear of {ln.get_label()}", not hit, str(hit[:3]))
+        styles = [str(ln.get_linestyle()) for ln in ax.get_lines()[:2]]
+        check(f"line patterns ({name})", styles == (["-", "--"] if style else ["-", "-"]), str(styles))
+        real_close(fig)
     # Inside a loop the file name carries the loop values; "every pass on one graph".
     for mw in (100, 200, 300):
         NS["ctx_push"]("Dispatch (MW)", mw, mw // 100, 3)

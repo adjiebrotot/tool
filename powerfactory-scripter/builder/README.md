@@ -141,7 +141,16 @@ tick). That default is a new look for old workflows by design; the **Builder cla
 is the look before graph styles, for anyone who wants it back.
 
 - Templates: `brotools` (default), `brotools-night`, `minimal`, `report` (serif, framed, 300 dpi,
-  colour-blind safe lines), `slides` (16:9, large text), `classic`.
+  colour-blind safe lines), `slides` (16:9, large text), `classic`; and the standard ones
+  (`group: 'standard'`, listed apart in the modal): `ieee` (3.5 in, Times 8 pt, box with ticks
+  inside, varied line patterns, 600 dpi and a PDF copy), `ieee-wide` (7.16 in), `elsevier`
+  (90 mm, Arial 8 pt), `matlab`, `matplotlib`, `ggplot`, `office` (Excel and PowerPoint).
+- `line_styles`: `solid` (the default, the look before it) or `vary` (solid, dashed, dotted,
+  dash-dot ... in turn, for black and white print), on time series and 2D lines.
+- A marked point's label ("Nadir 49.26 Hz") is placed by `_po_place_marks` after the layout:
+  of the spots around the point (beside, under, over, 2 pt at a time out to 48 pt) it takes the
+  one that crosses the least of the curves, limit and event lines, other labels, the key and the
+  plot's edge. `graphpreview.js` places it the same way (`MARK_SPOTS`).
 - A script that draws a graph gets `GRAPH_STYLE = {...}` in SETTINGS, one key per line with its
   choices in a comment; `outputs.py` `_po_st` reads it over `_PO_DEFAULT` with the same checks as
   `normalizeStyle`. Edited in the .py, it is read back on Open (`readBackGraphStyle`); a value
@@ -149,8 +158,9 @@ is the look before graph styles, for anyone who wants it back.
 - **Frozen handles**: the workflow key `graph`, the style's keys, the template ids, the select
   values and the ramp ids. A key added later must default to the look before it. A key a newer
   Builder saved is kept on the workflow untouched.
-- `_PO_DEFAULT` must equal the `brotools` template, and `_PO_RAMPS`, `_PO_CHOICES` and
-  `_PO_RANGES` their twins in `graphstyle.js`: `_audit/graphstyle/run.mjs` holds them together.
+- `_PO_DEFAULT` must equal the `brotools` template, and `_PO_RAMPS`, `_PO_CHOICES`,
+  `_PO_RANGES`, `_PO_LINE_DASHES` and `_PO_MARK_SPOTS` their twins in `graphstyle.js` and
+  `graphpreview.js`: `_audit/graphstyle/run.mjs` holds them together.
 
 ## 4. Blocks
 

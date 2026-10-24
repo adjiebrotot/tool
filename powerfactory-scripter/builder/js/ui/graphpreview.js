@@ -9,7 +9,7 @@
 // graph: the paler second round and the ramp) or 'heat' (a heat map and its colour bar).
 // thumb: a small card for a template (no words; the title as a bar).
 
-import { normalizeStyle, seriesColors, rampAt, luminance, RAMPS, fontCss } from '../core/graphstyle.js';
+import { normalizeStyle, seriesColors, rampAt, luminance, RAMPS, LINE_DASHES, fontCss } from '../core/graphstyle.js';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const n2 = (v) => (Math.round(v * 100) / 100).toString();
@@ -78,6 +78,57 @@ function fmtTick(v, ticks, thousands, yearAxis) {
   return t.replace(/^-/, '−');
 }
 
+// Where a mark's label may go around its point, as outputs.py _po_mark_spots has them: points
+// right and up from the point, how the label hangs from there, and what being further out costs.
+export const MARK_SPOTS = (() => {
+  const out = [[9, 0, 'left', 'center', 2], [-9, 0, 'right', 'center', 4]];
+  for (let d = 4; d < 50; d += 2) {
+    for (const [dx, ha, side] of [[6, 'left', 0], [-6, 'right', 2], [0, 'center', 3]]) {
+      if (ha === 'center' && d < 8) continue;
+      out.push([dx, -d, ha, 'top', d * 0.8 + side], [dx, d, ha, 'bottom', d * 0.8 + side + 4]);
+    }
+  }
+  return out;
+})();
+
+// The length of the segment (x0, y0)-(x1, y1) inside box [left, top, right, bottom].
+function segIn(x0, y0, x1, y1, b) {
+  const dx = x1 - x0, dy = y1 - y0;
+  let lo = 0, hi = 1;
+  for (const [p, q] of [[-dx, x0 - b[0]], [dx, b[2] - x0], [-dy, y0 - b[1]], [dy, b[3] - y0]]) {
+    if (p === 0) { if (q < 0) return 0; continue; }
+    const u = q / p;
+    if (p < 0) lo = Math.max(lo, u); else hi = Math.min(hi, u);
+    if (lo > hi) return 0;
+  }
+  return (hi - lo) * Math.hypot(dx, dy);
+}
+
+// The spot that crosses the least (outputs.py _po_place_marks): segments are lines to keep
+// clear of, boxes other words, frame the plot. Returns the label's box [left, top, right, bottom].
+function placeLabel(cx, cy, w, h, segs, boxes, frame) {
+  const pad = 3;
+  let best = null;
+  for (const [dx, dy, ha, va, further] of MARK_SPOTS) {
+    const x = cx + dx, y = cy - dy;
+    const x0 = ha === 'left' ? x : ha === 'right' ? x - w : x - w / 2;
+    const y0 = va === 'top' ? y : va === 'bottom' ? y - h : y - h / 2;
+    const b = [x0 - pad, y0 - pad, x0 + w + pad, y0 + h + pad];
+    const area = Math.max(1, (b[2] - b[0]) * (b[3] - b[1]));
+    const inside = Math.max(0, Math.min(b[2], frame[2]) - Math.max(b[0], frame[0])) * Math.max(0, Math.min(b[3], frame[3]) - Math.max(b[1], frame[1]));
+    let cost = (area - inside) / area * 1000 + further;
+    for (const o of boxes) {
+      const ow = Math.min(b[2], o[2]) - Math.max(b[0], o[0]), oh = Math.min(b[3], o[3]) - Math.max(b[1], o[1]);
+      if (ow > 0 && oh > 0) cost += 400 + ow * oh / area * 400;
+    }
+    let run = 0;
+    for (const sg of segs) run += segIn(sg[0], sg[1], sg[2], sg[3], b);
+    if (run > 0) cost += 150 + 8 * run;
+    if (!best || cost < best.cost) best = { cost, box: [x0, y0, x0 + w, y0 + h] };
+  }
+  return best.box;
+}
+
 // ---- The preview
 export function previewSvg(style0, opts = {}) {
   const st = normalizeStyle(style0);
@@ -99,11 +150,16 @@ export function previewSvg(style0, opts = {}) {
   };
   const line = (x1, y1, x2, y2, color, w, dash) => out.push('<line x1="' + px(x1) + '" y1="' + px(y1) + '" x2="' + px(x2) + '" y2="' + px(y2) + '" stroke="' + color + '" stroke-width="' + n2(Math.max(0.5, w * k)) + '"' + (dash ? ' stroke-dasharray="' + dash.map(d => n2(d * k)).join(' ') + '"' : '') + '/>');
   const dashOf = (g) => (g === 'dashed' ? [4 * 0.7, 3 * 0.7] : g === 'dotted' ? [0.7, 2.5 * 0.7] : null);
+  // A line's pattern (line_styles "vary"), scaled by the line width as matplotlib does.
+  const lineDash = (i) => {
+    const d = st.line_styles === 'vary' ? LINE_DASHES[i % LINE_DASHES.length] : null;
+    return d ? ' stroke-dasharray="' + d.map(v => n2(v * st.line_width * k)).join(' ') + '" stroke-linecap="butt"' : ' stroke-linecap="round"';
+  };
 
   // Series colours and the legend entries.
   const nSeries = S.lines ? S.lines.length : S.bars ? S.bars.length : 0;
   const colors = seriesColors(st, nSeries);
-  const entries = (S.lines || S.bars || []).map((s, i) => ({ label: s.label, color: colors[i], bar: !!S.bars }));
+  const entries = (S.lines || S.bars || []).map((s, i) => ({ label: s.label, color: colors[i], bar: !!S.bars, i }));
   const legendOn = entries.length > 1 && st.legend !== 'none';
 
   // ---- The data ranges, as outputs.py sets them.
@@ -205,26 +261,41 @@ export function previewSvg(style0, opts = {}) {
   if (gridAxes === 'both' || gridAxes === 'x') for (const v of xticks) line(sx(v), T, sx(v), B, st.grid, 0.7, gd);
 
   // ---- Data
+  // What a mark's label keeps clear of (in points): the lines drawn and the words beside them.
+  const segs = [], boxes = [];
+  let markAt = null;
   if (S.lines) {
     if (S.event) {
-      line(sx(S.event.x), T, sx(S.event.x), B, st.muted, 1, [1, 1.65]);
-      text(sx(S.event.x) + 3 + fs * 0.85 * 0.78, T + 3, S.event.label, fs * 0.85, st.muted, { rot: -90, anchor: 'end' });
+      const ex = sx(S.event.x), es = fs * 0.85;
+      line(ex, T, ex, B, st.muted, 1, [1, 1.65]);
+      text(ex + 3 + es * 0.78, T + 3, S.event.label, es, st.muted, { rot: -90, anchor: 'end' });
+      segs.push([ex, T, ex, B]);
+      boxes.push([ex + 3, T + 3, ex + 3 + es * lh, T + 3 + textWidth(S.event.label, es, fam)]);
     }
     if (S.limit) {
-      line(L, sy(S.limit.y), R, sy(S.limit.y), st.muted, 1.1, [5 * 1.1, 3 * 1.1]);
-      text(R - 4, sy(S.limit.y) - 3, S.limit.label, fs * 0.9, st.muted, { anchor: 'end' });
+      const ly = sy(S.limit.y), ls = fs * 0.9;
+      line(L, ly, R, ly, st.muted, 1.1, [5 * 1.1, 3 * 1.1]);
+      text(R - 4, ly - 3, S.limit.label, ls, st.muted, { anchor: 'end' });
+      segs.push([L, ly, R, ly]);
+      boxes.push([R - 4 - textWidth(S.limit.label, ls, fam), ly - 3 - ls * lh, R - 4, ly - 3]);
     }
     S.lines.forEach((l, i) => {
       const step = Math.max(1, Math.floor(l.x.length / Math.max(60, (R - L) * k)));
       const pts = [];
-      for (let j = 0; j < l.x.length; j += step) pts.push(px(sx(l.x[j])) + ',' + px(sy(l.y[j])));
-      out.push('<polyline fill="none" stroke="' + colors[i] + '" stroke-width="' + n2(Math.max(0.6, st.line_width * k)) + '" stroke-linejoin="round" stroke-linecap="round" points="' + pts.join(' ') + '"/>');
+      let prev = null;
+      for (let j = 0; j < l.x.length; j += step) {
+        const p = [sx(l.x[j]), sy(l.y[j])];
+        if (prev) segs.push([prev[0], prev[1], p[0], p[1]]);
+        prev = p;
+        pts.push(px(p[0]) + ',' + px(p[1]));
+      }
+      out.push('<polyline fill="none" stroke="' + colors[i] + '" stroke-width="' + n2(Math.max(0.6, st.line_width * k)) + '" stroke-linejoin="round"' + lineDash(i) + ' points="' + pts.join(' ') + '"/>');
     });
     if (S.mark) {
       const l = S.lines[S.mark.line];
       let j = 0; l.y.forEach((v, q) => { if (v < l.y[j]) j = q; });
-      out.push('<circle cx="' + px(sx(l.x[j])) + '" cy="' + px(sy(l.y[j])) + '" r="' + px(3.5) + '" fill="' + st.text + '" stroke="' + st.plot_background + '" stroke-width="' + n2(1.5 * k) + '"/>');
-      text(sx(l.x[j]) + 6, sy(l.y[j]) + 12, S.mark.label, fs * 0.92, st.text, { base: 'auto' });
+      markAt = [sx(l.x[j]), sy(l.y[j])];
+      out.push('<circle cx="' + px(markAt[0]) + '" cy="' + px(markAt[1]) + '" r="' + px(3.5) + '" fill="' + st.text + '" stroke="' + st.plot_background + '" stroke-width="' + n2(1.5 * k) + '"/>');
     }
   } else if (S.bars) {
     const nb = S.bars.length, w = 0.8 / nb;
@@ -298,11 +369,20 @@ export function previewSvg(style0, opts = {}) {
       col.forEach((e, r) => {
         const cy = ly + fs * 0.4 + r * fs * (lh + 0.5) + fs * lh / 2;
         if (e.bar) out.push('<rect x="' + px(cx) + '" y="' + px(cy - fs * 0.35) + '" width="' + px(fs * 2) + '" height="' + px(fs * 0.7) + '" fill="' + e.color + '"/>');
-        else out.push('<line x1="' + px(cx) + '" y1="' + px(cy) + '" x2="' + px(cx + fs * 2) + '" y2="' + px(cy) + '" stroke="' + e.color + '" stroke-width="' + n2(Math.max(0.6, st.line_width * k)) + '" stroke-linecap="round"/>');
+        else out.push('<line x1="' + px(cx) + '" y1="' + px(cy) + '" x2="' + px(cx + fs * 2) + '" y2="' + px(cy) + '" stroke="' + e.color + '" stroke-width="' + n2(Math.max(0.6, st.line_width * k)) + '"' + lineDash(e.i) + '/>');
         text(cx + fs * 2.8, cy + fs * 0.35, e.label, fs, st.text);
       });
       cx += leg.widths[c] + fs * 1.6;
     });
+    if (st.legend === 'inside') boxes.push([lx, ly, lx + leg.w, ly + leg.h]);
+  }
+
+  // ---- The mark's label, placed last so it can keep clear of everything else
+  if (markAt && !thumb) {
+    const ms = fs * 0.92, w = textWidth(S.mark.label, ms, fam), h = ms * lh;
+    const b = placeLabel(markAt[0], markAt[1], w, h, segs, boxes, [L, T, R, B]);
+    out.push('<rect x="' + px(b[0] - 1) + '" y="' + px(b[1] - 1) + '" width="' + px(b[2] - b[0] + 2) + '" height="' + px(b[3] - b[1] + 2) + '" fill="' + st.plot_background + '" opacity="0.85"/>');
+    text(b[0], b[1] + ms * 0.9, S.mark.label, ms, st.text);
   }
 
   // ---- Title and credit
