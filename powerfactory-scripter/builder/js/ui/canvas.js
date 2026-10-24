@@ -6,7 +6,8 @@
 // One memoised node component draws every block type from its definition: the category tint,
 // the flow input (an arrow-shaped port in the header row) and flow outputs (right edge, with
 // labels), data inputs on the left and outputs on the right with label and unit, coloured by
-// type, "= value" beside an unwired input that has a fallback, the "ends" caption beside an
+// type, "= value" beside an unwired input that has a fallback (greyed, with any other input that
+// does not need a wire), the "ends" caption beside an
 // unwired flow output, the step number, a problem badge and error border, the summary line, a
 // mock preview of what a graph or table block makes (previews.js), the Missing block look, and
 // notes as sticky notes. Behind the blocks, each loop's body is drawn as one dashed outline
@@ -340,9 +341,14 @@ export function mountCanvas(app) {
       for (let i = 0; i < nrows; i++) {
         const p = P.inputs[i], q = P.outputs[i];
         const wired = p && d.wiredIn.includes(p.id);
+        // An unwired input the block does not wait for (its value is set in Settings, or it is
+        // optional) is greyed: a wire may still replace it, but nothing is missing.
+        const idle = p && !wired && !p.stray && !p.missing;
+        const given = idle && d.fb[p.id] !== undefined && d.fb[p.id] !== 'not set';
+        const tip = p && !p.stray ? (given ? 'Set in Settings; a wire replaces it.' + (p.tip ? ' ' + p.tip : '') : p.tip) : '';
         rows.push(h('div', { key: i, className: 'pfb-n-row' },
-          p ? h('div', { className: 'pfb-n-in' + (p.stray ? ' is-stray' : '') + (p.mandatory ? ' is-req' : '') + (p.missing ? ' is-missing' : '') },
-            H('target', Pos.Left, p.id, 'pfb-h-data pfb-t-' + (p.stray ? 'any' : p.type) + (p.mandatory ? ' is-req' : ''), p.stray ? 'stray' : p.type, p.stray ? typeTip('none') : typeTip(p.type, p.tip, p.mandatory)),
+          p ? h('div', { className: 'pfb-n-in' + (p.stray ? ' is-stray' : '') + (p.mandatory ? ' is-req' : '') + (p.missing ? ' is-missing' : '') + (idle ? ' is-idle' : '') },
+            H('target', Pos.Left, p.id, 'pfb-h-data pfb-t-' + (p.stray ? 'any' : p.type) + (p.mandatory ? ' is-req' : ''), p.stray ? 'stray' : p.type, p.stray ? typeTip('none') : typeTip(p.type, tip, p.mandatory && !idle)),
             h('span', { className: 'pfb-n-plab', title: portLabel(p) }, portLabel(p)),
             !wired && d.fb[p.id] !== undefined ? h('span', { className: 'pfb-n-fb', title: String(d.fb[p.id]) }, '= ' + d.fb[p.id]) : null,
             !wired && p.required && d.fb[p.id] === undefined ? h('span', { className: 'pfb-n-need' }, 'needs a value') : null) : h('div', { className: 'pfb-n-in pfb-n-empty' }),
