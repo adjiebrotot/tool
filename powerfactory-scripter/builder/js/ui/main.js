@@ -30,6 +30,7 @@ import { mountFiles } from './files.js';
 import { mountTemplates } from './templates.js';
 import { mountKeyboard } from './keyboard.js';
 import { mountLayout, initTheme } from './layout.js';
+import { mountGraphStyle } from './graphstyle.js';
 import { attachedSize, CACHE_LIMIT } from './attach.js';
 
 export const PERSIST_NS = 'powerfactory-scripter-builder';   // frozen handle (DESIGN 1.1)
@@ -385,6 +386,9 @@ export async function boot() {
 
   // ---- Mount
   const layout = mountLayout(app);
+  const graphStyle = mountGraphStyle(app);
+  app.openGraphStyle = (from) => graphStyle.open(from);
+  app.graphStyleOpen = () => graphStyle.isOpen();
   app.safeArea = () => layout.safeArea();
   const canvas = mountCanvas(app);
   app.canvas = canvas;
@@ -446,6 +450,8 @@ export async function boot() {
     setPalette: (on) => layout.setPalette(on),
     setSheet: (on) => layout.setSheet(on),
     flushGenerate: () => app.flushGenerate(),
+    openGraphStyle: () => graphStyle.open(),
+    closeGraphStyle: () => graphStyle.close(),
     // Nothing worth keeping: only a Start block with its defaults (the tour leaves its demo then).
     isBlank: () => {
       const w = store.get().wf;

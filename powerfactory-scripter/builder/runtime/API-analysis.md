@@ -34,6 +34,16 @@ tests (`_audit/runtime/analysis/test_analysis.py`).
   tool.adjiebrotots.com/powerfactory-scripter/builder" (TextPath outlines, bottom right), are
   closed at once, and never raise: a drawing failure is logged as an error and returns `None`.
   Inside a loop the loop values ("Dispatch (MW) = 200") are written under the title.
+- **How graphs look** is `GRAPH_STYLE`, a dict the generator writes into SETTINGS from Workflow >
+  Graph style (`js/core/graphstyle.js`; keys and values documented there and on each SETTINGS
+  line). `_po_st()` reads it over `_PO_DEFAULT`, the Adjie Brotools style, checking each value
+  as `normalizeStyle` does, so a missing key or a bad value takes the default's and never stops a
+  graph. Each graph is drawn inside `rc_context` (its font, no "+4.9e1" axis offset), so a Python
+  code block of the reader's own keeps matplotlib's defaults. Fonts in a `fonts` folder beside
+  the script are added once (the study package brings DM Sans there); a font the computer lacks
+  falls back to one of the same kind, then DejaVu Sans. The value axis ends on a tick at both
+  ends (`_po_snap`), a time series runs edge to edge, and `also_save` writes an SVG or PDF beside
+  the PNG (the path returned stays the PNG).
 - **Packages** (for `preflight([...])` via the block's `packages`): every `plot_*`,
   `draw_collected` and `plot_convergence` need `matplotlib` (numpy comes with it). `optimise` with
   method de / nelder / powell / bounded needs `scipy` (without it the search falls back to a grid
@@ -65,8 +75,8 @@ tests (`_audit/runtime/analysis/test_analysis.py`).
 
 | Section | Signature | Returns, notes | Block |
 |---|---|---|---|
-| `plot_common` | private | Agg backend, palette, watermark, saving. | (needed by the others) |
-| `plot_series` | `plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None, marks=None, t_event=None, events=True, note="", stem=None, context=True, xlabel="Time (s)")` | PNG path or `None`. One line per Series (up to 8 in the categorical colours, more on one blue ramp in order). `unit` defaults to the series' shared unit; y axis "Frequency (Hz)". `limits`: numbers, `(value, label)` or `{"value", "label"}` (dashed, labelled on the right). `marks`: `(t, y)`, `(t, y, label)`, `{"t", "y", "label"}` or a check result with `time` / `value` (a COLLAPSE nadir is marked at its minimum). Dotted vertical lines at every series event (labelled) and at `t_event`. `note`: footnote (for example `despike(...).note`). | `out.plot.series` (one graph per pass) |
+| `plot_common` | private | Agg backend, the graph style (`GRAPH_STYLE` over `_PO_DEFAULT`), fonts, the key's places, watermark, saving. | (needed by the others) |
+| `plot_series` | `plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None, marks=None, t_event=None, events=True, note="", stem=None, context=True, xlabel="Time (s)")` | PNG path or `None`. One line per Series (the style's colours in order, then the same again paler, then its ramp in order). `unit` defaults to the series' shared unit; y axis "Frequency (Hz)". `limits`: numbers, `(value, label)` or `{"value", "label"}` (dashed, labelled on the right). `marks`: `(t, y)`, `(t, y, label)`, `{"t", "y", "label"}` or a check result with `time` / `value` (a COLLAPSE nadir is marked at its minimum). Dotted vertical lines at every series event (labelled) and at `t_event`. `note`: footnote (for example `despike(...).note`). | `out.plot.series` (one graph per pass) |
 | `collect_series` | `collect_series(key, series, label=None)`; `draw_collected(key, title="", ylabel="", unit=None, limits=None, marks=None, t_event=None, events=True, note="", stem=None, xlabel="Time (s)")` | `collect_series` keeps the pass's series under `key` (label default: the loop values, plus the series label when a pass gives several) and returns how many are kept; `draw_collected`, called after the loop, draws them all on one graph and forgets them (so an outer loop starts a fresh graph). Returns the path, or `None` with a warning when nothing was kept. Use the block's node id as `key`. | `out.plot.series` (every pass on one graph) |
 | `plot_xy` | `plot_xy(x, ys, labels=None, kind="line", title="", xlabel="", xunit="", ylabel="", yunit="", limits=None, stem=None, context=True)` | PNG path or `None`. kind line / scatter / bar. `x` numbers or names (names: one tick each, in order). `ys` one list, several lists, Series, or `{label: list}`. Lengths cut to the shorter with a warning; missing values leave gaps. | `out.plot.xy` |
 | `plot_3d` | `plot_3d(x, y, z, kind="surface", title="", xlabel="", xunit="", ylabel="", yunit="", zlabel="", zunit="", stem=None, context=True)` | PNG path or `None`. x, y, z as three equal lists of points (table columns) or z as rows over x and y. kind "surface" / "wireframe" when the points fill a whole grid (repeated points averaged), else (or kind "scatter") dots coloured by z, with a log line saying why. | `out.plot.3d` |

@@ -133,11 +133,20 @@ export function parsePyLiteral(src) {
 }
 
 function skipWs(p) { while (p.i < p.s.length && /\s/.test(p.s[p.i])) p.i++; }
+// Inside a list or a dict written over several lines, a comment after a value is skipped too.
+function skipWsC(p) {
+  for (;;) {
+    skipWs(p);
+    if (p.s[p.i] !== '#') return;
+    while (p.i < p.s.length && p.s[p.i] !== '\n') p.i++;
+  }
+}
 
 function readValue(p) {
   skipWs(p);
   const s = p.s, c = s[p.i];
   if (c === '[' || c === '(') return readList(p, c === '[' ? ']' : ')');
+  if (c === '{') return readDict(p);
   if (/['"]/.test(c) || (/[rRuU]/.test(c) && /['"]/.test(s[p.i + 1] || ''))) {
     let out = readString(p);
     for (;;) {                       // implicit concatenation: "a" "b"
@@ -173,13 +182,33 @@ function readList(p, close) {
   p.i++;
   const out = [];
   for (;;) {
-    skipWs(p);
+    skipWsC(p);
     if (p.s[p.i] === close) { p.i++; return out; }
     out.push(readValue(p));
-    skipWs(p);
+    skipWsC(p);
     if (p.s[p.i] === ',') { p.i++; continue; }
     if (p.s[p.i] === close) { p.i++; return out; }
     throw new Error('bad list');
+  }
+}
+
+// A dict with text keys (GRAPH_STYLE): a plain object, in the order written.
+function readDict(p) {
+  p.i++;
+  const out = {};
+  for (;;) {
+    skipWsC(p);
+    if (p.s[p.i] === '}') { p.i++; return out; }
+    const key = readValue(p);
+    if (typeof key !== 'string') throw new Error('bad dict key');
+    skipWsC(p);
+    if (p.s[p.i] !== ':') throw new Error('bad dict');
+    p.i++;
+    out[key] = readValue(p);
+    skipWsC(p);
+    if (p.s[p.i] === ',') { p.i++; continue; }
+    if (p.s[p.i] === '}') { p.i++; return out; }
+    throw new Error('bad dict');
   }
 }
 

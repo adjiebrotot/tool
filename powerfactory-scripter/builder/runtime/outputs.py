@@ -10,24 +10,87 @@
 # here catches its own failures, logs them and returns None, and returns None with a warning
 # when there is nothing to draw. matplotlib is imported on first use, so a workflow without
 # graphs never needs it and preflight() can name the missing package before connecting.
-# Colours: the site's validated chart palette (eight categorical slots in a fixed order, a blue
-# ramp for magnitudes and for more than eight ordered lines, status colours for pass / fail).
+#
+# How a graph looks is GRAPH_STYLE, a dict in the script's SETTINGS that the Builder writes from
+# Workflow > Graph style. A key it leaves out, or a value that cannot be used, takes the Adjie
+# Brotools style (_PO_DEFAULT, the site's own charts), so a hand-edited style can make a graph
+# look odd but never stops one being drawn. The style is applied inside an rc_context, so a
+# Python code block of the reader's own that uses matplotlib keeps its own defaults.
 # Private names start with _po_ so they cannot clash once everything is in one script.
 
 # @helper plot_common
 # @needs log, run_dir, ctx, convert
 # @imports import math
+# @imports import os
+# @imports import re
 # @imports import warnings
-_PO = {"plt": None, "missing": False, "collect": {}}
+_PO = {"plt": None, "missing": False, "collect": {}, "fonts": False, "st": None, "top": 0.0, "bottom": 0.0}
 _PO_CREDIT = "Made with tool.adjiebrotots.com/powerfactory-scripter/builder"
-_PO_SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
-_PO_RAMP = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5",
-            "#2a78d6", "#256abf", "#1c5cab", "#184f95", "#104281", "#0d366b"]
 _PO_STATUS = {"pass": "#0ca30c", "fail": "#d03b3b", "unknown": "#898781"}
-_PO_INK = {"primary": "#0b0b0b", "secondary": "#52514e", "muted": "#898781", "grid": "#e1e0d9",
-           "axis": "#c3c2b7", "surface": "#ffffff"}
-_PO_SIZE = (10.0, 5.6)
-_PO_DPI = 120
+# The Adjie Brotools style: light page, the site's neutral series sequence (blue, gold, teal,
+# rose, purple), blue-grey grid, slate axis text, DM Sans, a bold centred title and the key
+# under the graph. Keep it equal to the "brotools" template of js/core/graphstyle.js.
+_PO_DEFAULT = {
+    "template": "brotools",
+    "colors": ["#5A91E8", "#B45309", "#4A9E87", "#C46A7E", "#9B59B6"],
+    "ramp": "blue",
+    "background": "#FFFFFF",
+    "plot_background": "#FFFFFF",
+    "text": "#14203A",
+    "muted": "#4C5B76",
+    "grid": "#C8D4E8",
+    "axis": "#C8D4E8",
+    "font": "DM Sans",
+    "font_size": 9.5,
+    "title_size": 13.0,
+    "title_bold": True,
+    "title_align": "center",
+    "grid_axes": "both",
+    "grid_style": "solid",
+    "frame": "left-bottom",
+    "ticks": "out",
+    "thousands": True,
+    "line_width": 2.0,
+    "markers": "auto",
+    "legend": "bottom",
+    "legend_frame": False,
+    "width": 10.0,
+    "height": 5.6,
+    "dpi": 150,
+    "transparent": False,
+    "also_save": "",
+}
+_PO_HEX_KEYS = ("background", "plot_background", "text", "muted", "grid", "axis")
+_PO_RANGES = {"font_size": (5.0, 30.0), "title_size": (5.0, 48.0), "line_width": (0.3, 8.0),
+              "width": (2.0, 30.0), "height": (1.5, 20.0), "dpi": (50.0, 600.0)}
+_PO_CHOICES = {
+    "title_align": ("center", "left"),
+    "grid_axes": ("both", "y", "x", "none"),
+    "grid_style": ("solid", "dashed", "dotted"),
+    "frame": ("left-bottom", "box", "bottom", "none"),
+    "ticks": ("out", "in", "none"),
+    "markers": ("auto", "always", "never"),
+    "legend": ("bottom", "top", "right", "inside", "none"),
+    "also_save": ("", "svg", "pdf"),
+}
+# Colour ramps for heat maps, 3D graphs and more lines than the series colours hold, low to
+# high. Keep them equal to RAMPS in js/core/graphstyle.js (the page's preview draws them).
+_PO_RAMPS = {
+    "blue": ["#EAF2FF", "#BCD3F7", "#8FB5FF", "#5A91E8", "#3A71C8", "#0052CC", "#1A3F86", "#14203A"],
+    "night": ["#1C2942", "#1F3E73", "#2D67C7", "#5A91E8", "#8DBBFF", "#C4DCFF", "#EAF1FF"],
+    "viridis": ["#440154", "#472D7B", "#3B528B", "#2C728E", "#21918C", "#28AE80", "#5EC962", "#ADDC30", "#FDE725"],
+    "cividis": ["#00224E", "#123570", "#3B496C", "#575D6D", "#707173", "#8A8779", "#A69D75", "#C4B56C", "#E4CF5B", "#FEE838"],
+    "magma": ["#000004", "#1C1044", "#4F127B", "#812581", "#B5367A", "#E55064", "#FB8761", "#FEC287", "#FCFDBF"],
+    "coolwarm": ["#3B4CC0", "#6788EE", "#9ABBFF", "#C9D7F0", "#EDD1C2", "#F7A889", "#E26952", "#B40426"],
+    "greys": ["#F7F7F7", "#D9D9D9", "#BDBDBD", "#969696", "#737373", "#525252", "#252525"],
+    "classic": ["#CDE2FB", "#B7D3F6", "#9EC5F4", "#86B6EF", "#6DA7EC", "#5598E7", "#3987E5",
+                "#2A78D6", "#256ABF", "#1C5CAB", "#184F95", "#104281", "#0D366B"],
+}
+_PO_SANS = ("Segoe UI", "Helvetica Neue", "Helvetica", "Arial", "Liberation Sans", "DejaVu Sans")
+_PO_SERIF = ("Times New Roman", "Liberation Serif", "Nimbus Roman", "STIXGeneral", "DejaVu Serif")
+_PO_SERIF_NAMES = ("times new roman", "times", "cambria", "georgia", "garamond", "book antiqua",
+                   "palatino linotype", "liberation serif", "nimbus roman", "stixgeneral", "dejavu serif", "serif")
+_PO_DASH = {"solid": "-", "dashed": (0, (4, 3)), "dotted": (0, (1, 2.5))}
 
 
 def _po_plt():
@@ -46,6 +109,106 @@ def _po_plt():
     return _PO["plt"]
 
 
+def _po_hex(v):
+    # "#RRGGBB" from "#RGB" or "#RRGGBB" (any case), else None.
+    t = str(v or "").strip()
+    if re.match(r"^#[0-9A-Fa-f]{3}$", t):
+        t = "#" + "".join(ch * 2 for ch in t[1:])
+    return t.upper() if re.match(r"^#[0-9A-Fa-f]{6}$", t) else None
+
+
+def _po_st():
+    # The style in force: GRAPH_STYLE (SETTINGS) over _PO_DEFAULT, each value checked. A key the
+    # default does not have is ignored; a bad value keeps the default's.
+    raw = globals().get("GRAPH_STYLE")
+    raw = raw if isinstance(raw, dict) else {}
+    st = dict(_PO_DEFAULT)
+    st["colors"] = list(_PO_DEFAULT["colors"])
+    for key, dflt in _PO_DEFAULT.items():
+        if key not in raw:
+            continue
+        v = raw[key]
+        if key == "colors":
+            good = [c for c in (_po_hex(x) for x in (v if isinstance(v, (list, tuple)) else [])) if c][:12]
+            if good:
+                st[key] = good
+        elif key in _PO_HEX_KEYS:
+            c = _po_hex(v)
+            if c:
+                st[key] = c
+        elif key in _PO_RANGES:
+            if isinstance(v, bool):
+                continue
+            try:
+                f = float(v)
+            except (TypeError, ValueError):
+                continue
+            if math.isfinite(f):
+                lo, hi = _PO_RANGES[key]
+                st[key] = min(max(f, lo), hi)
+        elif key in _PO_CHOICES:
+            if str(v) in _PO_CHOICES[key]:
+                st[key] = str(v)
+        elif key == "ramp":
+            if str(v) in _PO_RAMPS:
+                st[key] = str(v)
+        elif isinstance(dflt, bool):
+            if isinstance(v, bool):
+                st[key] = v
+        elif isinstance(v, str) and v.strip():
+            st[key] = v.strip()[:60]
+    st["dpi"] = int(round(st["dpi"]))
+    return st
+
+
+def _po_s():
+    # The style of the graph being drawn (set by _po_run), or the one in force.
+    return _PO["st"] or _po_st()
+
+
+def _po_family(name):
+    # The font families to ask matplotlib for: the chosen one, then a family of the same kind
+    # that this computer has, then DejaVu Sans (always there, and it has the Greek letters). Fonts
+    # in a "fonts" folder next to the script (the study package brings DM Sans) are added once.
+    from matplotlib import font_manager
+    if not _PO["fonts"]:
+        _PO["fonts"] = True
+        folder = os.path.join(script_dir(), "fonts")
+        try:
+            names = sorted(os.listdir(folder))
+        except OSError:
+            names = []
+        for fn in names:
+            if fn.lower().endswith((".ttf", ".otf")):
+                try:
+                    font_manager.fontManager.addfont(os.path.join(folder, fn))
+                except Exception:
+                    pass
+    have = {}
+    for f in font_manager.fontManager.ttflist:
+        have.setdefault(f.name.lower(), f.name)
+    serif = str(name).strip().lower() in _PO_SERIF_NAMES
+    out = []
+    for fam in [str(name)] + list(_PO_SERIF if serif else _PO_SANS):
+        real = have.get(fam.strip().lower())
+        if real and real not in out:
+            out.append(real)
+    if "DejaVu Sans" not in out:
+        out.append("DejaVu Sans")
+    return out
+
+
+def _po_rc(st):
+    # rcParams for one graph: its fonts, no "+4.9e1" offset on a narrow axis, and grid
+    # defaults that 3D axes read when they are made.
+    import matplotlib
+    rc = {"font.family": _po_family(st["font"]), "font.size": st["font_size"],
+          "axes.formatter.useoffset": False, "grid.color": st["grid"], "grid.linewidth": 0.7,
+          "axes.edgecolor": st["axis"], "axes.labelcolor": st["muted"], "text.color": st["text"],
+          "xtick.color": st["muted"], "ytick.color": st["muted"]}
+    return {k: v for k, v in rc.items() if k in matplotlib.rcParams}
+
+
 def _po_watermark(fig):
     # The credit as glyph outlines (TextPath -> PathPatch), bottom right, faint: a vector
     # shape, not an editable text object. Placed in inches so any save dpi keeps it in place.
@@ -59,7 +222,7 @@ def _po_watermark(fig):
     tx = w_in - margin - bb.x1 / 72.0
     ty = margin - bb.y0 / 72.0
     patch = PathPatch(tp, transform=Affine2D().scale(1.0 / 72.0).translate(tx, ty) + fig.dpi_scale_trans,
-                      facecolor="#333333", edgecolor="none", alpha=0.25)
+                      facecolor=_po_s()["text"], edgecolor="none", alpha=0.25)
     fig.add_artist(patch)
     return patch
 
@@ -73,11 +236,14 @@ def _po_close(fig):
 
 def _po_figure(three_d=False):
     plt = _po_plt()
-    fig = plt.figure(figsize=_PO_SIZE, dpi=_PO_DPI)
-    fig.patch.set_facecolor(_PO_INK["surface"])
+    st = _po_s()
+    _PO["top"] = _PO["bottom"] = 0.0
+    fig = plt.figure(figsize=(st["width"], st["height"]), dpi=st["dpi"])
+    fig.patch.set_facecolor(st["background"])
     if three_d:
         import mpl_toolkits.mplot3d  # noqa: F401  (registers the 3d projection)
         ax = fig.add_subplot(1, 1, 1, projection="3d")
+        _po_style3d(ax)
     else:
         ax = fig.add_subplot(1, 1, 1)
         _po_style(ax)
@@ -85,14 +251,74 @@ def _po_figure(three_d=False):
 
 
 def _po_style(ax):
-    ax.set_facecolor(_PO_INK["surface"])
-    ax.grid(True, color=_PO_INK["grid"], linewidth=0.6)
+    st = _po_s()
+    ax.set_facecolor(st["plot_background"])
+    _po_grid(ax)
     ax.set_axisbelow(True)
-    for side in ("top", "right"):
-        ax.spines[side].set_visible(False)
-    for side in ("left", "bottom"):
-        ax.spines[side].set_color(_PO_INK["axis"])
-    ax.tick_params(colors=_PO_INK["secondary"], labelsize=9)
+    show = {"left-bottom": ("left", "bottom"), "box": ("left", "bottom", "top", "right"),
+            "bottom": ("bottom",), "none": ()}[st["frame"]]
+    for side in ("top", "right", "left", "bottom"):
+        ax.spines[side].set_visible(side in show)
+        ax.spines[side].set_color(st["axis"])
+        ax.spines[side].set_linewidth(0.8)
+    t = st["ticks"]
+    both = st["frame"] == "box" and t == "in"
+    ax.tick_params(axis="both", which="both", color=st["axis"], labelcolor=st["muted"],
+                   labelsize=st["font_size"], direction="in" if t == "in" else "out",
+                   length=0 if t == "none" else 4, width=0.8, pad=6 if t == "none" else 4,
+                   top=both, right=both)
+    if st["thousands"]:
+        _po_group_ticks(ax)
+
+
+def _po_grid(ax, axis=None):
+    # The grid the style asks for; axis narrows it ("y" under bars, "none" for a heat map).
+    st = _po_s()
+    which = st["grid_axes"]
+    if axis is not None and which != "none":
+        which = axis if which in ("both", axis) else "none"
+    ax.grid(False)
+    if which != "none":
+        ax.grid(True, axis=which, color=st["grid"], linewidth=0.7, linestyle=_PO_DASH[st["grid_style"]])
+
+
+def _po_group_ticks(ax):
+    # Tick numbers of 1,000 and up written with a thousands separator, as on the site's charts;
+    # an axis whose label says it holds years keeps 2030 as it is.
+    from matplotlib.ticker import ScalarFormatter
+
+    class _Grouped(ScalarFormatter):
+        def __call__(self, x, pos=None):
+            text = ScalarFormatter.__call__(self, x, pos)
+            label = self.axis.get_label().get_text().lower() if getattr(self, "axis", None) is not None else ""
+            return text if ("year" in label or "tahun" in label) else _po_thousands(text)
+
+    for axis in (ax.xaxis, ax.yaxis):
+        axis.set_major_formatter(_Grouped(useOffset=False))
+
+
+def _po_thousands(text):
+    m = re.match(r"^([-\u2212]?)(\d{4,})(\.\d*)?$", str(text))
+    if not m:
+        return text
+    return m.group(1) + "{:,}".format(int(m.group(2))) + (m.group(3) or "")
+
+
+def _po_style3d(ax):
+    st = _po_s()
+    ax.set_facecolor(st["plot_background"])
+    pane = _po_mix(st["plot_background"], st["grid"], 0.35)
+    for a in (ax.xaxis, ax.yaxis, ax.zaxis):
+        try:
+            a.set_pane_color(pane)
+            a.pane.set_edgecolor(st["axis"])
+        except Exception:
+            pass
+        try:
+            a._axinfo["grid"]["color"] = st["grid"]
+        except Exception:
+            pass
+    ax.tick_params(colors=st["muted"], labelsize=st["font_size"])
 
 
 def _po_axis(label, unit=""):
@@ -107,45 +333,147 @@ def _po_axis(label, unit=""):
 
 
 def _po_labels(ax, xlabel="", ylabel="", zlabel=None):
-    ax.set_xlabel(xlabel, color=_PO_INK["secondary"], fontsize=10)
-    ax.set_ylabel(ylabel, color=_PO_INK["secondary"], fontsize=10)
+    st = _po_s()
+    kw = {"color": st["muted"], "fontsize": st["font_size"] * 1.05}
+    ax.set_xlabel(xlabel, labelpad=6, **kw)
+    ax.set_ylabel(ylabel, labelpad=6, **kw)
     if zlabel is not None and hasattr(ax, "set_zlabel"):
-        ax.set_zlabel(zlabel, color=_PO_INK["secondary"], fontsize=10)
+        ax.set_zlabel(zlabel, **kw)
 
 
 def _po_title(ax, title, context=True):
     # The title, with the loop values ("Dispatch (MW) = 200") as a smaller line under it when
-    # the graph is drawn inside a loop.
+    # the graph is drawn inside a loop; a key above the graph sits between them and the plot.
+    st = _po_s()
     sub = ctx_text() if context else ""
-    ax.set_title(str(title or ""), loc="left", fontsize=12, color=_PO_INK["primary"],
-                 pad=18 if sub else 8)
+    left = st["title_align"] == "left"
+    fs = st["font_size"]
+    gap = 8.0 + _PO["top"]
+    ax.set_title(str(title or ""), loc="left" if left else "center", fontsize=st["title_size"],
+                 color=st["text"], fontweight="bold" if st["title_bold"] else "normal",
+                 pad=gap + (fs * 1.7 if sub else 0.0))
     if sub:
-        ax.text(0.0, 1.015, sub, transform=ax.transAxes, fontsize=9, color=_PO_INK["secondary"],
-                va="bottom", ha="left")
+        ax.annotate(sub, xy=(0.0 if left else 0.5, 1.0), xycoords="axes fraction", xytext=(0, gap),
+                    textcoords="offset points", fontsize=fs, color=st["muted"],
+                    ha="left" if left else "center", va="bottom")
+
+
+def _po_legend(ax, handles=None, labels=None):
+    # The key where the style puts it: under the graph (one row, or as many as the width
+    # needs, above the credit), above it (under the title), to its right, inside it, or none.
+    st = _po_s()
+    if handles is None:
+        handles, labels = ax.get_legend_handles_labels()
+    where = st["legend"]
+    if not handles or where == "none":
+        return None
+    fig = ax.figure
+    fs = st["font_size"]
+    kw = {"fontsize": fs, "frameon": bool(st["legend_frame"]), "handlelength": 2.0, "columnspacing": 1.6}
+    if st["legend_frame"]:
+        kw.update(facecolor=st["plot_background"], edgecolor=st["grid"], framealpha=1.0)
+    renderer = fig.canvas.get_renderer()
+    w_px, h_px = fig.get_size_inches() * fig.dpi
+    n = len(handles)
+    if where == "inside":
+        leg = ax.legend(handles, labels, loc="best", ncol=1 if n <= 10 else 2, **kw)
+    elif where == "right":
+        leg = ax.legend(handles, labels, loc="upper left", bbox_to_anchor=(1.02, 1.0), borderaxespad=0.0,
+                        ncol=1 if n <= 16 else 2, **kw)
+    else:
+        left = st["title_align"] == "left"
+        foot = 16.0 / 72.0 * fig.dpi / h_px
+        leg = None
+        for ncol in range(min(n, 12), 0, -1):
+            if leg is not None:
+                leg.remove()
+            if where == "top":
+                leg = ax.legend(handles, labels, loc="lower left" if left else "lower center",
+                                bbox_to_anchor=(0.0 if left else 0.5, 1.0), borderaxespad=0.4, ncol=ncol, **kw)
+            else:
+                leg = fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(0.5, foot),
+                                 borderaxespad=0.0, ncol=ncol, **kw)
+            if leg.get_window_extent(renderer).width <= w_px * 0.92 or ncol == 1:
+                break
+        height = leg.get_window_extent(renderer).height
+        if where == "top":
+            _PO["top"] = height / fig.dpi * 72.0 + 2.0
+        else:
+            _PO["bottom"] = foot + height / h_px
+    for t in leg.get_texts():
+        t.set_color(st["text"])
+    return leg
+
+
+def _po_snap(ax):
+    # The value axis ends on a tick at both ends, as the site's charts do, so the top grid line
+    # closes the plot and no half-empty band is left above or below the data. A wider range can
+    # change the tick step, so it is done again until the ends stay put; _po_save does it once
+    # more after the layout has sized the axes. Returns whether the limits moved.
+    moved = False
+    try:
+        ax.pfb_snap = True
+        for _ in range(4):
+            lo, hi = ax.get_ylim()
+            if not (math.isfinite(lo) and math.isfinite(hi)) or hi <= lo:
+                break
+            ticks = list(ax.yaxis.get_major_locator().tick_values(lo, hi))
+            eps = (hi - lo) * 1e-9
+            below = [t for t in ticks if t <= lo + eps]
+            above = [t for t in ticks if t >= hi - eps]
+            nlo = max(below) if below else lo
+            nhi = min(above) if above else hi
+            if abs(nlo - lo) <= eps * 10 and abs(nhi - hi) <= eps * 10:
+                break
+            ax.set_ylim(nlo, nhi)
+            moved = True
+    except Exception:
+        pass
+    return moved
+
+
+def _po_colorbar(fig, mappable, ax, label, **kw):
+    st = _po_s()
+    cb = fig.colorbar(mappable, ax=ax, **kw)
+    cb.outline.set_edgecolor(st["axis"])
+    cb.outline.set_linewidth(0.8)
+    cb.ax.tick_params(color=st["axis"], labelcolor=st["muted"], labelsize=st["font_size"])
+    cb.set_label(label, color=st["muted"], fontsize=st["font_size"] * 1.05)
+    return cb
 
 
 def _po_note(fig, note):
     if note:
+        st = _po_s()
         text = str(note)
         if len(text) > 160:
             text = text[:157] + "..."
-        fig.text(0.01, 0.012, text, fontsize=7.5, color=_PO_INK["secondary"], ha="left", va="bottom")
+        fig.text(0.01, 0.012, text, fontsize=st["font_size"] * 0.8, color=st["muted"], ha="left", va="bottom")
 
 
 def _po_colors(n):
-    # Up to eight lines: the categorical slots in their fixed order. More (for example every
-    # pass of a sweep on one graph): one blue ramp, light to dark, so the order still reads
-    # and no hue is invented.
-    if n <= len(_PO_SERIES):
-        return _PO_SERIES[:n]
-    lo, hi = 3, len(_PO_RAMP) - 1          # from step 250 (still visible on white) to 700
-    out = []
-    for k in range(n):
-        pos = lo + (hi - lo) * (k / max(1, n - 1))
-        a = int(math.floor(pos))
-        b = min(a + 1, hi)
-        out.append(_po_mix(_PO_RAMP[a], _PO_RAMP[b], pos - a))
-    return out
+    # Up to as many lines as the style has colours: those, in their order. Up to twice as many:
+    # the same again, paler (the site's charts do the same). More (every pass of a sweep on one
+    # graph): one ramp, so the order still reads and no hue is invented; the end of the ramp
+    # nearest the background is left out so every line stays visible.
+    st = _po_s()
+    base = list(st["colors"])
+    k = len(base)
+    if n <= k:
+        return base[:n]
+    if n <= 2 * k:
+        return base + [_po_mix(c, st["plot_background"], 0.42) for c in base][:n - k]
+    ramp = _PO_RAMPS[st["ramp"]]
+    bg = _po_lum(st["plot_background"])
+    lo, hi = (0.25, 1.0) if abs(_po_lum(ramp[0]) - bg) < abs(_po_lum(ramp[-1]) - bg) else (0.0, 0.75)
+    return [_po_ramp_at(ramp, lo + (hi - lo) * (j / max(1, n - 1))) for j in range(n)]
+
+
+def _po_ramp_at(ramp, pos):
+    pos = min(max(float(pos), 0.0), 1.0) * (len(ramp) - 1)
+    a = int(math.floor(pos))
+    b = min(a + 1, len(ramp) - 1)
+    return _po_mix(ramp[a], ramp[b], pos - a)
 
 
 def _po_mix(c1, c2, w):
@@ -154,9 +482,18 @@ def _po_mix(c1, c2, w):
     return "#%02x%02x%02x" % (round(r1 + (r2 - r1) * w), round(g1 + (g2 - g1) * w), round(b1 + (b2 - b1) * w))
 
 
+def _po_lum(c):
+    # Relative luminance (WCAG) of "#RRGGBB", 0 (black) to 1 (white).
+    def ch(v):
+        v = v / 255.0
+        return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
+    return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b)
+
+
 def _po_cmap():
     from matplotlib.colors import LinearSegmentedColormap
-    return LinearSegmentedColormap.from_list("pfb_blue", _PO_RAMP)
+    return LinearSegmentedColormap.from_list("pfb_ramp", _PO_RAMPS[_po_s()["ramp"]])
 
 
 def _po_num(v):
@@ -179,7 +516,7 @@ def _po_xpos(xs):
     return [float(cats.index(as_text(v))) for v in xs], cats
 
 
-def _po_grid(x, y, z):
+def _po_grid_xyz(x, y, z):
     # (xs, ys, Z) when the points (x, y) fill a whole grid (Z[j][i] at ys[j], xs[i]; repeated
     # points averaged), else None. Also accepts z as rows (one list per y value).
     if z and all(isinstance(r, (list, tuple)) for r in z):
@@ -215,17 +552,36 @@ def _po_grid(x, y, z):
 
 
 def _po_save(fig, stem):
+    st = _po_s()
     _po_watermark(fig)
+    # Room at the foot for the credit (and the footnote), or for a key under the graph.
+    strip = 14.0 / 72.0 / float(fig.get_size_inches()[1])
     try:
         with warnings.catch_warnings():
             # 3D axes and colour bars make tight_layout warn; the layout is still usable.
             warnings.simplefilter("ignore")
-            fig.tight_layout(rect=(0, 0.035, 1, 1))
+            fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
+            # The axes changed size, so the tick step may have too: end on a tick again.
+            if any([_po_snap(a) for a in fig.axes if getattr(a, "pfb_snap", False)]):
+                fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
     except Exception:
         pass
     path = out_file(stem or "graph", "png", sub="graphs")
-    fig.savefig(path, dpi=_PO_DPI, facecolor=fig.get_facecolor())
+    kw = {"dpi": st["dpi"]}
+    if st["transparent"]:
+        kw["transparent"] = True
+    else:
+        kw["facecolor"] = fig.get_facecolor()
+    fig.savefig(path, **kw)
     log(f"Saved graph: {path}")
+    if st["also_save"] in ("svg", "pdf"):
+        extra = path[:-4] + "." + st["also_save"]
+        try:
+            fig.savefig(extra, format=st["also_save"], **kw)
+            _RUN["files"].append(extra)
+            log(f"Saved graph ({st['also_save'].upper()}): {extra}")
+        except Exception as exc:
+            log(f"Could not save the {st['also_save'].upper()} copy of {path}: {type(exc).__name__}: {exc}", "warn")
     return path
 
 
@@ -235,22 +591,25 @@ def _po_run(what, title, draw):
     fig = None
     try:
         try:
-            _po_plt()
+            plt = _po_plt()
         except ImportError:
             if not _PO["missing"]:
                 _PO["missing"] = True
                 log("matplotlib is not installed, so no graphs are drawn. Install it with: "
                     "python -m pip install matplotlib", "error")
             return None
-        made = draw()
-        if made is None:
-            return None
-        fig, stem = made
-        return _po_save(fig, stem)
+        _PO["st"] = _po_st()
+        with plt.rc_context(_po_rc(_PO["st"])):
+            made = draw()
+            if made is None:
+                return None
+            fig, stem = made
+            return _po_save(fig, stem)
     except Exception as exc:
         log(f"Could not draw the {what} '{title or 'untitled'}': {type(exc).__name__}: {exc}", "error")
         return None
     finally:
+        _PO["st"] = None
         if fig is not None:
             _po_close(fig)
 
@@ -262,6 +621,7 @@ def _po_skip(what, title, why):
 
 def _po_hlines(ax, limits):
     # Horizontal limit lines: a number, (value, label) or {"value": v, "label": text}.
+    st = _po_s()
     for item in limits or []:
         if isinstance(item, dict):
             v, lab = item.get("value", item.get("y")), item.get("label", "")
@@ -272,10 +632,10 @@ def _po_hlines(ax, limits):
         f = as_float(v)
         if f is None or f != f:
             continue
-        ax.axhline(f, color=_PO_INK["secondary"], linestyle="--", linewidth=1.0, zorder=1)
+        ax.axhline(f, color=st["muted"], linestyle=(0, (5, 3)), linewidth=1.1, zorder=1)
         ax.annotate(str(lab or f"{f:.6g}"), xy=(1.0, f), xycoords=("axes fraction", "data"),
                     xytext=(-4, 3), textcoords="offset points", ha="right", va="bottom",
-                    fontsize=8, color=_PO_INK["secondary"])
+                    fontsize=st["font_size"] * 0.9, color=st["muted"])
 # @end
 
 # @helper plot_series
@@ -291,8 +651,8 @@ def plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None
     label) or a check result with time and value (for example a Frequency nadir result).
     Dotted vertical lines show the series' simulation events (events=True) and t_event (s).
     note: a footnote (for example the spikes removed). In a loop the loop values are shown
-    under the title and added to the file name. Returns None, with a warning, when there is
-    nothing to draw."""
+    under the title and added to the file name. GRAPH_STYLE in SETTINGS sets the look.
+    Returns None, with a warning, when there is nothing to draw."""
     items = [series] if hasattr(series, "t") else [s for s in (series or []) if s is not None]
     names = list(labels) if isinstance(labels, (list, tuple)) else ([labels] if labels else [])
     pairs = []
@@ -309,12 +669,15 @@ def plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None
     def draw():
         if not pairs:
             return _po_skip("Time series graph", head, "no series with samples")
+        st = _po_s()
         units = {str(getattr(s, "unit", "") or "") for s, _, _, _ in pairs}
         yunit = unit if unit is not None else (units.pop() if len(units) == 1 else "")
         fig, ax = _po_figure()
         colors = _po_colors(len(pairs))
         for (s, ts, ys, name), color in zip(pairs, colors):
-            ax.plot(ts, ys, color=color, linewidth=1.5, label=name, zorder=3)
+            ax.plot(ts, ys, color=color, linewidth=st["line_width"], label=name, zorder=3,
+                    solid_joinstyle="round", solid_capstyle="round")
+        ax.margins(x=0)
         lines_at = {}
         if events:
             for s, _, _, _ in pairs:
@@ -324,20 +687,21 @@ def plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None
         if te is not None and te == te:
             lines_at.setdefault(round(te, 9), "")
         for et in sorted(lines_at):
-            ax.axvline(et, color=_PO_INK["muted"], linestyle=":", linewidth=1.0, zorder=1)
+            ax.axvline(et, color=st["muted"], linestyle=":", linewidth=1.0, zorder=1)
             if lines_at[et]:
                 ax.annotate(lines_at[et], xy=(et, 1.0), xycoords=("data", "axes fraction"),
                             xytext=(3, -3), textcoords="offset points", ha="left", va="top",
-                            fontsize=8, color=_PO_INK["muted"], rotation=90, zorder=2,
-                            bbox={"facecolor": _PO_INK["surface"], "edgecolor": "none", "pad": 1.0, "alpha": 0.85})
+                            fontsize=st["font_size"] * 0.85, color=st["muted"], rotation=90, zorder=2,
+                            bbox={"facecolor": st["plot_background"], "edgecolor": "none", "pad": 1.0, "alpha": 0.85})
         _po_hlines(ax, limits)
+        _po_snap(ax)
         for m in marks or []:
             _po_mark(ax, m, yunit)
         ylab = _po_axis(ylabel or (pairs[0][3] if len(pairs) == 1 else ""), yunit)
         _po_labels(ax, xlabel, ylab)
-        _po_title(ax, head, context)
         if len(pairs) > 1:
-            ax.legend(fontsize=8, frameon=False, loc="best", ncol=1 if len(pairs) <= 10 else 2)
+            _po_legend(ax)
+        _po_title(ax, head, context)
         _po_note(fig, note)
         return fig, stem or head or "time_series"
 
@@ -347,6 +711,7 @@ def plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None
 def _po_mark(ax, m, unit=""):
     # A marked point: (t, y), (t, y, label), {"t", "y", "label"} or a result with time / value
     # (a COLLAPSE nadir result is marked at its minimum).
+    st = _po_s()
     t = y = None
     lab = ""
     if isinstance(m, dict):
@@ -369,7 +734,7 @@ def _po_mark(ax, m, unit=""):
     t, y = as_float(t), as_float(y)
     if t is None or y is None or t != t or y != y:
         return
-    ax.plot([t], [y], marker="o", markersize=7, color=_PO_INK["primary"], markeredgecolor="white",
+    ax.plot([t], [y], marker="o", markersize=7, color=st["text"], markeredgecolor=st["plot_background"],
             markeredgewidth=1.5, linestyle="none", zorder=5)
     if lab:
         # Near the right edge the label goes to the left of the point, so it stays inside the
@@ -377,7 +742,7 @@ def _po_mark(ax, m, unit=""):
         x0, x1 = ax.get_xlim()
         right = x1 > x0 and (t - x0) / (x1 - x0) > 0.8
         ax.annotate(str(lab), xy=(t, y), xytext=(-6 if right else 6, -12), textcoords="offset points",
-                    fontsize=8.5, color=_PO_INK["primary"], ha="right" if right else "left")
+                    fontsize=st["font_size"] * 0.92, color=st["text"], ha="right" if right else "left")
 # @end
 
 # @helper collect_series
@@ -473,6 +838,7 @@ def _po_draw_xy(xs, cols, names, kind, head, xlabel, xunit, ylabel, yunit, limit
             lines.append((gx, ys, names[k] if k < len(names) else ""))
     if not lines:
         return _po_skip("2D graph", head, "no numbers to draw")
+    st = _po_s()
     k = str(kind or "line").strip().lower()
     all_x = [v for gx, _, _ in lines for v in gx]
     pos_all, cats = _po_xpos(all_x)
@@ -480,6 +846,7 @@ def _po_draw_xy(xs, cols, names, kind, head, xlabel, xunit, ylabel, yunit, limit
     colors = _po_colors(len(lines))
     width = 0.8 / len(lines)
     start = 0
+    lw = st["line_width"]
     for idx, ((gx, ys, name), color) in enumerate(zip(lines, colors)):
         pos = pos_all[start:start + len(gx)]
         start += len(gx)
@@ -492,13 +859,15 @@ def _po_draw_xy(xs, cols, names, kind, head, xlabel, xunit, ylabel, yunit, limit
                 ax.bar([p - 0.4 + width * (idx + 0.5) for p in base], ys, width=width * 0.92,
                        color=color, label=name or None, zorder=3)
         elif k == "scatter":
-            ax.plot(pos, ys, linestyle="none", marker="o", markersize=6, color=color,
-                    markeredgecolor="white", markeredgewidth=1.0, label=name or None, zorder=3)
+            ax.plot(pos, ys, linestyle="none", marker="o", markersize=max(5.0, lw * 3.0), color=color,
+                    markeredgecolor=st["plot_background"], markeredgewidth=1.0, label=name or None, zorder=3)
         else:
-            ax.plot(pos, ys, color=color, linewidth=1.5, marker="o" if len(ys) <= 40 else None,
-                    markersize=4, label=name or None, zorder=3)
+            dots = st["markers"] == "always" or (st["markers"] == "auto" and len(ys) <= 40)
+            ax.plot(pos, ys, color=color, linewidth=lw, marker="o" if dots else None,
+                    markersize=max(3.5, lw * 2.2), label=name or None, zorder=3,
+                    solid_joinstyle="round", solid_capstyle="round")
     if k == "bar":
-        ax.grid(False, axis="x")
+        _po_grid(ax, "y")
     if cats is not None:
         ax.set_xticks(list(range(len(cats))))
         ax.set_xticklabels(cats, rotation=30 if max(len(c) for c in cats) > 6 else 0,
@@ -507,11 +876,12 @@ def _po_draw_xy(xs, cols, names, kind, head, xlabel, xunit, ylabel, yunit, limit
         ax.set_xticks(list(range(len(lines[0][0]))))
         ax.set_xticklabels([as_text(v) for v in lines[0][0]])
     _po_hlines(ax, limits)
+    _po_snap(ax)
     ylab = _po_axis(ylabel or (lines[0][2] if len(lines) == 1 else ""), yunit)
     _po_labels(ax, _po_axis(xlabel, xunit), ylab)
-    _po_title(ax, head, context)
     if len(lines) > 1:
-        ax.legend(fontsize=8, frameon=False, loc="best")
+        _po_legend(ax)
+    _po_title(ax, head, context)
     return fig, stem or head or "graph"
 
 
@@ -535,7 +905,8 @@ def plot_3d(x, y, z, kind="surface", title="", xlabel="", xunit="", ylabel="", y
     head = title or zlabel or "3D graph"
 
     def draw():
-        grid = _po_grid(x, y, z)
+        st = _po_s()
+        grid = _po_grid_xyz(x, y, z)
         k = str(kind or "surface").strip().lower()
         fig = ax = None
         if grid is not None and k in ("surface", "wireframe", "wire"):
@@ -549,10 +920,10 @@ def plot_3d(x, y, z, kind="surface", title="", xlabel="", xunit="", ylabel="", y
             if k == "surface":
                 surf = ax.plot_surface(X, Y, np.ma.masked_invalid(Zm), cmap=_po_cmap(),
                                        vmin=float(np.nanmin(Zm)), vmax=float(np.nanmax(Zm)),
-                                       edgecolor=_PO_INK["axis"], linewidth=0.3, antialiased=True)
-                fig.colorbar(surf, ax=ax, shrink=0.6, pad=0.1, label=_po_axis(zlabel, zunit))
+                                       edgecolor=st["axis"], linewidth=0.3, antialiased=True)
+                _po_colorbar(fig, surf, ax, _po_axis(zlabel, zunit), shrink=0.6, pad=0.1)
             else:
-                ax.plot_wireframe(X, Y, Zm, color=_PO_SERIES[0], linewidth=0.8)
+                ax.plot_wireframe(X, Y, Zm, color=st["colors"][0], linewidth=0.8)
         else:
             if k in ("surface", "wireframe", "wire") and z is not None:
                 log(f"3D graph '{head}': the points do not fill a grid of x and y, so they are drawn as dots.")
@@ -563,11 +934,12 @@ def plot_3d(x, y, z, kind="surface", title="", xlabel="", xunit="", ylabel="", y
             fig, ax = _po_figure(three_d=True)
             sc = ax.scatter([p[0] for p in pts], [p[1] for p in pts], [p[2] for p in pts],
                             c=[p[2] for p in pts], cmap=_po_cmap(), s=28, depthshade=False,
-                            edgecolors=_PO_INK["secondary"], linewidths=0.4)
-            fig.colorbar(sc, ax=ax, shrink=0.6, pad=0.1, label=_po_axis(zlabel, zunit))
+                            edgecolors=st["muted"], linewidths=0.4)
+            _po_colorbar(fig, sc, ax, _po_axis(zlabel, zunit), shrink=0.6, pad=0.1)
         _po_labels(ax, _po_axis(xlabel, xunit), _po_axis(ylabel, yunit), _po_axis(zlabel, zunit))
         sub = ctx_text() if context else ""
-        ax.set_title(str(head) + ("\n" + sub if sub else ""), loc="left", fontsize=12, color=_PO_INK["primary"])
+        ax.set_title(str(head) + ("\n" + sub if sub else ""), loc="left" if st["title_align"] == "left" else "center",
+                     fontsize=st["title_size"], color=st["text"], fontweight="bold" if st["title_bold"] else "normal")
         return fig, stem or head
 
     return _po_run("3D graph", head, draw)
@@ -612,11 +984,13 @@ def plot_heatmap(x, y, z, title="", xlabel="", xunit="", ylabel="", yunit="", zl
         Zm = np.array(Z, dtype=float) if Z and Z[0] else np.zeros((0, 0))
         if Zm.size == 0 or not np.isfinite(Zm).any():
             return _po_skip("Heat map", head, "no numbers to draw")
+        st = _po_s()
         fig, ax = _po_figure()
-        ax.grid(False)
-        im = ax.imshow(np.ma.masked_invalid(Zm), origin="lower", aspect="auto", cmap=_po_cmap(),
+        _po_grid(ax, "none")
+        cmap = _po_cmap()
+        im = ax.imshow(np.ma.masked_invalid(Zm), origin="lower", aspect="auto", cmap=cmap,
                        interpolation="nearest")
-        fig.colorbar(im, ax=ax, label=_po_axis(zlabel, zunit))
+        _po_colorbar(fig, im, ax, _po_axis(zlabel, zunit))
         ax.set_xticks(list(range(len(xk))))
         ax.set_xticklabels(xk, rotation=30 if max(len(s) for s in xk) > 6 else 0)
         ax.set_yticks(list(range(len(yk))))
@@ -628,9 +1002,11 @@ def plot_heatmap(x, y, z, title="", xlabel="", xunit="", ylabel="", yunit="", zl
                 for c in range(Zm.shape[1]):
                     v = Zm[r, c]
                     if v == v:
-                        dark = hi > lo and (v - lo) / (hi - lo) > 0.55
-                        ax.text(c, r, f"{v:.4g}", ha="center", va="center", fontsize=8,
-                                color="white" if dark else _PO_INK["primary"])
+                        # The ink that reads on this cell's own colour, whatever the ramp.
+                        rgb = cmap((v - lo) / (hi - lo) if hi > lo else 0.5)
+                        cell = "#%02x%02x%02x" % tuple(int(round(ch * 255)) for ch in rgb[:3])
+                        ax.text(c, r, f"{v:.4g}", ha="center", va="center", fontsize=st["font_size"] * 0.85,
+                                color="#FFFFFF" if _po_lum(cell) < 0.36 else "#14203A")
         _po_labels(ax, _po_axis(xlabel, xunit), _po_axis(ylabel, yunit))
         _po_title(ax, head, context)
         return fig, stem or head
@@ -717,10 +1093,10 @@ def plot_convergence(history, kind="auto", title="", ylabel="", unit="", stem=No
         else:
             _po_conv_opt(ax, hist)
             _po_labels(ax, "Try", _po_axis(ylabel or "Score", unit))
+        _po_snap(ax)
         from matplotlib.ticker import MaxNLocator
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        if ax.get_legend_handles_labels()[0]:
-            ax.legend(fontsize=8, frameon=False, loc="best")
+        _po_legend(ax)
         _po_title(ax, head, True)
         return fig, stem or ("find_limit" if k == "limit" else "optimise")
 
@@ -728,13 +1104,15 @@ def plot_convergence(history, kind="auto", title="", ylabel="", unit="", stem=No
 
 
 def _po_conv_opt(ax, hist):
+    st = _po_s()
+    colors = _po_colors(2)
     n = [h.get("try", i + 1) for i, h in enumerate(hist)]
     good = [(t, h.get("score")) for t, h in zip(n, hist) if h.get("candidate") and h.get("score") is not None]
     other = [(t, h.get("score")) for t, h in zip(n, hist) if not h.get("candidate") and h.get("score") is not None]
     none = [t for t, h in zip(n, hist) if h.get("score") is None]
     if good:
         ax.plot([t for t, _ in good], [s for _, s in good], linestyle="none", marker="o", markersize=6,
-                color=_PO_SERIES[0], markeredgecolor="white", label="Score of the try", zorder=3)
+                color=colors[0], markeredgecolor=st["plot_background"], label="Score of the try", zorder=3)
     if other:
         ax.plot([t for t, _ in other], [s for _, s in other], linestyle="none", marker="o", markersize=6,
                 markerfacecolor="none", markeredgecolor=_PO_STATUS["unknown"],
@@ -745,11 +1123,12 @@ def _po_conv_opt(ax, hist):
                 label="Failed or no score", zorder=4)
     best = [(t, h.get("best")) for t, h in zip(n, hist) if h.get("best") is not None]
     if best:
-        ax.step([t for t, _ in best], [b for _, b in best], where="post", color=_PO_SERIES[1],
-                linewidth=1.8, label="Best so far", zorder=2)
+        ax.step([t for t, _ in best], [b for _, b in best], where="post", color=colors[-1],
+                linewidth=st["line_width"] * 1.1, label="Best so far", zorder=2)
 
 
 def _po_conv_limit(ax, hist, limit=None):
+    st = _po_s()
     steps = [h.get("step", i + 1) for i, h in enumerate(hist)]
     for res, name in (("pass", "Passes"), ("fail", "Fails"), ("unknown", "Unknown")):
         pts = [(s, as_float(h.get("value"))) for s, h in zip(steps, hist) if h.get("result") == res]
@@ -757,15 +1136,16 @@ def _po_conv_limit(ax, hist, limit=None):
         if pts:
             ax.plot([p[0] for p in pts], [p[1] for p in pts], linestyle="none",
                     marker="o" if res != "unknown" else "s", markersize=7, color=_PO_STATUS[res],
-                    markeredgecolor="white", label=name, zorder=4)
+                    markeredgecolor=st["plot_background"], label=name, zorder=4)
     both = [(s, as_float(h.get("passing")), as_float(h.get("failing"))) for s, h in zip(steps, hist)]
     both = [b for b in both if b[1] is not None and b[2] is not None]
     if both:
         ax.fill_between([b[0] for b in both], [b[1] for b in both], [b[2] for b in both], step="post",
-                        color=_PO_RAMP[1], alpha=0.6, label="Bracket holding the limit", zorder=1)
+                        color=_po_mix(st["colors"][0], st["plot_background"], 0.78), alpha=0.9,
+                        label="Bracket holding the limit", zorder=1)
     lim = as_float(limit)
     if lim is not None and lim == lim:
-        ax.axhline(lim, color=_PO_INK["secondary"], linestyle="--", linewidth=1.0, zorder=2,
+        ax.axhline(lim, color=st["muted"], linestyle=(0, (5, 3)), linewidth=1.1, zorder=2,
                    label=f"Limit {lim:.6g}")
 # @end
 
