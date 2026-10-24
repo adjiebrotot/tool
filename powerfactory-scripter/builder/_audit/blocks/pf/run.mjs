@@ -21,13 +21,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+const { buildPackage } = await import(pathToFileURL(path.join(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..'), 'js/ui/package.js')).href);
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const BUILDER = path.resolve(HERE, '..', '..', '..');
 const imp = (rel) => import(pathToFileURL(path.join(BUILDER, rel)).href);
 // Only the block files these tests use (not index.js), so another category's file being edited
 // at the same time cannot stop them; the order is index.js's.
-for (const f of ['start', 'flow', 'values', 'model', 'study', 'advanced']) await imp(`js/blocks/${f}.js`);
+for (const f of ['start', 'flow', 'values', 'model', 'study', 'check', 'result', 'search', 'advanced']) await imp(`js/blocks/${f}.js`);
 const { generate } = await imp('js/core/codegen.js');
 const REG = await imp('js/core/registry.js');
 const { RUNTIME_FILES } = await imp('js/core/runtime-loader.js');
@@ -62,6 +63,7 @@ class Fail extends Error {}
 const ok = (cond, msg) => { if (!cond) throw new Fail(msg || 'expected true'); };
 const has = (text, part, msg) => { if (!String(text).includes(part)) throw new Fail((msg ? msg + ': ' : '') + `missing: ${part}`); };
 const hasNot = (text, part, msg) => { if (String(text).includes(part)) throw new Fail((msg ? msg + ': ' : '') + `unexpected: ${part}`); };
+const eqArr = (a, b, msg) => { if (JSON.stringify(a) !== JSON.stringify(b)) throw new Fail(`${msg || 'list'}: got ${JSON.stringify(a)}, expected ${JSON.stringify(b)}`); };
 const near = (a, b, tol, msg) => { if (!(Math.abs(Number(a) - Number(b)) <= tol)) throw new Fail(`${msg || 'value'}: got ${a}, expected ${b} +- ${tol}`); };
 function test(name, fn) {
   current = name;
@@ -133,6 +135,7 @@ const FILL = {
   'pf.evt.trip': { el: EL('ElmSym', 'G2') },
   'pf.evt.load': { load: EL('ElmLod', 'Load A') },
   'pf.evt.param': { el: EL('ElmDsl', 'AVR 1'), param: 'Vref' },
+  'pf.evt.steps': { el: EL('ElmVac', 'Grid Max SC'), param: 's:u0', steps: [{ id: 's1', t: 1, v: 1.3 }, { id: 's2', t: 2, v: 1.2 }, { id: 's3', t: 12, v: 1.1 }] },
   'sig.series': { el: EL('ElmTerm', 'Bus 5') },
 };
 
@@ -323,7 +326,7 @@ test('frozen handles: the type ids of section 9 are all defined', () => {
   const want = ['pf.element', 'pf.foreach_element', 'pf.set', 'pf.get', 'pf.dispatch', 'pf.scale', 'pf.outserv', 'pf.undo', 'pf.case.activate', 'pf.case.create',
     'pf.case.foreach', 'pf.scen.activate', 'pf.scen.create', 'pf.scen.save', 'pf.scen.deactivate', 'pf.scen.foreach', 'pf.var.activate', 'pf.var.deactivate',
     'pf.var.create', 'pf.var.foreach', 'pf.testgen', 'pf.ldf', 'pf.rms', 'pf.emt', 'pf.hldf', 'pf.shc', 'pf.evt.shc', 'pf.evt.switch', 'pf.evt.trip', 'pf.evt.load',
-    'pf.evt.param', 'sig.series', 'pf.cont.define', 'pf.cont.foreach'];
+    'pf.evt.param', 'pf.evt.steps', 'sig.series', 'pf.cont.define', 'pf.cont.foreach'];
   for (const t of want) ok(REG.getBlock(t), `missing ${t}`);
   ok(REG.getBlock('sig.series').cat === 'study', 'sig.series lives in the study category');
   for (const t of MINE) ok(want.includes(t), `not in the catalogue: ${t}`);
@@ -579,6 +582,7 @@ const S9 = (studyCase) => ['start', { project: N9, studyCase, outputDir: OUT }];
 const S39 = (studyCase) => ['start', { project: N39, studyCase, outputDir: OUT }];
 const PY = (inputs, outputs, code) => ['adv.python', { inputs: inputs.map((n, k) => ({ id: 'i' + (k + 1), name: n })), outputs: outputs.map(([n, t], k) => ({ id: 'o' + (k + 1), name: n, type: t })), code }];
 const LOG = (text) => ['flow.log', { text }];
+const NL = String.fromCharCode(10);   // a newline inside a Python code block
 
 const LIVE = {
   ldf: {
@@ -728,7 +732,11 @@ const LIVE = {
       ok(rows.length === 35, `base case plus 34 lines, got ${rows.length}`);
       ok(/ N1 1 Base case \|/.test(rows[0]), 'base case first: ' + rows[0]);
       const m = /WORST ([\d.]+) \| WHERE (.+?) \| PASSES (\d+)/.exec(out.text);
-      ok(m, 'the worst line'); near(m[1], 107.97, 0.05, 'worst loading (%)'); has(m[2], 'Line 10 - 11'); ok(m[3] === '35', m[0]);
+      // The worst of the 34 line outages, replayed independently on the sandbox with plain load
+      // flows (2026-10-24): out Line 21 - 22 -> 158.28 % on Line 23 - 24, then out Line 23 - 24
+      // -> 156.92 %. (107.97 % is what the Line 10 - 11 outage alone gives, which is what this
+      // line used to expect.)
+      ok(m, 'the worst line'); near(m[1], 158.28, 0.05, 'worst loading (%)'); has(m[2], 'Line 21 - 22'); ok(m[3] === '35', m[0]);
     },
   },
   testgen: {
@@ -784,6 +792,429 @@ const LIVE = {
       ok(/CONT 2 Line 16 - 21 .*Open Line 16 - 21/.test(c[1]) && /CONT 3 Line 16 - 24 .*Open Line 16 - 24/.test(c[2]) && !/Line 16 - 21/.test(c[2]), c.slice(1).join('\n'));
     },
   },
+  steps: {
+    project: N39, timeout: 900,
+    wf: W({
+      n1: S39('2.1 Simulation Fault Bus 16 Stable'),
+      // Three parameter steps, as PowerFactory's own event list holds them, then read back from
+      // the study case before the run: the times must be in seconds whatever the project shows.
+      n2: ['pf.evt.steps', { el: EL('ElmDsl', 'AVR 02'), param: 'Ka', steps: [{ id: 's1', t: 1, v: 20 }, { id: 's2', t: 2.5, v: 60 }, { id: 's3', t: 4, v: 6.2 }] }],
+      n3: PY([], [['evs', 'text'], ['unit', 'text']], [
+        "folder = app.GetActiveStudyCase().GetContents('*.IntEvt')[0]",
+        "evs = []",
+        "unit = ''",
+        "for e in sorted(folder.GetContents('*.EvtParam'), key=lambda x: x.GetAttribute('time')):",
+        "    unit = str(e.GetAttributeUnit('time'))",
+        "    evs.append('%s@%g=%s' % (e.GetAttribute('variable'), e.GetAttribute('time'), e.GetAttribute('value')))",
+        "evs = ' '.join(evs)",
+      ].join(NL)),
+      n4: LOG('EVTS {e} | time unit {u}'),
+      n5: ['pf.rms', { tstop: 5, record: [{ id: 'r1', el: EL('ElmTerm', 'Bus 02'), var: 'm:u1', combine: 'none' }] }],
+      n6: PY(['s'], [['ev', 'text'], ['n', 'num']], `ev = str(s.events)${NL}n = len(s.t)`),
+      n7: LOG('STEPRUN {ev} | n {n}'),
+      // "times" works from the value the parameter has now (Ka = 6.2 in this demo).
+      n8: ['pf.evt.steps', { el: EL('ElmDsl', 'AVR 02'), param: 'Ka', mode: 'times', steps: [{ id: 's1', t: 1, v: 2 }, { id: 's2', t: 3, v: 1 }] }],
+      n9: PY([], [['evs', 'text']], [
+        "folder = app.GetActiveStudyCase().GetContents('*.IntEvt')[0]",
+        "evs = ' '.join(sorted('%s=%s' % (e.GetAttribute('variable'), e.GetAttribute('value')) for e in folder.GetContents('*.EvtParam')))",
+      ].join(NL)),
+      n10: LOG('TIMESMODE {e}'),
+      n11: ['pf.rms', { tstop: 4 }],
+      n12: ['sig.series', { el: EL('ElmTerm', 'Bus 02'), var: 'm:u1' }],
+      n13: PY(['s'], [['ev', 'text']], 'ev = str(s.events)'), n14: LOG('TIMESRUN {ev}'),
+      n15: ['flow.log', { text: 'STEPS DONE' }],
+    }, ['n1>n2', 'n2>n3', 'n3>n4', 'n4>n5', 'n5.ok>n6', 'n6>n7', 'n7>n8', 'n8>n9', 'n9>n10', 'n10>n11', 'n11.ok>n13', 'n13>n14', 'n14>n15'],
+    ['n3.o1>n4.e', 'n3.o2>n4.u', 'n5.r1>n6.i1', 'n6.o1>n7.ev', 'n6.o2>n7.n', 'n9.o1>n10.e', 'n11.result>n12.res', 'n12.series>n13.i1', 'n13.o1>n14.ev'], 'PFB live param steps'),
+    check(out) {
+      const e = /EVTS (.+) \| time unit (.*)$/m.exec(out.text);
+      ok(e, 'the event list line: ' + out.text.slice(-2000));
+      // Written in seconds, in time order, with the value as the text PowerFactory takes.
+      ok(/^Ka@1=20 Ka@2\.5=60 Ka@4=6\.2$/.test(e[1].trim()), 'three EvtParam events in seconds: ' + e[1]);
+      const r = /STEPRUN (.+) \| n (\d+)$/m.exec(out.text);
+      ok(r, 'the run line');
+      ok((r[1].match(/Ka = /g) || []).length === 3, 'all three events belong to the run: ' + r[1]);
+      ok(/1\.0, 'Ka = 20/.test(r[1]) && /2\.5, 'Ka = 60/.test(r[1]) && /4\.0, 'Ka = 6\.2/.test(r[1]), 'times and values on the run: ' + r[1]);
+      ok(Number(r[2]) > 100, 'the run produced a curve: ' + r[2]);
+      // "times" multiplies the value the parameter has (Ka = 6.2 here): 12.4 and 6.2. Each block
+      // owns its own events, keyed by its block id, so the first block's three are still in the
+      // study case; the run below is what decides which of them are used.
+      const m = /TIMESMODE (.+)$/m.exec(out.text);
+      ok(m && /^Ka=12\.4 Ka=20 Ka=6\.2 Ka=6\.2 Ka=60$/.test(m[1].trim()), 'the times mode adds its own two events (12.4 and 6.2) beside the three of the block before: ' + (m && m[1]));
+      const tr = /TIMESRUN (.+)$/m.exec(out.text);
+      ok(tr && (tr[1].match(/Ka = /g) || []).length === 2 && /Ka = 12\.4/.test(tr[1]), 'the second run has only its own two events: ' + (tr && tr[1]));
+      has(out.text, 'STEPS DONE');
+    },
+  },
+  // --- Edge cases: shapes a reader builds that the single-purpose tests above do not reach.
+
+  // Three loops inside each other, each writing its own column of the results table.
+  nested: {
+    project: N9, timeout: 900,
+    wf: W({
+      n1: S9('01- Load Flow'),
+      n2: ['flow.list', { values: '100, 200' }, { label: 'Dispatch' }],
+      n3: ['pf.foreach_element', { el: EL('ElmLod', 'Load *', 'all'), name: 'Load' }],
+      n4: ['flow.range', { from: 1, to: 2, step: 1 }, { label: 'Factor' }],
+      n5: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+      n6: ['pf.scale', { attr: 'plini', attr2: 'qlini' }],
+      n7: ['pf.ldf', {}],
+      n8: ['pf.get', { attr: 'm:P:bus1' }],
+      n9: ['out.table.add', { table: 'Nested', cols: [{ id: 'c1', name: 'P (MW)' }] }],
+      n10: LOG('NEST {d} | {el} | {f} | P {p:.4f}'),
+      n11: ['out.table.save', { table: 'Nested', fmt: 'csv', stem: 'nested' }],
+      n12: PY([], [['rows', 'num'], ['cols', 'text']], ["t = table('Nested')", "rows = len(t.rows)", "cols = ' | '.join(t.columns)"].join(NL)),
+      n13: LOG('NESTED rows {r} | cols {c}'),
+    }, ['n1>n2', 'n2.body>n3', 'n3.body>n4', 'n4.body>n5', 'n5>n6', 'n6>n7', 'n7.ok>n8', 'n8>n9', 'n9>n10', 'n2.done>n11', 'n11>n12', 'n12>n13'],
+    ['n2.item>n5.p', 'n3.item>n6.obj', 'n4.value>n6.factor', 'n3.item>n8.obj', 'n8.value>n9.c1',
+      'n2.item>n10.d', 'n3.elname>n10.el', 'n4.value>n10.f', 'n8.value>n10.p', 'n12.o1>n13.r', 'n12.o2>n13.c'], 'PFB live nested loops'),
+    check(out) {
+      const rows = out.lines.filter(l => / NEST /.test(l)).map(l => /NEST (\d+) \| (.+?) \| (\d+) \| P ([-\d.]+)/.exec(l)).filter(Boolean);
+      ok(rows.length === 12, `2 dispatches x 3 loads x 2 factors = 12 passes, got ${rows.length}`);
+      const loads = [...new Set(rows.map(r => r[2]))].sort();
+      ok(loads.length === 3, 'three loads: ' + loads.join(', '));
+      // The inner loop puts the model back after each pass, so factor 2 is twice factor 1 for
+      // the same dispatch and the same load - and the outer loops keep their own values.
+      for (const d of ['100', '200']) {
+        for (const el of loads) {
+          const f1 = rows.find(r => r[1] === d && r[2] === el && r[3] === '1');
+          const f2 = rows.find(r => r[1] === d && r[2] === el && r[3] === '2');
+          ok(f1 && f2, `missing a pass for ${d} / ${el}`);
+          near(Number(f2[4]), 2 * Number(f1[4]), Math.max(0.05, Math.abs(Number(f1[4])) * 0.01), `${el} at dispatch ${d}: factor 2 is twice factor 1`);
+        }
+      }
+      const m = /NESTED rows (\d+) \| cols (.+)$/m.exec(out.text);
+      ok(m && m[1] === '12', 'the table holds one row per innermost pass: ' + (m && m[1]));
+      ok(m && m[2].trim() === 'Dispatch | Load | Factor | Status | P (MW)', 'the loop columns come first, outermost first: ' + (m && m[2]));
+      ok(/Saved results table 'Nested'/.test(out.text) || /nested.*\.csv/.test(out.text), 'the table was saved');
+    },
+  },
+
+  // Both searches, closing the loop through PowerFactory: a bisection for the biggest load the
+  // network takes, and an optimiser that has to land the slack on a number.
+  optimise: {
+    project: N9, timeout: 1200,
+    wf: W({
+      n1: S9('01- Load Flow'),
+      n30: PY([], [['p0', 'num']], "p0 = pf_find(app, 'Load A.ElmLod', 'one').GetAttribute('plini')"),
+      // 1. Find limit: how much Load A can take before a line goes over 100 %.
+      n2: ['opt.limit', { lower: 50, upper: 700, tol: 2, passes: 'low', onUnknown: 'fail' }, { label: 'Load A limit' }],
+      n3: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n4: ['pf.ldf', {}],
+      n5: ['pf.element', { el: EL('ElmLne', '*', 'all') }],
+      n6: ['pf.get', { attr: 'c:loading' }],
+      n7: ['chk.verdict', { op: 'le', limit: 100 }],
+      n8: ['opt.report', {}],
+      n9: ['val.bool', { value: false }],
+      n10: ['opt.report', {}],
+      n11: LOG('LIMIT {l:.2f} | found {f} | status {s} | passing {p:.2f} | failing {q:.2f}'),
+      // Check it: at the limit nothing is over 100 %, a little above it something is.
+      n12: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n13: ['pf.ldf', {}], n14: ['pf.get', { attr: 'c:loading' }], n15: LOG('ATLIMIT loading {x:.2f}'),
+      n16: ['math.formula', { expr: 'a + 6' }],
+      n17: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n18: ['pf.ldf', {}], n19: ['pf.get', { attr: 'c:loading' }], n20: LOG('ABOVE loading {x:.2f}'),
+      // Put Load A back where it was: the search above left it above its limit, and the next
+      // search needs the network it started from.
+      n31: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n32: ['pf.ldf', {}], n33: LOG('RESTORED slack {s:.3f}'),
+      // 2. Optimise: the G2 dispatch that makes the slack generate 70 MW.
+      n21: ['opt.optimise', { vars: [{ id: 'v1', name: 'G2 MW', lower: 50, upper: 250, integer: false }], goal: 'min', method: 'de', maxTries: 40, seed: 7 }, { label: 'Slack to 70' }],
+      n22: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+      n23: ['pf.ldf', {}],
+      n24: ['math.formula', { expr: 'abs(a - 70)' }],
+      n25: ['opt.report', {}],
+      n26: LOG('OPT best {b:.3f} | score {s:.4f} | found {f}'),
+      n27: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+      n28: ['pf.ldf', {}],
+      n29: LOG('CHECKOPT slack {s:.3f}'),
+    }, ['n1>n30', 'n30>n2', 'n2.body>n3', 'n3>n4', 'n4.ok>n6', 'n6>n7', 'n7.pass>n8', 'n7.fail>n8', 'n4.fail>n10',
+      'n2.done>n11', 'n11>n12', 'n12>n13', 'n13.ok>n14', 'n14>n15', 'n15>n17', 'n17>n18', 'n18.ok>n19', 'n19>n20',
+      'n20>n31', 'n31>n32', 'n32.ok>n33', 'n33>n21',
+      'n21.body>n22', 'n22>n23', 'n23.ok>n25', 'n21.done>n26', 'n26>n27', 'n27>n28', 'n28.ok>n29'],
+    ['n2.value>n3.value', 'n5.el>n6.obj', 'n6.max>n7.value', 'n7.ok>n8.pass', 'n6.max>n8.score', 'n9.value>n10.pass',
+      'n2.limit>n11.l', 'n2.found>n11.f', 'n2.status>n11.s', 'n2.passing>n11.p', 'n2.failing>n11.q',
+      'n2.limit>n12.value', 'n5.el>n14.obj', 'n14.max>n15.x',
+      'n2.limit>n16.a', 'n16.value>n17.value', 'n5.el>n19.obj', 'n19.max>n20.x',
+      'n30.o1>n31.value', 'n32.slack_mw>n33.s',
+      'n21.v1>n22.p', 'n23.slack_mw>n24.a', 'n24.value>n25.score',
+      'n21.best_v1>n26.b', 'n21.score>n26.s', 'n21.found>n26.f', 'n21.best_v1>n27.p', 'n28.slack_mw>n29.s'], 'PFB live searches'),
+    check(out) {
+      const l = /LIMIT ([\d.]+) \| found (\w+) \| status (\w+) \| passing ([\d.]+) \| failing ([\d.]+)/.exec(out.text);
+      ok(l, 'the limit line\n' + out.text.slice(-1500));
+      ok(/^(yes|true)$/i.test(l[2]), 'the bisection found a limit: ' + l[2]);
+      const lim = Number(l[1]);
+      ok(lim > 50 && lim < 700, 'the limit is inside the bracket: ' + lim);
+      ok(Math.abs(Number(l[4]) - lim) <= 2.001, `the biggest passing try is the limit: ${l[4]} vs ${lim}`);
+      ok(Number(l[5]) - Number(l[4]) <= 2.001 && Number(l[5]) > Number(l[4]), `the smallest failing try is just above it: ${l[5]}`);
+      // The limit really is the edge: at it nothing is overloaded, 6 MW above it something is.
+      const at = Number((/ATLIMIT loading ([\d.]+)/.exec(out.text) || [])[1]);
+      const ab = Number((/ABOVE loading ([\d.]+)/.exec(out.text) || [])[1]);
+      ok(at <= 100.0001, `at the limit the worst line is ${at} %`);
+      ok(ab > 100, `6 MW above the limit the worst line is ${ab} %`);
+      ok(ab > at, 'more load means more loading');
+      // The network is back where it started before the second search.
+      near(Number((/RESTORED slack ([-\d.]+)/.exec(out.text) || [])[1]), 71.64, 1.5, 'the slack is back at its base value');
+      const o = /OPT best ([\d.]+) \| score ([\d.]+) \| found (\w+)/.exec(out.text);
+      ok(o, 'the optimise line');
+      ok(Number(o[1]) > 50 && Number(o[1]) < 250, 'the best try is inside the bounds: ' + o[1]);
+      ok(Number(o[2]) < 1.0, 'the search got the slack within 1 MW of 70: score ' + o[2]);
+      // The search really drove PowerFactory: dispatching the value it chose gives the slack it
+      // scored, to the last decimal.
+      const c = Number((/CHECKOPT slack ([-\d.]+)/.exec(out.text) || [])[1]);
+      near(Math.abs(c - 70), Number(o[2]), 0.01, 'the best score is what that dispatch really gives');
+      near(c, 70, 1.0, 'and it is close to the target');
+    },
+  },
+
+  // Several curves out of one run, every kind of check on them, a graph and a CSV.
+  series: {
+    project: N39, timeout: 1200,
+    wf: W({
+      n1: S39('2.1 Simulation Fault Bus 16 Stable'),
+      n2: ['pf.evt.trip', { el: EL('ElmSym', 'G 02'), t: 1 }],
+      // 60 s with a 10 ms step: long enough for the governors to turn the frequency round, so
+      // the nadir is a real one (the trip test uses the same window).
+      n3: ['pf.rms', { tstop: 60, step: 0.01, record: [
+        { id: 'r1', el: EL('ElmTerm', 'Bus 16'), var: 'm:fehz', combine: 'none' },
+        { id: 'r2', el: EL('ElmTerm', 'Bus 16'), var: 'm:u1', combine: 'none' },
+        { id: 'r3', el: EL('ElmTerm', '*', 'all'), var: 'm:u1', combine: 'min' },
+        { id: 'r4', el: EL('ElmSym', 'G 03'), var: 's:xspeed', combine: 'none' },
+      ] }],
+      n4: ['sig.nadir', {}],
+      n5: ['sig.settle', { bandMode: 'abs', band: 0.02 }],
+      n6: ['sig.rocof', {}],
+      n7: ['sig.at', { t: 5 }],
+      n8: ['sig.final', {}],
+      n9: ['out.plot.series', { lines: [{ id: 'l1', name: 'Bus 16 f' }], title: 'Frequency after the trip', ylabel: 'Frequency', stem: 'series_f' }],
+      n10: ['out.series.save', { lines: [{ id: 'l1', name: 'f' }, { id: 'l2', name: 'u' }], stem: 'series_all' }],
+      n11: PY(['a', 'b', 'c', 'd'], [['n1_', 'num'], ['n2_', 'num'], ['n3_', 'num'], ['n4_', 'num'], ['t0', 'num'], ['t1', 'num'], ['umin', 'num'], ['ub', 'num']],
+        ["n1_, n2_, n3_, n4_ = len(a), len(b), len(c), len(d)",
+          "t0, t1 = a.t[0], a.t[-1]",
+          "umin = min(c.y)",
+          "ub = min(b.y)"].join(NL)),
+      n12: LOG('SER lens {a} {b} {c} {d} | t {t0:.3f}..{t1:.3f} | umin {u:.5f} | ubus {v:.5f}'),
+      n13: LOG('CHK nadir {nd:.4f} at {nt:.3f} ufls {uf} | settles {se} at {st} | rocof {rc:.4f} basis {rb} | u@5 {u5:.5f} | speed end {we:.6f} | png {png} | csv {csv}'),
+    }, ['n1>n2', 'n2>n3', 'n3.ok>n9', 'n9>n10', 'n10>n11', 'n11>n12', 'n12>n13'],
+    ['n3.r1>n4.series', 'n3.r2>n5.series', 'n3.r1>n6.series', 'n3.r3>n7.series', 'n3.r4>n8.series',
+      'n3.r1>n9.l1', 'n3.r1>n10.l1', 'n3.r2>n10.l2',
+      'n3.r1>n11.i1', 'n3.r2>n11.i2', 'n3.r3>n11.i3', 'n3.r4>n11.i4',
+      'n11.o1>n12.a', 'n11.o2>n12.b', 'n11.o3>n12.c', 'n11.o4>n12.d', 'n11.o5>n12.t0', 'n11.o6>n12.t1', 'n11.o7>n12.u', 'n11.o8>n12.v',
+      'n4.nadir>n13.nd', 'n4.time>n13.nt', 'n4.ufls>n13.uf', 'n5.settles>n13.se', 'n5.time>n13.st',
+      'n6.rocof>n13.rc', 'n6.basis>n13.rb', 'n7.value>n13.u5', 'n8.value>n13.we', 'n9.file>n13.png', 'n10.file>n13.csv'], 'PFB live many series'),
+    check(out) {
+      const s = /SER lens (\d+) (\d+) (\d+) (\d+) \| t ([-\d.]+)\.\.([\d.]+) \| umin ([\d.]+) \| ubus ([\d.]+)/.exec(out.text);
+      ok(s, 'the series line\n' + out.text.slice(-1500));
+      const lens = [s[1], s[2], s[3], s[4]].map(Number);
+      ok(lens.every(n => n > 5000), 'every curve has samples: ' + lens.join(', '));
+      ok(new Set(lens).size === 1, 'all four curves are the same length: ' + lens.join(', '));
+      near(Number(s[6]), 60, 0.01, 'the run reached its stop time');
+      ok(Number(s[7]) <= Number(s[8]) + 1e-9, 'the lowest voltage of every busbar is at or below Bus 16');
+      const c = /CHK nadir ([\d.]+) at ([\d.]+) ufls (\w+) \| settles (\w+) at ([\d.]+) \| rocof ([-\d.]+) basis (\w+) \| u@5 ([\d.]+) \| speed end ([\d.]+) \| png (.+?) \| csv (.+?)$/m.exec(out.text);
+      ok(c, 'the checks line');
+      ok(Number(c[1]) > 55 && Number(c[1]) < 60, 'the nadir is below 60 Hz and not silly: ' + c[1]);
+      ok(Number(c[2]) > 1 && Number(c[2]) < 60, 'the nadir is after the trip: ' + c[2]);
+      ok(Number(c[6]) < 0, 'the frequency falls, so RoCoF is negative: ' + c[6]);
+      ok(Number(c[8]) > 0.5 && Number(c[8]) < 1.2, 'the lowest busbar voltage at 5 s: ' + c[8]);
+      near(Number(c[9]), 1.0, 0.05, 'the other machine ends near its nominal speed');
+      ok(/\.png$/.test(c[10].trim()), 'a graph was drawn: ' + c[10]);
+      ok(/\.csv$/.test(c[11].trim()), 'the curves were written: ' + c[11]);
+      if (out.runlog) has(out.runlog, 'Saved graph');
+    },
+  },
+
+  // Decisions and the three terminals: a route per pass, a skipped pass that still leaves a row,
+  // and a loop that stops itself.
+  branch: {
+    project: N9, timeout: 900,
+    wf: W({
+      n1: S9('01- Load Flow'),
+      n2: ['flow.range', { from: 1, to: 5, step: 1 }, { label: 'Step' }],
+      n3: ['flow.if', { op: 'gt', b: 2 }],
+      n4: LOG('SMALL {v}'),
+      n5: ['flow.next', {}],
+      n6: ['flow.if', { op: 'ge', b: 5 }],
+      n7: LOG('ENOUGH {v}'),
+      n8: ['flow.break', {}],
+      n9: ['math.formula', { expr: 'a * 90' }],
+      n10: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n11: ['pf.ldf', {}],
+      n12: ['pf.get', { el: EL('ElmLod', 'Load A'), attr: 'm:P:bus1' }],
+      n13: ['out.table.add', { table: 'Routes', cols: [{ id: 'c1', name: 'P (MW)' }] }],
+      n14: LOG('BIG {v} | P {p:.2f}'),
+      n15: LOG('NOCONV {v}'),
+      n16: PY([], [['rows', 'num'], ['status', 'text']], ["t = table('Routes')", "rows = len(t.rows)", "status = ' ; '.join(str(r.get('Status', '')) for r in t.rows)"].join(NL)),
+      n17: LOG('ROUTES rows {r} | status {s}'),
+    }, ['n1>n2', 'n2.body>n3', 'n3.no>n4', 'n4>n5', 'n3.yes>n6', 'n6.yes>n7', 'n7>n8', 'n6.no>n10',
+      'n10>n11', 'n11.ok>n12', 'n12>n13', 'n13>n14', 'n11.fail>n15', 'n2.done>n16', 'n16>n17'],
+    ['n2.value>n3.a', 'n2.value>n4.v', 'n2.value>n6.a', 'n2.value>n7.v', 'n2.value>n9.a', 'n9.value>n10.value',
+      'n12.value>n13.c1', 'n2.value>n14.v', 'n12.value>n14.p', 'n2.value>n15.v', 'n16.o1>n17.r', 'n16.o2>n17.s'], 'PFB live routes'),
+    check(out) {
+      const small = out.lines.filter(l => / SMALL /.test(l)).map(l => /SMALL (\d+)/.exec(l)[1]);
+      const big = out.lines.filter(l => / BIG /.test(l)).map(l => /BIG (\d+)/.exec(l)[1]);
+      eqArr(small, ['1', '2'], 'passes 1 and 2 take the "no" route');
+      eqArr(big, ['3', '4'], 'passes 3 and 4 take the "yes" route and run');
+      ok(/ENOUGH 5/.test(out.text), 'pass 5 reaches the stop');
+      ok(!/BIG 5/.test(out.text), 'and stops the loop before running anything');
+      const m = /ROUTES rows (\d+) \| status (.*)$/m.exec(out.text);
+      ok(m, 'the summary line');
+      // Every pass leaves a row: the two skipped ones say so in Status, the stopped one too.
+      ok(Number(m[1]) === 5, 'one row per pass, skipped ones kept: ' + m[1]);
+      // Every pass says what became of it: the two that skipped, the two that ran, and the one
+      // that stopped the loop before it got anywhere.
+      eqArr(m[2].split(' ; ').map(x => x.trim()), ['Skipped', 'Skipped', 'OK', 'OK', 'Not reached'], 'the Status of each pass');
+    },
+  },
+
+  // The whole case-table chain: a file beside the script, its columns as values, a dispatch per
+  // row and a results table out the other end.
+  casetable: {
+    project: N9, timeout: 900,
+    files: { 'live_cases_in.csv': 'Case,G2 (MW),Load A (MW)\r\nLow,80,100\r\nBase,163,125\r\nHigh,220,160\r\n' },
+    wf: W({
+      n1: S9('01- Load Flow'),
+      n2: ['data.read', { table: 'Cases', path: 'live_cases_in.csv',
+        src: { name: 'live_cases_in.csv', size: 60, sheet: '', sheets: [], cols: ['Case', 'G2 (MW)', 'Load A (MW)'], rows: 3, sig: '|rows|1|0' } }],
+      n3: ['flow.list', { source: 'table', table: 'Cases', cols: [
+        { id: 'c1', name: 'Case', type: 'text' }, { id: 'c2', name: 'G2 (MW)', type: 'num' }, { id: 'c3', name: 'Load A (MW)', type: 'num' },
+      ] }, { label: 'Case' }],
+      n4: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+      n5: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n6: ['pf.ldf', {}],
+      n7: ['pf.get', { el: EL('ElmSym', 'G2'), attr: 'm:P:bus1' }],
+      n8: ['pf.get', { el: EL('ElmLod', 'Load A'), attr: 'm:P:bus1' }],
+      n9: ['out.table.add', { table: 'Study', cols: [{ id: 'k1', name: 'Case' }, { id: 'k2', name: 'G2 (MW)' }, { id: 'k3', name: 'Load A (MW)' }] }],
+      n10: LOG('CT {c} | G2 {g:.2f} | load {l:.2f} | rows {n}'),
+      n11: ['out.table.save', { table: 'Study', fmt: 'csv', stem: 'case_study' }],
+      n12: PY([], [['rows', 'num'], ['cols', 'text']], ["t = table('Study')", "rows = len(t.rows)", "cols = ' | '.join(t.columns)"].join(NL)),
+      n13: LOG('CTDONE rows {r} | cols {c} | file {f}'),
+    }, ['n1>n2', 'n2>n3', 'n3.body>n4', 'n4>n5', 'n5>n6', 'n6.ok>n7', 'n7>n8', 'n8>n9', 'n9>n10', 'n3.done>n11', 'n11>n12', 'n12>n13'],
+    ['n3.c2>n4.p', 'n3.c3>n5.value', 'n3.c1>n9.k1', 'n7.value>n9.k2', 'n8.value>n9.k3',
+      'n3.c1>n10.c', 'n7.value>n10.g', 'n8.value>n10.l', 'n2.n>n10.n',
+      'n12.o1>n13.r', 'n12.o2>n13.c', 'n11.file>n13.f'], 'PFB live case table'),
+    check(out) {
+      const rows = out.lines.filter(l => / CT /.test(l)).map(l => /CT (\w+) \| G2 ([\d.]+) \| load ([\d.]+) \| rows (\d+)/.exec(l)).filter(Boolean);
+      ok(rows.length === 3, 'one pass per row of the file, got ' + rows.length);
+      eqArr(rows.map(r => r[1]), ['Low', 'Base', 'High'], 'the passes follow the file, in its order');
+      ok(rows.every(r => r[4] === '3'), 'the block says it read 3 rows');
+      // The numbers in the file reach PowerFactory: the dispatch is what the column said.
+      const want = { Low: 80, Base: 163, High: 220 };
+      const load = { Low: 100, Base: 125, High: 160 };
+      for (const r of rows) {
+        near(Number(r[2]), want[r[1]], 0.01, `${r[1]}: G2 dispatched to the column value`);
+        near(Number(r[3]), load[r[1]], 0.5, `${r[1]}: Load A set to the column value`);
+      }
+      const m = /CTDONE rows (\d+) \| cols (.+?) \| file (.+?)$/m.exec(out.text);
+      ok(m, 'the summary line');
+      ok(m[1] === '3', 'the results table has one row per case: ' + m[1]);
+      // The loop is named Case and the row writes a Case column too: one column, same value.
+      ok(m[2].trim() === 'Case | Status | G2 (MW) | Load A (MW)', 'the loop value, the status and the columns: ' + m[2]);
+      ok(/case_study.*\.csv/.test(m[3]), 'the results were saved: ' + m[3]);
+    },
+  },
+
+  // Repeat until something happens, an Excel workbook read by the script itself, and a results
+  // table written as both CSV and Excel.
+  untilxl: {
+    project: N9, timeout: 1200,
+    filesFrom: { 'live_book.xlsx': '_audit/data/cases.xlsx' },
+    wf: W({
+      n1: S9('01- Load Flow'),
+      // openpyxl in the generated script: a real workbook, a named sheet, names on the second row.
+      n2: ['data.read', { table: 'Book', path: 'live_book.xlsx', sheet: 'Dispatch', header: 2,
+        src: { name: 'live_book.xlsx', size: 5458, sheet: 'Dispatch', sheets: ['Notes', 'Dispatch'], cols: ['Case', 'G 01 (MW)', 'G 02 (MW)', 'Scale'], rows: 3, sig: 'Dispatch|rows|2|0' } }],
+      n3: PY([], [['rows', 'num'], ['cols', 'text'], ['first', 'text'], ['scales', 'text']],
+        ["t = table('Book')",
+          "rows = len(t.rows)",
+          "cols = ' | '.join(t.columns)",
+          "first = str(t.rows[0].get('Case'))",
+          "scales = ', '.join(str(r.get('Scale')) for r in t.rows)"].join(NL)),
+      n4: LOG('BOOK rows {r} | cols {c} | first {f} | scales {s}'),
+      n5: PY([], [['base', 'num']], "base = pf_find(app, 'Load A.ElmLod', 'one').GetAttribute('plini')"),
+      // Raise the load 8 % of its base each pass until a line goes over 100 %.
+      n6: ['flow.until', { max: 12 }, { label: 'Ramp' }],
+      n7: ['math.formula', { expr: 'a * (1 + 0.08 * b)' }],
+      n8: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n9: ['pf.ldf', {}],
+      n10: ['pf.element', { el: EL('ElmLne', '*', 'all') }],
+      n11: ['pf.get', { attr: 'c:loading' }],
+      n12: ['out.table.add', { table: 'Ramp', cols: [{ id: 'c1', name: 'Load A (MW)' }, { id: 'c2', name: 'Worst line (%)' }] }],
+      n13: LOG('RAMP {i} | load {l:.2f} | worst {w:.2f}'),
+      n14: ['math.compare', { op: 'gt', b: 100 }],
+      // The pass number only exists inside the loop, so it is kept for the line after it.
+      n17: ['var.set', { name: 'Passes' }],
+      n18: ['var.get', { name: 'Passes' }],
+      n19: LOG('RAMPFAIL at pass {i}'),
+      n15: ['out.table.save', { table: 'Ramp', fmt: 'both', stem: 'ramp' }],
+      n16: LOG('RAMPDONE passes {i} | met {m} | file {f}'),
+    }, ['n1>n2', 'n2>n3', 'n3>n4', 'n4>n5', 'n5>n6', 'n6.body>n8', 'n8>n9', 'n9.ok>n11', 'n11>n12', 'n12>n17', 'n17>n13',
+      'n9.fail>n19', 'n6.done>n15', 'n15>n16'],
+    ['n3.o1>n4.r', 'n3.o2>n4.c', 'n3.o3>n4.f', 'n3.o4>n4.s',
+      'n5.o1>n7.a', 'n6.index>n7.b', 'n7.value>n8.value', 'n10.el>n11.obj',
+      'n7.value>n12.c1', 'n11.max>n12.c2', 'n6.index>n13.i', 'n7.value>n13.l', 'n11.max>n13.w',
+      'n11.max>n14.a', 'n14.value>n6.cond',
+      'n6.index>n17.value', 'n18.value>n16.i', 'n6.met>n16.m', 'n15.file>n16.f', 'n6.index>n19.i'], 'PFB live until and excel'),
+    check(out) {
+      // The workbook was read by the script, through openpyxl, with the sheet and header row set.
+      const b = /BOOK rows (\d+) \| cols (.+?) \| first (\w+) \| scales (.+?)$/m.exec(out.text);
+      ok(b, 'the workbook line\n' + out.text.slice(-1500));
+      ok(b[1] === '3', 'three rows out of the Dispatch sheet: ' + b[1]);
+      ok(b[2].trim() === 'Case | G 01 (MW) | G 02 (MW) | Scale', 'the names come from row 2: ' + b[2]);
+      ok(b[3] === 'Max', 'the first case: ' + b[3]);
+      ok(b[4].trim() === '1.0, 0.5, 0.75', 'the numbers are numbers: ' + b[4]);
+      // The loop stopped itself the pass after the loading passed 100 %.
+      const ramp = out.lines.filter(l => / RAMP /.test(l)).map(l => /RAMP (\d+) \| load ([\d.]+) \| worst ([\d.]+)/.exec(l)).filter(Boolean);
+      ok(ramp.length >= 2 && ramp.length <= 12, 'the ramp ran a sensible number of passes: ' + ramp.length);
+      const worst = ramp.map(r => Number(r[3]));
+      ok(worst[worst.length - 1] > 100, 'the last pass is the one that went over: ' + worst[worst.length - 1]);
+      ok(worst.slice(0, -1).every(w => w <= 100), 'and no earlier pass did: ' + worst.join(', '));
+      ok(worst.every((w, i) => i === 0 || w >= worst[i - 1] - 1e-9), 'more load, more loading: ' + worst.join(', '));
+      // Every pass adds the same slice of the base load, whatever the first pass number is.
+      const loads = ramp.map(r => Number(r[2]));
+      const steps = loads.slice(1).map((x, i) => x - loads[i]);
+      ok(steps.length && steps[0] > 0, 'the load goes up: ' + loads.join(', '));
+      ok(steps.every(s => Math.abs(s - steps[0]) < 0.01), 'in equal steps: ' + steps.join(', '));
+      const d = /RAMPDONE passes (\d+) \| met (\w+) \| file (.+?)$/m.exec(out.text);
+      ok(d, 'the summary line');
+      ok(d[1] === String(ramp.length), 'the loop counted its passes: ' + d[1] + ' vs ' + ramp.length);
+      ok(/^(yes|true)$/i.test(d[2]), 'the loop ended because the condition was met: ' + d[2]);
+      ok(/ramp.*\.csv$/.test(d[3].trim()), 'the CSV is the file it gives back: ' + d[3]);
+      if (out.runlog) { has(out.runlog, '.xlsx'); has(out.runlog, 'ramp'); }
+    },
+  },
+
+  // What a reader actually does: attach the case table, press Download, unpack the .zip and run
+  // the script inside it. The file is not put next to the script by the harness - it travels in
+  // the package, because the workflow carries it (wf.files, as the page saves it).
+  packaged: {
+    project: N9, timeout: 900, pack: true,
+    wf: (() => {
+      const w = W({
+        n1: S9('01- Load Flow'),
+        n2: ['data.read', { table: 'Cases', path: 'live_cases_in.csv',
+          src: { name: 'live_cases_in.csv', size: 56, sheet: '', sheets: [], cols: ['Case', 'G2 (MW)'], rows: 2, sig: '|rows|1|0' } }],
+        n3: ['flow.list', { source: 'table', table: 'Cases', cols: [
+          { id: 'c1', name: 'Case', type: 'text' }, { id: 'c2', name: 'G2 (MW)', type: 'num' },
+        ] }, { label: 'Case' }],
+        n4: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+        n5: ['pf.ldf', {}],
+        n6: ['pf.get', { el: EL('ElmSym', 'G2'), attr: 'm:P:bus1' }],
+        n7: LOG('PKG {c} | G2 {g:.2f}'),
+      }, ['n1>n2', 'n2>n3', 'n3.body>n4', 'n4>n5', 'n5.ok>n6', 'n6>n7'],
+      ['n3.c2>n4.p', 'n3.c1>n7.c', 'n6.value>n7.g'], 'PFB live packaged study');
+      // The attached file, exactly as the page keeps it: base64 beside the workflow.
+      w.files = { n2: { name: 'live_cases_in.csv', mime: 'text/csv',
+        b64: Buffer.from('Case,G2 (MW)\r\nSoft,95\r\nHard,205\r\n', 'utf8').toString('base64') } };
+      return w;
+    })(),
+    check(out) {
+      const rows = out.lines.filter(l => / PKG /.test(l)).map(l => /PKG (\w+) \| G2 ([\d.]+)/.exec(l)).filter(Boolean);
+      ok(rows.length === 2, 'one pass per row of the packaged file, got ' + rows.length);
+      eqArr(rows.map(r => r[1]), ['Soft', 'Hard'], 'the cases of the file that travelled in the .zip');
+      near(Number(rows[0][2]), 95, 0.01, 'Soft dispatched from the packaged file');
+      near(Number(rows[1][2]), 205, 0.01, 'Hard dispatched from the packaged file');
+    },
+  },
+
   vars: {
     project: N39, timeout: 600,
     wf: W({
@@ -823,14 +1254,35 @@ function pfrun(args, timeoutMs) {
   return { code: r.status, text: (r.stdout || '') + (r.stderr ? '\n[stderr]\n' + r.stderr : '') + (r.error ? '\n[error] ' + r.error : '') };
 }
 
-function runLive(name, L) {
-  const file = path.join(LIVE_DIR, `${name}.py`);
+async function runLive(name, L) {
+  let file = path.join(LIVE_DIR, `${name}.py`);
   const r = generate(L.wf, { runtime: RUNTIME });
   fs.writeFileSync(file, r.code);
   toCompileLive.push({ file, test: 'live ' + name });
   const blocking = r.problems.filter(p => p.level === 'error' || p.level === 'todo');
   test(`live ${name}: generates without errors`, () => ok(!blocking.length, ptext(r)));
   if (blocking.length) return;
+  // Files the workflow reads where it runs (a case table beside the script).
+  for (const [name, text] of Object.entries(L.files || {})) fs.writeFileSync(path.join(LIVE_DIR, name), text);
+  for (const [name, from] of Object.entries(L.filesFrom || {})) fs.copyFileSync(path.join(BUILDER, from), path.join(LIVE_DIR, name));
+  // `pack`: do what a reader does - press Download, unpack the .zip somewhere, run the script in
+  // it. The archive is unpacked by Python's own zipfile, not by the code that wrote it.
+  if (L.pack) {
+    const pkg = await buildPackage({ ...L.wf, view: { x: 0, y: 0, zoom: 1 } }, r, []);
+    const dir = path.join(LIVE_DIR, 'pkg_' + name);
+    fs.rmSync(dir, { recursive: true, force: true });
+    fs.mkdirSync(dir, { recursive: true });
+    const zipPath = path.join(LIVE_DIR, name + '.zip');
+    fs.writeFileSync(zipPath, Buffer.from(await pkg.blob.arrayBuffer()));
+    const un = spawnSync('python', ['-I', '-c', 'import sys, zipfile; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])', zipPath, dir], { encoding: 'utf8' });
+    const got = fs.existsSync(dir) ? fs.readdirSync(dir).sort() : [];
+    test(`live ${name}: the study package unpacks`, () => {
+      ok(un.status === 0, 'python could not unpack it: ' + (un.stderr || un.stdout));
+      eqArr(got, ['README.txt', pkg.name.replace(/\.zip$/, '.json'), pkg.name.replace(/\.zip$/, '.py'), 'live_cases_in.csv'].sort(), 'what is in the package');
+    });
+    if (un.status !== 0 || !got.length) return;
+    file = path.join(dir, pkg.name.replace(/\.zip$/, '.py'));
+  }
   const snap = path.join(LIVE_OUT, `last_${L.project === N9 ? 'nine' : 'ne39'}.pkl`);
   const opts = { keep: L.keep || [], opval: L.opval || '', save: L.save ? snap : '' };
   let res;
@@ -881,11 +1333,12 @@ function liveTree(tag) {
 
 if (!NO_LIVE) {
   const treeBefore = liveTree('before');
-  const order = ['sweep', 'ldf', 'cases', 'testgen', 'shc', 'shcevent', 'emt', 'trip', 'events', 'n1', 'vars'];
+  const order = ['sweep', 'ldf', 'cases', 'testgen', 'shc', 'shcevent', 'emt', 'trip', 'events', 'steps', 'n1', 'vars',
+    'nested', 'branch', 'casetable', 'packaged', 'untilxl', 'series', 'optimise'];
   for (const name of order) {
     if (LIVE_ONLY.length && !LIVE_ONLY.includes(name)) continue;
     const t0 = Date.now();
-    runLive(name, LIVE[name]);
+    await runLive(name, LIVE[name]);
     console.log(`live ${name}: ${((Date.now() - t0) / 1000).toFixed(0)} s`);
   }
   const treeAfter = liveTree('after');

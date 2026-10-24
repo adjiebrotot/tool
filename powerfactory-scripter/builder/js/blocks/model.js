@@ -8,6 +8,7 @@
 // study.js imports the shared pieces below (element settings, loop settings, the route notes).
 
 import { defineBlock } from '../core/registry.js';
+import { convertible, hasParam, unitOf, familyOf } from '../core/attrdata.js';
 
 const CAT = 'model';
 
@@ -82,6 +83,35 @@ export const UNIT_OPTIONS = [
   ['none', 'As the project shows it'], ['MW', 'MW'], ['kW', 'kW'], ['Mvar', 'Mvar'], ['kvar', 'kvar'], ['MVA', 'MVA'],
   ['kV', 'kV'], ['kA', 'kA'], ['A', 'A'], ['s', 's'], ['ms', 'ms'],
 ];
+
+// Which units an attribute can be given in.
+//
+// The script converts a value only between units of one kind (runtime/pf_core.py unit_factor:
+// power, reactive power, apparent power, time, voltage, current, energy). Most attributes are
+// outside all of them - a loading in %, a voltage in p.u., an angle in degrees, a count - and
+// for those a unit does nothing at all but a warning in the run log. So the choice is only
+// offered where it can work, and then only with the units of the attribute's own kind.
+//
+// While the element arrives through a wire its class is not known here, and while the reference
+// data is still loading nothing is known: both read as "offer it", and the page draws the block
+// again once it knows better.
+
+const elemClass = (s, key) => (s && s[key] && typeof s[key] === 'object' && s[key].cls) || '';
+
+// showIf for a unit setting: `elKey` is the element setting, `port` the input that replaces it.
+export const unitApplies = (elKey, port) => (s, cx) => {
+  if (cx && cx.wired && cx.wired.has(port)) return true;
+  return convertible(elemClass(s, elKey), s.attr) !== false;
+};
+
+// optionsFor for a unit setting: the units of the attribute's own kind, and "as the project
+// shows it". Null (every unit) while the kind is not known.
+export const unitOptions = (elKey) => (s) => {
+  const u = unitOf(elemClass(s, elKey), s.attr);
+  const fam = u === undefined ? '' : familyOf(u);
+  if (!fam) return null;
+  return ['none', ...UNIT_OPTIONS.map(o => o[0]).filter(v => v !== 'none' && familyOf(v) === fam)];
+};
 
 // Attributes an operation scenario holds (dispatch, service, set points, taps, switch states):
 // written with no scenario active they change the network data every study case uses (E1).
@@ -214,7 +244,7 @@ defineBlock({
   outputs: [{ id: 'el', label: 'Element', type: 'obj', var: 'element' }],
   settings: [
     elementSetting('el', 'Element', 'ElmTerm', { tip: 'The class and the name, exactly as in the Data Manager. Letter case counts; * matches anything (choose all to get every match).' }),
-    { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true,
+    { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true, more: true, 
       tip: 'Leave out elements that are out of service (a name that matches only those then stops with a message).' },
   ],
   ports(s) {
@@ -268,7 +298,7 @@ defineBlock({
   title: 'For each element',
   desc: 'Repeats the Each pass steps for every element of a class whose name matches (sorted by name), or for each element of a list wired in.',
   keywords: ['for each', 'loop', 'elements', 'every bus', 'every generator', 'all lines', 'iterate', 'ElmTerm', 'ElmSym', 'ElmLne', 'filter'],
-  inputs: [{ id: 'items', label: 'Elements', type: 'obj', tip: 'Optional: loop over these elements instead of searching by name.' }],
+  inputs: [{ id: 'items', label: 'Elements', type: 'obj', fallback: 'el', tip: 'Optional: loop over these elements instead of searching by name.' }],
   outputs: [
     { id: 'item', label: 'Element', type: 'obj', scope: 'body', var: 'element', tip: 'The element of this pass.' },
     { id: 'elname', label: 'Name', type: 'text', scope: 'body', var: 'element_name' },
@@ -278,10 +308,19 @@ defineBlock({
   settings: [
     nameSetting('Element'),
     elementSetting('el', 'Elements', 'ElmTerm', { match: 'all', tip: 'The class and a name with * (for example Bus* or *). Used while nothing is wired into Elements.' }),
-    { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true },
-    { key: 'attr', label: 'Only where this attribute', kind: 'attr', default: '', more: true, placeholder: 'e.g. uknom', tip: 'Leave empty to use every match. With an attribute, only elements whose value compares as set below.' },
-    { key: 'op', label: 'Compares', kind: 'select', default: '=', more: true, options: [['=', '='], ['!=', '≠'], ['>', '>'], ['>=', '≥'], ['<', '<'], ['<=', '≤']] },
-    { key: 'value', label: 'With', kind: 'text', default: '', more: true, placeholder: 'e.g. 230', tip: 'A number, or a text (with * as a pattern).' },
+    // A list wired into Elements is the list: nothing is searched for, so none of the search
+    // settings is written into the script.
+    { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true, showIf: (s, cx) => !(cx && cx.wired && cx.wired.has('items')) },
+    { key: 'attr', label: 'Only where this attribute', kind: 'attr', default: '', more: true, placeholder: 'e.g. uknom',
+      showIf: (s, cx) => !(cx && cx.wired && cx.wired.has('items')),
+      tip: 'Leave empty to use every match. With an attribute, only elements whose value compares as set below.' },
+    { key: 'op', label: 'Compares', kind: 'select', default: '=', more: true, options: [['=', '='], ['!=', '≠'], ['>', '>'], ['>=', '≥'], ['<', '<'], ['<=', '≤']],
+      showIf: (s, cx) => !!String(s.attr || '').trim() && !(cx && cx.wired && cx.wired.has('items')),
+      // A value with * or ? is matched as a pattern, which only equals and differs can answer.
+      optionsFor: (s) => (/[*?]/.test(String(s.value || '')) ? ['=', '!='] : null) },
+    { key: 'value', label: 'With', kind: 'text', default: '', more: true, placeholder: 'e.g. 230',
+      showIf: (s, cx) => !!String(s.attr || '').trim() && !(cx && cx.wired && cx.wired.has('items')),
+      tip: 'A number, or a text (with * as a pattern).' },
     restoreSetting, onErrorSetting,
   ],
   summary(s) { return 'Each of ' + elemText({ ...(s.el || {}), match: 'all' }) + (String(s.attr || '').trim() ? ` where ${s.attr} ${s.op} ${s.value}` : ''); },
@@ -322,6 +361,7 @@ defineBlock({
     { key: 'value', label: 'Value', kind: 'number', default: 0, showIf: (s) => s.vtype !== 'text' },
     { key: 'text', label: 'Value', kind: 'text', default: '', showIf: (s) => s.vtype === 'text' },
     { key: 'unit', label: 'Unit of the value', kind: 'select', default: 'none', more: true, options: UNIT_OPTIONS,
+      showIf: (s, cx) => s.vtype !== 'text' && unitApplies('el', 'obj')(s, cx), optionsFor: unitOptions('el'),
       tip: 'The value is converted to the unit this project shows for the attribute (for example kW or ms).' },
   ],
   ports(s) {
@@ -361,8 +401,12 @@ defineBlock({
     { key: 'attr', label: 'Attribute', kind: 'attr', default: 'm:u', required: true, placeholder: 'e.g. m:u',
       tip: 'A result (m:u voltage, c:loading, m:P:bus1, m:Ikss ...) or element data (pgini, outserv ...). Results are those of the last calculation before this step.' },
     { key: 'unit', label: 'Unit', kind: 'select', default: 'none', more: true, options: UNIT_OPTIONS,
+      showIf: unitApplies('el', 'obj'), optionsFor: unitOptions('el'),
       tip: 'Convert from the unit this project shows (for example kW) to this one.' },
     { key: 'total', label: 'Total of the parallel machines (x ngnum)', kind: 'bool', default: false, more: true,
+      // Only a machine has parallel machines: a busbar, a line or a load has no ngnum at all,
+      // and the script would quietly leave the value as it is.
+      showIf: (s, cx) => (cx && cx.wired && cx.wired.has('obj')) || hasParam(elemClass(s, 'el'), 'ngnum') !== false,
       tip: 'pgini, P_max and the like are per machine; this multiplies by the number of parallel machines.' },
     { key: 'skip', label: 'Leave out elements out of service or not energised', kind: 'bool', default: true, more: true,
       tip: 'So an island or an outage does not show up as a 0 p.u. voltage.' },
@@ -430,7 +474,7 @@ defineBlock({
       ],
       tip: 'Each row becomes an input: wire the column value of the table row into it. An empty cell takes that generator out of service; 0 keeps it in service at 0 MW.' },
     BASIS,
-    { key: 'qmode', label: 'Reactive power control', kind: 'select', default: 'keep', options: [['keep', 'Keep as in the model'], ['pq', 'Constant Q (needed for Q to apply)']],
+    { key: 'qmode', label: 'Reactive power control', kind: 'select', default: 'keep', more: true, showIf: (s) => s.mode !== 'row', options: [['keep', 'Keep as in the model'], ['pq', 'Constant Q (needed for Q to apply)']],
       tip: 'A voltage-controlled generator ignores the reactive power; constant Q switches it to av_mode constq (put back afterwards).' },
     { key: 'unit', label: 'Unit of the active power', kind: 'select', default: 'MW', more: true, options: [['MW', 'MW'], ['kW', 'kW'], ['GW', 'GW']] },
     { key: 'outerComp', label: 'Also its plant model (ElmComp)', kind: 'bool', default: true, more: true,
@@ -586,7 +630,7 @@ function runtimeName(cx, inExpr, what) {
 const NAME_TIP = '{active case} becomes the name of the active study case and {loop values} the loop values of this pass (for example Dispatch 300). At most 40 characters; PowerFactory\'s refused characters become _.';
 const EXISTS = (what) => ({ key: 'exists', label: `If a ${what} of that name exists`, kind: 'select', default: 'reuse', more: true,
   options: [['reuse', 'Use it'], ['replace', 'Replace it (only one the Builder made)'], ['new', 'Make a new one with a number']] });
-const KEEP = (what) => ({ key: 'keep', label: `Keep the new ${what} after the run`, kind: 'bool', default: true,
+const KEEP = (what) => ({ key: 'keep', label: `Keep the new ${what} after the run`, kind: 'bool', default: true, more: true, 
   tip: `Off: the ${what} is deleted when the workflow ends.` });
 
 defineBlock({
@@ -634,7 +678,7 @@ defineBlock({
       options: [['copy', 'Copy the case\'s scenario (a new one when it has none)'], ['new', 'A new scenario from the network data'], ['none', 'No scenario']],
       tip: 'With its own scenario, dispatch and service changes stay in this case and do not touch the network data every case uses.' },
     EXISTS('study case'),
-    { key: 'activate', label: 'Activate it', kind: 'bool', default: true },
+    { key: 'activate', label: 'Activate it', kind: 'bool', default: true, more: true },
     KEEP('study case'),
   ],
   summary(s) {
@@ -668,7 +712,7 @@ defineBlock({
   title: 'For each study case',
   desc: 'Repeats the Each pass steps with each study case active in turn (the names matching a pattern, sorted). The case active before is active again afterwards.',
   keywords: ['for each', 'loop', 'study cases', 'every case', 'all cases', 'IntCase', 'iterate', 'cases'],
-  inputs: [{ id: 'items', label: 'Study cases', type: 'items', tip: 'Optional: loop over these study cases (or their names) instead of a pattern.' }],
+  inputs: [{ id: 'items', label: 'Study cases', type: 'items', fallback: 'pattern', tip: 'Optional: loop over these study cases (or their names) instead of a pattern.' }],
   outputs: [
     { id: 'case', label: 'Study case', type: 'obj', scope: 'body', var: 'study_case' },
     { id: 'casename', label: 'Name', type: 'text', scope: 'body', var: 'case_name' },
@@ -731,7 +775,7 @@ defineBlock({
   settings: [
     { key: 'name', label: 'Name', kind: 'text', default: '{active case} {loop values}', tip: NAME_TIP },
     EXISTS('scenario'),
-    { key: 'activate', label: 'Activate it', kind: 'bool', default: true },
+    { key: 'activate', label: 'Activate it', kind: 'bool', default: true, more: true },
     KEEP('scenario'),
   ],
   summary(s) { return `${s.name || 'Unnamed'}${s.keep ? ', kept after the run' : ', deleted at the end'}`; },
@@ -790,7 +834,7 @@ defineBlock({
   title: 'For each operation scenario',
   desc: 'Repeats the Each pass steps with each operation scenario active in turn (names matching a pattern, sorted). The scenario active before comes back afterwards.',
   keywords: ['for each', 'loop', 'scenarios', 'operation scenario', 'every scenario', 'IntScenario', 'operating points', 'iterate'],
-  inputs: [{ id: 'items', label: 'Scenarios', type: 'items', tip: 'Optional: loop over these scenarios (or their names) instead of a pattern.' }],
+  inputs: [{ id: 'items', label: 'Scenarios', type: 'items', fallback: 'pattern', tip: 'Optional: loop over these scenarios (or their names) instead of a pattern.' }],
   outputs: [
     { id: 'scenario', label: 'Scenario', type: 'obj', scope: 'body', var: 'scenario' },
     { id: 'scenname', label: 'Name', type: 'text', scope: 'body', var: 'scenario_name' },
@@ -830,7 +874,7 @@ defineBlock({
   outputs: [{ id: 'variation', label: 'Variation', type: 'obj', var: 'variation' }],
   settings: [
     { key: 'variation', label: 'Variation', kind: 'text', default: '', required: true, placeholder: 'Exactly as in the Data Manager' },
-    { key: 'alone', label: 'Deactivate the other variations', kind: 'bool', default: false },
+    { key: 'alone', label: 'Deactivate the other variations', kind: 'bool', default: false, more: true },
   ],
   summary(s) { return (s.variation || 'Variation not set') + (s.alone ? ' (alone)' : ''); },
   helpers: ['variation_activate'],
@@ -884,7 +928,7 @@ defineBlock({
     { key: 'name', label: 'Name', kind: 'text', default: '{active case} {loop values}', tip: NAME_TIP },
     { key: 'stage', label: 'Stage name', kind: 'text', default: '', more: true, placeholder: 'Empty: the variation name' },
     EXISTS('variation'),
-    { key: 'activate', label: 'Activate it (recording)', kind: 'bool', default: true },
+    { key: 'activate', label: 'Activate it (recording)', kind: 'bool', default: true, more: true },
     KEEP('variation'),
   ],
   summary(s) { return `${s.name || 'Unnamed'}${s.keep ? ', kept after the run' : ', deleted at the end'}`; },
@@ -908,7 +952,7 @@ defineBlock({
   title: 'For each variation',
   desc: 'Repeats the Each pass steps with each network variation active in turn (names matching a pattern, sorted). The case\'s own variations come back afterwards.',
   keywords: ['for each', 'loop', 'variations', 'IntScheme', 'every variation', 'expansion', 'iterate', 'network variation'],
-  inputs: [{ id: 'items', label: 'Variations', type: 'items', tip: 'Optional: loop over these variations (or their names) instead of a pattern.' }],
+  inputs: [{ id: 'items', label: 'Variations', type: 'items', fallback: 'pattern', tip: 'Optional: loop over these variations (or their names) instead of a pattern.' }],
   outputs: [
     { id: 'variation', label: 'Variation', type: 'obj', scope: 'body', var: 'variation' },
     { id: 'varname', label: 'Name', type: 'text', scope: 'body', var: 'variation_name' },
@@ -918,7 +962,7 @@ defineBlock({
   settings: [
     nameSetting('Variation'),
     { key: 'pattern', label: 'Variations named', kind: 'text', default: '*', placeholder: '* for all', tip: 'A name with * wildcards; * means every variation.' },
-    { key: 'alone', label: 'Only that variation active', kind: 'bool', default: true, tip: 'Off: each one is added to the variations the case already has active.' },
+    { key: 'alone', label: 'Only that variation active', kind: 'bool', default: true, more: true, tip: 'Off: each one is added to the variations the case already has active.' },
     restoreSetting, onErrorSetting,
   ],
   summary(s) { return (s.pattern === '*' || !s.pattern ? 'Every variation' : `Variations ${s.pattern}`) + (s.alone ? ', one at a time' : ''); },

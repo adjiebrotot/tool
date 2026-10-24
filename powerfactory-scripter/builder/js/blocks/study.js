@@ -85,8 +85,9 @@ defineBlock({
   ],
   settings: [
     { key: 'net', label: 'Calculation', kind: 'select', default: 'case', options: [['case', AS_CASE], ['ac', 'AC balanced'], ['unbalanced', 'AC unbalanced, 3-phase'], ['dc', 'DC']] },
-    { key: 'qlim', label: 'Reactive power limits', kind: 'select', default: 'case', options: [['case', AS_CASE], ['on', 'Considered'], ['off', 'Ignored']] },
-    { key: 'taps', label: 'Automatic transformer taps', kind: 'select', default: 'case', options: [['case', AS_CASE], ['on', 'On'], ['off', 'Off']] },
+    // A DC load flow is linear and has neither reactive power nor voltage control.
+    { key: 'qlim', label: 'Reactive power limits', kind: 'select', default: 'case', more: true, options: [['case', AS_CASE], ['on', 'Considered'], ['off', 'Ignored']], showIf: (s) => s.net !== 'dc' },
+    { key: 'taps', label: 'Automatic transformer taps', kind: 'select', default: 'case', more: true, options: [['case', AS_CASE], ['on', 'On'], ['off', 'Off']], showIf: (s) => s.net !== 'dc' },
   ],
   summary(s) {
     const parts = [{ case: '', ac: 'AC balanced', unbalanced: 'AC unbalanced', dc: 'DC' }[s.net],
@@ -142,7 +143,7 @@ defineBlock({
   settings: [
     { key: 'method', label: 'Method', kind: 'select', default: 'iec', options: [['iec', 'IEC 60909'], ['vde', 'VDE 0102'], ['ansi', 'ANSI'], ['complete', 'Complete'], ['iec61363', 'IEC 61363']] },
     { key: 'fault', label: 'Fault type', kind: 'select', default: '3ph', options: [['3ph', 'Three-phase'], ['2ph', 'Two-phase'], ['1ph', 'Single-phase to ground'], ['2phg', 'Two-phase to ground']] },
-    { key: 'current', label: 'Calculate', kind: 'select', default: 'max', options: [['max', 'Maximum short-circuit currents'], ['min', 'Minimum short-circuit currents']] },
+    { key: 'current', label: 'Calculate', kind: 'select', default: 'max', more: true, options: [['max', 'Maximum short-circuit currents'], ['min', 'Minimum short-circuit currents']] },
     { key: 'at', label: 'Fault at', kind: 'select', default: 'all', noPin: true, options: [['all', 'Every busbar'], ['element', 'One element (or a list)']] },
     elementSetting('target', 'Fault at', 'ElmTerm', { showIf: (s) => s.at === 'element' }),
     { key: 'rf', label: 'Fault resistance', kind: 'number', default: 0, unit: 'Ohm', more: true },
@@ -215,7 +216,7 @@ function simBlock(kind) {
           { key: 'combine', label: 'For several matches', kind: 'select', default: 'none', options: COMBINE },
         ],
         tip: 'Each row records one curve and becomes a time series output, for example Bus 16 with m:fehz (frequency). A name with * and a way to combine gives one curve from several elements.' },
-      { key: 'caseEvents', label: 'The study case\'s own events', kind: 'select', default: 'auto',
+      { key: 'caseEvents', label: 'The study case\'s own events', kind: 'select', default: 'auto', more: true, 
         options: [['auto', 'Off when the workflow adds events'], ['keep', 'On'], ['off', 'Off']], tip: 'The case\'s own events are put back as they were after the run.' },
       { key: 'fast', label: 'Faster solver settings', kind: 'bool', default: false, more: true, tip: 'Fast solution and fast output: quicker, and can move a frequency nadir by about 1 mHz.' },
       { key: 'extendTo', label: 'Extend to', kind: 'number', default: 0, unit: 's', more: true,
@@ -378,6 +379,15 @@ const EVENT_FX = { writes: ['model'], reads: [] };
 const keyOf = (cx) => cx.lit(cx.id);
 const tOut = { id: 't', label: 'Time', type: 'num', unit: 's', var: 'event_time', tip: 'The event time, for the checks after the run.' };
 
+// A dynamic event drawn as a profile: the same EvtParam events PowerFactory's event list holds,
+// written from a list of (time, value) steps the reader types in a table or drags on a graph.
+// The classes are the ones a set point, a voltage input or a reference is worth stepping on.
+const STEP_CLASSES = ['ElmVac', 'ElmIac', 'ElmXnet', 'ElmSym', 'ElmGenstat', 'ElmPvsys', 'ElmAsm', 'ElmVsc',
+  'ElmLod', 'ElmShnt', 'ElmSvs', 'ElmTr2', 'ElmTr3', 'ElmDsl', 'ElmStactrl', 'ElmComp'];
+const STEP_MODES = [['absolute', 'Set it to the value'], ['add', 'Add the value to the value it has now'], ['times', 'Multiply the value it has now by it']];
+const stepRows = (s) => (Array.isArray(s.steps) ? s.steps : []).filter(r => r && typeof r === 'object');
+const stepsSorted = (s) => stepRows(s).map(r => ({ t: Number(r.t) || 0, v: Number(r.v) || 0 })).sort((a, b) => a.t - b.t);
+
 defineBlock({
   type: 'pf.evt.shc', cat: CAT, kind: 'action',
   title: 'Add short circuit',
@@ -401,10 +411,16 @@ defineBlock({
       tip: 'Unbalanced faults need a simulation with the unbalanced network (rst).' },
     { key: 'phase1', label: 'Phase', kind: 'select', default: 'a', options: [['a', 'a'], ['b', 'b'], ['c', 'c']], showIf: (s) => s.fault === '1ph' },
     { key: 'phase2', label: 'Phases', kind: 'select', default: 'ab', options: [['ab', 'a-b'], ['bc', 'b-c'], ['ca', 'c-a']], showIf: (s) => s.fault === '2ph' || s.fault === '2phg' },
-    { key: 'clear', label: 'Cleared by', kind: 'select', default: 'fault', options: [['fault', 'Clearing the fault'], ['trip', 'Opening the faulted line (and clearing)']] },
+    // Nothing is cleared while the duration is 0, so there is nothing to choose; and a fault on
+    // a busbar cannot be cleared by opening a line.
+    { key: 'clear', label: 'Cleared by', kind: 'select', default: 'fault', options: [['fault', 'Clearing the fault'], ['trip', 'Opening the faulted line (and clearing)']],
+      showIf: (s, cx) => (cx && cx.wired && cx.wired.has('duration')) || Number(s.duration) > 0,
+      optionsFor: (s, cx) => ((cx && cx.wired && cx.wired.has('target')) || (s.target || {}).cls !== 'ElmTerm' ? null : ['fault']) },
     { key: 'rf', label: 'Fault resistance', kind: 'number', default: 0, unit: 'Ohm', more: true },
     { key: 'xf', label: 'Fault reactance', kind: 'number', default: 0, unit: 'Ohm', more: true },
-    { key: 'loc', label: 'Location on the line', kind: 'number', default: null, unit: '%', more: true, placeholder: 'As set in PowerFactory', tip: 'Only for a line: where along it the fault is.' },
+    { key: 'loc', label: 'Location on the line', kind: 'number', default: null, unit: '%', more: true, placeholder: 'As set in PowerFactory',
+      showIf: (s, cx) => (cx && cx.wired && cx.wired.has('target')) || (s.target || {}).cls === 'ElmLne',
+      tip: 'Only for a line: where along it the fault is.' },
   ],
   summary(s) {
     const d = Number(s.duration) > 0 ? `, cleared after ${s.duration} s` + (s.clear === 'trip' ? ' (line opened)' : '') : ', not cleared';
@@ -505,15 +521,16 @@ defineBlock({
 
 defineBlock({
   type: 'pf.evt.param', cat: CAT, kind: 'action',
-  title: 'Add DSL parameter change',
-  desc: 'Changes a parameter of a DSL model (such as a voltage or power set point) at a time in the next simulation: to a value, by adding to it, or by a factor.',
-  keywords: ['parameter event', 'EvtParam', 'DSL', 'set point', 'step', 'voltage step', 'reference', 'controller', 'ElmDsl', 'event'],
-  inputs: [objInput('element', 'DSL model', 'el', ['ElmDsl']), tInput(), { id: 'value', label: 'Value', type: 'num', fallback: 'value' }],
+  title: 'Add parameter change',
+  desc: 'Changes one value of an element (a DSL parameter, a set point, a voltage input) at one time, to a value the workflow works out. For a profile use Add parameter steps.',
+  keywords: ['parameter event', 'EvtParam', 'DSL', 'set point', 'step', 'voltage step', 'reference', 'controller', 'ElmDsl', 'ElmVac', 'event', 'dynamic event'],
+  inputs: [objInput('element', 'Element', 'el', STEP_CLASSES, 'The element whose value changes: a DSL model, an AC voltage source, a generator.'), tInput(), { id: 'value', label: 'Value', type: 'num', fallback: 'value' }],
   outputs: [tOut],
   settings: [
-    elementSetting('el', 'DSL model', 'ElmDsl'),
+    elementSetting('el', 'Element', 'ElmDsl'),
     tSetting,
-    { key: 'param', label: 'Parameter', kind: 'text', default: '', required: true, placeholder: 'e.g. Vref', tip: 'The parameter name as in the DSL model\'s parameter list.' },
+    { key: 'param', label: 'Value to change', kind: 'attr', default: '', required: true, placeholder: 'e.g. Vref', attrs: 'any', study: 'dynamic_rms',
+      tip: 'The name PowerFactory uses for it: a DSL model\'s own parameter (Vref), a set point (usetp) or a voltage input (s:u0).' },
     { key: 'mode', label: 'Change', kind: 'select', default: 'absolute', options: [['absolute', 'Set it to the value'], ['add', 'Add the value to it'], ['times', 'Multiply it by the value']] },
     { key: 'value', label: 'Value', kind: 'number', default: 1 },
   ],
@@ -527,6 +544,57 @@ defineBlock({
     return cx.used('t') ? [`${cx.out('t')} = ${call}`] : [call];
   },
   validate(cx) { notesOf(cx); },
+});
+
+defineBlock({
+  type: 'pf.evt.steps', cat: CAT, kind: 'action',
+  title: 'Add parameter steps',
+  desc: 'Changes one value of an element at several times in the next simulation: a voltage profile on an AC voltage source, a set point ramp. Type the steps or drag them.',
+  keywords: ['dynamic event', 'simulation event', 'EvtParam', 'parameter event', 'profile', 'voltage profile', 'voltage step',
+    'TOV', 'over voltage', 'under voltage', 'set point', 'reference', 'ramp', 'steps', 'schedule', 'ElmVac', 'AC voltage source', 's:u0', 'usetp'],
+  inputs: [objInput('element', 'Element', 'el', STEP_CLASSES, 'The element whose value the steps change (for example the AC voltage source that feeds the model).')],
+  outputs: [
+    { id: 't_first', label: 'First step', type: 'num', unit: 's', var: 't_first', tip: 'When the first step happens, for the checks after the run.' },
+    { id: 't_last', label: 'Last step', type: 'num', unit: 's', var: 't_last' },
+  ],
+  settings: [
+    elementSetting('el', 'Element', 'ElmVac', { example: 'Grid Max SC' }),
+    { key: 'param', label: 'Value to change', kind: 'attr', default: 's:u0', required: true, placeholder: 'e.g. s:u0',
+      attrs: 'any', study: 'dynamic_rms',
+      tip: 'The name PowerFactory uses for it: s:u0 is the voltage input of an AC voltage source, usetp a set point, Vref a DSL parameter.' },
+    { key: 'steps', label: 'Steps', kind: 'schedule', required: true,
+      default: [{ id: 's1', t: 1, v: 1.1 }],
+      rowPrefix: 's', columns: [{ key: 't', kind: 'number', default: 1 }, { key: 'v', kind: 'number', default: 1 }],
+      tip: 'Each step is a time and the value from then on. The graph and the table are the same steps: change either one.' },
+    { key: 'mode', label: 'Each value', kind: 'select', default: 'absolute', more: true, options: STEP_MODES,
+      tip: 'Add and multiply work from the value the parameter has when the workflow reaches this block.' },
+  ],
+  summary(s) {
+    const rows = stepsSorted(s);
+    const p = String(s.param || '?').trim() || '?';
+    if (!rows.length) return `${p} of ${elemText(s.el)}: no steps yet`;
+    const say = rows.slice(0, 3).map(r => `${r.v}${s.mode === 'times' ? 'x' : ''} at ${r.t} s`).join(', ');
+    return `${p} of ${elemText(s.el)}: ${say}${rows.length > 3 ? `, +${rows.length - 3} more` : ''}`;
+  },
+  helpers: ['add_param_steps'],
+  effects: EVENT_FX,
+  emit(cx) {
+    routeAt(cx);
+    cx.helper('add_param_steps');
+    const rows = stepsSorted(cx.s);
+    const list = `[${rows.map(r => `(${cx.lit(r.t)}, ${cx.lit(r.v)})`).join(', ')}]`;
+    const call = `add_param_steps(app, ${keyOf(cx)}, ${cx.in('element')}, ${cx.val('param')}, ${list}, ${cx.val('mode')})`;
+    if (!cx.used('t_first') && !cx.used('t_last')) return [call];
+    return [`${cx.out('t_first')}, ${cx.out('t_last')} = ${call}`];
+  },
+  validate(cx) {
+    notesOf(cx);
+    const rows = stepsSorted(cx.s);
+    if (!rows.length) { cx.todo(`Add at least one step to ${cx.label}: a time and the value from then on.`); return; }
+    const same = rows.find((r, i) => i && Math.abs(r.t - rows[i - 1].t) < 1e-9);
+    if (same) cx.warn(`${cx.label} has two steps at ${same.t} s. PowerFactory applies both, and which one wins is not fixed: give them different times.`);
+    if (rows.some(r => r.t < 0)) cx.error(`${cx.label} has a step before 0 s. A simulation event happens at or after the start of the run.`);
+  },
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -548,7 +616,7 @@ defineBlock({
     { key: 'gens', label: 'Synchronous generators', kind: 'bool', default: false },
     { key: 'xnets', label: 'External grids', kind: 'bool', default: false },
     { key: 'query', label: 'Other elements', kind: 'text', default: '', placeholder: 'e.g. Line 1*.ElmLne, T*.ElmTr2', tip: 'Name.Class with * wildcards, separated by commas.' },
-    { key: 'order', label: 'Outages at a time', kind: 'select', default: '1', options: [['1', 'One (N-1)'], ['2', 'Two (N-2, every pair)']] },
+    { key: 'order', label: 'Outages at a time', kind: 'select', default: '1', more: true, options: [['1', 'One (N-1)'], ['2', 'Two (N-2, every pair)']] },
     { key: 'inService', label: 'Only elements in service', kind: 'bool', default: true, more: true, tip: 'Elements already out of service are left out (and named in the log), so nothing out is ever put in service.' },
   ],
   summary(s) {
@@ -598,7 +666,7 @@ defineBlock({
     { key: 'how', label: 'Take out by', kind: 'select', default: 'outserv', noPin: true,
       options: [['outserv', 'Setting it out of service (load flow, short circuit)'], ['event', 'A switch event at the outage time (simulation)']] },
     { key: 't', label: 'Outage time', kind: 'number', default: 1, unit: 's', showIf: (s) => s.how === 'event' },
-    { key: 'base', label: 'Base case first (nothing out)', kind: 'bool', default: true },
+    { key: 'base', label: 'Base case first (nothing out)', kind: 'bool', default: true, more: true },
     restoreSetting, onErrorSetting,
   ],
   ports(s) {

@@ -139,9 +139,10 @@ defineBlock({
     { key: 'cols', label: 'Columns', kind: 'list', default: [], rowPrefix: 'c', rowLabel: 'Column', addLabel: 'column',
       columns: [{ key: 'name', label: 'Column name', kind: 'text', default: '' }],
       tip: 'Each column is an input of this block. A wire dropped on "+ drop a value" adds one named after the value; rename it here.' },
-    { key: 'ctx', label: 'Start with the loop values', kind: 'bool', default: true, noPin: true,
+    // Outside a loop there are no loop values and no skipped passes to keep.
+    { key: 'ctx', label: 'Start with the loop values', kind: 'bool', default: true, more: true, noPin: true, showIf: (s, cx) => (cx ? cx.inLoop !== false : true),
       tip: 'Each row starts with the values of the loops around this block, for example Dispatch (MW) = 200.' },
-    { key: 'onSkip', label: 'Keep skipped passes as rows', kind: 'bool', default: true, noPin: true,
+    { key: 'onSkip', label: 'Keep skipped passes as rows', kind: 'bool', default: true, more: true, noPin: true, showIf: (s, cx) => (cx ? cx.inLoop !== false : true),
       tip: 'A pass that ends before this block still gets a row, with the reason in a Status column, so failed cases do not go missing.' },
   ],
   ports: addPorts,
@@ -222,7 +223,7 @@ defineBlock({
       options: [['all', 'Every value (a list)'], ['max', 'The value in the row where a column is highest'], ['min', 'The value in the row where a column is lowest']] },
     { key: 'of', label: 'Highest / lowest of column', kind: 'text', default: '', suggest: 'columns', showIf: (s) => s.pick !== 'all', placeholder: 'Empty: the column itself',
       tip: 'For example Column = Contingency and this = Loading (%) gives the contingency with the highest loading.' },
-    { key: 'as', label: 'The values are', kind: 'select', default: 'num', noPin: true, options: [['num', 'Numbers'], ['text', 'Text, such as names']] },
+    { key: 'as', label: 'The values are', kind: 'select', default: 'num', more: true, noPin: true, options: [['num', 'Numbers'], ['text', 'Text, such as names']] },
   ],
   ports(s) {
     const text = s.as === 'text';
@@ -260,41 +261,55 @@ defineBlock({
 defineBlock({
   type: 'data.read', cat: CAT, kind: 'action',
   title: 'Read table from file',
-  desc: 'Reads a CSV file or an Excel sheet into a named table, one case per row or per column, for For each item to loop over its rows. Use it for a case workbook.',
-  keywords: ['read', 'import', 'load', 'open', 'CSV', 'Excel', 'xlsx', 'spreadsheet', 'workbook', 'cases', 'case table', 'input file', 'dispatch table'],
+  desc: 'Attach a CSV or Excel file: its columns become a named table the rest of the workflow reads, one case per row. Use it for a case workbook or a dispatch table.',
+  keywords: ['read', 'import', 'load', 'open', 'upload', 'attach', 'CSV', 'Excel', 'xlsx', 'spreadsheet', 'workbook', 'cases', 'case table', 'input file', 'dispatch table'],
   outputs: [
     { id: 'name', label: 'Table name', type: 'text', var: 'table_name' },
     { id: 'n', label: 'Rows', type: 'num', var: 'rows_read', tip: 'How many cases were read.' },
   ],
   settings: [
     tableSetting('Cases', 'The name of the table to fill. For each item (the rows of a results table) and the other table blocks use it.'),
-    { key: 'path', label: 'File', kind: 'text', default: '', required: true, pin: true, placeholder: 'e.g. C:\\Studies\\cases.xlsx',
-      tip: 'A .csv, .xlsx or .xlsm file. A name without a folder is looked for next to the script. Shown at the top of the script.' },
-    { key: 'sheet', label: 'Sheet', kind: 'text', default: '', placeholder: 'The first sheet', tip: 'Excel only: the sheet to read.' },
-    { key: 'layout', label: 'Each case is', kind: 'select', default: 'rows',
+    { key: 'src', label: 'Data file', kind: 'file', default: { name: '', size: 0, sheet: '', sheets: [], cols: [], rows: 0, sig: '' },
+      required: true, accept: '.csv,.txt,.tsv,.xlsx,.xlsm', pathKey: 'path', sheetKey: 'sheet', layoutKey: 'layout', headerKey: 'header', commaKey: 'decimalComma',
+      tip: 'The file is read here in your browser so the page knows its columns, and it is written into the study package beside the script. Nothing is uploaded: this page has no server.' },
+    { key: 'path', label: 'File name the script reads', kind: 'text', default: '', pin: true, more: true, placeholder: 'e.g. cases.xlsx',
+      showIf: (s) => !(s.src && s.src.name),
+      tip: 'Without an attached file: the .csv, .xlsx or .xlsm the script opens where it runs. A name with no folder is looked for next to the script. Shown at the top of the script.' },
+    { key: 'sheet', label: 'Sheet', kind: 'text', default: '', more: true, placeholder: 'The first sheet',
+      showIf: (s) => !(s.src && s.src.name),
+      tip: 'Excel only: the sheet to read. With a file attached, pick the sheet on the card.' },
+    { key: 'layout', label: 'Each case is', kind: 'select', default: 'rows', more: true,
       options: [['rows', 'A row (names in the header row)'], ['columns', 'A column (names in the first column)']] },
-    { key: 'header', label: 'Names are in row', kind: 'number', default: 1, min: 1, step: 1,
+    { key: 'header', label: 'Names are in row', kind: 'number', default: 1, min: 1, step: 1, more: true,
       tip: 'The row with the column names, 1 for the first (for one case per column: the column with the names).' },
     { key: 'decimalComma', label: 'Numbers use a decimal comma (1,5)', kind: 'bool', default: false, more: true },
   ],
   summary(s) {
+    const src = s.src || {};
+    if (src.name) return `${src.name}: ${src.rows} ${src.rows === 1 ? 'row' : 'rows'} x ${(src.cols || []).length} into "${tableName(s)}"`;
     const f = String(s.path || '').trim().split(/[\\/]/).pop();
     return f ? `${f} into "${tableName(s)}"` : 'No file yet';
   },
   helpers: ['read_table'],
   emit(cx) {
     cx.helper('read_table');
-    if (/\.xls[xm]\s*$/i.test(String(cx.s.path || ''))) cx.package('openpyxl');
+    const src = cx.s.src || {};
+    const path = String(src.name || cx.s.path || '');
+    if (/\.xls[xm]\s*$/i.test(path)) cx.package('openpyxl');
     const name = tableName(cx.s);
     const t = cx.name(name + ' table');
-    if (cx.columns) cx.columns(name, [], { file: true });
+    if (cx.columns) cx.columns(name, src.name ? (src.cols || []) : [], { file: true, read: !!src.name });
     cx.out('name', cx.lit(name));
     cx.out('n', `len(${t}.rows)`);
     return [`${t} = read_table(${cx.lit(name)}, ${cx.val('path')}, sheet=${cx.val('sheet')}, layout=${cx.val('layout')}, ` +
       `header=${cx.val('header')}, decimal_comma=${cx.val('decimalComma')})`];
   },
   validate(cx) {
-    if (/\.xls\s*$/i.test(String(cx.s.path || ''))) cx.error(`${cx.label} reads ${String(cx.s.path).trim()}, an old .xls file it cannot open. Save it as .xlsx (or .csv) in Excel and use that file.`);
+    const src = cx.s.src || {};
+    const path = String(src.name || cx.s.path || '').trim();
+    if (!path) { cx.todo(`Attach the data file for ${cx.label} (a .csv or .xlsx), or type the name of a file that sits next to the script.`); return; }
+    if (/\.xls$/i.test(path)) cx.error(`${cx.label} reads ${path}, an old .xls file it cannot open. Save it as .xlsx (or .csv) in Excel and use that file.`);
+    if (src.name && !(src.cols || []).length) cx.warn(`${cx.label} found no columns in ${src.name}. Check which row holds the names (More options), or attach a file whose first row names the columns.`);
   },
 });
 
@@ -337,7 +352,7 @@ defineBlock({
   outputs: [fileOut()],
   settings: [
     curveSetting('Curve', 'Each curve is an input of this block. A time series dropped on "+ drop a curve" adds one.'),
-    { key: 'collect', label: 'Inside a loop', kind: 'select', default: 'pass', noPin: true,
+    { key: 'collect', label: 'Inside a loop', kind: 'select', default: 'pass', noPin: true, showIf: (s, cx) => (cx ? cx.inLoop !== false : true),
       options: [['pass', 'One graph per pass'], ['loop', 'Every pass on one graph (drawn after the loop)']],
       tip: 'Every pass on one graph draws one curve per pass, named by its loop values, once the loop has ended.' },
     titleSetting,

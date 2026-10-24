@@ -490,6 +490,11 @@ with Group("test generator"):
     ok("ready for set_dispatch", G["run_load_flow"](app).ok and near(G["pf_get"](gen2, "m:P:bus1"), 40, 0.01))
 
 with Group("RMS and EMT on Nine-bus (copy of 03)"):
+    # The test generator of the group before sits in the grid, so every study case sees it and it
+    # would move Bus 7's voltage. It goes out of service here (finish() still deletes it), so the
+    # fault trace written below is the one the plain study case gives.
+    for _tg in F(app, "PFB_*.ElmGenstat", "all"):
+        _tg.SetAttribute("outserv", 1)
     cc = G["case_create"](app, "PFB sim test", template="03- Three Cycles Standard SG Model", scenario="none", keep=False)
     bus7, bus5 = F(app, "Bus 7.ElmTerm"), F(app, "Bus 5.ElmTerm")
     inc = app.GetFromStudyCase("ComInc")
@@ -503,6 +508,8 @@ with Group("RMS and EMT on Nine-bus (copy of 03)"):
     ok("events of the run on the result and the series", res.events == [(1.0, "3ph fault at Bus 7"), (1.1, "Fault at Bus 7 cleared")]
        and u.events == res.events and u.first_event() == 1.0, res.events)
     ok("case's own events back as they were", [(nm(e), e.GetAttribute("outserv")) for e in inc.GetAttribute("p_event").GetContents() if not nm(e).startswith("PFB_")] == own)
+    # The fixture the analysis tests and the pf block tests read: a real Bus 7 voltage through a
+    # three-phase fault on the plain Nine-bus case 03, nothing else connected.
     write_csv(os.path.join(FIXTURES, "nine_bus_fault_u1.csv"), "t,u1", u.t, u.y)
     ok("fixture nine_bus_fault_u1.csv written", os.path.getsize(os.path.join(FIXTURES, "nine_bus_fault_u1.csv")) > 1000)
     ok("a variable that was not recorded gives an empty series", len(res.series(bus7, "m:fehz")) == 0)

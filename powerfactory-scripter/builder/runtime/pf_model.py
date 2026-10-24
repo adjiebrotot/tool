@@ -313,6 +313,10 @@ def scenario_save(app):
         log("No operation scenario is active, so there is nothing to save.", "warn")
         return False
     rc = scen.Save()
+    if rc == 0:
+        # What this save captured stays in the scenario: pf_undo leaves those records alone, so
+        # putting the model back at the end does not empty the scenario the reader just filled.
+        _PF["saved"][_full(scen)] = len(_PF["records"])
     log(f"Saved operation scenario '{_nm(scen)}'." if rc == 0 else f"Operation scenario '{_nm(scen)}' had no changes to save.")
     return rc == 0
 # @end

@@ -729,8 +729,7 @@ def add_load_step(app, key, load, t, dp=0.0, dq=0.0):
     return float(t)
 # @end
 
-# @helper add_param_event
-# @needs log, pf_events
+# @helper param_initial
 def _param_initial(obj, param):
     """The value a DSL parameter (ElmDsl params, named by parameterNames) or an attribute has now."""
     if obj.GetClassName() == "ElmDsl":
@@ -749,6 +748,10 @@ def _param_initial(obj, param):
         return None
 
 
+# @end
+
+# @helper add_param_event
+# @needs log, pf_events, param_initial
 def add_param_event(app, key, element, t, param, value, mode="absolute"):
     """Change a parameter of a DSL model (such as a voltage or power set point) at t (s) with a
     parameter event (EvtParam). mode "absolute" sets value, "add" adds it to the parameter's
@@ -767,4 +770,33 @@ def add_param_event(app, key, element, t, param, value, mode="absolute"):
                {"variable": str(param), "value": text})
     log(f"Event: {param} of {_nm(tgt)} set to {text} at {float(t):g} s.")
     return float(t)
+# @end
+
+# @helper add_param_steps
+# @needs log, pf_events, param_initial
+def add_param_steps(app, key, element, param, steps, mode="absolute"):
+    """Change one value of an element at several times in the next simulation: one parameter
+    event (EvtParam) per step, so the value holds until the next one.
+
+    steps is [(t, value), ...], times in seconds and values in the parameter's own unit; they are
+    put in time order. mode "absolute" sets the value, "add" adds it to the value the parameter
+    has now and "times" multiplies that value by it. Returns (the first time, the last time)."""
+    tgt = element[0] if isinstance(element, (list, tuple)) and len(element) == 1 else element
+    rows = sorted(((float(t), float(v)) for t, v in steps), key=lambda r: r[0])
+    if not rows:
+        raise PFError("[CODE] A list of parameter steps needs at least one step.")
+    base = None
+    if mode in ("add", "times"):
+        base = _param_initial(tgt, param)
+        if base is None:
+            raise PFError(f"[MODEL] Could not read the value of {param} of {_nm(tgt)}; use mode absolute.")
+    elif mode != "absolute":
+        raise PFError(f"[CODE] Parameter event mode '{mode}' is not absolute, add or times.")
+    for k, (t, v) in enumerate(rows, 1):
+        val = v if base is None else (base + v if mode == "add" else base * v)
+        text = f"{val:.10g}"   # EvtParam takes the new value as text
+        _event_put(app, key, f"p{k}", "EvtParam", tgt, t, f"{param} = {text} on {_nm(tgt)}",
+                   {"variable": str(param), "value": text})
+    log(f"Events: {param} of {_nm(tgt)} steps to " + ", ".join(f"{v:g} at {t:g} s" for t, v in rows) + ".")
+    return rows[0][0], rows[-1][0]
 # @end

@@ -41,7 +41,7 @@
 //     from): the blocks an output feeds (of block `from` when given); cx.valOf(nodeId, key):
 //     another block's setting as cx.val gives it; cx.check(queryExpr, match): an element the
 //     block finds by itself, listed for CHECK_ONLY. cx.columns(table, names, { ctx, status,
-//     file }): the columns this block writes into a results table (the loop values first when
+//     file, read }): the columns this block writes into a results table (the loop values first when
 //     ctx, then Status when status); `file: true` when they come from a file the page cannot
 //     see. The result's `tables` collects them per table name, for the inspector's suggestions.
 //   - A block's `pinLiteral(key, s)` (optional) gives the value written on its SETTINGS line
@@ -749,7 +749,7 @@ function generateInner(workflow, opts) {
       skipTables: () => (env && env.struct ? skipTablesFor(env.struct.id) : []),
       columns: (table, names, o) => {
         if (opt.probe) return;
-        tableRecs.set(X, { table: String(table), names: (names || []).map(String).filter(Boolean), ctx: !!(o && o.ctx), status: !!(o && o.status), file: !!(o && o.file) });
+        tableRecs.set(X, { table: String(table), names: (names || []).map(String).filter(Boolean), ctx: !!(o && o.ctx), status: !!(o && o.status), file: !!(o && o.file), read: !!(o && o.read) });
       },
       // Lines to write once the nearest loop or search has ended (for example "every pass on
       // one graph"): queued per block, written after the structure's own after-lines.
@@ -1658,8 +1658,10 @@ function generateInner(workflow, opts) {
   for (const id of order) {
     const t = tableRecs.get(id);
     if (!t) continue;
-    const T = tables[t.table] || (tables[t.table] = { columns: [], file: false });
+    const T = tables[t.table] || (tables[t.table] = { columns: [], file: false, read: false });
     if (t.file) T.file = true;
+    // `read` says the page has read the file itself, so its column names are the real ones.
+    if (t.read) T.read = true;
     const row = [];
     if (t.ctx) {
       const seen = new Set();
