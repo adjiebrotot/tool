@@ -114,7 +114,8 @@ function limitsLit(cx, extra = []) {
 
 const stemSetting = { key: 'stem', label: 'File name', kind: 'text', default: '', more: true, placeholder: 'From the title', tip: 'Without the extension. Inside a loop the loop values are added, so every pass gets its own file.' };
 const titleSetting = { key: 'title', label: 'Title', kind: 'text', default: '', placeholder: 'The block\'s name', tip: 'Inside a loop the loop values are written under it.' };
-const fileOut = (tip) => ({ id: 'file', label: 'File', type: 'text', var: 'graph_file', tip: tip || 'The PNG written (empty when there was nothing to draw).' });
+// The path of the file a block writes. Its id stays `file` (saved wires name it).
+const fileOut = (tip, label) => ({ id: 'file', label: label || 'Path', type: 'text', var: 'graph_file', tip: tip || 'The path of the PNG written (empty when there was nothing to draw).' });
 
 // `name = call` when the file output is used, else the call alone.
 function withFile(cx, call) {
@@ -191,7 +192,18 @@ defineBlock({
   title: 'Save results table',
   desc: 'Writes a results table to the run folder as CSV (opens in Excel), an Excel file or both. Connect it to After all passes so it saves once.',
   keywords: ['save', 'export', 'write', 'CSV', 'Excel', 'xlsx', 'file', 'table', 'results', 'output', 'spreadsheet', 'report'],
-  outputs: [fileOut('The path of the file written (the CSV when both).')],
+  outputs: [fileOut('The path of the file written.')],
+  // Both formats give one path each; `file` stays the first file written (the CSV when both), as
+  // it always was. A format left to the script's SETTINGS line keeps the one Path.
+  ports(s, node) {
+    const pinned = ((node && node.pin) || []).includes('fmt');
+    if (pinned) return { outputs: [fileOut('The path of the first file written (the CSV when both).')] };
+    if (s.fmt !== 'both') return { outputs: [fileOut(s.fmt === 'xlsx' ? 'The path of the Excel file written (the CSV when Excel could not be written).' : 'The path of the CSV written.')] };
+    return { outputs: [
+      fileOut('The path of the CSV written.', 'CSV path'),
+      { id: 'xlsx', label: 'XLSX path', type: 'text', var: 'xlsx_file', tip: 'The path of the Excel file written (empty when none was).' },
+    ] };
+  },
   settings: [
     tableSetting('Results', 'The table to save, as named on Add row or Read table from file.'),
     { key: 'fmt', label: 'Save as', kind: 'select', default: 'csv', options: FMT, tip: 'Excel files need the pandas and openpyxl packages (the script checks before it starts).' },
@@ -203,9 +215,10 @@ defineBlock({
     cx.helper('table');
     if (pinnedKey(cx, 'fmt') || cx.s.fmt !== 'csv') cx.package('pandas', 'openpyxl');
     const call = `table(${cx.lit(tableName(cx.s))}).save(${textOrNone(cx, 'stem')}, ${cx.val('fmt')})`;
-    if (!cx.used('file')) return [call];
+    if (!cx.used('file') && !cx.used('xlsx')) return [call];
     const p = cx.name('saved files');
     cx.out('file', `(${p}[0] if ${p} else "")`);
+    cx.out('xlsx', `next((f for f in ${p} if str(f).lower().endswith(".xlsx")), "")`);
     return [`${p} = ${call}`];
   },
 });
