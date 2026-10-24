@@ -687,7 +687,7 @@ test('run: Nine-bus fault (real trace): LVRT curve passes, recovery above 0.9 p.
   eq([row.LVRT, row.Found, row.Pre], ['PASS', true, 'PASS']);
   ok(row.Margin >= 0, 'margin ' + row.Margin);
   ok(row.Time > 1.1 && row.Time < 2.0, 'recovery time ' + row.Time);
-  near(row.U0, 1.024658, 1e-6, 'value before the fault');
+  near(row.U0, 1.025769, 1e-6, 'value before the fault');
   hasNot(res.stdout, 'LVRT FAILED');
 });
 

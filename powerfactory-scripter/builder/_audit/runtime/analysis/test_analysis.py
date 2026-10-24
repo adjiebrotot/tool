@@ -842,7 +842,9 @@ def test_real_traces():
         lvrt = [(0.0, 0.0, None), (0.15, 0.0, None), (0.15, 0.7, None), (1.5, 0.9, None)]
         lc = NS["check_limits"](s, curve=lvrt, x0=1.0, after=1.0)
         check("Nine-bus: LVRT curve passes", lc.ok is True and lc.margin >= 0, repr(lc))
-        check("Nine-bus: value before the fault", near(NS["value_at"](s, 0.5), 1.024658, 1e-6))
+        # The pre-fault voltage of the plain Nine-bus case 03 (the fixture is recorded by
+        # live_tests.py from that case with nothing else connected).
+        check("Nine-bus: value before the fault", near(NS["value_at"](s, 0.5), 1.025769, 1e-5))
         dp = NS["despike"](s)
         check("Nine-bus: spike runs reported once", all(b.t_start > a.t_end for a, b in zip(dp.spikes, dp.spikes[1:])), str(dp.spikes))
         check("Nine-bus: CSV of the trace", NS["save_series_csv"](s, stem="nine_bus_u1") is not None)

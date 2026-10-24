@@ -219,6 +219,12 @@ Python and statically checks every section (needs, docstrings, ASCII, each secti
   variable before any calculation. Conversion is only possible inside one family (power, reactive
   power, apparent power, time, voltage, current, energy); a percentage, a per-unit value or an
   angle cannot be converted at all, which is why the Unit choice is not offered for them.
+- An operation scenario the workflow saved keeps what that save captured: `pf_undo` leaves those
+  records alone (`scenario_save` notes how many were written). Without that, "put changed values
+  back" at the end of the run empties the scenario the reader just filled, because the undo
+  happens while that scenario is still active.
+- `IntScenario.GetOperationValue(element, attr)` reads a scenario's stored value whether or not
+  it is active, and always answers `[0, value]` - the 0 is not a validity flag.
 - Verified 2026-10-24, against three guesses that looked right and were not: an EMT run
   (`ComInc.iopt_sim = "ins"`) **does** accept the balanced network `iopt_net = "sym"` and runs
   with it; `ComShc.iopt_cur` (maximum / minimum currents) is kept by every method including
@@ -234,7 +240,7 @@ Run from the repository root (`D:\Repository\tool`):
 | `node powerfactory-scripter/builder/_audit/codegen/run.mjs` | the generator: names, literals, loading old state, every structural case, a 300-graph fuzzer, every script compiled, flow-only workflows executed against a stub runtime |
 | `node powerfactory-scripter/builder/_audit/choice/run.mjs` | "only what can be chosen" (§4.1): every rule by the case it was written for, and the contract (no `showIf` throws, no `optionsFor` invents an option, a pinned setting stays, a required one is never hidden, the unit families match the runtime) |
 | `node powerfactory-scripter/builder/_audit/data/run.mjs` | reading an attached CSV / Excel file: the page and `read_table` give the same table for the same fixtures, and the study package .zip is read back by Python's own `zipfile` |
-| `node powerfactory-scripter/builder/_audit/blocks/pf/run.mjs [--no-live]` | the PowerFactory blocks: generation of every setting variant, validators, and live runs on the sandboxes (load flow on every case, dispatch sweep, study cases and scenarios, short circuit, harmonics, fault event, EMT, RMS trip, N-1, variations, test generator, events), each ending with a sandbox audit |
+| `node powerfactory-scripter/builder/_audit/blocks/pf/run.mjs [--no-live]` | the PowerFactory blocks: generation of every setting variant, validators, and 19 live runs on the sandboxes, each ending with a sandbox audit. Single blocks: load flow on every case, dispatch sweep, study cases and scenarios, short circuit, fault event, EMT, RMS trip, N-1, variations, test generator, events, parameter steps. Whole shapes a reader builds: `nested` (three loops inside each other), `branch` (routes, skip to next pass, stop the loop), `series` (four curves from one run, every check, a graph and a CSV), `optimise` (a bisection and an optimiser closing the loop through the load flow), `untilxl` (repeat until, an .xlsx read by the script, a table saved as CSV and Excel), `casetable` (an attached case table driving the dispatch) and `packaged` (the .zip the Download button writes, unpacked by Python and run from where it landed) |
 | `node powerfactory-scripter/builder/_audit/blocks/analysis/run.mjs [--live]` | the analysis blocks, executed on the two real traces in `_audit/runtime/fixtures/` |
 | `node powerfactory-scripter/builder/_audit/templates/run.mjs` | every Quick Start template: generates, compiles, runs live, and loads on the page |
 | `node powerfactory-scripter/builder/_audit/ui/run.mjs` | the editor in Chromium at desktop and phone width |

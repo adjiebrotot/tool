@@ -23,6 +23,8 @@ _PF = {
     "hooks": [],        # [(label, fn)] restores finish() runs before re-activating the start case
     "said": set(),      # messages logged once
     "fnom": {},         # grid full name -> nominal frequency (f_nominal)
+    "saved": {},        # operation scenario full name -> how many records were written when it
+                        # was last saved; pf_undo leaves those values in it (scenario_save)
 }
 PFB = "PFB_"
 
@@ -823,23 +825,32 @@ def pf_undo(mark=None):
         return 0
     n0 = mark["n"] if mark else 0
     back = (mark["case"], mark["scen"]) if mark else _context(app)
-    recs = _PF["records"][n0:]
+    recs = list(enumerate(_PF["records"][n0:], n0))
     # Each (element, attribute, case, scenario) has one record (its first original), so the order
     # between contexts does not matter. Contexts without a scenario go first: leaving a scenario
     # for none drops its unsaved changes, which must not undo what was just put back in it.
     groups = []
-    for rec in reversed(recs):
+    for at, rec in reversed(recs):
         for gr in groups:
             if _same(gr[0], rec["case"]) and _same(gr[1], rec["scen"]):
-                gr[2].append(rec)
+                gr[2].append((at, rec))
                 break
         else:
-            groups.append((rec["case"], rec["scen"], [rec]))
+            groups.append((rec["case"], rec["scen"], [(at, rec)]))
     groups.sort(key=lambda gr: gr[1] is not None)
-    put, bad = 0, 0
+    put, bad, kept = 0, 0, 0
     for case, scen, items in groups:
+        # A scenario the workflow saved keeps what that save captured: the reader asked for those
+        # values to live in it, so putting the model back must not empty it again. Changes made
+        # after the save are not part of it and are put back as usual.
+        upto = _PF["saved"].get(_full(scen)) if scen is not None else None
+        if upto is not None and any(at < upto for at, _ in items):
+            kept += sum(1 for at, _ in items if at < upto)
+            items = [(at, rec) for at, rec in items if at >= upto]
+            if not items:
+                continue
         _enter_context(app, case, scen)
-        for rec in items:
+        for _at, rec in items:
             if not _alive(rec["obj"]):
                 continue
             try:
@@ -848,7 +859,12 @@ def pf_undo(mark=None):
             except Exception as e:
                 bad += 1
                 log(f"Could not put back {_nm(rec['obj'])}.{rec['attr']} = {rec['old']!r}: {e}", "warn")
+    if kept:
+        log(f"{kept} value(s) stay in the operation scenario(s) the workflow saved.")
     del _PF["records"][n0:]
+    # The records this undo took away are gone, so a save that counted them would now point past
+    # the end and keep records written later. Each one counts at most what is left.
+    _PF["saved"] = {k: min(v, n0) for k, v in _PF["saved"].items()}
     _PF["keys"] = {rec["key"]: i for i, rec in enumerate(_PF["records"])}
     ids = [m[0] for m in _PF["marks"]]
     if not mark:
