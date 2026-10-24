@@ -433,6 +433,12 @@ h1.pfb-title span { text-wrap: balance; }
    value, its name turns the warning colour. The tip leads with a Mandatory chip. */
 .react-flow__handle.pfb-h.is-req { background: var(--hc, var(--muted)); }
 .pfb-n-in.is-missing > .pfb-n-plab { color: var(--pfb-warn); font-weight: 600; }
+/* An unwired input the block does not wait for (set in Settings, or optional) is greyed, its
+   port an open grey ring; hovering it or dragging a wire onto it shows its type colour again. */
+.pfb-n-in.is-idle > .pfb-n-plab { color: var(--muted); }
+.pfb-n-in.is-idle > .react-flow__handle.pfb-h { background: var(--panel-raised); filter: grayscale(1); opacity: .55; }
+.pfb-n-in.is-idle > .react-flow__handle.pfb-h:hover, .pfb-n-in.is-idle > .react-flow__handle.pfb-h.connectingto { filter: none; opacity: 1; }
+.pfb-connecting .pfb-n-in.is-idle > .react-flow__handle.pfb-h:not(.connectingto) { opacity: .25; }
 #globalTooltip .pfb-tip-chip { display: inline-block; margin-right: 2px; padding: 0 7px; border-radius: 999px; font-size: .68rem; font-weight: 700; line-height: 1.6; vertical-align: 1px; color: var(--pfb-warn); background: color-mix(in srgb, var(--pfb-warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--pfb-warn) 40%, transparent); }
 /* An exact value in a port tip (TRUE, NADIR, no_init), in the code font. */
 #globalTooltip .pfb-tip-val { font-family: var(--pfb-mono); font-size: .92em; padding: 0 3px; border-radius: 4px; background: var(--input-bg); color: var(--text); }
