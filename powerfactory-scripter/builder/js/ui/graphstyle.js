@@ -186,24 +186,18 @@ export function mountGraphStyle(app) {
 
   function templatesRow(s) {
     const match = G.matchTemplate(s);
-    const box = el('div', { class: 'pfb-gs-tplbox' });
-    // The site's own looks, then the standard ones (journals and programs).
-    for (const [std, title] of [[false, 'Adjie Brotools and general'], [true, 'Standard: papers and programs']]) {
-      const grid = el('div', { class: 'pfb-gs-tpls', role: 'group', 'aria-label': title + ' templates' });
-      for (const t of G.TEMPLATES.filter(x => (x.group === 'standard') === std)) {
-        const on = !!match && match.id === t.id;
-        const b = el('button', { type: 'button', class: 'pfb-gs-tpl' + (on ? ' on' : ''), dataset: { tpl: t.id }, 'aria-pressed': on ? 'true' : 'false', title: t.desc },
-          // Every card at one shape, so the grid stays even (Report and Presentation are other sizes).
-          el('span', { class: 'pfb-gs-thumb', html: previewSvg({ ...t.style, width: 10, height: 5.6 }, { kind: 'series', width: 128, thumb: true }) }),
-          el('span', { class: 'pfb-gs-tpl-name', text: t.name }),
-          t.id === G.DEFAULT_TEMPLATE ? el('span', { class: 'pfb-gs-tpl-tag', text: 'Default' }) : null);
-        b.addEventListener('click', () => { setStyle(G.styleFromTemplate(t.id)); renderForm(); });
-        grid.appendChild(b);
-      }
-      box.appendChild(el('div', { class: 'pfb-gs-tplhead', text: title }));
-      box.appendChild(grid);
+    const grid = el('div', { class: 'pfb-gs-tpls', role: 'group', 'aria-label': 'Templates' });
+    for (const t of G.TEMPLATES) {
+      const on = !!match && match.id === t.id;
+      const b = el('button', { type: 'button', class: 'pfb-gs-tpl' + (on ? ' on' : ''), dataset: { tpl: t.id }, 'aria-pressed': on ? 'true' : 'false', title: t.desc },
+        // Every card at one shape, so the grid stays even (Report and Presentation are other sizes).
+        el('span', { class: 'pfb-gs-thumb', html: previewSvg({ ...t.style, width: 10, height: 5.6 }, { kind: 'series', width: 128, thumb: true }) }),
+        el('span', { class: 'pfb-gs-tpl-name', text: t.name }),
+        t.id === G.DEFAULT_TEMPLATE ? el('span', { class: 'pfb-gs-tpl-tag', text: 'Default' }) : null);
+      b.addEventListener('click', () => { setStyle(G.styleFromTemplate(t.id)); renderForm(); });
+      grid.appendChild(b);
     }
-    return box;
+    return el('div', { class: 'pfb-gs-tplbox' }, grid);
   }
 
   function fontRow(s) {

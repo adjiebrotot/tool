@@ -152,7 +152,11 @@ await test('frozen handles are still there', () => {
   };
   for (const [k, vals] of Object.entries(CHOICES)) for (const v of vals) ok(G.CHOICES[k].some(([x]) => x === v), k + ' value "' + v + '"');
   for (const id of ['brotools', 'brotools-night', 'minimal', 'report', 'slides', 'classic',
-    'ieee', 'ieee-wide', 'elsevier', 'matlab', 'matplotlib', 'ggplot', 'office']) ok(G.templateById(id), 'template "' + id + '"');
+    'ieee', 'elsevier', 'matlab', 'matplotlib', 'office']) ok(G.templateById(id), 'template "' + id + '"');
+  // A retired template is no longer offered, but a workflow saved in it keeps its look and name.
+  ok(!G.TEMPLATES.some(t => t.id === 'classic'), 'Builder classic is not offered');
+  eq(G.styleName(G.styleFromTemplate('classic')), 'Builder classic', 'a workflow in Builder classic is still named so');
+  eq(G.styleFromTemplate('classic').font, 'DejaVu Sans', 'and keeps its look');
   for (const id of ['blue', 'night', 'viridis', 'cividis', 'magma', 'coolwarm', 'greys', 'classic']) ok(G.RAMPS[id], 'ramp "' + id + '"');
   ok(baseReserved().has('GRAPH_STYLE'), 'GRAPH_STYLE is reserved, so a pinned setting never takes its name');
 });

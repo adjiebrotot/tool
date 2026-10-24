@@ -850,8 +850,6 @@ body.pfb-gs-open { overflow: hidden; }
 .pfb-gs-form select { --sel-pad: 28px; width: 100%; }
 .pfb-gs-tplbox { padding: 8px 0 12px; }
 .pfb-gs-tpls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.pfb-gs-tplhead { margin: 4px 0 6px; color: var(--muted); font-size: .74rem; font-weight: 700; letter-spacing: .02em; }
-.pfb-gs-tpls + .pfb-gs-tplhead { margin-top: 14px; }
 .pfb-gs-tpl { position: relative; display: flex; flex-direction: column; gap: 5px; padding: 6px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--panel); color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: border-color var(--motion-fast); }
 .pfb-gs-tpl:hover { border-color: var(--accent); }
 .pfb-gs-tpl:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }

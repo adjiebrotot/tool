@@ -137,14 +137,14 @@ so a workflow keeps its look if a template changes later. A workflow without it,
 workflow saved before graph styles, draws in the default: the **Adjie Brotools** style, the
 site's own charts (the light theme's chart tokens, the neutral series sequence blue, gold, teal,
 rose, purple, DM Sans, a bold centred title, the key under the graph, the value axis ending on a
-tick). That default is a new look for old workflows by design; the **Builder classic** template
-is the look before graph styles, for anyone who wants it back.
+tick). That default is a new look for old workflows by design. The **Builder classic** template,
+the look before graph styles, is no longer offered (`RETIRED_TEMPLATES`): a workflow saved with
+it still draws as it did and is still named after it.
 
 - Templates: `brotools` (default), `brotools-night`, `minimal`, `report` (serif, framed, 300 dpi,
-  colour-blind safe lines), `slides` (16:9, large text), `classic`; and the standard ones
-  (`group: 'standard'`, listed apart in the modal): `ieee` (3.5 in, Times 8 pt, box with ticks
-  inside, varied line patterns, 600 dpi and a PDF copy), `ieee-wide` (7.16 in), `elsevier`
-  (90 mm, Arial 8 pt), `matlab`, `matplotlib`, `ggplot`, `office` (Excel and PowerPoint).
+  colour-blind safe lines), `slides` (16:9, large text), and the standard ones: `ieee` (3.5 in,
+  Times 8 pt, box with ticks inside, varied line patterns, 600 dpi and a PDF copy), `elsevier`
+  (90 mm, Arial 8 pt), `matlab`, `matplotlib`, `office` (Excel and PowerPoint). Retired: `classic`.
 - `line_styles`: `solid` (the default, the look before it) or `vary` (solid, dashed, dotted,
   dash-dot ... in turn, for black and white print), on time series and 2D lines.
 - A marked point's label ("Nadir 49.26 Hz") is placed by `_po_place_marks` after the layout:
