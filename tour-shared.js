@@ -163,15 +163,19 @@
     renderTooltip(step);
 
     if (!step.target) { positionCentered(); return; }
-    awaitTarget(step.target, token, Date.now());
+    awaitTarget(token, Date.now());
   }
 
-  function awaitTarget(target, token, since) {
+  /* `target` may be a getter (a step pointing at something its onEnter is
+     still loading), so it is read again on every look-up. */
+  function stepTarget() { return steps[current].target; }
+
+  function awaitTarget(token, since) {
     if (token !== renderToken || !els) return;
-    var found = resolveTargets(target);
+    var found = resolveTargets(stepTarget());
     if (found.length) { scrollToTarget(found, token); return; }
     if (Date.now() - since < TARGET_WAIT_MS) {
-      setTimeout(function () { awaitTarget(target, token, since); }, 60);
+      setTimeout(function () { awaitTarget(token, since); }, 60);
       return;
     }
     // Unreachable target: show the step centred rather than spotlighting
@@ -180,12 +184,23 @@
   }
 
   /* Smooth scrolling has no completion event, so follow the elements until
-     they stop moving instead of guessing with a fixed delay. */
+     they stop moving instead of guessing with a fixed delay. The target is
+     looked up again on every tick: a panel that re-renders just after the
+     step opens (an editor drawing the settings of the block it selected)
+     replaces the element, and following the detached one read as a zero
+     box, so the step lost its spotlight and fell back to the centre. */
   function scrollToTarget(elements, token) {
     elements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
     var lastTop = null, steady = 0, ticks = 0;
     (function settle() {
       if (token !== renderToken || !els) return;
+      var live = resolveTargets(stepTarget());
+      if (!live.length) { if (++ticks < 25) setTimeout(settle, 60); return; }
+      if (live[0] !== elements[0]) {
+        live[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        lastTop = null; steady = 0;
+      }
+      elements = live;
       var top = unionRect(elements).top;
       steady = (lastTop !== null && Math.abs(top - lastTop) < 0.5) ? steady + 1 : 0;
       lastTop = top;
@@ -288,7 +303,7 @@
 
   function reposition() {
     if (!els) return;
-    var found = resolveTargets(steps[current].target);
+    var found = resolveTargets(stepTarget());
     if (found.length) positionToTarget(found);
     else positionCentered();
   }

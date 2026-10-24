@@ -1423,11 +1423,13 @@ await test('real blocks smoke', async () => {
   await sleep(300);
   await S.page.evaluate(() => window.pfTour.start());
   await S.page.waitForSelector('.pf-tour-tooltip');
-  let titles = [], demoSeen = false;
+  let titles = [], demoSeen = false, centred = [];
   for (let i = 0; i < 20; i++) {
     await sleep(1100);
     titles.push(await S.page.textContent('.pf-tour-tooltip .pf-tour-title'));
     if (await S.page.evaluate(() => PFB.store.get().wf.nodes.some(n => n.type === 'pf.rms'))) demoSeen = true;
+    // Only the welcome card is centred: every other step spotlights what it talks about.
+    if (i > 0 && await S.page.evaluate(() => document.querySelector('.pf-tour-spotlight').style.display === 'none')) centred.push(titles[i]);
     const last = /Done/.test(await S.page.textContent('.pf-tour-tooltip .pf-tour-btn-primary'));
     await S.page.click('.pf-tour-tooltip .pf-tour-btn-primary');
     if (last) break;
@@ -1435,6 +1437,7 @@ await test('real blocks smoke', async () => {
   await sleep(500);
   const back = await wfOf(S);
   check('the tour loads the demo and gives the reader\'s workflow back', demoSeen && back.name === 'Mine' && back.nodes.length === 1, JSON.stringify(titles));
+  check('every tour step after the welcome spotlights its target', !centred.length, JSON.stringify(centred));
   await closePage(S, 'real-blocks page');
 });
 
