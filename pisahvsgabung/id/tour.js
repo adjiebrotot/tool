@@ -44,7 +44,7 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '③ PTKP & Lapisan Pajak',
-      body: 'Berisi nilai sesuai ketentuan. Ubah hanya untuk memodelkan aturan lain.'
+      body: 'Sudah berisi nilai sesuai ketentuan. Ubah hanya kalau ingin menghitung aturan lain.'
     },
     {
       target: '#verdict',
@@ -68,7 +68,7 @@ window.__TOUR = {
       title: '⑥ Di berbagai gaji',
       body: '<ul><li>Gaji rumah tangga Rp 100 juta sampai Rp 5 miliar, pada porsi Anda</li>' +
             '<li>Biru untuk Pisah, emas untuk Gabung</li>' +
-            '<li>Catatan breakeven di bawah grafik kedua menyebut titik tukarnya</li></ul>'
+            '<li>Catatan breakeven di bawah grafik kedua menyebut titik baliknya</li></ul>'
     },
     {
       target: '#detailSection',

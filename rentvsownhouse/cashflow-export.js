@@ -367,9 +367,12 @@ function renderComparisonChart(canvas, opts){
     tension: 0.3, cubicInterpolationMode:'monotone',
     fill: false,
   }));
+  // An Indonesian page names its years in Indonesian.
+  const id = (global.document.documentElement.lang || '').slice(0, 2) === 'id';
+  const yr = id ? 'Thn' : 'Yr', year = id ? 'Tahun' : 'Year';
   const xTickCallback = function(val, i){
     const lbl = this.chart.data.labels[i];
-    return (lbl !== undefined && lbl !== null) ? `Yr ${lbl}` : '';
+    return (lbl !== undefined && lbl !== null) ? `${yr} ${lbl}` : '';
   };
   return new global.Chart(canvas.getContext('2d'), {
     type:'line', data:{labels, datasets},
@@ -383,7 +386,7 @@ function renderComparisonChart(canvas, opts){
         // as the main tool's does — a dashed series dashed, not a square.
         tooltip:global.SharedChartTip.options({
           callbacks:{
-            title: ctx=>`Year ${ctx[0].label}`,
+            title: ctx=>`${year} ${ctx[0].label}`,
             label: ctx=>`  ${ctx.dataset.label}: ${chartCurrency(ctx.parsed.y, sym)}`,
           },
           backgroundColor:cssVar('--panel')||'#162033',
@@ -401,7 +404,7 @@ function renderComparisonChart(canvas, opts){
         sharedYFit: {auto:{axes:['y'], includeZero:true}},
       },
       scales:{
-        x:{title:{display:true,text:'Year',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
+        x:{title:{display:true,text:year,color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,maxTicksLimit:12,font:{family:"'DM Mono', monospace",size:11},callback:xTickCallback},grid:{color:g}},
         y:{title:{display:true,text:opts.yAxisTitle||'',color:m,font:{family:"'DM Mono', monospace",size:11}},ticks:{color:m,font:{family:"'DM Mono', monospace",size:11},callback:v=>chartCurrency(v, sym)},grid:{color:g}},
       },
     },
