@@ -20,7 +20,7 @@ window.__TOUR = {
       title: '① Mulai dari kota',
       body: '<ul><li>Cari kota seperti Perth, Tokyo, atau Jakarta</li>' +
             '<li>Pilih hunian yang memang ada, dari studio hingga empat kamar</li>' +
-            '<li>Harga, sewa, dan syarat KPR setempat terisi; ganti sesuka Anda</li></ul>'
+            '<li>Harga, sewa, dan syarat KPR setempat langsung terisi, dan semuanya bisa Anda ubah</li></ul>'
     },
     {
       target: '.ctrl-tabs',
@@ -50,19 +50,19 @@ window.__TOUR = {
       target: '.chart-card',
       title: '⑤ Dari waktu ke waktu',
       body: '<ul><li>Ganti antara Kekayaan bersih, Uang tunai, dan Biaya kumulatif</li>' +
-            '<li>Tanda ? menjelaskan tiap metrik; ekspor sebagai SVG atau PNG</li></ul>'
+            '<li>Tanda ? menjelaskan tiap metrik, dan grafiknya bisa diekspor sebagai SVG atau PNG</li></ul>'
     },
     {
       target: '#detailSection',
       title: '⑥ Rinciannya',
-      body: '<ul><li>Arus kas per tahun terbuka dari tombol panah; CSV mengekspornya</li>' +
-            '<li>Asumsi yang dipakai, di bawahnya, menjelaskan apa yang dihitung</li></ul>'
+      body: '<ul><li>Tombol panah membuka arus kas per tahun, dan CSV mengunduhnya</li>' +
+            '<li>Daftar Asumsi yang dipakai di bawahnya menjelaskan apa saja yang dihitung</li></ul>'
     },
     {
       target: null,
       title: '✅ Selesai',
-      body: '<ul><li>Banyak skenario sekaligus? Coba <strong>Alat Analisis ' +
-            'Sensitivitas</strong> di bagian atas</li>' +
+      body: '<ul><li>Banyak skenario sekaligus? Coba <strong>tool Analisis ' +
+            'Sensitivitas</strong> lewat tautan di bagian atas</li>' +
             '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
     }
   ]

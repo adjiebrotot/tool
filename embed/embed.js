@@ -24,7 +24,7 @@
   var doc = document, root = doc.documentElement;
   var SITE = location.origin + '/', HOME = 'https://tool.adjiebrotots.com';
   var FAILED = { en: ['This chart could not be shown here.', 'Open it on '], id: ['Grafik ini tidak bisa ditampilkan di sini.', 'Buka di '] };
-  var RESET = { en: 'Reset zoom', id: 'Atur ulang zoom' }, PLAY = { en: ['Play', 'Pause'], id: ['Putar', 'Jeda'] };
+  var RESET = { en: 'Reset zoom', id: 'Reset zoom' }, PLAY = { en: ['Play', 'Pause'], id: ['Putar', 'Jeda'] };
   var snap = null, lang = 'en', pool = [], card, stage, legendBox, modesBox, resetBox, frameAt = -1, picks = [];
   // What the reader hid in the key, by entry, so it stays hidden in every view.
   var legendOff = {};
