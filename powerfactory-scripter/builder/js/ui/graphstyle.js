@@ -235,6 +235,7 @@ export function mountGraphStyle(app) {
     form.appendChild(group('Lines and key',
       num(s, 'line_width', 'Line width', 'pt'),
       sel(s, 'markers', 'Points on 2D lines', 'A dot at each value of a 2D graph or a graph from a results table. Time series never have them.'),
+      sel(s, 'line_styles', 'Line patterns', 'Solid, dashed, dotted ... in turn tells the lines apart where colour is lost: a paper printed in black and white (IEEE asks for it). Bars and points stay as they are.'),
       sel(s, 'legend', 'Key', 'Where the key (legend) goes when a graph has more than one line.'),
       bool(s, 'legend_frame', 'Box around the key')));
     const [pw, ph] = G.pixelsOf(s);

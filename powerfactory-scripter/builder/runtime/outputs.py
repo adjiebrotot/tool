@@ -52,6 +52,7 @@ _PO_DEFAULT = {
     "thousands": True,
     "line_width": 2.0,
     "markers": "auto",
+    "line_styles": "solid",
     "legend": "bottom",
     "legend_frame": False,
     "width": 10.0,
@@ -70,6 +71,7 @@ _PO_CHOICES = {
     "frame": ("left-bottom", "box", "bottom", "none"),
     "ticks": ("out", "in", "none"),
     "markers": ("auto", "always", "never"),
+    "line_styles": ("solid", "vary"),
     "legend": ("bottom", "top", "right", "inside", "none"),
     "also_save": ("", "svg", "pdf"),
 }
@@ -91,6 +93,10 @@ _PO_SERIF = ("Times New Roman", "Liberation Serif", "Nimbus Roman", "STIXGeneral
 _PO_SERIF_NAMES = ("times new roman", "times", "cambria", "georgia", "garamond", "book antiqua",
                    "palatino linotype", "liberation serif", "nimbus roman", "stixgeneral", "dejavu serif", "serif")
 _PO_DASH = {"solid": "-", "dashed": (0, (4, 3)), "dotted": (0, (1, 2.5))}
+# Line patterns in turn when the style varies them (line_styles "vary"), so lines stay apart in
+# black and white print: solid, dashed, dotted, dash-dot, long dash, dash-dot-dot (in multiples
+# of the line width, as matplotlib scales them). Keep equal to LINE_DASHES in graphstyle.js.
+_PO_LINE_DASHES = [None, (4.0, 2.0), (1.0, 1.6), (4.0, 1.6, 1.0, 1.6), (7.0, 2.0), (4.0, 1.6, 1.0, 1.6, 1.0, 1.6)]
 
 
 def _po_plt():
@@ -469,6 +475,13 @@ def _po_colors(n):
     return [_po_ramp_at(ramp, lo + (hi - lo) * (j / max(1, n - 1))) for j in range(n)]
 
 
+def _po_dashes(n):
+    # The line pattern of each of n lines: all solid, or solid, dashed, dotted ... in turn.
+    if _po_s()["line_styles"] != "vary":
+        return ["-"] * n
+    return ["-" if d is None else (0, d) for d in (_PO_LINE_DASHES[j % len(_PO_LINE_DASHES)] for j in range(n))]
+
+
 def _po_ramp_at(ramp, pos):
     pos = min(max(float(pos), 0.0), 1.0) * (len(ramp) - 1)
     a = int(math.floor(pos))
@@ -566,6 +579,9 @@ def _po_save(fig, stem):
                 fig.tight_layout(rect=(0, max(strip, _PO["bottom"]), 1, 1))
     except Exception:
         pass
+    for a in fig.axes:
+        if getattr(a, "pfb_marks", None):
+            _po_place_marks(a)
     path = out_file(stem or "graph", "png", sub="graphs")
     kw = {"dpi": st["dpi"]}
     if st["transparent"]:
@@ -583,6 +599,125 @@ def _po_save(fig, stem):
         except Exception as exc:
             log(f"Could not save the {st['also_save'].upper()} copy of {path}: {type(exc).__name__}: {exc}", "warn")
     return path
+
+
+# Where a mark's label may go around its point, in points right and up from it, how it hangs
+# from there, and what the spot costs for being further out: beside the point, then under it
+# (a nadir has its curve above), then over it, a step at a time out to 48 pt, so a label can
+# drop into the gap between a limit line and the axis. Keep equal to markSpots in graphpreview.js.
+def _po_mark_spots():
+    spots = [(9, 0, "left", "center_baseline", 2.0), (-9, 0, "right", "center_baseline", 4.0)]
+    for d in range(4, 50, 2):
+        for dx, ha, side in ((6, "left", 0.0), (-6, "right", 2.0), (0, "center", 3.0)):
+            if ha == "center" and d < 8:
+                continue
+            spots.append((dx, -d, ha, "top", d * 0.8 + side))
+            spots.append((dx, d, ha, "bottom", d * 0.8 + side + 4.0))
+    return spots
+
+
+_PO_MARK_SPOTS = _po_mark_spots()
+
+
+def _po_seg_in(x0, y0, x1, y1, box):
+    # The length (px) of the segment (x0, y0)-(x1, y1) inside box = (left, bottom, right, top).
+    l, b, r, t = box
+    dx, dy = x1 - x0, y1 - y0
+    lo, hi = 0.0, 1.0
+    for p, q in ((-dx, x0 - l), (dx, r - x0), (-dy, y0 - b), (dy, t - y0)):
+        if p == 0:
+            if q < 0:
+                return 0.0
+        else:
+            u = q / p
+            if p < 0:
+                lo = max(lo, u)
+            else:
+                hi = min(hi, u)
+            if lo > hi:
+                return 0.0
+    return (hi - lo) * math.hypot(dx, dy)
+
+
+def _po_place_marks(ax):
+    # Each mark's label at the spot around its point that crosses the least: lines (the curves,
+    # limit and event lines), other words (limit and event labels, labels already placed), the
+    # key, and the edge of the plot. A label that still meets a line has the plot's colour
+    # behind it, so it reads.
+    st = _po_s()
+    fig = ax.figure
+    try:
+        renderer = fig.canvas.get_renderer()
+    except Exception:
+        return
+    px = fig.dpi / 72.0
+    pad = 3.0 * px          # the clear space kept around a label
+    frame = ax.get_window_extent(renderer)
+    paths = []
+    for ln in ax.get_lines():
+        try:
+            xy = ln.get_transform().transform(ln.get_xydata())
+        except Exception:
+            continue
+        pts = [(float(a), float(b)) for a, b in xy if math.isfinite(a) and math.isfinite(b)]
+        if str(ln.get_linestyle()).lower() in ("none", "", " "):
+            paths.append(("dots", pts))
+        else:
+            paths.append(("line", pts))
+    for (t, y, lab) in ax.pfb_marks:
+        # Only the segments that pass near the point can meet a label beside it.
+        cx, cy = ax.transData.transform((t, y))
+        reach = 60.0 * px + st["font_size"] * 0.6 * px * len(lab)
+        near = []
+        for kind, pts in paths:
+            if kind == "dots":
+                near.append((kind, [q for q in pts if abs(q[0] - cx) <= reach and abs(q[1] - cy) <= reach]))
+            else:
+                near.append((kind, [(a, b) for a, b in zip(pts, pts[1:])
+                                    if min(a[0], b[0]) <= cx + reach and max(a[0], b[0]) >= cx - reach
+                                    and min(a[1], b[1]) <= cy + reach and max(a[1], b[1]) >= cy - reach]))
+        boxes = []
+        for other in list(ax.texts) + ([ax.get_legend()] if ax.get_legend() else []):
+            try:
+                e = other.get_window_extent(renderer)
+                boxes.append((e.x0, e.y0, e.x1, e.y1))
+            except Exception:
+                pass
+        ann = ax.annotate(lab, xy=(t, y), xytext=(0, 0), textcoords="offset points", zorder=6,
+                          fontsize=st["font_size"] * 0.92, color=st["text"], annotation_clip=False,
+                          bbox={"facecolor": st["plot_background"], "edgecolor": "none", "pad": 1.0, "alpha": 0.85})
+        best = None
+        for dx, dy, ha, va, further in _PO_MARK_SPOTS:
+            ann.set_position((dx, dy))
+            ann.set_ha(ha)
+            ann.set_va(va)
+            try:
+                e = ann.get_window_extent(renderer)
+            except Exception:
+                break
+            box = (e.x0 - pad, e.y0 - pad, e.x1 + pad, e.y1 + pad)
+            area = max(1.0, (box[2] - box[0]) * (box[3] - box[1]))
+            inside = (max(0.0, min(box[2], frame.x1) - max(box[0], frame.x0)) *
+                      max(0.0, min(box[3], frame.y1) - max(box[1], frame.y0)))
+            cost = (area - inside) / area * 1000.0
+            for l2, b2, r2, t2 in boxes:
+                w = min(box[2], r2) - max(box[0], l2)
+                h = min(box[3], t2) - max(box[1], b2)
+                if w > 0 and h > 0:
+                    cost += 400.0 + w * h / area * 400.0
+            for kind, items in near:
+                if kind == "dots":
+                    cost += 60.0 * sum(1 for a, b in items if box[0] <= a <= box[2] and box[1] <= b <= box[3])
+                else:
+                    run = sum(_po_seg_in(a[0], a[1], b[0], b[1], box) for a, b in items) / px
+                    cost += (150.0 + 8.0 * run) if run > 0 else 0.0
+            cost += further
+            if best is None or cost < best[0]:
+                best = (cost, dx, dy, ha, va)
+        if best is not None:
+            ann.set_position(best[1:3])
+            ann.set_ha(best[3])
+            ann.set_va(best[4])
 
 
 def _po_run(what, title, draw):
@@ -674,8 +809,8 @@ def plot_series(series, labels=None, title="", ylabel="", unit=None, limits=None
         yunit = unit if unit is not None else (units.pop() if len(units) == 1 else "")
         fig, ax = _po_figure()
         colors = _po_colors(len(pairs))
-        for (s, ts, ys, name), color in zip(pairs, colors):
-            ax.plot(ts, ys, color=color, linewidth=st["line_width"], label=name, zorder=3,
+        for (s, ts, ys, name), color, dash in zip(pairs, colors, _po_dashes(len(pairs))):
+            ax.plot(ts, ys, color=color, linewidth=st["line_width"], linestyle=dash, label=name, zorder=3,
                     solid_joinstyle="round", solid_capstyle="round")
         ax.margins(x=0)
         lines_at = {}
@@ -737,12 +872,10 @@ def _po_mark(ax, m, unit=""):
     ax.plot([t], [y], marker="o", markersize=7, color=st["text"], markeredgecolor=st["plot_background"],
             markeredgewidth=1.5, linestyle="none", zorder=5)
     if lab:
-        # Near the right edge the label goes to the left of the point, so it stays inside the
-        # plot and the layout does not shrink the axes to make room for it.
-        x0, x1 = ax.get_xlim()
-        right = x1 > x0 and (t - x0) / (x1 - x0) > 0.8
-        ax.annotate(str(lab), xy=(t, y), xytext=(-6 if right else 6, -12), textcoords="offset points",
-                    fontsize=st["font_size"] * 0.92, color=st["text"], ha="right" if right else "left")
+        # Written by _po_save once the layout is done (_po_place_marks), where it overlaps least.
+        if not hasattr(ax, "pfb_marks"):
+            ax.pfb_marks = []
+        ax.pfb_marks.append((t, y, str(lab)))
 # @end
 
 # @helper collect_series
@@ -844,6 +977,7 @@ def _po_draw_xy(xs, cols, names, kind, head, xlabel, xunit, ylabel, yunit, limit
     pos_all, cats = _po_xpos(all_x)
     fig, ax = _po_figure()
     colors = _po_colors(len(lines))
+    dashes = _po_dashes(len(lines))
     width = 0.8 / len(lines)
     start = 0
     lw = st["line_width"]
@@ -863,7 +997,7 @@ def _po_draw_xy(xs, cols, names, kind, head, xlabel, xunit, ylabel, yunit, limit
                     markeredgecolor=st["plot_background"], markeredgewidth=1.0, label=name or None, zorder=3)
         else:
             dots = st["markers"] == "always" or (st["markers"] == "auto" and len(ys) <= 40)
-            ax.plot(pos, ys, color=color, linewidth=lw, marker="o" if dots else None,
+            ax.plot(pos, ys, color=color, linewidth=lw, linestyle=dashes[idx], marker="o" if dots else None,
                     markersize=max(3.5, lw * 2.2), label=name or None, zorder=3,
                     solid_joinstyle="round", solid_capstyle="round")
     if k == "bar":
