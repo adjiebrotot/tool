@@ -47,27 +47,17 @@
 .pfl-alt { margin: 12px 0 0; font-size: .95rem; color: var(--text); }
 .pfl .pfl-alt a { color: var(--text); font-weight: 700; text-decoration: none; }
 .pfl .pfl-alt a:hover { text-decoration: underline; }
-.pfl-saved { margin: 10px 0 0; font-size: .85rem; color: var(--muted); }
 .pfl-stage { margin: 0; min-width: 0; }
 
 /* ---- Sections under the hero -------------------------------------------------------------- */
 .pfl-sec { padding: 24px 28px; margin-bottom: 18px; }
 .pfl-sec h2 { margin: 0 0 6px; font-size: 1.2rem; font-weight: 700; }
-.pfl-sub, .pfl-note { margin: 0 0 16px; color: var(--muted); line-height: 1.6; font-size: .95rem; }
-.pfl-note { margin: 14px 0 0; }
 .pfl-grid { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .pfl-grid > li { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
 .pfl-grid h3 { margin: 0 0 4px; font-size: .98rem; font-weight: 700; }
 .pfl-grid p { margin: 0; font-size: .88rem; line-height: 1.55; color: var(--muted); }
 .pfl-tags { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .pfl-tags li { padding: 2px 10px; border-radius: var(--radius-pill); background: var(--input-bg); border: 1px solid var(--border); font-size: .8rem; font-weight: 600; color: var(--text); }
-.pfl-steps { margin: 10px 0 0; padding-left: 1.3em; line-height: 1.6; }
-.pfl-steps li { margin-bottom: 8px; }
-.pfl-sec details { border-top: 1px solid var(--border); }
-.pfl-sec details:first-of-type { margin-top: 10px; }
-.pfl-sec summary { cursor: pointer; padding: 12px 0; font-weight: 600; list-style-position: outside; }
-.pfl-sec summary:hover { color: var(--accent-strong); }
-.pfl-sec details p { margin: 0 0 14px; line-height: 1.65; color: var(--muted); }
 
 footer { padding: 6px 4px 24px; }
 .pfl-made { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 4px; align-items: center; }

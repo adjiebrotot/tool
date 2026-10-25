@@ -81,9 +81,9 @@
       "url": "https://tool.adjiebrotots.com/powerfactory-scripter/legacy/"
     },
     {
-      "@type": "WebApplication",
-      "name": "PowerFactory Scripter Samples and Guides",
-      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/samples/"
+      "@type": "WebPage",
+      "name": "How to use the PowerFactory Workflow Builder",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/guides/"
     }
   ],
   "author": {
@@ -105,44 +105,6 @@
   ]
 }
 </script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is PowerFactory Scripter?",
-      "acceptedAnswer": { "@type": "Answer", "text": "A free browser tool that writes DIgSILENT PowerFactory Python scripts. In its Workflow Builder you drag study blocks onto a canvas and wire them in order (load flow, contingencies, RMS or EMT simulation, short circuit, checks, loops and result tables), then download one ready-to-run Python file that drives PowerFactory 2024 through its Python API: https://tool.adjiebrotots.com/powerfactory-scripter/builder/" }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I automate N-1 contingency analysis in PowerFactory?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Open the N-1 screening template in the PowerFactory Workflow Builder at https://tool.adjiebrotots.com/powerfactory-scripter/builder/. It takes each line and transformer out of service in turn (base case first), runs a load flow for each contingency, reads line loading, transformer loading and busbar voltage, and writes the worst values of every outage into a results table. Add or remove a reading by wiring another Read attribute block." }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I run a dynamic RMS or EMT study in PowerFactory, including grid-connection compliance checks?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The Workflow Builder has RMS and EMT simulation blocks, fault, switch, trip and load step events, and checks such as frequency nadir, RoCoF, settling time and first time above or below a limit. Its templates include a fault ride-through check against an LVRT curve, a critical clearing time search and a frequency headroom study." }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I do equipment sizing and optimisation in PowerFactory?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Use the Find limit or Optimise block in the Workflow Builder, or the form-based Legacy Scripter at https://tool.adjiebrotots.com/powerfactory-scripter/legacy/, which sweeps a sizing variable (parallel units, ratings, capacitor steps, filter sizes) and reports the first passing size. Worked capacitor bank, harmonic filter and synchronous condenser examples are on https://tool.adjiebrotots.com/powerfactory-scripter/samples/." }
-    },
-    {
-      "@type": "Question",
-      "name": "Is my PowerFactory project uploaded anywhere?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No. The page runs in your browser and the Python file is written on your own computer. The script runs against your project inside your own PowerFactory, so it suits security-restricted corporate environments. The generated file is yours to keep, change and run." }
-    },
-    {
-      "@type": "Question",
-      "name": "Where is the form-based PowerFactory Scripter?",
-      "acceptedAnswer": { "@type": "Answer", "text": "It is now the Legacy Scripter at https://tool.adjiebrotots.com/powerfactory-scripter/legacy/, unchanged. Setups saved in your browser, saved configuration files and the samples page's Try it links still open there." }
-    }
-  ]
-}
-</script>
 <link rel="icon" type="image/svg+xml" href="../logos/logo.svg">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
@@ -161,7 +123,7 @@
   <nav class="pfl-top" aria-label="Site">
     <a class="btn-theme btn-back" href="https://tool.adjiebrotots.com/">← Other Tools</a>
     <div class="pfl-top-r">
-      <a class="pfl-top-link" href="samples/">Samples &amp; Guides</a>
+      <a class="pfl-top-link" href="guides/">How to use</a>
       <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
     </div>
   </nav>
@@ -173,7 +135,6 @@
         <p class="pfl-lead">Write DIgSILENT PowerFactory Python scripts in minutes, not days.</p>
         <a class="btn-primary pfl-cta" href="builder/">Open Builder</a>
         <p class="pfl-alt">or I prefer <a href="legacy/">Legacy Scripter</a></p>
-        <p class="pfl-saved" id="pflSaved" hidden>Your saved form setup is waiting in the <a href="legacy/">Legacy Scripter</a>.</p>
       </div>
       <figure class="pfl-stage">
         <svg class="pfl-anim" viewBox="0 0 1024 502" role="img" aria-labelledby="pflAnimTitle" xmlns="http://www.w3.org/2000/svg">
@@ -222,44 +183,6 @@
         </li>
       </ul>
     </section>
-
-    <section class="card pfl-sec" aria-labelledby="pflHow">
-      <h2 id="pflHow">How it works</h2>
-      <ol class="pfl-steps">
-        <li><strong>Wire blocks.</strong> Drag study, loop, check and result blocks onto the canvas and connect them in the order PowerFactory should run them.</li>
-        <li><strong>Fill in the settings.</strong> Element classes, attributes such as <code>c:loading</code> or <code>m:u</code>, limits and file names. Choices are limited to what fits the block.</li>
-        <li><strong>Download and run.</strong> One <code>.py</code> file runs inside PowerFactory 2024 or from your own Python, and saves the results tables and graphs to a folder.</li>
-      </ol>
-      <p class="pfl-note">Nothing is uploaded. The page runs in your browser and the script runs on your own computer, against your own project. See worked examples in <a href="samples/">Samples &amp; Guides</a>.</p>
-    </section>
-
-    <section class="card pfl-sec" aria-labelledby="pflFaq">
-      <h2 id="pflFaq">Questions</h2>
-      <details>
-        <summary>What is PowerFactory Scripter?</summary>
-        <p>A free browser tool that writes DIgSILENT PowerFactory Python scripts. In its Workflow Builder you drag study blocks onto a canvas and wire them in order (load flow, contingencies, RMS or EMT simulation, short circuit, checks, loops and result tables), then download one ready-to-run Python file that drives PowerFactory 2024 through its Python API.</p>
-      </details>
-      <details>
-        <summary>How do I automate N-1 contingency analysis in PowerFactory?</summary>
-        <p>Open the N-1 screening template in the <a href="builder/">Workflow Builder</a>. It takes each line and transformer out of service in turn (base case first), runs a load flow for each contingency, reads line loading, transformer loading and busbar voltage, and writes the worst values of every outage into a results table. Add or remove a reading by wiring another Read attribute block.</p>
-      </details>
-      <details>
-        <summary>How do I run a dynamic RMS or EMT study in PowerFactory, including grid-connection compliance checks?</summary>
-        <p>The Workflow Builder has RMS and EMT simulation blocks, fault, switch, trip and load step events, and checks such as frequency nadir, RoCoF, settling time and first time above or below a limit. Its templates include a fault ride-through check against an LVRT curve, a critical clearing time search and a frequency headroom study.</p>
-      </details>
-      <details>
-        <summary>How do I do equipment sizing and optimisation in PowerFactory?</summary>
-        <p>Use the Find limit or Optimise block in the Workflow Builder, or the form-based <a href="legacy/">Legacy Scripter</a>, which sweeps a sizing variable (parallel units, ratings, capacitor steps, filter sizes) and reports the first passing size. Worked capacitor bank, harmonic filter and synchronous condenser examples are in <a href="samples/">Samples &amp; Guides</a>.</p>
-      </details>
-      <details>
-        <summary>Is my PowerFactory project uploaded anywhere?</summary>
-        <p>No. The page runs in your browser and the Python file is written on your own computer. The script runs against your project inside your own PowerFactory, so it suits security-restricted corporate environments. The generated file is yours to keep, change and run.</p>
-      </details>
-      <details>
-        <summary>Where is the form-based PowerFactory Scripter?</summary>
-        <p>It is now the <a href="legacy/">Legacy Scripter</a>, unchanged. Setups saved in your browser, saved configuration files and the samples page's Try it links still open there.</p>
-      </details>
-    </section>
   </main>
 
   <footer>
@@ -276,10 +199,8 @@
 <script src="../shared.js" defer></script>
 <script src="abbr.js" defer></script>
 <script>
-  /* The theme toggle (theme.js draws it and saves a reader's pick), and a pointer to
-     the Legacy Scripter for a reader whose form setup is in this browser's mini cache. */
+  /* The theme toggle (theme.js draws it and saves a reader's pick). */
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
-  try { if (localStorage.getItem('abt:save:powerfactory-scripter:v1')) document.getElementById('pflSaved').hidden = false; } catch (e) {}
 </script>
 </body>
 </html>

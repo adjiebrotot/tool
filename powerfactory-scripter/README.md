@@ -108,14 +108,17 @@ index.html
 The page is `legacy/index.html`, with its own `legacy/script.js` (the UI), `legacy/style.css` and
 `legacy/tour.js` (guided tour config for `../../tour-shared.js`). From the folder above it loads
 `pf-script-builder.js` (the generated-Python builders), `custom-functions.js` (the pre-made Custom
-Calculation library, shared with `samples/`) and `abbr.js`, and it fetches the reference data
+Calculation library, shared with `legacy/samples/`) and `abbr.js`, and it fetches the reference data
 (`element_params.json`, `type_params.json`, `variables/`) from there too (`PF_ROOT` in
 `legacy/script.js`), because the Workflow Builder reads the same files. The mini cache keeps its
 namespace (`powerfactory-scripter`), so a setup saved before the move still opens.
 
-Two sub-pages live under this folder: `samples/` (Samples and Guides) and `builder/`, the
-PowerFactory Workflow Builder, a node-based editor that writes one Python file from blocks wired
-on a canvas. The builder has its own technical README (`builder/README.md`); it shares this
+The Legacy Scripter's Samples and Guides page is `legacy/samples/` (the worked examples its Quick
+Start loads, `legacy/samples/json-samples/`, and the custom function library); the old address
+`samples/` is a redirect stub that keeps old links, anchors included, working. The landing page
+does not link it. Two more sub-pages live under this folder: `guides/`, how to use the Workflow
+Builder, and `builder/`, the PowerFactory Workflow Builder, a node-based editor that writes one
+Python file from blocks wired on a canvas. The builder has its own technical README (`builder/README.md`); it shares this
 folder's reference data (`element_params.json`, `variables/`) for its attribute suggestions.
 
 ---

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the PowerFactory Workflow Builder | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the PowerFactory Workflow Builder: add and wire blocks, build loops, fill in settings, use Quick start examples, make results tables and graphs, then download and run the Python script.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the PowerFactory Workflow Builder">
+<meta property="og:description" content="Recorded from the real Builder: add and wire blocks, loop over cases, fill in settings, make results tables and graphs, then download and run one Python script.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use the PowerFactory Workflow Builder">
+<meta name="twitter:description" content="Recorded from the real Builder: add and wire blocks, loop over cases, fill in settings, make results tables and graphs, then download and run one Python script.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the PowerFactory Workflow Builder",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/guides/",
+  "description": "Wire study blocks on a canvas, fill in their settings, then download one Python file that runs inside PowerFactory 2024 or from your own Python.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "PowerFactory Scripter",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+  },
+  "about": {
+    "@type": "WebApplication",
+    "name": "PowerFactory Workflow Builder",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/builder/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Wire blocks", "text": "Add study, loop, check and result blocks to the canvas and connect them in the order PowerFactory should run them." },
+    { "@type": "HowToStep", "name": "Fill in the settings", "text": "Choose element classes, attributes such as c:loading or m:u, limits and file names. Choices are limited to what fits the block." },
+    { "@type": "HowToStep", "name": "Download and run", "text": "Download the study package. Its Python file runs inside PowerFactory 2024 or from your own Python and saves results tables and graphs to a folder." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "PowerFactory Scripter", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the Workflow Builder", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+<script src="../../theme.js"></script>
+<div class="container pfg">
+
+  <nav class="pfg-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← PowerFactory Scripter</a>
+    <div class="pfg-top-r">
+      <a class="btn-primary pfg-open pfg-open-top" href="../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="pfg-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>How to use the Workflow Builder</h1>
+      <p class="pfg-lead">Wire blocks, fill in the settings, download one Python file. Every clip on this page is the real Builder, recorded while it was used.</p>
+      <div class="pfg-hero-btns">
+        <a class="btn-primary pfg-open" href="../builder/">Open Builder</a>
+        <a class="pfg-skip" href="#screen">Start with the screen</a>
+      </div>
+    </header>
+
+    <!-- The three steps that used to sit on the landing page -->
+    <section class="pfg-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="pfg-three">
+        <li>
+          <h3><span class="pfg-n" aria-hidden="true">1</span>Wire blocks</h3>
+          <p>Drag study, loop, check and result blocks onto the canvas and connect them in the order PowerFactory should run them.</p>
+        </li>
+        <li>
+          <h3><span class="pfg-n" aria-hidden="true">2</span>Fill in the settings</h3>
+          <p>Element classes, attributes such as <code>c:loading</code> or <code>m:u</code>, limits and file names. Choices are limited to what fits the block.</p>
+        </li>
+        <li>
+          <h3><span class="pfg-n" aria-hidden="true">3</span>Download and run</h3>
+          <p>Download gives a <code>.zip</code> with one <code>.py</code> script. It runs inside PowerFactory 2024 or from your own Python and saves results tables and graphs to a folder.</p>
+        </li>
+      </ol>
+      <p class="pfg-note"><strong>Nothing is uploaded.</strong> The page runs in your browser, and the script runs on your own computer against your own project.</p>
+      <nav class="pfg-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#add">Add a block</a>
+        <a href="#wire">Wires and ports</a>
+        <a href="#loops">Loops</a>
+        <a href="#settings">Settings and problems</a>
+        <a href="#rename">Rename a block</a>
+        <a href="#quickstart">Quick start</a>
+        <a href="#results">Tables and graphs</a>
+        <a href="#files">Save, open, download</a>
+        <a href="#run">Run the script</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="pfg-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="pfg-sub">The canvas fills the page and four things float over it. Select a part in the list to see where it is.</p>
+      <div class="pfg-layout">
+        <figure class="pfg-shot">
+          <div class="pfg-shot-frame" data-shot="layout" role="img" aria-label="The Workflow Builder with a load flow study open: the toolbar across the top, the Blocks panel on the left, the canvas in the middle and the Settings panel on the right.">
+            <noscript><img src="media/layout-light.webp" alt="The Workflow Builder screen" width="1280" height="720"></noscript>
+            <span class="pfg-box" data-b="1" style="--x:23.39%;--y:1.67%;--w:50.96%;--h:6.39%"><b>1</b></span>
+            <span class="pfg-box" data-b="2" style="--x:0.94%;--y:10.69%;--w:18.75%;--h:83.19%"><b>2</b></span>
+            <span class="pfg-box" data-b="3" style="--x:21.0%;--y:10.69%;--w:47.4%;--h:83.19%"><b>3</b></span>
+            <span class="pfg-box" data-b="4" style="--x:69.53%;--y:10.69%;--w:28.75%;--h:83.19%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="pfg-key">
+          <li data-b="1">
+            <h3>Toolbar</h3>
+            <p>Undo and redo, zoom, <strong>Fit view</strong>, <strong>Quick start</strong>, save, open, clear the canvas and <strong>Download</strong>. Its button shows how many problems are left.</p>
+          </li>
+          <li data-b="2">
+            <h3>Blocks panel</h3>
+            <p>Every step a workflow can take, in categories, with a search box. Click a block or drag it out. Drag the title bar to move the panel, or use the chevron to fold it.</p>
+          </li>
+          <li data-b="3">
+            <h3>Canvas</h3>
+            <p>Your workflow, read left to right. Every workflow begins at the <strong>Start</strong> block, which is always there. Near the bottom: a minimap and the <strong>Wire colours</strong> key.</p>
+          </li>
+          <li data-b="4">
+            <h3>Settings, Python and Problems</h3>
+            <p><strong>Settings</strong> of the selected block, the <strong>Python</strong> script as it is written, and <strong>Problems</strong>, the list of what still needs fixing.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="pfg-sub">Top right, <strong>Take a tour</strong> replays a one minute walk through a worked example. <strong>Other Tools</strong> leaves for the rest of the site.</p>
+    </section>
+
+    <!-- Add a block -->
+    <section class="pfg-sec card" id="add" aria-labelledby="add-h">
+      <h2 id="add-h">Add a block</h2>
+      <p class="pfg-sub">Search, then click a block to add it after the selected one, or drag it where you want it. <strong>Start</strong> is greyed in the panel because it is already on the canvas.</p>
+      <p class="pfg-sub pfg-phone-hint">On a phone, press <strong>Full screen</strong> under a clip and turn the phone sideways to read it.</p>
+      <div class="pfg-demo" data-demo="add" data-w="1280" data-h="720">
+        <figure class="pfg-screen"><span class="pfg-cap">Blocks panel and canvas</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Search</h3><p>Type a word such as <em>load flow</em>. The search looks at titles, keywords and descriptions.</p></li>
+          <li><h3>Click to add</h3><p>The block goes after the selected block (or the last one added), already wired to it.</p></li>
+          <li><h3>Or drag</h3><p>Drop it anywhere on the canvas. Dropped on a flow wire, it goes between the two steps.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Wires -->
+    <section class="pfg-sec card" id="wire" aria-labelledby="wire-h">
+      <h2 id="wire-h">Wires and ports</h2>
+      <p class="pfg-sub">Blocks connect through ports. Drag from a port on one block to a port on another. Only ports that fit will connect.</p>
+      <div class="pfg-demo" data-demo="wire" data-w="1280" data-h="720">
+        <figure class="pfg-screen"><span class="pfg-cap">Flow wire, then data wire</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Flow wire</h3><p>A thick wire with an arrow: <strong>then do this</strong>. It runs from a block's flow output, such as <em>Converged</em>, to the next block.</p></li>
+          <li><h3>Data wire</h3><p>A thin coloured wire: <strong>use this value</strong>. It runs from a value output, such as <em>Highest</em>, into an input of another block.</p></li>
+          <li><h3>Wire colours</h3><p>The colour is the kind of value: number, text, list, time series, element and so on.</p></li>
+        </ol>
+      </div>
+      <ul class="pfg-facts">
+        <li><strong>Unwired flow output.</strong> The path ends there. A block says so on its card, for example <em>ends the workflow</em> or <em>skips to the next pass</em>, so no extra block is needed.</li>
+        <li><strong>Drop a wire on empty canvas.</strong> A short list opens with only the blocks that fit that wire.</li>
+        <li><strong>+N more.</strong> A block shows its main ports and the wired ones. This button on its card shows the rest.</li>
+      </ul>
+    </section>
+
+    <!-- Loops -->
+    <section class="pfg-sec card" id="loops" aria-labelledby="loops-h">
+      <h2 id="loops-h">Loops</h2>
+      <p class="pfg-sub">A loop block repeats whatever is wired to its <strong>Each pass</strong> output, once per number, item, study case, scenario, variation, element or contingency. What is wired to <strong>After all passes</strong> runs once, when the loop is done.</p>
+      <div class="pfg-demo" data-demo="loop" data-w="1280" data-h="720">
+        <figure class="pfg-screen"><span class="pfg-cap">For a range of numbers</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Add the loop</h3><p><em>For a range of numbers</em> repeats from First to Last in steps. Its <em>Value</em> output is the number of the pass.</p></li>
+          <li><h3>Fill Each pass</h3><p>New blocks join <em>Each pass</em>. A dashed frame named after the loop shows what is inside it.</p></li>
+          <li><h3>Drag from After all passes</h3><p>Release on empty canvas to open the list of blocks that fit.</p></li>
+          <li><h3>Pick the next step</h3><p>It runs once, after the last pass.</p></li>
+        </ol>
+      </div>
+      <ul class="pfg-facts">
+        <li><strong>A pass that cannot finish.</strong> If a block such as <em>Did not converge</em> is not wired on, that pass ends and the loop goes to the next one.</li>
+        <li><strong>Contingencies.</strong> <em>For each contingency</em> works the same way: the base case first, then each outage on its <em>Each pass</em>.</li>
+      </ul>
+    </section>
+
+    <!-- Settings -->
+    <section class="pfg-sec card" id="settings" aria-labelledby="settings-h">
+      <h2 id="settings-h">Settings and problems</h2>
+      <p class="pfg-sub">Select a block to change its settings. A setting that must be filled in is marked <strong>Required</strong>. The block shows <strong>To do</strong> until it is, and the Download button counts what is left.</p>
+      <div class="pfg-demo" data-demo="settings" data-w="988" data-h="780">
+        <figure class="pfg-screen"><span class="pfg-cap">Settings and Problems</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>See what is missing</h3><p>The <strong>Problems</strong> tab lists to-dos, errors and warnings. Click one to jump to its block.</p></li>
+          <li><h3>Select a block</h3><p>Its settings open in the <strong>Settings</strong> tab. Select nothing to see the whole workflow's settings.</p></li>
+          <li><h3>Fill in what is required</h3><p>On Start, type the <strong>Project</strong> exactly as the Data Manager shows it. Letter case counts.</p></li>
+          <li><h3>Choose from what fits</h3><p>Pick the kind of element, then its name. The attribute box suggests results and parameters for that kind, with their units.</p></li>
+          <li><h3>Nothing left to do</h3><p>The Download button loses its count. Until then, the script stops before it connects to PowerFactory.</p></li>
+        </ol>
+      </div>
+      <ul class="pfg-facts">
+        <li><strong>Only what can be chosen.</strong> A setting appears only where it can change the script, and a list leaves out options that cannot apply.</li>
+        <li><strong>Pin.</strong> The pin beside a setting puts it at the top of the Python file, in its SETTINGS section, to change later without the Builder.</li>
+      </ul>
+    </section>
+
+    <!-- Rename -->
+    <section class="pfg-sec card" id="rename" aria-labelledby="rename-h">
+      <h2 id="rename-h">Rename a block</h2>
+      <p class="pfg-sub">Give a block the name you would use for it. The name shows on the canvas, in the Problems list and in the comments of the script.</p>
+      <div class="pfg-demo" data-demo="rename" data-w="1030" data-h="450">
+        <figure class="pfg-screen"><span class="pfg-cap">Double-click a block's name</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Double-click the name</h3><p>The title on the block turns into a text box.</p></li>
+          <li><h3>Type, then press Enter</h3><p>Escape keeps the old name.</p></li>
+          <li><h3>Or use Settings</h3><p>The same name is in <strong>Name on the canvas</strong>, the first setting of every block.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Quick start -->
+    <section class="pfg-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick start</h2>
+      <p class="pfg-sub">Seven worked examples to start from: headroom study, load flow on every study case, N-1 screening, short circuit at every busbar, the largest dispatch with a safe nadir, fault ride-through and critical clearing time. An empty canvas offers the same list on its <strong>Start a workflow</strong> card, next to <strong>Start blank</strong>.</p>
+      <div class="pfg-demo" data-demo="quickstart" data-w="1280" data-h="720">
+        <figure class="pfg-screen"><span class="pfg-cap">N-1 screening</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Open Quick start</h3><p>It is in the toolbar. Hover an example to read what it does.</p></li>
+          <li><h3>Pick an example</h3><p>It replaces the canvas as one undo step, and a message offers <strong>Undo</strong>. The Builder asks first if you have unsaved work.</p></li>
+        </ol>
+      </div>
+      <ul class="pfg-facts">
+        <li><strong>Then make it yours.</strong> Type your project on Start, and change the element names, limits and table names to fit your network.</li>
+      </ul>
+    </section>
+
+    <!-- Results -->
+    <section class="pfg-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">Results tables and graphs</h2>
+      <p class="pfg-sub">Results blocks collect values as the workflow runs. Tables are saved when the run ends, graphs are drawn to image files. Both land in the run folder.</p>
+      <div class="pfg-demo" data-demo="results" data-w="1280" data-h="720">
+        <figure class="pfg-screen"><span class="pfg-cap">Short circuit at every busbar</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Add row to results table</h3><p>One row per pass: the loop values, then one column per wired value. Rows with the same table name go into one table and one file.</p></li>
+          <li><h3>Draw a graph</h3><p>Time series, 2D, 3D, heat map, from a results table, or a convergence curve. The block draws a preview from your names and mock values.</p></li>
+        </ol>
+      </div>
+      <ul class="pfg-facts">
+        <li><strong>Skipped passes stay visible.</strong> A pass that ends early still gets a row, with the reason in a Status column.</li>
+        <li><strong>File format.</strong> On Start, <em>Save the results tables as</em> offers CSV (opens in Excel), Excel (.xlsx) or both. <em>Save results table</em> saves one partway, under another name.</li>
+        <li><strong>One look for every graph.</strong> With nothing selected, <em>Graph style</em> in Settings opens templates, from the Adjie Brotools style to IEEE, Elsevier and slides.</li>
+      </ul>
+    </section>
+
+    <!-- Files -->
+    <section class="pfg-sec card" id="files" aria-labelledby="files-h">
+      <h2 id="files-h">Save, open and download</h2>
+      <p class="pfg-sub">The Builder keeps your workflow in this browser between visits. Save and Download make files you own.</p>
+      <div class="pfg-demo" data-demo="download" data-w="1280" data-h="720">
+        <figure class="pfg-screen"><span class="pfg-cap">Save, Python tab, Download</span></figure>
+        <ol class="pfg-steps">
+          <li><h3>Save</h3><p>Writes the workflow as a <code>.json</code> file. <strong>Open</strong> reads it back. It also opens a <code>.py</code> made here, or a file dropped on the canvas.</p></li>
+          <li><h3>Read the Python</h3><p>The <strong>Python</strong> tab is written as you build. Copy it, or save only the script with <strong>.py</strong>.</p></li>
+          <li><h3>Download</h3><p>Saves the study package as one <code>.zip</code>, ready to unpack and run.</p></li>
+        </ol>
+      </div>
+      <div class="pfg-pack">
+        <h3>What is in the zip</h3>
+        <ul>
+          <li><code>name.py</code> the script</li>
+          <li><code>name.json</code> the workflow, for the Open button</li>
+          <li>any data file you attached, beside the script</li>
+          <li><code>fonts/</code> DM Sans, when graphs use it</li>
+          <li><code>README.txt</code> how to run it</li>
+        </ul>
+      </div>
+      <p class="pfg-sub">The bin in the toolbar clears the canvas. It asks first, and <strong>Undo</strong> brings the work back.</p>
+    </section>
+
+    <!-- Run -->
+    <section class="pfg-sec card" id="run" aria-labelledby="run-h">
+      <h2 id="run-h">Run the script</h2>
+      <ol class="pfg-run">
+        <li><h3>Unpack the zip</h3><p>Keep the files together: the script looks for its data files next to itself.</p></li>
+        <li><h3>Choose how to run it</h3><p>Either close PowerFactory and run the script with Python (it starts PowerFactory in the background), or run it from inside PowerFactory. The default, <em>Automatic</em> in Start's <em>How to run</em> setting, handles both.</p></li>
+        <li><h3>Run it with Python 3.12</h3><p>Use the one that comes with PowerFactory 2024, or any Python 3.12 that can import the <code>powerfactory</code> module.</p></li>
+        <li><h3>Collect the results</h3><p>Each run writes its tables, graphs and <code>run.log</code> to a new folder beside the script, or inside the Output folder you set on Start.</p></li>
+      </ol>
+      <pre class="pfg-code" tabindex="0"><code>"C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12\python.exe" "name.py"</code></pre>
+      <p class="pfg-sub">To change a value later, edit the SETTINGS section at the top of the <code>.py</code>. To change the workflow, open the <code>.json</code>, or the <code>.py</code> itself, in the Builder.</p>
+    </section>
+
+    <section class="pfg-sec card pfg-keys" aria-labelledby="keys-h">
+      <h2 id="keys-h">Shortcuts</h2>
+      <ul class="pfg-kbd">
+        <li><kbd>Ctrl</kbd> <kbd>Z</kbd> undo</li>
+        <li><kbd>Ctrl</kbd> <kbd>Y</kbd> redo</li>
+        <li><kbd>Ctrl</kbd> <kbd>C</kbd> <kbd>V</kbd> copy and paste blocks</li>
+        <li><kbd>Ctrl</kbd> <kbd>D</kbd> duplicate</li>
+        <li><kbd>Ctrl</kbd> <kbd>A</kbd> select every block</li>
+        <li><kbd>Delete</kbd> remove the selection</li>
+        <li><kbd>Esc</kbd> clear the selection</li>
+      </ul>
+    </section>
+
+    <section class="pfg-end">
+      <p>Ready to build one?</p>
+      <a class="btn-primary pfg-open" href="../builder/">Open Builder</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="pfg-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="pfg-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (RMS, EMT...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<script src="script.js"></script>
+</body>
+</html>

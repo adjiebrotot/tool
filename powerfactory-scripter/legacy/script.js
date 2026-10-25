@@ -1428,7 +1428,7 @@ function buildFnLibPicker(id) {
             ${groups}
           </select>
           <button class="btn btn-ghost btn-xs" id="${id}-fn-lib-btn" onclick="insertFnLibSample('${id}')" disabled>Insert</button>
-          <a class="fn-lib-help" href="../samples/#custom-fn-library" target="_blank" rel="noopener">Doc ↗</a>
+          <a class="fn-lib-help" href="samples/#custom-fn-library" target="_blank" rel="noopener">Doc ↗</a>
         </div>
         <div class="fn-lib-desc cond-hidden" id="${id}-fn-lib-desc"></div>`;
 }
@@ -2243,7 +2243,7 @@ function toggleInfoExtra(extraId, btn) {
    QUICK START — one-click worked examples loaded from samples/
 ================================================================ */
 async function applyQuickStart(key) {
-  const res = await fetch(`${PF_ROOT}samples/json-samples/${key}.json`);
+  const res = await fetch(`samples/json-samples/${key}.json`);
   if (!res.ok) throw new Error(`Could not load ${key}.json`);
   const cfg = await res.json();
   loadConfig(cfg);
