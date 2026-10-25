@@ -12,10 +12,8 @@
 .pfl a:not(.btn-theme):not(.btn-primary) { color: var(--accent-strong); }
 
 /* ---- Top bar ------------------------------------------------------------------------------ */
-.pfl-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
-.pfl-top-r { display: flex; align-items: center; gap: 14px; }
-.pfl .pfl-top-link { font-size: var(--fs-sm); font-weight: 600; color: var(--muted); text-decoration: none; }
-.pfl .pfl-top-link:hover { color: var(--text); text-decoration: underline; }
+.pfl-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.pfl-top-r { display: flex; align-items: center; gap: 8px; }
 
 /* ---- Hero: words left, animation right; stacked on a phone --------------------------------- */
 .pfl-hero {
@@ -71,7 +69,6 @@ footer { padding: 6px 4px 24px; }
 }
 @media (max-width: 600px) {
   .pfl.container { padding: 16px; }
-  .pfl-top-link { display: none; }
   .pfl .pfl-cta { width: 100%; min-width: 0; }
   .pfl-grid { grid-template-columns: minmax(0, 1fr); }
   .pfl-sec { padding: 18px; }
