@@ -211,17 +211,17 @@ sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program F
 
 PROJECT = <span class="py-s">&quot;39 Bus New England System&quot;</span>
 STUDY_CASE = <span class="py-s">&quot;1. Power Flow&quot;</span>
-LOADING_LIMIT = <span class="py-n">100.0</span>                               <span class="py-c"># %</span>
+LOADING_LIMIT = <span class="py-n">100.0</span>                               <span class="py-c"># %</span>
 
-app = powerfactory.<span class="py-f">GetApplicationExt</span>()              <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()              <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
 app.<span class="py-f">ActivateProject</span>(PROJECT)
 app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
 
 ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
 branches = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>) + app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTr2&quot;</span>)
 buses = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)
-<span class="py-c"># A generator's own transformer is left out: losing it loses the generator, a generation</span>
-<span class="py-c"># contingency that needs governor response, not a single slack taking up all of it.</span>
+<span class="py-c"># A generator's own transformer is left out: losing it loses the generator, a generation</span>
+<span class="py-c"># contingency that needs governor response, not a single slack taking up all of it.</span>
 gen_terminals = {g.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;bus1&quot;</span>).<span class="py-f">GetParent</span>().<span class="py-f">GetFullName</span>() <span class="py-k">for</span> g <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmSym&quot;</span>)}
 outages = [o <span class="py-k">for</span> o <span class="py-k">in</span> branches <span class="py-k">if</span> o.outserv == <span class="py-n">0</span> <span class="py-k">and</span> <span class="py-k">not</span> (
     o.<span class="py-f">GetClassName</span>() == <span class="py-s">&quot;ElmTr2&quot;</span> <span class="py-k">and</span> o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;buslv&quot;</span>).<span class="py-f">GetParent</span>().<span class="py-f">GetFullName</span>() <span class="py-k">in</span> gen_terminals)]
@@ -230,7 +230,7 @@ outages = [o <span class="py-k">for</span> o <span class="py-k">in</span> branch
 <span class="py-k">def</span> <span class="py-f">worst</span>():
     <span class="py-s">&quot;&quot;&quot;The highest branch loading and the lowest busbar voltage of the last load flow.&quot;&quot;&quot;</span>
     loading, branch = <span class="py-f">max</span>((o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>), o.loc_name) <span class="py-k">for</span> o <span class="py-k">in</span> branches <span class="py-k">if</span> o.outserv == <span class="py-n">0</span>)
-    <span class="py-c"># A busbar cut off by the outage reads exactly 0 p.u.: it is islanded, not low.</span>
+    <span class="py-c"># A busbar cut off by the outage reads exactly 0 p.u.: it is islanded, not low.</span>
     u, bus = <span class="py-f">min</span>((b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>), b.loc_name) <span class="py-k">for</span> b <span class="py-k">in</span> buses <span class="py-k">if</span> b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>) &gt; <span class="py-n">0</span>)
     <span class="py-k">return</span> {<span class="py-s">&quot;Highest loading (%)&quot;</span>: loading, <span class="py-s">&quot;Most loaded&quot;</span>: branch, <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>: u, <span class="py-s">&quot;Lowest at&quot;</span>: bus}
 
@@ -241,14 +241,14 @@ rows = []
 rows.<span class="py-f">append</span>({<span class="py-s">&quot;Outage&quot;</span>: <span class="py-s">&quot;Base case&quot;</span>, <span class="py-s">&quot;Converged&quot;</span>: <span class="py-s">&quot;yes&quot;</span>, **<span class="py-f">worst</span>()})
 
 <span class="py-k">for</span> out <span class="py-k">in</span> outages:
-    out.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)                  <span class="py-c"># take it out of service</span>
+    out.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)                  <span class="py-c"># take it out of service</span>
     <span class="py-k">try</span>:
         <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() == <span class="py-n">0</span>:
             rows.<span class="py-f">append</span>({<span class="py-s">&quot;Outage&quot;</span>: out.loc_name, <span class="py-s">&quot;Converged&quot;</span>: <span class="py-s">&quot;yes&quot;</span>, **<span class="py-f">worst</span>()})
         <span class="py-k">else</span>:
             rows.<span class="py-f">append</span>({<span class="py-s">&quot;Outage&quot;</span>: out.loc_name, <span class="py-s">&quot;Converged&quot;</span>: <span class="py-s">&quot;no&quot;</span>})
     <span class="py-k">finally</span>:
-        out.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">0</span>)              <span class="py-c"># always put it back</span>
+        out.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">0</span>)              <span class="py-c"># always put it back</span>
 
 overloads = [r <span class="py-k">for</span> r <span class="py-k">in</span> rows <span class="py-k">if</span> r.<span class="py-f">get</span>(<span class="py-s">&quot;Highest loading (%)&quot;</span>, <span class="py-n">0</span>) &gt; LOADING_LIMIT]
 <span class="py-f">print</span>(<span class="py-s">f&quot;{len(rows) - 1} outages, {len(overloads)} with a branch above {LOADING_LIMIT:.0f} %&quot;</span>)

@@ -24,7 +24,10 @@ export function results(name) {
   if (r.audit !== 'OK') throw new Error(`results/${name}.json: the project was not left as found`);
   return r;
 }
-export const script = (name) => fs.readFileSync(path.join(HERE, 'scripts', name + '.py'), 'utf8');
+// Sources are read with LF line ends whatever the checkout has (a Windows checkout gives CRLF), so
+// the pages and the .py downloads come out the same on every machine, as the site serves them.
+const lf = (s) => s.replace(/\r\n/g, '\n');
+export const script = (name) => lf(fs.readFileSync(path.join(HERE, 'scripts', name + '.py'), 'utf8'));
 
 // The Builder's script for a Quick Start, filled in for the example project the guide uses.
 let gen = null;
@@ -36,7 +39,7 @@ async function generator() {
   const { RUNTIME_FILES } = await imp('js/core/runtime-loader.js');
   const { built } = await imp('_audit/templates/build.mjs');
   const runtime = {};
-  for (const f of RUNTIME_FILES) runtime[f] = fs.readFileSync(path.join(BUILDER, 'runtime', f), 'utf8');
+  for (const f of RUNTIME_FILES) runtime[f] = lf(fs.readFileSync(path.join(BUILDER, 'runtime', f), 'utf8'));
   gen = { generate, runtime, templates: Object.fromEntries(built().map(t => [t.id, t])) };
   return gen;
 }

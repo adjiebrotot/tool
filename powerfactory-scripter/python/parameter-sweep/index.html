@@ -277,23 +277,23 @@ sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program F
 PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
 STUDY_CASE = <span class="py-s">&quot;01- Load Flow&quot;</span>
 BUS = <span class="py-s">&quot;Bus 5&quot;</span>
-VOLTAGES = [<span class="py-f">round</span>(<span class="py-n">1.10</span> - <span class="py-n">0.02</span> * k, <span class="py-n">2</span>) <span class="py-k">for</span> k <span class="py-k">in</span> <span class="py-f">range</span>(<span class="py-n">36</span>)]      <span class="py-c"># 1.10 p.u. down to 0.40 p.u.</span>
+VOLTAGES = [<span class="py-f">round</span>(<span class="py-n">1.10</span> - <span class="py-n">0.02</span> * k, <span class="py-n">2</span>) <span class="py-k">for</span> k <span class="py-k">in</span> <span class="py-f">range</span>(<span class="py-n">36</span>)]      <span class="py-c"># 1.10 p.u. down to 0.40 p.u.</span>
 
-app = powerfactory.<span class="py-f">GetApplicationExt</span>()          <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()          <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
 app.<span class="py-f">ActivateProject</span>(PROJECT)
 app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
 
 ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
 bus = app.<span class="py-f">GetCalcRelevantObjects</span>(BUS + <span class="py-s">&quot;.ElmTerm&quot;</span>)[<span class="py-n">0</span>]
-grid = bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;cpGrid&quot;</span>)                <span class="py-c"># the grid (ElmNet) the busbar belongs to</span>
+grid = bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;cpGrid&quot;</span>)                <span class="py-c"># the grid (ElmNet) the busbar belongs to</span>
 
-<span class="py-c"># The fictitious condenser: no active power, voltage control, rated well above what it will need.</span>
+<span class="py-c"># The fictitious condenser: no active power, voltage control, rated well above what it will need.</span>
 cubicle = bus.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;StaCubic&quot;</span>, <span class="py-s">&quot;QV cubicle&quot;</span>)
 gen = grid.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;ElmGenstat&quot;</span>, <span class="py-s">&quot;QV condenser&quot;</span>)
 gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;bus1&quot;</span>, cubicle)
-gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;sgn&quot;</span>, <span class="py-n">2000.0</span>)                  <span class="py-c"># MVA</span>
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;sgn&quot;</span>, <span class="py-n">2000.0</span>)                  <span class="py-c"># MVA</span>
 gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>, <span class="py-n">0.0</span>)
-gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;av_mode&quot;</span>, <span class="py-s">&quot;constv&quot;</span>)            <span class="py-c"># hold the voltage at usetp</span>
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;av_mode&quot;</span>, <span class="py-s">&quot;constv&quot;</span>)            <span class="py-c"># hold the voltage at usetp</span>
 
 curve = []
 <span class="py-k">try</span>:
@@ -303,7 +303,7 @@ curve = []
             <span class="py-k">break</span>
         curve.<span class="py-f">append</span>({<span class="py-s">&quot;Voltage (p.u.)&quot;</span>: bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>), <span class="py-s">&quot;Q (Mvar)&quot;</span>: gen.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:Q:bus1&quot;</span>)})
 <span class="py-k">finally</span>:
-    app.<span class="py-f">ResetCalculation</span>()                       <span class="py-c"># results first, then the objects can go</span>
+    app.<span class="py-f">ResetCalculation</span>()                       <span class="py-c"># results first, then the objects can go</span>
     gen.<span class="py-f">Delete</span>()
     cubicle.<span class="py-f">Delete</span>()
 
