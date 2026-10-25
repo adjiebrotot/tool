@@ -6,7 +6,7 @@
    (the gold gauge beside a field). */
 window.__TOUR = {
   seenKey: 'dca-tour-v4-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
   steps: [
     {
       target: null,

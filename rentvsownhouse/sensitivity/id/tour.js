@@ -3,8 +3,7 @@
    v3 meringkas tiap langkah menjadi satu kalimat pembuka dan daftar pendek. */
 window.__TOUR = {
   seenKey: 'rvos-id-tour-v3-seen',
-  launchLabel: '🧭 Ikuti tur',
-  launchShort: '🧭 Tur',
+  launchLabel: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [

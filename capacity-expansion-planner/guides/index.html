@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the Capacity Expansion Planner | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the Capacity Expansion Planner: load a worked plan, set the demand, the plants in service and the ones to build, a carbon price and the discount rate, then read what to build and when.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/capacity-expansion-planner/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the Capacity Expansion Planner">
+<meta property="og:description" content="Recorded from the real tool: set a growing demand, what is in service and what can be built, a carbon price and a net-zero year, then read what to build, how big and in which year.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/capacity-expansion-planner/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use the Capacity Expansion Planner">
+<meta name="twitter:description" content="Recorded from the real tool: set a growing demand, what is in service and what can be built, a carbon price and a net-zero year, then read what to build, how big and in which year.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the Capacity Expansion Planner",
+  "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/guides/",
+  "description": "Set a growing demand, the plants in service and the technologies that can be built, then find the least-cost plan of what to build and when, solved hour by hour over typical days in your browser.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Capacity Expansion Planner",
+    "url": "https://tool.adjiebrotots.com/capacity-expansion-planner/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Describe the demand", "text": "Set the peak demand now and how fast it grows, the climate and the load profile, and the years to plan." },
+    { "@type": "HowToStep", "name": "Set the supply and the rules", "text": "List what is in service and when it retires, what can be built and at what cost, then any carbon price, net-zero year and the discount rate." },
+    { "@type": "HowToStep", "name": "Run and read", "text": "Press Run plan. The answer says what to build first and when; the charts show capacity, energy and cost year by year, and each decision year's typical days." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Capacity Expansion Planner", "item": "https://tool.adjiebrotots.com/capacity-expansion-planner/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the Capacity Expansion Planner", "item": "https://tool.adjiebrotots.com/capacity-expansion-planner/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light">
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Capacity Expansion Planner</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 20.5h18"/><path stroke="var(--accent)" d="M5.5 20.5v-4M10 20.5v-7M14.5 20.5v-10"/><path stroke="var(--accent2)" d="M19.5 3.5v6M16.5 6.5h6"/></svg>How to use the Capacity Expansion Planner</h1>
+      <p class="gd-lead">Describe a growing demand and what could meet it, then read which plants and batteries to build, how big, and in which year. Every clip on this page is the real tool, recorded while it was used.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#screen">Start with the screen</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Describe the demand</h3>
+          <p>The <strong>peak</strong> now and how fast it grows, the climate and the shape of a day, and the years to plan.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Set the supply and the rules</h3>
+          <p>What is in service and when it <strong>retires</strong>, what can be built at what cost, then a carbon price, a net-zero year and the discount rate.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Run and read</h3>
+          <p>Press <strong>Run plan</strong>. The answer says what to build first and when; the charts follow capacity, energy and cost year by year.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> The plan is built by <a href="https://github.com/adjiebrotot/PSA.js" target="_blank" rel="noopener">PSA.js</a>, a JavaScript port of PyPSA, and solved by <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a>, both in your browser.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#demand">Demand</a>
+        <a href="#supply">Supply</a>
+        <a href="#policy">Policy and run</a>
+        <a href="#assume">Assumptions</a>
+        <a href="#charts">The answer and the charts</a>
+        <a href="#results">Results by year</a>
+        <a href="#share">Save and share</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the answer beside them, the charts and tables under it. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1400" role="img" aria-label="The Capacity Expansion Planner with the Growing grid example: the inputs on the left, the answer and four figures on the right, and the capacity and energy charts under them.">
+            <noscript><img src="media/layout-light.webp" alt="The Capacity Expansion Planner screen" width="1280" height="1400"></noscript>
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:13.17%;--w:28.13%;--h:85.64%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:31.41%;--y:13.17%;--w:65.94%;--h:20.3%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:31.41%;--y:34.76%;--w:65.94%;--h:64.96%"><b>3</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key" style="--n:3">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then four tabs: <strong>Demand</strong>, <strong>Supply</strong>, <strong>Policy</strong> and <strong>Assumptions</strong>. <strong>Run plan</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>The answer</h3>
+            <p>What to build first and when, in a sentence, then four figures: new capacity, present cost, <strong>LCOE</strong> and the clean share of energy.</p>
+          </li>
+          <li data-b="3">
+            <h3>The charts</h3>
+            <p><strong>Capacity and when to build</strong>, <strong>Energy by source</strong> with a decision year's typical days under it, and <strong>Cost by year</strong>. Then the tables and <strong>What this assumes</strong>.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Tour</strong> replays a one minute walk through the tool, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Four worked plans: a <strong>Growing grid</strong> whose coal closes, the same grid to <strong>Net zero</strong>, a <strong>Coal exit</strong> on a winter-peaking grid, and a tropical <strong>Island</strong> on diesel. One click replaces the whole plan and runs it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a clip and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick a plan</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the answer has the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick an example</h3><p>Hover a button to read what it holds. A click loads it and solves it.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Then make it yours.</strong> Change anything over the top of an example and run it again.</li>
+      </ul>
+    </section>
+
+    <!-- Demand -->
+    <section class="gd-sec card" id="demand" aria-labelledby="demand-h">
+      <h2 id="demand-h">Demand</h2>
+      <p class="gd-sub">How much power is needed now, how it grows, and how it moves through a day and a year.</p>
+      <div class="gd-demo" data-demo="demand" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">A 1,200 MW winter-peaking grid growing 4% a year</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Peak and growth</h3><p>The highest hour of demand in the first year, and how much it grows each year, compounded.</p></li>
+          <li><h3>Climate and profile</h3><p>The <strong>Climate</strong> sets the seasons, in either hemisphere. The <strong>Profile</strong> shapes a day; drag its bars to draw your own.</p></li>
+          <li><h3>Planning years</h3><p>The first and last year, and how often the plan may build. Each decision year stands for the years up to the next.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The first year is also the price year.</strong> Every cost you enter and every result is at its prices.</li>
+        <li><strong>Your own hours.</strong> <strong>Custom</strong> takes the profile from a CSV or Excel file: typical days, by season if you like, or a full year.</li>
+        <li><strong>Daily variability.</strong> Lets a weekday differ from the weekend, or each day from the next.</li>
+      </ul>
+    </section>
+
+    <!-- Supply -->
+    <section class="gd-sec card" id="supply" aria-labelledby="supply-h">
+      <h2 id="supply-h">Supply</h2>
+      <p class="gd-sub">One card per technology: what is in service and when it retires, and whether more can be built and at what cost.</p>
+      <div class="gd-demo" data-demo="supply" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Solar PV opened, then Detailed, then nuclear added</span></figure>
+        <ol class="gd-steps">
+          <li><h3>In service and to build</h3><p>Each card's line sums it up: <em>700 MW to 2036</em>, <em>new at $1,000/kW</em>.</p></li>
+          <li><h3>Open a technology</h3><p>Its existing capacity and retirement year, whether it can build more, its capital cost, and how it runs: a profile and capacity factor for solar and wind, a running cost and emissions for a firm plant.</p></li>
+          <li><h3>Detailed</h3><p>Adds fixed O&amp;M, lifetime, cost change a year, earliest year, a cap on what may be in service, unit sizes and availability.</p></li>
+          <li><h3>Add a technology</h3><p><strong>+ Add technology</strong> offers solar, wind, gas, coal, nuclear, geothermal, diesel, batteries and pumped hydro, with typical costs to start from.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Duplicate or remove.</strong> The icons on each card's head.</li>
+        <li><strong>Unit sizes</strong> make the plan build in whole units, a mixed-integer problem that takes longer to solve.</li>
+      </ul>
+    </section>
+
+    <!-- Policy -->
+    <section class="gd-sec card" id="policy" aria-labelledby="policy-h">
+      <h2 id="policy-h">Policy and run</h2>
+      <p class="gd-sub">Reliability and emissions, then <strong>Run plan</strong> to see what they change.</p>
+      <div class="gd-demo" data-demo="policy" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">A $40/t carbon price rising 5% a year, no CO2 from 2045</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Reliability</h3><p>Whether demand may go unserved, at the <strong>value of lost load</strong>, when that is cheaper than building for it.</p></li>
+          <li><h3>Carbon price</h3><p>Paid on every tonne a plant emits, in the first year, and how fast it grows.</p></li>
+          <li><h3>Net-zero year</h3><p>From this decision year on, no plant may emit CO2.</p></li>
+          <li><h3>Run the plan</h3><p><strong>Run plan</strong>, or <kbd>Ctrl</kbd> <kbd>Enter</kbd>. Until you do, the last result stays, faded.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="assume" aria-labelledby="assume-h">
+      <h2 id="assume-h">Assumptions</h2>
+      <p class="gd-sub">The guesses every plan rests on, and how each year is sampled.</p>
+      <div class="gd-demo" data-demo="assume" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Nominal rate, a stress day, the solver</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Discount rate</h3><p><strong>Real</strong>, above inflation, or <strong>Nominal</strong> with inflation, from which the real rate is worked out.</p></li>
+          <li><h3>Typical days</h3><p>Each year runs over typical days, one or more a season, set by the profiles. A <strong>still, overcast peak day</strong> makes the plan hold firm capacity for the worst case.</p></li>
+          <li><h3>Solver</h3><p>A time limit for HiGHS, and with unit sizes an optimality gap.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="gd-sec card" id="charts" aria-labelledby="charts-h">
+      <h2 id="charts-h">The answer and the charts</h2>
+      <p class="gd-sub">The answer comes first, in words; the charts show how it gets there, year by year.</p>
+      <div class="gd-demo" data-demo="charts" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Growing grid: capacity, a typical day, cost</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The answer</h3><p>What to build first and when, the year that builds the most, what retires, and the present cost and LCOE at first-year prices.</p></li>
+          <li><h3>Capacity and when to build</h3><p>What is in service each year, hatched for the plants there now, with each decision year's new build on top. Decision years are in <strong>bold</strong>.</p></li>
+          <li><h3>Click a year</h3><p>Opens <strong>Typical days</strong> for that year: each hour's dispatch, the battery's charging and any curtailment.</p></li>
+          <li><h3>Energy and cost</h3><p>Where each year's energy comes from, and what each year costs: capital, fixed and running, with the levelised cost on top.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Hover</strong> any chart to read a year or an hour; ⟳ resets its zoom.</li>
+      </ul>
+    </section>
+
+    <!-- Results -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">Results by year</h2>
+      <p class="gd-sub">The figures behind the charts, a row per year.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Five tables</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the tables</h3><p><strong>Results by year</strong> opens from its chevron.</p></li>
+          <li><h3>Pick a table</h3><p><strong>Capacity</strong>, <strong>New build</strong>, <strong>Energy</strong>, <strong>Costs</strong> or <strong>Years</strong>. <strong>⬇ CSV</strong> saves the one shown.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>What this assumes.</strong> The last card lists what the plan rests on: its demand, its rates and its prices.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your plan in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open and Share</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write the whole plan to a file, and read one back.</p></li>
+          <li><h3>Share a chart</h3><p>Each chart's <strong>Share</strong>: SVG or PNG, a copy to the clipboard, a link that opens your plan, or an embed for a web page.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card gd-keys" aria-labelledby="keys-h">
+      <h2 id="keys-h">Shortcuts</h2>
+      <ul class="gd-kbd">
+        <li><kbd>Ctrl</kbd> <kbd>Enter</kbd> run the plan</li>
+      </ul>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to plan one?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (LCOE, VoLL...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<script src="../../guide-shared.js"></script>
+</body>
+</html>

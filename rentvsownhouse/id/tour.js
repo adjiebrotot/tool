@@ -4,8 +4,7 @@
    v4 meringkas tiap langkah menjadi satu kalimat pembuka dan daftar pendek. */
 window.__TOUR = {
   seenKey: 'rvo-id-tour-v4-seen',
-  launchLabel: '🧭 Ikuti tur',
-  launchShort: '🧭 Tur',
+  launchLabel: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [

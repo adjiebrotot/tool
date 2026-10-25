@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the Load Flow Simulator | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the Load Flow Simulator: load a worked network, draw buses, lines and devices, set an AC or DC load flow, read the diagram and the results, then save, export or share it.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/loadflow-simulator/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the Load Flow Simulator">
+<meta property="og:description" content="Recorded from the real tool: draw a single-line diagram, run an AC or DC load flow, read the voltages and loadings, then export or share the animated result.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/loadflow-simulator/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use the Load Flow Simulator">
+<meta name="twitter:description" content="Recorded from the real tool: draw a single-line diagram, run an AC or DC load flow, read the voltages and loadings, then export or share the animated result.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the Load Flow Simulator",
+  "url": "https://tool.adjiebrotots.com/loadflow-simulator/guides/",
+  "description": "Draw a single-line diagram, run an AC Newton-Raphson or DC load flow in your browser, and read the bus voltages, branch loadings and losses.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Load Flow Simulator",
+    "url": "https://tool.adjiebrotots.com/loadflow-simulator/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Draw or load a network", "text": "Load a worked network from Quick Start, or drag buses, lines, transformers, generators and loads onto the single-line diagram." },
+    { "@type": "HowToStep", "name": "Set it up", "text": "Select an element to set its ratings and set points, and choose the load flow method and the limits on the Load flow tab." },
+    { "@type": "HowToStep", "name": "Run and read", "text": "Press Run load flow. The diagram shows the voltages, the flows and the loadings; the figures and tables below give the detail." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Load Flow Simulator", "item": "https://tool.adjiebrotots.com/loadflow-simulator/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the Load Flow Simulator", "item": "https://tool.adjiebrotots.com/loadflow-simulator/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light">
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Load Flow Simulator</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 5.5h18"/><path stroke="var(--accent)" d="M8 5.5v4.5"/><circle stroke="var(--accent)" cx="8" cy="14.5" r="4.5"/><path stroke="var(--accent)" stroke-width="1.6" d="M5.6 14.5q1.2-2 2.4 0t2.4 0"/><path stroke="var(--accent2)" d="M17 9v11"/><path stroke="var(--accent2)" d="m14 17 3 3 3-3"/></svg>How to use the Load Flow Simulator</h1>
+      <p class="gd-lead">Draw a single-line diagram, run a load flow, read where the power goes. Every clip on this page is the real tool, recorded while it was used.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#screen">Start with the screen</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Draw or load a network</h3>
+          <p>Start from a worked network in <strong>Quick Start</strong>, or drag buses, lines, transformers, generators and loads onto the diagram.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Set it up</h3>
+          <p>Select an element for its ratings and set points. The <strong>Load flow</strong> tab picks AC Newton-Raphson or DC, and the limits a result is read against.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Run and read</h3>
+          <p>Press <strong>Run load flow</strong>. The diagram shows voltages, flows and loadings; the figures and tables under it give the detail.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> The load flow runs in your browser, on <a href="https://github.com/adjiebrotot/PSA.js" target="_blank" rel="noopener">PSA.js</a>, a JavaScript port of PyPSA.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#draw">Draw a network</a>
+        <a href="#edit">Edit an element</a>
+        <a href="#settings">Load flow and labels</a>
+        <a href="#read">Read the diagram</a>
+        <a href="#results">Results</a>
+        <a href="#share">Save and share</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the diagram beside them, the results under it. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1400" role="img" aria-label="The Load Flow Simulator with the WSCC 9-bus network: the inputs on the left, the parts and the single-line diagram on the right, and the results under the diagram.">
+            <noscript><img src="media/layout-light.webp" alt="The Load Flow Simulator screen" width="1280" height="1400"></noscript>
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:11.46%;--w:26.56%;--h:58.54%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:31.48%;--y:18.6%;--w:5.78%;--h:54.5%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:38.05%;--y:18.6%;--w:57.66%;--h:54.5%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:29.84%;--y:78.03%;--w:67.5%;--h:18.25%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then three tabs: <strong>Element</strong>, <strong>Load flow</strong> and <strong>Labels</strong>. <strong>Run load flow</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>Parts</h3>
+            <p>Bus, node, line, transformer, generator, solar, wind, grid, load, shunt, storage and HVDC link. Under them: undo, redo and <strong>Clear</strong>.</p>
+          </li>
+          <li data-b="3">
+            <h3>Diagram</h3>
+            <p>Your network, with the result written on it. Above it: the flow animations, <strong>Colour by</strong> and <strong>Share</strong>. In it: full screen and zoom.</p>
+          </li>
+          <li data-b="4">
+            <h3>Results</h3>
+            <p>Four figures (convergence, losses, the voltage range, the highest loading), then <strong>Results by element</strong> and <strong>What this assumes</strong>.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Tour</strong> replays a one minute walk through the tool, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Four worked networks: the <strong>WSCC 9-bus</strong> system, a <strong>3-bus ring</strong>, a <strong>20/0.4 kV feeder</strong> with rooftop solar, and two areas joined by an <strong>HVDC link</strong>. One click replaces the diagram and solves it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a clip and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick a network</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the diagram has the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick a network</h3><p>Hover a button to read what it holds. A click loads it over the diagram and runs the load flow.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The WSCC 9-bus is a check.</strong> It reproduces the published voltages and generator outputs of Anderson and Fouad to the last digit shown.</li>
+        <li><strong>Then make it yours.</strong> Change anything over the top of an example; Undo brings the last step back.</li>
+      </ul>
+    </section>
+
+    <!-- Draw -->
+    <section class="gd-sec card" id="draw" aria-labelledby="draw-h">
+      <h2 id="draw-h">Draw a network</h2>
+      <p class="gd-sub">Buses first, then the devices on them and the branches between them. Every part takes sensible values for its voltage, so a network runs as soon as it is connected.</p>
+      <div class="gd-demo" data-demo="draw" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Two buses, a grid, a load and a line</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Drop a bus</h3><p>Drag <strong>Bus</strong> (a bar) or <strong>Node</strong> (a dot) onto the diagram. A new bus takes the voltage of the selected bus, or the one most buses have.</p></li>
+          <li><h3>Drop a device on a bus</h3><p>Drag a generator, solar, wind, <strong>Grid</strong>, load, shunt or storage onto a bus. It snaps to it.</p></li>
+          <li><h3>Connect two buses</h3><p>Pick <strong>Line</strong>, <strong>Transformer</strong> or <strong>HVDC link</strong>, then drag from one bus to the other. Esc stops.</p></li>
+          <li><h3>Run it</h3><p><strong>Run load flow</strong>, or <kbd>Ctrl</kbd> <kbd>Enter</kbd>. The values appear on the diagram.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Every island needs a slack.</strong> A <strong>Grid</strong>, or a generator set to Slack, holds the voltage and takes up the balance.</li>
+        <li><strong>Which end first.</strong> A transformer is drawn from its high-voltage bus; an HVDC link from its sending bus.</li>
+        <li><strong>Move and arrange.</strong> Drag anything to move it, empty space to pan, scroll to zoom. The arrow keys nudge a selection, <kbd>R</kbd> turns a bus upright.</li>
+        <li><strong>Mistakes are cheap.</strong> Undo and redo sit under the parts. <strong>Clear</strong> empties the diagram after asking, and Undo brings it back.</li>
+      </ul>
+    </section>
+
+    <!-- Edit -->
+    <section class="gd-sec card" id="edit" aria-labelledby="edit-h">
+      <h2 id="edit-h">Edit an element</h2>
+      <p class="gd-sub">Select an element on the diagram and the <strong>Element</strong> tab shows its values: a bus's voltage, a line's type and length, a generator's control and set points, a load's demand.</p>
+      <div class="gd-demo" data-demo="edit" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">3-bus ring: the town's load raised to 160 MW</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Select an element</h3><p>Click it on the diagram. Its name, kind and where it connects head the panel.</p></li>
+          <li><h3>Change a value</h3><p>Type it in. The last result stays, faded, and a note says the network changed.</p></li>
+          <li><h3>Run it again</h3><p>The new flows replace the faded ones.</p></li>
+          <li><h3>Nothing selected</h3><p>Esc, or a click on empty space, shows the network: its name, every element by kind, and any <strong>Checks</strong> to fix before it runs.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Standard types.</strong> Lines and transformers offer PyPSA's standard types, those matching the bus voltage first; <em>Custom</em> takes your own impedance and rating.</li>
+        <li><strong>Duplicate, delete, deselect.</strong> The three icons beside the name, or <kbd>Ctrl</kbd> <kbd>D</kbd>, <kbd>Del</kbd> and <kbd>Esc</kbd>.</li>
+        <li><strong>Its own labels.</strong> An element can show other values than the rest of its kind.</li>
+      </ul>
+    </section>
+
+    <!-- Settings -->
+    <section class="gd-sec card" id="settings" aria-labelledby="settings-h">
+      <h2 id="settings-h">Load flow and labels</h2>
+      <p class="gd-sub">The <strong>Load flow</strong> tab sets what is solved and what a result is read against. <strong>Labels</strong> sets what the diagram writes beside each kind of element.</p>
+      <div class="gd-demo" data-demo="settings" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The method, a tighter loading limit, the labels</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Load flow</h3><p><strong>AC, Newton-Raphson</strong> for voltages, angles, reactive power and losses, or <strong>DC, linear</strong> for active power only.</p></li>
+          <li><h3>Limits</h3><p>The lowest and highest voltage and the highest loading. They flag a bus or a branch in colour; they never change the result.</p></li>
+          <li><h3>Labels</h3><p>One row per kind of element, one tick per value it shows on the diagram.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Newton-Raphson.</strong> The tolerance, the initial guess (a DC load flow, so phase-shifting transformers converge, or a flat start), and a <strong>Distributed slack</strong> shared by dispatch or by rating.</li>
+      </ul>
+    </section>
+
+    <!-- Read -->
+    <section class="gd-sec card" id="read" aria-labelledby="read-h">
+      <h2 id="read-h">Read the diagram</h2>
+      <p class="gd-sub">After a run, every bus carries its voltage and angle and every branch its flow. Solid arrows are active power, open arrows reactive power, moving the way it flows.</p>
+      <div class="gd-demo" data-demo="read" data-w="1280" data-h="960">
+        <figure class="gd-screen"><span class="gd-cap">WSCC 9-bus, coloured by loading against a 60% limit</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Colour by</h3><p>Bus voltage, branch loading, both or nothing. Amber nears a limit, red is past it.</p></li>
+          <li><h3>Hover to read</h3><p>Hover or tap an element and the box under the diagram gives its values, both ends of a branch included.</p></li>
+          <li><h3>The flows</h3><p>Tick or untick the active and reactive power animations.</p></li>
+          <li><h3>Full screen</h3><p>⤢ fills the screen with the diagram; the same button brings it back. ⟳ fits the view again.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">Results</h2>
+      <p class="gd-sub">Under the diagram: the answer in four figures, then every element's values in tables, then what the result assumes.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Figures and tables</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Four figures</h3><p>Iterations to converge, losses and their share, the voltage range and where, and the most loaded branch.</p></li>
+          <li><h3>Open the tables</h3><p><strong>Results by element</strong> opens from its chevron.</p></li>
+          <li><h3>Pick a table</h3><p><strong>Buses</strong>, <strong>Branches</strong> or <strong>Devices</strong>. <strong>⬇ CSV</strong> saves the one shown.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>What this assumes.</strong> The last card lists what the result rests on for this network, such as the method and the slack.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your network in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open and Share</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write the whole network and its settings to a file, and read one back.</p></li>
+          <li><h3>Share</h3><p>The diagram as SVG, PNG or an animated GIF, a copy to the clipboard, a link that opens your network, or an embed for a web page.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>An embed is live.</strong> It shows the diagram with its flows moving, and a reader can pan, zoom and hover it.</li>
+        <li><strong>The GIF</strong> is offered after a run, while a flow animation is on.</li>
+      </ul>
+    </section>
+
+    <section class="gd-sec card gd-keys" aria-labelledby="keys-h">
+      <h2 id="keys-h">Shortcuts</h2>
+      <ul class="gd-kbd">
+        <li><kbd>Ctrl</kbd> <kbd>Enter</kbd> run the load flow</li>
+        <li><kbd>Ctrl</kbd> <kbd>Z</kbd> undo</li>
+        <li><kbd>Ctrl</kbd> <kbd>Y</kbd> redo</li>
+        <li><kbd>Ctrl</kbd> <kbd>D</kbd> duplicate</li>
+        <li><kbd>Ctrl</kbd> <kbd>A</kbd> select everything</li>
+        <li><kbd>Delete</kbd> remove the selection</li>
+        <li><kbd>R</kbd> turn a bus</li>
+        <li><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> nudge (with <kbd>Shift</kbd>, further)</li>
+        <li><kbd>Esc</kbd> stop drawing, clear the selection</li>
+      </ul>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to run one?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (AC, HVDC...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<script src="../../guide-shared.js"></script>
+</body>
+</html>

@@ -3,18 +3,18 @@
   "light": {
    "name": "add",
    "theme": "light",
-   "duration": 15.06,
+   "duration": 14.56,
    "marks": [
     {
      "t": 0,
      "label": "Search the Blocks panel"
     },
     {
-     "t": 1.11,
+     "t": 1.06,
      "label": "Click a block to add it"
     },
     {
-     "t": 6.69,
+     "t": 6.42,
      "label": "Drag a block onto the canvas"
     }
    ],
@@ -25,18 +25,18 @@
   "dark": {
    "name": "add",
    "theme": "dark",
-   "duration": 14.71,
+   "duration": 14.34,
    "marks": [
     {
      "t": 0,
      "label": "Search the Blocks panel"
     },
     {
-     "t": 1.04,
+     "t": 1.06,
      "label": "Click a block to add it"
     },
     {
-     "t": 6.53,
+     "t": 6.33,
      "label": "Drag a block onto the canvas"
     }
    ],
@@ -49,18 +49,18 @@
   "light": {
    "name": "wire",
    "theme": "light",
-   "duration": 13.77,
+   "duration": 13.39,
    "marks": [
     {
      "t": 0,
      "label": "A flow wire: then do this"
     },
     {
-     "t": 4.1,
+     "t": 3.96,
      "label": "A data wire: use this value"
     },
     {
-     "t": 9.69,
+     "t": 9.42,
      "label": "Wire colours"
     }
    ],
@@ -71,18 +71,18 @@
   "dark": {
    "name": "wire",
    "theme": "dark",
-   "duration": 13.88,
+   "duration": 13.38,
    "marks": [
     {
      "t": 0,
      "label": "A flow wire: then do this"
     },
     {
-     "t": 4.09,
+     "t": 3.97,
      "label": "A data wire: use this value"
     },
     {
-     "t": 9.78,
+     "t": 9.37,
      "label": "Wire colours"
     }
    ],
@@ -95,22 +95,22 @@
   "light": {
    "name": "loop",
    "theme": "light",
-   "duration": 22.39,
+   "duration": 22.23,
    "marks": [
     {
      "t": 0,
      "label": "Add a loop block"
     },
     {
-     "t": 3.01,
+     "t": 3.02,
      "label": "Add steps inside Each pass"
     },
     {
-     "t": 10.29,
+     "t": 10.28,
      "label": "Drag from After all passes"
     },
     {
-     "t": 15.6,
+     "t": 15.47,
      "label": "Pick the block that runs after the loop"
     }
    ],
@@ -121,22 +121,22 @@
   "dark": {
    "name": "loop",
    "theme": "dark",
-   "duration": 22.49,
+   "duration": 22.44,
    "marks": [
     {
      "t": 0,
      "label": "Add a loop block"
     },
     {
-     "t": 3.04,
+     "t": 2.99,
      "label": "Add steps inside Each pass"
     },
     {
-     "t": 10.4,
+     "t": 10.06,
      "label": "Drag from After all passes"
     },
     {
-     "t": 15.74,
+     "t": 15.34,
      "label": "Pick the block that runs after the loop"
     }
    ],
@@ -149,26 +149,26 @@
   "light": {
    "name": "settings",
    "theme": "light",
-   "duration": 26.09,
+   "duration": 25.16,
    "marks": [
     {
      "t": 0,
      "label": "See what is missing"
     },
     {
-     "t": 3.49,
+     "t": 3.37,
      "label": "Select a block"
     },
     {
-     "t": 7.25,
+     "t": 6.94,
      "label": "Fill in a required setting"
     },
     {
-     "t": 11.13,
+     "t": 10.74,
      "label": "Choose what fits the block"
     },
     {
-     "t": 22.97,
+     "t": 22.13,
      "label": "Nothing left to do"
     }
    ],
@@ -179,26 +179,26 @@
   "dark": {
    "name": "settings",
    "theme": "dark",
-   "duration": 25.79,
+   "duration": 25.01,
    "marks": [
     {
      "t": 0,
      "label": "See what is missing"
     },
     {
-     "t": 3.39,
+     "t": 3.27,
      "label": "Select a block"
     },
     {
-     "t": 7.06,
+     "t": 6.82,
      "label": "Fill in a required setting"
     },
     {
-     "t": 10.81,
+     "t": 10.59,
      "label": "Choose what fits the block"
     },
     {
-     "t": 22.63,
+     "t": 21.98,
      "label": "Nothing left to do"
     }
    ],
@@ -211,18 +211,18 @@
   "light": {
    "name": "rename",
    "theme": "light",
-   "duration": 7.19,
+   "duration": 7.08,
    "marks": [
     {
      "t": 0,
      "label": "Double-click the name"
     },
     {
-     "t": 1.68,
+     "t": 1.61,
      "label": "Type a new name"
     },
     {
-     "t": 4.44,
+     "t": 4.34,
      "label": "The name follows everywhere"
     }
    ],
@@ -233,18 +233,18 @@
   "dark": {
    "name": "rename",
    "theme": "dark",
-   "duration": 7.22,
+   "duration": 7.11,
    "marks": [
     {
      "t": 0,
      "label": "Double-click the name"
     },
     {
-     "t": 1.68,
+     "t": 1.65,
      "label": "Type a new name"
     },
     {
-     "t": 4.43,
+     "t": 4.38,
      "label": "The name follows everywhere"
     }
    ],
@@ -257,14 +257,14 @@
   "light": {
    "name": "quickstart",
    "theme": "light",
-   "duration": 9.83,
+   "duration": 9.51,
    "marks": [
     {
      "t": 0,
      "label": "Open Quick start"
     },
     {
-     "t": 1.89,
+     "t": 1.79,
      "label": "Pick a worked example"
     }
    ],
@@ -275,14 +275,14 @@
   "dark": {
    "name": "quickstart",
    "theme": "dark",
-   "duration": 9.69,
+   "duration": 9.54,
    "marks": [
     {
      "t": 0,
      "label": "Open Quick start"
     },
     {
-     "t": 1.85,
+     "t": 1.8,
      "label": "Pick a worked example"
     }
    ],
@@ -295,7 +295,7 @@
   "light": {
    "name": "results",
    "theme": "light",
-   "duration": 9.96,
+   "duration": 9.79,
    "marks": [
     {
      "t": 0,
@@ -313,14 +313,14 @@
   "dark": {
    "name": "results",
    "theme": "dark",
-   "duration": 9.96,
+   "duration": 9.68,
    "marks": [
     {
      "t": 0,
      "label": "Add row to results table"
     },
     {
-     "t": 3.03,
+     "t": 2.88,
      "label": "Draw a graph"
     }
    ],
@@ -333,18 +333,18 @@
   "light": {
    "name": "download",
    "theme": "light",
-   "duration": 12.12,
+   "duration": 11.65,
    "marks": [
     {
      "t": 0,
      "label": "Save the workflow"
     },
     {
-     "t": 3.05,
+     "t": 2.93,
      "label": "Read the Python"
     },
     {
-     "t": 8.09,
+     "t": 7.74,
      "label": "Download"
     }
    ],
@@ -355,18 +355,18 @@
   "dark": {
    "name": "download",
    "theme": "dark",
-   "duration": 11.98,
+   "duration": 11.64,
    "marks": [
     {
      "t": 0,
      "label": "Save the workflow"
     },
     {
-     "t": 3.03,
+     "t": 2.93,
      "label": "Read the Python"
     },
     {
-     "t": 7.98,
+     "t": 7.76,
      "label": "Download"
     }
    ],
@@ -381,7 +381,7 @@
    "theme": "light",
    "boxes": {
     "toolbar": {
-     "x": 23.39,
+     "x": 19.01,
      "y": 1.67,
      "w": 50.96,
      "h": 6.39
@@ -405,19 +405,19 @@
      "h": 83.19
     },
     "download": {
-     "x": 58.93,
+     "x": 54.55,
      "y": 2.71,
      "w": 14.88,
      "h": 4.31
     },
     "qs": {
-     "x": 40.03,
+     "x": 35.65,
      "y": 2.5,
      "w": 8.82,
      "h": 4.72
     },
     "save": {
-     "x": 50.03,
+     "x": 45.64,
      "y": 2.5,
      "w": 2.66,
      "h": 4.72
@@ -436,7 +436,7 @@
    "theme": "dark",
    "boxes": {
     "toolbar": {
-     "x": 23.39,
+     "x": 19.01,
      "y": 1.67,
      "w": 50.96,
      "h": 6.39
@@ -460,19 +460,19 @@
      "h": 83.19
     },
     "download": {
-     "x": 58.93,
+     "x": 54.55,
      "y": 2.71,
      "w": 14.88,
      "h": 4.31
     },
     "qs": {
-     "x": 40.03,
+     "x": 35.65,
      "y": 2.5,
      "w": 8.82,
      "h": 4.72
     },
     "save": {
-     "x": 50.03,
+     "x": 45.64,
      "y": 2.5,
      "w": 2.66,
      "h": 4.72

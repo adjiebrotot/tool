@@ -143,7 +143,8 @@
 
   window.__TOUR = {
     seenKey: 'pf-builder-tour-v1-seen',
-    launchLabel: '🧭 Take a tour',
+    launchLabel: '🧭 Tour',
+    guide: '../guides/',
     // Opened from a link to a Quick start (#qs=, js/ui/templates.js): show that example, and
     // leave the tour for the next visit (its demo would load over the example).
     holdFirstVisit: function () { return !!window.__PFB_QS || /(?:^#|&)qs=/.test(location.hash); },

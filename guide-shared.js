@@ -1,8 +1,10 @@
-/* How to use the Workflow Builder: plays the clips recorded from the real Builder.
-   Each .pfg-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.webm and .mp4, a
+/* GUIDE PAGES (shared across the tools' "How to use" guides, <tool>/guides/): plays the clips
+   recorded from the real tool. Each .gd-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.webm and .mp4, a
    .webp poster), a small bar with Play / Pause and Full screen, and its steps become live: the one
    the clip is showing is lit, and a click on a step jumps the clip to it. The times of the steps
-   come from media/manifest.json (written by _capture/capture.mjs). Clips play only while they are
+   come from media/manifest.json (written by _ref/guide-capture/run.mjs, or the PowerFactory
+   Builder's own _capture/capture.mjs). The screen's screenshot (.gd-shot-frame[data-shot]) swaps
+   with the theme too, and pointing at a part in its key lights that part's box. Clips play only while they are
    on screen, and not at all (until asked) for readers who prefer reduced motion. Everything here
    is an extra: without it the page reads as text with the steps listed. */
 (function () {
@@ -10,6 +12,8 @@
 
   var MEDIA = 'media/';
   var body = document.body;
+  // What the clips were recorded from, for their names: "the Builder", "the tool".
+  var SRC = body.getAttribute('data-guide-src') || 'tool';
 
   // The sun and moon button (theme.js draws it and keeps the choice; this flips the page).
   var tgl = document.getElementById('themeToggle');
@@ -23,26 +27,27 @@
   function Demo(root) {
     var name = root.getAttribute('data-demo');
     var w = +root.getAttribute('data-w') || 1280, h = +root.getAttribute('data-h') || 720;
-    var fig = root.querySelector('.pfg-screen');
-    var capEl = fig.querySelector('.pfg-cap');
+    var fig = root.querySelector('.gd-screen');
+    var capEl = fig.querySelector('.gd-cap');
     var cap = capEl ? capEl.textContent : '';
     if (capEl) capEl.remove();
 
+    if (w < 1280) fig.style.setProperty('--mw', w + 'px');
     var view = document.createElement('div');
-    view.className = 'pfg-view';
+    view.className = 'gd-view';
     view.style.setProperty('--ar', w + ' / ' + h);
     var video = document.createElement('video');
     video.muted = true; video.loop = true; video.playsInline = true; video.preload = 'none';
     video.setAttribute('muted', ''); video.setAttribute('playsinline', '');
     video.setAttribute('disablepictureinpicture', '');
-    video.setAttribute('aria-label', cap ? cap + ' (recorded from the Builder)' : 'Recorded from the Builder');
+    video.setAttribute('aria-label', cap ? cap + ' (recorded from the ' + SRC + ')' : 'Recorded from the ' + SRC);
     video.width = w; video.height = h;
     view.appendChild(video);
 
     var bar = document.createElement('div');
-    bar.className = 'pfg-bar';
+    bar.className = 'gd-bar';
     var label = document.createElement('span');
-    label.className = 'pfg-cap';
+    label.className = 'gd-cap';
     label.textContent = cap;
     var play = button('Play', 'Play or pause the clip');
     var full = button('Full screen', 'Show the clip full screen');
@@ -50,7 +55,7 @@
     fig.appendChild(view); fig.appendChild(bar);
     if (!(video.requestFullscreen || video.webkitEnterFullscreen)) full.hidden = true;
 
-    var steps = [].slice.call(root.querySelectorAll('.pfg-steps > li'));
+    var steps = [].slice.call(root.querySelectorAll('.gd-steps > li'));
     var d = { name: name, video: video, steps: steps, userPaused: false, visible: false, active: -1, marks: [], theme: null };
 
     function button(text, title) {
@@ -146,21 +151,32 @@
     return m && m.marks ? m.marks.map(function (x) { return x.t; }) : [];
   }
 
-  // ---- The screen: a screenshot per theme
-  var shot = document.querySelector('.pfg-shot-frame');
+  // ---- The screen: a screenshot per theme, its parts outlined
+  var shot = document.querySelector('.gd-shot-frame');
   var shotImg = null;
+  var shotName = shot && shot.getAttribute('data-shot') || 'layout';
+  var shotW = shot && +shot.getAttribute('data-w') || 1280, shotH = shot && +shot.getAttribute('data-h') || 720;
+  if (shot) shot.style.setProperty('--ar', shotW + ' / ' + shotH);
   function paintShot() {
     if (!shot) return;
     if (!shotImg) {
       shotImg = document.createElement('img');
-      shotImg.alt = ''; shotImg.width = 1280; shotImg.height = 720; shotImg.decoding = 'async';
+      shotImg.alt = ''; shotImg.width = shotW; shotImg.height = shotH; shotImg.decoding = 'async';
       shot.insertBefore(shotImg, shot.firstChild);
     }
-    shotImg.src = MEDIA + 'layout-' + theme() + '.webp';
+    shotImg.src = MEDIA + shotName + '-' + theme() + '.webp';
   }
+  // Pointing at (or focusing) a part in the key lights its box on the picture.
+  [].forEach.call(document.querySelectorAll('.gd-key li[data-b]'), function (li) {
+    var box = shot && shot.querySelector('.gd-box[data-b="' + li.getAttribute('data-b') + '"]');
+    if (!box) return;
+    function lit(on) { return function () { box.classList.toggle('is-lit', on); }; }
+    li.addEventListener('mouseenter', lit(true)); li.addEventListener('mouseleave', lit(false));
+    li.addEventListener('focusin', lit(true)); li.addEventListener('focusout', lit(false));
+  });
 
   // ---- Start
-  [].forEach.call(document.querySelectorAll('.pfg-demo[data-demo]'), function (el) { demos.push(Demo(el)); });
+  [].forEach.call(document.querySelectorAll('.gd-demo[data-demo]'), function (el) { demos.push(Demo(el)); });
   paintShot();
 
   if ('IntersectionObserver' in window) {

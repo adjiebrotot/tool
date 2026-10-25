@@ -14,7 +14,8 @@ function cxResults() {
 }
 window.__TOUR = {
   seenKey: 'capacityexpansion-planner-tour-v2-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

@@ -5,7 +5,7 @@
 // Serves the repo, drives the builder with real pointer events (a cursor is drawn into the recorded
 // page only), records a video per scene and theme, cuts and crops it with ffmpeg and writes
 // ../media/<scene>-<theme>.webm / .mp4 / .webp plus ../media/manifest.json (the times of the steps
-// each clip shows, which guides/script.js uses to light the matching step in the list).
+// each clip shows, which guide-shared.js uses to light the matching step in the list).
 // Needs Playwright for Node with Chromium, and ffmpeg (libvpx-vp9 and libx264) on the PATH.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';

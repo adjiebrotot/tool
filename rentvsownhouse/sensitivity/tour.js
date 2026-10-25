@@ -3,7 +3,7 @@
    step to a lead line and a short list. */
 window.__TOUR = {
   seenKey: 'rvos-tour-v3-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
   steps: [
     {
       target: null,
