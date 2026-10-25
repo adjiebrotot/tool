@@ -1,0 +1,250 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "PV curve by load scaling",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "tableFmt": "csv",
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "For each scaling factor this multiplies the active and reactive power of every load (or of the loads named on Loads) by the factor, from their original values, runs the load flow and reads the lowest busbar voltage and where it is; the loads are put back after each pass. The loop stops at the first factor whose load flow does not converge: the nose of the PV curve, the loadability limit. Fill in the project, and widen Load scaling when the nose lies beyond it."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "flow.range",
+      "x": 320,
+      "y": 0,
+      "label": "Load scaling",
+      "s": {
+        "name": "",
+        "from": 1,
+        "to": 3,
+        "step": 0.05,
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [
+        "from",
+        "to",
+        "step"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.scale",
+      "x": 640,
+      "y": 0,
+      "label": "Loads",
+      "s": {
+        "el": {
+          "cls": "ElmLod",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "plini",
+        "attr2": "qlini",
+        "factor": 1.1
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.ldf",
+      "x": 960,
+      "y": 0,
+      "label": "",
+      "s": {
+        "net": "case",
+        "qlim": "case",
+        "taps": "case"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "flow.break",
+      "x": 1280,
+      "y": 300,
+      "label": "Nose of the curve",
+      "s": {
+        "msg": "The load flow no longer converges: the nose of the PV curve"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "pf.get",
+      "x": 1280,
+      "y": 0,
+      "label": "Busbar voltage",
+      "s": {
+        "el": {
+          "cls": "ElmTerm",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "m:u",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "out.table.add",
+      "x": 1600,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "PV curve",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Lowest voltage (p.u.)"
+          },
+          {
+            "id": "c2",
+            "name": "Lowest at"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "out.plot.table",
+      "x": 640,
+      "y": 660,
+      "label": "PV curve",
+      "s": {
+        "table": "PV curve",
+        "x": "Load scaling",
+        "ys": "Lowest voltage (p.u.)",
+        "kind": "line",
+        "group": "",
+        "title": "",
+        "ylabel": "Lowest busbar voltage",
+        "yunit": "p.u.",
+        "limits": [],
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "next",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n5",
+      "out": "ok",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n5",
+      "out": "fail",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n7",
+      "out": "next",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n3",
+      "out": "done",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n3",
+      "out": "value",
+      "to": "n4",
+      "in": "factor"
+    },
+    {
+      "id": "e9",
+      "from": "n7",
+      "out": "min",
+      "to": "n8",
+      "in": "c1"
+    },
+    {
+      "id": "e10",
+      "from": "n7",
+      "out": "at_min",
+      "to": "n8",
+      "in": "c2"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

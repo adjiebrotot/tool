@@ -1,0 +1,335 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "RMS runs for several fault durations",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "tableFmt": "csv",
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "For each fault duration this applies a three-phase fault at the busbar, runs an RMS simulation for 5 s and records the rotor angle spread of all synchronous generators (the largest minus the smallest rotor angle). Each run gets a row with its peak spread and whether it stayed below 180 degrees (a run that stops early keeps its row), and every run is drawn on one graph. Fill in the project and the faulted busbar."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "flow.list",
+      "x": 320,
+      "y": 0,
+      "label": "Fault duration (s)",
+      "s": {
+        "name": "",
+        "source": "values",
+        "values": "0.1, 0.15, 0.2, 0.25",
+        "itemType": "num",
+        "table": "Results",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Case",
+            "type": "text"
+          }
+        ],
+        "runCol": "",
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [
+        "values"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "pf.evt.shc",
+      "x": 640,
+      "y": 0,
+      "label": "Fault",
+      "s": {
+        "target": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "t": 1,
+        "duration": 0.1,
+        "fault": "3ph",
+        "phase1": "a",
+        "phase2": "ab",
+        "clear": "fault",
+        "rf": 0,
+        "xf": 0,
+        "loc": null
+      },
+      "pin": [
+        "target"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.rms",
+      "x": 960,
+      "y": 0,
+      "label": "",
+      "s": {
+        "tstop": 5,
+        "tstart": null,
+        "step": null,
+        "net": "case",
+        "record": [
+          {
+            "id": "r1",
+            "el": {
+              "cls": "ElmSym",
+              "name": "*",
+              "match": "all"
+            },
+            "var": "c:firel",
+            "combine": "spread"
+          }
+        ],
+        "caseEvents": "auto",
+        "fast": false,
+        "extendTo": 0,
+        "ufls": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "sig.peak",
+      "x": 1280,
+      "y": 360,
+      "label": "Peak spread",
+      "s": {
+        "kind": "max",
+        "after": null,
+        "before": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "chk.limit",
+      "x": 1280,
+      "y": 0,
+      "label": "Rotor angle spread (deg)",
+      "s": {
+        "against": "value",
+        "lo": null,
+        "hi": 180,
+        "curve": [
+          {
+            "id": "k1",
+            "x": 0,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k2",
+            "x": 0.15,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k3",
+            "x": 0.15,
+            "low": 0.7,
+            "high": ""
+          },
+          {
+            "id": "k4",
+            "x": 1.5,
+            "low": 0.9,
+            "high": ""
+          }
+        ],
+        "x0": 0,
+        "extend": false,
+        "after": null,
+        "before": null,
+        "goOn": true
+      },
+      "pin": [
+        "hi"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "out.table.add",
+      "x": 1600,
+      "y": 0,
+      "label": "",
+      "s": {
+        "table": "RMS runs",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Peak rotor angle spread (deg)"
+          },
+          {
+            "id": "c2",
+            "name": "Stable"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "out.plot.series",
+      "x": 1920,
+      "y": 0,
+      "label": "Rotor angle spread",
+      "s": {
+        "lines": [
+          {
+            "id": "l1",
+            "name": ""
+          }
+        ],
+        "collect": "loop",
+        "title": "",
+        "ylabel": "Rotor angle spread",
+        "unit": "",
+        "limits": [],
+        "events": true,
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n4",
+      "out": "next",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n5",
+      "out": "ok",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n5",
+      "out": "early",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n7",
+      "out": "pass",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n8",
+      "out": "next",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n3",
+      "out": "item",
+      "to": "n4",
+      "in": "duration"
+    },
+    {
+      "id": "e9",
+      "from": "n5",
+      "out": "r1",
+      "to": "n6",
+      "in": "series"
+    },
+    {
+      "id": "e10",
+      "from": "n5",
+      "out": "r1",
+      "to": "n7",
+      "in": "x"
+    },
+    {
+      "id": "e11",
+      "from": "n6",
+      "out": "value",
+      "to": "n8",
+      "in": "c1"
+    },
+    {
+      "id": "e12",
+      "from": "n7",
+      "out": "text",
+      "to": "n8",
+      "in": "c2"
+    },
+    {
+      "id": "e13",
+      "from": "n5",
+      "out": "r1",
+      "to": "n9",
+      "in": "l1"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

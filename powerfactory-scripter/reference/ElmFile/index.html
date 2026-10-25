@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmFile attributes: PowerFactory Measurement File | Adjie Brotools</title>
+<meta name="description" content="All ElmFile attributes in PowerFactory (Measurement File): 15 input parameters and 172 result variables, with units, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFile/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmFile attributes: PowerFactory Measurement File parameters and result variables">
+<meta property="og:description" content="All ElmFile attributes in PowerFactory (Measurement File): 15 input parameters and 172 result variables, with units, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFile/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmFile attributes: PowerFactory Measurement File parameters and result variables">
+<meta name="twitter:description" content="All ElmFile attributes in PowerFactory (Measurement File): 15 input parameters and 172 result variables, with units, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmFile attributes (PowerFactory Measurement File)",
+  "description": "All ElmFile attributes in PowerFactory (Measurement File): 15 input parameters and 172 result variables, with units, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFile/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmFile (Measurement File)",
+    "description": "A measurement file: it reads a time series from a file and feeds it into a simulation as a signal."
+  },
+  "keywords": "ElmFile attributes, ElmFile parameters, ElmFile result variables, PowerFactory Measurement File attributes, ElmFile GetAttribute",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmFile",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFile/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmFile</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmFile attributes<span class="dx-h1-sub">PowerFactory Measurement File</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Measurement File (<code>ElmFile</code>): 15 input parameters and 172 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmFile is</h2>
+  <p>A measurement file: it reads a time series from a file and feeds it into a simulation as a signal.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmFile</code>, element class</dd><dt>PowerFactory name</dt><dd>Measurement File</dd><dt>Attributes</dt><dd>15 input parameters and 172 result variables, in 5 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmFile in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-k">for</span> obj <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmFile&quot;</span>):
+    <span class="py-f">print</span>(obj.loc_name, obj.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;loc_name&quot;</span>)) <span class="py-c"># Name</span>
+
+obj = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmFile&quot;</span>)[<span class="py-n">0</span>]
+obj.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)                <span class="py-c"># switch it off</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmFile attributes"><li><a href="#params">Input parameters<span class="dx-n">15</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">35</span></a></li><li><a href="#dynamic-rms">RMS simulation results<span class="dx-n">34</span></a></li><li><a href="#dynamic-emt">EMT simulation results<span class="dx-n">34</span></a></li><li><a href="#load-flow-dc">DC load flow results<span class="dx-n">35</span></a></li><li><a href="#modal-analysis">Modal analysis results<span class="dx-n">34</span></a></li><li><a href="#basic">Basic data<span class="dx-n">3</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmFile input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>f_name</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>prim</code></td><td><span aria-label="no unit">·</span></td><td>P or S</td></tr>
+<tr><td><code>outserv</code></td><td><span aria-label="no unit">·</span></td><td>Out of Service</td></tr>
+<tr><td><code>iopt_imp</code></td><td><span aria-label="no unit">·</span></td><td>Import from</td></tr>
+<tr><td><code>approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>iopt_tini</code></td><td><span aria-label="no unit">·</span></td><td>Load Flow Time</td></tr>
+<tr><td><code>icol</code></td><td><span aria-label="no unit">·</span></td><td>Column j</td></tr>
+<tr><td><code>tini</code></td><td>s</td><td>Load Flow Time</td></tr>
+<tr><td><code>afac</code></td><td><span aria-label="no unit">·</span></td><td>Factor a</td></tr>
+<tr><td><code>bfac</code></td><td><span aria-label="no unit">·</span></td><td>Factor b</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>results</code></td><td><span aria-label="no unit">·</span></td><td>Results<small>Object: ElmRes</small></td></tr>
+<tr><td><code>object</code></td><td><span aria-label="no unit">·</span></td><td>Element</td></tr>
+<tr><td><code>variable</code></td><td><span aria-label="no unit">·</span></td><td>Variable</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmFile load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:f_name_abs</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>c:ncol</code></td><td><span aria-label="no unit">·</span></td><td>Number of Columns in file</td></tr>
+<tr><td><code>c:preTrigger</code></td><td><span aria-label="no unit">·</span></td><td>Pre-trigger-time</td></tr>
+<tr><td><code>c:icolv</code></td><td><span aria-label="no unit">·</span></td><td>Column number for each Output</td></tr>
+<tr><td><code>c:afacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor a</td></tr>
+<tr><td><code>c:bfacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor b</td></tr>
+<tr><td><code>c:primv</code></td><td><span aria-label="no unit">·</span></td><td>P or S</td></tr>
+<tr><td><code>c:approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>c:eofReached</code></td><td><span aria-label="no unit">·</span></td><td>End of file reached</td></tr>
+<tr><td><code>c:tini</code></td><td><span aria-label="no unit">·</span></td><td>Time Index</td></tr>
+<tr><td><code>c:iopt_tini</code></td><td><span aria-label="no unit">·</span></td><td>Use study case time for loadflow initialisation</td></tr>
+<tr><td><code>s:y1</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 1</td></tr>
+<tr><td><code>s:y2</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 2</td></tr>
+<tr><td><code>s:y3</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 3</td></tr>
+<tr><td><code>s:y4</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 4</td></tr>
+<tr><td><code>s:y5</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 5</td></tr>
+<tr><td><code>s:y6</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 6</td></tr>
+<tr><td><code>s:y7</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 7</td></tr>
+<tr><td><code>s:y8</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 8</td></tr>
+<tr><td><code>s:y9</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 9</td></tr>
+<tr><td><code>s:y10</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 10</td></tr>
+<tr><td><code>s:y11</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 11</td></tr>
+<tr><td><code>s:y12</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 12</td></tr>
+<tr><td><code>s:y13</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 13</td></tr>
+<tr><td><code>s:y14</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 14</td></tr>
+<tr><td><code>s:y15</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 15</td></tr>
+<tr><td><code>s:y16</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 16</td></tr>
+<tr><td><code>s:y17</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 17</td></tr>
+<tr><td><code>s:y18</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 18</td></tr>
+<tr><td><code>s:y19</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 19</td></tr>
+<tr><td><code>s:y20</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 20</td></tr>
+<tr><td><code>s:y21</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 21</td></tr>
+<tr><td><code>s:y22</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 22</td></tr>
+<tr><td><code>s:y23</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 23</td></tr>
+<tr><td><code>s:y24</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 24</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-rms">
+  <h2 id="dynamic-rms">ElmFile rms simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (RMS) with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:f_name_abs</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>c:ncol</code></td><td><span aria-label="no unit">·</span></td><td>Number of Columns in file</td></tr>
+<tr><td><code>c:preTrigger</code></td><td><span aria-label="no unit">·</span></td><td>Pre-trigger-time</td></tr>
+<tr><td><code>c:icolv</code></td><td><span aria-label="no unit">·</span></td><td>Column number for each Output</td></tr>
+<tr><td><code>c:afacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor a</td></tr>
+<tr><td><code>c:bfacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor b</td></tr>
+<tr><td><code>c:primv</code></td><td><span aria-label="no unit">·</span></td><td>P or S</td></tr>
+<tr><td><code>c:approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>c:eofReached</code></td><td><span aria-label="no unit">·</span></td><td>End of file reached</td></tr>
+<tr><td><code>c:updateMeas</code></td><td><span aria-label="no unit">·</span></td><td>Update Measurement File</td></tr>
+<tr><td><code>s:y1</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 1</td></tr>
+<tr><td><code>s:y2</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 2</td></tr>
+<tr><td><code>s:y3</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 3</td></tr>
+<tr><td><code>s:y4</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 4</td></tr>
+<tr><td><code>s:y5</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 5</td></tr>
+<tr><td><code>s:y6</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 6</td></tr>
+<tr><td><code>s:y7</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 7</td></tr>
+<tr><td><code>s:y8</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 8</td></tr>
+<tr><td><code>s:y9</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 9</td></tr>
+<tr><td><code>s:y10</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 10</td></tr>
+<tr><td><code>s:y11</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 11</td></tr>
+<tr><td><code>s:y12</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 12</td></tr>
+<tr><td><code>s:y13</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 13</td></tr>
+<tr><td><code>s:y14</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 14</td></tr>
+<tr><td><code>s:y15</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 15</td></tr>
+<tr><td><code>s:y16</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 16</td></tr>
+<tr><td><code>s:y17</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 17</td></tr>
+<tr><td><code>s:y18</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 18</td></tr>
+<tr><td><code>s:y19</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 19</td></tr>
+<tr><td><code>s:y20</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 20</td></tr>
+<tr><td><code>s:y21</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 21</td></tr>
+<tr><td><code>s:y22</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 22</td></tr>
+<tr><td><code>s:y23</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 23</td></tr>
+<tr><td><code>s:y24</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 24</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-emt">
+  <h2 id="dynamic-emt">ElmFile emt simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (EMT) with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:f_name_abs</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>c:ncol</code></td><td><span aria-label="no unit">·</span></td><td>Number of Columns in file</td></tr>
+<tr><td><code>c:preTrigger</code></td><td><span aria-label="no unit">·</span></td><td>Pre-trigger-time</td></tr>
+<tr><td><code>c:icolv</code></td><td><span aria-label="no unit">·</span></td><td>Column number for each Output</td></tr>
+<tr><td><code>c:afacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor a</td></tr>
+<tr><td><code>c:bfacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor b</td></tr>
+<tr><td><code>c:primv</code></td><td><span aria-label="no unit">·</span></td><td>P or S</td></tr>
+<tr><td><code>c:approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>c:eofReached</code></td><td><span aria-label="no unit">·</span></td><td>End of file reached</td></tr>
+<tr><td><code>c:updateMeas</code></td><td><span aria-label="no unit">·</span></td><td>Update Measurement File</td></tr>
+<tr><td><code>s:y1</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 1</td></tr>
+<tr><td><code>s:y2</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 2</td></tr>
+<tr><td><code>s:y3</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 3</td></tr>
+<tr><td><code>s:y4</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 4</td></tr>
+<tr><td><code>s:y5</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 5</td></tr>
+<tr><td><code>s:y6</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 6</td></tr>
+<tr><td><code>s:y7</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 7</td></tr>
+<tr><td><code>s:y8</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 8</td></tr>
+<tr><td><code>s:y9</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 9</td></tr>
+<tr><td><code>s:y10</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 10</td></tr>
+<tr><td><code>s:y11</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 11</td></tr>
+<tr><td><code>s:y12</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 12</td></tr>
+<tr><td><code>s:y13</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 13</td></tr>
+<tr><td><code>s:y14</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 14</td></tr>
+<tr><td><code>s:y15</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 15</td></tr>
+<tr><td><code>s:y16</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 16</td></tr>
+<tr><td><code>s:y17</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 17</td></tr>
+<tr><td><code>s:y18</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 18</td></tr>
+<tr><td><code>s:y19</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 19</td></tr>
+<tr><td><code>s:y20</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 20</td></tr>
+<tr><td><code>s:y21</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 21</td></tr>
+<tr><td><code>s:y22</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 22</td></tr>
+<tr><td><code>s:y23</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 23</td></tr>
+<tr><td><code>s:y24</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 24</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow-dc">
+  <h2 id="load-flow-dc">ElmFile dc load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> (DC) with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:f_name_abs</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>c:ncol</code></td><td><span aria-label="no unit">·</span></td><td>Number of Columns in file</td></tr>
+<tr><td><code>c:preTrigger</code></td><td><span aria-label="no unit">·</span></td><td>Pre-trigger-time</td></tr>
+<tr><td><code>c:icolv</code></td><td><span aria-label="no unit">·</span></td><td>Column number for each Output</td></tr>
+<tr><td><code>c:afacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor a</td></tr>
+<tr><td><code>c:bfacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor b</td></tr>
+<tr><td><code>c:primv</code></td><td><span aria-label="no unit">·</span></td><td>P or S</td></tr>
+<tr><td><code>c:approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>c:eofReached</code></td><td><span aria-label="no unit">·</span></td><td>End of file reached</td></tr>
+<tr><td><code>c:tini</code></td><td><span aria-label="no unit">·</span></td><td>Time Index</td></tr>
+<tr><td><code>c:iopt_tini</code></td><td><span aria-label="no unit">·</span></td><td>Use study case time for loadflow initialisation</td></tr>
+<tr><td><code>s:y1</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 1</td></tr>
+<tr><td><code>s:y2</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 2</td></tr>
+<tr><td><code>s:y3</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 3</td></tr>
+<tr><td><code>s:y4</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 4</td></tr>
+<tr><td><code>s:y5</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 5</td></tr>
+<tr><td><code>s:y6</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 6</td></tr>
+<tr><td><code>s:y7</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 7</td></tr>
+<tr><td><code>s:y8</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 8</td></tr>
+<tr><td><code>s:y9</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 9</td></tr>
+<tr><td><code>s:y10</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 10</td></tr>
+<tr><td><code>s:y11</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 11</td></tr>
+<tr><td><code>s:y12</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 12</td></tr>
+<tr><td><code>s:y13</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 13</td></tr>
+<tr><td><code>s:y14</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 14</td></tr>
+<tr><td><code>s:y15</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 15</td></tr>
+<tr><td><code>s:y16</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 16</td></tr>
+<tr><td><code>s:y17</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 17</td></tr>
+<tr><td><code>s:y18</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 18</td></tr>
+<tr><td><code>s:y19</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 19</td></tr>
+<tr><td><code>s:y20</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 20</td></tr>
+<tr><td><code>s:y21</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 21</td></tr>
+<tr><td><code>s:y22</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 22</td></tr>
+<tr><td><code>s:y23</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 23</td></tr>
+<tr><td><code>s:y24</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 24</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="modal-analysis">
+  <h2 id="modal-analysis">ElmFile modal analysis results</h2>
+  <p class="dx-note">Read after <code>ComMod</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:f_name_abs</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>c:ncol</code></td><td><span aria-label="no unit">·</span></td><td>Number of Columns in file</td></tr>
+<tr><td><code>c:preTrigger</code></td><td><span aria-label="no unit">·</span></td><td>Pre-trigger-time</td></tr>
+<tr><td><code>c:icolv</code></td><td><span aria-label="no unit">·</span></td><td>Column number for each Output</td></tr>
+<tr><td><code>c:afacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor a</td></tr>
+<tr><td><code>c:bfacv</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor b</td></tr>
+<tr><td><code>c:primv</code></td><td><span aria-label="no unit">·</span></td><td>P or S</td></tr>
+<tr><td><code>c:approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>c:eofReached</code></td><td><span aria-label="no unit">·</span></td><td>End of file reached</td></tr>
+<tr><td><code>c:updateMeas</code></td><td><span aria-label="no unit">·</span></td><td>Update Measurement File</td></tr>
+<tr><td><code>s:y1</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 1</td></tr>
+<tr><td><code>s:y2</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 2</td></tr>
+<tr><td><code>s:y3</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 3</td></tr>
+<tr><td><code>s:y4</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 4</td></tr>
+<tr><td><code>s:y5</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 5</td></tr>
+<tr><td><code>s:y6</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 6</td></tr>
+<tr><td><code>s:y7</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 7</td></tr>
+<tr><td><code>s:y8</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 8</td></tr>
+<tr><td><code>s:y9</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 9</td></tr>
+<tr><td><code>s:y10</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 10</td></tr>
+<tr><td><code>s:y11</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 11</td></tr>
+<tr><td><code>s:y12</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 12</td></tr>
+<tr><td><code>s:y13</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 13</td></tr>
+<tr><td><code>s:y14</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 14</td></tr>
+<tr><td><code>s:y15</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 15</td></tr>
+<tr><td><code>s:y16</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 16</td></tr>
+<tr><td><code>s:y17</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 17</td></tr>
+<tr><td><code>s:y18</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 18</td></tr>
+<tr><td><code>s:y19</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 19</td></tr>
+<tr><td><code>s:y20</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 20</td></tr>
+<tr><td><code>s:y21</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 21</td></tr>
+<tr><td><code>s:y22</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 22</td></tr>
+<tr><td><code>s:y23</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 23</td></tr>
+<tr><td><code>s:y24</code></td><td><span aria-label="no unit">·</span></td><td>Measurement value 24</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmFile basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>b:f_name_abs</code></td><td><span aria-label="no unit">·</span></td><td>Filename</td></tr>
+<tr><td><code>b:approx</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmZone/"><code>ElmZone</code> Zone</a> · <a href="../ElmRes/"><code>ElmRes</code> Results</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

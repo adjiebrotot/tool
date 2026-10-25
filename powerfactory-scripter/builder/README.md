@@ -75,7 +75,7 @@ Optimise / Find limit searches.
 | `runtime/pf_core.py`, `pf_model.py`, `pf_studies.py` | PowerFactory helpers; documented in `runtime/API-pf.md` |
 | `runtime/signals.py`, `outputs.py`, `optimise.py` | checks, graphs, searches; documented in `runtime/API-analysis.md` |
 | `runtime/fonts/` | DM Sans Regular and Bold (static instances of the site's own DM Sans) and its SIL Open Font License, packed into the study package when the graphs are drawn in it |
-| `templates/` | Quick Start workflows (`index.json` + one file each; ids are frozen): `headroom`, `ldf-cases`, `n-1`, `shc-buses`, `find-limit`, `frt`, `cct`; made by `_audit/templates/build.mjs` |
+| `templates/` | Quick Start workflows (`index.json` + one file each; ids are frozen): `headroom`, `ldf-cases`, `n-1`, `shc-buses`, `find-limit`, `frt`, `cct`, `hosting-capacity`, `pv-curve`, `rms-batch`; made by `_audit/templates/build.mjs`. A link to `builder/#qs=<id>` opens one (`js/ui/templates.js`): the study guides in `../python/` use it |
 | `vendor/` | React 18.3.1, ReactDOM, `@xyflow/react` 12.12.0, the JSX shim; `vendor/README.md` has sources and SHA-256 |
 | `_audit/` | the test suites (§8) |
 
@@ -117,7 +117,8 @@ names, its column names, how many rows - is a small `file` setting on the block,
 reopened in the Builder still knows the table's columns and offers them.
 
 **Frozen handles** (rename the words a reader sees, never these): block `type` ids, setting keys,
-select option values (always strings), port ids, template ids, the Persist namespace, the `PFB1`
+select option values (always strings), port ids, template ids (they are also the `#qs=` link that
+opens a Quick Start from the study guides, `../python/`), the Persist namespace, the `PFB1`
 line format. Rules the loader follows (`loadWorkflow`, `settingsOf`):
 
 - every declared setting is saved; a missing one takes its default, an unknown one is kept untouched;

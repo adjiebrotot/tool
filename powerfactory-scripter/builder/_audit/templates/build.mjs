@@ -220,6 +220,79 @@ TEMPLATES.push({
   todo: 2,
 });
 
+// Hosting capacity: at each busbar, the largest injection of a test generator that keeps every
+// line and transformer within its rating and every busbar voltage within the band.
+TEMPLATES.push({
+  id: 'hosting-capacity', title: 'Hosting capacity at every busbar',
+  desc: 'At each busbar, searches the largest test generator output that keeps lines, transformers and voltages within limits, by halving the gap.',
+  wf: W('Hosting capacity at every busbar', {
+    n1: START(),
+    n2: NOTE('At each busbar of Connection point this connects a test generator at unity power factor and searches its largest output for which the load flow converges, no line or 2-winding transformer is above 100 % and every busbar stays between 0.9 and 1.1 p.u., turning the generators already dispatched down pro rata by the same amount (delete Other generators to let the slack take it, as for an upstream grid). ' +
+      'Each busbar gets a row with its hosting capacity and a bar chart is drawn at the end; the dispatch is put back and the test generator deleted. Fill in the project, then narrow the busbars and set the search range and limits to your network.'),
+    n3: ['pf.foreach_element', 2, 0, 'Connection point', { el: EL('ElmTerm', '*', 'all') }, ['el']],
+    n4: ['opt.limit', 3, 0, 'Generation (MW)', { lower: 0, upper: 1000, tol: 5, maxSteps: 20, passes: 'low', onUnknown: 'fail' }, ['lower', 'upper', 'tol']],
+    n5: ['pf.testgen', 4, 0, 'Test generator', {}],
+    n6: ['pf.ldf', 6, 0, '', {}],
+    n7: ['pf.get', 7, 0, 'Line loading', { el: EL('ElmLne', '*', 'all'), attr: 'c:loading' }],
+    n8: ['pf.get', 7, 0.6, 'Transformer loading', { el: EL('ElmTr2', '*', 'all'), attr: 'c:loading' }],
+    n9: ['pf.get', 7, 1.2, 'Busbar voltage', { el: EL('ElmTerm', '*', 'all'), attr: 'm:u' }],
+    n10: ['chk.limit', 8, 0, 'Line thermal limit', { against: 'value', hi: 100, goOn: true }, ['hi']],
+    n11: ['chk.limit', 8, 0.7, 'Transformer thermal limit', { against: 'value', hi: 100, goOn: true }],
+    n12: ['chk.limit', 8, 1.4, 'Voltage limits', { against: 'value', lo: 0.9, hi: 1.1, goOn: true }, ['lo', 'hi']],
+    n13: ['math.logic', 9, 1, 'Thermal limits', { op: 'and' }],
+    n14: ['math.logic', 10, 1.5, 'All limits', { op: 'and' }],
+    n15: ['out.table.add', 4, 2.5, '', { table: 'Hosting capacity', cols: [{ id: 'c1', name: 'Hosting capacity (MW)' }, { id: 'c2', name: 'Search' }] }],
+    n16: ['out.plot.table', 3, 3.5, 'Hosting capacity at each busbar', { table: 'Hosting capacity', x: 'Connection point', ys: 'Hosting capacity (MW)', kind: 'bar', ylabel: 'Hosting capacity', yunit: 'MW' }],
+    n17: ['pf.get', 1, 0, 'Generator dispatch', { el: EL('ElmSym', '*', 'all'), attr: 'pgini' }],
+    n18: ['math.sum', 1, 1, 'Total dispatch', {}],
+    n19: ['math.formula', 5, 1.1, 'Share kept', { expr: '1 - p / total' }],
+    n20: ['pf.scale', 5, 0, 'Other generators', { el: EL('ElmSym', '*', 'all'), attr: 'pgini' }],
+  }, ['n1>n17', 'n17>n3', 'n3.body>n4', 'n4.body>n5', 'n5>n20', 'n20>n6', 'n6.ok>n7', 'n7>n8', 'n8>n9', 'n9>n10', 'n10.pass>n11', 'n11.pass>n12', 'n4.done>n15', 'n3.done>n16'],
+  ['n3.item>n5.bus', 'n4.value>n5.p', 'n17.values>n18.values', 'n4.value>n19.p', 'n18.value>n19.total', 'n19.value>n20.factor', 'n7.values>n10.x', 'n8.values>n11.x', 'n9.values>n12.x',
+    'n10.ok>n13.a', 'n11.ok>n13.b', 'n13.value>n14.a', 'n12.ok>n14.b', 'n14.value>n4.pass', 'n4.limit>n15.c1', 'n4.status>n15.c2']),
+  todo: 1,
+});
+
+// PV curve: scale every load up until the load flow stops converging (the nose of the curve).
+TEMPLATES.push({
+  id: 'pv-curve', title: 'PV curve by load scaling',
+  desc: 'Scales every load up in steps and tables the lowest busbar voltage until the load flow no longer converges: the nose of the PV curve.',
+  wf: W('PV curve by load scaling', {
+    n1: START(),
+    n2: NOTE('For each scaling factor this multiplies the active and reactive power of every load (or of the loads named on Loads) by the factor, from their original values, runs the load flow and reads the lowest busbar voltage and where it is; the loads are put back after each pass. ' +
+      'The loop stops at the first factor whose load flow does not converge: the nose of the PV curve, the loadability limit. Fill in the project, and widen Load scaling when the nose lies beyond it.'),
+    n3: ['flow.range', 1, 0, 'Load scaling', { from: 1, to: 3, step: 0.05 }, ['from', 'to', 'step']],
+    n4: ['pf.scale', 2, 0, 'Loads', { el: EL('ElmLod', '*', 'all'), attr: 'plini', attr2: 'qlini' }],
+    n5: ['pf.ldf', 3, 0, '', {}],
+    n6: ['flow.break', 4, 1, 'Nose of the curve', { msg: 'The load flow no longer converges: the nose of the PV curve' }],
+    n7: ['pf.get', 4, 0, 'Busbar voltage', { el: EL('ElmTerm', '*', 'all'), attr: 'm:u' }],
+    n8: ['out.table.add', 5, 0, '', { table: 'PV curve', cols: [{ id: 'c1', name: 'Lowest voltage (p.u.)' }, { id: 'c2', name: 'Lowest at' }] }],
+    n9: ['out.plot.table', 2, 2.2, 'PV curve', { table: 'PV curve', x: 'Load scaling', ys: 'Lowest voltage (p.u.)', kind: 'line', ylabel: 'Lowest busbar voltage', yunit: 'p.u.' }],
+  }, ['n1>n3', 'n3.body>n4', 'n4>n5', 'n5.ok>n7', 'n5.fail>n6', 'n7>n8', 'n3.done>n9'],
+  ['n3.value>n4.factor', 'n7.min>n8.c1', 'n7.at_min>n8.c2']),
+  todo: 1,
+});
+
+// A batch of RMS runs: one fault, several clearing times, the rotor angle swings drawn together.
+TEMPLATES.push({
+  id: 'rms-batch', title: 'RMS runs for several fault durations',
+  desc: 'Runs one RMS simulation per fault duration at a busbar, tables the peak rotor angle spread of the generators and draws every run on one graph.',
+  wf: W('RMS runs for several fault durations', {
+    n1: START(),
+    n2: NOTE('For each fault duration this applies a three-phase fault at the busbar, runs an RMS simulation for 5 s and records the rotor angle spread of all synchronous generators (the largest minus the smallest rotor angle). ' +
+      'Each run gets a row with its peak spread and whether it stayed below 180 degrees (a run that stops early keeps its row), and every run is drawn on one graph. Fill in the project and the faulted busbar.'),
+    n3: ['flow.list', 1, 0, 'Fault duration (s)', { values: '0.1, 0.15, 0.2, 0.25' }, ['values']],
+    n4: ['pf.evt.shc', 2, 0, 'Fault', { target: EL('ElmTerm'), t: 1, fault: '3ph', clear: 'fault' }, ['target']],
+    n5: ['pf.rms', 3, 0, '', { tstop: 5, record: [{ id: 'r1', el: EL('ElmSym', '*', 'all'), var: 'c:firel', combine: 'spread' }] }],
+    n6: ['sig.peak', 4, 1.2, 'Peak spread', { kind: 'max' }],
+    n7: ['chk.limit', 4, 0, 'Rotor angle spread (deg)', { against: 'value', hi: 180, goOn: true }, ['hi']],
+    n8: ['out.table.add', 5, 0, '', { table: 'RMS runs', cols: [{ id: 'c1', name: 'Peak rotor angle spread (deg)' }, { id: 'c2', name: 'Stable' }] }],
+    n9: ['out.plot.series', 6, 0, 'Rotor angle spread', { collect: 'loop', ylabel: 'Rotor angle spread' }],
+  }, ['n1>n3', 'n3.body>n4', 'n4>n5', 'n5.ok>n7', 'n5.early>n7', 'n7.pass>n8', 'n8>n9'],
+  ['n3.item>n4.duration', 'n5.r1>n6.series', 'n5.r1>n7.x', 'n6.value>n8.c1', 'n7.text>n8.c2', 'n5.r1>n9.l1']),
+  todo: 2,
+});
+
 // ---------------------------------------------------------------------------------------------
 
 export function built() {

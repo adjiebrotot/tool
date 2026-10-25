@@ -1,0 +1,41 @@
+{
+ "script": "hub_pattern",
+ "project": "Nine-bus System",
+ "seconds": 0.0,
+ "status": "ok",
+ "stdout": [
+  "[('Line 5-7', 40.3), ('Line 6-9', 36.4), ('Line 7-8', 40.1), ('Line 8-9', 27.2), ('Line 4-6', 27.3), ('Line 4-5', 40.3)]"
+ ],
+ "data": {
+  "PROJECT": "Nine-bus System (Builder test)",
+  "rows": [
+   [
+    "Line 5-7",
+    40.3
+   ],
+   [
+    "Line 6-9",
+    36.4
+   ],
+   [
+    "Line 7-8",
+    40.1
+   ],
+   [
+    "Line 8-9",
+    27.2
+   ],
+   [
+    "Line 4-6",
+    27.3
+   ],
+   [
+    "Line 4-5",
+    40.3
+   ]
+  ],
+  "worst": 40.29185329946357
+ },
+ "audit": "OK",
+ "files": []
+}

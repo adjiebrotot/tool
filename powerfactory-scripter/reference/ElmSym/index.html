@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmSym attributes: PowerFactory Synchronous Machine | Adjie Brotools</title>
+<meta name="description" content="All ElmSym attributes in PowerFactory (Synchronous Machine): 277 input parameters and 1,317 result variables, with units, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSym/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmSym attributes: PowerFactory Synchronous Machine parameters and result variables">
+<meta property="og:description" content="All ElmSym attributes in PowerFactory (Synchronous Machine): 277 input parameters and 1,317 result variables, with units, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSym/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmSym attributes: PowerFactory Synchronous Machine parameters and result variables">
+<meta name="twitter:description" content="All ElmSym attributes in PowerFactory (Synchronous Machine): 277 input parameters and 1,317 result variables, with units, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmSym attributes (PowerFactory Synchronous Machine)",
+  "description": "All ElmSym attributes in PowerFactory (Synchronous Machine): 277 input parameters and 1,317 result variables, with units, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSym/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmSym (Synchronous Machine)",
+    "description": "A synchronous machine, generator or motor. Reactances, time constants and inertia sit in its type (TypSym); the element holds the dispatch, the control mode and the number of parallel machines."
+  },
+  "keywords": "ElmSym attributes, ElmSym parameters, ElmSym result variables, PowerFactory Synchronous Machine attributes, ElmSym GetAttribute, m:P:bus1 ElmSym, m:Q:bus1 ElmSym, c:loading ElmSym, pgini ElmSym",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmSym",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSym/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmSym</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmSym attributes<span class="dx-h1-sub">PowerFactory Synchronous Machine</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Synchronous Machine (<code>ElmSym</code>): 277 input parameters and 1317 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmSym is</h2>
+  <p>A synchronous machine, generator or motor. Reactances, time constants and inertia sit in its type (TypSym); the element holds the dispatch, the control mode and the number of parallel machines.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmSym</code>, element class</dd><dt>PowerFactory name</dt><dd>Synchronous Machine</dd><dt>Type</dt><dd><a href="../TypSym/"><code>TypSym</code></a>, through <code>typ_id</code></dd><dt>Terminal suffix</dt><dd><code>:bus1</code> terminal</dd><dt>Attributes</dt><dd>277 input parameters and 1317 result variables, in 7 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used ElmSym attributes</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th><th>Where</th></tr></thead><tbody>
+<tr><td><code>m:P:bus1</code></td><td>MW</td><td>Active Power<small>active power output</small></td><td>Load flow</td></tr>
+<tr><td><code>m:Q:bus1</code></td><td>Mvar</td><td>Reactive Power<small>reactive power output</small></td><td>Load flow</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td><td>Load flow</td></tr>
+<tr><td><code>pgini</code></td><td>MW</td><td>Active Power<small>active power dispatch</small></td><td>input data</td></tr>
+<tr><td><code>qgini</code></td><td>Mvar</td><td>Reactive Power</td><td>input data</td></tr>
+<tr><td><code>usetp</code></td><td>p.u.</td><td>Voltage<small>voltage setpoint</small></td><td>input data</td></tr>
+<tr><td><code>ip_ctrl</code></td><td>·</td><td>Reference Machine<small>reference machine</small></td><td>input data</td></tr>
+<tr><td><code>av_mode</code></td><td>·</td><td>Local Controller<small>local controller</small></td><td>input data</td></tr>
+<tr><td><code>ngnum</code></td><td>·</td><td>parallel Machines</td><td>input data</td></tr>
+<tr><td><code>outserv</code></td><td>·</td><td>Out of Service</td><td>input data</td></tr>
+<tr><td><code>s:speed</code></td><td>p.u.</td><td>Speed<small>speed (RMS simulation)</small></td><td>RMS simulation</td></tr>
+<tr><td><code>c:firel</code></td><td>deg</td><td>Rotor angle referred to the reference machine rotor angle<small>rotor angle (RMS simulation)</small></td><td>RMS simulation</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmSym in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>).<span class="py-f">Execute</span>()      <span class="py-c"># results exist after a calculation</span>
+
+<span class="py-k">for</span> gen <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmSym&quot;</span>):
+    p_bus1 = gen.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:P:bus1&quot;</span>)         <span class="py-c"># Active Power, MW</span>
+    q_bus1 = gen.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:Q:bus1&quot;</span>)         <span class="py-c"># Reactive Power, Mvar</span>
+    <span class="py-f">print</span>(gen.loc_name, p_bus1, q_bus1)
+
+gen = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmSym&quot;</span>)[<span class="py-n">0</span>]
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>, <span class="py-n">120</span>)                <span class="py-c"># dispatch 120 MW</span></code></pre>
+  <ul class="dx-prose"><li>A result at a terminal of the synchronous machine needs the terminal in its name: <code>m:P:bus1</code>, not <code>m:P</code>, which raises <code>AttributeError</code>.</li><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmSym attributes"><li><a href="#params">Input parameters<span class="dx-n">277</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">220</span></a></li><li><a href="#short-circuit">Short-circuit results<span class="dx-n">263</span></a></li><li><a href="#dynamic-rms">RMS simulation results<span class="dx-n">310</span></a></li><li><a href="#dynamic-emt">EMT simulation results<span class="dx-n">208</span></a></li><li><a href="#load-flow-dc">DC load flow results<span class="dx-n">39</span></a></li><li><a href="#modal-analysis">Modal analysis results<span class="dx-n">144</span></a></li><li><a href="#opf">Optimal power flow results<span class="dx-n">133</span></a></li><li><a href="#basic">Basic data<span class="dx-n">7</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmSym input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>sernum</code></td><td><span aria-label="no unit">·</span></td><td>Serial Number</td></tr>
+<tr><td><code>commissionDate</code></td><td><span aria-label="no unit">·</span></td><td>Commissioning Date</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>ifdBaseType</code></td><td><span aria-label="no unit">·</span></td><td>Excitation base mode</td></tr>
+<tr><td><code>mode_inp</code></td><td><span aria-label="no unit">·</span></td><td>Input Mode</td></tr>
+<tr><td><code>outserv</code></td><td><span aria-label="no unit">·</span></td><td>Out of Service</td></tr>
+<tr><td><code>ngnum</code></td><td><span aria-label="no unit">·</span></td><td>parallel Machines</td></tr>
+<tr><td><code>mode_pgi</code></td><td><span aria-label="no unit">·</span></td><td>Model</td></tr>
+<tr><td><code>iestp</code></td><td><span aria-label="no unit">·</span></td><td>Estimate Active Power</td></tr>
+<tr><td><code>iestq</code></td><td><span aria-label="no unit">·</span></td><td>Estimate Reactive Power</td></tr>
+<tr><td><code>i_mot</code></td><td><span aria-label="no unit">·</span></td><td>Machine</td></tr>
+<tr><td><code>ip_ctrl</code></td><td><span aria-label="no unit">·</span></td><td>Reference Machine</td></tr>
+<tr><td><code>ip_mode</code></td><td><span aria-label="no unit">·</span></td><td>Forced voltage angle control (const. phi)</td></tr>
+<tr><td><code>i_spin</code></td><td><span aria-label="no unit">·</span></td><td>Spinning if circuit-breaker is open</td></tr>
+<tr><td><code>constr</code></td><td><span aria-label="no unit">·</span></td><td>Year of Construction</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>Pctrl</code></td><td><span aria-label="no unit">·</span></td><td>Active power steps</td></tr>
+<tr><td><code>i_prty</code></td><td><span aria-label="no unit">·</span></td><td>Priority</td></tr>
+<tr><td><code>iqtype</code></td><td><span aria-label="no unit">·</span></td><td>Use limits specified in type</td></tr>
+<tr><td><code>i_cap</code></td><td><span aria-label="no unit">·</span></td><td>User defined Capability Curve</td></tr>
+<tr><td><code>ictpg</code></td><td><span aria-label="no unit">·</span></td><td>Active Power</td></tr>
+<tr><td><code>ictqg</code></td><td><span aria-label="no unit">·</span></td><td>Reactive Power</td></tr>
+<tr><td><code>iOPFCPmin</code></td><td><span aria-label="no unit">·</span></td><td>Min.</td></tr>
+<tr><td><code>iOPFCPmax</code></td><td><span aria-label="no unit">·</span></td><td>Max.</td></tr>
+<tr><td><code>iOPFCQmin</code></td><td><span aria-label="no unit">·</span></td><td>Min.</td></tr>
+<tr><td><code>iOPFCQmax</code></td><td><span aria-label="no unit">·</span></td><td>Max.</td></tr>
+<tr><td><code>QtargetBase</code></td><td><span aria-label="no unit">·</span></td><td>Base</td></tr>
+<tr><td><code>iInterPol</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>polyDegree</code></td><td><span aria-label="no unit">·</span></td><td>Polynomial degree</td></tr>
+<tr><td><code>isVRE</code></td><td><span aria-label="no unit">·</span></td><td>Generator usage</td></tr>
+<tr><td><code>isCtrlP</code></td><td><span aria-label="no unit">·</span></td><td>Active power</td></tr>
+<tr><td><code>isCtrlQ</code></td><td><span aria-label="no unit">·</span></td><td>Reactive power</td></tr>
+<tr><td><code>isLimPmax</code></td><td><span aria-label="no unit">·</span></td><td>Max.</td></tr>
+<tr><td><code>isLimPmin</code></td><td><span aria-label="no unit">·</span></td><td>Min.</td></tr>
+<tr><td><code>isLimQmax</code></td><td><span aria-label="no unit">·</span></td><td>Max.</td></tr>
+<tr><td><code>isLimQmin</code></td><td><span aria-label="no unit">·</span></td><td>Min.</td></tr>
+<tr><td><code>isMustRunUC</code></td><td><span aria-label="no unit">·</span></td><td>Must run</td></tr>
+<tr><td><code>isCtrlFixedToLdfVal</code></td><td><span aria-label="no unit">·</span></td><td>Fix controls to Load Flow values</td></tr>
+<tr><td><code>is4SpinReserve</code></td><td><span aria-label="no unit">·</span></td><td>Consider for region spinning reserve</td></tr>
+<tr><td><code>allowConsumMode</code></td><td><span aria-label="no unit">·</span></td><td>Separate consumption mode</td></tr>
+<tr><td><code>isConsCostOp</code></td><td><span aria-label="no unit">·</span></td><td>Operating costs</td></tr>
+<tr><td><code>discMethCostOp</code></td><td><span aria-label="no unit">·</span></td><td>Piecewise linearisation for LP</td></tr>
+<tr><td><code>numBreakpointsCostOp</code></td><td><span aria-label="no unit">·</span></td><td>Number of breakpoints</td></tr>
+<tr><td><code>isConsCostsRedispatch</code></td><td><span aria-label="no unit">·</span></td><td>Additional active power redispatch costs</td></tr>
+<tr><td><code>isConsStartUpCost</code></td><td><span aria-label="no unit">·</span></td><td>Start-up costs</td></tr>
+<tr><td><code>isConsShutDownCost</code></td><td><span aria-label="no unit">·</span></td><td>Shut-down costs</td></tr>
+<tr><td><code>isConstrRamp</code></td><td><span aria-label="no unit">·</span></td><td>Ramp rate constraints</td></tr>
+<tr><td><code>isConstrUpDown</code></td><td><span aria-label="no unit">·</span></td><td>Start-up/shut-down time constraints</td></tr>
+<tr><td><code>isDiscreteCtrlP</code></td><td><span aria-label="no unit">·</span></td><td>Restriction to discrete active power values</td></tr>
+<tr><td><code>isPcurrAllowed</code></td><td><span aria-label="no unit">·</span></td><td>Allow current active power value</td></tr>
+<tr><td><code>consCostsRedispatchQ</code></td><td><span aria-label="no unit">·</span></td><td>Additional reactive power redispatch costs</td></tr>
+<tr><td><code>refValueQ</code></td><td><span aria-label="no unit">·</span></td><td>Reference value for redispatch costs</td></tr>
+<tr><td><code>refValueLdfQ</code></td><td><span aria-label="no unit">·</span></td><td>Reference value for redispatch costs</td></tr>
+<tr><td><code>refValueV</code></td><td><span aria-label="no unit">·</span></td><td>Reference value for redispatch costs</td></tr>
+<tr><td><code>ctrlUsageP</code></td><td><span aria-label="no unit">·</span></td><td>Active Power</td></tr>
+<tr><td><code>ctrlUsageQ</code></td><td><span aria-label="no unit">·</span></td><td>Reactive Power</td></tr>
+<tr><td><code>isConsCostOp_Q</code></td><td><span aria-label="no unit">·</span></td><td>Reactive power operating costs</td></tr>
+<tr><td><code>iInterPol_Q</code></td><td><span aria-label="no unit">·</span></td><td>Approximation</td></tr>
+<tr><td><code>polyDegree_Q</code></td><td><span aria-label="no unit">·</span></td><td>Polynomial degree</td></tr>
+<tr><td><code>discMethCostOp_Q</code></td><td><span aria-label="no unit">·</span></td><td>Piecewise linearisation for LP</td></tr>
+<tr><td><code>iintgnd</code></td><td><span aria-label="no unit">·</span></td><td>N-Connection</td></tr>
+<tr><td><code>iAstabint</code></td><td><span aria-label="no unit">·</span></td><td>A-stable integration algorithm</td></tr>
+<tr><td><code>i_avr</code></td><td><span aria-label="no unit">·</span></td><td>Use integrated AVR for motor starting</td></tr>
+<tr><td><code>priority</code></td><td><span aria-label="no unit">·</span></td><td>Merit Order</td></tr>
+<tr><td><code>fixed</code></td><td><span aria-label="no unit">·</span></td><td>Must run</td></tr>
+<tr><td><code>dispatch</code></td><td><span aria-label="no unit">·</span></td><td>Generator Dispatch</td></tr>
+<tr><td><code>outServPzero</code></td><td><span aria-label="no unit">·</span></td><td>Out of service when active power is zero</td></tr>
+<tr><td><code>drawInrush</code></td><td><span aria-label="no unit">·</span></td><td>Draw Inrush Current</td></tr>
+<tr><td><code>drawStall</code></td><td><span aria-label="no unit">·</span></td><td>Draw Thermal Overload</td></tr>
+<tr><td><code>iHmcType</code></td><td><span aria-label="no unit">·</span></td><td>Harmonic Model</td></tr>
+<tr><td><code>isCtrlPplacement</code></td><td><span aria-label="no unit">·</span></td><td>Optimise active power</td></tr>
+<tr><td><code>stowind</code></td><td><span aria-label="no unit">·</span></td><td>Wind Model</td></tr>
+<tr><td><code>iopt_windm</code></td><td><span aria-label="no unit">·</span></td><td>Wind Model</td></tr>
+<tr><td><code>pgini</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>qgini</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>windspeed</code></td><td>m/s</td><td>Wind speed</td></tr>
+<tr><td><code>usetp</code></td><td>p.u.</td><td>Voltage</td></tr>
+<tr><td><code>usp_max</code></td><td>p.u.</td><td>Max. Voltage Setpoint</td></tr>
+<tr><td><code>usp_min</code></td><td>p.u.</td><td>Min. Voltage Setpoint</td></tr>
+<tr><td><code>xesy</code></td><td>Ohm</td><td>Reactance, Xe</td></tr>
+<tr><td><code>resy</code></td><td>Ohm</td><td>Resistance, Re</td></tr>
+<tr><td><code>ddroop</code></td><td>%</td><td>Droop</td></tr>
+<tr><td><code>q_min</code></td><td>p.u.</td><td>Min.</td></tr>
+<tr><td><code>q_max</code></td><td>p.u.</td><td>Max.</td></tr>
+<tr><td><code>Pmax_uc</code></td><td>MW</td><td>Max.</td></tr>
+<tr><td><code>Pmin_uc</code></td><td>MW</td><td>Min.</td></tr>
+<tr><td><code>smoothfac</code></td><td>%</td><td>Smoothing factor</td></tr>
+<tr><td><code>smoothfac_Q</code></td><td>%</td><td>Smoothing Factor</td></tr>
+<tr><td><code>pmaxratf</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>pG</code></td><td>%</td><td>Range of Voltage Regulation (+/-)</td></tr>
+<tr><td><code>Kpf</code></td><td>MW/Hz</td><td>Prim. Frequency Bias</td></tr>
+<tr><td><code>Jme</code></td><td>kgm^2</td><td>Moment of inertia</td></tr>
+<tr><td><code>gratio</code></td><td><span aria-label="no unit">·</span></td><td>Gear ratio</td></tr>
+<tr><td><code>mdmex</code></td><td><span aria-label="no unit">·</span></td><td>Exponent</td></tr>
+<tr><td><code>mdmlp</code></td><td>p.u.</td><td>Proportional Factor</td></tr>
+<tr><td><code>rf_st</code></td><td>p.u.</td><td>Starting field resistance</td></tr>
+<tr><td><code>speed_th</code></td><td>p.u.</td><td>Trigger excitation at speed</td></tr>
+<tr><td><code>ve_const</code></td><td>p.u.</td><td>Constant field voltage</td></tr>
+<tr><td><code>efdBaseRatio</code></td><td><span aria-label="no unit">·</span></td><td>Efd base ratio</td></tr>
+<tr><td><code>Tstart</code></td><td>s</td><td>Starting Time</td></tr>
+<tr><td><code>GPSlat</code></td><td>deg</td><td>Latitude / Northing</td></tr>
+<tr><td><code>GPSlon</code></td><td>deg</td><td>Longitude / Easting</td></tr>
+<tr><td><code>phiini</code></td><td>deg</td><td>Angle</td></tr>
+<tr><td><code>scaleQmin</code></td><td>%</td><td>Scaling Factor (min.)</td></tr>
+<tr><td><code>scaleQmax</code></td><td>%</td><td>Scaling Factor (max.)</td></tr>
+<tr><td><code>QtargetRPR</code></td><td>%</td><td>Q target value</td></tr>
+<tr><td><code>genShiftKey</code></td><td>%</td><td>Generation shift key</td></tr>
+<tr><td><code>PminInv</code></td><td>MW</td><td>Min.</td></tr>
+<tr><td><code>PmaxInv</code></td><td>MW</td><td>Max.</td></tr>
+<tr><td><code>costCurtailment</code></td><td>USD/MWh</td><td>Costs for curtailment</td></tr>
+<tr><td><code>penaltyCosts</code></td><td>USD/MWh</td><td>Penalty costs</td></tr>
+<tr><td><code>fixedCosts</code></td><td>USD/h</td><td>Fixed costs</td></tr>
+<tr><td><code>consumCosts</code></td><td>USD/MWh</td><td>Consumption costs</td></tr>
+<tr><td><code>costRedispatchUp</code></td><td>USD/MWh</td><td>Upward active power redispatch costs</td></tr>
+<tr><td><code>costRedispatchDown</code></td><td>USD/MWh</td><td>Downward active power redispatch costs</td></tr>
+<tr><td><code>costRedispatchQ</code></td><td>USD/Mvarh</td><td>Costs for reactive power deviation</td></tr>
+<tr><td><code>cost_up</code></td><td>USD</td><td>Warm-start costs</td></tr>
+<tr><td><code>costColdStart</code></td><td>USD</td><td>Cold-start costs</td></tr>
+<tr><td><code>coldStartTime</code></td><td>h</td><td>Cold-start time</td></tr>
+<tr><td><code>costShutDown</code></td><td>USD</td><td>Shut-down costs</td></tr>
+<tr><td><code>limRampUp</code></td><td>MW/h</td><td>Ramp-up limit</td></tr>
+<tr><td><code>limRampDown</code></td><td>MW/h</td><td>Ramp-down limit</td></tr>
+<tr><td><code>limRampStartUp</code></td><td>MW</td><td>Start-up ramp limit</td></tr>
+<tr><td><code>limRampShutDown</code></td><td>MW</td><td>Shut-down ramp limit</td></tr>
+<tr><td><code>minUpTime</code></td><td>h</td><td>Minimum up-time</td></tr>
+<tr><td><code>minDownTime</code></td><td>h</td><td>Minimum down-time</td></tr>
+<tr><td><code>targetQ</code></td><td>Mvar</td><td>Q target value</td></tr>
+<tr><td><code>targetV</code></td><td>p.u.</td><td>Target voltage setpoint</td></tr>
+<tr><td><code>fixedCostsSetpChangeQ</code></td><td>USD</td><td>Fixed costs per setpoint deviation</td></tr>
+<tr><td><code>zeroFixedCostsSetpChangeQ</code></td><td>USD</td><td>Fixed costs per setpoint deviation</td></tr>
+<tr><td><code>costRedispatchV</code></td><td>USD/p.u.</td><td>Costs for voltage setpoint deviation</td></tr>
+<tr><td><code>curativeLimP</code></td><td>MW</td><td>Max. curative active power deviation</td></tr>
+<tr><td><code>curativeLimQ</code></td><td>Mvar</td><td>Max. curative reactive power deviation</td></tr>
+<tr><td><code>curativeCosts</code></td><td>USD/MVAh</td><td>Costs for curative power deviation</td></tr>
+<tr><td><code>penaltyCosts_Q</code></td><td>USD/Mvarh</td><td>Penalty costs</td></tr>
+<tr><td><code>lambda</code></td><td>m/s</td><td>Lambda</td></tr>
+<tr><td><code>beta</code></td><td><span aria-label="no unit">·</span></td><td>Beta</td></tr>
+<tr><td><code>dpl1</code></td><td><span aria-label="no unit">·</span></td><td>dpl1</td></tr>
+<tr><td><code>dpl2</code></td><td><span aria-label="no unit">·</span></td><td>dpl2</td></tr>
+<tr><td><code>dpl3</code></td><td><span aria-label="no unit">·</span></td><td>dpl3</td></tr>
+<tr><td><code>dpl4</code></td><td><span aria-label="no unit">·</span></td><td>dpl4</td></tr>
+<tr><td><code>dpl5</code></td><td><span aria-label="no unit">·</span></td><td>dpl5</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>cap_P</code></td><td>MW</td><td>Act.Power</td></tr>
+<tr><td><code>cap_Qmn</code></td><td>Mvar</td><td>Min.</td></tr>
+<tr><td><code>cap_Qmx</code></td><td>Mvar</td><td>Max.</td></tr>
+<tr><td><code>cpower</code></td><td>MW</td><td>Power</td></tr>
+<tr><td><code>ccost</code></td><td>USD/h</td><td>Costs</td></tr>
+<tr><td><code>vecBreakpointsP</code></td><td>MW</td><td>Power</td></tr>
+<tr><td><code>vecStartUpTimes</code></td><td>&gt;=h</td><td>Down-time</td></tr>
+<tr><td><code>vecStartUpCosts</code></td><td>USD</td><td>Start-up costs</td></tr>
+<tr><td><code>vecDiscreteCtrlPvals</code></td><td>%</td><td>Valid active power values</td></tr>
+<tr><td><code>cpower_Q</code></td><td>Mvar</td><td>Power</td></tr>
+<tr><td><code>ccost_Q</code></td><td>USD/h</td><td>Costs</td></tr>
+<tr><td><code>vecBreakpointsQ</code></td><td>Mvar</td><td>Power</td></tr>
+<tr><td><code>cimRdfId</code></td><td><span aria-label="no unit">·</span></td><td>RDF ID</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>sOpComment</code></td><td><span aria-label="no unit">·</span></td><td>Operator Comment</td></tr>
+<tr><td><code>fold_id</code></td><td><span aria-label="no unit">·</span></td><td>In Folder</td></tr>
+<tr><td><code>typ_id</code></td><td><span aria-label="no unit">·</span></td><td>Type<small>Object: TypSym</small></td></tr>
+<tr><td><code>bus1</code></td><td><span aria-label="no unit">·</span></td><td>Terminal<small>Object: StaCubic</small></td></tr>
+<tr><td><code>bus1n</code></td><td><span aria-label="no unit">·</span></td><td>Neutral<small>Object: StaCubic</small></td></tr>
+<tr><td><code>doc_id</code></td><td><span aria-label="no unit">·</span></td><td>Additional Data</td></tr>
+<tr><td><code>pOwner</code></td><td><span aria-label="no unit">·</span></td><td>Owner<small>Object: ElmOwner</small></td></tr>
+<tr><td><code>pOperator</code></td><td><span aria-label="no unit">·</span></td><td>Operator<small>Object: ElmOperator</small></td></tr>
+<tr><td><code>pQlimType</code></td><td><span aria-label="no unit">·</span></td><td>Capability Curve<small>Object: IntQlim</small></td></tr>
+<tr><td><code>efficiencyCurveGen</code></td><td><span aria-label="no unit">·</span></td><td>Efficiency curve (generation)<small>Object: IntEffcurve</small></td></tr>
+<tr><td><code>efficiencyCurveConsum</code></td><td><span aria-label="no unit">·</span></td><td>Efficiency curve (consumption)<small>Object: IntEffcurve</small></td></tr>
+<tr><td><code>pOpCostCurve</code></td><td><span aria-label="no unit">·</span></td><td>Generator cost curve<small>Object: IntCostcurvegen</small></td></tr>
+<tr><td><code>pQPcurve</code></td><td><span aria-label="no unit">·</span></td><td>Q(P)-Curve<small>Object: IntQpcurve</small></td></tr>
+<tr><td><code>pBMU</code></td><td><span aria-label="no unit">·</span></td><td>Virtual Power Plant<small>Object: ElmBmu</small></td></tr>
+<tr><td><code>phmc</code></td><td><span aria-label="no unit">·</span></td><td>Harmonic Voltages<small>Object: TypHmcvolt,TypHmcopvolt</small></td></tr>
+<tr><td><code>pFlicker</code></td><td><span aria-label="no unit">·</span></td><td>Flicker Coefficients<small>Object: TypFlicker</small></td></tr>
+<tr><td><code>pGRStoch</code></td><td>StoGen</td><td>Stochastic Model</td></tr>
+<tr><td><code>pPowerCrv</code></td><td><span aria-label="no unit">·</span></td><td>Wind Power Curve<small>Object: TypPowercurve</small></td></tr>
+<tr><td><code>pCharYrMW</code></td><td>ChaVec,ChaVecfile,ChaTime,ChaProfile</td><td>Time Series Characteristics of Active Power Contribution (MW)</td></tr>
+<tr><td><code>pCharYrWS</code></td><td>ChaVec,ChaVecfile,ChaTime,ChaProfile</td><td>Time Series Characteristics for Wind Speed (m/s)</td></tr>
+<tr><td><code>cpHeadFold</code></td><td><span aria-label="no unit">·</span></td><td>Head Folder</td></tr>
+<tr><td><code>bus1_bar</code></td><td><span aria-label="no unit">·</span></td><td>Terminal</td></tr>
+<tr><td><code>bus1n_bar</code></td><td><span aria-label="no unit">·</span></td><td>Neutral</td></tr>
+<tr><td><code>cpGrid</code></td><td><span aria-label="no unit">·</span></td><td>Grid<small>Object: ElmNet</small></td></tr>
+<tr><td><code>cpZone</code></td><td><span aria-label="no unit">·</span></td><td>Zone<small>Object: ElmZone</small></td></tr>
+<tr><td><code>cpArea</code></td><td><span aria-label="no unit">·</span></td><td>Area<small>Object: ElmArea</small></td></tr>
+<tr><td><code>cpFeed</code></td><td><span aria-label="no unit">·</span></td><td>Feeder<small>Object: ElmFeeder</small></td></tr>
+<tr><td><code>ciDist</code></td><td><span aria-label="no unit">·</span></td><td>Distance from infeed in number of buses</td></tr>
+<tr><td><code>ciLater</code></td><td><span aria-label="no unit">·</span></td><td>Lateral Index</td></tr>
+<tr><td><code>ciDistRoot</code></td><td><span aria-label="no unit">·</span></td><td>Distance from first infeed in number of buses</td></tr>
+<tr><td><code>ciDistAll</code></td><td><span aria-label="no unit">·</span></td><td>Distance from infeed in number of buses including switches</td></tr>
+<tr><td><code>ciDistAllRoot</code></td><td><span aria-label="no unit">·</span></td><td>Distance from first infeed in number of buses including switches</td></tr>
+<tr><td><code>cpOwner</code></td><td><span aria-label="no unit">·</span></td><td>Owner<small>Object: ElmOwner</small></td></tr>
+<tr><td><code>cpOperator</code></td><td><span aria-label="no unit">·</span></td><td>Operator<small>Object: ElmOperator</small></td></tr>
+<tr><td><code>cpBranch</code></td><td><span aria-label="no unit">·</span></td><td>Branch<small>Object: ElmBranch</small></td></tr>
+<tr><td><code>cpSite</code></td><td><span aria-label="no unit">·</span></td><td>Site<small>Object: ElmSite</small></td></tr>
+<tr><td><code>cpSubstat</code></td><td><span aria-label="no unit">·</span></td><td>Substation<small>Object: ElmSubstat,ElmTrfstat</small></td></tr>
+<tr><td><code>cpMeteostat</code></td><td><span aria-label="no unit">·</span></td><td>Meteo Station<small>Object: ElmMeteostat</small></td></tr>
+<tr><td><code>ciOutaged</code></td><td><span aria-label="no unit">·</span></td><td>Planned Outage</td></tr>
+<tr><td><code>ciEnergized</code></td><td><span aria-label="no unit">·</span></td><td>Energized</td></tr>
+<tr><td><code>ciEarthed</code></td><td><span aria-label="no unit">·</span></td><td>Earthed</td></tr>
+<tr><td><code>cDisplayName</code></td><td><span aria-label="no unit">·</span></td><td>Display Name</td></tr>
+<tr><td><code>cpSupplyTransformer</code></td><td><span aria-label="no unit">·</span></td><td>Supplying Transformer<small>Object: ElmTr?,ElmTrmult</small></td></tr>
+<tr><td><code>cpSupplyTrfStation</code></td><td><span aria-label="no unit">·</span></td><td>Supplying Secondary Substation<small>Object: ElmTrfstat</small></td></tr>
+<tr><td><code>cpSupplySubstation</code></td><td><span aria-label="no unit">·</span></td><td>Supplying Substation<small>Object: ElmSubstat</small></td></tr>
+<tr><td><code>sgini</code></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>cosgini</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>pf_recap</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>p_direc</code></td><td><span aria-label="no unit">·</span></td><td>Power Direction</td></tr>
+<tr><td><code>av_mode</code></td><td><span aria-label="no unit">·</span></td><td>Local Controller</td></tr>
+<tr><td><code>c_pstac</code></td><td><span aria-label="no unit">·</span></td><td>External Station Controller<small>Object: ElmStactrl</small></td></tr>
+<tr><td><code>qdslCtrl</code></td><td><span aria-label="no unit">·</span></td><td>Quasi-Dynamic Model<small>Object: ElmQdsl</small></td></tr>
+<tr><td><code>c_psecc</code></td><td><span aria-label="no unit">·</span></td><td>External Secondary Controller<small>Object: ElmSecctrl</small></td></tr>
+<tr><td><code>c_pmod</code></td><td><span aria-label="no unit">·</span></td><td>Model<small>Object: ElmComp</small></td></tr>
+<tr><td><code>c_pCtrlHV</code></td><td><span aria-label="no unit">·</span></td><td>Controlled HV-busbar<small>Object: ElmTerm</small></td></tr>
+<tr><td><code>Uctrl</code></td><td>kV</td><td>HV-Voltage Setpoint</td></tr>
+<tr><td><code>Inom</code></td><td>kA</td><td>Nominal Current</td></tr>
+<tr><td><code>cq_min</code></td><td>p.u.</td><td>Min.</td></tr>
+<tr><td><code>cq_max</code></td><td>p.u.</td><td>Max.</td></tr>
+<tr><td><code>cQ_min</code></td><td>Mvar</td><td>Minimum</td></tr>
+<tr><td><code>cQ_max</code></td><td>Mvar</td><td>Maximum</td></tr>
+<tr><td><code>Pmax_ucPU</code></td><td>p.u.</td><td>Max.</td></tr>
+<tr><td><code>Pmin_ucPU</code></td><td>p.u.</td><td>Min.</td></tr>
+<tr><td><code>Pnom</code></td><td>MW</td><td>Pr(rated)</td></tr>
+<tr><td><code>avgCosts</code></td><td>USD/MWh</td><td>Average costs</td></tr>
+<tr><td><code>costRedispatchP</code></td><td>USD/MWh</td><td>Costs for active power deviation</td></tr>
+<tr><td><code>cStorage</code></td><td><span aria-label="no unit">·</span></td><td>Storage model<small>Object: ElmStorage</small></td></tr>
+<tr><td><code>cIsMustRunUC</code></td><td><span aria-label="no unit">·</span></td><td>Must run</td></tr>
+<tr><td><code>efficiencyLPgen</code></td><td><span aria-label="no unit">·</span></td><td>Used efficiency (generation)</td></tr>
+<tr><td><code>efficiencyLPconsum</code></td><td><span aria-label="no unit">·</span></td><td>Used efficiency (consumption)</td></tr>
+<tr><td><code>allowGenMode</code></td><td><span aria-label="no unit">·</span></td><td>Separate generation mode</td></tr>
+<tr><td><code>PminInvPU</code></td><td>p.u.</td><td>Min.</td></tr>
+<tr><td><code>PmaxInvPU</code></td><td>p.u.</td><td>Max.</td></tr>
+<tr><td><code>avgCostsUc</code></td><td>USD/MWh</td><td>Average costs</td></tr>
+<tr><td><code>cfixedCosts</code></td><td>USD/h</td><td>Fixed costs</td></tr>
+<tr><td><code>limRampUpPU</code></td><td>p.u./h</td><td>Ramp-up limit</td></tr>
+<tr><td><code>limRampDownPU</code></td><td>p.u./h</td><td>Ramp-down limit</td></tr>
+<tr><td><code>limRampStartUpPU</code></td><td>p.u.</td><td>Start-up ramp limit</td></tr>
+<tr><td><code>limRampShutDownPU</code></td><td>p.u.</td><td>Shut-down ramp limit</td></tr>
+<tr><td><code>cIsDiscreteCtrlP</code></td><td><span aria-label="no unit">·</span></td><td>Restriction to discrete active power values</td></tr>
+<tr><td><code>cVecDiscreteCtrlPvals</code></td><td>%</td><td>Valid active power values</td></tr>
+<tr><td><code>cIsPcurrAllowed</code></td><td><span aria-label="no unit">·</span></td><td>Allow current active power value</td></tr>
+<tr><td><code>cCtrlUsageP</code></td><td><span aria-label="no unit">·</span></td><td>Active Power</td></tr>
+<tr><td><code>cCtrlUsageQ</code></td><td><span aria-label="no unit">·</span></td><td>Reactive Power</td></tr>
+<tr><td><code>cCurativeLimP_PU</code></td><td>p.u.</td><td>Max. curative active power deviation</td></tr>
+<tr><td><code>cCurativeLimQ_PU</code></td><td>p.u.</td><td>Max. curative reactive power deviation</td></tr>
+<tr><td><code>avgCostsUc_Q</code></td><td>USD/Mvarh</td><td>Average costs</td></tr>
+<tr><td><code>avgCostsUc_posQ</code></td><td>USD/Mvarh</td><td>Average costs (pos. range)</td></tr>
+<tr><td><code>avgCostsUc_negQ</code></td><td>USD/Mvarh</td><td>Average costs (neg. range)</td></tr>
+<tr><td><code>P_max</code></td><td>MW</td><td>Max.</td></tr>
+<tr><td><code>cgnd</code></td><td><span aria-label="no unit">·</span></td><td>Star Point</td></tr>
+<tr><td><code>phtech</code></td><td><span aria-label="no unit">·</span></td><td>Technology</td></tr>
+<tr><td><code>ctag</code></td><td>s</td><td>Acceleration time const. from type</td></tr>
+<tr><td><code>ctagtot</code></td><td>s</td><td>Total acceleration time const.</td></tr>
+<tr><td><code>c_pmdm</code></td><td><span aria-label="no unit">·</span></td><td>Mdm<small>Object: ElmMdm*</small></td></tr>
+<tr><td><code>ve_rated</code></td><td>p.u.</td><td>Rated field voltage</td></tr>
+<tr><td><code>cCategory</code></td><td><span aria-label="no unit">·</span></td><td>Plant Category</td></tr>
+<tr><td><code>cSubCategory</code></td><td><span aria-label="no unit">·</span></td><td>Subcategory</td></tr>
+<tr><td><code>Qmin_a</code></td><td>Mvar</td><td>Qmin(act.)</td></tr>
+<tr><td><code>Qmax_a</code></td><td>Mvar</td><td>Qmax(act.)</td></tr>
+<tr><td><code>Pmin_a</code></td><td>MW</td><td>Pmin(act.)</td></tr>
+<tr><td><code>Pmax_a</code></td><td>MW</td><td>Pmax(act.)</td></tr>
+<tr><td><code>pgini_a</code></td><td>MW</td><td>Active Power (act.)</td></tr>
+<tr><td><code>qgini_a</code></td><td>Mvar</td><td>Reactive Power (act.)</td></tr>
+<tr><td><code>sgini_a</code></td><td>MVA</td><td>Apparent Power (act.)</td></tr>
+<tr><td><code>cosgini_a</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor (act.)</td></tr>
+<tr><td><code>pf_recap_a</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor Ind/Cap (act.)</td></tr>
+<tr><td><code>windspeed_a</code></td><td>m/s</td><td>Wind speed (act.)</td></tr>
+<tr><td><code>cTypHmc</code></td><td><span aria-label="no unit">·</span></td><td>Type of harmonic sources</td></tr>
+<tr><td><code>Pngrel</code></td><td>MW</td><td>Based on rated active power (Pr)</td></tr>
+<tr><td><code>mean</code></td><td>m/s</td><td>Mean</td></tr>
+<tr><td><code>variance</code></td><td>m/s</td><td>Variance</td></tr>
+<tr><td><code>cnwsamples</code></td><td><span aria-label="no unit">·</span></td><td>Number of Samples</td></tr>
+<tr><td><code>FAY</code></td><td>h/a</td><td>Full Availability Expectancy</td></tr>
+<tr><td><code>FOE</code></td><td>h/a</td><td>Forced Outage Expectancy</td></tr>
+<tr><td><code>EDS</code></td><td>h/a</td><td>Expectancy of derated states</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmSym load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:urnet:bus1</code></td><td>p.u.</td><td>Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Real Part</td></tr>
+<tr><td><code>m:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1:bus1</code></td><td>kV</td><td>Line-Ground Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1l:bus1</code></td><td>kV</td><td>Line-Line Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bus1</code></td><td>deg</td><td>Positive-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bus1</code></td><td>p.u.</td><td>Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bus1</code></td><td>p.u.</td><td>Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bus1</code></td><td>p.u.</td><td>Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bus1</code></td><td>kA</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1</code></td><td>deg</td><td>Current, Angle</td></tr>
+<tr><td><code>m:i1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bus1</code></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bus1</code></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bus1</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bus1</code></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bus1</code></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Psum:bus1</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bus1</code></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:Ssum:bus1</code></td><td>MVA</td><td>Total Apparent Power</td></tr>
+<tr><td><code>m:cosphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:tanphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total tan(phi)</td></tr>
+<tr><td><code>m:i1P:bus1</code></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bus1</code></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bus1</code></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bus1</code></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bus1</code></td><td>p.u.</td><td>Current, Real Part</td></tr>
+<tr><td><code>m:ii:bus1</code></td><td>p.u.</td><td>Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bus1</code></td><td>p.u.</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bus1</code></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>m:Tfct:bus1</code></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Brkload:bus1</code></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>m:Spu:bus1</code></td><td>MVA/p.u.</td><td>Apparent Power per p.u. Voltage</td></tr>
+<tr><td><code>m:urnet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu0:bus1</code></td><td>deg</td><td>Zero-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:u2:bus1</code></td><td>p.u.</td><td>Negative-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu2:bus1</code></td><td>deg</td><td>Negative-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:i0r:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i0i:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0:bus1</code></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0x3:bus1</code></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:phii0:bus1</code></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>m:i2r:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i2i:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i2:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I2:bus1</code></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii2:bus1</code></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>m:ubfacI:bus1</code></td><td>%</td><td>Current Unbalance Factor</td></tr>
+<tr><td><code>m:ubfacS:bus1</code></td><td>%</td><td>Power Unbalance Factor</td></tr>
+<tr><td><code>m:P:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Pln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power (Line-Neutral)</td></tr>
+<tr><td><code>m:Qln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power (Line-Neutral)</td></tr>
+<tr><td><code>m:P1:bus1</code></td><td>MW</td><td>Positive Sequence Active Power</td></tr>
+<tr><td><code>m:Q1:bus1</code></td><td>Mvar</td><td>Positive Sequence Reactive Power</td></tr>
+<tr><td><code>m:P2:bus1</code></td><td>MW</td><td>Negative Sequence Active Power</td></tr>
+<tr><td><code>m:Q2:bus1</code></td><td>Mvar</td><td>Negative Sequence Reactive Power</td></tr>
+<tr><td><code>m:P0:bus1</code></td><td>MW</td><td>Zero Sequence Active Power</td></tr>
+<tr><td><code>m:Q0:bus1</code></td><td>Mvar</td><td>Zero Sequence Reactive Power</td></tr>
+<tr><td><code>m:i2P:bus1</code></td><td>p.u.</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:i2Q:bus1</code></td><td>p.u.</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I2P:bus1</code></td><td>kA</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:I2Q:bus1</code></td><td>kA</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part</td></tr>
+<tr><td><code>m:ii:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu0i0:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in zero-sequence system</td></tr>
+<tr><td><code>m:phiu2i2:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in negative sequence system</td></tr>
+<tr><td><code>m:TfctPh:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:BrkloadPh:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>c:p</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>c:q</code></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>c:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal-Power factor</td></tr>
+<tr><td><code>c:Pnom</code></td><td>MW</td><td>Total Nominal Active power</td></tr>
+<tr><td><code>c:c2</code></td><td><span aria-label="no unit">·</span></td><td>Voltage Coefficient (uknom/ugn)</td></tr>
+<tr><td><code>c:uini</code></td><td>p.u.</td><td>Voltage Setpoint for PV and Slack</td></tr>
+<tr><td><code>c:phiini</code></td><td>deg</td><td>Initial Angle</td></tr>
+<tr><td><code>c:phirelref</code></td><td>rad</td><td>Relative reference angle</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:iPowerOn</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:xdq</code></td><td>p.u.</td><td>Synchronous Reactance</td></tr>
+<tr><td><code>c:Qmin</code></td><td>Mvar</td><td>Lower limit of reactive power</td></tr>
+<tr><td><code>c:Qmax</code></td><td>Mvar</td><td>Upper limit of reactive power</td></tr>
+<tr><td><code>c:Qsparelead</code></td><td>Mvar</td><td>Q spare lead</td></tr>
+<tr><td><code>c:Qsparelag</code></td><td>Mvar</td><td>Q spare lag</td></tr>
+<tr><td><code>c:i_qlim</code></td><td><span aria-label="no unit">·</span></td><td>Reactive power limit reached</td></tr>
+<tr><td><code>c:i_vlim</code></td><td><span aria-label="no unit">·</span></td><td>Voltage setpoint limit reached</td></tr>
+<tr><td><code>c:Pmin</code></td><td>MW</td><td>Lower limit of active power</td></tr>
+<tr><td><code>c:Pmax</code></td><td>MW</td><td>Upper limit of active power</td></tr>
+<tr><td><code>c:i_plim</code></td><td><span aria-label="no unit">·</span></td><td>Active power limit reached</td></tr>
+<tr><td><code>c:sm</code></td><td>MVA</td><td>Complex Power</td></tr>
+<tr><td><code>c:u1</code></td><td>p.u.</td><td>Internal</td></tr>
+<tr><td><code>c:i_spin</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:Pdisp</code></td><td>MW</td><td>Power (Eco-Dispatch)</td></tr>
+<tr><td><code>c:Kp</code></td><td>p.u.</td><td>Active Power Participation</td></tr>
+<tr><td><code>c:Kq</code></td><td>p.u.</td><td>Reactive Power Participation</td></tr>
+<tr><td><code>c:Kpf</code></td><td>MW/Hz</td><td>Frequency Bias</td></tr>
+<tr><td><code>c:iRefElement</code></td><td><span aria-label="no unit">·</span></td><td>Reference Element</td></tr>
+<tr><td><code>c:zonewscale</code></td><td><span aria-label="no unit">·</span></td><td>Wind generation zone scaling factor</td></tr>
+<tr><td><code>c:Pmism</code></td><td>MW</td><td>Active Power Mismatch</td></tr>
+<tr><td><code>c:nCtrlIter</code></td><td><span aria-label="no unit">·</span></td><td>No. of CTRL-iterations</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses (total)</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Reactive-Losses (total)</td></tr>
+<tr><td><code>c:Plossld</code></td><td>MW</td><td>Losses (load)</td></tr>
+<tr><td><code>c:Qlossld</code></td><td>Mvar</td><td>Reactive-Losses (load)</td></tr>
+<tr><td><code>c:Plossnld</code></td><td>MW</td><td>Losses (no load)</td></tr>
+<tr><td><code>c:Qlossnld</code></td><td>Mvar</td><td>Reactive-Losses (no load)</td></tr>
+<tr><td><code>c:Snom</code></td><td>MVA</td><td>Nom. Apparent Power (1 mach.)</td></tr>
+<tr><td><code>c:Nnom</code></td><td><span aria-label="no unit">·</span></td><td>Number of Parallel Machines</td></tr>
+<tr><td><code>c:cst_disp</code></td><td>USD/h</td><td>Operating Costs</td></tr>
+<tr><td><code>c:r0</code></td><td>p.u.</td><td>Zero Sequence Resistance</td></tr>
+<tr><td><code>c:x0</code></td><td>p.u.</td><td>Zero Sequence Reactance</td></tr>
+<tr><td><code>c:rearth</code></td><td>p.u.</td><td>Grounding Resistance</td></tr>
+<tr><td><code>c:xearth</code></td><td>p.u.</td><td>Grounding Reactance</td></tr>
+<tr><td><code>c:r2</code></td><td>p.u.</td><td>Negative Sequence Resistance</td></tr>
+<tr><td><code>c:x2</code></td><td>p.u.</td><td>Negative Sequence Reactance</td></tr>
+<tr><td><code>n:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1</code></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1</code></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1</code></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bus1</code></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bus1</code></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:Pgen:bus1</code></td><td>MW</td><td>Generation, Active Power</td></tr>
+<tr><td><code>n:Qgen:bus1</code></td><td>Mvar</td><td>Generation, Reactive Power</td></tr>
+<tr><td><code>n:Pmot:bus1</code></td><td>MW</td><td>Motor Load, Active Power</td></tr>
+<tr><td><code>n:Qmot:bus1</code></td><td>Mvar</td><td>Motor Load, Reactive Power</td></tr>
+<tr><td><code>n:Pload:bus1</code></td><td>MW</td><td>General Load, Active Power</td></tr>
+<tr><td><code>n:Qload:bus1</code></td><td>Mvar</td><td>General Load, Reactive Power</td></tr>
+<tr><td><code>n:Pcomp:bus1</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>n:Qcomp:bus1</code></td><td>Mvar</td><td>Compensation</td></tr>
+<tr><td><code>n:Pnet:bus1</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>n:Qnet:bus1</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>n:Pflow:bus1</code></td><td>MW</td><td>Power Flow, Active Power</td></tr>
+<tr><td><code>n:Qflow:bus1</code></td><td>Mvar</td><td>Power Flow, Reactive Power</td></tr>
+<tr><td><code>n:Pout:bus1</code></td><td>MW</td><td>Outgoing Flow, Active Power</td></tr>
+<tr><td><code>n:Qout:bus1</code></td><td>Mvar</td><td>Outgoing Power, Reactive Power</td></tr>
+<tr><td><code>n:Sout:bus1</code></td><td>MVA</td><td>Outgoing Power, Apparent Power</td></tr>
+<tr><td><code>n:cosphiout:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Outgoing Power, Power Factor</td></tr>
+<tr><td><code>n:Pbalance:bus1</code></td><td>MW</td><td>Active Power Balance (=0)</td></tr>
+<tr><td><code>n:Qbalance:bus1</code></td><td>Mvar</td><td>Reactive Power Balance (=0)</td></tr>
+<tr><td><code>n:LossPdown:bus1</code></td><td>MW</td><td>Losses, downstream</td></tr>
+<tr><td><code>n:LossQdown:bus1</code></td><td>Mvar</td><td>Losses, downstream (Reactive Power)</td></tr>
+<tr><td><code>n:LossPdownload:bus1</code></td><td>MW</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownload:bus1</code></td><td>Mvar</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossPdownnoload:bus1</code></td><td>MW</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownnoload:bus1</code></td><td>Mvar</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:du_feed:bus1</code></td><td>%</td><td>Difference from voltage at start of feeder</td></tr>
+<tr><td><code>n:ur:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:ulpc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Voltage, Angle</td></tr>
+<tr><td><code>n:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0:bus1</code></td><td>kV</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0x3:bus1</code></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:phiu0:bus1</code></td><td>deg</td><td>Zero-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1:bus1</code></td><td>kV</td><td>Line-Ground Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bus1</code></td><td>deg</td><td>Positive-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:u2:bus1</code></td><td>p.u.</td><td>Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2:bus1</code></td><td>kV</td><td>Line-Ground Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu2:bus1</code></td><td>deg</td><td>Negative-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1l:bus1</code></td><td>kV</td><td>Line-Line Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2l:bus1</code></td><td>kV</td><td>Line-Line Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:Uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiuln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Neutral Voltage, Angle</td></tr>
+<tr><td><code>n:un:bus1</code></td><td>p.u.</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:Un:bus1</code></td><td>kV</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiun:bus1</code></td><td>deg</td><td>Neutral-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:upht:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upht:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:um:bus1</code></td><td>p.u.</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:Um:bus1</code></td><td>kV</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:uphtmin:bus1</code></td><td>p.u.</td><td>Minimum of Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:uphtmax:bus1</code></td><td>p.u.</td><td>Maximum of Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:ubfac:bus1</code></td><td>%</td><td>Unbalance Factor</td></tr>
+<tr><td><code>s:pset</code></td><td>MW</td><td>Active Power Setpoint</td></tr>
+<tr><td><code>s:qset</code></td><td>Mvar</td><td>Reactive Power Setpoint</td></tr>
+<tr><td><code>s:dFin</code></td><td>Hz</td><td>Frequency Deviation</td></tr>
+<tr><td><code>s:phiset</code></td><td>rad</td><td>Voltage Angle Setpoint</td></tr>
+<tr><td><code>s:dF</code></td><td>Hz</td><td>Frequency Deviation Output</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="short-circuit">
+  <h2 id="short-circuit">ElmSym short-circuit results</h2>
+  <p class="dx-note">Read after <code>ComShc</code> with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:I:bus1</code></td><td>kA</td><td>Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1</code></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:i1:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bus1</code></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bus1</code></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bus1</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:i1P:bus1</code></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bus1</code></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bus1</code></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bus1</code></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:phiui:bus1</code></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in Positive-Sequence System</td></tr>
+<tr><td><code>m:Tfct:bus1</code></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Ikss:bus1</code></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>m:ikss:bus1</code></td><td>p.u.</td><td>Initial Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:Skss:bus1</code></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>m:ip:bus1</code></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>m:maxIkss:bus1</code></td><td>kA</td><td>Max. Initial Short-Circuit Current</td></tr>
+<tr><td><code>m:maxip:bus1</code></td><td>kA</td><td>Max. Peak Short-Circuit Current</td></tr>
+<tr><td><code>m:maxIth:bus1</code></td><td>kA</td><td>Max. Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>m:maxIb:bus1</code></td><td>kA</td><td>Max. Breaking Current</td></tr>
+<tr><td><code>m:R:bus1</code></td><td>Ohm</td><td>Fault Impedance, Real Part</td></tr>
+<tr><td><code>m:X:bus1</code></td><td>Ohm</td><td>Fault Impedance, Imaginary Part</td></tr>
+<tr><td><code>m:Z:bus1</code></td><td>Ohm</td><td>Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phiz:bus1</code></td><td>deg</td><td>Fault Impedance, Angle</td></tr>
+<tr><td><code>m:Rs:bus1</code></td><td>Ohm</td><td>Source Impedance, Real Part</td></tr>
+<tr><td><code>m:Xs:bus1</code></td><td>Ohm</td><td>Source Impedance, Imaginary Part</td></tr>
+<tr><td><code>m:Zs:bus1</code></td><td>Ohm</td><td>Source Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizs:bus1</code></td><td>deg</td><td>Source Impedance, Angle</td></tr>
+<tr><td><code>m:BrkIpload:bus1</code></td><td>%</td><td>Breaker Loading (peak)</td></tr>
+<tr><td><code>m:Ib:bus1</code></td><td>kA</td><td>Short-Circuit Breaking Current</td></tr>
+<tr><td><code>m:Sb:bus1</code></td><td>MVA</td><td>Short-Circuit Breaking Power</td></tr>
+<tr><td><code>m:Ith:bus1</code></td><td>kA</td><td>Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>m:zSbase:bus1</code></td><td>p.u.</td><td>Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:XtoR:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X/R ratio</td></tr>
+<tr><td><code>m:cosphiui:bus1</code></td><td><span aria-label="no unit">·</span></td><td>cosphi</td></tr>
+<tr><td><code>m:BrkIbload:bus1</code></td><td>%</td><td>Breaker Loading (breaking)</td></tr>
+<tr><td><code>m:BrkmaxIb:bus1</code></td><td>kA</td><td>Max. Breaking Current (breaker time)</td></tr>
+<tr><td><code>m:Ik:bus1</code></td><td>kA</td><td>Steady-State Short-Circuit Current</td></tr>
+<tr><td><code>m:I:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:I0:bus1</code></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0x3:bus1</code></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:phii0:bus1</code></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>m:I2:bus1</code></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii2:bus1</code></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:Psum:bus1</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bus1</code></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:cosphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:P2:bus1</code></td><td>MW</td><td>P2</td></tr>
+<tr><td><code>m:Q2:bus1</code></td><td>Mvar</td><td>Q2</td></tr>
+<tr><td><code>m:P0:bus1</code></td><td>MW</td><td>P0</td></tr>
+<tr><td><code>m:phiui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu0i0:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in Zero-Sequence System</td></tr>
+<tr><td><code>m:phiu2i2:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in Negative-Sequence System</td></tr>
+<tr><td><code>m:TfctPh:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Ikss:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>m:ikss:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Initial Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:Skss:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>m:Skssx3:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>3*Initial Short-Circuit Power</td></tr>
+<tr><td><code>m:ip:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>m:Z:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phiz:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Fault Impedance, Angle</td></tr>
+<tr><td><code>m:Zl:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Line-Line Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizl:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Fault Impedance, Angle</td></tr>
+<tr><td><code>m:Z0:bus1</code></td><td>Ohm</td><td>Zero-Sequence Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phiz0:bus1</code></td><td>deg</td><td>Zero-Sequence Fault Impedance, Angle</td></tr>
+<tr><td><code>m:z0Sbase:bus1</code></td><td>p.u.</td><td>Zero-Sequence Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:cosphiu1i1:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Positive-Sequence cosphi</td></tr>
+<tr><td><code>m:I0x3watt:bus1</code></td><td>kA</td><td>Earth-Fault Residual Current</td></tr>
+<tr><td><code>m:I0x3var:bus1</code></td><td>kA</td><td>Capacitive Earth-Fault Current</td></tr>
+<tr><td><code>m:Q0cap:bus1</code></td><td>Mvar</td><td>Q0 capacitive</td></tr>
+<tr><td><code>m:Rfrel:bus1</code></td><td>Ohm</td><td>Relay Impedance, Real Part</td></tr>
+<tr><td><code>m:Xfrel:bus1</code></td><td>Ohm</td><td>Relay Impedance, Imaginary Part</td></tr>
+<tr><td><code>m:Zfrel:bus1</code></td><td>Ohm</td><td>Relay Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizfrel:bus1</code></td><td>deg</td><td>Relay Impedance, Angle</td></tr>
+<tr><td><code>m:Zf:bus1</code></td><td>Ohm</td><td>Meas. Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizf:bus1</code></td><td>deg</td><td>Meas. Fault Impedance, Angle</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal power factor</td></tr>
+<tr><td><code>c:xdsss</code></td><td>p.u.</td><td>Saturated Subtransient Reactance</td></tr>
+<tr><td><code>c:z1</code></td><td>p.u.</td><td>Positive-sequence impedance</td></tr>
+<tr><td><code>c:uini1</code></td><td>p.u.</td><td>Internal positive-sequence voltage</td></tr>
+<tr><td><code>c:rgf</code></td><td>p.u.</td><td>Fictitious Resistance</td></tr>
+<tr><td><code>c:tr2tf</code></td><td><span aria-label="no unit">·</span></td><td>PSU Transformer Ratio</td></tr>
+<tr><td><code>c:xdsat</code></td><td>p.u.</td><td>Saturated Synchronous Reactance</td></tr>
+<tr><td><code>c:satur</code></td><td><span aria-label="no unit">·</span></td><td>Machine Type IEC909</td></tr>
+<tr><td><code>c:uini</code></td><td>p.u.</td><td>Internal voltage</td></tr>
+<tr><td><code>c:us</code></td><td>p.u.</td><td>Internal transient voltage</td></tr>
+<tr><td><code>c:z</code></td><td>p.u.</td><td>Impedance</td></tr>
+<tr><td><code>c:zss</code></td><td>p.u.</td><td>Subtransient impedance</td></tr>
+<tr><td><code>c:zs</code></td><td>p.u.</td><td>Transient impedance</td></tr>
+<tr><td><code>c:uss</code></td><td>p.u.</td><td>Internal subtransient voltage</td></tr>
+<tr><td><code>c:z2</code></td><td>p.u.</td><td>Negative-sequence impedance</td></tr>
+<tr><td><code>c:z0</code></td><td>p.u.</td><td>Zero-sequence impedance</td></tr>
+<tr><td><code>c:ze</code></td><td>p.u.</td><td>Grounding impedance</td></tr>
+<tr><td><code>c:pG</code></td><td>%.</td><td>Range of Voltage Regulation (+/-)</td></tr>
+<tr><td><code>n:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1</code></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1</code></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1</code></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:Ul:bus1</code></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:Ikss:bus1</code></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>n:I:bus1</code></td><td>kA</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:phii:bus1</code></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>n:Skss:bus1</code></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>n:ip:bus1</code></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>n:Ib:bus1</code></td><td>kA</td><td>Short-Circuit Breaking Current</td></tr>
+<tr><td><code>n:Sb:bus1</code></td><td>MVA</td><td>Short-Circuit Breaking Power</td></tr>
+<tr><td><code>n:idc:bus1</code></td><td>kA</td><td>Decaying Component</td></tr>
+<tr><td><code>n:Ith:bus1</code></td><td>kA</td><td>Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>n:R1toX1:bus1</code></td><td><span aria-label="no unit">·</span></td><td>R1/X1 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:X1toR1:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X1/R1 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:R:bus1</code></td><td>Ohm</td><td>Short-Circuit Impedance, Real Part</td></tr>
+<tr><td><code>n:X:bus1</code></td><td>Ohm</td><td>Short-Circuit Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z:bus1</code></td><td>Ohm</td><td>Short-Circuit Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz:bus1</code></td><td>deg</td><td>Short-Circuit Impedance, Angle</td></tr>
+<tr><td><code>n:urpref:bus1</code></td><td>p.u.</td><td>Pre-fault Voltage, Real Part</td></tr>
+<tr><td><code>n:uipref:bus1</code></td><td>p.u.</td><td>Pre-fault Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:upref:bus1</code></td><td>p.u.</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:uprefpc:bus1</code></td><td>%</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upref:bus1</code></td><td>kV</td><td>Line-Ground Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ulpref:bus1</code></td><td>kV</td><td>Line-Line Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiupref:bus1</code></td><td>deg</td><td>Pre-fault Voltage, Angle</td></tr>
+<tr><td><code>n:phiui:bus1</code></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>n:Ithload:bus1</code></td><td>%</td><td>Loading, Thermal equivalent Current</td></tr>
+<tr><td><code>n:Ipload:bus1</code></td><td>%</td><td>Loading, Peak Short-Circuit Current</td></tr>
+<tr><td><code>n:Ithrtk:bus1</code></td><td>kA</td><td>Rated Short-Time Current (Tk)</td></tr>
+<tr><td><code>n:XtoR:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X/R ratio (peak)</td></tr>
+<tr><td><code>n:RtoX:bus1</code></td><td><span aria-label="no unit">·</span></td><td>R/X ratio (peak)</td></tr>
+<tr><td><code>n:XtoR_b:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X/R ratio (dc)</td></tr>
+<tr><td><code>n:RtoX_b:bus1</code></td><td><span aria-label="no unit">·</span></td><td>R/X ratio (dc)</td></tr>
+<tr><td><code>n:fctof_b:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Equivalent Frequency fc/f (dc)</td></tr>
+<tr><td><code>n:rSbase:bus1</code></td><td>p.u.</td><td>Short-Circuit Impedance, Real Part</td></tr>
+<tr><td><code>n:xSbase:bus1</code></td><td>p.u.</td><td>Short-Circuit Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:zSbase:bus1</code></td><td>p.u.</td><td>Short-Circuit Impedance, Magnitude</td></tr>
+<tr><td><code>n:Tn:bus1</code></td><td>ms</td><td>Grid Time Constant</td></tr>
+<tr><td><code>n:Ik:bus1</code></td><td>kA</td><td>Steady-State Short-Circuit Current</td></tr>
+<tr><td><code>n:cfac:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Voltage Factor</td></tr>
+<tr><td><code>n:Iasy:bus1</code></td><td>kA</td><td>Asymmetrical Breaking Current</td></tr>
+<tr><td><code>n:ur:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:ulpc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Voltage, Angle</td></tr>
+<tr><td><code>n:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0:bus1</code></td><td>kV</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0x3:bus1</code></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:phiu0:bus1</code></td><td>deg</td><td>Zero-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1:bus1</code></td><td>kV</td><td>Line-Ground Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bus1</code></td><td>deg</td><td>Positive-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:u2:bus1</code></td><td>p.u.</td><td>Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2:bus1</code></td><td>kV</td><td>Line-Ground Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu2:bus1</code></td><td>deg</td><td>Negative-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1l:bus1</code></td><td>kV</td><td>Line-Line Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2l:bus1</code></td><td>kV</td><td>Line-Line Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:Uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiuln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Neutral Voltage, Angle</td></tr>
+<tr><td><code>n:un:bus1</code></td><td>p.u.</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:Un:bus1</code></td><td>kV</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiun:bus1</code></td><td>deg</td><td>Neutral-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:upht:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upht:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ikss:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>n:I:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:phii:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>n:Skss:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>n:Skssx3:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>3*Initial Short-Circuit Power</td></tr>
+<tr><td><code>n:ip:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>n:Ib:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Breaking Current</td></tr>
+<tr><td><code>n:Sb:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Short-Circuit Breaking Power</td></tr>
+<tr><td><code>n:Ith:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>n:Ithmax:bus1</code></td><td>kA</td><td>Max. Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>n:R0:bus1</code></td><td>Ohm</td><td>Zero-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:X0:bus1</code></td><td>Ohm</td><td>Zero-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z0:bus1</code></td><td>Ohm</td><td>Zero-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz0:bus1</code></td><td>deg</td><td>Zero-Sequence Impedance, Angle</td></tr>
+<tr><td><code>n:r0Sbase:bus1</code></td><td>p.u.</td><td>Zero-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:x0Sbase:bus1</code></td><td>p.u.</td><td>Zero-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:z0Sbase:bus1</code></td><td>p.u.</td><td>Zero-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:R1:bus1</code></td><td>Ohm</td><td>Positive-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:X1:bus1</code></td><td>Ohm</td><td>Positive-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z1:bus1</code></td><td>Ohm</td><td>Positive-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz1:bus1</code></td><td>deg</td><td>Positive-Sequence Impedance, Angle</td></tr>
+<tr><td><code>n:r1Sbase:bus1</code></td><td>p.u.</td><td>Positive-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:x1Sbase:bus1</code></td><td>p.u.</td><td>Positive-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:z1Sbase:bus1</code></td><td>p.u.</td><td>Positive-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:R2:bus1</code></td><td>Ohm</td><td>Negative-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:X2:bus1</code></td><td>Ohm</td><td>Negative-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z2:bus1</code></td><td>Ohm</td><td>Negative-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz2:bus1</code></td><td>deg</td><td>Negative-Sequence Impedance, Angle</td></tr>
+<tr><td><code>n:r2Sbase:bus1</code></td><td>p.u.</td><td>Negative-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:x2Sbase:bus1</code></td><td>p.u.</td><td>Negative-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:z2Sbase:bus1</code></td><td>p.u.</td><td>Negative-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:R0toX0:bus1</code></td><td><span aria-label="no unit">·</span></td><td>R0/X0 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:X0toR0:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X0/R0 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:R2toX2:bus1</code></td><td><span aria-label="no unit">·</span></td><td>R2/X2 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:X2toR2:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X2/R2 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:R:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Resistance, Line-Ground</td></tr>
+<tr><td><code>n:X:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Reactance, Line-Ground</td></tr>
+<tr><td><code>n:Z:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Impedance, Line-Ground</td></tr>
+<tr><td><code>n:phiz:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle of Network Impedance, Line-Ground</td></tr>
+<tr><td><code>n:Rl:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Resistance, Line-Line</td></tr>
+<tr><td><code>n:Xl:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Reactance, Line-Line</td></tr>
+<tr><td><code>n:Zl:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Impedance, Line-Line</td></tr>
+<tr><td><code>n:phizl:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle of Network Impedance, Line-Line</td></tr>
+<tr><td><code>n:Rln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Resistance, Line-Neutral</td></tr>
+<tr><td><code>n:Xln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Reactance, Line-Neutral</td></tr>
+<tr><td><code>n:Zln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Impedance, Line-Neutral</td></tr>
+<tr><td><code>n:phizln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle of Network Impedance, Line-Neutral</td></tr>
+<tr><td><code>n:Rn:bus1</code></td><td>Ohm</td><td>Network Resistance, Neutral</td></tr>
+<tr><td><code>n:Xn:bus1</code></td><td>Ohm</td><td>Network Reactance, Neutral</td></tr>
+<tr><td><code>n:Zn:bus1</code></td><td>Ohm</td><td>Network Impedance, Neutral</td></tr>
+<tr><td><code>n:phizn:bus1</code></td><td>deg</td><td>Angle of Network Impedance, Neutral</td></tr>
+<tr><td><code>n:eff:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Earth Fault Factor</td></tr>
+<tr><td><code>n:X0toX1:bus1</code></td><td><span aria-label="no unit">·</span></td><td>X0/X1</td></tr>
+<tr><td><code>n:In:bus1</code></td><td>kA</td><td>Neutral Current, Magnitude</td></tr>
+<tr><td><code>n:phiin:bus1</code></td><td>deg</td><td>Neutral Current, Angle</td></tr>
+<tr><td><code>n:I0:bus1</code></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:I0x3:bus1</code></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>n:phii0:bus1</code></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>n:I1:bus1</code></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:phii1:bus1</code></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>n:I2:bus1</code></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:phii2:bus1</code></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>n:urpref:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Pre-fault Voltage, Real Part</td></tr>
+<tr><td><code>n:uipref:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Pre-fault Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:upref:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:uprefpc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upref:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ulpref:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiupref:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Pre-fault Voltage, Angle</td></tr>
+<tr><td><code>n:phiui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>n:phiu1i1:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>n:phiu2i2:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in negative sequence system</td></tr>
+<tr><td><code>n:phiu0i0:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in zero-sequence system</td></tr>
+<tr><td><code>n:Ik:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Steady-State Short-Circuit Current</td></tr>
+<tr><td><code>n:in:bus1</code></td><td>p.u.</td><td>Neutral Current, Magnitude</td></tr>
+<tr><td><code>n:i0r:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Real Part</td></tr>
+<tr><td><code>n:i0i:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>n:i0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:i1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>n:i1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>n:i1:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:i2r:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Real Part</td></tr>
+<tr><td><code>n:i2i:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>n:i2:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Magnitude</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-rms">
+  <h2 id="dynamic-rms">ElmSym rms simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (RMS) with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:urnet:bus1</code></td><td>p.u.</td><td>Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Real Part</td></tr>
+<tr><td><code>m:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1:bus1</code></td><td>kV</td><td>Line-Ground Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1l:bus1</code></td><td>kV</td><td>Line-Line Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bus1</code></td><td>deg</td><td>Positive-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bus1</code></td><td>p.u.</td><td>Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bus1</code></td><td>p.u.</td><td>Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bus1</code></td><td>p.u.</td><td>Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bus1</code></td><td>kA</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1</code></td><td>deg</td><td>Current, Angle</td></tr>
+<tr><td><code>m:i1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bus1</code></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bus1</code></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bus1</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bus1</code></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bus1</code></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Psum:bus1</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bus1</code></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:Ssum:bus1</code></td><td>MVA</td><td>Total Apparent Power</td></tr>
+<tr><td><code>m:cosphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:tanphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total tan(phi)</td></tr>
+<tr><td><code>m:i1P:bus1</code></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bus1</code></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bus1</code></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bus1</code></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bus1</code></td><td>p.u.</td><td>Current, Real Part</td></tr>
+<tr><td><code>m:ii:bus1</code></td><td>p.u.</td><td>Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bus1</code></td><td>p.u.</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bus1</code></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>m:Tfct:bus1</code></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Brkload:bus1</code></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>m:Spu:bus1</code></td><td>MVA/p.u.</td><td>Apparent Power per p.u. Voltage</td></tr>
+<tr><td><code>m:urnet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu0:bus1</code></td><td>deg</td><td>Zero-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:u2:bus1</code></td><td>p.u.</td><td>Negative-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu2:bus1</code></td><td>deg</td><td>Negative-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part</td></tr>
+<tr><td><code>m:iinet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part</td></tr>
+<tr><td><code>m:inet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:I:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:i0r:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i0i:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0:bus1</code></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0x3:bus1</code></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:phii0:bus1</code></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>m:i2r:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i2i:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i2:bus1</code></td><td>p.u.</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I2:bus1</code></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii2:bus1</code></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Pln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power (Line-Neutral)</td></tr>
+<tr><td><code>m:Qln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power (Line-Neutral)</td></tr>
+<tr><td><code>m:P1:bus1</code></td><td>MW</td><td>Positive Sequence Active Power</td></tr>
+<tr><td><code>m:Q1:bus1</code></td><td>Mvar</td><td>Positive Sequence Reactive Power</td></tr>
+<tr><td><code>m:P2:bus1</code></td><td>MW</td><td>Negative Sequence Active Power</td></tr>
+<tr><td><code>m:Q2:bus1</code></td><td>Mvar</td><td>Negative Sequence Reactive Power</td></tr>
+<tr><td><code>m:P0:bus1</code></td><td>MW</td><td>Zero Sequence Active Power</td></tr>
+<tr><td><code>m:Q0:bus1</code></td><td>Mvar</td><td>Zero Sequence Reactive Power</td></tr>
+<tr><td><code>m:i2P:bus1</code></td><td>p.u.</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:i2Q:bus1</code></td><td>p.u.</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I2P:bus1</code></td><td>kA</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:I2Q:bus1</code></td><td>kA</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part</td></tr>
+<tr><td><code>m:ii:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu0i0:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in zero-sequence system</td></tr>
+<tr><td><code>m:phiu2i2:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in negative sequence system</td></tr>
+<tr><td><code>m:TfctPh:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:BrkloadPh:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>c:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal power factor</td></tr>
+<tr><td><code>c:c2</code></td><td><span aria-label="no unit">·</span></td><td>Voltage coefficient (uknom/ugn)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:Qmin</code></td><td>Mvar</td><td>Lower limit of reactive power</td></tr>
+<tr><td><code>c:Qmax</code></td><td>Mvar</td><td>Upper limit of reactive power</td></tr>
+<tr><td><code>c:Pmax</code></td><td>MW</td><td>Upper limit of active power</td></tr>
+<tr><td><code>c:ud</code></td><td>p.u.</td><td>Voltage, d-axis</td></tr>
+<tr><td><code>c:uq</code></td><td>p.u.</td><td>Voltage, q-axis</td></tr>
+<tr><td><code>c:id</code></td><td>p.u.</td><td>Stator current, d-axis</td></tr>
+<tr><td><code>c:iq</code></td><td>p.u.</td><td>Stator current, q-axis</td></tr>
+<tr><td><code>c:psim</code></td><td>p.u.</td><td>Magnetisation Flux</td></tr>
+<tr><td><code>c:xmem</code></td><td>p.u.</td><td>Electrical torque</td></tr>
+<tr><td><code>c:addmt</code></td><td>p.u.</td><td>Additional torque</td></tr>
+<tr><td><code>c:xmdpe</code></td><td>p.u.</td><td>Damping torque based on power</td></tr>
+<tr><td><code>c:xmdkd</code></td><td>p.u.</td><td>Damping torque</td></tr>
+<tr><td><code>c:i1d</code></td><td>p.u.</td><td>Current in 1d-damper winding</td></tr>
+<tr><td><code>c:ifd</code></td><td>p.u.</td><td>Current in excitation winding</td></tr>
+<tr><td><code>c:i1q</code></td><td>p.u.</td><td>Current in 1q-damper winding</td></tr>
+<tr><td><code>c:fi</code></td><td>deg</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>c:firot</code></td><td>deg</td><td>External rotor angle</td></tr>
+<tr><td><code>c:firel</code></td><td>deg</td><td>Rotor angle referred to the reference machine rotor angle</td></tr>
+<tr><td><code>c:dfrotx</code></td><td>deg</td><td>Maximum rotor angle difference</td></tr>
+<tr><td><code>c:dorhz</code></td><td>Hz</td><td>Speed Deviation</td></tr>
+<tr><td><code>c:Ptspin</code></td><td>MW</td><td>Total Turbine Power of Area</td></tr>
+<tr><td><code>c:Pnomspin</code></td><td>MW</td><td>Total Nominal Power of Spinning Machines in Area</td></tr>
+<tr><td><code>c:Presspin</code></td><td>MW</td><td>Spinning Reserve of Area</td></tr>
+<tr><td><code>c:Tag</code></td><td>s</td><td>Acceleration time constant</td></tr>
+<tr><td><code>c:Tagav</code></td><td>s</td><td>System Inertia of Area</td></tr>
+<tr><td><code>c:speedinit</code></td><td>p.u.</td><td>Initial speed</td></tr>
+<tr><td><code>c:xadu</code></td><td>p.u.</td><td>Mutual reactance, d-axis</td></tr>
+<tr><td><code>c:xaqu</code></td><td>p.u.</td><td>Mutual reactance, q-axis</td></tr>
+<tr><td><code>c:xad</code></td><td>p.u.</td><td>Saturated mutual reactance, d-axis</td></tr>
+<tr><td><code>c:xaq</code></td><td>p.u.</td><td>Saturated mutual reactance, q-axis</td></tr>
+<tr><td><code>c:satd</code></td><td>p.u.</td><td>Saturation factor, d-axis</td></tr>
+<tr><td><code>c:satq</code></td><td>p.u.</td><td>Saturation factor, q-axis</td></tr>
+<tr><td><code>c:xrl</code></td><td>p.u.</td><td>Coupling reactance between field and damper windings</td></tr>
+<tr><td><code>c:x1d</code></td><td>p.u.</td><td>Reactance of 1d-damper winding</td></tr>
+<tr><td><code>c:r1d</code></td><td>p.u.</td><td>Resistance of 1d-damper winding</td></tr>
+<tr><td><code>c:xfd</code></td><td>p.u.</td><td>Reactance of excitation winding</td></tr>
+<tr><td><code>c:rfd</code></td><td>p.u.</td><td>Resistance of excitation winding</td></tr>
+<tr><td><code>c:x1q</code></td><td>p.u.</td><td>Reactance of 1q-damper winding</td></tr>
+<tr><td><code>c:r1q</code></td><td>p.u.</td><td>Resistance of 1q-damper winding</td></tr>
+<tr><td><code>c:rstr</code></td><td>p.u.</td><td>Stator resistance</td></tr>
+<tr><td><code>c:xl</code></td><td>p.u.</td><td>Stator leakage reactance</td></tr>
+<tr><td><code>c:xd</code></td><td>p.u.</td><td>Synchronous reactance, d-axis</td></tr>
+<tr><td><code>c:xq</code></td><td>p.u.</td><td>Synchronous reactance, q-axis</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:Gm</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor (=xhd0/re)</td></tr>
+<tr><td><code>c:ve_rated</code></td><td>p.u.</td><td>Rated Excitation Voltage</td></tr>
+<tr><td><code>c:Pmaxspin</code></td><td>MW</td><td>Total Maximum Power of Spinning Machines in Area</td></tr>
+<tr><td><code>c:p_mag</code></td><td><span aria-label="no unit">·</span></td><td>Participation, Magnitude</td></tr>
+<tr><td><code>c:p_phi</code></td><td>deg</td><td>Participation, Angle</td></tr>
+<tr><td><code>c:p_mags</code></td><td><span aria-label="no unit">·</span></td><td>Participation, Magnitude (signed)</td></tr>
+<tr><td><code>c:lEVec_mag</code></td><td><span aria-label="no unit">·</span></td><td>Controllability, Magnitude</td></tr>
+<tr><td><code>c:lEVec_phi</code></td><td>deg</td><td>Controllability, Angle</td></tr>
+<tr><td><code>c:lEVec_mags</code></td><td><span aria-label="no unit">·</span></td><td>Controllability, Magnitude (signed)</td></tr>
+<tr><td><code>c:rEVec_mag</code></td><td><span aria-label="no unit">·</span></td><td>Observability, Magnitude</td></tr>
+<tr><td><code>c:rEVec_phi</code></td><td>deg</td><td>Observability, Angle</td></tr>
+<tr><td><code>c:rEVec_mags</code></td><td><span aria-label="no unit">·</span></td><td>Observability, Magnitude (signed)</td></tr>
+<tr><td><code>c:fe_bus</code></td><td><span aria-label="no unit">·</span></td><td>El. frequency</td></tr>
+<tr><td><code>c:slipreset</code></td><td><span aria-label="no unit">·</span></td><td>Reset out of step</td></tr>
+<tr><td><code>c:mdmlp</code></td><td>p.u.</td><td>Proportional Factor</td></tr>
+<tr><td><code>c:mdmex</code></td><td><span aria-label="no unit">·</span></td><td>Exponent</td></tr>
+<tr><td><code>c:psi1d</code></td><td>p.u.</td><td>Flux in 1d-damper winding</td></tr>
+<tr><td><code>c:psifd</code></td><td>p.u.</td><td>Field (excitation) flux</td></tr>
+<tr><td><code>c:psi1q</code></td><td>p.u.</td><td>Flux in 1q-damper winding</td></tr>
+<tr><td><code>c:xdss</code></td><td>p.u.</td><td>Subtransient reactance, d-axis</td></tr>
+<tr><td><code>c:xqss</code></td><td>p.u.</td><td>Subtransient reactance, q-axis</td></tr>
+<tr><td><code>c:psidss</code></td><td>p.u.</td><td>Subtransient Flux, d-axis</td></tr>
+<tr><td><code>c:psiqss</code></td><td>p.u.</td><td>Subtransient Flux, q-axis</td></tr>
+<tr><td><code>c:dfrotxM1</code></td><td><span aria-label="no unit">·</span></td><td>Machine 1 used to obtain dfrotx</td></tr>
+<tr><td><code>c:dfrotxM2</code></td><td><span aria-label="no unit">·</span></td><td>Machine 2 used to obtain dfrotx</td></tr>
+<tr><td><code>c:r2q</code></td><td>p.u.</td><td>Resistance of 2q-damper winding</td></tr>
+<tr><td><code>c:x2q</code></td><td>p.u.</td><td>Reactance of 2q-damper winding</td></tr>
+<tr><td><code>c:psid</code></td><td>p.u.</td><td>Stator Flux, d-axis</td></tr>
+<tr><td><code>c:psiq</code></td><td>p.u.</td><td>Stator Flux, q-axis</td></tr>
+<tr><td><code>c:psi2d</code></td><td>p.u.</td><td>Flux in 2d-damper winding</td></tr>
+<tr><td><code>c:psi2q</code></td><td>p.u.</td><td>Flux in 2q-damper winding</td></tr>
+<tr><td><code>c:psi3q</code></td><td>p.u.</td><td>Flux in 3q-damper winding</td></tr>
+<tr><td><code>c:xrl2d</code></td><td>p.u.</td><td>Coupling reactance between field and damper windings</td></tr>
+<tr><td><code>c:x2d</code></td><td>p.u.</td><td>Reactance of 2d-damper winding</td></tr>
+<tr><td><code>c:r2d</code></td><td>p.u.</td><td>Resistance of 2d-damper winding</td></tr>
+<tr><td><code>c:x3q</code></td><td>p.u.</td><td>Reactance of 3q-damper winding</td></tr>
+<tr><td><code>c:r3q</code></td><td>p.u.</td><td>Resistance of 3q-damper winding</td></tr>
+<tr><td><code>c:slip</code></td><td>%</td><td>Slip</td></tr>
+<tr><td><code>c:slipmin</code></td><td>%</td><td>Minimum Slip</td></tr>
+<tr><td><code>c:x1de</code></td><td>p.u.</td><td>Eddy-current reactance of 1d-damper winding</td></tr>
+<tr><td><code>c:r1de</code></td><td>p.u.</td><td>Eddy-current resistance of 1d-damper winding</td></tr>
+<tr><td><code>c:xfde</code></td><td>p.u.</td><td>Eddy-current reactance of excitation winding</td></tr>
+<tr><td><code>c:rfde</code></td><td>p.u.</td><td>Eddy-current resistance of excitation winding</td></tr>
+<tr><td><code>c:x1qe</code></td><td>p.u.</td><td>Eddy-current reactance of 1q-damper winding</td></tr>
+<tr><td><code>c:r1qe</code></td><td>p.u.</td><td>Eddy-current resistance of 1q-damper winding</td></tr>
+<tr><td><code>c:ussd</code></td><td>p.u.</td><td>Subtransient Voltage, d-axis</td></tr>
+<tr><td><code>c:ussq</code></td><td>p.u.</td><td>Subtransient Voltage, q-axis</td></tr>
+<tr><td><code>c:i2q</code></td><td>p.u.</td><td>Current in 2q-damper winding</td></tr>
+<tr><td><code>c:iD</code></td><td>p.u.</td><td>Current in 1d-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:ix</code></td><td>p.u.</td><td>Current in 2q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:iQ</code></td><td>p.u.</td><td>Current in 1q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psie</code></td><td>p.u.</td><td>Excitation Flux (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psiD</code></td><td>p.u.</td><td>Flux in 1d-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psiQ</code></td><td>p.u.</td><td>Flux in 1q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psix</code></td><td>p.u.</td><td>Flux in 2q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:Td0s</code></td><td>s</td><td>Td0'</td></tr>
+<tr><td><code>c:xme1</code></td><td>p.u.</td><td>Electrical Torque, Positive Sequence</td></tr>
+<tr><td><code>c:xme2</code></td><td>p.u.</td><td>Electrical Torque, Negative Sequence</td></tr>
+<tr><td><code>c:r0</code></td><td>p.u.</td><td>Zero Sequence Resistance</td></tr>
+<tr><td><code>c:x0</code></td><td>p.u.</td><td>Zero Sequence Reactance</td></tr>
+<tr><td><code>c:rearth</code></td><td>p.u.</td><td>Grounding Resistance</td></tr>
+<tr><td><code>c:xearth</code></td><td>p.u.</td><td>Grounding Reactance</td></tr>
+<tr><td><code>c:r2</code></td><td>p.u.</td><td>Negative Sequence Resistance</td></tr>
+<tr><td><code>c:x2</code></td><td>p.u.</td><td>Negative Sequence Reactance</td></tr>
+<tr><td><code>n:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1</code></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1</code></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1</code></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bus1</code></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bus1</code></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:ishc:bus1</code></td><td>p.u.</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Ishc:bus1</code></td><td>kA</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:fe:bus1</code></td><td>p.u.</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:dfehz:bus1</code></td><td>Hz</td><td>Deviation of the El. Frequency</td></tr>
+<tr><td><code>n:fehz:bus1</code></td><td>Hz</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:frnom:bus1</code></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>n:ishcr:bus1</code></td><td>p.u.</td><td>Short-Circuit Current, real</td></tr>
+<tr><td><code>n:ishci:bus1</code></td><td>p.u.</td><td>Short-Circuit Current, imag</td></tr>
+<tr><td><code>n:dfedt:bus1</code></td><td>p.u./s</td><td>Derivative of El. Frequency</td></tr>
+<tr><td><code>n:ur:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:ulpc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Voltage, Angle</td></tr>
+<tr><td><code>n:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0:bus1</code></td><td>kV</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0x3:bus1</code></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:phiu0:bus1</code></td><td>deg</td><td>Zero-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1:bus1</code></td><td>kV</td><td>Line-Ground Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bus1</code></td><td>deg</td><td>Positive-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:u2:bus1</code></td><td>p.u.</td><td>Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2:bus1</code></td><td>kV</td><td>Line-Ground Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu2:bus1</code></td><td>deg</td><td>Negative-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1l:bus1</code></td><td>kV</td><td>Line-Line Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2l:bus1</code></td><td>kV</td><td>Line-Line Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:Uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiuln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Neutral Voltage, Angle</td></tr>
+<tr><td><code>n:un:bus1</code></td><td>p.u.</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:Un:bus1</code></td><td>kV</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiun:bus1</code></td><td>deg</td><td>Neutral-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:upht:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upht:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:um:bus1</code></td><td>p.u.</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:Um:bus1</code></td><td>kV</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:ishc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Ishc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:inshc:bus1</code></td><td>p.u.</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Inshc:bus1</code></td><td>kA</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:ishcr:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current, real</td></tr>
+<tr><td><code>n:ishci:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current, imag</td></tr>
+<tr><td><code>s:psifd</code></td><td>p.u.</td><td>Excitation flux</td></tr>
+<tr><td><code>s:psi1d</code></td><td>p.u.</td><td>Flux in 1d-damper winding</td></tr>
+<tr><td><code>s:psi1q</code></td><td>p.u.</td><td>Flux in 1q-damper winding</td></tr>
+<tr><td><code>s:psid</code></td><td><span aria-label="no unit">·</span></td><td>Stator flux, d-axis</td></tr>
+<tr><td><code>s:psiq</code></td><td>p.u.</td><td>Stator flux, q-axis</td></tr>
+<tr><td><code>s:speed</code></td><td>p.u.</td><td>Speed</td></tr>
+<tr><td><code>s:phi</code></td><td>rad</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>s:outofstep</code></td><td><span aria-label="no unit">·</span></td><td>Out of Step (pole slip)</td></tr>
+<tr><td><code>s:xme</code></td><td>p.u.</td><td>Electrical torque</td></tr>
+<tr><td><code>s:xmt</code></td><td>p.u.</td><td>Mechanical torque</td></tr>
+<tr><td><code>s:xspeed</code></td><td>p.u.</td><td>Speed</td></tr>
+<tr><td><code>s:ie</code></td><td>p.u.</td><td>Excitation current (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>s:pgt</code></td><td>p.u.</td><td>Electrical Power</td></tr>
+<tr><td><code>s:xphi</code></td><td>rad</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>s:fe</code></td><td>p.u.</td><td>Frequency output</td></tr>
+<tr><td><code>s:ut</code></td><td>p.u.</td><td>Terminal voltage</td></tr>
+<tr><td><code>s:utr</code></td><td>p.u.</td><td>Terminal voltage, real part</td></tr>
+<tr><td><code>s:uti</code></td><td>p.u.</td><td>Terminal voltage, imaginary part</td></tr>
+<tr><td><code>s:fipol</code></td><td>deg</td><td>Internal rotor angle</td></tr>
+<tr><td><code>s:ve</code></td><td>p.u.</td><td>Excitation voltage</td></tr>
+<tr><td><code>s:pt</code></td><td>p.u.</td><td>Turbine power</td></tr>
+<tr><td><code>s:xmdm</code></td><td>p.u.</td><td>Torque input</td></tr>
+<tr><td><code>s:dw</code></td><td>p.u.</td><td>dw</td></tr>
+<tr><td><code>s:fref</code></td><td>p.u.</td><td>Reference frequency</td></tr>
+<tr><td><code>s:freflocal</code></td><td>p.u.</td><td>Local reference frequency</td></tr>
+<tr><td><code>s:i1d</code></td><td>p.u.</td><td>Current in 1d-damper winding, d-axis</td></tr>
+<tr><td><code>s:ifd</code></td><td>p.u.</td><td>Excitation Current</td></tr>
+<tr><td><code>s:i1q</code></td><td>p.u.</td><td>Current in 1q-damper winding, q-axis</td></tr>
+<tr><td><code>s:psi2q</code></td><td>p.u.</td><td>Flux in 2q-damper winding</td></tr>
+<tr><td><code>s:cur1</code></td><td>p.u.</td><td>Positive-sequence current, magnitude</td></tr>
+<tr><td><code>s:cur1r</code></td><td>p.u.</td><td>Positive-sequence current, real part</td></tr>
+<tr><td><code>s:cur1i</code></td><td>p.u.</td><td>Positive-sequence current, imaginary part</td></tr>
+<tr><td><code>s:P1</code></td><td>MW</td><td>Positive-sequence, active power</td></tr>
+<tr><td><code>s:Q1</code></td><td>Mvar</td><td>Positive-sequence, reactive power</td></tr>
+<tr><td><code>s:i2d</code></td><td>p.u.</td><td>Current in 2d-damper winding, d-axis</td></tr>
+<tr><td><code>s:i2q</code></td><td>p.u.</td><td>Current in 2q-damper winding, q-axis</td></tr>
+<tr><td><code>s:i3q</code></td><td>p.u.</td><td>Current in 3q-damper winding, q-axis</td></tr>
+<tr><td><code>s:i1de</code></td><td>p.u.</td><td>Eddy-current in 1d-damper winding</td></tr>
+<tr><td><code>s:ifde</code></td><td>p.u.</td><td>Eddy-current in excitation winding</td></tr>
+<tr><td><code>s:i1qe</code></td><td>p.u.</td><td>Eddy-current in 1q-damper winding</td></tr>
+<tr><td><code>s:current</code></td><td>p.u.</td><td>Current, magnitude</td></tr>
+<tr><td><code>s:curr</code></td><td>p.u.</td><td>Current, real part</td></tr>
+<tr><td><code>s:curi</code></td><td>p.u.</td><td>Current, imaginary part</td></tr>
+<tr><td><code>s:P</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>s:Q</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-emt">
+  <h2 id="dynamic-emt">ElmSym emt simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (EMT) with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence-Voltage</td></tr>
+<tr><td><code>m:u1r:bus1</code></td><td>p.u.</td><td>Voltage Phasor, Real Part</td></tr>
+<tr><td><code>m:u1i:bus1</code></td><td>p.u.</td><td>Voltage Phasor, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bus1</code></td><td>p.u.</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>m:U1:bus1</code></td><td>kV</td><td>Line-Ground Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>m:U1l:bus1</code></td><td>kV</td><td>Line-Line Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bus1</code></td><td>deg</td><td>Voltage Phasor, Angle</td></tr>
+<tr><td><code>m:inet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, referred to network</td></tr>
+<tr><td><code>m:I:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Phase Current</td></tr>
+<tr><td><code>m:i0:bus1</code></td><td>p.u.</td><td>Zero-Sequence Current</td></tr>
+<tr><td><code>m:I0:bus1</code></td><td>kA</td><td>Zero-Sequence Current</td></tr>
+<tr><td><code>m:I0x3:bus1</code></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:i1r:bus1</code></td><td>p.u.</td><td>Current Phasor, Real Part</td></tr>
+<tr><td><code>m:i1i:bus1</code></td><td>p.u.</td><td>Current Phasor, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bus1</code></td><td>p.u.</td><td>Current Phasor, Magnitude</td></tr>
+<tr><td><code>m:I1:bus1</code></td><td>kA</td><td>Current Phasor, Magnitude</td></tr>
+<tr><td><code>m:phii1:bus1</code></td><td>deg</td><td>Current Phasor, Angle</td></tr>
+<tr><td><code>m:P:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Psum:bus1</code></td><td>MW</td><td>Power-Phasor, Active Power</td></tr>
+<tr><td><code>m:Qsum:bus1</code></td><td>Mvar</td><td>Power Phasor, Reactive Part</td></tr>
+<tr><td><code>m:Ssum:bus1</code></td><td>MVA</td><td>Power Phasor, Apparent Power</td></tr>
+<tr><td><code>m:i1P:bus1</code></td><td>p.u.</td><td>Current Phasor, Active Current</td></tr>
+<tr><td><code>m:i1Q:bus1</code></td><td>p.u.</td><td>Current Phasor, Reactive Current</td></tr>
+<tr><td><code>m:I1P:bus1</code></td><td>kA</td><td>Current Phasor, Active Current</td></tr>
+<tr><td><code>m:I1Q:bus1</code></td><td>kA</td><td>Current Phasor, Reactive Current</td></tr>
+<tr><td><code>m:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage</td></tr>
+<tr><td><code>m:i:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current</td></tr>
+<tr><td><code>m:phiu1i1:bus1</code></td><td>deg</td><td>Angle between Voltage and Current Phasor</td></tr>
+<tr><td><code>m:Tfct:bus1</code></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:TfctPh:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:unet:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, referred to network</td></tr>
+<tr><td><code>m:cosphi1:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Power-Phasor, Power-Factor</td></tr>
+<tr><td><code>c:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal-Power Factor</td></tr>
+<tr><td><code>c:c2</code></td><td><span aria-label="no unit">·</span></td><td>Voltage Coefficient (uknom/ugn)</td></tr>
+<tr><td><code>c:Pmax</code></td><td>MW</td><td>Upper limit of active power</td></tr>
+<tr><td><code>c:ud</code></td><td>p.u.</td><td>Voltage, d-axis</td></tr>
+<tr><td><code>c:uq</code></td><td>p.u.</td><td>Voltage, q-axis</td></tr>
+<tr><td><code>c:id</code></td><td>p.u.</td><td>Stator Current, d-axis</td></tr>
+<tr><td><code>c:iq</code></td><td>p.u.</td><td>Stator Current, q-axis</td></tr>
+<tr><td><code>c:psim</code></td><td>p.u.</td><td>Magnetisation Flux</td></tr>
+<tr><td><code>c:xmem</code></td><td>p.u.</td><td>Electrical Torque</td></tr>
+<tr><td><code>c:addmt</code></td><td>p.u.</td><td>Additional Torque</td></tr>
+<tr><td><code>c:xmdpe</code></td><td>p.u.</td><td>Damping Torque based on power</td></tr>
+<tr><td><code>c:xmdkd</code></td><td>p.u.</td><td>Damping Torque</td></tr>
+<tr><td><code>c:i1d</code></td><td>p.u.</td><td>Current in 1d-damper winding</td></tr>
+<tr><td><code>c:ifd</code></td><td>p.u.</td><td>Current in excitation winding</td></tr>
+<tr><td><code>c:i1q</code></td><td>p.u.</td><td>Current in 1q-damper winding</td></tr>
+<tr><td><code>c:fi</code></td><td>deg</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>c:firot</code></td><td>deg</td><td>External rotor angle</td></tr>
+<tr><td><code>c:firel</code></td><td>deg</td><td>Rotor angle referred to the reference machine rotor angle</td></tr>
+<tr><td><code>c:dfrotx</code></td><td>deg</td><td>Maximum rotor angle difference</td></tr>
+<tr><td><code>c:dorhz</code></td><td>Hz</td><td>Speed Deviation</td></tr>
+<tr><td><code>c:Ptspin</code></td><td>MW</td><td>Total Turbine Power of Area</td></tr>
+<tr><td><code>c:Pnomspin</code></td><td>MW</td><td>Total Nominal Power of Spinning Machines in Area</td></tr>
+<tr><td><code>c:Presspin</code></td><td>MW</td><td>Spinning Reserve of Area</td></tr>
+<tr><td><code>c:Tag</code></td><td>s</td><td>Acceleration Time Constant</td></tr>
+<tr><td><code>c:Tagav</code></td><td>s</td><td>System Inertia of Area</td></tr>
+<tr><td><code>c:xadu</code></td><td>p.u.</td><td>Mutual reactance, d-axis</td></tr>
+<tr><td><code>c:xaqu</code></td><td>p.u.</td><td>Mutual reactance, q-axis</td></tr>
+<tr><td><code>c:xad</code></td><td>p.u.</td><td>Saturated mutual reactance, d-axis</td></tr>
+<tr><td><code>c:xaq</code></td><td>p.u.</td><td>Saturated mutual reactance, q-axis</td></tr>
+<tr><td><code>c:satd</code></td><td>p.u.</td><td>Saturation factor, d-axis</td></tr>
+<tr><td><code>c:satq</code></td><td>p.u.</td><td>Saturation factor, q-axis</td></tr>
+<tr><td><code>c:xrl</code></td><td>p.u.</td><td>Coupling reactance between field and damper windings</td></tr>
+<tr><td><code>c:x1d</code></td><td>p.u.</td><td>Reactance of 1d-damper winding</td></tr>
+<tr><td><code>c:r1d</code></td><td>p.u.</td><td>Resistance of 1d-damper winding</td></tr>
+<tr><td><code>c:xfd</code></td><td>p.u.</td><td>Reactance of excitation winding</td></tr>
+<tr><td><code>c:rfd</code></td><td>p.u.</td><td>Resistance of excitation winding</td></tr>
+<tr><td><code>c:x1q</code></td><td>p.u.</td><td>Reactance of 1q-damper winding</td></tr>
+<tr><td><code>c:r1q</code></td><td>p.u.</td><td>Resistance of 1q-damper winding</td></tr>
+<tr><td><code>c:rstr</code></td><td>p.u.</td><td>Stator Resistance</td></tr>
+<tr><td><code>c:xl</code></td><td>p.u.</td><td>Stator leakage reactance</td></tr>
+<tr><td><code>c:xd</code></td><td>p.u.</td><td>Synchronous Reactance, d-axis</td></tr>
+<tr><td><code>c:xq</code></td><td>p.u.</td><td>Synchronous Reactance, q-axis</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal-Angular-Frequency</td></tr>
+<tr><td><code>c:Gm</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor (=xadu/re)</td></tr>
+<tr><td><code>c:ve_rated</code></td><td>p.u.</td><td>Rated Excitation Voltage</td></tr>
+<tr><td><code>c:Pmaxspin</code></td><td>MW</td><td>Total Maximum Power of Spinning Machines in Area</td></tr>
+<tr><td><code>c:p_mag</code></td><td><span aria-label="no unit">·</span></td><td>Participation, Magnitude</td></tr>
+<tr><td><code>c:p_phi</code></td><td>deg</td><td>Participation, Angle</td></tr>
+<tr><td><code>c:p_mags</code></td><td><span aria-label="no unit">·</span></td><td>Participation, Magnitude (signed)</td></tr>
+<tr><td><code>c:lEVec_mag</code></td><td><span aria-label="no unit">·</span></td><td>Controllability, Magnitude</td></tr>
+<tr><td><code>c:lEVec_phi</code></td><td>deg</td><td>Controllability, Angle</td></tr>
+<tr><td><code>c:lEVec_mags</code></td><td><span aria-label="no unit">·</span></td><td>Controllability, Magnitude (signed)</td></tr>
+<tr><td><code>c:rEVec_mag</code></td><td><span aria-label="no unit">·</span></td><td>Observability, Magnitude</td></tr>
+<tr><td><code>c:rEVec_phi</code></td><td>deg</td><td>Observability, Angle</td></tr>
+<tr><td><code>c:rEVec_mags</code></td><td><span aria-label="no unit">·</span></td><td>Observability, Magnitude (signed)</td></tr>
+<tr><td><code>c:fe_bus</code></td><td><span aria-label="no unit">·</span></td><td>El. frequency</td></tr>
+<tr><td><code>c:mdmlp</code></td><td>p.u.</td><td>Proportional Factor</td></tr>
+<tr><td><code>c:mdmex</code></td><td><span aria-label="no unit">·</span></td><td>Exponent</td></tr>
+<tr><td><code>c:psi1d</code></td><td>p.u.</td><td>Flux in 1d-damper winding</td></tr>
+<tr><td><code>c:psifd</code></td><td>p.u.</td><td>Field (excitation) flux</td></tr>
+<tr><td><code>c:psi1q</code></td><td>p.u.</td><td>Flux in 1q-damper winding</td></tr>
+<tr><td><code>c:xdss</code></td><td>p.u.</td><td>Subtransient Reactance, d-axis</td></tr>
+<tr><td><code>c:xqss</code></td><td>p.u.</td><td>Subtransient Reactance, q-axis</td></tr>
+<tr><td><code>c:psidss</code></td><td>p.u.</td><td>Subtransient flux, d-axis</td></tr>
+<tr><td><code>c:psiqss</code></td><td>p.u.</td><td>Subtransient flux, q-axis</td></tr>
+<tr><td><code>c:dfrotxM1</code></td><td><span aria-label="no unit">·</span></td><td>Machine 1 used to obtain dfrotx</td></tr>
+<tr><td><code>c:dfrotxM2</code></td><td><span aria-label="no unit">·</span></td><td>Machine 2 used to obtain dfrotx</td></tr>
+<tr><td><code>c:r0</code></td><td>p.u.</td><td>Zero Sequence Resistance</td></tr>
+<tr><td><code>c:x0</code></td><td>p.u.</td><td>Zero Sequence Reactance</td></tr>
+<tr><td><code>c:rearth</code></td><td>p.u.</td><td>Grounding Resistance</td></tr>
+<tr><td><code>c:xearth</code></td><td>p.u.</td><td>Grounding Reactance</td></tr>
+<tr><td><code>c:r2q</code></td><td>p.u.</td><td>Td0s</td></tr>
+<tr><td><code>c:x2q</code></td><td>p.u.</td><td>Td0s</td></tr>
+<tr><td><code>c:xss</code></td><td>p.u.</td><td>(xdss+xqss)/2</td></tr>
+<tr><td><code>c:dxss</code></td><td>p.u.</td><td>(xdss-xqss)/2</td></tr>
+<tr><td><code>c:psid</code></td><td>p.u.</td><td>Stator Flux, d-axis</td></tr>
+<tr><td><code>c:psiq</code></td><td>p.u.</td><td>Stator Flux, q-axis</td></tr>
+<tr><td><code>c:psi2d</code></td><td>p.u.</td><td>Flux in 2d-damper winding</td></tr>
+<tr><td><code>c:psi2q</code></td><td>p.u.</td><td>Flux in 2q-damper winding</td></tr>
+<tr><td><code>c:psi3q</code></td><td>p.u.</td><td>Flux in 3q-damper winding</td></tr>
+<tr><td><code>c:xrl2d</code></td><td>p.u.</td><td>Coupling reactance between field and damper windings</td></tr>
+<tr><td><code>c:x2d</code></td><td>p.u.</td><td>Reactance of 2d-damper winding</td></tr>
+<tr><td><code>c:r2d</code></td><td>p.u.</td><td>Resistance of 2d-damper winding</td></tr>
+<tr><td><code>c:x3q</code></td><td>p.u.</td><td>Reactance of 3q-damper winding</td></tr>
+<tr><td><code>c:r3q</code></td><td>p.u.</td><td>Resistance of 3q-damper winding</td></tr>
+<tr><td><code>c:slip</code></td><td>%</td><td>Slip</td></tr>
+<tr><td><code>c:slipmin</code></td><td>%</td><td>Minimum Slip</td></tr>
+<tr><td><code>c:x1de</code></td><td>p.u.</td><td>Eddy-current reactance of 1d-damper winding</td></tr>
+<tr><td><code>c:r1de</code></td><td>p.u.</td><td>Eddy-current resistance of 1d-damper winding</td></tr>
+<tr><td><code>c:xfde</code></td><td>p.u.</td><td>Eddy-current reactance of excitation winding</td></tr>
+<tr><td><code>c:rfde</code></td><td>p.u.</td><td>Eddy-current resistance of excitation winding</td></tr>
+<tr><td><code>c:x1qe</code></td><td>p.u.</td><td>Eddy-current reactance of 1q-damper winding</td></tr>
+<tr><td><code>c:r1qe</code></td><td>p.u.</td><td>Eddy-current resistance of 1q-damper winding</td></tr>
+<tr><td><code>c:i2q</code></td><td>p.u.</td><td>Current in 2q-damper winding</td></tr>
+<tr><td><code>c:iD</code></td><td>p.u.</td><td>Current in 1d-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:ix</code></td><td>p.u.</td><td>Current in 2q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:iQ</code></td><td>p.u.</td><td>Current in 1q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psie</code></td><td>p.u.</td><td>Excitation Flux (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psiD</code></td><td>p.u.</td><td>Flux in 1d-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psiQ</code></td><td>p.u.</td><td>Flux in 1q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psix</code></td><td>p.u.</td><td>Flux in 2q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:Td0s</code></td><td>s</td><td>Td0'</td></tr>
+<tr><td><code>n:u:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage</td></tr>
+<tr><td><code>n:upc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Phase Voltage</td></tr>
+<tr><td><code>n:U:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Voltage</td></tr>
+<tr><td><code>n:ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage</td></tr>
+<tr><td><code>n:ulpc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage</td></tr>
+<tr><td><code>n:Ul:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage</td></tr>
+<tr><td><code>n:u0:bus1</code></td><td>p.u.</td><td>Zero-Sequence-Voltage</td></tr>
+<tr><td><code>n:U0:bus1</code></td><td>kV</td><td>Zero-Sequence-Voltage</td></tr>
+<tr><td><code>n:U0x3:bus1</code></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:u1:bus1</code></td><td>p.u.</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bus1</code></td><td>%</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:u1r:bus1</code></td><td>p.u.</td><td>Voltage Phasor, Real Part</td></tr>
+<tr><td><code>n:u1i:bus1</code></td><td>p.u.</td><td>Voltage Phasor, Imaginary Part</td></tr>
+<tr><td><code>n:U1:bus1</code></td><td>kV</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bus1</code></td><td>deg</td><td>Voltage Phasor, Angle</td></tr>
+<tr><td><code>n:U1l:bus1</code></td><td>kV</td><td>Line-Line Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage</td></tr>
+<tr><td><code>n:Uln:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage</td></tr>
+<tr><td><code>n:un:bus1</code></td><td>p.u.</td><td>Neutral-Ground Voltage</td></tr>
+<tr><td><code>n:Un:bus1</code></td><td>kV</td><td>Neutral-Ground Voltage</td></tr>
+<tr><td><code>n:ishc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:Ishc:bus1:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:inshc:bus1</code></td><td>p.u.</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Inshc:bus1</code></td><td>kA</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:fe:bus1</code></td><td>p.u.</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:dfehz:bus1</code></td><td>Hz</td><td>Deviation of the El. Frequency</td></tr>
+<tr><td><code>n:fehz:bus1</code></td><td>Hz</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:frnom:bus1</code></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>s:psifd</code></td><td>p.u.</td><td>Excitation Flux</td></tr>
+<tr><td><code>s:psi1d</code></td><td>p.u.</td><td>Flux in 1d-damper winding</td></tr>
+<tr><td><code>s:psi1q</code></td><td>p.u.</td><td>Flux in 1q-damper winding</td></tr>
+<tr><td><code>s:psid</code></td><td>p.u.</td><td>Stator Flux, d-axis</td></tr>
+<tr><td><code>s:psiq</code></td><td>p.u.</td><td>Stator Flux, q-axis</td></tr>
+<tr><td><code>s:speed</code></td><td>p.u.</td><td>Speed</td></tr>
+<tr><td><code>s:phi</code></td><td>rad</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>s:xme</code></td><td>p.u.</td><td>Electrical Torque</td></tr>
+<tr><td><code>s:xmt</code></td><td>p.u.</td><td>Mechanical Torque</td></tr>
+<tr><td><code>s:xspeed</code></td><td>p.u.</td><td>Speed</td></tr>
+<tr><td><code>s:ie</code></td><td>p.u.</td><td>Excitation Current (non-reciprocal pu system)</td></tr>
+<tr><td><code>s:pgt</code></td><td>p.u.</td><td>Electrical Power</td></tr>
+<tr><td><code>s:xphi</code></td><td>rad</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>s:fe</code></td><td>p.u.</td><td>Frequency Output</td></tr>
+<tr><td><code>s:ut</code></td><td>p.u.</td><td>Terminal voltage</td></tr>
+<tr><td><code>s:utr</code></td><td>p.u.</td><td>Terminal voltage, real part</td></tr>
+<tr><td><code>s:uti</code></td><td>p.u.</td><td>Terminal voltage, imaginary part</td></tr>
+<tr><td><code>s:current</code></td><td>p.u.</td><td>Current</td></tr>
+<tr><td><code>s:P</code></td><td>p.u.</td><td>Active Power</td></tr>
+<tr><td><code>s:fipol</code></td><td>deg</td><td>Internal rotor angle</td></tr>
+<tr><td><code>s:ve</code></td><td>p.u.</td><td>Excitation Voltage</td></tr>
+<tr><td><code>s:pt</code></td><td>p.u.</td><td>Turbine Power</td></tr>
+<tr><td><code>s:xmdm</code></td><td>p.u.</td><td>Torque Input</td></tr>
+<tr><td><code>s:dw</code></td><td>p.u.</td><td>dw</td></tr>
+<tr><td><code>s:freflocal</code></td><td>p.u.</td><td>Local Reference Frequency</td></tr>
+<tr><td><code>s:i1d</code></td><td>p.u.</td><td>Current in 1d-damper winding, d-axis</td></tr>
+<tr><td><code>s:ifd</code></td><td>p.u.</td><td>Excitation Current</td></tr>
+<tr><td><code>s:i1q</code></td><td>p.u.</td><td>Current in 1q-damper winding, q-axis</td></tr>
+<tr><td><code>s:psis</code></td><td>p.u.</td><td>Stator Flux</td></tr>
+<tr><td><code>s:ussd</code></td><td>p.u.</td><td>ifde</td></tr>
+<tr><td><code>s:ussq</code></td><td>p.u.</td><td>i1qe</td></tr>
+<tr><td><code>s:psi2q</code></td><td>p.u.</td><td>Flux in 2q-damper winding</td></tr>
+<tr><td><code>s:cur1</code></td><td>p.u.</td><td>Positive-sequence current, magnitude</td></tr>
+<tr><td><code>s:cur1r</code></td><td>p.u.</td><td>Positive-sequence current, real part</td></tr>
+<tr><td><code>s:cur1i</code></td><td>p.u.</td><td>Positive-sequence current, imaginary part</td></tr>
+<tr><td><code>s:P1</code></td><td>MW</td><td>Positive-sequence, active power</td></tr>
+<tr><td><code>s:Q1</code></td><td>Mvar</td><td>Positive-sequence, reactive power</td></tr>
+<tr><td><code>s:id</code></td><td>p.u.</td><td>Stator current, d-axis</td></tr>
+<tr><td><code>s:iq</code></td><td>p.u.</td><td>Stator current, q-axis</td></tr>
+<tr><td><code>s:i2d</code></td><td>p.u.</td><td>Current in 2d-damper winding, d-axis</td></tr>
+<tr><td><code>s:i2q</code></td><td>p.u.</td><td>Current in 2q-damper winding, q-axis</td></tr>
+<tr><td><code>s:i3q</code></td><td>p.u.</td><td>Current in 3q-damper winding, q-axis</td></tr>
+<tr><td><code>s:i1de</code></td><td>p.u.</td><td>Eddy-current in 1d-damper winding</td></tr>
+<tr><td><code>s:ifde</code></td><td>p.u.</td><td>Eddy-current in excitation winding</td></tr>
+<tr><td><code>s:i1qe</code></td><td>p.u.</td><td>Eddy-current in 1q-damper winding</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow-dc">
+  <h2 id="load-flow-dc">ElmSym dc load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> (DC) with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:P:bus1</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>c:p</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>c:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal-Power factor</td></tr>
+<tr><td><code>c:Pnom</code></td><td>MW</td><td>Total Nominal Active power</td></tr>
+<tr><td><code>c:phiini</code></td><td><span aria-label="no unit">·</span></td><td>Initial Angle</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:iPowerOn</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:Pmin</code></td><td>MW</td><td>Lower limit of active power</td></tr>
+<tr><td><code>c:Pmax</code></td><td>MW</td><td>Upper limit of active power</td></tr>
+<tr><td><code>c:i_plim</code></td><td><span aria-label="no unit">·</span></td><td>Active power limit reached</td></tr>
+<tr><td><code>c:i_spin</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:Pdisp</code></td><td>MW</td><td>Power (Eco-Dispatch)</td></tr>
+<tr><td><code>c:Kp</code></td><td>p.u.</td><td>Active Power Participation</td></tr>
+<tr><td><code>c:Kpf</code></td><td>MW/Hz</td><td>Frequency Bias</td></tr>
+<tr><td><code>c:iRefElement</code></td><td><span aria-label="no unit">·</span></td><td>Reference Element</td></tr>
+<tr><td><code>c:zonewscale</code></td><td><span aria-label="no unit">·</span></td><td>Wind generation zone scaling factor</td></tr>
+<tr><td><code>c:Pmism</code></td><td>MW</td><td>Active Power Mismatch</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses (total)</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Reactive-Losses (total)</td></tr>
+<tr><td><code>c:Snom</code></td><td>MVA</td><td>Nom. Apparent Power (1 mach.)</td></tr>
+<tr><td><code>c:Nnom</code></td><td><span aria-label="no unit">·</span></td><td>Number of Parallel Machines</td></tr>
+<tr><td><code>n:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:U:bus1</code></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1</code></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bus1</code></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bus1</code></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:Pgen:bus1</code></td><td>MW</td><td>Generation, Active Power</td></tr>
+<tr><td><code>n:Pmot:bus1</code></td><td>MW</td><td>Motor Load, Active Power</td></tr>
+<tr><td><code>n:Pload:bus1</code></td><td>MW</td><td>General Load, Active Power</td></tr>
+<tr><td><code>n:Pcomp:bus1</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>n:Pnet:bus1</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>n:Pflow:bus1</code></td><td>MW</td><td>Power Flow, Active Power</td></tr>
+<tr><td><code>s:pset</code></td><td>MW</td><td>Active Power Setpoint</td></tr>
+<tr><td><code>s:dFin</code></td><td>Hz</td><td>Frequency Deviation</td></tr>
+<tr><td><code>s:dF</code></td><td>Hz</td><td>Frequency Deviation Output</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="modal-analysis">
+  <h2 id="modal-analysis">ElmSym modal analysis results</h2>
+  <p class="dx-note">Read after <code>ComMod</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal power factor</td></tr>
+<tr><td><code>c:c2</code></td><td><span aria-label="no unit">·</span></td><td>Voltage coefficient (uknom/ugn)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:Qmin</code></td><td>Mvar</td><td>Lower limit of reactive power</td></tr>
+<tr><td><code>c:Qmax</code></td><td>Mvar</td><td>Upper limit of reactive power</td></tr>
+<tr><td><code>c:Pmax</code></td><td>MW</td><td>Upper limit of active power</td></tr>
+<tr><td><code>c:ud</code></td><td>p.u.</td><td>Voltage, d-axis</td></tr>
+<tr><td><code>c:uq</code></td><td>p.u.</td><td>Voltage, q-axis</td></tr>
+<tr><td><code>c:id</code></td><td>p.u.</td><td>Stator current, d-axis</td></tr>
+<tr><td><code>c:iq</code></td><td>p.u.</td><td>Stator current, q-axis</td></tr>
+<tr><td><code>c:psim</code></td><td>p.u.</td><td>Magnetisation Flux</td></tr>
+<tr><td><code>c:xmem</code></td><td>p.u.</td><td>Electrical torque</td></tr>
+<tr><td><code>c:addmt</code></td><td>p.u.</td><td>Additional torque</td></tr>
+<tr><td><code>c:xmdpe</code></td><td>p.u.</td><td>Damping torque based on power</td></tr>
+<tr><td><code>c:xmdkd</code></td><td>p.u.</td><td>Damping torque</td></tr>
+<tr><td><code>c:i1d</code></td><td>p.u.</td><td>Current in 1d-damper winding</td></tr>
+<tr><td><code>c:ifd</code></td><td>p.u.</td><td>Current in excitation winding</td></tr>
+<tr><td><code>c:i1q</code></td><td>p.u.</td><td>Current in 1q-damper winding</td></tr>
+<tr><td><code>c:fi</code></td><td>deg</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>c:firot</code></td><td>deg</td><td>External rotor angle</td></tr>
+<tr><td><code>c:firel</code></td><td>deg</td><td>Rotor angle referred to the reference machine rotor angle</td></tr>
+<tr><td><code>c:dfrotx</code></td><td>deg</td><td>Maximum rotor angle difference</td></tr>
+<tr><td><code>c:dorhz</code></td><td>Hz</td><td>Speed Deviation</td></tr>
+<tr><td><code>c:Ptspin</code></td><td>MW</td><td>Total Turbine Power of Area</td></tr>
+<tr><td><code>c:Pnomspin</code></td><td>MW</td><td>Total Nominal Power of Spinning Machines in Area</td></tr>
+<tr><td><code>c:Presspin</code></td><td>MW</td><td>Spinning Reserve of Area</td></tr>
+<tr><td><code>c:Tag</code></td><td>s</td><td>Acceleration time constant</td></tr>
+<tr><td><code>c:Tagav</code></td><td>s</td><td>System Inertia of Area</td></tr>
+<tr><td><code>c:speedinit</code></td><td>p.u.</td><td>Initial speed</td></tr>
+<tr><td><code>c:xadu</code></td><td>p.u.</td><td>Mutual reactance, d-axis</td></tr>
+<tr><td><code>c:xaqu</code></td><td>p.u.</td><td>Mutual reactance, q-axis</td></tr>
+<tr><td><code>c:xad</code></td><td>p.u.</td><td>Saturated mutual reactance, d-axis</td></tr>
+<tr><td><code>c:xaq</code></td><td>p.u.</td><td>Saturated mutual reactance, q-axis</td></tr>
+<tr><td><code>c:satd</code></td><td>p.u.</td><td>Saturation factor, d-axis</td></tr>
+<tr><td><code>c:satq</code></td><td>p.u.</td><td>Saturation factor, q-axis</td></tr>
+<tr><td><code>c:xrl</code></td><td>p.u.</td><td>Coupling reactance between field and damper windings</td></tr>
+<tr><td><code>c:x1d</code></td><td>p.u.</td><td>Reactance of 1d-damper winding</td></tr>
+<tr><td><code>c:r1d</code></td><td>p.u.</td><td>Resistance of 1d-damper winding</td></tr>
+<tr><td><code>c:xfd</code></td><td>p.u.</td><td>Reactance of excitation winding</td></tr>
+<tr><td><code>c:rfd</code></td><td>p.u.</td><td>Resistance of excitation winding</td></tr>
+<tr><td><code>c:x1q</code></td><td>p.u.</td><td>Reactance of 1q-damper winding</td></tr>
+<tr><td><code>c:r1q</code></td><td>p.u.</td><td>Resistance of 1q-damper winding</td></tr>
+<tr><td><code>c:rstr</code></td><td>p.u.</td><td>Stator resistance</td></tr>
+<tr><td><code>c:xl</code></td><td>p.u.</td><td>Stator leakage reactance</td></tr>
+<tr><td><code>c:xd</code></td><td>p.u.</td><td>Synchronous reactance, d-axis</td></tr>
+<tr><td><code>c:xq</code></td><td>p.u.</td><td>Synchronous reactance, q-axis</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:Gm</code></td><td><span aria-label="no unit">·</span></td><td>Conversion Factor (=xhd0/re)</td></tr>
+<tr><td><code>c:ve_rated</code></td><td>p.u.</td><td>Rated Excitation Voltage</td></tr>
+<tr><td><code>c:Pmaxspin</code></td><td>MW</td><td>Total Maximum Power of Spinning Machines in Area</td></tr>
+<tr><td><code>c:p_mag</code></td><td><span aria-label="no unit">·</span></td><td>Participation, Magnitude</td></tr>
+<tr><td><code>c:p_phi</code></td><td>deg</td><td>Participation, Angle</td></tr>
+<tr><td><code>c:p_mags</code></td><td><span aria-label="no unit">·</span></td><td>Participation, Magnitude (signed)</td></tr>
+<tr><td><code>c:lEVec_mag</code></td><td><span aria-label="no unit">·</span></td><td>Controllability, Magnitude</td></tr>
+<tr><td><code>c:lEVec_phi</code></td><td>deg</td><td>Controllability, Angle</td></tr>
+<tr><td><code>c:lEVec_mags</code></td><td><span aria-label="no unit">·</span></td><td>Controllability, Magnitude (signed)</td></tr>
+<tr><td><code>c:rEVec_mag</code></td><td><span aria-label="no unit">·</span></td><td>Observability, Magnitude</td></tr>
+<tr><td><code>c:rEVec_phi</code></td><td>deg</td><td>Observability, Angle</td></tr>
+<tr><td><code>c:rEVec_mags</code></td><td><span aria-label="no unit">·</span></td><td>Observability, Magnitude (signed)</td></tr>
+<tr><td><code>c:fe_bus</code></td><td><span aria-label="no unit">·</span></td><td>El. frequency</td></tr>
+<tr><td><code>c:slipreset</code></td><td><span aria-label="no unit">·</span></td><td>Reset out of step</td></tr>
+<tr><td><code>c:mdmlp</code></td><td>p.u.</td><td>Proportional Factor</td></tr>
+<tr><td><code>c:mdmex</code></td><td><span aria-label="no unit">·</span></td><td>Exponent</td></tr>
+<tr><td><code>c:psi1d</code></td><td>p.u.</td><td>Flux in 1d-damper winding</td></tr>
+<tr><td><code>c:psifd</code></td><td>p.u.</td><td>Field (excitation) flux</td></tr>
+<tr><td><code>c:psi1q</code></td><td>p.u.</td><td>Flux in 1q-damper winding</td></tr>
+<tr><td><code>c:xdss</code></td><td>p.u.</td><td>Subtransient reactance, d-axis</td></tr>
+<tr><td><code>c:xqss</code></td><td>p.u.</td><td>Subtransient reactance, q-axis</td></tr>
+<tr><td><code>c:psidss</code></td><td>p.u.</td><td>Subtransient Flux, d-axis</td></tr>
+<tr><td><code>c:psiqss</code></td><td>p.u.</td><td>Subtransient Flux, q-axis</td></tr>
+<tr><td><code>c:dfrotxM1</code></td><td><span aria-label="no unit">·</span></td><td>Machine 1 used to obtain dfrotx</td></tr>
+<tr><td><code>c:dfrotxM2</code></td><td><span aria-label="no unit">·</span></td><td>Machine 2 used to obtain dfrotx</td></tr>
+<tr><td><code>c:r2q</code></td><td>p.u.</td><td>Resistance of 2q-damper winding</td></tr>
+<tr><td><code>c:x2q</code></td><td>p.u.</td><td>Reactance of 2q-damper winding</td></tr>
+<tr><td><code>c:psid</code></td><td>p.u.</td><td>Stator Flux, d-axis</td></tr>
+<tr><td><code>c:psiq</code></td><td>p.u.</td><td>Stator Flux, q-axis</td></tr>
+<tr><td><code>c:psi2d</code></td><td>p.u.</td><td>Flux in 2d-damper winding</td></tr>
+<tr><td><code>c:psi2q</code></td><td>p.u.</td><td>Flux in 2q-damper winding</td></tr>
+<tr><td><code>c:psi3q</code></td><td>p.u.</td><td>Flux in 3q-damper winding</td></tr>
+<tr><td><code>c:xrl2d</code></td><td>p.u.</td><td>Coupling reactance between field and damper windings</td></tr>
+<tr><td><code>c:x2d</code></td><td>p.u.</td><td>Reactance of 2d-damper winding</td></tr>
+<tr><td><code>c:r2d</code></td><td>p.u.</td><td>Resistance of 2d-damper winding</td></tr>
+<tr><td><code>c:x3q</code></td><td>p.u.</td><td>Reactance of 3q-damper winding</td></tr>
+<tr><td><code>c:r3q</code></td><td>p.u.</td><td>Resistance of 3q-damper winding</td></tr>
+<tr><td><code>c:slip</code></td><td>%</td><td>Slip</td></tr>
+<tr><td><code>c:slipmin</code></td><td>%</td><td>Minimum Slip</td></tr>
+<tr><td><code>c:x1de</code></td><td>p.u.</td><td>Eddy-current reactance of 1d-damper winding</td></tr>
+<tr><td><code>c:r1de</code></td><td>p.u.</td><td>Eddy-current resistance of 1d-damper winding</td></tr>
+<tr><td><code>c:xfde</code></td><td>p.u.</td><td>Eddy-current reactance of excitation winding</td></tr>
+<tr><td><code>c:rfde</code></td><td>p.u.</td><td>Eddy-current resistance of excitation winding</td></tr>
+<tr><td><code>c:x1qe</code></td><td>p.u.</td><td>Eddy-current reactance of 1q-damper winding</td></tr>
+<tr><td><code>c:r1qe</code></td><td>p.u.</td><td>Eddy-current resistance of 1q-damper winding</td></tr>
+<tr><td><code>c:ussd</code></td><td>p.u.</td><td>Subtransient Voltage, d-axis</td></tr>
+<tr><td><code>c:ussq</code></td><td>p.u.</td><td>Subtransient Voltage, q-axis</td></tr>
+<tr><td><code>c:i2q</code></td><td>p.u.</td><td>Current in 2q-damper winding</td></tr>
+<tr><td><code>c:iD</code></td><td>p.u.</td><td>Current in 1d-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:ix</code></td><td>p.u.</td><td>Current in 2q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:iQ</code></td><td>p.u.</td><td>Current in 1q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psie</code></td><td>p.u.</td><td>Excitation Flux (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psiD</code></td><td>p.u.</td><td>Flux in 1d-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psiQ</code></td><td>p.u.</td><td>Flux in 1q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:psix</code></td><td>p.u.</td><td>Flux in 2q-damper winding (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>c:Td0s</code></td><td>s</td><td>Td0'</td></tr>
+<tr><td><code>s:psifd</code></td><td>p.u.</td><td>Excitation flux</td></tr>
+<tr><td><code>s:psi1d</code></td><td>p.u.</td><td>Flux in 1d-damper winding</td></tr>
+<tr><td><code>s:psi1q</code></td><td>p.u.</td><td>Flux in 1q-damper winding</td></tr>
+<tr><td><code>s:psid</code></td><td><span aria-label="no unit">·</span></td><td>Stator flux, d-axis</td></tr>
+<tr><td><code>s:psiq</code></td><td>p.u.</td><td>Stator flux, q-axis</td></tr>
+<tr><td><code>s:speed</code></td><td>p.u.</td><td>Speed</td></tr>
+<tr><td><code>s:phi</code></td><td>rad</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>s:outofstep</code></td><td><span aria-label="no unit">·</span></td><td>Out of Step (pole slip)</td></tr>
+<tr><td><code>s:xme</code></td><td>p.u.</td><td>Electrical torque</td></tr>
+<tr><td><code>s:xmt</code></td><td>p.u.</td><td>Mechanical torque</td></tr>
+<tr><td><code>s:xspeed</code></td><td>p.u.</td><td>Speed</td></tr>
+<tr><td><code>s:ie</code></td><td>p.u.</td><td>Excitation current (non-reciprocal p.u. system)</td></tr>
+<tr><td><code>s:pgt</code></td><td>p.u.</td><td>Electrical Power</td></tr>
+<tr><td><code>s:xphi</code></td><td>rad</td><td>Rotor position d-axis referred to the reference bus voltage</td></tr>
+<tr><td><code>s:fe</code></td><td>p.u.</td><td>Frequency output</td></tr>
+<tr><td><code>s:ut</code></td><td>p.u.</td><td>Terminal voltage</td></tr>
+<tr><td><code>s:utr</code></td><td>p.u.</td><td>Terminal voltage, real part</td></tr>
+<tr><td><code>s:uti</code></td><td>p.u.</td><td>Terminal voltage, imaginary part</td></tr>
+<tr><td><code>s:fipol</code></td><td>deg</td><td>Internal rotor angle</td></tr>
+<tr><td><code>s:ve</code></td><td>p.u.</td><td>Excitation voltage</td></tr>
+<tr><td><code>s:pt</code></td><td>p.u.</td><td>Turbine power</td></tr>
+<tr><td><code>s:xmdm</code></td><td>p.u.</td><td>Torque input</td></tr>
+<tr><td><code>s:dw</code></td><td>p.u.</td><td>dw</td></tr>
+<tr><td><code>s:fref</code></td><td>p.u.</td><td>Reference frequency</td></tr>
+<tr><td><code>s:freflocal</code></td><td>p.u.</td><td>Local reference frequency</td></tr>
+<tr><td><code>s:i1d</code></td><td>p.u.</td><td>Current in 1d-damper winding, d-axis</td></tr>
+<tr><td><code>s:ifd</code></td><td>p.u.</td><td>Excitation Current</td></tr>
+<tr><td><code>s:i1q</code></td><td>p.u.</td><td>Current in 1q-damper winding, q-axis</td></tr>
+<tr><td><code>s:psi2q</code></td><td>p.u.</td><td>Flux in 2q-damper winding</td></tr>
+<tr><td><code>s:cur1</code></td><td>p.u.</td><td>Positive-sequence current, magnitude</td></tr>
+<tr><td><code>s:cur1r</code></td><td>p.u.</td><td>Positive-sequence current, real part</td></tr>
+<tr><td><code>s:cur1i</code></td><td>p.u.</td><td>Positive-sequence current, imaginary part</td></tr>
+<tr><td><code>s:P1</code></td><td>MW</td><td>Positive-sequence, active power</td></tr>
+<tr><td><code>s:Q1</code></td><td>Mvar</td><td>Positive-sequence, reactive power</td></tr>
+<tr><td><code>s:i2d</code></td><td>p.u.</td><td>Current in 2d-damper winding, d-axis</td></tr>
+<tr><td><code>s:i2q</code></td><td>p.u.</td><td>Current in 2q-damper winding, q-axis</td></tr>
+<tr><td><code>s:i3q</code></td><td>p.u.</td><td>Current in 3q-damper winding, q-axis</td></tr>
+<tr><td><code>s:i1de</code></td><td>p.u.</td><td>Eddy-current in 1d-damper winding</td></tr>
+<tr><td><code>s:ifde</code></td><td>p.u.</td><td>Eddy-current in excitation winding</td></tr>
+<tr><td><code>s:i1qe</code></td><td>p.u.</td><td>Eddy-current in 1q-damper winding</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="opf">
+  <h2 id="opf">ElmSym optimal power flow results</h2>
+  <p class="dx-note">Read after <code>ComOpf</code> with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:urnet:bus1</code></td><td>p.u.</td><td>Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Real Part</td></tr>
+<tr><td><code>m:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bus1</code></td><td>p.u.</td><td>Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1:bus1</code></td><td>kV</td><td>Line-Ground Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1l:bus1</code></td><td>kV</td><td>Line-Line Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bus1</code></td><td>deg</td><td>Positive-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bus1</code></td><td>p.u.</td><td>Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bus1</code></td><td>p.u.</td><td>Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bus1</code></td><td>p.u.</td><td>Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bus1</code></td><td>kA</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bus1</code></td><td>deg</td><td>Current, Angle</td></tr>
+<tr><td><code>m:i1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bus1</code></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bus1</code></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bus1</code></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bus1</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bus1</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bus1</code></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bus1</code></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Psum:bus1</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bus1</code></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:Ssum:bus1</code></td><td>MVA</td><td>Total Apparent Power</td></tr>
+<tr><td><code>m:cosphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:tanphisum:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Total tan(phi)</td></tr>
+<tr><td><code>m:i1P:bus1</code></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bus1</code></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bus1</code></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bus1</code></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bus1</code></td><td>p.u.</td><td>Current, Real Part</td></tr>
+<tr><td><code>m:ii:bus1</code></td><td>p.u.</td><td>Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bus1</code></td><td>p.u.</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bus1</code></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bus1</code></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>m:Tfct:bus1</code></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Brkload:bus1</code></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>m:Spu:bus1</code></td><td>MVA/p.u.</td><td>Apparent Power per p.u. Voltage</td></tr>
+<tr><td><code>c:p</code></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>c:q</code></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>c:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>c:cosn</code></td><td><span aria-label="no unit">·</span></td><td>Nominal-Power factor</td></tr>
+<tr><td><code>c:Pnom</code></td><td>MW</td><td>Total Nominal Active power</td></tr>
+<tr><td><code>c:c2</code></td><td><span aria-label="no unit">·</span></td><td>Voltage Coefficient (uknom/ugn)</td></tr>
+<tr><td><code>c:uini</code></td><td>p.u.</td><td>Voltage Setpoint for PV and Slack</td></tr>
+<tr><td><code>c:phiini</code></td><td>deg</td><td>Initial Angle</td></tr>
+<tr><td><code>c:phirelref</code></td><td>rad</td><td>Relative reference angle</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:iPowerOn</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:xdq</code></td><td>p.u.</td><td>Synchronous Reactance</td></tr>
+<tr><td><code>c:Qmin</code></td><td>Mvar</td><td>Lower limit of reactive power</td></tr>
+<tr><td><code>c:Qmax</code></td><td>Mvar</td><td>Upper limit of reactive power</td></tr>
+<tr><td><code>c:Qsparelead</code></td><td>Mvar</td><td>Q spare lead</td></tr>
+<tr><td><code>c:Qsparelag</code></td><td>Mvar</td><td>Q spare lag</td></tr>
+<tr><td><code>c:i_qlim</code></td><td><span aria-label="no unit">·</span></td><td>Reactive power limit reached</td></tr>
+<tr><td><code>c:i_vlim</code></td><td><span aria-label="no unit">·</span></td><td>Voltage setpoint limit reached</td></tr>
+<tr><td><code>c:Pmin</code></td><td>MW</td><td>Lower limit of active power</td></tr>
+<tr><td><code>c:Pmax</code></td><td>MW</td><td>Upper limit of active power</td></tr>
+<tr><td><code>c:i_plim</code></td><td><span aria-label="no unit">·</span></td><td>Active power limit reached</td></tr>
+<tr><td><code>c:sm</code></td><td>MVA</td><td>Complex Power</td></tr>
+<tr><td><code>c:u1</code></td><td>p.u.</td><td>Internal</td></tr>
+<tr><td><code>c:i_spin</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:Pmax_uc</code></td><td>MW</td><td>Maximum Power</td></tr>
+<tr><td><code>c:Pmin_uc</code></td><td>MW</td><td>Minimum Power</td></tr>
+<tr><td><code>c:Pdisp</code></td><td>MW</td><td>Power (Eco-Dispatch)</td></tr>
+<tr><td><code>c:Kp</code></td><td>p.u.</td><td>Active Power Participation</td></tr>
+<tr><td><code>c:Kq</code></td><td>p.u.</td><td>Reactive Power Participation</td></tr>
+<tr><td><code>c:Kpf</code></td><td>MW/Hz</td><td>Frequency Bias</td></tr>
+<tr><td><code>c:iRefElement</code></td><td><span aria-label="no unit">·</span></td><td>Reference Element</td></tr>
+<tr><td><code>c:zonewscale</code></td><td><span aria-label="no unit">·</span></td><td>Wind generation zone scaling factor</td></tr>
+<tr><td><code>c:Pmism</code></td><td>MW</td><td>Active Power Mismatch</td></tr>
+<tr><td><code>c:nCtrlIter</code></td><td><span aria-label="no unit">·</span></td><td>No. of CTRL-iterations</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses (total)</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Reactive-Losses (total)</td></tr>
+<tr><td><code>c:Plossld</code></td><td>MW</td><td>Losses (load)</td></tr>
+<tr><td><code>c:Qlossld</code></td><td>Mvar</td><td>Reactive-Losses (load)</td></tr>
+<tr><td><code>c:Plossnld</code></td><td>MW</td><td>Losses (no load)</td></tr>
+<tr><td><code>c:Qlossnld</code></td><td>Mvar</td><td>Reactive-Losses (no load)</td></tr>
+<tr><td><code>c:Snom</code></td><td>MVA</td><td>Nom. Apparent Power (1 mach.)</td></tr>
+<tr><td><code>c:Nnom</code></td><td><span aria-label="no unit">·</span></td><td>Number of Parallel Machines</td></tr>
+<tr><td><code>c:cst_disp</code></td><td>USD/h</td><td>Operating Costs</td></tr>
+<tr><td><code>c:avgCosts</code></td><td>USD/MWh</td><td>Average Costs per MWh</td></tr>
+<tr><td><code>c:iInterPol</code></td><td><span aria-label="no unit">·</span></td><td>Interpolation of cost curve</td></tr>
+<tr><td><code>c:smoothfac</code></td><td><span aria-label="no unit">·</span></td><td>Smoothing Factor</td></tr>
+<tr><td><code>c:Qtarget</code></td><td>Mvar</td><td>Q target value</td></tr>
+<tr><td><code>c:QtargetDelta</code></td><td>Mvar</td><td>Deviation from Q target value</td></tr>
+<tr><td><code>c:Ptarget</code></td><td>MW</td><td>P target value</td></tr>
+<tr><td><code>c:totRedispatchP</code></td><td>MWh</td><td>Total redispatched energy</td></tr>
+<tr><td><code>c:totRedispatchQ</code></td><td>Mvarh</td><td>Total redispatched energy</td></tr>
+<tr><td><code>c:totRedispatchCosts</code></td><td>USD</td><td>Total redispatch costs</td></tr>
+<tr><td><code>n:ur:bus1</code></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bus1</code></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bus1</code></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bus1</code></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bus1</code></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bus1</code></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bus1</code></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bus1</code></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bus1</code></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bus1</code></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:Pgen:bus1</code></td><td>MW</td><td>Generation, Active Power</td></tr>
+<tr><td><code>n:Qgen:bus1</code></td><td>Mvar</td><td>Generation, Reactive Power</td></tr>
+<tr><td><code>n:Pmot:bus1</code></td><td>MW</td><td>Motor Load, Active Power</td></tr>
+<tr><td><code>n:Qmot:bus1</code></td><td>Mvar</td><td>Motor Load, Reactive Power</td></tr>
+<tr><td><code>n:Pload:bus1</code></td><td>MW</td><td>General Load, Active Power</td></tr>
+<tr><td><code>n:Qload:bus1</code></td><td>Mvar</td><td>General Load, Reactive Power</td></tr>
+<tr><td><code>n:Pcomp:bus1</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>n:Qcomp:bus1</code></td><td>Mvar</td><td>Compensation</td></tr>
+<tr><td><code>n:Pnet:bus1</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>n:Qnet:bus1</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>n:Pflow:bus1</code></td><td>MW</td><td>Power Flow, Active Power</td></tr>
+<tr><td><code>n:Qflow:bus1</code></td><td>Mvar</td><td>Power Flow, Reactive Power</td></tr>
+<tr><td><code>n:Pout:bus1</code></td><td>MW</td><td>Outgoing Flow, Active Power</td></tr>
+<tr><td><code>n:Qout:bus1</code></td><td>Mvar</td><td>Outgoing Power, Reactive Power</td></tr>
+<tr><td><code>n:Sout:bus1</code></td><td>MVA</td><td>Outgoing Power, Apparent Power</td></tr>
+<tr><td><code>n:cosphiout:bus1</code></td><td><span aria-label="no unit">·</span></td><td>Outgoing Power, Power Factor</td></tr>
+<tr><td><code>n:Pbalance:bus1</code></td><td>MW</td><td>Active Power Balance (=0)</td></tr>
+<tr><td><code>n:Qbalance:bus1</code></td><td>Mvar</td><td>Reactive Power Balance (=0)</td></tr>
+<tr><td><code>n:LossPdown:bus1</code></td><td>MW</td><td>Losses, downstream</td></tr>
+<tr><td><code>n:LossQdown:bus1</code></td><td>Mvar</td><td>Losses, downstream (Reactive Power)</td></tr>
+<tr><td><code>n:LossPdownload:bus1</code></td><td>MW</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownload:bus1</code></td><td>Mvar</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossPdownnoload:bus1</code></td><td>MW</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownnoload:bus1</code></td><td>Mvar</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:du_feed:bus1</code></td><td>%</td><td>Difference from voltage at start of feeder</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmSym basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>b:sgnn</code></td><td>MVA</td><td>Total rated apparent power (ngnum*sgn)</td></tr>
+<tr><td><code>b:i_spin</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>b:i_mot</code></td><td><span aria-label="no unit">·</span></td><td>Motor</td></tr>
+<tr><td><code>b:iWindGen</code></td><td><span aria-label="no unit">·</span></td><td>Wind Generator</td></tr>
+<tr><td><code>b:Kf</code></td><td><span aria-label="no unit">·</span></td><td>Correction Factor (Short-Circuit)</td></tr>
+<tr><td><code>b:ipsu</code></td><td><span aria-label="no unit">·</span></td><td>Power Station Unit</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/short-circuit/">Short-circuit automation in Python</a></li>
+    <li><a href="../../python/rms-emt-simulation/">RMS and EMT simulation batch runs in Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmPvsys/"><code>ElmPvsys</code> PV System</a> · <a href="../ElmVac/"><code>ElmVac</code> AC Voltage Source</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

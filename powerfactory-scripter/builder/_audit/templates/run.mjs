@@ -112,10 +112,11 @@ const N39 = '39 Bus New England System (Builder test)';
 const EL = (cls, name, match = 'one') => ({ cls, name, match });
 const OUT = LIVE_OUT.replace(/\\/g, '/');
 
-const IDS = ['headroom', 'ldf-cases', 'n-1', 'shc-buses', 'find-limit', 'frt', 'cct'];
+const IDS = ['headroom', 'ldf-cases', 'n-1', 'shc-buses', 'find-limit', 'frt', 'cct', 'hosting-capacity', 'pv-curve', 'rms-batch'];
 const TITLES = {
   headroom: 'Headroom study', 'ldf-cases': 'Load flow on every study case', 'n-1': 'N-1 screening', 'shc-buses': 'Short circuit at every busbar',
   'find-limit': 'Largest dispatch with a safe nadir', frt: 'Fault ride-through check', cct: 'Critical clearing time',
+  'hosting-capacity': 'Hosting capacity at every busbar', 'pv-curve': 'PV curve by load scaling', 'rms-batch': 'RMS runs for several fault durations',
 };
 // The to-dos a reader sees after loading (exact messages) and the settings pinned for them.
 const PROJECT_TODO = 'Fill in Project on Start.';
@@ -142,6 +143,17 @@ const EXPECT = {
     todo: [PROJECT_TODO, 'Choose the element for Fault at on Fault.'],
     pins: { n3: ['lower', 'upper', 'tol'], n4: ['target'], n6: ['hi'] },
     types: ['opt.limit', 'pf.evt.shc', 'pf.rms', 'chk.limit', 'opt.report', 'flow.log', 'out.plot.conv'],
+  },
+  'hosting-capacity': {
+    todo: [PROJECT_TODO],
+    pins: { n3: ['el'], n4: ['lower', 'upper', 'tol'], n10: ['hi'], n12: ['lo', 'hi'] },
+    types: ['pf.get', 'math.sum', 'pf.foreach_element', 'opt.limit', 'pf.testgen', 'math.formula', 'pf.scale', 'pf.ldf', 'chk.limit', 'math.logic', 'out.table.add', 'out.plot.table'],
+  },
+  'pv-curve': { todo: [PROJECT_TODO], pins: { n3: ['from', 'to', 'step'] }, types: ['flow.range', 'pf.scale', 'pf.ldf', 'flow.break', 'pf.get', 'out.table.add', 'out.plot.table'] },
+  'rms-batch': {
+    todo: [PROJECT_TODO, 'Choose the element for Fault at on Fault.'],
+    pins: { n3: ['values'], n4: ['target'], n7: ['hi'] },
+    types: ['flow.list', 'pf.evt.shc', 'pf.rms', 'sig.peak', 'chk.limit', 'out.table.add', 'out.plot.series'],
   },
 };
 
@@ -177,6 +189,17 @@ const FILL = {
     start(wf, N39, '2.3 Simulation Fault Bus 31 Stable');
     setS(wf, 'n4', { target: EL('ElmTerm', 'Bus 31') });
   },
+  // The busbars of 100 kV and above, as the page's own script (_pages/scripts/hosting_capacity.py).
+  'hosting-capacity'(wf) {
+    start(wf, N39, '1. Power Flow');
+    setS(wf, 'n3', { attr: 'uknom', op: '>=', value: '100' });
+    setS(wf, 'n4', { lower: 0, upper: 2000, tol: 5 });
+  },
+  'pv-curve'(wf) { start(wf, N9, '01- Load Flow'); },
+  'rms-batch'(wf) {
+    start(wf, N39, '2.3 Simulation Fault Bus 31 Stable');
+    setS(wf, 'n4', { target: EL('ElmTerm', 'Bus 31') });
+  },
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -185,7 +208,7 @@ const FILL = {
 const TEMPLATE_DIR = path.join(BUILDER, 'templates');
 const index = JSON.parse(fs.readFileSync(path.join(TEMPLATE_DIR, 'index.json'), 'utf8'));
 const files = {};
-await test('index.json lists the seven frozen ids in order, each with its title, a file and a short description', () => {
+await test('index.json lists the ten frozen ids in order, each with its title, a file and a short description', () => {
   ok(Array.isArray(index.templates), 'templates list');
   ok(JSON.stringify(index.templates.map(t => t.id)) === JSON.stringify(IDS), JSON.stringify(index.templates.map(t => t.id)));
   for (const t of index.templates) {
@@ -443,6 +466,72 @@ const LIVE = {
   },
 };
 
+// What the reading pages' own scripts computed on the same sandboxes (powerfactory-scripter/_pages/
+// scripts, run by hand through pfrun.py): the Quick Starts must agree with them.
+function pageResult(name) {
+  const f = path.join(ROOT, 'powerfactory-scripter', '_pages', 'results', name + '.json');
+  ok(fs.existsSync(f), `no ${f}`);
+  return JSON.parse(fs.readFileSync(f, 'utf8')).data;
+}
+LIVE['hosting-capacity'] = {
+  project: N39, timeout: 1500,
+  check(o) {
+    const t = o.csv('Hosting capacity');
+    ok(JSON.stringify(t.head) === JSON.stringify(['Connection point', 'Status', 'Hosting capacity (MW)', 'Search']), JSON.stringify(t.head));
+    const want = pageResult('hosting_capacity').results;
+    ok(t.rows.length === want.length, `one row per busbar of 100 kV and above: ${t.rows.length}, the page script has ${want.length}`);
+    for (const w of want) {
+      const r = t.rows.find(x => x['Connection point'] === w.Busbar);
+      ok(r, 'no row for ' + w.Busbar);
+      ok(r.Status === 'OK' && r.Search === 'DONE', `${w.Busbar}: ${r.Status} / ${r.Search}`);
+      near(r['Hosting capacity (MW)'], w['Hosting capacity (MW)'], 7.5, `${w.Busbar} hosting capacity (MW) against the page script`);
+    }
+    ok(o.pngs.length === 1, 'the bar chart: ' + o.pngs.join(', '));
+    const lo = t.rows.reduce((a, b) => (num(b['Hosting capacity (MW)']) < num(a['Hosting capacity (MW)']) ? b : a));
+    o.summary(`${t.rows.length} busbars, all within 7.5 MW of the page script; lowest ${lo['Connection point']} ${num(lo['Hosting capacity (MW)']).toFixed(0)} MW`);
+  },
+};
+LIVE['pv-curve'] = {
+  project: N9, timeout: 600,
+  check(o) {
+    const t = o.csv('PV curve');
+    ok(JSON.stringify(t.head) === JSON.stringify(['Load scaling', 'Status', 'Lowest voltage (p.u.)', 'Lowest at']), JSON.stringify(t.head));
+    const want = pageResult('pv_curve').curve;
+    const okRows = t.rows.filter(r => r.Status === 'OK');
+    ok(okRows.length === want.length, `${okRows.length} converged points, the page script has ${want.length}`);
+    for (const w of want) {
+      const r = okRows.find(x => Math.abs(num(x['Load scaling']) - w.Scale) < 1e-6);
+      ok(r, 'no row for scaling ' + w.Scale);
+      const lowest = Math.min(w['Bus 5'], w['Bus 6'], w['Bus 8']);
+      near(r['Lowest voltage (p.u.)'], lowest, 0.0005, `lowest voltage at ${w.Scale} x`);
+    }
+    has(o.runlog, 'the nose of the PV curve');
+    ok(o.pngs.length === 1, 'the PV curve: ' + o.pngs.join(', '));
+    const last = okRows[okRows.length - 1];
+    o.summary(`${okRows.length} points, nose at ${num(last['Load scaling']).toFixed(2)} x (${num(last['Lowest voltage (p.u.)']).toFixed(4)} p.u. at ${last['Lowest at']}), as the page script`);
+  },
+};
+LIVE['rms-batch'] = {
+  project: N39, timeout: 1200,
+  check(o) {
+    const t = o.csv('RMS runs');
+    ok(JSON.stringify(t.head) === JSON.stringify(['Fault duration (s)', 'Status', 'Peak rotor angle spread (deg)', 'Stable']), JSON.stringify(t.head));
+    ok(JSON.stringify(t.rows.map(r => num(r['Fault duration (s)']))) === JSON.stringify([0.1, 0.15, 0.2, 0.25]), 'four runs: ' + JSON.stringify(t.rows.map(r => r['Fault duration (s)'])));
+    const want = pageResult('rms_batch').runs;
+    for (const [k, w] of want.entries()) {
+      const r = t.rows[k];
+      if (w.Stable) {
+        ok(r.Stable === 'PASS', `${w['Clearing time (s)']} s: ${r.Stable}`);
+        near(r['Peak rotor angle spread (deg)'], w['Peak spread (deg)'], 2, `peak spread with the fault cleared after ${w['Clearing time (s)']} s, against the page script`);
+      } else {
+        ok(r.Stable === 'FAIL', `${w['Clearing time (s)']} s loses synchronism: ${r.Stable}`);
+      }
+    }
+    ok(o.pngs.length === 1, 'one graph of all runs: ' + o.pngs.join(', '));
+    o.summary(`peak spread ${t.rows.map(r => num(r['Peak rotor angle spread (deg)']).toFixed(1)).join(' / ')} deg at 0.10 / 0.15 / 0.20 / 0.25 s: ${t.rows.map(r => r.Stable).join(' / ')}`);
+  },
+};
+
 const liveSummaries = {};
 function runLive(id, L) {
   const f = clone(LOADED[id]);
@@ -493,7 +582,7 @@ function liveTree(tag) {
 }
 
 if (!NO_LIVE) {
-  const order = ['ldf-cases', 'shc-buses', 'frt', 'n-1', 'headroom', 'find-limit', 'cct'];
+  const order = ['ldf-cases', 'shc-buses', 'frt', 'n-1', 'headroom', 'find-limit', 'cct', 'pv-curve', 'hosting-capacity', 'rms-batch'];
   const todo = order.filter(id => LOADED[id] && (!LIVE_ONLY.length || LIVE_ONLY.includes(id)));
   const treeBefore = NO_TREE ? null : liveTree('before');
   for (const id of todo) {
