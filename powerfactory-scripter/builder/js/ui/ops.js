@@ -763,8 +763,9 @@ export function freeSpot(wf, x, y, sizes, w = 240, h = 110) {
 
 // The blocks to move when block `id` has grown from its box `before` ({ x, y, w, h }) to its
 // size in `sizes` ("+N more" opened): each block the new box covers, and the old one did not, is
-// pushed down below it (or right of it, when it starts above the grown block's top), and so on
-// for whatever a pushed block then covers. Blocks the reader had already overlapped stay put.
+// pushed down below it (or right of it, when it starts above the grown block's top), and every
+// block a pushed block then lands on is pushed down below that one, and so on. Blocks the reader
+// had already overlapped with the opened block stay put.
 // Returns { [id]: { x, y } } for the blocks that move; empty when none does.
 export function pushClear(wf, id, sizes, before, gap = 32) {
   const at = {};
@@ -783,10 +784,10 @@ export function pushClear(wf, id, sizes, before, gap = 32) {
     for (const b of wf.nodes) {
       if (b.id === o.id || b.id === id) continue;
       const bb = box(b);
-      if (!hit(bb, ob) || hit(bb, old)) continue;
-      const p = bb.y >= ob.y ? { x: bb.x, y: up(ob.y + ob.h + gap) } : { x: up(ob.x + ob.w + gap), y: bb.y };
+      if (!hit(bb, ob) || (old && hit(bb, old))) continue;
+      const p = old === null || bb.y >= ob.y ? { x: bb.x, y: up(ob.y + ob.h + gap) } : { x: up(ob.x + ob.w + gap), y: bb.y };
       at[b.id] = p;
-      queue.push({ n: b, old: bb });
+      queue.push({ n: b, old: null });
     }
   }
   return at;
