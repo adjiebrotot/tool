@@ -1,0 +1,422 @@
+{
+ "layout": {
+  "light": {
+   "name": "layout",
+   "theme": "light",
+   "boxes": {
+    "inputs": {
+     "x": 1.88,
+     "y": 13.17,
+     "w": 28.13,
+     "h": 85.64
+    },
+    "answer": {
+     "x": 31.41,
+     "y": 13.17,
+     "w": 65.94,
+     "h": 20.3
+    },
+    "charts": {
+     "x": 31.41,
+     "y": 34.76,
+     "w": 65.94,
+     "h": 64.96
+    }
+   },
+   "errors": []
+  },
+  "dark": {
+   "name": "layout",
+   "theme": "dark",
+   "boxes": {
+    "inputs": {
+     "x": 1.88,
+     "y": 13.17,
+     "w": 28.13,
+     "h": 85.64
+    },
+    "answer": {
+     "x": 31.41,
+     "y": 13.17,
+     "w": 65.94,
+     "h": 20.3
+    },
+    "charts": {
+     "x": 31.41,
+     "y": 34.76,
+     "w": 65.94,
+     "h": 64.96
+    }
+   },
+   "errors": []
+  }
+ },
+ "quickstart": {
+  "light": {
+   "name": "quickstart",
+   "theme": "light",
+   "duration": 14.09,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Open the inputs"
+    },
+    {
+     "t": 3.07,
+     "label": "Pick an example"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "quickstart",
+   "theme": "dark",
+   "duration": 14.06,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Open the inputs"
+    },
+    {
+     "t": 3.06,
+     "label": "Pick an example"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "demand": {
+  "light": {
+   "name": "demand",
+   "theme": "light",
+   "duration": 26.11,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Peak and growth"
+    },
+    {
+     "t": 5.95,
+     "label": "Climate and profile"
+    },
+    {
+     "t": 18.75,
+     "label": "Planning years"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "demand",
+   "theme": "dark",
+   "duration": 25.89,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Peak and growth"
+    },
+    {
+     "t": 5.85,
+     "label": "Climate and profile"
+    },
+    {
+     "t": 18.67,
+     "label": "Planning years"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "assume": {
+  "light": {
+   "name": "assume",
+   "theme": "light",
+   "duration": 16.22,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Discount rate"
+    },
+    {
+     "t": 6.45,
+     "label": "Typical days"
+    },
+    {
+     "t": 13.09,
+     "label": "Solver"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "assume",
+   "theme": "dark",
+   "duration": 16.55,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Discount rate"
+    },
+    {
+     "t": 6.51,
+     "label": "Typical days"
+    },
+    {
+     "t": 13.32,
+     "label": "Solver"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "charts": {
+  "light": {
+   "name": "charts",
+   "theme": "light",
+   "duration": 23.36,
+   "marks": [
+    {
+     "t": 0,
+     "label": "The answer"
+    },
+    {
+     "t": 3.59,
+     "label": "Capacity and when to build"
+    },
+    {
+     "t": 10.21,
+     "label": "Click a year"
+    },
+    {
+     "t": 18.79,
+     "label": "Energy and cost"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "charts",
+   "theme": "dark",
+   "duration": 23.42,
+   "marks": [
+    {
+     "t": 0,
+     "label": "The answer"
+    },
+    {
+     "t": 3.54,
+     "label": "Capacity and when to build"
+    },
+    {
+     "t": 10.17,
+     "label": "Click a year"
+    },
+    {
+     "t": 18.85,
+     "label": "Energy and cost"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "results": {
+  "light": {
+   "name": "results",
+   "theme": "light",
+   "duration": 15.01,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Open the tables"
+    },
+    {
+     "t": 3.13,
+     "label": "Pick a table"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "results",
+   "theme": "dark",
+   "duration": 14.65,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Open the tables"
+    },
+    {
+     "t": 3.19,
+     "label": "Pick a table"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "share": {
+  "light": {
+   "name": "share",
+   "theme": "light",
+   "duration": 13.97,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Save or open a file"
+    },
+    {
+     "t": 3.99,
+     "label": "Share a chart"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "share",
+   "theme": "dark",
+   "duration": 13.83,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Save or open a file"
+    },
+    {
+     "t": 3.83,
+     "label": "Share a chart"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "supply": {
+  "light": {
+   "name": "supply",
+   "theme": "light",
+   "duration": 22.27,
+   "marks": [
+    {
+     "t": 0,
+     "label": "In service and to build"
+    },
+    {
+     "t": 3.31,
+     "label": "Open a technology"
+    },
+    {
+     "t": 8.02,
+     "label": "Detailed"
+    },
+    {
+     "t": 13.87,
+     "label": "Add a technology"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "supply",
+   "theme": "dark",
+   "duration": 22.52,
+   "marks": [
+    {
+     "t": 0,
+     "label": "In service and to build"
+    },
+    {
+     "t": 3.41,
+     "label": "Open a technology"
+    },
+    {
+     "t": 8.19,
+     "label": "Detailed"
+    },
+    {
+     "t": 14.12,
+     "label": "Add a technology"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "policy": {
+  "light": {
+   "name": "policy",
+   "theme": "light",
+   "duration": 21.71,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Reliability"
+    },
+    {
+     "t": 3.4,
+     "label": "Carbon price"
+    },
+    {
+     "t": 10.34,
+     "label": "Net-zero year"
+    },
+    {
+     "t": 14.73,
+     "label": "Run the plan"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "policy",
+   "theme": "dark",
+   "duration": 20.98,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Reliability"
+    },
+    {
+     "t": 3.32,
+     "label": "Carbon price"
+    },
+    {
+     "t": 10.14,
+     "label": "Net-zero year"
+    },
+    {
+     "t": 14.48,
+     "label": "Run the plan"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ }
+}

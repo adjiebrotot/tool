@@ -1,0 +1,156 @@
+/* =============================================================================================
+   GUIDE PAGES (shared across the tools' "How to use" guides, <tool>/guides/)
+   The pictures are clips and a screenshot recorded from the real tool (<tool>/guides/media/,
+   made by _ref/guide-capture/ or, for the PowerFactory Builder, its own _capture/);
+   guide-shared.js plays them, picks the clip for the current theme and lights the step the
+   clip is showing. Colours come only from the site tokens (dark.css, light.css).
+   Class prefix: .gd-
+   ============================================================================================= */
+
+.gd { max-width: 1120px; }
+.gd code { font-family: 'DM Mono', monospace; font-size: .88em; background: var(--input-bg); padding: 1px 5px; border-radius: var(--radius-sm); }
+.gd a:not(.btn-theme):not(.btn-primary) { color: var(--accent-strong); }
+.gd em { font-style: normal; font-weight: 600; color: var(--text); }
+.gd h3 { color: var(--text); }
+
+/* ---- Top bar ------------------------------------------------------------------------------ */
+.gd-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.gd-top-r { display: flex; align-items: center; gap: 12px; }
+.gd .gd-open { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.gd .gd-open-top { height: 36px; padding: 0 16px; font-size: 14px; white-space: nowrap; }
+
+/* ---- Hero --------------------------------------------------------------------------------- */
+.gd-hero { padding: 28px 0 28px; max-width: 46rem; }
+.gd-hero h1 { margin: 0 0 14px; font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1.12; font-weight: 700; letter-spacing: -.01em; }
+.gd-hero h1 .tool-glyph { vertical-align: -.12em; margin-right: .22em; }
+.gd-lead { margin: 0 0 22px; font-size: clamp(1.02rem, 1.5vw, 1.2rem); line-height: 1.5; color: var(--text); }
+.gd-hero-btns { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
+.gd .gd-hero-btns .gd-open { min-width: 13rem; padding: 13px 26px; font-size: 1.1rem; }
+.gd .gd-skip { font-weight: 600; font-size: .95rem; color: var(--text); text-decoration: none; }
+.gd .gd-skip:hover { text-decoration: underline; }
+
+/* ---- Sections ----------------------------------------------------------------------------- */
+.gd-sec { padding: 24px 28px 26px; margin-bottom: 18px; scroll-margin-top: 16px; }
+.gd-sec > h2 { margin: 0 0 8px; font-size: 1.3rem; font-weight: 700; }
+.gd-sub { margin: 0 0 16px; font-size: .96rem; line-height: 1.6; color: var(--muted); max-width: 62rem; }
+.gd-sub strong, .gd-facts strong, .gd-steps strong, .gd-key strong { color: var(--text); font-weight: 700; }
+.gd-sec > .gd-sub:last-child { margin-bottom: 0; }
+.gd-sec > .gd-demo + .gd-sub { margin-top: 16px; }
+
+/* The three steps, as the landing page used to say them */
+.gd-three { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.gd-three li { padding: 16px 18px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-three h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 1.02rem; font-weight: 700; }
+.gd-three p { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--muted); }
+.gd-n { flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .78rem; font-weight: 700; }
+.gd-note { margin: 14px 0 0; padding: 11px 14px; border-radius: var(--radius-md); background: var(--info-bg); border: 1px solid var(--info-border); color: var(--info-text); font-size: .92rem; line-height: 1.55; }
+.gd-note strong { color: inherit; }
+.gd-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+.gd .gd-toc a { padding: 4px 12px; border-radius: var(--radius-pill); background: var(--input-bg); border: 1px solid var(--border); font-size: .85rem; font-weight: 600; color: var(--text); text-decoration: none; transition: border-color var(--motion-fast); }
+.gd .gd-toc a:hover { border-color: var(--accent); }
+
+/* ---- The screen: a screenshot with the four parts outlined --------------------------------- */
+.gd-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-bottom: 14px; }
+/* A tall screenshot sits beside its key, read top to bottom */
+.gd-layout.gd-layout-side { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: start; }
+.gd-layout-side .gd-key { grid-template-columns: minmax(0, 1fr); }
+.gd-shot { margin: 0; }
+.gd-shot-frame { position: relative; aspect-ratio: var(--ar, 16 / 9); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); }
+.gd-shot-frame img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.gd-box { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 2px dashed var(--accent-strong); border-radius: 10px; pointer-events: none; transition: background var(--motion-fast), border-color var(--motion-fast); }
+.gd-box b { position: absolute; left: -2px; top: -2px; transform: translate(-35%, -35%); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .75rem; font-weight: 700; box-shadow: 0 0 0 2px var(--panel); }
+/* The part a reader points at in the list lights up on the picture (guide-shared.js). */
+.gd-box.is-lit { background: color-mix(in srgb, var(--accent) 16%, transparent); border-style: solid; }
+.gd-box.gd-box-r b { left: auto; right: -2px; transform: translate(35%, -35%); }
+.gd-key { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 10px; }
+.gd-key li { display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-key li::before { content: attr(data-b); grid-row: 1 / 3; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .78rem; font-weight: 700; }
+.gd-key h3 { margin: 0 0 3px; font-size: .98rem; font-weight: 700; }
+.gd-key p { margin: 0; font-size: .86rem; line-height: 1.55; color: var(--muted); }
+
+/* ---- A demo: the clip, then the steps it shows --------------------------------------------- */
+.gd-demo { display: grid; gap: 14px; }
+.gd-screen { margin: 0; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); }
+.gd-view { position: relative; aspect-ratio: var(--ar, 16 / 9); background: var(--bg-subtle); }
+.gd-view video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; }
+.gd-bar { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 14px; border-top: 1px solid var(--border); }
+.gd-cap { flex: 1; min-width: 0; font-size: .82rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gd-bar .btn-sm { padding: 5px 12px; font-size: .8rem; }
+
+.gd-steps { list-style: none; margin: 0; padding: 0; counter-reset: gds; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.gd-steps li { counter-increment: gds; position: relative; padding: 12px 14px 13px 46px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); transition: border-color var(--motion-fast), background var(--motion-fast); }
+.gd-steps li::before { content: counter(gds); position: absolute; left: 13px; top: 12px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border); color: var(--muted); font-size: .78rem; font-weight: 700; transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast); }
+.gd-steps h3 { margin: 0 0 3px; font-size: .95rem; font-weight: 700; }
+.gd-steps p { margin: 0; font-size: .85rem; line-height: 1.55; color: var(--muted); }
+.gd-steps li.is-live { cursor: pointer; }
+.gd-steps li.is-live:hover { border-color: var(--accent); }
+.gd-steps li.is-live:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gd-steps li.is-active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 11%, var(--panel)); }
+.gd-steps li.is-active::before { background: var(--accent-strong); border-color: var(--accent-strong); color: var(--text-inv); }
+
+/* A clip is never stretched past its own size (guide-shared.js sets the width) */
+.gd-screen { max-width: var(--mw, none); }
+
+.gd-facts { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.gd-facts li { position: relative; padding-left: 18px; font-size: .9rem; line-height: 1.6; color: var(--muted); max-width: 62rem; }
+.gd-facts li::before { content: ''; position: absolute; left: 3px; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+.gd-pack { margin: 16px 0 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-pack h3 { margin: 0 0 8px; font-size: .95rem; font-weight: 700; }
+.gd-pack ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 6px 18px; font-size: .86rem; line-height: 1.5; color: var(--muted); }
+
+.gd-run { list-style: none; margin: 14px 0 16px; padding: 0; counter-reset: gdr; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.gd-run li { counter-increment: gdr; position: relative; padding: 14px 16px 15px 52px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-run li::before { content: counter(gdr); position: absolute; left: 15px; top: 14px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .82rem; font-weight: 700; }
+.gd-run h3 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; }
+.gd-run p { margin: 0; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+.gd-code { margin: 0 0 14px; padding: 13px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--input-bg); overflow-x: auto; font-family: 'DM Mono', monospace; font-size: .84rem; line-height: 1.6; color: var(--text); }
+.gd-code code { padding: 0; background: none; font-size: inherit; white-space: pre; }
+
+.gd-kbd { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px 18px; font-size: .9rem; color: var(--muted); }
+.gd kbd { display: inline-block; min-width: 1.7em; padding: 1px 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; background: var(--panel); color: var(--text); font-family: 'DM Mono', monospace; font-size: .8rem; text-align: center; }
+
+.gd-end { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px 22px; padding: 22px 0 30px; }
+.gd-end p { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.gd .gd-end .gd-open { min-width: 13rem; padding: 13px 26px; font-size: 1.1rem; }
+
+.gd .gd-phone-hint { display: none; padding: 8px 12px; border-radius: var(--radius-md); background: var(--input-bg); border: 1px solid var(--border); font-size: .88rem; }
+
+/* ---- Footer, as on the landing page -------------------------------------------------------- */
+.gd footer { padding: 6px 4px 24px; }
+.gd-made { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 4px; align-items: center; }
+.gd-made .gd-flag { grid-row: 1 / 3; height: 36px; width: auto; object-fit: contain; }
+.gd-made div { display: flex; align-items: center; gap: 10px; }
+.gd-made div img { height: 16px; width: auto; flex-shrink: 0; border-radius: 3px; }
+.gd-made span { color: var(--muted); font-size: .76rem; }
+
+/* ---- Narrower screens ---------------------------------------------------------------------- */
+@media (max-width: 1000px) {
+  .gd-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gd-layout.gd-layout-side { grid-template-columns: minmax(0, 1fr); }
+  .gd-layout-side .gd-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .gd-three { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .gd .gd-phone-hint { display: block; }
+  .gd.container { padding: 16px; }
+  .gd-sec { padding: 18px 16px 20px; }
+  .gd-hero { padding: 16px 0 20px; }
+  .gd .gd-hero-btns .gd-open { width: 100%; min-width: 0; }
+  .gd .gd-open-top { display: none; }
+  .gd-key, .gd-run, .gd-layout-side .gd-key { grid-template-columns: minmax(0, 1fr); }
+  .gd-steps { grid-template-columns: minmax(0, 1fr); }
+  .gd-code code { white-space: pre-wrap; word-break: break-all; }
+  .gd-bar { padding-left: 12px; }
+}
+@media (max-width: 380px) {
+  .gd .btn-back { font-size: 13px; padding: 0 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gd *, .gd *::before { transition: none !important; }
+}
+
+.gd-i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); font: italic 800 .7rem/1 Georgia, serif; vertical-align: 1px; }
+.gd-end .gd-more { order: 1; flex-basis: 100%; text-align: center; font-size: .9rem; font-weight: 400; color: var(--muted); }

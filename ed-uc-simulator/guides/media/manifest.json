@@ -1,0 +1,488 @@
+{
+ "layout": {
+  "light": {
+   "name": "layout",
+   "theme": "light",
+   "boxes": {
+    "inputs": {
+     "x": 1.88,
+     "y": 12.29,
+     "w": 26.56,
+     "h": 50.07
+    },
+    "parts": {
+     "x": 31.48,
+     "y": 18.96,
+     "w": 5.78,
+     "h": 47.2
+    },
+    "diagram": {
+     "x": 38.05,
+     "y": 18.96,
+     "w": 57.66,
+     "h": 47.2
+    },
+    "results": {
+     "x": 29.84,
+     "y": 70.76,
+     "w": 67.5,
+     "h": 28.97
+    }
+   },
+   "errors": []
+  },
+  "dark": {
+   "name": "layout",
+   "theme": "dark",
+   "boxes": {
+    "inputs": {
+     "x": 1.88,
+     "y": 12.29,
+     "w": 26.56,
+     "h": 50.07
+    },
+    "parts": {
+     "x": 31.48,
+     "y": 18.96,
+     "w": 5.78,
+     "h": 47.2
+    },
+    "diagram": {
+     "x": 38.05,
+     "y": 18.96,
+     "w": 57.66,
+     "h": 47.2
+    },
+    "results": {
+     "x": 29.84,
+     "y": 70.76,
+     "w": 67.5,
+     "h": 28.97
+    }
+   },
+   "errors": []
+  }
+ },
+ "quickstart": {
+  "light": {
+   "name": "quickstart",
+   "theme": "light",
+   "duration": 15.85,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Open the inputs"
+    },
+    {
+     "t": 3.63,
+     "label": "Pick an example"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "quickstart",
+   "theme": "dark",
+   "duration": 15.73,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Open the inputs"
+    },
+    {
+     "t": 3.52,
+     "label": "Pick an example"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "draw": {
+  "light": {
+   "name": "draw",
+   "theme": "light",
+   "duration": 34.01,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Drop a bus"
+    },
+    {
+     "t": 8.22,
+     "label": "Drop units and loads"
+    },
+    {
+     "t": 21.62,
+     "label": "Connect two buses"
+    },
+    {
+     "t": 28.39,
+     "label": "Run it"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "draw",
+   "theme": "dark",
+   "duration": 33.76,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Drop a bus"
+    },
+    {
+     "t": 8.25,
+     "label": "Drop units and loads"
+    },
+    {
+     "t": 21.34,
+     "label": "Connect two buses"
+    },
+    {
+     "t": 28.09,
+     "label": "Run it"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "unit": {
+  "light": {
+   "name": "unit",
+   "theme": "light",
+   "duration": 13.87,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Select a unit"
+    },
+    {
+     "t": 2.78,
+     "label": "Its cost"
+    },
+    {
+     "t": 9.34,
+     "label": "Commitment"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "unit",
+   "theme": "dark",
+   "duration": 13.87,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Select a unit"
+    },
+    {
+     "t": 2.78,
+     "label": "Its cost"
+    },
+    {
+     "t": 9.42,
+     "label": "Commitment"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "hour": {
+  "light": {
+   "name": "hour",
+   "theme": "light",
+   "duration": 31.46,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Drag the hour"
+    },
+    {
+     "t": 17.36,
+     "label": "Play the day"
+    },
+    {
+     "t": 26.9,
+     "label": "Hover to read"
+    }
+   ],
+   "width": 1280,
+   "height": 960,
+   "errors": []
+  },
+  "dark": {
+   "name": "hour",
+   "theme": "dark",
+   "duration": 32.79,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Drag the hour"
+    },
+    {
+     "t": 18.82,
+     "label": "Play the day"
+    },
+    {
+     "t": 28.22,
+     "label": "Hover to read"
+    }
+   ],
+   "width": 1280,
+   "height": 960,
+   "errors": []
+  }
+ },
+ "charts": {
+  "light": {
+   "name": "charts",
+   "theme": "light",
+   "duration": 18.31,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Dispatch"
+    },
+    {
+     "t": 5.63,
+     "label": "Click an hour"
+    },
+    {
+     "t": 10.69,
+     "label": "Prices and commitment"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "charts",
+   "theme": "dark",
+   "duration": 18.21,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Dispatch"
+    },
+    {
+     "t": 5.52,
+     "label": "Click an hour"
+    },
+    {
+     "t": 10.54,
+     "label": "Prices and commitment"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "results": {
+  "light": {
+   "name": "results",
+   "theme": "light",
+   "duration": 19.28,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Four figures"
+    },
+    {
+     "t": 3.09,
+     "label": "Open the tables"
+    },
+    {
+     "t": 7.43,
+     "label": "Pick a table"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "results",
+   "theme": "dark",
+   "duration": 19.36,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Four figures"
+    },
+    {
+     "t": 3.1,
+     "label": "Open the tables"
+    },
+    {
+     "t": 7.48,
+     "label": "Pick a table"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "share": {
+  "light": {
+   "name": "share",
+   "theme": "light",
+   "duration": 16.01,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Save or open a file"
+    },
+    {
+     "t": 5.02,
+     "label": "Share"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "share",
+   "theme": "dark",
+   "duration": 15.43,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Save or open a file"
+    },
+    {
+     "t": 4.74,
+     "label": "Share"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "profile": {
+  "light": {
+   "name": "profile",
+   "theme": "light",
+   "duration": 23.08,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Select a load"
+    },
+    {
+     "t": 2.38,
+     "label": "Pick a profile"
+    },
+    {
+     "t": 8.15,
+     "label": "Drag a bar"
+    },
+    {
+     "t": 16.3,
+     "label": "Vary it by weekday"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "profile",
+   "theme": "dark",
+   "duration": 22.55,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Select a load"
+    },
+    {
+     "t": 2.44,
+     "label": "Pick a profile"
+    },
+    {
+     "t": 7.93,
+     "label": "Drag a bar"
+    },
+    {
+     "t": 15.74,
+     "label": "Vary it by weekday"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ },
+ "dispatch": {
+  "light": {
+   "name": "dispatch",
+   "theme": "light",
+   "duration": 23.52,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Solve as"
+    },
+    {
+     "t": 5.13,
+     "label": "Horizon"
+    },
+    {
+     "t": 10.29,
+     "label": "Profiles from a file"
+    },
+    {
+     "t": 13.19,
+     "label": "Network and shedding"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  },
+  "dark": {
+   "name": "dispatch",
+   "theme": "dark",
+   "duration": 23.41,
+   "marks": [
+    {
+     "t": 0,
+     "label": "Solve as"
+    },
+    {
+     "t": 5.07,
+     "label": "Horizon"
+    },
+    {
+     "t": 10.25,
+     "label": "Profiles from a file"
+    },
+    {
+     "t": 13.12,
+     "label": "Network and shedding"
+    }
+   ],
+   "width": 1280,
+   "height": 800,
+   "errors": []
+  }
+ }
+}

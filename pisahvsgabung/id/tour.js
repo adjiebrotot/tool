@@ -5,8 +5,7 @@
    pembuka dan daftar pendek. */
 window.__TOUR = {
   seenKey: 'pvg-id-tour-v3-seen',
-  launchLabel: '🧭 Ikuti tur',
-  launchShort: '🧭 Tur',
+  launchLabel: '🧭 Tur',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
   steps: [

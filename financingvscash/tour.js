@@ -6,7 +6,7 @@
    every step to a lead line and a short list. */
 window.__TOUR = {
   seenKey: 'fvc-tour-v7-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
   steps: [
     {
       target: null,

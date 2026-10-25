@@ -229,6 +229,12 @@ readers see it again (checks treat any `<tool>-tour-vN-seen` as seen).
 
 A tour shows where things are; the page and its (i) tips explain them.
 
+- **Tour and Guide.** The header button reads `🧭 Tour`. A tool with a guide page
+  (`<tool>/guides/`, built on `guide-shared.css` and `guide-shared.js`, its clips recorded
+  from the real tool by `_ref/guide-capture/`) passes `guide: 'guides/'` in `window.__TOUR`:
+  a `📖 Guide` button then sits beside Tour, and the last step, which has no Skip, offers
+  "See guide for more details" with a `See Guide` button above Back and Done.
+
 - **Short.** A lead line, or a `<ul>` of two to four points, each a fragment
   (`Simulated: model an asset from its return and volatility`). About 30 words
   at most.

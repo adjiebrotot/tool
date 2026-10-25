@@ -3,7 +3,7 @@
    step to a lead line and a short list. */
 window.__TOUR = {
   seenKey: 'pf-tour-v2-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
   // Step ⚡ loads the worked example over the form, so give the user their
   // own configuration back when the tour ends, however it ends.
   saveState: function () {
