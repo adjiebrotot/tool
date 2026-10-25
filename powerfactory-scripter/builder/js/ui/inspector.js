@@ -139,6 +139,14 @@ export function mountInspector(app) {
     if (!text && !html) return null;
     return el('span', { class: 'tip-icon', 'data-tip': html || esc(tipText(text)) }, '?');
   }
+  // Classes with a page in the attribute reference (../reference/<cls>/).
+  const REF_CLASSES = new Set(["ElmArea", "ElmAsm", "ElmAsmsc", "ElmBbone", "ElmBmu", "ElmBoundary", "ElmBranch", "ElmCabsys", "ElmComp", "ElmCoup", "ElmDcu", "ElmDsl", "ElmFeeder", "ElmFile", "ElmFilter", "ElmGenstat", "ElmGndswt", "ElmIac", "ElmLne", "ElmLnesec", "ElmLod", "ElmLodlv", "ElmLodmv", "ElmMdl", "ElmNec", "ElmNet", "ElmPvsys", "ElmRecmono", "ElmRelay", "ElmRes", "ElmSecctrl", "ElmShnt", "ElmSind", "ElmStactrl", "ElmSubstat", "ElmSvs", "ElmSym", "ElmTerm", "ElmTow", "ElmTr2", "ElmTr3", "ElmTr4", "ElmTrain", "ElmTrb", "ElmTrfstat", "ElmTrmult", "ElmVac", "ElmVoltreg", "ElmVsc", "ElmVscmono", "ElmXnet", "ElmZone", "ElmZpu", "EvtGen", "EvtLod", "EvtOutage", "EvtParam", "EvtShc", "EvtSwitch", "EvtSym", "EvtTap", "StaPll", "TypAsm", "TypGeo", "TypLne", "TypLod", "TypLodlv", "TypSwitch", "TypSym", "TypTow", "TypTr2", "TypTr3", "TypTr4"]);
+  // Beside an attribute field: opens the attribute list for its element class in a new tab.
+  function refIcon(cls) {
+    const has = cls && REF_CLASSES.has(cls);
+    const label = has ? 'See the ' + cls + ' attribute list' : 'See the attribute reference';
+    return el('a', { class: 'pfb-ref', href: '../reference/' + (has ? cls + '/' : ''), target: '_blank', rel: 'noopener', title: label, 'aria-label': label }, 'i');
+  }
   function reqMark() { return el('span', { class: 'pfb-req', text: 'Required' }); }
 
   function pinButton(node, st) {
@@ -300,7 +308,7 @@ export function mountInspector(app) {
     }
     if (st.kind === 'list') return listRow(node, st, s);
     return el('div', { class: 'field-row pfb-set' + (empty ? ' pfb-todo' : ''), dataset: { key: st.key } },
-      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), empty ? reqMark() : null, el('span', { class: 'pfb-lab-fill' }), pin),
+      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), st.kind === 'attr' ? refIcon(classOf(node.id, st)) : null, empty ? reqMark() : null, el('span', { class: 'pfb-lab-fill' }), pin),
       buildField(specFor(node, st, value)));
   }
 
@@ -327,7 +335,9 @@ export function mountInspector(app) {
           columns: () => columnsFor(node.id, col),
         };
         const field = buildField(spec);
-        r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));
+        r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, col.kind === 'attr'
+          ? el('span', { class: 'pfb-list-labrow' }, el('span', { class: 'pfb-list-lab', text: cst.label }), refIcon(classOf(node.id, cst, row.id, st.key)))
+          : el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));
       }
       list.appendChild(r);
     });

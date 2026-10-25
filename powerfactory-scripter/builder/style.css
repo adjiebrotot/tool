@@ -565,6 +565,9 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-list-n { font-size: .8125rem; font-weight: 700; color: var(--muted); }
 .pfb-list-cell { display: flex; flex-direction: column; gap: 3px; }
 .pfb-list-cell > .tip-icon { display: none; }
+.pfb-list-labrow { display: flex; align-items: center; gap: 5px; }
+.pfb-ref { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border); color: var(--muted); font-size: .7rem; font-weight: 800; font-style: italic; font-family: Georgia, serif; line-height: 1; text-decoration: none; flex-shrink: 0; }
+.pfb-ref:hover, .pfb-ref:focus-visible { border-color: var(--accent); color: var(--accent); }
 .pfb-list-bool { flex-direction: row; align-items: center; justify-content: space-between; }
 .pfb-list-lab { font-size: .76rem; font-weight: 700; color: var(--muted); }
 .pfb-list-add { align-self: flex-start; margin-top: 4px; border-style: dashed; }
