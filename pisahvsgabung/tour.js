@@ -65,7 +65,7 @@ window.__TOUR = {
       target: '.chart-card',
       title: '⑥ Across salaries',
       body: '<ul><li>Household salary from Rp 100 million to Rp 5 billion, at your split</li>' +
-            '<li>Blue is Pisah, gold is Gabung</li>' +
+            '<li>Blue is Gabung, gold is Pisah</li>' +
             '<li>The crossover note under the second chart says where they swap</li></ul>'
     },
     {

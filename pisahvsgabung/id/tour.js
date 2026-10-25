@@ -67,7 +67,7 @@ window.__TOUR = {
       target: '.chart-card',
       title: '⑥ Di berbagai gaji',
       body: '<ul><li>Gaji rumah tangga Rp 100 juta sampai Rp 5 miliar, pada porsi Anda</li>' +
-            '<li>Biru untuk Pisah, emas untuk Gabung</li>' +
+            '<li>Biru untuk Gabung, emas untuk Pisah</li>' +
             '<li>Catatan breakeven di bawah grafik kedua menyebut titik baliknya</li></ul>'
     },
     {
