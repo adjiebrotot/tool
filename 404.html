@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wrong stop | Adjie Brotools</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="icon" type="image/svg+xml" href="/logos/logo.svg">
+  <link rel="apple-touch-icon" href="/logos/apple-touch-icon.png">
+  <script>
+    (function () {
+      /* The reader's pick (the abt-theme cookie shared with www and the blog), else the device's setting through the CSS below. GitHub Pages serves this page at any depth, so every path here starts with /. */
+      var m = /(?:^|;\s*)abt-theme=(light|dark)/.exec(document.cookie), t = m && m[1];
+      if (!t) { try { t = localStorage.getItem('abt-theme'); } catch (e) {} }
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      if (window.self !== window.top) document.documentElement.classList.add('framed');
+    })();
+  </script>
+  <style>
+    @font-face { font-family: 'DM Sans'; src: url('/assets/fonts/dm-sans.woff2') format('woff2'); font-weight: 400 800; font-display: swap; }
+    @font-face { font-family: 'Caveat'; src: url('/assets/fonts/caveat.woff2') format('woff2'); font-weight: 500 700; font-display: swap; }
+    :root { color-scheme: light; --bg-a: #BCD5FF; --bg-b: #F3F7FF; --ink: #14203A; --muted: #4C5B76; --line: #14203A; --card: #fff; --brand: #0052CC; --gold: #B45309; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --bg-a: #040914; --bg-b: #0F1728; --ink: #EAF1FF; --muted: #A8B6CF; --line: #8DBBFF; --card: #162033; --brand: #8DBBFF; --gold: #FFD28C; } }
+    :root[data-theme="dark"] { color-scheme: dark; --bg-a: #040914; --bg-b: #0F1728; --ink: #EAF1FF; --muted: #A8B6CF; --line: #8DBBFF; --card: #162033; --brand: #8DBBFF; --gold: #FFD28C; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; text-align: center; color: var(--ink); background: linear-gradient(180deg, var(--bg-a), var(--bg-b)); font-family: 'DM Sans', system-ui, sans-serif; }
+    .hand { font-family: 'Caveat', cursive; font-weight: 600; color: var(--gold); font-size: 1.6rem; margin: 0 auto; max-width: none; transform: rotate(-3deg); }
+    h1 { font-size: clamp(2.2rem, 7vw, 4rem); letter-spacing: -.04em; line-height: 1.05; margin: .3rem 0 .8rem; }
+    p { color: var(--muted); max-width: 50ch; margin: 0 auto 1.4rem; font-size: 1.05rem; }
+    svg { width: min(420px, 88vw); height: auto; margin-bottom: 8px; overflow: hidden; }
+    .train { animation: arrive 2.4s cubic-bezier(.2, .7, .2, 1) both; }
+    @keyframes arrive { from { transform: translateX(-280px); } to { transform: translateX(0); } }
+    nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+    nav a { padding: .65rem 1.05rem; border-radius: 14px; background: var(--card); color: var(--ink); border: 2px solid var(--line); box-shadow: 4px 4px 0 var(--line); text-decoration: none; font-weight: 800; transition: transform .15s, box-shadow .15s; }
+    nav a:hover, nav a:focus-visible { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--line); }
+    nav a:first-child { background: #FFD28C; color: #14203A; }
+    /* Inside someone's iframe (an embed whose link points nowhere): one quiet note, like the embed viewer's. */
+    .embed-fail { display: none; }
+    html.framed body { display: block; min-height: 0; padding: 0; background: transparent; }
+    html.framed main { display: none; }
+    html.framed .embed-fail { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 16px; color: #8a94a6; font-size: .9rem; }
+    html.framed .embed-fail p { color: inherit; font-size: inherit; margin: 4px 0; }
+    html.framed .embed-fail a { color: inherit; }
+    @media (prefers-reduced-motion: reduce) { .train { animation: none; } nav a { transition: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <svg viewBox="0 0 320 120" aria-hidden="true">
+      <path d="M0 104 H320" stroke="#6E7B96" stroke-width="3"/>
+      <path d="M0 110 H320" stroke="#6E7B96" stroke-width="1.4" stroke-dasharray="3 9"/>
+      <g class="train"><g transform="translate(40 66)">
+        <path d="M0 4 a4 4 0 0 1 4 -4 H178 C 190 0 198 10 200 22 L 201 28 a4 4 0 0 1 -4 4 H4 a4 4 0 0 1 -4 -4 Z" fill="#F7F8FA" stroke="#14203A" stroke-width="2"/>
+        <path d="M1 7 H182 C 188 8 192 12 194 17 H1 Z" fill="#1B1F27"/><rect x="1" y="20" width="199" height="4" fill="#0F9D58"/>
+        <rect x="30" y="4" width="12" height="26" rx="1" fill="#F2C200"/><rect x="130" y="4" width="12" height="26" rx="1" fill="#F2C200"/>
+        <circle cx="24" cy="36" r="5" fill="#2A303B"/><circle cx="40" cy="36" r="5" fill="#2A303B"/><circle cx="150" cy="36" r="5" fill="#2A303B"/><circle cx="166" cy="36" r="5" fill="#2A303B"/>
+        <rect x="194" y="25" width="5" height="3" rx="1" fill="#FFF3B0"/>
+      </g></g>
+      <g transform="translate(262 30)"><rect x="-2" y="0" width="4" height="74" fill="#6E7B96"/><rect x="-26" y="-10" width="52" height="24" rx="5" fill="#0052CC"/><text x="0" y="7" text-anchor="middle" font-family="DM Sans, sans-serif" font-weight="800" font-size="12" fill="#fff">404</text></g>
+    </svg>
+    <p class="hand" data-id="ups salah stasiun">oops, wrong stop</p>
+    <h1 data-id="Halaman ini salah naik kereta.">This page took a different train.</h1>
+    <p data-id="Alamatnya gak ada, atau sudah pindah. Naik lagi dari salah satu stasiun ini:">The address doesn't exist, or it moved. Hop back on at one of these:</p>
+    <nav>
+      <a href="/" data-id="Semua tools">All tools</a>
+      <a href="https://blog.adjiebrotots.com/">Blog</a>
+      <a href="https://www.adjiebrotots.com/about/" data-id="Tentang saya" data-id-href="https://www.adjiebrotots.com/id/about/">About me</a>
+      <a href="https://www.adjiebrotots.com/" data-id="Beranda">Home</a>
+    </nav>
+  </main>
+  <div class="embed-fail">
+    <p data-id="Embed ini rusak: grafik atau tool yang dituju tidak ada di sini.">This embed is broken: the chart or tool it points to isn't here.</p>
+    <p><span data-id="Ambil kode embed baru di">Get a fresh embed code at</span> <a href="/" target="_blank" rel="noopener">tool.adjiebrotots.com</a></p>
+  </div>
+  <script>
+    /* A missed address under an Indonesian page (/<tool>/id/...), or an Indonesian embed, gets the Indonesian words. */
+    if (/\/id(\/|$)/.test(location.pathname) || /(?:^#|&)l=id(&|$)/.test(location.hash)) {
+      document.documentElement.lang = 'id';
+      document.title = 'Salah stasiun | Adjie Brotools';
+      document.querySelectorAll('[data-id]').forEach(function (el) {
+        el.textContent = el.getAttribute('data-id');
+        if (el.hasAttribute('data-id-href')) el.href = el.getAttribute('data-id-href');
+      });
+    }
+  </script>
+</body>
+</html>
