@@ -330,7 +330,7 @@ await test('page loads clean', async () => {
   }));
   check('the vendored libraries load (React, ReactDOM, React Flow)', info.react && info.rf && info.canvas && info.msgHidden, JSON.stringify(info));
   check('every block file loaded, no banner', info.failed.length === 0 && !info.alert, JSON.stringify(info.failed));
-  check('header h1, banner links to ../ and ../samples/, footer', info.h1 === 'PowerFactory Workflow Builder' && info.banner.includes('../') && info.banner.includes('../samples/') && info.footer, JSON.stringify(info));
+  check('header h1, banner links to ../legacy/ and ../samples/, footer', info.h1 === 'PowerFactory Workflow Builder' && info.banner.includes('../legacy/') && info.banner.includes('../samples/') && info.footer, JSON.stringify(info));
   check('the app shell is data-no-abbr and data-no-persist', info.noAbbr);
   check('no em-dash in the page text', !info.emdash);
   const sw = await D.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);

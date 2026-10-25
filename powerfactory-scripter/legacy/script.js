@@ -289,13 +289,15 @@ function onSaveIntermediateChange() {
    on demand the first time a user focuses the Attribute field for
    that element class.
 
-   Deploy alongside index.html:
+   Deployed in the scripter folder (PF_ROOT, one up from this page in
+   legacy/), where the Workflow Builder and the samples read them too:
      variables_index.json      (68 KB  — gateway index, loaded on startup)
      variables/                (folder — lazy-loaded per element class)
      element_params.json       (512 KB — input param suggestions, loaded on startup)
      variables/types/          (folder — lazy-loaded per type class, e.g. TypLod, TypTr2)
      type_params.json          (input param suggestions for TypXxx classes, loaded on startup)
 ================================================================ */
+const PF_ROOT = '../';
 const PF_REF = {
   index:    null,   // variables/elements/element_variables_index.json → {ElmXxx: {file, study_groups}}
   params:   null,   // element_params.json   →  {ElmXxx: [{var,unit,desc},...]}
@@ -320,11 +322,11 @@ async function fetchReferenceData() {
   const badge = document.getElementById('ref-data-badge');
   try {
     const [idxRes, paramsRes, evtIdxRes, typIdxRes, typParamsRes] = await Promise.all([
-      fetch('variables/elements/element_variables_index.json').catch(() => null),
-      fetch('element_params.json').catch(() => null),
-      fetch('variables/events/event_variables_index.json').catch(() => null),
-      fetch('variables/types/type_variables_index.json').catch(() => null),
-      fetch('type_params.json').catch(() => null),
+      fetch(PF_ROOT + 'variables/elements/element_variables_index.json').catch(() => null),
+      fetch(PF_ROOT + 'element_params.json').catch(() => null),
+      fetch(PF_ROOT + 'variables/events/event_variables_index.json').catch(() => null),
+      fetch(PF_ROOT + 'variables/types/type_variables_index.json').catch(() => null),
+      fetch(PF_ROOT + 'type_params.json').catch(() => null),
     ]);
     if (idxRes    && idxRes.ok)    PF_REF.index     = await idxRes.json();
     if (paramsRes && paramsRes.ok) PF_REF.params    = await paramsRes.json();
@@ -338,7 +340,7 @@ async function fetchReferenceData() {
       badge.className   = `ref-badge ${loaded ? 'loaded' : 'offline'}`;
       badge.title = loaded
         ? 'Smart autocomplete active. Full variable/parameter lists load on demand per element and type class.'
-        : 'Deploy variables/elements/element_variables_index.json, variables/types/type_variables_index.json, variables/ folder, element_params.json, and type_params.json alongside index.html to enable smart autocomplete.';
+        : 'Deploy variables/elements/element_variables_index.json, variables/types/type_variables_index.json, variables/ folder, element_params.json, and type_params.json in the powerfactory-scripter folder to enable smart autocomplete.';
     }
   } catch (e) {
     if (badge) { badge.textContent = '⚠ Variable DB offline'; badge.className = 'ref-badge offline'; }
@@ -359,7 +361,7 @@ async function fetchElmClassVars(elmClass, onLoaded) {
   PF_REF.loading.add(elmClass);
   try {
     const filePath = PF_REF.index[elmClass].file; // e.g. "variables/ElmTerm.json"
-    const res = await fetch(filePath);
+    const res = await fetch(PF_ROOT + filePath);
     if (res.ok) {
       PF_REF.varFiles[elmClass] = await res.json();
       if (onLoaded) onLoaded(PF_REF.varFiles[elmClass]);
@@ -384,7 +386,7 @@ async function fetchTypClassVars(typClass, onLoaded) {
   PF_REF.typLoading.add(typClass);
   try {
     const filePath = PF_REF.typIndex[typClass].file; // e.g. "variables/types/TypLod.json"
-    const res = await fetch(filePath);
+    const res = await fetch(PF_ROOT + filePath);
     if (res.ok) {
       PF_REF.typFiles[typClass] = await res.json();
       if (onLoaded) onLoaded(PF_REF.typFiles[typClass]);
@@ -1426,7 +1428,7 @@ function buildFnLibPicker(id) {
             ${groups}
           </select>
           <button class="btn btn-ghost btn-xs" id="${id}-fn-lib-btn" onclick="insertFnLibSample('${id}')" disabled>Insert</button>
-          <a class="fn-lib-help" href="samples/#custom-fn-library" target="_blank" rel="noopener">Doc ↗</a>
+          <a class="fn-lib-help" href="../samples/#custom-fn-library" target="_blank" rel="noopener">Doc ↗</a>
         </div>
         <div class="fn-lib-desc cond-hidden" id="${id}-fn-lib-desc"></div>`;
 }
@@ -2241,7 +2243,7 @@ function toggleInfoExtra(extraId, btn) {
    QUICK START — one-click worked examples loaded from samples/
 ================================================================ */
 async function applyQuickStart(key) {
-  const res = await fetch(`samples/json-samples/${key}.json`);
+  const res = await fetch(`${PF_ROOT}samples/json-samples/${key}.json`);
   if (!res.ok) throw new Error(`Could not load ${key}.json`);
   const cfg = await res.json();
   loadConfig(cfg);
