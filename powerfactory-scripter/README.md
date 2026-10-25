@@ -1,6 +1,10 @@
 # PowerFactory Scripter — Technical README
 
-> **File:** `index.html`
+> **File:** `legacy/index.html` (the Legacy Scripter, tool.adjiebrotots.com/powerfactory-scripter/legacy/)
+> **Folder front page:** `index.html` is a light landing page: what the tool does, an animation
+> of the Workflow Builder drawn in CSS and inline SVG (`style.css`), and the way in to `builder/`
+> and `legacy/`. It loads no app code. A link made for the form when it lived at this address
+> (`?qs=<sample>`, or state in the hash) is forwarded to `legacy/` by a line in its `<head>`.
 > **Type:** Single-page HTML/CSS/JavaScript application (no build step, no backend, no framework)
 > **Purpose:** Collects PowerFactory study configuration from a user and deterministically assembles PowerFactory Python scripts from fixed template blocks.
 
@@ -101,9 +105,13 @@ index.html
     └── File I/O (copy, download .py, export/import JSON, download xlsx template, reset)
 ```
 
-Alongside `index.html` the page loads `pf-script-builder.js` (the generated-Python builders),
-`script.js` (the UI), `custom-functions.js` (the pre-made Custom Calculation library, shared with
-`samples/`), `style.css`, and `tour.js` (guided tour config for `../tour-shared.js`).
+The page is `legacy/index.html`, with its own `legacy/script.js` (the UI), `legacy/style.css` and
+`legacy/tour.js` (guided tour config for `../../tour-shared.js`). From the folder above it loads
+`pf-script-builder.js` (the generated-Python builders), `custom-functions.js` (the pre-made Custom
+Calculation library, shared with `samples/`) and `abbr.js`, and it fetches the reference data
+(`element_params.json`, `type_params.json`, `variables/`) from there too (`PF_ROOT` in
+`legacy/script.js`), because the Workflow Builder reads the same files. The mini cache keeps its
+namespace (`powerfactory-scripter`), so a setup saved before the move still opens.
 
 Two sub-pages live under this folder: `samples/` (Samples and Guides) and `builder/`, the
 PowerFactory Workflow Builder, a node-based editor that writes one Python file from blocks wired

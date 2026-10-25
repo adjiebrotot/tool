@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory Scripter (Legacy Form) | Adjie Brotools</title>
+<meta name="description" content="The original form-based DIgSILENT PowerFactory script generator: fill in inputs, outputs and contingencies, get a ready-to-run Python script for sizing, RMS/EMT and N-1 studies. Runs in your browser with no upload. For your own study sequence, use the Workflow Builder.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/legacy/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="PowerFactory Scripter (Legacy Form)">
+<meta property="og:description" content="The original form-based PowerFactory Python script generator. Fill in a form, get a ready-to-run script. Runs locally in your browser with no upload.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/legacy/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PowerFactory Scripter (Legacy Form)">
+<meta name="twitter:description" content="The original form-based PowerFactory Python script generator. Fill in a form, get a ready-to-run script. Runs locally in your browser with no upload.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "PowerFactory Scripter (Legacy Form)",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/legacy/",
+  "description": "The original form-based DIgSILENT PowerFactory Python script generator for equipment sizing, dynamic RMS/EMT studies and automatic N-1 contingency analysis. Runs locally in your browser with no upload; the generated Python script is yours to keep.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "alternateName": [
+    "PowerFactory Script Generator",
+    "Form-based PowerFactory Scripter"
+  ],
+  "featureList": [
+    "Equipment sizing and optimisation studies: sweep parallel units, ratings or settings and find the first passing size",
+    "Dynamic RMS and EMT studies across many scenarios",
+    "Automatic N-1 contingency analysis with wildcard element selection resolved at runtime",
+    "Script generation runs locally in the browser with no upload"
+  ],
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "PowerFactory Scripter",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "PowerFactory Scripter", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/" },
+    { "@type": "ListItem", "position": 3, "name": "Legacy Form", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/legacy/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<!-- Ace.js for Python syntax highlighting in custom function editors -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+<!-- SheetJS for xlsx template download in custom mode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Highlight.js for code preview -->
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../tour-shared.css">
+</head>
+<body class="light">
+<script src="../../theme.js"></script>
+
+<!-- TOP HEADER -->
+<header>
+  <div class="header-left">
+    <div class="header-text">
+      <div class="header-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/> <path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/> <path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/> </svg>PowerFactory Scripter: Legacy Form</div>
+      <div class="header-subtitle">Fill in a form, get a ready-to-run PowerFactory script.</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-nav">
+      <a class="btn-theme btn-back" href="https://tool.adjiebrotots.com/" target="_self" rel="noopener">← Other Tools</a>
+      <button class="btn-theme" id="themeToggle">☀️ Light</button>
+    </div>
+    <span class="ref-badge loading" id="ref-data-badge" title="Place variables.json, element_params.json, and type_params.json in the powerfactory-scripter folder to enable smart attribute suggestions.">⏳ Loading DB…</span>
+  </div>
+</header>
+
+<!-- TOASTS -->
+<div id="copy-toast" class="toast">Copied to clipboard!</div>
+<div id="generate-toast" class="toast">Code generated!</div>
+<div id="import-toast" class="toast">JSON imported!</div>
+<div id="fn-lib-toast" class="toast">Function inserted!</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- ============================================================
+       LEFT PANE — all input forms
+  ============================================================ -->
+  <div class="left-pane" id="left-pane">
+
+    <!-- Validation errors -->
+    <div id="validation-errors">
+      <h4>Validation Errors</h4>
+      <ul id="validation-list"></ul>
+    </div>
+
+    <!-- Validation warnings -->
+    <div id="validation-warnings">
+      <h4>Warnings</h4>
+      <ul id="validation-warning-list"></ul>
+    </div>
+
+    <!-- Sub-tool banner: the node-based Workflow Builder (portfolioLinkDiv pattern) -->
+    <div id="builderLinkDiv" style="margin-bottom:14px;padding:11px 18px;background:rgba(141,187,255,.07);border:1px solid var(--border);border-radius:var(--radius-xl);font-size:.85rem;color:var(--muted);line-height:1.5;">
+      This is the original form. For your own study sequence, wire study blocks in the <a href="../builder/" style="color:var(--accent);font-weight:700;text-decoration:none;">PowerFactory Workflow Builder</a>.
+    </div>
+
+    <!-- Samples & Guides callout -->
+    <div class="info-box" style="margin: 0 0 14px;">
+      <span>💡 New here? Browse the <a href="../samples/" style="color:var(--accent);font-weight:600;">Samples &amp; Guides</a> to see worked examples before configuring your script.</span>
+    </div>
+
+    <!-- Quick Start — one-click worked examples loaded straight from samples/ -->
+    <div class="quick-start-row">
+      <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start with IEEE 9-bus System</span>
+      <div class="quick-start-btns">
+        <button class="quick-start-btn" data-preset="sample-01-transmission-loss-factor" data-tip="Brute-force sweep of G2/G3 dispatch (pgini) to read the Line 5-7 / Line 7-8 transmission loss (generation shift) factors.">Transmission Loss Factor</button>
+        <button class="quick-start-btn" data-preset="sample-02-minimum-system-losses" data-tip="Bayesian optimisation of G2/G3 dispatch to minimise total network active-power losses (ElmNet c:LossP).">Minimum System Losses</button>
+        <button class="quick-start-btn" data-preset="sample-03-rotor-angle-stability" data-tip="Dynamic RMS sweep of fault-clearing time, tracking G2/G3 rotor angle (c:firel) for the critical clearing time before a pole slip.">Rotor Angle Stability</button>
+        <button class="quick-start-btn" data-preset="sample-04-n1-line-contingency" data-tip="Wildcard N-1 contingency: trips every 230kV line in turn and records bus voltages and line loadings, no manual enumeration needed.">N-1 Line Contingency</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 1 · INITIALISATION ──────────────────────────── -->
+    <div class="section-card" id="sec-init">
+      <div class="section-header" onclick="toggleSection('sec-init')">
+        <h3>Initialisation</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="form-row">
+          <label>API Path <span class="tip-icon" data-tip="Path to the PF Python API folder containing powerfactory.pyd (Windows) or .so (Linux).">?</span></label>
+          <div>
+            <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" autocomplete="off" />
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Username <span class="tip-icon" data-tip="PowerFactory login username passed to GetApplication(). Leave blank only if single-user mode is configured.">?</span></label>
+          <input type="text" id="pf-username" placeholder="USERNAME_HERE" autocomplete="off" />
+        </div>
+        <div class="form-row">
+          <label>Output Directory <span class="tip-icon" data-tip="Folder where results are written. The /graph and /raw subfolders appear automatically when timeseries outputs are used.">?</span></label>
+          <div>
+            <input type="text" id="output-dir" placeholder="C:\Users\user\results" autocomplete="off" />
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="" data-tip-options>?</span></label>
+          <select id="problem-type" onchange="onProblemTypeChange()">
+            <option value="brute_force">Brute Force</option>
+            <option value="optimisation">Optimisation</option>
+            <option value="custom">Custom</option>
+            <option value="contingency">Contingency</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="" data-tip-options>?</span></label>
+          <select id="study-type" onchange="onStudyTypeChange()">
+            <option value="steady_state">Steady State</option>
+            <option value="dynamic_rms">Dynamic RMS</option>
+            <option value="dynamic_emt">Dynamic EMT</option>
+            <option value="harmonic">Harmonic</option>
+          </select>
+        </div>
+        <div class="form-row" id="row-tstop" style="display:none">
+          <label>Stop Time (s) <span class="tip-icon" data-tip="How long the simulation runs, in seconds (ComSim.tstop). Typically 20 s for RMS and 0.25 s for EMT.">?</span></label>
+          <div>
+            <input type="number" id="tstop" value="20" step="0.01" min="0" autocomplete="off" />
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="<ul><li><strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.</li><li><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.</li></ul>">?</span></label>
+          <select id="coding-style" onchange="onCodingStyleChange()">
+            <option value="python_file">Python File</option>
+            <option value="notebook">Notebook Style</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2 · INPUT VARIABLES ─────────────────────────── -->
+    <div class="section-card" id="sec-inputs">
+      <div class="section-header" onclick="toggleSection('sec-inputs')">
+        <h3>Input Variables</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box" id="input-info-box">
+          <span id="input-info-brief">Set PowerFactory object parameters before each simulation. Enter the object using its PF path and class (e.g. <code>Gen.ElmSym</code>) and the parameter to modify (e.g. <code>e:qgini</code>).</span>
+          <button class="info-more-toggle" onclick="toggleInfoExtra('input-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="input-info-extra">
+            <code>GetCalcRelevantObjects()</code> resolves the object query; <code>SetAttribute()</code> writes the value before each run.<br/>
+            <strong>Brute Force:</strong> Step Size is the increment (not number of steps); every combination is iterated.<br/>
+            <strong>Integer / on-off attributes</strong> (modes, flags, tap positions) have no step: choose <em>Range</em> (Lower to Upper; blank = 0 and 1) or <em>List</em> (e.g. <code>0,1,5</code>) in the Step cell. This is set from the attribute; the <code>int</code> toggle in the Attribute cell switches it for custom attributes.<br/>
+            <strong>Optimisation:</strong> Bounds define the search space; step is unused.<br/>
+            <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step are unused).<br/>
+            Wildcards (e.g. <code>*.ElmDsl</code>) match multiple objects — the same value is applied to all matched objects.
+          </div>
+        </div>
+        <div class="dyn-table-wrapper">
+          <table class="dyn-table" id="input-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name <span class="tip-icon" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
+                <th>Object <span class="tip-icon" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
+                <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
+                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span></th>
+                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span></th>
+                <th class="col-step"><span class="th-two-line" id="th-step-label">Step<br>Size</span> <span class="tip-icon" data-tip="Both bounds are included: lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10]. Integer attributes have no step: pick Range or List here instead.">?</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="input-tbody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addInputRow()">+ Add Input Variable</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3 · CUSTOM MODE CONFIG ─────────────────────── -->
+    <div class="section-card cond-hidden" id="sec-custom">
+      <div class="section-header" onclick="toggleSection('sec-custom')">
+        <h3>Custom Mode Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          Excel scenario file with a <strong>3-row header</strong> (Variable name / Object / Attribute) + one data row per scenario.
+          <button class="info-more-toggle" onclick="toggleInfoExtra('custom-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="custom-info-extra">
+            <strong>Row 1 — Variable name:</strong> label cell <code>Variable name</code>, then one name per column.<br/>
+            <strong>Row 2 — Object:</strong> label cell <code>Object</code>, then PF query per column (e.g. <code>Grid.ElmTerm</code>).<br/>
+            <strong>Row 3 — Attribute:</strong> label cell <code>Attribute</code>, then attribute name per column.<br/>
+            <strong>Rows 4+ — Data:</strong> first cell = scenario label, then numeric values.<br/>
+            Wildcard queries (e.g. <code>*.ElmSym</code>) apply the value to all matched objects simultaneously. Sheet name must be <code>Sheet1</code>.
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
+          <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
+        </div>
+        <div class="form-row">
+          <label>Scenario File Path <span class="tip-icon" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
+          <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" autocomplete="off" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: CONTINGENCY CONFIG ──────────────────────────── -->
+    <div class="section-card cond-hidden" id="sec-contingency">
+      <div class="section-header" onclick="toggleSection('sec-contingency')">
+        <h3>Contingency Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          Specify one or more wildcard element queries. The script resolves all matching objects at runtime, then iterates through each contingency (N-1: one element tripped; N-2: two elements tripped simultaneously). A base case (all in service) is always included as the first run.
+          <button class="info-more-toggle" onclick="toggleInfoExtra('contingency-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="contingency-info-extra">
+            <strong>Element Query:</strong> wildcard PF query (e.g. <code>*.ElmLne</code>, <code>*.ElmSym</code>).<br/>
+            <strong>Filter Attribute:</strong> optional attribute to filter resolved objects (e.g. <code>e:Unom</code>, <code>loc_name</code>).<br/>
+            <strong>Filter Value:</strong> numeric (e.g. <code>66</code>), plain string, or wildcard string (e.g. <code>North*</code> — case-insensitive glob).<br/>
+            <strong>N-2 / Combine:</strong> when unchecked, pairs are formed within each element type only (line × line, generator × generator). When checked, pairs cross element types too.<br/>
+            The <code>outserv</code> attribute (1 = out, 0 = in) is always used and restored in a <code>finally</code> block after each run.
+          </div>
+        </div>
+        <div class="dyn-table-wrapper">
+          <table class="dyn-table" id="contingency-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Element Query <span class="tip-icon" data-tip="A wildcard PF query. Every object it matches becomes a contingency candidate, for example *.ElmLne.">?</span></th>
+                <th>Filter Attribute <span class="tip-icon" data-tip="Optional attribute to filter candidates (e.g. e:Unom, loc_name).">?</span></th>
+                <th>Op</th>
+                <th>Filter Value <span class="tip-icon" data-tip="A number (66), plain text, or a wildcard such as North*. Wildcard matching ignores case.">?</span></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="contingency-tbody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addContingencyRow()">+ Add Element Type</button>
+        </div>
+        <div class="form-row" style="margin-top:12px;">
+          <label>Contingency Type <span class="tip-icon" data-tip="<ul><li><strong>N-1:</strong> one element is tripped per run.</li><li><strong>N-2:</strong> two elements are tripped together per run.</li></ul>">?</span></label>
+          <select id="contingency-n" onchange="onContingencyNChange()">
+            <option value="1">N-1</option>
+            <option value="2">N-2</option>
+          </select>
+        </div>
+        <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
+          <input type="checkbox" id="contingency-combine" />
+          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<ul><li><strong>Ticked:</strong> an N-2 pair may mix types, such as a line with a generator.</li><li><strong>Unticked:</strong> pairs form within one type only.</li></ul>">?</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 4 · OUTPUT VARIABLES ───────────────────────── -->
+    <div class="section-card" id="sec-outputs">
+      <div class="section-header" onclick="toggleSection('sec-outputs')">
+        <h3>Output Variables</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          <span>Read results from PowerFactory after each simulation. <strong>Scalar</strong> reads a single value from any object; <strong>Timeseries</strong> captures a signal over time (dynamic studies only); <strong>Custom</strong> lets you write your own Python calculation.</span>
+          <button class="info-more-toggle" onclick="toggleInfoExtra('output-info-extra', this)">More ▾</button>
+          <div class="info-extra" id="output-info-extra">
+            <strong>Scalar</strong> uses <code>obj.GetAttribute()</code> on static result variables (e.g. <code>m:u1</code>, <code>c:loading</code>) after solving — check the PF result variable browser for available keys.<br/>
+            <strong>Timeseries</strong> requires a Dynamic RMS or EMT study type. Use the PF variable key (e.g. <code>m:u1</code>, <code>m:I:bus1</code>) — same as the result variable browser, not the descriptive label.<br/>
+            <strong>Custom Calculation</strong> arguments must be names of other defined Input or Output Variables. It must return exactly one scalar, and a value it could not read arrives as <code>None</code>. Pick a ready-made one from <strong>Insert a pre-made function</strong> above the editor, or see the <a href="samples/#custom-fn-library" target="_blank" rel="noopener">custom function library</a>.<br/>
+            All variable names must be unique across inputs and outputs.
+          </div>
+        </div>
+        <div id="output-vars-container"></div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addOutputVar()">+ Add Output Variable</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 6 · OPTIMISATION SETTINGS ─────────────────── -->
+    <div class="section-card cond-hidden" id="sec-optim">
+      <div class="section-header" onclick="toggleSection('sec-optim')">
+        <h3>Optimisation Settings</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="form-row">
+          <label>Sense <span class="tip-icon" data-tip="<ul><li><strong>Minimise:</strong> the objective goes to the algorithm as it is.</li><li><strong>Maximise:</strong> it is negated internally, since every scipy algorithm minimises.</li></ul>">?</span></label>
+          <select id="optim-sense">
+            <option value="minimise">Minimise</option>
+            <option value="maximise">Maximise</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Objective <span class="tip-icon" data-tip="Scalar output variable to optimise. Must be defined first in the Output Variables section.">?</span></label>
+          <div>
+            <select id="optim-objective">
+              <option value="">— select output variable —</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Algorithm <span class="tip-icon" data-alg-tip data-tip="" data-tip-options>?</span></label>
+          <div style="display:flex;align-items:center;gap:6px;min-width:0;">
+            <select id="optim-algorithm" onchange="updateAlgorithmUI()" style="flex:1;min-width:0;">
+              <option value="placeholder">Manual (Placeholder)</option>
+              <option value="scipy_nelder_mead">Nelder-Mead — Simplex (scipy)</option>
+              <option value="scipy_powell">Powell — Directional Set (scipy)</option>
+              <option value="scipy_lbfgsb">L-BFGS-B — Quasi-Newton (scipy)</option>
+              <option value="scipy_slsqp">SLSQP — Sequential Least Squares (scipy)</option>
+              <option value="scipy_cobyla">COBYLA — Constraint Approximation (scipy)</option>
+              <option value="differential_evolution">Differential Evolution — Global (scipy)</option>
+              <option value="gp_minimize">Bayesian Optimisation (scikit-optimize)</option>
+            </select>
+            <a id="optim-algorithm-doc" href="#" target="_blank" rel="noopener noreferrer"
+               style="font-size:11px;color:var(--accent);white-space:nowrap;display:none;flex-shrink:0;">Doc ↗</a>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Max Iterations <span class="tip-icon" id="tt-max-iter" data-tip="Not used in Manual mode: your own search loop decides how many runs happen.">?</span></label>
+          <input type="number" id="optim-max-iter" value="50" min="1" autocomplete="off" />
+        </div>
+        <hr class="divider" />
+        <div class="sub-label">Constraints <span class="tip-icon" data-tip="A soft limit: breaking it adds a large penalty rather than blocking the run. For a hard limit, bound the input variable instead.">?</span></div>
+        <div class="dyn-table-wrapper">
+          <table class="dyn-table" id="constraint-table">
+            <thead>
+              <tr>
+                <th>Output Variable</th>
+                <th>Operator</th>
+                <th>Value</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="constraint-tbody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-xs" onclick="addConstraint()">+ Add Constraint</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION 7 · ADDITIONAL CONFIG ──────────────────────── -->
+    <div class="section-card" id="sec-addl">
+      <div class="section-header" onclick="toggleSection('sec-addl')">
+        <h3>Additional Config</h3>
+        <span class="toggle-icon">▾</span>
+      </div>
+      <div class="section-body">
+        <div class="checkbox-row">
+          <input type="checkbox" id="iterate-study-cases" />
+          <label for="iterate-study-cases">Iterate through study cases <span class="tip-icon" data-tip="Activate each study case before running the sweep. Useful for N-1 contingency analysis.">?</span></label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="iterate-operating-scenarios" />
+          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tip-icon" data-tip="Activate each operating scenario before running. Combines with study case iteration.">?</span></label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="use-progress-bar" checked />
+          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tip-icon" data-tip="Shows live progress and an estimated finish time using tqdm. Requires pip install tqdm.">?</span></label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="open-pf-window" />
+          <label for="open-pf-window">Open PowerFactory window <span class="tip-icon" data-tip="Show the PF GUI (app.Show()) while running. Default is headless (app.Hide()) for speed.">?</span></label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
+          <label for="save-intermediate">Save intermediate results every X minutes</label>
+        </div>
+        <div id="row-save-interval" class="form-row cond-hidden">
+          <label>Interval (min) <span class="tip-icon" data-tip="How often partial results are written, in minutes. 10–30 min suits a run lasting several hours.">?</span></label>
+          <input type="number" id="save-interval-minutes" value="30" min="1" autocomplete="off" />
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end left-pane -->
+
+  <!-- PANE RESIZER — drag to adjust left/right width -->
+  <div class="pane-resizer" id="pane-resizer" title="Drag to resize"></div>
+
+  <!-- ============================================================
+       RIGHT PANE — code preview + controls
+  ============================================================ -->
+  <div class="right-pane">
+    <div class="right-toolbar">
+      <span class="pane-title">▸ Generated Code Preview</span>
+      <button class="btn btn-primary" onclick="generateCode()">▶ Generate Code</button>
+      <button class="btn btn-ghost" id="copy-btn" onclick="copyCode()" title="Copy to clipboard" aria-label="Copy to clipboard">⧉</button>
+      <button class="btn btn-ghost" id="download-btn" onclick="downloadCode()" title="Download script">⬇ .py</button>
+      <button class="btn btn-ghost btn-io" data-icon="save" onclick="exportConfigJSON()" title="Save this setup to a JSON file" aria-label="Save this setup to a JSON file"></button>
+      <label class="btn btn-ghost btn-io" data-icon="open" style="cursor:pointer; position:relative;" title="Open a saved setup JSON file">
+        <input type="file" accept=".json" id="import-json-file" onchange="importConfigJSON(event)" aria-label="Open a saved setup JSON file" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0;" />
+      </label>
+      <button class="btn btn-ghost" onclick="resetForm()" title="Reset every field to its default" aria-label="Reset every field to its default">↺</button>
+    </div>
+    <div id="code-preview-wrapper">
+      <pre id="code-preview"><code class="language-python">
+<div class="placeholder-msg">
+  <span class="big">▶</span>
+  <span>Configure inputs and click <strong>Generate Code</strong></span>
+</div>
+      </code></pre>
+      <div id="nb-preview" style="display:none"></div>
+    </div>
+  </div>
+
+</div><!-- end layout -->
+
+<!-- ============================================================
+     APP FOOTER — disclaimer
+============================================================ -->
+<footer class="app-footer">
+  <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+  <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+  <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
+    <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
+    <div style="display:flex;align-items:center;gap:10px">
+      <img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+      <span style="color:var(--muted);font-size:0.76rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
+      <span style="color:var(--muted);font-size:0.76rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT — all logic
+============================================================ -->
+<script src="../../dropdown.js"></script>
+<script src="../../chart-kit.js"></script>
+<script src="../../shared.js"></script>
+<script src="../abbr.js"></script>
+<script src="../pf-script-builder.js"></script>
+<script src="../custom-functions.js"></script>
+<script src="script.js"></script>
+<script src="tour.js"></script>
+<script src="../../tour-shared.js"></script>
+</body>
+</html>
