@@ -14,7 +14,8 @@
 // round its blocks, the loop's name on a tab (loopFrames, frames.js).
 //
 // Folded ports: a block draws its main ports and every wired one; the rest wait behind "+N more"
-// (a click shows them, kept per viewer in localStorage `pfb-unfold`, never in the workflow). A
+// (a click shows them, kept per viewer in localStorage `pfb-unfold`, never in the workflow; the
+// blocks the opened one now covers are pushed clear of it, ops.pushClear). A
 // port folds while it is unwired and either says so (`more` on the port: true, or a function of
 // the settings and the wiring) or is an input whose value is typed under More options or cannot
 // apply with these settings. A required input never folds. While a wire is being dragged, the
@@ -413,12 +414,18 @@ export function mountCanvas(app) {
     const [phone, setPhone] = React.useState(isPhone());
     const [foldRev, setFoldRev] = React.useState(0);
     const [conn, setConn] = React.useState(null);
+    const grow = React.useRef(null);
     const foldCtx = React.useMemo(() => ({
       conn,
       isOpen: (nid, type) => unfolded.has(foldKey(nid, type)),
       toggle: (nid, type) => {
         const k = foldKey(nid, type);
-        if (unfolded.has(k)) unfolded.delete(k); else unfolded.add(k);
+        if (unfolded.has(k)) unfolded.delete(k);
+        else {
+          unfolded.add(k);
+          const n = ops.nodeById(store.get().wf, nid), m = measuredRef.current[nid];
+          if (n && m) grow.current = { id: nid, before: { x: n.x, y: n.y, w: m.width, h: m.height }, until: Date.now() + 1500 };
+        }
         lsSet(UNFOLD_KEY, JSON.stringify([...unfolded].slice(-400)));
         setFoldRev(r => r + 1);
       },
@@ -426,6 +433,17 @@ export function mountCanvas(app) {
     const dragRef = React.useRef(dragPos);
     dragRef.current = dragPos;
     measuredRef.current = measured;
+    // A block just opened ("+N more"): once its new size is measured, the blocks it now covers
+    // are pushed clear of it (ops.pushClear), as one move that Undo puts back.
+    React.useEffect(() => {
+      const g = grow.current, m = g && measured[g.id];
+      if (!g || !m) return;
+      if (Date.now() > g.until) { grow.current = null; return; }
+      if (m.width === g.before.w && m.height === g.before.h) return;
+      grow.current = null;
+      const pos = ops.pushClear(store.get().wf, g.id, measured, g.before);
+      if (Object.keys(pos).length) { app.moveNodes(pos, 'unfold:' + (++dragSeq)); store.endCoalesce(); }
+    }, [measured]);
     React.useEffect(() => {
       const mq = window.matchMedia('(max-width: 767px)');
       const on = () => setPhone(mq.matches);

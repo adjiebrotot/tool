@@ -760,3 +760,35 @@ export function freeSpot(wf, x, y, sizes, w = 240, h = 110) {
   for (let i = 0; i < 40 && hits(px, py); i++) py = snap(py + 64);
   return { x: px, y: py };
 }
+
+// The blocks to move when block `id` has grown from its box `before` ({ x, y, w, h }) to its
+// size in `sizes` ("+N more" opened): each block the new box covers, and the old one did not, is
+// pushed down below it (or right of it, when it starts above the grown block's top), and every
+// block a pushed block then lands on is pushed down below that one, and so on. Blocks the reader
+// had already overlapped with the opened block stay put.
+// Returns { [id]: { x, y } } for the blocks that move; empty when none does.
+export function pushClear(wf, id, sizes, before, gap = 32) {
+  const at = {};
+  const box = (n) => {
+    const m = sizes && sizes[n.id], p = at[n.id] || n;
+    return { x: p.x, y: p.y, w: (m && m.width) || 240, h: (m && m.height) || 110 };
+  };
+  const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  const up = (v) => Math.ceil(v / GRID) * GRID;
+  const grown = wf.nodes.find(n => n.id === id);
+  if (!grown) return at;
+  const queue = [{ n: grown, old: before || box(grown) }];
+  for (let guard = 0; queue.length && guard < 2000; guard++) {
+    const { n: o, old } = queue.shift();
+    const ob = box(o);
+    for (const b of wf.nodes) {
+      if (b.id === o.id || b.id === id) continue;
+      const bb = box(b);
+      if (!hit(bb, ob) || (old && hit(bb, old))) continue;
+      const p = old === null || bb.y >= ob.y ? { x: bb.x, y: up(ob.y + ob.h + gap) } : { x: up(ob.x + ob.w + gap), y: bb.y };
+      at[b.id] = p;
+      queue.push({ n: b, old: null });
+    }
+  }
+  return at;
+}
