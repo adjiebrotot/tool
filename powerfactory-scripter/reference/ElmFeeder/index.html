@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmFeeder attributes: PowerFactory Feeder | Adjie Brotools</title>
+<meta name="description" content="All ElmFeeder attributes in PowerFactory (Feeder): 69 input parameters and 196 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFeeder/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmFeeder attributes: PowerFactory Feeder parameters and result variables">
+<meta property="og:description" content="All ElmFeeder attributes in PowerFactory (Feeder): 69 input parameters and 196 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFeeder/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmFeeder attributes: PowerFactory Feeder parameters and result variables">
+<meta name="twitter:description" content="All ElmFeeder attributes in PowerFactory (Feeder): 69 input parameters and 196 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmFeeder attributes (PowerFactory Feeder)",
+  "description": "All ElmFeeder attributes in PowerFactory (Feeder): 69 input parameters and 196 result variables, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFeeder/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmFeeder (Feeder)",
+    "description": "A feeder: the radial path that starts at one cubicle, used for voltage profiles, feeder load scaling and feeder results."
+  },
+  "keywords": "ElmFeeder attributes, ElmFeeder parameters, ElmFeeder result variables, PowerFactory Feeder attributes, ElmFeeder GetAttribute",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmFeeder",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFeeder/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmFeeder</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmFeeder attributes<span class="dx-h1-sub">PowerFactory Feeder</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Feeder (<code>ElmFeeder</code>): 69 input parameters and 196 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmFeeder is</h2>
+  <p>A feeder: the radial path that starts at one cubicle, used for voltage profiles, feeder load scaling and feeder results.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmFeeder</code>, element class</dd><dt>PowerFactory name</dt><dd>Feeder</dd><dt>Attributes</dt><dd>69 input parameters and 196 result variables, in 3 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmFeeder in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-k">for</span> obj <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmFeeder&quot;</span>):
+    <span class="py-f">print</span>(obj.loc_name, obj.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;loc_name&quot;</span>)) <span class="py-c"># Name</span>
+
+obj = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmFeeder&quot;</span>)[<span class="py-n">0</span>]
+obj.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;loc_name&quot;</span>, <span class="py-s">&quot;Feeder 1&quot;</span>)      <span class="py-c"># rename the feeder</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmFeeder attributes"><li><a href="#params">Input parameters<span class="dx-n">69</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">112</span></a></li><li><a href="#load-flow-dc">DC load flow results<span class="dx-n">15</span></a></li><li><a href="#opf">Optimal power flow results<span class="dx-n">69</span></a></li><li><a href="#basic">Basic data<span class="dx-n">4</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmFeeder input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>outserv</code></td><td><span aria-label="no unit">·</span></td><td>Out of Service</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>icolor</code></td><td><span aria-label="no unit">·</span></td><td>Colour</td></tr>
+<tr><td><code>irVolt</code></td><td><span aria-label="no unit">·</span></td><td>Terminate feeder when encountering higher voltage levels</td></tr>
+<tr><td><code>ilVolt</code></td><td><span aria-label="no unit">·</span></td><td>Terminate feeder when encountering lower voltage levels</td></tr>
+<tr><td><code>scalePhaseWise</code></td><td><span aria-label="no unit">·</span></td><td>Phasewise scaling</td></tr>
+<tr><td><code>i_scale</code></td><td><span aria-label="no unit">·</span></td><td>First setpoint</td></tr>
+<tr><td><code>i_scalepf</code></td><td><span aria-label="no unit">·</span></td><td>Second setpoint</td></tr>
+<tr><td><code>pf_recapset</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>pf_recapsetr</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, ph. 1</td></tr>
+<tr><td><code>pf_recapsets</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, ph. 2</td></tr>
+<tr><td><code>pf_recapsett</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, ph. 3</td></tr>
+<tr><td><code>operRadial</code></td><td><span aria-label="no unit">·</span></td><td>Feeder is supposed to be operated radially.</td></tr>
+<tr><td><code>maxVrise</code></td><td>%</td><td>Maximum allowed Voltage Rise</td></tr>
+<tr><td><code>maxVdrop</code></td><td>%</td><td>Maximum allowed Voltage Drop</td></tr>
+<tr><td><code>GPSlat</code></td><td>deg</td><td>Latitude / Northing</td></tr>
+<tr><td><code>GPSlon</code></td><td>deg</td><td>Longitude / Easting</td></tr>
+<tr><td><code>Iset</code></td><td>kA</td><td>Current</td></tr>
+<tr><td><code>Isetr</code></td><td>kA</td><td>Current, ph. 1</td></tr>
+<tr><td><code>Isets</code></td><td>kA</td><td>Current, ph. 2</td></tr>
+<tr><td><code>Isett</code></td><td>kA</td><td>Current, ph. 3</td></tr>
+<tr><td><code>Pset</code></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>Psetr</code></td><td>MW</td><td>Active Power, ph. 1</td></tr>
+<tr><td><code>Psets</code></td><td>MW</td><td>Active Power, ph. 2</td></tr>
+<tr><td><code>Psett</code></td><td>MW</td><td>Active Power, ph. 3</td></tr>
+<tr><td><code>Sset</code></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>Ssetr</code></td><td>MVA</td><td>Apparent Power, ph. 1</td></tr>
+<tr><td><code>Ssets</code></td><td>MVA</td><td>Apparent Power, ph. 2</td></tr>
+<tr><td><code>Ssett</code></td><td>MVA</td><td>Apparent Power, ph. 3</td></tr>
+<tr><td><code>scale0</code></td><td><span aria-label="no unit">·</span></td><td>Scaling Factor</td></tr>
+<tr><td><code>scale10r</code></td><td><span aria-label="no unit">·</span></td><td>Scaling Factor, ph. 1</td></tr>
+<tr><td><code>scale10s</code></td><td><span aria-label="no unit">·</span></td><td>Scaling Factor, ph. 2</td></tr>
+<tr><td><code>scale10t</code></td><td><span aria-label="no unit">·</span></td><td>Scaling Factor, ph. 3</td></tr>
+<tr><td><code>Qset</code></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>Qsetr</code></td><td>Mvar</td><td>Reactive Power, ph. 1</td></tr>
+<tr><td><code>Qsets</code></td><td>Mvar</td><td>Reactive Power, ph. 2</td></tr>
+<tr><td><code>Qsett</code></td><td>Mvar</td><td>Reactive Power, ph. 3</td></tr>
+<tr><td><code>cosphiset</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, cos(phi)</td></tr>
+<tr><td><code>cosphisetr</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, cos(phi), ph. 1</td></tr>
+<tr><td><code>cosphisets</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, cos(phi), ph. 2</td></tr>
+<tr><td><code>cosphisett</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor, cos(phi), ph. 3</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>cimRdfId</code></td><td><span aria-label="no unit">·</span></td><td>RDF ID</td></tr>
+<tr><td><code>obj_id</code></td><td><span aria-label="no unit">·</span></td><td>Cubicle<small>Object: StaCubic*</small></td></tr>
+<tr><td><code>cpZone</code></td><td><span aria-label="no unit">·</span></td><td>Zone<small>Object: ElmZone</small></td></tr>
+<tr><td><code>cPhaseWise</code></td><td><span aria-label="no unit">·</span></td><td>Phasewise input</td></tr>
+<tr><td><code>ciorient</code></td><td><span aria-label="no unit">·</span></td><td>Orientation</td></tr>
+<tr><td><code>ciConn</code></td><td><span aria-label="no unit">·</span></td><td>Connected</td></tr>
+<tr><td><code>cn_bus</code></td><td><span aria-label="no unit">·</span></td><td>Busbar<small>Object: ElmTerm</small></td></tr>
+<tr><td><code>cbranch</code></td><td><span aria-label="no unit">·</span></td><td>Branch<small>Object: Elm*,RelFuse,StaSua*</small></td></tr>
+<tr><td><code>ciRadial</code></td><td><span aria-label="no unit">·</span></td><td>Radial</td></tr>
+<tr><td><code>n_bar</code></td><td><span aria-label="no unit">·</span></td><td>No. of Busbars</td></tr>
+<tr><td><code>n_term</code></td><td><span aria-label="no unit">·</span></td><td>No. of Terminals</td></tr>
+<tr><td><code>n_lne</code></td><td><span aria-label="no unit">·</span></td><td>No. of Lines</td></tr>
+<tr><td><code>n_2wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 2-w Trfs.</td></tr>
+<tr><td><code>n_3wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 3-w Trfs.</td></tr>
+<tr><td><code>n_4wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 4-w Trfs.</td></tr>
+<tr><td><code>n_sym</code></td><td><span aria-label="no unit">·</span></td><td>No. of syn. Machines</td></tr>
+<tr><td><code>n_asm</code></td><td><span aria-label="no unit">·</span></td><td>No. of asyn. Machines</td></tr>
+<tr><td><code>n_stg</code></td><td><span aria-label="no unit">·</span></td><td>No. of Static Generators</td></tr>
+<tr><td><code>n_pvs</code></td><td><span aria-label="no unit">·</span></td><td>No. of PV Systems</td></tr>
+<tr><td><code>n_lod</code></td><td><span aria-label="no unit">·</span></td><td>No. of Loads</td></tr>
+<tr><td><code>n_cust</code></td><td><span aria-label="no unit">·</span></td><td>Total number of customers</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmFeeder load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Pset</code></td><td>MW</td><td>Active Power Measurement</td></tr>
+<tr><td><code>c:Iset</code></td><td>kA</td><td>Current Measurement</td></tr>
+<tr><td><code>c:Sset</code></td><td>MVA</td><td>Apparent Power Measurement</td></tr>
+<tr><td><code>c:Qset</code></td><td>Mvar</td><td>Reactive Power Measurement</td></tr>
+<tr><td><code>c:cosphiset</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor Measurement</td></tr>
+<tr><td><code>c:scale</code></td><td>p.u.</td><td>Scale Factor</td></tr>
+<tr><td><code>c:scalephi</code></td><td>rad</td><td>Power Angle</td></tr>
+<tr><td><code>c:Pin</code></td><td>MW</td><td>Infeed, Active Power</td></tr>
+<tr><td><code>c:Qin</code></td><td>Mvar</td><td>Infeed, Reactive Power</td></tr>
+<tr><td><code>c:Sin</code></td><td>MVA</td><td>Infeed, Apparent Power</td></tr>
+<tr><td><code>c:cosphiin</code></td><td><span aria-label="no unit">·</span></td><td>Infeed, Power Factor</td></tr>
+<tr><td><code>c:Pinsum</code></td><td>MW</td><td>Total Active Power, Infeed</td></tr>
+<tr><td><code>c:Qinsum</code></td><td>Mvar</td><td>Total Reactive Power, Infeed</td></tr>
+<tr><td><code>c:Sinsum</code></td><td>MVA</td><td>Total Apparent Power, Infeed</td></tr>
+<tr><td><code>c:cosphiinsum</code></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor, Infeed</td></tr>
+<tr><td><code>c:Ppv</code></td><td>MW</td><td>PV Generation</td></tr>
+<tr><td><code>c:Iin</code></td><td>kA</td><td>Input Current, Magnitude</td></tr>
+<tr><td><code>c:icon</code></td><td><span aria-label="no unit">·</span></td><td>Connected</td></tr>
+<tr><td><code>c:maxlen</code></td><td><span aria-label="no unit">·</span></td><td>Maximum Length</td></tr>
+<tr><td><code>c:zonescale</code></td><td><span aria-label="no unit">·</span></td><td>Zone Scale Factor</td></tr>
+<tr><td><code>c:delP</code></td><td>MW</td><td>Active Power, Deviation from Measurement</td></tr>
+<tr><td><code>c:delI</code></td><td>kA</td><td>Current, Deviation from Measurement</td></tr>
+<tr><td><code>c:delS</code></td><td>MVA</td><td>Apparent Power, Deviation from Measurement</td></tr>
+<tr><td><code>c:delSet</code></td><td>%</td><td>Deviation from Measurement</td></tr>
+<tr><td><code>c:GenP</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:GenQ</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:GenS</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:Gencos</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pcomp</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:Pld</code></td><td>MW</td><td>Total Load, Active Power</td></tr>
+<tr><td><code>c:Qld</code></td><td>Mvar</td><td>Total Load, Reactive Power</td></tr>
+<tr><td><code>c:Sld</code></td><td>MVA</td><td>Total Load, Apparent Power</td></tr>
+<tr><td><code>c:cosld</code></td><td><span aria-label="no unit">·</span></td><td>Total Load, Power Factor</td></tr>
+<tr><td><code>c:LoadP</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:MotP</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:LossP</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:LossPrel</code></td><td>%</td><td>Losses related to Infeed</td></tr>
+<tr><td><code>c:LossQ</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPld</code></td><td>MW</td><td>Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQld</code></td><td>Mvar</td><td>Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnld</code></td><td>MW</td><td>Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnld</code></td><td>Mvar</td><td>Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPlne</code></td><td>MW</td><td>Line Losses, Active Power</td></tr>
+<tr><td><code>c:LossQlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldlne</code></td><td>MW</td><td>Line Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldlne</code></td><td>MW</td><td>Line Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPtrf</code></td><td>MW</td><td>Transformer Losses, Active Power</td></tr>
+<tr><td><code>c:LossQtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:Maxloading</code></td><td>%</td><td>Maximum Loading</td></tr>
+<tr><td><code>c:umin</code></td><td>p.u.</td><td>Minimum voltage of all terminals</td></tr>
+<tr><td><code>c:Umin</code></td><td>kV</td><td>Minimum Voltage</td></tr>
+<tr><td><code>c:Ulmin</code></td><td>kV</td><td>Minimum Voltage (Line-Line)</td></tr>
+<tr><td><code>c:umax</code></td><td>p.u.</td><td>Maximum voltage of all terminals</td></tr>
+<tr><td><code>c:Umax</code></td><td>kV</td><td>Maximum Voltage</td></tr>
+<tr><td><code>c:Ulmax</code></td><td>kV</td><td>Maximum Voltage (Line-Line)</td></tr>
+<tr><td><code>c:dumaxdrop</code></td><td>%</td><td>Max. Voltage Drop</td></tr>
+<tr><td><code>c:dumaxrise</code></td><td>%</td><td>Max. Voltage Rise</td></tr>
+<tr><td><code>c:NrOvlBranch</code></td><td><span aria-label="no unit">·</span></td><td>Number of overloaded branch components</td></tr>
+<tr><td><code>c:NrTermMin</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals below their minimum voltage limit</td></tr>
+<tr><td><code>c:NrTermMax</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals above their maximum voltage limit</td></tr>
+<tr><td><code>c:Ulin</code></td><td>kV</td><td>Voltage (Line-Line), Infeed</td></tr>
+<tr><td><code>c:Psetr</code></td><td>MW</td><td>Active Power Measurement, ph. 1</td></tr>
+<tr><td><code>c:Psets</code></td><td>MW</td><td>Active Power Measurement, ph. 2</td></tr>
+<tr><td><code>c:Psett</code></td><td>MW</td><td>Active Power Measurement, ph. 3</td></tr>
+<tr><td><code>c:Isetr</code></td><td>kA</td><td>Current Measurement, ph. 1</td></tr>
+<tr><td><code>c:Isets</code></td><td>kA</td><td>Current Measurement, ph. 2</td></tr>
+<tr><td><code>c:Isett</code></td><td>kA</td><td>Current Measurement, ph. 3</td></tr>
+<tr><td><code>c:Ssetr</code></td><td>MVA</td><td>Apparent Power Measurement, ph. 1</td></tr>
+<tr><td><code>c:Ssets</code></td><td>MVA</td><td>Apparent Power Measurement, ph. 2</td></tr>
+<tr><td><code>c:Ssett</code></td><td>MVA</td><td>Apparent Power Measurement, ph. 3</td></tr>
+<tr><td><code>c:Qsetr</code></td><td>Mvar</td><td>Reactive Power Measurement, ph. 1</td></tr>
+<tr><td><code>c:Qsets</code></td><td>Mvar</td><td>Reactive Power Measurement, ph. 2</td></tr>
+<tr><td><code>c:Qsett</code></td><td>Mvar</td><td>Reactive Power Measurement, ph. 3</td></tr>
+<tr><td><code>c:cosphisetr</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor Measurement, ph. 1</td></tr>
+<tr><td><code>c:cosphisets</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor Measurement, ph. 2</td></tr>
+<tr><td><code>c:cosphisett</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor Measurement, ph. 3</td></tr>
+<tr><td><code>c:pf_recapset</code></td><td>T</td><td>cos(phi)(ind,cap)</td></tr>
+<tr><td><code>c:pf_recapsetr</code></td><td>P</td><td>cos(phi)(ind,cap), ph. 1</td></tr>
+<tr><td><code>c:pf_recapsets</code></td><td>P</td><td>cos(phi)(ind,cap), ph. 2</td></tr>
+<tr><td><code>c:pf_recapsett</code></td><td>P</td><td>cos(phi)(ind,cap), ph. 3</td></tr>
+<tr><td><code>c:scale1r</code></td><td><span aria-label="no unit">·</span></td><td>Feeder load scaling, control 1, ph. 1</td></tr>
+<tr><td><code>c:scale1s</code></td><td><span aria-label="no unit">·</span></td><td>Feeder load scaling, control 1, ph. 2</td></tr>
+<tr><td><code>c:scale1t</code></td><td><span aria-label="no unit">·</span></td><td>Feeder load scaling, control 1, ph. 3</td></tr>
+<tr><td><code>c:scale2r</code></td><td><span aria-label="no unit">·</span></td><td>Feeder load scaling, control 2, ph. 1</td></tr>
+<tr><td><code>c:scale2s</code></td><td><span aria-label="no unit">·</span></td><td>Feeder load scaling, control 2, ph. 2</td></tr>
+<tr><td><code>c:scale2t</code></td><td><span aria-label="no unit">·</span></td><td>Feeder load scaling, control 2, ph. 3</td></tr>
+<tr><td><code>c:Pin:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Infeed, Active Power</td></tr>
+<tr><td><code>c:Qin:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Infeed, Reactive Power</td></tr>
+<tr><td><code>c:Sin:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Infeed, Apparent Power</td></tr>
+<tr><td><code>c:cosphiin:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Infeed, Power Factor</td></tr>
+<tr><td><code>c:Iin:A</code><small>per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Input Current, Magnitude</td></tr>
+<tr><td><code>c:Iavg</code></td><td>kA</td><td>Input Current, Magnitude, Average</td></tr>
+<tr><td><code>c:ulmin</code></td><td>p.u.</td><td>Minimum Voltage (Line-Line)</td></tr>
+<tr><td><code>c:ulmax</code></td><td>p.u.</td><td>Maximum Voltage (Line-Line)</td></tr>
+<tr><td><code>c:maxUnbFacU</code></td><td>%</td><td>Maximum voltage unbalance factor</td></tr>
+<tr><td><code>c:avgUnbFacU</code></td><td>%</td><td>Average voltage unbalance factor</td></tr>
+<tr><td><code>c:maxUnbFacI</code></td><td>%</td><td>Maximum current unbalance factor</td></tr>
+<tr><td><code>c:avgUnbFacI</code></td><td>%</td><td>Average current unbalance factor</td></tr>
+<tr><td><code>c:maxUnbFacS</code></td><td>%</td><td>Maximum power unbalance factor</td></tr>
+<tr><td><code>c:avgUnbFacS</code></td><td>%</td><td>Average power unbalance factor</td></tr>
+<tr><td><code>c:fedUnbFacI</code></td><td>%</td><td>Current unbalance factor on feeding branch</td></tr>
+<tr><td><code>c:fedUnbFacS</code></td><td>%</td><td>Power unbalance factor on feeding branch</td></tr>
+<tr><td><code>c:uphtmin</code></td><td>p.u.</td><td>Minimum voltage of all terminals</td></tr>
+<tr><td><code>c:uphtmax</code></td><td>p.u.</td><td>Maximum voltage of all terminals</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow-dc">
+  <h2 id="load-flow-dc">ElmFeeder dc load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> (DC) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Pset</code></td><td>MW</td><td>Active Power Measurement</td></tr>
+<tr><td><code>c:scale</code></td><td>p.u.</td><td>Scale Factor</td></tr>
+<tr><td><code>c:Pin</code></td><td>MW</td><td>Infeed, Active Power</td></tr>
+<tr><td><code>c:Pinsum</code></td><td>MW</td><td>Total Active Power, Infeed</td></tr>
+<tr><td><code>c:Ppv</code></td><td>MW</td><td>PV Generation</td></tr>
+<tr><td><code>c:icon</code></td><td><span aria-label="no unit">·</span></td><td>Connected</td></tr>
+<tr><td><code>c:maxlen</code></td><td><span aria-label="no unit">·</span></td><td>Maximum Length</td></tr>
+<tr><td><code>c:zonescale</code></td><td><span aria-label="no unit">·</span></td><td>Zone Scale Factor</td></tr>
+<tr><td><code>c:delP</code></td><td>MW</td><td>Active Power, Deviation from Measurement</td></tr>
+<tr><td><code>c:delSet</code></td><td>%</td><td>Deviation from Measurement</td></tr>
+<tr><td><code>c:GenP</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Pld</code></td><td>MW</td><td>Total Load, Active Power</td></tr>
+<tr><td><code>c:LoadP</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Maxloading</code></td><td>%</td><td>Maximum Loading</td></tr>
+<tr><td><code>c:NrOvlBranch</code></td><td><span aria-label="no unit">·</span></td><td>Number of overloaded branch components</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="opf">
+  <h2 id="opf">ElmFeeder optimal power flow results</h2>
+  <p class="dx-note">Read after <code>ComOpf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Pset</code></td><td>MW</td><td>Active Power Measurement</td></tr>
+<tr><td><code>c:Iset</code></td><td>kA</td><td>Current Measurement</td></tr>
+<tr><td><code>c:Sset</code></td><td>MVA</td><td>Apparent Power Measurement</td></tr>
+<tr><td><code>c:Qset</code></td><td>Mvar</td><td>Reactive Power Measurement</td></tr>
+<tr><td><code>c:cosphiset</code></td><td><span aria-label="no unit">·</span></td><td>Power Factor Measurement</td></tr>
+<tr><td><code>c:scale</code></td><td>p.u.</td><td>Scale Factor</td></tr>
+<tr><td><code>c:scalephi</code></td><td>rad</td><td>Power Angle</td></tr>
+<tr><td><code>c:Pin</code></td><td>MW</td><td>Infeed, Active Power</td></tr>
+<tr><td><code>c:Qin</code></td><td>Mvar</td><td>Infeed, Reactive Power</td></tr>
+<tr><td><code>c:Sin</code></td><td>MVA</td><td>Infeed, Apparent Power</td></tr>
+<tr><td><code>c:cosphiin</code></td><td><span aria-label="no unit">·</span></td><td>Infeed, Power Factor</td></tr>
+<tr><td><code>c:Pinsum</code></td><td>MW</td><td>Total Active Power, Infeed</td></tr>
+<tr><td><code>c:Qinsum</code></td><td>Mvar</td><td>Total Reactive Power, Infeed</td></tr>
+<tr><td><code>c:Sinsum</code></td><td>MVA</td><td>Total Apparent Power, Infeed</td></tr>
+<tr><td><code>c:cosphiinsum</code></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor, Infeed</td></tr>
+<tr><td><code>c:Ppv</code></td><td>MW</td><td>PV Generation</td></tr>
+<tr><td><code>c:Iin</code></td><td>kA</td><td>Input Current, Magnitude</td></tr>
+<tr><td><code>c:icon</code></td><td><span aria-label="no unit">·</span></td><td>Connected</td></tr>
+<tr><td><code>c:maxlen</code></td><td><span aria-label="no unit">·</span></td><td>Maximum Length</td></tr>
+<tr><td><code>c:zonescale</code></td><td><span aria-label="no unit">·</span></td><td>Zone Scale Factor</td></tr>
+<tr><td><code>c:delP</code></td><td>MW</td><td>Active Power, Deviation from Measurement</td></tr>
+<tr><td><code>c:delI</code></td><td>kA</td><td>Current, Deviation from Measurement</td></tr>
+<tr><td><code>c:delS</code></td><td>MVA</td><td>Apparent Power, Deviation from Measurement</td></tr>
+<tr><td><code>c:delSet</code></td><td>%</td><td>Deviation from Measurement</td></tr>
+<tr><td><code>c:GenP</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:GenQ</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:GenS</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:Gencos</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pcomp</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:Pld</code></td><td>MW</td><td>Total Load, Active Power</td></tr>
+<tr><td><code>c:Qld</code></td><td>Mvar</td><td>Total Load, Reactive Power</td></tr>
+<tr><td><code>c:Sld</code></td><td>MVA</td><td>Total Load, Apparent Power</td></tr>
+<tr><td><code>c:cosld</code></td><td><span aria-label="no unit">·</span></td><td>Total Load, Power Factor</td></tr>
+<tr><td><code>c:LoadP</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:MotP</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:LossP</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:LossPrel</code></td><td>%</td><td>Losses related to Infeed</td></tr>
+<tr><td><code>c:LossQ</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPld</code></td><td>MW</td><td>Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQld</code></td><td>Mvar</td><td>Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnld</code></td><td>MW</td><td>Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnld</code></td><td>Mvar</td><td>Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPlne</code></td><td>MW</td><td>Line Losses, Active Power</td></tr>
+<tr><td><code>c:LossQlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldlne</code></td><td>MW</td><td>Line Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldlne</code></td><td>MW</td><td>Line Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPtrf</code></td><td>MW</td><td>Transformer Losses, Active Power</td></tr>
+<tr><td><code>c:LossQtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:Maxloading</code></td><td>%</td><td>Maximum Loading</td></tr>
+<tr><td><code>c:umin</code></td><td>p.u.</td><td>Minimum voltage of all terminals</td></tr>
+<tr><td><code>c:Umin</code></td><td>kV</td><td>Minimum Voltage</td></tr>
+<tr><td><code>c:Ulmin</code></td><td>kV</td><td>Minimum Voltage (Line-Line)</td></tr>
+<tr><td><code>c:umax</code></td><td>p.u.</td><td>Maximum voltage of all terminals</td></tr>
+<tr><td><code>c:Umax</code></td><td>kV</td><td>Maximum Voltage</td></tr>
+<tr><td><code>c:Ulmax</code></td><td>kV</td><td>Maximum Voltage (Line-Line)</td></tr>
+<tr><td><code>c:dumaxdrop</code></td><td>%</td><td>Max. Voltage Drop</td></tr>
+<tr><td><code>c:dumaxrise</code></td><td>%</td><td>Max. Voltage Rise</td></tr>
+<tr><td><code>c:NrOvlBranch</code></td><td><span aria-label="no unit">·</span></td><td>Number of overloaded branch components</td></tr>
+<tr><td><code>c:NrTermMin</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals below their minimum voltage limit</td></tr>
+<tr><td><code>c:NrTermMax</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals above their maximum voltage limit</td></tr>
+<tr><td><code>c:Ulin</code></td><td>kV</td><td>Voltage (Line-Line), Infeed</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmFeeder basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>b:icolor</code></td><td><span aria-label="no unit">·</span></td><td>Colour</td></tr>
+<tr><td><code>b:dist</code></td><td>km</td><td>Distance from infeed</td></tr>
+<tr><td><code>b:dist1</code></td><td>km</td><td>Distance from infeed (maxmin)</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmBoundary/"><code>ElmBoundary</code> Boundary</a> · <a href="../ElmNet/"><code>ElmNet</code> Grid</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

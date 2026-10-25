@@ -62,7 +62,8 @@ export function mountTemplates(app) {
     starter.hidden = !show;
   }
 
-  // opts.ask false: no confirm (the tour keeps the reader's work itself); opts.quiet: no toast.
+  // opts.ask false: no confirm (the tour keeps the reader's work itself); 'always': confirm
+  // whenever the canvas holds more than Start (a link, below); opts.quiet: no toast.
   async function load(id, opts = {}) {
     await ready;
     const t = list.find(x => x.id === id);
@@ -73,7 +74,7 @@ export function mountTemplates(app) {
     const { wf, notes } = loadWorkflow(text);
     if (!wf) { if (!opts.quiet) app.toast(notes.map(n => n.msg).join(' ') || 'The template could not be read.', { level: 'error' }); return false; }
     const s = store.get();
-    if (opts.ask !== false && !onlyStart(s.wf) && s.rev !== s.savedRev) {
+    if (opts.ask === 'always' ? !onlyStart(s.wf) : (opts.ask !== false && !onlyStart(s.wf) && s.rev !== s.savedRev)) {
       if (!confirm('Replace the workflow on the canvas with "' + t.title + '"? Undo brings yours back.')) return false;
     }
     app.replaceWorkflow(wf, { what: t.title, notes, saved: true, quiet: !!opts.quiet });
@@ -92,6 +93,21 @@ export function mountTemplates(app) {
     if (s.wf !== prev.wf) { starterVisibility(); markActive(); }
   });
   starterVisibility();
+
+  // A link opens a Quick start: builder/#qs=<id> (the study guides in ../python/ use it). The hash
+  // is cleared once read, so a reload keeps the reader's edits; work of the reader's own on the
+  // canvas (from the mini cache) is only replaced after a confirm. tour.js holds its first-visit
+  // start while window.__PFB_QS is set, so the tour does not load its demo over the example.
+  const linked = /(?:^#|&)qs=([a-z0-9][a-z0-9-]{0,40})(?:&|$)/.exec(location.hash || '');
+  if (linked) {
+    const id = linked[1];
+    window.__PFB_QS = id;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* a file: page */ }
+    ready.then(() => {
+      if (!list.some(x => x.id === id)) { app.toast('There is no Quick start called "' + id + '". Pick one from Quick start.', { level: 'warn' }); return; }
+      return load(id, { ask: 'always' });
+    });
+  }
 
   return {
     ready, load,

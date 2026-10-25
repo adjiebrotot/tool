@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to do a hosting capacity study (and automate it in PowerFactory)</title>
+<meta name="description" content="How to do a hosting capacity study, step by step: operating cases, limits, the test generator, bisection, the map. Then a tested PowerFactory script.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/hosting-capacity/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to do a hosting capacity study, and automate it in PowerFactory">
+<meta property="og:description" content="How to do a hosting capacity study, step by step: operating cases, limits, the test generator, bisection, the map. Then a tested PowerFactory script.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/hosting-capacity/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to do a hosting capacity study, and automate it in PowerFactory">
+<meta name="twitter:description" content="How to do a hosting capacity study, step by step: operating cases, limits, the test generator, bisection, the map. Then a tested PowerFactory script.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "How to do a hosting capacity study, and automate it in PowerFactory",
+  "description": "How to do a hosting capacity study, step by step: operating cases, limits, the test generator, bisection, the map. Then a tested PowerFactory script.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/hosting-capacity/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "how to do hosting capacity study, hosting capacity analysis, hosting capacity map, DER hosting capacity, PowerFactory hosting capacity, hosting capacity Python, network headroom",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "Hosting capacity"
+    },
+    {
+      "@type": "Thing",
+      "name": "Distributed energy resources"
+    },
+    {
+      "@type": "Thing",
+      "name": "Power system planning"
+    },
+    {
+      "@type": "Thing",
+      "name": "DIgSILENT PowerFactory"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PowerFactory studies with Python",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is hosting capacity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The largest amount of new generation or load that can connect at a point of the network without breaking a limit, such as a thermal rating or a voltage limit, in the operating cases studied."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is hosting capacity calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Connect the new generation at the point, raise its output, and run a load flow at each step until the first limit breaks. A bisection search finds the edge in about ten load flows. The largest output that passes is the hosting capacity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What limits hosting capacity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Usually thermal ratings of lines and transformers and voltage rise; also voltage step on connection, fault level, protection and power quality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a hosting capacity map?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The hosting capacity of every connection point in a network, shown on a map or a chart, often with the limit that binds at each point."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I do a hosting capacity study in PowerFactory?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Add a static generator (ElmGenstat) at the busbar, set its pgini, run ComLdf, check c:loading and m:u, and search the largest pgini that passes. The script and the Builder Quick Start on this page do it for every busbar."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Hosting capacity",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/hosting-capacity/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Hosting capacity</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>How to do a hosting capacity study, and automate it in PowerFactory</h1>
+    <p class="dx-lead"><strong>Hosting capacity</strong> is the most new generation (or load) a point of the network can take before a limit is broken: a thermal rating, a voltage limit, a fault level. To find it, connect the new generation at that point and raise it until the first limit breaks; a bisection search does it in about ten load flows. Repeat it at every busbar and you have a <strong>hosting capacity map</strong>. On PowerFactory's 39-bus example it runs from 8 MW to 1,742 MW, depending on the busbar.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What hosting capacity is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What hosting capacity is</h2>
+  <p>Hosting capacity answers one question for a network owner, a developer or a student: <em>how much can connect here without breaking anything?</em> It is found per connection point and per kind of connection (generation such as solar, wind and batteries exporting, or new load), and depends on the operating state the network is in.</p>
+  <p>Distribution network service providers publish hosting capacity maps so that applicants see where capacity is left; transmission planners compute it per substation for connection enquiries. The limits that set it are the same everywhere:</p>
+  <ul class="dx-prose">
+    <li><strong>Thermal</strong>: no line, cable or transformer above its rating (at transmission level, also after any single outage).</li>
+    <li><strong>Steady-state voltage</strong>: every busbar within its band. Export raises the voltage near the connection, which is what limits rooftop solar on long LV and MV feeders.</li>
+    <li><strong>Voltage step</strong>: the change when the new connection trips or connects, often a few percent.</li>
+    <li><strong>Fault level</strong>: switchgear still able to break the higher fault current; and for inverters, enough system strength.</li>
+    <li><strong>Protection and power quality</strong>: reverse power through a transformer, protection reach and grading, harmonics and flicker.</li>
+  </ul>
+  <p>The first two are found with load flows and are what most hosting capacity studies, and this page, compute. The others are checks on top.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">How to do a hosting capacity study</h2>
+  <p>The method does not depend on the software. Every step below is one decision you write down in the study report.</p>
+  <ol class="dx-steps">
+    <li><strong>Choose the operating cases.</strong> The limit depends on the state of the network: for new generation the hardest case is usually minimum demand with the existing generation high (voltage rise, reverse flow); for new load, maximum demand. Run each case.</li>
+    <li><strong>Set the limits</strong> from the planning standard: the rating each branch may reach and the voltage band each busbar must keep.</li>
+    <li><strong>Model the connection</strong> as a generator at the connection point, at the power factor it will run at (unity here).</li>
+    <li><strong>Decide where its power goes.</strong> In a distribution network the upstream grid takes it (the slack). In a transmission network, other generators turn down: pro rata, as here, or in merit order. This choice changes the answer, so state it.</li>
+    <li><strong>Search for the largest output that passes.</strong> Start from a passing value (0 MW) and a failing one (the most that could ever connect), try the middle, keep the half where the limit lies, and stop when the gap is within the tolerance. From 0 to 2,000 MW with a 5 MW tolerance that is 11 load flows (the two ends and 9 halvings), against 400 for a sweep in 5 MW steps.</li>
+    <li><strong>Record the hosting capacity and what limited it</strong> (the binding constraint), then repeat at every candidate busbar: the result is the hosting capacity map.</li>
+    <li><strong>Test the sensitivities</strong>: another power factor, other demand cases, an outage, the projects already in the queue.</li>
+  </ol>
+  <h3>In PowerFactory</h3>
+  <p>The new generation is a static generator (<a href="../../reference/ElmGenstat/"><code>ElmGenstat</code></a>) connected through a new cubicle (<code>StaCubic</code>) on the busbar, at constant reactive power 0. Each try sets its active power <code>pgini</code>, turns the existing synchronous generators down by the same total, runs <code>ComLdf</code>, and checks <code>c:loading</code> on every line and transformer and <code>m:u</code> on every busbar. Everything is put back and the test generator deleted after each busbar.</p>
+  <p class="dx-file"><span><code>hosting_capacity.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;Hosting capacity study in PowerFactory with Python: at each busbar, the largest output a new
+generator can have before a line or transformer overloads or a voltage leaves its band.
+
+Runs on the &quot;39 Bus New England System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;39 Bus New England System&quot;</span>
+STUDY_CASE = <span class="py-s">&quot;1. Power Flow&quot;</span>
+LOADING_MAX = <span class="py-n">100.0</span>              <span class="py-c"># % of rating, every line and transformer</span>
+VOLTAGE_BAND = (<span class="py-n">0.90</span>, <span class="py-n">1.10</span>)      <span class="py-c"># p.u., every busbar</span>
+SEARCH_MAX = <span class="py-n">2000.0</span>              <span class="py-c"># MW, the largest output tried</span>
+TOLERANCE = <span class="py-n">5.0</span>                  <span class="py-c"># MW, when to stop halving</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()           <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)
+app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
+
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
+branches = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>) + app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTr2&quot;</span>)
+buses = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)
+<span class="py-c"># The new generation displaces the generators in service pro rata, so the slack only covers losses.</span>
+dispatch = [(g, g.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>)) <span class="py-k">for</span> g <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmSym&quot;</span>) <span class="py-k">if</span> g.outserv == <span class="py-n">0</span>]
+total = <span class="py-f">sum</span>(p <span class="py-k">for</span> g, p <span class="py-k">in</span> dispatch)
+
+
+<span class="py-k">def</span> <span class="py-f">limits_hold</span>():
+    <span class="py-s">&quot;&quot;&quot;Run the load flow. (True, &quot;&quot;) when every limit holds, else (False, the first one broken).&quot;&quot;&quot;</span>
+    <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:
+        <span class="py-k">return</span> <span class="py-k">False</span>, <span class="py-s">&quot;load flow does not converge&quot;</span>
+    loading, branch = <span class="py-f">max</span>((o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>), o.loc_name) <span class="py-k">for</span> o <span class="py-k">in</span> branches <span class="py-k">if</span> o.outserv == <span class="py-n">0</span>)
+    <span class="py-k">if</span> loading &gt; LOADING_MAX:
+        <span class="py-k">return</span> <span class="py-k">False</span>, <span class="py-s">f&quot;{branch} loaded to {loading:.0f} %&quot;</span>
+    volts = [(b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>), b.loc_name) <span class="py-k">for</span> b <span class="py-k">in</span> buses <span class="py-k">if</span> b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>) &gt; <span class="py-n">0</span>]
+    <span class="py-k">if</span> <span class="py-f">max</span>(volts)[<span class="py-n">0</span>] &gt; VOLTAGE_BAND[<span class="py-n">1</span>]:
+        <span class="py-k">return</span> <span class="py-k">False</span>, <span class="py-s">f&quot;{max(volts)[1]} at {max(volts)[0]:.3f} p.u.&quot;</span>
+    <span class="py-k">if</span> <span class="py-f">min</span>(volts)[<span class="py-n">0</span>] &lt; VOLTAGE_BAND[<span class="py-n">0</span>]:
+        <span class="py-k">return</span> <span class="py-k">False</span>, <span class="py-s">f&quot;{min(volts)[1]} at {min(volts)[0]:.3f} p.u.&quot;</span>
+    <span class="py-k">return</span> <span class="py-k">True</span>, <span class="py-s">&quot;&quot;</span>
+
+
+<span class="py-k">def</span> <span class="py-f">inject</span>(gen, p_mw):
+    <span class="py-s">&quot;&quot;&quot;The test generator at p_mw, every other generator turned down by the same total.&quot;&quot;&quot;</span>
+    gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>, p_mw)
+    <span class="py-k">for</span> g, p <span class="py-k">in</span> dispatch:
+        g.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>, p * (<span class="py-n">1</span> - p_mw / total))
+
+
+results = []
+<span class="py-k">for</span> bus <span class="py-k">in</span> [b <span class="py-k">for</span> b <span class="py-k">in</span> buses <span class="py-k">if</span> b.uknom &gt;= <span class="py-n">100</span>]:          <span class="py-c"># the 345, 230 and 138 kV busbars</span>
+    cubicle = bus.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;StaCubic&quot;</span>, <span class="py-s">&quot;HC cubicle&quot;</span>)
+    gen = bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;cpGrid&quot;</span>).<span class="py-f">CreateObject</span>(<span class="py-s">&quot;ElmGenstat&quot;</span>, <span class="py-s">&quot;HC test generator&quot;</span>)
+    gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;bus1&quot;</span>, cubicle)
+    gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;sgn&quot;</span>, <span class="py-n">1.5</span> * SEARCH_MAX)           <span class="py-c"># MVA, never the limit</span>
+    gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;av_mode&quot;</span>, <span class="py-s">&quot;constq&quot;</span>)               <span class="py-c"># fixed reactive power...</span>
+    gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;qgini&quot;</span>, <span class="py-n">0.0</span>)                      <span class="py-c"># ...of zero: unity power factor</span>
+    <span class="py-k">try</span>:
+        <span class="py-f">inject</span>(gen, <span class="py-n">0.0</span>)
+        ok, why = <span class="py-f">limits_hold</span>()
+        <span class="py-k">if</span> <span class="py-k">not</span> ok:
+            results.<span class="py-f">append</span>({<span class="py-s">&quot;Busbar&quot;</span>: bus.loc_name, <span class="py-s">&quot;Hosting capacity (MW)&quot;</span>: <span class="py-n">0.0</span>, <span class="py-s">&quot;Limited by&quot;</span>: why})
+            <span class="py-k">continue</span>
+        low, high = <span class="py-n">0.0</span>, SEARCH_MAX
+        <span class="py-f">inject</span>(gen, high)
+        ok, why = <span class="py-f">limits_hold</span>()
+        <span class="py-k">if</span> ok:
+            results.<span class="py-f">append</span>({<span class="py-s">&quot;Busbar&quot;</span>: bus.loc_name, <span class="py-s">&quot;Hosting capacity (MW)&quot;</span>: high, <span class="py-s">&quot;Limited by&quot;</span>: <span class="py-s">&quot;nothing up to the search limit&quot;</span>})
+            <span class="py-k">continue</span>
+        <span class="py-k">while</span> high - low &gt; TOLERANCE:                    <span class="py-c"># halve the gap between pass and fail</span>
+            mid = (low + high) / <span class="py-n">2</span>
+            <span class="py-f">inject</span>(gen, mid)
+            ok, reason = <span class="py-f">limits_hold</span>()
+            <span class="py-k">if</span> ok:
+                low = mid
+            <span class="py-k">else</span>:
+                high, why = mid, reason
+        results.<span class="py-f">append</span>({<span class="py-s">&quot;Busbar&quot;</span>: bus.loc_name, <span class="py-s">&quot;Hosting capacity (MW)&quot;</span>: low, <span class="py-s">&quot;Limited by&quot;</span>: why})
+    <span class="py-k">finally</span>:
+        <span class="py-k">for</span> g, p <span class="py-k">in</span> dispatch:                            <span class="py-c"># put the dispatch back</span>
+            g.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>, p)
+        app.<span class="py-f">ResetCalculation</span>()
+        gen.<span class="py-f">Delete</span>()
+        cubicle.<span class="py-f">Delete</span>()
+
+<span class="py-k">for</span> r <span class="py-k">in</span> <span class="py-f">sorted</span>(results, key=<span class="py-k">lambda</span> r: r[<span class="py-s">&quot;Hosting capacity (MW)&quot;</span>]):
+    <span class="py-f">print</span>(<span class="py-s">f&quot;{r['Busbar']:7} {r['Hosting capacity (MW)']:7.0f} MW  limited by {r['Limited by']}&quot;</span>)
+
+<span class="py-k">with</span> <span class="py-f">open</span>(<span class="py-s">&quot;hosting_capacity.csv&quot;</span>, <span class="py-s">&quot;w&quot;</span>, newline=<span class="py-s">&quot;&quot;</span>) <span class="py-k">as</span> f:
+    out = csv.<span class="py-f">DictWriter</span>(f, fieldnames=[<span class="py-s">&quot;Busbar&quot;</span>, <span class="py-s">&quot;Hosting capacity (MW)&quot;</span>, <span class="py-s">&quot;Limited by&quot;</span>])
+    out.<span class="py-f">writeheader</span>()
+    out.<span class="py-f">writerows</span>(results)</code></pre>
+  <h3>Result: the hosting capacity map of the 39-bus example</h3>
+  <p>The 30 busbars of 100 kV and above take between <strong>8 MW (Bus 22)</strong> and <strong>1,742 MW (Bus 03)</strong>, 4.6 s of load flows in all. Every one is limited by a line rating, not by voltage: at transmission level, a generator at unity power factor moves the voltage little. The base case already loads Line 21 - 22 to 99.1 %, so busbars that push power through it can take almost nothing (Bus 22 and Bus 23), and Line 05 - 06 sets the limit of 5 busbars (Bus 06, Bus 11, Bus 12, Bus 10, Bus 07).</p>
+  <figure class="dx-chart"><div class="dx-chart-sc"><svg viewBox="0 0 760 399.2" role="img" aria-labelledby="ch5erm5v" xmlns="http://www.w3.org/2000/svg"><title id="ch5erm5v">Hosting capacity of each 345, 230 and 138 kV busbar of the 39-bus example</title><line class="ch-grid" x1="64" x2="742" y1="342.0" y2="342.0"/><text class="ch-t" x="56" y="346.0" text-anchor="end">0</text><line class="ch-grid" x1="64" x2="742" y1="260.5" y2="260.5"/><text class="ch-t" x="56" y="264.5" text-anchor="end">500</text><line class="ch-grid" x1="64" x2="742" y1="179.0" y2="179.0"/><text class="ch-t" x="56" y="183.0" text-anchor="end">1000</text><line class="ch-grid" x1="64" x2="742" y1="97.5" y2="97.5"/><text class="ch-t" x="56" y="101.5" text-anchor="end">1500</text><line class="ch-grid" x1="64" x2="742" y1="16.0" y2="16.0"/><text class="ch-t" x="56" y="20.0" text-anchor="end">2000</text><rect class="ch-f1" x="67.6" y="340.7" width="15.4" height="1.3" rx="2"><title>Bus 22: 7.81 MW</title></rect><text class="ch-t" transform="translate(75.3 354) rotate(-50)" text-anchor="end">Bus 22</text><rect class="ch-f1" x="90.2" y="340.1" width="15.4" height="1.9" rx="2"><title>Bus 23: 11.7 MW</title></rect><text class="ch-t" transform="translate(97.9 354) rotate(-50)" text-anchor="end">Bus 23</text><rect class="ch-f1" x="112.8" y="318.4" width="15.4" height="23.6" rx="2"><title>Bus 19: 145 MW</title></rect><text class="ch-t" transform="translate(120.5 354) rotate(-50)" text-anchor="end">Bus 19</text><rect class="ch-f1" x="135.4" y="318.4" width="15.4" height="23.6" rx="2"><title>Bus 20: 145 MW</title></rect><text class="ch-t" transform="translate(143.1 354) rotate(-50)" text-anchor="end">Bus 20</text><rect class="ch-f1" x="158.0" y="295.5" width="15.4" height="46.5" rx="2"><title>Bus 06: 285 MW</title></rect><text class="ch-t" transform="translate(165.7 354) rotate(-50)" text-anchor="end">Bus 06</text><rect class="ch-f1" x="180.6" y="277.7" width="15.4" height="64.3" rx="2"><title>Bus 11: 395 MW</title></rect><text class="ch-t" transform="translate(188.3 354) rotate(-50)" text-anchor="end">Bus 11</text><rect class="ch-f1" x="203.2" y="275.1" width="15.4" height="66.9" rx="2"><title>Bus 21: 410 MW</title></rect><text class="ch-t" transform="translate(210.9 354) rotate(-50)" text-anchor="end">Bus 21</text><rect class="ch-f1" x="225.8" y="265.0" width="15.4" height="77.0" rx="2"><title>Bus 12: 473 MW</title></rect><text class="ch-t" transform="translate(233.5 354) rotate(-50)" text-anchor="end">Bus 12</text><rect class="ch-f1" x="248.4" y="264.3" width="15.4" height="77.7" rx="2"><title>Bus 10: 477 MW</title></rect><text class="ch-t" transform="translate(256.1 354) rotate(-50)" text-anchor="end">Bus 10</text><rect class="ch-f1" x="271.0" y="251.6" width="15.4" height="90.4" rx="2"><title>Bus 02: 555 MW</title></rect><text class="ch-t" transform="translate(278.7 354) rotate(-50)" text-anchor="end">Bus 02</text><rect class="ch-f1" x="293.6" y="248.4" width="15.4" height="93.6" rx="2"><title>Bus 13: 574 MW</title></rect><text class="ch-t" transform="translate(301.3 354) rotate(-50)" text-anchor="end">Bus 13</text><rect class="ch-f1" x="316.2" y="238.2" width="15.4" height="103.8" rx="2"><title>Bus 29: 637 MW</title></rect><text class="ch-t" transform="translate(323.9 354) rotate(-50)" text-anchor="end">Bus 29</text><rect class="ch-f1" x="338.8" y="236.3" width="15.4" height="105.7" rx="2"><title>Bus 25: 648 MW</title></rect><text class="ch-t" transform="translate(346.5 354) rotate(-50)" text-anchor="end">Bus 25</text><rect class="ch-f1" x="361.4" y="230.6" width="15.4" height="111.4" rx="2"><title>Bus 24: 684 MW</title></rect><text class="ch-t" transform="translate(369.1 354) rotate(-50)" text-anchor="end">Bus 24</text><rect class="ch-f1" x="384.0" y="219.1" width="15.4" height="122.9" rx="2"><title>Bus 26: 754 MW</title></rect><text class="ch-t" transform="translate(391.7 354) rotate(-50)" text-anchor="end">Bus 26</text><rect class="ch-f1" x="406.6" y="218.5" width="15.4" height="123.5" rx="2"><title>Bus 28: 758 MW</title></rect><text class="ch-t" transform="translate(414.3 354) rotate(-50)" text-anchor="end">Bus 28</text><rect class="ch-f1" x="429.2" y="214.7" width="15.4" height="127.3" rx="2"><title>Bus 07: 781 MW</title></rect><text class="ch-t" transform="translate(436.9 354) rotate(-50)" text-anchor="end">Bus 07</text><rect class="ch-f1" x="451.8" y="187.3" width="15.4" height="154.7" rx="2"><title>Bus 05: 949 MW</title></rect><text class="ch-t" transform="translate(459.5 354) rotate(-50)" text-anchor="end">Bus 05</text><rect class="ch-f1" x="474.4" y="184.7" width="15.4" height="157.3" rx="2"><title>Bus 01: 965 MW</title></rect><text class="ch-t" transform="translate(482.1 354) rotate(-50)" text-anchor="end">Bus 01</text><rect class="ch-f1" x="497.0" y="182.8" width="15.4" height="159.2" rx="2"><title>Bus 14: 977 MW</title></rect><text class="ch-t" transform="translate(504.7 354) rotate(-50)" text-anchor="end">Bus 14</text><rect class="ch-f1" x="519.6" y="172.6" width="15.4" height="169.4" rx="2"><title>Bus 16: 1039 MW</title></rect><text class="ch-t" transform="translate(527.3 354) rotate(-50)" text-anchor="end">Bus 16</text><rect class="ch-f1" x="542.2" y="172.0" width="15.4" height="170.0" rx="2"><title>Bus 27: 1043 MW</title></rect><text class="ch-t" transform="translate(549.9 354) rotate(-50)" text-anchor="end">Bus 27</text><rect class="ch-f1" x="564.8" y="170.1" width="15.4" height="171.9" rx="2"><title>Bus 08: 1055 MW</title></rect><text class="ch-t" transform="translate(572.5 354) rotate(-50)" text-anchor="end">Bus 08</text><rect class="ch-f1" x="587.4" y="161.2" width="15.4" height="180.8" rx="2"><title>Bus 09: 1109 MW</title></rect><text class="ch-t" transform="translate(595.1 354) rotate(-50)" text-anchor="end">Bus 09</text><rect class="ch-f1" x="610.0" y="130.6" width="15.4" height="211.4" rx="2"><title>Bus 15: 1297 MW</title></rect><text class="ch-t" transform="translate(617.7 354) rotate(-50)" text-anchor="end">Bus 15</text><rect class="ch-f1" x="632.6" y="117.2" width="15.4" height="224.8" rx="2"><title>Bus 18: 1379 MW</title></rect><text class="ch-t" transform="translate(640.3 354) rotate(-50)" text-anchor="end">Bus 18</text><rect class="ch-f1" x="655.2" y="88.6" width="15.4" height="253.4" rx="2"><title>Bus 39: 1555 MW</title></rect><text class="ch-t" transform="translate(662.9 354) rotate(-50)" text-anchor="end">Bus 39</text><rect class="ch-f1" x="677.8" y="86.7" width="15.4" height="255.3" rx="2"><title>Bus 04: 1566 MW</title></rect><text class="ch-t" transform="translate(685.5 354) rotate(-50)" text-anchor="end">Bus 04</text><rect class="ch-f1" x="700.4" y="86.7" width="15.4" height="255.3" rx="2"><title>Bus 17: 1566 MW</title></rect><text class="ch-t" transform="translate(708.1 354) rotate(-50)" text-anchor="end">Bus 17</text><rect class="ch-f1" x="723.0" y="58.0" width="15.4" height="284.0" rx="2"><title>Bus 03: 1742 MW</title></rect><text class="ch-t" transform="translate(730.7 354) rotate(-50)" text-anchor="end">Bus 03</text><line class="ch-axis" x1="64" x2="742" y1="342" y2="342"/><text class="ch-tt" transform="translate(16 179) rotate(-90)" text-anchor="middle">Hosting capacity (MW)</text></svg></div><figcaption>Largest output of a new generator at unity power factor with every line and transformer within 100 % of rating and every busbar between 0.9 and 1.1 p.u.; existing generation turned down pro rata.</figcaption></figure>
+  <div class="dx-tw"><table><thead><tr><th>Busbar</th><th class="num">Hosting capacity <span class="th-unit">MW</span></th><th>Limited by</th></tr></thead><tbody>
+<tr><td>Bus 22</td><td class="num">8</td><td>Line 21 - 22 loaded to 100 %</td></tr>
+<tr><td>Bus 23</td><td class="num">12</td><td>Line 21 - 22 loaded to 100 %</td></tr>
+<tr><td>Bus 19</td><td class="num">145</td><td>Line 16 - 19 loaded to 100 %</td></tr>
+<tr><td>Bus 20</td><td class="num">145</td><td>Line 16 - 19 loaded to 100 %</td></tr>
+<tr><td>Bus 06</td><td class="num">285</td><td>Line 05 - 06 loaded to 100 %</td></tr>
+<tr><td>Bus 11</td><td class="num">395</td><td>Line 05 - 06 loaded to 100 %</td></tr>
+<tr><td>Bus 21</td><td class="num">410</td><td>Line 16 - 21 loaded to 100 %</td></tr>
+<tr><td>Bus 12</td><td class="num">473</td><td>Line 05 - 06 loaded to 100 %</td></tr>
+<tr><td>Bus 10</td><td class="num">477</td><td>Line 05 - 06 loaded to 100 %</td></tr>
+<tr><td>Bus 02</td><td class="num">555</td><td>Line 02 - 03 loaded to 100 %</td></tr>
+<tr><td>Bus 13</td><td class="num">574</td><td>Line 13 - 14 loaded to 100 %</td></tr>
+<tr><td>Bus 29</td><td class="num">637</td><td>Line 28 - 29 loaded to 100 %</td></tr>
+<tr><td>Bus 25</td><td class="num">648</td><td>Line 02 - 25 loaded to 100 %</td></tr>
+<tr><td>Bus 24</td><td class="num">684</td><td>Line 16 - 24 loaded to 100 %</td></tr>
+<tr><td>Bus 26</td><td class="num">754</td><td>Line 26 - 27 loaded to 100 %</td></tr>
+<tr><td>Bus 28</td><td class="num">758</td><td>Line 26 - 27 loaded to 100 %</td></tr>
+<tr><td>Bus 07</td><td class="num">781</td><td>Line 05 - 06 loaded to 100 %</td></tr>
+<tr><td>Bus 05</td><td class="num">949</td><td>Line 04 - 05 loaded to 100 %</td></tr>
+<tr><td>Bus 01</td><td class="num">965</td><td>Line 02 - 03 loaded to 100 %</td></tr>
+<tr><td>Bus 14</td><td class="num">977</td><td>Line 04 - 14 loaded to 100 %</td></tr>
+<tr><td>Bus 16</td><td class="num">1,039</td><td>Line 16 - 17 loaded to 100 %</td></tr>
+<tr><td>Bus 27</td><td class="num">1,043</td><td>Line 17 - 27 loaded to 100 %</td></tr>
+<tr><td>Bus 08</td><td class="num">1,055</td><td>Line 04 - 05 loaded to 100 %</td></tr>
+<tr><td>Bus 09</td><td class="num">1,109</td><td>Line 08 - 09 loaded to 100 %</td></tr>
+<tr><td>Bus 15</td><td class="num">1,297</td><td>Line 15 - 16 loaded to 100 %</td></tr>
+<tr><td>Bus 18</td><td class="num">1,379</td><td>Line 17 - 18 loaded to 100 %</td></tr>
+<tr><td>Bus 39</td><td class="num">1,555</td><td>Line 08 - 09 loaded to 100 %</td></tr>
+<tr><td>Bus 04</td><td class="num">1,566</td><td>Line 03 - 04 loaded to 100 %</td></tr>
+<tr><td>Bus 17</td><td class="num">1,566</td><td>Line 17 - 18 loaded to 100 %</td></tr>
+<tr><td>Bus 03</td><td class="num">1,742</td><td>Line 03 - 18 loaded to 100 %</td></tr>
+</tbody></table></div>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Hosting capacity at every busbar Quick Start loads in the PowerFactory Workflow Builder, ready for your project. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=hosting-capacity">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The Builder's Quick Start is the same study as blocks: a For each element loop over the busbars, a Find limit search inside it, a test generator, and three limit checks. Run on the 39-bus example with the busbars of 100 kV and above, it gives every busbar within 7.5 MW of the script above. This is its file for that example:</p>
+  <p class="dx-file"><span><code>hosting_capacity_at_every_busbar.py</code> as the Builder writes it: the settings and the workflow</span><a href="hosting_capacity_at_every_busbar.py" download>⬇ Download the full file (.py, 3,731 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Hosting capacity at every busbar</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Close PowerFactory, or run this file from inside PowerFactory (see RUN_MODE).
+  3. Run it with the Python that matches your PowerFactory, e.g.  py -3.12 hosting_capacity_at_every_busbar.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> bisect
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> difflib
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> glob
+<span class="py-k">import</span> importlib.util
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> subprocess
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Hosting capacity at every busbar&quot;</span>
+<span class="py-c"># REQUIRED. The PowerFactory project to open, exactly as the Data Manager shows it (letter case</span>
+<span class="py-c"># counts).</span>
+PROJECT = <span class="py-s">&quot;39 Bus New England System&quot;</span>
+<span class="py-c"># OPTIONAL. The study case to activate first (&quot;&quot; = keep the active one).</span>
+STUDY_CASE = <span class="py-s">&quot;1. Power Flow&quot;</span>
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every value the workflow changed back when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read from the</span>
+<span class="py-c"># grid).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;engine&quot; (start PowerFactory in the background) or &quot;inside&quot; (run from inside</span>
+<span class="py-c"># PowerFactory).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PowerFactory window while running (engine mode only).</span>
+SHOW_PF = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. True: no screen updates and fewer output window messages while running.</span>
+FAST_MODE = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PowerFactory to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+<span class="py-c"># OPTIONAL. The folder with the powerfactory Python module (&quot;&quot; = find it).</span>
+PF_API_PATH = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Log in to PowerFactory as this user (&quot;&quot; = your own).</span>
+PF_USER = <span class="py-s">&quot;&quot;</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># OPTIONAL. Connection point: Elements. A name (ElmTerm), exactly as in the Data Manager, or a</span>
+<span class="py-c"># pattern with * and ?: every element that matches is used.</span>
+CONNECTION_POINT_EL = <span class="py-s">&quot;*&quot;</span>
+
+<span class="py-c"># OPTIONAL. Generation (MW): Lowest value.</span>
+GENERATION_LOWER = <span class="py-n">0</span>
+
+<span class="py-c"># OPTIONAL. Generation (MW): Highest value.</span>
+GENERATION_UPPER = <span class="py-n">2000</span>
+
+<span class="py-c"># OPTIONAL. Generation (MW): Tolerance.</span>
+GENERATION_TOL = <span class="py-n">5</span>
+
+<span class="py-c"># OPTIONAL. Line thermal limit: Highest allowed.</span>
+LINE_THERMAL_LIMIT_HI = <span class="py-n">100</span>
+
+<span class="py-c"># OPTIONAL. Voltage limits: Lowest allowed.</span>
+VOLTAGE_LIMITS_LO = <span class="py-n">0.9</span>
+
+<span class="py-c"># OPTIONAL. Voltage limits: Highest allowed.</span>
+VOLTAGE_LIMITS_HI = <span class="py-n">1.1</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: At each busbar of Connection point this connects a test generator at unity power factor and searches its largest output for which the load flow converges, no line or 2-winding transformer is above...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">pf_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;*.ElmSym&quot;</span>, <span class="py-s">&quot;all&quot;</span>), (<span class="py-s">&quot;*.ElmLne&quot;</span>, <span class="py-s">&quot;all&quot;</span>), (<span class="py-s">&quot;*.ElmTr2&quot;</span>, <span class="py-s">&quot;all&quot;</span>), (<span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Project: 39 Bus New England System) --</span>
+        <span class="py-c"># -- Step 2: Generator dispatch (pgini of all * (ElmSym)) --</span>
+        generator_dispatch = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmSym&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;pgini&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+        <span class="py-c"># -- Step 3: Connection point (Each of all * (ElmTerm) where uknom &gt;= 100) --</span>
+        connection_point_elements = <span class="py-f">find_elements</span>(app, <span class="py-s">&quot;ElmTerm&quot;</span>, CONNECTION_POINT_EL, <span class="py-s">&quot;uknom&quot;</span>, <span class="py-s">&quot;&gt;=&quot;</span>, <span class="py-s">&quot;100&quot;</span>, <span class="py-k">True</span>)
+        <span class="py-k">if</span> <span class="py-k">not</span> connection_point_elements:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Connection point: no element to loop over.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+        <span class="py-k">for</span> connection_point_pass_no, connection_point <span class="py-k">in</span> <span class="py-f">enumerate</span>(connection_point_elements, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Connection point&quot;</span>, connection_point, connection_point_pass_no, <span class="py-f">len</span>(connection_point_elements))
+            mark = <span class="py-f">pf_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 4: Generation (MW) (0 to 2000, within 5) --</span>
+                <span class="py-k">def</span> <span class="py-f">try_n4</span>(generation_mw):
+                    trial = <span class="py-f">Trial</span>({<span class="py-s">&quot;Generation (MW)&quot;</span>: generation_mw}, <span class="py-s">&quot;min&quot;</span>)
+                    <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Generation (MW)&quot;</span>, generation_mw)
+                    mark_n4 = <span class="py-f">pf_mark</span>()
+                    <span class="py-k">try</span>:
+                        <span class="py-c"># -- Step 5: Test generator (At the wired busbar: wired MW, 0 Mvar) --</span>
+                        <span class="py-f">add_test_generator</span>(app, connection_point, generation_mw, <span class="py-n">0</span>, <span class="py-s">&quot;n5&quot;</span>, <span class="py-k">None</span>)
+                        <span class="py-c"># -- Step 6: Other generators (all * (ElmSym): pgini x the wired factor) --</span>
+                        total_dispatch = <span class="py-f">stat</span>(<span class="py-s">&quot;sum&quot;</span>, generator_dispatch.values)  <span class="py-c"># Total dispatch</span>
+                        share_kept = <span class="py-f">apply_formula</span>(<span class="py-k">lambda</span> p, total: <span class="py-n">1</span> - p / total, [generation_mw, total_dispatch], <span class="py-k">False</span>, <span class="py-s">&quot;Share kept&quot;</span>)  <span class="py-c"># Share kept</span>
+                        <span class="py-f">scale_attr</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmSym&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;pgini&quot;</span>, share_kept)
+                        <span class="py-c"># -- Step 7: Run load flow (Settings of the study case) --</span>
+                        ldf = <span class="py-f">run_load_flow</span>(app, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>)
+                        <span class="py-c"># Did not converge: ends this try of Generation (MW)</span>
+                        <span class="py-k">if</span> <span class="py-k">not</span> ldf.ok:
+                            <span class="py-f">case_skipped</span>(<span class="py-s">&quot;Load flow did not converge&quot;</span>)
+                            <span class="py-k">return</span> trial
+                        <span class="py-c"># -- Step 8: Line loading (c:loading of all * (ElmLne) (load flow results)) --</span>
+                        line_loading = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmLne&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;c:loading&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                        <span class="py-c"># -- Step 9: Transformer loading (c:loading of all * (ElmTr2) (load flow results)) --</span>
+                        transformer_loading = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTr2&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;c:loading&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                        <span class="py-c"># -- Step 10: Busbar voltage (m:u of all * (ElmTerm) (load flow results)) --</span>
+                        busbar_voltage = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;m:u&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                        <span class="py-c"># -- Step 11: Line thermal limit (At most 100, goes on either way) --</span>
+                        line_thermal_limit_result = <span class="py-f">check_limits</span>(line_loading.values, lo=<span class="py-k">None</span>, hi=LINE_THERMAL_LIMIT_HI, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)
+                        <span class="py-k">if</span> line_thermal_limit_result.ok <span class="py-k">is</span> <span class="py-k">None</span>:
+                            <span class="py-f">log</span>(<span class="py-s">&quot;Line thermal limit: NO DATA (&quot;</span> + <span class="py-f">str</span>(line_thermal_limit_result.<span class="py-f">get</span>(<span class="py-s">&quot;reason&quot;</span>) <span class="py-k">or</span> <span class="py-s">&quot;nothing to check&quot;</span>) + <span class="py-s">&quot;), so it did not pass.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+                        <span class="py-c"># -- Step 12: Transformer thermal limit (At most 100, goes on either way) --</span>
+                        transformer_thermal_limit_result = <span class="py-f">check_limits</span>(transformer_loading.values, lo=<span class="py-k">None</span>, hi=<span class="py-n">100</span>, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)
+                        <span class="py-k">if</span> transformer_thermal_limit_result.ok <span class="py-k">is</span> <span class="py-k">None</span>:
+                            <span class="py-f">log</span>(<span class="py-s">&quot;Transformer thermal limit: NO DATA (&quot;</span> + <span class="py-f">str</span>(transformer_thermal_limit_result.<span class="py-f">get</span>(<span class="py-s">&quot;reason&quot;</span>) <span class="py-k">or</span> <span class="py-s">&quot;nothing to check&quot;</span>) + <span class="py-s">&quot;), so it did not pass.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+                        <span class="py-c"># -- Step 13: Voltage limits (Between 0.9 and 1.1, goes on either way) --</span>
+                        voltage_limits_result = <span class="py-f">check_limits</span>(busbar_voltage.values, lo=VOLTAGE_LIMITS_LO, hi=VOLTAGE_LIMITS_HI, after=<span class="py-k">None</span>, before=<span class="py-k">None</span>)
+                        <span class="py-k">if</span> voltage_limits_result.ok <span class="py-k">is</span> <span class="py-k">None</span>:
+                            <span class="py-f">log</span>(<span class="py-s">&quot;Voltage limits: NO DATA (&quot;</span> + <span class="py-f">str</span>(voltage_limits_result.<span class="py-f">get</span>(<span class="py-s">&quot;reason&quot;</span>) <span class="py-k">or</span> <span class="py-s">&quot;nothing to check&quot;</span>) + <span class="py-s">&quot;), so it did not pass.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+                        thermal_limits = <span class="py-f">logic</span>(<span class="py-s">&quot;and&quot;</span>, line_thermal_limit_result.ok, transformer_thermal_limit_result.ok)  <span class="py-c"># Thermal limits</span>
+                        all_limits = <span class="py-f">logic</span>(<span class="py-s">&quot;and&quot;</span>, thermal_limits, voltage_limits_result.ok)  <span class="py-c"># All limits</span>
+                        trial.<span class="py-f">report</span>(ok=all_limits)
+                    <span class="py-k">except</span> StopWorkflow:
+                        <span class="py-k">raise</span>
+                    <span class="py-k">except</span> Exception <span class="py-k">as</span> err_n4:
+                        <span class="py-f">case_failed</span>(err_n4, trial)
+                    <span class="py-k">finally</span>:
+                        <span class="py-k">try</span>:
+                            <span class="py-f">pf_undo</span>(mark_n4)
+                        <span class="py-k">except</span> Exception <span class="py-k">as</span> fin_n4:
+                            <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin_n4}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                        <span class="py-f">ctx_pop</span>()
+                    <span class="py-k">return</span> trial
+                generation_mw_result = <span class="py-f">find_limit</span>(try_n4, GENERATION_LOWER, GENERATION_UPPER, GENERATION_TOL, max_steps=<span class="py-n">20</span>, passes=<span class="py-s">&quot;low&quot;</span>, bracket=<span class="py-s">&quot;given&quot;</span>, on_unknown=<span class="py-s">&quot;fail&quot;</span>, label=<span class="py-s">&quot;Generation (MW)&quot;</span>, integer=<span class="py-k">False</span>)
+                <span class="py-c"># -- Step 14: Add row to results table (Into &quot;Hosting capacity&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Hosting capacity&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Hosting capacity (MW)&quot;</span>: generation_mw_result.limit,
+                    <span class="py-s">&quot;Search&quot;</span>: generation_mw_result.status,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">pf_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Hosting capacity&quot;</span>])
+        <span class="py-c"># -- Step 15: Hosting capacity at each busbar (Hosting capacity (MW) against Connection point) --</span>
+        <span class="py-f">plot_table</span>(<span class="py-s">&quot;Hosting capacity&quot;</span>, <span class="py-s">&quot;Connection point&quot;</span>, [<span class="py-s">&quot;Hosting capacity (MW)&quot;</span>], kind=<span class="py-s">&quot;bar&quot;</span>, group=<span class="py-k">None</span>, title=<span class="py-s">&quot;Hosting capacity at each busbar&quot;</span>, ylabel=<span class="py-s">&quot;Hosting capacity&quot;</span>, yunit=<span class="py-s">&quot;MW&quot;</span>, limits=[], stem=<span class="py-k">None</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 3,517 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><strong>Step 2</strong> reads <code>pgini</code> of every synchronous generator, and "Total dispatch" adds them up: the existing generation that will make room.</li>
+    <li><strong>Step 3</strong> loops over the busbars that match <code>CONNECTION_POINT_EL</code>; for this example a filter keeps those with <code>uknom</code> of 100 kV or more.</li>
+    <li><strong>Step 4</strong>, Find limit, calls <code>try_n4</code> with one output after another and halves the gap between <code>GENERATION_LOWER</code> and <code>GENERATION_UPPER</code> down to <code>GENERATION_TOL</code>. A try whose load flow does not converge counts as a fail.</li>
+    <li>Inside each try, <code>add_test_generator</code> connects (or moves) the static generator, "Share kept" works out 1 minus the output over the total dispatch, and Scale sets every generator to that share of its original <code>pgini</code>; <code>pf_undo</code> puts them back after the try.</li>
+    <li>The three checks (<code>LINE_THERMAL_LIMIT_HI</code>, the transformer limit, <code>VOLTAGE_LIMITS_LO</code> and <code>_HI</code>) are combined with And blocks into the pass or fail the search reads.</li>
+    <li>After the search, the busbar's row gets the hosting capacity and the search status; after the loop, the bar chart is drawn and the test generator deleted.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>One operating case is one answer.</strong> Hosting capacity at minimum demand and at maximum demand can differ several times over. Run the cases that stress each limit, and report the lowest.</li>
+    <li><strong>The balancing rule changes the result.</strong> With a single slack taking every megawatt, the slack machine's own transformer soon becomes the "limit" at every busbar. Turn existing generation down (pro rata, as here) or let an upstream grid take it, and say which.</li>
+    <li><strong>Bisection assumes one crossing.</strong> It finds the edge between pass and fail when output only makes things worse. If more output first relieves a line and then loads it the other way, check a few points either side of the answer.</li>
+    <li><strong>Check the ratings.</strong> <code>c:loading</code> is measured against the rating in the model, the type's rated current times the element's derating. An out-of-date rating gives an out-of-date hosting capacity.</li>
+    <li><strong>Unity power factor is a choice.</strong> A connection that absorbs reactive power, or controls voltage, moves the voltage limit a long way: on LV and MV feeders it is often the difference that matters.</li>
+    <li><strong>Leave the network as you found it.</strong> Put the dispatch back and delete the test generator and its cubicle after each busbar (after <code>ResetCalculation()</code>), as the script does in <code>finally</code>.</li>
+    <li><strong>Load flow limits are not the whole story.</strong> Fault level, protection, voltage step and power quality limits can bind first; treat this result as an upper bound until they are checked.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>What is hosting capacity?</h3>
+  <p>The largest amount of new generation or load that can connect at a point of the network without breaking a limit, such as a thermal rating or a voltage limit, in the operating cases studied.</p>
+  <h3>How is hosting capacity calculated?</h3>
+  <p>Connect the new generation at the point, raise its output, and run a load flow at each step until the first limit breaks. A bisection search finds the edge in about ten load flows. The largest output that passes is the hosting capacity.</p>
+  <h3>What limits hosting capacity?</h3>
+  <p>Usually thermal ratings of lines and transformers and voltage rise; also voltage step on connection, fault level, protection and power quality.</p>
+  <h3>What is a hosting capacity map?</h3>
+  <p>The hosting capacity of every connection point in a network, shown on a map or a chart, often with the limit that binds at each point.</p>
+  <h3>How do I do a hosting capacity study in PowerFactory?</h3>
+  <p>Add a static generator (<code>ElmGenstat</code>) at the busbar, set its <code>pgini</code>, run <code>ComLdf</code>, check <code>c:loading</code> and <code>m:u</code>, and search the largest <code>pgini</code> that passes. The script and the Builder Quick Start on this page do it for every busbar.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PowerFactory studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PowerFactory Python API: getting started</a></li>
+    <li><a href="../load-flow/">Load flow and results to CSV or Excel</a></li>
+    <li><a href="../contingency-analysis/">N-1 contingency analysis</a></li>
+    <li><a href="../short-circuit/">Short-circuit automation</a></li>
+    <li><a href="../parameter-sweep/">Parameter sweep: PV and QV curves</a></li>
+    <li><a href="../rms-emt-simulation/">RMS and EMT simulation batch runs</a></li>
+  </ul>
+  <p>Attributes used on this page: <a href="../../reference/ElmGenstat/"><code>ElmGenstat</code></a>, <a href="../../reference/ElmPvsys/"><code>ElmPvsys</code></a>, <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a>, <a href="../../reference/ElmLne/"><code>ElmLne</code></a>, <a href="../../reference/ElmTr2/"><code>ElmTr2</code></a>, <a href="../../reference/ElmSym/"><code>ElmSym</code></a>. <a href="../../reference/">All attributes</a>.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+</body>
+</html>

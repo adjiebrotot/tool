@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmTrb attributes: PowerFactory Booster Transformer | Adjie Brotools</title>
+<meta name="description" content="All ElmTrb attributes in PowerFactory (Booster Transformer): 70 input parameters and 855 result variables, with units, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrb/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmTrb attributes: PowerFactory Booster Transformer parameters and result variables">
+<meta property="og:description" content="All ElmTrb attributes in PowerFactory (Booster Transformer): 70 input parameters and 855 result variables, with units, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrb/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmTrb attributes: PowerFactory Booster Transformer parameters and result variables">
+<meta name="twitter:description" content="All ElmTrb attributes in PowerFactory (Booster Transformer): 70 input parameters and 855 result variables, with units, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmTrb attributes (PowerFactory Booster Transformer)",
+  "description": "All ElmTrb attributes in PowerFactory (Booster Transformer): 70 input parameters and 855 result variables, with units, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrb/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmTrb (Booster Transformer)",
+    "description": "A booster transformer of a railway supply, which forces the return current into the return conductor."
+  },
+  "keywords": "ElmTrb attributes, ElmTrb parameters, ElmTrb result variables, PowerFactory Booster Transformer attributes, ElmTrb GetAttribute",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmTrb",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrb/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmTrb</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmTrb attributes<span class="dx-h1-sub">PowerFactory Booster Transformer</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Booster Transformer (<code>ElmTrb</code>): 70 input parameters and 855 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmTrb is</h2>
+  <p>A booster transformer of a railway supply, which forces the return current into the return conductor.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmTrb</code>, element class</dd><dt>PowerFactory name</dt><dd>Booster Transformer</dd><dt>Terminal suffix</dt><dd><code>:bushv1</code> terminal hvi, <code>:bushv2</code> terminal hvj, <code>:buslv</code> terminal lv, <code>:buslv2</code> terminal lvj</dd><dt>Attributes</dt><dd>70 input parameters and 855 result variables, in 7 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmTrb in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>).<span class="py-f">Execute</span>()      <span class="py-c"># results exist after a calculation</span>
+
+<span class="py-k">for</span> obj <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTrb&quot;</span>):
+    loading = obj.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>)       <span class="py-c"># Loading, %</span>
+    <span class="py-f">print</span>(obj.loc_name, loading)
+
+obj = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTrb&quot;</span>)[<span class="py-n">0</span>]
+obj.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)                <span class="py-c"># take it out of service</span></code></pre>
+  <ul class="dx-prose"><li>A result at a terminal of the booster transformer needs the terminal in its name: <code>m:P:bushv1</code>, not <code>m:P</code>, which raises <code>AttributeError</code>.</li><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmTrb attributes"><li><a href="#params">Input parameters<span class="dx-n">70</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">196</span></a></li><li><a href="#short-circuit">Short-circuit results<span class="dx-n">257</span></a></li><li><a href="#dynamic-rms">RMS simulation results<span class="dx-n">173</span></a></li><li><a href="#dynamic-emt">EMT simulation results<span class="dx-n">87</span></a></li><li><a href="#load-flow-dc">DC load flow results<span class="dx-n">28</span></a></li><li><a href="#modal-analysis">Modal analysis results<span class="dx-n">13</span></a></li><li><a href="#opf">Optimal power flow results<span class="dx-n">101</span></a></li><li><a href="#basic">Basic data<span class="dx-n">2</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmTrb input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>sernum</code></td><td><span aria-label="no unit">·</span></td><td>Serial Number</td></tr>
+<tr><td><code>commissionDate</code></td><td><span aria-label="no unit">·</span></td><td>Commissioning Date</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>outserv</code></td><td><span aria-label="no unit">·</span></td><td>Out of Service</td></tr>
+<tr><td><code>iZoneBus</code></td><td><span aria-label="no unit">·</span></td><td>Zone</td></tr>
+<tr><td><code>iAreaBus</code></td><td><span aria-label="no unit">·</span></td><td>Area</td></tr>
+<tr><td><code>constr</code></td><td><span aria-label="no unit">·</span></td><td>Year of Construction</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>ntnum</code></td><td><span aria-label="no unit">·</span></td><td>parallel Transformers</td></tr>
+<tr><td><code>nphases</code></td><td><span aria-label="no unit">·</span></td><td>No. of Phases</td></tr>
+<tr><td><code>re0tr_l</code></td><td>Ohm</td><td>Re</td></tr>
+<tr><td><code>xe0tr_l</code></td><td>Ohm</td><td>Xe</td></tr>
+<tr><td><code>maxload</code></td><td>%</td><td>Max. Loading</td></tr>
+<tr><td><code>ratfac</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>GPSlat</code></td><td>deg</td><td>Latitude / Northing</td></tr>
+<tr><td><code>GPSlon</code></td><td>deg</td><td>Longitude / Easting</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>fold_id</code></td><td><span aria-label="no unit">·</span></td><td>In Folder</td></tr>
+<tr><td><code>typ_id</code></td><td><span aria-label="no unit">·</span></td><td>Type<small>Object: TypTrb</small></td></tr>
+<tr><td><code>bushv1</code></td><td><span aria-label="no unit">·</span></td><td>Terminal HVi<small>Object: StaCubic</small></td></tr>
+<tr><td><code>bushv2</code></td><td><span aria-label="no unit">·</span></td><td>Terminal HVj<small>Object: StaCubic</small></td></tr>
+<tr><td><code>buslv</code></td><td><span aria-label="no unit">·</span></td><td>Terminal LV<small>Object: StaCubic</small></td></tr>
+<tr><td><code>buslv2</code></td><td><span aria-label="no unit">·</span></td><td>Terminal LVj<small>Object: StaCubic</small></td></tr>
+<tr><td><code>buslvn</code></td><td><span aria-label="no unit">·</span></td><td>LV-Neutral<small>Object: StaCubic</small></td></tr>
+<tr><td><code>doc_id</code></td><td><span aria-label="no unit">·</span></td><td>Additional Data</td></tr>
+<tr><td><code>pOwner</code></td><td><span aria-label="no unit">·</span></td><td>Owner<small>Object: ElmOwner</small></td></tr>
+<tr><td><code>pOperator</code></td><td><span aria-label="no unit">·</span></td><td>Operator<small>Object: ElmOperator</small></td></tr>
+<tr><td><code>pRating</code></td><td><span aria-label="no unit">·</span></td><td>Thermal Rating<small>Object: IntThrating</small></td></tr>
+<tr><td><code>cpHeadFold</code></td><td><span aria-label="no unit">·</span></td><td>Head Folder</td></tr>
+<tr><td><code>bushv1_bar</code></td><td><span aria-label="no unit">·</span></td><td>Terminal HVi</td></tr>
+<tr><td><code>bushv2_bar</code></td><td><span aria-label="no unit">·</span></td><td>Terminal HVj</td></tr>
+<tr><td><code>buslv_bar</code></td><td><span aria-label="no unit">·</span></td><td>Terminal LV</td></tr>
+<tr><td><code>buslv2_bar</code></td><td><span aria-label="no unit">·</span></td><td>Terminal LVj</td></tr>
+<tr><td><code>buslvn_bar</code></td><td><span aria-label="no unit">·</span></td><td>LV-Neutral</td></tr>
+<tr><td><code>cpGrid</code></td><td><span aria-label="no unit">·</span></td><td>Grid<small>Object: ElmNet</small></td></tr>
+<tr><td><code>cpZone</code></td><td><span aria-label="no unit">·</span></td><td>Zone<small>Object: ElmZone</small></td></tr>
+<tr><td><code>cpArea</code></td><td><span aria-label="no unit">·</span></td><td>Area<small>Object: ElmArea</small></td></tr>
+<tr><td><code>cpFeed</code></td><td><span aria-label="no unit">·</span></td><td>Feeder<small>Object: ElmFeeder</small></td></tr>
+<tr><td><code>ciDist</code></td><td><span aria-label="no unit">·</span></td><td>Distance from infeed in number of buses</td></tr>
+<tr><td><code>ciLater</code></td><td><span aria-label="no unit">·</span></td><td>Lateral Index</td></tr>
+<tr><td><code>ciDistRoot</code></td><td><span aria-label="no unit">·</span></td><td>Distance from first infeed in number of buses</td></tr>
+<tr><td><code>ciDistAll</code></td><td><span aria-label="no unit">·</span></td><td>Distance from infeed in number of buses including switches</td></tr>
+<tr><td><code>ciDistAllRoot</code></td><td><span aria-label="no unit">·</span></td><td>Distance from first infeed in number of buses including switches</td></tr>
+<tr><td><code>cpOwner</code></td><td><span aria-label="no unit">·</span></td><td>Owner<small>Object: ElmOwner</small></td></tr>
+<tr><td><code>cpOperator</code></td><td><span aria-label="no unit">·</span></td><td>Operator<small>Object: ElmOperator</small></td></tr>
+<tr><td><code>cpBranch</code></td><td><span aria-label="no unit">·</span></td><td>Branch<small>Object: ElmBranch</small></td></tr>
+<tr><td><code>cpSite</code></td><td><span aria-label="no unit">·</span></td><td>Site<small>Object: ElmSite</small></td></tr>
+<tr><td><code>cpSubstat</code></td><td><span aria-label="no unit">·</span></td><td>Substation<small>Object: ElmSubstat,ElmTrfstat</small></td></tr>
+<tr><td><code>cpMeteostat</code></td><td><span aria-label="no unit">·</span></td><td>Meteo Station<small>Object: ElmMeteostat</small></td></tr>
+<tr><td><code>ciOutaged</code></td><td><span aria-label="no unit">·</span></td><td>Planned Outage</td></tr>
+<tr><td><code>ciEnergized</code></td><td><span aria-label="no unit">·</span></td><td>Energized</td></tr>
+<tr><td><code>ciEarthed</code></td><td><span aria-label="no unit">·</span></td><td>Earthed</td></tr>
+<tr><td><code>cDisplayName</code></td><td><span aria-label="no unit">·</span></td><td>Display Name</td></tr>
+<tr><td><code>cpSupplyTransformer</code></td><td><span aria-label="no unit">·</span></td><td>Supplying Transformer<small>Object: ElmTr?,ElmTrmult</small></td></tr>
+<tr><td><code>cpSupplyTrfStation</code></td><td><span aria-label="no unit">·</span></td><td>Supplying Secondary Substation<small>Object: ElmTrfstat</small></td></tr>
+<tr><td><code>cpSupplySubstation</code></td><td><span aria-label="no unit">·</span></td><td>Supplying Substation<small>Object: ElmSubstat</small></td></tr>
+<tr><td><code>cgnd_l</code></td><td><span aria-label="no unit">·</span></td><td>Star Point</td></tr>
+<tr><td><code>cpeter_l</code></td><td><span aria-label="no unit">·</span></td><td>Petersen Coil</td></tr>
+<tr><td><code>cneutcon</code></td><td><span aria-label="no unit">·</span></td><td>N-Connection</td></tr>
+<tr><td><code>Inom_h</code></td><td>kA</td><td>HV-Side, Nominal Current</td></tr>
+<tr><td><code>Inom_l</code></td><td>kA</td><td>LV-Side, Nominal Current</td></tr>
+<tr><td><code>Inom_h_a</code></td><td>kA</td><td>HV-Side, Nominal Current (act.)</td></tr>
+<tr><td><code>Inom_l_a</code></td><td>kA</td><td>LV-Side, Nominal Current</td></tr>
+<tr><td><code>Snom</code></td><td>MVA</td><td>Nominal Power</td></tr>
+<tr><td><code>Snom_a</code></td><td>MVA</td><td>Nominal Power (act.)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmTrb load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:urnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Real Part</td></tr>
+<tr><td><code>m:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Current, Angle</td></tr>
+<tr><td><code>m:i1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Psum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:Ssum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Total Apparent Power</td></tr>
+<tr><td><code>m:cosphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:tanphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total tan(phi)</td></tr>
+<tr><td><code>m:i1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Real Part</td></tr>
+<tr><td><code>m:ii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>m:Tfct:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Brkload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>m:Spu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA/p.u.</td><td>Apparent Power per p.u. Voltage</td></tr>
+<tr><td><code>m:urnet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:u2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:i0r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i0i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:phii0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>m:i2r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i2i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>m:ubfacI:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Current Unbalance Factor</td></tr>
+<tr><td><code>m:ubfacS:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Power Unbalance Factor</td></tr>
+<tr><td><code>m:P:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Pln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power (Line-Neutral)</td></tr>
+<tr><td><code>m:Qln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power (Line-Neutral)</td></tr>
+<tr><td><code>m:P1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Positive Sequence Active Power</td></tr>
+<tr><td><code>m:Q1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Positive Sequence Reactive Power</td></tr>
+<tr><td><code>m:P2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Negative Sequence Active Power</td></tr>
+<tr><td><code>m:Q2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Negative Sequence Reactive Power</td></tr>
+<tr><td><code>m:P0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Zero Sequence Active Power</td></tr>
+<tr><td><code>m:Q0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Zero Sequence Reactive Power</td></tr>
+<tr><td><code>m:i2P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:i2Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I2P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:I2Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part</td></tr>
+<tr><td><code>m:ii:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu0i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in zero-sequence system</td></tr>
+<tr><td><code>m:phiu2i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in negative sequence system</td></tr>
+<tr><td><code>m:TfctPh:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:BrkloadPh:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>c:loading_h</code></td><td>%</td><td>Loading (HV)</td></tr>
+<tr><td><code>c:loading_l</code></td><td>%</td><td>Loading (LV)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:maxload</code></td><td>%</td><td>Max. Loading</td></tr>
+<tr><td><code>c:ratfac</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>c:snom</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>c:zshv</code></td><td>p.u.</td><td>Leakage Impedance (HV-Side)</td></tr>
+<tr><td><code>c:zslv</code></td><td>p.u.</td><td>Leakage Impedance (LV-Side)</td></tr>
+<tr><td><code>c:ym</code></td><td>p.u.</td><td>Magnetising Admittance</td></tr>
+<tr><td><code>c:Gmload</code></td><td>kW</td><td>Iron Losses</td></tr>
+<tr><td><code>c:Xmload</code></td><td>kvar</td><td>Magnetising Losses</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses (total)</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Reactive-Losses (total)</td></tr>
+<tr><td><code>c:Plossld</code></td><td>MW</td><td>Losses (load)</td></tr>
+<tr><td><code>c:Qlossld</code></td><td>Mvar</td><td>Reactive-Losses (load)</td></tr>
+<tr><td><code>c:Plossnld</code></td><td>MW</td><td>Losses (no load)</td></tr>
+<tr><td><code>c:Qlossnld</code></td><td>Mvar</td><td>Reactive-Losses (no load)</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex Winding Ratio</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+<tr><td><code>c:loading_st</code></td><td>%</td><td>Short term loading</td></tr>
+<tr><td><code>c:i_ea_l</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:i_star_l</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:zs0hv</code></td><td>p.u.</td><td>Zero sequence short circuit imp. (HV)</td></tr>
+<tr><td><code>c:zs0lv</code></td><td>p.u.</td><td>Zero sequence short circuit imp. (LV)</td></tr>
+<tr><td><code>c:ym0</code></td><td>p.u.</td><td>Zero Sequence Magnetising Admittance</td></tr>
+<tr><td><code>c:Ustar_l</code></td><td>kV</td><td>Star-Point Voltage (LV)</td></tr>
+<tr><td><code>c:Istar_l</code></td><td>kA</td><td>Star-Point Current (LV)</td></tr>
+<tr><td><code>n:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:Pgen:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Generation, Active Power</td></tr>
+<tr><td><code>n:Qgen:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Generation, Reactive Power</td></tr>
+<tr><td><code>n:Pmot:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Motor Load, Active Power</td></tr>
+<tr><td><code>n:Qmot:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Motor Load, Reactive Power</td></tr>
+<tr><td><code>n:Pload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>General Load, Active Power</td></tr>
+<tr><td><code>n:Qload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>General Load, Reactive Power</td></tr>
+<tr><td><code>n:Pcomp:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>n:Qcomp:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Compensation</td></tr>
+<tr><td><code>n:Pnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>n:Qnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>n:Pflow:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Power Flow, Active Power</td></tr>
+<tr><td><code>n:Qflow:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Power Flow, Reactive Power</td></tr>
+<tr><td><code>n:Pout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Outgoing Flow, Active Power</td></tr>
+<tr><td><code>n:Qout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Outgoing Power, Reactive Power</td></tr>
+<tr><td><code>n:Sout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Outgoing Power, Apparent Power</td></tr>
+<tr><td><code>n:cosphiout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Outgoing Power, Power Factor</td></tr>
+<tr><td><code>n:Pbalance:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power Balance (=0)</td></tr>
+<tr><td><code>n:Qbalance:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power Balance (=0)</td></tr>
+<tr><td><code>n:LossPdown:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Losses, downstream</td></tr>
+<tr><td><code>n:LossQdown:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Losses, downstream (Reactive Power)</td></tr>
+<tr><td><code>n:LossPdownload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossPdownnoload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownnoload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:du_feed:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Difference from voltage at start of feeder</td></tr>
+<tr><td><code>n:ur:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:ulpc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Voltage, Angle</td></tr>
+<tr><td><code>n:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:phiu0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:u2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:Uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiuln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Neutral Voltage, Angle</td></tr>
+<tr><td><code>n:un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:Un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiun:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Neutral-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:upht:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upht:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:um:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:Um:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:uphtmin:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Minimum of Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:uphtmax:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Maximum of Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:ubfac:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Unbalance Factor</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="short-circuit">
+  <h2 id="short-circuit">ElmTrb short-circuit results</h2>
+  <p class="dx-note">Read after <code>ComShc</code> with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:I:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:i1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:phiui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in Positive-Sequence System</td></tr>
+<tr><td><code>m:Tfct:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Ikss:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>m:ikss:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Initial Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:Skss:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>m:ip:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>m:maxIkss:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Max. Initial Short-Circuit Current</td></tr>
+<tr><td><code>m:maxip:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Max. Peak Short-Circuit Current</td></tr>
+<tr><td><code>m:maxIth:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Max. Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>m:maxIb:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Max. Breaking Current</td></tr>
+<tr><td><code>m:R:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Fault Impedance, Real Part</td></tr>
+<tr><td><code>m:X:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Fault Impedance, Imaginary Part</td></tr>
+<tr><td><code>m:Z:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phiz:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Fault Impedance, Angle</td></tr>
+<tr><td><code>m:Rs:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Source Impedance, Real Part</td></tr>
+<tr><td><code>m:Xs:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Source Impedance, Imaginary Part</td></tr>
+<tr><td><code>m:Zs:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Source Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizs:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Source Impedance, Angle</td></tr>
+<tr><td><code>m:BrkIpload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Breaker Loading (peak)</td></tr>
+<tr><td><code>m:Ib:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Short-Circuit Breaking Current</td></tr>
+<tr><td><code>m:Sb:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Short-Circuit Breaking Power</td></tr>
+<tr><td><code>m:Ith:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>m:zSbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:XtoR:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X/R ratio</td></tr>
+<tr><td><code>m:cosphiui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>cosphi</td></tr>
+<tr><td><code>m:BrkIbload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Breaker Loading (breaking)</td></tr>
+<tr><td><code>m:BrkmaxIb:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Max. Breaking Current (breaker time)</td></tr>
+<tr><td><code>m:Ik:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Steady-State Short-Circuit Current</td></tr>
+<tr><td><code>m:I:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:I0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:phii0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>m:I2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:Psum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:cosphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:P2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>P2</td></tr>
+<tr><td><code>m:Q2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Q2</td></tr>
+<tr><td><code>m:P0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>P0</td></tr>
+<tr><td><code>m:phiui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu0i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in Zero-Sequence System</td></tr>
+<tr><td><code>m:phiu2i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in Negative-Sequence System</td></tr>
+<tr><td><code>m:TfctPh:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Ikss:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>m:ikss:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Initial Short-Circuit Current, Magnitude</td></tr>
+<tr><td><code>m:Skss:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>m:Skssx3:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>3*Initial Short-Circuit Power</td></tr>
+<tr><td><code>m:ip:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>m:Z:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phiz:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Fault Impedance, Angle</td></tr>
+<tr><td><code>m:Zl:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Line-Line Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizl:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Fault Impedance, Angle</td></tr>
+<tr><td><code>m:Z0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Zero-Sequence Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phiz0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Fault Impedance, Angle</td></tr>
+<tr><td><code>m:z0Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:cosphiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Positive-Sequence cosphi</td></tr>
+<tr><td><code>m:I0x3watt:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Earth-Fault Residual Current</td></tr>
+<tr><td><code>m:I0x3var:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Capacitive Earth-Fault Current</td></tr>
+<tr><td><code>m:Q0cap:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Q0 capacitive</td></tr>
+<tr><td><code>m:Rfrel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Relay Impedance, Real Part</td></tr>
+<tr><td><code>m:Xfrel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Relay Impedance, Imaginary Part</td></tr>
+<tr><td><code>m:Zfrel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Relay Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizfrel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Relay Impedance, Angle</td></tr>
+<tr><td><code>m:Zf:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Meas. Fault Impedance, Magnitude</td></tr>
+<tr><td><code>m:phizf:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Meas. Fault Impedance, Angle</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:snom</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>c:zshv</code></td><td>p.u.</td><td>Leakage Impedance (HV-Side)</td></tr>
+<tr><td><code>c:zslv</code></td><td>p.u.</td><td>Leakage Impedance (LV-Side)</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex Winding Ratio</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+<tr><td><code>c:zs0hv</code></td><td>p.u.</td><td>Zero sequence short circuit imp. (HV)</td></tr>
+<tr><td><code>c:zs0lv</code></td><td>p.u.</td><td>Zero sequence short circuit imp. (LV)</td></tr>
+<tr><td><code>c:ym0</code></td><td>p.u.</td><td>Zero Sequence Magnetising Admittance</td></tr>
+<tr><td><code>c:Ustar_l</code></td><td>kV</td><td>Star-Point Voltage (LV)</td></tr>
+<tr><td><code>c:Istar_l</code></td><td>kA</td><td>Star-Point Current (LV)</td></tr>
+<tr><td><code>n:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:Ul:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:Ikss:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>n:I:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:phii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>n:Skss:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>n:ip:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>n:Ib:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Short-Circuit Breaking Current</td></tr>
+<tr><td><code>n:Sb:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Short-Circuit Breaking Power</td></tr>
+<tr><td><code>n:idc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Decaying Component</td></tr>
+<tr><td><code>n:Ith:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>n:R1toX1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>R1/X1 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:X1toR1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X1/R1 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:R:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Short-Circuit Impedance, Real Part</td></tr>
+<tr><td><code>n:X:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Short-Circuit Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Short-Circuit Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Short-Circuit Impedance, Angle</td></tr>
+<tr><td><code>n:urpref:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Pre-fault Voltage, Real Part</td></tr>
+<tr><td><code>n:uipref:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Pre-fault Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:upref:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:uprefpc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upref:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ulpref:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiupref:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Pre-fault Voltage, Angle</td></tr>
+<tr><td><code>n:phiui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>n:Ithload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Loading, Thermal equivalent Current</td></tr>
+<tr><td><code>n:Ipload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Loading, Peak Short-Circuit Current</td></tr>
+<tr><td><code>n:Ithrtk:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Rated Short-Time Current (Tk)</td></tr>
+<tr><td><code>n:XtoR:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X/R ratio (peak)</td></tr>
+<tr><td><code>n:RtoX:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>R/X ratio (peak)</td></tr>
+<tr><td><code>n:XtoR_b:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X/R ratio (dc)</td></tr>
+<tr><td><code>n:RtoX_b:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>R/X ratio (dc)</td></tr>
+<tr><td><code>n:fctof_b:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Equivalent Frequency fc/f (dc)</td></tr>
+<tr><td><code>n:rSbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Short-Circuit Impedance, Real Part</td></tr>
+<tr><td><code>n:xSbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Short-Circuit Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:zSbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Short-Circuit Impedance, Magnitude</td></tr>
+<tr><td><code>n:Tn:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>ms</td><td>Grid Time Constant</td></tr>
+<tr><td><code>n:Ik:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Steady-State Short-Circuit Current</td></tr>
+<tr><td><code>n:cfac:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Voltage Factor</td></tr>
+<tr><td><code>n:Iasy:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Asymmetrical Breaking Current</td></tr>
+<tr><td><code>n:ur:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:ulpc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Voltage, Angle</td></tr>
+<tr><td><code>n:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:phiu0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:u2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:Uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiuln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Neutral Voltage, Angle</td></tr>
+<tr><td><code>n:un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:Un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiun:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Neutral-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:upht:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upht:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ikss:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Initial Short-Circuit Current</td></tr>
+<tr><td><code>n:I:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:phii:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>n:Skss:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Initial Short-Circuit Power</td></tr>
+<tr><td><code>n:Skssx3:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>3*Initial Short-Circuit Power</td></tr>
+<tr><td><code>n:ip:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Peak Short-Circuit Current</td></tr>
+<tr><td><code>n:Ib:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Breaking Current</td></tr>
+<tr><td><code>n:Sb:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Short-Circuit Breaking Power</td></tr>
+<tr><td><code>n:Ith:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>n:Ithmax:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Max. Thermal equivalent Short-Circuit Current</td></tr>
+<tr><td><code>n:R0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Zero-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:X0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Zero-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Zero-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Impedance, Angle</td></tr>
+<tr><td><code>n:r0Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:x0Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:z0Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:R1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Positive-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:X1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Positive-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Positive-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Impedance, Angle</td></tr>
+<tr><td><code>n:r1Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:x1Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:z1Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:R2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Negative-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:X2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Negative-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:Z2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Negative-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:phiz2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Impedance, Angle</td></tr>
+<tr><td><code>n:r2Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Impedance, Real Part</td></tr>
+<tr><td><code>n:x2Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Impedance, Imaginary Part</td></tr>
+<tr><td><code>n:z2Sbase:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Impedance, Magnitude</td></tr>
+<tr><td><code>n:R0toX0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>R0/X0 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:X0toR0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X0/R0 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:R2toX2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>R2/X2 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:X2toR2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X2/R2 ratio (Zk&quot;)</td></tr>
+<tr><td><code>n:R:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Resistance, Line-Ground</td></tr>
+<tr><td><code>n:X:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Reactance, Line-Ground</td></tr>
+<tr><td><code>n:Z:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Impedance, Line-Ground</td></tr>
+<tr><td><code>n:phiz:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle of Network Impedance, Line-Ground</td></tr>
+<tr><td><code>n:Rl:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Resistance, Line-Line</td></tr>
+<tr><td><code>n:Xl:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Reactance, Line-Line</td></tr>
+<tr><td><code>n:Zl:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Impedance, Line-Line</td></tr>
+<tr><td><code>n:phizl:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle of Network Impedance, Line-Line</td></tr>
+<tr><td><code>n:Rln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Resistance, Line-Neutral</td></tr>
+<tr><td><code>n:Xln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Reactance, Line-Neutral</td></tr>
+<tr><td><code>n:Zln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Ohm</td><td>Network Impedance, Line-Neutral</td></tr>
+<tr><td><code>n:phizln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle of Network Impedance, Line-Neutral</td></tr>
+<tr><td><code>n:Rn:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Network Resistance, Neutral</td></tr>
+<tr><td><code>n:Xn:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Network Reactance, Neutral</td></tr>
+<tr><td><code>n:Zn:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Ohm</td><td>Network Impedance, Neutral</td></tr>
+<tr><td><code>n:phizn:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle of Network Impedance, Neutral</td></tr>
+<tr><td><code>n:eff:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Earth Fault Factor</td></tr>
+<tr><td><code>n:X0toX1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>X0/X1</td></tr>
+<tr><td><code>n:In:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Neutral Current, Magnitude</td></tr>
+<tr><td><code>n:phiin:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Neutral Current, Angle</td></tr>
+<tr><td><code>n:I0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:I0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>n:phii0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>n:I1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:phii1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>n:I2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:phii2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>n:urpref:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Pre-fault Voltage, Real Part</td></tr>
+<tr><td><code>n:uipref:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Pre-fault Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:upref:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:uprefpc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upref:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ulpref:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Pre-fault Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiupref:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Pre-fault Voltage, Angle</td></tr>
+<tr><td><code>n:phiui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>n:phiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>n:phiu2i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in negative sequence system</td></tr>
+<tr><td><code>n:phiu0i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in zero-sequence system</td></tr>
+<tr><td><code>n:Ik:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Steady-State Short-Circuit Current</td></tr>
+<tr><td><code>n:in:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral Current, Magnitude</td></tr>
+<tr><td><code>n:i0r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Real Part</td></tr>
+<tr><td><code>n:i0i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>n:i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:i1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>n:i1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>n:i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>n:i2r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Real Part</td></tr>
+<tr><td><code>n:i2i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>n:i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Magnitude</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-rms">
+  <h2 id="dynamic-rms">ElmTrb rms simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (RMS) with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:urnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Real Part</td></tr>
+<tr><td><code>m:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Current, Angle</td></tr>
+<tr><td><code>m:i1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Psum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:Ssum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Total Apparent Power</td></tr>
+<tr><td><code>m:cosphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:tanphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total tan(phi)</td></tr>
+<tr><td><code>m:i1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Real Part</td></tr>
+<tr><td><code>m:ii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>m:Tfct:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Brkload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>m:Spu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA/p.u.</td><td>Apparent Power per p.u. Voltage</td></tr>
+<tr><td><code>m:urnet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:u2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part</td></tr>
+<tr><td><code>m:iinet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part</td></tr>
+<tr><td><code>m:inet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:I:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Phase Current, Angle</td></tr>
+<tr><td><code>m:i0r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i0i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Zero-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:phii0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Current, Angle</td></tr>
+<tr><td><code>m:i2r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i2i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Pln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power (Line-Neutral)</td></tr>
+<tr><td><code>m:Qln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>Mvar</td><td>Reactive Power (Line-Neutral)</td></tr>
+<tr><td><code>m:P1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Positive Sequence Active Power</td></tr>
+<tr><td><code>m:Q1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Positive Sequence Reactive Power</td></tr>
+<tr><td><code>m:P2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Negative Sequence Active Power</td></tr>
+<tr><td><code>m:Q2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Negative Sequence Reactive Power</td></tr>
+<tr><td><code>m:P0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Zero Sequence Active Power</td></tr>
+<tr><td><code>m:Q0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Zero Sequence Reactive Power</td></tr>
+<tr><td><code>m:i2P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:i2Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I2P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Active Current</td></tr>
+<tr><td><code>m:I2Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Negative-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Real Part</td></tr>
+<tr><td><code>m:ii:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu0i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in zero-sequence system</td></tr>
+<tr><td><code>m:phiu2i2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in negative sequence system</td></tr>
+<tr><td><code>m:TfctPh:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:BrkloadPh:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>c:loading_h</code></td><td>%</td><td>Loading (HV)</td></tr>
+<tr><td><code>c:loading_l</code></td><td>%</td><td>Loading (LV)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:ratfac</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>c:snom</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>c:zshv</code></td><td>p.u.</td><td>Leakage Impedance (HV-Side)</td></tr>
+<tr><td><code>c:zslv</code></td><td>p.u.</td><td>Leakage Impedance (LV-Side)</td></tr>
+<tr><td><code>c:ym</code></td><td>p.u.</td><td>Magnetising Admittance</td></tr>
+<tr><td><code>c:Inom_HV</code></td><td>kA</td><td>Nominal Current (HV-Side)</td></tr>
+<tr><td><code>c:Inom_LV</code></td><td>kA</td><td>Nominal Current (LV-Side)</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex Winding Ratio</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+<tr><td><code>c:i_ea_l</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:i_star_l</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:zs0hv</code></td><td>p.u.</td><td>Zero sequence short circuit imp. (HV)</td></tr>
+<tr><td><code>c:zs0lv</code></td><td>p.u.</td><td>Zero sequence short circuit imp. (LV)</td></tr>
+<tr><td><code>c:ym0</code></td><td>p.u.</td><td>Zero Sequence Magnetising Admittance</td></tr>
+<tr><td><code>c:Ustar_l</code></td><td>kV</td><td>Star-Point Voltage (LV)</td></tr>
+<tr><td><code>c:Istar_l</code></td><td>kA</td><td>Star-Point Current (LV)</td></tr>
+<tr><td><code>n:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:ishc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Ishc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:fe:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:dfehz:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Hz</td><td>Deviation of the El. Frequency</td></tr>
+<tr><td><code>n:fehz:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Hz</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:frnom:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>n:ishcr:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Short-Circuit Current, real</td></tr>
+<tr><td><code>n:ishci:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Short-Circuit Current, imag</td></tr>
+<tr><td><code>n:dfedt:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u./s</td><td>Derivative of El. Frequency</td></tr>
+<tr><td><code>n:ur:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:ulpc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:Ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Line Voltage, Angle</td></tr>
+<tr><td><code>n:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Zero-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:phiu0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Zero-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:u2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu2:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Negative-Sequence Voltage, Angle</td></tr>
+<tr><td><code>n:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Positive-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:U2l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Negative-Sequence Voltage, Magnitude</td></tr>
+<tr><td><code>n:uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:Uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiuln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>deg</td><td>Line-Neutral Voltage, Angle</td></tr>
+<tr><td><code>n:un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:Un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Neutral-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiun:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Neutral-Ground Voltage, Angle</td></tr>
+<tr><td><code>n:upht:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:Upht:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Technology dependent Voltage, Magnitude</td></tr>
+<tr><td><code>n:um:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:Um:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Average-Voltage, Magnitude</td></tr>
+<tr><td><code>n:ishc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Ishc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:inshc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Inshc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:ishcr:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current, real</td></tr>
+<tr><td><code>n:ishci:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current, imag</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-emt">
+  <h2 id="dynamic-emt">ElmTrb emt simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (EMT) with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence-Voltage</td></tr>
+<tr><td><code>m:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage Phasor, Real Part</td></tr>
+<tr><td><code>m:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage Phasor, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>m:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>m:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage Phasor, Angle</td></tr>
+<tr><td><code>m:inet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current, referred to network</td></tr>
+<tr><td><code>m:I:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Phase Current</td></tr>
+<tr><td><code>m:i0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence Current</td></tr>
+<tr><td><code>m:I0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Zero-Sequence Current</td></tr>
+<tr><td><code>m:I0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>3*I0</td></tr>
+<tr><td><code>m:i1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current Phasor, Real Part</td></tr>
+<tr><td><code>m:i1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current Phasor, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current Phasor, Magnitude</td></tr>
+<tr><td><code>m:I1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Current Phasor, Magnitude</td></tr>
+<tr><td><code>m:phii1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Current Phasor, Angle</td></tr>
+<tr><td><code>m:P:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Psum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Power-Phasor, Active Power</td></tr>
+<tr><td><code>m:Qsum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Power Phasor, Reactive Part</td></tr>
+<tr><td><code>m:Ssum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Power Phasor, Apparent Power</td></tr>
+<tr><td><code>m:i1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current Phasor, Active Current</td></tr>
+<tr><td><code>m:i1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current Phasor, Reactive Current</td></tr>
+<tr><td><code>m:I1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Current Phasor, Active Current</td></tr>
+<tr><td><code>m:I1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Current Phasor, Reactive Current</td></tr>
+<tr><td><code>m:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage</td></tr>
+<tr><td><code>m:i:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Current</td></tr>
+<tr><td><code>m:phiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current Phasor</td></tr>
+<tr><td><code>m:Tfct:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:TfctPh:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:unet:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage, referred to network</td></tr>
+<tr><td><code>m:cosphi1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Power-Phasor, Power-Factor</td></tr>
+<tr><td><code>c:rshv</code></td><td>p.u.</td><td>Leakage resistance (HV-Side)</td></tr>
+<tr><td><code>c:lshv</code></td><td>p.u.</td><td>Leakage inductance (HV-Side)</td></tr>
+<tr><td><code>c:rslv</code></td><td>p.u.</td><td>Leakage resistance (LV-Side)</td></tr>
+<tr><td><code>c:lslv</code></td><td>p.u.</td><td>Leakage inductance (LV-Side)</td></tr>
+<tr><td><code>c:bm</code></td><td>p.u.</td><td>Magnetising susceptance</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Angular frequency</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex ...</td></tr>
+<tr><td><code>c:i_ea_l</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:i_star_l</code></td><td><span aria-label="no unit">·</span></td><td>Flag</td></tr>
+<tr><td><code>c:Ustar_l</code></td><td>kV</td><td>Star-Point Voltage (LV)</td></tr>
+<tr><td><code>c:Istar_l</code></td><td>kA</td><td>Star-Point Current (LV)</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+<tr><td><code>c:uh</code></td><td>p.u.</td><td>Aux.-value</td></tr>
+<tr><td><code>c:rs0hv</code></td><td>p.u.</td><td>Leakage Resistance (HV-Side)</td></tr>
+<tr><td><code>c:ls0hv</code></td><td>p.u.</td><td>Leakage Inductance (HV-Side)</td></tr>
+<tr><td><code>c:rs0lv</code></td><td>p.u.</td><td>Leakage Resistance (LV-Side)</td></tr>
+<tr><td><code>c:ls0lv</code></td><td>p.u.</td><td>Leakage Inductance (LV-Side)</td></tr>
+<tr><td><code>c:bm0</code></td><td>p.u.</td><td>Zero Sequence Magnetising Admittance</td></tr>
+<tr><td><code>n:u:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Phase Voltage</td></tr>
+<tr><td><code>n:upc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Phase Voltage</td></tr>
+<tr><td><code>n:U:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Phase Voltage</td></tr>
+<tr><td><code>n:ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Line Voltage</td></tr>
+<tr><td><code>n:ulpc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>%</td><td>Line-Line Voltage</td></tr>
+<tr><td><code>n:Ul:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Line Voltage</td></tr>
+<tr><td><code>n:u0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Zero-Sequence-Voltage</td></tr>
+<tr><td><code>n:U0:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Zero-Sequence-Voltage</td></tr>
+<tr><td><code>n:U0x3:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>3*U0</td></tr>
+<tr><td><code>n:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage Phasor, Real Part</td></tr>
+<tr><td><code>n:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage Phasor, Imaginary Part</td></tr>
+<tr><td><code>n:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage Phasor, Angle</td></tr>
+<tr><td><code>n:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage Phasor, Magnitude</td></tr>
+<tr><td><code>n:uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Line-Neutral Voltage</td></tr>
+<tr><td><code>n:Uln:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kV</td><td>Line-Neutral Voltage</td></tr>
+<tr><td><code>n:un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral-Ground Voltage</td></tr>
+<tr><td><code>n:Un:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Neutral-Ground Voltage</td></tr>
+<tr><td><code>n:ishc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>p.u.</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:Ishc:bushv1:A</code><small>or :bushv2, :buslv, :buslv2; per phase :A, :B, :C, unbalanced only</small></td><td>kA</td><td>Short-Circuit Current</td></tr>
+<tr><td><code>n:inshc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:Inshc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Neutral Short-Circuit Current, magnitude</td></tr>
+<tr><td><code>n:fe:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:dfehz:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Hz</td><td>Deviation of the El. Frequency</td></tr>
+<tr><td><code>n:fehz:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Hz</td><td>Electrical Frequency</td></tr>
+<tr><td><code>n:frnom:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>s:psim</code></td><td>p.u.</td><td>Magnetising flux</td></tr>
+<tr><td><code>s:im</code></td><td>p.u.</td><td>Magnetising current</td></tr>
+<tr><td><code>s:psimd</code></td><td>p.u.</td><td>Magnetising Flux, alpha-component</td></tr>
+<tr><td><code>s:psimq</code></td><td>p.u.</td><td>Magnetising Flux, beta-component</td></tr>
+<tr><td><code>s:psim0</code></td><td>p.u.</td><td>Magnetising Flux, gamma-component</td></tr>
+<tr><td><code>s:psim_a</code></td><td>p.u.</td><td>Magnetising Flux</td></tr>
+<tr><td><code>s:psim_b</code></td><td>p.u.</td><td>Magnetising Flux</td></tr>
+<tr><td><code>s:psim_c</code></td><td>p.u.</td><td>Magnetising Flux</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow-dc">
+  <h2 id="load-flow-dc">ElmTrb dc load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> (DC) with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>c:loading_h</code></td><td>%</td><td>Loading (HV)</td></tr>
+<tr><td><code>c:loading_l</code></td><td>%</td><td>Loading (LV)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:maxload</code></td><td>%</td><td>Max. Loading</td></tr>
+<tr><td><code>c:ratfac</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>c:snom</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>c:zshv</code></td><td>p.u.</td><td>Leakage Impedance (HV-Side)</td></tr>
+<tr><td><code>c:zslv</code></td><td>p.u.</td><td>Leakage Impedance (LV-Side)</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses (total)</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Reactive-Losses (total)</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex Winding Ratio</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+<tr><td><code>n:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:U:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:Pgen:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Generation, Active Power</td></tr>
+<tr><td><code>n:Pmot:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Motor Load, Active Power</td></tr>
+<tr><td><code>n:Pload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>General Load, Active Power</td></tr>
+<tr><td><code>n:Pcomp:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>n:Pnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>n:Pflow:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Power Flow, Active Power</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="modal-analysis">
+  <h2 id="modal-analysis">ElmTrb modal analysis results</h2>
+  <p class="dx-note">Read after <code>ComMod</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:loading_h</code></td><td>%</td><td>Loading (HV)</td></tr>
+<tr><td><code>c:loading_l</code></td><td>%</td><td>Loading (LV)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:ratfac</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>c:snom</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>c:zshv</code></td><td>p.u.</td><td>Leakage Impedance (HV-Side)</td></tr>
+<tr><td><code>c:zslv</code></td><td>p.u.</td><td>Leakage Impedance (LV-Side)</td></tr>
+<tr><td><code>c:ym</code></td><td>p.u.</td><td>Magnetising Admittance</td></tr>
+<tr><td><code>c:Inom_HV</code></td><td>kA</td><td>Nominal Current (HV-Side)</td></tr>
+<tr><td><code>c:Inom_LV</code></td><td>kA</td><td>Nominal Current (LV-Side)</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex Winding Ratio</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="opf">
+  <h2 id="opf">ElmTrb optimal power flow results</h2>
+  <p class="dx-note">Read after <code>ComOpf</code> with <code>GetAttribute</code>. <code>m:</code> currents, voltages and powers, <code>c:</code> calculation parameter, <code>n:</code> bus result at a terminal.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>m:urnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part, referred to network</td></tr>
+<tr><td><code>m:uinet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Real Part</td></tr>
+<tr><td><code>m:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:U1l:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Positive-Sequence-Voltage, Magnitude</td></tr>
+<tr><td><code>m:phiu1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence-Voltage, Angle</td></tr>
+<tr><td><code>m:irnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Real Part, referred to network</td></tr>
+<tr><td><code>m:iinet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Imaginary Part, referred to network</td></tr>
+<tr><td><code>m:inet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Magnitude, referred to network</td></tr>
+<tr><td><code>m:I:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Current, Angle</td></tr>
+<tr><td><code>m:i1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Real Part</td></tr>
+<tr><td><code>m:i1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Imaginary Part</td></tr>
+<tr><td><code>m:i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:I1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Current, Magnitude</td></tr>
+<tr><td><code>m:phii1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Positive-Sequence Current, Angle</td></tr>
+<tr><td><code>m:P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power</td></tr>
+<tr><td><code>m:Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power</td></tr>
+<tr><td><code>m:S:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Apparent Power</td></tr>
+<tr><td><code>m:cosphi:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Power Factor</td></tr>
+<tr><td><code>m:tanphi:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>tan(phi)</td></tr>
+<tr><td><code>m:Psum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Total Active Power</td></tr>
+<tr><td><code>m:Qsum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Total Reactive Power</td></tr>
+<tr><td><code>m:Ssum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Total Apparent Power</td></tr>
+<tr><td><code>m:cosphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total Power Factor</td></tr>
+<tr><td><code>m:tanphisum:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Total tan(phi)</td></tr>
+<tr><td><code>m:i1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:i1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:I1P:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Active Current</td></tr>
+<tr><td><code>m:I1Q:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kA</td><td>Positive-Sequence Reactive Current</td></tr>
+<tr><td><code>m:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>m:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>m:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>m:ir:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Real Part</td></tr>
+<tr><td><code>m:ii:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Imaginary Part</td></tr>
+<tr><td><code>m:i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Current, Magnitude</td></tr>
+<tr><td><code>m:phiui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current</td></tr>
+<tr><td><code>m:phiu1i1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Angle between Voltage and Current in positive sequence system</td></tr>
+<tr><td><code>m:Tfct:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>s</td><td>Fault Clearing Time</td></tr>
+<tr><td><code>m:Brkload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Breaker Loading</td></tr>
+<tr><td><code>m:Spu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA/p.u.</td><td>Apparent Power per p.u. Voltage</td></tr>
+<tr><td><code>c:loading_h</code></td><td>%</td><td>Loading (HV)</td></tr>
+<tr><td><code>c:loading_l</code></td><td>%</td><td>Loading (LV)</td></tr>
+<tr><td><code>c:loading</code></td><td>%</td><td>Loading</td></tr>
+<tr><td><code>c:maxload</code></td><td>%</td><td>Max. Loading</td></tr>
+<tr><td><code>c:ratfac</code></td><td><span aria-label="no unit">·</span></td><td>Rating Factor</td></tr>
+<tr><td><code>c:snom</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>c:zshv</code></td><td>p.u.</td><td>Leakage Impedance (HV-Side)</td></tr>
+<tr><td><code>c:zslv</code></td><td>p.u.</td><td>Leakage Impedance (LV-Side)</td></tr>
+<tr><td><code>c:ym</code></td><td>p.u.</td><td>Magnetising Admittance</td></tr>
+<tr><td><code>c:Gmload</code></td><td>kW</td><td>Iron Losses</td></tr>
+<tr><td><code>c:Xmload</code></td><td>kvar</td><td>Magnetising Losses</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses (total)</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Reactive-Losses (total)</td></tr>
+<tr><td><code>c:Plossld</code></td><td>MW</td><td>Losses (load)</td></tr>
+<tr><td><code>c:Qlossld</code></td><td>Mvar</td><td>Reactive-Losses (load)</td></tr>
+<tr><td><code>c:Plossnld</code></td><td>MW</td><td>Losses (no load)</td></tr>
+<tr><td><code>c:Qlossnld</code></td><td>Mvar</td><td>Reactive-Losses (no load)</td></tr>
+<tr><td><code>c:nt2agrd</code></td><td>rad</td><td>Phase Angle</td></tr>
+<tr><td><code>c:t</code></td><td><span aria-label="no unit">·</span></td><td>Complex Winding Ratio</td></tr>
+<tr><td><code>c:utrn_h</code></td><td>kV</td><td>Rated Voltage (HV-Side)</td></tr>
+<tr><td><code>n:ur:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Real Part</td></tr>
+<tr><td><code>n:ui:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:u:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:upc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:du:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage Deviation</td></tr>
+<tr><td><code>n:U:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Ground Voltage, Magnitude</td></tr>
+<tr><td><code>n:phiu:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Angle</td></tr>
+<tr><td><code>n:phiurel:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>deg</td><td>Voltage, Relative Angle</td></tr>
+<tr><td><code>n:Ul:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>kV</td><td>Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1pc:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Voltage, Magnitude</td></tr>
+<tr><td><code>n:u1r:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Real Part</td></tr>
+<tr><td><code>n:u1i:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>p.u.</td><td>Positive-Sequence Voltage, Imaginary Part</td></tr>
+<tr><td><code>n:Pgen:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Generation, Active Power</td></tr>
+<tr><td><code>n:Qgen:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Generation, Reactive Power</td></tr>
+<tr><td><code>n:Pmot:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Motor Load, Active Power</td></tr>
+<tr><td><code>n:Qmot:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Motor Load, Reactive Power</td></tr>
+<tr><td><code>n:Pload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>General Load, Active Power</td></tr>
+<tr><td><code>n:Qload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>General Load, Reactive Power</td></tr>
+<tr><td><code>n:Pcomp:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>n:Qcomp:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Compensation</td></tr>
+<tr><td><code>n:Pnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>n:Qnet:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>n:Pflow:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Power Flow, Active Power</td></tr>
+<tr><td><code>n:Qflow:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Power Flow, Reactive Power</td></tr>
+<tr><td><code>n:Pout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Outgoing Flow, Active Power</td></tr>
+<tr><td><code>n:Qout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Outgoing Power, Reactive Power</td></tr>
+<tr><td><code>n:Sout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MVA</td><td>Outgoing Power, Apparent Power</td></tr>
+<tr><td><code>n:cosphiout:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td><span aria-label="no unit">·</span></td><td>Outgoing Power, Power Factor</td></tr>
+<tr><td><code>n:Pbalance:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Active Power Balance (=0)</td></tr>
+<tr><td><code>n:Qbalance:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Reactive Power Balance (=0)</td></tr>
+<tr><td><code>n:LossPdown:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Losses, downstream</td></tr>
+<tr><td><code>n:LossQdown:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Losses, downstream (Reactive Power)</td></tr>
+<tr><td><code>n:LossPdownload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>Load losses, downstream</td></tr>
+<tr><td><code>n:LossPdownnoload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>MW</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:LossQdownnoload:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>Mvar</td><td>No load losses, downstream</td></tr>
+<tr><td><code>n:du_feed:bushv1</code><small>or :bushv2, :buslv, :buslv2</small></td><td>%</td><td>Difference from voltage at start of feeder</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmTrb basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>b:nt2ag</code></td><td><span aria-label="no unit">·</span></td><td>Rel.Phase Displacement</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmTr4/"><code>ElmTr4</code> 4-Winding Transformer</a> · <a href="../ElmTrmult/"><code>ElmTrmult</code> Multi-Winding Transformer</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

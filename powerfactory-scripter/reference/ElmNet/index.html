@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmNet attributes: PowerFactory Grid | Adjie Brotools</title>
+<meta name="description" content="All ElmNet attributes in PowerFactory (Grid): 19 input parameters and 346 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNet/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmNet attributes: PowerFactory Grid parameters and result variables">
+<meta property="og:description" content="All ElmNet attributes in PowerFactory (Grid): 19 input parameters and 346 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNet/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmNet attributes: PowerFactory Grid parameters and result variables">
+<meta name="twitter:description" content="All ElmNet attributes in PowerFactory (Grid): 19 input parameters and 346 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmNet attributes (PowerFactory Grid)",
+  "description": "All ElmNet attributes in PowerFactory (Grid): 19 input parameters and 346 result variables, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNet/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmNet (Grid)",
+    "description": "A grid: the container that holds a network's elements. It carries the nominal frequency and grid summary results such as total generation, load and losses."
+  },
+  "keywords": "ElmNet attributes, ElmNet parameters, ElmNet result variables, PowerFactory Grid attributes, ElmNet GetAttribute, frnom ElmNet, c:Pgen ElmNet, c:Pload ElmNet, c:Ploss ElmNet",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmNet",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNet/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmNet</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmNet attributes<span class="dx-h1-sub">PowerFactory Grid</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Grid (<code>ElmNet</code>): 19 input parameters and 346 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmNet is</h2>
+  <p>A grid: the container that holds a network's elements. It carries the nominal frequency and grid summary results such as total generation, load and losses.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmNet</code>, element class</dd><dt>PowerFactory name</dt><dd>Grid</dd><dt>Attributes</dt><dd>19 input parameters and 346 result variables, in 6 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used ElmNet attributes</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th><th>Where</th></tr></thead><tbody>
+<tr><td><code>frnom</code></td><td>Hz</td><td>Nominal Frequency<small>nominal frequency</small></td><td>input data</td></tr>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power<small>total generation</small></td><td>RMS simulation</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power<small>total load</small></td><td>RMS simulation</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses, Active Power<small>total losses</small></td><td>RMS simulation</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmNet in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-k">for</span> grid <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmNet&quot;</span>):
+    <span class="py-f">print</span>(grid.loc_name, grid.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;frnom&quot;</span>)) <span class="py-c"># Nominal Frequency</span>
+
+grid = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmNet&quot;</span>)[<span class="py-n">0</span>]
+grid.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;frnom&quot;</span>, <span class="py-n">50</span>)                <span class="py-c"># nominal frequency 50 Hz</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmNet attributes"><li><a href="#params">Input parameters<span class="dx-n">19</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">109</span></a></li><li><a href="#dynamic-rms">RMS simulation results<span class="dx-n">26</span></a></li><li><a href="#dynamic-emt">EMT simulation results<span class="dx-n">26</span></a></li><li><a href="#load-flow-dc">DC load flow results<span class="dx-n">51</span></a></li><li><a href="#modal-analysis">Modal analysis results<span class="dx-n">26</span></a></li><li><a href="#opf">Optimal power flow results<span class="dx-n">108</span></a></li><li><a href="#basic">Basic data<span class="dx-n">4</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmNet input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>fictborder</code></td><td><span aria-label="no unit">·</span></td><td>Fictitious border grid</td></tr>
+<tr><td><code>icolor</code></td><td><span aria-label="no unit">·</span></td><td>Colour</td></tr>
+<tr><td><code>iInterChg</code></td><td><span aria-label="no unit">·</span></td><td>Consider Interchange Schedule</td></tr>
+<tr><td><code>isConsSpinReserve</code></td><td><span aria-label="no unit">·</span></td><td>Min. spinning reserve constraint</td></tr>
+<tr><td><code>frnom</code></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>InterPset</code></td><td>MW</td><td>Scheduled Active Power Interchange</td></tr>
+<tr><td><code>spinReserve</code></td><td>MW</td><td>Spinning reserve</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>cimRdfId</code></td><td><span aria-label="no unit">·</span></td><td>RDF ID</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>owner</code></td><td><span aria-label="no unit">·</span></td><td>Owner</td></tr>
+<tr><td><code>pDiagram</code></td><td><span aria-label="no unit">·</span></td><td>Diagram<small>Object: IntGrfnet</small></td></tr>
+<tr><td><code>contents</code></td><td><span aria-label="no unit">·</span></td><td>Contents</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmNet load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:n_ele</code></td><td><span aria-label="no unit">·</span></td><td>Number of Elements</td></tr>
+<tr><td><code>c:n_area</code></td><td><span aria-label="no unit">·</span></td><td>Number of Connected Grids</td></tr>
+<tr><td><code>c:n_volt</code></td><td><span aria-label="no unit">·</span></td><td>Number of Voltage Levels</td></tr>
+<tr><td><code>c:n_sta</code></td><td><span aria-label="no unit">·</span></td><td>No. of Substations</td></tr>
+<tr><td><code>c:n_bar</code></td><td><span aria-label="no unit">·</span></td><td>No. of Busbars</td></tr>
+<tr><td><code>c:n_term</code></td><td><span aria-label="no unit">·</span></td><td>No. of Terminals</td></tr>
+<tr><td><code>c:n_lne</code></td><td><span aria-label="no unit">·</span></td><td>No. of Lines</td></tr>
+<tr><td><code>c:n_2wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 2-w Trfs.</td></tr>
+<tr><td><code>c:n_3wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 3-w Trfs.</td></tr>
+<tr><td><code>c:n_4wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 4-w Trfs.</td></tr>
+<tr><td><code>c:n_sym</code></td><td><span aria-label="no unit">·</span></td><td>No. of syn. Machines</td></tr>
+<tr><td><code>c:n_asm</code></td><td><span aria-label="no unit">·</span></td><td>No. of asyn. Machines</td></tr>
+<tr><td><code>c:n_stg</code></td><td><span aria-label="no unit">·</span></td><td>No. of Static Generators</td></tr>
+<tr><td><code>c:n_pvs</code></td><td><span aria-label="no unit">·</span></td><td>No. of PV Systems</td></tr>
+<tr><td><code>c:n_lod</code></td><td><span aria-label="no unit">·</span></td><td>No. of Loads</td></tr>
+<tr><td><code>c:n_svs</code></td><td><span aria-label="no unit">·</span></td><td>No. of SVS</td></tr>
+<tr><td><code>c:n_statcom</code></td><td><span aria-label="no unit">·</span></td><td>No. of STATCOM</td></tr>
+<tr><td><code>c:n_shnt</code></td><td><span aria-label="no unit">·</span></td><td>No. of Shunts/Filters</td></tr>
+<tr><td><code>c:n_other</code></td><td><span aria-label="no unit">·</span></td><td>No. of Other Elements</td></tr>
+<tr><td><code>c:n_iso</code></td><td><span aria-label="no unit">·</span></td><td>No. of Isolated Areas</td></tr>
+<tr><td><code>c:n_isooff</code></td><td><span aria-label="no unit">·</span></td><td>No. of Unsupplied Isolated Areas</td></tr>
+<tr><td><code>c:TotgenP</code></td><td>MW</td><td>Total Generation, Active Power</td></tr>
+<tr><td><code>c:TotgenQ</code></td><td>Mvar</td><td>Total Generation, Reactive Power</td></tr>
+<tr><td><code>c:TotconsP</code></td><td>MW</td><td>Total Consumption, Active Power</td></tr>
+<tr><td><code>c:TotconsQ</code></td><td>Mvar</td><td>Total Consumption, Reactive Power</td></tr>
+<tr><td><code>c:GenP</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:GenQ</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:GenS</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:Gencos</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:GenPnom</code></td><td>MW</td><td>Generators, Nominal Active Power</td></tr>
+<tr><td><code>c:GenQnom</code></td><td>Mvar</td><td>Generators, Nominal Reactive Power</td></tr>
+<tr><td><code>c:GenSnom</code></td><td>MVA</td><td>Generators, Nominal Apparent Power</td></tr>
+<tr><td><code>c:GenPdiff</code></td><td>MW</td><td>Generators, difference between nominal and actual active power</td></tr>
+<tr><td><code>c:GenQdiff</code></td><td>Mvar</td><td>Generators, difference between nominal and actual reactive power</td></tr>
+<tr><td><code>c:Gencosnom</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Nominal Power Factor</td></tr>
+<tr><td><code>c:GenPdisp</code></td><td>MW</td><td>Generators, Dispatch Active Power</td></tr>
+<tr><td><code>c:GenPmism</code></td><td>MW</td><td>Generators, difference between actual and dispatched active power</td></tr>
+<tr><td><code>c:GenPspinres</code></td><td>MW</td><td>Generators, difference between maximum and actual active power</td></tr>
+<tr><td><code>c:GenQspinres</code></td><td>Mvar</td><td>Generators, difference between maximum and actual reactive power</td></tr>
+<tr><td><code>c:MotP</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:MotQ</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:MotS</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:Motcos</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:LoadP</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:LoadQ</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:LoadS</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:Loadcos</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:LoadPnom</code></td><td>MW</td><td>Loads, Nominal Active Power</td></tr>
+<tr><td><code>c:LoadQnom</code></td><td>Mvar</td><td>Loads, Nominal Reactive Power</td></tr>
+<tr><td><code>c:LoadSnom</code></td><td>MVA</td><td>Loads, Nominal Apparent Power</td></tr>
+<tr><td><code>c:Loadcosnom</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Nominal Power Factor</td></tr>
+<tr><td><code>c:LoadPdiff</code></td><td>MW</td><td>Loads, difference between nominal and actual active power</td></tr>
+<tr><td><code>c:LoadQdiff</code></td><td>Mvar</td><td>Loads, difference between nominal and actual reactive power</td></tr>
+<tr><td><code>c:LoadPdem</code></td><td>MW</td><td>Loads, Active Power Demand</td></tr>
+<tr><td><code>c:LoadPmism</code></td><td>MW</td><td>Loads, difference between actual active power and demand</td></tr>
+<tr><td><code>c:CompP</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:CompQ</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:ComprQ</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:NetP</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:NetQ</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:NetS</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:Netcos</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:InterP</code></td><td>MW</td><td>Interchange Flow, Active Power</td></tr>
+<tr><td><code>c:InterQ</code></td><td>Mvar</td><td>Interchange Flow, Reactive Power</td></tr>
+<tr><td><code>c:LossP</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:LossQ</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPld</code></td><td>MW</td><td>Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQld</code></td><td>Mvar</td><td>Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnld</code></td><td>MW</td><td>Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnld</code></td><td>Mvar</td><td>Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPlne</code></td><td>MW</td><td>Line Losses, Active Power</td></tr>
+<tr><td><code>c:LossQlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldlne</code></td><td>MW</td><td>Line Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldlne</code></td><td>MW</td><td>Line Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPtrf</code></td><td>MW</td><td>Transformer Losses, Active Power</td></tr>
+<tr><td><code>c:LossQtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:TotLoadP</code></td><td>MW</td><td>Total Load, Active Power</td></tr>
+<tr><td><code>c:TotLoadQ</code></td><td>Mvar</td><td>Total Load, Reactive Power</td></tr>
+<tr><td><code>c:TotLoadS</code></td><td>MVA</td><td>Total Load, Apparent Power</td></tr>
+<tr><td><code>c:TotLoadcos</code></td><td><span aria-label="no unit">·</span></td><td>Total Load, Power Factor</td></tr>
+<tr><td><code>c:TotP</code></td><td>MW</td><td>Total Demand</td></tr>
+<tr><td><code>c:UnsupP</code></td><td>MW</td><td>Unsupplied Demand</td></tr>
+<tr><td><code>c:SupP</code></td><td>MW</td><td>Supplied Demand</td></tr>
+<tr><td><code>c:isummary</code></td><td><span aria-label="no unit">·</span></td><td>Flag for Summary Grid</td></tr>
+<tr><td><code>c:n_cust</code></td><td><span aria-label="no unit">·</span></td><td>Number of Customers</td></tr>
+<tr><td><code>c:n_cunsup</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsupplied Customers</td></tr>
+<tr><td><code>c:n_unsup</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsupplied Loads</td></tr>
+<tr><td><code>c:ptot</code></td><td>MW</td><td>Total Area Exchange Power</td></tr>
+<tr><td><code>c:ExportP</code></td><td>MW</td><td>Export, Active Power</td></tr>
+<tr><td><code>c:ExportQ</code></td><td>Mvar</td><td>Export, Reactive Power</td></tr>
+<tr><td><code>c:ImportP</code></td><td>MW</td><td>Import, Active Power</td></tr>
+<tr><td><code>c:ImportQ</code></td><td>Mvar</td><td>Import, Reactive Power</td></tr>
+<tr><td><code>c:cst_disp</code></td><td>USD/h</td><td>Total Production Costs</td></tr>
+<tr><td><code>c:NrOvlBranch</code></td><td><span aria-label="no unit">·</span></td><td>Number of overloaded branch components</td></tr>
+<tr><td><code>c:NrTermMin</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals below their minimum voltage limit</td></tr>
+<tr><td><code>c:NrTermMax</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals above their maximum voltage limit</td></tr>
+<tr><td><code>c:Maxloading</code></td><td>%</td><td>Maximum Loading</td></tr>
+<tr><td><code>c:NrGenQMax</code></td><td><span aria-label="no unit">·</span></td><td>Number of generators above their maximum reactive power limit</td></tr>
+<tr><td><code>c:NrGenQMin</code></td><td><span aria-label="no unit">·</span></td><td>Number of generators below their minimum reactive power limit</td></tr>
+<tr><td><code>c:umin</code></td><td>p.u.</td><td>Minimum voltage of all terminals</td></tr>
+<tr><td><code>c:umax</code></td><td>p.u.</td><td>Maximum voltage of all terminals</td></tr>
+<tr><td><code>c:uphtmin</code></td><td>p.u.</td><td>Minimum voltage of all terminals</td></tr>
+<tr><td><code>c:uphtmax</code></td><td>p.u.</td><td>Maximum voltage of all terminals</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-rms">
+  <h2 id="dynamic-rms">ElmNet rms simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (RMS) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Qgen</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:Sgen</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:cosgen</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Pmot</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:Qmot</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:Smot</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosmot</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Qload</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:Sload</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosload</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:Pcomp</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pnet</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:Qnet</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:Snet</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:cosnet</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:Pinter</code></td><td>MW</td><td>Interchange Flow, Active Power</td></tr>
+<tr><td><code>c:Qinter</code></td><td>Mvar</td><td>Interchange Flow, Reactive Power</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:isummary</code></td><td><span aria-label="no unit">·</span></td><td>Flag for Summary Grid</td></tr>
+<tr><td><code>c:Pt</code></td><td>MW</td><td>Turbine Power</td></tr>
+<tr><td><code>c:Pres</code></td><td>MW</td><td>Available-Reserve</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-emt">
+  <h2 id="dynamic-emt">ElmNet emt simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (EMT) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Qgen</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:Sgen</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:cosgen</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Pmot</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:Qmot</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:Smot</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosmot</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Qload</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:Sload</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosload</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:Pcomp</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pnet</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:Qnet</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:Snet</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:cosnet</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:Pinter</code></td><td>MW</td><td>Interchange Flow, Active Power</td></tr>
+<tr><td><code>c:Qinter</code></td><td>Mvar</td><td>Interchange Flow, Reactive Power</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:isummary</code></td><td><span aria-label="no unit">·</span></td><td>Flag for Summary Grid</td></tr>
+<tr><td><code>c:Pt</code></td><td>MW</td><td>Turbine Power</td></tr>
+<tr><td><code>c:Pres</code></td><td>MW</td><td>Available Reserve</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow-dc">
+  <h2 id="load-flow-dc">ElmNet dc load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> (DC) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:n_ele</code></td><td><span aria-label="no unit">·</span></td><td>Number of Elements</td></tr>
+<tr><td><code>c:n_area</code></td><td><span aria-label="no unit">·</span></td><td>Number of Connected Grids</td></tr>
+<tr><td><code>c:n_volt</code></td><td><span aria-label="no unit">·</span></td><td>Number of Voltage Levels</td></tr>
+<tr><td><code>c:n_sta</code></td><td><span aria-label="no unit">·</span></td><td>No. of Substations</td></tr>
+<tr><td><code>c:n_bar</code></td><td><span aria-label="no unit">·</span></td><td>No. of Busbars</td></tr>
+<tr><td><code>c:n_term</code></td><td><span aria-label="no unit">·</span></td><td>No. of Terminals</td></tr>
+<tr><td><code>c:n_lne</code></td><td><span aria-label="no unit">·</span></td><td>No. of Lines</td></tr>
+<tr><td><code>c:n_2wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 2-w Trfs.</td></tr>
+<tr><td><code>c:n_3wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 3-w Trfs.</td></tr>
+<tr><td><code>c:n_4wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 4-w Trfs.</td></tr>
+<tr><td><code>c:n_sym</code></td><td><span aria-label="no unit">·</span></td><td>No. of syn. Machines</td></tr>
+<tr><td><code>c:n_asm</code></td><td><span aria-label="no unit">·</span></td><td>No. of asyn. Machines</td></tr>
+<tr><td><code>c:n_stg</code></td><td><span aria-label="no unit">·</span></td><td>No. of Static Generators</td></tr>
+<tr><td><code>c:n_pvs</code></td><td><span aria-label="no unit">·</span></td><td>No. of PV Systems</td></tr>
+<tr><td><code>c:n_lod</code></td><td><span aria-label="no unit">·</span></td><td>No. of Loads</td></tr>
+<tr><td><code>c:n_svs</code></td><td><span aria-label="no unit">·</span></td><td>No. of SVS</td></tr>
+<tr><td><code>c:n_statcom</code></td><td><span aria-label="no unit">·</span></td><td>No. of STATCOM</td></tr>
+<tr><td><code>c:n_shnt</code></td><td><span aria-label="no unit">·</span></td><td>No. of Shunts/Filters</td></tr>
+<tr><td><code>c:n_other</code></td><td><span aria-label="no unit">·</span></td><td>No. of Other Elements</td></tr>
+<tr><td><code>c:n_iso</code></td><td><span aria-label="no unit">·</span></td><td>No. of Isolated Areas</td></tr>
+<tr><td><code>c:n_isooff</code></td><td><span aria-label="no unit">·</span></td><td>No. of Unsupplied Isolated Areas</td></tr>
+<tr><td><code>c:TotgenP</code></td><td>MW</td><td>Total Generation, Active Power</td></tr>
+<tr><td><code>c:TotconsP</code></td><td>MW</td><td>Total Consumption, Active Power</td></tr>
+<tr><td><code>c:GenP</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:GenPnom</code></td><td>MW</td><td>Generators, Nominal Active Power</td></tr>
+<tr><td><code>c:GenPdiff</code></td><td>MW</td><td>Generators, difference between nominal and actual active power</td></tr>
+<tr><td><code>c:GenPdisp</code></td><td>MW</td><td>Generators, Dispatch Active Power</td></tr>
+<tr><td><code>c:GenPmism</code></td><td>MW</td><td>Generators, difference between actual and dispatched active power</td></tr>
+<tr><td><code>c:GenPspinres</code></td><td>MW</td><td>Generators, difference between maximum and actual active power</td></tr>
+<tr><td><code>c:MotP</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:LoadP</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:LoadPnom</code></td><td>MW</td><td>Loads, Nominal Active Power</td></tr>
+<tr><td><code>c:LoadPdiff</code></td><td>MW</td><td>Loads, difference between nominal and actual active power</td></tr>
+<tr><td><code>c:LoadPdem</code></td><td>MW</td><td>Loads, Active Power Demand</td></tr>
+<tr><td><code>c:LoadPmism</code></td><td>MW</td><td>Loads, difference between actual active power and demand</td></tr>
+<tr><td><code>c:NetP</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:InterP</code></td><td>MW</td><td>Interchange Flow, Active Power</td></tr>
+<tr><td><code>c:TotLoadP</code></td><td>MW</td><td>Total Load, Active Power</td></tr>
+<tr><td><code>c:TotP</code></td><td>MW</td><td>Total Demand</td></tr>
+<tr><td><code>c:UnsupP</code></td><td>MW</td><td>Unsupplied Demand</td></tr>
+<tr><td><code>c:SupP</code></td><td>MW</td><td>Supplied Demand</td></tr>
+<tr><td><code>c:isummary</code></td><td><span aria-label="no unit">·</span></td><td>Flag for Summary Grid</td></tr>
+<tr><td><code>c:n_cust</code></td><td><span aria-label="no unit">·</span></td><td>Number of Customers</td></tr>
+<tr><td><code>c:n_cunsup</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsupplied Customers</td></tr>
+<tr><td><code>c:n_unsup</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsupplied Loads</td></tr>
+<tr><td><code>c:ptot</code></td><td>MW</td><td>Total Area Exchange Power</td></tr>
+<tr><td><code>c:ExportP</code></td><td>MW</td><td>Export, Active Power</td></tr>
+<tr><td><code>c:ImportP</code></td><td>MW</td><td>Import, Active Power</td></tr>
+<tr><td><code>c:cst_disp</code></td><td>USD/h</td><td>Total Production Costs</td></tr>
+<tr><td><code>c:NrOvlBranch</code></td><td><span aria-label="no unit">·</span></td><td>Number of overloaded branch components</td></tr>
+<tr><td><code>c:Maxloading</code></td><td>%</td><td>Maximum Loading</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="modal-analysis">
+  <h2 id="modal-analysis">ElmNet modal analysis results</h2>
+  <p class="dx-note">Read after <code>ComMod</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Qgen</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:Sgen</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:cosgen</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Pmot</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:Qmot</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:Smot</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosmot</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Qload</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:Sload</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosload</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:Pcomp</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pnet</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:Qnet</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:Snet</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:cosnet</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:Pinter</code></td><td>MW</td><td>Interchange Flow, Active Power</td></tr>
+<tr><td><code>c:Qinter</code></td><td>Mvar</td><td>Interchange Flow, Reactive Power</td></tr>
+<tr><td><code>c:Ploss</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:Qloss</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:isummary</code></td><td><span aria-label="no unit">·</span></td><td>Flag for Summary Grid</td></tr>
+<tr><td><code>c:Pt</code></td><td>MW</td><td>Turbine Power</td></tr>
+<tr><td><code>c:Pres</code></td><td>MW</td><td>Available-Reserve</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="opf">
+  <h2 id="opf">ElmNet optimal power flow results</h2>
+  <p class="dx-note">Read after <code>ComOpf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:n_ele</code></td><td><span aria-label="no unit">·</span></td><td>Number of Elements</td></tr>
+<tr><td><code>c:n_area</code></td><td><span aria-label="no unit">·</span></td><td>Number of Connected Grids</td></tr>
+<tr><td><code>c:n_volt</code></td><td><span aria-label="no unit">·</span></td><td>Number of Voltage Levels</td></tr>
+<tr><td><code>c:n_sta</code></td><td><span aria-label="no unit">·</span></td><td>No. of Substations</td></tr>
+<tr><td><code>c:n_bar</code></td><td><span aria-label="no unit">·</span></td><td>No. of Busbars</td></tr>
+<tr><td><code>c:n_term</code></td><td><span aria-label="no unit">·</span></td><td>No. of Terminals</td></tr>
+<tr><td><code>c:n_lne</code></td><td><span aria-label="no unit">·</span></td><td>No. of Lines</td></tr>
+<tr><td><code>c:n_2wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 2-w Trfs.</td></tr>
+<tr><td><code>c:n_3wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 3-w Trfs.</td></tr>
+<tr><td><code>c:n_4wt</code></td><td><span aria-label="no unit">·</span></td><td>No. of 4-w Trfs.</td></tr>
+<tr><td><code>c:n_sym</code></td><td><span aria-label="no unit">·</span></td><td>No. of syn. Machines</td></tr>
+<tr><td><code>c:n_asm</code></td><td><span aria-label="no unit">·</span></td><td>No. of asyn. Machines</td></tr>
+<tr><td><code>c:n_stg</code></td><td><span aria-label="no unit">·</span></td><td>No. of Static Generators</td></tr>
+<tr><td><code>c:n_pvs</code></td><td><span aria-label="no unit">·</span></td><td>No. of PV Systems</td></tr>
+<tr><td><code>c:n_lod</code></td><td><span aria-label="no unit">·</span></td><td>No. of Loads</td></tr>
+<tr><td><code>c:n_svs</code></td><td><span aria-label="no unit">·</span></td><td>No. of SVS</td></tr>
+<tr><td><code>c:n_statcom</code></td><td><span aria-label="no unit">·</span></td><td>No. of STATCOM</td></tr>
+<tr><td><code>c:n_shnt</code></td><td><span aria-label="no unit">·</span></td><td>No. of Shunts/Filters</td></tr>
+<tr><td><code>c:n_other</code></td><td><span aria-label="no unit">·</span></td><td>No. of Other Elements</td></tr>
+<tr><td><code>c:n_iso</code></td><td><span aria-label="no unit">·</span></td><td>No. of Isolated Areas</td></tr>
+<tr><td><code>c:n_isooff</code></td><td><span aria-label="no unit">·</span></td><td>No. of Unsupplied Isolated Areas</td></tr>
+<tr><td><code>c:TotgenP</code></td><td>MW</td><td>Total Generation, Active Power</td></tr>
+<tr><td><code>c:TotgenQ</code></td><td>Mvar</td><td>Total Generation, Reactive Power</td></tr>
+<tr><td><code>c:TotconsP</code></td><td>MW</td><td>Total Consumption, Active Power</td></tr>
+<tr><td><code>c:TotconsQ</code></td><td>Mvar</td><td>Total Consumption, Reactive Power</td></tr>
+<tr><td><code>c:GenP</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:GenQ</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:GenS</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:Gencos</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:GenPnom</code></td><td>MW</td><td>Generators, Nominal Active Power</td></tr>
+<tr><td><code>c:GenQnom</code></td><td>Mvar</td><td>Generators, Nominal Reactive Power</td></tr>
+<tr><td><code>c:GenSnom</code></td><td>MVA</td><td>Generators, Nominal Apparent Power</td></tr>
+<tr><td><code>c:GenPdiff</code></td><td>MW</td><td>Generators, difference between nominal and actual active power</td></tr>
+<tr><td><code>c:GenQdiff</code></td><td>Mvar</td><td>Generators, difference between nominal and actual reactive power</td></tr>
+<tr><td><code>c:Gencosnom</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Nominal Power Factor</td></tr>
+<tr><td><code>c:GenPdisp</code></td><td>MW</td><td>Generators, Dispatch Active Power</td></tr>
+<tr><td><code>c:GenPmism</code></td><td>MW</td><td>Generators, difference between actual and dispatched active power</td></tr>
+<tr><td><code>c:GenPspinres</code></td><td>MW</td><td>Generators, difference between maximum and actual active power</td></tr>
+<tr><td><code>c:GenQspinres</code></td><td>Mvar</td><td>Generators, difference between maximum and actual reactive power</td></tr>
+<tr><td><code>c:MotP</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:MotQ</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:MotS</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:Motcos</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:LoadP</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:LoadQ</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:LoadS</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:Loadcos</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:LoadPnom</code></td><td>MW</td><td>Loads, Nominal Active Power</td></tr>
+<tr><td><code>c:LoadQnom</code></td><td>Mvar</td><td>Loads, Nominal Reactive Power</td></tr>
+<tr><td><code>c:LoadSnom</code></td><td>MVA</td><td>Loads, Nominal Apparent Power</td></tr>
+<tr><td><code>c:Loadcosnom</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Nominal Power Factor</td></tr>
+<tr><td><code>c:LoadPdiff</code></td><td>MW</td><td>Loads, difference between nominal and actual active power</td></tr>
+<tr><td><code>c:LoadQdiff</code></td><td>Mvar</td><td>Loads, difference between nominal and actual reactive power</td></tr>
+<tr><td><code>c:LoadPdem</code></td><td>MW</td><td>Loads, Active Power Demand</td></tr>
+<tr><td><code>c:LoadPmism</code></td><td>MW</td><td>Loads, difference between actual active power and demand</td></tr>
+<tr><td><code>c:CompP</code></td><td>MW</td><td>Compensation (Losses)</td></tr>
+<tr><td><code>c:CompQ</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:ComprQ</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:NetP</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:NetQ</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:NetS</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:Netcos</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:InterP</code></td><td>MW</td><td>Interchange Flow, Active Power</td></tr>
+<tr><td><code>c:InterQ</code></td><td>Mvar</td><td>Interchange Flow, Reactive Power</td></tr>
+<tr><td><code>c:LossP</code></td><td>MW</td><td>Losses, Active Power</td></tr>
+<tr><td><code>c:LossQ</code></td><td>Mvar</td><td>Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPld</code></td><td>MW</td><td>Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQld</code></td><td>Mvar</td><td>Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnld</code></td><td>MW</td><td>Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnld</code></td><td>Mvar</td><td>Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPlne</code></td><td>MW</td><td>Line Losses, Active Power</td></tr>
+<tr><td><code>c:LossQlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldlne</code></td><td>MW</td><td>Line Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldlne</code></td><td>MW</td><td>Line Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldlne</code></td><td>Mvar</td><td>Line Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:LossPtrf</code></td><td>MW</td><td>Transformer Losses, Active Power</td></tr>
+<tr><td><code>c:LossQtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power</td></tr>
+<tr><td><code>c:LossPldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (load)</td></tr>
+<tr><td><code>c:LossQldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (load)</td></tr>
+<tr><td><code>c:LossPnldtrf</code></td><td>MW</td><td>Transformer Losses, Active Power (no load)</td></tr>
+<tr><td><code>c:LossQnldtrf</code></td><td>Mvar</td><td>Transformer Losses, Reactive Power (no load)</td></tr>
+<tr><td><code>c:TotLoadP</code></td><td>MW</td><td>Total Load, Active Power</td></tr>
+<tr><td><code>c:TotLoadQ</code></td><td>Mvar</td><td>Total Load, Reactive Power</td></tr>
+<tr><td><code>c:TotLoadS</code></td><td>MVA</td><td>Total Load, Apparent Power</td></tr>
+<tr><td><code>c:TotLoadcos</code></td><td><span aria-label="no unit">·</span></td><td>Total Load, Power Factor</td></tr>
+<tr><td><code>c:TotP</code></td><td>MW</td><td>Total Demand</td></tr>
+<tr><td><code>c:UnsupP</code></td><td>MW</td><td>Unsupplied Demand</td></tr>
+<tr><td><code>c:SupP</code></td><td>MW</td><td>Supplied Demand</td></tr>
+<tr><td><code>c:isummary</code></td><td><span aria-label="no unit">·</span></td><td>Flag for Summary Grid</td></tr>
+<tr><td><code>c:n_cust</code></td><td><span aria-label="no unit">·</span></td><td>Number of Customers</td></tr>
+<tr><td><code>c:n_cunsup</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsupplied Customers</td></tr>
+<tr><td><code>c:n_unsup</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsupplied Loads</td></tr>
+<tr><td><code>c:ptot</code></td><td>MW</td><td>Total Area Exchange Power</td></tr>
+<tr><td><code>c:ExportP</code></td><td>MW</td><td>Export, Active Power</td></tr>
+<tr><td><code>c:ExportQ</code></td><td>Mvar</td><td>Export, Reactive Power</td></tr>
+<tr><td><code>c:ImportP</code></td><td>MW</td><td>Import, Active Power</td></tr>
+<tr><td><code>c:ImportQ</code></td><td>Mvar</td><td>Import, Reactive Power</td></tr>
+<tr><td><code>c:cst_disp</code></td><td>USD/h</td><td>Total Production Costs</td></tr>
+<tr><td><code>c:NrOvlBranch</code></td><td><span aria-label="no unit">·</span></td><td>Number of overloaded branch components</td></tr>
+<tr><td><code>c:NrTermMin</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals below their minimum voltage limit</td></tr>
+<tr><td><code>c:NrTermMax</code></td><td><span aria-label="no unit">·</span></td><td>Number of terminals above their maximum voltage limit</td></tr>
+<tr><td><code>c:Maxloading</code></td><td>%</td><td>Maximum Loading</td></tr>
+<tr><td><code>c:NrGenQMax</code></td><td><span aria-label="no unit">·</span></td><td>Number of generators above their maximum reactive power limit</td></tr>
+<tr><td><code>c:NrGenQMin</code></td><td><span aria-label="no unit">·</span></td><td>Number of generators below their minimum reactive power limit</td></tr>
+<tr><td><code>c:umin</code></td><td>p.u.</td><td>Minimum voltage of all terminals</td></tr>
+<tr><td><code>c:umax</code></td><td>p.u.</td><td>Maximum voltage of all terminals</td></tr>
+<tr><td><code>c:QtargetDelta</code></td><td>Mvar</td><td>Total deviation from Q target values</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmNet basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>b:n_ele</code></td><td><span aria-label="no unit">·</span></td><td>Number of Elements</td></tr>
+<tr><td><code>b:n_area</code></td><td><span aria-label="no unit">·</span></td><td>Number of Connected Grids</td></tr>
+<tr><td><code>b:frnom</code></td><td><span aria-label="no unit">·</span></td><td>Nominal Frequency</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmFeeder/"><code>ElmFeeder</code> Feeder</a> · <a href="../ElmSubstat/"><code>ElmSubstat</code> Substation</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

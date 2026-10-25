@@ -45,6 +45,10 @@ export const numInput = (id, label, fallback, unit, tip) => {
 
 // "Bus 5", "all Bus* (ElmTerm)", "first G* (ElmSym)" for summaries. No name: "the element"
 // (it may be wired in; the Problems list says when it is missing).
+// True when the block's input `id` takes a wire: the card and the step comment then name the wire,
+// since the run uses it and not the typed setting.
+const wiredIn = (wf, node, id) => !!(wf && node && Array.isArray(wf.edges) && wf.edges.some(e => e && e.to === node.id && e.in === id));
+
 export function elemText(v, what) {
   const e = v && typeof v === 'object' ? v : {};
   const name = String(e.name || '').trim();
@@ -606,7 +610,10 @@ defineBlock({
     { key: 'attr2', label: 'Also this attribute', kind: 'attr', default: '', placeholder: 'e.g. qlini (optional)', tip: 'A second attribute scaled by the same factor, for example qlini to keep the power factor of a load.' },
     { key: 'factor', label: 'Factor', kind: 'number', default: 1.1, step: 0.05 },
   ],
-  summary(s) { return `${elemText(s.el)}: ${s.attr}${s.attr2 ? ', ' + s.attr2 : ''} x ${s.factor}`; },
+  summary(s, node, wf) {
+    const who = wiredIn(wf, node, 'obj') ? 'Wired element' : elemText(s.el);
+    return `${who}: ${s.attr}${s.attr2 ? ', ' + s.attr2 : ''} x ${wiredIn(wf, node, 'factor') ? 'the wired factor' : s.factor}`;
+  },
   helpers: ['scale_attr'],
   effects: { writes: ['model'], reads: [] },
   emit(cx) {
@@ -1095,7 +1102,10 @@ defineBlock({
     { key: 'q', label: 'Reactive power', kind: 'number', default: 0, unit: 'Mvar' },
     { key: 'rating', label: 'Rating', kind: 'number', default: null, unit: 'MVA', more: true, placeholder: 'Automatic', tip: 'Empty: the larger of 100 MVA and 1.5 times the apparent power.' },
   ],
-  summary(s) { return `At ${elemText(s.bus)}: ${s.p} MW, ${s.q} Mvar`; },
+  summary(s, node, wf) {
+    const at = wiredIn(wf, node, 'bus') ? 'the wired busbar' : elemText(s.bus);
+    return `At ${at}: ${wiredIn(wf, node, 'p') ? 'wired' : s.p} MW, ${wiredIn(wf, node, 'q') ? 'wired' : s.q} Mvar`;
+  },
   helpers: ['add_test_generator'],
   effects: { writes: ['model'], reads: [] },
   emit(cx) {

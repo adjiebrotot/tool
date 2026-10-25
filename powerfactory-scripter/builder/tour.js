@@ -144,6 +144,9 @@
   window.__TOUR = {
     seenKey: 'pf-builder-tour-v1-seen',
     launchLabel: '🧭 Take a tour',
+    // Opened from a link to a Quick start (#qs=, js/ui/templates.js): show that example, and
+    // leave the tour for the next visit (its demo would load over the example).
+    holdFirstVisit: function () { return !!window.__PFB_QS || /(?:^#|&)qs=/.test(location.hash); },
     saveState: function () {
       marker = { taken: false, loaded: false, snap: null };
       demoP = null; demoReady = false;

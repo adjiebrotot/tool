@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmRes attributes: PowerFactory Results | Adjie Brotools</title>
+<meta name="description" content="All ElmRes attributes in PowerFactory (Results): 59 input parameters and 9 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRes/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmRes attributes: PowerFactory Results parameters and result variables">
+<meta property="og:description" content="All ElmRes attributes in PowerFactory (Results): 59 input parameters and 9 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRes/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmRes attributes: PowerFactory Results parameters and result variables">
+<meta name="twitter:description" content="All ElmRes attributes in PowerFactory (Results): 59 input parameters and 9 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmRes attributes (PowerFactory Results)",
+  "description": "All ElmRes attributes in PowerFactory (Results): 59 input parameters and 9 result variables, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRes/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmRes (Results)",
+    "description": "A results object: it stores the variables recorded during a calculation or simulation (chosen with IntMon objects), one column per variable and one row per time step or case."
+  },
+  "keywords": "ElmRes attributes, ElmRes parameters, ElmRes result variables, PowerFactory Results attributes, ElmRes GetAttribute",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmRes",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRes/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmRes</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmRes attributes<span class="dx-h1-sub">PowerFactory Results</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Results (<code>ElmRes</code>): 59 input parameters and 9 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmRes is</h2>
+  <p>A results object: it stores the variables recorded during a calculation or simulation (chosen with IntMon objects), one column per variable and one row per time step or case.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmRes</code>, element class</dd><dt>PowerFactory name</dt><dd>Results</dd><dt>Attributes</dt><dd>59 input parameters and 9 result variables, in 3 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmRes in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+case = app.<span class="py-f">GetActiveStudyCase</span>()                <span class="py-c"># a study case with a simulation set up</span>
+inc, sim = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComInc&quot;</span>), app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComSim&quot;</span>)
+bus = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)[<span class="py-n">0</span>]
+
+res = case.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;ElmRes&quot;</span>, <span class="py-s">&quot;My results&quot;</span>)  <span class="py-c"># a results object of your own</span>
+res.<span class="py-f">AddVariable</span>(bus, <span class="py-s">&quot;m:fehz&quot;</span>)                 <span class="py-c"># what to record: the busbar frequency</span>
+inc.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;p_resvar&quot;</span>, res)              <span class="py-c"># the simulation writes to it</span>
+inc.<span class="py-f">Execute</span>()
+sim.<span class="py-f">Execute</span>()
+
+res.<span class="py-f">Load</span>()
+col = res.<span class="py-f">FindColumn</span>(bus, <span class="py-s">&quot;m:fehz&quot;</span>)            <span class="py-c"># -1 when it was not recorded</span>
+rows = <span class="py-f">range</span>(res.<span class="py-f">GetNumberOfRows</span>())
+t = [res.<span class="py-f">GetValue</span>(row, -<span class="py-n">1</span>)[<span class="py-n">1</span>] <span class="py-k">for</span> row <span class="py-k">in</span> rows] <span class="py-c"># column -1 is the time, s</span>
+f = [res.<span class="py-f">GetValue</span>(row, col)[<span class="py-n">1</span>] <span class="py-k">for</span> row <span class="py-k">in</span> rows]
+res.<span class="py-f">Release</span>()</code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmRes attributes"><li><a href="#params">Input parameters<span class="dx-n">59</span></a></li><li><a href="#dynamic-rms">RMS simulation results<span class="dx-n">3</span></a></li><li><a href="#dynamic-emt">EMT simulation results<span class="dx-n">3</span></a></li><li><a href="#modal-analysis">Modal analysis results<span class="dx-n">3</span></a></li><li><a href="#basic">Basic data<span class="dx-n">232</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmRes input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>FileType</code></td><td><span aria-label="no unit">·</span></td><td>File type</td></tr>
+<tr><td><code>calTp</code></td><td><span aria-label="no unit">·</span></td><td>Default for</td></tr>
+<tr><td><code>calTpSub</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>calTpTop</code></td><td><span aria-label="no unit">·</span></td><td>Usage</td></tr>
+<tr><td><code>cab_meth</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>host_meth</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>df_meth</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>powpark_meth</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>powpark_sub</code></td><td><span aria-label="no unit">·</span></td><td>Sub-result</td></tr>
+<tr><td><code>dbCalculationRunId</code></td><td><span aria-label="no unit">·</span></td><td>Calculation Run</td></tr>
+<tr><td><code>trg_pre</code></td><td>s</td><td>Pre-</td></tr>
+<tr><td><code>trg_post</code></td><td>s</td><td>Post-</td></tr>
+<tr><td><code>trg_pmax</code></td><td>s</td><td>Max.</td></tr>
+<tr><td><code>monitorStep</code></td><td>s</td><td>Sample period</td></tr>
+<tr><td><code>cnttime</code></td><td><span aria-label="no unit">·</span></td><td>Study time</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>cases</code></td><td><span aria-label="no unit">·</span></td><td>Cases</td></tr>
+<tr><td><code>header</code></td><td><span aria-label="no unit">·</span></td><td>Headlines</td></tr>
+<tr><td><code>dbOdbcSettings</code></td><td><span aria-label="no unit">·</span></td><td>Database settings<small>Object: SetDatabase</small></td></tr>
+<tr><td><code>cFilename</code></td><td><span aria-label="no unit">·</span></td><td>File name</td></tr>
+<tr><td><code>cnumcont</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies</td></tr>
+<tr><td><code>ctimeph</code></td><td><span aria-label="no unit">·</span></td><td>Number of time phases</td></tr>
+<tr><td><code>ctricnt</code></td><td><span aria-label="no unit">·</span></td><td>Points of time</td></tr>
+<tr><td><code>cnumrow</code></td><td><span aria-label="no unit">·</span></td><td>Number of rows</td></tr>
+<tr><td><code>ctotrow</code></td><td><span aria-label="no unit">·</span></td><td>Total number of rows</td></tr>
+<tr><td><code>cnumHmOd</code></td><td><span aria-label="no unit">·</span></td><td>Number of Harmonic Orders</td></tr>
+<tr><td><code>cnumCase</code></td><td><span aria-label="no unit">·</span></td><td>Number of cases</td></tr>
+<tr><td><code>cnumFrq</code></td><td><span aria-label="no unit">·</span></td><td>Number of frequencies</td></tr>
+<tr><td><code>cnumEigen</code></td><td><span aria-label="no unit">·</span></td><td>Number of eigenvalues</td></tr>
+<tr><td><code>cnumFFT</code></td><td><span aria-label="no unit">·</span></td><td>Number of harmonic orders</td></tr>
+<tr><td><code>fileSize</code></td><td><span aria-label="no unit">·</span></td><td>File size</td></tr>
+<tr><td><code>cnumfiles</code></td><td><span aria-label="no unit">·</span></td><td>Number of result files</td></tr>
+<tr><td><code>csteps</code></td><td><span aria-label="no unit">·</span></td><td>Average step size</td></tr>
+<tr><td><code>cFFTstep</code></td><td><span aria-label="no unit">·</span></td><td>Step size</td></tr>
+<tr><td><code>avgStep</code></td><td><span aria-label="no unit">·</span></td><td>Average step size</td></tr>
+<tr><td><code>unit</code></td><td><span aria-label="no unit">·</span></td><td>Unit</td></tr>
+<tr><td><code>cLdfMethod</code></td><td><span aria-label="no unit">·</span></td><td>Load Flow method</td></tr>
+<tr><td><code>cPosStep</code></td><td><span aria-label="no unit">·</span></td><td>Average position step size</td></tr>
+<tr><td><code>cvars</code></td><td><span aria-label="no unit">·</span></td><td>Number of variables</td></tr>
+<tr><td><code>cFlowNum</code></td><td><span aria-label="no unit">·</span></td><td>Number of flowgates</td></tr>
+<tr><td><code>cOpScenNum</code></td><td><span aria-label="no unit">·</span></td><td>Number of operation scenarios</td></tr>
+<tr><td><code>cAllRegNum</code></td><td><span aria-label="no unit">·</span></td><td>Number of transactions</td></tr>
+<tr><td><code>calTpSwp</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>calTpShc</code></td><td><span aria-label="no unit">·</span></td><td>Fault Type</td></tr>
+<tr><td><code>calTpSto</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>calTpStoCom</code></td><td><span aria-label="no unit">·</span></td><td>Command</td></tr>
+<tr><td><code>calTpStoLdfMethod</code></td><td><span aria-label="no unit">·</span></td><td>Load Flow method</td></tr>
+<tr><td><code>calTpHrmMethod</code></td><td><span aria-label="no unit">·</span></td><td>Load Flow method</td></tr>
+<tr><td><code>calTpFlowDecomp</code></td><td><span aria-label="no unit">·</span></td><td>Method</td></tr>
+<tr><td><code>calTpStoOpfMethod</code></td><td><span aria-label="no unit">·</span></td><td>Optimisation method</td></tr>
+<tr><td><code>calTpStoSimMethod</code></td><td><span aria-label="no unit">·</span></td><td>Simulation type</td></tr>
+<tr><td><code>cContingency</code></td><td><span aria-label="no unit">·</span></td><td>Contingency</td></tr>
+<tr><td><code>cFnom</code></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>cOrigCurve</code></td><td><span aria-label="no unit">·</span></td><td>Analysed curve</td></tr>
+<tr><td><code>cStudyBus</code></td><td><span aria-label="no unit">·</span></td><td>Study Bus</td></tr>
+<tr><td><code>cActivePower</code></td><td><span aria-label="no unit">·</span></td><td>Active Power</td></tr>
+<tr><td><code>calTpCoord</code></td><td><span aria-label="no unit">·</span></td><td>Usage</td></tr>
+<tr><td><code>monitorFreq</code></td><td>Hz</td><td>Frequency</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-rms">
+  <h2 id="dynamic-rms">ElmRes rms simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (RMS) with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:ready</code></td><td><span aria-label="no unit">·</span></td><td>Ready-Signal</td></tr>
+<tr><td><code>c:monitorFreq</code></td><td>Hz</td><td>Time between recordings</td></tr>
+<tr><td><code>s:writeTime</code></td><td><span aria-label="no unit">·</span></td><td>Write Time</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-emt">
+  <h2 id="dynamic-emt">ElmRes emt simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (EMT) with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:ready</code></td><td><span aria-label="no unit">·</span></td><td>Ready-Signal</td></tr>
+<tr><td><code>c:monitorFreq</code></td><td>Hz</td><td>Time between recordings</td></tr>
+<tr><td><code>s:writeTime</code></td><td><span aria-label="no unit">·</span></td><td>Write Time</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="modal-analysis">
+  <h2 id="modal-analysis">ElmRes modal analysis results</h2>
+  <p class="dx-note">Read after <code>ComMod</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter, <code>s:</code> signal (state or model variable).</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:ready</code></td><td><span aria-label="no unit">·</span></td><td>Ready-Signal</td></tr>
+<tr><td><code>c:monitorFreq</code></td><td>Hz</td><td>Time between recordings</td></tr>
+<tr><td><code>s:writeTime</code></td><td><span aria-label="no unit">·</span></td><td>Write Time</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmRes basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>b:i_obj</code></td><td><span aria-label="no unit">·</span></td><td>Object index</td></tr>
+<tr><td><code>b:violation</code></td><td><span aria-label="no unit">·</span></td><td>Restoration with violations</td></tr>
+<tr><td><code>b:nrActions</code></td><td><span aria-label="no unit">·</span></td><td>Number of switching actions</td></tr>
+<tr><td><code>b:interruptedPower</code></td><td>MW</td><td>Interrupted power</td></tr>
+<tr><td><code>b:restoredPower</code></td><td>MW</td><td>Restored power</td></tr>
+<tr><td><code>b:interruptedCust</code></td><td><span aria-label="no unit">·</span></td><td>Interrupted customers</td></tr>
+<tr><td><code>b:restoredCust</code></td><td><span aria-label="no unit">·</span></td><td>Restored customers</td></tr>
+<tr><td><code>b:eigno</code></td><td><span aria-label="no unit">·</span></td><td>Mode index</td></tr>
+<tr><td><code>b:eigvalr</code></td><td>1/s</td><td>Mode, Real Part</td></tr>
+<tr><td><code>b:eigvali</code></td><td>rad/s</td><td>Mode, Imaginary Part</td></tr>
+<tr><td><code>b:sigma</code></td><td>1/s</td><td>Damping</td></tr>
+<tr><td><code>b:Tp</code></td><td>s</td><td>Period</td></tr>
+<tr><td><code>b:ratio</code></td><td><span aria-label="no unit">·</span></td><td>Ratio</td></tr>
+<tr><td><code>b:frequ</code></td><td>Hz</td><td>Frequency</td></tr>
+<tr><td><code>b:index</code></td><td><span aria-label="no unit">·</span></td><td>Index</td></tr>
+<tr><td><code>b:feeder</code></td><td><span aria-label="no unit">·</span></td><td>Total Hosting Feeder(s)</td></tr>
+<tr><td><code>b:node</code></td><td><span aria-label="no unit">·</span></td><td>Total Hosting Node(s)</td></tr>
+<tr><td><code>b:iconn</code></td><td><span aria-label="no unit">·</span></td><td>Connection type</td></tr>
+<tr><td><code>b:pmax</code></td><td>MW</td><td>Max. hosting power</td></tr>
+<tr><td><code>b:pmin</code></td><td>MW</td><td>Min. hosting power</td></tr>
+<tr><td><code>b:pavg</code></td><td>MW</td><td>Average hosting power</td></tr>
+<tr><td><code>b:eval</code></td><td><span aria-label="no unit">·</span></td><td>Evaluation</td></tr>
+<tr><td><code>b:iter</code></td><td><span aria-label="no unit">·</span></td><td>Iteration</td></tr>
+<tr><td><code>b:failedCalc</code></td><td><span aria-label="no unit">·</span></td><td>Failed calculation</td></tr>
+<tr><td><code>b:objectiveValue</code></td><td><span aria-label="no unit">·</span></td><td>Objective function value</td></tr>
+<tr><td><code>b:iterBestObjective</code></td><td><span aria-label="no unit">·</span></td><td> Iteration with best objective value</td></tr>
+<tr><td><code>b:evalBestObjective</code></td><td><span aria-label="no unit">·</span></td><td> Evaluation with best objective value</td></tr>
+<tr><td><code>b:bestObjective</code></td><td><span aria-label="no unit">·</span></td><td>Best objective function value</td></tr>
+<tr><td><code>b:tnow</code></td><td>s</td><td>Time</td></tr>
+<tr><td><code>b:treal</code></td><td><span aria-label="no unit">·</span></td><td>Realtime</td></tr>
+<tr><td><code>b:isOptimalLoc</code></td><td><span aria-label="no unit">·</span></td><td>Detected as optimal location for a recloser</td></tr>
+<tr><td><code>b:contrBeforeEns</code></td><td>MWh/a</td><td>Contribution to ENS without reclosing functionality</td></tr>
+<tr><td><code>b:contrAfterEns</code></td><td>MWh/a</td><td>Contributions to ENS with reclosing functionality</td></tr>
+<tr><td><code>b:contrBeforeEic</code></td><td>USD/a</td><td>Contribution to EIC without reclosing functionality</td></tr>
+<tr><td><code>b:contrAfterEic</code></td><td>USD/a</td><td>Contributions to EIC with reclosing functionality</td></tr>
+<tr><td><code>b:contrBeforeSaidi</code></td><td>h/Ca</td><td>Contribution to SAIDI without reclosing functionality</td></tr>
+<tr><td><code>b:contrAfterSaidi</code></td><td>h/Ca</td><td>Contributions to SAIDI with reclosing functionality</td></tr>
+<tr><td><code>b:contrBeforeMaifi</code></td><td>1/Ca</td><td>Contribution to MAIFI without reclosing functionality</td></tr>
+<tr><td><code>b:contrAfterMaifi</code></td><td>1/Ca</td><td>Contributions to MAIFI with reclosing functionality</td></tr>
+<tr><td><code>b:calcmethod</code></td><td><span aria-label="no unit">·</span></td><td>Calculation method</td></tr>
+<tr><td><code>b:calctype</code></td><td><span aria-label="no unit">·</span></td><td>Calculation type</td></tr>
+<tr><td><code>b:calcres</code></td><td><span aria-label="no unit">·</span></td><td>Calculation result</td></tr>
+<tr><td><code>b:optemp</code></td><td>degC</td><td>Operating temperature</td></tr>
+<tr><td><code>b:wspeed</code></td><td>m/s</td><td>Wind speed</td></tr>
+<tr><td><code>b:prob</code></td><td>%</td><td>Probability</td></tr>
+<tr><td><code>b:cprob</code></td><td>%</td><td>Cumulative probability</td></tr>
+<tr><td><code>b:currency</code></td><td><span aria-label="no unit">·</span></td><td>Currency</td></tr>
+<tr><td><code>b:objid</code></td><td><span aria-label="no unit">·</span></td><td>Object ID</td></tr>
+<tr><td><code>b:olobjid</code></td><td><span aria-label="no unit">·</span></td><td>Overloaded object ID</td></tr>
+<tr><td><code>b:pnom</code></td><td>MW</td><td>Rated power</td></tr>
+<tr><td><code>b:pinst</code></td><td>MW</td><td>Installed power</td></tr>
+<tr><td><code>b:scaleA</code></td><td>m/s</td><td>Scale factor, A</td></tr>
+<tr><td><code>b:shapeK</code></td><td><span aria-label="no unit">·</span></td><td>Shape factor, k</td></tr>
+<tr><td><code>b:vavg</code></td><td>m/s</td><td>Average wind speed</td></tr>
+<tr><td><code>b:qmc</code></td><td><span aria-label="no unit">·</span></td><td>Quasi-Monte-Carlo</td></tr>
+<tr><td><code>b:ftariff</code></td><td>USD/kWh</td><td>Feed-in tariff</td></tr>
+<tr><td><code>b:ctariff</code></td><td>USD/kWh</td><td>Consumer tariff</td></tr>
+<tr><td><code>b:Hour</code></td><td>h</td><td>Year hour</td></tr>
+<tr><td><code>b:ucttime</code></td><td>s</td><td>Time</td></tr>
+<tr><td><code>b:cnfLvlUp</code></td><td>%</td><td>Confidence interval (upper bound)</td></tr>
+<tr><td><code>b:cnfLvlLo</code></td><td>%</td><td>Confidence interval (lower bound)</td></tr>
+<tr><td><code>b:sample</code></td><td><span aria-label="no unit">·</span></td><td>Sample</td></tr>
+<tr><td><code>b:number</code></td><td><span aria-label="no unit">·</span></td><td>Number</td></tr>
+<tr><td><code>b:inoconv</code></td><td><span aria-label="no unit">·</span></td><td>Load flow did not converge</td></tr>
+<tr><td><code>b:iShcFail</code></td><td><span aria-label="no unit">·</span></td><td>Short-Circuit Calculation failed</td></tr>
+<tr><td><code>b:iShcAtLine</code></td><td><span aria-label="no unit">·</span></td><td>Short-Circuit at Line</td></tr>
+<tr><td><code>b:pos</code></td><td>km</td><td>Distance</td></tr>
+<tr><td><code>b:posX</code></td><td>Ohm</td><td>Distance</td></tr>
+<tr><td><code>b:posZ</code></td><td>Ohm</td><td>Distance</td></tr>
+<tr><td><code>b:objIndex</code></td><td><span aria-label="no unit">·</span></td><td>Object index</td></tr>
+<tr><td><code>b:sideIndex</code></td><td><span aria-label="no unit">·</span></td><td>Side</td></tr>
+<tr><td><code>b:relPos</code></td><td>km</td><td>Position on element</td></tr>
+<tr><td><code>b:numRngDrawsInit</code></td><td><span aria-label="no unit">·</span></td><td>Number of initial random number generator draws</td></tr>
+<tr><td><code>b:method</code></td><td><span aria-label="no unit">·</span></td><td>Calculation method of Probabilistic Analysis</td></tr>
+<tr><td><code>b:calcAnalysed</code></td><td><span aria-label="no unit">·</span></td><td>Analysed command type</td></tr>
+<tr><td><code>b:comMethod</code></td><td><span aria-label="no unit">·</span></td><td>Calculation method of analysed command</td></tr>
+<tr><td><code>b:numSamplesExec</code></td><td><span aria-label="no unit">·</span></td><td>Number of iterations</td></tr>
+<tr><td><code>b:failures</code></td><td><span aria-label="no unit">·</span></td><td>Number of failed iterations</td></tr>
+<tr><td><code>b:numRngDraws</code></td><td><span aria-label="no unit">·</span></td><td>Number of calls of the random number generator</td></tr>
+<tr><td><code>b:seed</code></td><td><span aria-label="no unit">·</span></td><td>Used seed for random number generation</td></tr>
+<tr><td><code>b:considerCorrelations</code></td><td><span aria-label="no unit">·</span></td><td>Distribution correlations considered</td></tr>
+<tr><td><code>b:loadingLimit</code></td><td><span aria-label="no unit">·</span></td><td>Loading recording limit</td></tr>
+<tr><td><code>b:minVLimit</code></td><td><span aria-label="no unit">·</span></td><td>Minimum voltage recording limit</td></tr>
+<tr><td><code>b:maxVLimit</code></td><td><span aria-label="no unit">·</span></td><td>Maximum voltage recording limit</td></tr>
+<tr><td><code>b:maxDropLimit</code></td><td><span aria-label="no unit">·</span></td><td>Maximum feeder voltage drop recording limit</td></tr>
+<tr><td><code>b:maxRiseLimit</code></td><td><span aria-label="no unit">·</span></td><td>Minimum feeder voltage rise recording limit</td></tr>
+<tr><td><code>b:complyConstraints</code></td><td><span aria-label="no unit">·</span></td><td>Partial restoration to comply with constraints</td></tr>
+<tr><td><code>b:calcFail</code></td><td><span aria-label="no unit">·</span></td><td>Calculation failed.</td></tr>
+<tr><td><code>b:studyBBvoltage</code></td><td>p.u.</td><td>Voltage at study Busbar</td></tr>
+<tr><td><code>b:totDemand</code></td><td>MW</td><td>Active Power of scaled loads</td></tr>
+<tr><td><code>b:from</code></td><td><span aria-label="no unit">·</span></td><td>Exchange from</td></tr>
+<tr><td><code>b:to</code></td><td><span aria-label="no unit">·</span></td><td>Exchange to</td></tr>
+<tr><td><code>b:scen</code></td><td><span aria-label="no unit">·</span></td><td>Active Operation Scenario</td></tr>
+<tr><td><code>b:calcmod</code></td><td><span aria-label="no unit">·</span></td><td>Calculation mode</td></tr>
+<tr><td><code>b:outid</code></td><td><span aria-label="no unit">·</span></td><td>Contingency Case Index</td></tr>
+<tr><td><code>b:errbs</code></td><td><span aria-label="no unit">·</span></td><td>Error for bus equations</td></tr>
+<tr><td><code>b:errfi</code></td><td><span aria-label="no unit">·</span></td><td>Error for network model equations</td></tr>
+<tr><td><code>b:errgrd</code></td><td><span aria-label="no unit">·</span></td><td>Error for dynamic model equations</td></tr>
+<tr><td><code>b:errdxs</code></td><td><span aria-label="no unit">·</span></td><td>Error for A-stable dynamic model equations</td></tr>
+<tr><td><code>b:errdxi</code></td><td><span aria-label="no unit">·</span></td><td>Error for network state equations</td></tr>
+<tr><td><code>b:itrgr</code></td><td><span aria-label="no unit">·</span></td><td>Number of inner-loop iterations for network model equations</td></tr>
+<tr><td><code>b:ipjac</code></td><td><span aria-label="no unit">·</span></td><td>Number of Jacobian matrix updates for network model equations</td></tr>
+<tr><td><code>b:icjac</code></td><td><span aria-label="no unit">·</span></td><td>Number of network Jacobian matrix factorisations</td></tr>
+<tr><td><code>b:icadm</code></td><td><span aria-label="no unit">·</span></td><td>Number of admittance computations</td></tr>
+<tr><td><code>b:numNonZerosLU</code></td><td><span aria-label="no unit">·</span></td><td>Number of entries in factorisation</td></tr>
+<tr><td><code>b:ibvec</code></td><td><span aria-label="no unit">·</span></td><td>Number of evaluations for network model equation mismatches</td></tr>
+<tr><td><code>b:ibchk</code></td><td><span aria-label="no unit">·</span></td><td>Number of convergence checks for network model equations</td></tr>
+<tr><td><code>b:itreq</code></td><td><span aria-label="no unit">·</span></td><td>Number of whole system iterations</td></tr>
+<tr><td><code>b:itevt</code></td><td><span aria-label="no unit">·</span></td><td>Number of repeat event loops</td></tr>
+<tr><td><code>b:itevtmin</code></td><td><span aria-label="no unit">·</span></td><td>Number of reschedule event loops</td></tr>
+<tr><td><code>b:itout</code></td><td><span aria-label="no unit">·</span></td><td>Number of outer-loop iterations for network model equations</td></tr>
+<tr><td><code>b:itrstgrd</code></td><td><span aria-label="no unit">·</span></td><td>Number of inner-loop iterations for dynamic model equations</td></tr>
+<tr><td><code>b:ijgrd</code></td><td><span aria-label="no unit">·</span></td><td>Number of Jacobian matrix factorisations for dynamic model equations</td></tr>
+<tr><td><code>b:itoutgrd</code></td><td><span aria-label="no unit">·</span></td><td>Number of outer-loop iterations for dynamic model equations</td></tr>
+<tr><td><code>b:ierremt</code></td><td><span aria-label="no unit">·</span></td><td>Integration error for dynamic model equations (EMT)</td></tr>
+<tr><td><code>b:ierrgrd</code></td><td><span aria-label="no unit">·</span></td><td>Integration error for dynamic model equations (GRD)</td></tr>
+<tr><td><code>b:ierremtadapt</code></td><td><span aria-label="no unit">·</span></td><td>Integration error for dynamic model equations used for the automatic step size adaptation (EMT)</td></tr>
+<tr><td><code>b:ierrgrdadapt</code></td><td><span aria-label="no unit">·</span></td><td>Integration error for dynamic model equations used for the automatic step size adaptation (GRD)</td></tr>
+<tr><td><code>b:dtemt</code></td><td><span aria-label="no unit">·</span></td><td>Integration step size for dynamic model equations (EMT)</td></tr>
+<tr><td><code>b:dtgrd</code></td><td><span aria-label="no unit">·</span></td><td>Integration step size for dynamic model equations (GRD)</td></tr>
+<tr><td><code>b:dtint</code></td><td><span aria-label="no unit">·</span></td><td>Interruption step</td></tr>
+<tr><td><code>b:dtset</code></td><td><span aria-label="no unit">·</span></td><td>Default step</td></tr>
+<tr><td><code>b:warnA</code></td><td><span aria-label="no unit">·</span></td><td>Number of type-A warnings</td></tr>
+<tr><td><code>b:warnB</code></td><td><span aria-label="no unit">·</span></td><td>Number of type-B warnings</td></tr>
+<tr><td><code>b:warnC</code></td><td><span aria-label="no unit">·</span></td><td>Number of type-C warnings</td></tr>
+<tr><td><code>b:ierrthd</code></td><td><span aria-label="no unit">·</span></td><td>Maximum error in the EMT to RMS transformation during co-simulation</td></tr>
+<tr><td><code>b:ierrunb</code></td><td><span aria-label="no unit">·</span></td><td>Maximum unbalance factor during co-simulation</td></tr>
+<tr><td><code>b:i_eul</code></td><td><span aria-label="no unit">·</span></td><td>Integration formula restoration index</td></tr>
+<tr><td><code>b:fnow</code></td><td>Hz</td><td>Frequency</td></tr>
+<tr><td><code>b:ifnow</code></td><td><span aria-label="no unit">·</span></td><td>Harmonic Order</td></tr>
+<tr><td><code>b:df</code></td><td>Hz</td><td>Frequency step size (harmonics)</td></tr>
+<tr><td><code>b:ierrhmc</code></td><td><span aria-label="no unit">·</span></td><td>Prediction error (harmonics)</td></tr>
+<tr><td><code>b:ierrgnrl</code></td><td><span aria-label="no unit">·</span></td><td>Prediction error (ComStep)</td></tr>
+<tr><td><code>b:step</code></td><td><span aria-label="no unit">·</span></td><td>Step size (ComStep)</td></tr>
+<tr><td><code>b:dcase</code></td><td><span aria-label="no unit">·</span></td><td>Case</td></tr>
+<tr><td><code>b:identObjective</code></td><td><span aria-label="no unit">·</span></td><td>Objective function value for parameter identification</td></tr>
+<tr><td><code>b:stepDtact</code></td><td><span aria-label="no unit">·</span></td><td>Step size</td></tr>
+<tr><td><code>b:stepDtDefault</code></td><td><span aria-label="no unit">·</span></td><td>Default step size</td></tr>
+<tr><td><code>b:stepAlpha</code></td><td><span aria-label="no unit">·</span></td><td>Damping factor</td></tr>
+<tr><td><code>b:stepType</code></td><td><span aria-label="no unit">·</span></td><td>Simulation step type</td></tr>
+<tr><td><code>b:level</code></td><td><span aria-label="no unit">·</span></td><td>Level</td></tr>
+<tr><td><code>b:bbfail</code></td><td><span aria-label="no unit">·</span></td><td>Busbar failure</td></tr>
+<tr><td><code>b:tmphase</code></td><td>min</td><td>Time Phase</td></tr>
+<tr><td><code>b:outer</code></td><td><span aria-label="no unit">·</span></td><td>Number of outer loops</td></tr>
+<tr><td><code>b:iterTotal</code></td><td><span aria-label="no unit">·</span></td><td>Total number of (inner) iterations</td></tr>
+<tr><td><code>b:iter1</code></td><td><span aria-label="no unit">·</span></td><td>Number of iterations for outer loop 1</td></tr>
+<tr><td><code>b:iter2</code></td><td><span aria-label="no unit">·</span></td><td>Number of iterations for outer loop 2</td></tr>
+<tr><td><code>b:iter3</code></td><td><span aria-label="no unit">·</span></td><td>Number of iterations for outer loop 3</td></tr>
+<tr><td><code>b:iter4</code></td><td><span aria-label="no unit">·</span></td><td>Number of iterations for outer loop 4</td></tr>
+<tr><td><code>b:iter5</code></td><td><span aria-label="no unit">·</span></td><td>Number of iterations for outer loop 5</td></tr>
+<tr><td><code>b:isLinear</code></td><td><span aria-label="no unit">·</span></td><td>Calculated using linearised method</td></tr>
+<tr><td><code>b:isIslanding</code></td><td><span aria-label="no unit">·</span></td><td>Causes islanding</td></tr>
+<tr><td><code>b:isBlackout</code></td><td><span aria-label="no unit">·</span></td><td>Causes blackout</td></tr>
+<tr><td><code>b:isSubstSplit</code></td><td><span aria-label="no unit">·</span></td><td>Causes substation split or merge</td></tr>
+<tr><td><code>b:nrOfLostLoads</code></td><td><span aria-label="no unit">·</span></td><td>Number of loads lost</td></tr>
+<tr><td><code>b:nrOfLostGens</code></td><td><span aria-label="no unit">·</span></td><td>Number of generators lost</td></tr>
+<tr><td><code>b:lostPLoad</code></td><td><span aria-label="no unit">·</span></td><td>Load lost in MW</td></tr>
+<tr><td><code>b:lostPGeneration</code></td><td><span aria-label="no unit">·</span></td><td>Generation lost in MW</td></tr>
+<tr><td><code>b:lostQLoad</code></td><td><span aria-label="no unit">·</span></td><td>Load lost in Mvar</td></tr>
+<tr><td><code>b:lostQGeneration</code></td><td><span aria-label="no unit">·</span></td><td>Generation lost in Mvar</td></tr>
+<tr><td><code>b:asynchOfNextBB</code></td><td>deg</td><td>Max. asynchronism of busbars next to the fault</td></tr>
+<tr><td><code>b:asynchBB1</code></td><td><span aria-label="no unit">·</span></td><td>Max. asynchronism - busbar 1</td></tr>
+<tr><td><code>b:asynchBB2</code></td><td><span aria-label="no unit">·</span></td><td>Max. asynchronism - busbar 2</td></tr>
+<tr><td><code>b:nrUnsolvedCnt</code></td><td><span aria-label="no unit">·</span></td><td>Number of unsolved contingencies</td></tr>
+<tr><td><code>b:nrProcessedCnt</code></td><td><span aria-label="no unit">·</span></td><td>Number of processed contingencies</td></tr>
+<tr><td><code>b:nrInactiveCnt</code></td><td><span aria-label="no unit">·</span></td><td>Number of inactive contingencies</td></tr>
+<tr><td><code>b:nrEarthCnt</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies causing grounding</td></tr>
+<tr><td><code>b:nrCntIslanding</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies causing islanding</td></tr>
+<tr><td><code>b:nrCntBlackout</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies causing blackouts</td></tr>
+<tr><td><code>b:nrCntSubSplit</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies causing substation split or merge</td></tr>
+<tr><td><code>b:nrCntLostLoad</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies causing loss of load</td></tr>
+<tr><td><code>b:nrCntLostGen</code></td><td><span aria-label="no unit">·</span></td><td>Number of contingencies causing loss of generation</td></tr>
+<tr><td><code>b:casenum</code></td><td><span aria-label="no unit">·</span></td><td>Case</td></tr>
+<tr><td><code>b:ldfmethod</code></td><td><span aria-label="no unit">·</span></td><td>Load Flow Calculation</td></tr>
+<tr><td><code>b:noconv</code></td><td><span aria-label="no unit">·</span></td><td>Load flow calculation failed.</td></tr>
+<tr><td><code>b:isCalcSucc</code></td><td><span aria-label="no unit">·</span></td><td>Calculation successful.</td></tr>
+<tr><td><code>b:isContUc</code></td><td><span aria-label="no unit">·</span></td><td>Contingencies considered</td></tr>
+<tr><td><code>b:isLinearCont</code></td><td><span aria-label="no unit">·</span></td><td>Linearised contingency analysis method used</td></tr>
+<tr><td><code>b:calcPeriod</code></td><td><span aria-label="no unit">·</span></td><td>Time period</td></tr>
+<tr><td><code>b:stepSize</code></td><td><span aria-label="no unit">·</span></td><td>Step Size</td></tr>
+<tr><td><code>b:objective</code></td><td><span aria-label="no unit">·</span></td><td>Objective Function</td></tr>
+<tr><td><code>b:isMinVREcurt</code></td><td><span aria-label="no unit">·</span></td><td>Minimise curtailment of renewable energy sources (VREs)</td></tr>
+<tr><td><code>b:isMinLoadshed</code></td><td><span aria-label="no unit">·</span></td><td>Minimise load shedding</td></tr>
+<tr><td><code>b:isMinNetRemAct</code></td><td><span aria-label="no unit">·</span></td><td>Minimise network-based remedial actions</td></tr>
+<tr><td><code>b:isMinStartUpShutDownCosts</code></td><td><span aria-label="no unit">·</span></td><td>Minimise generator start-up/shut-down costs</td></tr>
+<tr><td><code>b:isMinOperatingCosts</code></td><td><span aria-label="no unit">·</span></td><td>Minimise generator operating costs</td></tr>
+<tr><td><code>b:isMinRedispCosts</code></td><td><span aria-label="no unit">·</span></td><td>Minimise generator redispatch costs</td></tr>
+<tr><td><code>b:isCtrlP</code></td><td><span aria-label="no unit">·</span></td><td>Active power dispatch</td></tr>
+<tr><td><code>b:isCtrlTap</code></td><td><span aria-label="no unit">·</span></td><td>Transformer tap positions</td></tr>
+<tr><td><code>b:isCtrlLdShed</code></td><td><span aria-label="no unit">·</span></td><td>Load shedding</td></tr>
+<tr><td><code>b:isCtrlQ</code></td><td><span aria-label="no unit">·</span></td><td>Reactive power dispatch</td></tr>
+<tr><td><code>b:isCtrlShunt</code></td><td><span aria-label="no unit">·</span></td><td>Switchable shunts</td></tr>
+<tr><td><code>b:isCtrlVRE</code></td><td><span aria-label="no unit">·</span></td><td>Allow curtailment of variable renewable energy sources (VREs)</td></tr>
+<tr><td><code>b:isCtrlHvDc</code></td><td><span aria-label="no unit">·</span></td><td>HVDC active/reactive power controls</td></tr>
+<tr><td><code>b:isRoundDiscreteCtrls</code></td><td><span aria-label="no unit">·</span></td><td>Round discrete controls</td></tr>
+<tr><td><code>b:isLimP</code></td><td><span aria-label="no unit">·</span></td><td>Active power limits</td></tr>
+<tr><td><code>b:isLimTap</code></td><td><span aria-label="no unit">·</span></td><td>Transformer tap limits</td></tr>
+<tr><td><code>b:isLimLdShed</code></td><td><span aria-label="no unit">·</span></td><td>Load shedding limits</td></tr>
+<tr><td><code>b:isLimQ</code></td><td><span aria-label="no unit">·</span></td><td>Reactive power limits</td></tr>
+<tr><td><code>b:isLimShunt</code></td><td><span aria-label="no unit">·</span></td><td>Shunt tap limits</td></tr>
+<tr><td><code>b:isConstrLoading</code></td><td><span aria-label="no unit">·</span></td><td>Max. branch flows (max. loading)</td></tr>
+<tr><td><code>b:isConstrBoundary</code></td><td><span aria-label="no unit">·</span></td><td>Boundary flow constraints</td></tr>
+<tr><td><code>b:isConstrVoltage</code></td><td><span aria-label="no unit">·</span></td><td>Voltage limits of busbars/terminals</td></tr>
+<tr><td><code>b:isConstrRamp</code></td><td><span aria-label="no unit">·</span></td><td>Ramp rate constraints</td></tr>
+<tr><td><code>b:isConstrMinUpDownTime</code></td><td><span aria-label="no unit">·</span></td><td>Minimum up-/down-times</td></tr>
+<tr><td><code>b:isConstrSpinReserve</code></td><td><span aria-label="no unit">·</span></td><td>Spinning reserve of regions</td></tr>
+<tr><td><code>b:isCheckOptSolution</code></td><td><span aria-label="no unit">·</span></td><td>Calculate and record load flow results with optimal controls</td></tr>
+<tr><td><code>b:recordCtrlVarsOpt</code></td><td><span aria-label="no unit">·</span></td><td>All optimal control variables recorded</td></tr>
+<tr><td><code>b:recordCnstrVarsOpt</code></td><td><span aria-label="no unit">·</span></td><td>All constraint results (after optimisation) recorded</td></tr>
+<tr><td><code>b:recordRedispResPerStep</code></td><td><span aria-label="no unit">·</span></td><td>Redispatch results per study time additionally recorded</td></tr>
+<tr><td><code>b:isWriteElmResCont</code></td><td><span aria-label="no unit">·</span></td><td>Contingency results recorded</td></tr>
+<tr><td><code>b:recordCnstrVarsOrg</code></td><td><span aria-label="no unit">·</span></td><td>All constraint results (before optimisation) additionally recorded</td></tr>
+<tr><td><code>b:isPlanedOutages</code></td><td><span aria-label="no unit">·</span></td><td>Planned outages</td></tr>
+<tr><td><code>b:isRollingHorizonAlgo</code></td><td><span aria-label="no unit">·</span></td><td>Restrict simultaneous optimisation period</td></tr>
+<tr><td><code>b:numStudyTimesHorizon</code></td><td><span aria-label="no unit">·</span></td><td>Number of study times</td></tr>
+<tr><td><code>b:numOverlapHorizon</code></td><td><span aria-label="no unit">·</span></td><td>Number of overlapping study times with next period</td></tr>
+<tr><td><code>b:maxAllowedConstrError</code></td><td>%</td><td>Max. acceptable error for constraints</td></tr>
+<tr><td><code>b:minEff_dP</code></td><td>%</td><td>Min. Generator effectiveness</td></tr>
+<tr><td><code>b:minEff_dTap</code></td><td>%</td><td>Min. Transformer effectiveness</td></tr>
+<tr><td><code>b:isFilterPowerConstr</code></td><td><span aria-label="no unit">·</span></td><td>Constraint filter for power flow constraints</td></tr>
+<tr><td><code>b:powerConstrMarginGeneral</code></td><td>%</td><td>Active constraint margin</td></tr>
+<tr><td><code>b:powerConstrMarginLazy</code></td><td>%</td><td>Lazy constraint margin</td></tr>
+<tr><td><code>b:powerConstrMarginCallback</code></td><td>%</td><td>Low priority constraint margin</td></tr>
+<tr><td><code>b:isFilterVoltConstr</code></td><td><span aria-label="no unit">·</span></td><td>Constraint filter for voltage constraints</td></tr>
+<tr><td><code>b:voltConstrMarginGeneral</code></td><td>p.u.</td><td>Active constraint margin</td></tr>
+<tr><td><code>b:voltConstrMarginLazy</code></td><td>p.u.</td><td>Lazy constraint margin</td></tr>
+<tr><td><code>b:voltConstrMarginCallback</code></td><td>p.u.</td><td>Low priority constraint margin</td></tr>
+<tr><td><code>b:penaltySoftConstr</code></td><td><span aria-label="no unit">·</span></td><td>Penalty factor for soft constraints</td></tr>
+<tr><td><code>b:isParallel</code></td><td><span aria-label="no unit">·</span></td><td>Parallel contingency computation</td></tr>
+<tr><td><code>b:minNumCnt4Parallel</code></td><td><span aria-label="no unit">·</span></td><td>Minimum number of contingencies</td></tr>
+<tr><td><code>b:isAllowCurativeCtrl</code></td><td><span aria-label="no unit">·</span></td><td>Curative controls allowed</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/rms-emt-simulation/">RMS and EMT simulation batch runs in Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmFile/"><code>ElmFile</code> Measurement File</a> · <a href="../TypAsm/"><code>TypAsm</code> Asynchronous Machine Type - old</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

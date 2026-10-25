@@ -1,0 +1,166 @@
+{
+ "script": "load_flow",
+ "project": "Nine-bus System",
+ "seconds": 0.9,
+ "status": "ok",
+ "stdout": [
+  "Saved 9 busbars and 9 branches"
+ ],
+ "data": {
+  "PROJECT": "Nine-bus System (Builder test)",
+  "STUDY_CASE": "01- Load Flow",
+  "saved": {
+   "iopt_net": 0,
+   "iopt_lim": 0,
+   "iopt_at": 0
+  },
+  "buses": [
+   {
+    "Busbar": "Bus 1",
+    "Nominal (kV)": 16.5,
+    "Voltage (p.u.)": 1.0399999618530273,
+    "Voltage (kV)": 17.15999937057495,
+    "Angle (deg)": 0.0
+   },
+   {
+    "Busbar": "Bus 2",
+    "Nominal (kV)": 18.0,
+    "Voltage (p.u.)": 1.0249999811145727,
+    "Voltage (kV)": 18.449999660062307,
+    "Angle (deg)": 9.280009215623247
+   },
+   {
+    "Busbar": "Bus 3",
+    "Nominal (kV)": 13.8,
+    "Voltage (p.u.)": 1.0249999768816025,
+    "Voltage (kV)": 14.144999876469345,
+    "Angle (deg)": 4.664754078051678
+   },
+   {
+    "Busbar": "Bus 4",
+    "Nominal (kV)": 230.0,
+    "Voltage (p.u.)": 1.0257885541743919,
+    "Voltage (kV)": 235.93136746011012,
+    "Angle (deg)": 147.7832126641802
+   },
+   {
+    "Busbar": "Bus 5",
+    "Nominal (kV)": 230.0,
+    "Voltage (p.u.)": 0.9956309087418355,
+    "Voltage (kV)": 228.99510901062214,
+    "Angle (deg)": 146.0111964059344
+   },
+   {
+    "Busbar": "Bus 6",
+    "Nominal (kV)": 230.0,
+    "Voltage (p.u.)": 1.0126546705300068,
+    "Voltage (kV)": 232.91057422190156,
+    "Angle (deg)": 146.31260321258893
+   },
+   {
+    "Busbar": "Bus 7",
+    "Nominal (kV)": 230.0,
+    "Voltage (p.u.)": 1.02576928145014,
+    "Voltage (kV)": 235.9269347335322,
+    "Angle (deg)": 153.71970443896356
+   },
+   {
+    "Busbar": "Bus 8",
+    "Nominal (kV)": 230.0,
+    "Voltage (p.u.)": 1.0158824164137235,
+    "Voltage (kV)": 233.65295577515639,
+    "Angle (deg)": 150.7275391812296
+   },
+   {
+    "Busbar": "Bus 9",
+    "Nominal (kV)": 230.0,
+    "Voltage (p.u.)": 1.0323529167435885,
+    "Voltage (kV)": 237.44117085102536,
+    "Angle (deg)": 151.96671864482644
+   }
+  ],
+  "branches": [
+   {
+    "Branch": "Line 4-5",
+    "Class": "ElmLne",
+    "Loading (%)": 14.153885616890863,
+    "P (MW)": -40.67983515388857,
+    "Q (Mvar)": -38.68729804458272,
+    "Losses (MW)": 0.25751498305307763
+   },
+   {
+    "Branch": "Line 4-6",
+    "Class": "ElmLne",
+    "Loading (%)": 8.60918683909552,
+    "P (MW)": -30.53726226985512,
+    "Q (Mvar)": -16.543530883164568,
+    "Losses (MW)": 0.16640621061389993
+   },
+   {
+    "Branch": "Line 5-7",
+    "Class": "ElmLne",
+    "Loading (%)": 21.449562270775953,
+    "P (MW)": -84.32016072251585,
+    "Q (Mvar)": -11.31266750715303,
+    "Losses (MW)": 2.2999711332957133
+   },
+   {
+    "Branch": "Line 6-9",
+    "Class": "ElmLne",
+    "Loading (%)": 15.427162750035569,
+    "P (MW)": 60.81658667591281,
+    "Q (Mvar)": -18.075101094666003,
+    "Losses (MW)": 1.3538488348269269
+   },
+   {
+    "Branch": "Line 7-8",
+    "Class": "ElmLne",
+    "Loading (%)": 18.94140153743569,
+    "P (MW)": 76.37986174951766,
+    "Q (Mvar)": -0.7971248800334401,
+    "Losses (MW)": 0.4752837778086416
+   },
+   {
+    "Branch": "Line 8-9",
+    "Class": "ElmLne",
+    "Loading (%)": 8.455192584470337,
+    "P (MW)": -24.095419032872986,
+    "Q (Mvar)": -24.295813600990396,
+    "Losses (MW)": 0.08799702121685016
+   },
+   {
+    "Branch": "T1",
+    "Class": "ElmTr2",
+    "Loading (%)": 29.452344435514565,
+    "P (MW)": -71.64101820559434,
+    "Q (Mvar)": -23.922777171609393,
+    "Losses (MW)": 1.8242474197904812e-10
+   },
+   {
+    "Branch": "T2",
+    "Class": "ElmTr2",
+    "Loading (%)": 79.57841376719901,
+    "P (MW)": -162.99999568559545,
+    "Q (Mvar)": 9.178030900452654,
+    "Losses (MW)": -6.995151125011034e-10
+   },
+   {
+    "Branch": "T3",
+    "Class": "ElmTr2",
+    "Loading (%)": 55.73393172402997,
+    "P (MW)": -85.0000030195179,
+    "Q (Mvar)": 14.955311320765016,
+    "Losses (MW)": 3.204263521183748e-10
+   }
+  ],
+  "end": "bushv",
+  "a": "iopt_at",
+  "v": 0
+ },
+ "audit": "OK",
+ "files": [
+  "load_flow_branches.csv",
+  "load_flow_buses.csv",
+  "load_flow_results.xlsx"
+ ]
+}

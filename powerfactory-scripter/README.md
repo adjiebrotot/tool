@@ -5,6 +5,9 @@
 > of the Workflow Builder drawn in CSS and inline SVG (`style.css`), and the way in to `builder/`
 > and `legacy/`. It loads no app code. A link made for the form when it lived at this address
 > (`?qs=<sample>`, or state in the hash) is forwarded to `legacy/` by a line in its `<head>`.
+> **Reading pages:** `reference/` (the attribute reference, one page per class) and `python/` (the
+> study guides) are static pages written by `_pages/build.mjs`; see `_pages/README.md`. Edit their
+> sources there, not the HTML.
 > **Type:** Single-page HTML/CSS/JavaScript application (no build step, no backend, no framework)
 > **Purpose:** Collects PowerFactory study configuration from a user and deterministically assembles PowerFactory Python scripts from fixed template blocks.
 

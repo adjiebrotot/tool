@@ -263,6 +263,13 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-starter-btns:empty { display: none; }
 .pfb-starter-blank { border: 0; background: transparent; padding: 2px 0; color: var(--accent); font: inherit; font-size: .86rem; font-weight: 700; cursor: pointer; }
 .pfb-starter-blank:hover { text-decoration: underline; }
+/* Ten worked examples: two columns beside each other, so the card stays below the Start block. */
+@media (min-width: 641px) {
+  .pfb-starter-card { max-width: 600px; padding: 16px 20px 14px; }
+  .pfb-starter-card p { margin-bottom: 10px; }
+  .pfb-starter-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+  .pfb-starter-tpl { text-align: left; justify-content: flex-start; }
+}
 
 /* ---- Blocks on the canvas ---------------------------------------------------------------- */
 .pfb-node {

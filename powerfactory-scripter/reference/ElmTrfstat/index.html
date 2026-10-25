@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmTrfstat attributes: PowerFactory Secondary Substation | Adjie Brotools</title>
+<meta name="description" content="All ElmTrfstat attributes in PowerFactory (Secondary Substation): 40 input parameters and 81 result variables, with units, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrfstat/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmTrfstat attributes: PowerFactory Secondary Substation parameters and result variables">
+<meta property="og:description" content="All ElmTrfstat attributes in PowerFactory (Secondary Substation): 40 input parameters and 81 result variables, with units, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrfstat/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElmTrfstat attributes: PowerFactory Secondary Substation parameters and result variables">
+<meta name="twitter:description" content="All ElmTrfstat attributes in PowerFactory (Secondary Substation): 40 input parameters and 81 result variables, with units, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmTrfstat attributes (PowerFactory Secondary Substation)",
+  "description": "All ElmTrfstat attributes in PowerFactory (Secondary Substation): 40 input parameters and 81 result variables, with units, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrfstat/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmTrfstat (Secondary Substation)",
+    "description": "A secondary substation: an MV/LV substation with its transformer, as found along distribution feeders."
+  },
+  "keywords": "ElmTrfstat attributes, ElmTrfstat parameters, ElmTrfstat result variables, PowerFactory Secondary Substation attributes, ElmTrfstat GetAttribute",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmTrfstat",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrfstat/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmTrfstat</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmTrfstat attributes<span class="dx-h1-sub">PowerFactory Secondary Substation</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Secondary Substation (<code>ElmTrfstat</code>): 40 input parameters and 81 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmTrfstat is</h2>
+  <p>A secondary substation: an MV/LV substation with its transformer, as found along distribution feeders.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmTrfstat</code>, element class</dd><dt>PowerFactory name</dt><dd>Secondary Substation</dd><dt>Attributes</dt><dd>40 input parameters and 81 result variables, in 3 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmTrfstat in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-k">for</span> obj <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTrfstat&quot;</span>):
+    <span class="py-f">print</span>(obj.loc_name, obj.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;loc_name&quot;</span>)) <span class="py-c"># Name</span>
+
+obj = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTrfstat&quot;</span>)[<span class="py-n">0</span>]
+obj.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;loc_name&quot;</span>, <span class="py-s">&quot;Kiosk 12&quot;</span>)      <span class="py-c"># rename it</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmTrfstat attributes"><li><a href="#params">Input parameters<span class="dx-n">40</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">33</span></a></li><li><a href="#load-flow-dc">DC load flow results<span class="dx-n">15</span></a></li><li><a href="#opf">Optimal power flow results<span class="dx-n">33</span></a></li><li><a href="#basic">Basic data<span class="dx-n">1</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmTrfstat input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>sShort</code></td><td><span aria-label="no unit">·</span></td><td>Short Name</td></tr>
+<tr><td><code>sType</code></td><td><span aria-label="no unit">·</span></td><td>Type</td></tr>
+<tr><td><code>Electrodes</code></td><td><span aria-label="no unit">·</span></td><td>Electrode configuration</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>icolor</code></td><td><span aria-label="no unit">·</span></td><td>Colour</td></tr>
+<tr><td><code>constr</code></td><td><span aria-label="no unit">·</span></td><td>Year of Construction</td></tr>
+<tr><td><code>iBoxed</code></td><td><span aria-label="no unit">·</span></td><td>Enclosure</td></tr>
+<tr><td><code>DcBoxType</code></td><td><span aria-label="no unit">·</span></td><td>Enclosure type</td></tr>
+<tr><td><code>GPSlat</code></td><td>deg</td><td>Latitude / Northing</td></tr>
+<tr><td><code>GPSlon</code></td><td>deg</td><td>Longitude / Easting</td></tr>
+<tr><td><code>AccessTime</code></td><td>min</td><td>First manual switch action after the fault</td></tr>
+<tr><td><code>LocAccTime</code></td><td>min</td><td>After a switch action in another substation</td></tr>
+<tr><td><code>CondGap</code></td><td>mm</td><td>Conductor gap</td></tr>
+<tr><td><code>Xfactor</code></td><td><span aria-label="no unit">·</span></td><td>Distance factor</td></tr>
+<tr><td><code>WorkDist</code></td><td>mm</td><td>Working distance</td></tr>
+<tr><td><code>BoxWidth</code></td><td>mm</td><td>Width</td></tr>
+<tr><td><code>BoxHeight</code></td><td>mm</td><td>Height</td></tr>
+<tr><td><code>BoxDepth</code></td><td>mm</td><td>Depth</td></tr>
+<tr><td><code>arcLength</code></td><td>mm</td><td>Arc length</td></tr>
+<tr><td><code>nFactor</code></td><td><span aria-label="no unit">·</span></td><td>Statistical correction</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>cimRdfId</code></td><td><span aria-label="no unit">·</span></td><td>RDF ID</td></tr>
+<tr><td><code>pSwSc</code></td><td><span aria-label="no unit">·</span></td><td>Active Rules<small>Object: IntSwitching</small></td></tr>
+<tr><td><code>pOwner</code></td><td><span aria-label="no unit">·</span></td><td>Default Owner<small>Object: ElmOwner</small></td></tr>
+<tr><td><code>pOperator</code></td><td><span aria-label="no unit">·</span></td><td>Default Operator<small>Object: ElmOperator</small></td></tr>
+<tr><td><code>pDiagram</code></td><td><span aria-label="no unit">·</span></td><td>Diagram<small>Object: IntGrfnet</small></td></tr>
+<tr><td><code>contents</code></td><td><span aria-label="no unit">·</span></td><td>Contents</td></tr>
+<tr><td><code>cpMeteostat</code></td><td><span aria-label="no unit">·</span></td><td>Meteo. Station<small>Object: ElmMeteostat</small></td></tr>
+<tr><td><code>cUnom</code></td><td>kV</td><td>Nominal Voltage</td></tr>
+<tr><td><code>cpZone</code></td><td><span aria-label="no unit">·</span></td><td>Default Zone<small>Object: ElmZone</small></td></tr>
+<tr><td><code>cpArea</code></td><td><span aria-label="no unit">·</span></td><td>Default Area<small>Object: ElmArea</small></td></tr>
+<tr><td><code>pBusbar</code></td><td><span aria-label="no unit">·</span></td><td>Busbar<small>Object: ElmTerm</small></td></tr>
+<tr><td><code>logf_freq</code></td><td>1/a</td><td>Loss of grid frequency</td></tr>
+<tr><td><code>logf_year</code></td><td>a</td><td>Time period between loss of grid events</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmTrfstat load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Ptotgen</code></td><td>MW</td><td>Total Generation, Active Power</td></tr>
+<tr><td><code>c:Qtotgen</code></td><td>Mvar</td><td>Total Generation, Reactive Power</td></tr>
+<tr><td><code>c:Ptotcons</code></td><td>MW</td><td>Total Consumption, Active Power</td></tr>
+<tr><td><code>c:Qtotcons</code></td><td>Mvar</td><td>Total Consumption, Reactive Power</td></tr>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Qgen</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:Sgen</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:cosgen</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Pmot</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:Qmot</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:Smot</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosmot</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Qload</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:Sload</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosload</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pnet</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:Qnet</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:Snet</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:cosnet</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:u</code></td><td>p.u.</td><td>Busbar Voltage, Magnitude</td></tr>
+<tr><td><code>c:Ul</code></td><td>kV</td><td>Busbar Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>c:phiu</code></td><td>deg</td><td>Busbar Voltage, Angle</td></tr>
+<tr><td><code>c:Pload_fup</code></td><td>MW</td><td>General Load, Active Power, Upstream in Feeder</td></tr>
+<tr><td><code>c:Pload_fdwn</code></td><td>MW</td><td>General Load, Active Power, Downstream in Feeder</td></tr>
+<tr><td><code>c:len_fup</code></td><td>km</td><td>Length, Upstream in Feeder</td></tr>
+<tr><td><code>c:len_fdwn</code></td><td>km</td><td>Length, Downstream in Feeder</td></tr>
+<tr><td><code>c:dist_fup</code></td><td>km</td><td>Distance to feeder begin</td></tr>
+<tr><td><code>c:dist_fdwn</code></td><td>km</td><td>Distance to furthest feeder end</td></tr>
+<tr><td><code>c:r_feed</code></td><td>p.u.</td><td>Pos. Seq. Resistance to feeder begin</td></tr>
+<tr><td><code>c:x_feed</code></td><td>p.u.</td><td>Pos. Seq. Reactance to feeder begin</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow-dc">
+  <h2 id="load-flow-dc">ElmTrfstat dc load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> (DC) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Ptotgen</code></td><td>MW</td><td>Total Generation, Active Power</td></tr>
+<tr><td><code>c:Ptotcons</code></td><td>MW</td><td>Total Consumption, Active Power</td></tr>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Pmot</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Pnet</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:phiu</code></td><td>deg</td><td>Busbar Voltage, Angle</td></tr>
+<tr><td><code>c:Pload_fup</code></td><td>MW</td><td>General Load, Active Power, Upstream in Feeder</td></tr>
+<tr><td><code>c:Pload_fdwn</code></td><td>MW</td><td>General Load, Active Power, Downstream in Feeder</td></tr>
+<tr><td><code>c:len_fup</code></td><td>km</td><td>Length, Upstream in Feeder</td></tr>
+<tr><td><code>c:len_fdwn</code></td><td>km</td><td>Length, Downstream in Feeder</td></tr>
+<tr><td><code>c:dist_fup</code></td><td>km</td><td>Distance to feeder begin</td></tr>
+<tr><td><code>c:dist_fdwn</code></td><td>km</td><td>Distance to furthest feeder end</td></tr>
+<tr><td><code>c:r_feed</code></td><td>p.u.</td><td>Pos. Seq. Resistance to feeder begin</td></tr>
+<tr><td><code>c:x_feed</code></td><td>p.u.</td><td>Pos. Seq. Reactance to feeder begin</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="opf">
+  <h2 id="opf">ElmTrfstat optimal power flow results</h2>
+  <p class="dx-note">Read after <code>ComOpf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:Ptotgen</code></td><td>MW</td><td>Total Generation, Active Power</td></tr>
+<tr><td><code>c:Qtotgen</code></td><td>Mvar</td><td>Total Generation, Reactive Power</td></tr>
+<tr><td><code>c:Ptotcons</code></td><td>MW</td><td>Total Consumption, Active Power</td></tr>
+<tr><td><code>c:Qtotcons</code></td><td>Mvar</td><td>Total Consumption, Reactive Power</td></tr>
+<tr><td><code>c:Pgen</code></td><td>MW</td><td>Generators, Active Power</td></tr>
+<tr><td><code>c:Qgen</code></td><td>Mvar</td><td>Generators, Reactive Power</td></tr>
+<tr><td><code>c:Sgen</code></td><td>MVA</td><td>Generators, Apparent Power</td></tr>
+<tr><td><code>c:cosgen</code></td><td><span aria-label="no unit">·</span></td><td>Generators, Power Factor</td></tr>
+<tr><td><code>c:Pmot</code></td><td>MW</td><td>Motor Loads, Active Power</td></tr>
+<tr><td><code>c:Qmot</code></td><td>Mvar</td><td>Motor Loads, Reactive Power</td></tr>
+<tr><td><code>c:Smot</code></td><td>MVA</td><td>Motor Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosmot</code></td><td><span aria-label="no unit">·</span></td><td>Motor Loads, Power Factor</td></tr>
+<tr><td><code>c:Pload</code></td><td>MW</td><td>Loads, Active Power</td></tr>
+<tr><td><code>c:Qload</code></td><td>Mvar</td><td>Loads, Reactive Power</td></tr>
+<tr><td><code>c:Sload</code></td><td>MVA</td><td>Loads, Apparent Power</td></tr>
+<tr><td><code>c:cosload</code></td><td><span aria-label="no unit">·</span></td><td>Loads, Power Factor</td></tr>
+<tr><td><code>c:Qcomp</code></td><td>Mvar</td><td>Compensation, C</td></tr>
+<tr><td><code>c:Qcompr</code></td><td>Mvar</td><td>Compensation, L</td></tr>
+<tr><td><code>c:Pnet</code></td><td>MW</td><td>External Networks, Active Power</td></tr>
+<tr><td><code>c:Qnet</code></td><td>Mvar</td><td>External Networks, Reactive Power</td></tr>
+<tr><td><code>c:Snet</code></td><td>MVA</td><td>External Networks, Apparent Power</td></tr>
+<tr><td><code>c:cosnet</code></td><td><span aria-label="no unit">·</span></td><td>External Networks, Power Factor</td></tr>
+<tr><td><code>c:u</code></td><td>p.u.</td><td>Busbar Voltage, Magnitude</td></tr>
+<tr><td><code>c:Ul</code></td><td>kV</td><td>Busbar Line-Line Voltage, Magnitude</td></tr>
+<tr><td><code>c:phiu</code></td><td>deg</td><td>Busbar Voltage, Angle</td></tr>
+<tr><td><code>c:Pload_fup</code></td><td>MW</td><td>General Load, Active Power, Upstream in Feeder</td></tr>
+<tr><td><code>c:Pload_fdwn</code></td><td>MW</td><td>General Load, Active Power, Downstream in Feeder</td></tr>
+<tr><td><code>c:len_fup</code></td><td>km</td><td>Length, Upstream in Feeder</td></tr>
+<tr><td><code>c:len_fdwn</code></td><td>km</td><td>Length, Downstream in Feeder</td></tr>
+<tr><td><code>c:dist_fup</code></td><td>km</td><td>Distance to feeder begin</td></tr>
+<tr><td><code>c:dist_fdwn</code></td><td>km</td><td>Distance to furthest feeder end</td></tr>
+<tr><td><code>c:r_feed</code></td><td>p.u.</td><td>Pos. Seq. Resistance to feeder begin</td></tr>
+<tr><td><code>c:x_feed</code></td><td>p.u.</td><td>Pos. Seq. Reactance to feeder begin</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmTrfstat basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmSubstat/"><code>ElmSubstat</code> Substation</a> · <a href="../ElmZone/"><code>ElmZone</code> Zone</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,673 @@
+{
+  "app": "pf-builder",
+  "v": 1,
+  "name": "Hosting capacity at every busbar",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "x": 0,
+      "y": 0,
+      "label": "",
+      "s": {
+        "project": "",
+        "studyCase": "",
+        "outputDir": "",
+        "undoChanges": true,
+        "tableFmt": "csv",
+        "fNominal": "auto",
+        "runMode": "auto",
+        "showPf": false,
+        "fastMode": true,
+        "connectTimeout": 120,
+        "apiPath": "",
+        "pfUser": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n2",
+      "type": "note",
+      "x": 0,
+      "y": -300,
+      "label": "About this template",
+      "s": {
+        "text": "At each busbar of Connection point this connects a test generator at unity power factor and searches its largest output for which the load flow converges, no line or 2-winding transformer is above 100 % and every busbar stays between 0.9 and 1.1 p.u., turning the generators already dispatched down pro rata by the same amount (delete Other generators to let the slack take it, as for an upstream grid). Each busbar gets a row with its hosting capacity and a bar chart is drawn at the end; the dispatch is put back and the test generator deleted. Fill in the project, then narrow the busbars and set the search range and limits to your network."
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n3",
+      "type": "pf.foreach_element",
+      "x": 640,
+      "y": 0,
+      "label": "Connection point",
+      "s": {
+        "name": "",
+        "el": {
+          "cls": "ElmTerm",
+          "name": "*",
+          "match": "all"
+        },
+        "inService": true,
+        "attr": "",
+        "op": "=",
+        "value": "",
+        "restore": "pass",
+        "onError": "skip"
+      },
+      "pin": [
+        "el"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n4",
+      "type": "opt.limit",
+      "x": 960,
+      "y": 0,
+      "label": "Generation (MW)",
+      "s": {
+        "name": "",
+        "lower": 0,
+        "upper": 1000,
+        "tol": 5,
+        "maxSteps": 20,
+        "passes": "low",
+        "bracket": "given",
+        "onUnknown": "fail",
+        "integer": false,
+        "passIs": "yes"
+      },
+      "pin": [
+        "lower",
+        "upper",
+        "tol"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n5",
+      "type": "pf.testgen",
+      "x": 1280,
+      "y": 0,
+      "label": "Test generator",
+      "s": {
+        "bus": {
+          "cls": "ElmTerm",
+          "name": "",
+          "match": "one"
+        },
+        "p": 0,
+        "q": 0,
+        "rating": null
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n6",
+      "type": "pf.ldf",
+      "x": 1920,
+      "y": 0,
+      "label": "",
+      "s": {
+        "net": "case",
+        "qlim": "case",
+        "taps": "case"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n7",
+      "type": "pf.get",
+      "x": 2240,
+      "y": 0,
+      "label": "Line loading",
+      "s": {
+        "el": {
+          "cls": "ElmLne",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "c:loading",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n8",
+      "type": "pf.get",
+      "x": 2240,
+      "y": 180,
+      "label": "Transformer loading",
+      "s": {
+        "el": {
+          "cls": "ElmTr2",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "c:loading",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n9",
+      "type": "pf.get",
+      "x": 2240,
+      "y": 360,
+      "label": "Busbar voltage",
+      "s": {
+        "el": {
+          "cls": "ElmTerm",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "m:u",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n10",
+      "type": "chk.limit",
+      "x": 2560,
+      "y": 0,
+      "label": "Line thermal limit",
+      "s": {
+        "against": "value",
+        "lo": null,
+        "hi": 100,
+        "curve": [
+          {
+            "id": "k1",
+            "x": 0,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k2",
+            "x": 0.15,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k3",
+            "x": 0.15,
+            "low": 0.7,
+            "high": ""
+          },
+          {
+            "id": "k4",
+            "x": 1.5,
+            "low": 0.9,
+            "high": ""
+          }
+        ],
+        "x0": 0,
+        "extend": false,
+        "after": null,
+        "before": null,
+        "goOn": true
+      },
+      "pin": [
+        "hi"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n11",
+      "type": "chk.limit",
+      "x": 2560,
+      "y": 210,
+      "label": "Transformer thermal limit",
+      "s": {
+        "against": "value",
+        "lo": null,
+        "hi": 100,
+        "curve": [
+          {
+            "id": "k1",
+            "x": 0,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k2",
+            "x": 0.15,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k3",
+            "x": 0.15,
+            "low": 0.7,
+            "high": ""
+          },
+          {
+            "id": "k4",
+            "x": 1.5,
+            "low": 0.9,
+            "high": ""
+          }
+        ],
+        "x0": 0,
+        "extend": false,
+        "after": null,
+        "before": null,
+        "goOn": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n12",
+      "type": "chk.limit",
+      "x": 2560,
+      "y": 420,
+      "label": "Voltage limits",
+      "s": {
+        "against": "value",
+        "lo": 0.9,
+        "hi": 1.1,
+        "curve": [
+          {
+            "id": "k1",
+            "x": 0,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k2",
+            "x": 0.15,
+            "low": 0,
+            "high": ""
+          },
+          {
+            "id": "k3",
+            "x": 0.15,
+            "low": 0.7,
+            "high": ""
+          },
+          {
+            "id": "k4",
+            "x": 1.5,
+            "low": 0.9,
+            "high": ""
+          }
+        ],
+        "x0": 0,
+        "extend": false,
+        "after": null,
+        "before": null,
+        "goOn": true
+      },
+      "pin": [
+        "lo",
+        "hi"
+      ],
+      "sv": 1
+    },
+    {
+      "id": "n13",
+      "type": "math.logic",
+      "x": 2880,
+      "y": 300,
+      "label": "Thermal limits",
+      "s": {
+        "op": "and"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n14",
+      "type": "math.logic",
+      "x": 3200,
+      "y": 450,
+      "label": "All limits",
+      "s": {
+        "op": "and"
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n15",
+      "type": "out.table.add",
+      "x": 1280,
+      "y": 750,
+      "label": "",
+      "s": {
+        "table": "Hosting capacity",
+        "cols": [
+          {
+            "id": "c1",
+            "name": "Hosting capacity (MW)"
+          },
+          {
+            "id": "c2",
+            "name": "Search"
+          }
+        ],
+        "ctx": true,
+        "onSkip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n16",
+      "type": "out.plot.table",
+      "x": 960,
+      "y": 1050,
+      "label": "Hosting capacity at each busbar",
+      "s": {
+        "table": "Hosting capacity",
+        "x": "Connection point",
+        "ys": "Hosting capacity (MW)",
+        "kind": "bar",
+        "group": "",
+        "title": "",
+        "ylabel": "Hosting capacity",
+        "yunit": "MW",
+        "limits": [],
+        "stem": ""
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n17",
+      "type": "pf.get",
+      "x": 320,
+      "y": 0,
+      "label": "Generator dispatch",
+      "s": {
+        "el": {
+          "cls": "ElmSym",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "pgini",
+        "unit": "none",
+        "total": false,
+        "skip": true
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n18",
+      "type": "math.sum",
+      "x": 320,
+      "y": 300,
+      "label": "Total dispatch",
+      "s": {},
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n19",
+      "type": "math.formula",
+      "x": 1600,
+      "y": 330,
+      "label": "Share kept",
+      "s": {
+        "expr": "1 - p / total",
+        "each": false
+      },
+      "pin": [],
+      "sv": 1
+    },
+    {
+      "id": "n20",
+      "type": "pf.scale",
+      "x": 1600,
+      "y": 0,
+      "label": "Other generators",
+      "s": {
+        "el": {
+          "cls": "ElmSym",
+          "name": "*",
+          "match": "all"
+        },
+        "attr": "pgini",
+        "attr2": "",
+        "factor": 1.1
+      },
+      "pin": [],
+      "sv": 1
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "n1",
+      "out": "next",
+      "to": "n17",
+      "in": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n17",
+      "out": "next",
+      "to": "n3",
+      "in": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n3",
+      "out": "body",
+      "to": "n4",
+      "in": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n4",
+      "out": "body",
+      "to": "n5",
+      "in": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n5",
+      "out": "next",
+      "to": "n20",
+      "in": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n20",
+      "out": "next",
+      "to": "n6",
+      "in": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n6",
+      "out": "ok",
+      "to": "n7",
+      "in": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n7",
+      "out": "next",
+      "to": "n8",
+      "in": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n8",
+      "out": "next",
+      "to": "n9",
+      "in": "in"
+    },
+    {
+      "id": "e10",
+      "from": "n9",
+      "out": "next",
+      "to": "n10",
+      "in": "in"
+    },
+    {
+      "id": "e11",
+      "from": "n10",
+      "out": "pass",
+      "to": "n11",
+      "in": "in"
+    },
+    {
+      "id": "e12",
+      "from": "n11",
+      "out": "pass",
+      "to": "n12",
+      "in": "in"
+    },
+    {
+      "id": "e13",
+      "from": "n4",
+      "out": "done",
+      "to": "n15",
+      "in": "in"
+    },
+    {
+      "id": "e14",
+      "from": "n3",
+      "out": "done",
+      "to": "n16",
+      "in": "in"
+    },
+    {
+      "id": "e15",
+      "from": "n3",
+      "out": "item",
+      "to": "n5",
+      "in": "bus"
+    },
+    {
+      "id": "e16",
+      "from": "n4",
+      "out": "value",
+      "to": "n5",
+      "in": "p"
+    },
+    {
+      "id": "e17",
+      "from": "n17",
+      "out": "values",
+      "to": "n18",
+      "in": "values"
+    },
+    {
+      "id": "e18",
+      "from": "n4",
+      "out": "value",
+      "to": "n19",
+      "in": "p"
+    },
+    {
+      "id": "e19",
+      "from": "n18",
+      "out": "value",
+      "to": "n19",
+      "in": "total"
+    },
+    {
+      "id": "e20",
+      "from": "n19",
+      "out": "value",
+      "to": "n20",
+      "in": "factor"
+    },
+    {
+      "id": "e21",
+      "from": "n7",
+      "out": "values",
+      "to": "n10",
+      "in": "x"
+    },
+    {
+      "id": "e22",
+      "from": "n8",
+      "out": "values",
+      "to": "n11",
+      "in": "x"
+    },
+    {
+      "id": "e23",
+      "from": "n9",
+      "out": "values",
+      "to": "n12",
+      "in": "x"
+    },
+    {
+      "id": "e24",
+      "from": "n10",
+      "out": "ok",
+      "to": "n13",
+      "in": "a"
+    },
+    {
+      "id": "e25",
+      "from": "n11",
+      "out": "ok",
+      "to": "n13",
+      "in": "b"
+    },
+    {
+      "id": "e26",
+      "from": "n13",
+      "out": "value",
+      "to": "n14",
+      "in": "a"
+    },
+    {
+      "id": "e27",
+      "from": "n12",
+      "out": "ok",
+      "to": "n14",
+      "in": "b"
+    },
+    {
+      "id": "e28",
+      "from": "n14",
+      "out": "value",
+      "to": "n4",
+      "in": "pass"
+    },
+    {
+      "id": "e29",
+      "from": "n4",
+      "out": "limit",
+      "to": "n15",
+      "in": "c1"
+    },
+    {
+      "id": "e30",
+      "from": "n4",
+      "out": "status",
+      "to": "n15",
+      "in": "c2"
+    }
+  ],
+  "view": {
+    "x": 40,
+    "y": 260,
+    "zoom": 0.55
+  }
+}

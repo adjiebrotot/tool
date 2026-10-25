@@ -17,6 +17,10 @@
        labels:      { skip, back, next, start, done, dialog }, // optional
        saveState:   function () { ... },   // optional, see below
        restoreState:function (snapshot) { ... },
+       holdFirstVisit: function () { ... }, // optional: true skips the first-visit
+                                             // start this once (the page was opened
+                                             // for something else, such as a link to
+                                             // an example); it is offered next visit
        steps: [ { target, title, body, onEnter } , ... ]
      };
    `target`  : CSS selector of the element to spotlight, an array of
@@ -422,7 +426,10 @@
     // Offer the tour only on the first visit (after this tour shipped).
     if (!hasVisited()) {
       // Let the app finish its own init/layout first.
-      setTimeout(start, 700);
+      setTimeout(function () {
+        if (typeof CFG.holdFirstVisit === 'function' && CFG.holdFirstVisit()) return;
+        start();
+      }, 700);
     }
   }
 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EvtShc attributes: PowerFactory Short-Circuit Event | Adjie Brotools</title>
+<meta name="description" content="All EvtShc attributes in PowerFactory (Short-Circuit Event): 28 event parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtShc/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="EvtShc attributes: PowerFactory Short-Circuit Event parameters">
+<meta property="og:description" content="All EvtShc attributes in PowerFactory (Short-Circuit Event): 28 event parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtShc/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EvtShc attributes: PowerFactory Short-Circuit Event parameters">
+<meta name="twitter:description" content="All EvtShc attributes in PowerFactory (Short-Circuit Event): 28 event parameters, with units and meaning, for GetAttribute and SetAttribute.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "EvtShc attributes (PowerFactory Short-Circuit Event)",
+  "description": "All EvtShc attributes in PowerFactory (Short-Circuit Event): 28 event parameters, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtShc/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "EvtShc (Short-Circuit Event)",
+    "description": "A short-circuit event: it applies (or clears) a fault on a terminal or a line at a set time of an RMS or EMT simulation."
+  },
+  "keywords": "EvtShc attributes, EvtShc parameters, EvtShc result variables, PowerFactory Short-Circuit Event attributes, EvtShc GetAttribute, p_target EvtShc, time EvtShc, i_shc EvtShc, R_f EvtShc",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "EvtShc",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtShc/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">EvtShc</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>EvtShc attributes<span class="dx-h1-sub">PowerFactory Short-Circuit Event</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Short-Circuit Event (<code>EvtShc</code>): 28 event parameters, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What EvtShc is</h2>
+  <p>A short-circuit event: it applies (or clears) a fault on a terminal or a line at a set time of an RMS or EMT simulation.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>EvtShc</code>, event class</dd><dt>PowerFactory name</dt><dd>Short-Circuit Event</dd><dt>Attributes</dt><dd>28 event parameters</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used EvtShc attributes</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th><th>Where</th></tr></thead><tbody>
+<tr><td><code>p_target</code></td><td>·</td><td>Object<small>the terminal or line</small></td><td>event data</td></tr>
+<tr><td><code>time</code></td><td>s</td><td>Execution time (absolute)<small>when, in seconds</small></td><td>event data</td></tr>
+<tr><td><code>i_shc</code></td><td>·</td><td>Fault Type<small>fault type</small></td><td>event data</td></tr>
+<tr><td><code>R_f</code></td><td>Ohm</td><td>Resistance</td><td>event data</td></tr>
+<tr><td><code>X_f</code></td><td>Ohm</td><td>Reactance</td><td>event data</td></tr>
+<tr><td><code>i_clearShc</code></td><td>·</td><td>Clear Short-Circuit</td><td>event data</td></tr>
+<tr><td><code>outserv</code></td><td>·</td><td>Out of Service</td><td>event data</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write EvtShc in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+inc = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComInc&quot;</span>)
+events = inc.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;p_event&quot;</span>)          <span class="py-c"># the event list the simulation reads</span>
+bus = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)[<span class="py-n">0</span>]
+ev = events.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;EvtShc&quot;</span>, <span class="py-s">&quot;My short-circuit event&quot;</span>)
+ev.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;p_target&quot;</span>, bus)
+app.<span class="py-f">SetAttributeModeInternal</span>(<span class="py-n">1</span>)               <span class="py-c"># write the time in seconds, whatever unit the project shows</span>
+ev.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;time&quot;</span>, <span class="py-n">1.0</span>)
+app.<span class="py-f">SetAttributeModeInternal</span>(<span class="py-n">0</span>)
+ev.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;i_shc&quot;</span>, <span class="py-n">0</span>)                   <span class="py-c"># 0 three-phase, 1 two-phase, 2 single-phase to ground, 3 two-phase to ground, 4 clears the fault</span></code></pre>
+  <ul class="dx-prose"><li>Times are written in the unit the project shows (some show milliseconds); <code>SetAttributeModeInternal(1)</code> makes it seconds. A fault is cleared by a second <code>EvtShc</code> with <code>i_shc</code> 4: <code>i_clearShc</code> does not clear it in an RMS or EMT run.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All EvtShc attributes"><li><a href="#params">Event parameters<span class="dx-n">28</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">EvtShc event parameters</h2>
+  <p class="dx-note">Set these on the event before the simulation runs. Names are typed without the <code>e:</code> shown in variable lists.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>outserv</code></td><td><span aria-label="no unit">·</span></td><td>Out of Service</td></tr>
+<tr><td><code>mtime</code></td><td>min</td><td>Execution time (absolute, in minutes)</td></tr>
+<tr><td><code>hrtime</code></td><td>h</td><td>Execution time (absolute, in hours)</td></tr>
+<tr><td><code>i_shc</code></td><td><span aria-label="no unit">·</span></td><td>Fault Type</td></tr>
+<tr><td><code>i_p2psc</code></td><td><span aria-label="no unit">·</span></td><td>Phases</td></tr>
+<tr><td><code>i_pspgf</code></td><td><span aria-label="no unit">·</span></td><td>Phase</td></tr>
+<tr><td><code>i_p2pgf</code></td><td><span aria-label="no unit">·</span></td><td>Phases</td></tr>
+<tr><td><code>ZfaultInp</code></td><td><span aria-label="no unit">·</span></td><td>Input</td></tr>
+<tr><td><code>i_clearShc</code></td><td><span aria-label="no unit">·</span></td><td>Clear Short-Circuit</td></tr>
+<tr><td><code>time</code></td><td>s</td><td>Execution time (absolute)</td></tr>
+<tr><td><code>R_f</code></td><td>Ohm</td><td>Resistance</td></tr>
+<tr><td><code>X_f</code></td><td>Ohm</td><td>Reactance</td></tr>
+<tr><td><code>L_f</code></td><td>mH</td><td>Inductance</td></tr>
+<tr><td><code>shcLocation</code></td><td>%</td><td>Fault Location</td></tr>
+<tr><td><code>tDateTime</code></td><td><span aria-label="no unit">·</span></td><td>Execution Time</td></tr>
+<tr><td><code>p_target</code></td><td><span aria-label="no unit">·</span></td><td>Object</td></tr>
+<tr><td><code>p_from</code></td><td><span aria-label="no unit">·</span></td><td>Event defined by<small>Object: Elm*</small></td></tr>
+<tr><td><code>dtime</code></td><td>s</td><td>Execution time (relative to now)</td></tr>
+<tr><td><code>tact</code></td><td>s</td><td>Now (current simulation time)</td></tr>
+<tr><td><code>dmtime</code></td><td>min</td><td>Execution time (relative to now, in minutes)</td></tr>
+<tr><td><code>mtact</code></td><td>min</td><td>Now (current simulation time, in minutes)</td></tr>
+<tr><td><code>dhrtime</code></td><td>h</td><td>Execution time (relative to now, in hours)</td></tr>
+<tr><td><code>hrtact</code></td><td>h</td><td>Now (current simulation time, in hours)</td></tr>
+<tr><td><code>Z_f</code></td><td>Ohm</td><td>Impedance</td></tr>
+<tr><td><code>ang_f</code></td><td>deg</td><td>Angle</td></tr>
+<tr><td><code>X2R_f</code></td><td><span aria-label="no unit">·</span></td><td>X/R ratio</td></tr>
+<tr><td><code>R2X_f</code></td><td><span aria-label="no unit">·</span></td><td>R/X ratio</td></tr>
+<tr><td><code>effectedLne</code></td><td><span aria-label="no unit">·</span></td><td>Affected line<small>Object: ElmLne</small></td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/rms-emt-simulation/">RMS and EMT simulation batch runs in Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../EvtParam/"><code>EvtParam</code> Parameter Event</a> · <a href="../EvtSwitch/"><code>EvtSwitch</code> Switch Event</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+ "script": "getting_started",
+ "project": "Nine-bus System",
+ "seconds": 0.0,
+ "status": "ok",
+ "stdout": [
+  "Study case: 01- Load Flow",
+  "Bus 1  1.0400 p.u.    17.16 kV",
+  "Bus 2  1.0250 p.u.    18.45 kV",
+  "Bus 3  1.0250 p.u.    14.14 kV",
+  "Bus 4  1.0258 p.u.   235.93 kV",
+  "Bus 5  0.9956 p.u.   229.00 kV",
+  "Bus 6  1.0127 p.u.   232.91 kV",
+  "Bus 7  1.0258 p.u.   235.93 kV",
+  "Bus 8  1.0159 p.u.   233.65 kV",
+  "Bus 9  1.0324 p.u.   237.44 kV",
+  "Line 4-5  loading  14.2 %",
+  "Line 4-6  loading   8.6 %",
+  "Line 5-7  loading  21.4 %",
+  "Line 6-9  loading  15.4 %",
+  "Line 7-8  loading  18.9 %",
+  "Line 8-9  loading   8.5 %",
+  "Load A: 125.0 MW"
+ ],
+ "data": {
+  "PROJECT": "Nine-bus System (Builder test)"
+ },
+ "audit": "OK",
+ "files": []
+}

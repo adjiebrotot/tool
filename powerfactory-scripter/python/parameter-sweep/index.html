@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory parameter sweep with Python: PV curve and QV curve scripts</title>
+<meta name="description" content="Parameter sweeps in PowerFactory with Python: a PV curve to the nose by load scaling and a QV curve with a fictitious condenser. Tested scripts, results.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/parameter-sweep/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Parameter sweeps in PowerFactory with Python: PV and QV curves">
+<meta property="og:description" content="Parameter sweeps in PowerFactory with Python: a PV curve to the nose by load scaling and a QV curve with a fictitious condenser. Tested scripts, results.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/parameter-sweep/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Parameter sweeps in PowerFactory with Python: PV and QV curves">
+<meta name="twitter:description" content="Parameter sweeps in PowerFactory with Python: a PV curve to the nose by load scaling and a QV curve with a fictitious condenser. Tested scripts, results.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Parameter sweeps in PowerFactory with Python: PV and QV curves",
+  "description": "Parameter sweeps in PowerFactory with Python: a PV curve to the nose by load scaling and a QV curve with a fictitious condenser. Tested scripts, results.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/parameter-sweep/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "powerfactory parameter sweep, PV curve PowerFactory, QV curve PowerFactory, voltage stability PowerFactory Python, load scaling, nose curve, loadability",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "Parameter sweep"
+    },
+    {
+      "@type": "Thing",
+      "name": "PV curve"
+    },
+    {
+      "@type": "Thing",
+      "name": "QV curve"
+    },
+    {
+      "@type": "Thing",
+      "name": "Voltage stability"
+    },
+    {
+      "@type": "Thing",
+      "name": "DIgSILENT PowerFactory"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PowerFactory studies with Python",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a PV curve?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The voltage of a busbar plotted against the power delivered as load or transfer grows. Its tip, the nose, is the maximum loadability; beyond it the load flow has no solution."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a QV curve?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The reactive power a fictitious condenser must inject to hold a busbar at each voltage. The bottom of the curve marks the critical voltage, and its depth below zero is the reactive power margin."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I run a parameter sweep in PowerFactory with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Store the original value, then for each step set it with SetAttribute, run the calculation, check that Execute() returned 0 and read the results. Put the original back in a finally block."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I scale all loads in PowerFactory with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Loop over app.GetCalcRelevantObjects(\"*.ElmLod\") and set plini and qlini to the factor times their original values. The load's scaling factor scale0 is another way."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Parameter sweep, PV and QV curves",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/parameter-sweep/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Parameter sweep, PV and QV curves</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Parameter sweeps in PowerFactory with Python: PV and QV curves</h1>
+    <p class="dx-lead">A parameter sweep sets one input to a series of values, reruns the calculation for each and records the results. The two classic sweeps are the <strong>PV curve</strong> (scale the load up until the load flow fails: the nose is the loadability limit) and the <strong>QV curve</strong> (hold a busbar at a voltage and read the reactive power it takes: the bottom is the reactive margin). On the Nine-bus example the nose is at <strong>740 MW, 2.35 times the base load</strong>, and Bus 5's QV curve bottoms out at <strong>-257 Mvar</strong>.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a parameter sweep is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a parameter sweep is</h2>
+  <p>A sweep answers "what happens as this changes?": loading against demand growth, losses against a tap position, a fault level against the number of units in service. The pattern is always the same: keep the original value, set the next one, run, check it converged, read, and put the original back at the end.</p>
+  <p>Voltage stability uses two sweeps:</p>
+  <ul class="dx-prose">
+    <li><strong>PV curve</strong>: the voltage of a busbar against the power delivered, as the load (or a transfer) grows. The voltage falls slowly, then faster, until the load flow has no solution: the tip of the curve, the nose, is the maximum loadability. The distance from today's load to the nose is the loadability margin.</li>
+    <li><strong>QV curve</strong>: the reactive power a fictitious condenser must inject to hold a busbar at each voltage. Where the curve bottoms out is the critical voltage; how far that bottom lies below zero is the reactive power margin of the busbar.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Keep the original values</strong> of everything the sweep changes, before the first step.</li>
+    <li><strong>Set the next value</strong> from the original, not from the previous step (multiplying the previous value compounds).</li>
+    <li><strong>Run and check</strong>: <code>Execute()</code> returns 0 when the load flow converged. For a PV curve the first failure is the end of the curve; for most sweeps it is a point to record and pass.</li>
+    <li><strong>Read what you sweep for</strong>: busbar voltages <code>m:u</code>, the delivered load <code>m:P:bus1</code>, a condenser's reactive power <code>m:Q:bus1</code>.</li>
+    <li><strong>Put everything back</strong> in a <code>finally</code> block, and delete any object the sweep made.</li>
+  </ol>
+  <h3>PV curve: scale every load to the nose</h3>
+  <p>Each step multiplies the active and reactive power of the three loads by the same factor, so their power factor stays as it is. The extra power comes from the slack generator; generator reactive limits follow the study case (ignored in this example).</p>
+  <p class="dx-file"><span><code>pv_curve.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;PV curve in PowerFactory with Python: scale every load up step by step until the load flow no
+longer converges, recording the load busbar voltages on the way. The last point is the nose.
+
+Runs on the &quot;Nine-bus System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+STUDY_CASE = <span class="py-s">&quot;01- Load Flow&quot;</span>
+WATCH = [<span class="py-s">&quot;Bus 5&quot;</span>, <span class="py-s">&quot;Bus 6&quot;</span>, <span class="py-s">&quot;Bus 8&quot;</span>]            <span class="py-c"># the busbars of the three loads</span>
+STEP = <span class="py-n">0.05</span>                                    <span class="py-c"># load scaling step</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()         <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)
+app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
+
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
+loads = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLod&quot;</span>)
+base = [(ld, ld.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;plini&quot;</span>), ld.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;qlini&quot;</span>)) <span class="py-k">for</span> ld <span class="py-k">in</span> loads]
+watch = [app.<span class="py-f">GetCalcRelevantObjects</span>(name + <span class="py-s">&quot;.ElmTerm&quot;</span>)[<span class="py-n">0</span>] <span class="py-k">for</span> name <span class="py-k">in</span> WATCH]
+
+curve = []
+scale = <span class="py-n">1.0</span>
+<span class="py-k">try</span>:
+    <span class="py-k">while</span> scale &lt;= <span class="py-n">5.0</span>:
+        <span class="py-k">for</span> ld, p, q <span class="py-k">in</span> base:                  <span class="py-c"># same power factor: P and Q scale together</span>
+            ld.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;plini&quot;</span>, p * scale)
+            ld.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;qlini&quot;</span>, q * scale)
+        <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:                 <span class="py-c"># no solution any more: past the nose</span>
+            <span class="py-k">break</span>
+        point = {<span class="py-s">&quot;Scale&quot;</span>: scale, <span class="py-s">&quot;Load (MW)&quot;</span>: <span class="py-f">sum</span>(ld.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:P:bus1&quot;</span>) <span class="py-k">for</span> ld <span class="py-k">in</span> loads)}
+        point.<span class="py-f">update</span>({b.loc_name: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>) <span class="py-k">for</span> b <span class="py-k">in</span> watch})
+        curve.<span class="py-f">append</span>(point)
+        scale = <span class="py-f">round</span>(scale + STEP, <span class="py-n">6</span>)
+<span class="py-k">finally</span>:
+    <span class="py-k">for</span> ld, p, q <span class="py-k">in</span> base:                      <span class="py-c"># put the loads back</span>
+        ld.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;plini&quot;</span>, p)
+        ld.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;qlini&quot;</span>, q)
+
+nose = curve[-<span class="py-n">1</span>]
+weakest = <span class="py-f">min</span>(WATCH, key=<span class="py-k">lambda</span> name: nose[name])
+<span class="py-f">print</span>(<span class="py-s">f&quot;Nose: {nose['Load (MW)']:.0f} MW ({nose['Scale']:.2f} x the base load), &quot;</span>
+      <span class="py-s">f&quot;weakest busbar {weakest} at {nose[weakest]:.3f} p.u.&quot;</span>)
+
+<span class="py-k">with</span> <span class="py-f">open</span>(<span class="py-s">&quot;pv_curve.csv&quot;</span>, <span class="py-s">&quot;w&quot;</span>, newline=<span class="py-s">&quot;&quot;</span>) <span class="py-k">as</span> f:
+    out = csv.<span class="py-f">DictWriter</span>(f, fieldnames=<span class="py-f">list</span>(curve[<span class="py-n">0</span>]))
+    out.<span class="py-f">writeheader</span>()
+    out.<span class="py-f">writerows</span>(curve)</code></pre>
+  <figure class="dx-chart"><div class="dx-chart-sc"><svg viewBox="0 0 760 360" role="img" aria-labelledby="chdivy5m" xmlns="http://www.w3.org/2000/svg"><title id="chdivy5m">PV curves of the three load busbars of the Nine-bus example as all loads scale up</title><line class="ch-grid" x1="64" x2="742" y1="308.0" y2="308.0"/><text class="ch-t" x="56" y="312.0" text-anchor="end">0.7</text><line class="ch-grid" x1="64" x2="742" y1="235.0" y2="235.0"/><text class="ch-t" x="56" y="239.0" text-anchor="end">0.8</text><line class="ch-grid" x1="64" x2="742" y1="162.0" y2="162.0"/><text class="ch-t" x="56" y="166.0" text-anchor="end">0.9</text><line class="ch-grid" x1="64" x2="742" y1="89.0" y2="89.0"/><text class="ch-t" x="56" y="93.0" text-anchor="end">1</text><line class="ch-grid" x1="64" x2="742" y1="16.0" y2="16.0"/><text class="ch-t" x="56" y="20.0" text-anchor="end">1.1</text><text class="ch-t" x="64.0" y="326" text-anchor="middle">300</text><text class="ch-t" x="199.6" y="326" text-anchor="middle">400</text><text class="ch-t" x="335.2" y="326" text-anchor="middle">500</text><text class="ch-t" x="470.8" y="326" text-anchor="middle">600</text><text class="ch-t" x="606.4" y="326" text-anchor="middle">700</text><text class="ch-t" x="742.0" y="326" text-anchor="middle">800</text><line class="ch-axis" x1="64" x2="742" y1="308" y2="308"/><text class="ch-tt" x="403" y="350" text-anchor="middle">Total load (MW)</text><text class="ch-tt" transform="translate(16 162) rotate(-90)" text-anchor="middle">Busbar voltage (p.u.)</text><path class="ch-l ch-c1" d="M84.3 92.2L105.7 94.7L127.1 97.3L148.4 100.1L169.8 103.0L191.1 106.2L212.5 109.4L233.8 112.9L255.2 116.5L276.6 120.4L297.9 124.5L319.3 128.8L340.6 133.4L362.0 138.2L383.3 143.4L404.7 148.9L426.1 154.7L447.4 161.0L468.8 167.8L490.1 175.1L511.5 183.1L532.8 191.8L554.2 201.5L575.6 212.5L596.9 225.2L618.3 240.3L639.6 259.7L661.0 289.4"/><path class="ch-l ch-c2" d="M84.3 79.8L105.7 81.8L127.1 84.1L148.4 86.4L169.8 88.9L191.1 91.5L212.5 94.3L233.8 97.3L255.2 100.4L276.6 103.7L297.9 107.2L319.3 110.9L340.6 114.8L362.0 119.0L383.3 123.5L404.7 128.2L426.1 133.3L447.4 138.7L468.8 144.5L490.1 150.8L511.5 157.7L532.8 165.3L554.2 173.7L575.6 183.1L596.9 193.9L618.3 206.9L639.6 223.4L661.0 248.4"/><path class="ch-l ch-c3" d="M84.3 77.4L105.7 79.3L127.1 81.3L148.4 83.3L169.8 85.4L191.1 87.5L212.5 89.7L233.8 92.0L255.2 94.4L276.6 96.8L297.9 99.3L319.3 101.9L340.6 104.6L362.0 107.4L383.3 110.3L404.7 113.4L426.1 116.6L447.4 119.9L468.8 123.4L490.1 127.1L511.5 131.0L532.8 135.2L554.2 139.7L575.6 144.7L596.9 150.2L618.3 156.4L639.6 164.1L661.0 174.9"/></svg></div><ul class="dx-legend"><li><i class="k1"></i>Bus 5</li><li><i class="k2"></i>Bus 6</li><li><i class="k3"></i>Bus 8</li></ul><figcaption>Steps of 5 % of the base load (315 MW). The last point that converges, 740 MW, is the nose; Bus 5 is the weakest busbar at 0.725 p.u.</figcaption></figure>
+  <h3>QV curve: a fictitious condenser at Bus 5</h3>
+  <p>A static generator with no active power, in voltage control, holds Bus 5 at each voltage from 1.10 p.u. down; the reactive power it injects is the curve. It is rated far above what it will need, so it never limits, and deleted at the end.</p>
+  <p class="dx-file"><span><code>qv_curve.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;QV curve in PowerFactory with Python: hold one busbar at a set voltage with a fictitious
+voltage-controlling static generator, step the voltage down and record the reactive power it
+needs. The bottom of the curve is the reactive power margin of the busbar.
+
+Runs on the &quot;Nine-bus System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+STUDY_CASE = <span class="py-s">&quot;01- Load Flow&quot;</span>
+BUS = <span class="py-s">&quot;Bus 5&quot;</span>
+VOLTAGES = [<span class="py-f">round</span>(<span class="py-n">1.10</span> - <span class="py-n">0.02</span> * k, <span class="py-n">2</span>) <span class="py-k">for</span> k <span class="py-k">in</span> <span class="py-f">range</span>(<span class="py-n">36</span>)]      <span class="py-c"># 1.10 p.u. down to 0.40 p.u.</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()          <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)
+app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
+
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
+bus = app.<span class="py-f">GetCalcRelevantObjects</span>(BUS + <span class="py-s">&quot;.ElmTerm&quot;</span>)[<span class="py-n">0</span>]
+grid = bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;cpGrid&quot;</span>)                <span class="py-c"># the grid (ElmNet) the busbar belongs to</span>
+
+<span class="py-c"># The fictitious condenser: no active power, voltage control, rated well above what it will need.</span>
+cubicle = bus.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;StaCubic&quot;</span>, <span class="py-s">&quot;QV cubicle&quot;</span>)
+gen = grid.<span class="py-f">CreateObject</span>(<span class="py-s">&quot;ElmGenstat&quot;</span>, <span class="py-s">&quot;QV condenser&quot;</span>)
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;bus1&quot;</span>, cubicle)
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;sgn&quot;</span>, <span class="py-n">2000.0</span>)                  <span class="py-c"># MVA</span>
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;pgini&quot;</span>, <span class="py-n">0.0</span>)
+gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;av_mode&quot;</span>, <span class="py-s">&quot;constv&quot;</span>)            <span class="py-c"># hold the voltage at usetp</span>
+
+curve = []
+<span class="py-k">try</span>:
+    <span class="py-k">for</span> v <span class="py-k">in</span> VOLTAGES:
+        gen.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;usetp&quot;</span>, v)
+        <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:
+            <span class="py-k">break</span>
+        curve.<span class="py-f">append</span>({<span class="py-s">&quot;Voltage (p.u.)&quot;</span>: bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>), <span class="py-s">&quot;Q (Mvar)&quot;</span>: gen.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:Q:bus1&quot;</span>)})
+<span class="py-k">finally</span>:
+    app.<span class="py-f">ResetCalculation</span>()                       <span class="py-c"># results first, then the objects can go</span>
+    gen.<span class="py-f">Delete</span>()
+    cubicle.<span class="py-f">Delete</span>()
+
+bottom = <span class="py-f">min</span>(curve, key=<span class="py-k">lambda</span> p: p[<span class="py-s">&quot;Q (Mvar)&quot;</span>])
+<span class="py-k">if</span> bottom <span class="py-k">is</span> curve[-<span class="py-n">1</span>]:
+    <span class="py-f">print</span>(<span class="py-s">f&quot;{BUS}: Q still falls at {bottom['Voltage (p.u.)']:.2f} p.u.; extend VOLTAGES to find the bottom&quot;</span>)
+<span class="py-k">else</span>:
+    <span class="py-f">print</span>(<span class="py-s">f&quot;{BUS}: the curve bottoms out at {bottom['Q (Mvar)']:.0f} Mvar, at {bottom['Voltage (p.u.)']:.2f} p.u.&quot;</span>)
+
+<span class="py-k">with</span> <span class="py-f">open</span>(<span class="py-s">&quot;qv_curve.csv&quot;</span>, <span class="py-s">&quot;w&quot;</span>, newline=<span class="py-s">&quot;&quot;</span>) <span class="py-k">as</span> f:
+    out = csv.<span class="py-f">DictWriter</span>(f, fieldnames=<span class="py-f">list</span>(curve[<span class="py-n">0</span>]))
+    out.<span class="py-f">writeheader</span>()
+    out.<span class="py-f">writerows</span>(curve)</code></pre>
+  <figure class="dx-chart"><div class="dx-chart-sc"><svg viewBox="0 0 760 360" role="img" aria-labelledby="ch3on01r" xmlns="http://www.w3.org/2000/svg"><title id="ch3on01r">QV curve of Bus 5 of the Nine-bus example</title><line class="ch-grid" x1="64" x2="742" y1="308.0" y2="308.0"/><text class="ch-t" x="56" y="312.0" text-anchor="end">−300</text><line class="ch-grid" x1="64" x2="742" y1="249.6" y2="249.6"/><text class="ch-t" x="56" y="253.6" text-anchor="end">−200</text><line class="ch-grid" x1="64" x2="742" y1="191.2" y2="191.2"/><text class="ch-t" x="56" y="195.2" text-anchor="end">−100</text><line class="ch-grid" x1="64" x2="742" y1="132.8" y2="132.8"/><text class="ch-t" x="56" y="136.8" text-anchor="end">0</text><line class="ch-grid" x1="64" x2="742" y1="74.4" y2="74.4"/><text class="ch-t" x="56" y="78.4" text-anchor="end">100</text><line class="ch-grid" x1="64" x2="742" y1="16.0" y2="16.0"/><text class="ch-t" x="56" y="20.0" text-anchor="end">200</text><text class="ch-t" x="64.0" y="326" text-anchor="middle">0.4</text><text class="ch-t" x="233.5" y="326" text-anchor="middle">0.6</text><text class="ch-t" x="403.0" y="326" text-anchor="middle">0.8</text><text class="ch-t" x="572.5" y="326" text-anchor="middle">1</text><text class="ch-t" x="742.0" y="326" text-anchor="middle">1.2</text><line class="ch-axis" x1="64" x2="742" y1="308" y2="308"/><text class="ch-tt" x="403" y="350" text-anchor="middle">Bus 5 voltage (p.u.)</text><text class="ch-tt" transform="translate(16 162) rotate(-90)" text-anchor="middle">Reactive power injected (Mvar)</text><line class="ch-lim" x1="64" x2="742" y1="132.8" y2="132.8"/><text class="ch-limt" x="738" y="126.8" text-anchor="end">Q = 0</text><path class="ch-l ch-c1" d="M657.3 58.1L640.3 73.6L623.3 88.5L606.4 102.9L589.4 116.7L572.5 130.0L555.6 142.7L538.6 154.9L521.6 166.5L504.7 177.6L487.7 188.1L470.8 198.0L453.9 207.4L436.9 216.3L420.0 224.6L403.0 232.4L386.0 239.6L369.1 246.2L352.2 252.3L335.2 257.9L318.2 262.9L301.3 267.3L284.4 271.2L267.4 274.5L250.5 277.3L233.5 279.5L216.5 281.1L199.6 282.2L182.7 282.7L165.7 282.7L148.8 282.0L131.8 280.9L114.9 279.1L97.9 276.7L80.9 273.8L64.0 270.3"/><circle class="ch-dot ch-f1" cx="657.3" cy="58.1" r="3.6"/><circle class="ch-dot ch-f1" cx="640.3" cy="73.6" r="3.6"/><circle class="ch-dot ch-f1" cx="623.3" cy="88.5" r="3.6"/><circle class="ch-dot ch-f1" cx="606.4" cy="102.9" r="3.6"/><circle class="ch-dot ch-f1" cx="589.4" cy="116.7" r="3.6"/><circle class="ch-dot ch-f1" cx="572.5" cy="130.0" r="3.6"/><circle class="ch-dot ch-f1" cx="555.6" cy="142.7" r="3.6"/><circle class="ch-dot ch-f1" cx="538.6" cy="154.9" r="3.6"/><circle class="ch-dot ch-f1" cx="521.6" cy="166.5" r="3.6"/><circle class="ch-dot ch-f1" cx="504.7" cy="177.6" r="3.6"/><circle class="ch-dot ch-f1" cx="487.7" cy="188.1" r="3.6"/><circle class="ch-dot ch-f1" cx="470.8" cy="198.0" r="3.6"/><circle class="ch-dot ch-f1" cx="453.9" cy="207.4" r="3.6"/><circle class="ch-dot ch-f1" cx="436.9" cy="216.3" r="3.6"/><circle class="ch-dot ch-f1" cx="420.0" cy="224.6" r="3.6"/><circle class="ch-dot ch-f1" cx="403.0" cy="232.4" r="3.6"/><circle class="ch-dot ch-f1" cx="386.0" cy="239.6" r="3.6"/><circle class="ch-dot ch-f1" cx="369.1" cy="246.2" r="3.6"/><circle class="ch-dot ch-f1" cx="352.2" cy="252.3" r="3.6"/><circle class="ch-dot ch-f1" cx="335.2" cy="257.9" r="3.6"/><circle class="ch-dot ch-f1" cx="318.2" cy="262.9" r="3.6"/><circle class="ch-dot ch-f1" cx="301.3" cy="267.3" r="3.6"/><circle class="ch-dot ch-f1" cx="284.4" cy="271.2" r="3.6"/><circle class="ch-dot ch-f1" cx="267.4" cy="274.5" r="3.6"/><circle class="ch-dot ch-f1" cx="250.5" cy="277.3" r="3.6"/><circle class="ch-dot ch-f1" cx="233.5" cy="279.5" r="3.6"/><circle class="ch-dot ch-f1" cx="216.5" cy="281.1" r="3.6"/><circle class="ch-dot ch-f1" cx="199.6" cy="282.2" r="3.6"/><circle class="ch-dot ch-f1" cx="182.7" cy="282.7" r="3.6"/><circle class="ch-dot ch-f1" cx="165.7" cy="282.7" r="3.6"/><circle class="ch-dot ch-f1" cx="148.8" cy="282.0" r="3.6"/><circle class="ch-dot ch-f1" cx="131.8" cy="280.9" r="3.6"/><circle class="ch-dot ch-f1" cx="114.9" cy="279.1" r="3.6"/><circle class="ch-dot ch-f1" cx="97.9" cy="276.7" r="3.6"/><circle class="ch-dot ch-f1" cx="80.9" cy="273.8" r="3.6"/><circle class="ch-dot ch-f1" cx="64.0" cy="270.3" r="3.6"/></svg></div><figcaption>Today's operating point is where the curve crosses zero (about 1.00 p.u.). The bottom, -257 Mvar at 0.54 p.u., is the critical point: Bus 5 has about 257 Mvar of reactive power margin.</figcaption></figure>
+  <div class="dx-tw"><table><thead><tr><th class="num">Load scaling</th><th class="num">Total load <span class="th-unit">MW</span></th><th class="num">Bus 5 <span class="th-unit">p.u.</span></th><th class="num">Bus 6 <span class="th-unit">p.u.</span></th><th class="num">Bus 8 <span class="th-unit">p.u.</span></th></tr></thead><tbody>
+<tr><td class="num">1.00</td><td class="num">315</td><td class="num">0.9956</td><td class="num">1.0127</td><td class="num">1.0159</td></tr>
+<tr><td class="num">1.20</td><td class="num">378</td><td class="num">0.9808</td><td class="num">1.0002</td><td class="num">1.0050</td></tr>
+<tr><td class="num">1.40</td><td class="num">441</td><td class="num">0.9623</td><td class="num">0.9844</td><td class="num">0.9927</td></tr>
+<tr><td class="num">1.60</td><td class="num">504</td><td class="num">0.9392</td><td class="num">0.9646</td><td class="num">0.9786</td></tr>
+<tr><td class="num">1.80</td><td class="num">567</td><td class="num">0.9099</td><td class="num">0.9394</td><td class="num">0.9622</td></tr>
+<tr><td class="num">2.00</td><td class="num">630</td><td class="num">0.8711</td><td class="num">0.9059</td><td class="num">0.9424</td></tr>
+<tr><td class="num">2.20</td><td class="num">693</td><td class="num">0.8135</td><td class="num">0.8562</td><td class="num">0.9162</td></tr>
+<tr><td class="num">2.35</td><td class="num">740</td><td class="num">0.7255</td><td class="num">0.7816</td><td class="num">0.8824</td></tr>
+</tbody></table></div>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The PV curve by load scaling Quick Start loads in the PowerFactory Workflow Builder, ready for your project. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=pv-curve">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The Builder's PV curve Quick Start is the same sweep as a loop of blocks, ending at the first load flow that fails. On the Nine-bus example it gives the same 28 points and the same nose at 2.35 times the base load. This is its file for that example:</p>
+  <p class="dx-file"><span><code>pv_curve_by_load_scaling.py</code> as the Builder writes it: the settings and the workflow</span><a href="pv_curve_by_load_scaling.py" download>⬇ Download the full file (.py, 2,784 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># PV curve by load scaling</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Close PowerFactory, or run this file from inside PowerFactory (see RUN_MODE).
+  3. Run it with the Python that matches your PowerFactory, e.g.  py -3.12 pv_curve_by_load_scaling.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> difflib
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> glob
+<span class="py-k">import</span> importlib.util
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> subprocess
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;PV curve by load scaling&quot;</span>
+<span class="py-c"># REQUIRED. The PowerFactory project to open, exactly as the Data Manager shows it (letter case</span>
+<span class="py-c"># counts).</span>
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+<span class="py-c"># OPTIONAL. The study case to activate first (&quot;&quot; = keep the active one).</span>
+STUDY_CASE = <span class="py-s">&quot;01- Load Flow&quot;</span>
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every value the workflow changed back when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read from the</span>
+<span class="py-c"># grid).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;engine&quot; (start PowerFactory in the background) or &quot;inside&quot; (run from inside</span>
+<span class="py-c"># PowerFactory).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PowerFactory window while running (engine mode only).</span>
+SHOW_PF = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. True: no screen updates and fewer output window messages while running.</span>
+FAST_MODE = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PowerFactory to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+<span class="py-c"># OPTIONAL. The folder with the powerfactory Python module (&quot;&quot; = find it).</span>
+PF_API_PATH = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Log in to PowerFactory as this user (&quot;&quot; = your own).</span>
+PF_USER = <span class="py-s">&quot;&quot;</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># OPTIONAL. Load scaling: First.</span>
+LOAD_SCALING_FROM = <span class="py-n">1</span>
+
+<span class="py-c"># OPTIONAL. Load scaling: Last.</span>
+LOAD_SCALING_TO = <span class="py-n">3</span>
+
+<span class="py-c"># OPTIONAL. Load scaling: Step.</span>
+LOAD_SCALING_STEP = <span class="py-n">0.05</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: For each scaling factor this multiplies the active and reactive power of every load (or of the loads named on Loads) by the factor, from their original values, runs the load flow and reads the lowe...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">pf_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;*.ElmLod&quot;</span>, <span class="py-s">&quot;all&quot;</span>), (<span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Project: Nine-bus System) --</span>
+        <span class="py-c"># -- Step 2: Load scaling (1 to 3, step 0.05) --</span>
+        load_scaling_values = <span class="py-f">num_range</span>(LOAD_SCALING_FROM, LOAD_SCALING_TO, LOAD_SCALING_STEP)
+        <span class="py-k">for</span> load_scaling_pass_no, load_scaling <span class="py-k">in</span> <span class="py-f">enumerate</span>(load_scaling_values, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Load scaling&quot;</span>, load_scaling, load_scaling_pass_no, <span class="py-f">len</span>(load_scaling_values))
+            mark = <span class="py-f">pf_mark</span>()
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Loads (all * (ElmLod): plini, qlini x the wired factor) --</span>
+                scaled = <span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmLod&quot;</span>, <span class="py-s">&quot;all&quot;</span>)
+                factor = load_scaling
+                <span class="py-f">scale_attr</span>(scaled, <span class="py-s">&quot;plini&quot;</span>, factor)
+                <span class="py-f">scale_attr</span>(scaled, <span class="py-s">&quot;qlini&quot;</span>, factor)
+                <span class="py-c"># -- Step 4: Run load flow (Settings of the study case) --</span>
+                ldf = <span class="py-f">run_load_flow</span>(app, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>)
+                <span class="py-c"># Run load flow: Did not converge</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> ldf.ok:
+                    <span class="py-c"># -- Step 5: Nose of the curve (The load flow no longer converges: the nose of the PV curve) --</span>
+                    <span class="py-f">log</span>(<span class="py-s">&quot;The load flow no longer converges: the nose of the PV curve&quot;</span>)
+                    <span class="py-k">break</span>
+                <span class="py-c"># -- Step 6: Busbar voltage (m:u of all * (ElmTerm) (load flow results)) --</span>
+                busbar_voltage = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;m:u&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 7: Add row to results table (Into &quot;PV curve&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;PV curve&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>: busbar_voltage.min,
+                    <span class="py-s">&quot;Lowest at&quot;</span>: busbar_voltage.at_min,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-k">try</span>:
+                    <span class="py-f">pf_undo</span>(mark)
+                <span class="py-k">except</span> Exception <span class="py-k">as</span> fin:
+                    <span class="py-f">log</span>(<span class="py-s">f&quot;Could not put things back after this pass: {fin}&quot;</span>, <span class="py-s">&quot;error&quot;</span>)
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;PV curve&quot;</span>])
+        <span class="py-c"># -- Step 8: PV curve (Lowest voltage (p.u.) against Load scaling) --</span>
+        <span class="py-f">plot_table</span>(<span class="py-s">&quot;PV curve&quot;</span>, <span class="py-s">&quot;Load scaling&quot;</span>, [<span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>], kind=<span class="py-s">&quot;line&quot;</span>, group=<span class="py-k">None</span>, title=<span class="py-s">&quot;PV curve&quot;</span>, ylabel=<span class="py-s">&quot;Lowest busbar voltage&quot;</span>, yunit=<span class="py-s">&quot;p.u.&quot;</span>, limits=[], stem=<span class="py-k">None</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 2,625 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><strong>Step 2</strong> is a "For a range of numbers" loop over the scaling factor, from <code>LOAD_SCALING_FROM</code> to <code>LOAD_SCALING_TO</code> in steps of <code>LOAD_SCALING_STEP</code>; it puts the loads back after every pass.</li>
+    <li><strong>Step 3</strong>, Scale, sets <code>plini</code> and <code>qlini</code> of every load to the factor times its original value.</li>
+    <li><strong>Step 4</strong> runs the load flow. When it does not converge, "Stop the loop" ends the sweep with a message in the log: the nose.</li>
+    <li><strong>Step 6</strong> reads the lowest busbar voltage and where it is; <strong>step 7</strong> adds the row.</li>
+    <li>After the loop, "Draw graph from results table" saves the PV curve as a PNG.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>The last converged point is an estimate of the nose.</strong> A load flow can also fail for numerical reasons. Use a smaller step near the end, or the continuation method, when the exact margin matters.</li>
+    <li><strong>Scale P and Q together</strong> to keep each load's power factor; scaling only P sweeps the power factor too.</li>
+    <li><strong>Where the extra power comes from shapes the curve.</strong> Here the slack takes it all. A transfer from one area to another, or generator reactive limits (<code>iopt_lim</code> on <code>ComLdf</code>), move the nose.</li>
+    <li><strong>Voltage-dependent loads draw less as the voltage falls.</strong> Record the delivered power <code>m:P:bus1</code>, not the setpoint <code>plini</code>, on the x axis.</li>
+    <li><strong>The QV condenser must never limit.</strong> Rate it well above the reactive power it will need, run without its limits, and delete it (after <code>ResetCalculation()</code>) when the sweep ends.</li>
+    <li><strong>Put the inputs back from the stored originals</strong> in <code>finally</code>, so a stopped sweep never leaves the loads scaled.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>What is a PV curve?</h3>
+  <p>The voltage of a busbar plotted against the power delivered as load or transfer grows. Its tip, the nose, is the maximum loadability; beyond it the load flow has no solution.</p>
+  <h3>What is a QV curve?</h3>
+  <p>The reactive power a fictitious condenser must inject to hold a busbar at each voltage. The bottom of the curve marks the critical voltage, and its depth below zero is the reactive power margin.</p>
+  <h3>How do I run a parameter sweep in PowerFactory with Python?</h3>
+  <p>Store the original value, then for each step set it with <code>SetAttribute</code>, run the calculation, check that <code>Execute()</code> returned 0 and read the results. Put the original back in a <code>finally</code> block.</p>
+  <h3>How do I scale all loads in PowerFactory with Python?</h3>
+  <p>Loop over <code>app.GetCalcRelevantObjects("*.ElmLod")</code> and set <code>plini</code> and <code>qlini</code> to the factor times their original values. The load's scaling factor <code>scale0</code> is another way.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PowerFactory studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PowerFactory Python API: getting started</a></li>
+    <li><a href="../load-flow/">Load flow and results to CSV or Excel</a></li>
+    <li><a href="../contingency-analysis/">N-1 contingency analysis</a></li>
+    <li><a href="../short-circuit/">Short-circuit automation</a></li>
+    <li><a href="../hosting-capacity/">Hosting capacity study</a></li>
+    <li><a href="../rms-emt-simulation/">RMS and EMT simulation batch runs</a></li>
+  </ul>
+  <p>Attributes used on this page: <a href="../../reference/ElmLod/"><code>ElmLod</code></a>, <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a>, <a href="../../reference/ElmGenstat/"><code>ElmGenstat</code></a>, <a href="../../reference/TypLod/"><code>TypLod</code></a>. <a href="../../reference/">All attributes</a>.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+</body>
+</html>
