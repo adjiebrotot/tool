@@ -53,6 +53,7 @@ Shared, cross-tool files live at the repo root:
 | `solve-cache.js` | Kept results for the optimiser tools (Capacity Expansion Planner, ED/UC Simulator), so a plan solved once opens solved instead of waiting for HiGHS: their first visit and Quick Starts ship pre-solved in `<tool>/presolved/`, and each reader's own solves are kept in IndexedDB. A result is used only for the exact solve key on screen and the solver revision the tool ships, so a stale one is a miss (the tool solves as before), never a wrong answer. `node _ref/presolve.mjs` writes them; `--check` fails when the solver changed since. |
 | `tour-shared.js`, `tour-shared.css` | The guided-tour engine. A tool opts in with a `tour.js` that sets `window.__TOUR = { seenKey, launchLabel, steps }` and loads `tour-shared.js` after it. |
 | `home-anim.js` | The small looping animation on each home-page tool card, picked by the card's `data-anim` (the tool's folder name). CSS keyframes only, played while the card is on screen and still under reduced motion. The `tool-animator` agent (`.claude/agents/tool-animator.md`) draws them. |
+| `404.html` | Not found: the train page from www (Indonesian words under an `/id/` path). Inside someone's iframe, an embed whose link points nowhere, it is one quiet line asking for a fresh embed code instead. Self-contained, every path starting with `/`, since GitHub Pages serves it at any depth. |
 | `_ref/` | Build-time helpers and the design reference — not shipped to users. |
 
 ## Audit harnesses

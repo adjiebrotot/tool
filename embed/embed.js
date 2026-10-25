@@ -23,7 +23,7 @@
 (function(global){
   var doc = document, root = doc.documentElement;
   var SITE = location.origin + '/', HOME = 'https://tool.adjiebrotots.com';
-  var FAILED = { en: ['This chart could not be shown here.', 'Open it on '], id: ['Grafik ini tidak bisa ditampilkan di sini.', 'Buka di '] };
+  var FAILED = { en: ['This chart could not load.', 'Open it, or get a fresh embed code, at '], id: ['Grafik ini gagal dimuat.', 'Buka, atau ambil kode embed baru, di '] };
   var RESET = { en: 'Reset zoom', id: 'Reset zoom' }, PLAY = { en: ['Play', 'Pause'], id: ['Putar', 'Jeda'] };
   var snap = null, lang = 'en', pool = [], card, stage, legendBox, modesBox, resetBox, frameAt = -1, picks = [];
   // What the reader hid in the key, by entry, so it stays hidden in every view.
@@ -571,7 +571,8 @@
   function start(){
     var s = hashParam('s');
     if(!s) return ready.then(fail);
-    Promise.all([unpack(s), ready]).then(function(r){
+    // A link mangled on its way (cut short, re-escaped) throws in atob: a rejection too.
+    Promise.all([Promise.resolve(s).then(unpack), ready]).then(function(r){
       snap = r[0];
       if(!snap || snap.v !== 1 || !Array.isArray(snap.frames) || !snap.frames.length) throw new Error('not a chart');
       pool = Array.isArray(snap.pool) ? snap.pool : [];
