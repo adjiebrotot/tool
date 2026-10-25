@@ -148,3 +148,6 @@
 @media (prefers-reduced-motion: reduce) {
   .pfg *, .pfg *::before { transition: none !important; }
 }
+
+.pfg-i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); font: italic 800 .7rem/1 Georgia, serif; vertical-align: 1px; }
+.pfg-end .pfg-more { order: 1; flex-basis: 100%; text-align: center; font-size: .9rem; font-weight: 400; color: var(--muted); }
