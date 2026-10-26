@@ -70,6 +70,7 @@
 
 /* ---- A demo: the clip, then the steps it shows --------------------------------------------- */
 .gd-demo { display: grid; gap: 14px; }
+.gd-demo + .gd-demo { margin-top: 22px; }
 .gd-screen { margin: 0; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); }
 .gd-view { position: relative; aspect-ratio: var(--ar, 16 / 9); background: var(--bg-subtle); }
 .gd-view video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; }

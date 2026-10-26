@@ -62,7 +62,6 @@ const sub = (S, name) => S.click(`.sub-tab[data-sub="${name}"]`, { after: 500 })
 const sw = (id) => (S) => { const e = S.doc.getElementById(id); return e && e.closest('.toggle-row'); };
 const group = (sel) => (S) => { const e = S.doc.querySelector(sel); return e && e.closest('.field-group'); };
 const row = (sel) => (S) => { const e = S.doc.querySelector(sel); return e && e.closest('.field-row, .sec-row, .param-row'); };
-const card = (sel) => (S) => { const e = S.doc.querySelector(sel); return e && e.closest('.card'); };
 const scTab = (name) => (S) => [...S.doc.querySelectorAll('#scenarioTabs .sc-tab')].find(t => t.textContent.indexOf(name) >= 0);
 const pfTab = (name) => (S) => [...S.doc.querySelectorAll('#portfolioTabs .pf-tab')].find(t => t.textContent.indexOf(name) >= 0);
 const fold = (sel) => `${sel} .fold-btn`;
@@ -214,9 +213,9 @@ export const SCENES = [
       S.mark('Momentum');
       await S.click('.cat-pill[data-cat="momentum"]', { after: 600 });
       await S.click('.radio-opt[id$="_momentum_dip"]', { after: 700 });
-      await S.reveal('[id^="secMomPct"]', 0.45);
+      await S.reveal('input[id^="secMomPct"]', 0.45);
       await S.focus(group('.cat-pills'), { pad: 20 });
-      await S.slide('[id^="secMomPct"]', 3, { after: 600 });
+      await S.slide('input[id^="secMomPct"]', 3, { after: 600 });
       await S.moveTo('.eom-row', { ms: 600 });
       await S.wait(1400);
       S.mark('Technical');
@@ -424,7 +423,11 @@ export const SCENES = [
         const w = S.win, e = S.doc.getElementById('startDate');
         e.value = v; e.dispatchEvent(new w.Event('input', { bubbles: true })); e.dispatchEvent(new w.Event('change', { bubbles: true }));
         await S.wait(700);
+        // On the Data tab the button loads tickers; Simulate is on the other tabs.
+        await tab(S, 'securities');
         await simulate(S, '$520');
+        await tab(S, 'data');
+        await S.reveal('#startDate', 0.5, 300);
       };
       S.begin();
       S.mark('The base case');
@@ -640,11 +643,11 @@ export const SCENES = [
       S.mark('Composition');
       await S.focus();
       await S.scrollTo('#compViewToggle', 60, 900);
-      await S.focus(card('#compCanvas'), { pad: 0 });
+      await S.focus((S2) => S2.doc.getElementById('compCanvas').closest('.detail-subsection'), { pad: 10 });
       await S.click('#compViewToggle .seg-btn[data-cv="percent"]', { after: 1800 });
       S.mark('Breakdown Table');
       await S.focus();
-      await S.scrollTo('#compTable', 300, 800);
+      await S.scrollTo('#downloadBtn', 300, 800);
       const f = (S2) => S2.doc.getElementById('compTable').closest('.detail-subsection').querySelector('.fold-btn');
       await S.click(f, { after: 700 });
       await S.scrollTo('#compUnitNote', 120, 900);
