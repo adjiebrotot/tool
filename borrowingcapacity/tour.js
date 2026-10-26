@@ -17,6 +17,7 @@
 window.__TOUR = {
   seenKey: 'bc-tour-v3-seen',
   launchLabel: '🧭 Tour',
+  guide: 'guides/',
   saveState: function () {
     return window.__BC_TOUR ? window.__BC_TOUR.saveState() : null;
   },

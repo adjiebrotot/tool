@@ -5,8 +5,10 @@
 window.__TOUR = {
   seenKey: 'rvo-id-tour-v4-seen',
   launchLabel: '🧭 Tur',
+  guide: '../guides/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)' },
   steps: [
     {
       target: null,

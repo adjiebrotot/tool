@@ -4,6 +4,7 @@
 window.__TOUR = {
   seenKey: 'rvos-tour-v3-seen',
   launchLabel: '🧭 Tour',
+  guide: '../guides/#same',
   steps: [
     {
       target: null,
