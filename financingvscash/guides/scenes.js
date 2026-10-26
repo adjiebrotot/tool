@@ -24,7 +24,15 @@ const offer = async (S, i) => {
   await S.reveal('.sc-bar', 0.2, 400);
   await S.click(`.sc-tab[data-idx="${i}"]`, { after: 800 });
 };
+// The note "Inputs changed" slides in above ▶ Simulate and moves it, so the click waits for it to settle.
 const simulate = async (S, after = 1200) => {
+  let last = '', t0 = Date.now();
+  await S.until(() => {
+    const r = S.doc.getElementById('simBtn').getBoundingClientRect(), k = r.top + ',' + r.left;
+    const still = k === last && Date.now() - t0 > 300;
+    last = k;
+    return still;
+  }, 4000, 'the Simulate button to settle');
   await S.click('#simBtn', { after: 0 });
   await S.until((w) => !w.document.body.classList.contains('is-stale') && !w.document.getElementById('simBtn').dataset.running, 15000, 'the run');
   await S.wait(after);
