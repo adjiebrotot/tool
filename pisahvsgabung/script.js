@@ -13,9 +13,19 @@ function measureWmText(text, font){ _wmMeasureCtx.font = font; return _wmMeasure
 const $ = id => document.getElementById(id);
 
 /* ── Translations ── */
+/* Two names, two meanings. The handles (pisahTax, kpiPisah, data-scenario="pisah",
+   the "pisah" keys below) keep the names they were saved, shared and embedded
+   with, but what they hold is the separate-ladder sum: the husband on PTKP K/n
+   plus the wife's salary on TK/0. That is what Gabung Harta costs when the
+   wife's salary comes from one employer, because UU PPh Pasal 8 ayat (1) makes
+   that salary final instead of adding it to the husband's. The "gabung"
+   handles hold the combined computation on PTKP K/I/n, which is how Pisah
+   Harta (PH, and MT, the wife choosing to file on her own) is taxed under
+   Pasal 8 ayat (3). So the words on screen say Gabung for the first and Pisah
+   for the second. */
 const LANG = {
   en: {
-    subtitle: 'Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).',
+    subtitle: "Compare a married couple's Indonesian income tax filed jointly (Gabung Harta) or separately (Pisah Harta, PH or MT).",
     btnBack: '← Other Tools',
     tabInputs: 'Household',
     tabAdvanced: 'PTKP & Brackets',
@@ -49,44 +59,44 @@ const LANG = {
     ptkpK: 'Added if married (K)',
     ptkpI: "Added when the wife's income is combined (I)",
     ptkpDep: 'Added for each dependant',
-    ptkpComputedPrefix: "This household's PTKP under Pisah Harta:",
+    ptkpComputedPrefix: "This household's PTKP under Gabung Harta:",
     ptkpHLabel: 'husband',
     ptkpWLabel: 'wife',
-    ptkpGLabel: 'Gabung Harta:',
+    ptkpGLabel: 'Pisah Harta (PH/MT):',
     bracketSectionLabel: 'Tax brackets (PPh 21)',
     bracketFrom: 'From (Rp)',
     bracketTo: 'Up to (Rp)',
     bracketRate: 'Rate (%)',
     bracketTip: 'Edit each threshold and rate. The "From" column fills itself in, and only the last bracket has no upper limit. Raising a limit past the ones beneath it deletes them.',
-    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Each spouse files their own SPT. Husband uses PTKP {K}, wife uses PTKP {TK}. Each has their own set of brackets.<br><br><strong>Gabung Harta ({KI}):</strong> Combined income, one SPT. Uses PTKP {KI}. One set of brackets for all the income.',
+    infoBoxHtml: "<strong>Gabung Harta ({GABUNG}):</strong> The husband files one SPT for the family with PTKP {K}. A wife whose salary comes from one employer is taxed on it by that employer with her own PTKP {TK}, and that tax is final, so her salary climbs its own set of brackets.<br><br><strong>Pisah Harta, PH or MT ({KI}):</strong> Each spouse files their own SPT, but the tax is worked out on the couple's combined net income with PTKP {KI} (UU PPh Pasal 8 ayat 3) and shared by each spouse's net income. One set of brackets for all the income, and usually tax to top up when filing.",
     quickStartLabel: 'Quick Start',
     quickStartTip: 'Fills the Household tab with a worked example and puts PTKP and the brackets back to the statutory values. Equal incomes is the example the page opens with.',
     qsEven: 'Equal incomes, no children',
-    qsEvenTip: 'Rp 500 million a year shared equally, no dependants: the figures the page opens with. Pisah Harta saves Rp 19.8 million.',
+    qsEvenTip: 'Rp 500 million a year shared equally, no dependants: the figures the page opens with. Gabung Harta saves Rp 19.8 million.',
     qsSingle: 'Single income family',
-    qsSingleTip: 'Husband earns Rp 300 million a year, wife earns nothing, two children. Her own PTKP goes unused under Pisah, so Gabung saves Rp 8.1 million.',
+    qsSingleTip: 'Husband earns Rp 300 million a year, wife earns nothing, two children. With no income of hers to combine, both ways cost the same.',
     qsDouble: 'Double income family',
-    qsDoubleTip: 'Husband Rp 400 million a year, wife Rp 300 million, one child. Under Pisah each climbs their own bracket ladder, which saves Rp 34.8 million.',
+    qsDoubleTip: 'Husband Rp 400 million a year, wife Rp 300 million, one child. Under Gabung her salary climbs its own bracket ladder, which saves Rp 34.8 million.',
     kpiSavingLabel: 'Tax savings (cheaper option)',
-    kpiPisahLabel: 'Pisah Harta: total tax',
-    kpiPisahTip: 'Each spouse files their own tax return (SPT). The effective rate is the tax as a share of gross salary.',
-    kpiGabungLabel: 'Gabung Harta: total tax',
-    kpiGabungTip: 'Husband and wife file one tax return (SPT) on their combined income.',
+    kpiPisahLabel: 'Gabung Harta: total tax',
+    kpiPisahTip: "The husband's SPT with PTKP K, plus the wife's salary taxed final by her employer with her own PTKP. The effective rate is the tax as a share of gross salary.",
+    kpiGabungLabel: 'Pisah Harta (PH/MT): total tax',
+    kpiGabungTip: 'Each spouse files their own tax return (SPT), but the tax is worked out on the combined net income and shared by net income.',
     kpiRateSub: (pct) => `A year, effective rate ${pct}`,
     noSignificantDiff: 'No significant difference',
-    pisahWins: 'A year, with Pisah Harta',
-    gabungWins: 'A year, with Gabung Harta',
+    pisahWins: 'A year, with Gabung Harta',
+    gabungWins: 'A year, with Pisah Harta',
     margFrom: 'from',
     /* The answer in one sentence, then the two totals and where the cheaper
        way switches. Neutral: neither scheme is the bad one. */
-    verdictPisah: (amt) => `Pisah Harta saves <span class="v-num">${amt}</span> a year in tax.`,
-    verdictGabung: (amt) => `Gabung Harta saves <span class="v-num">${amt}</span> a year in tax.`,
-    verdictSame: 'Pisah Harta and Gabung Harta cost the same tax at these incomes.',
-    verdictTotals: (p, pr, g, gr) => `Total tax a year: ${p} with Pisah Harta (effective rate ${pr}), ${g} with Gabung Harta (${gr}).`,
+    verdictPisah: (amt) => `Gabung Harta saves <span class="v-num">${amt}</span> a year in tax.`,
+    verdictGabung: (amt) => `Pisah Harta saves <span class="v-num">${amt}</span> a year in tax.`,
+    verdictSame: 'Gabung Harta and Pisah Harta cost the same tax at these incomes.',
+    verdictTotals: (p, pr, g, gr) => `Total tax a year: ${p} with Gabung Harta (effective rate ${pr}), ${g} with Pisah Harta (${gr}).`,
     verdictSwitch: (sal, below, above) => `At this split, ${below} is cheaper below a household salary of about ${sal} a year, and ${above} above it.`,
     verdictAlways: (who, lo, hi) => `At this split, ${who} costs the same or less at every household salary from ${lo} to ${hi} a year.`,
-    optPisah: 'Pisah Harta',
-    optGabung: 'Gabung Harta',
+    optPisah: 'Gabung Harta',
+    optGabung: 'Pisah Harta',
     chart1Title: 'Total tax a year, by household salary',
     chart1XTitle: 'Household gross salary (Rp/yr)',
     chart1YTitle: 'Total tax (Rp a year)',
@@ -98,17 +108,17 @@ const LANG = {
     btnResetZoomTitle: 'Reset zoom',
     btnCsvTitle: 'Download this table as CSV',
     hoverBox1: 'Hover over the chart to inspect a salary point.',
-    chart2Title: 'Tax difference (Gabung − Pisah)',
+    chart2Title: 'Tax difference (Pisah − Gabung)',
     chart2YTitle: 'Tax difference (Rp a year)',
     hoverBox2: 'Hover over the chart to inspect the difference.',
-    legendPisah: 'Pisah Harta ({PISAH})',
-    legendGabung: 'Gabung Harta ({KI})',
-    legendPisahWins: 'Pisah Harta cheaper (above zero)',
-    legendGabungWins: 'Gabung Harta cheaper (below zero)',
+    legendPisah: 'Gabung Harta ({GABUNG})',
+    legendGabung: 'Pisah Harta ({KI})',
+    legendPisahWins: 'Gabung Harta cheaper (above zero)',
+    legendGabungWins: 'Pisah Harta cheaper (below zero)',
     legendDiffFull: 'Difference, unbroken',
     salaryLabel: 'Household salary',
-    pisahSavesPrefix: 'Pisah Harta saves',
-    gabungSavesPrefix: 'Gabung Harta saves',
+    pisahSavesPrefix: 'Gabung Harta saves',
+    gabungSavesPrefix: 'Pisah Harta saves',
     summaryTitle: 'Summary at current salary, a year',
     crossoverTitle: 'Crossover analysis',
     tileGrosssalary: 'Gross salary',
@@ -116,34 +126,35 @@ const LANG = {
     tileNetIncome: 'Net income (after deductions)',
     tileHusbandNet: "Husband's net income",
     tileWifeNet: "Wife's net income",
-    tilePtkpHusband: 'PTKP husband (Pisah)',
-    tilePtkpWife: 'PTKP wife (Pisah)',
-    tileTotalPtkpPisah: 'Total PTKP (Pisah)',
-    tilePtkpGabungCode: 'PTKP Gabung ({KI})',
+    tilePtkpHusband: 'PTKP husband (Gabung)',
+    tilePtkpWife: 'PTKP wife (Gabung)',
+    tileTotalPtkpPisah: 'Total PTKP (Gabung)',
+    tilePtkpGabungCode: 'PTKP Pisah ({KI})',
     tileTopBracket: 'Max marginal bracket',
-    tileTopBracketTip: 'The highest tax rate any of the income reaches, under Pisah or Gabung.',
+    tileTopBracketTip: 'The highest tax rate any of the income reaches, under Gabung or Pisah.',
     crossoverWith: "With the wife's share at",
     crossoverWifePct: '%:',
-    crossoverWastedHtml: 'The non-earning spouse\'s PTKP goes unused under Pisah Harta. Gabung Harta puts every PTKP on one SPT, so <span class="gabung-val">Gabung Harta</span> is cheaper at this split.',
-    crossoverAdjust: "Move the wife's share to see where Pisah Harta becomes cheaper, thanks to each spouse having their own set of brackets.",
+    crossoverWastedHtml: 'The husband earns nothing. Under Gabung Harta his PTKP goes unused, because her employer taxes her salary with her own PTKP. Pisah Harta sets every PTKP against the combined income, so <span class="gabung-val">Pisah Harta</span> is cheaper at this split.',
+    crossoverNoWifeHtml: 'The wife earns nothing, so there is no income of hers to combine: both ways give the husband PTKP K and cost the same.',
+    crossoverAdjust: "Move the wife's share to see where each way becomes cheaper.",
     crossoverPoint: (sal) => `Crossover point: about ${sal} a year of household salary.`,
-    crossoverBelowHtml: 'Below it, <span class="gabung-val">Gabung Harta ({KI})</span> pays less, because its larger combined PTKP counts for more against a smaller income.',
-    crossoverAboveHtml: 'Above it, <span class="pisah-val">Pisah Harta ({PISAH})</span> pays less, because each spouse climbs their own set of brackets.',
-    crossoverBelowPisahHtml: 'Below it, <span class="pisah-val">Pisah Harta ({PISAH})</span> pays less.',
-    crossoverAboveGabungHtml: 'Above it, <span class="gabung-val">Gabung Harta ({KI})</span> pays less.',
+    crossoverBelowHtml: "Below it, <span class=\"gabung-val\">Pisah Harta ({KI})</span> pays less, because the lower earner's unused PTKP is set against the other spouse's income.",
+    crossoverAboveHtml: "Above it, <span class=\"pisah-val\">Gabung Harta ({GABUNG})</span> pays less, because the wife's salary climbs its own set of brackets.",
+    crossoverBelowPisahHtml: 'Below it, <span class="pisah-val">Gabung Harta ({GABUNG})</span> pays less.',
+    crossoverAboveGabungHtml: 'Above it, <span class="gabung-val">Pisah Harta ({KI})</span> pays less.',
     crossoverNoneFound: (lo, hi) => `No crossover between ${lo} and ${hi} a year.`,
     crossoverPisahBetterPre: 'At this split (',
-    crossoverPisahBetterPost: '%), <span class="pisah-val">Pisah Harta</span> costs the same or less at every salary. With the statutory PTKP both ways allow the same total, and Pisah Harta also gives each spouse their own set of brackets.',
-    crossoverGabungBetterHtml: 'At this split, <span class="gabung-val">Gabung Harta</span> costs the same or less across the whole range. This usually happens when one spouse earns far more than the other.',
+    crossoverPisahBetterPost: "%), <span class=\"pisah-val\">Gabung Harta</span> costs the same or less at every salary. With the statutory PTKP both ways allow the same total, and Gabung Harta also taxes the wife's salary on its own set of brackets.",
+    crossoverGabungBetterHtml: 'At this split, <span class="gabung-val">Pisah Harta</span> costs the same or less across the whole range. This happens when one spouse earns too little to use up their own PTKP.',
     crossoverSameHtml: 'At this split, both ways cost the same at every salary.',
     detailTitle: 'Detailed breakdown by salary',
     tableUnitNote: 'Rupiah a year.',
     tabComparison: 'Comparison',
-    tabPisah: 'Pisah Harta detail',
-    tabGabung: 'Gabung Harta detail',
+    tabPisah: 'Gabung Harta detail',
+    tabGabung: 'Pisah Harta detail',
     tblSalary: 'Household salary',
     tblTaxPayables: 'Tax payable',
-    tblDifference: 'Difference (Gabung − Pisah)',
+    tblDifference: 'Difference (Pisah − Gabung)',
     tblWinner: 'Winner',
     tblEffRate: 'Effective rate',
     tblPtkpGabungCode: 'PTKP ({KI})',
@@ -153,14 +164,14 @@ const LANG = {
     tblHusband: 'Husband',
     tblWife: 'Wife',
     tblTotalTax: 'Total tax',
-    tblPisah: 'Pisah',
-    tblGabung: 'Gabung',
+    tblPisah: 'Gabung',
+    tblGabung: 'Pisah',
     tblProportional: 'Tax payable (proportional)',
     tblSame: '—',
-    tblPisahWin: 'Pisah',
-    tblGabungWin: 'Gabung',
-    warnWife0: "⚠️ With 0% wife income, Pisah Harta wastes wife's PTKP (Rp 54M) entirely. Gabung Harta is strongly recommended.",
-    warnHusband0: "⚠️ With 100% wife income (0% husband), Pisah Harta wastes husband's PTKP ({K}) entirely. Gabung Harta is strongly recommended.",
+    tblPisahWin: 'Gabung',
+    tblGabungWin: 'Pisah',
+    warnWife0: '⚠️ With 0% wife income there is no income of hers to combine, so Gabung Harta and Pisah Harta cost the same.',
+    warnHusband0: "⚠️ With 100% wife income (0% husband), Gabung Harta leaves the husband's PTKP ({K}) unused, because her employer taxes her salary with her own PTKP. Pisah Harta uses it. (Her employer may apply PTKP K if she shows that her husband has no income; this tool assumes it does not.)",
     warnDeductExceed: '⚠️ Deductions (pengurang) exceed gross salary. Net income is set to Rp 0.',
     warnSpouseExceed: '⚠️ One spouse deduction exceeds that spouse gross salary. Net income for that spouse is set to Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan is capped at 5% of gross salary, up to Rp 6,000,000 a year. Above the cap: ',
@@ -171,7 +182,7 @@ const LANG = {
     assumesTitle: 'What this assumes',
   },
   id: {
-    subtitle: 'Bandingkan PPh 21 suami istri di Indonesia antara skema Pisah Harta dan Gabung Harta.',
+    subtitle: 'Bandingkan PPh suami istri di Indonesia antara Gabung Harta dan Pisah Harta (PH atau MT).',
     btnBack: '← Tool Lainnya',
     tabInputs: 'Rumah tangga',
     tabAdvanced: 'PTKP & Lapisan Pajak',
@@ -205,42 +216,42 @@ const LANG = {
     ptkpK: 'Tambahan bila kawin (K)',
     ptkpI: 'Tambahan bila penghasilan istri digabung (I)',
     ptkpDep: 'Tambahan per tanggungan',
-    ptkpComputedPrefix: 'PTKP rumah tangga ini dengan Pisah Harta:',
+    ptkpComputedPrefix: 'PTKP rumah tangga ini dengan Gabung Harta:',
     ptkpHLabel: 'suami',
     ptkpWLabel: 'istri',
-    ptkpGLabel: 'Gabung Harta:',
+    ptkpGLabel: 'Pisah Harta (PH/MT):',
     bracketSectionLabel: 'Lapisan tarif PPh 21',
     bracketFrom: 'Dari (Rp)',
     bracketTo: 'Sampai (Rp)',
     bracketRate: 'Tarif (%)',
     bracketTip: 'Ubah setiap batas dan tarif. Kolom "Dari" terisi otomatis, dan hanya lapisan terakhir yang tanpa batas atas. Batas yang dinaikkan melewati lapisan berikutnya akan menghapus lapisan itu.',
-    infoBoxHtml: '<strong>Pisah Harta ({PISAH}):</strong> Suami dan istri masing-masing melapor SPT sendiri. Suami memakai PTKP {K}, istri PTKP {TK}, dan masing-masing punya lapisan tarif sendiri.<br><br><strong>Gabung Harta ({KI}):</strong> Penghasilan digabung dalam satu SPT dengan PTKP {KI}, dan satu lapisan tarif berlaku untuk seluruh penghasilan.',
+    infoBoxHtml: '<strong>Gabung Harta ({GABUNG}):</strong> Suami melapor satu SPT untuk keluarga dengan PTKP {K}. Gaji istri dari satu pemberi kerja dipotong pajak oleh pemberi kerjanya dengan PTKP istri sendiri, {TK}, dan pajak itu final, jadi gaji istri menapaki lapisan tarifnya sendiri.<br><br><strong>Pisah Harta, PH atau MT ({KI}):</strong> Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan dengan PTKP {KI} (UU PPh Pasal 8 ayat 3), lalu dibagi sesuai penghasilan neto masing-masing. Satu lapisan tarif untuk seluruh penghasilan, dan biasanya ada kurang bayar saat melapor.',
     quickStartLabel: 'Quick Start',
     quickStartTip: 'Mengisi tab Rumah tangga dengan contoh, dan mengembalikan PTKP serta lapisan tarif ke ketentuan. Penghasilan setara adalah contoh yang tampil saat halaman dibuka.',
     qsEven: 'Penghasilan setara, tanpa anak',
-    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Pisah Harta hemat Rp 19,8 juta.',
+    qsEvenTip: 'Rp 500 juta per tahun dibagi rata, tanpa tanggungan: contoh yang tampil saat halaman dibuka. Gabung Harta hemat Rp 19,8 juta.',
     qsSingle: 'Keluarga satu penghasilan',
-    qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. PTKP istri terbuang kalau Pisah, jadi Gabung hemat Rp 8,1 juta.',
+    qsSingleTip: 'Suami berpenghasilan Rp 300 juta per tahun, istri tidak berpenghasilan, dua anak. Tidak ada penghasilan istri yang digabung, jadi kedua cara sama.',
     qsDouble: 'Keluarga dua penghasilan',
-    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Pisah, masing-masing punya lapisan tarif sendiri, jadi Pisah hemat Rp 34,8 juta.',
+    qsDoubleTip: 'Suami Rp 400 juta per tahun, istri Rp 300 juta, satu anak. Dengan Gabung, gaji istri menapaki lapisan tarifnya sendiri, jadi Gabung hemat Rp 34,8 juta.',
     kpiSavingLabel: 'Penghematan pajak (opsi lebih murah)',
-    kpiPisahLabel: 'Pisah Harta: total pajak',
-    kpiPisahTip: 'Suami dan istri masing-masing melapor SPT sendiri. Tarif efektif adalah pajak dibagi gaji kotor.',
-    kpiGabungLabel: 'Gabung Harta: total pajak',
-    kpiGabungTip: 'Suami dan istri melapor satu SPT atas penghasilan gabungan.',
+    kpiPisahLabel: 'Gabung Harta: total pajak',
+    kpiPisahTip: 'SPT suami dengan PTKP K, ditambah gaji istri yang dipotong final oleh pemberi kerjanya dengan PTKP istri sendiri. Tarif efektif adalah pajak dibagi gaji kotor.',
+    kpiGabungLabel: 'Pisah Harta (PH/MT): total pajak',
+    kpiGabungTip: 'Suami dan istri masing-masing melapor SPT, tetapi pajaknya dihitung dari penghasilan neto gabungan lalu dibagi sesuai penghasilan neto.',
     kpiRateSub: (pct) => `Per tahun, tarif efektif ${pct}`,
     noSignificantDiff: 'Tidak ada perbedaan signifikan',
-    pisahWins: 'Per tahun, dengan Pisah Harta',
-    gabungWins: 'Per tahun, dengan Gabung Harta',
+    pisahWins: 'Per tahun, dengan Gabung Harta',
+    gabungWins: 'Per tahun, dengan Pisah Harta',
     margFrom: 'mulai',
-    verdictPisah: (amt) => `Pisah Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
-    verdictGabung: (amt) => `Gabung Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
-    verdictSame: 'Pisah Harta dan Gabung Harta menghasilkan pajak yang sama pada penghasilan ini.',
-    verdictTotals: (p, pr, g, gr) => `Total pajak per tahun: ${p} dengan Pisah Harta (tarif efektif ${pr}), ${g} dengan Gabung Harta (${gr}).`,
+    verdictPisah: (amt) => `Gabung Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
+    verdictGabung: (amt) => `Pisah Harta menghemat pajak <span class="v-num">${amt}</span> per tahun.`,
+    verdictSame: 'Gabung Harta dan Pisah Harta menghasilkan pajak yang sama pada penghasilan ini.',
+    verdictTotals: (p, pr, g, gr) => `Total pajak per tahun: ${p} dengan Gabung Harta (tarif efektif ${pr}), ${g} dengan Pisah Harta (${gr}).`,
     verdictSwitch: (sal, below, above) => `Pada porsi ini, ${below} lebih murah di bawah gaji rumah tangga sekitar ${sal} per tahun, dan ${above} di atasnya.`,
     verdictAlways: (who, lo, hi) => `Pada porsi ini, ${who} sama atau lebih murah di setiap gaji rumah tangga dari ${lo} sampai ${hi} per tahun.`,
-    optPisah: 'Pisah Harta',
-    optGabung: 'Gabung Harta',
+    optPisah: 'Gabung Harta',
+    optGabung: 'Pisah Harta',
     chart1Title: 'Total pajak per tahun, menurut gaji rumah tangga',
     chart1XTitle: 'Gaji kotor rumah tangga (Rp/thn)',
     chart1YTitle: 'Total pajak (Rp per tahun)',
@@ -250,17 +261,17 @@ const LANG = {
     btnResetZoomTitle: 'Reset zoom',
     btnCsvTitle: 'Unduh tabel ini sebagai CSV',
     hoverBox1: 'Arahkan kursor ke grafik untuk melihat detail gaji.',
-    chart2Title: 'Selisih pajak (Gabung − Pisah)',
+    chart2Title: 'Selisih pajak (Pisah − Gabung)',
     chart2YTitle: 'Selisih pajak (Rp per tahun)',
     hoverBox2: 'Arahkan kursor ke grafik untuk melihat selisihnya.',
-    legendPisah: 'Pisah Harta ({PISAH})',
-    legendGabung: 'Gabung Harta ({KI})',
-    legendPisahWins: 'Pisah Harta lebih murah (di atas nol)',
-    legendGabungWins: 'Gabung Harta lebih murah (di bawah nol)',
+    legendPisah: 'Gabung Harta ({GABUNG})',
+    legendGabung: 'Pisah Harta ({KI})',
+    legendPisahWins: 'Gabung Harta lebih murah (di atas nol)',
+    legendGabungWins: 'Pisah Harta lebih murah (di bawah nol)',
     legendDiffFull: 'Selisih, garis penuh',
     salaryLabel: 'Gaji rumah tangga',
-    pisahSavesPrefix: 'Pisah Harta hemat',
-    gabungSavesPrefix: 'Gabung Harta hemat',
+    pisahSavesPrefix: 'Gabung Harta hemat',
+    gabungSavesPrefix: 'Pisah Harta hemat',
     summaryTitle: 'Ringkasan pada gaji saat ini, per tahun',
     crossoverTitle: 'Analisis breakeven',
     tileGrosssalary: 'Gaji kotor',
@@ -268,34 +279,35 @@ const LANG = {
     tileNetIncome: 'Penghasilan neto (setelah pengurang)',
     tileHusbandNet: 'Penghasilan neto suami',
     tileWifeNet: 'Penghasilan neto istri',
-    tilePtkpHusband: 'PTKP suami (Pisah)',
-    tilePtkpWife: 'PTKP istri (Pisah)',
-    tileTotalPtkpPisah: 'Total PTKP (Pisah)',
-    tilePtkpGabungCode: 'PTKP Gabung ({KI})',
+    tilePtkpHusband: 'PTKP suami (Gabung)',
+    tilePtkpWife: 'PTKP istri (Gabung)',
+    tileTotalPtkpPisah: 'Total PTKP (Gabung)',
+    tilePtkpGabungCode: 'PTKP Pisah ({KI})',
     tileTopBracket: 'Tarif marginal tertinggi',
-    tileTopBracketTip: 'Tarif pajak tertinggi yang dicapai penghasilan, dengan Pisah maupun Gabung.',
+    tileTopBracketTip: 'Tarif pajak tertinggi yang dicapai penghasilan, dengan Gabung maupun Pisah.',
     crossoverWith: 'Dengan porsi istri',
     crossoverWifePct: '%:',
-    crossoverWastedHtml: 'PTKP pasangan yang tidak berpenghasilan terbuang dalam Pisah Harta. Gabung Harta memasukkan semua PTKP ke satu SPT, jadi <span class="gabung-val">Gabung Harta</span> lebih murah pada porsi ini.',
-    crossoverAdjust: 'Geser porsi istri untuk melihat kapan Pisah Harta jadi lebih murah, karena tiap pasangan punya lapisan tarif sendiri.',
+    crossoverWastedHtml: 'Suami tidak berpenghasilan. Dengan Gabung Harta, PTKP suami terbuang, karena pemberi kerja istri memotong gajinya dengan PTKP istri sendiri. Pisah Harta memakai semua PTKP untuk penghasilan gabungan, jadi <span class="gabung-val">Pisah Harta</span> lebih murah pada porsi ini.',
+    crossoverNoWifeHtml: 'Istri tidak berpenghasilan, jadi tidak ada penghasilan istri yang digabung: kedua cara memberi suami PTKP K dan hasilnya sama.',
+    crossoverAdjust: 'Geser porsi istri untuk melihat kapan masing-masing cara jadi lebih murah.',
     crossoverPoint: (sal) => `Breakeven: sekitar ${sal} per tahun gaji rumah tangga.`,
-    crossoverBelowHtml: 'Di bawahnya, <span class="gabung-val">Gabung Harta ({KI})</span> membayar lebih sedikit, karena PTKP gabungan yang lebih besar lebih berarti bagi penghasilan yang lebih kecil.',
-    crossoverAboveHtml: 'Di atasnya, <span class="pisah-val">Pisah Harta ({PISAH})</span> membayar lebih sedikit, karena tiap pasangan punya lapisan tarif sendiri.',
-    crossoverBelowPisahHtml: 'Di bawahnya, <span class="pisah-val">Pisah Harta ({PISAH})</span> membayar lebih sedikit.',
-    crossoverAboveGabungHtml: 'Di atasnya, <span class="gabung-val">Gabung Harta ({KI})</span> membayar lebih sedikit.',
+    crossoverBelowHtml: 'Di bawahnya, <span class="gabung-val">Pisah Harta ({KI})</span> membayar lebih sedikit, karena PTKP pasangan berpenghasilan kecil yang tersisa ikut mengurangi penghasilan pasangannya.',
+    crossoverAboveHtml: 'Di atasnya, <span class="pisah-val">Gabung Harta ({GABUNG})</span> membayar lebih sedikit, karena gaji istri menapaki lapisan tarifnya sendiri.',
+    crossoverBelowPisahHtml: 'Di bawahnya, <span class="pisah-val">Gabung Harta ({GABUNG})</span> membayar lebih sedikit.',
+    crossoverAboveGabungHtml: 'Di atasnya, <span class="gabung-val">Pisah Harta ({KI})</span> membayar lebih sedikit.',
     crossoverNoneFound: (lo, hi) => `Tidak ada breakeven antara ${lo} dan ${hi} per tahun.`,
     crossoverPisahBetterPre: 'Pada porsi ini (',
-    crossoverPisahBetterPost: '%), <span class="pisah-val">Pisah Harta</span> sama atau lebih murah di setiap gaji. Dengan PTKP sesuai ketentuan, total PTKP kedua cara sama, dan Pisah Harta juga memberi tiap pasangan lapisan tarifnya sendiri.',
-    crossoverGabungBetterHtml: 'Pada porsi ini, <span class="gabung-val">Gabung Harta</span> sama atau lebih murah di seluruh rentang. Ini biasanya terjadi bila satu pasangan berpenghasilan jauh lebih besar dari yang lain.',
+    crossoverPisahBetterPost: '%), <span class="pisah-val">Gabung Harta</span> sama atau lebih murah di setiap gaji. Dengan PTKP sesuai ketentuan, total PTKP kedua cara sama, dan Gabung Harta juga memajaki gaji istri dengan lapisan tarifnya sendiri.',
+    crossoverGabungBetterHtml: 'Pada porsi ini, <span class="gabung-val">Pisah Harta</span> sama atau lebih murah di seluruh rentang. Ini terjadi bila salah satu pasangan berpenghasilan terlalu kecil untuk menghabiskan PTKP-nya sendiri.',
     crossoverSameHtml: 'Pada porsi ini, kedua cara sama di setiap gaji.',
     detailTitle: 'Rincian per gaji',
     tableUnitNote: 'Rupiah per tahun.',
     tabComparison: 'Perbandingan',
-    tabPisah: 'Detail Pisah Harta',
-    tabGabung: 'Detail Gabung Harta',
+    tabPisah: 'Detail Gabung Harta',
+    tabGabung: 'Detail Pisah Harta',
     tblSalary: 'Gaji rumah tangga',
     tblTaxPayables: 'Pajak terutang',
-    tblDifference: 'Selisih (Gabung − Pisah)',
+    tblDifference: 'Selisih (Pisah − Gabung)',
     tblWinner: 'Lebih hemat',
     tblEffRate: 'Tarif efektif',
     tblPtkpGabungCode: 'PTKP ({KI})',
@@ -305,14 +317,14 @@ const LANG = {
     tblHusband: 'Suami',
     tblWife: 'Istri',
     tblTotalTax: 'Total pajak',
-    tblPisah: 'Pisah',
-    tblGabung: 'Gabung',
+    tblPisah: 'Gabung',
+    tblGabung: 'Pisah',
     tblProportional: 'Pajak terutang (proporsional)',
     tblSame: '—',
-    tblPisahWin: 'Pisah',
-    tblGabungWin: 'Gabung',
-    warnWife0: '⚠️ Dengan 0% penghasilan istri, PTKP istri (Rp 54 juta) terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
-    warnHusband0: '⚠️ Dengan 100% penghasilan istri (suami 0%), PTKP suami ({K}) terbuang sia-sia dalam Pisah Harta. Gabung Harta sangat disarankan.',
+    tblPisahWin: 'Gabung',
+    tblGabungWin: 'Pisah',
+    warnWife0: '⚠️ Dengan 0% penghasilan istri, tidak ada penghasilan istri yang digabung, jadi Gabung Harta dan Pisah Harta sama.',
+    warnHusband0: '⚠️ Dengan 100% penghasilan istri (suami 0%), Gabung Harta membuat PTKP suami ({K}) terbuang, karena pemberi kerja istri memotong gajinya dengan PTKP istri sendiri. Pisah Harta memakainya. (Pemberi kerja bisa memakai PTKP K kalau istri menunjukkan suaminya tidak berpenghasilan; tool ini menganggap tidak.)',
     warnDeductExceed: '⚠️ Pengurang melebihi gaji kotor, jadi penghasilan neto dihitung Rp 0.',
     warnSpouseExceed: '⚠️ Pengurang salah satu pasangan melebihi gaji kotornya, jadi penghasilan neto pasangan itu dihitung Rp 0.',
     warnCapLead: '⚠️ Biaya jabatan dibatasi 5% dari gaji kotor, paling banyak Rp 6 juta per tahun. Di atas batas: ',
@@ -329,17 +341,18 @@ function T(key){ return LANG[lang][key] || LANG['en'][key] || key; }
 
 /* A PTKP status code is only half a code without the dependant count on the
    end, so every string that names one is written with a placeholder and filled
-   in here. The wife always files as TK/0 under Pisah Harta — her own PTKP,
-   no married or dependant additions — so {TK} carries no count of its own.
+   in here. Under Gabung Harta the wife's employer withholds on her salary as
+   TK/0, her own PTKP with no married or dependant additions, so {TK} carries
+   no count of its own.
    Keep these in step with the codes SharedAbbr defines for this tool. */
 const PTKP_CODES = {
   '{TK}':    () => 'TK/0',
   '{K}':     () => 'K/' + S.dependents,
   '{KI}':    () => 'K/I/' + S.dependents,
-  '{PISAH}': () => 'K/' + S.dependents + ' + TK/0'
+  '{GABUNG}': () => 'K/' + S.dependents + ' + TK/0'
 };
 function TF(key){
-  return T(key).replace(/\{(TK|KI|K|PISAH)\}/g, m => PTKP_CODES[m]());
+  return T(key).replace(/\{(TK|KI|K|GABUNG)\}/g, m => PTKP_CODES[m]());
 }
 
 /* The info box names the codes, so it is rebuilt whenever the count changes,
@@ -600,8 +613,13 @@ function computeModel() {
     : S.splitPct / 100;
   const husbandPct = 1 - wifePct;
 
+  // _pisah is the separate-ladder sum and Gabung the combined one: see the
+  // note above LANG for why the words on screen are the other way round.
   const ptkpHusband_pisah = S.ptkpBase + S.ptkpMarried + dep * S.ptkpDependent;
   const ptkpWife_pisah    = S.ptkpBase;
+  // The I addition is for a wife whose income is combined with her husband's,
+  // so a wife with no net income adds nothing: both ways then give K/n.
+  const ptkpCombined = wifeNet => ptkpHusband_pisah + (wifeNet > 0 ? S.ptkpSpouse : 0);
   const ptkpGabung        = S.ptkpBase + S.ptkpMarried + S.ptkpSpouse + dep * S.ptkpDependent;
 
   if($('ptkpHDisplay')) $('ptkpHDisplay').textContent = fmt.idr(ptkpHusband_pisah,true);
@@ -638,7 +656,8 @@ function computeModel() {
     const taxW_p = calcTaxProgressive(taxableW_p);
     const totalTax_p = taxH_p + taxW_p;
 
-    const taxableG = floorPkp(netIncome - ptkpGabung);
+    const rowPtkpGabung = ptkpCombined(wifeNet);
+    const taxableG = floorPkp(netIncome - rowPtkpGabung);
     const totalTax_g = calcTaxProgressive(taxableG);
     const taxH_g = netIncome > 0 ? totalTax_g * (husbandNet / netIncome) : 0;
     const taxW_g = netIncome > 0 ? totalTax_g * (wifeNet / netIncome) : 0;
@@ -655,7 +674,7 @@ function computeModel() {
       ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah,
       taxableH: taxableH_p, taxableW: taxableW_p,
       taxH: taxH_p, taxW: taxW_p,
-      ptkpGabung, taxableGabung: taxableG,
+      ptkpGabung: rowPtkpGabung, taxableGabung: taxableG,
       taxH_g, taxW_g,
     });
   }
@@ -693,7 +712,8 @@ function computeModel() {
   const curTaxW_p = calcTaxProgressive(curTxW_p);
   const curTaxP = curTaxH_p + curTaxW_p;
 
-  const curTxG = floorPkp(currentNet - ptkpGabung);
+  const curPtkpGabung = ptkpCombined(curWifeNet);
+  const curTxG = floorPkp(currentNet - curPtkpGabung);
   const curTaxG = calcTaxProgressive(curTxG);
 
   const maxTaxableForMarginal = Math.max(curTxH_p, curTxW_p, curTxG);
@@ -708,13 +728,13 @@ function computeModel() {
     gabungRate: S.totalSalary > 0 ? curTaxG / S.totalSalary : 0,
     husbandGross: currentHusbandGross, wifeGross: currentWifeGross,
     husbandNet: curHusbandNet, wifeNet: curWifeNet,
-    ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung,
+    ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung: curPtkpGabung,
     taxableH: curTxH_p, taxableW: curTxW_p, taxableGabung: curTxG,
     marginalRate: marginal.rate,
     marginalBracketFrom: marginal.from,
   };
 
-  return { rows, summary: { current, crossover, ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung } };
+  return { rows, summary: { current, crossover, ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung: curPtkpGabung } };
 }
 
 /* ── Charts ── */
@@ -943,7 +963,10 @@ function updateSummary(state){
   const info=$('crossoverInfo');
   const rows=state.rows, lo=fmt.salaryLabel(rows[0].salary), hi=fmt.salaryLabel(rows[rows.length-1].salary);
   if(S.splitPct===0 || S.splitPct===100){
-    info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong> ${T('crossoverWastedHtml')}<br>${T('crossoverAdjust')}`;
+    // No income of the wife's to combine makes the two ways equal; no income
+    // of the husband's leaves his PTKP unused under Gabung.
+    const why=S.splitPct===0 ? T('crossoverNoWifeHtml') : T('crossoverWastedHtml');
+    info.innerHTML=`<strong>${T('crossoverWith')} ${splitPctLabel()}${T('crossoverWifePct')}</strong> ${why}<br>${T('crossoverAdjust')}`;
   } else if(s.crossover){
     const sides=crossoverSides(state);
     const sal=fmt.salaryLabel(Math.round(s.crossover));
@@ -1127,11 +1150,11 @@ function renderAssumptions(state){
 
   const dep = S.dependents;
   items.push(L(
-    `<strong>Pisah Harta:</strong> the husband's PTKP is ${rp(c.ptkpH)}, with the married amount${dep ? ' and your ' + dep + (dep === 1 ? ' dependant' : ' dependants') : ''}; the wife keeps her own ${rp(c.ptkpW)}.`,
-    `<strong>Pisah Harta:</strong> PTKP suami ${rp(c.ptkpH)}, dengan tambahan kawin${dep ? ' dan ' + dep + ' tanggungan Anda' : ''}; istri memakai PTKP sendiri ${rp(c.ptkpW)}.`));
+    `<strong>Gabung Harta:</strong> the wife's salary comes from one employer and has nothing to do with the husband's work, so her employer's withholding is final (UU PPh Pasal 8 ayat 1). The husband's PTKP is ${rp(c.ptkpH)}, with the married amount${dep ? ' and your ' + dep + (dep === 1 ? ' dependant' : ' dependants') : ''}; the wife's salary is taxed with her own ${rp(c.ptkpW)}.`,
+    `<strong>Gabung Harta:</strong> gaji istri berasal dari satu pemberi kerja dan tidak berhubungan dengan pekerjaan suami, jadi potongan pajak dari pemberi kerjanya final (UU PPh Pasal 8 ayat 1). PTKP suami ${rp(c.ptkpH)}, dengan tambahan kawin${dep ? ' dan ' + dep + ' tanggungan Anda' : ''}; gaji istri dipajaki dengan PTKP istri sendiri ${rp(c.ptkpW)}.`));
   items.push(L(
-    `<strong>Gabung Harta:</strong> one SPT on ${rp(c.netIncome)} of combined net income, with a PTKP of ${rp(c.ptkpGabung)}.`,
-    `<strong>Gabung Harta:</strong> satu SPT atas penghasilan neto gabungan ${rp(c.netIncome)}, dengan PTKP ${rp(c.ptkpGabung)}.`));
+    `<strong>Pisah Harta (PH or MT):</strong> the tax is worked out on ${rp(c.netIncome)} of combined net income, with a PTKP of ${rp(c.ptkpGabung)} (Pasal 8 ayat 3), then shared between you by net income.`,
+    `<strong>Pisah Harta (PH atau MT):</strong> pajak dihitung dari penghasilan neto gabungan ${rp(c.netIncome)}, dengan PTKP ${rp(c.ptkpGabung)} (Pasal 8 ayat 3), lalu dibagi antara suami dan istri menurut penghasilan neto.`));
 
   const ptkpEdited = S.ptkpBase !== PTKP_BASE_DEFAULT || S.ptkpMarried !== PTKP_MARRIED_DEFAULT ||
     S.ptkpSpouse !== PTKP_SPOUSE_DEFAULT || S.ptkpDependent !== PTKP_DEPENDENT_DEFAULT;
@@ -1146,8 +1169,8 @@ function renderAssumptions(state){
   }
 
   items.push(L(
-    `<strong>The charts and table keep the wife's ${splitPctLabel()}% share fixed</strong>${S.deduction > 0 ? ' and the deductions at ' + rp(S.deduction) : ''}, moving the household salary from Rp 100 million to Rp 5 billion a year. Gabung Harta's tax is shared between you by net income.`,
-    `<strong>Grafik dan tabel memakai porsi istri yang tetap, ${splitPctLabel()}%</strong>${S.deduction > 0 ? ' dan pengurang tetap ' + rp(S.deduction) : ''}, sambil menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun. Pajak Gabung Harta dibagi antara suami dan istri menurut penghasilan neto.`));
+    `<strong>The charts and table keep the wife's ${splitPctLabel()}% share fixed</strong>${S.deduction > 0 ? ' and the deductions at ' + rp(S.deduction) : ''}, moving the household salary from Rp 100 million to Rp 5 billion a year.`,
+    `<strong>Grafik dan tabel memakai porsi istri yang tetap, ${splitPctLabel()}%</strong>${S.deduction > 0 ? ' dan pengurang tetap ' + rp(S.deduction) : ''}, sambil menggeser gaji rumah tangga dari Rp 100 juta sampai Rp 5 miliar per tahun.`));
 
   $('assumptions').innerHTML = items.map(x => '<li>' + x + '</li>').join('');
 }
@@ -1490,9 +1513,10 @@ els.chart2SvgBtn.addEventListener('click', () => downloadChartSvg('chartCanvas2'
 /* ── CSV ── */
 function downloadCsv(){
   if(!latestRows.length)return;
-  const h=['Salary_Mio','HusbandGross','WifeGross','Deduction','NetIncome','PTKP_H_Pisah','PTKP_W_Pisah','TaxableH_Pisah','TaxableW_Pisah','TaxH_Pisah','TaxW_Pisah','TotalTax_Pisah','PTKP_Gabung','Taxable_Gabung','TotalTax_Gabung','Difference','Winner','EffRate_Pisah','EffRate_Gabung'];
+  // Column names follow the words on screen (see the note above LANG).
+  const h=['Salary_Mio','HusbandGross','WifeGross','Deduction','NetIncome','PTKP_H_Gabung','PTKP_W_Gabung','TaxableH_Gabung','TaxableW_Gabung','TaxH_Gabung','TaxW_Gabung','TotalTax_Gabung','PTKP_Pisah','Taxable_Pisah','TotalTax_Pisah','Difference_PisahMinusGabung','Winner','EffRate_Gabung','EffRate_Pisah'];
   const lines=latestRows.map(r=>{
-    const w=Math.abs(r.diff)<1000?'Same':r.diff>0?'Pisah':'Gabung';
+    const w=Math.abs(r.diff)<1000?'Same':r.diff>0?'Gabung':'Pisah';
     return [r.salary,r.husbandGross,r.wifeGross,r.totalDeduction,r.netIncome,r.ptkpH,r.ptkpW,r.taxableH,r.taxableW,r.taxH,r.taxW,r.pisahTax,r.ptkpGabung,r.taxableGabung,r.gabungTax,r.diff,w,(r.pisahRate*100).toFixed(2)+'%',(r.gabungRate*100).toFixed(2)+'%'].join(',');
   });
   const csv='# Made using tool.adjiebrotots.com/pisahvsgabung\n'+[h.join(','),...lines].join('\n');
