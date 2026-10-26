@@ -1,13 +1,15 @@
-// Records a tool's guide clips from the REAL tool with Playwright.
+// Records a tool's guide clips from the REAL tool with Playwright. A guide's demos are the live
+// tool (guide-live.js, <tool>/guides/scenes.js) wherever a script can drive it; record clips
+// only for a tool that cannot be (one that needs a file from the reader, say).
 //
 //   node _ref/guide-capture/run.mjs <tool folder> [scene ...] [--theme light|dark]
 //   node _ref/guide-capture/run.mjs loadflow-simulator quickstart --theme dark
 //
 // Reads <tool>/guides/_capture/scenes.mjs (TOOL: how to open the tool; SCENES: what each clip does),
 // records a video per scene and theme, cuts and crops it with ffmpeg and writes
-// <tool>/guides/media/<scene>-<theme>.webm / .mp4 / .webp plus media/manifest.json (the times of
+// <tool>/guides/media/<scene>-<theme>.mp4 / .webp plus media/manifest.json (the times of
 // the steps each clip shows, which guide-shared.js uses to light the matching step in the list).
-// Needs Playwright for Node with Chromium, and ffmpeg (libvpx-vp9 and libx264) on the PATH.
+// Needs Playwright for Node with Chromium, and ffmpeg (libx264) on the PATH.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';

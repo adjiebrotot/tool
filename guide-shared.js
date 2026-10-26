@@ -1,12 +1,14 @@
 /* GUIDE PAGES (shared across the tools' "How to use" guides, <tool>/guides/): plays the clips
-   recorded from the real tool. Each .gd-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.webm and .mp4, a
+   recorded from the real tool. Each .gd-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.mp4, a
    .webp poster), a small bar with Play / Pause and Full screen, and its steps become live: the one
    the clip is showing is lit, and a click on a step jumps the clip to it. The times of the steps
    come from media/manifest.json (written by _ref/guide-capture/run.mjs, or the PowerFactory
    Builder's own _capture/capture.mjs). The screen's screenshot (.gd-shot-frame[data-shot]) swaps
    with the theme too, and pointing at a part in its key lights that part's box. Clips play only while they are
    on screen, and not at all (until asked) for readers who prefer reduced motion. Everything here
-   is an extra: without it the page reads as text with the steps listed. */
+   is an extra: without it the page reads as text with the steps listed.
+   A guide whose <body> has data-guide-live plays the real tool instead of clips (guide-live.js,
+   loaded just before this file): this file then only flips the theme and lights the key. */
 (function () {
   'use strict';
 
@@ -22,6 +24,7 @@
   var theme = function () { return body.classList.contains('light') ? 'light' : 'dark'; };
   var manifest = null;
   var demos = [];
+  var LIVE = body.hasAttribute('data-guide-live');
 
   // ---- One demo
   function Demo(root) {
@@ -78,11 +81,9 @@
       d.theme = t;
       while (video.firstChild) video.removeChild(video.firstChild);
       var base = MEDIA + name + '-' + t;
-      [['.webm', 'video/webm'], ['.mp4', 'video/mp4']].forEach(function (f) {
-        var s = document.createElement('source');
-        s.src = base + f[0]; s.type = f[1];
-        video.appendChild(s);
-      });
+      var s = document.createElement('source');
+      s.src = base + '.mp4'; s.type = 'video/mp4';
+      video.appendChild(s);
       d.poster();
       d.marks = marksFor(name, t);
       if (resume || wasPlaying) {
@@ -176,6 +177,7 @@
   });
 
   // ---- Start
+  if (LIVE) return;
   [].forEach.call(document.querySelectorAll('.gd-demo[data-demo]'), function (el) { demos.push(Demo(el)); });
   paintShot();
 
