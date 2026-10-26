@@ -1,5 +1,5 @@
 /* GUIDE PAGES (shared across the tools' "How to use" guides, <tool>/guides/): plays the clips
-   recorded from the real tool. Each .gd-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.webm and .mp4, a
+   recorded from the real tool. Each .gd-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.mp4, a
    .webp poster), a small bar with Play / Pause and Full screen, and its steps become live: the one
    the clip is showing is lit, and a click on a step jumps the clip to it. The times of the steps
    come from media/manifest.json (written by _ref/guide-capture/run.mjs, or the PowerFactory
@@ -78,11 +78,9 @@
       d.theme = t;
       while (video.firstChild) video.removeChild(video.firstChild);
       var base = MEDIA + name + '-' + t;
-      [['.webm', 'video/webm'], ['.mp4', 'video/mp4']].forEach(function (f) {
-        var s = document.createElement('source');
-        s.src = base + f[0]; s.type = f[1];
-        video.appendChild(s);
-      });
+      var s = document.createElement('source');
+      s.src = base + '.mp4'; s.type = 'video/mp4';
+      video.appendChild(s);
       d.poster();
       d.marks = marksFor(name, t);
       if (resume || wasPlaying) {

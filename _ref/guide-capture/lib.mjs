@@ -163,7 +163,10 @@ export async function openScene(browser, origin, theme, tool, opts = {}) {
   return S;
 }
 
-// Close the scene, then cut the video to the shown part, crop it and encode webm + mp4 + poster.
+// What one guide clip may weigh (the median clip is about 230 KB).
+const MP4_BUDGET_KB = 500;
+
+// Close the scene, then cut the video to the shown part, crop it and encode mp4 + poster.
 export async function finish(S, media, name, crop, o = {}) {
   const { page, ctx } = S;
   const dur = (Date.now() - S.start) / 1000;
@@ -176,8 +179,10 @@ export async function finish(S, media, name, crop, o = {}) {
   const vf = `crop=${w}:${h}:${x}:${y},fps=${o.fps || 15}${o.scale ? ',scale=' + o.scale + ':-2:flags=lanczos' : ''}`;
   const ss = ['-ss', (lead + (o.trim ?? 0.35)).toFixed(2), '-t', (dur - (o.trim ?? 0.35)).toFixed(2)];
   const run = (args) => { const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...args], { stdio: 'inherit' }); if (r.status) throw new Error('ffmpeg failed'); };
-  run([...ss, '-i', raw, '-vf', vf, '-an', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(o.crf ?? 46), '-row-mt', '1', '-deadline', 'good', '-cpu-used', '2', out + '.webm']);
   run([...ss, '-i', raw, '-vf', vf + ',format=yuv420p', '-an', '-c:v', 'libx264', '-preset', 'slow', '-crf', String(o.crfMp4 ?? 33), '-movflags', '+faststart', out + '.mp4']);
+  // A clip past the budget is usually a scene doing too much: split it, or pass a lower fps or a higher crfMp4.
+  const kb = Math.round(statSync(out + '.mp4').size / 1024);
+  if (kb > MP4_BUDGET_KB) console.warn(`  ${name}-${S.theme}.mp4 is ${kb} KB, over the ${MP4_BUDGET_KB} KB budget`);
   // The poster: a frame where the scene says it best (posterAt, in seconds into the shown part).
   const at = o.posterAt ?? (dur - 1.2);
   run(['-ss', (lead + 0.35 + at).toFixed(2), '-i', raw, '-vf', vf.replace(/,fps=\d+/, ''), '-frames:v', '1', '-c:v', 'libwebp', '-quality', '80', out + '.webp']);
