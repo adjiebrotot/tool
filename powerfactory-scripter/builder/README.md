@@ -61,7 +61,7 @@ Optimise / Find limit searches.
 
 | Path | What it is |
 |---|---|
-| `index.html`, `style.css`, `tour.js` | the page, its styles (tokens only, both themes), the guided tour |
+| `index.html`, `style.css`, `tour.js` | the page, its styles (tokens only, both themes), the guided tour. Its `<head>` starts with the `guide-demo.js` line: the guide (`../guides/`) plays its demos on this page, opened as `?demo` |
 | `js/app.js`, `js/ui/*.js` | the editor: store, ops, canvas, palette, inspector (fields, element picker, attribute suggestions, the attached-file card, the schedule editor), Python and Problems tabs, files (Save / Open), the study package, templates, quick-add, keyboard, toasts, layout (docks), block icons |
 | `js/core/registry.js` | the block contract: types, wire rules (`canConnect`, `whyNot`), categories, `defineBlock`, `settingsOf` (keeps old saved values meaningful), `portsOf`, `visibleSettings` (§4.1), `ELEMENT_CLASSES` |
 | `js/core/attrdata.js` | what the page knows about a PowerFactory attribute (its unit, whether a class has a parameter), from the parent tool's reference data; the blocks ask it which choices can apply |
@@ -400,6 +400,7 @@ Run from the repository root (`D:\Repository\tool`):
 | `node powerfactory-scripter/builder/_audit/graphstyle/run.mjs` | the graph style (§3.1): the rules for saved styles, the frozen handles, the page and the script agreeing (every case `_po_st` reads, the line colours), GRAPH_STYLE written and read back, DM Sans in the package, every template drawn by matplotlib, and the modal in Chromium |
 | `python powerfactory-scripter/builder/_audit/runtime/analysis/test_analysis.py` | the analysis helpers offline |
 | `python "%PFB_PFRUN%" powerfactory-scripter/builder/_audit/runtime/live/live_tests.py` | the PowerFactory helpers live on both sandboxes |
+| `node _ref/guide-check.mjs powerfactory-scripter` | the guide's live demos (`../guides/scenes.js`) still play on the page: they name its parts (`#pfbPalSearch`, `.pfb-pal-item[data-type]`, the canvas's handles, the Settings fields), so run it after moving one |
 | `node _ref/button-check.mjs builder`, `dropdown-check`, `tip-check`, `node _ref/abbr-check.mjs` | the site-wide checks (on Windows the filter must be a fragment without slashes) |
 
 Live runs need PowerFactory 2024 closed (engine mode), Python 3.12, and the sandbox projects
