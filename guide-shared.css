@@ -1,9 +1,9 @@
 /* =============================================================================================
    GUIDE PAGES (shared across the tools' "How to use" guides, <tool>/guides/)
-   The pictures are clips and a screenshot recorded from the real tool (<tool>/guides/media/,
-   made by _ref/guide-capture/ or, for the PowerFactory Builder, its own _capture/);
-   guide-shared.js plays them, picks the clip for the current theme and lights the step the
-   clip is showing. Colours come only from the site tokens (dark.css, light.css).
+   The pictures are the real tool running live in a frame (guide-live.js, <tool>/guides/scenes.js)
+   or, for the PowerFactory Builder, clips and a screenshot recorded from it (media/, made by its
+   own _capture/), which guide-shared.js plays. Either way the step the demo is showing is lit.
+   Colours come only from the site tokens (dark.css, light.css).
    Class prefix: .gd-
    ============================================================================================= */
 
@@ -87,6 +87,17 @@
 .gd-steps li.is-live:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .gd-steps li.is-active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 11%, var(--panel)); }
 .gd-steps li.is-active::before { background: var(--accent-strong); border-color: var(--accent-strong); color: var(--text-inv); }
+
+/* A live demo: the real tool in a frame, scaled to fit (guide-live.js). The veil covers it while
+   it loads or sets a scene up; the guard keeps a reader's pointer out while it plays. */
+.gd-view iframe, .gd-shot-frame iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: var(--bg); transition: opacity var(--motion-fast); }
+.gd-shot-frame iframe { pointer-events: none; }
+.gd-veil { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 16px; text-align: center; background: var(--bg-subtle); color: var(--muted); font-size: .85rem; font-weight: 600; transition: opacity var(--motion-fast); }
+.gd-veil.is-off { opacity: 0; pointer-events: none; }
+.gd-guard { position: absolute; inset: 0; z-index: 1; }
+.gd-view:fullscreen { aspect-ratio: auto; background: var(--bg); }
+.gd-demo.is-trying .gd-screen { border-color: var(--accent); }
+.gd-demo.is-trying .gd-cap { color: var(--text); }
 
 /* A clip is never stretched past its own size (guide-shared.js sets the width) */
 .gd-screen { max-width: var(--mw, none); }

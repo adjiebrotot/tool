@@ -26,7 +26,7 @@
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to use the Capacity Expansion Planner">
-<meta property="og:description" content="Recorded from the real tool: set a growing demand, what is in service and what can be built, a carbon price and a net-zero year, then read what to build, how big and in which year.">
+<meta property="og:description" content="The real tool, running live: set a growing demand, what is in service and what can be built, a carbon price and a net-zero year, then read what to build, how big and in which year.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/capacity-expansion-planner/guides/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 <meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
@@ -34,7 +34,7 @@
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to use the Capacity Expansion Planner">
-<meta name="twitter:description" content="Recorded from the real tool: set a growing demand, what is in service and what can be built, a carbon price and a net-zero year, then read what to build, how big and in which year.">
+<meta name="twitter:description" content="The real tool, running live: set a growing demand, what is in service and what can be built, a carbon price and a net-zero year, then read what to build, how big and in which year.">
 
 <script type="application/ld+json">
 {
@@ -85,7 +85,7 @@
 <link rel="stylesheet" href="../../shared.css">
 <link rel="stylesheet" href="../../guide-shared.css">
 </head>
-<body class="light">
+<body class="light" data-guide-live="scenes.js">
 <script src="../../theme.js"></script>
 <div class="container gd">
 
@@ -100,7 +100,7 @@
   <main>
     <header class="gd-hero">
       <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 20.5h18"/><path stroke="var(--accent)" d="M5.5 20.5v-4M10 20.5v-7M14.5 20.5v-10"/><path stroke="var(--accent2)" d="M19.5 3.5v6M16.5 6.5h6"/></svg>How to use the Capacity Expansion Planner</h1>
-      <p class="gd-lead">Describe a growing demand and what could meet it, then read which plants and batteries to build, how big, and in which year. Every clip on this page is the real tool, recorded while it was used.</p>
+      <p class="gd-lead">Describe a growing demand and what could meet it, then read which plants and batteries to build, how big, and in which year. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
       <div class="gd-hero-btns">
         <a class="btn-primary gd-open" href="../">Open the tool</a>
         <a class="gd-skip" href="#screen">Start with the screen</a>
@@ -144,7 +144,6 @@
       <div class="gd-layout gd-layout-side">
         <figure class="gd-shot">
           <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1400" role="img" aria-label="The Capacity Expansion Planner with the Growing grid example: the inputs on the left, the answer and four figures on the right, and the capacity and energy charts under them.">
-            <noscript><img src="media/layout-light.webp" alt="The Capacity Expansion Planner screen" width="1280" height="1400"></noscript>
             <span class="gd-box" data-b="1" style="--x:1.88%;--y:13.17%;--w:28.13%;--h:85.64%"><b>1</b></span>
             <span class="gd-box" data-b="2" style="--x:31.41%;--y:13.17%;--w:65.94%;--h:20.3%"><b>2</b></span>
             <span class="gd-box" data-b="3" style="--x:31.41%;--y:34.76%;--w:65.94%;--h:64.96%"><b>3</b></span>
@@ -172,7 +171,7 @@
     <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
       <h2 id="quickstart-h">Quick Start</h2>
       <p class="gd-sub">Four worked plans: a <strong>Growing grid</strong> whose coal closes, the same grid to <strong>Net zero</strong>, a <strong>Coal exit</strong> on a winter-peaking grid, and a tropical <strong>Island</strong> on diesel. One click replaces the whole plan and runs it.</p>
-      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a clip and turn the phone sideways to read it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
       <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
         <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick a plan</span></figure>
         <ol class="gd-steps">
@@ -325,6 +324,8 @@
 <!-- Deferred: the page paints without them. They add the abbreviation tooltips (LCOE, VoLL...). -->
 <script src="../../shared.js" defer></script>
 <script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
 <script src="../../guide-shared.js"></script>
 </body>
 </html>

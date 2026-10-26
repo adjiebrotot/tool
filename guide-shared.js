@@ -6,7 +6,9 @@
    Builder's own _capture/capture.mjs). The screen's screenshot (.gd-shot-frame[data-shot]) swaps
    with the theme too, and pointing at a part in its key lights that part's box. Clips play only while they are
    on screen, and not at all (until asked) for readers who prefer reduced motion. Everything here
-   is an extra: without it the page reads as text with the steps listed. */
+   is an extra: without it the page reads as text with the steps listed.
+   A guide whose <body> has data-guide-live plays the real tool instead of clips (guide-live.js,
+   loaded just before this file): this file then only flips the theme and lights the key. */
 (function () {
   'use strict';
 
@@ -22,6 +24,7 @@
   var theme = function () { return body.classList.contains('light') ? 'light' : 'dark'; };
   var manifest = null;
   var demos = [];
+  var LIVE = body.hasAttribute('data-guide-live');
 
   // ---- One demo
   function Demo(root) {
@@ -174,6 +177,7 @@
   });
 
   // ---- Start
+  if (LIVE) return;
   [].forEach.call(document.querySelectorAll('.gd-demo[data-demo]'), function (el) { demos.push(Demo(el)); });
   paintShot();
 

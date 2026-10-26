@@ -26,7 +26,7 @@
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="How to use the Load Flow Simulator">
-<meta property="og:description" content="Recorded from the real tool: draw a single-line diagram, run an AC or DC load flow, read the voltages and loadings, then export or share the animated result.">
+<meta property="og:description" content="The real tool, running live: draw a single-line diagram, run an AC or DC load flow, read the voltages and loadings, then export or share the animated result.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/loadflow-simulator/guides/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
 <meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
@@ -34,7 +34,7 @@
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to use the Load Flow Simulator">
-<meta name="twitter:description" content="Recorded from the real tool: draw a single-line diagram, run an AC or DC load flow, read the voltages and loadings, then export or share the animated result.">
+<meta name="twitter:description" content="The real tool, running live: draw a single-line diagram, run an AC or DC load flow, read the voltages and loadings, then export or share the animated result.">
 
 <script type="application/ld+json">
 {
@@ -85,7 +85,7 @@
 <link rel="stylesheet" href="../../shared.css">
 <link rel="stylesheet" href="../../guide-shared.css">
 </head>
-<body class="light">
+<body class="light" data-guide-live="scenes.js">
 <script src="../../theme.js"></script>
 <div class="container gd">
 
@@ -100,7 +100,7 @@
   <main>
     <header class="gd-hero">
       <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 5.5h18"/><path stroke="var(--accent)" d="M8 5.5v4.5"/><circle stroke="var(--accent)" cx="8" cy="14.5" r="4.5"/><path stroke="var(--accent)" stroke-width="1.6" d="M5.6 14.5q1.2-2 2.4 0t2.4 0"/><path stroke="var(--accent2)" d="M17 9v11"/><path stroke="var(--accent2)" d="m14 17 3 3 3-3"/></svg>How to use the Load Flow Simulator</h1>
-      <p class="gd-lead">Draw a single-line diagram, run a load flow, read where the power goes. Every clip on this page is the real tool, recorded while it was used.</p>
+      <p class="gd-lead">Draw a single-line diagram, run a load flow, read where the power goes. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
       <div class="gd-hero-btns">
         <a class="btn-primary gd-open" href="../">Open the tool</a>
         <a class="gd-skip" href="#screen">Start with the screen</a>
@@ -143,7 +143,6 @@
       <div class="gd-layout gd-layout-side">
         <figure class="gd-shot">
           <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1400" role="img" aria-label="The Load Flow Simulator with the WSCC 9-bus network: the inputs on the left, the parts and the single-line diagram on the right, and the results under the diagram.">
-            <noscript><img src="media/layout-light.webp" alt="The Load Flow Simulator screen" width="1280" height="1400"></noscript>
             <span class="gd-box" data-b="1" style="--x:1.88%;--y:11.46%;--w:26.56%;--h:58.54%"><b>1</b></span>
             <span class="gd-box" data-b="2" style="--x:31.48%;--y:18.6%;--w:5.78%;--h:54.5%"><b>2</b></span>
             <span class="gd-box" data-b="3" style="--x:38.05%;--y:18.6%;--w:57.66%;--h:54.5%"><b>3</b></span>
@@ -176,7 +175,7 @@
     <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
       <h2 id="quickstart-h">Quick Start</h2>
       <p class="gd-sub">Four worked networks: the <strong>WSCC 9-bus</strong> system, a <strong>3-bus ring</strong>, a <strong>20/0.4 kV feeder</strong> with rooftop solar, and two areas joined by an <strong>HVDC link</strong>. One click replaces the diagram and solves it.</p>
-      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a clip and turn the phone sideways to read it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
       <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
         <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick a network</span></figure>
         <ol class="gd-steps">
@@ -331,6 +330,8 @@
 <!-- Deferred: the page paints without them. They add the abbreviation tooltips (AC, HVDC...). -->
 <script src="../../shared.js" defer></script>
 <script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
 <script src="../../guide-shared.js"></script>
 </body>
 </html>

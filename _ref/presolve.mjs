@@ -16,6 +16,12 @@
    here (its presolved/ folder hidden from it), in Chromium, so the key and the
    result are exactly what a reader's browser makes.
 
+   A tool whose guide plays live demos (<tool>/guides/scenes.js, guide-live.js)
+   gets what those demos run solved too, as guide-<scene>.json: every scene is
+   played on the guide page and each solve it waits for (S.note('solved')) is
+   kept, so a demo never fetches the solver. Run this again after changing a
+   scene that solves.
+
    Run:  node _ref/presolve.mjs           write them (ONLY=ed-uc-simulator: one tool)
          node _ref/presolve.mjs --check   fail if a tool's solver changed since
 */
@@ -107,6 +113,41 @@ for (const tool of only) {
     if (out.has(got.hash)) { const was = out.get(got.hash); console.log('     ' + tool + ' ' + name + ': same plan as ' + was.name); if (was.name === 'start') was.name = name; continue; }
     out.set(got.hash, { name, key: got.key, res: got.res });
     console.log('PASS ' + tool + ' ' + name + ' (' + Math.round(got.res.length / 1024) + ' KB)');
+  }
+  // What the guide's live demos run: each scene played on the guide page, and every solve it
+  // waits for kept under the scene's name (the Quick Starts it loads are kept already).
+  if (existsSync(join(ROOT, tool, 'guides', 'scenes.js'))) {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await ctx.route('**/presolved/**', r => r.fulfill({ status: 404, body: '' }));
+    await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, r => /cdnjs\.cloudflare\.com/.test(r.request().url()) ? r.continue() : r.abort());
+    await ctx.addInitScript(() => { window.GuideLiveManual = true; });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => console.log('  page error: ' + e.message));
+    const got = [];
+    await page.exposeFunction('__presolveKeep', (scene, x) => { got.push({ scene, ...x }); });
+    await page.goto(base + tool + '/guides/');
+    const scenes = await page.evaluate(() => GuideLive.ready.then(() => GuideLive.scenes.SCENES.filter(s => !s.still).map(s => s.name)));
+    await page.evaluate(a => {
+      GuideLive.onNote = (tag, win, scene) => {
+        if (tag !== 'solved') return;
+        const x = win[a], key = x.solveKey();
+        return window.__presolveKeep(scene, { key, hash: win.SolveCache.hash(key), ok: !!(x.app.res.report && x.app.res.report.ok), res: win.SolveCache.encode(x.app.res) });
+      };
+    }, app);
+    for (const name of scenes) {
+      const r = await page.evaluate(n => GuideLive.run(n), name);
+      if (r.error) { console.log('FAIL ' + tool + ' guide ' + name + ': ' + r.error); failed++; }
+    }
+    await ctx.close();
+    const count = {};
+    for (const g of got) {
+      if (!g.ok) { console.log('FAIL ' + tool + ' guide ' + g.scene + ': did not solve'); failed++; continue; }
+      if (out.has(g.hash)) continue;
+      count[g.scene] = (count[g.scene] || 0) + 1;
+      const name = 'guide-' + g.scene + (count[g.scene] > 1 ? '-' + count[g.scene] : '');
+      out.set(g.hash, { name, key: g.key, res: g.res });
+      console.log('PASS ' + tool + ' ' + name + ' (' + Math.round(g.res.length / 1024) + ' KB)');
+    }
   }
   const dir = join(ROOT, tool, 'presolved');
   mkdirSync(dir, { recursive: true });

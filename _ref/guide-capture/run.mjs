@@ -1,4 +1,6 @@
-// Records a tool's guide clips from the REAL tool with Playwright.
+// Records a tool's guide clips from the REAL tool with Playwright. A guide's demos are the live
+// tool (guide-live.js, <tool>/guides/scenes.js) wherever a script can drive it; record clips
+// only for a tool that cannot be (one that needs a file from the reader, say).
 //
 //   node _ref/guide-capture/run.mjs <tool folder> [scene ...] [--theme light|dark]
 //   node _ref/guide-capture/run.mjs loadflow-simulator quickstart --theme dark
