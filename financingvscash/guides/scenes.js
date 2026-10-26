@@ -22,17 +22,23 @@ const tab = (S, t) => S.click(`.ctrl-tab[data-tab="${t}"]`, { after: 500 });
 // The bar of offers, scrolled into the Inputs card first (a field further down may have moved it out).
 const offer = async (S, i) => {
   await S.reveal('.sc-bar', 0.2, 400);
+  await settle(S, `.sc-tab[data-idx="${i}"]`);
   await S.click(`.sc-tab[data-idx="${i}"]`, { after: 800 });
 };
-// The note "Inputs changed" slides in above ▶ Simulate and moves it, so the click waits for it to settle.
-const simulate = async (S, after = 1200) => {
+// A part that may still be moving (a panel scrolling, a note sliding in above it) is clicked
+// once it has stood still for a moment.
+const settle = async (S, sel) => {
   let last = '', t0 = Date.now();
   await S.until(() => {
-    const r = S.doc.getElementById('simBtn').getBoundingClientRect(), k = r.top + ',' + r.left;
+    const r = S.doc.querySelector(sel).getBoundingClientRect(), k = r.top + ',' + r.left;
     const still = k === last && Date.now() - t0 > 300;
     last = k;
     return still;
-  }, 4000, 'the Simulate button to settle');
+  }, 4000, sel + ' to settle');
+};
+// The note "Inputs changed" slides in above ▶ Simulate and moves it.
+const simulate = async (S, after = 1200) => {
+  await settle(S, '#simBtn');
   await S.click('#simBtn', { after: 0 });
   await S.until((w) => !w.document.body.classList.contains('is-stale') && !w.document.getElementById('simBtn').dataset.running, 15000, 'the run');
   await S.wait(after);
@@ -46,6 +52,10 @@ export const SCENES = [
     name: 'layout', still: true,
     async run(S) {
       await preset(S, 'car');
+      // Off the button, so its tip has gone before the picture is taken.
+      await S.glide(1270, 140, 0);
+      const t0 = Date.now();
+      await S.until(() => Date.now() - t0 > 500, 3000, 'the tip to close');
       return { boxes: {
         inputs: '.layout > .controls',
         answer: ['#verdict', '#simMetrics'],

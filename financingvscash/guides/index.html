@@ -360,8 +360,8 @@
         <li><var>A</var><strong>Available Cash</strong></li>
         <li><var>C</var><strong>Cash Purchase Cost</strong></li>
         <li><var>D</var>the down payment, a share of the offer's price</li>
-        <li><var>F</var><sub>0</sub>an origination fee <strong>Paid upfront from cash</strong> (else 0)</li>
-        <li><var>R</var><sub><var>k</var></sub>repayment <var>k</var> of <var>n</var>, set by the loan type</li>
+        <li><var>F<sub>0</sub></var>an origination fee <strong>Paid upfront from cash</strong> (else 0)</li>
+        <li><var>R<sub>k</sub></var>repayment <var>k</var> of <var>n</var>, set by the loan type</li>
         <li><var>a</var>the <strong>Admin Fee</strong> on every repayment</li>
         <li><var>i</var>the <strong>Risk-Free Rate</strong> per period: (1 + <var>rf</var>)<sup>1/<var>m</var></sup> − 1, with <var>m</var> repayments a year</li>
         <li><var>n</var>the number of repayments, the <strong>Term</strong></li>
@@ -394,14 +394,14 @@
       <p class="gd-sub">The price and the cash. Surprisingly, the cash you hold does not move the answer at all, as long as it covers the price.</p>
       <div class="gd-eq"><span class="gd-eq-l">An offer at its own price</span> Net Benefit = Net Benefit<sub>at price <var>P</var>′</sub> + (<var>C</var> − <var>P</var>′) × (1 + <var>i</var>)<sup><var>n</var></sup></div>
       <ul class="gd-where">
-        <li><var>P</var>′the offer's price: <var>C</var> unless <strong>Price Each Loan Offer Separately</strong> is on</li>
-        <li><var>C</var> − <var>P</var>′a discount the financing side keeps invested and the cash buyer never gets</li>
+        <li><var>P′</var>the offer's price: <var>C</var> unless <strong>Price Each Loan Offer Separately</strong> is on</li>
+        <li><var>C − P′</var>a discount the financing side keeps invested and the cash buyer never gets</li>
       </ul>
       <div class="gd-table-wrap"><table class="gd-table">
         <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
         <tbody>
           <tr><th scope="row">Currency Symbol</th><td data-l="What it is">The symbol money is shown in.</td><td data-l="In the maths">Nowhere. Nothing is converted.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
-          <tr><th scope="row">Cash Purchase Cost</th><td data-l="What it is">What paying in full costs today.</td><td data-l="In the maths"><var>C</var>. Paying cash spends it; financing borrows it less the down payment, so it scales the loan.</td><td data-l="Raise it"><span class="gd-eff">▲ amount borrowed</span><span class="gd-eff gd-eff-neg">▼ Net Benefit, when the loan costs more than cash earns</span><p>Car, three-year loan: +10% is −$260.</p></td></tr>
+          <tr><th scope="row">Cash Purchase Cost</th><td data-l="What it is">What paying in full costs today.</td><td data-l="In the maths"><var>C</var>. Paying cash spends it; financing borrows it less the down payment, so it scales the loan.</td><td data-l="Raise it"><span class="gd-eff">▲ amount borrowed</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns. Car, three-year loan: +10% is −$260.</p></td></tr>
           <tr><th scope="row">Price Each Loan Offer Separately</th><td data-l="What it is">Gives each offer its own <strong>Offer Price</strong>.</td><td data-l="In the maths">Off, <var>P</var>′ = <var>C</var> for every offer. On, each offer states <var>P</var>′ as an amount, a % of cash or a % off. Cash is always scored at <var>C</var>.</td><td data-l="Raise it"><span class="gd-eff">a choice</span></td></tr>
           <tr><th scope="row">Available Cash</th><td data-l="What it is">Cash on hand today.</td><td data-l="In the maths"><var>A</var>. Must be at least <var>C</var>. The surplus earns the same in both paths and cancels out of Net Benefit.</td><td data-l="Raise it"><span class="gd-eff">▲ both wealth lines</span><span class="gd-eff">no effect on Net Benefit</span><p>Car: ±10% is $0.</p></td></tr>
         </tbody>
@@ -415,9 +415,9 @@
       <p class="gd-sub">The loan type sets the repayments <var>R</var><sub><var>k</var></sub>. Every type builds the same rows (start balance, interest, principal, payment, end balance), and the last repayment always clears what is left. <a href="../loan-types/">Loan Types Explained</a> walks through each one with charts.</p>
       <div class="gd-eq"><span class="gd-eq-l">Each period</span> interest<sub><var>k</var></sub> = <var>B</var><sub><var>k</var>−1</sub> × <var>r</var>,&nbsp;&nbsp; <var>B</var><sub><var>k</var></sub> = <var>B</var><sub><var>k</var>−1</sub> + interest<sub><var>k</var></sub> − <var>R</var><sub><var>k</var></sub><small>all but the flat rate</small></div>
       <ul class="gd-where">
-        <li><var>B</var><sub><var>k</var></sub>the balance after repayment <var>k</var>; <var>B</var><sub>0</sub> = <var>L</var>, the amount financed</li>
+        <li><var>B<sub>k</sub></var>the balance after repayment <var>k</var>; <var>B</var><sub>0</sub> = <var>L</var>, the amount financed</li>
         <li><var>r</var>the loan rate per period (see <a href="#m-rate">term and rate</a>)</li>
-        <li><var>n</var>, <var>k</var>the term, and the repayment being made</li>
+        <li><var>n, k</var>the term, and the repayment being made</li>
       </ul>
       <div class="gd-table-wrap"><table class="gd-table">
         <thead><tr><th>Loan Type</th><th>What you pay</th><th>In the maths</th><th>Next to amortizing</th></tr></thead>
@@ -435,8 +435,8 @@
         <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
         <tbody>
           <tr><th scope="row">Loan Type</th><td data-l="What it is">The repayment structure the lender sells.</td><td data-l="In the maths">Picks the formula for <var>R</var><sub><var>k</var></sub> above.</td><td data-l="Raise it"><span class="gd-eff">a choice of structure</span></td></tr>
-          <tr><th scope="row">Interest-Only / Payment Holiday</th><td data-l="What it is">How many repayments run before normal instalments begin.</td><td data-l="In the maths"><var>q</var> or <var>h</var>. Capped at the term.</td><td data-l="Raise it"><span class="gd-eff">▲ balance carried longer</span><span class="gd-eff gd-eff-neg">▼ Net Benefit, when the loan costs more than cash earns</span></td></tr>
-          <tr><th scope="row">Residual</th><td data-l="What it is">The share of the amount financed still owed at the end.</td><td data-l="In the maths"><var>ρ</var>, 0% to 99% of <var>L</var>.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit, when the loan costs more than cash earns</span></td></tr>
+          <tr><th scope="row">Interest-Only / Payment Holiday</th><td data-l="What it is">How many repayments run before normal instalments begin.</td><td data-l="In the maths"><var>q</var> or <var>h</var>. Capped at the term.</td><td data-l="Raise it"><span class="gd-eff">▲ balance carried longer</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns.</p></td></tr>
+          <tr><th scope="row">Residual</th><td data-l="What it is">The share of the amount financed still owed at the end.</td><td data-l="In the maths"><var>ρ</var>, 0% to 99% of <var>L</var>.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns.</p></td></tr>
         </tbody>
       </table></div>
       <p class="gd-note gd-note-warn"><strong>Watch out.</strong> A flat rate is not comparable with an ordinary rate. You keep paying interest on money you have already repaid, so the average balance is about half the loan while the interest is charged on all of it. Compare <strong>Effective Rate (APR)</strong>, never the quoted figure: the motorbike's 0.9% a month flat costs nearly twice its 10.8% amortizing twin.</p>
@@ -450,7 +450,7 @@
       <div class="gd-eq"><span class="gd-eq-l">Effective (EAR)</span> <var>r</var> = (1 + <var>R</var><sub>yr</sub>)<sup>1/<var>m</var></sup> − 1<small>the default</small></div>
       <div class="gd-eq"><span class="gd-eq-l">Nominal (APR)</span> <var>r</var> = <var>R</var><sub>yr</sub> ÷ <var>m</var></div>
       <ul class="gd-where">
-        <li><var>R</var><sub>yr</sub>the <strong>Finance Rate</strong> (or a schedule band), a year</li>
+        <li><var>R<sub>yr</sub></var>the <strong>Finance Rate</strong> (or a schedule band), a year</li>
         <li><var>m</var>repayments a year: 52, 26, 12 or 1</li>
         <li><var>r</var>the rate charged each repayment period</li>
       </ul>
@@ -458,7 +458,7 @@
         <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
         <tbody>
           <tr><th scope="row">Repayment Frequency</th><td data-l="What it is">Weekly, fortnightly, monthly or yearly.</td><td data-l="In the maths"><var>m</var>, in the loan's <var>r</var> and the cash's <var>i</var>. Switching converts the term, so the years stay the same.</td><td data-l="Raise it"><span class="gd-eff">▲ repaid sooner</span><p>Car: weekly is +$57; yearly, −$836, since each payment waits a year.</p></td></tr>
-          <tr><th scope="row">Term</th><td data-l="What it is">The number of repayments.</td><td data-l="In the maths"><var>n</var>. How long the loan runs, and how long the spread between loan and cash runs.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit, when the loan costs more than cash earns</span><p>Car: 48 months is −$1,012; 24 months, +$936.</p></td></tr>
+          <tr><th scope="row">Term</th><td data-l="What it is">The number of repayments.</td><td data-l="In the maths"><var>n</var>. How long the loan runs, and how long the spread between loan and cash runs.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns. Car: 48 months is −$1,012; 24 months, +$936.</p></td></tr>
           <tr><th scope="row">Rate Basis</th><td data-l="What it is"><strong>Simple</strong>, one rate; or <strong>Schedule</strong>, periods that each hold a rate.</td><td data-l="In the maths">Picks <strong>Finance Rate</strong> or <strong>Rate Schedule</strong>. Not for a flat rate or a known repayment.</td><td data-l="Raise it"><span class="gd-eff">a choice</span></td></tr>
           <tr><th scope="row">Finance Rate</th><td data-l="What it is">The yearly rate the lender quotes. <em>Flat Rate</em> on a flat loan, <em>Interest Rate</em> on a bullet.</td><td data-l="In the maths"><var>R</var><sub>yr</sub>, made <var>r</var> by the convention.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ repayments</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: +1 point is −$667.</p></td></tr>
           <tr><th scope="row">Rate Schedule</th><td data-l="What it is">Consecutive periods from the first repayment, each <strong>Fixed</strong> or <strong>Floating</strong> between a min and a max. The last stretches to the term.</td><td data-l="In the maths">Each band sets <var>r</var> for its repayments; the instalment is re-worked on the balance at each change. A floating band runs at its min, middle and max. A payment holiday's schedule starts after the holiday.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ a band, ▼ Net Benefit</span><p>House, 2 years fixed then 5% to 8.5%: Ending Wealth from −$321k to +$18k, in today's money.</p></td></tr>
@@ -479,14 +479,14 @@
       <div class="gd-eq"><span class="gd-eq-l">What a fee costs</span> <var>F</var><sub>0</sub> × (1 + <var>i</var>)<sup><var>n</var></sup> &nbsp;+&nbsp; <var>a</var> × <span class="gd-sum">Σ</span> (1 + <var>i</var>)<sup><var>n</var>−<var>k</var></sup><small>off Net Benefit</small></div>
       <ul class="gd-where">
         <li><var>d</var>the <strong>Down Payment</strong> share</li>
-        <li><var>F</var>, <var>f</var>the <strong>Origination Fee</strong>, as money or as a % of <var>L</var></li>
+        <li><var>F, f</var>the <strong>Origination Fee</strong>, as money or as a % of <var>L</var></li>
         <li><var>a</var>the <strong>Admin Fee</strong> a repayment</li>
       </ul>
       <div class="gd-table-wrap"><table class="gd-table">
         <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
         <tbody>
           <tr><th scope="row">Offer Price</th><td data-l="What it is">With a price per offer on: what this offer charges.</td><td data-l="In the maths"><var>P</var>′: an amount, <var>C</var> × % of cash, or <var>C</var> × (1 − % off).</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Furniture: 10% off cuts the loss from −$2,172 (the holiday) to −$682.</p></td></tr>
-          <tr><th scope="row">Down Payment</th><td data-l="What it is">The share of the price paid on day one. 100% is paying cash.</td><td data-l="In the maths"><var>D</var>, out of <var>W</var><sub>0</sub>; the loan shrinks by the same. At 100% there is no loan and Net Benefit is 0.</td><td data-l="Raise it"><span class="gd-eff">▼ amount borrowed</span><span class="gd-eff gd-eff-pos">▲ Net Benefit, when the loan costs more than cash earns</span><p>Car: 20% is +$289.</p></td></tr>
+          <tr><th scope="row">Down Payment</th><td data-l="What it is">The share of the price paid on day one. 100% is paying cash.</td><td data-l="In the maths"><var>D</var>, out of <var>W</var><sub>0</sub>; the loan shrinks by the same. At 100% there is no loan and Net Benefit is 0.</td><td data-l="Raise it"><span class="gd-eff">▼ amount borrowed</span><span class="gd-eff gd-eff-pos">▲ Net Benefit</span><p>While the loan costs more than cash earns. Car: 20% is +$289.</p></td></tr>
           <tr><th scope="row">Origination Fee</th><td data-l="What it is">A one-off lender's fee, as money or a %.</td><td data-l="In the maths"><var>F</var> or <var>f</var>. Never counted as interest.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: $400 costs $456 by year three, 400 × 1.045³.</p></td></tr>
           <tr><th scope="row">Fee Treatment</th><td data-l="What it is"><strong>Paid upfront from cash</strong>, <strong>Added to the loan</strong> or <strong>Deducted from the advance</strong>.</td><td data-l="In the maths">Upfront: <var>F</var><sub>0</sub> = <var>F</var>. Inside the loan, the fee is repaid with interest at the loan rate, never counted twice. Deducted, a % fee is grossed up so the net advance still meets the price.</td><td data-l="Raise it"><span class="gd-eff">a choice</span><p>Car: inside the loan costs $26 more, the fee borrowed at 8.4% instead of paid from cash earning 4.5%.</p></td></tr>
           <tr><th scope="row">Admin Fee</th><td data-l="What it is">A fixed fee on every repayment, such as account-keeping.</td><td data-l="In the maths"><var>a</var>, out of the cash with each <var>R</var><sub><var>k</var></sub>. Total = <var>a</var> × <var>n</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: $10 a month is −$384.</p></td></tr>
@@ -508,7 +508,7 @@
       <div class="gd-table-wrap"><table class="gd-table">
         <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Risk-Free Rate</th><td data-l="What it is">What spare cash earns in a safe place.</td><td data-l="In the maths"><var>i</var>, in both paths. Untaxed, compounded once each repayment period.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ Net Benefit, whenever you borrow</span><p>Car: +1 point is +$626.</p></td></tr>
+          <tr><th scope="row">Risk-Free Rate</th><td data-l="What it is">What spare cash earns in a safe place.</td><td data-l="In the maths"><var>i</var>, in both paths. Untaxed, compounded once each repayment period.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ Net Benefit</span><p>Whenever you borrow. Car: +1 point is +$626.</p></td></tr>
           <tr><th scope="row">Rate Convention</th><td data-l="What it is"><strong>Effective annual (EAR)</strong> or <strong>Nominal annual (APR)</strong>.</td><td data-l="In the maths">How a loan's yearly rate becomes <var>r</var>. Never the cash rate, which is always effective.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">nominal: ▲ cost, ▼ Net Benefit</span><p>Car: nominal is −$221; 8.4% charged 0.70% a month, not 0.67%.</p></td></tr>
           <tr><th scope="row">Inflation</th><td data-l="What it is">How fast prices rise.</td><td data-l="In the maths"><var>π</var>, only when reading in today's money. Never touches a loan or the cash.</td><td data-l="Raise it"><span class="gd-eff">no effect on the run</span></td></tr>
           <tr><th scope="row">Show in today's money</th><td data-l="What it is">The switch beside the results.</td><td data-l="In the maths">Divides each figure by (1 + <var>π</var>)<sup><var>t</var></sup> at its own date; a total is the sum of its parts each read that way. The purchase-day figures stay as they are.</td><td data-l="Raise it"><span class="gd-eff">a reading, not a model</span></td></tr>
