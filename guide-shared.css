@@ -105,6 +105,7 @@
 .gd-facts { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
 .gd-facts li { position: relative; padding-left: 18px; font-size: .9rem; line-height: 1.6; color: var(--muted); max-width: 62rem; }
 .gd-facts li::before { content: ''; position: absolute; left: 3px; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.gd-facts + .gd-sub, .gd-facts + .gd-demo, .gd-facts + .gd-table-wrap { margin-top: 16px; }
 
 .gd-pack { margin: 16px 0 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
 .gd-pack h3 { margin: 0 0 8px; font-size: .95rem; font-weight: 700; }
@@ -152,6 +153,7 @@
 .gd-sum { font-size: 1.3em; vertical-align: -.1em; }
 .gd-where { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px 18px; font-size: .86rem; line-height: 1.55; color: var(--muted); }
 .gd-where var { margin-right: 6px; }
+.gd-where var + :is(sub, sup) { margin: 0 6px 0 -6px; }
 
 /* A reference table (the fields of an input group, or the same field on two pages).
    Each cell names its column in data-l, which a phone shows above it. */
