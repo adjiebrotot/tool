@@ -14,8 +14,9 @@
    analytics, no dialogs, and this page never jumps. A demo plays only while on screen, one at a
    time, and not until asked for readers who prefer reduced motion. Pause stops it, and the
    reader can then try the tool in place; Play goes on, or starts over after a try. A click on a
-   step plays the scene up to it at once and on from there. A frame loads as its demo comes near
-   and goes when it is far, at most MAX at a time.
+   step plays the scene up to it at once and on from there. Once the guide itself has loaded, a
+   frame loads as its demo comes near and goes when it is far, at most MAX at a time; they load
+   one after another, the one a reader is looking at first.
 
    A scene can point the camera (S.focus): the frame zooms in on the part a step is about, up
    to ZOOM times, and pans to keep the pointer in sight; S.focus() shows all of it again. Live
@@ -177,6 +178,11 @@
     d.load = function (upTo) {
       var sc = d.scene();
       if (!sc) return null;
+      // One tool loads at a time (turn()): a demo nobody is looking at waits its turn, and the
+      // one a reader is looking at goes first, a demo still loading off screen stepping back.
+      var first = d.forced || d.asked || d.active;
+      if (!first && demos.some(function (x) { return x !== d && x.state === 'loading'; })) { queue(d); return null; }
+      if (first) demos.forEach(function (x) { if (x !== d && x.state === 'loading' && !x.forced && !x.asked && !x.active) { x.stop(); queue(x); } });
       d.stop();
       if (!still) room(d);
       var seed = { 'abt-theme': theme(), 'abt-consent': 'denied' };
@@ -205,6 +211,8 @@
       var r = d.run;
       if (r) { r.aborted = true; if (r.wake) r.wake(); }
       if (d.frame) { if (document.activeElement === d.frame) giveFocusBack(); d.frame.remove(); }
+      unqueue(d);
+      if (d.state === 'loading') turnSoon();
       d.frame = null; d.run = null; d.state = 'idle';
       setVeil(true, still ? '' : 'Live demo');
       setLabel();
@@ -235,6 +243,7 @@
       if (r.aborted || d.run !== r) return;
       r.end = Date.now();
       d.state = r.error ? 'failed' : 'ended';
+      turnSoon();
       r.fast = false; r.paused = true;
       setVeil(false); setLabel();
       if (document.activeElement === d.frame) giveFocusBack();
@@ -252,6 +261,7 @@
       syncTheme(d);
       if (!r.fast) setVeil(false);
       d.state = 'playing';
+      turnSoon();
       if (!r.fast) r.paused = !d.shouldPlay();
       setLabel();
     };
@@ -386,36 +396,90 @@
     }
     function move(x, y) {
       cursor(S.doc, x, y);
-      var cap = S.win.__demoCapture, el = under(x, y), dn = r.down;
+      var dn = r.down;
+      if (dn && !r.drag && dn.drag) dragStart(x, y);
+      if (r.drag) { dragOver(x, y); return; }
+      var cap = S.win.__demoCapture, el = under(x, y);
       if (!cap) pass(r.over, el, x, y);
       var t = cap || el;
       fire(t, 'pointermove', x, y, { buttons: dn ? 1 : 0 });
       if (!dn || dn.compat) fire(t, 'mousemove', x, y, { buttons: dn ? 1 : 0 });
     }
-    function press(x, y) {
+    // n: the press's count, 2 for the second press of a double-click.
+    function press(x, y, n) {
       var el = under(x, y);
       pass(r.over, el, x, y);
       S.win.__demoCapture = null;
       var pd = fire(el, 'pointerdown', x, y, { buttons: 1 });
-      r.down = { target: el, compat: !pd.defaultPrevented };
+      r.down = { target: el, compat: !pd.defaultPrevented, drag: el.closest ? el.closest('[draggable="true"]') : null };
       if (r.down.compat) {
-        var md = fire(el, 'mousedown', x, y, { buttons: 1, detail: 1 });
+        var md = fire(el, 'mousedown', x, y, { buttons: 1, detail: n || 1 });
         if (!md.defaultPrevented) focusFor(el);
       }
       ring(S.doc, x, y);
     }
-    function release(x, y) {
+    // Returns what the click went to (null: no click, as after a drag).
+    function release(x, y, n) {
       var dn = r.down;
-      if (!dn) return;
+      if (!dn) return null;
       r.down = null;
+      if (r.drag) { dragEnd(x, y); return null; }
       var cap = S.win.__demoCapture, el = cap || under(x, y);
       fire(el, 'pointerup', x, y, {});
-      if (dn.compat) fire(el, 'mouseup', x, y, { detail: 1 });
+      if (dn.compat) fire(el, 'mouseup', x, y, { detail: n || 1 });
       S.win.__demoCapture = null;
       // The click goes to what both the press and the release were on.
       var c = dn.target;
       while (c && !c.contains(el)) c = c.parentElement;
-      if (c && c.isConnected) fire(c, 'click', x, y, { detail: 1 });
+      if (c && c.isConnected) { fire(c, 'click', x, y, { detail: n || 1 }); return c; }
+      return null;
+    }
+    /* A press on a draggable element that moves becomes an HTML drag, as a browser makes it: the
+       pointer is cancelled, drag events take over from the mouse's, a picture of the element
+       follows the pointer, and the drop goes where the last dragover said yes. */
+    function fireDrag(target, type, x, y, dt) {
+      var Win = S.win, init = { bubbles: true, cancelable: !/^drag(end|leave)$/.test(type), composed: true,
+        view: Win, clientX: x, clientY: y, screenX: x, screenY: y, dataTransfer: dt };
+      var ev;
+      try { ev = new Win.DragEvent(type, init); } catch (e) { ev = new Win.MouseEvent(type, init); }
+      target.dispatchEvent(ev);
+      return ev;
+    }
+    function dragStart(x, y) {
+      var src = r.down.drag, Win = S.win, dt = null;
+      try { dt = new Win.DataTransfer(); } catch (e) { /* an old browser: the drop reads nothing */ }
+      r.down.drag = null;
+      if (fireDrag(src, 'dragstart', x, y, dt).defaultPrevented) return;
+      fire(src, 'pointercancel', x, y, {});
+      // The picture: a copy, in the colours it has where it is (its own or the panel's behind it).
+      var b = src.getBoundingClientRect(), g = src.cloneNode(true), cs = Win.getComputedStyle(src), bg = 'transparent';
+      for (var a = src; a && a.nodeType === 1; a = a.parentElement) {
+        var c = Win.getComputedStyle(a).backgroundColor;
+        if (c && c !== 'transparent' && !/^rgba\(.*,\s*0\)$/.test(c)) { bg = c; break; }
+      }
+      g.removeAttribute('id');
+      g.style.cssText = 'position:fixed;left:0;top:0;margin:0;width:' + b.width + 'px;z-index:2147483645;pointer-events:none;opacity:.85;box-sizing:border-box;' +
+        'color:' + cs.color + ';font:' + cs.font + ';background:' + bg + ';border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.2)';
+      S.doc.documentElement.appendChild(g);
+      r.drag = { src: src, dt: dt, over: null, ok: false, ghost: g, dx: b.left - x, dy: b.top - y };
+    }
+    function dragOver(x, y) {
+      var g = r.drag, el = under(x, y);
+      g.ghost.style.transform = 'translate(' + (x + g.dx) + 'px,' + (y + g.dy) + 'px)';
+      if (el !== g.over) {
+        if (g.over && g.over.isConnected) fireDrag(g.over, 'dragleave', x, y, g.dt);
+        fireDrag(el, 'dragenter', x, y, g.dt);
+        g.over = el;
+      }
+      g.ok = fireDrag(el, 'dragover', x, y, g.dt).defaultPrevented;
+    }
+    function dragEnd(x, y) {
+      var g = r.drag;
+      r.drag = null;
+      g.ghost.remove();
+      if (g.ok) fireDrag(under(x, y), 'drop', x, y, g.dt);
+      else if (g.over && g.over.isConnected) fireDrag(g.over, 'dragleave', x, y, g.dt);
+      fireDrag(g.src, 'dragend', x, y, g.dt);
     }
     // A press on a field focuses it (the only time a demo takes the keyboard from the page);
     // a press anywhere else takes the focus away, as it does in a browser.
@@ -457,6 +521,25 @@
       await hold();
       release(c.x, c.y);
       await S.wait(o.after == null ? 350 : o.after);
+      return el;
+    };
+    S.dblclick = async function (t, o) {
+      o = o || {};
+      var el = t ? await S.find(t) : null;
+      var c = o.at || await S.centre(el, o.dx, o.dy);
+      await S.glide(c.x, c.y, o.ms);
+      await S.wait(120);
+      var hit = null;
+      for (var n = 1; n <= 2; n++) {
+        await hold();
+        press(c.x, c.y, n);
+        await S.wait(60);
+        await hold();
+        hit = release(c.x, c.y, n);
+        if (n === 1) await S.wait(90);
+      }
+      if (hit) fire(hit, 'dblclick', c.x, c.y, { detail: 2 });
+      await S.wait(o.after == null ? 500 : o.after);
       return el;
     };
     S.drag = async function (from, to, o) {
@@ -516,10 +599,12 @@
       t.dispatchEvent(new Win.KeyboardEvent('keyup', init));
       await S.wait(o.after == null ? 150 : o.after);
     };
-    // Into a field: click it, replace what it holds a key at a time, then leave it (Tab).
+    // Into a field: click it, replace what it holds a key at a time, then leave it (Tab). With
+    // { click: false } it types into the field as it is (one the tool has just opened), and
+    // { end: 'Enter' } ends with that key instead (null: stays in the field).
     S.fill = async function (t, text, o) {
       o = o || {};
-      var el = await S.click(t, { after: 250 });
+      var el = o.click === false ? await S.find(t) : await S.click(t, { after: 250 });
       if (!/^(INPUT|TEXTAREA)$/.test(el.tagName)) el = el.querySelector('input, textarea');
       var Win = S.win, v = '';
       if (S.doc.activeElement !== el) take(el);
@@ -534,7 +619,8 @@
         el.dispatchEvent(new Win.KeyboardEvent('keyup', init));
         await S.wait(o.delay == null ? 140 : o.delay);
       }
-      await S.key('Tab', { after: o.after == null ? 700 : o.after });
+      if (o.end !== null) await S.key(o.end || 'Tab', { after: o.after == null ? 700 : o.after });
+      else await S.wait(o.after == null ? 700 : o.after);
     };
     // A select's option, picked from the site's own list (dropdown.js) as a reader would.
     S.choose = async function (t, text, o) {
@@ -543,7 +629,8 @@
       await S.click(sel, { after: 700 });
       var opt = resolve({ text: text, in: '.combo-list' });
       if (opt) opt = opt.closest('.combo-opt') || opt;
-      if (opt && shown(opt)) await S.click(opt, { after: 0 });
+      // A long list scrolls the option into its view first, as a reader would.
+      if (opt && shown(opt)) { await S.reveal(opt, 0.5, 500); await S.click(opt, { after: 0 }); }
       else {
         await S.key('Escape', { after: 100 });
         for (var i = 0; i < sel.options.length; i++) if (sel.options[i].text.indexOf(text) >= 0) { sel.selectedIndex = i; break; }
@@ -644,13 +731,16 @@
     });
   }
 
-  // The parts of the screen, outlined where the tool has them now (in % of the frame).
+  // The parts of the screen, outlined where the tool has them now (in % of the frame). A part is
+  // a selector, a list of them, or a box { x, y, width, height } in frame pixels.
   function place(view, boxes, win) {
     var doc = win.document, W = win.innerWidth, H = win.innerHeight;
     Object.keys(boxes).forEach(function (k, i) {
       var box = view.querySelector('.gd-box[data-b="' + (i + 1) + '"]');
-      var rs = [].concat(boxes[k]).map(function (s) { return doc.querySelector(s); }).filter(Boolean)
-        .map(function (e) { return e.getBoundingClientRect(); });
+      var rs = [].concat(boxes[k]).map(function (s) {
+        if (typeof s === 'string') { var e = doc.querySelector(s); return e && e.getBoundingClientRect(); }
+        return s && { left: s.x, top: s.y, right: s.x + s.width, bottom: s.y + s.height };
+      }).filter(Boolean);
       if (!box || !rs.length) return;
       var x = Math.max(0, Math.min.apply(null, rs.map(function (b) { return b.left; })));
       var y = Math.max(0, Math.min.apply(null, rs.map(function (b) { return b.top; })));
@@ -703,6 +793,22 @@
     alive.slice(0, alive.length - MAX + 1).forEach(function (x) { x.stop(); });
   }
 
+  // A tool loading takes the page's one thread for a moment, and two at once take twice as long
+  // each: they load one at a time, the waiting one nearest the middle of the screen next.
+  var waiting = [];
+  function queue(d) { if (waiting.indexOf(d) < 0) waiting.push(d); }
+  function unqueue(d) { var i = waiting.indexOf(d); if (i >= 0) waiting.splice(i, 1); }
+  function turn() {
+    if (!waiting.length || demos.some(function (x) { return x.state === 'loading'; })) return;
+    var mid = window.innerHeight / 2;
+    var gap = function (x) { var b = x.root.getBoundingClientRect(); return Math.abs(b.top + b.height / 2 - mid); };
+    waiting.sort(function (a, b) { return gap(a) - gap(b); });
+    var d = waiting.shift();
+    if (!d.frame) d.load(-1);
+  }
+  // After the moment that ended a load (a frame's own load starts in the same moment).
+  function turnSoon() { setTimeout(turn, 0); }
+
   // The one most on screen plays; the rest hold.
   function pick() {
     var best = null;
@@ -732,6 +838,13 @@
   API.ready = import(new URL(SRC, location.href).href).then(function (m) {
     mod = API.scenes = m;
     if (API.manual) return;
+    // The guide first: its frames start once the page itself has loaded.
+    if (document.readyState === 'complete') watch(); else window.addEventListener('load', watch, { once: true });
+  }).catch(function (e) {
+    if (window.console) console.warn('Guide demos: the scenes did not load (' + (e && e.message) + ')');
+    demos.forEach(function (d) { var v = d.root.querySelector('.gd-veil'); if (v) v.textContent = 'The demo could not load. Open the tool to try it.'; });
+  });
+  function watch() {
     if ('IntersectionObserver' in window) {
       // Near: the frame loads and sets the scene up, so it is there when the reader is.
       var nearIo = new IntersectionObserver(function (entries) {
@@ -742,7 +855,7 @@
       }, { rootMargin: '600px 0px' });
       // Far: the frame goes.
       var farIo = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) { var d = byView(en.target); if (d && !en.isIntersecting && d.frame) d.stop(); });
+        entries.forEach(function (en) { var d = byView(en.target); if (d && !en.isIntersecting) { unqueue(d); if (d.frame) d.stop(); } });
       }, { rootMargin: '1800px 0px' });
       var seeIo = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) { var d = byView(en.target); if (d) d.ratio = en.isIntersecting ? en.intersectionRatio : 0; });
@@ -752,10 +865,7 @@
     } else {
       demos.forEach(function (d) { if (d.still) d.load(-1); });
     }
-  }).catch(function (e) {
-    if (window.console) console.warn('Guide demos: the scenes did not load (' + (e && e.message) + ')');
-    demos.forEach(function (d) { var v = d.root.querySelector('.gd-veil'); if (v) v.textContent = 'The demo could not load. Open the tool to try it.'; });
-  });
+  }
   function byView(el) {
     return demos.filter(function (d) { return d.root === el || (!d.still && d.root.querySelector('.gd-view') === el); })[0];
   }

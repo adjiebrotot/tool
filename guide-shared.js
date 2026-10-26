@@ -2,8 +2,7 @@
    recorded from the real tool. Each .gd-demo[data-demo="<name>"] gets a video (media/<name>-<light|dark>.mp4, a
    .webp poster), a small bar with Play / Pause and Full screen, and its steps become live: the one
    the clip is showing is lit, and a click on a step jumps the clip to it. The times of the steps
-   come from media/manifest.json (written by _ref/guide-capture/run.mjs, or the PowerFactory
-   Builder's own _capture/capture.mjs). The screen's screenshot (.gd-shot-frame[data-shot]) swaps
+   come from media/manifest.json (written by _ref/guide-capture/run.mjs). The screen's screenshot (.gd-shot-frame[data-shot]) swaps
    with the theme too, and pointing at a part in its key lights that part's box. Clips play only while they are
    on screen, and not at all (until asked) for readers who prefer reduced motion. Everything here
    is an extra: without it the page reads as text with the steps listed.
