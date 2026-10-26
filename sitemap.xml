@@ -14,6 +14,12 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/borrowingcapacity/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -38,6 +44,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/costofliving-comparator/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/map/</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
@@ -48,6 +60,12 @@
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/dcasimulator/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/portfolio/</loc>
@@ -98,10 +116,22 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/financialfreedom/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financingvscash/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/loan-types/</loc>
@@ -147,6 +177,12 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/pisahvsgabung/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
@@ -707,6 +743,12 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
@@ -750,6 +792,12 @@
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/valuateeverything/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/videotogif/</loc>

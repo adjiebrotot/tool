@@ -75,7 +75,7 @@ fill), secondary (soft fill and border), bare (nothing until hovered) or link.
 | Theme | `🌙 Dark` / `☀️ Light` | secondary (header) | every tool |
 | Language | `ID` / `EN` | secondary (header) | Rent vs Own, Sensitivity, Pisah vs Gabung |
 | Tour | `🧭 Tour` | secondary (header) | tools with a tour |
-| Guide | `📖 Guide`, beside Tour; the tour's last step offers `See Guide` | secondary (header) | tools with a guide page (`<tool>/guides/`): Load Flow Simulator, ED/UC Simulator, Capacity Expansion Planner, PowerFactory Workflow Builder |
+| Guide | `📖 Guide`, beside Tour; the tour's last step offers `See Guide`. A tool with no tour has the same button alone in its header | secondary (header) | tools with a guide page (`<tool>/guides/`): Load Flow Simulator, ED/UC Simulator, Capacity Expansion Planner, PowerFactory Workflow Builder, and every finance tool (Rent vs Own and its Sensitivity page, Pisah vs Gabung, Borrowing Capacity, Finance vs Cash, Financial Freedom, DCA and its Portfolio mode, Cost of Living and its Map, Valuate Everything); the Indonesian pages' `📖 Panduan` opens the English guide |
 | Expand / collapse | `▾` | link | section headers, FAQ, `More ▾`, PowerFactory output variables |
 
 ---
