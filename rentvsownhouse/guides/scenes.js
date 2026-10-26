@@ -49,7 +49,7 @@ const sw = (id) => (S) => { const e = S.doc.getElementById(id); return e && e.cl
 const group = (sel) => (S) => { const e = S.doc.querySelector(sel); return e && e.closest('.field-group'); };
 const row = (sel) => (S) => { const e = S.doc.querySelector(sel); return e && e.closest('.field-row'); };
 const top = (S) => S.scrollTo('.layout', 16, 400);           // the inputs card as tall as the frame
-const park = (S, x = 1150, y = 700) => S.glide(x, y, 500);   // out of a tooltip's way
+const park = (S, x = 1272, y = 60) => S.glide(x, y, 500);    // in the right margin, off the chart's tooltip
 
 export const SCENES = [
   {
@@ -97,8 +97,8 @@ export const SCENES = [
       await S.moveTo('#qsAll', { ms: 600 });
       await S.wait(1600);
       S.mark('Read the answer');
-      await S.focus(['#verdict', '.metrics'], { pad: 30 });
       await park(S);
+      await S.focus(['#verdict', '.metrics'], { pad: 30 });
       await S.wait(2600);
       await S.focus(null, { ms: 900 });
       await S.wait(800);
@@ -121,6 +121,8 @@ export const SCENES = [
       await S.reveal('#mortgageModeGroup', 0.25);
       await S.focus(group('#mortgageModeGroup'), { pad: 30 });
       await S.click('#mortgageModeGroup .seg-btn[data-val="detailed"]', { after: 900 });
+      await S.reveal('#rateScheduleRow', 0.35);
+      await S.focus('#rateScheduleRow', { pad: 40 });
       await S.moveTo('#ratePeriodRows', { ms: 700 });
       await S.wait(1500);
       S.mark('The floating band');
@@ -158,10 +160,12 @@ export const SCENES = [
       await S.reveal('#rtbEnabled', 0.5);
       await S.focus(group('#rtbEnabled'), { pad: 60 });
       await S.click(sw('rtbEnabled'), { after: 900 });
+      await S.reveal('#rtbBuyYear', 0.6);
+      await S.focus(group('#rtbEnabled'), { pad: 40 });
       await S.slide('#rtbBuyYear', 8, { after: 900 });
       S.mark('A third line');
       await S.focus(['#verdict', '.chart-card'], { pad: 16 });
-      await park(S, 1150, 760);
+      await park(S);
       await S.wait(2600);
     },
   },
@@ -195,8 +199,8 @@ export const SCENES = [
       await S.focus();
       await S.fill('#monthlyBudget', '6000', { after: 1200 });
       S.mark('The lead stays');
-      await S.focus(['#verdict', '.metrics'], { pad: 24 });
       await park(S);
+      await S.focus(['#verdict', '.metrics'], { pad: 24 });
       await S.wait(2800);
     },
   },
@@ -341,7 +345,7 @@ export const SCENES = [
     // A copied column with one change, a metric and a year, every scenario on one chart, and the files.
     name: 'sens-compare', ...SENS,
     async run(S) {
-      await column(S, 0, 'perth/house-2br');
+      await column(S, 0, 'perth/house-2br', 'perth house');
       S.begin();
       S.mark('Copy and change');
       await S.focus('#tableWrap thead', { pad: 40 });
