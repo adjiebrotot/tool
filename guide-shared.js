@@ -167,11 +167,15 @@
     }
     shotImg.src = MEDIA + shotName + '-' + theme() + '.webp';
   }
-  // Pointing at (or focusing) a part in the key lights its box on the picture.
+  // Pointing at (or focusing) a part in the key lights its box on the picture: the pictures
+  // beside that key (both of a .gd-twin), else the page's first.
   [].forEach.call(document.querySelectorAll('.gd-key li[data-b]'), function (li) {
-    var box = shot && shot.querySelector('.gd-box[data-b="' + li.getAttribute('data-b') + '"]');
-    if (!box) return;
-    function lit(on) { return function () { box.classList.toggle('is-lit', on); }; }
+    var scope = li.closest('.gd-layout, .gd-twin, .gd-sec');
+    var frames = scope ? [].slice.call(scope.querySelectorAll('.gd-shot-frame')) : [];
+    if (!frames.length && shot) frames = [shot];
+    var boxes = frames.map(function (f) { return f.querySelector('.gd-box[data-b="' + li.getAttribute('data-b') + '"]'); }).filter(Boolean);
+    if (!boxes.length) return;
+    function lit(on) { return function () { boxes.forEach(function (b) { b.classList.toggle('is-lit', on); }); }; }
     li.addEventListener('mouseenter', lit(true)); li.addEventListener('mouseleave', lit(false));
     li.addEventListener('focusin', lit(true)); li.addEventListener('focusout', lit(false));
   });
