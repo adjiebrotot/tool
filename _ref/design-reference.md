@@ -238,7 +238,9 @@ A tour shows where things are; the page and its (i) tips explain them.
   scripts (`<tool>/guides/scenes.js`, played by `guide-live.js`; the Load Flow guide is the
   model), not recorded clips: a guide then costs a few KB instead of megabytes of video, never
   goes stale when the tool's look changes, and a reader can pause it and try the tool in
-  place. The tool's `<head>` starts with the one `guide-demo.js` line (see that file), so the
+  place. Each step points the camera at what it is about (`S.focus(part)`, up to 2.2 times
+  closer, sharp because it is the live page) and pulls back (`S.focus()`) when the result
+  shows across the tool, such as a run. The tool's `<head>` starts with the one `guide-demo.js` line (see that file), so the
   demo runs on storage of its own and is not counted as a visit. A run a scene starts is
   solved ahead by `node _ref/presolve.mjs`, and `node _ref/guide-check.mjs <tool>` must pass
   before a change to the tool or its guide ships. Record clips (`_ref/guide-capture/`, mp4

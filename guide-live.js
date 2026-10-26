@@ -17,6 +17,10 @@
    step plays the scene up to it at once and on from there. A frame loads as its demo comes near
    and goes when it is far, at most MAX at a time.
 
+   A scene can point the camera (S.focus): the frame zooms in on the part a step is about, up
+   to ZOOM times, and pans to keep the pointer in sight; S.focus() shows all of it again. Live
+   pages stay sharp at any zoom, as a video would not. A reader trying the tool sees all of it.
+
    The screen's picture (.gd-shot-frame[data-shot]) is the scene marked still: the tool at that
    size, with its parts outlined where the scene's boxes are.
 
@@ -31,6 +35,7 @@
   if (!SRC) return;
 
   var MAX = 4;              // frames alive at once
+  var ZOOM = 2.2;           // the closest a camera goes: this many times the whole frame
   var GAP = 2500;           // ms from the end of a scene to its next run
   var PID = 31;             // the guide's pointer (guide-demo.js keeps its capture)
   var ABORT = { abort: true };
@@ -131,14 +136,39 @@
       });
     };
 
-    // The frame keeps the tool's own size, scaled to the space it has (the whole screen, in full screen).
+    // The frame keeps the tool's own size, scaled so the part on show (cam, in frame pixels; null:
+    // all of it) fills the space it has (the whole screen, in full screen).
+    var cam = null, held = null;
     function fit() {
       if (!d.frame) return;
       var W = view.clientWidth, H = view.clientHeight;
       if (!W || !H) return;
-      var k = Math.min(W / w, H / h);
-      d.frame.style.transform = 'translate(' + ((W - w * k) / 2) + 'px,' + ((H - h * k) / 2) + 'px) scale(' + k + ')';
+      var c = cam || { x: 0, y: 0, w: w, h: h }, k = Math.min(W / c.w, H / c.h);
+      d.frame.style.transform = 'translate(' + ((W - c.w * k) / 2 - c.x * k) + 'px,' + ((H - c.h * k) / 2 - c.y * k) + 'px) scale(' + k + ')';
     }
+    // Move the camera to a part (a box in frame pixels, with room around it), or to all of it.
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+    d.region = function (b, pad) {
+      if (!b) return null;
+      var rw = Math.max(b.width + 2 * pad, w / ZOOM), rh = rw * h / w;
+      if (rh < b.height + 2 * pad) { rh = b.height + 2 * pad; rw = rh * w / h; }
+      if (rw >= w * 0.92 || rh >= h * 0.92) return null;
+      var cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+      return { x: clamp(cx - rw / 2, 0, w - rw), y: clamp(cy - rh / 2, 0, h - rh), w: rw, h: rh };
+    };
+    d.show = function (c, ms) {
+      cam = c;
+      if (d.frame) d.frame.style.transition = ms ? 'transform ' + ms + 'ms cubic-bezier(.4, 0, .2, 1), opacity 150ms' : 'opacity 150ms';
+      fit();
+    };
+    d.cam = function () { return cam; };
+    // Keep the pointer in sight: a point outside the part on show pans the camera to it.
+    d.follow = function (x, y, ms) {
+      if (!cam) return;
+      var m = Math.min(cam.w, cam.h) * 0.12;
+      if (x >= cam.x + m && x <= cam.x + cam.w - m && y >= cam.y + m && y <= cam.y + cam.h - m) return;
+      d.show({ x: clamp(x - cam.w / 2, 0, w - cam.w), y: clamp(y - cam.h / 2, 0, h - cam.h), w: cam.w, h: cam.h }, ms);
+    };
     if (window.ResizeObserver) new ResizeObserver(fit).observe(view);
 
     d.scene = function () { return mod && mod.SCENES.filter(function (s) { return s.name === name; })[0]; };
@@ -161,7 +191,7 @@
       f.style.width = w + 'px'; f.style.height = h + 'px';
       f.src = new URL(mod.TOOL.path + '?demo', location.href).href;
       view.insertBefore(f, view.firstChild);
-      d.frame = f; d.tried = false;
+      d.frame = f; d.tried = false; cam = null; held = null;
       var r = d.run = { upTo: upTo == null ? -1 : upTo, idx: -1, fast: true, begun: false, paused: false, aborted: false,
         wake: null, cur: { x: w / 2, y: h / 2 }, over: null, down: null, marks: [], errors: [], t0: Date.now(), done: null };
       r.finished = new Promise(function (res) { r.done = res; });
@@ -244,6 +274,9 @@
       var hold = !d.shouldPlay();
       if (!hold && d.tried) { d.load(-1); return; }
       if (r.paused !== hold) { r.paused = hold; if (!hold && r.wake) r.wake(); }
+      // A reader trying the tool sees all of it; Play puts the camera back.
+      if (hold && d.userPaused && cam) { held = cam; d.show(null, 400); }
+      else if (!hold && held) { var c = held; held = null; d.show(c, 400); }
       setLabel();
     };
     d.fit = fit;
@@ -396,6 +429,7 @@
 
     S.glide = async function (x, y, ms) {
       var a = r.cur, n = r.fast ? 1 : Math.max(6, Math.round((ms == null ? 650 : ms) / 16));
+      d.follow(x, y, r.fast ? 0 : Math.max(400, ms == null ? 650 : ms));
       for (var i = 1; i <= n; i++) {
         var k = i / n, e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
         await hold();
@@ -540,6 +574,25 @@
         c.scrollTo({ top: top, behavior: r.fast ? 'auto' : 'smooth' });
       }
       await S.wait(ms == null ? 800 : ms);
+    };
+
+    /* The camera: S.focus(target or [targets], { pad, ms }) zooms in on them (a box
+       { x, y, width, height } in frame pixels works too); S.focus() shows all of the tool. */
+    S.focus = async function (t, o) {
+      o = o || {};
+      var ms = r.fast ? 0 : (o.ms == null ? 700 : o.ms), b = null;
+      if (t) {
+        var list = [].concat(t), bs = [];
+        for (var i = 0; i < list.length; i++) {
+          var x = list[i];
+          bs.push(x && x.width !== undefined && x.nodeType === undefined && typeof x !== 'function' ? x : await S.box(x));
+        }
+        var x0 = Math.min.apply(null, bs.map(function (q) { return q.x; })), y0 = Math.min.apply(null, bs.map(function (q) { return q.y; }));
+        var x1 = Math.max.apply(null, bs.map(function (q) { return q.x + q.width; })), y1 = Math.max.apply(null, bs.map(function (q) { return q.y + q.height; }));
+        b = { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
+      }
+      d.show(d.region(b, o.pad == null ? 28 : o.pad), ms);
+      await S.wait(o.after == null ? ms : o.after);
     };
 
     /* The scene's own moments. */
