@@ -25,6 +25,11 @@
    The screen's picture (.gd-shot-frame[data-shot]) is the scene marked still: the tool at that
    size, with its parts outlined where the scene's boxes are.
 
+   A tool with a second page on the same inputs (Rent vs Own's Sensitivity, the DCA Portfolio
+   mode, the Cost of Living Map) shows both in one guide: a scene with its own `path` (relative
+   to the guide, and may carry a query or a hash) opens that page instead of TOOL.path, with
+   its own `ready(win)` when the page differs, and `seen` keys added to TOOL.seen.
+
    _ref/guide-check.mjs plays every scene of a guide and fails on a broken one, and
    _ref/presolve.mjs solves ahead whatever a scene runs, so a demo never fetches the solver.
    Both drive the page through window.GuideLive. */
@@ -186,7 +191,7 @@
       d.stop();
       if (!still) room(d);
       var seed = { 'abt-theme': theme(), 'abt-consent': 'denied' };
-      (mod.TOOL.seen || []).forEach(function (k) { seed[k] = '1'; });
+      (mod.TOOL.seen || []).concat(sc.seen || []).forEach(function (k) { seed[k] = '1'; });
       var st = sc.storage || mod.TOOL.storage || {};
       Object.keys(st).forEach(function (k) { seed[k] = st[k]; });
       var f = document.createElement('iframe');
@@ -195,7 +200,7 @@
       f.tabIndex = -1;
       f.setAttribute('data-storage', JSON.stringify(seed));
       f.style.width = w + 'px'; f.style.height = h + 'px';
-      f.src = new URL(mod.TOOL.path + '?demo', location.href).href;
+      f.src = demoUrl(sc.path || mod.TOOL.path);
       view.insertBefore(f, view.firstChild);
       d.frame = f; d.tried = false; cam = null; held = null;
       var r = d.run = { upTo: upTo == null ? -1 : upTo, idx: -1, fast: true, begun: false, paused: false, aborted: false,
@@ -226,7 +231,8 @@
         win.addEventListener('error', function (e) { r.errors.push(String(e.message || e)); });
         win.addEventListener('unhandledrejection', function (e) { r.errors.push('unhandled: ' + (e.reason && e.reason.message || e.reason)); });
         decorate(win, d, still);
-        await S.until(function () { return mod.TOOL.ready(win); }, 60000, 'the tool to be ready');
+        var ready = sc.ready || mod.TOOL.ready;
+        await S.until(function () { return ready(win); }, 60000, 'the tool to be ready');
         await S.wait(300);
         out = await sc.run(S);
         if (still) {
@@ -688,6 +694,13 @@
     // A moment the scripts that drive this page want to hear of (presolve.mjs: 'solved').
     S.note = async function (tag) { if (API.onNote) await API.onNote(tag, S.win, d.name); };
     return S;
+  }
+
+  // The page a scene opens, as a demo: ?demo joins whatever query the path already has.
+  function demoUrl(p) {
+    var u = new URL(p, location.href);
+    u.search = u.search ? u.search + '&demo' : '?demo';
+    return u.href;
   }
 
   /* ---- In the frame: the cursor, and what a reader's try means -------------------------- */

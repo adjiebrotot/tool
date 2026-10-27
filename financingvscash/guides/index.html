@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use Finance vs Cash | Adjie Brotools</title>
+<meta name="description" content="A visual guide to Finance vs Cash: load a worked comparison, enter the price, your cash and each loan offer, read whether paying cash or financing leaves you wealthier, then see how every field moves the answer.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/financingvscash/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use Finance vs Cash">
+<meta property="og:description" content="The real tool, running live: compare paying cash with financing a purchase and investing the cash you keep, across seven loan types, then learn how each field moves the answer.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/financingvscash/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use Finance vs Cash">
+<meta name="twitter:description" content="The real tool, running live: compare paying cash with financing a purchase and investing the cash you keep, across seven loan types, then learn how each field moves the answer.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use Finance vs Cash",
+  "url": "https://tool.adjiebrotots.com/financingvscash/guides/",
+  "description": "Compare paying cash for a purchase with financing it and investing the cash you keep, across amortizing, flat rate, interest-only, balloon, known repayment, bullet and deferred-start loans.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Finance vs Cash",
+    "url": "https://tool.adjiebrotots.com/financingvscash/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Load or enter a purchase", "text": "Load a worked comparison from Quick Start, or enter the cash price, the cash you have and the rate your spare cash earns." },
+    { "@type": "HowToStep", "name": "Describe each loan offer", "text": "On the Loan offers tab, give each offer its loan type, term, rate, down payment and fees. Up to two settings of one offer can be swept with Optimise." },
+    { "@type": "HowToStep", "name": "Simulate and read", "text": "Press Simulate. The verdict names the best strategy and its Net Benefit vs Cash; the chart, the Scenario Comparison and the Amortization Schedule give the detail." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Finance vs Cash", "item": "https://tool.adjiebrotots.com/financingvscash/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use Finance vs Cash", "item": "https://tool.adjiebrotots.com/financingvscash/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Finance vs Cash</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect stroke="var(--accent)" x="2" y="6" width="20" height="12" rx="2"/><circle stroke="var(--accent2)" cx="12" cy="12" r="2.5"/><path stroke="var(--accent)" d="M6 12h.01M18 12h.01"/></svg>How to use Finance vs Cash</h1>
+      <p class="gd-lead">Pay cash, or borrow and keep your cash earning? This guide shows how to set up a purchase and its loan offers, then how the tool decides. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#screen">Start with the screen</a>
+        <a class="gd-skip" href="#how">How the numbers work</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Load or enter a purchase</h3>
+          <p>Start from a worked comparison in <strong>Quick Start</strong>, or enter the cash price, the cash you have, and the <strong>Risk-Free Rate</strong> your spare cash earns.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Describe each loan offer</h3>
+          <p>One tab per offer on <strong>Loan offers</strong>: its loan type, term, rate, down payment and fees. A gauge beside a field sweeps it with <strong>Optimise</strong>.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Simulate and read</h3>
+          <p>Press <strong>▶ Simulate</strong>. The verdict names the best strategy and its <strong>Net Benefit vs Cash</strong>; the chart and the tables below give the detail.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> Every figure is worked out in your browser, and your plan is kept in this browser only. This guide is general information, not financial advice.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#purchase">The purchase</a>
+        <a href="#offers">Loan offers</a>
+        <a href="#types">Loan types with a field of their own</a>
+        <a href="#assume">Assumptions</a>
+        <a href="#results">The answer</a>
+        <a href="#charts">Chart and schedule</a>
+        <a href="#optimise">Optimise</a>
+        <a href="#share">Save and share</a>
+        <a href="#how">How the numbers work</a>
+        <a href="#worked">Worked example</a>
+        <a href="#sensitivity">What moves the answer</a>
+        <a href="#limits">What it leaves out</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the answer beside them, then the chart and the tables under it. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="2000" role="img" aria-label="Finance vs Cash with the Car Quick Start loaded: the inputs on the left, the verdict and four figures on the right, the chart under them, and the Scenario Comparison, Amortization Schedule and What this assumes below.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:8.05%;--w:29.69%;--h:31.1%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:32.97%;--y:8.05%;--w:64.38%;--h:20.8%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:32.97%;--y:29.7%;--w:64.38%;--h:30.55%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:32.97%;--y:61.15%;--w:64.38%;--h:36.95%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then three tabs: <strong>Purchase</strong>, <strong>Loan offers</strong> and <strong>Assumptions</strong>. <strong>▶ Simulate</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>The answer</h3>
+            <p>The verdict in a sentence, <strong>Show in today's money</strong>, then four figures: <strong>Best Strategy</strong>, <strong>Net Benefit vs Cash</strong>, <strong>Total Interest (Best)</strong> and <strong>Cash Purchase Wealth</strong>.</p>
+          </li>
+          <li data-b="3">
+            <h3>Chart</h3>
+            <p>Each offer and the cash purchase over time, read as <strong>Ending Wealth</strong>, <strong>Net Benefit</strong>, <strong>Investment Value</strong> or <strong>Loan Balance</strong>. <strong>Share</strong> sits above it.</p>
+          </li>
+          <li data-b="4">
+            <h3>Tables</h3>
+            <p><strong>Scenario Comparison</strong>, every figure side by side; the <strong>Amortization Schedule</strong>, one row per repayment; and <strong>What this assumes</strong>.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Tour</strong> replays a one minute walk through the tool, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Six worked comparisons, each a decision people really face: a <strong>House, fixed vs float</strong>, a <strong>Car, 3yr or balloon</strong>, a <strong>Phone on a plan</strong> that quotes no rate, a <strong>Credit card 0%</strong> conversion, a <strong>Motorbike, flat rate</strong>, and <strong>Furniture, pay later</strong>. One click fills every tab and runs it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, load the car</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the answer has the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick a comparison</h3><p>Hover a button to read what it holds and what it teaches. A click loads it and runs it.</p></li>
+          <li><h3>Read the answer</h3><p>The verdict and <strong>Net Benefit vs Cash</strong>: for the car, every loan trails paying cash, the three-year one by the least.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A Quick Start is also the reset.</strong> Each one is built from the same defaults, not from what is on screen, so it clears the plan before it.</li>
+        <li><strong>Each one carries a lesson.</strong> The car's smallest instalment (the balloon) finishes last; the motorbike's 0.9% a month flat costs 21.03% a year; the furniture's payment holiday grows the debt.</li>
+      </ul>
+    </section>
+
+    <!-- The purchase -->
+    <section class="gd-sec card" id="purchase" aria-labelledby="purchase-h">
+      <h2 id="purchase-h">The purchase</h2>
+      <p class="gd-sub">The <strong>Purchase</strong> tab holds what both paths share: the price, the cash you have today, and the symbol money is shown in. Typing never reruns the answer; <strong>▶ Simulate</strong> does.</p>
+      <div class="gd-demo" data-demo="purchase" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">A $45,000 purchase with $60,000 on hand</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The price and your cash</h3><p><strong>Cash Purchase Cost</strong> is what paying in full costs. <strong>Available Cash</strong> is what you hold today; it must cover the price.</p></li>
+          <li><h3>A price per offer</h3><p><strong>Price Each Loan Offer Separately</strong> gives each offer its own price, as an amount, a % of cash or a % off.</p></li>
+          <li><h3>Simulate</h3><p>An edit sends the board out of date and says so above the button. <strong>▶ Simulate</strong> runs every offer against cash.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Cash below the price is not modelled.</strong> The tool compares financing against genuinely paying cash, so the board stays blank and says why.</li>
+        <li><strong>The currency is a label.</strong> Nothing is converted.</li>
+      </ul>
+    </section>
+
+    <!-- Loan offers -->
+    <section class="gd-sec card" id="offers" aria-labelledby="offers-h">
+      <h2 id="offers-h">Loan offers</h2>
+      <p class="gd-sub">Each offer is a tab on the bar. The form under it is that offer, in titled sections: <strong>Loan Structure</strong>, <strong>Repayment Term</strong>, <strong>Interest Rate</strong> (or <strong>Repayment Plan</strong> for a known repayment), then <strong>Upfront &amp; Fees</strong>. Every edit applies as you make it.</p>
+      <div class="gd-demo" data-demo="offers" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The car's offers, and a flat-rate one beside them</span></figure>
+        <ol class="gd-steps">
+          <li><h3>One tab per offer</h3><p>Click a tab to edit it, double-click to rename it, click its dot to recolour it. The icons beside the bar duplicate or remove the one on screen.</p></li>
+          <li><h3>Add an offer</h3><p><strong>+</strong> adds one: an amortizing loan at 5% over 60 months, 0% down.</p></li>
+          <li><h3>Its loan type</h3><p><strong>Loan Type</strong> picks one of seven structures. The fields below change to suit it.</p></li>
+          <li><h3>Term, rate and fees</h3><p><strong>Term</strong> counts repayments, <strong>Finance Rate</strong> is yearly, then the <strong>Down Payment</strong>, <strong>Origination Fee</strong>, <strong>Fee Treatment</strong> and <strong>Admin Fee</strong>.</p></li>
+          <li><h3>Simulate</h3><p>The new offer joins the comparison. A 4.9% flat rate shows as 9.32% in <strong>Effective Rate (APR)</strong>.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Learn more ↗</strong> under Loan Type opens <a href="../loan-types/">Loan Types Explained</a>: each structure with its formula, the markets it is sold in and a worked example.</li>
+        <li><strong>Repayment Frequency</strong> converts the term when it changes: 60 months becomes 260 weeks, the same five years.</li>
+      </ul>
+    </section>
+
+    <!-- Loan types with a field of their own -->
+    <section class="gd-sec card" id="types" aria-labelledby="types-h">
+      <h2 id="types-h">Loan types with a field of their own</h2>
+      <p class="gd-sub">Some structures bring a field: <strong>Interest-Only</strong> or <strong>Payment Holiday</strong> periods, a <strong>Residual</strong>, a <strong>Repayment Amount</strong> instead of a rate. And any rate that can move takes a <strong>Rate Basis</strong> of <strong>Schedule</strong>.</p>
+      <div class="gd-demo" data-demo="types" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">A phone plan's solved rate, then a house loan that floats</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Known repayment</h3><p>For a plan that quotes an instalment and no rate: enter the <strong>Repayment Amount</strong>, one figure or a stepped <strong>Schedule</strong>.</p></li>
+          <li><h3>The rate it implies</h3><p><strong>Implied Rate</strong> is the yearly rate that repays the loan exactly. 24 payments of $82 on $1,800 is 9.08%; of $78, 3.86%.</p></li>
+          <li><h3>Fixed, then floating</h3><p>A <strong>Rate Schedule</strong> is consecutive periods, each <strong>Fixed</strong> or <strong>Floating</strong> between a min and a max. Here: two years at 5.80%, then 5% to 8.5%.</p></li>
+          <li><h3>The band</h3><p>A floating rate runs three times, at its min, middle and max. The chart shades the range; the tables use the middle.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A flat rate and a known repayment take no schedule.</strong> A flat loan fixes its interest at the start; a known repayment has the rate as its answer.</li>
+        <li><strong>No rate repays it?</strong> A repayment too small for any rate is skipped, and the banner says to raise it or shorten the term.</li>
+      </ul>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="assume" aria-labelledby="assume-h">
+      <h2 id="assume-h">Assumptions</h2>
+      <p class="gd-sub">What your spare cash earns, how a quoted loan rate is read, and how fast prices rise. The first is the yardstick every offer is measured against.</p>
+      <div class="gd-demo" data-demo="assume" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The car at 6% risk-free, nominal rates, 3% inflation</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Risk-Free Rate</h3><p>What cash earns in a safe place, such as a savings account. Every offer and the cash purchase use it.</p></li>
+          <li><h3>Rate Convention</h3><p><strong>Effective annual (EAR)</strong> compounds a loan rate down to each repayment; <strong>Nominal annual (APR)</strong> divides it. Loans only, never the cash rate.</p></li>
+          <li><h3>Inflation</h3><p>Never changes a loan or the cash. The note under it says what the price costs at the end.</p></li>
+          <li><h3>Show in today's money</h3><p>Beside the results: every figure divided by inflation up to its own date. Off again, every figure is back to the cent.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- The answer -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">The answer</h2>
+      <p class="gd-sub">The verdict names the best strategy and by how much it beats, or trails, paying cash. The four figures under it say the same in numbers, and the Scenario Comparison shows how each offer got there.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The opening plan, with cash earning 6%</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The verdict</h3><p>The best strategy, its <strong>Net Benefit vs Cash</strong> and when, and its effective rate against the <strong>Risk-Free Rate</strong>. Here the 5% loan beats cash by $1.5k.</p></li>
+          <li><h3>Four figures</h3><p><strong>Net Benefit vs Cash</strong>: above zero, financing wins. <strong>Cash Purchase Wealth</strong>: the cash left after paying in full, grown at the risk-free rate.</p></li>
+          <li><h3>Optimization Target</h3><p>Which offer counts as best: <strong>Highest Net Benefit</strong>, <strong>Lowest Total Interest</strong> or <strong>Lowest Financing Cost</strong>. The 7% loan pays $1,059 less interest, yet trails cash by $842.</p></li>
+          <li><h3>Scenario Comparison</h3><p>Every figure per offer, each at the end of its own term, against cash over the same time.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Banners say what to doubt.</strong> <em>Negative carry</em>: a loan's effective rate is above the risk-free rate. <em>Negative amortization</em>: a repayment is below the interest due, so the balance grows.</li>
+        <li><strong>What this assumes</strong>, the last card, lists what the answer rests on for this plan: the cash, the rates, the fees, the horizon.</li>
+      </ul>
+    </section>
+
+    <!-- Chart and schedule -->
+    <section class="gd-sec card" id="charts" aria-labelledby="charts-h">
+      <h2 id="charts-h">Chart and schedule</h2>
+      <p class="gd-sub">The chart puts every offer and the cash purchase on one time axis, in the finest repayment period on show. The Amortization Schedule under the table gives one row per repayment.</p>
+      <div class="gd-demo" data-demo="charts" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Furniture, pay later: the debt climbing through the holiday</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Chart Metric</h3><p><strong>Ending Wealth</strong> (cash kept less debt), <strong>Net Benefit</strong>, <strong>Investment Value</strong> or <strong>Loan Balance</strong>.</p></li>
+          <li><h3>Read a date</h3><p>Hover the chart and the line under it reads every series at that date.</p></li>
+          <li><h3>Amortization Schedule</h3><p>Opens from its chevron. One tab per offer: start balance, interest, principal, payment, end balance. <strong>⬇ CSV</strong> saves it.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Scroll or pinch to zoom, drag to pan, ⟳ to reset.</strong> Past an offer's term its cash keeps compounding at the risk-free rate, so shorter offers line up with longer ones.</li>
+      </ul>
+    </section>
+
+    <!-- Optimise -->
+    <section class="gd-sec card" id="optimise" aria-labelledby="optimise-h">
+      <h2 id="optimise-h">Optimise</h2>
+      <p class="gd-sub">The gold gauge beside a field sweeps it over a range on the offer on screen, up to two settings at once. The board then shows the best tested setting, your current one and the worst, each beside the cash purchase.</p>
+      <div class="gd-demo" data-demo="optimise" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The car's three-year loan, over 12 to 60 months</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Pick a setting</h3><p>Click the gauge beside <strong>Term</strong>, <strong>Finance Rate</strong>, <strong>Down Payment</strong>, a fee, the <strong>Risk-Free Rate</strong> and more.</p></li>
+          <li><h3>Set the range</h3><p><strong>Start value</strong>, <strong>End value</strong> and <strong>Steps</strong>, the values tested. <strong>✓ Done</strong> keeps it.</p></li>
+          <li><h3>▶ Optimise</h3><p>Simulate becomes <strong>▶ Optimise</strong>, and the note above it says what will run.</p></li>
+          <li><h3>Best, yours, worst</h3><p>Three tiles and the cash purchase. The chart plots the <strong>Objective</strong> against the setting; two settings draw a surface.</p></li>
+          <li><h3>Back to comparing</h3><p><strong>Cancel</strong> drops the sweep, and <strong>▶ Simulate</strong> compares every offer again.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>One offer, every combination.</strong> Up to 50 values a setting and 2,500 runs, all on the same engine as Simulate. The <strong>Objective</strong> can be Net Benefit, Ending Wealth, Total Interest, Total Financing Cost or Effective Rate.</li>
+        <li><strong>Left out on purpose:</strong> the loan type, the frequency and the rate and repayment bases, since each swaps the fields around it.</li>
+        <li><strong>The best is the best on these inputs,</strong> not a forecast. It moves when the cash, the rates or the price do.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your plan in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open and Share</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write the whole plan, every offer included, to a file, and read one back.</p></li>
+          <li><h3>Share</h3><p>The chart as SVG or PNG, a copy to the clipboard, a link that opens the tool on your plan, or an embed for a web page.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>An embed is live.</strong> It shows the chart as you drew it, and a reader can hover and zoom it.</li>
+      </ul>
+    </section>
+
+    <!-- ═════════ Part 2 ═════════ -->
+    <div class="gd-part" id="how">
+      <span class="gd-part-k">Part 2</span>
+      <h2>How the numbers work</h2>
+      <p>What each field means, where it enters the calculation, and what moving it does to the answer. Every formula here is the one the tool runs.</p>
+    </div>
+
+    <!-- The model -->
+    <section class="gd-sec card" id="model" aria-labelledby="model-h">
+      <h2 id="model-h">The model in one picture</h2>
+      <p class="gd-sub">Both paths start from the same cash. Paying cash spends the price today and leaves the rest earning the risk-free rate. Financing spends only the down payment and any upfront fee today, keeps the rest earning the same rate, and pays each repayment out of it. The tool compares what each path holds at the end of the offer's term, once the loan is repaid.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Financing</span> <var>W</var><sub>0</sub> = <var>A</var> − <var>D</var> − <var>F</var><sub>0</sub>,&nbsp;&nbsp; <var>W</var><sub><var>k</var></sub> = <var>W</var><sub><var>k</var>−1</sub> × (1 + <var>i</var>) − <var>R</var><sub><var>k</var></sub> − <var>a</var><small>each repayment period</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Paying cash</span> <var>W</var><sup>cash</sup> = (<var>A</var> − <var>C</var>) × (1 + <var>i</var>)<sup><var>n</var></sup></div>
+      <div class="gd-eq"><span class="gd-eq-l">Net Benefit vs Cash</span> = <var>W</var><sub><var>n</var></sub> − <var>W</var><sup>cash</sup> = (1 + <var>i</var>)<sup><var>n</var></sup> × [ (<var>C</var> − <var>D</var> − <var>F</var><sub>0</sub>) − <span class="gd-sum">Σ</span> <span class="gd-frac"><span><var>R</var><sub><var>k</var></sub> + <var>a</var></span><span>(1 + <var>i</var>)<sup><var>k</var></sup></span></span> ]</div>
+      <ul class="gd-where">
+        <li><var>A</var><strong>Available Cash</strong></li>
+        <li><var>C</var><strong>Cash Purchase Cost</strong></li>
+        <li><var>D</var>the down payment, a share of the offer's price</li>
+        <li><var>F<sub>0</sub></var>an origination fee <strong>Paid upfront from cash</strong> (else 0)</li>
+        <li><var>R<sub>k</sub></var>repayment <var>k</var> of <var>n</var>, set by the loan type</li>
+        <li><var>a</var>the <strong>Admin Fee</strong> on every repayment</li>
+        <li><var>i</var>the <strong>Risk-Free Rate</strong> per period: (1 + <var>rf</var>)<sup>1/<var>m</var></sup> − 1, with <var>m</var> repayments a year</li>
+        <li><var>n</var>the number of repayments, the <strong>Term</strong></li>
+      </ul>
+      <ul class="gd-facts">
+        <li><strong>Read the bracket as a present value.</strong> It is what financing lets you keep today, less what everything you pay later is worth today at the rate your cash earns. The tool carries that forward to the end of the term, so Net Benefit is in the money of that date.</li>
+        <li><strong>The wash.</strong> Borrow at exactly the rate your cash earns, with no fee, and the repayments are worth exactly the loan: Net Benefit is zero for every loan type, frequency, term and down payment. Measured on the car's three-year loan at 4.5% with its fee removed: $0.00.</li>
+        <li><strong>So the rule is one comparison.</strong> With no fees and the offer at the cash price, financing wins exactly when the loan's <strong>Effective Rate (APR)</strong> is below the <strong>Risk-Free Rate</strong>. Fees count against it, and a cheaper offer price counts for it.</li>
+        <li><strong>Timing.</strong> The cash grows for a period first, then the repayment comes out of it. The first repayment falls one period after the purchase, and the last one clears the loan exactly.</li>
+        <li><strong>Each offer is scored at the end of its own term</strong>, against paying cash over the same time. <strong>Best Strategy</strong> is the top offer by the <strong>Optimization Target</strong>, or <em>Cash Purchase</em> when every Net Benefit is below zero.</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Figure</th><th>What it is</th><th>In the maths</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Ending Wealth</th><td data-l="What it is">The cash still invested at the end of the term, less any debt.</td><td data-l="In the maths"><var>W</var><sub><var>n</var></sub>. On the chart over time: invested cash − loan balance.</td></tr>
+          <tr><th scope="row">Cash Purchase at Same Horizon</th><td data-l="What it is">The cash left after paying in full, grown to the offer's own end date.</td><td data-l="In the maths"><var>W</var><sup>cash</sup>. The <strong>Cash Purchase Wealth</strong> tile runs it to the longest offer.</td></tr>
+          <tr><th scope="row">Net Benefit vs Cash</th><td data-l="What it is">How much better off financing leaves you. Below zero, paying cash is better.</td><td data-l="In the maths"><var>W</var><sub><var>n</var></sub> − <var>W</var><sup>cash</sup>. A difference under half a cent reads as a tie.</td></tr>
+          <tr><th scope="row">Effective Rate (APR)</th><td data-l="What it is">What the loan really costs a year, whatever its shape.</td><td data-l="In the maths">The rate <var>r</var> that makes the repayments repay the amount financed, as (1 + <var>r</var>)<sup><var>m</var></sup> − 1. An effective annual rate, and it leaves fees out.</td></tr>
+          <tr><th scope="row">Total Interest Paid</th><td data-l="What it is">All the interest over the term.</td><td data-l="In the maths">Σ interest<sub><var>k</var></sub>. No fees in it.</td></tr>
+          <tr><th scope="row">Total Financing Cost</th><td data-l="What it is">What borrowing costs, before any credit for the cash it keeps.</td><td data-l="In the maths">Total interest + origination fee + <var>a</var> × <var>n</var>.</td></tr>
+          <tr><th scope="row">Total Out-of-Pocket</th><td data-l="What it is">Every dollar handed over.</td><td data-l="In the maths"><var>D</var> + <var>F</var><sub>0</sub> + Σ <var>R</var><sub><var>k</var></sub> + <var>a</var> × <var>n</var>. A fee inside the loan is in the repayments, counted once.</td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> Total Financing Cost and Total Out-of-Pocket ignore what your cash earns meanwhile, so they always favour paying cash. A 0% plan with no fee costs $0 and is still better than cash, because the cash you keep earns interest. Net Benefit is the only figure that counts both sides.</p>
+    </section>
+
+    <!-- Purchase fields -->
+    <section class="gd-sec card" id="m-purchase" aria-labelledby="m-purchase-h">
+      <h2 id="m-purchase-h">Purchase</h2>
+      <p class="gd-sub">The price and the cash. Surprisingly, the cash you hold does not move the answer at all, as long as it covers the price.</p>
+      <div class="gd-eq"><span class="gd-eq-l">An offer at its own price</span> Net Benefit = Net Benefit<sub>at price <var>P</var>′</sub> + (<var>C</var> − <var>P</var>′) × (1 + <var>i</var>)<sup><var>n</var></sup></div>
+      <ul class="gd-where">
+        <li><var>P′</var>the offer's price: <var>C</var> unless <strong>Price Each Loan Offer Separately</strong> is on</li>
+        <li><var>C − P′</var>a discount the financing side keeps invested and the cash buyer never gets</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Currency Symbol</th><td data-l="What it is">The symbol money is shown in.</td><td data-l="In the maths">Nowhere. Nothing is converted.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Cash Purchase Cost</th><td data-l="What it is">What paying in full costs today.</td><td data-l="In the maths"><var>C</var>. Paying cash spends it; financing borrows it less the down payment, so it scales the loan.</td><td data-l="Raise it"><span class="gd-eff">▲ amount borrowed</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns. Car, three-year loan: +10% is −$260.</p></td></tr>
+          <tr><th scope="row">Price Each Loan Offer Separately</th><td data-l="What it is">Gives each offer its own <strong>Offer Price</strong>.</td><td data-l="In the maths">Off, <var>P</var>′ = <var>C</var> for every offer. On, each offer states <var>P</var>′ as an amount, a % of cash or a % off. Cash is always scored at <var>C</var>.</td><td data-l="Raise it"><span class="gd-eff">a choice</span></td></tr>
+          <tr><th scope="row">Available Cash</th><td data-l="What it is">Cash on hand today.</td><td data-l="In the maths"><var>A</var>. Must be at least <var>C</var>. The surplus earns the same in both paths and cancels out of Net Benefit.</td><td data-l="Raise it"><span class="gd-eff">▲ both wealth lines</span><span class="gd-eff">no effect on Net Benefit</span><p>Car: ±10% is $0.</p></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> More cash in the bank does not make borrowing smarter. It raises <strong>Ending Wealth</strong> and <strong>Cash Purchase Wealth</strong> by the same amount, and Net Benefit not at all. What decides it is the loan against the risk-free rate.</p>
+    </section>
+
+    <!-- Loan structure -->
+    <section class="gd-sec card" id="m-structure" aria-labelledby="m-structure-h">
+      <h2 id="m-structure-h">Loan offers: the loan structure</h2>
+      <p class="gd-sub">The loan type sets the repayments <var>R</var><sub><var>k</var></sub>. Every type builds the same rows (start balance, interest, principal, payment, end balance), and the last repayment always clears what is left. <a href="../loan-types/">Loan Types Explained</a> walks through each one with charts.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Each period</span> interest<sub><var>k</var></sub> = <var>B</var><sub><var>k</var>−1</sub> × <var>r</var>,&nbsp;&nbsp; <var>B</var><sub><var>k</var></sub> = <var>B</var><sub><var>k</var>−1</sub> + interest<sub><var>k</var></sub> − <var>R</var><sub><var>k</var></sub><small>all but the flat rate</small></div>
+      <ul class="gd-where">
+        <li><var>B<sub>k</sub></var>the balance after repayment <var>k</var>; <var>B</var><sub>0</sub> = <var>L</var>, the amount financed</li>
+        <li><var>r</var>the loan rate per period (see <a href="#m-rate">term and rate</a>)</li>
+        <li><var>n, k</var>the term, and the repayment being made</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Loan Type</th><th>What you pay</th><th>In the maths</th><th>Next to amortizing</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Amortizing</th><td data-l="What you pay">One equal instalment; interest on what you still owe.</td><td data-l="In the maths"><div class="gd-eq"><var>R</var> = <var>L</var> × <span class="gd-frac"><span><var>r</var>(1 + <var>r</var>)<sup><var>n</var></sup></span><span>(1 + <var>r</var>)<sup><var>n</var></sup> − 1</span></span></div><p>At 0%, <var>R</var> = <var>L</var> ÷ <var>n</var>. Re-worked over the remaining term whenever the rate changes.</p></td><td data-l="Next to amortizing"><span class="gd-eff">the standard</span></td></tr>
+          <tr><th scope="row">Flat rate</th><td data-l="What you pay">Interest on the original amount for the whole term.</td><td data-l="In the maths"><div class="gd-eq"><var>R</var> = <var>L</var> ÷ <var>n</var> + <var>L</var> × <var>r</var></div><p>Total interest = <var>L</var> × <var>r</var> × <var>n</var>. The first period's rate holds for the whole loan.</p></td><td data-l="Next to amortizing"><span class="gd-eff gd-eff-neg">▲ effective rate, about double</span><p>Motorbike: 10.8% flat is 21.03% effective; amortizing, 11.35%.</p></td></tr>
+          <tr><th scope="row">Interest-only</th><td data-l="What you pay">Interest alone for the <strong>Interest-Only</strong> periods, then instalments.</td><td data-l="In the maths"><var>R</var><sub><var>k</var></sub> = <var>B</var> × <var>r</var> for <var>k</var> ≤ <var>q</var>, then amortizing over the rest. <var>q</var> = <var>n</var> repays all the principal at the end.</td><td data-l="Next to amortizing"><span class="gd-eff">▲ balance carried longer</span><p>Magnifies the spread, whichever way it runs.</p></td></tr>
+          <tr><th scope="row">Balloon / residual</th><td data-l="What you pay">Smaller instalments, with the <strong>Residual</strong> due in a lump at the end.</td><td data-l="In the maths"><div class="gd-eq"><var>R</var> = (<var>L</var> − <span class="gd-frac"><span><var>ρL</var></span><span>(1 + <var>r</var>)<sup><var>n</var></sup></span></span>) × <span class="gd-frac"><span><var>r</var>(1 + <var>r</var>)<sup><var>n</var></sup></span><span>(1 + <var>r</var>)<sup><var>n</var></sup> − 1</span></span></div><p>Final payment = <var>R</var> + <var>ρL</var>, with <var>ρ</var> the residual share.</p></td><td data-l="Next to amortizing"><span class="gd-eff gd-eff-neg">▼ instalment, ▲ interest</span><p>Car: $630.55 a month, then $14,805.55; 5 years, −$6,444 against −$5,162.</p></td></tr>
+          <tr><th scope="row">Known repayment</th><td data-l="What you pay">The instalment you were quoted, one figure or a stepped schedule.</td><td data-l="In the maths">Solves <var>r</var> so that <var>B</var><sub><var>n</var></sub> = 0, by bisection. <strong>Implied Rate</strong> = (1 + <var>r</var>)<sup><var>m</var></sup> − 1. A repayment below the interest due grows the debt, and the tool says so.</td><td data-l="Next to amortizing"><span class="gd-eff">rate is the answer</span><p>Phone: 12 × $150 on $1,800 is 0%; 36 × $57 is 9.07%.</p></td></tr>
+          <tr><th scope="row">Bullet</th><td data-l="What you pay">Nothing until maturity, then all of it.</td><td data-l="In the maths">Interest is added to the debt every period; one payment of <var>L</var>(1 + <var>r</var>)<sup><var>n</var></sup> at the end.</td><td data-l="Next to amortizing"><span class="gd-eff">▲ balance carried longest</span></td></tr>
+          <tr><th scope="row">Deferred start</th><td data-l="What you pay">A <strong>Payment Holiday</strong>, then normal instalments.</td><td data-l="In the maths"><var>B</var><sub><var>h</var></sub> = <var>L</var>(1 + <var>r</var>)<sup><var>h</var></sup> after <var>h</var> holiday periods, then amortizing over <var>n</var> − <var>h</var>. Interest is added to the debt meanwhile, so the balance rises above the amount borrowed.</td><td data-l="Next to amortizing"><span class="gd-eff gd-eff-neg">▲ debt during the holiday</span><p>Furniture: $6,000 grows to $7,194 before the first payment.</p></td></tr>
+        </tbody>
+      </table></div>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Loan Type</th><td data-l="What it is">The repayment structure the lender sells.</td><td data-l="In the maths">Picks the formula for <var>R</var><sub><var>k</var></sub> above.</td><td data-l="Raise it"><span class="gd-eff">a choice of structure</span></td></tr>
+          <tr><th scope="row">Interest-Only / Payment Holiday</th><td data-l="What it is">How many repayments run before normal instalments begin.</td><td data-l="In the maths"><var>q</var> or <var>h</var>. Capped at the term.</td><td data-l="Raise it"><span class="gd-eff">▲ balance carried longer</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns.</p></td></tr>
+          <tr><th scope="row">Residual</th><td data-l="What it is">The share of the amount financed still owed at the end.</td><td data-l="In the maths"><var>ρ</var>, 0% to 99% of <var>L</var>.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns.</p></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> A flat rate is not comparable with an ordinary rate. You keep paying interest on money you have already repaid, so the average balance is about half the loan while the interest is charged on all of it. Compare <strong>Effective Rate (APR)</strong>, never the quoted figure: the motorbike's 0.9% a month flat costs nearly twice its 10.8% amortizing twin.</p>
+      <p class="gd-note gd-note-warn"><strong>Not modelled: deferred interest.</strong> Some 0% promotions charge all the back interest if the balance is not cleared by a date. The tool has no such switch. Its 0% plans are amortizing loans at 0%, with any conversion fee as an origination fee.</p>
+    </section>
+
+    <!-- Term and rate -->
+    <section class="gd-sec card" id="m-rate" aria-labelledby="m-rate-h">
+      <h2 id="m-rate-h">Loan offers: term and rate</h2>
+      <p class="gd-sub">How often you repay, for how long, and at what rate. A yearly rate becomes a rate per repayment one of two ways, set on the Assumptions tab.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Effective (EAR)</span> <var>r</var> = (1 + <var>R</var><sub>yr</sub>)<sup>1/<var>m</var></sup> − 1<small>the default</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Nominal (APR)</span> <var>r</var> = <var>R</var><sub>yr</sub> ÷ <var>m</var></div>
+      <ul class="gd-where">
+        <li><var>R<sub>yr</sub></var>the <strong>Finance Rate</strong> (or a schedule band), a year</li>
+        <li><var>m</var>repayments a year: 52, 26, 12 or 1</li>
+        <li><var>r</var>the rate charged each repayment period</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Repayment Frequency</th><td data-l="What it is">Weekly, fortnightly, monthly or yearly.</td><td data-l="In the maths"><var>m</var>, in the loan's <var>r</var> and the cash's <var>i</var>. Switching converts the term, so the years stay the same.</td><td data-l="Raise it"><span class="gd-eff">▲ repaid sooner</span><p>Car: weekly is +$57; yearly, −$836, since each payment waits a year.</p></td></tr>
+          <tr><th scope="row">Term</th><td data-l="What it is">The number of repayments.</td><td data-l="In the maths"><var>n</var>. How long the loan runs, and how long the spread between loan and cash runs.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns. Car: 48 months is −$1,012; 24 months, +$936.</p></td></tr>
+          <tr><th scope="row">Rate Basis</th><td data-l="What it is"><strong>Simple</strong>, one rate; or <strong>Schedule</strong>, periods that each hold a rate.</td><td data-l="In the maths">Picks <strong>Finance Rate</strong> or <strong>Rate Schedule</strong>. Not for a flat rate or a known repayment.</td><td data-l="Raise it"><span class="gd-eff">a choice</span></td></tr>
+          <tr><th scope="row">Finance Rate</th><td data-l="What it is">The yearly rate the lender quotes. <em>Flat Rate</em> on a flat loan, <em>Interest Rate</em> on a bullet.</td><td data-l="In the maths"><var>R</var><sub>yr</sub>, made <var>r</var> by the convention.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ repayments</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: +1 point is −$667.</p></td></tr>
+          <tr><th scope="row">Rate Schedule</th><td data-l="What it is">Consecutive periods from the first repayment, each <strong>Fixed</strong> or <strong>Floating</strong> between a min and a max. The last stretches to the term.</td><td data-l="In the maths">Each band sets <var>r</var> for its repayments; the instalment is re-worked on the balance at each change. A floating band runs at its min, middle and max. A payment holiday's schedule starts after the holiday.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ a band, ▼ Net Benefit</span><p>House, 2 years fixed then 5% to 8.5%: Ending Wealth from −$321k to +$18k, in today's money.</p></td></tr>
+          <tr><th scope="row">Repayment Basis</th><td data-l="What it is">Known repayment only: <strong>Single</strong> amount or a stepped <strong>Schedule</strong>.</td><td data-l="In the maths">Picks the stream <var>R</var><sub>1</sub> … <var>R</var><sub><var>n</var></sub> the rate is solved from.</td><td data-l="Raise it"><span class="gd-eff">a choice</span></td></tr>
+          <tr><th scope="row">Repayment Amount / Schedule</th><td data-l="What it is">What you hand over each period.</td><td data-l="In the maths"><var>R</var><sub><var>k</var></sub>, given; <var>r</var> is solved from it.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ Implied Rate</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span></td></tr>
+          <tr><th scope="row">Implied Rate</th><td data-l="What it is">The rate the plan works out to. Read only.</td><td data-l="In the maths">(1 + <var>r</var>)<sup><var>m</var></sup> − 1, an effective annual rate.</td><td data-l="Raise it"><span class="gd-eff">an answer, not an input</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> A longer term is only worse while the loan costs more than your cash earns. Below the risk-free rate it is better, because cheap debt is kept longer. At exactly the risk-free rate, the term stops mattering.</p>
+    </section>
+
+    <!-- Upfront and fees -->
+    <section class="gd-sec card" id="m-fees" aria-labelledby="m-fees-h">
+      <h2 id="m-fees-h">Loan offers: upfront and fees</h2>
+      <p class="gd-sub">What leaves your cash on day one, and what each fee costs once the cash it takes would have earned interest.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Down payment</span> <var>D</var> = <var>d</var> × <var>P</var>′,&nbsp;&nbsp; financed base <var>L</var> = <var>P</var>′ − <var>D</var></div>
+      <div class="gd-eq"><span class="gd-eq-l">Amount financed</span> <var>L</var> (paid upfront) &nbsp;·&nbsp; <var>L</var> + <var>F</var> (added to the loan) &nbsp;·&nbsp; <span class="gd-frac"><span><var>L</var></span><span>1 − <var>f</var></span></span> (deducted from the advance, a % fee)</div>
+      <div class="gd-eq"><span class="gd-eq-l">What a fee costs</span> <var>F</var><sub>0</sub> × (1 + <var>i</var>)<sup><var>n</var></sup> &nbsp;+&nbsp; <var>a</var> × <span class="gd-sum">Σ</span> (1 + <var>i</var>)<sup><var>n</var>−<var>k</var></sup><small>off Net Benefit</small></div>
+      <ul class="gd-where">
+        <li><var>d</var>the <strong>Down Payment</strong> share</li>
+        <li><var>F, f</var>the <strong>Origination Fee</strong>, as money or as a % of <var>L</var></li>
+        <li><var>a</var>the <strong>Admin Fee</strong> a repayment</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Offer Price</th><td data-l="What it is">With a price per offer on: what this offer charges.</td><td data-l="In the maths"><var>P</var>′: an amount, <var>C</var> × % of cash, or <var>C</var> × (1 − % off).</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Furniture: 10% off cuts the loss from −$2,172 (the holiday) to −$682.</p></td></tr>
+          <tr><th scope="row">Down Payment</th><td data-l="What it is">The share of the price paid on day one. 100% is paying cash.</td><td data-l="In the maths"><var>D</var>, out of <var>W</var><sub>0</sub>; the loan shrinks by the same. At 100% there is no loan and Net Benefit is 0.</td><td data-l="Raise it"><span class="gd-eff">▼ amount borrowed</span><span class="gd-eff gd-eff-pos">▲ Net Benefit</span><p>While the loan costs more than cash earns. Car: 20% is +$289.</p></td></tr>
+          <tr><th scope="row">Origination Fee</th><td data-l="What it is">A one-off lender's fee, as money or a %.</td><td data-l="In the maths"><var>F</var> or <var>f</var>. Never counted as interest.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: $400 costs $456 by year three, 400 × 1.045³.</p></td></tr>
+          <tr><th scope="row">Fee Treatment</th><td data-l="What it is"><strong>Paid upfront from cash</strong>, <strong>Added to the loan</strong> or <strong>Deducted from the advance</strong>.</td><td data-l="In the maths">Upfront: <var>F</var><sub>0</sub> = <var>F</var>. Inside the loan, the fee is repaid with interest at the loan rate, never counted twice. Deducted, a % fee is grossed up so the net advance still meets the price.</td><td data-l="Raise it"><span class="gd-eff">a choice</span><p>Car: inside the loan costs $26 more, the fee borrowed at 8.4% instead of paid from cash earning 4.5%.</p></td></tr>
+          <tr><th scope="row">Admin Fee</th><td data-l="What it is">A fixed fee on every repayment, such as account-keeping.</td><td data-l="In the maths"><var>a</var>, out of the cash with each <var>R</var><sub><var>k</var></sub>. Total = <var>a</var> × <var>n</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: $10 a month is −$384.</p></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> <strong>Effective Rate (APR)</strong> is the contract rate of the repayments and leaves fees out, in every treatment. A 0% plan with a 3% fee still reads 0.00%. The fee is priced in Total Financing Cost and in Net Benefit: the card's six-month plan finishes last on it.</p>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="m-assume" aria-labelledby="m-assume-h">
+      <h2 id="m-assume-h">Assumptions</h2>
+      <p class="gd-sub">The risk-free rate is the opportunity cost of your cash: what it would have earned if you had not spent it. It grows the kept cash and, through the identity above, discounts every repayment.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Cash per period</span> <var>i</var> = (1 + <var>rf</var>)<sup>1/<var>m</var></sup> − 1<small>always effective</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Today's money</span> <var>x</var><sub>today</sub> = <span class="gd-frac"><span><var>x</var> at <var>t</var> years</span><span>(1 + <var>π</var>)<sup><var>t</var></sup></span></span></div>
+      <ul class="gd-where">
+        <li><var>rf</var>the <strong>Risk-Free Rate</strong>, a year</li>
+        <li><var>π</var><strong>Inflation</strong>, a year</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Risk-Free Rate</th><td data-l="What it is">What spare cash earns in a safe place.</td><td data-l="In the maths"><var>i</var>, in both paths. Untaxed, compounded once each repayment period.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ Net Benefit</span><p>Whenever you borrow. Car: +1 point is +$626.</p></td></tr>
+          <tr><th scope="row">Rate Convention</th><td data-l="What it is"><strong>Effective annual (EAR)</strong> or <strong>Nominal annual (APR)</strong>.</td><td data-l="In the maths">How a loan's yearly rate becomes <var>r</var>. Never the cash rate, which is always effective.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">nominal: ▲ cost, ▼ Net Benefit</span><p>Car: nominal is −$221; 8.4% charged 0.70% a month, not 0.67%.</p></td></tr>
+          <tr><th scope="row">Inflation</th><td data-l="What it is">How fast prices rise.</td><td data-l="In the maths"><var>π</var>, only when reading in today's money. Never touches a loan or the cash.</td><td data-l="Raise it"><span class="gd-eff">no effect on the run</span></td></tr>
+          <tr><th scope="row">Show in today's money</th><td data-l="What it is">The switch beside the results.</td><td data-l="In the maths">Divides each figure by (1 + <var>π</var>)<sup><var>t</var></sup> at its own date; a total is the sum of its parts each read that way. The purchase-day figures stay as they are.</td><td data-l="Raise it"><span class="gd-eff">a reading, not a model</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> The risk-free rate is not what an investment portfolio might return. If you would put the kept cash in shares, a higher rate would flatter financing, but with a risk the tool does not show. Use what the cash would really earn, safely, after tax.</p>
+    </section>
+
+    <!-- Worked example -->
+    <section class="gd-sec card" id="worked" aria-labelledby="worked-h">
+      <h2 id="worked-h">Worked example</h2>
+      <p class="gd-sub">The <strong>Car, 3yr or balloon</strong> Quick Start's first offer, by hand. Every figure below is the one the tool prints.</p>
+      <div class="gd-calc">
+        <h3>Car: $45,000, three-year loan, 10% down</h3>
+        <p>$60,000 on hand, 8.40% a year, 36 monthly repayments, a $400 fee paid upfront, 4.50% risk-free, Effective annual.</p>
+        <ol>
+          <li><span class="gd-calc-l">Down payment</span><span class="gd-calc-w">10% × $45,000</span><b>$4,500</b></li>
+          <li><span class="gd-calc-l">Amount financed</span><span class="gd-calc-w">$45,000 − $4,500</span><b>$40,500</b></li>
+          <li><span class="gd-calc-l">Loan rate a month</span><span class="gd-calc-w">1.084<sup>1/12</sup> − 1</span><b>0.6744%</b></li>
+          <li><span class="gd-calc-l">Instalment</span><span class="gd-calc-w">$40,500 × 0.006744 × 1.006744³⁶ ÷ (1.006744³⁶ − 1)</span><b>$1,270.86</b></li>
+          <li><span class="gd-calc-l">Total interest</span><span class="gd-calc-w">36 × $1,270.86 − $40,500</span><b>$5,250.97</b></li>
+          <li><span class="gd-calc-l">Cash kept today</span><span class="gd-calc-w">$60,000 − $4,500 down − $400 fee</span><b>$55,100</b></li>
+          <li><span class="gd-calc-l">Cash rate a month</span><span class="gd-calc-w">1.045<sup>1/12</sup> − 1</span><b>0.3675%</b></li>
+          <li><span class="gd-calc-l">Kept cash, grown</span><span class="gd-calc-w">$55,100 × 1.045³</span><b>$62,878.25</b></li>
+          <li><span class="gd-calc-l">Repayments, grown</span><span class="gd-calc-w">$1,270.86 × (1.045³ − 1) ÷ 0.003675</span><b>−$48,819.52</b></li>
+          <li><span class="gd-calc-l">Ending Wealth</span><span class="gd-calc-w">$62,878.25 − $48,819.52, the loan now repaid</span><b>$14,058.74</b></li>
+          <li><span class="gd-calc-l">Cash at the same horizon</span><span class="gd-calc-w">($60,000 − $45,000) × 1.045³</span><b>$17,117.49</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Net Benefit vs Cash</span><span class="gd-calc-w">$14,058.74 − $17,117.49</span><b>−$3,058.76</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The same answer as a present value.</strong> At 0.3675% a month the 36 instalments are worth $42,780.38 today. Financing kept $40,100 ($45,000 − $4,500 − $400). The gap, −$2,680.38, grown 1.045³, is −$3,058.76.</li>
+        <li><strong>Why it loses.</strong> The loan costs 8.40% while the kept cash earns 4.50%. On about $40,000 for three years that spread is the loss, plus the fee.</li>
+      </ul>
+    </section>
+
+    <!-- Sensitivity -->
+    <section class="gd-sec card" id="sensitivity" aria-labelledby="sensitivity-h">
+      <h2 id="sensitivity-h">What moves the answer</h2>
+      <p class="gd-sub">The same loan, with one input moved down and then up and the rest left as the Quick Start sets them. Measured on the tool itself.</p>
+      <figure class="gd-tornado">
+        <figcaption>Net Benefit vs Cash, car three-year loan, when one input moves<small>Base case: the Car Quick Start's "3yr loan, 10% down", Net Benefit −$3,059. Steps: 1 point on a rate, 12 months on the term, 10 points on the down payment, 10% on the price and the cash, $400 on the fee.</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered</span><span class="gd-tn-k-hi">Input raised</span></div>
+        <ol>
+          <li style="--lo:.93;--hi:-1"><span class="gd-tn-name">Term<small>36 → 24 / 48 months</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$936</span><span>−$1,012</span></span></li>
+          <li style="--lo:.66;--hi:-.66"><span class="gd-tn-name">Finance Rate<small>8.4% → 7.4% / 9.4%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$667</span><span>−$667</span></span></li>
+          <li style="--lo:-.6;--hi:.62"><span class="gd-tn-name">Risk-Free Rate<small>4.5% → 3.5% / 5.5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$608</span><span>+$626</span></span></li>
+          <li style="--lo:.45;--hi:-.45"><span class="gd-tn-name">Origination Fee<small>$400 → $0 / $800</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$456</span><span>−$456</span></span></li>
+          <li style="--lo:-.29;--hi:.29"><span class="gd-tn-name">Down Payment<small>10% → 0% / 20%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$289</span><span>+$289</span></span></li>
+          <li style="--lo:.26;--hi:-.26"><span class="gd-tn-name">Cash Purchase Cost<small>$45,000 → $40,500 / $49,500</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$260</span><span>−$260</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Available Cash<small>$60,000 → $54,000 / $66,000</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>$0</span><span>$0</span></span></li>
+        </ol>
+        <p class="gd-tn-note">Read it from the top: the longest bar is the input your answer rests on most. Measured by <code>financingvscash/guides/_sensitivity.mjs</code>.</p>
+      </figure>
+      <ul class="gd-facts">
+        <li><strong>The spread decides the sign; the term and the amount decide the size.</strong> Term tops the chart because it is how long a loan costing 3.9 points more than cash runs. The finance rate and the risk-free rate move the answer almost equally and in opposite directions: only the gap between them counts.</li>
+        <li><strong>No single plausible move rescues this loan.</strong> Each bar is at most about $1,000 against a $3,059 loss. It draws level with paying cash only at a <strong>Finance Rate</strong> of about 3.81%, below the 4.5% risk-free rate because the $400 fee must be earned back too.</li>
+        <li><strong>The cash in the bank does nothing.</strong> Its bar is empty: the surplus earns the same either way.</li>
+        <li><strong>For your own decision:</strong> argue about the rates first, then the term. If your loan's effective rate is well above what your cash safely earns, a shorter term or a bigger down payment loses less, but paying cash still wins.</li>
+      </ul>
+      <p class="gd-sub">The longest bar, live: the same loan over a year more, then a year less, with Net Benefit on the chart.</p>
+      <div class="gd-demo" data-demo="sensitivity" data-w="1280" data-h="960">
+        <figure class="gd-screen"><span class="gd-cap">The car's three-year loan over 48 months, then 24</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The base case</h3><p>Net Benefit −$3.1k after 36 months. The chart shows each loan's lead over cash over time, below zero all the way.</p></li>
+          <li><h3>A longer term</h3><p>48 months: a smaller instalment, but a year more of the spread. Net Benefit −$4.1k.</p></li>
+          <li><h3>A shorter term</h3><p>24 months: a bigger instalment, a year less of the spread. Net Benefit −$2.1k.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- What it leaves out -->
+    <section class="gd-sec card" id="limits" aria-labelledby="limits-h">
+      <h2 id="limits-h">What it leaves out</h2>
+      <p class="gd-sub">The comparison is clean because it holds a lot still. Know what that is before you act on it.</p>
+      <ul class="gd-facts">
+        <li><strong>The item itself.</strong> It costs the same either way, so what it is later worth is left out of both paths. A car that is worth less on a loan (insurance, a lien) is not modelled.</li>
+        <li><strong>Tax.</strong> The cash earns the risk-free rate untaxed, and loan interest is never deductible. If yours is taxed, enter the after-tax rate.</li>
+        <li><strong>Risk and access to cash.</strong> The kept cash is assumed safe and earning a fixed rate. Keeping a buffer for an emergency has a value the tool does not count.</li>
+        <li><strong>A rate that floats is three paths, not a forecast.</strong> The tables read the middle. Your loan could follow any path inside the band, or outside it.</li>
+        <li><strong>Penalties and promotions.</strong> No late fees, early repayment, break costs, or deferred interest charged back when a 0% promotion ends. Only the fees you enter.</li>
+        <li><strong>Different end dates.</strong> Each offer is scored in the money of its own end date. Offers of different lengths compare more fairly with <strong>Show in today's money</strong> on, and that reading uses inflation, not the risk-free rate.</li>
+        <li><strong>Cash that runs out.</strong> If the repayments drain the kept cash below zero, the shortfall is charged the risk-free rate, as if you could borrow at it. With <em>Negative carry</em> on a long loan, check the <strong>Investment Value</strong> line stays above zero.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>When not to trust it.</strong> If the answer is within a few hundred dollars of zero, the choice of risk-free rate decides it, so test a point either side. If you would invest the kept cash in something risky, the tool's answer is the safe case only. And if the loan has terms you could not enter, such as a promotion that ends, read the contract, not the chart.</p>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to compare your own?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (APR, EAR...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+</body>
+</html>

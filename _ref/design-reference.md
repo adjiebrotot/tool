@@ -246,6 +246,15 @@ A tour shows where things are; the page and its (i) tips explain them.
   before a change to the tool or its guide ships. Record clips (`_ref/guide-capture/`, mp4
   only, under 500 KB each) only for a tool a script cannot drive, such as one that needs a
   file from the reader.
+- **A finance guide also says how the numbers work.** After the how-to sections, a second
+  part (`.gd-part`) takes each input group in turn: the formula it enters (`.gd-eq`), a field
+  table naming what each field is, where it enters the maths and what raising it does
+  (`.gd-table`, `.gd-eff` chips), a worked example with a Quick Start's real figures
+  (`.gd-calc`), and a sensitivity chart (`.gd-tornado`) measured on the tool's own engine.
+  A tool with a second page on the same inputs (Rent vs Own's Sensitivity, the DCA Portfolio
+  mode, the Cost of Living Map) is one guide showing both: a scene with its own `path` opens
+  the other page, and `.gd-twin` sets the two screens side by side with the same fields
+  outlined under the same numbers.
 
 - **Short.** A lead line, or a `<ul>` of two to four points, each a fragment
   (`Simulated: model an asset from its return and volatility`). About 30 words

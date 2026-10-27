@@ -5,6 +5,7 @@
 window.__TOUR = {
   seenKey: 'rvo-tour-v4-seen',
   launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

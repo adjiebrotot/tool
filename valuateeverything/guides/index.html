@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use Valuate Everything | Adjie Brotools</title>
+<meta name="description" content="A visual guide to Valuate Everything: enter the secondhand listings you have seen, fit a price model to their age, kilometres or size, and check whether a listing you want to buy is a fair price.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/valuateeverything/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use Valuate Everything">
+<meta property="og:description" content="The real tool, running live: fit a price model to the listings you have seen, read the fair price of the item you want, and see how far its asking price sits from it.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/valuateeverything/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use Valuate Everything">
+<meta name="twitter:description" content="The real tool, running live: fit a price model to the listings you have seen, read the fair price of the item you want, and see how far its asking price sits from it.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use Valuate Everything",
+  "url": "https://tool.adjiebrotots.com/valuateeverything/guides/",
+  "description": "Fit a price model (linear, log-linear, ridge or quadratic regression) to secondhand listings, with years turned into ages and older prices lifted to today's money, then judge an asking price against the fair price it gives.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Valuate Everything",
+    "url": "https://tool.adjiebrotots.com/valuateeverything/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Enter the listings you have seen", "text": "Start from a Quick Start or enter your own listings on the Market data tab: a price and the features that drive it, such as the year, kilometres or land size, typed, pasted as text, opened from a CSV or gathered with an AI prompt." },
+    { "@type": "HowToStep", "name": "Add the items you want to buy", "text": "On the Items to buy tab, give each item its features and, if you have it, its asking price. Assumptions sets the current year, inflation and the modelling approach. Press Valuate." },
+    { "@type": "HowToStep", "name": "Read the fair price", "text": "The sentence at the top names the best value and how far each asking price sits from its fair price. The chart shows the fitted price model with the listings, and the tables give the equation, each listing's miss and the range." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Valuate Everything", "item": "https://tool.adjiebrotots.com/valuateeverything/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use Valuate Everything", "item": "https://tool.adjiebrotots.com/valuateeverything/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Valuate Everything</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3.5 12.5 11.5 4.5h8v8l-8 8z"/><circle stroke="var(--accent)" cx="15.6" cy="8.4" r="1.4"/><path stroke="var(--accent2)" d="M8.2 15.8l3-3M10.4 17.4l2.6-2.6"/></svg>How to use Valuate Everything</h1>
+      <p class="gd-lead">Is that listing a fair price? Fit a price model to the secondhand listings you have seen, then check the ones you want to buy against it. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#screen">Start with the screen</a>
+        <a class="gd-skip" href="#how">How the numbers work</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Enter the listings you have seen</h3>
+          <p>On <strong>Market data</strong>: one row per listing, its price and the features that drive it, such as the year, kilometres or land size. Or start from a <strong>Quick Start</strong>.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Add what you want to buy</h3>
+          <p>On <strong>Items to buy</strong>: each item's features and its asking price. <strong>Assumptions</strong> sets the year, inflation and the model. Press <strong>▶ Valuate</strong>.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Read the fair price</h3>
+          <p>The sentence at the top names the best value and how far each asking price sits from its fair price. The chart and the tables show the model behind it.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> The model is fitted in your browser, on your listings only. This guide is general information, not financial advice.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#market">Market data</a>
+        <a href="#items">Items to buy</a>
+        <a href="#assumptions">Assumptions</a>
+        <a href="#results">Read the answer</a>
+        <a href="#chart">The chart</a>
+        <a href="#share">Save and share</a>
+        <a href="#how">How the numbers work</a>
+        <a href="#worked">Worked example</a>
+        <a href="#sensitivity">What moves it most</a>
+        <a href="#limits">What it leaves out</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the answer beside them, the chart and the tables under it. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1720" role="img" aria-label="Valuate Everything with the Camry Hybrid example: the inputs on the left, the answer and four figures on the right, the price model chart under them, and the folded tables and what it assumes at the foot.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:10.7%;--w:32.81%;--h:40.64%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:36.09%;--y:10.7%;--w:61.25%;--h:22.21%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:36.09%;--y:34.01%;--w:61.25%;--h:41.4%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:36.09%;--y:76.45%;--w:61.25%;--h:21.4%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then three tabs: <strong>Market data</strong>, <strong>Items to buy</strong> and <strong>Assumptions</strong>. <strong>▶ Valuate</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>The answer</h3>
+            <p>One sentence, then four figures: <strong>Best value</strong>, <strong>Fair price</strong>, <strong>Model fit (R²)</strong> and <strong>Typical error (RMSE)</strong>.</p>
+          </li>
+          <li data-b="3">
+            <h3>Price model</h3>
+            <p>The fitted price across one feature, or two in 3D, with the listings and the items on it. <strong>Share</strong> and ⟳ sit above it.</p>
+          </li>
+          <li data-b="4">
+            <h3>The tables</h3>
+            <p><strong>Items to buy</strong>, <strong>Price model terms</strong> and <strong>Listings against the model</strong>, each behind its chevron, then <strong>What this assumes</strong>.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Guide</strong> opens this page. The tool has no tour: this page is the walk through it.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Four worked examples, built from real listings and sales gathered in October 2026: a used <strong>Camry Hybrid</strong> (18 dealer listings), a <strong>Perth house</strong> (23 sales in Morley, 2023 to 2026), a Sony A7 <strong>Camera</strong> body (24 listings, in pounds) and a <strong>Hotel night</strong> in Perth (22 rooms). Each brings two items to check.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick an example</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the answer has the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick an example</h3><p>Hover a button to read what it holds. A click fills all three tabs and runs the model at once.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The page opens on the Camry.</strong> Its first car, a 2021 Ascent Sport with 52,771 km, asks $32,369 against a fair price of $34,765: 6.9% under.</li>
+        <li><strong>Prices move.</strong> The examples are a snapshot of the market on the day they were gathered, not a live feed.</li>
+      </ul>
+    </section>
+
+    <!-- Market data -->
+    <section class="gd-sec card" id="market" aria-labelledby="market-h">
+      <h2 id="market-h">Market data</h2>
+      <p class="gd-sub">The listings the model learns from, one row each: a price and the features that drive it. <strong>Columns</strong> says what each one is; <strong>Listings</strong> holds the rows.</p>
+      <div class="gd-demo" data-demo="market" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Camry Hybrid: the columns, one listing changed, the other ways in</span></figure>
+        <ol class="gd-steps">
+          <li><h3>What you are valuing</h3><p><strong>Item</strong> names it in the answer, the AI prompt and the file names. It does not enter the maths.</p></li>
+          <li><h3>Columns</h3><p>Price first, Data year last, the features between. A feature's <strong>Type</strong> is Number, Year (turned into an age), Yes/No or Ignore.</p></li>
+          <li><h3>Listings</h3><p>Type in a cell. Here the first listing drops from $35,980 to $30,980, and the note under the inputs asks for Valuate.</p></li>
+          <li><h3>Valuate</h3><p><strong>▶ Valuate</strong> fits the model again: the 2021 Ascent Sport's fair price falls from $34,765 to $33,893.</p></li>
+          <li><h3>Text, CSV or AI</h3><p>The same rows as text to paste, a CSV to open or save, or a prompt that asks an AI with web search for real listings in your columns.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>More rows and columns.</strong> <strong>+ Add listing</strong> under the table, ⤢ to enlarge it, <strong>+ Add column</strong> for another feature, the bin to delete one.</li>
+        <li><strong>A blank is never guessed.</strong> A row with a blank or unreadable cell is left out, and the warning at the foot of the inputs counts it. A blank Yes/No reads as No, a blank data year as the current year.</li>
+        <li><strong>No data year?</strong> Delete that column and every listing is taken as seen this year, at its listed price. <strong>+ Add data year</strong> brings it back.</li>
+      </ul>
+    </section>
+
+    <!-- Items to buy -->
+    <section class="gd-sec card" id="items" aria-labelledby="items-h">
+      <h2 id="items-h">Items to buy</h2>
+      <p class="gd-sub">The listings you are weighing up. Each is priced by the model and judged against its fair price, but never added to the model.</p>
+      <div class="gd-demo" data-demo="items" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Camry Hybrid: the first car, a new asking price and year</span></figure>
+        <ol class="gd-steps">
+          <li><h3>An item to check</h3><p>One card each, in its own colour on the chart.</p></li>
+          <li><h3>Asking price</h3><p>Optional. Here $30,990. Without it the tool gives the fair price alone.</p></li>
+          <li><h3>Its features</h3><p>One field per feature the model uses. A Year shows its age under it: 2022 is 4 yrs in 2026.</p></li>
+          <li><h3>Valuate</h3><p>The fair price is now $35,799, and the asking price sits $4,809 (13.4%) under it.</p></li>
+          <li><h3>Add or copy</h3><p>The icons beside the name copy or delete the card. <strong>+ Add item</strong> adds a blank one.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Every feature, or no price.</strong> An item missing a feature is listed in the table as missing it, and left unpriced.</li>
+        <li><strong>Edits wait for Valuate.</strong> The results dim and the button is ringed until you press it, so you can enter every listing and item first.</li>
+      </ul>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="assumptions" aria-labelledby="assumptions-h">
+      <h2 id="assumptions-h">Assumptions</h2>
+      <p class="gd-sub">The money the prices are in, and the shape of the model. <strong>Current year</strong> and <strong>Inflation</strong> show only when the listings have a Data year column.</p>
+      <div class="gd-demo" data-demo="assumptions" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Perth house: more inflation, then Ridge</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Prices</h3><p><strong>Currency Symbol</strong> for the figures. <strong>Current year</strong>: the year every price is restated in and the items are aged from.</p></li>
+          <li><h3>Inflation</h3><p>From 3.0 to 6.0 %/yr: the 2023 to 2025 sales are lifted more, and 14 Netley Street's fair price rises from $929,996 to $970,948.</p></li>
+          <li><h3>Modelling approach</h3><p><strong>Linear regression</strong>, <strong>Log-linear</strong>, <strong>Ridge regression</strong> or <strong>Quadratic terms</strong>. Its (?) describes the one picked.</p></li>
+          <li><h3>Ridge penalty</h3><p>From 0.10 to 1.00 ×: every effect is pulled toward zero, and the fair price to $947,087.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Which model?</strong> <a href="#m-assume">Assumptions, in the maths</a> says what each one assumes about how a price falls with age or kilometres.</li>
+      </ul>
+    </section>
+
+    <!-- Results -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">Read the answer</h2>
+      <p class="gd-sub">One sentence, four figures, then the tables under the chart, each behind its chevron.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Camry Hybrid: the answer and the tables</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The answer</h3><p>The best value among the items with an asking price and how far it sits from its fair price, then the others and how well the model fits.</p></li>
+          <li><h3>Four figures</h3><p><strong>Best value</strong> as a gap, <strong>Fair price</strong> with its range, <strong>Model fit (R²)</strong> and <strong>Typical error (RMSE)</strong>.</p></li>
+          <li><h3>Items to buy</h3><p><strong>Asking</strong>, <strong>Fair price</strong>, <strong>Range</strong>, <strong>Gap</strong> and <strong>Gap %</strong> for each item.</p></li>
+          <li><h3>Price model terms</h3><p>The fitted equation, then each term's coefficient and its standardised weight.</p></li>
+          <li><h3>Listings against the model</h3><p>Each listing as listed, in today's money, the model's price for it and its miss.</p></li>
+          <li><h3>What this assumes</h3><p>What the answer rests on, in words, for the listings on screen.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A minus is good news.</strong> A negative gap means the asking price is under the model's fair price.</li>
+        <li><strong>Warnings</strong> sit at the foot of the inputs: rows left out, a feature that never changes, too few listings for the terms, an item outside the listings' range.</li>
+      </ul>
+    </section>
+
+    <!-- Chart -->
+    <section class="gd-sec card" id="chart" aria-labelledby="chart-h">
+      <h2 id="chart-h">The chart</h2>
+      <p class="gd-sub">The fitted price along one feature, with every other feature held at one value. The options beside it change how it reads, never the answer.</p>
+      <div class="gd-demo" data-demo="chart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Camry Hybrid: across age, held at the first car, in 3D</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The line and the dots</h3><p>The line is the fitted price. Grey dots are the listings, a circle is an item's fair price and a diamond its asking price. Hover one to read it.</p></li>
+          <li><h3>Across</h3><p>Picks the feature along the bottom. A Year shows as an age.</p></li>
+          <li><h3>Hold others at</h3><p><strong>Data average</strong> or one of the items: every feature not on an axis takes its value. The note under the chart says which.</p></li>
+          <li><h3>3D</h3><p><strong>And</strong> picks a second feature, and the line becomes a surface. Drag to turn it.</p></li>
+          <li><h3>Show data points</h3><p>Hides or shows the grey listings.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Each dot keeps its own miss.</strong> A listing is moved to the held values before it is drawn, so it sits off the line by exactly what the model missed it by. <a href="#m-fit">The chart, in the maths</a> shows how.</li>
+        <li><strong>Zoom.</strong> Drag across the 2D chart to zoom, and the price axis follows; ⟳ puts it back, or turns the 3D view back.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your listings, items and settings in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open, Share and CSV</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write the listings, the items and the settings to a file, and read one back.</p></li>
+          <li><h3>Share the chart</h3><p>SVG, PNG, a copy to the clipboard, a link that opens the tool on your data, or an embed for a web page.</p></li>
+          <li><h3>The listings as CSV</h3><p><strong>⬇ CSV</strong> on <strong>Listings against the model</strong> saves each listing with the model's price and its miss.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Your own rows.</strong> <strong>CSV</strong> under Listings saves them as you entered them (<strong>⬇ CSV</strong>) or as an empty <strong>⬇ Template</strong> with your columns.</li>
+        <li><strong>A link carries your listings.</strong> Nothing is uploaded, but anyone with the link can read them.</li>
+      </ul>
+    </section>
+
+    <!-- ================================================================== -->
+    <div class="gd-part" id="how">
+      <span class="gd-part-k">Part 2</span>
+      <h2>How the numbers work</h2>
+      <p>How the tool turns the listings you have seen into a fair price: every field, where it enters the maths, and what moving it does to the answer.</p>
+    </div>
+
+    <!-- The model -->
+    <section class="gd-sec card" id="model" aria-labelledby="model-h">
+      <h2 id="model-h">The model in one picture</h2>
+      <p class="gd-sub">The tool fits one regression to your listings: the price explained as the sum of what each feature is worth, the way an appraiser prices a house by its rooms and land. It then prices each item you want with it. The headline is the <strong>gap</strong>: how far an asking price sits from that fair price.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Fair price</span> <var>F</var> = <var>P̂</var>( <var>x</var><sub>item</sub> )<small>the model, at the item's features</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Gap</span> = <var>A</var> − <var>F</var>,  <span class="gd-eq-l">Gap %</span> = <span class="gd-frac"><span><var>A</var> − <var>F</var></span><span><var>F</var></span></span><small>below zero: asking under the fair price</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Range</span> = <var>F</var> ± RMSE<small>Log-linear: <var>F</var> × e<sup>±<var>s</var></sup></small></div>
+      <ul class="gd-where">
+        <li><var>P̂</var>the price model, fitted to the listings only</li>
+        <li><var>x</var><sub>item</sub>the item's features, a Year as its age now</li>
+        <li><var>A</var>the item's asking price</li>
+        <li><var>F</var>its fair price, in the current year's money</li>
+        <li><strong>RMSE</strong> the typical error: how far listings sit from the model</li>
+        <li><var>s</var>the same typical error, on the log of the price</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Quick Start</th><th>Model fit (R²)</th><th>Typical error</th><th>Best value</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Camry Hybrid</th><td data-l="Model fit (R²)">0.68</td><td data-l="Typical error">±$1,863</td><td data-l="Best value"><strong>2021 Ascent Sport</strong>: $32,369 against $34,765, −6.9%</td></tr>
+          <tr><th scope="row">Perth house</th><td data-l="Model fit (R²)">0.43</td><td data-l="Typical error">±$152,146</td><td data-l="Best value"><strong>14 Netley Street</strong>: $890,000 against $929,996, −4.3%</td></tr>
+          <tr><th scope="row">Camera</th><td data-l="Model fit (R²)">0.98</td><td data-l="Typical error">±£52</td><td data-l="Best value"><strong>A7 IV</strong>: £1,269 against £1,292, −1.8%</td></tr>
+          <tr><th scope="row">Hotel night</th><td data-l="Model fit (R²)">0.83</td><td data-l="Typical error">±$130</td><td data-l="Best value"><strong>InterContinental</strong>: $550 against $619, −11.2%</td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>A fair price is the market's average, not a valuation.</strong> It is what an item with these features typically lists for among your listings. A listing below the line may be below it for a reason the columns cannot see.</li>
+        <li><strong>Read a gap against the typical error.</strong> The Camry's −$2,396 is 1.3 typical errors: more than listings usually scatter, but not by much. The house's −$39,996 is a quarter of one: inside the scatter, so the model cannot call it a bargain.</li>
+        <li><strong>How well features explain price varies.</strong> A camera body is priced almost entirely by its release year, shutter count and condition (R² 0.98). A house is not: street, outlook and renovation are in none of the columns (0.43).</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>The range is not a confidence interval.</strong> It is the fair price give or take one typical error: how far real listings scatter around the line. It does not allow for the line itself being uncertain, which it is with few listings.</p>
+    </section>
+
+    <!-- Market data maths -->
+    <section class="gd-sec card" id="m-data" aria-labelledby="m-data-h">
+      <h2 id="m-data-h">Market data: what the model learns from</h2>
+      <p class="gd-sub">Each listing becomes one point: a price in today's money and a row of features. The model is the line, or plane, that sits closest to all the points at once: least squares.</p>
+      <div class="gd-eq"><var>P</var><sub><var>i</var></sub><sup>*</sup> = <var>P</var><sub><var>i</var></sub> × (1 + <var>π</var>)<sup><var>C</var> − <var>Y</var><sub><var>i</var></sub></sup><small>a price in the current year's money</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Age</span> = <var>Y</var><sub><var>i</var></sub> − year,  <span class="gd-eq-l">Yes</span> = 1,  <span class="gd-eq-l">No</span> = 0<small>a Year and a Yes/No as features</small></div>
+      <div class="gd-eq"><var>z</var><sub><var>ij</var></sub> = <span class="gd-frac"><span><var>x</var><sub><var>ij</var></sub> − <var>μ</var><sub><var>j</var></sub></span><span><var>σ</var><sub><var>j</var></sub></span></span><small>each feature put on one scale</small></div>
+      <div class="gd-eq">minimise <span class="gd-sum">Σ</span><sub><var>i</var></sub> ( <var>y</var><sub><var>i</var></sub> − <var>β</var><sub>0</sub> − <span class="gd-sum">Σ</span><sub><var>j</var></sub> <var>β</var><sub><var>j</var></sub> <var>z</var><sub><var>ij</var></sub> )<sup>2</sup> + <var>n</var><var>λ</var> <span class="gd-sum">Σ</span><sub><var>j</var></sub> <var>β</var><sub><var>j</var></sub><sup>2</sup><small><var>y</var> = <var>P</var><sup>*</sup>, or ln <var>P</var><sup>*</sup> for Log-linear</small></div>
+      <ul class="gd-where">
+        <li><var>P</var><sub><var>i</var></sub>the price of listing <var>i</var>, as listed</li>
+        <li><var>Y</var><sub><var>i</var></sub>its data year (blank: the current year)</li>
+        <li><var>C</var>the current year</li>
+        <li><var>π</var>inflation, a year</li>
+        <li><var>x</var><sub><var>ij</var></sub>feature <var>j</var> of listing <var>i</var></li>
+        <li><var>μ</var><sub><var>j</var></sub>, <var>σ</var><sub><var>j</var></sub>that feature's mean and spread over the listings</li>
+        <li><var>n</var>the number of complete listings</li>
+        <li><var>λ</var>the ridge penalty; 0 for every other model</li>
+        <li><var>β</var>the fitted effects, turned back into price per unit</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Item</th><td data-l="What it is">The name of what you are valuing, such as Toyota Camry Hybrid.</td><td data-l="In the maths">None. It names the answer, the AI prompt and the files.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Name (a column)</th><td data-l="What it is">A column's heading, such as Odometer.</td><td data-l="In the maths">None. Text and CSV match columns by it, so a pasted column keeps its type.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Price</th><td data-l="What it is">The price of each listing, always the first column. Its unit is a currency code (AUD).</td><td data-l="In the maths"><var>P</var><sub><var>i</var></sub>: what the model explains. The code only names the money; nothing converts.</td><td data-l="Raise it"><span class="gd-eff">a listing's price: ▲ fair price of items like it</span></td></tr>
+          <tr><th scope="row">Type: Number</th><td data-l="What it is">A measured feature: kilometres, land, shutter count.</td><td data-l="In the maths"><var>x</var><sub><var>ij</var></sub> as it is; its effect is a price per unit (−$0.036 a km for the Camry).</td><td data-l="Raise it"><span class="gd-eff">which features count</span></td></tr>
+          <tr><th scope="row">Type: Year</th><td data-l="What it is">A calendar year, such as the model year.</td><td data-l="In the maths">Turned into an age at the listing's data year: a 2021 car seen in 2026 is 5.</td><td data-l="Raise it"><span class="gd-eff">which features count</span></td></tr>
+          <tr><th scope="row">Type: Yes/No</th><td data-l="What it is">A feature a listing has or lacks: a grade, a box, breakfast.</td><td data-l="In the maths">1 or 0, so its effect is the price of having it (+$3,675 for the Camry's grade). A blank is No.</td><td data-l="Raise it"><span class="gd-eff">which features count</span></td></tr>
+          <tr><th scope="row">Type: Ignore</th><td data-l="What it is">A column kept for reference, such as a link or a note.</td><td data-l="In the maths">Left out of the model.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Unit</th><td data-l="What it is">A Number's unit, such as km or m².</td><td data-l="In the maths">A label. Each coefficient is a price per that unit; enter every row in the same one.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Data year</th><td data-l="What it is">The year the price was seen or paid, always the last column. Deletable.</td><td data-l="In the maths"><var>Y</var><sub><var>i</var></sub>: lifts the price by (1 + <var>π</var>)<sup><var>C</var> − <var>Y</var></sup> and sets the age. One after the current year is not read.</td><td data-l="Raise it"><span class="gd-eff">older: ▲ price lifted more</span></td></tr>
+          <tr><th scope="row">A listing (a row)</th><td data-l="What it is">One real price with its features.</td><td data-l="In the maths">One point (<var>z</var><sub><var>i</var></sub>, <var>y</var><sub><var>i</var></sub>). A row with a blank or unreadable cell is left out and counted.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">more rows: ▲ steadier fit</span></td></tr>
+          <tr><th scope="row">Table, Text, CSV</th><td data-l="What it is">Three ways to enter the same rows.</td><td data-l="In the maths">None: each edits the one set of listings.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">AI: Market, Listings</th><td data-l="What it is">Where to search, and how many listings (5 to 100) to ask for.</td><td data-l="In the maths">None. They word a prompt for an AI with web search; its answer, pasted into <strong>Text</strong>, replaces the listings.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>Why ages, not years.</strong> Buyers pay for how old an item is, not for the number on it. Turning a year into an age at the data year lets a 2024 sale and a 2026 listing of different cars be compared.</li>
+        <li><strong>Why one scale.</strong> Kilometres run into tens of thousands and a Yes/No is 0 or 1. Standardising puts them on one footing for the fit (and for Ridge's penalty); the tool then turns every effect back into a price per km, per year of age, per Yes.</li>
+        <li><strong>Today's money.</strong> The Perth house's first sale, $515,000 in 2023, counts as $515,000 × 1.03³ = $562,754 in 2026 at 3% a year, as <strong>Listings against the model</strong> shows in <strong>Today</strong>.</li>
+        <li><strong>What cannot be fitted.</strong> A feature the same in every listing is dropped, as it explains nothing. Two features that move together exactly cannot be told apart: remove one, or use Ridge.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Inflation is one rate, not the market's own growth.</strong> In the Perth house, three of the six 2023 sales sit 23% to 29% under the line, a sign these prices rose faster than 3% a year. At 6% the fit improves (R² 0.43 to 0.52); at 10% it is 0.63, and 11 Pitt Court turns from 5.8% over its fair price to 6.1% under it.</p>
+    </section>
+
+    <!-- Items maths -->
+    <section class="gd-sec card" id="m-items" aria-labelledby="m-items-h">
+      <h2 id="m-items-h">Items to buy: priced, never fitted</h2>
+      <p class="gd-sub">An item goes through the same features as the listings, aged from the current year, and the fitted model gives its price. Its asking price is then compared with that.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Age</span> = <var>C</var> − year,  <var>F</var> = <var>P̂</var>( <var>x</var><sub>item</sub> )<small>an item is always this year</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Best value</span> = the lowest <span class="gd-frac"><span><var>A</var> − <var>F</var></span><span><var>F</var></span></span> among items with an asking price</div>
+      <ul class="gd-where">
+        <li><var>C</var>the current year</li>
+        <li><var>x</var><sub>item</sub>the item's features</li>
+        <li><var>A</var>its asking price</li>
+        <li><var>F</var>its fair price</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Item name</th><td data-l="What it is">What you call it, such as 2021 Ascent Sport, 52,771 km.</td><td data-l="In the maths">None. It labels the item in the answer, the tables and the chart.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Asking price</th><td data-l="What it is">What the seller wants. Optional.</td><td data-l="In the maths"><var>A</var> in the gap. Never in the model, so it cannot pull the fair price toward itself.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ gap: worse value</span></td></tr>
+          <tr><th scope="row">A Number feature</th><td data-l="What it is">The item's own figure, such as its Odometer.</td><td data-l="In the maths"><var>x</var><sub><var>j</var></sub> times its effect: −$362 per 10,000 km for the Camry.</td><td data-l="Raise it"><span class="gd-eff">as its effect: ▼ fair price for km</span></td></tr>
+          <tr><th scope="row">A Year feature</th><td data-l="What it is">The item's year; the age shows under it.</td><td data-l="In the maths">Age = <var>C</var> − year: each year of age −$1,033 for the Camry.</td><td data-l="Raise it"><span class="gd-eff">newer: ▲ fair price</span></td></tr>
+          <tr><th scope="row">A Yes/No feature</th><td data-l="What it is">A tick for a feature it has.</td><td data-l="In the maths">1 when ticked: +$3,675 for the Camry's Above Ascent grade.</td><td data-l="Raise it"><span class="gd-eff">ticked: ▲ fair price</span></td></tr>
+          <tr><th scope="row">Copy, delete, + Add item</th><td data-l="What it is">More items, or fewer.</td><td data-l="In the maths">None. Items are never fitted; each is judged on its own.</td><td data-l="Raise it"><span class="gd-eff">no effect on the others</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>Outside the listings, the model guesses.</strong> When an item's feature lies beyond the lowest or highest in the listings, the fair price is an extrapolation and the tool says so. A straight line runs on for ever: far enough out, Linear can give a car no positive price, which the tool flags too.</li>
+        <li><strong>Gap and Gap %.</strong> The Camry's two cars ask $2,396 and $1,928 under their fair prices: −6.9% and −5.8%. The percentage ranks them, so a dearer item is not favoured for its bigger dollar gap.</li>
+      </ul>
+    </section>
+
+    <!-- Assumptions maths -->
+    <section class="gd-sec card" id="m-assume" aria-labelledby="m-assume-h">
+      <h2 id="m-assume-h">Assumptions: money, time and the model's shape</h2>
+      <p class="gd-sub">The modelling approach is a statement about how a price responds to a feature: by a fixed amount, by a fixed percentage, by an amount that bends, or by an amount pulled toward the average.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Linear</span> <var>P̂</var> = <var>α</var> + <span class="gd-sum">Σ</span> <var>α</var><sub><var>j</var></sub> <var>x</var><sub><var>j</var></sub><small>each unit adds a fixed amount</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Log-linear</span> ln <var>P̂</var> = <var>α</var> + <span class="gd-sum">Σ</span> <var>α</var><sub><var>j</var></sub> <var>x</var><sub><var>j</var></sub><small>each unit moves the price by e<sup><var>α</var><sub><var>j</var></sub></sup> − 1</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Ridge</span> Linear, fitted with <var>n</var><var>λ</var> <span class="gd-sum">Σ</span> <var>β</var><sub><var>j</var></sub><sup>2</sup> added<small>an effect on its own shrinks to about 1 ÷ (1 + <var>λ</var>)</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Quadratic terms</span> <var>P̂</var> = <var>α</var> + <span class="gd-sum">Σ</span> <var>α</var><sub><var>j</var></sub> <var>x</var><sub><var>j</var></sub> + <span class="gd-sum">Σ</span> <var>α</var><sub><var>jj</var></sub> <var>x</var><sub><var>j</var></sub><sup>2</sup><small>a Number or Year can bend; a Yes/No stays straight</small></div>
+      <ul class="gd-where">
+        <li><var>α</var>the intercept: the price with every feature at zero</li>
+        <li><var>α</var><sub><var>j</var></sub>the effect of feature <var>j</var>, per unit</li>
+        <li><var>α</var><sub><var>jj</var></sub>its bend, per unit squared</li>
+        <li><var>β</var><sub><var>j</var></sub>the same effect on the standardised scale</li>
+        <li><var>λ</var>the ridge penalty</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Currency Symbol</th><td data-l="What it is">The symbol the figures show, such as $ or £.</td><td data-l="In the maths">None: nothing converts. A Price code with a symbol of its own sets it (GBP gives £).</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Current year</th><td data-l="What it is">The year prices are restated in, 1950 to 2100. It starts at this year.</td><td data-l="In the maths"><var>C</var>: every price is lifted to it, and every item is aged from it.</td><td data-l="Raise it"><span class="gd-eff">▲ prices lifted</span><span class="gd-eff">items older</span></td></tr>
+          <tr><th scope="row">Inflation</th><td data-l="What it is">0 to 10 %/yr, 3.0 to start.</td><td data-l="In the maths"><var>π</var> in (1 + <var>π</var>)<sup><var>C</var> − <var>Y</var></sup>. No effect on listings from the current year.</td><td data-l="Raise it"><span class="gd-eff">older listings: ▲ fair price</span></td></tr>
+          <tr><th scope="row">Linear regression</th><td data-l="What it is">The default.</td><td data-l="In the maths">Each feature adds a fixed amount: the Camry loses $1,033 for every year of age, whatever its price.</td><td data-l="Raise it"><span class="gd-eff">fixed amounts</span></td></tr>
+          <tr><th scope="row">Log-linear</th><td data-l="What it is">Fitted to the log of the price.</td><td data-l="In the maths">Each feature moves the price by a fixed percentage: the Camry loses 3.28% a year, and Above Ascent grade adds 12.58%. Never below zero.</td><td data-l="Raise it"><span class="gd-eff">fixed percentages</span></td></tr>
+          <tr><th scope="row">Ridge regression</th><td data-l="What it is">Linear, with every effect pulled toward zero.</td><td data-l="In the maths">Adds <var>n</var><var>λ</var> to the fit's diagonal (never the intercept's), on standardised features.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">steadier effects</span></td></tr>
+          <tr><th scope="row">Quadratic terms</th><td data-l="What it is">Linear, plus a squared term for every Number and Year.</td><td data-l="In the maths">Lets depreciation slow or speed up with age or km. Needs more listings: <var>k</var> + 2 at least.</td><td data-l="Raise it"><span class="gd-eff">curves</span><span class="gd-eff gd-eff-neg">more terms to fit</span></td></tr>
+          <tr><th scope="row">Ridge penalty (λ)</th><td data-l="What it is">0 to 2 ×, 0.10 to start. Shown for Ridge only.</td><td data-l="In the maths"><var>λ</var>: at 0 Ridge is Linear; at 1 an effect on its own is about halved.</td><td data-l="Raise it"><span class="gd-eff">effects shrink toward the average listing</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>Linear or Log-linear for depreciation.</strong> Linear takes the same dollars off for each year, so a dear item and a cheap one lose alike. Log-linear takes the same share off, so the dollars shrink as the price falls, as resale prices tend to. On the Camry they agree within $60 on the first car.</li>
+        <li><strong>Overfitting, in two numbers.</strong> Quadratic fits the Camry's 18 listings a little closer (R² 0.68 to 0.69), but the typical error, corrected for the two extra terms, rises from $1,863 to $1,972: the bends follow the noise in these listings, not a pattern the next listing will share. The tool warns when there are fewer than three listings per term, plus three.</li>
+        <li><strong>Why Ridge exists.</strong> With few listings, or features that move together (older cars have more km), least squares can split one effect between them unsteadily. Ridge gives up a little fit for steadier effects. On the Perth house at λ 0.10 it lifts Bathrooms from $2,786 to $12,477 a bathroom and trims Bedrooms from $119,273 to $103,839.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>A higher R² is not a better model.</strong> More terms always fit the listings you have more closely. Judge a model by its typical error, which pays for each term, and by whether its effects make sense.</p>
+    </section>
+
+    <!-- Fit maths -->
+    <section class="gd-sec card" id="m-fit" aria-labelledby="m-fit-h">
+      <h2 id="m-fit-h">The fit, the range and the chart</h2>
+      <p class="gd-sub">How the four figures and the chart are worked out from the fitted model.</p>
+      <div class="gd-eq"><span class="gd-eq-l">R²</span> = 1 − <span class="gd-frac"><span><span class="gd-sum">Σ</span> ( <var>P</var><sub><var>i</var></sub><sup>*</sup> − <var>P̂</var><sub><var>i</var></sub> )<sup>2</sup></span><span><span class="gd-sum">Σ</span> ( <var>P</var><sub><var>i</var></sub><sup>*</sup> − <var>m</var> )<sup>2</sup></span></span><small>on the price, for every model</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">RMSE</span> = √ <span class="gd-frac"><span><span class="gd-sum">Σ</span> ( <var>P</var><sub><var>i</var></sub><sup>*</sup> − <var>P̂</var><sub><var>i</var></sub> )<sup>2</sup></span><span><var>n</var> − <var>k</var> − 1</span></span><small>the typical error, the square root of the whole</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Dot</span> = <var>P</var><sub><var>i</var></sub><sup>*</sup> − <var>P̂</var>( <var>x</var><sub><var>i</var></sub> ) + <var>P̂</var>( <var>x</var><sub><var>i</var></sub>, others held )<small>Log-linear: the same as a ratio</small></div>
+      <ul class="gd-where">
+        <li><var>P̂</var><sub><var>i</var></sub>the model's price for listing <var>i</var></li>
+        <li><var>m</var>the average listing, in today's money</li>
+        <li><var>k</var>the terms fitted: 3 for the Camry, 5 with Quadratic</li>
+        <li><strong>others held</strong> every feature not on an axis at the <strong>Hold others at</strong> value</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">View</th><td data-l="What it is">2D, a line across one feature; 3D, a surface across two.</td><td data-l="In the maths">Draws <var>P̂</var> on an 80-point line or a 30 × 30 grid.</td><td data-l="Raise it"><span class="gd-eff">display only</span></td></tr>
+          <tr><th scope="row">Across, And</th><td data-l="What it is">The feature along the bottom, and the second one in 3D.</td><td data-l="In the maths">The features that vary; the line spans the listings and the items.</td><td data-l="Raise it"><span class="gd-eff">display only</span></td></tr>
+          <tr><th scope="row">Hold others at</th><td data-l="What it is">Data average, or an item. Shown with two items or more.</td><td data-l="In the maths">The value every other feature takes, for the line and the dots alike.</td><td data-l="Raise it"><span class="gd-eff">display only</span></td></tr>
+          <tr><th scope="row">Show data points</th><td data-l="What it is">The grey listings, on or off.</td><td data-l="In the maths">None.</td><td data-l="Raise it"><span class="gd-eff">display only</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>R² is a share.</strong> 0.68 means the features explain 68% of how much the Camry listings differ in price. The rest is what the columns do not capture.</li>
+        <li><strong>The typical error pays for every term.</strong> Dividing by <var>n</var> − <var>k</var> − 1 rather than <var>n</var> makes a model with more terms show a larger error unless they earn their place. For the Camry it is ±$1,863, 5.7% of the average listing.</li>
+        <li><strong>Standardised weight.</strong> In <strong>Price model terms</strong>, the effect of one typical spread of a feature, so features in different units compare: for the Camry, age −$1,816, Above Ascent grade +$1,646, Odometer −$892.</li>
+        <li><strong>A dot is like for like.</strong> Each listing is moved from its own features to the held ones by the model, keeping its miss, so its distance from the line is exactly its <strong>Miss</strong> in <strong>Listings against the model</strong> (for Log-linear, its <strong>Miss %</strong>).</li>
+      </ul>
+    </section>
+
+    <!-- Worked example -->
+    <section class="gd-sec card" id="worked" aria-labelledby="worked-h">
+      <h2 id="worked-h">Worked example: Camry Hybrid</h2>
+      <p class="gd-sub">The Quick Start as it loads, worked by hand: 18 listings, Linear regression, current year 2026. The first car to check is a 2021 Ascent Sport with 52,771 km, asking $32,369.</p>
+      <div class="gd-calc">
+        <h3>From the fitted model to the gap</h3>
+        <p>The coefficients come from the fit, written out more fully than <strong>Price model terms</strong> shows them (38,167, −1,033, −0.03617 and 3,675), so the sum lands on the tool's figure.</p>
+        <ol>
+          <li><span class="gd-calc-l">Age</span><span class="gd-calc-w">2026 − 2021</span><b>5 yrs</b></li>
+          <li><span class="gd-calc-l">Intercept</span><span class="gd-calc-w"><var>α</var></span><b>$38,166.63</b></li>
+          <li><span class="gd-calc-l">Age</span><span class="gd-calc-w">−$1,033.39 a year × 5</span><b>−$5,166.96</b></li>
+          <li><span class="gd-calc-l">Odometer</span><span class="gd-calc-w">−$0.036173 a km × 52,771 km</span><b>−$1,908.89</b></li>
+          <li><span class="gd-calc-l">Above Ascent grade</span><span class="gd-calc-w">+$3,674.67 × 1 (Yes)</span><b>+$3,674.67</b></li>
+          <li><span class="gd-calc-l">Fair price</span><span class="gd-calc-w">$38,166.63 − $5,166.96 − $1,908.89 + $3,674.67 = $34,765.45</span><b>$34,765</b></li>
+          <li><span class="gd-calc-l">Range</span><span class="gd-calc-w">$34,765 ± $1,863, the typical error</span><b>$32,903 to $36,628</b></li>
+          <li><span class="gd-calc-l">Gap %</span><span class="gd-calc-w">−$2,396 ÷ $34,765</span><b>−6.9%</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Gap</span><span class="gd-calc-w">$32,369 asking − $34,765 fair: under the fair price</span><b>−$2,396</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The tool shows the same.</strong> <strong>Fair price</strong> $34,765, range $32,903 to $36,628; <strong>Best value</strong> −6.9%, −$2,396 against fair; <strong>Model fit (R²)</strong> 0.68 from 18 listings and 3 terms.</li>
+        <li><strong>What the coefficients say.</strong> Among these listings, each year of age takes $1,033 off, each 10,000 km $362, and Above Ascent grade adds $3,675, with the other features held where they are.</li>
+        <li><strong>The second car.</strong> The 2020 SL with 61,444 km is a year older and has 8,673 km more: $33,418 fair, asking $31,490, −5.8%. So the 2021 Ascent Sport is the better buy on these listings.</li>
+      </ul>
+    </section>
+
+    <!-- Sensitivity -->
+    <section class="gd-sec card" id="sensitivity" aria-labelledby="sensitivity-h">
+      <h2 id="sensitivity-h">What moves it most</h2>
+      <p class="gd-sub">Each bar changes one thing by a step worth arguing about, keeps the rest of the Camry example where it was, and records how far the first car's fair price moves.</p>
+      <figure class="gd-tornado">
+        <figcaption>The 2021 Ascent Sport's fair price when one input moves<small>Base case: Camry Hybrid, Linear regression, current year 2026: fair price $34,765 against an asking price of $32,369. Age by a year, km by 10,000, the grade off, the other models, Ridge at λ 0.10 and 1.00, inflation by a point, and each of the 18 listings left out in turn. Measured on the tool's own engine.</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered (or the first option)</span><span class="gd-tn-k-hi">Input raised (or the second)</span></div>
+        <ol>
+          <li style="--lo:-1;--hi:0"><span class="gd-tn-name">Above Ascent grade<small>Yes → No (cannot go higher)</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$3,675</span><span>none higher</span></span></li>
+          <li style="--lo:-.08;--hi:-.37"><span class="gd-tn-name">Ridge penalty (λ)<small>Linear → Ridge at 0.10 / 1.00</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$278</span><span>−$1,357</span></span></li>
+          <li style="--lo:.28;--hi:-.28"><span class="gd-tn-name">Age<small>5 yrs → 4 / 6 (Year 2022 / 2020)</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$1,033</span><span>−$1,033</span></span></li>
+          <li style="--lo:-.14;--hi:.14"><span class="gd-tn-name">One listing left out<small>the largest fall / rise of 18 (rows 1 / 2)</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$532</span><span>+$518</span></span></li>
+          <li style="--lo:.1;--hi:-.1"><span class="gd-tn-name">Odometer<small>52,771 km → 42,771 / 62,771</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$362</span><span>−$362</span></span></li>
+          <li style="--lo:.02;--hi:.07"><span class="gd-tn-name">Modelling approach<small>Linear → Log-linear / Quadratic terms</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$60</span><span>+$247</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Inflation<small>3% → 2% / 4% (every listing is from 2026)</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>$0</span><span>$0</span></span></li>
+        </ol>
+        <p class="gd-tn-note">Read it from the top: the longest bar is the input the fair price rests on most. Measured by <code>_sensitivity.mjs</code>, beside this page.</p>
+      </figure>
+      <ul class="gd-facts">
+        <li><strong>The grade decides the verdict.</strong> Untick Above Ascent grade and the fair price falls to $31,091, so the same asking price is $1,278 over it. Only 5 of the 18 listings have the grade, so check the car is the grade it says before trusting the discount.</li>
+        <li><strong>The model choice barely matters here; the penalty does.</strong> Log-linear and Quadratic move the fair price by $60 and $247. Ridge at λ 1.00 pulls the grade's worth toward the average and cuts the discount to $1,040, inside one typical error.</li>
+        <li><strong>One listing can move it by $500.</strong> Leaving out row 1, a 2021 SL with 82,984 km at $35,980, takes $532 off. With 18 listings, a single odd one counts.</li>
+        <li><strong>Inflation only acts on older listings.</strong> Every Camry listing is from 2026, so it moves nothing. On the Perth house, whose sales start in 2023, a point either way moves 14 Netley Street's fair price by −$13,270 or +$13,459. And the same Camry listings a year on (current year 2027) are lifted 3% while the car ages a year: −$21.</li>
+        <li><strong>For a decision.</strong> The discount survives every step but the grade. It is real on these listings, but at 1.3 typical errors it is a reason to look closer, not proof of a bargain.</li>
+      </ul>
+      <div class="gd-demo" data-demo="sensitivity" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Camry Hybrid: the grade off, then a year either way</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Not above Ascent</h3><p>Untick the grade and Valuate: the fair price falls to $31,091, and the asking price is 4.1% over it. The 2020 SL becomes the best value.</p></li>
+          <li><h3>A year newer</h3><p>The grade back on and Year 2022: age 4, fair price $35,799, the asking price 9.6% under it.</p></li>
+          <li><h3>A year older</h3><p>Year 2020: age 6, fair price $33,732, 4.0% under. Back at 2021 it is $34,765 again.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Limits -->
+    <section class="gd-sec card" id="limits" aria-labelledby="limits-h">
+      <h2 id="limits-h">What it leaves out</h2>
+      <p class="gd-sub">A regression on the listings you entered, nothing more. <strong>What this assumes</strong>, under the tool's answer, lists what applies to yours.</p>
+      <ul class="gd-facts">
+        <li><strong>Only the columns.</strong> Condition, history, colour, location quirks and anything else you did not enter are invisible to it.</li>
+        <li><strong>Your listings are the market.</strong> The model only knows these prices. A handful of listings, or ones picked from one end of the market, give a fair price for that sample only.</li>
+        <li><strong>Asking and sold prices are different things.</strong> The Camry example uses dealer asking prices, the house sold prices. A fair price from asking prices is what similar items are listed at, not what they sell for.</li>
+        <li><strong>Effects add up; they do not interact.</strong> Each feature is worth the same amount (for Log-linear, the same share) whatever the others are: km cost a 2019 car what they cost a 2024 one. Quadratic terms bend a single feature, never a pair.</li>
+        <li><strong>Whole years.</strong> An age is the data year less the model year; the month is not seen. Inflation is one rate for every year and every listing.</li>
+        <li><strong>The current year follows the calendar.</strong> Open the tool next year and it restates the same listings in that year's money and ages the items a year, so a figure can shift a little.</li>
+        <li><strong>No outlier is removed.</strong> A typo or a one-off sale pulls the line toward it. <strong>Listings against the model</strong> shows each miss, so a very large one is worth a second look.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>When not to lean on it.</strong> Few listings for the features you use, an item outside the listings' range, a gap inside the typical error, or a market that moved faster than your inflation rate. Then treat the fair price as a starting point for negotiation, not a valuation.</p>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to check a listing?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (RMSE...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+</body>
+</html>

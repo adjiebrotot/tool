@@ -8,6 +8,7 @@
 window.__TOUR = {
   seenKey: 'ff-tour-v5-seen',
   launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

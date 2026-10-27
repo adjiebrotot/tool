@@ -1639,4 +1639,8 @@ persist = Persist.init('pisahvsgabung', {
 // opens on the other.
 SharedScenario.mount('.quick-start-row', { tool: 'pisahvsgabung', persist: persist });
 
+// For the guide (guides/scenes.js and guides/_sensitivity.mjs): the model as the page computes it,
+// read from the form as it stands. Nothing here changes what the page does.
+window.__PVG = { readInputs, computeModel, state: () => S };
+
 })();

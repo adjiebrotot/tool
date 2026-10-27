@@ -7,6 +7,7 @@
 window.__TOUR = {
   seenKey: 'fvc-tour-v7-seen',
   launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

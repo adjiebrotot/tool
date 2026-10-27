@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the Cost of Living Comparator | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the Cost of Living Comparator and its Map View: compare two cities or many, find the net salary that keeps your lifestyle and savings, then see how the index estimate, the savings target and the exchange rate work out every figure.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/costofliving-comparator/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the Cost of Living Comparator">
+<meta property="og:description" content="The real tool, running live: the same lifestyle priced in another city, the net salary that keeps your savings, exchange rates, the world map of 500+ cities, and what moves the answer.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/costofliving-comparator/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/logos/logo.png">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to use the Cost of Living Comparator">
+<meta name="twitter:description" content="The real tool, running live: the same lifestyle priced in another city, the net salary that keeps your savings, exchange rates, the world map of 500+ cities, and what moves the answer.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the Cost of Living Comparator",
+  "url": "https://tool.adjiebrotots.com/costofliving-comparator/guides/",
+  "description": "Compare what the same lifestyle costs in two or more of 500+ cities, find the net salary that keeps your savings ratio or your savings, and map every city against yours.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Cost of Living Comparator",
+    "url": "https://tool.adjiebrotots.com/costofliving-comparator/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Pick your cities", "text": "Load a worked example from Quick Start, or pick a From city and a To city. The Map View takes your city and compares it with every other." },
+    { "@type": "HowToStep", "name": "Enter your month", "text": "Your net salary and what you spend a month, as one figure or row by row: rent, groceries, eating out, utilities and more." },
+    { "@type": "HowToStep", "name": "Read the answer", "text": "What you would save there, or the net salary you need there to save the same share of pay or the same amount." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Cost of Living Comparator", "item": "https://tool.adjiebrotots.com/costofliving-comparator/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the Cost of Living Comparator", "item": "https://tool.adjiebrotots.com/costofliving-comparator/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Cost of Living Comparator</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle stroke="var(--accent)" cx="12" cy="12" r="9"/><path stroke="var(--accent2)" d="M3 12h18"/><path stroke="var(--accent2)" d="M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>How to use the Cost of Living Comparator</h1>
+      <p class="gd-lead">What would your life cost in another city, and what would you need to earn there to save as much? Part 1 shows how to use the comparator and its Map View. Part 2 shows how every figure is worked out. Every demo is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#how">Skip to how the numbers work</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Pick your cities</h3>
+          <p>A worked example from <strong>Quick Start</strong>, or a <strong>From city</strong> and a <strong>To city</strong> from 500+. The <strong>Map View</strong> sets your city against all of them.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Enter your month</h3>
+          <p>Your net salary and what you spend, as one figure or row by row: rent, groceries, eating out, utilities and more.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Read the answer</h3>
+          <p>What you would save there, or the net salary you <strong>need to earn</strong> there to save the same share of pay, or the same amount.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> Every figure is worked out in your browser. This guide is general information, not financial advice.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#simple">Two cities</a>
+        <a href="#earn">What you need to earn</a>
+        <a href="#fx">Exchange rates</a>
+        <a href="#detailed">The Detailed table</a>
+        <a href="#save">Save and assumptions</a>
+        <a href="#same">Same inputs, two screens</a>
+        <a href="#map">The Map View</a>
+        <a href="#how">How the numbers work</a>
+        <a href="#example">Worked examples</a>
+        <a href="#mislead">When an index misleads</a>
+        <a href="#sensitivity">What moves the answer</a>
+        <a href="#limits">What it leaves out</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Two pages on one dataset. The comparator sets one city beside one or a few others; the Map View sets it beside every city at once. Point at a part in a list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1500" role="img" aria-label="The comparator in Simple mode, Jakarta to Perth: the question and Quick Start at the top, the two cities, the exchange rate, the answer with both cities side by side, and What this assumes.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:14.2%;--w:96.25%;--h:15.9%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:1.88%;--y:31.3%;--w:96.25%;--h:6.5%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:1.88%;--y:39%;--w:96.25%;--h:12.6%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:1.88%;--y:52.8%;--w:96.25%;--h:40.5%"><b>4</b></span>
+            <span class="gd-box" data-b="5" style="--x:1.88%;--y:94.5%;--w:96.25%;--h:4.5%"><b>5</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>The question</h3>
+            <p><strong>Quick Start</strong>, save and open, then <strong>Detail</strong> (Simple or Detailed), <strong>I can save</strong> or <strong>I need to earn</strong>, and housing in or out.</p>
+          </li>
+          <li data-b="2">
+            <h3>Cities</h3>
+            <p><strong>From city</strong> and <strong>To city</strong>, searched by city, country or currency. ⇆ swaps them.</p>
+          </li>
+          <li data-b="3">
+            <h3>Exchange rate</h3>
+            <p>Shown when the two currencies differ: <strong>Custom FX Rate</strong>, and a slider for a move in the rate.</p>
+          </li>
+          <li data-b="4">
+            <h3>The answer</h3>
+            <p>One sentence, then both cities side by side: salary, expenses, savings and the savings ratio, a month.</p>
+          </li>
+          <li data-b="5">
+            <h3>What this assumes</h3>
+            <p>What the answer rests on for your cities, opened from its chevron.</p>
+          </li>
+        </ol>
+      </div>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="map-layout" data-w="1280" data-h="1600" role="img" aria-label="The Map View with the Perth Quick Start: the inputs on the left, the world map coloured by living cost on the right, four figures under it, then the table of every city and What this assumes.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:15%;--w:29.7%;--h:43.9%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:33%;--y:15%;--w:65.1%;--h:52.6%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:33%;--y:68.9%;--w:65.1%;--h:14.4%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:33%;--y:84.5%;--w:65.1%;--h:9.9%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then <strong>You</strong>, <strong>Compare by</strong> and <strong>Lifestyle</strong>. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>The map</h3>
+            <p>Every city coloured against yours and labelled with the figure <strong>View</strong> picks. Zoom, home, world and major-city buttons on the right.</p>
+          </li>
+          <li data-b="3">
+            <h3>Four figures</h3>
+            <p>Your city, the cheapest and the dearest, and how many cities are cheaper. They change with the mode.</p>
+          </li>
+          <li data-b="4">
+            <h3>Every city</h3>
+            <p>A table of all 500+, with a search and <strong>⬇ CSV</strong>, then <strong>What this assumes</strong>.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right on both pages, <strong>Tour</strong> replays a one minute walk through the page, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Six worked examples, each a single professional's month in one home city, net of tax, against its neighbours: <strong>Singapore vs Australia</strong>, <strong>Southeast Asia</strong>, <strong>US cities</strong>, <strong>European capitals</strong>, <strong>Middle East</strong> and <strong>East Asia</strong>. One click opens the Detailed table on <strong>I need to earn</strong>.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Singapore on SGD 8,000 against four Australian cities</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Pick an example</h3><p>Hover a button to read what it holds. A click replaces whatever was on screen.</p></li>
+          <li><h3>Read the Net Income row</h3><p>The net salary each destination needs to save the same share of pay as home: <strong>AUD 10,178</strong> a month in Sydney, AUD 7,174 in Melbourne.</p></li>
+          <li><h3>Each row, each city</h3><p>Every expense row priced in each city, with what it comes to in the home currency, and the <strong>Savings</strong> row at the bottom.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Round savings ratios.</strong> Each budget saves 20, 25, 30 or 40% of pay at home, so the target reads at a glance.</li>
+        <li><strong>Then make it yours.</strong> Type over any figure. The examples are a starting point, not a survey of what people earn.</li>
+      </ul>
+    </section>
+
+    <!-- Simple -->
+    <section class="gd-sec card" id="simple" aria-labelledby="simple-h">
+      <h2 id="simple-h">Two cities, one month</h2>
+      <p class="gd-sub"><strong>Simple</strong> mode takes two cities and three figures: your net salary and your spending where you live, and a salary in the other city. It tells you which leaves more at the end of the month.</p>
+      <div class="gd-demo" data-demo="simple" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Jakarta on IDR 20 million, against Perth on AUD 6,500</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Pick two cities</h3><p>Type in <strong>From city</strong> and <strong>To city</strong> and pick from the list. City, country or currency all match.</p></li>
+          <li><h3>Enter your month</h3><p><strong>Net salary</strong> and <strong>Expenses</strong>, a month, after tax, in your currency. Each shows what it is worth in the other.</p></li>
+          <li><h3>And a salary there</h3><p>The net salary you would earn in the To city, in its currency.</p></li>
+          <li><h3>Read the answer</h3><p>The gap in monthly savings in both currencies, and the two <strong>savings ratios</strong>.</p></li>
+          <li><h3>Swap them</h3><p>⇆ turns it round. The salaries change sides, and your expenses become the estimate for the new home city.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Estimated monthly expenses</strong> is your spending priced in the other city, for the same lifestyle: AUD 2,709 in Perth for IDR 12 million in Jakarta.</li>
+        <li><strong>Two ways to win.</strong> More money saved, or a bigger share of pay saved. The sentence says <strong>but</strong> when the two disagree.</li>
+      </ul>
+    </section>
+
+    <!-- Earn -->
+    <section class="gd-sec card" id="earn" aria-labelledby="earn-h">
+      <h2 id="earn-h">What you need to earn</h2>
+      <p class="gd-sub">Switch the question to <strong>I need to earn</strong> and the To city's salary becomes the answer: the net salary that keeps your savings going after the same lifestyle there.</p>
+      <div class="gd-demo" data-demo="earn" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Jakarta to Perth: the salary that keeps a 40% savings ratio</span></figure>
+        <ol class="gd-steps">
+          <li><h3>I need to earn</h3><p>The To column now shows <strong>Required net monthly salary</strong>: AUD 4,515 for this example.</p></li>
+          <li><h3>Pick the target</h3><p><strong>Savings ratio</strong> keeps the same share of pay; <strong>Nominal savings</strong> keeps the same amount, at today's rate: AUD 3,341.</p></li>
+          <li><h3>Housing in or out</h3><p><strong>Exclude housing</strong> scales your spending by the index without rent, as when an employer pays for your home.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A net salary.</strong> The answer is take-home pay. To compare it with a job offer, add the tax and social charges of the new country yourself.</li>
+        <li><strong>The two targets can be far apart.</strong> Moving to a dearer city, keeping the same share of pay asks for more than keeping the same amount. The reverse holds moving to a cheaper one. Part 2 shows why.</li>
+      </ul>
+    </section>
+
+    <!-- FX -->
+    <section class="gd-sec card" id="fx" aria-labelledby="fx-h">
+      <h2 id="fx-h">Exchange rates</h2>
+      <p class="gd-sub">Between two currencies a card opens under the cities. Money that crosses the border (your salary, your savings, the ≈ figures) moves at today's market rate. The cost estimate does not: shop prices in Perth do not change when the rupiah does.</p>
+      <div class="gd-demo" data-demo="fx" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Jakarta to Perth at your own rate, then AUD 10% stronger</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The rate it uses</h3><p><strong>Default</strong> is today's rate from a free daily feed, or the bundled rate when the feeds cannot be reached.</p></li>
+          <li><h3>Your own rate</h3><p>Type the rate you would really get, after a bank's margin. The ≈ figures and the savings gap follow it.</p></li>
+          <li><h3>What if AUD moves?</h3><p>Move the destination currency up to 20% either way, on top of whichever rate is in force. <strong>Reset</strong> puts it back.</p></li>
+          <li><h3>What does not move</h3><p><strong>Estimated monthly expenses</strong> stays AUD 2,709, and so does every savings ratio.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>ISO codes throughout.</strong> Every figure carries its currency's three-letter code, so AUD and USD never pass for each other.</li>
+        <li><strong>Rates are kept for six hours</strong> in your browser, then asked for again. A feed that disagrees five-fold with the bundled rate is ignored for that currency.</li>
+      </ul>
+    </section>
+
+    <!-- Detailed -->
+    <section class="gd-sec card" id="detailed" aria-labelledby="detailed-h">
+      <h2 id="detailed-h">The Detailed table</h2>
+      <p class="gd-sub"><strong>Detailed</strong> mode splits your month into rows and prices each by its own index, in as many destinations as you like. The first column is home.</p>
+      <div class="gd-demo" data-demo="detailed" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">European capitals, with Dublin and health insurance added</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Add a city</h3><p><strong>+ City</strong> adds a destination column. The bin in its head takes it away.</p></li>
+          <li><h3>Add a row</h3><p><strong>+ Add expense row</strong>, then pick its category: thirteen, from rent to remittances. Each <strong>?</strong> says how it is priced.</p></li>
+          <li><h3>Type over an estimate</h3><p>Know the rent you would pay? Type it. The cell turns yellow and replaces the estimate; clear it to go back.</p></li>
+          <li><h3>Read the answer</h3><p><strong>Net Income</strong> at the top, <strong>Savings</strong> and its ratio at the bottom, per city.</p></li>
+        </ol>
+      </div>
+      <div class="gd-demo" data-demo="detailed-more" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Meals priced one at a time; Amsterdam moved to the front</span></figure>
+        <ol class="gd-steps">
+          <li><h3>At a custom frequency</h3><p>Enter a row per week, fortnight or year, or as a price times a count: per meal, kWh, litre, gallon or trip. Everything is turned into a month.</p></li>
+          <li><h3>Move a column</h3><p>Drag ⠿ to reorder the cities. The city that lands first becomes home, and every figure keeps its value.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>FX Rate (custom).</strong> A row of its own, one rate per destination in another currency. In this table it does more than in Simple mode; see <a href="#m-fx">Exchange rates</a> in Part 2.</li>
+        <li><strong>No data</strong> in a cell means the dataset lacks that index for that city. Type your own figure and the totals come back.</li>
+      </ul>
+    </section>
+
+    <!-- Save -->
+    <section class="gd-sec card" id="save" aria-labelledby="save-h">
+      <h2 id="save-h">Save, open and what it assumes</h2>
+      <p class="gd-sub">Each page keeps your comparison in this browser between visits. To keep it elsewhere, save it to a file.</p>
+      <div class="gd-demo" data-demo="save" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save and open; What this assumes</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons at the end of the Quick Start row write every input to a file, and read one back.</p></li>
+          <li><h3>What this assumes</h3><p>The last card, opened from its chevron: the index, the salaries, the target and the rate this answer rests on.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The Map View saves the same way,</strong> and its <strong>⬇ CSV</strong> writes every city's figures in both currencies.</li>
+      </ul>
+    </section>
+
+    <!-- Same inputs -->
+    <section class="gd-sec card" id="same" aria-labelledby="same-h">
+      <h2 id="same-h">Same inputs, two screens</h2>
+      <p class="gd-sub">The <strong>Map View</strong> runs the comparator's own sums on the same fields, against every city at once. Point at a field in the list to see it on both.</p>
+      <div class="gd-twin">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="same-main" data-w="900" data-h="1000" role="img" aria-label="The comparator in Simple mode with seven fields outlined: From city, Net salary, Expenses, housing, Detail, I want to know how much, and Target.">
+            <span class="gd-box" data-b="1" style="--x:5%;--y:29%;--w:89%;--h:8%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:7%;--y:73%;--w:85%;--h:8%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:7%;--y:81%;--w:85%;--h:8%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:5%;--y:20%;--w:50%;--h:4%"><b>4</b></span>
+            <span class="gd-box" data-b="5" style="--x:5%;--y:11%;--w:25%;--h:4%"><b>5</b></span>
+            <span class="gd-box" data-b="6" style="--x:5%;--y:15.5%;--w:45%;--h:4%"><b>6</b></span>
+            <span class="gd-box" data-b="7" style="--x:5%;--y:54%;--w:36%;--h:4%"><b>7</b></span>
+          </div>
+          <figcaption><strong>The comparator</strong>: Perth to Sydney, one figure for the month.</figcaption>
+        </figure>
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="same-map" data-w="900" data-h="1000" role="img" aria-label="The Map View's inputs with the same seven fields outlined: Your city, Net salary, Living cost, Housing, Detail, Salary and Target.">
+            <span class="gd-box" data-b="1" style="--x:5%;--y:8%;--w:89%;--h:12%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:5%;--y:21%;--w:89%;--h:9%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:5%;--y:72%;--w:89%;--h:9%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:5%;--y:82%;--w:89%;--h:9%"><b>4</b></span>
+            <span class="gd-box" data-b="5" style="--x:5%;--y:63%;--w:89%;--h:8%"><b>5</b></span>
+            <span class="gd-box" data-b="6" style="--x:5%;--y:39%;--w:89%;--h:8%"><b>6</b></span>
+            <span class="gd-box" data-b="7" style="--x:5%;--y:48%;--w:89%;--h:8%"><b>7</b></span>
+          </div>
+          <figcaption><strong>The Map View</strong>: Perth against every city, the same month.</figcaption>
+        </figure>
+        <ol class="gd-key" style="--n:4">
+          <li data-b="1"><h3>Your city</h3><p><strong>From city</strong> on one, <strong>Your city</strong> on the other. Its currency leads every figure.</p></li>
+          <li data-b="2"><h3>Net salary</h3><p>Take-home pay, a month, in your currency.</p></li>
+          <li data-b="3"><h3>Your spending</h3><p><strong>Expenses</strong> or <strong>Living cost</strong>: one figure in Simple, a row per category in Detailed.</p></li>
+          <li data-b="4"><h3>Housing</h3><p>Include or exclude it, Simple only on both.</p></li>
+          <li data-b="5"><h3>Detail</h3><p>Simple or Detailed.</p></li>
+          <li data-b="6"><h3>The question</h3><p><strong>I need to earn</strong> is the Map's <strong>Required</strong>. The Map adds <strong>Global</strong> and <strong>Scaled</strong>.</p></li>
+          <li data-b="7"><h3>Target</h3><p><strong>Savings ratio</strong> or <strong>Nominal savings</strong>, for the required salary.</p></li>
+        </ol>
+      </div>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Comparator</th><th>Map View</th><th>What differs</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">From city</th><td data-l="Map View">Your city</td><td data-l="What differs">The Map has no To city: every other city is a destination.</td></tr>
+            <tr><th scope="row">Net salary; Net Income in Detailed</th><td data-l="Map View">Net salary</td><td data-l="What differs">None. A month, after tax.</td></tr>
+            <tr><th scope="row">Expenses; the expense rows in Detailed</th><td data-l="Map View">Living cost; the expense rows in Detailed</td><td data-l="What differs">The same thirteen categories and the same estimate. The Map has no typed-over cells and no custom frequency.</td></tr>
+            <tr><th scope="row">As part of my expenses: Include or Exclude housing</th><td data-l="Map View">Housing: Include or Exclude</td><td data-l="What differs">None. Simple only on both.</td></tr>
+            <tr><th scope="row">Detail: Simple or Detailed</th><td data-l="Map View">Lifestyle, Detail: Simple or Detailed</td><td data-l="What differs">On the comparator, Detailed also brings several destinations.</td></tr>
+            <tr><th scope="row">I want to know how much: I need to earn, I can save</th><td data-l="Map View">Salary: Required, Global, Scaled</td><td data-l="What differs">Required is I need to earn. Global is I can save with your own salary converted to each city. Scaled has no counterpart.</td></tr>
+            <tr><th scope="row">Target: Savings ratio or Nominal savings</th><td data-l="Map View">Target</td><td data-l="What differs">None. Shown with I need to earn, or Required.</td></tr>
+            <tr><th scope="row">Net salary in the To city</th><td data-l="Map View">None</td><td data-l="What differs">Global uses your own salary everywhere; Scaled pays each city the same multiple of its local pay.</td></tr>
+            <tr><th scope="row">Custom FX Rate, What if AUD moves?</th><td data-l="Map View">None</td><td data-l="What differs">The Map always converts at today's market rate.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>What it adds.</strong> Every city at once on a world map, ranked and coloured, and two more ways to set the salary there: your own (<strong>Global</strong>), or the same multiple of local pay (<strong>Scaled</strong>).</li>
+        <li><strong>What it holds fixed.</strong> The sums. Perth on AUD 6,500 spending AUD 4,550 with housing needs <strong>AUD 7,189</strong> in Sydney on both pages; the Map's own audit checks every city against the comparator.</li>
+      </ul>
+    </section>
+
+    <!-- Map -->
+    <section class="gd-sec card" id="map" aria-labelledby="map-h">
+      <h2 id="map-h">The Map View</h2>
+      <p class="gd-sub">Open it from the link under the comparator's header. Six Quick Starts fill a home city's month row by row and fly the map there.</p>
+      <div class="gd-demo" data-demo="map-quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Perth on AUD 6,500, against the world</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the map has the room. Click <strong>Inputs</strong> to open it.</p></li>
+          <li><h3>Pick an example</h3><p><strong>Singapore</strong>, <strong>Jakarta</strong>, <strong>Perth</strong>, <strong>New York</strong>, <strong>London</strong> or <strong>Dubai</strong>.</p></li>
+          <li><h3>Read the map</h3><p>Blue is cheaper than home, amber dearer, deepest at the extremes. Point at a city for its card: Melbourne needs AUD 5,348.</p></li>
+          <li><h3>The four figures</h3><p>Your city, the cheapest, the dearest, and how many of the 546 cities cost less than yours.</p></li>
+        </ol>
+      </div>
+      <div class="gd-demo" data-demo="map-modes" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Perth: Required, Global, then Scaled by the median salary</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Required</h3><p>The net salary each city needs for your lifestyle and your <strong>Target</strong>, as on the comparator.</p></li>
+          <li><h3>Global</h3><p>Your own salary in every city, at today's rate. Red triangles mark cities where it does not cover your lifestyle.</p></li>
+          <li><h3>Scaled</h3><p>The same multiple of local pay: <strong>Scale by</strong> the <strong>Min. wage</strong>, the <strong>Average</strong> or the <strong>Median</strong> net salary.</p></li>
+          <li><h3>Change the view</h3><p><strong>View</strong> labels the map with the salary, <strong>Living cost</strong>, <strong>Nominal savings</strong> or <strong>Savings ratio</strong>.</p></li>
+        </ol>
+      </div>
+      <div class="gd-demo" data-demo="map-lifestyle" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Perth: rent lowered, then one figure without housing</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Detailed: a row each</h3><p>A Quick Start fills a row per category. Change one and the total and the map follow.</p></li>
+          <li><h3>Simple: one figure</h3><p><strong>Living cost</strong> holds the same month as one figure, scaled by the city's overall index.</p></li>
+          <li><h3>Housing in or out</h3><p>As on the comparator: the overall index with rent, or without it.</p></li>
+        </ol>
+      </div>
+      <div class="gd-demo" data-demo="map-read" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Adelaide's card, the world, major cities, every Australian city</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Point at a city</h3><p>Its card gives every figure in your currency and its own. Tap on a phone; the card stays until you close it.</p></li>
+          <li><h3>Zoom and move</h3><p>Drag to move; click the map, then scroll to zoom. The buttons zoom, fly back to your city, or show the whole world.</p></li>
+          <li><h3>Major cities only</h3><p>The funnel keeps capitals, each country's largest city and any of a million people or more.</p></li>
+          <li><h3>Full screen</h3><p>The blue ⤢ fills the screen with the map. Esc or the same button puts it back.</p></li>
+          <li><h3>Every city</h3><p><strong>Every city</strong> opens from its chevron. Search it, click a row to fly there, or <strong>⬇ CSV</strong>.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The colour is one number:</strong> the city's living cost in your currency against yours. It does not change with the view, so a city keeps its colour as you switch from salary to savings.</li>
+        <li><strong>No estimate</strong> (a hollow dot) means the dataset lacks an index your lifestyle needs there, or Scaled has no pay figure for it.</li>
+      </ul>
+    </section>
+
+    <!-- Part 2 -->
+    <div class="gd-part" id="how">
+      <span class="gd-part-k">Part 2</span>
+      <h2>How the numbers work</h2>
+      <p>What each field means, where it enters the sums, and what moving it does to the answer and why. All of it is read from the tool's own code (<code>script.js</code>, copied function for function into the Map View's).</p>
+    </div>
+
+    <section class="gd-sec card" id="model" aria-labelledby="model-h">
+      <h2 id="model-h">The model in one picture</h2>
+      <p class="gd-sub">The tool never prices your life from scratch. It takes what you spend now and scales it by how much dearer or cheaper each kind of spending is in the other city, according to a price index. Then it asks what salary there keeps your savings target.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Cost there</span> <var>E</var><sub><var>d</var></sub> = <span class="gd-sum">Σ</span> <var>x</var><sub><var>i</var></sub> × <span class="gd-frac"><span><var>e</var><sub><var>d</var></sub></span><span><var>e</var><sub><var>h</var></sub></span></span> × <span class="gd-frac"><span><var>I</var><sub><var>d</var>,<var>i</var></sub></span><span><var>I</var><sub><var>h</var>,<var>i</var></sub></span></span><small>a month, in the destination's currency</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Salary needed</span> <var>S</var><sub><var>d</var></sub> = <span class="gd-frac"><span><var>E</var><sub><var>d</var></sub></span><span>1 − <var>r</var></span></span> = <var>S</var><sub><var>h</var></sub> × <span class="gd-frac"><span><var>E</var><sub><var>d</var></sub></span><span><var>E</var><sub><var>h</var></sub></span></span><small>Savings ratio target</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Salary needed</span> <var>S</var><sub><var>d</var></sub> = <var>E</var><sub><var>d</var></sub> + <span class="gd-frac"><span><var>S</var><sub><var>h</var></sub> − <var>E</var><sub><var>h</var></sub></span><span><var>X</var></span></span><small>Nominal savings target</small></div>
+      <ul class="gd-where">
+        <li><var>x<sub>i</sub></var>what you spend on row <var>i</var> at home (one row in Simple)</li>
+        <li><var>I<sub>d,i</sub></var>, <var>I<sub>h,i</sub></var>that row's price index there and at home</li>
+        <li><var>e<sub>d</sub></var>, <var>e<sub>h</sub></var>units of each currency per US dollar, at the rate the indices were priced at</li>
+        <li><var>E<sub>h</sub></var>your spending at home, the sum of <var>x<sub>i</sub></var></li>
+        <li><var>S<sub>h</sub></var>your <strong>Net salary</strong> at home</li>
+        <li><var>r</var>your savings ratio now, (<var>S<sub>h</sub></var> − <var>E<sub>h</sub></var>) ÷ <var>S<sub>h</sub></var></li>
+        <li><var>X</var>today's market rate, home currency per 1 of the destination's</li>
+      </ul>
+      <ul class="gd-facts">
+        <li><strong>The exchange rate cancels out of the cost.</strong> Each index is a city's prices in US dollars over a base city's, so <var>e</var> × <var>I</var> is a city's prices in its own currency. <var>E<sub>d</sub></var> is a ratio of local prices: it does not move with today's exchange rate.</li>
+        <li><strong>On the savings ratio target, the answer is your salary times one ratio:</strong> what your basket costs there over what it costs you now. How much you spend drops out; only the mix of rows matters.</li>
+        <li><strong>On the nominal target, the amount you save is carried across the border</strong> at today's rate, so the exchange rate and your spending level both count.</li>
+      </ul>
+      <p class="gd-note"><strong>I can save</strong> skips the last step: you type the salary there, and savings are <var>S<sub>d</sub></var> − <var>E<sub>d</sub></var>. The sentence compares that with your savings at home converted at <var>X</var>, and the two ratios.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-question" aria-labelledby="m-question-h">
+      <h2 id="m-question-h">The question: Detail, goal and housing</h2>
+      <p class="gd-sub">The row of toggles at the top decides which index prices your spending and which figure is the answer.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Simple</span> <var>E</var><sub><var>d</var></sub> = <var>E</var><sub><var>h</var></sub> × <span class="gd-frac"><span><var>e</var><sub><var>d</var></sub></span><span><var>e</var><sub><var>h</var></sub></span></span> × <span class="gd-frac"><span><var>C</var><sub><var>d</var></sub></span><span><var>C</var><sub><var>h</var></sub></span></span><small>one row, one overall index</small></div>
+      <ul class="gd-where">
+        <li><var>C</var>the cost-of-living index with housing, or without it when housing is excluded</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Detail</th><td data-l="What it is"><strong>Simple</strong>: your month as one figure. <strong>Detailed</strong>: a row per category, and several destinations.</td><td data-l="In the maths">Simple prices <var>E<sub>h</sub></var> by the overall index <var>C</var>. Detailed prices each row by its own index and adds them up.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+            <tr><th scope="row">I want to know how much</th><td data-l="What it is"><strong>I can save</strong>: you give the salary there. <strong>I need to earn</strong>: the tool works it out.</td><td data-l="In the maths">Save: savings = <var>S<sub>d</sub></var> − <var>E<sub>d</sub></var>. Earn: <var>S<sub>d</sub></var> from the <strong>Target</strong>.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+            <tr><th scope="row">As part of my expenses</th><td data-l="What it is"><strong>Include housing</strong> or <strong>Exclude housing</strong>, as when an employer pays for it. Simple only.</td><td data-l="In the maths">Picks <var>C</var>: the index with rent, or the one without. Your Expenses figure should match: with rent in it, or not.</td><td data-l="Raise it"><span class="gd-eff">swaps the index</span></td></tr>
+            <tr><th scope="row">At a custom frequency</th><td data-l="What it is">Each row per week, fortnight, month or year, or a unit price times a count. Detailed only.</td><td data-l="In the maths">Every amount × its months factor: a week is 52 ÷ 12; a price is × count × periods a month. A switch restates the amount, so the money never changes.</td><td data-l="Raise it"><span class="gd-eff">no effect on the answer</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="gd-note gd-note-warn"><strong>Watch out: housing changes the index, not your figure.</strong> Excluding housing does not take rent out of your Expenses. If your figure still holds rent, it is scaled by an index without rent, which understates a move to a city where rent is dear.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-cities" aria-labelledby="m-cities-h">
+      <h2 id="m-cities-h">Cities, categories and the index</h2>
+      <p class="gd-sub">Each city has a set of price indices from a crowd-sourced survey (updated May 2026), rebased to Perth = 100. The base cancels in every ratio, so it never shows. A row follows the index of its category.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Index</span> <var>I</var><sub><var>c</var></sub> = <span class="gd-frac"><span><var>P</var><sub><var>c</var></sub> ÷ <var>e</var><sub><var>c</var></sub></span><span><var>P</var><sub>base</sub> ÷ <var>e</var><sub>base</sub></span></span> × 100<small>so <var>e</var><sub><var>d</var></sub><var>I</var><sub><var>d</var></sub> ÷ <var>e</var><sub><var>h</var></sub><var>I</var><sub><var>h</var></sub> = <var>P</var><sub><var>d</var></sub> ÷ <var>P</var><sub><var>h</var></sub></small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Utilities</span> = 0.5 × electricity + 0.2 × water + 0.3 × gas<small>a missing one is dropped and the rest reweighted</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Health</span> = <span class="gd-frac"><span>health price level</span><span>consumer price level</span></span> × <var>C</var><sup>no housing</sup><small>World Bank ICP 2021, by country</small></div>
+      <ul class="gd-where">
+        <li><var>P<sub>c</sub></var>the basket's price in city <var>c</var>, in its own currency</li>
+        <li><var>e<sub>c</sub></var>units of its currency per US dollar when the survey priced it</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">From city</th><td data-l="What it is">Where you live and spend now. Its currency leads every figure.</td><td data-l="In the maths"><var>I<sub>h</sub></var> and <var>e<sub>h</sub></var> in every row.</td><td data-l="Raise it"><span class="gd-eff">a dearer home: ▼ cost there</span></td></tr>
+            <tr><th scope="row">To city, or a destination</th><td data-l="What it is">Where you might move. Detailed takes several.</td><td data-l="In the maths"><var>I<sub>d</sub></var> and <var>e<sub>d</sub></var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">a dearer city: ▲ salary needed</span></td></tr>
+            <tr><th scope="row">Category</th><td data-l="What it is">What a row is spent on (Detailed).</td><td data-l="In the maths">Picks the index <var>I<sub>i</sub></var> for the row, as in the table below.</td><td data-l="Raise it"><span class="gd-eff">swaps the index</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Category</th><th>Priced by</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">🏠 Rent</th><td data-l="Priced by">The median rent index</td><td data-l="Note">Usually the row that moves most between cities.</td></tr>
+            <tr><th scope="row">🛒 Groceries, 🍽️ Eating Out</th><td data-l="Priced by">Their own indices</td><td data-l="Note">Eating out swings more than groceries: it carries local wages.</td></tr>
+            <tr><th scope="row">⚡ Utilities</th><td data-l="Priced by">The 50/20/30 blend above</td><td data-l="Note">A ! beside the cell says a part was missing and reweighted.</td></tr>
+            <tr><th scope="row">💡 Electricity, 💧 Water, 🔥 Gas, ⛽ Fuel</th><td data-l="Priced by">Each one's median index</td><td data-l="Note">Use one of these instead of Utilities to price a bill on its own.</td></tr>
+            <tr><th scope="row">🩺 Medical Care, 🛡️ Health Insurance</th><td data-l="Priced by">The health index above</td><td data-l="Note">The same care and cover; public schemes paid through tax are left out.</td></tr>
+            <tr><th scope="row">💸 Remittance, ✈️ International Travel</th><td data-l="Priced by">No index: the exchange rate alone</td><td data-l="Note">Converted at the rate the indices were priced at, or your custom rate.</td></tr>
+            <tr><th scope="row">🌐 Other</th><td data-l="Priced by">The cost-of-living index without housing</td><td data-l="Note">Everything else.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Purchasing power, done properly.</strong> Because the rate cancels, the estimate compares what the same goods cost in each place in local money. That is a purchasing-power comparison, not a currency conversion. The survey's own local purchasing power index is in the file but no figure uses it.</li>
+      </ul>
+    </section>
+
+    <section class="gd-sec card" id="m-money" aria-labelledby="m-money-h">
+      <h2 id="m-money-h">Your month: salary, spending and the target</h2>
+      <p class="gd-sub">Your salary and spending set your savings ratio. The target says which part of it you want to keep.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Savings ratio</span> <var>r</var> = <span class="gd-frac"><span><var>S</var><sub><var>h</var></sub> − <var>E</var><sub><var>h</var></sub></span><span><var>S</var><sub><var>h</var></sub></span></span></div>
+      <div class="gd-eq"><span class="gd-eq-l">Savings there</span> = <var>S</var><sub><var>d</var></sub> − <var>E</var><sub><var>d</var></sub><small>ratio: ÷ <var>S</var><sub><var>d</var></sub></small></div>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Net salary (home), Net Income</th><td data-l="What it is">Your take-home pay, a month (or the period you pick).</td><td data-l="In the maths"><var>S<sub>h</sub></var>, and through it <var>r</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">ratio target: ▲ salary needed, one for one</span><span class="gd-eff">nominal: ▲ by the extra savings</span></td></tr>
+            <tr><th scope="row">Expenses, or the expense rows</th><td data-l="What it is">What you spend at home in a month, rent included unless you exclude housing.</td><td data-l="In the maths"><var>x<sub>i</sub></var> and <var>E<sub>h</sub></var>: the cost there, and <var>r</var>.</td><td data-l="Raise it"><span class="gd-eff">ratio target: only the mix counts</span><span class="gd-eff gd-eff-neg">nominal: ▲ salary needed</span></td></tr>
+            <tr><th scope="row">Net salary (To city)</th><td data-l="What it is">A salary you are offered there (I can save).</td><td data-l="In the maths"><var>S<sub>d</sub></var> typed: savings and ratio there.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ savings there</span></td></tr>
+            <tr><th scope="row">A typed-over cell</th><td data-l="What it is">Your own figure for a row in a destination (Detailed, yellow).</td><td data-l="In the maths">Replaces that row's estimate in <var>E<sub>d</sub></var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ salary needed</span></td></tr>
+            <tr><th scope="row">Target</th><td data-l="What it is"><strong>Savings ratio</strong>: the same share of pay. <strong>Nominal savings</strong>: the same amount.</td><td data-l="In the maths">Ratio: <var>S<sub>d</sub></var> = <var>E<sub>d</sub></var> ÷ (1 − <var>r</var>). Nominal: <var>S<sub>d</sub></var> = <var>E<sub>d</sub></var> + (<var>S<sub>h</sub></var> − <var>E<sub>h</sub></var>) ÷ <var>X</var>.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Why the two targets part ways.</strong> In a city twice as dear, keeping a 25% ratio means saving twice as much in money; keeping the amount means saving a smaller share. Moving somewhere cheaper, the ratio target asks for less than the nominal one.</li>
+        <li><strong>No single answer</strong> when you save 100% of pay, or spend nothing there: any salary keeps that ratio, so the cell shows a dash with a tip.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Watch out: saving more at home raises the bar.</strong> On the ratio target, a pay rise you save lifts the salary you need elsewhere by the same 10%: you are asking the new city to fund the same higher share.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-fx" aria-labelledby="m-fx-h">
+      <h2 id="m-fx-h">Exchange rates</h2>
+      <p class="gd-sub">Two rates, two jobs. The rate the indices were priced at turns an index ratio into a ratio of local prices. Today's market rate, <var>X</var>, carries money across the border: the ≈ figures, the savings gap, the nominal target and every home-currency figure on the Map.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Rate in force</span> <var>X</var> = (your rate, else today's) × (1 + <var>p</var>)<small>Simple mode; <var>p</var> is the slider, −20% to +20%</small></div>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Default</th><td data-l="What it is">Today's rate from a free daily feed, kept six hours; the bundled May 2026 rate when no feed answers.</td><td data-l="In the maths"><var>X</var>, when you give no rate of your own.</td><td data-l="Raise it"><span class="gd-eff">not a field</span></td></tr>
+            <tr><th scope="row">Custom FX Rate</th><td data-l="What it is">1 To-city unit = this many home units: the rate you would really get.</td><td data-l="In the maths">Simple: <var>X</var> only, never the estimate. Detailed: <var>X</var>, and it also replaces <var>e<sub>d</sub></var> ÷ <var>e<sub>h</sub></var> in that column's estimates.</td><td data-l="Raise it"><span class="gd-eff">nominal: ▼ salary needed there</span><span class="gd-eff gd-eff-neg">Detailed: ▼ every estimate in the column</span></td></tr>
+            <tr><th scope="row">What if AUD moves?</th><td data-l="What it is">A move in the destination currency's strength, on top of the rate in force. Simple only.</td><td data-l="In the maths">× (1 + <var>p</var>) on <var>X</var>. It never touches the estimate.</td><td data-l="Raise it"><span class="gd-eff">ratio target: no effect</span><span class="gd-eff">nominal: ▼ salary needed in AUD</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Local prices are sticky; exchange rates are not.</strong> A weaker rupiah does not reprice a Perth lunch in dollars, or a Jakarta lunch in rupiah. It only changes how many rupiah the Perth lunch costs an Indonesian.</li>
+        <li><strong>The ratio target is immune.</strong> Its salary and the costs it covers are both in the destination's currency, so no rate enters it. Only the ≈ home-currency figure moves.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Watch out: in the Detailed table a custom rate reprices the estimates.</strong> Singapore to Sydney, a rate of 1 AUD = 1.00 SGD instead of 0.91 cuts the Sydney rent estimate from AUD 4,577 to AUD 4,185 and the salary needed from AUD 10,178 to AUD 9,306. Simple mode keeps the estimate on the priced-at rate, whatever rate you type.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-map" aria-labelledby="m-map-h">
+      <h2 id="m-map-h">The Map View: three ways to set the salary</h2>
+      <p class="gd-sub">The Map works out <var>E<sub>d</sub></var> for every city exactly as above, then sets the salary there one of three ways. Every figure is shown in your currency (× <var>X</var>) first, and in the city's own after it.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Required</span> <var>S</var><sub><var>d</var></sub> = <var>E</var><sub><var>d</var></sub> ÷ (1 − <var>r</var>)<small>or <var>E</var><sub><var>d</var></sub> + (<var>S</var><sub><var>h</var></sub> − <var>E</var><sub><var>h</var></sub>) ÷ <var>X</var>, by Target</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Global</span> <var>S</var><sub><var>d</var></sub> = <var>S</var><sub><var>h</var></sub> ÷ <var>X</var><small>your salary, converted</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Scaled</span> <var>S</var><sub><var>d</var></sub> = <span class="gd-frac"><span><var>S</var><sub><var>h</var></sub></span><span><var>W</var><sub><var>h</var></sub></span></span> × <var>W</var><sub><var>d</var></sub><small>no exchange rate enters it</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Colour</span> <var>q</var> = <span class="gd-frac"><span><var>E</var><sub><var>d</var></sub> × <var>X</var></span><span><var>E</var><sub><var>h</var></sub></span></span><small>Scaled: (<var>E</var><sub><var>d</var></sub> ÷ <var>S</var><sub><var>d</var></sub>) ÷ (<var>E</var><sub><var>h</var></sub> ÷ <var>S</var><sub><var>h</var></sub>)</small></div>
+      <ul class="gd-where">
+        <li><var>W</var>a city's pay yardstick, a month in its own currency</li>
+        <li><var>q</var>living cost in your currency over yours; below 1 is blue, above amber</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Salary: Required</th><td data-l="What it is">The salary each city needs for your lifestyle and Target.</td><td data-l="In the maths">The comparator's two formulas. On the ratio target, required salary in your currency is <var>S<sub>h</sub></var> × <var>q</var>.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+            <tr><th scope="row">Salary: Global</th><td data-l="What it is">Your salary taken to every city, like a remote job paid at home.</td><td data-l="In the maths"><var>S<sub>h</sub></var> ÷ <var>X</var>; a city falls short where <var>q</var> passes <var>S<sub>h</sub></var> ÷ <var>E<sub>h</sub></var>.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+            <tr><th scope="row">Salary: Scaled</th><td data-l="What it is">The same place in the local pay scale: a job paid like a local's.</td><td data-l="In the maths"><var>S<sub>h</sub></var> ÷ <var>W<sub>h</sub></var> × <var>W<sub>d</sub></var>. Your city keeps your salary exactly.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+            <tr><th scope="row">Scale by</th><td data-l="What it is"><strong>Min. wage</strong>, <strong>Average</strong> or <strong>Median</strong> net salary.</td><td data-l="In the maths"><var>W</var>. Minimum wages are gross, full-time; averages come from the survey's purchasing power and cost indices; a median is the average × the country's median-to-average earnings ratio.</td><td data-l="Raise it"><span class="gd-eff">swaps the yardstick</span></td></tr>
+            <tr><th scope="row">Target</th><td data-l="What it is">As on the comparator, Required only.</td><td data-l="In the maths">Picks the Required formula.</td><td data-l="Raise it"><span class="gd-eff">a mode</span></td></tr>
+            <tr><th scope="row">View</th><td data-l="What it is">The figure on the labels, metrics and title.</td><td data-l="In the maths">None: the colour stays <var>q</var>. Required on the ratio target hides Savings ratio, the same everywhere.</td><td data-l="Raise it"><span class="gd-eff">display only</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="gd-note gd-note-warn"><strong>Watch out: a minimum wage is gross, your salary net.</strong> Scaling a net salary by gross minimum wages flatters a country that taxes low pay hard. The tool says so in <strong>What this assumes</strong>.</p>
+    </section>
+
+    <section class="gd-sec card" id="example" aria-labelledby="example-h">
+      <h2 id="example-h">Worked examples</h2>
+      <p class="gd-sub">Figures from the Quick Starts, with the rates bundled with the tool (22 May 2026): AUD 1.40, SGD 1.28 and CHF 0.7847 per US dollar.</p>
+      <div class="gd-calc">
+        <h3>Singapore vs Australia: the salary Sydney needs</h3>
+        <p>SGD 8,000 a month net, SGD 6,000 spent in five rows, saving 25%. Each row is scaled by its own index, Sydney over Singapore.</p>
+        <ol>
+          <li><span class="gd-calc-l">Priced-at rate</span><span class="gd-calc-w">1.40 AUD ÷ 1.28 SGD per US dollar</span><b>1.09375</b></li>
+          <li><span class="gd-calc-l">Rent</span><span class="gd-calc-w">SGD 3,500 × 1.09375 × 130.8 ÷ 109.4</span><b>AUD 4,577</b></li>
+          <li><span class="gd-calc-l">Groceries</span><span class="gd-calc-w">SGD 600 × 1.09375 × 101.4 ÷ 99.0</span><b>AUD 672</b></li>
+          <li><span class="gd-calc-l">Eating out</span><span class="gd-calc-w">SGD 700 × 1.09375 × 97.7 ÷ 75.1</span><b>AUD 996</b></li>
+          <li><span class="gd-calc-l">Utilities</span><span class="gd-calc-w">SGD 200 × 1.09375 × 93.68 ÷ 62.25. Sydney: 0.5 × 97.0 + 0.2 × 90.9 + 0.3 × 90.0; Singapore: 0.5 × 99.4 + 0.2 × 39.8 + 0.3 × 15.3</span><b>AUD 329</b></li>
+          <li><span class="gd-calc-l">Other</span><span class="gd-calc-w">SGD 1,000 × 1.09375 × 102.0 ÷ 105.3</span><b>AUD 1,059</b></li>
+          <li><span class="gd-calc-l">Cost there, <var>E<sub>d</sub></var></span><span class="gd-calc-w">4,577 + 672 + 996 + 329 + 1,059</span><b>AUD 7,634</b></li>
+          <li><span class="gd-calc-l">Savings ratio, <var>r</var></span><span class="gd-calc-w">(8,000 − 6,000) ÷ 8,000</span><b>25%</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Net salary needed</span><span class="gd-calc-w">7,634 ÷ (1 − 0.25), or 8,000 × 7,634 ÷ 6,000. The tool's Net Income for Sydney: AUD 10,178</span><b>AUD 10,178 a month</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Rent is 58% of this budget and 60% of the answer.</strong> Sydney rent is 20% dearer than Singapore's on the index, eating out 30% dearer; groceries and other spending barely differ.</li>
+        <li><strong>On the nominal target</strong> it is AUD 7,634 + SGD 2,000 ÷ 0.9143 = <strong>AUD 9,821</strong>: keeping the amount you save asks less than keeping the share.</li>
+      </ul>
+      <div class="gd-calc">
+        <h3>The Map View: Perth to Zurich, three ways</h3>
+        <p>The Perth Quick Start: AUD 6,500 net, AUD 4,550 spent in six rows (rent 2,400, groceries 600, eating out 400, utilities 250, fuel 250, other 650), saving 30%. Today's rate in the demo: 1 CHF = AUD 1.784.</p>
+        <ol>
+          <li><span class="gd-calc-l">Cost in Zurich, <var>E<sub>d</sub></var></span><span class="gd-calc-w">Each row × 0.7847 ÷ 1.40 × Zurich's index ÷ Perth's 100: rent 144.1, groceries 156.1, eating out 152.7, utilities 157.3, fuel 183.2, other 147.9</span><b>CHF 3,822</b></li>
+          <li><span class="gd-calc-l">Colour, <var>q</var></span><span class="gd-calc-w">CHF 3,822 × 1.784 ÷ AUD 4,550: 50% dearer than Perth</span><b>1.50</b></li>
+          <li><span class="gd-calc-l">Required</span><span class="gd-calc-w">CHF 3,822 ÷ (1 − 0.30), or AUD 6,500 × 1.50</span><b>CHF 5,460 (AUD 9,741)</b></li>
+          <li><span class="gd-calc-l">Global</span><span class="gd-calc-w">AUD 6,500 ÷ 1.784 = CHF 3,643, less CHF 3,822 spent</span><b>short CHF 178 (AUD 318)</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Scaled, by the average</span><span class="gd-calc-w">AUD 6,500 ÷ Perth's average AUD 6,173 = 1.05×; × Zurich's average CHF 6,818 = CHF 7,180, less CHF 3,822</span><b>saves CHF 3,358 (46.8%)</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Three answers, three questions.</strong> Zurich needs half as much again to live as you do; your own pay would not cover it; but a Zurich job paying what yours does in Perth, relative to local pay, would save almost half of it.</li>
+      </ul>
+    </section>
+
+    <section class="gd-sec card" id="mislead" aria-labelledby="mislead-h">
+      <h2 id="mislead-h">When a ratio of indices misleads</h2>
+      <p class="gd-sub">An index prices a typical shopper's basket. Yours is not typical, and the gap shows most in rent.</p>
+      <div class="gd-calc">
+        <h3>The same Singapore to Sydney month, three ways</h3>
+        <p>SGD 8,000 net, SGD 6,000 spent, saving 25%. Only the way the spending is priced changes.</p>
+        <ol>
+          <li><span class="gd-calc-l">Simple, without housing</span><span class="gd-calc-w">SGD 6,000 × 1.09375 × 102.0 ÷ 105.3, ÷ 0.75</span><b>AUD 8,476</b></li>
+          <li><span class="gd-calc-l">Simple, with housing</span><span class="gd-calc-w">SGD 6,000 × 1.09375 × 110.6 ÷ 106.5, ÷ 0.75</span><b>AUD 9,087</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Detailed, five rows</span><span class="gd-calc-w">The worked example above</span><b>AUD 10,178</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The overall index weights rent like a typical household.</strong> This budget puts 58% into rent, and Sydney's rent index is 20% above Singapore's while the overall index with housing is only 4% above. Simple mode misses AUD 1,091 a month.</li>
+        <li><strong>A city is not one price.</strong> The rent index is a median across a city's neighbourhoods. Your street may sit far from it.</li>
+        <li><strong>Prices are not choices.</strong> The estimate keeps your lifestyle fixed. People who move change it: they cook more where eating out is dear, or rent smaller where rent is. The answer is the cost of not adapting.</li>
+        <li><strong>A survey, not a census.</strong> The indices are crowd-sourced and thin in some cities. Where you know a real figure, type it over the estimate.</li>
+      </ul>
+      <p class="gd-note">Use <strong>Detailed</strong> with your own rent as a row whenever rent is a large or unusual share of your month.</p>
+    </section>
+
+    <section class="gd-sec card" id="sensitivity" aria-labelledby="sensitivity-h">
+      <h2 id="sensitivity-h">What moves the answer</h2>
+      <p class="gd-sub">Each input moved on its own, from the Singapore vs Australia base case, on the tool's own engine.</p>
+      <figure class="gd-tornado">
+        <figcaption>Sydney's net salary needed, when one input moves<small>Base case: the Singapore vs Australia Quick Start, AUD 10,178 a month on the savings ratio target (25%). Each bar moves one input by 10% and keeps the rest; Sydney figures are typed over the estimates.</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered</span><span class="gd-tn-k-hi">Input raised</span></div>
+        <ol>
+          <li style="--lo:-1;--hi:1"><span class="gd-tn-name">Net Income in Singapore<small>SGD 8,000 → 7,200 / 8,800</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−AUD 1,017</span><span>+AUD 1,018</span></span></li>
+          <li style="--lo:-1;--hi:1"><span class="gd-tn-name">Sydney prices, every row<small>the estimates −10% / +10%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−AUD 1,017</span><span>+AUD 1,018</span></span></li>
+          <li style="--lo:-0.6;--hi:0.6"><span class="gd-tn-name">Sydney rent<small>AUD 4,577 → 4,119 / 5,035</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−AUD 610</span><span>+AUD 611</span></span></li>
+          <li style="--lo:0.03;--hi:-0.03"><span class="gd-tn-name">Other in Singapore<small>SGD 1,000 → 900 / 1,100</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+AUD 29</span><span>−AUD 28</span></span></li>
+          <li style="--lo:-0.02;--hi:0.02"><span class="gd-tn-name">Singapore rent<small>SGD 3,500 → 3,150 / 3,850</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−AUD 17</span><span>+AUD 16</span></span></li>
+          <li style="--lo:-0.01;--hi:0.01"><span class="gd-tn-name">Eating out in Singapore<small>SGD 700 → 630 / 770</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−AUD 14</span><span>+AUD 14</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Your spending, every row<small>SGD 6,000 → 5,400 / 6,600</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>AUD 0</span><span>AUD 0</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Exchange rate<small>SGD per AUD −10% / +10%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>AUD 0</span><span>AUD 0</span></span></li>
+        </ol>
+        <p class="gd-tn-note">Read it from the top: the longest bar is the input your answer rests on most. The Singapore rows move your spending with your salary held, so your savings ratio moves too. Measured by <code>guides/_sensitivity.mjs</code>.</p>
+      </figure>
+      <ul class="gd-facts">
+        <li><strong>Two things decide it: your pay and how right the prices there are.</strong> Each moves the answer one for one. Of the prices, rent is the piece worth checking: a 10% error in the Sydney rent is AUD 610 a month.</li>
+        <li><strong>How much you spend does not matter on this target.</strong> Spend 10% more at home and you save less, so the share to keep falls by just enough. Only the mix moves it: more on a row dearer in Sydney (rent, eating out) lifts it a little, more on a cheaper one (other) lowers it.</li>
+        <li><strong>The exchange rate does not touch it.</strong> Every figure in this answer is in Australian dollars, priced in Australian shops. On the nominal target it would: AUD 9,821 becomes AUD 10,064 with the Singapore dollar 10% stronger, and AUD 9,622 with it 10% weaker.</li>
+        <li><strong>So for a decision:</strong> negotiate on the salary needed, but check the rent you would really pay before you trust it, and remember the answer is net of tax.</li>
+      </ul>
+      <div class="gd-demo" data-demo="live" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Singapore's Net Income up and down 10%, then more rent</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The base case</h3><p>SGD 8,000 net, saving 25%: Sydney needs AUD 10,178.</p></li>
+          <li><h3>Salary up 10%</h3><p>SGD 8,800, spending unchanged, now saving 31.8%. Every destination needs 10% more: Sydney AUD 11,196.</p></li>
+          <li><h3>Salary down 10%</h3><p>SGD 7,200, saving 16.7%. Sydney needs AUD 9,161.</p></li>
+          <li><h3>Rent up 10%, salary back</h3><p>SGD 3,850 rent on SGD 8,000: you save less, so the bar barely moves. Sydney AUD 10,194.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="limits" aria-labelledby="limits-h">
+      <h2 id="limits-h">What it leaves out</h2>
+      <p class="gd-sub">What the answer rests on, beyond the figures you enter. <strong>What this assumes</strong>, under the results, lists the ones your comparison uses.</p>
+      <ul class="gd-facts">
+        <li><strong>No tax.</strong> Salaries are net, as you type them. Nothing grosses a salary up through income tax or social charges, so a required salary is take-home pay, not an offer.</li>
+        <li><strong>One lifestyle, fixed.</strong> No household size, no lifestyle level, no change of habits on arrival. A family is priced as whatever its month already costs.</li>
+        <li><strong>Prices from a survey.</strong> Crowd-sourced indices, updated May 2026; health care from the World Bank ICP 2021 by country. A city lacking an index shows no estimate rather than a guess.</li>
+        <li><strong>One month, today.</strong> No inflation from here, no change in rents or rates over time, no one-off costs of moving, deposits or visas.</li>
+        <li><strong>Public services left out.</strong> Schooling, health cover and transport paid through tax differ widely; the tool prices only what you pay directly.</li>
+        <li><strong>Exchange rates from a free feed,</strong> with no bank margin unless you type your own rate.</li>
+        <li><strong>Scaled pay is rough.</strong> Average salaries are crowd-sourced; a median comes from one national ratio; minimum wages are gross.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Do not lean on it when</strong> rent is a big share of your month and you have not typed your own, you compare gross offers, your household will change with the move, or the city's figures come from a thin survey.</p>
+      <p class="gd-note">This guide and the tool are general information, not financial advice. Check the figures that matter to you before you accept an offer or move.</p>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to compare your own?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+      <a class="gd-more" href="../map/">Or set your city against the world in the Map View</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (FX). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+</body>
+</html>

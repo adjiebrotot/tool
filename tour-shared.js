@@ -18,7 +18,7 @@
        launchShort: '🧭 Tur',                // a shorter phone-width form (optional)
        guide:       'guides/',               // optional: the tool's guide page
        labels:      { skip, back, next, start, done, dialog,
-                      guide, seeGuide, guideNote }, // optional
+                      guide, seeGuide, guideNote, guideTitle }, // optional
        saveState:   function () { ... },   // optional, see below
        restoreState:function (snapshot) { ... },
        holdFirstVisit: function () { ... }, // optional: true skips the first-visit
@@ -76,6 +76,7 @@
   var GUIDE_LABEL = L.guide || '📖 Guide';
   var SEE_GUIDE_LABEL = L.seeGuide || 'See Guide';
   var GUIDE_NOTE = L.guideNote || 'See guide for more details';
+  var GUIDE_TITLE = L.guideTitle || 'How to use this tool, step by step';
 
   // Snapshot of the user's own work, taken when the tour starts and given
   // back when it ends. null means there was nothing worth restoring.
@@ -459,7 +460,7 @@
       guide.href = GUIDE_HREF;
       guide.setAttribute('data-pf-guide-link', '');
       setLabel(guide, GUIDE_LABEL);
-      guide.title = 'How to use this tool, step by step';
+      guide.title = GUIDE_TITLE;
       btn.parentNode.insertBefore(guide, btn.nextSibling);
     }
   }
