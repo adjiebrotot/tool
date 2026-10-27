@@ -226,7 +226,7 @@
           <li><h3>Add an offer</h3><p><strong>+</strong> adds one: an amortizing loan at 5% over 60 months, 0% down.</p></li>
           <li><h3>Its loan type</h3><p><strong>Loan Type</strong> picks one of seven structures. The fields below change to suit it.</p></li>
           <li><h3>Term, rate and fees</h3><p><strong>Term</strong> counts repayments, <strong>Finance Rate</strong> is yearly, then the <strong>Down Payment</strong>, <strong>Origination Fee</strong>, <strong>Fee Treatment</strong> and <strong>Admin Fee</strong>.</p></li>
-          <li><h3>Simulate</h3><p>The new offer joins the comparison. A 4.9% flat rate shows as 9.32% in <strong>Effective Annual Rate (EAR)</strong>.</p></li>
+          <li><h3>Simulate</h3><p>The new offer joins the comparison. A 4.9% flat rate shows as 9.32% in <strong>Effective Rate (EAR)</strong>.</p></li>
         </ol>
       </div>
       <ul class="gd-facts">
@@ -320,7 +320,7 @@
         </ol>
       </div>
       <ul class="gd-facts">
-        <li><strong>One offer, every combination.</strong> Up to 50 values a setting and 2,500 runs, all on the same engine as Simulate. The <strong>Objective</strong> can be Net Benefit, Ending Wealth, Total Interest, Total Financing Cost or Effective Annual Rate.</li>
+        <li><strong>One offer, every combination.</strong> Up to 50 values a setting and 2,500 runs, all on the same engine as Simulate. The <strong>Objective</strong> can be Net Benefit, Ending Wealth, Total Interest, Total Financing Cost or Effective Rate.</li>
         <li><strong>Left out on purpose:</strong> the loan type, the frequency and the rate and repayment bases, since each swaps the fields around it.</li>
         <li><strong>The best is the best on these inputs,</strong> not a forecast. It moves when the cash, the rates or the price do.</li>
       </ul>
@@ -369,7 +369,7 @@
       <ul class="gd-facts">
         <li><strong>Read the bracket as a present value.</strong> It is what financing lets you keep today, less what everything you pay later is worth today at the rate your cash earns. The tool carries that forward to the end of the term, so Net Benefit is in the money of that date.</li>
         <li><strong>The wash.</strong> Borrow at exactly the rate your cash earns, with no fee, and the repayments are worth exactly the loan: Net Benefit is zero for every loan type, frequency, term and down payment. Measured on the car's three-year loan at 4.5% with its fee removed: $0.00.</li>
-        <li><strong>So the rule is one comparison.</strong> With no fees and the offer at the cash price, financing wins exactly when the loan's <strong>Effective Annual Rate (EAR)</strong> is below the <strong>Risk-Free Rate</strong>. Fees count against it, and a cheaper offer price counts for it.</li>
+        <li><strong>So the rule is one comparison.</strong> With no fees and the offer at the cash price, financing wins exactly when the loan's <strong>Effective Rate (EAR)</strong> is below the <strong>Risk-Free Rate</strong>. Fees count against it, and a cheaper offer price counts for it.</li>
         <li><strong>Timing.</strong> The cash grows for a period first, then the repayment comes out of it. The first repayment falls one period after the purchase, and the last one clears the loan exactly.</li>
         <li><strong>Each offer is scored at the end of its own term</strong>, against paying cash over the same time. <strong>Best Strategy</strong> is the top offer by the <strong>Optimization Target</strong>, or <em>Cash Purchase</em> when every Net Benefit is below zero.</li>
       </ul>
@@ -379,7 +379,7 @@
           <tr><th scope="row">Ending Wealth</th><td data-l="What it is">The cash still invested at the end of the term, less any debt.</td><td data-l="In the maths"><var>W</var><sub><var>n</var></sub>. On the chart over time: invested cash − loan balance.</td></tr>
           <tr><th scope="row">Cash Purchase at Same Horizon</th><td data-l="What it is">The cash left after paying in full, grown to the offer's own end date.</td><td data-l="In the maths"><var>W</var><sup>cash</sup>. The <strong>Cash Purchase Wealth</strong> tile runs it to the longest offer.</td></tr>
           <tr><th scope="row">Net Benefit vs Cash</th><td data-l="What it is">How much better off financing leaves you. Below zero, paying cash is better.</td><td data-l="In the maths"><var>W</var><sub><var>n</var></sub> − <var>W</var><sup>cash</sup>. A difference under half a cent reads as a tie.</td></tr>
-          <tr><th scope="row">Effective Annual Rate (EAR)</th><td data-l="What it is">What the repayments cost a year, whatever the loan's shape.</td><td data-l="In the maths">The rate <var>r</var> that makes the repayments repay the amount financed, as (1 + <var>r</var>)<sup><var>m</var></sup> − 1. It leaves fees out.</td></tr>
+          <tr><th scope="row">Effective Rate (EAR)</th><td data-l="What it is">What the repayments cost a year, whatever the loan's shape.</td><td data-l="In the maths">The rate <var>r</var> that makes the repayments repay the amount financed, as (1 + <var>r</var>)<sup><var>m</var></sup> − 1. It leaves fees out.</td></tr>
           <tr><th scope="row">All-in Rate (with fees)</th><td data-l="What it is">The same yearly rate with every fee the offer charges.</td><td data-l="In the maths">The rate that makes the repayments plus <var>a</var> each time repay the amount financed less the origination fee, the money that goes towards the item, as (1 + <var>r</var>)<sup><var>m</var></sup> − 1.</td></tr>
           <tr><th scope="row">Total Interest Paid</th><td data-l="What it is">All the interest over the term.</td><td data-l="In the maths">Σ interest<sub><var>k</var></sub>. No fees in it.</td></tr>
           <tr><th scope="row">Total Financing Cost</th><td data-l="What it is">What borrowing costs, before any credit for the cash it keeps.</td><td data-l="In the maths">Total interest + origination fee + <var>a</var> × <var>n</var>.</td></tr>
@@ -440,7 +440,7 @@
           <tr><th scope="row">Residual</th><td data-l="What it is">The share of the amount financed still owed at the end.</td><td data-l="In the maths"><var>ρ</var>, 0% to 99% of <var>L</var>.</td><td data-l="Raise it"><span class="gd-eff">▼ instalment</span><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>While the loan costs more than cash earns.</p></td></tr>
         </tbody>
       </table></div>
-      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> A flat rate is not comparable with an ordinary rate. You keep paying interest on money you have already repaid, so the average balance is about half the loan while the interest is charged on all of it. Compare <strong>Effective Annual Rate (EAR)</strong>, never the quoted figure: the motorbike's 0.9% a month flat costs nearly twice its 10.8% amortizing twin.</p>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> A flat rate is not comparable with an ordinary rate. You keep paying interest on money you have already repaid, so the average balance is about half the loan while the interest is charged on all of it. Compare <strong>Effective Rate (EAR)</strong>, never the quoted figure: the motorbike's 0.9% a month flat costs nearly twice its 10.8% amortizing twin.</p>
       <p class="gd-note gd-note-warn"><strong>Not modelled: deferred interest.</strong> Some 0% promotions charge all the back interest if the balance is not cleared by a date. The tool has no such switch. Its 0% plans are amortizing loans at 0%, with any conversion fee as an origination fee.</p>
     </section>
 
@@ -493,7 +493,7 @@
           <tr><th scope="row">Admin Fee</th><td data-l="What it is">A fixed fee on every repayment, such as account-keeping.</td><td data-l="In the maths"><var>a</var>, out of the cash with each <var>R</var><sub><var>k</var></sub>. Total = <var>a</var> × <var>n</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ Net Benefit</span><p>Car: $10 a month is −$384.</p></td></tr>
         </tbody>
       </table></div>
-      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> <strong>Effective Annual Rate (EAR)</strong> is the contract rate of the repayments and leaves fees out, in every treatment: a 0% plan with a 3% fee still reads 0.00% there. Read <strong>All-in Rate (with fees)</strong> under it, which prices the fee in, as Total Financing Cost and Net Benefit do: the card's six-month plan finishes last on them.</p>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> <strong>Effective Rate (EAR)</strong> is the contract rate of the repayments and leaves fees out, in every treatment: a 0% plan with a 3% fee still reads 0.00% there. Read <strong>All-in Rate (with fees)</strong> under it, which prices the fee in, as Total Financing Cost and Net Benefit do: the card's six-month plan finishes last on them.</p>
     </section>
 
     <!-- Assumptions -->

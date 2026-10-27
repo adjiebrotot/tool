@@ -143,7 +143,7 @@ export const SCENES = [
       await simulate(S, 600);
       await S.scrollTo('.detail-section', 12, 1000);
       await S.focus('.detail-section', { pad: 10 });
-      await S.moveTo({ text: 'Effective Annual Rate (EAR)', in: '#compTableWrap' }, { ms: 800 });
+      await S.moveTo({ text: 'Effective Rate (EAR)', in: '#compTableWrap' }, { ms: 800 });
       await S.wait(2600);
     },
   },

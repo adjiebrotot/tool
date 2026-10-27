@@ -287,7 +287,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
 
   // ── F6: and its effective rate is far above the headline ──
   const refEff=effAnnual(irrOf(PRICE,new Array(N).fill(refPmt)),PPY);
-  const gotEff=cell(t,'Effective Annual Rate (EAR)');
+  const gotEff=cell(t,'Effective Rate (EAR)');
   check('F6 flat rate: the effective APR matches an independent IRR and far exceeds the quoted 5%',
     Math.abs(gotEff-refEff)<0.02&&gotEff>8,
     `app ${gotEff.toFixed(2)}% vs replay ${refEff.toFixed(2)}% (quoted 5.00%)`);
@@ -299,7 +299,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
   const pmt=Math.round(pmtOf(PRICE,r,N)*100)/100;
   await setOneScenario({name:'Known',loanType:'knownPayment',freq:'monthly',term:N,rate:5,payment:pmt});
   await saveScenario();await page.waitForTimeout(200);
-  const got=cell(await compTable(),'Effective Annual Rate (EAR)');
+  const got=cell(await compTable(),'Effective Rate (EAR)');
   check('F7 known repayment: the solved rate returns the 7% the instalment was built from',
     Math.abs(got-7)<0.02,`app ${got.toFixed(4)}% vs 7.0000% (instalment ${pmt})`);
 }
@@ -322,7 +322,7 @@ const PRICE=50000,CASH=80000,RF=4.5,PPY=12,N=60;
   const stream=[];for(let i=1;i<=N;i++)stream.push(i<=2?100:i<=6?200:1100);
   stream[N-1]=money(a.rows[N-1][pi]); // the last period settles the remainder
   const refEff=effAnnual(irrOf(PRICE,stream),PPY);
-  const gotEff=cell(await compTable(),'Effective Annual Rate (EAR)');
+  const gotEff=cell(await compTable(),'Effective Rate (EAR)');
   check('F8b stepped repayment: the solved APR matches an independent IRR of the same stream',
     Math.abs(gotEff-refEff)<0.02,`app ${gotEff.toFixed(3)}% vs replay ${refEff.toFixed(3)}%`);
 }

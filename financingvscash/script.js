@@ -1282,7 +1282,7 @@ function renderComparisonTable(results,L){
     // What the loan really costs, so a flat 5% and an annuity 5% can be read
     // against each other instead of against their headline numbers: first the
     // repayments alone, then with every fee the offer charges.
-    ['Effective Annual Rate (EAR)','—',r=>r.effectiveRate===null?'—':fmt.pct(r.effectiveRate/100)],
+    ['Effective Rate (EAR)','—',r=>r.effectiveRate===null?'—':fmt.pct(r.effectiveRate/100)],
     ['All-in Rate (with fees)','—',r=>r.allInRate==null?'—':fmt.pct(r.allInRate/100)],
     ['Admin Fee (per payment)','—',r=>{
       if(!(r.adminFee>0))return'—';
@@ -3244,7 +3244,7 @@ const OPT_METRICS={
   endWealth:        {label:'Ending Wealth',            kind:'money',hi:true},
   totalInterest:    {label:'Total Interest Paid',      kind:'money',hi:false},
   totalFinanceCost: {label:'Total Financing Cost',     kind:'money',hi:false},
-  effectiveRate:    {label:'Effective Annual Rate (EAR)',kind:'pct', hi:false},
+  effectiveRate:    {label:'Effective Rate (EAR)',     kind:'pct',  hi:false},
   inflAdjNetBenefit:{label:'Net Benefit in today\'s money',kind:'money',hi:true}
 };
 function optMetricKey(){

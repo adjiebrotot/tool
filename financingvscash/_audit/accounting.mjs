@@ -357,7 +357,7 @@ console.log('\n════ B — the wash: borrow at r, invest at r, and nothin
   const t=await compTable();
   const flat=money(t['Net Benefit vs Cash'][colOf(t,'flat')]);
   const am=money(t['Net Benefit vs Cash'][colOf(t,'amort')]);
-  const apr=money(t['Effective Annual Rate (EAR)'][colOf(t,'flat')]);
+  const apr=money(t['Effective Rate (EAR)'][colOf(t,'flat')]);
   check('B1f flat rate is the exception that proves the rule: it cannot wash, and it loses',
     flat < -100 && Math.abs(am) < 0.01 && apr > R*1.6,
     `amortizing washes to $${am.toFixed(2)}; the same quoted 6% flat costs $${(-flat).toFixed(2)} and solves to ${apr.toFixed(2)}% APR`);
@@ -788,8 +788,8 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
   await load({}); await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="motorbike"]').click());
   await page.waitForTimeout(450);
   let t=await compTable();
-  const flatApr=money(t['Effective Annual Rate (EAR)'][colOf(t,'36mo @ 0.9%/mo flat')]);
-  const amApr =money(t['Effective Annual Rate (EAR)'][colOf(t,'36mo @ 10.8% amortizing')]);
+  const flatApr=money(t['Effective Rate (EAR)'][colOf(t,'36mo @ 0.9%/mo flat')]);
+  const amApr =money(t['Effective Rate (EAR)'][colOf(t,'36mo @ 10.8% amortizing')]);
   claims.push({ok: flatApr>1.7*10.8 && flatApr<2.3*10.8 && near(amApr,11.35,0.2),
     say:`flat solves to ${flatApr.toFixed(2)}% against a quoted 10.8% (the same money amortizing costs ${amApr.toFixed(2)}%)`});
 
@@ -802,7 +802,7 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
   await page.waitForTimeout(450);
   t=await compTable();
   const ph=['12 x $150','24 x $82','36 x $57'].map(n=>({n,
-    nb:money(t['Net Benefit vs Cash'][colOf(t,n)]), apr:money(t['Effective Annual Rate (EAR)'][colOf(t,n)]),
+    nb:money(t['Net Benefit vs Cash'][colOf(t,n)]), apr:money(t['Effective Rate (EAR)'][colOf(t,n)]),
     pmt:money(t['Periodic Payment'][colOf(t,n)])}));
   claims.push({ok: ph[0].apr===0 && ph[0].nb>0 && ph[1].nb<0 && ph[2].nb<0
       && ph[0].nb>ph[1].nb && ph[1].nb>ph[2].nb           // verdict falls
@@ -888,7 +888,7 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
 }
 
 /* One definitional choice the plan turned up that is worth pinning rather than
-   assuming: the Effective Annual Rate (EAR) row is the CONTRACT rate, so it is blind
+   assuming: the Effective Rate (EAR) row is the CONTRACT rate, so it is blind
    to fees in all three treatments alike. Consistency is the whole defence of
    that choice — a rate that folded the fee in for a discounted note but not for
    an upfront one would be neither the contract rate nor the true cost. */
@@ -901,12 +901,12 @@ const PRESETS=['house','car','phone','card','motorbike','deferred'];
   ];
   await load({fields:{'v:availableCash':'80000'}, scenarios:list});
   const t=await compTable();
-  const aprs=list.map(s=>money(t['Effective Annual Rate (EAR)'][colOf(t,s.name)]));
+  const aprs=list.map(s=>money(t['Effective Rate (EAR)'][colOf(t,s.name)]));
   const costs=list.map(s=>money(t['Total Financing Cost'][colOf(t,s.name)]));
   check('APR is the contract rate, identically across all three fee treatments; the fee lives in the cost row',
     aprs.every(v=>near(v,7,0.005)) && costs[0]>costs[3] && costs[1]>costs[3] && costs[2]>costs[3],
     `APR ${aprs.map(v=>v.toFixed(2)).join('/')}% — a 5% fee moves none of them, and moves financing cost to ${costs.slice(0,3).map(v=>v.toFixed(0)).join('/')} against ${costs[3].toFixed(0)}`);
-  note('Effective Annual Rate (EAR) is the contract rate and excludes every origination fee, including the grossed-up one on a '
+  note('Effective Rate (EAR) is the contract rate and excludes every origination fee, including the grossed-up one on a '
      + 'discounted note. That is consistent and it is what makes a flat quote comparable with an annuity quote, but it '
      + 'means EAR alone never prices a fee-bearing deal. All-in Rate (with fees) does, as Total Financing Cost and Net '
      + 'Benefit do, and they are what the verdict is drawn from.');
@@ -1086,7 +1086,7 @@ function diffSnap(a,b){
     ['balloon yearly',   sc({loanType:'balloon', financeRate:8, freq:'yearly', termPeriods:5, residualPct:30, feeAmt:1, feeType:'pct', feeTreatment:'discount'})],
     ['known monthly',    sc({loanType:'knownPayment', knownPayment:700, termPeriods:60, downPaymentPct:10})]
   ];
-  const loanRows=['Down Payment Amount','Financed Amount','Periodic Payment','Total Interest Paid','Total Fees Paid','Total Financing Cost','Total Out-of-Pocket','Ending Wealth','Effective Annual Rate (EAR)'];
+  const loanRows=['Down Payment Amount','Financed Amount','Periodic Payment','Total Interest Paid','Total Fees Paid','Total Financing Cost','Total Out-of-Pocket','Ending Wealth','Effective Rate (EAR)'];
   for(const [label,o] of offers){
     for(const Pp of [34000, 44000.5]){                    // 15% off, and a markup
       const s=Object.assign({},o,{name:'x',priceType:'amount',priceValue:Pp});
