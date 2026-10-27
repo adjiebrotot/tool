@@ -84,7 +84,8 @@
       var full = button('Full screen', 'Show the demo full screen');
       bar.appendChild(label); bar.appendChild(play); bar.appendChild(full);
       fig.appendChild(view); fig.appendChild(bar);
-      if (!(view.requestFullscreen || view.webkitRequestFullscreen)) full.hidden = true;
+      // The whole figure goes full screen, so its bar (Pause, Exit full screen) comes along.
+      if (!(fig.requestFullscreen || fig.webkitRequestFullscreen)) full.hidden = true;
       guard = document.createElement('div');
       guard.className = 'gd-guard';
       view.appendChild(guard);
@@ -96,9 +97,19 @@
         if (d.state === 'idle' || d.state === 'ended' || d.state === 'failed' || d.tried) d.load(-1);
         else d.want();
       });
+      d.fullLabel = function () {
+        var on = (document.fullscreenElement || document.webkitFullscreenElement) === fig;
+        full.textContent = on ? 'Exit full screen' : 'Full screen';
+      };
       full.addEventListener('click', function () {
-        var f = view.requestFullscreen || view.webkitRequestFullscreen;
-        var p = f.call(view);
+        if ((document.fullscreenElement || document.webkitFullscreenElement) === fig) {
+          var x = document.exitFullscreen || document.webkitExitFullscreen;
+          var q = x.call(document);
+          if (q && q.catch) q.catch(function () {});
+          return;
+        }
+        var f = fig.requestFullscreen || fig.webkitRequestFullscreen;
+        var p = f.call(fig);
         if (p && p.catch) p.catch(function () {});
         d.asked = true; d.userPaused = false;
         if (d.state === 'idle' || d.state === 'ended') d.load(-1); else d.want();
@@ -894,5 +905,7 @@
   }
   document.addEventListener('visibilitychange', function () { demos.forEach(function (d) { d.want(); }); });
   if (reduce.addEventListener) reduce.addEventListener('change', function () { demos.forEach(function (d) { d.want(); }); });
-  document.addEventListener('fullscreenchange', function () { demos.forEach(function (d) { d.fit(); }); });
+  function onFull() { demos.forEach(function (d) { d.fit(); if (d.fullLabel) d.fullLabel(); }); }
+  document.addEventListener('fullscreenchange', onFull);
+  document.addEventListener('webkitfullscreenchange', onFull);
 })();

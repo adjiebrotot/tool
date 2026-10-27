@@ -15,7 +15,6 @@
      window.__TOUR = {
        seenKey:     'unique-per-tool-key',   // localStorage flag
        launchLabel: '🧭 Tour',               // header button text (optional)
-       launchShort: '🧭 Tur',                // a shorter phone-width form (optional)
        guide:       'guides/',               // optional: the tool's guide page
        labels:      { skip, back, next, start, done, dialog,
                       guide, seeGuide, guideNote, guideTitle }, // optional
@@ -58,7 +57,6 @@
   var LAUNCH_LABEL = CFG.launchLabel || '🧭 Tour';
   // On a phone the header holds Back, language, tour and theme in one row,
   // and a long label is what pushes it to a second, so it shortens there.
-  var LAUNCH_SHORT = CFG.launchShort || '';
   // The tool's guide page, when it has one: a Guide button beside the tour's,
   // and a way there from the last step.
   var GUIDE_HREF = CFG.guide || '';
@@ -403,18 +401,22 @@
     try { return localStorage.getItem(SEEN_KEY) === '1'; } catch (e) { return false; }
   }
 
-  /* A label's leading emoji goes in a span of its own, so a crowded header
-     (the PowerFactory Builder's on a phone) can drop the decoration and keep
-     the word. */
+  /* A label's leading emoji and its word each get a span, so a narrow screen
+     can drop the word and keep the emoji (shared.css, .pf-tour-word); the
+     word stays the button's name for a screen reader. */
   function setLabel(el, text) {
     var m = /^([^\s\w]+)\s+(.+)$/.exec(text);
     if (!m) { el.textContent = text; return; }
     var emo = document.createElement('span');
     emo.className = 'pf-tour-emo';
     emo.setAttribute('aria-hidden', 'true');
-    emo.textContent = m[1] + ' ';
+    emo.textContent = m[1];
+    var word = document.createElement('span');
+    word.className = 'pf-tour-word';
+    word.textContent = '\u00a0' + m[2];
     el.appendChild(emo);
-    el.appendChild(document.createTextNode(m[2]));
+    el.appendChild(word);
+    if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', m[2]);
   }
 
   function addLaunchButton() {
@@ -436,18 +438,7 @@
       btn.className = model.className.replace(/\b(?:btn-back|theme-ico)\b/g, '').trim();
     }
     if (!btn.className) btn.className = 'pf-tour-launch';
-    if (LAUNCH_SHORT) {
-      var long = document.createElement('span');
-      long.className = 'pf-tour-long';
-      setLabel(long, LAUNCH_LABEL);
-      var short = document.createElement('span');
-      short.className = 'pf-tour-short';
-      setLabel(short, LAUNCH_SHORT);
-      btn.appendChild(long);
-      btn.appendChild(short);
-    } else {
-      setLabel(btn, LAUNCH_LABEL);
-    }
+    setLabel(btn, LAUNCH_LABEL);
     btn.setAttribute('aria-label', 'Take a guided tour of this tool');
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.

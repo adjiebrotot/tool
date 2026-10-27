@@ -26,7 +26,6 @@ const $ = id => document.getElementById(id);
 const LANG = {
   en: {
     subtitle: "Compare a married couple's Indonesian income tax filed jointly (Gabung Harta) or separately (Pisah Harta, PH or MT).",
-    btnBack: '← Other Tools',
     tabInputs: 'Household',
     tabAdvanced: 'PTKP & Brackets',
     groupFamily: 'Family',
@@ -185,7 +184,6 @@ const LANG = {
   },
   id: {
     subtitle: 'Bandingkan PPh suami istri di Indonesia antara Gabung Harta dan Pisah Harta (PH atau MT).',
-    btnBack: '← Tool Lainnya',
     tabInputs: 'Rumah tangga',
     tabAdvanced: 'PTKP & Lapisan Pajak',
     groupFamily: 'Keluarga',
