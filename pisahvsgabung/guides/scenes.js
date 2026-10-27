@@ -16,6 +16,8 @@ const tab = (name) => `.ctrl-tab[data-tab="${name}"]`;
 const deps = (n) => `#dependents + .seg-group .seg-btn[data-val="${n}"]`;
 const sliderOf = (id) => (S) => { const e = S.doc.getElementById(id); return e && e.closest('.slider-block'); };
 const rowOf = (id) => (S) => { const e = S.doc.getElementById(id); return e && e.closest('.field-row'); };
+const toggleOf = (id) => (S) => { const e = S.doc.getElementById(id); return e && e.closest('.toggle-row'); };
+const bjSwitch = '.toggle-switch:has(#biayaJabatan)';
 const saving = '.metrics .metric:first-child';               // the Tax savings card
 const park = (S, x = 1262, y = 790) => S.glide(x, y, 500);   // in the page's right margin, out of a tooltip's way
 // A Quick Start, loaded before the scene begins (the Inputs card must be open).
@@ -61,7 +63,7 @@ export const SCENES = [
     },
   },
   {
-    // Household: dependants, the wife's share, deductions, then the Each spouse view.
+    // Household: dependants, the wife's share, deductions, biaya jabatan, then the Each spouse view.
     name: 'household',
     async run(S) {
       await preset(S, 'even');
@@ -78,11 +80,16 @@ export const SCENES = [
       S.mark('Deductions');
       await S.reveal('#deductionInput', 0.4);
       await S.focus([rowOf('deductionInput'), saving], { pad: 30 });
-      await S.fill('#deductionInput', '12000000', { delay: 120, after: 900 });
+      await S.fill('#deductionInput', '12000000', { delay: 120, after: 1400 });
+      S.mark('Biaya jabatan');
+      await S.reveal(bjSwitch, 0.6);
+      await S.focus([toggleOf('biayaJabatan'), saving], { pad: 30 });
+      await S.click(bjSwitch, { after: 1200 });
       await S.reveal('#capWarning', 0.7);
-      await S.focus(['#capWarning', '#deductionInput'], { pad: 50 });
+      await S.focus(['#capWarning', toggleOf('biayaJabatan')], { pad: 50 });
       await S.moveTo('#capWarning', { ms: 700 });
       await S.wait(2200);
+      await S.click(bjSwitch, { after: 900 });
       S.mark('Each spouse');
       await S.reveal('.input-mode-toggle', 0.15);
       await S.focus('#tab-inputs .field-group:nth-of-type(2)', { pad: 20 });

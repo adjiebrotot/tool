@@ -45,15 +45,17 @@ const LANG = {
     wifeShareLabel: "Wife's share of that salary",
     splitDerived: (h, w) => `Husband <b>${h}</b>, wife <b>${w}</b> a year.`,
     deductionLabel: 'Deductions, both spouses (pengurang)',
-    deductionTip: 'Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.',
+    deductionTip: 'Deductions such as iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns. Biaya jabatan has its own switch; with it off, include biaya jabatan here.',
     husbandSalaryLabel: "Husband's gross salary",
     wifeSalaryLabel: "Wife's gross salary",
     combinedPrefix: 'Together',
     combinedSuffix: "a year, wife's share",
     husbandDeductionLabel: "Husband's deductions (pengurang)",
-    husbandDeductionTip: "Deductions that come off the husband's gross income only, applied before PTKP.",
+    husbandDeductionTip: "Deductions such as iuran pensiun that come off the husband's gross income only, before PTKP. Biaya jabatan has its own switch.",
     wifeDeductionLabel: "Wife's deductions (pengurang)",
-    wifeDeductionTip: "Deductions that come off the wife's gross income only, applied before PTKP.",
+    wifeDeductionTip: "Deductions such as iuran pensiun that come off the wife's gross income only, before PTKP. Biaya jabatan has its own switch.",
+    bjLabel: 'Biaya jabatan, worked out for you',
+    bjTip: "5% of each spouse's gross salary, at most Rp 6,000,000 a year, taken off before PTKP beside the deductions above. Switch it off to enter your own.",
     ptkpSectionLabel: 'Tax-free allowance a year (PTKP)',
     ptkpTK0: 'Base, for each taxpayer (TK/0)',
     ptkpK: 'Added if married (K)',
@@ -202,15 +204,17 @@ const LANG = {
     wifeShareLabel: 'Porsi istri dari gaji tersebut',
     splitDerived: (h, w) => `Suami <b>${h}</b>, istri <b>${w}</b> per tahun.`,
     deductionLabel: 'Pengurang, suami dan istri',
-    deductionTip: 'Pengurang seperti biaya jabatan atau iuran pensiun. Dikurangkan dari penghasilan kotor sebelum PTKP, lalu dibagi sesuai porsi penghasilan masing-masing.',
+    deductionTip: 'Pengurang seperti iuran pensiun, dikurangkan sebelum PTKP dan dibagi sesuai porsi penghasilan. Biaya jabatan punya tombol sendiri; jika dimatikan, masukkan di sini.',
     husbandSalaryLabel: 'Gaji kotor suami',
     wifeSalaryLabel: 'Gaji kotor istri',
     combinedPrefix: 'Total',
     combinedSuffix: 'per tahun, porsi istri',
     husbandDeductionLabel: 'Pengurang suami',
-    husbandDeductionTip: 'Pengurang yang hanya mengurangi penghasilan kotor suami, sebelum PTKP.',
+    husbandDeductionTip: 'Pengurang seperti iuran pensiun yang hanya mengurangi penghasilan kotor suami, sebelum PTKP. Biaya jabatan punya tombol sendiri.',
     wifeDeductionLabel: 'Pengurang istri',
-    wifeDeductionTip: 'Pengurang yang hanya mengurangi penghasilan kotor istri, sebelum PTKP.',
+    wifeDeductionTip: 'Pengurang seperti iuran pensiun yang hanya mengurangi penghasilan kotor istri, sebelum PTKP. Biaya jabatan punya tombol sendiri.',
+    bjLabel: 'Biaya jabatan, dihitung otomatis',
+    bjTip: '5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun, dikurangkan sebelum PTKP di samping pengurang di atas. Matikan untuk mengisinya sendiri.',
     ptkpSectionLabel: 'Penghasilan tidak kena pajak per tahun (PTKP)',
     ptkpTK0: 'Dasar, untuk tiap wajib pajak (TK/0)',
     ptkpK: 'Tambahan bila kawin (K)',
@@ -501,6 +505,17 @@ function normalizeBrackets() {
   S.brackets = kept;
 }
 
+/* Biaya jabatan: 5% of an employee's gross salary, at most Rp 6,000,000 a year
+   (PMK 250/PMK.03/2008), taken off before PTKP. With the switch on it is
+   worked out for each spouse from their own gross, on top of whatever is
+   typed as deductions; off, the deduction fields carry it, as they did before
+   the switch existed (a cache, file or link from then opens with it off, see
+   migrateBiayaJabatan). */
+const BIAYA_JABATAN_RATE = 0.05;
+const BIAYA_JABATAN_MAX  = 6000000;
+function biayaJabatanCap(gross){ return Math.min(Math.max(0,gross)*BIAYA_JABATAN_RATE, BIAYA_JABATAN_MAX); }
+function biayaJabatanOf(gross){ return S.biayaJabatan ? biayaJabatanCap(gross) : 0; }
+
 const DEFAULTS = {
   dependents: 0,
   splitPct: 50,
@@ -508,6 +523,7 @@ const DEFAULTS = {
   deduction: 0,
   husbandDeduction: 0,
   wifeDeduction: 0,
+  biayaJabatan: true,
   inputMode: 'total',
   husbandSalary: 250000000,
   wifeSalary: 250000000,
@@ -529,6 +545,7 @@ const els = {
   deductionInput: $('deductionInput'),
   husbandDeductionInput: $('husbandDeductionInput'),
   wifeDeductionInput: $('wifeDeductionInput'),
+  biayaJabatan: $('biayaJabatan'),
   chart1PngBtn: $('chart1PngBtn'),
   chart1CopyPngBtn: $('chart1CopyPngBtn'),
   chart1SvgBtn: $('chart1SvgBtn'),
@@ -560,6 +577,7 @@ function readPtkpField(el, dflt){
 
 function readInputs(){
   S.dependents = parseInt(els.dependents.value)||0;
+  S.biayaJabatan = !!els.biayaJabatan.checked;
   S.ptkpBase      = readPtkpField(els.ptkpBase, PTKP_BASE_DEFAULT);
   S.ptkpMarried   = readPtkpField(els.ptkpMarried, PTKP_MARRIED_DEFAULT);
   S.ptkpSpouse    = readPtkpField(els.ptkpSpouse, PTKP_SPOUSE_DEFAULT);
@@ -643,8 +661,9 @@ function computeModel() {
     const wifeGross = totalGross * wifePct;
     const husbandGross = totalGross * husbandPct;
     // Only the part of a deduction that fits inside that spouse's gross applies.
-    const husbandDeduction = Math.min(husbandGross, husbandDeductionAmt);
-    const wifeDeduction = Math.min(wifeGross, wifeDeductionAmt);
+    // Biaya jabatan is a share of gross, so it is worked out at every salary.
+    const husbandDeduction = Math.min(husbandGross, biayaJabatanOf(husbandGross) + husbandDeductionAmt);
+    const wifeDeduction = Math.min(wifeGross, biayaJabatanOf(wifeGross) + wifeDeductionAmt);
     const totalDeduction = husbandDeduction + wifeDeduction;
     const husbandNet = husbandGross - husbandDeduction;
     const wifeNet = wifeGross - wifeDeduction;
@@ -700,8 +719,10 @@ function computeModel() {
   const currentWifeGross    = S.inputMode === 'individual' ? S.wifeSalary    : S.totalSalary * wifePct;
   // Report the deduction actually applied, so Gross − Deductions = Net Income
   // even when one spouse's deduction is larger than their gross.
-  const currentHusbandDeduction = Math.min(currentHusbandGross, husbandDeductionAmt);
-  const currentWifeDeduction = Math.min(currentWifeGross, wifeDeductionAmt);
+  const currentHusbandBJ = biayaJabatanOf(currentHusbandGross);
+  const currentWifeBJ = biayaJabatanOf(currentWifeGross);
+  const currentHusbandDeduction = Math.min(currentHusbandGross, currentHusbandBJ + husbandDeductionAmt);
+  const currentWifeDeduction = Math.min(currentWifeGross, currentWifeBJ + wifeDeductionAmt);
   const curHusbandNet = currentHusbandGross - currentHusbandDeduction;
   const curWifeNet = currentWifeGross - currentWifeDeduction;
   const currentNet = curHusbandNet + curWifeNet;
@@ -727,6 +748,7 @@ function computeModel() {
     pisahRate: S.totalSalary > 0 ? curTaxP / S.totalSalary : 0,
     gabungRate: S.totalSalary > 0 ? curTaxG / S.totalSalary : 0,
     husbandGross: currentHusbandGross, wifeGross: currentWifeGross,
+    husbandBJ: currentHusbandBJ, wifeBJ: currentWifeBJ,
     husbandNet: curHusbandNet, wifeNet: curWifeNet,
     ptkpH: ptkpHusband_pisah, ptkpW: ptkpWife_pisah, ptkpGabung: curPtkpGabung,
     taxableH: curTxH_p, taxableW: curTxW_p, taxableGabung: curTxG,
@@ -1058,10 +1080,7 @@ function updateDetailTable(rows){
   }
 }
 
-/* ── Biaya jabatan cap (warning only, never applied to the maths) ── */
-const BIAYA_JABATAN_RATE = 0.05;
-const BIAYA_JABATAN_MAX  = 6000000;
-function biayaJabatanCap(gross){ return Math.min(Math.max(0,gross)*BIAYA_JABATAN_RATE, BIAYA_JABATAN_MAX); }
+/* ── Biaya jabatan cap warning, for deductions typed with the switch off ── */
 function capWarnMoney(v){ return 'Rp ' + Math.round(v).toLocaleString('en-US'); }
 function capWarnItem(who, amount, cap){
   return who + ' ' + capWarnMoney(amount) + T('warnCapOf') + capWarnMoney(cap);
@@ -1083,19 +1102,25 @@ function rerender(){
     warn.style.display='none';
   }
 
-  if(S.inputMode === 'total' && S.deduction > S.totalSalary){
+  const bjTotal = S.inputMode === 'individual'
+    ? biayaJabatanOf(S.husbandSalary) + biayaJabatanOf(S.wifeSalary)
+    : biayaJabatanOf(S.totalSalary*(1-S.splitPct/100)) + biayaJabatanOf(S.totalSalary*S.splitPct/100);
+  if(S.inputMode === 'total' && S.deduction > 0 && S.deduction + bjTotal > S.totalSalary){
     warn.style.display='block';
     warn.textContent=T('warnDeductExceed');
   }
-  if(S.inputMode === 'individual' && (S.husbandDeduction > S.husbandSalary || S.wifeDeduction > S.wifeSalary)){
+  if(S.inputMode === 'individual' && (S.husbandDeduction + biayaJabatanOf(S.husbandSalary) > S.husbandSalary && S.husbandDeduction > 0
+      || S.wifeDeduction + biayaJabatanOf(S.wifeSalary) > S.wifeSalary && S.wifeDeduction > 0)){
     warn.style.display='block';
     warn.textContent=T('warnSpouseExceed');
   }
 
-  // Biaya jabatan is 5% of gross, capped at Rp 6,000,000 a year. The field stays
-  // free-form (users may model other deductions), so this only flags the cap.
-  // Nothing here changes what is computed. Louder warnings above keep priority.
-  if(warn.style.display==='none'){
+  // Biaya jabatan is 5% of gross, capped at Rp 6,000,000 a year. With the switch
+  // off the field carries it and stays free-form (users may model other
+  // deductions), so this only flags the cap. With it on the field holds the
+  // other deductions only, so there is no cap to flag. Nothing here changes
+  // what is computed. Louder warnings above keep priority.
+  if(warn.style.display==='none' && !S.biayaJabatan){
     const wf = S.splitPct/100, hf = 1-wf;
     const hGross = S.inputMode==='individual' ? S.husbandSalary    : S.totalSalary*hf;
     const wGross = S.inputMode==='individual' ? S.wifeSalary       : S.totalSalary*wf;
@@ -1136,7 +1161,12 @@ function renderAssumptions(state){
     `<strong>Only salary is taxed (PPh 21):</strong> ${rp(c.totalGross)} a year for the household. Other income, income taxed at a final rate and tax already withheld are left out.`,
     `<strong>Hanya gaji yang dihitung (PPh 21):</strong> ${rp(c.totalGross)} per tahun untuk rumah tangga. Penghasilan lain, penghasilan yang dikenai pajak final, dan pajak yang sudah dipotong tidak dihitung.`));
 
-  const hDed = c.husbandGross - c.husbandNet, wDed = c.wifeGross - c.wifeNet;
+  if (S.biayaJabatan && (c.husbandBJ > 0 || c.wifeBJ > 0)) {
+    items.push(L(
+      `<strong>Biaya jabatan comes off each salary first:</strong> 5% of gross, at most Rp 6,000,000 a year, so ${rp(c.husbandBJ)} for the husband and ${rp(c.wifeBJ)} for the wife.`,
+      `<strong>Biaya jabatan dikurangkan dari tiap gaji lebih dulu:</strong> 5% dari gaji kotor, paling banyak Rp 6.000.000 per tahun, jadi ${rp(c.husbandBJ)} untuk suami dan ${rp(c.wifeBJ)} untuk istri.`));
+  }
+  const hDed = c.husbandGross - c.husbandNet - c.husbandBJ, wDed = c.wifeGross - c.wifeNet - c.wifeBJ;
   if (S.inputMode === 'total' && S.deduction > 0) {
     items.push(L(
       `<strong>Your ${rp(S.deduction)} of deductions is shared by salary:</strong> ${rp(hDed)} off the husband's and ${rp(wDed)} off the wife's, before PTKP.`,
@@ -1187,6 +1217,7 @@ function resetAll(){
   els.deductionInput.value='0';
   els.husbandDeductionInput.value='0';
   els.wifeDeductionInput.value='0';
+  els.biayaJabatan.checked=DEFAULTS.biayaJabatan;
   els.ptkpBase.value=DEFAULTS.ptkpBase.toLocaleString('en-US');
   els.ptkpMarried.value=DEFAULTS.ptkpMarried.toLocaleString('en-US');
   els.ptkpSpouse.value=DEFAULTS.ptkpSpouse.toLocaleString('en-US');
@@ -1575,6 +1606,7 @@ $('modeBtnTotal').addEventListener('click',()=>{ carryAcrossModes('total'); setI
 $('modeBtnSplit').addEventListener('click',()=>{ carryAcrossModes('individual'); setInputMode('individual'); });
 
 els.dependents.addEventListener('change',rerender);
+els.biayaJabatan.addEventListener('change',rerender);
 document.querySelectorAll('.quick-start-btn').forEach(btn=>btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
 els.downloadBtn.addEventListener('click',downloadCsv);
 
@@ -1625,8 +1657,18 @@ rerender();
    Persist the salary/deduction/PTKP inputs (plain form controls) plus the
    input mode and any edited tax brackets (JS state) so a returning user keeps
    their previous scenario. */
+/* State saved before the biaya jabatan switch existed has no value for it, and
+   back then the deduction fields were the only deductions, biaya jabatan
+   included if the reader typed it. So it opens with the switch off and computes
+   what it did. The cache, a scenario file and a Share link all land here. */
+function migrateBiayaJabatan(saved){
+  const f = saved && (saved.__fields || saved);
+  if (!f || typeof f !== 'object' || Object.prototype.hasOwnProperty.call(f, 'c:biayaJabatan')) return;
+  els.biayaJabatan.checked = false;
+}
+
 persist = Persist.init('pisahvsgabung', {
-  onRestore: function(){ setInputMode(S.inputMode || 'total'); buildBracketEditor(); rerender(); },
+  onRestore: function(saved){ migrateBiayaJabatan(saved); setInputMode(S.inputMode || 'total'); buildBracketEditor(); rerender(); },
   extra: {
     save: function(){ return { mode: S.inputMode, brackets: S.brackets }; },
     restore: function(e){
