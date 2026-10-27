@@ -25,7 +25,7 @@
 //   I12 with a budget and cash you set, switching Rent-Then-Buy on changes
 //       nothing in Own or Rent; with the automatic ones it never runs short
 //   I13 net equity is after selling costs; I14 the mortgage is the only
-//       borrowing: cash below zero is flagged, not charged the mortgage rate
+//       borrowing: a plan whose cash goes below zero is refused, not carried
 //
 // Run: node integrity.mjs
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
@@ -455,8 +455,11 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
 
 // ═══ Case F7: interest-only past the term ═══
 {
-  const R = await fullCase('F7 interest-only, 6% fixed, term 30, horizon 40', async()=>{
-    await setInputs({horizon:40});
+  // The automatic budget pays the interest, not the balance due at the term's
+  // end, so on its own this plan runs out of cash and is refused; enough cash
+  // up front to meet the balance lets it run.
+  const R = await fullCase('F7 interest-only, 6% fixed, term 30, horizon 40, $1M cash up front', async()=>{
+    await setInputs({horizon:40, initialCash:'1,000,000'});
     await setSchedule([{toYear:30,type:'fixed',rate:6,rateMin:6,rateMax:6}], true);
   });
   const own = await grabCsv('own');
@@ -468,6 +471,10 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
   own.slice(1).forEach(r=>{ const rhs=r.Beg_Cash+r.Ann_Budget+r.Interest_Inc-(r.Principal_Exp+r.Interest_Exp+r.Ongoing_Exp);
     if(!near(r.End_Cash,rhs,5)) bad.push(`yr${r.Year}: ${r.End_Cash} vs ${rhs.toFixed(0)}`); });
   check('I9 interest-only: own cash identity holds every year, balloon year included', bad.length===0, bad.slice(0,3).join('; '));
+  await setInputs({initialCash:''});
+  const io = await page.evaluate(()=>({blocked: document.getElementById('mainResults').classList.contains('rvo-blocked'), verdict: document.getElementById('verdict').textContent}));
+  check('I9 on the automatic figures alone the balance falling due runs Own short, so the plan is refused and says why',
+    io.blocked && /Own from year 30/.test(io.verdict) && /interest-only balance falls due/.test(io.verdict), io.verdict.slice(0, 160));
 }
 
 // ═══ Case F11: with a set budget and cash, switching Rent-Then-Buy on leaves Own and Rent untouched ═══
@@ -502,18 +509,35 @@ await fullCase('F5 floating whole term 3–8%, 25y term, 15y horizon', async()=>
   const exp0 = 192000 - 32000 - 800000*0.025 ; // start cash − setup − selling cost on today's price
   check('I13 year-0 Own net equity = starting cash − setup − selling cost (buy and sell at once)',
     near(own[0].Net_Equity, exp0, 1) && near(own[0].House_Equity, 800000*0.975-640000, 1), `net ${own[0].Net_Equity} vs ${exp0}; house ${own[0].House_Equity}`);
-  await setInputs({monthlyBudget:3000}); // below the ~$4,337 own cost: Own runs a shortfall
-  const o2 = await grabCsv('own');
-  const neg = o2.find(r=>r.Year>0 && r.Beg_Cash<0);
-  // Replay that year month by month at each candidate rate
-  const yearInterest = (r)=>{ const m=(neg.Ann_Budget-neg.Principal_Exp-neg.Interest_Exp-neg.Ongoing_Exp)/12; let c=neg.Beg_Cash, t=0; for(let i=0;i<12;i++){ t+=c*r; c=c*(1+r)+m; } return t; };
-  const at6 = neg ? yearInterest(0.06/12) : 0, atRfr = neg ? yearInterest(Math.pow(1.045,1/12)-1) : 0;
-  check('I14 cash below zero is not borrowed at the mortgage rate: it stays on the risk-free rate',
-    neg && near(neg.Interest_Inc, atRfr, 2),
-    neg ? `yr${neg.Year}: interest ${neg.Interest_Inc} vs ${atRfr.toFixed(0)} at 4.5% (${at6.toFixed(0)} at 6%)` : 'no shortfall year');
-  const banner = await page.evaluate(()=>{ const w=document.getElementById('warningBanner'); return w.style.display==='none' ? '' : w.textContent; });
-  check('I14 a shortfall from a set budget is flagged, naming the scenario and year',
-    banner.includes('Own from year '+o2.find(r=>r.Year>0 && r.End_Cash<0).Year), banner);
+  // A budget below the ~$4,337 own cost runs Own short. The mortgage is the
+  // only borrowing, so such a plan is refused, not carried at some rate: the
+  // year it runs short is replayed month by month from the automatic run's
+  // own costs, which a budget does not change, at the risk-free rate.
+  const rfm = Math.pow(1.045, 1/12) - 1;
+  let c = own[0].End_Cash, shortYr = null;
+  for(const r of own.slice(1)){
+    const m = (3000*12 - r.Principal_Exp - r.Interest_Exp - r.Ongoing_Exp) / 12;
+    for(let i=0;i<12;i++) c = c*(1+rfm) + m;
+    if(c < -0.5){ shortYr = r.Year; break; }
+  }
+  await setInputs({monthlyBudget:3000});
+  const seen = await page.evaluate(()=>{
+    const shown = sel => { const e=document.querySelector(sel); return !!e && e.offsetParent !== null; };
+    window.__csv = null; document.getElementById('downloadBtn').click();
+    const w = document.getElementById('warningBanner');
+    return { blocked: document.getElementById('mainResults').classList.contains('rvo-blocked'),
+      verdict: document.getElementById('verdict').textContent, warn: w.style.display==='none' ? '' : w.textContent,
+      metrics: shown('.metrics'), chart: shown('.chart-card'), table: shown('#detailSection'), csv: window.__csv };
+  });
+  check('I14 a plan that runs out of cash is not compared: only the answer card shows, and no cashflow is saved',
+    seen.blocked && /runs out of cash, so it is not compared/.test(seen.verdict) && !seen.metrics && !seen.chart && !seen.table && seen.csv == null,
+    `blocked ${seen.blocked}; figures ${seen.metrics||seen.chart||seen.table ? 'shown' : 'hidden'}; "${seen.verdict.slice(0, 60)}…"`);
+  check('I14 it names the scenario and the year it runs short, in the answer and under the inputs',
+    shortYr !== null && seen.verdict.includes('Own from year '+shortYr) && seen.warn.includes('Own from year '+shortYr),
+    `replayed year ${shortYr}; ${seen.verdict.replace(/^.*?Cash falls/, 'Cash falls').slice(0, 90)}`);
+  await setInputs({monthlyBudget:''});
+  const back = await page.evaluate(()=>!document.getElementById('mainResults').classList.contains('rvo-blocked'));
+  check('I14 clearing the budget for the automatic one brings the comparison back', back);
 }
 
 // ═══ Case F9: owning leads early, then renting pulls ahead ═══
@@ -542,8 +566,9 @@ await fullCase('F9 low growth, high cash return: Own ahead in year 1, behind at 
 
 // ═══ Case F8: interest-only, 10y term, rent-then-buy at year 5, 20y horizon ═══
 {
-  const R = await fullCase('F8 interest-only 10y term, floating, rent-then-buy at year 5, horizon 20', async()=>{
-    await setInputs({mortgageTerm:10, horizon:20, rtbEnabled:true, rtbBuyYear:5});
+  // Cash up front to meet both balances as they fall due, as in F7.
+  const R = await fullCase('F8 interest-only 10y term, floating, rent-then-buy at year 5, horizon 20, $2M cash up front', async()=>{
+    await setInputs({mortgageTerm:10, horizon:20, rtbEnabled:true, rtbBuyYear:5, initialCash:'2,000,000'});
     await setSchedule([{toYear:3,type:'fixed',rate:6,rateMin:6,rateMax:6},{toYear:10,type:'floating',rate:7,rateMin:5,rateMax:9}], true);
   });
   const rtb = await grabCsv('rtb');

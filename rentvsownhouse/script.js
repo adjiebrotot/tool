@@ -171,7 +171,10 @@ const LANG = {
     warnShortfallIO: (list) => `⚠️ Cash runs below zero in ${list}, when the interest-only balance falls due. Set a higher budget or more cash now to save for it.`,
     shortfallItem: (name, yr, amt) => `${name} from year ${yr} (down to ${amt})`,
     nameOwn: 'Own',
-    warnInitialCashShort: (x,y,z) => `⚠️ Initial cash, ${x}, is ${y} short of the down payment plus setup cost (${z}). The shortfall reduces the equity you start with.`,
+    warnInitialCashShort: (x,y,z) => `⚠️ Initial cash, ${x}, is ${y} short of the down payment plus setup cost (${z}), so the comparison cannot run.`,
+    blockedTitle: 'This plan runs out of cash, so it is not compared.',
+    blockedBody: (list) => `Cash falls below zero in ${list}. The mortgage is the only borrowing in this model, so a shortfall is never carried: raise the budget or the initial cash, or clear both for the automatic figures.`,
+    blockedBodyIO: (list) => `Cash falls below zero in ${list}, when the interest-only balance falls due. Set a budget or more initial cash that saves for it.`,
     subRequiredCash: (x) => `Needed: ${x} (down payment plus setup cost).`,
     warnBudgetLow: (x,y,z) => `⚠️ The budget (${x}/mo) is below both the cost of owning (${y}/mo with ongoing costs) and of renting (${z}/mo with ongoing costs). The surplus turns negative and cash may fall below zero.`,
     cagrResult: (x) => `Growth: ${x}%/yr, applied to House price growth ✓`,
@@ -419,7 +422,10 @@ const LANG = {
     warnShortfallIO: (list) => `⚠️ Kas jadi minus di ${list}, saat pokok KPR bunga saja jatuh tempo. Naikkan anggaran atau modal awal agar ada tabungan untuk melunasinya.`,
     shortfallItem: (name, yr, amt) => `${name} sejak tahun ke-${yr} (paling rendah ${amt})`,
     nameOwn: 'Beli',
-    warnInitialCashShort: (x,y,z) => `⚠️ Modal awal ${x} kurang ${y} dari DP ditambah biaya awal pembelian (${z}). Kekurangannya mengurangi ekuitas awal Anda.`,
+    warnInitialCashShort: (x,y,z) => `⚠️ Modal awal ${x} kurang ${y} dari DP ditambah biaya awal pembelian (${z}), jadi perbandingan tidak bisa dihitung.`,
+    blockedTitle: 'Rencana ini kehabisan kas, jadi tidak dibandingkan.',
+    blockedBody: (list) => `Kas jadi minus di ${list}. Model ini tidak punya pinjaman selain KPR, jadi kekurangan kas tidak pernah ditanggung: naikkan anggaran atau modal awal, atau kosongkan keduanya agar dihitung otomatis.`,
+    blockedBodyIO: (list) => `Kas jadi minus di ${list}, saat pokok KPR bunga saja jatuh tempo. Isi anggaran atau modal awal yang cukup untuk menabung melunasinya.`,
     subRequiredCash: (x) => `Dibutuhkan: ${x} (DP ditambah biaya awal pembelian).`,
     warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) lebih kecil dari biaya membeli (${y}/bln termasuk biaya rutin) dan biaya menyewa (${z}/bln termasuk biaya rutin). Surplusnya jadi negatif dan kas bisa minus.`,
     cagrResult: (x) => `Kenaikan: ${x}%/thn, dipakai untuk Kenaikan harga properti ✓`,
@@ -1223,16 +1229,36 @@ function updateKPIs(state){
   }
   // Any scenario whose cash goes below zero on any rate path: the model does
   // not borrow beyond the mortgage, so say so rather than hide it
+  const sf = shortfallText(state);
+  if(sf) msgs.push(T(sf.auto ? 'warnShortfallIO' : 'warnShortfall')(sf.list));
+  warn.style.display = msgs.length ? 'block' : 'none';
+  warn.textContent = msgs.join(' ');
+}
+
+/* Which scenarios run out of cash, and where, in words; null when none does.
+   With the automatic budget and cash only an interest-only balance falling
+   due can do it: they cover repayments, not the lump sum at the term's end. */
+function shortfallText(state){
   const sf = state.shortfalls || {};
   const items = [['own','nameOwn'],['rent','nameRent'],['rtb','nameRTB']]
     .filter(([k])=>sf[k])
     .map(([k,nm])=>T('shortfallItem')(T(nm), sf[k].year, fmt.currency(sf[k].worst, true)));
-  // With the automatic budget and cash only an interest-only balance falling
-  // due can do it: they cover repayments, not the lump sum at the term's end
-  const autoFigures = !(S.monthlyBudget > 0) && !(S.initialCash > 0);
-  if(items.length) msgs.push(T(autoFigures ? 'warnShortfallIO' : 'warnShortfall')(items.join(', ')));
-  warn.style.display = msgs.length ? 'block' : 'none';
-  warn.textContent = msgs.join(' ');
+  if(!items.length) return null;
+  return {list: items.join(', '), auto: !(S.monthlyBudget > 0) && !(S.initialCash > 0)};
+}
+
+/* A plan that runs out of cash is never compared. The mortgage is the only
+   borrowing in the model, so a balance below zero would be a loan at the
+   risk-free rate that nobody offers, and it would cancel out of the answer.
+   The answer card says why and what to change; the figures stay hidden until
+   the plan is funded. The automatic budget and cash always are, except for an
+   interest-only balance falling due. */
+function renderBlocked(state){
+  const sf = shortfallText(state);
+  $('mainResults').classList.toggle('rvo-blocked', !!sf);
+  if(!sf) return false;
+  SharedVerdict.set('verdict', {tone:'warn', title:T('blockedTitle'), body:T(sf.auto ? 'blockedBodyIO' : 'blockedBody')(sf.list)});
+  return true;
 }
 
 /* ── VERDICT ──
@@ -1654,6 +1680,7 @@ function rerender(){
   if(!S.rtbEnabled && activeTable==='rtb'){ activeTable='own'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.table==='own')); }
   updateRTBSummary(state);
   renderAssumptions(state);
+  renderBlocked(state);
   if(persist) persist.schedule(); // rerender is the universal funnel — save any state change
 }
 
@@ -1980,6 +2007,8 @@ $('svgBtn').addEventListener('click', downloadChartSvg);
 /* ── CSV ── (built by the shared RVOExport module so the main tool and the
    sensitivity tool emit byte-identical cashflow CSVs) */
 function downloadCsv(){
+  // A plan that runs out of cash is not compared, so it has no cashflow to save.
+  if($('mainResults').classList.contains('rvo-blocked')) return;
   let csv, filename;
   if(activeTable==='own'){
     if(!latestRows.length) return;
