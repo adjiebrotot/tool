@@ -1,8 +1,6 @@
 // Shared helpers for recording a tool's guide (<tool>/guides/) from the REAL tool with Playwright:
 // a static server, a page with a visible cursor, smooth pointer moves, and video trimming and
-// encoding with ffmpeg. The PowerFactory Builder's guide has its own copy
-// (powerfactory-scripter/guides/_capture/lib.mjs); this one is the same recorder for the tools
-// that load their charts from a CDN. Run a tool's captures with run.mjs.
+// encoding with ffmpeg. Run a tool's captures with run.mjs.
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { existsSync, statSync, createReadStream, readFileSync, mkdtempSync, rmSync } from 'node:fs';

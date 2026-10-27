@@ -15,6 +15,8 @@
      (window.__demoFocus, a field it types into) or a reader is already in the frame, and it
      and scrollIntoView() move only the frame, so the guide a reader is reading never jumps.
    - Dialogs: confirm() says yes; alert(), prompt() and window.open() do nothing.
+   - Files: a file the tool saves (an a[download] it clicks) is saved only when the reader's own
+     hand asked for it a moment ago (trying the tool, paused), never for the guide's pointer.
    - Pointer capture works for the guide's own pointer. */
 (function () {
   'use strict';
@@ -70,6 +72,18 @@
     EP.releasePointerCapture = function (id) { if (id === 31) { if (window.__demoCapture === this) window.__demoCapture = null; return; } return relCap.call(this, id); };
     EP.hasPointerCapture = function (id) { return id === 31 ? window.__demoCapture === this : hasCap.call(this, id); };
   }
+
+  // A save starts from a click, but may finish a little later (a zip being made): a reader's
+  // press or key in the last few seconds counts as theirs.
+  var hand = 0, HAND_MS = 10000;
+  ['pointerdown', 'keydown'].forEach(function (t) { window.addEventListener(t, function (e) { if (e.isTrusted) hand = Date.now(); }, true); });
+  var theirs = function () { return Date.now() - hand < HAND_MS; };
+  var aClick = HTMLAnchorElement.prototype.click;
+  HTMLAnchorElement.prototype.click = function () { if (this.hasAttribute('download') && !theirs()) return; return aClick.call(this); };
+  window.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[download]');
+    if (a && !e.isTrusted && !theirs()) e.preventDefault();
+  }, true);
 
   window.confirm = function () { return true; };
   window.alert = function () {};

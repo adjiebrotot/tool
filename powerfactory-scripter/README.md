@@ -120,7 +120,7 @@ The Legacy Scripter's Samples and Guides page is `legacy/samples/` (the worked e
 Start loads, `legacy/samples/json-samples/`, and the custom function library); the old address
 `samples/` is a redirect stub that keeps old links, anchors included, working. The landing page
 does not link it. Two more sub-pages live under this folder: `guides/`, how to use the Workflow
-Builder, and `builder/`, the PowerFactory Workflow Builder, a node-based editor that writes one
+Builder (its demos are the Builder itself, played live by `guides/scenes.js`), and `builder/`, the PowerFactory Workflow Builder, a node-based editor that writes one
 Python file from blocks wired on a canvas. The builder has its own technical README (`builder/README.md`); it shares this
 folder's reference data (`element_params.json`, `variables/`) for its attribute suggestions.
 
