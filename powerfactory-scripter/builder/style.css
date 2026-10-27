@@ -738,9 +738,7 @@ h1.pfb-title span { text-wrap: balance; }
   .pfb-brand { padding: 6px 10px; flex: 1 1 0; min-width: 0; max-width: none; }
   h1.pfb-title { font-size: 12.5px; letter-spacing: .01em; }
   .pfb-nav { gap: 6px; }
-  .pfb-nav-label { display: none; }
   .pfb-nav .btn-theme { padding: 6px 9px; }
-  .pfb-nav .pf-tour-emo { display: none; }   /* Tour and Guide keep their words, not the emoji */
   .pfb-toolbar { flex: 1 1 100%; justify-content: space-between; }
   #pfbZoomIn, #pfbZoomOut, .pfb-tb-sep:first-of-type { display: none; }
   .pfb-tb-text span { display: none; }

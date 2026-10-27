@@ -7,7 +7,6 @@ const LANG = {
   en: {
     /* header */
     subtitle: 'Model the long-term financial outcome of renting vs buying property, comparing cash, equity and net wealth over time.',
-    btnBack: '← Other Tools',
     sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
     quickStartLabel: 'Quick Start',
@@ -261,7 +260,6 @@ const LANG = {
   id: {
     /* header */
     subtitle: 'Hitung hasil keuangan jangka panjang dari menyewa vs membeli properti: kas, ekuitas, dan kekayaan bersih dari tahun ke tahun.',
-    btnBack: '← Tool Lainnya',
     sensitivityHtml: 'Power user? Bandingkan beberapa skenario berdampingan di <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">tool Analisis Sensitivitas</a>.',
     /* sidebar */
     quickStartLabel: 'Quick Start',
