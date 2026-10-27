@@ -42,6 +42,8 @@ export function page(p) {
     ? `<span aria-current="page">${esc(n)}</span>`
     : `<a href="${esc(rel(u, url))}">${esc(n)}</a><span aria-hidden="true">›</span>`)).join('');
   const ogDesc = p.ogDesc || p.desc;
+  // Over 60 characters a search result cuts the title, so a long one loses the site name first.
+  const docTitle = p.title.length > 60 ? p.title.replace(/ \| Adjie Brotools$/, '') : p.title;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +52,7 @@ ${GTAG}
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${esc(p.title)}</title>
+<title>${esc(docTitle)}</title>
 <meta name="description" content="${esc(p.desc)}">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${url}">
@@ -61,12 +63,16 @@ ${GTAG}
 <meta property="og:description" content="${esc(ogDesc)}">
 <meta property="og:url" content="${url}">
 <meta property="og:site_name" content="Adjie Brotot Tools">
-<meta property="og:image" content="${SITE}logos/logo.png">
+<meta property="og:image" content="${SITE}og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
 <meta property="og:locale" content="en_AU">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(p.ogTitle || p.title)}">
 <meta name="twitter:description" content="${esc(ogDesc)}">
+<meta name="twitter:image" content="${SITE}og/powerfactory-scripter.jpg">
 
 ${ld.map(o => `<script type="application/ld+json">\n${json(o)}\n</script>`).join('\n')}
 <link rel="icon" type="image/svg+xml" href="${root}logos/logo.svg">
@@ -80,6 +86,7 @@ ${ld.map(o => `<script type="application/ld+json">\n${json(o)}\n</script>`).join
 <link rel="stylesheet" href="${pf}docs.css">
 </head>
 <body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="${root}theme.js"></script>
 <div class="dx">
 
@@ -107,6 +114,7 @@ ${p.body}
 <script>
   document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });${p.script ? '\n' + p.script : ''}
 </script>
+<!--/email_off-->
 </body>
 </html>
 `;

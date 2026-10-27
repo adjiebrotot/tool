@@ -9,7 +9,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   const low = buses.reduce((a, x) => (x['Voltage (p.u.)'] < a['Voltage (p.u.)'] ? x : a));
   return {
     slug: 'load-flow', crumb: 'Load flow', card: 'Load flow and results to CSV or Excel', short: 'a load flow',
-    title: 'PowerFactory Python load flow: run it and export results to CSV and Excel',
+    title: 'PowerFactory load flow in Python, results to CSV and Excel',
     h1: 'PowerFactory load flow with Python, and the results in CSV or Excel',
     desc: 'Run a PowerFactory load flow from Python with ComLdf, read busbar voltages and line loadings, and save them to CSV and Excel. Tested script and results.',
     lead: `In PowerFactory's Python API a load flow is one call: <code>app.GetFromStudyCase("ComLdf").Execute()</code>, which returns <strong>0 when it converged</strong>. The results are then attributes: <code>m:u</code> for a busbar's voltage, <code>c:loading</code> for a line's loading. This page runs it on the Nine-bus example and saves every busbar and branch to CSV and Excel.`,

@@ -126,6 +126,13 @@ www.adjiebrotots.com into one maker. Then register the tool site-wide:
 - Add a `<url>` entry to `sitemap.xml`, right after its parent's if it is a sub-page
   (entries run home first, then by path).
 - Add the tool to `llms.txt` (and `README.md` if it's a headline tool).
+- Give it a social preview: add a line to `CARDS` in `_ref/og.mjs`, then (with the repo served
+  on :8412) `node _ref/og.mjs <tool>` draws `og/<tool>.jpg` and `node _ref/og.mjs --tags` writes
+  `og:image`, its size and alt, and the large Twitter card into every page of the tool.
+- `node _ref/updated.mjs` stamps the tool's `WebApplication` with `dateModified` (its sitemap
+  `<lastmod>`), a free `offers` and its card as `screenshot`, and ends the footer's
+  Disclaimer · Privacy · Blog line with "Updated <date>". Run it again whenever you bump the
+  `<lastmod>`.
 - Keep the Google `gtag` snippet like the other pages.
 
 **A sub-tool** (a page under another tool's folder, such as `dcasimulator/portfolio/` or

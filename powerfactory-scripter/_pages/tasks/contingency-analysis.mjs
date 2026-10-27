@@ -14,7 +14,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   const l2122 = get('Line 21 - 22'), l2324 = get('Line 23 - 24'), l1619 = get('Line 16 - 19');
   return {
     slug: 'contingency-analysis', crumb: 'N-1 contingency analysis', card: 'N-1 contingency analysis', short: 'an N-1 contingency analysis',
-    title: 'PowerFactory contingency analysis with Python: an N-1 script that works',
+    title: 'PowerFactory N-1 contingency analysis with Python',
     h1: 'N-1 contingency analysis in PowerFactory with Python',
     desc: 'An N-1 contingency analysis script for PowerFactory: take each line and transformer out, run the load flow, rank the overloads. Tested, with results.',
     lead: `An N-1 screening in Python is a loop: take one line or transformer out of service with <code>SetAttribute("outserv", 1)</code>, run the load flow, record the highest loading and the lowest voltage, and put the element back. On PowerFactory's 39-bus example, <strong>${over.length} of ${outs.length} outages overload a branch</strong>, the worst to ${f(over[0]['Highest loading (%)'], 1)} %.`,

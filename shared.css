@@ -56,6 +56,8 @@
 .tip-wrap{position:relative;display:inline;cursor:help;}
 .tip-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--input-bg);border:1px solid var(--border);color:var(--muted);font-size:.7rem;font-weight:800;cursor:help;flex-shrink:0;line-height:1;font-style:normal;vertical-align:1px;}
 .tip-icon:hover{border-color:var(--accent);color:var(--accent);}
+/* In a heading the ? is drawn, not written, so the heading's text is only its words. */
+.tip-icon:empty::before{content:'?';}
 /* The icon and the space before it, kept on one line (shared.js glueTip). */
 .tip-glue{white-space:nowrap;}
 .tip-icon.warn{background:rgba(245,158,11,.18);color:var(--gold);border-color:rgba(245,158,11,.3);}

@@ -15,7 +15,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   const win = w.t.map((t, i) => [t, i]).filter(([t], i) => t >= 0.15 && t <= 0.4 && i % 2 === 0);
   return {
     slug: 'rms-emt-simulation', crumb: 'RMS and EMT simulation', card: 'RMS and EMT simulation batch runs', short: 'a batch of dynamic simulations',
-    title: 'PowerFactory ComSim with Python: RMS and EMT simulation batch runs and plots',
+    title: 'PowerFactory RMS and EMT simulation with Python (ComSim)',
     h1: 'RMS and EMT simulations in PowerFactory with Python: batch runs and plots',
     desc: 'Run PowerFactory RMS and EMT simulations from Python with ComInc and ComSim, in a batch, record curves in ElmRes and plot them. Tested scripts.',
     lead: `A dynamic simulation in Python is two commands: <code>ComInc</code> computes the initial conditions and <code>ComSim</code> runs to <code>tstop</code>. Record variables in a results object with <code>ElmRes.AddVariable</code> and read the curves back with <code>FindColumn</code> and <code>GetValue</code>. On the 39-bus example, four runs of one fault cleared after 0.10 to 0.25 s show the <strong>critical clearing time lies between ${f(stable[stable.length - 1]['Clearing time (s)'], 2)} and ${f(lost[0]['Clearing time (s)'], 2)} s</strong>.`,

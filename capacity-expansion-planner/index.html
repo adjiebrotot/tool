@@ -21,7 +21,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Capacity Expansion Planner | Adjie Brotools</title>
-<meta name="description" content="Free generation capacity expansion planner in your browser. Find the size and timing of new solar, wind, gas and batteries that meet a growing load profile at least cost. PyPSA engine, HiGHS solver.">
+<meta name="description" content="Free capacity expansion planner in your browser. Find the least-cost size and timing of new solar, wind, gas and batteries for a growing load. PyPSA and HiGHS.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/capacity-expansion-planner/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
@@ -31,10 +31,15 @@
 <meta property="og:description" content="Which power plants and batteries to build, how big, and in which year, to meet a growing load profile at the least cost.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/capacity-expansion-planner/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/capacity-expansion-planner.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Capacity Expansion Planner, a free tool on Adjie Brotools">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Capacity Expansion Planner">
 <meta name="twitter:description" content="Which power plants and batteries to build, how big, and in which year, to meet a growing load profile at the least cost.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/capacity-expansion-planner.jpg">
 
 <script type="application/ld+json">
 {
@@ -46,6 +51,8 @@
   "applicationCategory": "EngineeringApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-10-16",
+  "screenshot": "https://tool.adjiebrotots.com/og/capacity-expansion-planner.jpg",
   "inLanguage": "en",
   "alternateName": ["Generation Expansion Planner", "Capacity Expansion Model Online", "Power System Expansion Planning Tool", "Least-Cost Generation Planning", "Multi-Period Investment Optimisation"],
   "keywords": "capacity expansion planning, generation expansion planning, least cost capacity expansion, power plant investment timing, multi-period investment optimisation, PyPSA in the browser, HiGHS solver, load duration, battery sizing, renewable build-out, coal retirement, net zero electricity",
@@ -123,6 +130,7 @@
 <link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="../theme.js"></script>
 <div class="container">
 <section class="header card">
@@ -499,7 +507,7 @@
 <footer class="page-footer">
   <section class="page-footer-info">
     <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
-    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-10-16">16 October 2026</time></span></p>
     <p>
       The optimisation engine is <a href="https://github.com/adjiebrotot/PSA.js" target="_blank" rel="noopener">PSA.js</a>, a JavaScript port of <a href="https://github.com/PyPSA/PyPSA" target="_blank" rel="noopener">PyPSA</a>, and the solver is <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a> through <a href="https://github.com/lovasoa/highs-js" target="_blank" rel="noopener">highs-js</a>, all used under the <a href="../ed-uc-simulator/engine/LICENSE.txt" target="_blank" rel="noopener">MIT licence</a>.
     </p>
@@ -528,5 +536,6 @@
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../tour-shared.js"></script>
+<!--/email_off-->
 </body>
 </html>

@@ -19,6 +19,18 @@
     document.head.appendChild(style);
   }
 
+  // "Updated <date>" from the data-updated stamp _ref/updated.mjs puts on the footer section.
+  var MONTHS = {
+    en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    id: ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
+  };
+  function updated(el, isId){
+    var d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(el.getAttribute('data-updated') || '');
+    if(!d) return '';
+    return ' · <span class="footer-updated">' + (isId ? 'Diperbarui' : 'Updated') + ' <time datetime="' + d[0] + '">'
+      + (+d[3]) + ' ' + MONTHS[isId ? 'id' : 'en'][d[2] - 1] + ' ' + d[1] + '</time></span>';
+  }
+
   window.renderRVOFooter = function(logosPath, containerId){
     logosPath  = logosPath  || '../logos/';
     containerId = containerId || 'siteFooterContent';
@@ -31,7 +43,7 @@
       ? '<a href="' + rootPath + 'disclaimer/id/">Penafian</a> · <a href="' + rootPath + 'privacy/id/">Kebijakan Privasi</a>'
       : '<a href="' + rootPath + 'disclaimer/">Disclaimer</a> · <a href="' + rootPath + 'privacy/">Privacy Policy</a>';
     el.innerHTML = '<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>'
-      + '<p class="footer-links">' + legal + ' · <a href="https://blog.adjiebrotots.com/">Blog</a></p>'
+      + '<p class="footer-links">' + legal + ' · <a href="https://blog.adjiebrotots.com/">Blog</a>' + updated(el, isId) + '</p>'
       + '<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">'
       +   '<img src="' + logosPath + 'australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'
       +   '<div style="display:flex;align-items:center;gap:10px">'

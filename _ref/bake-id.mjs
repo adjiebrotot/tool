@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stamp } from './updated.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -27,8 +28,8 @@ const AUTHOR = {
 const TOOLS = [
   {
     dir: 'pisahvsgabung',
-    title: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta | Adjie Brotools',
-    description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP, lapisan tarif pajak, grafik, dan analisis titik impas.',
+    title: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
+    description: 'Kalkulator gratis untuk membandingkan PPh 21 suami istri antara pisah harta (PH) dan gabung harta (KK), lengkap dengan PTKP, lapisan tarif, dan titik impas.',
     ogTitle: 'Kalkulator PPh 21 Pisah Harta vs Gabung Harta',
     ogDescription: 'Bandingkan PPh 21 suami istri antara skema pisah harta (PH) dan gabung harta (KK) di Indonesia.',
     sameDirAssets: ['script.js', 'style.css', 'abbr.js'],
@@ -95,8 +96,8 @@ const TOOLS = [
   },
   {
     dir: 'rentvsownhouse',
-    title: 'Sewa vs Beli Rumah: Simulasi Skenario Properti | Adjie Brotools',
-    description: 'Simulasikan sewa vs beli rumah dalam jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih berdasarkan asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
+    title: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
+    description: 'Simulasikan sewa vs beli rumah jangka panjang: bandingkan kas, ekuitas, dan kekayaan bersih dari asumsi harga properti, KPR, sewa, dan imbal hasil investasi.',
     ogTitle: 'Sewa vs Beli Rumah: Simulasi Skenario Properti',
     ogDescription: 'Simulasikan sewa vs beli rumah dalam jangka panjang dengan membandingkan kas, ekuitas, dan kekayaan bersih.',
     sameDirAssets: ['script.js', 'style.css', 'tooltips.js', 'footer.js', 'cashflow-export.js', 'engine.js', 'quickstart-data.js', 'abbr.js'],
@@ -195,7 +196,7 @@ const TOOLS = [
     dir: 'rentvsownhouse/sensitivity',
     langVar: 'LANG_SENS',
     title: 'Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools',
-    description: 'Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.',
+    description: 'Analisis sensitivitas multi-skenario sewa vs beli rumah: lihat asumsi mana yang paling memengaruhi kekayaan bersih Anda. Gratis dan berjalan di browser.',
     ogTitle: 'Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah',
     ogDescription: 'Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.',
     sameDirAssets: ['script.js', 'style.css', 'fx.js'],
@@ -361,6 +362,11 @@ function bake(tool) {
   html = html.replace('<meta property="og:locale:alternate" content="id_ID">', '<meta property="og:locale:alternate" content="en_US">');
   html = html.replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${tool.ogTitle}$2`);
   html = html.replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${tool.ogDescription}$2`);
+  // The back link carries no data-i18n (its long and short labels are two spans), so it is swapped here.
+  html = html.replace('<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span>', '<span class="nav-long">&nbsp;Tool Lainnya</span><span class="nav-short">&nbsp;Lainnya</span>');
+  // The share image is the Indonesian page's own card (og/<card>-id.jpg, drawn by _ref/og.mjs).
+  html = html.replace(/(<meta (?:property="og:image"|name="twitter:image") content="[^"]*\/og\/[a-z0-9-]+?)(?:-id)?\.jpg"/g, '$1-id.jpg"');
+  html = html.replace(/(<meta property="og:image:alt" content=")[^"]*(")/, `$1${escapeText(tool.ogTitle)}, tool gratis di Adjie Brotools$2`);
 
   /* ── JSON-LD blocks, replaced in document order ── */
   let ldIndex = 0;
@@ -422,6 +428,8 @@ function bake(tool) {
   }
 
   mkdirSync(join(toolDir, 'id'), { recursive: true });
+  // Its dateModified, offers and footer date, as _ref/updated.mjs gives every tool page.
+  html = stamp(html, `${tool.dir}/id/`);
   writeFileSync(join(toolDir, 'id', 'index.html'), html);
   console.log(`${tool.dir}/id/index.html written${missing ? ` (${missing} data-i18n keys without id translation left in English)` : ''}`);
 }
