@@ -72,7 +72,8 @@
 .gd-demo { display: grid; gap: 14px; }
 .gd-demo + .gd-demo { margin-top: 22px; }
 .gd-screen { margin: 0; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); }
-.gd-view { position: relative; aspect-ratio: var(--ar, 16 / 9); background: var(--bg-subtle); }
+/* overflow: a zoomed-in camera scales the frame past the view, which must not cover the bar */
+.gd-view { position: relative; aspect-ratio: var(--ar, 16 / 9); overflow: hidden; background: var(--bg-subtle); }
 .gd-view video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; }
 .gd-bar { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 14px; border-top: 1px solid var(--border); }
 .gd-cap { flex: 1; min-width: 0; font-size: .82rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -97,6 +98,9 @@
 .gd-veil.is-off { opacity: 0; pointer-events: none; }
 .gd-guard { position: absolute; inset: 0; z-index: 1; }
 .gd-view:fullscreen { aspect-ratio: auto; background: var(--bg); }
+/* Full screen takes the whole figure: the view fills it and the bar stays under it */
+.gd-screen:fullscreen { display: flex; flex-direction: column; max-width: none; border: 0; border-radius: 0; background: var(--bg); }
+.gd-screen:fullscreen .gd-view { flex: 1; min-height: 0; aspect-ratio: auto; }
 .gd-demo.is-trying .gd-screen { border-color: var(--accent); }
 .gd-demo.is-trying .gd-cap { color: var(--text); }
 
