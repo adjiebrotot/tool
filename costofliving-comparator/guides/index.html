@@ -515,7 +515,7 @@
             <tr><th scope="row">⚡ Utilities</th><td data-l="Priced by">The 50/20/30 blend above</td><td data-l="Note">A ! beside the cell says a part was missing and reweighted.</td></tr>
             <tr><th scope="row">💡 Electricity, 💧 Water, 🔥 Gas, ⛽ Fuel</th><td data-l="Priced by">Each one's median index</td><td data-l="Note">Use one of these instead of Utilities to price a bill on its own.</td></tr>
             <tr><th scope="row">🩺 Medical Care, 🛡️ Health Insurance</th><td data-l="Priced by">The health index above</td><td data-l="Note">The same care and cover; public schemes paid through tax are left out.</td></tr>
-            <tr><th scope="row">💸 Remittance, ✈️ International Travel</th><td data-l="Priced by">No index: the exchange rate alone</td><td data-l="Note">Converted at the rate the indices were priced at, or your custom rate.</td></tr>
+            <tr><th scope="row">💸 Remittance, ✈️ International Travel</th><td data-l="Priced by">No index: the exchange rate alone</td><td data-l="Note">Converted at your custom rate, else the rate the indices were priced at.</td></tr>
             <tr><th scope="row">🌐 Other</th><td data-l="Priced by">The cost-of-living index without housing</td><td data-l="Note">Everything else.</td></tr>
           </tbody>
         </table>
@@ -558,7 +558,7 @@
           <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
           <tbody>
             <tr><th scope="row">Default</th><td data-l="What it is">Today's rate from a free daily feed, kept six hours; the bundled May 2026 rate when no feed answers.</td><td data-l="In the maths"><var>X</var>, when you give no rate of your own.</td><td data-l="Raise it"><span class="gd-eff">not a field</span></td></tr>
-            <tr><th scope="row">Custom FX Rate</th><td data-l="What it is">1 To-city unit = this many home units: the rate you would really get.</td><td data-l="In the maths">Simple: <var>X</var> only, never the estimate. Detailed: <var>X</var>, and it also replaces <var>e<sub>d</sub></var> ÷ <var>e<sub>h</sub></var> in that column's estimates.</td><td data-l="Raise it"><span class="gd-eff">nominal: ▼ salary needed there</span><span class="gd-eff gd-eff-neg">Detailed: ▼ every estimate in the column</span></td></tr>
+            <tr><th scope="row">Custom FX Rate</th><td data-l="What it is">1 To-city unit = this many home units: the rate you would really get.</td><td data-l="In the maths"><var>X</var> only, never an indexed estimate, in Simple and Detailed alike. In Detailed it also converts that column's Remittance and Travel, which have no index.</td><td data-l="Raise it"><span class="gd-eff">nominal: ▼ salary needed there</span></td></tr>
             <tr><th scope="row">What if AUD moves?</th><td data-l="What it is">A move in the destination currency's strength, on top of the rate in force. Simple only.</td><td data-l="In the maths">× (1 + <var>p</var>) on <var>X</var>. It never touches the estimate.</td><td data-l="Raise it"><span class="gd-eff">ratio target: no effect</span><span class="gd-eff">nominal: ▼ salary needed in AUD</span></td></tr>
           </tbody>
         </table>
@@ -567,7 +567,6 @@
         <li><strong>Local prices are sticky; exchange rates are not.</strong> A weaker rupiah does not reprice a Perth lunch in dollars, or a Jakarta lunch in rupiah. It only changes how many rupiah the Perth lunch costs an Indonesian.</li>
         <li><strong>The ratio target is immune.</strong> Its salary and the costs it covers are both in the destination's currency, so no rate enters it. Only the ≈ home-currency figure moves.</li>
       </ul>
-      <p class="gd-note gd-note-warn"><strong>Watch out: in the Detailed table a custom rate reprices the estimates.</strong> Singapore to Sydney, a rate of 1 AUD = 1.00 SGD instead of 0.91 cuts the Sydney rent estimate from AUD 4,577 to AUD 4,185 and the salary needed from AUD 10,178 to AUD 9,306. Simple mode keeps the estimate on the priced-at rate, whatever rate you type.</p>
     </section>
 
     <section class="gd-sec card" id="m-map" aria-labelledby="m-map-h">

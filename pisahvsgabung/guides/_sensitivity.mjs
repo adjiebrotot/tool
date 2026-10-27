@@ -1,7 +1,7 @@
 /* The PPh 21 Pisah vs Gabung guide's sensitivity chart (the tornado in "How the numbers work"),
    measured on the tool's own engine: the page opens in headless Chromium, the Double income
-   family Quick Start is loaded, and each input is lowered and raised by one step while the rest
-   stay put. The figures come from the page's own readInputs() and computeModel()
+   family Quick Start is loaded (biaya jabatan on, as it opens), and each input is lowered and
+   raised by one step while the rest stay put. The figures come from the page's own readInputs() and computeModel()
    (window.__PVG), so they are what the tool would show for the same form.
 
    The headline is the saving from Gabung Harta: Pisah Harta's total tax less Gabung Harta's
@@ -43,7 +43,7 @@ const STEPS = [
     lo: { husbandSalaryInput: 470 * M, wifeSalaryInput: 230 * M }, hi: { husbandSalaryInput: 330 * M, wifeSalaryInput: 370 * M } },
   { name: 'Dependants', step: '1 → 0 / 2',
     lo: { dependents: 0 }, hi: { dependents: 2 } },
-  { name: 'Deductions, each spouse', step: 'nil → Rp 6M each (the biaya jabatan cap)',
+  { name: 'Other deductions, each spouse', step: 'nil → Rp 6M each, on top of biaya jabatan',
     lo: null, hi: { husbandDeductionInput: 6 * M, wifeDeductionInput: 6 * M } },
 ];
 

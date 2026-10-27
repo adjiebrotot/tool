@@ -196,7 +196,7 @@
               <div class="derived" id="splitDerived"></div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti biaya jabatan atau iuran pensiun. Dikurangkan dari penghasilan kotor sebelum PTKP, lalu dibagi sesuai porsi penghasilan masing-masing.">?</span></div>
+              <div class="field-label"><span data-i18n="deductionLabel">Pengurang, suami dan istri</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Pengurang seperti iuran pensiun, dikurangkan sebelum PTKP dan dibagi sesuai porsi penghasilan. Biaya jabatan punya tombol sendiri; jika dimatikan, masukkan di sini.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -225,7 +225,7 @@
               <div class="derived"><span data-i18n="combinedPrefix">Total</span> <b id="combinedLabel">Rp 500,000,000</b> <span data-i18n="combinedSuffix">per tahun, porsi istri</span> <b id="splitDerivedLabel">50.0%</b></div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="husbandDeductionLabel">Pengurang suami</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang yang hanya mengurangi penghasilan kotor suami, sebelum PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="husbandDeductionLabel">Pengurang suami</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Pengurang seperti iuran pensiun yang hanya mengurangi penghasilan kotor suami, sebelum PTKP. Biaya jabatan punya tombol sendiri.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -233,13 +233,17 @@
               </div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="wifeDeductionLabel">Pengurang istri</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang yang hanya mengurangi penghasilan kotor istri, sebelum PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="wifeDeductionLabel">Pengurang istri</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Pengurang seperti iuran pensiun yang hanya mengurangi penghasilan kotor istri, sebelum PTKP. Biaya jabatan punya tombol sendiri.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
                 <span class="suffix" data-i18n="unitPerYr">/thn</span>
               </div>
             </div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label"><span data-i18n="bjLabel">Biaya jabatan, dihitung otomatis</span> <span class="tip-icon" data-i18n-tip="bjTip" data-tip="5% dari gaji kotor tiap pasangan, paling banyak Rp 6.000.000 per tahun, dikurangkan sebelum PTKP di samping pengurang di atas. Matikan untuk mengisinya sendiri.">?</span></div>
+            <label class="toggle-switch"><input type="checkbox" id="biayaJabatan" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
           </div>
         </div>
       </div>
