@@ -7,6 +7,7 @@
 window.__TOUR = {
   seenKey: 'pvg-tour-v3-seen',
   launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,
