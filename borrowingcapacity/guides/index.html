@@ -210,7 +210,7 @@
       <ul class="gd-facts">
         <li><strong>I earn as.</strong> <strong>Employee</strong> or <strong>Self-employed</strong> picks which side of the form counts. Self-employed asks for the two year average profit after tax (NPAT) and add-backs.</li>
         <li><strong>An unticked box means it does not exist.</strong> Its fields are zeroed, so a figure left in a hidden group never leaks into the answer.</li>
-        <li><strong>Simple and Detailed hand the figure across.</strong> Detailed opens with the Simple figure as base salary, and Simple reopens on what the streams add up to.</li>
+        <li><strong>Simple and Detailed hand the figure across.</strong> Detailed opens on streams that add up to the Simple figure, base salary taking the difference, and Simple reopens on what the streams add up to.</li>
       </ul>
     </section>
 
@@ -429,20 +429,20 @@
         <li><strong>LITO</strong> is $700, less 5c a dollar above $37,500 and 1.5c above $45,000, gone by $66,667.</li>
         <li><strong>Medicare levy</strong> is 2% of combined taxable income: nil up to $27,222 single or $45,907 for a family (plus $4,216 a dependant), phased in at 10c a dollar to 1.25 times that.</li>
         <li><strong>Medicare levy surcharge</strong>, without hospital cover: 1%, 1.25% or 1.5% above $101,000, $118,000 or $158,000 single; $202,000, $236,000 or $316,000 for a family, plus $1,500 for each child after the first.</li>
-        <li><strong>HELP</strong> repays 15% of income above the threshold up to $125,000, and 17% above.</li>
+        <li><strong>HELP</strong> repays 15% of the higher earner's repayment income above the threshold up to $125,000, and 17% above.</li>
       </ul>
       <div class="gd-table-wrap"><table class="gd-table">
         <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
         <tbody>
           <tr><th scope="row">City</th><td data-l="What it is">Living costs without housing, from the <a href="../../costofliving-comparator/">Cost of Living Comparator</a>.</td><td data-l="In the maths"><var>c</var>: Sydney 102.0, Melbourne 98.8, Brisbane 102.7, Perth 100, Adelaide 109.2, Canberra 106.1, Hobart 86.5, Gold Coast 84.3, Regional 95.0.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">dearer city: ▼ capacity</span></td></tr>
           <tr><th scope="row">Adults in the household</th><td data-l="What it is">One or two applicants.</td><td data-l="In the maths">Two: <var>b</var> = $2,750, two taxpayers, the family Medicare and surcharge thresholds.</td><td data-l="Raise it"><span class="gd-eff">two: lower tax, higher HEM</span></td></tr>
-          <tr><th scope="row">Second applicant's share of income</th><td data-l="What it is">How taxable income splits between two applicants, 0% to 50% (50%).</td><td data-l="In the maths">The scale and LITO run on each share. Medicare, the surcharge and HELP stay on the combined figure.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">toward 50%: ▲ capacity</span></td></tr>
+          <tr><th scope="row">Second applicant's share of income</th><td data-l="What it is">How taxable income splits between two applicants, 0% to 50% (50%).</td><td data-l="In the maths">The scale and LITO run on each share, and HELP on the higher earner's. Medicare and the surcharge stay on the combined figure.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">toward 50%: ▲ capacity</span></td></tr>
           <tr><th scope="row">Dependants</th><td data-l="What it is">Children or others relying on your income, 0 to 6.</td><td data-l="In the maths">+$480 a month each in HEM before city and band; lifts the Medicare and surcharge family thresholds.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
           <tr><th scope="row">Declared living expenses</th><td data-l="What it is">Your own monthly figure, without rent, debt repayments or property outgoings.</td><td data-l="In the maths"><var>E</var> = max(declared, HEM). The note under it says which is used.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity, once above HEM</span></td></tr>
           <tr><th scope="row">Private hospital cover</th><td data-l="What it is">On by default.</td><td data-l="In the maths">Off: surcharge = tier rate × taxable income, the tier tested on income plus any rental loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">on: no surcharge</span></td></tr>
           <tr><th scope="row">Resident tax year</th><td data-l="What it is">2025-26, 2026-27 or 2027-28.</td><td data-l="In the maths">The lowest bracket rate: 16%, 15% or 14%.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">later year: ▲ capacity</span></td></tr>
           <tr><th scope="row">Study loan (HELP or HECS)</th><td data-l="What it is">Deduct as tax, Treat as a commitment, or No study loan.</td><td data-l="In the maths">The same repayment in <var>T</var> or in <var>K</var>, so capacity is the same either way; only the NSR differs.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">a loan: ▼ capacity</span></td></tr>
-          <tr><th scope="row">Repayment threshold</th><td data-l="What it is">The income where HELP repayments start ($67,000).</td><td data-l="In the maths">15% of income above it to $125,000, 17% above, on taxable income plus any rental loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Repayment threshold</th><td data-l="What it is">The income where HELP repayments start ($67,000).</td><td data-l="In the maths">15% of income above it to $125,000, 17% above, on the higher earner's share of taxable income plus any rental loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
         </tbody>
       </table></div>
       <p class="gd-note gd-note-warn"><strong>Declaring less than HEM gains nothing.</strong> The couple declare $4,800 a month, but HEM for two adults and two children in Melbourne on $185,000 is $5,315, so $5,315 is used. Cutting the declared figure changes nothing; only a figure above HEM moves the answer.</p>
@@ -631,7 +631,7 @@
       <p class="gd-sub">A model of the common approach, not any one bank's credit policy. Shading, HEM tables, floors, card rates and caps all differ between lenders.</p>
       <ul class="gd-facts">
         <li><strong>HEM is a stand-in.</strong> The real benchmark is a licensed table from the Melbourne Institute. Here it is $1,850 or $2,750 plus $480 a dependant at Perth prices, six income bands and a city index.</li>
-        <li><strong>Tax is the resident scale only.</strong> LITO and the Medicare levy, with no other deductions, offsets or salary sacrifice. The levy, the surcharge and HELP run on combined income, and negative gearing uses the higher earner's rate.</li>
+        <li><strong>Tax is the resident scale only.</strong> LITO and the Medicare levy, with no other deductions, offsets or salary sacrifice. The levy and the surcharge run on combined income; HELP is charged on the higher earner's share, and negative gearing uses that earner's rate.</li>
         <li><strong>Purchase costs are yours to enter.</strong> Stamp duty is not worked out by state, and first home grants and concessions are not applied.</li>
         <li><strong>LMI is a flat percentage.</strong> Real premiums climb steeply with LVR and loan size. The LVR and deposit caps apply to the loan before the premium is added.</li>
         <li><strong>The NSR minimum never resizes the loan.</strong> It is a pass or fail check; UMI alone sizes serviceability.</li>

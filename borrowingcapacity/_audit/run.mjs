@@ -139,7 +139,9 @@ function replay(p){
   const incTax   = share2 > 0 ? perHead(taxable1) + perHead(taxable2) : perHead(taxable);
   const medicare = refMedicare(taxable, p.adults, p.deps);
   const mls      = p.privHealth ? 0 : refMlsRate(adjusted, p.adults, p.deps) * taxable;
-  const helpAll  = p.helpMode === 'none' ? 0 : refHelp(adjusted, p.helpThreshold);
+  // HELP is one person's debt, on that person's repayment income: the higher
+  // earner's share, applicant 1's, never the couple's pooled figure.
+  const helpAll  = p.helpMode === 'none' ? 0 : refHelp(adjusted * (1 - share2), p.helpThreshold);
   const helpTax  = p.helpMode === 'tax' ? helpAll : 0;
   const helpComm = p.helpMode === 'commitment' ? helpAll : 0;
   const totalTax = incTax + medicare + mls + helpTax;   // the gross-up already puts the credit in income
@@ -184,7 +186,7 @@ function replay(p){
   // Step 8
   const repayAtMax = refPayment(maxLoan*lmiFactor, i, n);
   const outgoings  = living + commitments + repayAtMax;
-  return { grossAssessable, grossUnshaded, taxable, taxable1, taxable2, totalTax, netMonthly, hem, living,
+  return { grossAssessable, grossUnshaded, taxable, taxable1, taxable2, totalTax, help:helpAll, netMonthly, hem, living,
            commitments, assessRate, n, maxRepay, Lserv, Ldti, Llvr, Ldep, maxLoan,
            repayAtMax, funds, nsr: netMonthly/outgoings, umi: netMonthly - outgoings,
            maxPrice: maxLoan + funds };
@@ -367,7 +369,7 @@ async function reset(){
 
 /* ══════════════ B4 — HELP: marginal repayment, and where it lands ══════════════ */
 {
-  await setInputs({ incPayg:150000, helpMode:'tax', helpThreshold:67000 });
+  await setInputs({ adults:'1', incPayg:150000, helpMode:'tax', helpThreshold:67000 });
   const tax = await engine();
   const expected = 0.15*(125000-67000) + 0.17*(150000-125000);
   check('B4 HELP repayment uses the marginal system, not a flat rate of total income',
@@ -379,6 +381,15 @@ async function reset(){
   check('B4b moving HELP to commitments leaves capacity unchanged but lowers the NSR',
     near(tax.maxLoan, comm.maxLoan, 1) && comm.nsr < tax.nsr,
     `capacity ${tax.maxLoan.toFixed(0)} vs ${comm.maxLoan.toFixed(0)}; NSR ${tax.nsr.toFixed(4)} → ${comm.nsr.toFixed(4)}`);
+
+  // A couple on $150,000 split 70/30 owes HELP on the higher earner's $105,000,
+  // not on the $150,000 they earn between them.
+  await setInputs({ adults:'2', incSplit:30, helpMode:'tax' });
+  const pair = await engine(), pairRef = replay(await inputs());
+  const expectedPair = 0.15*(105000-67000);
+  check('B4c two applicants repay HELP on one person\'s income, not the combined figure',
+    near(pair.help, expectedPair, 0.01) && near(pair.help, pairRef.help, 0.01),
+    `page ${pair.help.toFixed(2)} vs ${expectedPair.toFixed(2)} on 105,000 (combined would be ${expected.toFixed(2)})`);
   await reset();
 }
 
@@ -696,6 +707,33 @@ async function reset(){
   check('B17d picking one side of the switch silences the other side entirely',
     !(await shown('incPayg')) && (await shown('incSeNpat')),
     'employment group hidden on the self-employed side');
+
+  // Detailed → Simple → Detailed is a round trip: the streams Detailed kept
+  // are part of the total Simple carried, so they are not added on top of it.
+  await reset();
+  await setInputs({ incPayg:120000, incOvertime:20000, incBonus:10000 });
+  await setModes({ incModeGroup:'simple' });
+  await setModes({ incModeGroup:'detailed' });
+  const round = await inputs();
+  check('B17e Detailed → Simple → Detailed counts the income once',
+    round.payg + round.overtime + round.bonus === 150000 && round.payg === 120000
+      && round.overtime === 20000 && round.bonus === 10000,
+    `payg ${round.payg} + overtime ${round.overtime} + bonus ${round.bonus} after the round trip, 150,000 entered`);
+
+  // A new Simple figure lands on base salary, with the other streams left as
+  // they were; one below those streams alone becomes the whole income.
+  await setModes({ incModeGroup:'simple' });
+  await setInputs({ incSimple:'160,000' });
+  await setModes({ incModeGroup:'detailed' });
+  const raised = await inputs();
+  await setModes({ incModeGroup:'simple' });
+  await setInputs({ incSimple:'25,000' });
+  await setModes({ incModeGroup:'detailed' });
+  const cut = await inputs();
+  check('B17f Detailed adds up to the figure Simple held, whatever it was changed to',
+    raised.payg === 130000 && raised.overtime === 20000 && raised.bonus === 10000
+      && cut.payg === 25000 && cut.overtime === 0 && cut.bonus === 0,
+    `160,000 → payg ${raised.payg} + ${raised.overtime} + ${raised.bonus}; 25,000 → payg ${cut.payg} + ${cut.overtime} + ${cut.bonus}`);
   await reset();
 }
 

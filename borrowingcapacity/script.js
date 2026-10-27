@@ -17,17 +17,17 @@
            applicant, or at a split of 0, the arithmetic collapses back to the
            single-taxpayer form.
 
-           Three parts of Step 2 stay on the COMBINED figure on purpose:
+           Two parts of Step 2 stay on the COMBINED figure on purpose:
              - Medicare levy. It is 2% of each person's taxable income, and
                2%(a) + 2%(b) = 2%(a+b) outside the low income phase-in, so
                pooling already gives the right answer.
              - Medicare Levy Surcharge. The tiers are set on combined family
                income and the surcharge then applies to each person's income,
                which is what combined tier × combined income computes.
-             - HELP. Repayment income is per person, but the page has one
-               study loan control and cannot say which applicant holds the
-               debt, so it is modelled as one borrower's.
-           The negative gearing add-back uses the HIGHER earner's marginal
+           HELP does not. Repayment income is per person, and the page has one
+           study loan control that cannot say which applicant holds the debt,
+           so it is charged on the HIGHER earner's share of repayment income.
+           The negative gearing add-back uses the same earner's marginal
            rate, since a geared property is normally held in that name.
    Step 3  Living expenses = MAX(declared, HEM). HEM scales with household
            composition, an income band, and a city cost index. It excludes
@@ -266,7 +266,11 @@ function compute(p){
   const lito      = grossTax - netIncTax;
   const medicare  = medicareLevy(taxableIncome, p.adults, p.deps);
   const surcharge = p.privHealth ? 0 : mlsRate(adjustedIncome, p.adults, p.deps) * taxableIncome;
-  const helpAmt   = p.helpMode === 'none' ? 0 : helpRepayment(adjustedIncome, p.helpThreshold);
+  // HELP is charged on the borrower's own repayment income, never the
+  // couple's. The page cannot say who holds the debt, so it is the higher
+  // earner's share, applicant 1's, which is the larger repayment of the two.
+  const helpIncome = adjustedIncome * (1 - share2);
+  const helpAmt   = p.helpMode === 'none' ? 0 : helpRepayment(helpIncome, p.helpThreshold);
   const helpAsTax        = p.helpMode === 'tax'        ? helpAmt : 0;
   const helpAsCommitment = p.helpMode === 'commitment' ? helpAmt : 0;
 
@@ -366,7 +370,7 @@ function compute(p){
 
   return {
     streams, grossAssessable, grossUnshaded, divGrossUp, divGrossed,
-    rentalNet, rentalProfit, rentalLoss, taxableIncome, adjustedIncome,
+    rentalNet, rentalProfit, rentalLoss, taxableIncome, adjustedIncome, helpIncome,
     grossTax, lito, netIncTax, medicare, surcharge, helpAmt, helpAsTax,
     helpAsCommitment, totalTax, mRate, negGear, netMonthly,
     hem, living, hemBinds,
@@ -735,7 +739,7 @@ function renderBuild(r, p){
   push('Income tax after LITO', -r.netIncTax/12, `on ${M(r.taxableIncome/12)}/mo taxable, LITO ${M(r.lito/12)}/mo`, '', ['','neg','neg','note']);
   push('Medicare levy', -r.medicare/12, '', '', ['','neg','neg','note']);
   if(r.surcharge > 0) push('Medicare levy surcharge', -r.surcharge/12, 'no private hospital cover', '', ['','neg','neg','note']);
-  if(r.helpAsTax > 0) push('HELP repayment', -r.helpAsTax/12, `on ${M(r.adjustedIncome/12)}/mo repayment income`, '', ['','neg','neg','note']);
+  if(r.helpAsTax > 0) push('HELP repayment', -r.helpAsTax/12, `on ${M(r.helpIncome/12)}/mo repayment income`, '', ['','neg','neg','note']);
   push('Total tax', -r.totalTax/12, r.divGrossUp > 0
         ? `includes ${M(r.divGrossUp/12)}/mo of franking credits already counted in income`
         : '', 'total', ['','neg','neg','note']);
@@ -1258,14 +1262,27 @@ function resetAll(){
 }
 
 // Flipping Simple and Detailed must not lose the headline figure, so the two
-// views hand it to each other: Detailed opens on the number Simple held, and
-// Simple reopens on what the streams on that side of the switch now add up to.
+// views hand it to each other: Detailed opens on streams that add up to the
+// number Simple held, and Simple reopens on what the streams on that side of
+// the switch now add up to. The primary field takes up the difference, so the
+// overtime or add-backs still sitting in Detailed are not counted a second time
+// on top of a total that already includes them. Only when Simple holds less
+// than those other streams alone does the primary field take the whole figure
+// and the others clear.
 const setAmount = (id, v) => { $(id).value = SharedFmt.formatThousands(String(v), { maxDecimals:2 }); };
 
 function carryIncome(nextMode, nextWho){
   const primary = nextWho === 'self' ? 'incSeNpat' : 'incPayg';
   if(nextMode === 'detailed' && UI.incMode === 'simple'){
-    setAmount(primary, num('incSimple'));
+    const total  = num('incSimple');
+    const others = DETAIL_STREAMS[nextWho].filter(id => id !== primary);
+    const rest   = others.reduce((a, id) => a + num(id), 0);
+    if(total >= rest){
+      setAmount(primary, Math.round((total - rest)*100)/100);
+    } else {
+      setAmount(primary, total);
+      others.forEach(id => setAmount(id, 0));
+    }
   } else if(nextMode === 'simple' && UI.incMode === 'detailed'){
     setAmount('incSimple', DETAIL_STREAMS[nextWho].reduce((a, id) => a + num(id), 0));
   }
