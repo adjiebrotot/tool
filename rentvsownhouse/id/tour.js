@@ -8,7 +8,8 @@ window.__TOUR = {
   guide: '../guides/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
             start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
-            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)' },
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)',
+            guideTitle: 'Cara memakai alat ini, langkah demi langkah (bahasa Inggris)' },
   steps: [
     {
       target: null,
