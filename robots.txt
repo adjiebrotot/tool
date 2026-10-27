@@ -1,4 +1,7 @@
 User-agent: *
+# Content signals (contentsignals.org): this site may be shown in search results, quoted in
+# AI answers, and used to train AI models. The same as the crawler list below allows.
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 # Search engine crawlers

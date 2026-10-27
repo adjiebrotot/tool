@@ -16,7 +16,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   const mw = (v) => Math.round(v).toLocaleString('en-AU');
   return {
     slug: 'hosting-capacity', crumb: 'Hosting capacity', card: 'Hosting capacity study', short: 'hosting capacity',
-    title: 'How to do a hosting capacity study (and automate it in PowerFactory)',
+    title: 'Hosting capacity study: how to automate it in PowerFactory',
     h1: 'How to do a hosting capacity study, and automate it in PowerFactory',
     h1Plain: 'How to do a hosting capacity study, and automate it in PowerFactory',
     desc: 'How to do a hosting capacity study, step by step: operating cases, limits, the test generator, bisection, the map. Then a tested PowerFactory script.',

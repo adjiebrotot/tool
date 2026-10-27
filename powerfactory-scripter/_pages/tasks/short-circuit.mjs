@@ -10,7 +10,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   const b5 = rows.find(x => x.Busbar === 'Bus 5');
   return {
     slug: 'short-circuit', crumb: 'Short circuit', card: 'Short-circuit automation', short: 'a short-circuit calculation',
-    title: 'PowerFactory short circuit with Python: IEC 60909 fault levels at every busbar',
+    title: 'PowerFactory short circuit in Python: IEC 60909 fault levels',
     h1: 'Short-circuit automation in PowerFactory with Python',
     desc: 'Run IEC 60909 short-circuit calculations in PowerFactory from Python with ComShc: a fault at every busbar, Ikss, ip and Skss saved to CSV. Tested script.',
     lead: `In Python, a short-circuit calculation is the study case's <code>ComShc</code> command: set the method (<code>iopt_mde = 1</code> for <strong>IEC 60909</strong>), the fault type (<code>iopt_shc = "3psc"</code>) and the location (<code>iopt_allbus = 2</code> for <strong>every busbar</strong>), call <code>Execute()</code>, then read <code>m:Ikss</code>, <code>m:ip</code> and <code>m:Skss</code> on each busbar.`,

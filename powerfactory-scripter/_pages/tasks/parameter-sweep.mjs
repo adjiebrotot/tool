@@ -10,7 +10,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   const q0 = qv.reduce((a, x) => (Math.abs(x['Q (Mvar)']) < Math.abs(a['Q (Mvar)']) ? x : a));
   return {
     slug: 'parameter-sweep', crumb: 'Parameter sweep, PV and QV curves', card: 'Parameter sweep: PV and QV curves', short: 'a parameter sweep',
-    title: 'PowerFactory parameter sweep with Python: PV curve and QV curve scripts',
+    title: 'PowerFactory parameter sweep in Python: PV and QV curves',
     h1: 'Parameter sweeps in PowerFactory with Python: PV and QV curves',
     desc: 'Parameter sweeps in PowerFactory with Python: a PV curve to the nose by load scaling and a QV curve with a fictitious condenser. Tested scripts, results.',
     lead: `A parameter sweep sets one input to a series of values, reruns the calculation for each and records the results. The two classic sweeps are the <strong>PV curve</strong> (scale the load up until the load flow fails: the nose is the loadability limit) and the <strong>QV curve</strong> (hold a busbar at a voltage and read the reactive power it takes: the bottom is the reactive margin). On the Nine-bus example the nose is at <strong>${f(nose['Load (MW)'], 0)} MW, ${f(nose.Scale, 2)} times the base load</strong>, and Bus 5's QV curve bottoms out at <strong>${f(bottom['Q (Mvar)'], 0)} Mvar</strong>.`,

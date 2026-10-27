@@ -22,7 +22,7 @@ export default async function ({ results, script, builderScript, builderBlock, p
   ];
   return {
     slug: 'getting-started', crumb: 'Getting started', card: 'PowerFactory Python API: getting started', short: 'the PowerFactory Python API',
-    title: 'PowerFactory Python API: getting started with GetApplication and GetApplicationExt',
+    title: 'PowerFactory Python API: getting started with GetApplication',
     h1: 'PowerFactory Python API: getting started',
     desc: 'Start scripting PowerFactory in Python: the powerfactory module, GetApplication and GetApplicationExt, the calls you use most, and a first load flow.',
     lead: `PowerFactory comes with a Python module, <code>powerfactory</code>. Inside PowerFactory, <code>powerfactory.GetApplication()</code> gives you the running program; from your own Python, <code>powerfactory.GetApplicationExt()</code> starts it in the background and tells you why when it cannot. Everything after that is objects: activate a project, run a command such as <code>ComLdf</code>, and read any value with <code>GetAttribute</code>.`,

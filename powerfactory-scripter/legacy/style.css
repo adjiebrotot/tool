@@ -132,6 +132,8 @@
     min-width: 0;
   }
   .header-title {
+    margin: 0;
+    line-height: inherit;
     font-family: var(--mono);
     font-weight: 600;
     font-size: 15px;
