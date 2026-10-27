@@ -491,6 +491,50 @@ function expected(fx){
   await fresh.close();
 }
 
+// ── C9: Detailed mode keeps the estimates on the priced-at rate ──
+// A custom rate is the rate money crosses the border at, so in Detailed mode,
+// as in Simple, it reprices only what crosses: the ≈ home figures and the
+// remittance row, which has no index. An indexed estimate stays a ratio of
+// local prices. And What this assumes follows every edit to the table.
+{
+  await page.evaluate(()=>{ document.querySelector('#modeGroup .seg-btn[data-val="detailed"]').click(); });
+  await page.waitForTimeout(80);
+  await page.evaluate(()=>document.querySelector('.quick-start-btn[data-preset="sg-au"]').click());
+  await page.waitForTimeout(150);
+  const SG = cityIdx['Singapore|Singapore'], SYD = cityIdx['Sydney|Australia'];
+  const cells = () => page.evaluate(()=>[...document.querySelectorAll('#detailSec tbody tr[data-ri]')].map(tr=>{
+    const inp=tr.querySelector('input.dt-to-exp[data-ci="0"]'); return inp ? inp.placeholder : null; }));
+  const before = await cells();
+  const s = await page.evaluate(()=>window.__COL_TOUR.saveState());
+  s.detailRows.push({catId:'remittance', fromAmount:1000, overrides:{}});
+  await page.evaluate(s=>window.__COL_TOUR.restoreState(s), s);
+  await page.waitForTimeout(80);
+  const remitMarket = (await cells()).at(-1);
+  s.customFxDetailed = [2, null, null, null];        // SGD per 1 AUD, far off the market
+  await page.evaluate(s=>window.__COL_TOUR.restoreState(s), s);
+  await page.waitForTimeout(80);
+  const after = await cells();
+  const rentWant = 3500/RATE.SGD*(SYD.rent_index.med/SG.rent_index.med)*RATE.AUD;
+  check('C9a a custom rate in Detailed mode leaves every indexed estimate where it was',
+    before.every((v,i)=>v===after[i]) && Math.abs(num(after[0])-rentWant)<=1,
+    `Sydney rent AUD ${before[0]} → ${after[0]} at 1 AUD = 2 SGD, replayed ${rentWant.toFixed(0)}`);
+  check('C9b the remittance row, money crossing the border, converts at the custom rate',
+    num(after.at(-1))===500 && num(remitMarket)!==500,
+    `SGD 1,000 sent: AUD ${remitMarket} at the bundled rate, AUD ${after.at(-1)} at 2 SGD`);
+
+  const assumes = () => page.evaluate(()=>document.getElementById('assumptions').textContent);
+  const rowsSaid = t => (t.match(/Each of your (\d+) expense/)||[])[1];
+  const was = rowsSaid(await assumes());
+  await page.evaluate(()=>document.getElementById('addRowBtn').click());
+  await page.waitForTimeout(80);
+  await page.evaluate(()=>{ const all=document.querySelectorAll('.dt-from-exp'), inp=all[all.length-1];
+    inp.value='250'; inp.dispatchEvent(new Event('input')); inp.dispatchEvent(new Event('blur')); });
+  await page.waitForTimeout(80);
+  const now = rowsSaid(await assumes());
+  check('C9c What this assumes follows an edit to the Detailed table', Number(now)===Number(was)+1,
+    `"${was}" expense rows before the new row, "${now}" after`);
+}
+
 await browser.close();
 server.close();
 console.log(`\ncostofliving audit: ${pass} passed, ${fail} failed`);
