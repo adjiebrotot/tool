@@ -360,7 +360,7 @@ export const SCENES = [
       await S.focus('#mapCard', { pad: 10 });
       await S.moveTo('#legend', { ms: 700 });
       await S.wait(1600);
-      const p = dot(S, 'Sydney|Australia');
+      const p = dot(S, 'Melbourne|Australia');
       await S.glide(p.x, p.y, 900);
       await S.wait(2600);
       S.mark('The four figures');
@@ -446,7 +446,7 @@ export const SCENES = [
       S.begin();
       S.mark('Point at a city');
       await S.focus('#mapCard', { pad: 10, after: 300 });
-      const p = dot(S, 'Singapore|Singapore');
+      const p = dot(S, 'Adelaide|Australia');
       await S.glide(p.x, p.y, 900);
       await S.wait(2600);
       S.mark('Zoom and move');
