@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- A guide's live demo opens this page in a frame as ?demo: guide-demo.js keeps it off the reader's own storage. -->
+  <script>if(self!==top&&/[?&]demo(&|$)/.test(location.search))document.write('<script src="../guide-demo.js"><\/script>')</script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
   <script>
@@ -116,6 +118,8 @@
   </div>
   <div class="header-right">
     <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+    <!-- No tour here, so the guide's link stands alone, dressed as tour-shared.js dresses its Guide button. -->
+    <a class="btn-theme" href="guides/" data-pf-guide-link title="How to use this tool, step by step"><span class="pf-tour-emo" aria-hidden="true">📖 </span>Guide</a>
     <button class="btn-theme" id="themeToggle">🌙 Dark</button>
   </div>
 </section>
