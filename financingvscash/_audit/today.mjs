@@ -166,7 +166,7 @@ console.log('\n════ Show in today\'s money, against an independent repla
       if(!near(got,want,0.011)) bad.push(`${nm} ${k} ${got} ≠ ${want.toFixed(2)}`);
     }
     const lo=money((F.comp['Ending Wealth Range (min–max)']||[])[i]);
-    for(const k of ['Loan Type','Down Payment (%)','Down Payment Amount','Financed Amount','Effective Rate (APR)','Comparison Horizon'])
+    for(const k of ['Loan Type','Down Payment (%)','Down Payment Amount','Financed Amount','Effective Annual Rate (EAR)','Comparison Horizon'])
       if(F.comp[k][i]!==T.comp[k][j]) bad.push(`${nm} ${k} moved`);
   }
   // The float's range row is read at the same horizon as its midpoint.

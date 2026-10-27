@@ -390,10 +390,16 @@ function defaultScenario(name,rate){
     that ends it, and the holiday itself capitalises at the schedule's opening
     rate.
 
-15. EFFECTIVE RATE (APR): the internal rate of return of the actual payment
-    stream against the amount financed, solved by the same bisection as §11,
-    then annualised as (1+r)^ppy − 1. It is what makes a flat 5% and an
-    annuity 5% comparable, and it drives the negative-carry warning.
+15. EFFECTIVE ANNUAL RATE (EAR): the internal rate of return of the actual
+    payment stream against the amount financed, solved by the same bisection
+    as §11, then annualised as (1+r)^ppy − 1. It is what makes a flat 5% and
+    an annuity 5% comparable, and it drives the negative-carry warning. It is
+    the rate of the repayments alone, so it leaves every fee out.
+    ALL-IN RATE (with fees): the same IRR and annualisation on the money that
+    actually changes hands. The borrower receives the amount financed less the
+    origination fee, whichever way the fee is settled (paid from cash, added
+    to the loan, or deducted from the advance, it is never money towards the
+    item), and pays every instalment plus the admin fee charged with it.
 
 16. FEE TREATMENT:
     upfront    — fee paid from your own cash; financed is unchanged (default)
@@ -679,9 +685,12 @@ function computeScenario(sc, cashPrice, availableCash, riskFreeRate, inflationRa
   // Carry is judged on what the loan actually costs, not on the headline rate:
   // a 5% flat loan really costs about 9%, and the warning has to say so.
   const effRate=amort.effectiveRate;
+  const allInRate=amort.schedule.length
+    ? effectiveAnnual(solvePeriodRate(financed-fee,amort.schedule.map(p=>p.payment+adminFee)),ppy)
+    : null;
   return{price:purchaseCost,down,financed,fee,cashFee:fin.cashFee,feeTreatment:sc.feeTreatment||'upfront',adminFee,totalAdminFee,amort,endWealth,
     totalInterest:amort.totalInterest,totalFee,totalFinanceCost,payment:amort.payment,finalPayment:amort.finalPayment,
-    paymentVaries:amort.paymentVaries,negAm:amort.negAm,effectiveRate:effRate,impliedAnnualRate:amort.impliedAnnualRate,
+    paymentVaries:amort.paymentVaries,negAm:amort.negAm,effectiveRate:effRate,allInRate,impliedAnnualRate:amort.impliedAnnualRate,
     residualAmt:amort.residualAmt,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',
     totalOOP,timeline,negCarry:riskFreeRate<(effRate===null?sc.financeRate:effRate),inflAdj,cashAfter:cashAfterUpfront,
     n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
@@ -698,7 +707,7 @@ function computeScenarioAsCash(purchaseCost,availableCash,sc,riskFreeRate,inflat
   for(let i=0;i<n;i++){bal*=(1+rfP);timeline.push({period:i+1,investBal:bal,loanBal:0,wealth:bal,cumInterest:0,cumPaid:0});}
   let inflAdj=null;
   if(inflationEnabled&&inflationRate>0) inflAdj={endWealthReal:bal/Math.pow(1+inflationRate/100,termYears)};
-  return{price:purchaseCost,down:purchaseCost,financed:0,fee:0,cashFee:0,feeTreatment:'upfront',adminFee:0,totalAdminFee:0,amort:{payment:0,finalPayment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,paymentVaries:false,negAm:false,solved:true},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,finalPayment:0,paymentVaries:false,negAm:false,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
+  return{price:purchaseCost,down:purchaseCost,financed:0,fee:0,cashFee:0,feeTreatment:'upfront',adminFee:0,totalAdminFee:0,amort:{payment:0,finalPayment:0,schedule:[],totalInterest:0,totalPaid:0,periods:0,periodRate:0,effectiveRate:null,impliedAnnualRate:null,residualAmt:0,paymentVaries:false,negAm:false,solved:true},endWealth:bal,totalInterest:0,totalFee:0,totalFinanceCost:0,payment:0,finalPayment:0,paymentVaries:false,negAm:false,effectiveRate:null,allInRate:null,impliedAnnualRate:null,residualAmt:0,loanType:sc.loanType||'annuity',rateMode:sc.rateMode||'simple',totalOOP:purchaseCost,timeline,negCarry:false,inflAdj,cashAfter:leftover,n,ppy,termYears,termPeriods:sc.termPeriods,riskFreeRate,financeRate:sc.financeRate,freq:sc.freq};
 }
 
 function computeCashBaseline(purchaseCost,availableCash,termYears,riskFreeRate,inflationRate,inflationEnabled){
@@ -937,17 +946,23 @@ function renderSimBoardIn(I){
   renderWarn();
 
   const valid=results.filter(r=>r);
+  // Comparison horizon = the longest scenario actually being compared, so the
+  // KPI tile, the chart's cash line and the table's cash column all end together.
+  const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
+  // Net Benefits of offers that end on different dates are ranked at one date,
+  // the comparison horizon. Once a loan is repaid both paths hold cash earning
+  // the risk-free rate, so its lead keeps growing at that rate to the horizon.
+  // Today's money divides every offer by the same price level there, so the
+  // engine's own figures rank the same in either money.
+  const atHorizon=r=>{const n=r.nominal||r;return n.netBenefit*priceLevel(riskFreeRate,maxTerm-n.termYears);};
   let bestIdx=-1;
   if(valid.length){
-    if(optTarget==='netBenefit')bestIdx=valid.reduce((b,r)=>r.netBenefit>(results[b]?.netBenefit??-Infinity)?r.idx:b,valid[0].idx);
+    if(optTarget==='netBenefit')bestIdx=valid.reduce((b,r)=>atHorizon(r)>(results[b]?atHorizon(results[b]):-Infinity)?r.idx:b,valid[0].idx);
     else if(optTarget==='lowestInterest')bestIdx=valid.reduce((b,r)=>r.totalInterest<(results[b]?.totalInterest??Infinity)?r.idx:b,valid[0].idx);
     else if(optTarget==='lowestCost')bestIdx=valid.reduce((b,r)=>r.totalFinanceCost<(results[b]?.totalFinanceCost??Infinity)?r.idx:b,valid[0].idx);
   }
   const allNeg=valid.every(r=>r.netBenefit<-NB_EPS);
   const bestResult=bestIdx>=0?results[bestIdx]:null;
-  // Comparison horizon = the longest scenario actually being compared, so the
-  // KPI tile, the chart's cash line and the table's cash column all end together.
-  const maxTerm=valid.reduce((m,r)=>Math.max(m,r.termYears),0);
   const cashBase=shownCash(computeCashBaseline(purchaseCost,availableCash,maxTerm,riskFreeRate,inflationRate,inflationEnabled),maxTerm,inflationRate);
   latestResults={results,cashBase,bestIdx,allNeg,purchaseCost,availableCash,maxTerm,inflationEnabled,inflationRate,riskFreeRate,scenarios:I.scenarios};
 
@@ -1265,8 +1280,10 @@ function renderComparisonTable(results,L){
     ['Down Payment Amount','—',r=>fmt.currency(r.down)],['Financed Amount','—',r=>fmt.currency(r.financed)],
     ['Periodic Payment','—',r=>paymentTxt(r)],
     // What the loan really costs, so a flat 5% and an annuity 5% can be read
-    // against each other instead of against their headline numbers.
-    ['Effective Rate (APR)','—',r=>r.effectiveRate===null?'—':fmt.pct(r.effectiveRate/100)],
+    // against each other instead of against their headline numbers: first the
+    // repayments alone, then with every fee the offer charges.
+    ['Effective Annual Rate (EAR)','—',r=>r.effectiveRate===null?'—':fmt.pct(r.effectiveRate/100)],
+    ['All-in Rate (with fees)','—',r=>r.allInRate==null?'—':fmt.pct(r.allInRate/100)],
     ['Admin Fee (per payment)','—',r=>{
       if(!(r.adminFee>0))return'—';
       const per='/'+freqLabel(r.freq);
@@ -3227,7 +3244,7 @@ const OPT_METRICS={
   endWealth:        {label:'Ending Wealth',            kind:'money',hi:true},
   totalInterest:    {label:'Total Interest Paid',      kind:'money',hi:false},
   totalFinanceCost: {label:'Total Financing Cost',     kind:'money',hi:false},
-  effectiveRate:    {label:'Effective Rate (APR)',     kind:'pct',  hi:false},
+  effectiveRate:    {label:'Effective Annual Rate (EAR)',kind:'pct', hi:false},
   inflAdjNetBenefit:{label:'Net Benefit in today\'s money',kind:'money',hi:true}
 };
 function optMetricKey(){
