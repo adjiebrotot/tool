@@ -30,13 +30,14 @@
      as #load&v=1&qs=<preset>&<field>=<value>&why.<field>=<reason>. Read
      once, now, beside the two above, because the mini cache has to know
      before any tool script calls it: such a link applies over the tool's
-     defaults, not over the reader's last scenario. Never in an embed frame,
-     a guide's ?demo frame, or beside an #open link. */
+     defaults, not over the reader's last scenario. Never in an embed frame
+     or a guide's ?demo frame, and never beside an #open link (OPEN), which
+     SharedShare applies instead. */
   var AGENT_MAX = 512 * 1024;
   var LOAD = EMBED || OPEN ? null : readLoadHash(global.location);
   function readLoadHash(loc){
     var hash = (loc && loc.hash) || '';
-    if(!/^#load(?:[&=?\/]|$)/.test(hash) || /(?:^#|&)open=/.test(hash)) return null;
+    if(!/^#load(?:[&=?\/]|$)/.test(hash) || (/(?:^#|&)open=[^&]/.test(hash) && /(?:^#|&)s=/.test(hash))) return null;
     if(global.self !== global.top && (/(?:^#|&)embed=/.test(hash) || /[?&]demo(?:&|$)/.test(loc.search || ''))) return null;
     return hash.length > AGENT_MAX ? { raw: '', tooLong: true } : { raw: hash.slice(1), tooLong: false };
   }

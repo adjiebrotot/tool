@@ -2623,11 +2623,23 @@ function migrateShowReal(saved){
   const f = saved && (saved.__fields || saved);
   if(f && typeof f === 'object' && !Object.prototype.hasOwnProperty.call(f, 'c:showReal')) $('showReal').checked = false;
 }
+/* The Detailed cost rows are drawn from S, like the rate periods above them,
+   so a restored cache, file or link shows the lists it carries, and the rows
+   an earlier plan left on the page are never read back over them. */
+function renderDetailedCostRows(){
+  Object.keys(COST_LISTS).forEach(key=>{
+    const cfg = COST_LISTS[key], wrap = $(cfg.rowsId);
+    if(!wrap) return;
+    if(Array.isArray(S[cfg.stateKey]) && S[cfg.stateKey].length) renderCostItemRows(key);
+    else wrap.innerHTML = '';
+  });
+}
 persist = Persist.init('rentvsownhouse', {
   onRestore: function(saved){
     migrateShowReal(saved);
     updateMortgageModeUI();
     renderRatePeriodRows();
+    renderDetailedCostRows();
     updateCostsModeUI();
     rerender();
   },
@@ -2664,5 +2676,248 @@ qsReset();
   applyPreset(want);
   try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){}
 })();
+
+/* ── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<city>[/<home>]&<field id>=<value>... opens the page set up by a
+   chatbot. The fields need nothing here; the Quick Start is the city picker's
+   own applyPreset, and what lives in S rather than in a field arrives as a
+   compact list, each switching its section to Detailed:
+     ratePeriods=<years>:<rate>,...   the mortgage's rate periods in order, each
+         a length in years and a rate in %/yr (or <low>-<high>, floating). As
+         in the Detailed rows, the last period runs to the end of the mortgage
+         term whatever length it is given, and one that starts after the term
+         does not count.
+     ownSetupCosts=<label>:<amount>[:fixed|pct],...
+     ownOngoingCosts=<label>:<amount>[:<freq>[:<growth>]],...
+     rentOngoingCosts=<label>:<amount>[:<freq>[:<growth>]],...
+         <freq> is what a row's selector saves (yearly, monthly, weekly, pct);
+         an amount written with % is pct; <growth> is the row's %/yr, else the
+         section's simple-mode growth.
+   json= takes the same state in its saved shape (the keys of extra above),
+   checked the same way. agent-notes.md documents all of it for the AI
+   section. Every name here is a saved handle already, and stays one. */
+const AGENT_MAX_ITEMS = 50;
+const AGENT_TEXT = {
+  en: { years: (a, b) => a === b ? 'year ' + a : 'years ' + a + ' to ' + b, at: ' at ', to: ' to ', json: 'Detailed settings',
+        shape: 'expected ', first: n => 'only the first ' + n + ' were used' },
+  id: { years: (a, b) => a === b ? 'tahun ' + a : 'tahun ' + a + ' sampai ' + b, at: ': ', to: ' sampai ', json: 'Pengaturan rinci',
+        shape: 'seharusnya ', first: n => 'hanya ' + n + ' pertama yang dipakai' }
+};
+const AGENT_SHAPE = {
+  ratePeriods: '<years>:<rate>',
+  ownSetup: '<label>:<amount>[:fixed|pct]',
+  ownOngoing: '<label>:<amount>[:<freq>[:<growth>]]',
+  rentOngoing: '<label>:<amount>[:<freq>[:<growth>]]'
+};
+const agentSet = { schedule: false };   // what this link's lists and json set
+function agentT(){ return AGENT_TEXT[lang] || AGENT_TEXT.en; }
+// A cost row's name, as plain text on one line.
+function agentLabel(v){ return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 80); }
+// A number pulled inside [lo, hi], said in the banner when it moves.
+function agentWithin(api, key, given, n, lo, hi){
+  const u = Math.min(hi, Math.max(lo, n));
+  if(u !== n) api.clamp(key, String(given), String(u));
+  return u;
+}
+function agentBasis(cfg, text){
+  const s = String(text).trim().toLowerCase();
+  const opts = cfg.kind === 'setup' ? [['fixed', null], ['pct', cfg.pctKey]]
+    : [['yearly', 'optPerYear'], ['monthly', 'optPerMonth'], ['weekly', 'optPerWeek'], ['pct', cfg.pctKey]];
+  for(const [v, k] of opts) if(s === v || (k && s === String(T(k)).toLowerCase())) return v;
+  return null;
+}
+function agentPeriodText(list, api){
+  const t = agentT(), term = api.num('mortgageTerm', DEFAULTS.mortgageTerm);
+  return E.normalizeRatePeriods(list, term, api.num('mortgageRate', DEFAULTS.mortgageRate)).map(p =>
+    t.years(p.from, p.to) + t.at + (p.max > p.min ? pctText(p.min) + t.to + pctText(p.max) : pctText(p.min))
+  ).join(', ');
+}
+function agentCostText(cfg, list, api){
+  const sym = api.field('currencySymbol') || '$';
+  const per = { yearly: 'optPerYear', monthly: 'optPerMonth', weekly: 'optPerWeek' };
+  return list.map(it => {
+    const amt = it.basis === 'pct' ? (+(+it.amount).toFixed(2)) + T(cfg.pctKey)
+      : sym + formatMoneyValue(it.amount) + (per[it.basis] ? ' ' + T(per[it.basis]) : '');
+    return (it.name ? it.name + ' ' : '') + amt;
+  }).join(', ');
+}
+// One rate period, from a compact item or a json object; null when unreadable.
+function agentPeriod(api, rateText, rateLo, rateHi){
+  const rate = v => { const n = api.number(v); return isFinite(n) ? agentWithin(api, 'ratePeriods', v, n, 0, 40) : NaN; };
+  if(rateLo !== undefined){
+    let lo = rate(rateLo), hi = rate(rateHi);
+    if(!isFinite(lo) || !isFinite(hi)) return null;
+    if(lo > hi) [lo, hi] = [hi, lo];
+    return {type: 'floating', rate: (lo + hi)/2, rateMin: lo, rateMax: hi};
+  }
+  const r = rate(rateText);
+  return isFinite(r) ? {type: 'fixed', rate: r, rateMin: r, rateMax: r} : null;
+}
+function agentRatePeriods(raw, extra, api){
+  const t = agentT(), items = api.items(raw), out = [];
+  if(items.length > AGENT_MAX_ITEMS) api.error('ratePeriods: ' + t.first(AGENT_MAX_ITEMS));
+  let to = 0;
+  items.slice(0, AGENT_MAX_ITEMS).forEach(parts => {
+    const bad = () => api.error('ratePeriods "' + parts.join(':') + '": ' + t.shape + AGENT_SHAPE.ratePeriods);
+    const yrs = api.number(parts[0]);
+    if(parts.length !== 2 || !isFinite(yrs)) return bad();
+    const m = /^(.+?)\s*-\s*(.+)$/.exec(parts[1]);
+    const p = m ? agentPeriod(api, null, m[1], m[2]) : agentPeriod(api, parts[1]);
+    if(!p) return bad();
+    to += agentWithin(api, 'ratePeriods', parts[0], Math.round(yrs), 1, 50);
+    out.push(Object.assign({toYear: to}, p));
+  });
+  if(!out.length) return false;
+  extra.mortgageMode = 'detailed';
+  extra.ratePeriods = out;
+  agentSet.schedule = true;
+  return { value: agentPeriodText(out, api) };
+}
+// One cost row; parts are [label, amount, basis?, growth?] as text.
+function agentCostItem(key, api, parts, inflationDefault){
+  const cfg = COST_LISTS[key], setup = cfg.kind === 'setup', name = cfg.stateKey;
+  let amt = api.number(parts[1]);
+  if(!isFinite(amt)) return null;
+  const pct = /%\s*$/.test(String(parts[1]));
+  let basis = pct ? 'pct' : (setup ? 'fixed' : 'yearly');
+  if(parts[2] != null && String(parts[2]).trim() !== ''){
+    const b = agentBasis(cfg, parts[2]);
+    if(!b || (pct && b !== 'pct')) return null;
+    basis = b;
+  }
+  amt = agentWithin(api, name, parts[1], amt, 0, 1e12);
+  const item = {name: agentLabel(parts[0]), amount: amt, basis};
+  if(!setup){
+    let g = inflationDefault;
+    if(parts[3] != null && String(parts[3]).trim() !== ''){
+      g = api.number(parts[3]);
+      if(!isFinite(g)) return null;
+      g = agentWithin(api, name, parts[3], g, 0, 30);
+    }
+    item.inflation = g;
+  }
+  return item;
+}
+function agentCostList(key){
+  const cfg = COST_LISTS[key], side = key === 'rentOngoing' ? 'rent' : 'own';
+  return function(raw, extra, api){
+    const t = agentT(), items = api.items(raw), out = [];
+    if(items.length > AGENT_MAX_ITEMS) api.error(cfg.stateKey + ': ' + t.first(AGENT_MAX_ITEMS));
+    const grow = api.num(side + 'OngoingInflation', 0);
+    items.slice(0, AGENT_MAX_ITEMS).forEach(parts => {
+      const item = parts.length >= 2 && parts.length <= (cfg.kind === 'setup' ? 3 : 4) ? agentCostItem(key, api, parts, grow) : null;
+      if(item) out.push(item);
+      else api.error(cfg.stateKey + ' "' + parts.join(':') + '": ' + t.shape + AGENT_SHAPE[key]);
+    });
+    if(!out.length) return false;
+    extra[cfg.stateKey] = out;
+    extra[side + 'CostsMode'] = 'detailed';
+    return { value: agentCostText(cfg, out, api) };
+  };
+}
+const AGENT_LISTS = { ownSetupCosts: 'ownSetup', ownOngoingCosts: 'ownOngoing', rentOngoingCosts: 'rentOngoing' };
+// json=: the saved shape of extra, each part checked as its compact list is.
+function agentJson(obj, extra, api){
+  if(!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
+  const done = [], num = v => typeof v === 'number' ? v : api.number(v);
+  Object.keys(obj).forEach(k => {
+    const v = obj[k];
+    if(/^(mortgage|ownCosts|rentCosts)Mode$/.test(k)){
+      if(v === 'simple' || v === 'detailed'){ extra[k] = v; done.push(k); }
+      else api.error('json.' + k + ': simple | detailed');
+      return;
+    }
+    if(k !== 'ratePeriods' && !AGENT_LISTS[k]){ api.unknown('json.' + k); return; }
+    if(!Array.isArray(v)){ api.error('json.' + k + ': [ ]'); return; }
+    const out = [];
+    v.slice(0, AGENT_MAX_ITEMS).forEach(o => {
+      if(!o || typeof o !== 'object') return;
+      let item = null;
+      if(k === 'ratePeriods'){
+        const floating = o.type === 'floating';
+        item = floating ? agentPeriod(api, null, o.rateMin, o.rateMax) : agentPeriod(api, o.rate);
+        const to = num(o.toYear);
+        if(item && isFinite(to)) item = Object.assign({toYear: agentWithin(api, 'ratePeriods', o.toYear, Math.round(to), 1, 50)}, item);
+        else item = null;
+      } else {
+        const key = AGENT_LISTS[k], side = key === 'rentOngoing' ? 'rent' : 'own';
+        item = agentCostItem(key, api, [o.name, o.amount, o.basis, o.inflation], api.num(side + 'OngoingInflation', 0));
+      }
+      if(item) out.push(item);
+      else api.error('json.' + k + ': ' + JSON.stringify(o).slice(0, 60));
+    });
+    if(!out.length) return;
+    extra[k] = out;
+    // A list on its own still switches its section, as the compact lists do.
+    const mode = k === 'ratePeriods' ? 'mortgageMode' : (k === 'rentOngoingCosts' ? 'rentCostsMode' : 'ownCostsMode');
+    if(!Object.prototype.hasOwnProperty.call(obj, mode)) extra[mode] = 'detailed';
+    if(k === 'ratePeriods') agentSet.schedule = true;
+    done.push(k);
+  });
+  if(!done.length) return false;
+  return { value: done.map(k => { const d = agentDescribe(k); return d ? d.label : k; }).join(', ') };
+}
+/* Fields that only count in one mode: Interest Only and its cost toggle live
+   in the Detailed mortgage, and a staged schedule ignores the one rate. So a
+   link naming those switches the mortgage to Detailed on one fixed period at
+   the link's rate (what Simple computes), and a Detailed section a list
+   switched on gets its other lists from the Simple fields, as the Detailed
+   button seeds them, so the figures the link left alone stay as they were. */
+function agentPatch(extra, api){
+  const term = api.num('mortgageTerm', DEFAULTS.mortgageTerm), rate = api.num('mortgageRate', DEFAULTS.mortgageRate);
+  const one = () => [{toYear: term, type: 'fixed', rate, rateMin: rate, rateMax: rate}];
+  if(!agentSet.schedule){
+    if(extra.mortgageMode === 'detailed'){
+      if(api.given('mortgageRate') || !Array.isArray(extra.ratePeriods) || !extra.ratePeriods.length) extra.ratePeriods = one();
+    } else if(api.given('mortgageType') || api.given('costInterestOnly')){
+      extra.mortgageMode = 'detailed';
+      extra.ratePeriods = one();
+    }
+  }
+  const seed = {
+    ownSetup: () => [{name: '', amount: api.num('setupCost', 0), basis: api.field('setupCostType') === 'pct' ? 'pct' : 'fixed'}],
+    ownOngoing: () => [{name: '', amount: api.num('ownOngoingCost', 0),
+      basis: api.field('ownOngoingCostType') === 'pct' ? 'pct' : (api.field('ownOngoingCostFreq') || 'yearly'), inflation: api.num('ownOngoingInflation', 0)}],
+    rentOngoing: () => [{name: '', amount: api.num('rentOngoingCost', 0),
+      basis: api.field('rentOngoingCostType') === 'pct' ? 'pct' : (api.field('rentOngoingCostFreq') || 'yearly'), inflation: api.num('rentOngoingInflation', 0)}]
+  };
+  [['ownCostsMode', ['ownSetup', 'ownOngoing']], ['rentCostsMode', ['rentOngoing']]].forEach(([mode, keys]) => {
+    if(extra[mode] !== 'detailed') return;
+    keys.forEach(key => {
+      const sk = COST_LISTS[key].stateKey;
+      if(!Array.isArray(extra[sk]) || !extra[sk].length) extra[sk] = seed[key]();
+    });
+  });
+}
+function agentDescribe(key){
+  const map = {
+    ratePeriods: ['labelRateSchedule', 'rateScheduleRow'],
+    ownSetupCosts: ['labelSetupCosts', 'ownSetupCostRows'],
+    ownOngoingCosts: ['labelOwnOngoing', 'ownOngoingCostRows'],
+    rentOngoingCosts: ['labelRentOngoing', 'rentOngoingCostRows']
+  };
+  if(key === 'json') return { label: agentT().json, el: null };
+  const m = Object.prototype.hasOwnProperty.call(map, key) ? map[key] : null;
+  return m ? { label: T(m[0]), el: $(m[1]) } : null;
+}
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'rentvsownhouse',
+  // A city alone opens its usual home, as the picker does.
+  preset: function(key){
+    const sid = String(key || '').trim().toLowerCase();
+    if(!QS || !QS.preset(sid)) return false;
+    applyPreset(sid);
+    return QS.label(sid, lang);
+  },
+  compact: {
+    ratePeriods: agentRatePeriods,
+    ownSetupCosts: agentCostList('ownSetup'),
+    ownOngoingCosts: agentCostList('ownOngoing'),
+    rentOngoingCosts: agentCostList('rentOngoing')
+  },
+  json: agentJson,
+  patch: agentPatch,
+  describe: agentDescribe
+});
 
 })();
