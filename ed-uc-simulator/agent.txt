@@ -72,9 +72,9 @@ Start from the one closest to the user's network, then change its parts by name 
 el.<name>.<param> keys. Their names, buses and ratings are under QUICK START FIGURES, so read the
 part the user means from there: in pjm5 the generator at bus E is Brighton, at bus A are Alta and
 Park City, at bus C Solitude and at bus D Sundance. A Quick Start also puts the options (edMode, the
-horizon, edStart, the limits, edCur and the rest) back on their own values, so send those keys after
-it. Without qs the tool starts from pjm5. A network that differs structurally, with other buses,
-lines or devices, goes in json.
+horizon, edStart, the limits, edCur and the rest) back on their own values, so name each option the
+user wants different. Without qs the tool starts from pjm5. A network that differs structurally,
+with other buses, lines or devices, goes in json.
 qs takes one of: pjm5, uc3, solar, areas.
 What each Quick Start sets is listed under QUICK START FIGURES at the end.
 
