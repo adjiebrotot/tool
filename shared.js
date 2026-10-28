@@ -3321,7 +3321,8 @@
            patch(extra, api),           // last, for rules tying fields to that state
            describe(key),               // { label, el }: a compact or json key's name
                                         //   in the banner and the element its row shows
-           ready(),                     // a Promise to wait for before applying
+           ready(),                     // a Promise to wait for before applying, for a
+                                        //   tool that sets up after DOMContentLoaded
            banner                       // an element or selector to put the banner in
          });
 
@@ -3330,10 +3331,13 @@
      decoded so an encoded : or , stays in its part), number(text),
      clamp(key, given, used), error(text), unknown(key).
 
-     A tool whose scenario file is its own format (save/load) and has no
-     Persist registers a provider with SharedShare.state and an adapter whose
-     patch() does the work; failing both, fields are set in the page and
-     announced with input and change events.
+     Where the fields go: into the scenario file's state when the provider
+     is SharedScenario's own (state.__fields), loaded back through it; else,
+     for a tool whose file is its own format (save/load), into the mini
+     cache's snapshot, loaded with Persist's load(), and its adapter's
+     compact, json and patch hooks get that snapshot's __extra (a custom
+     blob beyond it is the adapter's to load, from patch()); with neither,
+     straight into the page, each field announced with input and change.
 
      For the checks and the docs: SharedAgent.link (a #load link was read),
      SharedAgent.done (a Promise, resolved once it is applied, at once
@@ -3618,8 +3622,7 @@
     function start(){
       var t = T(), rep = api.report = { applied: [], unknown: [], clamped: [], qs: null, errors: [] };
       try { global.history.replaceState(null, '', global.location.pathname + global.location.search); } catch(e){}
-      var ctx = { t: t, rep: rep, rows: [], money: [], run: true, note: '', qsName: '', seen: {},
-                  cache: agentCaches.length ? agentCaches[0] : null };
+      var ctx = { t: t, rep: rep, rows: [], money: [], run: true, note: '', qsName: '', seen: {}, cache: null };
       var chain = Promise.resolve();
       if(LOAD.tooLong) rep.errors.push(t.tooLong);
       else chain = chain.then(function(){ return apply(parse(LOAD.raw), ctx); });
@@ -3686,7 +3689,9 @@
       return cleanText(hit) || key;
     }
     function setAll(plainPairs, jsonPair, pairs, ctx){
-      var t = ctx.t, rep = ctx.rep, idx = {}, inLink = {}, lists = [], direct = [], structured = [];
+      var t = ctx.t, rep = ctx.rep, idx = {}, inLink = {}, lists = [], direct = [];
+      // Read now, after ready(): a tool may call Persist.init late.
+      ctx.cache = agentCaches.length ? agentCaches[0] : null;
       api.fields().forEach(function(f){ if(!own(idx, f.key)) idx[f.key] = f; });
       pairs.forEach(function(p){ inLink[/^why\./.test(p.key) ? p.key.slice(4) : p.key] = 1; });
       ctx.idx = idx;
