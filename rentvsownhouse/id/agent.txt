@@ -293,6 +293,26 @@ showReal: Tampilkan dalam nilai hari ini
   Tip on the page: Rencananya tetap sama. Aktif: semua angka dalam nilai hari ini, menurut inflasi
   umum. Nonaktif: dalam nilai uang tiap tahun, seperti yang tertera di rekening.
 
+COMPACT LISTS
+- `ratePeriods=<years>:<rate>,<years>:<rate>,...`
+- `ownSetupCosts=<label>:<amount>[:<basis>],...`
+- `ownOngoingCosts=<label>:<amount>[:<freq>[:<growth>]],...`
+- `rentOngoingCosts=<label>:<amount>[:<freq>[:<growth>]],...`
+
+Each list switches its section to the Detailed mode and becomes that section's whole list. Items are separated by `,` and their parts by `:`, both typed as they are; a label may not contain `:` or `,` (leave them out, or encode them as %3A and %2C). Numbers are plain (6.1, 45070), with no thousands separators. At most 50 items a list.
+
+ratePeriods: the mortgage's rate periods in order, each a length in years and a rate in % a year: `<years>:<rate>` for a fixed rate, `<years>:<low>-<high>` for a floating one, which the tool runs at its low, middle and high rate and draws as a band. The loan term is mortgageTerm, never the sum of the lengths: the last period always runs to the end of mortgageTerm whatever length it is given, a period that would end after the term stops at it, and a period that starts after the term does not count. With ratePeriods, mortgageRate is not used. Rates 0 to 40, lengths 1 to 50 whole years. A 30-year loan fixed at 5.89% for 3 years, then floating between 6.5% and 7.5%:
+`ratePeriods=3:5.89,27:6.5-7.5`
+
+ownSetupCosts: the one-off costs at purchase, in place of setupCost. `<basis>` is fixed (an amount, the default) or pct (a % of the price); an amount written with % (4.5%) is pct.
+`ownSetupCosts=Stamp duty:45070,Transfer and registration:2600,Legal:1800`
+
+ownOngoingCosts and rentOngoingCosts: the running costs of owning and of renting, in place of ownOngoingCost and rentOngoingCost. `<freq>` is yearly (the default), monthly, weekly or pct: a % of the home's value each year for owning, of the year's rent for renting (an amount written with % is pct too). `<growth>` is how fast that cost grows, % a year, 0 to 30; left out, it is ownOngoingInflation or rentOngoingInflation. A pct cost grows with the home or the rent instead.
+`ownOngoingCosts=Council rates:2200,Strata:1450:yearly:3.5,Maintenance:0.5%`
+`rentOngoingCosts=Contents insurance:25:monthly,Moving every 3 years:600`
+
+Sending ownSetupCosts alone keeps the ongoing costs of owning at ownOngoingCost, and the other way round. mortgageType or costInterestOnly, which count only in the Detailed mortgage, switch it on as well; with no ratePeriods it then holds one fixed period at mortgageRate for the whole term. On a Quick Start that opens in the Detailed mortgage, mortgageRate sent without ratePeriods replaces the staged schedule with that one fixed rate.
+
 QUICK START FIGURES (what each qs sets, as a link would carry them)
 A heading line holds what all the Quick Starts under it share; each Quick Start's own line holds the
 rest.
