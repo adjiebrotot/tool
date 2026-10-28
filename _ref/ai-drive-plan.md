@@ -83,14 +83,17 @@ adapter and documented in its AI section, for example
 `ratePeriods=5:6.1,25:6.5` (years:rate, ...). Use `json=` only when no compact syntax is
 reasonable.
 
-### Too long for a link: Paste from AI
+### Long state stays in the link
 
-Some state (a custom load flow network, a PowerFactory workflow) is several KB. For those the AI
-puts the JSON in a code block and tells the reader to press **Paste from AI** on the tool. The pasted
-text may be a whole `#load` link, the `key=value` list on its own, or a JSON object of the same
-keys (`{"v":1,"qs":"wscc9","fields":{...},"why":{...},"json":{...}}`); all three go through the
-same loader. The AI section tells the chatbot: keep links under about 2,000 characters, and switch
-to Paste from AI beyond that.
+The link is the only way in: there is no paste box. Browsers open fragments of hundreds of KB, so a
+custom load flow network or a whole PowerFactory workflow (6 to 8 KB as JSON) goes in `json=` like
+anything else. To keep long links reliable for the chatbot that types them:
+
+- the AI section tells the AI to start from the nearest `qs` and send only what differs, and to
+  write `json` compactly (no spaces or line breaks, defaults left out);
+- it also tells the AI to give a long link both as a clickable link and inside a code block, since
+  some chat apps don't linkify or shorten very long URLs; the reader can then copy it into the
+  address bar. This costs the tool nothing.
 
 ## Phase 0: shared loader (`shared.js`, one place for every tool)
 
@@ -126,7 +129,7 @@ Add a `SharedAgent` module beside `SharedScenario` and `Persist`.
 5. **Treat the link as untrusted.** Anyone can write one.
    - only set persistable form controls and adapter-approved structures;
    - never `eval`, never `innerHTML` with link text (banner uses `textContent`);
-   - cap the whole fragment (64 KB) and each value (2 KB, `json` 48 KB);
+   - cap the whole fragment (512 KB) and each plain value (2 KB);
    - no download, upload, clipboard or navigation is triggered by a link;
    - the network calls a tool already makes (DCA prices via the Worker) are fine, with
      tickers validated by the same rule the tool uses.
@@ -145,13 +148,6 @@ A dismissible strip at the top of the inputs, bilingual (`en`/`id`) like `Shared
   when a previous cache existed.
 - Follow `_ref/design-reference.md`; no em-dashes in copy. Run the repo's UI checks
   (`button-check`, `form-check`, `tip-check`, `abbr-check`) on a page that shows it.
-
-### Paste from AI
-
-Add a third icon button to `SharedScenario.mount` (beside Save and Open) that opens a small dialog
-with a textarea and **Apply**. It parses a link, a `key=value` list or the JSON object above, and
-calls the same apply path. PowerFactory Scripter's builder, which does not use `SharedScenario`,
-gets the same button through its own toolbar (Phase 3).
 
 ## Phase 1: the text the AI reads
 
@@ -184,8 +180,9 @@ Content of each section, in this order:
    - Prefer what the user said earlier in the conversation over general figures.
    - Do not state results or a verdict; the tool calculates them when the link opens. Say "open
      the link to see the result".
-   - Keep the link under about 2,000 characters; beyond that, give a JSON block and tell the user
-     to press Paste from AI.
+   - Start from the nearest Quick Start and send only what differs. Write `json` compactly. Give
+     a long link both as a link and in a code block, so the user can copy it if their chat app
+     breaks it.
 3. The URL pattern and one complete example link.
 4. The Quick Starts (`qs` values) with one line each.
 5. The fields: `key`, label, unit, range, default, allowed values. Group them as the page does.
@@ -200,14 +197,15 @@ Content of each section, in this order:
   - A2: every kept link opens with no console error, no "not recognised" entries, and the
     fields it names hold the expected values afterwards (for a kept link whose field was renamed,
     the tool must map the old name, just as for Share links: fix the tool, never the link);
-  - A3: unknown keys, out-of-range numbers, a bad `qs`, malformed `json` and a 64 KB fragment
+  - A3: unknown keys, out-of-range numbers, a bad `qs`, malformed `json` and a 512 KB fragment
     all open the tool normally and report in the banner;
   - A4: the reader's cache is preserved in `abt:prev:` and Undo restores it exactly;
   - A5: the docs in the HTML match what `agent-doc.mjs` would generate (no drift);
-  - A6: the example links in the docs are under the length budget.
+  - A6: a kept link carrying a whole custom model in `json` (one per Engineering tool) opens and
+    solves.
 - Add to `CLAUDE.md`'s "Before shipping a change to a tool's inputs": also run
   `node _ref/agent-check.mjs`, and regenerate the AI docs with `node _ref/agent-doc.mjs`.
-- After adding the banner or the Paste button, run `node _ref/guide-check.mjs <tool>` for each
+- After adding the banner, run `node _ref/guide-check.mjs <tool>` for each
   tool with a live guide and fix scenes whose steps moved.
 
 ## Phase 3: per-tool adapters
@@ -231,7 +229,7 @@ passing `agent-check`.
 6. **Cost of Living Comparator** and **Map**: `cities=Melbourne,Jakarta` matched to the tool's
    city list by name (case- and accent-insensitive); unmatched cities reported.
 7. **Valuate Everything**: flat settings plus `listings` (one row per listing, `;`-separated,
-   fields in a documented order). Long tables go through Paste from AI.
+   fields in a documented order), or the whole table in `json`.
 8. **DCA Scenario Explorer** and **Portfolio**: custom `save/load`, so the adapter builds the
    custom blob itself. `tickers=SPY,QQQ`, dates as `YYYY-MM-DD`, portfolios as
    `p1=SPY:60,BND:40&p2=...`. Prices load through the existing Worker as they do today.
@@ -240,7 +238,7 @@ passing `agent-check`.
 ### Engineering (structured models)
 
 Pattern: start from a preset (`qs`), then patch named parts, so typical requests fit in a link;
-a whole custom model goes through `json` or Paste from AI in the tool's own saved format
+a whole custom model goes in `json`, in the tool's own saved format
 (`LF.compact` output, the `ED`/`CX` saved model, the builder workflow), which `LF.load`,
 `ED.load`, `CX.load` and `W.loadWorkflow` already validate.
 
@@ -257,9 +255,9 @@ a whole custom model goes through `json` or Paste from AI in the tool's own save
 13. **PowerFactory Scripter**:
     - **Builder** (`powerfactory-scripter/builder/`), the main target: `template=<id>` from
       `builder/templates/index.json` (`headroom`, `ldf-cases`, `n-1`, `frt`, `cct`, ...), block
-      parameter patches `blk.<blockId>.<param>=<value>`, a whole workflow via Paste from AI in the
+      parameter patches `blk.<blockId>.<param>=<value>`, a whole workflow in `json` in the
       `ui/files.js` format. It has no `SharedScenario` provider: register an adapter that calls
-      `W.loadWorkflow` and `store.reset`, and add the Paste button to its toolbar.
+      `W.loadWorkflow` and `store.reset`.
     - **`powerfactory-scripter/index.html`** redirects `#open`, `#s` and `#embed` links to
       `legacy/`. Route `#load` to `builder/` when it has `template` or `blk.*` keys, else to
       `legacy/`, keeping the hash.
@@ -281,7 +279,8 @@ never loosen the loader to accept guesses silently.
 
 ## Definition of done (per tool)
 
-- An AI link and a Paste from AI block both open the intended scenario, solved, with the banner.
+- An AI link opens the intended scenario, solved, with the banner, including one carrying a whole
+  custom model in `json` for the Engineering tools.
 - The reader's previous work is recoverable with Undo.
 - `node _ref/share-check.mjs`, `node _ref/scenario-check.mjs`, `node _ref/agent-check.mjs` pass;
   `node _ref/guide-check.mjs <tool>` passes where the tool has a guide.
