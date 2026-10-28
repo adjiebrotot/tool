@@ -2682,6 +2682,191 @@
     }
    },
    "model": true
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "docs example: PJM 5-bus, Brighton's cost raised to $40/MWh",
+   "link": "#load&v=1&qs=pjm5&el.Brighton.marginal_cost=40&why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh",
+   "expect": {},
+   "probe": {
+    "name": "PJM 5-bus",
+    "el": {
+     "Brighton": {
+      "c": "Generator",
+      "marginal_cost": 40,
+      "p_nom": 600
+     },
+     "Alta": {
+      "marginal_cost": 14
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "uc3: linear relaxation over 36 hours, a dearer start-up and peaker, more demand, in rupiah",
+   "link": "#load&v=1&qs=uc3&edMode=lin&why.edMode=The%20user%20wants%20a%20quick%20answer,%20so%20the%20relaxed%20commitment&edSpan=36&edSpanUnit=h&edCur=Rp&edVoll=15000&el.Coal.start_up_cost=25000&why.el.Coal.start_up_cost=The%20user%20said%20a%20cold%20start%20of%20the%20coal%20unit%20costs%2025,000&el.Peaker.marginal_cost=130&el.Demand.p_set=700&el.Combined cycle.min_up_time=6&note=Three-unit%20system,%2036%20hours",
+   "expect": {
+    "edMode": "lin",
+    "edSpan": "36",
+    "edSpanUnit": "h",
+    "edCur": "Rp",
+    "edVoll": "15000"
+   },
+   "probe": {
+    "el": {
+     "Coal": {
+      "start_up_cost": 25000
+     },
+     "Peaker": {
+      "marginal_cost": 130
+     },
+     "Demand": {
+      "p_set": 700
+     },
+     "Combined cycle": {
+      "min_up_time": 6
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "solar: a bigger farm and battery (a name written without its space), another home shape, a June start",
+   "link": "#load&v=1&qs=solar&edStart=2026-06-01T00:00&el.SolarFarm.p_nom=600&why.el.SolarFarm.p_nom=The%20user%20plans%20a%20600%20MW%20farm&el.Battery.p_nom=200&el.Battery.max_hours=6&el.Battery.eff=0.9&el.Homes.prof=resev&why.el.Homes.prof=The%20user%20expects%20many%20homes%20to%20charge%20electric%20cars",
+   "expect": {
+    "edStart": "2026-06-01T00:00"
+   },
+   "probe": {
+    "el": {
+     "Solar farm": {
+      "p_nom": 600
+     },
+     "Battery": {
+      "p_nom": 200,
+      "max_hours": 6,
+      "eff": 0.9
+     },
+     "Homes": {
+      "prof": "resev"
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "areas: a bigger link and wind farm, a slower hydro unit, a week with no line limits, relaxed",
+   "link": "#load&v=1&qs=areas&edMode=lin&edSpan=7&edSpanUnit=d&edLimits=false&el.HVDCLink.p_nom=400&el.Wind farms.p_nom=900&el.Hydro.ramp_limit_up=0.25&why.el.Hydro.ramp_limit_up=The%20user%20said%20the%20hydro%20unit%20ramps%20slowly",
+   "expect": {
+    "edMode": "lin",
+    "edSpan": "7",
+    "edSpanUnit": "d",
+    "edLimits": false
+   },
+   "probe": {
+    "el": {
+     "HVDC link": {
+      "p_nom": 400
+     },
+     "Wind farms": {
+      "p_nom": 900
+     },
+     "Hydro": {
+      "ramp_limit_up": 0.25
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "pjm5: two line limits tightened, no load shedding",
+   "link": "#load&v=1&qs=pjm5&edShed=false&why.edShed=The%20user%20wants%20every%20MWh%20served%20or%20the%20case%20reported&el.A-B.s_nom=300&el.D-E.s_nom=200&note=PJM%205-bus,%20tighter%20limits%20on%20A-B%20and%20D-E",
+   "expect": {
+    "edShed": false
+   },
+   "probe": {
+    "el": {
+     "A-B": {
+      "c": "Line",
+      "s_nom": 300
+     },
+     "D-E": {
+      "s_nom": 200
+     },
+     "A-D": {
+      "s_nom": 0
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "json: a hub, a town and a line, solved as a unit commitment, then the load patched",
+   "link": "#load&v=1&edMode=uc&json=%7B%22v%22:2,%22name%22:%22Hub%20and%20town%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:1,%22name%22:%22Hub%22,%22v_nom%22:110%7D,%7B%22c%22:%22Bus%22,%22id%22:2,%22name%22:%22Town%22,%22v_nom%22:110%7D,%7B%22c%22:%22Line%22,%22id%22:3,%22bus0%22:1,%22bus1%22:2,%22x%22:12,%22s_nom%22:120%7D,%7B%22c%22:%22Generator%22,%22id%22:4,%22name%22:%22Gas%22,%22bus%22:1,%22p_nom%22:150,%22marginal_cost%22:45,%22committable%22:1,%22p_min_pu%22:0.3,%22start_up_cost%22:2000,%22min_up_time%22:2%7D,%7B%22c%22:%22Generator%22,%22id%22:5,%22name%22:%22Wind%22,%22bus%22:1,%22p_nom%22:80,%22prof%22:%22wnd%22,%22style%22:%22wind%22%7D,%7B%22c%22:%22Load%22,%22id%22:6,%22name%22:%22Town%20load%22,%22bus%22:2,%22p_set%22:100,%22prof%22:%22res%22%7D%5D%7D&why.json=The%20user%20described%20a%20gas%20unit%20and%20wind%20at%20one%20bus,%20and%20a%20town%20on%20a%20line&el.Town load.p_set=110&why.el.Town load.p_set=The%20user%20said%20the%20town%20peaks%20at%20110%20MW&note=Hub%20and%20town",
+   "expect": {
+    "edMode": "uc"
+   },
+   "probe": {
+    "name": "Hub and town",
+    "counts": {
+     "Bus": 2,
+     "Line": 1,
+     "Generator": 2,
+     "Load": 1
+    },
+    "el": {
+     "Gas": {
+      "c": "Generator",
+      "committable": 1,
+      "bus": "Hub"
+     },
+     "Town load": {
+      "c": "Load",
+      "p_set": 110,
+      "prof": "res"
+     },
+     "Line 3": {
+      "c": "Line",
+      "bus0": "Hub",
+      "bus1": "Town",
+      "s_nom": 120
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "json: two voltage levels with a transformer, a cable link and a battery, laid out automatically",
+   "link": "#load&v=1&edMode=edm&edSpan=2&edSpanUnit=d&json=%7B%22v%22:2,%22name%22:%22Two%20voltage%20levels%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:1,%22name%22:%22Grid%22,%22v_nom%22:220%7D,%7B%22c%22:%22Bus%22,%22id%22:2,%22name%22:%22City%22,%22v_nom%22:66%7D,%7B%22c%22:%22Bus%22,%22id%22:3,%22name%22:%22Island%22,%22v_nom%22:66%7D,%7B%22c%22:%22Transformer%22,%22id%22:4,%22name%22:%22City%20transformer%22,%22bus0%22:1,%22bus1%22:2,%22s_nom%22:150,%22x%22:0.1%7D,%7B%22c%22:%22Link%22,%22id%22:5,%22name%22:%22Island%20cable%22,%22bus0%22:2,%22bus1%22:3,%22p_nom%22:40,%22efficiency%22:0.96%7D,%7B%22c%22:%22Generator%22,%22id%22:6,%22name%22:%22Grid%20supply%22,%22bus%22:1,%22p_nom%22:300,%22marginal_cost%22:60%7D,%7B%22c%22:%22Generator%22,%22id%22:7,%22name%22:%22Island%20solar%22,%22bus%22:3,%22p_nom%22:50,%22prof%22:%22pv%22,%22style%22:%22pv%22%7D,%7B%22c%22:%22StorageUnit%22,%22id%22:8,%22name%22:%22Island%20battery%22,%22bus%22:3,%22p_nom%22:15,%22max_hours%22:3,%22eff%22:0.85%7D,%7B%22c%22:%22Load%22,%22id%22:9,%22name%22:%22City%20load%22,%22bus%22:2,%22p_set%22:120,%22prof%22:%22com%22%7D,%7B%22c%22:%22Load%22,%22id%22:10,%22name%22:%22Island%20load%22,%22bus%22:3,%22p_set%22:30,%22prof%22:%22res%22%7D%5D%7D&note=City%20and%20island",
+   "expect": {
+    "edMode": "edm",
+    "edSpan": "2"
+   },
+   "probe": {
+    "name": "Two voltage levels",
+    "counts": {
+     "Bus": 3,
+     "Transformer": 1,
+     "Link": 1,
+     "StorageUnit": 1,
+     "Generator": 2,
+     "Load": 2
+    },
+    "el": {
+     "Island cable": {
+      "c": "Link",
+      "efficiency": 0.96,
+      "bus0": "City",
+      "bus1": "Island"
+     },
+     "Island battery": {
+      "c": "StorageUnit",
+      "max_hours": 3
+     }
+    }
+   },
+   "model": true
   }
  ]
 }
