@@ -28,7 +28,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  AI_RULES, PAGES, SITE, ROOT, RESERVED, FORBIDDEN, WHY_MAX, MARK_START, MARK_END, SECTION_RE,
+  AI_RULES, PAGES, SITE, ROOT, RESERVED, FORBIDDEN, WHY_MAX, MARK_START, MARK_END, SECTION_RE, LIST_KEY_RE,
   buildLink, serve, launch, openPage, readFields, parseNotes, defaultQuickStarts
 } from './agent-lib.mjs';
 
@@ -58,10 +58,10 @@ function model(P, read, qs, notes) {
   const S = notes.sections;
   const fields = read.fields;
   const byKey = Object.fromEntries(fields.map(f => [f.key, f]));
-  // List keys a tool's adapter reads (Compact lists), as "- `key=<syntax>`" or "### key".
+  // List keys a tool's adapter reads (Compact lists): LIST_KEY_RE.
   const compact = [];
   for (const line of (S['compact lists'] || '').split('\n')) {
-    const m = /^(?:[-*] +|#{3,} +)`?([A-Za-z][\w]*)(?:[=`:\s]|$)/.exec(line);
+    const m = LIST_KEY_RE.exec(line);
     if (m && !byKey[m[1]] && !compact.includes(m[1])) compact.push(m[1]);
   }
   const known = k => !!byKey[k] || compact.includes(k);

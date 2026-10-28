@@ -14,7 +14,9 @@
 // Adding a page: add a PAGES entry (and a notes file, see rentvsownhouse/agent-notes.md for
 // the headings), then run node _ref/agent-doc.mjs. A tool whose Quick Starts are
 // .quick-start-btn[data-preset] buttons needs no quickStarts reader; any other tool passes
-// one (see rvoQuickStarts below for the contract).
+// one (see rvoQuickStarts below for the contract). Then keep its links in
+// _ref/agent-links.json (the docs' example, each list syntax, a realistic one per Quick
+// Start or a sample of them) and run node _ref/agent-check.mjs <page>.
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -52,6 +54,8 @@ export const WHY_MAX = 200;
 export const MARK_START = '<!-- agent:start -->';
 export const MARK_END = '<!-- agent:end -->';
 export const SECTION_RE = /<!-- agent:start -->[\s\S]*?<!-- agent:end -->/;
+// A list key in a Compact lists section: "- `key=<syntax>`" or "### key".
+export const LIST_KEY_RE = /^(?:[-*] +|#{3,} +)`?([A-Za-z][\w]*)(?:[=`:\s]|$)/;
 
 /* A value as a chatbot should type it: percent-encoded, but with the characters a fragment
    allows and a compact list needs (/ : , $ @) left as they are, and ( ) ' encoded so a chat
@@ -77,13 +81,43 @@ export function buildLink(base, pairs) {
    notes       the hand-written <tool>/agent-notes.md (an id/ page shares its English notes)
    insertBefore  where to put the section the first time, when the page has no markers yet
                (an id/ page made by _ref/bake-id.mjs gets them from its English page)
-   quickStarts optional reader, run IN the page with (lang); default: .quick-start-btn buttons */
+   quickStarts optional reader, run IN the page with (lang); default: .quick-start-btn buttons
+   For _ref/agent-check.mjs:
+   probe       optional, run IN the page once a link has applied: the facts a kept link's
+               "probe" names (state beyond the fields); default: the scenario's __extra
+   solved      Engineering pages only, run IN the page: true once the tool has solved. It
+               makes check A6 open each of the page's kept links marked "model": true (a
+               whole custom model in json) and wait for it */
 export const PAGES = [
   { page: 'rentvsownhouse', url: '/rentvsownhouse/', lang: 'en', notes: 'rentvsownhouse/agent-notes.md',
-    insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts },
+    insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
   { page: 'rentvsownhouse/id', url: '/rentvsownhouse/id/', lang: 'id', notes: 'rentvsownhouse/agent-notes.md',
-    insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts },
+    insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
 ];
+
+/* ── Probes (run in the page) ─────────────────────────────────────────────────
+   What a link set beyond the fields, for a kept link's "probe" to name. The names a probe
+   returns are frozen with the links that name them: add, never rename. */
+export function defaultProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  return body && body.state && body.state.__extra && typeof body.state.__extra === 'object' ? body.state.__extra : {};
+}
+// Rent vs Own: the saved __extra, and what the page shows of it (shown: the mode each
+// section is in, and how many rows each list draws).
+export function rvoProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  const seg = id => { const b = document.querySelector('#' + id + ' .seg-btn.active'); return b ? b.dataset.val : null; };
+  const rows = id => { const w = document.getElementById(id); return w ? w.children.length : 0; };
+  return Object.assign({}, body && body.state && body.state.__extra, {
+    shown: {
+      mortgageMode: seg('mortgageModeGroup'), ownCostsMode: seg('ownCostsModeGroup'), rentCostsMode: seg('rentCostsModeGroup'),
+      ratePeriods: rows('ratePeriodRows'), ownSetupCosts: rows('ownSetupCostRows'),
+      ownOngoingCosts: rows('ownOngoingCostRows'), rentOngoingCosts: rows('rentOngoingCostRows')
+    }
+  });
+}
 
 /* ── Quick Start readers (run in the page) ────────────────────────────────────
    Contract: return null when the page has none, else
@@ -183,7 +217,10 @@ export async function launch() {
    the chart libraries become a do-nothing stand-in (so the tool's set-up runs to the end,
    the same on every machine, with or without _ref/.libcache), analytics and ads are
    dropped. The tour stays shut (a returning reader), which changes no field.
-   Returns { page, errors, close() }; errors collects page errors. */
+   Returns { page, errors, consoleErrors, ctx, close() }; errors collects page errors,
+   consoleErrors what the page logs as an error (but a request off the repo's origin, which
+   this page drops on purpose). ctx is the page's own context: another page in it shares its
+   storage. */
 export async function openPage(browser, origin, path, { viewport = { width: 1280, height: 900 } } = {}) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   await ctx.addInitScript(() => {
@@ -214,11 +251,17 @@ export async function openPage(browser, origin, path, { viewport = { width: 1280
     return route.abort();
   });
   const page = await ctx.newPage();
-  const errors = [];
+  const errors = [], consoleErrors = [];
   page.on('pageerror', e => errors.push(e.message));
+  page.on('console', m => {
+    if (m.type() !== 'error') return;
+    const at = (m.location() || {}).url || '';
+    if (/^Failed to load resource/.test(m.text()) && at && !at.startsWith(origin)) return;
+    consoleErrors.push(m.text());
+  });
   await page.goto(origin + path, { waitUntil: 'load' });
   await page.waitForTimeout(400);
-  return { page, errors, close: () => ctx.close() };
+  return { page, errors, consoleErrors, ctx, close: () => ctx.close() };
 }
 
 /* ── The field reader (runs in the page) ──────────────────────────────────────

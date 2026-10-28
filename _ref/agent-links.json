@@ -1,0 +1,314 @@
+{
+ "_about": "Kept AI links: the #load links a chatbot writes from a page's agent.txt (SharedAgent in shared.js, _ref/ai-drive-plan.md). FROZEN like _ref/share-links.json: these links live on in people's chat histories, so add new ones and never change or remove one. A field renamed since is mapped by the tool (data-persist, or a migration in its load), never fixed here. Each link opens `page` with the fragment `link` and must hold `expect` (field key: the value as the input shows it) and, when given, `probe` (what the page's probe in _ref/agent-lib.mjs returns, matched in part; lists whole). `model`: true marks a whole custom model in json, which must also solve (A6). Checked by node _ref/agent-check.mjs.",
+ "links": [
+  {
+   "page": "/rentvsownhouse/",
+   "name": "docs example: Melbourne 2-bedroom house",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&setupCost=6&why.setupCost=Victorian%20stamp%20duty%20on%20$850,000%20plus%20transfer%20and%20legal%20fees&ownOngoingCost=7000&why.ownOngoingCost=Rates,%20insurance%20and%20upkeep%20on%20an%20$850,000%20house&note=Melbourne,%20October%202026,%202-bedroom%20house",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "620", "setupCost": "6", "ownOngoingCost": "7,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "ratePeriods: fixed, then a floating range",
+   "link": "#load&v=1&qs=sydney/apt-2br&propertyPrice=1150000&ratePeriods=3:5.89,27:6.5-7.5&why.ratePeriods=3-year%20fixed%20at%205.89%25,%20then%20variable%20between%206.5%25%20and%207.5%25&note=Sydney,%20October%202026",
+   "expect": { "propertyPrice": "1,150,000" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [
+     { "toYear": 3, "type": "fixed", "rate": 5.89, "rateMin": 5.89, "rateMax": 5.89 },
+     { "type": "floating", "rateMin": 6.5, "rateMax": 7.5 }
+    ],
+    "shown": { "mortgageMode": "detailed", "ratePeriods": 2 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "ownSetupCosts: the docs' rows, the ongoing cost kept",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&ownOngoingCost=7000&ownOngoingCostFreq=yearly&ownSetupCosts=Stamp%20duty:45070,Transfer%20and%20registration:2600,Legal:1800&why.ownSetupCosts=Victorian%20stamp%20duty%20on%20$850,000,%20Land%20Registry%20fees%20and%20conveyancing",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "620", "ownOngoingCost": "7,000", "ownOngoingCostFreq": "yearly" },
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Stamp duty", "amount": 45070, "basis": "fixed" },
+     { "name": "Transfer and registration", "amount": 2600, "basis": "fixed" },
+     { "name": "Legal", "amount": 1800, "basis": "fixed" }
+    ],
+    "ownOngoingCosts": [ { "amount": 7000, "basis": "yearly" } ],
+    "shown": { "ownCostsMode": "detailed", "ownSetupCosts": 3, "ownOngoingCosts": 1 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "ownOngoingCosts: growth and a pct row, the setup cost kept",
+   "link": "#load&v=1&qs=brisbane/apt-2br&propertyPrice=790000&setupCost=4&setupCostType=pct&ownOngoingCosts=Council%20rates:2200,Strata:1450:yearly:3.5,Maintenance:0.5%25&why.ownOngoingCosts=Brisbane%20City%20Council%20rates,%20body%20corporate%20levies%20and%20upkeep",
+   "expect": { "propertyPrice": "790,000", "setupCost": "4", "setupCostType": "pct" },
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownOngoingCosts": [
+     { "name": "Council rates", "amount": 2200, "basis": "yearly" },
+     { "name": "Strata", "amount": 1450, "basis": "yearly", "inflation": 3.5 },
+     { "name": "Maintenance", "amount": 0.5, "basis": "pct" }
+    ],
+    "ownSetupCosts": [ { "amount": 4, "basis": "pct" } ],
+    "shown": { "ownCostsMode": "detailed", "ownOngoingCosts": 3, "ownSetupCosts": 1 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "rentOngoingCosts: a monthly row and a yearly one",
+   "link": "#load&v=1&qs=perth/apt-2br&rentAmount=780&rentOngoingCosts=Contents%20insurance:25:monthly,Moving%20every%203%20years:600&why.rentOngoingCosts=Renters%20contents%20cover%20and%20a%20move%20every%20three%20years&note=Perth,%20October%202026",
+   "expect": { "rentAmount": "780" },
+   "probe": {
+    "rentCostsMode": "detailed",
+    "rentOngoingCosts": [
+     { "name": "Contents insurance", "amount": 25, "basis": "monthly" },
+     { "name": "Moving every 3 years", "amount": 600, "basis": "yearly" }
+    ],
+    "shown": { "rentCostsMode": "detailed", "rentOngoingCosts": 2 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "every list at once: weekly, monthly and pct rows",
+   "link": "#load&v=1&qs=london/apt-2br&propertyPrice=560000&rentAmount=2400&ratePeriods=2:4.49,33:5.3-6.2&ownSetupCosts=Stamp%20duty:18000,Legal:1500,Survey:600&ownOngoingCosts=Service%20charge:250:monthly,Ground%20rent:300,Insurance:0.1%25&rentOngoingCosts=Contents%20insurance:3:weekly,Moving:1.5%25&note=London,%20October%202026,%202-bedroom%20flat",
+   "expect": { "propertyPrice": "560,000", "rentAmount": "2,400" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [
+     { "toYear": 2, "type": "fixed", "rate": 4.49 },
+     { "type": "floating", "rateMin": 5.3, "rateMax": 6.2 }
+    ],
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Stamp duty", "amount": 18000, "basis": "fixed" },
+     { "name": "Legal", "amount": 1500, "basis": "fixed" },
+     { "name": "Survey", "amount": 600, "basis": "fixed" }
+    ],
+    "ownOngoingCosts": [
+     { "name": "Service charge", "amount": 250, "basis": "monthly" },
+     { "name": "Ground rent", "amount": 300, "basis": "yearly" },
+     { "name": "Insurance", "amount": 0.1, "basis": "pct" }
+    ],
+    "rentCostsMode": "detailed",
+    "rentOngoingCosts": [
+     { "name": "Contents insurance", "amount": 3, "basis": "weekly" },
+     { "name": "Moving", "amount": 1.5, "basis": "pct" }
+    ],
+    "shown": { "mortgageMode": "detailed", "ownCostsMode": "detailed", "rentCostsMode": "detailed", "ratePeriods": 2, "ownSetupCosts": 3, "ownOngoingCosts": 3, "rentOngoingCosts": 2 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "a list label with an encoded colon and comma",
+   "link": "#load&v=1&qs=sydney/house-2br&propertyPrice=1650000&ownSetupCosts=Transfer%20duty%20%28NSW%29%3A%20standard:62000,Legal%2C%20conveyancing:2200",
+   "expect": { "propertyPrice": "1,650,000" },
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Transfer duty (NSW): standard", "amount": 62000, "basis": "fixed" },
+     { "name": "Legal, conveyancing", "amount": 2200, "basis": "fixed" }
+    ]
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "a list a chatbot encoded whole",
+   "link": "#load&v=1&qs=perth/house-2br&ownSetupCosts=Stamp%20duty%3A31000%2CLegal%3A1500",
+   "expect": {},
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Stamp duty", "amount": 31000, "basis": "fixed" },
+     { "name": "Legal", "amount": 1500, "basis": "fixed" }
+    ]
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Interest Only switches the mortgage to Detailed",
+   "link": "#load&v=1&qs=perth/apt-2br&mortgageType=io&mortgageRate=6.29&why.mortgageType=An%20investor%20loan,%20interest%20only&why.mortgageRate=Typical%20interest-only%20investor%20rate,%20October%202026",
+   "expect": { "mortgageType": "io", "mortgageRate": "6.29" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [ { "type": "fixed", "rate": 6.29, "rateMin": 6.29, "rateMax": 6.29 } ],
+    "shown": { "mortgageMode": "detailed", "ratePeriods": 1 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "forgiving numbers, a period by its label, Rent-Then-Buy",
+   "link": "#load&v=1&qs=newyork/apt-2br&propertyPrice=$1,250,000&rentAmount=5,400&rentFreq=a%20month&mortgageRate=6.85%25&rtbEnabled=true&rtbBuyYear=6&horizon=25&why.rtbBuyYear=The%20user%20may%20rent%20for%20about%20six%20years%20first&note=New%20York,%20October%202026",
+   "expect": { "propertyPrice": "1,250,000", "rentAmount": "5,400", "rentFreq": "monthly", "mortgageRate": "6.85", "rtbEnabled": true, "rtbBuyYear": "6", "horizon": "25" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Sydney 2-bedroom apartment",
+   "link": "#load&v=1&qs=sydney/apt-2br&propertyPrice=1100000&rentAmount=950&note=Sydney,%20October%202026,%202-bedroom%20apartment",
+   "expect": { "propertyPrice": "1,100,000", "rentAmount": "950" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Brisbane 4-bedroom house over 20 years",
+   "link": "#load&v=1&qs=brisbane/house-4br&propertyPrice=1500000&rentAmount=800&horizon=20&why.horizon=The%20user%20plans%20to%20stay%20about%2020%20years&note=Brisbane,%20October%202026,%204-bedroom%20house",
+   "expect": { "propertyPrice": "1,500,000", "rentAmount": "800", "horizon": "20" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Auckland 2-bedroom house, 10% deposit",
+   "link": "#load&v=1&qs=auckland/house-2br&propertyPrice=830000&rentAmount=620&downPaymentPct=10&why.downPaymentPct=A%20first-home%20buyer%20with%20a%2010%25%20deposit&note=Auckland,%20October%202026",
+   "expect": { "propertyPrice": "830,000", "rentAmount": "620", "downPaymentPct": "10" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Singapore 2-bedroom condo",
+   "link": "#load&v=1&qs=singapore/apt-2br&propertyPrice=1650000&rentAmount=4800&note=Singapore,%20October%202026,%202-bedroom%20condo",
+   "expect": { "propertyPrice": "1,650,000", "rentAmount": "4,800" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Kuala Lumpur 2-bedroom apartment",
+   "link": "#load&v=1&qs=kualalumpur/apt-2br&propertyPrice=850000&rentAmount=3500&currencySymbol=RM&note=Kuala%20Lumpur,%20October%202026",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "3,500", "currencySymbol": "RM" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Jakarta 2-bedroom apartment, rent a year",
+   "link": "#load&v=1&qs=jakarta/apt-2br&propertyPrice=1800000000&rentAmount=90000000&rentFreq=yearly&why.rentFreq=Jakarta%20apartment%20leases%20are%20paid%20a%20year%20at%20a%20time&note=Jakarta,%20October%202026",
+   "expect": { "propertyPrice": "1,800,000,000", "rentAmount": "90,000,000", "rentFreq": "yearly" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Bangkok 2-bedroom condo",
+   "link": "#load&v=1&qs=bangkok/apt-2br&propertyPrice=8500000&rentAmount=38000&note=Bangkok,%20October%202026",
+   "expect": { "propertyPrice": "8,500,000", "rentAmount": "38,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Ho Chi Minh City 2-bedroom apartment",
+   "link": "#load&v=1&qs=hochiminh/apt-2br&propertyPrice=5200000000&rentAmount=15000000&note=Ho%20Chi%20Minh%20City,%20October%202026",
+   "expect": { "propertyPrice": "5,200,000,000", "rentAmount": "15,000,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Hong Kong 2-bedroom flat",
+   "link": "#load&v=1&qs=hongkong/apt-2br&propertyPrice=7200000&rentAmount=20000&note=Hong%20Kong,%20October%202026",
+   "expect": { "propertyPrice": "7,200,000", "rentAmount": "20,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Tokyo 2-bedroom apartment over 25 years",
+   "link": "#load&v=1&qs=tokyo/apt-2br&propertyPrice=85000000&rentAmount=250000&horizon=25&why.horizon=The%20user%20expects%20to%20stay%20about%2025%20years&note=Tokyo,%20October%202026",
+   "expect": { "propertyPrice": "85,000,000", "rentAmount": "250,000", "horizon": "25" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Seoul 2-bedroom apartment",
+   "link": "#load&v=1&qs=seoul/apt-2br&propertyPrice=1000000000&rentAmount=1700000&note=Seoul,%20October%202026",
+   "expect": { "propertyPrice": "1,000,000,000", "rentAmount": "1,700,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Mumbai 2-bedroom flat, the user's loan rate",
+   "link": "#load&v=1&qs=mumbai/apt-2br&propertyPrice=22000000&rentAmount=70000&mortgageRate=8.5&why.mortgageRate=The%20rate%20the%20user%27s%20bank%20offered&note=Mumbai,%20October%202026",
+   "expect": { "propertyPrice": "22,000,000", "rentAmount": "70,000", "mortgageRate": "8.5" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Dubai 2-bedroom apartment, rent a year",
+   "link": "#load&v=1&qs=dubai/apt-2br&propertyPrice=1900000&rentAmount=120000&note=Dubai,%20October%202026",
+   "expect": { "propertyPrice": "1,900,000", "rentAmount": "120,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "London 2-bedroom house",
+   "link": "#load&v=1&qs=london/house-2br&propertyPrice=520000&rentAmount=2100&note=London,%20October%202026,%202-bedroom%20house",
+   "expect": { "propertyPrice": "520,000", "rentAmount": "2,100" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Zurich 2-bedroom apartment",
+   "link": "#load&v=1&qs=zurich/apt-2br&propertyPrice=1400000&rentAmount=2600&note=Zurich,%20October%202026",
+   "expect": { "propertyPrice": "1,400,000", "rentAmount": "2,600" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Paris 2-bedroom apartment, the euro sent encoded",
+   "link": "#load&v=1&qs=paris/apt-2br&currencySymbol=%E2%82%AC&propertyPrice=600000&rentAmount=1800&note=Paris,%20octobre%202026",
+   "expect": { "currencySymbol": "€", "propertyPrice": "600,000", "rentAmount": "1,800" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Berlin 2-bedroom apartment, setup cost as a %",
+   "link": "#load&v=1&qs=berlin/apt-2br&propertyPrice=450000&rentAmount=1350&setupCost=10.5&setupCostType=pct&why.setupCost=Berlin%20transfer%20tax%206%25,%20notary%20and%20land%20registry%20about%202%25,%20agent%20about%203.57%25&note=Berlin,%20Oktober%202026",
+   "expect": { "propertyPrice": "450,000", "rentAmount": "1,350", "setupCost": "10.5", "setupCostType": "pct" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "San Francisco 2-bedroom house",
+   "link": "#load&v=1&qs=sanfrancisco/house-2br&propertyPrice=1400000&rentAmount=5200&note=San%20Francisco,%20October%202026",
+   "expect": { "propertyPrice": "1,400,000", "rentAmount": "5,200" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Toronto 2-bedroom house",
+   "link": "#load&v=1&qs=toronto/house-2br&propertyPrice=1100000&rentAmount=3400&note=Toronto,%20October%202026",
+   "expect": { "propertyPrice": "1,100,000", "rentAmount": "3,400" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Shanghai 2-bedroom apartment",
+   "link": "#load&v=1&qs=shanghai/apt-2br&propertyPrice=5800000&rentAmount=9500&note=Shanghai,%20October%202026",
+   "expect": { "propertyPrice": "5,800,000", "rentAmount": "9,500" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Manila 2-bedroom house",
+   "link": "#load&v=1&qs=manila/house-2br&propertyPrice=8000000&rentAmount=26000&note=Metro%20Manila,%20October%202026",
+   "expect": { "propertyPrice": "8,000,000", "rentAmount": "26,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Los Angeles 4-bedroom house",
+   "link": "#load&v=1&qs=losangeles/house-4br&propertyPrice=1100000&rentAmount=5000&note=Los%20Angeles,%20October%202026",
+   "expect": { "propertyPrice": "1,100,000", "rentAmount": "5,000" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "docs example: Melbourne 2-bedroom house",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&setupCost=6&why.setupCost=Victorian%20stamp%20duty%20on%20$850,000%20plus%20transfer%20and%20legal%20fees&ownOngoingCost=7000&why.ownOngoingCost=Rates,%20insurance%20and%20upkeep%20on%20an%20$850,000%20house&note=Melbourne,%20October%202026,%202-bedroom%20house",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "620", "setupCost": "6", "ownOngoingCost": "7,000" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "Jakarta apartemen 2 kamar, sewa bulanan",
+   "link": "#load&v=1&qs=jakarta/apt-2br&propertyPrice=1800000000&rentAmount=7000000&rentFreq=monthly&why.rentFreq=Sewa%20dibayar%20per%20bulan&note=Jakarta,%20Oktober%202026",
+   "expect": { "propertyPrice": "1,800,000,000", "rentAmount": "7,000,000", "rentFreq": "monthly" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "Bali rumah 4 kamar",
+   "link": "#load&v=1&qs=bali/house-4br&propertyPrice=6000000000&rentAmount=350000000&note=Bali,%20Oktober%202026",
+   "expect": { "propertyPrice": "6,000,000,000", "rentAmount": "350,000,000" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "Jakarta rumah: KPR berjenjang dan biaya awal dalam %",
+   "link": "#load&v=1&qs=jakarta/house-2br&propertyPrice=1500000000&ratePeriods=3:7.5,17:10-12&why.ratePeriods=Bunga%20fix%203%20tahun,%20lalu%20floating&ownSetupCosts=BPHTB:5%25,Notaris%20dan%20PPAT:1%25,Biaya%20KPR:1.5%25&note=Jakarta,%20Oktober%202026",
+   "expect": { "propertyPrice": "1,500,000,000" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [
+     { "toYear": 3, "type": "fixed", "rate": 7.5 },
+     { "type": "floating", "rateMin": 10, "rateMax": 12 }
+    ],
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "BPHTB", "amount": 5, "basis": "pct" },
+     { "name": "Notaris dan PPAT", "amount": 1, "basis": "pct" },
+     { "name": "Biaya KPR", "amount": 1.5, "basis": "pct" }
+    ],
+    "shown": { "mortgageMode": "detailed", "ownCostsMode": "detailed", "ratePeriods": 2, "ownSetupCosts": 3 }
+   }
+  }
+ ]
+}
