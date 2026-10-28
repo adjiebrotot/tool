@@ -243,14 +243,24 @@ async function arrived(V, fragment) {
   return V;
 }
 // A page in a fresh context (empty storage), or the same tab again (its storage kept).
-const visit = async (P, fragment) => arrived(await openPage(browser, srv.origin, P.url + (fragment || '')), fragment);
+const visit = async (P, fragment) => {
+  const V = await openPage(browser, srv.origin, P.url + (fragment || ''));
+  V.page.__P = P;   // valuesOf and type reach a page's virtual fields through it
+  return arrived(V, fragment);
+};
 async function goTo(V, P, fragment) {
   await V.page.goto('about:blank');
   await V.page.goto(srv.origin + P.url + (fragment || ''), { waitUntil: 'load' });
   await V.page.waitForTimeout(400);
   return arrived(V, fragment);
 }
-const valuesOf = async page => Object.fromEntries((await page.evaluate(readFields)).fields.map(f => [f.key, f.value]));
+const valuesOf = async page => {
+  const vals = Object.fromEntries((await page.evaluate(readFields)).fields.map(f => [f.key, f.value]));
+  // A page with no form fields of its own reads its virtual ones (PAGES.virtual in agent-lib.mjs).
+  const P = page.__P;
+  if (P && P.virtual) for (const v of P.virtual) if (!(v.key in vals)) vals[v.key] = await page.evaluate(P.virtualRead, v.key);
+  return vals;
+};
 const probeOf = (page, P) => page.evaluate(P.probe || defaultProbe);
 const snapshot = page => page.evaluate(() => ({
   report: window.SharedAgent ? SharedAgent.report : undefined,
@@ -271,7 +281,9 @@ const errorsOf = V => [...V.errors, ...V.consoleErrors];
 // with a range, not one the link names.
 function editable(live, skip = []) {
   const f = live.fields.find(f => f.type === 'v' && f.input === 'number' && f.min != null && f.max != null && !skip.includes(f.key)) ||
-    live.fields.find(f => f.type === 'v' && f.input === 'range' && f.min != null && f.max != null && !skip.includes(f.key));
+    live.fields.find(f => f.type === 'v' && f.input === 'range' && f.min != null && f.max != null && !skip.includes(f.key)) ||
+    // A typed amount with a range (a currency field), when the page has no number box or slider.
+    live.fields.find(f => f.type === 'v' && f.numeric && f.min != null && f.max != null && !skip.includes(f.key));
   return f || null;
 }
 // A value one away from `from`, inside the field's range.
@@ -283,7 +295,7 @@ function nudged(f, from) {
   return String(+v.toFixed(6));
 }
 // Type a value into a field as a person would: input, then change and blur.
-const type = (page, key, value) => page.evaluate(([key, value]) => {
+const type = (page, key, value) => page.__P && page.__P.virtual && page.__P.virtual.some(v => v.key === key) ? page.evaluate(page.__P.virtualWrite, [key, value]) : page.evaluate(([key, value]) => {
   const f = SharedAgent.fields().find(x => x.key === key);
   f.el.value = value;
   f.el.dispatchEvent(new Event('input', { bubbles: true }));
@@ -296,6 +308,12 @@ const type = (page, key, value) => page.evaluate(([key, value]) => {
 async function liveOf(P) {
   const V = await visit(P);
   const got = await V.page.evaluate(readFields);
+  const real = new Set(got.fields.map(f => f.key));
+  // Compact keys that stand in as number boxes on a page with no form fields (PAGES.virtual).
+  for (const v of P.virtual || []) if (!real.has(v.key)) {
+    got.fields.push({ key: v.key, type: 'v', tag: 'input', input: 'number', label: v.key, group: '', prefix: '', suffix: '', unit: '',
+      money: false, numeric: true, min: v.min, max: v.max, step: null, value: v.value, options: null, pairs: [], tip: '', virtual: true });
+  }
   const qsRead = await V.page.evaluate(P.quickStarts || defaultQuickStarts, P.lang);
   const card = await V.page.evaluate(() => {
     const box = document.getElementById('agentHelp');
@@ -312,7 +330,7 @@ async function liveOf(P) {
   const txt = read(P.page + '/agent.txt');
   const docs = txt ? parseDocs(txt) : null;
   return { fields: got.fields, byKey: Object.fromEntries(got.fields.map(f => [f.key, f])), qs, card, docs, txt,
-    lists: docs ? docs.lists.filter(k => !got.fields.some(f => f.key === k)) : [], errs };
+    lists: docs ? docs.lists.filter(k => !real.has(k)) : [], errs };
 }
 
 /* ── A5: no drift (one run covers every page) ─────────────────────────────── */
@@ -361,7 +379,7 @@ try {
     else {
       check('A1', `${P.page} opens with no error`, live.errs.length === 0, list(live.errs, 2));
       const gone = D.fields.filter(f => !live.byKey[f.key]).map(f => f.key);
-      check('A1', `${P.page} agent.txt: each of its ${D.fields.length} fields is a live saved control`, D.fields.length > 0 && gone.length === 0, gone.length ? list(gone) : '');
+      check('A1', `${P.page} agent.txt: each of its ${D.fields.length} fields is a live saved control`, D.fields.length + live.lists.length > 0 && gone.length === 0, gone.length ? list(gone) : '');
       const badOpts = [];
       for (const f of D.fields.filter(f => f.options)) {
         const lf = live.byKey[f.key];

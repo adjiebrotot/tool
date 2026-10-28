@@ -891,8 +891,9 @@ function render(){
   if(S.mode==='simple'){
     renderSimpleFxSection(getCity(S.fromKey),getCity(S.toKey));
   } else {
+    // Emptied as well as hidden: its inputs would otherwise stay on the page, and in the mini cache's fields.
     const fxCard=document.getElementById('simpleFxCard');
-    if(fxCard)fxCard.style.display='none';
+    if(fxCard){fxCard.style.display='none';fxCard.innerHTML='';}
   }
   renderAnalysisArea();
 }
@@ -919,7 +920,7 @@ function renderAnalysisArea(){
 function renderSimpleFxSection(from,to){
   const card=document.getElementById('simpleFxCard');
   if(!card)return;
-  if(!from||!to||from.currency===to.currency){card.style.display='none';return;}
+  if(!from||!to||from.currency===to.currency){card.style.display='none';card.innerHTML='';return;}
   const fc=from.currency, tc=to.currency;
   const defRate=getDefaultFxRate(fc,tc);
   const defFmt=defRate?fmtFx(defRate):'—';
@@ -2017,6 +2018,258 @@ function wireQuickStart(){
     btn.addEventListener('click',()=>applyQuickStart(btn.dataset.preset)));
 }
 
+// ═══════════════════════════════════════════════════════════
+// AI ASSISTANT LINKS (SharedAgent in shared.js; the shared helpers are in ai-link.js)
+// A chatbot's #load link opens this page on a comparison. The page has no form
+// fields of its own (the whole comparison is the state S), so every key below is
+// the adapter's. Each reads one piece of S and writes it, after the Quick Start
+// the link names, into the same snapshot a saved file would load; nothing here
+// computes a figure, and a link only ever sets inputs.
+//   detail=simple|detailed  goal=save|earn  housing=include|exclude  target=ratio|nominal
+//   cities=<home>,<destination>,...      matched to the page's own list by name
+//   salary=<monthly net, home currency>  expense=<monthly, home currency> (Simple)
+//   toSalaries=<n>,<n>,...               each destination's net salary, its own currency
+//   rows=<category>:<amount>[:to<N>=<amount>],...    Detailed rows, monthly
+//   customFx=<rate>,<rate>,...  fxShock=<-20 to 20>
+// Amounts are monthly: a link never turns on the custom frequency. Keys are read in
+// any order and applied together in patch(), so a cities list that moves the home
+// city can clear the old home's figures first. Home and destination arrays are
+// filled in both modes, so a reader who flips the Detail switch finds the same cities.
+// ═══════════════════════════════════════════════════════════
+const AGENT_WORDS = {
+  detail:  {simple:'Simple', detailed:'Detailed'},
+  goal:    {save:'I can save', earn:'I need to earn'},
+  housing: {include:'Include housing', exclude:'Exclude housing'},
+  target:  {ratio:'Savings ratio', nominal:'Nominal savings'},
+};
+const AGENT_ALIAS = {goal:{'can save':'save','need to earn':'earn'}, housing:{included:'include',excluded:'exclude'}};
+const AGENT_MAX_DESTS = 8;
+let agentIn = {};      // what the keys of this link said, until patch() applies it
+let agentRes = {};     // the banner's value for each, which patch() may make fuller
+let agentReadyResolve = null;
+const agentReady = new Promise(r => { agentReadyResolve = r; });
+
+function agentSplit(raw){
+  const t = ColAI.decode(raw);
+  return t.split(/;/.test(t) ? ';' : ',').map(s => s.trim());
+}
+function agentChoice(key){
+  return function(raw, extra, api){
+    const v = ColAI.choice(raw, AGENT_WORDS[key], AGENT_ALIAS[key]);
+    if(!v){ api.error(key + ' "' + ColAI.clip(ColAI.decode(raw), 30) + '": not one of ' + Object.keys(AGENT_WORDS[key]).join(', ')); return false; }
+    agentIn[key] = v;
+    return agentRes[key] = {value: AGENT_WORDS[key][v]};
+  };
+}
+// A monthly amount, 0 to the field's own ceiling.
+function agentAmount(key){
+  return function(raw, extra, api){
+    const text = ColAI.decode(raw), n = api.number(text);
+    if(!isFinite(n)){ api.error(key + ' "' + ColAI.clip(text, 30) + '": not a number'); return false; }
+    const used = Math.min(ColAI.MAX_AMOUNT, Math.max(0, n));
+    if(used !== n) api.clamp(key, n, used);
+    agentIn[key] = Math.round(used * 100) / 100;
+    return agentRes[key] = {value: ColAI.money(agentIn[key])};
+  };
+}
+// A list that keeps its places: a blank item leaves that destination as it was. salaries are amounts
+// (2 decimals); rates keep their own precision, since a rate can be 0.000055.
+function agentNumbers(key, rate){
+  return function(raw, extra, api){
+    const items = agentSplit(raw);
+    if(items.length > AGENT_MAX_DESTS) api.error(key + ': only the first ' + AGENT_MAX_DESTS + ' were used');
+    const list = items.slice(0, AGENT_MAX_DESTS).map(s => {
+      if(s === '') return null;
+      const n = api.number(s);
+      if(!isFinite(n) || n < 0 || (rate && n <= 0)){ api.error(key + ' "' + ColAI.clip(s, 20) + '": not ' + (rate ? 'a rate above 0' : 'an amount')); return null; }
+      const used = Math.min(rate ? 1000000000 : ColAI.MAX_AMOUNT, n);
+      if(used !== n) api.clamp(key, n, used);
+      return rate ? used : Math.round(used * 100) / 100;
+    });
+    if(!list.some(v => v != null)) return false;
+    agentIn[key] = list;
+    return agentRes[key] = {value: list.map(v => v == null ? '-' : ColAI.money(v)).join(', ')};
+  };
+}
+function agentCities(raw, extra, api){
+  const r = ColAI.cities(raw, CITIES), seen = {};
+  if(r.entries.length > AGENT_MAX_DESTS + 1){
+    api.error('cities: only the home city and the first ' + AGENT_MAX_DESTS + ' destinations were used');
+    r.entries.length = AGENT_MAX_DESTS + 1;
+  }
+  r.entries.forEach((e, i) => {
+    if(e.status === 'none'){ api.unknown('cities.' + e.text); return; }
+    if(e.status === 'ambiguous'){
+      api.error('cities "' + e.text + '" fits more than one city (' + e.options.join('; ') + '): write the country too, as in "' + e.options[0] + '"');
+      e.key = ''; return;
+    }
+    if(seen[e.key]){ api.error('cities: ' + ColAI.display(e.city) + ' is listed twice, so the second was skipped'); e.key = ''; return; }
+    seen[e.key] = 1;
+  });
+  if(!r.entries.some(e => e.key)) return false;
+  agentIn.cities = r.entries.map(e => e.key || '');
+  const names = r.entries.map(e => e.key ? ColAI.display(e.city) : '');
+  return agentRes.cities = {value: (names[0] ? 'From ' + names[0] : '') + (names.slice(1).filter(Boolean).length ? (names[0] ? ' to ' : 'To ') + names.slice(1).filter(Boolean).join('; ') : '')};
+}
+function agentRows(raw, extra, api){
+  const r = ColAI.rows(raw, api, {dests: true});
+  if(!r) return false;
+  agentIn.rows = r.rows;
+  return agentRes.rows = {value: r.text};
+}
+function agentCurrency(key){ const c = getCity(key); return c ? c.currency : ''; }
+// Runs last, once every key has been read: the link's pieces onto S, as the page's own controls would write them.
+function agentPatch(extra, api){
+  const a = agentIn, res = agentRes;
+  agentIn = {}; agentRes = {};
+  if(!Object.keys(a).length) return;
+  const named = k => a[k] !== undefined;
+  const homeBefore = extra.detailFromKey || extra.fromKey || '';
+
+  // Cities: the home city, then up to eight destinations. A name that matched nothing keeps its place, so
+  // the figures that follow still belong to the right city.
+  let home, dests = [], at = {};   // at: the link's destination number (1 first) -> its place in dests
+  if(named('cities')){
+    home = a.cities[0] || '';
+    a.cities.slice(1).forEach((k, i) => { if(k){ at[i + 1] = dests.length; dests.push(k); } });
+    if(home){
+      const i = dests.indexOf(home);
+      if(i >= 0){ api.error('cities: ' + ColAI.display(getCity(home)) + ' is the home city, so it was not added as a destination'); dests.splice(i, 1); Object.keys(at).forEach(n => { if(at[n] === i) delete at[n]; else if(at[n] > i) at[n]--; }); }
+    }
+  } else {
+    dests = (extra.detailToCities || []).slice();
+    dests.forEach((k, i) => { if(k) at[i + 1] = i; });
+  }
+
+  // Mode: named, else Detailed when the link brings what only Detailed holds.
+  const many = dests.filter(Boolean).length > 1 || named('rows') || (named('toSalaries') && a.toSalaries.length > 1) || (named('customFx') && a.customFx.length > 1);
+  extra.mode = named('detail') ? a.detail : (many || extra.mode === 'detailed' ? 'detailed' : 'simple');
+  ['goal', 'housing'].forEach(k => { if(named(k)) extra[k] = a[k]; });
+  if(named('target')) extra.savingsTarget = a.target;
+
+  if(named('cities')){
+    const was = agentCurrency(homeBefore), now = agentCurrency(home);
+    extra.fromKey = home; extra.toKey = dests[0] || ''; extra.customFxSimple = null;
+    extra.detailFromKey = home; extra.detailToCities = dests.length ? dests : [''];
+    const n = extra.detailToCities.length;
+    extra.detailToSalaries = new Array(n).fill(0); extra.customFxDetailed = new Array(n).fill(null);
+    extra.toSalary = 0;
+    (extra.detailRows || []).forEach(r => { r.overrides = {}; });
+    // A Quick Start's figures are in its own home currency: kept for another one they would be read as that
+    // currency, so whatever the link does not replace is cleared.
+    if(was && now && was !== now){
+      const cleared = [];
+      if(!named('salary') && (extra.fromSalary || extra.detailFromSalary)){ extra.fromSalary = 0; extra.detailFromSalary = 0; cleared.push('salary'); }
+      if(!named('expense') && extra.fromExpense){ extra.fromExpense = 0; cleared.push('expense'); }
+      if(!named('rows') && (extra.detailRows || []).some(r => r.fromAmount)){ extra.detailRows = [{catId: 'rent', fromAmount: 0, overrides: {}}]; cleared.push('rows'); }
+      if(cleared.length) api.error('cities: the home city is now paid in ' + now + ', so the ' + cleared.join(' and ') + ' from the Quick Start (in ' + was + ') were cleared; send them in ' + now);
+    }
+  }
+  if(named('salary')){ extra.fromSalary = a.salary; extra.detailFromSalary = a.salary; }
+  if(named('expense')){
+    extra.fromExpense = a.expense;
+    if(extra.mode === 'detailed' && !named('rows')) api.error('expense counts only in Simple; Detailed takes its expenses as rows');
+  }
+  if(named('fxShock')) extra.fxShock = a.fxShock;
+  if(named('rows')){
+    extra.detailRows = a.rows.map(r => {
+      const overrides = {};
+      Object.keys(r.ov).forEach(n => {
+        if(at[n] != null) overrides[String(at[n])] = r.ov[n];
+        else api.error('rows "' + ColAI.CAT_LABEL[r.catId] + '": to' + n + ' is not a destination');
+      });
+      return {catId: r.catId, fromAmount: r.amount, overrides, unit: 'monthly', qtyPer: 'monthly'};
+    });
+  }
+  const perDest = (key, put) => {
+    a[key].forEach((v, i) => {
+      if(v == null) return;
+      if(at[i + 1] == null){ api.error(key + ': figure ' + (i + 1) + ' has no destination ' + (i + 1) + ' to belong to'); return; }
+      put(at[i + 1], v);
+    });
+  };
+  if(named('toSalaries')) perDest('toSalaries', (j, v) => {
+    if(!Array.isArray(extra.detailToSalaries)) extra.detailToSalaries = [];
+    extra.detailToSalaries[j] = v; if(j === 0) extra.toSalary = v;
+  });
+  if(named('customFx')) perDest('customFx', (j, v) => {
+    if(!Array.isArray(extra.customFxDetailed)) extra.customFxDetailed = [];
+    extra.customFxDetailed[j] = v; if(j === 0) extra.customFxSimple = v;
+  });
+
+  // The banner names the money: the home currency for the home figures, each destination's for its own.
+  const hc = agentCurrency(extra.mode === 'detailed' ? extra.detailFromKey : extra.fromKey);
+  const month = r => { if(r) r.value = (hc ? hc + ' ' : '') + r.value + ' a month'; };
+  month(res.salary); month(res.expense);
+  const nameOf = j => { const c = getCity(dests[j]); return c ? c.city : 'destination ' + (j + 1); };
+  if(res.toSalaries) res.toSalaries.value = a.toSalaries.map((v, i) => v == null || at[i + 1] == null ? null :
+    nameOf(at[i + 1]) + ' ' + agentCurrency(dests[at[i + 1]]) + ' ' + ColAI.money(v)).filter(Boolean).join('; ') + ' a month';
+  if(res.customFx) res.customFx.value = a.customFx.map((v, i) => v == null || at[i + 1] == null ? null :
+    '1 ' + agentCurrency(dests[at[i + 1]]) + ' = ' + ColAI.money(v) + ' ' + hc).filter(Boolean).join('; ');
+  if(res.fxShock) res.fxShock.value = (a.fxShock > 0 ? '+' : '') + a.fxShock + '%';
+}
+const AGENT_LABELS = {
+  detail: ['Detail', 'modeGroup'], goal: ['I want to know how much', 'goalGroup'], housing: ['As part of my expenses', 'housingGroup'],
+  target: ['Target', 'analysisArea'], cities: ['Cities', () => S.mode === 'simple' ? 'simpleCityCard' : 'analysisArea'],
+  salary: ['Net salary', 'analysisArea'], expense: ['Expenses', 'analysisArea'], toSalaries: ['Net salary in each destination', 'analysisArea'],
+  rows: ['Expense rows', 'analysisArea'], customFx: ['Custom exchange rates', () => S.mode === 'simple' ? 'simpleFxCard' : 'analysisArea'],
+  fxShock: ['What if the destination currency moves', 'simpleFxCard']
+};
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'costofliving-comparator',
+  // The data loads after the page does, and the mini cache starts with it.
+  ready: () => Promise.race([agentReady, new Promise(r => setTimeout(r, 20000))]),
+  compact: {
+    detail: agentChoice('detail'), goal: agentChoice('goal'), housing: agentChoice('housing'), target: agentChoice('target'),
+    cities: agentCities, salary: agentAmount('salary'), expense: agentAmount('expense'),
+    toSalaries: agentNumbers('toSalaries', false), rows: agentRows,
+    customFx: agentNumbers('customFx', true),
+    fxShock: function(raw, extra, api){
+      const n = api.number(ColAI.decode(raw));
+      if(!isFinite(n)){ api.error('fxShock "' + ColAI.clip(ColAI.decode(raw), 20) + '": not a number'); return false; }
+      const used = Math.max(-FX_SHOCK_LIMIT, Math.min(FX_SHOCK_LIMIT, Math.round(n)));
+      if(used !== n && Math.abs(n - used) >= 1) api.clamp('fxShock', n, used);
+      agentIn.fxShock = used;
+      return agentRes.fxShock = {value: String(used)};
+    }
+  },
+  patch: agentPatch,
+  describe: function(key){
+    const d = Object.prototype.hasOwnProperty.call(AGENT_LABELS, key) ? AGENT_LABELS[key] : null;
+    return d ? {label: d[0], el: document.getElementById(typeof d[1] === 'function' ? d[1]() : d[1])} : null;
+  }
+});
+
+/* What the docs print for each Quick Start (_ref/agent-lib.mjs, colQuickStarts), built from the same
+   data the buttons use. The city names are the shortest ones that find the city again. */
+window.COL_QS = {
+  keys: Object.keys(QUICK_START),
+  ready: agentReady,
+  link: function(key){
+    const q = QUICK_START[key];
+    if(!q || !CITIES.length) return null;
+    const name = t => { const c = CITIES.find(x => x.city === t[0] && x.country === t[1]); return c ? ColAI.label(c, CITIES) : t[0]; };
+    return {
+      detail: 'detailed', goal: 'earn', target: 'ratio', salary: String(q.salary),
+      cities: [q.from].concat(q.to).map(name).join(','),
+      rows: q.rows.map(r => r[0] + ':' + r[1]).join(',')
+    };
+  }
+};
+/* The checks type into the page the way a reader would (_ref/agent-check.mjs): the two figures a link
+   names that have a number box once cities are picked. */
+window.__COL_AGENT = {
+  get: function(key){
+    return String(key === 'salary' ? (S.mode === 'detailed' ? S.detailFromSalary : S.fromSalary) : key === 'expense' ? S.fromExpense : '');
+  },
+  set: function(key, value){
+    const v = parseNum(value);
+    if(key === 'salary'){ if(S.mode === 'detailed') S.detailFromSalary = v; else S.fromSalary = v; }
+    else if(key === 'expense') S.fromExpense = v;
+    render();
+  }
+};
+
 window.__COL_TOUR = {
   seedSimple: seedSimpleDemo, seedDetailed: seedDetailedDemo,
   saveState: tourSaveState, restoreState: tourRestoreState
@@ -2053,6 +2306,7 @@ function init(){
     }
   });
   SharedScenario.mount('.quick-start-row', { tool: 'costofliving-comparator', persist: persist });
+  agentReadyResolve();   // a #load link waits for the data, the pickers and the mini cache
 }
 
 loadData();

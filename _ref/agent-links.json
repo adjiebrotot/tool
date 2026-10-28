@@ -924,6 +924,358 @@
      }
     ]
    }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "docs example: Melbourne to Singapore, from the Singapore and Australia Quick Start",
+   "link": "#load&v=1&qs=sg-au&cities=Melbourne,Singapore&salary=7000&rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&note=Melbourne%20to%20Singapore,%20October%202026",
+   "expect": {
+    "salary": "7000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "goal": "earn",
+    "savingsTarget": "ratio",
+    "detailFromKey": "Melbourne|Australia",
+    "detailToCities": [
+     "Singapore|Singapore"
+    ],
+    "detailFromSalary": 7000,
+    "customFreq": false,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 2400,
+      "overrides": {}
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 700,
+      "overrides": {}
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 500,
+      "overrides": {}
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 250,
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 1300,
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "no Quick Start: Simple, a Perth offer for someone in Jakarta, cities by name",
+   "link": "#load&v=1&cities=Jakarta,Perth&salary=20000000&expense=12000000&toSalaries=6500&why.toSalaries=The%20offer%20the%20user%20named,%20in%20Australian%20dollars%20a%20month&note=Jakarta%20to%20Perth",
+   "expect": {
+    "salary": "20000000",
+    "expense": "12000000"
+   },
+   "probe": {
+    "mode": "simple",
+    "goal": "save",
+    "fromKey": "Jakarta|Indonesia",
+    "toKey": "Perth|Australia",
+    "fromSalary": 20000000,
+    "fromExpense": 12000000,
+    "toSalary": 6500
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "Simple earn: housing out, nominal target, own exchange rate and a currency scenario",
+   "link": "#load&v=1&detail=simple&goal=earn&housing=exclude&target=nominal&cities=Perth,Jakarta&salary=6500&expense=4500&customFx=0.000091&fxShock=-10&why.customFx=The%20rate%20the%20user%20named,%20Australian%20dollars%20for%201%20rupiah&why.fxShock=The%20user%20asked%20what%20a%2010%25%20weaker%20rupiah%20does",
+   "expect": {
+    "salary": "6500",
+    "expense": "4500"
+   },
+   "probe": {
+    "mode": "simple",
+    "goal": "earn",
+    "housing": "exclude",
+    "savingsTarget": "nominal",
+    "fromKey": "Perth|Australia",
+    "toKey": "Jakarta|Indonesia",
+    "customFxSimple": 0.000091,
+    "fxShock": -10
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=us: three job offers, the goal back to what the user would save",
+   "link": "#load&v=1&qs=us&goal=save&toSalaries=9500,8800,7600&why.toSalaries=The%20three%20offers%20the%20user%20named,%20in%20dollars%20a%20month,%20in%20the%20order%20of%20the%20cities&note=Three%20offers",
+   "expect": {
+    "salary": "8500"
+   },
+   "probe": {
+    "mode": "detailed",
+    "goal": "save",
+    "detailFromKey": "New York, NY|United States",
+    "detailToCities": [
+     "San Francisco, CA|United States",
+     "Seattle, WA|United States",
+     "Austin, TX|United States"
+    ],
+    "detailToSalaries": [
+     9500,
+     8800,
+     7600
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=sea: other cities by name, in any case and with accents",
+   "link": "#load&v=1&qs=sea&cities=jakarta,Z%C3%BCrich,SINGAPORE&why.cities=The%20user%20is%20weighing%20Zurich%20and%20Singapore",
+   "expect": {
+    "salary": "25000000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "detailFromKey": "Jakarta|Indonesia",
+    "detailToCities": [
+     "Zurich|Switzerland",
+     "Singapore|Singapore"
+    ],
+    "detailToSalaries": [
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=eu: London written with its country, one destination figure the user knows",
+   "link": "#load&v=1&qs=eu&cities=London,%20United%20Kingdom,Madrid,Rome&rows=rent:2100:to1=1500,groceries:350,eating_out:400,utilities:250,other:500&why.rows=The%20user%20knows%20Madrid%20rent%20is%20about%201,500%20euros&note=London%20to%20Madrid%20and%20Rome",
+   "expect": {
+    "salary": "4500"
+   },
+   "probe": {
+    "mode": "detailed",
+    "detailFromKey": "London|United Kingdom",
+    "detailToCities": [
+     "Madrid|Spain",
+     "Rome|Italy"
+    ],
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 2100,
+      "overrides": {
+       "0": 1500
+      }
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 350,
+      "overrides": {}
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 400,
+      "overrides": {}
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 250,
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 500,
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=me: the salary and the rows changed, the other cities kept",
+   "link": "#load&v=1&qs=me&salary=28000&rows=rent:8500,groceries:2000,fuel:400,other:4000&why.salary=The%20user%20takes%20home%20about%2028,000%20dirhams%20a%20month",
+   "expect": {
+    "salary": "28000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "detailFromKey": "Dubai|United Arab Emirates",
+    "detailFromSalary": 28000,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 8500,
+      "overrides": {}
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 2000,
+      "overrides": {}
+     },
+     {
+      "catId": "fuel",
+      "fromAmount": 400,
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 4000,
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=ea: Simple with one destination and an expense total",
+   "link": "#load&v=1&qs=ea&detail=simple&cities=Tokyo,Seoul&salary=450000&expense=320000&note=Tokyo%20to%20Seoul",
+   "expect": {
+    "salary": "450000",
+    "expense": "320000"
+   },
+   "probe": {
+    "mode": "simple",
+    "goal": "earn",
+    "fromKey": "Tokyo|Japan",
+    "toKey": "Seoul|South Korea",
+    "fromSalary": 450000,
+    "fromExpense": 320000
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=jkt with a higher salary",
+   "link": "#load&v=1&qs=jkt&salary=30000000&why.salary=The%20user%20takes%20home%2030%20million%20rupiah%20a%20month",
+   "expect": {
+    "salary": "30000000"
+   },
+   "probe": {
+    "fromKey": "Jakarta|Indonesia",
+    "salary": 30000000,
+    "expense": 17500000,
+    "detail": "detailed"
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "docs example: Melbourne on a take-home figure, from the Perth Quick Start",
+   "link": "#load&v=1&qs=per&cities=Melbourne&salary=7000&detail=simple&expense=5000&why.salary=The%20user%20gave%20a%20take-home%20figure%20of%20about%207,000%20a%20month&why.expense=The%20user%20said%20they%20spend%20roughly%205,000%20a%20month,%20so%20one%20expense%20total%20in%20Simple&note=Melbourne,%20October%202026",
+   "expect": {
+    "salary": "7000",
+    "expense": "5000"
+   },
+   "probe": {
+    "fromKey": "Melbourne|Australia",
+    "salary": 7000,
+    "detail": "simple",
+    "expense": 5000,
+    "mode": "required",
+    "housing": "include",
+    "target": "ratio"
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "no Quick Start: Global salary from Zurich, the city written with an accent",
+   "link": "#load&v=1&cities=Z%C3%BCrich&salary=9000&expense=5200&salaryMode=global&why.salaryMode=The%20user%20asked%20what%20their%20own%20salary%20does%20elsewhere",
+   "expect": {
+    "salary": "9000",
+    "expense": "5200"
+   },
+   "probe": {
+    "fromKey": "Zurich|Switzerland",
+    "mode": "global",
+    "detail": "simple",
+    "salary": 9000,
+    "expense": 5200
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=nyc: Scaled to the median salary, housing out, one expense total",
+   "link": "#load&v=1&qs=nyc&salaryMode=scaled&scale=median&housing=exclude&detail=simple&expense=6000&why.housing=The%20employer%20pays%20the%20rent",
+   "expect": {
+    "salary": "8500",
+    "expense": "6000"
+   },
+   "probe": {
+    "fromKey": "New York, NY|United States",
+    "mode": "scaled",
+    "scale": "median",
+    "housing": "exclude",
+    "detail": "simple",
+    "expense": 6000
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=nyc: Austin by name, a nominal target and the user's own rows",
+   "link": "#load&v=1&qs=nyc&cities=Austin&target=nominal&salary=7500&rows=rent:2200,groceries:500,eating_out:450,utilities:180,other:900&note=Austin",
+   "expect": {
+    "salary": "7500",
+    "expense": "4230"
+   },
+   "probe": {
+    "fromKey": "Austin, TX|United States",
+    "target": "nominal",
+    "detail": "detailed",
+    "expense": 4230,
+    "rows": [
+     {
+      "catId": "rent",
+      "amount": 2200
+     },
+     {
+      "catId": "groceries",
+      "amount": 500
+     },
+     {
+      "catId": "eating_out",
+      "amount": 450
+     },
+     {
+      "catId": "utilities",
+      "amount": 180
+     },
+     {
+      "catId": "other",
+      "amount": 900
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=sg: a home city that pays in another currency, salary and rows sent with it",
+   "link": "#load&v=1&qs=sg&cities=Kuala%20Lumpur&salary=7000&rows=rent:2600,groceries:700,other:1500&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20in%20ringgit",
+   "expect": {
+    "salary": "7000",
+    "expense": "4800"
+   },
+   "probe": {
+    "fromKey": "Kuala Lumpur|Malaysia",
+    "detail": "detailed",
+    "rows": [
+     {
+      "catId": "rent",
+      "amount": 2600
+     },
+     {
+      "catId": "groceries",
+      "amount": 700
+     },
+     {
+      "catId": "other",
+      "amount": 1500
+     }
+    ]
+   }
   }
  ]
 }

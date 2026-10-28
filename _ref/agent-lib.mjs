@@ -87,7 +87,11 @@ export function buildLink(base, pairs) {
                "probe" names (state beyond the fields); default: the scenario's __extra
    solved      Engineering pages only, run IN the page: true once the tool has solved. It
                makes check A6 open each of the page's kept links marked "model": true (a
-               whole custom model in json) and wait for it */
+               whole custom model in json) and wait for it
+   virtual     a page with no (or too few) form fields of its own: compact keys that stand in
+               as number boxes for the checks' hand edits and range tests, [{ key, min, max,
+               value }], with virtualRead(key) and virtualWrite([key, value]) run IN the page
+               to read one and to type into it as a reader would */
 export const PAGES = [
   { page: 'rentvsownhouse', url: '/rentvsownhouse/', lang: 'en', notes: 'rentvsownhouse/agent-notes.md',
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
@@ -103,6 +107,14 @@ export const PAGES = [
     insertBefore: '<section class="layout">', quickStarts: fvcQuickStarts, probe: fvcProbe },
   { page: 'financialfreedom', url: '/financialfreedom/', lang: 'en', notes: 'financialfreedom/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: ffQuickStarts },
+  // The comparator has no form fields: its whole comparison is JS state, so every key is a compact one.
+  // Two of them stand in as number boxes for the checks' hand edits (virtual, see agent-check.mjs).
+  { page: 'costofliving-comparator', url: '/costofliving-comparator/', lang: 'en', notes: 'costofliving-comparator/agent-notes.md',
+    insertBefore: '<!-- MODE TOGGLES -->', quickStarts: colQuickStarts,
+    virtual: [{ key: 'salary', min: 0, max: 100000000000, value: '0' }, { key: 'expense', min: 0, max: 100000000000, value: '0' }],
+    virtualRead: colVirtualRead, virtualWrite: colVirtualWrite },
+  { page: 'costofliving-comparator/map', url: '/costofliving-comparator/map/', lang: 'en', notes: 'costofliving-comparator/map/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: colmapQuickStarts },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -346,6 +358,57 @@ export function fvcProbe() {
   return Object.assign({}, body && body.state && body.state.__extra, {
     shown: { offers: document.querySelectorAll('#scenarioList .sc-tab').length }
   });
+}
+
+// Cost of Living Comparator: the six worked comparisons (window.COL_QS, costofliving-comparator/script.js).
+// What each sets, as link keys, and its cities and rows in the cities= and rows= syntax, in
+// parentheses so the docs' figure reader leaves the lists alone.
+export async function colQuickStarts() {
+  const Q = window.COL_QS;
+  if (!Q) return null;
+  await Q.ready;
+  const names = {};
+  document.querySelectorAll('.quick-start-btn[data-preset]').forEach(b => {
+    names[b.getAttribute('data-preset')] = (b.textContent || '').replace(/\s+/g, ' ').trim();
+  });
+  const items = Q.keys.map(key => {
+    const l = Q.link(key);
+    return {
+      key, title: names[key] || key,
+      values: { detail: l.detail, goal: l.goal, target: l.target, salary: l.salary },
+      extra: '(cities=' + l.cities + ') (rows=' + l.rows + ')', extraLabel: 'Cities and rows'
+    };
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + Q.keys.join(', ') + '. Each opens the Detailed table on a home city and its regional peers, with its monthly budget; a link sends only what differs from it.']
+  };
+}
+// The Comparator's checks type into the page the way a reader would (window.__COL_AGENT).
+export function colVirtualRead(key) { return window.__COL_AGENT ? window.__COL_AGENT.get(key) : ''; }
+export function colVirtualWrite([key, value]) { window.__COL_AGENT.set(key, value); }
+
+// Cost of Living Map: the six home cities (window.COLMAP_QS, costofliving-comparator/map/script.js).
+export async function colmapQuickStarts() {
+  const Q = window.COLMAP_QS;
+  if (!Q) return null;
+  await Q.ready;
+  const names = {};
+  document.querySelectorAll('.quick-start-btn[data-preset]').forEach(b => {
+    names[b.getAttribute('data-preset')] = (b.textContent || '').replace(/\s+/g, ' ').trim();
+  });
+  const items = Q.keys.map(key => {
+    const l = Q.link(key);
+    return {
+      key, title: names[key] || key,
+      values: { salary: l.salary, expense: l.expense, detail: l.detail },
+      extra: '(cities=' + l.cities + ') (rows=' + l.rows + ')', extraLabel: 'City and rows'
+    };
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + Q.keys.join(', ') + '. Each opens the map from a home city with its monthly budget; a link sends only what differs from it.']
+  };
 }
 
 /* ── Static server and pages ──────────────────────────────────────────────── */

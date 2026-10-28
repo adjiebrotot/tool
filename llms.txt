@@ -55,6 +55,8 @@ Pages with an agent.txt:
 - Borrowing Capacity: https://tool.adjiebrotots.com/borrowingcapacity/agent.txt
 - Finance vs Cash Purchase: https://tool.adjiebrotots.com/financingvscash/agent.txt
 - Financial Freedom Calculator: https://tool.adjiebrotots.com/financialfreedom/agent.txt
+- Cost of Living Comparator: https://tool.adjiebrotots.com/costofliving-comparator/agent.txt
+- Cost of Living Comparator: Map View: https://tool.adjiebrotots.com/costofliving-comparator/map/agent.txt
 <!-- agent:end -->
 
 ## Why these tools stand out
