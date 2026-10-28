@@ -1599,6 +1599,8 @@ function init(){
       save: () => ({ ...UI }),
       restore: saved => {
         if(!saved || typeof saved !== 'object') return;
+        // Only an AI link carries this (agentPatch below); save() never writes it.
+        if(saved.agentCarry && typeof saved.agentCarry === 'object') agentCarry(saved.agentCarry, saved);
         Object.keys(UI_DEFAULTS).forEach(k => { if(saved[k]) UI[k] = saved[k]; });
       }
     }
@@ -1653,6 +1655,104 @@ function init(){
                   medicareLevy, mlsRate, helpRepayment, amortPayment, loanFromPayment,
                   CITY_INDEX, TAX_SCALES, USER_INDEX };
 }
+
+/* ═════════════════════ AI links ═════════════════════
+   A #load link (SharedAgent, shared.js) names fields by their ids and starts
+   from a Quick Start key. What the fields cannot say is which view a section
+   is in: the five switches ride in extra (UI). So a link may name them
+   (incMode, incWho, debtsMode, loanMode, capsMode), and when it names a figure
+   that only counts in one view, or only under a ticked box, this switches the
+   view on for it, as a person would before typing the figure.
+
+   The hand-over the buttons make when Detailed opens (carryIncome, carryCaps)
+   and the ticks are written into the form after the link's fields have loaded,
+   so patch() leaves a note in extra.agentCarry and restore() (see init) acts
+   on it. save() never writes the note, so a saved scenario never has one. */
+const AGENT_MODES = {
+  incMode:   { label:'Income detail',   el:'incModeGroup',   words:{ simple:'Simple', detailed:'Detailed' } },
+  incWho:    { label:'I earn as',       el:'incWhoGroup',    words:{ employee:'Employee', self:'Self-employed' } },
+  debtsMode: { label:'Debts detail',    el:'debtsModeGroup', words:{ simple:'Simple', detailed:'Detailed' } },
+  loanMode:  { label:'Loan detail',     el:'loanModeGroup',  words:{ simple:'Simple', detailed:'Detailed' } },
+  capsMode:  { label:'Purchase detail', el:'capsModeGroup',  words:{ simple:'Simple', detailed:'Detailed' } }
+};
+
+function agentMode(key){
+  const m = AGENT_MODES[key];
+  return (raw, extra, api) => {
+    let s = String(raw);
+    try { s = decodeURIComponent(s); } catch(e){}
+    s = s.trim().toLowerCase();
+    const v = Object.keys(m.words).find(k => k === s || m.words[k].toLowerCase() === s);
+    if(!v){ api.error(key + ' "' + s.slice(0, 30) + '": not one of ' + Object.keys(m.words).join(', ')); return false; }
+    extra[key] = v;
+    return { value: m.words[v] };
+  };
+}
+
+function agentPatch(extra, api){
+  const was = { ...UI };            // the page as the Quick Start left it
+  const detailed = {}, who = {}, tick = [];
+  document.querySelectorAll('[data-adv] input, [data-adv] select').forEach(el => {
+    if(!el.id || !api.given(el.id)) return;
+    detailed[el.closest('[data-adv]').dataset.adv] = true;
+    const w = el.closest('[data-who]');
+    if(w) who[w.dataset.who] = true;
+  });
+  ['inc', 'debts', 'loan', 'caps'].forEach(sec => {
+    const key = sec + 'Mode';
+    if(api.given(key)) return;      // said outright
+    if(detailed[sec]) extra[key] = 'detailed';
+    else if(sec === 'inc' && api.given('incSimple')) extra[key] = 'simple';
+  });
+  if(!api.given('incWho')){
+    if(who.self && !who.employee) extra.incWho = 'self';
+    else if(who.employee && !who.self) extra.incWho = 'employee';
+    else if(who.employee && who.self) api.error('income: Employee and Self-employed streams cannot both count, so only the '
+      + AGENT_MODES.incWho.words[extra.incWho || was.incWho] + ' ones are used');
+  }
+  // A figure under a ticked box ticks the box, unless the link names the box.
+  document.querySelectorAll('[data-when] input:not([type="checkbox"]), [data-when] select').forEach(el => {
+    if(!el.id || !api.given(el.id)) return;
+    const n = api.number(api.field(el.id));
+    if(isFinite(n) && n === 0) return;
+    for(let n = el.closest('[data-when]'); n; n = n.parentElement && n.parentElement.closest('[data-when]')){
+      n.dataset.when.split(/\s+/).forEach(box => {
+        if(box && !api.given(box) && api.field(box) !== true && !tick.includes(box)) tick.push(box);
+      });
+    }
+  });
+  const carry = {};
+  if(extra.incMode === 'detailed' && was.incMode === 'simple'
+     && !api.given((extra.incWho || was.incWho) === 'self' ? 'incSeNpat' : 'incPayg')) carry.inc = 1;
+  if(extra.capsMode === 'detailed' && was.capsMode !== 'detailed'){
+    if(!api.given('valuation')) carry.valuation = 1;
+    if(!api.given('lvrMax')) carry.lvrMax = 1;
+  }
+  if(tick.length) carry.tick = tick;
+  if(Object.keys(carry).length) extra.agentCarry = carry;
+}
+
+// Runs inside restore(), after the link's fields are in the form and before the
+// switches move, so UI still holds the view the Quick Start left.
+function agentCarry(c, saved){
+  if(c.inc && UI.incMode === 'simple') carryIncome('detailed', saved.incWho || UI.incWho);
+  if(c.lvrMax) $('lvrMax').value = bool('lmiCap') ? 95 : 80;
+  if(c.valuation) setAmount('valuation', num('price'));
+  (Array.isArray(c.tick) ? c.tick : []).forEach(id => {
+    const el = Object.prototype.hasOwnProperty.call(DEFAULTS, id) ? $(id) : null;
+    if(el && el.type === 'checkbox') el.checked = true;
+  });
+}
+
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'borrowingcapacity',
+  compact: Object.fromEntries(Object.keys(AGENT_MODES).map(k => [k, agentMode(k)])),
+  patch: agentPatch,
+  describe: key => {
+    const m = Object.prototype.hasOwnProperty.call(AGENT_MODES, key) ? AGENT_MODES[key] : null;
+    return m ? { label: m.label, el: $(m.el) } : null;
+  }
+});
 
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();

@@ -114,7 +114,7 @@ const toNumber = s => {
   const t = String(s).replace(/[$,_\s]/g, '').replace(/%$/, '');
   return t === '' || !/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t) ? NaN : Number(t);
 };
-const isNumeric = f => f.input === 'number' || f.input === 'range' || f.money;
+const isNumeric = f => f.input === 'number' || f.input === 'range' || f.money || f.numeric;
 
 // Why a value would not go in as written, or '' when it would.
 function valueProblem(f, v) {
@@ -243,7 +243,7 @@ function fieldKind(f, M) {
   else if (f.options) s = 'One of: ' + f.options.map(optText).join(', ') + '.';
   else {
     const unit = f.input === 'range' ? f.unit : [f.prefix && f.prefix + ' before it', f.suffix && f.suffix + ' after it'].filter(Boolean).join(', ');
-    const kind = f.input === 'range' ? 'Slider' : f.money ? 'Amount' : f.input === 'number' ? 'Number' : 'Text';
+    const kind = f.input === 'range' ? 'Slider' : f.money ? 'Amount' : f.input === 'number' || f.numeric ? 'Number' : 'Text';
     s = kind + (unit ? ` (${unit})` : '') + '.';
     if (f.min != null && f.max != null) s += ` ${show(f.min)} to ${show(f.max)}` + (f.step && f.step !== 'any' && f.input !== 'range' ? `, step ${f.step}` : '') + '.';
     else if (f.min != null) s += ` At least ${show(f.min)}.`;
@@ -261,7 +261,7 @@ function qsLines(M) {
   const valued = all.length > 1 && all.every(it => it.values);
   const same = (items, k) => items.length > 0 && items.every(it => JSON.stringify(it.values[k]) === JSON.stringify(items[0].values[k]));
   const kv = (values, keys) => keys.map(k => `${k}=${plain(M.byKey[k], values[k])}`).join(' ');
-  const keysOf = it => Object.keys(it.values || {}).filter(k => M.byKey[k] && !M.hide.has(k));
+  const keysOf = it => Object.keys(it.values || {}).filter(k => (M.byKey[k] || M.compact.includes(k)) && !M.hide.has(k));
   const shared = valued ? keysOf(all[0]).filter(k => same(all, k)) : [];
   if (shared.length) out.push('Every Quick Start sets: ' + kv(all[0].values, shared), '');
   for (const g of qs.groups) {

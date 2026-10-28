@@ -496,6 +496,110 @@
      "offers": 1
     }
    }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "docs example: Sydney couple on $120,000 and $85,000",
+   "link": "#load&v=1&qs=couple&city=Sydney&incSimple=205000&why.incSimple=$120,000%20plus%20$85,000%20gross%20a%20year,%20before%20tax&incSplit=40&why.incSplit=The%20second%20applicant%20earns%20$85,000,%20about%2041%25%20of%20$205,000,%20and%20the%20slider%20moves%20in%20steps%20of%205&deps=0&why.deps=No%20children%20were%20mentioned,%20and%20the%20Couple%20Quick%20Start%20has%20two&declaredExp=4000&why.declaredExp=A%20typical%20monthly%20figure%20for%20two%20adults%20with%20no%20children,%20excluding%20rent%20and%20debts&price=1100000&why.price=A%20typical%20Sydney%20price%20for%20a%20home%20a%20couple%20on%20this%20income%20might%20shop%20for&savings=250000&why.savings=Savings%20for%20the%20purchase%20were%20not%20given,%20so%20a%20typical%20amount%20for%20a%20couple%20at%20this%20income&dutyPct=4&why.dutyPct=New%20South%20Wales%20stamp%20duty%20on%20about%20$1.1M%20is%20about%204%25%20of%20the%20price&note=Sydney%20couple,%20October%202026",
+   "expect": {
+    "city": "Sydney",
+    "incSimple": "205,000",
+    "incSplit": "40",
+    "deps": "0",
+    "declaredExp": "4,000",
+    "price": "1,100,000",
+    "savings": "250,000",
+    "dutyPct": "4",
+    "cardLimit": "15,000"
+   },
+   "probe": {
+    "incMode": "simple",
+    "incWho": "employee"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "detailed income by naming the streams: salary and a shaded bonus",
+   "link": "#load&v=1&qs=geoff&incPayg=100000&incBonus=20000&shdBonus=70&why.incBonus=A%20$20,000%20yearly%20bonus,%20which%20lenders%20shade&note=Perth,%20one%20income,%20October%202026",
+   "expect": {
+    "incPayg": "100,000",
+    "incBonus": "20,000",
+    "shdBonus": "70"
+   },
+   "probe": {
+    "incMode": "detailed",
+    "incWho": "employee"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "incMode=detailed without a base salary: it takes what is left of incSimple",
+   "link": "#load&v=1&qs=couple&incMode=detailed&incBonus=15000&why.incBonus=A%20$15,000%20bonus%20inside%20the%20$185,000",
+   "expect": {
+    "incSimple": "185,000",
+    "incBonus": "15,000",
+    "incPayg": "170,000"
+   },
+   "probe": {
+    "incMode": "detailed"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "self-employed in the Simple view, a personal loan ticked for it",
+   "link": "#load&v=1&qs=tradie&city=Brisbane&incSimple=190000&incWho=Self-employed&persRepay=600&persBal=30000&why.persRepay=A%20ute%20loan%20at%20$600%20a%20month",
+   "expect": {
+    "city": "Brisbane",
+    "incSimple": "190,000",
+    "persRepay": "600",
+    "persBal": "30,000",
+    "hasPersonal": true
+   },
+   "probe": {
+    "incMode": "simple",
+    "incWho": "self"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "a debt to income cap opens Purchase in Detailed on the Simple figures",
+   "link": "#load&v=1&qs=couple&dtiCap=5.5&why.dtiCap=A%20lender%20that%20caps%20debt%20at%205.5%20times%20income",
+   "expect": {
+    "dtiCap": "5.5",
+    "valuation": "920,000",
+    "lvrMax": "80"
+   },
+   "probe": {
+    "capsMode": "detailed"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "Finance Bro, Sydney, moved to Melbourne with a bigger purchase",
+   "link": "#load&v=1&qs=finance-bro&city=Melbourne&price=1500000&savings=600000&dutyPct=5.5&note=Melbourne,%20October%202026",
+   "expect": {
+    "city": "Melbourne",
+    "price": "1,500,000",
+    "savings": "600,000",
+    "incPayg": "230,000",
+    "incBonus": "90,000"
+   },
+   "probe": {
+    "incMode": "detailed",
+    "debtsMode": "detailed"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "First home buyer with a study loan, Brisbane",
+   "link": "#load&v=1&qs=first-home&incSimple=95000&helpMode=commitment&helpThreshold=67000&price=520000&savings=60000",
+   "expect": {
+    "incSimple": "95,000",
+    "helpMode": "commitment",
+    "price": "520,000",
+    "savings": "60,000",
+    "lmiCap": true
+   }
   }
  ]
 }

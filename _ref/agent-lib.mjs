@@ -93,6 +93,8 @@ export const PAGES = [
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
   { page: 'rentvsownhouse/id', url: '/rentvsownhouse/id/', lang: 'id', notes: 'rentvsownhouse/agent-notes.md',
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
+  { page: 'borrowingcapacity', url: '/borrowingcapacity/', lang: 'en', notes: 'borrowingcapacity/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: bcQuickStarts },
   { page: 'financingvscash', url: '/financingvscash/', lang: 'en', notes: 'financingvscash/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: fvcQuickStarts, probe: fvcProbe },
 ];
@@ -141,6 +143,39 @@ export function defaultQuickStarts() {
     if (seen.has(key)) return;
     seen.add(key);
     items.push({ key, title: (b.getAttribute('title') || b.textContent || '').replace(/\s+/g, ' ').trim() });
+  });
+  return { groups: [{ title: '', items }] };
+}
+
+// Borrowing Capacity: each Quick Start button is pressed and the form read, so the docs
+// print what the scenario really sets: every field, and the five view switches (incMode,
+// incWho, debtsMode, loanMode, capsMode, which a link may name), that differs from the
+// page's own start. Run on a fresh page that is left changed (agent-doc closes it).
+export function bcQuickStarts() {
+  const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
+  if (!btns.length || !window.SharedAgent || !window.__BC) return null;
+  const fields = SharedAgent.fields();
+  const snap = () => {
+    const o = {};
+    fields.forEach(f => {
+      if (f.type === 'c') { o[f.key] = !!f.el.checked; return; }
+      const v = f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));
+      o[f.key] = f.el.hasAttribute('data-min') && v.trim() !== '' && Number.isFinite(n) ? String(n) : v;
+    });
+    Object.assign(o, window.__BC.UI);
+    return o;
+  };
+  const start = snap();
+  const items = [];
+  btns.forEach(b => {
+    const key = b.getAttribute('data-preset');
+    if (items.some(it => it.key === key)) return;
+    b.click();
+    const now = snap(), values = {};
+    Object.keys(now).forEach(k => { if (now[k] !== start[k]) values[k] = now[k]; });
+    const label = b.textContent.replace(/\s+/g, ' ').trim();
+    // The button's label only: its tooltip talks about the answer, which a chatbot must not.
+    items.push({ key, title: label, values });
   });
   return { groups: [{ title: '', items }] };
 }
@@ -309,7 +344,7 @@ export async function openPage(browser, origin, path, { viewport = { width: 1280
    in shared.js (data-persist, else id, else name; no file/password/hidden/button inputs,
    nothing under data-no-persist; radios keyed by group name). Then it reads what a person
    sees at each control. Returns, in page order, one entry per key:
-     { key, type, tag, input, label, group, prefix, suffix, unit, money, min, max, step,
+     { key, type, tag, input, label, group, prefix, suffix, unit, money, numeric, min, max, step,
        value, options: [{ value, label }], pairs: [key], tip }
    value is the default: the text the field shows, true/false for a checkbox, the checked
    value of a radio group. */
@@ -347,7 +382,7 @@ export function readFields() {
     d.innerHTML = String(html).replace(/<br\s*\/?>|<\/?(ul|ol|li)\b[^>]*>/gi, ' ');
     return norm(d.textContent);
   };
-  const ROW = '.field-row, .toggle-row, .form-row, .field, .input-group, .ctrl-row';
+  const ROW = '.field-row, .toggle-row, .slider-block, .form-row, .field, .input-group, .ctrl-row';
   const labelFor = (el, isRadio) => {
     if (!isRadio) {
       if (el.id) {
@@ -359,7 +394,7 @@ export function readFields() {
     }
     const row = el.closest(ROW);
     if (row) {
-      const l = row.querySelector('.field-label, .toggle-label, .label, legend, label');
+      const l = row.querySelector('.field-label, .toggle-label, .slider-label, .label, legend, label');
       if (l && !l.contains(el) && text(l)) return { label: text(l), node: l };
     }
     const fs = el.closest('fieldset');
@@ -400,6 +435,9 @@ export function readFields() {
       suffix: wrap && wrap.querySelector('.suffix') ? norm(wrap.querySelector('.suffix').textContent) : '',
       unit: '',
       money: first.getAttribute('data-money') === 'true' || first.classList.contains('money-input'),
+      // Typed numbers the way the loader reads them (shared.js numeric()): a currency field, or one with a range or a number keypad.
+      numeric: !!first.__abtCurrency || first.hasAttribute('data-min') || first.hasAttribute('data-max') ||
+        /^(numeric|decimal)$/.test(first.getAttribute('inputmode') || ''),
       min: num(first.getAttribute('min') != null ? first.getAttribute('min') : first.getAttribute('data-min')),
       max: num(first.getAttribute('max') != null ? first.getAttribute('max') : first.getAttribute('data-max')),
       step: num(first.getAttribute('step')),

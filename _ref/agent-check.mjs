@@ -104,7 +104,7 @@ function partial(want, got, path = '') {
   if (typeof want === 'number') return typeof got === 'number' && close(want, got) ? [] : [`${at}: ${short(got)}, expected ${want}`];
   return want === got ? [] : [`${at}: ${short(got)}, expected ${short(want)}`];
 }
-const isNumeric = f => f.input === 'number' || f.input === 'range' || f.money;
+const isNumeric = f => f.input === 'number' || f.input === 'range' || f.money || f.numeric;
 // Why a field would not take this value from a link as it is, or ''.
 function refuses(f, v) {
   if (f.type === 'c') return /^(true|false|1|0|on|off|yes|no)$/i.test(v) ? '' : 'not true or false';
@@ -277,7 +277,9 @@ function editable(live, skip = []) {
 // A value one away from `from`, inside the field's range.
 function nudged(f, from) {
   const n = Number.isFinite(toNumber(from)) ? toNumber(from) : +f.min;
-  const v = n + 1 <= +f.max ? n + 1 : n - 1;
+  // A slider lands on its step, so move it one step; any other field, one.
+  const st = f.input === 'range' && +f.step > 0 ? +f.step : 1;
+  const v = n + st <= +f.max ? n + st : n - st;
   return String(+v.toFixed(6));
 }
 // Type a value into a field as a person would: input, then change and blur.
@@ -390,6 +392,7 @@ try {
       const figBad = D.figures.map(([k, v, where]) => {
         if (k === 'qs') return live.qs.has(v) ? '' : `qs=${v} (${where})`;
         const f = live.byKey[k];
+        if (!f && live.lists.includes(k)) return '';   // a list key a Quick Start sets (the tool's adapter reads it)
         if (!f) return `${k} is not a field (${where})`;
         const why = refuses(f, v);
         return why ? `${k}=${v}: ${why}` : '';
