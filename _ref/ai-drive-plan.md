@@ -355,3 +355,37 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | 11 | ED/UC Simulator | 7 | |
 | 12 | Capacity Expansion Planner | 8 | |
 | 13 | PowerFactory Scripter (builder, legacy, router) | 8 | |
+
+## Per-tool agent brief (pieces 2 to 13)
+
+Each tool is one sub-agent. It reads `CLAUDE.md`, this plan, the header comments of
+`_ref/agent-lib.mjs`, `_ref/agent-doc.mjs` and `_ref/agent-check.mjs`, and uses Rent vs Own as the
+worked example (`rentvsownhouse/agent-notes.md`, its `SharedAgent.register` call in
+`rentvsownhouse/script.js`, its entries in `PAGES` and `_ref/agent-links.json`). Then:
+
+1. **Read the tool**: its Persist namespace, `SharedScenario.mount`, Quick Starts, `__extra`
+   (or custom save/load), currency inputs, `.needs-run`, guide (`<tool>/guides/scenes.js`).
+2. **Adapter only where needed**: `SharedAgent.register` in the tool's script for a Quick Start
+   path other than `.quick-start-btn[data-preset]`, compact lists for row data, `json` for
+   structured state, a custom save/load. Flat fields need nothing. Least-damage rules apply:
+   no handle changes, behaviour without `#load` unchanged.
+3. **`PAGES` entry** in `_ref/agent-lib.mjs` (plus `probe` for state beyond fields, `solved`
+   for Engineering pages), **`<page>/agent-notes.md`** in the Rent vs Own format, then
+   `node _ref/agent-doc.mjs`. Never edit `AI_RULES` or a generated text by hand.
+4. **Kept links** in `_ref/agent-links.json` (add only): the docs' example, each compact list,
+   one realistic link per Quick Start (a sample if there are dozens), and for Engineering
+   pages one whole custom model in `json` (`"model": true`, check A6).
+5. **Verify**: `node --check` on changed scripts; `node _ref/agent-doc.mjs --check`;
+   `node _ref/agent-check.mjs <page>` green; `node _ref/scenario-check.mjs`;
+   `node _ref/share-check.mjs` (known pre-existing failures: E14 on `financingvscash`,
+   `dcasimulator`, `dcasimulator/portfolio`); `node _ref/guide-check.mjs <tool>` where a guide
+   exists; `node _ref/presolve.mjs --check` for the optimisers. Open the docs' example link in
+   Playwright and look at the banner: does the tool show the answer the request asked for?
+6. **Commit and push** per milestone, following the git rules above. Shared files
+   (`shared.js`, `shared.css`, `_ref/agent-lib.mjs`, `_ref/agent-check.mjs`,
+   `_ref/agent-links.json`, `llms.txt`) take small generic edits only, re-read right before
+   editing and committed promptly, since another agent may be working beside you.
+7. **Report** in at most 200 words: what changed, commits, checks with results, anything left.
+
+Gotcha found by 0b: a field whose default is today's date makes generated docs change daily;
+document such a field with a fixed description (or hide its default) rather than the live value.
