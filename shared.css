@@ -943,6 +943,7 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
    rules and links sit in wrapping monospace blocks so a long link never
    widens the page. */
 .agent-card{margin-bottom:14px;padding:0;font-size:var(--fs-sm);color:var(--muted);}
+.abt-demo .agent-card{display:none;}   /* a guide's live demo (guide-demo.js) plays the tool without it */
 .agent-sum{display:flex;align-items:center;gap:8px;padding:11px 18px;cursor:pointer;list-style:none;font-weight:600;color:var(--text);user-select:none;-webkit-user-select:none;}
 .agent-sum::-webkit-details-marker{display:none;}
 .agent-sum:hover{color:var(--accent);}
