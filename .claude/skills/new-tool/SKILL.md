@@ -133,7 +133,8 @@ www.adjiebrotots.com into one maker. Then register the tool site-wide:
   `<lastmod>`), a free `offers` and its card as `screenshot`, and ends the footer's
   Disclaimer · Privacy · Blog line with "Updated <date>". Run it again whenever you bump the
   `<lastmod>`.
-- Keep the Google `gtag` snippet like the other pages.
+- Keep the Google `gtag` snippet and the AdSense `adsbygoogle.js` tag right after it, exactly
+  as on the other pages (a page without the AdSense tag shows no ads).
 
 **A sub-tool** (a page under another tool's folder, such as `dcasimulator/portfolio/` or
 `costofliving-comparator/map/`) belongs to its parent everywhere:
