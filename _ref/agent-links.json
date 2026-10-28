@@ -1276,6 +1276,568 @@
      }
     ]
    }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "docs example: a Corolla against six listings",
+   "link": "#load&v=1&qs=camry&itemWhat=Toyota%20Corolla&columns=Year:year,Odometer:number:km&listings=24990:2019:58000%3B22990:2019:72500%3B21500:2018:81000%3B27490:2020:45000%3B25500:2020:63000%3B19990:2018:95000&why.listings=The%20six%20listings%20the%20user%20gave,%20in%20dollars,%20with%20the%20price%20first,%20then%20the%20year%20and%20the%20odometer&items=2019%20Corolla:24500:2019:60000&why.items=The%20car%20the%20user%20is%20weighing%20up,%20at%20the%20asking%20price%20they%20gave&note=Toyota%20Corolla,%20October%202026",
+   "expect": {
+    "itemWhat": "Toyota Corolla",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Odometer",
+      "type": "number",
+      "unit": "km"
+     }
+    ],
+    "rowCount": 6,
+    "firstRow": [
+     "24990",
+     "2019",
+     "58000"
+    ],
+    "lastRow": [
+     "19990",
+     "2018",
+     "95000"
+    ],
+    "items": [
+     {
+      "name": "2019 Corolla",
+      "asking": "24500",
+      "vals": {
+       "c2": "2019",
+       "c3": "60000"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 6,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "listings: house sales with a Data year column, semicolons as typed",
+   "link": "#load&v=1&qs=house&itemWhat=House%20in%20Bayswater,%20Perth&inflation=3.5&columns=Bedrooms:number,Bathrooms:number,Land:number:m%C2%B2,Data%20year:datayear&listings=710000:3:1:405:2023;765000:3:2:450:2024;820000:4:2:480:2025;690000:3:1:380:2023;845000:4:1:520:2026;735000:3:1:410:2025;905000:4:2:560:2026&why.listings=Seven%20sales%20the%20user%20found,%20each%20with%20the%20year%20it%20sold,%20so%20older%20prices%20are%20lifted%20to%20today&items=Bayswater%20house:780000:3:1:400&note=Bayswater,%20Perth,%20October%202026",
+   "expect": {
+    "itemWhat": "House in Bayswater, Perth",
+    "inflation": "3.5",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Bedrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Bathrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c4",
+      "name": "Land",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c5",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 7,
+    "firstRow": [
+     "710000",
+     "3",
+     "1",
+     "405",
+     "2023"
+    ],
+    "lastRow": [
+     "905000",
+     "4",
+     "2",
+     "560",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "Bayswater house",
+      "asking": "780000",
+      "vals": {
+       "c2": "3",
+       "c3": "1",
+       "c4": "400"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 7,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: the Camry Quick Start market and the user's own car",
+   "link": "#load&v=1&qs=camry&itemWhat=Toyota%20Camry%20Hybrid&items=2020%20Camry%20Hybrid%20SL:31490:2020:61444:Yes&why.items=The%20car%20the%20user%20asked%20about,%20above%20the%20Ascent%20grade,%20at%20the%20asking%20price%20they%20gave",
+   "expect": {
+    "itemWhat": "Toyota Camry Hybrid",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "AUD"
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Odometer",
+      "type": "number",
+      "unit": "km"
+     },
+     {
+      "id": "c4",
+      "name": "Above Ascent grade",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c5",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 18,
+    "firstRow": [
+     "35980",
+     "2021",
+     "82984",
+     "Yes",
+     "2026"
+    ],
+    "lastRow": [
+     "33490",
+     "2023",
+     "34756",
+     "No",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "2020 Camry Hybrid SL",
+      "asking": "31490",
+      "vals": {
+       "c2": "2020",
+       "c3": "61444",
+       "c4": true
+      }
+     }
+    ],
+    "shown": {
+     "rows": 18,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: a house in the Perth Quick Start market",
+   "link": "#load&v=1&qs=house&itemWhat=House%20in%20Morley,%20Perth&items=12%20Smith%20St:950000:4:2:450:160",
+   "expect": {
+    "itemWhat": "House in Morley, Perth",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "AUD"
+     },
+     {
+      "id": "c2",
+      "name": "Bedrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Bathrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c4",
+      "name": "Land",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c5",
+      "name": "Floor area",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c6",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 23,
+    "firstRow": [
+     "515000",
+     "3",
+     "1",
+     "318",
+     "106",
+     "2023"
+    ],
+    "lastRow": [
+     "740000",
+     "3",
+     "1",
+     "324",
+     "133",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "12 Smith St",
+      "asking": "950000",
+      "vals": {
+       "c2": "4",
+       "c3": "2",
+       "c4": "450",
+       "c5": "160"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 23,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: a used Sony body in pounds with the log model",
+   "link": "#load&v=1&qs=camera&itemWhat=Sony%20A7%20III%20body,%20used&model=log&items=A7%20III%20boxed:850:2018:8000:Yes:Yes&why.model=Used%20cameras%20lose%20a%20share%20of%20their%20price%20each%20year,%20which%20the%20log-linear%20model%20fits",
+   "expect": {
+    "itemWhat": "Sony A7 III body, used",
+    "currency": "£",
+    "model": "log"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "GBP"
+     },
+     {
+      "id": "c2",
+      "name": "Release year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Shutter count",
+      "type": "number",
+      "unit": "shots"
+     },
+     {
+      "id": "c4",
+      "name": "Like new or Excellent",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c5",
+      "name": "Original box",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c6",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 24,
+    "firstRow": [
+     "439",
+     "2014",
+     "10089",
+     "Yes",
+     "Yes",
+     "2026"
+    ],
+    "lastRow": [
+     "1139",
+     "2021",
+     "94923",
+     "Yes",
+     "No",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "A7 III boxed",
+      "asking": "850",
+      "vals": {
+       "c2": "2018",
+       "c3": "8000",
+       "c4": true,
+       "c5": true
+      }
+     }
+    ],
+    "shown": {
+     "rows": 24,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: a hotel night in the Perth Quick Start market",
+   "link": "#load&v=1&qs=hotel&itemWhat=Hotel%20night%20in%20Perth%20CBD&items=5-star%20room:480:35:5:Yes:No",
+   "expect": {
+    "itemWhat": "Hotel night in Perth CBD",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "AUD"
+     },
+     {
+      "id": "c2",
+      "name": "Room size",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c3",
+      "name": "Star rating",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c4",
+      "name": "Breakfast included",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c5",
+      "name": "Bathtub",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c6",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 22,
+    "firstRow": [
+     "499",
+     "42",
+     "5",
+     "No",
+     "No",
+     "2026"
+    ],
+    "lastRow": [
+     "355",
+     "24",
+     "4",
+     "No",
+     "No",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "5-star room",
+      "asking": "480",
+      "vals": {
+       "c2": "35",
+       "c3": "5",
+       "c4": true,
+       "c5": false
+      }
+     }
+    ],
+    "shown": {
+     "rows": 22,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "every separator percent-encoded",
+   "link": "#load&v=1&qs=camry&itemWhat=Toyota%20Corolla&columns=Year%3Ayear%2COdometer%3Anumber%3Akm&listings=24990%3A2019%3A58000%3B22990%3A2019%3A72500%3B21500%3A2018%3A81000%3B27490%3A2020%3A45000&items=2019%20Corolla%3A24500%3A2019%3A60000",
+   "expect": {
+    "itemWhat": "Toyota Corolla",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Odometer",
+      "type": "number",
+      "unit": "km"
+     }
+    ],
+    "rowCount": 4,
+    "firstRow": [
+     "24990",
+     "2019",
+     "58000"
+    ],
+    "lastRow": [
+     "27490",
+     "2020",
+     "45000"
+    ],
+    "items": [
+     {
+      "name": "2019 Corolla",
+      "asking": "24500",
+      "vals": {
+       "c2": "2019",
+       "c3": "60000"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 4,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "json: the whole table",
+   "link": "#load&v=1&itemWhat=Used%20hatchback&currency=%C2%A3&json=%7B%22columns%22:%5B%7B%22id%22:%22c1%22,%22name%22:%22Price%22,%22type%22:%22price%22,%22unit%22:%22%22%7D,%7B%22id%22:%22c2%22,%22name%22:%22Year%22,%22type%22:%22year%22,%22unit%22:%22%22%7D,%7B%22id%22:%22c3%22,%22name%22:%22Mileage%22,%22type%22:%22number%22,%22unit%22:%22mi%22%7D%5D,%22rows%22:%5B%5B%229500%22,%222016%22,%2261000%22%5D,%5B%228800%22,%222015%22,%2270500%22%5D,%5B%2210400%22,%222017%22,%2248000%22%5D,%5B%227600%22,%222014%22,%2288000%22%5D,%5B%229100%22,%222016%22,%2267000%22%5D%5D,%22items%22:%5B%7B%22name%22:%222016%20hatch%22,%22asking%22:%229000%22,%22vals%22:%7B%22c2%22:%222016%22,%22c3%22:%2264000%22%7D%7D%5D%7D",
+   "expect": {
+    "itemWhat": "Used hatchback",
+    "currency": "£"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Mileage",
+      "type": "number",
+      "unit": "mi"
+     }
+    ],
+    "rowCount": 5,
+    "firstRow": [
+     "9500",
+     "2016",
+     "61000"
+    ],
+    "lastRow": [
+     "9100",
+     "2016",
+     "67000"
+    ],
+    "items": [
+     {
+      "name": "2016 hatch",
+      "asking": "9000",
+      "vals": {
+       "c2": "2016",
+       "c3": "64000"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 5,
+     "items": 1
+    }
+   }
   }
  ]
 }

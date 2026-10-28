@@ -107,6 +107,8 @@ export const PAGES = [
     insertBefore: '<section class="layout">', quickStarts: fvcQuickStarts, probe: fvcProbe },
   { page: 'financialfreedom', url: '/financialfreedom/', lang: 'en', notes: 'financialfreedom/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: ffQuickStarts },
+  { page: 'valuateeverything', url: '/valuateeverything/', lang: 'en', notes: 'valuateeverything/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: veQuickStarts, probe: veProbe },
   // The comparator has no form fields: its whole comparison is JS state, so every key is a compact one.
   // Two of them stand in as number boxes for the checks' hand edits (virtual, see agent-check.mjs).
   { page: 'costofliving-comparator', url: '/costofliving-comparator/', lang: 'en', notes: 'costofliving-comparator/agent-notes.md',
@@ -284,6 +286,45 @@ export function ffQuickStarts() {
   return {
     groups: [{ title: '', items }],
     short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each fills every tab with a worked plan; a link sends only what differs from it.']
+  };
+}
+
+// Valuate Everything: the four worked tables (window.VE_QS, valuateeverything/script.js). Each
+// one's columns in the columns= syntax and how many listings and items it brings, in
+// parentheses so the docs' figure reader leaves the lists alone.
+export function veQuickStarts() {
+  const Q = window.VE_QS;
+  if (!Q) return null;
+  const names = {};
+  document.querySelectorAll('.quick-start-btn[data-preset]').forEach(b => {
+    names[b.getAttribute('data-preset')] = (b.textContent || '').replace(/\s+/g, ' ').trim();
+  });
+  const items = Q.keys.map(key => {
+    const p = Q.preset(key);
+    return {
+      key, title: names[key] || key,
+      values: { currency: p.currency },
+      extra: p.listings + ' listings and ' + p.items + ' example items to buy (columns=' + p.columns + '). A listing\'s fields: ' +
+        p.rowFields.join(', ') + '. An item\'s fields: ' + p.itemFields.join(', '),
+      extraLabel: 'Table'
+    };
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + Q.keys.join(', ') + '. Each fills the table with real listings and two example items; columns, listings and items in the link replace its table whole.']
+  };
+}
+// Valuate Everything: the saved table (columns, listings, items) and how many rows and cards the page draws.
+export function veProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  const x = body && body.state && body.state.__extra ? body.state.__extra : {};
+  const cols = Array.isArray(x.columns) ? x.columns : [], rows = Array.isArray(x.rows) ? x.rows : [];
+  return {
+    columns: cols.map(c => ({ id: c.id, name: c.name, type: c.type, unit: c.unit })),
+    rowCount: rows.length, firstRow: rows[0] || null, lastRow: rows[rows.length - 1] || null,
+    items: (Array.isArray(x.items) ? x.items : []).map(it => ({ name: it.name, asking: it.asking, vals: it.vals })),
+    shown: { rows: document.querySelectorAll('#gridWrap tbody tr').length, items: document.querySelectorAll('#itemList .item-card').length }
   };
 }
 
