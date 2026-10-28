@@ -956,6 +956,7 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
 .agent-body a{color:var(--accent);overflow-wrap:anywhere;}
 .agent-body code{font-family:'DM Mono',ui-monospace,monospace;font-size:.85em;color:var(--text);}
 .agent-pre{margin:0 0 10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text);font-family:'DM Mono',ui-monospace,monospace;font-size:.76rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;}
+.agent-rules{white-space:pre;overflow-x:auto;overflow-wrap:normal;}
 .agent-keys{margin:0 0 8px;padding-left:18px;}
 .agent-keys li{margin:2px 0;}
 .agent-unit{color:var(--muted);}

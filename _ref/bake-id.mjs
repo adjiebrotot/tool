@@ -11,11 +11,17 @@
 // writes the result to <tool>/id/index.html.
 //
 // Re-run this script whenever <tool>/index.html or the LANG tables change.
+//
+// The AI-assistant section (<!-- agent:start --> to <!-- agent:end -->) is not baked: it is
+// written by _ref/agent-doc.mjs for each page, the id/ one with id/ links and a line for
+// people in Indonesian, so the id/ page keeps the section it already has. Either order of
+// the two scripts is stable; on a brand-new id/ page run this first, then agent-doc.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stamp } from './updated.mjs';
+import { SECTION_RE } from './agent-lib.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -428,9 +434,13 @@ function bake(tool) {
   }
 
   mkdirSync(join(toolDir, 'id'), { recursive: true });
+  // The id/ page's own AI section (agent-doc writes it) stands in for the English one.
+  const out = join(toolDir, 'id', 'index.html');
+  const kept = existsSync(out) ? (readFileSync(out, 'utf8').match(SECTION_RE) || [])[0] : null;
+  if (kept && SECTION_RE.test(html)) html = html.replace(SECTION_RE, () => kept);
   // Its dateModified, offers and footer date, as _ref/updated.mjs gives every tool page.
   html = stamp(html, `${tool.dir}/id/`);
-  writeFileSync(join(toolDir, 'id', 'index.html'), html);
+  writeFileSync(out, html);
   console.log(`${tool.dir}/id/index.html written${missing ? ` (${missing} data-i18n keys without id translation left in English)` : ''}`);
 }
 
