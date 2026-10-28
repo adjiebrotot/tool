@@ -353,7 +353,7 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | 9 | Rent vs Own Sensitivity | 6 | done |
 | 10 | Load Flow Simulator | 7 | |
 | 11 | ED/UC Simulator | 7 | done |
-| 12 | Capacity Expansion Planner | 8 | |
+| 12 | Capacity Expansion Planner | 8 | done |
 | 13 | PowerFactory Scripter (builder, legacy, router) | 8 | |
 
 ## Per-tool agent brief (pieces 2 to 13)
