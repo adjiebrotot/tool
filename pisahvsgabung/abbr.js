@@ -23,14 +23,14 @@ var PISAH_TERMS = {
         id: ['Tidak Kawin', 'belum atau tidak menikah'] },
   K:  { en: ['Kawin', 'married'],
         id: ['Kawin', 'menikah'] },
-  I:  { en: ['Istri', 'the wife, whose income is combined into one filing'],
-        id: ['Istri', 'penghasilan istri digabung dalam satu SPT'] },
-  H:  { en: ['Husband', 'the husband\u2019s side of the Pisah Harta filing'],
-        id: ['Husband', 'sisi suami dalam skema Pisah Harta'] },
-  W:  { en: ['Wife', 'the wife\u2019s side of the Pisah Harta filing'],
-        id: ['Wife', 'sisi istri dalam skema Pisah Harta'] },
-  S:  { en: ['Suami', 'the husband\u2019s side of the Pisah Harta filing'],
-        id: ['Suami', 'sisi suami dalam skema Pisah Harta'] }
+  I:  { en: ['Istri', 'the wife, whose income is combined with her husband\u2019s in the tax computation'],
+        id: ['Istri', 'penghasilan istri digabung dalam perhitungan pajak'] },
+  H:  { en: ['Husband', 'the husband\u2019s side of the Gabung Harta computation'],
+        id: ['Husband', 'sisi suami dalam skema Gabung Harta'] },
+  W:  { en: ['Wife', 'the wife\u2019s side of the Gabung Harta computation'],
+        id: ['Wife', 'sisi istri dalam skema Gabung Harta'] },
+  S:  { en: ['Suami', 'the husband\u2019s side of the Gabung Harta computation'],
+        id: ['Suami', 'sisi suami dalam skema Gabung Harta'] }
   /* The numbered status codes (TK/0 … K/I/3) are added below: they only
      differ by the dependant count, so writing all twelve out by hand would
      be twelve chances to let one drift out of step with the others. */

@@ -41,8 +41,12 @@ def report(out_dir, title):
             py = os.path.join(HERE,'py_out',f'{name}_{kind}.csv')
             js = os.path.join(HERE,out_dir,f'{name}_{kind}.csv')
             if not (os.path.exists(py) and os.path.exists(js)): continue
-            d = diff_file(py, js)
             tag = f"{name} [{kind}]"
+            # The app refuses a plan that runs out of cash, so it exports nothing.
+            if os.path.getsize(js) == 0:
+                print(f"  REFUSED {tag}: the app does not compare a plan that runs out of cash")
+                continue
+            d = diff_file(py, js)
             if not d:
                 print(f"  OK   {tag}: identical")
             else:

@@ -22,6 +22,7 @@
 //      end, allocated in node order so adding a block never renames another block's variables
 //      (C24b). The reserved set covers Python, the runtime's names and the generator's (C5).
 //   5. The file layout of 6.6, with the helpers copied from the runtime and the # PFB1 line.
+//      A script that draws a graph also gets GRAPH_STYLE in SETTINGS (core/graphstyle.js).
 //
 // Contract for blocks (what emit returns per kind, the cx object): DESIGN 6.1 / 6.2, with these
 // choices where the spec was silent (block authors: read these):
@@ -39,7 +40,8 @@
 //     CHECK_ONLY); cx.used(outId): is that output wired; cx.inType(id) / cx.src(id): what is
 //     wired into an input; cx.settingLine(NAME, key, words) (Start only); cx.consumers(outId,
 //     from): the blocks an output feeds (of block `from` when given); cx.valOf(nodeId, key):
-//     another block's setting as cx.val gives it; cx.check(queryExpr, match): an element the
+//     another block's setting as cx.val gives it (cx.rawOf: as saved; cx.startSetting(key): a
+//     setting of Start); cx.check(queryExpr, match): an element the
 //     block finds by itself, listed for CHECK_ONLY. cx.columns(table, names, { ctx, status,
 //     file, read }): the columns this block writes into a results table (the loop values first when
 //     ctx, then Status when status); `file: true` when they come from a file the page cannot
@@ -62,6 +64,7 @@ import { baseReserved, allocateNames, constantName, snake } from './names.js';
 import { parseRuntime, resolveHelpers } from './runtime-loader.js';
 import { P, endWords } from './problems.js';
 import { compareIds, embedInPython } from './workflow.js';
+import { styleOf, pyStyleLines } from './graphstyle.js';
 
 export const MAX_LINES = 20000;
 export const MAX_LEVELS = 6;
@@ -208,6 +211,7 @@ function generateInner(workflow, opts) {
 
   const flowOut = new Map();      // 'id:out' -> { to, edge }
   const flowIn = new Map();       // to id -> [{ from, out, edge }]
+  const flowWires = new Map();    // 'id:out' -> [{ from, out, to, edge }]: several are parallel routes
   const dataIn = new Map();       // 'id:input' -> { from, port, type, edge, to, input }
   const dataOut = new Map();      // from id -> [same objects]
   const missOuts = new Map();     // missing node id -> number of flow-like wires out of it
@@ -215,6 +219,12 @@ function generateInner(workflow, opts) {
     flowOut.set(from + ':' + out, { to, edge });
     if (!flowIn.has(to)) flowIn.set(to, []);
     flowIn.get(to).push({ from, out, edge });
+  };
+  const collectFlow = (from, out, to, edge) => {
+    const k = from + ':' + out;
+    if (!flowWires.has(k)) flowWires.set(k, []);
+    const list = flowWires.get(k);
+    if (!list.some(w => w.to === to)) list.push({ from, out, to, edge });
   };
   for (const e of Array.isArray(wf.edges) ? wf.edges : []) {
     if (!isObj(e)) continue;
@@ -227,10 +237,10 @@ function generateInner(workflow, opts) {
         if (A.kind === 'missing') {
           const k = missOuts.get(A.id) || 0;
           missOuts.set(A.id, k + 1);
-          addFlow(A.id, '#' + k, B.id, e);
+          collectFlow(A.id, '#' + k, B.id, e);
         } else {
           const pa = findP(A, e.out, 'out');
-          if (pa && pa.kind === 'flowOut' && !flowOut.has(A.id + ':' + pa.port.id)) addFlow(A.id, pa.port.id, B.id, e);
+          if (pa && pa.kind === 'flowOut') collectFlow(A.id, pa.port.id, B.id, e);
         }
       }
       continue;
@@ -244,8 +254,7 @@ function generateInner(workflow, opts) {
         addProblem(P.wrongWire(A.label, pa.port, B.label, pb.port, whyNot(pa.type, pb.type) || 'a flow wire only joins flow ports.', B.id, eid));
         continue;
       }
-      if (flowOut.has(A.id + ':' + pa.port.id)) { addProblem(P.twoFromFlowOut(A.label, pa.port, A.id, eid)); continue; }
-      addFlow(A.id, pa.port.id, B.id, e);
+      collectFlow(A.id, pa.port.id, B.id, e);
     } else {
       if (!canConnect(pa.type, pb.type)) {
         addProblem(P.wrongWire(A.label, pa.port, B.label, pb.port, whyNot(pa.type, pb.type), B.id, eid));
@@ -259,6 +268,22 @@ function generateInner(workflow, opts) {
       dataOut.get(A.id).push(d);
     }
   }
+
+  // Parallel routes: a flow output wired to several steps leads to one "fork", a step of the
+  // generator's own (kind 'fork', never on the canvas), whose outputs lead to those steps in node
+  // order. Every walk below sees one wire per output; emitFork writes the routes one after another
+  // up to the step where they meet again.
+  for (const [k, list] of flowWires) {
+    if (list.length === 1) { addFlow(list[0].from, list[0].out, list[0].to, list[0].edge); continue; }
+    const { from, out } = list[0];
+    const F = '\u0001fork:' + k;
+    const targets = list.slice().sort((a, b) => compareIds(a.to, b.to));
+    info.set(F, { id: F, node: { id: F, type: '' }, def: null, kind: 'fork', s: {}, label: info.get(from).label, from, out,
+      ports: { flowIn: true, flowOuts: targets.map((w, i) => ({ id: '#' + i, label: '' })), inputs: [], outputs: [] } });
+    addFlow(from, out, F, list[0].edge);
+    targets.forEach((w, i) => addFlow(F, '#' + i, w.to, w.edge));
+  }
+  const isFork = (id) => info.get(id).kind === 'fork';
 
   const back = new Set();         // 'id:out' of wires left out to break a circle
   const outsOf = (id) => {
@@ -311,7 +336,7 @@ function generateInner(workflow, opts) {
           const loopBack = isStruct(v) && path[at + 1] !== undefined && rawSucc(v, 'body') === path[at + 1];
           const edge = flowOut.get(u + ':' + o).edge;
           if (loopBack) addProblem(P.wireBack(info.get(v).label, u, edge && edge.id));
-          else addProblem(P.cycle([...path.slice(at), v].map(x => info.get(x).label), v));
+          else addProblem(P.cycle([...path.slice(at), v].filter(x => !isFork(x)).map(x => info.get(x).label), v));
         } else if (c === 0) {
           dfs(v);
         }
@@ -555,6 +580,7 @@ function generateInner(workflow, opts) {
   let stepN = 0;
   const settingsMap = { WORKFLOW_NAME: ['*', 'name'] };
   let startSettingLines = [];
+  let startTablePackages = [];    // what Start's table format needs, when the script has tables
   const materialising = new Set();
   const pureForm = new Map();
   let epochN = 0;
@@ -601,7 +627,7 @@ function generateInner(workflow, opts) {
   const stepOf = (X) => { if (!steps.has(X)) steps.set(X, ++stepN); return steps.get(X); };
   const summaryText = (I) => {
     if (!I.def || typeof I.def.summary !== 'function') return '';
-    try { return String(I.def.summary(I.s, I.node) || ''); } catch (e) { return ''; }
+    try { return String(I.def.summary(I.s, I.node, wf) || ''); } catch (e) { return ''; }
   };
   const stepComment = (X) => {
     const I = info.get(X);
@@ -728,6 +754,10 @@ function generateInner(workflow, opts) {
       // An element the block looks up by itself (not through cx.element), for CHECK_ONLY.
       check: (q, match) => checkFind(q, ['one', 'first', 'all'].includes(match) ? match : 'one'),
       valOf: (nodeId, key) => (info.has(nodeId) && info.get(nodeId).def ? settingExpr(nodeId, key) : 'None'),
+      // Another block's setting as it is saved (not as Python), and a setting of Start (the
+      // workflow's own settings, such as undoChanges); undefined when there is none.
+      rawOf: (nodeId, key) => (info.has(nodeId) && info.get(nodeId).def ? info.get(nodeId).s[key] : undefined),
+      startSetting: (key) => (startId && info.get(startId).def ? info.get(startId).s[key] : undefined),
       src: (id) => { const d = dataIn.get(X + ':' + id); return d ? { id: d.from, label: info.get(d.from).label, port: d.port, type: d.type } : null; },
       inType: (id) => { const d = dataIn.get(X + ':' + id); return d ? d.type : null; },
       name: (hint) => { const h = String(hint === undefined || hint === null ? 'value' : hint); const k = occ.get(h) || 0; occ.set(h, k + 1); return tok(X, 'name:' + h + '#' + k, h); },
@@ -794,7 +824,7 @@ function generateInner(workflow, opts) {
       // Name the loop and its end-of-pass input, also when the value comes through calculators.
       const LI = info.get(stmt) || I;
       const lp = LI.ports.inputs.find(p => p.at === 'bodyEnd') || port;
-      addProblem(P.bodyEndOutside(LI.label, lp, LI.id));
+      addProblem(LI.kind === 'callback' ? P.bodyEndOutsideTry(LI.label, lp, LI.id) : P.bodyEndOutside(LI.label, lp, LI.id));
       return;
     }
     const scope = d.port.scope || 'after';
@@ -983,11 +1013,19 @@ function generateInner(workflow, opts) {
   };
   const writePre = (buf, pre) => { for (const l of pre) buf.add(l.t, 0, l.o); };
 
-  // ---- Terminators: the NEAREST structure decides (C1).
-  const writeTerminator = (env, buf, kind) => {
+  // ---- Terminators: the NEAREST structure decides (C1). `natural`: the route ended by itself
+  // (it had no step after it), not through Skip / Stop or an unwired Fail.
+  const writeTerminator = (env, buf, kind, natural = false) => {
     const s = env.struct;
     if (!s) { buf.add('return'); return; }
-    if (s.kind === 'callback') { buf.add(kind === 'stop' ? 'return ' + s.trial + '.stop_search()' : 'return ' + s.trial); return; }
+    if (s.kind === 'callback') {
+      // A search's end-of-try input (Find limit's Pass, Optimise's Score) is read where a route of
+      // the try ends by itself, unless Report this try already answered on it; a try that ended
+      // early gives no answer.
+      if (kind !== 'stop' && natural && s.bodyEnd && !env.reported) writeBodyEnd(env, buf, true);
+      buf.add(kind === 'stop' ? 'return ' + s.trial + '.stop_search()' : 'return ' + s.trial);
+      return;
+    }
     if (kind === 'stop') { buf.add('break'); return; }
     if (s.bodyEnd) writeBodyEnd(env, buf, true);
     buf.add('continue');
@@ -1004,7 +1042,7 @@ function generateInner(workflow, opts) {
     let lines = [];
     try { lines = flatLines(s.bodyEnd(cx)); } catch (e) { onceProblem('bodyend:' + s.id, P.internal(s.label, errText(e), s.id)); return; }
     if (onSkip && fail.failed) {
-      if (!s.warnedSkip) { s.warnedSkip = true; addProblem(P.bodyEndOnSkip(s.label, s.id)); }
+      if (!s.warnedSkip) { s.warnedSkip = true; addProblem(s.kind === 'callback' ? P.bodyEndOnRouteTry(s.label, s.id) : P.bodyEndOnSkip(s.label, s.id)); }
       return;
     }
     const prev = buf.owner;
@@ -1026,12 +1064,13 @@ function generateInner(workflow, opts) {
       else if (kind === 'missing') { emitMissing(cur, buf); cur = firstOut(cur) === null ? null : succ(cur, firstOut(cur)); }
       else if (kind === 'terminal') { emitTerminal(cur, env, buf); return { end: 'term' }; }
       else if (kind === 'branch') { const r = emitBranch(cur, stop, env, buf); if (r.end) return r; cur = r.next; }
+      else if (kind === 'fork') { cur = emitFork(cur, stop, env, buf).next; }
       else if (kind === 'loop') { emitLoop(cur, env, buf); cur = succ(cur, 'done'); }
       else if (kind === 'callback') { emitCallback(cur, env, buf); cur = succ(cur, 'done'); }
       else cur = null;
     }
     if (cur !== null && cur === stop) return { end: 'stop' };
-    if (env.pending) { writeTerminator(env, buf, 'skip'); return { end: 'term' }; }
+    if (env.pending) { writeTerminator(env, buf, 'skip', true); return { end: 'term' }; }
     return { end: 'dead' };
   };
 
@@ -1055,7 +1094,10 @@ function generateInner(workflow, opts) {
     let lines;
     if (I.kind === 'start') {
       const rr = isObj(r) ? r : {};
-      if (X === startId) startSettingLines = flatLines(rr.settings);
+      if (X === startId) {
+        startSettingLines = flatLines(rr.settings);
+        startTablePackages = Array.isArray(rr.tablePackages) ? rr.tablePackages.map(String) : [];
+      }
       lines = flatLines(rr.lines);
     } else {
       lines = flatLines(Array.isArray(r) || typeof r === 'string' ? r : (isObj(r) ? r.lines : []));
@@ -1064,6 +1106,8 @@ function generateInner(workflow, opts) {
     buf.addLines(lines);
     bindOuts(X, cx, { after: env.frame, body: env.frame });
     applyWrites(X, env);
+    // Report this try answered for this route of the try (its end-of-try input is not read again).
+    if (I.def && I.def.reports && env.struct && env.struct.kind === 'callback') env.reported = true;
     buf.owner = prev;
   };
 
@@ -1113,6 +1157,76 @@ function generateInner(workflow, opts) {
     return set;
   };
 
+  // The first step (in topological order) that every one of these reach sets holds: where routes
+  // meet again. Null when they do not meet.
+  const lowestJoin = (sets) => {
+    let J = null;
+    const [first, ...rest] = sets;
+    for (const v of first) if (rest.every(s => s.has(v)) && (J === null || topo.get(v) < topo.get(J))) J = v;
+    return J;
+  };
+
+  // Parallel routes (a flow output wired to several steps): written one after another, in node
+  // order, each up to the step where they all meet again (the join), which then runs once. Each
+  // route starts from the route state the steps before left (they are not meant to depend on one
+  // another), what a route makes is there after the join, and a route that changes the model or
+  // runs a calculation before another route reads results is reported (checkParallel).
+  const emitFork = (F, stop, env, buf) => {
+    const targets = outsOf(F).map(o => succ(F, o)).filter(v => v !== null);
+    if (!targets.length) return { next: null };
+    const J = lowestJoin(targets.map(t => reachOf(t, stop)));
+    const end = J !== null ? J : stop;
+    checkParallel(F, targets, end);
+    const before = copyRs(env.rs);
+    const routes = targets.map(t => {
+      const renv = { ...env, frame: newFrame(env.frame), pending: false, rs: copyRs(before) };
+      return { res: emitChain(t, end, renv, buf), env: renv };
+    });
+    const live = routes.filter(r => r.res.end !== 'term');
+    if (live.length) {
+      const inv = live.find(r => r.env.rs.results === 'invalid');
+      env.rs.results = inv ? 'invalid' : live.some(r => r.env.rs.results === 'valid') ? 'valid' : env.rs.results;
+      env.rs.writer = inv ? inv.env.rs.writer : env.rs.writer;
+      env.rs.loopStart = inv ? inv.env.rs.loopStart : env.rs.loopStart;
+      if (live.some(r => r.env.rs.epoch !== before.epoch)) env.rs.epoch = newEpoch();
+      for (const r of live) for (const [k, v] of r.env.frame.outs) env.frame.outs.set(k, v);
+      if (live.some(r => r.env.reported)) env.reported = true;
+    }
+    if (J !== null) return { next: J };
+    return { next: stop !== null && routes.some(r => r.res.end === 'stop') ? stop : null };
+  };
+  // What a step on a parallel route does to the results the others read (a loop or search: what
+  // its passes do).
+  const changesResults = (v) => {
+    if (isStruct(v)) { const fx = fxOf(v); return fx.model || fx.case || fx.calc; }
+    const w = effectsOf(info.get(v).node).writes;
+    return w.includes('model') || w.includes('case') || w.includes('results');
+  };
+  const checkParallel = (F, targets, end) => {
+    if (once.has('par:' + F)) return;
+    once.add('par:' + F);
+    const FI = info.get(F);
+    const sets = targets.map(t => [...reachOf(t, end)].filter(v => v !== end && !isFork(v)).sort((a, b) => topo.get(a) - topo.get(b)));
+    const fx = sets.map(set => {
+      const calc = set.some(v => !isStruct(v) && effectsOf(info.get(v).node).writes.includes('results'));
+      return {
+        writer: set.find(changesResults) || null,
+        // A route that runs its own calculation reads its own results.
+        reader: calc ? null : (set.find(v => effectsOf(info.get(v).node).reads.includes('results')) || null),
+      };
+    });
+    // Routes run in the order of `targets`: a writer on an earlier route meets a reader on a later one.
+    for (let j = 1; j < fx.length; j++) {
+      if (!fx[j].reader) continue;
+      const i = fx.findIndex((x, k) => k < j && x.writer);
+      if (i >= 0) { addProblem(P.parallelClash(info.get(fx[i].writer).label, info.get(fx[j].reader).label, FI.label, fx[j].reader)); break; }
+    }
+    if (targets.length > 1) {
+      const term = sets.slice(0, -1).flat().find(v => info.get(v).kind === 'terminal');
+      if (term) addProblem(P.parallelEnds(info.get(term).label, FI.label, term));
+    }
+  };
+
   const emitBranch = (X, stop, env, buf) => {
     const I = info.get(X);
     const prev = buf.owner;
@@ -1152,9 +1266,15 @@ function generateInner(workflow, opts) {
         buf.add(pyComment(outLabel(o) + ': ' + endWords(env.struct && env.struct.kind, env.struct && env.struct.label, true)));
         const child = buf.sub();
         const msg = stopMsg(o) || (I.label + ': ' + outLabel(o));
-        if (env.struct) { helpers.add('ctx'); child.add('case_skipped(' + pyStr(msg) + ')'); }
-        else child.add('log(' + pyStr(msg + '. The workflow ends here.') + ', "warn")');
-        writeTerminator(env, child, 'skip');
+        if (!stopMsg(o) && env.struct && env.struct.kind === 'callback' && env.struct.bodyEnd) {
+          // In a try whose search reads a value at its end, an unwired output that is not a
+          // failure (If's Yes) is where the route ends by itself: the value is read there.
+          writeTerminator(env, child, 'skip', true);
+        } else {
+          if (env.struct) { helpers.add('ctx'); child.add('case_skipped(' + pyStr(msg) + ')'); }
+          else child.add('log(' + pyStr(msg + '. The workflow ends here.') + ', "warn")');
+          writeTerminator(env, child, 'skip');
+        }
         writeSuite(buf, 'if ' + cond(o) + ':', child);
       } else {
         buf.add(pyComment(I.label + ': ' + outLabel(o)));
@@ -1200,9 +1320,12 @@ function generateInner(workflow, opts) {
 
     let result;
     if (!connected.length) {
-      // Nothing wired: say what happened, then the route ends here.
+      // Nothing wired: say what happened, then the route ends here. In a try whose search reads
+      // a value at the end of the try, a route that did not work out ends the try with no answer.
+      const early = !!(env.struct && env.struct.kind === 'callback' && env.struct.bodyEnd);
       for (const o of outs) {
         if (!stopMsg(o)) continue;
+        if (early) { guard(o); continue; }
         const child = buf.sub();
         child.add('log(' + pyStr(stopMsg(o)) + ', "warn")');
         writeSuite(buf, 'if ' + cond(o) + ':', child);
@@ -1210,12 +1333,7 @@ function generateInner(workflow, opts) {
       result = { next: null };
     } else {
       const continuing = stop === null ? [] : connected.filter(o => reachOf(succ(X, o), stop).has(stop));
-      const lowest = (sets) => {
-        let J = null;
-        const [first, ...rest] = sets;
-        for (const v of first) if (rest.every(s => s.has(v)) && (J === null || topo.get(v) < topo.get(J))) J = v;
-        return J;
-      };
+      const lowest = lowestJoin;
       if (continuing.length >= 2) {
         const J = lowest(continuing.map(o => reachOf(succ(X, o), stop)));
         for (const o of outs) if (!continuing.includes(o)) guard(o);
@@ -1410,10 +1528,11 @@ function generateInner(workflow, opts) {
     const rs = loopRs(env, C);
     const benv = {
       frame: bodyFrame, pending: false, depth: 0, rs: rs.body, trial: trialTok,
-      struct: { kind: 'callback', id: C, label: I.label, trial: trialTok, bodyEnd: null },
+      struct: { kind: 'callback', id: C, label: I.label, trial: trialTok, bodyEnd: typeof r.bodyEnd === 'function' ? r.bodyEnd : null, warnedSkip: false },
     };
     const b = succ(C, 'body');
-    if (b !== null) emitChain(b, null, benv, tryBuf);
+    const res = b !== null ? emitChain(b, null, benv, tryBuf) : { end: 'dead' };
+    if (res.end !== 'term' && benv.struct.bodyEnd && !benv.reported) writeBodyEnd(benv, tryBuf, false);
     writeTryBody(C, body, tryBuf, {
       onError: 'skip', label: I.label, markTok, undoEach: true, ctx, trial: trialTok,
       bodyFinally: flatLines(r.bodyFinally), tables: skipTablesFor(C),
@@ -1461,6 +1580,8 @@ function generateInner(workflow, opts) {
 
   const resolved = resolveHelpers([...helpers], lib);
   for (const m of resolved.missing) addProblem(P.helperMissing(m));
+  // Start's table format, when the run fills a results table (one read from a file is not saved again).
+  if ([...tableRecs.values()].some(rec => !rec.file)) for (const pk of startTablePackages) if (/^[A-Za-z_][\w.]*$/.test(pk)) packages.add(pk);
 
   // Problems: deduplicated, workflow-level first, then in node order (stable).
   const seenP = new Set();
@@ -1514,6 +1635,11 @@ function generateInner(workflow, opts) {
   add(commentLines('The name of this workflow: used for the run folder and in the log.').join('\n'));
   add('WORKFLOW_NAME = ' + pyStr(wfName));
   for (const l of startSettingLines) add(l);
+  // How the graphs look (Workflow > Graph style), only when the script draws one.
+  if (resolved.names.includes('plot_common')) {
+    add('');
+    for (const l of pyStyleLines(styleOf(wf), { pyLit, commentLines })) add(l);
+  }
   // Pinned settings of the blocks that run.
   for (const id of order) {
     if (!reached.has(id) && !needed.has(id)) continue;
@@ -1630,7 +1756,8 @@ function generateInner(workflow, opts) {
       let words;
       if (isStruct(id) && p.id === 'body') words = I.kind === 'loop' ? 'nothing runs on each pass yet' : 'nothing runs on each try yet';
       else if (isStruct(id)) { const [k, lab] = structLabel(id); words = endWords(k, lab, false); }
-      else { const [k, lab] = structLabel(id); words = endWords(k, lab, I.kind === 'branch'); }
+      // A check that goes on either way has one plain output: its end reads like a step's.
+      else { const [k, lab] = structLabel(id); words = endWords(k, lab, I.kind === 'branch' && I.ports.flowOuts.length > 1); }
       ends[id + ':' + p.id] = words;
     }
   }

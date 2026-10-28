@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory N-1 contingency analysis with Python</title>
+<meta name="description" content="An N-1 contingency analysis script for PowerFactory: take each line and transformer out, run the load flow, rank the overloads. Tested, with results.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/contingency-analysis/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="N-1 contingency analysis in PowerFactory with Python">
+<meta property="og:description" content="An N-1 contingency analysis script for PowerFactory: take each line and transformer out, run the load flow, rank the overloads. Tested, with results.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/contingency-analysis/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="N-1 contingency analysis in PowerFactory with Python">
+<meta name="twitter:description" content="An N-1 contingency analysis script for PowerFactory: take each line and transformer out, run the load flow, rank the overloads. Tested, with results.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "N-1 contingency analysis in PowerFactory with Python",
+  "description": "An N-1 contingency analysis script for PowerFactory: take each line and transformer out, run the load flow, rank the overloads. Tested, with results.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/contingency-analysis/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "powerfactory contingency python, N-1 contingency analysis PowerFactory, outserv, ComSimoutage, PowerFactory N-1 script, contingency screening",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "Contingency analysis"
+    },
+    {
+      "@type": "Thing",
+      "name": "N-1 criterion"
+    },
+    {
+      "@type": "Thing",
+      "name": "DIgSILENT PowerFactory"
+    },
+    {
+      "@type": "Thing",
+      "name": "Python"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PowerFactory studies with Python",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I run a contingency analysis in PowerFactory with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Loop over the lines and transformers: SetAttribute(\"outserv\", 1), run app.GetFromStudyCase(\"ComLdf\").Execute(), read c:loading and m:u, then set outserv back to 0 in a finally block."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I take an element out of service in a PowerFactory script?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Set its input parameter outserv to 1 with obj.SetAttribute(\"outserv\", 1), and back to 0 to return it to service."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the N-1 criterion?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A planning and operating rule: the network must stay within its thermal and voltage limits after the loss of any single element, such as a line, transformer or generator."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does PowerFactory have its own contingency analysis?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, the Contingency Analysis command (ComSimoutage). A Python loop is a lighter way to the same screening that is easy to adapt; the Builder's N-1 Quick Start writes one for you."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "N-1 contingency analysis",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/contingency-analysis/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">N-1 contingency analysis</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>N-1 contingency analysis in PowerFactory with Python</h1>
+    <p class="dx-lead">An N-1 screening in Python is a loop: take one line or transformer out of service with <code>SetAttribute("outserv", 1)</code>, run the load flow, record the highest loading and the lowest voltage, and put the element back. On PowerFactory's 39-bus example, <strong>18 of 37 outages overload a branch</strong>, the worst to 158.3 %.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What an N-1 contingency analysis is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What N-1 contingency analysis is</h2>
+  <p>The N-1 criterion asks that the network stays within its limits after the loss of any one element: a line, a cable, a transformer or a generator. A contingency analysis checks it by solving the network once per outage. The steady-state screening on this page uses the load flow and two limits: no branch above its thermal rating, and no busbar voltage outside its band.</p>
+  <p>PowerFactory has a built-in command for it, Contingency Analysis (<code>ComSimoutage</code>), with its contingency cases in <code>ComOutage</code> objects. A Python loop does the same with nothing to set up, and is easy to change: add a check, export a table in your own layout, or run it for every study case.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Run the base case</strong> load flow, and record it: an outage is judged against it.</li>
+    <li><strong>List the outages</strong>: every line and network transformer in service (<code>outserv == 0</code>). A generator's own transformer is a loss of generation; study those separately (see Pitfalls).</li>
+    <li><strong>For each outage</strong>, set <code>outserv</code> to 1 and run the load flow. A load flow that does not converge is a result too: record it and go on.</li>
+    <li><strong>Record the worst values</strong>: the highest <code>c:loading</code> of the branches still in service and the lowest <code>m:u</code> of the energised busbars, with where they are.</li>
+    <li><strong>Put the element back</strong> in a <code>finally</code> block, so an error never leaves the project with an outage in it.</li>
+    <li><strong>Rank</strong> the outages by loading and save the table.</li>
+  </ol>
+  <h3>The script</h3>
+  <p class="dx-file"><span><code>contingency.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;N-1 contingency analysis in PowerFactory with Python: take each line and network transformer
+out in turn, run the load flow, and keep the highest loading and the lowest voltage of each outage.
+
+Runs on the &quot;39 Bus New England System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;39 Bus New England System&quot;</span>
+STUDY_CASE = <span class="py-s">&quot;1. Power Flow&quot;</span>
+LOADING_LIMIT = <span class="py-n">100.0</span>                               <span class="py-c"># %</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()              <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)
+app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
+
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
+branches = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>) + app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTr2&quot;</span>)
+buses = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)
+<span class="py-c"># A generator's own transformer is left out: losing it loses the generator, a generation</span>
+<span class="py-c"># contingency that needs governor response, not a single slack taking up all of it.</span>
+gen_terminals = {g.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;bus1&quot;</span>).<span class="py-f">GetParent</span>().<span class="py-f">GetFullName</span>() <span class="py-k">for</span> g <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmSym&quot;</span>)}
+outages = [o <span class="py-k">for</span> o <span class="py-k">in</span> branches <span class="py-k">if</span> o.outserv == <span class="py-n">0</span> <span class="py-k">and</span> <span class="py-k">not</span> (
+    o.<span class="py-f">GetClassName</span>() == <span class="py-s">&quot;ElmTr2&quot;</span> <span class="py-k">and</span> o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;buslv&quot;</span>).<span class="py-f">GetParent</span>().<span class="py-f">GetFullName</span>() <span class="py-k">in</span> gen_terminals)]
+
+
+<span class="py-k">def</span> <span class="py-f">worst</span>():
+    <span class="py-s">&quot;&quot;&quot;The highest branch loading and the lowest busbar voltage of the last load flow.&quot;&quot;&quot;</span>
+    loading, branch = <span class="py-f">max</span>((o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>), o.loc_name) <span class="py-k">for</span> o <span class="py-k">in</span> branches <span class="py-k">if</span> o.outserv == <span class="py-n">0</span>)
+    <span class="py-c"># A busbar cut off by the outage reads exactly 0 p.u.: it is islanded, not low.</span>
+    u, bus = <span class="py-f">min</span>((b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>), b.loc_name) <span class="py-k">for</span> b <span class="py-k">in</span> buses <span class="py-k">if</span> b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>) &gt; <span class="py-n">0</span>)
+    <span class="py-k">return</span> {<span class="py-s">&quot;Highest loading (%)&quot;</span>: loading, <span class="py-s">&quot;Most loaded&quot;</span>: branch, <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>: u, <span class="py-s">&quot;Lowest at&quot;</span>: bus}
+
+
+rows = []
+<span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:
+    <span class="py-k">raise</span> <span class="py-f">SystemExit</span>(<span class="py-s">&quot;The base case load flow does not converge&quot;</span>)
+rows.<span class="py-f">append</span>({<span class="py-s">&quot;Outage&quot;</span>: <span class="py-s">&quot;Base case&quot;</span>, <span class="py-s">&quot;Converged&quot;</span>: <span class="py-s">&quot;yes&quot;</span>, **<span class="py-f">worst</span>()})
+
+<span class="py-k">for</span> out <span class="py-k">in</span> outages:
+    out.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)                  <span class="py-c"># take it out of service</span>
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() == <span class="py-n">0</span>:
+            rows.<span class="py-f">append</span>({<span class="py-s">&quot;Outage&quot;</span>: out.loc_name, <span class="py-s">&quot;Converged&quot;</span>: <span class="py-s">&quot;yes&quot;</span>, **<span class="py-f">worst</span>()})
+        <span class="py-k">else</span>:
+            rows.<span class="py-f">append</span>({<span class="py-s">&quot;Outage&quot;</span>: out.loc_name, <span class="py-s">&quot;Converged&quot;</span>: <span class="py-s">&quot;no&quot;</span>})
+    <span class="py-k">finally</span>:
+        out.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">0</span>)              <span class="py-c"># always put it back</span>
+
+overloads = [r <span class="py-k">for</span> r <span class="py-k">in</span> rows <span class="py-k">if</span> r.<span class="py-f">get</span>(<span class="py-s">&quot;Highest loading (%)&quot;</span>, <span class="py-n">0</span>) &gt; LOADING_LIMIT]
+<span class="py-f">print</span>(<span class="py-s">f&quot;{len(rows) - 1} outages, {len(overloads)} with a branch above {LOADING_LIMIT:.0f} %&quot;</span>)
+<span class="py-k">for</span> r <span class="py-k">in</span> <span class="py-f">sorted</span>(overloads, key=<span class="py-k">lambda</span> r: -r[<span class="py-s">&quot;Highest loading (%)&quot;</span>])[:<span class="py-n">5</span>]:
+    <span class="py-f">print</span>(<span class="py-s">f&quot;  {r['Outage']:16} {r['Most loaded']:16} {r['Highest loading (%)']:6.1f} %&quot;</span>)
+
+<span class="py-k">with</span> <span class="py-f">open</span>(<span class="py-s">&quot;n-1_results.csv&quot;</span>, <span class="py-s">&quot;w&quot;</span>, newline=<span class="py-s">&quot;&quot;</span>) <span class="py-k">as</span> f:
+    out_csv = csv.<span class="py-f">DictWriter</span>(f, fieldnames=[<span class="py-s">&quot;Outage&quot;</span>, <span class="py-s">&quot;Converged&quot;</span>, <span class="py-s">&quot;Highest loading (%)&quot;</span>, <span class="py-s">&quot;Most loaded&quot;</span>,
+                                            <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>, <span class="py-s">&quot;Lowest at&quot;</span>])
+    out_csv.<span class="py-f">writeheader</span>()
+    out_csv.<span class="py-f">writerows</span>(rows)</code></pre>
+  <h3>Result on the 39-bus example</h3>
+  <p>The base case already loads <strong>Line 21 - 22 to 99.1 %</strong>. Of the 37 outages (34 lines and 3 network transformers), 18 push a branch above 100 %. The two worst are each other's parallel path: with Line 21 - 22 out, Line 23 - 24 carries 158.3 %, and with Line 23 - 24 out, Line 21 - 22 carries 156.9 %. Line 16 - 19 is the only link of generators G 04 and G 05 to the rest of the grid: without it their export is lost, the slack machine makes it up, and its transformer Trf 06 - 31 reaches 156.5 %.</p>
+  <figure class="dx-chart"><div class="dx-chart-sc"><svg viewBox="0 0 760 390.4" role="img" aria-labelledby="chvsfmqk" xmlns="http://www.w3.org/2000/svg"><title id="chvsfmqk">Highest branch loading after each of the 12 worst outages of the 39-bus example</title><line class="ch-grid" x1="64" x2="742" y1="302.0" y2="302.0"/><text class="ch-t" x="56" y="306.0" text-anchor="end">0</text><line class="ch-grid" x1="64" x2="742" y1="230.5" y2="230.5"/><text class="ch-t" x="56" y="234.5" text-anchor="end">50</text><line class="ch-grid" x1="64" x2="742" y1="159.0" y2="159.0"/><text class="ch-t" x="56" y="163.0" text-anchor="end">100</text><line class="ch-grid" x1="64" x2="742" y1="87.5" y2="87.5"/><text class="ch-t" x="56" y="91.5" text-anchor="end">150</text><line class="ch-grid" x1="64" x2="742" y1="16.0" y2="16.0"/><text class="ch-t" x="56" y="20.0" text-anchor="end">200</text><rect class="ch-f1" x="73.0" y="75.7" width="38.4" height="226.3" rx="2"><title>Line 21 - 22: 158 %</title></rect><text class="ch-t" transform="translate(92.3 314) rotate(-50)" text-anchor="end">Line 21 - 22</text><rect class="ch-f1" x="129.5" y="77.6" width="38.4" height="224.4" rx="2"><title>Line 23 - 24: 157 %</title></rect><text class="ch-t" transform="translate(148.8 314) rotate(-50)" text-anchor="end">Line 23 - 24</text><rect class="ch-f1" x="186.0" y="78.3" width="38.4" height="223.7" rx="2"><title>Line 16 - 19: 156 %</title></rect><text class="ch-t" transform="translate(205.3 314) rotate(-50)" text-anchor="end">Line 16 - 19</text><rect class="ch-f1" x="242.5" y="96.0" width="38.4" height="206.0" rx="2"><title>Line 06 - 07: 144 %</title></rect><text class="ch-t" transform="translate(261.8 314) rotate(-50)" text-anchor="end">Line 06 - 07</text><rect class="ch-f1" x="299.0" y="125.5" width="38.4" height="176.5" rx="2"><title>Line 05 - 06: 123 %</title></rect><text class="ch-t" transform="translate(318.3 314) rotate(-50)" text-anchor="end">Line 05 - 06</text><rect class="ch-f1" x="355.5" y="127.1" width="38.4" height="174.9" rx="2"><title>Line 05 - 08: 122 %</title></rect><text class="ch-t" transform="translate(374.8 314) rotate(-50)" text-anchor="end">Line 05 - 08</text><rect class="ch-f1" x="412.0" y="135.7" width="38.4" height="166.3" rx="2"><title>Line 13 - 14: 116 %</title></rect><text class="ch-t" transform="translate(431.3 314) rotate(-50)" text-anchor="end">Line 13 - 14</text><rect class="ch-f1" x="468.5" y="143.5" width="38.4" height="158.5" rx="2"><title>Line 16 - 21: 111 %</title></rect><text class="ch-t" transform="translate(487.8 314) rotate(-50)" text-anchor="end">Line 16 - 21</text><rect class="ch-f1" x="525.0" y="146.9" width="38.4" height="155.1" rx="2"><title>Line 10 - 13: 108 %</title></rect><text class="ch-t" transform="translate(544.3 314) rotate(-50)" text-anchor="end">Line 10 - 13</text><rect class="ch-f1" x="581.5" y="147.4" width="38.4" height="154.6" rx="2"><title>Trf 19 - 20: 108 %</title></rect><text class="ch-t" transform="translate(600.8 314) rotate(-50)" text-anchor="end">Trf 19 - 20</text><rect class="ch-f1" x="638.0" y="147.6" width="38.4" height="154.4" rx="2"><title>Line 10 - 11: 108 %</title></rect><text class="ch-t" transform="translate(657.3 314) rotate(-50)" text-anchor="end">Line 10 - 11</text><rect class="ch-f1" x="694.5" y="148.6" width="38.4" height="153.4" rx="2"><title>Line 16 - 24: 107 %</title></rect><text class="ch-t" transform="translate(713.8 314) rotate(-50)" text-anchor="end">Line 16 - 24</text><line class="ch-axis" x1="64" x2="742" y1="302" y2="302"/><text class="ch-tt" transform="translate(16 159) rotate(-90)" text-anchor="middle">Highest branch loading (%)</text><line class="ch-lim" x1="64" x2="742" y1="159.0" y2="159.0"/></svg></div><ul class="dx-legend"><li><i class="klim"></i>100 % of rating</li></ul><figcaption>One bar per outage: the most loaded line or transformer left in service.</figcaption></figure>
+  <div class="dx-tw"><table><thead><tr><th>Outage</th><th>Most loaded branch</th><th class="num">Loading <span class="th-unit">%</span></th><th class="num">Lowest voltage <span class="th-unit">p.u.</span></th><th>At</th></tr></thead><tbody>
+<tr><td>Base case</td><td>Line 21 - 22</td><td class="num">99.1</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 21 - 22</td><td>Line 23 - 24</td><td class="num">158.3</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 23 - 24</td><td>Line 21 - 22</td><td class="num">156.9</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 16 - 19</td><td>Trf 06 - 31</td><td class="num">156.5</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 06 - 07</td><td>Line 05 - 06</td><td class="num">144.1</td><td class="num">0.972</td><td>Bus 07</td></tr>
+<tr><td>Line 05 - 06</td><td>Line 06 - 07</td><td class="num">123.5</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 05 - 08</td><td>Line 06 - 07</td><td class="num">122.3</td><td class="num">0.982</td><td>Bus 08</td></tr>
+<tr><td>Line 13 - 14</td><td>Line 05 - 06</td><td class="num">116.3</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 16 - 21</td><td>Line 23 - 24</td><td class="num">110.9</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 10 - 13</td><td>Line 10 - 11</td><td class="num">108.5</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Trf 19 - 20</td><td>Trf 20 - 34</td><td class="num">108.1</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 10 - 11</td><td>Line 10 - 13</td><td class="num">108.0</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 16 - 24</td><td>Line 21 - 22</td><td class="num">107.3</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 22 - 23</td><td>Line 21 - 22</td><td class="num">106.1</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 06 - 11</td><td>Line 13 - 14</td><td class="num">106.1</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 07 - 08</td><td>Line 05 - 06</td><td class="num">105.3</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 04 - 14</td><td>Line 05 - 06</td><td class="num">103.9</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 02 - 03</td><td>Line 21 - 22</td><td class="num">100.6</td><td class="num">0.982</td><td>Bus 31</td></tr>
+<tr><td>Line 26 - 27</td><td>Line 21 - 22</td><td class="num">100.5</td><td class="num">0.982</td><td>Bus 31</td></tr>
+</tbody></table></div>
+  <p class="dx-note">The base case, then every outage that overloads a branch, worst first. Every outage converged.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The N-1 screening Quick Start loads in the PowerFactory Workflow Builder, ready for your project. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=n-1">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The Builder's N-1 Quick Start runs the same loop with its Contingency block, which also takes out generator transformers, and keeps line and transformer loading in separate columns. On this example it gives the same numbers: 158.3 % with Line 21 - 22 out, 108.0 % with Line 10 - 11 out. This is its file for the 39-bus example:</p>
+  <p class="dx-file"><span><code>n-1_screening.py</code> as the Builder writes it: the settings and the workflow</span><a href="n-1_screening.py" download>⬇ Download the full file (.py, 1,695 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># N-1 screening</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Close PowerFactory, or run this file from inside PowerFactory (see RUN_MODE).
+  3. Run it with the Python that matches your PowerFactory, e.g.  py -3.12 n_1_screening.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> difflib
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> glob
+<span class="py-k">import</span> importlib.util
+<span class="py-k">import</span> itertools
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> string
+<span class="py-k">import</span> subprocess
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;N-1 screening&quot;</span>
+<span class="py-c"># REQUIRED. The PowerFactory project to open, exactly as the Data Manager shows it (letter case</span>
+<span class="py-c"># counts).</span>
+PROJECT = <span class="py-s">&quot;39 Bus New England System&quot;</span>
+<span class="py-c"># OPTIONAL. The study case to activate first (&quot;&quot; = keep the active one).</span>
+STUDY_CASE = <span class="py-s">&quot;1. Power Flow&quot;</span>
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every value the workflow changed back when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read from the</span>
+<span class="py-c"># grid).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;engine&quot; (start PowerFactory in the background) or &quot;inside&quot; (run from inside</span>
+<span class="py-c"># PowerFactory).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PowerFactory window while running (engine mode only).</span>
+SHOW_PF = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. True: no screen updates and fewer output window messages while running.</span>
+FAST_MODE = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PowerFactory to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+<span class="py-c"># OPTIONAL. The folder with the powerfactory Python module (&quot;&quot; = find it).</span>
+PF_API_PATH = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Log in to PowerFactory as this user (&quot;&quot; = your own).</span>
+PF_USER = <span class="py-s">&quot;&quot;</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: After a base load flow this takes out each line and transformer in service in turn (the base case first), runs the load flow and reads the loading of every line and 2-winding transformer and the vo...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">pf_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;*.ElmLne&quot;</span>, <span class="py-s">&quot;all&quot;</span>), (<span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>), (<span class="py-s">&quot;*.ElmTr2&quot;</span>, <span class="py-s">&quot;all&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Project: 39 Bus New England System) --</span>
+        <span class="py-c"># -- Step 2: Base load flow (Settings of the study case) --</span>
+        base_load_flow = <span class="py-f">run_load_flow</span>(app, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>)
+        <span class="py-c"># Did not converge: ends the workflow</span>
+        <span class="py-k">if</span> <span class="py-k">not</span> base_load_flow.ok:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Load flow did not converge. The workflow ends here.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 3: Contingency (Base case, then each N-1 outage of lines, transformers) --</span>
+        contingency_contingencies = <span class="py-f">define_contingencies</span>(app, [<span class="py-s">&quot;*.ElmLne&quot;</span>, <span class="py-s">&quot;*.ElmTr2&quot;</span>, <span class="py-s">&quot;*.ElmTr3&quot;</span>], <span class="py-n">1</span>, <span class="py-k">True</span>)
+        <span class="py-k">for</span> contingency_pass_no, contingency <span class="py-k">in</span> <span class="py-f">enumerate</span>(<span class="py-f">each_contingency</span>(app, contingency_contingencies, <span class="py-k">True</span>), <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Contingency&quot;</span>, contingency, contingency_pass_no, <span class="py-f">len</span>(contingency_contingencies) + (<span class="py-n">1</span> <span class="py-k">if</span> <span class="py-k">True</span> <span class="py-k">else</span> <span class="py-n">0</span>))
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 4: Run load flow (Settings of the study case) --</span>
+                ldf = <span class="py-f">run_load_flow</span>(app, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>)
+                <span class="py-c"># Did not converge: skips to the next pass of Contingency</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> ldf.ok:
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;Load flow did not converge&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 5: Line loading (c:loading of all * (ElmLne) (load flow results)) --</span>
+                line_loading = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmLne&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;c:loading&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 6: Busbar voltage (m:u of all * (ElmTerm) (load flow results)) --</span>
+                busbar_voltage = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;m:u&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 7: Transformer loading (c:loading of all * (ElmTr2) (load flow results)) --</span>
+                transformer_loading = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTr2&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;c:loading&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 8: Add row to results table (Into &quot;N-1&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;N-1&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Highest loading (%)&quot;</span>: line_loading.max,
+                    <span class="py-s">&quot;Most loaded line&quot;</span>: line_loading.at_max,
+                    <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>: busbar_voltage.min,
+                    <span class="py-s">&quot;Lowest voltage at&quot;</span>: busbar_voltage.at_min,
+                    <span class="py-s">&quot;Highest transformer loading (%)&quot;</span>: transformer_loading.max,
+                    <span class="py-s">&quot;Most loaded transformer&quot;</span>: transformer_loading.at_max,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;N-1&quot;</span>])
+        <span class="py-c"># -- Step 9: Print the worst outage (Worst outage: {worst}, with a line loaded to {loading:.1f} %) --</span>
+        worst_outage = <span class="py-f">table_pick</span>(<span class="py-s">&quot;N-1&quot;</span>, <span class="py-s">&quot;Contingency&quot;</span>, <span class="py-s">&quot;max&quot;</span>, <span class="py-s">&quot;Highest loading (%)&quot;</span>, <span class="py-s">&quot;text&quot;</span>)  <span class="py-c"># Worst outage</span>
+        worst_outage_highest = <span class="py-f">table_pick</span>(<span class="py-s">&quot;N-1&quot;</span>, <span class="py-s">&quot;Highest loading (%)&quot;</span> <span class="py-k">or</span> <span class="py-s">&quot;Contingency&quot;</span>, <span class="py-s">&quot;max&quot;</span>, <span class="py-s">&quot;Highest loading (%)&quot;</span>, <span class="py-s">&quot;num&quot;</span>)  <span class="py-c"># Worst outage</span>
+        <span class="py-f">log</span>(<span class="py-f">text_format</span>(<span class="py-s">&quot;Worst outage: {worst}, with a line loaded to {loading:.1f} %&quot;</span>, {<span class="py-s">&quot;worst&quot;</span>: worst_outage, <span class="py-s">&quot;loading&quot;</span>: worst_outage_highest}))
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 1,573 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><strong>Step 2</strong> runs the base load flow; <strong>step 3</strong>, the Contingency block, gives the base case first and then one pass per line and transformer in service, putting each element back after its pass.</li>
+    <li><strong>Steps 4 to 7</strong> run the load flow and read the highest line loading, the lowest busbar voltage and the highest transformer loading, each with where it is (busbars out of service or not energised are left out).</li>
+    <li><strong>Step 8</strong> adds one row per outage; an outage whose load flow does not converge keeps its row with the reason.</li>
+    <li>After all passes, "Table column" picks the outage with the highest line loading and "Print a message" writes it to the log.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>Always put the element back.</strong> Set <code>outserv</code> to 0 in a <code>finally</code> block. A script stopped between the two calls leaves the project with the line out of service, and every later study wrong.</li>
+    <li><strong>A single slack takes up every lost megawatt.</strong> Taking out a generator's own transformer loses the generator, and on this example the slack machine G 02 then carries it all: its transformer Trf 06 - 31 reaches 211 % when Trf 29 - 38 (G 09) is out. That is the balancing rule speaking, not the network. Study generator outages with a distributed slack or as their own contingency set.</li>
+    <li><strong>Islanded busbars read 0 p.u.</strong> An outage that cuts part of the network off leaves its busbars at exactly 0, and <code>IsEnergized()</code> can still return 1 for them after a load flow. Leave out busbars at 0 p.u. when you look for the lowest voltage.</li>
+    <li><strong>A load flow that does not converge is a finding, not an error.</strong> Record it and go on: it often means voltage collapse or an island without a reference.</li>
+    <li><strong>Which rating is 100 %?</strong> <code>c:loading</code> uses the rating in the model (the type's rated current with the element's derating). Post-contingency short-term ratings are higher: use a different limit, or a separate check, for them.</li>
+    <li><strong><code>outserv</code> is not switching.</strong> It removes the element from the calculation. To model the breakers that clear it, open them (<code>on_off</code> of <code>ElmCoup</code>, or the switch in the cubicle) instead.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I run a contingency analysis in PowerFactory with Python?</h3>
+  <p>Loop over the lines and transformers: <code>SetAttribute("outserv", 1)</code>, run <code>app.GetFromStudyCase("ComLdf").Execute()</code>, read <code>c:loading</code> and <code>m:u</code>, then set <code>outserv</code> back to 0 in a <code>finally</code> block.</p>
+  <h3>How do I take an element out of service in a PowerFactory script?</h3>
+  <p>Set its input parameter <code>outserv</code> to 1 with <code>obj.SetAttribute("outserv", 1)</code>, and back to 0 to return it to service.</p>
+  <h3>What is the N-1 criterion?</h3>
+  <p>A planning and operating rule: the network must stay within its thermal and voltage limits after the loss of any single element, such as a line, transformer or generator.</p>
+  <h3>Does PowerFactory have its own contingency analysis?</h3>
+  <p>Yes, the Contingency Analysis command (<code>ComSimoutage</code>). A Python loop is a lighter way to the same screening that is easy to adapt; the Builder's N-1 Quick Start writes one for you.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PowerFactory studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PowerFactory Python API: getting started</a></li>
+    <li><a href="../load-flow/">Load flow and results to CSV or Excel</a></li>
+    <li><a href="../short-circuit/">Short-circuit automation</a></li>
+    <li><a href="../hosting-capacity/">Hosting capacity study</a></li>
+    <li><a href="../parameter-sweep/">Parameter sweep: PV and QV curves</a></li>
+    <li><a href="../rms-emt-simulation/">RMS and EMT simulation batch runs</a></li>
+  </ul>
+  <p>Attributes used on this page: <a href="../../reference/ElmLne/"><code>ElmLne</code></a>, <a href="../../reference/ElmTr2/"><code>ElmTr2</code></a>, <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a>, <a href="../../reference/ElmSym/"><code>ElmSym</code></a>, <a href="../../reference/EvtOutage/"><code>EvtOutage</code></a>. <a href="../../reference/">All attributes</a>.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

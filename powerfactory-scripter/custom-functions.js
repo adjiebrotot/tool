@@ -4,7 +4,7 @@
    Ready-to-use bodies for an Output Variable of type
    "Custom Calculation". The picker above each custom function editor
    (script.js → buildOutputVarHTML) and the library section on the
-   Samples & Guides page (samples/index.html) both render from this
+   Samples & Guides page (legacy/samples/index.html) both render from this
    file, so a function is written once and shown in both places.
 
    Rules every entry follows, the same rules a user-written function

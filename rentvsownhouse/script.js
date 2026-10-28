@@ -7,7 +7,6 @@ const LANG = {
   en: {
     /* header */
     subtitle: 'Model the long-term financial outcome of renting vs buying property, comparing cash, equity and net wealth over time.',
-    btnBack: '← Other Tools',
     sensitivityHtml: 'Power user? Compare multiple scenarios side-by-side with our <a href="/rentvsownhouse/sensitivity/" style="color:var(--accent);font-weight:700;text-decoration:none;">Sensitivity Analysis Tool</a>.',
     /* sidebar */
     quickStartLabel: 'Quick Start',
@@ -171,7 +170,10 @@ const LANG = {
     warnShortfallIO: (list) => `⚠️ Cash runs below zero in ${list}, when the interest-only balance falls due. Set a higher budget or more cash now to save for it.`,
     shortfallItem: (name, yr, amt) => `${name} from year ${yr} (down to ${amt})`,
     nameOwn: 'Own',
-    warnInitialCashShort: (x,y,z) => `⚠️ Initial cash, ${x}, is ${y} short of the down payment plus setup cost (${z}). The shortfall reduces the equity you start with.`,
+    warnInitialCashShort: (x,y,z) => `⚠️ Initial cash, ${x}, is ${y} short of the down payment plus setup cost (${z}), so the comparison cannot run.`,
+    blockedTitle: 'This plan runs out of cash, so it is not compared.',
+    blockedBody: (list) => `Cash falls below zero in ${list}. The mortgage is the only borrowing in this model, so a shortfall is never carried: raise the budget or the initial cash, or clear both for the automatic figures.`,
+    blockedBodyIO: (list) => `Cash falls below zero in ${list}, when the interest-only balance falls due. Set a budget or more initial cash that saves for it.`,
     subRequiredCash: (x) => `Needed: ${x} (down payment plus setup cost).`,
     warnBudgetLow: (x,y,z) => `⚠️ The budget (${x}/mo) is below both the cost of owning (${y}/mo with ongoing costs) and of renting (${z}/mo with ongoing costs). The surplus turns negative and cash may fall below zero.`,
     cagrResult: (x) => `Growth: ${x}%/yr, applied to House price growth ✓`,
@@ -257,14 +259,13 @@ const LANG = {
   },
   id: {
     /* header */
-    subtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti, membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
-    btnBack: '← Other Tools',
-    sensitivityHtml: 'Power user? Bandingkan beberapa skenario secara berdampingan dengan <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">Alat Analisis Sensitivitas</a> kami.',
+    subtitle: 'Hitung hasil keuangan jangka panjang dari menyewa vs membeli properti: kas, ekuitas, dan kekayaan bersih dari tahun ke tahun.',
+    sensitivityHtml: 'Power user? Bandingkan beberapa skenario berdampingan di <a href="/rentvsownhouse/sensitivity/id/" style="color:var(--accent);font-weight:700;text-decoration:none;">tool Analisis Sensitivitas</a>.',
     /* sidebar */
-    quickStartLabel: 'Mulai Cepat',
-    quickStartTip: 'Mengisi formulir dengan hunian tipikal jenis itu di kota tersebut: harga, sewa, biaya rutin, dan syarat KPR setempat.',
+    quickStartLabel: 'Quick Start',
+    quickStartTip: 'Mengisi semua kolom dengan hunian tipikal jenis itu di kota tersebut: harga, sewa, biaya rutin, dan syarat KPR setempat.',
     qsCityPh: 'Cari kota…',
-    qsCityTitle: 'Kota Mulai Cepat',
+    qsCityTitle: 'Kota Quick Start',
     qsTypeTitle: 'Jenis hunian',
     qsTypePh: 'Jenis hunian',
     qsNoMatch: 'Kota tidak ditemukan',
@@ -278,18 +279,18 @@ const LANG = {
     unitPctPa: '%/thn',
     labelInitialCash: 'Modal awal',
     labelOptional: '(opsional)',
-    subInitialCashDefault: 'Default ke Uang Muka (DP) + biaya awal pembelian. Kelebihan diinvestasikan pada suku bunga bebas risiko.',
+    subInitialCashDefault: 'Jika dikosongkan, sebesar DP ditambah biaya awal pembelian. Kelebihannya mendapat suku bunga bebas risiko.',
     labelMonthlyBudget: 'Anggaran perumahan bulanan',
     labelBudgetIncrease: 'Kenaikan anggaran tahunan',
-    helpBudgetGrowsPrefix: 'Anggaran tumbuh dari',
-    helpBudgetGrowsSuffix: 'dengan laju ini setiap tahun.',
+    helpBudgetGrowsPrefix: 'Anggaran naik dari',
+    helpBudgetGrowsSuffix: 'sebesar laju ini tiap tahun.',
     labelTimeHorizon: 'Jangka waktu',
     labelYears: 'tahun',
     yrsSuffix: ' thn',
     sectionRTB: 'Skenario Sewa Dulu, Beli Kemudian',
     labelEnableRTB: 'Aktifkan Sewa Dulu, Beli Kemudian',
     labelBuyAtYear: 'Beli di tahun',
-    unitYearsRentingFirst: 'tahun menyewa lebih dahulu',
+    unitYearsRentingFirst: 'tahun menyewa dulu',
     sectionProperty: 'Properti',
     labelPropertyPrice: 'Harga properti',
     labelDownPayment: 'Uang Muka (DP)',
@@ -298,9 +299,9 @@ const LANG = {
     sectionMortgage: 'KPR',
     labelMortgageType: 'Jenis KPR',
     labelPI: 'Pokok & Bunga',
-    helpPI: 'Cicilan mengurangi bunga dan saldo pinjaman setiap periode; ekuitas bertambah lebih cepat.',
+    helpPI: 'Tiap cicilan ikut melunasi pokok, jadi ekuitas bertambah lebih cepat.',
     labelIO: 'Bunga Saja',
-    helpIO: 'Hanya membayar bunga; seluruh pokok dilunasi dari kas di akhir jangka waktu.',
+    helpIO: 'Hanya membayar bunga. Seluruh pokok dilunasi dari kas di akhir jangka waktu.',
     labelCostInterestOnly: 'Biaya = bunga saja',
     labelMortgageRate: 'Bunga KPR',
     labelMortgageTerm: 'Jangka waktu KPR',
@@ -309,17 +310,17 @@ const LANG = {
     segDetailed: 'Rinci',
     labelRateSchedule: 'Jadwal bunga KPR',
     btnAddPeriod: '+ Tambah Periode',
-    optFixed: 'Tetap (Fixed)',
-    optFloating: 'Mengambang (Floating)',
+    optFixed: 'Fixed',
+    optFloating: 'Floating',
     labelYear: 'Tahun',
     labelPeriodEnd: 'Tahun terakhir periode ini',
     sectionPropertyGrowth: 'Pertumbuhan properti',
     labelHouseGrowth: 'Kenaikan harga properti (RPPI)',
     labelSellingCost: 'Biaya penjualan',
     unitPctOfValue: '% dari harga jual',
-    labelCalcCAGR: 'Hitung pertumbuhan tahunan majemuk (CAGR) dari harga historis',
-    btnShowTool: 'Tampilkan alat',
-    btnHideTool: 'Sembunyikan alat',
+    labelCalcCAGR: 'Hitung kenaikan tahunan rata-rata (CAGR) dari harga historis',
+    btnShowTool: 'Tampilkan kalkulator',
+    btnHideTool: 'Sembunyikan kalkulator',
     btnDelete: 'Hapus',
     btnAddRow: '+ Baris',
     btnCalcCAGR: 'Hitung CAGR',
@@ -356,22 +357,22 @@ const LANG = {
     labelCurrencySymbol: 'Simbol Mata Uang',
     sectionPrices: 'Harga',
     labelGeneralInflation: 'Inflasi umum',
-    helpGeneralInflation: (now, later, yrs) => `Rumah seharga ${now} menjadi ${later} di tahun ke-${yrs} dengan laju ini. Tidak ada angka rencana yang berubah, hanya cara Tampilkan dalam nilai hari ini membacanya.`,
+    helpGeneralInflation: (now, later, yrs) => `Dengan laju ini, rumah seharga ${now} menjadi ${later} di tahun ke-${yrs}. Angka rencananya tetap; yang berubah hanya cara opsi Tampilkan dalam nilai hari ini membacanya.`,
     helpGeneralInflationZero: 'Harga tetap, jadi nilai hari ini dan nilai masa depan sama.',
     labelShowReal: 'Tampilkan dalam nilai hari ini',
-    showRealTip: 'Rencananya sama saja.<ul><li><strong>Nyala:</strong> semua angka dalam nilai hari ini, menurut inflasi umum.</li><li><strong>Mati:</strong> dalam nilai uang tiap tahun, seperti di rekening.</li></ul>',
+    showRealTip: 'Rencananya tetap sama.<ul><li><strong>Aktif:</strong> semua angka dalam nilai hari ini, menurut inflasi umum.</li><li><strong>Nonaktif:</strong> dalam nilai uang tiap tahun, seperti yang tertera di rekening.</li></ul>',
     moneyToday: 'nilai hari ini',
     moneyFuture: 'nilai masa depan',
     csvToday: g => `# In today's money, at ${g} general inflation a year`,
     /* KPI */
     kpiInitialCashLabel: 'Modal awal',
-    kpiInitialCashTip: 'Kas awal di semua skenario. Jika dikosongkan, dipakai kebutuhan awal terbesar: Uang Muka (DP) + biaya awal, sewa setahun, atau kas yang dibutuhkan Sewa Dulu sekarang untuk DP-nya nanti.',
+    kpiInitialCashTip: 'Kas awal yang sama untuk semua skenario. Jika dikosongkan, dipakai kebutuhan awal terbesar: DP + biaya awal, sewa setahun, atau kas yang perlu disiapkan Sewa Dulu untuk DP-nya nanti.',
     kpiInitialCashSub: 'Modal awal di Tahun 0',
     kpiBudgetLabel: 'Anggaran perumahan bulanan',
     kpiBudgetSub: 'Anggaran bulanan min–maks selama jangka waktu',
     kpiBreakevenLabel: 'Tahun breakeven',
-    kpiBreakevenTip: 'Tahun ketika membeli unggul atas menyewa dan tetap unggul hingga akhir jangka waktu.',
-    kpiBreakevenSub: 'Saat kekayaan bersih Beli melampaui Sewa seterusnya',
+    kpiBreakevenTip: 'Tahun saat membeli mulai unggul dari menyewa dan tetap unggul sampai akhir jangka waktu.',
+    kpiBreakevenSub: 'Saat kekayaan bersih Beli menyalip Sewa untuk seterusnya',
     kpiDiffLabel: 'Perbedaan kekayaan bersih',
     kpiDiffTip: 'Kekayaan bersih Beli dikurangi Sewa di tahun terakhir. Positif berarti membeli unggul.',
     kpiDiffSub: 'Beli dikurangi Sewa di tahun terakhir',
@@ -383,15 +384,15 @@ const LANG = {
     btnZoom: '⟳',
     btnSvgTitle: 'Unduh grafik ini sebagai SVG',
     btnPngTitle: 'Unduh grafik ini sebagai PNG',
-    btnCopyTitle: 'Salin PNG ke papan klip',
-    btnResetZoomTitle: 'Atur ulang zoom',
+    btnCopyTitle: 'Salin PNG ke clipboard',
+    btnResetZoomTitle: 'Reset zoom',
     btnCsvTitle: 'Unduh tabel ini sebagai CSV',
     chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     /* summary */
     ownSnapshotTitle: 'Ringkasan Beli',
     rentSnapshotTitle: 'Ringkasan Sewa',
     rtbSnapshotTitle: 'Ringkasan Sewa Dulu, Beli Kemudian',
-    rtbSnapshotTip: 'Skenario Sewa Dulu, Beli Kemudian pada tahun terakhir. Tabungan menjadi Uang Muka (DP) pada harga saat itu, lalu KPR baru dimulai.',
+    rtbSnapshotTip: 'Skenario Sewa Dulu, Beli Kemudian di tahun terakhir. Tabungannya menjadi DP pada harga saat itu, lalu KPR baru dimulai.',
     /* detail tabs */
     tabOwnCashflow: 'Arus kas Beli',
     tabRentCashflow: 'Arus kas Sewa',
@@ -407,23 +408,26 @@ const LANG = {
     seriesOwnCost: 'Beli: biaya kumulatif (KPR + rutin)',
     seriesRentCost: 'Sewa: biaya kumulatif (sewa + rutin)',
     seriesRTBCost: 'Sewa Dulu, Beli Kemudian: biaya kumulatif',
-    seriesRateBand: 'Rentang suku bunga mengambang (min–maks)',
+    seriesRateBand: 'Rentang bunga floating (min–maks)',
     /* dynamic messages */
     kpiBreakevenYear: 'Tahun ',
     subInitialCashLeftover: (x) => `Sisa ${x} mendapat suku bunga bebas risiko sejak hari pertama.`,
-    subInitialCashExact: 'Tepat menutup Uang Muka (DP) + biaya awal pembelian, tanpa sisa.',
-    subInitialCashAuto: (x) => `Otomatis: ${x} (Uang Muka (DP) ditambah biaya awal pembelian). Kelebihannya mendapat suku bunga bebas risiko.`,
-    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Bersama tabungannya, cukup untuk DP dan biaya awal sebesar ${z} saat Sewa Dulu membeli di tahun ke-${n}.`,
-    warnInitialCashRTB: (x,y,z,n) => `⚠️ Modal awal, ${x}, kurang ${y} dari kebutuhan Sewa Dulu hari ini (${z}) untuk membeli di tahun ke-${n}.`,
-    warnShortfall: (list) => `⚠️ Kas turun di bawah nol pada ${list}. KPR adalah satu-satunya pinjaman di model ini, jadi naikkan anggaran atau modal awal, atau kosongkan untuk angka otomatis.`,
-    warnShortfallIO: (list) => `⚠️ Kas turun di bawah nol pada ${list}, saat pokok KPR bunga saja jatuh tempo. Tetapkan anggaran atau kas awal lebih tinggi untuk menabungnya.`,
-    shortfallItem: (name, yr, amt) => `${name} mulai tahun ke-${yr} (hingga ${amt})`,
+    subInitialCashExact: 'Pas untuk DP ditambah biaya awal pembelian, tanpa sisa.',
+    subInitialCashAuto: (x) => `Otomatis: ${x} (DP ditambah biaya awal pembelian). Kelebihannya mendapat suku bunga bebas risiko.`,
+    subInitialCashRTB: (x,y,z,n) => `Otomatis: ${x}. Ditambah tabungannya, cukup untuk DP dan biaya awal sebesar ${z} saat Sewa Dulu membeli di tahun ke-${n}.`,
+    warnInitialCashRTB: (x,y,z,n) => `⚠️ Modal awal ${x} kurang ${y} dari yang perlu disiapkan Sewa Dulu hari ini (${z}) untuk membeli di tahun ke-${n}.`,
+    warnShortfall: (list) => `⚠️ Kas jadi minus di ${list}. Model ini tidak punya pinjaman selain KPR, jadi naikkan anggaran atau modal awal, atau kosongkan keduanya agar dihitung otomatis.`,
+    warnShortfallIO: (list) => `⚠️ Kas jadi minus di ${list}, saat pokok KPR bunga saja jatuh tempo. Naikkan anggaran atau modal awal agar ada tabungan untuk melunasinya.`,
+    shortfallItem: (name, yr, amt) => `${name} sejak tahun ke-${yr} (paling rendah ${amt})`,
     nameOwn: 'Beli',
-    warnInitialCashShort: (x,y,z) => `⚠️ Modal awal, ${x}, kurang ${y} dari Uang Muka (DP) ditambah biaya awal pembelian (${z}). Kekurangannya mengurangi ekuitas awal Anda.`,
-    subRequiredCash: (x) => `Dibutuhkan: ${x} (Uang Muka (DP) ditambah biaya awal pembelian).`,
-    warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) di bawah biaya membeli (${y}/bln termasuk biaya rutin) dan biaya menyewa (${z}/bln termasuk biaya rutin). Surplus menjadi negatif dan kas dapat turun di bawah nol.`,
-    cagrResult: (x) => `Kenaikan: ${x}%/thn, diterapkan ke Kenaikan harga properti ✓`,
-    cagrNeedPoints: 'Butuh minimal 2 pasangan tahun dan harga yang valid.',
+    warnInitialCashShort: (x,y,z) => `⚠️ Modal awal ${x} kurang ${y} dari DP ditambah biaya awal pembelian (${z}), jadi perbandingan tidak bisa dihitung.`,
+    blockedTitle: 'Rencana ini kehabisan kas, jadi tidak dibandingkan.',
+    blockedBody: (list) => `Kas jadi minus di ${list}. Model ini tidak punya pinjaman selain KPR, jadi kekurangan kas tidak pernah ditanggung: naikkan anggaran atau modal awal, atau kosongkan keduanya agar dihitung otomatis.`,
+    blockedBodyIO: (list) => `Kas jadi minus di ${list}, saat pokok KPR bunga saja jatuh tempo. Isi anggaran atau modal awal yang cukup untuk menabung melunasinya.`,
+    subRequiredCash: (x) => `Dibutuhkan: ${x} (DP ditambah biaya awal pembelian).`,
+    warnBudgetLow: (x,y,z) => `⚠️ Anggaran (${x}/bln) lebih kecil dari biaya membeli (${y}/bln termasuk biaya rutin) dan biaya menyewa (${z}/bln termasuk biaya rutin). Surplusnya jadi negatif dan kas bisa minus.`,
+    cagrResult: (x) => `Kenaikan: ${x}%/thn, dipakai untuk Kenaikan harga properti ✓`,
+    cagrNeedPoints: 'Isi minimal 2 pasang tahun dan harga yang valid.',
     cagrEndYearError: 'Tahun akhir harus setelah tahun awal.',
     /* table headers */
     thYear: 'Tahun',
@@ -433,25 +437,25 @@ const LANG = {
     thFinancialPosition: 'Posisi keuangan',
     thBegCash: 'Kas awal',
     thAnnBudget: 'Anggaran tahunan',
-    thPrincipalExp: 'Pokok pinjaman',
-    thInterestExp: 'Bunga',
+    thPrincipalExp: 'Pokok dibayar',
+    thInterestExp: 'Bunga dibayar',
     thOngoingExp: 'Biaya rutin',
-    thInterestInc: 'Bunga kas',
+    thInterestInc: 'Bunga tabungan',
     thSurplus: 'Surplus',
     thEndCash: 'Kas akhir',
     thPropValue: 'Nilai properti',
     thPrincipalLeft: 'Sisa pokok',
-    thHouseEquity: 'Nilai bersih properti',
+    thHouseEquity: 'Ekuitas rumah',
     thNetEquity: 'Kekayaan bersih',
     thAccumCost: 'Biaya kumulatif',
     thPhase: 'Fase',
     thTotalExp: 'Total pengeluaran',
     thRentExp: 'Biaya sewa',
-    thPurchaseOutlay: 'Pengeluaran beli',
+    thPurchaseOutlay: 'Biaya pembelian',
     /* summary tile labels */
     tileNetEquity: 'Kekayaan bersih',
     tileAccumCost: 'Biaya kumulatif',
-    tileHouseEquity: 'Nilai bersih properti',
+    tileHouseEquity: 'Ekuitas rumah',
     tileLiquidCash: 'Uang tunai',
     tileMonthlyMortgage: 'Cicilan KPR bulanan',
     tilePrincipalRemaining: 'Sisa pokok pinjaman',
@@ -476,7 +480,7 @@ const LANG = {
     phCagrPrice2: 'Harga, mis. 400,000',
     phCagrYear: 'Tahun, mis. 2020',
     phCagrPrice: 'Harga, mis. 450,000',
-    kpiBreakevenNone: 'Tidak ada breakeven dalam jangka waktu',
+    kpiBreakevenNone: 'Belum breakeven dalam jangka waktu ini',
     kpiDiffSubYear: (n) => `Kekayaan bersih di tahun ke-${n}`,
     chartSub: 'Dalam nilai masa depan, tidak disesuaikan dengan inflasi.',
     chartSubToday: g => `Dalam nilai hari ini, dengan inflasi umum ${g} per tahun.`,
@@ -496,8 +500,8 @@ const LANG = {
     verdictOwn: (amt, yrs) => `Membeli unggul <span class="v-num">${amt}</span> dari menyewa setelah ${yrs} tahun.`,
     verdictRent: (amt, yrs) => `Menyewa dan menginvestasikan selisihnya unggul <span class="v-num">${amt}</span> dari membeli setelah ${yrs} tahun.`,
     verdictTie: (yrs) => `Membeli dan menyewa berakhir seimbang setelah ${yrs} tahun.`,
-    verdictBreakeven: (be) => `Membeli mulai unggul seterusnya di tahun ke-${be}.`,
-    verdictNoBreakeven: (yrs) => `Membeli tidak unggul seterusnya dalam ${yrs} tahun.`,
+    verdictBreakeven: (be) => `Mulai tahun ke-${be}, membeli unggul untuk seterusnya.`,
+    verdictNoBreakeven: (yrs) => `Dalam ${yrs} tahun, membeli belum unggul untuk seterusnya.`,
     verdictEquity: (own, rent, yrs) => `Kekayaan bersih di tahun ke-${yrs}: membeli ${own}, menyewa ${rent}, dalam nilai masa depan.`,
     verdictEquityToday: (own, rent, yrs) => `Kekayaan bersih di tahun ke-${yrs}: membeli ${own}, menyewa ${rent}, dalam nilai hari ini.`,
     verdictRTB: (val, yr) => `Sewa Dulu, Beli Kemudian (membeli setelah ${yr} tahun) berakhir di ${val}.`,
@@ -1223,16 +1227,36 @@ function updateKPIs(state){
   }
   // Any scenario whose cash goes below zero on any rate path: the model does
   // not borrow beyond the mortgage, so say so rather than hide it
+  const sf = shortfallText(state);
+  if(sf) msgs.push(T(sf.auto ? 'warnShortfallIO' : 'warnShortfall')(sf.list));
+  warn.style.display = msgs.length ? 'block' : 'none';
+  warn.textContent = msgs.join(' ');
+}
+
+/* Which scenarios run out of cash, and where, in words; null when none does.
+   With the automatic budget and cash only an interest-only balance falling
+   due can do it: they cover repayments, not the lump sum at the term's end. */
+function shortfallText(state){
   const sf = state.shortfalls || {};
   const items = [['own','nameOwn'],['rent','nameRent'],['rtb','nameRTB']]
     .filter(([k])=>sf[k])
     .map(([k,nm])=>T('shortfallItem')(T(nm), sf[k].year, fmt.currency(sf[k].worst, true)));
-  // With the automatic budget and cash only an interest-only balance falling
-  // due can do it: they cover repayments, not the lump sum at the term's end
-  const autoFigures = !(S.monthlyBudget > 0) && !(S.initialCash > 0);
-  if(items.length) msgs.push(T(autoFigures ? 'warnShortfallIO' : 'warnShortfall')(items.join(', ')));
-  warn.style.display = msgs.length ? 'block' : 'none';
-  warn.textContent = msgs.join(' ');
+  if(!items.length) return null;
+  return {list: items.join(', '), auto: !(S.monthlyBudget > 0) && !(S.initialCash > 0)};
+}
+
+/* A plan that runs out of cash is never compared. The mortgage is the only
+   borrowing in the model, so a balance below zero would be a loan at the
+   risk-free rate that nobody offers, and it would cancel out of the answer.
+   The answer card says why and what to change; the figures stay hidden until
+   the plan is funded. The automatic budget and cash always are, except for an
+   interest-only balance falling due. */
+function renderBlocked(state){
+  const sf = shortfallText(state);
+  $('mainResults').classList.toggle('rvo-blocked', !!sf);
+  if(!sf) return false;
+  SharedVerdict.set('verdict', {tone:'warn', title:T('blockedTitle'), body:T(sf.auto ? 'blockedBodyIO' : 'blockedBody')(sf.list)});
+  return true;
 }
 
 /* ── VERDICT ──
@@ -1275,16 +1299,16 @@ function renderAssumptions(state){
   } else {
     items.push(L(
       `<strong>With no budget entered, it is the dearest scenario's cost each year</strong> (${m(state.monthlyBudget)}${perMo} in year 1), and whatever the others leave over is saved.`,
-      `<strong>Tanpa anggaran, anggarannya adalah biaya skenario termahal tiap tahun</strong> (${m(state.monthlyBudget)}${perMo} di tahun 1), dan sisa skenario lain ditabung.`));
+      `<strong>Tanpa anggaran yang diisi, anggarannya mengikuti biaya skenario termahal tiap tahun</strong> (${m(state.monthlyBudget)}${perMo} di tahun 1), dan sisa skenario lain ditabung.`));
   }
   items.push(S.initialCash > 0
     ? L(`<strong>Every scenario starts with your ${m(S.initialCash)} of cash.</strong>`,
         `<strong>Setiap skenario mulai dengan kas Anda ${m(S.initialCash)}.</strong>`)
     : L(`<strong>With no starting cash entered, every scenario starts with ${m(state.initialCashUsed)},</strong> enough for what each one needs up front.`,
-        `<strong>Tanpa kas awal, setiap skenario mulai dengan ${m(state.initialCashUsed)},</strong> cukup untuk kebutuhan awal masing-masing.`));
+        `<strong>Tanpa modal awal yang diisi, setiap skenario mulai dengan ${m(state.initialCashUsed)},</strong> cukup untuk kebutuhan awal masing-masing.`));
   items.push(L(
     `<strong>Savings earn ${pc(S.riskFreeRate)} a year,</strong> compounded monthly and untaxed, in every scenario.`,
-    `<strong>Tabungan menghasilkan ${pc(S.riskFreeRate)} per tahun,</strong> berbunga bulanan dan tanpa pajak, di setiap skenario.`));
+    `<strong>Tabungan menghasilkan ${pc(S.riskFreeRate)} per tahun,</strong> berbunga majemuk bulanan, tanpa pajak, di setiap skenario.`));
 
   const rentPart = state.rentMonthly0 > 0
     ? L(`rent rises ${pc(S.rentInflation)} a year from ${m(state.rentMonthly0)}${perMo}`, `sewa naik ${pc(S.rentInflation)} per tahun dari ${m(state.rentMonthly0)}${perMo}`)
@@ -1297,7 +1321,7 @@ function renderAssumptions(state){
   items.push(showToday()
     ? (g > 0
       ? L(`<strong>Figures are in today's money, with prices rising ${pc(g)} a year.</strong> Each year's are divided by that general inflation up to the end of the year, so the home's ${fmt.currency(state.summary.ownPropValue, true)} is what it would buy today. The amounts you enter are today's prices.`,
-          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi ${fmt.currency(state.summary.ownPropValue, true)} untuk rumah adalah daya belinya hari ini. Angka yang Anda isi adalah harga hari ini.`)
+          `<strong>Angka dalam nilai hari ini, dengan harga naik ${pc(g)} per tahun.</strong> Angka tiap tahun dibagi inflasi umum itu sampai akhir tahunnya, jadi nilai rumah ${fmt.currency(state.summary.ownPropValue, true)} adalah daya belinya hari ini. Angka yang Anda isi adalah harga hari ini.`)
       : L(`<strong>Figures are in today's money, with prices held still,</strong> so they read the same as the money of each year.`,
           `<strong>Angka dalam nilai hari ini, dengan harga tetap,</strong> jadi sama dengan nilai uang tiap tahun.`))
     : L(`<strong>Figures are in future's money,</strong> as the bank account will read them${g > 0 ? `. With prices rising ${pc(g)} a year, ${fmt.currency(100)} in year ${yrs} buys what ${fmt.currency(100/priceLevel(yrs))} does today` : ''}.`,
@@ -1307,17 +1331,17 @@ function renderAssumptions(state){
   if(S.mortgageMode !== 'detailed'){
     items.push(L(
       `<strong>The ${m(loan)} loan is at a fixed ${pc(S.mortgageRate)},</strong> principal and interest over ${S.mortgageTerm} years. Accumulated cost counts the interest, not the principal repaid.`,
-      `<strong>Pinjaman ${m(loan)} berbunga tetap ${pc(S.mortgageRate)},</strong> pokok dan bunga selama ${S.mortgageTerm} tahun. Biaya kumulatif menghitung bunganya, bukan pokok yang dilunasi.`));
+      `<strong>Pinjaman ${m(loan)} dengan bunga fixed ${pc(S.mortgageRate)},</strong> pokok dan bunga selama ${S.mortgageTerm} tahun. Biaya kumulatif menghitung bunganya, bukan pokok yang dilunasi.`));
   } else {
     const norm = getOwnRateNorm();
-    const band = p => p.max - p.min > 1e-9 ? pc(p.min) + L(' to ', ' sampai ') + pc(p.max) + L(' floating', ' mengambang') : pc(p.min) + L(' fixed', ' tetap');
+    const band = p => p.max - p.min > 1e-9 ? pc(p.min) + L(' to ', ' sampai ') + pc(p.max) + ' floating' : pc(p.min) + ' fixed';
     const sched = norm.map(p => band(p) + L(' to year ', ' sampai tahun ') + p.to).join(', ');
     const io = S.mortgageType === 'io';
     let txt = L(
       `<strong>The ${m(loan)} loan is ${io ? 'interest only' : 'principal and interest'} over ${S.mortgageTerm} years:</strong> ${sched}.`,
-      `<strong>Pinjaman ${m(loan)} ${io ? 'hanya bunga' : 'pokok dan bunga'} selama ${S.mortgageTerm} tahun:</strong> ${sched}.`);
+      `<strong>Pinjaman ${m(loan)} ${io ? 'bunga saja' : 'pokok dan bunga'} selama ${S.mortgageTerm} tahun:</strong> ${sched}.`);
     if(scheduleHasFloat()) txt += L(' Floating periods run at the middle of their range; the band shows the low and high.',
-      ' Periode mengambang memakai titik tengah rentangnya; pita menunjukkan batas bawah dan atasnya.');
+      ' Periode floating memakai nilai tengah rentangnya; pita di grafik menunjukkan batas bawah dan atasnya.');
     if(norm.length > 1 && !io) txt += L(' Each rate change re-spreads the balance over the term left.', ' Setiap perubahan bunga menghitung ulang cicilan atas sisa pokok dan sisa tenor.');
     if(io && S.mortgageTerm <= yrs) txt += L(' The whole balance falls due in year ' + S.mortgageTerm + ', paid from cash.', ' Seluruh pokok jatuh tempo di tahun ' + S.mortgageTerm + ', dibayar dari kas.');
     txt += S.costInterestOnly
@@ -1345,9 +1369,9 @@ function renderAssumptions(state){
     const cash = on.filter(it => it.basis !== 'pct');
     if(cash.length){
       const rates = [...new Set(cash.map(it => Number(it.inflation)||0))];
-      notes.push(rates.length > 1 ? L('the money items rise at their own rates', 'item nominal naik dengan lajunya masing-masing')
-        : rates[0] ? L('the money items rise ' + pc(rates[0]) + ' a year', 'item nominal naik ' + pc(rates[0]) + ' per tahun')
-        : L('the money items stay flat, with no inflation', 'item nominal tetap, tanpa inflasi'));
+      notes.push(rates.length > 1 ? L('the money items rise at their own rates', 'item jumlah uang naik dengan lajunya masing-masing')
+        : rates[0] ? L('the money items rise ' + pc(rates[0]) + ' a year', 'item jumlah uang naik ' + pc(rates[0]) + ' per tahun')
+        : L('the money items stay flat, with no inflation', 'item jumlah uang tetap, tanpa inflasi'));
     }
     return L(
       `<strong>${who.en} ${m(yr1)} in year 1</strong> across ${on.length} items: ${notes.join('; ')}.`,
@@ -1368,14 +1392,14 @@ function renderAssumptions(state){
     const r = state.rtbRows;
     items.push(L(
       `<strong>${T('nameRTB')} buys at the end of year ${S.rtbBuyYear}</strong> at ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, with the same ${pc(S.downPaymentPct)} deposit, setup costs scaled to that price, and a new loan on the same terms.`,
-      `<strong>${T('nameRTB')} membeli di akhir tahun ${S.rtbBuyYear}</strong> seharga ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, dengan uang muka ${pc(S.downPaymentPct)} yang sama, biaya awal disesuaikan dengan harga itu, dan pinjaman baru dengan syarat yang sama.`));
+      `<strong>${T('nameRTB')} membeli di akhir tahun ${S.rtbBuyYear}</strong> seharga ${fmt.currency(r.rtbPropValueAtBuy||0, true)}, dengan DP ${pc(S.downPaymentPct)} yang sama, biaya awal disesuaikan dengan harga itu, dan pinjaman baru dengan syarat yang sama.`));
   }
 
   items.push(S.sellingCostPct > 0
     ? L(`<strong>Net equity counts the home as sold in year ${yrs},</strong> less ${pc(S.sellingCostPct)} selling costs and the loan still owed, plus cash. No tax is taken on the gain.`,
-        `<strong>Ekuitas bersih menghitung rumah seolah dijual di tahun ${yrs},</strong> dikurangi biaya jual ${pc(S.sellingCostPct)} dan sisa pinjaman, ditambah kas. Keuntungannya tidak dikenai pajak.`)
+        `<strong>Kekayaan bersih menghitung rumah seolah dijual di tahun ${yrs},</strong> dikurangi biaya jual ${pc(S.sellingCostPct)} dan sisa pinjaman, ditambah kas. Keuntungan penjualannya tidak dikenai pajak.`)
     : L(`<strong>Net equity counts the home as sold in year ${yrs}</strong> with no selling costs, less the loan still owed, plus cash. No tax is taken on the gain.`,
-        `<strong>Ekuitas bersih menghitung rumah seolah dijual di tahun ${yrs}</strong> tanpa biaya jual, dikurangi sisa pinjaman, ditambah kas. Keuntungannya tidak dikenai pajak.`));
+        `<strong>Kekayaan bersih menghitung rumah seolah dijual di tahun ${yrs}</strong> tanpa biaya jual, dikurangi sisa pinjaman, ditambah kas. Keuntungan penjualannya tidak dikenai pajak.`));
 
   $('assumptions').innerHTML = items.map(x=>'<li>'+x+'</li>').join('');
 }
@@ -1654,6 +1678,7 @@ function rerender(){
   if(!S.rtbEnabled && activeTable==='rtb'){ activeTable='own'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.table==='own')); }
   updateRTBSummary(state);
   renderAssumptions(state);
+  renderBlocked(state);
   if(persist) persist.schedule(); // rerender is the universal funnel — save any state change
 }
 
@@ -1980,6 +2005,8 @@ $('svgBtn').addEventListener('click', downloadChartSvg);
 /* ── CSV ── (built by the shared RVOExport module so the main tool and the
    sensitivity tool emit byte-identical cashflow CSVs) */
 function downloadCsv(){
+  // A plan that runs out of cash is not compared, so it has no cashflow to save.
+  if($('mainResults').classList.contains('rvo-blocked')) return;
   let csv, filename;
   if(activeTable==='own'){
     if(!latestRows.length) return;

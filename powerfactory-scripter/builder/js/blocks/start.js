@@ -26,6 +26,9 @@ defineBlock({
       tip: 'Each run writes its tables, graphs and run.log to a new folder in here. Empty means the folder the script is in.' },
     { key: 'undoChanges', label: 'Put changed values back at the end', kind: 'bool', default: true, more: true, 
       tip: 'When the workflow ends (also after an error), every attribute the workflow changed is set back to its value before the run.' },
+    { key: 'tableFmt', label: 'Save the results tables as', kind: 'select', default: 'csv', more: true,
+      options: [['csv', 'CSV (opens in Excel)'], ['xlsx', 'Excel (.xlsx)'], ['both', 'Both']],
+      tip: 'Every results table is saved in the run folder when the run ends (also after an error). A Save results table block saves its own table its own way.' },
     { key: 'fNominal', label: 'Nominal frequency', kind: 'select', default: 'auto', more: true, 
       options: [['auto', 'Find it from the grid'], ['50', '50 Hz'], ['60', '60 Hz']],
       tip: 'Used by the frequency checks. "Find it from the grid" reads the nominal frequency of the grid in the project.' },
@@ -57,6 +60,7 @@ defineBlock({
         ...cx.settingLine('STUDY_CASE', 'studyCase', 'The study case to activate first ("" = keep the active one).'),
         ...cx.settingLine('OUTPUT_DIR', 'outputDir', 'Where each run writes its folder of results and run.log ("" = the folder of this script).'),
         ...cx.settingLine('UNDO_CHANGES', 'undoChanges', 'True: put every value the workflow changed back when it ends.'),
+        ...cx.settingLine('TABLE_FORMAT', 'tableFmt', 'How the results tables are saved in the run folder when the run ends: "csv", "xlsx" (Excel, needs pandas and openpyxl) or "both".'),
         ...cx.settingLine('F_NOMINAL', 'fNominal', 'Nominal frequency in Hz for the frequency checks: 50, 60 or "auto" (read from the grid).', { value: f }),
         ...cx.settingLine('RUN_MODE', 'runMode', '"auto", "engine" (start PowerFactory in the background) or "inside" (run from inside PowerFactory).'),
         ...cx.settingLine('SHOW_PF', 'showPf', 'True: show the PowerFactory window while running (engine mode only).'),
@@ -66,6 +70,8 @@ defineBlock({
         ...cx.settingLine('PF_USER', 'pfUser', 'Log in to PowerFactory as this user ("" = your own).'),
       ],
       lines: [],
+      // Excel needs pandas and openpyxl: checked before connecting, when the script has tables.
+      tablePackages: s.tableFmt === 'csv' ? [] : ['pandas', 'openpyxl'],
     };
   },
 });

@@ -158,7 +158,6 @@ body:not(.light) .wc-travel .txt-input{color-scheme:dark;}
   .wc-now-zone{font-size:.85rem;}
   .wc-nav{flex-direction:column;gap:6px;}
   .wc-nav .btn-theme{padding:7px 10px;justify-content:center;}
-  .wc-nav-label{display:none;}
   .wc-zoom{top:auto;transform:none;bottom:var(--wc-panel-bottom,150px);right:8px;}
   .wc-travel{left:8px;width:calc(100% - 16px);}
   .wc-zbtn{width:34px;height:34px;}

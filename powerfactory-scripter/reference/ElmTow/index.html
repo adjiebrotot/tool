@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ElmTow attributes: PowerFactory Line Couplings</title>
+<meta name="description" content="All ElmTow attributes in PowerFactory (Line Couplings): 79 input parameters and 136 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTow/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElmTow attributes: PowerFactory Line Couplings parameters and result variables">
+<meta property="og:description" content="All ElmTow attributes in PowerFactory (Line Couplings): 79 input parameters and 136 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTow/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ElmTow attributes: PowerFactory Line Couplings parameters and result variables">
+<meta name="twitter:description" content="All ElmTow attributes in PowerFactory (Line Couplings): 79 input parameters and 136 result variables, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "ElmTow attributes (PowerFactory Line Couplings)",
+  "description": "All ElmTow attributes in PowerFactory (Line Couplings): 79 input parameters and 136 result variables, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTow/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "ElmTow (Line Couplings)",
+    "description": "Line couplings: the mutual coupling between line circuits that share towers, computed from a tower type."
+  },
+  "keywords": "ElmTow attributes, ElmTow parameters, ElmTow result variables, PowerFactory Line Couplings attributes, ElmTow GetAttribute",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "ElmTow",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTow/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">ElmTow</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>ElmTow attributes<span class="dx-h1-sub">PowerFactory Line Couplings</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Line Couplings (<code>ElmTow</code>): 79 input parameters and 136 result variables, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What ElmTow is</h2>
+  <p>Line couplings: the mutual coupling between line circuits that share towers, computed from a tower type.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>ElmTow</code>, element class</dd><dt>PowerFactory name</dt><dd>Line Couplings</dd><dt>Attributes</dt><dd>79 input parameters and 136 result variables, in 6 calculations</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write ElmTow in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-k">for</span> obj <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTow&quot;</span>):
+    <span class="py-f">print</span>(obj.loc_name, obj.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;loc_name&quot;</span>)) <span class="py-c"># Name</span>
+
+obj = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTow&quot;</span>)[<span class="py-n">0</span>]
+obj.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)                <span class="py-c"># take it out of service</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All ElmTow attributes"><li><a href="#params">Input parameters<span class="dx-n">79</span></a></li><li><a href="#load-flow">Load flow results<span class="dx-n">18</span></a></li><li><a href="#short-circuit">Short-circuit results<span class="dx-n">12</span></a></li><li><a href="#dynamic-rms">RMS simulation results<span class="dx-n">30</span></a></li><li><a href="#dynamic-emt">EMT simulation results<span class="dx-n">28</span></a></li><li><a href="#modal-analysis">Modal analysis results<span class="dx-n">30</span></a></li><li><a href="#opf">Optimal power flow results<span class="dx-n">18</span></a></li><li><a href="#basic">Basic data<span class="dx-n">1</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">ElmTow input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>outserv</code></td><td><span aria-label="no unit">·</span></td><td>Out of Service</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>earthReturn</code></td><td><span aria-label="no unit">·</span></td><td>Earth return formula</td></tr>
+<tr><td><code>iTransMode</code></td><td><span aria-label="no unit">·</span></td><td>Transposition</td></tr>
+<tr><td><code>i_dist</code></td><td><span aria-label="no unit">·</span></td><td>Line Model</td></tr>
+<tr><td><code>c_dist</code></td><td><span aria-label="no unit">·</span></td><td>Distributed Parameter</td></tr>
+<tr><td><code>c_lumped</code></td><td><span aria-label="no unit">·</span></td><td>Lumped Parameter (PI)</td></tr>
+<tr><td><code>i_const_rms</code></td><td><span aria-label="no unit">·</span></td><td>Travelling wave</td></tr>
+<tr><td><code>lossModel_rms</code></td><td><span aria-label="no unit">·</span></td><td>Loss model</td></tr>
+<tr><td><code>iopt_tem_rms</code></td><td><span aria-label="no unit">·</span></td><td>Temperature dependency</td></tr>
+<tr><td><code>i_model</code></td><td><span aria-label="no unit">·</span></td><td>Distributed parameter line model</td></tr>
+<tr><td><code>lossModel_emt</code></td><td><span aria-label="no unit">·</span></td><td>Loss model</td></tr>
+<tr><td><code>iterVFZ</code></td><td><span aria-label="no unit">·</span></td><td>Max. number of iterations</td></tr>
+<tr><td><code>iterVFA</code></td><td><span aria-label="no unit">·</span></td><td>Max. number of iterations</td></tr>
+<tr><td><code>polesVFZ</code></td><td><span aria-label="no unit">·</span></td><td>Max. number of poles</td></tr>
+<tr><td><code>polesVFA</code></td><td><span aria-label="no unit">·</span></td><td>Max. number of poles</td></tr>
+<tr><td><code>outputPoles</code></td><td><span aria-label="no unit">·</span></td><td>Output poles</td></tr>
+<tr><td><code>dcCorr</code></td><td><span aria-label="no unit">·</span></td><td>Apply DC correction</td></tr>
+<tr><td><code>tuneDelays</code></td><td><span aria-label="no unit">·</span></td><td>Fine-tune delays</td></tr>
+<tr><td><code>methodVFZ</code></td><td><span aria-label="no unit">·</span></td><td>Number of poles</td></tr>
+<tr><td><code>methodVFA</code></td><td><span aria-label="no unit">·</span></td><td>Number of poles</td></tr>
+<tr><td><code>fd_model</code></td><td><span aria-label="no unit">·</span></td><td>Line Model</td></tr>
+<tr><td><code>fd_fit</code></td><td><span aria-label="no unit">·</span></td><td>Fit</td></tr>
+<tr><td><code>iopt_tem</code></td><td><span aria-label="no unit">·</span></td><td>Temperature Dependency</td></tr>
+<tr><td><code>freqDepPiModel</code></td><td><span aria-label="no unit">·</span></td><td>Lumped parameter line model</td></tr>
+<tr><td><code>numStates</code></td><td><span aria-label="no unit">·</span></td><td>Max. model order</td></tr>
+<tr><td><code>modelPiSec</code></td><td><span aria-label="no unit">·</span></td><td>Circuit configuration</td></tr>
+<tr><td><code>fittingMethod</code></td><td><span aria-label="no unit">·</span></td><td>Fitting method</td></tr>
+<tr><td><code>numPiSec</code></td><td><span aria-label="no unit">·</span></td><td>Number of cascaded PI sections</td></tr>
+<tr><td><code>rearth</code></td><td><span aria-label="no unit">·</span></td><td>Earth resistivity</td></tr>
+<tr><td><code>gshunt</code></td><td>uS/km</td><td>Shunt conductance</td></tr>
+<tr><td><code>fmin</code></td><td>Hz</td><td>Min. Frequency of Parameter Fitting</td></tr>
+<tr><td><code>fmax</code></td><td>Hz</td><td>Max. Frequency of Parameter Fitting</td></tr>
+<tr><td><code>ftau</code></td><td>Hz</td><td>Frequency for Parameter Approximation</td></tr>
+<tr><td><code>tolBode</code></td><td>%</td><td>Tolerance for Bode Approximation</td></tr>
+<tr><td><code>maxErrVFY</code></td><td>S</td><td>RMS error</td></tr>
+<tr><td><code>maxErrVFZ</code></td><td>Ohm</td><td>RMS error</td></tr>
+<tr><td><code>maxErrVFA</code></td><td><span aria-label="no unit">·</span></td><td>RMS error</td></tr>
+<tr><td><code>stMarginZ</code></td><td><span aria-label="no unit">·</span></td><td>Stability margin</td></tr>
+<tr><td><code>stMarginA</code></td><td><span aria-label="no unit">·</span></td><td>Stability margin</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>towdist</code></td><td>m</td><td>Distance</td></tr>
+<tr><td><code>sag_e</code></td><td>m</td><td>Max.Sag</td></tr>
+<tr><td><code>dpolar</code></td><td><span aria-label="no unit">·</span></td><td>Polarity</td></tr>
+<tr><td><code>sag_c</code></td><td>m</td><td>Max.Sag</td></tr>
+<tr><td><code>dphasing</code></td><td><span aria-label="no unit">·</span></td><td>Phasing</td></tr>
+<tr><td><code>pzs</code></td><td>Ohm</td><td>Surge Impedance</td></tr>
+<tr><td><code>adc</code></td><td>p.u.</td><td>Wave Propagation, DC</td></tr>
+<tr><td><code>tmat</code></td><td><span aria-label="no unit">·</span></td><td>Transformation Matrix Tv</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>pRoute</code></td><td><span aria-label="no unit">·</span></td><td>Route<small>Object: ElmRoute</small></td></tr>
+<tr><td><code>pGeo</code></td><td><span aria-label="no unit">·</span></td><td>Type<small>Object: TypTow,TypGeo</small></td></tr>
+<tr><td><code>plines</code></td><td><span aria-label="no unit">·</span></td><td>Circuit<small>Object: ElmLne,ElmLneroute</small></td></tr>
+<tr><td><code>ngeo</code></td><td><span aria-label="no unit">·</span></td><td>Number of overhead line systems</td></tr>
+<tr><td><code>cCon_e</code></td><td><span aria-label="no unit">·</span></td><td>Type<small>Object: TypCon</small></td></tr>
+<tr><td><code>cCon_c</code></td><td><span aria-label="no unit">·</span></td><td>Type<small>Object: TypCon</small></td></tr>
+<tr><td><code>ctransp</code></td><td><span aria-label="no unit">·</span></td><td>Transposition</td></tr>
+<tr><td><code>desc_c</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>ci_model</code></td><td><span aria-label="no unit">·</span></td><td>Distributed parameter line model</td></tr>
+<tr><td><code>cdisp_mode</code></td><td><span aria-label="no unit">·</span></td><td>Display Data for Mode</td></tr>
+<tr><td><code>cdisp_col</code></td><td><span aria-label="no unit">·</span></td><td>Display data for phase matrix index</td></tr>
+<tr><td><code>cdisp_row</code></td><td><span aria-label="no unit">·</span></td><td>Display data for phase matrix row</td></tr>
+<tr><td><code>cdisp_eig</code></td><td><span aria-label="no unit">·</span></td><td>Display data for eigenvalue</td></tr>
+<tr><td><code>c_pz</code></td><td><span aria-label="no unit">·</span></td><td>Z, N° Poles/Zeros</td></tr>
+<tr><td><code>c_pa</code></td><td><span aria-label="no unit">·</span></td><td>A, N° Poles</td></tr>
+<tr><td><code>c_za</code></td><td><span aria-label="no unit">·</span></td><td>A, N° Zeros</td></tr>
+<tr><td><code>c_pzs</code></td><td>Ohm</td><td>Surge Impedance, HF</td></tr>
+<tr><td><code>c_adc</code></td><td>p.u.</td><td>Wave Propagation, DC</td></tr>
+<tr><td><code>c_pTa</code></td><td>us</td><td>Travel Time</td></tr>
+<tr><td><code>c_paULM</code></td><td><span aria-label="no unit">·</span></td><td>A, Number of poles</td></tr>
+<tr><td><code>c_aAtDC</code></td><td>p.u.</td><td>Wave propagation, DC</td></tr>
+<tr><td><code>c_pTad</code></td><td>us</td><td>Travel Time</td></tr>
+<tr><td><code>c_pTadULM</code></td><td>us</td><td>Travel time</td></tr>
+<tr><td><code>c_freqDepPiModel</code></td><td><span aria-label="no unit">·</span></td><td>Lumped parameter line model</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="load-flow">
+  <h2 id="load-flow">ElmTow load flow results</h2>
+  <p class="dx-note">Read after <code>ComLdf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:zline</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:rlinedc</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:glinedc</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:yZline</code></td><td>S</td><td>Inversion of impedance matrix</td></tr>
+<tr><td><code>c:frnom</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:frnomDC</code></td><td>Hz</td><td>Nominal frequency, DC</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:rline</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_1</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_1</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_2</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_2</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:zline_1</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_1</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:zline_2</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_2</code></td><td>S</td><td>Admittance matrix</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="short-circuit">
+  <h2 id="short-circuit">ElmTow short-circuit results</h2>
+  <p class="dx-note">Read after <code>ComShc</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:zline</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:rlinedc</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:glinedc</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:yZline</code></td><td>S</td><td>Inversion of impedance matrix</td></tr>
+<tr><td><code>c:frnom</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:frnomDC</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:zline_1</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_1</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:zline_2</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_2</code></td><td>S</td><td>Admittance matrix</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-rms">
+  <h2 id="dynamic-rms">ElmTow rms simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (RMS) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:zline</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:rlinedc</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:glinedc</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:yZline</code></td><td>S</td><td>Inversion of impedance matrix</td></tr>
+<tr><td><code>c:frnom</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:frnomDC</code></td><td>Hz</td><td>Nominal frequency, DC</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:llinedc</code></td><td>H</td><td>Inductance</td></tr>
+<tr><td><code>c:clinedc</code></td><td>F</td><td>Line Capacitance</td></tr>
+<tr><td><code>c:rline</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:lline</code></td><td>H</td><td>Inductance matrix</td></tr>
+<tr><td><code>c:gline</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:cline</code></td><td>F</td><td>Capacitance matrix</td></tr>
+<tr><td><code>c:Rs1</code></td><td>Ohm</td><td>Resistance 1</td></tr>
+<tr><td><code>c:Ls1</code></td><td>H</td><td>Inductance 1</td></tr>
+<tr><td><code>c:Rs2</code></td><td>Ohm</td><td>Resistance 2</td></tr>
+<tr><td><code>c:Ls2</code></td><td>H</td><td>Inductance 2</td></tr>
+<tr><td><code>c:Rsm</code></td><td>Ohm</td><td>Resistance 1-2</td></tr>
+<tr><td><code>c:Lsm</code></td><td>H</td><td>Inductance 1-2</td></tr>
+<tr><td><code>c:glne</code></td><td>S</td><td>Shunt conductance</td></tr>
+<tr><td><code>c:clne</code></td><td>F</td><td>Shunt capacitance</td></tr>
+<tr><td><code>c:rline_1</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_1</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_2</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_2</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:zline_1</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_1</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:zline_2</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_2</code></td><td>S</td><td>Admittance matrix</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="dynamic-emt">
+  <h2 id="dynamic-emt">ElmTow emt simulation results</h2>
+  <p class="dx-note">Read after <code>ComInc</code> (EMT) with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:yline</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:frnom</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:frnomDC</code></td><td>Hz</td><td>Nominal frequency, DC</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:rline</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:lline</code></td><td>H</td><td>Inductance matrix</td></tr>
+<tr><td><code>c:gline</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:cline</code></td><td>F</td><td>Capacitance matrix</td></tr>
+<tr><td><code>c:U1m</code></td><td>kV</td><td>Vector of Modal Voltages, bus1</td></tr>
+<tr><td><code>c:U2m</code></td><td>kV</td><td>Vector of Modal Voltages, bus2</td></tr>
+<tr><td><code>c:I1m</code></td><td>kA</td><td>Vector of Modal Currents, bus1</td></tr>
+<tr><td><code>c:I2m</code></td><td>kA</td><td>Vector of Modal Currents, bus2</td></tr>
+<tr><td><code>c:Rs1</code></td><td>Ohm</td><td>Resistance 1</td></tr>
+<tr><td><code>c:Ls1</code></td><td>H</td><td>Inductance 1</td></tr>
+<tr><td><code>c:Rs2</code></td><td>Ohm</td><td>Resistance 2</td></tr>
+<tr><td><code>c:Ls2</code></td><td>H</td><td>Inductance 2</td></tr>
+<tr><td><code>c:Rsm</code></td><td>Ohm</td><td>Resistance 1-2</td></tr>
+<tr><td><code>c:Lsm</code></td><td>H</td><td>Inductance 1-2</td></tr>
+<tr><td><code>c:glne</code></td><td>S</td><td>Shunt conductance</td></tr>
+<tr><td><code>c:clne</code></td><td>F</td><td>Shunt capacitance</td></tr>
+<tr><td><code>c:rline_1</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_1</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_2</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_2</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:lline_1</code></td><td>H</td><td>Inductance matrix</td></tr>
+<tr><td><code>c:lline_2</code></td><td>H</td><td>Inductance matrix</td></tr>
+<tr><td><code>c:cline_1</code></td><td>F</td><td>Capacitance matrix</td></tr>
+<tr><td><code>c:cline_2</code></td><td>F</td><td>Capacitance matrix</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="modal-analysis">
+  <h2 id="modal-analysis">ElmTow modal analysis results</h2>
+  <p class="dx-note">Read after <code>ComMod</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:zline</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:rlinedc</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:glinedc</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:yZline</code></td><td>S</td><td>Inversion of impedance matrix</td></tr>
+<tr><td><code>c:frnom</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:frnomDC</code></td><td>Hz</td><td>Nominal frequency, DC</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:llinedc</code></td><td>H</td><td>Inductance</td></tr>
+<tr><td><code>c:clinedc</code></td><td>F</td><td>Line Capacitance</td></tr>
+<tr><td><code>c:rline</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:lline</code></td><td>H</td><td>Inductance matrix</td></tr>
+<tr><td><code>c:gline</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:cline</code></td><td>F</td><td>Capacitance matrix</td></tr>
+<tr><td><code>c:Rs1</code></td><td>Ohm</td><td>Resistance 1</td></tr>
+<tr><td><code>c:Ls1</code></td><td>H</td><td>Inductance 1</td></tr>
+<tr><td><code>c:Rs2</code></td><td>Ohm</td><td>Resistance 2</td></tr>
+<tr><td><code>c:Ls2</code></td><td>H</td><td>Inductance 2</td></tr>
+<tr><td><code>c:Rsm</code></td><td>Ohm</td><td>Resistance 1-2</td></tr>
+<tr><td><code>c:Lsm</code></td><td>H</td><td>Inductance 1-2</td></tr>
+<tr><td><code>c:glne</code></td><td>S</td><td>Shunt conductance</td></tr>
+<tr><td><code>c:clne</code></td><td>F</td><td>Shunt capacitance</td></tr>
+<tr><td><code>c:rline_1</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_1</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_2</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_2</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:zline_1</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_1</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:zline_2</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_2</code></td><td>S</td><td>Admittance matrix</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="opf">
+  <h2 id="opf">ElmTow optimal power flow results</h2>
+  <p class="dx-note">Read after <code>ComOpf</code> with <code>GetAttribute</code>. <code>c:</code> calculation parameter.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>c:zline</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:rlinedc</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:glinedc</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:yZline</code></td><td>S</td><td>Inversion of impedance matrix</td></tr>
+<tr><td><code>c:frnom</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>c:frnomDC</code></td><td>Hz</td><td>Nominal frequency, DC</td></tr>
+<tr><td><code>c:hpi</code></td><td>rad/s</td><td>Nominal angular frequency</td></tr>
+<tr><td><code>c:rline</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_1</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_1</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:rline_2</code></td><td>Ohm</td><td>Resistance matrix</td></tr>
+<tr><td><code>c:gline_2</code></td><td>S</td><td>Conductance matrix</td></tr>
+<tr><td><code>c:zline_1</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_1</code></td><td>S</td><td>Admittance matrix</td></tr>
+<tr><td><code>c:zline_2</code></td><td>Ohm</td><td>Impedance matrix</td></tr>
+<tr><td><code>c:yline_2</code></td><td>S</td><td>Admittance matrix</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec dx-group" aria-labelledby="basic">
+  <h2 id="basic">ElmTow basic data</h2>
+  <p class="dx-note"><code>b:</code> values are worked out from the input data. Read them; they are not set.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>b:loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/load-flow/">Run a load flow and export the results with Python</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../ElmSind/"><code>ElmSind</code> Series Reactor</a> · <a href="../ElmTr2/"><code>ElmTr2</code> 2-Winding Transformer</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

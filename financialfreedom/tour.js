@@ -7,7 +7,8 @@
    are offered it again. v5 trims every step to a lead line and a short list. */
 window.__TOUR = {
   seenKey: 'ff-tour-v5-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

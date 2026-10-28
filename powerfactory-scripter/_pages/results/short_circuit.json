@@ -1,0 +1,105 @@
+{
+ "script": "short_circuit",
+ "project": "Nine-bus System",
+ "seconds": 0.1,
+ "status": "ok",
+ "stdout": [
+  "Bus 1    16.5 kV  Ikss  57.01 kA  ip 147.98 kA",
+  "Bus 3    13.8 kV  Ikss  48.36 kA  ip 125.58 kA",
+  "Bus 2    18.0 kV  Ikss  47.75 kA  ip 124.86 kA",
+  "Bus 7   230.0 kV  Ikss   3.08 kA  ip   8.02 kA",
+  "Bus 4   230.0 kV  Ikss   3.05 kA  ip   7.88 kA",
+  "Bus 9   230.0 kV  Ikss   2.77 kA  ip   7.10 kA",
+  "Bus 8   230.0 kV  Ikss   2.46 kA  ip   6.26 kA",
+  "Bus 5   230.0 kV  Ikss   2.26 kA  ip   5.61 kA",
+  "Bus 6   230.0 kV  Ikss   2.15 kA  ip   5.18 kA"
+ ],
+ "data": {
+  "PROJECT": "Nine-bus System (Builder test)",
+  "STUDY_CASE": "01- Load Flow",
+  "saved": {
+   "iopt_mde": 0,
+   "iopt_shc": "3psc",
+   "iopt_cur": 0,
+   "iopt_allbus": 2
+  },
+  "rows": [
+   {
+    "Busbar": "Bus 1",
+    "Nominal (kV)": 16.5,
+    "Ikss (kA)": 57.011870240363415,
+    "ip (kA)": 147.98269214951011,
+    "Skss (MVA)": 1629.3330221987526
+   },
+   {
+    "Busbar": "Bus 2",
+    "Nominal (kV)": 18.0,
+    "Ikss (kA)": 47.74860186938497,
+    "ip (kA)": 124.85672787349529,
+    "Skss (MVA)": 1488.6540797067546
+   },
+   {
+    "Busbar": "Bus 3",
+    "Nominal (kV)": 13.8,
+    "Ikss (kA)": 48.36444620719879,
+    "ip (kA)": 125.57961560319909,
+    "Skss (MVA)": 1156.0215739068406
+   },
+   {
+    "Busbar": "Bus 4",
+    "Nominal (kV)": 230.0,
+    "Ikss (kA)": 3.0528410158931414,
+    "ip (kA)": 7.8760834466606315,
+    "Skss (MVA)": 1216.1654218001347
+   },
+   {
+    "Busbar": "Bus 5",
+    "Nominal (kV)": 230.0,
+    "Ikss (kA)": 2.255998147022099,
+    "ip (kA)": 5.609205362330602,
+    "Skss (MVA)": 898.7257848574089
+   },
+   {
+    "Busbar": "Bus 6",
+    "Nominal (kV)": 230.0,
+    "Ikss (kA)": 2.1462186940628514,
+    "ip (kA)": 5.180886170324508,
+    "Skss (MVA)": 854.9927591223261
+   },
+   {
+    "Busbar": "Bus 7",
+    "Nominal (kV)": 230.0,
+    "Ikss (kA)": 3.0811095810652342,
+    "ip (kA)": 8.022378145285735,
+    "Skss (MVA)": 1227.4268177612162
+   },
+   {
+    "Busbar": "Bus 8",
+    "Nominal (kV)": 230.0,
+    "Ikss (kA)": 2.4554380396795317,
+    "ip (kA)": 6.256695358997575,
+    "Skss (MVA)": 978.176991099323
+   },
+   {
+    "Busbar": "Bus 9",
+    "Nominal (kV)": 230.0,
+    "Ikss (kA)": 2.771301174586134,
+    "ip (kA)": 7.0983060821005335,
+    "Skss (MVA)": 1104.007920615453
+   }
+  ],
+  "a": "iopt_allbus",
+  "v": 2,
+  "r": {
+   "Busbar": "Bus 6",
+   "Nominal (kV)": 230.0,
+   "Ikss (kA)": 2.1462186940628514,
+   "ip (kA)": 5.180886170324508,
+   "Skss (MVA)": 854.9927591223261
+  }
+ },
+ "audit": "OK",
+ "files": [
+  "short_circuit_results.csv"
+ ]
+}

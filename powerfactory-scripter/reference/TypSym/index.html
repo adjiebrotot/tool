@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TypSym attributes: PowerFactory Synchronous Machine Type</title>
+<meta name="description" content="All TypSym attributes in PowerFactory (Synchronous Machine Type): 148 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSym/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypSym attributes: PowerFactory Synchronous Machine Type parameters">
+<meta property="og:description" content="All TypSym attributes in PowerFactory (Synchronous Machine Type): 148 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSym/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TypSym attributes: PowerFactory Synchronous Machine Type parameters">
+<meta name="twitter:description" content="All TypSym attributes in PowerFactory (Synchronous Machine Type): 148 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "TypSym attributes (PowerFactory Synchronous Machine Type)",
+  "description": "All TypSym attributes in PowerFactory (Synchronous Machine Type): 148 input parameters, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSym/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "TypSym (Synchronous Machine Type)",
+    "description": "A synchronous machine type: rated power and voltage, power factor, the synchronous, transient and subtransient reactances and time constants, and the inertia H."
+  },
+  "keywords": "TypSym attributes, TypSym parameters, TypSym result variables, PowerFactory Synchronous Machine Type attributes, TypSym GetAttribute, sgn TypSym, ugn TypSym, cosn TypSym, xd TypSym",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "TypSym",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSym/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">TypSym</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>TypSym attributes<span class="dx-h1-sub">PowerFactory Synchronous Machine Type</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory Synchronous Machine Type (<code>TypSym</code>): 148 input parameters, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What TypSym is</h2>
+  <p>A synchronous machine type: rated power and voltage, power factor, the synchronous, transient and subtransient reactances and time constants, and the inertia H.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>TypSym</code>, type class</dd><dt>PowerFactory name</dt><dd>Synchronous Machine Type</dd><dt>Used by</dt><dd><a href="../ElmSym/"><code>ElmSym</code></a></dd><dt>Attributes</dt><dd>148 input parameters</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used TypSym attributes</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th><th>Where</th></tr></thead><tbody>
+<tr><td><code>sgn</code></td><td>MVA</td><td>Rated apparent power</td><td>input data</td></tr>
+<tr><td><code>ugn</code></td><td>kV</td><td>Rated voltage</td><td>input data</td></tr>
+<tr><td><code>cosn</code></td><td>·</td><td>Rated power factor</td><td>input data</td></tr>
+<tr><td><code>xd</code></td><td>p.u.</td><td>xd</td><td>input data</td></tr>
+<tr><td><code>xq</code></td><td>p.u.</td><td>xq</td><td>input data</td></tr>
+<tr><td><code>xds</code></td><td>p.u.</td><td>xd'</td><td>input data</td></tr>
+<tr><td><code>xdss</code></td><td>p.u.</td><td>xd''</td><td>input data</td></tr>
+<tr><td><code>tds</code></td><td>s</td><td>Td'</td><td>input data</td></tr>
+<tr><td><code>tdss</code></td><td>s</td><td>Td''</td><td>input data</td></tr>
+<tr><td><code>h</code></td><td>s</td><td>Inertia constant H (rated to Sgn)<small>inertia constant</small></td><td>input data</td></tr>
+<tr><td><code>xl</code></td><td>p.u.</td><td>xl</td><td>input data</td></tr>
+<tr><td><code>rstr</code></td><td>p.u.</td><td>rstr</td><td>input data</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write TypSym in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-c"># Types live in the equipment library of the project.</span>
+types = app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;equip&quot;</span>).<span class="py-f">GetContents</span>(<span class="py-s">&quot;*.TypSym&quot;</span>, <span class="py-n">1</span>)
+<span class="py-k">for</span> typ <span class="py-k">in</span> types:
+    <span class="py-f">print</span>(typ.loc_name, typ.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;sgn&quot;</span>))  <span class="py-c"># Rated apparent power, MVA</span>
+
+<span class="py-c"># An element points to its type with typ_id; t: reads a type value through the element.</span>
+<span class="py-k">for</span> gen <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmSym&quot;</span>):
+    <span class="py-f">print</span>(gen.loc_name, gen.typ_id.loc_name, gen.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;t:sgn&quot;</span>))
+
+types[<span class="py-n">0</span>].<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;h&quot;</span>, <span class="py-n">4.5</span>)               <span class="py-c"># inertia constant 4.5 s: every element of this type changes</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>A type is shared: a change to it changes every element that uses it. Read a type value through an element with the <code>t:</code> prefix.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All TypSym attributes"><li><a href="#params">Input parameters<span class="dx-n">148</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">TypSym input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>model_inp</code></td><td><span aria-label="no unit">·</span></td><td>Model</td></tr>
+<tr><td><code>manuf</code></td><td><span aria-label="no unit">·</span></td><td>Manufacturer</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>iner_inp</code></td><td><span aria-label="no unit">·</span></td><td>Input mode</td></tr>
+<tr><td><code>i_condenser</code></td><td><span aria-label="no unit">·</span></td><td>Used as condenser</td></tr>
+<tr><td><code>iTdcManual</code></td><td><span aria-label="no unit">·</span></td><td>Enter Tdc manually</td></tr>
+<tr><td><code>iamort</code></td><td><span aria-label="no unit">·</span></td><td>with amortisseur windings</td></tr>
+<tr><td><code>iusesat</code></td><td><span aria-label="no unit">·</span></td><td>Use saturated value</td></tr>
+<tr><td><code>satur</code></td><td><span aria-label="no unit">·</span></td><td>Machine type IEC909/IEC60909</td></tr>
+<tr><td><code>iturbo</code></td><td><span aria-label="no unit">·</span></td><td>Rotor type</td></tr>
+<tr><td><code>iuseXdk</code></td><td><span aria-label="no unit">·</span></td><td>Ik&quot; instead of reactances</td></tr>
+<tr><td><code>nphase</code></td><td><span aria-label="no unit">·</span></td><td>No. of phases</td></tr>
+<tr><td><code>nslty</code></td><td><span aria-label="no unit">·</span></td><td>Connection</td></tr>
+<tr><td><code>i_trans</code></td><td><span aria-label="no unit">·</span></td><td>Use frequency transfer functions</td></tr>
+<tr><td><code>i_xl</code></td><td><span aria-label="no unit">·</span></td><td>xl is current dependent</td></tr>
+<tr><td><code>iopt_data</code></td><td><span aria-label="no unit">·</span></td><td>Input parameters</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>i_speedD</code></td><td><span aria-label="no unit">·</span></td><td>Speed deviation based on</td></tr>
+<tr><td><code>polepairs</code></td><td><span aria-label="no unit">·</span></td><td>No. of pole pairs</td></tr>
+<tr><td><code>isat</code></td><td><span aria-label="no unit">·</span></td><td>Main flux saturation</td></tr>
+<tr><td><code>isatSalient</code></td><td><span aria-label="no unit">·</span></td><td>Saturation</td></tr>
+<tr><td><code>i_extModel</code></td><td><span aria-label="no unit">·</span></td><td>Model</td></tr>
+<tr><td><code>i_exactConv</code></td><td><span aria-label="no unit">·</span></td><td>Exact conversion of time constants</td></tr>
+<tr><td><code>i_xme2</code></td><td><span aria-label="no unit">·</span></td><td>Consider negative sequence torque</td></tr>
+<tr><td><code>i_speedVar</code></td><td><span aria-label="no unit">·</span></td><td>Effect of speed variation</td></tr>
+<tr><td><code>sgn</code></td><td>MVA</td><td>Rated apparent power</td></tr>
+<tr><td><code>ugn</code></td><td>kV</td><td>Rated voltage</td></tr>
+<tr><td><code>cosn</code></td><td><span aria-label="no unit">·</span></td><td>Rated power factor</td></tr>
+<tr><td><code>tag</code></td><td>s</td><td>Acceleration time const. Tag (rated to Pgn)</td></tr>
+<tr><td><code>tds</code></td><td>s</td><td>Td'</td></tr>
+<tr><td><code>tqs</code></td><td>s</td><td>Tq'</td></tr>
+<tr><td><code>tdss</code></td><td>s</td><td>Td''</td></tr>
+<tr><td><code>Tdc</code></td><td>s</td><td>Tdc</td></tr>
+<tr><td><code>tqss</code></td><td>s</td><td>Tq''</td></tr>
+<tr><td><code>Ikd</code></td><td>p.u.</td><td>Ikd</td></tr>
+<tr><td><code>xd</code></td><td>p.u.</td><td>xd</td></tr>
+<tr><td><code>xds</code></td><td>p.u.</td><td>xd'</td></tr>
+<tr><td><code>xdss</code></td><td>p.u.</td><td>xd''</td></tr>
+<tr><td><code>xq</code></td><td>p.u.</td><td>xq</td></tr>
+<tr><td><code>xqs</code></td><td>p.u.</td><td>xq'</td></tr>
+<tr><td><code>xqss</code></td><td>p.u.</td><td>xq''</td></tr>
+<tr><td><code>xdsat</code></td><td>p.u.</td><td>Reciprocal of short-circuit ratio (xdsat)</td></tr>
+<tr><td><code>xdsss</code></td><td>p.u.</td><td>saturated value xd''sat</td></tr>
+<tr><td><code>xtor</code></td><td><span aria-label="no unit">·</span></td><td>Ratio X/R</td></tr>
+<tr><td><code>rstr</code></td><td>p.u.</td><td>rstr</td></tr>
+<tr><td><code>x2sy</code></td><td>p.u.</td><td>Reactance x2</td></tr>
+<tr><td><code>r2sy</code></td><td>p.u.</td><td>Resistance r2</td></tr>
+<tr><td><code>x0sy</code></td><td>p.u.</td><td>Reactance x0</td></tr>
+<tr><td><code>r0sy</code></td><td>p.u.</td><td>Resistance r0</td></tr>
+<tr><td><code>q_min</code></td><td>p.u.</td><td>Minimum value</td></tr>
+<tr><td><code>q_max</code></td><td>p.u.</td><td>Maximum value</td></tr>
+<tr><td><code>Q_min</code></td><td>Mvar</td><td>Minimum value</td></tr>
+<tr><td><code>Q_max</code></td><td>Mvar</td><td>Maximum value</td></tr>
+<tr><td><code>curk</code></td><td>kA</td><td>3-phase Ik&quot;</td></tr>
+<tr><td><code>curk1p</code></td><td>kA</td><td>1-phase Ik&quot;</td></tr>
+<tr><td><code>curk2p</code></td><td>kA</td><td>2-phase Ik&quot;</td></tr>
+<tr><td><code>tds0</code></td><td>s</td><td>Td0'</td></tr>
+<tr><td><code>tqs0</code></td><td>s</td><td>Tq0'</td></tr>
+<tr><td><code>tdss0</code></td><td>s</td><td>Td0''</td></tr>
+<tr><td><code>tqss0</code></td><td>s</td><td>Tq0''</td></tr>
+<tr><td><code>depSmoothFac</code></td><td>%</td><td>Dependency curve smoothing factor</td></tr>
+<tr><td><code>slipmin</code></td><td>%</td><td>Minimum slip</td></tr>
+<tr><td><code>frequ</code></td><td>Hz</td><td>Nominal frequency</td></tr>
+<tr><td><code>sg10</code></td><td>p.u.</td><td>SG10</td></tr>
+<tr><td><code>sg12</code></td><td>p.u.</td><td>SG12</td></tr>
+<tr><td><code>smoothFac</code></td><td>%</td><td>Smoothing factor</td></tr>
+<tr><td><code>sg10q</code></td><td>p.u.</td><td>SG10 q-axis</td></tr>
+<tr><td><code>sg12q</code></td><td>p.u.</td><td>SG12 q-axis</td></tr>
+<tr><td><code>iinrush</code></td><td>p.u.</td><td>Ratio Ip/In</td></tr>
+<tr><td><code>Tinrush</code></td><td>s</td><td>Max. time</td></tr>
+<tr><td><code>Tcold</code></td><td>s</td><td>Cold</td></tr>
+<tr><td><code>Thot</code></td><td>s</td><td>Hot</td></tr>
+<tr><td><code>xstr</code></td><td>p.u.</td><td>xstr</td></tr>
+<tr><td><code>xl</code></td><td>p.u.</td><td>xl</td></tr>
+<tr><td><code>xrl</code></td><td>p.u.</td><td>xrld</td></tr>
+<tr><td><code>xrlq</code></td><td>p.u.</td><td>xrlq</td></tr>
+<tr><td><code>kw</code></td><td>p.u.</td><td>kw</td></tr>
+<tr><td><code>xad</code></td><td>p.u.</td><td>xad</td></tr>
+<tr><td><code>xaq</code></td><td>p.u.</td><td>xaq</td></tr>
+<tr><td><code>xrl2d</code></td><td>p.u.</td><td>xrl2d</td></tr>
+<tr><td><code>x1d</code></td><td>p.u.</td><td>x1d</td></tr>
+<tr><td><code>r1d</code></td><td>p.u.</td><td>r1d</td></tr>
+<tr><td><code>x2d</code></td><td>p.u.</td><td>x2d</td></tr>
+<tr><td><code>r2d</code></td><td>p.u.</td><td>r2d</td></tr>
+<tr><td><code>xfd</code></td><td>p.u.</td><td>xfd</td></tr>
+<tr><td><code>rfd</code></td><td>p.u.</td><td>rfd</td></tr>
+<tr><td><code>x1q</code></td><td>p.u.</td><td>x1q</td></tr>
+<tr><td><code>r1q</code></td><td>p.u.</td><td>r1q</td></tr>
+<tr><td><code>x2q</code></td><td>p.u.</td><td>x2q</td></tr>
+<tr><td><code>r2q</code></td><td>p.u.</td><td>r2q</td></tr>
+<tr><td><code>x3q</code></td><td>p.u.</td><td>x3q</td></tr>
+<tr><td><code>r3q</code></td><td>p.u.</td><td>r3q</td></tr>
+<tr><td><code>t1d</code></td><td>s</td><td>t1d</td></tr>
+<tr><td><code>t2d</code></td><td>s</td><td>t2d</td></tr>
+<tr><td><code>t3d</code></td><td>s</td><td>t3d</td></tr>
+<tr><td><code>t4d</code></td><td>s</td><td>t4d</td></tr>
+<tr><td><code>t5d</code></td><td>s</td><td>t5d</td></tr>
+<tr><td><code>t6d</code></td><td>s</td><td>t6d</td></tr>
+<tr><td><code>t7d</code></td><td>s</td><td>t7d</td></tr>
+<tr><td><code>t8d</code></td><td>s</td><td>t8d</td></tr>
+<tr><td><code>t1q</code></td><td>s</td><td>t1q</td></tr>
+<tr><td><code>t2q</code></td><td>s</td><td>t2q</td></tr>
+<tr><td><code>t3q</code></td><td>s</td><td>t3q</td></tr>
+<tr><td><code>t4q</code></td><td>s</td><td>t4q</td></tr>
+<tr><td><code>t5q</code></td><td>s</td><td>t5q</td></tr>
+<tr><td><code>t6q</code></td><td>s</td><td>t6q</td></tr>
+<tr><td><code>x1dc</code></td><td>p.u.</td><td>x1dc</td></tr>
+<tr><td><code>x1de</code></td><td>p.u.</td><td>x1de</td></tr>
+<tr><td><code>r1de</code></td><td>p.u.</td><td>r1de</td></tr>
+<tr><td><code>xfde</code></td><td>p.u.</td><td>xfde</td></tr>
+<tr><td><code>rfde</code></td><td>p.u.</td><td>rfde</td></tr>
+<tr><td><code>x1qc</code></td><td>p.u.</td><td>x1qc</td></tr>
+<tr><td><code>x1qe</code></td><td>p.u.</td><td>x1qe</td></tr>
+<tr><td><code>r1qe</code></td><td>p.u.</td><td>r1qe</td></tr>
+<tr><td><code>psim</code></td><td>p.u.</td><td>Rotor flux</td></tr>
+<tr><td><code>dpu</code></td><td><span aria-label="no unit">·</span></td><td>Turbine shaft friction torque coefficient</td></tr>
+<tr><td><code>dpe</code></td><td><span aria-label="no unit">·</span></td><td>Damping torque coefficient based on power</td></tr>
+<tr><td><code>dkd</code></td><td><span aria-label="no unit">·</span></td><td>Damping torque coefficient</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>curTab</code></td><td>p.u.</td><td>Current</td></tr>
+<tr><td><code>xlTab</code></td><td>p.u.</td><td>xl</td></tr>
+<tr><td><code>satv</code></td><td>p.u.</td><td>Term. voltage</td></tr>
+<tr><td><code>satse</code></td><td>p.u.</td><td>SG(u)</td></tr>
+<tr><td><code>satvq</code></td><td>p.u.</td><td>Term. voltage</td></tr>
+<tr><td><code>satseq</code></td><td>p.u.</td><td>SG(u)</td></tr>
+<tr><td><code>typemetadata_version</code></td><td><span aria-label="no unit">·</span></td><td>Version</td></tr>
+<tr><td><code>typemetadata_key</code></td><td><span aria-label="no unit">·</span></td><td>Type Key</td></tr>
+<tr><td><code>typemetadata_changeLog</code></td><td><span aria-label="no unit">·</span></td><td>Change Log</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>fcharrstr</code></td><td>ChaPol,ChaVec,ChaMat</td><td>rs(f)</td></tr>
+<tr><td><code>fcharlss</code></td><td>ChaPol,ChaVec,ChaMat</td><td>l''(f)</td></tr>
+<tr><td><code>fcharr2</code></td><td>ChaPol,ChaVec,ChaMat</td><td>r2(f)</td></tr>
+<tr><td><code>fcharl2</code></td><td>ChaPol,ChaVec,ChaMat</td><td>l2(f)</td></tr>
+<tr><td><code>fcharr0</code></td><td>ChaPol,ChaVec,ChaMat</td><td>r0(f)</td></tr>
+<tr><td><code>fcharl0</code></td><td>ChaPol,ChaVec,ChaMat</td><td>l0(f)</td></tr>
+<tr><td><code>doc_id</code></td><td><span aria-label="no unit">·</span></td><td>Additional Data</td></tr>
+<tr><td><code>cTdc</code></td><td>s</td><td>Tdc</td></tr>
+<tr><td><code>tags</code></td><td>s</td><td>Acceleration time const. Tag (rated to Sgn)</td></tr>
+<tr><td><code>h</code></td><td>s</td><td>Inertia constant H (rated to Sgn)</td></tr>
+<tr><td><code>lss</code></td><td>p.u.</td><td>l''</td></tr>
+<tr><td><code>hpn</code></td><td>s</td><td>Inertia constant H (rated to Pgn)</td></tr>
+<tr><td><code>J</code></td><td>kgm^2</td><td>Moment of inertia J</td></tr>
+<tr><td><code>ifd</code></td><td>%</td><td>ie</td></tr>
+<tr><td><code>ifdq</code></td><td>%</td><td>ie</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../TypSwitch/"><code>TypSwitch</code> Switch Type</a> · <a href="../TypTow/"><code>TypTow</code> Tower Type</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

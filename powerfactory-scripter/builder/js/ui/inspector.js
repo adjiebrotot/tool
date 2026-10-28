@@ -1,7 +1,8 @@
 // The Settings tab (DESIGN 8, U16): what the selected block is, its inputs (each wired input
 // names its source, with "Type a value instead"), its settings, More options folded, and
 // Duplicate / Delete. With nothing selected it shows the workflow's own settings (the workflow
-// name and Start's settings) and a "How it works" card.
+// name, Start's settings and the graph style) and a "How it works" card. A graph block shows
+// the graph style too: both open the Graph style modal (graphstyle.js).
 //
 // Plain DOM. Edits go straight into the workflow (no Apply); one undo step per field, closed on
 // blur. The panel is redrawn only when what it shows changes shape (another block, a wire, a
@@ -9,7 +10,7 @@
 // the focus and the caret back where they were.
 
 import { $, el, esc, tipText, portTip, icon, iconButton } from './dom.js';
-import { getBlock, settingsOf, visibleSettings, displayName, TYPES, optionPairs } from '../core/registry.js';
+import { getBlock, settingsOf, visibleSettings, displayName, TYPES, optionPairs, familyOf } from '../core/registry.js';
 import { suggestions } from '../core/workflow.js';
 import * as ops from './ops.js';
 import { buildField } from './fields.js';
@@ -17,6 +18,8 @@ import { glyph, KIND_WORDS } from './glyphs.js';
 import { blockIcon } from './icons.js';
 import { readBytes, describe, decodeSig, fileBytes, toB64, looksExcel } from './attach.js';
 import { prime as primeAttrData, onLoad as onAttrData } from '../core/attrdata.js';
+import { styleOf, styleName } from '../core/graphstyle.js';
+import { previewSvg } from './graphpreview.js';
 
 const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const portLabel = (p) => (p ? (p.label || p.id) + (p.unit ? ' (' + p.unit + ')' : '') : '');
@@ -34,6 +37,7 @@ export function mountInspector(app) {
   const host = $('pfbInspector');
   const store = app.store;
   const moreOpen = new Set();
+  const kindAsk = new Map();      // node id -> the kind a switch would go to, waiting for a yes
   let selfEdit = false, lastShape = null, lastFull = null;
 
   const wf = () => store.get().wf;
@@ -83,12 +87,12 @@ export function mountInspector(app) {
       return st.key;
     });
     const sugg = def.settings.filter(st => st.suggest && st.suggest !== 'columns').map(st => suggestions(s.wf, st.suggest).join('|'));
-    return [x.node ? 'node' : 'wf', node.id, node.type, (node.pin || []).join(','), wired.join(';'), vis.join(','), [...moreOpen].join(','), sugg.join(';'), ports.missing].join('#');
+    return [x.node ? 'node' : 'wf', node.id, node.type, (node.pin || []).join(','), wired.join(';'), vis.join(','), [...moreOpen].join(','), sugg.join(';'), ports.missing, kindAsk.get(node.id) || ''].join('#');
   }
   function fullOf(s) {
     const x = selected(s);
     const node = x.node || (!x.many && !x.edge ? s.wf.nodes.find(n => n.type === 'start') : null);
-    return shapeOf(s) + '#' + (node ? JSON.stringify([node.label, node.s]) : '') + '#' + (x.node ? '' : s.wf.name);
+    return shapeOf(s) + '#' + (node ? JSON.stringify([node.label, node.s]) : '') + '#' + (x.node ? '' : s.wf.name) + '#' + JSON.stringify(s.wf.graph || null);
   }
 
   // The reference data landed: what a block offers may have narrowed.
@@ -134,6 +138,14 @@ export function mountInspector(app) {
   function tipIcon(text, html) {
     if (!text && !html) return null;
     return el('span', { class: 'tip-icon', 'data-tip': html || esc(tipText(text)) }, '?');
+  }
+  // Classes with a page in the attribute reference (../reference/<cls>/).
+  const REF_CLASSES = new Set(["ElmArea", "ElmAsm", "ElmAsmsc", "ElmBbone", "ElmBmu", "ElmBoundary", "ElmBranch", "ElmCabsys", "ElmComp", "ElmCoup", "ElmDcu", "ElmDsl", "ElmFeeder", "ElmFile", "ElmFilter", "ElmGenstat", "ElmGndswt", "ElmIac", "ElmLne", "ElmLnesec", "ElmLod", "ElmLodlv", "ElmLodmv", "ElmMdl", "ElmNec", "ElmNet", "ElmPvsys", "ElmRecmono", "ElmRelay", "ElmRes", "ElmSecctrl", "ElmShnt", "ElmSind", "ElmStactrl", "ElmSubstat", "ElmSvs", "ElmSym", "ElmTerm", "ElmTow", "ElmTr2", "ElmTr3", "ElmTr4", "ElmTrain", "ElmTrb", "ElmTrfstat", "ElmTrmult", "ElmVac", "ElmVoltreg", "ElmVsc", "ElmVscmono", "ElmXnet", "ElmZone", "ElmZpu", "EvtGen", "EvtLod", "EvtOutage", "EvtParam", "EvtShc", "EvtSwitch", "EvtSym", "EvtTap", "StaPll", "TypAsm", "TypGeo", "TypLne", "TypLod", "TypLodlv", "TypSwitch", "TypSym", "TypTow", "TypTr2", "TypTr3", "TypTr4"]);
+  // Beside an attribute field: opens the attribute list for its element class in a new tab.
+  function refIcon(cls) {
+    const has = cls && REF_CLASSES.has(cls);
+    const label = has ? 'See the ' + cls + ' attribute list' : 'See the attribute reference';
+    return el('a', { class: 'pfb-ref', href: '../reference/' + (has ? cls + '/' : ''), target: '_blank', rel: 'noopener', title: label, 'aria-label': label }, 'i');
   }
   function reqMark() { return el('span', { class: 'pfb-req', text: 'Required' }); }
 
@@ -296,7 +308,7 @@ export function mountInspector(app) {
     }
     if (st.kind === 'list') return listRow(node, st, s);
     return el('div', { class: 'field-row pfb-set' + (empty ? ' pfb-todo' : ''), dataset: { key: st.key } },
-      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), empty ? reqMark() : null, el('span', { class: 'pfb-lab-fill' }), pin),
+      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label || st.key }), tipIcon(st.tip), st.kind === 'attr' ? refIcon(classOf(node.id, st)) : null, empty ? reqMark() : null, el('span', { class: 'pfb-lab-fill' }), pin),
       buildField(specFor(node, st, value)));
   }
 
@@ -323,7 +335,9 @@ export function mountInspector(app) {
           columns: () => columnsFor(node.id, col),
         };
         const field = buildField(spec);
-        r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));
+        r.appendChild(el('div', { class: 'pfb-list-cell' + (col.kind === 'bool' ? ' pfb-list-bool' : '') }, col.kind === 'attr'
+          ? el('span', { class: 'pfb-list-labrow' }, el('span', { class: 'pfb-list-lab', text: cst.label }), refIcon(classOf(node.id, cst, row.id, st.key)))
+          : el('span', { class: 'pfb-list-lab', text: cst.label }), tipIcon(col.tip), field));
       }
       list.appendChild(r);
     });
@@ -334,14 +348,34 @@ export function mountInspector(app) {
     return box;
   }
 
-  function moreGroup(node, sts, s, key) {
+  // `inputs` (optional): setting key -> the input port it is the value of, for a setting that is
+  // typed here while its input is not wired; its row says a wire can give it instead.
+  function moreGroup(node, sts, s, key, inputs) {
     if (!sts.length) return null;
     const open = moreOpen.has(key);
     const btn = el('button', { type: 'button', class: 'pfb-more-btn', 'aria-expanded': open ? 'true' : 'false', text: (open ? '▾ ' : '▸ ') + 'More options (' + sts.length + ')' });
     btn.addEventListener('click', () => { if (moreOpen.has(key)) moreOpen.delete(key); else moreOpen.add(key); render(); });
     const body = el('div', { class: 'fg-sub', hidden: !open });
-    for (const st of sts) body.appendChild(settingRow(node, st, s));
+    for (const st of sts) {
+      const row = settingRow(node, st, s);
+      const p = inputs && inputs.get(st.key);
+      if (p) row.appendChild(el('div', { class: 'field-sub pfb-or-wire', text: 'Or wire a value into ' + portLabel(p) + ' on the canvas.' }));
+      body.appendChild(row);
+    }
     return el('div', { class: 'field-group pfb-more' }, btn, body);
+  }
+
+  // Inputs that have nothing to type, on one line: "Optional inputs: Mark, Limit line ..." (each
+  // name carries its tip).
+  function optionalRow(ports, lead, tail, key) {
+    const names = [];
+    ports.forEach((p, i) => {
+      if (i) names.push(', ');
+      names.push(el('span', { class: 'pfb-opt-in', 'data-tip': portTip(p.type, TYPES[p.type], p.tip || '', false) },
+        el('span', { class: 'pfb-dot pfb-t-' + (TYPES[p.type] ? p.type : 'any') }), portLabel(p)));
+    });
+    return el('div', { class: 'pfb-in pfb-in-optional', dataset: { port: key } },
+      el('div', { class: 'field-sub' }, el('span', { class: 'pfb-opt-lead', text: lead }), ...names, el('span', { text: tail })));
   }
 
   function actionButton(iconName, text, cls, onClick, title) {
@@ -382,8 +416,28 @@ export function mountInspector(app) {
       }
       frag.appendChild(warn);
     }
+    frag.appendChild(graphGroup());
     frag.appendChild(howItWorks());
     return frag;
+  }
+
+  // The graph style: a button showing it, which opens the Graph style modal.
+  function graphButton() {
+    const st = styleOf(wf());
+    const name = styleName(st);
+    const b = el('button', { type: 'button', class: 'btn-secondary pfb-gs-open', title: 'Edit how the graphs look', 'aria-label': 'Edit the graph style (now ' + name + ')' },
+      el('span', { class: 'pfb-gs-open-thumb', html: previewSvg(st, { kind: 'series', width: 64, thumb: true }) }),
+      el('span', { class: 'pfb-gs-open-name', text: name }),
+      el('span', { class: 'pfb-gs-open-go', html: icon('edit') + '<span>Edit</span>' }));
+    b.addEventListener('click', () => { if (app.openGraphStyle) app.openGraphStyle(b); });
+    return b;
+  }
+  function graphGroup() {
+    return el('div', { class: 'field-group pfb-gs-group' }, el('div', { class: 'group-title', text: 'Graphs' }),
+      el('div', { class: 'field-row pfb-set', dataset: { key: 'graphstyle' } },
+        el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: 'Graph style' }),
+          tipIcon('How every graph of this workflow looks: colours, font, grid, key and image size. The script writes it in SETTINGS as GRAPH_STYLE.')),
+        graphButton()));
   }
 
   function howItWorks() {
@@ -432,26 +486,42 @@ export function mountInspector(app) {
         el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: labelSt.label }),
           tipIcon(def.kind === 'loop' || def.kind === 'pure' ? 'Also names its values in the script and the columns of results tables, e.g. Dispatch (MW).' : 'Shown on the canvas, in the Problems list and in the comments of the script.')),
         buildField({ st: labelSt, value: node.label || '', fid: node.id + ':_label', set: (v) => edit(ops.setLabel(wf(), node.id, v), 'f:' + node.id + ':_label'), done })));
+    const kind = kindRow(node);
+    if (kind) g0.appendChild(kind);
     frag.appendChild(g0);
 
-    // Inputs
-    const fallbackKeys = new Set(ports.inputs.map(p => p.fallback).filter(Boolean));
+    // Inputs. A row is drawn for an input that is wired (it names its source), whose value is
+    // typed here (its fallback setting, unless that setting sits under More options) or that the
+    // block cannot run without. An input whose setting cannot apply with these settings is not
+    // drawn at all (README 4.1), one whose setting is under More options is typed there, and the
+    // optional inputs with nothing to type share one line.
     const visible = visibleSettings(node, wiredSet(s.wf, node), showCtx(s, node));
-    if (ports.inputs.length) {
+    const plan = ops.inputPlan(s.wf, node, visible);
+    if (plan.rows.length || plan.toWire.length || plan.optional.length) {
       const g = el('div', { class: 'field-group pfb-inputs' }, el('div', { class: 'group-title', text: 'Inputs' }));
-      for (const p of ports.inputs) g.appendChild(inputRow(node, def, p, ss, visible));
+      for (const p of plan.rows) g.appendChild(inputRow(node, def, p, ss, visible));
+      if (plan.toWire.length) g.appendChild(optionalRow(plan.toWire, 'To wire on the canvas: ', '.', '_towire'));
+      if (plan.optional.length) g.appendChild(optionalRow(plan.optional, 'Optional inputs: ', '. Wire them on the canvas when you need them.', '_optional'));
       frag.appendChild(g);
     }
     // Settings
-    const main = visible.filter(st => !st.more && !fallbackKeys.has(st.key));
+    const main = visible.filter(st => !st.more && !plan.inInputs.has(st.key));
     if (main.length) {
       const g = el('div', { class: 'field-group' }, el('div', { class: 'group-title', text: 'Settings' }));
       for (const st of main) g.appendChild(settingRow(node, st, ss));
       frag.appendChild(g);
     }
-    const more = moreGroup(node, visible.filter(st => st.more && !fallbackKeys.has(st.key)), ss, node.type);
+    const more = moreGroup(node, visible.filter(st => st.more && !plan.inInputs.has(st.key)), ss, node.type, plan.moreInputs);
     if (more) frag.appendChild(more);
     if (ports.error) frag.appendChild(el('div', { class: 'pfb-insp-note pfb-insp-error', text: 'Its ports could not be worked out from these settings: ' + ports.error }));
+    // A graph block: how it looks is the workflow's graph style, changed from here too.
+    if ((def.helpers || []).some(h => /^plot_/.test(h))) {
+      frag.appendChild(el('div', { class: 'field-group pfb-gs-group' }, el('div', { class: 'group-title', text: 'Look' }),
+        el('div', { class: 'field-row pfb-set', dataset: { key: 'graphstyle' } },
+          el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: 'Graph style' }),
+            tipIcon('Every graph of the workflow shares one style. Changing it here changes them all.')),
+          graphButton())));
+    }
 
     const acts = el('div', { class: 'pfb-insp-actions' });
     if (node.type !== 'start') {
@@ -460,6 +530,50 @@ export function mountInspector(app) {
     }
     frag.appendChild(acts);
     return frag;
+  }
+
+  // The Kind switch of a block in a family (core/registry.js defineFamily): another member, with
+  // the same name, settings and wires. When the new kind lacks a port a wire uses (or the port no
+  // longer takes it), the wires are named first and the switch waits for a yes.
+  function kindRow(node) {
+    const fam = familyOf(node.type);
+    if (!fam) return null;
+    const st = { key: '_kind', label: 'Kind', kind: 'select', default: node.type, options: fam.members.filter(t => getBlock(t)).map(t => [t, getBlock(t).title]),
+      tip: 'The other blocks of this family. Switching keeps the name, the settings they share and the wires.' };
+    const doSwitch = (type) => {
+      kindAsk.delete(node.id);
+      edit(ops.switchKind(wf(), node.id, type), 'kind:' + node.id);
+      done();
+    };
+    const ask = (type) => {
+      if (type === node.type) { if (kindAsk.delete(node.id)) render(); return; }
+      if (!ops.hangingWires(wf(), node.id, type).length) { doSwitch(type); return; }
+      kindAsk.set(node.id, type);
+      render();
+    };
+    const row = el('div', { class: 'field-row pfb-set pfb-kind', dataset: { key: '_kind' } },
+      el('div', { class: 'pfb-lab' }, el('span', { class: 'field-label', text: st.label }), tipIcon(st.tip)),
+      buildField({ st, value: node.type, fid: node.id + ':_kind', set: ask, done: () => {} }));
+    const want = kindAsk.get(node.id);
+    if (want && getBlock(want)) {
+      const s = store.get();
+      const name = (id) => { const n = ops.nodeById(s.wf, id); return n ? displayName(n) : id; };
+      const portName = (id, pid, side) => { const p = ops.portAt(s.wf, id, pid, side); return p ? (p.port.label || p.port.id) : pid; };
+      const list = el('ul', { class: 'pfb-kind-wires' });
+      for (const h of ops.hangingWires(s.wf, node.id, want)) {
+        const e = h.edge;
+        list.appendChild(el('li', { text: name(e.from) + (portName(e.from, e.out, 'out') ? ' (' + portName(e.from, e.out, 'out') + ')' : '') + ' → ' + name(e.to) +
+          (e.in !== 'in' ? ' (' + portName(e.to, e.in, 'in') + ')' : '') + (h.gone ? '' : ': the port no longer takes it') }));
+      }
+      const yes = el('button', { type: 'button', class: 'btn-secondary btn-sm', text: 'Switch anyway' });
+      yes.addEventListener('click', () => doSwitch(want));
+      const no = el('button', { type: 'button', class: 'btn-secondary btn-sm', text: 'Keep ' + getBlock(node.type).title });
+      no.addEventListener('click', () => { kindAsk.delete(node.id); render(); });
+      row.appendChild(el('div', { class: 'pfb-insp-note pfb-kind-ask', role: 'alert' },
+        el('p', { text: 'As ' + getBlock(want).title + ', these wires would be left hanging. They are kept and marked, so you can remove them:' }),
+        list, el('div', { class: 'pfb-kind-acts' }, yes, no)));
+    }
+    return row;
   }
 
   function inputRow(node, def, p, ss, visible) {

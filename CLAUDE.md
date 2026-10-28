@@ -51,6 +51,10 @@ Before shipping a change to a tool's inputs, run `node _ref/share-check.mjs` (it
 checks, F1 and F2, fail when a field an old link names is gone) and `node _ref/scenario-check.mjs`.
 When a field does fail F2, fix the tool so the old name still loads. Don't edit the kept link.
 
+A tool with a live guide (`<tool>/guides/scenes.js`) is driven by scripts that name its parts:
+after changing the tool or its guide, run `node _ref/guide-check.mjs <tool>`, and fix the scene
+when a step it plays has moved.
+
 After changing an optimiser tool's solver (`capacity-expansion-planner/cx-core.js`, `ed-uc-simulator/ed-core.js`,
 their workers or `ed-uc-simulator/engine/`), run `node _ref/presolve.mjs` so its pre-solved Quick Starts
 match again (`--check` says whether they do; until then the tool just solves as before).

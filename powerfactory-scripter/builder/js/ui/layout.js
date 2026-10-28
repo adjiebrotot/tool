@@ -4,8 +4,11 @@
 // the title bar puts it back on its side. Where they sit and whether they are folded is a
 // per-viewer convenience kept in localStorage. On a phone the Blocks panel starts folded and the
 // right panel is a bottom sheet (its tab bar always shows, the panel opens over the canvas).
-// The right panel's left edge drags to make it wider or narrower (a double-click puts the width
-// back), so the Python reads without scrolling sideways; the width is kept with the dock state.
+// The right panel's left or right edge drags to make it wider or narrower (a double-click puts the
+// width back), so the Python reads without scrolling sideways; the width is kept with the dock
+// state. It is never narrower than SIDE_MIN, where its tab bar still fits (without the tab icons
+// when the names would not fit beside them: fitTabs). Dragging the right edge of the docked panel moves it off its side,
+// so its left edge stays where it was.
 // Also the tabs, the wire legend and the theme toggle (shared with the parent: 'pf-theme').
 
 import { $, el, lsGet, lsSet, isPhone } from './dom.js';
@@ -14,7 +17,7 @@ import { TYPES } from '../core/registry.js';
 const DOCK_KEY = 'pfb-docks';
 const MARGIN = 12;          // px between a dock and the screen edge
 const FOOT = 40;            // px kept free at the bottom for the footer line
-const SIDE_MIN = 320;       // px, the narrowest the right panel is made by hand
+const SIDE_MIN = 360;       // px, the narrowest the right panel gets (style.css .pfb-side min-width)
 
 export function initTheme(store) {
   const btn = $('themeToggle');
@@ -42,11 +45,11 @@ export function mountLayout(app) {
   const docks = { pal: $('pfbPalette'), side: $('pfbSide') };
   const folds = { pal: $('pfbPalToggle'), side: $('pfbSheetToggle') };
   const foldWords = { pal: 'the Blocks panel', side: 'this panel' };
-  const sizer = docks.side ? docks.side.appendChild(el('div', {
-    class: 'pfb-side-size', role: 'separator', tabindex: '0', 'aria-orientation': 'vertical',
-    'aria-label': 'Panel width', 'aria-valuemin': String(SIDE_MIN),
+  const sizers = docks.side ? ['left', 'right'].map(edge => docks.side.appendChild(el('div', {
+    class: 'pfb-side-size is-' + edge, role: 'separator', tabindex: '0', 'aria-orientation': 'vertical',
+    'aria-label': 'Panel width (' + edge + ' edge)', 'aria-valuemin': String(SIDE_MIN), 'data-edge': edge,
     title: 'Drag to make this panel wider or narrower. Double-click to reset.',
-  })) : null;
+  }))) : [];
 
   // ---- Saved dock state: { pal: { folded, free, x, y }, side: { ..., w (px, 0: the default) } }
   let saved = {};
@@ -76,7 +79,8 @@ export function mountLayout(app) {
     if (key === 'side') {
       if (s.w && !phone) { s.w = sideWidth(s.w); d.style.setProperty('--pfb-side-w', s.w + 'px'); }
       else d.style.removeProperty('--pfb-side-w');
-      if (sizer) sizer.setAttribute('aria-valuenow', String(Math.round(d.offsetWidth)));
+      for (const z of sizers) z.setAttribute('aria-valuenow', String(Math.round(d.offsetWidth)));
+      fitTabs();
     }
     if (free) {
       const p = clamp(key, s.x, s.y);
@@ -98,6 +102,18 @@ export function mountLayout(app) {
     }
     updateSafe();
   }
+
+  // The tab icons go when a tab's name, or the tab bar, would not fit with them (a narrow panel,
+  // or Problems with both counts).
+  function fitTabs() {
+    const d = docks.side, tabs = d && d.querySelector('.pfb-tabs');
+    if (!tabs || isPhone()) { if (d) d.classList.remove('is-tight'); return; }
+    d.classList.remove('is-tight');
+    const cut = (x) => x.scrollWidth > x.clientWidth + 0.5;
+    d.classList.toggle('is-tight', cut(tabs) || [...tabs.children].some(t => cut(t) || [...t.children].some(cut)));
+  }
+  const tabBar = docks.side && docks.side.querySelector('.pfb-tabs');
+  if (tabBar && window.MutationObserver) new MutationObserver(fitTabs).observe(tabBar, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['hidden'] });
 
   // Keep a moved dock on screen (at least its title bar).
   function clamp(key, x, y) {
@@ -191,22 +207,31 @@ export function mountLayout(app) {
     });
   }
 
-  // ---- The right panel's width: drag its left edge, or arrow keys on it; a double-click resets.
-  function setSideWidth(w) {
+  // ---- The right panel's width: drag its left or right edge, or arrow keys on one; a
+  // double-click resets. The left edge keeps the right edge where it is, the right edge the left.
+  function setSideWidth(w, edge) {
     const d = docks.side, s = state.side;
-    const right = d.getBoundingClientRect().right - shell.getBoundingClientRect().left;
-    s.w = sideWidth(w);
-    if (s.free) s.x = right - s.w;     // a moved panel keeps its right edge where it was
+    const sr = shell.getBoundingClientRect(), r = d.getBoundingClientRect();
+    const left = r.left - sr.left, right = r.right - sr.left;
+    if (edge === 'right') {
+      if (!s.free) { s.free = true; s.y = r.top - sr.top; }
+      s.w = sideWidth(Math.min(w, shell.clientWidth - MARGIN - left));
+      s.x = left;
+    } else {
+      s.w = sideWidth(w);
+      if (s.free) s.x = right - s.w;     // a moved panel keeps its right edge where it was
+    }
     apply('side');
   }
-  if (sizer) {
+  for (const sizer of sizers) {
+    const edge = sizer.dataset.edge, sign = edge === 'right' ? 1 : -1;
     sizer.addEventListener('pointerdown', (e) => {
       if (isPhone() || e.button !== 0) return;
       e.preventDefault();
       const d = docks.side, w0 = d.offsetWidth, x0 = e.clientX;
       try { sizer.setPointerCapture(e.pointerId); } catch (err) { /* fine */ }
       d.classList.add('is-sizing');
-      const move = (ev) => setSideWidth(w0 + (x0 - ev.clientX));
+      const move = (ev) => setSideWidth(w0 + sign * (ev.clientX - x0), edge);
       const up = () => {
         sizer.removeEventListener('pointermove', move);
         sizer.removeEventListener('pointerup', up);
@@ -222,15 +247,15 @@ export function mountLayout(app) {
       const d = docks.side, right = d.getBoundingClientRect().right - shell.getBoundingClientRect().left;
       state.side.w = 0;
       apply('side');
-      if (state.side.free) { state.side.x = right - d.offsetWidth; apply('side'); }
+      if (state.side.free && edge === 'left') { state.side.x = right - d.offsetWidth; apply('side'); }
       save();
     });
     sizer.addEventListener('keydown', (e) => {
       const step = e.shiftKey ? 96 : 24;
-      const by = e.key === 'ArrowLeft' ? step : e.key === 'ArrowRight' ? -step : 0;
+      const by = e.key === 'ArrowRight' ? step : e.key === 'ArrowLeft' ? -step : 0;
       if (!by) return;
       e.preventDefault();
-      setSideWidth(docks.side.offsetWidth + by);
+      setSideWidth(docks.side.offsetWidth + sign * by, edge);
       save();
     });
   }

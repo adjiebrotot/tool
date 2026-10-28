@@ -6,20 +6,23 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Kebijakan Privasi | Adjie Brotools</title>
-<meta name="description" content="Cara Adjie Brotools menangani data Anda: apa yang Anda ketik tetap di browser Anda, apa yang diterima analitik dan beberapa layanan pencarian daring, cookie apa saja yang dipakai, dan cara menolaknya.">
+<meta name="description" content="Cara Adjie Brotools menangani data Anda: yang Anda ketik tetap di browser, apa yang diterima analitik, cookie yang dipakai, dan cara menolaknya.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/privacy/id/">
 <link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/privacy/">
@@ -29,13 +32,18 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Kebijakan Privasi | Adjie Brotools">
-<meta property="og:description" content="Cara Adjie Brotools menangani data Anda: apa yang Anda ketik tetap di browser Anda, apa yang diterima analitik dan beberapa layanan pencarian daring, cookie apa saja yang dipakai, dan cara menolaknya.">
+<meta property="og:description" content="Cara Adjie Brotools menangani data Anda: yang Anda ketik tetap di browser, apa yang diterima analitik, cookie yang dipakai, dan cara menolaknya.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/privacy/id/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Adjie Brotools, tool gratis di Adjie Brotools">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Kebijakan Privasi | Adjie Brotools">
-<meta name="twitter:description" content="Cara Adjie Brotools menangani data Anda: apa yang Anda ketik tetap di browser Anda, apa yang diterima analitik dan beberapa layanan pencarian daring, cookie apa saja yang dipakai, dan cara menolaknya.">
+<meta name="twitter:description" content="Cara Adjie Brotools menangani data Anda: yang Anda ketik tetap di browser, apa yang diterima analitik, cookie yang dipakai, dan cara menolaknya.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/home.jpg">
 
 <script type="application/ld+json">
 {
@@ -89,6 +97,7 @@
 <script src="../../shared.js"></script>
 </head>
 <body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="../../theme.js"></script>
 <div class="container">
 
@@ -99,7 +108,7 @@
       <p>Apa yang terjadi pada data Anda saat Anda menggunakan Adjie Brotools.</p>
     </div>
     <div class="header-right">
-      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Alat Lainnya</a>
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Alat Lainnya</span><span class="nav-short">&nbsp;Lainnya</span></a>
       <a id="langToggle" class="btn-theme" href="../" hreflang="en" lang="en" title="English version">EN</a>
       <button class="btn-theme" id="themeToggle">🌙 Dark</button>
     </div>
@@ -112,9 +121,10 @@
       <li>Angka, teks, dan file Anda diolah di browser Anda sendiri. Semua itu tidak dikirim kepada saya dan tidak saya simpan.</li>
       <li>Beberapa alat mencari data di layanan lain (pencarian peta, kurs mata uang, harga pasar). Hanya data yang dibutuhkan untuk pencarian itu yang dikirim, sebagaimana dirinci di bawah.</li>
       <li>Situs ini menggunakan Google Analytics untuk menghitung kunjungan. Saya melihat jumlah totalnya, bukan siapa Anda. Di Wilayah Ekonomi Eropa (EEA), Inggris, dan Swiss, cookie-nya hanya dipasang jika Anda menyetujuinya.</li>
-      <li>Tidak ada iklan dan tidak ada akun, dan saya tidak menjual data Anda. Jika Anda mengirim email kepada saya, saya menerima alamat email dan pesan Anda.</li>
+      <li>Situs ini dan blognya menampilkan iklan Google AdSense, yang dapat menggunakan cookie. Di Wilayah Ekonomi Eropa (EEA), Inggris, dan Swiss, iklan hanya dipersonalisasi jika Anda menyetujuinya melalui pesan persetujuan dari Google.</li>
+      <li>Tidak ada akun, dan saya tidak menjual data Anda. Jika Anda mengirim email kepada saya, saya menerima alamat email dan pesan Anda.</li>
     </ul>
-    <p class="policy-updated">Terakhir diperbarui: 22 Oktober 2026</p>
+    <p class="policy-updated">Terakhir diperbarui: 28 Oktober 2026</p>
   </section>
 
   <section class="card policy">
@@ -145,6 +155,8 @@
       <dd>cdnjs (Cloudflare) dan jsDelivr. Font situs ini sendiri dimuat dari GitHub Pages bersama file lainnya; Canvas Builder juga memuat Google Fonts, untuk font Lora dan Caveat yang bisa Anda pilih untuk kanvas.</dd>
       <dt>Google Analytics</dt>
       <dd>Mencatat halaman yang Anda lihat, berapa lama Anda berada di situs, situs yang mengarahkan Anda ke sini, jenis perangkat dan browser Anda, serta perkiraan lokasi Anda. Saya menggunakannya untuk melihat alat mana yang dipakai dan apa yang perlu diperbaiki. Menurut Google, Google Analytics 4 tidak menyimpan alamat IP. Google Analytics tidak berjalan pada grafik sematan. Lihat <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">cara Google menggunakan informasi ini</a>.</dd>
+      <dt>Google AdSense</dt>
+      <dd>Menampilkan iklan di situs ini dan di blog (blog.adjiebrotots.com). Google dan mitra iklannya dapat menggunakan cookie atau penanda serupa untuk menampilkan iklan berdasarkan kunjungan Anda ke situs ini dan situs lain, membatasi seberapa sering Anda melihat suatu iklan, serta mengukur iklan dan mencegah penipuan. Di EEA, Inggris, dan Swiss, Google meminta persetujuan Anda sebelum iklan dipersonalisasi; selama Anda belum setuju, iklan yang Anda lihat tidak didasarkan pada riwayat penjelajahan Anda. Iklan tidak tampil di grafik sematan atau di demo panduan. Lihat <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">cara Google menggunakan cookie dalam periklanan</a>.</dd>
       <dt>Peta (Load Flow Simulator)</dt>
       <dd>Petak peta (map tiles) dari OpenStreetMap, EOX, dan Open Infrastructure Map. Teks yang Anda ketik di kolom pencarian tempat dikirim ke layanan Nominatim milik OpenStreetMap.</dd>
       <dt>Kurs mata uang</dt>
@@ -168,19 +180,21 @@
       <dd>Dipasang oleh alat DCA untuk menghitung permintaan harga hari ini dari browser ini. Cookie ini kedaluwarsa pada akhir hari.</dd>
       <dt>Pilihan cookie Anda</dt>
       <dd>Disimpan di penyimpanan lokal browser Anda (<code>abt-consent</code>) agar Anda tidak ditanya lagi.</dd>
+      <dt>Cookie iklan</dt>
+      <dd>Google AdSense dan mitra iklannya dapat memasang cookie seperti <code>__gads</code>, <code>__gpi</code>, dan <code>IDE</code> untuk menampilkan, membatasi, dan mengukur iklan. Di EEA, Inggris, dan Swiss, pesan persetujuan dari Google menyimpan pilihan Anda di cookie miliknya sendiri.</dd>
     </dl>
-    <p>Saat ini situs ini tidak menampilkan iklan. Jika saya menambahkan iklan (misalnya Google AdSense), saya akan memperbarui halaman ini terlebih dahulu, termasuk penjelasan tentang cara kerja cookie iklan dan cara menolaknya.</p>
   </section>
 
   <section class="card policy">
     <h2>Pilihan dan hak Anda</h2>
     <ul>
       <li>Ubah pilihan cookie Analytics Anda kapan saja: <button type="button" class="btn-theme" onclick="window.AbtConsent &amp;&amp; AbtConsent.open()">Pengaturan cookie</button></li>
+      <li>Matikan iklan yang dipersonalisasi di <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">Pusat Iklan Saya dari Google</a>, atau tolak banyak jaringan iklan sekaligus di <a href="https://optout.aboutads.info/" target="_blank" rel="noopener">aboutads.info</a> atau <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener">youronlinechoices.eu</a>. Anda tetap melihat iklan, hanya saja tidak berdasarkan riwayat penjelajahan Anda.</li>
       <li>Blokir atau hapus cookie di browser Anda. Alat-alat ini tetap berfungsi.</li>
       <li>Pasang <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">add-on penolakan Google Analytics</a> untuk menghentikan Analytics di semua situs.</li>
       <li>Hapus data situs ini di browser Anda untuk menghapus semua yang disimpannya di perangkat Anda.</li>
     </ul>
-    <p>Tergantung tempat tinggal Anda (misalnya berdasarkan hukum privasi Australia, GDPR, atau hukum privasi negara bagian di Amerika Serikat), Anda mungkin berhak meminta informasi tentang data pribadi apa yang disimpan mengenai Anda, meminta data itu diperbaiki atau dihapus, atau menolak penggunaannya. Jika GDPR atau UK GDPR berlaku, cookie Analytics hanya digunakan dengan persetujuan Anda, yang dapat Anda tarik melalui tombol di atas. Saya tidak menyimpan akun atau profil, sehingga sebagian besar data semacam itu berada di Google, GitHub, atau Cloudflare. Meski begitu, kirimkan email kepada saya dan saya akan membantu sejauh yang dapat saya jangkau. Anda juga dapat mengajukan pengaduan kepada otoritas privasi setempat; di Australia, otoritas itu adalah <a href="https://www.oaic.gov.au/" target="_blank" rel="noopener">Office of the Australian Information Commissioner</a> (Kantor Komisioner Informasi Australia).</p>
+    <p>Tergantung tempat tinggal Anda (misalnya berdasarkan hukum privasi Australia, GDPR, atau hukum privasi negara bagian di Amerika Serikat), Anda mungkin berhak meminta informasi tentang data pribadi apa yang disimpan mengenai Anda, meminta data itu diperbaiki atau dihapus, atau menolak penggunaannya. Jika GDPR atau UK GDPR berlaku, cookie Analytics dan iklan yang dipersonalisasi hanya digunakan dengan persetujuan Anda, yang dapat Anda tarik melalui tombol di atas (Analytics) atau melalui pesan persetujuan dari Google (iklan). Saya tidak menyimpan akun atau profil, sehingga sebagian besar data semacam itu berada di Google, GitHub, atau Cloudflare. Meski begitu, kirimkan email kepada saya dan saya akan membantu sejauh yang dapat saya jangkau. Anda juga dapat mengajukan pengaduan kepada otoritas privasi setempat; di Australia, otoritas itu adalah <a href="https://www.oaic.gov.au/" target="_blank" rel="noopener">Office of the Australian Information Commissioner</a> (Kantor Komisioner Informasi Australia).</p>
     <p>Alat-alat ini tidak ditujukan untuk anak di bawah usia 13 tahun, dan saya tidak dengan sengaja mengumpulkan data pribadi mereka.</p>
   </section>
 
@@ -214,5 +228,6 @@ document.getElementById('themeToggle').addEventListener('click', function(){
   this.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
 });
 </script>
+<!--/email_off-->
 </body>
 </html>

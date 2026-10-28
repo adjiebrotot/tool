@@ -140,11 +140,24 @@
 }
 .pf-tour-launch:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Long label on a wide screen, short one on a phone (see launchShort). */
-.pf-tour-short { display: none; }
-
 @media (max-width: 640px) {
   .pf-tour-tooltip { width: calc(100vw - 24px); }
-  .pf-tour-long { display: none; }
-  .pf-tour-short { display: inline; }
 }
+
+/* The last step on a tool with a guide: the way there takes the Skip link's
+   place, on a line of its own above the step count and Done. */
+.pf-tour-footer-guide { flex-wrap: wrap; }
+.pf-tour-guide {
+  flex: 1 0 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+}
+.pf-tour-guide .pf-tour-btn { text-decoration: none; white-space: nowrap; }
+.pf-tour-footer-guide .pf-tour-btns { margin-left: auto; }

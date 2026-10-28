@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the ED/UC Simulator | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the ED/UC Simulator: draw a network, set unit costs, limits and load profiles, pick commitment or dispatch, then read prices and charts.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/ed-uc-simulator/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the ED/UC Simulator">
+<meta property="og:description" content="The real tool, running live: draw a network, set the units and the load profiles, solve unit commitment or economic dispatch, then play the day and read the nodal prices.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/ed-uc-simulator/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/ed-uc-simulator.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ED/UC Simulator: Economic Dispatch &amp; Unit Commitment, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to use the ED/UC Simulator">
+<meta name="twitter:description" content="The real tool, running live: draw a network, set the units and the load profiles, solve unit commitment or economic dispatch, then play the day and read the nodal prices.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/ed-uc-simulator.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the ED/UC Simulator",
+  "url": "https://tool.adjiebrotots.com/ed-uc-simulator/guides/",
+  "description": "Draw a network, set each unit's cost and limits and each load's profile, solve unit commitment or economic dispatch hour by hour in your browser, and read the dispatch and the nodal prices.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "ED/UC Simulator",
+    "url": "https://tool.adjiebrotots.com/ed-uc-simulator/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Draw or load a network", "text": "Load a worked example from Quick Start, or drag buses, lines, generators, loads and storage onto the single-line diagram." },
+    { "@type": "HowToStep", "name": "Set the units and the loads", "text": "Select a unit for its rating, minimum stable loading, marginal cost and commitment limits, and a load for its peak and its daily profile. The Dispatch tab sets the problem and the horizon." },
+    { "@type": "HowToStep", "name": "Run and read", "text": "Press Run dispatch. Pick an hour or play the day on the diagram, and read the dispatch, the nodal prices and the commitment in the charts and tables." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "ED/UC Simulator", "item": "https://tool.adjiebrotots.com/ed-uc-simulator/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the ED/UC Simulator", "item": "https://tool.adjiebrotots.com/ed-uc-simulator/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← ED/UC Simulator</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 20.5h18"/><path stroke="var(--accent)" d="M6 20.5v-5M10 20.5v-8M14 20.5v-6M18 20.5v-9.5"/><path stroke="var(--accent2)" d="M3 9.5 7.5 7l4 2.5 4.5-6 5 3"/></svg>How to use the ED/UC Simulator</h1>
+      <p class="gd-lead">Draw a network, decide which units run each hour and at what output, read the prices that follow. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#screen">Start with the screen</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Draw or load a network</h3>
+          <p>Start from a worked example in <strong>Quick Start</strong>, or drag buses, lines, units, loads and storage onto the diagram.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Set the units and the loads</h3>
+          <p>A unit's rating, minimum, <strong>marginal cost</strong> and commitment limits; a load's peak and <strong>profile</strong>. The <strong>Dispatch</strong> tab sets the problem and the horizon.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Run and read</h3>
+          <p>Press <strong>Run dispatch</strong>. Pick an hour or play the day on the diagram, then read the dispatch, the <strong>nodal prices</strong> and the commitment below.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> The problem is built by <a href="https://github.com/adjiebrotot/PSA.js" target="_blank" rel="noopener">PSA.js</a>, a JavaScript port of PyPSA, and solved by <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a>, both in your browser.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#draw">Draw a network</a>
+        <a href="#unit">Units and costs</a>
+        <a href="#profile">Load profiles</a>
+        <a href="#dispatch">The Dispatch tab</a>
+        <a href="#hour">Hour by hour</a>
+        <a href="#charts">The charts</a>
+        <a href="#results">Results</a>
+        <a href="#share">Save and share</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the diagram beside them, the results and the charts under it. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1500" role="img" aria-label="The ED/UC Simulator with the PJM 5-bus example: the inputs on the left, the parts, the hour and the single-line diagram on the right, and the results and the dispatch chart under the diagram.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:12.29%;--w:26.56%;--h:50.07%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:31.48%;--y:18.96%;--w:5.78%;--h:47.2%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:38.05%;--y:18.96%;--w:57.66%;--h:47.2%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:29.84%;--y:70.76%;--w:67.5%;--h:28.97%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then three tabs: <strong>Element</strong>, <strong>Dispatch</strong> and <strong>Labels</strong>. <strong>Run dispatch</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>Parts</h3>
+            <p>Bus, node, line, transformer, generator, solar, wind, grid, load, storage and HVDC link. Under them: undo, redo and <strong>Clear</strong>.</p>
+          </li>
+          <li data-b="3">
+            <h3>Diagram</h3>
+            <p>Your network, with one hour's outputs, flows and prices written on it. Above it: the <strong>Hour</strong>, ▶ to play the day, the flow animation, <strong>Colour by</strong> and <strong>Share</strong>.</p>
+          </li>
+          <li data-b="4">
+            <h3>Results</h3>
+            <p>Four figures (operating cost, average price, units running, congestion), then the charts: <strong>Dispatch</strong>, <strong>Nodal prices</strong>, commitment and storage, then the tables.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Tour</strong> replays a one minute walk through the tool, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Four worked examples: the <strong>PJM 5-bus</strong> system over a day, <strong>Three units</strong> on one bus, a <strong>Solar and battery</strong> system, and <strong>Two areas</strong> joined by an HVDC link over three days. One click replaces the network, sets how it is solved, and runs it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick an example</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the results have the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick an example</h3><p>Hover a button to read what it holds. A click loads it and solves it.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The PJM 5-bus is a check.</strong> At its 18:00 peak it reproduces the nodal prices published by Li and Bo (2010).</li>
+        <li><strong>Then make it yours.</strong> Change anything over the top of an example; Undo brings the last step back.</li>
+      </ul>
+    </section>
+
+    <!-- Draw -->
+    <section class="gd-sec card" id="draw" aria-labelledby="draw-h">
+      <h2 id="draw-h">Draw a network</h2>
+      <p class="gd-sub">Buses first, then the units, loads and storage on them, and the branches between them. A single bus is enough for a dispatch with no network.</p>
+      <div class="gd-demo" data-demo="draw" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Two buses, a generator, solar, a load and a line</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Drop a bus</h3><p>Drag <strong>Bus</strong> (a bar) or <strong>Node</strong> (a dot) onto the diagram.</p></li>
+          <li><h3>Drop units and loads</h3><p>Drag a generator, solar, wind, grid, load or storage onto a bus. It snaps to it.</p></li>
+          <li><h3>Connect two buses</h3><p>Pick <strong>Line</strong>, <strong>Transformer</strong> or <strong>HVDC link</strong>, then drag from one bus to the other. Esc stops.</p></li>
+          <li><h3>Run it</h3><p><strong>Run dispatch</strong>, or <kbd>Ctrl</kbd> <kbd>Enter</kbd>.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Solar and wind follow the weather.</strong> Their availability is a profile, so they run only as far as the sun or the wind allows; what they could have given and did not is curtailment.</li>
+        <li><strong>Move and arrange.</strong> Drag anything to move it, empty space to pan, scroll to zoom. The arrow keys nudge a selection, <kbd>R</kbd> turns a bus upright.</li>
+        <li><strong>Mistakes are cheap.</strong> Undo and redo sit under the parts. <strong>Clear</strong> empties the diagram after asking, and Undo brings it back.</li>
+      </ul>
+    </section>
+
+    <!-- Units -->
+    <section class="gd-sec card" id="unit" aria-labelledby="unit-h">
+      <h2 id="unit-h">Units and costs</h2>
+      <p class="gd-sub">Select a unit and the <strong>Element</strong> tab shows what decides when it runs: its type, rating, minimum stable loading and marginal cost, then its commitment and ramp limits.</p>
+      <div class="gd-demo" data-demo="unit" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Three units: the coal unit</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Select a unit</h3><p>Click it on the diagram. <strong>Type</strong> switches between generator, solar, wind and grid.</p></li>
+          <li><h3>Its cost</h3><p>A flat <strong>marginal cost</strong>, or one that rises with output, linear or quadratic. The curve under it reads the cost at any output.</p></li>
+          <li><h3>Commitment</h3><p>A <strong>committable</strong> unit is on or off each hour, with minimum up and down times, start-up, shut-down and no-load costs, and whether it runs before the first hour.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Ramping.</strong> How far a unit's output may rise or fall from one hour to the next, as a share of its rating.</li>
+        <li><strong>Storage.</strong> Its power rating, hours at full power, round-trip efficiency, and whether it ends the horizon where it started.</li>
+        <li><strong>HVDC link.</strong> Its rating, efficiency, and one way or both.</li>
+      </ul>
+    </section>
+
+    <!-- Profiles -->
+    <section class="gd-sec card" id="profile" aria-labelledby="profile-h">
+      <h2 id="profile-h">Load profiles</h2>
+      <p class="gd-sub">A load's <strong>Peak demand</strong> is scaled hour by hour by its profile. Solar and wind units have the same control, as their availability.</p>
+      <div class="gd-demo" data-demo="profile" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Three units: the demand made residential, its evening raised</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Select a load</h3><p>Click it on the diagram.</p></li>
+          <li><h3>Pick a profile</h3><p>System day, residential, commercial, industrial and more, or <strong>Custom</strong> to take every hour from a file.</p></li>
+          <li><h3>Drag a bar</h3><p>Each bar is an hour as a share of the peak. Drag across bars to draw a new shape; it stays marked <em>edited</em>.</p></li>
+          <li><h3>Vary it by weekday</h3><p><strong>Daily variability</strong> adds a factor for each day of the week, under the week it makes.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Dispatch tab -->
+    <section class="gd-sec card" id="dispatch" aria-labelledby="dispatch-h">
+      <h2 id="dispatch-h">The Dispatch tab</h2>
+      <p class="gd-sub">What is solved, over how long, and what the network is allowed to do.</p>
+      <div class="gd-demo" data-demo="dispatch" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Three units over three days</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Solve as</h3><p><strong>Unit commitment</strong>, mixed-integer (exact) or linear (quick, a lower bound), or <strong>Economic dispatch</strong> with or without minimum outputs.</p></li>
+          <li><h3>Horizon</h3><p>Up to 30 days in one-hour steps, solved together, from the <strong>First hour</strong>. Built-in profiles follow the weekday.</p></li>
+          <li><h3>Profiles from a file</h3><p><strong>⬇ Template</strong> gives a CSV with a row per hour and a column per load and unit; <strong>Open file</strong> takes the hours back from CSV or Excel.</p></li>
+          <li><h3>Network and shedding</h3><p><strong>Line limits</strong> on or off, and <strong>load shedding</strong> at the value of lost load instead of an infeasible problem.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Solver.</strong> The optimality gap of a mixed-integer run and a time limit for HiGHS.</li>
+        <li><strong>Currency.</strong> The symbol every cost and price is shown in.</li>
+      </ul>
+    </section>
+
+    <!-- Hour -->
+    <section class="gd-sec card" id="hour" aria-labelledby="hour-h">
+      <h2 id="hour-h">Hour by hour</h2>
+      <p class="gd-sub">The diagram shows one hour at a time: each unit's output, each branch's flow and loading, each bus's price.</p>
+      <div class="gd-demo" data-demo="hour" data-w="1280" data-h="960">
+        <figure class="gd-screen"><span class="gd-cap">PJM 5-bus through the day</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Drag the hour</h3><p>The slider above the diagram picks the hour; the date and time sit beside it.</p></li>
+          <li><h3>Play the day</h3><p>▶ steps through the hours; press it again to stop.</p></li>
+          <li><h3>Hover to read</h3><p>Hover or tap an element and the box under the diagram gives its values for that hour.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Colour by.</strong> Nodal price, branch loading, both or nothing. A full branch is what splits one price into many.</li>
+      </ul>
+    </section>
+
+    <!-- Charts -->
+    <section class="gd-sec card" id="charts" aria-labelledby="charts-h">
+      <h2 id="charts-h">The charts</h2>
+      <p class="gd-sub">Every hour of the horizon at once. Each chart has its own <strong>Share</strong> menu and ⟳ to reset its zoom.</p>
+      <div class="gd-demo" data-demo="charts" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Three units: dispatch, prices, commitment</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Dispatch</h3><p>Each unit's output stacked in merit order, cheapest at the bottom, under the demand line. Any curtailment sits on top.</p></li>
+          <li><h3>Click an hour</h3><p>A click on any chart shows that hour on the diagram.</p></li>
+          <li><h3>Prices and commitment</h3><p>The price at every bus, and which units are on in each hour. With storage, a fourth chart follows its charge.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">Results</h2>
+      <p class="gd-sub">Under the diagram: the answer in four figures; under the charts, every element's values in tables, then what the result assumes.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Figures and tables</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Four figures</h3><p>Operating cost, the load-weighted average price, units running at the peak, and the branch longest at its limit.</p></li>
+          <li><h3>Open the tables</h3><p><strong>Results by element</strong> opens from its chevron.</p></li>
+          <li><h3>Pick a table</h3><p><strong>Units</strong>, <strong>Buses</strong>, <strong>Branches</strong> or <strong>Hours</strong>. <strong>⬇ CSV</strong> saves the one shown.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>What this assumes.</strong> The last card lists what the result rests on for this network, such as how it was solved and the value of lost load.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your network in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open and Share</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write the whole network and its settings to a file, and read one back.</p></li>
+          <li><h3>Share</h3><p>The diagram as SVG, PNG or an animated GIF of the day, a copy to the clipboard, a link that opens your network, or an embed for a web page.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Every chart shares too.</strong> Each has the same menu, for that chart alone.</li>
+      </ul>
+    </section>
+
+    <section class="gd-sec card gd-keys" aria-labelledby="keys-h">
+      <h2 id="keys-h">Shortcuts</h2>
+      <ul class="gd-kbd">
+        <li><kbd>Ctrl</kbd> <kbd>Enter</kbd> run the dispatch</li>
+        <li><kbd>Ctrl</kbd> <kbd>Z</kbd> undo</li>
+        <li><kbd>Ctrl</kbd> <kbd>Y</kbd> redo</li>
+        <li><kbd>Ctrl</kbd> <kbd>D</kbd> duplicate</li>
+        <li><kbd>Ctrl</kbd> <kbd>A</kbd> select everything</li>
+        <li><kbd>Delete</kbd> remove the selection</li>
+        <li><kbd>R</kbd> turn a bus</li>
+        <li><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> nudge (with <kbd>Shift</kbd>, further)</li>
+        <li><kbd>Esc</kbd> stop drawing, clear the selection</li>
+      </ul>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to run one?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (UC, ED, VoLL...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+<!--/email_off-->
+</body>
+</html>

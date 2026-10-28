@@ -6,17 +6,24 @@
      2. Steps through the tool with a short, plain-language tooltip.
      3. Can be skipped at any point.
      4. Only OFFERED on the user's first visit; a localStorage flag
-        suppresses it on later visits. A manual "Take a tour" button in
-        the header re-launches it on demand.
+        suppresses it on later visits. A manual "Tour" button in the
+        header re-launches it on demand.
+     5. On a tool with a guide page, a "Guide" button sits beside it, and
+        the last step points there for more details.
 
    Each page defines window.__TOUR BEFORE loading this file:
      window.__TOUR = {
        seenKey:     'unique-per-tool-key',   // localStorage flag
-       launchLabel: '🧭 Take a tour',        // header button text (optional)
-       launchShort: '🧭 Tour',               // its phone-width form (optional)
-       labels:      { skip, back, next, start, done, dialog }, // optional
+       launchLabel: '🧭 Tour',               // header button text (optional)
+       guide:       'guides/',               // optional: the tool's guide page
+       labels:      { skip, back, next, start, done, dialog,
+                      guide, seeGuide, guideNote, guideTitle }, // optional
        saveState:   function () { ... },   // optional, see below
        restoreState:function (snapshot) { ... },
+       holdFirstVisit: function () { ... }, // optional: true skips the first-visit
+                                             // start this once (the page was opened
+                                             // for something else, such as a link to
+                                             // an example); it is offered next visit
        steps: [ { target, title, body, onEnter } , ... ]
      };
    `target`  : CSS selector of the element to spotlight, an array of
@@ -47,10 +54,12 @@
 
   var CFG = window.__TOUR || {};
   var SEEN_KEY = CFG.seenKey || 'ab-tour-generic-seen';
-  var LAUNCH_LABEL = CFG.launchLabel || '🧭 Take a tour';
+  var LAUNCH_LABEL = CFG.launchLabel || '🧭 Tour';
   // On a phone the header holds Back, language, tour and theme in one row,
-  // and the long label is what pushes it to a second, so it shortens there.
-  var LAUNCH_SHORT = CFG.launchShort || (LAUNCH_LABEL === '🧭 Take a tour' ? '🧭 Tour' : '');
+  // and a long label is what pushes it to a second, so it shortens there.
+  // The tool's guide page, when it has one: a Guide button beside the tour's,
+  // and a way there from the last step.
+  var GUIDE_HREF = CFG.guide || '';
   var steps = Array.isArray(CFG.steps) ? CFG.steps : [];
 
   /* Button copy. Defaults are English; the translated pages pass their own
@@ -62,6 +71,10 @@
   var START_LABEL = L.start || 'Start';
   var DONE_LABEL  = L.done  || 'Done';
   var DIALOG_LABEL = L.dialog || 'Product tour';
+  var GUIDE_LABEL = L.guide || '📖 Guide';
+  var SEE_GUIDE_LABEL = L.seeGuide || 'See Guide';
+  var GUIDE_NOTE = L.guideNote || 'See guide for more details';
+  var GUIDE_TITLE = L.guideTitle || 'How to use this tool, step by step';
 
   // Snapshot of the user's own work, taken when the tour starts and given
   // back when it ends. null means there was nothing worth restoring.
@@ -163,15 +176,19 @@
     renderTooltip(step);
 
     if (!step.target) { positionCentered(); return; }
-    awaitTarget(step.target, token, Date.now());
+    awaitTarget(token, Date.now());
   }
 
-  function awaitTarget(target, token, since) {
+  /* `target` may be a getter (a step pointing at something its onEnter is
+     still loading), so it is read again on every look-up. */
+  function stepTarget() { return steps[current].target; }
+
+  function awaitTarget(token, since) {
     if (token !== renderToken || !els) return;
-    var found = resolveTargets(target);
+    var found = resolveTargets(stepTarget());
     if (found.length) { scrollToTarget(found, token); return; }
     if (Date.now() - since < TARGET_WAIT_MS) {
-      setTimeout(function () { awaitTarget(target, token, since); }, 60);
+      setTimeout(function () { awaitTarget(token, since); }, 60);
       return;
     }
     // Unreachable target: show the step centred rather than spotlighting
@@ -180,12 +197,23 @@
   }
 
   /* Smooth scrolling has no completion event, so follow the elements until
-     they stop moving instead of guessing with a fixed delay. */
+     they stop moving instead of guessing with a fixed delay. The target is
+     looked up again on every tick: a panel that re-renders just after the
+     step opens (an editor drawing the settings of the block it selected)
+     replaces the element, and following the detached one read as a zero
+     box, so the step lost its spotlight and fell back to the centre. */
   function scrollToTarget(elements, token) {
     elements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
     var lastTop = null, steady = 0, ticks = 0;
     (function settle() {
       if (token !== renderToken || !els) return;
+      var live = resolveTargets(stepTarget());
+      if (!live.length) { if (++ticks < 25) setTimeout(settle, 60); return; }
+      if (live[0] !== elements[0]) {
+        live[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        lastTop = null; steady = 0;
+      }
+      elements = live;
       var top = unionRect(elements).top;
       steady = (lastTop !== null && Math.abs(top - lastTop) < 0.5) ? steady + 1 : 0;
       lastTop = top;
@@ -197,12 +225,20 @@
   function renderTooltip(step) {
     var isLast = current === steps.length - 1;
     var isFirst = current === 0;
+    // The last step has nothing left to skip: Done closes it. On a tool with a
+    // guide, its place goes to the way there.
+    var lead = !isLast
+      ? '<button type="button" class="pf-tour-skip" data-act="skip">' + SKIP_LABEL + '</button>'
+      : GUIDE_HREF
+        ? '<div class="pf-tour-guide"><span>' + GUIDE_NOTE + '</span>' +
+          '<a class="pf-tour-btn pf-tour-btn-ghost" data-act="guide" href="' + GUIDE_HREF + '">' + SEE_GUIDE_LABEL + '</a></div>'
+        : '';
     els.tooltip.innerHTML =
       '<h4 class="pf-tour-title">' + step.title + '</h4>' +
       // A div, not a p: a body may hold a <ul> of points, which a p cannot.
       '<div class="pf-tour-body">' + step.body + '</div>' +
-      '<div class="pf-tour-footer">' +
-        '<button type="button" class="pf-tour-skip" data-act="skip">' + SKIP_LABEL + '</button>' +
+      '<div class="pf-tour-footer' + (isLast && GUIDE_HREF ? ' pf-tour-footer-guide' : '') + '">' +
+        lead +
         '<span class="pf-tour-progress">' + (current + 1) + ' / ' + steps.length + '</span>' +
         '<div class="pf-tour-btns">' +
           (isFirst ? '' : '<button type="button" class="pf-tour-btn pf-tour-btn-ghost" data-act="back">' + BACK_LABEL + '</button>') +
@@ -216,6 +252,9 @@
       btn.addEventListener('click', function () {
         var act = btn.getAttribute('data-act');
         if (act === 'skip') return end();
+        // The link goes on to the guide; the tour hands the reader's work
+        // back first, so the tool they return to is their own.
+        if (act === 'guide') return end();
         if (act === 'back') return go(current - 1);
         if (act === 'next') return (isLast ? end() : go(current + 1));
       });
@@ -288,7 +327,7 @@
 
   function reposition() {
     if (!els) return;
-    var found = resolveTargets(steps[current].target);
+    var found = resolveTargets(stepTarget());
     if (found.length) positionToTarget(found);
     else positionCentered();
   }
@@ -362,6 +401,24 @@
     try { return localStorage.getItem(SEEN_KEY) === '1'; } catch (e) { return false; }
   }
 
+  /* A label's leading emoji and its word each get a span, so a narrow screen
+     can drop the word and keep the emoji (shared.css, .pf-tour-word); the
+     word stays the button's name for a screen reader. */
+  function setLabel(el, text) {
+    var m = /^([^\s\w]+)\s+(.+)$/.exec(text);
+    if (!m) { el.textContent = text; return; }
+    var emo = document.createElement('span');
+    emo.className = 'pf-tour-emo';
+    emo.setAttribute('aria-hidden', 'true');
+    emo.textContent = m[1];
+    var word = document.createElement('span');
+    word.className = 'pf-tour-word';
+    word.textContent = '\u00a0' + m[2];
+    el.appendChild(emo);
+    el.appendChild(word);
+    if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', m[2]);
+  }
+
   function addLaunchButton() {
     var nav = document.querySelector('.header-right') || document.querySelector('.header-nav');
     if (!nav || nav.querySelector('[data-pf-tour-launch]')) return;
@@ -381,23 +438,22 @@
       btn.className = model.className.replace(/\b(?:btn-back|theme-ico)\b/g, '').trim();
     }
     if (!btn.className) btn.className = 'pf-tour-launch';
-    if (LAUNCH_SHORT) {
-      var long = document.createElement('span');
-      long.className = 'pf-tour-long';
-      long.textContent = LAUNCH_LABEL;
-      var short = document.createElement('span');
-      short.className = 'pf-tour-short';
-      short.textContent = LAUNCH_SHORT;
-      btn.appendChild(long);
-      btn.appendChild(short);
-    } else {
-      btn.textContent = LAUNCH_LABEL;
-    }
+    setLabel(btn, LAUNCH_LABEL);
     btn.setAttribute('aria-label', 'Take a guided tour of this tool');
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.
     if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.insertBefore(btn, themeBtn);
     else nav.appendChild(btn);
+    if (GUIDE_HREF) {
+      // The guide beside it, a link dressed as the same header button.
+      var guide = document.createElement('a');
+      guide.className = btn.className;
+      guide.href = GUIDE_HREF;
+      guide.setAttribute('data-pf-guide-link', '');
+      setLabel(guide, GUIDE_LABEL);
+      guide.title = GUIDE_TITLE;
+      btn.parentNode.insertBefore(guide, btn.nextSibling);
+    }
   }
 
   function init() {
@@ -407,7 +463,10 @@
     // Offer the tour only on the first visit (after this tour shipped).
     if (!hasVisited()) {
       // Let the app finish its own init/layout first.
-      setTimeout(start, 700);
+      setTimeout(function () {
+        if (typeof CFG.holdFirstVisit === 'function' && CFG.holdFirstVisit()) return;
+        start();
+      }, 700);
     }
   }
 

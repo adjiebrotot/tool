@@ -6,7 +6,8 @@
 //   { "app": "pf-builder", "v": 1, "name": "...",
 //     "nodes": [ { "id", "type", "x", "y", "label", "s": {settings}, "pin": [keys], "sv" } ],
 //     "edges": [ { "id", "from", "out", "to", "in" } ],
-//     "view": { "x", "y", "zoom" } }
+//     "view": { "x", "y", "zoom" },
+//     "graph": { the graph style, core/graphstyle.js; absent = the default style } }
 // The PFB1 line of a .py carries the same object without `view`, plus two keys of its own:
 // "settings" (SETTINGS constant -> [nodeId, settingKey(, subKey)]; nodeId "*" is the workflow
 // itself, e.g. WORKFLOW_NAME -> ["*", "name"]) and "hash" (of the WORKFLOW section, to tell the
@@ -23,6 +24,7 @@
 import { getBlock, settingsOf, findPort, canConnect, displayName, optionPairs } from './registry.js';
 import { parsePyLiteral } from './pylit.js';
 import { parseValues } from './blockkit.js';
+import { normalizeStyle, sameStyle, unusableKeys } from './graphstyle.js';
 
 export const APP_ID = 'pf-builder';
 export const FORMAT_VERSION = 1;
@@ -267,6 +269,11 @@ function loadInner(input, notes) {
       } else {
         if (sv !== undefined && !Number.isFinite(sv)) delete node.sv;
         const full = settingsOf(node);
+        // A setting that took over a renamed one (settingAlias) is pinned when the old one was,
+        // so its SETTINGS line stays at the top of the script.
+        for (const [oldKey, newKey] of Object.entries(def.settingAlias || {})) {
+          if (node.pin.includes(oldKey) && !node.pin.includes(newKey)) node.pin.push(newKey);
+        }
         // A select value this version does not know (an option a newer Builder added) is kept
         // as saved, so saving here does not lose it; the generator uses the default meanwhile.
         if (sv === undefined || sv === version) {
@@ -324,6 +331,7 @@ function loadInner(input, notes) {
       notes.push({ level: 'warning', msg: 'Code outside SETTINGS was edited by hand in this file; those edits are not read back.' });
     }
     if (pfbSettings) readBackSettings(wf, pyText, pfbSettings, notes);
+    readBackGraphStyle(wf, pyText, notes);
   }
   return { wf, notes };
 }
@@ -341,7 +349,6 @@ function nameOf(raw) {
 // Notes for wires that no longer fit (kept, saved back unchanged, flagged in Problems too).
 function checkEdges(wf, byId, notes) {
   const intoInput = new Set();
-  const fromFlowOut = new Set();
   for (const e of wf.edges) {
     const a = byId.get(e.from), b = byId.get(e.to);
     const da = getBlock(a.type), db = getBlock(b.type);
@@ -359,11 +366,7 @@ function checkEdges(wf, byId, notes) {
       if (intoInput.has(k)) notes.push({ level: 'warning', msg: 'Two wires go into ' + (pb.port.label || pb.port.id) + ' of ' + displayName(b) + '. Only the first is used: remove the other.', nodeId: b.id, edgeId: e.id });
       intoInput.add(k);
     }
-    if (pa.kind === 'flowOut') {
-      const k = a.id + ':' + pa.port.id;
-      if (fromFlowOut.has(k)) notes.push({ level: 'warning', msg: 'Two wires leave ' + (pa.port.label || 'the flow output') + ' of ' + displayName(a) + '. A step leads to one next step: only the first is used.', nodeId: a.id, edgeId: e.id });
-      fromFlowOut.add(k);
-    }
+    // Several wires leaving one flow output are parallel routes (codegen.js emitFork).
   }
 }
 
@@ -507,15 +510,44 @@ function readBackSettings(wf, text, map, notes) {
   if (unreadable.length) notes.push({ level: 'warning', msg: 'These SETTINGS lines in the file could not be read back, so the workflow keeps its own values: ' + unreadable.join(', ') + '.' });
 }
 
+// GRAPH_STYLE = { ... } in SETTINGS, edited in the file, is read back as the workflow's graph
+// style. A value that cannot be used keeps the default's (as the script itself does) and is
+// named in a note; keys this version does not know are kept on the workflow as they were.
+function readBackGraphStyle(wf, text, notes) {
+  const lines = String(text).split(/\r\n|\n|\r/);
+  const a = lines.findIndex(l => /^# ==== SETTINGS/.test(l));
+  if (a < 0) return;
+  let b = lines.findIndex((l, i) => i > a && /^# ==== /.test(l));
+  if (b < 0) b = lines.length;
+  const i0 = lines.findIndex((l, i) => i > a && i < b && /^GRAPH_STYLE\s*=/.test(l));
+  if (i0 < 0) return;
+  let i1 = lines.findIndex((l, i) => i >= i0 && i < b && /^\}/.test(l));
+  if (i1 < 0) i1 = i0;
+  const lit = parsePyLiteral(lines.slice(i0, i1 + 1).join('\n').replace(/^GRAPH_STYLE\s*=\s*/, ''));
+  if (!lit || !isPlainObject(lit.value)) {
+    notes.push({ level: 'warning', msg: 'GRAPH_STYLE in the file could not be read back, so the workflow keeps its own graph style.' });
+    return;
+  }
+  const bad = unusableKeys(lit.value);
+  if (bad.length) notes.push({ level: 'warning', msg: 'These GRAPH_STYLE values in the file cannot be used, so they take the Adjie Brotools style\'s: ' + bad.join(', ') + '.' });
+  const next = normalizeStyle(lit.value);
+  if (sameStyle(next, wf.graph)) return;
+  wf.graph = { ...(isPlainObject(wf.graph) ? wf.graph : {}), ...next };
+  notes.push({ level: 'info', msg: 'Read the graph style edited in the file (GRAPH_STYLE).' });
+}
+
 function applySetting(wf, ref, value) {
-  const [nodeId, key, sub] = ref;
+  const [nodeId, key0, sub] = ref;
   if (nodeId === '*') {
-    if (key !== 'name' || typeof value !== 'string') return 'bad';
+    if (key0 !== 'name' || typeof value !== 'string') return 'bad';
     if (wf.name === value) return 'same';
     wf.name = value; return 'changed';
   }
   const node = wf.nodes.find(n => n.id === nodeId);
   const def = node && getBlock(node.type);
+  // A SETTINGS line of a setting that was renamed since (settingAlias) goes to its new key.
+  const alias = def && def.settingAlias && !(def.settings || []).some(x => x.key === key0) ? def.settingAlias[key0] : null;
+  const key = alias || key0;
   const st = def && (def.settings || []).find(x => x.key === key);
   if (!st) return 'bad';
   const cur = node.s[key];

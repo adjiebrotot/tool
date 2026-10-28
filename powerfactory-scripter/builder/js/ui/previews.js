@@ -161,7 +161,10 @@ const PREVIEWS = {
     const name = tableName(s);
     const save = c.wf.nodes.find(m => m.type === 'out.table.save' && tableName(settingsOf(m)) === name);
     const ss = save ? settingsOf(save) : null;
-    return { table: true, caption: ss ? saveName(ss.stem, name, ss.fmt) : name + '.csv', note: ss ? '' : 'saved at the end', cols: tableCols(c.wf, c.gen, c.node, s, c.wired) };
+    // No Save results table for it: saved at the end of the run, as Start's table format says.
+    const start = c.wf.nodes.find(m => m.type === 'start');
+    const fmt = start && getBlock('start') ? settingsOf(start).tableFmt : 'csv';
+    return { table: true, caption: ss ? saveName(ss.stem, name, ss.fmt) : saveName('', name, fmt), note: ss ? '' : 'saved at the end', cols: tableCols(c.wf, c.gen, c.node, s, c.wired) };
   },
   'out.table.save'(s, c) {
     const name = tableName(s);

@@ -229,6 +229,33 @@ readers see it again (checks treat any `<tool>-tour-vN-seen` as seen).
 
 A tour shows where things are; the page and its (i) tips explain them.
 
+- **Tour and Guide.** The header button reads `🧭 Tour`. A tool with a guide page
+  (`<tool>/guides/`, built on `guide-shared.css` and `guide-shared.js`) passes
+  `guide: 'guides/'` in `window.__TOUR`: a `📖 Guide` button then sits beside Tour, and the
+  last step, which has no Skip, offers "See guide for more details" with a `See Guide` button
+  above Back and Done.
+- **A guide's demos are the live tool.** A guide shows the real tool in a frame, driven by
+  scripts (`<tool>/guides/scenes.js`, played by `guide-live.js`; the Load Flow guide is the
+  model), not recorded clips: a guide then costs a few KB instead of megabytes of video, never
+  goes stale when the tool's look changes, and a reader can pause it and try the tool in
+  place. Each step points the camera at what it is about (`S.focus(part)`, up to 2.2 times
+  closer, sharp because it is the live page) and pulls back (`S.focus()`) when the result
+  shows across the tool, such as a run. The tool's `<head>` starts with the one `guide-demo.js` line (see that file), so the
+  demo runs on storage of its own and is not counted as a visit. A run a scene starts is
+  solved ahead by `node _ref/presolve.mjs`, and `node _ref/guide-check.mjs <tool>` must pass
+  before a change to the tool or its guide ships. Record clips (`_ref/guide-capture/`, mp4
+  only, under 500 KB each) only for a tool a script cannot drive, such as one that needs a
+  file from the reader.
+- **A finance guide also says how the numbers work.** After the how-to sections, a second
+  part (`.gd-part`) takes each input group in turn: the formula it enters (`.gd-eq`), a field
+  table naming what each field is, where it enters the maths and what raising it does
+  (`.gd-table`, `.gd-eff` chips), a worked example with a Quick Start's real figures
+  (`.gd-calc`), and a sensitivity chart (`.gd-tornado`) measured on the tool's own engine.
+  A tool with a second page on the same inputs (Rent vs Own's Sensitivity, the DCA Portfolio
+  mode, the Cost of Living Map) is one guide showing both: a scene with its own `path` opens
+  the other page, and `.gd-twin` sets the two screens side by side with the same fields
+  outlined under the same numbers.
+
 - **Short.** A lead line, or a `<ul>` of two to four points, each a fragment
   (`Simulated: model an asset from its return and volatility`). About 30 words
   at most.

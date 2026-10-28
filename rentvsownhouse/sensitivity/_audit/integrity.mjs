@@ -19,8 +19,8 @@
 //   A6  the fairness identity: two columns' renters hold exactly the future
 //       value of the difference in what their rent cost, and nothing else
 //   A7  a set cash and budget reach every column alike
-//   A8  a budget too small for a column is flagged on that column, from the
-//       first year its cash goes below zero
+//   A8  a budget too small for a column refuses that column (no figures, no
+//       cashflow), naming the first year its cash goes below zero
 // Several currencies (stubbed rates: 1 USD = 1.5 AUD = 1.35 SGD = 16,500 IDR):
 //   B1  switching multi-currency on with every column in the base changes
 //       no figure, and results then read in the base's ISO code
@@ -237,14 +237,29 @@ const A = [
   for(let i=0; i<A.length; i++){ const f = await flows(page, 'rent', i); c7.push(f.rows[0].End_Cash); b7.push(f.rows.slice(1).every((r, y) => near(r.Ann_Budget, 108000*Math.pow(1.03, y), 1))); }
   check('A7 a set cash and budget (with its increase) reach every column alike', c7.every(v => v === 2000000) && b7.every(Boolean), `cash ${c7.join(' / ')}, budgets ${b7.join(' / ')}`);
 
-  // A8
+  // A8: the year each column's Own cash would first close below zero on a
+  // $3,000 budget, replayed month by month from the automatic run's own
+  // costs and opening cash, which a budget does not change.
+  const rfm8 = Math.pow(1 + RFR/100, 1/12) - 1;
+  const firstNeg = own.map(o => {
+    let c = o.rows[0].End_Cash;
+    for(const r of o.rows.slice(1)){
+      const m = (3000*12 - r.Principal_Exp - r.Interest_Exp - r.Ongoing_Exp) / 12;
+      for(let k=0; k<12; k++) c = c*(1+rfm8) + m;
+      if(c < -0.5) return r.Year;
+    }
+    return null;
+  });
   await upload(page, tableCSV(A, {horizon:H, rfr:RFR, budget:3000}));
   const subs = await page.evaluate(() => [...document.querySelectorAll('.scen-header-notes')].map(n => n.textContent));
-  const firstNeg = [];
-  for(let i=0; i<A.length; i++){ const f = await flows(page, 'own', i); const r = f.rows.find(r => r.End_Cash < -0.5); firstNeg.push(r ? r.Year : null); }
-  const ok8 = firstNeg.every((y, i) => y === null ? !/Own cash below zero/.test(subs[i]) : subs[i].includes(`Own cash below zero from year ${y}`));
-  check('A8 a budget too small for a column is flagged on it, from the first year its cash goes below zero',
-    ok8 && firstNeg.some(y => y !== null), `first negative years ${firstNeg.join(' / ')}; notes ${subs.join(' | ')}`);
+  const csv8 = [];
+  for(let i=0; i<A.length; i++) csv8.push(await page.evaluate(si => { window.__csv = null; const b = document.querySelector(`.btn-scen-action.dl-own[data-si="${si}"]`); if(b) b.click(); return window.__csv; }, i));
+  const rows8 = []; for(let i=0; i<A.length; i++) rows8.push((await series(page, i, 'ownCash')).length);
+  const ok8 = firstNeg.every((y, i) => y === null
+    ? !/runs out of cash/.test(subs[i]) && csv8[i] != null
+    : subs[i].includes(`Own runs out of cash in year ${y}: not compared`) && csv8[i] == null && rows8[i] === 0);
+  check('A8 a budget too small for a column refuses that column, naming the first year its cash goes below zero',
+    ok8 && firstNeg.some(y => y !== null), `replayed years ${firstNeg.join(' / ')}; notes ${subs.join(' | ')}`);
   await page.close();
 }
 

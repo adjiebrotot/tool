@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory load flow in Python, results to CSV and Excel</title>
+<meta name="description" content="Run a PowerFactory load flow from Python with ComLdf, read busbar voltages and line loadings, and save them to CSV and Excel. Tested script and results.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/load-flow/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="PowerFactory load flow with Python, and the results in CSV or Excel">
+<meta property="og:description" content="Run a PowerFactory load flow from Python with ComLdf, read busbar voltages and line loadings, and save them to CSV and Excel. Tested script and results.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/load-flow/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PowerFactory load flow with Python, and the results in CSV or Excel">
+<meta name="twitter:description" content="Run a PowerFactory load flow from Python with ComLdf, read busbar voltages and line loadings, and save them to CSV and Excel. Tested script and results.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "PowerFactory load flow with Python, and the results in CSV or Excel",
+  "description": "Run a PowerFactory load flow from Python with ComLdf, read busbar voltages and line loadings, and save them to CSV and Excel. Tested script and results.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/load-flow/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "proficiencyLevel": "Beginner",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "powerfactory python load flow, ComLdf Execute, PowerFactory export results to Excel, PowerFactory results to CSV, m:u, c:loading, iopt_net",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "Load flow"
+    },
+    {
+      "@type": "Thing",
+      "name": "DIgSILENT PowerFactory"
+    },
+    {
+      "@type": "Thing",
+      "name": "Python"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PowerFactory studies with Python",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I run a load flow in PowerFactory with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Activate the study case, then call app.GetFromStudyCase(\"ComLdf\").Execute(). It returns 0 when the load flow converged."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I read busbar voltages after the load flow?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Loop over app.GetCalcRelevantObjects(\"*.ElmTerm\") and read GetAttribute(\"m:u\") for per unit, \"m:Ul\" for line-line kV and \"m:phiu\" for the angle in degrees."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I export PowerFactory load flow results to Excel?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Read the values into a list of dictionaries, then write it with pandas.DataFrame(rows).to_excel(\"results.xlsx\") (pandas and openpyxl installed), or with the csv module for CSV."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does iopt_net mean on ComLdf?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The network representation of the load flow: 0 balanced AC (positive sequence), 1 unbalanced three-phase AC, 2 DC load flow."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Load flow",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/load-flow/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Load flow</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PowerFactory load flow with Python, and the results in CSV or Excel</h1>
+    <p class="dx-lead">In PowerFactory's Python API a load flow is one call: <code>app.GetFromStudyCase("ComLdf").Execute()</code>, which returns <strong>0 when it converged</strong>. The results are then attributes: <code>m:u</code> for a busbar's voltage, <code>c:loading</code> for a line's loading. This page runs it on the Nine-bus example and saves every busbar and branch to CSV and Excel.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a load flow is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a load flow gives you</h2>
+  <p>A load flow (power flow) solves the steady state of the network for one operating point: the voltage magnitude and angle at every busbar, and from them the active and reactive power, current and loading of every line, transformer and generator. It is the base of almost every other study: contingency analysis repeats it per outage, hosting capacity repeats it per injection, a PV curve repeats it per load level.</p>
+  <p>In PowerFactory the load flow is a command object, <code>ComLdf</code>, stored in the study case. The study case decides what it solves: which grids are active, which operation scenario and which variations apply. Python only activates the case, sets the command's options, runs it and reads the answers.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Connect.</strong> <code>powerfactory.GetApplicationExt()</code> from your own Python (PowerFactory starts in the background), or <code>powerfactory.GetApplication()</code> inside a Python command in PowerFactory.</li>
+    <li><strong>Activate the project and the study case</strong> with <code>app.ActivateProject(name)</code> and the case's <code>Activate()</code>.</li>
+    <li><strong>Get the load flow command</strong> with <code>app.GetFromStudyCase("ComLdf")</code> and set the options of this run: <code>iopt_net</code> (0 balanced AC, 1 unbalanced, 2 DC), <code>iopt_lim</code> (reactive power limits), <code>iopt_at</code> (automatic taps).</li>
+    <li><strong>Run it.</strong> <code>Execute()</code> returns 0 when the load flow converged. Anything else means there is no valid result to read.</li>
+    <li><strong>Read the results</strong> with <code>GetAttribute</code>: <code>m:u</code>, <code>m:Ul</code> and <code>m:phiu</code> on terminals (<code>ElmTerm</code>), <code>c:loading</code>, <code>m:P:bus1</code> and <code>c:Ploss</code> on lines (<code>ElmLne</code>), with <code>:bushv</code> or <code>:buslv</code> on transformers.</li>
+    <li><strong>Save them</strong> as rows: the <code>csv</code> module for CSV, pandas for Excel. Put the command's options back so the study case stays as it was.</li>
+  </ol>
+  <h3>The script</h3>
+  <p>This runs as it is on the Nine-bus System, one of the example projects that come with PowerFactory 2024. Change <code>PROJECT</code> and <code>STUDY_CASE</code> for your own.</p>
+  <p class="dx-file"><span><code>load_flow.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;Load flow in PowerFactory with Python: run it, read every busbar and branch, save CSV and Excel.
+
+Runs on the &quot;Nine-bus System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+STUDY_CASE = <span class="py-s">&quot;01- Load Flow&quot;</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()         <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)
+app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
+
+<span class="py-c"># The study case's load flow command, with the options for this run (put back at the end).</span>
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)
+saved = {a: ldf.<span class="py-f">GetAttribute</span>(a) <span class="py-k">for</span> a <span class="py-k">in</span> (<span class="py-s">&quot;iopt_net&quot;</span>, <span class="py-s">&quot;iopt_lim&quot;</span>, <span class="py-s">&quot;iopt_at&quot;</span>)}
+ldf.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_net&quot;</span>, <span class="py-n">0</span>)     <span class="py-c"># 0 AC balanced, 1 AC unbalanced (3-phase), 2 DC</span>
+ldf.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_lim&quot;</span>, <span class="py-n">1</span>)     <span class="py-c"># 1 keeps generators within their reactive power limits</span>
+ldf.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_at&quot;</span>, <span class="py-n">0</span>)      <span class="py-c"># 1 lets transformer taps move automatically</span>
+<span class="py-k">try</span>:
+    <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:
+        <span class="py-k">raise</span> <span class="py-f">SystemExit</span>(<span class="py-s">&quot;The load flow did not converge&quot;</span>)
+
+    buses = [{<span class="py-s">&quot;Busbar&quot;</span>: b.loc_name, <span class="py-s">&quot;Nominal (kV)&quot;</span>: <span class="py-f">round</span>(b.uknom, <span class="py-n">2</span>),
+              <span class="py-s">&quot;Voltage (p.u.)&quot;</span>: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>), <span class="py-s">&quot;Voltage (kV)&quot;</span>: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:Ul&quot;</span>),
+              <span class="py-s">&quot;Angle (deg)&quot;</span>: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:phiu&quot;</span>)}
+             <span class="py-k">for</span> b <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)]
+
+    branches = []
+    <span class="py-k">for</span> o <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>) + app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTr2&quot;</span>):
+        end = <span class="py-s">&quot;bus1&quot;</span> <span class="py-k">if</span> o.<span class="py-f">GetClassName</span>() == <span class="py-s">&quot;ElmLne&quot;</span> <span class="py-k">else</span> <span class="py-s">&quot;bushv&quot;</span>   <span class="py-c"># the end P and Q are read at</span>
+        branches.<span class="py-f">append</span>({<span class="py-s">&quot;Branch&quot;</span>: o.loc_name, <span class="py-s">&quot;Class&quot;</span>: o.<span class="py-f">GetClassName</span>(),
+                         <span class="py-s">&quot;Loading (%)&quot;</span>: o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>),
+                         <span class="py-s">&quot;P (MW)&quot;</span>: o.<span class="py-f">GetAttribute</span>(<span class="py-s">f&quot;m:P:{end}&quot;</span>), <span class="py-s">&quot;Q (Mvar)&quot;</span>: o.<span class="py-f">GetAttribute</span>(<span class="py-s">f&quot;m:Q:{end}&quot;</span>),
+                         <span class="py-s">&quot;Losses (MW)&quot;</span>: o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:Ploss&quot;</span>)})
+<span class="py-k">finally</span>:
+    <span class="py-k">for</span> a, v <span class="py-k">in</span> saved.<span class="py-f">items</span>():                  <span class="py-c"># leave the command as it was</span>
+        ldf.<span class="py-f">SetAttribute</span>(a, v)
+
+
+<span class="py-k">def</span> <span class="py-f">save_csv</span>(name, rows):
+    <span class="py-k">with</span> <span class="py-f">open</span>(name, <span class="py-s">&quot;w&quot;</span>, newline=<span class="py-s">&quot;&quot;</span>) <span class="py-k">as</span> f:
+        out = csv.<span class="py-f">DictWriter</span>(f, fieldnames=<span class="py-f">list</span>(rows[<span class="py-n">0</span>]))
+        out.<span class="py-f">writeheader</span>()
+        out.<span class="py-f">writerows</span>(rows)
+
+
+<span class="py-f">save_csv</span>(<span class="py-s">&quot;load_flow_buses.csv&quot;</span>, buses)
+<span class="py-f">save_csv</span>(<span class="py-s">&quot;load_flow_branches.csv&quot;</span>, branches)
+
+<span class="py-c"># Excel, one sheet per table: needs pandas and openpyxl (pip install pandas openpyxl).</span>
+<span class="py-k">try</span>:
+    <span class="py-k">import</span> pandas <span class="py-k">as</span> pd
+    <span class="py-k">with</span> pd.<span class="py-f">ExcelWriter</span>(<span class="py-s">&quot;load_flow_results.xlsx&quot;</span>) <span class="py-k">as</span> xl:
+        pd.<span class="py-f">DataFrame</span>(buses).<span class="py-f">to_excel</span>(xl, sheet_name=<span class="py-s">&quot;Busbars&quot;</span>, index=<span class="py-k">False</span>)
+        pd.<span class="py-f">DataFrame</span>(branches).<span class="py-f">to_excel</span>(xl, sheet_name=<span class="py-s">&quot;Branches&quot;</span>, index=<span class="py-k">False</span>)
+<span class="py-k">except</span> ImportError:
+    <span class="py-f">print</span>(<span class="py-s">&quot;pandas is not installed: the CSV files are saved, the Excel file is not&quot;</span>)
+
+<span class="py-f">print</span>(<span class="py-s">f&quot;Saved {len(buses)} busbars and {len(branches)} branches&quot;</span>)</code></pre>
+  <h3>Result on the Nine-bus example</h3>
+  <p>The whole script, files included, runs in 0.9 s. The most loaded branch is <strong>T2 at 79.6 %</strong>, and the lowest voltage is <strong>0.9956 p.u. at Bus 5</strong>, the busbar of the largest load.</p>
+  <figure class="dx-chart"><div class="dx-chart-sc"><svg viewBox="0 0 760 360" role="img" aria-labelledby="ch5plqos" xmlns="http://www.w3.org/2000/svg"><title id="ch5plqos">Loading of every line and transformer in the Nine-bus example after the load flow</title><line class="ch-grid" x1="64" x2="742" y1="302.0" y2="302.0"/><text class="ch-t" x="56" y="306.0" text-anchor="end">0</text><line class="ch-grid" x1="64" x2="742" y1="244.8" y2="244.8"/><text class="ch-t" x="56" y="248.8" text-anchor="end">20</text><line class="ch-grid" x1="64" x2="742" y1="187.6" y2="187.6"/><text class="ch-t" x="56" y="191.6" text-anchor="end">40</text><line class="ch-grid" x1="64" x2="742" y1="130.4" y2="130.4"/><text class="ch-t" x="56" y="134.4" text-anchor="end">60</text><line class="ch-grid" x1="64" x2="742" y1="73.2" y2="73.2"/><text class="ch-t" x="56" y="77.2" text-anchor="end">80</text><line class="ch-grid" x1="64" x2="742" y1="16.0" y2="16.0"/><text class="ch-t" x="56" y="20.0" text-anchor="end">100</text><rect class="ch-f1" x="76.1" y="261.5" width="51.2" height="40.5" rx="2"><title>Line 4-5: 14.2 %</title></rect><text class="ch-t" x="101.7" y="320" text-anchor="middle">Line 4-5</text><rect class="ch-f1" x="151.4" y="277.4" width="51.2" height="24.6" rx="2"><title>Line 4-6: 8.61 %</title></rect><text class="ch-t" x="177.0" y="320" text-anchor="middle">Line 4-6</text><rect class="ch-f1" x="226.7" y="240.7" width="51.2" height="61.3" rx="2"><title>Line 5-7: 21.4 %</title></rect><text class="ch-t" x="252.3" y="320" text-anchor="middle">Line 5-7</text><rect class="ch-f1" x="302.1" y="257.9" width="51.2" height="44.1" rx="2"><title>Line 6-9: 15.4 %</title></rect><text class="ch-t" x="327.7" y="320" text-anchor="middle">Line 6-9</text><rect class="ch-f1" x="377.4" y="247.8" width="51.2" height="54.2" rx="2"><title>Line 7-8: 18.9 %</title></rect><text class="ch-t" x="403.0" y="320" text-anchor="middle">Line 7-8</text><rect class="ch-f1" x="452.7" y="277.8" width="51.2" height="24.2" rx="2"><title>Line 8-9: 8.46 %</title></rect><text class="ch-t" x="478.3" y="320" text-anchor="middle">Line 8-9</text><rect class="ch-f2" x="528.1" y="217.8" width="51.2" height="84.2" rx="2"><title>T1: 29.5 %</title></rect><text class="ch-t" x="553.7" y="320" text-anchor="middle">T1</text><rect class="ch-f2" x="603.4" y="74.4" width="51.2" height="227.6" rx="2"><title>T2: 79.6 %</title></rect><text class="ch-t" x="629.0" y="320" text-anchor="middle">T2</text><rect class="ch-f2" x="678.7" y="142.6" width="51.2" height="159.4" rx="2"><title>T3: 55.7 %</title></rect><text class="ch-t" x="704.3" y="320" text-anchor="middle">T3</text><line class="ch-axis" x1="64" x2="742" y1="302" y2="302"/><text class="ch-tt" transform="translate(16 159) rotate(-90)" text-anchor="middle">Loading (%)</text></svg></div><ul class="dx-legend"><li><i class="k1"></i>Line (ElmLne)</li><li><i class="k2"></i>Transformer (ElmTr2)</li></ul><figcaption>Read with c:loading after the load flow.</figcaption></figure>
+  <div class="dx-tw"><table><thead><tr><th>Busbar</th><th class="num">Nominal <span class="th-unit">kV</span></th><th class="num">Voltage <span class="th-unit">p.u.</span></th><th class="num">Voltage <span class="th-unit">kV</span></th><th class="num">Angle <span class="th-unit">deg</span></th></tr></thead><tbody>
+<tr><td>Bus 1</td><td class="num">16.5</td><td class="num">1.0400</td><td class="num">17.16</td><td class="num">0.00</td></tr>
+<tr><td>Bus 2</td><td class="num">18.0</td><td class="num">1.0250</td><td class="num">18.45</td><td class="num">9.28</td></tr>
+<tr><td>Bus 3</td><td class="num">13.8</td><td class="num">1.0250</td><td class="num">14.14</td><td class="num">4.66</td></tr>
+<tr><td>Bus 4</td><td class="num">230.0</td><td class="num">1.0258</td><td class="num">235.93</td><td class="num">147.78</td></tr>
+<tr><td>Bus 5</td><td class="num">230.0</td><td class="num">0.9956</td><td class="num">229.00</td><td class="num">146.01</td></tr>
+<tr><td>Bus 6</td><td class="num">230.0</td><td class="num">1.0127</td><td class="num">232.91</td><td class="num">146.31</td></tr>
+<tr><td>Bus 7</td><td class="num">230.0</td><td class="num">1.0258</td><td class="num">235.93</td><td class="num">153.72</td></tr>
+<tr><td>Bus 8</td><td class="num">230.0</td><td class="num">1.0159</td><td class="num">233.65</td><td class="num">150.73</td></tr>
+<tr><td>Bus 9</td><td class="num">230.0</td><td class="num">1.0324</td><td class="num">237.44</td><td class="num">151.97</td></tr>
+</tbody></table></div>
+  <div class="dx-tw"><table><thead><tr><th>Branch</th><th>Class</th><th class="num">Loading <span class="th-unit">%</span></th><th class="num">P <span class="th-unit">MW</span></th><th class="num">Q <span class="th-unit">Mvar</span></th><th class="num">Losses <span class="th-unit">MW</span></th></tr></thead><tbody>
+<tr><td>Line 4-5</td><td><code>ElmLne</code></td><td class="num">14.2</td><td class="num">-40.7</td><td class="num">-38.7</td><td class="num">0.26</td></tr>
+<tr><td>Line 4-6</td><td><code>ElmLne</code></td><td class="num">8.6</td><td class="num">-30.5</td><td class="num">-16.5</td><td class="num">0.17</td></tr>
+<tr><td>Line 5-7</td><td><code>ElmLne</code></td><td class="num">21.4</td><td class="num">-84.3</td><td class="num">-11.3</td><td class="num">2.30</td></tr>
+<tr><td>Line 6-9</td><td><code>ElmLne</code></td><td class="num">15.4</td><td class="num">60.8</td><td class="num">-18.1</td><td class="num">1.35</td></tr>
+<tr><td>Line 7-8</td><td><code>ElmLne</code></td><td class="num">18.9</td><td class="num">76.4</td><td class="num">-0.8</td><td class="num">0.48</td></tr>
+<tr><td>Line 8-9</td><td><code>ElmLne</code></td><td class="num">8.5</td><td class="num">-24.1</td><td class="num">-24.3</td><td class="num">0.09</td></tr>
+<tr><td>T1</td><td><code>ElmTr2</code></td><td class="num">29.5</td><td class="num">-71.6</td><td class="num">-23.9</td><td class="num">0.00</td></tr>
+<tr><td>T2</td><td><code>ElmTr2</code></td><td class="num">79.6</td><td class="num">-163.0</td><td class="num">9.2</td><td class="num">-0.00</td></tr>
+<tr><td>T3</td><td><code>ElmTr2</code></td><td class="num">55.7</td><td class="num">-85.0</td><td class="num">15.0</td><td class="num">0.00</td></tr>
+</tbody></table></div>
+  <p class="dx-note">P and Q are read at terminal i of each line (<code>:bus1</code>) and at the HV side of each transformer (<code>:bushv</code>); a negative value flows into the branch from the other end. The script also wrote <code>load_flow_buses.csv</code>, <code>load_flow_branches.csv</code> and <code>load_flow_results.xlsx</code>.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Load flow on every study case Quick Start loads in the PowerFactory Workflow Builder, ready for your project. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=ldf-cases">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The Builder writes the same study for <strong>every study case</strong> of a project, with one row per case: its lowest and highest busbar voltage and where they are. On the Nine-bus example its 8 study cases give 8 rows; the one case with no grid in it keeps its row with the reason the load flow did not converge. This is the file it writes for the example (only <code>PROJECT</code> filled in):</p>
+  <p class="dx-file"><span><code>load_flow_on_every_study_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="load_flow_on_every_study_case.py" download>⬇ Download the full file (.py, 1,628 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Load flow on every study case</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Close PowerFactory, or run this file from inside PowerFactory (see RUN_MODE).
+  3. Run it with the Python that matches your PowerFactory, e.g.  py -3.12 load_flow_on_every_study_case.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> difflib
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> glob
+<span class="py-k">import</span> importlib.util
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> subprocess
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Load flow on every study case&quot;</span>
+<span class="py-c"># REQUIRED. The PowerFactory project to open, exactly as the Data Manager shows it (letter case</span>
+<span class="py-c"># counts).</span>
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+<span class="py-c"># OPTIONAL. The study case to activate first (&quot;&quot; = keep the active one).</span>
+STUDY_CASE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every value the workflow changed back when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read from the</span>
+<span class="py-c"># grid).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;engine&quot; (start PowerFactory in the background) or &quot;inside&quot; (run from inside</span>
+<span class="py-c"># PowerFactory).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PowerFactory window while running (engine mode only).</span>
+SHOW_PF = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. True: no screen updates and fewer output window messages while running.</span>
+FAST_MODE = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PowerFactory to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+<span class="py-c"># OPTIONAL. The folder with the powerfactory Python module (&quot;&quot; = find it).</span>
+PF_API_PATH = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Log in to PowerFactory as this user (&quot;&quot; = your own).</span>
+PF_USER = <span class="py-s">&quot;&quot;</span>
+
+<span class="py-c"># OPTIONAL. Study case: Study cases named.</span>
+STUDY_CASE_PATTERN = <span class="py-s">&quot;*&quot;</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: This runs the load flow of every study case of the project (or of the cases named on For each study case, for example 0*) and reads the voltage of every busbar in service. Each case gets a row with...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">pf_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Project: Nine-bus System) --</span>
+        <span class="py-c"># -- Step 2: Study case (Every study case) --</span>
+        study_case_cases = <span class="py-f">case_list</span>(app, STUDY_CASE_PATTERN)
+        <span class="py-k">if</span> <span class="py-k">not</span> study_case_cases:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Study case: no study case to loop over.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+        <span class="py-k">for</span> study_case_pass_no, study_case <span class="py-k">in</span> <span class="py-f">enumerate</span>(<span class="py-f">each_case</span>(app, study_case_cases), <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Study case&quot;</span>, study_case, study_case_pass_no, <span class="py-f">len</span>(study_case_cases))
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Run load flow (Settings of the study case) --</span>
+                ldf = <span class="py-f">run_load_flow</span>(app, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>)
+                <span class="py-c"># Did not converge: skips to the next pass of Study case</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> ldf.ok:
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;Load flow did not converge&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 4: Busbar voltage (m:u of all * (ElmTerm) (load flow results)) --</span>
+                busbar_voltage = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;m:u&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 5: Add row to results table (Into &quot;Load flow&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Load flow&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>: busbar_voltage.min,
+                    <span class="py-s">&quot;Lowest at&quot;</span>: busbar_voltage.at_min,
+                    <span class="py-s">&quot;Highest voltage (p.u.)&quot;</span>: busbar_voltage.max,
+                    <span class="py-s">&quot;Highest at&quot;</span>: busbar_voltage.at_max,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Load flow&quot;</span>])
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 1,519 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><strong>SETTINGS</strong> at the top are the only lines to edit: the project, the study case to start from, where the run folder goes, and <code>TABLE_FORMAT</code> (<code>"csv"</code>, <code>"xlsx"</code> or <code>"both"</code>).</li>
+    <li><strong>Step 2</strong> lists the study cases that match <code>STUDY_CASE_PATTERN</code> and activates each in turn (<code>each_case</code>).</li>
+    <li><strong>Step 3</strong>, <code>run_load_flow</code>, runs the case's own <code>ComLdf</code>. When it does not converge, <code>case_skipped</code> keeps the row with the reason and the loop goes on to the next case.</li>
+    <li><strong>Step 4</strong> reads <code>m:u</code> of every busbar in service and energised, and keeps the lowest and highest with where they are.</li>
+    <li><strong>Step 5</strong> adds the row to the "Load flow" table, saved at the end as CSV or Excel in a new run folder, next to a <code>run.log</code>.</li>
+    <li><code>finish(app)</code> puts back every value the workflow changed and the study case it started from.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>Check <code>Execute()</code> before reading.</strong> 0 means converged. After a failed load flow the <code>m:</code> and <code>c:</code> values are not a solution, yet <code>GetAttribute</code> still returns numbers.</li>
+    <li><strong>Branch results need the end.</strong> <code>m:P</code> on a line raises <code>AttributeError</code>: write <code>m:P:bus1</code> or <code>m:P:bus2</code>, and <code>m:P:bushv</code> or <code>m:P:buslv</code> on a 2-winding transformer. <code>c:loading</code> has no end.</li>
+    <li><strong>Angles include transformer phase shifts.</strong> Bus 4 of the Nine-bus example reads 147.8 deg because generator transformer T1 shifts the angle by 150 deg. Compare angles on the same side of a transformer.</li>
+    <li><strong>Changed options are saved in the project.</strong> <code>SetAttribute</code> on <code>ComLdf</code> changes the study case for good, so the script keeps the old values and puts them back in <code>finally</code>.</li>
+    <li><strong><code>GetFromStudyCase</code> makes what is missing.</strong> If the study case has no <code>ComLdf</code>, it silently creates one with default options. Check <code>case.GetContents("*.ComLdf")</code> when the options matter.</li>
+    <li><strong>Excel needs pandas and openpyxl in the Python that runs the script.</strong> The CSV files need nothing beyond the standard library.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I run a load flow in PowerFactory with Python?</h3>
+  <p>Activate the study case, then call <code>app.GetFromStudyCase("ComLdf").Execute()</code>. It returns 0 when the load flow converged.</p>
+  <h3>How do I read busbar voltages after the load flow?</h3>
+  <p>Loop over <code>app.GetCalcRelevantObjects("*.ElmTerm")</code> and read <code>GetAttribute("m:u")</code> for per unit, <code>"m:Ul"</code> for line-line kV and <code>"m:phiu"</code> for the angle in degrees.</p>
+  <h3>How do I export PowerFactory load flow results to Excel?</h3>
+  <p>Read the values into a list of dictionaries, then write it with <code>pandas.DataFrame(rows).to_excel("results.xlsx")</code> (pandas and openpyxl installed), or with the <code>csv</code> module for CSV.</p>
+  <h3>What does iopt_net mean on ComLdf?</h3>
+  <p>The network representation of the load flow: 0 balanced AC (positive sequence), 1 unbalanced three-phase AC, 2 DC load flow.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PowerFactory studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PowerFactory Python API: getting started</a></li>
+    <li><a href="../contingency-analysis/">N-1 contingency analysis</a></li>
+    <li><a href="../short-circuit/">Short-circuit automation</a></li>
+    <li><a href="../hosting-capacity/">Hosting capacity study</a></li>
+    <li><a href="../parameter-sweep/">Parameter sweep: PV and QV curves</a></li>
+    <li><a href="../rms-emt-simulation/">RMS and EMT simulation batch runs</a></li>
+  </ul>
+  <p>Attributes used on this page: <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a>, <a href="../../reference/ElmLne/"><code>ElmLne</code></a>, <a href="../../reference/ElmTr2/"><code>ElmTr2</code></a>, <a href="../../reference/ElmSym/"><code>ElmSym</code></a>, <a href="../../reference/ElmLod/"><code>ElmLod</code></a>. <a href="../../reference/">All attributes</a>.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -149,23 +150,9 @@
       "sv": 1
     },
     {
-      "id": "n8",
-      "type": "out.table.save",
-      "x": 640,
-      "y": 480,
-      "label": "",
-      "s": {
-        "table": "Short circuit",
-        "fmt": "csv",
-        "stem": ""
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
       "id": "n9",
       "type": "out.plot.xy",
-      "x": 960,
+      "x": 640,
       "y": 480,
       "label": "Fault current at every busbar",
       "s": {
@@ -190,7 +177,7 @@
     {
       "id": "n10",
       "type": "out.table.column",
-      "x": 960,
+      "x": 320,
       "y": 810,
       "label": "Busbars",
       "s": {
@@ -206,7 +193,7 @@
     {
       "id": "n11",
       "type": "out.table.column",
-      "x": 1280,
+      "x": 640,
       "y": 810,
       "label": "Fault currents",
       "s": {
@@ -260,60 +247,53 @@
       "id": "e6",
       "from": "n3",
       "out": "done",
-      "to": "n8",
-      "in": "in"
-    },
-    {
-      "id": "e7",
-      "from": "n8",
-      "out": "next",
       "to": "n9",
       "in": "in"
     },
     {
-      "id": "e8",
+      "id": "e7",
       "from": "n3",
       "out": "item",
       "to": "n4",
       "in": "target"
     },
     {
-      "id": "e9",
+      "id": "e8",
       "from": "n3",
       "out": "item",
       "to": "n5",
       "in": "obj"
     },
     {
-      "id": "e10",
+      "id": "e9",
       "from": "n3",
       "out": "item",
       "to": "n6",
       "in": "obj"
     },
     {
-      "id": "e11",
+      "id": "e10",
       "from": "n5",
       "out": "value",
       "to": "n7",
       "in": "c1"
     },
     {
-      "id": "e12",
+      "id": "e11",
       "from": "n6",
       "out": "value",
       "to": "n7",
       "in": "c2"
     },
     {
-      "id": "e13",
+      "id": "e12",
       "from": "n10",
       "out": "value",
       "to": "n9",
       "in": "x"
     },
     {
-      "id": "e14",
+      "id": "e13",
       "from": "n11",
       "out": "value",
       "to": "n9",

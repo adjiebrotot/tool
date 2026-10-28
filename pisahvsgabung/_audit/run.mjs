@@ -41,6 +41,8 @@ function tax(income){
   return t;
 }
 const PTKP_TK0=54e6, PTKP_K=4.5e6;
+// Biaya jabatan, on by default: 5% of each spouse's gross, at most 6M a year.
+const bj = g => Math.min(g*0.05, 6e6);
 // fmt.idr compact used by the KPI: >=1e9 → x.xB else >=1e6 → x.xM
 function kpiFmt(v){
   const a=Math.abs(v);
@@ -58,6 +60,8 @@ await page.route('**/*', route => {
   if(/chart\.umd/.test(url)) return route.fulfill({contentType:'application/javascript', body:CHART_STUB});
   return route.fulfill({contentType:'application/javascript', body:'/* stub */'});
 });
+// The first-visit tour would cover the page and take the clicks.
+await page.addInitScript(()=>{ try{ localStorage.setItem('pvg-tour-v3-seen','1'); localStorage.setItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, ''), '1'); }catch(e){} });
 await page.goto(PAGE, {waitUntil:'load'});
 await page.waitForTimeout(300);
 
@@ -72,8 +76,8 @@ await page.waitForTimeout(300);
 // ── T2: default 50/50 KPI sanity vs reference schedule ──
 {
   const hus=250e6, wife=250e6;
-  const pisahRef = tax(hus-(PTKP_TK0+PTKP_K)) + tax(wife-PTKP_TK0);
-  const gabungRef = tax(hus+wife-(PTKP_TK0+PTKP_K+PTKP_TK0));
+  const pisahRef = tax(hus-bj(hus)-(PTKP_TK0+PTKP_K)) + tax(wife-bj(wife)-PTKP_TK0);
+  const gabungRef = tax(hus-bj(hus)+wife-bj(wife)-(PTKP_TK0+PTKP_K+PTKP_TK0));
   const got = await page.evaluate(()=>({p:document.getElementById('kpiPisah').textContent, g:document.getElementById('kpiGabung').textContent}));
   check('T2 default KPIs match reference tax schedule',
     got.p===kpiFmt(pisahRef) && got.g===kpiFmt(gabungRef),
@@ -92,7 +96,7 @@ await page.waitForTimeout(300);
     set('wifeSalaryInput','12,000,000');
   });
   await page.waitForTimeout(150);
-  const husTaxable = 500e6-(PTKP_TK0+PTKP_K);       // wife 12M < PTKP → 0 tax
+  const husTaxable = 500e6-bj(500e6)-(PTKP_TK0+PTKP_K);   // wife 12M < PTKP → 0 tax
   const exact = tax(husTaxable);
   const got = await page.evaluate(()=>document.getElementById('kpiPisah').textContent);
   check('T3 individual-mode Pisah KPI equals tax of typed salaries', got===kpiFmt(exact),
@@ -119,13 +123,46 @@ await page.waitForTimeout(300);
   await page.waitForTimeout(150);
   const after = await page.evaluate(()=>document.getElementById('kpiGabung').textContent);
   // Sane reading of the edited ladder (bracket 2 collapsed to nothing): the
-  // 327.5M above 60M is all taxed at 25% → 3M + 81.875M = 84.9M. The engine
+  // 315.5M above 60M is all taxed at 25% → 3M + 78.875M = 81.9M. The engine
   // instead walks a NEGATIVE width for bracket 2 (top 10,000 < prev 60M),
   // subtracting 15% of −59.99M and re-taxing that slice at 25%.
-  const taxable = 500e6-(PTKP_TK0+PTKP_K+PTKP_TK0);
+  const taxable = 500e6-2*bj(250e6)-(PTKP_TK0+PTKP_K+PTKP_TK0);
   const sane = 60e6*0.05 + (taxable-60e6)*0.25;
   check('T4 bracket editor: out-of-order "to" still yields a sane progressive tax', after===kpiFmt(sane),
     `before=${before}; after setting bracket 2 "to"=10,000 app shows ${after}, sane value is ${kpiFmt(sane)}`);
+}
+
+// ── T5: biaya jabatan. A cache, file or link saved before the switch existed
+//        carries no value for it, and its deductions were all the deductions
+//        there were, so it opens with the switch off and its old answer. One
+//        saved since keeps whichever way the switch was. ──
+{
+  const KEY='abt:save:pisahvsgabung:v1';
+  const seed = async fields => {
+    await page.evaluate(([k,f])=>{ localStorage.setItem(k, JSON.stringify({__fields:f, __extra:{mode:'total'}})); try{ localStorage.setItem=function(){}; }catch(e){} }, [KEY, fields]);
+    await page.reload({waitUntil:'load'});
+    await page.waitForTimeout(300);
+    return page.evaluate(()=>({on:document.getElementById('biayaJabatan').checked,
+      p:document.getElementById('kpiPisah').textContent, g:document.getElementById('kpiGabung').textContent}));
+  };
+  const old = {'v:dependents':'0','v:totalSalaryInput':'500,000,000','v:splitPct':'50','v:deductionInput':'0'};
+  const before = await seed(old);
+  const hus=250e6, wife=250e6;
+  const oldP = tax(hus-(PTKP_TK0+PTKP_K)) + tax(wife-PTKP_TK0), oldG = tax(hus+wife-(PTKP_TK0+PTKP_K+PTKP_TK0));
+  check('T5 state saved before the biaya jabatan switch opens with it off, on its old answer',
+    !before.on && before.p===kpiFmt(oldP) && before.g===kpiFmt(oldG),
+    `switch ${before.on?'on':'off'}, ${before.p}/${before.g} vs ${kpiFmt(oldP)}/${kpiFmt(oldG)} before the switch`);
+  const kept = await seed(Object.assign({'c:biayaJabatan':true}, old));
+  check('T5b state saved with the switch keeps it, and biaya jabatan comes off each salary',
+    kept.on && kept.p===kpiFmt(tax(hus-bj(hus)-(PTKP_TK0+PTKP_K)) + tax(wife-bj(wife)-PTKP_TK0)),
+    `switch ${kept.on?'on':'off'}, ${kept.p}/${kept.g}`);
+
+  // The switch itself redraws the answer, back to the old one when off.
+  await page.click('.toggle-switch:has(#biayaJabatan)');
+  await page.waitForTimeout(150);
+  const flipped = await page.evaluate(()=>({on:document.getElementById('biayaJabatan').checked, p:document.getElementById('kpiPisah').textContent}));
+  check('T5c turning biaya jabatan off redraws the answer without it',
+    !flipped.on && flipped.p===kpiFmt(oldP), `switch ${flipped.on?'on':'off'}, ${flipped.p} vs ${kpiFmt(oldP)}`);
 }
 
 await browser.close();

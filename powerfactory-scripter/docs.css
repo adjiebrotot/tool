@@ -1,0 +1,181 @@
+/* =============================================================================================
+   PowerFactory Scripter: reading pages (the attribute reference and the Python study guides).
+   One small stylesheet for static pages that load nothing else: no shared.css, no shared.js,
+   no chart library. Colours come only from the site tokens (dark.css, light.css via body.light),
+   so every page and every inline chart follows day and night. Written by _pages/build.mjs's
+   pages; class prefix .dx-
+   ============================================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; min-width: 0; }
+html { scrollbar-gutter: stable; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.6; color: var(--text); background: var(--bg); overflow-x: hidden; }
+a { color: var(--accent-strong); }
+a:hover { text-decoration-thickness: 2px; }
+img, svg { max-width: 100%; }
+code, pre, kbd { font-family: 'DM Mono', ui-monospace, Consolas, monospace; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dx { max-width: 1080px; margin: 0 auto; padding: 20px 24px 32px; }
+
+/* ---- Top bar: back link, the way in to the Builder, day and night --------------------------- */
+.dx-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.dx-top-r { display: flex; align-items: center; gap: 10px; }
+.btn-theme { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 12px; font-family: inherit; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; background: var(--panel); border: 1.5px solid var(--ink-line); color: var(--text); border-radius: var(--radius-sm); box-shadow: var(--sticker); cursor: pointer; transition: box-shadow var(--motion-fast); }
+.btn-theme:hover { transform: translate(-1px, -1px); box-shadow: var(--sticker-hover); }
+.btn-theme:active { transform: translate(1px, 1px); box-shadow: 0 0 0 transparent; }
+.btn-theme.theme-ico { width: 36px; padding: 0; border-radius: var(--radius-pill); }
+.btn-theme.theme-ico svg { width: 18px; height: 18px; }
+html[data-abt-theme="light"] .theme-ico .ico-moon, html[data-abt-theme="dark"] .theme-ico .ico-sun { display: none; }
+.btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: var(--text-inv); border: none; border-radius: var(--radius-sm); padding: 11px 22px; font-family: inherit; font-size: .95rem; font-weight: 700; line-height: 1.2; text-decoration: none; box-shadow: var(--sticker-accent); transition: box-shadow var(--motion-fast); }
+.btn-primary:hover { transform: translate(-1px, -1px); box-shadow: var(--sticker-accent-hover); }
+.btn-primary:active { transform: translate(2px, 2px); box-shadow: 0 0 0 transparent; }
+.dx .btn-primary { color: var(--text-inv); }
+.dx-top .btn-primary { height: 36px; padding: 0 16px; font-size: 14px; }
+
+/* ---- Breadcrumb and title ------------------------------------------------------------------- */
+.dx-crumb { font-size: .85rem; color: var(--muted); margin: 0 0 10px; }
+.dx-crumb a { color: var(--muted); text-decoration: none; }
+.dx-crumb a:hover { color: var(--text); text-decoration: underline; }
+.dx-crumb span[aria-hidden] { margin: 0 6px; }
+h1 { margin: 0 0 12px; font-size: clamp(1.75rem, 3.6vw, 2.45rem); line-height: 1.15; font-weight: 800; letter-spacing: -.02em; }
+h1 .tool-glyph { vertical-align: -.12em; margin-right: .22em; }
+h1 .dx-h1-sub { display: block; margin-top: 6px; font-size: .5em; font-weight: 600; letter-spacing: 0; color: var(--muted); }
+h2 { margin: 0 0 10px; font-size: 1.35rem; line-height: 1.3; font-weight: 700; letter-spacing: -.01em; scroll-margin-top: 16px; }
+h3 { margin: 18px 0 6px; font-size: 1.05rem; line-height: 1.35; font-weight: 700; }
+p { margin: 0 0 12px; }
+.dx-lead { font-size: clamp(1.04rem, 1.6vw, 1.18rem); line-height: 1.55; margin: 0 0 18px; max-width: 50rem; }
+.dx-muted, .dx-note { color: var(--muted); }
+.dx-note { font-size: .9rem; }
+.dx-prose { max-width: 50rem; }
+.dx-prose li { margin: 4px 0; }
+.dx-prose ol, .dx-prose ul { padding-left: 1.3em; margin: 0 0 12px; }
+strong { font-weight: 700; }
+
+/* ---- Sections ------------------------------------------------------------------------------- */
+.dx-sec { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 26px; margin: 0 0 16px; }
+.dx-sec > :last-child { margin-bottom: 0; }
+.dx-answer { border-left: 4px solid var(--accent); }
+.dx-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; padding: 0; list-style: none; }
+.dx-toc a { display: inline-block; padding: 4px 12px; border-radius: var(--radius-pill); background: var(--input-bg); border: 1px solid var(--border); font-size: .85rem; font-weight: 600; color: var(--text); text-decoration: none; }
+.dx-toc a:hover { border-color: var(--accent); }
+.dx-toc .dx-n { color: var(--muted); font-weight: 500; margin-left: 4px; }
+
+/* Facts about a class, as a definition list */
+.dx-facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0; }
+.dx-facts dt { color: var(--muted); font-size: .9rem; }
+.dx-facts dd { margin: 0; }
+
+/* ---- Code ----------------------------------------------------------------------------------- */
+:not(pre) > code { font-size: .88em; background: var(--input-bg); padding: 1px 5px; border-radius: 6px; overflow-wrap: anywhere; }
+pre { margin: 0 0 14px; padding: 14px 16px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: auto; font-size: .84rem; line-height: 1.55; tab-size: 4; max-height: 70vh; }
+pre code { white-space: pre; }
+.dx-file { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); margin: 0 0 6px; }
+.dx-file code { background: none; padding: 0; }
+/* Python, highlighted when the page is written (no script) */
+.py-k { color: var(--accent-strong); font-weight: 500; }
+.py-s { color: var(--accent2); }
+.py-c { color: var(--muted); font-style: italic; }
+.py-n { color: var(--gold); }
+.py-f { color: var(--accent); }
+
+/* ---- Tables --------------------------------------------------------------------------------- */
+.dx-tw { overflow: auto; margin: 0 0 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); font-size: .8rem; font-weight: 600; line-height: 1.3; vertical-align: middle; text-wrap: balance; }
+th .th-unit { display: block; font-weight: 400; color: var(--muted); }
+td.num, th.num { text-align: right; font-family: 'DM Mono', monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+thead th.num { text-align: center; font-family: inherit; }
+td code { background: none; padding: 0; font-size: .9em; white-space: nowrap; }
+td small { display: block; color: var(--muted); font-size: .78rem; }
+tbody tr:hover td { background: var(--input-bg); }
+.dx-attrs td:first-child { width: 30%; }
+.dx-attrs td:nth-child(2) { width: 6.5rem; white-space: nowrap; color: var(--muted); }
+/* A long reference table renders only when it comes near the screen */
+.dx-group { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+/* Filter box (reference pages; shown only when the script runs) */
+.dx-filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 16px; }
+.dx-filter input { flex: 1 1 18rem; height: 40px; padding: 0 12px; font: inherit; color: var(--text); background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.dx-filter input:focus { border-color: var(--accent); outline: none; }
+.dx-filter output { color: var(--muted); font-size: .88rem; }
+
+/* Class lists on the reference index */
+.dx-classes { list-style: none; padding: 0; margin: 0 0 6px; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 8px; }
+.dx-classes a { display: block; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--panel); text-decoration: none; color: var(--text); }
+.dx-classes a:hover { border-color: var(--accent); }
+.dx-classes code { font-weight: 600; color: var(--accent-strong); background: none; padding: 0; font-size: .95rem; }
+.dx-classes span { display: block; font-size: .85rem; color: var(--muted); }
+
+/* Task cards on the hub */
+.dx-cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 12px; }
+.dx-cards a { display: block; height: 100%; padding: 16px 18px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); text-decoration: none; color: var(--text); }
+.dx-cards a:hover { border-color: var(--accent); }
+.dx-cards strong { display: block; font-size: 1.05rem; margin-bottom: 4px; color: var(--accent-strong); }
+.dx-cards span { display: block; color: var(--muted); font-size: .92rem; line-height: 1.5; }
+
+/* Steps of a method */
+.dx-steps { counter-reset: s; list-style: none; padding: 0; margin: 0 0 12px; }
+.dx-steps > li { counter-increment: s; position: relative; padding: 0 0 10px 40px; }
+.dx-steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--text-inv); font-weight: 700; font-size: .9rem; display: flex; align-items: center; justify-content: center; }
+
+/* Call to action */
+.dx-cta { display: flex; align-items: center; gap: 14px 22px; flex-wrap: wrap; padding: 18px 22px; border: 1.5px dashed var(--accent); border-radius: var(--radius-lg); margin: 0 0 16px; }
+.dx-cta p { margin: 0; flex: 1 1 22rem; }
+
+/* ---- Charts (inline SVG, drawn when the page is written) ------------------------------------ */
+.dx-chart { margin: 4px 0 14px; }
+.dx-chart-sc { overflow-x: auto; }
+.dx-chart svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.dx-chart figcaption { font-size: .88rem; color: var(--muted); margin-top: 6px; }
+.ch-grid { stroke: var(--chart-grid); stroke-width: 1; }
+.ch-axis { stroke: var(--muted); stroke-width: 1; }
+.ch-t { fill: var(--chart-text); font: 12px 'DM Sans', system-ui, sans-serif; }
+.ch-tt { fill: var(--text); font: 600 12.5px 'DM Sans', system-ui, sans-serif; }
+.ch-lim { stroke: var(--negative-em); stroke-width: 1.5; stroke-dasharray: 6 4; fill: none; }
+.ch-limt { fill: var(--negative-em); font: 600 11.5px 'DM Sans', system-ui, sans-serif; }
+.ch-l { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.ch-c1 { stroke: var(--line-a); } .ch-c2 { stroke: var(--gold); } .ch-c3 { stroke: var(--line-c); } .ch-c4 { stroke: var(--line-d); } .ch-c5 { stroke: var(--line-e); }
+.ch-f1 { fill: var(--line-a); } .ch-f2 { fill: var(--gold); } .ch-f3 { fill: var(--line-c); } .ch-f4 { fill: var(--line-d); } .ch-f5 { fill: var(--line-e); }
+.ch-dot { stroke: var(--bg); stroke-width: 1.5; }
+.dx-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 6px 0 0; padding: 0; list-style: none; font-size: .85rem; color: var(--muted); }
+.dx-legend i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+.dx-legend .k1 { background: var(--line-a); } .dx-legend .k2 { background: var(--gold); } .dx-legend .k3 { background: var(--line-c); } .dx-legend .k4 { background: var(--line-d); } .dx-legend .k5 { background: var(--line-e); }
+.dx-legend .klim { background: none; border-top: 2px dashed var(--negative-em); height: 0; }
+
+/* ---- Footer --------------------------------------------------------------------------------- */
+footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); }
+footer p { color: var(--muted); font-size: .76rem; line-height: 1.5; margin: 0 0 8px; }
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer p.footer-collab { padding: 1px 0 1px 10px; border-left: 3px solid var(--accent); color: var(--text); font-size: .85rem; line-height: 1.55; margin: 0 0 10px; }
+footer p.footer-collab a { color: var(--accent-strong); }
+footer p.footer-links { font-size: .8rem; }
+
+@media (max-width: 480px) { .dx-top .btn-primary { display: none; } }
+@media (max-width: 640px) {
+  .dx { padding: 14px 16px 26px; }
+  .dx-sec { padding: 16px; }
+  /* A reference row stacks: the name and its unit on one line, the meaning under them. */
+  .dx-attrs, .dx-attrs tbody { display: block; }
+  .dx-attrs thead { display: none; }
+  .dx-attrs tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; padding: 7px 10px; border-bottom: 1px solid var(--border); }
+  .dx-attrs tbody tr:last-child { border-bottom: none; }
+  .dx-attrs td { border: 0; padding: 0; width: auto !important; }
+  .dx-attrs td:first-child { width: auto; }
+  .dx-attrs td:nth-child(2) { text-align: right; }
+  .dx-attrs td:nth-child(n+3) { grid-column: 1 / -1; margin-top: 2px; }
+  .dx-attrs td:nth-child(4) { color: var(--muted); font-size: .82rem; }
+  .dx-facts { grid-template-columns: 1fr; gap: 2px; }
+  .dx-facts dd { margin-bottom: 8px; }
+  pre { font-size: .8rem; padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media print { .dx-top, .dx-filter, .dx-cta, footer { display: none; } .dx-group { content-visibility: visible; } }
+
+/* The rest of a long script, folded */
+.dx-more { margin: 0 0 14px; }
+.dx-more summary { cursor: pointer; font-weight: 600; color: var(--accent-strong); padding: 4px 0; }
+.dx-more[open] summary { margin-bottom: 8px; }
+.dx-more pre { max-height: 60vh; content-visibility: auto; }

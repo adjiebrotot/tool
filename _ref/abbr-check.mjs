@@ -112,7 +112,8 @@ for (const file of pages(ROOT)) {
   await page.waitForTimeout(250);
 
   const report = await page.evaluate((skipSel) => {
-    const out = { has: typeof window.SharedAbbr !== 'undefined', counts: {}, bad: [], missing: 0, nested: 0 };
+    const out = { has: typeof window.SharedAbbr !== 'undefined', counts: {}, bad: [], missing: 0, nested: 0,
+                  optOut: document.body.hasAttribute('data-no-abbr') };
     if (!out.has) return out;
     const all = [...document.querySelectorAll('abbr.abbr')];
     out.total = all.length;
@@ -149,6 +150,13 @@ for (const file of pages(ROOT)) {
   }, SKIP_SELECTOR);
 
   check(rel + ' — loads clean', errors.length === 0, errors[0]);
+  // A reading page that loads neither shared.js nor any glossary on purpose (the PowerFactory
+  // reference and study guides, kept script-free for speed) says so with <body data-no-abbr>.
+  if (!report.has && report.optOut) {
+    check(rel + ' — no abbreviation layer, by choice (body data-no-abbr)', true);
+    await page.close();
+    continue;
+  }
   check(rel + ' — shared layer present', report.has === true);
   if (report.has) {
     for (const [t, n] of Object.entries(report.counts)) totals.set(t, (totals.get(t) || 0) + n);

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TypTr2 attributes: PowerFactory 2-Winding Transformer Type</title>
+<meta name="description" content="All TypTr2 attributes in PowerFactory (2-Winding Transformer Type): 155 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr2/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypTr2 attributes: PowerFactory 2-Winding Transformer Type parameters">
+<meta property="og:description" content="All TypTr2 attributes in PowerFactory (2-Winding Transformer Type): 155 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr2/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TypTr2 attributes: PowerFactory 2-Winding Transformer Type parameters">
+<meta name="twitter:description" content="All TypTr2 attributes in PowerFactory (2-Winding Transformer Type): 155 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "TypTr2 attributes (PowerFactory 2-Winding Transformer Type)",
+  "description": "All TypTr2 attributes in PowerFactory (2-Winding Transformer Type): 155 input parameters, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr2/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "TypTr2 (2-Winding Transformer Type)",
+    "description": "A 2-winding transformer type: rated power and voltages, short-circuit voltage, losses, vector group and tap changer."
+  },
+  "keywords": "TypTr2 attributes, TypTr2 parameters, TypTr2 result variables, PowerFactory 2-Winding Transformer Type attributes, TypTr2 GetAttribute, strn TypTr2, utrn_h TypTr2, utrn_l TypTr2, uktr TypTr2",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "TypTr2",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr2/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">TypTr2</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>TypTr2 attributes<span class="dx-h1-sub">PowerFactory 2-Winding Transformer Type</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory 2-Winding Transformer Type (<code>TypTr2</code>): 155 input parameters, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What TypTr2 is</h2>
+  <p>A 2-winding transformer type: rated power and voltages, short-circuit voltage, losses, vector group and tap changer.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>TypTr2</code>, type class</dd><dt>PowerFactory name</dt><dd>2-Winding Transformer Type</dd><dt>Used by</dt><dd><a href="../ElmTr2/"><code>ElmTr2</code></a></dd><dt>Attributes</dt><dd>155 input parameters</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used TypTr2 attributes</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th><th>Where</th></tr></thead><tbody>
+<tr><td><code>strn</code></td><td>MVA</td><td>Rated Power<small>rated power</small></td><td>input data</td></tr>
+<tr><td><code>utrn_h</code></td><td>kV</td><td>HV-Side</td><td>input data</td></tr>
+<tr><td><code>utrn_l</code></td><td>kV</td><td>LV-Side</td><td>input data</td></tr>
+<tr><td><code>uktr</code></td><td>%</td><td>Short-Circuit Voltage uk<small>short-circuit voltage</small></td><td>input data</td></tr>
+<tr><td><code>pcutr</code></td><td>kW</td><td>Copper Losses<small>copper losses</small></td><td>input data</td></tr>
+<tr><td><code>pfe</code></td><td>kW</td><td>No Load Losses</td><td>input data</td></tr>
+<tr><td><code>curmg</code></td><td>%</td><td>No Load Current</td><td>input data</td></tr>
+<tr><td><code>tr2cn_h</code></td><td>·</td><td>HV-Side</td><td>input data</td></tr>
+<tr><td><code>tr2cn_l</code></td><td>·</td><td>LV-Side</td><td>input data</td></tr>
+<tr><td><code>nt2ag</code></td><td>·</td><td>Phase Shift<small>phase shift</small></td><td>input data</td></tr>
+<tr><td><code>dutap</code></td><td>%</td><td>Additional voltage per tap<small>voltage per tap</small></td><td>input data</td></tr>
+<tr><td><code>nntap0</code></td><td>·</td><td>Neutral Position</td><td>input data</td></tr>
+<tr><td><code>ntpmn</code></td><td>·</td><td>Minimum Position</td><td>input data</td></tr>
+<tr><td><code>ntpmx</code></td><td>·</td><td>Maximum Position</td><td>input data</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write TypTr2 in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-c"># Types live in the equipment library of the project.</span>
+types = app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;equip&quot;</span>).<span class="py-f">GetContents</span>(<span class="py-s">&quot;*.TypTr2&quot;</span>, <span class="py-n">1</span>)
+<span class="py-k">for</span> typ <span class="py-k">in</span> types:
+    <span class="py-f">print</span>(typ.loc_name, typ.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;strn&quot;</span>)) <span class="py-c"># Rated Power, MVA</span>
+
+<span class="py-c"># An element points to its type with typ_id; t: reads a type value through the element.</span>
+<span class="py-k">for</span> trafo <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTr2&quot;</span>):
+    <span class="py-f">print</span>(trafo.loc_name, trafo.typ_id.loc_name, trafo.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;t:strn&quot;</span>))
+
+types[<span class="py-n">0</span>].<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;strn&quot;</span>, <span class="py-n">200</span>)            <span class="py-c"># rated power 200 MVA: every element of this type changes</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>A type is shared: a change to it changes every element that uses it. Read a type value through an element with the <code>t:</code> prefix.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All TypTr2 attributes"><li><a href="#params">Input parameters<span class="dx-n">155</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">TypTr2 input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>tr2cn_h</code></td><td><span aria-label="no unit">·</span></td><td>HV-Side</td></tr>
+<tr><td><code>tr2cn_l</code></td><td><span aria-label="no unit">·</span></td><td>LV-Side</td></tr>
+<tr><td><code>ansiclass</code></td><td><span aria-label="no unit">·</span></td><td>Class</td></tr>
+<tr><td><code>manuf</code></td><td><span aria-label="no unit">·</span></td><td>Manufacturer</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>ntpmx</code></td><td><span aria-label="no unit">·</span></td><td>Maximum Position</td></tr>
+<tr><td><code>ntpmn</code></td><td><span aria-label="no unit">·</span></td><td>Minimum Position</td></tr>
+<tr><td><code>nntap0</code></td><td><span aria-label="no unit">·</span></td><td>Neutral Position</td></tr>
+<tr><td><code>itapch</code></td><td><span aria-label="no unit">·</span></td><td>Tap Changer 1</td></tr>
+<tr><td><code>itapch2</code></td><td><span aria-label="no unit">·</span></td><td>Tap Changer 2</td></tr>
+<tr><td><code>ntpmx2</code></td><td><span aria-label="no unit">·</span></td><td>Maximum Position</td></tr>
+<tr><td><code>ntpmn2</code></td><td><span aria-label="no unit">·</span></td><td>Minimum Position</td></tr>
+<tr><td><code>nntap02</code></td><td><span aria-label="no unit">·</span></td><td>Neutral Position</td></tr>
+<tr><td><code>tap_side2</code></td><td><span aria-label="no unit">·</span></td><td>at Side</td></tr>
+<tr><td><code>tapchtype2</code></td><td><span aria-label="no unit">·</span></td><td>Type</td></tr>
+<tr><td><code>iTapLoading</code></td><td><span aria-label="no unit">·</span></td><td>Configuration</td></tr>
+<tr><td><code>nt2ph</code></td><td><span aria-label="no unit">·</span></td><td>Technology</td></tr>
+<tr><td><code>iIntDelta</code></td><td><span aria-label="no unit">·</span></td><td>Internal Delta Winding</td></tr>
+<tr><td><code>itrmt</code></td><td><span aria-label="no unit">·</span></td><td>Type</td></tr>
+<tr><td><code>iFinalSlope</code></td><td><span aria-label="no unit">·</span></td><td>Set final slope (peak values)</td></tr>
+<tr><td><code>ksat</code></td><td><span aria-label="no unit">·</span></td><td>Saturation Exponent</td></tr>
+<tr><td><code>iLimb</code></td><td><span aria-label="no unit">·</span></td><td>Core</td></tr>
+<tr><td><code>iInterPol</code></td><td><span aria-label="no unit">·</span></td><td>Interpolation</td></tr>
+<tr><td><code>iFit</code></td><td><span aria-label="no unit">·</span></td><td>Data fitting</td></tr>
+<tr><td><code>iHyster</code></td><td><span aria-label="no unit">·</span></td><td>Model</td></tr>
+<tr><td><code>itrtype</code></td><td><span aria-label="no unit">·</span></td><td>Transformer Type</td></tr>
+<tr><td><code>tap_side</code></td><td><span aria-label="no unit">·</span></td><td>at Side</td></tr>
+<tr><td><code>tapchtype</code></td><td><span aria-label="no unit">·</span></td><td>Type</td></tr>
+<tr><td><code>oltc</code></td><td><span aria-label="no unit">·</span></td><td>On-load Tap Changer</td></tr>
+<tr><td><code>oltc2</code></td><td><span aria-label="no unit">·</span></td><td>On-load Tap Changer 2</td></tr>
+<tr><td><code>itapzdep</code></td><td><span aria-label="no unit">·</span></td><td>Tap dependent impedance for tap changer 1</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>itrldf</code></td><td><span aria-label="no unit">·</span></td><td>Type</td></tr>
+<tr><td><code>iIntPola</code></td><td><span aria-label="no unit">·</span></td><td>Interpolation</td></tr>
+<tr><td><code>itratioadpt</code></td><td><span aria-label="no unit">·</span></td><td>Transformer Ratio Adaptation</td></tr>
+<tr><td><code>strn</code></td><td>MVA</td><td>Rated Power</td></tr>
+<tr><td><code>utrn_h</code></td><td>kV</td><td>HV-Side</td></tr>
+<tr><td><code>utrn_l</code></td><td>kV</td><td>LV-Side</td></tr>
+<tr><td><code>uktr</code></td><td>%</td><td>Short-Circuit Voltage uk</td></tr>
+<tr><td><code>pcutr</code></td><td>kW</td><td>Copper Losses</td></tr>
+<tr><td><code>curmg</code></td><td>%</td><td>No Load Current</td></tr>
+<tr><td><code>dutap</code></td><td>%</td><td>Additional voltage per tap</td></tr>
+<tr><td><code>phitr</code></td><td>deg</td><td>Phase of du</td></tr>
+<tr><td><code>dphitap</code></td><td>deg</td><td>Additional angle per tap</td></tr>
+<tr><td><code>dutap2</code></td><td>%</td><td>Additional voltage per tap</td></tr>
+<tr><td><code>phitr2</code></td><td>deg</td><td>Phase of du</td></tr>
+<tr><td><code>dphitap2</code></td><td>deg</td><td>Additional angle per Tap</td></tr>
+<tr><td><code>uk0_hlo</code></td><td>%</td><td>HV-SHC-Voltage uk0 (LV open)</td></tr>
+<tr><td><code>ur0_hlo</code></td><td>%</td><td>HV-SHC-Voltage Re(uk0) (LV open)</td></tr>
+<tr><td><code>uk0_lho</code></td><td>%</td><td>LV-SHC-Voltage uk0 (HV open)</td></tr>
+<tr><td><code>ur0_lho</code></td><td>%</td><td>LV-SHC-Voltage Re(uk0) (HV open)</td></tr>
+<tr><td><code>uk0_hls</code></td><td>%</td><td>HV-SHC-Voltage uk0 (LV short-circuit)</td></tr>
+<tr><td><code>ur0_hls</code></td><td>%</td><td>HV-SHC-Voltage Re(uk0) (LV short-circuit)</td></tr>
+<tr><td><code>uk0tr</code></td><td>%</td><td>Short-Circuit Voltage uk0</td></tr>
+<tr><td><code>ur0tr</code></td><td>%</td><td>SHC-Voltage (Re(uk0)) uk0r</td></tr>
+<tr><td><code>nt2ag</code></td><td><span aria-label="no unit">·</span></td><td>Phase Shift</td></tr>
+<tr><td><code>itrdl</code></td><td><span aria-label="no unit">·</span></td><td>x,Pos.Seq. HV-Side</td></tr>
+<tr><td><code>itrdr</code></td><td><span aria-label="no unit">·</span></td><td>r,Pos.Seq. HV-Side</td></tr>
+<tr><td><code>psi0</code></td><td>p.u.</td><td>Knee Flux</td></tr>
+<tr><td><code>xmlin</code></td><td>p.u.</td><td>Linear Reactance</td></tr>
+<tr><td><code>xmair</code></td><td>p.u.</td><td>Saturated Reactance</td></tr>
+<tr><td><code>smoothfac</code></td><td>%</td><td>Smoothing Factor</td></tr>
+<tr><td><code>Lwidth</code></td><td>%</td><td>Loop width</td></tr>
+<tr><td><code>itrdl0</code></td><td><span aria-label="no unit">·</span></td><td>x0, Zero.Seq. HV-Side</td></tr>
+<tr><td><code>itrdr0</code></td><td><span aria-label="no unit">·</span></td><td>r0, Zero.Seq. HV-Side</td></tr>
+<tr><td><code>zx0hl_n</code></td><td><span aria-label="no unit">·</span></td><td>Mag. Impedance/uk0</td></tr>
+<tr><td><code>rtox0_n</code></td><td><span aria-label="no unit">·</span></td><td>Mag. R/X</td></tr>
+<tr><td><code>pict1</code></td><td>p.u.</td><td>Ratio Ip/In (1)</td></tr>
+<tr><td><code>pitt1</code></td><td>s</td><td>Max. Time (1)</td></tr>
+<tr><td><code>pict2</code></td><td>p.u.</td><td>Ratio Ip/In (2)</td></tr>
+<tr><td><code>pitt2</code></td><td>s</td><td>Max. Time (2)</td></tr>
+<tr><td><code>frnom</code></td><td>Hz</td><td>Nominal Frequency</td></tr>
+<tr><td><code>pfe</code></td><td>kW</td><td>No Load Losses</td></tr>
+<tr><td><code>strnfc</code></td><td>MVA</td><td>Rated Power (forced cooling)</td></tr>
+<tr><td><code>uktmn</code></td><td>%</td><td>uk (min. tap)</td></tr>
+<tr><td><code>pcutmn</code></td><td>kW</td><td>Pcu (min. tap)</td></tr>
+<tr><td><code>uktmx</code></td><td>%</td><td>uk (max. tap)</td></tr>
+<tr><td><code>pcutmx</code></td><td>kW</td><td>Pcu (max. tap)</td></tr>
+<tr><td><code>uk0tmn</code></td><td>%</td><td>uk0 (min. tap)</td></tr>
+<tr><td><code>uk0rtmn</code></td><td>%</td><td>Re(uk0) (min. tap)</td></tr>
+<tr><td><code>uk0tmx</code></td><td>%</td><td>uk0 (max. tap)</td></tr>
+<tr><td><code>uk0rtmx</code></td><td>%</td><td>Re(uk0) (max. tap)</td></tr>
+<tr><td><code>smoothf</code></td><td>%</td><td>Smoothing Factor</td></tr>
+<tr><td><code>eddypc</code></td><td><span aria-label="no unit">·</span></td><td>Ratio</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>satcur</code></td><td>p.u.</td><td>Current (peak)</td></tr>
+<tr><td><code>satflux</code></td><td>p.u.</td><td>Flux (peak)</td></tr>
+<tr><td><code>satcue</code></td><td>%</td><td>Current (RMS)</td></tr>
+<tr><td><code>satvol</code></td><td>p.u.</td><td>Voltage (RMS)</td></tr>
+<tr><td><code>typemetadata_version</code></td><td><span aria-label="no unit">·</span></td><td>Version</td></tr>
+<tr><td><code>typemetadata_key</code></td><td><span aria-label="no unit">·</span></td><td>Type Key</td></tr>
+<tr><td><code>typemetadata_changeLog</code></td><td><span aria-label="no unit">·</span></td><td>Change Log</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>doc_id</code></td><td><span aria-label="no unit">·</span></td><td>Additional Data</td></tr>
+<tr><td><code>pStoch</code></td><td>StoTyptrf</td><td>Stochastic model</td></tr>
+<tr><td><code>fcharl1</code></td><td>ChaPol,ChaVec,ChaMat</td><td>l1(f)</td></tr>
+<tr><td><code>fcharr1</code></td><td>ChaPol,ChaVec,ChaMat</td><td>r1(f)</td></tr>
+<tr><td><code>fcharl0</code></td><td>ChaPol,ChaVec,ChaMat</td><td>l0(f)</td></tr>
+<tr><td><code>fcharr0</code></td><td>ChaPol,ChaVec,ChaMat</td><td>r0(f)</td></tr>
+<tr><td><code>fcharbm</code></td><td>ChaPol,ChaVec,ChaMat</td><td>1/lm(f)</td></tr>
+<tr><td><code>fchargm</code></td><td>ChaPol,ChaVec,ChaMat</td><td>gm(f)</td></tr>
+<tr><td><code>uktrr</code></td><td>%</td><td>SHC-Voltage (Re(uk)) ukr</td></tr>
+<tr><td><code>xtor</code></td><td><span aria-label="no unit">·</span></td><td>Ratio X/R</td></tr>
+<tr><td><code>r1pu</code></td><td>p.u.</td><td>Resistance r1</td></tr>
+<tr><td><code>x1pu</code></td><td>p.u.</td><td>Reactance x1</td></tr>
+<tr><td><code>l1pu</code></td><td>p.u.</td><td>Inductance l1</td></tr>
+<tr><td><code>xtr0_hlo</code></td><td><span aria-label="no unit">·</span></td><td>HV-Ratio X0/R0 (LV open)</td></tr>
+<tr><td><code>xtr0_lho</code></td><td><span aria-label="no unit">·</span></td><td>LV-Ratio X0/R0 (HV open)</td></tr>
+<tr><td><code>xtr0_hls</code></td><td><span aria-label="no unit">·</span></td><td>HV-Ratio X0/R0 (LV short-circuit)</td></tr>
+<tr><td><code>r0pu_hlo</code></td><td>p.u.</td><td>HV-Resistance r0 (LV open)</td></tr>
+<tr><td><code>r0pu_lho</code></td><td>p.u.</td><td>LV-Resistance r0 (HV open)</td></tr>
+<tr><td><code>r0pu_hls</code></td><td>p.u.</td><td>HV-Resistance r0 (LV short-circuit)</td></tr>
+<tr><td><code>x0pu_hlo</code></td><td>p.u.</td><td>HV-Reactance x0 (LV open)</td></tr>
+<tr><td><code>x0pu_lho</code></td><td>p.u.</td><td>LV-Reactance x0 (HV open)</td></tr>
+<tr><td><code>x0pu_hls</code></td><td>p.u.</td><td>HV-Reactance x0 (LV short-circuit)</td></tr>
+<tr><td><code>x0tor0</code></td><td><span aria-label="no unit">·</span></td><td>Ratio X0/R0</td></tr>
+<tr><td><code>r0pu</code></td><td>p.u.</td><td>Resistance r0</td></tr>
+<tr><td><code>x0pu</code></td><td>p.u.</td><td>Reactance x0</td></tr>
+<tr><td><code>l0pu</code></td><td>p.u.</td><td>Inductance l0</td></tr>
+<tr><td><code>uk0delta</code></td><td>%</td><td>Delta Winding, uk0</td></tr>
+<tr><td><code>ur0delta</code></td><td>%</td><td>Delta Winding, Re(uk0)</td></tr>
+<tr><td><code>x0delta</code></td><td>p.u.</td><td>Delta Winding, x0</td></tr>
+<tr><td><code>r0delta</code></td><td>p.u.</td><td>Delta Winding, r0</td></tr>
+<tr><td><code>x0tor0delta</code></td><td><span aria-label="no unit">·</span></td><td>Delta Winding, X0/R0</td></tr>
+<tr><td><code>itrdl0_lv</code></td><td><span aria-label="no unit">·</span></td><td>x0, Zero.Seq. LV-Side</td></tr>
+<tr><td><code>itrdr0_lv</code></td><td><span aria-label="no unit">·</span></td><td>r0, Zero.Seq. LV-Side</td></tr>
+<tr><td><code>aFrolich</code></td><td><span aria-label="no unit">·</span></td><td>Frolich equation coefficient a</td></tr>
+<tr><td><code>bFrolich</code></td><td><span aria-label="no unit">·</span></td><td>Frolich equation coefficient b</td></tr>
+<tr><td><code>cFrolich</code></td><td><span aria-label="no unit">·</span></td><td>Frolich equation coefficient c</td></tr>
+<tr><td><code>xsatFrolich</code></td><td><span aria-label="no unit">·</span></td><td>Frolich equation saturated reactance (p.u.)</td></tr>
+<tr><td><code>mseFrolich</code></td><td><span aria-label="no unit">·</span></td><td>Frolich equation, mean squared error</td></tr>
+<tr><td><code>itrdl_lv</code></td><td><span aria-label="no unit">·</span></td><td>x,Pos.Seq. LV-Side</td></tr>
+<tr><td><code>itrdr_lv</code></td><td><span aria-label="no unit">·</span></td><td>r,Pos.Seq. LV-Side</td></tr>
+<tr><td><code>bm1</code></td><td>p.u.</td><td>1/lm</td></tr>
+<tr><td><code>gm1</code></td><td>p.u.</td><td>gm</td></tr>
+<tr><td><code>ukrtmn</code></td><td>%</td><td>Re(uk) (min. tap)</td></tr>
+<tr><td><code>ukrtmx</code></td><td>%</td><td>Re(uk) (max. tap)</td></tr>
+<tr><td><code>xtortmx</code></td><td><span aria-label="no unit">·</span></td><td>X/R (max. tap)</td></tr>
+<tr><td><code>xtortmn</code></td><td><span aria-label="no unit">·</span></td><td>X/R (min. tap)</td></tr>
+<tr><td><code>r1putmx</code></td><td>p.u.</td><td>r1 (max. tap)</td></tr>
+<tr><td><code>r1putmn</code></td><td>p.u.</td><td>r1 (min. tap)</td></tr>
+<tr><td><code>x1putmx</code></td><td>p.u.</td><td>x1 (max. tap)</td></tr>
+<tr><td><code>x1putmn</code></td><td>p.u.</td><td>x1 (min. tap)</td></tr>
+<tr><td><code>x0tor0tmx</code></td><td><span aria-label="no unit">·</span></td><td>X0/R0 (max. tap)</td></tr>
+<tr><td><code>x0tor0tmn</code></td><td><span aria-label="no unit">·</span></td><td>X0/R0 (min. tap)</td></tr>
+<tr><td><code>r0putmx</code></td><td>p.u.</td><td>r0 (max. tap)</td></tr>
+<tr><td><code>r0putmn</code></td><td>p.u.</td><td>r0 (min. tap)</td></tr>
+<tr><td><code>x0putmx</code></td><td>p.u.</td><td>x0 (max. tap)</td></tr>
+<tr><td><code>x0putmn</code></td><td>p.u.</td><td>x0 (min. tap)</td></tr>
+<tr><td><code>vecgrp</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>pT</code></td><td><span aria-label="no unit">·</span></td><td>Voltage Range</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../TypTow/"><code>TypTow</code> Tower Type</a> · <a href="../TypTr3/"><code>TypTr3</code> 3-Winding Transformer Type</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

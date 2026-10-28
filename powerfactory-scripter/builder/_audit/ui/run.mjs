@@ -330,7 +330,7 @@ await test('page loads clean', async () => {
   }));
   check('the vendored libraries load (React, ReactDOM, React Flow)', info.react && info.rf && info.canvas && info.msgHidden, JSON.stringify(info));
   check('every block file loaded, no banner', info.failed.length === 0 && !info.alert, JSON.stringify(info.failed));
-  check('header h1, banner links to ../ and ../samples/, footer', info.h1 === 'PowerFactory Workflow Builder' && info.banner.includes('../') && info.banner.includes('../samples/') && info.footer, JSON.stringify(info));
+  check('header h1, no banner link to the Legacy Scripter or its samples, footer', info.h1 === 'PowerFactory Workflow Builder' && !info.banner.some(h => /legacy|samples/.test(h)) && info.footer, JSON.stringify(info));
   check('the app shell is data-no-abbr and data-no-persist', info.noAbbr);
   check('no em-dash in the page text', !info.emdash);
   const sw = await D.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
@@ -518,7 +518,7 @@ await test('quick-add on a pane drop', async () => {
   await D.page.evaluate(() => PFB.select([]));
 });
 
-await test('a second wire from a used flow output replaces the first, with Undo', async () => {
+await test('a second wire from a used flow output adds a parallel route, with Undo and "Move the wire instead"', async () => {
   await loadWf(D, { ...clone(BASE), nodes: [...clone(BASE).nodes, { id: 'n5', type: 'fx.log', x: 656, y: 272, label: '', s: {} }] });
   await clearToasts(D);
   const from = await handleAt(D, 'n3', 'next', 'source');
@@ -526,12 +526,18 @@ await test('a second wire from a used flow output replaces the first, with Undo'
   await dragMouse(D, from, to);
   const wf = await wfOf(D);
   const toasts = await toastTexts(D);
-  check('the new wire replaces the old one', edgeBetween(wf, 'n3', 'next', 'n5', 'in') && !wf.edges.some(e => e.id === 'e4'));
-  check('a toast says so and offers Undo', toasts.some(t => /was replaced/.test(t)) && await D.page.isVisible('.pfb-toast .pfb-toast-undo'), JSON.stringify(toasts));
-  await D.page.click('.pfb-toast .pfb-toast-undo');
+  check('the new wire goes beside the old one', !!edgeBetween(wf, 'n3', 'next', 'n5', 'in') && wf.edges.some(e => e.id === 'e4'));
+  check('a toast says they are parallel routes and offers Undo and moving the wire', toasts.some(t => /now leads to 2 steps: parallel routes/.test(t)) &&
+    await D.page.isVisible('.pfb-toast .pfb-toast-undo') && await D.page.isVisible('.pfb-toast .pfb-toast-act'), JSON.stringify(toasts));
+  await D.page.click('.pfb-toast .pfb-toast-act');
+  await sleep(150);
+  const moved = await wfOf(D);
+  check('"Move the wire instead" leaves only the new wire', !!edgeBetween(moved, 'n3', 'next', 'n5', 'in') && !moved.edges.some(e => e.id === 'e4'));
+  await D.page.evaluate(() => PFB.app.undo());
+  await D.page.evaluate(() => PFB.app.undo());
   await sleep(150);
   const back = await wfOf(D);
-  check('Undo in the toast brings the old wire back', back.edges.some(e => e.id === 'e4') && !edgeBetween(back, 'n3', 'next', 'n5', 'in'));
+  check('Undo brings back the one old wire', back.edges.some(e => e.id === 'e4') && !edgeBetween(back, 'n3', 'next', 'n5', 'in'));
 });
 
 await test('inspector edits', async () => {
@@ -1331,11 +1337,13 @@ await test('real blocks smoke', async () => {
   const S = await openPage({ fixture: false });
   const info = await S.page.evaluate(() => ({
     failed: PFB.failed, n: PFB.registry.allBlocks().length, items: document.querySelectorAll('.pfb-pal-item').length,
+    entries: PFB.registry.allBlocks().length - PFB.registry.allFamilies().reduce((k, f) => k + f.members.length - 1, 0),
     cats: [...document.querySelectorAll('.pfb-cat')].map(c => [c.dataset.cat, c.querySelectorAll('.pfb-pal-item').length]),
     regCats: [...new Set(PFB.registry.allBlocks().map(b => b.cat))],
   }));
   check('every real block file loads', info.failed.length === 0, JSON.stringify(info.failed));
-  check('the palette lists every real block, categories with no blocks hidden', info.items === info.n && info.n > 30 && info.cats.length === info.regCats.length && info.cats.every(c => c[1] > 0), JSON.stringify(info.cats));
+  check('the palette lists every real block once, a family once (58 entries for 92 blocks), categories with no blocks hidden',
+    info.items === info.entries && info.entries === 58 && info.n === 92 && info.cats.length === info.regCats.length && info.cats.every(c => c[1] > 0), JSON.stringify(info));
   const tips = await S.page.$$eval('.pfb-pal-item[data-tip]', ns => ns.filter(n => n.getAttribute('data-tip').length > 200).map(n => n.dataset.type));
   check('every palette tip is 200 characters at most', tips.length === 0, JSON.stringify(tips));
   // the built-in demo
@@ -1407,7 +1415,7 @@ await test('real blocks smoke', async () => {
   const pv = await S.page.evaluate(() => {
     const q = (id) => document.querySelector(`.react-flow__node[data-id="${id}"] .pfb-pv`);
     const own = (el) => [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('');
-    const t = q('n14'), g = q('n15');
+    const t = q('n12'), g = q('n15');
     return {
       file: t && t.querySelector('.pfb-pv-file').textContent,
       heads: t ? [...t.querySelectorAll('th')].map(th => th.textContent) : [],
@@ -1423,11 +1431,13 @@ await test('real blocks smoke', async () => {
   await sleep(300);
   await S.page.evaluate(() => window.pfTour.start());
   await S.page.waitForSelector('.pf-tour-tooltip');
-  let titles = [], demoSeen = false;
+  let titles = [], demoSeen = false, centred = [];
   for (let i = 0; i < 20; i++) {
     await sleep(1100);
     titles.push(await S.page.textContent('.pf-tour-tooltip .pf-tour-title'));
     if (await S.page.evaluate(() => PFB.store.get().wf.nodes.some(n => n.type === 'pf.rms'))) demoSeen = true;
+    // Only the welcome card is centred: every other step spotlights what it talks about.
+    if (i > 0 && await S.page.evaluate(() => document.querySelector('.pf-tour-spotlight').style.display === 'none')) centred.push(titles[i]);
     const last = /Done/.test(await S.page.textContent('.pf-tour-tooltip .pf-tour-btn-primary'));
     await S.page.click('.pf-tour-tooltip .pf-tour-btn-primary');
     if (last) break;
@@ -1435,7 +1445,150 @@ await test('real blocks smoke', async () => {
   await sleep(500);
   const back = await wfOf(S);
   check('the tour loads the demo and gives the reader\'s workflow back', demoSeen && back.name === 'Mine' && back.nodes.length === 1, JSON.stringify(titles));
+  check('every tour step after the welcome spotlights its target', !centred.length, JSON.stringify(centred));
   await closePage(S, 'real-blocks page');
+});
+
+await test('real blocks: families in the palette, the Kind switch, quick-add order, folded ports, inputs in Settings, the scenario fix', async () => {
+  const S = await openPage({ fixture: false });
+  const pal = () => S.page.$$eval('.pfb-pal-item', ns => ns.map(n => ({ type: n.dataset.type, family: n.dataset.family || '', title: n.querySelector('.pfb-pal-title').firstChild.textContent, off: n.getAttribute('aria-disabled') === 'true', sub: (n.querySelector('.pfb-pal-off') || {}).textContent || '' })));
+  // Families: one entry each, with its number of kinds.
+  await S.page.evaluate(() => { document.querySelectorAll('.pfb-cat-head[aria-expanded="false"]').forEach(b => b.click()); });
+  await sleep(150);
+  const all = await pal();
+  const stats = all.find(i => i.family === 'stats');
+  check('a family is one palette entry under its own title', stats && stats.title === 'Statistics' && !all.some(i => i.type === 'math.median'), JSON.stringify(stats));
+  check('the family entry says how many kinds it has', /8 kinds/.test(await S.page.textContent('.pfb-pal-item[data-family="stats"] .pfb-pal-kinds')));
+  // Search finds a member by its own name, and the family by its words.
+  await S.page.fill('#pfbPalSearch', 'median');
+  await sleep(150);
+  check('search finds a member by its own name', (await pal()).some(i => i.type === 'math.median' && i.title === 'Median'));
+  await S.page.fill('#pfbPalSearch', 'statistics');
+  await sleep(150);
+  const st2 = await pal();
+  check('search finds the family by its words, without listing every member', st2.some(i => i.family === 'stats') && !st2.some(i => i.type === 'math.std'), JSON.stringify(st2));
+  await S.page.fill('#pfbPalSearch', '');
+  await sleep(150);
+  // Outside any loop: Report this try greyed and sunk; Skip or stop adds Stop the workflow.
+  await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Fam', nodes: [{ id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }], edges: [] }, { quiet: true }));
+  await settle(S, 300);
+  const p2 = await pal();
+  const rep = p2.find(i => i.type === 'opt.report');
+  check('Report this try is greyed outside a search, saying why', rep && rep.off && /Only inside Optimise or Find limit/.test(rep.sub), JSON.stringify(rep));
+  const searchCat = await S.page.$$eval('.pfb-cat[data-cat="search"] .pfb-pal-item', ns => ns.map(n => n.dataset.type));
+  check('a greyed block goes to the end of its category', searchCat[searchCat.length - 1] === 'opt.report', JSON.stringify(searchCat));
+  await S.page.click('.pfb-pal-item[data-family="end"]');
+  await sleep(250);
+  check('a family click takes the first member that works there (Stop the workflow outside a loop)', (await wfOf(S)).nodes.some(n => n.type === 'flow.stop'), JSON.stringify((await wfOf(S)).nodes.map(n => n.type)));
+  // The Kind switch: a Peak wired into a table becomes First time above / below; Value at time
+  // would leave the Peak time wire hanging, so it asks first.
+  await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Kind', nodes: [
+    { id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }, { id: 'n2', type: 'pf.rms', x: 300, y: 0, s: { record: [{ id: 'r1', el: { cls: 'ElmTerm', name: 'Bus 5', match: 'one' }, var: 'm:fehz', combine: 'none' }] } },
+    { id: 'n3', type: 'sig.peak', x: 600, y: 200, label: 'Worst', s: {} }, { id: 'n4', type: 'out.table.add', x: 900, y: 0, s: { cols: [{ id: 'c1', name: 'P' }, { id: 'c2', name: 'T' }] } }],
+  edges: [{ id: 'e1', from: 'n1', out: 'next', to: 'n2', in: 'in' }, { id: 'e2', from: 'n2', out: 'ok', to: 'n4', in: 'in' }, { id: 'e3', from: 'n2', out: 'r1', to: 'n3', in: 'series' },
+    { id: 'e4', from: 'n3', out: 'value', to: 'n4', in: 'c1' }, { id: 'e5', from: 'n3', out: 'time', to: 'n4', in: 'c2' }] }, { quiet: true }));
+  await settle(S, 300);
+  await S.page.evaluate(() => PFB.openSettings('n3'));
+  await sleep(250);
+  const kinds = await S.page.$$eval('#pfbInspector [data-key="_kind"] select option', ns => ns.map(o => o.textContent));
+  check('Settings shows a Kind switch with the family\'s members', JSON.stringify(kinds) === JSON.stringify(['Peak', 'Value at time', 'Final value', 'First time above / below']), JSON.stringify(kinds));
+  await S.page.selectOption('#pfbInspector [data-key="_kind"] select', 'sig.at');
+  await sleep(250);
+  const ask = await S.page.textContent('#pfbInspector .pfb-kind-ask').catch(() => '');
+  check('a switch that would leave wires hanging names them first and waits', /would be left hanging/.test(ask) && /Worst \(Peak time\) → Add row to results table \(T\)/.test(ask) && (await wfOf(S)).nodes.find(n => n.id === 'n3').type === 'sig.peak', ask);
+  await S.page.click('#pfbInspector .pfb-kind-ask button:has-text("Keep Peak")');
+  await sleep(200);
+  check('"Keep" leaves the block as it was', (await wfOf(S)).nodes.find(n => n.id === 'n3').type === 'sig.peak' && !(await S.page.$('#pfbInspector .pfb-kind-ask')));
+  await S.page.selectOption('#pfbInspector [data-key="_kind"] select', 'sig.at');
+  await sleep(250);
+  await S.page.click('#pfbInspector .pfb-kind-ask button:has-text("Switch anyway")');
+  await sleep(300);
+  const w3a = await wfOf(S);
+  check('"Switch anyway" switches and keeps the hanging wire, flagged', w3a.nodes.find(n => n.id === 'n3').type === 'sig.at' && w3a.edges.some(e => e.id === 'e5') &&
+    await S.page.evaluate(() => PFB.store.get().gen.problems.some(p => p.edgeId === 'e5' && /port it no longer has/.test(p.msg))));
+  await S.page.evaluate(() => PFB.app.undo());
+  await sleep(200);
+  // RMS to EMT leaves nothing hanging: it switches at once, the stop time takes EMT's default.
+  await S.page.evaluate(() => PFB.openSettings('n2'));
+  await sleep(250);
+  await S.page.selectOption('#pfbInspector [data-key="_kind"] select', 'pf.emt');
+  await sleep(300);
+  const w3 = await wfOf(S);
+  const n2 = w3.nodes.find(n => n.id === 'n2');
+  check('a switch with nothing left hanging happens at once: same id and wires, a default value takes the new default', n2.type === 'pf.emt' && w3.edges.length === 5 && n2.s.tstop === 0.5, JSON.stringify(n2));
+  await S.page.evaluate(() => PFB.app.undo());
+  await sleep(200);
+  check('one Undo puts the kind back', (await wfOf(S)).nodes.find(n => n.id === 'n2').type === 'pf.rms');
+  // Folded ports: Frequency nadir shows three rows and "+6 more"; the choice is kept per viewer.
+  await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Fold', nodes: [
+    { id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }, { id: 'n2', type: 'sig.nadir', x: 300, y: 0, s: {} }, { id: 'n3', type: 'val.number', x: 0, y: 300, s: {} }], edges: [] }, { quiet: true }));
+  await settle(S, 300);
+  const rows = () => S.page.$$eval('.react-flow__node[data-id="n2"] .pfb-n-row', ns => ns.length);
+  const btn = () => S.page.textContent('.react-flow__node[data-id="n2"] .pfb-n-more');
+  check('Frequency nadir shows its main ports and "+N more"', await rows() === 3 && /\+8 more/.test(await btn()), (await rows()) + ' ' + (await btn()));
+  // While a number wire is dragged, the folded number inputs it fits show up.
+  const from = await handleAt(S, 'n3', 'value', 'source');
+  await S.page.mouse.move(from.x, from.y);
+  await S.page.mouse.down();
+  await S.page.mouse.move(from.x + 60, from.y - 40, { steps: 6 });
+  await sleep(200);
+  const during = await S.page.$$eval('.react-flow__node[data-id="n2"] .react-flow__handle.target', ns => ns.map(n => n.dataset.handleid));
+  await S.page.mouse.up();
+  await sleep(200);
+  check('a dragged wire shows the folded inputs it fits', during.includes('nominal') && during.includes('extendTo'), JSON.stringify(during));
+  await S.page.click('.react-flow__node[data-id="n2"] .pfb-n-more');
+  await sleep(200);
+  check('"+N more" shows every port', await rows() === 9 && /Fewer/.test(await btn()));
+  await gotoReady(S, true);
+  await settle(S, 300);
+  check('the opened block stays open after a reload (localStorage, not the workflow)', await rows() === 9 && !JSON.stringify(await wfOf(S)).includes('unfold'));
+  await S.page.click('.react-flow__node[data-id="n2"] .pfb-n-more');
+  await sleep(150);
+  // Settings: the optional inputs share one line; settings under More stay there.
+  await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Ins', nodes: [
+    { id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }, { id: 'n2', type: 'out.plot.series', x: 300, y: 0, s: {} }, { id: 'n3', type: 'pf.evt.shc', x: 600, y: 0, s: {} }], edges: [] }, { quiet: true }));
+  await settle(S, 300);
+  await S.page.evaluate(() => PFB.openSettings('n2'));
+  await sleep(250);
+  const ins = await S.page.$$eval('#pfbInspector .pfb-inputs .pfb-in', ns => ns.map(n => n.textContent.replace(/\s+/g, ' ').trim()));
+  check('no input row says only "Not connected (optional)"; the optional ones share a line', !ins.some(t => /Not connected/.test(t)) && ins.some(t => /^Optional inputs: Mark, Mark time \(s\), Limit line, Event time \(s\), Footnote\./.test(t)) && ins.some(t => /^To wire on the canvas: Curve 1, \+ drop a curve\./.test(t)), JSON.stringify(ins));
+  await S.page.evaluate(() => PFB.openSettings('n3'));
+  await sleep(250);
+  const shcIns = await S.page.$$eval('#pfbInspector .pfb-inputs .pfb-in', ns => ns.map(n => n.dataset.port));
+  await S.page.click('#pfbInspector .pfb-more-btn');
+  await sleep(150);
+  const more = await S.page.$$eval('#pfbInspector .pfb-more .pfb-set', ns => ns.map(n => n.dataset.key));
+  check('Fault resistance and reactance are under More options, not in Inputs; Location on the line is not offered for a busbar', !shcIns.includes('rf') && !shcIns.includes('loc') && more.includes('rf') && more.includes('xf') && !more.includes('loc'), JSON.stringify({ shcIns, more }));
+  check('a setting under More says it can be wired instead', /Or wire a value into Fault resistance \(Ohm\) on the canvas/.test(await S.page.textContent('#pfbInspector .pfb-more')));
+  // The scenario of a kept new study case: the Problems fix adds Save operation scenario.
+  await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'Scen', nodes: [
+    { id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }, { id: 'n2', type: 'flow.range', x: 300, y: 0, s: {} }, { id: 'n3', type: 'pf.case.create', x: 600, y: 0, s: {} },
+    { id: 'n4', type: 'pf.dispatch', x: 900, y: 0, s: { gen: { cls: 'ElmSym', name: 'G2', match: 'one' } } }, { id: 'n5', type: 'pf.ldf', x: 1200, y: 0, s: {} }],
+  edges: [{ id: 'e1', from: 'n1', out: 'next', to: 'n2', in: 'in' }, { id: 'e2', from: 'n2', out: 'body', to: 'n3', in: 'in' }, { id: 'e3', from: 'n3', out: 'next', to: 'n4', in: 'in' }, { id: 'e4', from: 'n4', out: 'next', to: 'n5', in: 'in' }] }, { quiet: true }));
+  await settle(S, 300);
+  await S.page.evaluate(() => PFB.openTab('problems'));
+  await sleep(200);
+  const fix = S.page.locator('#pfbProblems .pfb-prob-fix', { hasText: 'Add Save operation scenario here' });
+  check('Problems offers "Add Save operation scenario here"', await fix.count() === 1);
+  await fix.click();
+  await settle(S, 300);
+  const w5 = await wfOf(S);
+  const save = w5.nodes.find(n => n.type === 'pf.scen.save');
+  check('the fix puts Save operation scenario right after the dispatch, and the warning goes', save && edgeBetween(w5, 'n4', 'next', save.id, 'in') && edgeBetween(w5, save.id, 'next', 'n5', 'in') &&
+    !(await S.page.evaluate(() => PFB.store.get().gen.problems.some(p => /operation scenario of/.test(p.msg)))), JSON.stringify(w5.edges));
+  // Quick-add from a time series: exact matches first, the ones that cannot use it greyed at the end.
+  await S.page.evaluate(() => PFB.loadWorkflowObject({ app: 'pf-builder', v: 1, name: 'QA', nodes: [
+    { id: 'n1', type: 'start', x: 0, y: 0, s: { project: 'P' } }, { id: 'n2', type: 'pf.rms', x: 300, y: 0, s: { record: [{ id: 'r1', el: { cls: 'ElmTerm', name: 'Bus 5', match: 'one' }, var: 'm:fehz', combine: 'none' }] } }],
+  edges: [{ id: 'e1', from: 'n1', out: 'next', to: 'n2', in: 'in' }] }, { quiet: true }));
+  await settle(S, 300);
+  const f2 = await handleAt(S, 'n2', 'r1', 'source');
+  const pt = await emptyPoint(S);
+  await dragMouse(S, f2, pt);
+  const qa = await S.page.$$eval('.pfb-qa .pfb-qa-item', ns => ns.map(n => ({ t: n.querySelector('.pfb-qa-main').textContent, off: n.getAttribute('aria-disabled') === 'true' })));
+  const firstOff = qa.findIndex(x => x.off);
+  check('quick-add from a time series: Frequency nadir near the top, the greyed ones at the end', qa.findIndex(x => x.t === 'Frequency nadir') <= 2 && firstOff > 0 && qa.slice(firstOff).every(x => x.off) && qa.slice(firstOff).some(x => x.t === 'Activate study case'), JSON.stringify(qa));
+  await S.page.keyboard.press('Escape');
+  await closePage(S, 'families page');
 });
 
 await test('real blocks, phone', async () => {

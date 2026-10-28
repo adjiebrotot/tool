@@ -16,7 +16,8 @@
    line and a short list. */
 window.__TOUR = {
   seenKey: 'bc-tour-v3-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: 'guides/',
   saveState: function () {
     return window.__BC_TOUR ? window.__BC_TOUR.saveState() : null;
   },

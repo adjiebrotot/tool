@@ -5,10 +5,12 @@
    pembuka dan daftar pendek. */
 window.__TOUR = {
   seenKey: 'pvg-id-tour-v3-seen',
-  launchLabel: '🧭 Ikuti tur',
-  launchShort: '🧭 Tur',
+  launchLabel: '🧭 Tur',
+  guide: '../guides/',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)',
+            guideTitle: 'Cara memakai alat ini, langkah demi langkah (bahasa Inggris)' },
   steps: [
     {
       target: null,
@@ -44,7 +46,7 @@ window.__TOUR = {
         if (tab && !tab.classList.contains('active')) tab.click();
       },
       title: '③ PTKP & Lapisan Pajak',
-      body: 'Berisi nilai sesuai ketentuan. Ubah hanya untuk memodelkan aturan lain.'
+      body: 'Sudah berisi nilai sesuai ketentuan. Ubah hanya kalau ingin menghitung aturan lain.'
     },
     {
       target: '#verdict',
@@ -67,8 +69,8 @@ window.__TOUR = {
       target: '.chart-card',
       title: '⑥ Di berbagai gaji',
       body: '<ul><li>Gaji rumah tangga Rp 100 juta sampai Rp 5 miliar, pada porsi Anda</li>' +
-            '<li>Biru untuk Pisah, emas untuk Gabung</li>' +
-            '<li>Catatan breakeven di bawah grafik kedua menyebut titik tukarnya</li></ul>'
+            '<li>Biru untuk Gabung, emas untuk Pisah</li>' +
+            '<li>Catatan breakeven di bawah grafik kedua menyebut titik baliknya</li></ul>'
     },
     {
       target: '#detailSection',

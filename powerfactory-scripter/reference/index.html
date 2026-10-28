@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory attribute reference: every GetAttribute name</title>
+<meta name="description" content="Every DIgSILENT PowerFactory attribute name for GetAttribute and SetAttribute: 54 element classes, 11 types, 8 events, with units and Python examples.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="PowerFactory attribute reference">
+<meta property="og:description" content="Every DIgSILENT PowerFactory attribute name for GetAttribute and SetAttribute: 54 element classes, 11 types, 8 events, with units and Python examples.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PowerFactory attribute reference">
+<meta name="twitter:description" content="Every DIgSILENT PowerFactory attribute name for GetAttribute and SetAttribute: 54 element classes, 11 types, 8 events, with units and Python examples.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "PowerFactory attribute reference",
+  "description": "Every DIgSILENT PowerFactory attribute name for GetAttribute and SetAttribute: 54 element classes, 11 types, 8 events, with units and Python examples.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "PowerFactory Scripter",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+  },
+  "hasPart": [
+    {
+      "@type": "TechArticle",
+      "name": "ElmBranch attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBranch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmCabsys attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmCabsys/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmLne attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLne/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmLnesec attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLnesec/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmSind attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSind/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTow attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTow/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTr2 attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTr2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTr3 attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTr3/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTr4 attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTr4/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTrb attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrb/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTrmult attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrmult/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmVoltreg attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVoltreg/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmZpu attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmZpu/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmCoup attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmCoup/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmGndswt attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmGndswt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmNec attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNec/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTerm attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTerm/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmAsm attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmAsm/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmAsmsc attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmAsmsc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmDcu attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmDcu/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmGenstat attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmGenstat/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmIac attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmIac/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmPvsys attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmPvsys/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmSym attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSym/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmVac attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVac/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmXnet attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmXnet/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmFilter attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFilter/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmLod attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLod/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmLodlv attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLodlv/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmLodmv attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLodmv/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmShnt attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmShnt/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmSvs attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSvs/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTrain attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrain/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmRecmono attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRecmono/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmVsc attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVsc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmVscmono attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVscmono/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmComp attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmComp/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmDsl attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmDsl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmMdl attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmMdl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmRelay attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRelay/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmSecctrl attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSecctrl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmStactrl attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmStactrl/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "StaPll attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/StaPll/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmArea attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmArea/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmBbone attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBbone/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmBmu attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBmu/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmBoundary attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBoundary/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmFeeder attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFeeder/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmNet attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNet/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmSubstat attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSubstat/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmTrfstat attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrfstat/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmZone attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmZone/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmFile attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFile/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "ElmRes attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRes/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypAsm attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypAsm/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypGeo attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypGeo/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypLne attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLne/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypLod attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLod/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypLodlv attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLodlv/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypSwitch attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSwitch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypSym attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSym/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypTow attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTow/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypTr2 attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr2/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypTr3 attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr3/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "TypTr4 attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr4/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtGen attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtGen/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtLod attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtLod/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtOutage attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtOutage/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtParam attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtParam/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtShc attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtShc/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtSwitch attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtSwitch/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtSym attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtSym/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "EvtTap attributes",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtTap/"
+    }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../">PowerFactory Scripter</a><span aria-hidden="true">›</span><span aria-current="page">Attribute reference</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PowerFactory attribute reference</h1>
+    <p class="dx-lead">Every attribute name you can pass to <code>GetAttribute</code> and <code>SetAttribute</code> in DIgSILENT PowerFactory 2024, with units and meaning: 54 element classes, 11 types and 8 simulation events, 41,231 names in all.</p>
+    <section class="dx-sec dx-answer" aria-labelledby="quick">
+  <h2 id="quick">The attribute names people look up most</h2>
+  <div class="dx-tw"><table><thead><tr><th>You want</th><th>Attribute</th><th>Unit</th><th>Class</th><th>After</th></tr></thead><tbody>
+<tr><td>Loading of a line or transformer</td><td><code>c:loading</code></td><td>%</td><td><a href="ElmLne/"><code>ElmLne</code></a>, <a href="ElmTr2/"><code>ElmTr2</code></a>, <a href="ElmTr3/"><code>ElmTr3</code></a>, <a href="ElmSym/"><code>ElmSym</code></a></td><td>Load flow</td></tr>
+<tr><td>Busbar voltage, per unit</td><td><code>m:u</code></td><td>p.u.</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>Load flow</td></tr>
+<tr><td>Busbar voltage, line-line</td><td><code>m:Ul</code></td><td>kV</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>Load flow</td></tr>
+<tr><td>Voltage angle</td><td><code>m:phiu</code></td><td>deg</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>Load flow</td></tr>
+<tr><td>Active power at a line end</td><td><code>m:P:bus1</code></td><td>MW</td><td><a href="ElmLne/"><code>ElmLne</code></a> (<a href="ElmTr2/"><code>ElmTr2</code></a>: m:P:bushv, m:P:buslv)</td><td>Load flow</td></tr>
+<tr><td>Reactive power at a line end</td><td><code>m:Q:bus1</code></td><td>Mvar</td><td><a href="ElmLne/"><code>ElmLne</code></a>, <a href="ElmSym/"><code>ElmSym</code></a>, <a href="ElmLod/"><code>ElmLod</code></a>...</td><td>Load flow</td></tr>
+<tr><td>Current at a line end</td><td><code>m:I:bus1</code></td><td>kA</td><td><a href="ElmLne/"><code>ElmLne</code></a></td><td>Load flow</td></tr>
+<tr><td>Losses</td><td><code>c:Ploss</code></td><td>MW</td><td><a href="ElmLne/"><code>ElmLne</code></a>, <a href="ElmTr2/"><code>ElmTr2</code></a></td><td>Load flow</td></tr>
+<tr><td>Generator dispatch (input)</td><td><code>pgini</code></td><td>MW</td><td><a href="ElmSym/"><code>ElmSym</code></a>, <a href="ElmGenstat/"><code>ElmGenstat</code></a> (<a href="ElmPvsys/"><code>ElmPvsys</code></a> in kW)</td><td>Input data</td></tr>
+<tr><td>Load demand (input)</td><td><code>plini</code>, <code>qlini</code></td><td>MW, Mvar</td><td><a href="ElmLod/"><code>ElmLod</code></a></td><td>Input data</td></tr>
+<tr><td>Out of service</td><td><code>outserv</code></td><td>1 or 0</td><td>every element</td><td>Input data</td></tr>
+<tr><td>Breaker open or closed</td><td><code>on_off</code></td><td>1 closed, 0 open</td><td><a href="ElmCoup/"><code>ElmCoup</code></a></td><td>Input data</td></tr>
+<tr><td>Tap position</td><td><code>nntap</code></td><td>·</td><td><a href="ElmTr2/"><code>ElmTr2</code></a></td><td>Input data</td></tr>
+<tr><td>Line length</td><td><code>dline</code></td><td>km</td><td><a href="ElmLne/"><code>ElmLne</code></a></td><td>Input data</td></tr>
+<tr><td>Initial short-circuit current</td><td><code>m:Ikss</code></td><td>kA</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>Short circuit</td></tr>
+<tr><td>Initial short-circuit power</td><td><code>m:Skss</code></td><td>MVA</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>Short circuit</td></tr>
+<tr><td>Peak short-circuit current</td><td><code>m:ip</code></td><td>kA</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>Short circuit</td></tr>
+<tr><td>Frequency</td><td><code>m:fehz</code></td><td>Hz</td><td><a href="ElmTerm/"><code>ElmTerm</code></a></td><td>RMS simulation</td></tr>
+<tr><td>Rotor angle</td><td><code>c:firel</code></td><td>deg</td><td><a href="ElmSym/"><code>ElmSym</code></a></td><td>RMS simulation</td></tr>
+<tr><td>Speed</td><td><code>s:speed</code></td><td>p.u.</td><td><a href="ElmSym/"><code>ElmSym</code></a></td><td>RMS simulation</td></tr>
+</tbody></table></div>
+  <p class="dx-note">Results (<code>m:</code>, <code>c:</code>, <code>n:</code>) exist only after the calculation named in the last column has run in the active study case.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="prefixes">
+  <h2 id="prefixes">What the prefix of an attribute name means</h2>
+  <dl class="dx-facts"><dt><code>e:</code></dt><dd>Input parameter: the data of the element. Optional when you type it: <code>GetAttribute("dline")</code> and <code>GetAttribute("e:dline")</code> are the same.</dd><dt><code>m:</code></dt><dd>Currents, voltages and powers. On a branch it names the terminal: <code>m:P:bus1</code>, <code>m:P:bushv</code>. Without it, <code>m:P</code> on a line raises <code>AttributeError</code>.</dd><dt><code>c:</code></dt><dd>Calculation parameter: a result worked out from the others, such as <code>c:loading</code> and <code>c:Ploss</code>.</dd><dt><code>n:</code></dt><dd>Bus result: the result of the terminal at one end of a branch, such as <code>n:u:bus1</code>.</dd><dt><code>s:</code></dt><dd>Signal: a state or model variable of an RMS or EMT simulation, such as <code>s:speed</code>.</dd><dt><code>b:</code></dt><dd>Basic data: values derived from the input data (read only).</dd><dt><code>t:</code></dt><dd>Type parameter read through the element: <code>line.GetAttribute("t:uline")</code> is the rated voltage of the line's type.</dd><dt><code>:A :B :C</code></dt><dd>Per phase, in an unbalanced calculation only: <code>m:u:A</code>, <code>m:I:bus1:A</code> (capitals; <code>:a</code> raises <code>AttributeError</code>).</dd></dl>
+  <p class="dx-note">Each rule above was checked on the PowerFactory 2024 engine. A name a class does not have raises <code>AttributeError</code>.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write any attribute</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># inside PowerFactory; GetApplicationExt() from your own Python</span>
+app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>).<span class="py-f">Execute</span>()      <span class="py-c"># results need a calculation first</span>
+
+<span class="py-k">for</span> line <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>):
+    <span class="py-f">print</span>(line.loc_name, line.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>), line.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:P:bus1&quot;</span>))
+
+<span class="py-k">for</span> bus <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>):
+    <span class="py-f">print</span>(bus.loc_name, bus.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:u&quot;</span>))
+
+load = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLod&quot;</span>)[<span class="py-n">0</span>]
+load.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;plini&quot;</span>, <span class="py-n">140.0</span>)             <span class="py-c"># input data: the next load flow uses it</span></code></pre>
+  <p>New to the API? <a href="../python/getting-started/">Start with the PowerFactory Python API guide</a>, or <a href="../python/">see every study you can automate</a>.</p>
+</section>
+<section class="dx-sec" aria-labelledby="cat-branches">
+  <h2 id="cat-branches">Lines, cables and transformers</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmBranch/"><code>ElmBranch</code><span>Branch · 858 attributes</span></a></li>
+    <li><a href="ElmCabsys/"><code>ElmCabsys</code><span>Cable System · 195 attributes</span></a></li>
+    <li><a href="ElmLne/"><code>ElmLne</code><span>Line · 1363 attributes</span></a></li>
+    <li><a href="ElmLnesec/"><code>ElmLnesec</code><span>Line Sub-Section · 112 attributes</span></a></li>
+    <li><a href="ElmSind/"><code>ElmSind</code><span>Series Reactor · 936 attributes</span></a></li>
+    <li><a href="ElmTow/"><code>ElmTow</code><span>Line Couplings · 215 attributes</span></a></li>
+    <li><a href="ElmTr2/"><code>ElmTr2</code><span>2-Winding Transformer · 1330 attributes</span></a></li>
+    <li><a href="ElmTr3/"><code>ElmTr3</code><span>3-Winding Transformer · 1474 attributes</span></a></li>
+    <li><a href="ElmTr4/"><code>ElmTr4</code><span>4-Winding Transformer · 1459 attributes</span></a></li>
+    <li><a href="ElmTrb/"><code>ElmTrb</code><span>Booster Transformer · 925 attributes</span></a></li>
+    <li><a href="ElmTrmult/"><code>ElmTrmult</code><span>Multi-Winding Transformer · 1013 attributes</span></a></li>
+    <li><a href="ElmVoltreg/"><code>ElmVoltreg</code><span>Step-Voltage Regulator · 1017 attributes</span></a></li>
+    <li><a href="ElmZpu/"><code>ElmZpu</code><span>Common Impedance · 961 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-nodes">
+  <h2 id="cat-nodes">Terminals and switching</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmCoup/"><code>ElmCoup</code><span>Breaker/Switch · 913 attributes</span></a></li>
+    <li><a href="ElmGndswt/"><code>ElmGndswt</code><span>Grounding Switch · 863 attributes</span></a></li>
+    <li><a href="ElmNec/"><code>ElmNec</code><span>NEC/NER · 797 attributes</span></a></li>
+    <li><a href="ElmTerm/"><code>ElmTerm</code><span>Terminal · 508 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-gen">
+  <h2 id="cat-gen">Generators and sources</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmAsm/"><code>ElmAsm</code><span>Asynchronous Machine · 1609 attributes</span></a></li>
+    <li><a href="ElmAsmsc/"><code>ElmAsmsc</code><span>Doubly-Fed Induction Machine · 1154 attributes</span></a></li>
+    <li><a href="ElmDcu/"><code>ElmDcu</code><span>DC Voltage Source · 778 attributes</span></a></li>
+    <li><a href="ElmGenstat/"><code>ElmGenstat</code><span>Static Generator · 1279 attributes</span></a></li>
+    <li><a href="ElmIac/"><code>ElmIac</code><span>AC Current Source · 893 attributes</span></a></li>
+    <li><a href="ElmPvsys/"><code>ElmPvsys</code><span>PV System · 1298 attributes</span></a></li>
+    <li><a href="ElmSym/"><code>ElmSym</code><span>Synchronous Machine · 1594 attributes</span></a></li>
+    <li><a href="ElmVac/"><code>ElmVac</code><span>AC Voltage Source · 964 attributes</span></a></li>
+    <li><a href="ElmXnet/"><code>ElmXnet</code><span>External Grid · 1264 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-loads">
+  <h2 id="cat-loads">Loads and compensation</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmFilter/"><code>ElmFilter</code><span>Harmonic Filter · 1369 attributes</span></a></li>
+    <li><a href="ElmLod/"><code>ElmLod</code><span>General Load · 1328 attributes</span></a></li>
+    <li><a href="ElmLodlv/"><code>ElmLodlv</code><span>Low-Voltage Load · 1022 attributes</span></a></li>
+    <li><a href="ElmLodmv/"><code>ElmLodmv</code><span>MV Load · 1097 attributes</span></a></li>
+    <li><a href="ElmShnt/"><code>ElmShnt</code><span>Shunt/Filter · 1233 attributes</span></a></li>
+    <li><a href="ElmSvs/"><code>ElmSvs</code><span>Static Var System · 1031 attributes</span></a></li>
+    <li><a href="ElmTrain/"><code>ElmTrain</code><span>Train · 811 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-pe">
+  <h2 id="cat-pe">Power electronics and HVDC</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmRecmono/"><code>ElmRecmono</code><span>Rectifier/Inverter/1 DC-Connection · 1078 attributes</span></a></li>
+    <li><a href="ElmVsc/"><code>ElmVsc</code><span>PWM Converter/2 DC-Connections · 1326 attributes</span></a></li>
+    <li><a href="ElmVscmono/"><code>ElmVscmono</code><span>PWM Converter/1 DC-Connection · 1322 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-control">
+  <h2 id="cat-control">Dynamic models, control and protection</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmComp/"><code>ElmComp</code><span>Composite Model · 13 attributes</span></a></li>
+    <li><a href="ElmDsl/"><code>ElmDsl</code><span>DSL Model · 25 attributes</span></a></li>
+    <li><a href="ElmMdl/"><code>ElmMdl</code><span>Modelica Model · 36 attributes</span></a></li>
+    <li><a href="ElmRelay/"><code>ElmRelay</code><span>Relay · 58 attributes</span></a></li>
+    <li><a href="ElmSecctrl/"><code>ElmSecctrl</code><span>Power-Frequency Controller · 66 attributes</span></a></li>
+    <li><a href="ElmStactrl/"><code>ElmStactrl</code><span>Station Control · 115 attributes</span></a></li>
+    <li><a href="StaPll/"><code>StaPll</code><span>PLL Phase/Frequency Measurement · 109 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-groups">
+  <h2 id="cat-groups">Grids, areas and other groupings</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmArea/"><code>ElmArea</code><span>Area · 328 attributes</span></a></li>
+    <li><a href="ElmBbone/"><code>ElmBbone</code><span>Backbone · 10 attributes</span></a></li>
+    <li><a href="ElmBmu/"><code>ElmBmu</code><span>Virtual Power Plant · 133 attributes</span></a></li>
+    <li><a href="ElmBoundary/"><code>ElmBoundary</code><span>Boundary · 95 attributes</span></a></li>
+    <li><a href="ElmFeeder/"><code>ElmFeeder</code><span>Feeder · 265 attributes</span></a></li>
+    <li><a href="ElmNet/"><code>ElmNet</code><span>Grid · 365 attributes</span></a></li>
+    <li><a href="ElmSubstat/"><code>ElmSubstat</code><span>Substation · 99 attributes</span></a></li>
+    <li><a href="ElmTrfstat/"><code>ElmTrfstat</code><span>Secondary Substation · 121 attributes</span></a></li>
+    <li><a href="ElmZone/"><code>ElmZone</code><span>Zone · 330 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-data">
+  <h2 id="cat-data">Results and measurement data</h2>
+  <ul class="dx-classes">
+    <li><a href="ElmFile/"><code>ElmFile</code><span>Measurement File · 187 attributes</span></a></li>
+    <li><a href="ElmRes/"><code>ElmRes</code><span>Results · 68 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-types">
+  <h2 id="cat-types">Types (shared equipment data)</h2>
+  <ul class="dx-classes">
+    <li><a href="TypAsm/"><code>TypAsm</code><span>Asynchronous Machine Type - old · 60 attributes</span></a></li>
+    <li><a href="TypGeo/"><code>TypGeo</code><span>Tower Geometry Type · 19 attributes</span></a></li>
+    <li><a href="TypLne/"><code>TypLne</code><span>Line Type · 76 attributes</span></a></li>
+    <li><a href="TypLod/"><code>TypLod</code><span>General Load Type · 48 attributes</span></a></li>
+    <li><a href="TypLodlv/"><code>TypLodlv</code><span>LV Load Type · 26 attributes</span></a></li>
+    <li><a href="TypSwitch/"><code>TypSwitch</code><span>Switch Type · 48 attributes</span></a></li>
+    <li><a href="TypSym/"><code>TypSym</code><span>Synchronous Machine Type · 148 attributes</span></a></li>
+    <li><a href="TypTow/"><code>TypTow</code><span>Tower Type · 51 attributes</span></a></li>
+    <li><a href="TypTr2/"><code>TypTr2</code><span>2-Winding Transformer Type · 155 attributes</span></a></li>
+    <li><a href="TypTr3/"><code>TypTr3</code><span>3-Winding Transformer Type · 214 attributes</span></a></li>
+    <li><a href="TypTr4/"><code>TypTr4</code><span>4-Winding Transformer Type · 409 attributes</span></a></li>
+  </ul>
+</section>
+<section class="dx-sec" aria-labelledby="cat-events">
+  <h2 id="cat-events">Simulation events</h2>
+  <ul class="dx-classes">
+    <li><a href="EvtGen/"><code>EvtGen</code><span>Dispatch Event · 16 attributes</span></a></li>
+    <li><a href="EvtLod/"><code>EvtLod</code><span>Load Event · 26 attributes</span></a></li>
+    <li><a href="EvtOutage/"><code>EvtOutage</code><span>Outage Event · 14 attributes</span></a></li>
+    <li><a href="EvtParam/"><code>EvtParam</code><span>Parameter Event · 17 attributes</span></a></li>
+    <li><a href="EvtShc/"><code>EvtShc</code><span>Short-Circuit Event · 28 attributes</span></a></li>
+    <li><a href="EvtSwitch/"><code>EvtSwitch</code><span>Switch Event · 32 attributes</span></a></li>
+    <li><a href="EvtSym/"><code>EvtSym</code><span>Synchronous Machine Event · 16 attributes</span></a></li>
+    <li><a href="EvtTap/"><code>EvtTap</code><span>Tap Event · 16 attributes</span></a></li>
+  </ul>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

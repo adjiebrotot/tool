@@ -9,7 +9,8 @@ function colmapSeed(){
 }
 window.__TOUR = {
   seenKey: 'colmap-tour-v1-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: '../guides/#map',
   saveState: function () {
     return window.__COLMAP_TOUR ? window.__COLMAP_TOUR.saveState() : null;
   },

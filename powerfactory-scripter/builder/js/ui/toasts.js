@@ -14,6 +14,12 @@ export function toast(msg, opts = {}) {
   t.appendChild(el('span', { class: 'pfb-toast-msg', text: String(msg) }));
   let timer = null;
   const close = () => { clearTimeout(timer); t.classList.remove('show'); setTimeout(() => t.remove(), 250); };
+  // A second choice beside Undo: { label, run }.
+  if (opts.action && typeof opts.action.run === 'function') {
+    const a = el('button', { type: 'button', class: 'btn-secondary btn-sm pfb-toast-act', text: String(opts.action.label || 'Do it') });
+    a.addEventListener('click', () => { close(); opts.action.run(); });
+    t.appendChild(a);
+  }
   if (typeof opts.undo === 'function') {
     const b = el('button', { type: 'button', class: 'btn-secondary btn-sm pfb-toast-undo', text: '↶ Undo', title: 'Undo this' });
     b.addEventListener('click', () => { close(); opts.undo(); });

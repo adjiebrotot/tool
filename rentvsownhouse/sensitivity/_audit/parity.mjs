@@ -221,7 +221,9 @@ async function sensCsv(page, w){
 const diffAt=(a,b)=>{ const A=a.split('\n'), B=b.split('\n'); for(let i=0;i<Math.max(A.length,B.length);i++) if(A[i]!==B[i]) return `line ${i+1}\n      main: ${A[i]}\n      sens: ${B[i]}`; return null; };
 
 const main = await open(MAIN);
-const cases = EDGE.map(([name, o])=>[name, Object.assign({}, BASE, {mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple'}, o)]);
+// The edge cases run on the automatic budget and cash, which fund every plan,
+// so each is compared figure by figure; the one that sets its own is refused.
+const cases = EDGE.map(([name, o])=>[name, Object.assign({}, BASE, {mortgageMode:'simple', ownCostsMode:'simple', rentCostsMode:'simple', monthlyBudget:0, initialCash:0}, o)]);
 for(let i=0;i<N;i++) cases.push(['random #'+(i+1), randomScenario()]);
 
 for(const [name, sc] of cases){
@@ -229,9 +231,11 @@ for(const [name, sc] of cases){
   await applyMain(main, sc);
   await applySens(sens, sc);
   const [mo, mr, so, sr] = [await mainCsv(main,'own'), await mainCsv(main,'rent'), await sensCsv(sens,'own'), await sensCsv(sens,'rent')];
-  const d = diffAt(mo, so) || diffAt(mr, sr);
+  // A plan that runs out of cash is refused by both pages: no export either side.
+  const refused = [mo, mr, so, sr].every(x => x == null);
+  const d = refused ? null : [mo, mr, so, sr].some(x => x == null) ? `one page refused the plan and the other ran it` : diffAt(mo, so) || diffAt(mr, sr);
   const tag = `${sc.mortgageMode}${sc.mortgageMode==='detailed'?'/'+sc.mortgageType+'/'+sc.ratePeriods.map(p=>p.type[0]).join(''):''}, costs ${sc.ownCostsMode}/${sc.rentCostsMode}, budget ${sc.monthlyBudget||'auto'}, h${sc.horizon}/t${sc.mortgageTerm}`;
-  check(`P ${name} (${tag}): Own + Rent exports identical`, !d, d||'');
+  check(`P ${name} (${tag}): ${refused ? 'both pages refuse a plan that runs out of cash' : 'Own + Rent exports identical'}`, !d, d||'');
   if(d) console.log('      scenario:', JSON.stringify(sc));
   await sens.close();
 }
@@ -243,8 +247,9 @@ for(const [name, sc] of cases.slice(0, EDGE.length)){
   await applyMain(main, sc); await applyMain(mainId, sc);
   const sensId = await open(SENS_ID); await applySens(sensId, sc);
   const ref = [await mainCsv(main,'own'), await mainCsv(main,'rent')];
-  const d = diffAt(ref[0], await mainCsv(mainId,'own')) || diffAt(ref[1], await mainCsv(mainId,'rent'))
-         || diffAt(ref[0], await sensCsv(sensId,'own')) || diffAt(ref[1], await sensCsv(sensId,'rent'));
+  const got = [await mainCsv(mainId,'own'), await mainCsv(mainId,'rent'), await sensCsv(sensId,'own'), await sensCsv(sensId,'rent')];
+  const same = (a, b) => a == null || b == null ? (a == null && b == null ? null : 'one page refused the plan and the other ran it') : diffAt(a, b);
+  const d = same(ref[0], got[0]) || same(ref[1], got[1]) || same(ref[0], got[2]) || same(ref[1], got[3]);
   check(`P ${name}: Indonesian main + Sensitivity pages match the English main page`, !d, d||'');
   await sensId.close();
 }

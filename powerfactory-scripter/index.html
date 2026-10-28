@@ -6,70 +6,103 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../consent.js" defer></script>
+  <!-- This address used to be the form-based scripter. A link made for it (a samples page
+       "Try it" link, ?qs=..., or saved state in the hash) still opens it, now in legacy/. -->
+  <script>(function(){var q=location.search,h=location.hash;if(/[?&]qs=/.test(q)||/(?:^#|&)(?:open|s|embed)=/.test(h))location.replace('legacy/'+q+h);})();</script>
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DIgSILENT PowerFactory Script Generator | Adjie Brotools</title>
-<meta name="description" content="Generate DIgSILENT PowerFactory Python automation scripts for equipment sizing and optimisation, dynamic RMS/EMT and grid-connection studies, and automatic N-1 contingency analysis — in minutes instead of hours or days. Runs locally in your browser with no upload; the generated Python script is yours to keep. Replaces work that usually needs bespoke, in-house consultant scripting.">
-<meta name="robots" content="index, follow">
+<title>PowerFactory Scripter: DIgSILENT Python Script Builder</title>
+<meta name="description" content="Write DIgSILENT PowerFactory Python scripts in minutes. Wire load flow, N-1 contingency, RMS, EMT and short circuit blocks into one ready-to-run .py file. Free.">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="PowerFactory Script Generator">
-<meta property="og:description" content="Generate DIgSILENT PowerFactory Python automation scripts in minutes instead of hours or days. Runs locally in your browser with no upload — the generated Python script is yours to keep.">
+<meta property="og:title" content="PowerFactory Scripter">
+<meta property="og:description" content="Write DIgSILENT PowerFactory Python scripts in minutes, not days. Drag study blocks into a workflow and get one ready-to-run Python file. Runs in your browser with no upload.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
 
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PowerFactory Script Generator">
-<meta name="twitter:description" content="Generate DIgSILENT PowerFactory Python automation scripts in minutes instead of hours or days. Runs locally in your browser with no upload — the generated Python script is yours to keep.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PowerFactory Scripter">
+<meta name="twitter:description" content="Write DIgSILENT PowerFactory Python scripts in minutes, not days. Drag study blocks into a workflow and get one ready-to-run Python file. Runs in your browser with no upload.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "PowerFactory Script Generator",
+  "name": "PowerFactory Scripter",
   "url": "https://tool.adjiebrotots.com/powerfactory-scripter/",
-  "description": "Generate DIgSILENT PowerFactory Python automation scripts in minutes instead of hours or days. Runs locally in your browser with no upload — the generated Python script is yours to keep.",
+  "description": "Write DIgSILENT PowerFactory Python scripts in minutes, not days. The Workflow Builder wires study blocks (load flow, N-1 contingency, RMS and EMT simulation, short circuit, checks, loops and result tables) into one ready-to-run Python file; the Legacy Scripter is the original form. Runs locally in your browser with no upload; the generated script is yours to keep.",
   "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "Power system study automation",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-10-25",
+  "screenshot": "https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
   "alternateName": [
+    "PowerFactory Script Generator",
     "PowerFactory Python Script Generator",
     "DIgSILENT PowerFactory Automation Scripter",
-    "PowerFactory Equipment Sizing and Contingency Scripter"
+    "PowerFactory Workflow Builder"
   ],
-  "keywords": "PowerFactory scripting, DIgSILENT PowerFactory Python, equipment sizing PowerFactory, RMS EMT study PowerFactory, grid connection automation, N-1 contingency analysis PowerFactory, power system study automation",
+  "keywords": "PowerFactory scripting, DIgSILENT PowerFactory Python, PowerFactory automation, N-1 contingency analysis PowerFactory, load flow automation, RMS EMT study automation, fault ride-through, critical clearing time, frequency nadir headroom, equipment sizing PowerFactory, no-code PowerFactory",
   "featureList": [
-    "Equipment sizing and optimisation studies — sweep parallel units, ratings, or settings and find the first passing size automatically",
-    "Dynamic RMS and EMT studies, including grid-connection compliance process automation across many scenarios",
-    "Automatic N-1 contingency analysis with wildcard element selection resolved at runtime",
-    "Reduces PowerFactory scripting work that usually takes power system engineers hours to days down to minutes",
-    "The generated Python file is yours to keep, modify, and run",
-    "Script generation runs locally in the browser with no upload to any server — security-compliant for most corporate engineering environments",
-    "Optimised for huge iteration studies, built on years of power system engineering experience by Adjie Brotosukmono"
+    "Drag and drop study blocks into a workflow: load flow, RMS simulation, EMT simulation, harmonic load flow, short circuit, contingencies, checks, loops and result tables",
+    "One ready-to-run Python file that drives PowerFactory through its Python API",
+    "Automates many simulations at once: loops over contingencies, study cases, operation scenarios, variations or a range of values into one results table",
+    "Ready-made power system calculations on simulation results: RoCoF, settling time, frequency nadir, peak, value at a time, first time above or below a limit",
+    "Ready-made optimisation (differential evolution, Nelder-Mead, Powell, Bayesian, grid) and a limit finder by bisection, for hosting capacity or critical clearing time",
+    "Equipment sizing, optimisation and contingency sweeps in the original form-based Legacy Scripter",
+    "Runs locally in the browser with no upload, suiting security-restricted corporate engineering environments",
+    "The generated Python file is yours to keep, change and run"
   ],
   "hasPart": [
     {
       "@type": "WebApplication",
-      "name": "PowerFactory Scripter Samples and Guides",
-      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/samples/"
+      "name": "PowerFactory Workflow Builder",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/builder/"
     },
     {
       "@type": "WebApplication",
-      "name": "PowerFactory Workflow Builder",
-      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/builder/"
+      "name": "PowerFactory Scripter (Legacy Form)",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/legacy/"
+    },
+    {
+      "@type": "WebPage",
+      "name": "How to use the PowerFactory Workflow Builder",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/guides/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "How to automate PowerFactory studies with Python",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "CollectionPage",
+      "name": "PowerFactory attribute reference",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
     }
   ],
   "author": {
@@ -84,40 +117,10 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How do I do equipment sizing and optimisation in PowerFactory?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Use the free PowerFactory Scripter at https://tool.adjiebrotots.com/powerfactory-scripter/ to generate a Python script that sweeps a sizing variable — parallel units, ratings, capacitor steps, filter sizes — across scenarios and reports the first passing size automatically. Worked examples for capacitor bank, harmonic filter, and synchronous condenser sizing are on the Samples & Guides page at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I run a dynamic RMS or EMT study in PowerFactory, including grid-connection process automation?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "The PowerFactory Scripter generates Python that drives RMS and EMT time-domain simulations across many scenarios — for example fault ride-through and inertial response checks — and saves waveform plots and pass/fail metrics per case, automating repetitive grid-connection compliance runs. Generate it free at https://tool.adjiebrotots.com/powerfactory-scripter/ and see the synchronous condenser dynamic example in the samples."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How do I automate N-1 contingency analysis in PowerFactory?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Pick the Contingency problem type in the PowerFactory Scripter and use a wildcard to match elements; the generated Python resolves all matching lines or transformers at runtime and runs each outage automatically. A worked N-1 line contingency example is on the Samples & Guides page at https://tool.adjiebrotots.com/powerfactory-scripter/samples/."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can I generate PowerFactory automation scripts without bespoke or proprietary in-house software?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes. PowerFactory automation that normally needs custom consultant-written scripting or expensive in-house tooling is generated here for free. Generation runs entirely in your browser with no upload, so it suits security-restricted corporate environments, and the resulting Python file is yours to keep, modify, and run."
-      }
-    }
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "PowerFactory Scripter", "item": "https://tool.adjiebrotots.com/powerfactory-scripter/" }
   ]
 }
 </script>
@@ -125,450 +128,114 @@
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../logos/apple-touch-icon.png">
 <script src="../pwa.js" defer></script>
-<!-- Ace.js for Python syntax highlighting in custom function editors -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
-<!-- SheetJS for xlsx template download in custom mode -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<!-- Highlight.js for code preview -->
 <link rel="preload" href="../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
-<link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="../fonts.css">
 <link rel="stylesheet" href="../dark.css">
 <link rel="stylesheet" href="../light.css">
-<script>if(self!==top&&/(?:^#|&)embed=/.test(location.hash))document.documentElement.classList.add("abt-embed","abt-embed-wait");</script> <!-- an embedded chart says it is loading from the first paint (SharedShare) -->
 <link rel="stylesheet" href="../shared.css">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="../theme.js"></script>
+<div class="container pfl">
 
-<!-- TOP HEADER -->
-<header>
-  <div class="header-left">
-    <div class="header-text">
-      <div class="header-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/> <path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/> <path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/> </svg>PowerFactory Scripter</div>
-      <div class="header-subtitle">Help you automate PF simulations.</div>
+  <nav class="pfl-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="https://tool.adjiebrotots.com/">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
+    <div class="pfl-top-r">
+      <a class="btn-theme btn-back" href="guides/" title="How to use this tool, step by step" aria-label="Guides"><span class="pf-tour-emo" aria-hidden="true">📖</span><span class="pf-tour-word">&nbsp;Guides</span></a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
     </div>
-  </div>
-  <div class="header-right">
-    <div class="header-nav">
-      <a class="btn-theme btn-back" href="https://tool.adjiebrotots.com/" target="_self" rel="noopener">← Other Tools</a>
-      <button class="btn-theme" id="themeToggle">☀️ Light</button>
+  </nav>
+
+  <main>
+    <section class="pfl-hero" aria-labelledby="pflTitle">
+      <div class="pfl-copy">
+        <h1 id="pflTitle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PowerFactory Scripter</h1>
+        <p class="pfl-lead">Write DIgSILENT PowerFactory Python scripts in minutes, not days.</p>
+        <a class="btn-primary pfl-cta" href="builder/">Open Builder</a>
+        <p class="pfl-alt">or I prefer <a href="legacy/">Legacy Scripter</a></p>
+      </div>
+      <figure class="pfl-stage">
+        <svg class="pfl-anim" viewBox="0 0 1024 502" role="img" aria-labelledby="pflAnimTitle" xmlns="http://www.w3.org/2000/svg">
+        <title id="pflAnimTitle">The PowerFactory Workflow Builder: an N-1 study where, on each pass of Contingency, Run load flow feeds Line loading and Transformer loading into Add row to results table. A Read attribute block is dragged in from the Blocks panel, renamed Busbar voltage, wired after the load flow and into the results table, and the workflow downloads as a Python script.</title>
+        <defs><pattern id="pflDots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" class="pfl-dot"/></pattern><radialGradient id="pflFadeG" cx="50%" cy="50%" r="60%"><stop offset="55%" stop-color="#fff"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="pflFade"><rect width="1024" height="502" fill="url(#pflFadeG)"/></mask></defs>
+        <rect width="1024" height="502" fill="url(#pflDots)" mask="url(#pflFade)"/>
+        <path class="pfl-frame pfl-fshort" d="M260 30Q260 18 272 18L1002 18Q1014 18 1014 30L1014 208Q1014 220 1002 220L750 220Q738 220 738 232L738 310Q738 322 726 322L512 322Q500 322 500 310L500 223.5Q500 211.5 488 211.5L272 211.5Q260 211.5 260 199.5Z"/>
+        <path class="pfl-frame pfl-ftall" d="M260 30Q260 18 272 18L1002 18Q1014 18 1014 30L1014 230Q1014 242 1002 242L750 242Q738 242 738 254L738 476Q738 488 726 488L512 488Q500 488 500 476L500 223.5Q500 211.5 488 211.5L272 211.5Q260 211.5 260 199.5Z"/>
+        <g class="pfl-tab"><rect x="274" y="7" width="176" height="22" rx="11"/><text x="284" y="22.2"><tspan class="pfl-tab-ico">↻</tspan> Each pass <tspan class="pfl-tab-sep">·</tspan> Contingency</text></g>
+        <g class="pfl-pal-g"><rect class="pfl-pal" x="14" y="269.0" width="214" height="176" rx="14"/><text class="pfl-pal-grip" x="26" y="291.0">⠿</text><text class="pfl-pal-h" x="40" y="291.5">Blocks</text><text class="pfl-pal-chev" x="214" y="291.0" text-anchor="end">▾</text><path class="pfl-pal-line" d="M15 305.0H227"/><rect class="pfl-pal-dot" x="28" y="317.0" width="9" height="9" rx="3"/><text class="pfl-pal-cat" x="44" y="325.5">PowerFactory: cases and data</text><g class="pfl-ico pfl-pal-ico" transform="translate(32 337.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></g><text class="pfl-pal-it" x="56" y="349.5">Element</text><g class="pfl-ico pfl-pal-ico" transform="translate(32 363.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="13.5" width="18" height="7" rx="1.6"/><path d="M14.5 3.5l3.5 3.5-6.5 6.5H8V10z"/></g><text class="pfl-pal-it" x="56" y="375.5">Set attribute</text><rect class="pfl-pal-hi" x="22" y="385.0" width="198" height="24" rx="7"/><g class="pfl-ico pfl-pal-ico" transform="translate(32 389.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5a8.5 8.5 0 1 1 17 0"/><path d="M12 16.5l4-5"/><circle cx="12" cy="16.5" r="1.4" fill="currentColor"/><path d="M6.5 11l1.2 1M17.5 11l-1.2 1M12 8.5V10"/></g><text class="pfl-pal-it" x="56" y="401.5">Read attribute</text><g class="pfl-ico pfl-pal-ico" transform="translate(32 415.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14l-6 6M4 15.5V20h4.5M14 10l6-6M20 8.5V4h-4.5"/><rect x="8" y="8" width="8" height="8" rx="1.5"/></g><text class="pfl-pal-it" x="56" y="427.5">Scale</text></g>
+        <rect class="pfl-slot" x="516" y="328.0" width="206" height="144" rx="10"/>
+        <g class="pfl-wires"><path class="pfl-fw" d="M234 151C252 151 252 82 270 82"/><path class="pfl-arrow" d="M258.3 77.3L270 82L258.3 86.7Z"/><path class="pfl-fw" d="M474 135.5C492 135.5 492 56 510 56"/><path class="pfl-arrow" d="M498.3 51.3L510 56L498.3 60.7Z"/><path class="pfl-fw" d="M474 135.5C492 135.5 492 200 510 200"/><path class="pfl-arrow" d="M498.3 195.3L510 200L498.3 204.7Z"/><path class="pfl-fw" d="M728 56C746 56 746 56 764 56"/><path class="pfl-fw" d="M728 200C746 200 746 56 764 56"/><path class="pfl-arrow" d="M752.3 51.3L764 56L752.3 60.7Z"/><path class="pfl-dw pfl-num" d="M722 125C746 125 746 141 770 141"/><path class="pfl-dw pfl-num" d="M722 269C746 269 746 163 770 163"/><path class="pfl-fw pfl-new pfl-w1" pathLength="100" d="M474 135.5C492 135.5 492 344 510 344"/><g class="pfl-a1"><path class="pfl-arrow" d="M498.3 339.3L510 344L498.3 348.7Z"/></g><path class="pfl-dw pfl-num pfl-new pfl-w2" pathLength="100" d="M722 435C746 435 746 185 770 185"/><path class="pfl-fw pfl-new pfl-w3" pathLength="100" d="M728 344C746 344 746 56 764 56"/></g>
+        <g class="pfl-b pfl-study" transform="translate(14 66)"><rect class="pfl-node" width="214" height="173" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H203.5A9.9 9.9 0 0 1 213.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H203A9.4 9.4 0 0 1 212.4 11"/><path class="pfl-hline" d="M0.6 32.5H213.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(.4 .4) scale(.74)" stroke-width="2.35"><path d="M4 4.5v15M20 4.5v15"/><path d="M4 12h6M14 12h6"/><path d="M10.2 9.2l3.6 5.6M13.8 9.2l-3.6 5.6"/></g><circle cx="18.5" cy="18.5" r="5.6" class="pfl-cut" stroke="none"/><path d="M22.3 18.8a3.9 3.9 0 1 1-1.2-3"/><path d="M22.4 14.3v2.4H20"/></g><text class="pfl-title" x="33" y="20.5">Contingency</text><g class="pfl-step"><rect x="184" y="7" width="18" height="18" rx="9"/><text x="193" y="19.4" text-anchor="middle">1</text></g><text class="pfl-sum" x="12" y="49">Base case, then each N-1 outage</text><text class="pfl-sum" x="12" y="64.5">of lines, transformers</text><text class="pfl-fl" x="200" y="89" text-anchor="end">Each pass</text><path class="pfl-fp" d="M208 78h6l6 7-6 7h-6z"/><text class="pfl-fl" x="200" y="112" text-anchor="end">After all passes</text><path class="pfl-fp" d="M208 101h6l6 7-6 7h-6z"/><circle class="pfl-dp pfl-idle" cx="0" cy="136" r="4"/><text class="pfl-rl pfl-mut" x="13" y="140">Contingencies<tspan class="pfl-fb" dx="5"></tspan></text><text class="pfl-rl" x="201" y="140" text-anchor="end">Contingency</text><circle class="pfl-dp pfl-obj" cx="214" cy="136" r="4"/><text class="pfl-more" x="107" y="161" text-anchor="middle">+4 more</text><rect class="pfl-edge" width="214" height="173" rx="10"/><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/></g>
+        <g class="pfl-b pfl-study" transform="translate(276 66)"><rect class="pfl-node" width="192" height="129.5" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H181.5A9.9 9.9 0 0 1 191.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H181A9.4 9.4 0 0 1 190.4 11"/><path class="pfl-hline" d="M0.6 32.5H191.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18" stroke-width="2.8"/><path d="M3 8h6M7 6l2 2-2 2"/><path d="M15 16h6M19 14l2 2-2 2"/><path d="M15 8h6M17 6l-2 2 2 2"/></g><text class="pfl-title" x="33" y="20.5">Run load flow</text><g class="pfl-step"><rect x="162" y="7" width="18" height="18" rx="9"/><text x="171" y="19.4" text-anchor="middle">2</text></g><text class="pfl-sum" x="12" y="49">Settings of the study case</text><text class="pfl-fl" x="178" y="73.5" text-anchor="end">Converged</text><path class="pfl-fp" d="M186 62.5h6l6 7-6 7h-6z"/><text class="pfl-fl" x="178" y="96.5" text-anchor="end">Did not converge</text><path class="pfl-fp" d="M186 85.5h6l6 7-6 7h-6z"/><text class="pfl-more" x="96" y="117.5" text-anchor="middle">+2 more</text><rect class="pfl-edge" width="192" height="129.5" rx="10"/><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/></g>
+        <g class="pfl-b pfl-model" transform="translate(516 40)"><rect class="pfl-node" width="206" height="122" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H195.5A9.9 9.9 0 0 1 205.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H195A9.4 9.4 0 0 1 204.4 11"/><path class="pfl-hline" d="M0.6 32.5H205.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5a8.5 8.5 0 1 1 17 0"/><path d="M12 16.5l4-5"/><circle cx="12" cy="16.5" r="1.4" fill="currentColor"/><path d="M6.5 11l1.2 1M17.5 11l-1.2 1M12 8.5V10"/></g><text class="pfl-title" x="33" y="20.5">Line loading</text><g class="pfl-step"><rect x="176" y="7" width="18" height="18" rx="9"/><text x="185" y="19.4" text-anchor="middle">3</text></g><text class="pfl-sum" x="12" y="49">c:loading of all * (ElmLne)</text><text class="pfl-sum" x="12" y="64.5">(load flow results)</text><circle class="pfl-dp pfl-idle" cx="0" cy="85" r="4"/><text class="pfl-rl pfl-mut" x="13" y="89">Element<tspan class="pfl-fb" dx="5">= *</tspan></text><text class="pfl-rl" x="193" y="89" text-anchor="end">Highest</text><circle class="pfl-dp pfl-num" cx="206" cy="85" r="4"/><text class="pfl-more" x="103" y="110" text-anchor="middle">+6 more</text><rect class="pfl-edge" width="206" height="122" rx="10"/><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/><path class="pfl-fp" d="M200 9h6l6 7-6 7h-6z"/></g>
+        <g class="pfl-b pfl-model" transform="translate(516 184)"><rect class="pfl-node" width="206" height="122" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H195.5A9.9 9.9 0 0 1 205.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H195A9.4 9.4 0 0 1 204.4 11"/><path class="pfl-hline" d="M0.6 32.5H205.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5a8.5 8.5 0 1 1 17 0"/><path d="M12 16.5l4-5"/><circle cx="12" cy="16.5" r="1.4" fill="currentColor"/><path d="M6.5 11l1.2 1M17.5 11l-1.2 1M12 8.5V10"/></g><text class="pfl-title" x="33" y="20.5">Transformer loading</text><g class="pfl-step"><rect x="176" y="7" width="18" height="18" rx="9"/><text x="185" y="19.4" text-anchor="middle">4</text></g><text class="pfl-sum" x="12" y="49">c:loading of all * (ElmTr2)</text><text class="pfl-sum" x="12" y="64.5">(load flow results)</text><circle class="pfl-dp pfl-idle" cx="0" cy="85" r="4"/><text class="pfl-rl pfl-mut" x="13" y="89">Element<tspan class="pfl-fb" dx="5">= *</tspan></text><text class="pfl-rl" x="193" y="89" text-anchor="end">Highest</text><circle class="pfl-dp pfl-num" cx="206" cy="85" r="4"/><text class="pfl-more" x="103" y="110" text-anchor="middle">+6 more</text><rect class="pfl-edge" width="206" height="122" rx="10"/><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/><path class="pfl-fp" d="M200 9h6l6 7-6 7h-6z"/></g>
+        <g class="pfl-b pfl-result pfl-addrow" transform="translate(770 40)"><rect class="pfl-node pfl-ashort" width="228" height="164" rx="10"/><rect class="pfl-node pfl-atall" width="228" height="186" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H217.5A9.9 9.9 0 0 1 227.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H217A9.4 9.4 0 0 1 226.4 11"/><path class="pfl-hline" d="M0.6 32.5H227.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(.4 .4) scale(.74)" stroke-width="2.35"><rect x="3" y="4" width="18" height="16" rx="1.8"/><path d="M3 9h18M3 14.5h18M10 9v11"/></g><circle cx="18.5" cy="18.5" r="5.6" class="pfl-cut" stroke="none"/><path d="M18.5 14.8v7.4M14.8 18.5h7.4"/></g><text class="pfl-title" x="33" y="20.5">Add row to results table</text><text class="pfl-end" x="216" y="45" text-anchor="end">goes on to the next pass of Contingency</text><text class="pfl-sum" x="12" y="65">Into &quot;N-1&quot;, saved at the end</text><text class="pfl-sum" x="12" y="80.5">automatically</text><g class="pfl-arow"><circle class="pfl-dp pfl-num" cx="0" cy="101" r="4"/><text class="pfl-rl" x="13" y="105">Highest loading (%)</text></g><g class="pfl-arow"><circle class="pfl-dp pfl-num" cx="0" cy="123" r="4"/><text class="pfl-rl" x="13" y="127">Highest transformer loading (%)</text></g><g class="pfl-lowv"><circle class="pfl-dp pfl-num" cx="0" cy="145" r="4"/><text class="pfl-rl" x="13" y="149">Lowest voltage (p.u.)</text></g><g class="pfl-drop0"><circle class="pfl-dp pfl-idle" cx="0" cy="145" r="4"/><text class="pfl-rl pfl-mut" x="13" y="149">+ drop a value</text></g><g class="pfl-drop1"><circle class="pfl-dp pfl-idle" cx="0" cy="167" r="4"/><text class="pfl-rl pfl-mut" x="13" y="171">+ drop a value</text></g><rect class="pfl-edge pfl-ashort" width="228" height="164" rx="10"/><rect class="pfl-edge pfl-atall" width="228" height="186" rx="10"/><g class="pfl-step pfl-a5"><rect x="198" y="7" width="18" height="18" rx="9"/><text x="207" y="19.4" text-anchor="middle">5</text></g><g class="pfl-step pfl-a6"><rect x="198" y="7" width="18" height="18" rx="9"/><text x="207" y="19.4" text-anchor="middle">6</text></g><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/><path class="pfl-fp" d="M222 9h6l6 7-6 7h-6z"/></g>
+        <g class="pfl-b pfl-model"><g transform="translate(516 328.0)"><g class="pfl-drag"><g class="pfl-s0"><rect class="pfl-node" width="206" height="138" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H195.5A9.9 9.9 0 0 1 205.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H195A9.4 9.4 0 0 1 204.4 11"/><path class="pfl-hline" d="M0.6 32.5H205.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5a8.5 8.5 0 1 1 17 0"/><path d="M12 16.5l4-5"/><circle cx="12" cy="16.5" r="1.4" fill="currentColor"/><path d="M6.5 11l1.2 1M17.5 11l-1.2 1M12 8.5V10"/></g><text class="pfl-end" x="194" y="45" text-anchor="end">ends the workflow</text><text class="pfl-sum" x="12" y="65">m:u of the element (results of</text><text class="pfl-sum" x="12" y="80.5">the last calculation)</text><circle class="pfl-dp pfl-obj pfl-req" cx="0" cy="101" r="4"/><text class="pfl-rl pfl-miss" x="13" y="105">Element<tspan class="pfl-fb" dx="5">= not set</tspan></text><text class="pfl-rl" x="193" y="105" text-anchor="end">Value</text><circle class="pfl-dp pfl-num" cx="206" cy="101" r="4"/><text class="pfl-more" x="103" y="126" text-anchor="middle">+6 more</text><rect class="pfl-edge" width="206" height="138" rx="10"/><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/><path class="pfl-fp" d="M200 9h6l6 7-6 7h-6z"/><text class="pfl-title pfl-t0" x="33" y="20.5">Read attribute</text><g class="pfl-warn"><path d="M185 9.5l6.5 11.5h-13z"/><path class="pfl-warn-mark" d="M185 13.6v3.4M185 19.1v.2"/></g><g class="pfl-ren"><rect class="pfl-ren-box" x="27" y="5.5" width="159" height="21" rx="5"/><text class="pfl-title" x="33" y="20.5">Busbar voltage</text><rect class="pfl-ren-cover" x="32" y="7.5" width="96" height="17"/><rect class="pfl-ren-caret" x="33" y="9" width="1.3" height="14"/></g></g><g class="pfl-s1"><rect class="pfl-node" width="206" height="144" rx="10"/><path class="pfl-head" d="M0.6 32V10.5A9.9 9.9 0 0 1 10.5 0.6H195.5A9.9 9.9 0 0 1 205.4 10.5V32Z"/><path class="pfl-strip" d="M1.6 11A9.4 9.4 0 0 1 11 1.6H195A9.4 9.4 0 0 1 204.4 11"/><path class="pfl-hline" d="M0.6 32.5H205.4"/><g class="pfl-ico" transform="translate(11 8.5) scale(0.625)" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16.5a8.5 8.5 0 1 1 17 0"/><path d="M12 16.5l4-5"/><circle cx="12" cy="16.5" r="1.4" fill="currentColor"/><path d="M6.5 11l1.2 1M17.5 11l-1.2 1M12 8.5V10"/></g><text class="pfl-title" x="33" y="20.5">Busbar voltage</text><text class="pfl-sum" x="12" y="49">m:u of all * (ElmTerm)</text><text class="pfl-sum" x="12" y="64.5">(load flow results)</text><circle class="pfl-dp pfl-idle" cx="0" cy="85" r="4"/><text class="pfl-rl pfl-mut" x="13" y="89">Element<tspan class="pfl-fb" dx="5">= *</tspan></text><text class="pfl-rl" x="193" y="89" text-anchor="end">Highest</text><circle class="pfl-dp pfl-num" cx="206" cy="85" r="4"/><text class="pfl-rl" x="193" y="111" text-anchor="end">Lowest</text><circle class="pfl-dp pfl-num" cx="206" cy="107" r="4"/><text class="pfl-more" x="103" y="132" text-anchor="middle">+5 more</text><rect class="pfl-edge" width="206" height="144" rx="10"/><path class="pfl-fp" d="M-6 9h6l6 7-6 7h-6z"/><path class="pfl-fp" d="M200 9h6l6 7-6 7h-6z"/><g class="pfl-step pfl-st5"><rect x="176" y="7" width="18" height="18" rx="9"/><text x="185" y="19.4" text-anchor="middle">5</text></g><g class="pfl-warn pfl-w5"><path d="M185 9.5l6.5 11.5h-13z"/><path class="pfl-warn-mark" d="M185 13.6v3.4M185 19.1v.2"/></g></g></g></g></g>
+        <g class="pfl-btn"><rect x="870" y="316.0" width="128" height="34" rx="8"/><text x="934" y="338.0" text-anchor="middle">⬇ Download</text></g>
+        <g class="pfl-toast"><rect x="786" y="366.0" width="212" height="34" rx="9"/><path class="pfl-toast-bar" d="M787.5 374.0V392.0"/><path class="pfl-toast-ok" d="M802 383.5l4 4 8-8"/><text x="820" y="388.0">Python script downloaded</text></g>
+        <g class="pfl-cur"><path d="M0 0V17.5L4.6 13.4L7.6 20.2L10.6 18.9L7.7 12.2H13.6Z"/></g>
+        </svg>
+      </figure>
+    </section>
+
+    <section class="card pfl-sec" aria-labelledby="pflBuild">
+      <h2 id="pflBuild">What it does</h2>
+      <ul class="pfl-grid">
+        <li>
+          <h3>Automate many simulations at once</h3>
+          <p>Loop over contingencies, study cases, operation scenarios, variations or a range of values. One run of the script does them all and collects the results in one table.</p>
+        </li>
+        <li>
+          <h3>Simplify PowerFactory studies</h3>
+          <p>Each study is one block that asks only for the settings it needs:</p>
+          <ul class="pfl-tags" data-no-abbr><li>Load flow</li><li>RMS simulation</li><li>EMT simulation</li><li>Harmonic load flow</li></ul>
+        </li>
+        <li>
+          <h3>Common power system calculations, ready made</h3>
+          <p>Wire a simulation result into a check and get the number, per run:</p>
+          <ul class="pfl-tags" data-no-abbr><li>RoCoF</li><li>Settling time</li><li>Frequency nadir</li></ul>
+        </li>
+        <li>
+          <h3>Optimisation and limit finding, ready made</h3>
+          <p>Optimise searches the best value of one or more settings (differential evolution, Nelder-Mead, Bayesian or a grid). Find limit halves the gap to the largest value that still passes, such as a hosting capacity or a critical clearing time.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card pfl-sec" aria-labelledby="pflLearn">
+      <h2 id="pflLearn">Learn PowerFactory scripting</h2>
+      <ul class="pfl-grid">
+        <li>
+          <h3><a href="python/">Automate PowerFactory studies with Python</a></h3>
+          <p>One guide per study, each with a script tested on PowerFactory's example projects and its results: <a href="python/getting-started/">getting started with the API</a>, <a href="python/load-flow/">load flow to CSV and Excel</a>, <a href="python/contingency-analysis/">N-1 contingency</a>, <a href="python/short-circuit/">short circuit</a>, <a href="python/hosting-capacity/">hosting capacity</a>, <a href="python/parameter-sweep/">PV and QV curves</a> and <a href="python/rms-emt-simulation/">RMS and EMT batch runs</a>.</p>
+        </li>
+        <li>
+          <h3><a href="reference/">PowerFactory attribute reference</a></h3>
+          <p>Every attribute name for GetAttribute and SetAttribute, with units and meaning, one page per class: <a href="reference/ElmLne/">ElmLne</a>, <a href="reference/ElmTerm/">ElmTerm</a>, <a href="reference/ElmTr2/">ElmTr2</a>, <a href="reference/ElmSym/">ElmSym</a> and 69 more.</p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-10-25">25 October 2026</time></span></p>
+    <div class="pfl-made">
+      <img loading="lazy" src="../logos/australian.png" alt="Australian flag" class="pfl-flag">
+      <div><img loading="lazy" src="../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
     </div>
-    <span class="ref-badge loading" id="ref-data-badge" title="Place variables.json, element_params.json, and type_params.json in the same folder as index.html to enable smart attribute suggestions.">⏳ Loading DB…</span>
-  </div>
-</header>
-
-<!-- TOASTS -->
-<div id="copy-toast" class="toast">Copied to clipboard!</div>
-<div id="generate-toast" class="toast">Code generated!</div>
-<div id="import-toast" class="toast">JSON imported!</div>
-<div id="fn-lib-toast" class="toast">Function inserted!</div>
-
-<!-- MAIN LAYOUT -->
-<div class="layout">
-
-  <!-- ============================================================
-       LEFT PANE — all input forms
-  ============================================================ -->
-  <div class="left-pane" id="left-pane">
-
-    <!-- Validation errors -->
-    <div id="validation-errors">
-      <h4>Validation Errors</h4>
-      <ul id="validation-list"></ul>
-    </div>
-
-    <!-- Validation warnings -->
-    <div id="validation-warnings">
-      <h4>Warnings</h4>
-      <ul id="validation-warning-list"></ul>
-    </div>
-
-    <!-- Sub-tool banner: the node-based Workflow Builder (portfolioLinkDiv pattern) -->
-    <div id="builderLinkDiv" style="margin-bottom:14px;padding:11px 18px;background:rgba(141,187,255,.07);border:1px solid var(--border);border-radius:var(--radius-xl);font-size:.85rem;color:var(--muted);line-height:1.5;">
-      Need your own study sequence? Wire study blocks into a workflow in the <a href="builder/" style="color:var(--accent);font-weight:700;text-decoration:none;">PowerFactory Workflow Builder</a>.
-    </div>
-
-    <!-- Samples & Guides callout -->
-    <div class="info-box" style="margin: 0 0 14px;">
-      <span>💡 New here? Browse the <a href="samples/" style="color:var(--accent);font-weight:600;">Samples &amp; Guides</a> to see worked examples before configuring your script.</span>
-    </div>
-
-    <!-- Quick Start — one-click worked examples loaded straight from samples/ -->
-    <div class="quick-start-row">
-      <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg> Quick Start with IEEE 9-bus System</span>
-      <div class="quick-start-btns">
-        <button class="quick-start-btn" data-preset="sample-01-transmission-loss-factor" data-tip="Brute-force sweep of G2/G3 dispatch (pgini) to read the Line 5-7 / Line 7-8 transmission loss (generation shift) factors.">Transmission Loss Factor</button>
-        <button class="quick-start-btn" data-preset="sample-02-minimum-system-losses" data-tip="Bayesian optimisation of G2/G3 dispatch to minimise total network active-power losses (ElmNet c:LossP).">Minimum System Losses</button>
-        <button class="quick-start-btn" data-preset="sample-03-rotor-angle-stability" data-tip="Dynamic RMS sweep of fault-clearing time, tracking G2/G3 rotor angle (c:firel) for the critical clearing time before a pole slip.">Rotor Angle Stability</button>
-        <button class="quick-start-btn" data-preset="sample-04-n1-line-contingency" data-tip="Wildcard N-1 contingency: trips every 230kV line in turn and records bus voltages and line loadings, no manual enumeration needed.">N-1 Line Contingency</button>
-      </div>
-    </div>
-
-    <!-- ── SECTION 1 · INITIALISATION ──────────────────────────── -->
-    <div class="section-card" id="sec-init">
-      <div class="section-header" onclick="toggleSection('sec-init')">
-        <h3>Initialisation</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="form-row">
-          <label>API Path <span class="tip-icon" data-tip="Path to the PF Python API folder containing powerfactory.pyd (Windows) or .so (Linux).">?</span></label>
-          <div>
-            <input type="text" id="pf-api-path" placeholder="C:\Program Files\DIgSILENT\PowerFactory 2022 SP1\Python\3.8" autocomplete="off" />
-          </div>
-        </div>
-        <div class="form-row">
-          <label>Username <span class="tip-icon" data-tip="PowerFactory login username passed to GetApplication(). Leave blank only if single-user mode is configured.">?</span></label>
-          <input type="text" id="pf-username" placeholder="USERNAME_HERE" autocomplete="off" />
-        </div>
-        <div class="form-row">
-          <label>Output Directory <span class="tip-icon" data-tip="Folder where results are written. The /graph and /raw subfolders appear automatically when timeseries outputs are used.">?</span></label>
-          <div>
-            <input type="text" id="output-dir" placeholder="C:\Users\user\results" autocomplete="off" />
-          </div>
-        </div>
-        <div class="form-row">
-          <label>Problem Type <span class="tip-icon" id="tt-problem-type" data-tip="" data-tip-options>?</span></label>
-          <select id="problem-type" onchange="onProblemTypeChange()">
-            <option value="brute_force">Brute Force</option>
-            <option value="optimisation">Optimisation</option>
-            <option value="custom">Custom</option>
-            <option value="contingency">Contingency</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Study Type <span class="tip-icon" id="tt-study-type" data-tip="" data-tip-options>?</span></label>
-          <select id="study-type" onchange="onStudyTypeChange()">
-            <option value="steady_state">Steady State</option>
-            <option value="dynamic_rms">Dynamic RMS</option>
-            <option value="dynamic_emt">Dynamic EMT</option>
-            <option value="harmonic">Harmonic</option>
-          </select>
-        </div>
-        <div class="form-row" id="row-tstop" style="display:none">
-          <label>Stop Time (s) <span class="tip-icon" data-tip="How long the simulation runs, in seconds (ComSim.tstop). Typically 20 s for RMS and 0.25 s for EMT.">?</span></label>
-          <div>
-            <input type="number" id="tstop" value="20" step="0.01" min="0" autocomplete="off" />
-          </div>
-        </div>
-        <div class="form-row">
-          <label>Coding Style <span class="tip-icon" id="tt-coding-style" data-tip="<ul><li><strong>Python File:</strong> wraps everything in main(), ready to run as a plain script.</li><li><strong>Notebook Style:</strong> splits the code into labelled cells for Jupyter or VS Code.</li></ul>">?</span></label>
-          <select id="coding-style" onchange="onCodingStyleChange()">
-            <option value="python_file">Python File</option>
-            <option value="notebook">Notebook Style</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 2 · INPUT VARIABLES ─────────────────────────── -->
-    <div class="section-card" id="sec-inputs">
-      <div class="section-header" onclick="toggleSection('sec-inputs')">
-        <h3>Input Variables</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="info-box" id="input-info-box">
-          <span id="input-info-brief">Set PowerFactory object parameters before each simulation. Enter the object using its PF path and class (e.g. <code>Gen.ElmSym</code>) and the parameter to modify (e.g. <code>e:qgini</code>).</span>
-          <button class="info-more-toggle" onclick="toggleInfoExtra('input-info-extra', this)">More ▾</button>
-          <div class="info-extra" id="input-info-extra">
-            <code>GetCalcRelevantObjects()</code> resolves the object query; <code>SetAttribute()</code> writes the value before each run.<br/>
-            <strong>Brute Force:</strong> Step Size is the increment (not number of steps); every combination is iterated.<br/>
-            <strong>Integer / on-off attributes</strong> (modes, flags, tap positions) have no step: choose <em>Range</em> (Lower to Upper; blank = 0 and 1) or <em>List</em> (e.g. <code>0,1,5</code>) in the Step cell. This is set from the attribute; the <code>int</code> toggle in the Attribute cell switches it for custom attributes.<br/>
-            <strong>Optimisation:</strong> Bounds define the search space; step is unused.<br/>
-            <strong>Custom:</strong> Values come from a scenario Excel file (bounds and step are unused).<br/>
-            Wildcards (e.g. <code>*.ElmDsl</code>) match multiple objects — the same value is applied to all matched objects.
-          </div>
-        </div>
-        <div class="dyn-table-wrapper">
-          <table class="dyn-table" id="input-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name <span class="tip-icon" data-tip="Python identifier used as the column header in the results CSV.">?</span></th>
-                <th>Object <span class="tip-icon" data-tip="PF object query (e.g. Gen.ElmSym, *.ElmDsl). Wildcards match all objects of that class.">?</span></th>
-                <th>Attribute <span class="tip-icon" data-tip="Writable numeric/boolean PF parameter to set via SetAttribute() before each run (e.g. e:qgini, e:usetp).">?</span></th>
-                <th class="col-lb"><span class="th-two-line">Lower<br>Bound</span></th>
-                <th class="col-ub"><span class="th-two-line">Upper<br>Bound</span></th>
-                <th class="col-step"><span class="th-two-line" id="th-step-label">Step<br>Size</span> <span class="tip-icon" data-tip="Both bounds are included: lb=0, ub=10, step=0.5 gives [0, 0.5, …, 10]. Integer attributes have no step: pick Range or List here instead.">?</span></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="input-tbody"></tbody>
-          </table>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-ghost btn-xs" onclick="addInputRow()">+ Add Input Variable</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 3 · CUSTOM MODE CONFIG ─────────────────────── -->
-    <div class="section-card cond-hidden" id="sec-custom">
-      <div class="section-header" onclick="toggleSection('sec-custom')">
-        <h3>Custom Mode Config</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="info-box">
-          Excel scenario file with a <strong>3-row header</strong> (Variable name / Object / Attribute) + one data row per scenario.
-          <button class="info-more-toggle" onclick="toggleInfoExtra('custom-info-extra', this)">More ▾</button>
-          <div class="info-extra" id="custom-info-extra">
-            <strong>Row 1 — Variable name:</strong> label cell <code>Variable name</code>, then one name per column.<br/>
-            <strong>Row 2 — Object:</strong> label cell <code>Object</code>, then PF query per column (e.g. <code>Grid.ElmTerm</code>).<br/>
-            <strong>Row 3 — Attribute:</strong> label cell <code>Attribute</code>, then attribute name per column.<br/>
-            <strong>Rows 4+ — Data:</strong> first cell = scenario label, then numeric values.<br/>
-            Wildcard queries (e.g. <code>*.ElmSym</code>) apply the value to all matched objects simultaneously. Sheet name must be <code>Sheet1</code>.
-          </div>
-        </div>
-        <div class="btn-row" style="margin-top:0;margin-bottom:10px;">
-          <button class="btn btn-ghost btn-xs" onclick="downloadCustomTemplate()">⬇ Download Template (.xlsx)</button>
-        </div>
-        <div class="form-row">
-          <label>Scenario File Path <span class="tip-icon" data-tip="Path to the Excel scenario file (.xlsx). Download the template above for the required 3-row header format.">?</span></label>
-          <input type="text" id="scenario-file-path" placeholder="C:\scenarios\my_scenarios.xlsx" autocomplete="off" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION: CONTINGENCY CONFIG ──────────────────────────── -->
-    <div class="section-card cond-hidden" id="sec-contingency">
-      <div class="section-header" onclick="toggleSection('sec-contingency')">
-        <h3>Contingency Config</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="info-box">
-          Specify one or more wildcard element queries. The script resolves all matching objects at runtime, then iterates through each contingency (N-1: one element tripped; N-2: two elements tripped simultaneously). A base case (all in service) is always included as the first run.
-          <button class="info-more-toggle" onclick="toggleInfoExtra('contingency-info-extra', this)">More ▾</button>
-          <div class="info-extra" id="contingency-info-extra">
-            <strong>Element Query:</strong> wildcard PF query (e.g. <code>*.ElmLne</code>, <code>*.ElmSym</code>).<br/>
-            <strong>Filter Attribute:</strong> optional attribute to filter resolved objects (e.g. <code>e:Unom</code>, <code>loc_name</code>).<br/>
-            <strong>Filter Value:</strong> numeric (e.g. <code>66</code>), plain string, or wildcard string (e.g. <code>North*</code> — case-insensitive glob).<br/>
-            <strong>N-2 / Combine:</strong> when unchecked, pairs are formed within each element type only (line × line, generator × generator). When checked, pairs cross element types too.<br/>
-            The <code>outserv</code> attribute (1 = out, 0 = in) is always used and restored in a <code>finally</code> block after each run.
-          </div>
-        </div>
-        <div class="dyn-table-wrapper">
-          <table class="dyn-table" id="contingency-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Element Query <span class="tip-icon" data-tip="A wildcard PF query. Every object it matches becomes a contingency candidate, for example *.ElmLne.">?</span></th>
-                <th>Filter Attribute <span class="tip-icon" data-tip="Optional attribute to filter candidates (e.g. e:Unom, loc_name).">?</span></th>
-                <th>Op</th>
-                <th>Filter Value <span class="tip-icon" data-tip="A number (66), plain text, or a wildcard such as North*. Wildcard matching ignores case.">?</span></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="contingency-tbody"></tbody>
-          </table>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-ghost btn-xs" onclick="addContingencyRow()">+ Add Element Type</button>
-        </div>
-        <div class="form-row" style="margin-top:12px;">
-          <label>Contingency Type <span class="tip-icon" data-tip="<ul><li><strong>N-1:</strong> one element is tripped per run.</li><li><strong>N-2:</strong> two elements are tripped together per run.</li></ul>">?</span></label>
-          <select id="contingency-n" onchange="onContingencyNChange()">
-            <option value="1">N-1</option>
-            <option value="2">N-2</option>
-          </select>
-        </div>
-        <div class="checkbox-row cond-hidden" id="row-contingency-combine" style="margin-top:4px;">
-          <input type="checkbox" id="contingency-combine" />
-          <label for="contingency-combine">Combine element types <span class="tip-icon" data-tip="<ul><li><strong>Ticked:</strong> an N-2 pair may mix types, such as a line with a generator.</li><li><strong>Unticked:</strong> pairs form within one type only.</li></ul>">?</span></label>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 4 · OUTPUT VARIABLES ───────────────────────── -->
-    <div class="section-card" id="sec-outputs">
-      <div class="section-header" onclick="toggleSection('sec-outputs')">
-        <h3>Output Variables</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="info-box">
-          <span>Read results from PowerFactory after each simulation. <strong>Scalar</strong> reads a single value from any object; <strong>Timeseries</strong> captures a signal over time (dynamic studies only); <strong>Custom</strong> lets you write your own Python calculation.</span>
-          <button class="info-more-toggle" onclick="toggleInfoExtra('output-info-extra', this)">More ▾</button>
-          <div class="info-extra" id="output-info-extra">
-            <strong>Scalar</strong> uses <code>obj.GetAttribute()</code> on static result variables (e.g. <code>m:u1</code>, <code>c:loading</code>) after solving — check the PF result variable browser for available keys.<br/>
-            <strong>Timeseries</strong> requires a Dynamic RMS or EMT study type. Use the PF variable key (e.g. <code>m:u1</code>, <code>m:I:bus1</code>) — same as the result variable browser, not the descriptive label.<br/>
-            <strong>Custom Calculation</strong> arguments must be names of other defined Input or Output Variables. It must return exactly one scalar, and a value it could not read arrives as <code>None</code>. Pick a ready-made one from <strong>Insert a pre-made function</strong> above the editor, or see the <a href="samples/#custom-fn-library" target="_blank" rel="noopener">custom function library</a>.<br/>
-            All variable names must be unique across inputs and outputs.
-          </div>
-        </div>
-        <div id="output-vars-container"></div>
-        <div class="btn-row">
-          <button class="btn btn-ghost btn-xs" onclick="addOutputVar()">+ Add Output Variable</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 6 · OPTIMISATION SETTINGS ─────────────────── -->
-    <div class="section-card cond-hidden" id="sec-optim">
-      <div class="section-header" onclick="toggleSection('sec-optim')">
-        <h3>Optimisation Settings</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="form-row">
-          <label>Sense <span class="tip-icon" data-tip="<ul><li><strong>Minimise:</strong> the objective goes to the algorithm as it is.</li><li><strong>Maximise:</strong> it is negated internally, since every scipy algorithm minimises.</li></ul>">?</span></label>
-          <select id="optim-sense">
-            <option value="minimise">Minimise</option>
-            <option value="maximise">Maximise</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Objective <span class="tip-icon" data-tip="Scalar output variable to optimise. Must be defined first in the Output Variables section.">?</span></label>
-          <div>
-            <select id="optim-objective">
-              <option value="">— select output variable —</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <label>Algorithm <span class="tip-icon" data-alg-tip data-tip="" data-tip-options>?</span></label>
-          <div style="display:flex;align-items:center;gap:6px;min-width:0;">
-            <select id="optim-algorithm" onchange="updateAlgorithmUI()" style="flex:1;min-width:0;">
-              <option value="placeholder">Manual (Placeholder)</option>
-              <option value="scipy_nelder_mead">Nelder-Mead — Simplex (scipy)</option>
-              <option value="scipy_powell">Powell — Directional Set (scipy)</option>
-              <option value="scipy_lbfgsb">L-BFGS-B — Quasi-Newton (scipy)</option>
-              <option value="scipy_slsqp">SLSQP — Sequential Least Squares (scipy)</option>
-              <option value="scipy_cobyla">COBYLA — Constraint Approximation (scipy)</option>
-              <option value="differential_evolution">Differential Evolution — Global (scipy)</option>
-              <option value="gp_minimize">Bayesian Optimisation (scikit-optimize)</option>
-            </select>
-            <a id="optim-algorithm-doc" href="#" target="_blank" rel="noopener noreferrer"
-               style="font-size:11px;color:var(--accent);white-space:nowrap;display:none;flex-shrink:0;">Doc ↗</a>
-          </div>
-        </div>
-        <div class="form-row">
-          <label>Max Iterations <span class="tip-icon" id="tt-max-iter" data-tip="Not used in Manual mode: your own search loop decides how many runs happen.">?</span></label>
-          <input type="number" id="optim-max-iter" value="50" min="1" autocomplete="off" />
-        </div>
-        <hr class="divider" />
-        <div class="sub-label">Constraints <span class="tip-icon" data-tip="A soft limit: breaking it adds a large penalty rather than blocking the run. For a hard limit, bound the input variable instead.">?</span></div>
-        <div class="dyn-table-wrapper">
-          <table class="dyn-table" id="constraint-table">
-            <thead>
-              <tr>
-                <th>Output Variable</th>
-                <th>Operator</th>
-                <th>Value</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="constraint-tbody"></tbody>
-          </table>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-ghost btn-xs" onclick="addConstraint()">+ Add Constraint</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 7 · ADDITIONAL CONFIG ──────────────────────── -->
-    <div class="section-card" id="sec-addl">
-      <div class="section-header" onclick="toggleSection('sec-addl')">
-        <h3>Additional Config</h3>
-        <span class="toggle-icon">▾</span>
-      </div>
-      <div class="section-body">
-        <div class="checkbox-row">
-          <input type="checkbox" id="iterate-study-cases" />
-          <label for="iterate-study-cases">Iterate through study cases <span class="tip-icon" data-tip="Activate each study case before running the sweep. Useful for N-1 contingency analysis.">?</span></label>
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="iterate-operating-scenarios" />
-          <label for="iterate-operating-scenarios">Iterate through operating scenarios <span class="tip-icon" data-tip="Activate each operating scenario before running. Combines with study case iteration.">?</span></label>
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="use-progress-bar" checked />
-          <label for="use-progress-bar">Use progress bar (tqdm) <span class="tip-icon" data-tip="Shows live progress and an estimated finish time using tqdm. Requires pip install tqdm.">?</span></label>
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="open-pf-window" />
-          <label for="open-pf-window">Open PowerFactory window <span class="tip-icon" data-tip="Show the PF GUI (app.Show()) while running. Default is headless (app.Hide()) for speed.">?</span></label>
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="save-intermediate" onchange="onSaveIntermediateChange()" />
-          <label for="save-intermediate">Save intermediate results every X minutes</label>
-        </div>
-        <div id="row-save-interval" class="form-row cond-hidden">
-          <label>Interval (min) <span class="tip-icon" data-tip="How often partial results are written, in minutes. 10–30 min suits a run lasting several hours.">?</span></label>
-          <input type="number" id="save-interval-minutes" value="30" min="1" autocomplete="off" />
-        </div>
-      </div>
-    </div>
-
-  </div><!-- end left-pane -->
-
-  <!-- PANE RESIZER — drag to adjust left/right width -->
-  <div class="pane-resizer" id="pane-resizer" title="Drag to resize"></div>
-
-  <!-- ============================================================
-       RIGHT PANE — code preview + controls
-  ============================================================ -->
-  <div class="right-pane">
-    <div class="right-toolbar">
-      <span class="pane-title">▸ Generated Code Preview</span>
-      <button class="btn btn-primary" onclick="generateCode()">▶ Generate Code</button>
-      <button class="btn btn-ghost" id="copy-btn" onclick="copyCode()" title="Copy to clipboard" aria-label="Copy to clipboard">⧉</button>
-      <button class="btn btn-ghost" id="download-btn" onclick="downloadCode()" title="Download script">⬇ .py</button>
-      <button class="btn btn-ghost btn-io" data-icon="save" onclick="exportConfigJSON()" title="Save this setup to a JSON file" aria-label="Save this setup to a JSON file"></button>
-      <label class="btn btn-ghost btn-io" data-icon="open" style="cursor:pointer; position:relative;" title="Open a saved setup JSON file">
-        <input type="file" accept=".json" id="import-json-file" onchange="importConfigJSON(event)" aria-label="Open a saved setup JSON file" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;top:0;left:0;" />
-      </label>
-      <button class="btn btn-ghost" onclick="resetForm()" title="Reset every field to its default" aria-label="Reset every field to its default">↺</button>
-    </div>
-    <div id="code-preview-wrapper">
-      <pre id="code-preview"><code class="language-python">
-<div class="placeholder-msg">
-  <span class="big">▶</span>
-  <span>Configure inputs and click <strong>Generate Code</strong></span>
+  </footer>
 </div>
-      </code></pre>
-      <div id="nb-preview" style="display:none"></div>
-    </div>
-  </div>
-
-</div><!-- end layout -->
-
-<!-- ============================================================
-     APP FOOTER — disclaimer
-============================================================ -->
-<footer class="app-footer">
-  <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
-  <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
-  <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
-    <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
-    <div style="display:flex;align-items:center;gap:10px">
-      <img loading="lazy" src="../logos/gpl.png" alt="GNU GPL" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-      <span style="color:var(--muted);font-size:0.76rem">Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a> — free to use, modify, and share with source code disclosed.</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge" style="height:16px;width:auto;flex-shrink:0;border-radius:3px">
-      <span style="color:var(--muted);font-size:0.76rem">Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
-    </div>
-  </div>
-</footer>
-
-<!-- ============================================================
-     JAVASCRIPT — all logic
-============================================================ -->
-<script src="../dropdown.js"></script>
-<script src="../chart-kit.js"></script>
-<script src="../shared.js"></script>
-<script src="abbr.js"></script>
-<script src="pf-script-builder.js"></script>
-<script src="custom-functions.js"></script>
-<script src="script.js"></script>
-<script src="tour.js"></script>
-<script src="../tour-shared.js"></script>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (LVRT, UFLS...). -->
+<script src="../shared.js" defer></script>
+<script src="abbr.js" defer></script>
+<script>
+  /* The theme toggle (theme.js draws it and saves a reader's pick). */
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
 </body>
 </html>

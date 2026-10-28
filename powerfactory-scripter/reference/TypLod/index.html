@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TypLod attributes: PowerFactory General Load Type</title>
+<meta name="description" content="All TypLod attributes in PowerFactory (General Load Type): 48 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLod/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="TypLod attributes: PowerFactory General Load Type parameters">
+<meta property="og:description" content="All TypLod attributes in PowerFactory (General Load Type): 48 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLod/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TypLod attributes: PowerFactory General Load Type parameters">
+<meta name="twitter:description" content="All TypLod attributes in PowerFactory (General Load Type): 48 input parameters, with units and meaning, for GetAttribute and SetAttribute.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "TypLod attributes (PowerFactory General Load Type)",
+  "description": "All TypLod attributes in PowerFactory (General Load Type): 48 input parameters, with units and meaning, for GetAttribute and SetAttribute.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLod/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "about": {
+    "@type": "Thing",
+    "name": "TypLod (General Load Type)",
+    "description": "A general load type: how a load's P and Q change with voltage and frequency (the exponents and coefficients of its static model) and its dynamic share."
+  },
+  "keywords": "TypLod attributes, TypLod parameters, TypLod result variables, PowerFactory General Load Type attributes, TypLod GetAttribute, kpu TypLod, kqu TypLod, aP TypLod, bP TypLod",
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "PowerFactory attribute reference",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Attribute reference",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "TypLod",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLod/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Attribute reference</a><span aria-hidden="true">›</span><span aria-current="page">TypLod</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>TypLod attributes<span class="dx-h1-sub">PowerFactory General Load Type</span></h1>
+    <p class="dx-lead">Every attribute of the PowerFactory General Load Type (<code>TypLod</code>): 48 input parameters, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+<section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What TypLod is</h2>
+  <p>A general load type: how a load's P and Q change with voltage and frequency (the exponents and coefficients of its static model) and its dynamic share.</p>
+  <dl class="dx-facts"><dt>Class</dt><dd><code>TypLod</code>, type class</dd><dt>PowerFactory name</dt><dd>General Load Type</dd><dt>Used by</dt><dd><a href="../ElmLod/"><code>ElmLod</code></a></dd><dt>Attributes</dt><dd>48 input parameters</dd></dl>
+</section>
+<section class="dx-sec" aria-labelledby="common">
+  <h2 id="common">Most used TypLod attributes</h2>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th><th>Where</th></tr></thead><tbody>
+<tr><td><code>kpu</code></td><td>·</td><td>Exponent e_cP</td><td>input data</td></tr>
+<tr><td><code>kqu</code></td><td>·</td><td>Exponent e_cQ</td><td>input data</td></tr>
+<tr><td><code>aP</code></td><td>·</td><td>Coefficient aP</td><td>input data</td></tr>
+<tr><td><code>bP</code></td><td>·</td><td>Coefficient bP</td><td>input data</td></tr>
+<tr><td><code>systp</code></td><td>·</td><td>System type</td><td>input data</td></tr>
+<tr><td><code>loddy</code></td><td>%</td><td>Dynamic</td><td>input data</td></tr>
+</tbody></table></div>
+</section>
+<section class="dx-sec" aria-labelledby="python">
+  <h2 id="python">Read and write TypLod in Python</h2>
+  <pre><code class="language-python"><span class="py-k">import</span> powerfactory
+
+app = powerfactory.<span class="py-f">GetApplication</span>()          <span class="py-c"># GetApplicationExt() from outside PowerFactory</span>
+
+<span class="py-c"># Types live in the equipment library of the project.</span>
+types = app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;equip&quot;</span>).<span class="py-f">GetContents</span>(<span class="py-s">&quot;*.TypLod&quot;</span>, <span class="py-n">1</span>)
+<span class="py-k">for</span> typ <span class="py-k">in</span> types:
+    <span class="py-f">print</span>(typ.loc_name, typ.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;kpu&quot;</span>))  <span class="py-c"># Exponent e_cP</span>
+
+<span class="py-c"># An element points to its type with typ_id; t: reads a type value through the element.</span>
+<span class="py-k">for</span> load <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLod&quot;</span>):
+    <span class="py-f">print</span>(load.loc_name, load.typ_id.loc_name, load.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;t:kpu&quot;</span>))
+
+types[<span class="py-n">0</span>].<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;kpu&quot;</span>, <span class="py-n">2</span>)               <span class="py-c"># voltage exponent e_cP of P: every element of this type changes</span></code></pre>
+  <ul class="dx-prose"><li>An input parameter is read and written with or without its <code>e:</code> prefix: <code>GetAttribute("outserv")</code> and <code>GetAttribute("e:outserv")</code> give the same value.</li><li>A type is shared: a change to it changes every element that uses it. Read a type value through an element with the <code>t:</code> prefix.</li></ul>
+</section>
+    <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
+    <ul class="dx-toc" aria-label="All TypLod attributes"><li><a href="#params">Input parameters<span class="dx-n">48</span></a></li></ul>
+<section class="dx-sec dx-group" aria-labelledby="params">
+  <h2 id="params">TypLod input parameters</h2>
+  <p class="dx-note">The element data, as typed in <code>GetAttribute</code> and <code>SetAttribute</code> (the <code>e:</code> prefix is optional). Setting one changes the model.</p>
+  <div class="dx-tw"><table class="dx-attrs"><thead><tr><th>Attribute</th><th>Unit</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>loc_name</code></td><td><span aria-label="no unit">·</span></td><td>Name</td></tr>
+<tr><td><code>chr_name</code></td><td><span aria-label="no unit">·</span></td><td>Characteristic Name</td></tr>
+<tr><td><code>for_name</code></td><td><span aria-label="no unit">·</span></td><td>Foreign Key</td></tr>
+<tr><td><code>dat_src</code></td><td><span aria-label="no unit">·</span></td><td>Data source</td></tr>
+<tr><td><code>manuf</code></td><td><span aria-label="no unit">·</span></td><td>Manufacturer</td></tr>
+<tr><td><code>appr_modby</code></td><td><span aria-label="no unit">·</span></td><td>Modified by</td></tr>
+<tr><td><code>lodst</code></td><td>%</td><td>Static (const Z)</td></tr>
+<tr><td><code>systp</code></td><td><span aria-label="no unit">·</span></td><td>System type</td></tr>
+<tr><td><code>emtRLCSig</code></td><td><span aria-label="no unit">·</span></td><td>Variable resistance, inductance and capacitance via input signals</td></tr>
+<tr><td><code>appr_status</code></td><td><span aria-label="no unit">·</span></td><td>Status</td></tr>
+<tr><td><code>i_nln</code></td><td><span aria-label="no unit">·</span></td><td>Model dependence</td></tr>
+<tr><td><code>i_pure</code></td><td><span aria-label="no unit">·</span></td><td>Load model</td></tr>
+<tr><td><code>i_csrc</code></td><td><span aria-label="no unit">·</span></td><td>Load model</td></tr>
+<tr><td><code>kpf</code></td><td>%/%</td><td>Coefficient kpf</td></tr>
+<tr><td><code>tpf</code></td><td>s</td><td>P frequency dep.</td></tr>
+<tr><td><code>tpu</code></td><td>s</td><td>P voltage dep.</td></tr>
+<tr><td><code>kqf</code></td><td>%/%</td><td>Coefficient kqf</td></tr>
+<tr><td><code>tqf</code></td><td>s</td><td>Q frequency dep.</td></tr>
+<tr><td><code>tqu</code></td><td>s</td><td>Q voltage dep.</td></tr>
+<tr><td><code>t1</code></td><td>s</td><td>Delay</td></tr>
+<tr><td><code>pgrd</code></td><td>%</td><td>QL/QC</td></tr>
+<tr><td><code>pfc</code></td><td>%</td><td>Power factor correction</td></tr>
+<tr><td><code>kpu0</code></td><td><span aria-label="no unit">·</span></td><td>Exponent e_aP</td></tr>
+<tr><td><code>kpu1</code></td><td><span aria-label="no unit">·</span></td><td>Exponent e_bP</td></tr>
+<tr><td><code>kpu</code></td><td><span aria-label="no unit">·</span></td><td>Exponent e_cP</td></tr>
+<tr><td><code>kqu0</code></td><td><span aria-label="no unit">·</span></td><td>Exponent e_aQ</td></tr>
+<tr><td><code>kqu1</code></td><td><span aria-label="no unit">·</span></td><td>Exponent e_bQ</td></tr>
+<tr><td><code>kqu</code></td><td><span aria-label="no unit">·</span></td><td>Exponent e_cQ</td></tr>
+<tr><td><code>aP</code></td><td><span aria-label="no unit">·</span></td><td>Coefficient aP</td></tr>
+<tr><td><code>bP</code></td><td><span aria-label="no unit">·</span></td><td>Coefficient bP</td></tr>
+<tr><td><code>aQ</code></td><td><span aria-label="no unit">·</span></td><td>Coefficient aQ</td></tr>
+<tr><td><code>bQ</code></td><td><span aria-label="no unit">·</span></td><td>Coefficient bQ</td></tr>
+<tr><td><code>udmax</code></td><td>p.u.</td><td>Upper</td></tr>
+<tr><td><code>udmin</code></td><td>p.u.</td><td>Lower</td></tr>
+<tr><td><code>Prp</code></td><td>%</td><td>Static portion</td></tr>
+<tr><td><code>appr_modif</code></td><td><span aria-label="no unit">·</span></td><td>Modified</td></tr>
+<tr><td><code>typemetadata_version</code></td><td><span aria-label="no unit">·</span></td><td>Version</td></tr>
+<tr><td><code>typemetadata_key</code></td><td><span aria-label="no unit">·</span></td><td>Type Key</td></tr>
+<tr><td><code>typemetadata_changeLog</code></td><td><span aria-label="no unit">·</span></td><td>Change Log</td></tr>
+<tr><td><code>desc</code></td><td><span aria-label="no unit">·</span></td><td>Description</td></tr>
+<tr><td><code>doc_id</code></td><td><span aria-label="no unit">·</span></td><td>Additional Data</td></tr>
+<tr><td><code>loddy</code></td><td>%</td><td>Dynamic</td></tr>
+<tr><td><code>qcq</code></td><td>%</td><td>QC/Q</td></tr>
+<tr><td><code>phtech</code></td><td><span aria-label="no unit">·</span></td><td>Technology</td></tr>
+<tr><td><code>cP</code></td><td><span aria-label="no unit">·</span></td><td>Coefficient cP</td></tr>
+<tr><td><code>cQ</code></td><td><span aria-label="no unit">·</span></td><td>Coefficient cQ</td></tr>
+<tr><td><code>clodst</code></td><td>%</td><td>Static (const z)</td></tr>
+<tr><td><code>cloddy</code></td><td>%</td><td>Dynamic</td></tr>
+</tbody></table></div>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">All 73 classes in the attribute reference</a></li>
+    <li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>
+  </ul>
+  <p class="dx-note">← <a href="../TypLne/"><code>TypLne</code> Line Type</a> · <a href="../TypLodlv/"><code>TypLodlv</code> LV Load Type</a> →</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+  (function () {
+    var box = document.getElementById('dxFilter'), row = document.getElementById('dxFilterRow'), out = document.getElementById('dxCount');
+    if (!box) return;
+    row.hidden = false;
+    var rows = [].slice.call(document.querySelectorAll('.dx-group tbody tr'));
+    var secs = [].slice.call(document.querySelectorAll('.dx-group'));
+    var timer;
+    box.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var q = box.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (tr) { var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0; tr.hidden = !hit; if (hit) n++; });
+        secs.forEach(function (s) { s.hidden = !!q && !s.querySelector('tbody tr:not([hidden])'); s.style.contentVisibility = q ? 'visible' : ''; });
+        out.textContent = q ? n + ' found' : '';
+      }, 120);
+    });
+  })();
+</script>
+<!--/email_off-->
+</body>
+</html>

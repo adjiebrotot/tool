@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -32,7 +33,7 @@
       "y": -300,
       "label": "About this template",
       "s": {
-        "text": "This searches the longest three-phase fault at a busbar that the system survives: each try applies the fault for the duration tried, runs an RMS simulation and checks that the rotor angle spread of all synchronous generators stays below the limit (180 degrees). A simulation that stops early counts as unstable. Fill in the project and the faulted busbar."
+        "text": "This searches the longest three-phase fault at a busbar that the system survives: each try applies the fault for the duration tried, runs an RMS simulation and checks that the rotor angle spread of all synchronous generators stays below the limit (180 degrees). Find limit reads the angle check at the end of each try; a simulation that stops early reports a fail (unstable). Fill in the project and the faulted busbar."
       },
       "pin": [],
       "sv": 1
@@ -52,7 +53,8 @@
         "passes": "low",
         "bracket": "given",
         "onUnknown": "stop",
-        "integer": false
+        "integer": false,
+        "passIs": "yes"
       },
       "pin": [
         "lower",
@@ -158,23 +160,12 @@
         "x0": 0,
         "extend": false,
         "after": null,
-        "before": null
+        "before": null,
+        "goOn": true
       },
       "pin": [
         "hi"
       ],
-      "sv": 1
-    },
-    {
-      "id": "n7",
-      "type": "opt.report",
-      "x": 1600,
-      "y": 0,
-      "label": "",
-      "s": {
-        "passIs": "yes"
-      },
-      "pin": [],
       "sv": 1
     },
     {
@@ -184,19 +175,8 @@
       "y": 390,
       "label": "Unstable",
       "s": {
+        "answer": "fail",
         "passIs": "yes"
-      },
-      "pin": [],
-      "sv": 1
-    },
-    {
-      "id": "n9",
-      "type": "val.bool",
-      "x": 960,
-      "y": 390,
-      "label": "Stable",
-      "s": {
-        "value": false
       },
       "pin": [],
       "sv": 1
@@ -262,83 +242,62 @@
     },
     {
       "id": "e5",
-      "from": "n6",
-      "out": "pass",
-      "to": "n7",
-      "in": "in"
-    },
-    {
-      "id": "e6",
-      "from": "n6",
-      "out": "fail",
-      "to": "n7",
-      "in": "in"
-    },
-    {
-      "id": "e7",
       "from": "n5",
       "out": "early",
       "to": "n8",
       "in": "in"
     },
     {
-      "id": "e8",
+      "id": "e6",
       "from": "n3",
       "out": "done",
       "to": "n10",
       "in": "in"
     },
     {
-      "id": "e9",
+      "id": "e7",
       "from": "n10",
       "out": "next",
       "to": "n11",
       "in": "in"
     },
     {
-      "id": "e10",
+      "id": "e8",
       "from": "n3",
       "out": "value",
       "to": "n4",
       "in": "duration"
     },
     {
-      "id": "e11",
+      "id": "e9",
       "from": "n5",
       "out": "r1",
       "to": "n6",
       "in": "x"
     },
     {
-      "id": "e12",
+      "id": "e10",
       "from": "n6",
       "out": "ok",
-      "to": "n7",
+      "to": "n3",
       "in": "pass"
     },
     {
-      "id": "e13",
-      "from": "n9",
-      "out": "value",
-      "to": "n8",
-      "in": "pass"
-    },
-    {
-      "id": "e14",
+      "id": "e11",
       "from": "n3",
       "out": "limit",
       "to": "n10",
       "in": "cct"
     },
     {
-      "id": "e15",
+      "id": "e12",
       "from": "n3",
       "out": "status",
       "to": "n10",
       "in": "status"
     },
     {
-      "id": "e16",
+      "id": "e13",
       "from": "n3",
       "out": "history",
       "to": "n11",

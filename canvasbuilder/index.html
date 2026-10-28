@@ -6,33 +6,41 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../consent.js" defer></script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Strategy Canvas Builder | Adjie Brotools</title>
-<meta name="description" content="Build beautiful, interactive strategy canvases like Business Model Canvas and Value Proposition Canvas, and download them in pitch-ready quality — free, entirely in your browser.">
+<meta name="description" content="Build a Business Model Canvas, Value Proposition Canvas or other strategy canvas and download it in pitch-ready quality. Free, and it runs in your browser.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/canvasbuilder/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Strategy Canvas Builder">
-<meta property="og:description" content="Build beautiful, interactive strategy canvases like Business Model Canvas and Value Proposition Canvas, and download them in pitch-ready quality — free, entirely in your browser.">
+<meta property="og:description" content="Build a Business Model Canvas, Value Proposition Canvas or other strategy canvas and download it in pitch-ready quality. Free, and it runs in your browser.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/canvasbuilder/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/canvasbuilder.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Strategy Canvas Builder, a free tool on Adjie Brotools">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Strategy Canvas Builder">
-<meta name="twitter:description" content="Build beautiful, interactive strategy canvases like Business Model Canvas and Value Proposition Canvas, and download them in pitch-ready quality — free, entirely in your browser.">
+<meta name="twitter:description" content="Build a Business Model Canvas, Value Proposition Canvas or other strategy canvas and download it in pitch-ready quality. Free, and it runs in your browser.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/canvasbuilder.jpg">
 
 <script type="application/ld+json">
 {
@@ -44,6 +52,9 @@
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-06-06",
+  "screenshot": "https://tool.adjiebrotots.com/og/canvasbuilder.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
   "keywords": "Business Model Canvas maker, Value Proposition Canvas online, pitch-ready strategy canvas, business case competition canvas, free BMC tool",
   "featureList": [
@@ -105,7 +116,7 @@
 <header class="toolbar">
   <div class="brand">
     <div class="brand-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <rect stroke="#fff" x="3" y="3" width="18" height="18" rx="2"/> <path stroke="#fff" d="M9 3v12M15 3v12M3 15h18"/> </svg></div>
-    <span class="brand-text">Canvas Builder</span>
+    <h1 class="brand-text">Canvas Builder</h1>
   </div>
   <div class="divider"></div>
   <select class="tb-control" id="canvasTypeSelect">
@@ -124,7 +135,7 @@
   <button class="btn"             id="sampleBtn" title="Fill the canvas with a worked example">Sample</button>
   <div class="divider"></div>
   <button class="btn" id="themeBtn">🌙 Dark</button>
-  <a href="https://tool.adjiebrotots.com/" class="btn btn-back">← Other Tools</a>
+  <a href="https://tool.adjiebrotots.com/" class="btn btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
   <input type="file" id="jsonFileInput" accept=".json" style="display:none">
 </header>
 
@@ -186,7 +197,7 @@
 
 <footer style="padding:0 20px 16px;flex-shrink:0">
   <section style="margin-top:8px;padding:16px 18px;background:var(--panel);border:1px solid var(--border);border-radius:10px">
-    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-06-06">6 June 2026</time></span></p>
     <div style="display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
       <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">

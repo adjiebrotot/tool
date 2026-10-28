@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- A guide's live demo opens this page in a frame as ?demo: guide-demo.js keeps it off the reader's own storage. -->
+  <script>if(self!==top&&/[?&]demo(&|$)/.test(location.search))document.write('<script src="../guide-demo.js"><\/script>')</script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../consent.js" defer></script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PPh 21 Pisah Harta vs Gabung Harta Calculator | Adjie Brotools</title>
+  <title>PPh 21 Pisah Harta vs Gabung Harta Calculator</title>
 <meta name="description" content="Compare Indonesian PPh 21 personal income tax under separate and joint filing scenarios.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/pisahvsgabung/">
@@ -32,12 +37,17 @@
 <meta property="og:description" content="Compare Indonesian PPh 21 personal income tax under separate and joint filing scenarios.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/pisahvsgabung/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/pisahvsgabung.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PPh 21 Pisah Harta vs Gabung Harta Calculator, a free tool on Adjie Brotools">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="id_ID">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PPh 21 Pisah Harta vs Gabung Harta Calculator">
 <meta name="twitter:description" content="Compare Indonesian PPh 21 personal income tax under separate and joint filing scenarios.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/pisahvsgabung.jpg">
 
 <script type="application/ld+json">
 {
@@ -49,6 +59,9 @@
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-06-12",
+  "screenshot": "https://tool.adjiebrotots.com/og/pisahvsgabung.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": ["en", "id"],
   "alternateName": [
     "Kalkulator Pisah Harta vs Gabung Harta",
@@ -120,15 +133,16 @@
   <link rel="stylesheet" href="../tour-shared.css">
 </head>
 <body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="../theme.js"></script>
 <div class="container">
   <section class="header card">
     <div>
       <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle stroke="var(--accent)" cx="8.5" cy="12" r="5.5"/> <circle stroke="var(--accent2)" cx="15.5" cy="12" r="5.5"/> </svg>PPh 21: Pisah Harta vs Gabung Harta</h1>
-      <p data-i18n="subtitle">Compare Indonesian personal income tax under separate filing (Pisah Harta) vs joint filing (Gabung Harta).</p>
+      <p data-i18n="subtitle">Compare a married couple's Indonesian income tax filed jointly (Gabung Harta) or separately (Pisah Harta, PH or MT).</p>
     </div>
     <div class="header-right">
-      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" data-i18n="btnBack">← Other Tools</a>
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
       <a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>
       <button id="themeToggle" class="btn-theme">🌙 Dark</button>
     </div>
@@ -139,9 +153,9 @@
       <div class="quick-start-row">
         <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span data-i18n="quickStartLabel">Quick Start</span></span><span class="tip-icon" data-i18n-tip="quickStartTip" data-tip="Fills the Household tab with a worked example and puts PTKP and the brackets back to the statutory values. Equal incomes is the example the page opens with.">?</span>
         <div class="quick-start-btns">
-          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 million a year shared equally, no dependants: the figures the page opens with. Pisah Harta saves Rp 19.8 million.">Equal incomes, no children</button>
-          <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Husband earns Rp 300 million a year, wife earns nothing, two children. Her own PTKP goes unused under Pisah, so Gabung saves Rp 8.1 million.">Single income family</button>
-          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Husband Rp 400 million a year, wife Rp 300 million, one child. Under Pisah each climbs their own bracket ladder, which saves Rp 34.8 million.">Double income family</button>
+          <button class="quick-start-btn" data-preset="even" data-i18n="qsEven" data-i18n-tip="qsEvenTip" data-tip="Rp 500 million a year shared equally, no dependants: the figures the page opens with. Gabung Harta saves Rp 19.8 million.">Equal incomes, no children</button>
+          <button class="quick-start-btn" data-preset="single" data-i18n="qsSingle" data-i18n-tip="qsSingleTip" data-tip="Husband earns Rp 300 million a year, wife earns nothing, two children. With no income of hers to combine, both ways cost the same.">Single income family</button>
+          <button class="quick-start-btn" data-preset="double" data-i18n="qsDouble" data-i18n-tip="qsDoubleTip" data-tip="Husband Rp 400 million a year, wife Rp 300 million, one child. Under Gabung her salary climbs its own bracket ladder, which saves Rp 34.8 million.">Double income family</button>
         </div>
       </div>
       <div class="ctrl-scroll">
@@ -193,7 +207,7 @@
               <div class="derived" id="splitDerived"></div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="deductionLabel">Deductions, both spouses (pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as biaya jabatan or iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns.">?</span></div>
+              <div class="field-label"><span data-i18n="deductionLabel">Deductions, both spouses (pengurang)</span> <span class="tip-icon" data-i18n-tip="deductionTip" data-tip="Deductions such as iuran pensiun, taken off gross income before PTKP and split in proportion to what each spouse earns. Biaya jabatan has its own switch; with it off, include biaya jabatan here.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="deductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -222,7 +236,7 @@
               <div class="derived"><span data-i18n="combinedPrefix">Together</span> <b id="combinedLabel">Rp 500,000,000</b> <span data-i18n="combinedSuffix">a year, wife's share</span> <b id="splitDerivedLabel">50.0%</b></div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="husbandDeductionLabel">Husband's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions that come off the husband's gross income only, applied before PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="husbandDeductionLabel">Husband's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="husbandDeductionTip" data-tip="Deductions such as iuran pensiun that come off the husband's gross income only, before PTKP. Biaya jabatan has its own switch.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="husbandDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
@@ -230,13 +244,17 @@
               </div>
             </div>
             <div class="field-row">
-              <div class="field-label"><span data-i18n="wifeDeductionLabel">Wife's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions that come off the wife's gross income only, applied before PTKP.">?</span></div>
+              <div class="field-label"><span data-i18n="wifeDeductionLabel">Wife's deductions (pengurang)</span> <span class="tip-icon" data-i18n-tip="wifeDeductionTip" data-tip="Deductions such as iuran pensiun that come off the wife's gross income only, before PTKP. Biaya jabatan has its own switch.">?</span></div>
               <div class="affix-wrap">
                 <span class="prefix">Rp</span>
                 <input class="affix-input has-suffix" id="wifeDeductionInput" type="text" inputmode="numeric" data-min="0" data-max="1000000000000" value="0" />
                 <span class="suffix" data-i18n="unitPerYr">/yr</span>
               </div>
             </div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label"><span data-i18n="bjLabel">Biaya jabatan, worked out for you</span> <span class="tip-icon" data-i18n-tip="bjTip" data-tip="5% of each spouse's gross salary, at most Rp 6,000,000 a year, taken off before PTKP beside the deductions above. Switch it off to enter your own.">?</span></div>
+            <label class="toggle-switch"><input type="checkbox" id="biayaJabatan" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
           </div>
         </div>
       </div>
@@ -260,7 +278,7 @@
             <div class="ptkp-label-sm" data-i18n="ptkpDep">Added for each dependant</div>
             <div class="affix-wrap ptkp-wrap"><span class="prefix">Rp</span><input class="num-input-sm" id="ptkpDependent" type="text" inputmode="numeric" data-min="0" data-max="10000000000" data-grouped value="4,500,000" /></div>
           </div>
-          <div class="derived"><span data-i18n="ptkpComputedPrefix">This household's PTKP under Pisah Harta:</span> <b id="ptkpHDisplay">—</b> <span data-i18n="ptkpHLabel">husband</span> + <b id="ptkpWDisplay">—</b> <span data-i18n="ptkpWLabel">wife</span>. <span data-i18n="ptkpGLabel">Gabung Harta:</span> <b id="ptkpGDisplay">—</b>.</div>
+          <div class="derived"><span data-i18n="ptkpComputedPrefix">This household's PTKP under Gabung Harta:</span> <b id="ptkpHDisplay">—</b> <span data-i18n="ptkpHLabel">husband</span> + <b id="ptkpWDisplay">—</b> <span data-i18n="ptkpWLabel">wife</span>. <span data-i18n="ptkpGLabel">Pisah Harta (PH/MT):</span> <b id="ptkpGDisplay">—</b>.</div>
         </div>
 
         <div class="field-group bracket-group">
@@ -275,8 +293,8 @@
 
         <div class="bracket-info">
           <div class="info-box" style="margin-top:14px" id="infoBoxContent">
-            <strong>Pisah Harta (K/0 + TK/0):</strong> Each spouse files their own SPT. Husband uses PTKP K/0, wife uses PTKP TK/0. Each has their own set of brackets.<br><br>
-            <strong>Gabung Harta (K/I/0):</strong> Combined income, one SPT. Uses PTKP K/I/0. One set of brackets for all the income.
+            <strong>Gabung Harta (K/0 + TK/0):</strong> The husband files one SPT for the family with PTKP K/0. A wife whose salary comes from one employer is taxed on it by that employer with her own PTKP TK/0, and that tax is final, so her salary climbs its own set of brackets.<br><br>
+            <strong>Pisah Harta, PH or MT (K/I/0):</strong> Each spouse files their own SPT, but the tax is worked out on the couple's combined net income with PTKP K/I/0 (UU PPh Pasal 8 ayat 3) and shared by each spouse's net income. One set of brackets for all the income, and usually tax to top up when filing.
           </div>
         </div>
       </div>
@@ -297,12 +315,12 @@
           <div class="sub" id="kpiWinner"></div>
         </div>
         <div class="metric card">
-          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Pisah Harta: total tax</span> <span class="tip-icon" data-i18n-tip="kpiPisahTip" data-tip="Each spouse files their own tax return (SPT). The effective rate is the tax as a share of gross salary.">?</span></div>
+          <div class="label"><span class="opt-key opt-key-pisah" aria-hidden="true"></span><span data-i18n="kpiPisahLabel">Gabung Harta: total tax</span> <span class="tip-icon" data-i18n-tip="kpiPisahTip" data-tip="The husband's SPT with PTKP K, plus the wife's salary taxed final by her employer with her own PTKP. The effective rate is the tax as a share of gross salary.">?</span></div>
           <div class="value" id="kpiPisah">—</div>
           <div class="sub" id="kpiPisahRate"></div>
         </div>
         <div class="metric card">
-          <div class="label"><span class="opt-key opt-key-gabung" aria-hidden="true"></span><span data-i18n="kpiGabungLabel">Gabung Harta: total tax</span> <span class="tip-icon" data-i18n-tip="kpiGabungTip" data-tip="Husband and wife file one tax return (SPT) on their combined income.">?</span></div>
+          <div class="label"><span class="opt-key opt-key-gabung" aria-hidden="true"></span><span data-i18n="kpiGabungLabel">Pisah Harta (PH/MT): total tax</span> <span class="tip-icon" data-i18n-tip="kpiGabungTip" data-tip="Each spouse files their own tax return (SPT), but the tax is worked out on the combined net income and shared by net income.">?</span></div>
           <div class="value" id="kpiGabung">—</div>
           <div class="sub" id="kpiGabungRate"></div>
         </div>
@@ -327,7 +345,7 @@
 
       <section class="chart-card card" style="margin-bottom:18px;">
         <div class="chart-head">
-          <h2 data-i18n="chart2Title">Tax difference (Gabung − Pisah)</h2>
+          <h2 data-i18n="chart2Title">Tax difference (Pisah − Gabung)</h2>
           <div class="btn-cluster">
             <button class="btn-secondary btn-sm" id="chart2SvgBtn" data-i18n-title="btnSvgTitle" title="Download this chart as SVG">⬇ SVG</button>
             <button class="btn-secondary btn-sm" id="chart2PngBtn" data-i18n-title="btnPngTitle" title="Download this chart as PNG">⬇ PNG</button>
@@ -362,8 +380,8 @@
         <p class="unit-note" id="tableUnitNote" data-i18n="tableUnitNote">Rupiah a year.</p>
         <div class="tab-btns" id="tableTabs">
           <button class="tab-btn active" data-scenario="comparison" data-i18n="tabComparison">Comparison</button>
-          <button class="tab-btn" data-scenario="pisah" data-i18n="tabPisah">Pisah Harta detail</button>
-          <button class="tab-btn" data-scenario="gabung" data-i18n="tabGabung">Gabung Harta detail</button>
+          <button class="tab-btn" data-scenario="pisah" data-i18n="tabPisah">Gabung Harta detail</button>
+          <button class="tab-btn" data-scenario="gabung" data-i18n="tabGabung">Pisah Harta detail</button>
         </div>
         <div class="table-wrap" id="detailTable"></div>
       </section>
@@ -379,7 +397,7 @@
 <footer class="page-footer">
   <section class="page-footer-info">
     <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
-    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p class="footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-06-12">12 June 2026</time></span></p>
     <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
       <img loading="lazy" src="../logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">
       <div style="display:flex;align-items:center;gap:10px">
@@ -402,5 +420,6 @@
 <script src="script.js"></script>
 <script src="tour.js"></script>
 <script src="../tour-shared.js"></script>
+<!--/email_off-->
 </body>
 </html>

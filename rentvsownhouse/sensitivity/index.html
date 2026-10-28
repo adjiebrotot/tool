@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- A guide's live demo opens this page in a frame as ?demo: guide-demo.js keeps it off the reader's own storage. -->
+  <script>if(self!==top&&/[?&]demo(&|$)/.test(location.search))document.write('<script src="../../guide-demo.js"><\/script>')</script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Rent vs Own Sensitivity Analysis | Adjie Brotools</title>
-<meta name="description" content="Free multi-scenario rent-vs-buy sensitivity analysis: compare several property scenarios side by side and see which assumptions drive net wealth. A free alternative to the bespoke modelling property analysts and advisers normally charge thousands for.">
+<meta name="description" content="Free multi-scenario rent vs buy sensitivity analysis: compare property scenarios side by side and see which assumptions drive net wealth the most.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
 <link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
@@ -29,15 +34,20 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Rent vs Own Sensitivity & Multi-Scenario Property Analysis">
-<meta property="og:description" content="Compare several rent-vs-buy property scenarios side by side and see which assumptions drive net wealth — a free alternative to the bespoke modelling property analysts normally charge thousands for.">
+<meta property="og:description" content="Compare several rent-vs-buy property scenarios side by side and see which assumptions drive net wealth. A free alternative to the bespoke modelling property analysts normally charge thousands for.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/rentvsownhouse-sensitivity.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rent vs Own Sensitivity &amp; Multi-Scenario Property Analysis, a free tool on Adjie Brotools">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="id_ID">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Rent vs Own Sensitivity & Multi-Scenario Property Analysis">
-<meta name="twitter:description" content="Compare several rent-vs-buy property scenarios side by side and see which assumptions drive net wealth — a free alternative to bespoke property-analyst software.">
+<meta name="twitter:description" content="Compare several rent-vs-buy property scenarios side by side and see which assumptions drive net wealth. A free alternative to bespoke property-analyst software.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/rentvsownhouse-sensitivity.jpg">
 
 <script type="application/ld+json">
 {
@@ -49,6 +59,8 @@
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-06-12",
+  "screenshot": "https://tool.adjiebrotots.com/og/rentvsownhouse-sensitivity.jpg",
   "inLanguage": ["en", "id"],
   "alternateName": ["Rent vs Buy Sensitivity Analysis", "Property Scenario Comparison Tool", "Multi-Scenario Rent vs Own Calculator", "Property Investment Sensitivity Analysis"],
   "keywords": "rent vs own sensitivity, rent vs buy scenarios, property assumption comparison, sensitivity analysis, property investment analysis, free property analyst software, buyer's agent property modelling, sewa vs beli rumah analisis sensitivitas",
@@ -214,7 +226,7 @@
 </section>
 
 <footer class="page-footer">
-  <section class="page-footer-info" id="siteFooterContent"></section>
+  <section class="page-footer-info" id="siteFooterContent" data-updated="2026-06-12"></section>
 </footer>
 <script>renderRVOFooter('../../logos/');</script>
 

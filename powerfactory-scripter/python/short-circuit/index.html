@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory short circuit in Python: IEC 60909 fault levels</title>
+<meta name="description" content="Run IEC 60909 short-circuit calculations in PowerFactory from Python with ComShc: a fault at every busbar, Ikss, ip and Skss saved to CSV. Tested script.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/short-circuit/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Short-circuit automation in PowerFactory with Python">
+<meta property="og:description" content="Run IEC 60909 short-circuit calculations in PowerFactory from Python with ComShc: a fault at every busbar, Ikss, ip and Skss saved to CSV. Tested script.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/short-circuit/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Short-circuit automation in PowerFactory with Python">
+<meta name="twitter:description" content="Run IEC 60909 short-circuit calculations in PowerFactory from Python with ComShc: a fault at every busbar, Ikss, ip and Skss saved to CSV. Tested script.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Short-circuit automation in PowerFactory with Python",
+  "description": "Run IEC 60909 short-circuit calculations in PowerFactory from Python with ComShc: a fault at every busbar, Ikss, ip and Skss saved to CSV. Tested script.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/short-circuit/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "proficiencyLevel": "Intermediate",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "powerfactory short circuit python, ComShc, IEC 60909 PowerFactory, fault level every busbar, m:Ikss, iopt_mde, iopt_allbus",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "Short circuit"
+    },
+    {
+      "@type": "Thing",
+      "name": "IEC 60909"
+    },
+    {
+      "@type": "Thing",
+      "name": "DIgSILENT PowerFactory"
+    },
+    {
+      "@type": "Thing",
+      "name": "Python"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PowerFactory studies with Python",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I run a short circuit in PowerFactory with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Get the command with app.GetFromStudyCase(\"ComShc\"), set iopt_mde, iopt_shc, iopt_cur and the location (iopt_allbus or shcobj), then call Execute(). It returns 0 when it worked."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get the fault level at every busbar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Set iopt_allbus to 2 before Execute(), then read m:Ikss (kA) and m:Skss (MVA) on every ElmTerm."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does iopt_mde mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculation method of ComShc: 0 VDE 0102, 1 IEC 60909, 2 ANSI, 3 the complete method, 4 IEC 61363."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are Ikss, ip and Skss?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ikss (Ik\") is the initial symmetrical short-circuit current, ip the peak short-circuit current, and Skss (Sk\") the initial short-circuit power, √3 Un Ik\"."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Short circuit",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/short-circuit/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Short circuit</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>Short-circuit automation in PowerFactory with Python</h1>
+    <p class="dx-lead">In Python, a short-circuit calculation is the study case's <code>ComShc</code> command: set the method (<code>iopt_mde = 1</code> for <strong>IEC 60909</strong>), the fault type (<code>iopt_shc = "3psc"</code>) and the location (<code>iopt_allbus = 2</code> for <strong>every busbar</strong>), call <code>Execute()</code>, then read <code>m:Ikss</code>, <code>m:ip</code> and <code>m:Skss</code> on each busbar.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What a short-circuit calculation is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What a short-circuit calculation gives you</h2>
+  <p>A short-circuit calculation gives the current that flows into a fault, and the currents and voltages around it. The maximum currents size equipment: the breaking capacity of breakers, the peak and thermal withstand of busbars and cables, and the fault level a new connection adds to. The minimum currents check that protection still sees a fault.</p>
+  <p>PowerFactory has several methods in one command, <code>ComShc</code>: <strong>IEC 60909</strong> and its German twin VDE 0102 (an equivalent voltage source at the fault with a voltage factor c, no load flow needed), <strong>ANSI</strong> (IEEE C37), and the <strong>complete method</strong>, which superimposes the fault on a load flow. The results on a faulted busbar include the initial symmetrical current <code>m:Ikss</code> (I<sub>k</sub>"), the peak current <code>m:ip</code> and the initial short-circuit power <code>m:Skss</code> (S<sub>k</sub>" = √3 U<sub>n</sub> I<sub>k</sub>").</p>
+</section>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Activate the study case</strong> whose grids and operating state you want faulted.</li>
+    <li><strong>Get the command</strong> with <code>app.GetFromStudyCase("ComShc")</code> and keep its settings to put back.</li>
+    <li><strong>Choose the method and the fault</strong>: <code>iopt_mde</code> 1 for IEC 60909; <code>iopt_shc</code> <code>"3psc"</code> three-phase, <code>"2psc"</code> two-phase, <code>"spgf"</code> single-phase to ground, <code>"2pgf"</code> two-phase to ground; <code>iopt_cur</code> 0 for maximum or 1 for minimum currents.</li>
+    <li><strong>Choose where</strong>: <code>iopt_allbus = 2</code> faults every busbar in turn in one run, or <code>iopt_allbus = 0</code> with <code>shcobj</code> set to one busbar or line.</li>
+    <li><strong>Run</strong> with <code>Execute()</code> (0 means it worked) and read <code>m:Ikss</code>, <code>m:ip</code> and <code>m:Skss</code> on each faulted <code>ElmTerm</code>.</li>
+    <li><strong>Save</strong> the rows to CSV, and put the command's settings back.</li>
+  </ol>
+  <h3>The script</h3>
+  <p class="dx-file"><span><code>short_circuit.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;Short circuit in PowerFactory with Python: an IEC 60909 three-phase fault at every busbar, with
+the initial, peak and power values of each saved to CSV.
+
+Runs on the &quot;Nine-bus System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+STUDY_CASE = <span class="py-s">&quot;01- Load Flow&quot;</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()          <span class="py-c"># inside PowerFactory: powerfactory.GetApplication()</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)
+app.<span class="py-f">GetProjectFolder</span>(<span class="py-s">&quot;study&quot;</span>).<span class="py-f">GetContents</span>(STUDY_CASE + <span class="py-s">&quot;.IntCase&quot;</span>)[<span class="py-n">0</span>].<span class="py-f">Activate</span>()
+
+shc = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComShc&quot;</span>)
+saved = {a: shc.<span class="py-f">GetAttribute</span>(a) <span class="py-k">for</span> a <span class="py-k">in</span> (<span class="py-s">&quot;iopt_mde&quot;</span>, <span class="py-s">&quot;iopt_shc&quot;</span>, <span class="py-s">&quot;iopt_cur&quot;</span>, <span class="py-s">&quot;iopt_allbus&quot;</span>)}
+shc.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_mde&quot;</span>, <span class="py-n">1</span>)         <span class="py-c"># method: 0 VDE 0102, 1 IEC 60909, 2 ANSI, 3 complete</span>
+shc.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_shc&quot;</span>, <span class="py-s">&quot;3psc&quot;</span>)    <span class="py-c"># fault: 3psc three-phase, 2psc two-phase, spgf single-phase to ground</span>
+shc.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_cur&quot;</span>, <span class="py-n">0</span>)         <span class="py-c"># 0 maximum, 1 minimum short-circuit currents</span>
+shc.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;iopt_allbus&quot;</span>, <span class="py-n">2</span>)      <span class="py-c"># 2 a fault at every busbar, one at a time</span>
+<span class="py-k">try</span>:
+    <span class="py-k">if</span> shc.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:
+        <span class="py-k">raise</span> <span class="py-f">SystemExit</span>(<span class="py-s">&quot;The short-circuit calculation failed&quot;</span>)
+    rows = [{<span class="py-s">&quot;Busbar&quot;</span>: b.loc_name, <span class="py-s">&quot;Nominal (kV)&quot;</span>: <span class="py-f">round</span>(b.uknom, <span class="py-n">2</span>),
+             <span class="py-s">&quot;Ikss (kA)&quot;</span>: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:Ikss&quot;</span>),      <span class="py-c"># initial symmetrical short-circuit current</span>
+             <span class="py-s">&quot;ip (kA)&quot;</span>: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:ip&quot;</span>),          <span class="py-c"># peak short-circuit current</span>
+             <span class="py-s">&quot;Skss (MVA)&quot;</span>: b.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;m:Skss&quot;</span>)}     <span class="py-c"># initial short-circuit power</span>
+            <span class="py-k">for</span> b <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>)]
+<span class="py-k">finally</span>:
+    <span class="py-k">for</span> a, v <span class="py-k">in</span> saved.<span class="py-f">items</span>():                  <span class="py-c"># leave the command as it was</span>
+        shc.<span class="py-f">SetAttribute</span>(a, v)
+
+<span class="py-k">for</span> r <span class="py-k">in</span> <span class="py-f">sorted</span>(rows, key=<span class="py-k">lambda</span> r: -r[<span class="py-s">&quot;Ikss (kA)&quot;</span>]):
+    <span class="py-f">print</span>(<span class="py-s">f&quot;{r['Busbar']:6} {r['Nominal (kV)']:6.1f} kV  Ikss {r['Ikss (kA)']:6.2f} kA  ip {r['ip (kA)']:6.2f} kA&quot;</span>)
+
+<span class="py-k">with</span> <span class="py-f">open</span>(<span class="py-s">&quot;short_circuit_results.csv&quot;</span>, <span class="py-s">&quot;w&quot;</span>, newline=<span class="py-s">&quot;&quot;</span>) <span class="py-k">as</span> f:
+    out = csv.<span class="py-f">DictWriter</span>(f, fieldnames=<span class="py-f">list</span>(rows[<span class="py-n">0</span>]))
+    out.<span class="py-f">writeheader</span>()
+    out.<span class="py-f">writerows</span>(rows)</code></pre>
+  <h3>Result on the Nine-bus example</h3>
+  <p>The highest fault level on the 230 kV network is at <strong>Bus 7: 3.08 kA, 1227 MVA</strong>. The generator terminals (13.8 to 18 kV) see around 50 kA, because the same power at a lower voltage is a larger current. As a check, Bus 5 gives S<sub>k</sub>" = √3 × 230 kV × 2.256 kA = 898.7 MVA, the 898.7 MVA PowerFactory reports.</p>
+  <figure class="dx-chart"><div class="dx-chart-sc"><svg viewBox="0 0 760 360" role="img" aria-labelledby="chxjoxbi" xmlns="http://www.w3.org/2000/svg"><title id="chxjoxbi">Initial three-phase short-circuit current at each 230 kV busbar of the Nine-bus example, IEC 60909 maximum</title><line class="ch-grid" x1="64" x2="742" y1="302.0" y2="302.0"/><text class="ch-t" x="56" y="306.0" text-anchor="end">0</text><line class="ch-grid" x1="64" x2="742" y1="230.5" y2="230.5"/><text class="ch-t" x="56" y="234.5" text-anchor="end">1</text><line class="ch-grid" x1="64" x2="742" y1="159.0" y2="159.0"/><text class="ch-t" x="56" y="163.0" text-anchor="end">2</text><line class="ch-grid" x1="64" x2="742" y1="87.5" y2="87.5"/><text class="ch-t" x="56" y="91.5" text-anchor="end">3</text><line class="ch-grid" x1="64" x2="742" y1="16.0" y2="16.0"/><text class="ch-t" x="56" y="20.0" text-anchor="end">4</text><rect class="ch-f1" x="82.1" y="83.7" width="76.8" height="218.3" rx="2"><title>Bus 4: 3.05 kA</title></rect><text class="ch-t" x="120.5" y="320" text-anchor="middle">Bus 4</text><rect class="ch-f1" x="195.1" y="140.7" width="76.8" height="161.3" rx="2"><title>Bus 5: 2.26 kA</title></rect><text class="ch-t" x="233.5" y="320" text-anchor="middle">Bus 5</text><rect class="ch-f1" x="308.1" y="148.5" width="76.8" height="153.5" rx="2"><title>Bus 6: 2.15 kA</title></rect><text class="ch-t" x="346.5" y="320" text-anchor="middle">Bus 6</text><rect class="ch-f1" x="421.1" y="81.7" width="76.8" height="220.3" rx="2"><title>Bus 7: 3.08 kA</title></rect><text class="ch-t" x="459.5" y="320" text-anchor="middle">Bus 7</text><rect class="ch-f1" x="534.1" y="126.4" width="76.8" height="175.6" rx="2"><title>Bus 8: 2.46 kA</title></rect><text class="ch-t" x="572.5" y="320" text-anchor="middle">Bus 8</text><rect class="ch-f1" x="647.1" y="103.9" width="76.8" height="198.1" rx="2"><title>Bus 9: 2.77 kA</title></rect><text class="ch-t" x="685.5" y="320" text-anchor="middle">Bus 9</text><line class="ch-axis" x1="64" x2="742" y1="302" y2="302"/><text class="ch-tt" transform="translate(16 159) rotate(-90)" text-anchor="middle">Initial short-circuit current Ikss (kA)</text></svg></div><figcaption>IEC 60909, maximum currents, a three-phase fault at each busbar in turn. Read with m:Ikss.</figcaption></figure>
+  <div class="dx-tw"><table><thead><tr><th>Busbar</th><th class="num">Nominal <span class="th-unit">kV</span></th><th class="num">Ikss <span class="th-unit">kA</span></th><th class="num">ip <span class="th-unit">kA</span></th><th class="num">Skss <span class="th-unit">MVA</span></th></tr></thead><tbody>
+<tr><td>Bus 1</td><td class="num">16.5</td><td class="num">57.01</td><td class="num">147.98</td><td class="num">1629</td></tr>
+<tr><td>Bus 2</td><td class="num">18.0</td><td class="num">47.75</td><td class="num">124.86</td><td class="num">1489</td></tr>
+<tr><td>Bus 3</td><td class="num">13.8</td><td class="num">48.36</td><td class="num">125.58</td><td class="num">1156</td></tr>
+<tr><td>Bus 4</td><td class="num">230.0</td><td class="num">3.05</td><td class="num">7.88</td><td class="num">1216</td></tr>
+<tr><td>Bus 5</td><td class="num">230.0</td><td class="num">2.26</td><td class="num">5.61</td><td class="num">899</td></tr>
+<tr><td>Bus 6</td><td class="num">230.0</td><td class="num">2.15</td><td class="num">5.18</td><td class="num">855</td></tr>
+<tr><td>Bus 7</td><td class="num">230.0</td><td class="num">3.08</td><td class="num">8.02</td><td class="num">1227</td></tr>
+<tr><td>Bus 8</td><td class="num">230.0</td><td class="num">2.46</td><td class="num">6.26</td><td class="num">978</td></tr>
+<tr><td>Bus 9</td><td class="num">230.0</td><td class="num">2.77</td><td class="num">7.10</td><td class="num">1104</td></tr>
+</tbody></table></div>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Short circuit at every busbar Quick Start loads in the PowerFactory Workflow Builder, ready for your project. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=shc-buses">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>The Builder's Quick Start does the same with a loop: a fault at one busbar per pass, the results into a table, and a bar chart of the fault currents at the end. It gives the same 2.256 kA at Bus 5 of the Nine-bus example. This is its file, filled in for that example:</p>
+  <p class="dx-file"><span><code>short_circuit_at_every_busbar.py</code> as the Builder writes it: the settings and the workflow</span><a href="short_circuit_at_every_busbar.py" download>⬇ Download the full file (.py, 2,604 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Short circuit at every busbar</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Close PowerFactory, or run this file from inside PowerFactory (see RUN_MODE).
+  3. Run it with the Python that matches your PowerFactory, e.g.  py -3.12 short_circuit_at_every_busbar.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> difflib
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> glob
+<span class="py-k">import</span> importlib.util
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> subprocess
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+<span class="py-k">import</span> warnings
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Short circuit at every busbar&quot;</span>
+<span class="py-c"># REQUIRED. The PowerFactory project to open, exactly as the Data Manager shows it (letter case</span>
+<span class="py-c"># counts).</span>
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+<span class="py-c"># OPTIONAL. The study case to activate first (&quot;&quot; = keep the active one).</span>
+STUDY_CASE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every value the workflow changed back when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read from the</span>
+<span class="py-c"># grid).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;engine&quot; (start PowerFactory in the background) or &quot;inside&quot; (run from inside</span>
+<span class="py-c"># PowerFactory).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PowerFactory window while running (engine mode only).</span>
+SHOW_PF = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. True: no screen updates and fewer output window messages while running.</span>
+FAST_MODE = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PowerFactory to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+<span class="py-c"># OPTIONAL. The folder with the powerfactory Python module (&quot;&quot; = find it).</span>
+PF_API_PATH = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Log in to PowerFactory as this user (&quot;&quot; = your own).</span>
+PF_USER = <span class="py-s">&quot;&quot;</span>
+
+<span class="py-c"># How every graph of this run looks: set in the Builder (select nothing, then Graph style).</span>
+<span class="py-c"># Colours are hex codes. A value that cannot be used falls back to the Adjie Brotools style.</span>
+GRAPH_STYLE = {
+    <span class="py-s">&quot;template&quot;</span>: <span class="py-s">&quot;brotools&quot;</span>,                         <span class="py-c"># where this style started (a name only)</span>
+    <span class="py-s">&quot;colors&quot;</span>: [<span class="py-s">&quot;#5A91E8&quot;</span>, <span class="py-s">&quot;#B45309&quot;</span>, <span class="py-s">&quot;#4A9E87&quot;</span>, <span class="py-s">&quot;#C46A7E&quot;</span>, <span class="py-s">&quot;#9B59B6&quot;</span>],  <span class="py-c"># in order; more lines repeat them, paler</span>
+    <span class="py-s">&quot;ramp&quot;</span>: <span class="py-s">&quot;blue&quot;</span>,                                 <span class="py-c"># blue, night, viridis, cividis, magma, coolwarm, greys, classic</span>
+    <span class="py-s">&quot;background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;plot_background&quot;</span>: <span class="py-s">&quot;#FFFFFF&quot;</span>,
+    <span class="py-s">&quot;text&quot;</span>: <span class="py-s">&quot;#14203A&quot;</span>,
+    <span class="py-s">&quot;muted&quot;</span>: <span class="py-s">&quot;#4C5B76&quot;</span>,
+    <span class="py-s">&quot;grid&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;axis&quot;</span>: <span class="py-s">&quot;#C8D4E8&quot;</span>,
+    <span class="py-s">&quot;font&quot;</span>: <span class="py-s">&quot;DM Sans&quot;</span>,
+    <span class="py-s">&quot;font_size&quot;</span>: <span class="py-n">9.5</span>,                               <span class="py-c"># points, for the axis numbers (the rest follows)</span>
+    <span class="py-s">&quot;title_size&quot;</span>: <span class="py-n">13</span>,                               <span class="py-c"># points</span>
+    <span class="py-s">&quot;title_bold&quot;</span>: <span class="py-k">True</span>,                             <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;title_align&quot;</span>: <span class="py-s">&quot;center&quot;</span>,                        <span class="py-c"># center, left</span>
+    <span class="py-s">&quot;grid_axes&quot;</span>: <span class="py-s">&quot;both&quot;</span>,                            <span class="py-c"># both, y, x, none</span>
+    <span class="py-s">&quot;grid_style&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                          <span class="py-c"># solid, dashed, dotted</span>
+    <span class="py-s">&quot;frame&quot;</span>: <span class="py-s">&quot;left-bottom&quot;</span>,                         <span class="py-c"># left-bottom, box, bottom, none</span>
+    <span class="py-s">&quot;ticks&quot;</span>: <span class="py-s">&quot;out&quot;</span>,                                 <span class="py-c"># out, in, none</span>
+    <span class="py-s">&quot;thousands&quot;</span>: <span class="py-k">True</span>,                              <span class="py-c"># True: 1,200 rather than 1200</span>
+    <span class="py-s">&quot;line_width&quot;</span>: <span class="py-n">2</span>,                                <span class="py-c"># points</span>
+    <span class="py-s">&quot;markers&quot;</span>: <span class="py-s">&quot;auto&quot;</span>,                              <span class="py-c"># auto, always, never</span>
+    <span class="py-s">&quot;line_styles&quot;</span>: <span class="py-s">&quot;solid&quot;</span>,                         <span class="py-c"># solid, vary</span>
+    <span class="py-s">&quot;legend&quot;</span>: <span class="py-s">&quot;bottom&quot;</span>,                             <span class="py-c"># bottom, top, right, inside, none</span>
+    <span class="py-s">&quot;legend_frame&quot;</span>: <span class="py-k">False</span>,                          <span class="py-c"># True or False</span>
+    <span class="py-s">&quot;width&quot;</span>: <span class="py-n">10</span>,                                    <span class="py-c"># inches</span>
+    <span class="py-s">&quot;height&quot;</span>: <span class="py-n">5.6</span>,                                  <span class="py-c"># inches</span>
+    <span class="py-s">&quot;dpi&quot;</span>: <span class="py-n">150</span>,                                     <span class="py-c"># the PNG is width x dpi pixels wide</span>
+    <span class="py-s">&quot;transparent&quot;</span>: <span class="py-k">False</span>,                           <span class="py-c"># True: no background (for slides)</span>
+    <span class="py-s">&quot;also_save&quot;</span>: <span class="py-s">&quot;&quot;</span>,                                <span class="py-c"># &quot;&quot;, svg, pdf</span>
+}
+
+<span class="py-c"># REQUIRED. Busbar: Elements. A name (ElmTerm), exactly as in the Data Manager, or a pattern</span>
+<span class="py-c"># with * and ?: every element that matches is used.</span>
+BUSBAR_EL = <span class="py-s">&quot;*&quot;</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: This runs an IEC 60909 maximum three-phase short circuit at each busbar in service in turn (or at the busbars named on For each element) and reads the initial short-circuit current and power there....</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([<span class="py-s">&quot;matplotlib&quot;</span>])
+    app = <span class="py-f">pf_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(BUSBAR_EL + <span class="py-s">&quot;.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Project: Nine-bus System) --</span>
+        <span class="py-c"># -- Step 2: Busbar (Each of all * (ElmTerm)) --</span>
+        busbar_elements = <span class="py-f">as_items</span>(<span class="py-f">pf_find</span>(app, BUSBAR_EL + <span class="py-s">&quot;.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>, in_service=<span class="py-k">True</span>))
+        <span class="py-k">if</span> <span class="py-k">not</span> busbar_elements:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Busbar: no element to loop over.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+        <span class="py-k">for</span> busbar_pass_no, busbar <span class="py-k">in</span> <span class="py-f">enumerate</span>(busbar_elements, <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Busbar&quot;</span>, busbar, busbar_pass_no, <span class="py-f">len</span>(busbar_elements))
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Run short circuit (IEC 60909, three-phase, max, at the element) --</span>
+                shc = <span class="py-f">run_short_circuit</span>(app, <span class="py-s">&quot;iec&quot;</span>, <span class="py-s">&quot;3ph&quot;</span>, <span class="py-s">&quot;max&quot;</span>, busbar, <span class="py-n">0</span>, <span class="py-n">0</span>)
+                <span class="py-c"># Failed: skips to the next pass of Busbar</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> shc.ok:
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;Short circuit failed&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 4: Ikss (m:Ikss of the element (short-circuit results)) --</span>
+                ikss = <span class="py-f">pf_get_all</span>(busbar, <span class="py-s">&quot;m:Ikss&quot;</span>, <span class="py-s">&quot;kA&quot;</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 5: Skss (m:Skss of the element (short-circuit results)) --</span>
+                skss = <span class="py-f">pf_get_all</span>(busbar, <span class="py-s">&quot;m:Skss&quot;</span>, <span class="py-s">&quot;MVA&quot;</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 6: Add row to results table (Into &quot;Short circuit&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Short circuit&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Ikss (kA)&quot;</span>: ikss.value,
+                    <span class="py-s">&quot;Skss (MVA)&quot;</span>: skss.value,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Short circuit&quot;</span>])
+        <span class="py-c"># -- Step 7: Fault current at every busbar (Bars) --</span>
+        fault_currents = <span class="py-f">table_pick</span>(<span class="py-s">&quot;Short circuit&quot;</span>, <span class="py-s">&quot;Ikss (kA)&quot;</span>, <span class="py-s">&quot;all&quot;</span>, <span class="py-k">None</span>, <span class="py-s">&quot;num&quot;</span>)  <span class="py-c"># Fault currents</span>
+        busbars = <span class="py-f">table_pick</span>(<span class="py-s">&quot;Short circuit&quot;</span>, <span class="py-s">&quot;Busbar&quot;</span>, <span class="py-s">&quot;all&quot;</span>, <span class="py-k">None</span>, <span class="py-s">&quot;text&quot;</span>)  <span class="py-c"># Busbars</span>
+        <span class="py-f">plot_xy</span>(busbars, [fault_currents], labels=[<span class="py-s">&quot;Ikss (kA)&quot;</span>], kind=<span class="py-s">&quot;bar&quot;</span>, title=<span class="py-s">&quot;Fault current at every busbar&quot;</span>, xlabel=<span class="py-s">&quot;Busbar&quot;</span>, xunit=<span class="py-s">&quot;&quot;</span>, ylabel=<span class="py-s">&quot;Initial short-circuit current&quot;</span>, yunit=<span class="py-s">&quot;kA&quot;</span>, limits=[], stem=<span class="py-k">None</span>)
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 2,455 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><strong>Step 2</strong> finds every busbar in service that matches <code>BUSBAR_EL</code> (<code>*</code> for all) and loops over them.</li>
+    <li><strong>Step 3</strong>, <code>run_short_circuit</code>, sets <code>ComShc</code> for this run only (IEC 60909, three-phase, maximum, the fault at this pass's busbar through <code>shcobj</code>) and puts the settings back.</li>
+    <li><strong>Steps 4 and 5</strong> read <code>m:Ikss</code> in kA and <code>m:Skss</code> in MVA at the faulted busbar; step 6 adds the row.</li>
+    <li>After the loop, two "Table column" blocks pull the busbar names and the currents out of the table, and "Draw 2D graph" saves the bar chart as a PNG in the Adjie Brotools style.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>Set the method every time.</strong> The Nine-bus example's short-circuit command is set to VDE 0102 (<code>iopt_mde</code> 0). A script that does not set <code>iopt_mde</code> gets whatever the study case holds.</li>
+    <li><strong><code>iopt_shc</code> is text, not a number</strong>: <code>"3psc"</code>, <code>"2psc"</code>, <code>"spgf"</code>, <code>"2pgf"</code>.</li>
+    <li><strong>With one fault location, another busbar's <code>m:Ikss</code> is not its fault level.</strong> Only the faulted busbar carries its own fault current. Use <code>iopt_allbus = 2</code>, or loop and fault each busbar, to get a fault level everywhere.</li>
+    <li><strong>Maximum and minimum currents answer different questions.</strong> Maximum (<code>iopt_cur</code> 0) rates equipment; minimum (1) checks protection reaches. Run both when you need both.</li>
+    <li><strong>ANSI gives other result names</strong> than IEC 60909, so a script written for one method may raise <code>AttributeError</code> with the other. Check the busbar's short-circuit results in the <a href="../../reference/ElmTerm/#short-circuit">ElmTerm reference</a>.</li>
+    <li><strong>Put the command's settings back</strong> (the script does it in <code>finally</code>), or the next person to open the study case gets your method and fault type.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>How do I run a short circuit in PowerFactory with Python?</h3>
+  <p>Get the command with <code>app.GetFromStudyCase("ComShc")</code>, set <code>iopt_mde</code>, <code>iopt_shc</code>, <code>iopt_cur</code> and the location (<code>iopt_allbus</code> or <code>shcobj</code>), then call <code>Execute()</code>. It returns 0 when it worked.</p>
+  <h3>How do I get the fault level at every busbar?</h3>
+  <p>Set <code>iopt_allbus</code> to 2 before <code>Execute()</code>, then read <code>m:Ikss</code> (kA) and <code>m:Skss</code> (MVA) on every <code>ElmTerm</code>.</p>
+  <h3>What does iopt_mde mean?</h3>
+  <p>The calculation method of <code>ComShc</code>: 0 VDE 0102, 1 IEC 60909, 2 ANSI, 3 the complete method, 4 IEC 61363.</p>
+  <h3>What are Ikss, ip and Skss?</h3>
+  <p>Ikss (I<sub>k</sub>") is the initial symmetrical short-circuit current, ip the peak short-circuit current, and Skss (S<sub>k</sub>") the initial short-circuit power, √3 U<sub>n</sub> I<sub>k</sub>".</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PowerFactory studies with Python: every guide</a></li>
+    <li><a href="../getting-started/">PowerFactory Python API: getting started</a></li>
+    <li><a href="../load-flow/">Load flow and results to CSV or Excel</a></li>
+    <li><a href="../contingency-analysis/">N-1 contingency analysis</a></li>
+    <li><a href="../hosting-capacity/">Hosting capacity study</a></li>
+    <li><a href="../parameter-sweep/">Parameter sweep: PV and QV curves</a></li>
+    <li><a href="../rms-emt-simulation/">RMS and EMT simulation batch runs</a></li>
+  </ul>
+  <p>Attributes used on this page: <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a>, <a href="../../reference/ElmLne/"><code>ElmLne</code></a>, <a href="../../reference/ElmSym/"><code>ElmSym</code></a>, <a href="../../reference/ElmXnet/"><code>ElmXnet</code></a>, <a href="../../reference/EvtShc/"><code>EvtShc</code></a>. <a href="../../reference/">All attributes</a>.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

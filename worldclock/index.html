@@ -6,20 +6,23 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>World Clock Map: Live Time in Every Time Zone | Adjie Brotools</title>
-<meta name="description" content="A live world map with the local time in every country, state and time zone, daylight saving included. Time Travel to any date to convert meeting times. Free, runs in your browser.">
+<title>World Clock Map: Live Time in Every Time Zone</title>
+<meta name="description" content="A live world map with the local time in every country, state and time zone, daylight saving included. Time Travel to any date to convert meeting times. Free.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/worldclock/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
@@ -29,10 +32,15 @@
 <meta property="og:description" content="A live world map with the local time in every country, state and time zone, daylight saving included. Time Travel to any date to convert meeting times.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/worldclock/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/worldclock.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="World Clock Map: Live Time in Every Time Zone, a free tool on Adjie Brotools">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="World Clock Map: Live Time in Every Time Zone">
 <meta name="twitter:description" content="A live world map with the local time in every country, state and time zone, daylight saving included. Time Travel to any date to convert meeting times.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/worldclock.jpg">
 
 <script type="application/ld+json">
 {
@@ -44,6 +52,9 @@
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-09-25",
+  "screenshot": "https://tool.adjiebrotots.com/og/worldclock.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
   "keywords": "world clock map, time zone map, what time is it in, time zone converter, meeting time converter, daylight saving time, world time map, time difference",
   "author": {
@@ -115,7 +126,7 @@
       </div>
     </section>
     <nav class="wc-nav">
-      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" title="Other tools"><span aria-hidden="true">←</span><span class="wc-nav-label">&nbsp;Other Tools</span></a>
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back" title="Other tools"><span aria-hidden="true">←</span><span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
       <button class="btn-theme" id="themeToggle">🌙 Dark</button>
     </nav>
   </div>
@@ -178,7 +189,7 @@
     <footer class="wc-foot">
       <button class="wc-foot-peek" id="footPeek" type="button">© Credits &amp; licence ↓</button>
       <div class="wc-foot-body" id="footBody">
-      <span class="wc-foot-item"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></span>
+      <span class="wc-foot-item footer-links"><a href="../disclaimer/">Disclaimer</a> · <a href="../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-09-25">25 September 2026</time></span></span>
       <span class="wc-foot-item"><img loading="lazy" src="../logos/gpl.png" alt="GNU GPL"> Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a></span>
       <span class="wc-foot-item"><img loading="lazy" src="../logos/australian.png" alt="Australian flag"><img loading="lazy" src="../logos/indonesian.png" alt="Indonesian badge"> Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
       <span class="wc-foot-item">Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors via <a href="https://github.com/evansiroky/timezone-boundary-builder" target="_blank" rel="noopener">timezone-boundary-builder</a>, <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a></span>

@@ -14,7 +14,8 @@ function lfResults() {
 }
 window.__TOUR = {
   seenKey: 'loadflow-tour-v1-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

@@ -441,15 +441,20 @@ function getDefaultFxRate(fromCurr, toCurr){
 // customRate: fromCurr per toCurr (null = use DB).
 // Returns null when no honest estimate exists (a missing index or a missing FX
 // rate) so the caller renders "—" instead of a fabricated number.
+// An indexed estimate is a ratio of local prices, so it rides the rate the
+// indices were priced at, never the custom rate, exactly as Simple mode's does
+// (see the FX SHOCK note below). A category with no index (remittance, travel)
+// is money crossing the border, so it takes the custom rate when there is one.
+// The custom rate also stands in when the dataset has no rate for one of the
+// two currencies, since some rate beats no estimate.
 function convertExpense(amount, fromCity, toCity, indexKey, customRate){
   if(!fromCity||!toCity)return null;
   if(!amount)return 0;
   const fi=getIdx(fromCity,indexKey), ti=getIdx(toCity,indexKey);
   if(fi==null||ti==null||fi<=0)return null;
-  if(customRate!=null&&customRate>0){
-    return amount/customRate*(ti/fi);
-  }
   const fr=getRate(fromCity.currency), tr=getRate(toCity.currency);
+  const custom=customRate!=null&&customRate>0;
+  if(custom&&(indexKey==='currency_only'||!fr||!tr))return amount/customRate*(ti/fi);
   if(!fr||!tr)return null;
   return amount/fr*(ti/fi)*tr;
 }
@@ -1804,9 +1809,12 @@ function wireDetail(fromCity,toCities){
   });
 }
 
+// Every Detailed edit redraws through here, so What this assumes is rebuilt
+// with the table rather than left describing the rows as they stood before.
 function renderDetailArea(){
   const area=document.getElementById('analysisArea');
   renderDetailed(area);
+  renderAssumptions();
 }
 
 // ═══════════════════════════════════════════════════════════

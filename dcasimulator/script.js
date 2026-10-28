@@ -2432,11 +2432,13 @@ async function prepareRun(secs, startDate, endDate){
   // Ticker: assign cached slice for the selected range.
   for(const sec of secs){
     if(sec.type==='custom'){
-      // Seed on the asset's identity only (name + return + volatility) so its
-      // simulated price path is stable across DCA styles/amounts — otherwise
-      // comparing two styles would compare two different price histories. Matches
-      // the portfolio tool's seeding.
-      const secSeed = deriveSeed(currentRandomSeed, `${sec.name}|${sec.returnPct}|${sec.stdPct}`);
+      // Seed on the asset's identity only (its pool name + return + volatility)
+      // so its simulated price path is stable across DCA styles/amounts and
+      // scenario names — otherwise comparing two styles, or renaming a
+      // scenario, would compare two different price histories. Matches the
+      // portfolio tool's seeding. A scenario saved before simName existed
+      // names its asset by its own name, as the editor's migration does.
+      const secSeed = deriveSeed(currentRandomSeed, `${sec.simName||sec.name}|${sec.returnPct}|${sec.stdPct}`);
       const secRng = createSeededRng(secSeed);
       sec.priceData = generateGBMPrices(startDate, endDate, sec.returnPct, sec.stdPct, 100, secRng);
       sec.loaded=true;

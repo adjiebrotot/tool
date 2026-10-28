@@ -14,6 +14,12 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/borrowingcapacity/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/canvasbuilder/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -26,8 +32,20 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/capacity-expansion-planner/guides/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/costofliving-comparator/</loc>
     <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/costofliving-comparator/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -42,6 +60,12 @@
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/dcasimulator/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/dcasimulator/portfolio/</loc>
@@ -74,6 +98,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/ed-uc-simulator/guides/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/eggprice/</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
@@ -86,10 +116,22 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/financialfreedom/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/financingvscash/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/financingvscash/loan-types/</loc>
@@ -116,6 +158,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/loadflow-simulator/guides/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/mdtopdf/</loc>
     <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -131,6 +179,12 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/pisahvsgabung/"/>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/pisahvsgabung/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/pisahvsgabung/id/</loc>
     <lastmod>2026-06-12</lastmod>
     <changefreq>monthly</changefreq>
@@ -141,31 +195,535 @@
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/powerfactory-scripter/builder/</loc>
-    <lastmod>2026-10-22</lastmod>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/samples/</loc>
-    <lastmod>2026-06-06</lastmod>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/guides/</loc>
+    <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/legacy/samples/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/contingency-analysis/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/getting-started/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/hosting-capacity/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/load-flow/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/parameter-sweep/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/rms-emt-simulation/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/python/short-circuit/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmArea/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmAsm/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmAsmsc/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBbone/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBmu/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBoundary/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmBranch/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmCabsys/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmComp/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmCoup/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmDcu/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmDsl/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFeeder/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFile/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmFilter/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmGenstat/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmGndswt/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmIac/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLne/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLnesec/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLod/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLodlv/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmLodmv/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmMdl/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNec/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmNet/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmPvsys/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRecmono/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRelay/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmRes/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSecctrl/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmShnt/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSind/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmStactrl/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSubstat/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSvs/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmSym/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTerm/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTow/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTr2/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTr3/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTr4/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrain/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrb/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrfstat/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmTrmult/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVac/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVoltreg/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVsc/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmVscmono/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmXnet/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmZone/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/ElmZpu/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtGen/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtLod/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtOutage/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtParam/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtShc/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtSwitch/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtSym/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/EvtTap/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/StaPll/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypAsm/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypGeo/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLne/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLod/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypLodlv/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSwitch/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypSym/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTow/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr2/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr3/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/powerfactory-scripter/reference/TypTr4/</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://tool.adjiebrotots.com/privacy/</loc>
-    <lastmod>2026-10-21</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/privacy/id/</loc>
-    <lastmod>2026-10-21</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -183,6 +741,12 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
     <xhtml:link rel="alternate" hreflang="id" href="https://tool.adjiebrotots.com/rentvsownhouse/id/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tool.adjiebrotots.com/rentvsownhouse/"/>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/rentvsownhouse/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/rentvsownhouse/id/</loc>
@@ -228,6 +792,12 @@
     <lastmod>2026-10-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tool.adjiebrotots.com/valuateeverything/guides/</loc>
+    <lastmod>2026-10-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tool.adjiebrotots.com/videotogif/</loc>

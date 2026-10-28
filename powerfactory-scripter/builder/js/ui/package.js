@@ -7,6 +7,8 @@
 //   <name>.py          the script
 //   <name>.json        the workflow, to open again in the Builder
 //   <data files>       every attached file, beside the script, under the name the script reads
+//   fonts/             DM Sans and its licence, when the script draws graphs in it (the graph
+//                      style's default): outputs.py adds every font in this folder
 //   README.txt         how to run it, and what is in it
 //
 // The data files sit in the root rather than in a folder because read_table looks for a plain
@@ -16,6 +18,29 @@ import { makeZip, base64ToBytes, hasDeflate } from '../core/zip.js';
 import { serialize } from '../core/workflow.js';
 import { fileNameFor } from '../core/codegen.js';
 import { filesOf } from './ops.js';
+import { styleOf } from '../core/graphstyle.js';
+
+// The fonts a script that draws in DM Sans takes along (runtime/fonts, from the site's own
+// DM Sans; SIL Open Font License, which travels with them).
+export const GRAPH_FONTS = ['DMSans-Regular.ttf', 'DMSans-Bold.ttf', 'OFL.txt'];
+
+// Does this script draw graphs in DM Sans? (Only then are the fonts worth packing.)
+export function needsGraphFonts(wf, gen) {
+  return !!(gen && Array.isArray(gen.helpers) && gen.helpers.includes('plot_common')) && styleOf(wf).font === 'DM Sans';
+}
+
+// The font files as zip entries; a font that does not load is left out (the script then draws
+// in the computer's own sans serif).
+export async function graphFontEntries(fetcher = (u) => fetch(u)) {
+  const out = [];
+  for (const f of GRAPH_FONTS) {
+    try {
+      const r = await fetcher('runtime/fonts/' + f);
+      if (r && r.ok) out.push({ name: 'fonts/' + f, bytes: new Uint8Array(await r.arrayBuffer()) });
+    } catch (e) { /* offline: the graphs fall back to another font */ }
+  }
+  return out;
+}
 
 export const zipNameFor = (wf) => fileNameFor(wf).replace(/\.py$/, '') + '.zip';
 
@@ -38,7 +63,7 @@ export function packagedFiles(wf) {
   return out;
 }
 
-function readme(wf, pyName, jsonName, data, problems) {
+function readme(wf, pyName, jsonName, data, problems, fonts) {
   const L = [];
   L.push(`${wf.name || 'PowerFactory workflow'} - study package`);
   L.push('='.repeat(Math.min(72, (wf.name || 'PowerFactory workflow').length + 16)));
@@ -51,6 +76,7 @@ function readme(wf, pyName, jsonName, data, problems) {
   L.push(`  ${pyName}  the script: run it with the Python that comes with PowerFactory`);
   L.push(`  ${jsonName}  the workflow itself: open it again with the Builder's Open button`);
   for (const d of data) L.push(`  ${d.name}  a data file the script reads`);
+  if (fonts) L.push('  fonts/  DM Sans, the font the graphs are drawn in (SIL Open Font License, fonts/OFL.txt)');
   L.push('  README.txt  this file');
   L.push('');
   L.push('How to run it');
@@ -86,16 +112,18 @@ function readme(wf, pyName, jsonName, data, problems) {
 
 // Build the package. gen = the generator's result (code + problems), wf = the workflow with its
 // view. Returns { blob, name, files: [names], note } — `note` is what to tell the reader.
-export async function buildPackage(wf, gen, blocking) {
+export async function buildPackage(wf, gen, blocking, opts = {}) {
   const pyName = fileNameFor(wf);
   const jsonName = pyName.replace(/\.py$/, '') + '.json';
   const data = packagedFiles(wf);
   const obj = serialize(wf);
+  const fonts = needsGraphFonts(wf, gen) ? await graphFontEntries(opts.fetch) : [];
   const entries = [
     { name: pyName, text: gen.code },
     { name: jsonName, text: JSON.stringify(obj, null, 2) + '\n' },
     ...data.map(d => ({ name: d.name, bytes: d.bytes })),
-    { name: 'README.txt', text: readme(wf, pyName, jsonName, data, blocking) },
+    ...fonts,
+    { name: 'README.txt', text: readme(wf, pyName, jsonName, data, blocking, fonts.some(f => /\.ttf$/.test(f.name))) },
   ];
   const blob = await makeZip(entries);
   return {

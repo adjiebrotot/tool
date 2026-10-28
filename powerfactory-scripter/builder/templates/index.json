@@ -41,6 +41,24 @@
       "title": "Critical clearing time",
       "desc": "Searches the longest fault duration at a busbar for which the rotor angle spread of the generators stays below a limit, by halving the gap.",
       "file": "cct.json"
+    },
+    {
+      "id": "hosting-capacity",
+      "title": "Hosting capacity at every busbar",
+      "desc": "At each busbar, searches the largest test generator output that keeps lines, transformers and voltages within limits, by halving the gap.",
+      "file": "hosting-capacity.json"
+    },
+    {
+      "id": "pv-curve",
+      "title": "PV curve by load scaling",
+      "desc": "Scales every load up in steps and tables the lowest busbar voltage until the load flow no longer converges: the nose of the PV curve.",
+      "file": "pv-curve.json"
+    },
+    {
+      "id": "rms-batch",
+      "title": "RMS runs for several fault durations",
+      "desc": "Runs one RMS simulation per fault duration at a busbar, tables the peak rotor angle spread of the generators and draws every run on one graph.",
+      "file": "rms-batch.json"
     }
   ]
 }

@@ -232,3 +232,5 @@ h3{font-size:.8125rem;color:var(--muted);font-weight:600;margin-bottom:12px;font
 .money-bar{display:flex;justify-content:flex-end;margin:0 0 14px;}
 .money-bar .money-toggle{border-top:none;padding:6px 12px;gap:10px;flex:0 0 auto;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-subtle);}
 .money-bar .money-toggle .toggle-label{font-size:.84rem;flex:0 1 auto;}
+/* A plan that runs out of cash is not compared: only the answer card, saying why, shows. */
+main.rvo-blocked > :not(.verdict){display:none !important;}

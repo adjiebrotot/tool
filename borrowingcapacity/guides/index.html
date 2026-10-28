@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the Borrowing Capacity Calculator</title>
+<meta name="description" content="A visual guide to the Borrowing Capacity Calculator: enter income, debts and the loan, see which of the four caps binds and how the bank's test works.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/borrowingcapacity/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the Borrowing Capacity Calculator">
+<meta property="og:description" content="The real tool, running live: how an Australian lender sizes a home loan, from income shading, tax and HEM to the APRA buffer, and which of serviceability, DTI, LVR and the deposit sets the limit.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/borrowingcapacity/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/borrowingcapacity.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Borrowing Capacity Calculator (Australia), a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to use the Borrowing Capacity Calculator">
+<meta name="twitter:description" content="The real tool, running live: how an Australian lender sizes a home loan, from income shading, tax and HEM to the APRA buffer, and which of serviceability, DTI, LVR and the deposit sets the limit.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/borrowingcapacity.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the Borrowing Capacity Calculator",
+  "url": "https://tool.adjiebrotots.com/borrowingcapacity/guides/",
+  "description": "Work out how much an Australian lender would lend you: the serviceability test after tax, HEM living costs, commitments and the APRA buffer, then the debt-to-income, loan-to-value and deposit caps.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Borrowing Capacity Calculator (Australia)",
+    "url": "https://tool.adjiebrotots.com/borrowingcapacity/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Start from an example", "text": "Pick a Quick Start: a Sydney finance associate, a Melbourne couple, a single Perth buyer, a Brisbane first home buyer or an Adelaide tradie. One click fills every tab." },
+    { "@type": "HowToStep", "name": "Enter your own figures", "text": "Work through the five tabs in a lender's order: Income, Household, Debts, Loan and Purchase. Each starts Simple and opens to Detailed for a lender's own settings." },
+    { "@type": "HowToStep", "name": "Read the answer", "text": "The sentence at the top gives the loan and whether it buys the home you priced. The binding constraint names which of the four caps sets the limit, and the build-up shows the working." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Borrowing Capacity Calculator", "item": "https://tool.adjiebrotots.com/borrowingcapacity/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the Borrowing Capacity Calculator", "item": "https://tool.adjiebrotots.com/borrowingcapacity/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Borrowing Capacity</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 10.5 12 4l9 6.5"/><path stroke="var(--accent)" d="M5 10.5V20h14v-9.5"/><path stroke="var(--accent2)" d="M9 17v-3M12 17v-5M15 17v-2"/></svg>How to use the Borrowing Capacity Calculator</h1>
+      <p class="gd-lead">Enter what you earn, owe and spend, and see what an Australian lender would likely lend you, and which of its four caps stops it. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#screen">Start with the screen</a>
+        <a class="gd-skip" href="#how">How the numbers work</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Start from an example</h3>
+          <p>A <strong>Quick Start</strong> fills every tab with a worked Australian borrower. Change any figure over the top of it.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Enter your own</h3>
+          <p>Five tabs in a lender's order: <strong>Income</strong>, <strong>Household</strong>, <strong>Debts</strong>, <strong>Loan</strong>, <strong>Purchase</strong>. Each opens <strong>Simple</strong>; <strong>Detailed</strong> shows a lender's own settings.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Read the answer</h3>
+          <p>The sentence at the top, then <strong>Borrowing capacity</strong> and the <strong>Binding constraint</strong>: the smallest of four caps, and the one to lift first.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> Every figure is worked out in your browser, in the eight steps a lender's credit engine runs. This guide is general information, not financial advice, and the tool is not a pre-approval.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#income">Income</a>
+        <a href="#household">Household</a>
+        <a href="#debts">Debts</a>
+        <a href="#loan">Loan</a>
+        <a href="#purchase">Purchase</a>
+        <a href="#results">Read the answer</a>
+        <a href="#share">Save and share</a>
+        <a href="#how">How the numbers work</a>
+        <a href="#worked">Worked example</a>
+        <a href="#sensitivity">What moves it most</a>
+        <a href="#limits">What it leaves out</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the answer beside them, the chart and the working under it. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1880" role="img" aria-label="The Borrowing Capacity Calculator with the Couple, Melbourne example: the inputs on the left, the answer and six figures on the right, the chart of every cap across incomes, and the four caps and the working under it.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:9.79%;--w:29.69%;--h:32.93%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:32.97%;--y:9.79%;--w:64.38%;--h:20.0%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:32.97%;--y:30.74%;--w:64.38%;--h:30.85%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:32.97%;--y:63.4%;--w:64.38%;--h:35.3%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then five tabs: <strong>Income</strong>, <strong>Household</strong>, <strong>Debts</strong>, <strong>Loan</strong> and <strong>Purchase</strong>. Warnings appear at the foot. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>The answer</h3>
+            <p>One sentence, then six figures: <strong>Borrowing capacity</strong>, <strong>Binding constraint</strong>, <strong>Max purchase price</strong>, <strong>Assessed repayment</strong>, <strong>Income cover (NSR)</strong> and <strong>Left each month (UMI)</strong>.</p>
+          </li>
+          <li data-b="3">
+            <h3>The chart</h3>
+            <p><strong>Capacity across the income range</strong>: all four caps from 0.4 to 1.6 times your income, your scenario at the centre. <strong>Share</strong> and ⟳ sit above it.</p>
+          </li>
+          <li data-b="4">
+            <h3>The working</h3>
+            <p><strong>The four caps</strong>, then <strong>Serviceability build-up</strong>, <strong>Income shading</strong>, <strong>Monthly commitments</strong> and <strong>What this assumes</strong>, each behind a chevron.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Tour</strong> replays a one minute walk through the tool, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Five worked borrowers: <strong>Finance Bro, Sydney</strong> on $230,000 plus a bonus, a <strong>Couple, Melbourne</strong> with two children, <strong>Average Man, Perth</strong> on $110,000, a <strong>First home buyer, Brisbane</strong> with a thin deposit, and a <strong>Self-employed tradie, Adelaide</strong>. One click resets every tab and fills it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick an example</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the answer has the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick an example</h3><p>Hover a button to read who it is. A click fills every tab and the answer follows at once.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Every example can afford its home.</strong> Each clears its price with a little to spare, so the first nudge can tip it over. The first home buyer gets there only because Lenders Mortgage Insurance is on.</li>
+        <li><strong>No Reset button.</strong> Any Quick Start clears the form first, so it is the way back to a clean start.</li>
+      </ul>
+    </section>
+
+    <!-- Income -->
+    <section class="gd-sec card" id="income" aria-labelledby="income-h">
+      <h2 id="income-h">Income</h2>
+      <p class="gd-sub">What you earn, and how much of it a lender counts. <strong>Simple</strong> takes one gross figure a year, counted in full. <strong>Detailed</strong> asks stream by stream, each with its <strong>Shading</strong>: the share a lender counts.</p>
+      <div class="gd-demo" data-demo="income" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Finance Bro, Sydney: the bonus shaded to 50%</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Simple or Detailed</h3><p>The <strong>Detail</strong> switch. Finance Bro opens Detailed: $230,000 base salary at 100%, a $90,000 bonus at 80%.</p></li>
+          <li><h3>Shade each stream</h3><p>The box beside each amount. A lender taking only half the bonus cuts capacity from $906,340 to $624,187, while the tax stays on all of it.</p></li>
+          <li><h3>Anything else you receive</h3><p>Tick <strong>Rent, dividends or an investment property</strong> or <strong>Family Tax Benefit, pension or child support</strong> and their fields appear.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>I earn as.</strong> <strong>Employee</strong> or <strong>Self-employed</strong> picks which side of the form counts. Self-employed asks for the two year average profit after tax (NPAT) and add-backs.</li>
+        <li><strong>An unticked box means it does not exist.</strong> Its fields are zeroed, so a figure left in a hidden group never leaks into the answer.</li>
+        <li><strong>Simple and Detailed hand the figure across.</strong> Detailed opens on streams that add up to the Simple figure, base salary taking the difference, and Simple reopens on what the streams add up to.</li>
+      </ul>
+    </section>
+
+    <!-- Household -->
+    <section class="gd-sec card" id="household" aria-labelledby="household-h">
+      <h2 id="household-h">Household</h2>
+      <p class="gd-sub">Who is applying, who depends on you and where you live. It sets the tax, through two taxpayers or one, and the living costs a lender assumes, through the HEM benchmark.</p>
+      <div class="gd-demo" data-demo="household" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Couple, Melbourne: the income split and HEM</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Who is applying</h3><p><strong>Adults in the household</strong>, then the <strong>Second applicant's share of income</strong>. At 0% the couple's $185,000 is taxed in one name: $12,980 more tax a year and $135,643 less capacity.</p></li>
+          <li><h3>Living costs and HEM</h3><p>Under <strong>Declared living expenses</strong> a note says whether HEM is used instead. Declare $6,000 a month, above HEM, and it counts: capacity falls to $601,092.</p></li>
+          <li><h3>Tax and study loan</h3><p><strong>Resident tax year</strong> sets the lowest bracket. A study loan is deducted as tax or counted as a commitment; the same dollars either way.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>City</strong> scales HEM by local living costs without housing, Perth at 100.</li>
+        <li><strong>Private hospital cover.</strong> Off, and the Medicare levy surcharge applies once income passes its threshold.</li>
+      </ul>
+    </section>
+
+    <!-- Debts -->
+    <section class="gd-sec card" id="debts" aria-labelledby="debts-h">
+      <h2 id="debts-h">Debts</h2>
+      <p class="gd-sub">What you already owe and will keep paying. Each repayment comes out of the income the new loan could use; each balance counts against the debt-to-income cap.</p>
+      <div class="gd-demo" data-demo="debts" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Average Man, Perth: a car loan, then the card closed</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Tick what you have</h3><p>Each box opens its group. A $600 a month car loan takes capacity from $416,250 to $341,009.</p></li>
+          <li><h3>A card counts at its limit</h3><p><strong>Credit card and line of credit limits</strong>: the limit, not the balance. Closing the $8,000 card lifts capacity to $379,131.</p></li>
+          <li><h3>Detailed</h3><p>Shows the <strong>Assessed monthly rate</strong> on cards (3.0% to 3.8%) and the term and type of other home loans.</p></li>
+          <li><h3>After settlement</h3><p><strong>Occupancy</strong>, any rent you keep paying, and the <strong>Strata, rates and insurance</strong> on the new home.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Other home and investment loans</strong> are reassessed at the higher of their rate plus the buffer and the lender floor, as principal and interest over the term left.</li>
+        <li><strong>Closing at settlement.</strong> A facility you pay out at settlement comes off commitments, and its balance off the debt-to-income cap.</li>
+      </ul>
+    </section>
+
+    <!-- Loan -->
+    <section class="gd-sec card" id="loan" aria-labelledby="loan-h">
+      <h2 id="loan-h">Loan</h2>
+      <p class="gd-sub">The rate you are offered and the term. A lender tests you at a higher rate, so the note under the fields says what it is and what else it insists on.</p>
+      <div class="gd-demo" data-demo="loan" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Couple, Melbourne: 6.40%, interest only, the buffer</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Rate and term</h3><p><strong>Product rate offered</strong> and <strong>Loan term</strong>. At 6.40% instead of 5.90% the couple is tested at 9.40% and capacity falls to $657,222.</p></li>
+          <li><h3>Interest only to start</h3><p>The test runs over the years left after it ends. Five years of it take capacity to $632,057.</p></li>
+          <li><h3>Lender policy</h3><p>Detailed shows the <strong>APRA buffer</strong>, the <strong>Lender floor</strong>, <strong>Minimum left each month (UMI)</strong> and <strong>Minimum income cover (NSR)</strong>.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The assessment rate</strong> is the higher of the product rate plus the buffer (3.00%) and the floor (5.50%).</li>
+      </ul>
+    </section>
+
+    <!-- Purchase -->
+    <section class="gd-sec card" id="purchase" aria-labelledby="purchase-h">
+      <h2 id="purchase-h">Purchase</h2>
+      <p class="gd-sub">The home, the deposit and the costs of buying it. This tab sets three of the four caps: debt to income, loan to value and the deposit.</p>
+      <div class="gd-demo" data-demo="purchase" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">First home buyer, Brisbane: LMI switched off</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Price, deposit and costs</h3><p><strong>Purchase price</strong>, <strong>Deposit funds</strong>, <strong>Stamp duty</strong> and <strong>Other purchase costs</strong>. The note under the deposit says what is left after costs.</p></li>
+          <li><h3>Lenders Mortgage Insurance</h3><p>On, the lender goes to 95% of the price. Off, it stops at 80%, the $66,000 deposit binds, and capacity falls from $426,671 to $264,000.</p></li>
+          <li><h3>Detailed: LVR and DTI</h3><p><strong>Maximum LVR</strong>, the <strong>DTI cap</strong> and its <strong>Income basis</strong>, for a lender stricter than the usual.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>An amount or a percentage.</strong> <strong>Deposit funds</strong> as an amount is cash in the bank, with stamp duty and costs paid out of it first. As a percentage of the price it is the down payment, with the costs on top. Switching restates the figure, so the answer stays put.</li>
+        <li><strong>Bank valuation</strong> (Detailed). The loan to value cap uses the lower of price and valuation.</li>
+      </ul>
+    </section>
+
+    <!-- Results -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">Read the answer</h2>
+      <p class="gd-sub">One sentence, six figures, a chart of every cap, then the working behind each.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Couple, Melbourne: the answer and the working</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The answer</h3><p>What a lender would likely lend, whether that buys the home you entered, and which cap sets the limit.</p></li>
+          <li><h3>Six figures</h3><p><strong>Binding constraint</strong> names the cap and how far the next one sits above it. NSR and UMI say how tight it is.</p></li>
+          <li><h3>Every cap across incomes</h3><p>Hover to read all four at any income. Your capacity is the lowest line at each point.</p></li>
+          <li><h3>The four caps</h3><p>Each limit, its headroom above the answer, and which one binds.</p></li>
+          <li><h3>The working</h3><p><strong>Serviceability build-up</strong> runs from gross income to the loan, line by line. Its chevron opens it.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Max purchase price</strong> is the capacity plus the deposit left after costs. In percentage duty mode it reads a little low: enter it as the price to converge.</li>
+        <li><strong>Warnings</strong> sit at the foot of the inputs: a surplus that covers no repayment, an LVR above 80% without LMI, a debt-to-income ratio past 6, an NSR under its minimum.</li>
+        <li><strong>What this assumes</strong> lists every figure the answer rests on, in words, for the scenario on screen.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your figures in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open, Share and CSV</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write every tab to a file, and read one back.</p></li>
+          <li><h3>Share the chart</h3><p>SVG, PNG, a copy to the clipboard, a link that opens the tool on your figures, or an embed for a web page.</p></li>
+          <li><h3>Export the caps</h3><p><strong>⬇ CSV</strong> saves the results, the four caps and the whole income sweep behind the chart.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A link carries your figures.</strong> Nothing is uploaded, but anyone with the link can read them.</li>
+      </ul>
+    </section>
+
+    <!-- ================================================================== -->
+    <div class="gd-part" id="how">
+      <span class="gd-part-k">Part 2</span>
+      <h2>How the numbers work</h2>
+      <p>How an Australian lender sizes a home loan, as this tool does it: every field, where it enters the sums, and what moving it does to the answer.</p>
+    </div>
+
+    <!-- The model -->
+    <section class="gd-sec card" id="model" aria-labelledby="model-h">
+      <h2 id="model-h">The model in one picture</h2>
+      <p class="gd-sub">A lender asks four separate questions and lends the smallest answer. Can your income repay it? Is the total debt a sane multiple of income? Is the loan a safe share of the property? Does your deposit reach that share?</p>
+      <div class="gd-eq"><span class="gd-eq-l">Borrowing capacity</span> <var>C</var> = min( <var>L</var><sub>serv</sub>, <var>L</var><sub>DTI</sub>, <var>L</var><sub>LVR</sub>, <var>L</var><sub>dep</sub> )</div>
+      <div class="gd-eq"><var>L</var><sub>serv</sub> = <var>R</var> × <span class="gd-frac"><span>1 − (1 + <var>i</var>)<sup>−<var>n</var></sup></span><span><var>i</var></span></span> ÷ (1 + <var>m</var>)<small>serviceability</small></div>
+      <div class="gd-eq"><var>R</var> = <var>N</var> − <var>E</var> − <var>K</var> − <var>U</var><small>the largest new repayment, a month</small></div>
+      <ul class="gd-where">
+        <li><var>N</var>net income a month: counted income less tax</li>
+        <li><var>E</var>living costs: the higher of declared and HEM</li>
+        <li><var>K</var>existing commitments a month</li>
+        <li><var>U</var>the minimum left each month (UMI)</li>
+        <li><var>i</var>the assessment rate ÷ 12</li>
+        <li><var>n</var>months tested: the term, less any interest only</li>
+        <li><var>m</var>the LMI premium, when it is capitalised</li>
+        <li><var>L</var><sub>DTI</sub>, <var>L</var><sub>LVR</sub>, <var>L</var><sub>dep</sub>the three hard caps (Purchase)</li>
+      </ul>
+      <p class="gd-sub" style="margin-top:16px">Serviceability turns a monthly surplus into a loan: the present value of the repayment over the term, at the rate the lender tests you at. At 8.90% over 30 years every $1 a month supports $125.40 of loan, so every $100 a month of commitments costs about $12,540 of capacity.</p>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Quick Start</th><th>Serviceability</th><th>Debt to income</th><th>Loan to value</th><th>Deposit</th><th>Binds</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Finance Bro, Sydney</th><td data-l="Serviceability"><strong>$906,340</strong></td><td data-l="Debt to income">$1,853,000</td><td data-l="Loan to value">$1,080,000</td><td data-l="Deposit">$1,955,040</td><td data-l="Binds">Serviceability</td></tr>
+          <tr><th scope="row">Couple, Melbourne</th><td data-l="Serviceability"><strong>$686,999</strong></td><td data-l="Debt to income">$1,095,000</td><td data-l="Loan to value">$736,000</td><td data-l="Deposit">$983,072</td><td data-l="Binds">Serviceability</td></tr>
+          <tr><th scope="row">Average Man, Perth</th><td data-l="Serviceability"><strong>$416,250</strong></td><td data-l="Debt to income">$652,000</td><td data-l="Loan to value">$448,000</td><td data-l="Deposit">$621,568</td><td data-l="Binds">Serviceability</td></tr>
+          <tr><th scope="row">First home buyer, Brisbane</th><td data-l="Serviceability"><strong>$426,671</strong></td><td data-l="Debt to income">$715,000</td><td data-l="Loan to value">$456,000</td><td data-l="Deposit">$1,254,000</td><td data-l="Binds">Serviceability</td></tr>
+          <tr><th scope="row">The same, LMI off</th><td data-l="Serviceability">$437,338</td><td data-l="Debt to income">$715,000</td><td data-l="Loan to value">$384,000</td><td data-l="Deposit"><strong>$264,000</strong></td><td data-l="Binds">Deposit</td></tr>
+          <tr><th scope="row">Self-employed tradie, Adelaide</th><td data-l="Serviceability"><strong>$541,400</strong></td><td data-l="Debt to income">$922,000</td><td data-l="Loan to value">$624,000</td><td data-l="Deposit">$1,037,048</td><td data-l="Binds">Serviceability</td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>Serviceability binds for almost every real borrower.</strong> Tested at 8.90%, income runs out well before the other caps. All five Quick Starts land at 3.0 to 3.9 times gross income, far under the 6.0 debt-to-income cap.</li>
+        <li><strong>The deposit binds when it is thin.</strong> The first home buyer's $66,000 deposit, after costs, supports $264,000 at 80% LVR (four dollars of loan for each dollar down) but $1,254,000 at 95% (nineteen). LMI is what lets the income decide.</li>
+        <li><strong>Loan to value binds on a cheap home or a strong income.</strong> Average Man sits $31,750 under it; close his $8,000 card and it takes over at $448,000.</li>
+        <li><strong>Debt to income binds only for a stricter lender.</strong> Set the couple's <strong>DTI cap</strong> to 3.5 and it does, at $632,500.</li>
+      </ul>
+    </section>
+
+    <!-- Income maths -->
+    <section class="gd-sec card" id="m-income" aria-labelledby="m-income-h">
+      <h2 id="m-income-h">Income: what counts, and the tax on it</h2>
+      <p class="gd-sub">Two different incomes. The lender <em>counts</em> each stream at its shading. The tax office <em>taxes</em> what you actually earn. So a shaded bonus is a double hit: only part of it counts, all of it is taxed.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Counted income</span> <var>A</var> = <span class="gd-sum">Σ</span> amount × shading</div>
+      <div class="gd-eq"><span class="gd-eq-l">Net income</span> <var>N</var> = ( <var>A</var> − <var>T</var> + <var>G</var> ) ÷ 12<small>a month</small></div>
+      <div class="gd-eq"><var>T</var> = income tax per applicant − LITO + Medicare levy + surcharge + HELP<small>on taxable income <var>Y</var></small></div>
+      <ul class="gd-where">
+        <li><var>A</var>gross assessable income, a year</li>
+        <li><var>Y</var>taxable income: every taxed stream in full, plus rental profit and grossed-up dividends</li>
+        <li><var>T</var>total tax, a year (the scale is on the Household tab)</li>
+        <li><var>G</var>the negative gearing add-back: marginal rate × rental loss</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Detail</th><td data-l="What it is">Simple: one gross figure. Detailed: each stream with its shading.</td><td data-l="In the maths">Simple sets base salary (or NPAT) to the one figure at 100% and every other stream to nil.</td><td data-l="Raise it"><span class="gd-eff">which fields count</span></td></tr>
+          <tr><th scope="row">I earn as</th><td data-l="What it is">Employee or Self-employed.</td><td data-l="In the maths">The side not chosen is zeroed.</td><td data-l="Raise it"><span class="gd-eff">which fields count</span></td></tr>
+          <tr><th scope="row">Total employment income</th><td data-l="What it is">Simple view: gross pay a year before tax, without employer super. Self-employed, it reads <strong>Business income you draw on</strong>.</td><td data-l="In the maths">In <var>A</var> at 100% and in <var>Y</var> in full.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Base salary (PAYG)</th><td data-l="What it is">Gross base salary, with its shading (100%).</td><td data-l="In the maths">Amount × shading in <var>A</var>; full amount in <var>Y</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Overtime</th><td data-l="What it is">Regular overtime, shaded 80% (100% for essential services).</td><td data-l="In the maths">As base salary.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Bonus or commission</th><td data-l="What it is">Shaded 80%; lenders use 50% to 80%.</td><td data-l="In the maths">As base salary: the shaded part is still taxed.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Allowances</th><td data-l="What it is">Non-reimbursable car, shift, travel and site allowances, shaded 80%.</td><td data-l="In the maths">As base salary.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Casual or second job</th><td data-l="What it is">Shaded 80%.</td><td data-l="In the maths">As base salary.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Two year average profit after tax (NPAT)</th><td data-l="What it is">Self-employed income, shaded 100%.</td><td data-l="In the maths">With add-backs × shading in <var>A</var>; NPAT alone in <var>Y</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Add-backs</th><td data-l="What it is">Depreciation, one-offs, extra super and wages paid to you: costs that are not cash.</td><td data-l="In the maths">In <var>A</var> at the NPAT shading; never taxed.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Shading (each stream)</th><td data-l="What it is">The share of a stream a lender counts, 0% to 100%.</td><td data-l="In the maths">Multiplies that stream in <var>A</var> only; tax is unchanged.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Rent, dividends or an investment property</th><td data-l="What it is">The box that opens the Investments group.</td><td data-l="In the maths">Unticked, rent, its costs, depreciation, dividends and the outgoings on Debts are all nil.</td><td data-l="Raise it"><span class="gd-eff">opens the group</span></td></tr>
+          <tr><th scope="row">Gross rental income</th><td data-l="What it is">Rent a year before costs, shaded 80% for vacancy and running costs.</td><td data-l="In the maths">Rent × shading in <var>A</var>. Rent less costs and depreciation is the rental profit (taxed) or loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Investment property deductible costs</th><td data-l="What it is">Interest, fees, rates, strata, insurance and repairs.</td><td data-l="In the maths">Tax only: lower the rental profit in <var>Y</var>, or deepen the loss for <var>G</var>. Never taken off the rent twice.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ tax</span></td></tr>
+          <tr><th scope="row">Depreciation (non-cash)</th><td data-l="What it is">Claimed on the investment property.</td><td data-l="In the maths">As deductible costs: lowers tax without costing cash.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ tax</span></td></tr>
+          <tr><th scope="row">Allow negative gearing add-back</th><td data-l="What it is">Some lenders add back the tax a rental loss saves (on by default).</td><td data-l="In the maths"><var>G</var> = the higher earner's marginal rate × rental loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">on: ▲ capacity</span></td></tr>
+          <tr><th scope="row">Dividends and distributions</th><td data-l="What it is">Cash received, two year average, shaded 80%.</td><td data-l="In the maths">Grossed up for franking, then × shading in <var>A</var>; the grossed-up amount is in <var>Y</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Franked portion</th><td data-l="What it is">The share carrying franking credits at the 30% company rate (100%).</td><td data-l="In the maths">Gross-up = dividends × franked share × 30 ÷ 70. Counting the credit as income is the same as taking it off the tax.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Family Tax Benefit, pension or child support</th><td data-l="What it is">The box that opens the Government and support group.</td><td data-l="In the maths">Unticked, all three are nil.</td><td data-l="Raise it"><span class="gd-eff">opens the group</span></td></tr>
+          <tr><th scope="row">Family Tax Benefit A and B</th><td data-l="What it is">Counted in full while the youngest child is under the lender's age limit.</td><td data-l="In the maths">× shading (100%) in <var>A</var>; not taxed.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Centrelink pension or DSP</th><td data-l="What it is">Age pension, DSP or carer payment (100%).</td><td data-l="In the maths">× shading in <var>A</var>; in <var>Y</var> only when taxable.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Pension is taxable</th><td data-l="What it is">Age pension is taxable; DSP below pension age is not.</td><td data-l="In the maths">Adds the pension to <var>Y</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">on: ▼ capacity</span></td></tr>
+          <tr><th scope="row">Child support received</th><td data-l="What it is">Under a court order or binding agreement (100%).</td><td data-l="In the maths">× shading in <var>A</var>; tax free.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Shading is not a tax.</strong> Finance Bro's $90,000 bonus at 80% adds $72,000 to counted income, but all $90,000 is taxed at his 47% marginal rate. At 50% shading the bonus counts as $45,000, still taxed in full, and capacity falls by $282,153.</p>
+    </section>
+
+    <!-- Household maths -->
+    <section class="gd-sec card" id="m-household" aria-labelledby="m-household-h">
+      <h2 id="m-household-h">Household: living costs and the tax scale</h2>
+      <p class="gd-sub">A lender does not trust a low expense figure. It takes the higher of what you declare and a benchmark for a household like yours, the Household Expenditure Measure (HEM). This tool builds a HEM-style benchmark from household size, income and city.</p>
+      <div class="gd-eq"><span class="gd-eq-l">HEM</span> = ( <var>b</var> + $480 × <var>d</var> ) × <span class="gd-frac"><span><var>c</var></span><span>100</span></span> × <var>f</var><small>a month</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Living costs</span> <var>E</var> = max( declared, HEM )</div>
+      <ul class="gd-where">
+        <li><var>b</var>$1,850 for one applicant, $2,750 for two</li>
+        <li><var>d</var>dependants</li>
+        <li><var>c</var>the city index, Perth = 100</li>
+        <li><var>f</var>the income band on total gross income: up to $60,000 ×1.00, $90,000 ×1.08, $130,000 ×1.18, $180,000 ×1.30, $250,000 ×1.45, above ×1.62</li>
+      </ul>
+      <ul class="gd-facts">
+        <li><strong>Income tax</strong> runs once per applicant on their share of taxable income. 2026-27: nil to $18,200, 15% to $45,000, 30% to $135,000, 37% to $190,000, 45% above. The lowest rate is 16% in 2025-26 and 14% from 2027-28.</li>
+        <li><strong>LITO</strong> is $700, less 5c a dollar above $37,500 and 1.5c above $45,000, gone by $66,667.</li>
+        <li><strong>Medicare levy</strong> is 2% of combined taxable income: nil up to $27,222 single or $45,907 for a family (plus $4,216 a dependant), phased in at 10c a dollar to 1.25 times that.</li>
+        <li><strong>Medicare levy surcharge</strong>, without hospital cover: 1%, 1.25% or 1.5% above $101,000, $118,000 or $158,000 single; $202,000, $236,000 or $316,000 for a family, plus $1,500 for each child after the first.</li>
+        <li><strong>HELP</strong> repays 15% of the higher earner's repayment income above the threshold up to $125,000, and 17% above.</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">City</th><td data-l="What it is">Living costs without housing, from the <a href="../../costofliving-comparator/">Cost of Living Comparator</a>.</td><td data-l="In the maths"><var>c</var>: Sydney 102.0, Melbourne 98.8, Brisbane 102.7, Perth 100, Adelaide 109.2, Canberra 106.1, Hobart 86.5, Gold Coast 84.3, Regional 95.0.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">dearer city: ▼ capacity</span></td></tr>
+          <tr><th scope="row">Adults in the household</th><td data-l="What it is">One or two applicants.</td><td data-l="In the maths">Two: <var>b</var> = $2,750, two taxpayers, the family Medicare and surcharge thresholds.</td><td data-l="Raise it"><span class="gd-eff">two: lower tax, higher HEM</span></td></tr>
+          <tr><th scope="row">Second applicant's share of income</th><td data-l="What it is">How taxable income splits between two applicants, 0% to 50% (50%).</td><td data-l="In the maths">The scale and LITO run on each share, and HELP on the higher earner's. Medicare and the surcharge stay on the combined figure.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">toward 50%: ▲ capacity</span></td></tr>
+          <tr><th scope="row">Dependants</th><td data-l="What it is">Children or others relying on your income, 0 to 6.</td><td data-l="In the maths">+$480 a month each in HEM before city and band; lifts the Medicare and surcharge family thresholds.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Declared living expenses</th><td data-l="What it is">Your own monthly figure, without rent, debt repayments or property outgoings.</td><td data-l="In the maths"><var>E</var> = max(declared, HEM). The note under it says which is used.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity, once above HEM</span></td></tr>
+          <tr><th scope="row">Private hospital cover</th><td data-l="What it is">On by default.</td><td data-l="In the maths">Off: surcharge = tier rate × taxable income, the tier tested on income plus any rental loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">on: no surcharge</span></td></tr>
+          <tr><th scope="row">Resident tax year</th><td data-l="What it is">2025-26, 2026-27 or 2027-28.</td><td data-l="In the maths">The lowest bracket rate: 16%, 15% or 14%.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">later year: ▲ capacity</span></td></tr>
+          <tr><th scope="row">Study loan (HELP or HECS)</th><td data-l="What it is">Deduct as tax, Treat as a commitment, or No study loan.</td><td data-l="In the maths">The same repayment in <var>T</var> or in <var>K</var>, so capacity is the same either way; only the NSR differs.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">a loan: ▼ capacity</span></td></tr>
+          <tr><th scope="row">Repayment threshold</th><td data-l="What it is">The income where HELP repayments start ($67,000).</td><td data-l="In the maths">15% of income above it to $125,000, 17% above, on the higher earner's share of taxable income plus any rental loss.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Declaring less than HEM gains nothing.</strong> The couple declare $4,800 a month, but HEM for two adults and two children in Melbourne on $185,000 is $5,315, so $5,315 is used. Cutting the declared figure changes nothing; only a figure above HEM moves the answer.</p>
+      <ul class="gd-facts">
+        <li><strong>Two taxpayers, not one.</strong> Pooling $185,000 in one name pushes it into the 37% bracket. Split 50/50 the couple pay $40,240 a year; all in one name, $53,220.</li>
+        <li><strong>A raise can lower capacity.</strong> HEM steps up at each band edge. For the couple, $181,000 of income supports $57,469 less than $180,000, because HEM jumps from $4,765 to $5,315 a month. The dips in the chart's serviceability line are these steps.</li>
+      </ul>
+    </section>
+
+    <!-- Debts maths -->
+    <section class="gd-sec card" id="m-debts" aria-labelledby="m-debts-h">
+      <h2 id="m-debts-h">Debts: commitments and existing debt</h2>
+      <p class="gd-sub">Every dollar a month already promised elsewhere is a dollar the new loan cannot use. A lender also stress tests your other debts the way it tests the new one, and counts a card at the repayment its whole limit could demand.</p>
+      <div class="gd-eq"><var>K</var> = other loans at max(<var>r</var> + buffer, floor) + 3.8% × card limits + personal + BNPL + support paid + rent + property costs − closing<small>a month, never below 0</small></div>
+      <div class="gd-eq"><var>D</var> = other loan balances + card limits + personal balances + BNPL limits − balances closing<small>debt-to-income only</small></div>
+      <ul class="gd-where">
+        <li><var>K</var>existing commitments a month, in <var>R</var></li>
+        <li><var>D</var>existing debt, in <var>L</var><sub>DTI</sub></li>
+        <li><var>r</var>an other loan's actual rate</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Detail</th><td data-l="What it is">Simple hides a lender's settings; they stay live at their defaults.</td><td data-l="In the maths">Nothing changes until a value does.</td><td data-l="Raise it"><span class="gd-eff">shows more fields</span></td></tr>
+          <tr><th scope="row">Tick what you have</th><td data-l="What it is">Six boxes: another home loan, a card, a personal loan, BNPL, support paid, a facility closing.</td><td data-l="In the maths">Unticked, that group's fields are nil.</td><td data-l="Raise it"><span class="gd-eff">opens the group</span></td></tr>
+          <tr><th scope="row">Total balance</th><td data-l="What it is">What is owed on other home and investment loans.</td><td data-l="In the maths">Re-amortised in <var>K</var>; in <var>D</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Actual rate</th><td data-l="What it is">The rate paid on it today (6.20%).</td><td data-l="In the maths">Tested at max(rate + buffer, floor): 9.20% at the defaults.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Remaining term</th><td data-l="What it is">Years left on it (25, Detailed).</td><td data-l="In the maths">The months its repayment is spread over.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Repayment type</th><td data-l="What it is">Principal and interest, or interest only (Detailed).</td><td data-l="In the maths">Interest only is tested as principal and interest over the years left after it ends.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">interest only: ▼ capacity</span></td></tr>
+          <tr><th scope="row">Interest only period left</th><td data-l="What it is">Years of interest only to run (3).</td><td data-l="In the maths">Shortens its window to term − this.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Credit card and line of credit limits</th><td data-l="What it is">The total limit, not the balance.</td><td data-l="In the maths">Limit × the assessed rate in <var>K</var>; the limit in <var>D</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Assessed monthly rate</th><td data-l="What it is">The share of the limit counted a month, 3.0% to 3.8% (3.80%, Detailed).</td><td data-l="In the maths">$10,000 of limit at 3.8% is $380 a month.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Monthly repayments (personal and car loans)</th><td data-l="What it is">What you pay a month.</td><td data-l="In the maths">In <var>K</var> as entered.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Balances outstanding</th><td data-l="What it is">What is still owed on them.</td><td data-l="In the maths">In <var>D</var> only.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ DTI cap</span></td></tr>
+          <tr><th scope="row">Monthly instalments (BNPL)</th><td data-l="What it is">Buy now pay later instalments a month.</td><td data-l="In the maths">In <var>K</var> as entered.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Total limits (BNPL)</th><td data-l="What it is">Your BNPL limits.</td><td data-l="In the maths">In <var>D</var> only.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ DTI cap</span></td></tr>
+          <tr><th scope="row">Occupancy</th><td data-l="What it is">Owner occupier, or investor still renting or boarding.</td><td data-l="In the maths">Owner: rent after settlement is nil. Investor: it counts in <var>K</var>.</td><td data-l="Raise it"><span class="gd-eff">investor: rent counts</span></td></tr>
+          <tr><th scope="row">Rent or board paid after settlement</th><td data-l="What it is">An investor's own rent, a month.</td><td data-l="In the maths">In <var>K</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Strata, rates and insurance on the new property</th><td data-l="What it is">Running costs of the home you are buying ($350 a month).</td><td data-l="In the maths">In <var>K</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Child support or maintenance paid</th><td data-l="What it is">What you pay a month.</td><td data-l="In the maths">In <var>K</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Investment property outgoings not netted off rent</th><td data-l="What it is">Only what the rent shading misses (Detailed).</td><td data-l="In the maths">In <var>K</var>. Leave it at nil if rent is shaded 70% to 80%.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Repayments being refinanced or closed</th><td data-l="What it is">Facilities paid out at settlement.</td><td data-l="In the maths">Taken off <var>K</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Balances being refinanced or closed</th><td data-l="What it is">Their balances.</td><td data-l="In the maths">Taken off <var>D</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ DTI cap</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>An unused card still costs you.</strong> The couple's $15,000 limit counts as $570 a month whether they owe on it or not, about $71,000 of capacity at the 8.90% test. Cutting a limit before applying is the cheapest lift there is.</p>
+    </section>
+
+    <!-- Loan maths -->
+    <section class="gd-sec card" id="m-loan" aria-labelledby="m-loan-h">
+      <h2 id="m-loan-h">Loan: the rate you are tested at</h2>
+      <p class="gd-sub">You may pay 5.90%, but APRA requires lenders to test that you could pay at least 3 points more, and many set a floor too. The test rate, not the rate you pay, turns the surplus into a loan.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Assessment rate</span> <var>r</var><sub>a</sub> = max( product rate + buffer, floor )<small><var>i</var> = <var>r</var><sub>a</sub> ÷ 12</small></div>
+      <div class="gd-eq"><var>n</var> = 12 × ( term − interest only years )</div>
+      <div class="gd-eq"><span class="gd-eq-l">NSR</span> = <span class="gd-frac"><span><var>N</var></span><span><var>E</var> + <var>K</var> + <var>P</var></span></span>     <span class="gd-eq-l">UMI</span> = <var>N</var> − ( <var>E</var> + <var>K</var> + <var>P</var> )<small>at the capacity</small></div>
+      <ul class="gd-where">
+        <li><var>P</var>the assessed repayment on the capacity, LMI included</li>
+        <li><var>n</var>months the new loan is tested over</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Detail</th><td data-l="What it is">Simple states the policy in a note; Detailed shows the four dials.</td><td data-l="In the maths">The dials stay live at their defaults either way.</td><td data-l="Raise it"><span class="gd-eff">shows more fields</span></td></tr>
+          <tr><th scope="row">Product rate offered</th><td data-l="What it is">The rate you would pay (5.90%).</td><td data-l="In the maths">In <var>r</var><sub>a</sub> with the buffer.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Loan term</th><td data-l="What it is">Years to repay (30).</td><td data-l="In the maths"><var>n</var>: more months, a smaller repayment per dollar.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ capacity</span></td></tr>
+          <tr><th scope="row">Interest only to start</th><td data-l="What it is">Interest only at the start of the loan.</td><td data-l="In the maths">Tested as principal and interest over the years left after it.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">on: ▼ capacity</span></td></tr>
+          <tr><th scope="row">Interest only period</th><td data-l="What it is">Years of it (5).</td><td data-l="In the maths">Comes off <var>n</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">APRA buffer</th><td data-l="What it is">Points added to the product rate, 0% to 5% (3.00%, since October 2021).</td><td data-l="In the maths">In <var>r</var><sub>a</sub>; also on other home loans.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Lender floor</th><td data-l="What it is">The lowest rate the lender tests at (5.50%).</td><td data-l="In the maths">Used only when above rate + buffer.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity, once it binds</span></td></tr>
+          <tr><th scope="row">Minimum left each month (UMI)</th><td data-l="What it is">The surplus the lender insists on after everything ($250).</td><td data-l="In the maths"><var>U</var> comes off <var>R</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Minimum income cover (NSR)</th><td data-l="What it is">The NSR the lender wants, 1.00 to 1.20 (1.00).</td><td data-l="In the maths">A pass or fail test at the capacity. It does not change the loan.</td><td data-l="Raise it"><span class="gd-eff">may fail; same capacity</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>The NSR minimum only flags.</strong> Set it to 1.10 for the couple and the tool reports a fail (their NSR is 1.02), but capacity stays $686,999. A lender with that rule would lend less; this tool sizes the loan on UMI alone.</p>
+      <ul class="gd-facts">
+        <li><strong>Rate and buffer are one number to the test.</strong> One point on either moves the answer by the same amount, because only their sum counts. The floor matters only when it is higher, which at 5.50% it is not.</li>
+        <li><strong>What you would really pay.</strong> The couple's capacity costs $5,478 a month at 8.90%, the test, and $4,075 at the 5.90% they would pay. The gap is the buffer for rate rises.</li>
+      </ul>
+    </section>
+
+    <!-- Purchase maths -->
+    <section class="gd-sec card" id="m-purchase" aria-labelledby="m-purchase-h">
+      <h2 id="m-purchase-h">Purchase: the three hard caps</h2>
+      <p class="gd-sub">Serviceability asks what you can repay. These three ask what is prudent to lend at all, whatever your income: a multiple of income, a share of the property, and what your deposit reaches.</p>
+      <div class="gd-eq"><var>L</var><sub>DTI</sub> = DTI cap × income − <var>D</var></div>
+      <div class="gd-eq"><var>L</var><sub>LVR</sub> = max LVR × min( price, valuation )</div>
+      <div class="gd-eq"><var>S</var> = savings − ( stamp duty + other costs )<small>or price × deposit %</small></div>
+      <div class="gd-eq"><var>L</var><sub>dep</sub> = <var>S</var> × <span class="gd-frac"><span>max LVR</span><span>1 − max LVR</span></span>     <span class="gd-eq-l">Max purchase price</span> = <var>C</var> + <var>S</var></div>
+      <ul class="gd-where">
+        <li><var>D</var>existing debt (Debts)</li>
+        <li><var>S</var>the deposit left after purchase costs</li>
+        <li>income: gross unshaded, or assessable (shaded)</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Detail</th><td data-l="What it is">Simple asks no LVR or valuation: 80%, or 95% with LMI, and the price.</td><td data-l="In the maths">Detailed opens on the figures Simple was using.</td><td data-l="Raise it"><span class="gd-eff">shows more fields</span></td></tr>
+          <tr><th scope="row">Purchase price</th><td data-l="What it is">What you would pay.</td><td data-l="In the maths">In <var>L</var><sub>LVR</sub>; percentage duty and a percentage deposit scale with it.</td><td data-l="Raise it"><span class="gd-eff">▲ LVR cap, ▲ duty</span></td></tr>
+          <tr><th scope="row">Bank valuation</th><td data-l="What it is">The lender's value (Detailed).</td><td data-l="In the maths">The LVR cap uses the lower of price and valuation.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ LVR cap, up to the price</span></td></tr>
+          <tr><th scope="row">Deposit funds</th><td data-l="What it is">Enter an amount (cash, costs paid from it) or Percentage of price (the down payment, costs on top).</td><td data-l="In the maths"><var>S</var>, so <var>L</var><sub>dep</sub>; and the max purchase price.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ deposit cap</span></td></tr>
+          <tr><th scope="row">Stamp duty</th><td data-l="What it is">Percentage of price (4.00%) or Enter an amount. Not worked out by state.</td><td data-l="In the maths">Comes off savings in <var>S</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ deposit cap</span></td></tr>
+          <tr><th scope="row">Other purchase costs</th><td data-l="What it is">Conveyancing, transfer, building and pest ($4,000).</td><td data-l="In the maths">Comes off savings in <var>S</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ deposit cap</span></td></tr>
+          <tr><th scope="row">Lenders Mortgage Insurance</th><td data-l="What it is">Lets the lender go past 80% LVR, to 95%.</td><td data-l="In the maths">Simple: max LVR 95%. The premium is added to the loan, so <var>L</var><sub>serv</sub> ÷ (1 + <var>m</var>).</td><td data-l="Raise it"><span class="gd-eff">on: ▲ LVR and deposit caps, ▼ serviceability</span></td></tr>
+          <tr><th scope="row">LMI premium</th><td data-l="What it is">As a share of the loan (2.50%).</td><td data-l="In the maths"><var>m</var>, serviced on top of the loan.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ capacity</span></td></tr>
+          <tr><th scope="row">Maximum LVR</th><td data-l="What it is">The largest loan as a share of the value, 50% to 95% (80%, Detailed).</td><td data-l="In the maths">In <var>L</var><sub>LVR</sub> and <var>L</var><sub>dep</sub>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ LVR and deposit caps</span></td></tr>
+          <tr><th scope="row">DTI cap</th><td data-l="What it is">Total debt as a multiple of income, 3 to 9 (6.00×, Detailed).</td><td data-l="In the maths">In <var>L</var><sub>DTI</sub>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ DTI cap</span></td></tr>
+          <tr><th scope="row">Income basis</th><td data-l="What it is">Gross income, unshaded, or Assessable income, shaded.</td><td data-l="In the maths">The income in <var>L</var><sub>DTI</sub>. Shaded is stricter.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">shaded: ▼ DTI cap</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Capacity is the loan on this home.</strong> The LVR cap is a share of the price you enter, so a cheaper home can lower the answer. For the couple, a $828,000 home caps the loan at $662,400, below what their income services.</p>
+      <ul class="gd-facts">
+        <li><strong>A deposit is leverage.</strong> At 80% LVR each dollar of deposit supports four of loan; at 95%, nineteen. That is why LMI turns the first home buyer's $66,000 from the binding cap into one with room to spare.</li>
+        <li><strong>LMI cuts both ways.</strong> It lifts the LVR and deposit caps, but the premium is borrowed too, so the serviceability cap is divided by 1.025. On a thin margin it can leave a borrower worse off.</li>
+      </ul>
+    </section>
+
+    <!-- Worked example -->
+    <section class="gd-sec card" id="worked" aria-labelledby="worked-h">
+      <h2 id="worked-h">Worked example: Couple, Melbourne</h2>
+      <p class="gd-sub">The Quick Start as it loads, worked by hand in the order of the <strong>Serviceability build-up</strong>. Two applicants, two children, $185,000 between them split 50/50, buying a $920,000 house with $300,000 saved.</p>
+      <div class="gd-calc">
+        <h3>From gross income to the loan</h3>
+        <p>2026-27 scale, private hospital cover, no study loan. Each line is a line of the tool's table.</p>
+        <ol>
+          <li><span class="gd-calc-l">Gross assessable income</span><span class="gd-calc-w">$185,000 a year, Simple, counted in full</span><b>$15,417/mo</b></li>
+          <li><span class="gd-calc-l">Income tax after LITO</span><span class="gd-calc-w">each of two: 15% × ($45,000 − $18,200) + 30% × ($92,500 − $45,000) = $18,270; LITO nil above $66,667; × 2 = $36,540</span><b>−$3,045/mo</b></li>
+          <li><span class="gd-calc-l">Medicare levy</span><span class="gd-calc-w">2% × $185,000 = $3,700</span><b>−$308/mo</b></li>
+          <li><span class="gd-calc-l">Net income available</span><span class="gd-calc-w">($185,000 − $40,240 total tax) ÷ 12</span><b>$12,063/mo</b></li>
+          <li><span class="gd-calc-l">Living expenses</span><span class="gd-calc-w">HEM: ($2,750 + 2 × $480) × 98.8 ÷ 100 × 1.45 = $5,315, above the $4,800 declared</span><b>−$5,315/mo</b></li>
+          <li><span class="gd-calc-l">Existing commitments</span><span class="gd-calc-w">3.8% × $15,000 card limit = $570, plus $450 strata, rates and insurance</span><b>−$1,020/mo</b></li>
+          <li><span class="gd-calc-l">Minimum surplus buffer (UMI)</span><span class="gd-calc-w">the lender's $250</span><b>−$250/mo</b></li>
+          <li><span class="gd-calc-l">Maximum new repayment</span><span class="gd-calc-w">$12,063 − $5,315 − $1,020 − $250</span><b>$5,478/mo</b></li>
+          <li><span class="gd-calc-l">Assessment rate</span><span class="gd-calc-w">max(5.90% + 3.00%, 5.50%); <var>i</var> = 0.7417% a month, <var>n</var> = 360</span><b>8.90%</b></li>
+          <li><span class="gd-calc-l">Loan this supports</span><span class="gd-calc-w">$5,478.39 × (1 − 1.007417<sup>−360</sup>) ÷ 0.007417 = $5,478.39 × 125.40</span><b>$686,999</b></li>
+          <li><span class="gd-calc-l">Debt to income</span><span class="gd-calc-w">6 × $185,000 − $15,000 card limit</span><b>$1,095,000</b></li>
+          <li><span class="gd-calc-l">Loan to value</span><span class="gd-calc-w">80% × $920,000</span><b>$736,000</b></li>
+          <li><span class="gd-calc-l">Deposit</span><span class="gd-calc-w">$300,000 − $50,232 duty (5.46%) − $4,000 = $245,768; × 0.8 ÷ 0.2</span><b>$983,072</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Borrowing capacity</span><span class="gd-calc-w">the smallest: serviceability, $49,001 under loan to value. With the $245,768 deposit it buys up to $932,767.</span><b>$686,999</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The tool shows the same.</strong> <strong>Borrowing capacity</strong> $686,999, assessed at 8.90% over 30 years; <strong>Binding constraint</strong> serviceability, next limit $736,000; <strong>Income cover (NSR)</strong> 1.02 ($12,063 ÷ $11,813); <strong>Left each month (UMI)</strong> $250.</li>
+        <li><strong>UMI is the test that sizes the loan.</strong> At the capacity exactly $250 a month is left, by construction, so the NSR is just above 1.</li>
+      </ul>
+    </section>
+
+    <!-- Sensitivity -->
+    <section class="gd-sec card" id="sensitivity" aria-labelledby="sensitivity-h">
+      <h2 id="sensitivity-h">What moves it most</h2>
+      <p class="gd-sub">Each bar lowers or raises one input by a step worth arguing about, and keeps the rest of the Couple, Melbourne example where it was.</p>
+      <figure class="gd-tornado">
+        <figcaption>Borrowing capacity when one input moves<small>Base case: Couple, Melbourne, $686,999, serviceability binding. Measured on the tool's own engine. Every gain stops at +$49k, where the 80% LVR cap on the $920,000 price ($736,000) takes over.</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered</span><span class="gd-tn-k-hi">Input raised</span></div>
+        <ol>
+          <li style="--lo:.57;--hi:-1"><span class="gd-tn-name">Dependants<small>2 → 1 / 3</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$49k</span><span>−$86k</span></span></li>
+          <li style="--lo:-.78;--hi:.57"><span class="gd-tn-name">Gross income<small>$185,000 → $166,500 / $203,500</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$67k</span><span>+$49k</span></span></li>
+          <li style="--lo:0;--hi:-.71"><span class="gd-tn-name">Declared living expenses<small>$4,800 → $3,800 / $5,800 a month</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>$0</span><span>−$61k</span></span></li>
+          <li style="--lo:.57;--hi:-.67"><span class="gd-tn-name">Product rate offered<small>5.90% → 4.90% / 6.90%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$49k</span><span>−$57k</span></span></li>
+          <li style="--lo:.57;--hi:-.67"><span class="gd-tn-name">APRA buffer<small>3.00% → 2.00% / 4.00%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$49k</span><span>−$57k</span></span></li>
+          <li style="--lo:.55;--hi:-.55"><span class="gd-tn-name">Credit card limit<small>$15,000 → $5,000 / $25,000</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$48k</span><span>−$48k</span></span></li>
+          <li style="--lo:.36;--hi:-.36"><span class="gd-tn-name">Minimum left each month (UMI)<small>$250 → $0 / $500 a month</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$31k</span><span>−$31k</span></span></li>
+          <li style="--lo:-.33;--hi:.21"><span class="gd-tn-name">Loan term<small>30 → 25 / 35 years</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$29k</span><span>+$19k</span></span></li>
+          <li style="--lo:-.29;--hi:0"><span class="gd-tn-name">Purchase price<small>$920,000 → $828,000 / $1,012,000</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$25k</span><span>$0</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Deposit funds<small>$300,000 → $250,000 / $350,000</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>$0</span><span>$0</span></span></li>
+        </ol>
+        <p class="gd-tn-note">Read it from the top: the longest bar is the input the answer rests on most. Measured by <code>_sensitivity.mjs</code>, beside this page.</p>
+      </figure>
+      <ul class="gd-facts">
+        <li><strong>The downside is all serviceability.</strong> A third child, $1,000 a month more declared spending or a 1 point higher rate each take $57,000 to $86,000 off. Those are the risks to price in before you bid.</li>
+        <li><strong>The upside hits a wall.</strong> Without the LVR cap, 10% more income would add $131,000 and a 1 point lower rate $67,000. On a $920,000 home neither can push the loan past $736,000; to borrow more the couple would need a dearer home, or LMI.</li>
+        <li><strong>The cheap levers.</strong> Expenses below HEM and a bigger deposit do nothing here. Cutting the card limit is the one change in their own hands that lifts the answer.</li>
+      </ul>
+      <div class="gd-demo" data-demo="sensitivity" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Couple, Melbourne: three, then one dependant</span></figure>
+        <ol class="gd-steps">
+          <li><h3>One more dependant</h3><p>HEM rises $688 a month and capacity falls to $600,767. The serviceability line drops across the chart.</p></li>
+          <li><h3>One fewer</h3><p>HEM falls below the $4,800 declared, so the declared figure is used. Capacity rises to $736,000 and <strong>Binding constraint</strong> turns to loan to value.</p></li>
+          <li><h3>Back to two</h3><p>Serviceability binds again at $686,999.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Limits -->
+    <section class="gd-sec card" id="limits" aria-labelledby="limits-h">
+      <h2 id="limits-h">What it leaves out</h2>
+      <p class="gd-sub">A model of the common approach, not any one bank's credit policy. Shading, HEM tables, floors, card rates and caps all differ between lenders.</p>
+      <ul class="gd-facts">
+        <li><strong>HEM is a stand-in.</strong> The real benchmark is a licensed table from the Melbourne Institute. Here it is $1,850 or $2,750 plus $480 a dependant at Perth prices, six income bands and a city index.</li>
+        <li><strong>Tax is the resident scale only.</strong> LITO and the Medicare levy, with no other deductions, offsets or salary sacrifice. The levy and the surcharge run on combined income; HELP is charged on the higher earner's share, and negative gearing uses that earner's rate.</li>
+        <li><strong>Purchase costs are yours to enter.</strong> Stamp duty is not worked out by state, and first home grants and concessions are not applied.</li>
+        <li><strong>LMI is a flat percentage.</strong> Real premiums climb steeply with LVR and loan size. The LVR and deposit caps apply to the loan before the premium is added.</li>
+        <li><strong>The NSR minimum never resizes the loan.</strong> It is a pass or fail check; UMI alone sizes serviceability.</li>
+        <li><strong>The new home's own rent is not counted.</strong> An investor's purchase earns nothing unless you add the rent under Investments.</li>
+        <li><strong>Rates stand still.</strong> One rate for the whole term: no fixed period ending, no offset account, no rate change.</li>
+        <li><strong>A lender weighs more.</strong> Credit history, how long you have held the job, genuine savings, the property type and postcode, and your age against the term.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>When not to lean on it.</strong> Complex self-employment, trusts or overseas income; a lender you know is stricter; or a next cap within a few per cent of the binding one, where a small change flips which cap decides. Then ask a broker or the lender.</p>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to try your own figures?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (HEM, LVR, DTI...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+<!--/email_off-->
+</body>
+</html>

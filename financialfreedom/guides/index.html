@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the Financial Freedom Calculator | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the Financial Freedom Calculator: enter money in and out, investments and your goal, then read the age you reach freedom and why.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/financialfreedom/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the Financial Freedom Calculator">
+<meta property="og:description" content="The real tool, running live: enter what you save, spend and hold, pick what the money should do, then read the age you can stop working and how sure that age is.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/financialfreedom/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/financialfreedom.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Financial Freedom Calculator, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to use the Financial Freedom Calculator">
+<meta name="twitter:description" content="The real tool, running live: enter what you save, spend and hold, pick what the money should do, then read the age you can stop working and how sure that age is.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/financialfreedom.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the Financial Freedom Calculator",
+  "url": "https://tool.adjiebrotots.com/financialfreedom/guides/",
+  "description": "Work out the pot you need before you can stop working and the age your investment first reaches it, in today's money, with a confidence band for good and bad markets.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Financial Freedom Calculator",
+    "url": "https://tool.adjiebrotots.com/financialfreedom/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Load or enter a plan", "text": "Pick a worked plan from Quick Start, or enter your ages, what you save or earn, and what you spend now and once you stop." },
+    { "@type": "HowToStep", "name": "Set the investment and the goal", "text": "Enter what you hold and its expected return and volatility, choose what the money should do (Just Die, Leave a Legacy or Die Rich), and set inflation and how sure the answer has to be." },
+    { "@type": "HowToStep", "name": "Simulate and read", "text": "Press Simulate. Path to freedom gives the age your investment first covers the pot needed; Cashflows tests stopping at any age you drag the slider to." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Financial Freedom Calculator", "item": "https://tool.adjiebrotots.com/financialfreedom/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the Financial Freedom Calculator", "item": "https://tool.adjiebrotots.com/financialfreedom/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← Financial Freedom</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 20h18"/><path stroke="var(--accent)" d="M4 16.5l5-5 3.5 3.5L18 8"/><path stroke="var(--accent2)" d="M18 5v9"/><path stroke="var(--accent2)" d="M18 5.5l4 1.75-4 1.75z" fill="var(--accent2)"/></svg>How to use the Financial Freedom Calculator</h1>
+      <p class="gd-lead">How big a pot you need to stop working, and the age your investment first gets there. Every demo on this page is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#how">How the numbers work</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Load or enter a plan</h3>
+          <p>Start from a worked plan in <strong>Quick Start</strong>, or enter your ages, what you save or earn, and what you spend now and once you stop.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Investment and goal</h3>
+          <p>What you hold and its return and volatility, what the money should do, then inflation and how sure the answer has to be.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Simulate and read</h3>
+          <p>Press <strong>Simulate</strong>. <strong>Path to freedom</strong> gives the age you get there; <strong>Cashflows</strong> tests stopping at any age you drag to.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> Every figure is worked out in your browser, and your plan is kept in this browser only. This guide is general information, not financial advice.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#you">You</a>
+        <a href="#stages">Life stages</a>
+        <a href="#invest">Investment</a>
+        <a href="#goal">Goal</a>
+        <a href="#assumptions">Assumptions</a>
+        <a href="#path">Path to freedom</a>
+        <a href="#cashflows">Cashflows</a>
+        <a href="#table">Year by year</a>
+        <a href="#share">Save and share</a>
+        <a href="#how">How the numbers work</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, two boards of results beside them. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="2600" role="img" aria-label="The Financial Freedom Calculator with the Moderate FIRE plan: the inputs on the left, Path to freedom and Cashflows on the right, and What this assumes at the foot.">
+            <span class="gd-box" data-b="1" style="--x:1.88%;--y:6.2%;--w:29.7%;--h:27.8%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:32.97%;--y:6.2%;--w:64.4%;--h:35.9%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:32.97%;--y:43.1%;--w:64.4%;--h:51.6%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:32.97%;--y:95.7%;--w:64.4%;--h:2.6%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then four tabs: <strong>You</strong>, <strong>Investment</strong>, <strong>Goal</strong> and <strong>Assumptions</strong>. <strong>Simulate</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>Path to freedom</h3>
+            <p>The answer: the age you are <strong>financially free</strong>, the pot needed then and your real return, over the chart of your investment against the pot needed at every age.</p>
+          </li>
+          <li data-b="3">
+            <h3>Cashflows</h3>
+            <p>Stopping at one age: the <strong>Retire at</strong> slider, its verdict, four cards, the cashflow chart and the <strong>Year by year</strong> table.</p>
+          </li>
+          <li data-b="4">
+            <h3>What this assumes</h3>
+            <p>Every assumption your plan rests on, in figures, folded behind its chevron.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right, <strong>Tour</strong> replays a one minute walk through the tool, and <strong>Guide</strong> opens this page.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Six worked plans, each built to show one lever: <strong>Moderate FIRE</strong> (the baseline), <strong>Frugal Living</strong>, <strong>Geoarbitrage, Bali</strong>, <strong>Fat FIRE, forever</strong>, <strong>Family legacy</strong> and <strong>Late start, on a pension</strong>. One click fills every tab and runs it.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick a plan</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the results have the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick a plan</h3><p>Hover a button to read who it describes. A click loads every figure and gives the answer straight away.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The slider starts on the answer.</strong> No plan sets a retirement age: <strong>Retire at</strong> opens on the plan's own freedom age, rounded up to a whole year.</li>
+        <li><strong>Then make it yours.</strong> Change any figure over the top of a plan. A Quick Start always starts from the defaults, so nothing from the last one carries over.</li>
+      </ul>
+    </section>
+
+    <!-- You -->
+    <section class="gd-sec card" id="you" aria-labelledby="you-h">
+      <h2 id="you-h">The You tab</h2>
+      <p class="gd-sub">The figures you know: the currency, your ages, the money coming in and the money going out. Every amount is in today's money.</p>
+      <div class="gd-demo" data-demo="you" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: saving $50,000, retiring on 80%</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Ages</h3><p><strong>Age now</strong> starts the clock; <strong>Life expectancy</strong> is how long the money has to last.</p></li>
+          <li><h3>Money in</h3><p><strong>Savings</strong> is what you put away, or switch to <strong>Net income</strong> and the tool saves the gap after spending. <strong>Growth of that amount</strong> is your pay rises.</p></li>
+          <li><h3>Money out</h3><p><strong>Living expenses</strong> now, and <strong>Retirement expenses</strong> once you stop, as a % of living or an amount.</p></li>
+          <li><h3>Simulate</h3><p>Typing never reruns the answer: the button lights up instead. Press <strong>Simulate</strong> to run the plan on the form.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A week, a month or a year.</strong> Each amount takes its own period. Change the period and the figure is restated, so $60,000 a year becomes $5,000 a month.</li>
+        <li><strong>Government or age pension.</strong> Simple mode has a pension switch: its start age, its amount, and whether it <strong>Rises with inflation</strong>.</li>
+        <li><strong>Currency Symbol</strong> is display only. Nothing is converted.</li>
+      </ul>
+    </section>
+
+    <!-- Life stages -->
+    <section class="gd-sec card" id="stages" aria-labelledby="stages-h">
+      <h2 id="stages-h">Life stages</h2>
+      <p class="gd-sub">Set <strong>Detail</strong> to <strong>Detailed</strong> under Money in or Money out and the one figure becomes a list of stages, each between two ages: study, a hustle, kids, part-time work, a pension.</p>
+      <div class="gd-demo" data-demo="stages" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Frugal Living: a hustle age, part-time work and the age pension</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Detailed</h3><p>Your entered figure becomes the first stage, named and locked. Your own stages follow it in age order.</p></li>
+          <li><h3>A stage of income</h3><p>Its own amount and growth from its own start, and <strong>Still paid after you stop work</strong> for a pension or part-time work.</p></li>
+          <li><h3>A stage of spending</h3><p>From one age to another, as a % of living or an amount. It replaces your spending for those ages.</p></li>
+          <li><h3>The timeline</h3><p>Under each list, what the stages resolve to, gaps and all, at the age on the slider.</p></li>
+          <li><h3>On the chart</h3><p>The stages run along the top of the cashflow chart. With both sides staged, pick <strong>Income stages</strong> or <strong>Expense stages</strong>.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>+ Add stage</strong> starts a stage where the last one ends. A blank start follows the stage above; a blank end runs to your life expectancy.</li>
+        <li><strong>Up to 12 stages a side.</strong> A stage of income ending at 120 has no end: it is paid for life.</li>
+      </ul>
+    </section>
+
+    <!-- Investment -->
+    <section class="gd-sec card" id="invest" aria-labelledby="invest-h">
+      <h2 id="invest-h">The Investment tab</h2>
+      <p class="gd-sub">What you hold today, and what you expect it to earn and how much it swings.</p>
+      <div class="gd-demo" data-demo="invest" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: $150,000 in Australian equity</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Invested assets</h3><p>What already earns the return. Not the home you live in.</p></li>
+          <li><h3>Pick an asset</h3><p>A preset fills the return and volatility from long-run history: cash, bonds, US, Australian or global equity, gold.</p></li>
+          <li><h3>Return and volatility</h3><p><strong>Expected return (CAGR)</strong> is after fees and before inflation. <strong>Volatility</strong> is how far a year can swing.</p></li>
+          <li><h3>A real ticker</h3><p>Type one (SPY, VAS.AX) and press <strong>Fetch</strong> to measure both figures from its real prices.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Every field stays editable.</strong> A preset is a starting point, not a forecast.</li>
+      </ul>
+    </section>
+
+    <!-- Goal -->
+    <section class="gd-sec card" id="goal" aria-labelledby="goal-h">
+      <h2 id="goal-h">The Goal tab</h2>
+      <p class="gd-sub"><strong>What should the money do?</strong> Three answers, and each needs a different pot.</p>
+      <div class="gd-demo" data-demo="goal" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: the three goals</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Just Die</h3><p>The pot runs to nothing at your life expectancy. The smallest pot, and no margin if you live longer.</p></li>
+          <li><h3>Leave a Legacy</h3><p>A set amount, in today's money, is still there at your life expectancy. Enter it under <strong>Amount to leave behind</strong>.</p></li>
+          <li><h3>Die Rich</h3><p>Spend only the real growth, so the pot lasts for ever. It needs a return above inflation.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="assumptions" aria-labelledby="assumptions-h">
+      <h2 id="assumptions-h">The Assumptions tab</h2>
+      <p class="gd-sub">The guesses nobody knows for sure: what prices do, and how sure the answer has to be.</p>
+      <div class="gd-demo" data-demo="assumptions" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: 95% confidence, then a 90% outcome chance</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Inflation</h3><p>The note under it puts a price on it: what today's spending costs at the age you stop and at your life expectancy.</p></li>
+          <li><h3>Confidence level</h3><p>The share of futures the confidence pot has to last through. It shows under <strong>Chance it works</strong>, at the slider's age.</p></li>
+          <li><h3>Investment outcome chance</h3><p>The investment line is one reached in at least this share of futures. 50% is the expected return; 90% is cautious, and the freedom age moves out.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Path to freedom -->
+    <section class="gd-sec card" id="path" aria-labelledby="path-h">
+      <h2 id="path-h">Path to freedom</h2>
+      <p class="gd-sub">One question: how early could you stop? Nothing on this board depends on the retirement slider.</p>
+      <div class="gd-demo" data-demo="path" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: free at 44y 4m</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The answer</h3><p><strong>Financially free at</strong> an age, the <strong>Pot needed then</strong>, and your <strong>Real return</strong>, the figure that sizes the pot.</p></li>
+          <li><h3>The chart</h3><p>Red is the pot needed to stop at each age, blue what your investment grows to, the band the worst and best 10% of futures. Where blue meets red, you are free.</p></li>
+          <li><h3>Today's money</h3><p><strong>Show in today's money</strong>, on by default. Off, each figure reads in the money of its own year, as the account will.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Money deposited</strong>, the dotted line, is what you have paid in that is still in the pot. Above it is growth.</li>
+        <li><strong>Hover to read.</strong> The box under the chart gives any year's figures. Scroll or pinch to zoom, drag to pan; ⟳ resets it.</li>
+      </ul>
+    </section>
+
+    <!-- Cashflows -->
+    <section class="gd-sec card" id="cashflows" aria-labelledby="cashflows-h">
+      <h2 id="cashflows-h">Cashflows</h2>
+      <p class="gd-sub">What happens if you stop at this age. The slider is the one control that runs the answer on its own.</p>
+      <div class="gd-demo" data-demo="cashflows" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: stopping at 40, then at 52</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Retire at</h3><p>Drag the age you stop earning and start living off the pot. Click the age to type one.</p></li>
+          <li><h3>The verdict and the cards</h3><p>Whether that age works, then the <strong>Pot needed</strong>, the <strong>Balance</strong> you stop with, the <strong>Chance it works</strong> and what is <strong>Left at</strong> your life expectancy.</p></li>
+          <li><h3>Cashflows and balance</h3><p>Income against spending above, green while you save and red once the pot pays; the balance under it, with its band of futures.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A miss is drawn below zero.</strong> A plan that runs out shows a negative balance: the size of the shortfall.</li>
+        <li><strong>Not by this age?</strong> The verdict lists the one change that would close the gap: save more, spend less, a higher return, or retire later.</li>
+      </ul>
+    </section>
+
+    <!-- Year by year -->
+    <section class="gd-sec card" id="table" aria-labelledby="table-h">
+      <h2 id="table-h">Year by year, and what it assumes</h2>
+      <p class="gd-sub">Under the chart, the plan as a cash flow statement; at the foot, the assumptions in figures.</p>
+      <div class="gd-demo" data-demo="table" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The table and the assumptions</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Year by year</h3><p>Opens from its chevron. Each row adds up: balance, plus what was saved, plus growth, is the next balance. <strong>⬇ CSV</strong> saves it either way.</p></li>
+          <li><h3>What this assumes</h3><p>Your return, inflation, savings, spending and goal in figures, and the safe withdrawal rate your pot implies.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your plan in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open and Share</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write the whole plan to a file, and read one back.</p></li>
+          <li><h3>Share</h3><p>Each chart as SVG or PNG, a copy to the clipboard, a link that opens your plan, or an embed for a web page.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>An embed is live.</strong> It shows the chart as you drew it, and a reader can hover and zoom it.</li>
+      </ul>
+    </section>
+
+    <!-- ═════════ Part 2 ═════════ -->
+    <div class="gd-part" id="how">
+      <span class="gd-part-k">Part 2</span>
+      <h2>How the numbers work</h2>
+      <p>What each field means, where it enters the calculation, and what moving it does to the age you are free. Every formula here is the one the tool runs; its own source opens with the full specification.</p>
+    </div>
+
+    <!-- The model -->
+    <section class="gd-sec card" id="model" aria-labelledby="model-h">
+      <h2 id="model-h">The model in one picture</h2>
+      <p class="gd-sub">Two curves over age. One is what your investment has grown to if you never stop paying in. The other is the pot you would need if you stopped at that age. The tool's answer is where the first catches the second.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Freedom age</span> = the first <var>a</var> with <var>W</var><sub><var>c</var></sub>(<var>a</var>) ≥ <var>Pot</var>(<var>a</var>)</div>
+      <ul class="gd-where">
+        <li><var>a</var>an age, tried month by month from today</li>
+        <li><var>W<sub>c</sub>(a)</var>what the investment has grown to by that age, never drawn on, reached in at least <var>c</var> percent of futures</li>
+        <li><var>Pot(a)</var>the pot that funds the rest of your life from that age, for your goal</li>
+        <li><var>c</var>the <strong>Investment outcome chance</strong>: at 50% the line is the expected return's</li>
+      </ul>
+      <div class="gd-eq"><span class="gd-eq-l">Real return</span> <var>r</var><sub>r</sub> = <span class="gd-frac"><span>1 + <var>r</var></span><span>1 + <var>i</var></span></span> − 1</div>
+      <div class="gd-eq"><span class="gd-eq-l">Monthly</span> <var>r</var><sub>m</sub> = (1 + <var>r</var><sub>r</sub>)<sup>1/12</sup> − 1</div>
+      <ul class="gd-where">
+        <li><var>r</var>the <strong>Expected return (CAGR)</strong>, before inflation</li>
+        <li><var>i</var>the <strong>Inflation</strong> rate</li>
+        <li><var>r<sub>r</sub></var>the real return a year, by Fisher rather than subtraction</li>
+        <li><var>r<sub>m</sub></var>the real return a month, which every step compounds</li>
+      </ul>
+      <ul class="gd-facts">
+        <li><strong>Everything runs in today's money, month by month.</strong> Your spending is entered in today's money and stays flat in real terms, so inflation never has to be added back to it; it lives in the real return instead. A figure in the money of the day is only made for display: today's figure × (1 + <var>i</var>)<sup><var>y</var></sup>.</li>
+        <li><strong>Why the pot falls with age.</strong> Each year you wait is a year fewer to fund, so the red line drifts down while the blue line climbs. In Simple mode they cross at most once.</li>
+        <li><strong>The retirement slider is a separate question.</strong> Neither curve depends on it. It asks what happens if you stop at one age: the Cashflows board, further down.</li>
+      </ul>
+    </section>
+
+    <!-- You: ages, money in, money out -->
+    <section class="gd-sec card" id="m-you" aria-labelledby="m-you-h">
+      <h2 id="m-you-h">You: ages, money in and money out</h2>
+      <p class="gd-sub">What you add to the investment each month while you work depends on which figure you entered. The two are different models, and the panel says which one is running.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Savings model</span> <var>S</var>(<var>t</var>) = <var>S</var><sub>0</sub> × (1 + <var>g</var><sub>m</sub>)<sup><var>t</var></sup></div>
+      <div class="gd-eq"><span class="gd-eq-l">Net income model</span> <var>S</var>(<var>t</var>) = <var>I</var><sub>0</sub> × (1 + <var>g</var><sub>m</sub>)<sup><var>t</var></sup> − <var>E</var>(<var>t</var>)</div>
+      <div class="gd-eq"><span class="gd-eq-l">Retirement spending</span> <var>X</var><sub>r</sub> = <var>X</var> × <var>pct</var> ÷ 100</div>
+      <ul class="gd-where">
+        <li><var>S(t)</var>what you add in month <var>t</var> from today, while you work</li>
+        <li><var>S<sub>0</sub>, I<sub>0</sub></var>the savings or net income you entered, as a month</li>
+        <li><var>g<sub>m</sub></var>the real monthly growth of <strong>Growth of that amount</strong>, by Fisher</li>
+        <li><var>E(t)</var>what you spend in a working month: living expenses, or a life stage</li>
+        <li><var>X, X<sub>r</sub></var><strong>Living expenses</strong> and <strong>Retirement expenses</strong>, monthly</li>
+        <li><var>pct</var>retirement as a % of living, or enter an amount instead</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Currency Symbol</th><td data-l="What it is">The symbol money is shown in.</td><td data-l="In the maths">Nowhere. Nothing is converted, so the figures mean whatever money you typed them in.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">Age now</th><td data-l="What it is">Your age today.</td><td data-l="In the maths">Month 0. Every age is counted in months from it.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ freedom age</span><p>Moderate FIRE at 37 instead of 32 is free at 49y 1m: 4.75 years later for 5 years older.</p></td></tr>
+          <tr><th scope="row">Life expectancy</th><td data-l="What it is">How long the money has to last.</td><td data-l="In the maths">The end of the drawdown for Just Die and Leave a Legacy. Die Rich ignores it and tests to age 120.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span><span class="gd-eff gd-eff-neg">▲ freedom age</span></td></tr>
+          <tr><th scope="row">Detail (Money in)</th><td data-l="What it is">Simple: one figure. Detailed: a list of stages.</td><td data-l="In the maths">Detailed with no stages of its own is Simple to the last digit. See <a href="#m-stages">Life stages</a>.</td><td data-l="Raise it"><span class="gd-eff">no effect alone</span></td></tr>
+          <tr><th scope="row">Savings or Net income</th><td data-l="What it is">Which figure you enter: what you put away, or your take-home pay.</td><td data-l="In the maths">Picks the formula for <var>S</var>(<var>t</var>). Under Net income, spending is taken off your pay, so a costly stage cuts what you save.</td><td data-l="Raise it"><span class="gd-eff">a choice of model</span></td></tr>
+          <tr><th scope="row">Savings (or Net income) amount</th><td data-l="What it is">The amount, a week, a month or a year.</td><td data-l="In the maths"><var>S</var><sub>0</sub> or <var>I</var><sub>0</sub>, as a month: a week × 52 ÷ 12, a year ÷ 12. Added at the end of each working month.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ investment</span><span class="gd-eff gd-eff-pos">▼ freedom age</span></td></tr>
+          <tr><th scope="row">Growth of that amount</th><td data-l="What it is">How fast that amount grows each year, before inflation. Pay rises live here.</td><td data-l="In the maths"><var>g</var>, made real by Fisher. At the inflation rate it holds its value in today's money; below it, it shrinks.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ freedom age</span></td></tr>
+          <tr><th scope="row">Government or age pension</th><td data-l="What it is">An income from its start age, in Simple mode.</td><td data-l="In the maths">Comes off the monthly draw: <var>c</var>(<var>t</var>) = <var>X</var><sub>r</sub> − <var>P</var>(<var>t</var>), so it shrinks every pot needed from its start.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ pot needed</span><p>Late start: free at 60y 6m with it, 66y 3m without.</p></td></tr>
+          <tr><th scope="row">Pension starts at age</th><td data-l="What it is">The first age it pays.</td><td data-l="In the maths"><var>P</var>(<var>t</var>) = 0 before it.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span></td></tr>
+          <tr><th scope="row">Pension amount</th><td data-l="What it is">What it pays today.</td><td data-l="In the maths"><var>P</var><sub>0</sub>, as a month.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ pot needed</span></td></tr>
+          <tr><th scope="row">Rises with inflation</th><td data-l="What it is">Whether the pension is indexed.</td><td data-l="In the maths">On: <var>P</var> = <var>P</var><sub>0</sub>, flat in today's money. Off: <var>P</var> = <var>P</var><sub>0</sub> ÷ (1 + <var>i</var>)<sup><var>years from today</var></sup>, so it has already lost value when it starts.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">on: ▼ pot needed</span><p>Late start: 63 if it never rises.</p></td></tr>
+          <tr><th scope="row">Living expenses</th><td data-l="What it is">What you spend now, in today's money.</td><td data-l="In the maths"><var>X</var>, flat in real terms. Every % of living is a share of it. Under Net income it is also <var>E</var>(<var>t</var>) in your savings.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span><span class="gd-eff gd-eff-neg">▲ freedom age</span></td></tr>
+          <tr><th scope="row">Retirement expenses</th><td data-l="What it is">What you spend once you stop: a % of living, or an amount a week, month or year.</td><td data-l="In the maths"><var>X</var><sub>r</sub>, the draw in every pot needed.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span><p>Moderate FIRE on 80% of living is free at 42y 4m, two years sooner.</p></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> Under <strong>Savings</strong>, living expenses do not change what you save: the amount saved is what you typed, and your income is implied. They only size the pot. Switch to <strong>Net income</strong> and a spending cut works twice: it fills the pot faster and shrinks the pot needed. Moderate FIRE entered as $110,000 take-home is free at 44y 1m; spend 10% less and it is 42y 3m, against 43y 4m under Savings.</p>
+    </section>
+
+    <!-- Life stages -->
+    <section class="gd-sec card" id="m-stages" aria-labelledby="m-stages-h">
+      <h2 id="m-stages-h">Life stages</h2>
+      <p class="gd-sub">A stage is a span of ages, [from, to), with a level of its own. Stages run in list order and never overlap; a gap between them falls back to the base level.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Spending at <var>a</var></span> = the stage covering <var>a</var>, else <var>X</var> working, <var>X</var><sub>r</sub> retired</div>
+      <div class="gd-eq"><span class="gd-eq-l">A stage of income</span> = <var>L</var> × (1 + <var>g</var><sub>m,s</sub>)<sup><var>m</var></sup></div>
+      <ul class="gd-where">
+        <li><var>L</var>what the stage pays when it starts, in today's money</li>
+        <li><var>g<sub>m,s</sub></var>the stage's own growth, made real and monthly</li>
+        <li><var>m</var>months from the later of its start and today</li>
+        <li><strong>Income while working:</strong> the stage covering that age, else your first stage</li>
+        <li><strong>Income once retired:</strong> a stage covering that age if it is still paid, else nothing</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Stage name</th><td data-l="What it is">A label, such as 1st kid or Study.</td><td data-l="In the maths">Nowhere. It names the stage on the timeline and the chart.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+          <tr><th scope="row">From age, to</th><td data-l="What it is">The ages the stage covers.</td><td data-l="In the maths">From is in force from the month you turn it; to is the first age it no longer covers. A blank from starts where the stage above ended; a blank to runs to your life expectancy.</td><td data-l="Raise it"><span class="gd-eff">moves the stage</span></td></tr>
+          <tr><th scope="row">Spending (Money out)</th><td data-l="What it is">The stage's spending: a % of living or an amount.</td><td data-l="In the maths">Replaces <var>X</var> or <var>X</var><sub>r</sub> for those ages. A stage still running when you stop runs to its own end before retirement expenses take over.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span><p>Frugal Living's Relax age at 130% instead of 120%: free at 31y 8m, not 31y 6m.</p></td></tr>
+          <tr><th scope="row">Amount (Money in)</th><td data-l="What it is">What the stage pays, a week, a month or a year.</td><td data-l="In the maths"><var>L</var>: savings under Savings, take-home pay under Net income.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ freedom age</span></td></tr>
+          <tr><th scope="row">Grows</th><td data-l="What it is">The stage's growth a year, before inflation.</td><td data-l="In the maths"><var>g</var><sub>m,s</sub>, from the stage's own start. A pension indexed to prices grows at the inflation rate.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ what it pays</span></td></tr>
+          <tr><th scope="row">Still paid after you stop work</th><td data-l="What it is">For a pension, rent or part-time work you keep.</td><td data-l="In the maths">On: once retired it stands where the pension stood, off the draw. Off: it stops when work does.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">on: ▼ pot needed</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> A spending stage replaces your spending, it does not add to it. Family legacy's 150% with two kids at home means the household spends 150% of today, not 150% on top. Enter 50% and you would be saying spending halves.</p>
+    </section>
+
+    <!-- Investment -->
+    <section class="gd-sec card" id="m-invest" aria-labelledby="m-invest-h">
+      <h2 id="m-invest-h">Investment: how the pot grows</h2>
+      <p class="gd-sub">While you work, the balance earns a month's return, then that month's saving lands on top.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Accumulation</span> <var>W</var>(<var>t</var> + 1) = <var>W</var>(<var>t</var>) × (1 + <var>r</var><sub>m</sub>) + <var>S</var>(<var>t</var>)</div>
+      <ul class="gd-where">
+        <li><var>W(t)</var>the balance after <var>t</var> months, never drawn on</li>
+        <li><var>W(0)</var><strong>Invested assets today</strong></li>
+        <li><var>r<sub>m</sub></var>the real monthly return</li>
+        <li><var>S(t)</var>that month's saving, from the You tab</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Invested assets today</th><td data-l="What it is">What you already hold that earns the return. Not your home.</td><td data-l="In the maths"><var>W</var>(0), compounding from today.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▼ freedom age</span></td></tr>
+          <tr><th scope="row">Asset</th><td data-l="What it is">A preset: cash 4% / 1%, bonds 5% / 6%, US equity 10% / 15.5%, Australian equity 9.5% / 16%, global 8.5% / 15%, gold 7.5% / 17%.</td><td data-l="In the maths">Only fills the two fields below. Long-run nominal history, before tax and fees, as at September 2026.</td><td data-l="Raise it"><span class="gd-eff">fills return and volatility</span></td></tr>
+          <tr><th scope="row">Expected return (CAGR)</th><td data-l="What it is">The compound return a year you expect, after fees, before inflation.</td><td data-l="In the maths"><var>r</var>, in the real return <var>r</var><sub>r</sub>. It does two jobs: it grows the investment, and it discounts every pot needed.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ investment</span><span class="gd-eff gd-eff-pos">▼ pot needed</span></td></tr>
+          <tr><th scope="row">Volatility</th><td data-l="What it is">How far the return swings, one standard deviation a year. 0 for one smooth path.</td><td data-l="In the maths"><var>σ</var>, the width of the spread of futures (below). It widens the band, lowers the <strong>Chance it works</strong> and raises the confidence pot.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ chance it works</span><p>Moves the freedom age only above a 50% outcome chance.</p></td></tr>
+          <tr><th scope="row">Ticker</th><td data-l="What it is">A real fund or share, measured from 1990 or its listing.</td><td data-l="In the maths">Return: the CAGR of its adjusted close. Volatility: the standard deviation of its daily log returns × √252.</td><td data-l="Raise it"><span class="gd-eff">fills return and volatility</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>Compounding.</strong> At Moderate FIRE's 5.85% real a year, money doubles in real terms in about 12 years: the $120,000 it starts with is worth $242,040 in today's money by 44y 4m without another cent added.</li>
+        <li><strong>The return is the lever with two ends.</strong> A higher return fills the pot faster and makes the pot needed smaller, because the money still invested in retirement keeps earning it.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> The return you enter is nominal. With 8.5% and 2.5% inflation the real return is 1.085 ÷ 1.025 − 1 = 5.85%, not 6%, and it is the real return that sizes the pot.</p>
+    </section>
+
+    <!-- Goal -->
+    <section class="gd-sec card" id="m-goal" aria-labelledby="m-goal-h">
+      <h2 id="m-goal-h">Goal: the pot needed to stop</h2>
+      <p class="gd-sub">Once you stop, each month's spending comes out at the start of the month and the rest earns the return. The pot needed is the smallest that never goes below zero and meets your goal at the end. With flat spending and no pension that is a textbook annuity.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Just Die</span> <var>Pot</var> = <var>X</var><sub>r</sub> × <span class="gd-frac"><span>1 − (1 + <var>r</var><sub>m</sub>)<sup>−<var>n</var></sup></span><span><var>r</var><sub>m</sub></span></span> × (1 + <var>r</var><sub>m</sub>)</div>
+      <div class="gd-eq"><span class="gd-eq-l">Leave a Legacy</span> <var>Pot</var> = the Just Die pot + <span class="gd-frac"><span><var>L</var></span><span>(1 + <var>r</var><sub>m</sub>)<sup><var>n</var></sup></span></span></div>
+      <div class="gd-eq"><span class="gd-eq-l">Die Rich</span> <var>Pot</var> = <var>X</var><sub>r</sub> × <span class="gd-frac"><span>1 + <var>r</var><sub>m</sub></span><span><var>r</var><sub>m</sub></span></span></div>
+      <ul class="gd-where">
+        <li><var>X<sub>r</sub></var>retirement spending a month, less any pension or income still paid</li>
+        <li><var>n</var>months from the age you stop to your life expectancy</li>
+        <li><strong>Just Die</strong> is an annuity paid in advance; <strong>Die Rich</strong> a perpetuity, which needs <var>r<sub>m</sub></var> above 0</li>
+        <li><var>L</var>the <strong>Amount to leave behind</strong>, in today's money</li>
+      </ul>
+      <ul class="gd-facts">
+        <li><strong>One pass for any plan.</strong> With a pension, stages or a draw that changes, each month adds a "never below zero" bound and the goal adds one at the end; the pot needed is the largest of them. Die Rich asks that the pot at age 120 could go on for ever on the draw at that age.</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Just Die</th><td data-l="What it is">The pot runs to nothing at your life expectancy.</td><td data-l="In the maths">End balance ≥ 0. The smallest pot.</td><td data-l="Raise it"><span class="gd-eff">the baseline</span><p>Moderate FIRE at 45: $1.06m.</p></td></tr>
+          <tr><th scope="row">Leave a Legacy</th><td data-l="What it is">A set amount is still there at your life expectancy.</td><td data-l="In the maths">End balance ≥ <var>L</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span><p>$750,000 left at 90 adds only $58,000 to the pot at 45: it is discounted over 45 years.</p></td></tr>
+          <tr><th scope="row">Die Rich</th><td data-l="What it is">Spend only the real growth, so it lasts for ever.</td><td data-l="In the maths">A perpetuity, tested to age 120. Below inflation no pot is big enough.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span><p>Moderate FIRE at 45: $1.15m, free at 45y 1m.</p></td></tr>
+          <tr><th scope="row">Amount to leave behind</th><td data-l="What it is">The legacy, in today's money.</td><td data-l="In the maths"><var>L</var> ÷ (1 + <var>r</var><sub>m</sub>)<sup><var>n</var></sup> on top of the Just Die pot.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ pot needed</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>The withdrawal rate is an answer, not an input.</strong> The tool never asks for one. It works out the pot your own return and horizon need, then reports the rate it implies: <strong>Pot needed at 45</strong> for Moderate FIRE reads 16.3x a year of spending, a 6.15% safe withdrawal rate (SWR).</li>
+        <li><strong>The 25 times rule is one case of it.</strong> The <strong>Real return</strong> card says what for ever costs: 17.6x spending at 5.85% real. At about 4% real the perpetuity is the familiar 25x.</li>
+      </ul>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="m-assume" aria-labelledby="m-assume-h">
+      <h2 id="m-assume-h">Assumptions: inflation, and how sure the answer is</h2>
+      <p class="gd-sub">A single average return hides the order the good and bad years come in. The tool works out the spread of futures instead, in one pass rather than by simulating thousands of them.</p>
+      <div class="gd-eq"><span class="gd-eq-l">A month's real growth</span> = <var>e</var><sup><var>μ</var> + <var>s</var><var>z</var></sup></div>
+      <div class="gd-eq"><var>μ</var> = ln(1 + <var>r</var><sub>r</sub>) ÷ 12,   <var>s</var> = <var>σ</var> × √(1/12)</div>
+      <ul class="gd-where">
+        <li><var>z</var>a standard normal draw, independent month to month</li>
+        <li><var>μ</var>the drift: the CAGR, so a lump sum's middle future is the expected line</li>
+        <li><var>σ</var>the <strong>Volatility</strong></li>
+      </ul>
+      <ul class="gd-facts">
+        <li><strong>So returns are lognormal.</strong> A balance is many deposits, each grown over a different stretch, and that sum has no formula of its own. The tool reads each horizon through one normal factor that weighs every month by the money at stake in it (the comonotonic approximation of Kaas, Dhaene and Goovaerts, 2000), and takes each deposit's exact average given that factor.</li>
+        <li><strong>Worked out, not simulated.</strong> A percentile <var>q</var> is that factor at <var>Φ</var><sup>−1</sup>(<var>q</var>): no random numbers, the same answer every run, exact for a single lump sum. Against 5,000 simulated futures on every Quick Start, the 90% confidence pot agrees to about 1% and the chance it works to about a percentage point.</li>
+      </ul>
+      <div class="gd-eq"><span class="gd-eq-l">Investment line</span> <var>W</var><sub><var>c</var></sub>(<var>t</var>) = min( <var>W</var>(<var>t</var>), <var>W</var><sub>1 − <var>c</var></sub>(<var>t</var>) )</div>
+      <div class="gd-eq"><span class="gd-eq-l">Chance it works</span> = <var>Φ</var>(−<var>z</var>*)</div>
+      <ul class="gd-where">
+        <li><var>W(t)</var>the expected-return balance</li>
+        <li><var>W<sub>1 − c</sub>(t)</var>the balance at percentile 1 − <var>c</var> of futures</li>
+        <li><var>Φ</var>the standard normal distribution</li>
+        <li><var>z*</var>the score at which the pot needed equals the balance you stop with</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Inflation</th><td data-l="What it is">How fast prices rise each year.</td><td data-l="In the maths"><var>i</var>, in the real return and in the real growth of your savings, both by Fisher. Your spending is already in today's money.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ real return</span><span class="gd-eff gd-eff-neg">▲ freedom age</span><p>The biggest single mover on Moderate FIRE: +2.8 years for +1 point.</p></td></tr>
+          <tr><th scope="row">Investment outcome chance</th><td data-l="What it is">The share of futures the investment line is reached or beaten in. 50% to 99%.</td><td data-l="In the maths"><var>c</var>. Above 50% the line is the balance at percentile 1 − <var>c</var>, never above the expected line, and the freedom age is read off it.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ freedom age</span><p>Moderate FIRE at 90%: free at 49y 7m.</p></td></tr>
+          <tr><th scope="row">Confidence level</th><td data-l="What it is">The share of futures the confidence pot has to last through.</td><td data-l="In the maths">The pot needed at <var>z</var> = −<var>Φ</var><sup>−1</sup>(confidence), at the slider's age. Shown under Chance it works.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ confidence pot</span><p>Moderate FIRE at 45: $1.97m at 90%, $2.36m at 95%. The freedom age does not move.</p></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>Why a higher chance pushes the age out.</strong> At 50% the line is the middle of the road: half of futures do worse. At 90% only one future in ten does worse, so the line sits lower and takes longer to reach the pot.</li>
+        <li><strong>Why the swing of an average narrows.</strong> Over many years good and bad months partly cancel, so the band is not one rate run for every horizon: each horizon has its own factor.</li>
+        <li><strong>Sequence risk.</strong> A month weighs by the money exposed in it, so a crash in the years either side of stopping counts most: the risk an average return hides.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Watch out.</strong> At the default 50% outcome chance, volatility does not move the freedom age at all: that age is read off the expected-return line. Moderate FIRE stopping on it at 45 has a 53% <strong>Chance it works</strong>, close to a coin flip. Read that card, or raise the outcome chance, before you plan around the age.</p>
+    </section>
+
+    <!-- Cashflows -->
+    <section class="gd-sec card" id="m-cash" aria-labelledby="m-cash-h">
+      <h2 id="m-cash-h">Cashflows: stopping at one age</h2>
+      <p class="gd-sub">The Cashflows board saves until the slider's age, then lives off whatever is there. This is the only place a withdrawal appears.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Drawdown</span> <var>W</var>(<var>t</var> + 1) = ( <var>W</var>(<var>t</var>) − <var>X</var><sub>r</sub>(<var>t</var>) + <var>P</var>(<var>t</var>) ) × (1 + <var>r</var><sub>m</sub>)</div>
+      <ul class="gd-where">
+        <li><var>X<sub>r</sub>(t)</var>that month's retirement spending, or a stage's</li>
+        <li><var>P(t)</var>a pension, or a stage still paid</li>
+        <li><strong>Before it:</strong> working months follow the investment line at your outcome chance</li>
+      </ul>
+      <div class="gd-table-wrap"><table class="gd-table">
+        <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Retire at</th><td data-l="What it is">The age you stop earning and start drawing.</td><td data-l="In the maths">Splits the months: saving before it, drawing after. It moves nothing on Path to freedom.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ chance it works</span><span class="gd-eff gd-eff-pos">▲ left at the end</span></td></tr>
+          <tr><th scope="row">Show in today's money</th><td data-l="What it is">How every figure reads.</td><td data-l="In the maths">Off: each year's figure × (1 + <var>i</var>)<sup><var>y</var></sup>. The plan is the same either way.</td><td data-l="Raise it"><span class="gd-eff">no effect on the plan</span></td></tr>
+        </tbody>
+      </table></div>
+      <ul class="gd-facts">
+        <li><strong>The four cards.</strong> <strong>Pot needed</strong> is <var>Pot</var>(<var>R</var>); <strong>Balance</strong> is what the investment line reaches by then; <strong>Chance it works</strong> is the share of futures that balance lasts through; <strong>Left at</strong> is the balance at your life expectancy, negative when it runs out.</li>
+        <li><strong>The table reconciles.</strong> Growth is the residual, next balance less this balance less what was saved, so each row adds up to the cent in either money.</li>
+      </ul>
+    </section>
+
+    <!-- Worked example -->
+    <section class="gd-sec card" id="worked" aria-labelledby="worked-h">
+      <h2 id="worked-h">Worked example: Moderate FIRE</h2>
+      <p class="gd-sub">A 32-year-old saving $45,000 a year (growing 3%), spending $65,000 now and the same once retired, with $120,000 in global equity at 8.5% and 15% volatility, inflation 2.5%, Just Die at 90, outcome chance 50%.</p>
+      <div class="gd-calc">
+        <h3>Is 44y 4m the first month that works?</h3>
+        <p>The tool's own steps, by hand. 44y 4m is 148 months from today.</p>
+        <ol>
+          <li><span class="gd-calc-l">Real return</span><span class="gd-calc-w">1.085 ÷ 1.025 − 1, then (1.0585)<sup>1/12</sup> − 1</span><b>0.4752% a month</b></li>
+          <li><span class="gd-calc-l">Real growth of savings</span><span class="gd-calc-w">1.03 ÷ 1.025 − 1, then (1.0049)<sup>1/12</sup> − 1</span><b>0.0406% a month</b></li>
+          <li><span class="gd-calc-l">Today's assets, grown</span><span class="gd-calc-w">$120,000 × 1.004752<sup>148</sup> = $120,000 × 2.0170</span><b>$242,040</b></li>
+          <li><span class="gd-calc-l">Savings, grown</span><span class="gd-calc-w">$3,750 a month × (2.0170 − 1.0619) ÷ (0.004752 − 0.000406)</span><b>$824,108</b></li>
+          <li><span class="gd-calc-l">Investment at 44y 4m</span><span class="gd-calc-w">$242,040 + $824,108</span><b>$1,066,148</b></li>
+          <li><span class="gd-calc-l">Months to fund</span><span class="gd-calc-w">from 44y 4m to 90</span><b>548</b></li>
+          <li><span class="gd-calc-l">Pot needed at 44y 4m</span><span class="gd-calc-w">$5,416.67 a month × (1 − 1.004752<sup>−548</sup>) ÷ 0.004752 × 1.004752 = $5,416.67 × 195.71</span><b>$1,060,070</b></li>
+          <li><span class="gd-calc-l">One month earlier</span><span class="gd-calc-w">At 44y 3m the investment is $1,057,144 against a pot of $1,060,473: short</span><b>not yet</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">Financially free at</span><span class="gd-calc-w">$1,066,148 ≥ $1,060,070, the first month it holds. The tool shows 44y 4m and a pot of $1.06m.</span><b>44y 4m</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>16.3x a year of spending.</strong> $1,060,070 ÷ $65,000, as the <strong>Pot needed then</strong> card reads it.</li>
+        <li><strong>Now the risk.</strong> The slider opens at 45. Stopping there with $1.14m has a 53% chance of lasting; the pot for 90% confidence is $1.97m. At a 90% outcome chance the freedom age is 49y 7m.</li>
+      </ul>
+    </section>
+
+    <!-- Sensitivity -->
+    <section class="gd-sec card" id="sensitivity" aria-labelledby="sensitivity-h">
+      <h2 id="sensitivity-h">What moves the answer most</h2>
+      <p class="gd-sub">Measured on the tool's own engine: Moderate FIRE as the Quick Start loads it, each input moved down and up one step while the rest stay put. Left of the line is an earlier freedom age.</p>
+      <figure class="gd-tornado">
+        <figcaption>Freedom age, in years earlier or later, when one input moves<small>Base case: Moderate FIRE, free at 44y 4m, Investment outcome chance 50%. Steps: 1 point on a rate, 10% on an amount, 5 years on life expectancy. Values are years earlier (−) or later (+).</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered</span><span class="gd-tn-k-hi">Input raised</span></div>
+        <ol>
+          <li style="--lo:-.76;--hi:1"><span class="gd-tn-name">Inflation<small>2.5% → 1.5% / 3.5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−2.1 yrs</span><span>+2.8 yrs</span></span></li>
+          <li style="--lo:.76;--hi:-.64"><span class="gd-tn-name">Expected return (CAGR)<small>8.5% → 7.5% / 9.5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+2.1 yrs</span><span>−1.8 yrs</span></span></li>
+          <li style="--lo:-.36;--hi:.33"><span class="gd-tn-name">Living expenses<small>$65,000 → $58,500 / $71,500 a year</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−1.0 yrs</span><span>+0.9 yrs</span></span></li>
+          <li style="--lo:-.36;--hi:.33"><span class="gd-tn-name">Retirement expenses<small>100% → 90% / 110% of living</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−1.0 yrs</span><span>+0.9 yrs</span></span></li>
+          <li style="--lo:.27;--hi:-.24"><span class="gd-tn-name">Savings<small>$45,000 → $40,500 / $49,500 a year</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+0.8 yrs</span><span>−0.7 yrs</span></span></li>
+          <li style="--lo:.15;--hi:-.15"><span class="gd-tn-name">Growth of that amount<small>3% → 2% / 4% a year</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+0.4 yrs</span><span>−0.4 yrs</span></span></li>
+          <li style="--lo:.06;--hi:-.09"><span class="gd-tn-name">Invested assets today<small>$120,000 → $108,000 / $132,000</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+0.2 yrs</span><span>−0.3 yrs</span></span></li>
+          <li style="--lo:-.09;--hi:.06"><span class="gd-tn-name">Life expectancy<small>90 → 85 / 95</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−0.3 yrs</span><span>+0.2 yrs</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Volatility<small>15% → 10% / 20%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>0 yrs</span><span>0 yrs</span></span></li>
+          <li style="--lo:0;--hi:0"><span class="gd-tn-name">Confidence level<small>90% → 80% / 95%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>0 yrs</span><span>0 yrs</span></span></li>
+        </ol>
+        <p class="gd-tn-note">Read it from the top: the longest bar is the input your answer rests on most. Living and retirement expenses move together here because retirement is 100% of living, and under Savings living expenses only size the pot.</p>
+      </figure>
+      <figure class="gd-tornado">
+        <figcaption>The same plan, read at a 90% Investment outcome chance<small>Base case: Moderate FIRE with the outcome chance at 90%, free at 49y 7m. The same steps; the outcome chance moves 15 and 5 points.</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered</span><span class="gd-tn-k-hi">Input raised</span></div>
+        <ol>
+          <li style="--lo:1;--hi:-.84"><span class="gd-tn-name">Expected return (CAGR)<small>8.5% → 7.5% / 9.5%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+3.1 yrs</span><span>−2.6 yrs</span></span></li>
+          <li style="--lo:-.92;--hi:.65"><span class="gd-tn-name">Investment outcome chance<small>90% → 75% / 95%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−2.8 yrs</span><span>+2.0 yrs</span></span></li>
+          <li style="--lo:-.65;--hi:.68"><span class="gd-tn-name">Volatility<small>15% → 10% / 20%</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−2.0 yrs</span><span>+2.1 yrs</span></span></li>
+        </ol>
+        <p class="gd-tn-note">With no volatility at all, the 90% line is the expected line again and the age is back to 44y 4m: the five years are the price of being sure.</p>
+      </figure>
+      <ul class="gd-facts">
+        <li><strong>The real return decides the most.</strong> Inflation and the return are the two figures nobody controls, and together they set the real return. One point either way moves the age two to three years. Test your plan at a real return a point lower before you trust it.</li>
+        <li><strong>Your own levers move it about a year for 10%.</strong> Spending 10% less does a little more than saving 10% more, because it shrinks the pot for every year of retirement. Under Net income a spending cut does both jobs and moves it nearly twice as far.</li>
+        <li><strong>Risk only shows once you ask for it.</strong> At 50% the age ignores volatility; at 90% each 5 points of volatility is about two years. The goal matters less than it sounds: Leave a Legacy with $500,000 is free at 44y 8m, Die Rich at 45y 1m.</li>
+      </ul>
+    </section>
+
+    <!-- Live sensitivity -->
+    <section class="gd-sec card" id="sense" aria-labelledby="sense-h">
+      <h2 id="sense-h">Watch it move</h2>
+      <p class="gd-sub">The top of the tornado, live: inflation up a point, then down a point, on Moderate FIRE.</p>
+      <div class="gd-demo" data-demo="sense" data-w="1280" data-h="900">
+        <figure class="gd-screen"><span class="gd-cap">Moderate FIRE: inflation 3.5%, then 1.5%</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Raise inflation</h3><p>3.5% on the same 8.5% return: the real return falls to 4.83%, the red line lifts, the blue line flattens. Free at 47y 1m.</p></li>
+          <li><h3>Lower it</h3><p>1.5%: a 6.90% real return, a smaller pot, a steeper climb. Free at 42y 3m.</p></li>
+          <li><h3>Back to the base case</h3><p>2.5%, and the answer returns to 44y 4m. Nothing is random, so the same plan always gives the same answer.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Limits -->
+    <section class="gd-sec card" id="limits" aria-labelledby="limits-h">
+      <h2 id="limits-h">What it leaves out</h2>
+      <p class="gd-sub">The tool's own <strong>What this assumes</strong> card lists the assumptions your plan rests on. The ones that matter most:</p>
+      <ul class="gd-facts">
+        <li><strong>No tax.</strong> The return and the savings or income you enter are taken as after tax. Tax differs too much between countries and between ordinary and pension accounts to model honestly in one tool.</li>
+        <li><strong>No fees beyond the return.</strong> Enter the return after fees.</li>
+        <li><strong>One return, one inflation rate, for life.</strong> Volatility spreads the futures around them, but the long-run average never changes, and one rate covers prices at home and abroad (Geoarbitrage runs 3% for that reason).</li>
+        <li><strong>Returns are lognormal and independent month to month.</strong> Real markets have fatter tails and runs of bad years, so the worst futures can be worse than the band.</li>
+        <li><strong>Once you stop, the pot is drawn at the expected return.</strong> The outcome chance shapes the years you save; the spread in retirement shows in <strong>Chance it works</strong> and the band, not in the balance line.</li>
+        <li><strong>No lumpy spending.</strong> A stage changes spending for whole months at a time, never for one bill such as a car or a wedding.</li>
+        <li><strong>Spending stays flat in real terms within a stage.</strong> Slower later years are a stage you add, not something the tool assumes.</li>
+        <li><strong>No home.</strong> Invested assets exclude the home you live in, and no house is bought or sold.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>When not to trust it.</strong> If your answer only works on the expected return, stopping there is close to a coin flip. If a point less real return pushes it out by years, the plan is thin. And if tax on your savings or withdrawals is large, enter after-tax figures or treat the age as optimistic.</p>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to find your age?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (FIRE, SWR...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+<!--/email_off-->
+</body>
+</html>

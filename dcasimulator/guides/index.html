@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to use the DCA Scenario Explorer | Adjie Brotools</title>
+<meta name="description" content="A visual guide to the DCA Scenario Explorer and its Portfolio mode: load prices, set a dollar-cost averaging plan, read the result and sweep it with Optimise.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/dcasimulator/guides/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to use the DCA Scenario Explorer">
+<meta property="og:description" content="The real tool, running live: dollar-cost averaging into real prices, the average cost it buys at, ROI, TWR and MWR, portfolio rebalancing, and how far the answer moves when a setting does.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/dcasimulator/guides/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/dcasimulator.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DCA Scenario Explorer, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to use the DCA Scenario Explorer">
+<meta name="twitter:description" content="The real tool, running live: dollar-cost averaging into real prices, the average cost it buys at, ROI, TWR and MWR, portfolio rebalancing, and how far the answer moves when a setting does.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/dcasimulator.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to use the DCA Scenario Explorer",
+  "url": "https://tool.adjiebrotots.com/dcasimulator/guides/",
+  "description": "Backtest dollar-cost averaging: load real prices or simulate an asset, set how much and when each scenario buys, compare what each grew to, sweep a setting with Optimise, and compare whole portfolios with rebalancing in Portfolio mode.",
+  "inLanguage": "en",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "DCA Scenario Explorer",
+    "url": "https://tool.adjiebrotots.com/dcasimulator/"
+  },
+  "step": [
+    { "@type": "HowToStep", "name": "Load the prices", "text": "Start from a Quick Start, or list tickers on the Data tab and load their daily prices, or add a simulated asset by its return and volatility. Set the date range." },
+    { "@type": "HowToStep", "name": "Set each scenario", "text": "On the Scenarios tab, give each scenario an asset, an amount per top-up and an investment style: a fixed date, a momentum threshold, a technical signal, or a hindsight benchmark." },
+    { "@type": "HowToStep", "name": "Simulate and read", "text": "Press Simulate. The sentence at the top says which scenario did best, the Final Summary gives each one's value and ROI, and the charts and the breakdown show every buy. Optimise sweeps up to two settings." }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": { "@id": "https://www.adjiebrotots.com/#person" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Adjie Brotools", "item": "https://tool.adjiebrotots.com/" },
+    { "@type": "ListItem", "position": 2, "name": "DCA Scenario Explorer", "item": "https://tool.adjiebrotots.com/dcasimulator/" },
+    { "@type": "ListItem", "position": 3, "name": "How to use the DCA Scenario Explorer", "item": "https://tool.adjiebrotots.com/dcasimulator/guides/" }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../../shared.css">
+<link rel="stylesheet" href="../../guide-shared.css">
+</head>
+<body class="light" data-guide-live="scenes.js">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="container gd">
+
+  <nav class="gd-top" aria-label="Site">
+    <a class="btn-theme btn-back" href="../">← DCA Scenario Explorer</a>
+    <div class="gd-top-r">
+      <a class="btn-primary gd-open gd-open-top" href="../">Open the tool</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="gd-hero">
+      <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M3 3v18h18"/><path stroke="var(--accent2)" d="m7 15 4-4 3 3 6-7"/><path stroke="var(--accent2)" d="M16 7h4v4"/></svg>How to use the DCA Scenario Explorer</h1>
+      <p class="gd-lead">Put a set amount into an asset on a schedule, or when a signal fires, and see what it would have grown to. Part 1 shows how to use the tool and its Portfolio mode. Part 2 shows how every figure is worked out. Every demo is the real tool, running live in your browser. Press <strong>Pause</strong> on one to try it yourself.</p>
+      <div class="gd-hero-btns">
+        <a class="btn-primary gd-open" href="../">Open the tool</a>
+        <a class="gd-skip" href="#how">Skip to how the numbers work</a>
+      </div>
+    </header>
+
+    <section class="gd-sec card" id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">The short version</h2>
+      <ol class="gd-three">
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">1</span>Load the prices</h3>
+          <p>One click on a <strong>Quick Start</strong> loads an example. Or list tickers on the <strong>Data</strong> tab, or make up an asset from a return and a volatility, and set the <strong>Date Range</strong>.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">2</span>Set each scenario</h3>
+          <p>On <strong>Scenarios</strong>, each plan gets an asset, an <strong>Amount per top-up</strong> and an <strong>Investment Style</strong>: a fixed day, a price move, a technical signal, or a hindsight benchmark.</p>
+        </li>
+        <li>
+          <h3><span class="gd-n" aria-hidden="true">3</span>Simulate and read</h3>
+          <p>Press <strong>▶ Simulate</strong>. One sentence names the best plan; the <strong>Final Summary</strong> gives each one's value and ROI. <strong>Portfolio mode</strong> does the same for whole portfolios.</p>
+        </li>
+      </ol>
+      <p class="gd-note"><strong>Nothing is uploaded.</strong> Prices come from Yahoo Finance through the site's own server and are kept in your browser; every run is worked out there. This guide is general information, not financial advice.</p>
+      <nav class="gd-toc" aria-label="On this page">
+        <a href="#screen">The screen</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#data">Data</a>
+        <a href="#scenarios">Scenarios</a>
+        <a href="#styles">Investment Style</a>
+        <a href="#assumptions">Assumptions</a>
+        <a href="#results">The answer and the charts</a>
+        <a href="#details">Breakdown</a>
+        <a href="#optimise">Optimise</a>
+        <a href="#share">Save and share</a>
+        <a href="#same">Same inputs, two screens</a>
+        <a href="#portfolio">Portfolio mode</a>
+        <a href="#how">How the numbers work</a>
+        <a href="#example">Worked example</a>
+        <a href="#sensitivity">What moves the answer</a>
+        <a href="#limits">What it leaves out</a>
+      </nav>
+    </section>
+
+    <!-- The screen -->
+    <section class="gd-sec card" id="screen" aria-labelledby="screen-h">
+      <h2 id="screen-h">The screen</h2>
+      <p class="gd-sub">Inputs on the left, the answer and the charts beside them, the detail under the charts. Point at a part in the list to see where it is.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="layout" data-w="1280" data-h="1960" role="img" aria-label="The DCA Scenario Explorer with the Monthly vs Weekly example: the inputs on the left, the answer and the Final Summary on the right, the two charts under them, and the Detailed Breakdown and What this assumes at the bottom.">
+            <span class="gd-box" data-b="1" style="--x:1.9%;--y:11%;--w:29.7%;--h:30%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:33%;--y:11%;--w:65%;--h:15%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:33%;--y:27%;--w:65%;--h:52%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:33%;--y:81%;--w:65%;--h:17%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p><strong>Quick Start</strong>, save and open, then three tabs: <strong>Data</strong>, <strong>Scenarios</strong> and <strong>Assumptions</strong>. <strong>▶ Simulate</strong> sits at the bottom. The chevrons fold the card to a slim <strong>Inputs</strong> rail.</p>
+          </li>
+          <li data-b="2">
+            <h3>The answer</h3>
+            <p>One sentence: which scenario did best, and by how much. Under it, the <strong>Final Summary</strong>: a tile per scenario, and <strong>Advanced metrics</strong>.</p>
+          </li>
+          <li data-b="3">
+            <h3>Charts</h3>
+            <p><strong>Security Prices</strong>, with each buy marked if you like, and <strong>Portfolio Value Over Time</strong> against the money put in. Each has <strong>Share</strong> and ⟳.</p>
+          </li>
+          <li data-b="4">
+            <h3>Details</h3>
+            <p>The <strong>Detailed Breakdown</strong>, every buy of one scenario, and <strong>What this assumes</strong>, both opening from their chevrons.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub"><a href="../portfolio/">Portfolio mode</a>, linked above the inputs as the <strong>Portfolio DCA Simulator</strong>, runs whole portfolios: several assets at target weights, rebalanced, with fees and a cash account.</p>
+      <div class="gd-layout gd-layout-side">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="pf-layout" data-w="1280" data-h="1500" role="img" aria-label="The Portfolio DCA Simulator with the 80/20 vs 60/40 example: the inputs on the left, the answer and the Final Summary, the Portfolio Value Over Time chart, and the Detailed Breakdown under it.">
+            <span class="gd-box" data-b="1" style="--x:1.9%;--y:14%;--w:29.7%;--h:40%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:33%;--y:14%;--w:65%;--h:22%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:33%;--y:38%;--w:65%;--h:35%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:33%;--y:75%;--w:65%;--h:24%"><b>4</b></span>
+          </div>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1">
+            <h3>Inputs</h3>
+            <p>The same <strong>Data</strong> and <strong>Assumptions</strong> tabs. <strong>Portfolios</strong> holds a tab per portfolio, each with <strong>Top-Ups</strong>, <strong>Assets</strong> and <strong>Rebalancing</strong>.</p>
+          </li>
+          <li data-b="2">
+            <h3>The answer</h3>
+            <p>Which portfolio ended highest, then a tile per portfolio: value, net gain, ROI, top-ups and the share left in cash.</p>
+          </li>
+          <li data-b="3">
+            <h3>Portfolio Value Over Time</h3>
+            <p>A line per portfolio against the money topped up. In Optimise mode it becomes the sweep.</p>
+          </li>
+          <li data-b="4">
+            <h3>Detailed Breakdown</h3>
+            <p>One portfolio at a time: its assets' prices, its <strong>Composition Over Time</strong>, and the <strong>Breakdown Table</strong> of every event.</p>
+          </li>
+        </ol>
+      </div>
+      <p class="gd-sub">Top right on both pages, <strong>Tour</strong> replays a one minute walk through the page, and <strong>Guide</strong> opens this page. The <a href="../ticker/">ticker reference</a> lists the codes Yahoo Finance uses for shares, funds, indices, currencies and crypto.</p>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="gd-sec card" id="quickstart" aria-labelledby="quickstart-h">
+      <h2 id="quickstart-h">Quick Start</h2>
+      <p class="gd-sub">Three worked comparisons on real prices: <strong>Monthly vs Weekly</strong> ($520 a month against $120 a week into SPY), <strong>Equity vs Money Market</strong> ($500 a month into DHHF.AX against AAA.AX) and <strong>Stock vs ETF</strong> ($500 a month into AAPL against SPY). One click replaces the scenarios and runs them.</p>
+      <p class="gd-sub gd-phone-hint">On a phone, press <strong>Full screen</strong> under a demo and turn the phone sideways to read it.</p>
+      <div class="gd-demo" data-demo="quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Open the inputs, pick Monthly vs Weekly</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Open the inputs</h3><p>On a first visit the card is folded to a rail, so the answer has the room. Click <strong>Inputs</strong> to open it; it stays the way you leave it.</p></li>
+          <li><h3>Pick an example</h3><p>Hover a button to read what it compares. A click loads it and runs it.</p></li>
+          <li><h3>Read the answer</h3><p>$520 a month and $120 a week put in about the same money, so the sentence compares the return on it: 56.68% against 55.87%.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Every demo here runs 1 Oct 2021 to 30 Sep 2026,</strong> on prices saved with this guide. The tool opens on the last five years to today, so your own run of an example will differ.</li>
+        <li><strong>A Quick Start is a fresh start.</strong> It clears the scenarios and settings first; prices already loaded stay, so no download is wasted.</li>
+      </ul>
+    </section>
+
+    <!-- Data -->
+    <section class="gd-sec card" id="data" aria-labelledby="data-h">
+      <h2 id="data-h">The Data tab</h2>
+      <p class="gd-sub">What every scenario can buy, and the days it runs over. Load prices once here; scenarios then pick from them.</p>
+      <div class="gd-demo" data-demo="data" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The loaded assets, a simulated asset, the dates</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Currency</h3><p><strong>Currency Symbol</strong> is the label money wears. Nothing is converted.</p></li>
+          <li><h3>Loaded assets</h3><p>Folded to one line. Open it to see each ticker's name and dates, remove one, <strong>Refresh</strong> to today or <strong>Clear all</strong>.</p></li>
+          <li><h3>Real or Simulated</h3><p><strong>Real</strong>: list <strong>Tickers</strong> and press <strong>⤓ Load tickers</strong>. <strong>Simulated</strong>: an <strong>Asset name</strong>, a <strong>Return</strong> and a <strong>Standard deviation</strong>, then <strong>+ Add Simulated Asset</strong>.</p></li>
+          <li><h3>Date Range</h3><p><strong>Start</strong> and <strong>End</strong>. The run uses the trading days every scenario's asset shares.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Five loads a day, 25 tickers each.</strong> The data server is shared, so list everything at once. A ticker already loaded costs nothing, and both pages share the same prices.</li>
+        <li><strong>Prices from 1990 on.</strong> A load fetches each ticker's whole history from 1 Jan 1990, so changing the dates within it needs no new load.</li>
+      </ul>
+    </section>
+
+    <!-- Scenarios -->
+    <section class="gd-sec card" id="scenarios" aria-labelledby="scenarios-h">
+      <h2 id="scenarios-h">The Scenarios tab</h2>
+      <p class="gd-sub">A scenario is one plan: an asset, how much each top-up puts in, and when it buys. Add as many as you like; each runs on its own and they are compared.</p>
+      <div class="gd-demo" data-demo="scenarios" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Monthly vs Weekly: the monthly plan copied into AAPL</span></figure>
+        <ol class="gd-steps">
+          <li><h3>A tab per scenario</h3><p>Click a tab to edit it, double-click to rename it. <strong>+</strong> adds one, the icons copy or remove the one open.</p></li>
+          <li><h3>Pick the asset</h3><p><strong>Asset</strong> lists the loaded tickers and simulated assets. Type a ticker or part of its name.</p></li>
+          <li><h3>Name it</h3><p>The name and the colour beside it are labels only: changing them never sends the results out of date.</p></li>
+          <li><h3>Top-ups</h3><p><strong>Amount per top-up</strong>, then <strong>Yearly increase</strong>: 10 makes year 2 +10% and year 3 +21%.</p></li>
+          <li><h3>Simulate</h3><p>Any change greys the results and lights <strong>▶ Simulate</strong>, so a chart never shows numbers the form no longer holds.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The amount is per purchase.</strong> A weekly style buys 52 times a year, a monthly one 12. Switching between them restates the amount so a year's money stays the same: $500 a month becomes $115.38 a week.</li>
+      </ul>
+    </section>
+
+    <!-- Styles -->
+    <section class="gd-sec card" id="styles" aria-labelledby="styles-h">
+      <h2 id="styles-h">Investment Style</h2>
+      <p class="gd-sub">When a scenario buys. Four families, each opened by its pill: only the options of the open family, and the settings of the style picked, show.</p>
+      <div class="gd-demo" data-demo="styles" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The four families, then RSI with its indicator on the chart</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Date</h3><p><strong>Monthly (Fixed Date)</strong> on a <strong>Day of month</strong>, or <strong>Weekly (Fixed Day)</strong> on a <strong>Day of week</strong>. A holiday moves it to the closest trading day.</p></li>
+          <li><h3>Momentum</h3><p><strong>Buy the Dip</strong> or <strong>Buy the Peak</strong>: once the price has moved the <strong>Threshold</strong> from the period's first close. <strong>Invest at End of Month if target not reached</strong> buys anyway on its last day.</p></li>
+          <li><h3>Technical</h3><p>MA Crossover, RSI Oversold Buy, Bollinger Band Dip, MACD Bullish Cross, MACD Histogram Recovery, ADX Trend Filter, each with its own settings. At most one buy a month or a week, by <strong>Frequency</strong>.</p></li>
+          <li><h3>Forward</h3><p>The month's or week's highest or lowest price day. They need tomorrow's prices, so they are benchmarks: the best and worst a plan on that cadence could have done.</p></li>
+          <li><h3>Run it</h3><p><strong>Show Indicators</strong> draws the signal behind a technical style, <strong>Show Buy Date</strong> marks each buy under the price.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>A signal that never fires buys nothing.</strong> With the end-of-period box off, a month without a signal is skipped, so less money goes in. Compare such a plan on ROI, not on its final value.</li>
+        <li><strong>Indicators start from the first date.</strong> They are worked out on the prices in the Date Range alone, so a 200-day average gives no signal in the first 200 trading days.</li>
+      </ul>
+    </section>
+
+    <!-- Assumptions -->
+    <section class="gd-sec card" id="assumptions" aria-labelledby="assumptions-h">
+      <h2 id="assumptions-h">The Assumptions tab</h2>
+      <p class="gd-sub">Three settings every scenario shares.</p>
+      <div class="gd-demo" data-demo="assumptions" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Monthly vs Weekly, filled at the same day's close</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Trade at</h3><p>Every rule decides on a day's close. The order fills at <strong>Same day's close</strong>, <strong>Next day's open</strong> (the default: decide in the evening, buy next morning) or <strong>Next day's close</strong>.</p></li>
+          <li><h3>Risk-Free Rate</h3><p>What money earns without risk, a year. It only feeds Sharpe and Sortino and moves no money.</p></li>
+          <li><h3>Simulation Seed</h3><p>Fixes the random path of a simulated asset, so one seed always gives the same prices.</p></li>
+          <li><h3>Simulate</h3><p>A fill at the close here moves the result by about $24 on $48,884: when you buy within a day hardly matters.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="gd-sec card" id="results" aria-labelledby="results-h">
+      <h2 id="results-h">The answer and the charts</h2>
+      <p class="gd-sub">The sentence at the top is the whole answer. Under it, the figures behind it and two charts.</p>
+      <div class="gd-demo" data-demo="results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Monthly vs Weekly: the answer, the tiles, the charts</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The answer</h3><p>The same money in: the highest final value wins. Different money in: the highest return on it does.</p></li>
+          <li><h3>Final Summary</h3><p>Each tile: the final value, <strong>ROI</strong>, <strong>Topped up</strong> and <strong>Trades</strong>. <strong>Advanced metrics</strong> adds Sharpe, Sortino, CAGR (TWR) and CAGR (MWR).</p></li>
+          <li><h3>Security Prices</h3><p>The price of the first scenario's asset; click a legend entry to add another, scaled to 100 so they compare. <strong>Candlesticks</strong> shows each day's open, high, low and close.</p></li>
+          <li><h3>Portfolio Value</h3><p>What each scenario holds, day by day, over the dashed <strong>Total deposited</strong>. The gap between them is the gain.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Blue and gold are options, not good and bad.</strong> Scenarios take the site's neutral colours; red is kept for a price falling.</li>
+        <li><strong>Zoom and pan</strong> a chart with the wheel or a drag; ⟳ resets it. Hover to read every scenario on that day.</li>
+      </ul>
+    </section>
+
+    <!-- Details -->
+    <section class="gd-sec card" id="details" aria-labelledby="details-h">
+      <h2 id="details-h">Detailed Breakdown and What this assumes</h2>
+      <p class="gd-sub">Under the charts, the working behind the answer.</p>
+      <div class="gd-demo" data-demo="details" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Every buy, then what the run rests on</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Detailed Breakdown</h3><p>Opens from its chevron: a row per buy with the day it filled, the day it was <strong>Decided</strong>, the price, the units, the running totals and the return so far.</p></li>
+          <li><h3>Pick a scenario</h3><p>The menu picks whose buys show. <strong>⬇ CSV</strong> saves them.</p></li>
+          <li><h3>What this assumes</h3><p>The figures and rules this run used, from your own inputs: the price source, the dates, the fills, the top-ups.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Optimise -->
+    <section class="gd-sec card" id="optimise" aria-labelledby="optimise-h">
+      <h2 id="optimise-h">Optimise</h2>
+      <p class="gd-sub">The gold gauge beside a setting sweeps it: the scenario on screen runs once for every value in a range, up to two settings at once, so you see how the answer moves and where it peaks.</p>
+      <div class="gd-demo" data-demo="optimise" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The day of the month, swept from the 1st to the 28th</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Pick a setting</h3><p>Click the gauge beside it. Any amount, day, threshold or indicator setting has one.</p></li>
+          <li><h3>Set the range</h3><p><strong>Start value</strong>, <strong>End value</strong> and <strong>Steps</strong>, or a pick from a list. The line under it counts the runs.</p></li>
+          <li><h3>Optimise</h3><p>The button reads <strong>▶ Optimise</strong> and <strong>Cancel</strong> sits beside it. Only this scenario runs, so its tabs stay locked until you cancel.</p></li>
+          <li><h3>Read the sweep</h3><p>The answer names the best value against yours; the tiles show <strong>Best</strong>, <strong>Your current setting</strong> and <strong>Worst</strong>. Two settings draw a surface.</p></li>
+          <li><h3>Show a run below</h3><p><strong>Shown in the charts below</strong> picks the tested value the charts and the breakdown show. A click on the chart does the same.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Show</strong> picks what the sweep ranks by: ROI, Final value, Net, Sharpe, Sortino, CAGR (TWR) or CAGR (MWR).</li>
+        <li><strong>Up to 625 runs.</strong> 50 values for one setting, or 25 by 25 for two.</li>
+        <li><strong>The best is the best for these past prices,</strong> not a forecast. Here every day from the 1st to the 28th lands within a few hundred dollars.</li>
+      </ul>
+    </section>
+
+    <!-- Share -->
+    <section class="gd-sec card" id="share" aria-labelledby="share-h">
+      <h2 id="share-h">Save, export and share</h2>
+      <p class="gd-sub">The tool keeps your scenarios in this browser between visits. The rest makes something to keep or send.</p>
+      <div class="gd-demo" data-demo="share" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Save, open and Share</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Save or open a file</h3><p>The two icons beside Quick Start write every scenario and setting to a file, and read one back. Prices are not saved; a load fetches them again.</p></li>
+          <li><h3>Share a chart</h3><p>As SVG or PNG, a copy to the clipboard, a link that opens your scenarios, or an embed for a web page.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>An embed carries its own prices,</strong> just the dates it draws, so it shows the same chart on any site without loading anything. A link opens the tool on your scenarios and loads prices as a visit does.</li>
+      </ul>
+    </section>
+
+    <!-- Same inputs, two screens -->
+    <section class="gd-sec card" id="same" aria-labelledby="same-h">
+      <h2 id="same-h">Same inputs, two screens</h2>
+      <p class="gd-sub"><strong>Portfolio mode</strong> runs the same kind of plan on the same prices: a tab per plan, an amount per top-up, a yearly increase, a day it buys on. A plan there holds several assets instead of one. Point at a field in the list to see it on both.</p>
+      <div class="gd-twin">
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="same-main" data-w="900" data-h="1100" role="img" aria-label="The main page's Scenarios tab with four parts outlined: the scenario tabs, Amount per top-up, Yearly increase and the Investment Style.">
+            <span class="gd-box" data-b="1" style="--x:4%;--y:30%;--w:92%;--h:6%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:5%;--y:46%;--w:90%;--h:5%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:5%;--y:51%;--w:90%;--h:5%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:5%;--y:66%;--w:90%;--h:30%"><b>4</b></span>
+          </div>
+          <figcaption><strong>DCA Scenario Explorer</strong>: one asset per scenario.</figcaption>
+        </figure>
+        <figure class="gd-shot">
+          <div class="gd-shot-frame" data-shot="same-pf" data-w="900" data-h="1100" role="img" aria-label="The Portfolio page's Top-Ups tab with the same four parts outlined: the portfolio tabs, Amount per top-up, Yearly increase, and Top-up period with its Schedule.">
+            <span class="gd-box" data-b="1" style="--x:4%;--y:30%;--w:92%;--h:6%"><b>1</b></span>
+            <span class="gd-box" data-b="2" style="--x:5%;--y:46%;--w:90%;--h:7%"><b>2</b></span>
+            <span class="gd-box" data-b="3" style="--x:5%;--y:53%;--w:90%;--h:7%"><b>3</b></span>
+            <span class="gd-box" data-b="4" style="--x:5%;--y:60%;--w:90%;--h:14%"><b>4</b></span>
+          </div>
+          <figcaption><strong>Portfolio DCA Simulator</strong>: several assets per portfolio.</figcaption>
+        </figure>
+        <ol class="gd-key">
+          <li data-b="1"><h3>A tab per plan</h3><p>A scenario there, a portfolio here: click to edit, double-click to rename, copy or remove.</p></li>
+          <li data-b="2"><h3>Amount per top-up</h3><p>The same field: the money each top-up puts in.</p></li>
+          <li data-b="3"><h3>Yearly increase</h3><p>The same field, compounding once a year.</p></li>
+          <li data-b="4"><h3>When it buys</h3><p>The Investment Style there; the <strong>Top-up period</strong> and its <strong>Schedule</strong> here.</p></li>
+        </ol>
+      </div>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>DCA Scenario Explorer</th><th>Portfolio DCA Simulator</th><th>What differs</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Currency Symbol, Tickers, Simulated, Date Range</th><td data-l="Portfolio DCA Simulator">The same Data tab</td><td data-l="What differs">Nothing: both pages share the loaded prices and the simulated assets.</td></tr>
+            <tr><th scope="row">Scenario tabs</th><td data-l="Portfolio DCA Simulator">Portfolio tabs</td><td data-l="What differs">A portfolio holds several assets; a scenario holds one.</td></tr>
+            <tr><th scope="row">Amount per top-up, Yearly increase</th><td data-l="Portfolio DCA Simulator">Amount per top-up, Yearly increase (Top-Ups)</td><td data-l="What differs">None.</td></tr>
+            <tr><th scope="row">Investment Style: Monthly (Fixed Date), Weekly (Fixed Day)</th><td data-l="Portfolio DCA Simulator">Top-up period, Schedule</td><td data-l="What differs">Weekly, fortnightly, monthly, quarterly or yearly, on one or several days.</td></tr>
+            <tr><th scope="row">Investment Style: Momentum, Technical</th><td data-l="Portfolio DCA Simulator">Rule-Based Triggers, a trigger per asset (Rebalancing)</td><td data-l="What differs">Top-ups wait in a reserve, earning the risk-free rate or held in an asset, until each asset's own trigger fires.</td></tr>
+            <tr><th scope="row">Investment Style: Forward</th><td data-l="Portfolio DCA Simulator">None</td><td data-l="What differs">The hindsight benchmarks are on the main page only.</td></tr>
+            <tr><th scope="row">Asset</th><td data-l="Portfolio DCA Simulator">Assets, Target Weights, Method</td><td data-l="What differs">Several assets, each with a weight, and a rule for how top-ups and rebalances share the money out.</td></tr>
+            <tr><th scope="row">None</th><td data-l="Portfolio DCA Simulator">Buying fee, Selling fee</td><td data-l="What differs">The main page charges no fees.</td></tr>
+            <tr><th scope="row">Risk-Free Rate (Assumptions)</th><td data-l="Portfolio DCA Simulator">Risk-Free Account: Rate or Ticker (Top-Ups)</td><td data-l="What differs">Here it is real money: cash waiting to be invested earns it. It also sets each portfolio's Sharpe and Sortino.</td></tr>
+            <tr><th scope="row">Trade at, Simulation Seed</th><td data-l="Portfolio DCA Simulator">Trade at, Simulation Seed</td><td data-l="What differs">None.</td></tr>
+            <tr><th scope="row">Final Summary, Advanced metrics, Optimise</th><td data-l="Portfolio DCA Simulator">The same</td><td data-l="What differs">A tile adds Net and the share in cash; weights can be swept too.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>What it adds.</strong> Several assets in one plan, kept at their weights or not, with fees on every trade and interest on idle cash.</li>
+        <li><strong>What it holds fixed.</strong> The engine: a portfolio of one asset at 100%, with no fees, topped up on the same day, gives the main page's figures, buy for buy, metric for metric.</li>
+      </ul>
+    </section>
+
+    <!-- Portfolio mode -->
+    <section class="gd-sec card" id="portfolio" aria-labelledby="portfolio-h">
+      <h2 id="portfolio-h">Portfolio mode: Quick Start</h2>
+      <p class="gd-sub">Three Quick Starts: <strong>80/20 vs 60/40</strong> (DHHF.AX shares and AAA.AX cash), <strong>Rebal Monthly vs Quarterly</strong> and <strong>Rebal vs Constant Alloc</strong> (both 50/50 SPY and GOVT bonds). Each tops up $1,000 a month.</p>
+      <div class="gd-demo" data-demo="pf-quickstart" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Portfolio mode: 80/20 against 60/40</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Pick a comparison</h3><p>Hover a button to read what it compares; a click loads it and runs it.</p></li>
+          <li><h3>Read the answer</h3><p>The same $60,000 went in, so the final values compare: 80/20 ends $3,311 ahead, and the ★ marks it.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="pf-assets" aria-labelledby="pf-assets-h">
+      <h2 id="pf-assets-h">Portfolio mode: assets and weights</h2>
+      <p class="gd-sub">Each portfolio holds its own list of assets, and a target share for each.</p>
+      <div class="gd-demo" data-demo="pf-assets" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Rebal vs Constant Alloc: AAPL added at 20%</span></figure>
+        <ol class="gd-steps">
+          <li><h3>A tab per portfolio</h3><p>Click to edit, double-click to rename. Each portfolio has its own assets, schedule, method and fees.</p></li>
+          <li><h3>Add an asset</h3><p>On <strong>Assets</strong>, pick a loaded ticker or simulated asset and press <strong>+ Add</strong>. Drag a row to reorder.</p></li>
+          <li><h3>Target Weights</h3><p>On <strong>Rebalancing</strong>: each asset's share, which must add up to 100%. The ring shows the mix.</p></li>
+          <li><h3>Simulate</h3><p>The Constant Weight portfolio now holds SPY, GOVT and AAPL at 40/40/20.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="pf-rebal" aria-labelledby="pf-rebal-h">
+      <h2 id="pf-rebal-h">Portfolio mode: rebalancing and fees</h2>
+      <p class="gd-sub">The <strong>Method</strong> decides how a top-up becomes units, and whether anything is ever sold to stay on target.</p>
+      <div class="gd-demo" data-demo="pf-rebal" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">80/20 vs 60/40: 80/20 rebalanced every quarter</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Method</h3><p><strong>Towards Weight</strong>, <strong>Constant Weight</strong>, <strong>Constant Allocation</strong>, <strong>Trend Following</strong> or <strong>Rule-Based Triggers</strong>. The pencil reopens the list.</p></li>
+          <li><h3>Rebalance Timing</h3><p>Constant Weight rebalances <strong>At top-up</strong>, or on a <strong>Separate schedule</strong>, its own <strong>Rebalance period</strong>, with top-ups waiting in cash until then.</p></li>
+          <li><h3>Fees</h3><p><strong>Buying fee</strong> and <strong>Selling fee</strong>, a % of every trade.</p></li>
+          <li><h3>Simulate</h3><p>The answer and the tiles follow.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="pf-topups" aria-labelledby="pf-topups-h">
+      <h2 id="pf-topups-h">Portfolio mode: top-ups and cash</h2>
+      <p class="gd-sub">How much goes in, when, and what money earns while it waits to be invested.</p>
+      <div class="gd-demo" data-demo="pf-topups" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">Rebal Monthly vs Quarterly: idle cash earning 4%</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Contribution</h3><p><strong>Amount per top-up</strong> and <strong>Yearly increase</strong>, as on the main page.</p></li>
+          <li><h3>When it tops up</h3><p><strong>Top-up period</strong>, then its <strong>Schedule</strong>: weekdays, days of the month, the months of a quarter, or a month and day. The line under it says it in words.</p></li>
+          <li><h3>Risk-Free Account</h3><p>Cash waiting to be invested earns a <strong>Rate</strong>, or follows a money market <strong>Ticker</strong>.</p></li>
+          <li><h3>Simulate</h3><p>The quarterly portfolio holds each top-up in cash for up to three months; at 4% that cash now earns.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="pf-results" aria-labelledby="pf-results-h">
+      <h2 id="pf-results-h">Portfolio mode: the results</h2>
+      <p class="gd-sub">The same answer and tiles as the main page, then one portfolio at a time in detail.</p>
+      <div class="gd-demo" data-demo="pf-results" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">80/20 vs 60/40: the results</span></figure>
+        <ol class="gd-steps">
+          <li><h3>Final Summary</h3><p>A tile per portfolio. <strong>Advanced metrics</strong> shows that 60/40 earned less but scored the higher Sharpe: less return, a smoother ride.</p></li>
+          <li><h3>Portfolio Value</h3><p>A line per portfolio over the dashed top-ups. <strong>Show Top-Ups</strong> hides them.</p></li>
+          <li><h3>One portfolio in detail</h3><p><strong>Portfolio</strong> picks whose prices, composition and events show below.</p></li>
+          <li><h3>Composition</h3><p>Cash and each asset stacked to the total, in <strong>$ Value</strong> or <strong>% of Portfolio</strong>.</p></li>
+          <li><h3>Breakdown Table</h3><p>The start, every top-up, rebalance and trigger, and the end, with cash, interest and fees so far. <strong>⬇ CSV (full daily)</strong> saves every day.</p></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>Optimise works here too,</strong> from the gauges beside the amount, the schedule, the fees, the risk-free rate, trigger settings and the weights.</li>
+        <li><strong>Every portfolio runs on the trading days all of them share,</strong> the risk-free ticker included.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== Part 2 ===================== -->
+    <div class="gd-part" id="how">
+      <span class="gd-part-k">Part 2</span>
+      <h2>How the numbers work</h2>
+      <p>What each field means, where it enters the sums, and what moving it does to the answer and why. All of it is read from the tool's own code (<code>script.js</code> on each page, the indicators and fills in <code>shared.js</code>).</p>
+    </div>
+
+    <section class="gd-sec card" id="model" aria-labelledby="model-h">
+      <h2 id="model-h">The model in one picture</h2>
+      <p class="gd-sub">Dollar-cost averaging (DCA) means putting a set amount in on a schedule, whatever the price. Each top-up buys as many units as its money buys that day, in fractions where needed. The holding is worth its units at each day's close. At the end the tool asks two things: what is it worth, and what did it return on the money put in?</p>
+      <div class="gd-eq"><span class="gd-eq-l">Units bought</span> <var>u</var><sub><var>i</var></sub> = <span class="gd-frac"><span><var>a</var><sub><var>i</var></sub></span><span><var>p</var><sub><var>i</var></sub></span></span><small>each top-up</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Final value</span> <var>V</var> = <var>U</var> × <var>P</var><sub>end</sub>, with <var>U</var> = <span class="gd-sum">Σ</span> <var>u</var><sub><var>i</var></sub></div>
+      <div class="gd-eq"><span class="gd-eq-l">ROI</span> = <span class="gd-frac"><span><var>V</var> − <var>D</var></span><span><var>D</var></span></span> = <span class="gd-frac"><span><var>P</var><sub>end</sub></span><span>average cost</span></span> − 1<small>average cost = <var>D</var> ÷ <var>U</var></small></div>
+      <ul class="gd-where">
+        <li><var>a</var><sub><var>i</var></sub>the money in top-up <var>i</var></li>
+        <li><var>p</var><sub><var>i</var></sub>the price it fills at (<strong>Trade at</strong>)</li>
+        <li><var>U</var>units held at the end</li>
+        <li><var>P</var><sub>end</sub>the close on the last day</li>
+        <li><var>D</var><strong>Topped up</strong>: the sum of every <var>a</var><sub><var>i</var></sub></li>
+      </ul>
+      <p class="gd-sub" style="margin-top:16px">The last form is the whole of DCA in one line: your return is the last price over the average price you paid. And a fixed amount pays less than the average price, because it buys more units when the price is low and fewer when it is high. With equal top-ups the average cost is the harmonic mean of the fill prices, which is never above their ordinary mean:</p>
+      <div class="gd-eq"><span class="gd-eq-l">Average cost</span> = <span class="gd-frac"><span><var>n</var> × <var>a</var></span><span><span class="gd-sum">Σ</span> <var>a</var> ÷ <var>p</var><sub><var>i</var></sub></span></span> = <span class="gd-frac"><span><var>n</var></span><span><span class="gd-sum">Σ</span> 1 ÷ <var>p</var><sub><var>i</var></sub></span></span> ≤ <span class="gd-frac"><span><span class="gd-sum">Σ</span> <var>p</var><sub><var>i</var></sub></span><span><var>n</var></span></span></div>
+      <ul class="gd-facts">
+        <li><strong>In the example below,</strong> SPY's 60 fills averaged $512.90, but $520 a month paid $486.74 a unit on average: 5% less, from buying more in the 2022 fall.</li>
+        <li><strong>The answer compares like with like.</strong> When every scenario put in about the same money (within 0.5%), the highest final value wins. When they did not, more money in is not a better plan, so the sentence ranks them by ROI.</li>
+        <li><strong>DCA against a lump sum.</strong> The tool has no lump-sum scenario. A lump sum puts all the money to work on day one; a monthly plan has, on average, about half of it at work. In a market that rose, as SPY did (from $406 to $763 over the window, up 88%), the lump sum ends ahead. What DCA buys is protection from putting everything in at a peak. <strong>CAGR (TWR)</strong>, below, is the nearest stand-in for the lump sum's rate.</li>
+      </ul>
+      <p class="gd-note"><strong>The prices include dividends.</strong> Yahoo Finance's adjusted close folds every dividend and split into the price, so a holding grows as if dividends were reinvested. A ticker that falls back to Stooq is unadjusted: it shows ⚠️ in the loaded list, and What this assumes says its dividends are left out.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-data" aria-labelledby="m-data-h">
+      <h2 id="m-data-h">Data: the prices and the dates</h2>
+      <p class="gd-sub">A real ticker is its daily prices. A simulated asset is one random path built from a yearly return and a volatility, by geometric Brownian motion: each weekday's price is the last one times a random factor.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Simulated price</span> <var>P</var><sub><var>t</var>+1</sub> = <var>P</var><sub><var>t</var></sub> × exp((<var>μ</var> − <var>σ</var>²÷2) Δ<var>t</var> + <var>σ</var> √Δ<var>t</var> <var>z</var><sub><var>t</var></sub>)<small><var>P</var><sub>0</sub> = 100, Δ<var>t</var> = 1 ÷ 252</small></div>
+      <ul class="gd-where">
+        <li><var>μ</var><strong>Return</strong>, a year</li>
+        <li><var>σ</var><strong>Standard deviation</strong>, a year</li>
+        <li><var>z</var><sub><var>t</var></sub>a random draw, close to a standard normal (the sum of three uniform draws)</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Currency Symbol</th><td data-l="What it is">The symbol every amount wears.</td><td data-l="In the maths">A label only. A ticker is read in the currency it is quoted in, so DHHF.AX is in Australian dollars and SPY in US dollars, whatever the symbol.</td><td data-l="Raise it"><span class="gd-eff">no effect</span></td></tr>
+            <tr><th scope="row">Tickers</th><td data-l="What it is">The assets to load, by their Yahoo Finance codes.</td><td data-l="In the maths">Their daily adjusted closes, and opens, highs and lows scaled to match, from 1990 on.</td><td data-l="Raise it"><span class="gd-eff">more to choose from</span></td></tr>
+            <tr><th scope="row">Asset name</th><td data-l="What it is">A simulated asset's name.</td><td data-l="In the maths">Part of the random seed: the same name, return and volatility give the same path in every scenario and every portfolio, whatever the scenario is called.</td><td data-l="Raise it"><span class="gd-eff">a label and a seed</span></td></tr>
+            <tr><th scope="row">Return</th><td data-l="What it is">The yearly growth the simulated path is built around.</td><td data-l="In the maths"><var>μ</var>. One path is one draw: its own growth lands above or below <var>μ</var>.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ final value</span></td></tr>
+            <tr><th scope="row">Standard deviation</th><td data-l="What it is">How hard the simulated price swings in a year.</td><td data-l="In the maths"><var>σ</var>. The middle path grows at e<sup><var>μ</var> − <var>σ</var>²÷2</sup> − 1 a year: at a 10% return and 18%, about 8.7%.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ swings</span><span class="gd-eff">▲ DCA's discount on average cost</span></td></tr>
+            <tr><th scope="row">Start, End</th><td data-l="What it is">The <strong>Date Range</strong>.</td><td data-l="In the maths">Every scenario runs on the trading days all of their assets share, from the first on or after Start to the last on or before End.</td><td data-l="Raise it"><span class="gd-eff">earlier Start: more top-ups</span><span class="gd-eff">moves the answer most</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="gd-note gd-note-warn"><strong>Watch out: two markets share only their common days.</strong> Put an ASX fund beside a US one and each skips the other's holidays; a seven-day crypto series loses its weekends. The run says how many days it used under the dates.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-topups" aria-labelledby="m-topups-h">
+      <h2 id="m-topups-h">Scenarios: the top-ups and the asset</h2>
+      <p class="gd-sub">A scenario's money is its amount on each buy day, stepped up once a year if you ask. Nothing waits in cash: a top-up is deposited on the day it buys.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Top-up on day <var>t</var></span> <var>a</var><sub><var>t</var></sub> = <var>A</var> × (1 + <var>g</var>)<sup>⌊<var>y</var>⌋</sup></div>
+      <ul class="gd-where">
+        <li><var>A</var><strong>Amount per top-up</strong></li>
+        <li><var>g</var><strong>Yearly increase</strong></li>
+        <li><var>y</var>years since the run's first day; ⌊ ⌋ keeps the whole years</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Scenario name, colour</th><td data-l="What it is">What the plan is called and drawn in.</td><td data-l="In the maths">Labels, for a real ticker. For a simulated asset the name is part of its random seed (see Data, above).</td><td data-l="Raise it"><span class="gd-eff">no effect on a ticker</span></td></tr>
+            <tr><th scope="row">Amount per top-up</th><td data-l="What it is">The money each buy puts in.</td><td data-l="In the maths"><var>A</var>. Units, deposits and the final value all scale with it; ROI does not move.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ final value</span><span class="gd-eff">ROI unchanged</span></td></tr>
+            <tr><th scope="row">Yearly increase</th><td data-l="What it is">How much the amount grows each year, compounding.</td><td data-l="In the maths"><var>g</var>: year 2 buys <var>A</var>(1 + <var>g</var>), year 3 <var>A</var>(1 + <var>g</var>)². Later money has less time to grow, so ROI usually dips.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ final value</span><span class="gd-eff">▼ ROI, usually</span></td></tr>
+            <tr><th scope="row">Asset</th><td data-l="What it is">The loaded ticker or simulated asset this plan buys.</td><td data-l="In the maths">The price series <var>p</var> and <var>P</var><sub>end</sub>. Every other field only decides when, and how much, to buy it.</td><td data-l="Raise it"><span class="gd-eff">the biggest choice</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="gd-note gd-note-warn"><strong>Watch out: no fees and no tax here.</strong> Each top-up buys its whole amount. That flatters a weekly plan most, which trades four times as often. Portfolio mode charges a fee on every trade.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-style" aria-labelledby="m-style-h">
+      <h2 id="m-style-h">Investment Style: the day it buys</h2>
+      <p class="gd-sub">Every style names a decision day, and the order fills by <strong>Trade at</strong>. Date styles buy every period. Momentum and technical styles buy at most once a period: the first day their rule holds, or the period's last trading day if <strong>Invest at End of Month</strong> (or Week) is ticked.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Momentum</span> move<sub><var>t</var></sub> = <span class="gd-frac"><span><var>C</var><sub><var>t</var></sub></span><span><var>C</var><sub>first</sub></span></span> − 1<small>Buy the Dip when move ≤ −<var>θ</var>, Buy the Peak when move ≥ <var>θ</var></small></div>
+      <div class="gd-eq"><span class="gd-eq-l">RSI</span> = 100 − <span class="gd-frac"><span>100</span><span>1 + <var>G</var><sub><var>n</var></sub> ÷ <var>L</var><sub><var>n</var></sub></span></span><small>average daily gain over loss, Wilder smoothing over <var>n</var> days</small></div>
+      <ul class="gd-where">
+        <li><var>C</var><sub><var>t</var></sub>the day's close</li>
+        <li><var>C</var><sub>first</sub>the close on the period's first trading day</li>
+        <li><var>θ</var><strong>Threshold</strong></li>
+        <li><var>n</var><strong>RSI period</strong></li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Monthly (Fixed Date): Day of month</th><td data-l="What it is">Buy once a month on this day.</td><td data-l="In the maths">The trading day whose date is closest to it, so the 31st buys on a short month's last trading day.</td><td data-l="Raise it"><span class="gd-eff">barely moves it</span></td></tr>
+            <tr><th scope="row">Weekly (Fixed Day): Day of week</th><td data-l="What it is">Buy once a week on this weekday.</td><td data-l="In the maths">The closest trading day in that week; Saturday and Sunday land on Friday.</td><td data-l="Raise it"><span class="gd-eff">barely moves it</span></td></tr>
+            <tr><th scope="row">Buy the Dip, Buy the Peak: Threshold</th><td data-l="What it is">The move from the period's first close that triggers a buy.</td><td data-l="In the maths"><var>θ</var>, tested each day as above. A bigger dip is rarer, so with the end-of-period box off fewer months buy.</td><td data-l="Raise it"><span class="gd-eff">fewer buys on signal</span></td></tr>
+            <tr><th scope="row">Frequency</th><td data-l="What it is"><strong>Monthly</strong> or <strong>Weekly</strong>: the window a momentum or technical style buys in at most once.</td><td data-l="In the maths">The period above. A switch restates the amount so a year's money stays the same: × 12 ÷ 52, or back.</td><td data-l="Raise it"><span class="gd-eff">weekly: more, smaller buys</span></td></tr>
+            <tr><th scope="row">Invest at End of Month (or Week) if target not reached</th><td data-l="What it is">A buy on the period's last trading day when the rule never held.</td><td data-l="In the maths">On: every period buys, so the money in matches a date plan. Off: a quiet period is skipped and its money never goes in.</td><td data-l="Raise it"><span class="gd-eff">off: ▼ money in</span></td></tr>
+            <tr><th scope="row">MA Crossover: Fast MA, Slow MA</th><td data-l="What it is">A type (SMA or EMA) and a length in days for each.</td><td data-l="In the maths">Buys the day the fast average closes above the slow one after being at or below it (a golden cross).</td><td data-l="Raise it"><span class="gd-eff">longer: rarer signals</span></td></tr>
+            <tr><th scope="row">RSI Oversold Buy: RSI period, Oversold &lt;</th><td data-l="What it is">The RSI's length, and the level it must fall below.</td><td data-l="In the maths">Buys on a day RSI(<var>n</var>) is under the level.</td><td data-l="Raise it"><span class="gd-eff">higher level: more signals</span></td></tr>
+            <tr><th scope="row">Bollinger Band Dip: MA period, Deviations, Trigger</th><td data-l="What it is">The bands: an SMA of <var>n</var> days ± <var>k</var> standard deviations.</td><td data-l="In the maths"><strong>Close below lower band</strong>: a close under SMA − <var>k</var>σ. <strong>Reclaim above lower band</strong>: the day it closes back above it.</td><td data-l="Raise it"><span class="gd-eff">more deviations: rarer signals</span></td></tr>
+            <tr><th scope="row">MACD Bullish Cross: Fast EMA, Slow EMA, Signal EMA</th><td data-l="What it is">MACD is the fast EMA less the slow one; its signal is an EMA of MACD.</td><td data-l="In the maths">Buys the day MACD crosses above its signal line.</td><td data-l="Raise it"><span class="gd-eff">longer: slower signals</span></td></tr>
+            <tr><th scope="row">MACD Histogram Recovery: Hist &gt;</th><td data-l="What it is">The histogram is MACD less its signal.</td><td data-l="In the maths">Buys the day it rises above the level after being at or below it. The level is in the price's own units.</td><td data-l="Raise it"><span class="gd-eff">rarer signals</span></td></tr>
+            <tr><th scope="row">ADX Trend Filter: ADX period, Trend &gt;</th><td data-l="What it is">Trend strength, 0 to 100, and the bar it must clear.</td><td data-l="In the maths">Buys on a day ADX is above the bar. Worked from closes alone, with the high and the low taken as the close.</td><td data-l="Raise it"><span class="gd-eff">higher bar: rarer signals</span></td></tr>
+            <tr><th scope="row">Monthly (Top), (Bottom); Weekly (Top), (Bottom)</th><td data-l="What it is">The Forward styles: the period's highest or lowest close.</td><td data-l="In the maths">The day is picked after the period is over, so no one could follow it. It brackets what any timing rule on that cadence could do.</td><td data-l="Raise it"><span class="gd-eff">a benchmark</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="gd-note gd-note-warn"><strong>Watch out: the Forward styles look ahead.</strong> The tool says so in amber, and What this assumes calls them hindsight. Even so, in the example below perfect hindsight within each month moved the result by only about $1,300 either way on $31,200.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-assume" aria-labelledby="m-assume-h">
+      <h2 id="m-assume-h">Assumptions: the fill, the seed and the risk-free rate</h2>
+      <p class="gd-sub">Every rule decides on a day's close, using only prices up to that close (Forward styles aside). <strong>Trade at</strong> sets where the order fills.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Fill price</span> <var>p</var> = <var>C</var><sub><var>d</var></sub>, or <var>O</var><sub><var>d</var>+1</sub>, or <var>C</var><sub><var>d</var>+1</sub><small>same day's close, next day's open, next day's close</small></div>
+      <ul class="gd-where">
+        <li><var>d</var>the decision day</li>
+        <li><var>O</var>, <var>C</var>a day's open and close</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Trade at</th><td data-l="What it is">When an order fills.</td><td data-l="In the maths">The fill price above. A missing open fills at the last close, and the run says so; a decision on the last day with a next-day fill never fills.</td><td data-l="Raise it"><span class="gd-eff">barely moves it</span></td></tr>
+            <tr><th scope="row">Simulation Seed</th><td data-l="What it is">The starting point of the random numbers.</td><td data-l="In the maths">Each simulated asset's path is seeded by this and its name, return and volatility. A new seed is a new path, the same spread of outcomes.</td><td data-l="Raise it"><span class="gd-eff">another path</span></td></tr>
+            <tr><th scope="row">Risk-Free Rate</th><td data-l="What it is">What money earns with no risk, a year.</td><td data-l="In the maths"><var>R</var><sub><var>f</var></sub> in Sharpe and Sortino only. No money earns it on this page.</td><td data-l="Raise it"><span class="gd-eff">▼ Sharpe and Sortino</span><span class="gd-eff">no money moves</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="m-metrics" aria-labelledby="m-metrics-h">
+      <h2 id="m-metrics-h">The figures: ROI, CAGR (TWR), CAGR (MWR), Sharpe and Sortino</h2>
+      <p class="gd-sub">ROI is the plain gain on what went in. The rest come from the daily value, starting on the first day money is at work, and turn the result into a rate a year and a reward for the risk taken.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Daily return</span> <var>r</var><sub><var>t</var></sub> = <span class="gd-frac"><span><var>V</var><sub><var>t</var></sub> − <var>F</var><sub><var>t</var></sub></span><span><var>V</var><sub><var>t</var>−1</sub></span></span> − 1<small>the day's top-up taken out</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">CAGR (TWR)</span> = (<span class="gd-sum">Π</span> (1 + <var>r</var><sub><var>t</var></sub>))<sup>1 ÷ <var>Y</var></sup> − 1</div>
+      <div class="gd-eq"><span class="gd-eq-l">CAGR (MWR)</span>: the rate <var>x</var> with <span class="gd-sum">Σ</span> <span class="gd-frac"><span><var>a</var><sub><var>i</var></sub></span><span>(1 + <var>x</var>)<sup><var>t</var><sub><var>i</var></sub></sup></span></span> = <span class="gd-frac"><span><var>V</var></span><span>(1 + <var>x</var>)<sup><var>T</var></sup></span></span><small>the internal rate of return (XIRR)</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Sharpe</span> = <span class="gd-frac"><span>mean(<var>r</var> − <var>r</var><sub><var>f</var></sub>)</span><span>sd(<var>r</var>)</span></span> × √252<small>Sortino: the same over the downside deviation, √mean(min(0, <var>r</var> − <var>r</var><sub><var>f</var></sub>)²)</small></div>
+      <ul class="gd-where">
+        <li><var>F</var><sub><var>t</var></sub>the money topped up that day</li>
+        <li><var>Y</var>years from the first buy to the last day</li>
+        <li><var>t</var><sub><var>i</var></sub>, <var>T</var>years from the first buy to top-up <var>i</var>, and to the end</li>
+        <li><var>r</var><sub><var>f</var></sub>the daily risk-free rate, (1 + <var>R</var><sub><var>f</var></sub>)<sup>1÷252</sup> − 1</li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Figure</th><th>What it is</th><th>In the maths</th><th>Read it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Final value</th><td data-l="What it is">What the holding is worth on the last day.</td><td data-l="In the maths"><var>U</var> × <var>P</var><sub>end</sub>.</td><td data-l="Read it"><span class="gd-eff gd-eff-pos">▲ better, for the same money in</span></td></tr>
+            <tr><th scope="row">ROI</th><td data-l="What it is">The gain as a share of the money put in.</td><td data-l="In the maths">(<var>V</var> − <var>D</var>) ÷ <var>D</var>. It ignores when the money went in.</td><td data-l="Read it"><span class="gd-eff gd-eff-pos">▲ better</span></td></tr>
+            <tr><th scope="row">Topped up, Trades</th><td data-l="What it is">The money put in, and how many buys.</td><td data-l="In the maths"><var>D</var>, and the number of fills.</td><td data-l="Read it"><span class="gd-eff">context</span></td></tr>
+            <tr><th scope="row">CAGR (TWR)</th><td data-l="What it is">The holding's own growth rate a year, whatever you put in when.</td><td data-l="In the maths">The chained daily returns, top-ups taken out. Close to the asset's own growth from the first buy.</td><td data-l="Read it"><span class="gd-eff gd-eff-pos">▲ better asset</span></td></tr>
+            <tr><th scope="row">CAGR (MWR)</th><td data-l="What it is">Your own money's growth rate a year.</td><td data-l="In the maths">The rate that makes the top-ups grow into the final value, found by bisection.</td><td data-l="Read it"><span class="gd-eff gd-eff-pos">▲ better timing</span></td></tr>
+            <tr><th scope="row">Sharpe</th><td data-l="What it is">Return above the risk-free rate per unit of swing.</td><td data-l="In the maths">As above, from daily returns, scaled to a year.</td><td data-l="Read it"><span class="gd-eff gd-eff-pos">▲ smoother return</span></td></tr>
+            <tr><th scope="row">Sortino</th><td data-l="What it is">Sharpe counting only the falls as risk.</td><td data-l="In the maths">As above.</td><td data-l="Read it"><span class="gd-eff gd-eff-pos">▲ fewer deep falls</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>TWR against MWR is the timing test.</strong> TWR grades the asset; MWR grades your money. A monthly plan holds little in year 1 and the most at the end, so MWR leans on the later years. For SPY $520 a month, TWR was 14.21% and MWR 18.06%: the 2022 fall hit only the first few thousand dollars, and most of the money was at work in the strong years after.</li>
+        <li><strong>The display switches</strong> (Advanced metrics, Candlesticks, Show Buy Date, Show Indicators, Show Total Deposited) change what you see, never a figure.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Watch out: no drawdown, and Sharpe is daily noise.</strong> The tool does not report the deepest fall. And with daily returns a few large days dominate Sharpe and Sortino; over five years they rank plans, they do not promise the next five.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-opt" aria-labelledby="m-opt-h">
+      <h2 id="m-opt-h">Optimise: a sweep, not a forecast</h2>
+      <p class="gd-sub">Optimise copies the scenario, writes each tested value in where the form would, and runs the very engine Simulate uses. One setting runs its values; two run every pair.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Runs</span> = <var>n</var><sub>1</sub> × <var>n</var><sub>2</sub> ≤ 625<small><var>n</var> ≤ 50 values a setting</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Values</span> <var>v</var><sub><var>k</var></sub> = start + (end − start) × <span class="gd-frac"><span><var>k</var></span><span><var>n</var> − 1</span></span><small>rounded to what the field takes, repeats dropped</small></div>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">The gauge</th><td data-l="What it is">Beside every setting that changes nothing else on the form.</td><td data-l="In the maths">The amount, its increase, the day, the weekday, a threshold, Frequency, the end-of-period buy and every indicator setting. Not the asset, the style, Trade at, the seed, the dates or the risk-free rate.</td><td data-l="Raise it"><span class="gd-eff">up to two at once</span></td></tr>
+            <tr><th scope="row">Start value, End value, Steps</th><td data-l="What it is">The range, and how many values in it, ends included.</td><td data-l="In the maths">As above. A list (a weekday, a type) runs the options you pick.</td><td data-l="Raise it"><span class="gd-eff">more steps: ▲ runs</span></td></tr>
+            <tr><th scope="row">Show</th><td data-l="What it is">What the sweep is ranked and drawn by.</td><td data-l="In the maths">Best and Worst are its highest and lowest; a tie, within rounding, goes to the first tested.</td><td data-l="Raise it"><span class="gd-eff">ranking only</span></td></tr>
+            <tr><th scope="row">Shown in the charts below</th><td data-l="What it is">The tested value the charts and the breakdown show.</td><td data-l="In the maths">That run again, in full.</td><td data-l="Raise it"><span class="gd-eff">reading only</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="gd-note gd-note-warn"><strong>Watch out: a rate can be won by putting less in.</strong> A threshold that rarely fires buys less, and its ROI can top the sweep. When the best run topped up a different amount, the answer says so; rank by Final value or Net to compare the money. And the best setting is the best for these past prices: the next stretch can differ.</p>
+    </section>
+
+    <section class="gd-sec card" id="m-pf" aria-labelledby="m-pf-h">
+      <h2 id="m-pf-h">Portfolio mode: weights, rebalancing, cash and fees</h2>
+      <p class="gd-sub">A portfolio is cash plus units of each asset. A top-up lands in cash, and the <strong>Method</strong> decides how cash becomes units. Cash waiting earns the risk-free account every trading day; every trade pays its fee.</p>
+      <div class="gd-eq"><span class="gd-eq-l">Value</span> <var>V</var> = cash + <span class="gd-sum">Σ</span> <var>u</var><sub><var>k</var></sub> <var>P</var><sub><var>k</var></sub> = top-ups + interest − fees + market gain</div>
+      <div class="gd-eq"><span class="gd-eq-l">Cash each trading day</span> cash × (1 + <var>R</var>)<sup>1÷252</sup><small>or × the risk-free ticker's day-on-day change</small></div>
+      <div class="gd-eq"><span class="gd-eq-l">Towards Weight</span> spend<sub><var>k</var></sub> = max(0, <var>w</var><sub><var>k</var></sub><var>T</var> − <var>V</var><sub><var>k</var></sub>) × min(1, <span class="gd-frac"><span>cash</span><span><span class="gd-sum">Σ</span> shortfalls</span></span>)</div>
+      <div class="gd-eq"><span class="gd-eq-l">A buy</span> units += <span class="gd-frac"><span>spend × (1 − <var>f</var><sub>b</sub>)</span><span><var>P</var><sub><var>k</var></sub></span></span><small>a sale returns value × (1 − <var>f</var><sub>s</sub>) to cash</small></div>
+      <ul class="gd-where">
+        <li><var>u</var><sub><var>k</var></sub>, <var>P</var><sub><var>k</var></sub>units and price of asset <var>k</var></li>
+        <li><var>w</var><sub><var>k</var></sub>its <strong>Target Weight</strong></li>
+        <li><var>T</var>cash plus everything held, that day</li>
+        <li><var>V</var><sub><var>k</var></sub>what asset <var>k</var> is worth</li>
+        <li><var>R</var><strong>Risk-free rate</strong></li>
+        <li><var>f</var><sub>b</sub>, <var>f</var><sub>s</sub><strong>Buying fee</strong>, <strong>Selling fee</strong></li>
+      </ul>
+      <div class="gd-table-wrap">
+        <table class="gd-table">
+          <thead><tr><th>Field</th><th>What it is</th><th>In the maths</th><th>Raise it</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Amount per top-up, Yearly increase</th><td data-l="What it is">As on the main page.</td><td data-l="In the maths">Lands in cash on each top-up day.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ final value</span></td></tr>
+            <tr><th scope="row">Top-up period, Schedule</th><td data-l="What it is">Weekly, fortnightly, monthly, quarterly or yearly, on the weekdays, days, months or week picked.</td><td data-l="In the maths">The closest trading day to each. Several days a month means several top-ups. A switch of period restates the amount.</td><td data-l="Raise it"><span class="gd-eff">more days: ▲ money in</span></td></tr>
+            <tr><th scope="row">Risk-Free Account: Rate, Ticker; Risk-free rate, Risk-free ticker</th><td data-l="What it is">What waiting cash earns: a fixed yearly rate (0% unless you set one), or a money market ticker's price.</td><td data-l="In the maths">The cash line above. It also sets the portfolio's own <var>r</var><sub><var>f</var></sub> in Sharpe and Sortino.</td><td data-l="Raise it"><span class="gd-eff gd-eff-pos">▲ interest</span><span class="gd-eff">▼ Sharpe</span></td></tr>
+            <tr><th scope="row">Assets</th><td data-l="What it is">The loaded tickers and simulated assets the portfolio holds.</td><td data-l="In the maths">Each <var>P</var><sub><var>k</var></sub>, on the days every portfolio's assets share.</td><td data-l="Raise it"><span class="gd-eff">the biggest choice</span></td></tr>
+            <tr><th scope="row">Method: Towards Weight</th><td data-l="What it is">Top-ups buy only what is below target. Never sells.</td><td data-l="In the maths">The formula above: the whole top-up goes to the shortfalls, in proportion.</td><td data-l="Raise it"><span class="gd-eff">no selling fees</span></td></tr>
+            <tr><th scope="row">Method: Constant Weight</th><td data-l="What it is">Kept on target by selling what is over and buying what is under.</td><td data-l="In the maths">Sells <var>V</var><sub><var>k</var></sub> − <var>w</var><sub><var>k</var></sub><var>T</var> of each asset above target, then buys the shortfalls with the cash.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▲ fees</span><span class="gd-eff">holds the risk you chose</span></td></tr>
+            <tr><th scope="row">Rebalance Timing, Rebalance period, Rebalance schedule</th><td data-l="What it is"><strong>At top-up</strong>, or a <strong>Separate schedule</strong> (Constant Weight).</td><td data-l="In the maths">At top-up: buy the shortfalls, then rebalance, on every top-up. Separate: top-ups wait in cash, earning the rate, until each rebalance day.</td><td data-l="Raise it"><span class="gd-eff">rarer: ▲ cash waiting</span></td></tr>
+            <tr><th scope="row">Method: Constant Allocation</th><td data-l="What it is">Each top-up split by the weights. Never rebalances.</td><td data-l="In the maths">spend<sub><var>k</var></sub> = <var>w</var><sub><var>k</var></sub> × cash. The holdings drift with the prices.</td><td data-l="Raise it"><span class="gd-eff">the winner grows its share</span></td></tr>
+            <tr><th scope="row">Method: Trend Following; Momentum lookback, Rank Weights</th><td data-l="What it is">Each top-up split by rank of trailing return.</td><td data-l="In the maths">Each asset's return over the lookback (21 trading days a month) on the decision day; Rank 1, the best, gets the first rank weight. Never sells.</td><td data-l="Raise it"><span class="gd-eff">longer lookback: slower to switch</span></td></tr>
+            <tr><th scope="row">Method: Rule-Based Triggers; Reserve, Deploy Triggers</th><td data-l="What it is">Top-ups wait in a reserve until an asset's own trigger fires.</td><td data-l="In the maths">A firing asset is bought up to <var>w</var><sub><var>k</var></sub><var>T</var>, from cash or by selling the reserve asset. <strong>Trigger</strong>: Invest at Top-up, Price % move (<strong>Direction</strong>, <strong>Amount</strong>, <strong>From</strong> a month or week open or a previous top or bottom over a <strong>Lookback</strong>), or a technical signal as on the main page, each with Frequency and the end-of-period buy.</td><td data-l="Raise it"><span class="gd-eff">rarer triggers: ▲ cash waiting</span></td></tr>
+            <tr><th scope="row">Target Weights</th><td data-l="What it is">Each asset's share; they must add up to 100%.</td><td data-l="In the maths"><var>w</var><sub><var>k</var></sub>: of the whole portfolio for Towards Weight, Constant Weight and Rule-Based; of each top-up for Constant Allocation.</td><td data-l="Raise it"><span class="gd-eff">more in shares: ▲ return and swings</span></td></tr>
+            <tr><th scope="row">Buying fee, Selling fee</th><td data-l="What it is">A % of every buy and every sale (0.1% each to start).</td><td data-l="In the maths"><var>f</var><sub>b</sub>, <var>f</var><sub>s</sub> as above, counted in <strong>Fees</strong> in the table.</td><td data-l="Raise it"><span class="gd-eff gd-eff-neg">▼ final value</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>How return and risk combine.</strong> On a day with no trades, the portfolio's return is its holdings' returns weighted by their value: <var>r</var><sub>p</sub> = <span class="gd-sum">Σ</span> <var>w</var><sub><var>k</var></sub><var>r</var><sub><var>k</var></sub>, cash at its rate. Its swing is less than the weighted swings whenever the assets do not move together. The tool measures that from the portfolio's own daily values, so the benefit shows up in its Sharpe.</li>
+        <li><strong>80/20 against 60/40.</strong> More in shares earned more: $78,915 against $75,604 on $60,000, CAGR (TWR) 8.42% against 7.19%. But 60/40 had the higher Sharpe, 1.08 against 0.96: per unit of swing, the cash-heavy mix paid better.</li>
+        <li><strong>Rebalancing costs and helps.</strong> Over these five years, splitting each top-up 50/50 and never rebalancing ended $1,720 ahead of keeping SPY and GOVT at 50/50: shares beat bonds, and the unrebalanced mix let the winner grow.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Watch out: waiting cash earns nothing unless you set a rate.</strong> The Risk-free rate starts at 0%. A quarterly rebalance or a rare trigger can leave real money idle; the tile's <strong>Cash</strong> share and the table's <strong>Interest</strong> show how much.</p>
+    </section>
+
+    <section class="gd-sec card" id="example" aria-labelledby="example-h">
+      <h2 id="example-h">Worked example: SPY, $520 on the 1st of every month</h2>
+      <p class="gd-sub">The first scenario of the <strong>Monthly vs Weekly</strong> Quick Start, 1 Oct 2021 to 30 Sep 2026, filled at the next day's open (the default). The figures are the tool's own, from its Detailed Breakdown and Final Summary.</p>
+      <div class="gd-calc">
+        <h3>What $520 a month grew to</h3>
+        <p>Each top-up buys $520 ÷ the fill price. The units add up; the last close values them.</p>
+        <ol>
+          <li><span class="gd-calc-l">First buy</span><span class="gd-calc-w">Decided at the close on Fri 1 Oct 2021, filled at Monday's open, $404.99: $520 ÷ $404.99</span><b>1.283995 units</b></li>
+          <li><span class="gd-calc-l">Second buy</span><span class="gd-calc-w">Decided 1 Nov, filled 2 Nov at $430.44: $520 ÷ $430.44</span><b>1.208052 units</b></li>
+          <li><span class="gd-calc-l">All 60 buys</span><span class="gd-calc-w">One a month to 2 Sep 2026, fills from $353.58 (4 Oct 2022) to $760.56 (2 Sep 2026)</span><b>64.099753 units</b></li>
+          <li><span class="gd-calc-l">Topped up</span><span class="gd-calc-w">60 × $520</span><b>$31,200</b></li>
+          <li><span class="gd-calc-l">Average cost</span><span class="gd-calc-w">$31,200 ÷ 64.099753. The 60 fill prices average $512.90: the harmonic mean is lower</span><b>$486.74</b></li>
+          <li><span class="gd-calc-l">Final value</span><span class="gd-calc-w">64.099753 × $762.63, the close on 30 Sep 2026</span><b>$48,884</b></li>
+          <li class="gd-calc-total"><span class="gd-calc-l">ROI</span><span class="gd-calc-w">($48,884 − $31,200) ÷ $31,200, or $762.63 ÷ $486.74 − 1. The tool's tile: ROI 56.68%</span><b>56.68%</b></li>
+        </ol>
+      </div>
+      <ul class="gd-facts">
+        <li><strong>The rates a year.</strong> Advanced metrics: CAGR (TWR) 14.21%, CAGR (MWR) 18.06%, Sharpe 0.63, Sortino 0.91 at the 4% Risk-Free Rate.</li>
+        <li><strong>Its twin, $120 a week,</strong> bought 264 times for $31,680 and ended at $49,379: more money, a little less on it (ROI 55.87%). Same money a year, nearly the same result.</li>
+        <li><strong>The amount does not change the rate.</strong> The Stock vs ETF example puts $500 a month into SPY over the same dates: $47,004 on $30,000, the same 56.68%.</li>
+      </ul>
+    </section>
+
+    <section class="gd-sec card" id="sensitivity" aria-labelledby="sensitivity-h">
+      <h2 id="sensitivity-h">What moves the answer</h2>
+      <p class="gd-sub">Each input moved on its own from the worked example, on the tool itself, with the prices this guide ships.</p>
+      <figure class="gd-tornado">
+        <figcaption>Final value of SPY, $520 a month, when one input moves<small>Base case: the Monthly vs Weekly Quick Start's monthly scenario, 1 Oct 2021 to 30 Sep 2026, next day's open: $48,884 on $31,200. Each bar moves one input and keeps the rest: a year on the start date, 10% on the amount, 5 points on the yearly increase, the buy day within the month, the fill.</small></figcaption>
+        <div class="gd-tn-legend"><span class="gd-tn-k-lo">Input lowered (earlier, less, sooner)</span><span class="gd-tn-k-hi">Input raised (later, more)</span></div>
+        <ol>
+          <li style="--lo:1;--hi:-0.9"><span class="gd-tn-name">Start date<small>1 Oct 2021 → 1 Oct 2020 / 1 Oct 2022</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$13,145</span><span>−$11,789</span></span></li>
+          <li style="--lo:-0.37;--hi:0.37"><span class="gd-tn-name">Amount per top-up<small>$520 → $468 / $572 a month</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$4,888</span><span>+$4,889</span></span></li>
+          <li style="--lo:0;--hi:0.33"><span class="gd-tn-name">Yearly increase<small>0% → none lower / 5% a year</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>$0</span><span>+$4,386</span></span></li>
+          <li style="--lo:0.1;--hi:-0.11"><span class="gd-tn-name">Buy day in the month<small>the 1st → the lowest / highest close (hindsight)</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>+$1,321</span><span>−$1,393</span></span></li>
+          <li style="--lo:-0.006;--hi:-0.015"><span class="gd-tn-name">Day of month<small>the 1st → the 10th / the 20th</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$81</span><span>−$199</span></span></li>
+          <li style="--lo:-0.002;--hi:-0.009"><span class="gd-tn-name">Trade at<small>next day's open → same day's close / next day's close</small></span><span class="gd-tn-track"><i class="gd-tn-lo"></i><i class="gd-tn-hi"></i></span><span class="gd-tn-val"><span>−$24</span><span>−$118</span></span></li>
+        </ol>
+        <p class="gd-tn-note">Read it from the top: the longest bar is the input your answer rests on most. The Risk-Free Rate would be a bar of zero: it moves no money. Measured by <code>guides/_sensitivity.mjs</code>.</p>
+      </figure>
+      <ul class="gd-facts">
+        <li><strong>When you start, and how much you put in, are the answer.</strong> A year either way on the start date moves the result by $12,000 to $13,000: more top-ups, and a different stretch of market. The amount moves it in proportion.</li>
+        <li><strong>Timing within the month hardly matters.</strong> The 10th or the 20th instead of the 1st: under $200. A fill at the close instead of the open: $24. Even perfect hindsight, buying every month at its lowest close, adds only $1,321.</li>
+        <li><strong>ROI tells a different story from value.</strong> Starting a year earlier lifted ROI from 56.68% to 65.68%, starting later cut it to 48.62%; the amount left it unchanged; a 5% yearly increase put $3,280 more in but cut ROI to 54.50%, because later money had less time to grow.</li>
+        <li><strong>So spend your effort on the plan, not the day.</strong> Choose an asset and an amount you can keep up through a fall; a clever buy day is worth a rounding error by comparison.</li>
+      </ul>
+      <div class="gd-demo" data-demo="live" data-w="1280" data-h="800">
+        <figure class="gd-screen"><span class="gd-cap">The start date a year earlier, then a year later</span></figure>
+        <ol class="gd-steps">
+          <li><h3>The base case</h3><p>SPY, $520 a month from 1 Oct 2021: $48,884 on $31,200.</p></li>
+          <li><h3>A year earlier</h3><p>From 1 Oct 2020: 72 top-ups, $37,440 in, $62,029 out. ROI 65.68%.</p></li>
+          <li><h3>A year later</h3><p>From 1 Oct 2022, near the bottom of the fall: 48 top-ups, $24,960 in, $37,095 out. ROI 48.62%.</p></li>
+          <li><h3>Back to the base</h3><p>1 Oct 2021 again. Try it yourself: press <strong>Pause</strong> and change a date.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gd-sec card" id="limits" aria-labelledby="limits-h">
+      <h2 id="limits-h">What it leaves out</h2>
+      <p class="gd-sub">What the answer rests on, beyond the figures you enter. <strong>What this assumes</strong>, under the results, lists the ones your run uses.</p>
+      <ul class="gd-facts">
+        <li><strong>The past only.</strong> Every real run replays prices that already happened. A plan that won over five years can lose over the next five.</li>
+        <li><strong>No tax, and no fees on the main page.</strong> Portfolio mode charges a % fee on every trade; neither page has tax, brokerage minimums or spreads.</li>
+        <li><strong>One currency, never converted.</strong> The symbol is a label; mixing an ASX and a US ticker adds Australian and US dollars as if they were one.</li>
+        <li><strong>Dividends ride in the adjusted price,</strong> as if reinvested on the day, with no tax or delay. A Stooq series leaves them out.</li>
+        <li><strong>Fractional units at the fill price.</strong> Every top-up buys its whole amount at the open or close, whatever its size.</li>
+        <li><strong>Nothing is sold</strong> on the main page, and the holding is valued, not sold, on the last day.</li>
+        <li><strong>A simulated asset is one random path</strong> with a constant return and volatility: a what-if, not a forecast. Change the seed to see another.</li>
+        <li><strong>Indicators see only the Date Range.</strong> A long average needs months of the window to warm up before it can signal.</li>
+        <li><strong>No drawdown or worst-case figure.</strong> Read the Portfolio Value chart for the falls.</li>
+      </ul>
+      <p class="gd-note gd-note-warn"><strong>Do not lean on it when</strong> the best plan topped up a different amount from yours, a winning style is a Forward one, a sweep's best value sits alone on a spike, or your money is in a different currency from the ticker.</p>
+      <p class="gd-note">This guide and the tool are general information, not financial advice. Past returns do not predict future ones; talk to a licensed adviser before you invest.</p>
+    </section>
+
+    <section class="gd-end">
+      <p>Ready to run your own?</p>
+      <a class="btn-primary gd-open" href="../">Open the tool</a>
+      <a class="gd-more" href="../portfolio/">Or compare whole portfolios in Portfolio mode</a>
+    </section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <div class="gd-made">
+      <img loading="lazy" src="../../logos/australian.png" alt="Australian flag" class="gd-flag">
+      <div><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"><span>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed.</span></div>
+      <div><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"><span>Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span></div>
+    </div>
+  </footer>
+</div>
+<!-- Deferred: the page paints without them. They add the abbreviation tooltips (DCA, ROI, TWR...). -->
+<script src="../../shared.js" defer></script>
+<script src="../abbr.js" defer></script>
+<!-- The demos: the real tool, played live in frames (scenes.js). -->
+<script src="../../guide-live.js"></script>
+<script src="../../guide-shared.js"></script>
+<!--/email_off-->
+</body>
+</html>

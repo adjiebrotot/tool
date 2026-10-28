@@ -31,6 +31,8 @@ const imp = (rel) => import(pathToFileURL(path.join(BUILDER, rel)).href);
 for (const f of ['start', 'flow', 'values', 'model', 'study', 'check', 'result', 'search', 'advanced']) await imp(`js/blocks/${f}.js`);
 const { generate } = await imp('js/core/codegen.js');
 const REG = await imp('js/core/registry.js');
+const WF = await imp('js/core/workflow.js');
+const OPS = await imp('js/ui/ops.js');
 const { RUNTIME_FILES } = await imp('js/core/runtime-loader.js');
 
 const ARGS = process.argv.slice(2);
@@ -240,7 +242,7 @@ function allowed(type, s, p, o = {}) {
   if (type === 'pf.emt' && p.level === 'warning' && /EMT simulation, which can take/.test(p.msg)) return true;
   // Unwired on purpose: a table-row dispatch whose columns are not connected, contingencies of nothing.
   if (type === 'pf.dispatch' && s.mode === 'row' && !(o.wire || []).length && p.level === 'todo' && /Connect the value of column/.test(p.msg)) return true;
-  if (type === 'pf.cont.define' && p.level === 'todo' && /Choose what .* takes out/.test(p.msg) && !s.lines) return true;
+  if ((type === 'pf.cont.define' || type === 'pf.cont.foreach') && p.level === 'todo' && /Choose what .* takes out/.test(p.msg) && !s.lines) return true;
   return false;
 }
 
@@ -336,7 +338,9 @@ test('frozen handles: the type ids of section 9 are all defined', () => {
 // Validators
 
 const DISP = ['pf.dispatch', { gen: EL('ElmSym', 'G2') }];
-const E1 = /changes operating data/;
+const E1 = /changes operating data (while|after)/;
+// E1b: operating data written into the scenario of a kept new study case, never saved.
+const E1B = /operating data in the operation scenario of/;
 
 test('E1: a dispatch inside For each study case warns', () => {
   const r = gen(W({ n1: START, n2: ['pf.case.foreach', {}], n3: DISP }, ['n1>n2', 'n2.body>n3']), 'e1_case_loop');
@@ -352,6 +356,7 @@ test('E1: an operation scenario after the case switch silences it', () => {
 test('E1: Create study case with a scenario (default) is fine, without one it warns', () => {
   const r = gen(W({ n1: START, n2: ['pf.case.create', {}], n3: DISP }, ['n1>n2', 'n2>n3']), 'e1_create_copy');
   ok(!hasP(r, 'warning', E1), ptext(r));
+  ok(hasP(r, 'warning', E1B, 'n3'), 'the kept case\'s scenario is never saved (E1b): ' + ptext(r));
   const r2 = gen(W({ n1: START, n2: ['pf.case.create', { scenario: 'none' }], n3: DISP }, ['n1>n2', 'n2>n3']), 'e1_create_none');
   ok(hasP(r2, 'warning', E1, 'n3'), ptext(r2));
   const r3 = gen(W({ n1: START, n2: ['pf.case.create', { scenario: 'none', activate: false }], n3: DISP }, ['n1>n2', 'n2>n3']), 'e1_create_inactive');
@@ -379,6 +384,48 @@ test('E1: a loop of another category inside the case loop still warns; Activate 
   const r3 = gen(W({ n1: START, n2: ['pf.scen.foreach', {}], n3: DISP }, ['n1>n2', 'n2.body>n3']), 'e1_scen_loop');
   ok(!hasP(r3, 'warning', E1), ptext(r3));
 });
+// E1b: Create study case keeps the case and copies its scenario; a dispatch written into it and
+// never saved is undone by the put-back, so the kept case would not hold it.
+test('E1b: a kept new case\'s scenario written and not saved warns on the last write, with a fix that adds the save there', () => {
+  const r = gen(W({ n1: START, n2: ['flow.range', {}], n3: ['pf.case.create', {}], n4: DISP, n5: ['pf.outserv', { el: EL('ElmLne', 'L1') }], n6: ['pf.ldf', {}] },
+    ['n1>n2', 'n2.body>n3', 'n3>n4', 'n4>n5', 'n5>n6']), 'e1b_two_writes');
+  const ws = r.problems.filter(p => p.level === 'warning' && E1B.test(p.msg));
+  ok(ws.length === 1 && ws[0].nodeId === 'n5', 'one warning, on the last write: ' + ptext(r));
+  has(ws[0].msg, 'Set generator dispatch and Take out of / put back in service change');
+  has(ws[0].msg, 'at the end of each pass');
+  ok(ws[0].fix && ws[0].fix.op && ws[0].fix.op.op === 'insertAfter' && ws[0].fix.op.nodeId === 'n5' && ws[0].fix.op.type === 'pf.scen.save', JSON.stringify(ws[0].fix));
+});
+test('E1b: Save operation scenario after the writes, a case not kept, no scenario, or no put-back at all: no warning', () => {
+  const cases = [
+    ['saved', { n3: ['pf.case.create', {}], n4: DISP, n5: ['pf.scen.save', {}] }, ['n3>n4', 'n4>n5']],
+    ['deactivate with save', { n3: ['pf.case.create', {}], n4: DISP, n5: ['pf.scen.deactivate', { save: true }] }, ['n3>n4', 'n4>n5']],
+    ['not kept', { n3: ['pf.case.create', { keep: false }], n4: DISP }, ['n3>n4']],
+    ['not activated', { n3: ['pf.case.create', { activate: false }], n4: DISP }, ['n3>n4']],
+    ['another scenario activated', { n3: ['pf.case.create', {}], n4: ['pf.scen.activate', { scen: 'S1' }], n5: DISP }, ['n3>n4', 'n4>n5']],
+    ['not operating data', { n3: ['pf.case.create', {}], n4: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'desc', vtype: 'text', text: 'x' }] }, ['n3>n4']],
+  ];
+  for (const [name, nodes, flow] of cases) {
+    const r = gen(W({ n1: START, n2: ['flow.range', {}], ...nodes }, ['n1>n2', 'n2.body>n3', ...flow]), 'e1b_' + name.replace(/ /g, '_'));
+    ok(!hasP(r, 'warning', E1B), name + ': ' + ptext(r));
+  }
+  const keep = gen(W({ n1: ['start', { project: N9, undoChanges: false }], n2: ['flow.range', { restore: 'never' }], n3: ['pf.case.create', {}], n4: DISP },
+    ['n1>n2', 'n2.body>n3', 'n3>n4']), 'e1b_never');
+  ok(!hasP(keep, 'warning', E1B), 'nothing is put back: ' + ptext(keep));
+  const end = gen(W({ n1: START, n2: ['flow.range', { restore: 'never' }], n3: ['pf.case.create', {}], n4: DISP }, ['n1>n2', 'n2.body>n3', 'n3>n4']), 'e1b_end');
+  ok(hasP(end, 'warning', E1B, 'n4') && /at the end of the run/.test(end.problems.find(p => E1B.test(p.msg)).msg), 'put back at the end of the run: ' + ptext(end));
+  const after = gen(W({ n1: START, n2: ['pf.case.create', {}], n3: DISP, n4: ['pf.scen.save', {}], n5: ['pf.outserv', { el: EL('ElmLne', 'L1') }] },
+    ['n1>n2', 'n2>n3', 'n3>n4', 'n4>n5']), 'e1b_after_save');
+  ok(!hasP(after, 'warning', E1B, 'n3') && hasP(after, 'warning', E1B, 'n5'), 'a write after the save warns: ' + ptext(after));
+});
+test('E1b: the fix puts Save operation scenario right after the write, and the warning goes', () => {
+  const wf = W({ n1: START, n2: ['flow.range', {}], n3: ['pf.case.create', {}], n4: DISP, n5: ['pf.ldf', {}] }, ['n1>n2', 'n2.body>n3', 'n3>n4', 'n4>n5']);
+  const r = OPS.addAfterStep(wf, 'n4', 'pf.scen.save', {});
+  ok(r && r.node.type === 'pf.scen.save', 'a save block');
+  ok(r.wf.edges.some(e => e.from === 'n4' && e.to === r.node.id) && r.wf.edges.some(e => e.from === r.node.id && e.to === 'n5'), 'wired between the write and the load flow');
+  const g = gen(r.wf, 'e1b_fixed');
+  ok(!hasP(g, 'warning', E1B), ptext(g));
+});
+
 test('E1: a new run of the generator starts from a clean route (no stale notes)', () => {
   const wfA = W({ n1: START, n2: ['pf.case.foreach', {}], n3: DISP }, ['n1>n2', 'n2.body>n3']);
   const wfB = W({ n1: START, n3: DISP }, ['n1>n3']);
@@ -456,6 +503,44 @@ test('loops: case, scenario, variation and contingency loops use the runtime gen
   const never = body('pf.case.foreach', { restore: 'never' });
   hasNot(never, 'pf_undo(', 'restore never');
 });
+test('For each contingency makes its own N-1 or N-2 of lines, transformers, generators, external grids and other elements', () => {
+  const body = (s, pin) => mainBody(gen(W({ n1: START, n2: ['pf.cont.foreach', s, { pin }], n3: DISP }, ['n1>n2', 'n2.body>n3']), 'cont_loop').code);
+  has(body({ lines: true, trafos: true }), 'define_contingencies(app, ["*.ElmLne", "*.ElmTr2", "*.ElmTr3"], 1, True)');
+  has(body({ lines: false, gens: true, xnets: true, query: 'L1*.ElmLne, T*.ElmTr2', order: '2', inService: false }),
+    'define_contingencies(app, ["*.ElmSym", "*.ElmXnet", "L1*.ElmLne", "T*.ElmTr2"], 2, False)');
+  const p = body({ lines: true, order: '2' }, ['lines', 'query', 'order']);
+  has(p, '*(["*.ElmLne"] if FOR_EACH_CONTINGENCY_LINES else [])'); has(p, 'int(FOR_EACH_CONTINGENCY_ORDER)');
+  // Wired Contingencies: the loop's own choices are not used, so they are not shown.
+  const node = { id: 'n2', type: 'pf.cont.foreach', s: {} };
+  const vis = REG.visibleSettings(node, new Set(['conts'])).map(st => st.key);
+  for (const k of ['lines', 'trafos', 'gens', 'xnets', 'query', 'order']) ok(!vis.includes(k), `${k} is hidden while Contingencies is wired`);
+  ok(REG.visibleSettings(node, new Set()).some(st => st.key === 'lines'), 'shown while nothing is wired');
+});
+test('For each contingency saved before version 2: its pattern becomes Other elements, the boxes stay off, a pin stays', () => {
+  const old = { app: 'pf-builder', v: 1, name: 'old n-1', nodes: [
+    { id: 'n1', type: 'start', x: 0, y: 0, label: '', s: { project: N9 }, pin: [], sv: 1 },
+    { id: 'n2', type: 'pf.cont.foreach', x: 0, y: 0, label: '', s: { name: '', group: 'T*.ElmTr2', how: 'outserv', t: 1, base: true, restore: 'pass', onError: 'skip' }, pin: ['group'], sv: 1 },
+    { id: 'n3', type: 'pf.ldf', x: 0, y: 0, label: '', s: {}, pin: [], sv: 1 }],
+  edges: [{ id: 'e1', from: 'n1', out: 'next', to: 'n2', in: 'in' }, { id: 'e2', from: 'n2', out: 'body', to: 'n3', in: 'in' }] };
+  const { wf, notes } = WF.loadWorkflow(old);
+  ok(!notes.length, JSON.stringify(notes));
+  const s = REG.settingsOf(wf.nodes[1]);
+  ok(s.query === 'T*.ElmTr2' && !s.lines && !s.trafos && !s.gens && !s.xnets && s.order === '1' && s.inService === true, JSON.stringify(s));
+  ok(wf.nodes[1].pin.includes('query'), 'the pin moved with the pattern: ' + JSON.stringify(wf.nodes[1].pin));
+  const r = gen(wf, 'cont_v1');
+  has(r.code, 'define_contingencies(app, [*[q.strip() for q in str(FOR_EACH_CONTINGENCY_QUERY).split(",") if q.strip()]], 1, True)');
+  has(r.code, 'FOR_EACH_CONTINGENCY_QUERY = "T*.ElmTr2"');
+  // An unpinned default pattern makes the same call as before (*.ElmLne, N-1, in service).
+  const plain = JSON.parse(JSON.stringify(old));
+  plain.nodes[1].s.group = '*.ElmLne'; plain.nodes[1].pin = [];
+  has(mainBody(gen(WF.loadWorkflow(plain).wf, 'cont_v1_plain').code), 'define_contingencies(app, ["*.ElmLne"], 1, True)');
+  // A .py written before version 2 named the pattern's SETTINGS line after `group`: edited
+  // there, it is read back into Other elements.
+  const py = r.code.replace('FOR_EACH_CONTINGENCY_QUERY = "T*.ElmTr2"', 'FOR_EACH_CONTINGENCY_GROUP = "G*.ElmSym"')
+    .replace('"FOR_EACH_CONTINGENCY_QUERY":["n2","query"]', '"FOR_EACH_CONTINGENCY_GROUP":["n2","group"]');
+  const back = WF.loadWorkflow(py);
+  ok(REG.settingsOf(back.wf.nodes[1]).query === 'G*.ElmSym', JSON.stringify(back.notes));
+});
 test('Element is found again before each step that uses it (also inside For each study case)', () => {
   const rd = ['pf.get', { attr: 'uknom' }];
   const r = gen(W({ n1: START, n2: ['pf.element', { el: EL('ElmTerm', 'Bus 5') }], n3: rd, n4: ['pf.case.activate', { case: 'B' }], n5: rd },
@@ -470,7 +555,7 @@ test('Element is found again before each step that uses it (also inside For each
   ok(/pf_find\(app, "\*\.ElmTerm", "all", in_service=True\)/.test(inLoop), 'found again in each pass: ' + mainBody(r4.code));
   const r3 = gen(W({ n1: START, n2: ['pf.cont.define', {}], n3: ['pf.case.activate', { case: 'B' }], n4: ['pf.cont.foreach', {}], n5: ['flow.log', { text: 'x' }] },
     ['n1>n3', 'n3>n4', 'n4.body>n5'], ['n2.conts>n4.conts']), 'cont_define_case');
-  has(mainBody(r3.code), 'define_contingencies(app, ["*.ElmLne"], int("1"), True)');
+  has(mainBody(r3.code), 'define_contingencies(app, ["*.ElmLne"], 1, True)');
 });
 test('monitors: Read time series records its element during the run, a later element loop records the whole list', () => {
   const r = gen(W({ n1: START, n2: ['pf.rms', {}], n3: ['pf.element', { el: EL('ElmTerm', 'Bus 9') }], n4: ['sig.series', { var: 'm:u' }], n5: ['math.min', {}], n6: ['flow.log', { text: '{v}' }] },
@@ -966,6 +1051,129 @@ const LIVE = {
     },
   },
 
+  // E1b on the real engine: a kept new study case's scenario holds a dispatch only when Save
+  // operation scenario saved it. Without the save the put-back at the end of the pass undoes it
+  // while that scenario is active, so the kept case holds the value from before (the trap the
+  // warning names); with the save (the Problems fix) it holds the dispatch.
+  trap: {
+    project: N9, timeout: 600, keep: [['IntCase', 'PFBT trap*'], ['IntScenario', 'PFBT trap*']], opval: 'G2.ElmSym:pgini',
+    wf: W({
+      n1: S9('01- Load Flow'),
+      n2: PY([], [['p0', 'num']], "p0 = pf_find(app, 'G2.ElmSym', 'one').GetAttribute('pgini')"), n3: LOG('BEFORE pgini {p:.1f}'),
+      n4: ['flow.list', { values: '120' }, { label: 'Not saved' }], n5: ['pf.case.create', { name: 'PFBT trap nosave' }],
+      n6: ['pf.dispatch', { gen: EL('ElmSym', 'G2'), basis: 'machine' }], n7: ['pf.ldf', {}], n8: ['pf.get', { el: EL('ElmSym', 'G2'), attr: 'm:P:bus1' }], n9: LOG('NOSAVE P {p:.1f}'),
+      n10: ['flow.list', { values: '130' }, { label: 'Saved' }], n11: ['pf.case.create', { name: 'PFBT trap saved' }],
+      n12: ['pf.dispatch', { gen: EL('ElmSym', 'G2'), basis: 'machine' }], n13: ['pf.scen.save', {}], n14: ['pf.ldf', {}], n15: ['pf.get', { el: EL('ElmSym', 'G2'), attr: 'm:P:bus1' }], n16: LOG('SAVED P {p:.1f}'),
+    }, ['n1>n2', 'n2>n3', 'n3>n4', 'n4.body>n5', 'n5>n6', 'n6>n7', 'n7.ok>n8', 'n8>n9', 'n4.done>n10', 'n10.body>n11', 'n11>n12', 'n12>n13', 'n13>n14', 'n14.ok>n15', 'n15>n16'],
+    ['n2.o1>n3.p', 'n4.item>n6.p', 'n8.value>n9.p', 'n10.item>n12.p', 'n15.value>n16.p'], 'PFB live scenario trap'),
+    expectWarn: [['n6', /operation scenario of Create study case, which keeps its study case after the run, but nothing saves that scenario/]],
+    check(out) {
+      has(out.text, 'NOSAVE P 120.0'); has(out.text, 'SAVED P 130.0');
+      const before = (/BEFORE pgini ([\d.]+)/.exec(out.text) || [])[1];
+      ok(before && Number(before) !== 120, 'the dispatch before the run: ' + before);
+      const nosave = /LIVE-OPVAL PFBT trap nosave \[\d+, ([\d.]+)\]/.exec(out.text);
+      const saved = /LIVE-OPVAL PFBT trap saved \[\d+, ([\d.]+)\]/.exec(out.text);
+      ok(nosave && saved, out.lines.filter(l => /LIVE-(OPVAL|KEPT)/.test(l)).join('\n'));
+      near(nosave[1], before, 1e-6, 'without the save the kept scenario does not hold the dispatch (it holds the value from before)');
+      near(saved[1], 130, 1e-6, 'with the save the kept scenario holds the dispatch');
+      has(out.text, 'LIVE-KEPT-LEFT IntCase []'); has(out.text, 'LIVE-KEPT-LEFT IntScenario []');
+    },
+  },
+
+  // The searches read their answer at the end of each try: Find limit's Pass from a check that
+  // goes on either way (a diverged load flow reports Fail with Report this try), Optimise's Score
+  // straight from a formula. The limit is checked on the engine afterwards.
+  direct: {
+    project: N9, timeout: 1200,
+    wf: W({
+      n1: S9('01- Load Flow'),
+      n30: PY([], [['p0', 'num']], "p0 = pf_find(app, 'Load A.ElmLod', 'one').GetAttribute('plini')"),
+      n2: ['opt.limit', { lower: 50, upper: 700, tol: 2, passes: 'low', onUnknown: 'stop' }, { label: 'Load A limit' }],
+      n3: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n4: ['pf.ldf', {}],
+      n5: ['pf.element', { el: EL('ElmLne', '*', 'all') }],
+      n6: ['pf.get', { attr: 'c:loading' }],
+      n7: ['chk.verdict', { op: 'le', limit: 100, goOn: true }],
+      n10: ['opt.report', { answer: 'fail' }, { label: 'Diverged' }],
+      n11: LOG('LIMIT {l:.2f} | found {f} | status {s} | passing {p:.2f} | failing {q:.2f}'),
+      n12: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n13: ['pf.ldf', {}], n14: ['pf.get', { attr: 'c:loading' }], n15: LOG('ATLIMIT loading {x:.2f}'),
+      n16: ['math.formula', { expr: 'a + 6' }],
+      n17: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n18: ['pf.ldf', {}], n19: ['pf.get', { attr: 'c:loading' }], n20: LOG('ABOVE loading {x:.2f}'),
+      n31: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
+      n32: ['pf.ldf', {}], n33: LOG('RESTORED slack {s:.3f}'),
+      n21: ['opt.optimise', { vars: [{ id: 'v1', name: 'G2 MW', lower: 50, upper: 250, integer: false }], goal: 'min', method: 'de', maxTries: 40, seed: 7 }, { label: 'Slack to 70' }],
+      n22: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+      n23: ['pf.ldf', {}],
+      n24: ['math.formula', { expr: 'abs(a - 70)' }],
+      n26: LOG('OPT best {b:.3f} | score {s:.4f} | found {f}'),
+      n27: ['pf.dispatch', { gen: EL('ElmSym', 'G2') }],
+      n28: ['pf.ldf', {}],
+      n29: LOG('CHECKOPT slack {s:.3f}'),
+    }, ['n1>n30', 'n30>n2', 'n2.body>n3', 'n3>n4', 'n4.ok>n6', 'n6>n7', 'n4.fail>n10',
+      'n2.done>n11', 'n11>n12', 'n12>n13', 'n13.ok>n14', 'n14>n15', 'n15>n17', 'n17>n18', 'n18.ok>n19', 'n19>n20',
+      'n20>n31', 'n31>n32', 'n32.ok>n33', 'n33>n21',
+      'n21.body>n22', 'n22>n23', 'n21.done>n26', 'n26>n27', 'n27>n28', 'n28.ok>n29'],
+    ['n2.value>n3.value', 'n5.el>n6.obj', 'n6.max>n7.value', 'n7.ok>n2.pass',
+      'n2.limit>n11.l', 'n2.found>n11.f', 'n2.status>n11.s', 'n2.passing>n11.p', 'n2.failing>n11.q',
+      'n2.limit>n12.value', 'n5.el>n14.obj', 'n14.max>n15.x',
+      'n2.limit>n16.a', 'n16.value>n17.value', 'n5.el>n19.obj', 'n19.max>n20.x',
+      'n30.o1>n31.value', 'n32.slack_mw>n33.s',
+      'n21.v1>n22.p', 'n23.slack_mw>n24.a', 'n24.value>n21.score',
+      'n21.best_v1>n26.b', 'n21.score>n26.s', 'n21.found>n26.f', 'n21.best_v1>n27.p', 'n28.slack_mw>n29.s'], 'PFB live searches read their answer'),
+    code: ['trial.report(ok=pass_fail.ok)', 'trial.report(score=', 'trial.report(score=None, ok=False)'],
+    check(out) {
+      const l = /LIMIT ([\d.]+) \| found (\w+) \| status (\w+) \| passing ([\d.]+) \| failing ([\d.]+)/.exec(out.text);
+      ok(l, 'the limit line\n' + out.text.slice(-1500));
+      ok(/^(yes|true)$/i.test(l[2]) && l[3] === 'DONE', 'the bisection found a limit: ' + l[0]);
+      const lim = Number(l[1]);
+      ok(lim > 50 && lim < 700, 'the limit is inside the bracket: ' + lim);
+      ok(Number(l[5]) - Number(l[4]) <= 2.001 && Number(l[5]) > Number(l[4]), `the smallest failing try is just above it: ${l[5]}`);
+      const at = Number((/ATLIMIT loading ([\d.]+)/.exec(out.text) || [])[1]);
+      const ab = Number((/ABOVE loading ([\d.]+)/.exec(out.text) || [])[1]);
+      ok(at <= 100.0001, `at the limit the worst line is ${at} %`);
+      ok(ab > 100, `6 MW above the limit the worst line is ${ab} %`);
+      near(Number((/RESTORED slack ([-\d.]+)/.exec(out.text) || [])[1]), 71.64, 1.5, 'the slack is back at its base value');
+      const o = /OPT best ([\d.]+) \| score ([\d.]+) \| found (\w+)/.exec(out.text);
+      ok(o, 'the optimise line');
+      ok(Number(o[2]) < 1.0, 'the search got the slack within 1 MW of 70: score ' + o[2]);
+      const c = Number((/CHECKOPT slack ([-\d.]+)/.exec(out.text) || [])[1]);
+      near(Math.abs(c - 70), Number(o[2]), 0.01, 'the best score is what that dispatch really gives');
+    },
+  },
+
+  // For each contingency makes its own N-2 of the six lines (15 pairs and the base case); the
+  // three reads after the load flow are parallel routes that meet at Add row; the table is
+  // saved at the end of the run as CSV and Excel (Start: Both), with no Save block.
+  n2par: {
+    project: N9, timeout: 900,
+    wf: W({
+      n1: ['start', { project: N9, studyCase: '01- Load Flow', outputDir: OUT, tableFmt: 'both' }],
+      n2: ['pf.cont.foreach', { lines: true, order: '2' }, { label: 'Outage' }],
+      n3: ['pf.ldf', {}],
+      n4: ['pf.get', { el: EL('ElmLne', '*', 'all'), attr: 'c:loading' }, { label: 'Line loading' }],
+      n5: ['pf.get', { el: EL('ElmTerm', '*', 'all'), attr: 'm:u' }, { label: 'Busbar voltage' }],
+      n6: ['pf.get', { el: EL('ElmTr2', '*', 'all'), attr: 'c:loading' }, { label: 'Transformer loading' }],
+      n7: ['out.table.add', { table: 'N-2', cols: [{ id: 'c1', name: 'Line (%)' }, { id: 'c2', name: 'Lowest (p.u.)' }, { id: 'c3', name: 'Transformer (%)' }] }],
+    }, ['n1>n2', 'n2.body>n3', 'n3.ok>n4', 'n3.ok>n5', 'n3.ok>n6', 'n4>n7', 'n5>n7', 'n6>n7'],
+    ['n4.max>n7.c1', 'n5.min>n7.c2', 'n6.max>n7.c3'], 'PFB live N-2 parallel'),
+    code: ['define_contingencies(app, ["*.ElmLne"], 2, True)', "preflight([\"openpyxl\", \"pandas\"])"],
+    check(out) {
+      ok(out.rundir, 'the run folder');
+      const csv = path.join(out.rundir, 'N-2.csv');
+      ok(fs.existsSync(csv) && fs.existsSync(path.join(out.rundir, 'N-2.xlsx')), 'the table saved as CSV and Excel at the end: ' + fs.readdirSync(out.rundir).join(', '));
+      const rows = fs.readFileSync(csv, 'utf8').replace(/^﻿/, '').trim().split(/\r?\n/);
+      ok(rows[0] === 'Outage,Status,Line (%),Lowest (p.u.),Transformer (%)', rows[0]);
+      ok(rows.length === 1 + 16, `the base case and the 15 pairs of lines, got ${rows.length - 1}: ` + rows.slice(1, 4).join(' / '));
+      const okRows = rows.slice(1).filter(r => r.split(',')[1] === 'OK');
+      ok(okRows.length >= 1 && rows[1].startsWith('Base case,OK'), 'the base case first and converged');
+      for (const r of okRows) { const c = r.split(','); ok(Number(c[2]) > 0 && Number(c[3]) > 0.5 && Number(c[4]) > 0, r); }
+      has(out.runlog || '', "End of the run: saving the results table 'N-2'.");
+      ok(!/were not saved/.test(out.runlog || ''), 'the end-of-run save does not read as a warning');
+    },
+  },
+
   // Several curves out of one run, every kind of check on them, a graph and a CSV.
   series: {
     project: N39, timeout: 1200,
@@ -1130,10 +1338,10 @@ const LIVE = {
           "scales = ', '.join(str(r.get('Scale')) for r in t.rows)"].join(NL)),
       n4: LOG('BOOK rows {r} | cols {c} | first {f} | scales {s}'),
       n5: PY([], [['base', 'num']], "base = pf_find(app, 'Load A.ElmLod', 'one').GetAttribute('plini')"),
-      // Raise the load a quarter of its base each pass until a line goes over 100 %. The lines
-      // of this demo are lightly loaded, so it takes about eleven passes to get there.
-      n6: ['flow.until', { max: 20 }, { label: 'Ramp' }],
-      n7: ['math.formula', { expr: 'a * (1 + 0.25 * b)' }],
+      // Raise the load 40 % of its base each pass until a line goes over 100 % (Load A's limit
+      // on this sandbox is about 462 MW, 3.7 times its 125 MW, so 8 % steps never got there).
+      n6: ['flow.until', { max: 12 }, { label: 'Ramp' }],
+      n7: ['math.formula', { expr: 'a * (1 + 0.4 * b)' }],
       n8: ['pf.set', { el: EL('ElmLod', 'Load A'), attr: 'plini' }],
       n9: ['pf.ldf', {}],
       n10: ['pf.element', { el: EL('ElmLne', '*', 'all') }],
@@ -1161,12 +1369,11 @@ const LIVE = {
       ok(b[1] === '3', 'three rows out of the Dispatch sheet: ' + b[1]);
       ok(b[2].trim() === 'Case | G 01 (MW) | G 02 (MW) | Scale', 'the names come from row 2: ' + b[2]);
       ok(b[3] === 'Max', 'the first case: ' + b[3]);
-      // A whole number comes back whole (openpyxl gives 1, not 1.0) - the page's own reader
-      // agrees, which _audit/data checks on this very file.
-      ok(b[4].trim() === '1, 0.5, 0.75', 'the numbers are numbers: ' + b[4]);
+      // openpyxl gives a whole number stored as 1.0 back as 1: either way a number, not text.
+      ok(/^1(\.0)?, 0\.5, 0\.75$/.test(b[4].trim()), 'the numbers are numbers: ' + b[4]);
       // The loop stopped itself the pass after the loading passed 100 %.
       const ramp = out.lines.filter(l => / RAMP /.test(l)).map(l => /RAMP (\d+) \| load ([\d.]+) \| worst ([\d.]+)/.exec(l)).filter(Boolean);
-      ok(ramp.length >= 3 && ramp.length < 20, 'the ramp stopped itself before its maximum: ' + ramp.length);
+      ok(ramp.length >= 2 && ramp.length <= 12, 'the ramp ran a sensible number of passes: ' + ramp.length);
       const worst = ramp.map(r => Number(r[3]));
       ok(worst[worst.length - 1] > 100, 'the last pass is the one that went over: ' + worst[worst.length - 1]);
       ok(worst.slice(0, -1).every(w => w <= 100), 'and no earlier pass did: ' + worst.join(', '));
@@ -1254,10 +1461,10 @@ function readCsv(file) {
   return fs.readFileSync(file, 'utf8').trim().split(/\r?\n/).slice(1).map(l => l.split(',').map(Number));
 }
 
-function pfrun(args, timeoutMs) {
+function pfrun(args, timeoutMs, cwd = LIVE_DIR) {
   // pfrun kills the script after PFRUN_TIMEOUT s; this process waits a little longer (the lock, the spacing).
   const env = { ...process.env, PYTHONIOENCODING: 'utf-8', PFRUN_TIMEOUT: String(Math.round(timeoutMs / 1000) - 60) };
-  const r = spawnSync('python', [PFRUN, ...args], { cwd: LIVE_DIR, encoding: 'utf8', timeout: timeoutMs + 2700 * 1000, maxBuffer: 256 << 20, env });
+  const r = spawnSync('python', [PFRUN, ...args], { cwd, encoding: 'utf8', timeout: timeoutMs + 2700 * 1000, maxBuffer: 256 << 20, env });
   return { code: r.status, text: (r.stdout || '') + (r.stderr ? '\n[stderr]\n' + r.stderr : '') + (r.error ? '\n[error] ' + r.error : '') };
 }
 
@@ -1268,6 +1475,9 @@ async function runLive(name, L) {
   toCompileLive.push({ file, test: 'live ' + name });
   const blocking = r.problems.filter(p => p.level === 'error' || p.level === 'todo');
   test(`live ${name}: generates without errors`, () => ok(!blocking.length, ptext(r)));
+  if (L.expectWarn) test(`live ${name}: warns as it should`, () => { for (const [id, re] of L.expectWarn) ok(r.problems.some(p => p.nodeId === id && re.test(p.msg)), `${id} ${re}
+${ptext(r)}`); });
+  if (L.code) test(`live ${name}: the script says what it should`, () => { for (const c of L.code) has(r.code, c); });
   if (blocking.length) return;
   // Files the workflow reads where it runs (a case table beside the script).
   for (const [name, text] of Object.entries(L.files || {})) fs.writeFileSync(path.join(LIVE_DIR, name), text);
@@ -1294,7 +1504,10 @@ async function runLive(name, L) {
   const opts = { keep: L.keep || [], opval: L.opval || '', save: L.save ? snap : '' };
   let res;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    res = L.direct ? pfrun([file], (L.timeout + 120) * 1000) : pfrun([path.join(HERE, 'live_wrap.py'), file, JSON.stringify(opts)], (L.timeout + 120) * 1000);
+    // An unpacked study runs from its own folder, as a reader runs it: read_table looks in the
+    // working folder first, where another live run may have left a file of the same name.
+    const cwd = L.pack ? path.dirname(file) : LIVE_DIR;
+    res = L.direct ? pfrun([file], (L.timeout + 120) * 1000, cwd) : pfrun([path.join(HERE, 'live_wrap.py'), file, JSON.stringify(opts)], (L.timeout + 120) * 1000, cwd);
     fs.writeFileSync(path.join(LOG_DIR, `live_${name}${attempt > 1 ? '_try' + attempt : ''}.log`), res.text);
     if (res.code !== 3) break;   // 3: the connect watchdog fired; pfrun spaces the retry
   }
@@ -1319,6 +1532,7 @@ async function runLive(name, L) {
     test(`live ${name}: main() ends normally`, () => ok(/LIVE-EXIT 0/.test(res.text) && res.code === 0, `exit ${res.code}\n${res.text.slice(-3000)}`));
     test(`live ${name}: sandbox left as found`, () => ok(/LIVE-AUDIT OK/.test(res.text), lines.filter(l => /LIVE-(AUDIT|DIFF)/.test(l)).join('\n') || res.text.slice(-2000)));
     const rd = (/LIVE-RUNDIR (.+)$/m.exec(res.text) || [])[1];
+    if (rd && rd.trim() !== 'None' && fs.existsSync(rd.trim())) out.rundir = rd.trim();
     if (rd && rd.trim() !== 'None' && fs.existsSync(path.join(rd.trim(), 'run.log'))) out.runlog = fs.readFileSync(path.join(rd.trim(), 'run.log'), 'utf8');
   }
   test(`live ${name}: results`, () => L.check(out));
@@ -1341,7 +1555,7 @@ function liveTree(tag) {
 if (!NO_LIVE) {
   const treeBefore = liveTree('before');
   const order = ['sweep', 'ldf', 'cases', 'testgen', 'shc', 'shcevent', 'emt', 'trip', 'events', 'steps', 'n1', 'vars',
-    'nested', 'branch', 'casetable', 'packaged', 'untilxl', 'series', 'optimise'];
+    'nested', 'branch', 'casetable', 'packaged', 'untilxl', 'series', 'optimise', 'trap', 'direct', 'n2par'];
   for (const name of order) {
     if (LIVE_ONLY.length && !LIVE_ONLY.includes(name)) continue;
     const t0 = Date.now();

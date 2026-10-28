@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerFactory Python API: getting started with GetApplication</title>
+<meta name="description" content="Start scripting PowerFactory in Python: the powerfactory module, GetApplication and GetApplicationExt, the calls you use most, and a first load flow.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/getting-started/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="PowerFactory Python API: getting started">
+<meta property="og:description" content="Start scripting PowerFactory in Python: the powerfactory module, GetApplication and GetApplicationExt, the calls you use most, and a first load flow.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/getting-started/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PowerFactory Python API: getting started">
+<meta name="twitter:description" content="Start scripting PowerFactory in Python: the powerfactory module, GetApplication and GetApplicationExt, the calls you use most, and a first load flow.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "PowerFactory Python API: getting started",
+  "description": "Start scripting PowerFactory in Python: the powerfactory module, GetApplication and GetApplicationExt, the calls you use most, and a first load flow.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/getting-started/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "proficiencyLevel": "Beginner",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "python api in powerfactory, GetApplication, GetApplicationExt, powerfactory module, PowerFactory engine mode, PowerFactory Python script, ComPython",
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "DIgSILENT PowerFactory"
+    },
+    {
+      "@type": "Thing",
+      "name": "Python"
+    },
+    {
+      "@type": "Thing",
+      "name": "Application programming interface"
+    }
+  ],
+  "isPartOf": {
+    "@type": "WebPage",
+    "name": "Automate PowerFactory studies with Python",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+  },
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between GetApplication and GetApplicationExt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both return the application object, and from your own Python both start PowerFactory in engine mode. When PowerFactory cannot start, GetApplication() returns None, while GetApplicationExt() raises powerfactory.ExitError with an error code (4002 database in use, 3000 no licence). Inside PowerFactory, use GetApplication()."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where is the PowerFactory Python module?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the PowerFactory installation, one folder per Python version, such as C:\\Program Files\\DIgSILENT\\PowerFactory 2024\\Python\\3.12. Add that folder to sys.path before import powerfactory."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which Python version does PowerFactory 2024 use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "PowerFactory 2024 installs the module for Python 3.8, 3.9, 3.10, 3.11 and 3.12, one folder each. Use any of them; the scripts on these pages were run with Python 3.12."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I run PowerFactory from Jupyter or VS Code?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes: in engine mode with GetApplicationExt(), once per Python process, with the matching Python version."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Getting started",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/getting-started/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../../logos/logo.svg">
+<link rel="manifest" href="../../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../../logos/apple-touch-icon.png">
+<script src="../../../pwa.js" defer></script>
+<link rel="preload" href="../../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../dark.css">
+<link rel="stylesheet" href="../../../light.css">
+<link rel="stylesheet" href="../../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../../">PowerFactory Scripter</a><span aria-hidden="true">›</span><a href="../">Python automation</a><span aria-hidden="true">›</span><span aria-current="page">Getting started</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>PowerFactory Python API: getting started</h1>
+    <p class="dx-lead">PowerFactory comes with a Python module, <code>powerfactory</code>. Inside PowerFactory, <code>powerfactory.GetApplication()</code> gives you the running program; from your own Python, <code>powerfactory.GetApplicationExt()</code> starts it in the background and tells you why when it cannot. Everything after that is objects: activate a project, run a command such as <code>ComLdf</code>, and read any value with <code>GetAttribute</code>.</p>
+    <ul class="dx-toc" aria-label="On this page"><li><a href="#what">What the PowerFactory Python API is</a></li><li><a href="#method">The method</a></li><li><a href="#builder">The full Python script</a></li><li><a href="#pitfalls">Pitfalls</a></li><li><a href="#faq">Questions</a></li></ul>
+    <section class="dx-sec dx-answer" aria-labelledby="what">
+  <h2 id="what">What the PowerFactory Python API is</h2>
+  <p>The API is a compiled module, <code>powerfactory.pyd</code>, installed with PowerFactory in one folder per Python version, for example <code>C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12</code>. The Python that imports it must be that version. There are two ways to run a script:</p>
+  <ul class="dx-prose">
+    <li><strong>Inside PowerFactory</strong>, as a Python command (<code>ComPython</code>) in the project: <code>powerfactory.GetApplication()</code> returns the program you are looking at, with its active project and study case.</li>
+    <li><strong>From your own Python</strong> (a terminal, VS Code, Jupyter): add the folder to <code>sys.path</code>, import the module and call <code>powerfactory.GetApplicationExt()</code>. It starts PowerFactory without a window, the engine mode, which is what batch studies use. <code>GetApplication()</code> starts it too, but only returns None when something is wrong, where <code>GetApplicationExt()</code> raises <code>powerfactory.ExitError</code> with a code that says what.</li>
+  </ul>
+  <p>Everything PowerFactory holds is an object with a class name: elements such as <a href="../../reference/ElmLne/"><code>ElmLne</code></a> (a line) and <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a> (a busbar), types such as <a href="../../reference/TypLne/"><code>TypLne</code></a>, commands such as <code>ComLdf</code> (load flow), and study cases (<code>IntCase</code>). Each object reads and writes its values with <code>GetAttribute</code> and <code>SetAttribute</code>; the <a href="../../reference/">attribute reference</a> lists every name.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="method">
+  <h2 id="method">The method</h2>
+  <ol class="dx-steps">
+    <li><strong>Find the module folder</strong> for your PowerFactory, and run Python of the same version (3.12 for this folder).</li>
+    <li><strong>Connect</strong>: <code>GetApplicationExt()</code> outside PowerFactory, <code>GetApplication()</code> inside it.</li>
+    <li><strong>Activate the project</strong> with <code>app.ActivateProject(name)</code>, then the study case you want. The study case decides the grids, the operation scenario and the variations every calculation uses.</li>
+    <li><strong>Find objects</strong> with <code>GetCalcRelevantObjects("*.ElmTerm")</code>, or by name with <code>GetCalcRelevantObjects("Load A.ElmLod")</code>.</li>
+    <li><strong>Run a command</strong>: <code>app.GetFromStudyCase("ComLdf").Execute()</code>. It returns 0 when it worked.</li>
+    <li><strong>Read the results</strong> with <code>GetAttribute</code>, by the attribute's name and prefix (<code>m:u</code> for a busbar voltage).</li>
+  </ol>
+  <h3>A first script</h3>
+  <p class="dx-file"><span><code>getting_started.py</code></span></p>
+<pre><code class="language-python"><span class="py-s">&quot;&quot;&quot;A first PowerFactory Python script: connect, open a project, run a load flow, read results.
+
+Runs on the &quot;Nine-bus System&quot; example project that comes with PowerFactory 2024.
+&quot;&quot;&quot;</span>
+<span class="py-k">import</span> sys
+
+<span class="py-c"># The powerfactory module ships with PowerFactory, one folder per Python version. Run this</span>
+<span class="py-c"># file with the Python whose version has a folder there (3.12 here).</span>
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+
+<span class="py-c"># From your own Python: start PowerFactory in the background (engine mode).</span>
+<span class="py-c"># Inside PowerFactory (a Python command, ComPython): app = powerfactory.GetApplication()</span>
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()
+
+<span class="py-k">if</span> app.<span class="py-f">ActivateProject</span>(PROJECT) != <span class="py-n">0</span>:                    <span class="py-c"># 0 means it worked</span>
+    <span class="py-k">raise</span> <span class="py-f">SystemExit</span>(<span class="py-s">f&quot;There is no project called {PROJECT}&quot;</span>)
+case = app.<span class="py-f">GetActiveStudyCase</span>()
+<span class="py-f">print</span>(<span class="py-s">&quot;Study case:&quot;</span>, case.loc_name)
+
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)                     <span class="py-c"># the load flow command of the case</span>
+<span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() != <span class="py-n">0</span>:                                   <span class="py-c"># 0 means it converged</span>
+    <span class="py-k">raise</span> <span class="py-f">SystemExit</span>(<span class="py-s">&quot;The load flow did not converge&quot;</span>)
+
+<span class="py-k">for</span> bus <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmTerm&quot;</span>):      <span class="py-c"># every terminal of the active grids</span>
+    <span class="py-f">print</span>(<span class="py-s">f&quot;{bus.loc_name:6} {bus.GetAttribute('m:u'):.4f} p.u. {bus.GetAttribute('m:Ul'):8.2f} kV&quot;</span>)
+
+<span class="py-k">for</span> line <span class="py-k">in</span> app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>):
+    <span class="py-f">print</span>(<span class="py-s">f&quot;{line.loc_name:9} loading {line.GetAttribute('c:loading'):5.1f} %&quot;</span>)
+
+load = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;Load A.ElmLod&quot;</span>)[<span class="py-n">0</span>]    <span class="py-c"># one element, found by name</span>
+<span class="py-f">print</span>(<span class="py-s">&quot;Load A:&quot;</span>, load.plini, <span class="py-s">&quot;MW&quot;</span>)                       <span class="py-c"># input data also reads as a property</span></code></pre>
+  <h3>What it prints on the Nine-bus example</h3>
+  <pre><code>Study case: 01- Load Flow
+Bus 1  1.0400 p.u.    17.16 kV
+Bus 2  1.0250 p.u.    18.45 kV
+Bus 3  1.0250 p.u.    14.14 kV
+Bus 4  1.0258 p.u.   235.93 kV
+Bus 5  0.9956 p.u.   229.00 kV
+Bus 6  1.0127 p.u.   232.91 kV
+Bus 7  1.0258 p.u.   235.93 kV
+Bus 8  1.0159 p.u.   233.65 kV
+Bus 9  1.0324 p.u.   237.44 kV
+Line 4-5  loading  14.2 %
+Line 4-6  loading   8.6 %
+Line 5-7  loading  21.4 %
+Line 6-9  loading  15.4 %
+Line 7-8  loading  18.9 %
+Line 8-9  loading   8.5 %
+Load A: 125.0 MW</code></pre>
+  <h3>The calls you use most</h3>
+  <div class="dx-tw"><table><thead><tr><th>Call</th><th>What it does</th></tr></thead><tbody>
+<tr><td><code>powerfactory.GetApplication()</code></td><td>Inside PowerFactory, the program the Python command runs in. From your own Python it starts PowerFactory in engine mode; None when it cannot.</td></tr>
+<tr><td><code>powerfactory.GetApplicationExt()</code></td><td>Starts PowerFactory in engine mode from your own Python, and raises powerfactory.ExitError with a code when it cannot. Once per Python process.</td></tr>
+<tr><td><code>app.ActivateProject(name)</code></td><td>Activates a project of the current user by its name; returns 0 when it worked.</td></tr>
+<tr><td><code>app.GetActiveStudyCase()</code></td><td>The active study case (IntCase); its Activate() switches to another.</td></tr>
+<tr><td><code>app.GetProjectFolder(&quot;study&quot;)</code></td><td>A folder of the active project: &quot;study&quot; for study cases, &quot;equip&quot; for the type library, &quot;scen&quot; for operation scenarios.</td></tr>
+<tr><td><code>app.GetFromStudyCase(&quot;ComLdf&quot;)</code></td><td>A command or object of the active study case by class: ComLdf, ComShc, ComInc, ComSim, ElmRes, IntEvt.</td></tr>
+<tr><td><code>app.GetCalcRelevantObjects(&quot;*.ElmLne&quot;)</code></td><td>Every object of a class in the active grids; the name can be a pattern, as in &quot;Line 4*.ElmLne&quot;.</td></tr>
+<tr><td><code>obj.GetContents(&quot;*.IntCase&quot;, 1)</code></td><td>The objects stored inside obj that match; 1 also searches the folders below.</td></tr>
+<tr><td><code>obj.GetAttribute(&quot;m:u&quot;)</code></td><td>Reads an input parameter or a result. obj.loc_name and obj.plini read the same way.</td></tr>
+<tr><td><code>obj.SetAttribute(&quot;plini&quot;, 140.0)</code></td><td>Writes an input parameter. It changes the project.</td></tr>
+<tr><td><code>cmd.Execute()</code></td><td>Runs a command (load flow, short circuit, simulation); 0 means success.</td></tr>
+<tr><td><code>obj.CreateObject(&quot;ElmGenstat&quot;, name)</code></td><td>Creates an object inside obj; obj.Delete() removes one.</td></tr>
+<tr><td><code>obj.GetClassName(), obj.GetParent()</code></td><td>The class of an object and the object it is stored in.</td></tr>
+<tr><td><code>app.ResetCalculation()</code></td><td>Drops the results in memory, as the reset button does; needed before deleting what a calculation used.</td></tr>
+<tr><td><code>app.SetAttributeModeInternal(1)</code></td><td>Reads and writes values in internal units (seconds for times) until it is set back to 0.</td></tr>
+</tbody></table></div>
+  <p class="dx-note">Every call in this table was used in the scripts on these pages, run on PowerFactory 2024's example projects.</p>
+</section>
+<div class="dx-cta">
+  <p><strong>Open this in the Builder.</strong> The Load flow on every study case Quick Start loads in the PowerFactory Workflow Builder, ready for your project. Change any block and download the Python file.</p>
+  <a class="btn-primary" href="../../builder/#qs=ldf-cases">Open in the Builder</a>
+</div>
+    <section class="dx-sec" aria-labelledby="builder">
+  <h2 id="builder">The full Python script from the Builder</h2>
+  <p>A script the Builder writes is the same API with the chores done: it finds the module folder for the Python that runs it, connects inside PowerFactory or in engine mode, stops with a plain message when the licence or the database is not free, and puts back every value it changed. This is its load flow on every study case, filled in for the Nine-bus example:</p>
+  <p class="dx-file"><span><code>load_flow_on_every_study_case.py</code> as the Builder writes it: the settings and the workflow</span><a href="load_flow_on_every_study_case.py" download>⬇ Download the full file (.py, 1,628 lines)</a></p>
+  <pre><code class="language-python"><span class="py-c">#!/usr/bin/env python3</span>
+<span class="py-c"># Load flow on every study case</span>
+<span class="py-s">&quot;&quot;&quot;Made with the PowerFactory Workflow Builder, https://tool.adjiebrotots.com/powerfactory-scripter/builder/
+
+BEFORE YOU RUN
+  1. Check the SETTINGS below (lines marked REQUIRED).
+  2. Close PowerFactory, or run this file from inside PowerFactory (see RUN_MODE).
+  3. Run it with the Python that matches your PowerFactory, e.g.  py -3.12 load_flow_on_every_study_case.py
+Results and run.log go to a new folder next to this file (or in OUTPUT_DIR).
+&quot;&quot;&quot;</span>
+<span class="py-c"># ==== IMPORTS ====</span>
+<span class="py-k">import</span> csv
+<span class="py-k">import</span> difflib
+<span class="py-k">import</span> fnmatch
+<span class="py-k">import</span> glob
+<span class="py-k">import</span> importlib.util
+<span class="py-k">import</span> math
+<span class="py-k">import</span> os
+<span class="py-k">import</span> re
+<span class="py-k">import</span> subprocess
+<span class="py-k">import</span> sys
+<span class="py-k">import</span> time
+<span class="py-k">import</span> traceback
+
+<span class="py-c"># ==== SETTINGS (edit here) ====</span>
+<span class="py-c"># The name of this workflow: used for the run folder and in the log.</span>
+WORKFLOW_NAME = <span class="py-s">&quot;Load flow on every study case&quot;</span>
+<span class="py-c"># REQUIRED. The PowerFactory project to open, exactly as the Data Manager shows it (letter case</span>
+<span class="py-c"># counts).</span>
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+<span class="py-c"># OPTIONAL. The study case to activate first (&quot;&quot; = keep the active one).</span>
+STUDY_CASE = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Where each run writes its folder of results and run.log (&quot;&quot; = the folder of this</span>
+<span class="py-c"># script).</span>
+OUTPUT_DIR = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. True: put every value the workflow changed back when it ends.</span>
+UNDO_CHANGES = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. How the results tables are saved in the run folder when the run ends: &quot;csv&quot;, &quot;xlsx&quot;</span>
+<span class="py-c"># (Excel, needs pandas and openpyxl) or &quot;both&quot;.</span>
+TABLE_FORMAT = <span class="py-s">&quot;csv&quot;</span>
+<span class="py-c"># OPTIONAL. Nominal frequency in Hz for the frequency checks: 50, 60 or &quot;auto&quot; (read from the</span>
+<span class="py-c"># grid).</span>
+F_NOMINAL = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. &quot;auto&quot;, &quot;engine&quot; (start PowerFactory in the background) or &quot;inside&quot; (run from inside</span>
+<span class="py-c"># PowerFactory).</span>
+RUN_MODE = <span class="py-s">&quot;auto&quot;</span>
+<span class="py-c"># OPTIONAL. True: show the PowerFactory window while running (engine mode only).</span>
+SHOW_PF = <span class="py-k">False</span>
+<span class="py-c"># OPTIONAL. True: no screen updates and fewer output window messages while running.</span>
+FAST_MODE = <span class="py-k">True</span>
+<span class="py-c"># OPTIONAL. Seconds to wait for PowerFactory to start.</span>
+CONNECT_TIMEOUT = <span class="py-n">120</span>
+<span class="py-c"># OPTIONAL. The folder with the powerfactory Python module (&quot;&quot; = find it).</span>
+PF_API_PATH = <span class="py-s">&quot;&quot;</span>
+<span class="py-c"># OPTIONAL. Log in to PowerFactory as this user (&quot;&quot; = your own).</span>
+PF_USER = <span class="py-s">&quot;&quot;</span>
+
+<span class="py-c"># OPTIONAL. Study case: Study cases named.</span>
+STUDY_CASE_PATTERN = <span class="py-s">&quot;*&quot;</span>
+
+<span class="py-c"># True: connect, find every element named in this workflow, say what was found, then stop</span>
+<span class="py-c"># without running anything.</span>
+CHECK_ONLY = <span class="py-k">False</span>
+
+
+<span class="py-c"># ==== WORKFLOW ====</span>
+<span class="py-c"># Note: This runs the load flow of every study case of the project (or of the cases named on For each study case, for example 0*) and reads the voltage of every busbar in service. Each case gets a row with...</span>
+<span class="py-k">def</span> <span class="py-f">main</span>():
+    <span class="py-f">preflight</span>([])
+    app = <span class="py-f">pf_connect</span>()
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> CHECK_ONLY:
+            <span class="py-f">check_elements</span>(app, [(<span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>)])
+            <span class="py-k">return</span>
+        <span class="py-c"># -- Step 1: Start (Project: Nine-bus System) --</span>
+        <span class="py-c"># -- Step 2: Study case (Every study case) --</span>
+        study_case_cases = <span class="py-f">case_list</span>(app, STUDY_CASE_PATTERN)
+        <span class="py-k">if</span> <span class="py-k">not</span> study_case_cases:
+            <span class="py-f">log</span>(<span class="py-s">&quot;Study case: no study case to loop over.&quot;</span>, <span class="py-s">&quot;warn&quot;</span>)
+        <span class="py-k">for</span> study_case_pass_no, study_case <span class="py-k">in</span> <span class="py-f">enumerate</span>(<span class="py-f">each_case</span>(app, study_case_cases), <span class="py-n">1</span>):
+            <span class="py-f">ctx_push</span>(<span class="py-s">&quot;Study case&quot;</span>, study_case, study_case_pass_no, <span class="py-f">len</span>(study_case_cases))
+            <span class="py-k">try</span>:
+                <span class="py-c"># -- Step 3: Run load flow (Settings of the study case) --</span>
+                ldf = <span class="py-f">run_load_flow</span>(app, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>, <span class="py-s">&quot;case&quot;</span>)
+                <span class="py-c"># Did not converge: skips to the next pass of Study case</span>
+                <span class="py-k">if</span> <span class="py-k">not</span> ldf.ok:
+                    <span class="py-f">case_skipped</span>(<span class="py-s">&quot;Load flow did not converge&quot;</span>)
+                    <span class="py-k">continue</span>
+                <span class="py-c"># -- Step 4: Busbar voltage (m:u of all * (ElmTerm) (load flow results)) --</span>
+                busbar_voltage = <span class="py-f">pf_get_all</span>(<span class="py-f">pf_find</span>(app, <span class="py-s">&quot;*.ElmTerm&quot;</span>, <span class="py-s">&quot;all&quot;</span>), <span class="py-s">&quot;m:u&quot;</span>, <span class="py-k">None</span>, <span class="py-k">False</span>, <span class="py-k">True</span>)
+                <span class="py-c"># -- Step 5: Add row to results table (Into &quot;Load flow&quot;, saved at the end automatically) --</span>
+                <span class="py-f">table</span>(<span class="py-s">&quot;Load flow&quot;</span>).<span class="py-f">add</span>({
+                    <span class="py-s">&quot;Lowest voltage (p.u.)&quot;</span>: busbar_voltage.min,
+                    <span class="py-s">&quot;Lowest at&quot;</span>: busbar_voltage.at_min,
+                    <span class="py-s">&quot;Highest voltage (p.u.)&quot;</span>: busbar_voltage.max,
+                    <span class="py-s">&quot;Highest at&quot;</span>: busbar_voltage.at_max,
+                }, status=<span class="py-k">True</span>)
+            <span class="py-k">except</span> StopWorkflow:
+                <span class="py-k">raise</span>
+            <span class="py-k">except</span> Exception <span class="py-k">as</span> err:
+                <span class="py-f">case_failed</span>(err)
+            <span class="py-k">finally</span>:
+                <span class="py-f">ctx_pop</span>([<span class="py-s">&quot;Load flow&quot;</span>])
+    <span class="py-k">except</span> StopWorkflow <span class="py-k">as</span> stop:
+        <span class="py-f">log</span>(<span class="py-s">f&quot;Stopped: {stop}&quot;</span>)
+    <span class="py-k">finally</span>:
+        <span class="py-f">finish</span>(app)
+</code></pre>
+  <p class="dx-note">The file goes on with 1,519 lines of helper functions copied from the Builder's runtime (connecting, logging, tables, graphs, putting values back), only those this workflow needs. The download has them all.</p>
+  <h3>How the script works</h3>
+  <ul class="dx-prose">
+    <li><code>RUN_MODE = "auto"</code> runs inside PowerFactory when the file is started there, and in engine mode otherwise. <code>PF_API_PATH</code> stays empty: the script looks for <code>Python\&lt;version&gt;</code> under <code>Program Files\DIgSILENT</code> itself.</li>
+    <li><code>pf_connect()</code> calls <code>GetApplicationExt()</code> under a watchdog (<code>CONNECT_TIMEOUT</code>), turns <code>ExitError</code> codes into plain words, then activates <code>PROJECT</code> and <code>STUDY_CASE</code>.</li>
+    <li><code>CHECK_ONLY = True</code> connects, finds every element the workflow names, says what it found and stops without running anything: a safe first run on a new project.</li>
+    <li>The workflow itself is <code>main()</code>, one commented step per block; the helpers below it come from the Builder's runtime and are copied in only when a block needs them.</li>
+    <li>Every run writes a new folder with its results tables and a <code>run.log</code>.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pitfalls">
+  <h2 id="pitfalls">Pitfalls</h2>
+  <ul class="dx-prose">
+    <li><strong>The Python version must match the module folder.</strong> Importing <code>powerfactory</code> from the 3.12 folder into another Python fails with an import error. Use the matching interpreter, for example <code>py -3.12 script.py</code>.</li>
+    <li><strong>One engine per Python process.</strong> Start it once and keep <code>app</code>: a second call in the same process hands back the session already running. In Jupyter, restart the kernel for a fresh one.</li>
+    <li><strong>The database can be held by another PowerFactory.</strong> With a local database, a PowerFactory window that is open (or an engine that has not exited) makes <code>GetApplicationExt()</code> fail with <code>ExitError</code> 4002. Close it and wait about 45 s.</li>
+    <li><strong>Licence errors are <code>ExitError</code> too</strong>: 3000 no licence found, 3018 no free seat, 3010 a licence without scripting.</li>
+    <li><strong>Changes are saved.</strong> There is no "do not save" for an engine session: <code>SetAttribute</code>, <code>CreateObject</code> and <code>Delete</code> change the project. Put values back in a <code>finally</code> block, or work on a copy of the project.</li>
+    <li><strong>A project name is exact</strong> and letter case counts. <code>ActivateProject</code> returns non-zero when no project of that name belongs to the current user.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>What is the difference between GetApplication and GetApplicationExt?</h3>
+  <p>Both return the application object, and from your own Python both start PowerFactory in engine mode. When PowerFactory cannot start, <code>GetApplication()</code> returns None, while <code>GetApplicationExt()</code> raises <code>powerfactory.ExitError</code> with an error code (4002 database in use, 3000 no licence). Inside PowerFactory, use <code>GetApplication()</code>.</p>
+  <h3>Where is the PowerFactory Python module?</h3>
+  <p>In the PowerFactory installation, one folder per Python version, such as <code>C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12</code>. Add that folder to <code>sys.path</code> before <code>import powerfactory</code>.</p>
+  <h3>Which Python version does PowerFactory 2024 use?</h3>
+  <p>PowerFactory 2024 installs the module for Python 3.8, 3.9, 3.10, 3.11 and 3.12, one folder each. Use any of them; the scripts on these pages were run with Python 3.12.</p>
+  <h3>Can I run PowerFactory from Jupyter or VS Code?</h3>
+  <p>Yes: in engine mode with <code>GetApplicationExt()</code>, once per Python process, with the matching Python version.</p>
+</section>
+    <section class="dx-sec" aria-labelledby="more">
+  <h2 id="more">Related</h2>
+  <ul class="dx-prose">
+    <li><a href="../">Automate PowerFactory studies with Python: every guide</a></li>
+    <li><a href="../load-flow/">Load flow and results to CSV or Excel</a></li>
+    <li><a href="../contingency-analysis/">N-1 contingency analysis</a></li>
+    <li><a href="../short-circuit/">Short-circuit automation</a></li>
+    <li><a href="../hosting-capacity/">Hosting capacity study</a></li>
+    <li><a href="../parameter-sweep/">Parameter sweep: PV and QV curves</a></li>
+    <li><a href="../rms-emt-simulation/">RMS and EMT simulation batch runs</a></li>
+  </ul>
+  <p>Attributes used on this page: <a href="../../reference/ElmTerm/"><code>ElmTerm</code></a>, <a href="../../reference/ElmLne/"><code>ElmLne</code></a>, <a href="../../reference/ElmLod/"><code>ElmLod</code></a>. <a href="../../reference/">All attributes</a>.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../../disclaimer/">Disclaimer</a> · <a href="../../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

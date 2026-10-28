@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
+    gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
+    try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
+    gtag('js', new Date());
+
+    gtag('config', 'G-VYTV157ST0');
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
+  <script src="../../consent.js" defer></script>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to automate PowerFactory studies with Python</title>
+<meta name="description" content="How to automate PowerFactory studies with Python: load flow, N-1, short circuit, hosting capacity, PV and QV curves, RMS and EMT. Tested scripts, free builder.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/python/">
+<link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to automate PowerFactory studies with Python">
+<meta property="og:description" content="How to automate PowerFactory studies with Python: load flow, N-1, short circuit, hosting capacity, PV and QV curves, RMS and EMT. Tested scripts, free builder.">
+<meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/python/">
+<meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Scripter, a free tool on Adjie Brotools">
+<meta property="og:locale" content="en_AU">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to automate PowerFactory studies with Python">
+<meta name="twitter:description" content="How to automate PowerFactory studies with Python: load flow, N-1, short circuit, hosting capacity, PV and QV curves, RMS and EMT. Tested scripts, free builder.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "How to automate PowerFactory studies with Python",
+  "description": "How to automate PowerFactory studies with Python: load flow, N-1, short circuit, hosting capacity, PV and QV curves, RMS and EMT. Tested scripts, free builder.",
+  "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/",
+  "inLanguage": "en",
+  "dateModified": "2026-10-25",
+  "dependencies": "DIgSILENT PowerFactory 2024 (Python 3.12 API)",
+  "keywords": "how to automate powerfactory studies, PowerFactory Python, PowerFactory automation, PowerFactory scripting, DIgSILENT Python API",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "PowerFactory Scripter",
+    "url": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+  },
+  "hasPart": [
+    {
+      "@type": "TechArticle",
+      "name": "PowerFactory Python API: getting started",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/getting-started/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "PowerFactory load flow with Python, and the results in CSV or Excel",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/load-flow/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "N-1 contingency analysis in PowerFactory with Python",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/contingency-analysis/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Short-circuit automation in PowerFactory with Python",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/short-circuit/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "How to do a hosting capacity study, and automate it in PowerFactory",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/hosting-capacity/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "Parameter sweeps in PowerFactory with Python: PV and QV curves",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/parameter-sweep/"
+    },
+    {
+      "@type": "TechArticle",
+      "name": "RMS and EMT simulations in PowerFactory with Python: batch runs and plots",
+      "url": "https://tool.adjiebrotots.com/powerfactory-scripter/python/rms-emt-simulation/"
+    }
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://www.adjiebrotots.com/#person",
+    "name": "Adjie Brotosukmono",
+    "url": "https://www.adjiebrotots.com/"
+  },
+  "publisher": {
+    "@id": "https://www.adjiebrotots.com/#person"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can PowerFactory be automated with Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. PowerFactory installs a Python module, powerfactory, that reaches every object and command of a project: scripts run inside PowerFactory as Python commands, or from your own Python with PowerFactory in the background."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does scripting need a special licence?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The licence has to include scripting. Without it, starting PowerFactory from Python fails with ExitError 3010."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Python or DPL?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "DPL is PowerFactory's own scripting language and runs only inside it. Python reaches the same objects and adds the Python world: pandas for tables, matplotlib for graphs, SciPy for optimisation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to know Python?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not for the studies the Workflow Builder covers: it writes the script from blocks. Reading the generated file is a good way to learn the API."
+      }
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Adjie Brotools",
+      "item": "https://tool.adjiebrotots.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "PowerFactory Scripter",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Python automation",
+      "item": "https://tool.adjiebrotots.com/powerfactory-scripter/python/"
+    }
+  ]
+}
+</script>
+<link rel="icon" type="image/svg+xml" href="../../logos/logo.svg">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../../logos/apple-touch-icon.png">
+<script src="../../pwa.js" defer></script>
+<link rel="preload" href="../../assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../dark.css">
+<link rel="stylesheet" href="../../light.css">
+<link rel="stylesheet" href="../docs.css">
+</head>
+<body class="light" data-no-abbr>
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
+<script src="../../theme.js"></script>
+<div class="dx">
+
+  <nav class="dx-top" aria-label="Site">
+    <a class="btn-theme" href="../">← PowerFactory Scripter</a>
+    <div class="dx-top-r">
+      <a class="btn-primary" href="../builder/">Open Builder</a>
+      <button class="btn-theme" id="themeToggle" type="button">🌙 Dark</button>
+    </div>
+  </nav>
+
+  <main>
+    <nav class="dx-crumb" aria-label="Breadcrumb"><a href="../">PowerFactory Scripter</a><span aria-hidden="true">›</span><span aria-current="page">Python automation</span></nav>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>How to automate PowerFactory studies with Python</h1>
+    <p class="dx-lead">PowerFactory studies are automated with its Python API: a script activates a study case, runs the calculation commands (load flow, short circuit, RMS or EMT simulation) in a loop over study cases, outages or values, reads the results and saves tables and graphs. Each guide below solves one study with a script tested on PowerFactory's example projects, and opens the same study in the <a href="../builder/">Workflow Builder</a>, which writes the Python for you from blocks.</p>
+    <section class="dx-sec dx-answer" aria-labelledby="guides">
+  <h2 id="guides">Guides, one study each</h2>
+  <ul class="dx-cards">
+    <li><a href="getting-started/"><strong>PowerFactory Python API: getting started</strong><span>Where the powerfactory module is, GetApplication and GetApplicationExt, and a first load flow.</span></a></li>
+    <li><a href="load-flow/"><strong>Load flow and results to CSV or Excel</strong><span>Run ComLdf, read every busbar voltage and branch loading, save CSV and Excel.</span></a></li>
+    <li><a href="contingency-analysis/"><strong>N-1 contingency analysis</strong><span>Take each line and transformer out in turn and rank the overloads.</span></a></li>
+    <li><a href="short-circuit/"><strong>Short-circuit automation</strong><span>IEC 60909 at every busbar with ComShc: Ikss, ip and Skss.</span></a></li>
+    <li><a href="hosting-capacity/"><strong>Hosting capacity study</strong><span>The method step by step, then a hosting capacity map from one script.</span></a></li>
+    <li><a href="parameter-sweep/"><strong>Parameter sweep: PV and QV curves</strong><span>Sweep an input over a range: a PV curve to the nose and a QV curve.</span></a></li>
+    <li><a href="rms-emt-simulation/"><strong>RMS and EMT simulation batch runs</strong><span>ComInc and ComSim in a loop, curves from ElmRes, plotted.</span></a></li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="pattern">
+  <h2 id="pattern">The pattern every automation follows</h2>
+  <p>Whatever the study, a PowerFactory script does the same seven things. This one is a minimal N-1 loop; the guides fill each step in for their study.</p>
+  <pre><code class="language-python"><span class="py-k">import</span> sys
+
+sys.path.<span class="py-f">append</span>(<span class="py-s">r&quot;C:\Program Files\DIgSILENT\PowerFactory 2024\Python\3.12&quot;</span>)
+<span class="py-k">import</span> powerfactory
+
+PROJECT = <span class="py-s">&quot;Nine-bus System&quot;</span>
+
+app = powerfactory.<span class="py-f">GetApplicationExt</span>()                <span class="py-c"># 1. connect (GetApplication() inside PowerFactory)</span>
+app.<span class="py-f">ActivateProject</span>(PROJECT)                          <span class="py-c"># 2. the project, with its active study case</span>
+ldf = app.<span class="py-f">GetFromStudyCase</span>(<span class="py-s">&quot;ComLdf&quot;</span>)                  <span class="py-c"># 3. the command of the study</span>
+lines = app.<span class="py-f">GetCalcRelevantObjects</span>(<span class="py-s">&quot;*.ElmLne&quot;</span>)
+
+rows = []
+<span class="py-k">for</span> line <span class="py-k">in</span> lines:                                    <span class="py-c"># 4. loop over what the study varies</span>
+    line.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">1</span>)
+    <span class="py-k">try</span>:
+        <span class="py-k">if</span> ldf.<span class="py-f">Execute</span>() == <span class="py-n">0</span>:                        <span class="py-c"># 5. run, and check it worked</span>
+            worst = <span class="py-f">max</span>(o.<span class="py-f">GetAttribute</span>(<span class="py-s">&quot;c:loading&quot;</span>) <span class="py-k">for</span> o <span class="py-k">in</span> lines <span class="py-k">if</span> o.outserv == <span class="py-n">0</span>)
+            rows.<span class="py-f">append</span>((line.loc_name, <span class="py-f">round</span>(worst, <span class="py-n">1</span>)))   <span class="py-c"># 6. read and keep the results</span>
+    <span class="py-k">finally</span>:
+        line.<span class="py-f">SetAttribute</span>(<span class="py-s">&quot;outserv&quot;</span>, <span class="py-n">0</span>)               <span class="py-c"># 7. leave the project as it was</span>
+
+<span class="py-f">print</span>(rows)</code></pre>
+  <ol class="dx-prose">
+    <li><strong>Connect</strong>: <code>GetApplicationExt()</code> from your own Python, <code>GetApplication()</code> inside PowerFactory.</li>
+    <li><strong>Activate the project and study case</strong>: they decide the grids, the scenario and the variations.</li>
+    <li><strong>Get the command</strong> from the study case: <code>ComLdf</code>, <code>ComShc</code>, <code>ComInc</code> and <code>ComSim</code>.</li>
+    <li><strong>Loop</strong> over what the study varies: study cases, outages, a dispatch, a fault location, a clearing time.</li>
+    <li><strong>Run and check</strong>: <code>Execute()</code> returns 0 when it worked; anything else is a result to record, not a crash.</li>
+    <li><strong>Read the results</strong> with <code>GetAttribute</code>, by the attribute's name (<a href="../reference/">attribute reference</a>).</li>
+    <li><strong>Put everything back</strong> in <code>finally</code>, because every change is saved in the project.</li>
+  </ol>
+</section>
+    <section class="dx-sec" aria-labelledby="two-ways">
+  <h2 id="two-ways">Write it, or have it written</h2>
+  <ul class="dx-prose">
+    <li><strong>Write the Python yourself</strong> with the API: the guides give a working script per study and the <a href="../reference/">attribute reference</a> gives every attribute name of 73 PowerFactory classes, with units.</li>
+    <li><strong>Draw it in the <a href="../builder/">Workflow Builder</a></strong>: wire blocks for the study, the loops and the checks, and download one Python file. It finds the PowerFactory module, connects inside or in engine mode, keeps a log, saves tables and graphs, and puts back every value it changed. Each guide has an "Open in the Builder" button that loads its study as a Quick Start; <a href="../guides/">how to use the Builder</a> shows the rest.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="first">
+  <h2 id="first">What is worth automating first</h2>
+  <ul class="dx-prose">
+    <li><strong>The same study on many cases</strong>: every study case, every operation scenario, every year of a plan.</li>
+    <li><strong>Screening</strong>: <a href="contingency-analysis/">N-1 outages</a>, <a href="short-circuit/">fault levels at every busbar</a>, <a href="hosting-capacity/">hosting capacity at every busbar</a>.</li>
+    <li><strong>Searches</strong>: the largest dispatch that passes, a critical clearing time, a hosting capacity: a few runs with bisection instead of hundreds by hand.</li>
+    <li><strong>Reporting</strong>: the same tables and graphs, in the same layout, every time the model changes.</li>
+  </ul>
+</section>
+    <section class="dx-sec" aria-labelledby="faq">
+  <h2 id="faq">Questions</h2>
+  <h3>Can PowerFactory be automated with Python?</h3>
+  <p>Yes. PowerFactory installs a Python module, <code>powerfactory</code>, that reaches every object and command of a project: scripts run inside PowerFactory as Python commands, or from your own Python with PowerFactory in the background.</p>
+  <h3>Does scripting need a special licence?</h3>
+  <p>The licence has to include scripting. Without it, starting PowerFactory from Python fails with <code>ExitError</code> 3010.</p>
+  <h3>Python or DPL?</h3>
+  <p>DPL is PowerFactory's own scripting language and runs only inside it. Python reaches the same objects and adds the Python world: pandas for tables, matplotlib for graphs, SciPy for optimisation.</p>
+  <h3>Do I need to know Python?</h3>
+  <p>Not for the studies the <a href="../builder/">Workflow Builder</a> covers: it writes the script from blocks. Reading the generated file is a good way to learn the API.</p>
+</section>
+  </main>
+
+  <footer>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
+    <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
+    <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>
+  </footer>
+</div>
+<script>
+  document.getElementById('themeToggle').addEventListener('click', function () { document.body.classList.toggle('light'); });
+</script>
+<!--/email_off-->
+</body>
+</html>

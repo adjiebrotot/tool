@@ -7,7 +7,7 @@
 // Every runtime helper called here is described in runtime/API-pf.md (pf_core.py, pf_model.py).
 // study.js imports the shared pieces below (element settings, loop settings, the route notes).
 
-import { defineBlock } from '../core/registry.js';
+import { defineBlock, defineFamily } from '../core/registry.js';
 import { convertible, hasParam, unitOf, familyOf } from '../core/attrdata.js';
 
 const CAT = 'model';
@@ -45,6 +45,10 @@ export const numInput = (id, label, fallback, unit, tip) => {
 
 // "Bus 5", "all Bus* (ElmTerm)", "first G* (ElmSym)" for summaries. No name: "the element"
 // (it may be wired in; the Problems list says when it is missing).
+// True when the block's input `id` takes a wire: the card and the step comment then name the wire,
+// since the run uses it and not the typed setting.
+const wiredIn = (wf, node, id) => !!(wf && node && Array.isArray(wf.edges) && wf.edges.some(e => e && e.to === node.id && e.in === id));
+
 export function elemText(v, what) {
   const e = v && typeof v === 'object' ? v : {};
   const name = String(e.name || '').trim();
@@ -55,8 +59,8 @@ export function elemText(v, what) {
 
 // Loops share these three settings with flow.js (same keys and option values).
 export const nameSetting = (fallback) => ({
-  key: 'name', label: 'Name (table column and file names)', kind: 'text', default: '', placeholder: `The block's name, or ${fallback}`,
-  tip: `What each pass is called: the column in results tables, part of file names and the log label. Empty: the block's name, or "${fallback}".`,
+  key: 'name', label: 'Name (table column and file names)', kind: 'text', default: '', more: true, meaning: 'passName', placeholder: `The name on the canvas, or ${fallback}`,
+  tip: `What each pass is called in results tables, file names and the log, when that is not the name on the canvas. Empty: the name on the canvas, or "${fallback}".`,
 });
 export const restoreSetting = {
   key: 'restore', label: 'After each pass', kind: 'select', default: 'pass', more: true, noPin: true,
@@ -141,8 +145,11 @@ const isResultAttr = (a) => /^(m|c|s|n|r|b):/.test(String(a || '').trim());
 // all passes route) is taken to be inside it.
 
 const R = { phase: '', ports: new Map(), cur: null, stack: [], notes: new Map(), last: new Map() };
-const freshState = () => ({ scen: 'unknown', caseBy: null, calc: null, faults: [] });
-const copyState = (st) => ({ ...st, faults: st.faults.slice() });
+// kept: the study case made by Create study case, kept after the run with its own scenario, while
+// that scenario is the active one; pending: operating-data writes into such a scenario that no
+// Save operation scenario has saved yet (E1b).
+const freshState = () => ({ scen: 'unknown', caseBy: null, calc: null, faults: [], kept: null, pending: [] });
+const copyState = (st) => ({ ...st, faults: st.faults.slice(), pending: st.pending.slice() });
 const findLast = (arr, fn) => { for (let k = arr.length - 1; k >= 0; k--) if (fn(arr[k])) return k; return -1; };
 
 function resetNotes() { R.phase = 'emit'; R.ports = new Map(); R.cur = freshState(); R.stack = []; R.notes = new Map(); }
@@ -209,14 +216,44 @@ export function noteCalc(cx, type) {
   return st;
 }
 
-// An operating-data write (dispatch, service, set point): warn when no scenario is active.
+// An operating-data write (dispatch, service, set point): warn when no scenario is active, and
+// when it goes into the scenario of a study case that is kept after the run (E1b, below).
 function noteOperational(cx, force) {
   const st = routeAt(cx);
   if (force && st.scen === 'none') noteFor(cx).e1 = st.caseBy;
+  if (force && st.kept) {
+    // One warning per kept case, on its last unsaved write (where the fix puts the save).
+    const before = st.pending.filter(p => p.kept.id === st.kept.id);
+    for (const p of before) { const n = R.notes.get(p.id); if (n) n.unsaved = null; }
+    st.pending = st.pending.filter(p => p.kept.id !== st.kept.id);
+    const also = before.map(p => p.label).filter(l => l !== cx.label);
+    st.pending.push({ id: cx.id, label: cx.label, kept: st.kept });
+    noteFor(cx).unsaved = { kept: st.kept, also, putBack: putBackAt(cx) };
+  }
   return st;
+}
+// Is what this step changes put back while the workflow runs: at the end of the pass of the loop
+// it sits in (unless that loop keeps its changes), else at the end of the run (UNDO_CHANGES)?
+function putBackAt(cx) {
+  const loopRestore = cx.loopId && typeof cx.rawOf === 'function' ? cx.rawOf(cx.loopId, 'restore') : undefined;
+  if (cx.loopId && loopRestore !== 'never') return loopRestore === 'end' ? 'loop' : 'pass';
+  const undo = typeof cx.startSetting === 'function' ? cx.startSetting('undoChanges') : undefined;
+  return undo === false ? null : 'run';
+}
+// Save operation scenario (or Deactivate with save) saved the active scenario: the writes into it
+// stay after the put-back.
+function noteSaved(st) {
+  if (!st.kept) return;
+  for (const p of st.pending) {
+    if (p.kept.id !== st.kept.id) continue;
+    const n = R.notes.get(p.id);
+    if (n) n.unsaved = null;
+  }
+  st.pending = st.pending.filter(p => p.kept.id !== st.kept.id);
 }
 function warnE1(cx) {
   const n = notesOf(cx);
+  if (n && n.unsaved && n.unsaved.putBack) warnUnsaved(cx, n.unsaved);
   if (!n || !n.e1) return;
   const by = n.e1;
   const fix = `Add Activate operation scenario or Create operation scenario after ${by.label}, or let Create study case make one.`;
@@ -226,8 +263,21 @@ function warnE1(cx) {
     cx.warn(`${cx.label} changes operating data after ${by.label} with no operation scenario made or activated by the workflow: unless that study case has its own scenario, the change goes into the network data every study case uses. ${fix}`);
   }
 }
+// E1b: Create study case keeps the new case after the run with a copy of its scenario. A change
+// to operating data written into that scenario and never saved is undone by the put-back at the
+// end of the pass (or run) while the scenario is still active, so the kept case does not hold it.
+// Saving automatically at the end of the pass would also keep an outage made later in that
+// pass, so the fix is a Save operation scenario right after the change.
+function warnUnsaved(cx, u) {
+  const when = u.putBack === 'pass' ? 'at the end of each pass' : u.putBack === 'loop' ? 'after the last pass' : 'at the end of the run';
+  const what = u.also && u.also.length ? `${u.also.join(', ')} and ${cx.label} change` : `${cx.label} changes`;
+  cx.warn(`${what} operating data in the operation scenario of ${u.kept.label}, which keeps its study case after the run, but nothing saves that scenario: ` +
+    `the changes are put back ${when}, so the kept case would not hold them. Add Save operation scenario after ${cx.label}.`,
+  { fix: { label: 'Add Save operation scenario here', op: { op: 'insertAfter', nodeId: cx.id, type: 'pf.scen.save' } } });
+}
+
 // A study case switch: the case's own scenario (if any) comes with it, so "none" is not sure.
-const caseSwitch = (st, cx, sure = false) => { st.scen = 'none'; st.caseBy = { label: cx.label, sure }; };
+const caseSwitch = (st, cx, sure = false) => { st.scen = 'none'; st.caseBy = { label: cx.label, sure }; st.kept = null; };
 
 // ---------------------------------------------------------------------------------------------
 // Elements
@@ -301,9 +351,9 @@ defineBlock({
   inputs: [{ id: 'items', label: 'Elements', type: 'obj', fallback: 'el', tip: 'Optional: loop over these elements instead of searching by name.' }],
   outputs: [
     { id: 'item', label: 'Element', type: 'obj', scope: 'body', var: 'element', tip: 'The element of this pass.' },
-    { id: 'elname', label: 'Name', type: 'text', scope: 'body', var: 'element_name' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', tip: 'The pass number, 1 for the first pass.' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'elname', label: 'Name', type: 'text', scope: 'body', var: 'element_name', more: true },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true, tip: 'The pass number, 1 for the first pass.' },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Element'),
@@ -381,6 +431,18 @@ defineBlock({
   validate(cx) { warnE1(cx); },
 });
 
+// Read attribute's outputs on the canvas (a port's `more`: folded while unwired): Value for one
+// element, Highest and Lowest for a list. A wired element is a list when it comes from Element
+// with all, or another output named Elements.
+const readsMany = (s, cx) => {
+  if (cx && cx.wired && cx.wired.has('obj')) {
+    const src = typeof cx.srcPort === 'function' ? cx.srcPort('obj') : null;
+    return !!(src && /^Elements/.test(String(src.label || '')));
+  }
+  return !!(s.el && s.el.match === 'all');
+};
+const readsOne = (s, cx) => !readsMany(s, cx);
+
 defineBlock({
   type: 'pf.get', cat: CAT, kind: 'action',
   title: 'Read attribute',
@@ -388,13 +450,13 @@ defineBlock({
   keywords: ['read', 'get', 'attribute', 'result', 'GetAttribute', 'voltage', 'loading', 'm:u', 'c:loading', 'm:P:bus1', 'm:Ikss', 'max', 'min', 'worst', 'all buses'],
   inputs: [objInput('obj', 'Element', 'el', null, 'One element or a list (for example Element with all).')],
   outputs: [
-    { id: 'value', label: 'Value', type: 'num', var: 'value', tip: 'The value (of the first element for a list).' },
-    { id: 'max', label: 'Highest', type: 'num', var: 'highest' },
-    { id: 'min', label: 'Lowest', type: 'num', var: 'lowest' },
-    { id: 'at_max', label: 'Where highest', type: 'obj', var: 'at_highest', tip: 'The element with the highest value.' },
-    { id: 'at_min', label: 'Where lowest', type: 'obj', var: 'at_lowest', tip: 'The element with the lowest value.' },
-    { id: 'values', label: 'All values', type: 'list', var: 'values' },
-    { id: 'n', label: 'How many', type: 'num', var: 'count' },
+    { id: 'value', label: 'Value', type: 'num', var: 'value', more: readsMany, tip: 'The value (of the first element for a list).' },
+    { id: 'max', label: 'Highest', type: 'num', var: 'highest', more: readsOne },
+    { id: 'min', label: 'Lowest', type: 'num', var: 'lowest', more: readsOne },
+    { id: 'at_max', label: 'Where highest', type: 'obj', var: 'at_highest', more: true, tip: 'The element with the highest value.' },
+    { id: 'at_min', label: 'Where lowest', type: 'obj', var: 'at_lowest', more: true, tip: 'The element with the lowest value.' },
+    { id: 'values', label: 'All values', type: 'list', var: 'values', more: true },
+    { id: 'n', label: 'How many', type: 'num', var: 'count', more: true },
   ],
   settings: [
     elementSetting('el', 'Element', 'ElmTerm'),
@@ -548,7 +610,10 @@ defineBlock({
     { key: 'attr2', label: 'Also this attribute', kind: 'attr', default: '', placeholder: 'e.g. qlini (optional)', tip: 'A second attribute scaled by the same factor, for example qlini to keep the power factor of a load.' },
     { key: 'factor', label: 'Factor', kind: 'number', default: 1.1, step: 0.05 },
   ],
-  summary(s) { return `${elemText(s.el)}: ${s.attr}${s.attr2 ? ', ' + s.attr2 : ''} x ${s.factor}`; },
+  summary(s, node, wf) {
+    const who = wiredIn(wf, node, 'obj') ? 'Wired element' : elemText(s.el);
+    return `${who}: ${s.attr}${s.attr2 ? ', ' + s.attr2 : ''} x ${wiredIn(wf, node, 'factor') ? 'the wired factor' : s.factor}`;
+  },
   helpers: ['scale_attr'],
   effects: { writes: ['model'], reads: [] },
   emit(cx) {
@@ -638,10 +703,10 @@ defineBlock({
   title: 'Activate study case',
   desc: 'Makes a study case active by its name (or the case wired in). Its operation scenario and variations come with it. The start case is active again at the end.',
   keywords: ['study case', 'activate', 'switch case', 'IntCase', 'case', 'Activate()', 'select case'],
-  inputs: [{ id: 'case_in', label: 'Study case', type: 'any', fallback: 'case', tip: 'A study case or its name, for example from Create study case.' }],
+  inputs: [{ id: 'case_in', label: 'Study case', type: 'any', takes: ['obj', 'text'], fallback: 'case', tip: 'A study case or its name, for example from Create study case.' }],
   outputs: [
     { id: 'case', label: 'Study case', type: 'obj', var: 'study_case' },
-    { id: 'name', label: 'Name', type: 'text', var: 'case_name' },
+    { id: 'name', label: 'Name', type: 'text', var: 'case_name', more: true },
   ],
   settings: [{ key: 'case', label: 'Study case', kind: 'text', default: '', required: true, placeholder: 'Exactly as in the Data Manager, e.g. 01- Load Flow', tip: 'Letter case counts.' }],
   summary(s) { return s.case || 'Study case not set'; },
@@ -664,12 +729,12 @@ defineBlock({
   keywords: ['create', 'new study case', 'copy case', 'AddCopy', 'IntCase', 'operation scenario', 'IntScenario', 'case per pass', 'duplicate'],
   inputs: [
     { id: 'name_in', label: 'Name', type: 'text', fallback: 'name', tip: 'The new case name, for example from Text from a template.' },
-    { id: 'template', label: 'Copy of', type: 'any', fallback: 'template', tip: 'The study case to copy (a case or its name). Empty: the active case.' },
+    { id: 'template', label: 'Copy of', type: 'any', takes: ['obj', 'text'], fallback: 'template', tip: 'The study case to copy (a case or its name). Empty: the active case.' },
   ],
   outputs: [
     { id: 'case', label: 'Study case', type: 'obj', var: 'new_case' },
-    { id: 'scenario', label: 'Operation scenario', type: 'obj', var: 'new_scenario' },
-    { id: 'name', label: 'Name', type: 'text', var: 'new_case_name', tip: 'The name PowerFactory gave it (cut to 40 characters, or numbered).' },
+    { id: 'scenario', label: 'Operation scenario', type: 'obj', var: 'new_scenario', more: true },
+    { id: 'name', label: 'Name', type: 'text', var: 'new_case_name', more: true, tip: 'The name PowerFactory gave it (cut to 40 characters, or numbered).' },
   ],
   settings: [
     { key: 'name', label: 'Name', kind: 'text', default: '{active case} {loop values}', tip: NAME_TIP },
@@ -690,7 +755,10 @@ defineBlock({
     const st = routeAt(cx);
     if (cx.s.activate) {
       if (cx.s.scenario === 'none') caseSwitch(st, cx);
-      else { st.scen = 'scen'; st.caseBy = { label: cx.label, sure: false }; }
+      else {
+        st.scen = 'scen'; st.caseBy = { label: cx.label, sure: false };
+        st.kept = cx.s.keep ? { id: cx.id, label: cx.label } : null;
+      }
     }
     cx.helper('case_create');
     const { nm, lines } = runtimeName(cx, cx.in('name_in'), 'case');
@@ -715,9 +783,9 @@ defineBlock({
   inputs: [{ id: 'items', label: 'Study cases', type: 'items', fallback: 'pattern', tip: 'Optional: loop over these study cases (or their names) instead of a pattern.' }],
   outputs: [
     { id: 'case', label: 'Study case', type: 'obj', scope: 'body', var: 'study_case' },
-    { id: 'casename', label: 'Name', type: 'text', scope: 'body', var: 'case_name' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'casename', label: 'Name', type: 'text', scope: 'body', var: 'case_name', more: true },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Study case'),
@@ -748,14 +816,16 @@ defineBlock({
   title: 'Activate operation scenario',
   desc: 'Makes an operation scenario active in the active study case, so dispatch and service changes go into it. The start scenario is active again at the end.',
   keywords: ['operation scenario', 'scenario', 'activate', 'IntScenario', 'operating point', 'switch scenario'],
-  inputs: [{ id: 'scen', label: 'Scenario', type: 'any', fallback: 'scen', tip: 'An operation scenario or its name.' }],
+  inputs: [{ id: 'scen', label: 'Scenario', type: 'any', takes: ['obj', 'text'], fallback: 'scen', tip: 'An operation scenario or its name.' }],
   outputs: [{ id: 'scenario', label: 'Scenario', type: 'obj', var: 'scenario' }],
   settings: [{ key: 'scen', label: 'Operation scenario', kind: 'text', default: '', required: true, placeholder: 'Exactly as in the Data Manager' }],
   summary(s) { return s.scen || 'Scenario not set'; },
   helpers: ['scenario_activate'],
   effects: { writes: ['case'], reads: [] },
   emit(cx) {
-    routeAt(cx).scen = 'scen';
+    const st = routeAt(cx);
+    st.scen = 'scen';
+    st.kept = null;
     cx.helper('scenario_activate');
     return [`${cx.out('scenario')} = scenario_activate(app, ${cx.in('scen')})`];
   },
@@ -770,7 +840,7 @@ defineBlock({
   inputs: [{ id: 'name_in', label: 'Name', type: 'text', fallback: 'name' }],
   outputs: [
     { id: 'scenario', label: 'Scenario', type: 'obj', var: 'new_scenario' },
-    { id: 'name', label: 'Name', type: 'text', var: 'scenario_name' },
+    { id: 'name', label: 'Name', type: 'text', var: 'scenario_name', more: true },
   ],
   settings: [
     { key: 'name', label: 'Name', kind: 'text', default: '{active case} {loop values}', tip: NAME_TIP },
@@ -783,7 +853,7 @@ defineBlock({
   effects(s) { return s.activate ? { writes: ['case'], reads: [] } : { writes: [], reads: [] }; },
   emit(cx) {
     const st = routeAt(cx);
-    if (cx.s.activate) st.scen = 'scen';
+    if (cx.s.activate) { st.scen = 'scen'; st.kept = null; }
     cx.helper('scenario_create');
     const { nm, lines } = runtimeName(cx, cx.in('name_in'), 'scenario');
     const sc = cx.out('scenario');
@@ -799,11 +869,11 @@ defineBlock({
   title: 'Save operation scenario',
   desc: 'Saves the changes of the active operation scenario into it, so they stay after the workflow puts changed values back (also at the end of a pass).',
   keywords: ['save', 'scenario', 'operation scenario', 'store', 'IntScenario', 'Save()', 'keep changes'],
-  outputs: [{ id: 'saved', label: 'Saved', type: 'bool', var: 'saved' }],
+  outputs: [{ id: 'saved', label: 'Saved', type: 'bool', var: 'saved', more: true }],
   summary() { return 'The active scenario'; },
   helpers: ['scenario_save'],
   emit(cx) {
-    routeAt(cx);
+    noteSaved(routeAt(cx));
     cx.helper('scenario_save');
     return cx.used('saved') ? [`${cx.out('saved')} = scenario_save(app)`] : ['scenario_save(app)'];
   },
@@ -815,13 +885,15 @@ defineBlock({
   title: 'Deactivate operation scenario',
   desc: 'Switches the active operation scenario off. Its unsaved changes are dropped unless you choose to save them (PowerFactory\'s own default is to drop).',
   keywords: ['deactivate', 'scenario', 'operation scenario', 'switch off', 'IntScenario', 'Deactivate()', 'network data'],
-  outputs: [{ id: 'scenario', label: 'Scenario', type: 'obj', var: 'old_scenario', tip: 'The scenario that was switched off (empty when none was active).' }],
+  outputs: [{ id: 'scenario', label: 'Scenario', type: 'obj', var: 'old_scenario', more: true, tip: 'The scenario that was switched off (empty when none was active).' }],
   settings: [{ key: 'save', label: 'Save its changes first', kind: 'bool', default: false }],
   summary(s) { return s.save ? 'Save, then switch off' : 'Switch off, drop unsaved changes'; },
   helpers: ['scenario_deactivate'],
   effects: { writes: ['case'], reads: [] },
   emit(cx) {
-    caseSwitch(routeAt(cx), cx, true);
+    const st = routeAt(cx);
+    if (cx.s.save) noteSaved(st);
+    caseSwitch(st, cx, true);
     cx.helper('scenario_deactivate');
     const call = `scenario_deactivate(app, ${cx.val('save')})`;
     return cx.used('scenario') ? [`${cx.out('scenario')} = ${call}`] : [call];
@@ -837,9 +909,9 @@ defineBlock({
   inputs: [{ id: 'items', label: 'Scenarios', type: 'items', fallback: 'pattern', tip: 'Optional: loop over these scenarios (or their names) instead of a pattern.' }],
   outputs: [
     { id: 'scenario', label: 'Scenario', type: 'obj', scope: 'body', var: 'scenario' },
-    { id: 'scenname', label: 'Name', type: 'text', scope: 'body', var: 'scenario_name' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'scenname', label: 'Name', type: 'text', scope: 'body', var: 'scenario_name', more: true },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Scenario'),
@@ -859,7 +931,9 @@ defineBlock({
     cx.out('count', `len(${lst})`);
     const lines = [cx.has('items') ? `${lst} = as_items(${cx.in('items')})` : `${lst} = scenario_list(app, ${cx.val('pattern')})`,
       `if not ${lst}:`, `    log(${cx.lit(cx.label + ': no operation scenario to loop over.')}, "warn")`];
-    enterLoop(cx, true).scen = 'scen';
+    const st = enterLoop(cx, true);
+    st.scen = 'scen';
+    st.kept = null;
     return { lines, header: `for ${i}, ${sc} in enumerate(each_scenario(app, ${lst}), 1):`, iter: { i, n: `len(${lst})` }, ctx: [passLabel(cx, 'Scenario'), sc] };
   },
   validate(cx) { notesOf(cx); },
@@ -870,7 +944,7 @@ defineBlock({
   title: 'Activate variation',
   desc: 'Activates a network variation in the active study case (alone, or with the ones already active). The case gets its own variations back at the end.',
   keywords: ['variation', 'activate', 'IntScheme', 'network variation', 'expansion stage', 'future grid', 'project'],
-  inputs: [{ id: 'var_in', label: 'Variation', type: 'any', fallback: 'variation', tip: 'A variation or its name.' }],
+  inputs: [{ id: 'var_in', label: 'Variation', type: 'any', takes: ['obj', 'text'], fallback: 'variation', tip: 'A variation or its name.' }],
   outputs: [{ id: 'variation', label: 'Variation', type: 'obj', var: 'variation' }],
   settings: [
     { key: 'variation', label: 'Variation', kind: 'text', default: '', required: true, placeholder: 'Exactly as in the Data Manager' },
@@ -892,13 +966,13 @@ defineBlock({
   title: 'Deactivate variation',
   desc: 'Deactivates one network variation, or every active one, in the active study case. The case gets its own variations back at the end.',
   keywords: ['variation', 'deactivate', 'IntScheme', 'switch off', 'base network', 'network variation'],
-  inputs: [{ id: 'var_in', label: 'Variation', type: 'any', fallback: 'variation', tip: 'A variation or its name.' }],
-  outputs: [{ id: 'count', label: 'How many', type: 'num', var: 'deactivated' }],
+  inputs: [{ id: 'var_in', label: 'Variation', type: 'any', takes: ['obj', 'text'], fallback: 'variation', tip: 'A variation or its name.' }],
+  outputs: [{ id: 'count', label: 'How many', type: 'num', var: 'deactivated', more: true }],
   settings: [
     { key: 'which', label: 'Deactivate', kind: 'select', default: 'one', noPin: true, options: [['one', 'This variation'], ['all', 'Every active variation']] },
     { key: 'variation', label: 'Variation', kind: 'text', default: '', placeholder: 'Exactly as in the Data Manager', showIf: (s) => s.which !== 'all' },
   ],
-  ports(s) { return { inputs: s.which === 'all' ? [] : [{ id: 'var_in', label: 'Variation', type: 'any', fallback: 'variation', tip: 'A variation or its name.' }] }; },
+  ports(s) { return { inputs: s.which === 'all' ? [] : [{ id: 'var_in', label: 'Variation', type: 'any', takes: ['obj', 'text'], fallback: 'variation', tip: 'A variation or its name.' }] }; },
   summary(s) { return s.which === 'all' ? 'Every active variation' : (s.variation || 'Variation not set'); },
   helpers: ['variation_deactivate'],
   effects: { writes: ['case'], reads: [] },
@@ -922,7 +996,7 @@ defineBlock({
   inputs: [{ id: 'name_in', label: 'Name', type: 'text', fallback: 'name' }],
   outputs: [
     { id: 'variation', label: 'Variation', type: 'obj', var: 'new_variation' },
-    { id: 'name', label: 'Name', type: 'text', var: 'variation_name' },
+    { id: 'name', label: 'Name', type: 'text', var: 'variation_name', more: true },
   ],
   settings: [
     { key: 'name', label: 'Name', kind: 'text', default: '{active case} {loop values}', tip: NAME_TIP },
@@ -955,9 +1029,9 @@ defineBlock({
   inputs: [{ id: 'items', label: 'Variations', type: 'items', fallback: 'pattern', tip: 'Optional: loop over these variations (or their names) instead of a pattern.' }],
   outputs: [
     { id: 'variation', label: 'Variation', type: 'obj', scope: 'body', var: 'variation' },
-    { id: 'varname', label: 'Name', type: 'text', scope: 'body', var: 'variation_name' },
-    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no' },
-    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes' },
+    { id: 'varname', label: 'Name', type: 'text', scope: 'body', var: 'variation_name', more: true },
+    { id: 'index', label: 'Pass no.', type: 'num', scope: 'body', var: 'pass_no', more: true },
+    { id: 'count', label: 'Number of passes', type: 'num', scope: 'done', var: 'passes', more: true },
   ],
   settings: [
     nameSetting('Variation'),
@@ -984,6 +1058,34 @@ defineBlock({
   validate(cx) { notesOf(cx); },
 });
 
+// Activate, Create and For each of one kind of object are one palette entry each, and the two
+// Deactivate blocks another. Create's `name` names the new object and a loop's `name` its passes
+// (meaning 'passName'), so a Kind switch between them gives the new kind's default.
+defineFamily({
+  id: 'case', title: 'Study case',
+  desc: 'Activates a study case, creates one (with its own operation scenario), or repeats the steps for each study case. Choose which under Kind.',
+  keywords: ['study case', 'IntCase', 'activate', 'create', 'for each', 'every case', 'case per pass'],
+  members: ['pf.case.activate', 'pf.case.create', 'pf.case.foreach'], dflt: 'pf.case.activate',
+});
+defineFamily({
+  id: 'scen', title: 'Operation scenario',
+  desc: 'Activates an operation scenario, saves the operating state as a new one, or repeats the steps for each scenario. Choose which under Kind.',
+  keywords: ['operation scenario', 'scenario', 'IntScenario', 'activate', 'create', 'for each', 'operating point'],
+  members: ['pf.scen.activate', 'pf.scen.create', 'pf.scen.foreach'], dflt: 'pf.scen.activate',
+});
+defineFamily({
+  id: 'var', title: 'Network variation',
+  desc: 'Activates a network variation, creates one to record changes in, or repeats the steps for each variation. Choose which under Kind.',
+  keywords: ['variation', 'network variation', 'IntScheme', 'expansion stage', 'activate', 'create', 'for each'],
+  members: ['pf.var.activate', 'pf.var.create', 'pf.var.foreach'], dflt: 'pf.var.activate',
+});
+defineFamily({
+  id: 'deactivate', title: 'Deactivate scenario or variation',
+  desc: 'Switches the active operation scenario off, or one (or every) network variation. Choose which under Kind.',
+  keywords: ['deactivate', 'switch off', 'operation scenario', 'variation', 'base network', 'network data'],
+  members: ['pf.scen.deactivate', 'pf.var.deactivate'], dflt: 'pf.scen.deactivate',
+});
+
 // ---------------------------------------------------------------------------------------------
 // Test generator (hosting capacity, E21)
 
@@ -1000,7 +1102,10 @@ defineBlock({
     { key: 'q', label: 'Reactive power', kind: 'number', default: 0, unit: 'Mvar' },
     { key: 'rating', label: 'Rating', kind: 'number', default: null, unit: 'MVA', more: true, placeholder: 'Automatic', tip: 'Empty: the larger of 100 MVA and 1.5 times the apparent power.' },
   ],
-  summary(s) { return `At ${elemText(s.bus)}: ${s.p} MW, ${s.q} Mvar`; },
+  summary(s, node, wf) {
+    const at = wiredIn(wf, node, 'bus') ? 'the wired busbar' : elemText(s.bus);
+    return `At ${at}: ${wiredIn(wf, node, 'p') ? 'wired' : s.p} MW, ${wiredIn(wf, node, 'q') ? 'wired' : s.q} Mvar`;
+  },
   helpers: ['add_test_generator'],
   effects: { writes: ['model'], reads: [] },
   emit(cx) {

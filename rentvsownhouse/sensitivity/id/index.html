@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <!-- A guide's live demo opens this page in a frame as ?demo: guide-demo.js keeps it off the reader's own storage. -->
+  <script>if(self!==top&&/[?&]demo(&|$)/.test(location.search))document.write('<script src="../../../guide-demo.js"><\/script>')</script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../../../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Analisis Sensitivitas Sewa vs Beli Rumah | Adjie Brotools</title>
-<meta name="description" content="Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti — alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.">
+<meta name="description" content="Analisis sensitivitas multi-skenario sewa vs beli rumah: lihat asumsi mana yang paling memengaruhi kekayaan bersih Anda. Gratis dan berjalan di browser.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/">
 <link rel="alternate" hreflang="en" href="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/">
@@ -29,15 +34,20 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah">
-<meta property="og:description" content="Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih — alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.">
+<meta property="og:description" content="Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/rentvsownhouse-sensitivity-id.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Analisis Sensitivitas &amp; Multi-Skenario Sewa vs Beli Rumah, tool gratis di Adjie Brotools">
 <meta property="og:locale" content="id_ID">
 <meta property="og:locale:alternate" content="en_US">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah">
-<meta name="twitter:description" content="Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih — alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.">
+<meta name="twitter:description" content="Bandingkan beberapa skenario sewa vs beli berdampingan dan lihat asumsi mana yang paling menggerakkan kekayaan bersih. Alternatif gratis untuk pemodelan properti bespoke yang biasanya berbiaya mahal.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/rentvsownhouse-sensitivity-id.jpg">
 
 <script type="application/ld+json">
 {
@@ -45,10 +55,12 @@
   "@type": "WebApplication",
   "name": "Analisis Sensitivitas & Multi-Skenario Sewa vs Beli Rumah",
   "url": "https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/",
-  "description": "Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti — alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.",
+  "description": "Jalankan analisis sensitivitas multi-skenario pada asumsi sewa vs beli rumah untuk melihat variabel mana yang paling memengaruhi kekayaan bersih properti. Alternatif gratis untuk pemodelan bespoke yang biasanya dijual analis properti dan penasihat keuangan seharga jutaan rupiah.",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-06-12",
+  "screenshot": "https://tool.adjiebrotots.com/og/rentvsownhouse-sensitivity-id.jpg",
   "inLanguage": "id",
   "alternateName": [
     "Analisis Sensitivitas Sewa vs Beli",
@@ -60,10 +72,10 @@
   "featureList": [
     "Bandingkan beberapa skenario sewa vs beli secara berdampingan dalam satu tabel",
     "Bandingkan rumah di kota dan mata uang berbeda dengan modal awal dan anggaran bulanan yang sama, dikonversi ke satu mata uang dasar dengan kurs terkini",
-    "Uji bagaimana setiap asumsi — kenaikan harga, bunga KPR, inflasi sewa, biaya — mengubah hasilnya",
+    "Uji bagaimana setiap asumsi (kenaikan harga, bunga KPR, inflasi sewa, biaya) mengubah hasilnya",
     "Alternatif gratis untuk software analisis properti bespoke dan pemodelan skenario berbayar yang biasanya dikenakan analis properti, agen pembeli, dan penasihat keuangan seharga jutaan rupiah",
     "Tersedia dalam bahasa Indonesia dan Inggris",
-    "Semua perhitungan berjalan lokal di browser — data keuangan Anda tidak pernah meninggalkan perangkat",
+    "Semua perhitungan berjalan lokal di browser, jadi data keuangan Anda tidak pernah keluar dari perangkat",
     "Ekspor CSV gratis tanpa paywall"
   ],
   "offers": {
@@ -95,10 +107,10 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Apa fungsi Alat Analisis Sensitivitas Sewa vs Beli Rumah?",
+      "name": "Apa fungsi tool Analisis Sensitivitas Sewa vs Beli Rumah?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Alat ini membandingkan beberapa skenario sewa vs beli secara berdampingan sehingga Anda bisa melihat asumsi mana — kenaikan harga properti, bunga KPR, inflasi sewa, biaya rutin — yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/."
+        "text": "Tool ini membandingkan beberapa skenario sewa vs beli secara berdampingan sehingga Anda bisa melihat asumsi mana (kenaikan harga properti, bunga KPR, inflasi sewa, biaya rutin) yang paling memengaruhi kekayaan bersih, uang tunai, atau biaya kumulatif. Gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/."
       }
     },
     {
@@ -106,7 +118,7 @@
       "name": "Apa bedanya dengan kalkulator Sewa vs Beli Rumah utama?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Kalkulator utama memodelkan satu skenario secara mendalam; alat sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih."
+        "text": "Kalkulator utama memodelkan satu skenario secara mendalam, sedangkan tool sensitivitas menyusun beberapa skenario dalam satu tabel untuk membandingkan asumsi pada tahun dan metrik yang dipilih."
       }
     },
     {
@@ -122,7 +134,7 @@
       "name": "Adakah alternatif gratis untuk pemodelan skenario properti yang mahal dari analis properti atau agen pembeli?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Ada. Analisis sensitivitas multi-skenario yang biasanya dibuat analis properti, agen pembeli, dan penasihat keuangan sebagai spreadsheet bespoke atau dijual sebagai layanan berbayar — sering berbiaya jutaan rupiah — tersedia gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, berjalan sepenuhnya di browser, dan bisa diekspor ke CSV tanpa akun."
+        "text": "Ada. Analisis sensitivitas multi-skenario yang biasanya dibuat analis properti, agen pembeli, dan penasihat keuangan sebagai spreadsheet bespoke atau dijual sebagai layanan berbayar, sering seharga jutaan rupiah, tersedia gratis di https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/, berjalan sepenuhnya di browser, dan bisa diekspor ke CSV tanpa akun."
       }
     },
     {
@@ -130,7 +142,7 @@
       "name": "Asumsi mana yang paling menentukan apakah menyewa atau membeli yang lebih unggul?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Susun skenario yang mengubah satu input pada satu waktu — pertumbuhan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin — lalu baca tabel berdampingan pada tahun dan metrik yang Anda pilih untuk melihat asumsi mana yang paling menggerakkan kekayaan bersih. Ini menguji seberapa kuat keputusan sewa-atau-beli Anda."
+        "text": "Susun skenario yang masing-masing mengubah satu input saja (kenaikan harga rumah, bunga KPR, inflasi sewa, imbal hasil investasi, atau biaya rutin), lalu baca tabel berdampingan pada tahun dan metrik yang Anda pilih untuk melihat asumsi mana yang paling menggerakkan kekayaan bersih. Ini menguji seberapa kuat keputusan sewa-atau-beli Anda."
       }
     }
   ]
@@ -186,8 +198,8 @@
 <!-- HEADER -->
 <section class="header card">
   <div class="header-left">
-    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="m3 11 9-8 9 8"/> <path stroke="var(--accent)" d="M5 9.5V21h14V9.5"/> <path stroke="var(--accent2)" d="M10 21v-6h4v6"/> </svg><span data-i18n="sensTitle">Sewa vs Beli: Alat Sensitivitas</span></h1>
-    <p data-i18n="sensSubtitle">Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti, membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.</p>
+    <h1><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" style="vertical-align:-0.18em;margin-right:.2em;flex-shrink:0" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="m3 11 9-8 9 8"/> <path stroke="var(--accent)" d="M5 9.5V21h14V9.5"/> <path stroke="var(--accent2)" d="M10 21v-6h4v6"/> </svg><span data-i18n="sensTitle">Sewa vs Beli: Analisis Sensitivitas</span></h1>
+    <p data-i18n="sensSubtitle">Hitung hasil keuangan jangka panjang dari menyewa vs membeli properti: kas, ekuitas, dan kekayaan bersih dari tahun ke tahun.</p>
   </div>
   <div class="header-right">
     <a href="../../id/" class="btn-theme btn-back" data-i18n="btnBack">← Kembali</a>
@@ -221,7 +233,7 @@
 </section>
 
 <footer class="page-footer">
-  <section class="page-footer-info" id="siteFooterContent"></section>
+  <section class="page-footer-info" id="siteFooterContent" data-updated="2026-06-12"></section>
 </footer>
 <script>renderRVOFooter('../../../logos/');</script>
 

@@ -14,7 +14,8 @@ function edResults() {
 }
 window.__TOUR = {
   seenKey: 'educ-tour-v1-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: 'guides/',
   steps: [
     {
       target: null,

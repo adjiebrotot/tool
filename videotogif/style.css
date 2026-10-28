@@ -51,7 +51,7 @@
     z-index: 10;
   }
   .header-left { display: flex; align-items: center; gap: 14px; }
-  .logo { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; }
+  .logo { margin: 0; line-height: inherit; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; }
   .logo span { color: var(--accent); }
   .tagline { font-size: 0.78rem; color: var(--muted); }
   .btn-theme {

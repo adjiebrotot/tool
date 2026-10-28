@@ -92,8 +92,8 @@ const LANG_SENS = {
     fxCustom: 'Your rate, clear it for the live one',
     fxNone: 'No rate yet: type one',
     fxCapital: (cash, budget) => `Same money here: ${cash} cash, ${budget}/mo budget in year 1`,
-    shortOwn: (y) => `Own cash below zero from year ${y}`,
-    shortRent: (y) => `Rent cash below zero from year ${y}`,
+    shortOwn: (y) => `Own runs out of cash in year ${y}: not compared`,
+    shortRent: (y) => `Rent runs out of cash in year ${y}: not compared`,
     cashflowCurrencyNote: (cur, base, rate) => `# Figures in ${cur}, this scenario's own currency (1 ${base} = ${rate} ${cur} today)`,
     pHorizon: 'Time horizon',
     pRiskFreeRate: 'Risk-Free Rate',
@@ -170,8 +170,8 @@ const LANG_SENS = {
     hintMin: 'Min',
   },
   id: {
-    sensTitle: 'Sewa vs Beli: Alat Sensitivitas',
-    sensSubtitle: 'Modelkan hasil keuangan jangka panjang dari menyewa vs membeli properti, membandingkan kas, ekuitas, dan kekayaan bersih dari waktu ke waktu.',
+    sensTitle: 'Sewa vs Beli: Analisis Sensitivitas',
+    sensSubtitle: 'Hitung hasil keuangan jangka panjang dari menyewa vs membeli properti: kas, ekuitas, dan kekayaan bersih dari tahun ke tahun.',
     btnBack: '← Kembali',
     labelCurrency: 'Simbol Mata Uang:',
     labelBase: 'Mata uang dasar:',
@@ -184,7 +184,7 @@ const LANG_SENS = {
     btnCSV: '⬇ CSV',
     btnUploadCSV: 'CSV',
     btnCompareAll: 'Bandingkan',
-    csvParseError: 'Tidak dapat membaca CSV ini. Pastikan file adalah CSV sensitivitas yang diekspor dari alat ini.',
+    csvParseError: 'CSV ini tidak bisa dibaca. Pastikan file ini CSV sensitivitas yang diekspor dari tool ini.',
     gcTitle: 'Semua skenario',
     gcScenariosLabel: 'Skenario:',
     gcShowOwn: 'Beli',
@@ -204,7 +204,7 @@ const LANG_SENS = {
     ownOutputLabel: (ml) => `Beli: ${ml}`,
     rentOutputLabel: (ml) => `Sewa: ${ml}`,
     deltaLabel: 'Beli dikurangi sewa',
-    actionsLabel: 'Per-skenario',
+    actionsLabel: 'Per skenario',
     dlOwnTitle: 'Unduh arus kas Beli (CSV)',
     dlRentTitle: 'Unduh arus kas Sewa (CSV)',
     chartBtnTitle: 'Tampilkan grafik perbandingan',
@@ -212,14 +212,14 @@ const LANG_SENS = {
     closeTitle: 'Tutup',
     btnSvgTitle: 'Unduh grafik ini sebagai SVG',
     btnPngTitle: 'Unduh grafik ini sebagai PNG',
-    btnCopyTitle: 'Salin PNG ke papan klip',
-    btnResetZoomTitle: 'Atur ulang zoom',
-    chartHoverHint: 'Arahkan kursor ke grafik untuk memeriksa suatu tahun.',
+    btnCopyTitle: 'Salin PNG ke clipboard',
+    btnResetZoomTitle: 'Reset zoom',
+    chartHoverHint: 'Arahkan kursor ke grafik untuk melihat detail per tahun.',
     seriesOwn: 'Beli',
     seriesRent: 'Sewa',
     boolEnabled: 'Aktif',
     dupTitle: 'Duplikat',
-    presetTitle: 'Mulai Cepat: isi kolom ini dengan data kota dan hunian',
+    presetTitle: 'Quick Start: isi kolom ini dengan data kota dan hunian',
     presetPick: 'Cari kota atau hunian…',
     presetNone: 'Kota atau hunian tidak ditemukan',
     presetAll: 'Semua angka dan sumbernya',
@@ -242,7 +242,7 @@ const LANG_SENS = {
     trendDown: (base, cur, pct) => `Nilai ${base} akan turun ${pct}% per tahun terhadap ${cur}`,
     trendFlat: (base, cur) => `${base} dan ${cur} tetap di kurs hari ini`,
     trendPath: (base, now, later, cur, yr) => `1 ${base} = ${now} ${cur} hari ini, ${later} ${cur} di tahun ${yr}`,
-    trendNone: 'Hanya mata uang dasar yang dipakai: pilih mata uang lain untuk sebuah kolom',
+    trendNone: 'Semua kolom memakai mata uang dasar. Pilih mata uang lain di salah satu kolom.',
     autoBasedOn: (amt, name) => `Otomatis: ${amt} berdasarkan ${name}`,
     autoBudgetBasedOn: (amt, name) => `Otomatis: ${amt}/bln di tahun 1, berdasarkan ${name}`,
     fxIsBase: 'Mata uang dasar, tanpa konversi',
@@ -250,9 +250,9 @@ const LANG_SENS = {
     fxBundled: (date) => `Kurs per ${date}`,
     fxCustom: 'Kurs Anda, kosongkan untuk kurs terkini',
     fxNone: 'Belum ada kurs: isi sendiri',
-    fxCapital: (cash, budget) => `Uang yang sama di sini: kas ${cash}, anggaran ${budget}/bln di tahun 1`,
-    shortOwn: (y) => `Kas Beli di bawah nol sejak tahun ${y}`,
-    shortRent: (y) => `Kas Sewa di bawah nol sejak tahun ${y}`,
+    fxCapital: (cash, budget) => `Setara di mata uang ini: kas ${cash}, anggaran ${budget}/bln di tahun 1`,
+    shortOwn: (y) => `Kas Beli habis di tahun ${y}: tidak dibandingkan`,
+    shortRent: (y) => `Kas Sewa habis di tahun ${y}: tidak dibandingkan`,
     cashflowCurrencyNote: (cur, base, rate) => `# Angka dalam ${cur}, mata uang skenario ini (1 ${base} = ${rate} ${cur} hari ini)`,
     pHorizon: 'Jangka waktu',
     pRiskFreeRate: 'Suku Bunga Bebas Risiko',
@@ -292,10 +292,10 @@ const LANG_SENS = {
     btnAddPeriod: '+ Periode bunga',
     btnAddSetupCost: '+ Biaya awal',
     btnAddOngoingCost: '+ Biaya rutin',
-    optFixed: 'Tetap',
-    optFloating: 'Mengambang',
+    optFixed: 'Fixed',
+    optFloating: 'Floating',
     uYr: 'Tahun',
-    uToYr: 'hingga tahun',
+    uToYr: 'sampai tahun',
     lblInfl: 'kenaikan',
     optPerYear: '/ thn',
     optPerMonth: '/ bln',
@@ -758,9 +758,25 @@ function computeModel(S){
 function recompute(){
   ensureRfr();
   plan = computePlan();
+  /* A column that runs out of cash is not compared, as on the main page: the
+     mortgage is the only borrowing in the model. It keeps only where it ran
+     short, for its header to say so, and no rows, so it shows no figures. */
   scenarioResults = scenarios.map((sc,i)=>{
     if(!plan.items[i].ok) return null;
-    try{ return computeModel(buildStateObj(sc, i)); }catch(e){ console.error(e); return null; }
+    // Every rate path a floating period can take, as the main page checks.
+    let r, sf = null;
+    try{
+      const S = buildStateObj(sc, i);
+      r = computeModel(S);
+      ['mid','low','high'].forEach(v=>{
+        const f = (v === 'mid' ? r : RVOEngine.computeModel(S, v)).shortfalls || {};
+        ['own','rent','rtb'].forEach(k=>{
+          const a = sf && sf[k], b = f[k];
+          if(b){ sf = sf || {own:null, rent:null, rtb:null}; sf[k] = a ? {year:Math.min(a.year, b.year), worst:Math.min(a.worst, b.worst)} : b; }
+        });
+      });
+    }catch(e){ console.error(e); return null; }
+    return sf ? {blocked:true, shortfalls:sf} : r;
   });
 }
 
@@ -1379,8 +1395,8 @@ function trendListHTML(){
   }).join('') + `</div>`;
 }
 // A column's own warnings, under its name: a cash balance that goes below
-// zero is money the model borrows at the risk-free rate, which no lender
-// offers, so it is said rather than left to look like a cheap win.
+// zero would be money borrowed at the risk-free rate, which no lender offers,
+// so the column is not compared and says why.
 function headerNotes(i){
   const out = [];
   const clamped = viewYr();

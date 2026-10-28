@@ -1,16 +1,18 @@
-/* Konfigurasi tur berpemandu untuk Alat Analisis Sensitivitas Sewa vs Beli
+/* Konfigurasi tur berpemandu untuk tool Analisis Sensitivitas Sewa vs Beli
    (versi Indonesia). Mesin bersama (../../../tour-shared.js) membaca objek ini.
    v3 meringkas tiap langkah menjadi satu kalimat pembuka dan daftar pendek. */
 window.__TOUR = {
   seenKey: 'rvos-id-tour-v3-seen',
-  launchLabel: '🧭 Ikuti tur',
-  launchShort: '🧭 Tur',
+  launchLabel: '🧭 Tur',
+  guide: '../../guides/#same',
   labels: { skip: 'Lewati tur', back: 'Kembali', next: 'Lanjut',
-            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk' },
+            start: 'Mulai', done: 'Selesai', dialog: 'Tur produk',
+            guide: '📖 Panduan', seeGuide: 'Lihat Panduan', guideNote: 'Panduan lengkap (bahasa Inggris)',
+            guideTitle: 'Cara memakai alat ini, langkah demi langkah (bahasa Inggris)' },
   steps: [
     {
       target: null,
-      title: '👋 Selamat datang di Alat Sensitivitas Sewa vs Beli',
+      title: '👋 Selamat datang di Analisis Sensitivitas Sewa vs Beli',
       body: 'Bandingkan <strong>banyak skenario sewa vs beli</strong> berdampingan. ' +
             'Sekitar satu menit.'
     },
@@ -21,14 +23,14 @@ window.__TOUR = {
       target: '#tableWrap thead',
       title: '① Tiap kolom satu skenario',
       body: '<ul><li>Tambah kolom per kasus: uang muka, suku bunga, atau kota lain</li>' +
-            '<li>Ubah sel mana pun dan tabel dihitung ulang</li>' +
-            '<li>Pilihan <strong>⚡</strong> mengisi kolom dari kota Mulai Cepat</li></ul>'
+            '<li>Ubah sel mana pun, tabelnya langsung dihitung ulang</li>' +
+            '<li>Tombol <strong>⚡</strong> mengisi kolom dari kota Quick Start</li></ul>'
     },
     {
       target: '#tableWrap tr.group-sep-tr',
       title: '② Baris bersama',
       body: 'Jangka waktu, suku bunga bebas risiko, modal awal, dan anggaran sama untuk ' +
-            'semua kolom, jadi tak ada skenario yang menang karena modal lebih besar.' +
+            'semua kolom, jadi tidak ada skenario yang menang karena modalnya lebih besar.' +
             '<ul><li>Jika <strong>Otomatis</strong>, modal dan anggaran mengikuti kolom ' +
             'yang butuh paling banyak</li></ul>'
     },
@@ -52,12 +54,12 @@ window.__TOUR = {
       target: '.csv-actions',
       title: '⑤ Bandingkan dan simpan',
       body: '<ul><li><strong>Bandingkan</strong> menggambar semua skenario dalam satu grafik</li>' +
-            '<li>Unduh tabel sebagai CSV, atau unggah untuk membangunnya kembali</li></ul>'
+            '<li>Unduh tabel sebagai CSV, atau unggah CSV untuk menyusunnya kembali</li></ul>'
     },
     {
       target: null,
       title: '✅ Selesai',
-      body: '<ul><li>Satu kasus secara detail? Gunakan alat <strong>Sewa vs Beli</strong> ' +
+      body: '<ul><li>Mau membedah satu kasus? Pakai tool <strong>Sewa vs Beli</strong> ' +
             'utama lewat tautan Kembali</li>' +
             '<li>Putar ulang tur lewat tombol 🧭</li></ul>'
     }

@@ -1,0 +1,218 @@
+{
+ "script": "hosting_capacity",
+ "project": "39 Bus New England System",
+ "seconds": 4.6,
+ "status": "ok",
+ "stdout": [
+  "Bus 22        8 MW  limited by Line 21 - 22 loaded to 100 %",
+  "Bus 23       12 MW  limited by Line 21 - 22 loaded to 100 %",
+  "Bus 19      145 MW  limited by Line 16 - 19 loaded to 100 %",
+  "Bus 20      145 MW  limited by Line 16 - 19 loaded to 100 %",
+  "Bus 06      285 MW  limited by Line 05 - 06 loaded to 100 %",
+  "Bus 11      395 MW  limited by Line 05 - 06 loaded to 100 %",
+  "Bus 21      410 MW  limited by Line 16 - 21 loaded to 100 %",
+  "Bus 12      473 MW  limited by Line 05 - 06 loaded to 100 %",
+  "Bus 10      477 MW  limited by Line 05 - 06 loaded to 100 %",
+  "Bus 02      555 MW  limited by Line 02 - 03 loaded to 100 %",
+  "Bus 13      574 MW  limited by Line 13 - 14 loaded to 100 %",
+  "Bus 29      637 MW  limited by Line 28 - 29 loaded to 100 %",
+  "Bus 25      648 MW  limited by Line 02 - 25 loaded to 100 %",
+  "Bus 24      684 MW  limited by Line 16 - 24 loaded to 100 %",
+  "Bus 26      754 MW  limited by Line 26 - 27 loaded to 100 %",
+  "Bus 28      758 MW  limited by Line 26 - 27 loaded to 100 %",
+  "Bus 07      781 MW  limited by Line 05 - 06 loaded to 100 %",
+  "Bus 05      949 MW  limited by Line 04 - 05 loaded to 100 %",
+  "Bus 01      965 MW  limited by Line 02 - 03 loaded to 100 %",
+  "Bus 14      977 MW  limited by Line 04 - 14 loaded to 100 %",
+  "Bus 16     1039 MW  limited by Line 16 - 17 loaded to 100 %",
+  "Bus 27     1043 MW  limited by Line 17 - 27 loaded to 100 %",
+  "Bus 08     1055 MW  limited by Line 04 - 05 loaded to 100 %",
+  "Bus 09     1109 MW  limited by Line 08 - 09 loaded to 100 %",
+  "Bus 15     1297 MW  limited by Line 15 - 16 loaded to 100 %",
+  "Bus 18     1379 MW  limited by Line 17 - 18 loaded to 100 %",
+  "Bus 39     1555 MW  limited by Line 08 - 09 loaded to 100 %",
+  "Bus 04     1566 MW  limited by Line 03 - 04 loaded to 100 %",
+  "Bus 17     1566 MW  limited by Line 17 - 18 loaded to 100 %",
+  "Bus 03     1742 MW  limited by Line 03 - 18 loaded to 100 %"
+ ],
+ "data": {
+  "PROJECT": "39 Bus New England System (Builder test)",
+  "STUDY_CASE": "1. Power Flow",
+  "LOADING_MAX": 100.0,
+  "VOLTAGE_BAND": [
+   0.9,
+   1.1
+  ],
+  "SEARCH_MAX": 2000.0,
+  "TOLERANCE": 5.0,
+  "total": 5366.0,
+  "results": [
+   {
+    "Busbar": "Bus 01",
+    "Hosting capacity (MW)": 964.84375,
+    "Limited by": "Line 02 - 03 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 02",
+    "Hosting capacity (MW)": 554.6875,
+    "Limited by": "Line 02 - 03 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 03",
+    "Hosting capacity (MW)": 1742.1875,
+    "Limited by": "Line 03 - 18 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 04",
+    "Hosting capacity (MW)": 1566.40625,
+    "Limited by": "Line 03 - 04 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 05",
+    "Hosting capacity (MW)": 949.21875,
+    "Limited by": "Line 04 - 05 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 06",
+    "Hosting capacity (MW)": 285.15625,
+    "Limited by": "Line 05 - 06 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 07",
+    "Hosting capacity (MW)": 781.25,
+    "Limited by": "Line 05 - 06 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 08",
+    "Hosting capacity (MW)": 1054.6875,
+    "Limited by": "Line 04 - 05 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 09",
+    "Hosting capacity (MW)": 1109.375,
+    "Limited by": "Line 08 - 09 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 10",
+    "Hosting capacity (MW)": 476.5625,
+    "Limited by": "Line 05 - 06 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 11",
+    "Hosting capacity (MW)": 394.53125,
+    "Limited by": "Line 05 - 06 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 12",
+    "Hosting capacity (MW)": 472.65625,
+    "Limited by": "Line 05 - 06 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 13",
+    "Hosting capacity (MW)": 574.21875,
+    "Limited by": "Line 13 - 14 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 14",
+    "Hosting capacity (MW)": 976.5625,
+    "Limited by": "Line 04 - 14 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 15",
+    "Hosting capacity (MW)": 1296.875,
+    "Limited by": "Line 15 - 16 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 16",
+    "Hosting capacity (MW)": 1039.0625,
+    "Limited by": "Line 16 - 17 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 17",
+    "Hosting capacity (MW)": 1566.40625,
+    "Limited by": "Line 17 - 18 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 18",
+    "Hosting capacity (MW)": 1378.90625,
+    "Limited by": "Line 17 - 18 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 19",
+    "Hosting capacity (MW)": 144.53125,
+    "Limited by": "Line 16 - 19 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 20",
+    "Hosting capacity (MW)": 144.53125,
+    "Limited by": "Line 16 - 19 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 21",
+    "Hosting capacity (MW)": 410.15625,
+    "Limited by": "Line 16 - 21 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 22",
+    "Hosting capacity (MW)": 7.8125,
+    "Limited by": "Line 21 - 22 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 23",
+    "Hosting capacity (MW)": 11.71875,
+    "Limited by": "Line 21 - 22 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 24",
+    "Hosting capacity (MW)": 683.59375,
+    "Limited by": "Line 16 - 24 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 25",
+    "Hosting capacity (MW)": 648.4375,
+    "Limited by": "Line 02 - 25 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 26",
+    "Hosting capacity (MW)": 753.90625,
+    "Limited by": "Line 26 - 27 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 27",
+    "Hosting capacity (MW)": 1042.96875,
+    "Limited by": "Line 17 - 27 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 28",
+    "Hosting capacity (MW)": 757.8125,
+    "Limited by": "Line 26 - 27 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 29",
+    "Hosting capacity (MW)": 636.71875,
+    "Limited by": "Line 28 - 29 loaded to 100 %"
+   },
+   {
+    "Busbar": "Bus 39",
+    "Hosting capacity (MW)": 1554.6875,
+    "Limited by": "Line 08 - 09 loaded to 100 %"
+   }
+  ],
+  "ok": false,
+  "why": "Line 08 - 09 loaded to 100 %",
+  "low": 1554.6875,
+  "high": 1558.59375,
+  "mid": 1558.59375,
+  "reason": "Line 08 - 09 loaded to 100 %",
+  "p": 250.0,
+  "r": {
+   "Busbar": "Bus 03",
+   "Hosting capacity (MW)": 1742.1875,
+   "Limited by": "Line 03 - 18 loaded to 100 %"
+  }
+ },
+ "audit": "OK",
+ "files": [
+  "hosting_capacity.csv"
+ ]
+}

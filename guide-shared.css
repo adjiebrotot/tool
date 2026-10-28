@@ -1,0 +1,284 @@
+/* =============================================================================================
+   GUIDE PAGES (shared across the tools' "How to use" guides, <tool>/guides/)
+   The pictures are the real tool running live in a frame (guide-live.js, <tool>/guides/scenes.js)
+   or, for the PowerFactory Builder, clips and a screenshot recorded from it (media/, made by its
+   own _capture/), which guide-shared.js plays. Either way the step the demo is showing is lit.
+   Colours come only from the site tokens (dark.css, light.css).
+   Class prefix: .gd-
+   ============================================================================================= */
+
+.gd { max-width: 1120px; }
+.gd code { font-family: 'DM Mono', monospace; font-size: .88em; background: var(--input-bg); padding: 1px 5px; border-radius: var(--radius-sm); }
+.gd a:not(.btn-theme):not(.btn-primary) { color: var(--accent-strong); }
+.gd em { font-style: normal; font-weight: 600; color: var(--text); }
+.gd h3 { color: var(--text); }
+
+/* ---- Top bar ------------------------------------------------------------------------------ */
+.gd-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.gd-top-r { display: flex; align-items: center; gap: 12px; }
+.gd .gd-open { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.gd .gd-open-top { height: 36px; padding: 0 16px; font-size: 14px; white-space: nowrap; }
+
+/* ---- Hero --------------------------------------------------------------------------------- */
+.gd-hero { padding: 28px 0 28px; max-width: 46rem; }
+.gd-hero h1 { margin: 0 0 14px; font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1.12; font-weight: 700; letter-spacing: -.01em; }
+.gd-hero h1 .tool-glyph { vertical-align: -.12em; margin-right: .22em; }
+.gd-lead { margin: 0 0 22px; font-size: clamp(1.02rem, 1.5vw, 1.2rem); line-height: 1.5; color: var(--text); }
+.gd-hero-btns { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
+.gd .gd-hero-btns .gd-open { min-width: 13rem; padding: 13px 26px; font-size: 1.1rem; }
+.gd .gd-skip { font-weight: 600; font-size: .95rem; color: var(--text); text-decoration: none; }
+.gd .gd-skip:hover { text-decoration: underline; }
+
+/* ---- Sections ----------------------------------------------------------------------------- */
+.gd-sec { padding: 24px 28px 26px; margin-bottom: 18px; scroll-margin-top: 16px; }
+.gd-sec > h2 { margin: 0 0 8px; font-size: 1.3rem; font-weight: 700; }
+.gd-sub { margin: 0 0 16px; font-size: .96rem; line-height: 1.6; color: var(--muted); max-width: 62rem; }
+.gd-sub strong, .gd-facts strong, .gd-steps strong, .gd-key strong { color: var(--text); font-weight: 700; }
+.gd-sec > .gd-sub:last-child { margin-bottom: 0; }
+.gd-sec > .gd-demo + .gd-sub { margin-top: 16px; }
+
+/* The three steps, as the landing page used to say them */
+.gd-three { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.gd-three li { padding: 16px 18px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-three h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 1.02rem; font-weight: 700; }
+.gd-three p { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--muted); }
+.gd-n { flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .78rem; font-weight: 700; }
+.gd-note { margin: 14px 0 0; padding: 11px 14px; border-radius: var(--radius-md); background: var(--info-bg); border: 1px solid var(--info-border); color: var(--info-text); font-size: .92rem; line-height: 1.55; }
+.gd-note strong { color: inherit; }
+.gd-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+.gd .gd-toc a { padding: 4px 12px; border-radius: var(--radius-pill); background: var(--input-bg); border: 1px solid var(--border); font-size: .85rem; font-weight: 600; color: var(--text); text-decoration: none; transition: border-color var(--motion-fast); }
+.gd .gd-toc a:hover { border-color: var(--accent); }
+
+/* ---- The screen: a screenshot with the four parts outlined --------------------------------- */
+.gd-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-bottom: 14px; }
+/* A tall screenshot sits beside its key, read top to bottom */
+.gd-layout.gd-layout-side { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: start; }
+.gd-layout-side .gd-key { grid-template-columns: minmax(0, 1fr); }
+.gd-shot { margin: 0; }
+.gd-shot-frame { position: relative; aspect-ratio: var(--ar, 16 / 9); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); }
+.gd-shot-frame img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.gd-box { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border: 2px dashed var(--accent-strong); border-radius: 10px; pointer-events: none; transition: background var(--motion-fast), border-color var(--motion-fast); }
+.gd-box b { position: absolute; left: -2px; top: -2px; transform: translate(-35%, -35%); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .75rem; font-weight: 700; box-shadow: 0 0 0 2px var(--panel); }
+/* The part a reader points at in the list lights up on the picture (guide-shared.js). */
+.gd-box.is-lit { background: color-mix(in srgb, var(--accent) 16%, transparent); border-style: solid; }
+.gd-box.gd-box-r b { left: auto; right: -2px; transform: translate(35%, -35%); }
+.gd-key { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 10px; }
+.gd-key li { display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-key li::before { content: attr(data-b); grid-row: 1 / 3; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .78rem; font-weight: 700; }
+.gd-key h3 { margin: 0 0 3px; font-size: .98rem; font-weight: 700; }
+.gd-key p { margin: 0; font-size: .86rem; line-height: 1.55; color: var(--muted); }
+
+/* ---- A demo: the clip, then the steps it shows --------------------------------------------- */
+.gd-demo { display: grid; gap: 14px; }
+.gd-demo + .gd-demo { margin-top: 22px; }
+.gd-screen { margin: 0; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--panel); }
+/* overflow: a zoomed-in camera scales the frame past the view, which must not cover the bar */
+.gd-view { position: relative; aspect-ratio: var(--ar, 16 / 9); overflow: hidden; background: var(--bg-subtle); }
+.gd-view video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; }
+.gd-bar { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 14px; border-top: 1px solid var(--border); }
+.gd-cap { flex: 1; min-width: 0; font-size: .82rem; font-weight: 600; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gd-bar .btn-sm { padding: 5px 12px; font-size: .8rem; }
+
+.gd-steps { list-style: none; margin: 0; padding: 0; counter-reset: gds; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.gd-steps li { counter-increment: gds; position: relative; padding: 12px 14px 13px 46px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); transition: border-color var(--motion-fast), background var(--motion-fast); }
+.gd-steps li::before { content: counter(gds); position: absolute; left: 13px; top: 12px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border); color: var(--muted); font-size: .78rem; font-weight: 700; transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast); }
+.gd-steps h3 { margin: 0 0 3px; font-size: .95rem; font-weight: 700; }
+.gd-steps p { margin: 0; font-size: .85rem; line-height: 1.55; color: var(--muted); }
+.gd-steps li.is-live { cursor: pointer; }
+.gd-steps li.is-live:hover { border-color: var(--accent); }
+.gd-steps li.is-live:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gd-steps li.is-active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 11%, var(--panel)); }
+.gd-steps li.is-active::before { background: var(--accent-strong); border-color: var(--accent-strong); color: var(--text-inv); }
+
+/* A live demo: the real tool in a frame, scaled to fit (guide-live.js). The veil covers it while
+   it loads or sets a scene up; the guard keeps a reader's pointer out while it plays. */
+.gd-view iframe, .gd-shot-frame iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; background: var(--bg); transition: opacity var(--motion-fast); }
+.gd-shot-frame iframe { pointer-events: none; }
+.gd-veil { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 16px; text-align: center; background: var(--bg-subtle); color: var(--muted); font-size: .85rem; font-weight: 600; transition: opacity var(--motion-fast); }
+.gd-veil.is-off { opacity: 0; pointer-events: none; }
+.gd-guard { position: absolute; inset: 0; z-index: 1; }
+.gd-view:fullscreen { aspect-ratio: auto; background: var(--bg); }
+/* Full screen takes the whole figure: the view fills it and the bar stays under it */
+.gd-screen:fullscreen { display: flex; flex-direction: column; max-width: none; border: 0; border-radius: 0; background: var(--bg); }
+.gd-screen:fullscreen .gd-view { flex: 1; min-height: 0; aspect-ratio: auto; }
+.gd-demo.is-trying .gd-screen { border-color: var(--accent); }
+.gd-demo.is-trying .gd-cap { color: var(--text); }
+
+/* A clip is never stretched past its own size (guide-shared.js sets the width) */
+.gd-screen { max-width: var(--mw, none); }
+
+.gd-facts { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.gd-facts li { position: relative; padding-left: 18px; font-size: .9rem; line-height: 1.6; color: var(--muted); max-width: 62rem; }
+.gd-facts li::before { content: ''; position: absolute; left: 3px; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.gd-facts + .gd-sub, .gd-facts + .gd-demo, .gd-facts + .gd-table-wrap { margin-top: 16px; }
+
+.gd-pack { margin: 16px 0 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-pack h3 { margin: 0 0 8px; font-size: .95rem; font-weight: 700; }
+.gd-pack ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 6px 18px; font-size: .86rem; line-height: 1.5; color: var(--muted); }
+
+.gd-run { list-style: none; margin: 14px 0 16px; padding: 0; counter-reset: gdr; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.gd-run li { counter-increment: gdr; position: relative; padding: 14px 16px 15px 52px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-run li::before { content: counter(gdr); position: absolute; left: 15px; top: 14px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-strong); color: var(--text-inv); font-size: .82rem; font-weight: 700; }
+.gd-run h3 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; }
+.gd-run p { margin: 0; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+.gd-code { margin: 0 0 14px; padding: 13px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--input-bg); overflow-x: auto; font-family: 'DM Mono', monospace; font-size: .84rem; line-height: 1.6; color: var(--text); }
+.gd-code code { padding: 0; background: none; font-size: inherit; white-space: pre; }
+
+.gd-kbd { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px 18px; font-size: .9rem; color: var(--muted); }
+.gd kbd { display: inline-block; min-width: 1.7em; padding: 1px 6px; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; background: var(--panel); color: var(--text); font-family: 'DM Mono', monospace; font-size: .8rem; text-align: center; }
+
+.gd-end { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px 22px; padding: 22px 0 30px; }
+.gd-end p { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.gd .gd-end .gd-open { min-width: 13rem; padding: 13px 26px; font-size: 1.1rem; }
+
+.gd .gd-phone-hint { display: none; padding: 8px 12px; border-radius: var(--radius-md); background: var(--input-bg); border: 1px solid var(--border); font-size: .88rem; }
+
+/* ---- How the numbers work (the finance guides) ----------------------------------------------
+   A finance guide has two parts: how to use the tool, then what each field does to the answer.
+   The second part is built from the pieces below: a part divider, formulas, a field table,
+   effect chips, a worked example with real figures, and a sensitivity chart (a tornado).
+   A tool with a second page on the same inputs shows both screens side by side (.gd-twin). */
+
+/* A part of the guide: a kicker, a heading and a lead line, between the section cards */
+.gd-part { margin: 34px 0 18px; padding: 20px 2px 0; border-top: 3px solid var(--accent); scroll-margin-top: 16px; }
+.gd-part-k { display: block; margin-bottom: 6px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-strong); }
+.gd-part h2 { margin: 0 0 8px; font-size: clamp(1.45rem, 2.4vw, 1.85rem); line-height: 1.2; font-weight: 700; }
+.gd-part p { margin: 0; max-width: 46rem; font-size: 1rem; line-height: 1.6; color: var(--text); }
+
+/* A formula: <div class="gd-eq">, with <var> for symbols, <span class="gd-frac"><span>top</span>
+   <span>bottom</span></span> for a fraction, and a .gd-where list naming every symbol under it */
+.gd var { font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 1.06em; color: var(--text); }
+.gd-eq { margin: 14px 0 0; padding: 14px 18px; border-left: 3px solid var(--accent); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text); font-size: 1.04rem; line-height: 2; overflow-x: auto; white-space: nowrap; }
+.gd-eq + .gd-eq { margin-top: 8px; }
+.gd-eq-l { font-weight: 700; }
+.gd-eq small { margin-left: 10px; font-size: .78rem; font-weight: 600; color: var(--muted); }
+.gd-frac { display: inline-flex; flex-direction: column; vertical-align: middle; margin: 0 .2em; text-align: center; font-size: .94em; line-height: 1.45; }
+.gd-frac > span:first-child { padding: 0 .35em .1em; border-bottom: 1px solid currentColor; }
+.gd-frac > span + span { padding: .1em .35em 0; }
+.gd-sum { font-size: 1.3em; vertical-align: -.1em; }
+.gd-where { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px 18px; font-size: .86rem; line-height: 1.55; color: var(--muted); }
+.gd-where var { margin-right: 6px; }
+.gd-where var + :is(sub, sup) { margin: 0 6px 0 -6px; }
+
+/* A reference table (the fields of an input group, or the same field on two pages).
+   Each cell names its column in data-l, which a phone shows above it. */
+.gd-table-wrap { margin: 16px 0 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.gd-table { width: 100%; border-collapse: collapse; font-family: 'DM Sans', sans-serif; font-variant-numeric: normal; font-size: .87rem; line-height: 1.55; }
+.gd-table th, .gd-table td, .gd-table thead th { padding: 10px 14px; text-align: left; vertical-align: top; white-space: normal; font-family: inherit; border-top: 1px solid var(--border); border-bottom: 0; }
+.gd-table tr:hover td { background: none; }
+.gd-table thead th { border-top: 0; background: var(--input-bg); font-size: .78rem; font-weight: 700; letter-spacing: .02em; color: var(--muted); }
+.gd-table tbody th { width: 17%; font-weight: 700; color: var(--text); }
+.gd-table td { color: var(--muted); }
+.gd-table td strong { color: var(--text); }
+.gd-table td p { margin: 0; }
+.gd-table td p + p { margin-top: 6px; }
+.gd-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.gd-table .gd-eq { margin: 6px 0 0; padding: 6px 10px; font-size: .9rem; line-height: 1.8; }
+
+/* What raising a field does: a chip with an arrow. pos and neg are the data colours a gain and
+   a loss take on the tools' charts, read from the reader's side; the plain chip says neither. */
+.gd-eff { display: inline-flex; align-items: center; gap: 5px; margin: 1px 4px 1px 0; padding: 1px 9px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: .8rem; font-weight: 600; line-height: 1.6; white-space: nowrap; }
+.gd-eff-pos { border-color: var(--data-pos-border); background: var(--data-pos-bg); color: var(--data-pos-em); }
+.gd-eff-neg { border-color: var(--data-neg-border); background: var(--data-neg-bg); color: var(--data-neg-em); }
+
+/* A worked example: each line a label, the working and the figure; .gd-calc-total closes it */
+.gd-calc { margin: 16px 0 0; padding: 16px 18px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-calc h3 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; }
+.gd-calc > p { margin: 0 0 10px; font-size: .86rem; line-height: 1.55; color: var(--muted); }
+.gd-calc ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto; column-gap: 16px; }
+.gd-calc li { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; row-gap: 4px; align-items: baseline; padding: 8px 0; border-top: 1px dashed var(--border); font-size: .88rem; line-height: 1.5; }
+.gd-calc li:first-child { border-top: 0; }
+.gd-calc-l { font-weight: 600; color: var(--text); text-align: left; }
+.gd-calc-w { color: var(--muted); text-align: left; }
+.gd-calc li > b { font-family: 'DM Mono', monospace; font-size: .9rem; font-weight: 600; color: var(--text); text-align: right; white-space: nowrap; }
+.gd-calc li.gd-calc-total { margin-top: 4px; padding-top: 10px; border-top: 2px solid var(--text); }
+.gd-calc li.gd-calc-total > b { color: var(--accent-strong); font-size: 1rem; }
+
+/* A sensitivity chart (a tornado): how far the answer moves when one input is lowered or raised
+   and the rest stay put. Each row sets --lo and --hi, the moves scaled so the largest is 1
+   (negative to the left of the base case, positive to the right). */
+.gd-tornado { margin: 16px 0 0; padding: 16px 18px 14px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
+.gd-tornado figcaption { margin: 0 0 10px; font-size: .95rem; font-weight: 700; color: var(--text); }
+.gd-tornado figcaption small { display: block; margin-top: 2px; font-size: .82rem; font-weight: 400; color: var(--muted); }
+.gd-tn-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; font-size: .8rem; color: var(--muted); }
+.gd-tn-legend span::before { content: ''; display: inline-block; width: 12px; height: 8px; margin-right: 6px; border-radius: 2px; vertical-align: 1px; }
+.gd-tn-legend .gd-tn-k-lo::before { background: var(--accent2); }
+.gd-tn-legend .gd-tn-k-hi::before { background: var(--accent); }
+.gd-tornado ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.gd-tornado li { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) minmax(0, 9.5rem); gap: 12px; align-items: center; }
+.gd-tn-name { font-size: .86rem; font-weight: 600; line-height: 1.35; color: var(--text); }
+.gd-tn-name small { display: block; font-size: .76rem; font-weight: 400; color: var(--muted); }
+.gd-tn-track { position: relative; height: 22px; border-radius: 4px; background: var(--input-bg); }
+.gd-tn-track::before { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--text); opacity: .55; }
+.gd-tn-track i { position: absolute; height: 8px; border-radius: 2px; }
+.gd-tn-lo { top: 2px; left: calc(50% + min(var(--lo, 0), 0) * 50%); width: calc(max(var(--lo, 0), -1 * var(--lo, 0)) * 50%); background: var(--accent2); }
+.gd-tn-hi { top: 12px; left: calc(50% + min(var(--hi, 0), 0) * 50%); width: calc(max(var(--hi, 0), -1 * var(--hi, 0)) * 50%); background: var(--accent); }
+.gd-tn-val { display: grid; gap: 1px; font-family: 'DM Mono', monospace; font-size: .78rem; line-height: 1.35; color: var(--muted); }
+.gd-tn-val span::before { content: ''; display: inline-block; width: 8px; height: 6px; margin-right: 6px; border-radius: 1px; vertical-align: 1px; }
+.gd-tn-val span:first-child::before { background: var(--accent2); }
+.gd-tn-val span + span::before { background: var(--accent); }
+.gd-tn-note { margin: 12px 0 0; font-size: .82rem; line-height: 1.55; color: var(--muted); }
+
+/* Two pages on the same inputs, side by side: each screen outlines the same fields with the
+   same numbers, and one key under both names them (pointing at a line lights both boxes). */
+.gd-twin { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0 0 14px; align-items: start; }
+.gd-twin > .gd-key, .gd-twin > .gd-table-wrap, .gd-twin > p { grid-column: 1 / -1; }
+.gd-shot figcaption { margin: 8px 2px 0; font-size: .86rem; line-height: 1.5; color: var(--muted); }
+.gd-shot figcaption strong { color: var(--text); }
+
+/* A caution beside .gd-note: what a reader commonly gets wrong about a field */
+.gd-note.gd-note-warn { background: var(--warning-bg); border-color: color-mix(in srgb, var(--warning-text) 30%, transparent); color: var(--warning-text); }
+
+/* ---- Footer, as on the landing page -------------------------------------------------------- */
+.gd footer { padding: 6px 4px 24px; }
+.gd-made { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 4px; align-items: center; }
+.gd-made .gd-flag { grid-row: 1 / 3; height: 36px; width: auto; object-fit: contain; }
+.gd-made div { display: flex; align-items: center; gap: 10px; }
+.gd-made div img { height: 16px; width: auto; flex-shrink: 0; border-radius: 3px; }
+.gd-made span { color: var(--muted); font-size: .76rem; }
+
+/* ---- Narrower screens ---------------------------------------------------------------------- */
+@media (max-width: 1000px) {
+  .gd-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gd-tornado li { grid-template-columns: minmax(0, 1fr) minmax(0, 8.5rem); }
+  .gd-tn-name { grid-column: 1 / -1; }
+  .gd-layout.gd-layout-side { grid-template-columns: minmax(0, 1fr); }
+  .gd-layout-side .gd-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .gd-three { grid-template-columns: minmax(0, 1fr); }
+  .gd-twin { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  /* A reference table becomes a card per row, each cell under its column's name */
+  .gd-table, .gd-table tbody, .gd-table tr, .gd-table th, .gd-table td { display: block; width: auto; }
+  .gd-table thead { display: none; }
+  .gd-table tbody tr { padding: 10px 14px 12px; border-top: 1px solid var(--border); }
+  .gd-table tbody tr:first-child { border-top: 0; }
+  .gd-table tbody th, .gd-table td { padding: 4px 0 0; border-top: 0; }
+  .gd-table tbody th { width: auto; font-size: .95rem; }
+  .gd-table td[data-l]::before { content: attr(data-l); display: block; font-size: .72rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); opacity: .8; }
+  .gd-calc ol { grid-template-columns: minmax(0, 1fr) auto; }
+  .gd-calc-w { grid-column: 1 / -1; grid-row: 2; font-size: .84rem; }
+}
+@media (max-width: 600px) {
+  .gd .gd-phone-hint { display: block; }
+  .gd.container { padding: 16px; }
+  .gd-sec { padding: 18px 16px 20px; }
+  .gd-hero { padding: 16px 0 20px; }
+  .gd .gd-hero-btns .gd-open { width: 100%; min-width: 0; }
+  .gd .gd-open-top { display: none; }
+  .gd-key, .gd-run, .gd-layout-side .gd-key { grid-template-columns: minmax(0, 1fr); }
+  .gd-steps { grid-template-columns: minmax(0, 1fr); }
+  .gd-code code { white-space: pre-wrap; word-break: break-all; }
+  .gd-bar { padding-left: 12px; }
+}
+@media (max-width: 380px) {
+  .gd .btn-back { font-size: 13px; padding: 0 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gd *, .gd *::before { transition: none !important; }
+}
+
+.gd-i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); font: italic 800 .7rem/1 Georgia, serif; vertical-align: 1px; }
+.gd-end .gd-more { order: 1; flex-basis: 100%; text-align: center; font-size: .9rem; font-weight: 400; color: var(--muted); }

@@ -6,7 +6,8 @@
    to a lead line and a short list. */
 window.__TOUR = {
   seenKey: 'dcapf-tour-v4-seen',
-  launchLabel: '🧭 Take a tour',
+  launchLabel: '🧭 Tour',
+  guide: '../guides/#same',
   steps: [
     {
       target: null,

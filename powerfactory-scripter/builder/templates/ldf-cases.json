@@ -14,6 +14,7 @@
         "studyCase": "",
         "outputDir": "",
         "undoChanges": true,
+        "tableFmt": "csv",
         "fNominal": "auto",
         "runMode": "auto",
         "showPf": false,
@@ -119,20 +120,6 @@
       },
       "pin": [],
       "sv": 1
-    },
-    {
-      "id": "n7",
-      "type": "out.table.save",
-      "x": 640,
-      "y": 480,
-      "label": "",
-      "s": {
-        "table": "Load flow",
-        "fmt": "csv",
-        "stem": ""
-      },
-      "pin": [],
-      "sv": 1
     }
   ],
   "edges": [
@@ -166,34 +153,27 @@
     },
     {
       "id": "e5",
-      "from": "n3",
-      "out": "done",
-      "to": "n7",
-      "in": "in"
-    },
-    {
-      "id": "e6",
       "from": "n5",
       "out": "min",
       "to": "n6",
       "in": "c1"
     },
     {
-      "id": "e7",
+      "id": "e6",
       "from": "n5",
       "out": "at_min",
       "to": "n6",
       "in": "c2"
     },
     {
-      "id": "e8",
+      "id": "e7",
       "from": "n5",
       "out": "max",
       "to": "n6",
       "in": "c3"
     },
     {
-      "id": "e9",
+      "id": "e8",
       "from": "n5",
       "out": "at_max",
       "to": "n6",

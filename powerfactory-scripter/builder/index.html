@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- A guide's live demo opens this page in a frame as ?demo: guide-demo.js keeps it off the reader's own storage. -->
+  <script>if(self!==top&&/[?&]demo(&|$)/.test(location.search))document.write('<script src="../../guide-demo.js"><\/script>')</script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VYTV157ST0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../../consent.js" defer></script>
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PowerFactory Workflow Builder | Adjie Brotools</title>
-<meta name="description" content="Build DIgSILENT PowerFactory study workflows from blocks: study cases, load flow, RMS, EMT, harmonics, loops, checks and result tables. Get one ready-to-run Python file. Runs in your browser with no upload.">
+<meta name="description" content="Build DIgSILENT PowerFactory study workflows from blocks: load flow, RMS, EMT, harmonics, loops and result tables, as one ready-to-run Python file.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://tool.adjiebrotots.com/powerfactory-scripter/builder/">
 <link rel="sitemap" type="application/xml" href="https://tool.adjiebrotots.com/sitemap.xml">
@@ -29,10 +34,15 @@
 <meta property="og:description" content="Wire PowerFactory study blocks into your own workflow and get one ready-to-run Python file. Runs locally in your browser with no upload.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/powerfactory-scripter/builder/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter-builder.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PowerFactory Workflow Builder, a free tool on Adjie Brotools">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PowerFactory Workflow Builder">
 <meta name="twitter:description" content="Wire PowerFactory study blocks into your own workflow and get one ready-to-run Python file. Runs locally in your browser with no upload.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/powerfactory-scripter-builder.jpg">
 
 <script type="application/ld+json">
 {
@@ -44,6 +54,9 @@
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
   "isAccessibleForFree": true,
+  "dateModified": "2026-10-25",
+  "screenshot": "https://tool.adjiebrotots.com/og/powerfactory-scripter-builder.jpg",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "inLanguage": "en",
   "alternateName": ["PowerFactory No-Code Workflow Builder", "DIgSILENT PowerFactory Node Editor"],
   "keywords": "PowerFactory workflow builder, no-code PowerFactory automation, DIgSILENT PowerFactory Python, grid compliance study automation, frequency nadir headroom study, RMS EMT harmonic automation",
@@ -118,6 +131,7 @@
 <link rel="modulepreload" href="js/core/codegen.js">
 </head>
 <body class="light pfb-page">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="../../theme.js"></script>
 
 <!-- THE APP fills the screen: the canvas underneath, everything else floats over it (the World
@@ -143,7 +157,7 @@
   <div class="pfb-top">
     <section class="pfb-brand pfb-card" aria-label="About this tool">
       <h1 class="pfb-title"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.15em" height="1.15em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/> <path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/> <path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/> </svg><span>PowerFactory Workflow Builder</span></h1>
-      <div class="pfb-brand-sub" id="scripterLinkDiv">Wire study blocks, get one ready-to-run Python file. <a href="../">Form-based Scripter</a> · <a href="../samples/">Samples</a></div>
+      <div class="pfb-brand-sub" id="scripterLinkDiv">Wire study blocks, get one ready-to-run Python file.</div>
     </section>
 
     <div class="pfb-toolbar pfb-card" id="pfbToolbar" role="toolbar" aria-label="Workflow">
@@ -164,7 +178,7 @@
     </div>
 
     <nav class="pfb-nav header-nav" aria-label="Site">
-      <a class="btn-theme btn-back pfb-back" href="https://tool.adjiebrotots.com/" title="Other tools"><span aria-hidden="true">←</span><span class="pfb-nav-label">&nbsp;Other Tools</span></a>
+      <a class="btn-theme btn-back pfb-back" href="https://tool.adjiebrotots.com/" title="Other tools"><span aria-hidden="true">←</span><span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
       <button class="btn-theme" id="themeToggle" type="button">☀️ Light</button>
     </nav>
   </div>
@@ -232,7 +246,7 @@
   <footer class="pfb-foot" id="pfbFoot">
     <button type="button" class="pfb-foot-more" id="pfbFootMore" aria-expanded="false" aria-controls="pfbFoot" aria-label="Show the whole footer" title="About, contact and licence"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4"/><circle cx="8" cy="4.7" r=".4" fill="currentColor"/></svg></button>
     <span class="pfb-foot-item footer-collab">A hobby project, open to collaboration: <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a></span>
-    <span class="pfb-foot-item footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></span>
+    <span class="pfb-foot-item footer-links"><a href="../../disclaimer/">Disclaimer</a> · <a href="../../privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a> · <span class="footer-updated">Updated <time datetime="2026-10-25">25 October 2026</time></span></span>
     <span class="pfb-foot-item"><img loading="lazy" src="../../logos/gpl.png" alt="GNU GPL"> Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL</a></span>
     <span class="pfb-foot-item"><img loading="lazy" src="../../logos/australian.png" alt="Australian flag"><img loading="lazy" src="../../logos/indonesian.png" alt="Indonesian badge"> Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</span>
   </footer>
@@ -252,5 +266,6 @@
 <script src="tour.js"></script>
 <script src="../../tour-shared.js"></script>
 <script type="module" src="js/app.js"></script>
+<!--/email_off-->
 </body>
 </html>

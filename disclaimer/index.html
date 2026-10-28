@@ -6,14 +6,17 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
@@ -32,10 +35,15 @@
 <meta property="og:description" content="The terms for using Adjie Brotools: the tools are free and provided as is, they are not financial, tax or engineering advice, and you use them at your own risk.">
 <meta property="og:url" content="https://tool.adjiebrotots.com/disclaimer/">
 <meta property="og:site_name" content="Adjie Brotot Tools">
+<meta property="og:image" content="https://tool.adjiebrotots.com/og/home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Adjie Brotools, a free tool on Adjie Brotools">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Disclaimer | Adjie Brotools">
 <meta name="twitter:description" content="The terms for using Adjie Brotools: the tools are free and provided as is, they are not financial, tax or engineering advice, and you use them at your own risk.">
+<meta name="twitter:image" content="https://tool.adjiebrotots.com/og/home.jpg">
 
 <script type="application/ld+json">
 {
@@ -89,6 +97,7 @@
 <script src="../shared.js"></script>
 </head>
 <body class="light">
+<!--email_off--><!-- Cloudflare: show the email address as written, so readers and crawlers see it -->
 <script src="../theme.js"></script>
 <div class="container">
 
@@ -99,7 +108,7 @@
       <p>The terms for using Adjie Brotools, in plain English.</p>
     </div>
     <div class="header-right">
-      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">← Other Tools</a>
+      <a href="https://tool.adjiebrotots.com/" class="btn-theme btn-back">←<span class="nav-long">&nbsp;Other Tools</span><span class="nav-short">&nbsp;Others</span></a>
       <button class="btn-theme" id="themeToggle">🌙 Dark</button>
     </div>
   </div>
@@ -210,5 +219,6 @@ document.getElementById('themeToggle').addEventListener('click', function(){
   this.textContent = document.body.classList.contains('light') ? '🌙 Dark' : '☀️ Light';
 });
 </script>
+<!--/email_off-->
 </body>
 </html>
