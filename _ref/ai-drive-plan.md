@@ -377,15 +377,19 @@ worked example (`rentvsownhouse/agent-notes.md`, its `SharedAgent.register` call
    pages one whole custom model in `json` (`"model": true`, check A6).
 5. **Verify**: `node --check` on changed scripts; `node _ref/agent-doc.mjs --check`;
    `node _ref/agent-check.mjs <page>` green; `node _ref/scenario-check.mjs`;
-   `node _ref/share-check.mjs` (known pre-existing failures: E14 on `financingvscash`,
-   `dcasimulator`, `dcasimulator/portfolio`); `node _ref/guide-check.mjs <tool>` where a guide
-   exists; `node _ref/presolve.mjs --check` for the optimisers. Open the docs' example link in
-   Playwright and look at the banner: does the tool show the answer the request asked for?
+   `node _ref/guide-check.mjs <tool>` where a guide exists; `node _ref/presolve.mjs --check`
+   for the optimisers. Run the full `node _ref/share-check.mjs` only after editing `shared.js`
+   or chart code (known pre-existing failures: E14 on `financingvscash`, `dcasimulator`,
+   `dcasimulator/portfolio`).
 6. **Commit and push** per milestone, following the git rules above. Shared files
    (`shared.js`, `shared.css`, `_ref/agent-lib.mjs`, `_ref/agent-check.mjs`,
    `_ref/agent-links.json`, `llms.txt`) take small generic edits only, re-read right before
    editing and committed promptly, since another agent may be working beside you.
-7. **Report** in at most 200 words: what changed, commits, checks with results, anything left.
+7. **Report** in at most 120 words: what changed, commits, checks with results, anything left.
+
+**Quota (usage-limited plan):** read code with grep and `sed -n` ranges, not whole files; read
+only the parts of the Rent vs Own example you need; keep kept links to about 5 to 8 per page;
+commit and push as soon as `agent-check` is green, so a limit hit never loses work.
 
 Gotcha found by 0b: a field whose default is today's date makes generated docs change daily;
 document such a field with a fixed description (or hide its default) rather than the live value.
