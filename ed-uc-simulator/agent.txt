@@ -118,9 +118,11 @@ edSpanUnit: Horizon (hours or days)  (most important)
   edSpanUnit=h.
 edStart: First hour  (most important)
   Text. 1900-01-01T00:00 to 2200-12-31T23:00, step 3600. Default 2026-01-01T00:00.
-  The first hour of the horizon, as YYYY-MM-DDTHH:00 (a whole hour). The built-in demand shapes
-  follow the weekday and are lower at the weekend, so it matters for a horizon that crosses one. The
-  default is 2026-01-01T00:00, a Thursday. Leave it out unless the user gives a date.
+  The first hour of the horizon, as YYYY-MM-DDTHH:00 (a whole hour), always with the time, for
+  example 2026-06-01T00:00; a date with no time is not read and the first hour goes back to the
+  default. The built-in demand shapes follow the weekday and are lower at the weekend, so it matters
+  for a horizon that crosses one. The default is 2026-01-01T00:00, a Thursday. Leave it out unless
+  the user gives a date.
   Tip on the page: When the horizon starts. Built-in demand profiles follow the weekday, lower at
   the weekend.
 
