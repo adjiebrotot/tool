@@ -132,6 +132,8 @@ function valueProblem(f, v) {
   return '';
 }
 
+// A key in one of the page's families (PAGES.families: el.<name>.<param>), which its adapter reads.
+const inFamily = (M, k) => (M.P.families || []).some(pre => k.length > pre.length && k.startsWith(pre));
 function checkExample(M) {
   const { P, example: ex, byKey } = M;
   if (!ex.request) problem(P.page, 'Example has no Request line');
@@ -147,12 +149,12 @@ function checkExample(M) {
     if (k === 'json' || k === 'run') continue;
     if (k.startsWith('why.')) {
       const t = k.slice(4);
-      if (!byKey[t] && !M.compact.includes(t)) problem(P.page, `example link: ${k} explains a key the page does not have`);
+      if (!byKey[t] && !M.compact.includes(t) && !inFamily(M, t)) problem(P.page, `example link: ${k} explains a key the page does not have`);
       if (!ex.pairs.some(([x]) => x === t)) problem(P.page, `example link: ${k} explains a key the link does not set`);
       if (v.length > WHY_MAX) problem(P.page, `example link: ${k} is longer than ${WHY_MAX} characters`);
       continue;
     }
-    if (M.compact.includes(k)) continue;
+    if (M.compact.includes(k) || inFamily(M, k)) continue;
     const f = byKey[k];
     if (!f) { problem(P.page, `example link: "${k}" is not a key on the page`); continue; }
     if (M.hide.has(k)) problem(P.page, `example link: "${k}" is hidden from the docs`);
@@ -411,6 +413,7 @@ function section(M) {
     H.push('<ul class="agent-keys">' + keys.join('') + '</ul>');
   }
   if (compactKeys.length) H.push(`<p>Lists: ${esc(compactKeys.join(', '))}; their syntax is in agent.txt.</p>`);
+  if ((P.families || []).length) H.push(`<p>Keys that start with ${esc(P.families.join(' or '))} change a part of the tool by its name; their syntax is in agent.txt.</p>`);
   H.push(`<p>Every key with its range and default${M.qs ? ', each Quick Start\'s figures' : ''} and the list syntaxes: <a href="${attr(txtUrl)}">${esc(txtUrl)}</a></p>`);
   if (P.lang !== 'en') H.push('</div>');
   H.push('</div>');

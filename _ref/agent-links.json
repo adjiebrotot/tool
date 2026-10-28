@@ -2509,6 +2509,179 @@
      "columns": 2
     }
    }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "docs example: WSCC 9-bus, the load at bus 5 raised to 150 MW",
+   "link": "#load&v=1&qs=wscc9&el.LoadA.p_set=150&why.el.LoadA.p_set=The%20load%20at%20bus%205%20is%20Load%20A%20in%20the%20WSCC%209-bus%20case%3B%20the%20user%27s%20150%20MW%20replaces%20its%20active%20power&note=WSCC%209-bus%20case,%20load%20at%20bus%205%20raised%20to%20150%20MW",
+   "expect": {},
+   "probe": {
+    "name": "WSCC 9-bus",
+    "el": {
+     "Load A": {
+      "c": "Load",
+      "p_set": 150,
+      "q_set": 50
+     },
+     "Load B": {
+      "p_set": 90
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "3bus: a typed line made longer, the station dispatch and voltage set point, a flat start",
+   "link": "#load&v=1&qs=3bus&el.Line5.length=45&why.el.Line5.length=The%20user%20said%20the%20line%20from%20bus%201%20to%20the%20town%20is%2045%20km,%20not%2030&el.PowerStation.p_set=80&why.el.PowerStation.p_set=The%20user%20wants%20the%20station%20dispatched%20at%2080%20MW&el.Bus2.v_mag_pu_set=1.03&lfSeed=flat&note=3-bus%20ring,%20longer%20line,%20station%20at%2080%20MW",
+   "expect": {
+    "lfSeed": "flat"
+   },
+   "probe": {
+    "el": {
+     "Line 5": {
+      "c": "Line",
+      "length": 45
+     },
+     "Power station": {
+      "p_set": 80
+     },
+     "Bus 2": {
+      "v_mag_pu_set": 1.03
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "feeder: more load at two pillars, a second transformer unit, a DC load flow",
+   "link": "#load&v=1&qs=feeder&el.Homes1.p_set=0.1&el.Homes2.p_set=0.1&why.el.Homes1.p_set=The%20user%20expects%20heat%20pumps%20on%20the%20first%20two%20pillars,%20so%200.1%20MW%20each&el.Substation.num_parallel=2&lfMethod=dc",
+   "expect": {
+    "lfMethod": "dc"
+   },
+   "probe": {
+    "el": {
+     "Homes 1": {
+      "p_set": 0.1
+     },
+     "Homes 2": {
+      "p_set": 0.1
+     },
+     "Substation": {
+      "c": "Transformer",
+      "num_parallel": 2
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "hvdc: the link sent the other way at a lower efficiency, a tighter loading limit",
+   "link": "#load&v=1&qs=hvdc&el.HVDClink.p_set=-100&why.el.HVDClink.p_set=The%20user%20wants%20100%20MW%20going%20from%20area%20B%20to%20area%20A&el.HVDClink.efficiency=0.95&lfLoadMax=80",
+   "expect": {
+    "lfLoadMax": "80"
+   },
+   "probe": {
+    "el": {
+     "HVDC link": {
+      "c": "Link",
+      "p_set": -100,
+      "efficiency": 0.95
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "wscc9: a distributed slack, a unit as PQ, names with spaces and underscores, p and q for p_set and q_set",
+   "link": "#load&v=1&qs=wscc9&lfDistSlack=true&lfSlackW=p_nom&el.G2.control=pq&el.g2.q_set=20&el.Load%20B.p=100&el.load_c.q=40&note=WSCC%209-bus,%20slack%20shared%20by%20rating",
+   "expect": {
+    "lfDistSlack": true,
+    "lfSlackW": "p_nom"
+   },
+   "probe": {
+    "el": {
+     "G2": {
+      "control": "PQ",
+      "q_set": 20
+     },
+     "Load B": {
+      "p_set": 100
+     },
+     "Load C": {
+      "q_set": 40
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "no Quick Start: the page starts on the WSCC 9-bus case, a transformer tap and a lower voltage limit",
+   "link": "#load&v=1&el.LoadB.p_set=110&el.T1.tap_ratio=1.02&lfVmin=0.9",
+   "expect": {
+    "lfVmin": "0.9"
+   },
+   "probe": {
+    "name": "WSCC 9-bus",
+    "el": {
+     "Load B": {
+      "p_set": 110
+     },
+     "T1": {
+      "tap_ratio": 1.02
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "json: a radial 33/11 kV network with no coordinates",
+   "link": "#load&v=1&json=%7B%22v%22:1,%22name%22:%22Radial%2033/11%20kV%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:101,%22v_nom%22:33%7D,%7B%22c%22:%22Bus%22,%22id%22:102,%22v_nom%22:33%7D,%7B%22c%22:%22Bus%22,%22id%22:103,%22v_nom%22:11%7D,%7B%22c%22:%22Line%22,%22id%22:104,%22bus0%22:101,%22bus1%22:102,%22r%22:1.5,%22x%22:3,%22b%22:0.00002,%22s_nom%22:60%7D,%7B%22c%22:%22Transformer%22,%22id%22:105,%22bus0%22:102,%22bus1%22:103,%22s_nom%22:40,%22x%22:0.1,%22r%22:0.005,%22tap_ratio%22:1.025%7D,%7B%22c%22:%22Generator%22,%22id%22:106,%22name%22:%22Grid%22,%22bus%22:101,%22control%22:%22Slack%22,%22grid%22:1%7D,%7B%22c%22:%22Load%22,%22id%22:107,%22name%22:%22Town%22,%22bus%22:103,%22p_set%22:25,%22q_set%22:8%7D,%7B%22c%22:%22Generator%22,%22id%22:108,%22name%22:%22Solar%20farm%22,%22bus%22:103,%22p_set%22:6,%22p_nom%22:8,%22style%22:%22pv%22%7D,%7B%22c%22:%22ShuntImpedance%22,%22id%22:109,%22name%22:%22Capacitor%22,%22bus%22:103,%22b%22:0.01%7D%5D%7D&why.json=The%20user%20described%20a%2033%20kV%20line%20to%20a%2033/11%20kV%20substation,%20a%20town%20of%2025%20MW,%20a%20small%20solar%20farm%20and%20a%20capacitor&note=Radial%2033/11%20kV%20network",
+   "expect": {},
+   "probe": {
+    "name": "Radial 33/11 kV",
+    "counts": {
+     "Bus": 3,
+     "Line": 1,
+     "Transformer": 1,
+     "Generator": 2,
+     "Load": 1,
+     "ShuntImpedance": 1
+    },
+    "el": {
+     "Town": {
+      "c": "Load",
+      "p_set": 25,
+      "bus": "Bus 103"
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "json over a Quick Start, then a patch on its own load",
+   "link": "#load&v=1&qs=wscc9&json=%7B%22v%22:1,%22name%22:%22Two%20feeders%20from%20one%20substation%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:201,%22name%22:%22Substation%22,%22v_nom%22:20%7D,%7B%22c%22:%22Bus%22,%22id%22:202,%22name%22:%22North%22,%22v_nom%22:20%7D,%7B%22c%22:%22Bus%22,%22id%22:203,%22name%22:%22South%22,%22v_nom%22:20%7D,%7B%22c%22:%22Line%22,%22id%22:204,%22name%22:%22North%20line%22,%22bus0%22:201,%22bus1%22:202,%22r%22:2,%22x%22:4,%22s_nom%22:40%7D,%7B%22c%22:%22Line%22,%22id%22:205,%22name%22:%22South%20line%22,%22bus0%22:201,%22bus1%22:203,%22r%22:3,%22x%22:5,%22s_nom%22:30%7D,%7B%22c%22:%22Generator%22,%22id%22:206,%22name%22:%22Grid%22,%22bus%22:201,%22control%22:%22Slack%22,%22grid%22:1%7D,%7B%22c%22:%22Load%22,%22id%22:207,%22name%22:%22North%20town%22,%22bus%22:202,%22p_set%22:18,%22q_set%22:6%7D,%7B%22c%22:%22Load%22,%22id%22:208,%22name%22:%22South%20town%22,%22bus%22:203,%22p_set%22:10,%22q_set%22:3%7D,%7B%22c%22:%22StorageUnit%22,%22id%22:209,%22name%22:%22Battery%22,%22bus%22:203,%22p_set%22:4,%22p_nom%22:10%7D%5D%7D&el.NorthTown.p_set=22&why.el.NorthTown.p_set=The%20user%20said%20the%20northern%20town%20peaks%20at%2022%20MW",
+   "expect": {},
+   "probe": {
+    "name": "Two feeders from one substation",
+    "counts": {
+     "Bus": 3,
+     "Line": 2,
+     "Load": 2,
+     "StorageUnit": 1,
+     "Generator": 1
+    },
+    "el": {
+     "North town": {
+      "p_set": 22
+     },
+     "Battery": {
+      "c": "StorageUnit",
+      "p_set": 4
+     }
+    }
+   },
+   "model": true
   }
  ]
 }

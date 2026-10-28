@@ -133,6 +133,8 @@ function pairsOf(link) {
     return [dec(eq < 0 ? p : p.slice(0, eq)).trim(), eq < 0 ? '' : dec(p.slice(eq + 1))];
   });
 }
+// A key in one of the page's families (PAGES.families: el.<name>.<param>), which its adapter reads.
+const inFamily = (live, k) => (live.families || []).some(pre => k.length > pre.length && k.startsWith(pre));
 // What would stop a link the docs print from opening as written.
 function linkProblems(pairs, live) {
   const out = [];
@@ -145,11 +147,11 @@ function linkProblems(pairs, live) {
     if (k === 'run') continue;
     if (k.startsWith('why.')) {
       const t = k.slice(4);
-      if (!live.byKey[t] && !live.lists.includes(t)) out.push(`${k} explains no key`);
+      if (!live.byKey[t] && !live.lists.includes(t) && !inFamily(live, t)) out.push(`${k} explains no key`);
       if (v.length > WHY_MAX) out.push(`${k} is over ${WHY_MAX}`);
       continue;
     }
-    if (live.lists.includes(k)) continue;
+    if (live.lists.includes(k) || inFamily(live, k)) continue;
     const f = live.byKey[k];
     if (!f) { out.push(`${k} is not a key`); continue; }
     const why = refuses(f, v);
@@ -289,8 +291,10 @@ function editable(live, skip = []) {
 // A value one away from `from`, inside the field's range.
 function nudged(f, from) {
   const n = Number.isFinite(toNumber(from)) ? toNumber(from) : +f.min;
-  // A slider lands on its step, so move it one step; any other field, one.
-  const st = f.input === 'range' && +f.step > 0 ? +f.step : 1;
+  // A slider lands on its step, so move it one step; any other field, one. A range too narrow to move
+  // by one (0.5 to 1 p.u.) moves by the field's own step, else a tenth of the range.
+  const span = f.max != null && f.min != null ? +f.max - +f.min : Infinity;
+  const st = f.input === 'range' && +f.step > 0 ? +f.step : span < 2 ? (+f.step > 0 ? +f.step : span / 10) : 1;
   const v = n + st <= +f.max ? n + st : n - st;
   return String(+v.toFixed(6));
 }
@@ -330,7 +334,7 @@ async function liveOf(P) {
   const txt = read(P.page + '/agent.txt');
   const docs = txt ? parseDocs(txt) : null;
   return { fields: got.fields, byKey: Object.fromEntries(got.fields.map(f => [f.key, f])), qs, card, docs, txt,
-    lists: docs ? docs.lists.filter(k => !real.has(k)) : [], errs };
+    lists: docs ? docs.lists.filter(k => !real.has(k)) : [], families: P.families || [], errs };
 }
 
 /* ── A5: no drift (one run covers every page) ─────────────────────────────── */
@@ -403,6 +407,15 @@ try {
           V.failed || list(unread));
         await V.close();
       } else check('A1', `${P.page} agent.txt: list keys`, true, 'none');
+      // A family of keys (el.<name>.<param>): the tool's adapter reads the prefix, so a key in it is never "not recognised".
+      for (const pre of live.families) {
+        const key = pre + 'zzNoSuch.zz';
+        const V = await visit(P, '#load&v=1&' + encodeURIComponent(key).replace(/%2E/g, '.') + '=1');
+        const s = await snapshot(V.page);
+        check('A1', `${P.page} agent.txt: the tool reads the ${pre}* keys`, !V.failed && !!s.report && !s.report.unknown.includes(key) && s.report.errors.length > 0,
+          V.failed || (!s.report ? 'no report' : s.report.unknown.includes(key) ? 'not recognised' : 'no error for a part that is not there'));
+        await V.close();
+      }
       const strayNotes = D.listNotes.filter(k => !live.byKey[k] && !live.lists.includes(k));
       check('A1', `${P.page} agent.txt: the keys its list notes explain are live`, strayNotes.length === 0, list(strayNotes));
       const qsGone = D.qs.filter(k => !live.qs.has(k));

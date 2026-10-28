@@ -84,6 +84,9 @@ export function buildLink(base, pairs) {
    quickStarts optional reader, run IN the page with (lang); default: .quick-start-btn buttons
    prices      true on a page that loads market data from the Worker (the DCA tools): openPage
                answers the Worker from a fixed series, so no check depends on the live network
+   families    key prefixes the tool's adapter reads as a family (SharedAgent.register's
+               family), e.g. ['el.'] for el.<name>.<param>: the docs' links and the checks
+               accept any key with the prefix, and A1 sends one to see the tool read it
    For _ref/agent-check.mjs:
    probe       optional, run IN the page once a link has applied: the facts a kept link's
                "probe" names (state beyond the fields); default: the scenario's __extra
@@ -133,6 +136,10 @@ export const PAGES = [
     insertBefore: '<section class="layout">', quickStarts: dcaQuickStarts, probe: dcaProbe, prices: true },
   { page: 'dcasimulator/portfolio', url: '/dcasimulator/portfolio/', lang: 'en', notes: 'dcasimulator/portfolio/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: pfQuickStarts, probe: pfProbe, prices: true },
+  // The load flow tool is an Engineering page: a Quick Start network patched part by part
+  // (el.<name>.<param>, a family of keys) or replaced whole in json; it solves on its own.
+  { page: 'loadflow-simulator', url: '/loadflow-simulator/', lang: 'en', notes: 'loadflow-simulator/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: lfQuickStarts, probe: lfProbe, solved: lfSolved, families: ['el.'] },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -619,6 +626,75 @@ export function pfProbe() {
     global: { currencySymbol: g.currencySymbol, randomSeed: g.randomSeed, execTiming: g.execTiming, startDate: g.startDate, endDate: g.endDate },
     shown: { portfolios: document.querySelectorAll('#portfolioTabs .pf-tab').length }
   };
+}
+
+// Load Flow Simulator: what each Quick Start network holds, by the visible name an el.<name>.<param>
+// patch uses (read from LF.PRESETS, so it never goes stale), and the options a Quick Start puts back
+// on their defaults (values). No "=" in the text: the checks read key=value pairs out of these lines.
+export function lfQuickStarts() {
+  const LF = window.LF;
+  const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
+  if (!LF || !LF.PRESETS || !btns.length || !window.SharedAgent) return null;
+  const values = {};
+  SharedAgent.fields().forEach(f => {
+    const el = f.el;
+    if (f.type === 'c') values[f.key] = el.defaultChecked;
+    else if (el.tagName === 'SELECT') values[f.key] = (Array.from(el.options).find(o => o.defaultSelected) || el.options[0]).value;
+    else if (f.type === 'v') values[f.key] = el.defaultValue;
+  });
+  const num = n => String(+Number(n).toFixed(4));
+  const items = btns.map(b => {
+    const key = b.getAttribute('data-preset'), net = LF.load(LF.PRESETS[key]), byId = LF.byId(net), nm = e => LF.nameOf(e);
+    const on = e => (e.bus != null && byId[e.bus] ? 'at ' + nm(byId[e.bus]) : 'on no bus');
+    const ends = e => nm(byId[e.bus0]) + ' to ' + nm(byId[e.bus1]);
+    const text = {
+      Bus: e => nm(e) + ' (' + num(e.v_nom) + ' kV' + (e.v_mag_pu_set !== 1 ? ', holds ' + num(e.v_mag_pu_set) + ' p.u.' : '') + ')',
+      Line: e => nm(e) + ' (' + [ends(e), e.type && 'type ' + e.type, e.length > 0 && num(e.length) + ' km', e.num_parallel > 1 && e.num_parallel + ' circuits'].filter(Boolean).join(', ') + ')',
+      Transformer: e => nm(e) + ' (' + [ends(e), e.type ? e.type : num(e.s_nom) + ' MVA'].join(', ') + ')',
+      Generator: e => nm(e) + ' (' + [e.control + ' ' + on(e), e.control !== 'Slack' && num(e.p_set) + ' MW',
+        e.control === 'PQ' && e.q_set !== 0 && num(e.q_set) + ' MVAr'].filter(Boolean).join(', ') + ')',
+      Load: e => nm(e) + ' (' + [on(e), num(e.p_set) + ' MW', num(e.q_set) + ' MVAr'].join(', ') + ')',
+      ShuntImpedance: e => nm(e) + ' (' + [on(e), 'susceptance ' + num(e.b) + ' S'].join(', ') + ')',
+      StorageUnit: e => nm(e) + ' (' + [on(e), num(e.p_set) + ' MW'].join(', ') + ')',
+      Link: e => nm(e) + ' (' + [ends(e), num(e.p_set) + ' MW', 'efficiency ' + num(e.efficiency)].join(', ') + ')'
+    };
+    const plural = { Bus: 'Buses', Line: 'Lines', Transformer: 'Transformers', Generator: 'Generators', Load: 'Loads',
+      ShuntImpedance: 'Shunts', StorageUnit: 'Storage', Link: 'Links' };
+    const rows = LF.CLASSES.map(c => {
+      const list = net.el.filter(e => e.c === c);
+      return list.length ? plural[c] + ': ' + list.map(e => text[c](e)).join(', ') : '';
+    }).filter(Boolean);
+    return { key, title: (b.textContent || '').replace(/\s+/g, ' ').trim(), values, extra: rows.join('.\n    '), extraLabel: 'Parts' };
+  });
+  return { groups: [{ title: '', items }] };
+}
+// Load Flow Simulator: the network on screen, one entry per element under its visible name, with the
+// parameters an el.<name>.<param> patch or json can set (the saved names and units).
+export function lfProbe() {
+  const L = window.__lf;
+  if (!L) return {};
+  const m = L.app.model, byId = L.LF.byId(m), out = { name: m.name, counts: {}, el: {} };
+  m.el.forEach(e => {
+    out.counts[e.c] = (out.counts[e.c] || 0) + 1;
+    const o = { c: e.c };
+    Object.keys(L.LF.DEFAULTS[e.c]).forEach(k => { o[k] = e[k]; });
+    if (e.bus != null && byId[e.bus]) o.bus = L.LF.nameOf(byId[e.bus]);
+    if (e.bus0 != null && byId[e.bus0]) o.bus0 = L.LF.nameOf(byId[e.bus0]);
+    if (e.bus1 != null && byId[e.bus1]) o.bus1 = L.LF.nameOf(byId[e.bus1]);
+    out.el[L.LF.nameOf(e)] = o;
+  });
+  return out;
+}
+// Load Flow Simulator: true once the load flow has converged and its results are drawn, and they are
+// this network's (every bus and branch on screen has one, so an earlier network's result does not count).
+export function lfSolved() {
+  const L = window.__lf, a = L && L.app, r = a && a.res && a.res.report, btn = document.getElementById('runBtn');
+  const conv = document.getElementById('mConv');
+  if (!r || !r.ok || !r.converged || !a.solvedKey || !btn || btn.disabled || !conv) return false;
+  if (conv.classList.contains('neg') || !/iteration|DC, linear/.test(conv.textContent)) return false;
+  const bus = a.model.el.filter(e => e.c === 'Bus'), br = a.model.el.filter(e => L.LF.BRANCH[e.c]);
+  return bus.length > 0 && Object.keys(a.res.bus).length === bus.length && bus.every(b => a.res.bus[b.id]) &&
+    Object.keys(a.res.br).length === br.length && br.every(e => a.res.br[e.id]);
 }
 
 /* ── Static server and pages ──────────────────────────────────────────────── */

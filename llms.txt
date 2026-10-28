@@ -62,6 +62,7 @@ Pages with an agent.txt:
 - Sewa vs Beli: Analisis Sensitivitas (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.txt
 - DCA Scenario Explorer: https://tool.adjiebrotots.com/dcasimulator/agent.txt
 - Portfolio DCA Simulator: https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.txt
+- Load Flow Simulator: https://tool.adjiebrotots.com/loadflow-simulator/agent.txt
 <!-- agent:end -->
 
 ## Why these tools stand out

@@ -3319,6 +3319,9 @@
                                         //   the banner, or false
            json(obj, extra, api),       // the same for json=, given the parsed object
            patch(extra, api),           // last, for rules tying fields to that state
+           family: { 'el.': parse },    // keys that share a prefix and name a part of
+                                        //   the tool (el.<name>.<param>): parse(raw,
+                                        //   extra, api, key) as a compact one does
            describe(key),               // { label, el }: a compact or json key's name
                                         //   in the banner and the element its row shows
            ready(),                     // a Promise to wait for before applying, for a
@@ -3392,7 +3395,7 @@
     };
     var RESERVED = { v: 1, qs: 1, note: 1, json: 1, run: 1 };
     var NEVER = { s: 1, open: 1, embed: 1 };
-    var MAX_VALUE = 2048, MAX_LIST = 16384, MAX_WHY = 200, MAX_KEY = 120, MAX_UNKNOWN = 500;
+    var MAX_VALUE = 2048, MAX_LIST = 16384, MAX_WHY = 200, MAX_KEY = 120, MAX_UNKNOWN = 500, MAX_FAMILY = 300;
     var adapter = null, resolveDone = null;
     var api = {
       link: !!LOAD,
@@ -3404,6 +3407,13 @@
     if(!LOAD) resolveDone();
 
     function T(){ return TEXT[pageLang()]; }
+    // The adapter's parser for a key in one of its families (a shared prefix), else null.
+    function familyOf(k){
+      var fam = adapter && adapter.family;
+      if(!fam || typeof fam !== 'object') return null;
+      for(var pre in fam) if(own(fam, pre) && pre && k.length > pre.length && k.slice(0, pre.length) === pre && typeof fam[pre] === 'function') return fam[pre];
+      return null;
+    }
     function own(o, k){ return !!o && Object.prototype.hasOwnProperty.call(o, k); }
     function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
     // Text from a link, made one plain line: no control characters, capped.
@@ -3707,7 +3717,7 @@
          the mini cache's own snapshot, else straight into the page. */
       var prov = global.SharedShare && global.SharedShare.provider ? global.SharedShare.provider() : null;
       var cache = ctx.cache && ctx.cache.api ? ctx.cache.api : null;
-      var wrote = {};
+      var wrote = {}, nFamily = 0;
       var body = null, state = null;
       if(prov){ try { body = prov.save(); } catch(e){ body = null; } }
       if(body && body.state && typeof body.state === 'object' && body.state.__fields && typeof body.state.__fields === 'object') state = body.state;
@@ -3734,6 +3744,7 @@
           ctx.rows.push({ at: p.at, key: k, f: f });
         }
         else if(adapter && adapter.compact && own(adapter.compact, k) && typeof adapter.compact[k] === 'function') lists.push(p);
+        else if((p.fn = familyOf(k)) && ++nFamily <= MAX_FAMILY) lists.push(p);
         else unknownKey(ctx, k);
       });
 
@@ -3768,7 +3779,7 @@
       }
       lists.forEach(function(p){
         if(p.raw.length > MAX_LIST){ rep.errors.push(p.key + ': ' + t.long); return; }
-        run(p.key, p.at, function(){ return adapter.compact[p.key](p.raw, extra, hook); });
+        run(p.key, p.at, function(){ return p.fn ? p.fn(p.raw, extra, hook, p.key) : adapter.compact[p.key](p.raw, extra, hook); });
       });
       if(adapter && typeof adapter.patch === 'function'){
         try { adapter.patch(extra, hook); } catch(e){ if(global.console) console.warn('AI link: patch', e); rep.errors.push(t.failed); }
@@ -3785,7 +3796,7 @@
           if(!plainPairs.some(function(p){ return p.key === k; })) ctx.rows.push({ at: ctx.why[k].at, key: k, f: idx[k] });
           return;
         }
-        if(k === 'json' || (adapter && adapter.compact && own(adapter.compact, k))) return;
+        if(k === 'json' || (adapter && adapter.compact && own(adapter.compact, k)) || familyOf(k)) return;
         unknownKey(ctx, 'why.' + k);
       });
 
