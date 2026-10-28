@@ -346,7 +346,7 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | 2 | Borrowing Capacity | 3 | done |
 | 3 | Finance vs Cash | 3 | done |
 | 4 | Financial Freedom | 4 | done |
-| 5 | Pisah vs Gabung (+ `id/`) | 4 | |
+| 5 | Pisah vs Gabung (+ `id/`) | 4 | done |
 | 6 | Cost of Living Comparator + Map | 5 | |
 | 7 | Valuate Everything | 5 | |
 | 8 | DCA Scenario Explorer + Portfolio | 6 | |
