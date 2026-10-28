@@ -309,6 +309,193 @@
     ],
     "shown": { "mortgageMode": "detailed", "ownCostsMode": "detailed", "ratePeriods": 2, "ownSetupCosts": 3 }
    }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "docs example: $45,000 car, one 5-year loan at 7.9%",
+   "link": "#load&v=1&qs=car&purchaseCost=45000&availableCash=60000&why.availableCash=The%20user%20did%20not%20say%20how%20much%20cash%20they%20hold,%20so%20a%20round%20amount%20above%20the%20price,%20as%20the%20car%20Quick%20Start%20assumes&offers=5-year%20loan%20at%207.9%25:financeRate=7.9:termYears=5&why.offers=One%20loan%20over%205%20years%20at%207.9%25%20a%20year,%20paid%20monthly%20with%20nothing%20down%20and%20no%20fees,%20since%20none%20were%20mentioned&baseRf=4.5&why.baseRf=A%20typical%20savings%20or%20term%20deposit%20rate%20for%20the%20cash%20that%20is%20invested%20instead&note=Car%20purchase,%20October%202026",
+   "expect": {
+    "purchaseCost": "45,000",
+    "availableCash": "60,000",
+    "baseRf": "4.5"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "5-year loan at 7.9%",
+      "loanType": "annuity",
+      "financeRate": 7.9,
+      "termPeriods": 60,
+      "freq": "monthly",
+      "downPaymentPct": 0
+     }
+    ],
+    "shown": {
+     "offers": 1
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: fixed against fixed-then-floating schedule",
+   "link": "#load&v=1&qs=house&purchaseCost=900000&availableCash=1000000&offers=30yr%20fixed%206.1:financeRate=6.1:termYears=30:downPaymentPct=20,2yr%20fixed%20then%20variable:termYears=30:ratePeriods=24@5.8/360@5-8.5:downPaymentPct=20&why.offers=The%20two%20quotes%20the%20user%20was%20given:%20a%206.1%25%20fixed%20loan%20and%20a%202-year%20fixed%20at%205.8%25%20that%20then%20floats%20between%205%25%20and%208.5%25&note=House%20purchase,%20October%202026",
+   "expect": {
+    "purchaseCost": "900,000",
+    "availableCash": "1,000,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "30yr fixed 6.1",
+      "financeRate": 6.1,
+      "termPeriods": 360,
+      "rateMode": "simple",
+      "downPaymentPct": 20
+     },
+     {
+      "name": "2yr fixed then variable",
+      "termPeriods": 360,
+      "rateMode": "schedule",
+      "downPaymentPct": 20,
+      "ratePeriods": [
+       {
+        "toPeriod": 24,
+        "type": "fixed",
+        "rate": 5.8
+       },
+       {
+        "toPeriod": 360,
+        "type": "floating",
+        "rateMin": 5,
+        "rateMax": 8.5
+       }
+      ]
+     }
+    ],
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: a plan that quotes only the instalment",
+   "link": "#load&v=1&qs=phone&purchaseCost=1800&availableCash=4000&offers=24%20x%2082:loanType=knownPayment:knownPayment=82:termPeriods=24,12%20x%20150:loanType=knownPayment:knownPayment=150:termPeriods=12&why.offers=The%20two%20instalment%20plans%20the%20store%20quoted,%20with%20no%20rate%20stated",
+   "expect": {
+    "purchaseCost": "1,800"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "24 x 82",
+      "loanType": "knownPayment",
+      "knownPayment": 82,
+      "termPeriods": 24
+     },
+     {
+      "name": "12 x 150",
+      "loanType": "knownPayment",
+      "knownPayment": 150,
+      "termPeriods": 12
+     }
+    ],
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: balloon with a percent fee",
+   "link": "#load&v=1&qs=car&offers=5yr%20balloon:loanType=balloon:financeRate=8.4:termYears=5:residualPct=35:downPaymentPct=10:feeAmt=3%25&why.offers=A%205-year%20balloon%20loan%20with%2035%25%20left%20at%20the%20end,%2010%25%20down%20and%20a%203%25%20establishment%20fee,%20as%20quoted",
+   "expect": {
+    "purchaseCost": "45,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "5yr balloon",
+      "loanType": "balloon",
+      "termPeriods": 60,
+      "residualPct": 35,
+      "downPaymentPct": 10,
+      "feeAmt": 3,
+      "feeType": "pct"
+     }
+    ],
+    "shown": {
+     "offers": 1
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: separate prices and a payment holiday",
+   "link": "#load&v=1&qs=deferred&offerPricing=true&offers=Holiday:loanType=deferred:financeRate=19.9:termPeriods=36:ioPeriods=12:priceType=amount:priceValue=6000,Pay%20now:financeRate=19.9:termPeriods=36:priceType=discount:priceValue=10&why.offers=The%20store%27s%20two%20deals:%2012%20months%20with%20nothing%20to%20pay%20at%20the%20full%20ticket,%20or%20paying%20from%20day%20one%20for%2010%25%20off",
+   "expect": {
+    "offerPricing": true,
+    "purchaseCost": "6,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "Holiday",
+      "loanType": "deferred",
+      "ioPeriods": 12,
+      "priceType": "amount",
+      "priceValue": 6000
+     },
+     {
+      "name": "Pay now",
+      "priceType": "discount",
+      "priceValue": 10
+     }
+    ],
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "qs=motorbike with the user's own figures",
+   "link": "#load&v=1&qs=motorbike&purchaseCost=40000000&availableCash=60000000&why.purchaseCost=The%20bike%20price%20the%20user%20was%20quoted",
+   "expect": {
+    "currencySymbol": "Rp",
+    "purchaseCost": "40,000,000",
+    "availableCash": "60,000,000",
+    "rateConvention": "nominal"
+   },
+   "probe": {
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "no Quick Start: weekly loan in pounds",
+   "link": "#load&v=1&currencySymbol=%C2%A3&purchaseCost=12000&availableCash=15000&baseRf=4&offers=Dealer%20finance:financeRate=6.9:freq=weekly:termYears=3:downPaymentPct=10&why.offers=Dealer%20finance%20at%206.9%25%20a%20year%20over%203%20years,%20paid%20weekly,%20with%2010%25%20down&why.baseRf=A%20typical%20UK%20savings%20rate",
+   "expect": {
+    "currencySymbol": "£",
+    "purchaseCost": "12,000",
+    "availableCash": "15,000",
+    "baseRf": "4"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "Dealer finance",
+      "freq": "weekly",
+      "termPeriods": 156,
+      "financeRate": 6.9,
+      "downPaymentPct": 10
+     }
+    ],
+    "shown": {
+     "offers": 1
+    }
+   }
   }
  ]
 }

@@ -62,7 +62,7 @@ export const LIST_KEY_RE = /^(?:[-*] +|#{3,} +)`?([A-Za-z][\w]*)(?:[=`:\s]|$)/;
    app's link detector does not cut the link short. */
 export function encodeValue(s) {
   return encodeURIComponent(String(s))
-    .replace(/%(2F|3A|2C|24|40)/g, m => decodeURIComponent(m))
+    .replace(/%(2F|3A|2C|24|40|3D)/g, m => decodeURIComponent(m))
     .replace(/[()']/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
 }
 // base: the page's absolute URL; pairs: [[key, value], ...] in link order.
@@ -93,6 +93,8 @@ export const PAGES = [
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
   { page: 'rentvsownhouse/id', url: '/rentvsownhouse/id/', lang: 'id', notes: 'rentvsownhouse/agent-notes.md',
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
+  { page: 'financingvscash', url: '/financingvscash/', lang: 'en', notes: 'financingvscash/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: fvcQuickStarts, probe: fvcProbe },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -187,6 +189,43 @@ export function rvoQuickStarts(lang) {
       'Homes: ' + D.types.map(t => t.key).join(', ') + '. Not every city has every home; qs=<city> alone loads its 2-bedroom apartment (or its first home).',
     ]
   };
+}
+
+// Finance vs Cash: the six worked comparisons (window.FVC_QS, financingvscash/script.js).
+// Each one's form values as a link carries them, and its loan offers written in the
+// offers= list syntax, in parentheses so the docs' figure reader leaves them alone.
+export function fvcQuickStarts() {
+  const Q = window.FVC_QS;
+  if (!Q) return null;
+  const names = {};
+  document.querySelectorAll('.quick-start-btn[data-preset]').forEach(b => {
+    names[b.getAttribute('data-preset')] = (b.textContent || '').replace(/\s+/g, ' ').trim();
+  });
+  const items = Q.keys.map(key => {
+    const p = Q.preset(key), b = p.base;
+    return {
+      key, title: names[key] || key,
+      values: {
+        currencySymbol: b.currencySymbol, purchaseCost: String(b.purchaseCost), offerPricing: !!b.offerPricing,
+        availableCash: String(b.availableCash), baseRf: String(b.riskFree), rateConvention: b.rateConvention,
+        inflationToggle: !!b.inflationOn, inflationRate: String(b.inflationRate), chartMetric: b.chartMetric,
+        optTarget: b.optTarget, optMetric: b.optMetric
+      },
+      extra: p.count + ' loan offer' + (p.count > 1 ? 's' : '') + ' (offers=' + p.offers.join(',') + ')'
+    };
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + Q.keys.join(', ') + '. Each sets the purchase, cash and rates and brings its own loan offers; offers= in the link replaces them.']
+  };
+}
+// Finance vs Cash: the saved __extra (the loan offers) and how many offer tabs the page draws.
+export function fvcProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  return Object.assign({}, body && body.state && body.state.__extra, {
+    shown: { offers: document.querySelectorAll('#scenarioList .sc-tab').length }
+  });
 }
 
 /* ── Static server and pages ──────────────────────────────────────────────── */
