@@ -46,10 +46,15 @@ write each change as that.
 - **Never edit or delete what old links need.** `share-dict-*.txt` and the entries in
   `_ref/share-links.json` are frozen: add, never change. A better Share dictionary is the
   next letter (`_ref/share-dict.mjs`).
+- **An AI link is kept like a Share link.** A `#load` link a chatbot wrote names fields by
+  their Persist handles (and a tool's list keys and Quick Start keys), so a renamed handle
+  must still load from an old AI link. `_ref/agent-links.json` is frozen the same way.
 
 Before shipping a change to a tool's inputs, run `node _ref/share-check.mjs` (its kept-links
-checks, F1 and F2, fail when a field an old link names is gone) and `node _ref/scenario-check.mjs`.
-When a field does fail F2, fix the tool so the old name still loads. Don't edit the kept link.
+checks, F1 and F2, fail when a field an old link names is gone), `node _ref/scenario-check.mjs`
+and `node _ref/agent-check.mjs` (its A2 fails the same way for a kept AI link), and regenerate
+the AI docs with `node _ref/agent-doc.mjs`. When a field does fail F2 or A2, fix the tool so
+the old name still loads. Don't edit the kept link.
 
 A tool with a live guide (`<tool>/guides/scenes.js`) is driven by scripts that name its parts:
 after changing the tool or its guide, run `node _ref/guide-check.mjs <tool>`, and fix the scene
