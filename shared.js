@@ -3327,7 +3327,9 @@
          });
 
      api: lang, field(key) (its value as it will load), num(key), given(key)
-     (the link names it), items(raw) (a "a:b,c:d" list, split before it is
+     (the link names it), applied(key) (the link names it and its value was
+     read, so it loads: a value it could not read leaves the field as it was),
+     items(raw) (a "a:b,c:d" list, split before it is
      decoded so an encoded : or , stays in its part), number(text),
      clamp(key, given, used), error(text), unknown(key).
 
@@ -3700,6 +3702,7 @@
          the mini cache's own snapshot, else straight into the page. */
       var prov = global.SharedShare && global.SharedShare.provider ? global.SharedShare.provider() : null;
       var cache = ctx.cache && ctx.cache.api ? ctx.cache.api : null;
+      var wrote = {};
       var body = null, state = null;
       if(prov){ try { body = prov.save(); } catch(e){ body = null; } }
       if(body && body.state && typeof body.state === 'object' && body.state.__fields && typeof body.state.__fields === 'object') state = body.state;
@@ -3721,6 +3724,7 @@
           if(r.clamped) rep.clamped.push({ key: k, given: r.given, used: r.used });
           if(F) F[f.type + ':' + k] = r.store;
           else direct.push({ f: f, store: r.store });
+          wrote[k] = 1;
           if(r.money) ctx.money.push(f.el);
           ctx.rows.push({ at: p.at, key: k, f: f });
         }
@@ -3738,6 +3742,7 @@
         },
         num: function(key, fallback){ var n = toNumber(hook.field(key)); return isFinite(n) ? n : (fallback === undefined ? NaN : fallback); },
         given: function(key){ return own(inLink, key); },
+        applied: function(key){ return own(wrote, key); },
         items: items,
         number: toNumber,
         clamp: function(key, given, used){ rep.clamped.push({ key: String(key), given: given, used: used }); },
