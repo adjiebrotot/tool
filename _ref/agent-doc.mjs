@@ -399,7 +399,7 @@ function section(M) {
   H.push(`<pre class="agent-pre agent-rules">${esc(AI_RULES)}</pre>`);
   H.push('<p><strong>Link format</strong></p>');
   H.push(`<pre class="agent-pre">${esc(pattern(M))}</pre>`);
-  H.push(`<p>${esc(protocolLines(M).slice(1, 5).join(' '))}</p>`);
+  H.push(`<p>${esc(protocolLines(M).slice(1).join(' '))}</p>`);
   H.push(`<p><strong>Example</strong> for: "${esc(M.example.request)}"</p>`);
   H.push(`<pre class="agent-pre">${esc(M.link)}</pre>`);
   if (qsShort.length) H.push(`<p><strong>Quick Starts</strong> ${esc(qsShort.join(' '))}</p>`);
