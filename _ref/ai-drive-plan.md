@@ -341,7 +341,7 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | # | Piece | Agent wave | Status |
 |---|---|---|---|
 | 0a | Phase 0 loader + banner, Rent vs Own adapter (+ `id/`) | 1 (parallel with 0b) | |
-| 0b | Phase 1 generator `agent-doc.mjs`, Rent vs Own notes and docs, `llms.txt` | 1 (parallel with 0a) | |
+| 0b | Phase 1 generator `agent-doc.mjs`, Rent vs Own notes and docs, `llms.txt` | 1 (parallel with 0a) | done |
 | 0c | Phase 2 `agent-check.mjs`, `agent-links.json`, `CLAUDE.md`, Rent vs Own done | 2 | |
 | 2 | Borrowing Capacity | 3 | |
 | 3 | Finance vs Cash | 3 | |
