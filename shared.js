@@ -3556,6 +3556,11 @@
         var lab = row.querySelector('.field-label, .toggle-label, .slider-label, label');
         if(lab && !(f.type === 'r' && lab.contains(el)) && (t = cleanText(lab))) return t;
       }
+      // A radio group with no row of its own is named by its group (role="radiogroup" aria-label).
+      if(f.type === 'r'){
+        var grp = el.closest('[role="radiogroup"]');
+        if(grp && (t = grp.getAttribute('aria-label'))) return norm(t);
+      }
       t = el.getAttribute('aria-label') || el.getAttribute('title') || el.getAttribute('placeholder');
       if(t) return norm(t);
       if(f.type !== 'r' && (t = cleanText(el.closest('label')))) return t;

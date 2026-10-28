@@ -132,7 +132,7 @@ rfRate: Risk-free rate
   more for a money market fund.
 
 [Portfolios]
-rebalMethod: rebalMethod  (most important)
+rebalMethod: Rebalancing method  (most important)
   One of: towards-weight (Towards Weight), constant-weight (Constant Weight), constant-allocation
   (Constant Allocation), dynamic-momentum (Trend Following), rule-trigger (Rule-Based Triggers).
   Default towards-weight.
@@ -148,7 +148,7 @@ lookbackMonths: Momentum lookback
   Left out, 6.
   Tip on the page: How far back each asset's return is measured for ranking. At every top-up they
   are sorted by it, then the money is split by your rank weights.
-cwTiming: cwTiming
+cwTiming: Rebalance timing
   One of: at-topup (At top-up), schedule (Separate schedule). Default at-topup.
   Only for constant-weight. at-topup (the default): a full rebalance on every top-up. schedule:
   top-ups wait in the cash account until the rebalance runs on its own rebalPeriod.

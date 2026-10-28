@@ -785,6 +785,11 @@ export function readFields() {
       const l = row.querySelector('.field-label, .toggle-label, .slider-label, .label, legend, label');
       if (l && !l.contains(el) && text(l)) return { label: text(l), node: l };
     }
+    // A radio group with no row of its own is named by its group (role="radiogroup" aria-label), as the banner reads it.
+    if (isRadio) {
+      const g = el.closest('[role="radiogroup"]'), a = g && g.getAttribute('aria-label');
+      if (a) return { label: norm(a), node: null };
+    }
     const fs = el.closest('fieldset');
     if (fs && fs.querySelector('legend')) return { label: text(fs.querySelector('legend')), node: fs.querySelector('legend') };
     const attr = el.getAttribute('aria-label') || el.getAttribute('title') || el.getAttribute('placeholder');

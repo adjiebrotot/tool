@@ -173,7 +173,7 @@
 <pre class="agent-pre">https://tool.adjiebrotots.com/dcasimulator/portfolio/#load&amp;v=1&amp;p1=VOO:60,BND:40&amp;why.p1=The%2060/40%20mix%20the%20user%20named,%20VOO%20for%20shares%20and%20BND%20for%20bonds&amp;p2=VOO:80,BND:20&amp;why.p2=The%2080/20%20mix%20the%20user%20named,%20with%20the%20same%20two%20funds&amp;topupAmount=1000&amp;why.topupAmount=The%20user%27s%20$1,000,%20added%20once%20a%20month&amp;topupPeriod=monthly&amp;rebalMethod=constant-weight&amp;why.rebalMethod=Rebalancing%20means%20buying%20and%20selling%20to%20hold%20the%20target%20weights&amp;cwTiming=schedule&amp;rebalPeriod=quarterly&amp;why.rebalPeriod=The%20user%20said%20every%20quarter&amp;startDate=2012-01-01&amp;why.startDate=The%20user%20said%20from%202012,%20so%20the%20first%20day%20of%20that%20year&amp;note=VOO%20and%20BND,%2060/40%20against%2080/20,%20from%202012%20to%20now</pre>
 <p><strong>Quick Starts</strong> qs takes one of: alloc, rebal-freq, rebal-vs-alloc. Each lays down a worked comparison of two portfolios on real tickers; p1, p2 ... in the link replace its portfolios, and a link sends only what differs from it.</p>
 <p><strong>Main keys</strong></p>
-<ul class="agent-keys"><li><code>topupAmount</code> Amount per top-up <span class="agent-unit">($, 0 to 100,000,000,000)</span></li><li><code>startDate</code> Start date</li><li><code>endDate</code> End date</li><li><code>rebalMethod</code> rebalMethod <span class="agent-unit">(towards-weight = Towards Weight, constant-weight = Constant Weight, constant-allocation = Constant Allocation, dynamic-momentum = Trend Following, rule-trigger = Rule-Based Triggers)</span></li></ul>
+<ul class="agent-keys"><li><code>topupAmount</code> Amount per top-up <span class="agent-unit">($, 0 to 100,000,000,000)</span></li><li><code>startDate</code> Start date</li><li><code>endDate</code> End date</li><li><code>rebalMethod</code> Rebalancing method <span class="agent-unit">(towards-weight = Towards Weight, constant-weight = Constant Weight, constant-allocation = Constant Allocation, dynamic-momentum = Trend Following, rule-trigger = Rule-Based Triggers)</span></li></ul>
 <p>Lists: p1, p2; their syntax is in agent.txt.</p>
 <p>Every key with its range and default, each Quick Start's figures and the list syntaxes: <a href="https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.txt">https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.txt</a></p>
 </div>
@@ -383,7 +383,7 @@
       </div>
       <button type="button" class="btn-bare method-change-btn" data-icon="edit" id="changeMethodBtn" title="Change method" aria-label="Change method"></button>
     </div>
-    <div class="radio-group" id="methodList" style="flex-direction:column">
+    <div class="radio-group" id="methodList" role="radiogroup" aria-label="Rebalancing method" style="flex-direction:column">
       <label class="radio-opt selected" data-method="towards-weight">
         <input type="radio" name="rebalMethod" value="towards-weight" checked/>
         <div class="radio-opt-text"><strong>Towards Weight</strong>Top-ups only buy underweight assets to move toward target weights. Never sells; may stay below 100% invested.</div>
@@ -442,7 +442,7 @@
 
     <div id="constantWeightOpts" style="display:none">
       <div class="field-label" style="margin-top:10px">Rebalance Timing</div>
-      <div class="radio-group" style="flex-direction:column">
+      <div class="radio-group" role="radiogroup" aria-label="Rebalance timing" style="flex-direction:column">
         <label class="radio-opt selected" data-cwtiming="at-topup">
           <input type="radio" name="cwTiming" value="at-topup" checked/>
           <div class="radio-opt-text"><strong>At top-up</strong>Buy underweight first, then fully rebalance (buy &amp; sell) on every top-up.</div>
