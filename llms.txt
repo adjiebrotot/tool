@@ -50,6 +50,8 @@ https://tool.adjiebrotots.com/<tool>/#load&v=1&qs=<quick start>&<key>=<value>&..
 Pages with an agent.txt:
 - Rent vs Own: https://tool.adjiebrotots.com/rentvsownhouse/agent.txt
 - Rent vs Own (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/id/agent.txt
+- PPh 21: Pisah Harta vs Gabung Harta: https://tool.adjiebrotots.com/pisahvsgabung/agent.txt
+- PPh 21: Pisah Harta vs Gabung Harta (Indonesian page): https://tool.adjiebrotots.com/pisahvsgabung/id/agent.txt
 - Borrowing Capacity: https://tool.adjiebrotots.com/borrowingcapacity/agent.txt
 - Finance vs Cash Purchase: https://tool.adjiebrotots.com/financingvscash/agent.txt
 - Financial Freedom Calculator: https://tool.adjiebrotots.com/financialfreedom/agent.txt

@@ -1583,10 +1583,12 @@ function downloadCsv(){
    splits a deduction pro rata, so a split it cannot hold (400M and 300M is
    42.857%) lands on the nearest one. Only a click converts; a Quick Start or
    the mini cache picks a mode with its own figures. */
-function carryAcrossModes(to){
+// keep: ids a #load link has set itself (see the AI links at the end), left as they are.
+function carryAcrossModes(to, keep){
   if(to === S.inputMode) return;
+  const kept = id => !!keep && keep.indexOf(id) >= 0;
   const rp = el => Math.max(0, SharedFmt.parseFormatted(el.value) || 0);
-  const put = (el, n) => { el.value = Math.round(n).toLocaleString('en-US'); };
+  const put = (el, n) => { if(!kept(el.id)) el.value = Math.round(n).toLocaleString('en-US'); };
   if(to === 'individual'){
     const total = rp(els.totalSalaryInput), ded = rp(els.deductionInput);
     const share = Math.max(0, Math.min(100, parseFloat(els.splitPct.value) || 0)) / 100;
@@ -1597,7 +1599,7 @@ function carryAcrossModes(to){
     const h = rp(els.husbandSalaryInput), w = rp(els.wifeSalaryInput);
     put(els.totalSalaryInput, h + w);
     put(els.deductionInput, rp(els.husbandDeductionInput) + rp(els.wifeDeductionInput));
-    if(h + w > 0) els.splitPct.value = Math.round(w/(h + w)*100);
+    if(h + w > 0 && !kept('splitPct')) els.splitPct.value = Math.round(w/(h + w)*100);
   }
 }
 $('modeBtnTotal').addEventListener('click',()=>{ carryAcrossModes('total'); setInputMode('total'); });
@@ -1670,6 +1672,10 @@ persist = Persist.init('pisahvsgabung', {
   extra: {
     save: function(){ return { mode: S.inputMode, brackets: S.brackets }; },
     restore: function(e){
+      // An AI link that switches the way income is entered hands the other view's figures over
+      // first, as the buttons do, except what the link set itself (agentPatch). save() never
+      // writes the note, so a saved scenario never has one.
+      if (e && e.agentCarry && (e.mode === 'total' || e.mode === 'individual')) carryAcrossModes(e.mode, e.agentCarry.keep);
       if (e && e.mode) S.inputMode = e.mode;
       if (e && Array.isArray(e.brackets) && e.brackets.length) { S.brackets = e.brackets; normalizeBrackets(); }
     }
@@ -1678,6 +1684,99 @@ persist = Persist.init('pisahvsgabung', {
 // One namespace for the English and Indonesian pages, so a file saved on one
 // opens on the other.
 SharedScenario.mount('.quick-start-row', { tool: 'pisahvsgabung', persist: persist });
+
+/* ── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<even|single|double>&<field id>=<value>... opens the page set up by
+   a chatbot. The fields need nothing here, and the Quick Starts are the
+   buttons' own. Two things live outside the fields, and arrive as they ride in
+   extra (the keys of Persist's extra above stay as they are):
+     inputMode=total|individual     the way income is entered (extra.mode)
+     brackets=<upTo>:<rate>,...     the PPh 21 ladder (extra.brackets): each
+         bracket's upper limit in Rp a year and its rate in %, the last one
+         open-ended whatever limit it is given, as in the editor (at most as
+         many brackets as the editor has). Statute unless a link sends others.
+   A link that names a figure only one way of entering income uses switches to
+   that way, as a person would before typing it (and hands the other way's
+   figures over, as the buttons do, for what the link did not set). The hand-over
+   is a note in extra (agentCarry), acted on in restore() above. The brackets
+   are the statutory ones the tool opens with, so nothing here exposes them
+   beyond what the editor already lets a reader change. */
+const AGENT_VIEWS = {
+  total: ['totalSalaryInput', 'splitPct', 'deductionInput'],
+  individual: ['husbandSalaryInput', 'wifeSalaryInput', 'husbandDeductionInput', 'wifeDeductionInput']
+};
+const AGENT_MODE_LABEL = { total: 'modeTotalBtn', individual: 'modeSplitBtn' };
+const AGENT_TEXT = {
+  en: { oneOf: 'not one of total, individual', shape: 'expected <upTo>:<rate>', first: n => 'only the first ' + n + ' were used',
+        rising: 'each limit must be above the one before it', only: (ids, view) => ids.join(', ') + ': counts only when income is entered as ' + view,
+        upTo: 'up to ', above: 'above ', flat: 'on all income' },
+  id: { oneOf: 'bukan salah satu dari total, individual', shape: 'seharusnya <upTo>:<rate>', first: n => 'hanya ' + n + ' pertama yang dipakai',
+        rising: 'setiap batas harus di atas batas sebelumnya', only: (ids, view) => ids.join(', ') + ': hanya berlaku bila penghasilan diisi sebagai ' + view,
+        upTo: 'sampai ', above: 'di atas ', flat: 'untuk seluruh penghasilan' }
+};
+function agentT(){ return AGENT_TEXT[lang] || AGENT_TEXT.en; }
+function agentInputMode(raw, extra, api){
+  let v = String(raw);
+  try { v = decodeURIComponent(v.replace(/\+/g, ' ')); } catch(e){}
+  v = v.trim().toLowerCase();
+  const hit = Object.keys(AGENT_MODE_LABEL).find(k => k === v || ['en', 'id'].some(l => LANG[l][AGENT_MODE_LABEL[k]].toLowerCase() === v));
+  if(!hit){ api.error('inputMode "' + v.slice(0, 30) + '": ' + agentT().oneOf); return false; }
+  extra.mode = hit;
+  return { value: T(AGENT_MODE_LABEL[hit]) };
+}
+function agentBrackets(raw, extra, api){
+  const t = agentT(), max = BRACKETS_DEFAULT.length, items = api.items(raw), rows = [];
+  if(items.length > max) api.error('brackets: ' + t.first(max));
+  const bad = parts => { api.error('brackets "' + parts.join(':').slice(0, 40) + '": ' + t.shape); return false; };
+  const list = items.slice(0, max);
+  let prev = -1;
+  for(let i = 0; i < list.length; i++){
+    const parts = list[i], last = i === list.length - 1;
+    const rate = parts.length === 2 ? api.number(parts[1]) : NaN;
+    if(!isFinite(rate)) return bad(parts);
+    const pct = Math.round(Math.max(0, Math.min(100, rate)) * 100) / 100;
+    if(pct !== rate) api.clamp('brackets', parts[1], String(pct));
+    let to = null;
+    if(!last){
+      const up = api.number(parts[0]);
+      if(!isFinite(up) || up < 0) return bad(parts);
+      to = Math.min(100000000000000, Math.round(up));
+      if(to <= prev){ api.error('brackets: ' + t.rising); return false; }
+      prev = to;
+    }
+    rows.push({ from: 0, to, rate: pct / 100 });
+  }
+  if(!rows.length) return false;
+  extra.brackets = rows;
+  const rp = n => 'Rp ' + n.toLocaleString('en-US'), pc = r => (+(r * 100).toFixed(2)) + '%';
+  return { value: rows.map((b, i) => pc(b.rate) + ' ' + (b.to !== null ? t.upTo + rp(b.to)
+    : i ? t.above + rp(rows[i - 1].to) : t.flat)).join(', ') };
+}
+function agentPatch(extra, api){
+  const was = S.inputMode === 'individual' ? 'individual' : 'total';   // the page as the Quick Start left it
+  const named = v => AGENT_VIEWS[v].filter(id => api.given(id));
+  let now = was;
+  if(!api.given('inputMode') || !(extra.mode === 'total' || extra.mode === 'individual')){
+    // Said outright, or else the way the figures the link names are entered.
+    if(named('individual').length && !named('total').length) now = 'individual';
+    else if(named('total').length && !named('individual').length) now = 'total';
+    extra.mode = now;
+  } else now = extra.mode;
+  const other = now === 'total' ? 'individual' : 'total';
+  if(named(other).length) api.error(agentT().only(named(other), T(AGENT_MODE_LABEL[other])));
+  if(now !== was) extra.agentCarry = { keep: named(now) };
+}
+function agentDescribe(key){
+  if(key === 'inputMode') return { label: T('inputMethodLabel'), el: document.querySelector('.input-mode-toggle') };
+  if(key === 'brackets') return { label: T('bracketSectionLabel'), el: els.bracketsContainer };
+  return null;
+}
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'pisahvsgabung',
+  compact: { inputMode: agentInputMode, brackets: agentBrackets },
+  patch: agentPatch,
+  describe: agentDescribe
+});
 
 // For the guide (guides/scenes.js and guides/_sensitivity.mjs): the model as the page computes it,
 // read from the form as it stands. Nothing here changes what the page does.

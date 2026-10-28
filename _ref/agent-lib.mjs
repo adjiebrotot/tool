@@ -93,6 +93,10 @@ export const PAGES = [
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
   { page: 'rentvsownhouse/id', url: '/rentvsownhouse/id/', lang: 'id', notes: 'rentvsownhouse/agent-notes.md',
     insertBefore: '<!-- LAYOUT -->', quickStarts: rvoQuickStarts, probe: rvoProbe },
+  { page: 'pisahvsgabung', url: '/pisahvsgabung/', lang: 'en', notes: 'pisahvsgabung/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: pvgQuickStarts },
+  { page: 'pisahvsgabung/id', url: '/pisahvsgabung/id/', lang: 'id', notes: 'pisahvsgabung/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: pvgQuickStarts },
   { page: 'borrowingcapacity', url: '/borrowingcapacity/', lang: 'en', notes: 'borrowingcapacity/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: bcQuickStarts },
   { page: 'financingvscash', url: '/financingvscash/', lang: 'en', notes: 'financingvscash/agent-notes.md',
@@ -268,6 +272,42 @@ export function ffQuickStarts() {
   return {
     groups: [{ title: '', items }],
     short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each fills every tab with a worked plan; a link sends only what differs from it.']
+  };
+}
+
+// Pisah vs Gabung: each Quick Start button is pressed and the form read, so the docs print what
+// the household really sets: every field that differs from the page's own start, and inputMode
+// (how income is entered: total or individual), which a link may name. Run on a fresh page that
+// is left changed (agent-doc closes it). The three Quick Starts also put PTKP and the tax
+// brackets back to the statutory values, which is the page's own start.
+export function pvgQuickStarts() {
+  const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
+  if (!btns.length || !window.SharedAgent || !window.__PVG) return null;
+  const fields = SharedAgent.fields();
+  const snap = () => {
+    const o = {};
+    fields.forEach(f => {
+      if (f.type === 'c') { o[f.key] = !!f.el.checked; return; }
+      const v = f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));
+      o[f.key] = f.el.hasAttribute('data-min') && v.trim() !== '' && Number.isFinite(n) ? String(n) : v;
+    });
+    o.inputMode = window.__PVG.state().inputMode;
+    return o;
+  };
+  const start = snap();
+  const items = [];
+  btns.forEach(b => {
+    const key = b.getAttribute('data-preset');
+    if (items.some(it => it.key === key)) return;
+    b.click();
+    const now = snap(), values = {};
+    Object.keys(now).forEach(k => { if (now[k] !== start[k]) values[k] = now[k]; });
+    // The button's label only: its tooltip talks about the answer, which a chatbot must not.
+    items.push({ key, title: b.textContent.replace(/\s+/g, ' ').trim(), values });
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each opens a worked household with the statutory PTKP and tax brackets; a link sends only what differs from it.']
   };
 }
 

@@ -311,6 +311,115 @@
    }
   },
   {
+   "page": "/pisahvsgabung/",
+   "name": "docs example: two salaries, 2 children",
+   "link": "#load&v=1&qs=double&dependents=2&why.dependents=Dua%20anak,%20sesuai%20yang%20disebutkan&husbandSalaryInput=300000000&why.husbandSalaryInput=Gaji%20suami%20Rp%2025%20juta%20sebulan%20dikali%2012%20bulan&wifeSalaryInput=216000000&why.wifeSalaryInput=Gaji%20istri%20Rp%2018%20juta%20sebulan%20dikali%2012%20bulan&note=Dua%20penghasilan,%202%20anak,%20Oktober%202026",
+   "expect": { "dependents": "2", "husbandSalaryInput": "300,000,000", "wifeSalaryInput": "216,000,000" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=even: a household total and the wife's share",
+   "link": "#load&v=1&qs=even&totalSalaryInput=420000000&why.totalSalaryInput=The%20user%20gave%20one%20household%20salary%20for%20the%20year&splitPct=40&why.splitPct=The%20wife%20earns%20about%2040%25%20of%20the%20household%20total,%20as%20the%20user%20said&dependents=1&note=Household%20total,%201%20child,%20October%202026",
+   "expect": { "totalSalaryInput": "420,000,000", "splitPct": "40", "dependents": "1" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=single: one salary, 3 children, pension contributions",
+   "link": "#load&v=1&qs=single&totalSalaryInput=180000000&deductionInput=5400000&why.deductionInput=JHT%202%25%20and%20JP%201%25%20of%20the%20salary%20that%20the%20employee%20pays&dependents=3",
+   "expect": { "totalSalaryInput": "180,000,000", "deductionInput": "5,400,000", "dependents": "3", "splitPct": "0" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=double with only a household total switches to Total and split",
+   "link": "#load&v=1&qs=double&totalSalaryInput=800000000&splitPct=35",
+   "expect": { "totalSalaryInput": "800,000,000", "splitPct": "35", "dependents": "1" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "inputMode=individual with each spouse's deductions",
+   "link": "#load&v=1&inputMode=individual&husbandSalaryInput=450000000&wifeSalaryInput=150000000&husbandDeductionInput=9000000&why.husbandDeductionInput=Pension%20contributions%20the%20user%20pays%20each%20year&wifeDeductionInput=3000000&dependents=2",
+   "expect": { "husbandSalaryInput": "450,000,000", "wifeSalaryInput": "150,000,000", "husbandDeductionInput": "9,000,000", "wifeDeductionInput": "3,000,000", "dependents": "2" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "brackets: a ladder of three",
+   "link": "#load&v=1&qs=even&brackets=60000000:5,250000000:15,:35&why.brackets=The%20user%20wants%20to%20try%20a%20three-bracket%20ladder%20with%2035%25%20above%20Rp%20250%20million",
+   "expect": { "totalSalaryInput": "500,000,000" },
+   "probe": {
+    "mode": "total",
+    "brackets": [
+     { "from": 0, "to": 60000000, "rate": 0.05 },
+     { "from": 60000001, "to": 250000000, "rate": 0.15 },
+     { "from": 250000001, "to": null, "rate": 0.35 }
+    ]
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=single with the husband's salary only keeps the wife at nothing",
+   "link": "#load&v=1&qs=single&husbandSalaryInput=350000000",
+   "expect": { "husbandSalaryInput": "350,000,000", "wifeSalaryInput": "0", "dependents": "2" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "docs example: dua gaji, 2 anak",
+   "link": "#load&v=1&qs=double&dependents=2&why.dependents=Dua%20anak,%20sesuai%20yang%20disebutkan&husbandSalaryInput=300000000&why.husbandSalaryInput=Gaji%20suami%20Rp%2025%20juta%20sebulan%20dikali%2012%20bulan&wifeSalaryInput=216000000&why.wifeSalaryInput=Gaji%20istri%20Rp%2018%20juta%20sebulan%20dikali%2012%20bulan&note=Dua%20penghasilan,%202%20anak,%20Oktober%202026",
+   "expect": { "dependents": "2", "husbandSalaryInput": "300,000,000", "wifeSalaryInput": "216,000,000" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "Keluarga satu penghasilan, 2 anak",
+   "link": "#load&v=1&qs=single&totalSalaryInput=240000000&why.totalSalaryInput=Gaji%20suami%20Rp%2020%20juta%20sebulan%20dikali%2012%20bulan,%20istri%20tidak%20bekerja&note=Satu%20penghasilan,%202%20anak,%20Oktober%202026",
+   "expect": { "totalSalaryInput": "240,000,000", "splitPct": "0", "dependents": "2" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "Per pasangan dengan iuran pensiun",
+   "link": "#load&v=1&inputMode=Per%20pasangan&husbandSalaryInput=360000000&wifeSalaryInput=180000000&husbandDeductionInput=7200000&why.husbandDeductionInput=JHT%202%25%20dan%20JP%201%25%20dari%20gaji%20suami,%20yang%20ditanggung%20karyawan&wifeDeductionInput=3600000&dependents=1",
+   "expect": { "husbandSalaryInput": "360,000,000", "wifeSalaryInput": "180,000,000", "husbandDeductionInput": "7,200,000", "wifeDeductionInput": "3,600,000" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "Lapisan tarif usulan: tiga lapisan",
+   "link": "#load&v=1&qs=double&brackets=60000000:5,250000000:15,:35&why.brackets=Mencoba%20tiga%20lapisan,%2035%25%20di%20atas%20Rp%20250%20juta",
+   "expect": { "husbandSalaryInput": "400,000,000" },
+   "probe": {
+    "mode": "individual",
+    "brackets": [
+     { "from": 0, "to": 60000000, "rate": 0.05 },
+     { "from": 60000001, "to": 250000000, "rate": 0.15 },
+     { "from": 250000001, "to": null, "rate": 0.35 }
+    ]
+   }
+  },
+  {
    "page": "/financingvscash/",
    "name": "docs example: $45,000 car, one 5-year loan at 7.9%",
    "link": "#load&v=1&qs=car&purchaseCost=45000&availableCash=60000&why.availableCash=The%20user%20did%20not%20say%20how%20much%20cash%20they%20hold,%20so%20a%20round%20amount%20above%20the%20price,%20as%20the%20car%20Quick%20Start%20assumes&offers=5-year%20loan%20at%207.9%25:financeRate=7.9:termYears=5&why.offers=One%20loan%20over%205%20years%20at%207.9%25%20a%20year,%20paid%20monthly%20with%20nothing%20down%20and%20no%20fees,%20since%20none%20were%20mentioned&baseRf=4.5&why.baseRf=A%20typical%20savings%20or%20term%20deposit%20rate%20for%20the%20cash%20that%20is%20invested%20instead&note=Car%20purchase,%20October%202026",

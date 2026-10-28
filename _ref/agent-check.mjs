@@ -467,7 +467,8 @@ try {
 
     /* ── A3: a bad link still opens the tool ── */
     const other = editable(live);
-    const num = live.fields.find(f => f.type === 'v' && (f.input === 'range' || f.input === 'number') && f.min != null && f.max != null &&
+    // A typed amount with a range (a currency field) is a numeric field to try as well.
+    const num = live.fields.find(f => f.type === 'v' && (f.input === 'range' || f.input === 'number' || f.numeric) && f.min != null && f.max != null &&
       (!other || f.key !== other.key));
     if (!other || !num) check('A3', `${P.page} has a numeric field to try`, false, 'none');
     else {
