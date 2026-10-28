@@ -352,7 +352,7 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | 8 | DCA Scenario Explorer + Portfolio | 6 | done |
 | 9 | Rent vs Own Sensitivity | 6 | done |
 | 10 | Load Flow Simulator | 7 | |
-| 11 | ED/UC Simulator | 7 | |
+| 11 | ED/UC Simulator | 7 | done |
 | 12 | Capacity Expansion Planner | 8 | |
 | 13 | PowerFactory Scripter (builder, legacy, router) | 8 | |
 
