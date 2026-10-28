@@ -4546,10 +4546,196 @@ if(window.SharedFold){
 }
 renderAssumptions();
 
+/* ── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<quick start>&<key>=<value>... opens the page set up by a chatbot.
+   Like the single-asset page, this tool loads everything through importSettings
+   from the settings blob the mini cache keeps in its extra, and that blob wins
+   over the form fields it mirrors. So patch() writes the link's currency,
+   seed, Trade at and dates into the blob's `global`, and the portfolio fields
+   (topupAmount ... lookbackMonths, the Persist handles of the controls that show
+   the active portfolio) into every portfolio in it.
+   The portfolios are not fields. They arrive as compact keys, p1 to p6:
+     p1=<TICKER>:<weight>,<TICKER>:<weight>,...[,<setting>=<value>...]
+   Weights are % and must come with every ticker or none (then they split
+   equally). A setting item, "name" or one of the portfolio fields, beats the
+   same field given on its own, which beats the Quick Start or default it
+   lands on. When p1.. are in the link they replace the Quick Start's
+   portfolios. The link adds no request of its own: importSettings runs the
+   simulation once, and its prices load through the Worker like any run (or come
+   from the price cache). A ticker is accepted by the rule the embed's price
+   restore uses (SharedYF.restoreCache): letters, digits and . ^ = _ -, up to 24,
+   in capitals. agent-notes.md documents all of it. */
+const AGENT_MAX_PORTFOLIOS = 6, AGENT_MAX_ASSETS = 10;     // the palette has six slots
+const AGENT_TICKER_RE = /^[A-Z0-9.^=_-]{1,24}$/;
+const AGENT_GLOBALS = ['currencySymbol','randomSeed','execTiming'];
+const agentObj = (p, k)=>(p[k] && typeof p[k]==='object') ? p[k] : (p[k] = {});
+// The portfolio fields a link may set: the control that shows it, its range or its choices, and where it lives in a portfolio.
+const AGENT_PF = {
+  topupAmount:    { num:[0, 100000000000, 2], set:(p, v)=>{ agentObj(p,'topup').amount = v; } },
+  topupYearlyInc: { num:[0, 100, 2],          set:(p, v)=>{ agentObj(p,'topup').yearlyIncrease = v; } },
+  topupPeriod:    { sel:'topupPeriod',        set:(p, v)=>{ agentObj(p,'topupSched').period = v; } },
+  rfRate:         { num:[0, 30, 2],           set:(p, v)=>{ const r = agentObj(p,'rf'); r.rate = v; r.mode = 'rate'; } },
+  rebalMethod:    { radio:'rebalMethod',      set:(p, v)=>{ agentObj(p,'rebal').method = v; } },
+  cwTiming:       { radio:'cwTiming',         set:(p, v)=>{ agentObj(p,'rebal').cwTiming = v; } },
+  rebalPeriod:    { sel:'rebalPeriod',        set:(p, v)=>{ agentObj(p,'rebalSched').period = v; } },
+  buyFee:         { num:[0, 10, 2],           set:(p, v)=>{ agentObj(p,'rebal').buyFee = v; } },
+  sellFee:        { num:[0, 10, 2],           set:(p, v)=>{ agentObj(p,'rebal').sellFee = v; } },
+  lookbackMonths: { sel:'lookbackMonths',     set:(p, v)=>{ agentObj(p,'rebal').lookbackMonths = parseInt(v, 10) || 6; } }
+};
+const agentSet = { qs:'', portfolios:{} };
+function agentChoices(f){
+  if(f.radio) return Array.from(document.querySelectorAll('input[type=radio][name="'+f.radio+'"]')).map(r=>{
+    const s = r.closest('label') && r.closest('label').querySelector('strong');
+    return { value:r.value, label:s ? s.textContent.trim() : r.value };
+  });
+  return Array.from($(f.sel).options).map(o=>({ value:o.value, label:o.textContent.trim() }));
+}
+// One portfolio field from text: { v } or { err }.
+function agentPfValue(key, text, api, who){
+  const f = AGENT_PF[key], t = String(text==null?'':text).trim(), tag = key+' ('+who+')';
+  if(f.num){
+    const n = api.number(t);
+    if(!isFinite(n)) return { err: tag+' "'+t.slice(0,30)+'" is not a number' };
+    const v = Math.min(f.num[1], Math.max(f.num[0], n));
+    if(v !== n) api.clamp(tag, String(n), String(v));
+    return { v: +v.toFixed(f.num[2]) };
+  }
+  const opts = agentChoices(f), low = t.toLowerCase();
+  const hit = opts.find(o=>o.value===t) || opts.find(o=>o.value.toLowerCase()===low) || opts.find(o=>o.label.toLowerCase()===low);
+  return hit ? { v: hit.value } : { err: tag+' "'+t.slice(0,30)+'" is not one of '+opts.map(o=>o.value).join(', ') };
+}
+function agentDate(text){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(text==null?'':text).trim());
+  if(!m) return null;
+  const d = new Date(Date.UTC(+m[1], +m[2]-1, +m[3]));
+  return d.getUTCFullYear()===+m[1] && d.getUTCMonth()===+m[2]-1 && d.getUTCDate()===+m[3] ? m[0] : null;
+}
+function agentPreset(key){
+  const low = String(key).toLowerCase();
+  const hit = Object.keys(PORTFOLIO_QUICK_START).find(k=>k.toLowerCase()===low);
+  if(!hit) return false;
+  // The Quick Start button's own steps, without its run: the link runs once, in importSettings.
+  resetWorkspace();
+  PORTFOLIO_QUICK_START[hit]();
+  activePortfolioId = portfolios.length ? portfolios[0].id : null;
+  loadControlsFromActive(); renderPortfolioList(); renderPfSelectors();
+  agentSet.qs = hit;
+  const b = document.querySelector('.quick-start-btn[data-preset="'+hit+'"]');
+  return (b && (b.textContent||'').replace(/\s+/g,' ').trim()) || hit;
+}
+function agentPortfolioKey(n){
+  const tag = 'p'+n;
+  return function(raw, extra, api){
+    const assets = [], set = {}, seen = {}, bad = [];
+    let name = '', over = 0, weighted = 0, blank = 0;
+    api.items(raw).forEach(parts=>{
+      const first = String(parts[0]||'').trim(), eq = first.indexOf('='), k = eq > 0 ? first.slice(0, eq).trim() : '';
+      if(parts.length===1 && (k==='name' || AGENT_PF[k])){
+        const text = first.slice(eq+1);
+        if(k==='name'){
+          const v = text.replace(/[\u0000-\u001f\u007f<>]/g,' ').replace(/\s+/g,' ').trim().slice(0,40);
+          if(v) name = v; else api.error(tag+': name is blank');
+        } else {
+          const r = agentPfValue(k, text, api, tag);
+          if(r.err) api.error(r.err); else set[k] = r.v;
+        }
+        return;
+      }
+      const tk = first.toUpperCase();
+      if(!AGENT_TICKER_RE.test(tk)){ bad.push(first.slice(0,24) || '(blank)'); return; }
+      if(seen[tk]){ api.error(tag+': '+tk+' is listed twice, the first weight is used'); return; }
+      if(assets.length >= AGENT_MAX_ASSETS){ over++; return; }
+      let w = null;
+      if(parts.length > 1 && String(parts[1]).trim() !== ''){
+        const x = api.number(parts[1]);
+        if(!isFinite(x)){ api.error(tag+' '+tk+': weight "'+String(parts[1]).slice(0,20)+'" is not a number'); return; }
+        w = Math.min(100, Math.max(0, +x.toFixed(2)));
+        if(w !== x) api.clamp(tag+' '+tk+' weight', String(x), String(w));
+        weighted++;
+      } else blank++;
+      seen[tk] = 1;
+      assets.push({ ticker:tk, weight:w });
+    });
+    if(bad.length) api.error(tag+': '+bad.join(', ')+' not valid (letters, digits and . ^ = _ - only, up to 24)');
+    if(over) api.error(tag+': only the first '+AGENT_MAX_ASSETS+' tickers were used');
+    if(!assets.length) return false;
+    if(weighted && blank){ api.error(tag+': give every ticker a weight, or none of them'); return false; }
+    if(!weighted){
+      // No weights: an equal split that adds to 100.
+      const each = Math.floor(10000 / assets.length) / 100;
+      assets.forEach((a, i)=>{ a.weight = i < assets.length-1 ? each : +(100 - each * (assets.length-1)).toFixed(2); });
+    }
+    agentSet.portfolios[n] = { name, assets, set };
+    return { value: assets.map(a=>a.ticker+' '+a.weight+'%').join(', ') };
+  };
+}
+// A portfolio as importSettings reads it; normalizeLoadedPortfolio fills in the rest.
+function agentBuild(item, n){
+  return {
+    name: item.name || item.assets.map(a=>a.ticker+' '+a.weight).join(' / '),
+    assets: item.assets.map(a=>({ type:'ticker', ticker:a.ticker, name:a.ticker, weight:a.weight }))
+  };
+}
+function agentPatch(extra, api){
+  const g = extra.global && typeof extra.global==='object' ? extra.global : (extra.global = {});
+  AGENT_GLOBALS.forEach(k=>{
+    if(!api.applied(k)) return;
+    g[k] = api.field(k);
+  });
+  ['startDate','endDate'].forEach(k=>{
+    if(!api.given(k)) return;
+    const v = String(api.field(k)==null ? '' : api.field(k)).trim(), ok = agentDate(v);
+    if(ok) g[k] = ok; else if(v) api.error(k+' "'+v.slice(0,20)+'" is not a date (use YYYY-MM-DD)');
+  });
+  let pfs = Array.isArray(extra.portfolios) ? extra.portfolios : [];
+  const listed = Object.keys(agentSet.portfolios).map(Number).sort((a, b)=>a-b);
+  if(listed.length){
+    pfs = listed.map(n=>agentBuild(agentSet.portfolios[n], n));
+    extra.activePortfolioId = null;   // importSettings opens the first
+  }
+  // The portfolio fields named on their own go on every portfolio; each portfolio's own settings come last.
+  Object.keys(AGENT_PF).forEach(k=>{
+    if(!api.applied(k)) return;
+    const v = AGENT_PF[k].num ? api.number(api.field(k)) : api.field(k);
+    if(v === undefined || v === '' || (typeof v==='number' && !isFinite(v))) return;
+    pfs.forEach(p=>AGENT_PF[k].set(p, v));
+  });
+  listed.forEach((n, i)=>{ const own = agentSet.portfolios[n].set; Object.keys(own).forEach(k=>AGENT_PF[k].set(pfs[i], own[k])); });
+  extra.portfolios = pfs;
+  // A Quick Start was laid down on the page itself, so the blob already holds it; this makes it
+  // differ, so the loader loads it (through importSettings, which runs the simulation once).
+  if(agentSet.qs) extra.fromLink = true;
+}
+function agentDescribe(key){
+  return /^p[1-6]$/.test(key) ? { label:'Portfolio '+key.slice(1), el:$('portfolioTabs') } : null;
+}
+if(window.SharedAgent){
+  const compact = {};
+  for(let n = 1; n <= AGENT_MAX_PORTFOLIOS; n++) compact['p'+n] = agentPortfolioKey(n);
+  SharedAgent.register({ tool:'dcasimulator-portfolio', preset:agentPreset, compact, patch:agentPatch, describe:agentDescribe });
+}
+/* The Quick Starts as the docs print them (_ref/agent-lib.mjs, pfQuickStarts): each one's portfolios,
+   read after laying the Quick Start on the page with the button's own steps (no run). The docs'
+   page is left changed and closed by the caller. */
+window.PF_QS = {
+  keys: Object.keys(PORTFOLIO_QUICK_START),
+  read: key=>{
+    resetWorkspace();
+    PORTFOLIO_QUICK_START[key]();
+    return portfolios.map(p=>({
+      name: p.name, assets: p.assets.map(a=>[a.ticker, a.weight]),
+      fields: { topupAmount:p.topup.amount, topupYearlyInc:p.topup.yearlyIncrease||0, topupPeriod:p.topupSched.period, rfRate:p.rf.rate,
+        rebalMethod:p.rebal.method, cwTiming:p.rebal.cwTiming, rebalPeriod:p.rebalSched.period, buyFee:p.rebal.buyFee, sellFee:p.rebal.sellFee }
+    }));
+  }
+};
+
 persist = Persist.init('dcasimulator-portfolio', {
   onRestore: function(){ /* importSettings() already rebuilt + ran */ },
   extra: {
-    save: buildSettingsObj,
+    // The cache holds the settings without the file's timestamp, so saving twice saves the same bytes
+    // (an AI link keeps the cache it replaces as it was, and Undo gives it back).
+    save: function(){ const o=buildSettingsObj(); delete o.savedAt; return o; },
     restore: function(e){ if(e && e.app==='dca-portfolio'){ try { importSettings(e); restoredFromCache=true; } catch(_){ restoredFromCache=false; } } }
   }
 });

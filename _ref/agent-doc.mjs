@@ -203,6 +203,7 @@ function unitExample(M) {
   const order = [...M.important, ...M.fields.map(f => f.key)];
   for (const k of order) {
     const f = M.byKey[k];
+    if (M.hide.has(k)) continue;
     const unit = f && (f.input === 'range' ? f.unit : f.suffix);
     const v = f && toNumber(f.value);
     if (unit && /^%/.test(unit) && Number.isFinite(v) && v > 0) return `${k}=${v} means ${v}${unit}, not ${+(v / 100).toFixed(6)}.`;
@@ -243,14 +244,16 @@ function fieldKind(f, M) {
   else if (f.options) s = 'One of: ' + f.options.map(optText).join(', ') + '.';
   else {
     const unit = f.input === 'range' ? f.unit : [f.prefix && f.prefix + ' before it', f.suffix && f.suffix + ' after it'].filter(Boolean).join(', ');
-    const kind = f.input === 'range' ? 'Slider' : f.money ? 'Amount' : f.input === 'number' || f.numeric ? 'Number' : 'Text';
+    const kind = f.input === 'range' ? 'Slider' : f.money ? 'Amount' : f.input === 'number' || f.numeric ? 'Number' : f.input === 'date' ? 'Date as YYYY-MM-DD' : 'Text';
     s = kind + (unit ? ` (${unit})` : '') + '.';
     if (f.min != null && f.max != null) s += ` ${show(f.min)} to ${show(f.max)}` + (f.step && f.step !== 'any' && f.input !== 'range' ? `, step ${f.step}` : '') + '.';
     else if (f.min != null) s += ` At least ${show(f.min)}.`;
     else if (f.max != null) s += ` At most ${show(f.max)}.`;
   }
   if (pairsWith.length) s += (f.tag === 'select' ? ' Sets the unit of ' : ' Its unit is set by ') + pairsWith.join(' and ') + '.';
-  const def = f.value === '' || f.value == null ? 'blank' : f.type === 'c' ? String(f.value) : plain(f, f.value);
+  // A date field opens on a day counted from today, so its value would change the docs daily: say so instead.
+  const def = f.input === 'date' ? 'a day the page sets from today (see below)'
+    : f.value === '' || f.value == null ? 'blank' : f.type === 'c' ? String(f.value) : plain(f, f.value);
   return s + ' Default ' + def + '.';
 }
 

@@ -244,7 +244,7 @@ async function arrived(V, fragment) {
 }
 // A page in a fresh context (empty storage), or the same tab again (its storage kept).
 const visit = async (P, fragment) => {
-  const V = await openPage(browser, srv.origin, P.url + (fragment || ''));
+  const V = await openPage(browser, srv.origin, P.url + (fragment || ''), { prices: !!P.prices });
   V.page.__P = P;   // valuesOf and type reach a page's virtual fields through it
   return arrived(V, fragment);
 };

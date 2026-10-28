@@ -3624,6 +3624,169 @@ window.__DCA_TOUR = {
   }
 };
 
+/* ── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<quick start>&<key>=<value>... opens the page set up by a chatbot.
+   This tool loads everything through importSettings, from the settings blob
+   the mini cache keeps in its extra (the same blob a settings file holds), and
+   that blob's `global` wins over the form fields it mirrors. So the link's
+   currency, seed, risk-free rate, Trade at and dates are written into the blob
+   too (patch), where the fields alone would be overwritten.
+   The scenarios are not fields. They arrive as compact keys:
+     tickers=<TICKER>[:<setting>=<value>...],...   one real-ticker scenario each
+     amount, yearlyIncrease, style, dayOrDate, period, momentumPct
+                                                   the setting every scenario takes
+   A setting inside a tickers item beats the same key on its own, which beats
+   the Quick Start or default scenario it lands on. Anything left out takes
+   what addSecurity gives a new scenario. The link adds no request of its own:
+   importSettings runs the simulation once, and its prices load through the
+   Worker like any run (or come from the price cache). A ticker is accepted
+   by the rule the embed's price restore uses (SharedYF.restoreCache): letters,
+   digits and . ^ = _ -, up to 24, in capitals. agent-notes.md documents it. */
+const AGENT_MAX_SCENARIOS = 6;                       // the palette has six slots
+const AGENT_TICKER_RE = /^[A-Z0-9.^=_-]{1,24}$/;
+const AGENT_GLOBALS = ['currencySymbol','randomSeed','riskFreeRate','execTiming'];
+const AGENT_ITEM_KEYS = ['amount','yearlyIncrease','style','dayOrDate','period','momentumPct','name'];
+const AGENT_PLAN_KEYS = ['amount','yearlyIncrease','style','dayOrDate','period','momentumPct'];
+const AGENT_LABELS = { tickers:'Tickers', amount:'Amount per top-up', yearlyIncrease:'Yearly increase', style:'Investment style',
+  dayOrDate:'Day of month or week', period:'Frequency', momentumPct:'Rise or dip threshold' };
+const agentSet = { qs:'', tickers:null, plan:{} };
+function agentPreset(key){
+  const low = String(key).toLowerCase();
+  const hit = Object.keys(QUICK_START_PRESETS).find(k=>k.toLowerCase()===low);
+  if(!hit) return false;
+  agentSet.qs = hit;   // laid down in patch(), once, with everything else
+  const b = document.querySelector('.quick-start-btn[data-preset="'+hit+'"]');
+  return (b && (b.textContent||'').replace(/\s+/g,' ').trim()) || hit;
+}
+function agentDate(text){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(text==null?'':text).trim());
+  if(!m) return null;
+  const d = new Date(Date.UTC(+m[1], +m[2]-1, +m[3]));
+  return d.getUTCFullYear()===+m[1] && d.getUTCMonth()===+m[2]-1 && d.getUTCDate()===+m[3] ? m[0] : null;
+}
+// One scenario setting from text: { v } or { err }. Numbers are pulled into the editor's own range.
+function agentSetting(name, text, api, who){
+  const t = String(text==null?'':text).trim(), tag = name + (who ? ' ('+who+')' : '');
+  const num = (lo, hi, dp)=>{
+    const n = api.number(t);
+    if(!isFinite(n)) return { err: tag+' "'+t.slice(0,30)+'" is not a number' };
+    const v = Math.min(hi, Math.max(lo, n));
+    if(v !== n) api.clamp(tag, String(n), String(v));
+    return { v: +v.toFixed(dp) };
+  };
+  switch(name){
+    case 'amount': return num(0, 100000000000, 2);
+    case 'yearlyIncrease': return num(0, 100, 2);
+    case 'momentumPct': return num(0.1, 50, 1);
+    case 'dayOrDate': {
+      const day = WEEKDAY_OPTIONS.findIndex(d=>d.toLowerCase()===t.toLowerCase() || d.slice(0,3).toLowerCase()===t.toLowerCase());
+      return day >= 0 ? { v: day+1 } : num(1, 31, 0);
+    }
+    case 'style': {
+      const low = t.toLowerCase(), dashed = low.replace(/[_\s]+/g,'-');
+      const hit = STYLE_ORDER.find(s=>s===dashed) || STYLE_ORDER.find(s=>styleLabel(s).toLowerCase()===low);
+      return hit ? { v: hit } : { err: tag+' "'+t.slice(0,30)+'" is not one of '+STYLE_ORDER.join(', ') };
+    }
+    case 'period': {
+      const low = t.toLowerCase();
+      return low==='monthly' || low==='weekly' ? { v: low } : { err: tag+' "'+t.slice(0,30)+'" is not monthly or weekly' };
+    }
+    case 'name': {
+      const v = t.replace(/[\u0000-\u001f\u007f<>]/g,' ').replace(/\s+/g,' ').trim().slice(0,40);
+      return v ? { v } : { err: tag+' is blank' };
+    }
+  }
+  return { err: tag+' is not a setting' };
+}
+function agentTickers(raw, extra, api){
+  const out = [], bad = [];
+  let over = 0;
+  api.items(raw).forEach(parts=>{
+    const given = String(parts[0]||'').trim(), tk = given.toUpperCase();
+    if(!AGENT_TICKER_RE.test(tk)){ bad.push(given.slice(0,24) || '(blank)'); return; }
+    if(out.length >= AGENT_MAX_SCENARIOS){ over++; return; }
+    const item = { ticker:tk, set:{} };
+    parts.slice(1).forEach(p=>{
+      const eq = p.indexOf('='), k = (eq<0 ? p : p.slice(0, eq)).trim();
+      if(AGENT_ITEM_KEYS.indexOf(k) < 0){ api.error('tickers '+tk+': "'+k.slice(0,30)+'" is not a setting'); return; }
+      const r = agentSetting(k, eq<0 ? '' : p.slice(eq+1), api, tk);
+      if(r.err) api.error(r.err); else item.set[k] = r.v;
+    });
+    out.push(item);
+  });
+  if(bad.length) api.error('tickers: '+bad.join(', ')+' not valid (letters, digits and . ^ = _ - only, up to 24)');
+  if(over) api.error('tickers: only the first '+AGENT_MAX_SCENARIOS+' were used');
+  if(!out.length) return false;
+  agentSet.tickers = out;
+  return { value: out.map(i=>i.ticker).join(', ') };
+}
+function agentPlanKey(name){
+  return function(raw, extra, api){
+    const first = api.items(raw, '\n', '\n')[0];
+    const r = agentSetting(name, first ? first[0] : '', api, '');
+    if(r.err){ api.error(r.err); return false; }
+    agentSet.plan[name] = r.v;
+    return { value: name==='style' ? styleLabel(r.v) : String(r.v) };
+  };
+}
+// The scenarios the link describes, as addSecurity takes them.
+function agentScenarios(items, plan){
+  const count = {};
+  items.forEach(i=>{ count[i.ticker] = (count[i.ticker]||0)+1; });
+  const used = new Set();
+  return items.map(i=>{
+    const c = Object.assign({ type:'ticker', ticker:i.ticker }, i.base, plan, i.set);
+    let base = c.name || (count[i.ticker] > 1 ? i.ticker+' - '+styleLabel(c.style || 'monthly-date') : i.ticker), n = base, k = 2;
+    while(used.has(n.toLowerCase())) n = base+' ('+(k++)+')';
+    used.add(n.toLowerCase());
+    c.name = n;
+    return c;
+  });
+}
+function agentPatch(extra, api){
+  const g = extra.global && typeof extra.global==='object' ? extra.global : (extra.global = {});
+  AGENT_GLOBALS.forEach(k=>{
+    if(!api.given(k)) return;
+    const v = api.field(k);
+    if(v !== undefined && v !== '') g[k] = v;
+  });
+  ['startDate','endDate'].forEach(k=>{
+    if(!api.given(k)) return;
+    const v = String(api.field(k)==null ? '' : api.field(k)).trim(), ok = agentDate(v);
+    if(ok) g[k] = ok; else if(v) api.error(k+' "'+v.slice(0,20)+'" is not a date (use YYYY-MM-DD)');
+  });
+  let secs = Array.isArray(extra.securities) ? extra.securities : [];
+  const planned = Object.keys(agentSet.plan).length > 0, preset = agentSet.qs ? QUICK_START_PRESETS[agentSet.qs] : null;
+  if(preset){
+    // A Quick Start's names say its amount and schedule, so a link that changes them names the scenarios afresh.
+    secs = planned ? agentScenarios(preset.map(d=>{
+      const base = Object.assign({}, d);
+      delete base.type; delete base.ticker; delete base.name;
+      return { ticker:d.ticker, base, set:{} };
+    }), agentSet.plan) : preset.map(d=>Object.assign({}, d));
+  }
+  if(agentSet.tickers) secs = agentScenarios(agentSet.tickers, agentSet.plan);
+  else if(!preset) secs.forEach(s=>Object.assign(s, agentSet.plan));
+  // A weekday is 1 to 7; the editor holds a day of the month otherwise.
+  secs.forEach(s=>{ if(s.style==='weekly-day' && s.dayOrDate > 7){ api.clamp('dayOrDate', String(s.dayOrDate), '7'); s.dayOrDate = 7; } });
+  extra.securities = secs;
+}
+function agentDescribe(key){
+  return AGENT_LABELS[key] ? { label: AGENT_LABELS[key], el: $('scenarioTabs') } : null;
+}
+if(window.SharedAgent){
+  const compact = { tickers: agentTickers };
+  AGENT_PLAN_KEYS.forEach(k=>{ compact[k] = agentPlanKey(k); });
+  SharedAgent.register({ tool:'dcasimulator', preset:agentPreset, compact, patch:agentPatch, describe:agentDescribe });
+}
+/* The Quick Starts as the docs print them (_ref/agent-lib.mjs, dcaQuickStarts):
+   each one's scenarios in the tickers= syntax, from the same data the button uses. */
+window.DCA_QS = {
+  keys: Object.keys(QUICK_START_PRESETS),
+  tickers: key=>(QUICK_START_PRESETS[key]||[]).map(d=>[d.ticker, 'amount='+d.amount, 'style='+d.style,
+    ...(d.dayOrDate!=null ? ['dayOrDate='+d.dayOrDate] : [])].join(':')).join(',')
+};
+
 /* ── Mini cache ──────────────────────────────────────────────────────────
    Restore the user's last scenario set + global settings (built with the same
    shape as the export/import config) so a returning user resumes where they
@@ -3634,7 +3797,9 @@ let restoredFromCache = false;
 persist = Persist.init('dcasimulator', {
   onRestore: function(){ /* importSettings() already rebuilt securities and ran the sim */ },
   extra: {
-    save: buildSettingsObj,
+    // The cache holds the settings without the file's timestamp, so saving twice saves the same bytes
+    // (an AI link keeps the cache it replaces as it was, and Undo gives it back).
+    save: function(){ const o = buildSettingsObj(); delete o.savedAt; return o; },
     restore: function(e){ if(e && e.app === 'dca-single'){ try { importSettings(e); restoredFromCache = true; } catch(_){ restoredFromCache = false; } } }
   }
 });

@@ -1838,6 +1838,386 @@
      "items": 1
     }
    }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "docs example: VOO and QQQ monthly from 2015",
+   "link": "#load&v=1&tickers=VOO,QQQ&why.tickers=The%20two%20funds%20the%20user%20named,%20each%20as%20its%20own%20scenario%20so%20they%20can%20be%20compared&amount=500&why.amount=The%20user%27s%20$500,%20invested%20once%20a%20month&startDate=2015-01-01&why.startDate=The%20user%20said%20from%202015,%20so%20the%20first%20day%20of%20that%20year&note=VOO%20and%20QQQ,%20monthly%20from%202015%20to%20now",
+   "expect": {
+    "startDate": "2015-01-01"
+   },
+   "probe": {
+    "securities": [
+     {
+      "type": "ticker",
+      "ticker": "VOO",
+      "name": "VOO",
+      "amount": 500,
+      "style": "monthly-date",
+      "dayOrDate": 1
+     },
+     {
+      "type": "ticker",
+      "ticker": "QQQ",
+      "name": "QQQ",
+      "amount": 500,
+      "style": "monthly-date",
+      "dayOrDate": 1
+     }
+    ],
+    "global": {
+     "startDate": "2015-01-01"
+    },
+    "shown": {
+     "scenarios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "Quick Start alone: SPY monthly against weekly",
+   "link": "#load&v=1&qs=monthly-weekly",
+   "expect": {},
+   "probe": {
+    "securities": [
+     {
+      "ticker": "SPY",
+      "name": "SPY - $520 / month",
+      "amount": 520,
+      "style": "monthly-date"
+     },
+     {
+      "ticker": "SPY",
+      "name": "SPY - $120 / week",
+      "amount": 120,
+      "style": "weekly-day"
+     }
+    ],
+    "shown": {
+     "scenarios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "tickers: per-scenario settings, monthly against buying the dip",
+   "link": "#load&v=1&tickers=VOO:style=monthly-date,VOO:style=momentum-dip:momentumPct=3&why.tickers=The%20same%20fund%20bought%20on%20a%20fixed%20day%20and%20on%20dips&amount=500&startDate=2013-01-01&endDate=2023-12-31",
+   "expect": {
+    "startDate": "2013-01-01",
+    "endDate": "2023-12-31"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "VOO",
+      "name": "VOO - Monthly (Fixed Date)",
+      "amount": 500,
+      "style": "monthly-date"
+     },
+     {
+      "ticker": "VOO",
+      "name": "VOO - Buy the Dip",
+      "amount": 500,
+      "style": "momentum-dip",
+      "momentumPct": 3
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "plan keys on a Quick Start: amount, yearly increase and day",
+   "link": "#load&v=1&qs=equity-mmf&amount=750&yearlyIncrease=5&dayOrDate=15&why.amount=The%20user%20invests%20750%20a%20month",
+   "expect": {},
+   "probe": {
+    "securities": [
+     {
+      "ticker": "DHHF.AX",
+      "name": "DHHF.AX",
+      "amount": 750,
+      "yearlyIncrease": 5,
+      "dayOrDate": 15
+     },
+     {
+      "ticker": "AAA.AX",
+      "amount": 750,
+      "yearlyIncrease": 5,
+      "dayOrDate": 15
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "settings: dates, Trade at, risk-free rate and currency",
+   "link": "#load&v=1&tickers=AAPL&startDate=2012-01-01&endDate=2022-12-31&execTiming=close&riskFreeRate=3.5&currencySymbol=Rp&amount=1,500,000",
+   "expect": {
+    "startDate": "2012-01-01",
+    "endDate": "2022-12-31",
+    "execTiming": "close",
+    "riskFreeRate": "3.5",
+    "currencySymbol": "Rp"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "AAPL",
+      "amount": 1500000
+     }
+    ],
+    "global": {
+     "currencySymbol": "Rp",
+     "execTiming": "close",
+     "riskFreeRate": 3.5,
+     "startDate": "2012-01-01",
+     "endDate": "2022-12-31"
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "weekday by name, weekly style and a technical style",
+   "link": "#load&v=1&tickers=SPY:style=weekly-day:dayOrDate=Friday:amount=100,QQQ:style=tech-rsi:period=weekly:amount=100&startDate=2016-06-01",
+   "expect": {
+    "startDate": "2016-06-01"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "SPY",
+      "amount": 100,
+      "style": "weekly-day",
+      "dayOrDate": 5
+     },
+     {
+      "ticker": "QQQ",
+      "amount": 100,
+      "style": "tech-rsi",
+      "period": "weekly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "tickers with symbols and a name",
+   "link": "#load&v=1&tickers=%5EGSPC:name=S%26P%20500%20index,BRK-B,AAA.AX:amount=250&startDate=2015-01-01",
+   "expect": {
+    "startDate": "2015-01-01"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "^GSPC",
+      "name": "S&P 500 index"
+     },
+     {
+      "ticker": "BRK-B",
+      "name": "BRK-B"
+     },
+     {
+      "ticker": "AAA.AX",
+      "amount": 250
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "docs example: 60/40 against 80/20, rebalanced quarterly",
+   "link": "#load&v=1&p1=VOO:60,BND:40&why.p1=The%2060/40%20mix%20the%20user%20named,%20VOO%20for%20shares%20and%20BND%20for%20bonds&p2=VOO:80,BND:20&why.p2=The%2080/20%20mix%20the%20user%20named,%20with%20the%20same%20two%20funds&topupAmount=1000&why.topupAmount=The%20user%27s%20$1,000,%20added%20once%20a%20month&topupPeriod=monthly&rebalMethod=constant-weight&why.rebalMethod=Rebalancing%20means%20buying%20and%20selling%20to%20hold%20the%20target%20weights&cwTiming=schedule&rebalPeriod=quarterly&why.rebalPeriod=The%20user%20said%20every%20quarter&startDate=2012-01-01&why.startDate=The%20user%20said%20from%202012,%20so%20the%20first%20day%20of%20that%20year&note=VOO%20and%20BND,%2060/40%20against%2080/20,%20from%202012%20to%20now",
+   "expect": {
+    "topupAmount": "1,000",
+    "topupPeriod": "monthly",
+    "rebalMethod": "constant-weight",
+    "cwTiming": "schedule",
+    "rebalPeriod": "quarterly",
+    "startDate": "2012-01-01"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "name": "VOO 60 / BND 40",
+      "assets": [
+       {
+        "type": "ticker",
+        "ticker": "VOO",
+        "weight": 60
+       },
+       {
+        "type": "ticker",
+        "ticker": "BND",
+        "weight": 40
+       }
+      ],
+      "topupAmount": 1000,
+      "rebalMethod": "constant-weight",
+      "cwTiming": "schedule",
+      "rebalPeriod": "quarterly"
+     },
+     {
+      "name": "VOO 80 / BND 20",
+      "assets": [
+       {
+        "ticker": "VOO",
+        "weight": 80
+       },
+       {
+        "ticker": "BND",
+        "weight": 20
+       }
+      ],
+      "topupAmount": 1000,
+      "rebalMethod": "constant-weight",
+      "cwTiming": "schedule",
+      "rebalPeriod": "quarterly"
+     }
+    ],
+    "shown": {
+     "portfolios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "Quick Start alone: growth against conservative mix",
+   "link": "#load&v=1&qs=alloc",
+   "expect": {
+    "topupAmount": "1,000"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "name": "60/40 (DHHF/AAA)",
+      "topupAmount": 1000
+     },
+     {
+      "name": "80/20 (DHHF/AAA)",
+      "topupAmount": 1000
+     }
+    ],
+    "shown": {
+     "portfolios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "Quick Start with the top-up and dates changed",
+   "link": "#load&v=1&qs=rebal-vs-alloc&topupAmount=2000&startDate=2014-01-01&why.topupAmount=The%20user%20adds%202,000%20a%20month",
+   "expect": {
+    "topupAmount": "2,000",
+    "startDate": "2014-01-01"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "topupAmount": 2000,
+      "rebalMethod": "constant-weight"
+     },
+     {
+      "topupAmount": 2000,
+      "rebalMethod": "constant-allocation"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "p1: three funds with no weights split equally, weekly top-ups",
+   "link": "#load&v=1&p1=VOO,QQQ,BND&topupAmount=500&topupPeriod=weekly",
+   "expect": {
+    "topupAmount": "500",
+    "topupPeriod": "weekly"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "assets": [
+       {
+        "ticker": "VOO",
+        "weight": 33.33
+       },
+       {
+        "ticker": "QQQ",
+        "weight": 33.33
+       },
+       {
+        "ticker": "BND",
+        "weight": 33.34
+       }
+      ],
+      "topupPeriod": "weekly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "portfolio settings: monthly against quarterly rebalancing",
+   "link": "#load&v=1&p1=VOO:50,BND:50,name=Monthly,rebalMethod=constant-weight,cwTiming=schedule,rebalPeriod=monthly&p2=VOO:50,BND:50,name=Quarterly,rebalMethod=constant-weight,cwTiming=schedule,rebalPeriod=quarterly&topupAmount=1000",
+   "expect": {
+    "topupAmount": "1,000"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "name": "Monthly",
+      "rebalPeriod": "monthly",
+      "rebalMethod": "constant-weight",
+      "cwTiming": "schedule"
+     },
+     {
+      "name": "Quarterly",
+      "rebalPeriod": "quarterly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "fees, cash yield, yearly increase and Trade at",
+   "link": "#load&v=1&p1=SPY:70,GOVT:30&topupAmount=3000&topupYearlyInc=5&buyFee=0&sellFee=0.25&rfRate=3&execTiming=close&currencySymbol=%C2%A3",
+   "expect": {
+    "topupAmount": "3,000",
+    "topupYearlyInc": "5",
+    "buyFee": "0",
+    "sellFee": "0.25",
+    "rfRate": "3",
+    "execTiming": "close",
+    "currencySymbol": "£"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "topupAmount": 3000,
+      "topupYearlyInc": 5,
+      "buyFee": 0,
+      "sellFee": 0.25,
+      "rfRate": 3
+     }
+    ],
+    "global": {
+     "execTiming": "close",
+     "currencySymbol": "£"
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "trend following with a 12 month lookback",
+   "link": "#load&v=1&p1=SPY:34,QQQ:33,GLD:33&rebalMethod=dynamic-momentum&lookbackMonths=12&topupAmount=1000",
+   "expect": {
+    "rebalMethod": "dynamic-momentum",
+    "lookbackMonths": "12"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "rebalMethod": "dynamic-momentum"
+     }
+    ]
+   }
   }
  ]
 }

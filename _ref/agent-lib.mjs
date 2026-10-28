@@ -82,6 +82,8 @@ export function buildLink(base, pairs) {
    insertBefore  where to put the section the first time, when the page has no markers yet
                (an id/ page made by _ref/bake-id.mjs gets them from its English page)
    quickStarts optional reader, run IN the page with (lang); default: .quick-start-btn buttons
+   prices      true on a page that loads market data from the Worker (the DCA tools): openPage
+               answers the Worker from a fixed series, so no check depends on the live network
    For _ref/agent-check.mjs:
    probe       optional, run IN the page once a link has applied: the facts a kept link's
                "probe" names (state beyond the fields); default: the scenario's __extra
@@ -117,6 +119,12 @@ export const PAGES = [
     virtualRead: colVirtualRead, virtualWrite: colVirtualWrite },
   { page: 'costofliving-comparator/map', url: '/costofliving-comparator/map/', lang: 'en', notes: 'costofliving-comparator/map/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: colmapQuickStarts },
+  // The DCA tools fetch prices from the market-data Worker, so their pages open with prices: true
+  // (openPage answers the Worker from a fixed series, and the checks never touch the network).
+  { page: 'dcasimulator', url: '/dcasimulator/', lang: 'en', notes: 'dcasimulator/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: dcaQuickStarts, probe: dcaProbe, prices: true },
+  { page: 'dcasimulator/portfolio', url: '/dcasimulator/portfolio/', lang: 'en', notes: 'dcasimulator/portfolio/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: pfQuickStarts, probe: pfProbe, prices: true },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -452,6 +460,92 @@ export async function colmapQuickStarts() {
   };
 }
 
+// DCA Scenario Explorer: the three worked comparisons (window.DCA_QS, dcasimulator/script.js).
+// Each one's scenarios in the tickers= syntax, in parentheses so the docs' figure reader leaves
+// the list alone.
+export function dcaQuickStarts() {
+  const Q = window.DCA_QS;
+  if (!Q) return null;
+  const names = {};
+  document.querySelectorAll('.quick-start-btn[data-preset]').forEach(b => {
+    names[b.getAttribute('data-preset')] = (b.textContent || '').replace(/\s+/g, ' ').trim();
+  });
+  const items = Q.keys.map(key => ({
+    key, title: names[key] || key, values: {},
+    extra: '(tickers=' + Q.tickers(key) + ')', extraLabel: 'Scenarios'
+  }));
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + Q.keys.join(', ') + '. Each lays down a worked comparison on real tickers; tickers= and the plan keys in the link replace its scenarios, and a link sends only what differs from it.']
+  };
+}
+// DCA Scenario Explorer: the saved scenarios (what the link made of them) and the settings beside them.
+export function dcaProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  const g = (body && body.global) || {};
+  return {
+    securities: ((body && body.securities) || []).map(s => ({ type: s.type, ticker: s.ticker, name: s.name, amount: s.amount,
+      yearlyIncrease: s.yearlyIncrease, style: s.style, dayOrDate: s.dayOrDate, period: s.period, momentumPct: s.momentumPct })),
+    global: { currencySymbol: g.currencySymbol, randomSeed: g.randomSeed, riskFreeRate: g.riskFreeRate, execTiming: g.execTiming,
+      startDate: g.startDate, endDate: g.endDate },
+    shown: { scenarios: document.querySelectorAll('#scenarioTabs .sc-tab').length }
+  };
+}
+
+// DCA Portfolio: the three worked comparisons (window.PF_QS, dcasimulator/portfolio/script.js).
+// Each portfolio in the p1= syntax, in parentheses so the docs' figure reader leaves the lists
+// alone; the fields every portfolio of a Quick Start shares go in values, as a link carries them.
+// PF_QS.read lays the Quick Start on the page (no run), so the caller closes the page after.
+export function pfQuickStarts() {
+  const Q = window.PF_QS;
+  if (!Q) return null;
+  const names = {};
+  document.querySelectorAll('.quick-start-btn[data-preset]').forEach(b => {
+    names[b.getAttribute('data-preset')] = (b.textContent || '').replace(/\s+/g, ' ').trim();
+  });
+  const num = n => String(+(+n).toFixed(2));
+  const items = Q.keys.map(key => {
+    const ps = Q.read(key);
+    const order = ['topupAmount', 'topupYearlyInc', 'topupPeriod', 'rebalMethod', 'cwTiming', 'rebalPeriod', 'buyFee', 'sellFee', 'rfRate'];
+    // Only the fields the Quick Start sets differently from a new portfolio matter; the rest are the page's own.
+    const dflt = { topupAmount: 5000, topupYearlyInc: 0, topupPeriod: 'monthly', rebalMethod: 'towards-weight', cwTiming: 'at-topup',
+      rebalPeriod: 'quarterly', buyFee: 0.1, sellFee: 0.1, rfRate: 0 };
+    const uses = (f, p) => f !== 'cwTiming' && f !== 'rebalPeriod' ? true : p.fields.rebalMethod === 'constant-weight' &&
+      (f === 'cwTiming' || p.fields.cwTiming === 'schedule');
+    const shared = {}, own = ps.map(() => []);
+    order.forEach(f => {
+      const vals = ps.map(p => p.fields[f]);
+      const set = ps.some((p, i) => uses(f, p) && String(vals[i]) !== String(dflt[f]));
+      if (!set) return;
+      const text = v => typeof v === 'number' ? num(v) : String(v);
+      if (vals.every(v => String(v) === String(vals[0])) && ps.every(p => uses(f, p))) shared[f] = text(vals[0]);
+      else ps.forEach((p, i) => { if (uses(f, p)) own[i].push(f + '=' + text(vals[i])); });
+    });
+    const lists = ps.map((p, i) => 'p' + (i + 1) + '=' + [...p.assets.map(a => a[0] + ':' + num(a[1])),
+      'name=' + p.name.replace(/[:,]/g, ' '), ...own[i]].join(','));
+    return { key, title: names[key] || key, values: shared, extra: lists.map(l => '(' + l + ')').join(' '), extraLabel: 'Portfolios' };
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + Q.keys.join(', ') + '. Each lays down a worked comparison of two portfolios on real tickers; p1, p2 ... in the link replace its portfolios, and a link sends only what differs from it.']
+  };
+}
+// DCA Portfolio: the saved portfolios (what the link made of them) and the settings beside them.
+export function pfProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  const g = (body && body.global) || {};
+  return {
+    portfolios: ((body && body.portfolios) || []).map(p => ({ name: p.name, assets: (p.assets || []).map(a => ({ type: a.type, ticker: a.ticker, weight: a.weight })),
+      topupAmount: p.topup && p.topup.amount, topupYearlyInc: p.topup && p.topup.yearlyIncrease, topupPeriod: p.topupSched && p.topupSched.period,
+      rfRate: p.rf && p.rf.rate, rebalMethod: p.rebal && p.rebal.method, cwTiming: p.rebal && p.rebal.cwTiming,
+      rebalPeriod: p.rebalSched && p.rebalSched.period, buyFee: p.rebal && p.rebal.buyFee, sellFee: p.rebal && p.rebal.sellFee })),
+    global: { currencySymbol: g.currencySymbol, randomSeed: g.randomSeed, execTiming: g.execTiming, startDate: g.startDate, endDate: g.endDate },
+    shown: { portfolios: document.querySelectorAll('#portfolioTabs .pf-tab').length }
+  };
+}
+
 /* ── Static server and pages ──────────────────────────────────────────────── */
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm',
   '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png',
@@ -476,6 +570,28 @@ export async function launch() {
   return pw.chromium.launch();
 }
 
+/* The market-data Worker's answer for one ticker: daily bars from 2010 to today inside
+   [start, end], a fixed walk seeded by the ticker's letters (the same idea as synthSeries in
+   share-check.mjs), with open, high and low as the Worker sends them. */
+export function workerSeries(ticker, start, end) {
+  const dates = [], prices = [], opens = [], highs = [], lows = [];
+  const today = new Date().toISOString().slice(0, 10);
+  let p = 100, s = 7 + [...ticker].reduce((a, c) => a + c.charCodeAt(0), 0) * 13, d = new Date(Date.UTC(2010, 0, 1));
+  const rnd = () => { s = (s * 1103515245 + 12345) % 2147483648; return s / 2147483648; };
+  while (true) {
+    d.setUTCDate(d.getUTCDate() + 1);
+    const iso = d.toISOString().slice(0, 10), dow = d.getUTCDay();
+    if (iso > today) break;
+    if (dow === 0 || dow === 6) continue;
+    const o = p * (1 + (rnd() - 0.5) * 0.01);
+    p = Math.max(1, p * (1 + 0.0004 + (rnd() - 0.5) * 0.02));
+    const hi = Math.max(o, p) * (1 + rnd() * 0.008), lo = Math.min(o, p) * (1 - rnd() * 0.008);
+    if (iso < start || iso > end) continue;
+    dates.push(iso); prices.push(Math.fround(p)); opens.push(Math.fround(o)); highs.push(Math.fround(hi)); lows.push(Math.fround(lo));
+  }
+  return { dates, prices, opens, highs, lows, source: 'yahoo', kind: 'stock', basis: 'utc' };
+}
+
 /* A page on empty storage, as a first visit sees it, with nothing off the repo's origin:
    the chart libraries become a do-nothing stand-in (so the tool's set-up runs to the end,
    the same on every machine, with or without _ref/.libcache), analytics and ads are
@@ -484,7 +600,7 @@ export async function launch() {
    consoleErrors what the page logs as an error (but a request off the repo's origin, which
    this page drops on purpose). ctx is the page's own context: another page in it shares its
    storage. */
-export async function openPage(browser, origin, path, { viewport = { width: 1280, height: 900 } } = {}) {
+export async function openPage(browser, origin, path, { viewport = { width: 1280, height: 900 }, prices = false } = {}) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1 });
   await ctx.addInitScript(() => {
     const stub = () => {
@@ -508,6 +624,14 @@ export async function openPage(browser, origin, path, { viewport = { width: 1280
   await ctx.route('**/*', route => {
     const url = route.request().url();
     if (url.startsWith(origin)) return route.continue();
+    // A page with prices: true (the DCA tools) gets the market-data Worker's answer from a fixed
+    // series, so no check depends on the live network or on a ticker existing.
+    if (prices && /yfinance|workers\.dev/.test(url)) {
+      const u = new URL(url), start = u.searchParams.get('start') || '', end = u.searchParams.get('end') || '9';
+      const results = {};
+      (u.searchParams.get('tickers') || '').split(',').filter(Boolean).forEach(t => { results[t] = workerSeries(t, start, end); });
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results }) });
+    }
     const type = route.request().resourceType();
     if (type === 'script') return route.fulfill({ status: 200, contentType: 'text/javascript', body: '' });
     if (type === 'stylesheet') return route.fulfill({ status: 200, contentType: 'text/css', body: '' });
