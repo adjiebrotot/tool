@@ -1395,6 +1395,10 @@ const LIVE = {
   // What a reader actually does: attach the case table, press Download, unpack the .zip and run
   // the script inside it. The file is not put next to the script by the harness - it travels in
   // the package, because the workflow carries it (wf.files, as the page saves it).
+  //
+  // It is called live_cases_in.csv on purpose: the casetable run above leaves a file of that name
+  // in the folder the runs are started from, so this also proves the script reads the one that
+  // came with it rather than the one that happens to share its name (base.py _rt_find).
   packaged: {
     project: N9, timeout: 900, pack: true,
     wf: (() => {

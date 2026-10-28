@@ -92,7 +92,9 @@ README.txt     what is in it and how to run it
 ```
 
 The data files sit beside the script rather than in a folder, because `read_table` looks for a
-plain name next to the script: unpack it anywhere and it runs. `js/core/zip.js` writes the archive
+plain name **next to the script first** and only then in the folder the run was started from
+(`base.py` `_rt_find`): unpack the package anywhere, run it from anywhere, and it reads the file
+that travelled with it even if another of that name sits in the working directory. `js/core/zip.js` writes the archive
 with the browser's own `CompressionStream` (and stores the files uncompressed where a browser has
 none, which is still a valid `.zip`).
 

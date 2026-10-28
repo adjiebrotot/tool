@@ -818,9 +818,9 @@ def read_table(name, path, sheet="", layout="rows", header=1, decimal_comma=Fals
     holds the names, 1 for the first. Numbers become numbers (decimal_comma: 1,5 is 1.5), empty
     cells None, other text stays text (a code such as 007 stays text). Rows with no value are
     left out. The table is filled afresh and counts as saved, so the end of the run does not
-    write it to the run folder again. A name without a folder is looked for in the current
-    folder, then next to the script. Returns the table; stops the workflow with a plain message
-    when the file cannot be read."""
+    write it to the run folder again. A name without a folder is looked for next to the script
+    first (a study package is unpacked as one folder), then in the current folder. Returns the
+    table; stops the workflow with a plain message when the file cannot be read."""
     where = _rt_find(path)
     ext = os.path.splitext(where)[1].lower()
     if ext == ".xls":
@@ -873,10 +873,13 @@ def _rt_find(path):
     if os.path.isabs(p):
         tried.append(p)
     else:
-        tried.append(os.path.abspath(p))
+        # Next to the script first. A study package is unpacked as one folder and may be run from
+        # anywhere, so the file that travelled with the script must win over one that happens to
+        # have the same name in the folder the run was started from; that folder is still tried.
         here = globals().get("__file__") or (sys.argv[0] if sys.argv and sys.argv[0] else "")
         if here:
             tried.append(os.path.join(os.path.dirname(os.path.abspath(here)), p))
+        tried.append(os.path.abspath(p))
     for t in tried:
         if os.path.isfile(t):
             return t
