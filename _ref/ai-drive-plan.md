@@ -349,8 +349,8 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | 5 | Pisah vs Gabung (+ `id/`) | 4 | done |
 | 6 | Cost of Living Comparator + Map | 5 | done |
 | 7 | Valuate Everything | 5 | done |
-| 8 | DCA Scenario Explorer + Portfolio | 6 | |
-| 9 | Rent vs Own Sensitivity | 6 | |
+| 8 | DCA Scenario Explorer + Portfolio | 6 | done |
+| 9 | Rent vs Own Sensitivity | 6 | done |
 | 10 | Load Flow Simulator | 7 | |
 | 11 | ED/UC Simulator | 7 | |
 | 12 | Capacity Expansion Planner | 8 | |
