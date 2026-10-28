@@ -6,14 +6,17 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
   </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>
   <script src="../consent.js" defer></script>
 
 <meta charset="UTF-8"/>
@@ -116,9 +119,10 @@
       <li>Your figures, text and files are worked on in your own browser. They are not sent to me and I do not store them.</li>
       <li>A few tools look things up on other services (map search, exchange rates, market prices). Only what the lookup needs is sent, as listed below.</li>
       <li>The site uses Google Analytics to count visits. I see totals, not who you are. In the EEA, the UK and Switzerland, its cookies are only set if you accept them.</li>
-      <li>There are no ads and no accounts, and I do not sell your data. If you email me, I get your email address and message.</li>
+      <li>The site and the blog show Google AdSense ads, which may use cookies. In the EEA, the UK and Switzerland, ads are only personalised if you agree in Google's consent message.</li>
+      <li>There are no accounts, and I do not sell your data. If you email me, I get your email address and message.</li>
     </ul>
-    <p class="policy-updated">Last updated: 22 October 2026</p>
+    <p class="policy-updated">Last updated: 28 October 2026</p>
   </section>
 
   <section class="card policy">
@@ -149,6 +153,8 @@
       <dd>cdnjs (Cloudflare) and jsDelivr. The site's own fonts come from GitHub Pages with everything else; Canvas Builder also loads Google Fonts, for the Lora and Caveat fonts you can pick for a canvas.</dd>
       <dt>Google Analytics</dt>
       <dd>Records the pages you view, how long you stay, the site that sent you, your device and browser type, and your approximate location. I use it to see which tools are used and what needs work. Google says Google Analytics 4 does not store IP addresses. It does not run on embedded charts. See <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">how Google uses this information</a>.</dd>
+      <dt>Google AdSense</dt>
+      <dd>Shows the ads on this site and on the blog (blog.adjiebrotots.com). Google and its ad partners may use cookies or similar identifiers to show ads based on your visits to this and other sites, to limit how often you see an ad, and to measure ads and stop fraud. In the EEA, the UK and Switzerland, Google asks before any ad is personalised; until you agree, the ads you see are not based on your past browsing. Ads do not run inside embedded charts or a guide's demo. See <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">how Google uses cookies in advertising</a>.</dd>
       <dt>Map (Load Flow Simulator)</dt>
       <dd>Map tiles from OpenStreetMap, EOX and Open Infrastructure Map. Text you type in the place search is sent to OpenStreetMap's Nominatim service.</dd>
       <dt>Exchange rates</dt>
@@ -172,19 +178,21 @@
       <dd>Set by the DCA tools to count today's price requests from this browser. It expires at the end of the day.</dd>
       <dt>Your cookie choice</dt>
       <dd>Kept in your browser's local storage (<code>abt-consent</code>) so you are not asked again.</dd>
+      <dt>Advertising cookies</dt>
+      <dd>Google AdSense and its ad partners may set cookies such as <code>__gads</code>, <code>__gpi</code> and <code>IDE</code> to show, limit and measure ads. In the EEA, the UK and Switzerland, Google's consent message records your choice in its own cookie.</dd>
     </dl>
-    <p>The site shows no ads today. If I add ads (for example Google AdSense), I will update this page first, including how advertising cookies work and how to opt out.</p>
   </section>
 
   <section class="card policy">
     <h2>Your choices and rights</h2>
     <ul>
       <li>Change your Analytics cookie choice at any time: <button type="button" class="btn-theme" onclick="window.AbtConsent &amp;&amp; AbtConsent.open()">Cookie settings</button></li>
+      <li>Turn off personalised ads in <a href="https://myadcenter.google.com/" target="_blank" rel="noopener">Google's My Ad Center</a>, or opt out of many ad networks at <a href="https://optout.aboutads.info/" target="_blank" rel="noopener">aboutads.info</a> or <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener">youronlinechoices.eu</a>. You will still see ads, just not ones based on your browsing.</li>
       <li>Block or delete cookies in your browser. The tools still work.</li>
       <li>Install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics opt-out add-on</a> to stop Analytics on every site.</li>
       <li>Clear this site's data in your browser to remove everything it stored on your device.</li>
     </ul>
-    <p>Depending on where you live (for example under Australian privacy law, the GDPR or a US state privacy law), you may have the right to ask what personal information is held about you, and to have it corrected or deleted, or to object to its use. Where the GDPR or UK GDPR applies, Analytics cookies are only used with your consent, which you can withdraw with the button above. I hold no accounts or profiles, so most such data sits with Google, GitHub or Cloudflare, but email me and I will help with anything I can reach. You can also complain to your local privacy regulator; in Australia that is the <a href="https://www.oaic.gov.au/" target="_blank" rel="noopener">Office of the Australian Information Commissioner</a>.</p>
+    <p>Depending on where you live (for example under Australian privacy law, the GDPR or a US state privacy law), you may have the right to ask what personal information is held about you, and to have it corrected or deleted, or to object to its use. Where the GDPR or UK GDPR applies, Analytics cookies and personalised ads are only used with your consent, which you can withdraw with the button above (Analytics) or through Google's consent message (ads). I hold no accounts or profiles, so most such data sits with Google, GitHub or Cloudflare, but email me and I will help with anything I can reach. You can also complain to your local privacy regulator; in Australia that is the <a href="https://www.oaic.gov.au/" target="_blank" rel="noopener">Office of the Australian Information Commissioner</a>.</p>
     <p>The tools are not aimed at children under 13, and I do not knowingly collect their personal information.</p>
   </section>
 

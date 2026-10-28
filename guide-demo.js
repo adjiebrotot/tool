@@ -10,7 +10,8 @@
      its frame's data-storage (the theme, the tour already seen, no consent question), so the
      tool never opens the reader's saved work and never writes over it, their tour, theme or
      consent. A guide checks localStorage.__demo before it plays, and plays nothing without it.
-   - Analytics: the frame is not a visit (the guide page around it was).
+   - Analytics and ads: the frame is not a visit (the guide page around it was), so it sends no
+     Analytics hit and requests no ads.
    - The guide page: focus() takes the keyboard from the page only when the guide asks
      (window.__demoFocus, a field it types into) or a reader is already in the frame, and it
      and scrollIntoView() move only the frame, so the guide a reader is reading never jumps.
@@ -23,6 +24,7 @@
   if (window.self === window.top || !/[?&]demo(?:&|$)/.test(location.search)) return;
   window.ABT_DEMO = true;
   window['ga-disable-G-VYTV157ST0'] = true;
+  (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;
 
   var data = Object.create(null);
   try {
