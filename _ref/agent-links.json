@@ -600,6 +600,221 @@
     "savings": "60,000",
     "lmiCap": true
    }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "docs example: 35 in Perth, 180,000 invested, saves 3,000 a month",
+   "link": "#load&v=1&qs=moderate&ageNow=35&assets=180000&savings=3000&savingsPeriod=monthly&expense=60000&why.expense=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20round%20figure%20for%20one%20person%20living%20in%20Perth&note=Perth,%20October%202026,%20saving%203,000%20a%20month",
+   "expect": {
+    "ageNow": "35",
+    "assets": "180,000",
+    "savings": "3,000",
+    "savingsPeriod": "monthly",
+    "expense": "60,000"
+   },
+   "probe": {
+    "savingsMode": "savings",
+    "expenseMode": "simple",
+    "incomeMode": "simple"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=frugal with the user's own figures, stages kept",
+   "link": "#load&v=1&qs=frugal&ageNow=29&savings=85000&expense=36000&assets=25000&why.savings=The%20user%27s%20take-home%20pay%20of%20$85,000%20a%20year,%20which%20the%20Frugal%20Living%20Quick%20Start%20also%20counts%20as%20net%20income&why.expense=$3,000%20a%20month%20the%20user%20said%20they%20spend,%20as%20a%20yearly%20figure&note=Sydney,%20October%202026,%20lean%20saver",
+   "expect": {
+    "ageNow": "29",
+    "savings": "85,000",
+    "expense": "36,000",
+    "assets": "25,000",
+    "ageDie": "92"
+   },
+   "probe": {
+    "savingsMode": "income",
+    "expenseMode": "detailed",
+    "incomeMode": "detailed",
+    "stages": [
+     {
+      "name": "Hustle age",
+      "from": 28,
+      "to": 33,
+      "amount": 80,
+      "period": "pct"
+     },
+     {
+      "name": "Relax age",
+      "from": 40,
+      "to": 55,
+      "amount": 120,
+      "period": "pct"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "stages: two kids at home, switches Money out to Detailed",
+   "link": "#load&v=1&qs=moderate&ageNow=34&assets=90000&savings=4000&savingsPeriod=monthly&expense=70000&stages=1st%20kid:from=36:to=38:amount=125,2nd%20kid:from=38:to=56:amount=150,1st%20kid%20leaves:from=56:to=58:amount=125&why.stages=The%20couple%20plan%20two%20children,%20three%20and%20five%20years%20out,%20so%20spending%20steps%20up%20while%20they%20are%20at%20home&note=Family%20of%20four,%20October%202026",
+   "expect": {
+    "ageNow": "34",
+    "assets": "90,000",
+    "savings": "4,000",
+    "savingsPeriod": "monthly",
+    "expense": "70,000"
+   },
+   "probe": {
+    "expenseMode": "detailed",
+    "incomeMode": "simple",
+    "stages": [
+     {
+      "name": "1st kid",
+      "from": 36,
+      "to": 38,
+      "amount": 125,
+      "period": "pct"
+     },
+     {
+      "name": "2nd kid",
+      "from": 38,
+      "to": 56,
+      "amount": 150,
+      "period": "pct"
+     },
+     {
+      "name": "1st kid leaves",
+      "from": 56,
+      "to": 58,
+      "amount": 125,
+      "period": "pct"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "inStages and savingsMode: study years, then a pension kept after work",
+   "link": "#load&v=1&qs=moderate&ageNow=31&savingsMode=income&savings=95000&expense=48000&inStages=Part-time%20study:from=31:to=33:amount=30000:growth=0,Age%20pension:from=67:to=120:amount=29000:growth=2.5:keeps=true&why.inStages=Two%20years%20of%20part-time%20study%20at%2030,000,%20then%20the%20age%20pension%20from%2067,%20still%20paid%20after%20work%20stops&why.savingsMode=The%20user%20gave%20their%20take-home%20pay,%20not%20an%20amount%20saved",
+   "expect": {
+    "ageNow": "31",
+    "savings": "95,000",
+    "expense": "48,000"
+   },
+   "probe": {
+    "savingsMode": "income",
+    "expenseMode": "simple",
+    "incomeMode": "detailed",
+    "inStages": [
+     {
+      "name": "Part-time study",
+      "from": 31,
+      "to": 33,
+      "amount": 30000,
+      "period": "yearly",
+      "growth": 0,
+      "keeps": false
+     },
+     {
+      "name": "Age pension",
+      "from": 67,
+      "to": 120,
+      "amount": 29000,
+      "period": "yearly",
+      "growth": 2.5,
+      "keeps": true
+     }
+    ]
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=latestart: pension paid monthly, in the Simple Money in view",
+   "link": "#load&v=1&qs=latestart&ageNow=58&assets=420000&savings=30000&expense=52000&pensionAmount=2400&pensionPeriod=monthly&pensionStartAge=67&why.pensionAmount=The%20pension%20the%20user%20expects,%202,400%20a%20month",
+   "expect": {
+    "ageNow": "58",
+    "assets": "420,000",
+    "savings": "30,000",
+    "expense": "52,000",
+    "pensionOn": true,
+    "pensionAmount": "2,400",
+    "pensionPeriod": "monthly",
+    "pensionStartAge": "67"
+   },
+   "probe": {
+    "incomeMode": "simple"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "no Quick Start: pounds, a bond preset fills the return, retirement age named",
+   "link": "#load&v=1&currency=%C2%A3&ageNow=40&ageDie=88&expense=3000&expensePeriod=monthly&savings=1500&savingsPeriod=monthly&assets=250000&assetPreset=bonds&ageRetire=55&why.assetPreset=The%20user%20holds%20mostly%20government%20bonds&why.ageRetire=The%20age%20the%20user%20asked%20about",
+   "expect": {
+    "currency": "£",
+    "ageNow": "40",
+    "ageDie": "88",
+    "expense": "3,000",
+    "expensePeriod": "monthly",
+    "savings": "1,500",
+    "savingsPeriod": "monthly",
+    "assets": "250,000",
+    "assetPreset": "bonds",
+    "ret": "5",
+    "std": "6",
+    "ageRetire": "55"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=fatfire with another preset and the Die Rich goal",
+   "link": "#load&v=1&qs=fatfire&assetPreset=asx&ageNow=41&assets=650000&savings=210000&expense=95000&why.assetPreset=The%20user%20invests%20mostly%20in%20Australian%20shares",
+   "expect": {
+    "assetPreset": "asx",
+    "ageNow": "41",
+    "assets": "650,000",
+    "savings": "210,000",
+    "expense": "95,000",
+    "ret": "9.5",
+    "std": "16",
+    "ffmode": "rich"
+   },
+   "probe": {
+    "savingsMode": "income"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=legacy: Money out back to Simple, a smaller bequest",
+   "link": "#load&v=1&qs=legacy&expenseMode=simple&legacy=400000&retireExpense=90&why.expenseMode=The%20user%20does%20not%20want%20the%20kids%20as%20stages&why.legacy=The%20amount%20the%20user%20wants%20to%20leave,%20in%20today%27s%20money",
+   "expect": {
+    "retireExpense": "90",
+    "legacy": "400,000",
+    "ffmode": "legacy"
+   },
+   "probe": {
+    "expenseMode": "simple",
+    "stages": [
+     {
+      "name": "1st kid",
+      "from": 34,
+      "to": 36,
+      "amount": 125,
+      "period": "pct"
+     },
+     {
+      "name": "2nd kid",
+      "from": 36,
+      "to": 54,
+      "amount": 150,
+      "period": "pct"
+     },
+     {
+      "name": "1st kid leaves",
+      "from": 54,
+      "to": 56,
+      "amount": 125,
+      "period": "pct"
+     }
+    ]
+   }
   }
  ]
 }

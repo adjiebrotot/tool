@@ -97,6 +97,8 @@ export const PAGES = [
     insertBefore: '<section class="layout">', quickStarts: bcQuickStarts },
   { page: 'financingvscash', url: '/financingvscash/', lang: 'en', notes: 'financingvscash/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: fvcQuickStarts, probe: fvcProbe },
+  { page: 'financialfreedom', url: '/financialfreedom/', lang: 'en', notes: 'financialfreedom/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: ffQuickStarts },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -125,14 +127,15 @@ export function rvoProbe() {
 
 /* ── Quick Start readers (run in the page) ────────────────────────────────────
    Contract: return null when the page has none, else
-     { groups: [{ key?, alias?, title, note?, items: [{ key, title, values?, extra? }] }],
+     { groups: [{ key?, alias?, title, note?, items: [{ key, title, values?, extra?, extraLabel? }] }],
        short?: [line, ...] }
    groups   items under a heading (Rent vs Own: a city); a group's own key, when given, is a
             valid qs too and loads the item named by alias
    values   the form values the Quick Start writes, keyed by field key, as a link carries
             them; the docs print what each group shares once, and agent-doc resolves the
             example's {key} placeholders from them
-   extra    a line for state outside the fields (a rate schedule)
+   extra    a line for state outside the fields (a rate schedule); printed after extraLabel
+            (default "Loan")
    short    the lines the HTML section shows in place of the full list (default: every key) */
 export function defaultQuickStarts() {
   const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
@@ -223,6 +226,48 @@ export function rvoQuickStarts(lang) {
       'Cities: ' + D.cities.map(c => c.key).join(', ') + '.',
       'Homes: ' + D.types.map(t => t.key).join(', ') + '. Not every city has every home; qs=<city> alone loads its 2-bedroom apartment (or its first home).',
     ]
+  };
+}
+
+// Financial Freedom: each Quick Start button is pressed and the form read, so the docs print
+// what the plan really sets: every field that differs from the page's own start, the three
+// switches (savingsMode, expenseMode, incomeMode) and the life-stage rows in the stages= and
+// inStages= syntax (window.FF_QS, financialfreedom/script.js). ageRetire is left out: the tool
+// opens on the age the plan is free, which is its answer. incomeNowName is a fixed label.
+export function ffQuickStarts() {
+  const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
+  const Q = window.FF_QS;
+  if (!btns.length || !Q || !window.SharedAgent) return null;
+  const fields = SharedAgent.fields().filter(f => f.key !== 'ageRetire' && f.key !== 'incomeNowName');
+  const snap = () => {
+    const o = {};
+    fields.forEach(f => {
+      if (f.type === 'c') { o[f.key] = !!f.el.checked; return; }
+      if (f.type === 'r') { const r = f.els.filter(x => x.checked)[0]; o[f.key] = r ? r.value : ''; return; }
+      const v = f.el.value, n = Number(String(v).replace(/[,$\s]/g, ''));
+      o[f.key] = f.el.hasAttribute('data-min') && v.trim() !== '' && Number.isFinite(n) ? String(n) : v;
+    });
+    return o;
+  };
+  const start = snap();
+  const items = [];
+  btns.forEach(b => {
+    const key = b.getAttribute('data-preset');
+    if (items.some(it => it.key === key)) return;
+    b.click();
+    const now = snap(), values = {}, r = Q.rows(key);
+    Object.keys(now).forEach(k => { if (now[k] !== start[k]) values[k] = now[k]; });
+    ['savingsMode', 'incomeMode', 'expenseMode'].forEach(k => { if (r[k] !== 'savings' && r[k] !== 'simple') values[k] = r[k]; });
+    // In parentheses, so the docs' figure reader leaves the lists alone.
+    const extra = [];
+    if (r.stages.length) extra.push('Money out (stages=' + r.stages.join(',') + ')');
+    if (r.inStages.length) extra.push('Money in (inStages=' + r.inStages.join(',') + ')');
+    // The button's label only: its tooltip talks about the answer, which a chatbot must not.
+    items.push({ key, title: b.textContent.replace(/\s+/g, ' ').trim(), values, extra: extra.join('; '), extraLabel: 'Life stages' });
+  });
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each fills every tab with a worked plan; a link sends only what differs from it.']
   };
 }
 

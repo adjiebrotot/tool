@@ -272,13 +272,13 @@ function qsLines(M) {
       if (g.key && g.alias) head += `. qs=${g.key} alone loads ${g.alias}`;
       out.push(head + '.');
       if (groupShared.length) out.push('  Sets: ' + kv(g.items[0].values, groupShared));
-      if (groupExtra) out.push('  Loan: ' + groupExtra + '.');
+      if (groupExtra) out.push('  ' + (g.items[0].extraLabel || 'Loan') + ': ' + groupExtra + '.');
     }
     for (const it of g.items) {
       const own = valued ? keysOf(it).filter(k => !shared.includes(k) && !groupShared.includes(k)) : [];
       let line = (g.title || g.key ? '  ' : '') + it.key + ': ' + it.title + '.';
       if (own.length) line += ' ' + kv(it.values, own);
-      if (it.extra && !groupExtra) line += ' Loan: ' + it.extra + '.';
+      if (it.extra && !groupExtra) line += ' ' + (it.extraLabel || 'Loan') + ': ' + it.extra + '.';
       out.push(line);
     }
   }
