@@ -119,6 +119,14 @@ export const PAGES = [
     virtualRead: colVirtualRead, virtualWrite: colVirtualWrite },
   { page: 'costofliving-comparator/map', url: '/costofliving-comparator/map/', lang: 'en', notes: 'costofliving-comparator/map/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: colmapQuickStarts },
+  // The sensitivity table has one form field (the currency symbol): the figures are compact keys, six of which
+  // stand in as number boxes for the checks' hand edits (virtual, see agent-check.mjs).
+  { page: 'rentvsownhouse/sensitivity', url: '/rentvsownhouse/sensitivity/', lang: 'en', notes: 'rentvsownhouse/sensitivity/agent-notes.md',
+    insertBefore: '<!-- CONTROLS BAR -->', quickStarts: rvosQuickStarts, probe: rvosProbe,
+    virtual: rvosVirtual(), virtualRead: rvosVirtualRead, virtualWrite: rvosVirtualWrite },
+  { page: 'rentvsownhouse/sensitivity/id', url: '/rentvsownhouse/sensitivity/id/', lang: 'id', notes: 'rentvsownhouse/sensitivity/agent-notes.md',
+    insertBefore: '<!-- CONTROLS BAR -->', quickStarts: rvosQuickStarts, probe: rvosProbe,
+    virtual: rvosVirtual(), virtualRead: rvosVirtualRead, virtualWrite: rvosVirtualWrite },
   // The DCA tools fetch prices from the market-data Worker, so their pages open with prices: true
   // (openPage answers the Worker from a fixed series, and the checks never touch the network).
   { page: 'dcasimulator', url: '/dcasimulator/', lang: 'en', notes: 'dcasimulator/agent-notes.md',
@@ -436,6 +444,73 @@ export async function colQuickStarts() {
 // The Comparator's checks type into the page the way a reader would (window.__COL_AGENT).
 export function colVirtualRead(key) { return window.__COL_AGENT ? window.__COL_AGENT.get(key) : ''; }
 export function colVirtualWrite([key, value]) { window.__COL_AGENT.set(key, value); }
+
+// Rent vs Own Sensitivity: the main page's city Quick Starts (window.RVO_QS), each opening as the table's one
+// column. The values are only the figures this page takes (window.__RVOS_AGENT.keys), and the currency symbol
+// is under this page's own key, currencySelect.
+export function rvosQuickStarts(lang) {
+  const Q = window.RVO_QS, A = window.__RVOS_AGENT;
+  if (!Q || !A) return null;
+  const D = Q.data, keys = new Set(A.keys);
+  const fields = Q.FIELDS.filter(f => f === 'currencySymbol' || (f !== 'initialCash' && keys.has(f)));
+  const pct = n => String(+(+n).toFixed(3));
+  const schedule = rp => rp.map((p, i) => (p.type === 'fixed' ? 'fixed ' + pct(p.rate) + '%'
+      : 'floating ' + pct(p.rateMin) + ' to ' + pct(p.rateMax) + '%') +
+    ' to year ' + p.toYear).join(', then ');
+  const groups = D.cities.map(c => {
+    const homes = Q.homes(c.key);
+    return {
+      key: c.key,
+      alias: Q.id(c.key, Q.defaultType(c.key)),
+      title: c.city + ', ' + Q.countryText(c, lang) + ' (' + c.currencyCode + ', figures as of ' + c.asOf + ')',
+      items: homes.map(t => {
+        const p = Q.preset(Q.id(c.key, t));
+        const values = {};
+        fields.forEach(f => { values[f === 'currencySymbol' ? 'currencySelect' : f] = p[f]; });
+        return {
+          key: p.id,
+          title: Q.typeText(t, 'name', lang),
+          values,
+          extra: p.ratePeriods ? 'a staged loan, so it opens in the Detailed mortgage mode with the rate schedule ' +
+            schedule(p.ratePeriods) + ' (mortgageRate, its average, is then not used; naming mortgageRate in a link goes back to one fixed rate)' : ''
+        };
+      })
+    };
+  });
+  const months = { '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May', '06': 'Jun',
+    '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec' };
+  const asOf = /^(\d{4})-(\d{2})/.exec(D.asOf || '');
+  return {
+    groups,
+    short: [
+      'qs=<city>/<home> starts the table from a typical home in that city as its one column, with its local price, rent, loan, setup and running costs, growth and shared figures' +
+        (asOf ? ' (figures as of ' + months[asOf[2]] + ' ' + asOf[1] + ')' : '') + '.',
+      'Cities: ' + D.cities.map(c => c.key).join(', ') + '.',
+      'Homes: ' + D.types.map(t => t.key).join(', ') + '. Not every city has every home; qs=<city> alone loads its 2-bedroom apartment (or its first home).',
+    ]
+  };
+}
+// Rent vs Own Sensitivity: the saved __extra (the columns, the shared figures, the modes) and how many columns the page draws.
+export function rvosProbe() {
+  const prov = window.SharedShare && typeof SharedShare.provider === 'function' ? SharedShare.provider() : null;
+  const body = prov ? prov.save() : null;
+  return Object.assign({}, body && body.state && body.state.__extra, {
+    shown: { columns: document.querySelectorAll('.scen-name-input').length }
+  });
+}
+// The checks type into the first column the way a reader would (window.__RVOS_AGENT).
+export function rvosVirtual() {
+  return [
+    { key: 'propertyPrice', min: 50000, max: 1000000000000, value: '800000' },
+    { key: 'mortgageRate', min: 0, max: 25, value: '6' },
+    { key: 'houseGrowth', min: -10, max: 25, value: '5' },
+    { key: 'rentAmount', min: 0, max: 1000000000000, value: '2800' },
+    { key: 'downPaymentPct', min: 0, max: 100, value: '20' },
+    { key: 'sellingCostPct', min: 0, max: 15, value: '2.5' }
+  ];
+}
+export function rvosVirtualRead(key) { return window.__RVOS_AGENT ? window.__RVOS_AGENT.get(key) : ''; }
+export function rvosVirtualWrite([key, value]) { window.__RVOS_AGENT.set(key, value); }
 
 // Cost of Living Map: the six home cities (window.COLMAP_QS, costofliving-comparator/map/script.js).
 export async function colmapQuickStarts() {

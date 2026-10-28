@@ -58,6 +58,8 @@ Pages with an agent.txt:
 - Valuate Everything: https://tool.adjiebrotots.com/valuateeverything/agent.txt
 - Cost of Living Comparator: https://tool.adjiebrotots.com/costofliving-comparator/agent.txt
 - Cost of Living Comparator: Map View: https://tool.adjiebrotots.com/costofliving-comparator/map/agent.txt
+- Rent vs Own: Sensitivity Tool: https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/agent.txt
+- Sewa vs Beli: Analisis Sensitivitas (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.txt
 - DCA Scenario Explorer: https://tool.adjiebrotots.com/dcasimulator/agent.txt
 - Portfolio DCA Simulator: https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.txt
 <!-- agent:end -->

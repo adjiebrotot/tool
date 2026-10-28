@@ -2218,6 +2218,297 @@
      }
     ]
    }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "docs example: Melbourne house, mortgage rate and house price growth varied",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&setupCost=6&why.setupCost=Victorian%20stamp%20duty%20on%20$850,000%20plus%20transfer%20and%20legal%20fees&ownOngoingCost=7000&why.ownOngoingCost=Rates,%20insurance%20and%20upkeep%20on%20an%20$850,000%20house&vary=mortgageRate:5.4:7.4,houseGrowth:2:6&why.vary=The%20user%20named%20the%20mortgage%20rate%20and%20house%20price%20growth,%20so%20each%20is%20tried%20a%20little%20either%20side%20of%20the%20base%20case&note=Melbourne,%20October%202026,%202-bedroom%20house",
+   "expect": {
+    "propertyPrice": "850,000",
+    "rentAmount": "620"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "Melbourne · 2BR house",
+      "propertyPrice": 850000,
+      "mortgageRate": 6.4,
+      "houseGrowth": 4,
+      "rentAmount": 620
+     },
+     {
+      "name": "Mortgage rate 5.4%",
+      "mortgageRate": 5.4,
+      "houseGrowth": 4
+     },
+     {
+      "name": "Mortgage rate 7.4%",
+      "mortgageRate": 7.4
+     },
+     {
+      "name": "House price growth 2%",
+      "mortgageRate": 6.4,
+      "houseGrowth": 2
+     },
+     {
+      "name": "House price growth 6%",
+      "houseGrowth": 6
+     }
+    ],
+    "modes": {
+     "mortgageMode": "simple"
+    },
+    "shown": {
+     "columns": 5
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "a staged-loan Quick Start keeps its schedule when another figure varies",
+   "link": "#load&v=1&qs=auckland/apt-2br&vary=houseGrowth:2:6&note=Auckland,%20October%202026",
+   "expect": {},
+   "probe": {
+    "modes": {
+     "mortgageMode": "detailed"
+    },
+    "scenarios": [
+     {
+      "name": "Auckland · 2BR apartment"
+     },
+     {
+      "houseGrowth": 2
+     },
+     {
+      "houseGrowth": 6
+     }
+    ],
+    "shown": {
+     "columns": 3
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "varying the mortgage rate on a staged-loan Quick Start goes back to one fixed rate",
+   "link": "#load&v=1&qs=auckland/apt-2br&vary=mortgageRate:4:6&why.vary=Rate%20scenarios%20either%20side%20of%20the%20going%20rate",
+   "expect": {},
+   "probe": {
+    "modes": {
+     "mortgageMode": "simple"
+    },
+    "scenarios": [
+     {
+      "ratePeriods": null
+     },
+     {
+      "mortgageRate": 4
+     },
+     {
+      "mortgageRate": 6
+     }
+    ],
+    "shown": {
+     "columns": 3
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "shared figures, the metric and the year, with rent inflation varied",
+   "link": "#load&v=1&qs=sydney/apt-2br&riskFreeRate=4.2&horizon=20&metric=cash&year=15&vary=rentInflation:2:5&why.riskFreeRate=Sydney%20term%20deposit%20rate,%20October%202026",
+   "expect": {},
+   "probe": {
+    "shared": {
+     "riskFreeRate": 4.2,
+     "horizon": 20
+    },
+    "view": {
+     "metric": "cash",
+     "year": 15
+    },
+    "scenarios": [
+     {},
+     {
+      "rentInflation": 2
+     },
+     {
+      "rentInflation": 5
+     }
+    ],
+    "shown": {
+     "columns": 3
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "a choice varied: principal and interest against interest only",
+   "link": "#load&v=1&qs=perth/house-2br&vary=mortgageType:pi:io&baseName=Perth%20house",
+   "expect": {},
+   "probe": {
+    "modes": {
+     "mortgageMode": "detailed"
+    },
+    "scenarios": [
+     {
+      "name": "Perth house",
+      "mortgageType": "pi"
+     },
+     {
+      "mortgageType": "io"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "json: two homes side by side, shared figures and the view",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22qs%22:%22melbourne/house-2br%22,%22propertyPrice%22:850000%7D,%7B%22qs%22:%22sydney/apt-2br%22,%22name%22:%22Sydney%20flat%22%7D%5D,%22shared%22:%7B%22horizon%22:25%7D,%22view%22:%7B%22metric%22:%22cash%22,%22year%22:10%7D%7D&why.json=The%20user%20compares%20a%20Melbourne%20house%20with%20a%20Sydney%20flat",
+   "expect": {},
+   "probe": {
+    "shared": {
+     "horizon": 25
+    },
+    "view": {
+     "metric": "cash",
+     "year": 10
+    },
+    "scenarios": [
+     {
+      "name": "Melbourne · 2BR house",
+      "propertyPrice": 850000
+     },
+     {
+      "name": "Sydney flat"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "json: a column with its own rate schedule and setup cost rows",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22name%22:%22Perth%22,%22propertyPrice%22:700000,%22ratePeriods%22:%5B%7B%22toYear%22:3,%22rate%22:5.89%7D,%7B%22toYear%22:30,%22type%22:%22floating%22,%22rateMin%22:6.5,%22rateMax%22:7.5%7D%5D,%22ownSetupCosts%22:%5B%7B%22amount%22:45000,%22basis%22:%22fixed%22%7D,%7B%22amount%22:1.5,%22basis%22:%22pct%22%7D%5D%7D%5D%7D",
+   "expect": {
+    "propertyPrice": "700,000"
+   },
+   "probe": {
+    "modes": {
+     "mortgageMode": "detailed",
+     "ownCostsMode": "detailed"
+    },
+    "scenarios": [
+     {
+      "name": "Perth",
+      "ratePeriods": [
+       {
+        "toYear": 3,
+        "type": "fixed",
+        "rate": 5.89
+       },
+       {
+        "type": "floating",
+        "rateMin": 6.5,
+        "rateMax": 7.5
+       }
+      ],
+      "ownSetupCosts": [
+       {
+        "amount": 45000,
+        "basis": "fixed"
+       },
+       {
+        "amount": 1.5,
+        "basis": "pct"
+       }
+      ]
+     }
+    ],
+    "shown": {
+     "columns": 1
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "json: two currencies turn multi-currency on",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22qs%22:%22melbourne/house-2br%22%7D,%7B%22qs%22:%22singapore/apt-2br%22%7D%5D%7D",
+   "expect": {},
+   "probe": {
+    "fx": {
+     "on": true,
+     "base": "AUD"
+    },
+    "scenarios": [
+     {
+      "currency": "AUD"
+     },
+     {
+      "currency": "SGD"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/id/",
+   "name": "Jakarta apartemen: bunga KPR dan kenaikan harga divariasikan",
+   "link": "#load&v=1&qs=jakarta/apt-2br&propertyPrice=1800000000&rentAmount=7000000&rentFreq=monthly&vary=mortgageRate:8:11,houseGrowth:3:7&why.vary=Pengguna%20menyebut%20bunga%20KPR%20dan%20kenaikan%20harga,%20jadi%20masing-masing%20dicoba%20sedikit%20di%20bawah%20dan%20di%20atas&note=Jakarta,%20Oktober%202026",
+   "expect": {
+    "propertyPrice": "1,800,000,000",
+    "rentAmount": "7,000,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "propertyPrice": 1800000000,
+      "rentFreq": "monthly"
+     },
+     {
+      "mortgageRate": 8
+     },
+     {
+      "mortgageRate": 11
+     },
+     {
+      "houseGrowth": 3
+     },
+     {
+      "houseGrowth": 7
+     }
+    ],
+    "shown": {
+     "columns": 5
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/id/",
+   "name": "Dua rumah berdampingan dengan json",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22qs%22:%22jakarta/apt-2br%22%7D,%7B%22qs%22:%22bali/house-2br%22,%22name%22:%22Rumah%20Bali%22%7D%5D%7D",
+   "expect": {},
+   "probe": {
+    "scenarios": [
+     {
+      "currency": "IDR"
+     },
+     {
+      "name": "Rumah Bali",
+      "currency": "IDR"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
   }
  ]
 }

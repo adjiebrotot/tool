@@ -894,9 +894,11 @@ function setPageSymbol(sym){
   if(sel && sym && [...sel.options].some(o=>o.value===sym)) sel.value = sym;
   scenarios.forEach(s=>{ s.currencySymbol = pageSym(); });
 }
-function applyCityPreset(si, sid){
+// A Quick Start as a column: the preset's figures over the defaults, named after
+// it and in its city's currency. Changes nothing on the page (an AI link reads it too).
+function presetColumn(sid){
   const p = QS && QS.preset(sid);
-  if(!p || !scenarios[si]) return;
+  if(!p) return null;
   const city = QS.city(p.cityKey) || {};
   const code = city.currencyCode || SharedCurrency.toCode(p.currencySymbol, fxs.base);
   const sc = cloneScenario(DEFAULT_SCENARIO);
@@ -904,6 +906,12 @@ function applyCityPreset(si, sid){
   sc.name = QS.label(sid, lang);
   sc.currency = code;
   sc.fxRate = null;
+  return {p, code, sc};
+}
+function applyCityPreset(si, sid){
+  const col = presetColumn(sid);
+  if(!col || !scenarios[si]) return;
+  const {p, code, sc} = col;
   /* A staged loan (promo or fixed, then floating) is only said by the
      Detailed rate schedule, so it switches the page's mortgage mode, which is
      shared by every column: the others are seeded from their own single
@@ -2869,6 +2877,443 @@ function syncControls(){
     if(on){ baseSel.innerHTML = currencyOptions(fxs.base); baseSel.value = fxs.base; }
   }
 }
+
+/* ── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<city>[/<home>]&<figure>=<value>&vary=<figure>:<a>:<b>,... opens the
+   table a chatbot set up. The page has one form field of its own (the currency
+   symbol); the table is JS state, so the keys below are the adapter's. Each
+   writes into the same saved shape a file loads (the extra of Persist.init
+   above), so the cache, a file and a link take one path:
+     qs=<city>[/<home>]   the Quick Start, as the table's one column (the main
+                          page's Quick Start sets its whole form the same way)
+     <figure>=<value>     a column figure (PARAMS) sets the base column (the
+                          first); a shared one (SHARED_KEYS) the figure every
+                          column shares
+     vary=<figure>:<a>:<b>,...   after the base column, one column per value:
+                          the base with that one figure changed
+     baseName, metric, year
+     json                 the saved shape, partly: { scenarios: [{qs?, name?,
+                          figures, lists, currency, fxRate}], shared, modes, fx, view }
+   Values are checked as typed ones are (the range, the options) and a figure
+   outside it is pulled in and said. Nothing here computes a figure. */
+const AGENT_MAX_COLUMNS = 12, AGENT_MAX_VALUES = 6, AGENT_MAX_ITEMS = 50;
+const AGENT_TEXT = {
+  en: { notFigure: 'not a figure of the table', shared: 'it is one figure for every column, so it cannot vary',
+        columns: n => 'only the first ' + n + ' columns were used', values: n => 'only the first ' + n + ' values were used',
+        items: n => 'only the first ' + n + ' were used', noQs: 'is not a Quick Start', expected: 'expected ',
+        json: 'Table settings (json)', vary: 'Columns that vary one figure', baseName: 'Name of the first column',
+        on: 'on', off: 'off', cols: n => n + (n === 1 ? ' column' : ' columns') },
+  id: { notFigure: 'bukan angka di tabel', shared: 'satu angka untuk semua kolom, jadi tidak bisa divariasikan',
+        columns: n => 'hanya ' + n + ' kolom pertama yang dipakai', values: n => 'hanya ' + n + ' nilai pertama yang dipakai',
+        items: n => 'hanya ' + n + ' pertama yang dipakai', noQs: 'bukan Quick Start', expected: 'seharusnya ',
+        json: 'Pengaturan tabel (json)', vary: 'Kolom yang memvariasikan satu angka', baseName: 'Nama kolom pertama',
+        on: 'aktif', off: 'nonaktif', cols: n => n + ' kolom' }
+};
+const agentT = () => AGENT_TEXT[lang] || AGENT_TEXT.en;
+const agentOwn = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+// What this link said, kept until patch() lays it over the saved shape.
+const agentIn = { base: {}, shared: {}, vary: [], name: null, metric: null, year: null, json: null, table: false };
+const agentRes = {};   // the banner's value for each key, which patch() makes fuller
+const AGENT_YES = /^(true|1|on|yes)$/i, AGENT_NO = /^(false|0|off|no)$/i;
+function agentDec(s){
+  s = String(s == null ? '' : s).replace(/\+/g, ' ');
+  try { return decodeURIComponent(s); }
+  catch(e){ return s.replace(/(?:%[0-9A-Fa-f]{2})+/g, m => { try { return decodeURIComponent(m); } catch(e2){ return m; } }); }
+}
+const agentClip = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n || 40);
+// A column's name, as plain text on one line.
+const agentLabel = v => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+const agentOptText = (o, sym) => { const l = T(o.lk); return String(typeof l === 'function' ? l(sym) : l); };
+// A figure pulled inside [lo, hi], said in the banner when it moves.
+function agentWithin(api, key, given, n, lo, hi){
+  const u = Math.min(hi, Math.max(lo, n));
+  if(u !== n) api.clamp(key, String(given), String(u));
+  return u;
+}
+/* One figure of PARAMS from a link's text or a json value, the way the field takes
+   a typed one: a number inside its range (a percentage to two decimals, a whole
+   number rounded), an option by its value or the words it shows, a box on or off.
+   Returns the value, or undefined once the problem is said. */
+function agentFigure(p, given, api, where, sym){
+  const bad = why => { api.error(where + ' "' + agentClip(given) + '": ' + why); };
+  if(p.type === 'select'){
+    const s = String(given).trim().toLowerCase();
+    const o = p.options.find(o => o.v.toLowerCase() === s || agentOptText(o, sym || pageSym()).toLowerCase() === s);
+    if(!o) return bad('not one of ' + p.options.map(o => o.v).join(', '));
+    return o.v;
+  }
+  if(p.type === 'boolean'){
+    if(given === true || (typeof given === 'string' && AGENT_YES.test(given.trim()))) return true;
+    if(given === false || (typeof given === 'string' && AGENT_NO.test(given.trim()))) return false;
+    return bad('not true or false');
+  }
+  let n = typeof given === 'number' ? given : api.number(given);
+  if(!isFinite(n)) return bad('not a number');
+  if(p.type === 'integer') n = Math.round(n);
+  if(p.type === 'percent') n = Math.round(n * 100) / 100;
+  return agentWithin(api, p.key, given, n, p.min != null ? p.min : -Infinity, p.max != null ? p.max : 1e12);
+}
+// The unit a figure wears in a column (paramAffix, with the symbol the link names).
+function agentAffix(p, sc, sym){
+  if(p.basis){
+    const b = COST_BASIS[p.basis];
+    if(sc[b.type] === 'pct') return {pre: '', suf: T(b.pctKey)};
+    return {pre: sym, suf: b.freq ? T(PER_SUFFIX[sc[b.freq]] || 'uPerYr') : ''};
+  }
+  if(p.type === 'currency'){
+    const per = p.per || (p.freqKey ? sc[p.freqKey] : null);
+    return {pre: sym, suf: per ? T(PER_SUFFIX[per] || 'uPerMo') : ''};
+  }
+  return {pre: '', suf: p.suf ? T(p.suf) : ''};
+}
+// A figure as the banner and a column's name say it: "$850,000", "6.2 %/yr", "a week".
+function agentShow(p, v, sc, sym){
+  if(p.type === 'select'){ const o = p.options.find(o => o.v === v); return o ? agentOptText(o, sym) : String(v); }
+  if(p.type === 'boolean') return v ? agentT().on : agentT().off;
+  if(p.auto && !(v > 0)) return T('phAuto');
+  const a = agentAffix(p, sc || {}, sym);
+  const num = p.type === 'currency' ? addCommas(v) : String(+Number(v).toFixed(2));
+  return (a.pre ? a.pre + (a.pre.length > 1 ? ' ' : '') : '') + num + (a.suf ? ' ' + a.suf : '');
+}
+// <figure>=<value>: the base column's figure, or the one every column shares.
+function agentFlat(p){
+  return function(raw, extra, api){
+    const v = agentFigure(p, agentDec(raw), api, p.key, api.field('currencySelect'));
+    if(v === undefined) return false;
+    if(p.shared) agentIn.shared[p.key] = v;
+    else { agentIn.base[p.key] = v; agentIn.table = true; }
+    return agentRes[p.key] = {value: agentShow(p, v, {}, api.field('currencySelect') || pageSym())};
+  };
+}
+function agentName(raw, extra, api){
+  const n = agentLabel(agentDec(raw));
+  if(!n) return false;
+  agentIn.name = n;
+  agentIn.table = true;
+  return {value: n};
+}
+function agentMetric(raw, extra, api){
+  const norm = s => String(s).toLowerCase().replace(/[\s_.-]/g, '');
+  const s = norm(agentDec(raw));
+  const hit = METRICS.find(([m, lk]) => norm(m) === s || norm(T(lk)) === s || norm(T(lk + 'Short')) === s || norm(T(lk)).replace(/liquid|accumulated/, '') === s);
+  if(!hit){ api.error('metric "' + agentClip(agentDec(raw)) + '": not one of ' + METRICS.map(m => m[0]).join(', ')); return false; }
+  agentIn.metric = hit[0];
+  return {value: T(hit[1])};
+}
+function agentYear(raw, extra, api){
+  const n = api.number(agentDec(raw));
+  if(!isFinite(n)){ api.error('year "' + agentClip(agentDec(raw)) + '": not a number'); return false; }
+  agentIn.year = {given: agentDec(raw), n: Math.round(n)};
+  return agentRes.year = {value: String(Math.round(n))};
+}
+// vary=<figure>:<a>:<b>,<figure>:<a>:<b>: one more column per value.
+function agentVary(raw, extra, api){
+  const t = agentT(), out = [];
+  api.items(raw).forEach(parts => {
+    const key = parts[0], p = agentOwn(PARAM_MAP, key) ? PARAM_MAP[key] : null;
+    if(!p){ api.error('vary "' + agentClip(key) + '": ' + t.notFigure); return; }
+    if(p.shared){ api.error('vary ' + key + ': ' + t.shared); return; }
+    const vals = [];
+    parts.slice(1).forEach(x => {
+      const v = agentFigure(p, x, api, 'vary ' + key);
+      if(v !== undefined && !vals.includes(v)) vals.push(v);
+    });
+    if(vals.length > AGENT_MAX_VALUES){ api.error('vary ' + key + ': ' + t.values(AGENT_MAX_VALUES)); vals.length = AGENT_MAX_VALUES; }
+    if(vals.length) out.push({p, vals});
+  });
+  if(!out.length) return false;
+  agentIn.vary = agentIn.vary.concat(out);
+  agentIn.table = true;
+  return agentRes.vary = {value: ''};
+}
+
+/* json=: the saved shape, partly. Each part is checked as its compact key is, so a
+   bad entry is said and skipped and nothing throws. */
+const AGENT_LISTS = {ratePeriods: 'rate', ownSetupCosts: 'setup', ownOngoingCosts: 'ongoing', rentOngoingCosts: 'ongoing'};
+function agentList(k, v, api, where){
+  const t = agentT();
+  if(!Array.isArray(v)){ api.error(where + ': ' + t.expected + '[ ]'); return null; }
+  if(v.length > AGENT_MAX_ITEMS) api.error(where + ': ' + t.items(AGENT_MAX_ITEMS));
+  const out = [];
+  v.slice(0, AGENT_MAX_ITEMS).forEach(o => {
+    let it = null;
+    const num = (x, lo, hi) => { const n = typeof x === 'number' ? x : (x == null ? NaN : api.number(x)); return isFinite(n) ? agentWithin(api, k, x, n, lo, hi) : NaN; };
+    if(o && typeof o === 'object' && !Array.isArray(o)){
+      if(k === 'ratePeriods'){
+        const to = num(o.toYear, 1, 50), floating = o.type === 'floating';
+        let lo = num(floating ? o.rateMin : o.rate, 0, 40), hi = floating ? num(o.rateMax, 0, 40) : lo;
+        if(isFinite(to) && isFinite(lo) && isFinite(hi)){
+          if(lo > hi) [lo, hi] = [hi, lo];
+          it = {toYear: Math.round(to), type: floating ? 'floating' : 'fixed', rate: floating ? (lo + hi) / 2 : lo, rateMin: lo, rateMax: hi};
+        }
+      } else {
+        const amt = num(o.amount, 0, 1e12), kinds = AGENT_LISTS[k] === 'setup' ? ['fixed', 'pct'] : ['yearly', 'monthly', 'weekly', 'pct'];
+        const basis = o.basis == null ? kinds[0] : String(o.basis).trim().toLowerCase();
+        if(isFinite(amt) && kinds.includes(basis)){
+          it = {amount: amt, basis};
+          if(AGENT_LISTS[k] === 'ongoing' && o.inflation != null){
+            const g = num(o.inflation, 0, 30);
+            if(isFinite(g)) it.inflation = g; else it = null;
+          }
+        }
+      }
+    }
+    if(it) out.push(it); else api.error(where + ': ' + agentClip(JSON.stringify(o), 60));
+  });
+  return out.length ? out : null;
+}
+// One json column; null when it is not an object.
+function agentColumn(o, i, api){
+  const t = agentT(), at = 'json.scenarios[' + i + ']', out = {set: {}};
+  if(!o || typeof o !== 'object' || Array.isArray(o)){ api.error(at + ': ' + t.expected + '{ }'); return null; }
+  Object.keys(o).forEach(k => {
+    const v = o[k], where = at + '.' + k;
+    if(k === 'qs'){
+      const sid = String(v).trim().toLowerCase();
+      if(QS && QS.preset(sid)) out.qs = sid; else api.error(where + ' "' + agentClip(v) + '": ' + t.noQs);
+    } else if(k === 'name'){
+      const n = agentLabel(v);
+      if(n) out.set.name = n;
+    } else if(agentOwn(PARAM_MAP, k) && !PARAM_MAP[k].shared){
+      const x = agentFigure(PARAM_MAP[k], v, api, where);
+      if(x !== undefined) out.set[k] = x;
+    } else if(agentOwn(AGENT_LISTS, k)){
+      const list = agentList(k, v, api, where);
+      if(list) out.set[k] = list;
+    } else if(k === 'currency'){
+      const c = String(v).trim().toUpperCase();
+      if(/^[A-Z]{3}$/.test(c)) out.set.currency = c; else api.error(where + ' "' + agentClip(v) + '": ' + t.expected + 'ISO');
+    } else if(k === 'fxRate'){
+      const n = typeof v === 'number' ? v : api.number(v);
+      if(isFinite(n) && n > 0) out.set.fxRate = n; else api.error(where + ' "' + agentClip(v) + '": ' + t.expected + '> 0');
+    } else api.unknown(where);
+  });
+  return out;
+}
+function agentJson(obj, extra, api){
+  const t = agentT();
+  if(!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
+  const J = {scenarios: null, shared: {}, modes: {}, fx: null, view: {}}, done = [];
+  Object.keys(obj).forEach(k => {
+    const v = obj[k], isObj = v && typeof v === 'object' && !Array.isArray(v);
+    if(k === 'scenarios'){
+      if(!Array.isArray(v)){ api.error('json.scenarios: ' + t.expected + '[ ]'); return; }
+      if(v.length > AGENT_MAX_COLUMNS) api.error('json.scenarios: ' + t.columns(AGENT_MAX_COLUMNS));
+      const cols = v.slice(0, AGENT_MAX_COLUMNS).map((o, i) => agentColumn(o, i, api)).filter(Boolean);
+      if(cols.length){ J.scenarios = cols; done.push(k); }
+    } else if(k === 'shared'){
+      if(!isObj){ api.error('json.shared: ' + t.expected + '{ }'); return; }
+      Object.keys(v).forEach(s => {
+        if(!SHARED_KEYS.includes(s)){ api.unknown('json.shared.' + s); return; }
+        const x = agentFigure(PARAM_MAP[s], v[s], api, 'json.shared.' + s);
+        if(x !== undefined) J.shared[s] = x;
+      });
+      done.push(k);
+    } else if(k === 'modes'){
+      if(!isObj){ api.error('json.modes: ' + t.expected + '{ }'); return; }
+      Object.keys(v).forEach(m => {
+        if(!/^(mortgage|ownCosts|rentCosts)Mode$/.test(m)) api.unknown('json.modes.' + m);
+        else if(v[m] === 'simple' || v[m] === 'detailed') J.modes[m] = v[m];
+        else api.error('json.modes.' + m + ': simple | detailed');
+      });
+      done.push(k);
+    } else if(k === 'fx'){
+      if(!isObj){ api.error('json.fx: ' + t.expected + '{ }'); return; }
+      const f = {};
+      Object.keys(v).forEach(x => {
+        const w = v[x];
+        if(x === 'on'){ if(typeof w === 'boolean') f.on = w; else api.error('json.fx.on: true | false'); }
+        else if(x === 'base'){ const c = String(w).trim().toUpperCase(); if(/^[A-Z]{3}$/.test(c)) f.base = c; else api.error('json.fx.base: ' + t.expected + 'ISO'); }
+        else if(x === 'path'){ if(FX_PATHS.includes(w)) f.path = w; else api.error('json.fx.path: ' + FX_PATHS.join(' | ')); }
+        else if(x === 'rfr' || x === 'trend'){
+          const lim = x === 'rfr' ? [PARAM_MAP.riskFreeRate.min, PARAM_MAP.riskFreeRate.max] : [TREND_MIN, TREND_MAX];
+          if(!w || typeof w !== 'object' || Array.isArray(w)){ api.error('json.fx.' + x + ': ' + t.expected + '{ }'); return; }
+          f[x] = {};
+          Object.keys(w).forEach(c => {
+            const n = typeof w[c] === 'number' ? w[c] : api.number(w[c]);
+            if(/^[A-Z]{3}$/.test(c) && isFinite(n)) f[x][c] = agentWithin(api, 'json.fx.' + x + '.' + c, w[c], n, lim[0], lim[1]);
+            else api.error('json.fx.' + x + '.' + c + ': ' + t.expected + 'ISO: number');
+          });
+        } else api.unknown('json.fx.' + x);
+      });
+      J.fx = f;
+      done.push(k);
+    } else if(k === 'view'){
+      if(!isObj){ api.error('json.view: ' + t.expected + '{ }'); return; }
+      Object.keys(v).forEach(x => {
+        if(x === 'metric'){ if(METRICS.some(m => m[0] === v[x])) J.view.metric = v[x]; else api.error('json.view.metric: ' + METRICS.map(m => m[0]).join(' | ')); }
+        else if(x === 'year'){ const n = typeof v[x] === 'number' ? v[x] : api.number(v[x]); if(isFinite(n)) J.view.year = {given: v[x], n: Math.round(n)}; else api.error('json.view.year: ' + t.expected + '#'); }
+        else api.unknown('json.view.' + x);
+      });
+      done.push(k);
+    } else api.unknown('json.' + k);
+  });
+  if(!done.length) return false;
+  agentIn.json = J;
+  if(J.scenarios) agentIn.table = true;
+  return agentRes.json = {value: done.join(', ')};
+}
+
+// A Detailed section needs its list in every column, seeded from the simple figures as the page's own switch does.
+function agentSeed(cols, modes){
+  if(modes.mortgageMode === 'detailed') cols.forEach(seedRatePeriods);
+  if(modes.ownCostsMode === 'detailed') cols.forEach(seedOwnCostItems);
+  if(modes.rentCostsMode === 'detailed') cols.forEach(seedRentCostItems);
+}
+/* After every key is read: the base column, then the columns json names, then one per
+   vary value, with the modes that go with them, laid over the saved shape. The table is
+   rebuilt only when the link named a column figure, a vary, a name or json scenarios; a
+   link naming only shared figures, the metric or the year leaves the columns as they are. */
+function agentPatch(extra, api){
+  const A = agentIn, J = A.json, t = agentT(), none = {scenarios: null, shared: {}, modes: {}, fx: null, view: {}};
+  const j = J || none;
+  const sym = api.field('currencySelect') || pageSym();
+  const modes = Object.assign({mortgageMode: 'simple', ownCostsMode: 'simple', rentCostsMode: 'simple'}, extra.modes, j.modes);
+  const shared = Object.assign(sharedFrom(extra.shared), j.shared, A.shared);
+  if(Object.keys(j.shared).length || Object.keys(A.shared).length) extra.shared = shared;
+  if(A.table){
+    const start = extra.scenarios && extra.scenarios[0] ? extra.scenarios[0] : {};
+    const base = Object.assign(cloneScenario(DEFAULT_SCENARIO), cloneScenario(start), A.base);
+    if(A.name) base.name = A.name;
+    let cols = [], preset = null;
+    if(j.scenarios) j.scenarios.forEach((o, i) => {
+      const from = o.qs ? presetColumn(o.qs) : null;
+      const sc = Object.assign(from ? from.sc : cloneScenario(base), cloneScenario(o.set));
+      if(!o.set.name && !from && i > 0) sc.name = T('scenPlaceholder') + ' ' + (i + 1);
+      if(from && from.p.mortgageMode === 'detailed' && !agentOwn(j.modes, 'mortgageMode')) modes.mortgageMode = 'detailed';
+      if(from && !preset) preset = from;
+      cols.push(sc);
+    });
+    else cols = [base];
+    if(A.name) cols[0].name = A.name;
+    // One column per vary value: the first column with that one figure changed.
+    const parent = cols[0], varied = [];
+    let over = false;
+    A.vary.forEach(v => v.vals.forEach(val => {
+      if(parent[v.p.key] === val) return;
+      if(cols.length + varied.length >= AGENT_MAX_COLUMNS){ over = true; return; }
+      const sc = cloneScenario(parent);
+      sc[v.p.key] = val;
+      sc.name = agentLabel(T(v.p.labelKey).replace(/\s*\(.*\)\s*$/, '') + ' ' + (v.p.type === 'percent' ? +val.toFixed(2) + '%' : agentShow(v.p, val, sc, sym)));
+      varied.push(sc);
+    }));
+    if(over) api.error('vary: ' + t.columns(AGENT_MAX_COLUMNS));
+    const all = cols.concat(varied);
+    /* The loan: its type and the cost it counts only act in the Detailed mortgage, and a
+       staged schedule ignores the one rate. A link naming either of those switches the
+       mortgage to Detailed on one fixed period per column at its own rate; one naming the
+       rate alone, over a staged Quick Start, goes back to the one rate. */
+    const sets = key => (j.scenarios || []).some(o => o.set[key] !== undefined);
+    const named = key => A.base[key] !== undefined || A.vary.some(v => v.p.key === key) || sets(key);
+    // A list in json switches its section to Detailed, as the compact lists of the main page do.
+    [['mortgageMode', ['ratePeriods']], ['ownCostsMode', ['ownSetupCosts', 'ownOngoingCosts']], ['rentCostsMode', ['rentOngoingCosts']]].forEach(([m, keys]) => {
+      if(!agentOwn(j.modes, m) && keys.some(sets)) modes[m] = 'detailed';
+    });
+    const schedule = sets('ratePeriods') || agentOwn(j.modes, 'mortgageMode');
+    if(!schedule){
+      if(named('mortgageType') || named('costInterestOnly')){
+        modes.mortgageMode = 'detailed';
+        if(named('mortgageRate')) all.forEach(c => { c.ratePeriods = null; });
+      } else if(named('mortgageRate')){
+        modes.mortgageMode = 'simple';
+        all.forEach(c => { c.ratePeriods = null; });
+      }
+    }
+    agentSeed(all, modes);
+    all.forEach(c => {
+      [['ownOngoingCosts', 'ownOngoingInflation'], ['rentOngoingCosts', 'rentOngoingInflation']].forEach(([list, g]) => {
+        (c[list] || []).forEach(it => { if(it && it.inflation === undefined && it.basis !== 'pct') it.inflation = c[g] ?? 0; });
+      });
+      if(api.given('currencySelect')) c.currencySymbol = sym;
+    });
+    extra.scenarios = all;
+    // Columns in more than one currency are only comparable in the multi-currency mode.
+    const codes = [...new Set(all.map(c => c.currency).filter(Boolean))];
+    if(j.fx || codes.length > 1){
+      const old = extra.fx || {};
+      const fx = Object.assign({}, old, j.fx || {});
+      fx.rfr = Object.assign({}, old.rfr, j.fx && j.fx.rfr);
+      fx.trend = Object.assign({}, old.trend, j.fx && j.fx.trend);
+      if(!(j.fx && j.fx.on !== undefined) && codes.length > 1) fx.on = true;
+      if(!(j.fx && j.fx.base) && all[0].currency) fx.base = all[0].currency;
+      if(preset && !Number.isFinite(Number(fx.rfr[preset.code])) && Number.isFinite(Number(preset.p.riskFreeRate))) fx.rfr[preset.code] = Number(preset.p.riskFreeRate);
+      extra.fx = fx;
+    }
+    // The banner says each figure in the unit its column gives it.
+    Object.keys(A.base).forEach(k => { if(agentRes[k]) agentRes[k].value = agentShow(PARAM_MAP[k], A.base[k], base, sym); });
+    if(agentRes.vary) agentRes.vary.value = A.vary.map(v => T(v.p.labelKey) + ' ' + v.vals.map(x => agentShow(v.p, x, parent, sym)).join(', ')).join('; ');
+    if(agentRes.json && j.scenarios) agentRes.json.value += ' (' + t.cols(all.length) + ')';
+  } else {
+    // Only modes or the exchange-rate settings: the columns stay, with their lists seeded for a Detailed section.
+    if(Object.keys(j.modes).length && Array.isArray(extra.scenarios)) agentSeed(extra.scenarios, modes);
+    if(j.fx){
+      const old = extra.fx || {};
+      extra.fx = Object.assign({}, old, j.fx, {rfr: Object.assign({}, old.rfr, j.fx.rfr), trend: Object.assign({}, old.trend, j.fx.trend)});
+    }
+  }
+  if(A.table || Object.keys(j.modes).length) extra.modes = modes;
+  // The view: the metric and the year the results read, one for every column.
+  const view = Object.assign({}, extra.view);
+  const metricNow = A.metric || j.view.metric, yearNow = A.year || j.view.year;
+  if(metricNow) view.metric = metricNow;
+  if(yearNow){
+    const H = Math.max(1, Math.round(Number(shared.horizon) || 30));
+    view.year = Math.min(H, Math.max(1, yearNow.n));
+    if(view.year !== yearNow.n) api.clamp('year', String(yearNow.given), String(view.year));
+    if(agentRes.year) agentRes.year.value = String(view.year);
+  }
+  if(metricNow || yearNow) extra.view = view;
+}
+function agentDescribe(key){
+  const t = agentT(), wrap = document.getElementById('tableWrap');
+  if(key === 'json') return {label: t.json, el: wrap};
+  if(key === 'vary') return {label: t.vary, el: wrap};
+  if(key === 'baseName') return {label: t.baseName, el: document.querySelector('.scen-name-input[data-si="0"]')};
+  if(key === 'metric') return {label: T('labelMetric').replace(/:$/, ''), el: document.getElementById('metricGroup')};
+  if(key === 'year') return {label: T('labelAtYear').replace(/:$/, ''), el: document.getElementById('yearInput')};
+  const p = agentOwn(PARAM_MAP, key) ? PARAM_MAP[key] : null;
+  if(!p) return null;
+  return {label: T(p.labelKey), el: document.querySelector(p.shared ? '.shared-input[data-key="' + key + '"]' : '.param-input[data-si="0"][data-key="' + key + '"]')};
+}
+const AGENT_COMPACT = {vary: agentVary, baseName: agentName, metric: agentMetric, year: agentYear};
+PARAMS.forEach(p => { AGENT_COMPACT[p.key] = agentFlat(p); });
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'rentvsownhouse-sensitivity',
+  /* A city opens its usual home as the table's one column, as the main page's Quick
+     Start sets its whole form: the shared figures too, since nothing else is there. */
+  preset: function(key){
+    const sid = String(key || '').trim().toLowerCase();
+    if(!QS || !QS.preset(sid)) return false;
+    scenarios = [cloneScenario(DEFAULT_SCENARIO)];
+    shared = sharedFrom(null);
+    fxs = JSON.parse(JSON.stringify(DEFAULT_FX));
+    modes = {mortgageMode: 'simple', ownCostsMode: 'simple', rentCostsMode: 'simple'};
+    applyCityPreset(0, sid);
+    return QS.label(sid, lang);
+  },
+  compact: AGENT_COMPACT,
+  json: agentJson,
+  patch: agentPatch,
+  describe: agentDescribe
+});
+/* What the docs and checks need (_ref/agent-lib.mjs): the figures a Quick Start sets, and a
+   way to type into the first column the way a reader does. */
+window.__RVOS_AGENT = {
+  keys: PARAMS.map(p => p.key),
+  get: function(key){
+    const p = agentOwn(PARAM_MAP, key) ? PARAM_MAP[key] : null;
+    if(!p) return '';
+    const v = p.shared ? shared[key] : (scenarios[0] || {})[key];
+    return v == null ? '' : String(v);
+  },
+  set: function(key, value){
+    const el = document.querySelector('.param-input[data-si="0"][data-key="' + key + '"], .shared-input[data-key="' + key + '"]');
+    if(!el) return;
+    el.value = value;
+    el.dispatchEvent(new Event('input', {bubbles: true}));
+    el.dispatchEvent(new FocusEvent('blur'));
+  }
+};
 
 /* Read-only view for the audit harnesses (_audit/integrity.mjs): the plan
    and each column's results in the base currency, never a way to set them. */
