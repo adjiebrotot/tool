@@ -236,18 +236,19 @@ async function settled(page) {
   await page.waitForFunction(() => document.documentElement.dataset.agentLoad === 'done', null, { timeout: 30000 });
   await page.waitForTimeout(250);
 }
-async function visit(P, fragment) {
-  const V = await openPage(browser, srv.origin, P.url + (fragment || ''));
+// Once a #load link has applied; V.failed says why it never did.
+async function arrived(V, fragment) {
   V.failed = '';
   if (fragment && fragment.startsWith('#load')) await settled(V.page).catch(e => { V.failed = 'the link never finished applying: ' + e.message.split('\n')[0]; });
   return V;
 }
+// A page in a fresh context (empty storage), or the same tab again (its storage kept).
+const visit = async (P, fragment) => arrived(await openPage(browser, srv.origin, P.url + (fragment || '')), fragment);
 async function goTo(V, P, fragment) {
   await V.page.goto('about:blank');
   await V.page.goto(srv.origin + P.url + (fragment || ''), { waitUntil: 'load' });
   await V.page.waitForTimeout(400);
-  V.failed = '';
-  if (fragment && fragment.startsWith('#load')) await settled(V.page).catch(e => { V.failed = 'the link never finished applying: ' + e.message.split('\n')[0]; });
+  return arrived(V, fragment);
 }
 const valuesOf = async page => Object.fromEntries((await page.evaluate(readFields)).fields.map(f => [f.key, f.value]));
 const probeOf = (page, P) => page.evaluate(P.probe || defaultProbe);
