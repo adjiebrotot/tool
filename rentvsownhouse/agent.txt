@@ -127,8 +127,9 @@ mortgageRate: Mortgage rate  (most important)
   The loan's interest rate in % a year, for the whole term (Simple mortgage mode). Use the going
   variable rate for the place and date: about 6 to 6.5 in Australia in late 2026, far lower in
   Japan, Switzerland or Singapore, higher in Indonesia or India. On a Quick Start whose Loan line
-  says it opens in the Detailed mortgage mode, this field is not used: send ratePeriods to change
-  the rate there.
+  says it opens in the Detailed mortgage mode, sending mortgageRate without ratePeriods replaces
+  that rate schedule with this one fixed rate for the whole term; send ratePeriods instead to keep a
+  schedule.
 mortgageTerm: Mortgage term  (most important)
   Number (yrs after it). 5 to 50, step 1. Default 30.
   Years the loan is repaid over. Typical 25 to 30 (20 in Indonesia and the Philippines, 35 in Japan
