@@ -144,6 +144,11 @@ export const PAGES = [
   // or replaced whole in json, with the solve options as ordinary fields. It solves in a worker.
   { page: 'ed-uc-simulator', url: '/ed-uc-simulator/', lang: 'en', notes: 'ed-uc-simulator/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: edQuickStarts, probe: edProbe, solved: edSolved, families: ['el.'] },
+  // The capacity planner is the same kind of page: a Quick Start plan whose technologies a link changes by name
+  // (tech.<name>.<param>) or replaces whole in json, with the grid, carbon price and horizon as ordinary fields.
+  // The solve is heavy, so a link may hold it (run=0) and leave Run plan lit.
+  { page: 'capacity-expansion-planner', url: '/capacity-expansion-planner/', lang: 'en', notes: 'capacity-expansion-planner/agent-notes.md',
+    insertBefore: '<section class="layout">', quickStarts: cxQuickStarts, probe: cxProbe, solved: cxSolved, families: ['tech.'] },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -758,6 +763,68 @@ export function edSolved() {
   const cost = document.getElementById('mCost');
   if (!r || !r.ok || !a.solvedKey || !btn || btn.disabled || btn.classList.contains('needs-run') || !cost) return false;
   return a.solvedKey === E.solveKey() && /\d/.test(cost.textContent) && !cost.classList.contains('neg');
+}
+
+// Capacity Expansion Planner: each Quick Start is pressed and the form read, so the docs print what the
+// scenario really sets (every field that differs from the page's own start), and the technologies it plans
+// with under the visible names a tech.<name>.<param> patch uses (read from CX.PRESETS, so it never goes stale).
+// No "=" in the text: the checks read key=value pairs out of these lines. Run on a fresh page that is left changed.
+export function cxQuickStarts() {
+  const X = window.__cx, CX = X && X.CX;
+  const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
+  if (!CX || !btns.length || !window.SharedAgent) return null;
+  const fields = SharedAgent.fields();
+  const snap = () => {
+    const o = {};
+    fields.forEach(f => { o[f.key] = f.type === 'c' ? !!f.el.checked : f.el.value; });
+    return o;
+  };
+  const num = n => String(+Number(n).toFixed(4));
+  const start = snap(), items = [];
+  btns.forEach(b => {
+    const key = b.getAttribute('data-preset');
+    if (items.some(it => it.key === key)) return;
+    X.applyPreset(key);
+    const now = snap(), values = {};
+    Object.keys(now).forEach(k => { if (now[k] !== start[k]) values[k] = now[k]; });
+    const plan = CX.load(CX.PRESETS[key].plan);
+    const rows = plan.tech.map(e => {
+      const bits = [CX.KIND_WORD[e.kind].toLowerCase()];
+      if (e.exist > 0) bits.push('existing ' + num(e.exist) + ' MW' + (e.retire ? ', retires ' + e.retire : ''));
+      if (e.build) bits.push('can build at ' + num(e.capex) + ' per kW' + (e.from ? ' from ' + e.from : '') + (e.max ? ', at most ' + num(e.max) + ' MW' : '') + (e.unit ? ', in ' + num(e.unit) + ' MW units' : ''));
+      else bits.push('no new build');
+      return CX.nameOf(e) + ': ' + bits.join(', ');
+    });
+    const shape = CX.PROFILES[CX.loadBase(plan.load)].label.toLowerCase();
+    items.push({ key, title: (b.textContent || '').replace(/\s+/g, ' ').trim(), values,
+      extra: 'demand shape ' + shape + '; ' + rows.join('; '), extraLabel: 'Plan' });
+  });
+  return { groups: [{ title: '', items }] };
+}
+// Capacity Expansion Planner: the plan on screen, one entry per technology under its visible name, with the
+// values a tech.<name>.<param> patch or json can set (the saved names and units), and whether Run plan is
+// waiting. runPending is true only while the plan is unsolved and nothing is solving it (a link with run=0);
+// it is false the moment a solve starts, so it holds the same whenever it is read.
+export function cxProbe() {
+  const X = window.__cx;
+  if (!X) return {};
+  const CX = X.CX, m = X.app.model, out = { load: CX.loadBase(m.load), counts: { tech: m.tech.length }, tech: {} };
+  m.tech.forEach(e => {
+    const o = {};
+    Object.keys(CX.DEFAULTS).forEach(k => { o[k] = e[k]; });
+    out.tech[CX.nameOf(e)] = o;
+  });
+  const btn = document.getElementById('runBtn');
+  out.runPending = !!btn && btn.classList.contains('needs-run') && !btn.disabled;
+  return out;
+}
+// Capacity Expansion Planner: true once the planner has solved this plan and its results are drawn (Run plan is
+// idle and not lit, what was solved is what is on screen, and the present-cost card has a figure).
+export function cxSolved() {
+  const X = window.__cx, a = X && X.app, r = a && a.res && a.res.report, btn = document.getElementById('runBtn');
+  const npv = document.getElementById('mNpv');
+  if (!r || !r.ok || !a.solvedKey || !btn || btn.disabled || btn.classList.contains('needs-run') || !npv) return false;
+  return a.solvedKey === X.solveKey() && /\d/.test(npv.textContent);
 }
 
 /* ── Static server and pages ──────────────────────────────────────────────── */

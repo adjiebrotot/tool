@@ -2867,6 +2867,172 @@
     }
    },
    "model": true
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "docs example: Growing grid, a $50/t carbon price, solar at $900/kW, planned to 2040",
+   "link": "#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040",
+   "expect": {
+    "cxCarbon": "50",
+    "cxEnd": "2040"
+   },
+   "probe": {
+    "load": "sys",
+    "counts": {
+     "tech": 6
+    },
+    "tech": {
+     "Solar PV": {
+      "kind": "pv",
+      "capex": 900
+     },
+     "Gas (CCGT)": {
+      "capex": 1200,
+      "exist": 300
+     }
+    },
+    "runPending": false
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "nz: nuclear offered from the menu (added), cheaper gas written with its brackets, a 60 carbon price",
+   "link": "#load&v=1&qs=nz&cxCarbon=60&tech.nuclear.capex=6000&why.tech.nuclear.capex=The%20user%20wants%20nuclear%20offered%20at%20$6,000%20per%20kW&tech.nuclear.build=1&tech.Gas (CCGT).capex=1000&why.tech.Gas (CCGT).capex=The%20user%20said%20new%20combined-cycle%20gas%20costs%20$1,000%20per%20kW&cxDetail=detailed&note=Net%20zero%20grid%20with%20nuclear%20on%20offer",
+   "expect": {
+    "cxCarbon": "60",
+    "cxNetZero": true,
+    "cxNzYear": "2041",
+    "cxDetail": "detailed"
+   },
+   "probe": {
+    "counts": {
+     "tech": 8
+    },
+    "tech": {
+     "Nuclear": {
+      "kind": "firm",
+      "capex": 6000,
+      "build": 1
+     },
+     "Gas (CCGT)": {
+      "capex": 1000
+     }
+    },
+    "runPending": false
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "coal: the older station retires earlier (a name with a comma), gas units of 300 MW, a winter-peak climate in the north",
+   "link": "#load&v=1&qs=coal&cxClimate=win-n&tech.Coal%2C older station.retire=2028&why.tech.Coal%2C older station.retire=The%20user%20said%20the%20older%20station%20closes%20in%202028&tech.ccgt.unit=300&tech.wind.max=5000&cxDetail=detailed",
+   "expect": {
+    "cxClimate": "win-n",
+    "cxDetail": "detailed"
+   },
+   "probe": {
+    "tech": {
+     "Coal, older station": {
+      "retire": 2028,
+      "exist": 2000
+     },
+     "Gas (CCGT)": {
+      "unit": 300
+     },
+     "Wind": {
+      "max": 5000
+     }
+    }
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "island: a flat commercial demand shape, geothermal limited to 100 MW in 25 MW units, longer battery, in rupiah",
+   "link": "#load&v=1&qs=island&cxCur=Rp&cxPeak=150&loadShape=commercial&why.loadShape=The%20user%20said%20most%20of%20the%20demand%20is%20hotels%20and%20shops&tech.geo.max=100&tech.geo.unit=25&tech.battery.hours=6&tech.solar.cf=0.2&cxEnd=2040",
+   "expect": {
+    "cxCur": "Rp",
+    "cxPeak": "150",
+    "cxEnd": "2040"
+   },
+   "probe": {
+    "load": "com",
+    "tech": {
+     "Geothermal": {
+      "max": 100,
+      "unit": 25
+     },
+     "Battery": {
+      "hours": 6
+     },
+     "Solar PV": {
+      "cf": 0.2
+     }
+    }
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "run=0: the coal plan opens unsolved with a carbon price and a cheaper peaker, Run plan waiting",
+   "link": "#load&v=1&qs=coal&run=0&cxCarbon=30&cxGrowth=2&tech.ocgt.capex=700&why.tech.ocgt.capex=The%20user%20said%20peakers%20cost%20$700%20per%20kW&note=Coal%20exit,%20opened%20without%20solving",
+   "expect": {
+    "cxCarbon": "30",
+    "cxGrowth": "2"
+   },
+   "probe": {
+    "tech": {
+     "Gas (OCGT)": {
+      "capex": 700
+     }
+    },
+    "runPending": true
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "run=0 with no Quick Start: a smaller grid, opened unsolved",
+   "link": "#load&v=1&run=0&cxPeak=500&cxStep=10&why.cxStep=The%20user%20wants%20a%20quick,%20coarse%20plan",
+   "expect": {
+    "cxPeak": "500",
+    "cxStep": "10"
+   },
+   "probe": {
+    "counts": {
+     "tech": 6
+    },
+    "runPending": true
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "json: a small grid with an old gas plant, solar and a battery, solved over two decision years, then solar patched",
+   "link": "#load&v=1&cxPeak=100&cxGrowth=2&cxStart=2026&cxEnd=2036&cxStep=10&json=%7B%22v%22:2,%22tech%22:%5B%7B%22name%22:%22Old%20gas%22,%22kind%22:%22firm%22,%22exist%22:80,%22build%22:0,%22vom%22:70,%22co2%22:0.5%7D,%7B%22name%22:%22Solar%22,%22kind%22:%22pv%22,%22capex%22:900,%22fom%22:15,%22life%22:30,%22cf%22:0.22%7D,%7B%22name%22:%22Battery%22,%22kind%22:%22store%22,%22capex%22:1200,%22fom%22:25,%22life%22:15,%22hours%22:4,%22rte%22:0.87%7D%5D,%22load%22:%7B%22base%22:%22res%22%7D%7D&why.json=The%20user%20described%20an%2080%20MW%20gas%20plant%20that%20cannot%20be%20added%20to,%20with%20solar%20and%20a%20battery%20to%20build&tech.Solar.capex=800&note=Small%20grid,%20gas%20plant%20plus%20solar%20and%20storage",
+   "expect": {
+    "cxPeak": "100",
+    "cxStep": "10"
+   },
+   "probe": {
+    "load": "res",
+    "counts": {
+     "tech": 3
+    },
+    "tech": {
+     "Old gas": {
+      "kind": "firm",
+      "exist": 80,
+      "build": 0,
+      "co2": 0.5
+     },
+     "Solar": {
+      "kind": "pv",
+      "capex": 800,
+      "cf": 0.22
+     },
+     "Battery": {
+      "kind": "store",
+      "hours": 4
+     }
+    }
+   },
+   "model": true
   }
  ]
 }
