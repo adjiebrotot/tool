@@ -12,7 +12,8 @@
                             status: ok | ambiguous | none; key is "City|Country" as the page keys it
      label(city, list)      the shortest name that finds this city again ("Sydney", "London, United Kingdom")
      choice(raw, words, alias)  a key, its label or an alias -> the key of words ({ key: label }), or null
-     rows(raw, api, o)      "rent:3500,groceries:600:to1=700" -> { rows: [{ catId, amount, ov }], text }
+     rows(raw, api, o)      "rent:3500,groceries:600:to1=700" -> { rows: [{ catId, amount, ov, unit, qty, per }], text }
+                          unit, qty and per only when o.units ({ unit(catId, text), period(text) }) reads them
      catId(text)            an expense category by id or name, or ''
      money(n)               8000 -> "8,000"
      decode(raw)            a link's value, percent-decoded (+ is a space)
@@ -152,7 +153,9 @@ function catId(text){
 }
 /* "rent:3500,groceries:600:to1=700,eating out:700". Each item is a category, a monthly amount
    and, when o.dests is true, any number of to<N>=<amount> (what destination N costs, in its
-   own currency, in place of the estimate). Returns { rows: [{ catId, amount, ov: { N: amount } }], text }
+   own currency, in place of the estimate). When o.units is given, a part may also be the row's
+   unit (weekly, meal), qty=<how many> or per=<their period>: the Comparator's custom frequency.
+   Returns { rows: [{ catId, amount, ov: { N: amount } }], text }
    or null when no row could be read. api is the loader's (items, number, clamp, error, unknown). */
 function rows(raw, api, o){
   o = o || {};
@@ -167,7 +170,24 @@ function rows(raw, api, o){
     if(used !== amt) api.clamp('rows.' + id, amt, used);
     var row = { catId: id, amount: Math.round(used * 100) / 100, ov: {} };
     parts.slice(2).forEach(function(p){
-      var m = /^to\s*(\d+)\s*=\s*(.*)$/i.exec(p);
+      var m = /^to\s*(\d+)\s*=\s*(.*)$/i.exec(p), q;
+      if(o.units && !m){
+        // The custom frequency: a unit (weekly, meal), qty=<how many> and per=<their period>, none of them needed.
+        if(p === '') return;
+        q = /^(qty|per)\s*=\s*(.*)$/i.exec(p);
+        if(q && q[1].toLowerCase() === 'qty'){
+          var n = api.number(q[2]);
+          if(!isFinite(n) || n <= 0) api.error('rows "' + CAT_LABEL[id] + '" ' + clip(p, 20) + ': qty is not a number above 0, so it was skipped');
+          else row.qty = Math.min(MAX_AMOUNT, n);
+        } else if(q){
+          var per = o.units.period(q[2]);
+          if(per) row.per = per; else api.error('rows "' + CAT_LABEL[id] + '" ' + clip(p, 20) + ': per is not weekly, fortnightly, monthly or yearly, so it was skipped');
+        } else {
+          var u = o.units.unit(id, p);
+          if(u) row.unit = u; else api.error('rows "' + CAT_LABEL[id] + '" ' + clip(p, 20) + ': not a frequency or a unit for this row, so it was skipped');
+        }
+        return;
+      }
       if(!m || !o.dests){ api.unknown('rows.' + id + '.' + clip(p, 20)); return; }
       var v = api.number(m[2]);
       if(!isFinite(v) || v < 0){ api.error('rows "' + CAT_LABEL[id] + '" ' + clip(p, 20) + ': not an amount'); return; }

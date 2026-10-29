@@ -1149,6 +1149,182 @@
    }
   },
   {
+   "page": "/costofliving-comparator/",
+   "name": "freq=weekly: the salary and every row are weekly amounts",
+   "link": "#load&v=1&qs=sg-au&freq=weekly&salary=1850&rows=rent:800,groceries:140,eating_out:160,utilities:46,other:230&why.freq=The%20user%20gave%20every%20figure%20a%20week&why.salary=The%20user%20takes%20home%20about%201,850%20a%20week&why.rows=The%20user%20gave%20their%20weekly%20spending&note=Weekly%20figures,%20Melbourne%20and%20peers",
+   "expect": {
+    "salary": "1850"
+   },
+   "probe": {
+    "mode": "detailed",
+    "customFreq": true,
+    "detailIncomeFreq": "weekly",
+    "detailSavingsFreq": "weekly",
+    "detailFromSalary": 1850,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 800,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 140,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 160,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 46,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 230,
+      "unit": "weekly",
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "incomeFreq=yearly with rows in their own unit: a yearly salary, monthly rows, savings shown monthly",
+   "link": "#load&v=1&qs=eu&incomeFreq=yearly&savingsFreq=monthly&salary=54000&rows=rent:2100:monthly,groceries:350:monthly,eating_out:400:monthly,utilities:250:monthly,other:500:monthly&why.salary=The%20user%20takes%20home%20about%2054,000%20a%20year&why.rows=The%20user%20gave%20their%20monthly%20spending",
+   "expect": {
+    "salary": "54000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "customFreq": true,
+    "detailIncomeFreq": "yearly",
+    "detailSavingsFreq": "monthly",
+    "detailFromSalary": 54000,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 2100,
+      "unit": "monthly"
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 350,
+      "unit": "monthly"
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 400,
+      "unit": "monthly"
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 250,
+      "unit": "monthly"
+     },
+     {
+      "catId": "other",
+      "fromAmount": 500,
+      "unit": "monthly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "freq=fortnightly with a unit price and a destination figure: meals per fortnight, offers a fortnight, goal save",
+   "link": "#load&v=1&qs=us&freq=fortnightly&goal=save&salary=3900&toSalaries=4400,4300,4000&rows=rent:1850:to1=2600,groceries:280,eating_out:22:meal:qty=5:per=fortnightly,other:600&why.freq=The%20user%20is%20paid%20every%20fortnight&why.toSalaries=The%20offers%20are%20fortnightly%20take-home%20figures&why.rows=Meals%20are%20about%2022%20each,%20five%20a%20fortnight",
+   "expect": {
+    "salary": "3900"
+   },
+   "probe": {
+    "mode": "detailed",
+    "goal": "save",
+    "customFreq": true,
+    "detailIncomeFreq": "fortnightly",
+    "detailFromSalary": 3900,
+    "detailToSalaries": [
+     4400,
+     4300,
+     4000
+    ],
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 1850,
+      "unit": "fortnightly",
+      "overrides": {
+       "0": 2600
+      }
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 280,
+      "unit": "fortnightly"
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 22,
+      "unit": "meal",
+      "qtyUnit": "meal",
+      "qty": 5,
+      "qtyPer": "fortnightly"
+     },
+     {
+      "catId": "other",
+      "fromAmount": 600,
+      "unit": "fortnightly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "freq=yearly: a yearly salary and rows, with a trip priced by the trip at the page's own two a year",
+   "link": "#load&v=1&qs=sg-au&freq=yearly&salary=96000&rows=rent:42000,groceries:7200,intl_travel:1800:trip,other:12000&why.freq=The%20user%20thinks%20in%20yearly%20figures&why.rows=A%20trip%20costs%20about%201,800;%20the%20page%20assumes%20two%20a%20year",
+   "expect": {
+    "salary": "96000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "customFreq": true,
+    "detailIncomeFreq": "yearly",
+    "detailFromSalary": 96000,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 42000,
+      "unit": "yearly"
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 7200,
+      "unit": "yearly"
+     },
+     {
+      "catId": "intl_travel",
+      "fromAmount": 1800,
+      "unit": "trip",
+      "qtyUnit": "trip",
+      "qty": 2,
+      "qtyPer": "yearly"
+     },
+     {
+      "catId": "other",
+      "fromAmount": 12000,
+      "unit": "yearly"
+     }
+    ]
+   }
+  },
+  {
    "page": "/costofliving-comparator/map/",
    "name": "qs=jkt with a higher salary",
    "link": "#load&v=1&qs=jkt&salary=30000000&why.salary=The%20user%20takes%20home%2030%20million%20rupiah%20a%20month",

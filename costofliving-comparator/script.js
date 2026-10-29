@@ -2029,9 +2029,12 @@ function wireQuickStart(){
 //   cities=<home>,<destination>,...      matched to the page's own list by name
 //   salary=<monthly net, home currency>  expense=<monthly, home currency> (Simple)
 //   toSalaries=<n>,<n>,...               each destination's net salary, its own currency
-//   rows=<category>:<amount>[:to<N>=<amount>],...    Detailed rows, monthly
+//   rows=<category>:<amount>[:<unit>][:qty=<n>][:per=<period>][:to<N>=<amount>],...    Detailed rows
 //   customFx=<rate>,<rate>,...  fxShock=<-20 to 20>
-// Amounts are monthly: a link never turns on the custom frequency. Keys are read in
+//   freq=<period>  incomeFreq=<period>  savingsFreq=<period>   the custom frequency (Detailed)
+// Amounts are monthly unless the link names a frequency: freq, incomeFreq, savingsFreq or a row's
+// own unit turns the custom frequency on, with the page's own PERIODS and UNITS as the values, and
+// writes the same S fields the page's controls do. Keys are read in
 // any order and applied together in patch(), so a cities list that moves the home
 // city can clear the old home's figures first. Home and destination arrays are
 // filled in both modes, so a reader who flips the Detail switch finds the same cities.
@@ -2111,9 +2114,39 @@ function agentCities(raw, extra, api){
   const names = r.entries.map(e => e.key ? ColAI.display(e.city) : '');
   return agentRes.cities = {value: (names[0] ? 'From ' + names[0] : '') + (names.slice(1).filter(Boolean).length ? (names[0] ? ' to ' : 'To ') + names.slice(1).filter(Boolean).join('; ') : '')};
 }
+// A period as the page names it (weekly, week, per week), or null.
+const AGENT_PERIOD_ALIAS = {annual:'yearly', annually:'yearly', biweekly:'fortnightly'};
+function agentBare(text){ return ColAI.norm(ColAI.decode(text)).replace(/^(per|a|an|each|every) /, ''); }
+function agentPeriodOf(text){ return ColAI.choice(agentBare(text), PERIODS, AGENT_PERIOD_ALIAS); }
+// A row's unit: a period, or one of this category's unit prices (meal, kwh, litre, gallon, trip).
+function agentUnitOf(catId, text){
+  const p = agentPeriodOf(text);
+  if(p) return p;
+  const s = agentBare(text).replace(/^liters?$/, 'litre').replace(/^litres$/, 'litre');
+  for(const k in UNITS){
+    const U = UNITS[k];
+    if(U.cat === catId && (ColAI.norm(k) === s || ColAI.norm(U.one) === s || ColAI.norm(U.many) === s)) return k;
+  }
+  return null;
+}
+const AGENT_PER = {weekly:'a week', fortnightly:'a fortnight', monthly:'a month', yearly:'a year'};
+function agentPeriod(key){
+  return function(raw, extra, api){
+    const p = agentPeriodOf(raw);
+    if(!p){ api.error(key + ' "' + ColAI.clip(ColAI.decode(raw), 30) + '": not one of ' + Object.keys(PERIODS).join(', ')); return false; }
+    agentIn[key] = p;
+    return agentRes[key] = {value: 'Per ' + PERIODS[p]};
+  };
+}
 function agentRows(raw, extra, api){
-  const r = ColAI.rows(raw, api, {dests: true});
+  const r = ColAI.rows(raw, api, {dests: true, units: {unit: agentUnitOf, period: agentPeriodOf}});
   if(!r) return false;
+  r.rows.forEach(row => {
+    if((row.qty != null || row.per) && !(row.unit && UNITS[row.unit])){
+      api.error('rows "' + ColAI.CAT_LABEL[row.catId] + '": qty and per go with a unit price (meal, kwh, litre, gallon, trip), so they were skipped');
+      delete row.qty; delete row.per;
+    }
+  });
   agentIn.rows = r.rows;
   return agentRes.rows = {value: r.text};
 }
@@ -2142,8 +2175,18 @@ function agentPatch(extra, api){
   }
 
   // Mode: named, else Detailed when the link brings what only Detailed holds.
-  const many = dests.filter(Boolean).length > 1 || named('rows') || (named('toSalaries') && a.toSalaries.length > 1) || (named('customFx') && a.customFx.length > 1);
+  // The custom frequency is Detailed's: naming a period or a row's unit asks for it.
+  const freqNamed = named('freq') || named('incomeFreq') || named('savingsFreq') || (named('rows') && a.rows.some(r => r.unit));
+  const many = dests.filter(Boolean).length > 1 || named('rows') || freqNamed || (named('toSalaries') && a.toSalaries.length > 1) || (named('customFx') && a.customFx.length > 1);
   extra.mode = named('detail') ? a.detail : (many || extra.mode === 'detailed' ? 'detailed' : 'simple');
+  const useFreq = freqNamed && extra.mode === 'detailed';
+  if(freqNamed && !useFreq) api.error('freq: the custom frequency is in Detailed only, so it was not used and the amounts are read as monthly; leave detail out or send detail=detailed');
+  // incP: the period Net income is in; defP: the period of rows without their own unit; savP: the savings shown.
+  const startInc = validPeriod(extra.detailIncomeFreq);
+  const incP = useFreq ? (a.incomeFreq || a.freq || startInc) : 'monthly';
+  const defP = useFreq && a.freq ? a.freq : 'monthly';
+  const savP = useFreq ? (a.savingsFreq || (a.freq || a.incomeFreq ? incP : validPeriod(extra.detailSavingsFreq))) : 'monthly';
+  const monthly = (v, p) => Math.round(v * perMonth(p) * 100) / 100;   // Simple has no frequency: its figures stay monthly
   ['goal', 'housing'].forEach(k => { if(named(k)) extra[k] = a[k]; });
   if(named('target')) extra.savingsTarget = a.target;
 
@@ -2165,9 +2208,14 @@ function agentPatch(extra, api){
       if(cleared.length) api.error('cities: the home city is now paid in ' + now + ', so the ' + cleared.join(' and ') + ' from the Quick Start (in ' + was + ') were cleared; send them in ' + now);
     }
   }
-  if(named('salary')){ extra.fromSalary = a.salary; extra.detailFromSalary = a.salary; }
+  // Net income moves to its new period with the money unchanged, as the page's own selector does; what the link names replaces it.
+  if(useFreq && incP !== startInc){
+    if(extra.detailFromSalary) extra.detailFromSalary = rescale(extra.detailFromSalary, startInc, incP);
+    extra.detailToSalaries = (extra.detailToSalaries || []).map(v => v ? rescale(v, startInc, incP) : v);
+  }
+  if(named('salary')){ extra.fromSalary = useFreq ? monthly(a.salary, incP) : a.salary; extra.detailFromSalary = a.salary; }
   if(named('expense')){
-    extra.fromExpense = a.expense;
+    extra.fromExpense = useFreq ? monthly(a.expense, defP) : a.expense;
     if(extra.mode === 'detailed' && !named('rows')) api.error('expense counts only in Simple; Detailed takes its expenses as rows');
   }
   if(named('fxShock')) extra.fxShock = a.fxShock;
@@ -2178,9 +2226,16 @@ function agentPatch(extra, api){
         if(at[n] != null) overrides[String(at[n])] = r.ov[n];
         else api.error('rows "' + ColAI.CAT_LABEL[r.catId] + '": to' + n + ' is not a destination');
       });
-      return {catId: r.catId, fromAmount: r.amount, overrides, unit: 'monthly', qtyPer: 'monthly'};
+      const row = {catId: r.catId, fromAmount: r.amount, overrides, unit: 'monthly', qtyPer: 'monthly'};
+      const u = useFreq ? (r.unit || defP) : 'monthly';
+      row.unit = u;
+      if(UNITS[u]){   // a unit price: how many, and in what period, as the page's own unit selector starts them
+        row.qtyUnit = u; row.qty = r.qty != null ? r.qty : UNITS[u].qty; row.qtyPer = r.per || UNITS[u].per;
+      }
+      return row;
     });
   }
+  if(useFreq){ extra.customFreq = true; extra.detailIncomeFreq = incP; extra.detailSavingsFreq = savP; }
   const perDest = (key, put) => {
     a[key].forEach((v, i) => {
       if(v == null) return;
@@ -2190,7 +2245,7 @@ function agentPatch(extra, api){
   };
   if(named('toSalaries')) perDest('toSalaries', (j, v) => {
     if(!Array.isArray(extra.detailToSalaries)) extra.detailToSalaries = [];
-    extra.detailToSalaries[j] = v; if(j === 0) extra.toSalary = v;
+    extra.detailToSalaries[j] = v; if(j === 0) extra.toSalary = useFreq ? monthly(v, incP) : v;
   });
   if(named('customFx')) perDest('customFx', (j, v) => {
     if(!Array.isArray(extra.customFxDetailed)) extra.customFxDetailed = [];
@@ -2199,11 +2254,20 @@ function agentPatch(extra, api){
 
   // The banner names the money: the home currency for the home figures, each destination's for its own.
   const hc = agentCurrency(extra.mode === 'detailed' ? extra.detailFromKey : extra.fromKey);
-  const month = r => { if(r) r.value = (hc ? hc + ' ' : '') + r.value + ' a month'; };
-  month(res.salary); month(res.expense);
+  const month = (r, p) => { if(r) r.value = (hc ? hc + ' ' : '') + r.value + ' ' + AGENT_PER[p]; };
+  month(res.salary, incP); month(res.expense, defP);
+  ['freq', 'incomeFreq', 'savingsFreq'].forEach(k => { if(res[k] && !useFreq) res[k].value += ' (not used in Simple)'; });
+  if(useFreq && res.rows){
+    const unitText = (r, u) => {
+      if(!UNITS[u]) return AGENT_PER[u];
+      const U = UNITS[u];
+      return 'a ' + U.one + ' (' + ColAI.money(r.qty != null ? r.qty : U.qty) + ' ' + AGENT_PER[r.per || U.per] + ')';
+    };
+    res.rows.value = a.rows.map(r => ColAI.CAT_LABEL[r.catId] + ' ' + ColAI.money(r.amount) + ' ' + unitText(r, r.unit || defP)).join(', ');
+  }
   const nameOf = j => { const c = getCity(dests[j]); return c ? c.city : 'destination ' + (j + 1); };
   if(res.toSalaries) res.toSalaries.value = a.toSalaries.map((v, i) => v == null || at[i + 1] == null ? null :
-    nameOf(at[i + 1]) + ' ' + agentCurrency(dests[at[i + 1]]) + ' ' + ColAI.money(v)).filter(Boolean).join('; ') + ' a month';
+    nameOf(at[i + 1]) + ' ' + agentCurrency(dests[at[i + 1]]) + ' ' + ColAI.money(v)).filter(Boolean).join('; ') + ' ' + AGENT_PER[incP];
   if(res.customFx) res.customFx.value = a.customFx.map((v, i) => v == null || at[i + 1] == null ? null :
     '1 ' + agentCurrency(dests[at[i + 1]]) + ' = ' + ColAI.money(v) + ' ' + hc).filter(Boolean).join('; ');
   if(res.fxShock) res.fxShock.value = (a.fxShock > 0 ? '+' : '') + a.fxShock + '%';
@@ -2213,7 +2277,8 @@ const AGENT_LABELS = {
   target: ['Target', 'analysisArea'], cities: ['Cities', () => S.mode === 'simple' ? 'simpleCityCard' : 'analysisArea'],
   salary: ['Net salary', 'analysisArea'], expense: ['Expenses', 'analysisArea'], toSalaries: ['Net salary in each destination', 'analysisArea'],
   rows: ['Expense rows', 'analysisArea'], customFx: ['Custom exchange rates', () => S.mode === 'simple' ? 'simpleFxCard' : 'analysisArea'],
-  fxShock: ['What if the destination currency moves', 'simpleFxCard']
+  fxShock: ['What if the destination currency moves', 'simpleFxCard'],
+  freq: ['At a custom frequency', 'freqRow'], incomeFreq: ['Net income frequency', 'analysisArea'], savingsFreq: ['Savings frequency', 'analysisArea']
 };
 if(window.SharedAgent) SharedAgent.register({
   tool: 'costofliving-comparator',
@@ -2224,6 +2289,7 @@ if(window.SharedAgent) SharedAgent.register({
     cities: agentCities, salary: agentAmount('salary'), expense: agentAmount('expense'),
     toSalaries: agentNumbers('toSalaries', false), rows: agentRows,
     customFx: agentNumbers('customFx', true),
+    freq: agentPeriod('freq'), incomeFreq: agentPeriod('incomeFreq'), savingsFreq: agentPeriod('savingsFreq'),
     fxShock: function(raw, extra, api){
       const n = api.number(ColAI.decode(raw));
       if(!isFinite(n)){ api.error('fxShock "' + ColAI.clip(ColAI.decode(raw), 20) + '": not a number'); return false; }
