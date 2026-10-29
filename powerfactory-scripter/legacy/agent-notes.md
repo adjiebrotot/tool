@@ -17,7 +17,7 @@ workflow in a link (`powerfactory-scripter/builder/agent.txt`).
 
 ## Decides
 
-Which kind of PowerFactory study a Python script runs: a sweep of input values, an optimisation, a run of scenarios from a file, or an outage screening (N-1 or N-2), in which study type (load flow, RMS, EMT or harmonic) and with what options. The tool writes one ready-to-run script from the form, and the user downloads it. It does not run PowerFactory or work out a study result, so never write the script's code yourself.
+Which kind of PowerFactory study a Python script runs: a sweep of input values, an optimisation, a run of scenarios from a file, or an outage screening (N-1 or N-2), in which study type (load flow, RMS, EMT or harmonic) and with what options. The tool writes one ready-to-run script from the form, and the user downloads it. It does not run PowerFactory or work out a study result. The script comes from the tool, so a link to it gives the user the whole script.
 
 ## Most important
 

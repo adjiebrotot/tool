@@ -319,7 +319,7 @@ function agentTxt(M) {
   for (const l of protocolLines(M)) para('- ' + l, '');
   L.push('', 'EXAMPLE');
   para('Request: ' + M.example.request);
-  L.push('A reply that follows the rules:');
+  L.push('A reply in that form:');
   M.example.assumptions.forEach((a, i) => para(`${i + 1}. ${a}`));
   L.push(M.link, '```', M.link, '```', 'Open the link to see the result.');
   // The Quick Starts in brief here; their figures, which can run long, close the file, so a

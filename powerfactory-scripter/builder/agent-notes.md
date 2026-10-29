@@ -19,7 +19,7 @@ never carries Python code (the Python code block's `code`) nor the PowerFactory 
 
 ## Decides
 
-Which study the PowerFactory Python script runs, and in what order: a workflow of blocks (load flow, N-1 contingencies, short circuit, RMS or EMT simulation, checks, loops, results tables and graphs), the project and study case it opens and where its results go. The tool writes one ready-to-run script for DIgSILENT PowerFactory 2024 from that workflow, and the user downloads it. It does not run PowerFactory or work out a study result, so never write the script's code yourself.
+Which study the PowerFactory Python script runs, and in what order: a workflow of blocks (load flow, N-1 contingencies, short circuit, RMS or EMT simulation, checks, loops, results tables and graphs), the project and study case it opens and where its results go. The tool writes one ready-to-run script for DIgSILENT PowerFactory 2024 from that workflow, and the user downloads it. It does not run PowerFactory or work out a study result. The script comes from the tool, so a link to it gives the user the whole script.
 
 ## Most important
 
