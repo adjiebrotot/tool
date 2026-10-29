@@ -31,7 +31,7 @@ Which study the PowerFactory Python script runs, and in what order: a workflow o
 
 A Quick Start is a worked example workflow: it opens on the canvas and its script is written at once. They are listed with their blocks under QUICK START FIGURES; the id at the start of a block is what blk.<id>.<setting> names. Pick the one closest to the study the user describes and change what differs. Every Quick Start has its Start block at n1.
 
-Without qs the Builder opens on an empty workflow with just a Start block. For a study no Quick Start is near, send the workflow in json. Leave the project and study case empty unless the user names them: the project is typed exactly as PowerFactory's Data Manager shows it, and an invented one makes the script stop. The user types it into the Start block, which says so while it is empty.
+Without qs the Builder opens on an empty workflow with just a Start block. For a study no Quick Start is near, send the workflow in json. Leave the project and study case empty unless the user names them: the project is typed exactly as PowerFactory's Data Manager shows it, and an invented one makes the script stop. The user types it into the Start block, which says so while it is empty. The script is written as soon as the workflow is in, so run has no effect here.
 
 ## Example
 

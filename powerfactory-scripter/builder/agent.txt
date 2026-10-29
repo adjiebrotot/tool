@@ -74,6 +74,7 @@ Without qs the Builder opens on an empty workflow with just a Start block. For a
 Start is near, send the workflow in json. Leave the project and study case empty unless the user
 names them: the project is typed exactly as PowerFactory's Data Manager shows it, and an invented
 one makes the script stop. The user types it into the Start block, which says so while it is empty.
+The script is written as soon as the workflow is in, so run has no effect here.
 qs takes one of: headroom, ldf-cases, n-1, shc-buses, find-limit, frt, cct, hosting-capacity,
 pv-curve, rms-batch. Each opens a worked example workflow. Change its blocks by id with
 blk.<id>.<setting> (agent.txt lists each one's blocks), or send a whole workflow in json.
