@@ -289,6 +289,13 @@ can keep a scenario as a JSON file and open it another day. One line after `Pers
 `SharedScenario.mount('.quick-start-row', { tool: '<toolname>', persist })`, or `'.header-right'`
 when the tool has no Quick Start row. Add the page to `_ref/scenario-check.mjs`.
 
+An Engineering or Finance tool can also be opened by an AI assistant through a `#load` link
+(`SharedAgent` in `shared.js`). Every input a reader can set, a feature like a frequency or a
+mode included, must be reachable that way: add the page to `PAGES` in `_ref/agent-lib.mjs`, write
+`<tool>/agent-notes.md` (Rent vs Own's is the worked example), register an adapter for state
+beyond plain fields, run `node _ref/agent-doc.mjs`, add kept links to `_ref/agent-links.json`
+and get `node _ref/agent-check.mjs <tool>` green. A tool whose solve is heavy honours `run=0`.
+
 For a multi-language tool (an `en` page and an `id/` page sharing one `script.js`), use a
 **language-agnostic namespace** (`'pisahvsgabung'`, not `'pisahvsgabung-en'`). `localStorage` is
 per-origin, so both pages then share one cache and a user's work follows them across a language

@@ -49,6 +49,10 @@ write each change as that.
 - **An AI link is kept like a Share link.** A `#load` link a chatbot wrote names fields by
   their Persist handles (and a tool's list keys and Quick Start keys), so a renamed handle
   must still load from an old AI link. `_ref/agent-links.json` is frozen the same way.
+- **Every input a reader can set travels in the link.** A new input or feature (an option, a
+  frequency, a mode, a row) is saved by the mini cache, a scenario file and a Share link, and
+  is a key an AI link can name: describe it in `<tool>/agent-notes.md`, regenerate the AI docs
+  and add a kept link that uses it. A link or saved state without the new key opens as before.
 
 Before shipping a change to a tool's inputs, run `node _ref/share-check.mjs` (its kept-links
 checks, F1 and F2, fail when a field an old link names is gone), `node _ref/scenario-check.mjs`
