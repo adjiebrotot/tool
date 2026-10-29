@@ -21,6 +21,9 @@
   <!-- This address used to be the form-based scripter. A link made for it (a samples page
        "Try it" link, ?qs=..., or saved state in the hash) still opens it, now in legacy/. -->
   <script>(function(){var q=location.search,h=location.hash;if(/[?&]qs=/.test(q)||/(?:^#|&)(?:open|s|embed)=/.test(h))location.replace('legacy/'+q+h);})();</script>
+  <!-- A link an AI assistant wrote (#load, see agent.txt in builder/ and legacy/) goes to the page whose keys it uses: the
+       Workflow Builder's (template, blk.<id>.<setting>, graph.<key>, json), else the form's. The hash is kept. -->
+  <script>(function(){var q=location.search,h=location.hash;if(!/^#load(?:[&=?\/]|$)/.test(h)||/[?&]qs=/.test(q)||/(?:^#|&)(?:open|s|embed)=/.test(h))return;location.replace((/(?:^#|&)(?:amp;)?(?:template=|blk\.|graph\.|json=)/.test(h)?'builder/':'legacy/')+q+h);})();</script>
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />

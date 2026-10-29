@@ -1318,6 +1318,155 @@
   }
   SharedScenario.mount('.quick-start-row', { tool: 'loadflow-simulator', persist: persist });
 
+  /* ── AI links (SharedAgent): patch a Quick Start's parts, or send a whole network ──
+     A chatbot's link starts from a Quick Start, then changes parts by their visible
+     name (el.<name>.<param>=<value>) or replaces the network with json in the saved
+     form. Both work on that saved form (LF.compact, which the mini cache carries as
+     __extra) and read it back through LF.load, so a value meets exactly the bounds
+     any saved diagram does. Names and units are the saved ones (PyPSA's), as in json. */
+  if(window.SharedAgent) (function(){
+    var NOT_PATCHABLE = { type: 1, style: 1, grid: 1 };   // a type comes from the engine's list; style and grid only change the drawing
+    var SHORT = { p: 'p_set', q: 'q_set' };
+    var UNIT = {
+      Bus: { v_nom: 'kV', v_mag_pu_set: 'p.u.' },
+      Line: { length: 'km', r: 'ohm', x: 'ohm', b: 'S', g: 'S', s_nom: 'MVA' },
+      Transformer: { s_nom: 'MVA', x: 'p.u.', r: 'p.u.', g: 'p.u.', b: 'p.u.', phase_shift: 'deg' },
+      Generator: { p_set: 'MW', q_set: 'MVAr', p_nom: 'MW' },
+      Load: { p_set: 'MW', q_set: 'MVAr' },
+      ShuntImpedance: { g: 'S', b: 'S' },
+      StorageUnit: { p_set: 'MW', q_set: 'MVAr', p_nom: 'MW' },
+      Link: { p_set: 'MW', p_nom: 'MW' }
+    };
+    var LABEL = { v_nom: 'nominal voltage', v_mag_pu_set: 'voltage set point', length: 'length', num_parallel: 'parallel circuits',
+      r: 'resistance', x: 'reactance', b: 'susceptance', g: 'conductance', s_nom: 'rating', tap_position: 'tap position',
+      tap_ratio: 'tap ratio', tap_side: 'tap side', phase_shift: 'phase shift', model: 'equivalent circuit', control: 'control',
+      p_set: 'active power', q_set: 'reactive power', p_nom: 'rating', efficiency: 'efficiency' };
+    var has = function(o, k){ return Object.prototype.hasOwnProperty.call(o, k); };
+    var norm = function(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().toLowerCase(); };
+    var squash = function(s){ return norm(s).replace(/[ _]/g, ''); };
+    var short = function(n){ return String(+Number(n).toFixed(6)); };
+    function replaceWith(extra, next){
+      Object.keys(extra).forEach(function(k){ delete extra[k]; });
+      Object.keys(next).forEach(function(k){ extra[k] = next[k]; });
+    }
+    function paramsOf(c){ return Object.keys(LF.DEFAULTS[c]).filter(function(k){ return !NOT_PATCHABLE[k]; }); }
+    // The elements called this: the name as written (any case), else with spaces and underscores ignored (Load A, LoadA).
+    function find(list, name){
+      var a = norm(name), z = squash(name), hits = [];
+      [function(e){ return norm(LF.nameOf(e)) === a; }, function(e){ return squash(LF.nameOf(e)) === z; }].some(function(test){
+        hits = list.filter(test);
+        return hits.length > 0;
+      });
+      return hits;
+    }
+
+    // el.<name>.<param>=<value>: one parameter of one element.
+    function patch(raw, extra, api, key){
+      if(!Array.isArray(extra.el)) replaceWith(extra, LF.compact(app.model));
+      var rest = key.slice(3), dot = rest.lastIndexOf('.');
+      var name = rest.slice(0, Math.max(dot, 0)).trim(), pname = rest.slice(dot + 1).trim();
+      if(dot < 1 || !name || !pname){ api.error(key + ': write it as el.<name>.<param>'); return false; }
+      var hits = find(extra.el, name);
+      if(!hits.length){ api.error(key + ': no element is called "' + name + '"'); return false; }
+      if(hits.length > 1){ api.error(key + ': ' + hits.length + ' elements are called "' + name + '"'); return false; }
+      var e = hits[0], list = paramsOf(e.c), param = null;
+      if(list.indexOf(pname) >= 0) param = pname;
+      else if(has(SHORT, pname.toLowerCase()) && list.indexOf(SHORT[pname.toLowerCase()]) >= 0) param = SHORT[pname.toLowerCase()];
+      else list.forEach(function(k){ if(!param && k.toLowerCase() === pname.toLowerCase()) param = k; });
+      if(!param){ api.error(key + ': ' + LF.nameOf(e) + ' is a ' + LF.WORD[e.c].toLowerCase() + ' and takes ' + list.join(', ')); return false; }
+
+      var spec = LF.SPEC[e.c][param], v, given;
+      if(spec[0] === 'e' && typeof spec[1][0] === 'string'){
+        v = spec[1].filter(function(o){ return o.toLowerCase() === norm(raw); })[0];
+        if(v === undefined){ api.error(key + ': "' + String(raw).slice(0, 40) + '" is not one of ' + spec[1].join(', ')); return false; }
+      } else {
+        v = given = api.number(raw);
+        if(!isFinite(v)){ api.error(key + ': "' + String(raw).slice(0, 40) + '" is not a number'); return false; }
+      }
+      e[param] = v;
+      var back = LF.load(extra), got = null;
+      back.el.forEach(function(x){ if(x.id === e.id) got = x; });
+      var used = got ? got[param] : v;
+      if(given !== undefined && used !== given) api.clamp(key, given, used);
+      replaceWith(extra, LF.compact(back));
+      var unit = (UNIT[e.c] || {})[param];
+      return { label: LF.nameOf(e) + ': ' + (e.c === 'Link' && param === 'p_set' ? 'power sent' : LABEL[param] || param),
+               value: typeof used === 'number' ? short(used) + (unit ? ' ' + unit : '') : String(used) };
+    }
+
+    // Buses written without coordinates are laid out in rows by their distance from the first bus.
+    function placeBuses(list){
+      var els = list.filter(function(e){ return e && typeof e === 'object'; });
+      var buses = els.filter(function(e){ return e.c === 'Bus'; });
+      if(!buses.some(function(b){ return !Array.isArray(b.at); })) return;
+      var byId = {}, nbr = {}, deg = {}, level = {}, rows = [];
+      buses.forEach(function(b){ byId[+b.id] = b; });
+      var count = function(id){ deg[id] = (deg[id] || 0) + 1; };
+      els.forEach(function(e){
+        if(LF.BRANCH[e.c]){
+          var a = +e.bus0, b = +e.bus1;
+          (nbr[a] = nbr[a] || []).push(b); (nbr[b] = nbr[b] || []).push(a); count(a); count(b);
+        } else if(LF.DEVICE[e.c]) count(+e.bus);
+      });
+      var width = function(id){ return Math.min(30, Math.max(8, 6 + 3 * (deg[id] || 0))); };
+      buses.forEach(function(b){
+        var id = +b.id;
+        if(level[id] !== undefined) return;
+        var queue = [id], base = rows.length;
+        level[id] = base;
+        for(var i = 0; i < queue.length; i++){
+          var at = level[queue[i]];
+          (rows[at] = rows[at] || []).push(queue[i]);
+          (nbr[queue[i]] || []).forEach(function(n){ if(has(byId, n) && level[n] === undefined){ level[n] = at + 1; queue.push(n); } });
+        }
+      });
+      var span = rows.map(function(r){ return r.reduce(function(a, id){ return a + width(id) + 8; }, -8); });
+      var widest = Math.max.apply(null, span);
+      rows.forEach(function(r, y){
+        var x = 10 + (widest - span[y]) / 2;
+        r.forEach(function(id){
+          if(!Array.isArray(byId[id].at)) byId[id].at = [Math.round(x), 10 + y * 24, width(id)];
+          x += width(id) + 8;
+        });
+      });
+    }
+
+    // json: the whole network, in the saved form (LF.compact). Anything LF.load cannot use is left out and said.
+    function whole(obj, extra, api){
+      if(!obj || typeof obj !== 'object' || !Array.isArray(obj.el)){ api.error('json: send the network as {"el":[...]}, in the form this tool saves it'); return false; }
+      var raw = { v: 1, name: obj.name, next: obj.next, el: obj.el.slice(0, 5000) };
+      placeBuses(raw.el);
+      var net = LF.load(raw);
+      if(!net.el.some(function(e){ return e.c === 'Bus'; })){ api.error('json: the network has no bus, so it was not used'); return false; }
+      var left = raw.el.length - net.el.length;
+      if(left > 0) api.error('json: ' + left + ' element' + (left === 1 ? '' : 's') + ' left out (not a known class, or a line, transformer or link missing a bus at one end)');
+      var said = 0;
+      raw.el.forEach(function(r){
+        if(!r || typeof r !== 'object' || !has(LF.SPEC, r.c)) return;
+        Object.keys(LF.SPEC[r.c]).forEach(function(k){
+          var sp = LF.SPEC[r.c][k], n = has(r, k) ? LF.num(r[k]) : NaN;
+          if((sp[0] !== 'n' && sp[0] !== 'i') || isNaN(n) || (n >= sp[1] && n <= sp[2]) || said >= 10) return;
+          said++;
+          api.clamp('json', (r.name || LF.WORD[r.c] + ' ' + r.id) + ' ' + k + ' ' + short(n), short(Math.min(sp[2], Math.max(sp[1], n))));
+        });
+      });
+      replaceWith(extra, LF.compact(net));
+      var n = function(f){ return net.el.filter(f).length; };
+      return { label: 'Whole network', value: (net.name ? net.name + ': ' : '') + n(function(e){ return e.c === 'Bus'; }) + ' buses, ' +
+        n(function(e){ return LF.BRANCH[e.c]; }) + ' branches, ' + n(function(e){ return LF.DEVICE[e.c]; }) + ' devices' };
+    }
+
+    function describe(key){
+      if(key === 'json') return { label: 'Whole network' };
+      var rest = key.slice(3), dot = rest.lastIndexOf('.');
+      if(key.indexOf('el.') !== 0 || dot < 1) return null;
+      var p = rest.slice(dot + 1).toLowerCase();
+      if(has(SHORT, p)) p = SHORT[p];
+      return { label: rest.slice(0, dot) + ': ' + (LABEL[p] || p) };
+    }
+    SharedAgent.register({ tool: 'loadflow-simulator', family: { 'el.': patch }, json: whole, describe: describe });
+  })();
+
   /* ── Start: draw at once, solve as soon as the engine is in ── */
   if(restoredAtLoad) motionChosen = true;
   pushHistory();

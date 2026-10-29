@@ -903,6 +903,32 @@ body.col-dragging,body.col-dragging *{cursor:grabbing!important;user-select:none
 .col-drag-src{position:relative;z-index:5;background-color:var(--panel)!important;box-shadow:inset 0 0 0 9999px color-mix(in srgb,var(--accent) 20%,transparent),inset 1px 0 0 var(--accent-strong),inset -1px 0 0 var(--accent-strong);pointer-events:none;}
 .col-drop-line{position:fixed;z-index:1000;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--accent-strong);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-strong) 22%,transparent);pointer-events:none;}
 
+/* ── Set up by an AI assistant (SharedAgent, shared.js) ──
+   A #load link opens the tool on its scenario with this strip over the inputs
+   and the results: what the assistant set and why, then anything it could not
+   use. A row's name opens the inputs on its field and outlines it for a
+   moment. Information, not a warning, so it wears the info tokens. */
+.agent-banner{margin:0 0 18px;padding:14px 18px 16px;border:1px solid var(--info-border);border-radius:var(--radius-xl);background:var(--info-bg);color:var(--text);font-size:var(--fs-sm);line-height:1.45;}
+.agent-top{display:flex;align-items:flex-start;gap:12px;}
+.agent-titles{flex:1 1 auto;min-width:0;}
+.agent-note{margin:0 0 2px;color:var(--text);font-size:var(--fs-base);font-weight:700;overflow-wrap:anywhere;}
+.agent-head{margin:0;color:var(--info-text);font-weight:700;}
+.agent-qs{margin:3px 0 0;color:var(--muted);overflow-wrap:anywhere;}
+.agent-dismiss{margin:-4px -8px 0 0;}
+.agent-rows{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px 22px;}
+.agent-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;min-width:0;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--info-border) 45%,transparent);}
+.agent-go{padding:0;margin:0;border:0;background:none;font:inherit;font-weight:700;color:var(--text);text-align:left;}
+button.agent-go{color:var(--accent-strong);cursor:pointer;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent-strong) 35%,transparent);text-underline-offset:3px;}
+button.agent-go:hover{text-decoration-color:currentColor;}
+button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px;border-radius:4px;}
+.agent-val{color:var(--text);font-weight:600;overflow-wrap:anywhere;}
+.agent-why{flex-basis:100%;color:var(--muted);font-size:var(--fs-xs);overflow-wrap:anywhere;}
+.agent-unknown,.agent-clamped,.agent-errors{margin:10px 0 0;color:var(--muted);overflow-wrap:anywhere;}
+.agent-unknown strong,.agent-clamped strong,.agent-errors strong{color:var(--text);font-weight:700;}
+.agent-actions{margin-top:12px;}
+.agent-flash{outline:2px solid var(--accent);outline-offset:4px;border-radius:var(--radius-sm);}
+@media(max-width:600px){.agent-banner{padding:12px 14px 14px;}}
+
 /* Header labels on a narrow screen: "← Other Tools" becomes "← Others", and the
    Tour and Guide buttons keep only their emoji (tour-shared.js, .pf-tour-word). */
 .nav-short{display:none;}
@@ -910,3 +936,28 @@ body.col-dragging,body.col-dragging *{cursor:grabbing!important;user-select:none
   .nav-long,.pf-tour-word{display:none;}
   .nav-short{display:inline;}
 }
+
+/* ── Use this tool with an AI assistant (written by _ref/agent-doc.mjs) ──
+   A folded card high on a tool page: what a chatbot reading the page needs to
+   open the tool with a #load link. Folded, it is one quiet line; open, the
+   rules and links sit in wrapping monospace blocks so a long link never
+   widens the page. */
+.agent-card{margin-bottom:14px;padding:0;font-size:var(--fs-sm);color:var(--muted);}
+.abt-demo .agent-card{display:none;}   /* a guide's live demo (guide-demo.js) plays the tool without it */
+.agent-sum{display:flex;align-items:center;gap:8px;padding:11px 18px;cursor:pointer;list-style:none;font-weight:600;color:var(--text);user-select:none;-webkit-user-select:none;}
+.agent-sum::-webkit-details-marker{display:none;}
+.agent-sum:hover{color:var(--accent);}
+.agent-sum:focus-visible{outline:2px solid var(--accent-strong);outline-offset:-2px;border-radius:var(--radius-xl);}
+.agent-chev{width:1.1em;height:1.1em;margin-left:auto;flex-shrink:0;color:var(--muted);transition:transform var(--motion-fast);}
+.agent-card[open] .agent-chev{transform:rotate(180deg);}
+.agent-card[open] .agent-sum{border-bottom:1px solid var(--border);}
+.agent-body{padding:12px 18px 14px;line-height:1.55;}
+.agent-body p{margin:0 0 8px;}
+.agent-body strong{color:var(--text);}
+.agent-body a{color:var(--accent);overflow-wrap:anywhere;}
+.agent-body code{font-family:'DM Mono',ui-monospace,monospace;font-size:.85em;color:var(--text);}
+.agent-pre{margin:0 0 10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--text);font-family:'DM Mono',ui-monospace,monospace;font-size:.76rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;}
+.agent-rules{white-space:pre;overflow-x:auto;overflow-wrap:normal;}
+.agent-keys{margin:0 0 8px;padding-left:18px;}
+.agent-keys li{margin:2px 0;}
+.agent-unit{color:var(--muted);}

@@ -465,6 +465,8 @@
       // Let the app finish its own init/layout first.
       setTimeout(function () {
         if (typeof CFG.holdFirstVisit === 'function' && CFG.holdFirstVisit()) return;
+        // Opened from an AI assistant's link (SharedAgent): its banner comes first.
+        if (window.SharedAgent && window.SharedAgent.link) return;
         start();
       }, 700);
     }

@@ -1055,6 +1055,33 @@
   $('runBtn').addEventListener('click', function(){ run(); });
   document.addEventListener('keydown', function(ev){ if((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter'){ ev.preventDefault(); run(); } });
 
+  /* An AI link written with run=0 (SharedAgent) opens the plan without solving it: the
+     reader presses Run plan. The hash is read here, before the loader takes it off the
+     address, and the hold ends once the link has been applied. With no such link nothing
+     is held and every plan that is put on screen is solved, as ever. */
+  var holdRun = (function(){
+    if(!window.SharedAgent || !SharedAgent.link) return false;
+    var hold = false;
+    String(window.location.hash).replace(/^#/, '').split('&').forEach(function(part){
+      var eq = part.indexOf('='), k, v;
+      try {
+        k = decodeURIComponent(eq < 0 ? part : part.slice(0, eq)).trim().replace(/^amp;/, '');
+        v = eq < 0 ? '' : decodeURIComponent(part.slice(eq + 1));
+      } catch(e){ return; }
+      if(k === 'run') hold = /^\s*(0|false|no|off)\s*$/i.test(v);
+    });
+    return hold;
+  })();
+  if(holdRun) SharedAgent.done.then(function(){ holdRun = false; });
+  // A plan has just been put on screen (a Quick Start, a file, a Share or AI link): solve it, unless the link held the run.
+  function opened(){
+    if(!holdRun) return run();
+    renderChecks(CX.validate(app.model, plan()));
+    showResults();
+    updateStale();
+    return solved();
+  }
+
   /* ── Checks: what stops a run, and what the run will do ── */
   function renderChecks(v){
     var items = v.errors.map(function(x){ return '<li class="err">' + esc(x.msg) + '</li>'; })
@@ -1378,7 +1405,7 @@
     renderTechs();
     if(persist) persist.save();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){ b.classList.toggle('active', b.getAttribute('data-preset') === key); });
-    return run();
+    return opened();
   }
   Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){
     b.addEventListener('click', function(){ applyPreset(b.getAttribute('data-preset')); });
@@ -1460,7 +1487,7 @@
     renderLoadProf();
     renderTechs();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn.active'), function(b){ b.classList.remove('active'); });
-    return run();
+    return opened();
   }
   SharedScenario.mount('.quick-start-row', { tool: 'capacityexpansion-planner', persist: persist });
   // The chart's view rides in a link: which year the typical days show. It is
@@ -1476,6 +1503,176 @@
   // When to build went into the capacity chart: its embeds and links open that.
   if(SharedShare.alias) SharedShare.alias('buildCanvas', 'capCanvas');
 
+  /* ── AI links (SharedAgent): patch a Quick Start's technologies, or send a whole plan ──
+     A chatbot's link starts from a Quick Start, then changes a technology by its
+     visible name (tech.<name>.<param>=<value>), the demand shape (loadShape) or
+     replaces the plan with json in the saved form (CX.compact, which the mini cache
+     carries as __extra). Each works on that saved form and reads it back through
+     CX.load, so a value meets exactly the bounds any saved plan does. Names and units
+     are the saved ones, as in json. The flat fields (demand, carbon price, horizon ...)
+     are ordinary fields and need nothing here. run=0 is held by opened(), above. */
+  if(window.SharedAgent) (function(){
+    // What a link may change on a technology: the saved name, how the banner says it, its unit
+    // ($ stands for the currency symbol chosen) and the scale the page shows it in (a share is shown as %).
+    var PARAM = {
+      exist:  ['existing capacity', 'MW'],           retire: ['retires in', ''],
+      build:  ['can build more', ''],                capex:  ['capital cost', '$/kW'],
+      fom:    ['fixed O&M', '$/kW/yr'],              vom:    ['running cost', '$/MWh'],
+      life:   ['lifetime', 'yrs'],                   learn:  ['cost change', '%/yr', 100],
+      from:   ['earliest year', ''],                 max:    ['most in service', 'MW'],
+      unit:   ['unit size', 'MW'],                   cf:     ['capacity factor', '%', 100],
+      avail:  ['availability', '%', 100],            co2:    ['emissions', 't/MWh'],
+      hours:  ['hours at full power', 'h'],          rte:    ['round-trip efficiency', '%', 100]
+    };
+    var ORDER = ['exist', 'retire', 'build', 'capex', 'fom', 'vom', 'life', 'learn', 'from', 'max', 'unit', 'cf', 'avail', 'co2', 'hours', 'rte'];
+    // Which kinds of technology take the ones that are not for all.
+    var ONLY = { cf: ['pv', 'wind'], avail: ['firm'], co2: ['firm'], hours: ['store'], rte: ['store'] };
+    var KIND_WORD = { pv: 'a solar technology', wind: 'a wind technology', firm: 'a firm technology', store: 'a storage technology' };
+    var YEAR = { retire: 1, from: 1 };
+    // What 0 means for the ones where it is not a number.
+    var ZERO = { retire: 'stays to the end', from: 'first year', max: 'no limit', unit: 'any size' };
+    var has = function(o, k){ return Object.prototype.hasOwnProperty.call(o, k); };
+    var tidy = function(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().toLowerCase(); };
+    var squash = function(s){ return tidy(s).replace(/[^\p{L}\p{N}]/gu, ''); };
+    var short = function(n){ return String(+Number(n).toFixed(6)); };
+    var list = function(){ return $('techList'); };
+    function takes(kind){ return ORDER.filter(function(p){ return !has(ONLY, p) || ONLY[p].indexOf(kind) >= 0; }); }
+    function paramOf(p){
+      var low = String(p).toLowerCase();
+      return has(PARAM, p) ? p : (ORDER.filter(function(k){ return k === low; })[0] || null);
+    }
+    function replaceWith(extra, next){
+      Object.keys(extra).forEach(function(k){ delete extra[k]; });
+      Object.keys(next).forEach(function(k){ extra[k] = next[k]; });
+    }
+    // The saved plan the link is working on: the one in the snapshot, else the one on screen.
+    function planOf(extra){
+      if(!Array.isArray(extra.tech)) replaceWith(extra, CX.compact(app.model));
+      return CX.load(extra);
+    }
+    // The technologies called this: the name as written (any case), else with spaces and punctuation
+    // ignored (Gas (CCGT), gasccgt), else a + Add id (ccgt) for the technology that carries its name.
+    function find(techs, name){
+      var a = tidy(name), z = squash(name), hits = [];
+      var same = function(want){ return function(e){ return want && squash(CX.nameOf(e)) === want; }; };
+      [function(e){ return tidy(CX.nameOf(e)) === a; }, same(z)].some(function(test){
+        hits = techs.filter(test);
+        return hits.length > 0;
+      });
+      if(!hits.length && has(CX.NEW, a)) hits = techs.filter(same(squash(CX.NEW[a].name)));
+      return hits;
+    }
+    function namesIn(techs){
+      var names = techs.map(function(e){ return CX.nameOf(e); });
+      return names.slice(0, 8).join(', ') + (names.length > 8 ? ', and ' + (names.length - 8) + ' more' : '');
+    }
+    function symbol(api){
+      var c = api.field('cxCur');
+      return typeof c === 'string' ? c : '$';
+    }
+
+    // tech.<name>.<param>=<value>: one value of one technology.
+    function patch(raw, extra, api, key){
+      var rest = key.slice(5), dot = rest.lastIndexOf('.');
+      var name = rest.slice(0, Math.max(dot, 0)).trim(), pname = rest.slice(dot + 1).trim();
+      if(dot < 1 || !name || !pname){ api.error(key + ': write it as tech.<name>.<param>'); return false; }
+      var m = planOf(extra), hits = find(m.tech, name), id = tidy(name), made = has(CX.NEW, id) && !hits.length;
+      if(!hits.length && !made){
+        api.error(key + ': no technology is called "' + name.slice(0, 40) + '"' + (m.tech.length ? ' (the plan has ' + namesIn(m.tech) + ')' : ''));
+        return false;
+      }
+      if(hits.length > 1){ api.error(key + ': ' + hits.length + ' technologies are called "' + name.slice(0, 40) + '"'); return false; }
+      var kind = made ? CX.NEW[id].kind : hits[0].kind, param = paramOf(pname), shownName = made ? CX.NEW[id].name : CX.nameOf(hits[0]);
+      if(!param || takes(kind).indexOf(param) < 0){
+        api.error(key + ': ' + shownName + ' is ' + KIND_WORD[kind] + ' and takes ' + takes(kind).join(', '));
+        return false;
+      }
+      var text = String(raw).trim(), v, given, shown;
+      if(param === 'build'){
+        v = /^(1|true|on|yes)$/i.test(text) ? 1 : /^(0|false|off|no)$/i.test(text) ? 0 : NaN;
+        if(isNaN(v)){ api.error(key + ': "' + text.slice(0, 40) + '" is not 0 or 1'); return false; }
+        shown = v ? 'yes' : 'no';
+      } else {
+        v = given = api.number(raw);
+        if(!isFinite(v)){ api.error(key + ': "' + text.slice(0, 40) + '" is not a number'); return false; }
+        if(has(YEAR, param)){
+          v = given = Math.round(v);
+          if(v !== 0 && (v < 1900 || v > 2200)){ api.error(key + ': ' + v + ' is not a year from 1900 to 2200 (0 for none)'); return false; }
+        }
+      }
+      if(made){
+        if(m.tech.length >= CX.MAX_TECH){ api.error(key + ': the plan already has ' + CX.MAX_TECH + ' technologies, so ' + shownName + ' was not added'); return false; }
+        hits = [CX.newTech(m, id)];
+        m.tech.push(hits[0]);
+      }
+      var e = hits[0];
+      e[param] = v;
+      var back = CX.load(CX.compact(m)), got = null;
+      back.tech.forEach(function(x){ if(x.id === e.id) got = x; });
+      var used = got ? got[param] : v;
+      if(given !== undefined && used !== given) api.clamp(key, given, used);
+      replaceWith(extra, CX.compact(back));
+      var P = PARAM[param], figure = short(used * (P[2] || 1)), unit = P[1];
+      if(shown === undefined) shown = !unit ? figure : unit.charAt(0) === '$' ? symbol(api) + figure + unit.slice(1) : unit.charAt(0) === '%' ? figure + unit : figure + ' ' + unit;
+      if(!used && has(ZERO, param)) shown = ZERO[param];
+      return { label: shownName + ': ' + P[0], value: shown + (made ? ' (added to the plan)' : ''), el: list() };
+    }
+
+    // loadShape=<shape>: the demand through the day, as picking it in the Profile list does.
+    function shape(raw, extra, api){
+      var text = String(raw).trim(), low = tidy(text), hit = null;
+      CX.LOAD_KEYS.forEach(function(k){ if(!hit && (k === low || tidy(CX.PROFILES[k].label) === low)) hit = k; });
+      if(!hit){ api.error('loadShape: "' + text.slice(0, 40) + '" is not one of ' + CX.LOAD_KEYS.join(', ')); return false; }
+      var m = planOf(extra), p = m.load;
+      p.ts = null; p.base = hit; p.hrs = ''; p.f2 = ''; p.f7 = ''; p.sd = '';
+      replaceWith(extra, CX.compact(m));
+      return { label: 'Demand shape', value: CX.PROFILES[hit].label, el: document.querySelector('[data-prof="load"]') };
+    }
+
+    // json: the whole plan, in the saved form (CX.compact). Anything CX.load cannot use is left out and said.
+    function whole(obj, extra, api){
+      if(!obj || typeof obj !== 'object' || !Array.isArray(obj.tech)){ api.error('json: send the plan as {"v":2,"tech":[...]}, in the form this tool saves it'); return false; }
+      // A plan written now is the current version: its load profile is the one in "load", whatever "v" says.
+      var raw = { v: CX.VERSION, next: obj.next, tech: obj.tech.slice(0, 500), load: obj.load };
+      var m = CX.load(raw);
+      if(!m.tech.length){ api.error('json: the plan has no technology, so it was not used'); return false; }
+      var left = obj.tech.length - m.tech.length;
+      if(left > 0) api.error('json: ' + left + ' technolog' + (left === 1 ? 'y' : 'ies') + ' left out (more than ' + CX.MAX_TECH + ', or not an object)');
+      var said = 0;
+      raw.tech.slice(0, CX.MAX_TECH).forEach(function(r){
+        if(!r || typeof r !== 'object') return;
+        Object.keys(CX.SPEC).forEach(function(k){
+          var sp = CX.SPEC[k], n = has(r, k) ? CX.num(r[k]) : NaN;
+          if(sp[0] !== 'n' || isNaN(n) || (n >= sp[1] && n <= sp[2]) || said >= 10) return;
+          said++;
+          api.clamp('json', String(r.name || r.kind || 'technology').slice(0, 40) + ' ' + k + ' ' + short(n), short(Math.min(sp[2], Math.max(sp[1], n))));
+        });
+      });
+      replaceWith(extra, CX.compact(m));
+      var n = function(kind){ return m.tech.filter(function(e){ return e.kind === kind; }).length; };
+      return { label: 'Whole plan', el: list(),
+               value: m.tech.length + ' technologies (' + [['pv', 'solar'], ['wind', 'wind'], ['firm', 'firm'], ['store', 'storage']].filter(function(x){ return n(x[0]); })
+                 .map(function(x){ return n(x[0]) + ' ' + x[1]; }).join(', ') + '), ' + CX.PROFILES[CX.loadBase(m.load)].label.toLowerCase() + ' demand' };
+    }
+
+    function describe(key){
+      if(key === 'json') return { label: 'Whole plan', el: list() };
+      if(key === 'loadShape') return { label: 'Demand shape', el: document.querySelector('[data-prof="load"]') };
+      var rest = key.slice(5), dot = rest.lastIndexOf('.');
+      if(key.indexOf('tech.') !== 0 || dot < 1) return null;
+      var k = paramOf(rest.slice(dot + 1));
+      return { label: rest.slice(0, dot) + ': ' + (k ? PARAM[k][0] : rest.slice(dot + 1)), el: list() };
+    }
+
+    SharedAgent.register({
+      tool: 'capacityexpansion-planner',
+      family: { 'tech.': patch },
+      compact: { loadShape: shape },
+      json: whole,
+      describe: describe
+    });
+  })();
+
   /* ── Start: draw at once, solve as soon as the engine is in ── */
   if(!restoredAtLoad && !EMBED){
     var p0 = CX.PRESETS[CX.PRESET_DEFAULT];
@@ -1490,7 +1687,7 @@
   updateStale();
   try { performance.mark('cx-first-render'); } catch(e){}
   // An embed solves the scenario its link carries, once SharedShare has loaded it.
-  if(!EMBED) run();
+  if(!EMBED && !holdRun) run();
 
   // The guided tour (tour.js) points at the results, so a plan that changed
   // since its last run is solved first.

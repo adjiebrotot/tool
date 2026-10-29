@@ -65,6 +65,7 @@ export async function boot() {
 
   let restoredBlob;            // what Persist found (restore runs inside init)
   let cachedExtra;             // the cached workflow as it was, kept while autosave is held
+  let booted = false;          // set once the panels are mounted: a restore after that is a link's (below)
   // What goes into the mini cache. Attached data files come along so a reload finds them
   // again, unless they are together too big for a browser's storage: then the workflow is
   // cached without them (Save writes a .json that keeps everything) and the blocks say so.
@@ -81,7 +82,10 @@ export async function boot() {
       persist = Persist.init(PERSIST_NS, {
         extra: {
           save: () => (app.held ? cachedExtra : cacheBlob()),
-          restore: (obj) => { restoredBlob = obj; },
+          // At start-up the cached workflow waits in restoredBlob for loadWorkflow (below). After
+          // that a restore is an AI link applying its workflow, or its banner's Undo: both go
+          // through loadWorkflow and replace the canvas as one undo step, as Open does.
+          restore: (obj) => { restoredBlob = obj; if (booted) applyRestored(obj); },
         },
       });
     } catch (e) { console.warn('[Builder] mini cache:', e && e.message ? e.message : e); persist = null; }
@@ -412,6 +416,13 @@ export async function boot() {
     return true;
   };
 
+  function applyRestored(obj) {
+    const { wf: next, notes } = W.loadWorkflow(obj);
+    if (!next) { for (const n of notes.slice(0, 2)) toast(n.msg, { level: 'error', ms: 9000 }); return; }
+    app.replaceWorkflow(next, { quiet: true });
+    for (const n of notes) if (n.level === 'warning' || n.level === 'error') toast(n.msg, { level: 'warn', ms: 9000 });
+  }
+
   app.setView = (vp) => {
     const v = store.get().view;
     if (v && v.x === vp.x && v.y === vp.y && v.zoom === vp.zoom) return;
@@ -465,6 +476,8 @@ export async function boot() {
     if (!Object.keys(rt).length) showAlert('<strong>The Python runtime did not load</strong>, so the script cannot be written. Check your connection and reload the page.');
     runGenerate();
   });
+
+  booted = true;
 
   // ---- For tour.js and the tests
   const api = {

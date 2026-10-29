@@ -833,6 +833,126 @@ function applyQuickStart(id){
 function clearPresetMark(){ document.querySelectorAll('.quick-start-btn.active').forEach(b => b.classList.remove('active')); }
 
 // ═══════════════════════════════════════════════════════════
+// AI ASSISTANT LINKS (SharedAgent in shared.js; the shared helpers are in ../ai-link.js)
+// A chatbot's #load link opens the map on a person. The net salary and the expense
+// total are this page's own fields (salary, expense), so they need nothing but a hand
+// across to S in patch(); the rest of the plan is the state S, so its keys are the
+// adapter's, and the same words the comparator uses where they mean the same thing:
+//   cities=<home city>                  matched to the page's own list by name
+//   detail=simple|detailed  housing=include|exclude  target=ratio|nominal
+//   salaryMode=required|global|scaled   scale=min|avg|median (Scaled only)
+//   rows=<category>:<monthly amount>,... Detailed rows, home currency
+// Display choices (which view the map shows, major cities only) are the reader's and
+// are not set by a link. Amounts are monthly, in the home city's currency.
+// ═══════════════════════════════════════════════════════════
+const AGENT_WORDS = {
+  detail:     {simple: 'Simple', detailed: 'Detailed'},
+  housing:    {include: 'Include', exclude: 'Exclude'},
+  salaryMode: {required: 'Required', global: 'Global', scaled: 'Scaled'},
+  target:     {ratio: 'Savings ratio', nominal: 'Nominal savings'},
+  scale:      {min: 'Minimum wage', avg: 'Average salary', median: 'Median salary'},
+};
+const AGENT_ALIAS = {scale: {'min wage': 'min', average: 'avg'}, salaryMode: {'required salary': 'required', 'global salary': 'global', 'scaled salary': 'scaled'}};
+let agentIn = {}, agentRes = {}, agentFly = false, agentReadyResolve = null;
+const agentReady = new Promise(r => { agentReadyResolve = r; });
+
+function agentChoice(key){
+  return function(raw, extra, api){
+    const v = ColAI.choice(raw, AGENT_WORDS[key], AGENT_ALIAS[key]);
+    if(!v){ api.error(key + ' "' + ColAI.clip(ColAI.decode(raw), 30) + '": not one of ' + Object.keys(AGENT_WORDS[key]).join(', ')); return false; }
+    agentIn[key] = v;
+    return agentRes[key] = {value: AGENT_WORDS[key][v]};
+  };
+}
+function agentCities(raw, extra, api){
+  const r = ColAI.cities(raw, CITIES), e = r.entries[0];
+  if(!e) return false;
+  if(r.entries.length > 1) api.error('cities: the map has one home city, so only "' + e.text + '" was used and the others were skipped');
+  if(e.status === 'none'){ api.unknown('cities.' + e.text); return false; }
+  if(e.status === 'ambiguous'){
+    api.error('cities "' + e.text + '" fits more than one city (' + e.options.join('; ') + '): write the country too, as in "' + e.options[0] + '"');
+    return false;
+  }
+  agentIn.cities = e.key;
+  return agentRes.cities = {value: ColAI.display(e.city)};
+}
+function agentRows(raw, extra, api){
+  const r = ColAI.rows(raw, api, {dests: false});
+  if(!r) return false;
+  agentIn.rows = r.rows;
+  return agentRes.rows = {value: r.text};
+}
+// Last, once every key is read. The two fields arrive in the snapshot's __fields, which the page's own
+// restore would redraw from S, so the link's figures are written into S here as well.
+function agentPatch(extra, api){
+  const a = agentIn, res = agentRes;
+  agentIn = {}; agentRes = {};
+  const named = k => a[k] !== undefined;
+  const homeBefore = extra.fromKey || '';
+  if(named('cities')){
+    extra.fromKey = a.cities;
+    agentFly = true;
+    const was = (getCity(homeBefore) || {}).currency, now = (getCity(a.cities) || {}).currency;
+    // A Quick Start's figures are in its own home currency: for another one they would be read as that
+    // currency, so whatever the link does not replace is cleared.
+    if(was && now && was !== now){
+      const cleared = [];
+      if(!api.given('salary') && extra.salary){ extra.salary = 0; cleared.push('salary'); }
+      if(!api.given('expense') && !named('rows') && extra.expense){ extra.expense = 0; cleared.push('expense'); }
+      if(!named('rows') && (extra.rows || []).some(r => r.amount)){ extra.rows = [{catId: 'rent', amount: 0}]; cleared.push('rows'); }
+      if(cleared.length) api.error('cities: the home city is now paid in ' + now + ', so the ' + cleared.join(' and ') + ' from the Quick Start (in ' + was + ') were cleared; send them in ' + now);
+    }
+  }
+  ['detail', 'housing', 'target', 'scale'].forEach(k => { if(named(k)) extra[k] = a[k]; });
+  if(named('salaryMode')) extra.mode = a.salaryMode;
+  if(api.given('salary')) extra.salary = api.num('salary', 0);
+  if(api.given('expense')) extra.expense = api.num('expense', 0);
+  if(named('rows')){
+    extra.rows = a.rows.map(r => ({catId: r.catId, amount: r.amount}));
+    if(!named('detail')) extra.detail = 'detailed';
+    // As the Quick Start does: the same budget as one figure, for a reader who switches to Simple.
+    if(!api.given('expense')) extra.expense = a.rows.reduce((t, r) => t + r.amount, 0);
+  }
+  const cur = (getCity(extra.fromKey) || {}).currency;
+  if(res.rows && cur) res.rows.value += ' (' + cur + ' a month)';
+}
+const AGENT_LABELS = {
+  cities: ['Your city', 'fromPicker'], detail: ['Lifestyle detail', 'detailGroup'], housing: ['Housing', 'housingGroup'],
+  salaryMode: ['Salary', 'modeGroup'], target: ['Target', 'targetGroup'], scale: ['Pay to scale your salary by', 'scaleGroup'],
+  rows: ['Expense rows', 'rows']
+};
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'costofliving-comparator-map',
+  // The data loads after the page does, and the mini cache starts with it.
+  ready: () => Promise.race([agentReady, new Promise(r => setTimeout(r, 20000))]),
+  compact: {
+    cities: agentCities, detail: agentChoice('detail'), housing: agentChoice('housing'), salaryMode: agentChoice('salaryMode'),
+    target: agentChoice('target'), scale: agentChoice('scale'), rows: agentRows
+  },
+  patch: agentPatch,
+  describe: function(key){
+    const d = Object.prototype.hasOwnProperty.call(AGENT_LABELS, key) ? AGENT_LABELS[key] : null;
+    return d ? {label: d[0], el: $(d[1])} : null;
+  }
+});
+
+/* What the docs print for each Quick Start (_ref/agent-lib.mjs, colmapQuickStarts), from the same data the buttons use. */
+window.COLMAP_QS = {
+  keys: Object.keys(QUICK_START),
+  ready: agentReady,
+  link: function(key){
+    const q = QUICK_START[key];
+    if(!q || !CITIES.length) return null;
+    const c = CITIES.find(x => x.city === q.from[0] && x.country === q.from[1]);
+    return {
+      salary: String(q.salary), expense: String(q.rows.reduce((t, r) => t + r[1], 0)), detail: 'detailed',
+      cities: c ? ColAI.label(c, CITIES) : q.from[0],
+      rows: q.rows.map(r => r[0] + ':' + r[1]).join(',')
+    };
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
 // GUIDED-TOUR DEMO DATA
 // The tour (tour.js) narrates the Perth Quick Start, so it loads it before
 // the steps that point at a form or a result, and hands the reader's own plan
@@ -1887,13 +2007,18 @@ function init(){
   render();
   // The whole plan lives in S; the form is redrawn from it on a revisit.
   persist = Persist.init('costofliving-comparator-map', {
-    onRestore(){ normalise(); mountFromPicker(); syncInputs(); render(); },
+    onRestore(){
+      normalise(); mountFromPicker(); syncInputs(); render();
+      // A link that names the city moves the map to it (a Quick Start does through applyQuickStart).
+      if(agentFly){ agentFly = false; if(mapReady) flyTo(homeTransform(), 600); }
+    },
     extra: {
       save(){ return S; },
       restore(e){ if(e && typeof e === 'object'){ Object.keys(S).forEach(k => { delete S[k]; }); Object.assign(S, clone(S_DEFAULTS), clone(e)); } }
     }
   });
   SharedScenario.mount('.quick-start-row', { tool: 'costofliving-comparator-map', persist });
+  agentReadyResolve();   // a #load link waits for the data, the picker and the mini cache
   loadMap();
   tourCatchUp();
 

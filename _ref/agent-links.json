@@ -1,0 +1,3517 @@
+{
+ "_about": "Kept AI links: the #load links a chatbot writes from a page's agent.txt (SharedAgent in shared.js, _ref/ai-drive-plan.md). FROZEN like _ref/share-links.json: these links live on in people's chat histories, so add new ones and never change or remove one. A field renamed since is mapped by the tool (data-persist, or a migration in its load), never fixed here. Each link opens `page` with the fragment `link` and must hold `expect` (field key: the value as the input shows it) and, when given, `probe` (what the page's probe in _ref/agent-lib.mjs returns, matched in part; lists whole). `model`: true marks a whole custom model in json, which must also solve (A6). `via`: the address a link is opened at when it is not `page` itself (a router page that redirects, powerfactory-scripter/index.html); it must land on `page` and apply there. Checked by node _ref/agent-check.mjs.",
+ "links": [
+  {
+   "page": "/rentvsownhouse/",
+   "name": "docs example: Melbourne 2-bedroom house",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&setupCost=6&why.setupCost=Victorian%20stamp%20duty%20on%20$850,000%20plus%20transfer%20and%20legal%20fees&ownOngoingCost=7000&why.ownOngoingCost=Rates,%20insurance%20and%20upkeep%20on%20an%20$850,000%20house&note=Melbourne,%20October%202026,%202-bedroom%20house",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "620", "setupCost": "6", "ownOngoingCost": "7,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "ratePeriods: fixed, then a floating range",
+   "link": "#load&v=1&qs=sydney/apt-2br&propertyPrice=1150000&ratePeriods=3:5.89,27:6.5-7.5&why.ratePeriods=3-year%20fixed%20at%205.89%25,%20then%20variable%20between%206.5%25%20and%207.5%25&note=Sydney,%20October%202026",
+   "expect": { "propertyPrice": "1,150,000" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [
+     { "toYear": 3, "type": "fixed", "rate": 5.89, "rateMin": 5.89, "rateMax": 5.89 },
+     { "type": "floating", "rateMin": 6.5, "rateMax": 7.5 }
+    ],
+    "shown": { "mortgageMode": "detailed", "ratePeriods": 2 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "ownSetupCosts: the docs' rows, the ongoing cost kept",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&ownOngoingCost=7000&ownOngoingCostFreq=yearly&ownSetupCosts=Stamp%20duty:45070,Transfer%20and%20registration:2600,Legal:1800&why.ownSetupCosts=Victorian%20stamp%20duty%20on%20$850,000,%20Land%20Registry%20fees%20and%20conveyancing",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "620", "ownOngoingCost": "7,000", "ownOngoingCostFreq": "yearly" },
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Stamp duty", "amount": 45070, "basis": "fixed" },
+     { "name": "Transfer and registration", "amount": 2600, "basis": "fixed" },
+     { "name": "Legal", "amount": 1800, "basis": "fixed" }
+    ],
+    "ownOngoingCosts": [ { "amount": 7000, "basis": "yearly" } ],
+    "shown": { "ownCostsMode": "detailed", "ownSetupCosts": 3, "ownOngoingCosts": 1 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "ownOngoingCosts: growth and a pct row, the setup cost kept",
+   "link": "#load&v=1&qs=brisbane/apt-2br&propertyPrice=790000&setupCost=4&setupCostType=pct&ownOngoingCosts=Council%20rates:2200,Strata:1450:yearly:3.5,Maintenance:0.5%25&why.ownOngoingCosts=Brisbane%20City%20Council%20rates,%20body%20corporate%20levies%20and%20upkeep",
+   "expect": { "propertyPrice": "790,000", "setupCost": "4", "setupCostType": "pct" },
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownOngoingCosts": [
+     { "name": "Council rates", "amount": 2200, "basis": "yearly" },
+     { "name": "Strata", "amount": 1450, "basis": "yearly", "inflation": 3.5 },
+     { "name": "Maintenance", "amount": 0.5, "basis": "pct" }
+    ],
+    "ownSetupCosts": [ { "amount": 4, "basis": "pct" } ],
+    "shown": { "ownCostsMode": "detailed", "ownOngoingCosts": 3, "ownSetupCosts": 1 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "rentOngoingCosts: a monthly row and a yearly one",
+   "link": "#load&v=1&qs=perth/apt-2br&rentAmount=780&rentOngoingCosts=Contents%20insurance:25:monthly,Moving%20every%203%20years:600&why.rentOngoingCosts=Renters%20contents%20cover%20and%20a%20move%20every%20three%20years&note=Perth,%20October%202026",
+   "expect": { "rentAmount": "780" },
+   "probe": {
+    "rentCostsMode": "detailed",
+    "rentOngoingCosts": [
+     { "name": "Contents insurance", "amount": 25, "basis": "monthly" },
+     { "name": "Moving every 3 years", "amount": 600, "basis": "yearly" }
+    ],
+    "shown": { "rentCostsMode": "detailed", "rentOngoingCosts": 2 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "every list at once: weekly, monthly and pct rows",
+   "link": "#load&v=1&qs=london/apt-2br&propertyPrice=560000&rentAmount=2400&ratePeriods=2:4.49,33:5.3-6.2&ownSetupCosts=Stamp%20duty:18000,Legal:1500,Survey:600&ownOngoingCosts=Service%20charge:250:monthly,Ground%20rent:300,Insurance:0.1%25&rentOngoingCosts=Contents%20insurance:3:weekly,Moving:1.5%25&note=London,%20October%202026,%202-bedroom%20flat",
+   "expect": { "propertyPrice": "560,000", "rentAmount": "2,400" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [
+     { "toYear": 2, "type": "fixed", "rate": 4.49 },
+     { "type": "floating", "rateMin": 5.3, "rateMax": 6.2 }
+    ],
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Stamp duty", "amount": 18000, "basis": "fixed" },
+     { "name": "Legal", "amount": 1500, "basis": "fixed" },
+     { "name": "Survey", "amount": 600, "basis": "fixed" }
+    ],
+    "ownOngoingCosts": [
+     { "name": "Service charge", "amount": 250, "basis": "monthly" },
+     { "name": "Ground rent", "amount": 300, "basis": "yearly" },
+     { "name": "Insurance", "amount": 0.1, "basis": "pct" }
+    ],
+    "rentCostsMode": "detailed",
+    "rentOngoingCosts": [
+     { "name": "Contents insurance", "amount": 3, "basis": "weekly" },
+     { "name": "Moving", "amount": 1.5, "basis": "pct" }
+    ],
+    "shown": { "mortgageMode": "detailed", "ownCostsMode": "detailed", "rentCostsMode": "detailed", "ratePeriods": 2, "ownSetupCosts": 3, "ownOngoingCosts": 3, "rentOngoingCosts": 2 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "a list label with an encoded colon and comma",
+   "link": "#load&v=1&qs=sydney/house-2br&propertyPrice=1650000&ownSetupCosts=Transfer%20duty%20%28NSW%29%3A%20standard:62000,Legal%2C%20conveyancing:2200",
+   "expect": { "propertyPrice": "1,650,000" },
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Transfer duty (NSW): standard", "amount": 62000, "basis": "fixed" },
+     { "name": "Legal, conveyancing", "amount": 2200, "basis": "fixed" }
+    ]
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "a list a chatbot encoded whole",
+   "link": "#load&v=1&qs=perth/house-2br&ownSetupCosts=Stamp%20duty%3A31000%2CLegal%3A1500",
+   "expect": {},
+   "probe": {
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "Stamp duty", "amount": 31000, "basis": "fixed" },
+     { "name": "Legal", "amount": 1500, "basis": "fixed" }
+    ]
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Interest Only switches the mortgage to Detailed",
+   "link": "#load&v=1&qs=perth/apt-2br&mortgageType=io&mortgageRate=6.29&why.mortgageType=An%20investor%20loan,%20interest%20only&why.mortgageRate=Typical%20interest-only%20investor%20rate,%20October%202026",
+   "expect": { "mortgageType": "io", "mortgageRate": "6.29" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [ { "type": "fixed", "rate": 6.29, "rateMin": 6.29, "rateMax": 6.29 } ],
+    "shown": { "mortgageMode": "detailed", "ratePeriods": 1 }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "forgiving numbers, a period by its label, Rent-Then-Buy",
+   "link": "#load&v=1&qs=newyork/apt-2br&propertyPrice=$1,250,000&rentAmount=5,400&rentFreq=a%20month&mortgageRate=6.85%25&rtbEnabled=true&rtbBuyYear=6&horizon=25&why.rtbBuyYear=The%20user%20may%20rent%20for%20about%20six%20years%20first&note=New%20York,%20October%202026",
+   "expect": { "propertyPrice": "1,250,000", "rentAmount": "5,400", "rentFreq": "monthly", "mortgageRate": "6.85", "rtbEnabled": true, "rtbBuyYear": "6", "horizon": "25" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Sydney 2-bedroom apartment",
+   "link": "#load&v=1&qs=sydney/apt-2br&propertyPrice=1100000&rentAmount=950&note=Sydney,%20October%202026,%202-bedroom%20apartment",
+   "expect": { "propertyPrice": "1,100,000", "rentAmount": "950" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Brisbane 4-bedroom house over 20 years",
+   "link": "#load&v=1&qs=brisbane/house-4br&propertyPrice=1500000&rentAmount=800&horizon=20&why.horizon=The%20user%20plans%20to%20stay%20about%2020%20years&note=Brisbane,%20October%202026,%204-bedroom%20house",
+   "expect": { "propertyPrice": "1,500,000", "rentAmount": "800", "horizon": "20" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Auckland 2-bedroom house, 10% deposit",
+   "link": "#load&v=1&qs=auckland/house-2br&propertyPrice=830000&rentAmount=620&downPaymentPct=10&why.downPaymentPct=A%20first-home%20buyer%20with%20a%2010%25%20deposit&note=Auckland,%20October%202026",
+   "expect": { "propertyPrice": "830,000", "rentAmount": "620", "downPaymentPct": "10" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Singapore 2-bedroom condo",
+   "link": "#load&v=1&qs=singapore/apt-2br&propertyPrice=1650000&rentAmount=4800&note=Singapore,%20October%202026,%202-bedroom%20condo",
+   "expect": { "propertyPrice": "1,650,000", "rentAmount": "4,800" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Kuala Lumpur 2-bedroom apartment",
+   "link": "#load&v=1&qs=kualalumpur/apt-2br&propertyPrice=850000&rentAmount=3500&currencySymbol=RM&note=Kuala%20Lumpur,%20October%202026",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "3,500", "currencySymbol": "RM" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Jakarta 2-bedroom apartment, rent a year",
+   "link": "#load&v=1&qs=jakarta/apt-2br&propertyPrice=1800000000&rentAmount=90000000&rentFreq=yearly&why.rentFreq=Jakarta%20apartment%20leases%20are%20paid%20a%20year%20at%20a%20time&note=Jakarta,%20October%202026",
+   "expect": { "propertyPrice": "1,800,000,000", "rentAmount": "90,000,000", "rentFreq": "yearly" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Bangkok 2-bedroom condo",
+   "link": "#load&v=1&qs=bangkok/apt-2br&propertyPrice=8500000&rentAmount=38000&note=Bangkok,%20October%202026",
+   "expect": { "propertyPrice": "8,500,000", "rentAmount": "38,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Ho Chi Minh City 2-bedroom apartment",
+   "link": "#load&v=1&qs=hochiminh/apt-2br&propertyPrice=5200000000&rentAmount=15000000&note=Ho%20Chi%20Minh%20City,%20October%202026",
+   "expect": { "propertyPrice": "5,200,000,000", "rentAmount": "15,000,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Hong Kong 2-bedroom flat",
+   "link": "#load&v=1&qs=hongkong/apt-2br&propertyPrice=7200000&rentAmount=20000&note=Hong%20Kong,%20October%202026",
+   "expect": { "propertyPrice": "7,200,000", "rentAmount": "20,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Tokyo 2-bedroom apartment over 25 years",
+   "link": "#load&v=1&qs=tokyo/apt-2br&propertyPrice=85000000&rentAmount=250000&horizon=25&why.horizon=The%20user%20expects%20to%20stay%20about%2025%20years&note=Tokyo,%20October%202026",
+   "expect": { "propertyPrice": "85,000,000", "rentAmount": "250,000", "horizon": "25" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Seoul 2-bedroom apartment",
+   "link": "#load&v=1&qs=seoul/apt-2br&propertyPrice=1000000000&rentAmount=1700000&note=Seoul,%20October%202026",
+   "expect": { "propertyPrice": "1,000,000,000", "rentAmount": "1,700,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Mumbai 2-bedroom flat, the user's loan rate",
+   "link": "#load&v=1&qs=mumbai/apt-2br&propertyPrice=22000000&rentAmount=70000&mortgageRate=8.5&why.mortgageRate=The%20rate%20the%20user%27s%20bank%20offered&note=Mumbai,%20October%202026",
+   "expect": { "propertyPrice": "22,000,000", "rentAmount": "70,000", "mortgageRate": "8.5" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Dubai 2-bedroom apartment, rent a year",
+   "link": "#load&v=1&qs=dubai/apt-2br&propertyPrice=1900000&rentAmount=120000&note=Dubai,%20October%202026",
+   "expect": { "propertyPrice": "1,900,000", "rentAmount": "120,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "London 2-bedroom house",
+   "link": "#load&v=1&qs=london/house-2br&propertyPrice=520000&rentAmount=2100&note=London,%20October%202026,%202-bedroom%20house",
+   "expect": { "propertyPrice": "520,000", "rentAmount": "2,100" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Zurich 2-bedroom apartment",
+   "link": "#load&v=1&qs=zurich/apt-2br&propertyPrice=1400000&rentAmount=2600&note=Zurich,%20October%202026",
+   "expect": { "propertyPrice": "1,400,000", "rentAmount": "2,600" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Paris 2-bedroom apartment, the euro sent encoded",
+   "link": "#load&v=1&qs=paris/apt-2br&currencySymbol=%E2%82%AC&propertyPrice=600000&rentAmount=1800&note=Paris,%20octobre%202026",
+   "expect": { "currencySymbol": "€", "propertyPrice": "600,000", "rentAmount": "1,800" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Berlin 2-bedroom apartment, setup cost as a %",
+   "link": "#load&v=1&qs=berlin/apt-2br&propertyPrice=450000&rentAmount=1350&setupCost=10.5&setupCostType=pct&why.setupCost=Berlin%20transfer%20tax%206%25,%20notary%20and%20land%20registry%20about%202%25,%20agent%20about%203.57%25&note=Berlin,%20Oktober%202026",
+   "expect": { "propertyPrice": "450,000", "rentAmount": "1,350", "setupCost": "10.5", "setupCostType": "pct" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "San Francisco 2-bedroom house",
+   "link": "#load&v=1&qs=sanfrancisco/house-2br&propertyPrice=1400000&rentAmount=5200&note=San%20Francisco,%20October%202026",
+   "expect": { "propertyPrice": "1,400,000", "rentAmount": "5,200" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Toronto 2-bedroom house",
+   "link": "#load&v=1&qs=toronto/house-2br&propertyPrice=1100000&rentAmount=3400&note=Toronto,%20October%202026",
+   "expect": { "propertyPrice": "1,100,000", "rentAmount": "3,400" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Shanghai 2-bedroom apartment",
+   "link": "#load&v=1&qs=shanghai/apt-2br&propertyPrice=5800000&rentAmount=9500&note=Shanghai,%20October%202026",
+   "expect": { "propertyPrice": "5,800,000", "rentAmount": "9,500" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Manila 2-bedroom house",
+   "link": "#load&v=1&qs=manila/house-2br&propertyPrice=8000000&rentAmount=26000&note=Metro%20Manila,%20October%202026",
+   "expect": { "propertyPrice": "8,000,000", "rentAmount": "26,000" }
+  },
+  {
+   "page": "/rentvsownhouse/",
+   "name": "Los Angeles 4-bedroom house",
+   "link": "#load&v=1&qs=losangeles/house-4br&propertyPrice=1100000&rentAmount=5000&note=Los%20Angeles,%20October%202026",
+   "expect": { "propertyPrice": "1,100,000", "rentAmount": "5,000" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "docs example: Melbourne 2-bedroom house",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&setupCost=6&why.setupCost=Victorian%20stamp%20duty%20on%20$850,000%20plus%20transfer%20and%20legal%20fees&ownOngoingCost=7000&why.ownOngoingCost=Rates,%20insurance%20and%20upkeep%20on%20an%20$850,000%20house&note=Melbourne,%20October%202026,%202-bedroom%20house",
+   "expect": { "propertyPrice": "850,000", "rentAmount": "620", "setupCost": "6", "ownOngoingCost": "7,000" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "Jakarta apartemen 2 kamar, sewa bulanan",
+   "link": "#load&v=1&qs=jakarta/apt-2br&propertyPrice=1800000000&rentAmount=7000000&rentFreq=monthly&why.rentFreq=Sewa%20dibayar%20per%20bulan&note=Jakarta,%20Oktober%202026",
+   "expect": { "propertyPrice": "1,800,000,000", "rentAmount": "7,000,000", "rentFreq": "monthly" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "Bali rumah 4 kamar",
+   "link": "#load&v=1&qs=bali/house-4br&propertyPrice=6000000000&rentAmount=350000000&note=Bali,%20Oktober%202026",
+   "expect": { "propertyPrice": "6,000,000,000", "rentAmount": "350,000,000" }
+  },
+  {
+   "page": "/rentvsownhouse/id/",
+   "name": "Jakarta rumah: KPR berjenjang dan biaya awal dalam %",
+   "link": "#load&v=1&qs=jakarta/house-2br&propertyPrice=1500000000&ratePeriods=3:7.5,17:10-12&why.ratePeriods=Bunga%20fix%203%20tahun,%20lalu%20floating&ownSetupCosts=BPHTB:5%25,Notaris%20dan%20PPAT:1%25,Biaya%20KPR:1.5%25&note=Jakarta,%20Oktober%202026",
+   "expect": { "propertyPrice": "1,500,000,000" },
+   "probe": {
+    "mortgageMode": "detailed",
+    "ratePeriods": [
+     { "toYear": 3, "type": "fixed", "rate": 7.5 },
+     { "type": "floating", "rateMin": 10, "rateMax": 12 }
+    ],
+    "ownCostsMode": "detailed",
+    "ownSetupCosts": [
+     { "name": "BPHTB", "amount": 5, "basis": "pct" },
+     { "name": "Notaris dan PPAT", "amount": 1, "basis": "pct" },
+     { "name": "Biaya KPR", "amount": 1.5, "basis": "pct" }
+    ],
+    "shown": { "mortgageMode": "detailed", "ownCostsMode": "detailed", "ratePeriods": 2, "ownSetupCosts": 3 }
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "docs example: two salaries, 2 children",
+   "link": "#load&v=1&qs=double&dependents=2&why.dependents=Dua%20anak,%20sesuai%20yang%20disebutkan&husbandSalaryInput=300000000&why.husbandSalaryInput=Gaji%20suami%20Rp%2025%20juta%20sebulan%20dikali%2012%20bulan&wifeSalaryInput=216000000&why.wifeSalaryInput=Gaji%20istri%20Rp%2018%20juta%20sebulan%20dikali%2012%20bulan&note=Dua%20penghasilan,%202%20anak,%20Oktober%202026",
+   "expect": { "dependents": "2", "husbandSalaryInput": "300,000,000", "wifeSalaryInput": "216,000,000" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=even: a household total and the wife's share",
+   "link": "#load&v=1&qs=even&totalSalaryInput=420000000&why.totalSalaryInput=The%20user%20gave%20one%20household%20salary%20for%20the%20year&splitPct=40&why.splitPct=The%20wife%20earns%20about%2040%25%20of%20the%20household%20total,%20as%20the%20user%20said&dependents=1&note=Household%20total,%201%20child,%20October%202026",
+   "expect": { "totalSalaryInput": "420,000,000", "splitPct": "40", "dependents": "1" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=single: one salary, 3 children, pension contributions",
+   "link": "#load&v=1&qs=single&totalSalaryInput=180000000&deductionInput=5400000&why.deductionInput=JHT%202%25%20and%20JP%201%25%20of%20the%20salary%20that%20the%20employee%20pays&dependents=3",
+   "expect": { "totalSalaryInput": "180,000,000", "deductionInput": "5,400,000", "dependents": "3", "splitPct": "0" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=double with only a household total switches to Total and split",
+   "link": "#load&v=1&qs=double&totalSalaryInput=800000000&splitPct=35",
+   "expect": { "totalSalaryInput": "800,000,000", "splitPct": "35", "dependents": "1" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "inputMode=individual with each spouse's deductions",
+   "link": "#load&v=1&inputMode=individual&husbandSalaryInput=450000000&wifeSalaryInput=150000000&husbandDeductionInput=9000000&why.husbandDeductionInput=Pension%20contributions%20the%20user%20pays%20each%20year&wifeDeductionInput=3000000&dependents=2",
+   "expect": { "husbandSalaryInput": "450,000,000", "wifeSalaryInput": "150,000,000", "husbandDeductionInput": "9,000,000", "wifeDeductionInput": "3,000,000", "dependents": "2" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "brackets: a ladder of three",
+   "link": "#load&v=1&qs=even&brackets=60000000:5,250000000:15,:35&why.brackets=The%20user%20wants%20to%20try%20a%20three-bracket%20ladder%20with%2035%25%20above%20Rp%20250%20million",
+   "expect": { "totalSalaryInput": "500,000,000" },
+   "probe": {
+    "mode": "total",
+    "brackets": [
+     { "from": 0, "to": 60000000, "rate": 0.05 },
+     { "from": 60000001, "to": 250000000, "rate": 0.15 },
+     { "from": 250000001, "to": null, "rate": 0.35 }
+    ]
+   }
+  },
+  {
+   "page": "/pisahvsgabung/",
+   "name": "qs=single with the husband's salary only keeps the wife at nothing",
+   "link": "#load&v=1&qs=single&husbandSalaryInput=350000000",
+   "expect": { "husbandSalaryInput": "350,000,000", "wifeSalaryInput": "0", "dependents": "2" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "docs example: dua gaji, 2 anak",
+   "link": "#load&v=1&qs=double&dependents=2&why.dependents=Dua%20anak,%20sesuai%20yang%20disebutkan&husbandSalaryInput=300000000&why.husbandSalaryInput=Gaji%20suami%20Rp%2025%20juta%20sebulan%20dikali%2012%20bulan&wifeSalaryInput=216000000&why.wifeSalaryInput=Gaji%20istri%20Rp%2018%20juta%20sebulan%20dikali%2012%20bulan&note=Dua%20penghasilan,%202%20anak,%20Oktober%202026",
+   "expect": { "dependents": "2", "husbandSalaryInput": "300,000,000", "wifeSalaryInput": "216,000,000" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "Keluarga satu penghasilan, 2 anak",
+   "link": "#load&v=1&qs=single&totalSalaryInput=240000000&why.totalSalaryInput=Gaji%20suami%20Rp%2020%20juta%20sebulan%20dikali%2012%20bulan,%20istri%20tidak%20bekerja&note=Satu%20penghasilan,%202%20anak,%20Oktober%202026",
+   "expect": { "totalSalaryInput": "240,000,000", "splitPct": "0", "dependents": "2" },
+   "probe": {
+    "mode": "total"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "Per pasangan dengan iuran pensiun",
+   "link": "#load&v=1&inputMode=Per%20pasangan&husbandSalaryInput=360000000&wifeSalaryInput=180000000&husbandDeductionInput=7200000&why.husbandDeductionInput=JHT%202%25%20dan%20JP%201%25%20dari%20gaji%20suami,%20yang%20ditanggung%20karyawan&wifeDeductionInput=3600000&dependents=1",
+   "expect": { "husbandSalaryInput": "360,000,000", "wifeSalaryInput": "180,000,000", "husbandDeductionInput": "7,200,000", "wifeDeductionInput": "3,600,000" },
+   "probe": {
+    "mode": "individual"
+   }
+  },
+  {
+   "page": "/pisahvsgabung/id/",
+   "name": "Lapisan tarif usulan: tiga lapisan",
+   "link": "#load&v=1&qs=double&brackets=60000000:5,250000000:15,:35&why.brackets=Mencoba%20tiga%20lapisan,%2035%25%20di%20atas%20Rp%20250%20juta",
+   "expect": { "husbandSalaryInput": "400,000,000" },
+   "probe": {
+    "mode": "individual",
+    "brackets": [
+     { "from": 0, "to": 60000000, "rate": 0.05 },
+     { "from": 60000001, "to": 250000000, "rate": 0.15 },
+     { "from": 250000001, "to": null, "rate": 0.35 }
+    ]
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "docs example: $45,000 car, one 5-year loan at 7.9%",
+   "link": "#load&v=1&qs=car&purchaseCost=45000&availableCash=60000&why.availableCash=The%20user%20did%20not%20say%20how%20much%20cash%20they%20hold,%20so%20a%20round%20amount%20above%20the%20price,%20as%20the%20car%20Quick%20Start%20assumes&offers=5-year%20loan%20at%207.9%25:financeRate=7.9:termYears=5&why.offers=One%20loan%20over%205%20years%20at%207.9%25%20a%20year,%20paid%20monthly%20with%20nothing%20down%20and%20no%20fees,%20since%20none%20were%20mentioned&baseRf=4.5&why.baseRf=A%20typical%20savings%20or%20term%20deposit%20rate%20for%20the%20cash%20that%20is%20invested%20instead&note=Car%20purchase,%20October%202026",
+   "expect": {
+    "purchaseCost": "45,000",
+    "availableCash": "60,000",
+    "baseRf": "4.5"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "5-year loan at 7.9%",
+      "loanType": "annuity",
+      "financeRate": 7.9,
+      "termPeriods": 60,
+      "freq": "monthly",
+      "downPaymentPct": 0
+     }
+    ],
+    "shown": {
+     "offers": 1
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: fixed against fixed-then-floating schedule",
+   "link": "#load&v=1&qs=house&purchaseCost=900000&availableCash=1000000&offers=30yr%20fixed%206.1:financeRate=6.1:termYears=30:downPaymentPct=20,2yr%20fixed%20then%20variable:termYears=30:ratePeriods=24@5.8/360@5-8.5:downPaymentPct=20&why.offers=The%20two%20quotes%20the%20user%20was%20given:%20a%206.1%25%20fixed%20loan%20and%20a%202-year%20fixed%20at%205.8%25%20that%20then%20floats%20between%205%25%20and%208.5%25&note=House%20purchase,%20October%202026",
+   "expect": {
+    "purchaseCost": "900,000",
+    "availableCash": "1,000,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "30yr fixed 6.1",
+      "financeRate": 6.1,
+      "termPeriods": 360,
+      "rateMode": "simple",
+      "downPaymentPct": 20
+     },
+     {
+      "name": "2yr fixed then variable",
+      "termPeriods": 360,
+      "rateMode": "schedule",
+      "downPaymentPct": 20,
+      "ratePeriods": [
+       {
+        "toPeriod": 24,
+        "type": "fixed",
+        "rate": 5.8
+       },
+       {
+        "toPeriod": 360,
+        "type": "floating",
+        "rateMin": 5,
+        "rateMax": 8.5
+       }
+      ]
+     }
+    ],
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: a plan that quotes only the instalment",
+   "link": "#load&v=1&qs=phone&purchaseCost=1800&availableCash=4000&offers=24%20x%2082:loanType=knownPayment:knownPayment=82:termPeriods=24,12%20x%20150:loanType=knownPayment:knownPayment=150:termPeriods=12&why.offers=The%20two%20instalment%20plans%20the%20store%20quoted,%20with%20no%20rate%20stated",
+   "expect": {
+    "purchaseCost": "1,800"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "24 x 82",
+      "loanType": "knownPayment",
+      "knownPayment": 82,
+      "termPeriods": 24
+     },
+     {
+      "name": "12 x 150",
+      "loanType": "knownPayment",
+      "knownPayment": 150,
+      "termPeriods": 12
+     }
+    ],
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: balloon with a percent fee",
+   "link": "#load&v=1&qs=car&offers=5yr%20balloon:loanType=balloon:financeRate=8.4:termYears=5:residualPct=35:downPaymentPct=10:feeAmt=3%25&why.offers=A%205-year%20balloon%20loan%20with%2035%25%20left%20at%20the%20end,%2010%25%20down%20and%20a%203%25%20establishment%20fee,%20as%20quoted",
+   "expect": {
+    "purchaseCost": "45,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "5yr balloon",
+      "loanType": "balloon",
+      "termPeriods": 60,
+      "residualPct": 35,
+      "downPaymentPct": 10,
+      "feeAmt": 3,
+      "feeType": "pct"
+     }
+    ],
+    "shown": {
+     "offers": 1
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "offers: separate prices and a payment holiday",
+   "link": "#load&v=1&qs=deferred&offerPricing=true&offers=Holiday:loanType=deferred:financeRate=19.9:termPeriods=36:ioPeriods=12:priceType=amount:priceValue=6000,Pay%20now:financeRate=19.9:termPeriods=36:priceType=discount:priceValue=10&why.offers=The%20store%27s%20two%20deals:%2012%20months%20with%20nothing%20to%20pay%20at%20the%20full%20ticket,%20or%20paying%20from%20day%20one%20for%2010%25%20off",
+   "expect": {
+    "offerPricing": true,
+    "purchaseCost": "6,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "Holiday",
+      "loanType": "deferred",
+      "ioPeriods": 12,
+      "priceType": "amount",
+      "priceValue": 6000
+     },
+     {
+      "name": "Pay now",
+      "priceType": "discount",
+      "priceValue": 10
+     }
+    ],
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "qs=motorbike with the user's own figures",
+   "link": "#load&v=1&qs=motorbike&purchaseCost=40000000&availableCash=60000000&why.purchaseCost=The%20bike%20price%20the%20user%20was%20quoted",
+   "expect": {
+    "currencySymbol": "Rp",
+    "purchaseCost": "40,000,000",
+    "availableCash": "60,000,000",
+    "rateConvention": "nominal"
+   },
+   "probe": {
+    "shown": {
+     "offers": 2
+    }
+   }
+  },
+  {
+   "page": "/financingvscash/",
+   "name": "no Quick Start: weekly loan in pounds",
+   "link": "#load&v=1&currencySymbol=%C2%A3&purchaseCost=12000&availableCash=15000&baseRf=4&offers=Dealer%20finance:financeRate=6.9:freq=weekly:termYears=3:downPaymentPct=10&why.offers=Dealer%20finance%20at%206.9%25%20a%20year%20over%203%20years,%20paid%20weekly,%20with%2010%25%20down&why.baseRf=A%20typical%20UK%20savings%20rate",
+   "expect": {
+    "currencySymbol": "£",
+    "purchaseCost": "12,000",
+    "availableCash": "15,000",
+    "baseRf": "4"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "Dealer finance",
+      "freq": "weekly",
+      "termPeriods": 156,
+      "financeRate": 6.9,
+      "downPaymentPct": 10
+     }
+    ],
+    "shown": {
+     "offers": 1
+    }
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "docs example: Sydney couple on $120,000 and $85,000",
+   "link": "#load&v=1&qs=couple&city=Sydney&incSimple=205000&why.incSimple=$120,000%20plus%20$85,000%20gross%20a%20year,%20before%20tax&incSplit=40&why.incSplit=The%20second%20applicant%20earns%20$85,000,%20about%2041%25%20of%20$205,000,%20and%20the%20slider%20moves%20in%20steps%20of%205&deps=0&why.deps=No%20children%20were%20mentioned,%20and%20the%20Couple%20Quick%20Start%20has%20two&declaredExp=4000&why.declaredExp=A%20typical%20monthly%20figure%20for%20two%20adults%20with%20no%20children,%20excluding%20rent%20and%20debts&price=1100000&why.price=A%20typical%20Sydney%20price%20for%20a%20home%20a%20couple%20on%20this%20income%20might%20shop%20for&savings=250000&why.savings=Savings%20for%20the%20purchase%20were%20not%20given,%20so%20a%20typical%20amount%20for%20a%20couple%20at%20this%20income&dutyPct=4&why.dutyPct=New%20South%20Wales%20stamp%20duty%20on%20about%20$1.1M%20is%20about%204%25%20of%20the%20price&note=Sydney%20couple,%20October%202026",
+   "expect": {
+    "city": "Sydney",
+    "incSimple": "205,000",
+    "incSplit": "40",
+    "deps": "0",
+    "declaredExp": "4,000",
+    "price": "1,100,000",
+    "savings": "250,000",
+    "dutyPct": "4",
+    "cardLimit": "15,000"
+   },
+   "probe": {
+    "incMode": "simple",
+    "incWho": "employee"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "detailed income by naming the streams: salary and a shaded bonus",
+   "link": "#load&v=1&qs=geoff&incPayg=100000&incBonus=20000&shdBonus=70&why.incBonus=A%20$20,000%20yearly%20bonus,%20which%20lenders%20shade&note=Perth,%20one%20income,%20October%202026",
+   "expect": {
+    "incPayg": "100,000",
+    "incBonus": "20,000",
+    "shdBonus": "70"
+   },
+   "probe": {
+    "incMode": "detailed",
+    "incWho": "employee"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "incMode=detailed without a base salary: it takes what is left of incSimple",
+   "link": "#load&v=1&qs=couple&incMode=detailed&incBonus=15000&why.incBonus=A%20$15,000%20bonus%20inside%20the%20$185,000",
+   "expect": {
+    "incSimple": "185,000",
+    "incBonus": "15,000",
+    "incPayg": "170,000"
+   },
+   "probe": {
+    "incMode": "detailed"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "self-employed in the Simple view, a personal loan ticked for it",
+   "link": "#load&v=1&qs=tradie&city=Brisbane&incSimple=190000&incWho=Self-employed&persRepay=600&persBal=30000&why.persRepay=A%20ute%20loan%20at%20$600%20a%20month",
+   "expect": {
+    "city": "Brisbane",
+    "incSimple": "190,000",
+    "persRepay": "600",
+    "persBal": "30,000",
+    "hasPersonal": true
+   },
+   "probe": {
+    "incMode": "simple",
+    "incWho": "self"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "a debt to income cap opens Purchase in Detailed on the Simple figures",
+   "link": "#load&v=1&qs=couple&dtiCap=5.5&why.dtiCap=A%20lender%20that%20caps%20debt%20at%205.5%20times%20income",
+   "expect": {
+    "dtiCap": "5.5",
+    "valuation": "920,000",
+    "lvrMax": "80"
+   },
+   "probe": {
+    "capsMode": "detailed"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "Finance Bro, Sydney, moved to Melbourne with a bigger purchase",
+   "link": "#load&v=1&qs=finance-bro&city=Melbourne&price=1500000&savings=600000&dutyPct=5.5&note=Melbourne,%20October%202026",
+   "expect": {
+    "city": "Melbourne",
+    "price": "1,500,000",
+    "savings": "600,000",
+    "incPayg": "230,000",
+    "incBonus": "90,000"
+   },
+   "probe": {
+    "incMode": "detailed",
+    "debtsMode": "detailed"
+   }
+  },
+  {
+   "page": "/borrowingcapacity/",
+   "name": "First home buyer with a study loan, Brisbane",
+   "link": "#load&v=1&qs=first-home&incSimple=95000&helpMode=commitment&helpThreshold=67000&price=520000&savings=60000",
+   "expect": {
+    "incSimple": "95,000",
+    "helpMode": "commitment",
+    "price": "520,000",
+    "savings": "60,000",
+    "lmiCap": true
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "docs example: 35 in Perth, 180,000 invested, saves 3,000 a month",
+   "link": "#load&v=1&qs=moderate&ageNow=35&assets=180000&savings=3000&savingsPeriod=monthly&expense=60000&why.expense=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20round%20figure%20for%20one%20person%20living%20in%20Perth&note=Perth,%20October%202026,%20saving%203,000%20a%20month",
+   "expect": {
+    "ageNow": "35",
+    "assets": "180,000",
+    "savings": "3,000",
+    "savingsPeriod": "monthly",
+    "expense": "60,000"
+   },
+   "probe": {
+    "savingsMode": "savings",
+    "expenseMode": "simple",
+    "incomeMode": "simple"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=frugal with the user's own figures, stages kept",
+   "link": "#load&v=1&qs=frugal&ageNow=29&savings=85000&expense=36000&assets=25000&why.savings=The%20user%27s%20take-home%20pay%20of%20$85,000%20a%20year,%20which%20the%20Frugal%20Living%20Quick%20Start%20also%20counts%20as%20net%20income&why.expense=$3,000%20a%20month%20the%20user%20said%20they%20spend,%20as%20a%20yearly%20figure&note=Sydney,%20October%202026,%20lean%20saver",
+   "expect": {
+    "ageNow": "29",
+    "savings": "85,000",
+    "expense": "36,000",
+    "assets": "25,000",
+    "ageDie": "92"
+   },
+   "probe": {
+    "savingsMode": "income",
+    "expenseMode": "detailed",
+    "incomeMode": "detailed",
+    "stages": [
+     {
+      "name": "Hustle age",
+      "from": 28,
+      "to": 33,
+      "amount": 80,
+      "period": "pct"
+     },
+     {
+      "name": "Relax age",
+      "from": 40,
+      "to": 55,
+      "amount": 120,
+      "period": "pct"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "stages: two kids at home, switches Money out to Detailed",
+   "link": "#load&v=1&qs=moderate&ageNow=34&assets=90000&savings=4000&savingsPeriod=monthly&expense=70000&stages=1st%20kid:from=36:to=38:amount=125,2nd%20kid:from=38:to=56:amount=150,1st%20kid%20leaves:from=56:to=58:amount=125&why.stages=The%20couple%20plan%20two%20children,%20three%20and%20five%20years%20out,%20so%20spending%20steps%20up%20while%20they%20are%20at%20home&note=Family%20of%20four,%20October%202026",
+   "expect": {
+    "ageNow": "34",
+    "assets": "90,000",
+    "savings": "4,000",
+    "savingsPeriod": "monthly",
+    "expense": "70,000"
+   },
+   "probe": {
+    "expenseMode": "detailed",
+    "incomeMode": "simple",
+    "stages": [
+     {
+      "name": "1st kid",
+      "from": 36,
+      "to": 38,
+      "amount": 125,
+      "period": "pct"
+     },
+     {
+      "name": "2nd kid",
+      "from": 38,
+      "to": 56,
+      "amount": 150,
+      "period": "pct"
+     },
+     {
+      "name": "1st kid leaves",
+      "from": 56,
+      "to": 58,
+      "amount": 125,
+      "period": "pct"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "inStages and savingsMode: study years, then a pension kept after work",
+   "link": "#load&v=1&qs=moderate&ageNow=31&savingsMode=income&savings=95000&expense=48000&inStages=Part-time%20study:from=31:to=33:amount=30000:growth=0,Age%20pension:from=67:to=120:amount=29000:growth=2.5:keeps=true&why.inStages=Two%20years%20of%20part-time%20study%20at%2030,000,%20then%20the%20age%20pension%20from%2067,%20still%20paid%20after%20work%20stops&why.savingsMode=The%20user%20gave%20their%20take-home%20pay,%20not%20an%20amount%20saved",
+   "expect": {
+    "ageNow": "31",
+    "savings": "95,000",
+    "expense": "48,000"
+   },
+   "probe": {
+    "savingsMode": "income",
+    "expenseMode": "simple",
+    "incomeMode": "detailed",
+    "inStages": [
+     {
+      "name": "Part-time study",
+      "from": 31,
+      "to": 33,
+      "amount": 30000,
+      "period": "yearly",
+      "growth": 0,
+      "keeps": false
+     },
+     {
+      "name": "Age pension",
+      "from": 67,
+      "to": 120,
+      "amount": 29000,
+      "period": "yearly",
+      "growth": 2.5,
+      "keeps": true
+     }
+    ]
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=latestart: pension paid monthly, in the Simple Money in view",
+   "link": "#load&v=1&qs=latestart&ageNow=58&assets=420000&savings=30000&expense=52000&pensionAmount=2400&pensionPeriod=monthly&pensionStartAge=67&why.pensionAmount=The%20pension%20the%20user%20expects,%202,400%20a%20month",
+   "expect": {
+    "ageNow": "58",
+    "assets": "420,000",
+    "savings": "30,000",
+    "expense": "52,000",
+    "pensionOn": true,
+    "pensionAmount": "2,400",
+    "pensionPeriod": "monthly",
+    "pensionStartAge": "67"
+   },
+   "probe": {
+    "incomeMode": "simple"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "no Quick Start: pounds, a bond preset fills the return, retirement age named",
+   "link": "#load&v=1&currency=%C2%A3&ageNow=40&ageDie=88&expense=3000&expensePeriod=monthly&savings=1500&savingsPeriod=monthly&assets=250000&assetPreset=bonds&ageRetire=55&why.assetPreset=The%20user%20holds%20mostly%20government%20bonds&why.ageRetire=The%20age%20the%20user%20asked%20about",
+   "expect": {
+    "currency": "£",
+    "ageNow": "40",
+    "ageDie": "88",
+    "expense": "3,000",
+    "expensePeriod": "monthly",
+    "savings": "1,500",
+    "savingsPeriod": "monthly",
+    "assets": "250,000",
+    "assetPreset": "bonds",
+    "ret": "5",
+    "std": "6",
+    "ageRetire": "55"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=fatfire with another preset and the Die Rich goal",
+   "link": "#load&v=1&qs=fatfire&assetPreset=asx&ageNow=41&assets=650000&savings=210000&expense=95000&why.assetPreset=The%20user%20invests%20mostly%20in%20Australian%20shares",
+   "expect": {
+    "assetPreset": "asx",
+    "ageNow": "41",
+    "assets": "650,000",
+    "savings": "210,000",
+    "expense": "95,000",
+    "ret": "9.5",
+    "std": "16",
+    "ffmode": "rich"
+   },
+   "probe": {
+    "savingsMode": "income"
+   }
+  },
+  {
+   "page": "/financialfreedom/",
+   "name": "qs=legacy: Money out back to Simple, a smaller bequest",
+   "link": "#load&v=1&qs=legacy&expenseMode=simple&legacy=400000&retireExpense=90&why.expenseMode=The%20user%20does%20not%20want%20the%20kids%20as%20stages&why.legacy=The%20amount%20the%20user%20wants%20to%20leave,%20in%20today%27s%20money",
+   "expect": {
+    "retireExpense": "90",
+    "legacy": "400,000",
+    "ffmode": "legacy"
+   },
+   "probe": {
+    "expenseMode": "simple",
+    "stages": [
+     {
+      "name": "1st kid",
+      "from": 34,
+      "to": 36,
+      "amount": 125,
+      "period": "pct"
+     },
+     {
+      "name": "2nd kid",
+      "from": 36,
+      "to": 54,
+      "amount": 150,
+      "period": "pct"
+     },
+     {
+      "name": "1st kid leaves",
+      "from": 54,
+      "to": 56,
+      "amount": 125,
+      "period": "pct"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "docs example: Melbourne to Singapore, from the Singapore and Australia Quick Start",
+   "link": "#load&v=1&qs=sg-au&cities=Melbourne,Singapore&salary=7000&rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&note=Melbourne%20to%20Singapore,%20October%202026",
+   "expect": {
+    "salary": "7000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "goal": "earn",
+    "savingsTarget": "ratio",
+    "detailFromKey": "Melbourne|Australia",
+    "detailToCities": [
+     "Singapore|Singapore"
+    ],
+    "detailFromSalary": 7000,
+    "customFreq": false,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 2400,
+      "overrides": {}
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 700,
+      "overrides": {}
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 500,
+      "overrides": {}
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 250,
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 1300,
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "no Quick Start: Simple, a Perth offer for someone in Jakarta, cities by name",
+   "link": "#load&v=1&cities=Jakarta,Perth&salary=20000000&expense=12000000&toSalaries=6500&why.toSalaries=The%20offer%20the%20user%20named,%20in%20Australian%20dollars%20a%20month&note=Jakarta%20to%20Perth",
+   "expect": {
+    "salary": "20000000",
+    "expense": "12000000"
+   },
+   "probe": {
+    "mode": "simple",
+    "goal": "save",
+    "fromKey": "Jakarta|Indonesia",
+    "toKey": "Perth|Australia",
+    "fromSalary": 20000000,
+    "fromExpense": 12000000,
+    "toSalary": 6500
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "Simple earn: housing out, nominal target, own exchange rate and a currency scenario",
+   "link": "#load&v=1&detail=simple&goal=earn&housing=exclude&target=nominal&cities=Perth,Jakarta&salary=6500&expense=4500&customFx=0.000091&fxShock=-10&why.customFx=The%20rate%20the%20user%20named,%20Australian%20dollars%20for%201%20rupiah&why.fxShock=The%20user%20asked%20what%20a%2010%25%20weaker%20rupiah%20does",
+   "expect": {
+    "salary": "6500",
+    "expense": "4500"
+   },
+   "probe": {
+    "mode": "simple",
+    "goal": "earn",
+    "housing": "exclude",
+    "savingsTarget": "nominal",
+    "fromKey": "Perth|Australia",
+    "toKey": "Jakarta|Indonesia",
+    "customFxSimple": 0.000091,
+    "fxShock": -10
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=us: three job offers, the goal back to what the user would save",
+   "link": "#load&v=1&qs=us&goal=save&toSalaries=9500,8800,7600&why.toSalaries=The%20three%20offers%20the%20user%20named,%20in%20dollars%20a%20month,%20in%20the%20order%20of%20the%20cities&note=Three%20offers",
+   "expect": {
+    "salary": "8500"
+   },
+   "probe": {
+    "mode": "detailed",
+    "goal": "save",
+    "detailFromKey": "New York, NY|United States",
+    "detailToCities": [
+     "San Francisco, CA|United States",
+     "Seattle, WA|United States",
+     "Austin, TX|United States"
+    ],
+    "detailToSalaries": [
+     9500,
+     8800,
+     7600
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=sea: other cities by name, in any case and with accents",
+   "link": "#load&v=1&qs=sea&cities=jakarta,Z%C3%BCrich,SINGAPORE&why.cities=The%20user%20is%20weighing%20Zurich%20and%20Singapore",
+   "expect": {
+    "salary": "25000000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "detailFromKey": "Jakarta|Indonesia",
+    "detailToCities": [
+     "Zurich|Switzerland",
+     "Singapore|Singapore"
+    ],
+    "detailToSalaries": [
+     0,
+     0
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=eu: London written with its country, one destination figure the user knows",
+   "link": "#load&v=1&qs=eu&cities=London,%20United%20Kingdom,Madrid,Rome&rows=rent:2100:to1=1500,groceries:350,eating_out:400,utilities:250,other:500&why.rows=The%20user%20knows%20Madrid%20rent%20is%20about%201,500%20euros&note=London%20to%20Madrid%20and%20Rome",
+   "expect": {
+    "salary": "4500"
+   },
+   "probe": {
+    "mode": "detailed",
+    "detailFromKey": "London|United Kingdom",
+    "detailToCities": [
+     "Madrid|Spain",
+     "Rome|Italy"
+    ],
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 2100,
+      "overrides": {
+       "0": 1500
+      }
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 350,
+      "overrides": {}
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 400,
+      "overrides": {}
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 250,
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 500,
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=me: the salary and the rows changed, the other cities kept",
+   "link": "#load&v=1&qs=me&salary=28000&rows=rent:8500,groceries:2000,fuel:400,other:4000&why.salary=The%20user%20takes%20home%20about%2028,000%20dirhams%20a%20month",
+   "expect": {
+    "salary": "28000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "detailFromKey": "Dubai|United Arab Emirates",
+    "detailFromSalary": 28000,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 8500,
+      "overrides": {}
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 2000,
+      "overrides": {}
+     },
+     {
+      "catId": "fuel",
+      "fromAmount": 400,
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 4000,
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "qs=ea: Simple with one destination and an expense total",
+   "link": "#load&v=1&qs=ea&detail=simple&cities=Tokyo,Seoul&salary=450000&expense=320000&note=Tokyo%20to%20Seoul",
+   "expect": {
+    "salary": "450000",
+    "expense": "320000"
+   },
+   "probe": {
+    "mode": "simple",
+    "goal": "earn",
+    "fromKey": "Tokyo|Japan",
+    "toKey": "Seoul|South Korea",
+    "fromSalary": 450000,
+    "fromExpense": 320000
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "freq=weekly: the salary and every row are weekly amounts",
+   "link": "#load&v=1&qs=sg-au&freq=weekly&salary=1850&rows=rent:800,groceries:140,eating_out:160,utilities:46,other:230&why.freq=The%20user%20gave%20every%20figure%20a%20week&why.salary=The%20user%20takes%20home%20about%201,850%20a%20week&why.rows=The%20user%20gave%20their%20weekly%20spending&note=Weekly%20figures,%20Melbourne%20and%20peers",
+   "expect": {
+    "salary": "1850"
+   },
+   "probe": {
+    "mode": "detailed",
+    "customFreq": true,
+    "detailIncomeFreq": "weekly",
+    "detailSavingsFreq": "weekly",
+    "detailFromSalary": 1850,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 800,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 140,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 160,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 46,
+      "unit": "weekly",
+      "overrides": {}
+     },
+     {
+      "catId": "other",
+      "fromAmount": 230,
+      "unit": "weekly",
+      "overrides": {}
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "incomeFreq=yearly with rows in their own unit: a yearly salary, monthly rows, savings shown monthly",
+   "link": "#load&v=1&qs=eu&incomeFreq=yearly&savingsFreq=monthly&salary=54000&rows=rent:2100:monthly,groceries:350:monthly,eating_out:400:monthly,utilities:250:monthly,other:500:monthly&why.salary=The%20user%20takes%20home%20about%2054,000%20a%20year&why.rows=The%20user%20gave%20their%20monthly%20spending",
+   "expect": {
+    "salary": "54000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "customFreq": true,
+    "detailIncomeFreq": "yearly",
+    "detailSavingsFreq": "monthly",
+    "detailFromSalary": 54000,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 2100,
+      "unit": "monthly"
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 350,
+      "unit": "monthly"
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 400,
+      "unit": "monthly"
+     },
+     {
+      "catId": "utilities",
+      "fromAmount": 250,
+      "unit": "monthly"
+     },
+     {
+      "catId": "other",
+      "fromAmount": 500,
+      "unit": "monthly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "freq=fortnightly with a unit price and a destination figure: meals per fortnight, offers a fortnight, goal save",
+   "link": "#load&v=1&qs=us&freq=fortnightly&goal=save&salary=3900&toSalaries=4400,4300,4000&rows=rent:1850:to1=2600,groceries:280,eating_out:22:meal:qty=5:per=fortnightly,other:600&why.freq=The%20user%20is%20paid%20every%20fortnight&why.toSalaries=The%20offers%20are%20fortnightly%20take-home%20figures&why.rows=Meals%20are%20about%2022%20each,%20five%20a%20fortnight",
+   "expect": {
+    "salary": "3900"
+   },
+   "probe": {
+    "mode": "detailed",
+    "goal": "save",
+    "customFreq": true,
+    "detailIncomeFreq": "fortnightly",
+    "detailFromSalary": 3900,
+    "detailToSalaries": [
+     4400,
+     4300,
+     4000
+    ],
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 1850,
+      "unit": "fortnightly",
+      "overrides": {
+       "0": 2600
+      }
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 280,
+      "unit": "fortnightly"
+     },
+     {
+      "catId": "eating_out",
+      "fromAmount": 22,
+      "unit": "meal",
+      "qtyUnit": "meal",
+      "qty": 5,
+      "qtyPer": "fortnightly"
+     },
+     {
+      "catId": "other",
+      "fromAmount": 600,
+      "unit": "fortnightly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/",
+   "name": "freq=yearly: a yearly salary and rows, with a trip priced by the trip at the page's own two a year",
+   "link": "#load&v=1&qs=sg-au&freq=yearly&salary=96000&rows=rent:42000,groceries:7200,intl_travel:1800:trip,other:12000&why.freq=The%20user%20thinks%20in%20yearly%20figures&why.rows=A%20trip%20costs%20about%201,800;%20the%20page%20assumes%20two%20a%20year",
+   "expect": {
+    "salary": "96000"
+   },
+   "probe": {
+    "mode": "detailed",
+    "customFreq": true,
+    "detailIncomeFreq": "yearly",
+    "detailFromSalary": 96000,
+    "detailRows": [
+     {
+      "catId": "rent",
+      "fromAmount": 42000,
+      "unit": "yearly"
+     },
+     {
+      "catId": "groceries",
+      "fromAmount": 7200,
+      "unit": "yearly"
+     },
+     {
+      "catId": "intl_travel",
+      "fromAmount": 1800,
+      "unit": "trip",
+      "qtyUnit": "trip",
+      "qty": 2,
+      "qtyPer": "yearly"
+     },
+     {
+      "catId": "other",
+      "fromAmount": 12000,
+      "unit": "yearly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=jkt with a higher salary",
+   "link": "#load&v=1&qs=jkt&salary=30000000&why.salary=The%20user%20takes%20home%2030%20million%20rupiah%20a%20month",
+   "expect": {
+    "salary": "30000000"
+   },
+   "probe": {
+    "fromKey": "Jakarta|Indonesia",
+    "salary": 30000000,
+    "expense": 17500000,
+    "detail": "detailed"
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "docs example: Melbourne on a take-home figure, from the Perth Quick Start",
+   "link": "#load&v=1&qs=per&cities=Melbourne&salary=7000&detail=simple&expense=5000&why.salary=The%20user%20gave%20a%20take-home%20figure%20of%20about%207,000%20a%20month&why.expense=The%20user%20said%20they%20spend%20roughly%205,000%20a%20month,%20so%20one%20expense%20total%20in%20Simple&note=Melbourne,%20October%202026",
+   "expect": {
+    "salary": "7000",
+    "expense": "5000"
+   },
+   "probe": {
+    "fromKey": "Melbourne|Australia",
+    "salary": 7000,
+    "detail": "simple",
+    "expense": 5000,
+    "mode": "required",
+    "housing": "include",
+    "target": "ratio"
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "no Quick Start: Global salary from Zurich, the city written with an accent",
+   "link": "#load&v=1&cities=Z%C3%BCrich&salary=9000&expense=5200&salaryMode=global&why.salaryMode=The%20user%20asked%20what%20their%20own%20salary%20does%20elsewhere",
+   "expect": {
+    "salary": "9000",
+    "expense": "5200"
+   },
+   "probe": {
+    "fromKey": "Zurich|Switzerland",
+    "mode": "global",
+    "detail": "simple",
+    "salary": 9000,
+    "expense": 5200
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=nyc: Scaled to the median salary, housing out, one expense total",
+   "link": "#load&v=1&qs=nyc&salaryMode=scaled&scale=median&housing=exclude&detail=simple&expense=6000&why.housing=The%20employer%20pays%20the%20rent",
+   "expect": {
+    "salary": "8500",
+    "expense": "6000"
+   },
+   "probe": {
+    "fromKey": "New York, NY|United States",
+    "mode": "scaled",
+    "scale": "median",
+    "housing": "exclude",
+    "detail": "simple",
+    "expense": 6000
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=nyc: Austin by name, a nominal target and the user's own rows",
+   "link": "#load&v=1&qs=nyc&cities=Austin&target=nominal&salary=7500&rows=rent:2200,groceries:500,eating_out:450,utilities:180,other:900&note=Austin",
+   "expect": {
+    "salary": "7500",
+    "expense": "4230"
+   },
+   "probe": {
+    "fromKey": "Austin, TX|United States",
+    "target": "nominal",
+    "detail": "detailed",
+    "expense": 4230,
+    "rows": [
+     {
+      "catId": "rent",
+      "amount": 2200
+     },
+     {
+      "catId": "groceries",
+      "amount": 500
+     },
+     {
+      "catId": "eating_out",
+      "amount": 450
+     },
+     {
+      "catId": "utilities",
+      "amount": 180
+     },
+     {
+      "catId": "other",
+      "amount": 900
+     }
+    ]
+   }
+  },
+  {
+   "page": "/costofliving-comparator/map/",
+   "name": "qs=sg: a home city that pays in another currency, salary and rows sent with it",
+   "link": "#load&v=1&qs=sg&cities=Kuala%20Lumpur&salary=7000&rows=rent:2600,groceries:700,other:1500&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20in%20ringgit",
+   "expect": {
+    "salary": "7000",
+    "expense": "4800"
+   },
+   "probe": {
+    "fromKey": "Kuala Lumpur|Malaysia",
+    "detail": "detailed",
+    "rows": [
+     {
+      "catId": "rent",
+      "amount": 2600
+     },
+     {
+      "catId": "groceries",
+      "amount": 700
+     },
+     {
+      "catId": "other",
+      "amount": 1500
+     }
+    ]
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "docs example: a Corolla against six listings",
+   "link": "#load&v=1&qs=camry&itemWhat=Toyota%20Corolla&columns=Year:year,Odometer:number:km&listings=24990:2019:58000%3B22990:2019:72500%3B21500:2018:81000%3B27490:2020:45000%3B25500:2020:63000%3B19990:2018:95000&why.listings=The%20six%20listings%20the%20user%20gave,%20in%20dollars,%20with%20the%20price%20first,%20then%20the%20year%20and%20the%20odometer&items=2019%20Corolla:24500:2019:60000&why.items=The%20car%20the%20user%20is%20weighing%20up,%20at%20the%20asking%20price%20they%20gave&note=Toyota%20Corolla,%20October%202026",
+   "expect": {
+    "itemWhat": "Toyota Corolla",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Odometer",
+      "type": "number",
+      "unit": "km"
+     }
+    ],
+    "rowCount": 6,
+    "firstRow": [
+     "24990",
+     "2019",
+     "58000"
+    ],
+    "lastRow": [
+     "19990",
+     "2018",
+     "95000"
+    ],
+    "items": [
+     {
+      "name": "2019 Corolla",
+      "asking": "24500",
+      "vals": {
+       "c2": "2019",
+       "c3": "60000"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 6,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "listings: house sales with a Data year column, semicolons as typed",
+   "link": "#load&v=1&qs=house&itemWhat=House%20in%20Bayswater,%20Perth&inflation=3.5&columns=Bedrooms:number,Bathrooms:number,Land:number:m%C2%B2,Data%20year:datayear&listings=710000:3:1:405:2023;765000:3:2:450:2024;820000:4:2:480:2025;690000:3:1:380:2023;845000:4:1:520:2026;735000:3:1:410:2025;905000:4:2:560:2026&why.listings=Seven%20sales%20the%20user%20found,%20each%20with%20the%20year%20it%20sold,%20so%20older%20prices%20are%20lifted%20to%20today&items=Bayswater%20house:780000:3:1:400&note=Bayswater,%20Perth,%20October%202026",
+   "expect": {
+    "itemWhat": "House in Bayswater, Perth",
+    "inflation": "3.5",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Bedrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Bathrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c4",
+      "name": "Land",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c5",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 7,
+    "firstRow": [
+     "710000",
+     "3",
+     "1",
+     "405",
+     "2023"
+    ],
+    "lastRow": [
+     "905000",
+     "4",
+     "2",
+     "560",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "Bayswater house",
+      "asking": "780000",
+      "vals": {
+       "c2": "3",
+       "c3": "1",
+       "c4": "400"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 7,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: the Camry Quick Start market and the user's own car",
+   "link": "#load&v=1&qs=camry&itemWhat=Toyota%20Camry%20Hybrid&items=2020%20Camry%20Hybrid%20SL:31490:2020:61444:Yes&why.items=The%20car%20the%20user%20asked%20about,%20above%20the%20Ascent%20grade,%20at%20the%20asking%20price%20they%20gave",
+   "expect": {
+    "itemWhat": "Toyota Camry Hybrid",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "AUD"
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Odometer",
+      "type": "number",
+      "unit": "km"
+     },
+     {
+      "id": "c4",
+      "name": "Above Ascent grade",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c5",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 18,
+    "firstRow": [
+     "35980",
+     "2021",
+     "82984",
+     "Yes",
+     "2026"
+    ],
+    "lastRow": [
+     "33490",
+     "2023",
+     "34756",
+     "No",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "2020 Camry Hybrid SL",
+      "asking": "31490",
+      "vals": {
+       "c2": "2020",
+       "c3": "61444",
+       "c4": true
+      }
+     }
+    ],
+    "shown": {
+     "rows": 18,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: a house in the Perth Quick Start market",
+   "link": "#load&v=1&qs=house&itemWhat=House%20in%20Morley,%20Perth&items=12%20Smith%20St:950000:4:2:450:160",
+   "expect": {
+    "itemWhat": "House in Morley, Perth",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "AUD"
+     },
+     {
+      "id": "c2",
+      "name": "Bedrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Bathrooms",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c4",
+      "name": "Land",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c5",
+      "name": "Floor area",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c6",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 23,
+    "firstRow": [
+     "515000",
+     "3",
+     "1",
+     "318",
+     "106",
+     "2023"
+    ],
+    "lastRow": [
+     "740000",
+     "3",
+     "1",
+     "324",
+     "133",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "12 Smith St",
+      "asking": "950000",
+      "vals": {
+       "c2": "4",
+       "c3": "2",
+       "c4": "450",
+       "c5": "160"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 23,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: a used Sony body in pounds with the log model",
+   "link": "#load&v=1&qs=camera&itemWhat=Sony%20A7%20III%20body,%20used&model=log&items=A7%20III%20boxed:850:2018:8000:Yes:Yes&why.model=Used%20cameras%20lose%20a%20share%20of%20their%20price%20each%20year,%20which%20the%20log-linear%20model%20fits",
+   "expect": {
+    "itemWhat": "Sony A7 III body, used",
+    "currency": "£",
+    "model": "log"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "GBP"
+     },
+     {
+      "id": "c2",
+      "name": "Release year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Shutter count",
+      "type": "number",
+      "unit": "shots"
+     },
+     {
+      "id": "c4",
+      "name": "Like new or Excellent",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c5",
+      "name": "Original box",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c6",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 24,
+    "firstRow": [
+     "439",
+     "2014",
+     "10089",
+     "Yes",
+     "Yes",
+     "2026"
+    ],
+    "lastRow": [
+     "1139",
+     "2021",
+     "94923",
+     "Yes",
+     "No",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "A7 III boxed",
+      "asking": "850",
+      "vals": {
+       "c2": "2018",
+       "c3": "8000",
+       "c4": true,
+       "c5": true
+      }
+     }
+    ],
+    "shown": {
+     "rows": 24,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "items: a hotel night in the Perth Quick Start market",
+   "link": "#load&v=1&qs=hotel&itemWhat=Hotel%20night%20in%20Perth%20CBD&items=5-star%20room:480:35:5:Yes:No",
+   "expect": {
+    "itemWhat": "Hotel night in Perth CBD",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": "AUD"
+     },
+     {
+      "id": "c2",
+      "name": "Room size",
+      "type": "number",
+      "unit": "m²"
+     },
+     {
+      "id": "c3",
+      "name": "Star rating",
+      "type": "number",
+      "unit": ""
+     },
+     {
+      "id": "c4",
+      "name": "Breakfast included",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c5",
+      "name": "Bathtub",
+      "type": "bool",
+      "unit": ""
+     },
+     {
+      "id": "c6",
+      "name": "Data year",
+      "type": "datayear",
+      "unit": ""
+     }
+    ],
+    "rowCount": 22,
+    "firstRow": [
+     "499",
+     "42",
+     "5",
+     "No",
+     "No",
+     "2026"
+    ],
+    "lastRow": [
+     "355",
+     "24",
+     "4",
+     "No",
+     "No",
+     "2026"
+    ],
+    "items": [
+     {
+      "name": "5-star room",
+      "asking": "480",
+      "vals": {
+       "c2": "35",
+       "c3": "5",
+       "c4": true,
+       "c5": false
+      }
+     }
+    ],
+    "shown": {
+     "rows": 22,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "every separator percent-encoded",
+   "link": "#load&v=1&qs=camry&itemWhat=Toyota%20Corolla&columns=Year%3Ayear%2COdometer%3Anumber%3Akm&listings=24990%3A2019%3A58000%3B22990%3A2019%3A72500%3B21500%3A2018%3A81000%3B27490%3A2020%3A45000&items=2019%20Corolla%3A24500%3A2019%3A60000",
+   "expect": {
+    "itemWhat": "Toyota Corolla",
+    "currency": "$"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Odometer",
+      "type": "number",
+      "unit": "km"
+     }
+    ],
+    "rowCount": 4,
+    "firstRow": [
+     "24990",
+     "2019",
+     "58000"
+    ],
+    "lastRow": [
+     "27490",
+     "2020",
+     "45000"
+    ],
+    "items": [
+     {
+      "name": "2019 Corolla",
+      "asking": "24500",
+      "vals": {
+       "c2": "2019",
+       "c3": "60000"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 4,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/valuateeverything/",
+   "name": "json: the whole table",
+   "link": "#load&v=1&itemWhat=Used%20hatchback&currency=%C2%A3&json=%7B%22columns%22:%5B%7B%22id%22:%22c1%22,%22name%22:%22Price%22,%22type%22:%22price%22,%22unit%22:%22%22%7D,%7B%22id%22:%22c2%22,%22name%22:%22Year%22,%22type%22:%22year%22,%22unit%22:%22%22%7D,%7B%22id%22:%22c3%22,%22name%22:%22Mileage%22,%22type%22:%22number%22,%22unit%22:%22mi%22%7D%5D,%22rows%22:%5B%5B%229500%22,%222016%22,%2261000%22%5D,%5B%228800%22,%222015%22,%2270500%22%5D,%5B%2210400%22,%222017%22,%2248000%22%5D,%5B%227600%22,%222014%22,%2288000%22%5D,%5B%229100%22,%222016%22,%2267000%22%5D%5D,%22items%22:%5B%7B%22name%22:%222016%20hatch%22,%22asking%22:%229000%22,%22vals%22:%7B%22c2%22:%222016%22,%22c3%22:%2264000%22%7D%7D%5D%7D",
+   "expect": {
+    "itemWhat": "Used hatchback",
+    "currency": "£"
+   },
+   "probe": {
+    "columns": [
+     {
+      "id": "c1",
+      "name": "Price",
+      "type": "price",
+      "unit": ""
+     },
+     {
+      "id": "c2",
+      "name": "Year",
+      "type": "year",
+      "unit": ""
+     },
+     {
+      "id": "c3",
+      "name": "Mileage",
+      "type": "number",
+      "unit": "mi"
+     }
+    ],
+    "rowCount": 5,
+    "firstRow": [
+     "9500",
+     "2016",
+     "61000"
+    ],
+    "lastRow": [
+     "9100",
+     "2016",
+     "67000"
+    ],
+    "items": [
+     {
+      "name": "2016 hatch",
+      "asking": "9000",
+      "vals": {
+       "c2": "2016",
+       "c3": "64000"
+      }
+     }
+    ],
+    "shown": {
+     "rows": 5,
+     "items": 1
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "docs example: VOO and QQQ monthly from 2015",
+   "link": "#load&v=1&tickers=VOO,QQQ&why.tickers=The%20two%20funds%20the%20user%20named,%20each%20as%20its%20own%20scenario%20so%20they%20can%20be%20compared&amount=500&why.amount=The%20user%27s%20$500,%20invested%20once%20a%20month&startDate=2015-01-01&why.startDate=The%20user%20said%20from%202015,%20so%20the%20first%20day%20of%20that%20year&note=VOO%20and%20QQQ,%20monthly%20from%202015%20to%20now",
+   "expect": {
+    "startDate": "2015-01-01"
+   },
+   "probe": {
+    "securities": [
+     {
+      "type": "ticker",
+      "ticker": "VOO",
+      "name": "VOO",
+      "amount": 500,
+      "style": "monthly-date",
+      "dayOrDate": 1
+     },
+     {
+      "type": "ticker",
+      "ticker": "QQQ",
+      "name": "QQQ",
+      "amount": 500,
+      "style": "monthly-date",
+      "dayOrDate": 1
+     }
+    ],
+    "global": {
+     "startDate": "2015-01-01"
+    },
+    "shown": {
+     "scenarios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "Quick Start alone: SPY monthly against weekly",
+   "link": "#load&v=1&qs=monthly-weekly",
+   "expect": {},
+   "probe": {
+    "securities": [
+     {
+      "ticker": "SPY",
+      "name": "SPY - $520 / month",
+      "amount": 520,
+      "style": "monthly-date"
+     },
+     {
+      "ticker": "SPY",
+      "name": "SPY - $120 / week",
+      "amount": 120,
+      "style": "weekly-day"
+     }
+    ],
+    "shown": {
+     "scenarios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "tickers: per-scenario settings, monthly against buying the dip",
+   "link": "#load&v=1&tickers=VOO:style=monthly-date,VOO:style=momentum-dip:momentumPct=3&why.tickers=The%20same%20fund%20bought%20on%20a%20fixed%20day%20and%20on%20dips&amount=500&startDate=2013-01-01&endDate=2023-12-31",
+   "expect": {
+    "startDate": "2013-01-01",
+    "endDate": "2023-12-31"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "VOO",
+      "name": "VOO - Monthly (Fixed Date)",
+      "amount": 500,
+      "style": "monthly-date"
+     },
+     {
+      "ticker": "VOO",
+      "name": "VOO - Buy the Dip",
+      "amount": 500,
+      "style": "momentum-dip",
+      "momentumPct": 3
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "plan keys on a Quick Start: amount, yearly increase and day",
+   "link": "#load&v=1&qs=equity-mmf&amount=750&yearlyIncrease=5&dayOrDate=15&why.amount=The%20user%20invests%20750%20a%20month",
+   "expect": {},
+   "probe": {
+    "securities": [
+     {
+      "ticker": "DHHF.AX",
+      "name": "DHHF.AX",
+      "amount": 750,
+      "yearlyIncrease": 5,
+      "dayOrDate": 15
+     },
+     {
+      "ticker": "AAA.AX",
+      "amount": 750,
+      "yearlyIncrease": 5,
+      "dayOrDate": 15
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "settings: dates, Trade at, risk-free rate and currency",
+   "link": "#load&v=1&tickers=AAPL&startDate=2012-01-01&endDate=2022-12-31&execTiming=close&riskFreeRate=3.5&currencySymbol=Rp&amount=1,500,000",
+   "expect": {
+    "startDate": "2012-01-01",
+    "endDate": "2022-12-31",
+    "execTiming": "close",
+    "riskFreeRate": "3.5",
+    "currencySymbol": "Rp"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "AAPL",
+      "amount": 1500000
+     }
+    ],
+    "global": {
+     "currencySymbol": "Rp",
+     "execTiming": "close",
+     "riskFreeRate": 3.5,
+     "startDate": "2012-01-01",
+     "endDate": "2022-12-31"
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "weekday by name, weekly style and a technical style",
+   "link": "#load&v=1&tickers=SPY:style=weekly-day:dayOrDate=Friday:amount=100,QQQ:style=tech-rsi:period=weekly:amount=100&startDate=2016-06-01",
+   "expect": {
+    "startDate": "2016-06-01"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "SPY",
+      "amount": 100,
+      "style": "weekly-day",
+      "dayOrDate": 5
+     },
+     {
+      "ticker": "QQQ",
+      "amount": 100,
+      "style": "tech-rsi",
+      "period": "weekly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/",
+   "name": "tickers with symbols and a name",
+   "link": "#load&v=1&tickers=%5EGSPC:name=S%26P%20500%20index,BRK-B,AAA.AX:amount=250&startDate=2015-01-01",
+   "expect": {
+    "startDate": "2015-01-01"
+   },
+   "probe": {
+    "securities": [
+     {
+      "ticker": "^GSPC",
+      "name": "S&P 500 index"
+     },
+     {
+      "ticker": "BRK-B",
+      "name": "BRK-B"
+     },
+     {
+      "ticker": "AAA.AX",
+      "amount": 250
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "docs example: 60/40 against 80/20, rebalanced quarterly",
+   "link": "#load&v=1&p1=VOO:60,BND:40&why.p1=The%2060/40%20mix%20the%20user%20named,%20VOO%20for%20shares%20and%20BND%20for%20bonds&p2=VOO:80,BND:20&why.p2=The%2080/20%20mix%20the%20user%20named,%20with%20the%20same%20two%20funds&topupAmount=1000&why.topupAmount=The%20user%27s%20$1,000,%20added%20once%20a%20month&topupPeriod=monthly&rebalMethod=constant-weight&why.rebalMethod=Rebalancing%20means%20buying%20and%20selling%20to%20hold%20the%20target%20weights&cwTiming=schedule&rebalPeriod=quarterly&why.rebalPeriod=The%20user%20said%20every%20quarter&startDate=2012-01-01&why.startDate=The%20user%20said%20from%202012,%20so%20the%20first%20day%20of%20that%20year&note=VOO%20and%20BND,%2060/40%20against%2080/20,%20from%202012%20to%20now",
+   "expect": {
+    "topupAmount": "1,000",
+    "topupPeriod": "monthly",
+    "rebalMethod": "constant-weight",
+    "cwTiming": "schedule",
+    "rebalPeriod": "quarterly",
+    "startDate": "2012-01-01"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "name": "VOO 60 / BND 40",
+      "assets": [
+       {
+        "type": "ticker",
+        "ticker": "VOO",
+        "weight": 60
+       },
+       {
+        "type": "ticker",
+        "ticker": "BND",
+        "weight": 40
+       }
+      ],
+      "topupAmount": 1000,
+      "rebalMethod": "constant-weight",
+      "cwTiming": "schedule",
+      "rebalPeriod": "quarterly"
+     },
+     {
+      "name": "VOO 80 / BND 20",
+      "assets": [
+       {
+        "ticker": "VOO",
+        "weight": 80
+       },
+       {
+        "ticker": "BND",
+        "weight": 20
+       }
+      ],
+      "topupAmount": 1000,
+      "rebalMethod": "constant-weight",
+      "cwTiming": "schedule",
+      "rebalPeriod": "quarterly"
+     }
+    ],
+    "shown": {
+     "portfolios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "Quick Start alone: growth against conservative mix",
+   "link": "#load&v=1&qs=alloc",
+   "expect": {
+    "topupAmount": "1,000"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "name": "60/40 (DHHF/AAA)",
+      "topupAmount": 1000
+     },
+     {
+      "name": "80/20 (DHHF/AAA)",
+      "topupAmount": 1000
+     }
+    ],
+    "shown": {
+     "portfolios": 2
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "Quick Start with the top-up and dates changed",
+   "link": "#load&v=1&qs=rebal-vs-alloc&topupAmount=2000&startDate=2014-01-01&why.topupAmount=The%20user%20adds%202,000%20a%20month",
+   "expect": {
+    "topupAmount": "2,000",
+    "startDate": "2014-01-01"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "topupAmount": 2000,
+      "rebalMethod": "constant-weight"
+     },
+     {
+      "topupAmount": 2000,
+      "rebalMethod": "constant-allocation"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "p1: three funds with no weights split equally, weekly top-ups",
+   "link": "#load&v=1&p1=VOO,QQQ,BND&topupAmount=500&topupPeriod=weekly",
+   "expect": {
+    "topupAmount": "500",
+    "topupPeriod": "weekly"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "assets": [
+       {
+        "ticker": "VOO",
+        "weight": 33.33
+       },
+       {
+        "ticker": "QQQ",
+        "weight": 33.33
+       },
+       {
+        "ticker": "BND",
+        "weight": 33.34
+       }
+      ],
+      "topupPeriod": "weekly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "portfolio settings: monthly against quarterly rebalancing",
+   "link": "#load&v=1&p1=VOO:50,BND:50,name=Monthly,rebalMethod=constant-weight,cwTiming=schedule,rebalPeriod=monthly&p2=VOO:50,BND:50,name=Quarterly,rebalMethod=constant-weight,cwTiming=schedule,rebalPeriod=quarterly&topupAmount=1000",
+   "expect": {
+    "topupAmount": "1,000"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "name": "Monthly",
+      "rebalPeriod": "monthly",
+      "rebalMethod": "constant-weight",
+      "cwTiming": "schedule"
+     },
+     {
+      "name": "Quarterly",
+      "rebalPeriod": "quarterly"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "fees, cash yield, yearly increase and Trade at",
+   "link": "#load&v=1&p1=SPY:70,GOVT:30&topupAmount=3000&topupYearlyInc=5&buyFee=0&sellFee=0.25&rfRate=3&execTiming=close&currencySymbol=%C2%A3",
+   "expect": {
+    "topupAmount": "3,000",
+    "topupYearlyInc": "5",
+    "buyFee": "0",
+    "sellFee": "0.25",
+    "rfRate": "3",
+    "execTiming": "close",
+    "currencySymbol": "£"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "topupAmount": 3000,
+      "topupYearlyInc": 5,
+      "buyFee": 0,
+      "sellFee": 0.25,
+      "rfRate": 3
+     }
+    ],
+    "global": {
+     "execTiming": "close",
+     "currencySymbol": "£"
+    }
+   }
+  },
+  {
+   "page": "/dcasimulator/portfolio/",
+   "name": "trend following with a 12 month lookback",
+   "link": "#load&v=1&p1=SPY:34,QQQ:33,GLD:33&rebalMethod=dynamic-momentum&lookbackMonths=12&topupAmount=1000",
+   "expect": {
+    "rebalMethod": "dynamic-momentum",
+    "lookbackMonths": "12"
+   },
+   "probe": {
+    "portfolios": [
+     {
+      "rebalMethod": "dynamic-momentum"
+     }
+    ]
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "docs example: Melbourne house, mortgage rate and house price growth varied",
+   "link": "#load&v=1&qs=melbourne/house-2br&propertyPrice=850000&rentAmount=620&setupCost=6&why.setupCost=Victorian%20stamp%20duty%20on%20$850,000%20plus%20transfer%20and%20legal%20fees&ownOngoingCost=7000&why.ownOngoingCost=Rates,%20insurance%20and%20upkeep%20on%20an%20$850,000%20house&vary=mortgageRate:5.4:7.4,houseGrowth:2:6&why.vary=The%20user%20named%20the%20mortgage%20rate%20and%20house%20price%20growth,%20so%20each%20is%20tried%20a%20little%20either%20side%20of%20the%20base%20case&note=Melbourne,%20October%202026,%202-bedroom%20house",
+   "expect": {
+    "propertyPrice": "850,000",
+    "rentAmount": "620"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "name": "Melbourne · 2BR house",
+      "propertyPrice": 850000,
+      "mortgageRate": 6.4,
+      "houseGrowth": 4,
+      "rentAmount": 620
+     },
+     {
+      "name": "Mortgage rate 5.4%",
+      "mortgageRate": 5.4,
+      "houseGrowth": 4
+     },
+     {
+      "name": "Mortgage rate 7.4%",
+      "mortgageRate": 7.4
+     },
+     {
+      "name": "House price growth 2%",
+      "mortgageRate": 6.4,
+      "houseGrowth": 2
+     },
+     {
+      "name": "House price growth 6%",
+      "houseGrowth": 6
+     }
+    ],
+    "modes": {
+     "mortgageMode": "simple"
+    },
+    "shown": {
+     "columns": 5
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "a staged-loan Quick Start keeps its schedule when another figure varies",
+   "link": "#load&v=1&qs=auckland/apt-2br&vary=houseGrowth:2:6&note=Auckland,%20October%202026",
+   "expect": {},
+   "probe": {
+    "modes": {
+     "mortgageMode": "detailed"
+    },
+    "scenarios": [
+     {
+      "name": "Auckland · 2BR apartment"
+     },
+     {
+      "houseGrowth": 2
+     },
+     {
+      "houseGrowth": 6
+     }
+    ],
+    "shown": {
+     "columns": 3
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "varying the mortgage rate on a staged-loan Quick Start goes back to one fixed rate",
+   "link": "#load&v=1&qs=auckland/apt-2br&vary=mortgageRate:4:6&why.vary=Rate%20scenarios%20either%20side%20of%20the%20going%20rate",
+   "expect": {},
+   "probe": {
+    "modes": {
+     "mortgageMode": "simple"
+    },
+    "scenarios": [
+     {
+      "ratePeriods": null
+     },
+     {
+      "mortgageRate": 4
+     },
+     {
+      "mortgageRate": 6
+     }
+    ],
+    "shown": {
+     "columns": 3
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "shared figures, the metric and the year, with rent inflation varied",
+   "link": "#load&v=1&qs=sydney/apt-2br&riskFreeRate=4.2&horizon=20&metric=cash&year=15&vary=rentInflation:2:5&why.riskFreeRate=Sydney%20term%20deposit%20rate,%20October%202026",
+   "expect": {},
+   "probe": {
+    "shared": {
+     "riskFreeRate": 4.2,
+     "horizon": 20
+    },
+    "view": {
+     "metric": "cash",
+     "year": 15
+    },
+    "scenarios": [
+     {},
+     {
+      "rentInflation": 2
+     },
+     {
+      "rentInflation": 5
+     }
+    ],
+    "shown": {
+     "columns": 3
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "a choice varied: principal and interest against interest only",
+   "link": "#load&v=1&qs=perth/house-2br&vary=mortgageType:pi:io&baseName=Perth%20house",
+   "expect": {},
+   "probe": {
+    "modes": {
+     "mortgageMode": "detailed"
+    },
+    "scenarios": [
+     {
+      "name": "Perth house",
+      "mortgageType": "pi"
+     },
+     {
+      "mortgageType": "io"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "json: two homes side by side, shared figures and the view",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22qs%22:%22melbourne/house-2br%22,%22propertyPrice%22:850000%7D,%7B%22qs%22:%22sydney/apt-2br%22,%22name%22:%22Sydney%20flat%22%7D%5D,%22shared%22:%7B%22horizon%22:25%7D,%22view%22:%7B%22metric%22:%22cash%22,%22year%22:10%7D%7D&why.json=The%20user%20compares%20a%20Melbourne%20house%20with%20a%20Sydney%20flat",
+   "expect": {},
+   "probe": {
+    "shared": {
+     "horizon": 25
+    },
+    "view": {
+     "metric": "cash",
+     "year": 10
+    },
+    "scenarios": [
+     {
+      "name": "Melbourne · 2BR house",
+      "propertyPrice": 850000
+     },
+     {
+      "name": "Sydney flat"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "json: a column with its own rate schedule and setup cost rows",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22name%22:%22Perth%22,%22propertyPrice%22:700000,%22ratePeriods%22:%5B%7B%22toYear%22:3,%22rate%22:5.89%7D,%7B%22toYear%22:30,%22type%22:%22floating%22,%22rateMin%22:6.5,%22rateMax%22:7.5%7D%5D,%22ownSetupCosts%22:%5B%7B%22amount%22:45000,%22basis%22:%22fixed%22%7D,%7B%22amount%22:1.5,%22basis%22:%22pct%22%7D%5D%7D%5D%7D",
+   "expect": {
+    "propertyPrice": "700,000"
+   },
+   "probe": {
+    "modes": {
+     "mortgageMode": "detailed",
+     "ownCostsMode": "detailed"
+    },
+    "scenarios": [
+     {
+      "name": "Perth",
+      "ratePeriods": [
+       {
+        "toYear": 3,
+        "type": "fixed",
+        "rate": 5.89
+       },
+       {
+        "type": "floating",
+        "rateMin": 6.5,
+        "rateMax": 7.5
+       }
+      ],
+      "ownSetupCosts": [
+       {
+        "amount": 45000,
+        "basis": "fixed"
+       },
+       {
+        "amount": 1.5,
+        "basis": "pct"
+       }
+      ]
+     }
+    ],
+    "shown": {
+     "columns": 1
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/",
+   "name": "json: two currencies turn multi-currency on",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22qs%22:%22melbourne/house-2br%22%7D,%7B%22qs%22:%22singapore/apt-2br%22%7D%5D%7D",
+   "expect": {},
+   "probe": {
+    "fx": {
+     "on": true,
+     "base": "AUD"
+    },
+    "scenarios": [
+     {
+      "currency": "AUD"
+     },
+     {
+      "currency": "SGD"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/id/",
+   "name": "Jakarta apartemen: bunga KPR dan kenaikan harga divariasikan",
+   "link": "#load&v=1&qs=jakarta/apt-2br&propertyPrice=1800000000&rentAmount=7000000&rentFreq=monthly&vary=mortgageRate:8:11,houseGrowth:3:7&why.vary=Pengguna%20menyebut%20bunga%20KPR%20dan%20kenaikan%20harga,%20jadi%20masing-masing%20dicoba%20sedikit%20di%20bawah%20dan%20di%20atas&note=Jakarta,%20Oktober%202026",
+   "expect": {
+    "propertyPrice": "1,800,000,000",
+    "rentAmount": "7,000,000"
+   },
+   "probe": {
+    "scenarios": [
+     {
+      "propertyPrice": 1800000000,
+      "rentFreq": "monthly"
+     },
+     {
+      "mortgageRate": 8
+     },
+     {
+      "mortgageRate": 11
+     },
+     {
+      "houseGrowth": 3
+     },
+     {
+      "houseGrowth": 7
+     }
+    ],
+    "shown": {
+     "columns": 5
+    }
+   }
+  },
+  {
+   "page": "/rentvsownhouse/sensitivity/id/",
+   "name": "Dua rumah berdampingan dengan json",
+   "link": "#load&v=1&json=%7B%22scenarios%22:%5B%7B%22qs%22:%22jakarta/apt-2br%22%7D,%7B%22qs%22:%22bali/house-2br%22,%22name%22:%22Rumah%20Bali%22%7D%5D%7D",
+   "expect": {},
+   "probe": {
+    "scenarios": [
+     {
+      "currency": "IDR"
+     },
+     {
+      "name": "Rumah Bali",
+      "currency": "IDR"
+     }
+    ],
+    "shown": {
+     "columns": 2
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "docs example: WSCC 9-bus, the load at bus 5 raised to 150 MW",
+   "link": "#load&v=1&qs=wscc9&el.LoadA.p_set=150&why.el.LoadA.p_set=The%20load%20at%20bus%205%20is%20Load%20A%20in%20the%20WSCC%209-bus%20case%3B%20the%20user%27s%20150%20MW%20replaces%20its%20active%20power&note=WSCC%209-bus%20case,%20load%20at%20bus%205%20raised%20to%20150%20MW",
+   "expect": {},
+   "probe": {
+    "name": "WSCC 9-bus",
+    "el": {
+     "Load A": {
+      "c": "Load",
+      "p_set": 150,
+      "q_set": 50
+     },
+     "Load B": {
+      "p_set": 90
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "3bus: a typed line made longer, the station dispatch and voltage set point, a flat start",
+   "link": "#load&v=1&qs=3bus&el.Line5.length=45&why.el.Line5.length=The%20user%20said%20the%20line%20from%20bus%201%20to%20the%20town%20is%2045%20km,%20not%2030&el.PowerStation.p_set=80&why.el.PowerStation.p_set=The%20user%20wants%20the%20station%20dispatched%20at%2080%20MW&el.Bus2.v_mag_pu_set=1.03&lfSeed=flat&note=3-bus%20ring,%20longer%20line,%20station%20at%2080%20MW",
+   "expect": {
+    "lfSeed": "flat"
+   },
+   "probe": {
+    "el": {
+     "Line 5": {
+      "c": "Line",
+      "length": 45
+     },
+     "Power station": {
+      "p_set": 80
+     },
+     "Bus 2": {
+      "v_mag_pu_set": 1.03
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "feeder: more load at two pillars, a second transformer unit, a DC load flow",
+   "link": "#load&v=1&qs=feeder&el.Homes1.p_set=0.1&el.Homes2.p_set=0.1&why.el.Homes1.p_set=The%20user%20expects%20heat%20pumps%20on%20the%20first%20two%20pillars,%20so%200.1%20MW%20each&el.Substation.num_parallel=2&lfMethod=dc",
+   "expect": {
+    "lfMethod": "dc"
+   },
+   "probe": {
+    "el": {
+     "Homes 1": {
+      "p_set": 0.1
+     },
+     "Homes 2": {
+      "p_set": 0.1
+     },
+     "Substation": {
+      "c": "Transformer",
+      "num_parallel": 2
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "hvdc: the link sent the other way at a lower efficiency, a tighter loading limit",
+   "link": "#load&v=1&qs=hvdc&el.HVDClink.p_set=-100&why.el.HVDClink.p_set=The%20user%20wants%20100%20MW%20going%20from%20area%20B%20to%20area%20A&el.HVDClink.efficiency=0.95&lfLoadMax=80",
+   "expect": {
+    "lfLoadMax": "80"
+   },
+   "probe": {
+    "el": {
+     "HVDC link": {
+      "c": "Link",
+      "p_set": -100,
+      "efficiency": 0.95
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "wscc9: a distributed slack, a unit as PQ, names with spaces and underscores, p and q for p_set and q_set",
+   "link": "#load&v=1&qs=wscc9&lfDistSlack=true&lfSlackW=p_nom&el.G2.control=pq&el.g2.q_set=20&el.Load%20B.p=100&el.load_c.q=40&note=WSCC%209-bus,%20slack%20shared%20by%20rating",
+   "expect": {
+    "lfDistSlack": true,
+    "lfSlackW": "p_nom"
+   },
+   "probe": {
+    "el": {
+     "G2": {
+      "control": "PQ",
+      "q_set": 20
+     },
+     "Load B": {
+      "p_set": 100
+     },
+     "Load C": {
+      "q_set": 40
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "no Quick Start: the page starts on the WSCC 9-bus case, a transformer tap and a lower voltage limit",
+   "link": "#load&v=1&el.LoadB.p_set=110&el.T1.tap_ratio=1.02&lfVmin=0.9",
+   "expect": {
+    "lfVmin": "0.9"
+   },
+   "probe": {
+    "name": "WSCC 9-bus",
+    "el": {
+     "Load B": {
+      "p_set": 110
+     },
+     "T1": {
+      "tap_ratio": 1.02
+     }
+    }
+   }
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "json: a radial 33/11 kV network with no coordinates",
+   "link": "#load&v=1&json=%7B%22v%22:1,%22name%22:%22Radial%2033/11%20kV%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:101,%22v_nom%22:33%7D,%7B%22c%22:%22Bus%22,%22id%22:102,%22v_nom%22:33%7D,%7B%22c%22:%22Bus%22,%22id%22:103,%22v_nom%22:11%7D,%7B%22c%22:%22Line%22,%22id%22:104,%22bus0%22:101,%22bus1%22:102,%22r%22:1.5,%22x%22:3,%22b%22:0.00002,%22s_nom%22:60%7D,%7B%22c%22:%22Transformer%22,%22id%22:105,%22bus0%22:102,%22bus1%22:103,%22s_nom%22:40,%22x%22:0.1,%22r%22:0.005,%22tap_ratio%22:1.025%7D,%7B%22c%22:%22Generator%22,%22id%22:106,%22name%22:%22Grid%22,%22bus%22:101,%22control%22:%22Slack%22,%22grid%22:1%7D,%7B%22c%22:%22Load%22,%22id%22:107,%22name%22:%22Town%22,%22bus%22:103,%22p_set%22:25,%22q_set%22:8%7D,%7B%22c%22:%22Generator%22,%22id%22:108,%22name%22:%22Solar%20farm%22,%22bus%22:103,%22p_set%22:6,%22p_nom%22:8,%22style%22:%22pv%22%7D,%7B%22c%22:%22ShuntImpedance%22,%22id%22:109,%22name%22:%22Capacitor%22,%22bus%22:103,%22b%22:0.01%7D%5D%7D&why.json=The%20user%20described%20a%2033%20kV%20line%20to%20a%2033/11%20kV%20substation,%20a%20town%20of%2025%20MW,%20a%20small%20solar%20farm%20and%20a%20capacitor&note=Radial%2033/11%20kV%20network",
+   "expect": {},
+   "probe": {
+    "name": "Radial 33/11 kV",
+    "counts": {
+     "Bus": 3,
+     "Line": 1,
+     "Transformer": 1,
+     "Generator": 2,
+     "Load": 1,
+     "ShuntImpedance": 1
+    },
+    "el": {
+     "Town": {
+      "c": "Load",
+      "p_set": 25,
+      "bus": "Bus 103"
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/loadflow-simulator/",
+   "name": "json over a Quick Start, then a patch on its own load",
+   "link": "#load&v=1&qs=wscc9&json=%7B%22v%22:1,%22name%22:%22Two%20feeders%20from%20one%20substation%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:201,%22name%22:%22Substation%22,%22v_nom%22:20%7D,%7B%22c%22:%22Bus%22,%22id%22:202,%22name%22:%22North%22,%22v_nom%22:20%7D,%7B%22c%22:%22Bus%22,%22id%22:203,%22name%22:%22South%22,%22v_nom%22:20%7D,%7B%22c%22:%22Line%22,%22id%22:204,%22name%22:%22North%20line%22,%22bus0%22:201,%22bus1%22:202,%22r%22:2,%22x%22:4,%22s_nom%22:40%7D,%7B%22c%22:%22Line%22,%22id%22:205,%22name%22:%22South%20line%22,%22bus0%22:201,%22bus1%22:203,%22r%22:3,%22x%22:5,%22s_nom%22:30%7D,%7B%22c%22:%22Generator%22,%22id%22:206,%22name%22:%22Grid%22,%22bus%22:201,%22control%22:%22Slack%22,%22grid%22:1%7D,%7B%22c%22:%22Load%22,%22id%22:207,%22name%22:%22North%20town%22,%22bus%22:202,%22p_set%22:18,%22q_set%22:6%7D,%7B%22c%22:%22Load%22,%22id%22:208,%22name%22:%22South%20town%22,%22bus%22:203,%22p_set%22:10,%22q_set%22:3%7D,%7B%22c%22:%22StorageUnit%22,%22id%22:209,%22name%22:%22Battery%22,%22bus%22:203,%22p_set%22:4,%22p_nom%22:10%7D%5D%7D&el.NorthTown.p_set=22&why.el.NorthTown.p_set=The%20user%20said%20the%20northern%20town%20peaks%20at%2022%20MW",
+   "expect": {},
+   "probe": {
+    "name": "Two feeders from one substation",
+    "counts": {
+     "Bus": 3,
+     "Line": 2,
+     "Load": 2,
+     "StorageUnit": 1,
+     "Generator": 1
+    },
+    "el": {
+     "North town": {
+      "p_set": 22
+     },
+     "Battery": {
+      "c": "StorageUnit",
+      "p_set": 4
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "docs example: PJM 5-bus, Brighton's cost raised to $40/MWh",
+   "link": "#load&v=1&qs=pjm5&el.Brighton.marginal_cost=40&why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh",
+   "expect": {},
+   "probe": {
+    "name": "PJM 5-bus",
+    "el": {
+     "Brighton": {
+      "c": "Generator",
+      "marginal_cost": 40,
+      "p_nom": 600
+     },
+     "Alta": {
+      "marginal_cost": 14
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "uc3: linear relaxation over 36 hours, a dearer start-up and peaker, more demand, in rupiah",
+   "link": "#load&v=1&qs=uc3&edMode=lin&why.edMode=The%20user%20wants%20a%20quick%20answer,%20so%20the%20relaxed%20commitment&edSpan=36&edSpanUnit=h&edCur=Rp&edVoll=15000&el.Coal.start_up_cost=25000&why.el.Coal.start_up_cost=The%20user%20said%20a%20cold%20start%20of%20the%20coal%20unit%20costs%2025,000&el.Peaker.marginal_cost=130&el.Demand.p_set=700&el.Combined cycle.min_up_time=6&note=Three-unit%20system,%2036%20hours",
+   "expect": {
+    "edMode": "lin",
+    "edSpan": "36",
+    "edSpanUnit": "h",
+    "edCur": "Rp",
+    "edVoll": "15000"
+   },
+   "probe": {
+    "el": {
+     "Coal": {
+      "start_up_cost": 25000
+     },
+     "Peaker": {
+      "marginal_cost": 130
+     },
+     "Demand": {
+      "p_set": 700
+     },
+     "Combined cycle": {
+      "min_up_time": 6
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "solar: a bigger farm and battery (a name written without its space), another home shape, a June start",
+   "link": "#load&v=1&qs=solar&edStart=2026-06-01T00:00&el.SolarFarm.p_nom=600&why.el.SolarFarm.p_nom=The%20user%20plans%20a%20600%20MW%20farm&el.Battery.p_nom=200&el.Battery.max_hours=6&el.Battery.eff=0.9&el.Homes.prof=resev&why.el.Homes.prof=The%20user%20expects%20many%20homes%20to%20charge%20electric%20cars",
+   "expect": {
+    "edStart": "2026-06-01T00:00"
+   },
+   "probe": {
+    "el": {
+     "Solar farm": {
+      "p_nom": 600
+     },
+     "Battery": {
+      "p_nom": 200,
+      "max_hours": 6,
+      "eff": 0.9
+     },
+     "Homes": {
+      "prof": "resev"
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "areas: a bigger link and wind farm, a slower hydro unit, a week with no line limits, relaxed",
+   "link": "#load&v=1&qs=areas&edMode=lin&edSpan=7&edSpanUnit=d&edLimits=false&el.HVDCLink.p_nom=400&el.Wind farms.p_nom=900&el.Hydro.ramp_limit_up=0.25&why.el.Hydro.ramp_limit_up=The%20user%20said%20the%20hydro%20unit%20ramps%20slowly",
+   "expect": {
+    "edMode": "lin",
+    "edSpan": "7",
+    "edSpanUnit": "d",
+    "edLimits": false
+   },
+   "probe": {
+    "el": {
+     "HVDC link": {
+      "p_nom": 400
+     },
+     "Wind farms": {
+      "p_nom": 900
+     },
+     "Hydro": {
+      "ramp_limit_up": 0.25
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "pjm5: two line limits tightened, no load shedding",
+   "link": "#load&v=1&qs=pjm5&edShed=false&why.edShed=The%20user%20wants%20every%20MWh%20served%20or%20the%20case%20reported&el.A-B.s_nom=300&el.D-E.s_nom=200&note=PJM%205-bus,%20tighter%20limits%20on%20A-B%20and%20D-E",
+   "expect": {
+    "edShed": false
+   },
+   "probe": {
+    "el": {
+     "A-B": {
+      "c": "Line",
+      "s_nom": 300
+     },
+     "D-E": {
+      "s_nom": 200
+     },
+     "A-D": {
+      "s_nom": 0
+     }
+    }
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "json: a hub, a town and a line, solved as a unit commitment, then the load patched",
+   "link": "#load&v=1&edMode=uc&json=%7B%22v%22:2,%22name%22:%22Hub%20and%20town%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:1,%22name%22:%22Hub%22,%22v_nom%22:110%7D,%7B%22c%22:%22Bus%22,%22id%22:2,%22name%22:%22Town%22,%22v_nom%22:110%7D,%7B%22c%22:%22Line%22,%22id%22:3,%22bus0%22:1,%22bus1%22:2,%22x%22:12,%22s_nom%22:120%7D,%7B%22c%22:%22Generator%22,%22id%22:4,%22name%22:%22Gas%22,%22bus%22:1,%22p_nom%22:150,%22marginal_cost%22:45,%22committable%22:1,%22p_min_pu%22:0.3,%22start_up_cost%22:2000,%22min_up_time%22:2%7D,%7B%22c%22:%22Generator%22,%22id%22:5,%22name%22:%22Wind%22,%22bus%22:1,%22p_nom%22:80,%22prof%22:%22wnd%22,%22style%22:%22wind%22%7D,%7B%22c%22:%22Load%22,%22id%22:6,%22name%22:%22Town%20load%22,%22bus%22:2,%22p_set%22:100,%22prof%22:%22res%22%7D%5D%7D&why.json=The%20user%20described%20a%20gas%20unit%20and%20wind%20at%20one%20bus,%20and%20a%20town%20on%20a%20line&el.Town load.p_set=110&why.el.Town load.p_set=The%20user%20said%20the%20town%20peaks%20at%20110%20MW&note=Hub%20and%20town",
+   "expect": {
+    "edMode": "uc"
+   },
+   "probe": {
+    "name": "Hub and town",
+    "counts": {
+     "Bus": 2,
+     "Line": 1,
+     "Generator": 2,
+     "Load": 1
+    },
+    "el": {
+     "Gas": {
+      "c": "Generator",
+      "committable": 1,
+      "bus": "Hub"
+     },
+     "Town load": {
+      "c": "Load",
+      "p_set": 110,
+      "prof": "res"
+     },
+     "Line 3": {
+      "c": "Line",
+      "bus0": "Hub",
+      "bus1": "Town",
+      "s_nom": 120
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "json: two voltage levels with a transformer, a cable link and a battery, laid out automatically",
+   "link": "#load&v=1&edMode=edm&edSpan=2&edSpanUnit=d&json=%7B%22v%22:2,%22name%22:%22Two%20voltage%20levels%22,%22el%22:%5B%7B%22c%22:%22Bus%22,%22id%22:1,%22name%22:%22Grid%22,%22v_nom%22:220%7D,%7B%22c%22:%22Bus%22,%22id%22:2,%22name%22:%22City%22,%22v_nom%22:66%7D,%7B%22c%22:%22Bus%22,%22id%22:3,%22name%22:%22Island%22,%22v_nom%22:66%7D,%7B%22c%22:%22Transformer%22,%22id%22:4,%22name%22:%22City%20transformer%22,%22bus0%22:1,%22bus1%22:2,%22s_nom%22:150,%22x%22:0.1%7D,%7B%22c%22:%22Link%22,%22id%22:5,%22name%22:%22Island%20cable%22,%22bus0%22:2,%22bus1%22:3,%22p_nom%22:40,%22efficiency%22:0.96%7D,%7B%22c%22:%22Generator%22,%22id%22:6,%22name%22:%22Grid%20supply%22,%22bus%22:1,%22p_nom%22:300,%22marginal_cost%22:60%7D,%7B%22c%22:%22Generator%22,%22id%22:7,%22name%22:%22Island%20solar%22,%22bus%22:3,%22p_nom%22:50,%22prof%22:%22pv%22,%22style%22:%22pv%22%7D,%7B%22c%22:%22StorageUnit%22,%22id%22:8,%22name%22:%22Island%20battery%22,%22bus%22:3,%22p_nom%22:15,%22max_hours%22:3,%22eff%22:0.85%7D,%7B%22c%22:%22Load%22,%22id%22:9,%22name%22:%22City%20load%22,%22bus%22:2,%22p_set%22:120,%22prof%22:%22com%22%7D,%7B%22c%22:%22Load%22,%22id%22:10,%22name%22:%22Island%20load%22,%22bus%22:3,%22p_set%22:30,%22prof%22:%22res%22%7D%5D%7D&note=City%20and%20island",
+   "expect": {
+    "edMode": "edm",
+    "edSpan": "2"
+   },
+   "probe": {
+    "name": "Two voltage levels",
+    "counts": {
+     "Bus": 3,
+     "Transformer": 1,
+     "Link": 1,
+     "StorageUnit": 1,
+     "Generator": 2,
+     "Load": 2
+    },
+    "el": {
+     "Island cable": {
+      "c": "Link",
+      "efficiency": 0.96,
+      "bus0": "City",
+      "bus1": "Island"
+     },
+     "Island battery": {
+      "c": "StorageUnit",
+      "max_hours": 3
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "run=0: the PJM 5-bus Quick Start opens with no result, not even its pre-solved one, Run dispatch waiting",
+   "link": "#load&v=1&qs=pjm5&run=0&note=PJM%205-bus%20case,%20opened%20without%20a%20result",
+   "expect": {
+    "edMode": "edm"
+   },
+   "probe": {
+    "name": "PJM 5-bus",
+    "counts": {
+     "Bus": 5,
+     "Generator": 5
+    },
+    "runPending": true,
+    "resultShown": false
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "run=0 with a part patched: the three-unit case in the relaxed commitment, a dearer coal start-up, opened with no result",
+   "link": "#load&v=1&qs=uc3&run=0&edMode=lin&why.edMode=The%20user%20wants%20a%20quick%20answer,%20so%20the%20relaxed%20commitment&el.Coal.start_up_cost=25000&why.el.Coal.start_up_cost=The%20user%20said%20a%20cold%20start%20of%20the%20coal%20unit%20costs%2025,000&note=Three-unit%20case,%20dearer%20coal%20start-up,%20opened%20without%20a%20result",
+   "expect": {
+    "edMode": "lin"
+   },
+   "probe": {
+    "el": {
+     "Coal": {
+      "c": "Generator",
+      "start_up_cost": 25000
+     }
+    },
+    "runPending": true,
+    "resultShown": false
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "docs example: Growing grid, a $50/t carbon price, solar at $900/kW, planned to 2040",
+   "link": "#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040",
+   "expect": {
+    "cxCarbon": "50",
+    "cxEnd": "2040"
+   },
+   "probe": {
+    "load": "sys",
+    "counts": {
+     "tech": 6
+    },
+    "tech": {
+     "Solar PV": {
+      "kind": "pv",
+      "capex": 900
+     },
+     "Gas (CCGT)": {
+      "capex": 1200,
+      "exist": 300
+     }
+    },
+    "runPending": false
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "nz: nuclear offered from the menu (added), cheaper gas written with its brackets, a 60 carbon price",
+   "link": "#load&v=1&qs=nz&cxCarbon=60&tech.nuclear.capex=6000&why.tech.nuclear.capex=The%20user%20wants%20nuclear%20offered%20at%20$6,000%20per%20kW&tech.nuclear.build=1&tech.Gas (CCGT).capex=1000&why.tech.Gas (CCGT).capex=The%20user%20said%20new%20combined-cycle%20gas%20costs%20$1,000%20per%20kW&cxDetail=detailed&note=Net%20zero%20grid%20with%20nuclear%20on%20offer",
+   "expect": {
+    "cxCarbon": "60",
+    "cxNetZero": true,
+    "cxNzYear": "2041",
+    "cxDetail": "detailed"
+   },
+   "probe": {
+    "counts": {
+     "tech": 8
+    },
+    "tech": {
+     "Nuclear": {
+      "kind": "firm",
+      "capex": 6000,
+      "build": 1
+     },
+     "Gas (CCGT)": {
+      "capex": 1000
+     }
+    },
+    "runPending": false
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "coal: the older station retires earlier (a name with a comma), gas units of 300 MW, a winter-peak climate in the north",
+   "link": "#load&v=1&qs=coal&cxClimate=win-n&tech.Coal%2C older station.retire=2028&why.tech.Coal%2C older station.retire=The%20user%20said%20the%20older%20station%20closes%20in%202028&tech.ccgt.unit=300&tech.wind.max=5000&cxDetail=detailed",
+   "expect": {
+    "cxClimate": "win-n",
+    "cxDetail": "detailed"
+   },
+   "probe": {
+    "tech": {
+     "Coal, older station": {
+      "retire": 2028,
+      "exist": 2000
+     },
+     "Gas (CCGT)": {
+      "unit": 300
+     },
+     "Wind": {
+      "max": 5000
+     }
+    }
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "island: a flat commercial demand shape, geothermal limited to 100 MW in 25 MW units, longer battery, in rupiah",
+   "link": "#load&v=1&qs=island&cxCur=Rp&cxPeak=150&loadShape=commercial&why.loadShape=The%20user%20said%20most%20of%20the%20demand%20is%20hotels%20and%20shops&tech.geo.max=100&tech.geo.unit=25&tech.battery.hours=6&tech.solar.cf=0.2&cxEnd=2040",
+   "expect": {
+    "cxCur": "Rp",
+    "cxPeak": "150",
+    "cxEnd": "2040"
+   },
+   "probe": {
+    "load": "com",
+    "tech": {
+     "Geothermal": {
+      "max": 100,
+      "unit": 25
+     },
+     "Battery": {
+      "hours": 6
+     },
+     "Solar PV": {
+      "cf": 0.2
+     }
+    }
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "run=0: the coal plan opens unsolved with a carbon price and a cheaper peaker, Run plan waiting",
+   "link": "#load&v=1&qs=coal&run=0&cxCarbon=30&cxGrowth=2&tech.ocgt.capex=700&why.tech.ocgt.capex=The%20user%20said%20peakers%20cost%20$700%20per%20kW&note=Coal%20exit,%20opened%20without%20solving",
+   "expect": {
+    "cxCarbon": "30",
+    "cxGrowth": "2"
+   },
+   "probe": {
+    "tech": {
+     "Gas (OCGT)": {
+      "capex": 700
+     }
+    },
+    "runPending": true
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "run=0 with no Quick Start: a smaller grid, opened unsolved",
+   "link": "#load&v=1&run=0&cxPeak=500&cxStep=10&why.cxStep=The%20user%20wants%20a%20quick,%20coarse%20plan",
+   "expect": {
+    "cxPeak": "500",
+    "cxStep": "10"
+   },
+   "probe": {
+    "counts": {
+     "tech": 6
+    },
+    "runPending": true
+   }
+  },
+  {
+   "page": "/capacity-expansion-planner/",
+   "name": "json: a small grid with an old gas plant, solar and a battery, solved over two decision years, then solar patched",
+   "link": "#load&v=1&cxPeak=100&cxGrowth=2&cxStart=2026&cxEnd=2036&cxStep=10&json=%7B%22v%22:2,%22tech%22:%5B%7B%22name%22:%22Old%20gas%22,%22kind%22:%22firm%22,%22exist%22:80,%22build%22:0,%22vom%22:70,%22co2%22:0.5%7D,%7B%22name%22:%22Solar%22,%22kind%22:%22pv%22,%22capex%22:900,%22fom%22:15,%22life%22:30,%22cf%22:0.22%7D,%7B%22name%22:%22Battery%22,%22kind%22:%22store%22,%22capex%22:1200,%22fom%22:25,%22life%22:15,%22hours%22:4,%22rte%22:0.87%7D%5D,%22load%22:%7B%22base%22:%22res%22%7D%7D&why.json=The%20user%20described%20an%2080%20MW%20gas%20plant%20that%20cannot%20be%20added%20to,%20with%20solar%20and%20a%20battery%20to%20build&tech.Solar.capex=800&note=Small%20grid,%20gas%20plant%20plus%20solar%20and%20storage",
+   "expect": {
+    "cxPeak": "100",
+    "cxStep": "10"
+   },
+   "probe": {
+    "load": "res",
+    "counts": {
+     "tech": 3
+    },
+    "tech": {
+     "Old gas": {
+      "kind": "firm",
+      "exist": 80,
+      "build": 0,
+      "co2": 0.5
+     },
+     "Solar": {
+      "kind": "pv",
+      "capex": 800,
+      "cf": 0.22
+     },
+     "Battery": {
+      "kind": "store",
+      "hours": 4
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "docs example: N-1 screening of the lines only, Nine-bus System, Excel tables",
+   "link": "#load&v=1&qs=n-1&blk.n1.project=Nine-bus%20System&why.blk.n1.project=The%20project%20the%20user%20named,%20as%20they%20wrote%20it&blk.n5.trafos=false&why.blk.n5.trafos=The%20user%20wants%20lines%20only,%20so%20transformers%20are%20not%20taken%20out&blk.n1.tableFmt=xlsx&why.blk.n1.tableFmt=The%20user%20wants%20the%20results%20as%20Excel%20files&note=N-1%20screening%20of%20the%20lines,%20Nine-bus%20System,%20Excel%20tables",
+   "expect": {},
+   "probe": {
+    "name": "N-1 screening",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Nine-bus System",
+       "tableFmt": "xlsx"
+      }
+     },
+     "n5": {
+      "s": {
+       "lines": true,
+       "trafos": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "template (the router's name for qs) written after blk keys: a study case and a busbar name pattern",
+   "link": "#load&v=1&blk.n1.studyCase=Base%20Case&why.blk.n1.studyCase=The%20study%20case%20the%20user%20named&template=ldf-cases&blk.n5.el.name=B*&why.blk.n5.el.name=Only%20the%20busbars%20whose%20name%20starts%20with%20B,%20as%20the%20user%20asked&blk.n5.el.match=all&note=Load%20flow%20on%20every%20study%20case,%20busbars%20B*",
+   "expect": {},
+   "probe": {
+    "name": "Load flow on every study case",
+    "blocks": {
+     "n1": {
+      "s": {
+       "studyCase": "Base Case"
+      }
+     },
+     "n5": {
+      "s": {
+       "el": {
+        "cls": "ElmTerm",
+        "name": "B*",
+        "match": "all"
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "headroom: a wider dispatch range, a longer RMS run and a project",
+   "link": "#load&v=1&qs=headroom&blk.n3.from=150&blk.n3.to=350&why.blk.n3.to=The%20user%20wants%20dispatches%20up%20to%20350%20MW&blk.n3.step=25&blk.n8.tstop=30&why.blk.n8.tstop=A%20longer%20simulation%20so%20a%20slow%20recovery%20is%20seen&blk.n1.project=Grid%202030&note=Headroom%20study,%20150%20to%20350%20MW%20in%20steps%20of%2025",
+   "expect": {},
+   "probe": {
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Grid 2030"
+      }
+     },
+     "n3": {
+      "s": {
+       "from": 150,
+       "to": 350,
+       "step": 25
+      }
+     },
+     "n8": {
+      "s": {
+       "tstop": 30
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "frt: the Start block by blk.start, a 60 Hz grid run in the background",
+   "link": "#load&v=1&qs=frt&blk.start.fNominal=60&why.blk.start.fNominal=The%20user%20is%20on%20a%2060%20Hz%20grid&blk.start.runMode=engine&blk.start.connectTimeout=300&blk.start.studyCase=FRT%20Case",
+   "expect": {},
+   "probe": {
+    "blocks": {
+     "n1": {
+      "s": {
+       "fNominal": "60",
+       "runMode": "engine",
+       "connectTimeout": 300,
+       "studyCase": "FRT Case"
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "shc-buses: the report graph style at 300 dpi with the key on the right",
+   "link": "#load&v=1&qs=shc-buses&graph.template=report&graph.dpi=300&why.graph.dpi=Print%20quality%20for%20a%20report&graph.legend=right&graph.title_bold=false",
+   "expect": {},
+   "probe": {
+    "graph": {
+     "template": "report",
+     "dpi": 300,
+     "legend": "right",
+     "title_bold": false
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "json: a whole workflow (load flow, lowest busbar voltage into a table), then a study case patched",
+   "link": "#load&v=1&json=%7B%22name%22:%22Voltage%20screen%22,%22nodes%22:%5B%7B%22id%22:%22n1%22,%22type%22:%22start%22,%22s%22:%7B%22project%22:%22Nine-bus%20System%22%7D%7D,%7B%22id%22:%22n2%22,%22type%22:%22pf.ldf%22%7D,%7B%22id%22:%22n3%22,%22type%22:%22pf.get%22,%22label%22:%22Busbar%20voltage%22,%22s%22:%7B%22el%22:%7B%22cls%22:%22ElmTerm%22,%22name%22:%22*%22,%22match%22:%22all%22%7D,%22attr%22:%22m:u%22%7D%7D,%7B%22id%22:%22n4%22,%22type%22:%22out.table.add%22,%22s%22:%7B%22table%22:%22Voltage%22,%22cols%22:%5B%7B%22id%22:%22c1%22,%22name%22:%22Lowest%20voltage%20%28p.u.%29%22%7D,%7B%22id%22:%22c2%22,%22name%22:%22Lowest%20at%22%7D%5D%7D%7D,%7B%22id%22:%22n5%22,%22type%22:%22pf.cont.foreach%22,%22label%22:%22Outage%22,%22s%22:%7B%22lines%22:true,%22trafos%22:false%7D%7D%5D,%22edges%22:%5B%7B%22from%22:%22n1%22,%22out%22:%22next%22,%22to%22:%22n2%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n2%22,%22out%22:%22ok%22,%22to%22:%22n3%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22next%22,%22to%22:%22n4%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22min%22,%22to%22:%22n4%22,%22in%22:%22c1%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22at_min%22,%22to%22:%22n4%22,%22in%22:%22c2%22%7D%5D%7D&blk.n1.studyCase=Base&note=Load%20flow%20and%20lowest%20busbar%20voltage",
+   "expect": {},
+   "probe": {
+    "name": "Voltage screen",
+    "counts": {
+     "blocks": 5,
+     "wires": 5
+    },
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Nine-bus System",
+       "studyCase": "Base"
+      }
+     },
+     "n3": {
+      "label": "Busbar voltage",
+      "s": {
+       "attr": "m:u"
+      }
+     },
+     "n5": {
+      "type": "pf.cont.foreach",
+      "label": "Outage"
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "via": "/powerfactory-scripter/",
+   "name": "router: template and blk keys sent to powerfactory-scripter/ land on the builder",
+   "link": "#load&v=1&template=n-1&blk.n1.project=Nine-bus%20System&blk.n5.gens=true&why.blk.n5.gens=Generator%20outages%20too",
+   "expect": {},
+   "probe": {
+    "name": "N-1 screening",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Nine-bus System"
+      }
+     },
+     "n5": {
+      "s": {
+       "gens": true
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "docs example: minimum system losses with differential evolution and 100 tries, as a notebook",
+   "link": "#load&v=1&qs=sample-02-minimum-system-losses&optim-algorithm=differential_evolution&why.optim-algorithm=The%20search%20method%20the%20user%20asked%20for&optim-max-iter=100&why.optim-max-iter=The%20user%20allows%20up%20to%20100%20tries&coding-style=notebook&why.coding-style=The%20user%20wants%20a%20notebook&note=Minimum%20system%20losses,%20differential%20evolution,%20notebook",
+   "expect": {
+    "optim-algorithm": "differential_evolution",
+    "optim-max-iter": "100",
+    "coding-style": "notebook"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "inputs": [
+     "G2_dispatch",
+     "G3_dispatch"
+    ],
+    "outputs": [
+     "total_losses",
+     "G1_dispatch"
+    ],
+    "objective": "total_losses"
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "N-1 sample set to N-2 pairs, on every study case, results in a named folder",
+   "link": "#load&v=1&qs=sample-04-n1-line-contingency&contingency-n=2&why.contingency-n=The%20user%20wants%20pairs%20of%20outages,%20N-2&iterate-study-cases=true&output-dir=D:/Studies/n2&why.output-dir=The%20folder%20the%20user%20named&note=N-2%20screening%20of%20the%20220%20kV%20lines%20on%20every%20study%20case",
+   "expect": {
+    "contingency-n": "2",
+    "iterate-study-cases": true,
+    "output-dir": "D:/Studies/n2"
+   },
+   "probe": {
+    "problemType": "contingency",
+    "outputs": [
+     "bus_voltage",
+     "loading"
+    ]
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "transmission loss factor sweep with a longer stop time, saved every 10 minutes, no progress bar",
+   "link": "#load&v=1&qs=sample-01-transmission-loss-factor&tstop=30&why.tstop=The%20user%20wants%20the%20sweep%20run%20with%2030%20seconds%20as%20its%20stop%20time&save-intermediate=true&save-interval-minutes=10&use-progress-bar=false&open-pf-window=true",
+   "expect": {
+    "tstop": "30",
+    "save-intermediate": true,
+    "save-interval-minutes": "10",
+    "use-progress-bar": false,
+    "open-pf-window": true
+   },
+   "probe": {
+    "problemType": "brute_force",
+    "inputs": [
+     "G2_dispatch",
+     "G3_dispatch"
+    ]
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "no Quick Start: an optimisation study with a local search, set field by field",
+   "link": "#load&v=1&problem-type=optimisation&study-type=dynamic_rms&tstop=5&optim-algorithm=scipy_powell&optim-max-iter=80&why.optim-max-iter=Enough%20tries%20for%20a%20local%20search",
+   "expect": {
+    "problem-type": "optimisation",
+    "study-type": "dynamic_rms",
+    "tstop": "5",
+    "optim-algorithm": "scipy_powell",
+    "optim-max-iter": "80"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "studyType": "dynamic_rms",
+    "inputs": [
+     "Q_gen"
+    ]
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "a sample with no Quick Start button (as ?qs= takes it): harmonic filter optimisation, 40 tries",
+   "link": "#load&v=1&qs=sample-05-harmonic-filter-optimisation&optim-max-iter=40&note=Harmonic%20filter,%2040%20tries",
+   "expect": {
+    "optim-max-iter": "40"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "studyType": "harmonic",
+    "inputs": [
+     "filter_tuning_order",
+     "filter_rated_power"
+    ],
+    "objective": "THD_HVDC_bus"
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "via": "/powerfactory-scripter/",
+   "name": "router: a link with no Builder key sent to powerfactory-scripter/ lands on the form",
+   "link": "#load&v=1&qs=sample-02-minimum-system-losses&optim-max-iter=90&why.optim-max-iter=Ninety%20tries%20are%20enough%20for%20two%20inputs",
+   "expect": {
+    "optim-max-iter": "90"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "objective": "total_losses"
+   }
+  }
+ ]
+}

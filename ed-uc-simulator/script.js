@@ -472,6 +472,34 @@
   app.run = run;
   $('runBtn').addEventListener('click', function(){ run(); });
 
+  /* An AI link written with run=0 (SharedAgent) opens the network without solving it: the
+     reader presses Run dispatch, so the answer comes when they ask for it. That includes the
+     results a Quick Start has solved ahead of time and the ones kept from an earlier solve,
+     which would otherwise show at once. The hash is read here, before the loader takes it off
+     the address, and the hold ends once the link has been applied. With no such link nothing
+     is held and every network that is put on screen is solved, as ever. */
+  var holdRun = (function(){
+    if(!window.SharedAgent || !SharedAgent.link) return false;
+    var hold = false;
+    String(window.location.hash).replace(/^#/, '').split('&').forEach(function(part){
+      var eq = part.indexOf('='), k, v;
+      try {
+        k = decodeURIComponent(eq < 0 ? part : part.slice(0, eq)).trim().replace(/^amp;/, '');
+        v = eq < 0 ? '' : decodeURIComponent(part.slice(eq + 1));
+      } catch(e){ return; }
+      if(k === 'run') hold = /^\s*(0|false|no|off)\s*$/i.test(v);
+    });
+    return hold;
+  })();
+  if(holdRun) SharedAgent.done.then(function(){ holdRun = false; });
+  // A network has just been put on screen (a Quick Start, a file, a Share or AI link, or the first draw): solve it, unless the link held the run.
+  function opened(){
+    if(!holdRun) return run();
+    showResults();
+    updateStale();
+    return Promise.resolve(app.res);
+  }
+
   /* ── The hour ── */
   function syncHourRange(){
     var res = shownResults(), el = $('edHour');
@@ -1896,7 +1924,7 @@
     renderInspector();
     if(persist) persist.save();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){ b.classList.toggle('active', b.getAttribute('data-preset') === key); });
-    return run();
+    return opened();
   }
   Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){
     b.addEventListener('click', function(){ applyPreset(b.getAttribute('data-preset')); });
@@ -2168,9 +2196,207 @@
     app.fitPending = true;
     renderInspector();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn.active'), function(b){ b.classList.remove('active'); });
-    return run();
+    return opened();
   }
   SharedScenario.mount('.quick-start-row', { tool: 'educ-simulator', persist: persist });
+
+  /* ── AI links (SharedAgent): patch a Quick Start's parts, or send a whole network ──
+     A chatbot's link starts from a Quick Start, then changes parts by their visible
+     name (el.<name>.<param>=<value>) or replaces the network with json in the saved
+     form. Both work on that saved form (ED.compact, which the mini cache carries as
+     __extra) and read it back through ED.load, so a value meets exactly the bounds
+     any saved network does. Names and units are the saved ones (PyPSA's), as in json.
+     The options (mode, horizon, VoLL ...) are ordinary fields and need nothing here.
+     run=0 is held by opened(), above. */
+  if(window.SharedAgent) (function(){
+    // What a link may change on each class: the saved name, how the banner says it and its unit
+    // ($ stands for the currency symbol chosen). Draw-only values, the line type, the cost curve,
+    // uploaded series and the hourly shapes of 24 numbers are left to json.
+    var PARAM = {
+      Bus:         { v_nom: ['nominal voltage', 'kV'] },
+      Line:        { length: ['length', 'km'], num_parallel: ['parallel circuits', ''], r: ['resistance', 'ohm'], x: ['reactance', 'ohm'], s_nom: ['rating', 'MW'] },
+      Transformer: { s_nom: ['rating', 'MVA'], x: ['reactance', 'p.u.'], r: ['resistance', 'p.u.'] },
+      Generator:   { p_nom: ['rating', 'MW'], marginal_cost: ['marginal cost', '$/MWh'], committable: ['committable', ''], p_min_pu: ['minimum stable loading', 'p.u.'],
+                     start_up_cost: ['start-up cost', '$'], shut_down_cost: ['shut-down cost', '$'], stand_by_cost: ['no-load cost', '$/h'],
+                     min_up_time: ['minimum up time', 'h'], min_down_time: ['minimum down time', 'h'],
+                     ramp_limit_up: ['ramp up limit', 'p.u./h'], ramp_limit_down: ['ramp down limit', 'p.u./h'], init: ['before the first hour', ''], prof: ['availability', ''] },
+      Load:        { p_set: ['peak demand', 'MW'], prof: ['profile', ''] },
+      StorageUnit: { p_nom: ['power rating', 'MW'], max_hours: ['hours at full power', 'h'], eff: ['round-trip efficiency', 'p.u.'],
+                     soc0: ['starting charge', 'p.u.'], cyclic: ['end where it started', ''] },
+      Link:        { p_nom: ['rating', 'MW'], efficiency: ['efficiency', 'p.u.'], both: ['direction', ''] }
+    };
+    var FLAG = { committable: ['no', 'yes'], init: ['off', 'running'], cyclic: ['no', 'yes'], both: ['one way', 'both ways'] };
+    var has = function(o, k){ return Object.prototype.hasOwnProperty.call(o, k); };
+    var norm = function(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().toLowerCase(); };
+    var squash = function(s){ return norm(s).replace(/[ _]/g, ''); };
+    var short = function(n){ return String(+Number(n).toFixed(6)); };
+    var sld = function(){ return $('sldCard'); };
+    function replaceWith(extra, next){
+      Object.keys(extra).forEach(function(k){ delete extra[k]; });
+      Object.keys(next).forEach(function(k){ extra[k] = next[k]; });
+    }
+    function paramOf(c, p){
+      var list = has(PARAM, c) ? PARAM[c] : {}, low = String(p).toLowerCase(), hit = null;
+      if(has(list, p)) return p;
+      Object.keys(list).forEach(function(k){ if(!hit && k.toLowerCase() === low) hit = k; });
+      return hit;
+    }
+    // The elements called this: the name as written (any case), else with spaces and underscores ignored (Load B, LoadB).
+    function find(list, name){
+      var a = norm(name), z = squash(name), hits = [];
+      [function(e){ return norm(ED.nameOf(e)) === a; }, function(e){ return squash(ED.nameOf(e)) === z; }].some(function(test){
+        hits = list.filter(test);
+        return hits.length > 0;
+      });
+      return hits;
+    }
+    // The shapes a link may name: flat, or a built-in one of the kind the element uses (the old ones only where it already has one).
+    function shapesOf(e){
+      var kind = e.c === 'Load' ? 'load' : 'gen';
+      return Object.keys(ED.PROFILES).filter(function(k){ var p = ED.PROFILES[k]; return p.kind === kind && (!p.old || e.prof === k); });
+    }
+
+    // el.<name>.<param>=<value>: one value of one element.
+    function patch(raw, extra, api, key){
+      if(!Array.isArray(extra.el)) replaceWith(extra, ED.compact(app.model));
+      var rest = key.slice(3), dot = rest.lastIndexOf('.');
+      var name = rest.slice(0, Math.max(dot, 0)).trim(), pname = rest.slice(dot + 1).trim();
+      if(dot < 1 || !name || !pname){ api.error(key + ': write it as el.<name>.<param>'); return false; }
+      var net = ED.load(extra), hits = find(net.el, name);
+      if(!hits.length){ api.error(key + ': no element is called "' + name + '"'); return false; }
+      var fits = hits.filter(function(e){ return !!paramOf(e.c, pname); });
+      if(!fits.length){
+        api.error(key + ': ' + ED.nameOf(hits[0]) + ' is a ' + ED.WORD[hits[0].c].toLowerCase() + ' and takes ' + Object.keys(PARAM[hits[0].c]).join(', '));
+        return false;
+      }
+      if(fits.length > 1){ api.error(key + ': ' + fits.length + ' elements are called "' + name + '"'); return false; }
+      var e = fits[0], param = paramOf(e.c, pname), spec = ED.SPEC[e.c][param], text = String(raw).trim();
+      var v, given, shown;
+      if(param === 'prof'){
+        var low = text.toLowerCase();
+        v = /^(flat|none|)$/.test(low) ? '' : shapesOf(e).filter(function(k){ return k === text || k.toLowerCase() === low; })[0];
+        if(v === undefined){ api.error(key + ': "' + text.slice(0, 40) + '" is not one of flat, ' + shapesOf(e).join(', ')); return false; }
+        shown = v ? ED.PROFILES[v].label : 'flat';
+      } else if(spec[0] === 'e'){
+        v = /^(1|true|on|yes)$/i.test(text) ? 1 : /^(0|false|off|no)$/i.test(text) ? 0 : NaN;
+        if(isNaN(v)){ api.error(key + ': "' + text.slice(0, 40) + '" is not 0 or 1'); return false; }
+        shown = FLAG[param][v];
+      } else {
+        v = given = api.number(raw);
+        if(!isFinite(v)){ api.error(key + ': "' + text.slice(0, 40) + '" is not a number'); return false; }
+      }
+      e[param] = v;
+      // A shape the link names replaces whatever an edited or uploaded one held.
+      if(param === 'prof'){ e.pbase = ''; e.ts = null; }
+      var back = ED.load(ED.compact(net)), got = null;
+      back.el.forEach(function(x){ if(x.id === e.id) got = x; });
+      var used = got ? got[param] : v;
+      if(given !== undefined && used !== given) api.clamp(key, given, used);
+      replaceWith(extra, ED.compact(back));
+      var unit = PARAM[e.c][param][1].replace(/^\$/, cur());
+      return { label: ED.nameOf(e) + ': ' + PARAM[e.c][param][0], value: shown !== undefined ? shown : short(used) + (unit ? ' ' + unit : ''), el: sld() };
+    }
+
+    // Buses written without coordinates are laid out in rows by their distance from the first bus.
+    function placeBuses(list){
+      var els = list.filter(function(e){ return e && typeof e === 'object'; });
+      var buses = els.filter(function(e){ return e.c === 'Bus'; });
+      if(!buses.some(function(b){ return !Array.isArray(b.at); })) return;
+      var byId = {}, nbr = {}, deg = {}, level = {}, rows = [];
+      buses.forEach(function(b){ byId[+b.id] = b; });
+      var count = function(id){ deg[id] = (deg[id] || 0) + 1; };
+      els.forEach(function(e){
+        if(ED.BRANCH[e.c]){
+          var a = +e.bus0, b = +e.bus1;
+          (nbr[a] = nbr[a] || []).push(b); (nbr[b] = nbr[b] || []).push(a); count(a); count(b);
+        } else if(ED.DEVICE[e.c]) count(+e.bus);
+      });
+      var width = function(id){ return Math.min(30, Math.max(8, 4 + 3 * (deg[id] || 0))); };
+      buses.forEach(function(b){
+        var id = +b.id;
+        if(level[id] !== undefined) return;
+        var queue = [id], base = rows.length;
+        level[id] = base;
+        for(var i = 0; i < queue.length; i++){
+          var at = level[queue[i]];
+          (rows[at] = rows[at] || []).push(queue[i]);
+          (nbr[queue[i]] || []).forEach(function(n){ if(has(byId, n) && level[n] === undefined){ level[n] = at + 1; queue.push(n); } });
+        }
+      });
+      var span = rows.map(function(r){ return r.reduce(function(a, id){ return a + width(id) + 8; }, -8); });
+      var widest = Math.max.apply(null, span);
+      rows.forEach(function(r, y){
+        var x = 10 + (widest - span[y]) / 2;
+        r.forEach(function(id){
+          if(!Array.isArray(byId[id].at)) byId[id].at = [Math.round(x + width(id) / 2), 14 + y * 26, width(id)];
+          x += width(id) + 8;
+        });
+      });
+    }
+
+    // json: the whole network, in the saved form (ED.compact). Anything ED.load cannot use is left out and said.
+    function whole(obj, extra, api){
+      if(!obj || typeof obj !== 'object' || !Array.isArray(obj.el)){ api.error('json: send the network as {"v":2,"el":[...]}, in the form this tool saves it'); return false; }
+      // A network written now is read as the current version (a unit's minimum holds whenever it is on).
+      var raw = { v: obj.v == null ? ED.VERSION : obj.v, name: obj.name, next: obj.next, el: obj.el.slice(0, 5000) };
+      placeBuses(raw.el);
+      var net = ED.load(raw);
+      if(!net.el.some(function(e){ return e.c === 'Bus'; })){ api.error('json: the network has no bus, so it was not used'); return false; }
+      var left = raw.el.length - net.el.length;
+      if(left > 0) api.error('json: ' + left + ' element' + (left === 1 ? '' : 's') + ' left out (not a known class, or a line, transformer or link missing a bus at one end)');
+      var said = 0;
+      raw.el.forEach(function(r){
+        if(!r || typeof r !== 'object' || !has(ED.SPEC, r.c)) return;
+        Object.keys(ED.SPEC[r.c]).forEach(function(k){
+          var sp = ED.SPEC[r.c][k], n = has(r, k) ? ED.num(r[k]) : NaN;
+          if((sp[0] !== 'n' && sp[0] !== 'i') || isNaN(n) || (n >= sp[1] && n <= sp[2]) || said >= 10) return;
+          said++;
+          api.clamp('json', (r.name || ED.WORD[r.c] + ' ' + r.id) + ' ' + k + ' ' + short(n), short(Math.min(sp[2], Math.max(sp[1], n))));
+        });
+      });
+      replaceWith(extra, ED.compact(net));
+      var n = function(f){ return net.el.filter(f).length; };
+      return { label: 'Whole network', el: sld(),
+               value: (net.name ? net.name + ': ' : '') + n(function(e){ return e.c === 'Bus'; }) + ' buses, ' +
+                      n(function(e){ return ED.BRANCH[e.c]; }) + ' branches, ' + n(function(e){ return ED.DEVICE[e.c]; }) + ' devices' };
+    }
+
+    function describe(key){
+      if(key === 'json') return { label: 'Whole network', el: sld() };
+      var rest = key.slice(3), dot = rest.lastIndexOf('.');
+      if(key.indexOf('el.') !== 0 || dot < 1) return null;
+      var p = rest.slice(dot + 1), label = p;
+      Object.keys(PARAM).forEach(function(c){ var k = paramOf(c, p); if(k && label === p) label = PARAM[c][k][0]; });
+      return { label: rest.slice(0, dot) + ': ' + label, el: sld() };
+    }
+
+    SharedAgent.register({
+      tool: 'educ-simulator',
+      family: { 'el.': patch },
+      json: whole,
+      describe: describe,
+      // The horizon box takes hours (up to 720) or days (up to 30), and its limit follows the unit
+      // on the page. A link may name both at once, so the loader reads the wider limit; patch() below
+      // says when days run past 30, and the form goes back to the unit's own limit.
+      ready: function(){ $('edSpan').max = String(ED.MAX_HOURS); },
+      // Pressing a Quick Start puts the box's limit back, so it is widened again after the press.
+      preset: function(key){
+        var btns = document.querySelectorAll('.quick-start-btn[data-preset]'), low = String(key).toLowerCase(), hit = null;
+        Array.prototype.forEach.call(btns, function(b){ if(!hit && b.getAttribute('data-preset').toLowerCase() === low) hit = b; });
+        if(!hit || hit.disabled) return false;
+        hit.click();
+        $('edSpan').max = String(ED.MAX_HOURS);
+        return (hit.textContent || '').replace(/\s+/g, ' ').trim() || key;
+      },
+      patch: function(extra, api){
+        if(api.applied('edSpan') || api.applied('edSpanUnit')){
+          var n = api.num('edSpan'), cap = SPAN_MAX[api.field('edSpanUnit') === 'h' ? 'h' : 'd'];
+          if(isFinite(n) && n > cap) api.clamp('edSpan', n, cap);
+        }
+        syncDispatchForm();
+      }
+    });
+  })();
 
   /* ── Start: draw at once, solve as soon as the engine is in ── */
   if(restoredAtLoad) motionChosen = true;
@@ -2192,7 +2418,7 @@
   try { performance.mark('ed-first-render'); } catch(e){}
   if(ED.Editor) ED.Editor(app);
   // An embed solves the scenario its link carries, once SharedShare has loaded it.
-  if(!EMBED) run();
+  if(!EMBED) opened();
   else loadTypes();
 
   // The guided tour (tour.js) points at the results, so a network that changed

@@ -1723,6 +1723,298 @@ function applyQuickStart(key){
   render();
 }
 
+/* ───────────────────────── AI links ─────────────────────────
+   A link an AI assistant wrote (SharedAgent, shared.js) opens the tool on a
+   scenario. The fields come through the mini cache's handles like any tool's.
+   The table lives in JS state (S, saved in the extra slot), so the adapter
+   reads four keys for it, written out for the assistant in agent-notes.md:
+
+     columns   the feature columns, in table order   name:type[:unit],...
+     listings  the market data, one row each         price:f1:...:fn[:dataYear];...
+     items     the items to buy                      name:asking:v1:...:vk;...
+     json      the whole table, as the tool saves it (S)
+
+   listings and items replace what the Quick Start brought, never add to it:
+   the model is fitted to the market the link names, not to a mix. columns
+   replaces the table (its listings and items refer to the old columns), unless
+   it names the columns the table already has. A row that cannot be read is
+   dropped and reported; nothing here throws.
+
+   The three compact keys are read together, in patch(), so the order they
+   come in the link does not matter: each one only records what it was given. */
+const AGENT_MAX = { columns: 14, rows: 300, items: 12 };
+const AGENT_TYPES = { number: 'number', numeric: 'number', num: 'number', year: 'year', bool: 'bool', boolean: 'bool',
+  'yes/no': 'bool', yesno: 'bool', ignore: 'ignore', skip: 'ignore', text: 'ignore',
+  datayear: 'datayear', 'data year': 'datayear', 'data-year': 'datayear', data_year: 'datayear' };
+const AGENT_WORD = { number: 'number', year: 'year', bool: 'bool', ignore: 'ignore', datayear: 'datayear' };
+const AGENT_LABEL = { price: 'Price', number: 'Number', year: 'Year', bool: 'Yes/No', ignore: 'Ignore', datayear: 'Data year' };
+let agentJob = null;           // what the link in hand asked of the table: { columns|listings|items: { raw, res } }
+
+const agentOwn = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+// Text from a link as one plain line: no control characters or tags, capped.
+function agentName(v, max){
+  return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, max || 80);
+}
+const agentPlain = n => String(+(+n).toPrecision(12));
+// A list value with its separators written the way the assistant typed them or encoded them.
+const agentSplit = raw => String(raw == null ? '' : raw).replace(/%3A/gi, ':').replace(/%3B/gi, ';').replace(/%2C/gi, ',');
+
+// One cell against its column: { v } as the table stores it, or { why } it cannot be read.
+function agentCell(c, text){
+  const s = String(text == null ? '' : text).trim();
+  if(c.type === 'price'){
+    const n = parseNum(s);
+    return n === null || n <= 0 || n > BIG ? { why: 'is not a price above zero' } : { v: agentPlain(n) };
+  }
+  if(c.type === 'number'){
+    const n = parseNum(s);
+    return n === null || Math.abs(n) > BIG ? { why: 'is not a number' } : { v: agentPlain(n) };
+  }
+  if(c.type === 'year' || c.type === 'datayear'){
+    if(s === '' && c.type === 'datayear') return { v: '' };
+    const n = parseNum(s);
+    return n === null || !Number.isInteger(n) || n < 1900 || n > 2100 ? { why: 'is not a year from 1900 to 2100' } : { v: String(n) };
+  }
+  if(c.type === 'bool'){
+    const b = parseBool(s);
+    return b === null ? { why: 'is not Yes or No' } : { v: b ? 'Yes' : 'No' };
+  }
+  return { v: agentName(s) };
+}
+const agentColName = (c, k) => c.name || 'column ' + (k + 1);
+
+// Listing rows against the table's columns (Price first, Data year last, which a row may leave out).
+function agentRows(lines, cols, api, where){
+  const need = cols.length, dated = need > 1 && cols[need - 1].type === 'datayear', least = dated ? need - 1 : need;
+  const rows = [];
+  lines.forEach((parts, i) => {
+    const at = where + ' ' + (i + 1);
+    if(parts.length > need || parts.length < least){
+      api.error(at + ' has ' + parts.length + ' field' + (parts.length === 1 ? '' : 's') + ' and the table has ' + need +
+        (dated ? ' (Data year, the last, may be left out)' : '') + ', so it was skipped');
+      return;
+    }
+    const row = [];
+    for(let k = 0; k < need; k++){
+      const r = k < parts.length ? agentCell(cols[k], parts[k]) : { v: '' };
+      if(r.why){ api.error(at + ': ' + agentColName(cols[k], k) + ' "' + agentName(parts[k], 30) + '" ' + r.why + ', so it was skipped'); return; }
+      row.push(r.v);
+    }
+    rows.push(row);
+  });
+  return rows;
+}
+// An item's own fields: a name, an asking price and one value for each feature column.
+function agentItem(name, asking, values, feats, api, at){
+  const vals = {};
+  let ask = '';
+  if(String(asking == null ? '' : asking).trim() !== ''){
+    const n = parseNum(asking);
+    if(n === null || n < 0 || n > BIG){ api.error(at + ': asking price "' + agentName(asking, 30) + '" is not an amount, so it was skipped'); return null; }
+    ask = agentPlain(n);
+  }
+  for(let k = 0; k < feats.length; k++){
+    const c = feats[k], text = k < values.length ? values[k] : '';
+    if(c.type === 'bool'){
+      const b = parseBool(text);
+      if(b === null){ api.error(at + ': ' + agentColName(c, k) + ' "' + agentName(text, 30) + '" is not Yes or No, so it was skipped'); return null; }
+      vals[c.id] = !!b;
+      continue;
+    }
+    const r = agentCell(c, text);
+    if(r.why){ api.error(at + ': ' + agentColName(c, k) + ' "' + agentName(text, 30) + '" ' + r.why + ', so it was skipped'); return null; }
+    vals[c.id] = r.v;
+  }
+  return { name: agentName(name), asking: ask, vals };
+}
+function agentItems(lines, cols, api){
+  const feats = cols.filter(c => FEATURE_TYPES.includes(c.type)), need = 2 + feats.length, out = [];
+  lines.forEach((parts, i) => {
+    const at = 'items row ' + (i + 1);
+    if(parts.length !== need){
+      api.error(at + ' has ' + parts.length + ' field' + (parts.length === 1 ? '' : 's') + ' and an item has ' + need + ' (name, asking price' +
+        feats.map(c => ', ' + agentColName(c, 0)).join('') + '), so it was skipped');
+      return;
+    }
+    const it = agentItem(parts[0], parts[1], parts.slice(2), feats, api, at);
+    if(it){ if(!it.name) it.name = 'Item ' + (out.length + 1); out.push(it); }
+  });
+  return out;
+}
+function agentCapped(lines, max, api, key){
+  if(lines.length > max) api.error(key + ': only the first ' + max + ' were used');
+  return lines.slice(0, max);
+}
+
+// columns=name:type[:unit],... into column specs; a part that cannot be read is reported.
+function agentColumnSpecs(raw, api){
+  const specs = [];
+  let dated = false;
+  api.items(agentSplit(raw)).forEach(parts => {
+    const name = agentName(parts[0], 80), word = String(parts[1] || '').trim().toLowerCase();
+    const type = agentOwn(AGENT_TYPES, word) ? AGENT_TYPES[word] : '';
+    if(!name){ api.error('columns: a column has no name, so it was skipped'); return; }
+    if(!type){
+      api.error('columns "' + name + '": ' + (word ? '"' + agentName(word, 20) + '" is not a type' : 'needs a type') + ' (number, year, bool, ignore or datayear), so it was skipped');
+      return;
+    }
+    if(type === 'datayear'){
+      if(dated){ api.error('columns: a second Data year column was left out'); return; }
+      dated = true;
+    }
+    specs.push({ name, type, unit: type === 'number' ? agentName(parts[2], 20) : '' });
+  });
+  const feats = specs.filter(s => s.type !== 'datayear');
+  if(feats.length > AGENT_MAX.columns){
+    api.error('columns: only the first ' + AGENT_MAX.columns + ' were used');
+    const keep = new Set(feats.slice(0, AGENT_MAX.columns));
+    return specs.filter(s => s.type === 'datayear' || keep.has(s));
+  }
+  return specs;
+}
+// The table's columns after Price, as columns= writes them.
+function agentColumnsText(cols){
+  const clean = v => agentName(v).replace(/[:,;=]/g, ' ').replace(/\s+/g, ' ').trim();
+  return cols.filter(c => c.type !== 'price').map(c =>
+    clean(c.name) + ':' + (AGENT_WORD[c.type] || 'number') + (c.type === 'number' && c.unit ? ':' + clean(c.unit) : '')).join(',');
+}
+function agentColumnsShown(cols){
+  return cols.filter(c => c.type !== 'price').map(c => {
+    const name = c.name || '(no name)', note = c.type === 'number' ? c.unit : AGENT_LABEL[c.type];
+    return note && note.toLowerCase() !== name.toLowerCase() ? name + ' (' + note + ')' : name;
+  }).join(', ');
+}
+const agentSignature = cols => cols.filter(c => c.type !== 'price').map(c => c.type + '|' + c.name + '|' + (c.type === 'number' ? c.unit : '')).join('\n');
+
+// What each key records for patch(); the banner's value for it is filled in there.
+function agentDefer(kind){
+  return raw => {
+    const res = { value: '' };
+    (agentJob = agentJob || {})[kind] = { raw: String(raw == null ? '' : raw), res };
+    return res;
+  };
+}
+
+// An item as the tool saves it (json=), made safe: a value it cannot read is left blank, as a reader's own blank cell is.
+function agentCleanItem(it, feats, n){
+  const vals = {};
+  feats.forEach(c => {
+    const v = it.vals ? it.vals[c.id] : undefined;
+    if(c.type === 'bool') vals[c.id] = v === true || (typeof v === 'string' && parseBool(v) === 1);
+    else { const x = parseNum(v); vals[c.id] = x === null || Math.abs(x) > BIG ? '' : agentPlain(x); }
+  });
+  const ask = parseNum(it.asking);
+  return { name: agentName(it.name) || 'Item ' + n, asking: ask === null || ask < 0 || ask > BIG ? '' : agentPlain(ask), vals };
+}
+function agentJson(obj, extra, api){
+  const t = obj && typeof obj === 'object' && !Array.isArray(obj) ? normaliseState(obj) : null;
+  if(!t){ api.error('json: needs a list of columns and a list of rows, as the tool saves its table'); return false; }
+  if(t.columns.length > AGENT_MAX.columns + 2){ api.error('json: more than ' + AGENT_MAX.columns + ' feature columns, so it was not used'); return false; }
+  // Two columns with one id would share their item values: the later one gets a new id.
+  const ids = new Set(), used = new Set(t.columns.map(c => c.id));
+  let next = 0;
+  t.columns.forEach(c => {
+    if(ids.has(c.id)){ do { next++; } while(used.has('c' + next)); c.id = 'c' + next; used.add(c.id); }
+    ids.add(c.id);
+  });
+  const feats = t.columns.filter(c => FEATURE_TYPES.includes(c.type));
+  const filled = t.rows.filter(r => r.some(v => String(v).trim() !== ''));
+  const rows = agentRows(agentCapped(filled, AGENT_MAX.rows * 2, api, 'json rows'), t.columns, api, 'json row');
+  const items = agentCapped(t.items, AGENT_MAX.items, api, 'json items').map((it, i) => agentCleanItem(it, feats, i + 1));
+  extra.columns = t.columns; extra.rows = rows; extra.items = items; extra.chart = t.chart;
+  return { value: rows.length + ' listing' + (rows.length === 1 ? '' : 's') + ', ' + items.length + ' item' + (items.length === 1 ? '' : 's') +
+    '; ' + (agentColumnsShown(t.columns) || 'no feature columns') };
+}
+
+// Last, once the fields and any json are in: columns, then the listings and items against them.
+function agentPatch(extra, api){
+  const job = agentJob;
+  agentJob = null;
+  if(!job && !api.given('currency')) return;
+  const t = normaliseState(extra) || normaliseState(clone(S));
+  if(!t) return;
+  let replaced = false;
+  const cleared = [];
+
+  if(job && job.columns){
+    const res = job.columns.res, specs = agentColumnSpecs(job.columns.raw, api);
+    if(!specs.length){ res.value = 'nothing could be read, so the table keeps its columns'; }
+    else {
+      const price = t.columns.find(c => c.type === 'price');
+      const next = [{ id: 'c1', name: price ? price.name : 'Price', type: 'price', unit: '' }]
+        .concat(specs.filter(s => s.type !== 'datayear'), specs.filter(s => s.type === 'datayear'))
+        .map((c, i) => Object.assign({ id: 'c' + (i + 1) }, c));
+      if(agentSignature(next) === agentSignature(t.columns)){
+        res.value = agentColumnsShown(t.columns) + ' (as the table has them)';
+      } else {
+        t.columns = next; t.rows = []; t.items = []; t.chart = { x: '', y: '', hold: 'mean' };
+        replaced = true;
+        res.value = agentColumnsShown(next);
+      }
+    }
+  }
+  if(job && job.listings){
+    const res = job.listings.res, lines = agentCapped(api.items(agentSplit(job.listings.raw), ';', ':'), AGENT_MAX.rows, api, 'listings');
+    const rows = agentRows(lines, t.columns, api, 'listings row');
+    if(lines.length && !rows.length){ res.value = 'no row could be read, so the table keeps its listings'; }
+    else {
+      t.rows = rows;
+      const skipped = lines.length - rows.length;
+      res.value = rows.length ? rows.length + ' listing' + (rows.length === 1 ? '' : 's') + (skipped ? ', ' + skipped + ' skipped' : '') : 'none';
+    }
+  } else if(replaced) cleared.push('listings');
+  if(job && job.items){
+    const res = job.items.res, lines = agentCapped(api.items(agentSplit(job.items.raw), ';', ':'), AGENT_MAX.items, api, 'items');
+    const items = agentItems(lines, t.columns, api);
+    if(lines.length && !items.length){ res.value = 'no item could be read, so the table keeps its items'; }
+    else {
+      t.items = items;
+      const s = String(api.field('currency') || '');
+      res.value = items.length ? items.map(it => it.name + (it.asking ? ' asking ' + fmt.money(+it.asking, s) : '')).join('; ') : 'none';
+    }
+  } else if(replaced) cleared.push('items');
+  if(cleared.length) job.columns.res.value += '; ' + cleared.join(' and ') + ' cleared, as they refer to the old columns';
+
+  // A new market has no use for the old Price code, and a code whose own symbol is not the Currency Symbol
+  // names other money (the tool drops it the same way when a reader picks another symbol).
+  const price = t.columns.find(c => c.type === 'price');
+  if(price && price.unit){
+    const s = replaced ? '' : SharedCurrency.toSymbol(price.unit, null);
+    if(replaced || (s && s !== String(api.field('currency') || ''))) price.unit = '';
+  }
+  extra.columns = t.columns; extra.rows = t.rows; extra.items = t.items; extra.chart = t.chart;
+}
+function agentDescribe(key){
+  const d = { columns: ['Columns', 'colList'], listings: ['Listings', 'gridWrap'], items: ['Items to buy', 'itemList'], json: ['Listings table', 'gridWrap'] };
+  return agentOwn(d, key) ? { label: d[key][0], el: $(d[key][1]) } : null;
+}
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'valuateeverything',
+  compact: { columns: agentDefer('columns'), listings: agentDefer('listings'), items: agentDefer('items') },
+  json: agentJson,
+  patch: agentPatch,
+  describe: agentDescribe
+});
+
+/* The Quick Starts as the docs print them (_ref/agent-lib.mjs, veQuickStarts): each one's
+   table in the syntax above, written by the same functions the adapter reads with. */
+window.VE_QS = {
+  keys: Object.keys(PRESETS),
+  preset(key){
+    if(!agentOwn(PRESETS, key)) return null;
+    const t = presetState(key), feats = t.columns.filter(c => FEATURE_TYPES.includes(c.type));
+    return {
+      currency: PRESETS[key].fields.currency,
+      columns: agentColumnsText(t.columns),
+      shown: agentColumnsShown(t.columns),
+      listings: t.rows.length,
+      items: t.items.length,
+      rowFields: ['Price'].concat(t.columns.filter(c => c.type !== 'price').map(c => c.name)),
+      itemFields: ['name', 'asking price'].concat(feats.map(c => c.name))
+    };
+  }
+};
+
 /* ───────────────────────── Wiring ───────────────────────── */
 function init(){
   $('curYear').value = String(THIS_YEAR);

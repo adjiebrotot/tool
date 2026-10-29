@@ -4098,6 +4098,221 @@ function migrateCurrencyCode(saved){
   $('currency').value = SharedCurrency.toSymbol(f['v:currency']);
 }
 
+/* ─── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<quick start>&<field id>=<value>... opens the page set up by a
+   chatbot. The fields and the Quick Starts need nothing here. What lives in
+   the extra rather than in a field arrives under the extra's own names:
+     savingsMode, expenseMode, incomeMode   one word each (the three switches)
+     stages=<name>:from=<age>:to=<age>:amount=<n>:period=<basis>,<name>:...
+     inStages=<name>:from=<age>:to=<age>:amount=<n>:period=<per>:growth=<%>:keeps=<bool>,...
+   A list mirrors a saved row's own fields, one item a row, and replaces the
+   Quick Start's rows whole. Anything left out takes what a new row starts
+   with. Every row goes through cleanStage / cleanInStage and orderStages, as
+   a row read off the form does, so a link can only produce a row the editor
+   could have. A list switches its section to Detailed, as the button would,
+   unless the link names the switch.
+
+   Two things a person does by hand are done for the link: choosing a preset
+   fills its return and volatility, and the retirement age (the slider, which
+   is the tool's answer for the plan) opens on the earliest age that works for
+   the plan as the link made it. patch() leaves a note in extra.agentCarry and
+   restore() / onRestore (see init) act on it after the fields are in. save()
+   never writes the note, so a saved scenario never has one. */
+var AGENT_MODES = {
+  savingsMode: {label: 'Savings or net income', el: 'savingsModeGroup', words: {savings: 'Savings', income: 'Net income'}},
+  incomeMode:  {label: 'Money in detail',       el: 'incomeModeGroup',  words: {simple: 'Simple', detailed: 'Detailed'}},
+  expenseMode: {label: 'Money out detail',      el: 'expenseModeGroup', words: {simple: 'Simple', detailed: 'Detailed'}}
+};
+var AGENT_LISTS = {
+  stages:   {label: 'Life stages, Money out', el: 'stageRows',   income: false, periods: BASIS_KEYS},
+  inStages: {label: 'Life stages, Money in',  el: 'inStageRows', income: true,  periods: ['weekly', 'monthly', 'yearly']}
+};
+var agentCarry = null;      // what the load in progress owes a link (set by restore, spent by agentFinish)
+var agentParsed = {};       // which lists this link carried, for patch()
+
+function agentOwn(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+function agentMode(key){
+  var m = AGENT_MODES[key];
+  return function(raw, extra, api){
+    var s = String(raw);
+    try { s = decodeURIComponent(s); } catch(e){}
+    s = s.trim().toLowerCase();
+    var v = Object.keys(m.words).filter(function(k){ return k === s || m.words[k].toLowerCase() === s; })[0];
+    if(!v){ api.error(key + ' "' + s.slice(0, 30) + '": not one of ' + Object.keys(m.words).join(', ')); return false; }
+    extra[key] = v;
+    return {value: m.words[v]};
+  };
+}
+// A stage's name as plain text on one line, without the list's own separators.
+function agentName(v){
+  return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/[:,=]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40);
+}
+function agentPlain(n){ return String(+(+n).toFixed(4)); }
+function agentBool(text){
+  var s = String(text).trim().toLowerCase();
+  if(/^(true|1|yes|on|y)$/.test(s)) return true;
+  if(/^(false|0|no|off|n)$/.test(s)) return false;
+  return null;
+}
+// One row from "<name>:<field>=<value>:...", or null when nothing in it can be read.
+function agentStage(parts, api, kind, idx){
+  var L = AGENT_LISTS[kind], fields = ['from', 'to', 'amount', 'period'].concat(L.income ? ['growth', 'keeps'] : []);
+  var name = '', given = {};
+  parts.forEach(function(p){
+    var eq = p.indexOf('=');
+    if(eq < 0){
+      if(!name) name = agentName(p);
+      else api.error(kind + ' "' + name + '": "' + agentName(p) + '" is not <field>=<value>');
+      return;
+    }
+    var k = fields.filter(function(f){ return f.toLowerCase() === p.slice(0, eq).trim().toLowerCase(); })[0];
+    if(k) given[k] = p.slice(eq + 1).trim();
+    else api.unknown(kind + '.' + agentName(p.slice(0, eq)));
+  });
+  var label = kind + ' "' + (name || 'Stage ' + (idx + 1)) + '"';
+  var err = function(k, msg){ api.error(label + ' ' + k + ' "' + given[k] + '": ' + msg); };
+  var read = function(k, lo, hi){
+    if(!agentOwn(given, k)) return null;
+    var n = api.number(given[k]);
+    if(!isFinite(n)){ err(k, 'not a number'); return null; }
+    var u = Math.min(hi, Math.max(lo, n));
+    if(u !== n) api.clamp(label + ' ' + k, given[k], agentPlain(u));
+    return u;
+  };
+  var age = function(k){ return agentOwn(given, k) && given[k] !== '' ? read(k, 0, STAGE_AGE_MAX) : null; };
+  var row = {name: name, from: age('from'), to: age('to'), amount: 0, period: L.income ? 'yearly' : 'pct'};
+  if(agentOwn(given, 'period')){
+    var low = given.period.toLowerCase(), alias = {'%': 'pct', percent: 'pct', week: 'weekly', month: 'monthly', year: 'yearly', annual: 'yearly'};
+    var hit = L.periods.filter(function(p){ return p === low; })[0] || (agentOwn(alias, low) && L.periods.indexOf(alias[low]) >= 0 ? alias[low] : null);
+    if(hit) row.period = hit; else err('period', 'one of ' + L.periods.join(', '));
+  }
+  var amt = read('amount', 0, row.period === 'pct' ? +SPEND_MAX_PCT : +SPEND_MAX_MONEY);
+  if(amt == null){
+    if(!agentOwn(given, 'amount')) api.error(label + ': amount is needed, so the stage was skipped');
+    return null;
+  }
+  row.amount = amt;
+  if(L.income){
+    var g = read('growth', -10, 30);
+    row.growth = g != null ? g : api.num('growth', UI_DEFAULTS.growth);
+    if(agentOwn(given, 'keeps')){
+      var b = agentBool(given.keeps);
+      if(b === null) err('keeps', 'true or false'); else row.keeps = b;
+    }
+    row.keeps = !!row.keeps;
+  }
+  return row;
+}
+function agentSummary(s, income){
+  var money = s.period === 'pct' ? agentPlain(s.amount) + '% of living'
+    : fmt.symbol + SharedFmt.formatThousands(String(Math.round(s.amount))) + ' ' + (s.period === 'weekly' ? 'a week' : s.period === 'monthly' ? 'a month' : 'a year');
+  return (s.name || 'Stage') + ' (' + (s.from == null ? 'start' : s.from) + ' to ' + (s.to == null ? 'end' : s.to) + ', ' + money + (income && s.keeps ? ', kept after work' : '') + ')';
+}
+function agentStageList(kind){
+  var L = AGENT_LISTS[kind];
+  return function(raw, extra, api){
+    var items = api.items(raw), out = [];
+    if(items.length > MAX_STAGES) api.error(kind + ': only the first ' + MAX_STAGES + ' were used');
+    items.slice(0, MAX_STAGES).forEach(function(parts){
+      var row = agentStage(parts, api, kind, out.length);
+      if(row) out.push(row);
+    });
+    if(!out.length && items.length) return false;
+    var rows = orderStages(out.map(L.income ? cleanInStage : cleanStage), formAgeDie());
+    extra[kind] = rows;
+    agentParsed[kind] = true;
+    return {value: rows.length ? rows.map(function(s){ return agentSummary(s, L.income); }).join('; ') : 'none'};
+  };
+}
+function agentPatch(extra, api){
+  var parsed = agentParsed;
+  agentParsed = {};
+  // A list switches its section to Detailed, as the button would; an empty one switches it off.
+  if(parsed.stages && !api.given('expenseMode')) extra.expenseMode = extra.stages.length ? 'detailed' : 'simple';
+  if(parsed.inStages && !api.given('incomeMode')) extra.incomeMode = extra.inStages.length ? 'detailed' : 'simple';
+  if(extra.incomeMode === 'detailed'){
+    var pen = ['pensionOn', 'pensionStartAge', 'pensionAmount', 'pensionPeriod', 'pensionIndexed'].filter(api.given);
+    if(pen.length) api.error('pension fields (' + pen.join(', ') + ') count only while Money in is Simple; with Detailed, give the pension as an inStages item with keeps=true');
+  }
+  var carry = {};
+  // The tool's answer is the age the plan is free, so the slider opens there unless the user named an age.
+  if(!api.given('ageRetire')) carry.reseed = 1;
+  var preset = api.field('assetPreset');
+  if(api.given('assetPreset') && agentOwn(PRESET_ASSETS, preset) && preset !== 'custom'){
+    carry.preset = preset;
+    if(api.given('ret')) carry.keepRet = 1;
+    if(api.given('std')) carry.keepStd = 1;
+  }
+  if(Object.keys(carry).length) extra.agentCarry = carry;
+}
+// Runs in onRestore, once the fields, the switches and the rows are in.
+function agentFinish(){
+  var c = agentCarry;
+  agentCarry = null;
+  if(!c) return;
+  var p = c.preset && PRESET_ASSETS[c.preset];
+  if(p){
+    if(!c.keepRet) $('ret').value = p.ret;
+    if(!c.keepStd) $('std').value = p.std;
+    tickerInfo = null;
+  }
+  if(c.reseed){ readInputs(); seedRetireAge(); }
+}
+/* The retirement slider is clamped to the plan on screen (age now to life
+   expectancy), which would pull a link's retirement age into the range of the
+   plan the link is replacing. Opened to its markup span while the link is read,
+   as seedRetireAge() does; the render that follows the load narrows it again. */
+function agentPreset(key){
+  var k = String(key || '').trim().toLowerCase();
+  var hit = Object.keys(QUICK_START_SCENARIOS).filter(function(x){ return x.toLowerCase() === k; })[0];
+  if(!hit) return false;
+  applyQuickStart(hit);
+  widenRetireSlider();
+  var btn = document.querySelector('.quick-start-btn[data-preset="' + hit + '"]');
+  return btn ? btn.textContent.replace(/\s+/g, ' ').trim() : hit;
+}
+if(window.SharedAgent) SharedAgent.register({
+  tool: 'financialfreedom',
+  ready: widenRetireSlider,
+  preset: agentPreset,
+  compact: {
+    savingsMode: agentMode('savingsMode'), incomeMode: agentMode('incomeMode'), expenseMode: agentMode('expenseMode'),
+    stages: agentStageList('stages'), inStages: agentStageList('inStages')
+  },
+  patch: agentPatch,
+  describe: function(key){
+    var d = agentOwn(AGENT_MODES, key) ? AGENT_MODES[key] : agentOwn(AGENT_LISTS, key) ? AGENT_LISTS[key] : null;
+    return d ? {label: d.label, el: $(d.el)} : null;
+  }
+});
+
+/* The Quick Starts as the docs print them (_ref/agent-lib.mjs, ffQuickStarts):
+   the switches and the rows each one sets, in the syntax above, built from the
+   same data and the same cleaners the Quick Start button uses, so the docs
+   cannot drift from the tool. */
+function agentRowCompact(s, income){
+  var p = [agentName(s.name) || 'Stage'], add = function(k, v){ p.push(k + '=' + v); };
+  if(s.from !== null) add('from', agentPlain(s.from));
+  if(s.to !== null) add('to', agentPlain(s.to));
+  add('amount', agentPlain(s.amount));
+  add('period', s.period);
+  if(income){ add('growth', agentPlain(s.growth)); if(s.keeps) add('keeps', 'true'); }
+  return p.join(':');
+}
+window.FF_QS = {
+  keys: Object.keys(QUICK_START_SCENARIOS),
+  rows: function(key){
+    var s = QUICK_START_SCENARIOS[key];
+    if(!s) return null;
+    var v = Object.assign({}, UI_DEFAULTS, s.vals);
+    return {
+      savingsMode: v.savingsMode, expenseMode: v.expenseMode, incomeMode: v.incomeMode,
+      stages: (v.stages || []).map(cleanStage).map(function(r){ return agentRowCompact(r, false); }),
+      inStages: (v.inStages || []).map(function(r){ return agentRowCompact(cleanInStage(r), true); })
+    };
+  }
+};
+
 /* ─── INIT ─── */
 
 function init(){
@@ -4110,7 +4325,7 @@ function init(){
   if(window.Persist){
     // Language-agnostic namespace, so an Indonesian page could share this cache.
     persist = Persist.init('financialfreedom', {
-      onRestore: function(saved){ migrateRetireMultiplier(saved); migrateCurrencyCode(saved); render(); },
+      onRestore: function(saved){ migrateRetireMultiplier(saved); migrateCurrencyCode(saved); agentFinish(); render(); },
       extra: {
         // The stage list lives in rows with no id, so it rides here, read
         // straight off the rows so an edit not yet run is still kept.
@@ -4122,6 +4337,8 @@ function init(){
         },
         restore: function(saved){
           if(!saved) return;
+          // Only an AI link carries this (agentPatch above); save() never writes it.
+          agentCarry = saved.agentCarry && typeof saved.agentCarry === 'object' ? saved.agentCarry : null;
           if(saved.savingsMode) setSavingsMode(saved.savingsMode, true);
           if(saved.expenseMode) setExpenseMode(saved.expenseMode, true);
           if(Array.isArray(saved.stages)) renderStageRows(saved.stages.slice(0, MAX_STAGES).map(cleanStage));

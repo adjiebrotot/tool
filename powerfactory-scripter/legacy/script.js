@@ -2379,6 +2379,85 @@ document.querySelectorAll('.quick-start-btn').forEach(btn => {
     });
   }
 
+  /* ── AI links (SharedAgent) ─────────────────────────────────────────────
+     A chatbot's link (#load&v=1&qs=<sample>&<field>=<value>, see agent.txt) starts
+     from one of the worked examples and sets the form's fields by their ids. The
+     tables (input variables, output variables, constraints, contingencies) belong
+     to the example: they are not link keys (index.html marks them data-no-persist),
+     and neither is the folder the script imports PowerFactory's module from, which
+     a link never sets. The mini cache saves the whole configuration as its extra
+     (readConfig), and loading it puts every field back, so a field a link sets
+     goes into that configuration too or the saved one would put it back as it was.
+     The script is written once the link has applied, unless the link says run=0. */
+  if (window.SharedAgent) (function () {
+    var PATH = {
+      'pf-username': ['initialisation', 'username'], 'output-dir': ['initialisation', 'outputDir'],
+      'problem-type': ['initialisation', 'problemType'], 'study-type': ['initialisation', 'studyType'],
+      'coding-style': ['initialisation', 'codingStyle'], 'tstop': ['initialisation', 'tstop'],
+      'optim-sense': ['optimisation', 'sense'], 'optim-algorithm': ['optimisation', 'algorithm'],
+      'optim-max-iter': ['optimisation', 'maxIterations'], 'optim-objective': ['optimisation', 'objectiveOutputName'],
+      'scenario-file-path': ['customMode', 'scenarioFilePath'],
+      'contingency-n': ['contingencyMode', 'contingencyN'], 'contingency-combine': ['contingencyMode', 'combineTypes'],
+      'iterate-study-cases': ['additionalConfig', 'iterateStudyCases'],
+      'iterate-operating-scenarios': ['additionalConfig', 'iterateOperatingScenarios'],
+      'use-progress-bar': ['additionalConfig', 'useProgressBar'], 'open-pf-window': ['additionalConfig', 'openPowerFactoryWindow'],
+      'save-intermediate': ['additionalConfig', 'saveIntermediateEnabled'],
+      'save-interval-minutes': ['additionalConfig', 'saveIntermediateMinutes']
+    };
+    var holdRun = /(?:^#|&)run=(?:0|false|no|off)(?:&|$)/i.test(location.hash);
+    // A worked example by its sample name (any case), loaded the way its button loads it.
+    function quickStart(key) {
+      var btns = document.querySelectorAll('.quick-start-btn[data-preset]'), low = String(key).toLowerCase(), hit = null, i;
+      for (i = 0; i < btns.length && !hit; i++) if (btns[i].getAttribute('data-preset').toLowerCase() === low) hit = btns[i];
+      // A sample with no button of its own (the ?qs= link below takes any sample) loads the same way.
+      if (!hit && !/^sample-\d{2}-[a-z0-9-]+$/.test(low)) return false;
+      var id = hit ? hit.getAttribute('data-preset') : low;
+      return fetch('samples/json-samples/' + id + '.json')
+        .then(function (r) { if (!r.ok) throw new Error('missing'); return r.json(); })
+        .then(function (cfg) {
+          loadConfig(cfg);
+          refreshLiveWarnings();
+          document.querySelectorAll('.quick-start-btn').forEach(function (b) { b.classList.toggle('active', b.dataset.preset === id); });
+          return (hit ? (hit.textContent || '').replace(/\s+/g, ' ').trim() : '') || id;
+        })
+        .catch(function () { return false; });
+    }
+    SharedAgent.register({
+      tool: 'powerfactory-scripter',
+      preset: quickStart,
+      // The configuration the snapshot holds, with the link's fields written into it.
+      patch: function (extra, api) {
+        Object.keys(PATH).forEach(function (key) {
+          if (!api.applied(key)) return;
+          var at = PATH[key], node = extra;
+          for (var i = 0; i < at.length - 1; i++) {
+            if (!node[at[i]] || typeof node[at[i]] !== 'object') node[at[i]] = {};
+            node = node[at[i]];
+          }
+          node[at[at.length - 1]] = api.field(key);
+        });
+        // Loading a dynamic study type puts its usual stop time (20 s, EMT 0.25 s) over the one the
+        // configuration holds (onStudyTypeChange, run by loadConfig): a stop time the link names wins.
+        if (api.applied('tstop')) {
+          var stop = String(api.field('tstop'));
+          Promise.resolve().then(function () {
+            var el = document.getElementById('tstop');
+            if (!el || el.value === stop) return;
+            el.value = stop;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+        }
+      },
+      banner: '#left-pane'
+    });
+    if (SharedAgent.link && !holdRun) {
+      SharedAgent.done.then(function () {
+        try { if (typeof hljs !== 'undefined') generateCode(); } catch (e) { /* the Generate Code button still works */ }
+      });
+    }
+  })();
+
   /* A link from the samples page, ?qs=<sample file name>, opens on that
      worked example. It is taken off the address once loaded, so a reload
      restores the reader's edits rather than the sample again. */

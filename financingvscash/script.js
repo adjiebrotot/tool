@@ -3599,4 +3599,206 @@ persist = Persist.init('financingvscash', {
   }
 });
 SharedScenario.mount('.quick-start-row', { tool: 'financingvscash', persist: persist });
+
+/* ── AI assistant links (SharedAgent in shared.js) ─────────────────────────
+   #load&qs=<quick start>&<field id>=<value>... opens the page set up by a
+   chatbot. The fields and the Quick Starts need nothing here. What lives in
+   the extra rather than in a field, the loan offers, arrives as one compact
+   list that mirrors an offer's own saved fields:
+     offers=<name>:<field>=<value>:<field>=<value>,<name>:...
+   Each item is one offer; the whole list replaces the Quick Start's offers.
+   The fields are the names a saved offer carries (loanType, financeRate,
+   termPeriods, freq, downPaymentPct, feeAmt, feeType, feeTreatment, adminFee,
+   knownPayment, ioPeriods, residualPct, priceType, priceValue), plus
+   termYears (the term in years, for termPeriods), ratePeriods
+   (<to>@<rate>/<to>@<low>-<high>/..., a rate schedule) and paymentPeriods
+   (<to>@<amount>/..., a known-repayment schedule). Anything left out takes
+   the editor's default for a new offer. Every offer goes through
+   normaliseScenario, as a Quick Start's does, so a link can only produce an
+   offer the editor could have. Every name here is a saved handle already,
+   and stays one. agent-notes.md documents all of it for the AI section. */
+const AGENT_MAX_OFFERS=12, AGENT_MAX_PERIODS=24;
+const AGENT_OFFER_FIELDS=['loanType','financeRate','termPeriods','termYears','freq','downPaymentPct','feeAmt','feeType',
+  'feeTreatment','adminFee','knownPayment','ioPeriods','residualPct','priceType','priceValue','ratePeriods','paymentPeriods'];
+const agentSet={priced:false};
+// An offer's name, as plain text on one line without the list's own separators.
+function agentLabel(v){return String(v==null?'':v).replace(/[\u0000-\u001f\u007f<>]/g,'').replace(/\s+/g,' ').trim().slice(0,60);}
+function agentPlain(n){return String(+(+n).toFixed(4));}
+// One rate or repayment schedule from "<to>@<value>/<to>@<value>"; null when unreadable.
+function agentPeriods(text,api,label,kind,term,start){
+  const out=[];let prev=start-1;
+  const bad=[];
+  String(text).split('/').map(s=>s.trim()).filter(Boolean).slice(0,AGENT_MAX_PERIODS).forEach(seg=>{
+    const m=/^([^@]+)@(.+)$/.exec(seg);
+    const to=m?api.number(m[1]):NaN;
+    if(!m||!isFinite(to)){bad.push(seg);return;}
+    if(prev>=term)return;
+    const toPeriod=Math.min(term,Math.max(prev+1,Math.round(to)));
+    const lim=(key,given,n,hi)=>{const u=Math.min(hi,Math.max(0,n));if(u!==n)api.clamp(label+' '+key,String(given),String(u));return u;};
+    if(kind==='rate'){
+      const r=/^\s*([^-]+)-\s*(.+)$/.exec(m[2]);
+      const a=api.number(r?r[1]:m[2]),b=r?api.number(r[2]):a;
+      if(!isFinite(a)||!isFinite(b)){bad.push(seg);return;}
+      const lo=lim('ratePeriods',m[2],Math.min(a,b),40),hi=lim('ratePeriods',m[2],Math.max(a,b),40);
+      out.push(r&&hi>lo?{toPeriod,type:'floating',rate:(lo+hi)/2,rateMin:lo,rateMax:hi}:{toPeriod,type:'fixed',rate:lo,rateMin:lo,rateMax:lo});
+    }else{
+      const a=api.number(m[2]);
+      if(!isFinite(a)){bad.push(seg);return;}
+      out.push({toPeriod,amount:lim('paymentPeriods',m[2],a,1e12)});
+    }
+    prev=toPeriod;
+  });
+  bad.forEach(s=>api.error(label+': '+kind+'Periods "'+s+'" should look like <to>@'+(kind==='rate'?'<rate> or <to>@<low>-<high>':'<amount>')));
+  if(out.length)out[out.length-1].toPeriod=term;
+  return out.length?out:null;
+}
+function agentOffer(parts,api,idx){
+  let name='';const given={};
+  parts.forEach(p=>{
+    const eq=p.indexOf('=');
+    if(eq<0){
+      if(!name)name=agentLabel(p);
+      else api.error('offers "'+name+'": "'+agentLabel(p)+'" is not <field>=<value>');
+      return;
+    }
+    const k=AGENT_OFFER_FIELDS.find(f=>f.toLowerCase()===p.slice(0,eq).trim().toLowerCase());
+    if(k)given[k]=p.slice(eq+1).trim();
+    else api.unknown('offers.'+agentLabel(p.slice(0,eq)));
+  });
+  name=name||'Offer '+(idx+1);
+  const label='offers "'+name+'"';
+  const sc=defaultScenario(name);
+  const err=(k,msg)=>api.error(label+' '+k+' "'+given[k]+'": '+msg);
+  const pick=(k,list,alias)=>{
+    if(!(k in given))return null;
+    const low=given[k].toLowerCase(),hit=list.find(v=>v.toLowerCase()===low)||(alias&&alias[low]);
+    if(!hit)err(k,'one of '+list.join(', '));
+    return hit||null;
+  };
+  const read=(k,lo,hi,whole)=>{
+    if(!(k in given))return null;
+    const n=api.number(given[k]);
+    if(!isFinite(n)){err(k,'not a number');return null;}
+    const r=whole?Math.round(n):n,u=Math.min(hi,Math.max(lo,r));
+    if(u!==r)api.clamp(label+' '+k,given[k],String(u));
+    return u;
+  };
+  const type=pick('loanType',LOAN_TYPES,Object.fromEntries(Array.from($('scLoanType').options).map(o=>[o.textContent.trim().toLowerCase(),o.value])));
+  if(type)sc.loanType=type;
+  const freq=pick('freq',['weekly','fortnightly','monthly','yearly']);
+  if(freq)sc.freq=freq;
+  const ppy=periodsPerYear(sc.freq);
+  let term=read('termPeriods',1,3000,true);
+  if(term==null){
+    const y=read('termYears',0,3000,false);
+    term=y!=null&&y>0?Math.min(3000,Math.max(1,Math.round(y*ppy))):defaultTerm(sc.freq);
+  }
+  sc.termPeriods=term;
+  sc.ioPeriods=term;
+  let v;
+  if((v=read('financeRate',0,30))!=null)sc.financeRate=v;
+  if((v=read('downPaymentPct',0,100))!=null)sc.downPaymentPct=v;
+  const ft=pick('feeType',['fixed','pct'],{'%':'pct','$':'fixed'})||(/%$/.test(given.feeAmt||'')?'pct':null);
+  if(ft)sc.feeType=ft;
+  if((v=read('feeAmt',0,sc.feeType==='pct'?100:1e12))!=null)sc.feeAmt=v;
+  if((v=pick('feeTreatment',['upfront','capitalise','discount'])))sc.feeTreatment=v;
+  if((v=read('adminFee',0,1e9))!=null)sc.adminFee=v;
+  if((v=read('knownPayment',0,1e12))!=null)sc.knownPayment=v;
+  if((v=read('ioPeriods',0,term,true))!=null)sc.ioPeriods=v;
+  if((v=read('residualPct',0,99))!=null)sc.residualPct=v;
+  if((v=pick('priceType',PRICE_TYPES)))sc.priceType=v;
+  if((v=read('priceValue',0,PRICE_MAX[sc.priceType]))!=null)sc.priceValue=v;
+  if('priceType' in given||'priceValue' in given)agentSet.priced=true;
+  if('ratePeriods' in given){
+    if(!supportsSchedule(sc.loanType))err('ratePeriods','a '+sc.loanType+' loan takes no rate schedule');
+    else{
+      const list=agentPeriods(given.ratePeriods,api,label,'rate',term,rateScheduleStart(sc,term));
+      if(list){
+        sc.rateMode='schedule';sc.ratePeriods=list;
+        if(!('financeRate' in given))sc.financeRate=list[0].rate;
+      }
+    }
+  }
+  if('paymentPeriods' in given){
+    if(sc.loanType!=='knownPayment')err('paymentPeriods','only a knownPayment loan takes a repayment schedule');
+    else{
+      const list=agentPeriods(given.paymentPeriods,api,label,'payment',term,1);
+      if(list){
+        sc.paymentMode='schedule';sc.paymentPeriods=list;
+        if(!('knownPayment' in given))sc.knownPayment=list[0].amount;
+      }
+    }
+  }
+  return normaliseScenario(sc);
+}
+// A short line for the banner: "5yr loan (Amortizing, 7.9%/yr, 60 months, 10% down)".
+function agentOfferSummary(sc){
+  const bits=[LOAN_TYPE_LABEL[sc.loanType]||sc.loanType];
+  if(sc.loanType!=='knownPayment')bits.push(sc.rateMode==='schedule'?'rate schedule':agentPlain(sc.financeRate)+'%/yr');
+  bits.push(sc.termPeriods+' '+termUnitLabel(sc.freq));
+  if(sc.downPaymentPct)bits.push(agentPlain(sc.downPaymentPct)+'% down');
+  return sc.name+' ('+bits.join(', ')+')';
+}
+function agentOffers(raw,extra,api){
+  const items=api.items(raw),out=[];
+  if(items.length>AGENT_MAX_OFFERS)api.error('offers: only the first '+AGENT_MAX_OFFERS+' were used');
+  items.slice(0,AGENT_MAX_OFFERS).forEach(parts=>{const sc=agentOffer(parts,api,out.length);if(sc)out.push(sc);});
+  if(!out.length)return false;
+  extra.scenarios=out;
+  extra.active=0;
+  return {value:out.map(agentOfferSummary).join('; ')};
+}
+/* Offer prices count only while the switch is on, so say so when a link sets
+   one and leaves the switch off. */
+function agentPatch(extra,api){
+  if(agentSet.priced&&api.field('offerPricing')!==true)
+    api.error('an offer price counts only with offerPricing=true, which this link leaves off');
+}
+function agentDescribe(key){
+  return key==='offers'?{label:'Loan offers',el:$('scenarioList')}:null;
+}
+if(window.SharedAgent)SharedAgent.register({
+  tool: 'financingvscash',
+  compact: { offers: agentOffers },
+  patch: agentPatch,
+  describe: agentDescribe
+});
+
+/* The Quick Starts as the docs print them (_ref/agent-lib.mjs, fvcQuickStarts):
+   each one's field values and its offers written in the compact syntax above,
+   built from the same data and the same normaliser the Quick Start button uses,
+   so the docs cannot drift from the tool. */
+function agentOfferCompact(sc){
+  const p=[agentLabel(sc.name).replace(/%/g,' percent ').replace(/[:,=]/g,' ').replace(/\s+/g,' ').trim()||'Offer'],add=(k,v)=>p.push(k+'='+v);
+  const sched=l=>l.map(x=>x.toPeriod+'@'+(x.type==='floating'?agentPlain(x.rateMin)+'-'+agentPlain(x.rateMax):agentPlain(x.rate))).join('/');
+  if(sc.loanType!=='annuity')add('loanType',sc.loanType);
+  if(sc.freq!=='monthly')add('freq',sc.freq);
+  if(sc.loanType!=='knownPayment'&&sc.rateMode!=='schedule')add('financeRate',agentPlain(sc.financeRate));
+  add('termPeriods',sc.termPeriods);
+  if(sc.rateMode==='schedule')add('ratePeriods',sched(sc.ratePeriods));
+  if(sc.loanType==='knownPayment'){
+    if(sc.paymentMode==='schedule')add('paymentPeriods',sc.paymentPeriods.map(x=>x.toPeriod+'@'+agentPlain(x.amount)).join('/'));
+    else add('knownPayment',agentPlain(sc.knownPayment));
+  }
+  if(usesIoPeriods(sc.loanType))add('ioPeriods',sc.ioPeriods);
+  if(sc.loanType==='balloon')add('residualPct',agentPlain(sc.residualPct));
+  if(sc.downPaymentPct)add('downPaymentPct',agentPlain(sc.downPaymentPct));
+  if(sc.feeAmt){add('feeAmt',agentPlain(sc.feeAmt));if(sc.feeType==='pct')add('feeType','pct');if(sc.feeTreatment!=='upfront')add('feeTreatment',sc.feeTreatment);}
+  if(sc.adminFee)add('adminFee',agentPlain(sc.adminFee));
+  if(sc.priceType!=='discount'||sc.priceValue)add('priceType',sc.priceType),add('priceValue',agentPlain(sc.priceValue));
+  return p.join(':');
+}
+window.FVC_QS={
+  keys:Object.keys(QUICK_START_SCENARIOS),
+  preset:function(key){
+    const s=QUICK_START_SCENARIOS[key];
+    if(!s)return null;
+    const rows=s.scenarios.map(x=>{
+      const seed=defaultScenario(x.name);
+      seed.ioPeriods=Math.max(1,Math.round(x.termPeriods||seed.termPeriods));
+      return normaliseScenario(Object.assign(seed,x));
+    }).filter(Boolean);
+    return {base:Object.assign({},QS_DEFAULTS,s.base||{}),offers:rows.map(agentOfferCompact),count:rows.length};
+  }
+};
 })();

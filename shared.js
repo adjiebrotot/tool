@@ -26,6 +26,21 @@
     var m = /(?:^#|&)open=([^&]+)/.exec(hash || ''), s = /(?:^#|&)s=([^&]*)/.exec(hash || '');
     return m && s ? { key: decodeURIComponent(m[1]), s: decodeURIComponent(s[1]) } : null;
   }
+  /* A link an AI assistant wrote (SharedAgent, below) opens the tool set up
+     as #load&v=1&qs=<preset>&<field>=<value>&why.<field>=<reason>. Read
+     once, now, beside the two above, because the mini cache has to know
+     before any tool script calls it: such a link applies over the tool's
+     defaults, not over the reader's last scenario. Never in an embed frame
+     or a guide's ?demo frame, and never beside an #open link (OPEN), which
+     SharedShare applies instead. */
+  var AGENT_MAX = 512 * 1024;
+  var LOAD = EMBED || OPEN ? null : readLoadHash(global.location);
+  function readLoadHash(loc){
+    var hash = (loc && loc.hash) || '';
+    if(!/^#load(?:[&=?\/]|$)/.test(hash) || (/(?:^#|&)open=[^&]/.test(hash) && /(?:^#|&)s=/.test(hash))) return null;
+    if(global.self !== global.top && (/(?:^#|&)embed=/.test(hash) || /[?&]demo(?:&|$)/.test(loc.search || ''))) return null;
+    return hash.length > AGENT_MAX ? { raw: '', tooLong: true } : { raw: hash.slice(1), tooLong: false };
+  }
 
   function formatThousands(value, opts){
     opts = opts || {};
@@ -71,6 +86,8 @@
 
   function attachCurrencyInput(el, opts){
     opts = opts || {};
+    // An AI link (SharedAgent) writes its figure the way this field formats one.
+    el.__abtCurrency = opts;
     el.addEventListener('input', function(){
       liveFormat(this, opts);
       if (typeof opts.onChange === 'function') opts.onChange(this);
@@ -1247,7 +1264,15 @@
      Returns { save, schedule, collect, clear, snapshot, load }. snapshot() is
      the same blob that goes to localStorage; load(blob) applies one to the live
      page exactly as a returning visit would, then saves it. SharedScenario
-     below uses the pair to write a scenario to a file and read it back.      */
+     below uses the pair to write a scenario to a file and read it back.
+
+     An AI assistant's #load link (SharedAgent) opens on the tool's defaults:
+     while one is pending, init() copies the cache to abt:prev:<ns>:v<ver>
+     (the banner's Undo) and does not restore it. Saving stays on.
+
+     Persist.fields(scope) lists the controls it saves, as [{ key, type, el }]
+     with type 'c' (checkbox), 'r' (radio group, keyed by name, every radio of
+     the group in els) or 'v' (everything else), in page order.             */
   function makePersist(){
     function keyFor(ns, ver){ return 'abt:save:' + ns + ':v' + (ver || 1); }
     function handle(el){ return el.getAttribute('data-persist') || el.id || el.name || ''; }
@@ -1269,6 +1294,23 @@
         if(t === 'checkbox') out['c:'+id] = !!el.checked;
         else if(t === 'radio'){ if(el.checked) out['r:'+el.name] = el.value; }
         else out['v:'+id] = el.value;
+      }
+      return out;
+    }
+    // The same controls collect() and restore() visit, one entry per key.
+    function fields(scope){
+      var out = [], seen = {}, els = (scope || document).querySelectorAll('input, textarea, select');
+      for(var i=0;i<els.length;i++){
+        var el = els[i]; if(!persistable(el)) continue;
+        var t = (el.type||'').toLowerCase();
+        var type = t === 'checkbox' ? 'c' : t === 'radio' ? 'r' : 'v';
+        var key = type === 'r' ? el.name : handle(el);
+        if(!key) continue;
+        var id = type + ':' + key;
+        if(Object.prototype.hasOwnProperty.call(seen, id)){ if(type === 'r') seen[id].els.push(el); continue; }
+        seen[id] = { key: key, type: type, el: el };
+        if(type === 'r') seen[id].els = [el];
+        out.push(seen[id]);
       }
       return out;
     }
@@ -1304,9 +1346,11 @@
         }
       }
       var saved = null;
+      // An AI link applies over the defaults; the cache waits for Undo.
+      var fresh = agentSkipsCache(KEY);
       // An embedded chart opens on the scenario in its link, never on the
       // viewer's own cache, and never writes over it.
-      if(!EMBED){ try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){} }
+      if(!EMBED && !fresh){ try { var raw = localStorage.getItem(KEY); if(raw) saved = JSON.parse(raw); } catch(e){} }
       if(saved && typeof saved === 'object') apply(saved);
       var timer = null;
       function snapshot(){
@@ -1325,7 +1369,7 @@
       // Always flush on unload so structural changes that didn't fire an input
       // event (a removed row, a cleared field) are still captured.
       window.addEventListener('beforeunload', function(){ if(timer) clearTimeout(timer); save(); });
-      return {
+      var api = {
         save: save,
         schedule: schedule,
         collect: function(){ return collect(scope); },
@@ -1338,8 +1382,10 @@
           save();
         }
       };
+      agentPersistReady(KEY, scope, api);
+      return api;
     }
-    return { init: init };
+    return { init: init, fields: fields };
   }
   global.Persist = makePersist();
 
@@ -3208,6 +3254,8 @@
       upgrade: upgrade,
       copyImage: copyImage,
       state: function(p){ provider = p && typeof p.save === 'function' && typeof p.load === 'function' ? p : null; },
+      // The scenario provider state() registered, for an AI link (SharedAgent).
+      provider: function(){ return provider; },
       view: function(key, hook){ if(key) views[key] = hook; },
       fit: function(key, fn){ if(key && typeof fn === 'function') fits[key] = fn; },
       alias: function(from, to){ if(from && to && from !== to) aliases[from] = to; },
@@ -3222,6 +3270,696 @@
     };
   }
   global.SharedShare = makeShare();
+
+  /* ── SharedAgent — a link an AI assistant wrote opens the tool set up ─────
+     A reader asks a chatbot about a tool; the chatbot reads the tool's AI
+     section (<tool>/agent.txt) and replies with a link that opens the tool on
+     that scenario. The answer is the tool's, worked out on screen; a banner
+     over the inputs lists what the assistant assumed, so the reader checks it.
+
+         https://tool.adjiebrotots.com/<tool>/#load&v=1&qs=<preset>
+             &<key>=<value>&why.<key>=<reason>&note=<one line>
+
+     Keys are the mini cache's handles (data-persist, else id, else a radio
+     group's name: Persist.fields), so a link's words are frozen exactly as
+     saved state is. A value is what the field shows, in its own units; a
+     number may carry $ , _ spaces or a trailing %, a checkbox takes
+     true/false/1/0/on/off, a select or radio its value or the words it shows.
+     Reserved: v (the format, 1), qs (a Quick Start to start from), why.<key>
+     (the reason, shown in the banner, 200 characters), note (one line over
+     it), json (structured state, as the tool's adapter defines it) and run
+     (0 opens without pressing the tool's Run). s, open and embed belong to
+     Share links and embeds and are never read.
+
+     It applies as an #open link does (SharedShare): the hash leaves the
+     address first, so a reload keeps the reader's edits; the Quick Start goes
+     on; the fields are laid over a snapshot of the page and loaded through the
+     scenario provider, the same doLoad a file uses, so every migration in the
+     tool's onRestore runs; a currency field then gets the events typing
+     would fire; the tool's Run is pressed; the banner shows. The mini cache
+     did not restore (Persist, above), and its last blob waits in
+     abt:prev:<ns>:v<ver> for the banner's Undo.
+
+     The link is untrusted. Only persistable controls and what an adapter
+     accepts are set, nothing is evaluated, link text is written as text, the
+     fragment is capped at 512 KB and each plain value at 2 KB, and nothing
+     downloads, uploads, copies or navigates. A key it does not know, a value
+     it cannot read and a number outside the field's range never throw: they
+     are skipped or clamped, and the banner says so.
+
+     A tool with flat fields needs nothing beyond SharedScenario.mount. One
+     with state beyond them registers an adapter:
+
+         SharedAgent.register({
+           tool,                        // the scenario tag
+           preset(key),                 // apply Quick Start `key`: false when there is
+                                        //   none, else true or its name (or a Promise)
+           compact: { key: parse },     // parse(raw, extra, api): patch extra (the
+                                        //   snapshot's __extra), return { value } for
+                                        //   the banner, or false
+           json(obj, extra, api),       // the same for json=, given the parsed object
+           patch(extra, api),           // last, for rules tying fields to that state
+           family: { 'el.': parse },    // keys that share a prefix and name a part of
+                                        //   the tool (el.<name>.<param>): parse(raw,
+                                        //   extra, api, key) as a compact one does
+           describe(key),               // { label, el }: a compact or json key's name
+                                        //   in the banner and the element its row shows
+           ready(),                     // a Promise to wait for before applying, for a
+                                        //   tool that sets up after DOMContentLoaded
+           banner                       // an element or selector to put the banner in
+         });
+
+     api: lang, field(key) (its value as it will load), num(key), given(key)
+     (the link names it), applied(key) (the link names it and its value was
+     read, so it loads: a value it could not read leaves the field as it was),
+     items(raw) (a "a:b,c:d" list, split before it is
+     decoded so an encoded : or , stays in its part), number(text),
+     clamp(key, given, used), error(text), unknown(key).
+
+     Where the fields go: into the scenario file's state when the provider
+     is SharedScenario's own (state.__fields), loaded back through it; else,
+     for a tool whose file is its own format (save/load), into the mini
+     cache's snapshot, loaded with Persist's load(), and its adapter's
+     compact, json and patch hooks get that snapshot's __extra (a custom
+     blob beyond it is the adapter's to load, from patch()); with neither,
+     straight into the page, each field announced with input and change.
+
+     For the checks and the docs: SharedAgent.link (a #load link was read),
+     SharedAgent.done (a Promise, resolved once it is applied, at once
+     without one), SharedAgent.report ({ applied: [{ key, label, value, why }],
+     unknown: [key], clamped: [{ key, given, used }], qs: { key, ok } | null,
+     errors: [text] }), <html data-agent-load="done">, and
+     SharedAgent.fields(), the controls a link may set. */
+  var agentCaches = [], agentScope = null;
+  // Persist.init asks: true when a #load link takes the cache's place.
+  function agentSkipsCache(KEY){
+    if(!LOAD || LOAD.tooLong) return false;
+    var prev = KEY.replace(/^abt:save:/, 'abt:prev:'), had = false;
+    try {
+      var raw = localStorage.getItem(KEY);
+      if(raw){
+        try { localStorage.setItem(prev, raw); }
+        catch(e){ localStorage.removeItem(prev); localStorage.setItem(prev, raw); }
+        had = true;
+      } else localStorage.removeItem(prev);
+    } catch(e){}
+    agentCaches.push({ key: KEY, prev: prev, had: had, api: null });
+    return true;
+  }
+  function agentPersistReady(KEY, scope, api){
+    if(!agentScope) agentScope = scope;
+    for(var i = 0; i < agentCaches.length; i++) if(agentCaches[i].key === KEY && !agentCaches[i].api) agentCaches[i].api = api;
+  }
+  function makeAgent(){
+    var TEXT = {
+      en: { head: 'Set up by an AI assistant. Check these assumptions:', qs: 'Started from the Quick Start ',
+            unknown: 'Not recognised:', clamped: 'Adjusted to fit the allowed range:', errors: 'Not applied:',
+            undo: 'Back to my previous inputs', close: 'Close', on: 'On', off: 'Off', blank: 'empty',
+            more: function(n){ return 'and ' + n + ' more'; },
+            tooLong: 'the link is longer than 512 KB, so nothing in it was applied',
+            noQs: function(k){ return 'there is no Quick Start "' + k + '"'; },
+            notNumber: 'not a number', noOption: 'not one of the choices', noBool: 'not on or off', long: 'too long',
+            badJson: 'json could not be read', noJson: 'this tool takes no json',
+            version: function(v){ return 'link version "' + v + '" is unknown, so it was read as version 1'; },
+            failed: 'the link could not be applied in full' },
+      id: { head: 'Diatur oleh asisten AI. Periksa asumsi berikut:', qs: 'Dimulai dari Quick Start ',
+            unknown: 'Tidak dikenali:', clamped: 'Disesuaikan agar masuk rentang yang diizinkan:', errors: 'Tidak diterapkan:',
+            undo: 'Kembali ke input saya sebelumnya', close: 'Tutup', on: 'Aktif', off: 'Nonaktif', blank: 'kosong',
+            more: function(n){ return 'dan ' + n + ' lainnya'; },
+            tooLong: 'tautan lebih panjang dari 512 KB, jadi tidak ada isinya yang diterapkan',
+            noQs: function(k){ return 'tidak ada Quick Start "' + k + '"'; },
+            notNumber: 'bukan angka', noOption: 'bukan salah satu pilihan', noBool: 'bukan aktif atau nonaktif', long: 'terlalu panjang',
+            badJson: 'json tidak bisa dibaca', noJson: 'tool ini tidak menerima json',
+            version: function(v){ return 'versi tautan "' + v + '" tidak dikenal, jadi dibaca sebagai versi 1'; },
+            failed: 'tautan tidak bisa diterapkan sepenuhnya' }
+    };
+    var RESERVED = { v: 1, qs: 1, note: 1, json: 1, run: 1 };
+    var NEVER = { s: 1, open: 1, embed: 1 };
+    var MAX_VALUE = 2048, MAX_LIST = 16384, MAX_WHY = 200, MAX_KEY = 120, MAX_UNKNOWN = 500, MAX_FAMILY = 300;
+    var adapter = null, resolveDone = null;
+    var api = {
+      link: !!LOAD,
+      register: function(a){ adapter = a && typeof a === 'object' ? a : null; },
+      fields: function(scope){ return global.Persist.fields(scope || agentScope || document); },
+      done: new Promise(function(r){ resolveDone = r; }),
+      report: null
+    };
+    if(!LOAD) resolveDone();
+
+    function T(){ return TEXT[pageLang()]; }
+    // The adapter's parser for a key in one of its families (a shared prefix), else null.
+    function familyOf(k){
+      var fam = adapter && adapter.family;
+      if(!fam || typeof fam !== 'object') return null;
+      for(var pre in fam) if(own(fam, pre) && pre && k.length > pre.length && k.slice(0, pre.length) === pre && typeof fam[pre] === 'function') return fam[pre];
+      return null;
+    }
+    function own(o, k){ return !!o && Object.prototype.hasOwnProperty.call(o, k); }
+    function norm(s){ return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+    // Text from a link, made one plain line: no control characters, capped.
+    function line(s, max){ return norm(String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f]/g, ' ')).slice(0, max); }
+    function cssEscape(s){ return global.CSS && global.CSS.escape ? global.CSS.escape(s) : String(s).replace(/["\\]/g, '\\$&'); }
+    function decode(s){
+      s = String(s).replace(/\+/g, ' ');
+      try { return decodeURIComponent(s); }
+      catch(e){
+        return s.replace(/(?:%[0-9A-Fa-f]{2})+/g, function(m){ try { return decodeURIComponent(m); } catch(e2){ return m; } });
+      }
+    }
+    // "12,500", "$ 1_000", "6.1%" → a number; anything else NaN.
+    function toNumber(v){
+      if(typeof v === 'number') return isFinite(v) ? v : NaN;
+      var s = String(v == null ? '' : v).replace(/[\s_,$]/g, '').replace(/\u2212/g, '-').replace(/%$/, '');
+      return /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(s) ? parseFloat(s) : NaN;
+    }
+    // A number written plainly, with at most dp decimals.
+    function plain(n, dp){
+      dp = dp == null ? 10 : Math.max(0, Math.min(10, dp));
+      var s = (+(+n).toFixed(dp)).toFixed(dp);
+      if(s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+      return s === '-0' ? '0' : s;
+    }
+    /* A list such as "5:6.1,25:6.5" into its parts. Split first and decoded
+       after, so a label may carry an encoded : or ,; a link that encoded
+       every separator (no : left in it as typed) is decoded first. */
+    function items(raw, itemSep, partSep){
+      itemSep = itemSep || ','; partSep = partSep || ':';
+      raw = String(raw == null ? '' : raw);
+      var typed = raw.indexOf(partSep) >= 0 || raw.indexOf(itemSep) >= 0;
+      var text = typed ? raw : decode(raw);
+      return text.split(itemSep).map(function(it){
+        return it.split(partSep).map(function(p){ return (typed ? decode(p) : p).trim(); });
+      }).filter(function(parts){ return parts.join('') !== ''; });
+    }
+
+    /* ── The fields ── */
+    function numeric(el){
+      var t = (el.type || '').toLowerCase();
+      return t === 'number' || t === 'range' || !!moneyFormat(el) || el.hasAttribute('data-min') ||
+             el.hasAttribute('data-max') || /^(numeric|decimal)$/.test(el.getAttribute('inputmode') || '');
+    }
+    // How a currency field writes a figure, or null for any other field.
+    function moneyFormat(el){
+      if(el.__abtCurrency) return { maxDecimals: el.__abtCurrency.maxDecimals || 0 };
+      if(el.getAttribute('data-money') === 'true' || el.classList.contains('money-input') || el.hasAttribute('data-grouped')){
+        var dp = decimalsOf(el.getAttribute('data-step'));
+        return { maxDecimals: dp == null ? 2 : dp };
+      }
+      return null;
+    }
+    function limits(el){
+      var num = function(v){ return v == null || v === '' || !isFinite(+v) ? null : +v; };
+      var t = (el.type || '').toLowerCase(), nat = t === 'number' || t === 'range';
+      var mn = num(el.getAttribute('data-min')), mx = num(el.getAttribute('data-max')), st = num(el.getAttribute('data-step'));
+      if(nat){
+        if(mn == null) mn = num(el.getAttribute('min'));
+        if(mx == null) mx = num(el.getAttribute('max'));
+        if(st == null && el.getAttribute('step') !== 'any') st = num(el.getAttribute('step'));
+      }
+      if(t === 'range'){ if(mn == null) mn = 0; if(mx == null) mx = 100; if(st == null && el.getAttribute('step') !== 'any') st = 1; }
+      return { min: mn == null ? -Infinity : mn, max: mx == null ? Infinity : mx, step: st && st > 0 ? st : null };
+    }
+    function optionText(o){ return norm(o.textContent); }
+    function matchOption(sel, s){
+      var opts = Array.prototype.filter.call(sel.options, function(o){ return !o.disabled; }), low = s.toLowerCase(), i;
+      for(i = 0; i < opts.length; i++) if(opts[i].value === s) return opts[i];
+      for(i = 0; i < opts.length; i++) if(opts[i].value.toLowerCase() === low) return opts[i];
+      for(i = 0; i < opts.length; i++) if(optionText(opts[i]).toLowerCase() === low) return opts[i];
+      // A symbol picker takes the currency's code as well (AUD is $).
+      if(sel.hasAttribute('data-currency-symbols') && global.SharedCurrency){
+        var sym = global.SharedCurrency.toSymbol(s, null);
+        if(sym != null) for(i = 0; i < opts.length; i++) if(opts[i].value === sym) return opts[i];
+      }
+      return null;
+    }
+    function radioText(r){
+      var lab = (r.id && document.querySelector('label[for="' + cssEscape(r.id) + '"]')) || r.closest('label');
+      if(!lab) return r.value;
+      return cleanText(lab.querySelector('strong, b') || lab) || r.value;
+    }
+    function matchRadio(els, s){
+      var low = s.toLowerCase(), i;
+      for(i = 0; i < els.length; i++) if(els[i].value === s) return els[i];
+      for(i = 0; i < els.length; i++) if(els[i].value.toLowerCase() === low) return els[i];
+      for(i = 0; i < els.length; i++) if(radioText(els[i]).toLowerCase() === low) return els[i];
+      return null;
+    }
+    // A link's value for one field, as the mini cache would hold it.
+    function read(f, text){
+      var t = T(), el = f.el, s = String(text).trim();
+      if(f.type === 'c'){
+        if(/^(true|1|on|yes)$/i.test(s)) return { ok: true, store: true };
+        if(/^(false|0|off|no)$/i.test(s)) return { ok: true, store: false };
+        return { ok: false, error: t.noBool };
+      }
+      if(f.type === 'r'){
+        var r = matchRadio(f.els, s);
+        return r ? { ok: true, store: r.value } : { ok: false, error: t.noOption };
+      }
+      if(el.tagName === 'SELECT'){
+        var o = matchOption(el, s);
+        return o ? { ok: true, store: o.value } : { ok: false, error: t.noOption };
+      }
+      if(!numeric(el)) return { ok: true, store: String(text) };
+      var range = (el.type || '').toLowerCase() === 'range';
+      if(s === '') return range ? { ok: false, error: t.notNumber } : { ok: true, store: '' };
+      var n = toNumber(s);
+      if(!isFinite(n)) return { ok: false, error: t.notNumber };
+      var lim = limits(el), used = Math.min(lim.max, Math.max(lim.min, n)), out = { ok: true };
+      if(used !== n){ out.clamped = true; out.given = n; out.used = used; }
+      // On its step, as a slider lands: silent, like the slider.
+      if(lim.step){
+        var dp = decimalsOf(lim.step), base = isFinite(lim.min) ? lim.min : 0;
+        var snap = +(Math.round((used - base) / lim.step) * lim.step + base).toFixed(dp == null ? 10 : dp);
+        if(snap > lim.max) snap = +(snap - lim.step).toFixed(dp == null ? 10 : dp);
+        if(snap < lim.min) snap = +(snap + lim.step).toFixed(dp == null ? 10 : dp);
+        if(out.clamped) out.used = snap;
+        used = snap;
+      }
+      var fmt = moneyFormat(el);
+      out.store = fmt ? formatThousands(plain(used, fmt.maxDecimals), { maxDecimals: fmt.maxDecimals, allowNegative: true }) : plain(used);
+      out.money = !!fmt;
+      return out;
+    }
+    function current(f){
+      if(f.type === 'c') return !!f.el.checked;
+      if(f.type === 'r'){ for(var i = 0; i < f.els.length; i++) if(f.els[i].checked) return f.els[i].value; return undefined; }
+      return f.el.value;
+    }
+    // Words a reader sees, without the tooltip's ? and the unit beside them.
+    function cleanText(node){
+      if(!node) return '';
+      var c = node.cloneNode(true);
+      var drop = c.querySelectorAll('.tip-icon, .slider-value, .prefix, .suffix, .range-ends, .derived, button, input, select, textarea, [aria-hidden="true"]');
+      for(var i = 0; i < drop.length; i++) if(drop[i].parentNode) drop[i].parentNode.removeChild(drop[i]);
+      return norm(c.textContent).replace(/\s*:$/, '');
+    }
+    var ROW = '.field-row, .toggle-row, .slider-block, .sc-field, .field';
+    function fieldLabel(f){
+      var el = f.el, t;
+      if(f.type !== 'r' && el.id){
+        var l = document.querySelector('label[for="' + cssEscape(el.id) + '"]');
+        if(l && (t = cleanText(l))) return t;
+      }
+      var row = el.closest(ROW);
+      if(row){
+        var lab = row.querySelector('.field-label, .toggle-label, .slider-label, label');
+        if(lab && !(f.type === 'r' && lab.contains(el)) && (t = cleanText(lab))) return t;
+      }
+      // A radio group with no row of its own is named by its group (role="radiogroup" aria-label).
+      if(f.type === 'r'){
+        var grp = el.closest('[role="radiogroup"]');
+        if(grp && (t = grp.getAttribute('aria-label'))) return norm(t);
+      }
+      t = el.getAttribute('aria-label') || el.getAttribute('title') || el.getAttribute('placeholder');
+      if(t) return norm(t);
+      if(f.type !== 'r' && (t = cleanText(el.closest('label')))) return t;
+      return f.key;
+    }
+    function readout(el){
+      var id = el.getAttribute('data-readout');
+      if(id) return document.getElementById(id);
+      var box = el.closest('.slider-block, .field-row, .sc-field, .slider-wrap');
+      return box && box.querySelectorAll('input[type=range]').length === 1 ? box.querySelector('.slider-value') : null;
+    }
+    // The value as the page shows it once loaded: "$850,000", "6.1 %/yr", "a week".
+    function shownValue(f){
+      var t = T(), el = f.el, i;
+      if(f.type === 'c') return el.checked ? t.on : t.off;
+      if(f.type === 'r'){ for(i = 0; i < f.els.length; i++) if(f.els[i].checked) return radioText(f.els[i]); return ''; }
+      if(el.tagName === 'SELECT'){ var o = el.options[el.selectedIndex]; return o ? optionText(o) : el.value; }
+      if((el.type || '').toLowerCase() === 'range'){
+        var ro = readout(el);
+        if(ro && norm(ro.textContent)) return norm(ro.textContent);
+        return el.value + (el.getAttribute('data-unit') ? ' ' + el.getAttribute('data-unit') : '');
+      }
+      if(String(el.value).trim() === '') return t.blank;
+      var wrap = el.closest('.affix-wrap'), pre = '', suf = '';
+      if(wrap){
+        var p = wrap.querySelector('.prefix'), s = wrap.querySelector('.suffix');
+        if(p && !p.hidden) pre = norm(p.textContent);
+        if(s && !s.hidden) suf = norm(s.textContent);
+      }
+      return (pre ? pre + (pre.length > 1 ? ' ' : '') : '') + el.value + (suf ? ' ' + suf : '');
+    }
+    // Typing a figure fires input, then leaving the field change and blur.
+    function typed(el){
+      if(!el || !el.isConnected) return;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      el.dispatchEvent(new FocusEvent('blur'));
+      el.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    }
+    function settle(){
+      return new Promise(function(r){
+        var fin = function(){ if(r){ var f = r; r = null; f(); } };
+        if(global.requestAnimationFrame) global.requestAnimationFrame(function(){ global.requestAnimationFrame(fin); });
+        setTimeout(fin, 150);
+      });
+    }
+
+    /* ── Reading the link ── */
+    function parse(raw){
+      var out = [], at = {};
+      var parts = String(raw).replace(/^load(?:=[^&]*)?(?:[?&\/]|$)/, '').split('&');
+      for(var i = 0; i < parts.length; i++){
+        var p = parts[i]; if(!p) continue;
+        var eq = p.indexOf('=');
+        // A chatbot that wrote its link into HTML may have left &amp; behind.
+        var k = decode(eq < 0 ? p : p.slice(0, eq)).trim().replace(/^amp;/, '');
+        if(!k) continue;
+        var pair = { key: k, raw: eq < 0 ? '' : p.slice(eq + 1) };
+        pair.value = decode(pair.raw);
+        // The last one wins, in the first one's place.
+        if(own(at, k)) out[at[k]] = Object.assign(pair, { at: out[at[k]].at });
+        else { at[k] = out.length; pair.at = out.length; out.push(pair); }
+      }
+      return out;
+    }
+    function start(){
+      var t = T(), rep = api.report = { applied: [], unknown: [], clamped: [], qs: null, errors: [] };
+      try { global.history.replaceState(null, '', global.location.pathname + global.location.search); } catch(e){}
+      var ctx = { t: t, rep: rep, rows: [], money: [], run: true, note: '', qsName: '', seen: {}, cache: null };
+      var chain = Promise.resolve();
+      if(LOAD.tooLong) rep.errors.push(t.tooLong);
+      else chain = chain.then(function(){ return apply(parse(LOAD.raw), ctx); });
+      chain.catch(function(err){
+        if(global.console) console.warn('AI link:', err);
+        rep.errors.push(t.failed);
+      }).then(function(){
+        try { banner(ctx); } catch(e){ if(global.console) console.warn('AI link banner:', e); }
+        document.documentElement.dataset.agentLoad = 'done';
+        resolveDone();
+      });
+    }
+    function unknownKey(ctx, k){
+      k = line(k, MAX_KEY);
+      if(own(ctx.seen, k)) return;
+      ctx.seen[k] = 1;
+      if(ctx.rep.unknown.length < MAX_UNKNOWN) ctx.rep.unknown.push(k);
+      else ctx.unknownMore = (ctx.unknownMore || 0) + 1;
+    }
+    function apply(pairs, ctx){
+      var t = ctx.t, rep = ctx.rep, why = {}, get = {}, plainPairs = [];
+      pairs.forEach(function(p){
+        if(/^why\./.test(p.key)) why[p.key.slice(4)] = { text: line(p.value, MAX_WHY), at: p.at };
+        else if(own(RESERVED, p.key)) get[p.key] = p;
+        else plainPairs.push(p);
+      });
+      if(get.v && get.v.value.trim() !== '1') rep.errors.push(t.version(line(get.v.value, 20)));
+      if(get.note) ctx.note = line(get.note.value, MAX_WHY);
+      if(get.run && /^\s*(0|false|no|off)\s*$/i.test(get.run.value)) ctx.run = false;
+      ctx.why = why;
+      return Promise.resolve()
+        .then(function(){ return adapter && typeof adapter.ready === 'function' ? adapter.ready() : null; })
+        .then(function(){
+          var key = get.qs ? line(get.qs.value, 200) : '';
+          if(key) return startFrom(key, ctx);
+        })
+        .then(settle)
+        .then(function(){ return setAll(plainPairs, get.json || null, pairs, ctx); })
+        .then(settle)
+        .then(function(){ ctx.money.forEach(typed); })
+        .then(settle)
+        .then(function(){
+          if(!ctx.run) return;
+          // A tool behind a Run gate solves on its button, as an #open link does.
+          var b = document.querySelector('.needs-run');
+          if(b && !b.disabled){ b.click(); return settle(); }
+        });
+    }
+    function startFrom(key, ctx){
+      var rep = ctx.rep;
+      rep.qs = { key: key, ok: false };
+      return Promise.resolve()
+        .then(function(){ return adapter && typeof adapter.preset === 'function' ? adapter.preset(key) : pressPreset(key); })
+        .then(function(res){ if(res){ rep.qs.ok = true; ctx.qsName = typeof res === 'string' ? line(res, 200) : key; } },
+              function(err){ if(global.console) console.warn('AI link: Quick Start', err); })
+        .then(function(){ if(!rep.qs.ok) rep.errors.push(ctx.t.noQs(key)); });
+    }
+    function pressPreset(key){
+      var btns = document.querySelectorAll('.quick-start-btn[data-preset]'), low = key.toLowerCase(), hit = null, i;
+      for(i = 0; i < btns.length && !hit; i++) if(btns[i].getAttribute('data-preset') === key) hit = btns[i];
+      for(i = 0; i < btns.length && !hit; i++) if(btns[i].getAttribute('data-preset').toLowerCase() === low) hit = btns[i];
+      if(!hit || hit.disabled) return false;
+      hit.click();
+      return cleanText(hit) || key;
+    }
+    function setAll(plainPairs, jsonPair, pairs, ctx){
+      var t = ctx.t, rep = ctx.rep, idx = {}, inLink = {}, lists = [], direct = [];
+      // Read now, after ready(): a tool may call Persist.init late.
+      ctx.cache = agentCaches.length ? agentCaches[0] : null;
+      api.fields().forEach(function(f){ if(!own(idx, f.key)) idx[f.key] = f; });
+      pairs.forEach(function(p){ inLink[/^why\./.test(p.key) ? p.key.slice(4) : p.key] = 1; });
+      ctx.idx = idx;
+
+      /* Where the fields go: the scenario file's state (SharedScenario), else
+         the mini cache's own snapshot, else straight into the page. */
+      var prov = global.SharedShare && global.SharedShare.provider ? global.SharedShare.provider() : null;
+      var cache = ctx.cache && ctx.cache.api ? ctx.cache.api : null;
+      var wrote = {}, nFamily = 0;
+      var body = null, state = null;
+      if(prov){ try { body = prov.save(); } catch(e){ body = null; } }
+      if(body && body.state && typeof body.state === 'object' && body.state.__fields && typeof body.state.__fields === 'object') state = body.state;
+      else { body = null; if(cache) state = cache.snapshot(); }
+      var F = state ? (state.__fields && typeof state.__fields === 'object' ? state.__fields : (state.__fields = {})) : null;
+      var extraWas = state ? state.__extra : undefined;
+      var extra = extraWas && typeof extraWas === 'object' ? extraWas : {};
+      var extraBefore = JSON.stringify(extra);
+
+      function fail(f, value, why){ rep.errors.push(fieldLabel(f) + ' "' + line(value, 40) + '": ' + why); }
+      plainPairs.forEach(function(p){
+        var k = p.key;
+        if(own(NEVER, k) || k.length > MAX_KEY){ unknownKey(ctx, k); return; }
+        var f = own(idx, k) ? idx[k] : null;
+        if(f){
+          if(p.value.length > MAX_VALUE){ fail(f, p.value, t.long); return; }
+          var r = read(f, p.value);
+          if(!r.ok){ fail(f, p.value, r.error); return; }
+          if(r.clamped) rep.clamped.push({ key: k, given: r.given, used: r.used });
+          if(F) F[f.type + ':' + k] = r.store;
+          else direct.push({ f: f, store: r.store });
+          wrote[k] = 1;
+          if(r.money) ctx.money.push(f.el);
+          ctx.rows.push({ at: p.at, key: k, f: f });
+        }
+        else if(adapter && adapter.compact && own(adapter.compact, k) && typeof adapter.compact[k] === 'function') lists.push(p);
+        else if((p.fn = familyOf(k)) && ++nFamily <= MAX_FAMILY) lists.push(p);
+        else unknownKey(ctx, k);
+      });
+
+      // Structured state: the adapter reads it, against the fields as they will load.
+      var hook = {
+        lang: pageLang(),
+        field: function(key){
+          var f = own(idx, key) ? idx[key] : null;
+          if(!f) return undefined;
+          return F && own(F, f.type + ':' + key) ? F[f.type + ':' + key] : current(f);
+        },
+        num: function(key, fallback){ var n = toNumber(hook.field(key)); return isFinite(n) ? n : (fallback === undefined ? NaN : fallback); },
+        given: function(key){ return own(inLink, key); },
+        applied: function(key){ return own(wrote, key); },
+        items: items,
+        number: toNumber,
+        clamp: function(key, given, used){ rep.clamped.push({ key: String(key), given: given, used: used }); },
+        error: function(text){ rep.errors.push(line(text, 300)); },
+        unknown: function(key){ unknownKey(ctx, key); }
+      };
+      function run(key, at, fn){
+        var res;
+        try { res = fn(); } catch(e){ if(global.console) console.warn('AI link: ' + key, e); rep.errors.push(key + ': ' + t.failed); return; }
+        if(res) ctx.rows.push({ at: at, key: key, res: typeof res === 'object' ? res : {} });
+      }
+      if(jsonPair){
+        var obj, ok = true;
+        try { obj = JSON.parse(jsonPair.value); } catch(e){ ok = false; }
+        if(!ok) rep.errors.push(t.badJson);
+        else if(!adapter || typeof adapter.json !== 'function') rep.errors.push(t.noJson);
+        else run('json', jsonPair.at, function(){ return adapter.json(obj, extra, hook); });
+      }
+      lists.forEach(function(p){
+        if(p.raw.length > MAX_LIST){ rep.errors.push(p.key + ': ' + t.long); return; }
+        run(p.key, p.at, function(){ return p.fn ? p.fn(p.raw, extra, hook, p.key) : adapter.compact[p.key](p.raw, extra, hook); });
+      });
+      if(adapter && typeof adapter.patch === 'function'){
+        try { adapter.patch(extra, hook); } catch(e){ if(global.console) console.warn('AI link: patch', e); rep.errors.push(t.failed); }
+      }
+      var extraChanged = JSON.stringify(extra) !== extraBefore;
+      if(state && extraChanged) state.__extra = extra;
+      var changed = ctx.rows.length > 0 || extraChanged || direct.length > 0;
+
+      // A why for a field the link left as it was still names that field.
+      Object.keys(ctx.why).forEach(function(k){
+        if(ctx.rows.some(function(r){ return r.key === k; })) return;
+        if(own(idx, k)){
+          // A value it could not use was reported already; a field it did not name keeps its value.
+          if(!plainPairs.some(function(p){ return p.key === k; })) ctx.rows.push({ at: ctx.why[k].at, key: k, f: idx[k] });
+          return;
+        }
+        if(k === 'json' || (adapter && adapter.compact && own(adapter.compact, k)) || familyOf(k)) return;
+        unknownKey(ctx, 'why.' + k);
+      });
+
+      if(!changed) return;
+      if(body) return prov.load(body);
+      if(state && cache) return cache.load(state);
+      // No scenario state at all: set the page, choosing periods before amounts.
+      direct.sort(function(a, b){ return (b.f.el.tagName === 'SELECT') - (a.f.el.tagName === 'SELECT'); });
+      direct.forEach(function(d){
+        var f = d.f;
+        if(f.type === 'c') f.el.checked = !!d.store;
+        else if(f.type === 'r') f.els.forEach(function(r){ r.checked = r.value === d.store; });
+        else f.el.value = d.store;
+        var el = f.type === 'r' ? f.els.filter(function(r){ return r.checked; })[0] : f.el;
+        if(el){ el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
+      });
+    }
+
+    /* ── The banner ── */
+    function node(tag, cls, text){
+      var n = document.createElement(tag);
+      if(cls) n.className = cls;
+      if(text != null) n.textContent = text;
+      return n;
+    }
+    function nameOf(ctx, key){
+      if(own(ctx.idx, key)) return fieldLabel(ctx.idx[key]);
+      var d = describe(key);
+      return d && d.label ? d.label : key;
+    }
+    function describe(key){
+      if(!adapter || typeof adapter.describe !== 'function') return null;
+      try { var d = adapter.describe(key); return d && typeof d === 'object' ? d : null; } catch(e){ return null; }
+    }
+    function listLine(cls, head, list, more, t, sep){
+      var p = node('p', cls);
+      p.appendChild(node('strong', null, head));
+      var shown = list.slice(0, 20), rest = list.length - shown.length + (more || 0);
+      sep = sep || ', ';
+      p.appendChild(document.createTextNode(' ' + shown.join(sep) + (rest > 0 ? sep + t.more(rest) : '')));
+      return p;
+    }
+    // Open the inputs on the field a row names, and show it for a moment.
+    function reveal(target){
+      if(!target || !target.isConnected) return;
+      if(target.closest('.controls') && global.SharedCtrl && !global.SharedCtrl.isOpen()) global.SharedCtrl.open();
+      var panel = target.closest('.ctrl-panel');
+      if(panel && !panel.classList.contains('active') && /^tab-/.test(panel.id)){
+        var tab = document.querySelector('.ctrl-tab[data-tab="' + cssEscape(panel.id.slice(4)) + '"]');
+        if(tab) tab.click();
+      }
+      var box = target.closest(ROW) || target;
+      while(box && box !== document.body && !box.getClientRects().length) box = box.parentElement;
+      if(!box || box === document.body) return;
+      var calm = global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      box.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' });
+      box.classList.remove('agent-flash');
+      void box.offsetWidth;
+      box.classList.add('agent-flash');
+      clearTimeout(box.__agentFlash);
+      box.__agentFlash = setTimeout(function(){ box.classList.remove('agent-flash'); }, 2600);
+    }
+    function place(box){
+      var at = adapter && adapter.banner ? (typeof adapter.banner === 'string' ? document.querySelector(adapter.banner) : adapter.banner) : null;
+      if(at && at.nodeType === 1){ at.insertBefore(box, at.firstChild); return; }
+      // Over the inputs and the results both: the input card opens folded
+      // (SharedCtrl), and the reader lands on what was assumed and the answer.
+      var layout = document.querySelector('.layout');
+      if(layout && layout.parentNode){ layout.parentNode.insertBefore(box, layout); return; }
+      var head = document.querySelector('.header');
+      if(head && head.parentNode){ head.parentNode.insertBefore(box, head.nextSibling); return; }
+      document.body.insertBefore(box, document.body.firstChild);
+    }
+    function banner(ctx){
+      var t = ctx.t, rep = ctx.rep;
+      ctx.idx = ctx.idx || {};
+      ctx.rows.sort(function(a, b){ return a.at - b.at; });
+      var box = node('section', 'agent-banner');
+      box.setAttribute('role', 'region');
+      box.setAttribute('aria-labelledby', 'agentBannerHead');
+      box.setAttribute('data-no-abbr', '');
+      var top = node('div', 'agent-top'), titles = node('div', 'agent-titles');
+      if(ctx.note) titles.appendChild(node('p', 'agent-note', ctx.note));
+      var head = node('p', 'agent-head', t.head);
+      head.id = 'agentBannerHead';
+      titles.appendChild(head);
+      if(rep.qs && rep.qs.ok) titles.appendChild(node('p', 'agent-qs', t.qs + ctx.qsName));
+      top.appendChild(titles);
+      var tmp = document.createElement('div');
+      tmp.innerHTML = global.SharedIcon.button('close', t.close, 'agent-dismiss');
+      var close = tmp.firstChild;
+      top.appendChild(close);
+      box.appendChild(top);
+
+      var ul = node('ul', 'agent-rows');
+      ctx.rows.forEach(function(r){
+        var label, value, el;
+        if(r.f){ label = fieldLabel(r.f); value = shownValue(r.f); el = r.f.el; }
+        else {
+          var d = describe(r.key) || {};
+          label = line(r.res.label || d.label || r.key, 200);
+          value = line(r.res.value == null ? '' : r.res.value, 600);
+          el = r.res.el || d.el || null;
+        }
+        var why = own(ctx.why, r.key) ? ctx.why[r.key].text : '';
+        rep.applied.push({ key: r.key, label: label, value: value, why: why });
+        var li = node('li', 'agent-row');
+        li.setAttribute('data-key', r.key);
+        var go = node(el ? 'button' : 'span', 'agent-go', label);
+        if(el){ go.type = 'button'; go.addEventListener('click', function(){ reveal(el); }); }
+        li.appendChild(go);
+        li.appendChild(node('span', 'agent-val', value));
+        if(why) li.appendChild(node('span', 'agent-why', why));
+        ul.appendChild(li);
+      });
+      if(ul.children.length) box.appendChild(ul);
+      if(rep.unknown.length) box.appendChild(listLine('agent-unknown', t.unknown, rep.unknown, ctx.unknownMore, t));
+      if(rep.clamped.length) box.appendChild(listLine('agent-clamped', t.clamped, rep.clamped.map(function(c){
+        return nameOf(ctx, c.key) + ' ' + c.given + ' → ' + c.used;
+      }), 0, t));
+      if(rep.errors.length) box.appendChild(listLine('agent-errors', t.errors, rep.errors, 0, t, '; '));
+
+      function dismiss(){
+        if(box.parentNode) box.parentNode.removeChild(box);
+        global.dispatchEvent(new Event('resize'));
+      }
+      close.addEventListener('click', dismiss);
+      var cache = ctx.cache;
+      if(cache && cache.had && cache.api){
+        var actions = node('div', 'agent-actions');
+        var undo = node('button', 'btn-secondary btn-sm agent-undo', t.undo);
+        undo.type = 'button';
+        undo.addEventListener('click', function(){
+          var blob = null;
+          try { blob = JSON.parse(localStorage.getItem(cache.prev)); } catch(e){}
+          if(blob && typeof blob === 'object'){
+            cache.api.load(blob);
+            document.querySelectorAll('.quick-start-btn.active').forEach(function(b){ b.classList.remove('active'); });
+          }
+          dismiss();
+        });
+        actions.appendChild(undo);
+        box.appendChild(actions);
+      }
+      place(box);
+      // The cards below moved down: let a sticky card size itself again.
+      global.dispatchEvent(new Event('resize'));
+    }
+
+    if(LOAD){
+      var go = function(){ setTimeout(start, 0); };
+      // Every tool's scripts have run by DOMContentLoaded; nothing waits on images or ads.
+      if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+      else go();
+    }
+    /* The tool already open in this tab and an AI link pasted over it: only
+       the hash changes, so nothing would load. Load the page again on it. */
+    global.addEventListener('hashchange', function(){
+      if(readLoadHash(global.location)) global.location.reload();
+    });
+    return api;
+  }
+  global.SharedAgent = makeAgent();
 
   /* ══ Finance tool skeleton ═══════════════════════════════════════════════
      The behaviours every finance tool shares, so the same field behaves the

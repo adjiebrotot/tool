@@ -18,11 +18,15 @@
    - Dialogs: confirm() says yes; alert(), prompt() and window.open() do nothing.
    - Files: a file the tool saves (an a[download] it clicks) is saved only when the reader's own
      hand asked for it a moment ago (trying the tool, paused), never for the guide's pointer.
-   - Pointer capture works for the guide's own pointer. */
+   - Pointer capture works for the guide's own pointer.
+   - The AI card ("Use this tool with an AI assistant", .agent-card) is left out: it is not the
+     tool, and its height moves the inputs a guide's pointer was drawn against. <html> carries
+     the class abt-demo for that (shared.css). */
 (function () {
   'use strict';
   if (window.self === window.top || !/[?&]demo(?:&|$)/.test(location.search)) return;
   window.ABT_DEMO = true;
+  document.documentElement.classList.add('abt-demo');
   window['ga-disable-G-VYTV157ST0'] = true;
   (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;
 
