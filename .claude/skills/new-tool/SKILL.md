@@ -295,6 +295,9 @@ mode included, must be reachable that way: add the page to `PAGES` in `_ref/agen
 `<tool>/agent-notes.md` (Rent vs Own's is the worked example), register an adapter for state
 beyond plain fields, run `node _ref/agent-doc.mjs`, add kept links to `_ref/agent-links.json`
 and get `node _ref/agent-check.mjs <tool>` green. A tool whose solve is heavy honours `run=0`.
+`agent-doc` writes `<tool>/agent.txt` and the same text as a web page, `<tool>/agent.html`, for
+chatbots whose browser skips `.txt` files: add the `agent.html` to `sitemap.xml` after the tool's
+own entry, and after the deploy run `node _ref/agent-live-check.mjs <tool>`.
 
 For a multi-language tool (an `en` page and an `id/` page sharing one `script.js`), use a
 **language-agnostic namespace** (`'pisahvsgabung'`, not `'pisahvsgabung-en'`). `localStorage` is

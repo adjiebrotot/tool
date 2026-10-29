@@ -41,6 +41,11 @@
 //       in each page's card, the llms.txt section) carries AI_RULES verbatim, so no
 //       chatbot is told it may answer the question itself; and no generated text and no
 //       kept link uses the keys s, open or embed.
+//   A8. A READER THAT ONLY OPENS WEB PAGES FINDS IT TOO. Each page has an agent.html, a
+//       script-free web page with the agent.txt reference (AI_RULES verbatim in its
+//       pre.agent-rules), and the card in the page's own HTML links to it with a plain
+//       <a href>. Some chatbots' browsers open web pages but return nothing for a .txt.
+//       After a deploy, node _ref/agent-live-check.mjs checks the same on the live site.
 //   H.  THE LINK STEPS ASIDE. Once applied, the #load hash is gone from the address, and a
 //       reload keeps what the reader changed after it instead of applying the link again.
 //   N.  NO LINK, NO CHANGE. Without #load the page is as it was: no banner, an empty
@@ -69,7 +74,7 @@ const KEPT_FILE = join(ROOT, '_ref', 'agent-links.json');
 const KEPT = JSON.parse(readFileSync(KEPT_FILE, 'utf8'));
 const keptFor = P => KEPT.links.filter(k => k.page === P.url);
 
-const IDS = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'H', 'N'];
+const IDS = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'H', 'N'];
 const tally = Object.fromEntries(IDS.map(id => [id, { pass: 0, fail: 0 }]));
 function check(id, name, ok, detail) {
   console.log((ok ? '  PASS  ' : '✗ FAIL  ') + id + ' ' + name + (detail ? '  — ' + detail : ''));
@@ -371,6 +376,18 @@ check('A7', 'llms.txt section carries AI_RULES verbatim', !!llmsSec && llmsSec.i
   !llmsSec ? 'no agent section' : llmsSec.includes(AI_RULES) ? '' : 'lacks or alters it');
 check('A7', 'llms.txt section uses no key s, open or embed', forbiddenIn(llmsSec).length === 0, forbiddenIn(llmsSec).join(', '));
 
+/* ── A8: the reference as a web page, linked from the tool (files only) ───── */
+console.log('\n── A8 the reference as a web page ──');
+for (const P of pages) {
+  const page = read(P.page + '/agent.html');
+  const pres = [...(page || '').matchAll(/<pre class="agent-rules">([\s\S]*?)<\/pre>/g)].map(m => unescape(m[1]));
+  check('A8', `${P.page}/agent.html carries AI_RULES verbatim, with no script`, !!page && pres.length === 1 && pres[0] === AI_RULES && !/<script/i.test(page),
+    !page ? 'missing' : /<script/i.test(page) ? 'has a script' : pres.length !== 1 ? `${pres.length} pre.agent-rules` : pres[0] === AI_RULES ? '' : 'altered');
+  const sec = ((read(P.page + '/index.html') || '').match(SECTION_RE) || [''])[0];
+  const href = SITE + P.url + 'agent.html';
+  check('A8', `${P.page}/index.html card links to agent.html`, sec.includes(`<a href="${href}">`), sec ? 'no <a href> to ' + href : 'no agent section');
+}
+
 /* ── A6 bookkeeping: which pages solve ────────────────────────────────────── */
 const solvedSeen = new Map();   // page -> number of model links that solved
 
@@ -446,8 +463,9 @@ try {
         check('A7', `${P.page} card on the page shows AI_RULES verbatim`, live.card.rules === AI_RULES,
           live.card.rules === AI_RULES ? '' : live.card.rules == null ? 'no pre.agent-rules' : 'altered');
       }
-      const listed = new RegExp('^- .*: ' + (SITE + P.url + 'agent.txt').replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '$', 'm');
-      check('A1', `llms.txt lists ${P.url}agent.txt`, listed.test(llmsSec), '');
+      const re = s => s.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+      const listed = new RegExp('^- .*: ' + re(`${SITE + P.url}agent.html (plain text: ${SITE + P.url}agent.txt)`) + '$', 'm');
+      check('A1', `llms.txt lists ${P.url}agent.html and agent.txt`, listed.test(llmsSec), '');
     }
 
     /* ── A2 (and H, A6): every kept link ── */
@@ -646,8 +664,8 @@ try {
   /* ── A1/A2: the files themselves ── */
   const orphans = KEPT.links.filter(k => !PAGES.some(P => P.url === k.page)).map(k => `${k.page} "${k.name}"`);
   check('A2', 'every kept link names a page in PAGES', orphans.length === 0, list(orphans));
-  const listedUrls = [...llmsSec.matchAll(/^- .*: (\S+)agent\.txt$/gm)].map(m => m[1]);
-  const strays = listedUrls.filter(u => !PAGES.some(P => SITE + P.url === u) || !existsSync(join(ROOT, u.slice(SITE.length), 'agent.txt')));
+  const listedUrls = [...llmsSec.matchAll(/^- .*: (\S+)agent\.html \(plain text: \1agent\.txt\)$/gm)].map(m => m[1]);
+  const strays = listedUrls.filter(u => !PAGES.some(P => SITE + P.url === u) || !existsSync(join(ROOT, u.slice(SITE.length), 'agent.txt')) || !existsSync(join(ROOT, u.slice(SITE.length), 'agent.html')));
   check('A1', `llms.txt lists only pages with an agent.txt (${listedUrls.length})`, strays.length === 0, list(strays));
 } finally {
   await browser.close();
