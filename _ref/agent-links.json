@@ -2869,6 +2869,41 @@
    "model": true
   },
   {
+   "page": "/ed-uc-simulator/",
+   "name": "run=0: the PJM 5-bus Quick Start opens with no result, not even its pre-solved one, Run dispatch waiting",
+   "link": "#load&v=1&qs=pjm5&run=0&note=PJM%205-bus%20case,%20opened%20without%20a%20result",
+   "expect": {
+    "edMode": "edm"
+   },
+   "probe": {
+    "name": "PJM 5-bus",
+    "counts": {
+     "Bus": 5,
+     "Generator": 5
+    },
+    "runPending": true,
+    "resultShown": false
+   }
+  },
+  {
+   "page": "/ed-uc-simulator/",
+   "name": "run=0 with a part patched: the three-unit case in the relaxed commitment, a dearer coal start-up, opened with no result",
+   "link": "#load&v=1&qs=uc3&run=0&edMode=lin&why.edMode=The%20user%20wants%20a%20quick%20answer,%20so%20the%20relaxed%20commitment&el.Coal.start_up_cost=25000&why.el.Coal.start_up_cost=The%20user%20said%20a%20cold%20start%20of%20the%20coal%20unit%20costs%2025,000&note=Three-unit%20case,%20dearer%20coal%20start-up,%20opened%20without%20a%20result",
+   "expect": {
+    "edMode": "lin"
+   },
+   "probe": {
+    "el": {
+     "Coal": {
+      "c": "Generator",
+      "start_up_cost": 25000
+     }
+    },
+    "runPending": true,
+    "resultShown": false
+   }
+  },
+  {
    "page": "/capacity-expansion-planner/",
    "name": "docs example: Growing grid, a $50/t carbon price, solar at $900/kW, planned to 2040",
    "link": "#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040",

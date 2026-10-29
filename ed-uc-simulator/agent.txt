@@ -55,9 +55,9 @@ A reply that follows the rules:
    (el.Brighton.marginal_cost); its rating and every other part stay as in the Quick Start.
 3. Solve: the Quick Start's own: mode edm (edm is economic dispatch) over 1 d (d is days), with line
    limits and load shedding as the tool defaults them.
-https://tool.adjiebrotots.com/ed-uc-simulator/#load&v=1&qs=pjm5&el.Brighton.marginal_cost=40&why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh
+https://tool.adjiebrotots.com/ed-uc-simulator/#load&v=1&qs=pjm5&run=0&el.Brighton.marginal_cost=40&why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh
 ```
-https://tool.adjiebrotots.com/ed-uc-simulator/#load&v=1&qs=pjm5&el.Brighton.marginal_cost=40&why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh
+https://tool.adjiebrotots.com/ed-uc-simulator/#load&v=1&qs=pjm5&run=0&el.Brighton.marginal_cost=40&why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh
 ```
 Open the link to see the result.
 
@@ -183,6 +183,8 @@ Storage parameters: p_nom (MW, power rating, 0 to 100000), max_hours (hours of e
 Link parameters (an HVDC link): p_nom (MW, rating, 0 to 100000), efficiency (a fraction, 0.01 to 1, so 0.97 is 97%) and both (1 if it carries power either way, 0 for one way, from the first end).
 
 A line type, a part's symbol, a cost curve, an uploaded hourly series, adding or removing parts and rewiring are not patches: send the network in json.
+
+`run=0` opens the network without solving it: no result shows, Run dispatch stays lit and the reader presses it to see the answer. Always add it to a link for this tool, so the answer comes from the tool when the reader asks for it and never straight from the link. It holds for a Quick Start's pre-solved result too, so it works with or without el.<name>.<param> keys and json. Without it the network is solved as soon as the link opens.
 
 JSON
 `json=<network>` replaces the network with one of the user's own: the form the tool saves, which is how every Quick Start is written. Use it only for a network that differs structurally from the four Quick Starts (other buses, lines or devices); to change a value on one of them, patch it. A qs before it is replaced, but still sets the options, so pick the nearest one or send edMode and the horizon yourself. Write it compactly (no spaces or line breaks) and leave out every parameter that is at its default.

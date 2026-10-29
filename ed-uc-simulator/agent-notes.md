@@ -9,8 +9,10 @@ Two things are specific to this tool. The network is not a form: a Quick Start l
 link changes its parts by name (`el.<name>.<param>`, a family of keys the adapter reads in
 `script.js`) or replaces it whole (`json`). The names and units in both are the saved ones
 (`ed-core.js`: `ED.DEFAULTS`, `ED.SPEC`), the same as the tool's scenario files. The solve options
-and the horizon are ordinary fields. The tool always solves a link's network, so `run` has no
-effect here.
+and the horizon are ordinary fields. A solve can take seconds and the reader should ask for the
+answer, so every link carries `run=0`: it opens the network without a result (not even a
+pre-solved Quick Start's) and Run dispatch stays lit until the reader presses it. A link without
+`run` solves at once, as the tool does.
 
 ## Decides
 
@@ -81,6 +83,7 @@ Request: using tool.adjiebrotots.com/ed-uc-simulator, in the PJM 5-bus case, how
 
 Link:
 - qs=pjm5
+- run=0
 - el.Brighton.marginal_cost=40
 - why.el.Brighton.marginal_cost=The user's new marginal cost for Brighton, in $ per MWh
 - note=PJM 5-bus case, Brighton's marginal cost raised to $40/MWh
@@ -113,6 +116,8 @@ Storage parameters: p_nom (MW, power rating, 0 to 100000), max_hours (hours of e
 Link parameters (an HVDC link): p_nom (MW, rating, 0 to 100000), efficiency (a fraction, 0.01 to 1, so 0.97 is 97%) and both (1 if it carries power either way, 0 for one way, from the first end).
 
 A line type, a part's symbol, a cost curve, an uploaded hourly series, adding or removing parts and rewiring are not patches: send the network in json.
+
+`run=0` opens the network without solving it: no result shows, Run dispatch stays lit and the reader presses it to see the answer. Always add it to a link for this tool, so the answer comes from the tool when the reader asks for it and never straight from the link. It holds for a Quick Start's pre-solved result too, so it works with or without el.<name>.<param> keys and json. Without it the network is solved as soon as the link opens.
 
 ## Json
 

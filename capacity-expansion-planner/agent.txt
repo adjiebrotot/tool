@@ -56,9 +56,9 @@ A reply that follows the rules:
 3. Solar: the Solar PV technology's capital cost is set to $900 per kW (tech.solar.capex); its other
    figures stay as in the Quick Start.
 4. Horizon: the first year is 2,026, the last 2040, with a decision every 5 years.
-https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
+https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&run=0&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
 ```
-https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
+https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&run=0&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
 ```
 Open the link to see the result.
 
@@ -237,7 +237,7 @@ Solar and wind also take cf (capacity factor, the year's output over rating time
 
 `loadShape=<shape>` sets the demand through the day: sys (system day), res (residential), com (commercial), ind (industrial), respv (residential with rooftop solar), resev (residential with electric cars) or flat. It replaces whatever shape and edits the plan had. Leave it out to keep the Quick Start's own.
 
-`run=0` opens the plan without solving it. Add it when the plan is large (a long horizon with small steps, many technologies) or the user asks to look at the inputs first. Without it the plan is solved as soon as the link opens.
+`run=0` opens the plan without solving it. Always add it to a link for this tool, so the reader presses Run plan to see the result and the answer comes from the tool when they ask for it, never straight from the link. Without it the plan is solved as soon as the link opens.
 
 JSON
 `json=<plan>` replaces the technologies and the demand shape with ones of the user's own: the form the tool saves, which is how every Quick Start is written. Use it only for a grid whose technologies differ structurally from the four Quick Starts; to change a value on one of them, patch it. A qs before it is replaced, but still sets the demand, years, climate and carbon price, so pick the nearest one or send those fields yourself. Write it compactly (no spaces or line breaks) and leave out every value that is at its default.

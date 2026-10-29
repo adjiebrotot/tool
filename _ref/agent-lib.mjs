@@ -766,6 +766,12 @@ export function edProbe() {
     if (e.bus1 != null && byId[e.bus1]) o.bus1 = E.ED.nameOf(byId[e.bus1]);
     out.el[E.ED.nameOf(e)] = o;
   });
+  // Whether Run dispatch is waiting (a link with run=0): true only while the network is unsolved and nothing is solving it.
+  // While it waits, resultShown says whether a result is drawn anyway (a pre-solved Quick Start would be); it is left out
+  // otherwise, as a solve in flight makes it change from one read to the next.
+  const btn = document.getElementById('runBtn');
+  out.runPending = !!btn && btn.classList.contains('needs-run') && !btn.disabled;
+  if (out.runPending) out.resultShown = !!E.app.res || /\d/.test((document.getElementById('mCost') || {}).textContent || '');
   return out;
 }
 // ED/UC Simulator: true once the dispatch has solved this network and its results are drawn (the Run

@@ -472,6 +472,34 @@
   app.run = run;
   $('runBtn').addEventListener('click', function(){ run(); });
 
+  /* An AI link written with run=0 (SharedAgent) opens the network without solving it: the
+     reader presses Run dispatch, so the answer comes when they ask for it. That includes the
+     results a Quick Start has solved ahead of time and the ones kept from an earlier solve,
+     which would otherwise show at once. The hash is read here, before the loader takes it off
+     the address, and the hold ends once the link has been applied. With no such link nothing
+     is held and every network that is put on screen is solved, as ever. */
+  var holdRun = (function(){
+    if(!window.SharedAgent || !SharedAgent.link) return false;
+    var hold = false;
+    String(window.location.hash).replace(/^#/, '').split('&').forEach(function(part){
+      var eq = part.indexOf('='), k, v;
+      try {
+        k = decodeURIComponent(eq < 0 ? part : part.slice(0, eq)).trim().replace(/^amp;/, '');
+        v = eq < 0 ? '' : decodeURIComponent(part.slice(eq + 1));
+      } catch(e){ return; }
+      if(k === 'run') hold = /^\s*(0|false|no|off)\s*$/i.test(v);
+    });
+    return hold;
+  })();
+  if(holdRun) SharedAgent.done.then(function(){ holdRun = false; });
+  // A network has just been put on screen (a Quick Start, a file, a Share or AI link, or the first draw): solve it, unless the link held the run.
+  function opened(){
+    if(!holdRun) return run();
+    showResults();
+    updateStale();
+    return Promise.resolve(app.res);
+  }
+
   /* ── The hour ── */
   function syncHourRange(){
     var res = shownResults(), el = $('edHour');
@@ -1896,7 +1924,7 @@
     renderInspector();
     if(persist) persist.save();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){ b.classList.toggle('active', b.getAttribute('data-preset') === key); });
-    return run();
+    return opened();
   }
   Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn'), function(b){
     b.addEventListener('click', function(){ applyPreset(b.getAttribute('data-preset')); });
@@ -2168,7 +2196,7 @@
     app.fitPending = true;
     renderInspector();
     Array.prototype.forEach.call(document.querySelectorAll('.quick-start-btn.active'), function(b){ b.classList.remove('active'); });
-    return run();
+    return opened();
   }
   SharedScenario.mount('.quick-start-row', { tool: 'educ-simulator', persist: persist });
 
@@ -2178,7 +2206,8 @@
      form. Both work on that saved form (ED.compact, which the mini cache carries as
      __extra) and read it back through ED.load, so a value meets exactly the bounds
      any saved network does. Names and units are the saved ones (PyPSA's), as in json.
-     The options (mode, horizon, VoLL ...) are ordinary fields and need nothing here. */
+     The options (mode, horizon, VoLL ...) are ordinary fields and need nothing here.
+     run=0 is held by opened(), above. */
   if(window.SharedAgent) (function(){
     // What a link may change on each class: the saved name, how the banner says it and its unit
     // ($ stands for the currency symbol chosen). Draw-only values, the line type, the cost curve,
@@ -2389,7 +2418,7 @@
   try { performance.mark('ed-first-render'); } catch(e){}
   if(ED.Editor) ED.Editor(app);
   // An embed solves the scenario its link carries, once SharedShare has loaded it.
-  if(!EMBED) run();
+  if(!EMBED) opened();
   else loadTypes();
 
   // The guided tour (tour.js) points at the results, so a network that changed

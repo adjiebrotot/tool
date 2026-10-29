@@ -10,8 +10,9 @@ changes a technology by its visible name (`tech.<name>.<param>`, a family of key
 in `script.js`), changes the demand shape (`loadShape`) or replaces the plan whole (`json`). The
 names and units in all three are the saved ones (`cx-core.js`: `CX.DEFAULTS`, `CX.SPEC`), the same
 as the tool's scenario files. The demand, years, carbon price and the rest are ordinary fields.
-The solve is heavy, so `run=0` opens the plan without solving it: Run plan stays lit until the reader
-presses it. A link without `run` solves, as the tool does.
+The solve is heavy and the reader should ask for the answer, so every link carries `run=0`: it
+opens the plan without solving it, and Run plan stays lit until the reader presses it. A link
+without `run` solves, as the tool does.
 
 ## Decides
 
@@ -66,6 +67,7 @@ Request: using tool.adjiebrotots.com/capacity-expansion-planner, with a $50/t ca
 
 Link:
 - qs=grow
+- run=0
 - cxCarbon=50
 - why.cxCarbon=The user's carbon price, in $ per tonne of CO2, from the first year
 - tech.solar.capex=900
@@ -95,7 +97,7 @@ Solar and wind also take cf (capacity factor, the year's output over rating time
 
 `loadShape=<shape>` sets the demand through the day: sys (system day), res (residential), com (commercial), ind (industrial), respv (residential with rooftop solar), resev (residential with electric cars) or flat. It replaces whatever shape and edits the plan had. Leave it out to keep the Quick Start's own.
 
-`run=0` opens the plan without solving it. Add it when the plan is large (a long horizon with small steps, many technologies) or the user asks to look at the inputs first. Without it the plan is solved as soon as the link opens.
+`run=0` opens the plan without solving it. Always add it to a link for this tool, so the reader presses Run plan to see the result and the answer comes from the tool when they ask for it, never straight from the link. Without it the plan is solved as soon as the link opens.
 
 ## Json
 
