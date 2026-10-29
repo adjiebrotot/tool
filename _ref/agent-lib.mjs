@@ -93,7 +93,7 @@ export function buildLink(base, pairs) {
    solved      Engineering pages only, run IN the page: true once the tool has solved. It
                makes check A6 open each of the page's kept links marked "model": true (a
                whole custom model in json) and wait for it
-   reference   optional, run IN the page: generated reference sections for agent.txt, [{ title, lines }],
+   reference   optional, run IN the page (it may wait for the editor): generated reference sections for agent.txt, [{ title, lines }],
                printed last under "REFERENCE: <title>" (the builder's block types)
    virtual     a page with no (or too few) form fields of its own: compact keys that stand in
                as number boxes for the checks' hand edits and range tests, [{ key, min, max,
@@ -158,6 +158,9 @@ export const PAGES = [
     insertBefore: '<!-- AI-CARD -->', quickStarts: pfbQuickStarts, reference: pfbReference, probe: pfbProbe, solved: pfbSolved, families: ['blk.', 'graph.'],
     virtual: [{ key: 'blk.n1.connectTimeout', min: 10, max: 1000000, value: '120' }, { key: 'graph.dpi', min: 50, max: 600, value: '150' }],
     virtualRead: pfbVirtualRead, virtualWrite: pfbVirtualWrite },
+  // The form-based scripter: flat fields and one of six worked examples (qs, a sample name); its tables come with the example.
+  { page: 'powerfactory-scripter/legacy', url: '/powerfactory-scripter/legacy/', lang: 'en', notes: 'powerfactory-scripter/legacy/agent-notes.md',
+    insertBefore: '<!-- Sub-tool banner:', quickStarts: pflQuickStarts, probe: pflProbe },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -841,6 +844,7 @@ export function cxSolved() {
 // name the block it means. Read from the template files and the block registry, so it never goes stale. No "=" in the text: the
 // checks read key=value pairs out of these lines.
 export async function pfbQuickStarts() {
+  for (let i = 0; i < 200 && !(window.PFB && window.PFB.ready); i++) await new Promise(r => setTimeout(r, 100));
   const P = window.PFB;
   if (!P) return null;
   await Promise.all([P.canvasReady, P.runtimeReady, P.templatesReady]);
@@ -872,7 +876,8 @@ export async function pfbQuickStarts() {
   };
 }
 // The block types a json workflow is made of, from the registry: kind, wires and settings, in palette order.
-export function pfbReference() {
+export async function pfbReference() {
+  for (let i = 0; i < 200 && !(window.PFB && window.PFB.ready); i++) await new Promise(r => setTimeout(r, 100));
   const P = window.PFB;
   if (!P) return null;
   const R = P.registry;
@@ -938,6 +943,52 @@ export function pfbSolved() {
 // The checks type into the builder the way a reader would (window.__PFB_AGENT, js/ui/agent.js), once it has booted.
 export async function pfbVirtualRead(key) { await window.__PFB_AGENT.ready; return window.__PFB_AGENT.get(key); }
 export async function pfbVirtualWrite([key, value]) { await window.__PFB_AGENT.ready; window.__PFB_AGENT.set(key, value); }
+
+// PowerFactory Scripter (the form): each Quick Start is a sample configuration (samples/json-samples/<key>.json). The values are
+// the form fields it sets, as a link carries them; the tables come with the sample and are said in a line (no "=" in the text).
+export async function pflQuickStarts() {
+  const btns = Array.from(document.querySelectorAll('.quick-start-btn[data-preset]'));
+  if (!btns.length) return null;
+  const items = [], seen = new Set();
+  const text = v => String(v === undefined || v === null ? '' : v).replace(/[=\s]+/g, ' ').trim();
+  for (const b of btns) {
+    const key = b.getAttribute('data-preset');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const cfg = await fetch('samples/json-samples/' + key + '.json').then(r => r.json());
+    const I = cfg.initialisation || {}, O = cfg.optimisation || {}, C = cfg.contingencyMode || {}, A = cfg.additionalConfig || {}, M = cfg.customMode || {};
+    const values = {
+      'pf-username': I.username || '', 'output-dir': I.outputDir || '', 'problem-type': I.problemType, 'study-type': I.studyType,
+      'coding-style': I.codingStyle,
+      // loadConfig runs onStudyTypeChange, which sets a dynamic study type's usual stop time over the sample's own
+      tstop: I.studyType === 'dynamic_emt' ? '0.25' : I.studyType === 'dynamic_rms' ? '20' : String(I.tstop), 'scenario-file-path': M.scenarioFilePath || '',
+      'optim-sense': O.sense, 'optim-algorithm': O.algorithm, 'optim-max-iter': String(O.maxIterations),
+      'contingency-n': String(C.contingencyN || '1'), 'contingency-combine': !!C.combineTypes,
+      'iterate-study-cases': !!A.iterateStudyCases, 'iterate-operating-scenarios': !!A.iterateOperatingScenarios,
+      'use-progress-bar': A.useProgressBar !== false, 'open-pf-window': !!A.openPowerFactoryWindow,
+      'save-intermediate': !!A.saveIntermediateEnabled, 'save-interval-minutes': String(A.saveIntermediateMinutes || 30)
+    };
+    Object.keys(values).forEach(k => { if (values[k] === '') delete values[k]; });   // a field no sample fills in
+    const row = (n, bits) => text(n) + ' (' + bits.map(text).filter(Boolean).join(', ') + ')';
+    const range = iv => [iv.object_query, iv.variable, iv.lower !== '' && iv.lower != null ? iv.lower + ' to ' + iv.upper : '', iv.step ? 'step ' + iv.step : ''];
+    const parts = [];
+    if ((cfg.inputVariables || []).length && I.problemType !== 'contingency') parts.push('inputs ' + cfg.inputVariables.map(iv => row(iv.name, range(iv))).join('; '));
+    if (I.problemType === 'contingency') parts.push('outages ' + ((C.elementTypes || []).map(e => text(e.query)).filter(Boolean).join(', ') || 'all'));
+    parts.push('outputs ' + (cfg.outputVariables || []).map(ov => row(ov.name, [ov.object_query, ov.variable, ov.metric])).join('; '));
+    if (O.objectiveOutputName) parts.push('objective ' + text(O.sense) + ' ' + text(O.objectiveOutputName));
+    items.push({ key, title: (b.textContent || '').replace(/\s+/g, ' ').trim(), values, extra: parts.join('. '), extraLabel: 'Tables' });
+  }
+  return { groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each loads a worked example with its own input and output variables; the fields a link sets go on top of it.'] };
+}
+// The configuration on the form (the same one the mini cache keeps): the study and its input and output variables by name.
+export function pflProbe() {
+  const cfg = window.readConfig ? window.readConfig() : null;
+  if (!cfg) return {};
+  return { problemType: cfg.initialisation.problemType, studyType: cfg.initialisation.studyType,
+    inputs: cfg.inputVariables.map(iv => iv.name), outputs: cfg.outputVariables.map(ov => ov.name),
+    objective: cfg.optimisation.objectiveOutputName };
+}
 
 /* ── Static server and pages ──────────────────────────────────────────────── */
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm',

@@ -3194,6 +3194,113 @@
      }
     }
    }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "docs example: minimum system losses with differential evolution and 100 tries, as a notebook",
+   "link": "#load&v=1&qs=sample-02-minimum-system-losses&optim-algorithm=differential_evolution&why.optim-algorithm=The%20search%20method%20the%20user%20asked%20for&optim-max-iter=100&why.optim-max-iter=The%20user%20allows%20up%20to%20100%20tries&coding-style=notebook&why.coding-style=The%20user%20wants%20a%20notebook&note=Minimum%20system%20losses,%20differential%20evolution,%20notebook",
+   "expect": {
+    "optim-algorithm": "differential_evolution",
+    "optim-max-iter": "100",
+    "coding-style": "notebook"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "inputs": [
+     "G2_dispatch",
+     "G3_dispatch"
+    ],
+    "outputs": [
+     "total_losses",
+     "G1_dispatch"
+    ],
+    "objective": "total_losses"
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "N-1 sample set to N-2 pairs, on every study case, results in a named folder",
+   "link": "#load&v=1&qs=sample-04-n1-line-contingency&contingency-n=2&why.contingency-n=The%20user%20wants%20pairs%20of%20outages,%20N-2&iterate-study-cases=true&output-dir=D:/Studies/n2&why.output-dir=The%20folder%20the%20user%20named&note=N-2%20screening%20of%20the%20220%20kV%20lines%20on%20every%20study%20case",
+   "expect": {
+    "contingency-n": "2",
+    "iterate-study-cases": true,
+    "output-dir": "D:/Studies/n2"
+   },
+   "probe": {
+    "problemType": "contingency",
+    "outputs": [
+     "bus_voltage",
+     "loading"
+    ]
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "transmission loss factor sweep with a longer stop time, saved every 10 minutes, no progress bar",
+   "link": "#load&v=1&qs=sample-01-transmission-loss-factor&tstop=30&why.tstop=The%20user%20wants%20the%20sweep%20run%20with%2030%20seconds%20as%20its%20stop%20time&save-intermediate=true&save-interval-minutes=10&use-progress-bar=false&open-pf-window=true",
+   "expect": {
+    "tstop": "30",
+    "save-intermediate": true,
+    "save-interval-minutes": "10",
+    "use-progress-bar": false,
+    "open-pf-window": true
+   },
+   "probe": {
+    "problemType": "brute_force",
+    "inputs": [
+     "G2_dispatch",
+     "G3_dispatch"
+    ]
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "no Quick Start: an optimisation study with a local search, set field by field",
+   "link": "#load&v=1&problem-type=optimisation&study-type=dynamic_rms&tstop=5&optim-algorithm=scipy_powell&optim-max-iter=80&why.optim-max-iter=Enough%20tries%20for%20a%20local%20search",
+   "expect": {
+    "problem-type": "optimisation",
+    "study-type": "dynamic_rms",
+    "tstop": "5",
+    "optim-algorithm": "scipy_powell",
+    "optim-max-iter": "80"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "studyType": "dynamic_rms",
+    "inputs": [
+     "Q_gen"
+    ]
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "name": "a sample with no Quick Start button (as ?qs= takes it): harmonic filter optimisation, 40 tries",
+   "link": "#load&v=1&qs=sample-05-harmonic-filter-optimisation&optim-max-iter=40&note=Harmonic%20filter,%2040%20tries",
+   "expect": {
+    "optim-max-iter": "40"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "studyType": "harmonic",
+    "inputs": [
+     "filter_tuning_order",
+     "filter_rated_power"
+    ],
+    "objective": "THD_HVDC_bus"
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/legacy/",
+   "via": "/powerfactory-scripter/",
+   "name": "router: a link with no Builder key sent to powerfactory-scripter/ lands on the form",
+   "link": "#load&v=1&qs=sample-02-minimum-system-losses&optim-max-iter=90&why.optim-max-iter=Ninety%20tries%20are%20enough%20for%20two%20inputs",
+   "expect": {
+    "optim-max-iter": "90"
+   },
+   "probe": {
+    "problemType": "optimisation",
+    "objective": "total_losses"
+   }
   }
  ]
 }
