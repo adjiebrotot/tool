@@ -3172,6 +3172,28 @@
     }
    },
    "model": true
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "via": "/powerfactory-scripter/",
+   "name": "router: template and blk keys sent to powerfactory-scripter/ land on the builder",
+   "link": "#load&v=1&template=n-1&blk.n1.project=Nine-bus%20System&blk.n5.gens=true&why.blk.n5.gens=Generator%20outages%20too",
+   "expect": {},
+   "probe": {
+    "name": "N-1 screening",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Nine-bus System"
+      }
+     },
+     "n5": {
+      "s": {
+       "gens": true
+      }
+     }
+    }
+   }
   }
  ]
 }
