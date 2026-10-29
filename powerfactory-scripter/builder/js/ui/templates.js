@@ -98,7 +98,8 @@ export function mountTemplates(app) {
   // is cleared once read, so a reload keeps the reader's edits; work of the reader's own on the
   // canvas (from the mini cache) is only replaced after a confirm. tour.js holds its first-visit
   // start while window.__PFB_QS is set, so the tour does not load its demo over the example.
-  const linked = /(?:^#|&)qs=([a-z0-9][a-z0-9-]{0,40})(?:&|$)/.exec(location.hash || '');
+  // An AI assistant's #load link (agent.js) names its Quick Start with qs= too and loads it itself.
+  const linked = /^#load(?:[&=?/]|$)/.test(location.hash || '') ? null : /(?:^#|&)qs=([a-z0-9][a-z0-9-]{0,40})(?:&|$)/.exec(location.hash || '');
   if (linked) {
     const id = linked[1];
     window.__PFB_QS = id;

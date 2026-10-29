@@ -1,5 +1,5 @@
 {
- "_about": "Kept AI links: the #load links a chatbot writes from a page's agent.txt (SharedAgent in shared.js, _ref/ai-drive-plan.md). FROZEN like _ref/share-links.json: these links live on in people's chat histories, so add new ones and never change or remove one. A field renamed since is mapped by the tool (data-persist, or a migration in its load), never fixed here. Each link opens `page` with the fragment `link` and must hold `expect` (field key: the value as the input shows it) and, when given, `probe` (what the page's probe in _ref/agent-lib.mjs returns, matched in part; lists whole). `model`: true marks a whole custom model in json, which must also solve (A6). Checked by node _ref/agent-check.mjs.",
+ "_about": "Kept AI links: the #load links a chatbot writes from a page's agent.txt (SharedAgent in shared.js, _ref/ai-drive-plan.md). FROZEN like _ref/share-links.json: these links live on in people's chat histories, so add new ones and never change or remove one. A field renamed since is mapped by the tool (data-persist, or a migration in its load), never fixed here. Each link opens `page` with the fragment `link` and must hold `expect` (field key: the value as the input shows it) and, when given, `probe` (what the page's probe in _ref/agent-lib.mjs returns, matched in part; lists whole). `model`: true marks a whole custom model in json, which must also solve (A6). `via`: the address a link is opened at when it is not `page` itself (a router page that redirects, powerfactory-scripter/index.html); it must land on `page` and apply there. Checked by node _ref/agent-check.mjs.",
  "links": [
   {
    "page": "/rentvsownhouse/",
@@ -3029,6 +3029,145 @@
      "Battery": {
       "kind": "store",
       "hours": 4
+     }
+    }
+   },
+   "model": true
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "docs example: N-1 screening of the lines only, Nine-bus System, Excel tables",
+   "link": "#load&v=1&qs=n-1&blk.n1.project=Nine-bus%20System&why.blk.n1.project=The%20project%20the%20user%20named,%20as%20they%20wrote%20it&blk.n5.trafos=false&why.blk.n5.trafos=The%20user%20wants%20lines%20only,%20so%20transformers%20are%20not%20taken%20out&blk.n1.tableFmt=xlsx&why.blk.n1.tableFmt=The%20user%20wants%20the%20results%20as%20Excel%20files&note=N-1%20screening%20of%20the%20lines,%20Nine-bus%20System,%20Excel%20tables",
+   "expect": {},
+   "probe": {
+    "name": "N-1 screening",
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Nine-bus System",
+       "tableFmt": "xlsx"
+      }
+     },
+     "n5": {
+      "s": {
+       "lines": true,
+       "trafos": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "template (the router's name for qs) written after blk keys: a study case and a busbar name pattern",
+   "link": "#load&v=1&blk.n1.studyCase=Base%20Case&why.blk.n1.studyCase=The%20study%20case%20the%20user%20named&template=ldf-cases&blk.n5.el.name=B*&why.blk.n5.el.name=Only%20the%20busbars%20whose%20name%20starts%20with%20B,%20as%20the%20user%20asked&blk.n5.el.match=all&note=Load%20flow%20on%20every%20study%20case,%20busbars%20B*",
+   "expect": {},
+   "probe": {
+    "name": "Load flow on every study case",
+    "blocks": {
+     "n1": {
+      "s": {
+       "studyCase": "Base Case"
+      }
+     },
+     "n5": {
+      "s": {
+       "el": {
+        "cls": "ElmTerm",
+        "name": "B*",
+        "match": "all"
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "headroom: a wider dispatch range, a longer RMS run and a project",
+   "link": "#load&v=1&qs=headroom&blk.n3.from=150&blk.n3.to=350&why.blk.n3.to=The%20user%20wants%20dispatches%20up%20to%20350%20MW&blk.n3.step=25&blk.n8.tstop=30&why.blk.n8.tstop=A%20longer%20simulation%20so%20a%20slow%20recovery%20is%20seen&blk.n1.project=Grid%202030&note=Headroom%20study,%20150%20to%20350%20MW%20in%20steps%20of%2025",
+   "expect": {},
+   "probe": {
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Grid 2030"
+      }
+     },
+     "n3": {
+      "s": {
+       "from": 150,
+       "to": 350,
+       "step": 25
+      }
+     },
+     "n8": {
+      "s": {
+       "tstop": 30
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "frt: the Start block by blk.start, a 60 Hz grid run in the background",
+   "link": "#load&v=1&qs=frt&blk.start.fNominal=60&why.blk.start.fNominal=The%20user%20is%20on%20a%2060%20Hz%20grid&blk.start.runMode=engine&blk.start.connectTimeout=300&blk.start.studyCase=FRT%20Case",
+   "expect": {},
+   "probe": {
+    "blocks": {
+     "n1": {
+      "s": {
+       "fNominal": "60",
+       "runMode": "engine",
+       "connectTimeout": 300,
+       "studyCase": "FRT Case"
+      }
+     }
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "shc-buses: the report graph style at 300 dpi with the key on the right",
+   "link": "#load&v=1&qs=shc-buses&graph.template=report&graph.dpi=300&why.graph.dpi=Print%20quality%20for%20a%20report&graph.legend=right&graph.title_bold=false",
+   "expect": {},
+   "probe": {
+    "graph": {
+     "template": "report",
+     "dpi": 300,
+     "legend": "right",
+     "title_bold": false
+    }
+   }
+  },
+  {
+   "page": "/powerfactory-scripter/builder/",
+   "name": "json: a whole workflow (load flow, lowest busbar voltage into a table), then a study case patched",
+   "link": "#load&v=1&json=%7B%22name%22:%22Voltage%20screen%22,%22nodes%22:%5B%7B%22id%22:%22n1%22,%22type%22:%22start%22,%22s%22:%7B%22project%22:%22Nine-bus%20System%22%7D%7D,%7B%22id%22:%22n2%22,%22type%22:%22pf.ldf%22%7D,%7B%22id%22:%22n3%22,%22type%22:%22pf.get%22,%22label%22:%22Busbar%20voltage%22,%22s%22:%7B%22el%22:%7B%22cls%22:%22ElmTerm%22,%22name%22:%22*%22,%22match%22:%22all%22%7D,%22attr%22:%22m:u%22%7D%7D,%7B%22id%22:%22n4%22,%22type%22:%22out.table.add%22,%22s%22:%7B%22table%22:%22Voltage%22,%22cols%22:%5B%7B%22id%22:%22c1%22,%22name%22:%22Lowest%20voltage%20%28p.u.%29%22%7D,%7B%22id%22:%22c2%22,%22name%22:%22Lowest%20at%22%7D%5D%7D%7D,%7B%22id%22:%22n5%22,%22type%22:%22pf.cont.foreach%22,%22label%22:%22Outage%22,%22s%22:%7B%22lines%22:true,%22trafos%22:false%7D%7D%5D,%22edges%22:%5B%7B%22from%22:%22n1%22,%22out%22:%22next%22,%22to%22:%22n2%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n2%22,%22out%22:%22ok%22,%22to%22:%22n3%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22next%22,%22to%22:%22n4%22,%22in%22:%22in%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22min%22,%22to%22:%22n4%22,%22in%22:%22c1%22%7D,%7B%22from%22:%22n3%22,%22out%22:%22at_min%22,%22to%22:%22n4%22,%22in%22:%22c2%22%7D%5D%7D&blk.n1.studyCase=Base&note=Load%20flow%20and%20lowest%20busbar%20voltage",
+   "expect": {},
+   "probe": {
+    "name": "Voltage screen",
+    "counts": {
+     "blocks": 5,
+     "wires": 5
+    },
+    "blocks": {
+     "n1": {
+      "s": {
+       "project": "Nine-bus System",
+       "studyCase": "Base"
+      }
+     },
+     "n3": {
+      "label": "Busbar voltage",
+      "s": {
+       "attr": "m:u"
+      }
+     },
+     "n5": {
+      "type": "pf.cont.foreach",
+      "label": "Outage"
      }
     }
    },

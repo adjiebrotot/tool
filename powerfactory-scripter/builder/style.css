@@ -119,6 +119,17 @@ h1.pfb-title span { text-wrap: balance; }
 
 .pfb-alert.warning { position: absolute; z-index: 40; top: calc(var(--pfb-dock-top) + 4px); left: 50%; transform: translateX(-50%); width: min(560px, calc(100% - 24px)); margin: 0; }
 
+/* The banner of a link an AI assistant wrote (SharedAgent): over the canvas, under the action bar, above the panels. */
+.pfb-agent { position: absolute; z-index: 44; top: calc(var(--pfb-dock-top) + 4px); left: 50%; transform: translateX(-50%); width: min(640px, calc(100% - 24px)); max-height: calc(100% - var(--pfb-dock-top) - 56px); overflow: auto; pointer-events: none; border-radius: var(--radius-xl); }
+.pfb-agent:empty { display: none; }
+.pfb-agent > * { pointer-events: auto; }
+.pfb-agent .agent-banner { margin: 0; box-shadow: var(--shadow); }
+/* The same section the other tools fold on their page sits at the foot of the Quick start list, wider while it is open. */
+.pfb-qs .agent-card { margin: 4px 0 0; flex: 0 0 auto; align-self: stretch; min-width: 0; max-width: 100%; text-align: left; }
+.pfb-qs .agent-body { overflow-x: auto; }
+.pfb-qs .agent-sum { padding: 9px 12px; font-size: .82rem; }
+.pfb-qs:has(.agent-card[open]) { width: min(640px, calc(100% - 24px)); left: 12px !important; max-height: calc(100% - var(--pfb-dock-top) - 56px); overflow-y: auto; flex-wrap: nowrap; }
+
 /* ---- Docks: the Blocks panel (left) and Settings / Python / Problems (right) ---------------- */
 .pfb-dock {
   position: absolute; z-index: 20;

@@ -2,6 +2,10 @@
 // classic scripts). It only starts the editor (ui/main.js) and catches a failure to load it, so
 // a broken or blocked file shows a message instead of a dead page.
 
+// The AI-link adapter registers now, not when the editor has booted: SharedAgent (shared.js) starts
+// the moment the page's scripts have run and waits on the adapter's ready() for the editor.
+import './ui/agent.js';
+
 const msg = (text) => {
   const a = document.getElementById('pfbAlert');
   if (a) { a.textContent = text; a.classList.add('visible'); }

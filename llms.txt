@@ -65,6 +65,7 @@ Pages with an agent.txt:
 - Load Flow Simulator: https://tool.adjiebrotots.com/loadflow-simulator/agent.txt
 - ED/UC Simulator: https://tool.adjiebrotots.com/ed-uc-simulator/agent.txt
 - Capacity Expansion Planner: https://tool.adjiebrotots.com/capacity-expansion-planner/agent.txt
+- PowerFactory Workflow Builder: https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.txt
 <!-- agent:end -->
 
 ## Why these tools stand out

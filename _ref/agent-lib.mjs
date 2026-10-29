@@ -93,6 +93,8 @@ export function buildLink(base, pairs) {
    solved      Engineering pages only, run IN the page: true once the tool has solved. It
                makes check A6 open each of the page's kept links marked "model": true (a
                whole custom model in json) and wait for it
+   reference   optional, run IN the page: generated reference sections for agent.txt, [{ title, lines }],
+               printed last under "REFERENCE: <title>" (the builder's block types)
    virtual     a page with no (or too few) form fields of its own: compact keys that stand in
                as number boxes for the checks' hand edits and range tests, [{ key, min, max,
                value }], with virtualRead(key) and virtualWrite([key, value]) run IN the page
@@ -149,6 +151,13 @@ export const PAGES = [
   // The solve is heavy, so a link may hold it (run=0) and leave Run plan lit.
   { page: 'capacity-expansion-planner', url: '/capacity-expansion-planner/', lang: 'en', notes: 'capacity-expansion-planner/agent-notes.md',
     insertBefore: '<section class="layout">', quickStarts: cxQuickStarts, probe: cxProbe, solved: cxSolved, families: ['tech.'] },
+  // The workflow builder has no form fields: the workflow is one saved blob. A Quick Start (a worked example) is patched block by
+  // block (blk.<id>.<setting>), restyled (graph.<key>) or replaced whole in json; it writes its Python as soon as the workflow is in.
+  // Two compact keys stand in as number boxes for the checks' hand edits (virtual, see agent-check.mjs).
+  { page: 'powerfactory-scripter/builder', url: '/powerfactory-scripter/builder/', lang: 'en', notes: 'powerfactory-scripter/builder/agent-notes.md',
+    insertBefore: '<!-- AI-CARD -->', quickStarts: pfbQuickStarts, reference: pfbReference, probe: pfbProbe, solved: pfbSolved, families: ['blk.', 'graph.'],
+    virtual: [{ key: 'blk.n1.connectTimeout', min: 10, max: 1000000, value: '120' }, { key: 'graph.dpi', min: 50, max: 600, value: '150' }],
+    virtualRead: pfbVirtualRead, virtualWrite: pfbVirtualWrite },
 ];
 
 /* ── Probes (run in the page) ─────────────────────────────────────────────────
@@ -826,6 +835,109 @@ export function cxSolved() {
   if (!r || !r.ok || !a.solvedKey || !btn || btn.disabled || btn.classList.contains('needs-run') || !npv) return false;
   return a.solvedKey === X.solveKey() && /\d/.test(npv.textContent);
 }
+
+// PowerFactory Workflow Builder: each Quick Start is a worked example workflow (templates/index.json). The docs list its blocks
+// by id, name and kind, and what the example sets that its block kind does not by default, so a blk.<id>.<setting> patch can
+// name the block it means. Read from the template files and the block registry, so it never goes stale. No "=" in the text: the
+// checks read key=value pairs out of these lines.
+export async function pfbQuickStarts() {
+  const P = window.PFB;
+  if (!P) return null;
+  await Promise.all([P.canvasReady, P.runtimeReady, P.templatesReady]);
+  const R = P.registry, W = P.workflow, list = P.templates();
+  if (!list.length) return null;
+  const word = v => typeof v === 'boolean' ? (v ? 'yes' : 'no') : v === '' || v == null ? 'empty' : String(v).replace(/\s+/g, ' ').slice(0, 60);
+  const items = [];
+  for (const t of list) {
+    const text = await fetch('templates/' + t.file).then(r => r.text());
+    const wf = W.loadWorkflow(text).wf;
+    if (!wf) continue;
+    const parts = wf.nodes.filter(n => n.type !== 'note' && R.getBlock(n.type)).map(n => {
+      const def = R.getBlock(n.type), s = R.settingsOf(n), diff = [];
+      for (const st of def.settings) {
+        if (['list', 'schedule', 'file', 'code'].includes(st.kind)) continue;
+        const v = s[st.key], d = st.default === undefined ? '' : st.default;
+        if (st.kind === 'element') {
+          const e = Object.assign({ cls: '', name: '', match: 'one' }, d && typeof d === 'object' ? d : {});
+          ['name', 'cls', 'match'].forEach(k => { if (v[k] !== e[k]) diff.push(st.key + '.' + k + ' ' + word(v[k])); });
+        } else if (JSON.stringify(v) !== JSON.stringify(d)) diff.push(st.key + ' ' + word(v));
+      }
+      return n.id + ' "' + R.displayName(n).replace(/"/g, "'") + '" (' + n.type + ')' + (diff.length ? ' with ' + diff.join(', ') : '');
+    });
+    items.push({ key: t.id, title: t.title, values: {}, extra: parts.join('.\n    '), extraLabel: 'Blocks' });
+  }
+  return {
+    groups: [{ title: '', items }],
+    short: ['qs takes one of: ' + items.map(it => it.key).join(', ') + '. Each opens a worked example workflow. Change its blocks by id with blk.<id>.<setting> (agent.txt lists each one\'s blocks), or send a whole workflow in json.']
+  };
+}
+// The block types a json workflow is made of, from the registry: kind, wires and settings, in palette order.
+export function pfbReference() {
+  const P = window.PFB;
+  if (!P) return null;
+  const R = P.registry;
+  const num = n => String(+Number(n).toFixed(6));
+  const dflt = st => st.default === undefined || st.default === null || st.default === '' ? '' : ' default ' + (typeof st.default === 'boolean' ? (st.default ? 'yes' : 'no') : num2(st.default));
+  const num2 = v => typeof v === 'number' ? num(v) : String(v).replace(/\s+/g, ' ').slice(0, 40);
+  const setting = st => {
+    const label = st.key;
+    switch (st.kind) {
+      case 'number': return label + ' number' + (typeof st.min === 'number' && typeof st.max === 'number' ? ' (' + num(st.min) + ' to ' + num(st.max) + ')'
+        : typeof st.min === 'number' ? ' (at least ' + num(st.min) + ')' : typeof st.max === 'number' ? ' (at most ' + num(st.max) + ')' : '') + (st.unit ? ' in ' + st.unit : '') + dflt(st);
+      case 'bool': return label + ' yes or no' + dflt(st);
+      case 'select': return label + ' one of ' + R.optionPairs(st).map(o => o[0] === '' ? '(blank)' : o[0]).join(' | ') + dflt(st);
+      case 'element': return label + ' element with cls, name (a * matches anything) and match (one, first or all)' + (st.default && st.default.cls ? ', default cls ' + st.default.cls : '');
+      case 'list': return label + ' rows' + (st.columns && st.columns.length ? ' with id and ' + st.columns.map(c => c.key).join(', ') : '');
+      case 'schedule': return label + ' rows with id, t and v';
+      case 'code': return label + ' python (not taken from a link)';
+      case 'file': return null;
+      case 'attr': return label + ' attribute name such as c:loading' + dflt(st);
+      default: return label + (st.kind === 'textarea' ? ' text, one value per line' : ' text') + dflt(st);
+    }
+  };
+  const ports = ps => ps.map(p => p.id + ':' + p.type).join(', ');
+  const lines = [];
+  R.CATEGORIES.forEach(cat => {
+    const blocks = R.allBlocks().filter(b => b.cat === cat.id);
+    if (!blocks.length) return;
+    lines.push('', '[' + cat.title + ']');
+    blocks.forEach(def => {
+      const pt = R.portsOf({ type: def.type, s: {} });
+      const wires = [pt.flowIn ? 'flow in: in' : '', pt.flowOuts.length ? 'flow out: ' + pt.flowOuts.map(p => p.id).join(', ') : '',
+        pt.inputs.length ? 'data in: ' + ports(pt.inputs) : '', pt.outputs.length ? 'data out: ' + ports(pt.outputs) : ''].filter(Boolean);
+      // The description up to the end of a sentence that fits.
+      let desc = (def.desc || '').replace(/\s+/g, ' ').trim();
+      if (desc.length > 170) { const cut = desc.slice(0, 170), at = cut.lastIndexOf('. '); desc = at > 40 ? cut.slice(0, at + 1) : cut.replace(/\s+\S*$/, '') + '...'; }
+      lines.push(def.type + ': ' + def.title + '. ' + desc);
+      lines.push('  Wires' + (typeof def.ports === 'function' ? ' (with default settings; more follow the settings)' : '') + ': ' + (wires.join('; ') || 'none'));
+      const sets = (def.settings || []).map(setting).filter(Boolean);
+      if (sets.length) lines.push('  Settings: ' + sets.join('; '));
+    });
+  });
+  return [{ title: 'BLOCK TYPES', lines }];
+}
+// What the builder holds, for a kept link's "probe": the workflow on the canvas (without where its blocks sit), block by block.
+export function pfbProbe() {
+  const P = window.PFB;
+  if (!P) return {};
+  const o = P.workflow.serialize(P.store.get().wf), blocks = {};
+  o.nodes.forEach(n => { blocks[n.id] = { type: n.type, label: n.label, s: n.s }; });
+  return { name: o.name, counts: { blocks: o.nodes.length, wires: o.edges.length }, blocks, graph: o.graph || null };
+}
+// True once the workflow is on the canvas and the script for exactly that workflow is written (its last line holds the
+// workflow it was written from, so a script of an earlier workflow does not count).
+export function pfbSolved() {
+  const P = window.PFB;
+  if (!P || !P.ready) return false;
+  const s = P.store.get(), g = s.gen;
+  if (!g || typeof g.code !== 'string' || (g.problems || []).some(p => /could not write this workflow/.test(p.msg || ''))) return false;
+  const emb = P.workflow.extractFromPython(g.code), now = P.workflow.serialize(s.wf);
+  const key = o => JSON.stringify([o.name, o.nodes, o.edges]);
+  return !!emb && now.nodes.length > 1 && /^def main\b/m.test(g.code) && key(emb) === key(now);
+}
+// The checks type into the builder the way a reader would (window.__PFB_AGENT, js/ui/agent.js), once it has booted.
+export async function pfbVirtualRead(key) { await window.__PFB_AGENT.ready; return window.__PFB_AGENT.get(key); }
+export async function pfbVirtualWrite([key, value]) { await window.__PFB_AGENT.ready; window.__PFB_AGENT.set(key, value); }
 
 /* ── Static server and pages ──────────────────────────────────────────────── */
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm',
