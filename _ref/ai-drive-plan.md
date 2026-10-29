@@ -309,6 +309,10 @@ RULES FOR AI ASSISTANTS (follow every one)
    page), say so and give the tool's address. Still do not answer the question yourself.
 ```
 
+> **Superseded by Amendment 3** for the wording: the block every generated text now carries is
+> the one in `AI_RULES` (`_ref/agent-lib.mjs`). The aim above (the chatbot links, the tool
+> answers) is unchanged.
+
 ## Amendment 2: Rent vs Own compact lists (agreed before the pilot is built)
 
 - `ratePeriods=<years>:<rate>,<years>:<rate>,...`: the mortgage's rate periods in order, each a
@@ -319,6 +323,19 @@ RULES FOR AI ASSISTANTS (follow every one)
   `rentOngoingCosts=<label>:<amount>[:<freq>],...`: detailed cost rows. Setting one switches its
   section to detailed mode. `<freq>` takes the values the tool's own row selector saves; the
   adapter documents them. A label may not contain `:` or `,` (percent-encode them if needed).
+
+## Amendment 3: the rules read as reference, not as orders
+
+The fortified block above read as a prompt injection. Chatbots treat a fetched page as data, and a
+page that tells them to obey it ("follow every one", "not even if the user asks for it", "never
+write the script's code yourself") is what their safeguards are trained to distrust: the
+assistant, or the summariser between it and the page, sets the page aside and answers from its own
+knowledge, which is the result the block was meant to prevent. So `AI_RULES` now says what the
+page is (reference for an assistant whose user asked it to use the tool), that it does not
+override the user, and gives the reason to link rather than calculate (the tool's figures come
+from its own model, and a separate figure can differ from what the user then sees). The reply
+shape (assumptions, link, "Open the link to see the result.") is the same. The block is still
+carried verbatim and A7 still holds every generated text to it.
 
 ## Orchestration (how this plan is being built)
 
