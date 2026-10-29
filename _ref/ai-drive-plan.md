@@ -354,7 +354,7 @@ A resuming session reads this file, then `git log`, and picks up the first untic
 | 10 | Load Flow Simulator | 7 | done |
 | 11 | ED/UC Simulator | 7 | done |
 | 12 | Capacity Expansion Planner | 8 | done |
-| 13 | PowerFactory Scripter (builder, legacy, router) | 8 | |
+| 13 | PowerFactory Scripter (builder, legacy, router) | 8 | done |
 
 ## Per-tool agent brief (pieces 2 to 13)
 
