@@ -18,7 +18,7 @@ Access: Free, browser-based, no account required for the listed tools.
 <!-- agent:start -->
 ## Use a tool through an AI assistant (the #load link)
 
-An AI assistant can open a tool on the user's own scenario with one link, and the tool computes the answer in the user's browser. Each tool page carries a folded "Use this tool with an AI assistant" section, and the full reference for each page (every key, its range and default, the Quick Starts and an example) is in that page's agent.txt, listed below.
+An AI assistant can open a tool on the user's own scenario with one link, and the tool computes the answer in the user's browser. Each tool page carries a folded "Use this tool with an AI assistant" section, and the full reference for each page (every key, its range and default, the Quick Starts and an example) is in that page's agent.html (a web page) and agent.txt (the same text, plain), listed below.
 
 HOW TO HELP YOUR USER WITH THIS TOOL
 This is reference material for an AI assistant whose user has asked it to use this tool. It
@@ -49,26 +49,26 @@ https://tool.adjiebrotots.com/<tool>/#load&v=1&qs=<quick start>&<key>=<value>&..
 - Base, then overrides: the Quick Start (or the tool's defaults), then each key in the link. Anything not named keeps its base value, so send only what differs.
 - Long links are fine: everything after # stays in the browser. Give a long link both as a link and inside a code block.
 
-Pages with an agent.txt:
-- Rent vs Own: https://tool.adjiebrotots.com/rentvsownhouse/agent.txt
-- Rent vs Own (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/id/agent.txt
-- PPh 21: Pisah Harta vs Gabung Harta: https://tool.adjiebrotots.com/pisahvsgabung/agent.txt
-- PPh 21: Pisah Harta vs Gabung Harta (Indonesian page): https://tool.adjiebrotots.com/pisahvsgabung/id/agent.txt
-- Borrowing Capacity: https://tool.adjiebrotots.com/borrowingcapacity/agent.txt
-- Finance vs Cash Purchase: https://tool.adjiebrotots.com/financingvscash/agent.txt
-- Financial Freedom Calculator: https://tool.adjiebrotots.com/financialfreedom/agent.txt
-- Valuate Everything: https://tool.adjiebrotots.com/valuateeverything/agent.txt
-- Cost of Living Comparator: https://tool.adjiebrotots.com/costofliving-comparator/agent.txt
-- Cost of Living Comparator: Map View: https://tool.adjiebrotots.com/costofliving-comparator/map/agent.txt
-- Rent vs Own: Sensitivity Tool: https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/agent.txt
-- Sewa vs Beli: Analisis Sensitivitas (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.txt
-- DCA Scenario Explorer: https://tool.adjiebrotots.com/dcasimulator/agent.txt
-- Portfolio DCA Simulator: https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.txt
-- Load Flow Simulator: https://tool.adjiebrotots.com/loadflow-simulator/agent.txt
-- ED/UC Simulator: https://tool.adjiebrotots.com/ed-uc-simulator/agent.txt
-- Capacity Expansion Planner: https://tool.adjiebrotots.com/capacity-expansion-planner/agent.txt
-- PowerFactory Workflow Builder: https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.txt
-- PowerFactory Scripter: Legacy Form: https://tool.adjiebrotots.com/powerfactory-scripter/legacy/agent.txt
+Pages with an AI reference (web page, then plain text):
+- Rent vs Own: https://tool.adjiebrotots.com/rentvsownhouse/agent.html (plain text: https://tool.adjiebrotots.com/rentvsownhouse/agent.txt)
+- Rent vs Own (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/id/agent.html (plain text: https://tool.adjiebrotots.com/rentvsownhouse/id/agent.txt)
+- PPh 21: Pisah Harta vs Gabung Harta: https://tool.adjiebrotots.com/pisahvsgabung/agent.html (plain text: https://tool.adjiebrotots.com/pisahvsgabung/agent.txt)
+- PPh 21: Pisah Harta vs Gabung Harta (Indonesian page): https://tool.adjiebrotots.com/pisahvsgabung/id/agent.html (plain text: https://tool.adjiebrotots.com/pisahvsgabung/id/agent.txt)
+- Borrowing Capacity: https://tool.adjiebrotots.com/borrowingcapacity/agent.html (plain text: https://tool.adjiebrotots.com/borrowingcapacity/agent.txt)
+- Finance vs Cash Purchase: https://tool.adjiebrotots.com/financingvscash/agent.html (plain text: https://tool.adjiebrotots.com/financingvscash/agent.txt)
+- Financial Freedom Calculator: https://tool.adjiebrotots.com/financialfreedom/agent.html (plain text: https://tool.adjiebrotots.com/financialfreedom/agent.txt)
+- Valuate Everything: https://tool.adjiebrotots.com/valuateeverything/agent.html (plain text: https://tool.adjiebrotots.com/valuateeverything/agent.txt)
+- Cost of Living Comparator: https://tool.adjiebrotots.com/costofliving-comparator/agent.html (plain text: https://tool.adjiebrotots.com/costofliving-comparator/agent.txt)
+- Cost of Living Comparator: Map View: https://tool.adjiebrotots.com/costofliving-comparator/map/agent.html (plain text: https://tool.adjiebrotots.com/costofliving-comparator/map/agent.txt)
+- Rent vs Own: Sensitivity Tool: https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/agent.html (plain text: https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/agent.txt)
+- Sewa vs Beli: Analisis Sensitivitas (Indonesian page): https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.html (plain text: https://tool.adjiebrotots.com/rentvsownhouse/sensitivity/id/agent.txt)
+- DCA Scenario Explorer: https://tool.adjiebrotots.com/dcasimulator/agent.html (plain text: https://tool.adjiebrotots.com/dcasimulator/agent.txt)
+- Portfolio DCA Simulator: https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.html (plain text: https://tool.adjiebrotots.com/dcasimulator/portfolio/agent.txt)
+- Load Flow Simulator: https://tool.adjiebrotots.com/loadflow-simulator/agent.html (plain text: https://tool.adjiebrotots.com/loadflow-simulator/agent.txt)
+- ED/UC Simulator: https://tool.adjiebrotots.com/ed-uc-simulator/agent.html (plain text: https://tool.adjiebrotots.com/ed-uc-simulator/agent.txt)
+- Capacity Expansion Planner: https://tool.adjiebrotots.com/capacity-expansion-planner/agent.html (plain text: https://tool.adjiebrotots.com/capacity-expansion-planner/agent.txt)
+- PowerFactory Workflow Builder: https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.html (plain text: https://tool.adjiebrotots.com/powerfactory-scripter/builder/agent.txt)
+- PowerFactory Scripter: Legacy Form: https://tool.adjiebrotots.com/powerfactory-scripter/legacy/agent.html (plain text: https://tool.adjiebrotots.com/powerfactory-scripter/legacy/agent.txt)
 <!-- agent:end -->
 
 ## Why these tools stand out
