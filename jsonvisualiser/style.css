@@ -43,11 +43,7 @@ a{color:inherit;text-decoration:none}
 
 /* ─── LAYOUT ────────────────────────────────────────────────────────────────── */
 .container{max-width:1440px;margin:0 auto;padding:20px 24px}
-.layout{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;margin-top:16px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}}
 
-/* ─── CARD ──────────────────────────────────────────────────────────────────── */
-.card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
 
 /* ─── HEADER ────────────────────────────────────────────────────────────────── */
 .header{padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -62,24 +58,28 @@ a{color:inherit;text-decoration:none}
 /* Look (fill, ink outline, sticker, hover lift) comes from shared.css, as on
    every other tool; only the layout is set here. */
 .btn-primary,.btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn-full{width:100%;margin-top:8px}
-.btn-secondary.btn-full{margin-top:12px}
-/* Clearing the loaded JSON: the bin, boxed like the buttons beside it; red
-   only on hover, because it throws the document away. */
-.btn-clear{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:44px;color:var(--muted)}
-.btn-clear .ico{width:16px;height:16px}
-.btn-clear:hover{border-color:var(--negative-em);color:var(--negative-em)}
-.toggle-row{display:flex;align-items:center;gap:10px;padding:6px 0;}
-.toggle-label{font-weight:600;font-size:.85rem;flex:1;}
+.btn-full{width:100%;margin-top:10px}
+.btn-full:first-child{margin-top:0}
+/* Clearing the loaded JSON: the bare bin at the end of its row. */
+.btn-clear{margin-left:auto}
+/* Toggle rows in a group are ruled by shared.css; only the row's layout is here. */
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+.toggle-label{font-weight:700;font-size:.9rem;flex:1}
+
+/* QUICK START ROW (the sample): the row's chrome, as on the other tools. */
+.quick-start-row{display:flex;align-items:center;gap:6px 10px;padding:10px 16px 12px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.quick-start-label .tico{width:1.05em;height:1.05em}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;flex-basis:100%}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast);white-space:nowrap;font-family:inherit}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
 
 /* ─── SIDEBAR ───────────────────────────────────────────────────────────────── */
-.sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:16px;align-self:start;overflow:hidden}
-.sidebar-section{padding:16px 18px}
-.sidebar-section + .sidebar-section{border-top:1px solid var(--border)}
-.section-title{font-size:.8125rem;color:var(--muted);font-weight:700;margin:0 0 12px}
-.field-group{margin-bottom:14px}
-.field-group:last-child{margin-bottom:0}
-.field-group label{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
+/* The card, tabs-less panel, groups and rows are shared.css's. Only the three
+   ways of loading a file are here. */
+.fg-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fg-actions .btn-secondary{flex:1 1 auto}
+.fg-actions .btn-bare{flex:0 0 auto}
 .load-method{margin-bottom:14px}
 .load-method:last-child{margin-bottom:0}
 .load-method-header{display:none;width:100%;align-items:center;justify-content:space-between;gap:10px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font:inherit;font-size:.88rem;font-weight:700;text-align:left;cursor:pointer;transition:border-color 150ms,background 150ms}
@@ -93,12 +93,14 @@ a{color:inherit;text-decoration:none}
 .load-inputs.has-selection .or-divider{display:none}
 .load-inputs.has-selection .load-method:not(.active) .method-body{display:none}
 .load-inputs.has-selection .load-method.active .method-body{margin-top:10px}
+.method-body>.field-label{margin-bottom:6px}
 
 /* ─── INPUTS ────────────────────────────────────────────────────────────────── */
-input[type=text],input[type=url],textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color 150ms}
-input[type=text]:focus,input[type=url]:focus,textarea:focus{border-color:var(--accent)}
-input::placeholder,textarea::placeholder{color:var(--muted)}
-textarea{min-height:120px;resize:vertical;line-height:1.45}
+/* Sidebar fields wear shared.css's .txt-input; the pasted text is monospace. */
+#jsonTextInput{font-family:'DM Mono',monospace;font-size:.85rem;min-height:120px;resize:vertical;line-height:1.45;margin-bottom:0}
+.main-panel input[type=text],.main-panel textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.85rem;outline:none;transition:border-color 150ms}
+.main-panel input[type=text]:focus,.main-panel textarea:focus{border-color:var(--accent)}
+.main-panel input::placeholder,.main-panel textarea::placeholder{color:var(--muted)}
 
 /* ─── DROP ZONE ─────────────────────────────────────────────────────────────── */
 .drop-zone{border:2px dashed var(--border-strong);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:color 200ms,background-color 200ms,border-color 200ms,box-shadow 200ms,opacity 200ms,transform 200ms,fill 200ms,stroke 200ms;background:var(--input-bg)}
@@ -120,7 +122,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.45}
 
 /* ─── STATUS MESSAGES ───────────────────────────────────────────────────────── */
 .status-msg{padding:10px 14px;border-radius:10px;font-size:.85rem;font-weight:500;display:none;overflow-wrap:break-word;word-break:break-word;min-width:0}
-.status-msg.visible{display:block;margin-top:12px}
+.status-msg.visible{display:block;margin-top:10px}
 .status-success{background:var(--success-bg);color:var(--success-text)}
 .status-error{background:var(--error-bg);color:var(--error-text)}
 .status-loading{background:var(--info-bg);color:var(--info-text)}
@@ -129,13 +131,6 @@ textarea{min-height:120px;resize:vertical;line-height:1.45}
 .info-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.82rem;min-width:0}
 .info-label{color:var(--muted);font-weight:600;white-space:nowrap}
 .info-value{font-family:'DM Mono',monospace;font-size:.80rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-
-/* ─── CONTROLS ──────────────────────────────────────────────────────────────── */
-.controls-row{display:flex;gap:8px;flex-wrap:wrap}
-.download-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-/* Three buttons share the sidebar's width: a little less side padding keeps
-   each label on one line. */
-.controls-row .btn-secondary,.download-row .btn-secondary{padding-left:12px;padding-right:12px;white-space:nowrap}
 
 /* ─── MAIN PANEL ────────────────────────────────────────────────────────────── */
 .main-panel{overflow:hidden;min-height:400px;display:flex;flex-direction:column;min-width:0}
@@ -266,8 +261,3 @@ body.dark .tj-node.expandable:hover{background:rgba(141,187,255,0.08)}
 .loading-overlay.visible{display:flex}
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 .loading-text{color:var(--muted);font-size:.9rem}
-
-/* ─── RESPONSIVE ────────────────────────────────────────────────────────────── */
-@media(max-width:900px){
-  .sidebar{position:static;max-height:none}
-}

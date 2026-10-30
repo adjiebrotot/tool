@@ -126,10 +126,13 @@
   <div class="layout">
 
     <!-- ── SIDEBAR ──────────────────────────────────── -->
-    <div class="sidebar">
-
-      <!-- Control panel tabs -->
-      <div class="card" style="overflow:hidden">
+    <aside class="controls card">
+    <div class="quick-start-row">
+      <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span>Quick Start</span></span><span class="tip-icon" data-tip="Loads a sample dataset so you can see how the tool works.">?</span>
+      <div class="quick-start-btns">
+        <button class="quick-start-btn" id="sampleBtn" type="button">Sample dataset</button>
+      </div>
+    </div>
         <div class="ctrl-scroll">
         <div class="ctrl-tabs">
           <button class="ctrl-tab active" data-tab="data"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4" width="17.6" height="16" rx="2.2"/><path d="M3.2 9.4h17.6"/><path d="M9.3 9.4V20M15.1 9.4V20"/></svg> Data</button>
@@ -149,11 +152,10 @@
                 <div class="upload-sub">CSV, Excel (.xlsx .xls), TSV</div>
                 <div class="file-name" id="fileName" data-no-abbr></div>
               </div>
-              <button class="btn-secondary btn-sample" id="sampleBtn" type="button">Load a sample dataset</button>
             </div>
             <div class="field-row">
               <div class="field-label"><span class="tip-wrap">Header row number</span></div>
-              <input type="number" id="headerRow" value="1" min="1" max="50" style="width:90px" data-no-persist/>
+              <input class="num-input" type="number" id="headerRow" value="1" min="1" max="50" data-no-persist/>
             </div>
           </div>
         </div>
@@ -163,10 +165,10 @@
           <div class="field-group">
             <div class="group-title">Dimension</div>
             <div class="fg-body">
-              <div class="dim-btns">
-                <button class="dim-btn active" data-dim="2">2D</button>
-                <button class="dim-btn" data-dim="3">3D</button>
-                <button class="dim-btn" data-dim="4">4D</button>
+              <div class="seg-group seg-fill">
+                <button type="button" class="seg-btn dim-btn active" data-dim="2">2D</button>
+                <button type="button" class="seg-btn dim-btn" data-dim="3">3D</button>
+                <button type="button" class="seg-btn dim-btn" data-dim="4">4D</button>
               </div>
               <div class="help" id="dimHelp">Line graph: X axis + one or more Y series</div>
             </div>
@@ -183,57 +185,136 @@
         <!-- STYLE TAB -->
         <div class="ctrl-panel" id="tab-style">
           <div class="field-group">
-            <div class="group-title">Chart</div>
+            <div class="group-title">Start from a template</div>
             <div class="field-row">
-              <div class="field-label">Chart title</div>
-              <input type="text" id="chartTitle" placeholder="My Chart"/>
+              <div class="field-label"><span class="tip-wrap">Template <i class="tip-icon" id="gTemplateTip" data-tip="" data-tip-options>?</i></span></div>
+              <select class="sel-input" id="gTemplate" data-no-persist>
+                <option value="brotools">Adjie Brotools</option>
+                <option value="brotools-night">Adjie Brotools, night</option>
+                <option value="minimal">Minimal</option>
+                <option value="report">Report</option>
+                <option value="slides">Presentation</option>
+                <option value="custom">Custom</option>
+              </select>
             </div>
           </div>
 
-          <!-- 2D series colours -->
-          <div class="field-group" id="seriesColourSection" style="display:none">
-            <div class="group-title">Series colours</div>
-            <div class="fg-body">
-              <div class="color-series-list" id="colorSeriesList" data-no-abbr>
-                <div class="empty-note">Select Y columns in Axes tab first.</div>
+          <div class="field-group">
+            <div class="group-title">Colours</div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Background <span class="tip-icon" data-tip="<ul><li><strong>Page:</strong> the chart sits on the light or dark page.</li><li><strong>White:</strong> a white sheet, as printed.</li><li><strong>Dark:</strong> a dark sheet for dark slides.</li></ul>">?</span></span></div>
+              <select class="sel-input" id="gBg"><option value="auto">Page</option><option value="white">White</option><option value="dark">Dark</option></select>
+            </div>
+            <!-- 2D series colours -->
+            <div class="fg-sub" id="seriesColourSection" style="display:none">
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Palette <span class="tip-icon" data-tip="The starting colour of each series. Picking a palette resets the colours below.">?</span></span></div>
+              <select class="sel-input" id="gPalette"><option value="brotools">Adjie Brotools</option><option value="tableau">Tableau 10</option><option value="okabe">Colour-blind safe</option><option value="vivid">Vivid</option></select>
+            </div>
+              <div class="fg-body">
+                <div class="color-series-list" id="colorSeriesList" data-no-abbr>
+                  <div class="empty-note">Select Y columns in Axes tab first.</div>
+                </div>
+              </div>
+            </div>
+            <!-- 3D/4D colourmap -->
+            <div class="fg-sub" id="heatmapSection" style="display:none">
+              <div class="fg-body">
+                <div class="colormap-grid" id="colormapGrid"></div>
               </div>
             </div>
           </div>
 
-          <!-- 3D/4D colourmap -->
-          <div class="field-group" id="heatmapSection" style="display:none">
-            <div class="group-title">Colour map</div>
-            <div class="fg-body">
-              <div class="colormap-grid" id="colormapGrid"></div>
+          <div class="field-group">
+            <div class="group-title">Text</div>
+            <div class="field-row">
+              <div class="field-label">Chart title</div>
+              <input class="txt-input" type="text" id="chartTitle" placeholder="My Chart"/>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Font</span></div>
+              <select class="sel-input" id="gFont"><option value="dm">DM Sans</option><option value="arial">Arial</option><option value="segoe">Segoe UI</option><option value="times">Times New Roman</option></select>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Text size</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" type="number" id="gFS" value="12" min="8" max="28" step="1"/><span class="suffix">px</span></div>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Title size</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" type="number" id="gTS" value="16" min="10" max="40" step="1"/><span class="suffix">px</span></div>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Title position</span></div>
+              <select class="sel-input" id="gTA"><option value="center">Centre</option><option value="left">Left</option></select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="group-title">Axes and grid</div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Grid lines <span class="tip-icon" data-tip="Across: a line at each value up the Y axis. A 3D chart takes Both ways or None.">?</span></span></div>
+              <select class="sel-input" id="gGrid"><option value="both">Both ways</option><option value="y">Across only</option><option value="none">None</option></select>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Grid line style</span></div>
+              <select class="sel-input" id="gGridStyle"><option value="solid">Solid</option><option value="dash">Dashed</option><option value="dot">Dotted</option></select>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Frame <span class="tip-icon" data-tip="<ul><li><strong>Soft:</strong> a pale line in the grid colour.</li><li><strong>Bottom and left:</strong> a solid line on those two sides.</li><li><strong>Box:</strong> a solid line all round.</li></ul>On a 2D plot.">?</span></span></div>
+              <select class="sel-input" id="gFrame"><option value="none">Soft</option><option value="bottom">Bottom and left</option><option value="box">Box</option></select>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Tick marks <span class="tip-icon" data-tip="On a 2D plot.">?</span></span></div>
+              <select class="sel-input" id="gTicks"><option value="none">None</option><option value="outside">Outside</option><option value="inside">Inside</option></select>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="group-title">Lines and key</div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Line width</span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" type="number" id="gLW" value="2.5" min="0.5" max="8" step="0.5"/><span class="suffix">px</span></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-label"><span class="tip-wrap">Points on lines <span class="tip-icon" data-tip="A dot at each value of a 2D line.">?</span></span></div>
+              <label class="toggle-switch"><input type="checkbox" id="gPoints" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Line patterns <span class="tip-icon" data-tip="Solid, dashed, dotted in turn tells the lines apart where colour is lost, such as a page printed in black and white.">?</span></span></div>
+              <select class="sel-input" id="gDash"><option value="solid">All solid</option><option value="vary">Vary</option></select>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Key <span class="tip-icon" data-tip="Where the key (legend) goes when a 2D chart has lines to name.">?</span></span></div>
+              <select class="sel-input" id="gLegend"><option value="right">Right</option><option value="top">Above</option><option value="bottom">Below</option><option value="inside">Inside</option><option value="none">Hidden</option></select>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-label"><span class="tip-wrap">Box around the key</span></div>
+              <label class="toggle-switch"><input type="checkbox" id="gLegendBox" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
             </div>
           </div>
 
           <div class="field-group">
             <div class="group-title">Marker (3D / 4D)</div>
-            <div class="fg-body">
-              <div class="marker-grid">
-                <div>
-                  <div class="field-label">Size</div>
-                  <input type="number" id="markerSize" value="6" min="2" max="20"/>
-                </div>
-                <div>
-                  <div class="field-label">Opacity</div>
-                  <input type="number" id="markerOpacity" value="0.85" min="0.1" max="1" step="0.05"/>
-                </div>
-              </div>
+            <div class="field-row">
+              <div class="field-label">Size</div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" type="number" id="markerSize" value="6" min="2" max="20"/><span class="suffix">px</span></div>
+            </div>
+            <div class="field-row">
+              <div class="field-label">Opacity</div>
+              <input class="num-input" type="number" id="markerOpacity" value="0.85" min="0.1" max="1" step="0.05"/>
             </div>
           </div>
         </div>
-        </div>
+        </div><!-- /ctrl-scroll -->
+
+      <!-- VISUALISE: pinned to the bottom of the card, outside the tabs -->
+      <div class="btn-row">
+        <p class="vis-note" id="visNote" aria-live="polite">Load a file or the sample dataset to start</p>
+        <button class="btn-primary btn-visualise" id="renderBtn" disabled aria-describedby="visNote">
+          ▶ Visualise
+        </button>
       </div>
-
-      <!-- VISUALISE BUTTON — always visible outside tabs -->
-      <button class="btn-visualise" id="renderBtn" disabled aria-describedby="visNote">
-        ▶ Visualise
-      </button>
-      <p class="vis-note" id="visNote" aria-live="polite">Load a file or the sample dataset to start</p>
-
-    </div><!-- /sidebar -->
+    </aside><!-- /sidebar -->
 
     <!-- ── CHART PANEL ───────────────────────────────── -->
     <div class="chart-panel card">

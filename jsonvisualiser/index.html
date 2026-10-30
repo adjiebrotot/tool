@@ -138,110 +138,114 @@
   <div class="layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="card">
+    <aside class="controls card">
+    <div class="quick-start-row">
+      <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span>Quick Start</span></span><span class="tip-icon" data-tip="Loads a sample JSON document so you can see how the tool works.">?</span>
+      <div class="quick-start-btns">
+        <button class="quick-start-btn" id="sampleBtn" type="button">Sample JSON</button>
+      </div>
+    </div>
+      <div class="ctrl-scroll">
+      <div class="ctrl-panel active" id="tab-load">
 
-        <!-- INPUT SECTION -->
-        <div class="sidebar-section">
-          <div class="section-title">Load JSON</div>
+        <!-- LOAD -->
+        <div class="field-group">
+          <div class="group-title">Load JSON</div>
+          <div class="fg-body">
+            <div class="load-inputs" id="loadInputs">
+              <!-- Drop zone -->
+              <div class="load-method" data-load-method="file">
+                <button class="load-method-header" type="button" data-method-toggle="file">
+                  <span><span class="load-method-kicker">Method</span>Drop JSON file</span>
+                </button>
+                <div class="method-body">
+                  <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Open a JSON file">
+                    <span class="drop-zone-icon" data-icon="open"></span>
+                    <div class="drop-zone-text">
+                      Drop a JSON file here, or <strong id="browseBtn">click to browse</strong>
+                    </div>
+                  </div>
+                  <input type="file" id="fileInput" accept=".json,application/json,text/plain">
+                </div>
+              </div>
 
-          <div class="load-inputs" id="loadInputs">
-            <!-- Drop zone -->
-            <div class="load-method" data-load-method="file">
-              <button class="load-method-header" type="button" data-method-toggle="file">
-                <span><span class="load-method-kicker">Method</span>Drop JSON file</span>
-              </button>
-              <div class="method-body">
-                <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Open a JSON file">
-                  <span class="drop-zone-icon" data-icon="open"></span>
-                  <div class="drop-zone-text">
-                    Drop a JSON file here, or <strong id="browseBtn">click to browse</strong>
+              <div class="or-divider">or</div>
+
+              <!-- Direct JSON paste -->
+              <div class="load-method" data-load-method="paste">
+                <button class="load-method-header" type="button" data-method-toggle="paste">
+                  <span><span class="load-method-kicker">Method</span>Paste JSON text</span>
+                </button>
+                <div class="method-body">
+                  <div class="field-label"><label for="jsonTextInput">Paste JSON text</label></div>
+                  <textarea class="txt-input" id="jsonTextInput" placeholder='{&quot;example&quot;: true}' spellcheck="false"></textarea>
+                  <button class="btn-primary btn-full" id="loadTextBtn">Load JSON</button>
+                </div>
+              </div>
+
+              <div class="or-divider">or</div>
+
+              <!-- URL fetch -->
+              <div class="load-method" data-load-method="url">
+                <button class="load-method-header" type="button" data-method-toggle="url">
+                  <span><span class="load-method-kicker">Method</span>Fetch from URL</span>
+                </button>
+                <div class="method-body">
+                  <div class="field-label"><label for="urlInput">Fetch from URL</label></div>
+                  <div class="url-row">
+                    <input type="url" class="txt-input" id="urlInput" placeholder="https://example.com/data.json" data-no-persist>
+                    <button class="btn-primary" id="fetchBtn">Fetch</button>
                   </div>
                 </div>
-                <input type="file" id="fileInput" accept=".json,application/json,text/plain">
               </div>
             </div>
 
-            <div class="or-divider">or</div>
-
-            <!-- Direct JSON paste -->
-            <div class="load-method" data-load-method="paste">
-              <button class="load-method-header" type="button" data-method-toggle="paste">
-                <span><span class="load-method-kicker">Method</span>Paste JSON text</span>
-              </button>
-              <div class="method-body field-group">
-                <label for="jsonTextInput">Paste JSON text</label>
-                <textarea id="jsonTextInput" placeholder='{&quot;example&quot;: true}' spellcheck="false"></textarea>
-                <button class="btn-primary btn-full" id="loadTextBtn">Load JSON</button>
-              </div>
+            <!-- Status messages -->
+            <div class="status-msg status-loading" id="statusLoading">
+              <span id="statusLoadingText">Parsing JSON...</span>
             </div>
-
-            <div class="or-divider">or</div>
-
-            <!-- URL fetch -->
-            <div class="load-method" data-load-method="url">
-              <button class="load-method-header" type="button" data-method-toggle="url">
-                <span><span class="load-method-kicker">Method</span>Fetch from URL</span>
-              </button>
-              <div class="method-body field-group">
-                <label for="urlInput">Fetch from URL</label>
-                <div class="url-row">
-                  <input type="url" id="urlInput" placeholder="https://example.com/data.json" data-no-persist>
-                  <button class="btn-primary" id="fetchBtn">Fetch</button>
-                </div>
-              </div>
-            </div>
+            <div class="status-msg status-success" id="statusSuccess"></div>
+            <div class="status-msg status-error" id="statusError"></div>
           </div>
-
-          <button class="btn-secondary btn-full" id="sampleBtn" type="button">Load a sample JSON</button>
-
-          <!-- Status messages -->
-          <div class="status-msg status-loading" id="statusLoading">
-            <span id="statusLoadingText">Parsing JSON...</span>
-          </div>
-          <div class="status-msg status-success" id="statusSuccess"></div>
-          <div class="status-msg status-error" id="statusError"></div>
         </div>
 
         <!-- FILE INFO (shown after load) -->
-        <div class="sidebar-section" id="fileInfoSection" style="display:none">
-          <div class="section-title">File Info</div>
-          <div class="info-grid" id="fileInfoGrid" data-no-abbr></div>
+        <div class="field-group" id="fileInfoSection" style="display:none">
+          <div class="group-title">File info</div>
+          <div class="fg-body">
+            <div class="info-grid" id="fileInfoGrid" data-no-abbr></div>
+          </div>
         </div>
 
-      </div>
-
-      <!-- CONTROLS (shown after load) -->
-      <div class="card" id="controlsCard" style="display:none">
-        <div class="sidebar-section">
-          <div class="section-title">Controls <span class="tip-icon" data-tip="An SVG or PNG captures only the nodes expanded and visible right now, so expand what you want in the image first.">?</span></div>
-          <div class="controls-row">
-            <button class="btn-secondary" id="expandAllBtn" style="flex:1">Expand All</button>
-            <button class="btn-secondary" id="collapseAllBtn" style="flex:1">Collapse All</button>
-            <button class="btn-secondary btn-clear" id="clearBtn" data-icon="trash" title="Clear the loaded JSON" aria-label="Clear the loaded JSON"></button>
-          </div>
-          <div class="toggle-row" title="Show only one representative example per array to reveal the JSON structure without the repeated data.">
-            <span class="toggle-label">Schema Mode</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="schemaModeToggle"/>
-              <div class="toggle-track"><div class="toggle-knob"></div></div>
-            </label>
+        <!-- VIEW CONTROLS (shown after load) -->
+        <div class="field-group" id="controlsCard" style="display:none">
+          <div class="group-title">View <span class="tip-icon" data-tip="An SVG or PNG captures only the nodes expanded and visible right now, so expand what you want in the image first.">?</span></div>
+          <div class="fg-body">
+            <div class="fg-actions">
+              <button class="btn-secondary btn-sm" id="expandAllBtn" type="button">Expand All</button>
+              <button class="btn-secondary btn-sm" id="collapseAllBtn" type="button">Collapse All</button>
+              <button class="btn-bare is-delete btn-clear" id="clearBtn" type="button" data-icon="trash" title="Clear the loaded JSON" aria-label="Clear the loaded JSON"></button>
+            </div>
           </div>
           <div class="toggle-row">
-            <span class="toggle-label">Wrap Text</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="wrapTextToggle"/>
-              <div class="toggle-track"><div class="toggle-knob"></div></div>
-            </label>
+            <div class="toggle-label"><span class="tip-wrap">Schema mode <span class="tip-icon" data-tip="Shows one example per array, so the structure shows without the repeated data.">?</span></span></div>
+            <label class="toggle-switch"><input type="checkbox" id="schemaModeToggle"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
           </div>
-          <div class="download-row">
-            <button class="btn-secondary" id="downloadSvgBtn" style="flex:1" disabled>⬇ SVG</button>
-            <button class="btn-secondary" id="downloadPngBtn" style="flex:1" disabled>⬇ PNG</button>
-            <button class="btn-secondary" id="copyPngBtn" style="flex:0 0 auto;min-width:44px" disabled title="Copy PNG to clipboard">⧉</button>
+          <div class="toggle-row">
+            <div class="toggle-label">Wrap text</div>
+            <label class="toggle-switch"><input type="checkbox" id="wrapTextToggle"/><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+          </div>
+          <div class="fg-body">
+            <div class="fg-actions">
+              <button class="btn-secondary btn-sm" id="downloadSvgBtn" type="button" disabled>⬇ SVG</button>
+              <button class="btn-secondary btn-sm" id="downloadPngBtn" type="button" disabled>⬇ PNG</button>
+              <button class="btn-secondary btn-sm btn-icon" id="copyPngBtn" type="button" disabled title="Copy PNG to clipboard" aria-label="Copy PNG to clipboard">⧉</button>
+            </div>
           </div>
         </div>
-      </div>
 
+      </div>
+      </div><!-- /ctrl-scroll -->
     </aside><!-- /sidebar -->
 
     <!-- MAIN PANEL -->

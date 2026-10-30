@@ -1593,3 +1593,15 @@ $('downloadJsonBtn').addEventListener('click', () => {
    box and re-runs it when ready (large payloads simply exceed the quota and
    are skipped — persistence is best-effort). */
 if (window.Persist) Persist.init('jsonvisualiser', { onRestore: function(){} });
+
+/* The sidebar is the standard foldable control card. A first visit lands with
+   it open, because loading a file is the only way in; after that the reader's
+   own fold choice is kept by SharedCtrl. */
+function openCtrlFirstVisit() {
+  try {
+    if (window.SharedCtrl && localStorage.getItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, '').replace(/\/+$/, '/')) === null) SharedCtrl.open();
+  } catch (e) {}
+}
+// shared.js sets the card up on DOMContentLoaded here, so ask after that.
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openCtrlFirstVisit);
+else openCtrlFirstVisit();
