@@ -14,7 +14,6 @@ body.light {
 *{box-sizing:border-box;min-width:0}
 body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--text);background:var(--bg);transition:background .25s,color .25s;overflow-x:hidden}
 .container{max-width:1560px;margin:0 auto;padding:20px 24px}
-.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
 h1{margin:0 0 6px;font-size:1.65rem;font-weight:800;letter-spacing:-.02em}
 h2{margin:0 0 10px;font-size:1.1rem;font-weight:700}
 p,.muted{color:var(--muted);margin:0}
@@ -24,39 +23,31 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 .header{padding:18px 26px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .header-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
 
-/* ─── LAYOUT ─── */
-.layout{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start}
-
 /* ─── SIDEBAR ─── */
-.controls{padding:0;position:sticky;top:14px;align-self:start;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100vh - 28px)}
-/* Already locked: the tab bar is a fixed row of the .controls column, so the
-   panel under it scrolls on its own. */
-.ctrl-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;position:static}
-.ctrl-tab{flex:1;padding:10px 4px;text-align:center;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit;white-space:nowrap}
-.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
-.ctrl-panel{display:none;padding:12px 14px 14px;flex-direction:column;gap:10px;overflow-y:auto;flex:1;min-height:0}
-.ctrl-panel.active{display:flex}
-#tab-data{overflow-y:hidden;padding-bottom:6px}
+/* The card, tabs, panels, groups, rows, sliders and toggles are shared.css's. */
+.data-sub-tabs{margin-bottom:14px}
+.data-sub-panel{display:none}
+.data-sub-panel.active{display:block}
+.seg-group>.seg-btn{display:inline-flex;align-items:center;justify-content:center}
+.seg-btn input{display:none}
+.seg-group>.seg-btn:has(input:checked){background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm)}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+.toggle-label{font-weight:700;font-size:.9rem;flex:1}
+.btn-wide{width:100%;margin-top:10px}
+.btn-row .btn-secondary{flex:1 1 0}
+.btn-row .btn-secondary:disabled{opacity:.45}
 
 /* ─── QUICK START ─── */
-.quick-start-row{display:flex;align-items:center;gap:6px 10px;padding:10px 14px 12px;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0}
+.quick-start-row{display:flex;align-items:center;gap:6px 10px;padding:10px 16px 12px;border-bottom:1px solid var(--border);flex-wrap:wrap}
 .quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
 .quick-start-label .tico{width:1.05em;height:1.05em}
 .quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;flex-basis:100%}
-.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color .15s,background-color .15s,border-color .15s,box-shadow .15s,opacity .15s,transform .15s,fill .15s,stroke .15s;white-space:nowrap;font-family:inherit}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast);white-space:nowrap;font-family:inherit}
 .quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
 .quick-start-btn.active{border-color:var(--accent2);color:var(--text);background:rgba(143,205,189,.15)}
 
-/* ─── DATA SUB-TABS ─── */
-.data-sub-tabs{display:flex;width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px;gap:2px;flex-shrink:0}
-.data-sub-tab{flex:1;background:transparent;border:none;border-radius:7px;padding:7px 14px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),transform var(--motion-fast),fill var(--motion-fast),stroke var(--motion-fast);font-family:inherit;white-space:nowrap}
-.data-sub-tab.active{background:var(--accent-strong);color:var(--text-inv);box-shadow:var(--shadow-sm)}
-.data-sub-tab:hover:not(.active){color:var(--text)}
-.data-sub-panel{display:none;flex-direction:column;gap:8px;min-height:0;flex:1;overflow:hidden}
-.data-sub-panel.active{display:flex}
-
 /* ─── EDITOR TABLE ─── */
-.editor-table-wrap{overflow-y:auto;flex:1;min-height:0;border:1px solid var(--border);border-radius:8px}
+.editor-table-wrap{overflow-y:auto;max-height:340px;border:1px solid var(--border);border-radius:8px}
 .editor-table{width:100%;border-collapse:collapse;font-size:.8rem}
 .editor-table th{position:sticky;top:0;background:var(--panel-raised);padding:6px 7px;border-bottom:2px solid var(--border);z-index:1}
 .editor-table .th-amt{padding-right:5px}
@@ -80,45 +71,27 @@ code{font-family:'DM Mono',monospace;background:var(--input-bg);padding:1px 5px;
 .rem-badge{font-size:.7rem;color:var(--warning-text);background:var(--warning-bg);border-radius:999px;padding:1px 5px;white-space:nowrap;font-family:'DM Mono',monospace;display:none;margin-top:1px;text-align:right}
 
 /* ─── TEXTAREA TAB ─── */
-textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:10px 12px;resize:vertical;outline:none;transition:border-color 150ms;line-height:1.65;tab-size:2}
-textarea:focus{border-color:var(--accent)}
+#textInput{font-family:'DM Mono',monospace;font-size:.8rem;resize:vertical;line-height:1.65;tab-size:2}
+#textStatus:not(:empty),#csvStatus:not(:empty){margin-top:8px}
 .status-ok{color:var(--success-text);font-size:.78rem;font-weight:600}
 .status-err{color:var(--error-text);font-size:.78rem;font-weight:600}
 
 /* ─── CSV TAB ─── */
-.csv-drop{border:2px dashed var(--border);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;color:var(--muted)}
+.csv-drop{border:2px dashed var(--border);border-radius:10px;padding:24px 16px;text-align:center;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;color:var(--muted)}
 .csv-drop:hover,.csv-drop.dragover{border-color:var(--accent);color:var(--text);background:var(--input-bg)}
 .csv-icon{font-size:2rem;margin-bottom:5px}
 .csv-browse{color:var(--accent);cursor:pointer;text-decoration:underline}
 .help{color:var(--muted);font-size:.81rem;line-height:1.5}
 
 /* ─── STYLE TAB ─── */
-.sblock{padding:9px 0 11px;border-top:1px solid var(--border)}
-.sblock:first-child{border-top:none;padding-top:0}
-.shead{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:5px}
-.slabel{font-weight:700;font-size:.87rem}
-.sval{color:var(--value-highlight);font-weight:700;font-family:'DM Mono',monospace;font-size:.83rem;cursor:text;}
-.slider-val-edit{display:none;width:4.5em;background:transparent;border:none;border-bottom:1.5px solid var(--accent);color:var(--value-highlight);font-weight:700;font-size:.83rem;font-family:'DM Mono',monospace;text-align:right;outline:none;padding:0 1px;}
-input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;margin:0}
-.radio-grp{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
-.radio-opt{display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 10px;border-radius:999px;border:1px solid var(--border);font-size:.8rem;font-weight:600;color:var(--muted);transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;background:var(--input-bg);user-select:none}
-.radio-opt:has(input:checked){border-color:var(--accent);color:var(--accent);background:rgba(141,187,255,.08)}
-.radio-opt input{display:none}
-/* Look from dropdown.css; this only sizes it. */
-select.sel-in{width:100%;font-size:.86rem;padding:7px 10px;border-radius:var(--radius-sm);margin-top:4px}
+/* Slider values are click-to-edit: the field that replaces the number. */
+.slider-value{cursor:text}
+.slider-val-edit{display:none;width:4.5em;background:transparent;border:none;border-bottom:1.5px solid var(--accent);color:var(--accent);font-weight:700;font-size:.9rem;font-family:'DM Mono',monospace;text-align:right;outline:none;padding:0 1px}
+.add-row-btn{width:100%;margin-top:10px;border-style:dashed}
+.csv-drop{margin-bottom:0}
 
-/* ─── BUTTONS ─── */
-.btn-row{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
-.btn-sec{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-weight:700;font-size:.82rem;cursor:pointer;transition:border-color 150ms,transform 100ms;font-family:inherit;white-space:nowrap}
-.btn-sec:hover{border-color:var(--accent)}
-.btn-sec:active{transform:scale(.97)}
-.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:7px 13px;font-size:.83rem;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;white-space:nowrap;font-family:inherit}
-.btn-theme:hover{border-color:var(--accent);color:var(--text)}
-.btn-export{background:var(--input-bg);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-weight:600;font-size:.79rem;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit;white-space:nowrap}
+.btn-export{background:var(--input-bg);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-weight:600;font-size:.79rem;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn-export:hover{border-color:var(--accent);color:var(--text)}
-.btn-export:active{transform:scale(.97)}
-.add-row-btn{flex-shrink:0;padding:7px;background:var(--input-bg);border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit;text-align:center}
-.add-row-btn:hover{border-color:var(--accent);color:var(--accent)}
 /* Color cell (shared) */
 .color-cell{position:relative;display:flex;align-items:center}
 .row-color{width:26px;height:24px;border:1px solid var(--border);border-radius:5px;padding:2px;background:var(--input-bg);cursor:pointer;display:block}
@@ -126,15 +99,6 @@ select.sel-in{width:100%;font-size:.86rem;padding:7px 10px;border-radius:var(--r
 .color-clear .ico{width:10px;height:10px}
 .color-clear:hover{color:var(--accent-strong);border-color:var(--accent)}
 .color-cell.has-color .color-clear{display:flex}
-
-/* Toggle switch */
-.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.toggle-wrap{display:inline-flex;align-items:center;cursor:pointer;flex-shrink:0}
-.toggle-wrap input{display:none}
-.toggle-track{width:34px;height:19px;background:var(--border);border-radius:999px;position:relative;transition:background 200ms;flex-shrink:0}
-.toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform 200ms;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.toggle-wrap input:checked+.toggle-track{background:var(--accent)}
-.toggle-wrap input:checked+.toggle-track::after{transform:translateX(15px)}
 
 /* ─── MAIN CONTENT ─── */
 main{display:flex;flex-direction:column;gap:13px}
@@ -162,5 +126,5 @@ main{display:flex;flex-direction:column;gap:13px}
 .page-footer-info p:last-child{margin-bottom:0}
 
 /* ─── RESPONSIVE ─── */
-@media(max-width:1100px){.layout{grid-template-columns:1fr}.controls{position:static;max-height:none}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.container{padding:10px}.header{flex-direction:column;align-items:flex-start;padding:14px}.metrics{grid-template-columns:1fr 1fr}h1{font-size:1.25rem}.chart-head{flex-direction:column;align-items:flex-start}}

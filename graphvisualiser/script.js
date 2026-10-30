@@ -202,7 +202,7 @@ function buildAxesUI() {
   const row = (label, id, extra = '') => `
       <div class="field-row">
         <div class="field-label">${label}</div>
-        <select id="${id}"${extra}>${opts}</select>
+        <select class="sel-input" id="${id}"${extra}>${opts}</select>
       </div>`;
 
   if (S.dim === 2) {
@@ -341,7 +341,7 @@ function clearStale() {
 }
 // Every setting lives in the sidebar, so one listener covers them all. The
 // header row and file input re-parse, which marks stale through onDataLoaded.
-['input', 'change'].forEach(ev => document.querySelector('.sidebar').addEventListener(ev, e => {
+['input', 'change'].forEach(ev => document.querySelector('.layout > .controls').addEventListener(ev, e => {
   if (e.target.closest('#renderBtn')) return;
   markStale();
 }));
@@ -657,3 +657,15 @@ SharedShare.state({
     }, 0);
   })
 });
+
+/* The sidebar is the standard foldable control card. A first visit lands with
+   it open, because loading a file is the only way in; after that the reader's
+   own fold choice is kept by SharedCtrl. */
+function openCtrlFirstVisit() {
+  try {
+    if (window.SharedCtrl && localStorage.getItem('abt:ctrl:' + location.pathname.replace(/index\.html?$/, '').replace(/\/+$/, '/')) === null) SharedCtrl.open();
+  } catch (e) {}
+}
+// shared.js sets the card up on DOMContentLoaded here, so ask after that.
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openCtrlFirstVisit);
+else openCtrlFirstVisit();

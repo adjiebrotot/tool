@@ -23,71 +23,39 @@ body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-hei
 .header-left p{color:var(--muted);margin:0;font-size:.88rem}
 .header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
-/* LAYOUT */
-.layout{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
-/* The sidebar is capped to the viewport so the tab bar can stay pinned to the
-   top of the card while the panel below it scrolls (.ctrl-scroll in shared.css),
-   and the Visualise button stays reachable at the bottom. */
-.sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:16px;max-height:calc(100vh - 32px)}
-.sidebar>.card{display:flex;flex-direction:column;min-height:0}
+/* QUICK START ROW (the sample): the row's chrome, as on the other tools. */
+.quick-start-row{display:flex;align-items:center;gap:6px 10px;padding:10px 16px 12px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.quick-start-label{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:.82rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.quick-start-label .tico{width:1.05em;height:1.05em}
+.quick-start-btns{display:flex;gap:6px;flex-wrap:wrap;flex-basis:100%}
+.quick-start-btn{background:var(--input-bg);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--muted);padding:5px 11px;font-size:.78rem;font-weight:600;cursor:pointer;transition:color var(--motion-fast),background-color var(--motion-fast),border-color var(--motion-fast);white-space:nowrap;font-family:inherit}
+.quick-start-btn:hover{border-color:var(--accent);color:var(--text)}
 
-/* CARD */
-.card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
-
-/* CONTROL PANEL */
-.ctrl-tab{flex:1;padding:12px 8px;text-align:center;font-weight:700;font-size:.85rem;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit}
-.ctrl-tab.active{color:var(--text);border-bottom-color:var(--accent)}
-.ctrl-panel{display:none;padding:16px 18px 18px}
-.ctrl-panel.active{display:block}
-
-/* VISUALISE BUTTON — always visible below sidebar */
-.btn-visualise{width:100%;padding:13px 22px;background:var(--accent);color:var(--text-inv);border:none;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer;transition:opacity 150ms,transform 150ms;font-family:inherit;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(141,187,255,.2)}
-.btn-visualise:hover{opacity:.88}
-.btn-visualise:active{transform:scale(.97)}
-/* No data yet: a flat grey slab, not a faded blue one, so it cannot be
-   mistaken for a button that is merely pale. */
-.btn-visualise:disabled,.btn-visualise:disabled:hover{background:var(--input-bg);color:var(--muted);border:1.5px dashed var(--border);box-shadow:none;opacity:1;cursor:not-allowed;transform:none}
+/* VISUALISE: the button is the shared .btn-primary in the pinned .btn-row. */
+.btn-visualise{flex:1 1 100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-visualise .tico{width:1.15em;height:1.15em;vertical-align:-0.22em;margin-right:2px}
 
 /* The Visualise gate (the same contract as financialfreedom's Simulate).
    The chart is drawn on Visualise, not on every change, so the page has to say
    when what is on screen no longer matches the settings: the button gains a
    ring and a note, and a chart already drawn steps back until it is redrawn. */
-.vis-note{font-size:.78rem;font-weight:700;text-align:center;margin:-4px 0 0;color:var(--muted)}
+.vis-note{flex-basis:100%;font-size:.78rem;font-weight:700;text-align:center;margin:0;color:var(--muted)}
 .vis-note.is-stale{color:var(--accent2)}
-.btn-visualise.needs-run{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent2)}
+.btn-visualise.needs-run{outline:2px solid var(--accent2);outline-offset:2px}
 #plotDiv,.info-row{transition:opacity 150ms}
 body.is-stale #plotDiv,body.is-stale .info-row{opacity:.45}
 
-/* FIELD GROUPS — the boxes, titles and rows are shared.css's
-   (.field-group / .group-title / .field-row / .fg-body); only what sits
-   inside them is here. */
-.field-group>:first-child{border-top:none}
-/* A free-form body is ruled off from the title like a row is. */
-.field-group>.fg-body{border-top:1px solid var(--border);padding:10px 0 8px}
-.field-group .help{font-size:.79rem;margin-top:6px}
+.help{margin-top:6px}
 .label-note{color:var(--muted);font-weight:400;font-size:.78rem}
 .empty-note{color:var(--muted);font-size:.83rem;text-align:center}
-.marker-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.marker-grid .field-label{margin-bottom:5px}
-.btn-sample{width:100%;justify-content:center;padding:8px 14px}
-
-/* INPUTS */
-input[type=number],input[type=text]{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-variant-numeric:tabular-nums;font-size:.88rem;outline:none;transition:border-color 150ms}
-input:focus{border-color:var(--accent)}
-/* Selects take their look from dropdown.css; sized here to sit with the inputs. */
-select{width:100%;padding:8px 10px;font-size:.88rem;border-radius:var(--radius-sm)}
-/* The shared option colours paint over the browser's own highlight, so a
-   multi-select would hide which series are picked. */
+/* Selects take their look from dropdown.css. The shared option colours paint
+   over the browser's own highlight, so a multi-select would hide which
+   series are picked. */
 select[multiple] option{background:transparent;color:var(--text);padding:2px 4px;border-radius:4px}
 select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 
-/* DIMENSION BUTTONS */
-.dim-btns{display:flex;gap:7px}
-.dim-btn{flex:1;padding:9px 6px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;color:var(--muted);font-weight:700;font-size:.88rem;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;font-family:inherit;text-align:center}
-.dim-btn.active{border-color:var(--accent);color:var(--accent-strong);background:rgba(141,187,255,.14)}
-
 /* UPLOAD ZONE */
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:color 200ms,background-color 200ms,border-color 200ms,box-shadow 200ms,opacity 200ms,transform 200ms,fill 200ms,stroke 200ms;margin-bottom:10px;position:relative}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:22px 16px;text-align:center;cursor:pointer;transition:color 200ms,background-color 200ms,border-color 200ms;margin-bottom:10px;position:relative}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(141,187,255,.04)}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .upload-icon{margin-bottom:6px;color:var(--muted);line-height:0}
@@ -97,11 +65,7 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 .upload-sub{color:var(--muted);font-size:.78rem}
 .file-name{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent2);margin-top:8px;word-break:break-all}
 
-/* BUTTONS */
-/* Look (fill, ink outline, sticker) comes from shared.css; only the layout is set here. */
 .btn-secondary{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;white-space:nowrap;font-family:inherit}
-.btn-theme:hover{border-color:var(--accent);color:var(--text)}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
 
 /* CHART PANEL */
@@ -146,8 +110,6 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 
 /* RESPONSIVE */
 @media(max-width:1100px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{position:static;max-height:none}
   #plotDiv{height:420px}
 }
 @media(max-width:600px){

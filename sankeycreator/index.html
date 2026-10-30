@@ -139,6 +139,7 @@
           <button class="quick-start-btn" data-preset="funnel" data-tip="Visits by traffic channel dropping out at each step of an online shop, from landing on the site to a completed purchase.">Web Funnel</button>
         </div>
       </div>
+      <div class="ctrl-scroll">
       <div class="ctrl-tabs">
         <button class="ctrl-tab active" data-tab="data"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.2" y="4" width="17.6" height="16" rx="2.2"/><path d="M3.2 9.4h17.6"/><path d="M9.3 9.4V20M15.1 9.4V20"/></svg> Data</button>
         <button class="ctrl-tab" data-tab="style"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2c0 0 6.3 6.3 6.3 10.4a6.3 6.3 0 0 1-12.6 0C5.7 9.5 12 3.2 12 3.2z"/></svg> Style</button>
@@ -148,143 +149,169 @@
       <div class="ctrl-panel active" id="tab-data">
 
         <!-- Sub-tabs -->
-        <div class="data-sub-tabs">
-          <button class="data-sub-tab active" data-sub="table">Table</button>
-          <button class="data-sub-tab" data-sub="text">Text</button>
-          <button class="data-sub-tab" data-sub="csv">CSV</button>
+        <div class="seg-group seg-fill data-sub-tabs">
+          <button class="seg-btn data-sub-tab active" data-sub="table" type="button">Table</button>
+          <button class="seg-btn data-sub-tab" data-sub="text" type="button">Text</button>
+          <button class="seg-btn data-sub-tab" data-sub="csv" type="button">CSV</button>
         </div>
 
         <!-- ── TABLE sub-panel ── -->
         <div class="data-sub-panel active" id="sub-table">
-          <div style="display:flex;justify-content:flex-end;flex-shrink:0">
-            <span class="tip-icon" data-tip="One row per flow: <strong>Source</strong> to <strong>Target</strong>, carrying a <strong>Value</strong>.<br>Use <code>remaining</code> for whatever is left from that source, and <code>|</code> in a label to wrap it.">?</span>
+          <div class="field-group">
+            <div class="group-title">Flows <span class="tip-icon" data-tip="One row per flow: <strong>Source</strong> to <strong>Target</strong>, carrying a <strong>Value</strong>.<br>Use <code>remaining</code> for whatever is left from that source, and <code>|</code> in a label to wrap it.">?</span></div>
+            <div class="fg-body">
+              <div class="editor-table-wrap" id="tableWrap">
+                <table class="editor-table">
+                  <thead>
+                    <tr>
+                      <th>From</th>
+                      <th>To</th>
+                      <th class="th-amt">Amount (current)</th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody" data-no-abbr></tbody>
+                </table>
+              </div>
+              <button class="btn-secondary btn-sm add-row-btn" id="addRowBtn" type="button">+ Add Flow</button>
+            </div>
           </div>
-          <div class="editor-table-wrap" id="tableWrap">
-            <table class="editor-table">
-              <thead>
-                <tr>
-                  <th>From</th>
-                  <th>To</th>
-                  <th class="th-amt">Amount (current)</th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="tableBody" data-no-abbr></tbody>
-            </table>
-          </div>
-          <button class="add-row-btn" id="addRowBtn" style="flex-shrink:0">+ Add Flow</button>
         </div>
 
         <!-- ── TEXT sub-panel ── -->
         <div class="data-sub-panel" id="sub-text">
-          <div style="display:flex;justify-content:flex-end;flex-shrink:0">
-            <span class="tip-icon" data-tip="One flow per line: <code>source,target,value[,color]</code>, colour optional.<br>Use <code>remaining</code> for what is left from that node, and <code>|</code> in a label to wrap it.">?</span>
+          <div class="field-group">
+            <div class="group-title">Flows as text <span class="tip-icon" data-tip="One flow per line: <code>source,target,value[,color]</code>, colour optional.<br>Use <code>remaining</code> for what is left from that node, and <code>|</code> in a label to wrap it.">?</span></div>
+            <div class="fg-body">
+              <textarea class="txt-input" id="textInput" rows="14" spellcheck="false"
+                placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
+              <div id="textStatus"></div>
+            </div>
           </div>
-          <textarea id="textInput" rows="18" spellcheck="false"
-            placeholder="source,target,value,color&#10;Dubai,Applications,3&#10;Applications,Hired,5,#8FCDBD&#10;Applications,Declined,remaining,#FF8B8B"></textarea>
-          <div id="textStatus" style="flex-shrink:0"></div>
         </div>
 
         <!-- ── CSV sub-panel ── -->
         <div class="data-sub-panel" id="sub-csv">
-          <div class="csv-drop" id="csvDrop">
-            <div class="csv-icon">📂</div>
-            <div>Drop a CSV file here or<br><label for="csvFile" class="csv-browse">browse to upload</label></div>
-            <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
+          <div class="field-group">
+            <div class="group-title">Flows from a file <span class="tip-icon" data-tip="Needs <code>source</code>, <code>target</code> and <code>value</code> columns, plus an optional <code>color</code>. A header row is detected, so leave it in.">?</span></div>
+            <div class="fg-body">
+              <div class="csv-drop" id="csvDrop">
+                <div class="csv-icon">📂</div>
+                <div>Drop a CSV file here or<br><label for="csvFile" class="csv-browse">browse to upload</label></div>
+                <input type="file" id="csvFile" accept=".csv,.txt" style="display:none"/>
+              </div>
+              <button id="downloadTemplate" class="btn-secondary btn-sm btn-wide" type="button">⬇ Download CSV Template</button>
+              <div id="csvStatus"></div>
+            </div>
           </div>
-          <div style="display:flex;justify-content:flex-end">
-            <span class="tip-icon" data-tip="Needs <code>source</code>, <code>target</code> and <code>value</code> columns, plus an optional <code>color</code>. A header row is detected, so leave it in.">?</span>
-          </div>
-          <button id="downloadTemplate" class="btn-sec" style="width:100%">⬇ Download CSV Template</button>
-          <div id="csvStatus"></div>
         </div>
 
       </div><!-- end tab-data -->
 
       <!-- ── STYLE TAB ── -->
       <div class="ctrl-panel" id="tab-style">
-        <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Value Display <span class="tip-icon" data-tip="<ul><li><strong>Nominal:</strong> each node's actual total.</li><li><strong>% of Max:</strong> a share of the largest node total.</li><li><strong>None:</strong> labels only.</li></ul>">?</span></div>
-          <div class="radio-grp">
-            <label class="radio-opt"><input type="radio" name="valueMode" value="nominal" checked>Nominal</label>
-            <label class="radio-opt"><input type="radio" name="valueMode" value="percent">% of Max</label>
-            <label class="radio-opt"><input type="radio" name="valueMode" value="none">None</label>
+
+        <div class="field-group">
+          <div class="group-title">Labels</div>
+          <div class="field-row">
+            <div class="field-label"><span class="tip-wrap">Value display <span class="tip-icon" data-tip="<ul><li><strong>Nominal:</strong> each node's actual total.</li><li><strong>% of Max:</strong> a share of the largest node total.</li><li><strong>None:</strong> labels only.</li></ul>">?</span></span></div>
+            <div class="seg-group seg-fill">
+              <label class="seg-btn"><input type="radio" name="valueMode" value="nominal" checked>Nominal</label>
+              <label class="seg-btn"><input type="radio" name="valueMode" value="percent">% of Max</label>
+              <label class="seg-btn"><input type="radio" name="valueMode" value="none">None</label>
+            </div>
           </div>
-        </div>
-        <div class="sblock">
-          <div class="slabel" style="margin-bottom:6px">Node Alignment</div>
-          <div class="radio-grp">
-            <label class="radio-opt"><input type="radio" name="align" value="justify" checked>Justify</label>
-            <label class="radio-opt"><input type="radio" name="align" value="left">Left</label>
-            <label class="radio-opt"><input type="radio" name="align" value="right">Right</label>
-            <label class="radio-opt"><input type="radio" name="align" value="center">Center</label>
+          <div class="field-row">
+            <div class="field-label">Label position</div>
+            <select class="sel-input" id="sLabel">
+              <option value="auto">Auto (adaptive)</option>
+              <option value="outside">Always Outside</option>
+              <option value="inside">Inside Nodes</option>
+            </select>
           </div>
-        </div>
-        <div class="sblock">
-          <div class="shead"><span class="slabel">Node Padding</span><span class="sval" id="vPad">20</span></div>
-          <input type="range" id="sPad" min="2" max="60" step="2" value="20">
-        </div>
-        <div class="sblock">
-          <div class="shead"><span class="slabel">Node Width</span><span class="sval" id="vNW">18px</span></div>
-          <input type="range" id="sNW" min="4" max="48" step="2" value="18">
-        </div>
-        <div class="sblock">
-          <div class="shead"><span class="slabel">Link Opacity</span><span class="sval" id="vOp">40%</span></div>
-          <input type="range" id="sOp" min="5" max="95" step="5" value="40">
-        </div>
-        <div class="sblock">
-          <div class="shead"><span class="slabel">Diagram Height</span><span class="sval" id="vH">520px</span></div>
-          <input type="range" id="sH" min="280" max="1400" step="20" value="520">
-        </div>
-        <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Color Scheme</div>
-          <select class="sel-in" id="sColor">
-            <option value="tableau">Tableau 10</option>
-            <option value="d3cat">D3 Category 10</option>
-            <option value="pastel">Pastel (Design System)</option>
-            <option value="vivid">Vivid</option>
-            <option value="cool">Cool Blues</option>
-            <option value="warm">Warm Tones</option>
-          </select>
-        </div>
-        <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Label Position</div>
-          <select class="sel-in" id="sLabel">
-            <option value="auto">Auto (adaptive)</option>
-            <option value="outside">Always Outside</option>
-            <option value="inside">Inside Nodes</option>
-          </select>
-        </div>
-        <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Link Colour Style</div>
-          <select class="sel-in" id="sLinkStyle">
-            <option value="gradient">Gradient (source → target)</option>
-            <option value="source">Source node colour</option>
-            <option value="target">Target node colour</option>
-          </select>
-        </div>
-        <div class="sblock">
           <div class="toggle-row">
-            <span class="slabel">Label Background Box</span>
-            <label class="toggle-wrap"><input type="checkbox" id="sLabelBox"><span class="toggle-track"></span></label>
+            <div class="toggle-label">Label background box</div>
+            <label class="toggle-switch"><input type="checkbox" id="sLabelBox"><span class="toggle-track"><span class="toggle-knob"></span></span></label>
           </div>
         </div>
-        <div class="sblock">
-          <div class="slabel" style="margin-bottom:4px">Iterations (layout quality)</div>
-          <select class="sel-in" id="sIter">
-            <option value="6">Fast (6)</option>
-            <option value="32" selected>Normal (32)</option>
-            <option value="64">High (64)</option>
-          </select>
+
+        <div class="field-group">
+          <div class="group-title">Nodes</div>
+          <div class="field-row">
+            <div class="field-label">Alignment</div>
+            <div class="seg-group seg-fill seg-tight">
+              <label class="seg-btn"><input type="radio" name="align" value="justify" checked>Justify</label>
+              <label class="seg-btn"><input type="radio" name="align" value="left">Left</label>
+              <label class="seg-btn"><input type="radio" name="align" value="right">Right</label>
+              <label class="seg-btn"><input type="radio" name="align" value="center">Center</label>
+            </div>
+          </div>
+          <div class="slider-block">
+            <div class="slider-head"><span class="slider-label">Padding</span><span class="slider-value" id="vPad">20</span></div>
+            <input type="range" id="sPad" min="2" max="60" step="2" value="20">
+          </div>
+          <div class="slider-block">
+            <div class="slider-head"><span class="slider-label">Width</span><span class="slider-value" id="vNW">18px</span></div>
+            <input type="range" id="sNW" min="4" max="48" step="2" value="18">
+          </div>
         </div>
+
+        <div class="field-group">
+          <div class="group-title">Links</div>
+          <div class="slider-block">
+            <div class="slider-head"><span class="slider-label">Opacity</span><span class="slider-value" id="vOp">40%</span></div>
+            <input type="range" id="sOp" min="5" max="95" step="5" value="40">
+          </div>
+          <div class="field-row">
+            <div class="field-label">Colour style</div>
+            <select class="sel-input" id="sLinkStyle">
+              <option value="gradient">Gradient (source → target)</option>
+              <option value="source">Source node colour</option>
+              <option value="target">Target node colour</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="group-title">Colours</div>
+          <div class="field-row">
+            <div class="field-label">Color scheme</div>
+            <select class="sel-input" id="sColor">
+              <option value="tableau">Tableau 10</option>
+              <option value="d3cat">D3 Category 10</option>
+              <option value="pastel">Pastel (Design System)</option>
+              <option value="vivid">Vivid</option>
+              <option value="cool">Cool Blues</option>
+              <option value="warm">Warm Tones</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="group-title">Diagram</div>
+          <div class="slider-block">
+            <div class="slider-head"><span class="slider-label">Height</span><span class="slider-value" id="vH">520px</span></div>
+            <input type="range" id="sH" min="280" max="1400" step="20" value="520">
+          </div>
+          <div class="field-row">
+            <div class="field-label">Layout quality</div>
+            <select class="sel-input" id="sIter">
+              <option value="6">Fast (6)</option>
+              <option value="32" selected>Normal (32)</option>
+              <option value="64">High (64)</option>
+            </select>
+          </div>
+        </div>
+
       </div>
+      </div><!-- /ctrl-scroll -->
 
       <!-- Btn Row -->
       <div class="btn-row">
-        <button class="btn-sec" id="resetBtn" style="flex:1">↺ Reset</button>
-        <button class="btn-sec" id="clearBtn" data-icon="trash" style="flex:1">Clear</button>
-        <button class="btn-sec" id="downloadCsvBtn" style="flex:1">⬇ CSV</button>
+        <button class="btn-secondary btn-sm" id="resetBtn" type="button">↺ Reset</button>
+        <button class="btn-secondary btn-sm has-ico" id="clearBtn" data-icon="trash" type="button">Clear</button>
+        <button class="btn-secondary btn-sm" id="downloadCsvBtn" type="button">⬇ CSV</button>
       </div>
     </aside>
 
