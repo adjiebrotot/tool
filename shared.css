@@ -941,9 +941,11 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
    In the page's HTML for an assistant that reads it, never shown to people. */
 .agent-ref{display:none !important;}
 
-/* In-article ad (AdSense unit 1433722275), placed by hand between the cards of a guide or
-   reading page, never beside a button, a demo or a table of contents. The slot takes no room
-   until Google fills it: an unfilled or blocked unit leaves no gap and no orphaned label. */
+/* An ad, placed by hand: the in-article unit (1433722275) between the cards of a guide or
+   reading page and before a tool's "What this assumes"; the display unit (4716600974) below a
+   tool's header card and, on a tool with a long results column, once between result cards.
+   Never beside a button, a demo or a table of contents. The slot takes no room until Google
+   fills it: an unfilled or blocked unit leaves no gap and no orphaned label. */
 .ad-slot{margin:0;text-align:center;}
 .ad-slot:has(ins.adsbygoogle[data-ad-status="filled"]){margin:28px 0 30px;}
 .ad-slot:has(ins.adsbygoogle[data-ad-status="filled"])::before{content:"Advertisement";display:block;margin-bottom:6px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
