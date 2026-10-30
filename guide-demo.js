@@ -19,9 +19,7 @@
    - Files: a file the tool saves (an a[download] it clicks) is saved only when the reader's own
      hand asked for it a moment ago (trying the tool, paused), never for the guide's pointer.
    - Pointer capture works for the guide's own pointer.
-   - The AI card ("Use this tool with an AI assistant", .agent-card) is left out: it is not the
-     tool, and its height moves the inputs a guide's pointer was drawn against. <html> carries
-     the class abt-demo for that (shared.css). */
+   - <html> carries the class abt-demo, for styles that apply only inside a guide's demo. */
 (function () {
   'use strict';
   if (window.self === window.top || !/[?&]demo(?:&|$)/.test(location.search)) return;
