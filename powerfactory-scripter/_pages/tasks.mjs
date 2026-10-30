@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { page, esc, pre, py, PERSON, BASE, adSlot } from './lib.mjs';
+import { page, esc, pre, py, PERSON, BASE, adSlot, endAd } from './lib.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const BUILDER = path.resolve(HERE, '..', 'builder');
@@ -72,7 +72,7 @@ function guidePage(spec, all, specs) {
 </div>` : '';
   const refs = (spec.refs || []).filter(c => all[c]).map(c => `<a href="../../reference/${c}/"><code>${c}</code></a>`);
   const others = ORDER.filter(x => x !== spec.slug).map(x => specs[x]).map(o => `<li><a href="../${o.slug}/">${esc(o.card)}</a></li>`).join('\n    ');
-  const body = `    <p class="dx-lead">${spec.lead}</p>
+  const body = endAd(`    <p class="dx-lead">${spec.lead}</p>
     <ul class="dx-toc" aria-label="On this page">${toc.map(([id, t]) => `<li><a href="#${id}">${esc(t)}</a></li>`).join('')}</ul>
     <section class="dx-sec dx-answer" aria-labelledby="what">
   <h2 id="what">${esc(spec.whatTitle)}</h2>
@@ -98,7 +98,7 @@ ${s.pitfalls.map(p => `    <li>${p}</li>`).join('\n')}
 ${s.faq && s.faq.length ? `    <section class="dx-sec" aria-labelledby="faq">
   <h2 id="faq">Questions</h2>
 ${s.faq.map(([q, a]) => `  <h3>${esc(q)}</h3>\n  <p>${a}</p>`).join('\n')}
-</section>` : ''}
+</section>` : ''}`) + `
     <section class="dx-sec" aria-labelledby="more">
   <h2 id="more">Related</h2>
   <ul class="dx-prose">

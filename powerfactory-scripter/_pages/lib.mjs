@@ -7,12 +7,25 @@ export const BASE = SITE + 'powerfactory-scripter/';
 export const PERSON = { '@type': 'Person', '@id': 'https://www.adjiebrotots.com/#person', name: 'Adjie Brotosukmono', url: 'https://www.adjiebrotots.com/' };
 
 export const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-// The in-article AdSense unit (styled by .ad-slot in ../docs.css), put between sections, never
-// beside a button, a table of contents or the Related links. The loader is in the page's head.
+// AdSense, put between sections, never beside a button, a table of contents or the Related
+// links (styled by .ad-slot in ../docs.css; the loader is in the page's head). adSlot is the
+// in-article unit (In-article 1). endAd closes the reading with the multiplex (Multiplex 2),
+// above the Related heading, and only when at least MUX_GAP words have passed since the last
+// unit, so two ads never sit a few paragraphs apart and a short page ends without one.
 export const adSlot = () => `    <div class="ad-slot">
-      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="1433722275"></ins>
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4587949325"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>`;
+const muxSlot = () => `    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed" data-ad-client="ca-pub-8730116101825381" data-ad-slot="4659267360"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>`;
+export const MUX_GAP = 600;
+const wordsIn = (h) => String(h).replace(/<(script|style|svg)[\s\S]*?<\/\1>/g, ' ').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+export const endAd = (html) => {
+  const last = html.lastIndexOf('<div class="ad-slot">');
+  return wordsIn(last < 0 ? html : html.slice(last)) >= MUX_GAP ? `${html}\n${muxSlot()}` : html;
+};
 export const json = (o) => JSON.stringify(o, null, 2).replace(/</g, '\\u003c');
 
 const GLYPH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false" class="tool-glyph" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="var(--accent)" d="M6.5 8 3 12l3.5 4"/><path stroke="var(--accent)" d="M17.5 8 21 12l-3.5 4"/><path stroke="var(--accent2)" d="M13 4.5 9.5 12.5h4L10.5 19.5"/></svg>';
@@ -22,14 +35,17 @@ const GTAG = `  <!-- Google tag (gtag.js) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); no ad storage anywhere.
+    // Analytics cookies wait for a yes in the EEA, the UK and Switzerland (asked by consent.js); ads there are non-personalised until Google's consent message says otherwise.
     gtag('consent', 'default', {analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']});
-    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied'});
+    gtag('consent', 'default', {analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted'});
     try { var abtConsent = localStorage.getItem('abt-consent'); if (abtConsent) gtag('consent', 'update', {analytics_storage: abtConsent}); } catch (e) {}
     gtag('js', new Date());
 
     gtag('config', 'G-VYTV157ST0');
-  </script>`;
+  </script>
+  <!-- Google AdSense (skipped inside a guide demo: guide-demo.js pauses it) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8730116101825381"
+       crossorigin="anonymous"></script>`;
 
 // page: { path: 'reference/ElmLne/' (under powerfactory-scripter/), title, h1 (html), desc,
 //   ogTitle, ogType, crumbs: [[name, path]], jsonld: [objects], body (html), script (inline js),
@@ -111,7 +127,7 @@ ${p.body}
   </main>
 
   <footer>
-    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free and earns me no revenue. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
+    <p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:adjiebrotots@gmail.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:adjiebrotots@gmail.com">adjiebrotots@gmail.com</a> 🙂</p>
     <p class="footer-links"><a href="${root}disclaimer/">Disclaimer</a> · <a href="${root}privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
     <p>PowerFactory and DIgSILENT are trademarks of DIgSILENT GmbH. This page is independent and not endorsed by DIgSILENT. Attribute names and descriptions are as PowerFactory 2024 reports them.</p>
     <p>Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener">GNU GPL</a>, free to use, modify, and share with source code disclosed. Made in Australia by <a href="https://www.adjiebrotots.com/about/" rel="author">Adjie Brotosukmono</a>, an Indonesian engineer.</p>

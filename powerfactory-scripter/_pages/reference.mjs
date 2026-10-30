@@ -3,7 +3,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { page, esc, pre, PERSON, BASE, adSlot } from './lib.mjs';
+import { page, esc, pre, PERSON, BASE, adSlot, endAd } from './lib.mjs';
 import { CLASSES, CATEGORIES, GROUPS, PREFIX_WORDS, DESC_OVERRIDES } from './classes.mjs';
 
 const KIND_DIR = { element: 'elements', type: 'types', event: 'events' };
@@ -300,11 +300,11 @@ ${rows}
       ['ElmGenstat', 'ElmPvsys', 'ElmTerm', 'ElmLne'].includes(cls) ? '<li><a href="../../python/hosting-capacity/">Hosting capacity study</a></li>' : '',
       '<li><a href="../../python/getting-started/">PowerFactory Python API: getting started</a></li>',
     ].filter(Boolean).join('\n    ');
-    const body = `    <p class="dx-lead">Every attribute of the PowerFactory ${esc(meta.name)} (<code>${cls}</code>): ${esc(counts)}, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
+    const body = endAd(`    <p class="dx-lead">Every attribute of the PowerFactory ${esc(meta.name)} (<code>${cls}</code>): ${esc(counts)}, with units and meaning. Copy a name into <code>GetAttribute</code> or <code>SetAttribute</code>.</p>
 ${sections.join('\n')}
     <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
     <ul class="dx-toc" aria-label="All ${esc(cls)} attributes">${toc.join('')}</ul>
-${(groupsHtml.length >= 4 ? [...groupsHtml.slice(0, 2), adSlot(), ...groupsHtml.slice(2)] : groupsHtml).join('\n')}
+${(groupsHtml.length >= 4 ? [...groupsHtml.slice(0, 2), adSlot(), ...groupsHtml.slice(2)] : groupsHtml).join('\n')}`) + `
     <section class="dx-sec" aria-labelledby="more">
   <h2 id="more">Related</h2>
   <ul class="dx-prose">

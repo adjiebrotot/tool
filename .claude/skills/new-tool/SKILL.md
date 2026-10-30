@@ -135,6 +135,13 @@ www.adjiebrotots.com into one maker. Then register the tool site-wide:
   `<lastmod>`.
 - Keep the Google `gtag` snippet and the AdSense `adsbygoogle.js` tag right after it, exactly
   as on the other pages (a page without the AdSense tag shows no ads).
+- **Ads are placed by hand**, each placement with its own unit from the slot map above
+  `.ad-slot` in `shared.css` (copy the block from `borrowingcapacity/index.html`): Display 1 as
+  a banner (`.ad-slot.ad-top`, `data-ad-format="horizontal"`) below the header card, Multiplex
+  1 after the results and before What this assumes, and Display 2 between result cards only
+  when a screen of results (600px or more, desktop and phone) sits on each side of it. A guide
+  takes In-article 3 between cards and, when long, Multiplex 2 before its Sensitivity card.
+  Never beside a button, a demo or a table of contents, never two units within a screen.
 
 **A sub-tool** (a page under another tool's folder, such as `dcasimulator/portfolio/` or
 `costofliving-comparator/map/`) belongs to its parent everywhere:
