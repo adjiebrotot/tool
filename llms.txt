@@ -18,7 +18,7 @@ Access: Free, browser-based, no account required for the listed tools.
 <!-- agent:start -->
 ## Use a tool through an AI assistant (the #load link)
 
-An AI assistant can open a tool on the user's own scenario with one link, and the tool computes the answer in the user's browser. Each tool page carries a folded "Use this tool with an AI assistant" section, and the full reference for each page (every key, its range and default, the Quick Starts and an example) is in that page's agent.html (a web page) and agent.txt (the same text, plain), listed below.
+An AI assistant can open a tool on the user's own scenario with one link, and the tool computes the answer in the user's browser. The full reference for each page (every key, its range and default, the Quick Starts and an example) is in that page's agent.html (a web page) and agent.txt (the same text, plain), listed below.
 
 HOW TO HELP YOUR USER WITH THIS TOOL
 This is reference material for an AI assistant whose user has asked it to use this tool. It

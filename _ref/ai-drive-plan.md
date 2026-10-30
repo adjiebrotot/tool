@@ -159,6 +159,8 @@ first part of a long page. So:
    `<details>` high in the main content (before long explainer copy), between markers
    `<!-- agent:start -->` and `<!-- agent:end -->`. Short enough to sit in the first few KB of
    text. It links to `agent.txt`.
+   *(Since replaced: the tool page now carries only a hidden pointer to `agent.html` and
+   `agent.txt`, never shown to people, and `agent.html` has a Copy system prompt button.)*
 3. **`llms.txt`**: a site-wide section describing the `#load` protocol once, and linking each
    tool's `agent.txt`.
 
