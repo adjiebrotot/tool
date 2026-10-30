@@ -4237,6 +4237,11 @@ function agentPatch(extra, api){
   var carry = {};
   // The tool's answer is the age the plan is free, so the slider opens there unless the user named an age.
   if(!api.given('ageRetire')) carry.reseed = 1;
+  // Read against the money ceiling (agentReady); a share of living still stops at 1,000%.
+  if(api.given('retireExpense') && api.field('retireExpensePeriod') === 'pct'){
+    var re = api.num('retireExpense');
+    if(re > +SPEND_MAX_PCT){ api.clamp('retireExpense', re, +SPEND_MAX_PCT); carry.retireCap = 1; }
+  }
   var preset = api.field('assetPreset');
   if(api.given('assetPreset') && agentOwn(PRESET_ASSETS, preset) && preset !== 'custom'){
     carry.preset = preset;
@@ -4256,7 +4261,17 @@ function agentFinish(){
     if(!c.keepStd) $('std').value = p.std;
     tickerInfo = null;
   }
+  if(c.retireCap) $('retireExpense').value = fmtAmount(+SPEND_MAX_PCT, 'pct');
   if(c.reseed){ readInputs(); seedRetireAge(); }
+}
+/* Retirement expenses take the bound of the basis on screen (1,000% while it is
+   a share of living), and a link's figures are read before its basis is applied,
+   so an amount (5,000,000 a month) would be cut to 1,000. Opened to the money
+   ceiling while the link is read; agentPatch holds a share to 1,000% itself, and
+   the render that follows sets the bound for the basis the link chose. */
+function agentReady(){
+  widenRetireSlider();
+  $('retireExpense').setAttribute('data-max', SPEND_MAX_MONEY);
 }
 /* The retirement slider is clamped to the plan on screen (age now to life
    expectancy), which would pull a link's retirement age into the range of the
@@ -4273,7 +4288,7 @@ function agentPreset(key){
 }
 if(window.SharedAgent) SharedAgent.register({
   tool: 'financialfreedom',
-  ready: widenRetireSlider,
+  ready: agentReady,
   preset: agentPreset,
   compact: {
     savingsMode: agentMode('savingsMode'), incomeMode: agentMode('incomeMode'), expenseMode: agentMode('expenseMode'),
