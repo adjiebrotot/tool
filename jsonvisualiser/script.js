@@ -22,6 +22,19 @@ let schemaMode = false;
 // Collapsed primitive values longer than this are shown sliced (with a trailing
 // "…") to keep single-line layout cheap; the full value is revealed on expand.
 const VALUE_PREVIEW_CAP = 800;
+// 'tree' or 'text': which of the two editors the main panel shows.
+let viewMode = 'tree';
+// The JSON text that parsedData was read from, byte for byte, while nothing has
+// been edited in the tree since: ⬇ JSON and the text editor hand it back as it
+// was (its formatting, and numbers too long for a JS double), instead of
+// rewriting it. Null once the tree has been edited, or for a very large file.
+let sourceText = null;
+const SOURCE_TEXT_KEEP_LIMIT = 50 * 1024 * 1024;
+// Indentation of the loaded text (2, 4, '\t', or 0 for minified), so a
+// downloaded file keeps the shape it came in.
+let jsonIndent = 2;
+let isEdited = false;
+let currentByteLen = 0;
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
@@ -128,7 +141,7 @@ function markTruncatedValues(){
     el.dataset.trunc = truncated ? '1' : '0';
     if(truncated){
       el.classList.add('is-truncated');
-      el.title = 'Click to expand';
+      el.title = 'Click to see and edit the full value';
     }
   });
 }
@@ -319,6 +332,9 @@ function handleRawJSON(text, name, size, loadMethod){
       parsedData = data;
       currentFileName = name;
       currentFileSize = size;
+      sourceText = text.length <= SOURCE_TEXT_KEEP_LIMIT ? text : null;
+      jsonIndent = detectIndent(text);
+      isEdited = false;
       renderTree(data, name, size, text.length, loadMethod);
     } catch(err) {
       showError('Invalid JSON: ' + err.message);
@@ -328,32 +344,15 @@ function handleRawJSON(text, name, size, loadMethod){
 
 // ─── RENDER TREE ─────────────────────────────────────────────────────────────
 function renderTree(data, name, size, byteLen, loadMethod){
+  // A new document always opens in the tree.
+  showViewMode('tree');
   // Hide loading, show tree
   $('loadingOverlay').classList.remove('visible');
   $('treeHeader').style.display = 'flex';
   $('treeViewport').style.display = 'block';
 
-  // Compute stats (fast, capped)
-  const type = getType(data);
-  const depth = countDepth(data);
-  const topCount = type === 'array' ? data.length : (type === 'object' ? Object.keys(data).length : 0);
-
-  // Update header
-  $('treeHeaderTitle').textContent = name;
-  $('treeHeaderMeta').textContent =
-    formatBytes(byteLen) + ' · ' +
-    (type === 'array' ? `[${topCount}]` : type === 'object' ? `{${topCount}}` : type) +
-    ' · depth ~' + depth;
-
-  // Show file info panel
-  $('fileInfoSection').style.display = 'block';
-  $('fileInfoGrid').innerHTML = `
-    <span class="info-label">File</span><span class="info-value" title="${escHtml(name)}">${escHtml(name)}</span>
-    <span class="info-label">Size</span><span class="info-value">${formatBytes(byteLen)}</span>
-    <span class="info-label">Root type</span><span class="info-value">${type}</span>
-    <span class="info-label">Top keys</span><span class="info-value">${topCount}</span>
-    <span class="info-label">Est. depth</span><span class="info-value">${depth}</span>
-  `;
+  currentByteLen = byteLen;
+  refreshDocInfo();
 
   // Show controls
   $('controlsCard').style.display = 'block';
@@ -368,7 +367,48 @@ function renderTree(data, name, size, byteLen, loadMethod){
   buildTree(data);
 
   hideStatus();
-  showStatus('statusSuccess', `Loaded ${name} (${formatBytes(byteLen)})`);
+  showStatus('statusSuccess', `Loaded ${name} (${formatBytes(byteLen)})` +
+    (sourceText && hasLongNumbers(sourceText)
+      ? '. Some numbers have 16 or more digits, which a browser reads rounded: one you edit is saved rounded.'
+      : ''));
+}
+
+// Header line and File Info for the document as it stands now (after edits too).
+function refreshDocInfo(){
+  const data = parsedData;
+  const name = currentFileName;
+  // Compute stats (fast, capped)
+  const type = getType(data);
+  const depth = countDepth(data);
+  const topCount = type === 'array' ? data.length : (type === 'object' ? Object.keys(data).length : 0);
+
+  $('treeHeaderTitle').textContent = name;
+  $('treeHeaderMeta').textContent =
+    formatBytes(currentByteLen) + ' · ' +
+    (type === 'array' ? `[${topCount}]` : type === 'object' ? `{${topCount}}` : type) +
+    ' · depth ~' + depth + (isEdited ? ' · edited' : '');
+
+  $('fileInfoSection').style.display = 'block';
+  $('fileInfoGrid').innerHTML = `
+    <span class="info-label">File</span><span class="info-value" title="${escHtml(name)}">${escHtml(name)}</span>
+    <span class="info-label">Size</span><span class="info-value">${formatBytes(currentByteLen)}${isEdited ? ' (as loaded)' : ''}</span>
+    <span class="info-label">Root type</span><span class="info-value">${type}</span>
+    <span class="info-label">Top keys</span><span class="info-value">${topCount}</span>
+    <span class="info-label">Est. depth</span><span class="info-value">${depth}</span>
+  `;
+}
+
+// Indentation of a JSON text: the leading whitespace of its first indented line.
+function detectIndent(text){
+  const head = text.slice(0, 20000);
+  const m = /\n([ \t]+)\S/.exec(head);
+  if(m) return m[1][0] === '\t' ? '\t' : Math.min(m[1].length, 8);
+  return /\n/.test(head.trim()) ? 2 : 0;
+}
+
+// A number with 16+ digits (an ID, usually) is past what a JS double holds.
+function hasLongNumbers(text){
+  return /[\[:,]\s*-?\d{16,}/.test(text);
 }
 
 // Builds the tree nodes for `data` from scratch. Separated from renderTree so the
@@ -395,10 +435,11 @@ function buildTree(data){
 }
 
 // ─── DESCRIPTOR FACTORY ──────────────────────────────────────────────────────
-function createDescriptor(value, key){
+function createDescriptor(value, key, parent = null){
   const type = getType(value);
   const desc = {
     id: nodeIdCounter++,
+    parent,              // the branch this sits in (null for the root)
     key: key !== null && key !== undefined ? String(key) : null,
     type,
     rawRef: value,
@@ -427,11 +468,22 @@ function renderNode(desc, parentEl){
   const branchPreview = getBranchPreview(desc);
   if(branchPreview) node.classList.add('has-preview');
 
-  // Key label
+  // Key label. An object's key can be renamed: a leaf's on a click, a branch's
+  // on a double-click, since a single click opens the branch.
+  let keySpan = null;
   if(desc.key !== null){
-    const keySpan = document.createElement('span');
+    keySpan = document.createElement('span');
     keySpan.className = 'node-key';
     keySpan.textContent = desc.key;
+    if(isKeyEditable(desc)){
+      keySpan.classList.add('is-editable');
+      const leaf = isPrimitive(desc.type);
+      keySpan.title = leaf ? 'Click to rename' : 'Double-click to rename';
+      keySpan.addEventListener(leaf ? 'click' : 'dblclick', (e) => {
+        e.stopPropagation();
+        openInlineEditor(desc, 'key', keySpan);
+      });
+    }
     node.appendChild(keySpan);
     const colon = document.createElement('span');
     colon.className = branchPreview ? 'node-colon node-key-colon' : 'node-colon';
@@ -440,8 +492,8 @@ function renderNode(desc, parentEl){
   }
 
   if(isPrimitive(desc.type)){
-    // Primitive value. Show a (capped) single-line preview; clicking a value
-    // that is clipped expands it inline, wrapped across multiple rows.
+    // Primitive value. Show a (capped) single-line preview; clicking it opens
+    // the full value in an editor, wrapped across as many rows as it needs.
     const fullVal = desc.type === 'null' ? 'null' : JSON.stringify(desc.rawRef);
     const previewVal = fullVal.length > VALUE_PREVIEW_CAP
       ? fullVal.slice(0, VALUE_PREVIEW_CAP) + '…'
@@ -449,22 +501,16 @@ function renderNode(desc, parentEl){
     const valSpan = document.createElement('span');
     valSpan.className = 'node-value';
     valSpan.textContent = previewVal;
+    valSpan.title = 'Click to edit';
     valSpan.addEventListener('click', (e) => {
-      const wrapped = valSpan.classList.contains('is-wrapped');
-      // Only react when there is actually something hidden to reveal.
-      if(!wrapped && !valSpan.classList.contains('is-truncated')) return;
       e.stopPropagation();
-      if(wrapped){
-        valSpan.classList.remove('is-wrapped');
-        valSpan.textContent = previewVal;
-        node.classList.remove('has-wrapped-value');
-      } else {
-        valSpan.classList.add('is-wrapped');
-        valSpan.textContent = fullVal;
-        node.classList.add('has-wrapped-value');
-      }
+      openInlineEditor(desc, 'value', valSpan);
     });
     node.appendChild(valSpan);
+    node.addEventListener('keydown', (e) => {
+      if(e.target !== node) return;
+      if(e.key === 'Enter' || e.key === 'F2'){ e.preventDefault(); openInlineEditor(desc, 'value', valSpan); }
+    });
     scheduleTruncationCheck();
   } else {
     // Object or array: show a useful first-entry preview for unnamed array branches,
@@ -491,9 +537,16 @@ function renderNode(desc, parentEl){
       item.appendChild(node);
       item.appendChild(childrenEl);
 
-      node.addEventListener('click', () => toggleNode(desc, node, childrenEl));
+      node.addEventListener('click', (e) => {
+        // The second click of a double-click on the key renames it; it does
+        // not close the branch the first click opened.
+        if(e.detail > 1 && keySpan && e.target === keySpan && keySpan.classList.contains('is-editable')) return;
+        toggleNode(desc, node, childrenEl);
+      });
       node.addEventListener('keydown', (e) => {
+        if(e.target !== node) return;
         if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleNode(desc, node, childrenEl); }
+        if(e.key === 'F2' && keySpan && keySpan.classList.contains('is-editable')){ e.preventDefault(); openInlineEditor(desc, 'key', keySpan); }
       });
       parentEl.appendChild(item);
       return;
@@ -528,7 +581,7 @@ function renderObjectChildren(desc, containerEl){
   const keys = desc.childKeys;
   const FIRST = Math.min(5, keys.length);
   for(let i = 0; i < FIRST; i++){
-    const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+    const child = createDescriptor(desc.rawRef[keys[i]], keys[i], desc);
     desc.childDescriptors.push(child);
     renderNode(child, containerEl);
   }
@@ -555,7 +608,7 @@ function updateObjectPagination(desc, containerEl){
       const start = desc.renderedCount;
       const end = Math.min(start + actual, keys.length);
       for(let i = start; i < end; i++){
-        const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+        const child = createDescriptor(desc.rawRef[keys[i]], keys[i], desc);
         desc.childDescriptors.push(child);
         renderNode(child, containerEl);
       }
@@ -577,7 +630,7 @@ function renderArrayChunk(desc, containerEl, count){
   const start = desc.renderedCount;
   const end = Math.min(start + count, desc.childCount);
   for(let i = start; i < end; i++){
-    const child = createDescriptor(desc.rawRef[i], i);
+    const child = createDescriptor(desc.rawRef[i], i, desc);
     desc.childDescriptors.push(child);
     renderNode(child, containerEl);
   }
@@ -692,7 +745,7 @@ function renderAllMissingChildren(desc){
   if(desc.type === 'object'){
     const keys = desc.childKeys;
     for(let i = desc.renderedCount; i < keys.length; i++){
-      const child = createDescriptor(desc.rawRef[keys[i]], keys[i]);
+      const child = createDescriptor(desc.rawRef[keys[i]], keys[i], desc);
       desc.childDescriptors.push(child);
       renderNode(child, desc.containerEl);
     }
@@ -701,7 +754,7 @@ function renderAllMissingChildren(desc){
     // In schema mode an array never renders more than its single example.
     const target = schemaMode ? Math.min(1, desc.childCount) : desc.childCount;
     for(let i = desc.renderedCount; i < target; i++){
-      const child = createDescriptor(desc.rawRef[i], i);
+      const child = createDescriptor(desc.rawRef[i], i, desc);
       desc.childDescriptors.push(child);
       renderNode(child, desc.containerEl);
     }
@@ -782,8 +835,12 @@ $('wrapTextToggle').addEventListener('change', (e) => {
 });
 
 $('clearBtn').addEventListener('click', () => {
+  closeInlineEditor(false);
+  showViewMode('tree');
   parsedData = null;
   rootDescriptor = null;
+  sourceText = null;
+  isEdited = false;
   $('treeRoot').innerHTML = '';
   setWrapTextMode(false);
   setSchemaMode(false);
@@ -842,6 +899,8 @@ function showNavHint(){
 // Mouse drag
 vpEl.addEventListener('mousedown', (e) => {
   if(e.button !== 0) return;
+  // Selecting text in a field being edited is not a pan.
+  if(e.target.closest('.jv-inline-edit')) return;
   vp.dragging = true; vp.lastX = e.clientX; vp.lastY = e.clientY;
   vpEl.classList.add('panning');
   // Don't preventDefault on interactive elements — doing so suppresses their click events
@@ -873,6 +932,7 @@ vpEl.addEventListener('wheel', (e) => {
 
 // Touch pan + pinch-to-zoom
 vpEl.addEventListener('touchstart', (e) => {
+  if(e.target.closest('.jv-inline-edit')) return;
   if(e.touches.length === 1){
     vp.lastX = e.touches[0].clientX;
     vp.lastY = e.touches[0].clientY;
@@ -891,6 +951,7 @@ vpEl.addEventListener('touchstart', (e) => {
 }, { passive: false });
 
 vpEl.addEventListener('touchmove', (e) => {
+  if(e.target.closest('.jv-inline-edit')) return;
   if(e.touches.length === 1){
     vp.x += e.touches[0].clientX - vp.lastX;
     vp.y += e.touches[0].clientY - vp.lastY;
@@ -924,7 +985,8 @@ $('zoomLevel').addEventListener('click',  resetView);
 // Keyboard shortcuts (when viewport focused)
 window.addEventListener('keydown', (e) => {
   if(!parsedData) return;
-  if(e.target.tagName === 'INPUT') return;
+  if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+  if(viewMode !== 'tree') return;
   if(e.key === '=' || e.key === '+') { const r = vpEl.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1.25); e.preventDefault(); }
   if(e.key === '-')                  { const r = vpEl.getBoundingClientRect(); zoomAt(r.width/2, r.height/2, 1/1.25); e.preventDefault(); }
   if(e.key === '0')                  { resetView(); e.preventDefault(); }
@@ -1203,6 +1265,326 @@ $('downloadSvgBtn').addEventListener('click', () => {
     }
     btn.disabled = false; btn.textContent = '⬇ SVG';
   }, 30);
+});
+
+// ─── TREE EDITING ────────────────────────────────────────────────────────────
+// A key or a value is edited in place. The descriptors point into parsedData
+// itself (rawRef), so an edit changes the parsed document directly and the
+// next ⬇ JSON writes it out.
+
+// Only an object's keys are names; an array's are positions.
+function isKeyEditable(desc){
+  return !!desc.parent && desc.parent.type === 'object';
+}
+
+// Plain assignment would treat a "__proto__" key as the prototype.
+function setOwn(obj, key, value){
+  Object.defineProperty(obj, key, { value, writable: true, enumerable: true, configurable: true });
+}
+
+// Rename a key where it stands: every key is re-added in order, so the renamed
+// one keeps its place instead of moving to the end.
+function renameKeyInPlace(obj, oldKey, newKey){
+  const keys = Object.keys(obj);
+  const values = keys.map(k => obj[k]);
+  keys.forEach(k => { delete obj[k]; });
+  keys.forEach((k, i) => setOwn(obj, k === oldKey ? newKey : k, values[i]));
+}
+
+// What a typed value means: valid JSON is taken as JSON (42, true, null,
+// "quoted text", even {"a": 1}); anything else is kept as a string, so a
+// word typed without quotes is still saved.
+function parseEditedValue(text){
+  try { return JSON.parse(text); } catch(e) { return text; }
+}
+
+function markEdited(){
+  isEdited = true;
+  sourceText = null;
+  refreshDocInfo();
+}
+
+// The first-entry preview an indexed branch shows when collapsed.
+function refreshBranchPreview(desc){
+  if(!desc || !desc.nodeEl || !desc.nodeEl.classList.contains('has-preview')) return;
+  const preview = getBranchPreview(desc);
+  const keyEl = desc.nodeEl.querySelector(':scope > .node-preview .node-preview-key');
+  const valueEl = desc.nodeEl.querySelector(':scope > .node-preview .node-preview-value');
+  if(preview && keyEl && valueEl){ keyEl.textContent = preview.key; valueEl.textContent = preview.value; }
+}
+
+function renameKey(desc, newKey){
+  const parent = desc.parent;
+  if(newKey === desc.key) return null;
+  if(Object.prototype.hasOwnProperty.call(parent.rawRef, newKey)){
+    return `There is already a key "${newKey}" here.`;
+  }
+  renameKeyInPlace(parent.rawRef, desc.key, newKey);
+  const i = parent.childKeys.indexOf(desc.key);
+  if(i >= 0) parent.childKeys[i] = newKey;
+  desc.key = newKey;
+  if(i === 0) refreshBranchPreview(parent);
+  markEdited();
+  return null;
+}
+
+function replaceValue(desc, newValue){
+  const parent = desc.parent;
+  if(!parent){
+    parsedData = newValue;
+    markEdited();
+    buildTree(newValue);
+    return null;
+  }
+  if(parent.type === 'array') parent.rawRef[Number(desc.key)] = newValue;
+  else setOwn(parent.rawRef, desc.key, newValue);
+  // Draw the new value in the old one's place (it may now be a branch).
+  const fresh = createDescriptor(newValue, desc.key, parent);
+  const i = parent.childDescriptors.indexOf(desc);
+  if(i >= 0) parent.childDescriptors[i] = fresh;
+  const frag = document.createDocumentFragment();
+  renderNode(fresh, frag);
+  desc.nodeEl.parentElement.replaceWith(frag);
+  refreshBranchPreview(parent);
+  markEdited();
+  return fresh;
+}
+
+let activeEdit = null;
+
+function closeInlineEditor(commit){
+  if(activeEdit) activeEdit.finish(commit);
+}
+
+function sizeInlineEditor(field){
+  if(field.tagName === 'INPUT'){
+    field.size = Math.max(3, field.value.length + 1);
+    return;
+  }
+  const longest = field.value.split('\n').reduce((m, line) => Math.max(m, line.length), 0);
+  field.cols = Math.max(8, Math.min(70, longest + 1));
+  field.style.height = 'auto';
+  field.style.height = field.scrollHeight + 'px';
+}
+
+// Swap a key or value span for a field. Enter (or leaving the field) saves,
+// Esc puts the old text back; Shift+Enter starts a new line in a value.
+function openInlineEditor(desc, part, spanEl){
+  if(activeEdit) activeEdit.finish(true);
+  if(!spanEl.isConnected) return;
+  const isKey = part === 'key';
+  const initial = isKey ? desc.key : (desc.type === 'null' ? 'null' : JSON.stringify(desc.rawRef));
+  const field = document.createElement(isKey ? 'input' : 'textarea');
+  field.className = 'jv-inline-edit ' + (isKey ? 'is-key' : 'is-value');
+  field.value = initial;
+  field.spellcheck = false;
+  field.setAttribute('data-no-persist', '');
+  if(isKey){
+    field.type = 'text';
+    field.setAttribute('aria-label', `Rename key ${desc.key}`);
+  } else {
+    field.rows = 1;
+    field.setAttribute('aria-label', desc.key === null ? 'Edit the value' : `Edit the value of ${desc.key}`);
+  }
+  const nodeEl = desc.nodeEl;
+  spanEl.replaceWith(field);
+  nodeEl.classList.add('is-editing');
+  sizeInlineEditor(field);
+  field.focus({ preventScroll: true });
+  field.select();
+
+  let done = false;
+  const edit = {
+    finish(commit){
+      if(done) return;
+      if(commit && field.value !== initial){
+        if(isKey){
+          const err = renameKey(desc, field.value);
+          if(err){
+            // Enter keeps the field open to fix it; leaving it gives up.
+            if(document.activeElement === field){
+              field.classList.add('is-invalid');
+              field.title = err;
+              return;
+            }
+            showStatus('statusError', err + ' The key was left as it was.');
+          } else {
+            spanEl.textContent = desc.key;
+          }
+        } else {
+          done = true;
+          activeEdit = null;
+          const fresh = replaceValue(desc, parseEditedValue(field.value));
+          if(fresh && fresh.nodeEl) fresh.nodeEl.focus({ preventScroll: true });
+          return;
+        }
+      }
+      done = true;
+      activeEdit = null;
+      nodeEl.classList.remove('is-editing');
+      if(field.isConnected){
+        const hadFocus = document.activeElement === field;
+        field.replaceWith(spanEl);
+        if(hadFocus) nodeEl.focus({ preventScroll: true });
+      }
+    },
+  };
+  activeEdit = edit;
+
+  field.addEventListener('input', () => {
+    field.classList.remove('is-invalid');
+    field.removeAttribute('title');
+    sizeInlineEditor(field);
+  });
+  field.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+    if(e.key === 'Escape'){ e.preventDefault(); edit.finish(false); }
+    else if(e.key === 'Enter' && !(e.shiftKey && !isKey)){ e.preventDefault(); edit.finish(true); }
+  });
+  field.addEventListener('blur', () => edit.finish(true));
+  // Clicks in the field are for the field, not for the node around it.
+  ['click', 'dblclick', 'mousedown'].forEach(type => field.addEventListener(type, e => e.stopPropagation()));
+}
+
+// ─── TEXT EDITOR ─────────────────────────────────────────────────────────────
+// "Edit as text" swaps the tree for the whole document as plain JSON text; the
+// same button goes back, reading the text into a fresh tree. Text that does not
+// parse stays in the editor with the reason, and nothing is lost.
+const TEXT_EDITOR_WARN_BYTES = 20 * 1024 * 1024;
+const jsonEditor = $('jsonEditor');
+const editModeBtn = $('editModeBtn');
+// The text the editor opened with: if it is unchanged on the way back, the tree
+// (and what is open in it) is left as it was.
+let editorBaseText = null;
+
+function editorTextFor(data){
+  // A minified file is opened pretty-printed: one very long line is no editor.
+  if(sourceText !== null && jsonIndent !== 0) return sourceText;
+  return JSON.stringify(data, null, jsonIndent || 2);
+}
+
+function showViewMode(mode){
+  viewMode = mode;
+  const text = mode === 'text';
+  $('mainPanel').classList.toggle('is-text-mode', text);
+  $('treeViewport').style.display = (!text && parsedData !== null) ? 'block' : 'none';
+  editModeBtn.innerHTML = SharedIcon.svg(text ? 'view' : 'edit') + (text ? 'Tree view' : 'Edit as text');
+  editModeBtn.title = text ? 'Back to the tree, with your text edits' : 'Edit the JSON as plain text';
+  editModeBtn.setAttribute('aria-pressed', String(text));
+  // The tree's own controls have nothing to act on while the text is shown.
+  ['expandAllBtn', 'collapseAllBtn', 'schemaModeToggle', 'wrapTextToggle',
+   'downloadSvgBtn', 'downloadPngBtn', 'copyPngBtn'].forEach(id => { $(id).disabled = text; });
+  if(!text){ editorBaseText = null; setEditorStatus(''); }
+}
+
+function setEditorStatus(msg, isError){
+  const el = $('textEditorStatus');
+  el.textContent = msg;
+  el.classList.toggle('is-error', !!isError);
+}
+
+function validateEditorText(){
+  const text = jsonEditor.value;
+  if(!text.trim()){ setEditorStatus('Empty: type or paste some JSON.', true); return false; }
+  try {
+    JSON.parse(text);
+    setEditorStatus('Valid JSON' + (text === editorBaseText ? '' : ' · edited') +
+      ' · ' + formatBytes(text.length) + ' · Tree view reads it back into the tree');
+    return true;
+  } catch(err) {
+    setEditorStatus('Invalid JSON: ' + err.message, true);
+    return false;
+  }
+}
+
+function enterTextMode(){
+  if(parsedData === null) return;
+  closeInlineEditor(true);
+  if(currentByteLen > TEXT_EDITOR_WARN_BYTES &&
+     !confirm(`This JSON is large (${formatBytes(currentByteLen)}). Showing it as text may be slow. Continue?`)) return;
+  const text = editorTextFor(parsedData);
+  jsonEditor.value = text;
+  editorBaseText = text;
+  showViewMode('text');
+  setEditorStatus('Valid JSON · ' + formatBytes(text.length) + ' · Tree view reads it back into the tree');
+  jsonEditor.scrollTop = 0;
+  jsonEditor.setSelectionRange(0, 0);
+  jsonEditor.focus({ preventScroll: true });
+}
+
+function leaveTextMode(){
+  const text = jsonEditor.value;
+  if(text === editorBaseText){ showViewMode('tree'); return; }
+  let data;
+  try { data = JSON.parse(text); }
+  catch(err){
+    setEditorStatus('Invalid JSON: ' + err.message + '. Fix it to go back to the tree.', true);
+    // Put the cursor where the parser stopped, when it says where that is.
+    const at = /position (\d+)/.exec(err.message);
+    jsonEditor.focus();
+    if(at){
+      const pos = Math.min(Number(at[1]), text.length);
+      jsonEditor.setSelectionRange(pos, pos);
+      const lineH = parseFloat(getComputedStyle(jsonEditor).lineHeight) || 20;
+      jsonEditor.scrollTop = Math.max(0, (text.slice(0, pos).split('\n').length - 3) * lineH);
+    }
+    return;
+  }
+  parsedData = data;
+  sourceText = text.length <= SOURCE_TEXT_KEEP_LIMIT ? text : null;
+  jsonIndent = detectIndent(text);
+  isEdited = true;
+  currentByteLen = text.length;
+  showViewMode('tree');
+  refreshDocInfo();
+  buildTree(data);
+}
+
+editModeBtn.addEventListener('click', () => {
+  if(viewMode === 'text') leaveTextMode();
+  else enterTextMode();
+});
+
+let editorValidateTimer;
+jsonEditor.addEventListener('input', () => {
+  clearTimeout(editorValidateTimer);
+  // Re-reading a big text on every key would make typing lag.
+  if(jsonEditor.value.length > 5 * 1024 * 1024){ setEditorStatus('Edited · checked when you go back to the tree'); return; }
+  editorValidateTimer = setTimeout(validateEditorText, 300);
+});
+
+// Tab indents (by the file's own step) instead of leaving the editor.
+jsonEditor.addEventListener('keydown', (e) => {
+  if(e.key !== 'Tab' || e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return;
+  e.preventDefault();
+  const step = jsonIndent === '\t' ? '\t' : ' '.repeat(jsonIndent || 2);
+  if(!document.execCommand || !document.execCommand('insertText', false, step)){
+    jsonEditor.setRangeText(step, jsonEditor.selectionStart, jsonEditor.selectionEnd, 'end');
+  }
+});
+
+// ─── DOWNLOAD JSON ───────────────────────────────────────────────────────────
+function jsonDownloadName(){
+  return (currentFileName.replace(/\.[^.]+$/, '') || 'data') + '.json';
+}
+
+$('downloadJsonBtn').addEventListener('click', () => {
+  if(parsedData === null && viewMode !== 'text') return;
+  let text;
+  if(viewMode === 'text'){
+    text = jsonEditor.value;
+    if(!validateEditorText()) return;
+  } else {
+    closeInlineEditor(true);
+    text = sourceText !== null ? sourceText : JSON.stringify(parsedData, null, jsonIndent);
+  }
+  const blob = new Blob([text], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = jsonDownloadName();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
 
 /* ── Mini cache ────────────────────────────────────────────────────────────
