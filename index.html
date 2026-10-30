@@ -556,6 +556,16 @@
       display: none;
     }
 
+    /* The in-article ad between two domain groups (.ad-slot in shared.css): a full row,
+       shown only while every group is (no filter), so it never sits among a few results. */
+    .tool-grid > .ad-slot {
+      grid-column: 1 / -1;
+    }
+
+    .tool-grid > .ad-slot.is-hidden {
+      display: none;
+    }
+
     /* A tool card: its animation on the left, then the title, one line or
        two on what it does, its categories in small print, and the button. */
     /* Twenty-odd cards stay quiet at rest (a hairline of border, no shadow)
@@ -2506,10 +2516,29 @@
         card.parentElement.appendChild(card);
       });
 
+      // The in-article AdSense unit, between two domain groups.
+      function makeAdSlot() {
+        const slot = document.createElement('div');
+        slot.className = 'ad-slot';
+        const ins = document.createElement('ins');
+        ins.className = 'adsbygoogle';
+        ins.style.cssText = 'display:block; text-align:center;';
+        ins.dataset.adLayout = 'in-article';
+        ins.dataset.adFormat = 'fluid';
+        ins.dataset.adClient = 'ca-pub-8730116101825381';
+        ins.dataset.adSlot = '1433722275';
+        slot.appendChild(ins);
+        return slot;
+      }
+
+      // The first after the first group, then one only when 8 or more cards have passed, so the grid
+      // stays a list of tools with an ad now and then, never an ad at every heading.
       let lastDomain = '';
+      let sinceAd = -1;
       cards.forEach(card => {
         const domain = card.dataset.domain.trim();
         if (domain !== lastDomain) {
+          if (lastDomain && (sinceAd < 0 || sinceAd >= 8)) { toolGrid.insertBefore(makeAdSlot(), card); sinceAd = 0; }
           const heading = document.createElement('h3');
           heading.className = 'domain-group-heading';
           heading.dataset.domainHeading = domain.toLowerCase();
@@ -2517,6 +2546,10 @@
           toolGrid.insertBefore(heading, card);
           lastDomain = domain;
         }
+        if (sinceAd >= 0) sinceAd++;
+      });
+      toolGrid.querySelectorAll('.ad-slot').forEach(() => {
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* blocked: the slot stays empty */ }
       });
 
       function updateDomainHeadingsVisibility() {
@@ -2536,6 +2569,8 @@
 
           heading.classList.toggle('is-hidden', !hasVisibleCard);
         });
+        const filtered = cards.some(card => card.classList.contains('is-hidden'));
+        toolGrid.querySelectorAll('.ad-slot').forEach(slot => slot.classList.toggle('is-hidden', filtered));
       }
 
       function applyFilters() {

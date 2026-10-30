@@ -519,6 +519,10 @@
   <dl class="dx-facts"><dt><code>e:</code></dt><dd>Input parameter: the data of the element. Optional when you type it: <code>GetAttribute("dline")</code> and <code>GetAttribute("e:dline")</code> are the same.</dd><dt><code>m:</code></dt><dd>Currents, voltages and powers. On a branch it names the terminal: <code>m:P:bus1</code>, <code>m:P:bushv</code>. Without it, <code>m:P</code> on a line raises <code>AttributeError</code>.</dd><dt><code>c:</code></dt><dd>Calculation parameter: a result worked out from the others, such as <code>c:loading</code> and <code>c:Ploss</code>.</dd><dt><code>n:</code></dt><dd>Bus result: the result of the terminal at one end of a branch, such as <code>n:u:bus1</code>.</dd><dt><code>s:</code></dt><dd>Signal: a state or model variable of an RMS or EMT simulation, such as <code>s:speed</code>.</dd><dt><code>b:</code></dt><dd>Basic data: values derived from the input data (read only).</dd><dt><code>t:</code></dt><dd>Type parameter read through the element: <code>line.GetAttribute("t:uline")</code> is the rated voltage of the line's type.</dd><dt><code>:A :B :C</code></dt><dd>Per phase, in an unbalanced calculation only: <code>m:u:A</code>, <code>m:I:bus1:A</code> (capitals; <code>:a</code> raises <code>AttributeError</code>).</dd></dl>
   <p class="dx-note">Each rule above was checked on the PowerFactory 2024 engine. A name a class does not have raises <code>AttributeError</code>.</p>
 </section>
+    <div class="ad-slot">
+      <ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-layout="in-article" data-ad-format="fluid" data-ad-client="ca-pub-8730116101825381" data-ad-slot="1433722275"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
     <section class="dx-sec" aria-labelledby="python">
   <h2 id="python">Read and write any attribute</h2>
   <pre><code class="language-python"><span class="py-k">import</span> powerfactory

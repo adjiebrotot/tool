@@ -179,3 +179,11 @@ footer p.footer-links { font-size: .8rem; }
 .dx-more summary { cursor: pointer; font-weight: 600; color: var(--accent-strong); padding: 4px 0; }
 .dx-more[open] summary { margin-bottom: 8px; }
 .dx-more pre { max-height: 60vh; content-visibility: auto; }
+
+/* In-article ad (AdSense unit 1433722275), written by _pages/lib.mjs adSlot() between sections.
+   It takes no room until Google fills it. Same rules as .ad-slot in shared.css. */
+.ad-slot { margin: 0; text-align: center; }
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"]) { margin: 26px 0 28px; }
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"])::before { content: "Advertisement"; display: block; margin-bottom: 6px; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ad-slot:has(ins.adsbygoogle[data-ad-status="unfilled"]) { display: none; }
+@media print { .ad-slot { display: none !important; } }

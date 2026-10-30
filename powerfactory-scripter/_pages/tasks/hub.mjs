@@ -1,4 +1,5 @@
 // The hub: how to automate PowerFactory studies with Python, linking every guide.
+import { adSlot } from '../lib.mjs';
 export default async function ({ specs, ORDER, page, PERSON, BASE, UPDATED, pre, esc, all, script }) {
   const BLURB = {
     'getting-started': 'Where the powerfactory module is, GetApplication and GetApplicationExt, and a first load flow.',
@@ -32,6 +33,7 @@ ${cards}
     <li><strong>Put everything back</strong> in <code>finally</code>, because every change is saved in the project.</li>
   </ol>
 </section>
+${adSlot()}
     <section class="dx-sec" aria-labelledby="two-ways">
   <h2 id="two-ways">Write it, or have it written</h2>
   <ul class="dx-prose">
