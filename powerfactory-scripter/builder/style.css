@@ -506,6 +506,16 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-badge-warn { gap: 3px; margin-left: -2px; background: var(--warning-bg); color: var(--warning-text); border-color: transparent; }
 .pfb-panels { overflow-y: auto; overscroll-behavior: contain; display: block; }
 .pfb-panels > .ctrl-panel { padding: 14px 16px 22px; }
+/* The display ad: a strip at the foot of the right dock, only on a screen with room for it and
+   the panel above (a phone's bottom sheet never gets one); gone when unfilled or folded. */
+.pfb-ad { display: none; }
+@media (min-width: 1100px) and (min-height: 820px) {
+  .pfb-ad { display: block; flex: 0 0 auto; padding: 8px 0 10px; border-top: 1px solid var(--border); text-align: center; }
+  .pfb-ad::before { content: "Advertisement"; display: block; margin-bottom: 4px; font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .pfb-ad:has(ins.adsbygoogle[data-ad-status="unfilled"]) { display: none; }
+  .pfb-dock.is-folded > .pfb-ad { display: none; }
+}
+@media print { .pfb-ad { display: none !important; } }
 .pfb-panels:has(> .pfb-py-panel.active) { overflow: hidden; display: flex; flex-direction: column; }
 
 /* ---- Inspector -------------------------------------------------------------------------- */
