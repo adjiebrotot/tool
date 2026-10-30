@@ -124,11 +124,6 @@ h1.pfb-title span { text-wrap: balance; }
 .pfb-agent:empty { display: none; }
 .pfb-agent > * { pointer-events: auto; }
 .pfb-agent .agent-banner { margin: 0; box-shadow: var(--shadow); }
-/* The same section the other tools fold on their page sits at the foot of the Quick start list, wider while it is open. */
-.pfb-qs .agent-card { margin: 4px 0 0; flex: 0 0 auto; align-self: stretch; min-width: 0; max-width: 100%; text-align: left; }
-.pfb-qs .agent-body { overflow-x: auto; }
-.pfb-qs .agent-sum { padding: 9px 12px; font-size: .82rem; }
-.pfb-qs:has(.agent-card[open]) { width: min(640px, calc(100% - 24px)); left: 12px !important; max-height: calc(100% - var(--pfb-dock-top) - 56px); overflow-y: auto; flex-wrap: nowrap; }
 
 /* ---- Docks: the Blocks panel (left) and Settings / Python / Problems (right) ---------------- */
 .pfb-dock {

@@ -37,14 +37,15 @@
 //   A6. AN ENGINEERING MODEL COMES WHOLE. Each Engineering page (a PAGES entry with a
 //       solved hook) keeps a link carrying a whole custom model in json, and it opens and
 //       solves.
-//   A7. THE RULES ARE THE RULES. Every generated text (each agent.txt, the pre.agent-rules
-//       in each page's card, the llms.txt section) carries AI_RULES verbatim, so no
+//   A7. THE RULES ARE THE RULES. Every generated text (each agent.txt, each agent.html's
+//       pre.agent-rules, the llms.txt section) carries AI_RULES verbatim, so no
 //       chatbot is told it may answer the question itself; and no generated text and no
 //       kept link uses the keys s, open or embed.
 //   A8. A READER THAT ONLY OPENS WEB PAGES FINDS IT TOO. Each page has an agent.html, a
-//       script-free web page with the agent.txt reference (AI_RULES verbatim in its
-//       pre.agent-rules), and the card in the page's own HTML links to it with a plain
-//       <a href>. Some chatbots' browsers open web pages but return nothing for a .txt.
+//       web page with the agent.txt reference in its HTML (AI_RULES verbatim in its
+//       pre.agent-rules; its only script is the Copy system prompt button), and the tool
+//       page's own HTML links to it with a plain <a href> in a hidden pointer that people
+//       never see. Some chatbots' browsers open web pages but return nothing for a .txt.
 //       After a deploy, node _ref/agent-live-check.mjs checks the same on the live site.
 //   H.  THE LINK STEPS ASIDE. Once applied, the #load hash is gone from the address, and a
 //       reload keeps what the reader changed after it instead of applying the link again.
@@ -327,13 +328,10 @@ async function liveOf(P) {
       money: false, numeric: true, min: v.min, max: v.max, step: null, value: v.value, options: null, pairs: [], tip: '', virtual: true });
   }
   const qsRead = await V.page.evaluate(P.quickStarts || defaultQuickStarts, P.lang);
+  // The pointer to the reference is in the page but never shown to people.
   const card = await V.page.evaluate(() => {
     const box = document.getElementById('agentHelp');
-    return box ? {
-      keys: Array.from(box.querySelectorAll('.agent-keys code')).map(c => c.textContent.trim()),
-      pres: Array.from(box.querySelectorAll('pre.agent-pre')).map(p => p.textContent),
-      rules: (box.querySelector('pre.agent-rules') || {}).textContent || null
-    } : null;
+    return box ? { hidden: box.hidden && box.getBoundingClientRect().height === 0 && !box.checkVisibility() } : null;
   });
   const errs = errorsOf(V);
   await V.close();
@@ -364,9 +362,6 @@ for (const P of pages) {
   check('A7', `${P.page}/agent.txt carries AI_RULES verbatim`, !!txt && txt.includes(AI_RULES), !txt ? 'missing' : txt.includes(AI_RULES) ? '' : 'lacks or alters it');
   const html = read(P.page + '/index.html') || '';
   const sec = (html.match(SECTION_RE) || [''])[0];
-  const pres = [...sec.matchAll(/<pre class="[^"]*\bagent-rules\b[^"]*">([\s\S]*?)<\/pre>/g)].map(m => unescape(m[1]));
-  check('A7', `${P.page}/index.html card's pre.agent-rules is AI_RULES verbatim`, pres.length === 1 && pres[0] === AI_RULES,
-    !sec ? 'no agent section' : pres.length !== 1 ? `${pres.length} pre.agent-rules` : pres[0] === AI_RULES ? '' : 'altered');
   const bad = [...forbiddenIn(txt || ''), ...forbiddenIn(unescape(sec))];
   check('A7', `${P.page} docs use no key s, open or embed`, bad.length === 0, bad.join(', '));
   const keptBad = keptFor(P).flatMap(k => pairsOf(k.link).filter(([key]) => FORBIDDEN.includes(key)).map(([key]) => `${k.name}: ${key}`));
@@ -380,12 +375,16 @@ check('A7', 'llms.txt section uses no key s, open or embed', forbiddenIn(llmsSec
 console.log('\n── A8 the reference as a web page ──');
 for (const P of pages) {
   const page = read(P.page + '/agent.html');
+  // Its one script is the Copy system prompt button, which copies text already in the HTML.
+  const scripts = [...(page || '').matchAll(/<script\b([^>]*)>/gi)];
+  const scriptOk = scripts.length <= 1 && scripts.every(m => !/\bsrc=/i.test(m[1])) && (!scripts.length || page.includes('id="copyPrompt"'));
   const pres = [...(page || '').matchAll(/<pre class="agent-rules">([\s\S]*?)<\/pre>/g)].map(m => unescape(m[1]));
-  check('A8', `${P.page}/agent.html carries AI_RULES verbatim, with no script`, !!page && pres.length === 1 && pres[0] === AI_RULES && !/<script/i.test(page),
-    !page ? 'missing' : /<script/i.test(page) ? 'has a script' : pres.length !== 1 ? `${pres.length} pre.agent-rules` : pres[0] === AI_RULES ? '' : 'altered');
+  check('A8', `${P.page}/agent.html carries AI_RULES verbatim, with no script but the copy button's`, !!page && pres.length === 1 && pres[0] === AI_RULES && scriptOk,
+    !page ? 'missing' : !scriptOk ? 'has another script' : pres.length !== 1 ? `${pres.length} pre.agent-rules` : pres[0] === AI_RULES ? '' : 'altered');
   const sec = ((read(P.page + '/index.html') || '').match(SECTION_RE) || [''])[0];
   const href = SITE + P.url + 'agent.html';
-  check('A8', `${P.page}/index.html card links to agent.html`, sec.includes(`<a href="${href}">`), sec ? 'no <a href> to ' + href : 'no agent section');
+  check('A8', `${P.page}/index.html hidden pointer links to agent.html`, sec.includes(`<a href="${href}">`), sec ? 'no <a href> to ' + href : 'no agent section');
+  check('A8', `${P.page}/index.html shows people no AI text`, /<div id="agentHelp"[^>]*\shidden[\s>]/.test(sec) && !/<details|agent-rules/.test(sec), sec ? 'the agent section is visible' : 'no agent section');
 }
 
 /* ── A6 bookkeeping: which pages solve ────────────────────────────────────── */
@@ -452,17 +451,8 @@ try {
       const linkBad = D.links.flatMap(l => linkProblems(pairsOf(l), live));
       check('A1', `${P.page} agent.txt: its ${D.links.length} example link(s) use live keys and values`, D.links.length > 0 && linkBad.length === 0,
         D.links.length ? list(linkBad) : 'no example link');
-      if (!live.card) check('A1', `${P.page} has the folded AI card`, false, 'no #agentHelp');
-      else {
-        const cardGone = live.card.keys.filter(k => !live.byKey[k] && !live.lists.includes(k));
-        check('A1', `${P.page} card: each of its ${live.card.keys.length} main keys is live`, cardGone.length === 0, list(cardGone));
-        const cardLinks = live.card.pres.filter(t => /#load/.test(t) && !t.includes('<')).map(t => t.trim());
-        const cardBad = cardLinks.flatMap(l => linkProblems(pairsOf(l), live));
-        check('A1', `${P.page} card: its example link uses live keys and values`, cardLinks.length > 0 && cardBad.length === 0,
-          cardLinks.length ? list(cardBad) : 'no example link');
-        check('A7', `${P.page} card on the page shows AI_RULES verbatim`, live.card.rules === AI_RULES,
-          live.card.rules === AI_RULES ? '' : live.card.rules == null ? 'no pre.agent-rules' : 'altered');
-      }
+      check('A8', `${P.page} has the hidden pointer to its reference, unseen on the page`, !!live.card && live.card.hidden,
+        !live.card ? 'no #agentHelp' : 'it is visible');
       const re = s => s.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
       const listed = new RegExp('^- .*: ' + re(`${SITE + P.url}agent.html (plain text: ${SITE + P.url}agent.txt)`) + '$', 'm');
       check('A1', `llms.txt lists ${P.url}agent.html and agent.txt`, listed.test(llmsSec), '');

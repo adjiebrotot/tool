@@ -296,8 +296,10 @@ mode included, must be reachable that way: add the page to `PAGES` in `_ref/agen
 beyond plain fields, run `node _ref/agent-doc.mjs`, add kept links to `_ref/agent-links.json`
 and get `node _ref/agent-check.mjs <tool>` green. A tool whose solve is heavy honours `run=0`.
 `agent-doc` writes `<tool>/agent.txt` and the same text as a web page, `<tool>/agent.html`, for
-chatbots whose browser skips `.txt` files: add the `agent.html` to `sitemap.xml` after the tool's
-own entry, and after the deploy run `node _ref/agent-live-check.mjs <tool>`.
+chatbots whose browser skips `.txt` files (its Copy system prompt button copies it as Markdown),
+and puts only a hidden pointer to them in the tool page: no AI text is ever shown to people there.
+Add the `agent.html` to `sitemap.xml` after the tool's own entry, and after the deploy run
+`node _ref/agent-live-check.mjs <tool>`.
 
 For a multi-language tool (an `en` page and an `id/` page sharing one `script.js`), use a
 **language-agnostic namespace** (`'pisahvsgabung'`, not `'pisahvsgabung-en'`). `localStorage` is

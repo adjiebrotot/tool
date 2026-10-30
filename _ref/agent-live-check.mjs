@@ -6,7 +6,7 @@
 // For each page in PAGES (_ref/agent-lib.mjs), and for every User-Agent below:
 //   <page>/agent.txt   200, text/plain, no Content-Disposition, the page's title line first
 //                      and AI_RULES in the body;
-//   <page>/agent.html  200, text/html, AI_RULES in its pre.agent-rules, no script;
+//   <page>/agent.html  200, text/html, AI_RULES in its pre.agent-rules, no script but the copy button's;
 //   <page>/            200, and its HTML links to agent.html with a plain <a href>.
 // And once: /robots.txt is 200 text/plain and disallows none of those paths for any of the
 // User-Agents; /llms.txt and /sitemap.xml are 200.
@@ -105,8 +105,8 @@ for (const P of pages) {
     check(`${name}: agent.txt matches the repo`, txt.body === txtLocal, 'not deployed yet, or changed since');
     const html = await get(P.url + 'agent.html', ua);
     check(`${name}: agent.html is 200 text/html`, html.status === 200 && html.type.startsWith('text/html'), said(html));
-    check(`${name}: agent.html carries AI_RULES, with no script`,
-      html.body.includes(`<pre class="agent-rules">${esc(AI_RULES)}</pre>`) && !/<script/i.test(html.body), html.body.slice(0, 80).replace(/\s+/g, ' '));
+    check(`${name}: agent.html carries AI_RULES, with no outside script`,
+      html.body.includes(`<pre class="agent-rules">${esc(AI_RULES)}</pre>`) && !/<script\b[^>]*\bsrc=/i.test(html.body), html.body.slice(0, 80).replace(/\s+/g, ' '));
     check(`${name}: agent.html matches the repo`, html.body === htmlLocal, 'not deployed yet, or changed since');
     const page = await get(P.url, ua);
     check(`${name}: the page is 200 and links to agent.html`, page.status === 200 && page.body.includes(href), said(page));
