@@ -961,3 +961,12 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
 .agent-keys{margin:0 0 8px;padding-left:18px;}
 .agent-keys li{margin:2px 0;}
 .agent-unit{color:var(--muted);}
+
+/* In-article ad (AdSense unit 1433722275), placed by hand between the cards of a guide or
+   reading page, never beside a button, a demo or a table of contents. The slot takes no room
+   until Google fills it: an unfilled or blocked unit leaves no gap and no orphaned label. */
+.ad-slot{margin:0;text-align:center;}
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"]){margin:28px 0 30px;}
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"])::before{content:"Advertisement";display:block;margin-bottom:6px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.ad-slot:has(ins.adsbygoogle[data-ad-status="unfilled"]){display:none;}
+@media print{.ad-slot{display:none !important;}}

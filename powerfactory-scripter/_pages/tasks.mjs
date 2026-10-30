@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { page, esc, pre, py, PERSON, BASE } from './lib.mjs';
+import { page, esc, pre, py, PERSON, BASE, adSlot } from './lib.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const BUILDER = path.resolve(HERE, '..', 'builder');
@@ -78,6 +78,7 @@ function guidePage(spec, all, specs) {
   <h2 id="what">${esc(spec.whatTitle)}</h2>
 ${s.what}
 </section>
+${adSlot()}
     <section class="dx-sec" aria-labelledby="method">
   <h2 id="method">${esc(spec.methodTitle || 'The method')}</h2>
 ${s.method}
@@ -87,6 +88,7 @@ ${cta}
   <h2 id="builder">${esc(spec.builderTitle || 'The full Python script from the Builder')}</h2>
 ${s.builder}
 </section>
+${adSlot()}
     <section class="dx-sec" aria-labelledby="pitfalls">
   <h2 id="pitfalls">Pitfalls</h2>
   <ul class="dx-prose">

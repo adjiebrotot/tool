@@ -3,7 +3,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { page, esc, pre, PERSON, BASE } from './lib.mjs';
+import { page, esc, pre, PERSON, BASE, adSlot } from './lib.mjs';
 import { CLASSES, CATEGORIES, GROUPS, PREFIX_WORDS, DESC_OVERRIDES } from './classes.mjs';
 
 const KIND_DIR = { element: 'elements', type: 'types', event: 'events' };
@@ -267,6 +267,7 @@ ${rows}
     if (d.kind === 'type') notes.push('A type is shared: a change to it changes every element that uses it. Read a type value through an element with the <code>t:</code> prefix.');
     if (d.kind === 'event') notes.push('Times are written in the unit the project shows (some show milliseconds); <code>SetAttributeModeInternal(1)</code> makes it seconds. A fault is cleared by a second <code>EvtShc</code> with <code>i_shc</code> 4: <code>i_clearShc</code> does not clear it in an RMS or EMT run.');
     if (d.groups.dynamic_rms || d.groups.dynamic_emt) notes.push('RMS and EMT variables change over time: record them in a results object (<a href="../ElmRes/"><code>ElmRes</code></a>) to read the whole curve. <code>GetAttribute</code> after a run gives the value at the last time step.');
+    sections.push(adSlot());
     sections.push(`<section class="dx-sec" aria-labelledby="python">
   <h2 id="python">Read and write ${cls} in Python</h2>
   ${pre(snippet(cls, d, meta))}
@@ -303,7 +304,7 @@ ${rows}
 ${sections.join('\n')}
     <div class="dx-filter" id="dxFilterRow" hidden><input id="dxFilter" type="search" placeholder="Filter by name or meaning, e.g. loading or m:P" aria-label="Filter the attributes"><output id="dxCount" aria-live="polite"></output></div>
     <ul class="dx-toc" aria-label="All ${esc(cls)} attributes">${toc.join('')}</ul>
-${groupsHtml.join('\n')}
+${(groupsHtml.length >= 4 ? [...groupsHtml.slice(0, 2), adSlot(), ...groupsHtml.slice(2)] : groupsHtml).join('\n')}
     <section class="dx-sec" aria-labelledby="more">
   <h2 id="more">Related</h2>
   <ul class="dx-prose">
@@ -411,6 +412,7 @@ ${list.map(c => `    <li><a href="${c}/"><code>${c}</code><span>${esc(CLASSES[c]
   <dl class="dx-facts">${prefixes.map(([p, t]) => `<dt><code>${esc(p)}</code></dt><dd>${t}</dd>`).join('')}</dl>
   <p class="dx-note">Each rule above was checked on the PowerFactory 2024 engine. A name a class does not have raises <code>AttributeError</code>.</p>
 </section>
+${adSlot()}
     <section class="dx-sec" aria-labelledby="python">
   <h2 id="python">Read and write any attribute</h2>
   ${pre(`import powerfactory
