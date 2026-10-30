@@ -46,6 +46,8 @@ body{margin:0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-hei
 body.is-stale #plotDiv,body.is-stale .info-row{opacity:.45}
 
 .help{margin-top:6px}
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+.toggle-label{font-weight:700;font-size:.9rem;flex:1}
 .label-note{color:var(--muted);font-weight:400;font-size:.78rem}
 .empty-note{color:var(--muted);font-size:.83rem;text-align:center}
 /* Selects take their look from dropdown.css. The shared option colours paint

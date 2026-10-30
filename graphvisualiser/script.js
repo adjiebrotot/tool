@@ -19,6 +19,85 @@ const DEFAULT_COLORS = [
   '#B3D1FF','#c49bff','#7fcfff','#a8e6cf','#ffaaa5'
 ];
 
+/* Series palettes. 'brotools' is DEFAULT_COLORS, the colours a series took before
+   palettes existed, so state saved without a palette draws as it always did. */
+const PALETTES = {
+  brotools: DEFAULT_COLORS,
+  tableau:  ['#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F','#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC'],
+  okabe:    ['#0072B2','#D55E00','#009E73','#E69F00','#CC79A7','#56B4E9','#000000','#F0E442'],
+  vivid:    ['#2563EB','#F97316','#10B981','#E11D48','#8B5CF6','#EAB308','#0EA5E9','#64748B'],
+};
+const FONTS = {
+  dm:    "'DM Sans',sans-serif",
+  arial: 'Arial,Helvetica,sans-serif',
+  segoe: "'Segoe UI',system-ui,Arial,sans-serif",
+  times: "'Times New Roman',Times,serif",
+};
+const DASHES = ['solid','dash','dot','dashdot'];
+
+/* ─── STYLE TEMPLATES ──────────────────────────────────────────────────────────
+   The Style tab opens with a template picker, as the Sankey Creator's does. A
+   template sets every style control at once (STYLE_FIELDS says which control
+   each key is). The picker is derived, never saved: the controls are what
+   travel in the mini cache and the link, and it shows the template they add
+   up to, else Custom. A control missing from older saved state keeps its
+   default, which is the first template, so older work draws as it did. */
+const STYLE_FIELDS = {
+  bg:'gBg', palette:'gPalette', font:'gFont', fs:'gFS', ts:'gTS', ta:'gTA',
+  grid:'gGrid', gridStyle:'gGridStyle', frame:'gFrame', ticks:'gTicks',
+  lw:'gLW', points:'gPoints', dash:'gDash', legend:'gLegend', legendBox:'gLegendBox',
+  mSize:'markerSize', mOp:'markerOpacity',
+};
+const STYLE_DEFAULT = {
+  bg:'auto', palette:'brotools', font:'dm', fs:12, ts:16, ta:'center',
+  grid:'both', gridStyle:'solid', frame:'none', ticks:'none',
+  lw:2.5, points:true, dash:'solid', legend:'right', legendBox:true,
+  mSize:6, mOp:0.85,
+};
+const STYLE_RANGE = { fs:[8,28], ts:[10,40], lw:[0.5,8], mSize:[2,20], mOp:[0.1,1] };
+const TEMPLATES = [
+  {id:'brotools', name:'Adjie Brotools', desc:'The site\u2019s own look: soft pastel lines, DM Sans, a light grid, the key on the right.', s:{}},
+  {id:'brotools-night', name:'Adjie Brotools, night', desc:'The site at night: a dark sheet with pastel lines, for dark slides.', s:{bg:'dark'}},
+  {id:'minimal', name:'Minimal', desc:'Value lines only, no points, the key above the chart.', s:{bg:'white', palette:'tableau', font:'arial', ts:14, ta:'left', grid:'y', frame:'bottom', lw:1.8, points:false, legend:'top', legendBox:false}},
+  {id:'report', name:'Report', desc:'For a printed report: Times text, a full frame, colour-blind safe lines.', s:{bg:'white', palette:'okabe', font:'times', fs:11, ts:13, gridStyle:'dash', frame:'box', ticks:'inside', lw:1.5, legend:'inside', mSize:5, mOp:0.9}},
+  {id:'slides', name:'Presentation', desc:'Large text and thick lines, to read from the back of the room.', s:{bg:'white', palette:'vivid', font:'segoe', fs:16, ts:24, ta:'left', grid:'y', frame:'bottom', lw:4, points:false, legend:'top', legendBox:false, mSize:10}},
+];
+const templateStyle = t => Object.assign({}, STYLE_DEFAULT, t.s);
+
+function readStyle() {
+  const out = {};
+  Object.keys(STYLE_FIELDS).forEach(k => {
+    const el = document.getElementById(STYLE_FIELDS[k]), d = STYLE_DEFAULT[k];
+    if (!el) { out[k] = d; return; }
+    if (typeof d === 'boolean') out[k] = !!el.checked;
+    else if (typeof d === 'number') {
+      const n = parseFloat(el.value), r = STYLE_RANGE[k];
+      out[k] = isFinite(n) ? Math.min(r[1], Math.max(r[0], n)) : d;
+    } else out[k] = el.value || d;
+  });
+  return out;
+}
+function writeStyle(st) {
+  Object.keys(STYLE_FIELDS).forEach(k => {
+    const el = document.getElementById(STYLE_FIELDS[k]);
+    if (!el || st[k] === undefined) return;
+    if (el.type === 'checkbox') el.checked = !!st[k]; else el.value = st[k];
+  });
+}
+function matchTemplate(st) {
+  return TEMPLATES.find(t => { const ts = templateStyle(t); return Object.keys(ts).every(k => ts[k] === st[k]); }) || null;
+}
+function syncTemplateBox() {
+  const m = matchTemplate(readStyle());
+  document.getElementById('gTemplate').value = m ? m.id : 'custom';
+  document.getElementById('gTemplateTip').setAttribute('data-tip', m ? m.desc : 'Your own mix of settings. Pick a template to set them all at once.');
+}
+// A series with no colour of its own takes its place in the chosen palette.
+function seriesDefault(i) {
+  const p = PALETTES[document.getElementById('gPalette').value] || PALETTES.brotools;
+  return p[i % p.length];
+}
+
 const COLORMAPS = [
   {name:'Viridis', grad:'linear-gradient(90deg,#440154,#31688e,#35b779,#fde725)'},
   {name:'Plasma',  grad:'linear-gradient(90deg,#0d0887,#cc4778,#f89540,#f0f921)'},
@@ -266,7 +345,7 @@ function buildSeriesColourPickers() {
 
   // Assign defaults for new columns
   yCols.forEach(ci => {
-    if (!S.seriesColors[ci]) S.seriesColors[ci] = DEFAULT_COLORS[ci % DEFAULT_COLORS.length];
+    if (!S.seriesColors[ci]) S.seriesColors[ci] = seriesDefault(ci);
   });
 
   list.innerHTML = yCols.map(ci => `
@@ -346,6 +425,21 @@ function clearStale() {
   markStale();
 }));
 
+// ─── STYLE TAB WIRING ─────────────────────────────────────────────────────────
+// A template sets every style control; any other control re-reads which template
+// the controls now add up to. A new palette starts the series colours over.
+document.getElementById('gTemplate').addEventListener('change', () => {
+  const t = TEMPLATES.find(x => x.id === document.getElementById('gTemplate').value);
+  if (!t) { syncTemplateBox(); return; }
+  const was = document.getElementById('gPalette').value;
+  writeStyle(templateStyle(t));
+  if (document.getElementById('gPalette').value !== was) { S.seriesColors = {}; buildSeriesColourPickers(); }
+  syncTemplateBox();
+});
+document.getElementById('gPalette').addEventListener('change', () => { S.seriesColors = {}; buildSeriesColourPickers(); });
+document.getElementById('tab-style').addEventListener('change', e => { if (e.target.id !== 'gTemplate') syncTemplateBox(); });
+document.getElementById('tab-style').addEventListener('input', e => { if (e.target.id !== 'gTemplate') syncTemplateBox(); });
+
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 document.getElementById('renderBtn').onclick = renderChart;
 
@@ -366,11 +460,27 @@ function renderChart() {
   // A 2D plot has a zoom to reset; a 3D one has a camera to put back.
   document.getElementById('resetView').title = S.dim === 2 ? 'Reset zoom' : 'Reset view';
 
-  const isLight  = document.body.classList.contains('light');
-  const paperBg  = 'rgba(0,0,0,0)';
-  const plotBg   = isLight ? 'rgba(255,255,255,0.5)' : 'rgba(22,32,51,0.5)';
+  const st       = readStyle();
+  // Page follows the light or dark page; White and Dark are a sheet of their own.
+  const isLight  = st.bg === 'auto' ? document.body.classList.contains('light') : st.bg === 'white';
+  const sheet    = st.bg === 'dark' ? '#0F1728' : '#FFFFFF';
+  const paperBg  = st.bg === 'auto' ? 'rgba(0,0,0,0)' : sheet;
+  const plotBg   = st.bg === 'auto' ? (isLight ? 'rgba(255,255,255,0.5)' : 'rgba(22,32,51,0.5)') : sheet;
   const fontColor= isLight ? '#14203A' : '#EAF1FF';
   const gridColor= isLight ? '#DCE3F0' : '#2C3A52';
+  const fam      = FONTS[st.font] || FONTS.dm;
+  const titleFont= {color:fontColor, size:st.ts, family:fam};
+  const titlePos = st.ta === 'left' ? {xref:'paper', x:0, xanchor:'left'} : {x:.5, xanchor:'center'};
+  const baseFont = {family:fam, color:fontColor, size:st.fs};
+  const showGrid = st.grid !== 'none';
+  // Soft (the default) leaves Plotly's own light axis line, drawn in the grid colour.
+  const showline = st.frame !== 'none';
+  // One 2D axis: the frame, ticks and grid the Style tab chose.
+  const axis2d = (title, gridOn) => ({
+    title, color:fontColor, gridcolor:gridColor, griddash:st.gridStyle, showgrid:gridOn, zeroline:showGrid,
+    linecolor: showline ? fontColor : gridColor, showline: showline ? true : undefined, mirror: st.frame === 'box',
+    ticks: st.ticks === 'none' ? '' : st.ticks, tickcolor:fontColor, tickfont:{color:fontColor, size:st.fs},
+  });
 
   let traces=[], layout={};
 
@@ -383,27 +493,33 @@ function renderChart() {
     buildSeriesColourPickers(); // ensure pickers are in sync
 
     traces = yCols.map((ci, idx) => {
-      const color = S.seriesColors[ci] || DEFAULT_COLORS[idx % DEFAULT_COLORS.length];
+      const color = S.seriesColors[ci] || seriesDefault(idx);
       return {
         x: xVals,
         y: getColumnValues(ci, rows),
-        type:'scatter', mode:'lines+markers',
+        type:'scatter', mode: st.points ? 'lines+markers' : 'lines',
         name: S.headers[ci],
-        line:{color, width:2.5},
+        line:{color, width:st.lw, dash: st.dash === 'vary' ? DASHES[idx % DASHES.length] : 'solid'},
         marker:{color, size:5},
         hovertemplate:`<b>${S.headers[ci]}</b><br>${xName}: %{x}<br>Value: %{y}<extra></extra>`,
       };
     });
+    const lg = st.legend;
+    const legend = Object.assign({bgcolor:'rgba(0,0,0,0)', bordercolor:gridColor, borderwidth: st.legendBox ? 1 : 0, font:{color:fontColor, size:st.fs}},
+      lg === 'top'    ? {orientation:'h', x:0, xanchor:'left', y:1.02, yanchor:'bottom'} :
+      lg === 'bottom' ? {orientation:'h', x:0, xanchor:'left', y:-0.16, yanchor:'top'} :
+      lg === 'inside' ? {x:.99, xanchor:'right', y:.99, yanchor:'top', bgcolor: isLight ? 'rgba(255,255,255,0.8)' : 'rgba(15,23,40,0.75)'} : {});
     layout = {
-      title:{text:title,font:{color:fontColor,size:16,family:"'DM Sans',sans-serif"},x:.5,xanchor:'center'},
-      xaxis:{title:xName,color:fontColor,gridcolor:gridColor,linecolor:gridColor,tickfont:{color:fontColor}},
-      yaxis:{title:yCols.length===1?S.headers[yCols[0]]:'Value',color:fontColor,gridcolor:gridColor,linecolor:gridColor,tickfont:{color:fontColor}},
+      title:Object.assign({text:title, font:titleFont}, titlePos),
+      xaxis:axis2d(xName, st.grid === 'both'),
+      yaxis:axis2d(yCols.length===1?S.headers[yCols[0]]:'Value', showGrid),
       paper_bgcolor:paperBg, plot_bgcolor:plotBg,
-      font:{family:"'DM Sans',sans-serif",color:fontColor},
-      legend:{bgcolor:'rgba(0,0,0,0)',bordercolor:gridColor,borderwidth:1,font:{color:fontColor}},
-      margin:{l:60,r:30,t:55,b:55},
+      font:baseFont,
+      legend,
+      margin:{l:60,r:30,t: lg === 'top' ? 95 : 55,b: lg === 'bottom' ? 100 : 55},
       hovermode:'closest',
     };
+    if (lg === 'none') layout.showlegend = false;
     setInfoRow(`${rows.length} rows`, `${yCols.length} series`, `X: ${xName}`);
 
   /* ── 3D ── */
@@ -419,15 +535,15 @@ function renderChart() {
       hovertemplate:`${S.headers[ax.x]}: %{x}<br>${S.headers[ax.y]}: %{y}<br>${S.headers[ax.z]}: %{z}<extra></extra>`,
     }];
     layout = {
-      title:{text:title,font:{color:fontColor,size:16,family:"'DM Sans',sans-serif"},x:.5,xanchor:'center'},
+      title:Object.assign({text:title, font:titleFont}, titlePos),
       scene:{
-        xaxis:{title:S.headers[ax.x],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg},
-        yaxis:{title:S.headers[ax.y],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg},
-        zaxis:{title:S.headers[ax.z],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg},
+        xaxis:{title:S.headers[ax.x],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg,showgrid:showGrid},
+        yaxis:{title:S.headers[ax.y],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg,showgrid:showGrid},
+        zaxis:{title:S.headers[ax.z],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg,showgrid:showGrid},
         bgcolor:plotBg,
       },
       paper_bgcolor:paperBg,
-      font:{family:"'DM Sans',sans-serif",color:fontColor},
+      font:baseFont,
       margin:{l:0,r:0,t:55,b:0},
     };
     setInfoRow(`${rows.length} pts`, `${S.headers[ax.x]} × ${S.headers[ax.y]} × ${S.headers[ax.z]}`);
@@ -446,15 +562,15 @@ function renderChart() {
       hovertemplate:`${S.headers[ax.x]}: %{x}<br>${S.headers[ax.y]}: %{y}<br>${S.headers[ax.z]}: %{z}<br><b>${S.headers[ax.w]}: %{marker.color:.4g}</b><extra></extra>`,
     }];
     layout = {
-      title:{text:`${title}  <span style="font-size:11px;opacity:.6">(colour → ${S.headers[ax.w]})</span>`,font:{color:fontColor,size:16,family:"'DM Sans',sans-serif"},x:.5,xanchor:'center'},
+      title:Object.assign({text:`${title}  <span style="font-size:11px;opacity:.6">(colour → ${S.headers[ax.w]})</span>`, font:titleFont}, titlePos),
       scene:{
-        xaxis:{title:S.headers[ax.x],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg},
-        yaxis:{title:S.headers[ax.y],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg},
-        zaxis:{title:S.headers[ax.z],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg},
+        xaxis:{title:S.headers[ax.x],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg,showgrid:showGrid},
+        yaxis:{title:S.headers[ax.y],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg,showgrid:showGrid},
+        zaxis:{title:S.headers[ax.z],color:fontColor,gridcolor:gridColor,backgroundcolor:plotBg,showgrid:showGrid},
         bgcolor:plotBg,
       },
       paper_bgcolor:paperBg,
-      font:{family:"'DM Sans',sans-serif",color:fontColor},
+      font:baseFont,
       margin:{l:0,r:0,t:55,b:0},
     };
     setInfoRow(`${rows.length} pts`, `${S.colormap} map`, `W: ${S.headers[ax.w]}`);
@@ -617,6 +733,7 @@ function setInfoRow(...chips) {
    restore is silent — the saved styling applies once the user loads data and a
    chart renders. The header-row field is file-specific (data-no-persist). */
 if (window.Persist) Persist.init('graphvisualiser', { onRestore: function(){} });
+syncTemplateBox();
 
 /* ── Embed ─────────────────────────────────────────────────────────────────
    An embedded chart (SharedShare in shared.js) has no file to read, so it
@@ -629,11 +746,14 @@ SharedShare.state({
     title: document.getElementById('chartTitle').value,
     size: document.getElementById('markerSize').value,
     opacity: document.getElementById('markerOpacity').value,
+    style: readStyle(),
   }),
   load: v => new Promise(resolve => {
     if (!v || !Array.isArray(v.rows) || v.rows.length < 2) return resolve();
     const dimBtn = document.querySelector(`.dim-btn[data-dim="${+v.dim}"]`);
     if (dimBtn) dimBtn.click();
+    // A link made before styles existed has none: it draws with the defaults it always had.
+    writeStyle(Object.assign({}, STYLE_DEFAULT, v.style && typeof v.style === 'object' ? v.style : {})); syncTemplateBox();
     if (COLORMAPS.some(c => c.name === v.colormap)) S.colormap = v.colormap;
     S.seriesColors = v.colors && typeof v.colors === 'object' ? v.colors : {};
     document.getElementById('chartTitle').value = v.title || '';

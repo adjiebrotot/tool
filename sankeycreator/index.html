@@ -213,7 +213,63 @@
       <div class="ctrl-panel" id="tab-style">
 
         <div class="field-group">
-          <div class="group-title">Labels</div>
+          <div class="group-title">Start from a template</div>
+          <div class="field-row">
+            <div class="field-label"><span class="tip-wrap">Template <i class="tip-icon" id="sTemplateTip" data-tip="" data-tip-options>?</i></span></div>
+            <select class="sel-input" id="sTemplate" data-no-persist>
+              <option value="brotools">Adjie Brotools</option>
+              <option value="brotools-night">Adjie Brotools, night</option>
+              <option value="minimal">Minimal</option>
+              <option value="report">Report</option>
+              <option value="slides">Presentation</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="group-title">Colours</div>
+          <div class="field-row">
+            <div class="field-label">Colour scheme</div>
+            <select class="sel-input" id="sColor">
+              <option value="tableau">Tableau 10</option>
+              <option value="d3cat">D3 Category 10</option>
+              <option value="pastel">Pastel (Design System)</option>
+              <option value="vivid">Vivid</option>
+              <option value="cool">Cool Blues</option>
+              <option value="warm">Warm Tones</option>
+              <option value="okabe">Colour-blind safe</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field-label"><span class="tip-wrap">Background <span class="tip-icon" data-tip="<ul><li><strong>Page:</strong> follows the light or dark page.</li><li><strong>White:</strong> a white sheet, as printed.</li><li><strong>Dark:</strong> a dark sheet for dark slides.</li></ul>The choice also goes into the SVG and PNG you export.">?</span></span></div>
+            <select class="sel-input" id="sBg">
+              <option value="auto">Page</option>
+              <option value="white">White</option>
+              <option value="dark">Dark</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="group-title">Text</div>
+          <div class="field-row">
+            <div class="field-label">Font</div>
+            <select class="sel-input" id="sFont">
+              <option value="dm">DM Sans</option>
+              <option value="arial">Arial</option>
+              <option value="segoe">Segoe UI</option>
+              <option value="times">Times New Roman</option>
+            </select>
+          </div>
+          <div class="slider-block">
+            <div class="slider-head"><span class="slider-label">Text size</span><span class="slider-value" id="vFS">12px</span></div>
+            <input type="range" id="sFS" min="9" max="20" step="1" value="12">
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-label">Bold labels</div>
+            <label class="toggle-switch"><input type="checkbox" id="sBold" checked><span class="toggle-track"><span class="toggle-knob"></span></span></label>
+          </div>
           <div class="field-row">
             <div class="field-label"><span class="tip-wrap">Value display <span class="tip-icon" data-tip="<ul><li><strong>Nominal:</strong> each node's actual total.</li><li><strong>% of Max:</strong> a share of the largest node total.</li><li><strong>None:</strong> labels only.</li></ul>">?</span></span></div>
             <div class="seg-group seg-fill">
@@ -274,22 +330,7 @@
         </div>
 
         <div class="field-group">
-          <div class="group-title">Colours</div>
-          <div class="field-row">
-            <div class="field-label">Color scheme</div>
-            <select class="sel-input" id="sColor">
-              <option value="tableau">Tableau 10</option>
-              <option value="d3cat">D3 Category 10</option>
-              <option value="pastel">Pastel (Design System)</option>
-              <option value="vivid">Vivid</option>
-              <option value="cool">Cool Blues</option>
-              <option value="warm">Warm Tones</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="group-title">Diagram</div>
+          <div class="group-title">Layout</div>
           <div class="slider-block">
             <div class="slider-head"><span class="slider-label">Height</span><span class="slider-value" id="vH">520px</span></div>
             <input type="range" id="sH" min="280" max="1400" step="20" value="520">

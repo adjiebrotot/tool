@@ -19,6 +19,7 @@ const PALETTES = {
   pastel: ['#8DBBFF','#FF8B8B','#8FCDBD','#F1C0D0','#FFD28C','#B5A8FF','#A8E6CF','#F9C74F','#C9F0D1','#FFB3BA'],
   vivid:  ['#E63946','#2A9D8F','#E9C46A','#F4A261','#264653','#A8DADC','#457B9D','#6A0572','#F77F00','#7B2D8B'],
   cool:   ['#08519C','#3182BD','#6BAED6','#9ECAE1','#C6DBEF','#238B45','#41AB5D','#74C476','#A1D99B','#C7E9C0'],
+  okabe:  ['#0072B2','#D55E00','#009E73','#E69F00','#CC79A7','#56B4E9','#F0E442','#000000','#7F7F7F','#999933'],
   warm:   ['#D73027','#F46D43','#FDAE61','#FEE08B','#7FBC41','#4393C3','#F4A582','#D6604D','#FFEDA0','#FEB24C'],
 };
 
@@ -140,7 +141,30 @@ const PRESETS = {
   },
 };
 const DEFAULT_ROWS = PRESETS.family.rows;
-const DEFAULT_S = {align:'justify',pad:20,nw:18,op:40,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:false,valueMode:'nominal'};
+const DEFAULT_S = {align:'justify',pad:20,nw:18,op:40,h:520,scheme:'tableau',label:'auto',linkStyle:'gradient',iter:32,labelBox:false,valueMode:'nominal',
+  font:'dm',fs:12,bold:true,bg:'auto'};
+
+// Style templates: each sets every style key at once. A key a template leaves
+// out takes the default's value. The first one is the default look, so state
+// saved before templates existed (no template key at all) is the first one.
+const FONTS = {
+  dm:    'DM Sans,system-ui,sans-serif',
+  arial: 'Arial,Helvetica,sans-serif',
+  segoe: '"Segoe UI",system-ui,Arial,sans-serif',
+  times: '"Times New Roman",Times,serif',
+};
+const TEMPLATES = [
+  {id:'brotools', name:'Adjie Brotools', desc:'The site\u2019s own look: gradient links, Tableau colours, DM Sans.', s:{}},
+  {id:'brotools-night', name:'Adjie Brotools, night', desc:'The site at night: a dark sheet with pastel colours, for dark slides.', s:{scheme:'pastel', bg:'dark', op:45}},
+  {id:'minimal', name:'Minimal', desc:'Slim nodes, quiet blue links, labels outside and no values.', s:{font:'arial', fs:11, bold:false, scheme:'cool', bg:'white', linkStyle:'source', op:30, nw:10, pad:14, label:'outside', valueMode:'none'}},
+  {id:'report', name:'Report', desc:'For a printed report: Times text, colour-blind safe colours on white.', s:{font:'times', fs:11, bold:false, scheme:'okabe', bg:'white', linkStyle:'source', op:50, nw:14, pad:16, label:'outside', iter:64}},
+  {id:'slides', name:'Presentation', desc:'Large bold text, wide nodes and a tall diagram, to read from the back of the room.', s:{font:'segoe', fs:16, scheme:'vivid', bg:'white', op:50, nw:26, pad:30, label:'outside', h:640}},
+];
+const STYLE_KEYS = Object.keys(DEFAULT_S);
+function templateStyle(t){ return Object.assign(clone(DEFAULT_S), t.s); }
+function matchTemplate(st){
+  return TEMPLATES.find(t => { const ts = templateStyle(t); return STYLE_KEYS.every(k => ts[k] === st[k]); }) || null;
+}
 
 // ═══════════════════════════════════════════════
 //  STATE
@@ -330,7 +354,8 @@ function doRender(){
   const wrap = $('svgWrap');
   const W = exportWidth || Math.max(600, wrap.clientWidth||800);
   const H = S.h;
-  const mL=130, mR=140, mT=10, mB=16;
+  const fsc = S.fs/12;
+  const mL=Math.round(130*fsc), mR=Math.round(140*fsc), mT=10, mB=16;
 
   svgEl.setAttribute('viewBox',`0 0 ${W} ${H}`);
   svgEl.setAttribute('width', W);
@@ -359,6 +384,13 @@ function doRender(){
 
   const svg  = d3.select(svgEl);
   const defs = svg.append('defs');
+  // The sheet: Page follows the light/dark page, White and Dark are drawn as a
+  // sheet of their own (and travel into the export).
+  const sheetDark = S.bg === 'dark' || (S.bg === 'auto' && !document.body.classList.contains('light'));
+  if(S.bg !== 'auto'){
+    svg.append('rect').attr('class','sheet-bg').attr('x',0).attr('y',0).attr('width',W).attr('height',H)
+      .attr('rx',8).attr('fill', S.bg === 'dark' ? '#0F1728' : '#FFFFFF');
+  }
   const op   = S.op/100;
 
   // Max node value (used for % display mode)
@@ -445,9 +477,9 @@ function doRender(){
     const onLeft = d.x0 < W / 2;
     const isInside  = S.label === 'inside' || (S.label === 'auto' && nodeH > 36);
     const valOffset = 14;
-    const isLight    = document.body.classList.contains('light');
-    const textColor  = isLight ? '#000000' : (cssVar('--text')  || '#EAF1FF');
-    const mutedColor = isLight ? '#000000' : (cssVar('--muted') || '#A8B6CF');
+    const isLight    = !sheetDark;
+    const textColor  = isLight ? '#000000' : (S.bg === 'dark' ? '#EAF1FF' : (cssVar('--text')  || '#EAF1FF'));
+    const mutedColor = isLight ? '#000000' : (S.bg === 'dark' ? '#A8B6CF' : (cssVar('--muted') || '#A8B6CF'));
     const boxBg      = isLight ? 'rgba(255,255,255,0.96)' : 'rgba(15,23,40,0.78)';
     const boxStroke  = isLight ? 'rgba(0,0,0,0.24)'      : 'rgba(234,241,255,0.18)';
     let tx, anchor, nameColor, valColor, nameSize;
@@ -455,13 +487,13 @@ function doRender(){
       tx = (d.x0 + d.x1) / 2; anchor = 'middle';
       nameColor = isLight ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.95)';
       valColor  = isLight ? 'rgba(0,0,0,0.60)' : 'rgba(255,255,255,0.70)';
-      nameSize  = Math.min(12, nodeH * 0.38);
+      nameSize  = Math.min(S.fs, nodeH * 0.38);
     } else if (S.label === 'outside' || (S.label === 'auto' && !onLeft)) {
       tx = d.x0 - 7; anchor = 'end';
-      nameColor = textColor; valColor = mutedColor; nameSize = 12;
+      nameColor = textColor; valColor = mutedColor; nameSize = S.fs;
     } else {
       tx = d.x1 + 7; anchor = 'start';
-      nameColor = textColor; valColor = mutedColor; nameSize = 12;
+      nameColor = textColor; valColor = mutedColor; nameSize = S.fs;
     }
     const lines = labelLines(d.name);
     const nameLineHeight = Math.max(13, nameSize * 1.15);
@@ -472,9 +504,9 @@ function doRender(){
       .attr('text-anchor', anchor)
       .attr('dominant-baseline', 'middle')
       .attr('fill', nameColor)
-      .attr('font-family', 'DM Sans,system-ui,sans-serif')
+      .attr('font-family', FONTS[S.font] || FONTS.dm)
       .attr('font-size', nameSize)
-      .attr('font-weight', '700')
+      .attr('font-weight', S.bold ? '700' : '400')
       .style('pointer-events', 'none');
     appendMultilineText(nameEl, lines, tx, nameLineHeight);
 
@@ -493,8 +525,8 @@ function doRender(){
         .attr('text-anchor', anchor)
         .attr('dominant-baseline', 'middle')
         .attr('fill', valColor)
-        .attr('font-family', 'DM Mono,monospace')
-        .attr('font-size', Math.min(11, nameSize - 1))
+        .attr('font-family', S.font === 'dm' ? 'DM Mono,monospace' : (FONTS[S.font] || FONTS.dm))
+        .attr('font-size', Math.min(S.fs - 1, nameSize - 1))
         .attr('font-weight', '400')
         .text(valText)
         .style('pointer-events', 'none');
@@ -962,6 +994,10 @@ $('sLabel').addEventListener('change',()=>{ S.label=$('sLabel').value;  schedule
 $('sLinkStyle').addEventListener('change',()=>{ S.linkStyle=$('sLinkStyle').value; scheduleRender(); });
 $('sIter').addEventListener('change',()=>{ S.iter=parseInt($('sIter').value); scheduleRender(); });
 $('sLabelBox').addEventListener('change',()=>{ S.labelBox=$('sLabelBox').checked; scheduleRender(); });
+$('sFont').addEventListener('change',()=>{ S.font=$('sFont').value; scheduleRender(); });
+$('sBg').addEventListener('change',()=>{ S.bg=$('sBg').value; scheduleRender(); });
+$('sBold').addEventListener('change',()=>{ S.bold=$('sBold').checked; scheduleRender(); });
+bindSlider('FS','vFS','fs', v=>v+'px', null);
 
 document.querySelectorAll('input[name="align"]').forEach(r=>{
   r.addEventListener('change',()=>{ if(!r.checked) return; S.align=r.value; scheduleRender(); });
@@ -971,23 +1007,54 @@ document.querySelectorAll('input[name="valueMode"]').forEach(r=>{
   r.addEventListener('change',()=>{ if(!r.checked) return; S.valueMode=r.value; scheduleRender(); });
 });
 
+// Put every style control on S's values (a template, Reset).
+function syncStyleControls(){
+  $('sPad').value=S.pad;       $('vPad').textContent=S.pad;
+  $('sNW').value=S.nw;         $('vNW').textContent=S.nw+'px';
+  $('sOp').value=S.op;         $('vOp').textContent=S.op+'%';
+  $('sH').value=S.h;           $('vH').textContent=S.h+'px';
+  $('sFS').value=S.fs;         $('vFS').textContent=S.fs+'px';
+  $('sColor').value=S.scheme;
+  $('sLabel').value=S.label;
+  $('sLinkStyle').value=S.linkStyle;
+  $('sIter').value=S.iter;
+  $('sLabelBox').checked=S.labelBox;
+  $('sFont').value=S.font;
+  $('sBg').value=S.bg;
+  $('sBold').checked=S.bold;
+  document.querySelector(`input[name="align"][value="${S.align}"]`).checked=true;
+  document.querySelector(`input[name="valueMode"][value="${S.valueMode}"]`).checked=true;
+}
+
+// The template box shows the template the controls add up to, else Custom.
+// It is derived, never saved: the controls are what travel, so saved state
+// from before templates existed (no new keys) reads as the first template.
+function syncTemplateBox(){
+  const m = matchTemplate(S);
+  $('sTemplate').value = m ? m.id : 'custom';
+  const tip = $('sTemplateTip');
+  if(tip) tip.setAttribute('data-tip', m ? m.desc : 'Your own mix of settings. Pick a template to set them all at once.');
+}
+$('sTemplate').addEventListener('change',()=>{
+  const t = TEMPLATES.find(x => x.id === $('sTemplate').value);
+  if(!t){ syncTemplateBox(); return; }
+  S = Object.assign(S, templateStyle(t));
+  syncStyleControls();
+  syncTemplateBox();
+  scheduleRender();
+});
+// Any other style control: re-read which template it adds up to.
+$('tab-style').addEventListener('change', e => { if(e.target.id !== 'sTemplate') syncTemplateBox(); });
+$('tab-style').addEventListener('input', e => { if(e.target.type === 'range') syncTemplateBox(); });
+
 // ═══════════════════════════════════════════════
 //  RESET / CLEAR
 // ═══════════════════════════════════════════════
 $('resetBtn').addEventListener('click',()=>{
   rows = clone(DEFAULT_ROWS);
   S    = clone(DEFAULT_S);
-  $('sPad').value=S.pad;       $('vPad').textContent=S.pad;
-  $('sNW').value=S.nw;         $('vNW').textContent=S.nw+'px';
-  $('sOp').value=S.op;         $('vOp').textContent=S.op+'%';
-  $('sH').value=S.h;           $('vH').textContent=S.h+'px';
-  $('sColor').value=S.scheme;
-  $('sLabel').value=S.label;
-  $('sLinkStyle').value=S.linkStyle;
-  $('sIter').value=S.iter;
-  $('sLabelBox').checked=S.labelBox;
-  document.querySelector(`input[name="align"][value="${S.align}"]`).checked=true;
-  document.querySelector(`input[name="valueMode"][value="${S.valueMode}"]`).checked=true;
+  syncStyleControls();
+  syncTemplateBox();
   buildTableRows();
   syncText();
   scheduleRender();
@@ -1058,8 +1125,12 @@ function exportCloneXml(){
 }
 function exportCloneXmlAtSize(){
   const clone = svgEl.cloneNode(true);
-  clone.querySelectorAll('text').forEach(t => t.setAttribute('fill','#1a1a1a'));
-  clone.querySelectorAll('.label-bg').forEach(r => r.setAttribute('fill','rgba(255,255,255,0.88)'));
+  // A dark sheet keeps its own light text; every other export is dark text on white.
+  const darkSheet = S.bg === 'dark', ink = darkSheet ? '#EAF1FF' : '#1a1a1a';
+  if(!darkSheet){
+    clone.querySelectorAll('text').forEach(t => t.setAttribute('fill','#1a1a1a'));
+    clone.querySelectorAll('.label-bg').forEach(r => r.setAttribute('fill','rgba(255,255,255,0.88)'));
+  }
   const W = svgEl.viewBox.baseVal.width || 800;
   const H = svgEl.viewBox.baseVal.height || S.h;
   lastExportSize = { W, H };
@@ -1069,15 +1140,21 @@ function exportCloneXmlAtSize(){
   // Expand viewBox to accommodate title at top and watermark at bottom
   clone.setAttribute('viewBox', `0 ${-TITLE_H} ${W} ${H + TITLE_H}`);
   clone.setAttribute('height', H + TITLE_H);
+  if(darkSheet){
+    const back = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    back.setAttribute('x',0); back.setAttribute('y',-TITLE_H); back.setAttribute('width',W); back.setAttribute('height',H + TITLE_H);
+    back.setAttribute('fill','#0F1728');
+    clone.insertBefore(back, clone.firstChild);
+  }
 
   if(titleText){
     const titleEl = document.createElementNS('http://www.w3.org/2000/svg','text');
     titleEl.setAttribute('x', W / 2); titleEl.setAttribute('y', -10);
     titleEl.setAttribute('text-anchor','middle');
-    titleEl.setAttribute('font-family','DM Sans, sans-serif');
+    titleEl.setAttribute('font-family', FONTS[S.font] || FONTS.dm);
     titleEl.setAttribute('font-size','16');
     titleEl.setAttribute('font-weight','700');
-    titleEl.setAttribute('fill','#1a1a1a');
+    titleEl.setAttribute('fill', ink);
     titleEl.textContent = titleText;
     clone.insertBefore(titleEl, clone.firstChild);
   }
@@ -1087,7 +1164,7 @@ function exportCloneXmlAtSize(){
   const wm = document.createElementNS('http://www.w3.org/2000/svg','path');
   wm.setAttribute('d', WM_PATH);
   wm.setAttribute('transform', 'translate(' + (W - 12 - WM_PATH_W) + ',' + (H - 10) + ')');
-  wm.setAttribute('fill','#1a1a1a');
+  wm.setAttribute('fill', ink);
   wm.setAttribute('opacity','0.22');
   clone.appendChild(wm);
   const wmLogoSize = 13;
@@ -1203,6 +1280,7 @@ buildTableRows();
 syncText();
 scheduleRender();
 markPreset('family');
+syncTemplateBox();
 
 /* ── Mini cache ────────────────────────────────────────────────────────────
    Restore the last diagram definition and styling on revisit. Each restored
