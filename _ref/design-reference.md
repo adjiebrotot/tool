@@ -1058,6 +1058,10 @@ back to the start*
 ```css
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; padding: 14px 18px 18px; border-top: 1px solid var(--border); }
 
+/* shared.css draws both buttons for every tool. A tool's stylesheet sets only
+   their layout (display, flex, gap, white-space), never their fill, border,
+   radius, padding or hover: a restated copy is how a tool's buttons drift
+   back to a grey box with a faint border. */
 .btn-primary {
   background: var(--accent);
   color: var(--text-inv);
@@ -1065,29 +1069,31 @@ back to the start*
   border-radius: var(--radius-md);
   padding: 11px 22px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   cursor: pointer;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  box-shadow: var(--sticker-accent);
+  transition: opacity var(--transition-fast), box-shadow var(--transition-fast);
   font-family: inherit;
   letter-spacing: 0.01em;
 }
-.btn-primary:hover { opacity: 0.88; }
-.btn-primary:active { transform: scale(0.97); }
+.btn-primary:hover { transform: translate(-1px, -1px); box-shadow: var(--sticker-accent-hover); }
+.btn-primary:active { transform: translate(2px, 2px); box-shadow: 0 0 0 transparent; }
 
 .btn-secondary {
-  background: var(--input-bg);
+  background: var(--panel);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--ink-line);
   border-radius: var(--radius-md);
-  padding: 11px 22px;
+  padding: 10px 21px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   cursor: pointer;
-  transition: border-color var(--transition-fast);
+  box-shadow: var(--sticker);
+  transition: box-shadow var(--transition-fast);
   font-family: inherit;
 }
-.btn-secondary:hover { border-color: var(--accent); }
-.btn-secondary:active { transform: scale(0.97); }
+.btn-secondary:hover { transform: translate(-1px, -1px); box-shadow: var(--sticker-hover); }
+.btn-secondary:active { transform: translate(1px, 1px); box-shadow: 0 0 0 transparent; }
 ```
 
 ---

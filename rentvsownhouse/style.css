@@ -113,10 +113,8 @@ body.light .radio-opt:hover{border-color:var(--accent);}
 .warning{margin:0 18px 18px;padding:10px 12px;border-radius:var(--radius-md);background:rgba(255,210,140,.12);border:1px solid rgba(255,210,140,.25);color:#FFD28C;display:none;font-size:.82rem;line-height:1.5;}
 body.light .warning{background:#FFF0D9;border-color:#F5D08A;color:#7A4A00;}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px 16px;border-top:1px solid var(--border);}
-.btn-primary{background:var(--accent);color:var(--text-inv);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:600;cursor:pointer;font-size:14px;transition:opacity var(--motion-fast);flex:1;letter-spacing:.01em;}
-.btn-primary:hover{opacity:.85;}
-.btn-secondary{background:var(--input-bg);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:600;cursor:pointer;font-size:14px;transition:border-color var(--motion-fast);flex:1;letter-spacing:.01em;}
-.btn-secondary:hover{border-color:var(--accent);}
+/* Look (fill, ink outline, sticker) comes from shared.css; only the layout is set here. */
+.btn-primary,.btn-secondary{flex:1;}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
 .metric{padding:12px 14px;}
 .metric .label{color:var(--muted);font-size:.8125rem;font-weight:600;margin-bottom:6px;}

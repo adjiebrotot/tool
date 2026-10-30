@@ -44,11 +44,6 @@
     .num-input:focus,.affix-input:focus{border-color:var(--accent);background:var(--panel)}
     .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-md);padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;white-space:nowrap;}
     .btn-theme:hover{border-color:var(--accent);color:var(--text);}
-    .btn-primary{background:var(--accent);color:var(--panel);border:none;border-radius:var(--radius-md);padding:11px 22px;font-weight:600;cursor:pointer;font-size:14px;transition:background 150ms,transform 150ms}
-    .btn-primary:hover{background:var(--accent-strong)}
-    .btn-primary:active{transform:scale(0.97)}
-    .btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:11px 22px;font-weight:600;cursor:pointer;font-size:14px;transition:border-color 150ms}
-    .btn-secondary:hover{border-color:var(--accent)}
     .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
     .metric{padding:12px 14px;min-height:82px}
     .metric .label{color:var(--muted);font-size:.8125rem;font-weight:600;margin-bottom:6px}

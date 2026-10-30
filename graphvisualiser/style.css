@@ -98,9 +98,8 @@ select[multiple] option:checked{background:var(--accent);color:var(--text-inv)}
 .file-name{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent2);margin-top:8px;word-break:break-all}
 
 /* BUTTONS */
-.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:7px 14px;font-weight:700;font-size:.83rem;cursor:pointer;transition:border-color 150ms;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.btn-secondary:hover{border-color:var(--accent)}
-.btn-secondary:active{transform:scale(.97)}
+/* Look (fill, ink outline, sticker) comes from shared.css; only the layout is set here. */
+.btn-secondary{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-theme{background:var(--input-bg);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 14px;font-size:.85rem;font-weight:600;cursor:pointer;transition:color 150ms,background-color 150ms,border-color 150ms,box-shadow 150ms,opacity 150ms,transform 150ms,fill 150ms,stroke 150ms;white-space:nowrap;font-family:inherit}
 .btn-theme:hover{border-color:var(--accent);color:var(--text)}
 .btn-back{text-decoration:none;display:inline-flex;align-items:center;}
