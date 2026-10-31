@@ -953,6 +953,11 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
      In-article 3 1433722275  between the cards of a guide or reading page, and between the domain
                               groups of the home page
      In-article 1 4587949325  PowerFactory reference and Python pages (docs.css)
+     In-feed      5403685043  image on the side: the card-sized tile that fills a grid's last row,
+                              on this home page (index.html, fillGaps) and the blog's post grids;
+                              also the blog's in-feed unit among its home page cards
+     In-feed      8828371845  image above, 2777521705 title above, 6995134169 text only: the next
+                              tries when a gap tile comes back unfilled (same places)
    The blog has In-article 2 7068974137 and Multiplex 3 6347753554, www's about pages Display 5
    1821351030; Display 4 3134432708 is spare. Never beside a button, a demo or a table of
    contents, and never two units within a screen of each other. The slot takes no room until
