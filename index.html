@@ -566,6 +566,50 @@
       display: none;
     }
 
+    /* A domain group never ends on a lone card: its last row's empty cell takes
+       an in-feed ad the size of a card (fillGaps below). The tile has a card's
+       surface and corners but a plain border, no sticker and no lift, so it
+       sits in the grid like a card yet never reads as a tool, and it shows
+       nothing until AdSense fills it. */
+    .tool-grid > .ad-tile {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 0.75rem 1rem 1rem;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .tool-grid > .ad-tile.is-hidden {
+      display: none;
+    }
+
+    .tool-grid > .ad-tile:not(:has(ins[data-ad-status="filled"])) {
+      visibility: hidden;
+    }
+
+    .ad-tile-label {
+      margin: 0 0 0.5rem;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .ad-tile ins.adsbygoogle {
+      margin-block: auto;
+    }
+
+    .ad-tile ins.adsbygoogle,
+    .ad-tile ins.adsbygoogle > div,
+    .ad-tile ins.adsbygoogle iframe {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
     /* A tool card: its animation on the left, then the title, one line or
        two on what it does, its categories in small print, and the button. */
     /* Twenty-odd cards stay quiet at rest (a hairline of border, no shadow)
@@ -2552,6 +2596,73 @@
         try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* blocked: the slot stays empty */ }
       });
 
+      // A domain group's last row is filled with in-feed tiles the size of a card, so no
+      // group ends on a lone card. The count follows the grid's columns (none on one column)
+      // and the cards a filter leaves, so it is worked out again on a filter and a resize.
+      // A tile is pushed to AdSense the first time it shows; one left unfilled is replaced
+      // by the next unit. "Image on the side" first: the same shape as a tool card.
+      const tileUnits = [
+        { slot: '5403685043', key: '-fb+5w+4e-db+86' }, // In-feed, image on the side
+        { slot: '8828371845', key: '-6t+ed+2i-1n-4w' }, // In-feed, image above
+        { slot: '2777521705', key: '-ef+6k-30-ac+ty' }, // In-feed, title above
+        { slot: '6995134169', key: '-gw-3+1f-3d+2z' }   // In-feed, text only
+      ];
+      const groups = new Map();
+      cards.forEach(card => {
+        const domain = card.dataset.domain.trim();
+        if (!groups.has(domain)) groups.set(domain, { cards: [], tiles: [], failed: 0 });
+        groups.get(domain).cards.push(card);
+      });
+
+      function makeAdTile(unit) {
+        const tile = document.createElement('aside');
+        tile.className = 'ad-tile is-hidden';
+        tile.setAttribute('aria-label', 'Advertisement');
+        const label = document.createElement('p');
+        label.className = 'ad-tile-label';
+        label.textContent = 'Advertisement';
+        const ins = document.createElement('ins');
+        ins.className = 'adsbygoogle';
+        ins.style.display = 'block';
+        ins.dataset.adFormat = 'fluid';
+        ins.dataset.adLayoutKey = unit.key;
+        ins.dataset.adClient = 'ca-pub-8730116101825381';
+        ins.dataset.adSlot = unit.slot;
+        tile.append(label, ins);
+        return tile;
+      }
+
+      function fillGaps() {
+        const cols = getComputedStyle(toolGrid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+        groups.forEach(group => {
+          group.tiles = group.tiles.filter(tile => {
+            if (tile.querySelector('ins').getAttribute('data-ad-status') !== 'unfilled') return true;
+            tile.remove();
+            group.failed += 1;
+            return false;
+          });
+          const visible = group.cards.filter(card => !card.classList.contains('is-hidden')).length;
+          const want = cols > 1 && visible % cols ? Math.min(cols - (visible % cols), visible) : 0;
+          while (group.tiles.length < want && group.failed < tileUnits.length) {
+            const tile = makeAdTile(tileUnits[group.failed]);
+            (group.tiles[group.tiles.length - 1] || group.cards[group.cards.length - 1]).after(tile);
+            group.tiles.push(tile);
+          }
+          group.tiles.forEach((tile, i) => {
+            const on = i < want;
+            tile.classList.toggle('is-hidden', !on);
+            if (on && !tile.dataset.pushed) {
+              tile.dataset.pushed = '1';
+              try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* blocked: the tile stays invisible */ }
+            }
+          });
+        });
+      }
+
+      new MutationObserver(fillGaps).observe(toolGrid, { subtree: true, attributes: true, attributeFilter: ['data-ad-status'] });
+      let fillTimer;
+      window.addEventListener('resize', () => { clearTimeout(fillTimer); fillTimer = setTimeout(fillGaps, 150); });
+
       function updateDomainHeadingsVisibility() {
         const headings = Array.from(toolGrid.querySelectorAll('.domain-group-heading'));
         headings.forEach((heading, index) => {
@@ -2571,6 +2682,7 @@
         });
         const filtered = cards.some(card => card.classList.contains('is-hidden'));
         toolGrid.querySelectorAll('.ad-slot').forEach(slot => slot.classList.toggle('is-hidden', filtered));
+        fillGaps();
       }
 
       function applyFilters() {
