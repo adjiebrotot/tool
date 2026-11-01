@@ -1,6 +1,6 @@
 /* ──────────────────────────────────────────────────────────────────────────
    Embed viewer — a shared chart, drawn from its link
-   embed/index.html#t=<kind>&kit=<tool>&s=<snapshot>
+   embed/index.html#t=<kind>&kit=<tool>&s=<snapshot>[&theme=light|dark]
 
    The page another site frames when a reader pastes Embed as HTML. The
    snapshot (share-snapshot.js) is the chart written down as data while the
@@ -548,6 +548,52 @@
   }
   function queueSize(){ if(!queued){ queued = true; global.requestAnimationFrame(post); } }
 
+  /* ── Theme ──
+     A snapshot keeps the colours it was drawn in (snap.th). A page that
+     frames it can ask for the other theme with &theme=light|dark: each colour
+     that is a site token in one theme becomes the same token in the other,
+     read from dark.css and light.css, so nothing here repeats their values. */
+  var TOKENS = ['chart-text', 'chart-grid', 'line-a', 'line-b', 'line-c', 'line-d', 'line-e', 'line-rtb-rent',
+    'line-rtb-own', 'text', 'muted', 'border', 'panel', 'bg', 'bg-subtle', 'accent', 'accent2', 'accent3', 'gold',
+    'positive-em', 'negative-em', 'accent-strong', 'positive-border', 'negative-border', 'positive-bg', 'negative-bg'];
+  function hex2(n){ return ('0' + (+n).toString(16)).slice(-2); }
+  function tokenMap(from){
+    var body = doc.body, had = body.classList.contains('light'), vals = { dark: [], light: [] }, map = {};
+    ['dark', 'light'].forEach(function(t){
+      body.classList.toggle('light', t === 'light');
+      var cs = global.getComputedStyle(body);
+      vals[t] = TOKENS.map(function(n){ return cs.getPropertyValue('--' + n).trim().toUpperCase(); });
+    });
+    body.classList.toggle('light', had);
+    var to = from === 'light' ? 'dark' : 'light';
+    // A tooltip border some tools draw in that is not a token.
+    if(from === 'light') map['#D4DEEF'] = vals.dark[TOKENS.indexOf('border')];
+    vals[from].forEach(function(c, i){ if(/^#[0-9A-F]{6}$/.test(c) && !map[c] && vals[to][i]) map[c] = vals[to][i]; });
+    return map;
+  }
+  function recolor(v, from){
+    var map = tokenMap(from), bg = from === 'light' ? '15,23,40' : '255,255,255';
+    function one(c){
+      return c.replace(/#([0-9a-f]{6})([0-9a-f]{2})?\b/gi, function(m, h, a){
+        var to = map['#' + h.toUpperCase()]; return to ? to + (a || '') : m;
+      }).replace(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)/gi, function(m, r, g, b, a){
+        var key = r + ',' + g + ',' + b, to = map['#' + (hex2(r) + hex2(g) + hex2(b)).toUpperCase()];
+        if(to && a == null) return to;
+        // Plain white and black (a backdrop, a hairline) swap sides.
+        if(from === 'light' ? key === '255,255,255' : key === '15,23,40') return 'rgba(' + bg + ',' + (a == null ? 1 : a) + ')';
+        if(key === '0,0,0' && from === 'light') return 'rgba(255,255,255,' + (a == null ? 1 : a) + ')';
+        return m;
+      });
+    }
+    (function walk(o){
+      Object.keys(o).forEach(function(k){
+        var x = o[k];
+        if(typeof x === 'string') o[k] = one(x);
+        else if(x && typeof x === 'object') walk(x);
+      });
+    })(v);
+  }
+
   /* ── Start ── */
   function fail(){
     root.classList.remove('wait');
@@ -578,7 +624,10 @@
       pool = Array.isArray(snap.pool) ? snap.pool : [];
       lang = snap.l === 'id' ? 'id' : 'en';
       root.lang = lang;
-      if(snap.th === 'light') doc.body.classList.add('light');
+      var made = snap.th === 'light' ? 'light' : 'dark', want = hashParam('theme');
+      if(want !== 'light' && want !== 'dark') want = made;
+      if(want === 'light') doc.body.classList.add('light');
+      if(want !== made) recolor(snap, made);
       if(snap.kind === 'chartjs' && !global.Chart) throw new Error('Chart.js did not load');
       if(snap.kind === 'plotly' && !global.Plotly) throw new Error('Plotly did not load');
       return fonts();
