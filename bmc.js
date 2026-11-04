@@ -21,7 +21,12 @@
  *    end whenever the bar is open and wide enough, and floats as above otherwise;
  *  - leaves blank room under the footer of a page that scrolls, so the end of
  *    the page is never under it;
- *  - stays out of a tool embedded on another site.
+ *  - stays out of a tool embedded on another site;
+ *  - for a reader in Indonesia (the browser's time zone is WIB, WITA or WIT),
+ *    opens Trakteer instead of Buy Me a Coffee: the same circle, with
+ *    Trakteer's coffee cup, opening Trakteer's tip modal in a full-screen
+ *    iframe, as Trakteer's own overlay script does (without its long pill
+ *    button). `?tip=trakteer` or `?tip=bmc` in the address forces either one.
  *
  * The tool site (tool.adjiebrotots.com/bmc.js) and the blog (assets/js/bmc.js)
  * keep the same file: change both together.
@@ -34,6 +39,22 @@
   var DRAG = !!(me && me.hasAttribute('data-bmc-drag'));
   var DOCK = me && me.getAttribute('data-bmc-dock'), DS = 32; /* the button's size inside a footer bar */
   var KEY = 'bmc-pos:' + location.pathname;
+
+  /* Trakteer for a reader in Indonesia, Buy Me a Coffee for everyone else. */
+  var TRAKTEER = {
+    url: 'https://trakteer.id/v1/adjiebrotot/tip/embed/modal',
+    icon: 'https://edge-cdn.trakteer.id/images/mix/coffee.png',
+    title: 'Dukung saya di Trakteer'
+  };
+  var TIP = (function () {
+    var m = /[?&]tip=(trakteer|bmc)\b/.exec(location.search);
+    if (m) return m[1] === 'trakteer';
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      return /^Asia\/(Jakarta|Pontianak|Makassar|Ujung_Pandang|Jayapura)$/.test(tz);
+    } catch (e) { return false; }
+  })();
+  var TITLE = TIP ? TRAKTEER.title : 'Buy me a coffee';
 
   var css = D.createElement('style');
   css.id = 'bmc-fit';
@@ -55,6 +76,11 @@
     '#bmc-wbtn:active{transform:translate(2px,2px)!important;box-shadow:0 0 0 transparent!important;}' +
     '#bmc-wbtn img{width:28px!important;height:28px!important;pointer-events:none;}' +
     '#bmc-wbtn svg path{fill:var(--text-inv,#fff);}' +
+    'html.bmc-tr #bmc-wbtn img{width:32px!important;height:32px!important;object-fit:contain;}' +
+    'html.bmc-tr-wait #bmc-wbtn{animation:bmc-wait 1s ease-in-out infinite alternate;}' +
+    '@keyframes bmc-wait{to{opacity:.55;}}' +
+    '#bmc-tr{display:none;position:fixed;inset:0;z-index:9999999;}' +
+    '#bmc-tr iframe{width:100%;height:100%;border:0;display:block;background:transparent;}' +
     'html.bmc-drag #bmc-wbtn{touch-action:none;cursor:grab!important;}' +
     'html.bmc-dragging #bmc-wbtn{transition:none!important;cursor:grabbing!important;transform:none!important;box-shadow:var(--sticker-accent-hover,3px 3px 0 #14203A)!important;}' +
     /* The thank-you note beside the button, in the site's card style. */
@@ -80,7 +106,7 @@
     'html.bmc-docked #bmc-note{left:auto!important;right:var(--bmc-nr,' + EDGE + 'px)!important;bottom:var(--bmc-nb,' + RESERVE + 'px)!important;transform-origin:right bottom!important;}' +
     'html.bmc-off #bmc-wbtn,html.bmc-off #bmc-note{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}' +
     '@media (prefers-reduced-motion:reduce){#bmc-wbtn{transition:none!important;}#bmc-wbtn:hover,#bmc-wbtn:active{transform:none!important;}}' +
-    '@media print{#bmc-wbtn,#bmc-note,#bmc-iframe{display:none!important;}}';
+    '@media print{#bmc-wbtn,#bmc-note,#bmc-iframe,#bmc-tr{display:none!important;}}';
   (D.head || R).appendChild(css);
 
   var btn, mine = [], footer = null, reserved = 0, queued = false, last = 0, manual = null;
@@ -218,7 +244,7 @@
     if (btn.parentElement !== host) host.appendChild(btn);
     if (!host.classList.contains('bmc-dock-host')) host.classList.add('bmc-dock-host');
     R.classList.add('bmc-docked'); R.classList.remove('bmc-left', 'bmc-off');
-    btn.title = 'Buy me a coffee';
+    btn.title = TITLE;
     var W = R.clientWidth, H = innerHeight, br = btn.getBoundingClientRect(), fr = host.getBoundingClientRect(), PW = 420;
     var nb = H - fr.top + GAP;
     R.style.setProperty('--bmc-nr', Math.max(EDGE, W - br.right) + 'px');
@@ -234,7 +260,7 @@
     D.body.appendChild(btn);
     if (host && host.classList) host.classList.remove('bmc-dock-host');
     R.classList.remove('bmc-docked');
-    if (DRAG) btn.title = 'Buy me a coffee (drag to move)';
+    if (DRAG) btn.title = TITLE + ' (drag to move)';
   }
 
   function update() {
@@ -273,7 +299,7 @@
   /* Dragging, on a canvas-style tool. A press that moves is a drag, never a click. */
   function draggable() {
     R.classList.add('bmc-drag');
-    btn.title = 'Buy me a coffee (drag to move)';
+    btn.title = TITLE + ' (drag to move)';
     try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && typeof saved.dx === 'number') manual = { left: !!saved.left, dx: saved.dx, lift: saved.lift }; } catch (e) {}
     var start = null, moved = false, swallow = false;
     btn.addEventListener('pointerdown', function (e) {
@@ -309,6 +335,43 @@
     }, true);
   }
 
+  /* Trakteer in place of Buy Me a Coffee: the button shows Trakteer's cup and a
+     click (caught before the widget's own) opens Trakteer's tip modal. The modal
+     page opens itself when it loads, and on a later click when asked to; it says
+     when it closes. */
+  function trakteer(note) {
+    R.classList.add('bmc-tr');
+    btn.title = TITLE;
+    btn.setAttribute('aria-label', TITLE);
+    var img = btn.querySelector('img');
+    if (img) { img.src = TRAKTEER.icon; img.alt = 'Trakteer'; }
+    var box = null, frame = null;
+    function open(e) {
+      e.stopImmediatePropagation(); e.preventDefault();
+      if (!box) {
+        box = D.createElement('div');
+        box.id = 'bmc-tr';
+        frame = D.createElement('iframe');
+        frame.title = TITLE;
+        frame.setAttribute('allow', 'payment');
+        R.classList.add('bmc-tr-wait');
+        frame.onload = function () { R.classList.remove('bmc-tr-wait'); };
+        frame.src = TRAKTEER.url + '?embedId=0&ref=' + encodeURIComponent(location.href);
+        box.appendChild(frame);
+        D.body.appendChild(box);
+        mine.push(box);
+      }
+      box.style.display = 'block';
+      try { frame.contentWindow.postMessage({ type: 'embed.openModal' }, '*'); } catch (er) {}
+    }
+    addEventListener('message', function (e) {
+      if (!box || e.source !== frame.contentWindow || !e.data || e.data.type !== 'embed.modalClosed') return;
+      setTimeout(function () { box.style.display = 'none'; }, 200);
+    });
+    btn.addEventListener('click', open, true);
+    if (note) note.addEventListener('click', open, true);
+  }
+
   function start() {
     btn = D.getElementById('bmc-wbtn');
     if (!btn) return false;
@@ -316,6 +379,7 @@
     var note = btn.nextElementSibling;
     if (note && !note.id) note.id = 'bmc-note';
     mine = [btn, note, frame && frame.parentElement];
+    if (TIP) trakteer(note);
     if (DRAG) draggable();
     update();
     addEventListener('scroll', soon, { passive: true });
