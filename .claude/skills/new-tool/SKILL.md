@@ -252,7 +252,7 @@ Scale the rigor to the risk:
 
 ## 6. Footer
 
-- **Every page** ends, just before `</body>`, with the Buy Me a Coffee pair: `<script
+- **Every tool page, guide and reference article** ends, just before `</body>`, with the Buy Me a Coffee pair: `<script
   src="<root>/bmc.js" defer></script>` then the BMC widget `<script data-name="BMC-Widget" ...>`
   (copy both from `financingvscash/index.html`). Give each page its own `data-message`, the note
   beside the button: one short, fun, guilt-free line about that page (`rentvsownhouse/`: "No need
@@ -263,7 +263,8 @@ Scale the rigor to the risk:
   as `worldclock/`) adds `data-bmc-drag` to the `bmc.js` tag so a reader can drag it. One whose
   footer is a bar floating over the canvas also adds `data-bmc-dock="<footer selector>"`: the
   button then sits at the bar's right end whenever the bar is open and more than a line tall. Not on
-  `agent.html` pages or the embed viewer.
+  pages with nothing to thank for (the home page, privacy, disclaimer, 404), `agent.html` pages or
+  the embed viewer.
 - **Every tool** carries the links row `p.footer-links`: Disclaimer · Privacy Policy · Blog,
   linking `<root>/disclaimer/`, `<root>/privacy/` and https://blog.adjiebrotots.com/ with
   relative paths. The disclaimer text itself lives on `/disclaimer/`, never inline in a footer;
