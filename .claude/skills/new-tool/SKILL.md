@@ -252,14 +252,19 @@ Scale the rigor to the risk:
 
 ## 6. Footer
 
-- **Every page** ends, just before `</body>`, with the Buy Me a Coffee pair: `<script
+- **Every tool page, guide and reference article** ends, just before `</body>`, with the Buy Me a Coffee pair: `<script
   src="<root>/bmc.js" defer></script>` then the BMC widget `<script data-name="BMC-Widget" ...>`
-  (copy both from `financingvscash/index.html`). `bmc.js` fits the widget to the design system
+  (copy both from `financingvscash/index.html`). Give each page its own `data-message`, the note
+  beside the button: one short, fun, guilt-free line about that page (`rentvsownhouse/`: "No need
+  to buy me a house, just buy me a coffee!"), under about 90 characters, no em-dashes. An
+  Indonesian page asks for *kopi susu* instead ("Tidak perlu belikan saya rumah, traktir kopi
+  susu saja sudah cukup!"). `bmc.js` fits the widget to the design system
   and keeps it clear of other floating controls. A canvas-style tool (a full-screen workspace,
   as `worldclock/`) adds `data-bmc-drag` to the `bmc.js` tag so a reader can drag it. One whose
   footer is a bar floating over the canvas also adds `data-bmc-dock="<footer selector>"`: the
   button then sits at the bar's right end whenever the bar is open and more than a line tall. Not on
-  `agent.html` pages or the embed viewer.
+  pages with nothing to thank for (the home page, privacy, disclaimer, 404), `agent.html` pages or
+  the embed viewer.
 - **Every tool** carries the links row `p.footer-links`: Disclaimer · Privacy Policy · Blog,
   linking `<root>/disclaimer/`, `<root>/privacy/` and https://blog.adjiebrotots.com/ with
   relative paths. The disclaimer text itself lives on `/disclaimer/`, never inline in a footer;
