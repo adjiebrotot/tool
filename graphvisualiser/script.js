@@ -114,6 +114,17 @@ const DIM_HELP = {
   3:'3D scatter: X, Y, Z axes; Z depth colour-coded',
   4:'3D scatter + W column colour-coded as heat map',
 };
+// The 4D view: 'heatmap' is how 4D always drew, so state saved before the
+// animation existed (no g4dMode) opens as it did.
+const DIM_HELP_ANIM = 'Z over X and Y, one frame per value of a time column, played on the chart and saved as a GIF';
+function is4dAnim() { return S.dim === 4 && document.getElementById('g4dMode').value === 'anim'; }
+function syncAnimUI() {
+  const four = S.dim === 4, anim = is4dAnim();
+  document.getElementById('mode4dRow').style.display = four ? '' : 'none';
+  document.getElementById('animGroup').style.display = anim ? '' : 'none';
+  document.getElementById('orbitRow').style.display = document.getElementById('g4dCam').value === 'orbit' ? '' : 'none';
+  document.getElementById('dimHelp').textContent = anim ? DIM_HELP_ANIM : DIM_HELP[S.dim];
+}
 
 // ─── THEME ────────────────────────────────────────────────────────────────────
 document.getElementById('themeToggle').onclick = () => {
@@ -140,12 +151,20 @@ document.querySelectorAll('.dim-btn').forEach(btn => {
     document.querySelectorAll('.dim-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     S.dim = +btn.dataset.dim;
-    document.getElementById('dimHelp').textContent = DIM_HELP[S.dim];
+    syncAnimUI();
     if (S.headers.length) buildAxesUI();
     refreshStyleTab();
     markStale();
   };
 });
+
+// The heat map and the animation pick different columns, so a change of view
+// lays the axes out afresh, as a change of dimension does.
+document.getElementById('g4dMode').addEventListener('change', () => {
+  syncAnimUI();
+  if (S.headers.length) buildAxesUI();
+});
+document.getElementById('g4dCam').addEventListener('change', syncAnimUI);
 
 // ─── FILE UPLOAD ──────────────────────────────────────────────────────────────
 const uploadZone = document.getElementById('uploadZone');
@@ -206,6 +225,39 @@ document.getElementById('sampleBtn').onclick = () => {
     buildSeriesColourPickers();
     renderChart();
   }, 0);
+};
+
+/* A ripple over a 21 × 21 grid, 20 frames of one period, so the loop is
+   seamless: the 4D animation's sample, with time first so it is picked as
+   the animated column. */
+function buildAnimSampleCSV() {
+  const lines = ['t,X,Y,Z'], N = 20, G = 21;
+  for (let k = 0; k < N; k++) {
+    const t = 2 * Math.PI * k / N;
+    for (let j = 0; j < G; j++) for (let i = 0; i < G; i++) {
+      const x = -5 + 10 * i / (G - 1), y = -5 + 10 * j / (G - 1), r = Math.hypot(x, y);
+      const z = Math.cos(1.1 * r - t) * Math.exp(-r * r / 40) + 0.25 * Math.sin(0.6 * x + t) * Math.cos(0.6 * y);
+      lines.push([t.toFixed(2), x.toFixed(2), y.toFixed(2), z.toFixed(3)].join(','));
+    }
+  }
+  return lines.join('\n');
+}
+
+document.getElementById('sampleAnimBtn').onclick = () => {
+  document.getElementById('fileName').textContent = '📄 sample-ripple-4d.csv';
+  document.getElementById('headerRow').value = 1;
+  S.headerRow = 1;
+  document.getElementById('chartTitle').value = '4D data: Z(X, Y) evolving over time';
+  // A clean start: every animation setting back to its default.
+  document.getElementById('g4dMode').value = 'anim';
+  document.getElementById('g4dShape').value = 'surface';
+  document.getElementById('g4dFps').value = 8;
+  document.getElementById('g4dCam').value = 'orbit';
+  document.getElementById('g4dOrbit').value = 30;
+  ANIM.camera = null;
+  document.querySelector('.dim-btn[data-dim="4"]').click();
+  parseCSV(buildAnimSampleCSV());
+  setTimeout(renderChart, 0);
 };
 
 function detectDelimiter(text) {
@@ -303,6 +355,24 @@ function buildAxesUI() {
       if(z&&z.options[2]) z.options[2].selected=true;
     }, 0);
 
+  } else if (is4dAnim()) {
+    c.innerHTML =
+      row('X axis', 'axisX') + row('Y axis', 'axisY') +
+      row('Z axis <span class="label-note">(height, colour)</span>', 'axisZ') +
+      row('Time <span class="label-note">(animated)</span> <span class="tip-icon" data-tip="Each value of this column is one frame, in order. Its rows are drawn as Z over X and Y; the slider on the chart steps through them.">?</span>', 'axisT');
+    setTimeout(() => {
+      // Time is the column named like it, else the fourth; X, Y and Z are the
+      // first three of the others.
+      const n = S.headers.length;
+      let t = S.headers.findIndex(h => /^(t|time|date|year|month|day|frame|step|period)\b/i.test(String(h).trim()));
+      if (t < 0) t = Math.min(3, n - 1);
+      const rest = [...Array(n).keys()].filter(i => i !== t);
+      [['axisX', rest[0]], ['axisY', rest[1]], ['axisZ', rest[2]], ['axisT', t]].forEach(([id, i]) => {
+        const el = document.getElementById(id);
+        if (el && i != null && el.options[i]) el.value = String(i);
+      });
+    }, 0);
+
   } else {
     c.innerHTML =
       row('X axis', 'axisX') + row('Y axis', 'axisY') +
@@ -379,12 +449,15 @@ function getAxisSelections() {
   const yEl=document.getElementById('axisY');
   const zEl=document.getElementById('axisZ');
   const wEl=document.getElementById('axisW');
-  return {
+  const tEl=document.getElementById('axisT');
+  const out = {
     x: xEl ? +xEl.value : 0,
     y: yEl ? (yEl.multiple ? Array.from(yEl.selectedOptions).map(o=>+o.value) : [+yEl.value]) : [1],
     z: zEl ? +zEl.value : null,
     w: wEl ? +wEl.value : null,
   };
+  if (tEl) out.t = +tEl.value;
+  return out;
 }
 
 function getColumnValues(col, rows, numeric=true) {
@@ -449,6 +522,8 @@ function renderChart() {
 
   const ax    = getAxisSelections();
   const title = document.getElementById('chartTitle').value || (S.dim + 'D Chart');
+  stopAnim();
+  const anim = is4dAnim();
   const mSize = +document.getElementById('markerSize').value   || 6;
   const mOpa  = +document.getElementById('markerOpacity').value || 0.85;
 
@@ -457,6 +532,7 @@ function renderChart() {
   ['saveSvg','savePng','copyPng','resetView'].forEach(id => {
     document.getElementById(id).style.display = 'inline-flex';
   });
+  document.getElementById('saveGif').style.display = anim ? 'inline-flex' : 'none';
   // A 2D plot has a zoom to reset; a 3D one has a camera to put back.
   document.getElementById('resetView').title = S.dim === 2 ? 'Reset zoom' : 'Reset view';
 
@@ -548,6 +624,15 @@ function renderChart() {
     };
     setInfoRow(`${rows.length} pts`, `${S.headers[ax.x]} × ${S.headers[ax.y]} × ${S.headers[ax.z]}`);
 
+  /* ── 4D animation ── */
+  } else if (anim) {
+    const fig = buildAnimFigure(rows, ax, {title, titleFont, titlePos, fontColor, gridColor, plotBg, paperBg, baseFont, showGrid, st, mSize, mOpa,
+      solidBg: st.bg === 'auto' ? (isLight ? '#FFFFFF' : '#0F1728') : sheet});
+    if (!fig) { ANIM.active = false; document.getElementById('saveGif').style.display = 'none'; return; }
+    traces = fig.traces; layout = fig.layout;
+    setInfoRow(`${ANIM.steps.length} frames`, `Time: ${S.headers[ax.t]}`, ANIM.kind === 'surface' ? 'Surface' : ANIM.kind === 'trail' ? 'Moving point' : 'Points',
+      ANIM.opts.orbit ? `Orbit ${ANIM.opts.spd}°/s` : 'Static view');
+
   /* ── 4D ── */
   } else {
     const xV=getColumnValues(ax.x,rows), yV=getColumnValues(ax.y,rows),
@@ -580,11 +665,332 @@ function renderChart() {
     responsive:true, displayModeBar:true,
     modeBarButtonsToRemove:['sendDataToCloud','editInChartStudio'],
     toImageButtonOptions:{format:'png',filename:title.replace(/\s+/g,'_'),scale:2},
-  }).then(() => bindAxisGuard(traces));
+  }).then(() => {
+    bindAxisGuard(traces);
+    bindAnimEvents();
+    // Twice: the first move can shift Plotly's margins under the second.
+    if (anim) fitPlayBar().then(fitPlayBar).then(startAnim); else ANIM.active = false;
+  });
 
   document.getElementById('chartPanelTitle').textContent = title;
   setStatus('Rendered', 'success');
   clearStale();
+}
+
+/* ─── 4D ANIMATION ────────────────────────────────────────────────────────────
+   One column is time. Each of its values is a frame: that value's rows drawn
+   as Z over X and Y (a surface when they make a grid, else points), or, when
+   the column has one row per value (a path through time), the whole path
+   drawn faintly with a point moving along it. The frames are slider steps on
+   the chart itself, each a restyle carrying that frame's data, so the slider
+   works with no code behind it, an embedded chart included. ▶ Play and the
+   orbiting camera are driven from here. Axis and colour ranges are the whole
+   run's, so a frame never rescales. */
+const ANIM = {
+  active:false, steps:[], labels:[], traceIdx:[0], kind:'', opts:null, fig:null, tName:'',
+  idx:0, playing:false, raf:0, busy:false, prev:0, clock:0, camClock:0,
+  camera:null,  // the reader's view: dragged on the chart, kept across redraws and in the link
+};
+function defaultCamera() { return {eye:{x:1.25, y:1.25, z:1.25}, up:{x:0, y:0, z:1}, center:{x:0, y:0, z:0}}; }
+function validCamera(c) {
+  const ok = v => v && typeof v === 'object' && ['x','y','z'].every(k => isFinite(+v[k]));
+  if (!c || typeof c !== 'object' || !ok(c.eye)) return null;
+  const pick = v => ({x:+v.x, y:+v.y, z:+v.z});
+  return {eye:pick(c.eye), up: ok(c.up) ? pick(c.up) : {x:0, y:0, z:1}, center: ok(c.center) ? pick(c.center) : {x:0, y:0, z:0}};
+}
+function animOpts() {
+  const num = (id, d, lo, hi) => { const n = +document.getElementById(id).value; return isFinite(n) && document.getElementById(id).value !== '' ? Math.min(hi, Math.max(lo, n)) : d; };
+  return {
+    shape: document.getElementById('g4dShape').value === 'points' ? 'points' : 'surface',
+    fps:   num('g4dFps', 8, 1, 30),
+    orbit: document.getElementById('g4dCam').value === 'orbit',
+    spd:   num('g4dOrbit', 30, -180, 180),
+  };
+}
+function fmtTime(v) {
+  if (typeof v !== 'number') return String(v);
+  const a = Math.abs(v);
+  return (a !== 0 && (a >= 1e6 || a < 1e-3)) ? v.toExponential(2) : String(+v.toFixed(a >= 100 ? 1 : a >= 1 ? 2 : 3));
+}
+// A frame's rows as a grid: every (x, y) once, at least half the cells filled.
+function gridOf(xs, ys, zs) {
+  const ux = [...new Set(xs)].sort((a,b) => a-b), uy = [...new Set(ys)].sort((a,b) => a-b);
+  if (ux.length < 2 || uy.length < 2 || ux.length * uy.length > 2 * xs.length || ux.length * uy.length > 250000) return null;
+  const ix = new Map(ux.map((v,i) => [v,i])), iy = new Map(uy.map((v,i) => [v,i]));
+  const z = uy.map(() => new Array(ux.length).fill(null));
+  for (let k = 0; k < xs.length; k++) {
+    const r = z[iy.get(ys[k])], c = ix.get(xs[k]);
+    if (r[c] !== null) return null;
+    r[c] = zs[k];
+  }
+  return {x:ux, y:uy, z};
+}
+
+function buildAnimFigure(rows, ax, c) {
+  const o = animOpts();
+  const xV = getColumnValues(ax.x, rows), yV = getColumnValues(ax.y, rows), zV = getColumnValues(ax.z, rows);
+  const tRaw = getColumnValues(ax.t, rows, false).map(v => String(v == null ? '' : v).trim());
+  const tNum = tRaw.map(v => { const n = parseFloat(v.replace(/,/g,'')); return v !== '' && isFinite(n) && /^[-+]?[\d.,]+(e[-+]?\d+)?$/i.test(v) ? n : null; });
+  const numeric = tRaw.every((v, i) => v === '' || tNum[i] !== null);
+  // Rows grouped by time, in time order (a text column keeps the file's order).
+  const groups = new Map();
+  rows.forEach((r, i) => {
+    if (xV[i] === null || yV[i] === null || zV[i] === null || tRaw[i] === '') return;
+    const key = numeric ? tNum[i] : tRaw[i];
+    if (!groups.has(key)) groups.set(key, {x:[], y:[], z:[]});
+    const g = groups.get(key); g.x.push(xV[i]); g.y.push(yV[i]); g.z.push(zV[i]);
+  });
+  let keys = [...groups.keys()];
+  if (numeric) keys.sort((a,b) => a-b);
+  if (!keys.length) { showError('No numeric X, Y, Z rows to animate.'); return null; }
+
+  const all = {x:[], y:[], z:[]};
+  keys.forEach(k => { const g = groups.get(k); all.x.push(...g.x); all.y.push(...g.y); all.z.push(...g.z); });
+  const ext = arr => { let lo = Infinity, hi = -Infinity; arr.forEach(v => { if (v < lo) lo = v; if (v > hi) hi = v; });
+    const p = (hi - lo) * 0.03 || Math.abs(hi) * 0.05 || 1; return [lo - p, hi + p]; };
+  const zr = ext(all.z), cmin = Math.min(...all.z), cmax = Math.max(...all.z);
+
+  const single = keys.length > 1 && keys.every(k => groups.get(k).x.length === 1);
+  let grids = null;
+  if (!single && o.shape === 'surface') {
+    grids = keys.map(k => { const g = groups.get(k); return gridOf(g.x, g.y, g.z); });
+    if (grids.some(g => !g)) grids = null;
+  }
+  const kind = single ? 'trail' : grids ? 'surface' : 'points';
+  const xN = S.headers[ax.x], yN = S.headers[ax.y], zN = S.headers[ax.z], tN = S.headers[ax.t];
+  const colorbar = {title:{text:zN, font:{color:c.fontColor}}, tickfont:{color:c.fontColor}, len:0.75};
+  const hover = `${xN}: %{x}<br>${yN}: %{y}<br>${zN}: %{z}<extra></extra>`;
+
+  let traces, steps, traceIdx = [0];
+  if (kind === 'surface') {
+    traces = [{type:'surface', x:grids[0].x, y:grids[0].y, z:grids[0].z, colorscale:S.colormap, cmin, cmax,
+      colorbar, hovertemplate:hover, contours:{z:{show:false}}}];
+    steps = grids.map(g => ({x:[g.x], y:[g.y], z:[g.z]}));
+  } else if (kind === 'points') {
+    const g0 = groups.get(keys[0]);
+    traces = [{type:'scatter3d', mode:'markers', x:g0.x, y:g0.y, z:g0.z, hovertemplate:hover,
+      marker:{size:c.mSize, opacity:c.mOpa, color:g0.z, colorscale:S.colormap, cmin, cmax, showscale:true, colorbar}}];
+    steps = keys.map(k => { const g = groups.get(k); return {x:[g.x], y:[g.y], z:[g.z], 'marker.color':[g.z]}; });
+  } else {
+    const p = k => groups.get(k);
+    traces = [
+      {type:'scatter3d', mode:'lines', x:all.x, y:all.y, z:all.z, opacity:0.6, hoverinfo:'skip', showlegend:false,
+        line:{width:5, color:all.z, colorscale:S.colormap, cmin, cmax}},
+      {type:'scatter3d', mode:'markers', x:p(keys[0]).x, y:p(keys[0]).y, z:p(keys[0]).z, showlegend:false, hovertemplate:hover,
+        marker:{size:Math.max(8, c.mSize * 1.8), opacity:1, color:p(keys[0]).z, colorscale:S.colormap, cmin, cmax, showscale:true, colorbar,
+          line:{color:c.fontColor, width:1}}},
+    ];
+    traceIdx = [1];
+    steps = keys.map(k => ({x:[p(k).x], y:[p(k).y], z:[p(k).z], 'marker.color':[p(k).z]}));
+  }
+  const labels = keys.map(fmtTime);
+  const many = steps.length > 12;
+  const sceneAxis = (title, range) => ({title, range, autorange:false, color:c.fontColor, gridcolor:c.gridColor, backgroundcolor:c.plotBg, showgrid:c.showGrid});
+  // A first guess at the play bar; fitPlayBar sets it to the pixel once drawn.
+  const sliderX = 0.1, sliderLen = 0.88, INSET = PLAYBAR.inset;
+  const layout = {
+    title:Object.assign({text:c.title, font:c.titleFont, y:0.97, yanchor:'top'}, c.titlePos),
+    scene:{
+      xaxis:sceneAxis(xN, ext(all.x)), yaxis:sceneAxis(yN, ext(all.y)), zaxis:sceneAxis(zN, zr),
+      // A slightly flattened box fills a wide canvas better than a cube.
+      bgcolor:c.plotBg, aspectmode:'manual', aspectratio:{x:1, y:1, z:0.75}, camera: ANIM.camera || defaultCamera(),
+      domain:{x:[0, 1], y:[0, 1]},
+    },
+    paper_bgcolor:c.paperBg, font:c.baseFont,
+    margin:{l:INSET, r:INSET, t:56, b:94},
+    // The slider and ▶ sit on the chart, under the scene.
+    sliders:[{
+      active:0, x:sliderX, len:sliderLen, xanchor:'left', y:0, yanchor:'top', pad:{t:8, b:0, l:0, r:0},
+      currentvalue:{prefix:tN + ' = ', xanchor:'left', offset:8, font:{color:c.fontColor, size:c.st.fs + 1}},
+      // With many frames the tick labels would pile up: the current value says which.
+      font:{color: many ? 'rgba(0,0,0,0)' : c.fontColor, size:Math.max(8, c.st.fs - 2)},
+      bgcolor:c.gridColor, bordercolor:c.gridColor, activebgcolor:c.fontColor, tickcolor:c.gridColor, ticklen: many ? 3 : 6,
+      steps: labels.map((l, i) => ({label:l, method:'restyle', args:[steps[i], traceIdx]})),
+    }],
+    updatemenus:[{
+      type:'buttons', showactive:false, x:0, xanchor:'left', y:0, yanchor:'top', pad:{t:0, r:0, l:0, b:0},
+      font:{color:c.fontColor, size:c.st.fs}, bgcolor:c.plotBg, bordercolor:c.gridColor,
+      buttons:[{label: steps.length > 1 || o.orbit ? PLAYBAR.pause : PLAYBAR.play, method:'skip', args:[null]}],
+    }],
+  };
+  Object.assign(ANIM, {active:true, steps, labels, traceIdx, kind, opts:o, tName:tN, idx:0, solidBg:c.solidBg, title:c.title,
+    fig:{traces, layout}});
+  return {traces, layout};
+}
+
+/* The play bar, set in pixels once the chart is drawn (Plotly places it in
+   fractions of a plot area the colour bar has narrowed): ▶ inset from the
+   left edge as far as the slider's rail ends from the right, one gap between
+   them, the button centred on the rail. Kept on a resize. ▶ Play and
+   ❚❚ Pause are given one width (non-breaking spaces, which SVG keeps), so
+   the rail does not move when they swap. */
+const PLAYBAR = {inset:18, gap:14, railPad:8, play:'▶\u00a0\u00a0\u00a0 Play\u00a0\u00a0\u00a0', pause:'❚❚ Pause'};
+function fitPlayBar() {
+  const div = document.getElementById('plotDiv'), fl = div._fullLayout;
+  if (!ANIM.active || !fl || !fl._size || !(fl.sliders || []).length || !(fl.updatemenus || []).length) return Promise.resolve();
+  const btn = div.querySelector('.updatemenu-button'), rail = div.querySelector('.slider-rail-rect');
+  if (!btn || !rail) return Promise.resolve();
+  const box = div.getBoundingClientRect(), b = btn.getBoundingClientRect(), r = rail.getBoundingClientRect(), sz = fl._size;
+  const P = PLAYBAR;
+  const start = P.inset + b.width + P.gap - P.railPad, end = box.width - P.inset + P.railPad;
+  const dy = (r.top + r.height / 2) - (b.top + b.height / 2);
+  const upd = {};
+  const set = (k, v, now) => { if (Math.abs(v - now) > 1e-4) upd[k] = v; };
+  set('updatemenus[0].x', (P.inset - sz.l) / sz.w, fl.updatemenus[0].x);
+  set('sliders[0].x', (start - sz.l) / sz.w, fl.sliders[0].x);
+  set('sliders[0].len', (end - start) / sz.w, fl.sliders[0].len);
+  if (Math.abs(dy) > 0.5) upd['updatemenus[0].pad.t'] = Math.max(0, (fl.updatemenus[0].pad.t || 0) + dy);
+  return Object.keys(upd).length ? Plotly.relayout(div, upd) : Promise.resolve();
+}
+let playBarTimer = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(playBarTimer);
+  playBarTimer = setTimeout(() => { if (ANIM.active) fitPlayBar().then(fitPlayBar); }, 200);
+});
+
+function stopAnim() {
+  ANIM.playing = false;
+  if (ANIM.raf) cancelAnimationFrame(ANIM.raf);
+  ANIM.raf = 0;
+}
+function playLabel(on) {
+  return Plotly.relayout('plotDiv', {'updatemenus[0].buttons[0].label': on ? PLAYBAR.pause : PLAYBAR.play});
+}
+function startAnim() {
+  stopAnim();
+  // One frame and no orbit: nothing moves, so there is nothing to play.
+  if (!ANIM.active || (ANIM.steps.length < 2 && !ANIM.opts.orbit)) { playLabel(false); return; }
+  ANIM.playing = true;
+  ANIM.prev = performance.now(); ANIM.clock = 0; ANIM.camClock = 0;
+  playLabel(true);
+  ANIM.raf = requestAnimationFrame(animTick);
+}
+function orbitCamera(cam, deg) {
+  const c = validCamera(cam) || defaultCamera(), e = c.eye;
+  const r = Math.hypot(e.x, e.y) || 1.77, a = Math.atan2(e.y, e.x) + deg * Math.PI / 180;
+  c.eye = {x:r * Math.cos(a), y:r * Math.sin(a), z:e.z};
+  return c;
+}
+function animTick(now) {
+  if (!ANIM.playing) return;
+  ANIM.raf = requestAnimationFrame(animTick);
+  const dt = Math.min(250, now - ANIM.prev);
+  ANIM.prev = now;
+  ANIM.clock += dt; ANIM.camClock += dt;
+  if (ANIM.busy) return;
+  const o = ANIM.opts, period = 1000 / o.fps, n = ANIM.steps.length;
+  const due = n > 1 && ANIM.clock >= period;
+  // The camera turns smoothly, about 30 times a second, whatever the frame rate.
+  const turn = o.orbit && o.spd && ANIM.camClock >= 33;
+  if (!due && !turn) return;
+  const data = {}, lay = {};
+  if (due) {
+    ANIM.clock = ANIM.clock % period;
+    ANIM.idx = (ANIM.idx + 1) % n;
+    Object.assign(data, ANIM.steps[ANIM.idx]);
+    lay['sliders[0].active'] = ANIM.idx;
+  }
+  if (turn) {
+    ANIM.camera = orbitCamera(ANIM.camera, o.spd * ANIM.camClock / 1000);
+    ANIM.camClock = 0;
+    lay['scene.camera'] = ANIM.camera;
+  }
+  ANIM.busy = true;
+  const div = document.getElementById('plotDiv');
+  (due ? Plotly.update(div, data, lay, ANIM.traceIdx) : Plotly.relayout(div, lay))
+    .catch(() => {}).then(() => { ANIM.busy = false; });
+}
+let animEventsBound = false;
+function bindAnimEvents() {
+  if (animEventsBound) return;
+  animEventsBound = true;
+  const div = document.getElementById('plotDiv');
+  // The slider applies its own frame; this only keeps the count in step.
+  div.on('plotly_sliderchange', ev => {
+    if (!ANIM.active || !ev || !ev.step) return;
+    const i = ev.step._index != null ? ev.step._index : ev.slider.steps.indexOf(ev.step);
+    if (i >= 0) { ANIM.idx = i; ANIM.clock = 0; }
+  });
+  div.on('plotly_buttonclicked', () => {
+    if (!ANIM.active) return;
+    if (ANIM.playing) { stopAnim(); playLabel(false); } else startAnim();
+  });
+  // The view the reader drags to is the one kept: Static holds it, Orbit turns from it.
+  div.on('plotly_relayout', ev => {
+    if (ANIM.active && ev && ev['scene.camera']) ANIM.camera = validCamera(ev['scene.camera']) || ANIM.camera;
+  });
+}
+
+/* ⬇ GIF: the animation redrawn off screen, one picture a frame, encoded with
+   gifenc (as the Load Flow Simulator's diagram is). One pass of the time
+   frames; with Orbit, passes repeat until the view has gone once round, so
+   the GIF loops without a jump where it can (capped at 240 frames). */
+async function makeAnimGif(onProgress) {
+  if (!ANIM.active || !ANIM.fig) throw new Error('draw the animation first');
+  const W = 720, H = 600, MAX = 240, o = ANIM.opts, n = ANIM.steps.length;
+  let order = [...Array(n).keys()];
+  if (n > MAX) order = [...Array(MAX).keys()].map(i => Math.round(i * (n - 1) / (MAX - 1)));
+  const deg = o.orbit ? o.spd / o.fps : 0;
+  let total = order.length;
+  if (deg) {
+    const rev = Math.round(360 / Math.abs(deg));
+    if (total < rev) total = Math.min(MAX, Math.ceil(rev / total) * total);
+  }
+  const loopDeg = deg && total * Math.abs(deg) >= 300 ? 360 / total * Math.sign(deg) : deg;
+  const delay = Math.max(20, Math.round(1000 / o.fps));
+
+  const layout = JSON.parse(JSON.stringify(ANIM.fig.layout));
+  delete layout.sliders; delete layout.updatemenus;
+  Object.assign(layout, {width:W, height:H, paper_bgcolor:ANIM.solidBg, annotations:[wmAnnotation()], images:[wmPlotlyImage()]});
+  layout.margin = {l:0, r:0, t:60, b:10};
+  const traces = JSON.parse(JSON.stringify(ANIM.fig.traces));
+  const box = document.createElement('div');
+  box.style.cssText = `position:fixed;left:-${W + 2000}px;top:0;width:${W}px;height:${H}px`;
+  document.body.appendChild(box);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d', {willReadFrequently:true});
+  const frames = [];
+  try {
+    await Plotly.newPlot(box, traces, layout, {displayModeBar:false});
+    let cam = validCamera(ANIM.camera) || defaultCamera();
+    for (let k = 0; k < total; k++) {
+      const ti = order[k % order.length];
+      const lay = {'scene.camera': cam, 'title.text': `${ANIM.title}   ${ANIM.tName} = ${ANIM.labels[ti]}`};
+      await Plotly.update(box, ANIM.steps[ti], lay, ANIM.traceIdx);
+      const url = await Plotly.toImage(box, {format:'png', width:W, height:H});
+      const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('a frame could not be drawn')); im.src = url; });
+      g.fillStyle = ANIM.solidBg; g.fillRect(0, 0, W, H); g.drawImage(img, 0, 0, W, H);
+      frames.push(g.getImageData(0, 0, W, H).data);
+      if (loopDeg) cam = orbitCamera(cam, loopDeg);
+      if (onProgress) onProgress((k + 1) / total * 0.7);
+    }
+  } finally { Plotly.purge(box); box.remove(); }
+
+  const G = await import('./vendor/gifenc.js');
+  // One palette for the loop, from a sample of frames spread across it.
+  const pick = [0, 0.33, 0.66, 0.99].map(f => frames[Math.floor(f * (frames.length - 1))]);
+  const sample = new Uint8ClampedArray(pick.length * W * H);
+  let q = 0;
+  pick.forEach(f => { for (let p = 0; p < f.length; p += 16) { sample[q++] = f[p]; sample[q++] = f[p+1]; sample[q++] = f[p+2]; sample[q++] = 255; } });
+  const pal = G.quantize(sample.subarray(0, q), 255);
+  while (pal.length < 255) pal.push([0, 0, 0]);
+  const palette = pal.concat([[255, 0, 255]]);  // index 255: unchanged since the frame before
+  const enc = G.GIFEncoder();
+  let prev = null;
+  for (let i = 0; i < frames.length; i++) {
+    const idx = G.applyPalette(frames[i], pal);
+    if (i === 0) enc.writeFrame(idx, W, H, {palette, delay, repeat:0});
+    else {
+      const out = new Uint8Array(idx.length);
+      for (let p = 0; p < idx.length; p++) out[p] = idx[p] === prev[p] ? 255 : idx[p];
+      enc.writeFrame(out, W, H, {delay, transparent:true, transparentIndex:255, dispose:1});
+    }
+    prev = idx;
+    if (onProgress) onProgress(0.7 + (i + 1) / frames.length * 0.3);
+    if (i % 4 === 3) await new Promise(r => setTimeout(r, 0));
+  }
+  enc.finish();
+  return new Blob([enc.bytes()], {type:'image/gif'});
 }
 
 /* ─── ZOOM: BOUNDED, AND A Y AXIS THAT FOLLOWS THE X WINDOW ───────────────────
@@ -681,18 +1087,21 @@ document.getElementById('resetView').onclick = () => {
                            : {'xaxis.autorange': true, 'yaxis.autorange': true});
   } else {
     // A 3D scene: put the camera back where the plot opened.
-    Plotly.relayout(div, {'scene.camera': {eye:{x:1.25, y:1.25, z:1.25}}});
+    if (ANIM.active) ANIM.camera = defaultCamera();
+    Plotly.relayout(div, {'scene.camera': defaultCamera()});
   }
 };
 
 // ─── SAVE PNG ─────────────────────────────────────────────────────────────────
-async function withPngWatermark(callback) {
-  const wmAnnotation = {
+function wmAnnotation() {
+  return {
     xref:'paper', yref:'paper', x:1, y:0, xanchor:'right', yanchor:'bottom',
     showarrow:false, text:'Made using tool.adjiebrotots.com/graphvisualiser',
     font:{ size:10, color:'rgba(60,60,60,0.22)', family:'DM Sans, sans-serif' },
   };
-  await Plotly.relayout('plotDiv', { annotations:[wmAnnotation], images:[wmPlotlyImage()] });
+}
+async function withPngWatermark(callback) {
+  await Plotly.relayout('plotDiv', { annotations:[wmAnnotation()], images:[wmPlotlyImage()] });
   try { return await callback(); }
   finally { await Plotly.relayout('plotDiv', { annotations:[], images:[] }); }
 }
@@ -709,9 +1118,33 @@ document.getElementById('saveSvg').onclick = async () => {
   }));
 };
 document.getElementById('copyPng').onclick = () => {
-  SharedShare.copyImage(() => withPngWatermark(() => Plotly.toImage('plotDiv', {
+  const btn = document.getElementById('copyPng');
+  const png = () => withPngWatermark(() => Plotly.toImage('plotDiv', {
     format:'png', scale:3, width:1440, height:760
-  })), document.getElementById('copyPng'));
+  }));
+  if (!ANIM.active) { SharedShare.copyImage(png, btn); return; }
+  // An animation goes on the clipboard as its GIF where the browser takes one.
+  SharedShare.copyImage(png, btn, {
+    gif: () => makeAnimGif(p => setStatus('Making the GIF… ' + Math.round(p * 100) + '%', 'info')),
+    onDone: kind => setStatus(kind === 'gif' ? 'Copied the animated GIF' : 'Copied a still PNG. Use Download as GIF for the animation', 'success'),
+  });
+};
+document.getElementById('saveGif').onclick = async () => {
+  const btn = document.getElementById('saveGif');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  try {
+    const blob = await makeAnimGif(p => setStatus('Making the GIF… ' + Math.round(p * 100) + '%', 'info'));
+    const title = document.getElementById('chartTitle').value || 'graph';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = title.replace(/\s+/g,'_') + '.gif';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    setStatus('GIF saved', 'success');
+  } catch (err) {
+    showError('The GIF could not be made: ' + (err && err.message || err));
+  } finally { btn.disabled = false; }
 };
 
 // ─── UI HELPERS ───────────────────────────────────────────────────────────────
@@ -734,6 +1167,7 @@ function setInfoRow(...chips) {
    chart renders. The header-row field is file-specific (data-no-persist). */
 if (window.Persist) Persist.init('graphvisualiser', { onRestore: function(){} });
 syncTemplateBox();
+syncAnimUI();
 
 /* ── Embed ─────────────────────────────────────────────────────────────────
    An embedded chart (SharedShare in shared.js) has no file to read, so it
@@ -747,6 +1181,12 @@ SharedShare.state({
     size: document.getElementById('markerSize').value,
     opacity: document.getElementById('markerOpacity').value,
     style: readStyle(),
+    mode4d: document.getElementById('g4dMode').value,
+    anim: {
+      shape: document.getElementById('g4dShape').value, fps: document.getElementById('g4dFps').value,
+      cam: document.getElementById('g4dCam').value, orbit: document.getElementById('g4dOrbit').value,
+      camera: ANIM.camera,
+    },
   }),
   load: v => new Promise(resolve => {
     if (!v || !Array.isArray(v.rows) || v.rows.length < 2) return resolve();
@@ -759,6 +1199,16 @@ SharedShare.state({
     document.getElementById('chartTitle').value = v.title || '';
     if (v.size) document.getElementById('markerSize').value = v.size;
     if (v.opacity) document.getElementById('markerOpacity').value = v.opacity;
+    // A link made before the 4D animation has no mode4d: it is the heat map,
+    // as 4D always was. Anything unknown takes the default.
+    const an = v.anim && typeof v.anim === 'object' ? v.anim : {};
+    document.getElementById('g4dMode').value  = v.mode4d === 'anim' ? 'anim' : 'heatmap';
+    document.getElementById('g4dShape').value = an.shape === 'points' ? 'points' : 'surface';
+    document.getElementById('g4dFps').value   = isFinite(+an.fps) && +an.fps > 0 ? an.fps : 8;
+    document.getElementById('g4dCam').value   = an.cam === 'static' ? 'static' : 'orbit';
+    document.getElementById('g4dOrbit').value = an.orbit != null && isFinite(+an.orbit) ? an.orbit : 30;
+    ANIM.camera = validCamera(an.camera);
+    syncAnimUI();
     document.getElementById('headerRow').value = 1;
     S.headerRow = 1;
     S.raw = v.rows;
@@ -767,7 +1217,7 @@ SharedShare.state({
     // in after that, as the sample dataset's do.
     setTimeout(() => {
       const a = v.axes || {}, pickOne = (id, i) => { const el = document.getElementById(id); if (el && i != null && el.options[i]) el.value = String(i); };
-      pickOne('axisX', a.x); pickOne('axisZ', a.z); pickOne('axisW', a.w);
+      pickOne('axisX', a.x); pickOne('axisZ', a.z); pickOne('axisW', a.w); pickOne('axisT', a.t);
       const y = document.getElementById('axisY'), ys = Array.isArray(a.y) ? a.y.map(String) : [];
       if (y && ys.length) Array.from(y.options).forEach(o => { o.selected = y.multiple ? ys.includes(o.value) : o.value === ys[0]; });
       buildSeriesColourPickers();
