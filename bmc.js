@@ -16,6 +16,9 @@
  *    corners it takes the nearest free spot along the bottom;
  *  - on a canvas-style tool (the bmc.js <script> carries data-bmc-drag), lets the
  *    reader drag it anywhere; the spot is kept for that page in localStorage;
+ *  - on a tool whose footer is a bar floating over the canvas (data-bmc-dock
+ *    names it, as the World Clock's .wc-foot), sits inside that bar at its right
+ *    end whenever the bar is open and wide enough, and floats as above otherwise;
  *  - leaves blank room under the footer of a page that scrolls, so the end of
  *    the page is never under it;
  *  - stays out of a tool embedded on another site.
@@ -29,12 +32,13 @@
   var EDGE = 16, SIZE = 52, GAP = 12, RESERVE = EDGE + SIZE + EDGE, PANEL_MIN = 380;
   var me = D.currentScript || D.querySelector('script[src$="bmc.js"]');
   var DRAG = !!(me && me.hasAttribute('data-bmc-drag'));
+  var DOCK = me && me.getAttribute('data-bmc-dock'), DS = 32; /* the button's size inside a footer bar */
   var KEY = 'bmc-pos:' + location.pathname;
 
   var css = D.createElement('style');
   css.id = 'bmc-fit';
   if (R.classList.contains('abt-embed') || /(?:^#|&)embed=/.test(location.hash) && window.self !== window.top) {
-    css.textContent = '#bmc-wbtn,#bmc-wbtn+div,#bmc-iframe{display:none!important;}';
+    css.textContent = '#bmc-wbtn,#bmc-note,#bmc-iframe{display:none!important;}';
     (D.head || R).appendChild(css);
     return;
   }
@@ -54,21 +58,29 @@
     'html.bmc-drag #bmc-wbtn{touch-action:none;cursor:grab!important;}' +
     'html.bmc-dragging #bmc-wbtn{transition:none!important;cursor:grabbing!important;transform:none!important;box-shadow:var(--sticker-accent-hover,3px 3px 0 #14203A)!important;}' +
     /* The thank-you note beside the button, in the site's card style. */
-    '#bmc-wbtn+div{left:auto!important;right:calc(' + R_ + ' + var(--bmc-dx,0px) + ' + (SIZE + GAP) + 'px)!important;' +
+    '#bmc-note{left:auto!important;right:calc(' + R_ + ' + var(--bmc-dx,0px) + ' + (SIZE + GAP) + 'px)!important;' +
       'bottom:' + B_ + '!important;z-index:49!important;' +
       'max-width:min(260px,calc(100vw - ' + (EDGE * 2 + SIZE + GAP) + 'px))!important;padding:10px 14px!important;' +
       'background:var(--panel-raised,var(--panel,#fff))!important;color:var(--text,#14203A)!important;' +
       'border:1.5px solid var(--ink-line,#14203A)!important;border-radius:var(--radius-md,8px)!important;' +
       'box-shadow:var(--sticker,2px 2px 0 #14203A)!important;font:500 14px/1.45 "DM Sans",system-ui,sans-serif!important;transform-origin:left bottom!important;}' +
-    'html:not(.bmc-left) #bmc-wbtn+div{transform-origin:right bottom!important;}' +
-    'html.bmc-left #bmc-wbtn+div{right:auto!important;left:calc(' + L_ + ' + var(--bmc-dx,0px) + ' + (SIZE + GAP) + 'px)!important;}' +
-    'html.bmc-note-flip #bmc-wbtn+div{display:none!important;}' +
+    'html:not(.bmc-left) #bmc-note{transform-origin:right bottom!important;}' +
+    'html.bmc-left #bmc-note{right:auto!important;left:calc(' + L_ + ' + var(--bmc-dx,0px) + ' + (SIZE + GAP) + 'px)!important;}' +
+    'html.bmc-note-flip #bmc-note{display:none!important;}' +
     /* The support panel opens above the button, on its side. */
     '@media (min-width:480px){#bmc-iframe{left:var(--bmc-pl,auto)!important;right:var(--bmc-pr,' + EDGE + 'px)!important;' +
       'bottom:var(--bmc-pb,' + RESERVE + 'px)!important;max-height:calc(100vh - var(--bmc-pb,' + RESERVE + 'px) - 16px)!important;}}' +
-    'html.bmc-off #bmc-wbtn,html.bmc-off #bmc-wbtn+div{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}' +
+    /* Inside a floating footer bar: a smaller button at the bar's right end. */
+    '.bmc-dock-host{position:relative!important;box-sizing:border-box!important;min-height:' + (DS + 8) + 'px!important;' +
+      'padding-right:' + (DS + 16) + 'px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;}' +
+    'html.bmc-docked #bmc-wbtn{position:absolute!important;left:auto!important;right:6px!important;top:50%!important;bottom:auto!important;' +
+      'width:' + DS + 'px!important;height:' + DS + 'px!important;margin-top:-' + (DS / 2) + 'px!important;}' +
+    'html.bmc-docked #bmc-wbtn img{width:18px!important;height:18px!important;}' +
+    'html.bmc-docked #bmc-wbtn svg{width:12px!important;height:12px!important;}' +
+    'html.bmc-docked #bmc-note{left:auto!important;right:var(--bmc-nr,' + EDGE + 'px)!important;bottom:var(--bmc-nb,' + RESERVE + 'px)!important;transform-origin:right bottom!important;}' +
+    'html.bmc-off #bmc-wbtn,html.bmc-off #bmc-note{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}' +
     '@media (prefers-reduced-motion:reduce){#bmc-wbtn{transition:none!important;}#bmc-wbtn:hover,#bmc-wbtn:active{transform:none!important;}}' +
-    '@media print{#bmc-wbtn,#bmc-wbtn+div,#bmc-iframe{display:none!important;}}';
+    '@media print{#bmc-wbtn,#bmc-note,#bmc-iframe{display:none!important;}}';
   (D.head || R).appendChild(css);
 
   var btn, mine = [], footer = null, reserved = 0, queued = false, last = 0, manual = null;
@@ -124,8 +136,10 @@
         var el = hits[i];
         if (el === D.body || el === R || isMine(el)) continue;
         if (el.closest && el.closest('svg') && el.tagName.toUpperCase() !== 'SVG') el = el.closest('svg');
-        /* On an app page its footer bar counts as a whole, background and all. */
-        if (!isContent(el) && !(still && el.closest('footer'))) continue;
+        /* On an app page its footer, and a small card or bar floating over the
+           canvas, count as a whole, background and all; elsewhere only what
+           they show counts. */
+        if (!isContent(el) && !(still && (el.closest('footer') || inFloat(el, area)))) continue;
         /* The box that holds it: a fixed bar, toast or panel as a whole. */
         var box = null, page = false;
         for (var p = el; p && p !== D.body; p = p.parentElement) {
@@ -141,6 +155,14 @@
       }
     }
     return top;
+  }
+  /* Inside a small positioned card or bar (under a fifth of the screen). */
+  function inFloat(el, area) {
+    for (var p = el; p && p !== D.body; p = p.parentElement) {
+      var ps = pos(p);
+      if (ps === 'absolute' || ps === 'fixed') { var b = p.getBoundingClientRect(); return b.width * b.height < area * 0.2; }
+    }
+    return false;
   }
   /* How far the button must rise in a corner, or Infinity when it cannot fit. */
   function liftFor(left, dx, still) {
@@ -179,10 +201,51 @@
     manual.lift = Math.max(0, Math.min(manual.lift, H - 2 * EDGE - SIZE));
   }
 
+  /* A footer bar has room when it is open (not folded to a tab), wide, and
+     more than one line of text tall. */
+  function roomy(host) {
+    var hr = host.getBoundingClientRect();
+    if (!hr.width || hr.width < 300 || hr.bottom > innerHeight + 1) return false;
+    var t = Infinity, b = -Infinity;
+    for (var c = host.firstElementChild; c; c = c.nextElementSibling) {
+      if (c === btn) continue;
+      var r = c.getBoundingClientRect();
+      if (r.height > 0) { t = Math.min(t, r.top); b = Math.max(b, r.bottom); }
+    }
+    return b - t >= 26;
+  }
+  function dock(host) {
+    if (btn.parentElement !== host) host.appendChild(btn);
+    if (!host.classList.contains('bmc-dock-host')) host.classList.add('bmc-dock-host');
+    R.classList.add('bmc-docked'); R.classList.remove('bmc-left', 'bmc-off');
+    btn.title = 'Buy me a coffee';
+    var W = R.clientWidth, H = innerHeight, br = btn.getBoundingClientRect(), fr = host.getBoundingClientRect(), PW = 420;
+    var nb = H - fr.top + GAP;
+    R.style.setProperty('--bmc-nr', Math.max(EDGE, W - br.right) + 'px');
+    R.style.setProperty('--bmc-nb', nb + 'px');
+    R.style.setProperty('--bmc-pb', (H - nb >= PANEL_MIN ? nb : EDGE) + 'px');
+    R.style.setProperty('--bmc-pl', Math.max(EDGE, Math.min(br.right - PW, W - EDGE - PW)) + 'px');
+    R.style.setProperty('--bmc-pr', 'auto');
+    R.classList.toggle('bmc-note-flip', false);
+  }
+  function undock() {
+    if (!R.classList.contains('bmc-docked')) return;
+    var host = btn.parentElement;
+    D.body.appendChild(btn);
+    if (host && host.classList) host.classList.remove('bmc-dock-host');
+    R.classList.remove('bmc-docked');
+    if (DRAG) btn.title = 'Buy me a coffee (drag to move)';
+  }
+
   function update() {
     queued = false; last = Date.now();
     if (!btn || !btn.isConnected) return;
     if (mine[2] && mine[2].offsetWidth > 0) return; /* the support panel is open */
+    if (DOCK) {
+      var host = D.querySelector(DOCK);
+      if (host && roomy(host)) return dock(host);
+      undock();
+    }
     reserve();
     if (manual) { clampManual(); place(manual.left, manual.dx, manual.lift, false); return; }
     var still = !canScroll() || R.scrollHeight <= innerHeight + 2;
@@ -214,7 +277,7 @@
     try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && typeof saved.dx === 'number') manual = { left: !!saved.left, dx: saved.dx, lift: saved.lift }; } catch (e) {}
     var start = null, moved = false, swallow = false;
     btn.addEventListener('pointerdown', function (e) {
-      if (e.button !== 0) return;
+      if (e.button !== 0 || R.classList.contains('bmc-docked')) return;
       var r = btn.getBoundingClientRect();
       start = { x: e.clientX, y: e.clientY, l: r.left, t: r.top, id: e.pointerId };
       moved = false;
@@ -250,7 +313,9 @@
     btn = D.getElementById('bmc-wbtn');
     if (!btn) return false;
     var frame = D.getElementById('bmc-iframe');
-    mine = [btn, btn.nextElementSibling, frame && frame.parentElement];
+    var note = btn.nextElementSibling;
+    if (note && !note.id) note.id = 'bmc-note';
+    mine = [btn, note, frame && frame.parentElement];
     if (DRAG) draggable();
     update();
     addEventListener('scroll', soon, { passive: true });
