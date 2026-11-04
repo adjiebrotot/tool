@@ -131,6 +131,7 @@
       <span class="quick-start-label"><svg class="tico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.2 2.5 4.8 13.2h6L10 21.5l9.2-11.4h-6.6z"/></svg><span>Quick Start</span></span><span class="tip-icon" data-tip="Loads a sample dataset so you can see how the tool works.">?</span>
       <div class="quick-start-btns">
         <button class="quick-start-btn" id="sampleBtn" type="button">Sample dataset</button>
+        <button class="quick-start-btn" id="sampleAnimBtn" type="button">4D animation</button>
       </div>
     </div>
         <div class="ctrl-scroll">
@@ -171,6 +172,29 @@
                 <button type="button" class="seg-btn dim-btn" data-dim="4">4D</button>
               </div>
               <div class="help" id="dimHelp">Line graph: X axis + one or more Y series</div>
+            </div>
+            <div class="field-row" id="mode4dRow" style="display:none">
+              <div class="field-label"><span class="tip-wrap">4D view <span class="tip-icon" data-tip="<ul><li><strong>Colour-coded heat map:</strong> a 3D scatter coloured by the fourth column.</li><li><strong>Animation:</strong> one column is time, each value a frame, played on the chart and saved as a GIF.</li></ul>">?</span></span></div>
+              <select class="sel-input" id="g4dMode"><option value="heatmap">Colour-coded heat map</option><option value="anim">Animation</option></select>
+            </div>
+          </div>
+          <div class="field-group" id="animGroup" style="display:none">
+            <div class="group-title">Animation</div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Draw each frame as <span class="tip-icon" data-tip="<ul><li><strong>Surface:</strong> a sheet over X and Y, when each frame's rows form a grid; else points.</li><li><strong>Points:</strong> a marker per row.</li></ul>One row per time moves a point along its path.">?</span></span></div>
+              <select class="sel-input" id="g4dShape"><option value="surface">Surface</option><option value="points">Points</option></select>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Playback speed <span class="tip-icon" data-tip="Time frames shown each second, on the chart and in the GIF.">?</span></span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" type="number" id="g4dFps" value="8" min="1" max="30" step="1"/><span class="suffix">fps</span></div>
+            </div>
+            <div class="field-row">
+              <div class="field-label"><span class="tip-wrap">Camera <span class="tip-icon" data-tip="<ul><li><strong>Orbit:</strong> the view turns while it plays, from where you left it.</li><li><strong>Static:</strong> the view stays where you drag it on the chart, and the GIF is taken from there.</li></ul>">?</span></span></div>
+              <select class="sel-input" id="g4dCam"><option value="orbit">Orbit</option><option value="static">Static</option></select>
+            </div>
+            <div class="field-row" id="orbitRow">
+              <div class="field-label"><span class="tip-wrap">Orbit speed <span class="tip-icon" data-tip="How fast the view turns. Negative turns the other way.">?</span></span></div>
+              <div class="affix-wrap"><input class="affix-input has-suffix" type="number" id="g4dOrbit" value="30" min="-180" max="180" step="5"/><span class="suffix">°/s</span></div>
             </div>
           </div>
 
@@ -328,6 +352,7 @@
         <div class="btn-cluster">
           <button class="btn-secondary btn-sm" id="saveSvg" style="display:none" title="Download this chart as SVG">⬇ SVG</button>
           <button class="btn-secondary btn-sm" id="savePng" style="display:none" title="Download this chart as PNG">⬇ PNG</button>
+          <button class="btn-secondary btn-sm" id="saveGif" style="display:none" title="Download the animation as GIF">⬇ GIF</button>
           <button class="btn-secondary btn-sm btn-icon" id="copyPng" style="display:none" title="Copy PNG to clipboard">⧉</button>
           <button class="btn-secondary btn-sm btn-icon" id="resetView" style="display:none" title="Reset zoom">⟳</button>
         </div>

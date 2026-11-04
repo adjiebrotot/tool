@@ -53,7 +53,8 @@
 // data-share-chart and keeps data-share-sig set to a signature of what it
 // draws: E3 compares that, and E4 wheels the diagram and needs its viewBox to
 // move. A page whose cluster carries ⬇ GIF (spec.gif) also has the GIF row in
-// its menu (M2), and its GIF must loop and be the desktop PNG's size at 1x on
+// its menu (M2, which reads the rows a reader sees: a GIF row hidden while the
+// chart is not animated, as the Graph Visualiser's 2D is, is not one), and its GIF must loop and be the desktop PNG's size at 1x on
 // a desktop and on a phone alike (X6, X7). Where the GIF row opens a dialog
 // first, its Download is pressed as it opens.
 //
@@ -825,7 +826,7 @@ for (const spec of PAGES) {
     const menu = await page.evaluate(`(() => {
       const list = document.querySelector('.share-list.is-open'), t = (${FIND})(${JSON.stringify(key)}).toggle;
       const lr = list.getBoundingClientRect(), tr = t.getBoundingClientRect();
-      return { rows: [...list.querySelectorAll('.share-opt .combo-main')].map(e => e.textContent.trim()),
+      return { rows: [...list.querySelectorAll('.share-opt .combo-main')].filter(e => !e.closest('[hidden]')).map(e => e.textContent.trim()),
                expanded: t.getAttribute('aria-expanded'), focused: document.activeElement && document.activeElement.dataset.kind,
                rightGap: Math.round(tr.right - lr.right), below: Math.round(lr.top - tr.bottom),
                inView: lr.left >= 0 && lr.right <= innerWidth };
