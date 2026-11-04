@@ -31,6 +31,16 @@
       + (+d[3]) + ' ' + MONTHS[isId ? 'id' : 'en'][d[2] - 1] + ' ' + d[1] + '</time></span>';
   }
 
+  // The Buy Me a Coffee row, the same as every other footer's p.footer-support.
+  function support(isId){
+    return '<p class="footer-support"><span>' + (isId
+        ? 'Kalau <em>tool</em> ini menghemat waktu atau uangmu, kamu bisa mentraktir saya segelas es kopi susu.'
+        : 'If a tool saved you time or money, you can say thanks with an iced latte.')
+      + '</span> <a class="bmc-btn" href="https://www.buymeacoffee.com/adjiebrotot" target="_blank" rel="noopener" aria-label="'
+      + (isId ? 'Traktir saya es kopi susu lewat Buy Me a Coffee (terbuka di tab baru)' : 'Buy me an iced latte on Buy Me a Coffee (opens in a new tab)')
+      + '"><span aria-hidden="true">☕</span> ' + (isId ? 'Traktir saya es kopi susu' : 'Buy me an iced latte') + '</a></p>';
+  }
+
   window.renderRVOFooter = function(logosPath, containerId){
     logosPath  = logosPath  || '../logos/';
     containerId = containerId || 'siteFooterContent';
@@ -43,6 +53,7 @@
       ? '<a href="' + rootPath + 'disclaimer/id/">Penafian</a> · <a href="' + rootPath + 'privacy/id/">Kebijakan Privasi</a>'
       : '<a href="' + rootPath + 'disclaimer/">Disclaimer</a> · <a href="' + rootPath + 'privacy/">Privacy Policy</a>';
     el.innerHTML = '<p class="footer-collab"><strong>A hobby project, open to collaboration.</strong> This tool is free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>'
+      + support(isId)
       + '<p class="footer-links">' + legal + ' · <a href="https://blog.adjiebrotots.com/">Blog</a>' + updated(el, isId) + '</p>'
       + '<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">'
       +   '<img src="' + logosPath + 'australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">'

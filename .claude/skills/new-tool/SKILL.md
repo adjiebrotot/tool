@@ -252,6 +252,10 @@ Scale the rigor to the risk:
 
 ## 6. Footer
 
+- **Every footer** carries the Buy Me a Coffee row `p.footer-support` just above the links row
+  (copy it from `financingvscash/index.html`; Indonesian wording in `_ref/bake-id.mjs`). It is a
+  plain link styled by `shared.css`, never the floating BMC widget or its button script: a fixed
+  widget would sit over charts, controls, toasts and tours, and the script uses `document.write`.
 - **Every tool** carries the links row `p.footer-links`: Disclaimer · Privacy Policy · Blog,
   linking `<root>/disclaimer/`, `<root>/privacy/` and https://blog.adjiebrotots.com/ with
   relative paths. The disclaimer text itself lives on `/disclaimer/`, never inline in a footer;

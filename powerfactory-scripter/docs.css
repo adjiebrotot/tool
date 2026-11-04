@@ -189,3 +189,16 @@ footer p.footer-links { font-size: .8rem; }
 .ad-slot:has(ins.adsbygoogle[data-ad-status="unfilled"]) { display: none; }
 .ad-slot:has(ins.adsbygoogle[data-ad-format="autorelaxed"][data-ad-status="filled"]) { margin-top: 44px; }
 @media print { .ad-slot { display: none !important; } }
+
+/* Buy Me a Coffee (p.footer-support): a plain link in the footer, never a
+   floating widget, so it covers no chart, control or tour, and loads no script.
+   Its own yellow in both themes, so a reader knows it at a glance. */
+footer p.footer-support{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 12px;color:var(--muted);font-size:.85rem;line-height:1.5;}
+footer p.footer-support>span{flex:1 1 16rem;}
+a.bmc-btn,footer a.bmc-btn{display:inline-flex;align-items:center;gap:7px;flex:none;padding:7px 14px;border:1.5px solid #000;border-radius:10px;background:#FFDD00;color:#000;font-weight:700;font-size:.9rem;line-height:1.2;text-decoration:none;box-shadow:0 2px 0 #000;transition:transform var(--motion-fast,150ms),box-shadow var(--motion-fast,150ms);}
+a.bmc-btn:hover,footer a.bmc-btn:hover{color:#000;text-decoration:none;transform:translateY(-1px);box-shadow:0 3px 0 #000;}
+a.bmc-btn:active{transform:translateY(1px);box-shadow:0 1px 0 #000;}
+a.bmc-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+a.bmc-btn.bmc-btn-sm{padding:3px 10px;font-size:.78rem;border-radius:8px;box-shadow:0 1px 0 #000;}
+@media (prefers-reduced-motion:reduce){a.bmc-btn,a.bmc-btn:hover,a.bmc-btn:active{transform:none;}}
+@media print{footer p.footer-support,a.bmc-btn{display:none !important;}}
