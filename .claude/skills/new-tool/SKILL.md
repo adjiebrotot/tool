@@ -259,7 +259,9 @@ Scale the rigor to the risk:
   to buy me a house, just buy me a coffee!"), under about 90 characters, no em-dashes. An
   Indonesian page asks for *kopi susu* instead ("Tidak perlu belikan saya rumah, traktir kopi
   susu saja sudah cukup!"). `bmc.js` fits the widget to the design system
-  and keeps it clear of other floating controls. A canvas-style tool (a full-screen workspace,
+  and keeps it clear of other floating controls. For a reader whose browser is on an Indonesian
+  time zone it turns the same button into Trakteer (Trakteer's cup, Trakteer's tip modal), so the
+  page needs nothing extra for it. A canvas-style tool (a full-screen workspace,
   as `worldclock/`) adds `data-bmc-drag` to the `bmc.js` tag so a reader can drag it. One whose
   footer is a bar floating over the canvas also adds `data-bmc-dock="<footer selector>"`: the
   button then sits at the bar's right end whenever the bar is open and more than a line tall. Not on
