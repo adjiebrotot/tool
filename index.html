@@ -983,24 +983,6 @@
       font-size: 0.76rem;
     }
 
-    /* Buy Me a Coffee (p.footer-support), as in shared.css: a plain link in
-       the footer, never a floating widget, so it covers no tool card. */
-    .footer-card p.footer-support {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
-      margin: 0 0 0.75rem; color: #cbd5e1; font-size: 0.85rem; line-height: 1.5;
-    }
-    .footer-card p.footer-support > span { flex: 1 1 16rem; }
-    .footer-card a.bmc-btn {
-      display: inline-flex; align-items: center; gap: 7px; flex: none;
-      padding: 7px 14px; border: 1.5px solid #000; border-radius: 10px;
-      background: #FFDD00; color: #000; font-weight: 700; font-size: 0.9rem; line-height: 1.2;
-      text-decoration: none; box-shadow: 0 2px 0 #000;
-      transition: transform var(--motion-fast, 150ms), box-shadow var(--motion-fast, 150ms);
-    }
-    .footer-card a.bmc-btn:hover { text-decoration: none; transform: translateY(-1px); box-shadow: 0 3px 0 #000; }
-    .footer-card a.bmc-btn:focus-visible { outline: 2px solid #93C5FD; outline-offset: 3px; }
-    @media (prefers-reduced-motion: reduce) { .footer-card a.bmc-btn, .footer-card a.bmc-btn:hover { transform: none; } }
-
     .skip-link {
       position: absolute;
       left: 1rem;
@@ -2450,7 +2432,6 @@
     <div class="container">
       <div class="footer-card">
         <p class="footer-collab"><strong>A hobby project by <a href="https://www.adjiebrotots.com/about/">Adjie</a>, open to collaboration.</strong> These tools are free to use. If your organisation could use a custom tool or training, <a href="mailto:hi@adjiebrotots.com?subject=Collaboration">let’s talk</a>; I’m based in Perth and occasionally visit Jakarta. Bugs or questions: <a href="mailto:hi@adjiebrotots.com">hi@adjiebrotots.com</a> 🙂</p>
-        <p class="footer-support"><span>If a tool saved you time or money, you can say thanks with an iced latte.</span> <a class="bmc-btn" href="https://www.buymeacoffee.com/adjiebrotot" target="_blank" rel="noopener" aria-label="Buy me an iced latte on Buy Me a Coffee (opens in a new tab)"><span aria-hidden="true">☕</span> Buy me an iced latte</a></p>
         <p class="footer-links"><a href="disclaimer/">Disclaimer</a> · <a href="privacy/">Privacy Policy</a> · <a href="https://blog.adjiebrotots.com/">Blog</a></p>
         <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.12);display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;align-items:center">
           <img loading="lazy" src="logos/australian.png" alt="Australian flag" style="grid-row:1/3;height:36px;width:auto;object-fit:contain">

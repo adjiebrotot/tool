@@ -392,13 +392,6 @@ function bake(tool) {
   html = html.replace(/<a href="((?:\.\.\/)+)disclaimer\/">Disclaimer<\/a> · <a href="\1privacy\/">Privacy Policy<\/a>/,
     '<a href="$1disclaimer/id/">Penafian</a> · <a href="$1privacy/id/">Kebijakan Privasi</a>');
 
-  /* ── the Buy Me a Coffee row (p.footer-support) in Indonesian ── */
-  html = html
-    .replace('<span>If a tool saved you time or money, you can say thanks with an iced latte.</span>',
-      '<span>Kalau <em>tool</em> ini menghemat waktu atau uangmu, kamu bisa mentraktir saya segelas es kopi susu.</span>')
-    .replace('aria-label="Buy me an iced latte on Buy Me a Coffee (opens in a new tab)"><span aria-hidden="true">☕</span> Buy me an iced latte</a>',
-      'aria-label="Traktir saya es kopi susu lewat Buy Me a Coffee (terbuka di tab baru)"><span aria-hidden="true">☕</span> Traktir saya es kopi susu</a>');
-
   /* ── language toggle points back to the English page ── */
   html = html.replace(
     '<a id="langToggle" class="btn-theme" href="id/" hreflang="id" lang="id" title="Versi Bahasa Indonesia">ID</a>',
