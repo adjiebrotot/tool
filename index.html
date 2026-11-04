@@ -570,8 +570,12 @@
        an in-feed ad the size of a card (fillGaps below). The tile has a card's
        surface and corners but a plain border, no sticker and no lift, so it
        sits in the grid like a card yet never reads as a tool, and it shows
-       nothing until AdSense fills it. */
+       nothing until AdSense fills it. contain: size keeps the ad out of the
+       row's height: the row is as tall as the card beside it and the tile
+       stretches to that, so a tall ad never stretches the card (an ad that
+       does not fit is swapped for the next unit, fillGaps). */
     .tool-grid > .ad-tile {
+      contain: size;
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -2632,11 +2636,19 @@
         return tile;
       }
 
+      // A filled ad settles its height after it loads, so a tile is checked again whenever its ad resizes.
+      let sizeTimer;
+      const tileSizes = new ResizeObserver(() => { clearTimeout(sizeTimer); sizeTimer = setTimeout(fillGaps, 100); });
+
       function fillGaps() {
         const cols = getComputedStyle(toolGrid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
         groups.forEach(group => {
           group.tiles = group.tiles.filter(tile => {
-            if (tile.querySelector('ins').getAttribute('data-ad-status') !== 'unfilled') return true;
+            const status = tile.querySelector('ins').getAttribute('data-ad-status');
+            // Unfilled, or filled taller than the card it sits beside: try the next unit.
+            const misfit = status === 'filled' && !tile.classList.contains('is-hidden') && tile.scrollHeight > tile.clientHeight + 2;
+            if (status !== 'unfilled' && !misfit) return true;
+            tileSizes.unobserve(tile.querySelector('ins'));
             tile.remove();
             group.failed += 1;
             return false;
@@ -2645,6 +2657,7 @@
           const want = cols > 1 && visible % cols ? Math.min(cols - (visible % cols), visible) : 0;
           while (group.tiles.length < want && group.failed < tileUnits.length) {
             const tile = makeAdTile(tileUnits[group.failed]);
+            tileSizes.observe(tile.querySelector('ins'));
             (group.tiles[group.tiles.length - 1] || group.cards[group.cards.length - 1]).after(tile);
             group.tiles.push(tile);
           }
