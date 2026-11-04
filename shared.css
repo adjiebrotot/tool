@@ -970,3 +970,6 @@ button.agent-go:focus-visible{outline:2px solid var(--accent-strong);outline-off
 /* A multiplex is a grid of ads: more room above it, clear of the toggles and links it follows. */
 .ad-slot:has(ins.adsbygoogle[data-ad-format="autorelaxed"][data-ad-status="filled"]){margin-top:44px;}
 @media print{.ad-slot{display:none !important;}}
+
+/* The Buy Me a Coffee widget stays out of a tool embedded on another site. */
+html.abt-embed #bmc-wbtn,html.abt-embed #bmc-iframe{display:none !important;}
