@@ -76,6 +76,9 @@
     '#bmc-wbtn:active{transform:translate(2px,2px)!important;box-shadow:0 0 0 transparent!important;}' +
     '#bmc-wbtn img{width:28px!important;height:28px!important;pointer-events:none;}' +
     '#bmc-wbtn svg path{fill:var(--text-inv,#fff);}' +
+    /* Trakteer's red cup reads on a pale circle, not on the accent blue: a light
+       blue in both themes, with the same ink outline and sticker shadow. */
+    'html.bmc-tr #bmc-wbtn{background:#EAF1FF!important;}' +
     'html.bmc-tr #bmc-wbtn img{width:32px!important;height:32px!important;object-fit:contain;}' +
     'html.bmc-tr-wait #bmc-wbtn{animation:bmc-wait 1s ease-in-out infinite alternate;}' +
     '@keyframes bmc-wait{to{opacity:.55;}}' +
