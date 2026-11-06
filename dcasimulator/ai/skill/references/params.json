@@ -149,6 +149,7 @@
      "kind": "number",
      "min": 0,
      "max": null,
+     "step": 1,
      "default": "25823952204"
     },
     {
@@ -194,6 +195,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "monthly-weekly",
@@ -352,7 +354,7 @@
      "label": "Amount per top-up",
      "group": "Portfolios: Contribution",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 5000,
@@ -363,7 +365,7 @@
      "label": "Yearly increase",
      "group": "Portfolios: Contribution",
      "kind": "amount",
-     "unit": "%/yr",
+     "currency": true,
      "min": 0,
      "max": 100,
      "default": 0
@@ -402,7 +404,7 @@
      "label": "Risk-free rate",
      "group": "Portfolios: Risk-Free Account",
      "kind": "amount",
-     "unit": "%/yr",
+     "currency": true,
      "min": 0,
      "max": 30,
      "default": 0
@@ -513,7 +515,7 @@
      "label": "Buying fee",
      "group": "Portfolios: Fees",
      "kind": "amount",
-     "unit": "%",
+     "currency": true,
      "min": 0,
      "max": 10,
      "default": 0.1
@@ -523,7 +525,7 @@
      "label": "Selling fee",
      "group": "Portfolios: Fees",
      "kind": "amount",
-     "unit": "%",
+     "currency": true,
      "min": 0,
      "max": 10,
      "default": 0.1
@@ -535,6 +537,7 @@
      "kind": "number",
      "min": 0,
      "max": null,
+     "step": 1,
      "default": "25823952204"
     },
     {
@@ -569,6 +572,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "alloc",

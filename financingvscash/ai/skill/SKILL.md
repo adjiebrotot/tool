@@ -16,7 +16,7 @@ Finance vs Cash is a free calculator that runs in the user's browser. This skill
 1. **Pick the page.** Read the user's request and choose the page above that answers it. Open its reference (`references/<page>.md`, listed under Files) and read the LINK FORMAT, the most important keys and the Quick Starts. The reference is long: read the parts you need.
 2. **Separate what the user said from what you must choose.** Every figure the user gave goes in as they gave it (convert units or periods only to match the field, and say so).
 3. **Fill every other input that matters with a researched assumption.**
-   - If you can search the web, do it for figures that change over time or by place: interest and mortgage rates, rents and prices, tax, duty and fee schedules, inflation, salaries, tariffs, technology costs, standards. Prefer official and primary sources (central banks, tax offices, statistics agencies, standards bodies, operators) and note the source and its date.
+   - If you can search the web, do it for figures that change over time or by place. For this tool that usually means the loan offer's rate, fees and term (the dealer or lender), savings and deposit rates and inflation for the user's country (central bank, statistics agency). Prefer official and primary sources and note each source and its date.
    - If you cannot search, use your own knowledge and say it is an estimate as of your knowledge date.
    - Start from the nearest Quick Start (`qs`) for the user's place and case, and keep its figures unless you have a better one for this user. Send only what differs from it.
    - Prefer what the user said earlier in the conversation over general figures. Never invent a figure the user gave differently.
@@ -26,16 +26,17 @@ Finance vs Cash is a free calculator that runs in the user's browser. This skill
    python3 scripts/build_link.py --quickstarts financingvscash --find <words> # look up Quick Starts
    python3 scripts/build_link.py spec.json                                   # build the link
    ```
-   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen), `why` (key: your reason, 200 characters at most, shown to the user beside the value) and `note` (one line, such as the place and date). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.
+   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen, numbers written plainly: `800000`, `6.5`, never `800,000` or `6,5`), `why` (key: your reason, 200 characters at most, shown to the user beside the value; a list key or `json` can have one too), `note` (one line, such as the place and date). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.
+   The script checks every form field: its key, range, step and choices. List keys and `json` are checked by the tool when the link opens, so write them exactly in the syntax the reference gives (its COMPACT LISTS and JSON sections), with the names it lists. A Quick Start sets only what its line in the reference lists; when a list key (a set of tickers, portfolios or offers) replaces what the Quick Start holds, send every setting you want with it.
    If you cannot run code, build the link by hand from the LINK FORMAT in the reference, using only keys and values listed there, and check each value against its range.
 5. **Reply in the format below, and stop.**
 
 ## Reply format
 
-Your whole reply has these four parts, in this order:
+Your whole reply has these four parts, in this order, written in the user's language (keys and the link stay as they are):
 
 1. **Your inputs**: a short list of what the user stated, each with the value that goes in the link.
-2. **Assumptions**: a table with one row per input you chose: | Input | Value | Source or rationale |. Name the source (with its date) for anything you looked up; say "estimate" for anything from your own knowledge. Put the same reason, shortened, in that key's `why`.
+2. **Assumptions**: a numbered list (or a table: Input | Value | Source or rationale), one entry per input you chose, each with its value and its source with the date for anything you looked up, or "estimate" and your reason for anything from your own knowledge. Put the same reason, shortened, in that key's `why`.
 3. **The link**, as a clickable Markdown link to tool.adjiebrotots.com/financingvscash/..., and again inside a code block so the user can copy it if their chat app breaks a long link.
 4. The sentence: **Open the link to see the result.** You may add one line inviting the user to correct any assumption, and then you will send a new link.
 
@@ -79,13 +80,19 @@ https://tool.adjiebrotots.com/financingvscash/#load&v=1&qs=<quick start>&<key>=<
 }
 ```
 
-**Assumptions given:**
+**Reply:**
+
+**Your inputs**
+
+- Cash Purchase Cost: $45,000
+
+**Assumptions**
 
 1. Cash on hand: 60,000, which the user did not state, kept at the car Quick Start's level so the cash covers the price.
 2. The loan: a single offer over 5 years at 7.9% a year, repaid monthly, with no deposit and no fees because the user mentioned none. It replaces the car Quick Start's three offers.
 3. Interest on spare cash: 4.5% a year, a typical savings or term deposit rate, used for the cash that is invested instead of spent.
 
-**Link:**
+[Open Finance vs Cash on this scenario](https://tool.adjiebrotots.com/financingvscash/#load&v=1&qs=car&purchaseCost=45000&availableCash=60000&why.availableCash=The%20user%20did%20not%20say%20how%20much%20cash%20they%20hold,%20so%20a%20round%20amount%20above%20the%20price,%20as%20the%20car%20Quick%20Start%20assumes&offers=5-year%20loan%20at%207.9%25:financeRate=7.9:termYears=5&why.offers=One%20loan%20over%205%20years%20at%207.9%25%20a%20year,%20paid%20monthly%20with%20nothing%20down%20and%20no%20fees,%20since%20none%20were%20mentioned&baseRf=4.5&why.baseRf=A%20typical%20savings%20or%20term%20deposit%20rate%20for%20the%20cash%20that%20is%20invested%20instead&note=Car%20purchase,%20October%202026)
 
 ```
 https://tool.adjiebrotots.com/financingvscash/#load&v=1&qs=car&purchaseCost=45000&availableCash=60000&why.availableCash=The%20user%20did%20not%20say%20how%20much%20cash%20they%20hold,%20so%20a%20round%20amount%20above%20the%20price,%20as%20the%20car%20Quick%20Start%20assumes&offers=5-year%20loan%20at%207.9%25:financeRate=7.9:termYears=5&why.offers=One%20loan%20over%205%20years%20at%207.9%25%20a%20year,%20paid%20monthly%20with%20nothing%20down%20and%20no%20fees,%20since%20none%20were%20mentioned&baseRf=4.5&why.baseRf=A%20typical%20savings%20or%20term%20deposit%20rate%20for%20the%20cash%20that%20is%20invested%20instead&note=Car%20purchase,%20October%202026

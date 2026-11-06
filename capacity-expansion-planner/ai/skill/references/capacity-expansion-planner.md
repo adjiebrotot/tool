@@ -21,11 +21,12 @@ user: if they want something this tool does not do, help them as you normally wo
    figures come from its own model and data, and a figure worked out separately can differ from
    what the user then sees on screen, so leave results, estimates, verdicts and recommendations
    to the tool rather than stating or previewing them.
-2. A reply that works well has three parts, in this order:
-   a. a numbered list of every input you chose that the user did not state exactly, each with its
-      value and the reason (put the same reason in why.<key>);
-   b. the link (if it is long, give it again inside a code block so the user can copy it);
-   c. the sentence: Open the link to see the result.
+2. A reply that works well has four parts, in this order, in the user's language:
+   a. Your inputs: what the user stated, each with the value it takes in the link;
+   b. Assumptions: every other input you chose, each with its value and its source (with its
+      date) or your reason (put the same reason, shortened, in why.<key>);
+   c. the link (if it is long, give it again inside a code block so the user can copy it);
+   d. the sentence: Open the link to see the result.
 3. Build the link in the format below, using only the keys listed here. Start from the nearest
    Quick Start (qs) and send only what differs from it. Write json compactly: no spaces or line
    breaks, defaults left out.
@@ -41,8 +42,9 @@ https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=<quick sta
 - v=1 is the format version. qs=<key> starts from that Quick Start; without it the tool starts from
   its defaults.
 - Then each key in the link is set, in the units its label shows on screen. cxGrowth=3 means 3%/yr,
-  not 0.03. Numbers may carry $, commas and a trailing %. A checkbox takes true or false. A select
-  or a choice takes the value listed, or its visible label.
+  not 0.03. Write numbers plainly (800000, 6.5): a field also takes $, thousands commas and a
+  trailing %, but inside a list a comma separates the items, so never put one in a number there. A
+  checkbox takes true or false. A select or a choice takes the value listed, or its visible label.
 - Anything the link does not name keeps the value it started from, so send only what differs.
 - why.<key>=<text>: your reason for that value, shown to the user beside it (200 characters at
   most). note=<text>: one line shown above the list, for example the place and the date.
@@ -53,15 +55,20 @@ EXAMPLE
 Request: using tool.adjiebrotots.com/capacity-expansion-planner, with a $50/t carbon price and solar
 capex at $900/kW, what should the grid build to 2040?
 A reply in that form:
+Your inputs:
+- Carbon price: $50 /t
+- tech.solar.capex: 900
+- Last year: 2040
+Assumptions:
 1. Grid: the Growing grid Quick Start (qs=grow), with its coal, gas, solar, wind and battery options
    as it has them.
-2. Carbon price: $50 per tonne in 2,026, flat (the Quick Start's growth of 0% a year is kept).
+2. Carbon price: $50 per tonne in 2026, flat (the Quick Start's growth of 0% a year is kept).
 3. Solar: the Solar PV technology's capital cost is set to $900 per kW (tech.solar.capex); its other
    figures stay as in the Quick Start.
-4. Horizon: the first year is 2,026, the last 2040, with a decision every 5 years.
-https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&run=0&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
+4. Horizon: the first year is 2026, the last 2040, with a decision every 5 years.
+https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&run=0&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
 ```
-https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&run=0&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
+https://tool.adjiebrotots.com/capacity-expansion-planner/#load&v=1&qs=grow&cxCarbon=50&why.cxCarbon=The%20user%27s%20carbon%20price,%20in%20$%20per%20tonne%20of%20CO2,%20from%20the%20first%20year&tech.solar.capex=900&why.tech.solar.capex=The%20user%27s%20solar%20capital%20cost,%20in%20$%20per%20kW&cxEnd=2040&why.cxEnd=The%20user%20wants%20the%20plan%20to%20run%20to%202040&run=0&note=Growing%20grid,%20$50/t%20carbon%20price,%20solar%20at%20$900/kW,%20planned%20to%202040
 ```
 Open the link to see the result.
 
@@ -121,13 +128,13 @@ cxClimate: Climate  (most important)
 
 [Demand: Planning years]
 cxStart: First year  (most important)
-  Number. 2,000 to 2,100, step 1. Default 2026.
+  Number. 2000 to 2100, step 1. Default 2026.
   The first year of the plan, a whole year (2000 to 2100). Costs and the carbon price are those of
   this year.
   Tip on the page: Also the price year: every cost you enter and every result is at this year’s
   prices, and every later year’s cost is discounted back to it.
 cxEnd: Last year  (most important)
-  Number. 2,000 to 2,150, step 1. Default 2050.
+  Number. 2000 to 2150, step 1. Default 2050.
   The last year of the plan (2000 to 2150), at least the first year. Decision years run from the
   first year in steps of cxStep, and each stands for the years up to the next. A longer plan with
   smaller steps takes longer to solve.
@@ -163,7 +170,7 @@ cxVoll: Value of lost load (VoLL)
 
 [Policy: Emissions]
 cxCarbon: Carbon price  (most important)
-  Number ($ before it, /t after it). 0 to 2,000. Default 0.
+  Number ($ before it, /t after it). 0 to 2000. Default 0.
   The carbon price in the first year, per tonne of CO2 in the currency of cxCur. 0 means none. A
   plant pays it on every tonne it emits.
   Tip on the page: Paid on every tonne of CO2 a plant emits, on top of its running cost: the price
@@ -179,7 +186,7 @@ cxNetZero: Net-zero year  (most important)
   Tip on the page: From this decision year on, no plant may emit CO2. Storage and clean plants have
   to meet the demand.
 cxNzYear: No CO2 from  (most important)
-  Number. 2,000 to 2,150, step 1. Default 2045.
+  Number. 2000 to 2150, step 1. Default 2045.
   The decision year from which no plant may emit (2000 to 2150). Used only while cxNetZero is on.
 
 [Assumptions]

@@ -19,11 +19,12 @@ user: if they want something this tool does not do, help them as you normally wo
    figures come from its own model and data, and a figure worked out separately can differ from
    what the user then sees on screen, so leave results, estimates, verdicts and recommendations
    to the tool rather than stating or previewing them.
-2. A reply that works well has three parts, in this order:
-   a. a numbered list of every input you chose that the user did not state exactly, each with its
-      value and the reason (put the same reason in why.<key>);
-   b. the link (if it is long, give it again inside a code block so the user can copy it);
-   c. the sentence: Open the link to see the result.
+2. A reply that works well has four parts, in this order, in the user's language:
+   a. Your inputs: what the user stated, each with the value it takes in the link;
+   b. Assumptions: every other input you chose, each with its value and its source (with its
+      date) or your reason (put the same reason, shortened, in why.<key>);
+   c. the link (if it is long, give it again inside a code block so the user can copy it);
+   d. the sentence: Open the link to see the result.
 3. Build the link in the format below, using only the keys listed here. Start from the nearest
    Quick Start (qs) and send only what differs from it. Write json compactly: no spaces or line
    breaks, defaults left out.
@@ -39,8 +40,10 @@ https://tool.adjiebrotots.com/rentvsownhouse/#load&v=1&qs=<quick start>&<key>=<v
 - v=1 is the format version. qs=<key> starts from that Quick Start; without it the tool starts from
   its defaults.
 - Then each key in the link is set, in the units its label shows on screen. downPaymentPct=20 means
-  20% of price, not 0.2. Numbers may carry $, commas and a trailing %. A checkbox takes true or
-  false. A select or a choice takes the value listed, or its visible label.
+  20% of price, not 0.2. Write numbers plainly (800000, 6.5): a field also takes $, thousands commas
+  and a trailing %, but inside a list a comma separates the items, so never put one in a number
+  there. A checkbox takes true or false. A select or a choice takes the value listed, or its visible
+  label.
 - Anything the link does not name keeps the value it started from, so send only what differs.
 - why.<key>=<text>: your reason for that value, shown to the user beside it (200 characters at
   most). note=<text>: one line shown above the list, for example the place and the date.
@@ -51,6 +54,10 @@ EXAMPLE
 Request: using tool.adjiebrotots.com/rentvsownhouse, please decide which one is better: buy for
 $850,000 or rent for $620 per week in Melbourne
 A reply in that form:
+Your inputs:
+- Property price: $850,000
+- Rent amount: $620 a week
+Assumptions:
 1. Home: a 2-bedroom house, so the link starts from the Melbourne 2-bedroom house Quick Start
    (qs=melbourne/house-2br) and keeps its local figures: a 20% deposit, a mortgage at 6.4% a year
    over 30 years, house prices growing 4% a year, rent growing 3.5% a year, spare cash earning 4.6%

@@ -25,29 +25,30 @@ import { ROOT, SITE, AI_RULES, WHY_MAX, buildLink } from './agent-lib.mjs';
    name    the tool's name for people
    use     when an assistant should reach for the skill (the YAML description's trigger) */
 export const TOOLS = [
-  { tool: 'rentvsownhouse', main: 'rentvsownhouse', name: 'Rent vs Own',
+  { tool: 'rentvsownhouse', research: 'mortgage and loan rates, rents and prices, tax, duty and fee schedules, inflation, salaries and fees for the user\'s place and date (central banks, tax offices, statistics agencies, lenders)', main: 'rentvsownhouse', name: 'Rent vs Own',
     use: 'buying a home versus renting (and investing the difference), whether a house or apartment is worth buying at a price against a rent, mortgage vs rent comparisons, or how sensitive that answer is to rates, growth and costs. Covers 33 cities with local Quick Starts; has an Indonesian version.' },
-  { tool: 'pisahvsgabung', main: 'pisahvsgabung', name: 'Pisah vs Gabung Harta',
+  { tool: 'pisahvsgabung', research: 'the current PPh 21 rules, PTKP amounts and tax brackets (DJP, the tax law), and typical salaries and deductions in Indonesia', main: 'pisahvsgabung', name: 'Pisah vs Gabung Harta',
     use: 'Indonesian married couples\' PPh 21 income tax: whether Pisah Harta (PH/MT) or Gabung Harta (joint) pays less, for given salaries, deductions and dependants. Requests often come in Indonesian.' },
-  { tool: 'borrowingcapacity', main: 'borrowingcapacity', name: 'Borrowing Capacity',
+  { tool: 'borrowingcapacity', research: 'current Australian lender rates and serviceability buffers (APRA, the lender), HEM living expenses, tax and HECS-HELP repayment thresholds (ATO)', main: 'borrowingcapacity', name: 'Borrowing Capacity',
     use: 'how much an Australian bank would lend for a home loan: borrowing power from income, expenses, dependants, debts, deposit, rate and term, and what limit (serviceability, DTI, LVR, deposit) holds it down.' },
-  { tool: 'financingvscash', main: 'financingvscash', name: 'Finance vs Cash',
+  { tool: 'financingvscash', research: 'the loan offer\'s rate, fees and term (the dealer or lender), savings and deposit rates and inflation for the user\'s country (central bank, statistics agency)', main: 'financingvscash', name: 'Finance vs Cash',
     use: 'whether to pay cash or take finance (car loan, 0% offers, dealer finance, personal loan, buy now pay later) for a purchase while investing the cash, and which loan offer is best.' },
-  { tool: 'financialfreedom', main: 'financialfreedom', name: 'Financial Freedom',
+  { tool: 'financialfreedom', research: 'expected returns and inflation, safe withdrawal rates, pension and superannuation rules, life expectancy tables for the user\'s country', main: 'financialfreedom', name: 'Financial Freedom',
     use: 'early retirement and financial independence (FIRE): the earliest age someone can stop working, how long savings last, safe withdrawal, retirement savings plans with Monte Carlo odds.' },
-  { tool: 'valuateeverything', main: 'valuateeverything', name: 'Valuate Everything',
+  { tool: 'valuateeverything', research: 'comparable listings only as the user gives them or as you find them on real listing sites (name each one); never invent listings', main: 'valuateeverything', name: 'Valuate Everything',
     use: 'whether an asking price is fair: a used car, a house, a hotel night or any item, fitted against comparable listings (price against year, mileage, size and other features).' },
-  { tool: 'costofliving-comparator', main: 'costofliving-comparator', name: 'Cost of Living Comparator',
+  { tool: 'costofliving-comparator', research: 'take-home pay after tax, rents, groceries and other costs in each city (statistics agencies, payroll calculators, cost of living surveys), and exchange rates', main: 'costofliving-comparator', name: 'Cost of Living Comparator',
     use: 'moving between cities: how far a salary goes elsewhere, the salary needed in another city to live and save the same, comparing cost of living across many cities or on a world map.' },
-  { tool: 'dcasimulator', main: 'dcasimulator', name: 'DCA Scenario Explorer',
+  { tool: 'dcasimulator', research: 'the exact ticker symbols (exchange suffixes such as .JK or .AX), fees and the date range the user means; prices load in the tool, never type them in', main: 'dcasimulator', name: 'DCA Scenario Explorer',
     use: 'backtesting regular investing (dollar cost averaging) into stocks, ETFs or crypto on past prices, comparing tickers, schedules and buying rules, and multi-ticker portfolios with rebalancing.' },
-  { tool: 'loadflow-simulator', main: 'loadflow-simulator', name: 'Load Flow Simulator',
+  { tool: 'loadflow-simulator', research: 'standards and grid codes (IEEE, IEC, EN 50160, the network operator\'s code), typical line, cable and transformer data, and the operating limits that apply', main: 'loadflow-simulator', name: 'Load Flow Simulator',
     use: 'power system load flow (power flow) studies: bus voltages, line loading and losses on a network such as the IEEE/WSCC 9-bus, a distribution feeder or an HVDC case, AC Newton-Raphson or DC.' },
-  { tool: 'ed-uc-simulator', main: 'ed-uc-simulator', name: 'ED/UC Simulator',
+  { tool: 'ed-uc-simulator', research: 'generator costs, fuel prices and technical limits (ramp rates, minimum up and down times), line ratings and market rules (the operator, IEA, typical plant data)', main: 'ed-uc-simulator', name: 'ED/UC Simulator',
     use: 'power system economic dispatch and unit commitment over hours: which generators run, storage and HVDC schedules, operating cost and nodal prices (LMP) with line congestion.' },
-  { tool: 'capacity-expansion-planner', main: 'capacity-expansion-planner', name: 'Capacity Expansion Planner',
+  { tool: 'capacity-expansion-planner', research: 'technology costs and lifetimes (NREL ATB, CSIRO GenCost, IEA, Lazard), carbon prices, demand forecasts and plant capacity factors for the user\'s region', main: 'capacity-expansion-planner', name: 'Capacity Expansion Planner',
     use: 'electricity generation capacity expansion planning: which plants, renewables and batteries to build and when to meet growing demand at least cost, with carbon prices, emissions and costs by year.' },
-  { tool: 'powerfactory-scripter', main: 'powerfactory-scripter/builder', name: 'PowerFactory Scripter',
+  { tool: 'powerfactory-scripter', research: 'the PowerFactory object and variable names, the study standard (IEC 60909, the grid code\'s fault ride-through curve), and the user\'s project and study case names as they gave them', main: 'powerfactory-scripter/builder', name: 'PowerFactory Scripter',
+    extra: 'Never write the PowerFactory Python script yourself, not even part of it: the tool writes it from the link, and the user downloads it there.',
     use: 'writing DIgSILENT PowerFactory Python scripts: load flow, N-1 contingency, short circuit, RMS/EMT simulation, fault ride-through, critical clearing time, parameter sweeps and result export, built as a workflow the tool turns into one ready-to-run script.' },
 ];
 
@@ -64,7 +65,10 @@ const attr = s => esc(s).replace(/"/g, '&quot;');
 const num = v => (v === null || v === undefined || v === '' || !Number.isFinite(+v)) ? null : +v;
 function kindOf(f) {
   if (f.type === 'c') return 'checkbox';
+  // A select the page fills while it runs (an output variable list) has no fixed choices to check.
+  if (f.options && f.options.filter(o => o.value !== '').length < 2 && f.tag === 'select') return 'text';
   if (f.options) return 'choice';
+  if (f.input === 'datetime-local') return 'datetime';
   if (f.input === 'range') return 'slider';
   if (f.money) return 'amount';
   if (f.input === 'number' || f.numeric) return 'number';
@@ -73,13 +77,21 @@ function kindOf(f) {
 }
 function fieldData(f, M) {
   const kind = kindOf(f);
-  const unit = f.input === 'range' ? f.unit : [f.prefix, f.suffix].filter(Boolean).join(' ');
+  // An amount is in the page's currency (its symbol picker), so no symbol is named here.
+  const unit = f.input === 'range' ? f.unit : f.money ? '' : [f.prefix, f.suffix].filter(Boolean).join(' ');
   const o = { key: f.key, label: f.label || f.key, group: f.group || '', kind };
+  if (f.money) o.currency = true;
   if (unit) o.unit = unit;
   if (kind === 'choice') o.options = f.options.map(x => ({ value: x.value, label: x.label || x.value }));
-  if (['number', 'amount', 'slider'].includes(kind)) { o.min = num(f.min); o.max = num(f.max); }
+  if (['number', 'amount', 'slider'].includes(kind)) {
+    o.min = num(f.min); o.max = num(f.max);
+    // A slider snaps to its step, and a whole-number box takes whole numbers: the script says so.
+    const st = num(f.step);
+    if (st && (kind === 'slider' || st >= 1)) o.step = st;
+  }
   o.default = f.input === 'date' ? 'set from today' : f.type === 'c' ? !!f.value : (f.money ? (num(String(f.value).replace(/[$,_\s]/g, '')) ?? f.value) : f.value);
-  const by = (f.pairs || []).filter(k => M.byKey[k] && !M.hide.has(k));
+  // The field that sets its unit: a paired select, or a <key>Unit / <key>Period select beside it (edSpan, retireExpense).
+  const by = [...(f.pairs || []), ...[f.key + 'Unit', f.key + 'Period'].filter(k => M.byKey[k] && M.byKey[k].options)].filter((k, i, a) => M.byKey[k] && !M.hide.has(k) && a.indexOf(k) === i);
   if (by.length && f.tag !== 'select') o.unitSetBy = by;
   if (M.important.includes(f.key)) o.important = true;
   return o;
@@ -95,8 +107,14 @@ function pageData(M) {
     reference: 'references/' + refName(M.P.page),
     decides: M.notes.sections['decides'] || '',
     important: M.important,
-    fields: M.fields.filter(f => !M.hide.has(f.key)).map(f => fieldData(f, M)),
-    lists: M.compact, families: M.P.families || [], json: !!M.notes.sections['json'],
+    fields: [
+      ...M.fields.filter(f => !M.hide.has(f.key)).map(f => fieldData(f, M)),
+      // Compact keys that are plain numbers (PAGES.virtual): checked like a number box.
+      ...(M.P.virtual || []).filter(v => !M.byKey[v.key]).map(v => ({ key: v.key, label: v.key, group: '', kind: 'number', min: num(v.min), max: num(v.max), default: v.value })),
+    ],
+    lists: M.compact.filter(k => !(M.P.virtual || []).some(v => v.key === k)),
+    families: M.P.families || [], json: !!M.notes.sections['json'],
+    run: /\brun=0\b/.test(JSON.stringify(M.notes.sections)),
     quickStarts: qs,
   };
 }
@@ -124,7 +142,7 @@ function skillMd(T, models) {
     '1. **Pick the page.** Read the user\'s request and choose the page above that answers it. Open its reference (`references/<page>.md`, listed under Files) and read the LINK FORMAT, the most important keys and the Quick Starts. The reference is long: read the parts you need.',
     '2. **Separate what the user said from what you must choose.** Every figure the user gave goes in as they gave it (convert units or periods only to match the field, and say so).',
     '3. **Fill every other input that matters with a researched assumption.**',
-    '   - If you can search the web, do it for figures that change over time or by place: interest and mortgage rates, rents and prices, tax, duty and fee schedules, inflation, salaries, tariffs, technology costs, standards. Prefer official and primary sources (central banks, tax offices, statistics agencies, standards bodies, operators) and note the source and its date.',
+    `   - If you can search the web, do it for figures that change over time or by place. For this tool that usually means ${T.research}. Prefer official and primary sources and note each source and its date.`,
     '   - If you cannot search, use your own knowledge and say it is an estimate as of your knowledge date.',
     '   - Start from the nearest Quick Start (`qs`) for the user\'s place and case, and keep its figures unless you have a better one for this user. Send only what differs from it.',
     '   - Prefer what the user said earlier in the conversation over general figures. Never invent a figure the user gave differently.',
@@ -134,17 +152,21 @@ function skillMd(T, models) {
     `   python3 scripts/build_link.py --quickstarts ${main.P.page} --find <words> # look up Quick Starts`,
     '   python3 scripts/build_link.py spec.json                                   # build the link',
     '   ```',
-    '   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen), `why` (key: your reason, 200 characters at most, shown to the user beside the value) and `note` (one line, such as the place and date). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.',
+    '   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen, numbers written plainly: `800000`, `6.5`, never `800,000` or `6,5`), `why` (key: your reason, 200 characters at most, shown to the user beside the value; a list key or `json` can have one too), `note` (one line, such as the place and date)' +
+      (models.some(M => M.notes.sections['json']) ? ', `json` (an object, for a page whose reference defines it)' : '') +
+      (models.some(M => /\brun=0\b/.test(JSON.stringify(M.notes.sections))) ? ' and `run` (0 opens the page without solving, as the reference says)' : '') +
+      '. If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.',
+    '   The script checks every form field: its key, range, step and choices. List keys' + (models.some(M => (M.P.families || []).length) ? ', part settings (' + [...new Set(models.flatMap(M => M.P.families || []))].map(f => '`' + f + '...`').join(', ') + ')' : '') + ' and `json` are checked by the tool when the link opens, so write them exactly in the syntax the reference gives (its COMPACT LISTS' + (models.some(M => M.reference && M.reference.length) ? ', REFERENCE' : '') + ' and JSON sections), with the names it lists. A Quick Start sets only what its line in the reference lists; when a list key (a set of tickers, portfolios or offers) replaces what the Quick Start holds, send every setting you want with it.',
     '   If you cannot run code, build the link by hand from the LINK FORMAT in the reference, using only keys and values listed there, and check each value against its range.',
-    '5. **Reply in the format below, and stop.**',
+    '5. **Reply in the format below, and stop.**' + (T.extra ? ' ' + T.extra : ''),
     '',
   );
   L.push('## Reply format', '');
   L.push(
-    'Your whole reply has these four parts, in this order:',
+    'Your whole reply has these four parts, in this order, written in the user\'s language (keys and the link stay as they are):',
     '',
     '1. **Your inputs**: a short list of what the user stated, each with the value that goes in the link.',
-    '2. **Assumptions**: a table with one row per input you chose: | Input | Value | Source or rationale |. Name the source (with its date) for anything you looked up; say "estimate" for anything from your own knowledge. Put the same reason, shortened, in that key\'s `why`.',
+    '2. **Assumptions**: a numbered list (or a table: Input | Value | Source or rationale), one entry per input you chose, each with its value and its source with the date for anything you looked up, or "estimate" and your reason for anything from your own knowledge. Put the same reason, shortened, in that key\'s `why`.',
     `3. **The link**, as a clickable Markdown link to tool.adjiebrotots.com/${T.tool}/..., and again inside a code block so the user can copy it if their chat app breaks a long link.`,
     '4. The sentence: **Open the link to see the result.** You may add one line inviting the user to correct any assumption, and then you will send a new link.',
     '',
@@ -165,12 +187,15 @@ function skillMd(T, models) {
     '- Never use the keys `s`, `open` or `embed`.',
     '',
   );
-  // The worked example, from the main page's notes.
+  // The worked example, from the main page's notes, in the reply's four parts.
   const ex = main.example;
-  L.push('## Worked example', '', `**User:** ${ex.request}`, '', `**Spec** (\`${main.P.page}\`):`, '', '```json', JSON.stringify(specOf(main.P.page, ex.pairs), null, 2), '```', '');
-  L.push('**Assumptions given:**', '');
+  const link = canonicalLink(main.base, ex.pairs);
+  const said = userInputs(main, ex);
+  L.push('## Worked example', '', `**User:** ${ex.request}`, '', `**Spec** (\`${main.P.page}\`):`, '', '```json', JSON.stringify(specOf(main.P.page, ex.pairs), null, 2), '```', '', '**Reply:**', '');
+  if (said.length) { L.push('**Your inputs**', ''); said.forEach(r => L.push(`- ${r.label}: ${r.value}`)); L.push(''); }
+  L.push('**Assumptions**', '');
   ex.assumptions.forEach((a, i) => L.push(`${i + 1}. ${a}`));
-  L.push('', '**Link:**', '', '```', canonicalLink(main.base, ex.pairs), '```', '', 'Open the link to see the result.', '');
+  L.push('', `[Open ${T.name} on this scenario](${link})`, '', '```', link, '```', '', 'Open the link to see the result.', '');
   L.push('## Files', '');
   for (const M of models) L.push(`- \`references/${refName(M.P.page)}\`: ${M.title}${M.P.lang !== 'en' ? ' (Indonesian page)' : ''}. Every key with its label, unit, range and default, the Quick Starts and what each sets, list and json syntaxes, and an example.`);
   L.push('- `references/params.json`: the same keys as data (what the script checks against).',
@@ -275,7 +300,7 @@ function glyph(T, M) {
 }
 
 // A value as people read it: 800000 as 800,000.
-const shown = v => /^-?\d+(\.\d+)?$/.test(String(v)) ? Number(v).toLocaleString('en-US', { maximumFractionDigits: 4 }) : String(v);
+const shown = v => /^(1[89]|2[0-2])\d\d$/.test(String(v)) ? String(v) : /^-?\d+(\.\d+)?$/.test(String(v)) ? Number(v).toLocaleString('en-US', { maximumFractionDigits: 4 }) : String(v);
 
 // The demo conversation: the main page's "AI page example" notes section, else its Example.
 function demoRows(M, demo) {
@@ -287,7 +312,8 @@ function demoRows(M, demo) {
     if (k === 'v' || k === 'note' || k === 'json' || k === 'run' || k.startsWith('why.')) continue;
     const f = M.byKey[k];
     let label = k === 'qs' ? 'Quick Start' : f ? (f.label || k) : k;
-    let value = k === 'qs' ? v : f && f.options ? ((f.options.find(o => o.value === v) || {}).label || v) : shown(v);
+    let value = k === 'qs' ? v : f && f.options ? ((f.options.find(o => o.value === v) || {}).label || v)
+      : f && f.money && Number.isFinite(Number(v)) ? Number(v).toLocaleString('en-US', { maximumFractionDigits: 4 }) : shown(v);
     if (f && !f.options) {
       // A unit another field sets (setupCost with setupCostType): that field's choice, as it opens.
       const by = (f.pairs || []).map(x => M.byKey[x]).find(x => x && x.options);
@@ -299,10 +325,25 @@ function demoRows(M, demo) {
         if (f.prefix) value = f.prefix + value;
       }
     }
-    const user = !why[k] && k !== 'qs' && new RegExp('(^|\\D)' + String(v).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\D|$)').test(said);
-    rows.push({ key: k, label, value, source: why[k] || (k === 'qs' ? 'Nearest local starting point' : user ? 'You said' : 'Assumed'), user });
+    // Stated by the user: the value as written, as 180k or 1.2m, or a choice's words, in the request.
+    const n = Number(v);
+    const forms = [String(v)];
+    if (Number.isFinite(n) && n >= 1000) forms.push(n / 1000 + 'k', n / 1e6 + 'm', n / 1e6 + ' million');
+    const word = f && f.options && (f.options.find(o => o.value === v) || {}).label;
+    const lit = x => '(^|[^\\d.])' + String(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\d])';
+    const user = k !== 'qs' && (forms.some(x => String(x).length > 1 && new RegExp(lit(x), 'i').test(said)) ||
+      (!!word && word.length > 2 && said.toLowerCase().includes(word.toLowerCase())));
+    rows.push({ key: k, label, value, source: user ? 'You said' : why[k] || (k === 'qs' ? 'Nearest local starting point' : 'Assumed'), user });
   }
   return rows;
+}
+
+// What the user stated in an example: the link's keys whose value is in the request.
+export function userInputs(M, ex) {
+  // The state the example opens on (Quick Start, then the link), as agent-doc worked it out.
+  const state = { ...Object.fromEntries(M.fields.map(f => [f.key, f.value])), ...(M.exampleState || {}) };
+  for (const [k, v] of ex.pairs) state[k] = v;
+  return demoRows(M, { ...ex, state }).filter(r => r.user);
 }
 
 export function aiPage(T, models, demo) {
@@ -441,19 +482,16 @@ ${JSON.stringify({
           <ul>${rows.filter(r => r.user).map(r => `<li>${esc(r.label)}: <strong>${esc(r.value)}</strong></li>`).join('')}</ul>` : ''}
           <h3>Assumptions</h3>
           <ol>${demo.assumptions.map(a => `<li>${esc(a)}</li>`).join('')}</ol>
-          <div class="ai-table-wrap"><table class="ai-table">
-            <thead><tr><th>Input</th><th>Value</th><th>Source or rationale</th></tr></thead>
-            <tbody>${rows.map(r => `<tr><td>${esc(r.label)}</td><td>${esc(r.value)}</td><td>${esc(r.source)}</td></tr>`).join('')}</tbody>
-          </table></div>
           <h3>Your scenario</h3>
-          <p><a class="ai-link" href="${attr(demo.link)}" target="_blank" rel="noopener">${esc(demo.link)}</a></p>
+          <p><a class="ai-link" href="${attr(demo.link)}" target="_blank" rel="noopener">Open ${esc(T.name)} on this scenario</a></p>
+          <pre class="ai-code"><code>${esc(demo.link)}</code></pre>
           <p><strong>Open the link to see the result.</strong></p>
         </div>
         <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Replay</button><a class="btn-sm btn-primary" href="${attr(demo.link)}" target="_blank" rel="noopener">Open this scenario</a></div>
       </div>
       <ul class="gd-facts">
         <li><strong>Your figures stay yours.</strong> Anything you state goes in as you said it; correct any assumption and the AI sends a new link.</li>
-        <li><strong>Checked before you see it.</strong> The skill's script knows every input, its range and its choices, so the link opens exactly the scenario listed.</li>
+        <li><strong>Checked before you see it.</strong> The skill's script checks every input's name, range and choices before the AI sends the link, so it opens the scenario listed.</li>
         <li><strong>The tool shows what the AI chose.</strong> When the link opens, a banner lists each value the AI set and why, with an Undo back to your own inputs.</li>
       </ul>
     </section>

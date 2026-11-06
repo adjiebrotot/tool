@@ -23,15 +23,32 @@
     "toSalaries",
     "freq"
    ],
-   "fields": [],
+   "fields": [
+    {
+     "key": "salary",
+     "label": "salary",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 100000000000,
+     "default": "0"
+    },
+    {
+     "key": "expense",
+     "label": "expense",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 100000000000,
+     "default": "0"
+    }
+   ],
    "lists": [
     "cities",
     "detail",
     "goal",
     "housing",
     "target",
-    "salary",
-    "expense",
     "toSalaries",
     "rows",
     "customFx",
@@ -42,6 +59,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "sg-au",
@@ -121,6 +139,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "sg",

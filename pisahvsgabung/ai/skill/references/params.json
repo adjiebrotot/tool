@@ -70,6 +70,7 @@
      "unit": "%",
      "min": 0,
      "max": 100,
+     "step": 1,
      "default": "50",
      "important": true
     },
@@ -182,6 +183,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "even",
@@ -262,6 +264,7 @@
      "unit": "%",
      "min": 0,
      "max": 100,
+     "step": 1,
      "default": "50",
      "important": true
     },
@@ -374,6 +377,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "even",

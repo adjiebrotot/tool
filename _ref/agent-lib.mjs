@@ -34,11 +34,12 @@ user: if they want something this tool does not do, help them as you normally wo
    figures come from its own model and data, and a figure worked out separately can differ from
    what the user then sees on screen, so leave results, estimates, verdicts and recommendations
    to the tool rather than stating or previewing them.
-2. A reply that works well has three parts, in this order:
-   a. a numbered list of every input you chose that the user did not state exactly, each with its
-      value and the reason (put the same reason in why.<key>);
-   b. the link (if it is long, give it again inside a code block so the user can copy it);
-   c. the sentence: Open the link to see the result.
+2. A reply that works well has four parts, in this order, in the user's language:
+   a. Your inputs: what the user stated, each with the value it takes in the link;
+   b. Assumptions: every other input you chose, each with its value and its source (with its
+      date) or your reason (put the same reason, shortened, in why.<key>);
+   c. the link (if it is long, give it again inside a code block so the user can copy it);
+   d. the sentence: Open the link to see the result.
 3. Build the link in the format below, using only the keys listed here. Start from the nearest
    Quick Start (qs) and send only what differs from it. Write json compactly: no spaces or line
    breaks, defaults left out.
@@ -68,8 +69,10 @@ export function encodeValue(s) {
     .replace(/[()']/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
 }
 // base: the page's absolute URL; pairs: [[key, value], ...] in link order.
+// A key is encoded too (a part name may hold a space: el.HVDC link.p_nom), keeping its dots.
+export const encodeKey = k => encodeValue(k).replace(/=/g, '%3D');
 export function buildLink(base, pairs) {
-  let link = base + '#load' + pairs.map(([k, v]) => '&' + k + '=' + encodeValue(v)).join('');
+  let link = base + '#load' + pairs.map(([k, v]) => '&' + encodeKey(k) + '=' + encodeValue(v)).join('');
   // A link that ends on punctuation loses it to the link detector.
   if (/[.,:]$/.test(link)) link = link.slice(0, -1) + '%' + link.slice(-1).charCodeAt(0).toString(16).toUpperCase();
   return link;

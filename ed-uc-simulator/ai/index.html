@@ -140,22 +140,20 @@
           <span class="ai-chip">Ran <code>scripts/build_link.py</code>: link checked</span>
         </div>
         <div class="ai-msg ai-bot">
-          
+          <h3>Your inputs</h3>
+          <ul><li>el.Brighton.marginal_cost: <strong>40</strong></li></ul>
           <h3>Assumptions</h3>
           <ol><li>Network: the PJM 5-bus Quick Start (qs=pjm5), unchanged apart from the cost below.</li><li>Brighton: the generator at bus E. Its marginal cost is set to $40 per MWh (el.Brighton.marginal_cost); its rating and every other part stay as in the Quick Start.</li><li>Solve: the Quick Start's own: mode edm (edm is economic dispatch) over 1 d (d is days), with line limits and load shedding as the tool defaults them.</li></ol>
-          <div class="ai-table-wrap"><table class="ai-table">
-            <thead><tr><th>Input</th><th>Value</th><th>Source or rationale</th></tr></thead>
-            <tbody><tr><td>Quick Start</td><td>pjm5</td><td>Nearest local starting point</td></tr><tr><td>el.Brighton.marginal_cost</td><td>40</td><td>The user's new marginal cost for Brighton, in $ per MWh</td></tr></tbody>
-          </table></div>
           <h3>Your scenario</h3>
-          <p><a class="ai-link" href="https://tool.adjiebrotots.com/ed-uc-simulator/#load&amp;v=1&amp;qs=pjm5&amp;el.Brighton.marginal_cost=40&amp;why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&amp;run=0&amp;note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh" target="_blank" rel="noopener">https://tool.adjiebrotots.com/ed-uc-simulator/#load&amp;v=1&amp;qs=pjm5&amp;el.Brighton.marginal_cost=40&amp;why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&amp;run=0&amp;note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh</a></p>
+          <p><a class="ai-link" href="https://tool.adjiebrotots.com/ed-uc-simulator/#load&amp;v=1&amp;qs=pjm5&amp;el.Brighton.marginal_cost=40&amp;why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&amp;run=0&amp;note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh" target="_blank" rel="noopener">Open ED/UC Simulator on this scenario</a></p>
+          <pre class="ai-code"><code>https://tool.adjiebrotots.com/ed-uc-simulator/#load&amp;v=1&amp;qs=pjm5&amp;el.Brighton.marginal_cost=40&amp;why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&amp;run=0&amp;note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh</code></pre>
           <p><strong>Open the link to see the result.</strong></p>
         </div>
         <div class="ai-chat-bar"><button type="button" class="btn-sm btn-theme ai-replay">Replay</button><a class="btn-sm btn-primary" href="https://tool.adjiebrotots.com/ed-uc-simulator/#load&amp;v=1&amp;qs=pjm5&amp;el.Brighton.marginal_cost=40&amp;why.el.Brighton.marginal_cost=The%20user%27s%20new%20marginal%20cost%20for%20Brighton,%20in%20$%20per%20MWh&amp;run=0&amp;note=PJM%205-bus%20case,%20Brighton%27s%20marginal%20cost%20raised%20to%20$40/MWh" target="_blank" rel="noopener">Open this scenario</a></div>
       </div>
       <ul class="gd-facts">
         <li><strong>Your figures stay yours.</strong> Anything you state goes in as you said it; correct any assumption and the AI sends a new link.</li>
-        <li><strong>Checked before you see it.</strong> The skill's script knows every input, its range and its choices, so the link opens exactly the scenario listed.</li>
+        <li><strong>Checked before you see it.</strong> The skill's script checks every input's name, range and choices before the AI sends the link, so it opens the scenario listed.</li>
         <li><strong>The tool shows what the AI chose.</strong> When the link opens, a banner lists each value the AI set and why, with an Undo back to your own inputs.</li>
       </ul>
     </section>

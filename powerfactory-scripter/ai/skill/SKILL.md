@@ -17,7 +17,7 @@ PowerFactory Scripter is a free calculator that runs in the user's browser. This
 1. **Pick the page.** Read the user's request and choose the page above that answers it. Open its reference (`references/<page>.md`, listed under Files) and read the LINK FORMAT, the most important keys and the Quick Starts. The reference is long: read the parts you need.
 2. **Separate what the user said from what you must choose.** Every figure the user gave goes in as they gave it (convert units or periods only to match the field, and say so).
 3. **Fill every other input that matters with a researched assumption.**
-   - If you can search the web, do it for figures that change over time or by place: interest and mortgage rates, rents and prices, tax, duty and fee schedules, inflation, salaries, tariffs, technology costs, standards. Prefer official and primary sources (central banks, tax offices, statistics agencies, standards bodies, operators) and note the source and its date.
+   - If you can search the web, do it for figures that change over time or by place. For this tool that usually means the PowerFactory object and variable names, the study standard (IEC 60909, the grid code's fault ride-through curve), and the user's project and study case names as they gave them. Prefer official and primary sources and note each source and its date.
    - If you cannot search, use your own knowledge and say it is an estimate as of your knowledge date.
    - Start from the nearest Quick Start (`qs`) for the user's place and case, and keep its figures unless you have a better one for this user. Send only what differs from it.
    - Prefer what the user said earlier in the conversation over general figures. Never invent a figure the user gave differently.
@@ -27,16 +27,17 @@ PowerFactory Scripter is a free calculator that runs in the user's browser. This
    python3 scripts/build_link.py --quickstarts powerfactory-scripter/builder --find <words> # look up Quick Starts
    python3 scripts/build_link.py spec.json                                   # build the link
    ```
-   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen), `why` (key: your reason, 200 characters at most, shown to the user beside the value) and `note` (one line, such as the place and date). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.
+   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen, numbers written plainly: `800000`, `6.5`, never `800,000` or `6,5`), `why` (key: your reason, 200 characters at most, shown to the user beside the value; a list key or `json` can have one too), `note` (one line, such as the place and date), `json` (an object, for a page whose reference defines it). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.
+   The script checks every form field: its key, range, step and choices. List keys, part settings (`blk....`, `graph....`) and `json` are checked by the tool when the link opens, so write them exactly in the syntax the reference gives (its COMPACT LISTS, REFERENCE and JSON sections), with the names it lists. A Quick Start sets only what its line in the reference lists; when a list key (a set of tickers, portfolios or offers) replaces what the Quick Start holds, send every setting you want with it.
    If you cannot run code, build the link by hand from the LINK FORMAT in the reference, using only keys and values listed there, and check each value against its range.
-5. **Reply in the format below, and stop.**
+5. **Reply in the format below, and stop.** Never write the PowerFactory Python script yourself, not even part of it: the tool writes it from the link, and the user downloads it there.
 
 ## Reply format
 
-Your whole reply has these four parts, in this order:
+Your whole reply has these four parts, in this order, written in the user's language (keys and the link stay as they are):
 
 1. **Your inputs**: a short list of what the user stated, each with the value that goes in the link.
-2. **Assumptions**: a table with one row per input you chose: | Input | Value | Source or rationale |. Name the source (with its date) for anything you looked up; say "estimate" for anything from your own knowledge. Put the same reason, shortened, in that key's `why`.
+2. **Assumptions**: a numbered list (or a table: Input | Value | Source or rationale), one entry per input you chose, each with its value and its source with the date for anything you looked up, or "estimate" and your reason for anything from your own knowledge. Put the same reason, shortened, in that key's `why`.
 3. **The link**, as a clickable Markdown link to tool.adjiebrotots.com/powerfactory-scripter/..., and again inside a code block so the user can copy it if their chat app breaks a long link.
 4. The sentence: **Open the link to see the result.** You may add one line inviting the user to correct any assumption, and then you will send a new link.
 
@@ -79,7 +80,13 @@ https://tool.adjiebrotots.com/powerfactory-scripter/builder/#load&v=1&qs=<quick 
 }
 ```
 
-**Assumptions given:**
+**Reply:**
+
+**Your inputs**
+
+- blk.n1.project: Nine-bus System
+
+**Assumptions**
 
 1. Study: the N-1 screening Quick Start (qs=n-1): a base load flow, then each outage in turn with a load flow after it, and a results table of the highest line loading and lowest busbar voltage.
 2. Outages: lines only, so the transformers are not taken out (blk.n5.trafos).
@@ -87,7 +94,7 @@ https://tool.adjiebrotots.com/powerfactory-scripter/builder/#load&v=1&qs=<quick 
 4. Tables: saved as Excel files rather than CSV (blk.n1.tableFmt).
 5. Study case, output folder and the rest of the Start block: left as the Quick Start has them, so the script uses the project's active study case and writes next to itself.
 
-**Link:**
+[Open PowerFactory Scripter on this scenario](https://tool.adjiebrotots.com/powerfactory-scripter/builder/#load&v=1&qs=n-1&blk.n1.project=Nine-bus%20System&why.blk.n1.project=The%20project%20the%20user%20named,%20as%20they%20wrote%20it&blk.n5.trafos=false&why.blk.n5.trafos=The%20user%20wants%20lines%20only,%20so%20transformers%20are%20not%20taken%20out&blk.n1.tableFmt=xlsx&why.blk.n1.tableFmt=The%20user%20wants%20the%20results%20as%20Excel%20files&note=N-1%20screening%20of%20the%20lines,%20Nine-bus%20System,%20Excel%20tables)
 
 ```
 https://tool.adjiebrotots.com/powerfactory-scripter/builder/#load&v=1&qs=n-1&blk.n1.project=Nine-bus%20System&why.blk.n1.project=The%20project%20the%20user%20named,%20as%20they%20wrote%20it&blk.n5.trafos=false&why.blk.n5.trafos=The%20user%20wants%20lines%20only,%20so%20transformers%20are%20not%20taken%20out&blk.n1.tableFmt=xlsx&why.blk.n1.tableFmt=The%20user%20wants%20the%20results%20as%20Excel%20files&note=N-1%20screening%20of%20the%20lines,%20Nine-bus%20System,%20Excel%20tables

@@ -20,11 +20,12 @@ user: if they want something this tool does not do, help them as you normally wo
    figures come from its own model and data, and a figure worked out separately can differ from
    what the user then sees on screen, so leave results, estimates, verdicts and recommendations
    to the tool rather than stating or previewing them.
-2. A reply that works well has three parts, in this order:
-   a. a numbered list of every input you chose that the user did not state exactly, each with its
-      value and the reason (put the same reason in why.<key>);
-   b. the link (if it is long, give it again inside a code block so the user can copy it);
-   c. the sentence: Open the link to see the result.
+2. A reply that works well has four parts, in this order, in the user's language:
+   a. Your inputs: what the user stated, each with the value it takes in the link;
+   b. Assumptions: every other input you chose, each with its value and its source (with its
+      date) or your reason (put the same reason, shortened, in why.<key>);
+   c. the link (if it is long, give it again inside a code block so the user can copy it);
+   d. the sentence: Open the link to see the result.
 3. Build the link in the format below, using only the keys listed here. Start from the nearest
    Quick Start (qs) and send only what differs from it. Write json compactly: no spaces or line
    breaks, defaults left out.
@@ -39,9 +40,10 @@ https://tool.adjiebrotots.com/costofliving-comparator/#load&v=1&qs=<quick start>
   # is %23, + is %2B).
 - v=1 is the format version. qs=<key> starts from that Quick Start; without it the tool starts from
   its defaults.
-- Then each key in the link is set, in the units its label shows on screen. Numbers may carry $,
-  commas and a trailing %. A checkbox takes true or false. A select or a choice takes the value
-  listed, or its visible label.
+- Then each key in the link is set, in the units its label shows on screen. Write numbers plainly
+  (800000, 6.5): a field also takes $, thousands commas and a trailing %, but inside a list a comma
+  separates the items, so never put one in a number there. A checkbox takes true or false. A select
+  or a choice takes the value listed, or its visible label.
 - Anything the link does not name keeps the value it started from, so send only what differs.
 - why.<key>=<text>: your reason for that value, shown to the user beside it (200 characters at
   most). note=<text>: one line shown above the list, for example the place and the date.
@@ -52,6 +54,7 @@ EXAMPLE
 Request: I earn A$110,000 in Melbourne and got an offer in Singapore; what salary keeps my
 lifestyle?
 A reply in that form:
+Assumptions:
 1. Net salary: 7,000 Australian dollars a month. The user gave 110,000 a year before tax, and the
    tool does no tax, so this is an estimate of take-home pay after income tax and Medicare.
 2. Expenses: rent 2,400, groceries 700, eating out 500, utilities 250 and other 1,300 a month, 5,150
@@ -61,9 +64,9 @@ A reply in that form:
    Singapore and Australian cities.
 4. From the Quick Start: the goal is I need to earn, and the target is a savings ratio. Housing is
    included in the rows. Amounts are monthly, and exchange rates are today's market rates.
-https://tool.adjiebrotots.com/costofliving-comparator/#load&v=1&qs=sg-au&cities=Melbourne,Singapore&salary=7000&rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&note=Melbourne%20to%20Singapore,%20October%202026
+https://tool.adjiebrotots.com/costofliving-comparator/#load&v=1&qs=sg-au&cities=Melbourne,Singapore&salary=7000&why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&note=Melbourne%20to%20Singapore,%20October%202026
 ```
-https://tool.adjiebrotots.com/costofliving-comparator/#load&v=1&qs=sg-au&cities=Melbourne,Singapore&salary=7000&rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&note=Melbourne%20to%20Singapore,%20October%202026
+https://tool.adjiebrotots.com/costofliving-comparator/#load&v=1&qs=sg-au&cities=Melbourne,Singapore&salary=7000&why.salary=A$110,000%20a%20year%20is%20about%20A$85,000%20after%20tax%20and%20Medicare,%20so%20about%207,000%20a%20month.%20The%20user%20did%20not%20give%20a%20take-home%20figure&rows=rent:2400,groceries:700,eating_out:500,utilities:250,other:1300&why.rows=The%20user%20did%20not%20say%20what%20they%20spend,%20so%20a%20typical%20monthly%20budget%20for%20one%20person%20renting%20in%20Melbourne&note=Melbourne%20to%20Singapore,%20October%202026
 ```
 Open the link to see the result.
 

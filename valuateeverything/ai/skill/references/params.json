@@ -141,6 +141,7 @@
      "unit": "%/yr",
      "min": 0,
      "max": 10,
+     "step": 0.1,
      "default": "3",
      "important": true
     },
@@ -178,6 +179,7 @@
      "unit": "×",
      "min": 0,
      "max": 2,
+     "step": 0.01,
      "default": "0.1"
     },
     {
@@ -205,6 +207,7 @@
    ],
    "families": [],
    "json": true,
+   "run": false,
    "quickStarts": [
     {
      "key": "camry",

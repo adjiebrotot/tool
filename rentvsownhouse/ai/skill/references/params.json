@@ -136,7 +136,7 @@
      "label": "Property price",
      "group": "Home: Property",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 50000,
      "max": 1000000000000,
      "default": 800000,
@@ -150,6 +150,7 @@
      "unit": "% of price",
      "min": 0,
      "max": 100,
+     "step": 0.01,
      "default": "20",
      "important": true
     },
@@ -196,6 +197,7 @@
      "unit": "yrs",
      "min": 5,
      "max": 50,
+     "step": 1,
      "default": "30",
      "important": true
     },
@@ -204,7 +206,7 @@
      "label": "Setup cost (stamp duty, legal, etc.)",
      "group": "Home: Costs of owning",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 1000000000000,
      "default": 32000,
@@ -235,7 +237,7 @@
      "label": "Ongoing costs of owning",
      "group": "Home: Costs of owning",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 1000000000000,
      "default": 6000,
@@ -290,6 +292,7 @@
      "unit": "%/yr",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "0"
     },
     {
@@ -297,7 +300,7 @@
      "label": "Rent amount",
      "group": "Rent: Rental payments",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 2800,
@@ -336,6 +339,7 @@
      "unit": "%/yr",
      "min": -10,
      "max": 25,
+     "step": 0.01,
      "default": "3",
      "important": true
     },
@@ -344,7 +348,7 @@
      "label": "Ongoing costs of renting",
      "group": "Rent: Costs of renting",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 1200,
@@ -398,6 +402,7 @@
      "unit": "%/yr",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "0"
     },
     {
@@ -415,6 +420,7 @@
      "unit": "yrs",
      "min": 1,
      "max": 29,
+     "step": 1,
      "default": "5"
     },
     {
@@ -425,6 +431,7 @@
      "unit": "%/yr",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "2.5"
     },
     {
@@ -435,6 +442,7 @@
      "unit": "%/yr",
      "min": -10,
      "max": 25,
+     "step": 0.01,
      "default": "4.5",
      "important": true
     },
@@ -446,6 +454,7 @@
      "unit": "yrs",
      "min": 5,
      "max": 100,
+     "step": 1,
      "default": "30",
      "important": true
     },
@@ -457,6 +466,7 @@
      "unit": "%/yr",
      "min": -10,
      "max": 25,
+     "step": 0.01,
      "default": "5",
      "important": true
     },
@@ -468,6 +478,7 @@
      "unit": "% of sale",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "2.5"
     },
     {
@@ -475,7 +486,7 @@
      "label": "Initial cash (optional)",
      "group": "Assumptions: Cash",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 1000000000000,
      "default": ""
@@ -485,7 +496,7 @@
      "label": "Monthly housing budget (optional)",
      "group": "Assumptions: Cash",
      "kind": "amount",
-     "unit": "$ /mo",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 0
@@ -498,6 +509,7 @@
      "unit": "%/yr",
      "min": 0,
      "max": 25,
+     "step": 0.01,
      "default": "0"
     },
     {
@@ -516,6 +528,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "perth",
@@ -1414,7 +1427,7 @@
      "label": "Harga properti",
      "group": "Rumah: Properti",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 50000,
      "max": 1000000000000,
      "default": 800000,
@@ -1428,6 +1441,7 @@
      "unit": "% dari harga",
      "min": 0,
      "max": 100,
+     "step": 0.01,
      "default": "20",
      "important": true
     },
@@ -1474,6 +1488,7 @@
      "unit": "thn",
      "min": 5,
      "max": 50,
+     "step": 1,
      "default": "30",
      "important": true
     },
@@ -1482,7 +1497,7 @@
      "label": "Biaya awal pembelian (BPHTB, notaris, dll.)",
      "group": "Rumah: Biaya kepemilikan",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 1000000000000,
      "default": 32000,
@@ -1513,7 +1528,7 @@
      "label": "Biaya rutin kepemilikan",
      "group": "Rumah: Biaya kepemilikan",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 1000000000000,
      "default": 6000,
@@ -1568,6 +1583,7 @@
      "unit": "%/thn",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "0"
     },
     {
@@ -1575,7 +1591,7 @@
      "label": "Biaya sewa",
      "group": "Sewa: Pembayaran sewa",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 2800,
@@ -1614,6 +1630,7 @@
      "unit": "%/thn",
      "min": -10,
      "max": 25,
+     "step": 0.01,
      "default": "3",
      "important": true
     },
@@ -1622,7 +1639,7 @@
      "label": "Biaya rutin menyewa",
      "group": "Sewa: Biaya menyewa",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 1200,
@@ -1676,6 +1693,7 @@
      "unit": "%/thn",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "0"
     },
     {
@@ -1693,6 +1711,7 @@
      "unit": "thn",
      "min": 1,
      "max": 29,
+     "step": 1,
      "default": "5"
     },
     {
@@ -1703,6 +1722,7 @@
      "unit": "%/thn",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "2.5"
     },
     {
@@ -1713,6 +1733,7 @@
      "unit": "%/thn",
      "min": -10,
      "max": 25,
+     "step": 0.01,
      "default": "4.5",
      "important": true
     },
@@ -1724,6 +1745,7 @@
      "unit": "thn",
      "min": 5,
      "max": 100,
+     "step": 1,
      "default": "30",
      "important": true
     },
@@ -1735,6 +1757,7 @@
      "unit": "%/thn",
      "min": -10,
      "max": 25,
+     "step": 0.01,
      "default": "5",
      "important": true
     },
@@ -1746,6 +1769,7 @@
      "unit": "% harga jual",
      "min": 0,
      "max": 15,
+     "step": 0.01,
      "default": "2.5"
     },
     {
@@ -1753,7 +1777,7 @@
      "label": "Modal awal (opsional)",
      "group": "Asumsi: Kas",
      "kind": "amount",
-     "unit": "$",
+     "currency": true,
      "min": 0,
      "max": 1000000000000,
      "default": ""
@@ -1763,7 +1787,7 @@
      "label": "Anggaran perumahan bulanan (opsional)",
      "group": "Asumsi: Kas",
      "kind": "amount",
-     "unit": "$ /bln",
+     "currency": true,
      "min": 0,
      "max": 100000000000,
      "default": 0
@@ -1776,6 +1800,7 @@
      "unit": "%/thn",
      "min": 0,
      "max": 25,
+     "step": 0.01,
      "default": "0"
     },
     {
@@ -1794,6 +1819,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "perth",
@@ -2686,16 +2712,65 @@
      ],
      "default": "$",
      "important": true
+    },
+    {
+     "key": "propertyPrice",
+     "label": "propertyPrice",
+     "group": "",
+     "kind": "number",
+     "min": 50000,
+     "max": 1000000000000,
+     "default": "800000"
+    },
+    {
+     "key": "mortgageRate",
+     "label": "mortgageRate",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 25,
+     "default": "6"
+    },
+    {
+     "key": "houseGrowth",
+     "label": "houseGrowth",
+     "group": "",
+     "kind": "number",
+     "min": -10,
+     "max": 25,
+     "default": "5"
+    },
+    {
+     "key": "rentAmount",
+     "label": "rentAmount",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "2800"
+    },
+    {
+     "key": "downPaymentPct",
+     "label": "downPaymentPct",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 100,
+     "default": "20"
+    },
+    {
+     "key": "sellingCostPct",
+     "label": "sellingCostPct",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 15,
+     "default": "2.5"
     }
    ],
    "lists": [
-    "propertyPrice",
-    "downPaymentPct",
     "mortgageType",
-    "mortgageRate",
     "mortgageTerm",
-    "houseGrowth",
-    "sellingCostPct",
     "setupCost",
     "setupCostType",
     "ownOngoingCost",
@@ -2703,7 +2778,6 @@
     "ownOngoingCostType",
     "ownOngoingInflation",
     "costInterestOnly",
-    "rentAmount",
     "rentFreq",
     "rentInflation",
     "rentOngoingCost",
@@ -2722,6 +2796,7 @@
    ],
    "families": [],
    "json": true,
+   "run": false,
    "quickStarts": [
     {
      "key": "perth",
@@ -3614,16 +3689,65 @@
      ],
      "default": "$",
      "important": true
+    },
+    {
+     "key": "propertyPrice",
+     "label": "propertyPrice",
+     "group": "",
+     "kind": "number",
+     "min": 50000,
+     "max": 1000000000000,
+     "default": "800000"
+    },
+    {
+     "key": "mortgageRate",
+     "label": "mortgageRate",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 25,
+     "default": "6"
+    },
+    {
+     "key": "houseGrowth",
+     "label": "houseGrowth",
+     "group": "",
+     "kind": "number",
+     "min": -10,
+     "max": 25,
+     "default": "5"
+    },
+    {
+     "key": "rentAmount",
+     "label": "rentAmount",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 1000000000000,
+     "default": "2800"
+    },
+    {
+     "key": "downPaymentPct",
+     "label": "downPaymentPct",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 100,
+     "default": "20"
+    },
+    {
+     "key": "sellingCostPct",
+     "label": "sellingCostPct",
+     "group": "",
+     "kind": "number",
+     "min": 0,
+     "max": 15,
+     "default": "2.5"
     }
    ],
    "lists": [
-    "propertyPrice",
-    "downPaymentPct",
     "mortgageType",
-    "mortgageRate",
     "mortgageTerm",
-    "houseGrowth",
-    "sellingCostPct",
     "setupCost",
     "setupCostType",
     "ownOngoingCost",
@@ -3631,7 +3755,6 @@
     "ownOngoingCostType",
     "ownOngoingInflation",
     "costInterestOnly",
-    "rentAmount",
     "rentFreq",
     "rentInflation",
     "rentOngoingCost",
@@ -3650,6 +3773,7 @@
    ],
    "families": [],
    "json": true,
+   "run": false,
    "quickStarts": [
     {
      "key": "perth",

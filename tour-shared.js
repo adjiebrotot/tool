@@ -442,7 +442,9 @@
     btn.setAttribute('aria-label', 'Take a guided tour of this tool');
     btn.addEventListener('click', start);
     // Insert before the theme toggle so it sits next to it.
-    if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.insertBefore(btn, themeBtn);
+    var aiBtn = nav.querySelector('[data-abt-ai-link]');
+    if (aiBtn && aiBtn.parentNode) aiBtn.parentNode.insertBefore(btn, aiBtn);
+    else if (themeBtn && themeBtn.parentNode) themeBtn.parentNode.insertBefore(btn, themeBtn);
     else nav.appendChild(btn);
     if (GUIDE_HREF) {
       // The guide beside it, a link dressed as the same header button.
@@ -454,21 +456,8 @@
       guide.title = GUIDE_TITLE;
       btn.parentNode.insertBefore(guide, btn.nextSibling);
     }
-    // "Use in AI": the tool's skill page, where the page's generated AI pointer names it
-    // (_ref/agent-doc.mjs writes data-ai on #agentHelp). On a narrow screen only the ✨ shows.
-    var ref = document.getElementById('agentHelp');
-    var aiHref = ref && ref.getAttribute('data-ai');
-    if (aiHref && !nav.querySelector('[data-abt-ai-link]')) {
-      var idLang = /^id\b/i.test(document.documentElement.lang || '');
-      var ai = document.createElement('a');
-      ai.className = btn.className;
-      ai.href = aiHref;
-      ai.setAttribute('data-abt-ai-link', '');
-      setLabel(ai, idLang ? '✨ Pakai di AI' : '✨ Use in AI');
-      ai.title = idLang ? 'Pakai alat ini lewat asisten AI Anda (Claude, ChatGPT, Grok)' : 'Use this tool through your AI assistant (Claude, ChatGPT, Grok)';
-      var after = nav.querySelector('[data-pf-guide-link]') || btn;
-      after.parentNode.insertBefore(ai, after.nextSibling);
-    }
+    // "Use in AI" (SharedAiLink in shared.js) goes after Tour and Guide.
+    if (window.SharedAiLink) window.SharedAiLink.add();
   }
 
   function init() {

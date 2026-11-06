@@ -33,7 +33,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { rmSync } from 'node:fs';
-import { TOOLS, toolOf, skillFiles, aiPage, aiUrl, skillName, refName, llmsLines } from './ai-skill.mjs';
+import { TOOLS, toolOf, skillFiles, aiPage, aiUrl, skillName, refName, llmsLines, canonicalLink, userInputs } from './ai-skill.mjs';
 import {
   AI_RULES, PAGES, SITE, ROOT, RESERVED, FORBIDDEN, WHY_MAX, MARK_START, MARK_END, SECTION_RE, LIST_KEY_RE,
   buildLink, serve, launch, openPage, readFields, parseNotes, defaultQuickStarts
@@ -199,6 +199,7 @@ function checkExample(M) {
 function show(v) {
   if (typeof v === 'boolean') return v ? 'on' : 'off';
   const n = toNumber(v);
+  if (/^(1[89]|2[0-2])\d\d$/.test(String(v))) return String(v);   // a year reads 2030, not 2,030
   if (typeof v === 'number' || (Number.isFinite(n) && /^[\d.,$\s-]+$/.test(String(v)))) {
     return Number.isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: 4 }) : String(v);
   }
@@ -232,7 +233,7 @@ function protocolLines(M) {
   return [
     'After #load come key=value pairs joined by &. Percent-encode each value (a space is %20, & is %26, # is %23, + is %2B).',
     'v=1 is the format version.' + (M.qs ? ' qs=<key> starts from that Quick Start; without it the tool starts from its defaults.' : ' The tool starts from its defaults.'),
-    ('Then each key in the link is set, in the units its label shows on screen. ' + unitExample(M)).trim() + ' Numbers may carry $, commas and a trailing %. A checkbox takes true or false. A select or a choice takes the value listed, or its visible label.',
+    ('Then each key in the link is set, in the units its label shows on screen. ' + unitExample(M)).trim() + ' Write numbers plainly (800000, 6.5): a field also takes $, thousands commas and a trailing %, but inside a list a comma separates the items, so never put one in a number there. A checkbox takes true or false. A select or a choice takes the value listed, or its visible label.',
     'Anything the link does not name keeps the value it started from, so send only what differs.',
     `why.<key>=<text>: your reason for that value, shown to the user beside it (${WHY_MAX} characters at most). note=<text>: one line shown above the list, for example the place and the date.`,
     'A number outside a field\'s range is pulled into range and the user is told; a key the tool does not know is skipped and listed. Never use the keys s, open or embed.',
@@ -336,8 +337,12 @@ function agentTxt(M) {
   L.push('', 'EXAMPLE');
   para('Request: ' + M.example.request);
   L.push('A reply in that form:');
+  const said = userInputs(M, M.example);
+  if (said.length) { L.push('Your inputs:'); said.forEach(r => para(`- ${r.label}: ${r.value}`)); }
+  L.push('Assumptions:');
   M.example.assumptions.forEach((a, i) => para(`${i + 1}. ${a}`));
-  L.push(M.link, '```', M.link, '```', 'Open the link to see the result.');
+  const link = canonicalLink(M.base, M.example.pairs);
+  L.push(link, '```', link, '```', 'Open the link to see the result.');
   // The Quick Starts in brief here; their figures, which can run long, close the file, so a
   // reader that stops early still has every field.
   if (M.qs) {

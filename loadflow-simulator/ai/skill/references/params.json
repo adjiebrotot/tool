@@ -136,6 +136,7 @@
      "unit": "%",
      "min": 10,
      "max": 200,
+     "step": 1,
      "default": "100",
      "important": true
     },
@@ -170,6 +171,7 @@
     "el."
    ],
    "json": true,
+   "run": false,
    "quickStarts": [
     {
      "key": "wscc9",

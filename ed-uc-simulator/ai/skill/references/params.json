@@ -159,7 +159,11 @@
      "kind": "number",
      "min": 1,
      "max": 30,
+     "step": 1,
      "default": "1",
+     "unitSetBy": [
+      "edSpanUnit"
+     ],
      "important": true
     },
     {
@@ -184,7 +188,7 @@
      "key": "edStart",
      "label": "First hour",
      "group": "Dispatch: Problem",
-     "kind": "text",
+     "kind": "datetime",
      "default": "2026-01-01T00:00",
      "important": true
     },
@@ -212,6 +216,7 @@
      "unit": "$ /MWh",
      "min": 100,
      "max": 100000,
+     "step": 100,
      "default": "10000",
      "important": true
     },
@@ -267,6 +272,7 @@
     "el."
    ],
    "json": true,
+   "run": true,
    "quickStarts": [
     {
      "key": "pjm5",

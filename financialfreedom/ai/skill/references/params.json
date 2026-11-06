@@ -142,6 +142,7 @@
      "unit": "yrs",
      "min": 0,
      "max": 100,
+     "step": 1,
      "default": "30",
      "important": true
     },
@@ -153,6 +154,7 @@
      "unit": "yrs",
      "min": 2,
      "max": 120,
+     "step": 1,
      "default": "90",
      "important": true
     },
@@ -165,6 +167,9 @@
      "min": 0,
      "max": 100000000000,
      "default": "30,000",
+     "unitSetBy": [
+      "savingsPeriod"
+     ],
      "important": true
     },
     {
@@ -214,6 +219,7 @@
      "unit": "yrs",
      "min": 40,
      "max": 90,
+     "step": 1,
      "default": "67"
     },
     {
@@ -263,6 +269,9 @@
      "min": 0,
      "max": 100000000000,
      "default": "60,000",
+     "unitSetBy": [
+      "expensePeriod"
+     ],
      "important": true
     },
     {
@@ -296,6 +305,9 @@
      "min": 0,
      "max": 1000,
      "default": "100",
+     "unitSetBy": [
+      "retireExpensePeriod"
+     ],
      "important": true
     },
     {
@@ -446,6 +458,7 @@
      "unit": "%",
      "min": 50,
      "max": 99,
+     "step": 1,
      "default": "50"
     },
     {
@@ -456,6 +469,7 @@
      "unit": "%",
      "min": 50,
      "max": 99,
+     "step": 1,
      "default": "90"
     },
     {
@@ -472,6 +486,7 @@
      "kind": "slider",
      "min": 30,
      "max": 90,
+     "step": 1,
      "default": "47"
     }
    ],
@@ -484,6 +499,7 @@
    ],
    "families": [],
    "json": false,
+   "run": false,
    "quickStarts": [
     {
      "key": "moderate",

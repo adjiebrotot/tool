@@ -16,7 +16,7 @@ Load Flow Simulator is a free calculator that runs in the user's browser. This s
 1. **Pick the page.** Read the user's request and choose the page above that answers it. Open its reference (`references/<page>.md`, listed under Files) and read the LINK FORMAT, the most important keys and the Quick Starts. The reference is long: read the parts you need.
 2. **Separate what the user said from what you must choose.** Every figure the user gave goes in as they gave it (convert units or periods only to match the field, and say so).
 3. **Fill every other input that matters with a researched assumption.**
-   - If you can search the web, do it for figures that change over time or by place: interest and mortgage rates, rents and prices, tax, duty and fee schedules, inflation, salaries, tariffs, technology costs, standards. Prefer official and primary sources (central banks, tax offices, statistics agencies, standards bodies, operators) and note the source and its date.
+   - If you can search the web, do it for figures that change over time or by place. For this tool that usually means standards and grid codes (IEEE, IEC, EN 50160, the network operator's code), typical line, cable and transformer data, and the operating limits that apply. Prefer official and primary sources and note each source and its date.
    - If you cannot search, use your own knowledge and say it is an estimate as of your knowledge date.
    - Start from the nearest Quick Start (`qs`) for the user's place and case, and keep its figures unless you have a better one for this user. Send only what differs from it.
    - Prefer what the user said earlier in the conversation over general figures. Never invent a figure the user gave differently.
@@ -26,16 +26,17 @@ Load Flow Simulator is a free calculator that runs in the user's browser. This s
    python3 scripts/build_link.py --quickstarts loadflow-simulator --find <words> # look up Quick Starts
    python3 scripts/build_link.py spec.json                                   # build the link
    ```
-   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen), `why` (key: your reason, 200 characters at most, shown to the user beside the value) and `note` (one line, such as the place and date). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.
+   `spec.json` holds `page`, `qs`, `set` (key: value, in the units the field shows on screen, numbers written plainly: `800000`, `6.5`, never `800,000` or `6,5`), `why` (key: your reason, 200 characters at most, shown to the user beside the value; a list key or `json` can have one too), `note` (one line, such as the place and date), `json` (an object, for a page whose reference defines it). If it prints NOT BUILT, fix what it lists and run it again. Use the link it prints exactly as printed.
+   The script checks every form field: its key, range, step and choices. List keys, part settings (`el....`) and `json` are checked by the tool when the link opens, so write them exactly in the syntax the reference gives (its COMPACT LISTS and JSON sections), with the names it lists. A Quick Start sets only what its line in the reference lists; when a list key (a set of tickers, portfolios or offers) replaces what the Quick Start holds, send every setting you want with it.
    If you cannot run code, build the link by hand from the LINK FORMAT in the reference, using only keys and values listed there, and check each value against its range.
 5. **Reply in the format below, and stop.**
 
 ## Reply format
 
-Your whole reply has these four parts, in this order:
+Your whole reply has these four parts, in this order, written in the user's language (keys and the link stay as they are):
 
 1. **Your inputs**: a short list of what the user stated, each with the value that goes in the link.
-2. **Assumptions**: a table with one row per input you chose: | Input | Value | Source or rationale |. Name the source (with its date) for anything you looked up; say "estimate" for anything from your own knowledge. Put the same reason, shortened, in that key's `why`.
+2. **Assumptions**: a numbered list (or a table: Input | Value | Source or rationale), one entry per input you chose, each with its value and its source with the date for anything you looked up, or "estimate" and your reason for anything from your own knowledge. Put the same reason, shortened, in that key's `why`.
 3. **The link**, as a clickable Markdown link to tool.adjiebrotots.com/loadflow-simulator/..., and again inside a code block so the user can copy it if their chat app breaks a long link.
 4. The sentence: **Open the link to see the result.** You may add one line inviting the user to correct any assumption, and then you will send a new link.
 
@@ -74,13 +75,19 @@ https://tool.adjiebrotots.com/loadflow-simulator/#load&v=1&qs=<quick start>&<key
 }
 ```
 
-**Assumptions given:**
+**Reply:**
+
+**Your inputs**
+
+- el.LoadA.p_set: 150
+
+**Assumptions**
 
 1. Network: the WSCC 9-bus Quick Start (qs=wscc9), unchanged apart from the load below.
 2. Load at bus 5: Load A, the load on bus 5 in that case. Its active power is set to 150 MW (el.LoadA.p_set) and its reactive power stays at the Quick Start's figure.
 3. Solver and limits: the Quick Start's own: the ac method (ac is the full AC load flow), voltage limits of 0.95 to 1.05 p.u. and a branch loading limit of 100%.
 
-**Link:**
+[Open Load Flow Simulator on this scenario](https://tool.adjiebrotots.com/loadflow-simulator/#load&v=1&qs=wscc9&el.LoadA.p_set=150&why.el.LoadA.p_set=The%20load%20at%20bus%205%20is%20Load%20A%20in%20the%20WSCC%209-bus%20case%3B%20the%20user%27s%20150%20MW%20replaces%20its%20active%20power&note=WSCC%209-bus%20case,%20load%20at%20bus%205%20raised%20to%20150%20MW)
 
 ```
 https://tool.adjiebrotots.com/loadflow-simulator/#load&v=1&qs=wscc9&el.LoadA.p_set=150&why.el.LoadA.p_set=The%20load%20at%20bus%205%20is%20Load%20A%20in%20the%20WSCC%209-bus%20case%3B%20the%20user%27s%20150%20MW%20replaces%20its%20active%20power&note=WSCC%209-bus%20case,%20load%20at%20bus%205%20raised%20to%20150%20MW
